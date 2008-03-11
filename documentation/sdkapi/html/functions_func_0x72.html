@@ -115,8 +115,8 @@
 , <a class="el" href="interfacesb_i_metadata_channel.html#7b931b8aea05a54a1f0f4ee17e1d87d3">sbIMetadataChannel</a>
 , <a class="el" href="interfacesb_i_metadata_handler.html#089f9e2ab8e3494dc72dae7e937b0a56">sbIMetadataHandler</a>
 <li>readChar()
-: <a class="el" href="interfacesb_i_seekable_channel.html#d7c9988d208980102eb39c109ee17e4d">sbISeekableChannel</a>
-, <a class="el" href="interfacesb_i_metadata_channel.html#76c6402a0c9c81a78b9795bdb3478669">sbIMetadataChannel</a>
+: <a class="el" href="interfacesb_i_metadata_channel.html#76c6402a0c9c81a78b9795bdb3478669">sbIMetadataChannel</a>
+, <a class="el" href="interfacesb_i_seekable_channel.html#d7c9988d208980102eb39c109ee17e4d">sbISeekableChannel</a>
 <li>readInt32()
 : <a class="el" href="interfacesb_i_seekable_channel.html#43fb0ad4d324228a967be2f4bcb5bcb9">sbISeekableChannel</a>
 , <a class="el" href="interfacesb_i_metadata_channel.html#6948e056c34868f428edfdbe86ed3952">sbIMetadataChannel</a>
@@ -149,6 +149,8 @@
 : <a class="el" href="interfacesb_i_library_manager.html#067654136524331ee62c2b9adb629303">sbILibraryManager</a>
 <li>registerMediaListFactory()
 : <a class="el" href="interfacesb_i_library.html#f87abee5d36302272e3d842af0bc9125">sbILibrary</a>
+<li>registerPage()
+: <a class="el" href="interfacesb_i_media_page_manager.html#b0da2b8351dacdffa79b8af35bc5cbc0">sbIMediaPageManager</a>
 <li>registerPathHandler()
 : <a class="el" href="interfacens_i_http_server.html#81fc7e7e29d82aac5ce7d56d0bedfb3a">nsIHttpServer</a>
 <li>registerPlaylistCommandsMediaItem()
@@ -166,8 +168,8 @@
 <li>releaseViews()
 : <a class="el" href="interfacesb_i_media_list_view_map.html#07ee9e978222b8e5c4d8b2d849a75947">sbIMediaListViewMap</a>
 <li>remove()
-: <a class="el" href="interfacesb_i_media_list.html#63e7e739718bd6d35016500933e5fc58">sbIMediaList</a>
-, <a class="el" href="interfacesb_i_cascade_filter_set.html#b8c664b0441fb66e9d67bbcc4d22cc76">sbICascadeFilterSet</a>
+: <a class="el" href="interfacesb_i_cascade_filter_set.html#b8c664b0441fb66e9d67bbcc4d22cc76">sbICascadeFilterSet</a>
+, <a class="el" href="interfacesb_i_media_list.html#63e7e739718bd6d35016500933e5fc58">sbIMediaList</a>
 <li>removeAllCommands()
 : <a class="el" href="interfacesb_i_playlist_commands_builder.html#43369f3d99534956fd0a463c7a1c8821">sbIPlaylistCommandsBuilder</a>
 <li>removeAllHotkeys()
@@ -179,8 +181,8 @@
 <li>removeByIndex()
 : <a class="el" href="interfacesb_i_media_list.html#48c9653c3324dfe0a1dedb4b6307ea29">sbIMediaList</a>
 <li>removeCallback()
-: <a class="el" href="interfacesb_i_device_base.html#25a80634ada6eaa6ecc58e3143f5bfe0">sbIDeviceBase</a>
-, <a class="el" href="interfacesb_i_database_query.html#38f90315055dc28f3549479159792633">sbIDatabaseQuery</a>
+: <a class="el" href="interfacesb_i_database_query.html#38f90315055dc28f3549479159792633">sbIDatabaseQuery</a>
+, <a class="el" href="interfacesb_i_device_base.html#25a80634ada6eaa6ecc58e3143f5bfe0">sbIDeviceBase</a>
 <li>removeChannel()
 : <a class="el" href="interfacesb_i_tag_lib_channel_file_i_o_manager.html#a800b1e105df870b408efa0a23aa64cb">sbITagLibChannelFileIOManager</a>
 <li>removeColumn()
@@ -193,42 +195,46 @@
 : <a class="el" href="interfacesb_i_playlist_playback.html#8ba11f526ece608120fcf29b94ba326c">sbIPlaylistPlayback</a>
 <li>removeCriterion()
 : <a class="el" href="interfacesb_i_s_q_l_where_builder.html#600c4a25d61c5a3794811b53d8b362e3">sbISQLWhereBuilder</a>
+<li>removeDeviceLibraryListener()
+: <a class="el" href="interfacesb_i_device_library.html#f71e3a51c5fd001b3abb798905bef64a">sbIDeviceLibrary</a>
+<li>removeEventListener()
+: <a class="el" href="interfacesb_i_device_event_target.html#94b22f4f570ec97a251dd31a1f44759d">sbIDeviceEventTarget</a>
 <li>removeFlagHandler()
 : <a class="el" href="interfacesb_i_command_line_manager.html#18b8f18b939b1de0cff8dda01a3c3615">sbICommandLineManager</a>
 <li>removeHotkey()
 : <a class="el" href="interfacesb_i_global_hotkeys.html#6ac24c884fd8596d954f12a9ab9f9d70">sbIGlobalHotkeys</a>
 <li>removeItemHandler()
 : <a class="el" href="interfacesb_i_command_line_manager.html#68fb99371dfc5f753ad792a4bcbfc8f8">sbICommandLineManager</a>
+<li>removeLibrary()
+: <a class="el" href="interfacesb_i_device_content.html#392e78ad6feb3a5ae31bbb79de91edd9">sbIDeviceContent</a>
 <li>removeListener()
 : <a class="el" href="interfacesb_i_library_manager.html#c8cd36abc6a43ec4223c9ba351bcdacc">sbILibraryManager</a>
-, <a class="el" href="interfacesb_i_playlist_playback.html#648e3d435e4f2724e9200e25e4867e54">sbIPlaylistPlayback</a>
 , <a class="el" href="interfacesb_i_remote_player.html#6468a05a52df347ec61c1e9a1b172873">sbIRemotePlayer</a>
 , <a class="el" href="interfacesb_i_cascade_filter_set.html#1b1c4feed4717e7b4cde5678b31343b7">sbICascadeFilterSet</a>
-, <a class="el" href="interfacesb_i_faceplate_manager.html#a21378003022b523c9812263add006b0">sbIFaceplateManager</a>
-, <a class="el" href="interfacesb_i_media_list_view.html#5e1b82d0a1890358c5cbd75d625cdd08">sbIMediaListView</a>
+, <a class="el" href="interfacesb_i_media_list_view_selection.html#a9f8a6664e5f8b75f6d21d8fccc585dd">sbIMediaListViewSelection</a>
 , <a class="el" href="interfacesb_i_media_list.html#37a3275d1ea302a95b706a31413e3084">sbIMediaList</a>
+, <a class="el" href="interfacesb_i_media_list_view.html#5e1b82d0a1890358c5cbd75d625cdd08">sbIMediaListView</a>
+, <a class="el" href="interfacesb_i_faceplate_manager.html#a21378003022b523c9812263add006b0">sbIFaceplateManager</a>
+, <a class="el" href="interfacesb_i_playlist_playback.html#648e3d435e4f2724e9200e25e4867e54">sbIPlaylistPlayback</a>
 , <a class="el" href="interfacesb_i_feathers_manager.html#9debde65ce0281d47f82cfb3233f03d4">sbIFeathersManager</a>
 <li>removeObserver()
 : <a class="el" href="interfacesb_i_faceplate_pane.html#66654dabd332b7df6fc0d5f61302e0eb">sbIFaceplatePane</a>
-, <a class="el" href="interfacesb_i_state_object.html#2dcef7aecb0e0a5d0f82ceb8e987e79e">sbIStateObject</a>
 <li>RemovePersistentQuery()
 : <a class="el" href="interfacesb_i_database_engine.html#59ee7f8f26b7e7c62419cdbb51b65332">sbIDatabaseEngine</a>
 <li>removeSelectedMediaItems()
-: <a class="el" href="interfacesb_i_media_list_view_tree_view.html#f214d34b6b789a8e7a499fd3fd74e103">sbIMediaListViewTreeView</a>
+: <a class="el" href="interfacesb_i_media_list_view.html#12208ca9fb7dc450225df7dc709ae281">sbIMediaListView</a>
 <li>removeSimpleQueryCallback()
 : <a class="el" href="interfacesb_i_database_query.html#a36913599717e4c903126dac94eb2e10">sbIDatabaseQuery</a>
 <li>removeSome()
 : <a class="el" href="interfacesb_i_media_list.html#22c907e9dbc8abb40bd4f8e63e9b935d">sbIMediaList</a>
-<li>removeStateObject()
-: <a class="el" href="interfacesb_p_i_state_service.html#3edb8fbf80daeca9742a49b052239cba">sbPIStateService</a>
 <li>request()
 : <a class="el" href="interfacesb_i_playlist_commands_manager.html#77c7b69bd536005897ab613fc6a913a6">sbIPlaylistCommandsManager</a>
 <li>rescanCommands()
 : <a class="el" href="interfacesb_i_playlist_widget.html#fd3292f2b9571292155841e07adcb567">sbIPlaylistWidget</a>
 <li>reset()
-: <a class="el" href="interfacesb_i_s_q_l_builder.html#37f276fb7a1b02e7f5398313e22bb43d">sbISQLBuilder</a>
-, <a class="el" href="interfacesb_i_dnd_source_tracker.html#95f9ca430e722a1d39af650763b4e32d">sbIDndSourceTracker</a>
+: <a class="el" href="interfacesb_i_dnd_source_tracker.html#95f9ca430e722a1d39af650763b4e32d">sbIDndSourceTracker</a>
 , <a class="el" href="interfacesb_i_multiple_item_transfer_context.html#bbae1ea3135367d092779617091d5a36">sbIMultipleItemTransferContext</a>
+, <a class="el" href="interfacesb_i_s_q_l_builder.html#37f276fb7a1b02e7f5398313e22bb43d">sbISQLBuilder</a>
 <li>resetCallback()
 : <a class="el" href="interfacesb_i_window_resize_hook.html#cd10e2b76a8e26cd3d2738be19f1db76">sbIWindowResizeHook</a>
 , <a class="el" href="interfacesb_i_window_min_max.html#41e8ea4304a5752f2cbd04bdac9796ed">sbIWindowMinMax</a>
@@ -245,7 +251,7 @@
 <li>runInBatchMode()
 : <a class="el" href="interfacesb_i_media_list.html#54a8cc70b3884a1fe8c8b5f38437b9c3">sbIMediaList</a>
 </ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

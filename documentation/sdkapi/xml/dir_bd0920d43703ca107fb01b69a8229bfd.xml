@@ -18,6 +18,7 @@
     <innerfile refid="sb_i_media_list_listener_8idl">sbIMediaListListener.idl</innerfile>
     <innerfile refid="sb_i_media_list_view_8idl">sbIMediaListView.idl</innerfile>
     <innerfile refid="sb_i_media_list_view_map_8idl">sbIMediaListViewMap.idl</innerfile>
+    <innerfile refid="sb_i_media_list_view_selection_8idl">sbIMediaListViewSelection.idl</innerfile>
     <innerfile refid="sb_i_media_list_view_tree_view_8idl">sbIMediaListViewTreeView.idl</innerfile>
     <innerfile refid="sb_i_orderable_media_list_8idl">sbIOrderableMediaList.idl</innerfile>
     <innerfile refid="sb_i_searchable_media_list_view_8idl">sbISearchableMediaListView.idl</innerfile>

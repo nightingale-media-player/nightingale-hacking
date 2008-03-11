@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceEventListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="70">
+      <node id="64">
         <label>components/devices/base/public/sbIDeviceEventListener.idl</label>
         <link refid="sbIDeviceEventListener.idl"/>
-        <childnode refid="71" relation="include">
+        <childnode refid="65" relation="include">
         </childnode>
       </node>
-      <node id="71">
+      <node id="65">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -26,7 +26,7 @@
 <codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
 <codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright©<sp/>2006<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright©<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
 <codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
 <codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
@@ -48,13 +48,13 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEvent</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event" kindref="compound">sbIDeviceEvent</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(a8c5b212-2b04-497e-978a-56493f1f2dda)]</highlight></codeline>
-<codeline lineno="38" refid="interfacesb_i_device_event_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEventListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="39"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDeviceEvent(in<sp/><ref refid="interfacesb_i_device_event" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEvent</ref><sp/>aEvent);</highlight></codeline>
-<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(a8c5b212-2b04-497e-978a-56493f1f2dda)]</highlight></codeline>
+<codeline lineno="40" refid="interfacesb_i_device_event_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDeviceEvent(in<sp/><ref refid="interfacesb_i_device_event" kindref="compound">sbIDeviceEvent</ref><sp/>aEvent);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl"/>
   </compounddef>

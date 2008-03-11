@@ -71,7 +71,7 @@
 <a name="l00004"></a>00004 <span class="comment">//</span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2007 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2008 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">//</span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
@@ -97,41 +97,52 @@
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
 <a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>;
 <a name="l00038"></a>00038 
-<a name="l00047"></a>00047 [scriptable, uuid(7ed06a74-6df1-4483-b222-fdaaf6ffcd5e)]
+<a name="l00047"></a>00047 [scriptable, uuid(a99bcdbf-166d-409a-8375-f617944397c2)]
 <a name="l00048"></a><a class="code" href="interfacesb_i_media_list_listener.html">00048</a> interface <a class="code" href="interfacesb_i_media_list_listener.html" title="Interface used to listen to changes to a media list.">sbIMediaListListener</a> : nsISupports
 <a name="l00049"></a>00049 {
-<a name="l00058"></a>00058   <span class="keywordtype">boolean</span> onItemAdded(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
-<a name="l00059"></a>00059                       in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
-<a name="l00060"></a>00060 
-<a name="l00069"></a>00069   <span class="keywordtype">boolean</span> onBeforeItemRemoved(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
-<a name="l00070"></a>00070                               in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
-<a name="l00071"></a>00071 
-<a name="l00080"></a>00080   <span class="keywordtype">boolean</span> onAfterItemRemoved(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
-<a name="l00081"></a>00081                              in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
-<a name="l00082"></a>00082 
-<a name="l00093"></a>00093   <span class="keywordtype">boolean</span> onItemUpdated(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
-<a name="l00094"></a>00094                         in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem,
-<a name="l00095"></a>00095                         in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aProperties);
-<a name="l00096"></a>00096 
-<a name="l00103"></a>00103   <span class="keywordtype">boolean</span> onListCleared(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
-<a name="l00104"></a>00104 
-<a name="l00115"></a>00115   <span class="keywordtype">void</span> onBatchBegin(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
-<a name="l00116"></a>00116 
-<a name="l00127"></a>00127   <span class="keywordtype">void</span> onBatchEnd(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
-<a name="l00128"></a>00128 };
-<a name="l00129"></a>00129 
-<a name="l00135"></a>00135 [scriptable, uuid(2f7c9d1b-ef9c-4522-af72-1acbeeddd366)]
-<a name="l00136"></a><a class="code" href="interfacesb_i_media_list_enumeration_listener.html">00136</a> interface <a class="code" href="interfacesb_i_media_list_enumeration_listener.html" title="Interface used to enumerate the items in a media list.">sbIMediaListEnumerationListener</a> : nsISupports
-<a name="l00137"></a>00137 {
-<a name="l00145"></a>00145   <span class="keywordtype">boolean</span> onEnumerationBegin(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
-<a name="l00146"></a>00146 
-<a name="l00155"></a>00155   <span class="keywordtype">boolean</span> onEnumeratedItem(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
-<a name="l00156"></a>00156                            in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
-<a name="l00157"></a>00157 
-<a name="l00164"></a>00164   <span class="keywordtype">void</span> onEnumerationEnd(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
-<a name="l00165"></a>00165                         in nsresult aStatusCode);
-<a name="l00166"></a>00166 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:03 2007 for Songbird by&nbsp;
+<a name="l00059"></a>00059   <span class="keywordtype">boolean</span> onItemAdded(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
+<a name="l00060"></a>00060                       in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem,
+<a name="l00061"></a>00061                       in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00062"></a>00062 
+<a name="l00072"></a>00072   <span class="keywordtype">boolean</span> onBeforeItemRemoved(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
+<a name="l00073"></a>00073                               in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem,
+<a name="l00074"></a>00074                               in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00075"></a>00075 
+<a name="l00085"></a>00085   <span class="keywordtype">boolean</span> onAfterItemRemoved(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
+<a name="l00086"></a>00086                              in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem,
+<a name="l00087"></a>00087                              in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00088"></a>00088 
+<a name="l00099"></a>00099   <span class="keywordtype">boolean</span> onItemUpdated(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
+<a name="l00100"></a>00100                         in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem,
+<a name="l00101"></a>00101                         in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aProperties);
+<a name="l00102"></a>00102 
+<a name="l00112"></a>00112   <span class="keywordtype">boolean</span> onItemMoved(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
+<a name="l00113"></a>00113                       in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFromIndex,
+<a name="l00114"></a>00114                       in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aToIndex);
+<a name="l00115"></a>00115 
+<a name="l00122"></a>00122   <span class="keywordtype">boolean</span> onListCleared(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
+<a name="l00123"></a>00123 
+<a name="l00134"></a>00134   <span class="keywordtype">void</span> onBatchBegin(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
+<a name="l00135"></a>00135 
+<a name="l00146"></a>00146   <span class="keywordtype">void</span> onBatchEnd(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
+<a name="l00147"></a>00147 };
+<a name="l00148"></a>00148 
+<a name="l00154"></a>00154 [scriptable, uuid(8060b316-1837-44df-a184-7f25c18ea4c0)]
+<a name="l00155"></a><a class="code" href="interfacesb_i_media_list_enumeration_listener.html">00155</a> interface <a class="code" href="interfacesb_i_media_list_enumeration_listener.html" title="Interface used to enumerate the items in a media list.">sbIMediaListEnumerationListener</a> : nsISupports
+<a name="l00156"></a>00156 {
+<a name="l00157"></a><a class="code" href="interfacesb_i_media_list_enumeration_listener.html#7b50b91cd857b8e461129c6fcdeb110a">00157</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> CONTINUE = 0;
+<a name="l00158"></a><a class="code" href="interfacesb_i_media_list_enumeration_listener.html#9b7434fd8b4fc5fd80d945560704736f">00158</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> CANCEL   = 1;
+<a name="l00159"></a>00159 
+<a name="l00169"></a>00169   <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> onEnumerationBegin(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
+<a name="l00170"></a>00170 
+<a name="l00181"></a>00181   <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> onEnumeratedItem(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
+<a name="l00182"></a>00182                                   in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
+<a name="l00183"></a>00183 
+<a name="l00190"></a>00190   <span class="keywordtype">void</span> onEnumerationEnd(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList,
+<a name="l00191"></a>00191                         in nsresult aStatusCode);
+<a name="l00192"></a>00192 };
+<a name="l00193"></a>00193 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:23 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -71,7 +71,7 @@
 <a name="l00004"></a>00004 <span class="comment">// </span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright© 2006 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright© 2005-2008 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">// </span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
@@ -93,42 +93,75 @@
 <a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
-<a name="l00029"></a>00029 interface nsISimpleEnumerator;
-<a name="l00030"></a>00030 
-<a name="l00035"></a>00035 [scriptable, uuid(193121e6-51a6-40ea-b63d-701ed240a953)]
-<a name="l00036"></a><a class="code" href="interfacesb_i_device_capabilities.html">00036</a> interface <a class="code" href="interfacesb_i_device_capabilities.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCapabilities</a> : nsISupports
-<a name="l00037"></a>00037 {
-<a name="l00041"></a><a class="code" href="interfacesb_i_device_capabilities.html#90169ce9a7d625939d042e4f3e80931a">00041</a>   <span class="keyword">const</span> PRUint32 FUNCTION_UNKNOWN        = 0x00;
-<a name="l00042"></a><a class="code" href="interfacesb_i_device_capabilities.html#db96af2563c0c7ff017ae379db1bb93b">00042</a>   <span class="keyword">const</span> PRUint32 FUNCTION_DEVICE         = 0x01;
-<a name="l00043"></a><a class="code" href="interfacesb_i_device_capabilities.html#e6dc5822d32abf01f9a54d45a53b9972">00043</a>   <span class="keyword">const</span> PRUint32 FUNCTION_AUDIO_PLAYBACK = 0x02;
-<a name="l00044"></a><a class="code" href="interfacesb_i_device_capabilities.html#b71d156f1786e79a7fd3d9fa4189bce1">00044</a>   <span class="keyword">const</span> PRUint32 FUNCTION_AUDIO_CAPTURE  = 0x03;
-<a name="l00045"></a><a class="code" href="interfacesb_i_device_capabilities.html#7048b66215ac2465b3981f373fbed783">00045</a>   <span class="keyword">const</span> PRUint32 FUNCTION_IMAGE_DISPLAY  = 0x04;
-<a name="l00046"></a><a class="code" href="interfacesb_i_device_capabilities.html#cc62135a3ef12c7dbb5030b2507f6097">00046</a>   <span class="keyword">const</span> PRUint32 FUNCTION_IMAGE_CAPTURE  = 0x05;
-<a name="l00047"></a><a class="code" href="interfacesb_i_device_capabilities.html#e410779678c7eb44936af821c5b68369">00047</a>   <span class="keyword">const</span> PRUint32 FUNCTION_VIDEO_PLAYBACK = 0x06;
-<a name="l00048"></a><a class="code" href="interfacesb_i_device_capabilities.html#a001147360de4e0db463f18f6e1a49a1">00048</a>   <span class="keyword">const</span> PRUint32 FUNCTION_VIDEO_CAPTURE  = 0x07;
+<a name="l00029"></a>00029 interface nsIArray;
+<a name="l00030"></a>00030 interface <a class="code" href="interfacesb_i_device.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</a>;
+<a name="l00031"></a>00031 
+<a name="l00037"></a>00037 [scriptable, uuid(54d42a87-9031-4928-991e-e66f4916a90b)]
+<a name="l00038"></a><a class="code" href="interfacesb_i_device_capabilities.html">00038</a> interface <a class="code" href="interfacesb_i_device_capabilities.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCapabilities</a> : nsISupports
+<a name="l00039"></a>00039 {
+<a name="l00040"></a>00040 
+<a name="l00046"></a>00046   <span class="keywordtype">void</span> setFunctionTypes([array, size_is(aFunctionTypesCount)]
+<a name="l00047"></a>00047                          in PRUint32 aFunctionTypes,
+<a name="l00048"></a>00048                         in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFunctionTypesCount);
 <a name="l00049"></a>00049 
-<a name="l00053"></a><a class="code" href="interfacesb_i_device_capabilities.html#264a755317ef2988c10f31951e8b575c">00053</a>   <span class="keyword">const</span> PRUint32 FUNCTION_CLIENT_DEFINED = 0x800000000;
-<a name="l00054"></a>00054 
-<a name="l00058"></a>00058   nsISimpleEnumerator getSupportedFunctionTypes();
-<a name="l00059"></a>00059 
-<a name="l00063"></a><a class="code" href="interfacesb_i_device_capabilities.html#fcf744ed74e6e3f153c7224d866afb5a">00063</a>   <span class="keyword">const</span> PRUint32 CONTENT_UNKNOWN  = 0x00;
-<a name="l00064"></a><a class="code" href="interfacesb_i_device_capabilities.html#d50c6c34efa315316df71282618495ed">00064</a>   <span class="keyword">const</span> PRUint32 CONTENT_FILE     = 0x01;
-<a name="l00065"></a><a class="code" href="interfacesb_i_device_capabilities.html#552bbe81c7dbac935953fe65cab1b742">00065</a>   <span class="keyword">const</span> PRUint32 CONTENT_FOLDER   = 0x02;
-<a name="l00066"></a><a class="code" href="interfacesb_i_device_capabilities.html#39111b3bb501e0f9418dded121ec6048">00066</a>   <span class="keyword">const</span> PRUint32 CONTENT_AUDIO    = 0x03;
-<a name="l00067"></a><a class="code" href="interfacesb_i_device_capabilities.html#715b0a5b47395dc8b2475a08cf959745">00067</a>   <span class="keyword">const</span> PRUint32 CONTENT_IMAGE    = 0x04;
-<a name="l00068"></a><a class="code" href="interfacesb_i_device_capabilities.html#43a55b41f0de584e454e2e144a4c731c">00068</a>   <span class="keyword">const</span> PRUint32 CONTENT_VIDEO    = 0x05;
-<a name="l00069"></a><a class="code" href="interfacesb_i_device_capabilities.html#1528ffc998bbb5c07d2e3501bb468074">00069</a>   <span class="keyword">const</span> PRUint32 CONTENT_PLAYLIST = 0x06;
-<a name="l00070"></a><a class="code" href="interfacesb_i_device_capabilities.html#a295b2493363335748270a9925480eb2">00070</a>   <span class="keyword">const</span> PRUint32 CONTENT_ALBUM    = 0x07;
-<a name="l00071"></a>00071 
-<a name="l00075"></a><a class="code" href="interfacesb_i_device_capabilities.html#a7e8d6f144bfb21342b20f275f5dce6f">00075</a>   <span class="keyword">const</span> PRUint32 CONTENT_CLIENT_DEFINED = 0x800000000;
-<a name="l00076"></a>00076 
-<a name="l00080"></a>00080   nsISimpleEnumerator getSupportedContentTypes(in PRUint32 aFunctionType);
-<a name="l00081"></a>00081 
-<a name="l00085"></a>00085   nsISimpleEnumerator getSupportedFormats(in PRUint32 aContentType);
-<a name="l00086"></a>00086 
-<a name="l00090"></a>00090   nsISimpleEnumerator getSupportedEvents();
-<a name="l00091"></a>00091 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:02 2007 for Songbird by&nbsp;
+<a name="l00055"></a>00055   <span class="keywordtype">void</span> setEventTypes([array, size_is(aEventTypesCount)]
+<a name="l00056"></a>00056                       in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aEventTypes,
+<a name="l00057"></a>00057                      in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aEventTypesCount);
+<a name="l00058"></a>00058 
+<a name="l00065"></a>00065   <span class="keywordtype">void</span> addContentTypes(in PRUint32 aFunctionType,
+<a name="l00066"></a>00066                 [array, size_is(aContentTypesCount)] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aContentTypes,
+<a name="l00067"></a>00067                 in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aContentTypesCount);
+<a name="l00068"></a>00068   
+<a name="l00075"></a>00075   <span class="keywordtype">void</span> addFormats(in PRUint32 aContentType,
+<a name="l00076"></a>00076                   [array, size_is(aFormatsCount)] in <span class="keywordtype">string</span> aFormats,
+<a name="l00077"></a>00077                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFormatsCount);
+<a name="l00078"></a>00078 
+<a name="l00083"></a>00083   <span class="keywordtype">void</span> initDone();
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085 
+<a name="l00086"></a>00086   
+<a name="l00090"></a><a class="code" href="interfacesb_i_device_capabilities.html#90169ce9a7d625939d042e4f3e80931a">00090</a>   <span class="keyword">const</span> PRUint32 FUNCTION_UNKNOWN        = 0x00;
+<a name="l00091"></a><a class="code" href="interfacesb_i_device_capabilities.html#db96af2563c0c7ff017ae379db1bb93b">00091</a>   <span class="keyword">const</span> PRUint32 FUNCTION_DEVICE         = 0x01;
+<a name="l00092"></a><a class="code" href="interfacesb_i_device_capabilities.html#e6dc5822d32abf01f9a54d45a53b9972">00092</a>   <span class="keyword">const</span> PRUint32 FUNCTION_AUDIO_PLAYBACK = 0x02;
+<a name="l00093"></a><a class="code" href="interfacesb_i_device_capabilities.html#b71d156f1786e79a7fd3d9fa4189bce1">00093</a>   <span class="keyword">const</span> PRUint32 FUNCTION_AUDIO_CAPTURE  = 0x03;
+<a name="l00094"></a><a class="code" href="interfacesb_i_device_capabilities.html#7048b66215ac2465b3981f373fbed783">00094</a>   <span class="keyword">const</span> PRUint32 FUNCTION_IMAGE_DISPLAY  = 0x04;
+<a name="l00095"></a><a class="code" href="interfacesb_i_device_capabilities.html#cc62135a3ef12c7dbb5030b2507f6097">00095</a>   <span class="keyword">const</span> PRUint32 FUNCTION_IMAGE_CAPTURE  = 0x05;
+<a name="l00096"></a><a class="code" href="interfacesb_i_device_capabilities.html#e410779678c7eb44936af821c5b68369">00096</a>   <span class="keyword">const</span> PRUint32 FUNCTION_VIDEO_PLAYBACK = 0x06;
+<a name="l00097"></a><a class="code" href="interfacesb_i_device_capabilities.html#a001147360de4e0db463f18f6e1a49a1">00097</a>   <span class="keyword">const</span> PRUint32 FUNCTION_VIDEO_CAPTURE  = 0x07;
+<a name="l00098"></a>00098 
+<a name="l00102"></a><a class="code" href="interfacesb_i_device_capabilities.html#264a755317ef2988c10f31951e8b575c">00102</a>   <span class="keyword">const</span> PRUint32 FUNCTION_CLIENT_DEFINED = 0x80000000;
+<a name="l00103"></a>00103 
+<a name="l00107"></a>00107   <span class="comment">// </span>
+<a name="l00108"></a>00108   <span class="keywordtype">void</span> getSupportedFunctionTypes(out <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aArrayCount,
+<a name="l00109"></a>00109                                  [retval, array, size_is(aArrayCount)]
+<a name="l00110"></a>00110                                   out PRUint32 aFunctionTypes);
+<a name="l00111"></a>00111 
+<a name="l00115"></a><a class="code" href="interfacesb_i_device_capabilities.html#fcf744ed74e6e3f153c7224d866afb5a">00115</a>   <span class="keyword">const</span> PRUint32 CONTENT_UNKNOWN  = 0x00;
+<a name="l00116"></a><a class="code" href="interfacesb_i_device_capabilities.html#d50c6c34efa315316df71282618495ed">00116</a>   <span class="keyword">const</span> PRUint32 CONTENT_FILE     = 0x01;
+<a name="l00117"></a><a class="code" href="interfacesb_i_device_capabilities.html#552bbe81c7dbac935953fe65cab1b742">00117</a>   <span class="keyword">const</span> PRUint32 CONTENT_FOLDER   = 0x02;
+<a name="l00118"></a><a class="code" href="interfacesb_i_device_capabilities.html#39111b3bb501e0f9418dded121ec6048">00118</a>   <span class="keyword">const</span> PRUint32 CONTENT_AUDIO    = 0x03;
+<a name="l00119"></a><a class="code" href="interfacesb_i_device_capabilities.html#715b0a5b47395dc8b2475a08cf959745">00119</a>   <span class="keyword">const</span> PRUint32 CONTENT_IMAGE    = 0x04;
+<a name="l00120"></a><a class="code" href="interfacesb_i_device_capabilities.html#43a55b41f0de584e454e2e144a4c731c">00120</a>   <span class="keyword">const</span> PRUint32 CONTENT_VIDEO    = 0x05;
+<a name="l00121"></a><a class="code" href="interfacesb_i_device_capabilities.html#1528ffc998bbb5c07d2e3501bb468074">00121</a>   <span class="keyword">const</span> PRUint32 CONTENT_PLAYLIST = 0x06;
+<a name="l00122"></a><a class="code" href="interfacesb_i_device_capabilities.html#a295b2493363335748270a9925480eb2">00122</a>   <span class="keyword">const</span> PRUint32 CONTENT_ALBUM    = 0x07;
+<a name="l00123"></a>00123 
+<a name="l00127"></a><a class="code" href="interfacesb_i_device_capabilities.html#a7e8d6f144bfb21342b20f275f5dce6f">00127</a>   <span class="keyword">const</span> PRUint32 CONTENT_CLIENT_DEFINED = 0x80000000;
+<a name="l00128"></a>00128 
+<a name="l00132"></a>00132   <span class="keywordtype">void</span> getSupportedContentTypes(in PRUint32 aFunctionType,
+<a name="l00133"></a>00133                                 out <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aArrayCount,
+<a name="l00134"></a>00134                                 [retval, array, size_is(aArrayCount)]
+<a name="l00135"></a>00135                                 out PRUint32 aContentTypes);
+<a name="l00136"></a>00136 
+<a name="l00140"></a>00140   <span class="keywordtype">void</span> getSupportedFormats(in PRUint32 aContentType,
+<a name="l00141"></a>00141                            out <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aArrayCount,
+<a name="l00142"></a>00142                            [retval, array, size_is(aArrayCount)]
+<a name="l00143"></a>00143                            out <span class="keywordtype">string</span> aSuportedFormats);
+<a name="l00144"></a>00144 
+<a name="l00148"></a>00148   <span class="keywordtype">void</span> getSupportedEvents(out <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aArrayCount,
+<a name="l00149"></a>00149                           [retval, array, size_is(aArrayCount)]
+<a name="l00150"></a>00150                            out <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aSupportedEvents);
+<a name="l00151"></a>00151 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

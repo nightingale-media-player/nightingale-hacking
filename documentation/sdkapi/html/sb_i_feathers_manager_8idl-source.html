@@ -71,7 +71,7 @@
 <a name="l00004"></a>00004 <span class="comment">//</span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2007 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2008 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">// </span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
@@ -161,28 +161,37 @@
 <a name="l00209"></a>00209                   in AString aInternalName);
 <a name="l00210"></a>00210 
 <a name="l00211"></a>00211 
-<a name="l00212"></a>00212 
-<a name="l00220"></a>00220   nsISimpleEnumerator getSkinsForLayout(in AString aLayoutURL);
-<a name="l00221"></a>00221 
+<a name="l00219"></a>00219   <span class="keywordtype">void</span> setOnTop(in AString aLayoutURL,
+<a name="l00220"></a>00220                 in AString aInternalName,
+<a name="l00221"></a>00221                 in <span class="keywordtype">boolean</span> aOnTop);
 <a name="l00222"></a>00222 
-<a name="l00230"></a>00230   nsISimpleEnumerator getLayoutsForSkin(in AString aInternalName);
-<a name="l00231"></a>00231 
-<a name="l00232"></a>00232 
-<a name="l00246"></a>00246   <span class="keywordtype">void</span> switchFeathers(in AString aLayoutURL, 
-<a name="l00247"></a>00247                       in AString aInternalName);
-<a name="l00248"></a>00248 
-<a name="l00256"></a>00256   <span class="keywordtype">void</span> openPlayerWindow();
-<a name="l00257"></a>00257 
-<a name="l00258"></a>00258 
-<a name="l00264"></a>00264   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_feathers_manager_listener.html" title="Callback interface used to listen to Feathers Manager changes.">sbIFeathersManagerListener</a> aListener);
-<a name="l00265"></a>00265 
-<a name="l00271"></a>00271   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_feathers_manager_listener.html" title="Callback interface used to listen to Feathers Manager changes.">sbIFeathersManagerListener</a> aListener);
-<a name="l00272"></a>00272 };
-<a name="l00273"></a>00273 
-<a name="l00274"></a>00274 
-<a name="l00275"></a>00275 
-<a name="l00276"></a>00276 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:03 2007 for Songbird by&nbsp;
+<a name="l00223"></a>00223 
+<a name="l00231"></a>00231   <span class="keywordtype">boolean</span> canOnTop(in AString aLayoutURL,
+<a name="l00232"></a>00232                    in AString aInternalName);
+<a name="l00233"></a>00233 
+<a name="l00234"></a>00234 
+<a name="l00235"></a>00235 
+<a name="l00243"></a>00243   nsISimpleEnumerator getSkinsForLayout(in AString aLayoutURL);
+<a name="l00244"></a>00244 
+<a name="l00245"></a>00245 
+<a name="l00253"></a>00253   nsISimpleEnumerator getLayoutsForSkin(in AString aInternalName);
+<a name="l00254"></a>00254 
+<a name="l00255"></a>00255 
+<a name="l00269"></a>00269   <span class="keywordtype">void</span> switchFeathers(in AString aLayoutURL, 
+<a name="l00270"></a>00270                       in AString aInternalName);
+<a name="l00271"></a>00271 
+<a name="l00279"></a>00279   <span class="keywordtype">void</span> openPlayerWindow();
+<a name="l00280"></a>00280 
+<a name="l00281"></a>00281 
+<a name="l00287"></a>00287   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_feathers_manager_listener.html" title="Callback interface used to listen to Feathers Manager changes.">sbIFeathersManagerListener</a> aListener);
+<a name="l00288"></a>00288 
+<a name="l00294"></a>00294   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_feathers_manager_listener.html" title="Callback interface used to listen to Feathers Manager changes.">sbIFeathersManagerListener</a> aListener);
+<a name="l00295"></a>00295 };
+<a name="l00296"></a>00296 
+<a name="l00297"></a>00297 
+<a name="l00298"></a>00298 
+<a name="l00299"></a>00299 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

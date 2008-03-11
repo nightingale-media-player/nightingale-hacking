@@ -19,19 +19,6 @@
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_device_manager_1e3dddb558bf6005792dd103d0ea14b17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void sbIDeviceManager::updateDevices</definition>
-        <argsstring>()</argsstring>
-        <name>updateDevices</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Simply calls updateDevices on all loaded controllers. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/manager/public/sbIDeviceManager.idl" line="44"/>
-      </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_manager_1fe1f3d8ce5cde429ebb64cb8968c6602" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
         <definition>AString sbIDeviceManager::getCategoryByIndex</definition>
@@ -165,17 +152,16 @@
       </memberdef>
       </sectiondef>
     <briefdescription>
-<para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
+    </briefdescription>
     <detaileddescription>
 <para>This is the DeviceManager service. Make sure to use getService rather than createInstance when using. </para>    </detaileddescription>
-    <location file="z:/projects/songbird/components/devices/manager/public/sbIDeviceManager.idl" line="40" bodyfile="z:/projects/songbird/components/devices/manager/public/sbIDeviceManager.idl" bodystart="39" bodyend="45"/>
+    <location file="z:/projects/songbird/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="37" bodyfile="z:/projects/songbird/components/devicesobsolete/manager/public/sbIDeviceManager.idl" bodystart="36" bodyend="74"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_manager_12c0f42d75db8a848b3f5352cc0901531" prot="public" virt="non-virtual"><scope>sbIDeviceManager</scope><name>deviceCount</name></member>
       <member refid="interfacesb_i_device_manager_1fe1f3d8ce5cde429ebb64cb8968c6602" prot="public" virt="non-virtual"><scope>sbIDeviceManager</scope><name>getCategoryByIndex</name></member>
       <member refid="interfacesb_i_device_manager_12c0ed4ddbc1d707ac5fd93f18d0ff69a" prot="public" virt="non-virtual"><scope>sbIDeviceManager</scope><name>getDeviceByCategory</name></member>
       <member refid="interfacesb_i_device_manager_12110e24f1cf3202386c7f830106f317d" prot="public" virt="non-virtual"><scope>sbIDeviceManager</scope><name>getDeviceByIndex</name></member>
       <member refid="interfacesb_i_device_manager_1b7793a974650ca7ebe424de324cd56b8" prot="public" virt="non-virtual"><scope>sbIDeviceManager</scope><name>hasDeviceForCategory</name></member>
-      <member refid="interfacesb_i_device_manager_1e3dddb558bf6005792dd103d0ea14b17" prot="public" virt="non-virtual"><scope>sbIDeviceManager</scope><name>updateDevices</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

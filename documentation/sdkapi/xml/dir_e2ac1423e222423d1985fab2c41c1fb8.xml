@@ -3,6 +3,7 @@
   <compounddef id="dir_e2ac1423e222423d1985fab2c41c1fb8" kind="dir">
     <compoundname>components/devices/device/</compoundname>
     <innerdir refid="dir_5193e827237a27fbccce397dda4d9295">components/devices/device/public/</innerdir>
+    <innerdir refid="dir_9cf9c088d00bf19badb7d3d7c9c45b85">components/devices/device/test/</innerdir>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

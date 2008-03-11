@@ -80,13 +80,29 @@
 <a href="interfacesb_i_device_capabilities-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#43f71eb1d6e7262a9984f301dac5ff3b">getSupportedFunctionTypes</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#65da6bde450e0bcc882f93a8373f0760">setFunctionTypes</a> ([array, size_is(aFunctionTypesCount)] in PRUint32 aFunctionTypes, in unsigned long aFunctionTypesCount)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#881558c631d7a28aae747d43252ded59">getSupportedContentTypes</a> (in PRUint32 aFunctionType)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets an array of function types.  <a href="#65da6bde450e0bcc882f93a8373f0760"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#aabbda5466a5586827cace5706350fd9">setEventTypes</a> ([array, size_is(aEventTypesCount)] in unsigned long aEventTypes, in unsigned long aEventTypesCount)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#0278f342e6bf9435ab7d5bfc8f543a2a">getSupportedFormats</a> (in PRUint32 aContentType)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sets an array of event types.  <a href="#aabbda5466a5586827cace5706350fd9"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#e974724d380b6fa462d0786da3c22604">addContentTypes</a> (in PRUint32 aFunctionType,[array, size_is(aContentTypesCount)] in unsigned long aContentTypes, in unsigned long aContentTypesCount)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#33e348a44206108096efca4ec979dc07">getSupportedEvents</a> ()</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add an array of content types for a function type.  <a href="#e974724d380b6fa462d0786da3c22604"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#9e4ff93c47203ce86544167667a18bfe">addFormats</a> (in PRUint32 aContentType,[array, size_is(aFormatsCount)] in string aFormats, in unsigned long aFormatsCount)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add an array of formats for a content type.  <a href="#9e4ff93c47203ce86544167667a18bfe"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6d26ef734b6a0e5efbcad762524b8f87"></a><!-- doxytag: member="sbIDeviceCapabilities::initDone" ref="6d26ef734b6a0e5efbcad762524b8f87" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#6d26ef734b6a0e5efbcad762524b8f87">initDone</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Indicates that the initialization is complete, the add and set functions above will no longer affect the data. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#52d636956f340d8f10459f7673b9a834">getSupportedFunctionTypes</a> (out unsigned long aArrayCount,[retval, array, size_is(aArrayCount)] out PRUint32 aFunctionTypes)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#05e367726283198718a583e3b58685ce">getSupportedContentTypes</a> (in PRUint32 aFunctionType, out unsigned long aArrayCount,[retval, array, size_is(aArrayCount)] out PRUint32 aContentTypes)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#80b0ef86f83282c8e556dd55adf3077c">getSupportedFormats</a> (in PRUint32 aContentType, out unsigned long aArrayCount,[retval, array, size_is(aArrayCount)] out string aSuportedFormats)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#48f39c26a7c927218ab3323d42fd31cf">getSupportedEvents</a> (out unsigned long aArrayCount,[retval, array, size_is(aArrayCount)] out unsigned long aSupportedEvents)</td></tr>
 
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="90169ce9a7d625939d042e4f3e80931a"></a><!-- doxytag: member="sbIDeviceCapabilities::FUNCTION_UNKNOWN" ref="90169ce9a7d625939d042e4f3e80931a" args="" -->
@@ -114,7 +130,7 @@ const PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" 
 const PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#a001147360de4e0db463f18f6e1a49a1">FUNCTION_VIDEO_CAPTURE</a> = 0x07</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="264a755317ef2988c10f31951e8b575c"></a><!-- doxytag: member="sbIDeviceCapabilities::FUNCTION_CLIENT_DEFINED" ref="264a755317ef2988c10f31951e8b575c" args="" -->
-const PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#264a755317ef2988c10f31951e8b575c">FUNCTION_CLIENT_DEFINED</a> = 0x800000000</td></tr>
+const PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#264a755317ef2988c10f31951e8b575c">FUNCTION_CLIENT_DEFINED</a> = 0x80000000</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fcf744ed74e6e3f153c7224d866afb5a"></a><!-- doxytag: member="sbIDeviceCapabilities::CONTENT_UNKNOWN" ref="fcf744ed74e6e3f153c7224d866afb5a" args="" -->
 const PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#fcf744ed74e6e3f153c7224d866afb5a">CONTENT_UNKNOWN</a> = 0x00</td></tr>
@@ -141,96 +157,311 @@ const PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" 
 const PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#a295b2493363335748270a9925480eb2">CONTENT_ALBUM</a> = 0x07</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a7e8d6f144bfb21342b20f275f5dce6f"></a><!-- doxytag: member="sbIDeviceCapabilities::CONTENT_CLIENT_DEFINED" ref="a7e8d6f144bfb21342b20f275f5dce6f" args="" -->
-const PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#a7e8d6f144bfb21342b20f275f5dce6f">CONTENT_CLIENT_DEFINED</a> = 0x800000000</td></tr>
+const PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_capabilities.html#a7e8d6f144bfb21342b20f275f5dce6f">CONTENT_CLIENT_DEFINED</a> = 0x80000000</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 [UNIMPLEMENTED UNTIL AFTER 0.3] 
 <p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Implementations of this interface must be threadsafe. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_device_capabilities_8idl-source.html#l00036">36</a> of file <a class="el" href="sb_i_device_capabilities_8idl-source.html">sbIDeviceCapabilities.idl</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="43f71eb1d6e7262a9984f301dac5ff3b"></a><!-- doxytag: member="sbIDeviceCapabilities::getSupportedFunctionTypes" ref="43f71eb1d6e7262a9984f301dac5ff3b" args="()" -->
+
+<p>
+Definition at line <a class="el" href="sb_i_device_capabilities_8idl-source.html#l00038">38</a> of file <a class="el" href="sb_i_device_capabilities_8idl-source.html">sbIDeviceCapabilities.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="65da6bde450e0bcc882f93a8373f0760"></a><!-- doxytag: member="sbIDeviceCapabilities::setFunctionTypes" ref="65da6bde450e0bcc882f93a8373f0760" args="([array, size_is(aFunctionTypesCount)] in PRUint32 aFunctionTypes, in unsigned long aFunctionTypesCount)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">nsISimpleEnumerator sbIDeviceCapabilities::getSupportedFunctionTypes           </td>
+          <td class="memname">void sbIDeviceCapabilities::setFunctionTypes           </td>
           <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramtype">[array, size_is(aFunctionTypesCount)] in PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aFunctionTypes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aFunctionTypesCount</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-An enumeration of nsISupportsPRUint32 values defined above. 
+Sets an array of function types. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aFunctionTypes</em>&nbsp;</td><td>and array of function types </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aFunctionTypesCount</em>&nbsp;</td><td>length of aFunctionTypes array </td></tr>
+  </table>
+</dl>
+
 </div>
 </div><p>
-<a class="anchor" name="881558c631d7a28aae747d43252ded59"></a><!-- doxytag: member="sbIDeviceCapabilities::getSupportedContentTypes" ref="881558c631d7a28aae747d43252ded59" args="(in PRUint32 aFunctionType)" -->
+<a class="anchor" name="aabbda5466a5586827cace5706350fd9"></a><!-- doxytag: member="sbIDeviceCapabilities::setEventTypes" ref="aabbda5466a5586827cace5706350fd9" args="([array, size_is(aEventTypesCount)] in unsigned long aEventTypes, in unsigned long aEventTypesCount)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">nsISimpleEnumerator sbIDeviceCapabilities::getSupportedContentTypes           </td>
+          <td class="memname">void sbIDeviceCapabilities::setEventTypes           </td>
+          <td>(</td>
+          <td class="paramtype">[array, size_is(aEventTypesCount)] in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aEventTypes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aEventTypesCount</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Sets an array of event types. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aEventTypes</em>&nbsp;</td><td>an array of event types </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aEventCount</em>&nbsp;</td><td>length of aEventTypes array </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="e974724d380b6fa462d0786da3c22604"></a><!-- doxytag: member="sbIDeviceCapabilities::addContentTypes" ref="e974724d380b6fa462d0786da3c22604" args="(in PRUint32 aFunctionType,[array, size_is(aContentTypesCount)] in unsigned long aContentTypes, in unsigned long aContentTypesCount)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIDeviceCapabilities::addContentTypes           </td>
           <td>(</td>
           <td class="paramtype">in PRUint32&nbsp;</td>
-          <td class="paramname"> <em>aFunctionType</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramname"> <em>aFunctionType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(aContentTypesCount)] in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aContentTypes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aContentTypesCount</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-An enumeration of nsISupportsPRUint32 values defined above. 
+Add an array of content types for a function type. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aFunctionType</em>&nbsp;</td><td>Function type these content types fall under </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aContentTypes</em>&nbsp;</td><td>an array of content types for aFunctionType </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aContentTypesCount</em>&nbsp;</td><td>length of aContentTypes array </td></tr>
+  </table>
+</dl>
+
 </div>
 </div><p>
-<a class="anchor" name="0278f342e6bf9435ab7d5bfc8f543a2a"></a><!-- doxytag: member="sbIDeviceCapabilities::getSupportedFormats" ref="0278f342e6bf9435ab7d5bfc8f543a2a" args="(in PRUint32 aContentType)" -->
+<a class="anchor" name="9e4ff93c47203ce86544167667a18bfe"></a><!-- doxytag: member="sbIDeviceCapabilities::addFormats" ref="9e4ff93c47203ce86544167667a18bfe" args="(in PRUint32 aContentType,[array, size_is(aFormatsCount)] in string aFormats, in unsigned long aFormatsCount)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">nsISimpleEnumerator sbIDeviceCapabilities::getSupportedFormats           </td>
+          <td class="memname">void sbIDeviceCapabilities::addFormats           </td>
           <td>(</td>
           <td class="paramtype">in PRUint32&nbsp;</td>
-          <td class="paramname"> <em>aContentType</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramname"> <em>aContentType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[array, size_is(aFormatsCount)] in string&nbsp;</td>
+          <td class="paramname"> <em>aFormats</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aFormatsCount</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Returns an enumeration of <a class="el" href="interfacesb_i_content_type_format.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIContentTypeFormat</a> objects. 
+Add an array of formats for a content type. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aContentType</em>&nbsp;</td><td>Content type these formats fall under </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aFormats</em>&nbsp;</td><td>an array of formats for aContentType </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aFormatsCount</em>&nbsp;</td><td>length of aFormats array </td></tr>
+  </table>
+</dl>
+
 </div>
 </div><p>
-<a class="anchor" name="33e348a44206108096efca4ec979dc07"></a><!-- doxytag: member="sbIDeviceCapabilities::getSupportedEvents" ref="33e348a44206108096efca4ec979dc07" args="()" -->
+<a class="anchor" name="52d636956f340d8f10459f7673b9a834"></a><!-- doxytag: member="sbIDeviceCapabilities::getSupportedFunctionTypes" ref="52d636956f340d8f10459f7673b9a834" args="(out unsigned long aArrayCount,[retval, array, size_is(aArrayCount)] out PRUint32 aFunctionTypes)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">nsISimpleEnumerator sbIDeviceCapabilities::getSupportedEvents           </td>
+          <td class="memname">void sbIDeviceCapabilities::getSupportedFunctionTypes           </td>
           <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramtype">out unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aArrayCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[retval, array, size_is(aArrayCount)] out PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aFunctionTypes</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-An enumeration of nsISupportsPRUint32 values defined in <a class="el" href="sb_i_device_event_8idl-source.html">sbIDeviceEvent.idl</a> 
+An array of nsISupportsPRUint32 values defined above. 
+</div>
+</div><p>
+<a class="anchor" name="05e367726283198718a583e3b58685ce"></a><!-- doxytag: member="sbIDeviceCapabilities::getSupportedContentTypes" ref="05e367726283198718a583e3b58685ce" args="(in PRUint32 aFunctionType, out unsigned long aArrayCount,[retval, array, size_is(aArrayCount)] out PRUint32 aContentTypes)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIDeviceCapabilities::getSupportedContentTypes           </td>
+          <td>(</td>
+          <td class="paramtype">in PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aFunctionType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">out unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aArrayCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[retval, array, size_is(aArrayCount)] out PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aContentTypes</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+An array of nsISupportsPRUint32 values defined above. 
+</div>
+</div><p>
+<a class="anchor" name="80b0ef86f83282c8e556dd55adf3077c"></a><!-- doxytag: member="sbIDeviceCapabilities::getSupportedFormats" ref="80b0ef86f83282c8e556dd55adf3077c" args="(in PRUint32 aContentType, out unsigned long aArrayCount,[retval, array, size_is(aArrayCount)] out string aSuportedFormats)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIDeviceCapabilities::getSupportedFormats           </td>
+          <td>(</td>
+          <td class="paramtype">in PRUint32&nbsp;</td>
+          <td class="paramname"> <em>aContentType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">out unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aArrayCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[retval, array, size_is(aArrayCount)] out string&nbsp;</td>
+          <td class="paramname"> <em>aSuportedFormats</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Returns an array of <a class="el" href="interfacesb_i_content_type_format.html">sbIContentTypeFormat</a> objects. 
+</div>
+</div><p>
+<a class="anchor" name="48f39c26a7c927218ab3323d42fd31cf"></a><!-- doxytag: member="sbIDeviceCapabilities::getSupportedEvents" ref="48f39c26a7c927218ab3323d42fd31cf" args="(out unsigned long aArrayCount,[retval, array, size_is(aArrayCount)] out unsigned long aSupportedEvents)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIDeviceCapabilities::getSupportedEvents           </td>
+          <td>(</td>
+          <td class="paramtype">out unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aArrayCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[retval, array, size_is(aArrayCount)] out unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aSupportedEvents</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+An array of nsISupportsPRUint32 values defined in <a class="el" href="sb_i_device_event_8idl-source.html">sbIDeviceEvent.idl</a> 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devices/base/public/<a class="el" href="sb_i_device_capabilities_8idl-source.html">sbIDeviceCapabilities.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

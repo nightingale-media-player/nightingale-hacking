@@ -110,12 +110,20 @@
 <h3><a class="anchor" name="index_s">- s -</a></h3><ul>
 <li>sanitize()
 : <a class="el" href="interfacesb_i_property_info.html#f34bc688867a4ebb7b3b0a8dc4cf655a">sbIPropertyInfo</a>
-<li>save()
-: <a class="el" href="interfacesb_i_state_datastore.html#f66ed9704d80a9d3af4292b6cc806884">sbIStateDatastore</a>
 <li>scanDirectory()
 : <a class="el" href="interfacesb_i_file_scan.html#9072c5bad6c983f3337f82c873d31150">sbIFileScan</a>
+<li>select()
+: <a class="el" href="interfacesb_i_media_list_view_selection.html#910695d47f815bb408f0ebd4346bb9ff">sbIMediaListViewSelection</a>
+<li>selectAll()
+: <a class="el" href="interfacesb_i_media_list_view_selection.html#253e423d676145fd5512433df75896ca">sbIMediaListViewSelection</a>
 <li>selectCore()
 : <a class="el" href="interfacesb_i_playlist_playback.html#ee7408cd7d2d62d2a146d83abe5acd6f">sbIPlaylistPlayback</a>
+<li>selectNone()
+: <a class="el" href="interfacesb_i_media_list_view_selection.html#1c7fa66d2dadfa7361fc5bae59d8412d">sbIMediaListViewSelection</a>
+<li>selectOnly()
+: <a class="el" href="interfacesb_i_media_list_view_selection.html#74c6fb37b3de3f36b046b16b53bcae26">sbIMediaListViewSelection</a>
+<li>selectRange()
+: <a class="el" href="interfacesb_i_media_list_view_selection.html#232e421b82277a448009575111fbf6d1">sbIMediaListViewSelection</a>
 <li>set()
 : <a class="el" href="interfacesb_i_cascade_filter_set.html#7c5f6c345297156eae8a0bb10c9e4dcf">sbICascadeFilterSet</a>
 <li>setAsyncQuery()
@@ -146,8 +154,12 @@
 : <a class="el" href="interfacesb_i_database_query.html#e23fc826898b53ffb1912491072f0657">sbIDatabaseQuery</a>
 <li>setDirectory()
 : <a class="el" href="interfacesb_i_file_scan_query.html#a6b1324cef88c61b6e78f2dcc7c62f42">sbIFileScanQuery</a>
+<li>setEventTypes()
+: <a class="el" href="interfacesb_i_device_capabilities.html#aabbda5466a5586827cace5706350fd9">sbIDeviceCapabilities</a>
 <li>setExtensionInstallFlag()
 : <a class="el" href="interfacesb_i_bundle.html#ca4f669e27f6d3cc67fca45c99208682">sbIBundle</a>
+<li>setFunctionTypes()
+: <a class="el" href="interfacesb_i_device_capabilities.html#65da6bde450e0bcc882f93a8373f0760">sbIDeviceCapabilities</a>
 <li>setGapBurnedTrack()
 : <a class="el" href="interfacesb_i_c_d_device.html#f9db005823c6104f527f7997ce1684f7">sbICDDevice</a>
 <li>setHeader()
@@ -174,8 +186,12 @@
 : <a class="el" href="interfacesb_i_core_wrapper.html#4aa009b8e9732542335fcc96dd11c2b4">sbICoreWrapper</a>
 <li>setObserver()
 : <a class="el" href="interfacesb_i_metadata_job.html#28d18f789eb3baa205f72f546806db5d">sbIMetadataJob</a>
+<li>setOnTop()
+: <a class="el" href="interfacesb_i_feathers_manager.html#6acee2eefe3380d09248aa80da2bd41b">sbIFeathersManager</a>
 <li>setOpacity()
 : <a class="el" href="interfacesb_i_window_layer.html#36f724a453357dc41acf55b3561df1fb">sbIWindowLayer</a>
+<li>setPage()
+: <a class="el" href="interfacesb_i_media_page_manager.html#9ec7b0a91b3a5c7fafa3466cd1e693a0">sbIMediaPageManager</a>
 <li>setPersistentQuery()
 : <a class="el" href="interfacesb_i_database_query.html#4add8374cd522178d054499cc9f8a3f7">sbIDatabaseQuery</a>
 <li>setPosition()
@@ -207,25 +223,27 @@
 <li>setWindowRegion()
 : <a class="el" href="interfacesb_i_window_region.html#a63cb6ca732f696d3ad56424480afcc0">sbIWindowRegion</a>
 <li>showPane()
-: <a class="el" href="interfacesb_i_display_pane_manager.html#0ae71afcbd1d0c62c00b61c2470e9bd9">sbIDisplayPaneManager</a>
-, <a class="el" href="interfacesb_i_faceplate_manager.html#545cf70bbb71ce151fd93679f93b6316">sbIFaceplateManager</a>
+: <a class="el" href="interfacesb_i_faceplate_manager.html#545cf70bbb71ce151fd93679f93b6316">sbIFaceplateManager</a>
+, <a class="el" href="interfacesb_i_display_pane_manager.html#0ae71afcbd1d0c62c00b61c2470e9bd9">sbIDisplayPaneManager</a>
 <li>shutdown()
 : <a class="el" href="interfacesb_i_playlist_commands_builder.html#f6859e26c95738651c4c42e833435643">sbIPlaylistCommandsBuilder</a>
 <li>shutdownCommands()
 : <a class="el" href="interfacesb_i_playlist_commands.html#272c3e0eb8d5d4f17dadc180b05df3f5">sbIPlaylistCommands</a>
 <li>skip()
-: <a class="el" href="interfacesb_i_metadata_channel.html#d0ce838a6c0bfef2f9882f077e9a6072">sbIMetadataChannel</a>
-, <a class="el" href="interfacesb_i_seekable_channel.html#9fe8570826ed7862ad7a5194b80bc5bb">sbISeekableChannel</a>
+: <a class="el" href="interfacesb_i_seekable_channel.html#9fe8570826ed7862ad7a5194b80bc5bb">sbISeekableChannel</a>
+, <a class="el" href="interfacesb_i_metadata_channel.html#d0ce838a6c0bfef2f9882f077e9a6072">sbIMetadataChannel</a>
 <li>start()
-: <a class="el" href="interfacens_i_http_server.html#46ea1853a6f4407e3dea33d2533df2fe">nsIHttpServer</a>
-, <a class="el" href="interfacesb_i_metadata_backscanner.html#18eb8aa007ea37a4ab237799cdf1b3fa">sbIMetadataBackscanner</a>
+: <a class="el" href="interfacesb_i_metadata_backscanner.html#18eb8aa007ea37a4ab237799cdf1b3fa">sbIMetadataBackscanner</a>
+, <a class="el" href="interfacens_i_http_server.html#46ea1853a6f4407e3dea33d2533df2fe">nsIHttpServer</a>
 <li>stop()
-: <a class="el" href="interfacens_i_http_server.html#7b4bcc5fc21dd816c55e3ec269c0607d">nsIHttpServer</a>
-, <a class="el" href="interfacesb_i_metadata_job_manager.html#670828ecd74c91874b45e46489191293">sbIMetadataJobManager</a>
+: <a class="el" href="interfacesb_i_playlist_playback.html#73cfaeb60327ced50c221a51da6a49e4">sbIPlaylistPlayback</a>
+, <a class="el" href="interfacens_i_http_server.html#7b4bcc5fc21dd816c55e3ec269c0607d">nsIHttpServer</a>
 , <a class="el" href="interfacesb_i_remote_player.html#5af91bd5074e382b717241d955223473">sbIRemotePlayer</a>
 , <a class="el" href="interfacesb_i_metadata_backscanner.html#28302f19ee042dcc84a42b9d38fd6261">sbIMetadataBackscanner</a>
+, <a class="el" href="interfacesb_i_metadata_job_manager.html#670828ecd74c91874b45e46489191293">sbIMetadataJobManager</a>
 , <a class="el" href="interfacesb_i_core_wrapper.html#210849d716d88fe169e5360fae51ddd4">sbICoreWrapper</a>
-, <a class="el" href="interfacesb_i_playlist_playback.html#73cfaeb60327ced50c221a51da6a49e4">sbIPlaylistPlayback</a>
+<li>stopMonitoring()
+: <a class="el" href="interfacesb_i_device_marshall.html#083ff7ba8aa9ab48f2b568dcde2216fd">sbIDeviceMarshall</a>
 <li>stripHoursFromTimeString()
 : <a class="el" href="interfacesb_i_playlist_playback.html#e02ca0130ec8807194dcde3f07775537">sbIPlaylistPlayback</a>
 <li>submitQuery()
@@ -233,17 +251,17 @@
 <li>SubmitQuery()
 : <a class="el" href="interfacesb_i_database_engine.html#2f9b566a7505cff7691aec08fc524b96">sbIDatabaseEngine</a>
 <li>supportedFileExtensions()
-: <a class="el" href="interfacesb_i_playlist_writer_manager.html#394bed219a53ea5f530a363df966f5ee">sbIPlaylistWriterManager</a>
-, <a class="el" href="interfacesb_i_playlist_reader_manager.html#ac0de28c6fa58a44f8cb7949789d85e0">sbIPlaylistReaderManager</a>
-, <a class="el" href="interfacesb_i_metadata_handler.html#7a6c8e683a208b6acae06a6ea4edd3b7">sbIMetadataHandler</a>
+: <a class="el" href="interfacesb_i_playlist_reader_manager.html#ac0de28c6fa58a44f8cb7949789d85e0">sbIPlaylistReaderManager</a>
+, <a class="el" href="interfacesb_i_playlist_writer_manager.html#394bed219a53ea5f530a363df966f5ee">sbIPlaylistWriterManager</a>
 , <a class="el" href="interfacesb_i_playlist_writer.html#9fa8fada5cae500f460f7a6e9db7e850">sbIPlaylistWriter</a>
+, <a class="el" href="interfacesb_i_metadata_handler.html#7a6c8e683a208b6acae06a6ea4edd3b7">sbIMetadataHandler</a>
 , <a class="el" href="interfacesb_i_playlist_reader.html#8f6391aef2c0302d059e4b0bd011ab5c">sbIPlaylistReader</a>
 <li>supportedMIMETypes()
-: <a class="el" href="interfacesb_i_metadata_handler.html#0e2be754f36f62a4984cb56576142ee4">sbIMetadataHandler</a>
-, <a class="el" href="interfacesb_i_playlist_writer.html#0a3790bd97bf000be6d8f8661bdf7ab7">sbIPlaylistWriter</a>
-, <a class="el" href="interfacesb_i_playlist_reader.html#25a458ceedb5548185ecf43917ee8be0">sbIPlaylistReader</a>
-, <a class="el" href="interfacesb_i_playlist_reader_manager.html#021cb1b89f0fda35a5afd3fadfe4fca6">sbIPlaylistReaderManager</a>
+: <a class="el" href="interfacesb_i_playlist_reader.html#25a458ceedb5548185ecf43917ee8be0">sbIPlaylistReader</a>
 , <a class="el" href="interfacesb_i_playlist_writer_manager.html#69a3b383ebf69f6440ccd9fccdb2fff1">sbIPlaylistWriterManager</a>
+, <a class="el" href="interfacesb_i_playlist_reader_manager.html#021cb1b89f0fda35a5afd3fadfe4fca6">sbIPlaylistReaderManager</a>
+, <a class="el" href="interfacesb_i_metadata_handler.html#0e2be754f36f62a4984cb56576142ee4">sbIMetadataHandler</a>
+, <a class="el" href="interfacesb_i_playlist_writer.html#0a3790bd97bf000be6d8f8661bdf7ab7">sbIPlaylistWriter</a>
 <li>suspendTransfer()
 : <a class="el" href="interfacesb_i_device_base.html#5afd4dd515f205fd8abe0fde40e150ed">sbIDeviceBase</a>
 <li>switchFeathers()
@@ -251,7 +269,7 @@
 <li>sync()
 : <a class="el" href="interfacesb_i_library.html#ec308d5681d1e7a38b0783f2fd0730cb">sbILibrary</a>
 </ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

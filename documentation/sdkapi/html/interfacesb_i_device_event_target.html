@@ -72,22 +72,108 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul>
 </div>
-<h1>sbIDeviceEventTarget Interface Reference</h1><!-- doxytag: class="sbIDeviceEventTarget" -->[UNIMPLEMENTED UNTIL AFTER 0.3]  
-<a href="#_details">More...</a>
-<p>
-<code>import &quot;<a class="el" href="sb_i_device_event_target_8idl-source.html">sbIDeviceEventTarget.idl</a>&quot;;</code>
+<h1>sbIDeviceEventTarget Interface Reference</h1><!-- doxytag: class="sbIDeviceEventTarget" --><code>import &quot;<a class="el" href="sb_i_device_event_target_8idl-source.html">sbIDeviceEventTarget.idl</a>&quot;;</code>
 <p>
 <a href="interfacesb_i_device_event_target-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_event_target.html#d1a2b61726bb4d5928ff2e0b839bee54">dispatchEvent</a> (in <a class="el" href="interfacesb_i_device_event.html">sbIDeviceEvent</a> aEvent,[optional] in PRBool aAsync)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_event_target.html#0b98a373909bd311cacb6ec831011062">addEventListener</a> (in <a class="el" href="interfacesb_i_device_event_listener.html">sbIDeviceEventListener</a> aListener)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_event_target.html#94b22f4f570ec97a251dd31a1f44759d">removeEventListener</a> (in <a class="el" href="interfacesb_i_device_event_listener.html">sbIDeviceEventListener</a> aListener)</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-[UNIMPLEMENTED UNTIL AFTER 0.3] 
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Implementations of this interface must be threadsafe. </dd></dl>
+
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_device_event_target_8idl-source.html#l00037">37</a> of file <a class="el" href="sb_i_device_event_target_8idl-source.html">sbIDeviceEventTarget.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_device_event_target_8idl-source.html#l00037">37</a> of file <a class="el" href="sb_i_device_event_target_8idl-source.html">sbIDeviceEventTarget.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="d1a2b61726bb4d5928ff2e0b839bee54"></a><!-- doxytag: member="sbIDeviceEventTarget::dispatchEvent" ref="d1a2b61726bb4d5928ff2e0b839bee54" args="(in sbIDeviceEvent aEvent,[optional] in PRBool aAsync)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIDeviceEventTarget::dispatchEvent           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_device_event.html">sbIDeviceEvent</a>&nbsp;</td>
+          <td class="paramname"> <em>aEvent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in PRBool&nbsp;</td>
+          <td class="paramname"> <em>aAsync</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Dispatch a given event. The event will always be synchronously dispatched on the main (UI) thread.<p>
+An event may only be dispatched once; it may not be re-used.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aEvent</em>&nbsp;</td><td>the event to dispatch </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSync</em>&nbsp;</td><td>dispatch the event asynchronously (default false) </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Undefined if the event was dispatched asynchournously True if the event has been dispatched (false if no listeners) </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="0b98a373909bd311cacb6ec831011062"></a><!-- doxytag: member="sbIDeviceEventTarget::addEventListener" ref="0b98a373909bd311cacb6ec831011062" args="(in sbIDeviceEventListener aListener)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIDeviceEventTarget::addEventListener           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_device_event_listener.html">sbIDeviceEventListener</a>&nbsp;</td>
+          <td class="paramname"> <em>aListener</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a event listener<p>
+If the event listener is added while an event is being dispatched, the new listener will not be triggered until the next event is dispatched. (This is true even if the new event is dispatched before the current listener finishes; the new listener will see any nested events.) 
+</div>
+</div><p>
+<a class="anchor" name="94b22f4f570ec97a251dd31a1f44759d"></a><!-- doxytag: member="sbIDeviceEventTarget::removeEventListener" ref="94b22f4f570ec97a251dd31a1f44759d" args="(in sbIDeviceEventListener aListener)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIDeviceEventTarget::removeEventListener           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_device_event_listener.html">sbIDeviceEventListener</a>&nbsp;</td>
+          <td class="paramname"> <em>aListener</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Remove a event listener<p>
+If an event is currently being dispatched, the listener will not be triggered for the event if it has not already done so. 
+</div>
+</div><p>
+<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devices/base/public/<a class="el" href="sb_i_device_event_target_8idl-source.html">sbIDeviceEventTarget.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:06 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

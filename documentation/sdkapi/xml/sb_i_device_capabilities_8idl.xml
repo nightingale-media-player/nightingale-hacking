@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceCapabilities.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="55">
+      <node id="49">
         <label>components/devices/base/public/sbIDeviceCapabilities.idl</label>
         <link refid="sbIDeviceCapabilities.idl"/>
-        <childnode refid="56" relation="include">
+        <childnode refid="50" relation="include">
         </childnode>
       </node>
-      <node id="56">
+      <node id="50">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -26,7 +26,7 @@
 <codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
 <codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright©<sp/>2006<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright©<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
 <codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
 <codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
@@ -48,41 +48,74 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">[scriptable,<sp/>uuid(193121e6-51a6-40ea-b63d-701ed240a953)]</highlight></codeline>
-<codeline lineno="36" refid="interfacesb_i_device_capabilities" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_capabilities" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCapabilities</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="37"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="41" refid="interfacesb_i_device_capabilities_190169ce9a7d625939d042e4f3e80931a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_UNKNOWN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00;</highlight></codeline>
-<codeline lineno="42" refid="interfacesb_i_device_capabilities_1db96af2563c0c7ff017ae379db1bb93b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_DEVICE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
-<codeline lineno="43" refid="interfacesb_i_device_capabilities_1e6dc5822d32abf01f9a54d45a53b9972" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_AUDIO_PLAYBACK<sp/>=<sp/>0x02;</highlight></codeline>
-<codeline lineno="44" refid="interfacesb_i_device_capabilities_1b71d156f1786e79a7fd3d9fa4189bce1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_AUDIO_CAPTURE<sp/><sp/>=<sp/>0x03;</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_device_capabilities_17048b66215ac2465b3981f373fbed783" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_IMAGE_DISPLAY<sp/><sp/>=<sp/>0x04;</highlight></codeline>
-<codeline lineno="46" refid="interfacesb_i_device_capabilities_1cc62135a3ef12c7dbb5030b2507f6097" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_IMAGE_CAPTURE<sp/><sp/>=<sp/>0x05;</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_device_capabilities_1e410779678c7eb44936af821c5b68369" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_VIDEO_PLAYBACK<sp/>=<sp/>0x06;</highlight></codeline>
-<codeline lineno="48" refid="interfacesb_i_device_capabilities_1a001147360de4e0db463f18f6e1a49a1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_VIDEO_CAPTURE<sp/><sp/>=<sp/>0x07;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(54d42a87-9031-4928-991e-e66f4916a90b)]</highlight></codeline>
+<codeline lineno="38" refid="interfacesb_i_device_capabilities" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_capabilities" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCapabilities</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setFunctionTypes([array,<sp/>size_is(aFunctionTypesCount)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRUint32<sp/>aFunctionTypes,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aFunctionTypesCount);</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53" refid="interfacesb_i_device_capabilities_1264a755317ef2988c10f31951e8b575c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_CLIENT_DEFINED<sp/>=<sp/>0x800000000;</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getSupportedFunctionTypes();</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63" refid="interfacesb_i_device_capabilities_1fcf744ed74e6e3f153c7224d866afb5a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_UNKNOWN<sp/><sp/>=<sp/>0x00;</highlight></codeline>
-<codeline lineno="64" refid="interfacesb_i_device_capabilities_1d50c6c34efa315316df71282618495ed" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_FILE<sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
-<codeline lineno="65" refid="interfacesb_i_device_capabilities_1552bbe81c7dbac935953fe65cab1b742" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_FOLDER<sp/><sp/><sp/>=<sp/>0x02;</highlight></codeline>
-<codeline lineno="66" refid="interfacesb_i_device_capabilities_139111b3bb501e0f9418dded121ec6048" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_AUDIO<sp/><sp/><sp/><sp/>=<sp/>0x03;</highlight></codeline>
-<codeline lineno="67" refid="interfacesb_i_device_capabilities_1715b0a5b47395dc8b2475a08cf959745" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_IMAGE<sp/><sp/><sp/><sp/>=<sp/>0x04;</highlight></codeline>
-<codeline lineno="68" refid="interfacesb_i_device_capabilities_143a55b41f0de584e454e2e144a4c731c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_VIDEO<sp/><sp/><sp/><sp/>=<sp/>0x05;</highlight></codeline>
-<codeline lineno="69" refid="interfacesb_i_device_capabilities_11528ffc998bbb5c07d2e3501bb468074" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_PLAYLIST<sp/>=<sp/>0x06;</highlight></codeline>
-<codeline lineno="70" refid="interfacesb_i_device_capabilities_1a295b2493363335748270a9925480eb2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_ALBUM<sp/><sp/><sp/><sp/>=<sp/>0x07;</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"></highlight></codeline>
-<codeline lineno="75" refid="interfacesb_i_device_capabilities_1a7e8d6f144bfb21342b20f275f5dce6f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_CLIENT_DEFINED<sp/>=<sp/>0x800000000;</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getSupportedContentTypes(in<sp/>PRUint32<sp/>aFunctionType);</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getSupportedFormats(in<sp/>PRUint32<sp/>aContentType);</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"></highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getSupportedEvents();</highlight></codeline>
-<codeline lineno="91"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setEventTypes([array,<sp/>size_is(aEventTypesCount)]</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEventTypes,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEventTypesCount);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addContentTypes(in<sp/>PRUint32<sp/>aFunctionType,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(aContentTypesCount)]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aContentTypes,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aContentTypesCount);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addFormats(in<sp/>PRUint32<sp/>aContentType,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(aFormatsCount)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aFormats,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aFormatsCount);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDone();</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="90" refid="interfacesb_i_device_capabilities_190169ce9a7d625939d042e4f3e80931a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_UNKNOWN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00;</highlight></codeline>
+<codeline lineno="91" refid="interfacesb_i_device_capabilities_1db96af2563c0c7ff017ae379db1bb93b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_DEVICE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
+<codeline lineno="92" refid="interfacesb_i_device_capabilities_1e6dc5822d32abf01f9a54d45a53b9972" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_AUDIO_PLAYBACK<sp/>=<sp/>0x02;</highlight></codeline>
+<codeline lineno="93" refid="interfacesb_i_device_capabilities_1b71d156f1786e79a7fd3d9fa4189bce1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_AUDIO_CAPTURE<sp/><sp/>=<sp/>0x03;</highlight></codeline>
+<codeline lineno="94" refid="interfacesb_i_device_capabilities_17048b66215ac2465b3981f373fbed783" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_IMAGE_DISPLAY<sp/><sp/>=<sp/>0x04;</highlight></codeline>
+<codeline lineno="95" refid="interfacesb_i_device_capabilities_1cc62135a3ef12c7dbb5030b2507f6097" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_IMAGE_CAPTURE<sp/><sp/>=<sp/>0x05;</highlight></codeline>
+<codeline lineno="96" refid="interfacesb_i_device_capabilities_1e410779678c7eb44936af821c5b68369" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_VIDEO_PLAYBACK<sp/>=<sp/>0x06;</highlight></codeline>
+<codeline lineno="97" refid="interfacesb_i_device_capabilities_1a001147360de4e0db463f18f6e1a49a1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_VIDEO_CAPTURE<sp/><sp/>=<sp/>0x07;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="interfacesb_i_device_capabilities_1264a755317ef2988c10f31951e8b575c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_CLIENT_DEFINED<sp/>=<sp/>0x80000000;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedFunctionTypes(out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>PRUint32<sp/>aFunctionTypes);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="interfacesb_i_device_capabilities_1fcf744ed74e6e3f153c7224d866afb5a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_UNKNOWN<sp/><sp/>=<sp/>0x00;</highlight></codeline>
+<codeline lineno="116" refid="interfacesb_i_device_capabilities_1d50c6c34efa315316df71282618495ed" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_FILE<sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
+<codeline lineno="117" refid="interfacesb_i_device_capabilities_1552bbe81c7dbac935953fe65cab1b742" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_FOLDER<sp/><sp/><sp/>=<sp/>0x02;</highlight></codeline>
+<codeline lineno="118" refid="interfacesb_i_device_capabilities_139111b3bb501e0f9418dded121ec6048" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_AUDIO<sp/><sp/><sp/><sp/>=<sp/>0x03;</highlight></codeline>
+<codeline lineno="119" refid="interfacesb_i_device_capabilities_1715b0a5b47395dc8b2475a08cf959745" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_IMAGE<sp/><sp/><sp/><sp/>=<sp/>0x04;</highlight></codeline>
+<codeline lineno="120" refid="interfacesb_i_device_capabilities_143a55b41f0de584e454e2e144a4c731c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_VIDEO<sp/><sp/><sp/><sp/>=<sp/>0x05;</highlight></codeline>
+<codeline lineno="121" refid="interfacesb_i_device_capabilities_11528ffc998bbb5c07d2e3501bb468074" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_PLAYLIST<sp/>=<sp/>0x06;</highlight></codeline>
+<codeline lineno="122" refid="interfacesb_i_device_capabilities_1a295b2493363335748270a9925480eb2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_ALBUM<sp/><sp/><sp/><sp/>=<sp/>0x07;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="interfacesb_i_device_capabilities_1a7e8d6f144bfb21342b20f275f5dce6f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_CLIENT_DEFINED<sp/>=<sp/>0x80000000;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedContentTypes(in<sp/>PRUint32<sp/>aFunctionType,</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>PRUint32<sp/>aContentTypes);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedFormats(in<sp/>PRUint32<sp/>aContentType,</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aSuportedFormats);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedEvents(out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSupportedEvents);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl"/>
   </compounddef>

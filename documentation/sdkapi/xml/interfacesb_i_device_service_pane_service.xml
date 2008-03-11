@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_device_service_pane_service" kind="interface" prot="public">
+    <compoundname>sbIDeviceServicePaneService</compoundname>
+    <includes refid="sb_i_device_service_pane_service_8idl" local="no">sbIDeviceServicePaneService.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_device_service_pane_service_118059a6b644ba1487104e02219e5c5f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref></type>
+        <definition>sbIServicePaneNode sbIDeviceServicePaneService::createNodeForDevice</definition>
+        <argsstring>(in sbIDeviceBase aDevice, in AString aDeviceIdentifier)</argsstring>
+        <name>createNodeForDevice</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_base" kindref="compound">sbIDeviceBase</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aDeviceIdentifier</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/servicepane/public/sbIDeviceServicePaneService.idl" line="52"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_service_pane_service_134d988390abaa9f5a0d19dbbff2b2414" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref></type>
+        <definition>sbIServicePaneNode sbIDeviceServicePaneService::createNodeForDevice2</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>createNodeForDevice2</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/servicepane/public/sbIDeviceServicePaneService.idl" line="61"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Provides information about devices needed by the service pane. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/servicepane/public/sbIDeviceServicePaneService.idl" line="43" bodyfile="z:/projects/songbird/components/servicepane/public/sbIDeviceServicePaneService.idl" bodystart="43" bodyend="62"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_service_pane_service_118059a6b644ba1487104e02219e5c5f5" prot="public" virt="non-virtual"><scope>sbIDeviceServicePaneService</scope><name>createNodeForDevice</name></member>
+      <member refid="interfacesb_i_device_service_pane_service_134d988390abaa9f5a0d19dbbff2b2414" prot="public" virt="non-virtual"><scope>sbIDeviceServicePaneService</scope><name>createNodeForDevice2</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

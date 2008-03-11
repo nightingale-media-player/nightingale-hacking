@@ -91,7 +91,6 @@
     <li><a href="functions_0x68.html#index_h"><span>h</span></a></li>
     <li><a href="functions_0x69.html#index_i"><span>i</span></a></li>
     <li><a href="functions_0x6a.html#index_j"><span>j</span></a></li>
-    <li><a href="functions_0x6b.html#index_k"><span>k</span></a></li>
     <li><a href="functions_0x6c.html#index_l"><span>l</span></a></li>
     <li><a href="functions_0x6d.html#index_m"><span>m</span></a></li>
     <li><a href="functions_0x6e.html#index_n"><span>n</span></a></li>
@@ -114,12 +113,14 @@ Here is a list of all documented class members with links to the class documenta
 <h3><a class="anchor" name="index_e">- e -</a></h3><ul>
 <li>editable
 : <a class="el" href="interfacesb_i_service_pane_node.html#4709ccf77f08f9c74a36a80a8be7bb88">sbIServicePaneNode</a>
+<li>eject()
+: <a class="el" href="interfacesb_i_device.html#90ef2e85d63890e85cb45ff7792128d0">sbIDevice</a>
 <li>ejectDevice()
 : <a class="el" href="interfacesb_i_device_base.html#ddf45a09e5de5494f4b7234aa7653122">sbIDeviceBase</a>
 <li>emitSecondsToTimeString()
 : <a class="el" href="interfacesb_i_playlist_playback.html#e5a04a116cecdc9bf36cfca4ddf9aefb">sbIPlaylistPlayback</a>
 <li>encodingFormats
-: <a class="el" href="interfacesb_i_content_type_format.html#aba1f41f93edc844774b20d14deb8139">sbIContentTypeFormat</a>
+: <a class="el" href="interfacesb_i_content_type_format.html#574a05d98fcb042e5fb7bb5747e8e5fc">sbIContentTypeFormat</a>
 <li>enforceLowercase
 : <a class="el" href="interfacesb_i_text_property_info.html#81f045c485d9e68758526a32d239c282">sbITextPropertyInfo</a>
 <li>enumerateAllItems()
@@ -138,10 +139,16 @@ Here is a list of all documented class members with links to the class documenta
 : <a class="el" href="interfacesb_i_device_event.html#ecdb97c08ac5f027a7bf08698584015a">sbIDeviceEvent</a>
 <li>EVENT_CONTROLLER_BASE
 : <a class="el" href="interfacesb_i_device_event.html#cb6bb266781dbcb22e4483ce400770e2">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_ACCESS_DENIED
+: <a class="el" href="interfacesb_i_device_event.html#e3e43349c6a65d0a77ed933f4f0e9b79">sbIDeviceEvent</a>
 <li>EVENT_DEVICE_ADDED
 : <a class="el" href="interfacesb_i_device_event.html#4a921cb3047dc4911998d5384204a761">sbIDeviceEvent</a>
 <li>EVENT_DEVICE_BASE
 : <a class="el" href="interfacesb_i_device_event.html#776531a2a557b93de6ac527abb5e9f0d">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_ERROR_UNEXPECTED
+: <a class="el" href="interfacesb_i_device_event.html#18971da08fedeba93ff9655bcff41d23">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_INFO_CHANGED
+: <a class="el" href="interfacesb_i_device_event.html#dd5f1dc3960a9e868b404f0e3269cace">sbIDeviceEvent</a>
 <li>EVENT_DEVICE_MEDIA_INSERTED
 : <a class="el" href="interfacesb_i_device_event.html#ade0006ea99a163b6fd9d0467b46243d">sbIDeviceEvent</a>
 <li>EVENT_DEVICE_MEDIA_READ_END
@@ -150,6 +157,8 @@ Here is a list of all documented class members with links to the class documenta
 : <a class="el" href="interfacesb_i_device_event.html#bd57e28928f64b1eaa3b1880546cb5ea">sbIDeviceEvent</a>
 <li>EVENT_DEVICE_MEDIA_READ_START
 : <a class="el" href="interfacesb_i_device_event.html#1415c512117c6f65d586c2bc2924e1f1">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_MEDIA_READ_UNSUPPORTED_TYPE
+: <a class="el" href="interfacesb_i_device_event.html#dfd4bc5df321efc63be8e126365fb9dc">sbIDeviceEvent</a>
 <li>EVENT_DEVICE_MEDIA_REMOVED
 : <a class="el" href="interfacesb_i_device_event.html#1ccf12f3b9e643adb2235524ac6ff6d3">sbIDeviceEvent</a>
 <li>EVENT_DEVICE_MEDIA_WRITE_END
@@ -158,8 +167,24 @@ Here is a list of all documented class members with links to the class documenta
 : <a class="el" href="interfacesb_i_device_event.html#15cfa72883c1b40027726af23a8e80f8">sbIDeviceEvent</a>
 <li>EVENT_DEVICE_MEDIA_WRITE_START
 : <a class="el" href="interfacesb_i_device_event.html#641905b30b5e939b7237d2d92a7f18e1">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE
+: <a class="el" href="interfacesb_i_device_event.html#025d005bffe694fddf1bc2eca2054b9b">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_NOT_AVAILABLE
+: <a class="el" href="interfacesb_i_device_event.html#479c606d0b2c0b6c88118d9cef195926">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_NOT_ENOUGH_FREESPACE
+: <a class="el" href="interfacesb_i_device_event.html#a2aa4c5503d8fc89374764892e371a00">sbIDeviceEvent</a>
 <li>EVENT_DEVICE_REMOVED
 : <a class="el" href="interfacesb_i_device_event.html#3c18f2e1ad6f1dd896fb4feac8b976b6">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_RESET
+: <a class="el" href="interfacesb_i_device_event.html#09b6fc1985d6435e0c293b04aaf9b892">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_STATE_CHANGED
+: <a class="el" href="interfacesb_i_device_event.html#eff8c61f5561f8655fd6a569021fab93">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_TRANSFER_END
+: <a class="el" href="interfacesb_i_device_event.html#79b604bb27b605bf5d8ddd50ac15a187">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_TRANSFER_PROGRESS
+: <a class="el" href="interfacesb_i_device_event.html#313ec805e9d68801766f057fe0e60505">sbIDeviceEvent</a>
+<li>EVENT_DEVICE_TRANSFER_START
+: <a class="el" href="interfacesb_i_device_event.html#d034a9cd728478b211d1fefe2299d0b1">sbIDeviceEvent</a>
 <li>EVENT_MANAGER_BASE
 : <a class="el" href="interfacesb_i_device_event.html#beb207b4c5548d656dc09351b4f9010c">sbIDeviceEvent</a>
 <li>EVENT_MARSHALL_BASE
@@ -167,7 +192,7 @@ Here is a list of all documented class members with links to the class documenta
 <li>execute()
 : <a class="el" href="interfacesb_i_database_query.html#5af54f347459563a8f1cf694672e71d4">sbIDatabaseQuery</a>
 </ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

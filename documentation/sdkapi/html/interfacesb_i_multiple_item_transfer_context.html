@@ -98,11 +98,11 @@ readonly attribute nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign
 This interface represents a transfer of a collection of media items and/or media lists. 
 <p>
 This interface will be sent with the following flavors: application/x-sb-transfer-media-items (enumerator returns <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>) application/x-sb-transfer-media-lists (enumerator returns <a class="el" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>)<p>
-Note that since a media items is a media list, a transfer context whose flavor is "application/x-sb-transfer-media-items" may indeed still media lists. Therefore consumers who want to treat lists differently will need to check the contents of the enumerator to determine if lists are present. 
+Note that since a media item is a media list, a transfer context whose flavor is "application/x-sb-transfer-media-items" may indeed still contain media lists. Therefore consumers who want to treat lists differently will need to check the contents of the enumerator to determine if lists are present. 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_library_transfer_context_8idl-source.html#l00110">110</a> of file <a class="el" href="sb_i_library_transfer_context_8idl-source.html">sbILibraryTransferContext.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_library_transfer_context_8idl-source.html#l00111">111</a> of file <a class="el" href="sb_i_library_transfer_context_8idl-source.html">sbILibraryTransferContext.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="bbae1ea3135367d092779617091d5a36"></a><!-- doxytag: member="sbIMultipleItemTransferContext::reset" ref="bbae1ea3135367d092779617091d5a36" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -127,7 +127,7 @@ Reset the items enumerator above to re-start at the first item.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_library_transfer_context_8idl-source.html">sbILibraryTransferContext.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:06 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:27 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

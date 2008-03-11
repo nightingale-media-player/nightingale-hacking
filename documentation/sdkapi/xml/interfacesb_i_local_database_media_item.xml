@@ -31,27 +31,47 @@
         <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" line="44" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" bodystart="44" bodyend="-1"/>
       </memberdef>
       </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_local_database_media_item_1f735841e7adb3987eb1cf59113945e99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseMediaItem::SetSuppressNotifications</definition>
+        <argsstring>(in boolean aSuppress)</argsstring>
+        <name>SetSuppressNotifications</name>
+        <param>
+          <type>in boolean</type>
+          <declname>aSuppress</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" line="46"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="274">
+      <node id="304">
         <label>sbILocalDatabaseMediaItem</label>
         <link refid="interfacesb_i_local_database_media_item"/>
-        <childnode refid="275" relation="usage">
+        <childnode refid="305" relation="usage">
           <edgelabel>propertyBag</edgelabel>
         </childnode>
       </node>
-      <node id="275">
+      <node id="305">
         <label>sbILocalDatabaseResourcePropertyBag</label>
         <link refid="interfacesb_i_local_database_resource_property_bag"/>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" line="41" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" bodystart="40" bodyend="45"/>
+    <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" line="41" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl" bodystart="40" bodyend="47"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_media_item_12bb36f7b468488cc4be7564aab03571a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseMediaItem</scope><name>mediaItemId</name></member>
       <member refid="interfacesb_i_local_database_media_item_1a911a58eccae0c6ef888dc5f795da2ff" prot="public" virt="non-virtual"><scope>sbILocalDatabaseMediaItem</scope><name>propertyBag</name></member>
+      <member refid="interfacesb_i_local_database_media_item_1f735841e7adb3987eb1cf59113945e99" prot="public" virt="non-virtual"><scope>sbILocalDatabaseMediaItem</scope><name>SetSuppressNotifications</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

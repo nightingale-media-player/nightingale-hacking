@@ -3,35 +3,48 @@
   <compounddef id="sb_i_library_8idl" kind="file">
     <compoundname>sbILibrary.idl</compoundname>
     <includes refid="sb_i_media_list_8idl" local="yes">sbIMediaList.idl</includes>
+    <includedby refid="sb_i_device_library_8idl" local="yes">components/devices/base/public/sbIDeviceLibrary.idl</includedby>
     <incdepgraph>
-      <node id="194">
+      <node id="200">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="195" relation="include">
+        <childnode refid="201" relation="include">
         </childnode>
       </node>
-      <node id="192">
+      <node id="198">
         <label>sbIMediaList.idl</label>
         <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="193" relation="include">
+        <childnode refid="199" relation="include">
         </childnode>
       </node>
-      <node id="191">
+      <node id="197">
         <label>components/library/base/public/sbILibrary.idl</label>
         <link refid="sbILibrary.idl"/>
-        <childnode refid="192" relation="include">
+        <childnode refid="198" relation="include">
         </childnode>
       </node>
-      <node id="193">
+      <node id="199">
         <label>sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="194" relation="include">
+        <childnode refid="200" relation="include">
         </childnode>
       </node>
-      <node id="195">
+      <node id="201">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="202">
+        <label>components/library/base/public/sbILibrary.idl</label>
+        <link refid="sbILibrary.idl"/>
+        <childnode refid="203" relation="include">
+        </childnode>
+      </node>
+      <node id="203">
+        <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
+        <link refid="sb_i_device_library_8idl-source"/>
+      </node>
+    </invincdepgraph>
     <innerclass refid="interfacesb_i_batch_create_media_items_listener" prot="public">sbIBatchCreateMediaItemsListener</innerclass>
     <innerclass refid="interfacesb_i_library" prot="public">sbILibrary</innerclass>
     <briefdescription>
@@ -46,7 +59,7 @@
 <codeline lineno="4"><highlight class="comment">//</highlight></codeline>
 <codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
 <codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
 <codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
 <codeline lineno="9"><highlight class="comment">//</highlight></codeline>
 <codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>

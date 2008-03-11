@@ -71,7 +71,7 @@
 <a name="l00004"></a>00004 <span class="comment">// </span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright© 2006 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright© 2005-2008 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">// </span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
@@ -93,19 +93,19 @@
 <a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
-<a name="l00029"></a>00029 interface <a class="code" href="interfacesb_i_device_event.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEvent</a>;
-<a name="l00030"></a>00030 interface <a class="code" href="interfacesb_i_device_event_listener.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEventListener</a>;
+<a name="l00029"></a>00029 interface <a class="code" href="interfacesb_i_device_event.html">sbIDeviceEvent</a>;
+<a name="l00030"></a>00030 interface <a class="code" href="interfacesb_i_device_event_listener.html">sbIDeviceEventListener</a>;
 <a name="l00031"></a>00031 
-<a name="l00036"></a>00036 [scriptable, uuid(c83fad0a-d0f7-4b66-9596-b6a3cfa21d65)]
-<a name="l00037"></a><a class="code" href="interfacesb_i_device_event_target.html">00037</a> interface <a class="code" href="interfacesb_i_device_event_target.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEventTarget</a> : nsISupports
+<a name="l00036"></a>00036 [scriptable, uuid(877c03e8-b834-44de-b7c1-bcb5dd62d693)]
+<a name="l00037"></a><a class="code" href="interfacesb_i_device_event_target.html">00037</a> interface <a class="code" href="interfacesb_i_device_event_target.html">sbIDeviceEventTarget</a> : nsISupports
 <a name="l00038"></a>00038 {
-<a name="l00042"></a>00042   <span class="keywordtype">void</span> dispatchEvent(in <a class="code" href="interfacesb_i_device_event.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEvent</a> aEvent);
-<a name="l00043"></a>00043 
-<a name="l00047"></a>00047   <span class="keywordtype">void</span> addEventListener(in <a class="code" href="interfacesb_i_device_event_listener.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEventListener</a> aListener);
-<a name="l00048"></a>00048 
-<a name="l00052"></a>00052   <span class="keywordtype">void</span> removeEventListener(in <a class="code" href="interfacesb_i_device_event_listener.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceEventListener</a> aListener);
-<a name="l00053"></a>00053 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:03 2007 for Songbird by&nbsp;
+<a name="l00050"></a>00050   <span class="keywordtype">boolean</span> dispatchEvent(in <a class="code" href="interfacesb_i_device_event.html">sbIDeviceEvent</a> aEvent, [optional] in PRBool aAsync);
+<a name="l00051"></a>00051 
+<a name="l00060"></a>00060   <span class="keywordtype">void</span> addEventListener(in <a class="code" href="interfacesb_i_device_event_listener.html">sbIDeviceEventListener</a> aListener);
+<a name="l00061"></a>00061 
+<a name="l00068"></a>00068   <span class="keywordtype">void</span> removeEventListener(in <a class="code" href="interfacesb_i_device_event_listener.html">sbIDeviceEventListener</a> aListener);
+<a name="l00069"></a>00069 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

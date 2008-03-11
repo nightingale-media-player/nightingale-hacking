@@ -5,7 +5,6 @@
     <innerdir refid="dir_1621c25d1bcd57ede874a14539b63195">components/devices/base/</innerdir>
     <innerdir refid="dir_d38e5d844baa5fb2ab3eb347f53e0252">components/devices/controller/</innerdir>
     <innerdir refid="dir_e2ac1423e222423d1985fab2c41c1fb8">components/devices/device/</innerdir>
-    <innerdir refid="dir_82bb079e59c84b2f1a7a52d2c995810e">components/devices/manager/</innerdir>
     <innerdir refid="dir_8396492468d503e1945e71373a8a160e">components/devices/marshall/</innerdir>
     <briefdescription>
     </briefdescription>

@@ -39,7 +39,7 @@
           <declname>aMediaItems</declname>
         </param>
         <briefdescription>
-<para>Called when batcvh operation is complete. </para>        </briefdescription>
+<para>Called when batch operation is complete. </para>        </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>

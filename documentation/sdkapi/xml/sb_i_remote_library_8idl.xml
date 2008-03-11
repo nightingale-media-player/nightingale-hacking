@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_remote_media_list_8idl" local="yes">sbIRemoteMediaList.idl</includes>
     <incdepgraph>
-      <node id="418">
+      <node id="441">
         <label>sbIRemoteMediaList.idl</label>
         <link refid="sb_i_remote_media_list_8idl"/>
-        <childnode refid="417" relation="include">
+        <childnode refid="440" relation="include">
         </childnode>
       </node>
-      <node id="416">
+      <node id="439">
         <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
         <link refid="sbIRemoteLibrary.idl"/>
-        <childnode refid="417" relation="include">
+        <childnode refid="440" relation="include">
         </childnode>
-        <childnode refid="418" relation="include">
+        <childnode refid="441" relation="include">
         </childnode>
       </node>
-      <node id="417">
+      <node id="440">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -37,7 +37,7 @@
 <codeline lineno="4"><highlight class="comment">//</highlight></codeline>
 <codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
 <codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
 <codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
 <codeline lineno="9"><highlight class="comment">//</highlight></codeline>
 <codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>

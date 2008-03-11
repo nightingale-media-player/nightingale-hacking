@@ -4,13 +4,13 @@
     <compoundname>sbIFeathersManagerListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="145">
+      <node id="151">
         <label>components/feathers/public/sbIFeathersManagerListener.idl</label>
         <link refid="sbIFeathersManagerListener.idl"/>
-        <childnode refid="146" relation="include">
+        <childnode refid="152" relation="include">
         </childnode>
       </node>
-      <node id="146">
+      <node id="152">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -26,7 +26,7 @@
 <codeline lineno="4"><highlight class="comment">//</highlight></codeline>
 <codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
 <codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
 <codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
 <codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
@@ -51,14 +51,18 @@
 <codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_layout_description" kindref="compound" tooltip="Struct describing the properties of a XUL window layout.">sbILayoutDescription</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_skin_description" kindref="compound" tooltip="Struct describing the properties of a skin.">sbISkinDescription</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(989ca002-eea7-4eff-ae93-2615f89b5581)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(441f3fae-8276-4cf2-ab83-6f32e2a8eb92)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_feathers_manager_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_feathers_manager_listener" kindref="compound" tooltip="Callback interface used to listen to Feathers Manager changes.">sbIFeathersManagerListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFeathersUpdate();</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
 <codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFeathersSelectRequest(in<sp/><ref refid="interfacesb_i_layout_description" kindref="compound" tooltip="Struct describing the properties of a XUL window layout.">sbILayoutDescription</ref><sp/>aLayout,<sp/></highlight></codeline>
 <codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_skin_description" kindref="compound" tooltip="Struct describing the properties of a skin.">sbISkinDescription</ref><sp/>aSkin);</highlight></codeline>
-<codeline lineno="58"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFeathersSelectComplete(in<sp/><ref refid="interfacesb_i_layout_description" kindref="compound" tooltip="Struct describing the properties of a XUL window layout.">sbILayoutDescription</ref><sp/>aLayout,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_skin_description" kindref="compound" tooltip="Struct describing the properties of a skin.">sbISkinDescription</ref><sp/>aSkin);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl"/>
   </compounddef>

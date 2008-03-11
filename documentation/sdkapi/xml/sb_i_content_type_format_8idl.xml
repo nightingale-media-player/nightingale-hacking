@@ -4,13 +4,13 @@
     <compoundname>sbIContentTypeFormat.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="52">
+      <node id="46">
         <label>components/devices/base/public/sbIContentTypeFormat.idl</label>
         <link refid="sbIContentTypeFormat.idl"/>
-        <childnode refid="53" relation="include">
+        <childnode refid="47" relation="include">
         </childnode>
       </node>
-      <node id="53">
+      <node id="47">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -26,7 +26,7 @@
 <codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
 <codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2006<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
 <codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
 <codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
@@ -48,17 +48,22 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/>nsIUTF8StringEnumerator;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">[scriptable,<sp/>uuid(f08c6820-fa6c-44c0-9ce5-19c1d4a5fc3c)]</highlight></codeline>
-<codeline lineno="36" refid="interfacesb_i_content_type_format" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_content_type_format" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIContentTypeFormat</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="37"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="41" refid="interfacesb_i_content_type_format_17a46156e76490b9f41bc47a715154ef7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>containerFormat;</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="46" refid="interfacesb_i_content_type_format_1aba1f41f93edc844774b20d14deb8139" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>encodingFormats;</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="51" refid="interfacesb_i_content_type_format_17d84b00c8779884a8ea52dba1b210eed" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>decodingFormats;<sp/></highlight></codeline>
-<codeline lineno="52"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">[scriptable,<sp/>uuid(9c369502-815e-457c-b7f8-ec75162a6a7c)]</highlight></codeline>
+<codeline lineno="40" refid="interfacesb_i_content_type_format" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_content_type_format" kindref="compound">sbIContentTypeFormat</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aContainerFormat,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(aEncodingFormatsCount)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aEncodingFormats,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEncodingFormatsCount,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(aDecodingFormatsCount)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aDecodingFormats,</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDecodingFormatsCount);</highlight></codeline>
+<codeline lineno="51" refid="interfacesb_i_content_type_format_1774593c5f79562b87a71574f9b2291b0" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>ACString<sp/>containerFormat;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="56" refid="interfacesb_i_content_type_format_1574a05d98fcb042e5fb7bb5747e8e5fc" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIUTF8StringEnumerator<sp/>encodingFormats;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="61" refid="interfacesb_i_content_type_format_150777698da7105b62f16e80fca8e1c3c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIUTF8StringEnumerator<sp/>decodingFormats;<sp/></highlight></codeline>
+<codeline lineno="62"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="z:/projects/songbird/components/devices/base/public/sbIContentTypeFormat.idl"/>
   </compounddef>

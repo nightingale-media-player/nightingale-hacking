@@ -223,11 +223,11 @@ long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 Base interface for all supported devices. The supported devices can be CD, Windows Media Device, iPod, etc., and even a download device for downloading and uploading files.<p>
 All devices implement this base interface to perform the basic operations such as enumerating tracks (media files) and perform supported I/O operations.<p>
 In addition, a device class instance, not to be confused with a device instance, can provide extended information about a device, for example recording speed for a CD drive.<p>
-"Device Category" is used in identifying device class instances (using <a class="el" href="interfacesb_i_device_manager.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceManager</a>) and "Device String" is for identifying a device. For instance "Songbird CD Device" is the Device Category and "D:\" is the Device String. 
+"Device Category" is used in identifying device class instances (using <a class="el" href="interfacesb_i_device_manager.html">sbIDeviceManager</a>) and "Device String" is for identifying a device. For instance "Songbird CD Device" is the Device Category and "D:\" is the Device String. 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_device_base_8idl-source.html#l00126">126</a> of file <a class="el" href="sb_i_device_base_8idl-source.html">sbIDeviceBase.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_device_base_8idl-source.html#l00127">127</a> of file <a class="el" href="sb_i_device_base_8idl-source.html">sbIDeviceBase.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="514a91bf363e2ab6d61e04c40a2485ff"></a><!-- doxytag: member="sbIDeviceBase::finalize" ref="514a91bf363e2ab6d61e04c40a2485ff" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -896,7 +896,7 @@ Eject or unmount the device from the system.
 File format constants<p>
 XXXben We have an explicit -1 here but later we have PRUint32 as a param for get/set Upload and Download FileType. Also, should these be renamed to FILE_TYPE_XXX or should we change the other funcs to use FileFormat? 
 <p>
-Definition at line <a class="el" href="sb_i_device_base_8idl-source.html#l00136">136</a> of file <a class="el" href="sb_i_device_base_8idl-source.html">sbIDeviceBase.idl</a>.
+Definition at line <a class="el" href="sb_i_device_base_8idl-source.html#l00137">137</a> of file <a class="el" href="sb_i_device_base_8idl-source.html">sbIDeviceBase.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="e9feaccdd1f099e418ef48879e761d72"></a><!-- doxytag: member="sbIDeviceBase::STATE_IDLE" ref="e9feaccdd1f099e418ef48879e761d72" args="" -->
@@ -915,7 +915,7 @@ Device State constants<p>
 Generally speaking I/O commands can be issued to a device if device state is STATE_IDLE for the device. But if STATE_DOWNLOADING then it can be asked to transfer more tracks, and the same applies to STATE_UPLOADING and STATE_DELETING. STATE_TRANSFERRING_PAUSED indicates a paused transfer.<p>
 XXXben STATE_TRANSFERRING_PAUSED no longer exists 
 <p>
-Definition at line <a class="el" href="sb_i_device_base_8idl-source.html#l00151">151</a> of file <a class="el" href="sb_i_device_base_8idl-source.html">sbIDeviceBase.idl</a>.
+Definition at line <a class="el" href="sb_i_device_base_8idl-source.html#l00152">152</a> of file <a class="el" href="sb_i_device_base_8idl-source.html">sbIDeviceBase.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="e26cd7e75266b587e32c6b8942d269bc"></a><!-- doxytag: member="sbIDeviceBase::OP_UPLOAD" ref="e26cd7e75266b587e32c6b8942d269bc" args="" -->
@@ -935,12 +935,12 @@ Device Operation Constants.
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_device_base.html#7b2be1b7de63836b2d53bc0df1594a8f" title="Transfer items to a library or destination.">transferItems</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_device_base_8idl-source.html#l00163">163</a> of file <a class="el" href="sb_i_device_base_8idl-source.html">sbIDeviceBase.idl</a>.
+Definition at line <a class="el" href="sb_i_device_base_8idl-source.html#l00164">164</a> of file <a class="el" href="sb_i_device_base_8idl-source.html">sbIDeviceBase.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devicesobsolete/base/public/<a class="el" href="sb_i_device_base_8idl-source.html">sbIDeviceBase.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

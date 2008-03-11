@@ -107,6 +107,10 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#5e1b82d0a1890358c5cbd75d625cdd08">removeListener</a> (in <a class="el" href="interfacesb_i_media_list_view_listener.html">sbIMediaListViewListener</a> aListener)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a listener from the view.  <a href="#5e1b82d0a1890358c5cbd75d625cdd08"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="12208ca9fb7dc450225df7dc709ae281"></a><!-- doxytag: member="sbIMediaListView::removeSelectedMediaItems" ref="12208ca9fb7dc450225df7dc709ae281" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#12208ca9fb7dc450225df7dc709ae281">removeSelectedMediaItems</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove selected items from the view's media list. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0c728825b5bc85265d000a68d22d56a9"></a><!-- doxytag: member="sbIMediaListView::mediaList" ref="0c728825b5bc85265d000a68d22d56a9" args="" -->
 readonly attribute <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#0c728825b5bc85265d000a68d22d56a9">mediaList</a></td></tr>
@@ -125,6 +129,10 @@ readonly attribute nsITreeView&nbsp;</td><td class="memItemRight" valign="bottom
 readonly attribute <a class="el" href="interfacesb_i_cascade_filter_set.html">sbICascadeFilterSet</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#c8b1eafe724ee791059510c9fdeb8b24">cascadeFilterSet</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the cascade filter set for this media list view. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fb1ed8f2da0b28b41be435d0f6c51c12"></a><!-- doxytag: member="sbIMediaListView::selection" ref="fb1ed8f2da0b28b41be435d0f6c51c12" args="" -->
+readonly attribute <a class="el" href="interfacesb_i_media_list_view_selection.html">sbIMediaListViewSelection</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view.html#fb1ed8f2da0b28b41be435d0f6c51c12">selection</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the selection for the view. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 A distinct view on a given media list. 
@@ -134,7 +142,7 @@ A distinct view on a given media list.
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_media_list_view_8idl-source.html#l00088">88</a> of file <a class="el" href="sb_i_media_list_view_8idl-source.html">sbIMediaListView.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_media_list_view_8idl-source.html#l00089">89</a> of file <a class="el" href="sb_i_media_list_view_8idl-source.html">sbIMediaListView.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="845aa28b17e2eab43b1ea8b08811d247"></a><!-- doxytag: member="sbIMediaListView::getItemByIndex" ref="845aa28b17e2eab43b1ea8b08811d247" args="(in unsigned long aIndex)" -->
 <div class="memitem">
 <div class="memproto">
@@ -395,7 +403,7 @@ Calling removeListener with a listener that had both a weak and a strong referen
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_media_list_view_8idl-source.html">sbIMediaListView.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:06 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:26 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

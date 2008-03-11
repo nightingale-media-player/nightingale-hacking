@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="205" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="205" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="206" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="206" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_indexed_media_item_171a61e92b2950718ac1b50876e6447c7" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="206" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="206" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="207" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="207" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -36,71 +36,78 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="184">
+      <node id="208">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="181" relation="public-inheritance">
+        <childnode refid="205" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="180">
+      <node id="204">
         <label>sbIIndexedMediaItem</label>
         <link refid="interfacesb_i_indexed_media_item"/>
-        <childnode refid="181" relation="usage">
+        <childnode refid="205" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
       </node>
-      <node id="188">
+      <node id="212">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="185">
+      <node id="209">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="186" relation="usage">
+        <childnode refid="210" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="188" relation="usage">
+        <childnode refid="212" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
+        <childnode refid="213" relation="usage">
+          <edgelabel>properties</edgelabel>
+        </childnode>
       </node>
-      <node id="183">
+      <node id="207">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="184" relation="public-inheritance">
+        <childnode refid="208" relation="public-inheritance">
         </childnode>
-        <childnode refid="185" relation="usage">
+        <childnode refid="209" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="187" relation="usage">
+        <childnode refid="211" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="182">
+      <node id="206">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="181">
+      <node id="205">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="182" relation="public-inheritance">
+        <childnode refid="206" relation="public-inheritance">
         </childnode>
-        <childnode refid="183" relation="usage">
+        <childnode refid="207" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="186">
+      <node id="210">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="187" relation="usage">
+        <childnode refid="211" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="187">
+      <node id="211">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
+      <node id="213">
+        <label>sbIDeviceProperties</label>
+        <link refid="interfacesb_i_device_properties"/>
+      </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="204" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="203" bodyend="207"/>
+    <location file="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" line="205" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaItem.idl" bodystart="204" bodyend="208"/>
     <listofallmembers>
       <member refid="interfacesb_i_indexed_media_item_14ae9e36d39863face1346d4a21f5c35d" prot="public" virt="non-virtual"><scope>sbIIndexedMediaItem</scope><name>index</name></member>
       <member refid="interfacesb_i_indexed_media_item_171a61e92b2950718ac1b50876e6447c7" prot="public" virt="non-virtual"><scope>sbIIndexedMediaItem</scope><name>mediaItem</name></member>

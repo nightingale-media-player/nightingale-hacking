@@ -2,6 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_device" kind="interface" prot="public">
     <compoundname>sbIDevice</compoundname>
+    <derivedcompoundref refid="interfacesb_i_device_device_tester_base" prot="public" virt="non-virtual">sbIDeviceDeviceTesterBase</derivedcompoundref>
     <includes refid="sb_i_device_8idl" local="no">sbIDevice.idl</includes>
       <sectiondef kind="public-attrib">
       <memberdef kind="variable" id="interfacesb_i_device_10ec1721b04be6d0dff919299f9928a7d" prot="public" static="no" mutable="no">
@@ -15,7 +16,7 @@
 <para>A human-readable name identifying the device. Optional. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="53" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="53" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="55" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_16bb1c045b9053154ee58591336941f14" prot="public" static="no" mutable="no">
         <type>readonly attribute nsIDPtr</type>
@@ -28,7 +29,20 @@
 <para>The id of the controller that created the device. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="58" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="58" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="60" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_10cd836f1f07248e5ccc3f804eed029a5" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIDPtr</type>
+        <definition>readonly attribute nsIDPtr sbIDevice::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The id of the device </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="65" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="65" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_17371a0d264e88bb584112b3657569aa5" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -41,7 +55,7 @@
 <para>Whether or not the device is currently connected. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="73" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="73" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="80" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="80" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_1892f35dfa1739941fc1aa5b8d8fef433" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -54,7 +68,7 @@
 <para>Whether or not the device&apos;s events are being processed in additional threads (i.e. off the main UI thread). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="79" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="79" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="86" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="86" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_18a10e26718e7a6721465c37dd79c4b41" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_device_capabilities" kindref="compound">sbIDeviceCapabilities</ref></type>
@@ -67,7 +81,7 @@
 <para>Get the capabilities of the device. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="95" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="95" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="102" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="102" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_156499f28980a000b9a0bbd7f3150566f" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_device_content" kindref="compound">sbIDeviceContent</ref></type>
@@ -80,11 +94,11 @@
 <para>All the device&apos;s content. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="100" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="100" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="107" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="107" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_device_1d55ea7f26e638e59ea18f68497d01126" prot="public" static="no" mutable="no">
-        <type>readonly attribute sbIDeviceParamaters</type>
-        <definition>readonly attribute sbIDeviceParamaters sbIDevice::parameters</definition>
+      <memberdef kind="variable" id="interfacesb_i_device_1f724198a8fa131e7d805b20d59f0fd72" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIPropertyBag2</type>
+        <definition>readonly attribute nsIPropertyBag2 sbIDevice::parameters</definition>
         <argsstring></argsstring>
         <name>parameters</name>
         <briefdescription>
@@ -93,7 +107,328 @@
 <para>The parameters with which the device was created </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="105" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="105" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="112" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_12289e53792b087edb742e505b502bfda" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_device_properties" kindref="compound">sbIDeviceProperties</ref></type>
+        <definition>readonly attribute sbIDeviceProperties sbIDevice::properties</definition>
+        <argsstring></argsstring>
+        <name>properties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The device&apos;s properties. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="117" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1370f6a73c7b74ec3e5f1c8f0b1331259" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIDevice::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether the device is busy, etc. <simplesect kind="see"><para>sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_* </para><para>sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_* </para><para>STATE_* </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="124" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1784fc50900edf1c33d9f2192bdc42251" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::STATE_IDLE</definition>
+        <argsstring></argsstring>
+        <name>STATE_IDLE</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="126" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_171a811d2eadc546a5f6b11d7c6c82010" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::STATE_DOWNLOADING</definition>
+        <argsstring></argsstring>
+        <name>STATE_DOWNLOADING</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="127" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1f8a164426c7da85a68034a6237f275ac" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::STATE_UPLOADING</definition>
+        <argsstring></argsstring>
+        <name>STATE_UPLOADING</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="128" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1ed865ab71492a22c3eedf6cc75564b12" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::STATE_BUSY</definition>
+        <argsstring></argsstring>
+        <name>STATE_BUSY</name>
+        <initializer> 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="129" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1a36f63e782db7d6651dcfa2536b0bb16" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::STATE_DELETING</definition>
+        <argsstring></argsstring>
+        <name>STATE_DELETING</name>
+        <initializer> 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="130" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1d8e6795f7bd3fed2ced6cd2489b95615" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::STATE_DOWNLOAD_PAUSED</definition>
+        <argsstring></argsstring>
+        <name>STATE_DOWNLOAD_PAUSED</name>
+        <initializer> 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="131" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_147b034c619c9a76d577374d37c8ff363" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::STATE_UPLOAD_PAUSED</definition>
+        <argsstring></argsstring>
+        <name>STATE_UPLOAD_PAUSED</name>
+        <initializer> 6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="132" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_11f6bcc64dd814a074fc44692531bbac8" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_FLAG_USER</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_FLAG_USER</name>
+        <initializer> 0x80000000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="134" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_FLAG_WRITE</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_FLAG_WRITE</name>
+        <initializer> 0x40000000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="135" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_154268d62bc934ffcfb1352cb051c4cd9" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_RESERVED</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_RESERVED</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="137" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1d88218696c137c33a26c8862aac35aee" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_MOUNT</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_MOUNT</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="138" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1d66a1688e9847826840d78e897ebe213" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_READ</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_READ</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="139" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1f974626ddd15a6be25974a798633d5d0" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_EJECT</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_EJECT</name>
+        <initializer> 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="140" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="140" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1be9e1155e07758f28594554522c9e5be" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_SUSPEND</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_SUSPEND</name>
+        <initializer> 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="141" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1d3a8faec96dabba809dda4aed50f93de" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_WRITE</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_WRITE</name>
+        <initializer> <ref refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" kindref="member">REQUEST_FLAG_WRITE</ref> + 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="143" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="143" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1f3a7780304ecc4366547b218da84ca5a" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_DELETE</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_DELETE</name>
+        <initializer> <ref refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" kindref="member">REQUEST_FLAG_WRITE</ref> + 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="144" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="144" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1dbcdfcc20b6efc817536617aae29ae90" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_SYNC</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_SYNC</name>
+        <initializer> <ref refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" kindref="member">REQUEST_FLAG_WRITE</ref> + 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="145" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_1b7c2296260c3c18d2d098148f9374995" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_WIPE</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_WIPE</name>
+        <initializer> <ref refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" kindref="member">REQUEST_FLAG_WRITE</ref> + 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="146" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_17dabc4f52477dcb082e319f486dbbf5e" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_MOVE</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_MOVE</name>
+        <initializer> <ref refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" kindref="member">REQUEST_FLAG_WRITE</ref> + 5</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="147" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_16bbd136600b5da03bc45ba01420fdfcc" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_UPDATE</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_UPDATE</name>
+        <initializer> <ref refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" kindref="member">REQUEST_FLAG_WRITE</ref> + 6</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="148" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_12128ccc1c913d021f8a3bd1ee85e1c95" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIDevice::REQUEST_NEW_PLAYLIST</definition>
+        <argsstring></argsstring>
+        <name>REQUEST_NEW_PLAYLIST</name>
+        <initializer> <ref refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" kindref="member">REQUEST_FLAG_WRITE</ref> + 7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="149" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="149" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -108,7 +443,7 @@
 <para>Called when the device should initialize. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="63"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="70"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_1873b30e727370e23050285116c9566de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -121,7 +456,7 @@
 <para>Called when the device is to finalize. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="68"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="75"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_1ff64a942e51a477c31cc7a906e8d7182" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIVariant</type>
@@ -138,7 +473,7 @@
 <para>Get a preference stored on the device. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="84"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="91"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_1d29366472072cd95aa68122f6e753f1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -159,52 +494,146 @@
 <para>Sets a preference stored on the device. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="90"/>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="97"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_17ed9284aac5a16769d652bf02bc4ec22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDevice::submitRequest</definition>
+        <argsstring>(in unsigned long aRequest, in nsIPropertyBag2 aRequestParameters)</argsstring>
+        <name>submitRequest</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aRequest</declname>
+        </param>
+        <param>
+          <type>in nsIPropertyBag2</type>
+          <declname>aRequestParameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="154"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_162c36e19acfc5e13e08c3925607dd12a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDevice::cancelRequests</definition>
+        <argsstring>()</argsstring>
+        <name>cancelRequests</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Cancel all current pending requests </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="158"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_190ef2e85d63890e85cb45ff7792128d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDevice::eject</definition>
+        <argsstring>()</argsstring>
+        <name>eject</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Eject device. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="163"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
     <detaileddescription>
-<para>The main interface to all device objects </para>    </detaileddescription>
+<para><simplesect kind="note"><para>Implementations of this interface must be threadsafe.</para></simplesect>
+The main interface to all device objects </para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="64">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+      </node>
+      <node id="65">
+        <label>sbIDeviceDeviceTesterBase</label>
+        <link refid="interfacesb_i_device_device_tester_base"/>
+        <childnode refid="64" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
     <collaborationgraph>
-      <node id="80">
+      <node id="69">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="77">
+      <node id="66">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="78" relation="usage">
+        <childnode refid="67" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="80" relation="usage">
+        <childnode refid="69" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
+        <childnode refid="70" relation="usage">
+          <edgelabel>properties</edgelabel>
+        </childnode>
       </node>
-      <node id="78">
+      <node id="67">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="79" relation="usage">
+        <childnode refid="68" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="79">
+      <node id="68">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
+      <node id="70">
+        <label>sbIDeviceProperties</label>
+        <link refid="interfacesb_i_device_properties"/>
+      </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="49" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="48" bodyend="106"/>
+    <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" line="51" bodyfile="z:/projects/songbird/components/devices/device/public/sbIDevice.idl" bodystart="50" bodyend="164"/>
     <listofallmembers>
+      <member refid="interfacesb_i_device_162c36e19acfc5e13e08c3925607dd12a" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>cancelRequests</name></member>
       <member refid="interfacesb_i_device_18a10e26718e7a6721465c37dd79c4b41" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>capabilities</name></member>
       <member refid="interfacesb_i_device_181a26acbf3b748a9076294ec8a6880b4" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>connect</name></member>
       <member refid="interfacesb_i_device_17371a0d264e88bb584112b3657569aa5" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>connected</name></member>
       <member refid="interfacesb_i_device_156499f28980a000b9a0bbd7f3150566f" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>content</name></member>
       <member refid="interfacesb_i_device_16bb1c045b9053154ee58591336941f14" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>controllerId</name></member>
       <member refid="interfacesb_i_device_1873b30e727370e23050285116c9566de" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>disconnect</name></member>
+      <member refid="interfacesb_i_device_190ef2e85d63890e85cb45ff7792128d0" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>eject</name></member>
       <member refid="interfacesb_i_device_1ff64a942e51a477c31cc7a906e8d7182" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>getPreference</name></member>
+      <member refid="interfacesb_i_device_10cd836f1f07248e5ccc3f804eed029a5" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>id</name></member>
       <member refid="interfacesb_i_device_10ec1721b04be6d0dff919299f9928a7d" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>name</name></member>
-      <member refid="interfacesb_i_device_1d55ea7f26e638e59ea18f68497d01126" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>parameters</name></member>
+      <member refid="interfacesb_i_device_1f724198a8fa131e7d805b20d59f0fd72" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>parameters</name></member>
+      <member refid="interfacesb_i_device_12289e53792b087edb742e505b502bfda" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>properties</name></member>
+      <member refid="interfacesb_i_device_1f3a7780304ecc4366547b218da84ca5a" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_DELETE</name></member>
+      <member refid="interfacesb_i_device_1f974626ddd15a6be25974a798633d5d0" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_EJECT</name></member>
+      <member refid="interfacesb_i_device_11f6bcc64dd814a074fc44692531bbac8" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_FLAG_USER</name></member>
+      <member refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_FLAG_WRITE</name></member>
+      <member refid="interfacesb_i_device_1d88218696c137c33a26c8862aac35aee" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_MOUNT</name></member>
+      <member refid="interfacesb_i_device_17dabc4f52477dcb082e319f486dbbf5e" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_MOVE</name></member>
+      <member refid="interfacesb_i_device_12128ccc1c913d021f8a3bd1ee85e1c95" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_NEW_PLAYLIST</name></member>
+      <member refid="interfacesb_i_device_1d66a1688e9847826840d78e897ebe213" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_READ</name></member>
+      <member refid="interfacesb_i_device_154268d62bc934ffcfb1352cb051c4cd9" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_RESERVED</name></member>
+      <member refid="interfacesb_i_device_1be9e1155e07758f28594554522c9e5be" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_SUSPEND</name></member>
+      <member refid="interfacesb_i_device_1dbcdfcc20b6efc817536617aae29ae90" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_SYNC</name></member>
+      <member refid="interfacesb_i_device_16bbd136600b5da03bc45ba01420fdfcc" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_UPDATE</name></member>
+      <member refid="interfacesb_i_device_1b7c2296260c3c18d2d098148f9374995" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_WIPE</name></member>
+      <member refid="interfacesb_i_device_1d3a8faec96dabba809dda4aed50f93de" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>REQUEST_WRITE</name></member>
       <member refid="interfacesb_i_device_1d29366472072cd95aa68122f6e753f1b" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>setPreference</name></member>
+      <member refid="interfacesb_i_device_1370f6a73c7b74ec3e5f1c8f0b1331259" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>state</name></member>
+      <member refid="interfacesb_i_device_1ed865ab71492a22c3eedf6cc75564b12" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>STATE_BUSY</name></member>
+      <member refid="interfacesb_i_device_1a36f63e782db7d6651dcfa2536b0bb16" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>STATE_DELETING</name></member>
+      <member refid="interfacesb_i_device_1d8e6795f7bd3fed2ced6cd2489b95615" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>STATE_DOWNLOAD_PAUSED</name></member>
+      <member refid="interfacesb_i_device_171a811d2eadc546a5f6b11d7c6c82010" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>STATE_DOWNLOADING</name></member>
+      <member refid="interfacesb_i_device_1784fc50900edf1c33d9f2192bdc42251" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>STATE_IDLE</name></member>
+      <member refid="interfacesb_i_device_147b034c619c9a76d577374d37c8ff363" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>STATE_UPLOAD_PAUSED</name></member>
+      <member refid="interfacesb_i_device_1f8a164426c7da85a68034a6237f275ac" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>STATE_UPLOADING</name></member>
+      <member refid="interfacesb_i_device_17ed9284aac5a16769d652bf02bc4ec22" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>submitRequest</name></member>
       <member refid="interfacesb_i_device_1892f35dfa1739941fc1aa5b8d8fef433" prot="public" virt="non-virtual"><scope>sbIDevice</scope><name>threaded</name></member>
     </listofallmembers>
   </compounddef>

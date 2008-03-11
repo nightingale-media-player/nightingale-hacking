@@ -71,7 +71,7 @@
 <a name="l00004"></a>00004 <span class="comment">//</span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2007 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2008 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">//</span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
@@ -144,58 +144,59 @@
 <a name="l00117"></a>00117   <span class="comment">/*</span>
 <a name="l00118"></a>00118 <span class="comment">  Prop: contentSrc</span>
 <a name="l00119"></a>00119 <span class="comment"></span>
-<a name="l00120"></a>00120 <span class="comment">  The URI representing the location of the &lt;MediaItem&gt;.</span>
-<a name="l00121"></a>00121 <span class="comment"></span>
-<a name="l00122"></a>00122 <span class="comment">  Type:</span>
-<a name="l00123"></a>00123 <span class="comment">    Number, in bytes.</span>
-<a name="l00124"></a>00124 <span class="comment">  */</span>
-<a name="l00125"></a><a class="code" href="interfacesb_i_media_item.html#574db3949d138422afdbd6ecffd88aa2">00125</a>   attribute nsIURI contentSrc;
-<a name="l00126"></a>00126 
-<a name="l00131"></a>00131   <span class="comment">/*</span>
-<a name="l00132"></a>00132 <span class="comment">  Prop: contentLength</span>
-<a name="l00133"></a>00133 <span class="comment"></span>
-<a name="l00134"></a>00134 <span class="comment">  The size (in bytes) of the content of the &lt;MediaItem&gt;. If this &lt;MediaItem&gt;</span>
-<a name="l00135"></a>00135 <span class="comment">  is also a &lt;MediaList&gt;, the contentLength will always be 0. </span>
-<a name="l00136"></a>00136 <span class="comment"></span>
-<a name="l00137"></a>00137 <span class="comment">  The contentLength may not be available for streams</span>
-<a name="l00138"></a>00138 <span class="comment"></span>
-<a name="l00139"></a>00139 <span class="comment">  Type:</span>
-<a name="l00140"></a>00140 <span class="comment">    Number, in bytes.</span>
-<a name="l00141"></a>00141 <span class="comment">  */</span>
-<a name="l00142"></a><a class="code" href="interfacesb_i_media_item.html#49d00fe6e35d8d24dc468b97d43d8075">00142</a>   attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> contentLength;
-<a name="l00143"></a>00143 
-<a name="l00149"></a>00149   <span class="comment">/*</span>
-<a name="l00150"></a>00150 <span class="comment">  Prop: contentType</span>
-<a name="l00151"></a>00151 <span class="comment"></span>
-<a name="l00152"></a>00152 <span class="comment">  The content type, also called mime type, of the &lt;MediaItem&gt;.</span>
-<a name="l00153"></a>00153 <span class="comment"></span>
-<a name="l00154"></a>00154 <span class="comment">  Type:</span>
-<a name="l00155"></a>00155 <span class="comment">    String</span>
-<a name="l00156"></a>00156 <span class="comment"></span>
-<a name="l00157"></a>00157 <span class="comment">  Note:</span>
-<a name="l00158"></a>00158 <span class="comment">    This property is never filled currently.</span>
-<a name="l00159"></a>00159 <span class="comment">  */</span>
-<a name="l00160"></a><a class="code" href="interfacesb_i_media_item.html#1df3ae03b08948558b1a311e3705db07">00160</a>   attribute AString contentType;
-<a name="l00161"></a>00161 
-<a name="l00166"></a>00166   <span class="keywordtype">void</span> testIsAvailable(in nsIObserver aObserver);
-<a name="l00167"></a>00167 
-<a name="l00177"></a>00177   nsIChannel openInputStreamAsync(in nsIStreamListener aListener, in nsISupports aContext);
-<a name="l00178"></a>00178 
-<a name="l00183"></a>00183   nsIInputStream openInputStream();
-<a name="l00184"></a>00184 
-<a name="l00189"></a>00189   nsIOutputStream openOutputStream();
-<a name="l00190"></a>00190 
-<a name="l00195"></a>00195   AString toString();
-<a name="l00196"></a>00196 };
-<a name="l00197"></a>00197 
-<a name="l00202"></a>00202 [scriptable, uuid(691f4342-4dcb-471f-a0f4-c4ac94cbd805)]
-<a name="l00203"></a><a class="code" href="interfacesb_i_indexed_media_item.html">00203</a> interface <a class="code" href="interfacesb_i_indexed_media_item.html" title="A container for a media item and its index.">sbIIndexedMediaItem</a> : nsISupports
-<a name="l00204"></a>00204 {
-<a name="l00205"></a><a class="code" href="interfacesb_i_indexed_media_item.html#4ae9e36d39863face1346d4a21f5c35d">00205</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> index;
-<a name="l00206"></a><a class="code" href="interfacesb_i_indexed_media_item.html#71a61e92b2950718ac1b50876e6447c7">00206</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> mediaItem;
-<a name="l00207"></a>00207 };
-<a name="l00208"></a>00208 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:03 2007 for Songbird by&nbsp;
+<a name="l00120"></a>00120 <span class="comment">  The URI representing the location of the &lt;MediaItem&gt;.  If the URI is a URL, it</span>
+<a name="l00121"></a>00121 <span class="comment">  may be QI'ed to an nsIURL.</span>
+<a name="l00122"></a>00122 <span class="comment"></span>
+<a name="l00123"></a>00123 <span class="comment">  Type:</span>
+<a name="l00124"></a>00124 <span class="comment">    Number, in bytes.</span>
+<a name="l00125"></a>00125 <span class="comment">  */</span>
+<a name="l00126"></a><a class="code" href="interfacesb_i_media_item.html#574db3949d138422afdbd6ecffd88aa2">00126</a>   attribute nsIURI contentSrc;
+<a name="l00127"></a>00127 
+<a name="l00132"></a>00132   <span class="comment">/*</span>
+<a name="l00133"></a>00133 <span class="comment">  Prop: contentLength</span>
+<a name="l00134"></a>00134 <span class="comment"></span>
+<a name="l00135"></a>00135 <span class="comment">  The size (in bytes) of the content of the &lt;MediaItem&gt;. If this &lt;MediaItem&gt;</span>
+<a name="l00136"></a>00136 <span class="comment">  is also a &lt;MediaList&gt;, the contentLength will always be 0. </span>
+<a name="l00137"></a>00137 <span class="comment"></span>
+<a name="l00138"></a>00138 <span class="comment">  The contentLength may not be available for streams</span>
+<a name="l00139"></a>00139 <span class="comment"></span>
+<a name="l00140"></a>00140 <span class="comment">  Type:</span>
+<a name="l00141"></a>00141 <span class="comment">    Number, in bytes.</span>
+<a name="l00142"></a>00142 <span class="comment">  */</span>
+<a name="l00143"></a><a class="code" href="interfacesb_i_media_item.html#49d00fe6e35d8d24dc468b97d43d8075">00143</a>   attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> contentLength;
+<a name="l00144"></a>00144 
+<a name="l00150"></a>00150   <span class="comment">/*</span>
+<a name="l00151"></a>00151 <span class="comment">  Prop: contentType</span>
+<a name="l00152"></a>00152 <span class="comment"></span>
+<a name="l00153"></a>00153 <span class="comment">  The content type, also called mime type, of the &lt;MediaItem&gt;.</span>
+<a name="l00154"></a>00154 <span class="comment"></span>
+<a name="l00155"></a>00155 <span class="comment">  Type:</span>
+<a name="l00156"></a>00156 <span class="comment">    String</span>
+<a name="l00157"></a>00157 <span class="comment"></span>
+<a name="l00158"></a>00158 <span class="comment">  Note:</span>
+<a name="l00159"></a>00159 <span class="comment">    This property is never filled currently.</span>
+<a name="l00160"></a>00160 <span class="comment">  */</span>
+<a name="l00161"></a><a class="code" href="interfacesb_i_media_item.html#1df3ae03b08948558b1a311e3705db07">00161</a>   attribute AString contentType;
+<a name="l00162"></a>00162 
+<a name="l00167"></a>00167   <span class="keywordtype">void</span> testIsAvailable(in nsIObserver aObserver);
+<a name="l00168"></a>00168 
+<a name="l00178"></a>00178   nsIChannel openInputStreamAsync(in nsIStreamListener aListener, in nsISupports aContext);
+<a name="l00179"></a>00179 
+<a name="l00184"></a>00184   nsIInputStream openInputStream();
+<a name="l00185"></a>00185 
+<a name="l00190"></a>00190   nsIOutputStream openOutputStream();
+<a name="l00191"></a>00191 
+<a name="l00196"></a>00196   AString toString();
+<a name="l00197"></a>00197 };
+<a name="l00198"></a>00198 
+<a name="l00203"></a>00203 [scriptable, uuid(691f4342-4dcb-471f-a0f4-c4ac94cbd805)]
+<a name="l00204"></a><a class="code" href="interfacesb_i_indexed_media_item.html">00204</a> interface <a class="code" href="interfacesb_i_indexed_media_item.html" title="A container for a media item and its index.">sbIIndexedMediaItem</a> : nsISupports
+<a name="l00205"></a>00205 {
+<a name="l00206"></a><a class="code" href="interfacesb_i_indexed_media_item.html#4ae9e36d39863face1346d4a21f5c35d">00206</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> index;
+<a name="l00207"></a><a class="code" href="interfacesb_i_indexed_media_item.html#71a61e92b2950718ac1b50876e6447c7">00207</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> mediaItem;
+<a name="l00208"></a>00208 };
+<a name="l00209"></a>00209 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:23 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

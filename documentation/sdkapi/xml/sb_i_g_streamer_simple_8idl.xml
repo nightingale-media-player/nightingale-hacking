@@ -4,13 +4,13 @@
     <compoundname>sbIGStreamerSimple.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="351">
+      <node id="365">
         <label>components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl</label>
         <link refid="sbIGStreamerSimple.idl"/>
-        <childnode refid="352" relation="include">
+        <childnode refid="366" relation="include">
         </childnode>
       </node>
-      <node id="352">
+      <node id="366">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -26,7 +26,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="71"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="72"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_simple_8idl_174463472d39b3b4fc1fd3964930beef8" prot="public" static="no">
         <name>SBGSTREAMERSIMPLE_CONTRACTID</name>
@@ -37,7 +37,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="73"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="74"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_simple_8idl_1e2c7988e42fbcd7bd14caf2d5373888a" prot="public" static="no">
         <name>SBGSTREAMERSIMPLE_CLASSNAME</name>
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="74"/>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="75"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -62,7 +62,7 @@
 <codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
 <codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
 <codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
 <codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
@@ -111,17 +111,18 @@
 <codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>stop();</highlight></codeline>
 <codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>seek(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aTimeNanos);</highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>restartPlaybin();</highlight></codeline>
-<codeline lineno="65"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal">%{C++</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/>{7a36e062-6d46-4c80-ad48-27c6241e3915}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSIMPLE_CID<sp/>\</highlight></codeline>
-<codeline lineno="70"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>0x7a36e062,<sp/>0x6d46,<sp/>0x4c80,<sp/>\</highlight></codeline>
-<codeline lineno="71"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>0xad,<sp/>0x48,<sp/>0x27,<sp/>0xc6,<sp/>0x24,<sp/>0x1e,<sp/>0x39,<sp/>0x15<sp/>}<sp/>}</highlight></codeline>
-<codeline lineno="72"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="73"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSIMPLE_CONTRACTID<sp/>&quot;@songbirdnest.com/Songbird/Playback/GStreamer/Simple;1&quot;</highlight></codeline>
-<codeline lineno="74"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSIMPLE_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/>&quot;GStreamerSimple&quot;</highlight></codeline>
-<codeline lineno="75"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>showHelperPage();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//<sp/>{7a36e062-6d46-4c80-ad48-27c6241e3915}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSIMPLE_CID<sp/>\</highlight></codeline>
+<codeline lineno="71"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>0x7a36e062,<sp/>0x6d46,<sp/>0x4c80,<sp/>\</highlight></codeline>
+<codeline lineno="72"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/>0xad,<sp/>0x48,<sp/>0x27,<sp/>0xc6,<sp/>0x24,<sp/>0x1e,<sp/>0x39,<sp/>0x15<sp/>}<sp/>}</highlight></codeline>
+<codeline lineno="73"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSIMPLE_CONTRACTID<sp/>&quot;@songbirdnest.com/Songbird/Playback/GStreamer/Simple;1&quot;</highlight></codeline>
+<codeline lineno="75"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSIMPLE_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/>&quot;GStreamerSimple&quot;</highlight></codeline>
+<codeline lineno="76"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
     <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl"/>
   </compounddef>

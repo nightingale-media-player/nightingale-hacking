@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_9cf9c088d00bf19badb7d3d7c9c45b85" kind="dir">
+    <compoundname>components/devices/device/test/</compoundname>
+    <innerfile refid="sb_device_device_tester_interfaces_8idl">sbDeviceDeviceTesterInterfaces.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/devices/device/test/"/>
+  </compounddef>
+</doxygen>

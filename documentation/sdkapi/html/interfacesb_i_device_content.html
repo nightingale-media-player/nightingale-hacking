@@ -79,25 +79,44 @@
 <p>
 <a href="interfacesb_i_device_content-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2fc02787c47e4eec63beb0fe803e173c"></a><!-- doxytag: member="sbIDeviceContent::initialize" ref="2fc02787c47e4eec63beb0fe803e173c" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_content.html#2fc02787c47e4eec63beb0fe803e173c">initialize</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initialize the device content. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5fb5bb6eefd2745e3feb4da1e5a6be4f"></a><!-- doxytag: member="sbIDeviceContent::finalize" ref="5fb5bb6eefd2745e3feb4da1e5a6be4f" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_content.html#5fb5bb6eefd2745e3feb4da1e5a6be4f">finalize</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Finalize the device content. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d85f2a3647a4a83140614ff2ac612d87"></a><!-- doxytag: member="sbIDeviceContent::addLibrary" ref="d85f2a3647a4a83140614ff2ac612d87" args="(in sbIDeviceLibrary aLibrary)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_content.html#d85f2a3647a4a83140614ff2ac612d87">addLibrary</a> (in <a class="el" href="interfacesb_i_device_library.html">sbIDeviceLibrary</a> aLibrary)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a device library to the device. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="392e78ad6feb3a5ae31bbb79de91edd9"></a><!-- doxytag: member="sbIDeviceContent::removeLibrary" ref="392e78ad6feb3a5ae31bbb79de91edd9" args="(in sbIDeviceLibrary aLibrary)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_content.html#392e78ad6feb3a5ae31bbb79de91edd9">removeLibrary</a> (in <a class="el" href="interfacesb_i_device_library.html">sbIDeviceLibrary</a> aLibrary)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a device library from the device. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4e150e0b6e296e4fa01ec286d78b735a"></a><!-- doxytag: member="sbIDeviceContent::libraries" ref="4e150e0b6e296e4fa01ec286d78b735a" args="" -->
-readonly attribute nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_content.html#4e150e0b6e296e4fa01ec286d78b735a">libraries</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fdc0c37bb6ff3e2f54a1361686d99110"></a><!-- doxytag: member="sbIDeviceContent::libraries" ref="fdc0c37bb6ff3e2f54a1361686d99110" args="" -->
+readonly attribute nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_content.html#fdc0c37bb6ff3e2f54a1361686d99110">libraries</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3b2f6ac099d2002ffcf1873026cbcbb7"></a><!-- doxytag: member="sbIDeviceContent::libraryCount" ref="3b2f6ac099d2002ffcf1873026cbcbb7" args="" -->
-readonly attribute PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_content.html#3b2f6ac099d2002ffcf1873026cbcbb7">libraryCount</a></td></tr>
-
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A simple array of the libraries for this device. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8c21ed6447e772a6d8da1b36e4c811a7"></a><!-- doxytag: member="sbIDeviceContent::libraryFactory" ref="8c21ed6447e772a6d8da1b36e4c811a7" args="" -->
 readonly attribute <a class="el" href="interfacesb_i_library_factory.html">sbILibraryFactory</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_content.html#8c21ed6447e772a6d8da1b36e4c811a7">libraryFactory</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Not currently implemented. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 [UNIMPLEMENTED UNTIL AFTER 0.3] 
 <p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Implementations of this interface must be threadsafe. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_device_content_8idl-source.html#l00041">41</a> of file <a class="el" href="sb_i_device_content_8idl-source.html">sbIDeviceContent.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+
+<p>
+Definition at line <a class="el" href="sb_i_device_content_8idl-source.html#l00040">40</a> of file <a class="el" href="sb_i_device_content_8idl-source.html">sbIDeviceContent.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devices/base/public/<a class="el" href="sb_i_device_content_8idl-source.html">sbIDeviceContent.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -3,17 +3,30 @@
   <compounddef id="sb_i_device_8idl" kind="file">
     <compoundname>sbIDevice.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
+    <includedby refid="sb_device_device_tester_interfaces_8idl" local="yes">components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl</includedby>
     <incdepgraph>
-      <node id="91">
+      <node id="98">
         <label>components/devices/device/public/sbIDevice.idl</label>
         <link refid="sbIDevice.idl"/>
-        <childnode refid="92" relation="include">
+        <childnode refid="99" relation="include">
         </childnode>
       </node>
-      <node id="92">
+      <node id="99">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="101">
+        <label>components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl</label>
+        <link refid="sb_device_device_tester_interfaces_8idl-source"/>
+      </node>
+      <node id="100">
+        <label>components/devices/device/public/sbIDevice.idl</label>
+        <link refid="sbIDevice.idl"/>
+        <childnode refid="101" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
     <innerclass refid="interfacesb_i_device" prot="public">sbIDevice</innerclass>
     <briefdescription>
 <para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
@@ -26,7 +39,7 @@
 <codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
 <codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright©<sp/>2006<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright©<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
 <codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
 <codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
@@ -48,39 +61,75 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">interface<sp/>nsIVariant;</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_capabilities" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCapabilities</ref>;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_content" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceContent</ref>;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_identification" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceIdentification</ref>;</highlight></codeline>
-<codeline lineno="39"><highlight class="normal">interface<sp/>sbIDeviceParameters;</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(ef5c2db8-37b7-42d4-aa7e-f76bd91d710e)]</highlight></codeline>
-<codeline lineno="48" refid="interfacesb_i_device" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="49"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="53" refid="interfacesb_i_device_10ec1721b04be6d0dff919299f9928a7d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58" refid="interfacesb_i_device_16bb1c045b9053154ee58591336941f14" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDPtr<sp/>controllerId;</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>connect();</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>disconnect();</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight></codeline>
-<codeline lineno="73" refid="interfacesb_i_device_17371a0d264e88bb584112b3657569aa5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>connected;</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"></highlight></codeline>
-<codeline lineno="79" refid="interfacesb_i_device_1892f35dfa1739941fc1aa5b8d8fef433" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>threaded;</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/>nsIVariant<sp/>getPreference(in<sp/>AString<sp/>aPrefName);</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"></highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setPreference(in<sp/>AString<sp/>aPrefName,</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIVariant<sp/>aPrefValue);</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"></highlight></codeline>
-<codeline lineno="95" refid="interfacesb_i_device_18a10e26718e7a6721465c37dd79c4b41" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_device_capabilities" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCapabilities</ref><sp/>capabilities;</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"></highlight></codeline>
-<codeline lineno="100" refid="interfacesb_i_device_156499f28980a000b9a0bbd7f3150566f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_device_content" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceContent</ref><sp/>content;</highlight></codeline>
-<codeline lineno="101"><highlight class="normal"></highlight></codeline>
-<codeline lineno="105" refid="interfacesb_i_device_1d55ea7f26e638e59ea18f68497d01126" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>sbIDeviceParamaters<sp/>parameters;</highlight></codeline>
-<codeline lineno="106"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/>nsIPropertyBag2;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/>nsIVariant;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_capabilities" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCapabilities</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_content" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceContent</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_properties" kindref="compound">sbIDeviceProperties</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">interface<sp/>sbIDeviceParameters;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal">[scriptable,<sp/>uuid(500cd0ed-d670-4013-a6bf-53e4ff0ec501)]</highlight></codeline>
+<codeline lineno="50" refid="interfacesb_i_device" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="55" refid="interfacesb_i_device_10ec1721b04be6d0dff919299f9928a7d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="interfacesb_i_device_16bb1c045b9053154ee58591336941f14" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDPtr<sp/>controllerId;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="65" refid="interfacesb_i_device_10cd836f1f07248e5ccc3f804eed029a5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDPtr<sp/>id;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>connect();</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>disconnect();</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="interfacesb_i_device_17371a0d264e88bb584112b3657569aa5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>connected;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="interfacesb_i_device_1892f35dfa1739941fc1aa5b8d8fef433" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>threaded;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>nsIVariant<sp/>getPreference(in<sp/>AString<sp/>aPrefName);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setPreference(in<sp/>AString<sp/>aPrefName,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIVariant<sp/>aPrefValue);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102" refid="interfacesb_i_device_18a10e26718e7a6721465c37dd79c4b41" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_device_capabilities" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCapabilities</ref><sp/>capabilities;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="interfacesb_i_device_156499f28980a000b9a0bbd7f3150566f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_device_content" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceContent</ref><sp/>content;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112" refid="interfacesb_i_device_1f724198a8fa131e7d805b20d59f0fd72" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIPropertyBag2<sp/>parameters;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="117" refid="interfacesb_i_device_12289e53792b087edb742e505b502bfda" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_device_properties" kindref="compound">sbIDeviceProperties</ref><sp/>properties;</highlight></codeline>
+<codeline lineno="124" refid="interfacesb_i_device_1370f6a73c7b74ec3e5f1c8f0b1331259" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>state;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126" refid="interfacesb_i_device_1784fc50900edf1c33d9f2192bdc42251" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATE_IDLE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="127" refid="interfacesb_i_device_171a811d2eadc546a5f6b11d7c6c82010" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATE_DOWNLOADING<sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="128" refid="interfacesb_i_device_1f8a164426c7da85a68034a6237f275ac" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATE_UPLOADING<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="129" refid="interfacesb_i_device_1ed865ab71492a22c3eedf6cc75564b12" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATE_BUSY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="130" refid="interfacesb_i_device_1a36f63e782db7d6651dcfa2536b0bb16" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATE_DELETING<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>4;</highlight></codeline>
+<codeline lineno="131" refid="interfacesb_i_device_1d8e6795f7bd3fed2ced6cd2489b95615" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATE_DOWNLOAD_PAUSED<sp/>=<sp/>5;</highlight></codeline>
+<codeline lineno="132" refid="interfacesb_i_device_147b034c619c9a76d577374d37c8ff363" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATE_UPLOAD_PAUSED<sp/><sp/><sp/>=<sp/>6;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="interfacesb_i_device_11f6bcc64dd814a074fc44692531bbac8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_FLAG_USER<sp/><sp/>=<sp/>0x80000000;</highlight></codeline>
+<codeline lineno="135" refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_FLAG_WRITE<sp/>=<sp/>0x40000000;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137" refid="interfacesb_i_device_154268d62bc934ffcfb1352cb051c4cd9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_RESERVED<sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="138" refid="interfacesb_i_device_1d88218696c137c33a26c8862aac35aee" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_MOUNT<sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="139" refid="interfacesb_i_device_1d66a1688e9847826840d78e897ebe213" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_READ<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="140" refid="interfacesb_i_device_1f974626ddd15a6be25974a798633d5d0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_EJECT<sp/><sp/><sp/><sp/><sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="141" refid="interfacesb_i_device_1be9e1155e07758f28594554522c9e5be" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_SUSPEND<sp/><sp/><sp/>=<sp/>4;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="interfacesb_i_device_1d3a8faec96dabba809dda4aed50f93de" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_WRITE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>REQUEST_FLAG_WRITE<sp/>+<sp/>1;</highlight></codeline>
+<codeline lineno="144" refid="interfacesb_i_device_1f3a7780304ecc4366547b218da84ca5a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_DELETE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>REQUEST_FLAG_WRITE<sp/>+<sp/>2;</highlight></codeline>
+<codeline lineno="145" refid="interfacesb_i_device_1dbcdfcc20b6efc817536617aae29ae90" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_SYNC<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>REQUEST_FLAG_WRITE<sp/>+<sp/>3;</highlight></codeline>
+<codeline lineno="146" refid="interfacesb_i_device_1b7c2296260c3c18d2d098148f9374995" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_WIPE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>REQUEST_FLAG_WRITE<sp/>+<sp/>4;</highlight></codeline>
+<codeline lineno="147" refid="interfacesb_i_device_17dabc4f52477dcb082e319f486dbbf5e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_MOVE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>REQUEST_FLAG_WRITE<sp/>+<sp/>5;</highlight></codeline>
+<codeline lineno="148" refid="interfacesb_i_device_16bbd136600b5da03bc45ba01420fdfcc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_UPDATE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>REQUEST_FLAG_WRITE<sp/>+<sp/>6;</highlight></codeline>
+<codeline lineno="149" refid="interfacesb_i_device_12128ccc1c913d021f8a3bd1ee85e1c95" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_NEW_PLAYLIST<sp/><sp/>=<sp/>REQUEST_FLAG_WRITE<sp/>+<sp/>7;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>submitRequest(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aRequest,<sp/>in<sp/>nsIPropertyBag2<sp/>aRequestParameters);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cancelRequests();</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>eject();</highlight></codeline>
+<codeline lineno="164"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="z:/projects/songbird/components/devices/device/public/sbIDevice.idl"/>
   </compounddef>

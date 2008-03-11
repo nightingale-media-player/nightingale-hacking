@@ -118,6 +118,12 @@ nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#a51940037eaf3f3d39a16e9fffdfaacc">isOnTop</a> (in AString aLayoutURL, in AString aInternalName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Should the window be kept on top.  <a href="#a51940037eaf3f3d39a16e9fffdfaacc"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#6acee2eefe3380d09248aa80da2bd41b">setOnTop</a> (in AString aLayoutURL, in AString aInternalName, in boolean aOnTop)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Should the window be kept on top.  <a href="#6acee2eefe3380d09248aa80da2bd41b"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#87254fb2eac367dadd278b53b8cac4b3">canOnTop</a> (in AString aLayoutURL, in AString aInternalName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Can the window be kept on top.  <a href="#87254fb2eac367dadd278b53b8cac4b3"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#7f80bd36542c40d6a3b733c54b1934b2">getSkinsForLayout</a> (in AString aLayoutURL)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get an enumerator for all registered skins compatible with the given layoutID.  <a href="#7f80bd36542c40d6a3b733c54b1934b2"></a><br></td></tr>
@@ -507,6 +513,88 @@ Should the window be kept on top.
 
 </div>
 </div><p>
+<a class="anchor" name="6acee2eefe3380d09248aa80da2bd41b"></a><!-- doxytag: member="sbIFeathersManager::setOnTop" ref="6acee2eefe3380d09248aa80da2bd41b" args="(in AString aLayoutURL, in AString aInternalName, in boolean aOnTop)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIFeathersManager::setOnTop           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aLayoutURL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aInternalName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in boolean&nbsp;</td>
+          <td class="paramname"> <em>aOnTop</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Should the window be kept on top. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aLayoutURL</em>&nbsp;</td><td>URL for a xul window </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aInternalName</em>&nbsp;</td><td>Identifier for a skin </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aOnTop</em>&nbsp;</td><td>Should the window be kept on top </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="87254fb2eac367dadd278b53b8cac4b3"></a><!-- doxytag: member="sbIFeathersManager::canOnTop" ref="87254fb2eac367dadd278b53b8cac4b3" args="(in AString aLayoutURL, in AString aInternalName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIFeathersManager::canOnTop           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aLayoutURL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aInternalName</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Can the window be kept on top. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aLayoutURL</em>&nbsp;</td><td>URL for a xul window </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aInternalName</em>&nbsp;</td><td>Identifier for a skin </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>True if the given pair can be kept on top </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="7f80bd36542c40d6a3b733c54b1934b2"></a><!-- doxytag: member="sbIFeathersManager::getSkinsForLayout" ref="7f80bd36542c40d6a3b733c54b1934b2" args="(in AString aLayoutURL)" -->
 <div class="memitem">
 <div class="memproto">
@@ -685,7 +773,7 @@ Unregister modification callbacks.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/feathers/public/<a class="el" href="sb_i_feathers_manager_8idl-source.html">sbIFeathersManager.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:06 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:26 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

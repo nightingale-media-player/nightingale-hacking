@@ -71,7 +71,7 @@
 <a name="l00004"></a>00004 <span class="comment">//</span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2007 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2008 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">//</span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
@@ -97,7 +97,7 @@
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a>;
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a>;
 <a name="l00037"></a>00037 
-<a name="l00042"></a>00042 [scriptable, uuid(961b6911-c48a-4a48-a3a3-596f5fa68b7c)]
+<a name="l00042"></a>00042 [scriptable, uuid(15928572-66fc-4eb8-a430-a5bac5bf350e)]
 <a name="l00043"></a><a class="code" href="interfacesb_i_library_service_pane_service.html">00043</a> interface <a class="code" href="interfacesb_i_library_service_pane_service.html" title="Provides information about libraries and medialists needed by the service pane.">sbILibraryServicePaneService</a> : nsISupports {
 <a name="l00044"></a>00044 
 <a name="l00045"></a>00045   <span class="comment">/* \brief Suggest a library for creating a new media list</span>
@@ -139,8 +139,16 @@
 <a name="l00081"></a>00081 <span class="comment">   * \return a sbIMediaItem, sbIMediaItem, sbILibrary, or null</span>
 <a name="l00082"></a>00082 <span class="comment">   */</span>
 <a name="l00083"></a>00083   <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a> getLibraryResourceForNode (in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode);
-<a name="l00084"></a>00084 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:04 2007 for Songbird by&nbsp;
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085   <span class="comment">/* \brief Set node read-only property.</span>
+<a name="l00086"></a>00086 <span class="comment">   *</span>
+<a name="l00087"></a>00087 <span class="comment">   * \param aNode Node to set.</span>
+<a name="l00088"></a>00088 <span class="comment">   * \param aReadOnly If true, node is read-only.</span>
+<a name="l00089"></a>00089 <span class="comment">   */</span>
+<a name="l00090"></a>00090   <span class="keywordtype">void</span> setNodeReadOnly(in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode,
+<a name="l00091"></a>00091                        in <span class="keywordtype">boolean</span> aReadOnly);
+<a name="l00092"></a>00092 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:24 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

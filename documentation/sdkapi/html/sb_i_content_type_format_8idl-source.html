@@ -71,7 +71,7 @@
 <a name="l00004"></a>00004 <span class="comment">// </span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2006 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2008 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">// </span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
@@ -93,18 +93,23 @@
 <a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
-<a name="l00029"></a>00029 interface nsISimpleEnumerator;
+<a name="l00029"></a>00029 interface nsIUTF8StringEnumerator;
 <a name="l00030"></a>00030 
-<a name="l00035"></a>00035 [scriptable, uuid(f08c6820-fa6c-44c0-9ce5-19c1d4a5fc3c)]
-<a name="l00036"></a><a class="code" href="interfacesb_i_content_type_format.html">00036</a> interface <a class="code" href="interfacesb_i_content_type_format.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIContentTypeFormat</a> : nsISupports
-<a name="l00037"></a>00037 {
-<a name="l00041"></a><a class="code" href="interfacesb_i_content_type_format.html#7a46156e76490b9f41bc47a715154ef7">00041</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> containerFormat;
-<a name="l00042"></a>00042    
-<a name="l00046"></a><a class="code" href="interfacesb_i_content_type_format.html#aba1f41f93edc844774b20d14deb8139">00046</a>   readonly attribute nsISimpleEnumerator encodingFormats;
-<a name="l00047"></a>00047    
-<a name="l00051"></a><a class="code" href="interfacesb_i_content_type_format.html#7d84b00c8779884a8ea52dba1b210eed">00051</a>   readonly attribute nsISimpleEnumerator decodingFormats; 
-<a name="l00052"></a>00052 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:02 2007 for Songbird by&nbsp;
+<a name="l00039"></a>00039 [scriptable, uuid(9c369502-815e-457c-b7f8-ec75162a6a7c)]
+<a name="l00040"></a><a class="code" href="interfacesb_i_content_type_format.html">00040</a> interface <a class="code" href="interfacesb_i_content_type_format.html">sbIContentTypeFormat</a> : nsISupports
+<a name="l00041"></a>00041 {
+<a name="l00042"></a>00042   <span class="keywordtype">void</span> init(in <span class="keywordtype">string</span> aContainerFormat,
+<a name="l00043"></a>00043             [array, size_is(aEncodingFormatsCount)] in <span class="keywordtype">string</span> aEncodingFormats,
+<a name="l00044"></a>00044             in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aEncodingFormatsCount,
+<a name="l00045"></a>00045             [array, size_is(aDecodingFormatsCount)] in <span class="keywordtype">string</span> aDecodingFormats,
+<a name="l00046"></a>00046             in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aDecodingFormatsCount);
+<a name="l00051"></a><a class="code" href="interfacesb_i_content_type_format.html#774593c5f79562b87a71574f9b2291b0">00051</a>   readonly attribute ACString containerFormat;
+<a name="l00052"></a>00052    
+<a name="l00056"></a><a class="code" href="interfacesb_i_content_type_format.html#574a05d98fcb042e5fb7bb5747e8e5fc">00056</a>   readonly attribute nsIUTF8StringEnumerator encodingFormats;
+<a name="l00057"></a>00057    
+<a name="l00061"></a><a class="code" href="interfacesb_i_content_type_format.html#50777698da7105b62f16e80fca8e1c3c">00061</a>   readonly attribute nsIUTF8StringEnumerator decodingFormats; 
+<a name="l00062"></a>00062 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

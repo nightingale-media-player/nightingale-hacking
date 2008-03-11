@@ -4,19 +4,6 @@
     <compoundname>sbITabBrowserTab</compoundname>
     <includes refid="sb_i_tab_browser_8idl" local="no">sbITabBrowser.idl</includes>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_tab_browser_tab_15fa459b0d1cd94101b8cf42d7880158f" prot="public" static="no" mutable="no">
-        <type>readonly attribute nsIDOMElement</type>
-        <definition>readonly attribute nsIDOMElement sbITabBrowserTab::innerPlaylist</definition>
-        <argsstring></argsstring>
-        <name>innerPlaylist</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="59" bodyfile="z:/projects/songbird/bindings/public/sbITabBrowser.idl" bodystart="59" bodyend="-1"/>
-      </memberdef>
       <memberdef kind="variable" id="interfacesb_i_tab_browser_tab_15071abe645f9ef3ca43f649c617a4781" prot="public" static="no" mutable="no">
         <type>readonly attribute nsIDOMElement</type>
         <definition>readonly attribute nsIDOMElement sbITabBrowserTab::outerPlaylist</definition>
@@ -28,7 +15,33 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="60" bodyfile="z:/projects/songbird/bindings/public/sbITabBrowser.idl" bodystart="60" bodyend="-1"/>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="61" bodyfile="z:/projects/songbird/bindings/public/sbITabBrowser.idl" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_tab_browser_tab_110fa932cdff01dabc02d577a232ec39d" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_media_page" kindref="compound">sbIMediaPage</ref></type>
+        <definition>readonly attribute sbIMediaPage sbITabBrowserTab::mediaPage</definition>
+        <argsstring></argsstring>
+        <name>mediaPage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="62" bodyfile="z:/projects/songbird/bindings/public/sbITabBrowser.idl" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_tab_browser_tab_11c4f11513da61b6a93e6d2796228c90c" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+        <definition>readonly attribute sbIMediaListView sbITabBrowserTab::mediaListView</definition>
+        <argsstring></argsstring>
+        <name>mediaListView</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="63" bodyfile="z:/projects/songbird/bindings/public/sbITabBrowser.idl" bodystart="63" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -43,7 +56,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="61"/>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="64"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tab_browser_tab_1e0ad1aa4c26f02f21aa457c14be91400" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -56,7 +69,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="62"/>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="65"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tab_browser_tab_130c9bc1829baaff577bf56b0e9c58875" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -69,7 +82,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="63"/>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="66"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tab_browser_tab_1b986896ce581c03cc24445c62f50ce1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -82,7 +95,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="64"/>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="67"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tab_browser_tab_104889d5a0de6ce1d932b5e40cb8e83ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -95,7 +108,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="65"/>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="68"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_tab_browser_tab_117fa6fc2e89dc73ae801a1b1b6cad898" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -108,7 +121,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="66"/>
+        <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="69"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -116,14 +129,121 @@
 </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="58" bodyfile="z:/projects/songbird/bindings/public/sbITabBrowser.idl" bodystart="57" bodyend="67"/>
+    <collaborationgraph>
+      <node id="800">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="801" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="799">
+        <label>sbIMediaListView</label>
+        <link refid="interfacesb_i_media_list_view"/>
+        <childnode refid="800" relation="usage">
+          <edgelabel>mediaList</edgelabel>
+        </childnode>
+        <childnode refid="809" relation="usage">
+          <edgelabel>selection</edgelabel>
+        </childnode>
+        <childnode refid="810" relation="usage">
+          <edgelabel>cascadeFilterSet</edgelabel>
+        </childnode>
+      </node>
+      <node id="809">
+        <label>sbIMediaListViewSelection</label>
+        <link refid="interfacesb_i_media_list_view_selection"/>
+        <childnode refid="801" relation="usage">
+          <edgelabel>currentMediaItem</edgelabel>
+        </childnode>
+      </node>
+      <node id="807">
+        <label>sbIDeviceCapabilities</label>
+        <link refid="interfacesb_i_device_capabilities"/>
+      </node>
+      <node id="798">
+        <label>sbIMediaPage</label>
+        <link refid="interfacesb_i_media_page"/>
+        <childnode refid="799" relation="usage">
+          <edgelabel>mediaListView</edgelabel>
+        </childnode>
+      </node>
+      <node id="804">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="805" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="807" relation="usage">
+          <edgelabel>capabilities</edgelabel>
+        </childnode>
+        <childnode refid="808" relation="usage">
+          <edgelabel>properties</edgelabel>
+        </childnode>
+      </node>
+      <node id="803">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="800" relation="public-inheritance">
+        </childnode>
+        <childnode refid="804" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="806" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="810">
+        <label>sbICascadeFilterSet</label>
+        <link refid="interfacesb_i_cascade_filter_set"/>
+      </node>
+      <node id="802">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="801">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="802" relation="public-inheritance">
+        </childnode>
+        <childnode refid="803" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="797">
+        <label>sbITabBrowserTab</label>
+        <link refid="interfacesb_i_tab_browser_tab"/>
+        <childnode refid="798" relation="usage">
+          <edgelabel>mediaPage</edgelabel>
+        </childnode>
+        <childnode refid="799" relation="usage">
+          <edgelabel>mediaListView</edgelabel>
+        </childnode>
+      </node>
+      <node id="805">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="806" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="806">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+      <node id="808">
+        <label>sbIDeviceProperties</label>
+        <link refid="interfacesb_i_device_properties"/>
+      </node>
+    </collaborationgraph>
+    <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl" line="60" bodyfile="z:/projects/songbird/bindings/public/sbITabBrowser.idl" bodystart="59" bodyend="70"/>
     <listofallmembers>
       <member refid="interfacesb_i_tab_browser_tab_1e0ad1aa4c26f02f21aa457c14be91400" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>clearOuterPlaylist</name></member>
       <member refid="interfacesb_i_tab_browser_tab_130c9bc1829baaff577bf56b0e9c58875" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>disableScan</name></member>
       <member refid="interfacesb_i_tab_browser_tab_1b986896ce581c03cc24445c62f50ce1c" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>enableScan</name></member>
       <member refid="interfacesb_i_tab_browser_tab_1bc82234cf82d052b1cc2cc7f203746aa" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>getPlaylist</name></member>
       <member refid="interfacesb_i_tab_browser_tab_104889d5a0de6ce1d932b5e40cb8e83ca" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>hideOuterPlaylist</name></member>
-      <member refid="interfacesb_i_tab_browser_tab_15fa459b0d1cd94101b8cf42d7880158f" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>innerPlaylist</name></member>
+      <member refid="interfacesb_i_tab_browser_tab_11c4f11513da61b6a93e6d2796228c90c" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>mediaListView</name></member>
+      <member refid="interfacesb_i_tab_browser_tab_110fa932cdff01dabc02d577a232ec39d" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>mediaPage</name></member>
       <member refid="interfacesb_i_tab_browser_tab_15071abe645f9ef3ca43f649c617a4781" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>outerPlaylist</name></member>
       <member refid="interfacesb_i_tab_browser_tab_117fa6fc2e89dc73ae801a1b1b6cad898" prot="public" virt="non-virtual"><scope>sbITabBrowserTab</scope><name>showOuterPlaylist</name></member>
     </listofallmembers>

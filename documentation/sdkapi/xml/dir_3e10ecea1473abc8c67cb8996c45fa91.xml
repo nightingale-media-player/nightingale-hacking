@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_3e10ecea1473abc8c67cb8996c45fa91" kind="dir">
+    <compoundname>components/moz/proxy/</compoundname>
+    <innerdir refid="dir_419c080e7d50d1e3677e90132dafc983">components/moz/proxy/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="z:/projects/songbird/components/moz/proxy/"/>
+  </compounddef>
+</doxygen>

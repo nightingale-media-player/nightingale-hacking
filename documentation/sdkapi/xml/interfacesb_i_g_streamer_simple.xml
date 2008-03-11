@@ -287,12 +287,25 @@
         </inbodydescription>
         <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="64"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_g_streamer_simple_17562587412bd00bb99d3b6ace087318a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerSimple::showHelperPage</definition>
+        <argsstring>()</argsstring>
+        <name>showHelperPage</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="65"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="41" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="40" bodyend="65"/>
+    <location file="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" line="41" bodyfile="z:/projects/songbird/components/mediacore/playback/gstreamer/public/sbIGStreamerSimple.idl" bodystart="40" bodyend="66"/>
     <listofallmembers>
       <member refid="interfacesb_i_g_streamer_simple_1fd20eebec78801f82bbff12f91041b1b" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>album</name></member>
       <member refid="interfacesb_i_g_streamer_simple_1cc17a436412b33fd60094301af9c03c6" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>artist</name></member>
@@ -310,6 +323,7 @@
       <member refid="interfacesb_i_g_streamer_simple_1c7f90ad86e23877864d272a97a40b4ba" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>position</name></member>
       <member refid="interfacesb_i_g_streamer_simple_1a999bb4deaeb7b0fd5dd344e87dae045" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>restartPlaybin</name></member>
       <member refid="interfacesb_i_g_streamer_simple_1ad7586306e1330ffc06246ecf499d3f5" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>seek</name></member>
+      <member refid="interfacesb_i_g_streamer_simple_17562587412bd00bb99d3b6ace087318a" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>showHelperPage</name></member>
       <member refid="interfacesb_i_g_streamer_simple_181338c11b8b7b72e4676d967aa5b8a44" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>stop</name></member>
       <member refid="interfacesb_i_g_streamer_simple_1aff9e06580f103d9e18e6b392da4ed68" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>streamLength</name></member>
       <member refid="interfacesb_i_g_streamer_simple_1aef992a4e89620a459b23c399f9a91f1" prot="public" virt="non-virtual"><scope>sbIGStreamerSimple</scope><name>title</name></member>

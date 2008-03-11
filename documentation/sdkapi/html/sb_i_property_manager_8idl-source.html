@@ -71,7 +71,7 @@
 <a name="l00004"></a>00004 <span class="comment">//</span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2007 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2008 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">//</span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
@@ -100,7 +100,7 @@
 <a name="l00039"></a>00039 interface <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>;
 <a name="l00040"></a>00040 interface <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>;
 <a name="l00041"></a>00041 
-<a name="l00050"></a>00050 [scriptable, uuid(fe64ee8a-7df6-4046-85da-97ee1742ac21)]
+<a name="l00050"></a>00050 [scriptable, uuid(fa691a34-5739-427e-afd6-d8d55ea0f3d0)]
 <a name="l00051"></a><a class="code" href="interfacesb_i_property_manager.html">00051</a> interface <a class="code" href="interfacesb_i_property_manager.html" title="Manager for system wide metadata properties.">sbIPropertyManager</a> : nsISupports
 <a name="l00052"></a>00052 {
 <a name="l00057"></a><a class="code" href="interfacesb_i_property_manager.html#fb62e82a29db1da94a9acd2c2bd8599b">00057</a>   readonly attribute nsIStringEnumerator propertyIDs;
@@ -115,157 +115,158 @@
 <a name="l00085"></a>00085 
 <a name="l00089"></a>00089   AString getStringFromName(in nsIStringBundle aBundle, in AString aName);
 <a name="l00090"></a>00090 
-<a name="l00091"></a>00091 };
-<a name="l00092"></a>00092 
-<a name="l00097"></a>00097 [scriptable, uuid(2C334049-EFCD-40ed-99F8-A96D541569E5)]
-<a name="l00098"></a><a class="code" href="interfacesb_i_property_operator.html">00098</a> interface <a class="code" href="interfacesb_i_property_operator.html" title="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</a> : nsISupports
-<a name="l00099"></a>00099 {
-<a name="l00103"></a><a class="code" href="interfacesb_i_property_operator.html#655cf614c5ada820482e2286943267ff">00103</a>   readonly attribute AString <span class="keyword">operator</span>;
-<a name="l00104"></a>00104 
-<a name="l00109"></a><a class="code" href="interfacesb_i_property_operator.html#ff61810d7bc89c81dcc005b14c711647">00109</a>   readonly attribute AString operatorReadable;
+<a name="l00096"></a>00096   <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> getPropertySort(in AString aID, in <span class="keywordtype">boolean</span> aIsAscending);
+<a name="l00097"></a>00097 };
+<a name="l00098"></a>00098 
+<a name="l00103"></a>00103 [scriptable, uuid(2C334049-EFCD-40ed-99F8-A96D541569E5)]
+<a name="l00104"></a><a class="code" href="interfacesb_i_property_operator.html">00104</a> interface <a class="code" href="interfacesb_i_property_operator.html" title="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</a> : nsISupports
+<a name="l00105"></a>00105 {
+<a name="l00109"></a><a class="code" href="interfacesb_i_property_operator.html#655cf614c5ada820482e2286943267ff">00109</a>   readonly attribute AString <span class="keyword">operator</span>;
 <a name="l00110"></a>00110 
-<a name="l00115"></a>00115   <span class="keywordtype">void</span> Init(in AString aOperator, in aString aOperatorReadable);
-<a name="l00116"></a>00116 };
-<a name="l00117"></a>00117 
-<a name="l00123"></a>00123 [scriptable, uuid(769538d8-4e2b-457d-b76f-0db0150830a8)]
-<a name="l00124"></a><a class="code" href="interfacesb_i_property_info.html">00124</a> interface <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> : nsISupports
-<a name="l00125"></a>00125 {
-<a name="l00126"></a><a class="code" href="interfacesb_i_property_info.html#afe9f89f31df1de16ca3b9ab5b7682de">00126</a>   readonly attribute AString OPERATOR_EQUALS;
-<a name="l00127"></a><a class="code" href="interfacesb_i_property_info.html#07b29f9866c056a61de6f605e56614ba">00127</a>   readonly attribute AString OPERATOR_NOTEQUALS;
-<a name="l00128"></a><a class="code" href="interfacesb_i_property_info.html#8638a084c59f3033542093b691267704">00128</a>   readonly attribute AString OPERATOR_GREATER;
-<a name="l00129"></a><a class="code" href="interfacesb_i_property_info.html#0f788ca30e7f58af5d5fab302fa3e00e">00129</a>   readonly attribute AString OPERATOR_GREATEREQUAL;
-<a name="l00130"></a><a class="code" href="interfacesb_i_property_info.html#b0c9ffabb30224122bf1bba5bea890be">00130</a>   readonly attribute AString OPERATOR_LESS;
-<a name="l00131"></a><a class="code" href="interfacesb_i_property_info.html#3cdfd09f8658c992b1fe589ced72da7a">00131</a>   readonly attribute AString OPERATOR_LESSEQUAL;
-<a name="l00132"></a><a class="code" href="interfacesb_i_property_info.html#4b6d078b39a35c61911b42ca24a3f2b7">00132</a>   readonly attribute AString OPERATOR_CONTAINS;
-<a name="l00133"></a><a class="code" href="interfacesb_i_property_info.html#23dae3923453285d8471be2a045c125d">00133</a>   readonly attribute AString OPERATOR_BEGINSWITH;
-<a name="l00134"></a><a class="code" href="interfacesb_i_property_info.html#12123f0254cc60b5323bccbeb6485bd0">00134</a>   readonly attribute AString OPERATOR_ENDSWITH;
-<a name="l00135"></a><a class="code" href="interfacesb_i_property_info.html#e510a1cfef38ced282dbb4fec4211ee5">00135</a>   readonly attribute AString OPERATOR_BETWEEN;
-<a name="l00136"></a>00136 
-<a name="l00137"></a>00137   <span class="comment">/* NOTE: if you change this list of null sort values, please update the</span>
-<a name="l00138"></a>00138 <span class="comment">   * documentation in sbIRemoteWebPlaylist.idl as well, thanks!</span>
-<a name="l00139"></a>00139 <span class="comment">   */</span>
-<a name="l00140"></a>00140 
-<a name="l00144"></a><a class="code" href="interfacesb_i_property_info.html#a59ffdf127b704755dd744beca75e22c">00144</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SORT_NULL_SMALL = 0;
-<a name="l00145"></a>00145 
-<a name="l00149"></a><a class="code" href="interfacesb_i_property_info.html#b3fa49104aef3d82537d89ca6fc4631a">00149</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SORT_NULL_BIG   = 1;
-<a name="l00150"></a>00150 
-<a name="l00154"></a><a class="code" href="interfacesb_i_property_info.html#691b6cd3f66d0b53d9a97e271cab4dee">00154</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SORT_NULL_FIRST = 2;
-<a name="l00155"></a>00155 
-<a name="l00159"></a><a class="code" href="interfacesb_i_property_info.html#096eee2d42fdc593b9cfb6dfcce30a2e">00159</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SORT_NULL_LAST  = 3;
-<a name="l00160"></a>00160   
-<a name="l00164"></a><a class="code" href="interfacesb_i_property_info.html#ef29192fd04343a208b31f975f6224f8">00164</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> nullSort;
-<a name="l00165"></a>00165 
-<a name="l00173"></a><a class="code" href="interfacesb_i_property_info.html#5928b8ba0b6b86690f8805159f42321b">00173</a>   attribute <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> sortProfile;
-<a name="l00174"></a>00174 
-<a name="l00178"></a><a class="code" href="interfacesb_i_property_info.html#61817d7ea202ecab4269758576035d40">00178</a>   attribute AString id;
-<a name="l00179"></a>00179 
-<a name="l00183"></a><a class="code" href="interfacesb_i_property_info.html#37e83ba1df687703b9006504d58239fe">00183</a>   attribute AString type;
-<a name="l00184"></a>00184 
-<a name="l00188"></a><a class="code" href="interfacesb_i_property_info.html#a21698c5223efc9ab97e4b0f1070d7ef">00188</a>   attribute AString displayName;
-<a name="l00189"></a>00189 
-<a name="l00194"></a><a class="code" href="interfacesb_i_property_info.html#0fa3d1fb01bd4fd2ab06eaa63465ed7d">00194</a>   attribute <span class="keywordtype">boolean</span> userViewable;
+<a name="l00115"></a><a class="code" href="interfacesb_i_property_operator.html#ff61810d7bc89c81dcc005b14c711647">00115</a>   readonly attribute AString operatorReadable;
+<a name="l00116"></a>00116 
+<a name="l00121"></a>00121   <span class="keywordtype">void</span> Init(in AString aOperator, in aString aOperatorReadable);
+<a name="l00122"></a>00122 };
+<a name="l00123"></a>00123 
+<a name="l00129"></a>00129 [scriptable, uuid(769538d8-4e2b-457d-b76f-0db0150830a8)]
+<a name="l00130"></a><a class="code" href="interfacesb_i_property_info.html">00130</a> interface <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> : nsISupports
+<a name="l00131"></a>00131 {
+<a name="l00132"></a><a class="code" href="interfacesb_i_property_info.html#afe9f89f31df1de16ca3b9ab5b7682de">00132</a>   readonly attribute AString OPERATOR_EQUALS;
+<a name="l00133"></a><a class="code" href="interfacesb_i_property_info.html#07b29f9866c056a61de6f605e56614ba">00133</a>   readonly attribute AString OPERATOR_NOTEQUALS;
+<a name="l00134"></a><a class="code" href="interfacesb_i_property_info.html#8638a084c59f3033542093b691267704">00134</a>   readonly attribute AString OPERATOR_GREATER;
+<a name="l00135"></a><a class="code" href="interfacesb_i_property_info.html#0f788ca30e7f58af5d5fab302fa3e00e">00135</a>   readonly attribute AString OPERATOR_GREATEREQUAL;
+<a name="l00136"></a><a class="code" href="interfacesb_i_property_info.html#b0c9ffabb30224122bf1bba5bea890be">00136</a>   readonly attribute AString OPERATOR_LESS;
+<a name="l00137"></a><a class="code" href="interfacesb_i_property_info.html#3cdfd09f8658c992b1fe589ced72da7a">00137</a>   readonly attribute AString OPERATOR_LESSEQUAL;
+<a name="l00138"></a><a class="code" href="interfacesb_i_property_info.html#4b6d078b39a35c61911b42ca24a3f2b7">00138</a>   readonly attribute AString OPERATOR_CONTAINS;
+<a name="l00139"></a><a class="code" href="interfacesb_i_property_info.html#23dae3923453285d8471be2a045c125d">00139</a>   readonly attribute AString OPERATOR_BEGINSWITH;
+<a name="l00140"></a><a class="code" href="interfacesb_i_property_info.html#12123f0254cc60b5323bccbeb6485bd0">00140</a>   readonly attribute AString OPERATOR_ENDSWITH;
+<a name="l00141"></a><a class="code" href="interfacesb_i_property_info.html#e510a1cfef38ced282dbb4fec4211ee5">00141</a>   readonly attribute AString OPERATOR_BETWEEN;
+<a name="l00142"></a>00142 
+<a name="l00143"></a>00143   <span class="comment">/* NOTE: if you change this list of null sort values, please update the</span>
+<a name="l00144"></a>00144 <span class="comment">   * documentation in sbIRemoteWebPlaylist.idl as well, thanks!</span>
+<a name="l00145"></a>00145 <span class="comment">   */</span>
+<a name="l00146"></a>00146 
+<a name="l00150"></a><a class="code" href="interfacesb_i_property_info.html#a59ffdf127b704755dd744beca75e22c">00150</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SORT_NULL_SMALL = 0;
+<a name="l00151"></a>00151 
+<a name="l00155"></a><a class="code" href="interfacesb_i_property_info.html#b3fa49104aef3d82537d89ca6fc4631a">00155</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SORT_NULL_BIG   = 1;
+<a name="l00156"></a>00156 
+<a name="l00160"></a><a class="code" href="interfacesb_i_property_info.html#691b6cd3f66d0b53d9a97e271cab4dee">00160</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SORT_NULL_FIRST = 2;
+<a name="l00161"></a>00161 
+<a name="l00165"></a><a class="code" href="interfacesb_i_property_info.html#096eee2d42fdc593b9cfb6dfcce30a2e">00165</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SORT_NULL_LAST  = 3;
+<a name="l00166"></a>00166   
+<a name="l00170"></a><a class="code" href="interfacesb_i_property_info.html#ef29192fd04343a208b31f975f6224f8">00170</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> nullSort;
+<a name="l00171"></a>00171 
+<a name="l00179"></a><a class="code" href="interfacesb_i_property_info.html#5928b8ba0b6b86690f8805159f42321b">00179</a>   attribute <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> sortProfile;
+<a name="l00180"></a>00180 
+<a name="l00184"></a><a class="code" href="interfacesb_i_property_info.html#61817d7ea202ecab4269758576035d40">00184</a>   attribute AString id;
+<a name="l00185"></a>00185 
+<a name="l00189"></a><a class="code" href="interfacesb_i_property_info.html#37e83ba1df687703b9006504d58239fe">00189</a>   attribute AString type;
+<a name="l00190"></a>00190 
+<a name="l00194"></a><a class="code" href="interfacesb_i_property_info.html#a21698c5223efc9ab97e4b0f1070d7ef">00194</a>   attribute AString displayName;
 <a name="l00195"></a>00195 
-<a name="l00200"></a><a class="code" href="interfacesb_i_property_info.html#0933e00d6494945c02b977671da28bea">00200</a>   attribute <span class="keywordtype">boolean</span> userEditable;
+<a name="l00200"></a><a class="code" href="interfacesb_i_property_info.html#0fa3d1fb01bd4fd2ab06eaa63465ed7d">00200</a>   attribute <span class="keywordtype">boolean</span> userViewable;
 <a name="l00201"></a>00201 
-<a name="l00205"></a><a class="code" href="interfacesb_i_property_info.html#f7b23f6f5b5c360f74359799880180b8">00205</a>   attribute <span class="keywordtype">boolean</span> remoteReadable;
-<a name="l00206"></a>00206 
-<a name="l00210"></a><a class="code" href="interfacesb_i_property_info.html#8fd3cfd54a2405456c6ce4730ca206f6">00210</a>   attribute <span class="keywordtype">boolean</span> remoteWritable;
-<a name="l00211"></a>00211 
-<a name="l00215"></a>00215   <span class="comment">//attribute boolean hasValues;</span>
-<a name="l00216"></a>00216 
-<a name="l00220"></a>00220   <span class="comment">//attribute nsIStringEnumerator values;</span>
-<a name="l00221"></a>00221 
-<a name="l00227"></a><a class="code" href="interfacesb_i_property_info.html#24dc15ce31329fb21a05962f84a15c9e">00227</a>   attribute AString units;
-<a name="l00228"></a>00228 
-<a name="l00232"></a><a class="code" href="interfacesb_i_property_info.html#f2757f5dbc58e2fa111b918cc83e2c5e">00232</a>   attribute nsISimpleEnumerator operators;
-<a name="l00233"></a>00233 
-<a name="l00240"></a>00240   <a class="code" href="interfacesb_i_property_operator.html" title="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</a> getOperator(in AString aOperator);
-<a name="l00241"></a>00241 
-<a name="l00247"></a>00247   <span class="keywordtype">boolean</span> validate(in AString aValue);
-<a name="l00248"></a>00248 
-<a name="l00255"></a>00255   AString sanitize(in AString aValue);
-<a name="l00256"></a>00256 
-<a name="l00262"></a>00262   AString format(in AString aValue);
-<a name="l00263"></a>00263 
-<a name="l00269"></a>00269   AString makeSortable(in AString aValue);
-<a name="l00270"></a>00270 };
-<a name="l00271"></a>00271 
-<a name="l00277"></a>00277 [scriptable, uuid(ceff6b77-4b4d-48d0-816f-26ec1992a5b2)]
-<a name="l00278"></a><a class="code" href="interfacesb_i_text_property_info.html">00278</a> interface <a class="code" href="interfacesb_i_text_property_info.html" title="The property information specific to text fields.">sbITextPropertyInfo</a> : <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>
-<a name="l00279"></a>00279 {
-<a name="l00283"></a><a class="code" href="interfacesb_i_text_property_info.html#2486d1062478616860e797aa705863e9">00283</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> minLength;
-<a name="l00284"></a>00284 
-<a name="l00288"></a><a class="code" href="interfacesb_i_text_property_info.html#a8d381037c32b9ea8dcd0e298c821d3b">00288</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> maxLength;
-<a name="l00289"></a>00289 
-<a name="l00293"></a><a class="code" href="interfacesb_i_text_property_info.html#81f045c485d9e68758526a32d239c282">00293</a>   attribute <span class="keywordtype">boolean</span> enforceLowercase;
-<a name="l00294"></a>00294 };
+<a name="l00206"></a><a class="code" href="interfacesb_i_property_info.html#0933e00d6494945c02b977671da28bea">00206</a>   attribute <span class="keywordtype">boolean</span> userEditable;
+<a name="l00207"></a>00207 
+<a name="l00211"></a><a class="code" href="interfacesb_i_property_info.html#f7b23f6f5b5c360f74359799880180b8">00211</a>   attribute <span class="keywordtype">boolean</span> remoteReadable;
+<a name="l00212"></a>00212 
+<a name="l00216"></a><a class="code" href="interfacesb_i_property_info.html#8fd3cfd54a2405456c6ce4730ca206f6">00216</a>   attribute <span class="keywordtype">boolean</span> remoteWritable;
+<a name="l00217"></a>00217 
+<a name="l00221"></a>00221   <span class="comment">//attribute boolean hasValues;</span>
+<a name="l00222"></a>00222 
+<a name="l00226"></a>00226   <span class="comment">//attribute nsIStringEnumerator values;</span>
+<a name="l00227"></a>00227 
+<a name="l00233"></a><a class="code" href="interfacesb_i_property_info.html#24dc15ce31329fb21a05962f84a15c9e">00233</a>   attribute AString units;
+<a name="l00234"></a>00234 
+<a name="l00238"></a><a class="code" href="interfacesb_i_property_info.html#f2757f5dbc58e2fa111b918cc83e2c5e">00238</a>   attribute nsISimpleEnumerator operators;
+<a name="l00239"></a>00239 
+<a name="l00246"></a>00246   <a class="code" href="interfacesb_i_property_operator.html" title="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</a> getOperator(in AString aOperator);
+<a name="l00247"></a>00247 
+<a name="l00253"></a>00253   <span class="keywordtype">boolean</span> validate(in AString aValue);
+<a name="l00254"></a>00254 
+<a name="l00261"></a>00261   AString sanitize(in AString aValue);
+<a name="l00262"></a>00262 
+<a name="l00268"></a>00268   AString format(in AString aValue);
+<a name="l00269"></a>00269 
+<a name="l00275"></a>00275   AString makeSortable(in AString aValue);
+<a name="l00276"></a>00276 };
+<a name="l00277"></a>00277 
+<a name="l00283"></a>00283 [scriptable, uuid(ceff6b77-4b4d-48d0-816f-26ec1992a5b2)]
+<a name="l00284"></a><a class="code" href="interfacesb_i_text_property_info.html">00284</a> interface <a class="code" href="interfacesb_i_text_property_info.html" title="The property information specific to text fields.">sbITextPropertyInfo</a> : <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>
+<a name="l00285"></a>00285 {
+<a name="l00289"></a><a class="code" href="interfacesb_i_text_property_info.html#2486d1062478616860e797aa705863e9">00289</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> minLength;
+<a name="l00290"></a>00290 
+<a name="l00294"></a><a class="code" href="interfacesb_i_text_property_info.html#a8d381037c32b9ea8dcd0e298c821d3b">00294</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> maxLength;
 <a name="l00295"></a>00295 
-<a name="l00301"></a>00301 [scriptable, uuid(eb35eca3-a9ec-4e01-a9af-152c72086e68)]
-<a name="l00302"></a><a class="code" href="interfacesb_i_number_property_info.html">00302</a> interface <a class="code" href="interfacesb_i_number_property_info.html" title="The property information specific to numeric fields.">sbINumberPropertyInfo</a> : <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>
-<a name="l00303"></a>00303 {
-<a name="l00307"></a><a class="code" href="interfacesb_i_number_property_info.html#e7ace5e86b1a21e70f5fc2b0d68c77f8">00307</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> RADIX_8  = 8;
-<a name="l00308"></a>00308 
-<a name="l00312"></a><a class="code" href="interfacesb_i_number_property_info.html#4aa688166e0c18771ec7197d373e15f3">00312</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> RADIX_10 = 10;
-<a name="l00313"></a>00313 
-<a name="l00317"></a><a class="code" href="interfacesb_i_number_property_info.html#a43620591a1237627556fe8bdedb0e7f">00317</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> RADIX_16 = 16;
-<a name="l00318"></a>00318 
-<a name="l00322"></a><a class="code" href="interfacesb_i_number_property_info.html#91688eb3d9da61506cf46b836ac19a46">00322</a>   attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> minValue;
-<a name="l00323"></a>00323 
-<a name="l00327"></a><a class="code" href="interfacesb_i_number_property_info.html#24229475be75971fe164124f6ce07faa">00327</a>   attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> maxValue;
-<a name="l00328"></a>00328 
-<a name="l00332"></a><a class="code" href="interfacesb_i_number_property_info.html#5bfa08e88f2f0005d00fa71931a3e30a">00332</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> radix;
-<a name="l00333"></a>00333 };
+<a name="l00299"></a><a class="code" href="interfacesb_i_text_property_info.html#81f045c485d9e68758526a32d239c282">00299</a>   attribute <span class="keywordtype">boolean</span> enforceLowercase;
+<a name="l00300"></a>00300 };
+<a name="l00301"></a>00301 
+<a name="l00307"></a>00307 [scriptable, uuid(eb35eca3-a9ec-4e01-a9af-152c72086e68)]
+<a name="l00308"></a><a class="code" href="interfacesb_i_number_property_info.html">00308</a> interface <a class="code" href="interfacesb_i_number_property_info.html" title="The property information specific to numeric fields.">sbINumberPropertyInfo</a> : <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>
+<a name="l00309"></a>00309 {
+<a name="l00313"></a><a class="code" href="interfacesb_i_number_property_info.html#e7ace5e86b1a21e70f5fc2b0d68c77f8">00313</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> RADIX_8  = 8;
+<a name="l00314"></a>00314 
+<a name="l00318"></a><a class="code" href="interfacesb_i_number_property_info.html#4aa688166e0c18771ec7197d373e15f3">00318</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> RADIX_10 = 10;
+<a name="l00319"></a>00319 
+<a name="l00323"></a><a class="code" href="interfacesb_i_number_property_info.html#a43620591a1237627556fe8bdedb0e7f">00323</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> RADIX_16 = 16;
+<a name="l00324"></a>00324 
+<a name="l00328"></a><a class="code" href="interfacesb_i_number_property_info.html#91688eb3d9da61506cf46b836ac19a46">00328</a>   attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> minValue;
+<a name="l00329"></a>00329 
+<a name="l00333"></a><a class="code" href="interfacesb_i_number_property_info.html#24229475be75971fe164124f6ce07faa">00333</a>   attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> maxValue;
 <a name="l00334"></a>00334 
-<a name="l00340"></a>00340 [scriptable, uuid(b8d0b930-8aab-4afa-969d-3a5dca7ea536)]
-<a name="l00341"></a><a class="code" href="interfacesb_i_u_r_i_property_info.html">00341</a> interface <a class="code" href="interfacesb_i_u_r_i_property_info.html" title="The property information specific to URL/URI fields.">sbIURIPropertyInfo</a> : <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>
-<a name="l00342"></a>00342 {
-<a name="l00347"></a><a class="code" href="interfacesb_i_u_r_i_property_info.html#4e7ac4d5f2b7ee28410ed44ffda4b0b1">00347</a>   attribute AString constrainScheme;
-<a name="l00348"></a>00348 };
-<a name="l00349"></a>00349 
-<a name="l00355"></a>00355 [scriptable, uuid(df7d6d96-db92-4e30-9f5a-01088f3d7dc5)]
-<a name="l00356"></a><a class="code" href="interfacesb_i_datetime_property_info.html">00356</a> interface <a class="code" href="interfacesb_i_datetime_property_info.html" title="The property information specific to date/time fields.">sbIDatetimePropertyInfo</a> : <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>
-<a name="l00357"></a>00357 {
-<a name="l00358"></a><a class="code" href="interfacesb_i_datetime_property_info.html#3c03cfc66ea09935fc4441d335ebfb74">00358</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_UNINITIALIZED = -1;
-<a name="l00359"></a>00359 
-<a name="l00363"></a><a class="code" href="interfacesb_i_datetime_property_info.html#be95a145b9f78009b7986037cc8ab6b1">00363</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_DATE = 0; 
-<a name="l00364"></a>00364   
-<a name="l00369"></a><a class="code" href="interfacesb_i_datetime_property_info.html#f27102ee8ddab1ebbb67dd517d76746e">00369</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_TIME = 1; 
+<a name="l00338"></a><a class="code" href="interfacesb_i_number_property_info.html#5bfa08e88f2f0005d00fa71931a3e30a">00338</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> radix;
+<a name="l00339"></a>00339 };
+<a name="l00340"></a>00340 
+<a name="l00346"></a>00346 [scriptable, uuid(b8d0b930-8aab-4afa-969d-3a5dca7ea536)]
+<a name="l00347"></a><a class="code" href="interfacesb_i_u_r_i_property_info.html">00347</a> interface <a class="code" href="interfacesb_i_u_r_i_property_info.html" title="The property information specific to URL/URI fields.">sbIURIPropertyInfo</a> : <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>
+<a name="l00348"></a>00348 {
+<a name="l00353"></a><a class="code" href="interfacesb_i_u_r_i_property_info.html#4e7ac4d5f2b7ee28410ed44ffda4b0b1">00353</a>   attribute AString constrainScheme;
+<a name="l00354"></a>00354 };
+<a name="l00355"></a>00355 
+<a name="l00361"></a>00361 [scriptable, uuid(df7d6d96-db92-4e30-9f5a-01088f3d7dc5)]
+<a name="l00362"></a><a class="code" href="interfacesb_i_datetime_property_info.html">00362</a> interface <a class="code" href="interfacesb_i_datetime_property_info.html" title="The property information specific to date/time fields.">sbIDatetimePropertyInfo</a> : <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>
+<a name="l00363"></a>00363 {
+<a name="l00364"></a><a class="code" href="interfacesb_i_datetime_property_info.html#3c03cfc66ea09935fc4441d335ebfb74">00364</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_UNINITIALIZED = -1;
+<a name="l00365"></a>00365 
+<a name="l00369"></a><a class="code" href="interfacesb_i_datetime_property_info.html#be95a145b9f78009b7986037cc8ab6b1">00369</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_DATE = 0; 
 <a name="l00370"></a>00370   
-<a name="l00374"></a><a class="code" href="interfacesb_i_datetime_property_info.html#f8448b6e7e8f735e03c0278c7bd7ef64">00374</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_DATETIME = 2;
-<a name="l00375"></a>00375 
-<a name="l00380"></a><a class="code" href="interfacesb_i_datetime_property_info.html#532581492499bc56f497c458cfdb3a4f">00380</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_DURATION = 3;
+<a name="l00375"></a><a class="code" href="interfacesb_i_datetime_property_info.html#f27102ee8ddab1ebbb67dd517d76746e">00375</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_TIME = 1; 
+<a name="l00376"></a>00376   
+<a name="l00380"></a><a class="code" href="interfacesb_i_datetime_property_info.html#f8448b6e7e8f735e03c0278c7bd7ef64">00380</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_DATETIME = 2;
 <a name="l00381"></a>00381 
-<a name="l00386"></a><a class="code" href="interfacesb_i_datetime_property_info.html#8d6827a42cbb766b64d300cef7e455a3">00386</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_TIMESTAMP = 4;
+<a name="l00386"></a><a class="code" href="interfacesb_i_datetime_property_info.html#532581492499bc56f497c458cfdb3a4f">00386</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_DURATION = 3;
 <a name="l00387"></a>00387 
-<a name="l00393"></a><a class="code" href="interfacesb_i_datetime_property_info.html#a700e6a6b9df6f102c6716f2b7338300">00393</a>   attribute <span class="keywordtype">long</span> timeType;
-<a name="l00394"></a>00394 
-<a name="l00403"></a><a class="code" href="interfacesb_i_datetime_property_info.html#659d08db75de0c036002f0eaf2b32c28">00403</a>   attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> minTime;
-<a name="l00404"></a>00404 
-<a name="l00413"></a><a class="code" href="interfacesb_i_datetime_property_info.html#df244c8fba02d2d3decfc708895409f9">00413</a>   attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> maxTime;
-<a name="l00414"></a>00414 
-<a name="l00419"></a><a class="code" href="interfacesb_i_datetime_property_info.html#6e5f1bcef1d1ce389d9320c5bede28e2">00419</a>   attribute <span class="keywordtype">boolean</span> durationInverse;
+<a name="l00392"></a><a class="code" href="interfacesb_i_datetime_property_info.html#8d6827a42cbb766b64d300cef7e455a3">00392</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> TIMETYPE_TIMESTAMP = 4;
+<a name="l00393"></a>00393 
+<a name="l00399"></a><a class="code" href="interfacesb_i_datetime_property_info.html#a700e6a6b9df6f102c6716f2b7338300">00399</a>   attribute <span class="keywordtype">long</span> timeType;
+<a name="l00400"></a>00400 
+<a name="l00409"></a><a class="code" href="interfacesb_i_datetime_property_info.html#659d08db75de0c036002f0eaf2b32c28">00409</a>   attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> minTime;
+<a name="l00410"></a>00410 
+<a name="l00419"></a><a class="code" href="interfacesb_i_datetime_property_info.html#df244c8fba02d2d3decfc708895409f9">00419</a>   attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> maxTime;
 <a name="l00420"></a>00420 
-<a name="l00424"></a><a class="code" href="interfacesb_i_datetime_property_info.html#c75a17f3cb2148dd5fe46a1d00545a63">00424</a>   attribute <span class="keywordtype">boolean</span> durationWithMilliseconds;
-<a name="l00425"></a>00425 };
+<a name="l00425"></a><a class="code" href="interfacesb_i_datetime_property_info.html#6e5f1bcef1d1ce389d9320c5bede28e2">00425</a>   attribute <span class="keywordtype">boolean</span> durationInverse;
 <a name="l00426"></a>00426 
-<a name="l00433"></a>00433 [scriptable, uuid(154e77d3-6750-4f4c-a070-473bb7645381)]
-<a name="l00434"></a><a class="code" href="interfacesb_i_progress_property_info.html">00434</a> interface <a class="code" href="interfacesb_i_progress_property_info.html" title="The property information specific to progressmeters.">sbIProgressPropertyInfo</a> : <a class="code" href="interfacesb_i_text_property_info.html" title="The property information specific to text fields.">sbITextPropertyInfo</a>
-<a name="l00435"></a>00435 {
-<a name="l00439"></a><a class="code" href="interfacesb_i_progress_property_info.html#97dae25ee82d9f86bb210e4459612c50">00439</a>   attribute AString modePropertyName;
-<a name="l00440"></a>00440 };
-<a name="l00441"></a>00441 
-<a name="l00447"></a>00447 [scriptable, uuid(797f47d2-f71d-409c-993c-4c5bd5ddaf02)]
-<a name="l00448"></a><a class="code" href="interfacesb_i_button_property_info.html">00448</a> interface <a class="code" href="interfacesb_i_button_property_info.html" title="The property information specific to button properties.">sbIButtonPropertyInfo</a> : nsISupports
-<a name="l00449"></a>00449 {
-<a name="l00453"></a><a class="code" href="interfacesb_i_button_property_info.html#00b8abfdf045141fbe8e50ef797254fa">00453</a>   attribute AString label;
-<a name="l00454"></a>00454 };
-<a name="l00455"></a>00455 
-<a name="l00461"></a>00461 [scriptable, uuid(6d1d6c90-d2b5-48ac-b07f-a0cb5bcaaae9)]
-<a name="l00462"></a><a class="code" href="interfacesb_i_boolean_property_info.html">00462</a> interface <a class="code" href="interfacesb_i_boolean_property_info.html" title="The property information specific to boolean properties.">sbIBooleanPropertyInfo</a> : <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>
-<a name="l00463"></a>00463 {
-<a name="l00464"></a>00464 };
-<a name="l00465"></a>00465 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:04 2007 for Songbird by&nbsp;
+<a name="l00430"></a><a class="code" href="interfacesb_i_datetime_property_info.html#c75a17f3cb2148dd5fe46a1d00545a63">00430</a>   attribute <span class="keywordtype">boolean</span> durationWithMilliseconds;
+<a name="l00431"></a>00431 };
+<a name="l00432"></a>00432 
+<a name="l00439"></a>00439 [scriptable, uuid(154e77d3-6750-4f4c-a070-473bb7645381)]
+<a name="l00440"></a><a class="code" href="interfacesb_i_progress_property_info.html">00440</a> interface <a class="code" href="interfacesb_i_progress_property_info.html" title="The property information specific to progressmeters.">sbIProgressPropertyInfo</a> : <a class="code" href="interfacesb_i_text_property_info.html" title="The property information specific to text fields.">sbITextPropertyInfo</a>
+<a name="l00441"></a>00441 {
+<a name="l00445"></a><a class="code" href="interfacesb_i_progress_property_info.html#97dae25ee82d9f86bb210e4459612c50">00445</a>   attribute AString modePropertyName;
+<a name="l00446"></a>00446 };
+<a name="l00447"></a>00447 
+<a name="l00453"></a>00453 [scriptable, uuid(797f47d2-f71d-409c-993c-4c5bd5ddaf02)]
+<a name="l00454"></a><a class="code" href="interfacesb_i_button_property_info.html">00454</a> interface <a class="code" href="interfacesb_i_button_property_info.html" title="The property information specific to button properties.">sbIButtonPropertyInfo</a> : nsISupports
+<a name="l00455"></a>00455 {
+<a name="l00459"></a><a class="code" href="interfacesb_i_button_property_info.html#00b8abfdf045141fbe8e50ef797254fa">00459</a>   attribute AString label;
+<a name="l00460"></a>00460 };
+<a name="l00461"></a>00461 
+<a name="l00467"></a>00467 [scriptable, uuid(6d1d6c90-d2b5-48ac-b07f-a0cb5bcaaae9)]
+<a name="l00468"></a><a class="code" href="interfacesb_i_boolean_property_info.html">00468</a> interface <a class="code" href="interfacesb_i_boolean_property_info.html" title="The property information specific to boolean properties.">sbIBooleanPropertyInfo</a> : <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>
+<a name="l00469"></a>00469 {
+<a name="l00470"></a>00470 };
+<a name="l00471"></a>00471 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:23 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

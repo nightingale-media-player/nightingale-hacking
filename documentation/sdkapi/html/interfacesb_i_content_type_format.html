@@ -72,82 +72,80 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul>
 </div>
-<h1>sbIContentTypeFormat Interface Reference</h1><!-- doxytag: class="sbIContentTypeFormat" -->[UNIMPLEMENTED UNTIL AFTER 0.3]  
-<a href="#_details">More...</a>
-<p>
-<code>import &quot;<a class="el" href="sb_i_content_type_format_8idl-source.html">sbIContentTypeFormat.idl</a>&quot;;</code>
+<h1>sbIContentTypeFormat Interface Reference</h1><!-- doxytag: class="sbIContentTypeFormat" --><code>import &quot;<a class="el" href="sb_i_content_type_format_8idl-source.html">sbIContentTypeFormat.idl</a>&quot;;</code>
 <p>
 <a href="interfacesb_i_content_type_format-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute unsigned <br>
-long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_content_type_format.html#7a46156e76490b9f41bc47a715154ef7">containerFormat</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute ACString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_content_type_format.html#774593c5f79562b87a71574f9b2291b0">containerFormat</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_content_type_format.html#aba1f41f93edc844774b20d14deb8139">encodingFormats</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsIUTF8StringEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_content_type_format.html#574a05d98fcb042e5fb7bb5747e8e5fc">encodingFormats</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_content_type_format.html#7d84b00c8779884a8ea52dba1b210eed">decodingFormats</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsIUTF8StringEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_content_type_format.html#50777698da7105b62f16e80fca8e1c3c">decodingFormats</a></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-[UNIMPLEMENTED UNTIL AFTER 0.3] 
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Implementations of this interface must be threadsafe.<p>
+the formats may be either a content type or a GUID. This will be determined by whether the first character is a literal "{". The strings are in UTF8 (though they will be 7-bit ASCII in most instances). </dd></dl>
+
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_content_type_format_8idl-source.html#l00036">36</a> of file <a class="el" href="sb_i_content_type_format_8idl-source.html">sbIContentTypeFormat.idl</a>.<hr><h2>Member Data Documentation</h2>
-<a class="anchor" name="7a46156e76490b9f41bc47a715154ef7"></a><!-- doxytag: member="sbIContentTypeFormat::containerFormat" ref="7a46156e76490b9f41bc47a715154ef7" args="" -->
+Definition at line <a class="el" href="sb_i_content_type_format_8idl-source.html#l00040">40</a> of file <a class="el" href="sb_i_content_type_format_8idl-source.html">sbIContentTypeFormat.idl</a>.<hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="774593c5f79562b87a71574f9b2291b0"></a><!-- doxytag: member="sbIContentTypeFormat::containerFormat" ref="774593c5f79562b87a71574f9b2291b0" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">readonly attribute unsigned long <a class="el" href="interfacesb_i_content_type_format.html#7a46156e76490b9f41bc47a715154ef7">sbIContentTypeFormat::containerFormat</a>          </td>
+          <td class="memname">readonly attribute ACString <a class="el" href="interfacesb_i_content_type_format.html#774593c5f79562b87a71574f9b2291b0">sbIContentTypeFormat::containerFormat</a>          </td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Code for the container type 
-<p>
-Definition at line <a class="el" href="sb_i_content_type_format_8idl-source.html#l00041">41</a> of file <a class="el" href="sb_i_content_type_format_8idl-source.html">sbIContentTypeFormat.idl</a>.
-</div>
-</div><p>
-<a class="anchor" name="aba1f41f93edc844774b20d14deb8139"></a><!-- doxytag: member="sbIContentTypeFormat::encodingFormats" ref="aba1f41f93edc844774b20d14deb8139" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">readonly attribute nsISimpleEnumerator <a class="el" href="interfacesb_i_content_type_format.html#aba1f41f93edc844774b20d14deb8139">sbIContentTypeFormat::encodingFormats</a>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Enumerates nsISupportsPRUint32 values of FourCC codes 
-<p>
-Definition at line <a class="el" href="sb_i_content_type_format_8idl-source.html#l00046">46</a> of file <a class="el" href="sb_i_content_type_format_8idl-source.html">sbIContentTypeFormat.idl</a>.
-</div>
-</div><p>
-<a class="anchor" name="7d84b00c8779884a8ea52dba1b210eed"></a><!-- doxytag: member="sbIContentTypeFormat::decodingFormats" ref="7d84b00c8779884a8ea52dba1b210eed" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">readonly attribute nsISimpleEnumerator <a class="el" href="interfacesb_i_content_type_format.html#7d84b00c8779884a8ea52dba1b210eed">sbIContentTypeFormat::decodingFormats</a>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Enumerates nsISupportsPRUint32 values of FourCC codes 
+The format of the media container. See above - may be a content type string ("application/ogg") or guid. 
 <p>
 Definition at line <a class="el" href="sb_i_content_type_format_8idl-source.html#l00051">51</a> of file <a class="el" href="sb_i_content_type_format_8idl-source.html">sbIContentTypeFormat.idl</a>.
 </div>
 </div><p>
+<a class="anchor" name="574a05d98fcb042e5fb7bb5747e8e5fc"></a><!-- doxytag: member="sbIContentTypeFormat::encodingFormats" ref="574a05d98fcb042e5fb7bb5747e8e5fc" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute nsIUTF8StringEnumerator <a class="el" href="interfacesb_i_content_type_format.html#574a05d98fcb042e5fb7bb5747e8e5fc">sbIContentTypeFormat::encodingFormats</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+The encoding formats (may be content type or guid) 
+<p>
+Definition at line <a class="el" href="sb_i_content_type_format_8idl-source.html#l00056">56</a> of file <a class="el" href="sb_i_content_type_format_8idl-source.html">sbIContentTypeFormat.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="50777698da7105b62f16e80fca8e1c3c"></a><!-- doxytag: member="sbIContentTypeFormat::decodingFormats" ref="50777698da7105b62f16e80fca8e1c3c" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute nsIUTF8StringEnumerator <a class="el" href="interfacesb_i_content_type_format.html#50777698da7105b62f16e80fca8e1c3c">sbIContentTypeFormat::decodingFormats</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+The decoding formats (may be content type or guid) 
+<p>
+Definition at line <a class="el" href="sb_i_content_type_format_8idl-source.html#l00061">61</a> of file <a class="el" href="sb_i_content_type_format_8idl-source.html">sbIContentTypeFormat.idl</a>.
+</div>
+</div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devices/base/public/<a class="el" href="sb_i_content_type_format_8idl-source.html">sbIContentTypeFormat.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

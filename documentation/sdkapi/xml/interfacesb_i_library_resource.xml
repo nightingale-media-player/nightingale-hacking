@@ -199,38 +199,44 @@
 <para>This interface should be implemented by each object of the data model, including libraries, media items, and media lists.</para><para><simplesect kind="see"><para>sbILibraryPropertiesManager </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="230">
+      <node id="258">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="229" relation="public-inheritance">
+        <childnode refid="257" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="228">
+      <node id="256">
         <label>sbILocalDatabaseResourceProperty</label>
         <link refid="interfacesb_i_local_database_resource_property"/>
-        <childnode refid="227" relation="public-inheritance">
+        <childnode refid="255" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="231">
+      <node id="259">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="230" relation="public-inheritance">
+        <childnode refid="258" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="227">
+      <node id="255">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="229">
+      <node id="257">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="227" relation="public-inheritance">
+        <childnode refid="255" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="232">
+      <node id="261">
         <label>sbILocalDatabaseSmartMediaList</label>
         <link refid="interfacesb_i_local_database_smart_media_list"/>
-        <childnode refid="230" relation="public-inheritance">
+        <childnode refid="258" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="260">
+        <label>sbIDeviceLibrary</label>
+        <link refid="interfacesb_i_device_library"/>
+        <childnode refid="259" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

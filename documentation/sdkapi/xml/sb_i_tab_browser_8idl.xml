@@ -28,7 +28,7 @@
 <codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
 <codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
 <codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
 <codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
@@ -53,27 +53,30 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_tab_browser_tab" kindref="compound" tooltip="sbITabBrowser">sbITabBrowserTab</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIDOMDocument;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">interface<sp/>nsIDOMElement;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(52727f1a-9088-4952-aaa8-f3ec10abc169)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_tab_browser" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_tab_browser" kindref="compound" tooltip="sbITabBrowserTab">sbITabBrowser</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="46"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_tab_browser_tab" kindref="compound" tooltip="sbITabBrowser">sbITabBrowserTab</ref><sp/>getTabForDocument(<sp/>in<sp/>nsIDOMDocument<sp/>aContentDocument<sp/>);</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/>nsIDOMElement<sp/>getBrowserForDocument(in<sp/>nsIDOMDocument<sp/>aDocument);</highlight></codeline>
-<codeline lineno="49"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="normal">[scriptable,<sp/>uuid(821f6247-5773-49ad-83e5-33f88683b5cb)]</highlight></codeline>
-<codeline lineno="57" refid="interfacesb_i_tab_browser_tab" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_tab_browser_tab" kindref="compound" tooltip="sbITabBrowser">sbITabBrowserTab</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="58"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="59" refid="interfacesb_i_tab_browser_tab_15fa459b0d1cd94101b8cf42d7880158f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMElement<sp/>innerPlaylist;</highlight></codeline>
-<codeline lineno="60" refid="interfacesb_i_tab_browser_tab_15071abe645f9ef3ca43f649c617a4781" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMElement<sp/>outerPlaylist;</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/>nsIDOMElement<sp/>getPlaylist();</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearOuterPlaylist();</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>disableScan();</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>enableScan();</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>hideOuterPlaylist();</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>showOuterPlaylist();</highlight></codeline>
-<codeline lineno="67"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_page" kindref="compound" tooltip="A generic interface for UI that renders a media list view.">sbIMediaPage</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(52727f1a-9088-4952-aaa8-f3ec10abc169)]</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_tab_browser" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_tab_browser" kindref="compound" tooltip="sbITabBrowserTab">sbITabBrowser</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_tab_browser_tab" kindref="compound" tooltip="sbITabBrowser">sbITabBrowserTab</ref><sp/>getTabForDocument(<sp/>in<sp/>nsIDOMDocument<sp/>aContentDocument<sp/>);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/>nsIDOMElement<sp/>getBrowserForDocument(in<sp/>nsIDOMDocument<sp/>aDocument);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal">[scriptable,<sp/>uuid(9f6d5d80-d5d4-11dc-95ff-0800200c9a66)]</highlight></codeline>
+<codeline lineno="59" refid="interfacesb_i_tab_browser_tab" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_tab_browser_tab" kindref="compound" tooltip="sbITabBrowser">sbITabBrowserTab</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="60"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61" refid="interfacesb_i_tab_browser_tab_15071abe645f9ef3ca43f649c617a4781" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMElement<sp/>outerPlaylist;</highlight></codeline>
+<codeline lineno="62" refid="interfacesb_i_tab_browser_tab_110fa932cdff01dabc02d577a232ec39d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_page" kindref="compound" tooltip="A generic interface for UI that renders a media list view.">sbIMediaPage</ref><sp/>mediaPage;</highlight></codeline>
+<codeline lineno="63" refid="interfacesb_i_tab_browser_tab_11c4f11513da61b6a93e6d2796228c90c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>mediaListView;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/>nsIDOMElement<sp/>getPlaylist();</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearOuterPlaylist();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>disableScan();</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>enableScan();</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>hideOuterPlaylist();</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>showOuterPlaylist();</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="z:/projects/songbird/bindings/public/sbITabBrowser.idl"/>
   </compounddef>

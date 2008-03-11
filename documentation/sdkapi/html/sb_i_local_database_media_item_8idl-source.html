@@ -71,7 +71,7 @@
 <a name="l00004"></a>00004 <span class="comment">//</span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2007 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2008 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">//</span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
@@ -94,15 +94,17 @@
 <a name="l00032"></a>00032 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00033"></a>00033 interface <a class="code" href="interfacesb_i_local_database_resource_property_bag.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseResourcePropertyBag</a>;
 <a name="l00034"></a>00034 
-<a name="l00039"></a>00039 [uuid(a3445a34-99a1-47ce-b766-e51d0a5753c8)]
+<a name="l00039"></a>00039 [uuid(8a477686-216c-4dfa-9515-282ff685d69f)]
 <a name="l00040"></a><a class="code" href="interfacesb_i_local_database_media_item.html">00040</a> interface <a class="code" href="interfacesb_i_local_database_media_item.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseMediaItem</a> : nsISupports
 <a name="l00041"></a>00041 {
 <a name="l00042"></a><a class="code" href="interfacesb_i_local_database_media_item.html#2bb36f7b468488cc4be7564aab03571a">00042</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> mediaItemId;
 <a name="l00043"></a>00043 
 <a name="l00044"></a><a class="code" href="interfacesb_i_local_database_media_item.html#a911a58eccae0c6ef888dc5f795da2ff">00044</a>   attribute <a class="code" href="interfacesb_i_local_database_resource_property_bag.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseResourcePropertyBag</a> propertyBag;
-<a name="l00045"></a>00045 };
-<a name="l00046"></a>00046 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:03 2007 for Songbird by&nbsp;
+<a name="l00045"></a>00045   
+<a name="l00046"></a>00046   [notxpcom] <span class="keywordtype">void</span> SetSuppressNotifications(in <span class="keywordtype">boolean</span> aSuppress);
+<a name="l00047"></a>00047 };
+<a name="l00048"></a>00048 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:23 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -423,6 +423,90 @@
         </inbodydescription>
         <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="209"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_16acee2eefe3380d09248aa80da2bd41b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFeathersManager::setOnTop</definition>
+        <argsstring>(in AString aLayoutURL, in AString aInternalName, in boolean aOnTop)</argsstring>
+        <name>setOnTop</name>
+        <param>
+          <type>in AString</type>
+          <declname>aLayoutURL</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aInternalName</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aOnTop</declname>
+        </param>
+        <briefdescription>
+<para>Should the window be kept on top. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayoutURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL for a xul window </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInternalName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier for a skin </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aOnTop</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Should the window be kept on top </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="221"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_feathers_manager_187254fb2eac367dadd278b53b8cac4b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIFeathersManager::canOnTop</definition>
+        <argsstring>(in AString aLayoutURL, in AString aInternalName)</argsstring>
+        <name>canOnTop</name>
+        <param>
+          <type>in AString</type>
+          <declname>aLayoutURL</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aInternalName</declname>
+        </param>
+        <briefdescription>
+<para>Can the window be kept on top. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLayoutURL</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL for a xul window </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInternalName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Identifier for a skin </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True if the given pair can be kept on top </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="232"/>
+      </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_17f80bd36542c40d6a3b733c54b1934b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
         <definition>nsISimpleEnumerator sbIFeathersManager::getSkinsForLayout</definition>
@@ -447,7 +531,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="220"/>
+        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="243"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_18d4d882c103eae24914c1cf60f411b95" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -473,7 +557,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="230"/>
+        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="253"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_14481e6634ff2789cb61b7960e54cadd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -518,7 +602,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="247"/>
+        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="270"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_19125c53897e784a2b10e5915811d911d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -531,7 +615,7 @@
 <para>Attempts to open the XUL player window layout for the current feathers. If the current layout or skin is invalid, the default feathers will be loaded instead. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="256"/>
+        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="279"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_10e7152df59e47a9cb1b9699f03294033" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -556,7 +640,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="264"/>
+        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="287"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_19debde65ce0281d47f82cfb3233f03d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -581,7 +665,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="271"/>
+        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="294"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -589,10 +673,11 @@
     <detaileddescription>
 <para>Acts as a registry for installed skins and alternate XUL windows, and provides a mechanism for switching between them.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_skin_description" kindref="compound">sbISkinDescription</ref>, <ref refid="interfacesb_i_layout_description" kindref="compound">sbILayoutDescription</ref>, sbIFeathersChangeListener </para></simplesect>
 </para>    </detaileddescription>
-    <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="53" bodyfile="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" bodystart="52" bodyend="272"/>
+    <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" line="53" bodyfile="z:/projects/songbird/components/feathers/public/sbIFeathersManager.idl" bodystart="52" bodyend="295"/>
     <listofallmembers>
       <member refid="interfacesb_i_feathers_manager_10e7152df59e47a9cb1b9699f03294033" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>addListener</name></member>
       <member refid="interfacesb_i_feathers_manager_1063febb08ff6edd1d687c926d860b95f" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>assertCompatibility</name></member>
+      <member refid="interfacesb_i_feathers_manager_187254fb2eac367dadd278b53b8cac4b3" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>canOnTop</name></member>
       <member refid="interfacesb_i_feathers_manager_12baaf5ce393f0ecfc798855cf68df318" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>currentLayoutURL</name></member>
       <member refid="interfacesb_i_feathers_manager_1f21a46e05b9760ad021366cfa20b59d6" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>currentSkinName</name></member>
       <member refid="interfacesb_i_feathers_manager_1cc68c664bea00a1e1ac5289af3d7068f" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>getLayoutDescription</name></member>
@@ -610,6 +695,7 @@
       <member refid="interfacesb_i_feathers_manager_1a3f6c1145bf57ce889f4c5c76c1f25c4" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>registerLayout</name></member>
       <member refid="interfacesb_i_feathers_manager_136241d7adea8eec3b4c242c0f54d41c2" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>registerSkin</name></member>
       <member refid="interfacesb_i_feathers_manager_19debde65ce0281d47f82cfb3233f03d4" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>removeListener</name></member>
+      <member refid="interfacesb_i_feathers_manager_16acee2eefe3380d09248aa80da2bd41b" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>setOnTop</name></member>
       <member refid="interfacesb_i_feathers_manager_1f88d0c0de580dd60d6f3277efd15e118" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>skinCount</name></member>
       <member refid="interfacesb_i_feathers_manager_14481e6634ff2789cb61b7960e54cadd7" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>switchFeathers</name></member>
       <member refid="interfacesb_i_feathers_manager_11cf705163c6a5ddf649c3eb71e092b81" prot="public" virt="non-virtual"><scope>sbIFeathersManager</scope><name>unassertCompatibility</name></member>

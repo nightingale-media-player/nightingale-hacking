@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="169" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="169" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="167" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="167" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_remote_security_event_1f156ea5b411c6818b7e4deb0f5f7df05" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="179" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="179" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="177" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="177" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_remote_security_event_1e5d7767368df48e8915ce7fe9e4b75f5" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="189" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="189" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="187" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="187" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_remote_security_event_1b0fb56a6b901e69ecd47ef94d6d14439" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -54,14 +54,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="199" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="199" bodyend="-1"/>
+        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="197" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="197" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface to maintain information about the last security event that occurred. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="160" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="159" bodyend="200"/>
+    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" line="158" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteSecurityEvent.idl" bodystart="157" bodyend="198"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_security_event_1f156ea5b411c6818b7e4deb0f5f7df05" prot="public" virt="non-virtual"><scope>sbIRemoteSecurityEvent</scope><name>category</name></member>
       <member refid="interfacesb_i_remote_security_event_1e5d7767368df48e8915ce7fe9e4b75f5" prot="public" virt="non-virtual"><scope>sbIRemoteSecurityEvent</scope><name>categoryID</name></member>

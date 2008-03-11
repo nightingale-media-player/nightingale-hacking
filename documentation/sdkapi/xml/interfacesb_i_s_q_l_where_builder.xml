@@ -509,43 +509,43 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="707">
+      <node id="787">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="708" relation="public-inheritance">
+        <childnode refid="788" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="711">
+      <node id="791">
         <label>sbISQLUpdateBuilder</label>
         <link refid="interfacesb_i_s_q_l_update_builder"/>
-        <childnode refid="707" relation="public-inheritance">
+        <childnode refid="787" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="709">
+      <node id="789">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="707" relation="public-inheritance">
+        <childnode refid="787" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="708">
+      <node id="788">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
-      <node id="710">
+      <node id="790">
         <label>sbISQLSelectBuilder</label>
         <link refid="interfacesb_i_s_q_l_select_builder"/>
-        <childnode refid="707" relation="public-inheritance">
+        <childnode refid="787" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="712">
+      <node id="792">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="713" relation="public-inheritance">
+        <childnode refid="793" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="713">
+      <node id="793">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>

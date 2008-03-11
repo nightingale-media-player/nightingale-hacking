@@ -71,7 +71,7 @@
 <a name="l00004"></a>00004 <span class="comment">//</span>
 <a name="l00005"></a>00005 <span class="comment">// This file is part of the Songbird web player.</span>
 <a name="l00006"></a>00006 <span class="comment">//</span>
-<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2007 POTI, Inc.</span>
+<a name="l00007"></a>00007 <span class="comment">// Copyright(c) 2005-2008 POTI, Inc.</span>
 <a name="l00008"></a>00008 <span class="comment">// http://songbirdnest.com</span>
 <a name="l00009"></a>00009 <span class="comment">//</span>
 <a name="l00010"></a>00010 <span class="comment">// This file may be licensed under the terms of of the</span>
@@ -107,7 +107,7 @@
 <a name="l00046"></a>00046 interface <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a>;
 <a name="l00047"></a>00047 interface <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>;
 <a name="l00048"></a>00048 
-<a name="l00057"></a>00057 [scriptable, uuid(013dd574-cae2-4f2c-8507-63dcc3ca4035)]
+<a name="l00057"></a>00057 [scriptable, uuid(4517f0f3-a142-40d8-aed0-1ecf8246efec)]
 <a name="l00058"></a><a class="code" href="interfacesb_i_media_list.html">00058</a> interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> : <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>
 <a name="l00059"></a>00059 {
 <a name="l00060"></a>00060   <span class="comment">/*</span>
@@ -455,7 +455,7 @@
 <a name="l00486"></a>00486 <span class="comment"></span>
 <a name="l00487"></a>00487 <span class="comment">  Parameters:</span>
 <a name="l00488"></a>00488 <span class="comment">    mediaItem - The &lt;MediaItem&gt; to find.</span>
-<a name="l00489"></a>00489 <span class="comment">    startFrom - The index position at which to start searching. Index starts at 0.</span>
+<a name="l00489"></a>00489 <span class="comment">    startFrom - If specfied, the index position at which to start searching. Index starts at 0.</span>
 <a name="l00490"></a>00490 <span class="comment"></span>
 <a name="l00491"></a>00491 <span class="comment">  Returns:</span>
 <a name="l00492"></a>00492 <span class="comment">    The index where the &lt;MediaItem&gt; was first found.</span>
@@ -489,7 +489,7 @@
 <a name="l00520"></a>00520 <span class="comment">    &lt;contains()&gt;</span>
 <a name="l00521"></a>00521 <span class="comment">  */</span>
 <a name="l00522"></a>00522   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> indexOf(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem,
-<a name="l00523"></a>00523                         in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aStartFrom);
+<a name="l00523"></a>00523                         [optional] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aStartFrom);
 <a name="l00524"></a>00524 
 <a name="l00533"></a>00533   <span class="comment">/*</span>
 <a name="l00534"></a>00534 <span class="comment">  Method: lastIndexOf()</span>
@@ -586,239 +586,260 @@
 <a name="l00636"></a>00636 <span class="comment">  Prototype:</span>
 <a name="l00637"></a>00637 <span class="comment">    add(&lt;MediaItem&gt; mediaItem);</span>
 <a name="l00638"></a>00638 <span class="comment"></span>
-<a name="l00639"></a>00639 <span class="comment">  Parameters:</span>
-<a name="l00640"></a>00640 <span class="comment">    mediaItem - The &lt;MediaItem&gt; to add.</span>
-<a name="l00641"></a>00641 <span class="comment"></span>
-<a name="l00642"></a>00642 <span class="comment">  Example:</span>
-<a name="l00643"></a>00643 <span class="comment">    (start code)</span>
-<a name="l00644"></a>00644 <span class="comment">    //Create or get a library.</span>
-<a name="l00645"></a>00645 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
-<a name="l00646"></a>00646 <span class="comment"></span>
-<a name="l00647"></a>00647 <span class="comment">    //Create a mediaitem.</span>
-<a name="l00648"></a>00648 <span class="comment">    var mediaItem = library.createMediaItem("http://path/to/item.mp3");</span>
-<a name="l00649"></a>00649 <span class="comment"></span>
-<a name="l00650"></a>00650 <span class="comment">    //Create a medialist.</span>
-<a name="l00651"></a>00651 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
-<a name="l00652"></a>00652 <span class="comment"></span>
-<a name="l00653"></a>00653 <span class="comment">    //Add same item twice. We now have mediaItem at index 0 and 1.</span>
-<a name="l00654"></a>00654 <span class="comment">    mediaList.add(mediaItem);</span>
-<a name="l00655"></a>00655 <span class="comment">    (end)</span>
-<a name="l00656"></a>00656 <span class="comment"></span>
-<a name="l00657"></a>00657 <span class="comment">  See Also:</span>
-<a name="l00658"></a>00658 <span class="comment">    &lt;addAll()&gt;</span>
-<a name="l00659"></a>00659 <span class="comment">    &lt;remove()&gt;</span>
-<a name="l00660"></a>00660 <span class="comment">    &lt;removeByIndex()&gt;</span>
-<a name="l00661"></a>00661 <span class="comment">    &lt;clear()&gt;</span>
-<a name="l00662"></a>00662 <span class="comment">  */</span>
-<a name="l00663"></a>00663   <span class="keywordtype">void</span> <span class="keyword">add</span>(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
-<a name="l00664"></a>00664 
-<a name="l00670"></a>00670   <span class="comment">/*</span>
-<a name="l00671"></a>00671 <span class="comment">  Method: addAll()</span>
-<a name="l00672"></a>00672 <span class="comment"></span>
-<a name="l00673"></a>00673 <span class="comment">  Add all the &lt;MediaItems&gt; from a &lt;MediaList&gt; into this &lt;MediaList&gt;.</span>
-<a name="l00674"></a>00674 <span class="comment"></span>
-<a name="l00675"></a>00675 <span class="comment">  Prototype:</span>
-<a name="l00676"></a>00676 <span class="comment">    addAll(&lt;MediaList&gt; mediaList)</span>
-<a name="l00677"></a>00677 <span class="comment"></span>
-<a name="l00678"></a>00678 <span class="comment">  Parameters:</span>
-<a name="l00679"></a>00679 <span class="comment">    mediaList - The &lt;MediaList&gt; whose &lt;MediaItems&gt; are to be added.</span>
-<a name="l00680"></a>00680 <span class="comment"></span>
-<a name="l00681"></a>00681 <span class="comment">  Example:</span>
-<a name="l00682"></a>00682 <span class="comment">    (start code)</span>
-<a name="l00683"></a>00683 <span class="comment">    //This example assumes you already have medialists in</span>
-<a name="l00684"></a>00684 <span class="comment">    //variables named mediaListFrom and mediaListTo.</span>
-<a name="l00685"></a>00685 <span class="comment"></span>
-<a name="l00686"></a>00686 <span class="comment">    //Add all mediaitems from mediaListFrom to mediaListTo.</span>
-<a name="l00687"></a>00687 <span class="comment">    mediaListTo.addAll(mediaListFrom);</span>
-<a name="l00688"></a>00688 <span class="comment">    (end)</span>
-<a name="l00689"></a>00689 <span class="comment">  */</span>
-<a name="l00690"></a>00690   <span class="keywordtype">void</span> addAll(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
-<a name="l00691"></a>00691 
-<a name="l00696"></a>00696   <span class="keywordtype">void</span> addSome(in nsISimpleEnumerator aMediaItems);
-<a name="l00697"></a>00697 
-<a name="l00703"></a>00703   <span class="comment">/*</span>
-<a name="l00704"></a>00704 <span class="comment">  Method: remove()</span>
+<a name="l00639"></a>00639 <span class="comment">    // additional forms</span>
+<a name="l00640"></a>00640 <span class="comment"></span>
+<a name="l00641"></a>00641 <span class="comment">    add(String urlToMedia);</span>
+<a name="l00642"></a>00642 <span class="comment"></span>
+<a name="l00643"></a>00643 <span class="comment">    add(Array mediaItemURLArray);</span>
+<a name="l00644"></a>00644 <span class="comment"></span>
+<a name="l00645"></a>00645 <span class="comment">  Parameters:</span>
+<a name="l00646"></a>00646 <span class="comment">    mediaItem - The &lt;MediaItem&gt; to add.</span>
+<a name="l00647"></a>00647 <span class="comment">    urlToMediaItem - The address of the &lt;MediaItem&gt;(s) to add.</span>
+<a name="l00648"></a>00648 <span class="comment">    mediaItemURLArray - An array containing the address(es)</span>
+<a name="l00649"></a>00649 <span class="comment">      of the &lt;MediaItem&gt;(s) to add.</span>
+<a name="l00650"></a>00650 <span class="comment"></span>
+<a name="l00651"></a>00651 <span class="comment">    In the additional forms urls to the &lt;MediaItem&gt;s can be passed directly</span>
+<a name="l00652"></a>00652 <span class="comment">    to the &lt;MediaList&gt; for addition. The &lt;MediaItems&gt; will be created and</span>
+<a name="l00653"></a>00653 <span class="comment">    added this &lt;MediaList&gt;. The additional forms are ONLY available through</span>
+<a name="l00654"></a>00654 <span class="comment">    the WebpageAPI.</span>
+<a name="l00655"></a>00655 <span class="comment"></span>
+<a name="l00656"></a>00656 <span class="comment">  Example:</span>
+<a name="l00657"></a>00657 <span class="comment">    (start code)</span>
+<a name="l00658"></a>00658 <span class="comment">    //Create or get a library.</span>
+<a name="l00659"></a>00659 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00660"></a>00660 <span class="comment"></span>
+<a name="l00661"></a>00661 <span class="comment">    //Create a mediaitem.</span>
+<a name="l00662"></a>00662 <span class="comment">    var mediaItem = library.createMediaItem("http://path/to/item.mp3");</span>
+<a name="l00663"></a>00663 <span class="comment"></span>
+<a name="l00664"></a>00664 <span class="comment">    //Create a medialist.</span>
+<a name="l00665"></a>00665 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
+<a name="l00666"></a>00666 <span class="comment"></span>
+<a name="l00667"></a>00667 <span class="comment">    //Add same item twice. We now have mediaItem at index 0 and 1.</span>
+<a name="l00668"></a>00668 <span class="comment">    mediaList.add(mediaItem);</span>
+<a name="l00669"></a>00669 <span class="comment"></span>
+<a name="l00670"></a>00670 <span class="comment">    //Alternate forms</span>
+<a name="l00671"></a>00671 <span class="comment">    mediaList.add("http://path/to/another/item.mp3");</span>
+<a name="l00672"></a>00672 <span class="comment">    mediaList.add(["http://path/to/another/cool/item.mp3",</span>
+<a name="l00673"></a>00673 <span class="comment">                   "http://path/to/another/great/item.mp3",</span>
+<a name="l00674"></a>00674 <span class="comment">                   "http://path/to/another/rockin/item.mp3"]);</span>
+<a name="l00675"></a>00675 <span class="comment">    (end)</span>
+<a name="l00676"></a>00676 <span class="comment"></span>
+<a name="l00677"></a>00677 <span class="comment">  See Also:</span>
+<a name="l00678"></a>00678 <span class="comment">    &lt;addAll()&gt;</span>
+<a name="l00679"></a>00679 <span class="comment">    &lt;remove()&gt;</span>
+<a name="l00680"></a>00680 <span class="comment">    &lt;removeByIndex()&gt;</span>
+<a name="l00681"></a>00681 <span class="comment">    &lt;clear()&gt;</span>
+<a name="l00682"></a>00682 <span class="comment">  */</span>
+<a name="l00683"></a>00683   <span class="keywordtype">void</span> <span class="keyword">add</span>(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
+<a name="l00684"></a>00684 
+<a name="l00690"></a>00690   <span class="comment">/*</span>
+<a name="l00691"></a>00691 <span class="comment">  Method: addAll()</span>
+<a name="l00692"></a>00692 <span class="comment"></span>
+<a name="l00693"></a>00693 <span class="comment">  Add all the &lt;MediaItems&gt; from a &lt;MediaList&gt; into this &lt;MediaList&gt;.</span>
+<a name="l00694"></a>00694 <span class="comment"></span>
+<a name="l00695"></a>00695 <span class="comment">  Prototype:</span>
+<a name="l00696"></a>00696 <span class="comment">    addAll(&lt;MediaList&gt; mediaList)</span>
+<a name="l00697"></a>00697 <span class="comment"></span>
+<a name="l00698"></a>00698 <span class="comment">  Parameters:</span>
+<a name="l00699"></a>00699 <span class="comment">    mediaList - The &lt;MediaList&gt; whose &lt;MediaItems&gt; are to be added.</span>
+<a name="l00700"></a>00700 <span class="comment"></span>
+<a name="l00701"></a>00701 <span class="comment">  Example:</span>
+<a name="l00702"></a>00702 <span class="comment">    (start code)</span>
+<a name="l00703"></a>00703 <span class="comment">    //This example assumes you already have medialists in</span>
+<a name="l00704"></a>00704 <span class="comment">    //variables named mediaListFrom and mediaListTo.</span>
 <a name="l00705"></a>00705 <span class="comment"></span>
-<a name="l00706"></a>00706 <span class="comment">  Remove the first occurrence of the given &lt;MediaItem&gt; from this &lt;MediaList&gt;.</span>
-<a name="l00707"></a>00707 <span class="comment"></span>
-<a name="l00708"></a>00708 <span class="comment">  Prototype:</span>
-<a name="l00709"></a>00709 <span class="comment">    remove(&lt;MediaItem&gt; mediaItem)</span>
-<a name="l00710"></a>00710 <span class="comment"></span>
-<a name="l00711"></a>00711 <span class="comment">  Parameters:</span>
-<a name="l00712"></a>00712 <span class="comment">    mediaItem - The &lt;MediaItem&gt; to remove.</span>
-<a name="l00713"></a>00713 <span class="comment"></span>
-<a name="l00714"></a>00714 <span class="comment">  Example:</span>
-<a name="l00715"></a>00715 <span class="comment">    (start code)</span>
-<a name="l00716"></a>00716 <span class="comment">    //Create or get a library.</span>
-<a name="l00717"></a>00717 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
-<a name="l00718"></a>00718 <span class="comment"></span>
-<a name="l00719"></a>00719 <span class="comment">    //Create a mediaitem.</span>
-<a name="l00720"></a>00720 <span class="comment">    var mediaItem = library.createMediaItem("http://path/to/item.mp3");</span>
-<a name="l00721"></a>00721 <span class="comment"></span>
-<a name="l00722"></a>00722 <span class="comment">    //Create a medialist.</span>
-<a name="l00723"></a>00723 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
-<a name="l00724"></a>00724 <span class="comment"></span>
-<a name="l00725"></a>00725 <span class="comment">    //Add same item twice. We now have mediaItem at index 0 and 1.</span>
-<a name="l00726"></a>00726 <span class="comment">    mediaList.add(mediaItem);</span>
-<a name="l00727"></a>00727 <span class="comment">    mediaList.add(mediaItem);</span>
-<a name="l00728"></a>00728 <span class="comment"></span>
-<a name="l00729"></a>00729 <span class="comment">    //Remove the first occurrence of the mediaitem.</span>
-<a name="l00730"></a>00730 <span class="comment">    mediaList.remove(mediaItem);</span>
-<a name="l00731"></a>00731 <span class="comment"></span>
-<a name="l00732"></a>00732 <span class="comment">    ... //Now only the second occurrence remains and it's index is now 0.</span>
-<a name="l00733"></a>00733 <span class="comment">    (end)</span>
-<a name="l00734"></a>00734 <span class="comment"></span>
-<a name="l00735"></a>00735 <span class="comment">  See Also:</span>
-<a name="l00736"></a>00736 <span class="comment">    &lt;add()&gt;</span>
-<a name="l00737"></a>00737 <span class="comment">    &lt;addAll()&gt;</span>
-<a name="l00738"></a>00738 <span class="comment">    &lt;removeByIndex()&gt;</span>
-<a name="l00739"></a>00739 <span class="comment">  */</span>
-<a name="l00740"></a>00740   <span class="keywordtype">void</span> <span class="keyword">remove</span>(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
-<a name="l00741"></a>00741 
-<a name="l00747"></a>00747   <span class="comment">/*</span>
-<a name="l00748"></a>00748 <span class="comment">  Method: removeByIndex()</span>
-<a name="l00749"></a>00749 <span class="comment"></span>
-<a name="l00750"></a>00750 <span class="comment">  Remove a &lt;MediaItem&gt; from the &lt;MediaList&gt; using it's index.</span>
+<a name="l00706"></a>00706 <span class="comment">    //Add all mediaitems from mediaListFrom to mediaListTo.</span>
+<a name="l00707"></a>00707 <span class="comment">    mediaListTo.addAll(mediaListFrom);</span>
+<a name="l00708"></a>00708 <span class="comment">    (end)</span>
+<a name="l00709"></a>00709 <span class="comment">  */</span>
+<a name="l00710"></a>00710   <span class="keywordtype">void</span> addAll(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
+<a name="l00711"></a>00711 
+<a name="l00716"></a>00716   <span class="keywordtype">void</span> addSome(in nsISimpleEnumerator aMediaItems);
+<a name="l00717"></a>00717 
+<a name="l00723"></a>00723   <span class="comment">/*</span>
+<a name="l00724"></a>00724 <span class="comment">  Method: remove()</span>
+<a name="l00725"></a>00725 <span class="comment"></span>
+<a name="l00726"></a>00726 <span class="comment">  Remove the first occurrence of the given &lt;MediaItem&gt; from this &lt;MediaList&gt;.</span>
+<a name="l00727"></a>00727 <span class="comment"></span>
+<a name="l00728"></a>00728 <span class="comment">  Prototype:</span>
+<a name="l00729"></a>00729 <span class="comment">    remove(&lt;MediaItem&gt; mediaItem)</span>
+<a name="l00730"></a>00730 <span class="comment"></span>
+<a name="l00731"></a>00731 <span class="comment">  Parameters:</span>
+<a name="l00732"></a>00732 <span class="comment">    mediaItem - The &lt;MediaItem&gt; to remove.</span>
+<a name="l00733"></a>00733 <span class="comment"></span>
+<a name="l00734"></a>00734 <span class="comment">  Example:</span>
+<a name="l00735"></a>00735 <span class="comment">    (start code)</span>
+<a name="l00736"></a>00736 <span class="comment">    //Create or get a library.</span>
+<a name="l00737"></a>00737 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00738"></a>00738 <span class="comment"></span>
+<a name="l00739"></a>00739 <span class="comment">    //Create a mediaitem.</span>
+<a name="l00740"></a>00740 <span class="comment">    var mediaItem = library.createMediaItem("http://path/to/item.mp3");</span>
+<a name="l00741"></a>00741 <span class="comment"></span>
+<a name="l00742"></a>00742 <span class="comment">    //Create a medialist.</span>
+<a name="l00743"></a>00743 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
+<a name="l00744"></a>00744 <span class="comment"></span>
+<a name="l00745"></a>00745 <span class="comment">    //Add same item twice. We now have mediaItem at index 0 and 1.</span>
+<a name="l00746"></a>00746 <span class="comment">    mediaList.add(mediaItem);</span>
+<a name="l00747"></a>00747 <span class="comment">    mediaList.add(mediaItem);</span>
+<a name="l00748"></a>00748 <span class="comment"></span>
+<a name="l00749"></a>00749 <span class="comment">    //Remove the first occurrence of the mediaitem.</span>
+<a name="l00750"></a>00750 <span class="comment">    mediaList.remove(mediaItem);</span>
 <a name="l00751"></a>00751 <span class="comment"></span>
-<a name="l00752"></a>00752 <span class="comment">  Prototype:</span>
-<a name="l00753"></a>00753 <span class="comment">    removeByIndex(Number index)</span>
+<a name="l00752"></a>00752 <span class="comment">    ... //Now only the second occurrence remains and it's index is now 0.</span>
+<a name="l00753"></a>00753 <span class="comment">    (end)</span>
 <a name="l00754"></a>00754 <span class="comment"></span>
-<a name="l00755"></a>00755 <span class="comment">  Parameters:</span>
-<a name="l00756"></a>00756 <span class="comment">    index - The index of the &lt;MediaItem&gt; to remove.</span>
-<a name="l00757"></a>00757 <span class="comment"></span>
-<a name="l00758"></a>00758 <span class="comment">  Throws:</span>
-<a name="l00759"></a>00759 <span class="comment">    Invalid Argument (Components.results.NS_ERROR_INVALID_ARG)</span>
-<a name="l00760"></a>00760 <span class="comment">    when the &lt;MediaItem&gt; cannot be found.</span>
-<a name="l00761"></a>00761 <span class="comment"></span>
-<a name="l00762"></a>00762 <span class="comment">  Example:</span>
-<a name="l00763"></a>00763 <span class="comment">    (start code)</span>
-<a name="l00764"></a>00764 <span class="comment">    //Create or get a library.</span>
-<a name="l00765"></a>00765 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
-<a name="l00766"></a>00766 <span class="comment"></span>
-<a name="l00767"></a>00767 <span class="comment">    //Create a mediaitem.</span>
-<a name="l00768"></a>00768 <span class="comment">    var mediaItem = library.createMediaItem("http://path/to/item.mp3");</span>
+<a name="l00755"></a>00755 <span class="comment">  See Also:</span>
+<a name="l00756"></a>00756 <span class="comment">    &lt;add()&gt;</span>
+<a name="l00757"></a>00757 <span class="comment">    &lt;addAll()&gt;</span>
+<a name="l00758"></a>00758 <span class="comment">    &lt;removeByIndex()&gt;</span>
+<a name="l00759"></a>00759 <span class="comment">  */</span>
+<a name="l00760"></a>00760   <span class="keywordtype">void</span> <span class="keyword">remove</span>(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
+<a name="l00761"></a>00761 
+<a name="l00767"></a>00767   <span class="comment">/*</span>
+<a name="l00768"></a>00768 <span class="comment">  Method: removeByIndex()</span>
 <a name="l00769"></a>00769 <span class="comment"></span>
-<a name="l00770"></a>00770 <span class="comment">    //Create a medialist.</span>
-<a name="l00771"></a>00771 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
-<a name="l00772"></a>00772 <span class="comment"></span>
-<a name="l00773"></a>00773 <span class="comment">    //Add same item twice. We now have mediaItem at index 0 and 1.</span>
-<a name="l00774"></a>00774 <span class="comment">    mediaList.add(mediaItem);</span>
-<a name="l00775"></a>00775 <span class="comment">    mediaList.add(mediaItem);</span>
-<a name="l00776"></a>00776 <span class="comment"></span>
-<a name="l00777"></a>00777 <span class="comment">    //Remove the duplicate item.</span>
-<a name="l00778"></a>00778 <span class="comment">    mediaList.removeByIndex(1);</span>
-<a name="l00779"></a>00779 <span class="comment">    (end)</span>
-<a name="l00780"></a>00780 <span class="comment"></span>
-<a name="l00781"></a>00781 <span class="comment">  See Also:</span>
-<a name="l00782"></a>00782 <span class="comment">    &lt;add()&gt;</span>
-<a name="l00783"></a>00783 <span class="comment">    &lt;addAll()&gt;</span>
-<a name="l00784"></a>00784 <span class="comment">    &lt;remove()&gt;</span>
-<a name="l00785"></a>00785 <span class="comment">  */</span>
-<a name="l00786"></a>00786   <span class="keywordtype">void</span> removeByIndex(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
-<a name="l00787"></a>00787 
-<a name="l00792"></a>00792   <span class="keywordtype">void</span> removeSome(in nsISimpleEnumerator aMediaItems);
-<a name="l00793"></a>00793 
-<a name="l00797"></a>00797   <span class="comment">/*</span>
-<a name="l00798"></a>00798 <span class="comment">  Method: clear()</span>
-<a name="l00799"></a>00799 <span class="comment"></span>
-<a name="l00800"></a>00800 <span class="comment">  Clear the &lt;MediaList&gt;. This will remove all &lt;MediaItems&gt; from this &lt;MediaList&gt;.</span>
-<a name="l00801"></a>00801 <span class="comment"></span>
-<a name="l00802"></a>00802 <span class="comment">  Prototype:</span>
-<a name="l00803"></a>00803 <span class="comment">    clear()</span>
-<a name="l00804"></a>00804 <span class="comment"></span>
-<a name="l00805"></a>00805 <span class="comment">  Note:</span>
-<a name="l00806"></a>00806 <span class="comment">    This is the *preferred* way to remove all &lt;MediaItems&gt; from a &lt;MediaList&gt;</span>
-<a name="l00807"></a>00807 <span class="comment">    because it is optimized for speed.</span>
-<a name="l00808"></a>00808 <span class="comment"></span>
-<a name="l00809"></a>00809 <span class="comment">  Example:</span>
-<a name="l00810"></a>00810 <span class="comment">    (start code)</span>
-<a name="l00811"></a>00811 <span class="comment">    //Create or get a library.</span>
-<a name="l00812"></a>00812 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
-<a name="l00813"></a>00813 <span class="comment"></span>
-<a name="l00814"></a>00814 <span class="comment">    //Create a mediaitem.</span>
-<a name="l00815"></a>00815 <span class="comment">    var mediaItem = library.createMediaItem("http://path/to/item.mp3");</span>
-<a name="l00816"></a>00816 <span class="comment"></span>
-<a name="l00817"></a>00817 <span class="comment">    //Create a medialist.</span>
-<a name="l00818"></a>00818 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
+<a name="l00770"></a>00770 <span class="comment">  Remove a &lt;MediaItem&gt; from the &lt;MediaList&gt; using it's index.</span>
+<a name="l00771"></a>00771 <span class="comment"></span>
+<a name="l00772"></a>00772 <span class="comment">  Prototype:</span>
+<a name="l00773"></a>00773 <span class="comment">    removeByIndex(Number index)</span>
+<a name="l00774"></a>00774 <span class="comment"></span>
+<a name="l00775"></a>00775 <span class="comment">  Parameters:</span>
+<a name="l00776"></a>00776 <span class="comment">    index - The index of the &lt;MediaItem&gt; to remove.</span>
+<a name="l00777"></a>00777 <span class="comment"></span>
+<a name="l00778"></a>00778 <span class="comment">  Throws:</span>
+<a name="l00779"></a>00779 <span class="comment">    Invalid Argument (Components.results.NS_ERROR_INVALID_ARG)</span>
+<a name="l00780"></a>00780 <span class="comment">    when the &lt;MediaItem&gt; cannot be found.</span>
+<a name="l00781"></a>00781 <span class="comment"></span>
+<a name="l00782"></a>00782 <span class="comment">  Example:</span>
+<a name="l00783"></a>00783 <span class="comment">    (start code)</span>
+<a name="l00784"></a>00784 <span class="comment">    //Create or get a library.</span>
+<a name="l00785"></a>00785 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00786"></a>00786 <span class="comment"></span>
+<a name="l00787"></a>00787 <span class="comment">    //Create a mediaitem.</span>
+<a name="l00788"></a>00788 <span class="comment">    var mediaItem = library.createMediaItem("http://path/to/item.mp3");</span>
+<a name="l00789"></a>00789 <span class="comment"></span>
+<a name="l00790"></a>00790 <span class="comment">    //Create a medialist.</span>
+<a name="l00791"></a>00791 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
+<a name="l00792"></a>00792 <span class="comment"></span>
+<a name="l00793"></a>00793 <span class="comment">    //Add same item twice. We now have mediaItem at index 0 and 1.</span>
+<a name="l00794"></a>00794 <span class="comment">    mediaList.add(mediaItem);</span>
+<a name="l00795"></a>00795 <span class="comment">    mediaList.add(mediaItem);</span>
+<a name="l00796"></a>00796 <span class="comment"></span>
+<a name="l00797"></a>00797 <span class="comment">    //Remove the duplicate item.</span>
+<a name="l00798"></a>00798 <span class="comment">    mediaList.removeByIndex(1);</span>
+<a name="l00799"></a>00799 <span class="comment">    (end)</span>
+<a name="l00800"></a>00800 <span class="comment"></span>
+<a name="l00801"></a>00801 <span class="comment">  See Also:</span>
+<a name="l00802"></a>00802 <span class="comment">    &lt;add()&gt;</span>
+<a name="l00803"></a>00803 <span class="comment">    &lt;addAll()&gt;</span>
+<a name="l00804"></a>00804 <span class="comment">    &lt;remove()&gt;</span>
+<a name="l00805"></a>00805 <span class="comment">  */</span>
+<a name="l00806"></a>00806   <span class="keywordtype">void</span> removeByIndex(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00807"></a>00807 
+<a name="l00812"></a>00812   <span class="keywordtype">void</span> removeSome(in nsISimpleEnumerator aMediaItems);
+<a name="l00813"></a>00813 
+<a name="l00817"></a>00817   <span class="comment">/*</span>
+<a name="l00818"></a>00818 <span class="comment">  Method: clear()</span>
 <a name="l00819"></a>00819 <span class="comment"></span>
-<a name="l00820"></a>00820 <span class="comment">    //Add same item twice. We now have mediaItem at index 0 and 1.</span>
-<a name="l00821"></a>00821 <span class="comment">    mediaList.add(mediaItem);</span>
-<a name="l00822"></a>00822 <span class="comment">    mediaList.add(mediaItem);</span>
-<a name="l00823"></a>00823 <span class="comment"></span>
-<a name="l00824"></a>00824 <span class="comment">    ... //Do something with the medialist.</span>
-<a name="l00825"></a>00825 <span class="comment"></span>
-<a name="l00826"></a>00826 <span class="comment">    //Clear the medialist.</span>
-<a name="l00827"></a>00827 <span class="comment">    mediaList.clear();</span>
+<a name="l00820"></a>00820 <span class="comment">  Clear the &lt;MediaList&gt;. This will remove all &lt;MediaItems&gt; from this &lt;MediaList&gt;.</span>
+<a name="l00821"></a>00821 <span class="comment"></span>
+<a name="l00822"></a>00822 <span class="comment">  Prototype:</span>
+<a name="l00823"></a>00823 <span class="comment">    clear()</span>
+<a name="l00824"></a>00824 <span class="comment"></span>
+<a name="l00825"></a>00825 <span class="comment">  Note:</span>
+<a name="l00826"></a>00826 <span class="comment">    This is the *preferred* way to remove all &lt;MediaItems&gt; from a &lt;MediaList&gt;</span>
+<a name="l00827"></a>00827 <span class="comment">    because it is optimized for speed.</span>
 <a name="l00828"></a>00828 <span class="comment"></span>
-<a name="l00829"></a>00829 <span class="comment">    //Check to see if the medialist is empty.</span>
-<a name="l00830"></a>00830 <span class="comment">    //The property in this case will be true.</span>
-<a name="l00831"></a>00831 <span class="comment">    var empty = mediaList.isEmpty;</span>
-<a name="l00832"></a>00832 <span class="comment">    (end)</span>
-<a name="l00833"></a>00833 <span class="comment">  */</span>
-<a name="l00834"></a>00834   <span class="keywordtype">void</span> clear();
-<a name="l00835"></a>00835 
-<a name="l00836"></a><a class="code" href="interfacesb_i_media_list.html#b34ff623969f79f3dab95304e42f34b3">00836</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ITEMADDED         = 1 &lt;&lt; 0;
-<a name="l00837"></a><a class="code" href="interfacesb_i_media_list.html#ebd887a26980780de64ddf4af9cf430a">00837</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BEFOREITEMREMOVED = 1 &lt;&lt; 1;
-<a name="l00838"></a><a class="code" href="interfacesb_i_media_list.html#cdecf4b09dd4e75a52e9be77d378e6f3">00838</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_AFTERITEMREMOVED  = 1 &lt;&lt; 2;
-<a name="l00839"></a><a class="code" href="interfacesb_i_media_list.html#34e744de3ce3931f387c6ab405c3a968">00839</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ITEMUPDATED       = 1 &lt;&lt; 3;
-<a name="l00840"></a><a class="code" href="interfacesb_i_media_list.html#10cf8a4549906ace13097775e484c2b3">00840</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_LISTCLEARED       = 1 &lt;&lt; 4;
-<a name="l00841"></a><a class="code" href="interfacesb_i_media_list.html#c038790117b70fcca91a4a6f6c5a3f4b">00841</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BATCHBEGIN        = 1 &lt;&lt; 5;
-<a name="l00842"></a><a class="code" href="interfacesb_i_media_list.html#536109c8e3dc6da8d732ad92a226337b">00842</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BATCHEND          = 1 &lt;&lt; 6;
-<a name="l00843"></a><a class="code" href="interfacesb_i_media_list.html#6e0542725b8ace2f19f7556d3192ed5f">00843</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ALL               = 0xffffffff;
-<a name="l00844"></a>00844 
-<a name="l00861"></a>00861   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_media_list_listener.html" title="Interface used to listen to changes to a media list.">sbIMediaListListener</a> aListener,
-<a name="l00862"></a>00862                    [optional] in <span class="keywordtype">boolean</span> aOwnsWeak,
-<a name="l00863"></a>00863                    [optional] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFlags,
-<a name="l00864"></a>00864                    [optional] in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aPropertyFilter);
+<a name="l00829"></a>00829 <span class="comment">  Example:</span>
+<a name="l00830"></a>00830 <span class="comment">    (start code)</span>
+<a name="l00831"></a>00831 <span class="comment">    //Create or get a library.</span>
+<a name="l00832"></a>00832 <span class="comment">    var library = songbird.siteLibrary("", "");</span>
+<a name="l00833"></a>00833 <span class="comment"></span>
+<a name="l00834"></a>00834 <span class="comment">    //Create a mediaitem.</span>
+<a name="l00835"></a>00835 <span class="comment">    var mediaItem = library.createMediaItem("http://path/to/item.mp3");</span>
+<a name="l00836"></a>00836 <span class="comment"></span>
+<a name="l00837"></a>00837 <span class="comment">    //Create a medialist.</span>
+<a name="l00838"></a>00838 <span class="comment">    var mediaList = library.createMediaList("simple");</span>
+<a name="l00839"></a>00839 <span class="comment"></span>
+<a name="l00840"></a>00840 <span class="comment">    //Add same item twice. We now have mediaItem at index 0 and 1.</span>
+<a name="l00841"></a>00841 <span class="comment">    mediaList.add(mediaItem);</span>
+<a name="l00842"></a>00842 <span class="comment">    mediaList.add(mediaItem);</span>
+<a name="l00843"></a>00843 <span class="comment"></span>
+<a name="l00844"></a>00844 <span class="comment">    ... //Do something with the medialist.</span>
+<a name="l00845"></a>00845 <span class="comment"></span>
+<a name="l00846"></a>00846 <span class="comment">    //Clear the medialist.</span>
+<a name="l00847"></a>00847 <span class="comment">    mediaList.clear();</span>
+<a name="l00848"></a>00848 <span class="comment"></span>
+<a name="l00849"></a>00849 <span class="comment">    //Check to see if the medialist is empty.</span>
+<a name="l00850"></a>00850 <span class="comment">    //The property in this case will be true.</span>
+<a name="l00851"></a>00851 <span class="comment">    var empty = mediaList.isEmpty;</span>
+<a name="l00852"></a>00852 <span class="comment">    (end)</span>
+<a name="l00853"></a>00853 <span class="comment">  */</span>
+<a name="l00854"></a>00854   <span class="keywordtype">void</span> clear();
+<a name="l00855"></a>00855 
+<a name="l00856"></a><a class="code" href="interfacesb_i_media_list.html#b34ff623969f79f3dab95304e42f34b3">00856</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ITEMADDED         = 1 &lt;&lt; 0;
+<a name="l00857"></a><a class="code" href="interfacesb_i_media_list.html#ebd887a26980780de64ddf4af9cf430a">00857</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BEFOREITEMREMOVED = 1 &lt;&lt; 1;
+<a name="l00858"></a><a class="code" href="interfacesb_i_media_list.html#cdecf4b09dd4e75a52e9be77d378e6f3">00858</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_AFTERITEMREMOVED  = 1 &lt;&lt; 2;
+<a name="l00859"></a><a class="code" href="interfacesb_i_media_list.html#34e744de3ce3931f387c6ab405c3a968">00859</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ITEMUPDATED       = 1 &lt;&lt; 3;
+<a name="l00860"></a><a class="code" href="interfacesb_i_media_list.html#10cf8a4549906ace13097775e484c2b3">00860</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_LISTCLEARED       = 1 &lt;&lt; 4;
+<a name="l00861"></a><a class="code" href="interfacesb_i_media_list.html#c038790117b70fcca91a4a6f6c5a3f4b">00861</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BATCHBEGIN        = 1 &lt;&lt; 5;
+<a name="l00862"></a><a class="code" href="interfacesb_i_media_list.html#536109c8e3dc6da8d732ad92a226337b">00862</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BATCHEND          = 1 &lt;&lt; 6;
+<a name="l00863"></a><a class="code" href="interfacesb_i_media_list.html#9900bddb359408a49158687dfcb6f20d">00863</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ITEMMOVED         = 1 &lt;&lt; 7;
+<a name="l00864"></a><a class="code" href="interfacesb_i_media_list.html#6e0542725b8ace2f19f7556d3192ed5f">00864</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ALL               = 0xffffffff;
 <a name="l00865"></a>00865 
-<a name="l00870"></a>00870   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_media_list_listener.html" title="Interface used to listen to changes to a media list.">sbIMediaListListener</a> aListener);
-<a name="l00871"></a>00871 
-<a name="l00877"></a>00877   <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> createView([optional] in <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a> aState);
-<a name="l00878"></a>00878 
-<a name="l00884"></a>00884   <span class="keywordtype">void</span> runInBatchMode(in <a class="code" href="interfacesb_i_media_list_batch_callback.html">sbIMediaListBatchCallback</a> aCallback,
-<a name="l00885"></a>00885                       [optional] in nsISupports aUserData);
+<a name="l00882"></a>00882   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_media_list_listener.html" title="Interface used to listen to changes to a media list.">sbIMediaListListener</a> aListener,
+<a name="l00883"></a>00883                    [optional] in <span class="keywordtype">boolean</span> aOwnsWeak,
+<a name="l00884"></a>00884                    [optional] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFlags,
+<a name="l00885"></a>00885                    [optional] in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aPropertyFilter);
 <a name="l00886"></a>00886 
-<a name="l00887"></a>00887   <span class="comment">/*</span>
-<a name="l00888"></a>00888 <span class="comment">   * \brief Return the distinct values in the list for a given property</span>
-<a name="l00889"></a>00889 <span class="comment">   * \param aPropertyID Propery ID to get distinct values for</span>
-<a name="l00890"></a>00890 <span class="comment">   * \return String enumerator of distinct values for the given property</span>
-<a name="l00891"></a>00891 <span class="comment">   */</span>
+<a name="l00891"></a>00891   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_media_list_listener.html" title="Interface used to listen to changes to a media list.">sbIMediaListListener</a> aListener);
 <a name="l00892"></a>00892 
-<a name="l00893"></a>00893   <span class="comment">/*</span>
-<a name="l00894"></a>00894 <span class="comment">  Method: getDistinctValuesForProperty()</span>
-<a name="l00895"></a>00895 <span class="comment"></span>
-<a name="l00896"></a>00896 <span class="comment">  Get all distinct (unique) values in this &lt;MediaList&gt; for a given property.</span>
-<a name="l00897"></a>00897 <span class="comment"></span>
-<a name="l00898"></a>00898 <span class="comment">  This function is useful if you want to know all the unique artistName property</span>
-<a name="l00899"></a>00899 <span class="comment">  values for example.</span>
-<a name="l00900"></a>00900 <span class="comment"></span>
-<a name="l00901"></a>00901 <span class="comment">  Prototype:</span>
-<a name="l00902"></a>00902 <span class="comment">    Enumerator getDistinctValuesForProperty(String id)</span>
-<a name="l00903"></a>00903 <span class="comment"></span>
-<a name="l00904"></a>00904 <span class="comment">  Parameters:</span>
-<a name="l00905"></a>00905 <span class="comment">    id - The ID of the property for which all distinct values are desired.</span>
-<a name="l00906"></a>00906 <span class="comment"></span>
-<a name="l00907"></a>00907 <span class="comment">  Returns:</span>
-<a name="l00908"></a>00908 <span class="comment">    Enumerator, contains Strings.</span>
-<a name="l00909"></a>00909 <span class="comment"></span>
-<a name="l00910"></a>00910 <span class="comment">  Example:</span>
-<a name="l00911"></a>00911 <span class="comment">    (start code)</span>
-<a name="l00912"></a>00912 <span class="comment">    (end)</span>
-<a name="l00913"></a>00913 <span class="comment"></span>
-<a name="l00914"></a>00914 <span class="comment">  See Also:</span>
-<a name="l00915"></a>00915 <span class="comment">    &lt;enumerateItemsByProperty()&gt;</span>
+<a name="l00898"></a>00898   <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> createView([optional] in <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a> aState);
+<a name="l00899"></a>00899 
+<a name="l00905"></a>00905   <span class="keywordtype">void</span> runInBatchMode(in <a class="code" href="interfacesb_i_media_list_batch_callback.html">sbIMediaListBatchCallback</a> aCallback,
+<a name="l00906"></a>00906                       [optional] in nsISupports aUserData);
+<a name="l00907"></a>00907 
+<a name="l00908"></a>00908   <span class="comment">/*</span>
+<a name="l00909"></a>00909 <span class="comment">   * \brief Return the distinct values in the list for a given property</span>
+<a name="l00910"></a>00910 <span class="comment">   * \param aPropertyID Propery ID to get distinct values for</span>
+<a name="l00911"></a>00911 <span class="comment">   * \return String enumerator of distinct values for the given property</span>
+<a name="l00912"></a>00912 <span class="comment">   */</span>
+<a name="l00913"></a>00913 
+<a name="l00914"></a>00914   <span class="comment">/*</span>
+<a name="l00915"></a>00915 <span class="comment">  Method: getDistinctValuesForProperty()</span>
 <a name="l00916"></a>00916 <span class="comment"></span>
-<a name="l00917"></a>00917 <span class="comment">    &lt;getProperty()&gt;</span>
-<a name="l00918"></a>00918 <span class="comment">  */</span>
-<a name="l00919"></a>00919   nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyID);
-<a name="l00920"></a>00920 };
-<a name="l00921"></a>00921 
-<a name="l00926"></a>00926 [scriptable, function, uuid(02e86553-31e9-4564-b2db-2756b6d5e52f)]
-<a name="l00927"></a><a class="code" href="interfacesb_i_media_list_batch_callback.html">00927</a> interface <a class="code" href="interfacesb_i_media_list_batch_callback.html">sbIMediaListBatchCallback</a> : nsISupports
-<a name="l00928"></a>00928 {
-<a name="l00929"></a>00929   <span class="keywordtype">void</span> runBatched([optional] in nsISupports aUserData);
-<a name="l00930"></a>00930 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:03 2007 for Songbird by&nbsp;
+<a name="l00917"></a>00917 <span class="comment">  Get all distinct (unique) values in this &lt;MediaList&gt; for a given property.</span>
+<a name="l00918"></a>00918 <span class="comment"></span>
+<a name="l00919"></a>00919 <span class="comment">  This function is useful if you want to know all the unique artistName property</span>
+<a name="l00920"></a>00920 <span class="comment">  values for example.</span>
+<a name="l00921"></a>00921 <span class="comment"></span>
+<a name="l00922"></a>00922 <span class="comment">  Prototype:</span>
+<a name="l00923"></a>00923 <span class="comment">    Enumerator getDistinctValuesForProperty(String id)</span>
+<a name="l00924"></a>00924 <span class="comment"></span>
+<a name="l00925"></a>00925 <span class="comment">  Parameters:</span>
+<a name="l00926"></a>00926 <span class="comment">    id - The ID of the property for which all distinct values are desired.</span>
+<a name="l00927"></a>00927 <span class="comment"></span>
+<a name="l00928"></a>00928 <span class="comment">  Returns:</span>
+<a name="l00929"></a>00929 <span class="comment">    Enumerator, contains Strings.</span>
+<a name="l00930"></a>00930 <span class="comment"></span>
+<a name="l00931"></a>00931 <span class="comment">  Example:</span>
+<a name="l00932"></a>00932 <span class="comment">    (start code)</span>
+<a name="l00933"></a>00933 <span class="comment">    (end)</span>
+<a name="l00934"></a>00934 <span class="comment"></span>
+<a name="l00935"></a>00935 <span class="comment">  See Also:</span>
+<a name="l00936"></a>00936 <span class="comment">    &lt;enumerateItemsByProperty()&gt;</span>
+<a name="l00937"></a>00937 <span class="comment"></span>
+<a name="l00938"></a>00938 <span class="comment">    &lt;getProperty()&gt;</span>
+<a name="l00939"></a>00939 <span class="comment">  */</span>
+<a name="l00940"></a>00940   nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyID);
+<a name="l00941"></a>00941 };
+<a name="l00942"></a>00942 
+<a name="l00947"></a>00947 [scriptable, function, uuid(02e86553-31e9-4564-b2db-2756b6d5e52f)]
+<a name="l00948"></a><a class="code" href="interfacesb_i_media_list_batch_callback.html">00948</a> interface <a class="code" href="interfacesb_i_media_list_batch_callback.html">sbIMediaListBatchCallback</a> : nsISupports
+<a name="l00949"></a>00949 {
+<a name="l00950"></a>00950   <span class="keywordtype">void</span> runBatched([optional] in nsISupports aUserData);
+<a name="l00951"></a>00951 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:23 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

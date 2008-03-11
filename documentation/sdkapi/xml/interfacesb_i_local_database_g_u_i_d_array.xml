@@ -526,40 +526,40 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="262">
+      <node id="292">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
       </node>
-      <node id="263">
+      <node id="293">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="262" relation="public-inheritance">
+        <childnode refid="292" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="264">
+      <node id="294">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
-        <childnode refid="265" relation="usage">
+        <childnode refid="295" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
-        <childnode refid="266" relation="usage">
+        <childnode refid="296" relation="usage">
           <edgelabel>listener</edgelabel>
         </childnode>
-        <childnode refid="267" relation="usage">
+        <childnode refid="297" relation="usage">
           <edgelabel>currentSort</edgelabel>
         </childnode>
       </node>
-      <node id="267">
+      <node id="297">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="266">
+      <node id="296">
         <label>sbILocalDatabaseGUIDArrayListener</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array_listener"/>
       </node>
-      <node id="265">
+      <node id="295">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>

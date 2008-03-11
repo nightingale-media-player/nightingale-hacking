@@ -4,13 +4,13 @@
     <compoundname>sbILibraryTransferContext.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="227">
+      <node id="235">
         <label>components/library/base/public/sbILibraryTransferContext.idl</label>
         <link refid="sbILibraryTransferContext.idl"/>
-        <childnode refid="228" relation="include">
+        <childnode refid="236" relation="include">
         </childnode>
       </node>
-      <node id="228">
+      <node id="236">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -29,7 +29,7 @@
 <codeline lineno="4"><highlight class="comment">//</highlight></codeline>
 <codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
 <codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2007<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
 <codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
 <codeline lineno="9"><highlight class="comment">//</highlight></codeline>
 <codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
@@ -75,14 +75,14 @@
 <codeline lineno="92" refid="interfacesb_i_single_list_transfer_context_1a94cd19e291a40d19a76e0845dae2d41" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>list;</highlight></codeline>
 <codeline lineno="93"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="109"><highlight class="normal">[scriptable,<sp/>uuid(13af0d9a-9dc6-447f-916d-55e10d42e573)]</highlight></codeline>
-<codeline lineno="110" refid="interfacesb_i_multiple_item_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_multiple_item_transfer_context" kindref="compound" tooltip="This interface represents a transfer of a collection of media items and/or media...">sbIMultipleItemTransferContext</ref><sp/>:<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound" tooltip="A base interface for the various library transfer contexts.">sbILibraryTransferContext</ref></highlight></codeline>
-<codeline lineno="111"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="116" refid="interfacesb_i_multiple_item_transfer_context_1c62397ab39e4531e7a3c80c0193819d2" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>items;</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reset();</highlight></codeline>
-<codeline lineno="123"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal">[scriptable,<sp/>uuid(13af0d9a-9dc6-447f-916d-55e10d42e573)]</highlight></codeline>
+<codeline lineno="111" refid="interfacesb_i_multiple_item_transfer_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_multiple_item_transfer_context" kindref="compound" tooltip="This interface represents a transfer of a collection of media items and/or media...">sbIMultipleItemTransferContext</ref><sp/>:<sp/><ref refid="interfacesb_i_library_transfer_context" kindref="compound" tooltip="A base interface for the various library transfer contexts.">sbILibraryTransferContext</ref></highlight></codeline>
+<codeline lineno="112"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="117" refid="interfacesb_i_multiple_item_transfer_context_1c62397ab39e4531e7a3c80c0193819d2" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>items;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reset();</highlight></codeline>
+<codeline lineno="124"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="z:/projects/songbird/components/library/base/public/sbILibraryTransferContext.idl"/>
   </compounddef>
