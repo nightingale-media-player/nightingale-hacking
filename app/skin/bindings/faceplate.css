@@ -156,7 +156,6 @@ progressmeter.sb-player-seek-slider > .progress-bar {
   background-image: url(chrome://songbird/skin/faceplate/seek-thumb.png);
   background-repeat: no-repeat;
   background-position: right center;
-  background-color: transparent;
 }
 
 thumb.sb-player-seek-slider  > gripper
@@ -217,12 +216,11 @@ progressmeter.sb-player-seek-slider > .progress-bar
  */
 sb-player-seek-slider[buffering="true"]
 {
-  background-image: url(chrome://songbird/skin/faceplate/seek-buffering-animation.png);
-  background-repeat: no-repeat;
+  background-image: url('chrome://songbird/skin/faceplate/seek-buffering-animation.png');
+  background-repeat: repeat-x;
   background-position: center center;
 }
-
-sb-player-seek-slider[buffering="true"] #sb-player-seek-slider
+sb-player-seek-slider[buffering="true"] > #sb-player-seek-slider
 {
   display: none;
 }
