@@ -240,6 +240,9 @@ pref("songbird.url.support", "http://songbirdnest.com/support/");
 pref("songbird.url.support.quicktime", "http://publicsvn.songbirdnest.com/trac/wiki/SettingUpQuickTime");
 pref("songbird.url.support.corefailure", "http://publicsvn.songbirdest.com/trac/wiki/CoreWrapperFailure");
 
+// The breakpad report server to link to in about:crashes
+pref("breakpad.reportURL", "http://crashreports.songbirdnest.com/report/index/");
+
 //
 // Media Core prefs
 //
