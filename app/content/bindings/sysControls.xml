@@ -303,11 +303,13 @@
           <xul:sb-sys-title id="sb-sys-dialog-titlebar-osx-title-title" xbl:inherits="value"/> 
         </xul:hbox>
         <xul:hbox id="sb-sys-dialog-titlebar" flex="1">
-          <xul:sb-sys-osx-buttons id="sb-sys-dialog-titlebar-osx-buttons" sbid="left_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
-          <xul:sb-sys-title id="sb-sys-dialog-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
-          <!-- TODO: allow external menu? -->
-          <xul:menubar id="sb-sys-dialog-titlebar-menubar" />  
-          <xul:spacer id="sb-sys-dialog-titlebar-spacer" flex="1"/>
+	  <xul:hbox id="sb-sys-dialog-titlebar-primary-content" flex="1">
+	    <xul:sb-sys-osx-buttons id="sb-sys-dialog-titlebar-osx-buttons" sbid="left_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
+	    <xul:sb-sys-title id="sb-sys-dialog-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
+	    <!-- TODO: allow external menu? -->
+	    <xul:menubar id="sb-sys-dialog-titlebar-menubar" />  
+	    <xul:spacer id="sb-sys-dialog-titlebar-spacer" flex="1"/>
+	  </xul:hbox>
           <xul:sb-sys-buttons id="sb-sys-dialog-titlebar-buttons" sbid="right_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
         </xul:hbox>
       </xul:stack>
@@ -368,12 +370,14 @@
           <xul:sb-sys-title id="sb-sys-titlebar-osx-title-title" xbl:inherits="value"/> 
         </xul:hbox>
         <xul:hbox id="sb-sys-titlebar" align="center" flex="1">
-          <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
-          <xul:sb-sys-icon id="sb-sys-titlebar-icon" xbl:inherits="type"/>
-          <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
-          <children />
-          <xul:spacer id="sb-sys-titlebar-spacer" flex="1"/>
-          <xul:sb-feathers-toggle-button id="sb-sys-titlebar-feathers" sbid="feathers" popupanchor="bottomright" popupalign="topright" />
+	  <xul:hbox id="sb-sys-titlebar-primary-content" flex="1">
+	    <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
+	    <xul:sb-sys-icon id="sb-sys-titlebar-icon" xbl:inherits="type"/>
+	    <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
+	    <children />
+	  </xul:hbox>
+	  <xul:spacer id="sb-sys-titlebar-spacer" flex="1"/>
+	  <xul:sb-feathers-toggle-button id="sb-sys-titlebar-feathers" sbid="feathers" popupanchor="bottomright" popupalign="topright" />
           <xul:sb-sys-buttons id="sb-sys-titlebar-buttons" xbl:inherits="type"/>
         </xul:hbox>
       </xul:stack>

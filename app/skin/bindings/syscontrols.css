@@ -77,6 +77,13 @@ sb-sys-titlebar > menubar
   margin-left: 15px;
 }
 
+/* Keep feathers icon from exscaping the right side of the toolbar. */
+#sb-sys-dialog-titlebar-primary-content,
+#sb-sys-titlebar-primary-content,
+#sb-sys-titlebar-title
+{
+  overflow: hidden;
+}
 
 sb-feathers-toggle-button,
 sb-sys-minimize-button.sb-player-button,

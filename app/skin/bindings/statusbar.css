@@ -40,7 +40,14 @@ statusbar#status-bar
 {
   padding-top:3px;
   padding-right:0;
+  overflow: hidden;
 }
+
+#statusbar-display
+{
+  overflow: hidden;
+}
+
 window[platform="Darwin"] statusbar#status-bar
 {
   padding-right:16px;

@@ -50,10 +50,20 @@ window#mainplayer
   min-height: 400px;
 }
 
+/* hide the overflow here so that as the window shrinks below a certain size
+   the scrollbars on the browser window don't disappear.
+ */  
 #control_pane_box
 {
   margin-top: 7px;
   max-height: 45px;
+  overflow: hidden;
+}
+
+#middle_pane_box
+{
+  /* everything collapses in the end. */
+  overflow: hidden;
 }
 
 #servicepane_box /* aka The Service Tree, The Left Pane **/
