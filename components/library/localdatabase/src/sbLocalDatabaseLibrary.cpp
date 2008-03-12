@@ -3819,15 +3819,15 @@ sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
   aTimer->Cancel();
   mLibrary->mBatchCreateTimers.RemoveObject(aTimer);
 
-  // Report the earlier error, if any.
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Gather the media items we added and call the listener.
   nsCOMPtr<nsIArray> array;
-  rv = mBatchHelper->NotifyAndGetItems(getter_AddRefs(array));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_SUCCEEDED(rv))
+    rv = mBatchHelper->NotifyAndGetItems(getter_AddRefs(array));
 
-  mListener->OnComplete(array);
+  mListener->OnComplete(array, rv);
+
+  // Report the earlier error, if any.
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -3920,15 +3920,19 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
   NS_ASSERTION(aQuery, "aQuery is null");
 
   mURIArray = aURIArray;
+  PRUint32 queryCount = 0;
 
   nsresult rv = aQuery->AddQuery(NS_LITERAL_STRING("begin"));
   NS_ENSURE_SUCCESS(rv, rv);
+  if (mCallback) {
+    rv = mCallback->AddMapping(queryCount, 0);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  queryCount++;
 
   PRUint32 listLength;
   rv = aURIArray->GetLength(&listLength);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 queryCount = 0;
 
   // Add a query to insert each new item and record the guids that were
   // generated for the future inserts
@@ -3987,6 +3991,11 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
 
   rv = aQuery->AddQuery(NS_LITERAL_STRING("commit"));
   NS_ENSURE_SUCCESS(rv, rv);
+  if (mCallback) {
+    rv = mCallback->AddMapping(queryCount, listLength - 1);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  queryCount++;
 
   // Remember length for notifications
   rv = mLibrary->GetLength(&mLength);

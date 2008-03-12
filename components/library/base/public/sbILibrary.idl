@@ -46,7 +46,7 @@ interface sbIMediaListFactory;
 * \interface sbIBatchCreateMediaItemsListener
 * \brief Callback for batch media create items
 */
-[scriptable, uuid(fcdbb044-4214-425e-9103-bce219cb171d)]
+[scriptable, uuid(923514f0-0845-431f-86d4-3a073c6a0a98)]
 interface sbIBatchCreateMediaItemsListener : nsISupports
 {
   /**
@@ -59,9 +59,13 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 
   /**
    * \brief Called when batch operation is complete
-   * \param aMediaItems Array of the created sbIMediaItem objects.
+   * \param aMediaItems Array of the created sbIMediaItem objects.  If the
+   *        operation completes with an error, this argument is null.
+   * \param aResult Result of operation.  Set to an error value.  NS_OK
+   *                indicates successful completion.
    */
-  void onComplete(in nsIArray aMediaItems);
+  void onComplete(in nsIArray aMediaItems,
+                  in unsigned long aResult);
 };
 
 /**
