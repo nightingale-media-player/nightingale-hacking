@@ -27,6 +27,9 @@
 
 #include "sbBaseDevice.h"
 
+#include <algorithm>
+#include <vector>
+
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
@@ -329,12 +332,64 @@ nsresult sbBaseDevice::RemoveRequest(const int aType,
   return NS_OK;
 }
 
+typedef std::vector<sbBaseDevice::TransferRequest *> sbBaseDeviceTransferRequests;
+
+/**
+ * This iterates over the transfer requests and removes the Songbird library
+ * items that were created for the requests.
+ */
+static nsresult RemoveLibraryItems(sbBaseDeviceTransferRequests const & items)
+{
+  sbBaseDeviceTransferRequests::const_iterator const end = items.end();
+  for (sbBaseDeviceTransferRequests::const_iterator iter = items.begin(); 
+       iter != end;
+       ++iter) {
+    sbBaseDevice::TransferRequest * request = *iter; 
+    // If this is a request that adds an item to the device we need to remove
+    // it from the device since it never was copied
+    if (request->type == sbBaseDevice::TransferRequest::REQUEST_WRITE) {
+      if (request->list && request->item) {
+        nsresult rv = request->list->Remove(request->item);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+    NS_RELEASE(request);
+  }
+  return NS_OK;
+}
+
+/**
+ * This copies the add requests to the inserter
+ */
+template <class T>
+inline
+void CopyLibraryItems(nsDeque const & items, T inserter)
+{
+  nsDequeIterator end = items.End();
+  for (nsDequeIterator iter = items.Begin(); iter != end; ++iter) {
+    sbBaseDevice::TransferRequest * const request = static_cast<sbBaseDevice::TransferRequest*>(iter.GetCurrent());
+    if (request->type == sbBaseDevice::TransferRequest::REQUEST_WRITE) {
+      NS_ADDREF(request);
+      inserter = request;
+    }
+  }
+}
+
 nsresult sbBaseDevice::ClearRequests()
 {
+  sbBaseDeviceTransferRequests requests;
   NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
-  nsAutoLock lock(mRequestLock);
-  mAbortCurrentRequest = PR_TRUE;
-  mRequests.Erase();
+  {
+    nsAutoLock lock(mRequestLock);
+    requests.reserve(mRequests.GetSize());
+    // Save off the library items that are pending to avoid any
+    // potential reenterancy issues when deleting them.
+    CopyLibraryItems(mRequests, std::back_inserter(requests));
+    mAbortCurrentRequest = PR_TRUE;
+    mRequests.Erase();
+  }
+  nsresult rv = RemoveLibraryItems(requests);
+  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
 
