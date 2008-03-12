@@ -1168,6 +1168,8 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
     } // Exit Monitor
 
+    //The query is now in a running state.
+    nsAutoMonitor mon(pQuery->m_pQueryRunningMonitor);
 
     PRBool bPersistent = pQuery->m_PersistentQuery;
     sqlite3 *pDB = pThread->m_pHandle;
@@ -1558,21 +1560,15 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
     }
 
     //Whatever happened, the query is done running now.
-    {
-      nsAutoMonitor mon(pQuery->m_pQueryRunningMonitor);
+    PR_Lock(pQuery->m_StateLock);
 
-      PR_Lock(pQuery->m_StateLock);
+    pQuery->m_QueryHasCompleted = PR_TRUE;
+    pQuery->m_IsExecuting = PR_FALSE;
+    pQuery->m_IsAborting = PR_FALSE;
 
-      pQuery->m_QueryHasCompleted = PR_TRUE;
-      pQuery->m_IsExecuting = PR_FALSE;
-      pQuery->m_IsAborting = PR_FALSE;
+    PR_Unlock(pQuery->m_StateLock);
 
-      PR_Unlock(pQuery->m_StateLock);
-
-      mon.NotifyAll();
-
-      LOG(("DBE: Notified query monitor."));
-    }
+    LOG(("DBE: Notified query monitor."));
 
     //Check if this query is a persistent query so we can now fire off the callback.
     pEngine->DoSimpleCallback(pQuery);
@@ -1591,6 +1587,9 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
     }
 
     LOG(("DBE: Process End"));
+
+    mon.NotifyAll();
+    mon.Exit();
 
   } // while
 
