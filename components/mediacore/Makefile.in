@@ -30,7 +30,6 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = metadata \
-          transcoding \
           playback \
           $(NULL)
 
