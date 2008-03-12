@@ -81,7 +81,7 @@
                                         .getService(Components.interfaces.nsIURLFormatter);
               var getMoreURL = formatter.formatURLPref("extensions.getMoreThemesURL");
               if (typeof gBrowser != 'undefined') {
-                gBrowser.loadURI(getMoreURL);
+                gBrowser.loadURI(getMoreURL, null, null, null, "_blank");
               } else {
                 SBBrowserOpenURLInNewWindow(getMoreURL);
               }
