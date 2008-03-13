@@ -242,6 +242,12 @@ sbFilterTreeSelection::CheckIsSelectAll()
 {
   nsresult rv;
 
+  // Don't attempt to determine if we are a select all tree if we are
+  // rebuilding
+  if (mTreeView->mIsRebuilding) {
+    return NS_OK;
+  }
+
   PRInt32 rowCount;
   rv = mTreeView->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
