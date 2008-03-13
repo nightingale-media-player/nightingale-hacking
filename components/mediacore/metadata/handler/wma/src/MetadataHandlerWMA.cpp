@@ -32,6 +32,11 @@
 // INCLUDES ===================================================================
 #include "MetadataHandlerWMA.h"
 
+/* Songbird interfaces */
+#include "sbStandardProperties.h"
+#include "sbIPropertyArray.h"
+#include "sbPropertiesCID.h"
+
 #include <nsIChannel.h>
 #include <nsIFileStreams.h>
 #include <nsIFileURL.h>
@@ -61,24 +66,24 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerWMA");
 #define countof(_array)                                    \
   sizeof(_array) / sizeof(_array[0])
 
-#define SB_ARTIST       "artist"
-#define SB_TITLE        "title"
-#define SB_ALBUM        "album"
-#define SB_GENRE        "genre"
-#define SB_TRACKNO      "track_no"
-#define SB_VENDOR       "vendor"
-#define SB_COPYRIGHT    "Copyright"
-#define SB_COMPOSER     "composer"
-#define SB_CONDUCTOR    "conductor"
+#define SB_ARTIST       SB_PROPERTY_ARTISTNAME
+#define SB_TITLE        SB_PROPERTY_TRACKNAME
+#define SB_ALBUM        SB_PROPERTY_ALBUMNAME
+#define SB_GENRE        SB_PROPERTY_GENRE
+#define SB_TRACKNO      SB_PROPERTY_TRACKNUMBER
+#define SB_VENDOR       SB_PROPERTY_SOFTWAREVENDOR
+#define SB_COPYRIGHT    SB_PROPERTY_COPYRIGHT
+#define SB_COMPOSER     SB_PROPERTY_COMPOSERNAME
+#define SB_CONDUCTOR    SB_PROPERTY_CONDUCTORNAME
 #define SB_DIRECTOR     "director"
-#define SB_BPM          "bpm"
-#define SB_LYRICS       "lyrics"
-#define SB_YEAR         "year"
-#define SB_BITRATE      "bitrate"
-#define SB_RATING       "rating"
+#define SB_BPM          SB_PROPERTY_BPM
+#define SB_LYRICS       SB_PROPERTY_LYRICS
+#define SB_YEAR         SB_PROPERTY_YEAR
+#define SB_BITRATE      SB_PROPERTY_BITRATE
+#define SB_RATING       SB_PROPERTY_RATING
 #define SB_DESCRIPTION  "description"
-#define SB_COMMENT      "comment"
-#define SB_LENGTH       "length"
+#define SB_COMMENT      SB_PROPERTY_COMMENT
+#define SB_LENGTH       SB_PROPERTY_DURATION
 
 #define WMP_ARTIST      "Author"
 #define WMP_TITLE       "Title"
@@ -114,10 +119,10 @@ static const char* kMetadataKeys[] = {
       KEY_MAP_ENTRY(GENRE)        KEY_MAP_ENTRY(TRACKNO)
       KEY_MAP_ENTRY(VENDOR)       KEY_MAP_ENTRY(COPYRIGHT)
       KEY_MAP_ENTRY(COMPOSER)     KEY_MAP_ENTRY(CONDUCTOR)
-      KEY_MAP_ENTRY(DIRECTOR)     KEY_MAP_ENTRY(BPM)
+      KEY_MAP_ENTRY(COMMENT)      KEY_MAP_ENTRY(BPM)
       KEY_MAP_ENTRY(LYRICS)       KEY_MAP_ENTRY(YEAR)
       KEY_MAP_ENTRY(BITRATE)      KEY_MAP_ENTRY(RATING)
-      KEY_MAP_ENTRY(DESCRIPTION)  KEY_MAP_ENTRY(COMMENT)
+//      KEY_MAP_ENTRY(DESCRIPTION)  KEY_MAP_ENTRY(DIRECTOR)
     KEY_MAP_LAST_ENTRY(LENGTH)
   KEY_MAP_TAIL
 };
@@ -142,7 +147,7 @@ sbMetadataHandlerWMA::sbMetadataHandlerWMA() :
 
   // Get a new values object.
   nsresult rv;
-  m_Values = do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1", &rv);
+  m_PropertyArray = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to create MetadataValues");
 }
 
@@ -203,7 +208,7 @@ sbMetadataHandlerWMA::Close()
   if (m_ChannelHandler) 
     m_ChannelHandler->Close();
 
-  m_Values = nsnull;
+  m_PropertyArray = nsnull;
   m_Channel = nsnull;
   m_ChannelHandler = nsnull;
 
@@ -291,17 +296,18 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
 } //Write
 
 NS_IMETHODIMP
-sbMetadataHandlerWMA::GetValues(sbIMetadataValues **_retval)
+sbMetadataHandlerWMA::GetProps(sbIMutablePropertyArray **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_IF_ADDREF(*_retval = m_Values);
+  NS_IF_ADDREF(*_retval = m_PropertyArray);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbMetadataHandlerWMA::SetValues(sbIMetadataValues *values)
+sbMetadataHandlerWMA::SetProps(sbIMutablePropertyArray *props)
 {
-  m_Values = values;
+  m_PropertyArray = props;
+  // Should we maybe copy this rather than take a reference to it?
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -439,7 +445,7 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
     if (!value.IsEmpty()) {
       nsAutoString sbKey;
       sbKey.AssignLiteral(kMetadataKeys[index]);
-      nsresult rv = m_Values->SetValue(sbKey, value, datatype);
+      nsresult rv = m_PropertyArray->AppendProperty(sbKey, value);
       if (NS_SUCCEEDED(rv))
         *_retval += 1;
       else
@@ -554,7 +560,7 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
       nsAutoString sbKey;
       sbKey.AssignLiteral(kMetadataKeys[index]);
       nsresult rv =
-        m_Values->SetValue(sbKey, metadataValue, metadataValueType);
+        m_PropertyArray->AppendProperty(sbKey, metadataValue);
       if (NS_SUCCEEDED(rv))
         *_retval += 1;
       else

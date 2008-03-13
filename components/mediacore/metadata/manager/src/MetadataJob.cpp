@@ -1448,138 +1448,73 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
   nsCOMPtr<sbIMediaItem> item = aItem->item;
 
   // Get the metadata values that were found
-  nsCOMPtr<sbIMetadataValues> values;
-  rv = aItem->handler->GetValues( getter_AddRefs(values) );
+  nsCOMPtr<sbIMutablePropertyArray> props, newProps;
+  rv = aItem->handler->GetProps( getter_AddRefs(props) );
   NS_ENSURE_SUCCESS(rv, rv);
 
-/*
-  // These are the old API metadata key strings
-  const keys = new Array("title", "length", "album", "artist", "genre", "year", "composer", "track_no",
-                         "track_total", "disc_no", "disc_total", "service_uuid");
-*/
+  // Get a new array we're going to copy across
+  newProps = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the property manager because we love it so much
   nsCOMPtr<sbIPropertyManager> propMan =
     do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMutablePropertyArray> properties =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Set the properties (eventually iterate when the sbIMetadataValue have the correct keystrings).
+  // Set the properties
   NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
   nsAutoString oldName;
   rv = item->GetProperty( trackNameKey, oldName );
   nsAutoString trackName;
-  rv = values->GetValue( NS_LITERAL_STRING("title"), trackName );
+  rv = props->GetPropertyValue( trackNameKey, trackName );
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRBool defaultTrackname = trackName.IsEmpty() && !oldName.IsEmpty();
   // If the metadata read can't even find a song name,
   // AND THERE ISN'T ALREADY A TRACK NAME, cook one up off the url.
   if ( trackName.IsEmpty() && oldName.IsEmpty() ) {
     rv = CreateDefaultItemName( aItem->url, trackName );
     NS_ENSURE_SUCCESS(rv, rv);
+    // And then add/change it
+    if ( !trackName.IsEmpty() ) {
+      rv = AppendIfValid( propMan, newProps, trackNameKey, trackName );
+      NS_ENSURE_SUCCESS(rv, rv);
+      defaultTrackname = PR_TRUE;
+    }
   }
 
-  if ( ! trackName.IsEmpty() ) {
-    rv = AppendIfValid( propMan, properties, trackNameKey, trackName);
-    NS_ENSURE_SUCCESS(rv, rv);
+  // Loop through the returned props to copy to the new props
+  for ( PRUint32 i = 0; NS_SUCCEEDED(rv); i++ ) {
+    nsCOMPtr<sbIProperty> prop;
+    rv = props->GetPropertyAt( i, getter_AddRefs(prop) );
+    if ( NS_FAILED(rv) )
+      break;
+    nsAutoString id, value;
+    prop->GetId( id );
+    if ( !defaultTrackname || !id.Equals(trackNameKey) ) {
+      prop->GetValue( value );
+      if ( !value.IsEmpty() && !value.IsVoid() && !value.EqualsLiteral(" ") ) {
+        AppendIfValid( propMan, newProps, id, value );
+      }
+    }
   }
 
-  NS_NAMED_LITERAL_STRING( artistKey, SB_PROPERTY_ARTISTNAME );
-  nsAutoString artist;
-  rv = values->GetValue( NS_LITERAL_STRING("artist"), artist );
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ( ! artist.IsEmpty() ) {
-    rv = AppendIfValid( propMan, properties, artistKey, artist );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_NAMED_LITERAL_STRING( albumKey, SB_PROPERTY_ALBUMNAME );
-  nsAutoString album;
-  rv = values->GetValue( NS_LITERAL_STRING("album"), album );
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ( ! album.IsEmpty() ) {
-    rv = AppendIfValid( propMan, properties, albumKey, album );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_NAMED_LITERAL_STRING( durationKey, SB_PROPERTY_DURATION );
-  nsAutoString duration;
-  rv = values->GetValue( NS_LITERAL_STRING("length"), duration );
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ( ! duration.IsEmpty() ) {
-    rv = AppendIfValid( propMan, properties, durationKey, duration );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_NAMED_LITERAL_STRING( genreKey, SB_PROPERTY_GENRE );
-  nsAutoString genre;
-  rv = values->GetValue( NS_LITERAL_STRING("genre"), genre );
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ( ! genre.IsEmpty() ) {
-    rv = AppendIfValid( propMan, properties, genreKey, genre );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_NAMED_LITERAL_STRING( yearKey, SB_PROPERTY_YEAR );
-  nsAutoString year;
-  rv = values->GetValue( NS_LITERAL_STRING("year"), year );
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ( ! year.IsEmpty() ) {
-    rv = AppendIfValid( propMan, properties, yearKey, year );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_NAMED_LITERAL_STRING( trackKey, SB_PROPERTY_TRACKNUMBER );
-  nsAutoString track;
-  rv = values->GetValue( NS_LITERAL_STRING("track_no"), track );
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ( ! track.IsEmpty() ) {
-    rv = AppendIfValid( propMan, properties, trackKey, track );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_NAMED_LITERAL_STRING( discNumberKey, SB_PROPERTY_DISCNUMBER );
-  nsAutoString discNumber;
-  rv = values->GetValue( NS_LITERAL_STRING("disc_no"), discNumber );
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ( ! discNumber.IsEmpty() ) {
-    rv = AppendIfValid( propMan, properties, discNumberKey, discNumber );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_NAMED_LITERAL_STRING( totalTracksKey, SB_PROPERTY_TOTALTRACKS );
-  nsAutoString totalTracks;
-  rv = values->GetValue( NS_LITERAL_STRING("track_total"), totalTracks );
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ( ! totalTracks.IsEmpty() ) {
-    rv = AppendIfValid( propMan, properties, totalTracksKey, totalTracks );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_NAMED_LITERAL_STRING( totalDiscsKey, SB_PROPERTY_TOTALDISCS );
-  nsAutoString totalDiscs;
-  rv = values->GetValue( NS_LITERAL_STRING("disc_total"), totalDiscs );
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ( ! totalDiscs.IsEmpty() ) {
-    rv = AppendIfValid( propMan, properties, totalDiscsKey, totalDiscs );
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
+  // Then calc filesize, just to enjoy it.
   PRInt64 fileSize = 0;
   rv = aURIMetadataHelper->GetFileSize(aItem->url, &fileSize);
   if (NS_SUCCEEDED(rv)) {
     nsAutoString contentLength;
     contentLength.AppendInt(fileSize);
     rv = AppendIfValid( propMan,
-                        properties,
+                        newProps,
                         NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
                         contentLength );
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = item->SetProperties(properties);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // And then put the properties into the item
+  rv = item->SetProperties(newProps);
+  // NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

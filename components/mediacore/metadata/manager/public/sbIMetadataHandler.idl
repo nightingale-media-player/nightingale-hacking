@@ -30,7 +30,7 @@
 */
 #include "nsISupports.idl"
 #include "nsIChannel.idl"
-#include "sbIMetadataValues.idl"
+#include "sbIPropertyArray.idl"
 
 /**
 * \interface sbIMetadataHandler sbIMetadataHandler.h
@@ -41,16 +41,16 @@
 *
 * \sa sbIMetadataManager
 */
-[scriptable, uuid(919FF2D3-616D-4035-A52F-08C239F334EE)]
+[scriptable, uuid(1167a8c2-b0cb-4e4b-9334-4d38e307932f)]
 interface sbIMetadataHandler : nsISupports
 {
   /**
-  * \brief The values object containing the metadata information
+  * \brief The sbIPropertyArray object containing the metadata information
   *
   * When the handler has successfully completed its read() operation, the
   * values attribute will be filled with the metadata from the url.
   */
-  attribute sbIMetadataValues values;
+  attribute sbIMutablePropertyArray props;
 
   /**
   * \brief Whether or not the object has completed its read() operation

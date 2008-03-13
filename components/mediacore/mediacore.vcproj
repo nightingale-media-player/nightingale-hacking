@@ -254,9 +254,6 @@
 						RelativePath=".\metadata\manager\public\Makefile.in">
 					</File>
 					<File
-						RelativePath=".\metadata\manager\public\sbIMetadataBackscanner.idl">
-					</File>
-					<File
 						RelativePath=".\metadata\manager\public\sbIMetadataChannel.idl">
 					</File>
 					<File
@@ -271,21 +268,12 @@
 					<File
 						RelativePath=".\metadata\manager\public\sbIMetadataManager.idl">
 					</File>
-					<File
-						RelativePath=".\metadata\manager\public\sbIMetadataValues.idl">
-					</File>
 				</Filter>
 				<Filter
 					Name="src"
 					Filter="">
 					<File
 						RelativePath=".\metadata\manager\src\Makefile.in">
-					</File>
-					<File
-						RelativePath=".\metadata\manager\src\MetadataBackscanner.cpp">
-					</File>
-					<File
-						RelativePath=".\metadata\manager\src\MetadataBackscanner.h">
 					</File>
 					<File
 						RelativePath=".\metadata\manager\src\MetadataChannel.cpp">
@@ -313,12 +301,6 @@
 					</File>
 					<File
 						RelativePath=".\metadata\manager\src\MetadataManagerComponent.cpp">
-					</File>
-					<File
-						RelativePath=".\metadata\manager\src\MetadataValues.cpp">
-					</File>
-					<File
-						RelativePath=".\metadata\manager\src\MetadataValues.h">
 					</File>
 				</Filter>
 				<Filter

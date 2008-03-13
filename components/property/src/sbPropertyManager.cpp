@@ -64,7 +64,10 @@ const char* sFilterListPickerProperties[] = {
   SB_PROPERTY_GENRE,
   SB_PROPERTY_YEAR,
   SB_PROPERTY_RATING,
-  SB_PROPERTY_COMPOSERNAME
+  SB_PROPERTY_COMPOSERNAME,
+  SB_PROPERTY_BITRATE,
+  SB_PROPERTY_SAMPLERATE,
+  SB_PROPERTY_BPM,
 };
 
 
@@ -476,17 +479,17 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Track number
-  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                      NS_LITERAL_STRING("property.track_no"),
-                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE,
-                      PR_TRUE, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   //Year
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_YEAR),
                       NS_LITERAL_STRING("property.year"),
                       stringBundle, PR_TRUE, PR_TRUE, 1877, PR_TRUE, 0, PR_FALSE,
+                      PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Track number
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                      NS_LITERAL_STRING("property.track_no"),
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE,
                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -528,6 +531,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Composer(s)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COMPOSERNAME),
                     NS_LITERAL_STRING("property.composer"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Conductor(s)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CONDUCTORNAME),
+                    NS_LITERAL_STRING("property.conductor"),
                     stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -585,6 +595,82 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       NS_LITERAL_STRING("property.skip_count"),
                       stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE, 0, PR_FALSE,
                       PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Bitrate
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_BITRATE),
+                      NS_LITERAL_STRING("property.bitrate"),
+                      stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE, 0, PR_FALSE,
+                      PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Samplerate
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_SAMPLERATE),
+                      NS_LITERAL_STRING("property.samplerate"),
+                      stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE, 0, PR_FALSE,
+                      PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //BPM
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_BPM),
+                      NS_LITERAL_STRING("property.bpm"),
+                      stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE, 0, PR_FALSE,
+                      PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Key
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_KEY),
+                    NS_LITERAL_STRING("property.key"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Language
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LANGUAGE),
+                    NS_LITERAL_STRING("property.language"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Comment
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COMMENT),
+                    NS_LITERAL_STRING("property.comment"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Copyright
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COPYRIGHT),
+                    NS_LITERAL_STRING("property.copyright"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Copyright URL
+  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_COPYRIGHTURL),
+                   NS_LITERAL_STRING("property.copyright_url"),
+                   stringBundle, PR_TRUE, PR_FALSE, PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Subtitle
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_SUBTITLE),
+                    NS_LITERAL_STRING("property.subtitle"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Metadata UUID
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_METADATAUUID),
+                    NS_LITERAL_STRING("property.metadata_uuid"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //SoftwareVendor
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_SOFTWAREVENDOR),
+                    NS_LITERAL_STRING("property.vendor"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Origin URL

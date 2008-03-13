@@ -53,6 +53,11 @@
 #include "sbStringUtils.h"
 #include <sbProxiedComponentManager.h>
 
+/* Songbird interfaces */
+#include "sbStandardProperties.h"
+#include "sbIPropertyArray.h"
+#include "sbPropertiesCID.h"
+
 /* Mozilla imports. */
 #include <necko/nsIURI.h>
 #include <nsComponentManagerUtils.h>
@@ -306,6 +311,7 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
     nsCString                   urlSpec;
     nsCString                   urlScheme;
     nsAutoString                filePath;
+    PRUint32                    unsignedReadCount = 0;
     PRInt32                     readCount = 0;
     nsresult                    result = NS_OK;
 
@@ -318,9 +324,8 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
     /* Initialize the metadata values. */
     if (NS_SUCCEEDED(result))
     {
-        mpMetadataValues =
-                do_CreateInstance("@songbirdnest.com/Songbird/MetadataValues;1",
-                                  &result);
+        mpMetadataPropertyArray = 
+          do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &result);
     }
 
     /* Get the channel URL info. */
@@ -427,8 +432,10 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
     }
 
     /* If the read operation is complete, get the number of read tags. */
-    if (NS_SUCCEEDED(result) && mCompleted)
-        result = mpMetadataValues->GetNumValues(&readCount);
+    if (NS_SUCCEEDED(result) && mCompleted) {
+        result = mpMetadataPropertyArray->GetLength(&unsignedReadCount);
+        readCount = (PRInt32)unsignedReadCount; // (sigh)
+    }
 
     /* Complete read operation on error. */
     if (!NS_SUCCEEDED(result))
@@ -522,19 +529,19 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Close()
  * Getters/setters
  */
 
-NS_IMETHODIMP sbMetadataHandlerTaglib::GetValues(
-    sbIMetadataValues           **ppMetadataValues)
+NS_IMETHODIMP sbMetadataHandlerTaglib::GetProps(
+    sbIMutablePropertyArray     **ppPropertyArray)
 {
-    NS_ENSURE_ARG_POINTER(ppMetadataValues);
-    NS_ENSURE_STATE(mpMetadataValues);
-    NS_ADDREF(*ppMetadataValues = mpMetadataValues);
+    NS_ENSURE_ARG_POINTER(ppPropertyArray);
+    NS_ENSURE_STATE(ppPropertyArray);
+    NS_ADDREF(*ppPropertyArray = mpMetadataPropertyArray);
     return (NS_OK);
 }
 
-NS_IMETHODIMP sbMetadataHandlerTaglib::SetValues(
-    sbIMetadataValues           *valueList)
+NS_IMETHODIMP sbMetadataHandlerTaglib::SetProps(
+    sbIMutablePropertyArray     *ppPropertyArray)
 {
-    LOG(("1: SetValues\n"));
+    LOG(("1: SetProps\n"));
 
     return (NS_ERROR_NOT_IMPLEMENTED);
 }
@@ -726,41 +733,42 @@ PRUint32 sbMetadataHandlerTaglib::sNextChannelID = 0;
 
 static char *ID3v2Map[][2] =
 {
-    { "COMM", "comment" },
-    { "TALB", "album" },
-    { "TBPM", "bpm" },
-    { "TCOM", "composer" },
-    { "TCOP", "copyright_message" },
-    { "TENC", "vendor" },
-    { "TIME", "length" },
-    { "TIT2", "title" },
-    { "TIT3", "subtitle" },
-    { "TKEY", "key" },
-    { "TLAN", "language" },
-    { "TLEN", "length" },
-    { "TMED", "mediatype" },
-    { "TOAL", "original_album" },
-    { "TOPE", "original_artist" },
-    { "TORY", "original_year" },
-    { "TPE1", "artist" },
-    { "TPE2", "accompaniment" },
-    { "TPE3", "conductor" },
-    { "TPE4", "interpreter_remixer" },
-    { "TPOS", "disc_no" },
-    { "TPUB", "publisher" },
-    { "TRCK", "track_no" },
-    { "TYER", "year" },
-    { "UFID", "metadata_uuid" },
-    { "USER", "terms_of_use" },
-    { "USLT", "lyrics" },
-    { "WCOM", "commercialinfo_url" },
-    { "WCOP", "copyright_url" },
-    { "WOAR", "artist_url" },
-    { "WOAS", "source_url" },
-    { "WORS", "netradio_url" },
-    { "WPAY", "payment_url" },
-    { "WPUB", "publisher_url" },
-    { "WXXX", "user_url" }
+    { "COMM", SB_PROPERTY_COMMENT },
+    { "TALB", SB_PROPERTY_ALBUMNAME },
+    { "TBPM", SB_PROPERTY_BPM },
+    { "TCOM", SB_PROPERTY_COMPOSERNAME },
+    { "TCOP", SB_PROPERTY_COPYRIGHT },
+    { "TENC", SB_PROPERTY_SOFTWAREVENDOR },
+    { "TIME", SB_PROPERTY_DURATION },
+    { "TIT2", SB_PROPERTY_TRACKNAME },
+    { "TIT3", SB_PROPERTY_SUBTITLE },
+    { "TKEY", SB_PROPERTY_KEY },
+    { "TLAN", SB_PROPERTY_LANGUAGE },
+    { "TLEN", SB_PROPERTY_DURATION },
+//    { "TMED", "mediatype" },
+//    { "TOAL", "original_album" },
+//    { "TOPE", "original_artist" },
+//    { "TORY", "original_year" },
+    { "TPE1", SB_PROPERTY_ARTISTNAME },
+//    { "TPE2", "accompaniment" },
+    { "TPE3", SB_PROPERTY_CONDUCTORNAME },
+//    { "TPE4", "interpreter_remixer" },
+    { "TPOS", SB_PROPERTY_DISCNUMBER },
+    { "TPUB", SB_PROPERTY_RECORDLABELNAME },
+    { "TRCK", SB_PROPERTY_TRACKNUMBER },
+    { "TYER", SB_PROPERTY_YEAR },
+    { "UFID", SB_PROPERTY_METADATAUUID },
+//    { "USER", "terms_of_use" },
+    { "USLT", SB_PROPERTY_LYRICS },
+//    { "WCOM", "commercialinfo_url" },
+    { "WCOP", SB_PROPERTY_COPYRIGHTURL },
+//    { "WOAR", "artist_url" },
+//    { "WOAS", "source_url" },
+//    { "WORS", "netradio_url" },
+//    { "WPAY", "payment_url" },
+//    { "WPUB", "publisher_url" },
+//    { "WXXX", "user_url" }
+      { "XXXX", "junq" }
 };
 
 
@@ -824,7 +832,7 @@ void sbMetadataHandlerTaglib::AddID3v2Tag(
     if (!frameList.isEmpty())
     {
         /* Convert length to microseconds. */
-        if (!strcmp(metadataName, "length"))
+        if (!strcmp(metadataName, SB_PROPERTY_DURATION))
         {
             PRInt32                     length;
 
@@ -858,20 +866,20 @@ void sbMetadataHandlerTaglib::AddID3v2Tag(
 // see http://wiki.hydrogenaudio.org/index.php?title=APE_key
 static char *APEMap[][2] =
 {
-    { "Title", "trackName" },
-    { "Subtitle", "subtitle" },
-    { "Artist", "artistName" },
-    { "Album", "albumName" },
-    { "Debut album", "original_album" },
-    { "Publisher", "recordLabelName" },
-    { "Conductor", "conductor" },
-    { "Track", "trackNumber" },
-    { "Composer", "composerName" },
-    { "Comment", "comment" },
-    { "Copyright", "copyright_message" },
-    { "File", "source_url" },
-    { "Year", "year" },
-    { "Genre", "genre" }
+    { "Title", SB_PROPERTY_TRACKNAME },
+    { "Subtitle", SB_PROPERTY_SUBTITLE },
+    { "Artist", SB_PROPERTY_ARTISTNAME },
+    { "Album", SB_PROPERTY_ALBUMNAME },
+//    { "Debut album", "original_album" },
+    { "Publisher", SB_PROPERTY_RECORDLABELNAME },
+    { "Conductor", SB_PROPERTY_CONDUCTORNAME },
+    { "Track", SB_PROPERTY_TRACKNUMBER },
+    { "Composer", SB_PROPERTY_COMPOSERNAME },
+    { "Comment", SB_PROPERTY_COMMENT },
+    { "Copyright", SB_PROPERTY_COPYRIGHT },
+//    { "File", "source_url" },
+    { "Year", SB_PROPERTY_YEAR },
+    { "Genre", SB_PROPERTY_GENRE }
 };
 
 
@@ -930,7 +938,7 @@ void sbMetadataHandlerTaglib::AddAPETag(
     if (!item.isEmpty())
     {
         /* Convert length to microseconds. */
-        if (!strcmp(metadataName, "length"))
+        if (!strcmp(metadataName, SB_PROPERTY_DURATION))
         {
             PRInt32                     length;
 
@@ -961,8 +969,8 @@ void sbMetadataHandlerTaglib::AddAPETag(
 
 static char *XiphMap[][2] =
 {
-    { "TRACKNUMBER", "track_no" },
-    { "DATE", "year" }
+    { "TRACKNUMBER", SB_PROPERTY_TRACKNUMBER },
+    { "DATE", SB_PROPERTY_YEAR }
 };
 
 
@@ -1042,15 +1050,15 @@ void sbMetadataHandlerTaglib::ReadMP4Tags(
 {
     /* Add MP4 specific tags. */
     if (!pTag->composer().isEmpty())
-        AddMetadataValue("composer", pTag->composer());
+        AddMetadataValue(SB_PROPERTY_COMPOSERNAME, pTag->composer());
     if (pTag->numTracks())
-        AddMetadataValue("track_total", pTag->numTracks());
+        AddMetadataValue(SB_PROPERTY_TOTALTRACKS, pTag->numTracks());
     if (pTag->disk())
-        AddMetadataValue("disc_no", pTag->disk());
+        AddMetadataValue(SB_PROPERTY_DISCNUMBER, pTag->disk());
     if (pTag->numDisks())
-        AddMetadataValue("disc_total", pTag->numDisks());
+        AddMetadataValue(SB_PROPERTY_TOTALDISCS, pTag->numDisks());
     if (pTag->bpm())
-        AddMetadataValue("bpm", pTag->bpm());
+        AddMetadataValue(SB_PROPERTY_BPM, pTag->bpm());
 }
 
 
@@ -1126,10 +1134,10 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
     /* Fix up track and disc number metadata. */
     if (isValid && !mMetadataChannelRestart)
     {
-        FixTrackDiscNumber(NS_LITERAL_STRING("track_no"),
-                           NS_LITERAL_STRING("track_total"));
-        FixTrackDiscNumber(NS_LITERAL_STRING("disc_no"),
-                           NS_LITERAL_STRING("disc_total"));
+        FixTrackDiscNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                           NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS));
+        FixTrackDiscNumber(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                           NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS));
     }
 
     /* Check if the metadata reading is complete. */
@@ -1205,13 +1213,13 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
     {
         pTag = pTagFile->tag();
         // yay random charset guessing!
-        AddMetadataValue("album", ConvertCharset(pTag->album(), aCharset));
-        AddMetadataValue("artist", ConvertCharset(pTag->artist(), aCharset));
-        AddMetadataValue("comment", ConvertCharset(pTag->comment(), aCharset));
-        AddMetadataValue("genre", ConvertCharset(pTag->genre(), aCharset));
-        AddMetadataValue("title", ConvertCharset(pTag->title(), aCharset));
-        AddMetadataValue("track_no", pTag->track());
-        AddMetadataValue("year", pTag->year());
+        AddMetadataValue(SB_PROPERTY_ALBUMNAME, ConvertCharset(pTag->album(), aCharset));
+        AddMetadataValue(SB_PROPERTY_ARTISTNAME, ConvertCharset(pTag->artist(), aCharset));
+        AddMetadataValue(SB_PROPERTY_COMMENT, ConvertCharset(pTag->comment(), aCharset));
+        AddMetadataValue(SB_PROPERTY_GENRE, ConvertCharset(pTag->genre(), aCharset));
+        AddMetadataValue(SB_PROPERTY_TRACKNAME, ConvertCharset(pTag->title(), aCharset));
+        AddMetadataValue(SB_PROPERTY_TRACKNUMBER, pTag->track());
+        AddMetadataValue(SB_PROPERTY_YEAR, pTag->year());
     }
 
     /* Get the audio properties. */
@@ -1220,9 +1228,9 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
         pAudioProperties = pTagFile->audioProperties();
         if (pAudioProperties)
         {
-            AddMetadataValue("bitrate", pAudioProperties->bitrate());
-            AddMetadataValue("frequency", pAudioProperties->sampleRate());
-            AddMetadataValue("length", pAudioProperties->length() * 1000000);
+            AddMetadataValue(SB_PROPERTY_BITRATE, pAudioProperties->bitrate());
+            AddMetadataValue(SB_PROPERTY_SAMPLERATE, pAudioProperties->sampleRate());
+            AddMetadataValue(SB_PROPERTY_DURATION, pAudioProperties->length() * 1000000);
         }
     }
 
@@ -1770,10 +1778,9 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
         return (result);
 
     /* Add the metadata value. */
-    result = mpMetadataValues->SetValue
-                                (NS_ConvertUTF8toUTF16(name),
-                                 NS_ConvertUTF8toUTF16(value.to8Bit(true).c_str()),
-                                 0);
+    result = mpMetadataPropertyArray->AppendProperty
+                        (NS_ConvertUTF8toUTF16(name),
+                         NS_ConvertUTF8toUTF16(value.to8Bit(true).c_str()));
 
     return (result);
 }
@@ -1800,9 +1807,9 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
     valueString.AppendInt(value);
 
     /* Add the metadata value. */
-    result = mpMetadataValues->SetValue(NS_ConvertUTF8toUTF16(name),
-                                        valueString,
-                                        0);
+    result = mpMetadataPropertyArray->AppendProperty
+                                     (NS_ConvertUTF8toUTF16(name),
+                                      valueString);
 
     return (result);
 }
@@ -1833,7 +1840,8 @@ void sbMetadataHandlerTaglib::FixTrackDiscNumber(
     nsresult                    result = NS_OK;
 
     /* Get the number value. */
-    result = mpMetadataValues->GetValue(numberKey, numberValue);
+    result = mpMetadataPropertyArray->GetPropertyValue
+                                          (numberKey, numberValue);
 
     /* Search for "of" or "/". */
     if ((mark = numberValue.Find("of", PR_TRUE)) == -1)

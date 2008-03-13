@@ -44,10 +44,12 @@ CPP_SRCS = MetadataHandlerTaglib.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/mediacore/metadata/handler/taglib/public \
+               $(DEPTH)/components/property/public \
                $(DEPTH)/components/moz/proxy/public \
                $(topsrcdir)/components/mediacore/metadata/manager/src \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/threads/src \
+               $(topsrcdir)/components/property/src \
                $(srcdir) \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/crashreporter \

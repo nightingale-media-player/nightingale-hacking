@@ -37,7 +37,6 @@
 #include <nsStringGlue.h>
 
 #include "sbIMetadataHandler.h"
-#include "sbIMetadataValues.h"
 #include "sbIMetadataChannel.h"
 
 // DEFINES ====================================================================
@@ -63,7 +62,7 @@ class sbMetadataHandlerWMA : public sbIMetadataHandler
 protected:
   ~sbMetadataHandlerWMA();
 
-  nsCOMPtr<sbIMetadataValues>  m_Values;
+  nsCOMPtr<sbIMutablePropertyArray>  m_PropertyArray;
   nsCOMPtr<sbIMetadataChannel> m_ChannelHandler;
   nsCOMPtr<nsIChannel>         m_Channel;
   PRBool                       m_Completed;

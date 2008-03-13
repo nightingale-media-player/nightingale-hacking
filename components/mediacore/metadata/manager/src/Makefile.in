@@ -36,9 +36,7 @@ target_name = sbMetadataManager
 endif
 
 CPP_SRCS = MetadataManager.cpp \
-           MetadataValues.cpp \
            MetadataChannel.cpp \
-           MetadataBackscanner.cpp \
            MetadataJobManager.cpp \
            MetadataJob.cpp \
            sbMetadataUtils.cpp \

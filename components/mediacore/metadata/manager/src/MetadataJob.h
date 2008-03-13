@@ -58,7 +58,6 @@
 #include <sbIMetadataManager.h>
 #include <sbIMetadataHandler.h>
 #include <sbIMetadataJob.h>
-#include <sbIMetadataValues.h>
 
 #include <set>
 

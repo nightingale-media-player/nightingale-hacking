@@ -54,7 +54,6 @@
 #include "sbIMetadataHandler.h"
 #include "sbIMetadataJob.h"
 #include "sbIMetadataJobManager.h"
-#include "sbIMetadataValues.h"
 
 // DEFINES ====================================================================
 #define SONGBIRD_METADATAJOBMANAGER_CONTRACTID \

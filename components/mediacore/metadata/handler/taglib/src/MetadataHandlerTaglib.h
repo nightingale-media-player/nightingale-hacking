@@ -82,7 +82,6 @@
 
 /* Songbird imports. */
 #include <sbIMetadataHandler.h>
-#include <sbIMetadataValues.h>
 #include <sbISeekableChannel.h>
 #include <sbITagLibChannelFileIOManager.h>
 #include <sbIProxiedServices.h>
@@ -130,7 +129,7 @@ class sbMetadataHandlerTaglib : public sbIMetadataHandler,
      * mpTagLibChannelFileIOManager
      *                          TagLib sbISeekableChannel file IO manager.
      * mpFileProtocolHandler    File protocol handler instance.
-     * mpMetadataValues         Read metadata values.
+     * mpMetadataPropertyArray  Read metadata property values.
      * mpChannel                Metadata file channel.
      * mpSeekableChannel        Metadata channel.
      * mpURL                    Metadata file channel URL.
@@ -146,7 +145,7 @@ private:
                                 mpTagLibChannelFileIOManager;
     nsCOMPtr<nsIFileProtocolHandler>
                                 mpFileProtocolHandler;
-    nsCOMPtr<sbIMetadataValues> mpMetadataValues;
+    nsCOMPtr<sbIMutablePropertyArray> mpMetadataPropertyArray;
     nsCOMPtr<nsIChannel>        mpChannel;
     nsCOMPtr<sbISeekableChannel>
                                 mpSeekableChannel;
