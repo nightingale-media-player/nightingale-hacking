@@ -221,7 +221,10 @@
       <body>
         <![CDATA[
          this.hotkeyChar = event.charCode;
-         if (this.hotkeyChar != 0) this.checkHotkey(-1, event);
+         if (this.hotkeyChar != 0) {
+           this.checkHotkey(-1, event);
+           this.hotkeyChar = 0;
+         }
         ]]>
       </body>
     </method>
