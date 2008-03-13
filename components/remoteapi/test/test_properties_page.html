@@ -45,13 +45,17 @@ function runTest(tester) {
       "skipCount",
       "rating",                     // value [0-5]
       "duration",
-      "lastPlayTime"
+      "lastPlayTime",
+      "bitrate",
+      "samplerate",
+      "bpm"
     ];
 
     // must have a uri-valid value
     var uriPropNames = [
       "primaryImageURL",
-      "originURL"
+      "originURL",
+      "copyrightURL"
     ];
 
     // this one is just super special
@@ -119,7 +123,8 @@ function runTest(tester) {
       "originURL",
       "transferPolicy",
       "defaultMediaPageURL",
-      "onlyCustomMediaPages"
+      "onlyCustomMediaPages",
+      "copyrightURL"
     ];
 
     var library = songbird.mainLibrary;
