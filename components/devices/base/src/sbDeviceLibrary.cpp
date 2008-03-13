@@ -110,6 +110,8 @@ sbDeviceLibrary::Finalize()
     nsAutoLock lock(mLock);
     deviceLibrary = mDeviceLibrary;
     mDeviceLibrary = nsnull;
+    // remove the listeners
+    mListeners.Clear();
   }
 
   if (deviceLibrary)

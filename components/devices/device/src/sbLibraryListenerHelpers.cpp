@@ -350,8 +350,8 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS1(sbBaseDeviceMediaListListener,
-                   sbIMediaListListener)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseDeviceMediaListListener,
+                              sbIMediaListListener)
 
 sbBaseDeviceMediaListListener::sbBaseDeviceMediaListListener()
 : mDevice(nsnull),
