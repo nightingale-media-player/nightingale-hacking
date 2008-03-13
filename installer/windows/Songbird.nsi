@@ -198,6 +198,7 @@ Section "-Application" Section1
       ClearErrors
       MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessage}" IDYES 0 IDNO +1
       ExecWait '$R1 /S _?=$INSTDIR'
+      Delete '$R1'
     ${EndIf}
   ${EndIf}
 
@@ -600,9 +601,44 @@ Function BackupOldVersion
 FunctionEnd
 
 Function shouldPickNewDirectory
+  ; Seems the directory that was picked isn't empty
   ${If} $HasValidInstallDirectory == "0"
-    MessageBox MB_OK|MB_ICONSTOP "${DirectoryNotEmptyMessage}"
-    Abort
+    
+    ; Check for previous version of Songbird in picked folder.
+    ${If} ${FileExists} "$INSTDIR\${FileMainEXE}"
+      
+      ; Looks like it is Songbird that is installed in this folder
+      ; Ask the user if they want to uninstall. If they choose not to, they
+      ; will not be able to continue installing in the chosen folder.
+      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessageSameFolder}" IDYES 0 IDNO NotValid
+      ExecWait '$INSTDIR\${FileUninstallEXE} /S _?=$INSTDIR'
+      Delete '$INSTDIR\${FileUninstallEXE}'
+
+      ; Check the state of the directory again. It may still not be empty!
+      ${DirState} "$INSTDIR" $0
+
+      ${If} $0 == 1
+        StrCpy $HasValidInstallDirectory 0
+        Goto Valid
+      ${Else}
+        StrCpy $HasValidInstallDirectory 1
+        Goto Valid
+      ${EndIf}
+
+      NotValid: 
+        Abort
+        
+      Valid:
+      
+    ${EndIf}
+
+    ; If we still don't have a valid empty directory to install
+    ; to, throw up the error message.
+    ${If} $HasValidInstallDirectory == "0"
+     MessageBox MB_OK|MB_ICONSTOP "${DirectoryNotEmptyMessage}"
+     Abort
+    ${EndIf}
+    
   ${EndIf}
 FunctionEnd
 
