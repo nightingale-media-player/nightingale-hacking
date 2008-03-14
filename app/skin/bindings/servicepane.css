@@ -41,11 +41,11 @@ Imported by bindings.css or directly into feathers.
 /* Twisty and Shouty **/
 .servicepane-tree > treechildren::-moz-tree-twisty(open)
 {
-  list-style-image: url(chrome://songbird/skin/tree/twisty-open.png);
+  list-style-image: url(chrome://songbird/skin/servicepane/twisty-open.png);
 }
 .servicepane-tree > treechildren::-moz-tree-twisty(closed)
 {
-  list-style-image: url(chrome://songbird/skin/tree/twisty-closed.png);
+  list-style-image: url(chrome://songbird/skin/servicepane/twisty-closed.png);
 }
 
 /* Service Pane Icons **/

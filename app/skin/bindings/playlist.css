@@ -109,14 +109,14 @@ Tree Progress Meter
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating )
 {
   background-repeat: no-repeat;
-  background-image: url(chrome://songbird/skin/tree/ratings.png);
+  background-image: url(chrome://songbird/skin/playlist/ratings.png);
 }
 
 
 .sb-filterlist-tree > treechildren::-moz-tree-cell( rating )
 {
   background-repeat: no-repeat;
-  background-image: url(chrome://songbird/skin/tree/ratings-readonly.png);
+  background-image: url(chrome://songbird/skin/playlist/ratings-readonly.png);
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating ),
@@ -199,14 +199,14 @@ In-cell Buttons
 /* button default state and baseline */
 .sb-playlist-tree > treechildren::-moz-tree-cell( button )
 {
-       background-image: url(chrome://songbird/skin/tree/button/button_left.png);
+       background-image: url(chrome://songbird/skin/playlist/button/button_left.png);
        background-position:0px -36px;
        background-repeat:no-repeat;
        padding:0 0 0 0 ! important;
 }
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( button )
 {
-       background-image: url(chrome://songbird/skin/tree/button/button_right.png);
+       background-image: url(chrome://songbird/skin/playlist/button/button_right.png);
        background-position:100% -36px;
        background-repeat:no-repeat;
        margin:0 0 0 13px ! important;
@@ -287,7 +287,7 @@ In-cell Download Buttons
 }
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter
 {
-       background-image:url(chrome://songbird/skin/tree/download/remain.png);
+       background-image:url(chrome://songbird/skin/playlist/download/remain.png);
        border: none !important;
        background-color: transparent !important;
        padding:0 ! important;
@@ -295,7 +295,7 @@ In-cell Download Buttons
 }
 .sb-playlist-tree > treechildren::-moz-tree-progressmeter(progressNotStarted)
 {
-       background: url(chrome://songbird/skin/tree/download/not-started.png);
+       background: url(chrome://songbird/skin/playlist/download/not-started.png);
        background-position:left center;
        background-repeat:repeat-x;
 }
@@ -305,13 +305,13 @@ In-cell Download Buttons
 }
 .sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton progressCompleted )
 {
-       background: url(chrome://songbird/skin/tree/download/done.png);
+       background: url(chrome://songbird/skin/playlist/download/done.png);
        background-position:center center;
        background-repeat:no-repeat;
 }
 .sb-playlist-tree > treechildren::-moz-tree-cell( button downloadbutton progressFailed )
 {
-       background-image: url(chrome://songbird/skin/tree/button/button_left-error.png);
+       background-image: url(chrome://songbird/skin/playlist/button/button_left-error.png);
        padding:0 0 0 16px ! important;
 }
 
@@ -347,7 +347,7 @@ Playing track indicator
 .sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, playing )
 {
   background-repeat: no-repeat;
-  background-image: url(chrome://songbird/skin/tree/playing.png);
+  background-image: url(chrome://songbird/skin/playlist/playing.png);
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, playing, selected )
