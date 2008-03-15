@@ -105,7 +105,7 @@ public:
     virtual ~TagLibChannelFileIOTypeResolver();
 
     virtual FileIO *createFileIO(
-        const char                  *fileName) const;
+        FileName                    fileName) const;
 };
 
 

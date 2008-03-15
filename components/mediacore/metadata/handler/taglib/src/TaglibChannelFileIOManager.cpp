@@ -441,10 +441,8 @@ TagLibChannelFileIOTypeResolver::~TagLibChannelFileIOTypeResolver()
  */
 
 FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
-    const char                  *fileName) const
+    FileName                    fileName) const
 {
-    NS_ASSERTION(fileName, "fileName is null");
-
     nsCOMPtr<sbITagLibChannelFileIOManager>
                                    pTagLibChannelFileIOManager;
     nsCOMPtr<sbISeekableChannel>   pSeekableChannel;
@@ -453,7 +451,14 @@ FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
     nsresult                       result = NS_OK;
 
     /* Assume the file name is a channel ID. */
+#if XP_WIN
+    if(wcslen((const wchar_t *) fileName) > 0)
+        channelID.Assign((const wchar_t *) fileName);
+    else
+        channelID = NS_ConvertUTF8toUTF16((const char *) fileName);
+#else
     channelID = NS_ConvertUTF8toUTF16(fileName);
+#endif
 
     /* Get the TagLib sbISeekableChannel file IO manager. */
     pTagLibChannelFileIOManager =

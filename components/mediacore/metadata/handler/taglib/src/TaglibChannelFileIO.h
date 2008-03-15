@@ -113,7 +113,7 @@ private:
      */
 
 public:
-    virtual const char *name() const;
+    virtual FileName name() const;
 
     virtual ByteVector readBlock(
         TagLib::ulong               length);

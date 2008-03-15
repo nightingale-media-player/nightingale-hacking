@@ -153,7 +153,7 @@ private:
     nsString                    mMetadataChannelID;
     PRBool                      mMetadataChannelRestart;
     PRBool                      mCompleted;
-    nsCString                   mMetadataPath;
+    nsString                    mMetadataPath;
 #ifdef MOZ_CRASHREPORTER
     nsCOMPtr<nsICrashReporter>  mpCrashReporter;
 #endif
@@ -275,19 +275,19 @@ private:
         const char                  *aCharset = 0);
 
     PRBool ReadMPEGFile(
-        const char                  *filePath);
+        nsAString                   &aFilePath);
 
     PRBool ReadMP4File(
-        const char                  *filePath);
+        nsAString                   &aFilePath);
 
     PRBool ReadOGGFile(
-        const char                  *filePath);
+        nsAString                   &aFilePath);
 
     PRBool ReadFLACFile(
-        const char                  *filePath);
+        nsAString                   &aFilePath);
 
     PRBool ReadMPCFile(
-        const char                  *filePath);
+        nsAString                   &aFilePath);
 
     nsresult AddMetadataValue(
         const char                  *name,

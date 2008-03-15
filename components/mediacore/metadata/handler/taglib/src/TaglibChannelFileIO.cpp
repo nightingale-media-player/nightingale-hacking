@@ -79,7 +79,7 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("TagLibChannelFileIO");
  * Returns the file name in the local file system encoding.
  */
 
-const char *TagLibChannelFileIO::name() const
+FileName TagLibChannelFileIO::name() const
 {
     LOG(("1: name\n"));
 

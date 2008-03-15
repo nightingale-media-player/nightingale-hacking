@@ -383,13 +383,8 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
                                                          getter_AddRefs(pFile));
         }
 
-        if (NS_SUCCEEDED(result)) {
-
-          nsAutoString path;
-          result = pFile->GetPath(path);
-
-          mMetadataPath = NS_ConvertUTF16toUTF8(path);
-        }
+        if (NS_SUCCEEDED(result))
+          result = pFile->GetPath(mMetadataPath);
 
         /* Read the metadata. */
         if (NS_SUCCEEDED(result))
@@ -414,7 +409,7 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
             PR_AtomicIncrement((PRInt32 *) &sNextChannelID);
             mMetadataPath.AssignLiteral("metadata_channel://");
             mMetadataPath.AppendInt(sNextChannelID);
-            mMetadataChannelID = NS_ConvertUTF8toUTF16(mMetadataPath);
+            mMetadataChannelID = mMetadataPath;
 
             /* Add the metadata channel. */
             result = mpTagLibChannelFileIOManager->AddChannel
@@ -1078,14 +1073,10 @@ void sbMetadataHandlerTaglib::ReadMP4Tags(
 
 nsresult sbMetadataHandlerTaglib::ReadMetadata()
 {
-    const char                  *metadataPathCStr;
     nsCString                   fileExt;
     PRBool                      isValid = PR_FALSE;
     PRBool                      decodedFileExt = PR_FALSE;
     nsresult                    result = NS_OK;
-
-    /* Get the metadata local file path. */
-    metadataPathCStr = mMetadataPath.get();
 
     /* Get the metadata file extension. */
     result = mpURL->GetFileExtension(fileExt);
@@ -1098,25 +1089,25 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
     {
         decodedFileExt = PR_TRUE;
         if (fileExt.Equals(NS_LITERAL_CSTRING("flac")))
-            isValid = ReadFLACFile(metadataPathCStr);
+            isValid = ReadFLACFile(mMetadataPath);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("mpc")))
-            isValid = ReadMPCFile(metadataPathCStr);
+            isValid = ReadMPCFile(mMetadataPath);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("mp3")))
-            isValid = ReadMPEGFile(metadataPathCStr);
+            isValid = ReadMPEGFile(mMetadataPath);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("m4a")))
-            isValid = ReadMP4File(metadataPathCStr);
+            isValid = ReadMP4File(mMetadataPath);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("m4p")))
-            isValid = ReadMP4File(metadataPathCStr);
+            isValid = ReadMP4File(mMetadataPath);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg")))
-            isValid = ReadOGGFile(metadataPathCStr);
+            isValid = ReadOGGFile(mMetadataPath);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("oga")))
-            isValid = ReadOGGFile(metadataPathCStr);
+            isValid = ReadOGGFile(mMetadataPath);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("ogv")))
-            isValid = ReadOGGFile(metadataPathCStr);
+            isValid = ReadOGGFile(mMetadataPath);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("ogm")))
-            isValid = ReadOGGFile(metadataPathCStr);
+            isValid = ReadOGGFile(mMetadataPath);
         else if (fileExt.Equals(NS_LITERAL_CSTRING("ogx")))
-            isValid = ReadOGGFile(metadataPathCStr);
+            isValid = ReadOGGFile(mMetadataPath);
         else
             decodedFileExt = PR_FALSE;
     }
@@ -1128,7 +1119,7 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
         && !isValid
         && !mMetadataChannelRestart)
     {
-        isValid = ReadMPEGFile(metadataPathCStr);
+        isValid = ReadMPEGFile(mMetadataPath);
     }
 
     /* Fix up track and disc number metadata. */
@@ -1461,12 +1452,19 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
  */
 
 PRBool sbMetadataHandlerTaglib::ReadFLACFile(
-    const char                  *filePath)
+    nsAString                   &aFilePath)
 {
     nsAutoPtr<TagLib::FLAC::File>   pTagFile;
     PRBool                          restart;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
+
+    /* Get the file path in the proper format for the platform. */
+#if XP_WIN
+    nsAString &filePath = aFilePath;
+#else
+    nsCAutoString filePath = NS_ConvertUTF16toUTF8(aFilePath);
+#endif
 
     /* Open and read the metadata file. */
     pTagFile = new TagLib::FLAC::File();
@@ -1475,7 +1473,7 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
     if (NS_SUCCEEDED(result))
         pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
     if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath);
+        pTagFile->open(filePath.BeginReading());
     if (NS_SUCCEEDED(result))
         pTagFile->read();
 
@@ -1521,12 +1519,19 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
  */
 
 PRBool sbMetadataHandlerTaglib::ReadMPCFile(
-    const char                  *filePath)
+    nsAString                   &aFilePath)
 {
     nsAutoPtr<TagLib::MPC::File>    pTagFile;
     PRBool                          restart;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
+
+    /* Get the file path in the proper format for the platform. */
+#if XP_WIN
+    nsAString &filePath = aFilePath;
+#else
+    nsCAutoString filePath = NS_ConvertUTF16toUTF8(aFilePath);
+#endif
 
     /* Open and read the metadata file. */
     pTagFile = new TagLib::MPC::File();
@@ -1535,7 +1540,7 @@ PRBool sbMetadataHandlerTaglib::ReadMPCFile(
     if (NS_SUCCEEDED(result))
         pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
     if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath);
+        pTagFile->open(filePath.BeginReading());
     if (NS_SUCCEEDED(result))
         pTagFile->read();
 
@@ -1581,12 +1586,19 @@ PRBool sbMetadataHandlerTaglib::ReadMPCFile(
  */
 
 PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
-    const char                  *filePath)
+    nsAString                   &aFilePath)
 {
     nsAutoPtr<TagLib::MPEG::File>   pTagFile;
     PRBool                          restart;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
+
+    /* Get the file path in the proper format for the platform. */
+#if XP_WIN
+    nsAString &filePath = aFilePath;
+#else
+    nsCAutoString filePath = NS_ConvertUTF16toUTF8(aFilePath);
+#endif
 
     /* Open and read the metadata file. */
     pTagFile = new TagLib::MPEG::File();
@@ -1595,7 +1607,7 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
     if (NS_SUCCEEDED(result))
         pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
     if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath);
+        pTagFile->open(filePath.BeginReading());
     if (NS_SUCCEEDED(result))
         pTagFile->read();
 
@@ -1649,12 +1661,19 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
  */
 
 PRBool sbMetadataHandlerTaglib::ReadMP4File(
-    const char                  *filePath)
+    nsAString                   &aFilePath)
 {
     nsAutoPtr<TagLib::MP4::File>    pTagFile;
     PRBool                          restart;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
+
+    /* Get the file path in the proper format for the platform. */
+#if XP_WIN
+    nsAString &filePath = aFilePath;
+#else
+    nsCAutoString filePath = NS_ConvertUTF16toUTF8(aFilePath);
+#endif
 
     /* Open and read the metadata file. */
     pTagFile = new TagLib::MP4::File();
@@ -1663,7 +1682,7 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File(
     if (NS_SUCCEEDED(result))
         pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
     if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath);
+        pTagFile->open(filePath.BeginReading());
     if (NS_SUCCEEDED(result))
         pTagFile->read();
 
@@ -1709,12 +1728,19 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File(
  */
 
 PRBool sbMetadataHandlerTaglib::ReadOGGFile(
-    const char                  *filePath)
+    nsAString                   &aFilePath)
 {
     nsAutoPtr<TagLib::Vorbis::File> pTagFile;
     PRBool                          restart;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
+
+    /* Get the file path in the proper format for the platform. */
+#if XP_WIN
+    nsAString &filePath = aFilePath;
+#else
+    nsCAutoString filePath = NS_ConvertUTF16toUTF8(aFilePath);
+#endif
 
     /* Open and read the metadata file. */
     pTagFile = new TagLib::Vorbis::File();
@@ -1723,7 +1749,7 @@ PRBool sbMetadataHandlerTaglib::ReadOGGFile(
     if (NS_SUCCEEDED(result))
         pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
     if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath);
+        pTagFile->open(filePath.BeginReading());
     if (NS_SUCCEEDED(result))
         pTagFile->read();
 
