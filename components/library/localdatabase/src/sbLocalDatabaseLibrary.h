@@ -34,6 +34,8 @@
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include "sbLocalDatabaseMediaListBase.h"
 
+#include <prmon.h>
+#include <nsAutoLock.h>
 #include <nsClassHashtable.h>
 #include <nsDataHashtable.h>
 #include <nsCOMArray.h>
@@ -325,6 +327,9 @@ private:
   PRUint32 mAnalyzeCountLimit;
 
   PRBool mPreventAddedNotification;
+
+  // This monitor protects calls to GetMediaItem.
+  PRMonitor *mMonitor;
 };
 
 /**

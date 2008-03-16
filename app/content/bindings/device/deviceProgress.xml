@@ -71,11 +71,12 @@
                      class="dev-progress-text1-label"/>
 
           <!-- Operation progress meter. -->
-          <xul:progressmeter class="device-progressmeter"
-                                mode="determined"
-                                observestarget="true"
-                                observeskey="progress"
-                                observesattribute="value"/>
+          <xul:progressmeter sbid="progress_meter" 
+                             class="device-progressmeter"
+                             mode="determined"
+                             observestarget="true"
+                             observeskey="progress"
+                             observesattribute="value"/>
 
           <!-- Progress text 2 label. -->
           <xul:label observestarget="true"

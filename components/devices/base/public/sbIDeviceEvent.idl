@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(d49fa358-2745-4df3-b592-ce6f3929d7b4)]
+[scriptable, uuid(86a4e796-5e8d-452c-8551-8078527278f6)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -93,29 +93,35 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_DEVICE_TRANSFER_END       = EVENT_DEVICE_BASE + 8;
 
   // device state changes
-  const unsigned long EVENT_DEVICE_MEDIA_READ_START   = EVENT_DEVICE_BASE + 9;
-  const unsigned long EVENT_DEVICE_MEDIA_READ_END     = EVENT_DEVICE_BASE + 10;
-  const unsigned long EVENT_DEVICE_MEDIA_READ_FAILED  = EVENT_DEVICE_BASE + 11;
-  const unsigned long EVENT_DEVICE_MEDIA_WRITE_START  = EVENT_DEVICE_BASE + 12;
-  const unsigned long EVENT_DEVICE_MEDIA_WRITE_END    = EVENT_DEVICE_BASE + 13;
-  const unsigned long EVENT_DEVICE_MEDIA_WRITE_FAILED = EVENT_DEVICE_BASE + 14;
+  const unsigned long EVENT_DEVICE_MOUNTING_START      = EVENT_DEVICE_BASE + 9;
+  const unsigned long EVENT_DEVICE_MOUNTING_PROGRESS   = EVENT_DEVICE_BASE + 10;
+  const unsigned long EVENT_DEVICE_MOUNTING_END        = EVENT_DEVICE_BASE + 11;
+
+  const unsigned long EVENT_DEVICE_READY               = EVENT_DEVICE_BASE + 12;
+
+  const unsigned long EVENT_DEVICE_MEDIA_READ_START   = EVENT_DEVICE_BASE + 13;
+  const unsigned long EVENT_DEVICE_MEDIA_READ_END     = EVENT_DEVICE_BASE + 14;
+  const unsigned long EVENT_DEVICE_MEDIA_READ_FAILED  = EVENT_DEVICE_BASE + 15;
+  const unsigned long EVENT_DEVICE_MEDIA_WRITE_START  = EVENT_DEVICE_BASE + 16;
+  const unsigned long EVENT_DEVICE_MEDIA_WRITE_END    = EVENT_DEVICE_BASE + 17;
+  const unsigned long EVENT_DEVICE_MEDIA_WRITE_FAILED = EVENT_DEVICE_BASE + 18;
   
-  const unsigned long EVENT_DEVICE_INFO_CHANGED       = EVENT_DEVICE_BASE + 15;
+  const unsigned long EVENT_DEVICE_INFO_CHANGED       = EVENT_DEVICE_BASE + 19;
 
   // device transfer errors
-  const unsigned long EVENT_DEVICE_MEDIA_READ_UNSUPPORTED_TYPE = EVENT_DEVICE_BASE + 15;
-  const unsigned long EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE = EVENT_DEVICE_BASE + 16;
+  const unsigned long EVENT_DEVICE_MEDIA_READ_UNSUPPORTED_TYPE  = EVENT_DEVICE_BASE + 20;
+  const unsigned long EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE = EVENT_DEVICE_BASE + 21;
   
   // device general errors
-  const unsigned long EVENT_DEVICE_ACCESS_DENIED        = EVENT_DEVICE_BASE + 17;
-  const unsigned long EVENT_DEVICE_NOT_ENOUGH_FREESPACE = EVENT_DEVICE_BASE + 18;
-  const unsigned long EVENT_DEVICE_NOT_AVAILABLE        = EVENT_DEVICE_BASE + 19;
+  const unsigned long EVENT_DEVICE_ACCESS_DENIED        = EVENT_DEVICE_BASE + 22;
+  const unsigned long EVENT_DEVICE_NOT_ENOUGH_FREESPACE = EVENT_DEVICE_BASE + 23;
+  const unsigned long EVENT_DEVICE_NOT_AVAILABLE        = EVENT_DEVICE_BASE + 24;
 
   // device generic catch-all error
-  const unsigned long EVENT_DEVICE_ERROR_UNEXPECTED     = EVENT_DEVICE_BASE + 20;
+  const unsigned long EVENT_DEVICE_ERROR_UNEXPECTED     = EVENT_DEVICE_BASE + 25;
 
   // device generic state changed
-  const unsigned long EVENT_DEVICE_STATE_CHANGED        = EVENT_DEVICE_BASE + 21;
+  const unsigned long EVENT_DEVICE_STATE_CHANGED        = EVENT_DEVICE_BASE + 26;
 
   /**
    * 

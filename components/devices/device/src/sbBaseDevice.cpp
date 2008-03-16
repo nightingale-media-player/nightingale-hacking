@@ -101,7 +101,7 @@ NS_IMETHODIMP MediaListListenerAttachingEnumerator::OnEnumeratedItem(sbIMediaLis
   
   nsCOMPtr<sbIMediaList> list(do_QueryInterface(aItem, &rv));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = mDevice->ListenToList(list);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -112,6 +112,62 @@ NS_IMETHODIMP MediaListListenerAttachingEnumerator::OnEnumeratedItem(sbIMediaLis
 
 NS_IMETHODIMP MediaListListenerAttachingEnumerator::OnEnumerationEnd(sbIMediaList*,
                                                                      nsresult)
+{
+  return NS_OK;
+}
+
+class ShowMediaListEnumerator : public sbIMediaListEnumerationListener
+{
+public:
+  explicit ShowMediaListEnumerator(PRBool aHideMediaLists)
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+private:
+  PRBool    mHideMediaLists;
+  nsString  mHideMediaListsStringValue;
+};
+
+NS_IMPL_ISUPPORTS1(ShowMediaListEnumerator ,
+                   sbIMediaListEnumerationListener)
+
+
+ShowMediaListEnumerator::ShowMediaListEnumerator(PRBool aHideMediaLists)
+: mHideMediaLists(aHideMediaLists) 
+{
+  mHideMediaListsStringValue = (mHideMediaLists == PR_TRUE) ? 
+                               NS_LITERAL_STRING("1") : 
+                               NS_LITERAL_STRING("0");
+}
+
+NS_IMETHODIMP ShowMediaListEnumerator::OnEnumerationBegin(sbIMediaList*,
+                                                          PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP ShowMediaListEnumerator::OnEnumeratedItem(sbIMediaList*,
+                                                        sbIMediaItem* aItem,
+                                                        PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  nsString value = 
+  rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), 
+                          value);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP ShowMediaListEnumerator::OnEnumerationEnd(sbIMediaList*,
+                                                        nsresult)
 {
   return NS_OK;
 }
@@ -454,6 +510,12 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
   rv = devLib->QueryInterface(NS_GET_IID(sbIDeviceLibrary),
                               reinterpret_cast<void**>(_retval));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Hide the library on creation. The device is responsible
+  // for showing it is done mounting.
+  rv = devLib->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                           NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
   
   nsRefPtr<sbBaseDeviceLibraryListener> libListener = new sbBaseDeviceLibraryListener();
   NS_ENSURE_TRUE(libListener, NS_ERROR_OUT_OF_MEMORY);
@@ -520,6 +582,43 @@ nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
   
   mMediaListListeners.Put(list, listener);
   return NS_OK;
+}
+
+PLDHashOperator sbBaseDevice::EnumerateIgnoreMediaListListeners(nsISupports* aKey,
+                                                                nsRefPtr<sbBaseDeviceMediaListListener> aData,
+                                                                void* aClosure)
+{
+  nsresult rv;
+  PRBool *ignore = static_cast<PRBool *>(aClosure);
+
+  rv = aData->SetIgnoreListener(*ignore);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+nsresult 
+sbBaseDevice::SetIgnoreMediaListListeners(PRBool aIgnoreListener)
+{
+  mMediaListListeners.EnumerateRead(sbBaseDevice::EnumerateIgnoreMediaListListeners, 
+                                    &aIgnoreListener);
+  return NS_OK;
+}
+
+
+nsresult 
+sbBaseDevice::SetMediaListsHidden(sbIMediaList *aLibrary, PRBool aHidden)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+
+  nsRefPtr<ShowMediaListEnumerator> enumerator = new ShowMediaListEnumerator(aHidden);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+  
+  nsresult rv = aLibrary->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                                   NS_LITERAL_STRING("1"),
+                                                   enumerator,
+                                                   sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  return rv;
 }
 
 nsresult 
@@ -593,7 +692,8 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
 }
 
 nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
-                                              nsIVariant *aData)
+                                              nsIVariant *aData,
+                                              PRBool aAsync /*= PR_TRUE*/)
 {
   nsresult rv;
   
@@ -606,7 +706,7 @@ nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
                             getter_AddRefs(deviceEvent));
   NS_ENSURE_SUCCESS(rv, rv);
   
-  return DispatchEvent(deviceEvent, PR_TRUE, nsnull);
+  return DispatchEvent(deviceEvent, aAsync, nsnull);
 }
 
 /* a helper class to proxy sbBaseDevice::Init onto the main thread

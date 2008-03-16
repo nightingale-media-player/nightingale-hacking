@@ -873,12 +873,20 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   // Default MediaPage URL
   rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_DEFAULT_MEDIAPAGE_URL),
-    NS_LITERAL_STRING("property.default_mediapage_url"),
-    stringBundle,
-    PR_FALSE,
-    PR_FALSE,
-    PR_FALSE, PR_FALSE);
+                   NS_LITERAL_STRING("property.default_mediapage_url"),
+                   stringBundle,
+                   PR_FALSE,
+                   PR_FALSE,
+                   PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Availability
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_AVAILABILITY),
+                      NS_LITERAL_STRING("property.availability"),
+                      stringBundle,
+                      PR_FALSE, PR_FALSE,
+                      0, PR_FALSE, 0, PR_FALSE,
+                      PR_FALSE, PR_FALSE);
 
   return NS_OK;
 }

@@ -32,6 +32,7 @@ class nsIFile;
 
 class sbIDeviceLibrary;
 class sbIMediaItem;
+class sbIMediaList;
 
 /**
  * Utilities to aid in implementing devices
@@ -51,4 +52,18 @@ public:
   static nsresult GetOrganizedPath(/* in */ nsIFile *aParent,
                                    /* in */ sbIMediaItem *aItem,
                                    nsIFile **_retval);
+
+  /**
+   * Mark all items in a list / library as not available (sets
+   * the availability property to 0).
+   * \param aMediaList The list or library to process.
+   */
+  static nsresult MarkAllItemsUnavailable(/* in */ sbIMediaList *aMediaList);
+
+  /**
+   * Delete all items that are marked not available (availability == 0)
+   * in a medialist / library.
+   * \param aMediaList The list or library to prune.
+   */
+  static nsresult DeleteUnavailableItems(/* in */ sbIMediaList *aMediaList);
 };

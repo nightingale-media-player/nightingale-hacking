@@ -39,9 +39,6 @@ Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
 const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
 const ROOTNODE = "SB:Bookmarks";
 
-const PROP_ISLIST = "http://songbirdnest.com/data/1.0#isList";
-const PROP_ISHIDDEN = "http://songbirdnest.com/data/1.0#hidden";
-
 const URN_PREFIX_ITEM = 'urn:item:';
 const URN_PREFIX_LIBRARY = 'urn:library:';
 
@@ -913,7 +910,7 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
   };
 
   // Enumerate all lists in this library
-  aLibrary.enumerateItemsByProperty(PROP_ISLIST, "1",
+  aLibrary.enumerateItemsByProperty(SBProperties.isList, "1",
                                     listener );
 
   // Make sure we have a node for each list
@@ -1134,7 +1131,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   node.url = null;
   node.contractid = CONTRACTID;
   node.editable = false;
-  node.hidden = aLibrary.getProperty(SBProperties.hidden) == "1";
+  node.hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
 
   if (aLibrary == this._libraryManager.mainLibrary) {
     // the main library uses a separate Playlists folder
@@ -1255,9 +1252,8 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     this._insertMediaListNode(node, aMediaList);
   }
 
-
   // Get hidden state from list, since we hide all list nodes on startup
-  node.hidden = aMediaList.getProperty(PROP_ISHIDDEN) == "1";
+  node.hidden = (aMediaList.getProperty(SBProperties.hidden) == "1");
 
   return node;
 }
@@ -1605,6 +1601,7 @@ function sbLibraryServicePane_onBatchEnd(aMediaList) {
   this._batch.end();
   if (!this._batch.isActive() && this._refreshPending) {
     this._refreshLibraryNodes(aMediaList);
+    this._refreshPending = false;
   }
 
 }

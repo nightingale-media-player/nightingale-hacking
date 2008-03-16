@@ -409,7 +409,8 @@ NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseLibrary,
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
 : mDirtyItemCount(0),
   mAnalyzeCountLimit(DEFAULT_ANALYZE_COUNT_LIMIT),
-  mPreventAddedNotification(PR_FALSE)
+  mPreventAddedNotification(PR_FALSE),
+  mMonitor(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gLibraryLog) {
@@ -422,6 +423,9 @@ sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
 sbLocalDatabaseLibrary::~sbLocalDatabaseLibrary()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Destructed", this));
+  if(mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
+  }
 }
 
 nsresult
@@ -581,6 +585,16 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseLibrary::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  // Library initialized, ensure others can get notifications
+  nsCOMPtr<sbILocalDatabaseMediaItem> item = 
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILibrary *, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  item->SetSuppressNotifications(PR_FALSE);
+  
   return NS_OK;
 }
 
@@ -2514,6 +2528,8 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
          NS_LossyConvertUTF16toASCII(aGUID).get()));
   NS_ENSURE_ARG_POINTER(_retval);
 
+  nsAutoMonitor mon(mMonitor);
+
   nsresult rv;
   nsCOMPtr<sbIMediaItem> strongMediaItem;
 
@@ -2552,6 +2568,19 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
       // again. Add a ref and let it live a little longer.
       LOG((LOG_SUBMESSAGE_SPACE "Found live weak reference in cache"));
       NS_ADDREF(*_retval = strongMediaItem);
+      
+      // It is possible for items to get in the cache without being gotten
+      // via "GetMediaItem". Therefore, it is possible for their mSuppressNotification
+      // flag to remain TRUE despite the fact that it should be FALSE.
+      // This ensures that items gotten from the cache have proper notification
+      // via media list listeners.
+      nsCOMPtr<sbILocalDatabaseMediaItem> strongLocalItem =
+        do_QueryInterface(strongMediaItem, &rv);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to SetSuppressNotifications!");
+
+      if (NS_SUCCEEDED(rv)) {
+        strongLocalItem->SetSuppressNotifications(PR_FALSE);
+      }
 
       // That's all we have to do here.
       return NS_OK;
@@ -2599,6 +2628,8 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
   
   nsCOMPtr<sbILocalDatabaseMediaItem> strongLocalItem =
     do_QueryInterface(strongMediaItem, &rv);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "SetSuppressNotifications will not get called!");
+
   if (NS_SUCCEEDED(rv)) {
     strongLocalItem->SetSuppressNotifications(PR_FALSE);
   }

@@ -389,6 +389,40 @@ var DPW = {
         this._isIdle = true;
         this._update();
       break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_START:
+        this._dText1Remote.stringValue = SBString("device.status.progress_header_mounting");
+        this._dText2Remote.stringValue = SBString("device.status.progress_footer_mounting");
+
+        var progressMeter = this._getElement("progress_meter");
+        progressMeter.setAttribute("mode", "undetermined");
+
+        this._dProgressRemote.intValue = 0;
+        this._isIdle = false;
+        this._update();
+      break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_PROGRESS:
+        this._dText1Remote.stringValue = SBString("device.status.progress_header_mounting");
+        this._dText2Remote.stringValue = SBString("device.status.progress_footer_mounting");
+
+        var progressMeter = this._getElement("progress_meter");
+        progressMeter.setAttribute("mode", "undetermined");
+
+        this._dProgressRemote.intValue = 0;
+        this._isIdle = false;
+        this._update();
+      break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END:
+        this._dText1Remote.stringValue = SBString("device.status.progress_complete_mounting");
+        this._dText2Remote.stringValue = SBString("device.status.progress_idle");
+        this._isIdle = true;
+
+        var progressMeter = this._getElement("progress_meter");
+        progressMeter.setAttribute("mode", "determined");
+
+        this._dProgressRemote.intValue = 100;
+        this._update();
+      break;
+
     }
   },
 

@@ -50,6 +50,9 @@ class sbIDeviceLibrary;
  * Derived classes should
  *  - QI to sbIDevice, sbIDeviceEventTarget
  *  - call sbBaseDevice::Init() at some early point
+ *  - Set the hidden property to false on the library when done mounting.
+ *  - Set the hidden property on all medialists in the library when
+ *    done mounting.
  */
 class sbBaseDevice : public sbIDevice,
                      public sbBaseDeviceEventTarget
@@ -171,6 +174,14 @@ public:
    */
   nsresult ListenToList(sbIMediaList* aList);
   
+  static NS_HIDDEN_(PLDHashOperator) EnumerateIgnoreMediaListListeners(nsISupports* aKey,
+                                                                       nsRefPtr<sbBaseDeviceMediaListListener> aData,
+                                                                       void* aClosure);
+
+  nsresult SetIgnoreMediaListListeners(PRBool aIgnoreListener);
+
+  nsresult SetMediaListsHidden(sbIMediaList *aLibrary, PRBool aHidden);
+
   /**
    * Return our statistics collector
    */
@@ -189,7 +200,8 @@ public:
    * @param aData event data
    */
   nsresult CreateAndDispatchEvent(PRUint32 aType,
-                                  nsIVariant *aData);
+                                  nsIVariant *aData,
+                                  PRBool aAsync = PR_TRUE);
 
   /**
    * Returns true if the current request should be aborted. This subsequently
