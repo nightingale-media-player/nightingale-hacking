@@ -119,7 +119,7 @@ NS_IMETHODIMP MediaListListenerAttachingEnumerator::OnEnumerationEnd(sbIMediaLis
 class ShowMediaListEnumerator : public sbIMediaListEnumerationListener
 {
 public:
-  explicit ShowMediaListEnumerator(PRBool aHideMediaLists)
+  explicit ShowMediaListEnumerator(PRBool aHideMediaLists);
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 private:
