@@ -1637,12 +1637,18 @@
             if ( ! SBDataGetBoolValue( "balloontip.backscan.shown" ) )
             {
               this.balloon = new BalloonTip();
-              this.balloon.onCloseCallback = this.onBalloonClose;
-              var title = SBString("balloontip.backscan.title", "Scanning For Metadata");
-              var text = SBString("balloontip.backscan.text", "This indicates that Songbird is scanning the files in your Library to import their Metadata Tags.");
-              this.balloon.showText(text, this, title, 'balloon-icon-songbird', null);
-              this.balloon._that = this;
-              SBDataSetBoolValue( "balloontip.backscan.shown", true )
+              // **************************
+              // Bug 7674
+              // (sigh) Apparently you can't pop 2 balloontips in the same frame?
+              // So set a timeout on it so it comes after the other balloontip.
+              setTimeout( function(xthis) {
+                xthis.balloon.onCloseCallback = xthis.onBalloonClose;
+                var title = SBString("balloontip.backscan.title", "Scanning For Metadata");
+                var text = SBString("balloontip.backscan.text", "This indicates that Songbird is scanning the files in your Library to import their Metadata Tags.");
+                xthis.balloon.showText(text, xthis, title, 'balloon-icon-songbird', null);
+                xthis.balloon._that = xthis;
+              }, 0, this );
+              SBDataSetBoolValue( "balloontip.backscan.shown", true );
             }
           }
           else
@@ -1663,7 +1669,7 @@
           if ( SBDataGetIntValue("backscan.concurrent") < 1 )
             that.setAttribute( "hidden", "true" );
             
-          that.balloon = null;
+          delete that.balloon;
         ]]>
       </body>
     </method>
