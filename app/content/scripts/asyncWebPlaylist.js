@@ -433,19 +433,22 @@ try
       var observer = {
         url : "",
         manager : null,
+        finished : false,
         onStartRequest : function(aRequest,aContext) {
         },
         onStopRequest : function(aRequest, aContext, aStatusCode) {
-          this.manager.popAsync();
           try {
+            var url = "";
+            this.finished = true;
+            this.manager.popAsync();
             if (aStatusCode == 0) {
               // Get the redirected URL.
               var uriChecker =
                 aRequest.QueryInterface(Components.interfaces.nsIURIChecker);
               if ( uriChecker ) {
-                var url = uriChecker.baseChannel.URI.spec;
+                url = uriChecker.baseChannel.URI.spec;
                 var contentType = uriChecker.baseChannel.contentType;
-
+                
                 // XXXAus: We know for sure these follow contentTypes are not media we can playback.
                 // See bug #4844 for more information.
                 if(contentType == "text/html" ||
@@ -455,34 +458,39 @@ try
                    contentType == "application/xml") {
                    return;
                  }
+              }
+            } else {
+              // (shrug) Time's up, go with what you have.
+              url = this.url;
+            }
 
-                // Try to see if we've already found and scanned this url
-                var listener = {
-                  foundItem: null,
-                  onEnumerationBegin: function onEnumerationBegin() {
-                    if (this.foundItem) {
-                      return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
-                    }
-                    return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
-                  },
-                  onEnumeratedItem: function onEnumeratedItem(list, item) {
-                    this.foundItem = item;
+            if ( url != "" ) {
+              // Try to see if we've already found and scanned this url
+              var listener = {
+                foundItem: null,
+                onEnumerationBegin: function onEnumerationBegin() {
+                  if (this.foundItem) {
                     return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
-                  },
-                  onEnumerationEnd: function onEnumerationEnd() {
                   }
-                };
+                  return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                },
+                onEnumeratedItem: function onEnumeratedItem(list, item) {
+                  this.foundItem = item;
+                  return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+                },
+                onEnumerationEnd: function onEnumerationEnd() {
+                }
+              };
 
-                var library = aMediaListView.mediaList.library;
-                library.enumerateItemsByProperty(SBProperties.originURL, url, listener );
-                library.enumerateItemsByProperty(SBProperties.contentURL, url, listener );
-                
-                if (listener.foundItem) {
-                  this.manager.items.push(listener.foundItem);
-                }
-                else {
-                  this.manager.items.push(url);
-                }
+              var library = aMediaListView.mediaList.library;
+              library.enumerateItemsByProperty(SBProperties.originURL, url, listener );
+              library.enumerateItemsByProperty(SBProperties.contentURL, url, listener );
+              
+              if (listener.foundItem) {
+                this.manager.items.push(listener.foundItem);
+              }
+              else {
+                this.manager.items.push(url);
               }
             }
           } catch( e ) {
@@ -502,8 +510,13 @@ try
       if( uri.scheme != "file" ) {
         checker.init(uri);
         checker.asyncCheck(observer, null);
-        
         this.pushAsync();
+        // Only allow 2 seconds per redirect?
+        setTimeout( function() {
+          if ( ! observer.finished ) {
+            checker.cancel(-1)
+          }
+        }, 2000);
       }
       else if( uri.scheme == "file" ) {
         var uri = newURI(url);
