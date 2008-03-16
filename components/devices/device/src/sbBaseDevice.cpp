@@ -154,11 +154,8 @@ NS_IMETHODIMP ShowMediaListEnumerator::OnEnumeratedItem(sbIMediaList*,
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsresult rv;
-
-  nsString value = 
-  rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), 
-                          value);
+  nsresult rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), 
+                          mHideMediaListsStringValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
