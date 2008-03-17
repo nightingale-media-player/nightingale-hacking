@@ -619,6 +619,25 @@ sbBaseDevice::SetMediaListsHidden(sbIMediaList *aLibrary, PRBool aHidden)
 }
 
 nsresult 
+sbBaseDevice::DeleteItem(sbIMediaList *aLibrary, sbIMediaItem *aItem)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  NS_ENSURE_STATE(mLibraryListener);
+
+  SetIgnoreMediaListListeners(PR_TRUE);
+  mLibraryListener->SetIgnoreListener(PR_TRUE);
+
+  nsresult rv = aLibrary->Remove(aItem);
+
+  SetIgnoreMediaListListeners(PR_FALSE);
+  mLibraryListener->SetIgnoreListener(PR_FALSE);
+
+  return rv;
+}
+
+nsresult 
 sbBaseDevice::CreateTransferRequest(PRUint32 aRequest, 
                                     nsIPropertyBag2 *aRequestParameters,
                                     TransferRequest **aTransferRequest)

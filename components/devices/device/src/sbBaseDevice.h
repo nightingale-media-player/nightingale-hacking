@@ -178,9 +178,27 @@ public:
                                                                        nsRefPtr<sbBaseDeviceMediaListListener> aData,
                                                                        void* aClosure);
 
+  /**
+  * Set the ignore flag on all media list listeners registered for
+  * the library for this device.
+  * \param aIgnoreListener Ignore flag value.
+  */
   nsresult SetIgnoreMediaListListeners(PRBool aIgnoreListener);
 
+  /**
+   * Set all media lists in the library hidden. This is useful
+   * for hiding the lists during mounting operations.
+   * \param aLibrary The library containing the media lists you wish to hide.
+   * \param aHidden True to hide, false to show.
+   */
   nsresult SetMediaListsHidden(sbIMediaList *aLibrary, PRBool aHidden);
+
+  /**
+   * Delete an item from the library and suppress notifications during
+   * delete. This is to avoid having the listeners watching the library
+   * attempt to double delete an item.
+   */
+  nsresult DeleteItem(sbIMediaList *aLibrary, sbIMediaItem *aItem);
 
   /**
    * Return our statistics collector
