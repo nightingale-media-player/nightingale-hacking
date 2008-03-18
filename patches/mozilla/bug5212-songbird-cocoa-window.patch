@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
 retrieving revision 1.45
 diff -u -8 -p -r1.45 nsCocoaWindow.h
 --- widget/src/cocoa/nsCocoaWindow.h	19 Dec 2007 19:40:19 -0000	1.45
-+++ widget/src/cocoa/nsCocoaWindow.h	1 Mar 2008 00:41:12 -0000
++++ widget/src/cocoa/nsCocoaWindow.h	12 Mar 2008 22:17:19 -0000
 @@ -94,17 +94,21 @@ class nsChildView;
  
  
@@ -33,7 +33,7 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
 retrieving revision 1.128
 diff -u -8 -p -r1.128 nsCocoaWindow.mm
 --- widget/src/cocoa/nsCocoaWindow.mm	19 Dec 2007 19:40:19 -0000	1.128
-+++ widget/src/cocoa/nsCocoaWindow.mm	1 Mar 2008 00:41:12 -0000
++++ widget/src/cocoa/nsCocoaWindow.mm	12 Mar 2008 22:17:19 -0000
 @@ -362,20 +362,34 @@ nsresult nsCocoaWindow::StandardCreate(n
      // Note that we need to check the window type because we mark sheets sheets as 
      // having titlebars.
@@ -96,7 +96,7 @@ diff -u -8 -p -r1.128 nsCocoaWindow.mm
      
      mWindowMadeHere = PR_TRUE;
    }
-@@ -1920,8 +1938,202 @@ void patternDraw(void* aInfo, CGContextR
+@@ -1920,8 +1938,244 @@ void patternDraw(void* aInfo, CGContextR
  {
    NSWindow *nativeWindow = [self retain];
    BOOL retval = [super performKeyEquivalent:theEvent];
@@ -266,6 +266,14 @@ diff -u -8 -p -r1.128 nsCocoaWindow.mm
 +                                             selector:@selector(windowDidMove:)
 +                                                 name:NSWindowDidMoveNotification 
 +                                               object:self];
++    [[NSNotificationCenter defaultCenter] addObserver:self 
++                                             selector:@selector(windowDidBecomeMain:)
++                                                 name:NSWindowDidBecomeMainNotification 
++                                               object:self];
++    [[NSNotificationCenter defaultCenter] addObserver:self 
++                                             selector:@selector(windowDidResignMain:)
++                                                 name:NSWindowDidResignMainNotification 
++                                               object:self];
 +  }
 +  
 +  return self;
@@ -275,6 +283,12 @@ diff -u -8 -p -r1.128 nsCocoaWindow.mm
 +{
 +  [[NSNotificationCenter defaultCenter] removeObserver:self
 +                                                  name:NSWindowDidMoveNotification
++                                                object:self];
++  [[NSNotificationCenter defaultCenter] removeObserver:self
++                                                  name:NSWindowDidBecomeMainNotification
++                                                object:self];
++  [[NSNotificationCenter defaultCenter] removeObserver:self
++                                                  name:NSWindowDidResignMainNotification
 +                                                object:self];
 +  [super dealloc];
 +}
@@ -292,6 +306,34 @@ diff -u -8 -p -r1.128 nsCocoaWindow.mm
 +      screenFrame.origin.y + (screenFrame.size.height - newFrame.size.height);
 +    [self setFrameOrigin:newFrame.origin];
 +  }
++}
++
++// Borderless windows by default can not become key.
++- (BOOL)canBecomeKeyWindow
++{
++  return YES;
++}
++
++// This is the un-documented function that enables any window to display the 
++// normal drop shadow to it. All borderless-windows (like |SongbirdWindow|) 
++// will never return |YES| here unless we override it.
++- (BOOL)_hasDarkShadow
++{
++  return YES;
++}
++
++- (void)windowDidBecomeMain:(NSNotification *)notification
++{
++  // since we are a borderless window - we need to send this event ourselves
++  // so that our shadow is updated correctly.
++  [self display];
++}
++
++- (void)windowDidResignMain:(NSNotification *)notification
++{
++  // since we are a borderless window - we need to send this event ourselves
++  // so that our shadow is updated correctly.
++  [self display];
 +}
 +
 +@end
