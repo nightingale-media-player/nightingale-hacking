@@ -25,6 +25,9 @@
 //
 */
 
+#ifndef __SBBASEDEVICE__H__
+#define __SBBASEDEVICE__H__
+
 #include "sbIDevice.h"
 #include "sbBaseDeviceEventTarget.h"
 
@@ -143,7 +146,7 @@ public:
                          sbIMediaList* aList = nsnull);
   
   /* clear the request queue */
-  nsresult ClearRequests();
+  nsresult ClearRequests(const nsAString &aDeviceID);
   
   /* A request has been added, process the request
      (or schedule it to be processed) */
@@ -249,3 +252,5 @@ protected:
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtable<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
 };
+
+#endif /* __SBBASEDEVICE__H__ */

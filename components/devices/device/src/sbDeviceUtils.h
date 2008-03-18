@@ -25,14 +25,16 @@
 //
 */
 
+#ifndef __SBDEVICEUTILS__H__
+#define __SBDEVICEUTILS__H__
+
 #include <nscore.h>
 #include <nsStringGlue.h>
 
-class nsIFile;
+#include "sbBaseDevice.h"
+#include "sbDeviceStatus.h"
 
-class sbIDeviceLibrary;
-class sbIMediaItem;
-class sbIMediaList;
+class nsIFile;
 
 /**
  * Utilities to aid in implementing devices
@@ -66,4 +68,10 @@ public:
    * \param aMediaList The list or library to prune.
    */
   static nsresult DeleteUnavailableItems(/* in */ sbIMediaList *aMediaList);
+
+  static nsresult CreateStatusFromRequest(/* in */ const nsAString &aDeviceID,
+                                          /* in */ sbBaseDevice::TransferRequest *aRequest, 
+                                          /* out */ sbDeviceStatus **aStatus);
 };
+
+#endif /* __SBDEVICEUTILS__H__ */

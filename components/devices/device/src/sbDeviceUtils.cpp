@@ -37,6 +37,7 @@
 #include <nsIURI.h>
 #include <nsIURL.h>
 
+#include "sbBaseDevice.h"
 #include "sbIDeviceLibrary.h"
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
@@ -224,4 +225,72 @@ nsresult sbDeviceUtils::DeleteUnavailableItems(sbIMediaList *aMediaList)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return aMediaList->RemoveSome(enumerator);
+}
+
+/*static*/ 
+nsresult sbDeviceUtils::CreateStatusFromRequest(/* in */ const nsAString &aDeviceID,
+                                                /* in */ sbBaseDevice::TransferRequest *aRequest,
+                                                /* out */ sbDeviceStatus **aStatus)
+{
+  NS_ENSURE_ARG_POINTER(aRequest);
+  NS_ENSURE_ARG_POINTER(aStatus);
+
+  nsRefPtr<sbDeviceStatus> status = sbDeviceStatus::New(aDeviceID);
+  NS_ENSURE_TRUE(status, NS_ERROR_OUT_OF_MEMORY);
+
+  switch(aRequest->type) {
+    /* read requests */
+    case sbIDevice::REQUEST_MOUNT:
+      status->CurrentOperation(NS_LITERAL_STRING("mounting"));
+    break;
+    
+    case sbIDevice::REQUEST_READ:
+      status->CurrentOperation(NS_LITERAL_STRING("reading"));
+    break;
+
+    case sbIDevice::REQUEST_EJECT:
+      status->CurrentOperation(NS_LITERAL_STRING("ejecting"));
+    break;
+
+    case sbIDevice::REQUEST_SUSPEND:
+      status->CurrentOperation(NS_LITERAL_STRING("suspending"));
+    break;
+
+    /* write requests */
+    case sbIDevice::REQUEST_WRITE:
+      status->CurrentOperation(NS_LITERAL_STRING("copying"));
+    break;
+    
+    case sbIDevice::REQUEST_DELETE:
+      status->CurrentOperation(NS_LITERAL_STRING("deleting"));
+    break;
+
+    case sbIDevice::REQUEST_SYNC:
+      status->CurrentOperation(NS_LITERAL_STRING("syncing"));
+    break;
+
+    /* delete all files */
+    case sbIDevice::REQUEST_WIPE:
+      status->CurrentOperation(NS_LITERAL_STRING("wiping"));
+    break;
+
+    /* move an item in one playlist */
+    case sbIDevice::REQUEST_MOVE:
+      status->CurrentOperation(NS_LITERAL_STRING("moving"));
+    break;
+    case sbIDevice::REQUEST_UPDATE:
+      status->CurrentOperation(NS_LITERAL_STRING("updating"));
+    break;
+   
+    case sbIDevice::REQUEST_NEW_PLAYLIST:
+      status->CurrentOperation(NS_LITERAL_STRING("creating_playlist"));
+    break;
+
+    default:
+      return NS_ERROR_FAILURE;
+  }
+
+  status.forget(aStatus);
+
+  return NS_OK;
 }

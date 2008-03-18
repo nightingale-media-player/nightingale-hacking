@@ -39,6 +39,8 @@
 #include <nsThreadUtils.h>
 
 #include "sbDeviceLibrary.h"
+#include "sbDeviceStatus.h"
+#include "sbDeviceUtils.h"
 #include "sbIDeviceEvent.h"
 #include "sbIDeviceManager.h"
 #include "sbILibrary.h"
@@ -391,7 +393,7 @@ typedef std::vector<sbBaseDevice::TransferRequest *> sbBaseDeviceTransferRequest
  * This iterates over the transfer requests and removes the Songbird library
  * items that were created for the requests.
  */
-static nsresult RemoveLibraryItems(sbBaseDeviceTransferRequests const & items)
+static nsresult RemoveLibraryItems(sbBaseDeviceTransferRequests const & items, sbBaseDevice *aBaseDevice)
 {
   sbBaseDeviceTransferRequests::const_iterator const end = items.end();
   for (sbBaseDeviceTransferRequests::const_iterator iter = items.begin(); 
@@ -402,7 +404,7 @@ static nsresult RemoveLibraryItems(sbBaseDeviceTransferRequests const & items)
     // it from the device since it never was copied
     if (request->type == sbBaseDevice::TransferRequest::REQUEST_WRITE) {
       if (request->list && request->item) {
-        nsresult rv = request->list->Remove(request->item);
+        nsresult rv = aBaseDevice->DeleteItem(request->list, request->item);
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
@@ -428,21 +430,65 @@ void CopyLibraryItems(nsDeque const & items, T inserter)
   }
 }
 
-nsresult sbBaseDevice::ClearRequests()
+nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
 {
+  nsresult rv;
   sbBaseDeviceTransferRequests requests;
+
+  nsRefPtr<TransferRequest> request;
+  PeekRequest(getter_AddRefs(request));
+
+  rv = SetState(STATE_IDLE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
   {
     nsAutoLock lock(mRequestLock);
-    requests.reserve(mRequests.GetSize());
-    // Save off the library items that are pending to avoid any
-    // potential reenterancy issues when deleting them.
-    CopyLibraryItems(mRequests, std::back_inserter(requests));
-    mAbortCurrentRequest = PR_TRUE;
-    mRequests.Erase();
+    PRInt32 queueSize = mRequests.GetSize();
+    
+    if(queueSize > 0) {
+
+      requests.reserve(mRequests.GetSize());
+
+      // Save off the library items that are pending to avoid any
+      // potential reenterancy issues when deleting them.
+      CopyLibraryItems(mRequests, std::back_inserter(requests));
+
+      mAbortCurrentRequest = PR_TRUE;
+      mRequests.Erase();
+
+      rv = RemoveLibraryItems(requests, this);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if(request.get()) {
+        nsRefPtr<sbDeviceStatus> status;
+        rv = sbDeviceUtils::CreateStatusFromRequest(aDeviceID, 
+                                                    request.get(), 
+                                                    getter_AddRefs(status));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // All done cancelling, make sure we set appropriate state.
+        status->StateMessage(NS_LITERAL_STRING("Completed"));
+        status->Progress(100);
+
+        status->SetItem(request->item);
+        status->SetList(request->list);
+
+        status->WorkItemProgress(request->batchIndex);
+        status->WorkItemProgressEndCount(request->batchCount);
+
+        nsCOMPtr<nsIWritableVariant> var = do_CreateInstance("@songbirdnest.com/Songbird/Variant;1",
+          &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = var->SetAsISupports(request->item);
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END, var, PR_TRUE);
+      }
+    }
   }
-  nsresult rv = RemoveLibraryItems(requests);
-  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
