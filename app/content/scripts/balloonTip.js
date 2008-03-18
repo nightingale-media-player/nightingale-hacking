@@ -130,7 +130,7 @@ BalloonTip.prototype = {
     // work after the window has been initialized)
     var raisedflag;
     switch (getPlatformString()) {
-      case "Linux": raisedflag = ",popup"; break;
+      case "Linux":// raisedflag = ",popup"; break;
       case "Windows_NT": raisedflag = ",alwaysRaised"; break;
       default: raisedflag = ""; break;
     }
