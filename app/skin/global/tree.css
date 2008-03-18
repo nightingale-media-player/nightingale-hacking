@@ -415,14 +415,14 @@ treechildren::-moz-tree-cell-text(selected, editing) {
 {
  -moz-appearance: none;
  background-image: none !important;
- list-style-image:  url("chrome://songbird/skin/arrow/arrow-up.png");
+ list-style-image:  url("chrome://songbird/skin/tree/sort-ascending.png");
  padding: 0px 5px 0px 0px !important;
 } 
 .treecol-sortdirection[sortDirection="descending"]
 {
  -moz-appearance: none;
  background-image: none !important;
- list-style-image:  url("chrome://songbird/skin/arrow/arrow-down.png");
+ list-style-image:  url("chrome://songbird/skin/tree/sort-descending.png");
  padding: 0px 5px 0px 0px !important;
 }
 

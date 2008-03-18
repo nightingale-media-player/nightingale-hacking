@@ -84,7 +84,7 @@ menulist[focused="true"]
 /* ..... dropmarker ..... */
 
 .menulist-dropmarker {
-  list-style-image: url("chrome://songbird/skin/arrow/arrow-down.png");
+  list-style-image: url("chrome://songbird/skin/menu/dropmarker.png");
 }
 
 /* ..... disabled state ..... */
@@ -95,7 +95,7 @@ menulist[disabled="true"] {
 
 menulist[disabled="true"] > .menulist-dropmarker 
 {
-  list-style-image: url("chrome://songbird/skin/arrow/arrow-down-disabled.png");
+  list-style-image: url("chrome://songbird/skin/menu/dropmarker-disabled.png");
   padding: 1px !important;
 }
 

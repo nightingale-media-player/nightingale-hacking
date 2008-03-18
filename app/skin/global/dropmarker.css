@@ -18,7 +18,7 @@ dropmarker[disabled="true"] {
 
 .dropmarker-icon
 {
-  list-style-image: url("chrome://songbird/skin/arrow/arrow-down.png");
+  list-style-image: url("chrome://songbird/skin/menu/dropmarker.png");
 }
 
 dropmarker[disabled="true"] > .dropmarker-icon
