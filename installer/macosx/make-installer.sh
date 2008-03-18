@@ -23,6 +23,8 @@ mkdir ${DEPTH}/compiled/_built_installer
 
 cp ${DEPTH}/compiled/dist/Songbird.app/Contents/Resources/${README_FILE} \
    ${DEPTH}/compiled/dist/README.txt
+mv ${DEPTH}/compiled/dist/Songbird.app/Contents/Resources/${README_FILE} \
+   ${DEPTH}/compiled/dist/Songbird.app/Contents/Resources/README.txt
 ln -s /Applications/ ${DEPTH}/compiled/dist/Applications
 
 ${DEPTH}/installer/macosx/make-diskimage \
