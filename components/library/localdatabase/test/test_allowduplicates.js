@@ -72,7 +72,8 @@ function runTest() {
     that: this,
     onProgress: function(index) {
     },
-    onComplete: function(array) {
+    onComplete: function(array, result) {
+      assertEqual(result, Cr.NS_OK);
       assertEqual(array.length, this.arrayLength);
       assertEqual(library.length, this.libraryLength);
       this.that.testFinished();

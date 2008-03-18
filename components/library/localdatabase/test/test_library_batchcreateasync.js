@@ -50,7 +50,8 @@ function runTest () {
   var listener = {
     onProgress: function(index) {
     },
-    onComplete: function(array) {
+    onComplete: function(array, result) {
+      assertEqual(result, Cr.NS_OK);
       for (var i = 0; i < array.length; i++) {
         var item = array.queryElementAt(i, Ci.sbIMediaItem);
         assertTrue(item.contentSrc.equals(newURI("file:///foo/" + i + ".mp3")));

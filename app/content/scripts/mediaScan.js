@@ -307,10 +307,20 @@ function sbBatchCreateListener_onProgress(aIndex)
 }
 
 sbBatchCreateListener.prototype.onComplete = 
-function sbBatchCreateListener_onComplete(aItemArray)
+function sbBatchCreateListener_onComplete(aItemArray, aResult)
 {
+  // Get the completed item array.  Don't use the given item array on error.
+  // Use an empty one instead.
+  var itemArray;
+  if (aResult == Components.results.NS_OK) {
+    itemArray = aItemArray;
+  } else {
+    itemArray = Components.classes["@mozilla.org/array;1"]
+                          .createInstance(Components.interfaces.nsIArray);
+  }
+
   batchLoadsPending--;
-  totalAdded += aItemArray.length;
+  totalAdded += itemArray.length;
   
   // get the original list of URIs corresponding to this batch chunk
   var chunk = scannedChunks[0];
@@ -318,7 +328,7 @@ function sbBatchCreateListener_onComplete(aItemArray)
   
   // calculate number of items that were dropped because they already existed 
   // in the library
-  totalDups += chunk.length - aItemArray.length;
+  totalDups += chunk.length - itemArray.length;
   
   // find the first item via the original list, we want to notify with the first
   // item, not necessarilly the first one that didnt exist in the target library
@@ -407,8 +417,8 @@ function sbBatchCreateListener_onComplete(aItemArray)
   }
   
   // New items to be sent for metadata scanning.
-  if (aItemArray.length > 0) {
-    appendToMetadataQueue( aItemArray );
+  if (itemArray.length > 0) {
+    appendToMetadataQueue( itemArray );
   }
   
 
