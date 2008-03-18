@@ -110,6 +110,15 @@ public:
     PRUint32 itemTransferID;         /* id for this item transfer */
 
     NS_DECL_ISUPPORTS
+    /**
+     * Returns PR_TRUE if the request is for a playlist and PR_FALSE otherwise
+     */
+    PRBool IsPlaylist() const;
+    /**
+     * Returns PR_TRUE if the request should be counted as part of he batch
+     * otherwise returns PR_FALSE
+     */
+    PRBool IsCountable() const;
     static TransferRequest * New();
   private:
     TransferRequest() {}

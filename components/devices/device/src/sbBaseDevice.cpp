@@ -176,6 +176,22 @@ sbBaseDevice::TransferRequest * sbBaseDevice::TransferRequest::New()
   return new TransferRequest();
 }
 
+PRBool sbBaseDevice::TransferRequest::IsPlaylist() const
+{
+  if (!list)
+    return PR_FALSE;
+  // Is this a playlist
+  nsCOMPtr<sbILibrary> libTest = do_QueryInterface(list);
+  return libTest ? PR_FALSE : PR_TRUE;      
+}
+
+PRBool sbBaseDevice::TransferRequest::IsCountable() const
+{
+  return !IsPlaylist() && 
+         type != sbIDevice::REQUEST_UPDATE && 
+         type !=sbIDevice::REQUEST_RESERVED;
+}
+
 sbBaseDevice::sbBaseDevice() : mAbortCurrentRequest(PR_FALSE)
 {
   nsDequeFunctor* deallocator = new RequestDeallocator;
@@ -243,11 +259,9 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     
     // when calculating batch counts, we skip over invalid requests and updates
     // (since they are not presented to the user anyway)
-    if (aRequest->type != TransferRequest::REQUEST_RESERVED &&
-        aRequest->type != TransferRequest::REQUEST_UPDATE)
+    if (aRequest->IsCountable())
     {
-      while (last && (last->type == TransferRequest::REQUEST_RESERVED ||
-                      last->type == TransferRequest::REQUEST_UPDATE))
+      while (last && !last->IsCountable())
       {
         --lastIt;
         last = static_cast<sbBaseDevice::TransferRequest*>(lastIt.GetCurrent());
@@ -255,42 +269,41 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
           break;
         }
       }
-    }
   
-    if (last && last->type == aRequest->type) {
-      // same type of request, batch them
-      aRequest->batchCount += last->batchCount;
-      aRequest->batchIndex = aRequest->batchCount;
+      if (last && last->type == aRequest->type) {
+        // same type of request, batch them
+        aRequest->batchCount += last->batchCount;
+        aRequest->batchIndex = aRequest->batchCount;
+    
+        nsDequeIterator it = mRequests.End(); 
   
-      nsDequeIterator it = mRequests.End(); 
-
-      for(; /* see loop */; --it) {
-        TransferRequest* oldReq =
-          static_cast<sbBaseDevice::TransferRequest*>(it.GetCurrent());
-        if (!oldReq) {
-          // no request
-          break;
-        }
-        if (oldReq->type == TransferRequest::REQUEST_RESERVED ||
-            oldReq->type == TransferRequest::REQUEST_UPDATE) {
-          // invalid request, or update only (doesn't matter to the user), skip
-          if (begin == it) {
-            // start of the queue, nothing left
+        for(; /* see loop */; --it) {
+          TransferRequest* oldReq =
+            static_cast<sbBaseDevice::TransferRequest*>(it.GetCurrent());
+          if (!oldReq) {
+            // no request
             break;
           }
-          continue;
-        }
-        if (oldReq->type != aRequest->type) {
-          /* differernt request type */
-          break;
-        }
-        NS_ASSERTION(oldReq->batchCount == aRequest->batchCount - 1,
-          "Unexpected batch count in old request");
-        ++(oldReq->batchCount);
-
-          if (begin == it) {
-          /* no requests left */
-          break;
+          if (!oldReq->IsCountable()) {
+            // invalid request, or update only (doesn't matter to the user), skip
+            if (begin == it) {
+              // start of the queue, nothing left
+              break;
+            }
+            continue;
+          }
+          if (oldReq->type != aRequest->type) {
+            /* differernt request type */
+            break;
+          }
+          NS_ASSERTION(oldReq->batchCount == aRequest->batchCount - 1,
+            "Unexpected batch count in old request");
+          ++(oldReq->batchCount);
+  
+            if (begin == it) {
+            /* no requests left */
+            break;
+          }
         }
       }
     }
