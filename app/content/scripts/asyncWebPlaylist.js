@@ -46,6 +46,12 @@ if (typeof(SBProperties) == "undefined") {
     throw new Error("Import of sbProperties module failed!");
 }
 
+if (typeof(LibraryUtils) == "undefined") {
+  Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+  if (!LibraryUtils)
+    throw new Error("Import of sbLibraryUtils module failed!");
+}
+
 try
 {
   // Parse through the document to get all the urls.
@@ -215,7 +221,7 @@ try
             }
             for (var index = 0; index < foundItemsLength; index++) {
               var item = self.items[index];
-              var mediaItem;
+              var mediaItem = null;
 
               if (item instanceof Components.interfaces.sbIMediaItem) {
                 mediaItem = item;
@@ -231,99 +237,67 @@ try
                   name = item.name;
                 }
 
-                var uri = newURI(url);
-
-                // Set the originURL/Page values to remember our state.
-                var propArray = [
-                    [SBProperties.originPage, self.currentURL],
-                    [SBProperties.originPageImage, self.currentURL],
-                    [SBProperties.originURL, url],
-                    [SBProperties.originPageTitle, self.currentTitle],
-                    [SBProperties.enableAutoDownload, "1"],
-                    [SBProperties.downloadButton, "1|0|0"]
-                  ];
-                // Add the track name if requested.
-                if (name.length > 0) {
-                  propArray.push([SBProperties.trackName, name])
-                }
-
-                // Make a new media item for it
-                mediaItem = library.createMediaItem(uri,
-                                // Set the properties for later tracking
-                                SBProperties.createArray( propArray ) );
-
-                // Make sure we scan it for metadata
-                if (!mediaItemsToScan) {
-                  mediaItemsToScan = Components.classes[CONTRACTID_ARRAY]
-                                              .createInstance(nsIMutableArray);
-                }
-                mediaItemsToScan.appendElement(mediaItem, false);
-              }
-              
-              var mainLibraryHasItem = false;
-              var downloadStatus = 0;
-
-              try {
-                // Get the current status of this item
-                downloadStatus = mediaItem.getProperty(SBProperties.downloadButton);
-                downloadStatus = downloadStatus.split("|");
-                downloadStatus = downloadStatus[0];
-
-                // See if the item is in the main library
-                var originURL;
-                
-                originURL = mediaItem.getProperty(SBProperties.originURL);
-
-                var libraryManager =
-                    Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                     .getService(Ci.sbILibraryManager);
-                var mainLibrary = libraryManager.mainLibrary;
-
-                var listener = {
-                  items: [],
-                  onEnumerationBegin: function() {
-                  },
-                  onEnumeratedItem: function(list, item) {
-                    this.items.push(item);
-                  },
-                  onEnumerationEnd: function() {
+                // First lets see if this is already in the main library
+                // If it is then we will use it otherwise we will create a
+                // new one.
+                try {
+                  // See if the item is in the main library
+                  var mainLibrary = LibraryUtils.mainLibrary;
+  
+                  var listener = {
+                    foundItem: null,
+                    onEnumerationBegin: function() {
+                      return Components.interfaces
+                             .sbIMediaListEnumerationListener.CONTINUE;
+                    },
+                    onEnumeratedItem: function(list, item) {
+                      this.foundItem = item;
+                      return Components.interfaces
+                             .sbIMediaListEnumerationListener.CANCEL;
+                    },
+                    onEnumerationEnd: function() {
+                    }
+                  };
+  
+                  LibraryUtils.mainLibrary.enumerateItemsByProperty(
+                                                        SBProperties.originURL,
+                                                        url,
+                                                        listener);
+                  if (listener.foundItem) {
+                    mediaItem = listener.foundItem;
                   }
-                };
+                } catch (err) { }
 
-                mainLibrary.enumerateItemsByProperty(
-                                    SBProperties.originURL,
-                                    originURL,
-                                    listener);
-                if (listener.items.length > 0) {
-                  mainLibraryHasItem = true;
-                }
-              } catch (err) { }
-            
-              // If the item is not currently downloading and does not
-              // appear in the main library then reset the download button
-              if ( ( (downloadStatus > SBDOWNLOADMODE_EPAUSED) ||
-                   (downloadStatus < SBDOWNLOADMODE_ESTARTING) ) &&
-                   (!mainLibraryHasItem) ) {
-                // Not in library so reset download button
-                mediaItem.setProperty(SBProperties.downloadButton, "1|0|0");
-                mediaItem.setProperty(SBProperties.downloadDetails, "");
-              } else if (mainLibraryHasItem) {
-                // But if it does show up in the main library.
-                if (downloadStatus == SBDOWNLOADMODE_EFAILED) {
-                    mediaItem.setProperty(SBProperties.downloadButton,
-                                          SBDOWNLOADMODE_EFAILED + "|0|0");
-                    mediaItem.setProperty(SBProperties.downloadDetails,
-                                          SBString("device.download.error",
-                                                   "Failed"));
-                } else {
-                    mediaItem.setProperty(SBProperties.downloadButton,
-                                          SBDOWNLOADMODE_ECOMPLETE + "|1|1");
-                    mediaItem.setProperty(SBProperties.downloadDetails,
-                                          SBString("device.download.complete",
-                                                   "Complete"));
+                if (mediaItem == null) {
+                  // Set the originURL/Page values to remember our state.
+                  var propArray = [
+                      [SBProperties.originPage, self.currentURL],
+                      [SBProperties.originPageImage, self.currentURL],
+                      [SBProperties.originURL, url],
+                      [SBProperties.originPageTitle, self.currentTitle],
+                      [SBProperties.enableAutoDownload, "1"],
+                      [SBProperties.downloadButton, "1|0|0"]
+                    ];
+                  // Add the track name if requested.
+                  if (name.length > 0) {
+                    propArray.push([SBProperties.trackName, name])
+                  }
+
+                  var uri = newURI(url);
+                  // Make a new media item for it
+                  mediaItem = library.createMediaItem(uri,
+                                  // Set the properties for later tracking
+                                  SBProperties.createArray( propArray ) );
+  
+                  // Make sure we scan it for metadata
+                  if (!mediaItemsToScan) {
+                    mediaItemsToScan = Components.classes[CONTRACTID_ARRAY]
+                                                .createInstance(nsIMutableArray);
+                  }
+                  mediaItemsToScan.appendElement(mediaItem, false);
                 }
               }
-              
+
               mediaList.add(mediaItem);
             }
           };
