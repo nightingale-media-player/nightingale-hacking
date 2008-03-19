@@ -2578,7 +2578,7 @@ sbDownloadSession::sbDownloadSession(
 sbDownloadSession::~sbDownloadSession()
 {
     /* clean up any active downloads, if we still manage to have them */
-    this->Shutdown();
+    Shutdown();
 
     /* Dispose of the session lock. */
     if (mpSessionLock)
@@ -3897,9 +3897,15 @@ nsresult sbDownloadSession::StartTimers()
  */
 nsresult sbDownloadSession::StopTimers()
 {
+  if(mProgressTimer) {
     mProgressTimer->Cancel();
+  }
+  
+  if(mIdleTimer) {
     mIdleTimer->Cancel();
-    return NS_OK;
+  }
+  
+  return NS_OK;
 }
 
 
