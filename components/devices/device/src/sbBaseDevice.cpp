@@ -49,6 +49,13 @@
 #include "sbLibraryListenerHelpers.h"
 #include "sbStandardProperties.h"
 
+#define DEFAULT_COLUMNSPEC_DEVICE_LIBRARY SB_PROPERTY_TRACKNAME " 265 "     \
+                                          SB_PROPERTY_DURATION " 43 "       \
+                                          SB_PROPERTY_ARTISTNAME " 177 a "  \
+                                          SB_PROPERTY_ALBUMNAME " 159 "     \
+                                          SB_PROPERTY_GENRE " 53 "          \
+                                          SB_PROPERTY_RATING   " 80"        \
+
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbBaseDevice::TransferRequest)
 
 /*
@@ -572,7 +579,15 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
   rv = devLib->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                            NS_LITERAL_STRING("1"));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = devLib->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), 
+                            NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
   
+  rv = devLib->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
+                           NS_ConvertASCIItoUTF16(NS_LITERAL_CSTRING(DEFAULT_COLUMNSPEC_DEVICE_LIBRARY)));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsRefPtr<sbBaseDeviceLibraryListener> libListener = new sbBaseDeviceLibraryListener();
   NS_ENSURE_TRUE(libListener, NS_ERROR_OUT_OF_MEMORY);
   
