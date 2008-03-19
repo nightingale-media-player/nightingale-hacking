@@ -67,6 +67,10 @@ endif
 
 endif
 
+ifeq (macosx, $(SB_PLATFORM))
+export MACOSX_DEPLOYMENT_TARGET=10.4
+endif
+
 ifdef DEBUG
   C_EXTRA_DEFS += -DSQLITE_DEBUG=1 \
                   $(NULL)

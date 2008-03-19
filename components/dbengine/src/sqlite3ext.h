@@ -344,7 +344,7 @@ struct sqlite3_api_routines {
 #define sqlite3_vfs_unregister         sqlite3_api->vfs_unregister
 #endif /* SQLITE_CORE */
 
-#define SQLITE_EXTENSION_INIT1     const sqlite3_api_routines *sqlite3_api;
+#define SQLITE_EXTENSION_INIT1     const sqlite3_api_routines *sqlite3_api = 0;
 #define SQLITE_EXTENSION_INIT2(v)  sqlite3_api = v;
 
 #endif /* _SQLITE3EXT_H_ */
