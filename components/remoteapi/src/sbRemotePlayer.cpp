@@ -205,6 +205,7 @@ const static char* sPublicCategoryConversions[][2] =
 #define RAPI_EVENT_TYPE_DOWNLOADCOMPLETE  NS_LITERAL_STRING("downloadcomplete")
 #define RAPI_EVENT_TYPE_BEFORETRACKCHANGE NS_LITERAL_STRING("beforetrackchange")
 #define RAPI_EVENT_TYPE_TRACKCHANGE       NS_LITERAL_STRING("trackchange")
+#define RAPI_EVENT_TYPE_STOP              NS_LITERAL_STRING("playbackstopped")
 #define SB_PREFS_ROOT                     NS_LITERAL_STRING("songbird.")
 #define SB_EVENT_CMNDS_UP                 NS_LITERAL_STRING("playlist-commands-updated")
 #define SB_WEB_TABBROWSER                 NS_LITERAL_STRING("sb-tabbrowser")
@@ -1457,6 +1458,10 @@ NS_IMETHODIMP
 sbRemotePlayer::OnStop()
 {
   LOG(("sbRemotePlayer::OnStop()"));
+  nsresult rv;
+
+  rv = FireEventToContent( RAPI_EVENT_CLASS, RAPI_EVENT_TYPE_STOP );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   return NS_OK;
 }

@@ -60,9 +60,16 @@
       dump("Name: " + event.item.getProperty(SB_NS + "trackName"));
     }
 
+    function onStop(event) {
+      dump('playbackstopped');
+      dump("status: " + event.status);
+      dump("type: " + event.type);
+    }
+
     function onload() {
       document.addEventListener('trackchange', onTrackChanged, false);
       document.addEventListener('beforetrackchange', onBeforeTrackChanged, false);
+      document.addEventListener('playbackstopped', onStop, false);
       songbird.webPlaylist.mediaList = list;
       outputDiv = document.getElementById('output');
     }
@@ -70,6 +77,7 @@
     function onunload() {
       document.removeEventListener('trackchange', onTrackChanged, false);
       document.removeEventListener('beforetrackchange', onBeforeTrackChanged, false);
+      document.removeEventListener('playbackstopped', onStop, false);
       siteLib.clear();
     }
 
@@ -90,6 +98,8 @@
       <input type="button" id="next_button" value="Next" onclick="songbird.next();" /> 
       <br />
       <input type="button" id="prev_button" value="Previous" onclick="songbird.previous();" /> 
+      <br />
+      <input type="button" id="stop_button" value="Stop" onclick="songbird.stop();" /> 
     </form>
   </p>
   <hr>
