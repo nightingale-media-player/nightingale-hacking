@@ -122,7 +122,7 @@
           var paneinfo = paneMgr.getPaneInfo(this._lastURL.stringValue);
           if (paneinfo) {
             // hide the pane as soon as possible if the url is about:blank
-            if (aPaneInfo.contentUrl == "about:blank") {
+            if (paneinfo.contentUrl == "about:blank") {
               this._hidden = true;
             }
             setTimeout(function(self){
