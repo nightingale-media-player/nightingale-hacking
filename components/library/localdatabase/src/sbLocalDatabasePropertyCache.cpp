@@ -201,7 +201,7 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
 
   for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
     rv = mMediaItemsSelect->AddColumn(EmptyString(),
-                                      nsDependentString(sStaticProperties[i].mColumn));
+                                      NS_ConvertASCIItoUTF16(sStaticProperties[i].mColumn));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1138,12 +1138,12 @@ sbLocalDatabasePropertyCache::LoadProperties()
    */
   for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
 
-    nsString propertyID(sStaticProperties[i].mPropertyID);
+    nsString propertyID(NS_ConvertASCIItoUTF16(sStaticProperties[i].mPropertyID));
+
     PRBool success = mPropertyDBIDToID.Put(sStaticProperties[i].mDBID, propertyID);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-    success = mPropertyIDToDBID.Put(nsDependentString(sStaticProperties[i].mPropertyID),
-                                    sStaticProperties[i].mDBID);
+    success = mPropertyIDToDBID.Put(propertyID, sStaticProperties[i].mDBID);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   }

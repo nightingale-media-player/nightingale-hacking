@@ -39,50 +39,50 @@
 #define MAX_IN_LENGTH 5000
 
 struct sbStaticProperty {
-  const PRUnichar* mPropertyID;
-  const PRUnichar* mColumn;
+  const char* mPropertyID;
+  const char* mColumn;
   PRUint32         mDBID;
 };
 
 static sbStaticProperty sStaticProperties[] = {
   {
-    NS_LITERAL_STRING(SB_PROPERTY_GUID).get(),
-    NS_LITERAL_STRING("guid").get(),
+    SB_PROPERTY_GUID,
+    "guid",
     PR_UINT32_MAX,
   },
   {
-    NS_LITERAL_STRING(SB_PROPERTY_CREATED).get(),
-    NS_LITERAL_STRING("created").get(),
+    SB_PROPERTY_CREATED,
+    "created",
     PR_UINT32_MAX - 1,
   },
   {
-    NS_LITERAL_STRING(SB_PROPERTY_UPDATED).get(),
-    NS_LITERAL_STRING("updated").get(),
+    SB_PROPERTY_UPDATED,
+    "updated",
     PR_UINT32_MAX - 2,
   },
   {
-    NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL).get(),
-    NS_LITERAL_STRING("content_url").get(),
+    SB_PROPERTY_CONTENTURL,
+    "content_url",
     PR_UINT32_MAX - 3,
   },
   {
-    NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE).get(),
-    NS_LITERAL_STRING("content_mime_type").get(),
+    SB_PROPERTY_CONTENTMIMETYPE,
+    "content_mime_type",
     PR_UINT32_MAX - 4,
   },
   {
-    NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH).get(),
-    NS_LITERAL_STRING("content_length").get(),
+    SB_PROPERTY_CONTENTLENGTH,
+    "content_length",
     PR_UINT32_MAX - 5,
   },
   {
-    NS_LITERAL_STRING(SB_PROPERTY_HIDDEN).get(),
-    NS_LITERAL_STRING("hidden").get(),
+    SB_PROPERTY_HIDDEN,
+    "hidden",
     PR_UINT32_MAX - 6,
   },
   {
-    NS_LITERAL_STRING(SB_PROPERTY_ISLIST).get(),
-    NS_LITERAL_STRING("media_list_type_id").get(),
+    SB_PROPERTY_ISLIST,
+    "media_list_type_id",
     PR_UINT32_MAX - 7,
   }
 };
@@ -103,7 +103,7 @@ static PRBool
 SB_IsTopLevelProperty(const nsAString& aProperty)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
-    if(aProperty.Equals(sStaticProperties[i].mPropertyID))
+    if(aProperty.EqualsLiteral(sStaticProperties[i].mPropertyID))
       return PR_TRUE;
   }
   return PR_FALSE;
@@ -114,8 +114,8 @@ SB_GetTopLevelPropertyColumn(const nsAString& aProperty,
                              nsAString& aColumnName)
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
-    if(aProperty.Equals(sStaticProperties[i].mPropertyID)) {
-      aColumnName.Assign(sStaticProperties[i].mColumn);
+    if(aProperty.EqualsLiteral(sStaticProperties[i].mPropertyID)) {
+      aColumnName.AssignLiteral(sStaticProperties[i].mColumn);
       return NS_OK;
     }
   }
@@ -128,7 +128,7 @@ SB_GetTopLevelPropertyColumn(const PRUint32 aPropertyDBID,
 {
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
     if(aPropertyDBID == sStaticProperties[i].mDBID) {
-      aColumnName.Assign(sStaticProperties[i].mColumn);
+      aColumnName.AssignLiteral(sStaticProperties[i].mColumn);
       return NS_OK;
     }
   }
