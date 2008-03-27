@@ -130,7 +130,7 @@ sbDeviceProperties::InitDone()
 NS_IMETHODIMP
 sbDeviceProperties::GetFriendlyName(nsAString & aFriendlyName)
 {
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   
   aFriendlyName = mFriendlyName;
   return NS_OK;
@@ -139,7 +139,7 @@ sbDeviceProperties::GetFriendlyName(nsAString & aFriendlyName)
 NS_IMETHODIMP
 sbDeviceProperties::SetFriendlyName(const nsAString & aFriendlyName)
 {
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
   mFriendlyName = aFriendlyName;
   
@@ -150,7 +150,7 @@ sbDeviceProperties::SetFriendlyName(const nsAString & aFriendlyName)
 NS_IMETHODIMP
 sbDeviceProperties::GetVendorName(nsAString & aVendorName)
 {
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
   aVendorName = mVendorName;
   return NS_OK;
@@ -159,7 +159,7 @@ sbDeviceProperties::GetVendorName(nsAString & aVendorName)
 NS_IMETHODIMP
 sbDeviceProperties::GetModelNumber(nsIVariant * *aModelNumber)
 {
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
   NS_IF_ADDREF( *aModelNumber = mModelNumber );
   return NS_OK;
@@ -168,7 +168,7 @@ sbDeviceProperties::GetModelNumber(nsIVariant * *aModelNumber)
 NS_IMETHODIMP
 sbDeviceProperties::GetSerialNumber(nsIVariant * *aSerialNumber)
 {
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
   NS_IF_ADDREF( *aSerialNumber = mSerialNumber );
   return NS_OK;
@@ -177,7 +177,7 @@ sbDeviceProperties::GetSerialNumber(nsIVariant * *aSerialNumber)
 NS_IMETHODIMP
 sbDeviceProperties::GetUri(nsIURI * *aUri)
 {
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
   NS_IF_ADDREF( *aUri = mDeviceLocation );
   return NS_OK;
@@ -186,7 +186,7 @@ sbDeviceProperties::GetUri(nsIURI * *aUri)
 NS_IMETHODIMP
 sbDeviceProperties::GetIconUri(nsIURI * *aIconUri)
 {
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
 
   NS_IF_ADDREF( *aIconUri = mDeviceIcon );
@@ -196,7 +196,7 @@ sbDeviceProperties::GetIconUri(nsIURI * *aIconUri)
 NS_IMETHODIMP
 sbDeviceProperties::GetProperties(nsIPropertyBag2 * *aProperties)
 {
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
   return NS_ERROR_NOT_IMPLEMENTED;
 }
