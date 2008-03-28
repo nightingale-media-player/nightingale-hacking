@@ -970,72 +970,81 @@ sbLocalDatabaseQuery::AddPrimarySort()
                             columnName,
                             mSorts->ElementAt(0).ascending);
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
+
     /*
-     * If this is the custom sort, sort by the "ordinal" column in the
-     * "simple_media_lists" table.  Make sure that base table is actually
-     * the simple media lists table before proceeding.
+     * Add the media_item_id to the sort so like values always sort the same
      */
-    if (mSorts->ElementAt(0).property.Equals(ORDINAL_PROPERTY)) {
-      nsAutoString baseTable;
-      rv = mBuilder->GetBaseTableName(baseTable);
-      NS_ENSURE_SUCCESS(rv, rv);
+    rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS,
+                            MEDIAITEMID_COLUMN,
+                            mSorts->ElementAt(0).ascending);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      if (baseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
-        rv = mBuilder->AddOrder(CONSTRAINT_ALIAS,
-                                ORDINAL_COLUMN,
-                                mSorts->ElementAt(0).ascending);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        return NS_ERROR_INVALID_ARG;
-      }
-    }
-    else {
-      /*
-       * Join an instance of the properties table to the base table
-       */
-      rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
-                             PROPERTIES_TABLE,
-                             SORT_ALIAS,
-                             GUID_COLUMN,
-                             MEDIAITEMS_ALIAS,
-                             GUID_COLUMN);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      /*
-       * Restrict the sort table to the sort property
-       */
-      nsCOMPtr<sbISQLBuilderCriterion> criterion;
-      rv = mBuilder->CreateMatchCriterionLong(SORT_ALIAS,
-                                              PROPERTYID_COLUMN,
-                                              sbISQLSelectBuilder::MATCH_EQUALS,
-                                              GetPropertyId(mSorts->ElementAt(0).property),
-                                              getter_AddRefs(criterion));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mBuilder->AddCriterion(criterion);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      /*
-       * Add a sort on the primary sort
-       */
-      rv = mBuilder->AddOrder(SORT_ALIAS,
-                              OBJSORTABLE_COLUMN,
-                              mSorts->ElementAt(0).ascending);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+    return NS_OK;
   }
 
   /*
-   * Sort on media_item_id to make the order of the rows always the same.
-   * Make sure we sort on the same direction as the primary sort so reversing
-   * the primary sort will reverse the ordering when the primary sort values
-   * are the same.
+   * If this is the custom sort, sort by the "ordinal" column in the
+   * "simple_media_lists" table.  Make sure that base table is actually
+   * the simple media lists table before proceeding.
    */
-  rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS,
-                          MEDIAITEMID_COLUMN,
+  if (mSorts->ElementAt(0).property.Equals(ORDINAL_PROPERTY)) {
+    nsAutoString baseTable;
+    rv = mBuilder->GetBaseTableName(baseTable);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (baseTable.Equals(SIMPLEMEDIALISTS_TABLE)) {
+      rv = mBuilder->AddOrder(CONSTRAINT_ALIAS,
+                              ORDINAL_COLUMN,
+                              mSorts->ElementAt(0).ascending);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_OK;
+    }
+
+
+    return NS_ERROR_INVALID_ARG;
+  }
+
+  /*
+   * Join an instance of the properties table to the base table
+   */
+  rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                         PROPERTIES_TABLE,
+                         SORT_ALIAS,
+                         GUID_COLUMN,
+                         MEDIAITEMS_ALIAS,
+                         GUID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Restrict the sort table to the sort property
+   */
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  rv = mBuilder->CreateMatchCriterionLong(SORT_ALIAS,
+                                          PROPERTYID_COLUMN,
+                                          sbISQLSelectBuilder::MATCH_EQUALS,
+                                          GetPropertyId(mSorts->ElementAt(0).property),
+                                          getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mBuilder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Add a sort on the primary sort
+   */
+  rv = mBuilder->AddOrder(SORT_ALIAS,
+                          OBJSORTABLE_COLUMN,
+                          mSorts->ElementAt(0).ascending);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Sort on guid to make the order of the rows always the same.  Make sure we
+   * sort on the same direction as the primary sort so reversing the primary
+   * sort will reverse the ordering when the primary sort values are the same.
+   */
+  rv = mBuilder->AddOrder(SORT_ALIAS,
+                          GUID_COLUMN,
                           mSorts->ElementAt(0).ascending);
   NS_ENSURE_SUCCESS(rv, rv);
 
