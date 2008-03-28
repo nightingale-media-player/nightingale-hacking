@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = vendor/mozilla
 
+# XXXredfive -erhn?
 SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/songbird$(BIN_SUFFIX)
 
 GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
@@ -50,12 +51,17 @@ SONGBIRD_DIST = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
                 $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
                 $(NULL)
 
+# have to put the dlls here too because updater can't copy yet
+SONGBIRD_XULRUNNER = $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) 
+
 # MSVC 8 needs the manifest files
 ifeq ($(_MSC_VER), 1400)
 SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
+# have to put the manifest here too because updater can't copy yet
+SONGBIRD_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
 endif # _MSC_VER==1400
 
-endif
+endif # windows
 
 ifeq (linux,$(SB_PLATFORM))
 
