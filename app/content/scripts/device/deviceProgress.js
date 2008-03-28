@@ -68,13 +68,19 @@ var DPW = {
   // Device progress object fields.
   //
   //   _widget                  Device info widget.
+  //   _progressInfoBox         Device progress info.
   //   _deviceID                Device ID.
-  //   _isIdle                  Flag for state of device.
+  //   _isIdle                  Flag for state of device on manual transfers.
+  //   _isSyncing               Flag for sync state of device for syncing.
+  //   _showFinished            Flag for showing the finished button
   //
 
   _widget: null,
+  _progressInfoBox: null,
   _deviceID: null,
   _isIdle: true,
+  _isSyncing: false,
+  _showFinished: false,
 
 
   /**
@@ -87,6 +93,9 @@ var DPW = {
   initialize: function DPW__initialize(aWidget) {
     // Get the device widget.
     this._widget = aWidget;
+    
+    // Get the progress info box so we can show/hide it when required
+    this._progressInfoBox = this._getElement("progress_information_box");
 
     // Initialize object fields.
     this._deviceID = this._widget.deviceID;
@@ -97,8 +106,9 @@ var DPW = {
     // Set up the observes elements.
     this._setupObservesElements();
 
-    // Hide the widget by default and then update it.
-    this._widget.hidden = true;
+    // Hide the progress info by default and then update it.
+    this._progressInfoBox.hidden = true;
+    this._showFinished = false;
     this._update();
   },
 
@@ -113,6 +123,7 @@ var DPW = {
 
     // Clear object fields.
     this._widget = null;
+    this._progressInfoBox = null;
     this._deviceID = null;
   },
 
@@ -137,8 +148,15 @@ var DPW = {
         this._deviceCancelOperations();
         break;
 
+      case "sync" :
+        this._deviceSync();
+        break;
+
       case "finish" :
-        this._widget.hidden = true;
+        this._progressInfoBox.hidden = true;
+        this._showFinished = false;
+        this._update();
+      break;
 
       default :
         break;
@@ -179,18 +197,33 @@ var DPW = {
    */
 
   _update: function DPW__update() {
-    // Get the cancel and finish buttons.
+    // Get the sync, cancel and finish buttons.
+    var syncButton   = this._getElement("sync_operation_button");
     var cancelButton = this._getElement("cancel_operation_button");
     var finishButton = this._getElement("finish_progress_button");
 
     // Update the progress widget based on the device state.
-    if (this._deviceIsIdle()) {
+    if (this._showFinished) {
+      syncButton.hidden = true;
       cancelButton.hidden = true;
       finishButton.hidden = false;
+      this._progressInfoBox.hidden = false;
     } else {
-      cancelButton.hidden = false;
       finishButton.hidden = true;
-      this._widget.hidden = false;
+      if (this._deviceIsSyncing()) {
+        syncButton.hidden = true;
+        cancelButton.hidden = false;
+        this._progressInfoBox.hidden = false;
+      } else {
+        if (this._deviceIsIdle()) {
+          cancelButton.hidden = true;
+          syncButton.hidden = false;
+        } else {
+          cancelButton.hidden = false;
+          syncButton.hidden = true;
+          this._progressInfoBox.hidden = false;
+        }
+      }
     }
   },
 
@@ -366,14 +399,28 @@ var DPW = {
   onDeviceEvent : function DPW_onDeviceEvent(aEvent) {
     // Something happened :)
     switch (aEvent.type) {
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_START:
+      /*
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_SYNC_START:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_SYNC_PROGRESS:
         var aMediaItem = aEvent.data;
         if (aMediaItem)
           aMediaItem.QueryInterface(Ci.sbIMediaItem);
         this._updateDeviceStatus(aMediaItem);
-        this._isIdle = false;
+        this._isSyncing = true;
         this._update();
       break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_SYNC_STOP:
+        var aMediaItem = aEvent.data;
+        if (aMediaItem)
+          aMediaItem.QueryInterface(Ci.sbIMediaItem);
+        this._updateDeviceStatus(aMediaItem);
+        this._isSyncing = false;
+        this._showFinished = true;
+        this._update();
+      break;
+      */
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_START:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_PROGRESS:
         var aMediaItem = aEvent.data;
         if (aMediaItem)
@@ -387,19 +434,11 @@ var DPW = {
         this._dText2Remote.stringValue = SBString("device.status.progress_idle");
         this._dProgressRemote.intValue = 100;
         this._isIdle = true;
+        this._showFinished = true;
         this._update();
       break;
+
       case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_START:
-        this._dText1Remote.stringValue = SBString("device.status.progress_header_mounting");
-        this._dText2Remote.stringValue = SBString("device.status.progress_footer_mounting");
-
-        var progressMeter = this._getElement("progress_meter");
-        progressMeter.setAttribute("mode", "undetermined");
-
-        this._dProgressRemote.intValue = 0;
-        this._isIdle = false;
-        this._update();
-      break;
       case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_PROGRESS:
         this._dText1Remote.stringValue = SBString("device.status.progress_header_mounting");
         this._dText2Remote.stringValue = SBString("device.status.progress_footer_mounting");
@@ -433,12 +472,75 @@ var DPW = {
   _deviceCancelOperations: function DPW__deviceCancelOperations() {
     try {
       this._device.cancelRequests();
+      this._isSyncing = false;
+      this._isIdle = true;
+      this._showFinished = true;
+      this._update();
+      this._test_cancel = true;       // STEVO: For test syncing below.
     } catch (e) {
       dump("Error: " + e);
       Cu.reportError("Error occurred when canceling requests: " + e);
     }
   },
 
+// STEVO: TEST SYNC STUFF...
+  _test_curItemIndex: 0,
+  _test_totalItems: 20,
+  _test_cancel: false,
+  
+  _testSync: function DPW__testSync() {
+    if (this._test_cancel) {
+      this._isSyncing = false;
+      this._showFinished = true;
+      this._update();
+      return;
+    }
+    
+    var progress = Math.round((this._test_curItemIndex / this._test_totalItems) * 100);
+    this._dProgressRemote.intValue = progress;
+    if (progress < 100) {
+      this._progressInfoBox.hidden = false;
+      this._isSyncing = true;
+
+      this._dText1Remote.stringValue =
+                SBFormattedString("device.status.progress_header_copying",
+                                  [this._test_curItemIndex,
+                                   this._test_totalItems]);
+      this._dText2Remote.stringValue =
+          SBFormattedString("device.status.progress_footer_copying",
+                            ["Test " + this._test_curItemIndex,
+                             "The Testsers",
+                             "Sync Test"]);
+
+      self = this;
+      setTimeout(function () { self._testSync(); }, 1000);
+    } else {
+      this._isSyncing = false;
+      this._showFinished = true;
+      this._dText1Remote.stringValue = SBString("device.status.progress_complete");
+      this._dText2Remote.stringValue = SBString("device.status.progress_idle");
+      this._dProgressRemote.intValue = 100;
+    }
+
+    this._update();
+    this._test_curItemIndex += 1;
+  },
+// STEVO: END TEST SYNC STUFF.
+  /**
+   * \brief Sync device
+   */
+  _deviceSync: function DPW__deviceSync() {
+    try {
+      this._device.sync();
+      this._progressInfoBox.hidden = false;
+    } catch (e) {
+      this._test_curItemIndex = 0;  // STEVO: TEST SYNC STUFF
+      this._test_cancel = false;    // STEVO: TEST SYNC STUFF
+      this._testSync();             // STEVO: TEST SYNC STUFF
+      dump("Error: " + e + "\n");
+      Cu.reportError("Error occurred when attempting to sync: " + e);
+    }
+  },
 
   /**
    * \brief Return the device status data remote prefix.
@@ -461,6 +563,12 @@ var DPW = {
     return this._isIdle;
   },
 
+  /**
+   * \brief Return true if device is syncing
+   */
+  _deviceIsSyncing: function DPW__deviceIsSyncing() {
+    return this._isSyncing;
+  },
 
   /**
    * \brief Get the device object for the device ID specified by aDeviceID.

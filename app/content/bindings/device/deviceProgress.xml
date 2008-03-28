@@ -62,7 +62,7 @@
                     orient="horizontal">
 
         <!-- Device operation progress box. -->
-        <xul:vbox flex="1" pack="center">
+        <xul:vbox flex="1" pack="center" sbid="progress_information_box">
 
           <!-- Progress text 1 label. -->
           <xul:label observestarget="true"
@@ -84,6 +84,15 @@
                      observesattribute="value"
                      class="dev-progress-text2-label"/>
 
+        </xul:vbox>
+
+        <!-- Sync device operation button. -->
+        <xul:vbox pack="center">
+          <xul:button sbid="sync_operation_button"
+                      class="device-progress-button"
+                      label="&device.progress.sync;"
+                      action="sync"
+                      oncommand="DPW.onAction(event);"/>
         </xul:vbox>
 
         <!-- Cancel device operation button. -->

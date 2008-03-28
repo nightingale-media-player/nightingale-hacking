@@ -417,6 +417,8 @@
 <!ENTITY device.info.playback_formats.label "Playback Formats">
 <!ENTITY device.info.battery.label          "Battery">
 
+<!ENTITY device.progress.sync "Sync">
+
 <!ENTITY device.capacity.music.label    "Music">
 <!ENTITY device.capacity.video.label    "Video">
 <!ENTITY device.capacity.other.label    "Other">
