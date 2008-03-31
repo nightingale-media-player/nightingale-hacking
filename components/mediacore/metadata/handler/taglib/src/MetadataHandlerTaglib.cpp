@@ -516,7 +516,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Close()
     /* Complete read operation. */
     CompleteRead();
 
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    return (NS_OK);
 }
 
 
