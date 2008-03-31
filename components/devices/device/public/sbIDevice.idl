@@ -130,6 +130,7 @@ interface sbIDevice : nsISupports
   const unsigned long STATE_DELETING        = 4;
   const unsigned long STATE_DOWNLOAD_PAUSED = 5;
   const unsigned long STATE_UPLOAD_PAUSED   = 6;
+  const unsigned long STATE_DISCONNECTED    = 9;
 
   const unsigned long REQUEST_FLAG_USER  = 0x80000000;
   const unsigned long REQUEST_FLAG_WRITE = 0x40000000;

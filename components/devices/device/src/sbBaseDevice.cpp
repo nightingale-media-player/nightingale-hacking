@@ -270,11 +270,12 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     {
       while (last && !last->IsCountable())
       {
-        --lastIt;
-        last = static_cast<sbBaseDevice::TransferRequest*>(lastIt.GetCurrent());
         if (begin == lastIt) {
+          last = nsnull;
           break;
         }
+        --lastIt;
+        last = static_cast<sbBaseDevice::TransferRequest*>(lastIt.GetCurrent());
       }
   
       if (last && last->type == aRequest->type) {
