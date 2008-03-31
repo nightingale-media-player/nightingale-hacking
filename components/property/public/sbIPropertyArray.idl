@@ -50,7 +50,7 @@ interface sbIProperty : nsISupports
  * \interface sbIPropertyArray
  * \brief An interface to carry around arrays of nsIProperty instances.  Users
  *        of this interface should only QI it to a sbIMutablePropertyArray if
- *        they are the owners of the instance.
+ *        they are the owners of the instance. 
  */
 [scriptable, uuid(cc75d9ac-cb61-4f6d-afda-1cba8a090b6f)]
 interface sbIPropertyArray : nsIArray
@@ -84,8 +84,10 @@ interface sbIPropertyArray : nsIArray
 };
 
 /**
- * \interface sbIPropertyArray
+ * \interface sbIMutablePropertyArray
  * \brief An interface to carry around arrays of nsIProperty instances
+ * Note that implementations of the interface should also provide 
+ * nsIMutableArray.  QI to nsIMutableArray to access add/remove/clear methods.
  */
 [scriptable, uuid(a47d226b-26eb-46b8-9d5a-f919def2ebfb)]
 interface sbIMutablePropertyArray : sbIPropertyArray

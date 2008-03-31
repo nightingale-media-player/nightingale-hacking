@@ -42,6 +42,10 @@ var SBProperties = {
 
 ### actual properties generated here via sbStandardProperties.pl
 
+  /**
+   * Create a property array from a js object such as [[id,value], ..] or {id:value}.
+   * Pass strict=true to ensure that all property values are valid.
+   */
   createArray: function(properties, strict) {
     var propertyArray =
       Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
@@ -50,12 +54,44 @@ var SBProperties = {
       propertyArray.strict = arguments[1];
     }
     if (properties) {
-      properties.forEach(function(e) {
-        if (e.length == 2) {
-          propertyArray.appendProperty(e[0], e[1]);
-        }
-      });
+      this.addToArray(properties, propertyArray);
     }
     return propertyArray;
+  },
+  
+  /**
+   * Add properties (as [[id,value], ..] or {id:value})
+   * to the given property array
+   */
+  addToArray: function(properties, propertyArray) {
+    if (properties) {
+      // If properties are passed as an array, assume [[id,value], ..]
+      if (properties.length !== undefined) {
+        properties.forEach(function(e) {
+          if (e.length == 2) {
+            propertyArray.appendProperty(e[0], e[1]);
+          }
+        });
+      // Otherwise assume an object with {id:value}
+      } else {
+        for (var prop in properties) {
+          propertyArray.appendProperty(prop, properties[prop]);
+        }
+      }
+    }
+  },
+  
+  /**
+   * Convert the given property array into a javascript map like {id:value}
+   */
+  arrayToJSObject: function(propArray) {
+    var enumerator = propArray.enumerate();
+    var property;
+    var propMap = {};
+    while (enumerator.hasMoreElements()) {
+      property = enumerator.getNext().QueryInterface(Components.interfaces.sbIProperty);
+      propMap[property.id] = property.value;
+    }
+    return propMap;
   }
 }

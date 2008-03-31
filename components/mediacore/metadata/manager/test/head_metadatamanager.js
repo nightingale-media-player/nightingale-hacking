@@ -28,6 +28,8 @@
  * \brief Some globally useful stuff for the local database library tests
  */
 
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+
 function newFileURI(file) {
   var ioService = Cc["@mozilla.org/network/io-service;1"].
                   getService(Ci.nsIIOService);
@@ -114,5 +116,14 @@ function newAppRelativeFile( path ) {
   }
 
   return file;
+}
+
+/**
+ * Assert that all key/value pairs in mapA exist in mapB
+ */
+function assertObjectIsSubsetOf(mapA, mapB) {
+  for (var id in mapA) {
+    assertEqual(mapA[id], mapB[id]);
+  }
 }
 
