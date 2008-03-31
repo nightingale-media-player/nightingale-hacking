@@ -263,3 +263,4 @@ protected:
 };
 
 #endif /* __SBBASEDEVICE__H__ */
+
