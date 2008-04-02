@@ -26,7 +26,7 @@
 	<key>CFBundleExecutable</key>
 	<string>songbird</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Songbird 0.6pre For Mac, © 2005-2006 Pioneers of the Inevitable</string>
+	<string>Songbird 0.6pre For Mac, © 2005-2008 Pioneers of the Inevitable</string>
 	<key>CFBundleIconFile</key>
 	<string>songbird.icns</string>
 	<key>CFBundleIdentifier</key>
