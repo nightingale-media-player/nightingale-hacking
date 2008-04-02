@@ -1,20 +1,14 @@
 Index: extensions/inspector/install.rdf
 ===================================================================
 RCS file: /cvsroot/mozilla/extensions/inspector/install.rdf,v
-retrieving revision 1.16
-diff -u -8 -p -r1.16 install.rdf
---- extensions/inspector/install.rdf	30 Jan 2008 04:29:32 -0000	1.16
-+++ extensions/inspector/install.rdf	13 Mar 2008 22:19:36 -0000
-@@ -48,16 +48,25 @@
-       <!-- Toolkit -->
-       <Description>
-         <em:id>toolkit@mozilla.org</em:id>
-         <em:minVersion>1.9a1</em:minVersion>
-         <em:maxVersion>@EXTENSION_VERSION@</em:maxVersion>
-       </Description>
-     </em:targetApplication>
+retrieving revision 1.17
+diff -u -p -r1.17 install.rdf
+--- extensions/inspector/install.rdf	28 Feb 2008 02:04:17 -0000	1.17
++++ extensions/inspector/install.rdf	2 Apr 2008 19:01:43 -0000
+@@ -9,6 +9,15 @@
+     <em:version>@DOMi_VERSION@</em:version>
  
-+    <em:targetApplication>
+     <em:targetApplication>
 +      <!-- Songbird -->
 +      <Description>
 +        <em:id>songbird@songbirdnest.com</em:id>
@@ -22,28 +16,19 @@ diff -u -8 -p -r1.16 install.rdf
 +        <em:maxVersion>*</em:maxVersion>
 +      </Description>
 +    </em:targetApplication>
-+     
-     <!-- EXTENSION AUTHORS!
-          DO NOT COPY THIS PROPERTY INTO YOUR INSTALL RDF FILES
-          It will cause users not to be informed of incompatibilities
-          with your extension when they are updated with Software Update
-          and your extension will become unavailable to them!
-          -->
-     <em:appManaged>true</em:appManaged>
- 
++
++    <em:targetApplication>
+       <!-- Firefox -->
+       <Description>
+         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
 Index: extensions/inspector/jar.mn
 ===================================================================
 RCS file: /cvsroot/mozilla/extensions/inspector/jar.mn,v
 retrieving revision 1.36
-diff -u -8 -p -r1.36 jar.mn
+diff -u -p -r1.36 jar.mn
 --- extensions/inspector/jar.mn	6 Feb 2008 06:49:43 -0000	1.36
-+++ extensions/inspector/jar.mn	13 Mar 2008 22:19:36 -0000
-@@ -4,16 +4,17 @@ inspector.jar:
- % overlay chrome://inspector/content/inspector.xul chrome://communicator/content/tasksOverlay.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
- % overlay chrome://communicator/content/tasksOverlay.xul chrome://inspector/content/tasksOverlay.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
- % overlay chrome://communicator/content/pref/preftree.xul chrome://inspector/content/prefs/prefsOverlay.xul application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
- % overlay chrome://browser/content/browser.xul chrome://inspector/content/tasksOverlay-ff.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
- % overlay chrome://browser/content/macBrowserOverlay.xul chrome://inspector/content/tasksOverlay-ff.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
++++ extensions/inspector/jar.mn	2 Apr 2008 19:01:43 -0000
+@@ -9,6 +9,7 @@ inspector.jar:
  % overlay chrome://inspector/content/inspector.xul chrome://browser/content/baseMenuOverlay.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384}
  % overlay chrome://calendar/content/calendar.xul chrome://inspector/content/tasksOverlay-sb.xul application={718e30fb-e89b-41dd-9da7-e25a45638b28}
  % overlay chrome://messenger/content/mailWindowOverlay.xul chrome://inspector/content/tasksOverlay-tb.xul application={3550f703-e582-4d05-9a08-453d09bdfdc6}
@@ -51,17 +36,7 @@ diff -u -8 -p -r1.36 jar.mn
  % overlay chrome://inspector/content/commandOverlay.xul chrome://inspector/content/viewers/dom/commandOverlay.xul
  % overlay chrome://inspector/content/commandOverlay.xul chrome://inspector/content/viewers/styleRules/commandOverlay.xul
  % overlay chrome://inspector/content/keysetOverlay.xul chrome://inspector/content/viewers/dom/keysetOverlay.xul
- % overlay chrome://inspector/content/popupOverlay.xul chrome://inspector/content/viewers/dom/popupOverlay.xul
- % overlay chrome://inspector/content/popupOverlay.xul chrome://inspector/content/viewers/styleRules/popupOverlay.xul
-   content/inspector/inspector.xul                                     (resources/content/inspector.xul)
-   content/inspector/inspector.js                                      (resources/content/inspector.js)
-   content/inspector/inspector.css                                     (resources/content/inspector.css)
-@@ -26,16 +27,17 @@ inspector.jar:
-   content/inspector/toolboxOverlay.xul                                (resources/content/toolboxOverlay.xul)
-   content/inspector/commandOverlay.xul                                (resources/content/commandOverlay.xul)
-   content/inspector/keysetOverlay.xul                                 (resources/content/keysetOverlay.xul)
-   content/inspector/popupOverlay.xul                                  (resources/content/popupOverlay.xul)
-   content/inspector/statusbarOverlay.xul                              (resources/content/statusbarOverlay.xul)
+@@ -31,6 +32,7 @@ inspector.jar:
    content/inspector/tasksOverlay.xul                                  (resources/content/tasksOverlay.xul)
    content/inspector/tasksOverlay-ff.xul                               (resources/content/tasksOverlay-ff.xul)
    content/inspector/tasksOverlay-sb.xul                               (resources/content/tasksOverlay-sb.xul)
@@ -69,17 +44,12 @@ diff -u -8 -p -r1.36 jar.mn
    content/inspector/tasksOverlay-tb.xul                               (resources/content/tasksOverlay-tb.xul)
    content/inspector/editingOverlay.xul                                (resources/content/editingOverlay.xul)
    content/inspector/utilWindow.xul                                    (resources/content/utilWindow.xul)
-   content/inspector/Flasher.js                                        (resources/content/Flasher.js)
-   content/inspector/ViewerRegistry.js                                 (resources/content/ViewerRegistry.js)
-   content/inspector/utils.js                                          (resources/content/utils.js)
-   content/inspector/hooks.js                                          (resources/content/hooks.js)
-   content/inspector/util.dtd                                          (resources/content/util.dtd)
 Index: extensions/inspector/resources/content/tasksOverlay-songbird.xul
 ===================================================================
 RCS file: extensions/inspector/resources/content/tasksOverlay-songbird.xul
 diff -N extensions/inspector/resources/content/tasksOverlay-songbird.xul
 --- /dev/null	1 Jan 1970 00:00:00 -0000
-+++ extensions/inspector/resources/content/tasksOverlay-songbird.xul	13 Mar 2008 22:19:36 -0000
++++ extensions/inspector/resources/content/tasksOverlay-songbird.xul	2 Apr 2008 19:01:43 -0000
 @@ -0,0 +1,43 @@
 +<?xml version="1.0"?>
 +

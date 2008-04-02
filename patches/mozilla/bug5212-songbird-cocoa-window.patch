@@ -1,16 +1,11 @@
 Index: widget/src/cocoa/nsCocoaWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
-retrieving revision 1.45
-diff -u -8 -p -r1.45 nsCocoaWindow.h
---- widget/src/cocoa/nsCocoaWindow.h	19 Dec 2007 19:40:19 -0000	1.45
-+++ widget/src/cocoa/nsCocoaWindow.h	1 Apr 2008 19:20:56 -0000
-@@ -94,17 +94,21 @@ class nsChildView;
- 
- 
- @interface BorderlessWindow : NSWindow
- {
- }
+retrieving revision 1.48
+diff -u -p -r1.48 nsCocoaWindow.h
+--- widget/src/cocoa/nsCocoaWindow.h	27 Mar 2008 03:42:57 -0000	1.48
++++ widget/src/cocoa/nsCocoaWindow.h	2 Apr 2008 19:15:02 -0000
+@@ -94,7 +94,11 @@ typedef struct _nsCocoaWindowList {
  
  - (BOOL)canBecomeKeyWindow;
  - (BOOL)canBecomeMainWindow;
@@ -22,24 +17,14 @@ diff -u -8 -p -r1.45 nsCocoaWindow.h
  @end
  
  
- @interface WindowDelegate : NSObject
- {
-   nsCocoaWindow* mGeckoWindow; // [WEAK] (we are owned by the window)
- }
- - (id)initWithGeckoWindow:(nsCocoaWindow*)geckoWind;
 Index: widget/src/cocoa/nsCocoaWindow.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
-retrieving revision 1.128
-diff -u -8 -p -r1.128 nsCocoaWindow.mm
---- widget/src/cocoa/nsCocoaWindow.mm	19 Dec 2007 19:40:19 -0000	1.128
-+++ widget/src/cocoa/nsCocoaWindow.mm	1 Apr 2008 19:20:56 -0000
-@@ -362,20 +362,34 @@ nsresult nsCocoaWindow::StandardCreate(n
-     // Note that we need to check the window type because we mark sheets sheets as 
-     // having titlebars.
-     if (mWindowType == eWindowType_toplevel &&
-         (features & NSTitledWindowMask))
-       windowClass = [ToolbarWindow class];
+retrieving revision 1.141
+diff -u -p -r1.141 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	27 Mar 2008 03:42:57 -0000	1.141
++++ widget/src/cocoa/nsCocoaWindow.mm	2 Apr 2008 19:15:02 -0000
+@@ -348,10 +348,24 @@ nsresult nsCocoaWindow::StandardCreate(n
      // If we're a popup window we need to use the PopupWindow class.
      else if (mWindowType == eWindowType_popup)
        windowClass = [PopupWindow class];
@@ -68,17 +53,7 @@ diff -u -8 -p -r1.128 nsCocoaWindow.mm
  
      // Create the window
      mWindow = [[windowClass alloc] initWithContentRect:rect styleMask:features 
-                                    backing:NSBackingStoreBuffered defer:YES];
-     
-     if (mWindowType == eWindowType_popup) {
-       [mWindow setAlphaValue:POPUP_DEFAULT_TRANSPARENCY];
-       [mWindow setLevel:NSPopUpMenuWindowLevel];
-@@ -394,17 +408,21 @@ nsresult nsCocoaWindow::StandardCreate(n
-         [mWindow setContentView:newContentView];
-       }
-     }
-     else if (mWindowType == eWindowType_invisible) {
-       [mWindow setLevel:kCGDesktopWindowLevelKey];
+@@ -380,7 +394,11 @@ nsresult nsCocoaWindow::StandardCreate(n
      }
  
      [mWindow setBackgroundColor:[NSColor whiteColor]];
@@ -91,22 +66,10 @@ diff -u -8 -p -r1.128 nsCocoaWindow.mm
      [mWindow setReleasedWhenClosed:NO];
  
      // setup our notification delegate. Note that setDelegate: does NOT retain.
-     mDelegate = [[WindowDelegate alloc] initWithGeckoWindow:this];
-     [mWindow setDelegate:mDelegate];
-     
-     mWindowMadeHere = PR_TRUE;
-   }
-@@ -1920,8 +1938,238 @@ void patternDraw(void* aInfo, CGContextR
- {
-   NSWindow *nativeWindow = [self retain];
-   BOOL retval = [super performKeyEquivalent:theEvent];
-   [nativeWindow release];
-   return retval;
+@@ -2341,3 +2359,231 @@ already_AddRefed<nsIDOMElement> GetFocus
  }
  
  @end
-+
-+
 +
 +/*************************************************************************
 + * BEGIN SONGBIRD HACK
