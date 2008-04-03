@@ -207,7 +207,7 @@ interface sbIDeviceLibraryListener : nsISupports
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(c18aec1c-3a10-4cc6-a192-1510056b9716)]
+[scriptable, uuid(08e84687-a775-4219-b510-fed144fb25c8)]
 interface sbIDeviceLibrary : sbILibrary
 {
   /**
@@ -220,6 +220,59 @@ interface sbIDeviceLibrary : sbILibrary
    * \brief Finalize the device library.
    */
   void finalize();
+
+  /**
+   * Syncronization settings
+   */
+
+  /** \brief Manually manage device.
+    */
+  const unsigned long MGMT_TYPE_MANUAL            = 0;
+
+  /** \brief Automatically synchronize all of library to device.
+    */
+  const unsigned long MGMT_TYPE_SYNC_ALL          = 1;
+
+  /** \brief Automatically synchronize a list of playlsits to device.
+    */
+  const unsigned long MGMT_TYPE_SYNC_PLAYLISTS    = 2;
+
+  /**
+   * \brief The currently configured device management type preference
+   * for the device library.
+   *
+   * \sa MGMT_TYPE_* constants
+   */
+
+  attribute PRUint32 mgmtType;
+
+  /**
+   * \brief Return the list of playlists used to sync the device library.
+   *
+   * \return List of sbIMediaLists that represent the playlists to
+   *         sync.
+   */
+
+  nsIArray getSyncPlaylistList();
+
+  /**
+   * \brief Set the list of playlists used to sync the device library.
+   *
+   * \param aPlaylistList List of sbIMediaLists that represent the playlists to
+   *                      sync.
+   */
+
+  void setSyncPlaylistList(in nsIArray aPlaylistList);
+
+  /**
+   * \brief Add a playlist to the list of playlists used to sync the device
+   *        library.
+   *
+   * \param aPlaylist The playlist to add.
+   */
+
+  void addToSyncPlaylistList(in sbIMediaList aPlaylist);
+
 
   /**
    * \brief Add a listener to this device library.
