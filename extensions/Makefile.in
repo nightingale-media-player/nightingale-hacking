@@ -32,4 +32,8 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = xpcom_helloworld \
           $(NULL)
 
+ifneq (default, $(SB_EXTENSIONS))
+SUBDIRS = $(subst $(COMMA),$(SPACE),$(SB_EXTENSIONS))
+endif
+
 include $(topsrcdir)/build/rules.mk

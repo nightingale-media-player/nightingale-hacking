@@ -35,6 +35,15 @@ ifndef AUTODEFS_MK_INCLUDED
 AUTODEFS_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
+# These technically should be in rules.mk, but autodefs.mk gets included at
+# the top of Makefiles throughout the tree, whereas rules.mk gets included at
+# the bottom. :`( Since we need these defines in the target definitions in
+# between these two includes, we define them here.
+
+COMMA ?= ,
+EMPTY ?=
+SPACE ?= $(EMPTY) $(EMPTY)
+
 SB_PLATFORM      = @SB_PLATFORM@
 SB_ARCH          = @SB_ARCH@
 SB_CONFIGURATION = @SB_CONFIGURATION@
@@ -65,6 +74,8 @@ SB_ENABLE_TESTS    = @SB_ENABLE_TESTS@
 SB_ENABLE_BREAKPAD = @SB_ENABLE_BREAKPAD@
 SB_ENABLE_STATIC   = @SB_ENABLE_STATIC@
 SB_SEARCHPLUGINS   = @SB_SEARCHPLUGINS@
+SB_BIRD_EXTENSIONS = @SB_BIRD_EXTENSIONS@
+SB_EXTENSIONS      = @SB_EXTENSIONS@
 
 # cores to enable
 MEDIA_CORE_VLC    = @MEDIA_CORE_VLC@

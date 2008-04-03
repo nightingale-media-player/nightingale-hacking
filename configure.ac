@@ -135,6 +135,31 @@ fi
 AC_SUBST(SB_UPDATE_CHANNEL)
 
 #
+# Check for --with-songbird-extensions
+#
+
+SB_BIRD_EXTENSIONS=default
+
+AC_ARG_WITH(songbird-extensions,
+            [  --with-songbird-extensions=<list of songbird extensions>,list of songbird extensions to build (default: platform dependent)],
+            [ SB_BIRD_EXTENSIONS=$withval ],
+            [ SB_BIRD_EXTENSIONS=default])
+AC_SUBST(SB_BIRD_EXTENSIONS)
+
+#
+# Check for --with-extensions
+#
+
+SB_EXTENSIONS=default
+
+AC_ARG_WITH(extensions,
+            [  --with-extensions=<list of extensions>,list of extensions to build (default: xpcom_helloworld)],
+            [ SB_EXTENSIONS=$withval ],
+            [ SB_EXTENSIONS=default])
+AC_SUBST(SB_EXTENSIONS)
+
+
+#
 # Check platform
 #
 
