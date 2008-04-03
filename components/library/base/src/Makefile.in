@@ -34,7 +34,8 @@ ifdef DEBUG
 target := $(addsuffix _d,$(target))
 endif
 
-CPP_SRCS = sbLibraryConstraints.cpp \
+CPP_SRCS = sbLibraryChangeset.cpp \
+           sbLibraryConstraints.cpp \
            sbLibraryManager.cpp \
            sbLibraryManagerModule.cpp \
            sbMediaListViewMap.cpp \

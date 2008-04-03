@@ -24,7 +24,7 @@
 //
 */
 
-/** 
+/**
  * \file  LibraryManagerComponent.cpp
  * \brief Songbird LibraryManager Component Factory and Main Entry Point.
  */
@@ -44,24 +44,10 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryConstraint);
 static nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_LIBRARYMANAGER_CLASSNAME,
-    SONGBIRD_LIBRARYMANAGER_CID,
-    SONGBIRD_LIBRARYMANAGER_CONTRACTID,
-    sbLibraryManagerConstructor,
-    sbLibraryManager::RegisterSelf
-  },
-  {
-    SONGBIRD_MEDIALISTVIEWMAP_CLASSNAME,
-    SONGBIRD_MEDIALISTVIEWMAP_CID,
-    SONGBIRD_MEDIALISTVIEWMAP_CONTRACTID,
-    sbMediaListViewMapConstructor,
-    sbMediaListViewMap::RegisterSelf
-  },
-  {
-    SONGBIRD_LIBRARYSORT_CLASSNAME,
-    SONGBIRD_LIBRARYSORT_CID,
-    SONGBIRD_LIBRARYSORT_CONTRACTID,
-    sbLibrarySortConstructor
+    SONGBIRD_LIBRARY_CONSTRAINT_CLASSNAME,
+    SONGBIRD_LIBRARY_CONSTRAINT_CID,
+    SONGBIRD_LIBRARY_CONSTRAINT_CONTRACTID,
+    sbLibraryConstraintConstructor
   },
   {
     SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CLASSNAME,
@@ -70,10 +56,24 @@ static nsModuleComponentInfo components[] =
     sbLibraryConstraintBuilderConstructor
   },
   {
-    SONGBIRD_LIBRARY_CONSTRAINT_CLASSNAME,
-    SONGBIRD_LIBRARY_CONSTRAINT_CID,
-    SONGBIRD_LIBRARY_CONSTRAINT_CONTRACTID,
-    sbLibraryConstraintConstructor
+    SONGBIRD_LIBRARYMANAGER_CLASSNAME,
+    SONGBIRD_LIBRARYMANAGER_CID,
+    SONGBIRD_LIBRARYMANAGER_CONTRACTID,
+    sbLibraryManagerConstructor,
+    sbLibraryManager::RegisterSelf
+  },
+  {
+    SONGBIRD_LIBRARYSORT_CLASSNAME,
+    SONGBIRD_LIBRARYSORT_CID,
+    SONGBIRD_LIBRARYSORT_CONTRACTID,
+    sbLibrarySortConstructor
+  },
+  {
+    SONGBIRD_MEDIALISTVIEWMAP_CLASSNAME,
+    SONGBIRD_MEDIALISTVIEWMAP_CID,
+    SONGBIRD_MEDIALISTVIEWMAP_CONTRACTID,
+    sbMediaListViewMapConstructor,
+    sbMediaListViewMap::RegisterSelf
   }
 };
 
