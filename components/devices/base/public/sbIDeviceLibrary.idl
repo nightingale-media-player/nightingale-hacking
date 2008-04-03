@@ -247,7 +247,8 @@ interface sbIDeviceLibrary : sbILibrary
   attribute PRUint32 mgmtType;
 
   /**
-   * \brief Return the list of playlists used to sync the device library.
+   * \brief Return the list of playlists the user wants to sync from the main
+   *        library to the device.
    *
    * \return List of sbIMediaLists that represent the playlists to
    *         sync.
@@ -256,7 +257,8 @@ interface sbIDeviceLibrary : sbILibrary
   nsIArray getSyncPlaylistList();
 
   /**
-   * \brief Set the list of playlists used to sync the device library.
+   * \brief Set the list of playlists the user wants to sync from the main
+   *        library to the device
    *
    * \param aPlaylistList List of sbIMediaLists that represent the playlists to
    *                      sync.
@@ -265,8 +267,8 @@ interface sbIDeviceLibrary : sbILibrary
   void setSyncPlaylistList(in nsIArray aPlaylistList);
 
   /**
-   * \brief Add a playlist to the list of playlists used to sync the device
-   *        library.
+   * \brief Add a playlist to the list of playlists the user wants to sync from
+   *        the main library to the device
    *
    * \param aPlaylist The playlist to add.
    */

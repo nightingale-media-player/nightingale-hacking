@@ -242,6 +242,45 @@ sbDeviceLibrary::UnregisterDeviceLibrary(sbILibrary* aDeviceLibrary)
   return libraryManager->UnregisterLibrary(aDeviceLibrary);
 }
 
+/**
+ * sbIDeviceLibrary
+ */
+
+NS_IMETHODIMP
+sbDeviceLibrary::GetMgmtType(PRUint32 *aMgmtType)
+{
+  *aMgmtType = sbDeviceLibrary::MGMT_TYPE_MANUAL;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::GetSyncPlaylistList(nsIArray **_retval)
+{
+  nsresult rv;
+  nsCOMPtr<nsIArray> pAPlaylistList = do_CreateInstance("@mozilla.org/array;1", &rv);;
+
+  NS_ADDREF(*_retval = pAPlaylistList);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::SetSyncPlaylistList(nsIArray *aPlaylistList)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::AddToSyncPlaylistList(sbIMediaList *aPlaylist)
+{
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbDeviceLibrary::AddDeviceLibraryListener(sbIDeviceLibraryListener* aListener)
 {
