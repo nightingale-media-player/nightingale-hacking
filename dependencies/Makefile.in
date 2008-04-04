@@ -110,6 +110,308 @@ vlcplugin::
 
 endif
 
+# GStreamer
+ifdef MEDIA_CORE_GST
+
+GST_VERSION=0.10
+GLIB_VERSION=2.0
+OIL_VERSION=0.3
+
+GLIB_NAMES = glib \
+             gmodule \
+             gobject \
+             gthread \
+             $(NULL)
+
+LIBICONV_NAMES = charset \
+                 iconv \
+                 $(NULL)
+
+GETTEXT_NAMES = gettextlib \
+                gettextpo \
+                gettextsrc \
+                intl \
+                $(NULL)
+
+GSTREAMER_NAMES = gstreamer \
+                  gstbase \
+                  gstcontroller \
+                  gstdataprotocol \
+                  gstnet \
+                  $(NULL)
+
+GST_PLUGINS_BASE_LIBS_NAMES = gstaudio \
+                              gstcdda \
+                              gstfft \
+                              gstinterfaces \
+                              gstnetbuffer \
+                              gstpbutils \
+                              gstriff \
+                              gstrtp \
+                              gstrtsp \
+                              gstsdp \
+                              gsttag \
+                              gstvideo \
+                              $(NULL)
+
+OGG_NAMES = ogg \
+            $(NULL)
+
+VORBIS_NAMES = vorbis \
+               vorbisenc \
+               vorbisfile \
+               $(NULL)
+
+OIL_NAMES = oil \
+            $(NULL)
+
+GST_PLUGINS_CORE_NAMES = gstcoreelements \
+                         gstcoreindexers \
+                         $(NULL)
+
+GST_PLUGINS_BASE_NAMES = gstadder \
+                         gstaudioconvert \
+                         gstaudiorate \
+                         gstaudioresample \
+                         gstaudiotestsrc \
+                         gstdecodebin \
+                         gstdecodebin2 \
+                         gstffmpegcolorspace \
+                         gstgdp \
+                         gstogg \
+                         gstplaybin \
+                         gstqueue2 \
+                         gsttypefindfunctions \
+                         gstvideorate \
+                         gstvideoscale \
+                         gstvideotestsrc \
+                         gstvolume \
+                         gstvorbis \
+                         $(NULL)
+
+GST_PLUGINS_GOOD_NAMES = gstalaw \
+                         gstalpha \
+                         gstalphacolor \
+                         gstapetag \
+                         gstaudiofx \
+                         gstauparse \
+                         gstautodetect \
+                         gstavi \
+                         gstcutter \
+                         gstdebug \
+                         gsteffectv \
+                         gstequalizer \
+                         gstflxdec \
+                         gstgamma \
+                         gstgoom \
+                         gsticydemux \
+                         gstid3demux \
+                         gstlevel \
+                         gstmatroska \
+                         gstmulaw \
+                         gstmultifile \
+                         gstmultipart \
+                         gstnavigationtest \
+                         gstqtdemux \
+                         gstrtp \
+                         gstrtsp \
+                         gstsmpte \
+                         gstspectrum \
+                         gstudp \
+                         gstvideobalance \
+                         gstvideobox \
+                         gstvideocrop \
+                         gstvideoflip \
+                         gstvideomixer \
+                         gstwavenc \
+                         gstwavparse \
+                         $(NULL)
+
+GST_PLUGINS_BAD_NAMES = gstreplaygain \
+                        $(NULL)
+
+ifeq (windows,$(SB_PLATFORM))
+
+GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
+                          gstdirectsoundsink \
+                          $(NULL)
+
+GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \
+         $(addsuffix -$(GLIB_VERSION)-0$(DLL_SUFFIX), $(GLIB_NAMES)))
+
+LIBICONV = $(addprefix $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/bin/, \
+             $(addsuffix $(DLL_SUFFIX), $(LIBICONV_NAMES)))
+
+GETTEXT = $(addprefix $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/bin/, \
+            $(addsuffix $(DLL_SUFFIX), $(GETTEXT_NAMES)))
+
+# XXX remove the filter-out stuff when new gst lands
+GSTREAMER = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/bin/, \
+              $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX), \
+                $(filter-out gstnet, $(GSTREAMER_NAMES))))
+
+GST_PLUGINS_BASE_LIBS = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/bin/, \
+                          $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX), $(GST_PLUGINS_BASE_LIBS_NAMES)))
+
+OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/bin/, \
+        $(addsuffix $(DEBUG:%=_d)$(DLL_SUFFIX), $(OGG_NAMES)))
+
+LIBICONV = $(addprefix $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/bin/, \
+             $(addsuffix $(DLL_SUFFIX), $(LIBICONV_NAMES)))
+
+# XXX We need to append the version numbers of the libraries
+VORBIS_VERSIONED_NAMES = $(join $(VORBIS_NAMES), -0 -2 -3)
+VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
+           $(addsuffix $(DLL_SUFFIX), $(VORBIS_VERSIONED_NAMES)))
+
+OIL = $(addprefix $(DEPS_DIR)/liboil/$(SB_CONFIGURATION)/bin/, \
+        $(addsuffix -$(OIL_VERSION)-0$(DLL_SUFFIX), $(OIL_NAMES)))
+
+GST_PLUGINS_CORE = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
+                     $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_CORE_NAMES)))
+
+GST_PLUGINS_BASE = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
+                     $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_BASE_NAMES)))
+
+GST_PLUGINS_GOOD = $(addprefix $(DEPS_DIR)/gst-plugins-good/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
+                     $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_GOOD_NAMES)))
+
+GST_PLUGINS_BAD = $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
+                    $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_BAD_NAMES)))
+
+SONGBIRD_LIB += $(GLIB) \
+                $(LIBICONV) \
+                $(GETTEXT) \
+                $(GSTREAMER) \
+                $(GST_PLUGINS_BASE_LIBS) \
+                $(OGG) \
+                $(VORBIS) \
+                $(OIL) \
+                $(NULL)
+
+SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
+                        $(GST_PLUGINS_BASE) \
+                        $(GST_PLUGINS_GOOD) \
+#                        $(GST_PLUGINS_BAD) \
+                        $(NULL)
+
+endif # windows
+
+ifeq (macosx,$(SB_PLATFORM))
+
+GST_PLUGINS_GOOD_NAMES += gstosxaudio \
+                          gstosxvideosink \
+                          $(NULL)
+
+GST_PLUGINS_BAD_NAMES += gstqtwrapper \
+                         $(NULL)
+
+GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/lib, \
+         $(addsuffix -$(GLIB_VERSION)$(DLL_SUFFIX), $(GLIB_NAMES)))
+
+LIBICONV = $(addprefix $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/lib/lib, \
+             $(addsuffix $(DLL_SUFFIX), $(LIBICONV_NAMES)))
+
+GETTEXT = $(addprefix $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib/lib, \
+            $(addsuffix $(DLL_SUFFIX), $(GETTEXT_NAMES)))
+
+GSTREAMER = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/lib, \
+              $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GSTREAMER_NAMES)))
+
+GST_PLUGINS_BASE_LIBS = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib/lib, \
+                          $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GST_PLUGINS_BASE_LIBS_NAMES)))
+
+OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/lib, \
+        $(addsuffix $(DLL_SUFFIX), $(OGG_NAMES)))
+
+VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
+           $(addsuffix $(DLL_SUFFIX), $(VORBIS_NAMES)))
+
+OIL = $(addprefix $(DEPS_DIR)/liboil/$(SB_CONFIGURATION)/lib/lib, \
+        $(addsuffix -$(OIL_VERSION)$(DLL_SUFFIX), $(OIL_NAMES)))
+
+GST_PLUGINS_CORE = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+                     $(addsuffix .so, $(GST_PLUGINS_CORE_NAMES)))
+
+GST_PLUGINS_BASE = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+                     $(addsuffix .so, $(GST_PLUGINS_BASE_NAMES)))
+
+GST_PLUGINS_GOOD = $(addprefix $(DEPS_DIR)/gst-plugins-good/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+                     $(addsuffix .so, $(GST_PLUGINS_GOOD_NAMES)))
+
+GST_PLUGINS_BAD = $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+                    $(addsuffix .so, $(GST_PLUGINS_BAD_NAMES)))
+
+SONGBIRD_LIB += $(GLIB) \
+                $(LIBICONV) \
+                $(GETTEXT) \
+                $(GSTREAMER) \
+                $(GST_PLUGINS_BASE_LIBS) \
+                $(OGG) \
+                $(VORBIS) \
+                $(OIL) \
+                $(NULL)
+
+SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
+                        $(GST_PLUGINS_BASE) \
+                        $(GST_PLUGINS_GOOD) \
+                        $(GST_PLUGINS_BAD) \
+                        $(NULL)
+
+endif # macosx
+
+# everything but macosx and windows
+ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+
+GST_PLUGINS_BASE_NAMES += gstalsa \
+                          gstximagesink \
+                          gstxvimagesink
+                          $(NULL)
+
+GSTREAMER = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/lib, \
+              $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GSTREAMER_NAMES)))
+
+GST_PLUGINS_BASE_LIBS = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib/lib, \
+                          $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GST_PLUGINS_BASE_LIBS_NAMES)))
+
+OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/lib, \
+        $(addsuffix $(DLL_SUFFIX), $(OGG_NAMES)))
+
+VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
+           $(addsuffix $(DLL_SUFFIX), $(VORBIS_NAMES)))
+
+OIL = $(addprefix $(DEPS_DIR)/liboil/$(SB_CONFIGURATION)/lib/lib, \
+        $(addsuffix -$(OIL_VERSION)$(DLL_SUFFIX), $(OIL_NAMES)))
+
+GST_PLUGINS_CORE = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+                     $(addsuffix .so, $(GST_PLUGINS_CORE_NAMES)))
+
+GST_PLUGINS_BASE = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+                     $(addsuffix .so, $(GST_PLUGINS_BASE_NAMES)))
+
+GST_PLUGINS_GOOD = $(addprefix $(DEPS_DIR)/gst-plugins-good/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+                     $(addsuffix .so, $(GST_PLUGINS_GOOD_NAMES)))
+
+GST_PLUGINS_BAD = $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+                    $(addsuffix .so, $(GST_PLUGINS_BAD_NAMES)))
+
+SONGBIRD_LIB += $(GSTREAMER) \
+                $(GST_PLUGINS_BASE_LIBS) \
+                $(OGG) \
+                $(VORBIS) \
+                $(OIL) \
+                $(NULL)
+
+SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
+                        $(GST_PLUGINS_BASE) \
+                        $(GST_PLUGINS_GOOD) \
+#                        $(GST_PLUGINS_BAD) \
+                        $(NULL)
+
+endif # not mac or windows
+
+endif # MEDIA_CORE_GST
+
 ifeq (macosx,$(SB_PLATFORM))
 EXECUTABLE = $(SONGBIRD_XULRUNNERDIR)/xulrunner-bin$(BIN_SUFFIX)
 else

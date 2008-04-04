@@ -7,10 +7,10 @@ include $(DEPTH)/build/autodefs.mk
 
 target_name = sbGStreamer
 
-# Linux only for now ;)
-ifeq (linux,$(SB_PLATFORM))
+GST_VERSION=0.10
+GLIB_VERSION=2.0
 
-CPP_SRCS   = \
+CPP_SRCS = \
       sbGStreamerModule.cpp \
       sbGStreamerService.cpp \
       sbGStreamerSimple.cpp \
@@ -37,10 +37,33 @@ CPP_INCLUDES = \
       $(MOZSDK_IDL_DIR) \
       $(NULL)
 
-CPP_EXTRA_INCLUDES = \
-      $(GSTREAMER_CFLAGS) \
-      $(GTK_CFLAGS) \
-      $(NULL)
+ifdef MEDIA_CORE_GST_SYSTEM
+  CPP_EXTRA_FLAGS = -DGST_SYSTEM=1
+
+  CPP_EXTRA_INCLUDES = $(GSTREAMER_CFLAGS) \
+                       $(GTK_CFLAGS) \
+                       $(NULL)
+else
+  CPP_EXTRA_INCLUDES = -I$(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+                       -I$(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+                       $(NULL)
+
+  ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+    # macosx or windows
+    CPP_EXTRA_INCLUDES += -I$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
+                          -I$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
+                          $(NULL)
+  else
+    # everything else
+    CPP_EXTRA_INCLUDES += $(GTK_CFLAGS) \
+                          $(NULL)
+  endif
+endif
+
+# The dynamic gstreamer libs on windows have "-0" appended to their names
+ifeq (windows,$(SB_PLATFORM))
+  GST_LIB_SUFFIX=-0
+endif
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
@@ -48,21 +71,56 @@ DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = \
       nspr4 \
-      xpcom \
       xpcomglue_s \
+      xpcom \
+      gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
       $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = \
       $(MOZSDK_LIB_DIR) \
       $(NULL)
 
-DYNAMIC_LIB_EXTRA_FLAGS = \
-      $(GSTREAMER_LIBS) \
-      $(GTK_LIBS) \
-      $(NULL)
+# Use system headers for MEDIA_CORE_GST_SYSTEM only
+ifdef MEDIA_CORE_GST_SYSTEM
+  DYNAMIC_LIB_EXTRA_FLAGS = $(GSTREAMER_LIBS) \
+                            $(GTK_LIBS) \
+                            $(NULL)
+else
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+  DYNAMIC_LIB_EXTRA_IMPORTS += gstreamer-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                              $(NULL)
+  DYNAMIC_LIB_IMPORT_PATHS += $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib \
+                              $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/lib \
+                              $(NULL)
 
+  ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+    # macosx or windows
+    DYNAMIC_LIB_EXTRA_IMPORTS += intl \
+                                 iconv \
+                                 glib-$(GLIB_VERSION) \
+                                 gmodule-$(GLIB_VERSION) \
+                                 gobject-$(GLIB_VERSION) \
+                                 gthread-$(GLIB_VERSION) \
+                                 $(NULL)
+    DYNAMIC_LIB_IMPORT_PATHS += $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib \
+                                $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/lib \
+                                $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib \
+                                $(NULL)
+  else
+    # everything else
+    DYNAMIC_LIB_EXTRA_FLAGS += $(GTK_LIBS) \
+                               $(NULL)
+    DYNAMIC_LIB_EXTRA_IMPORTS += gstinterfaces-$(GST_VERSION)$ \
+                                 $(NULL)
+
+  endif
 endif
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbAboutGStreamer.js \
+                      $(NULL)
+
+# We use the stub loader to load this dll, so stick it in the lib directory
+SONGBIRD_LIB = $(DYNAMIC_LIB) \
+               $(NULL)
 
 include $(topsrcdir)/build/rules.mk

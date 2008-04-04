@@ -140,6 +140,14 @@ ifdef SONGBIRD_COMPONENTS
 targets += copy_sb_components
 endif
 
+ifdef SONGBIRD_LIB
+targets += copy_sb_lib
+endif
+
+ifdef SONGBIRD_GST_PLUGINS
+targets += copy_sb_gst_plugins
+endif
+
 ifdef SONGBIRD_CHROME
 targets += copy_sb_chrome
 endif
@@ -879,6 +887,32 @@ ifneq (,$(strip $(SONGBIRD_COMPONENTS)))
 endif
 .PHONY : copy_sb_components
 endif #SONGBIRD_COMPONENTS
+
+#-----------------------
+
+ifdef SONGBIRD_LIB
+copy_sb_lib:
+ifeq (,$(wildcard $(SONGBIRD_LIBDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_LIBDIR)
+endif
+ifneq (,$(strip $(SONGBIRD_LIB)))
+	$(CYGWIN_WRAPPER) $(CP) -dfpL $(SONGBIRD_LIB) $(SONGBIRD_LIBDIR)
+endif
+.PHONY : copy_sb_lib
+endif #SONGBIRD_LIB
+
+#-----------------------
+
+ifdef SONGBIRD_GST_PLUGINS
+copy_sb_gst_plugins:
+ifeq (,$(wildcard $(SONGBIRD_GSTPLUGINSDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_GSTPLUGINSDIR)
+endif
+ifneq (,$(strip $(SONGBIRD_GST_PLUGINS)))
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_GST_PLUGINS) $(SONGBIRD_GSTPLUGINSDIR)
+endif
+.PHONY : copy_sb_gst_plugins
+endif #SONGBIRD_GST_PLGUINS
 
 #-----------------------
 

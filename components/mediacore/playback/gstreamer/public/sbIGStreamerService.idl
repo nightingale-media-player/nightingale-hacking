@@ -1,53 +1,90 @@
 /*
- //
+//
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
-// 
-// Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
- */
+*/
+
 /**
  * \file sbIGStreamerService.idl
- * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS] 
- * 
  */
 
 #include "nsISupports.idl"
 
+[scriptable, uuid(d7bae616-9e4a-4be1-a294-09c850eb9ab1)]
+interface sbIGStreamerInspectHandler : nsISupports
+{
+  void beginInspect();
+  void endInspect();
+
+  void beginPluginInfo(in ACString aName,
+                       in ACString aDescription,
+                       in ACString aFilename,
+                       in ACString aVersion,
+                       in ACString aLicense,
+                       in ACString aSource,
+                       in ACString aPackage,
+                       in ACString aOrigin);
+
+  void endPluginInfo();
+
+  void beginFactoryInfo(in ACString aLongName,
+                        in ACString aClass,
+                        in ACString aDescription,
+                        in ACString aAuthor,
+                        in ACString aRankName,
+                        in long aRank);
+  void endFactoryInfo();
+
+  void beginPadTemplateInfo(in ACString aName,
+                            in unsigned long aDirection,
+                            in unsigned long aPresence,
+                            in ACString aCodecDescription);
+  void endPadTemplateInfo();
+};
+
 /**
  * \interface sbIGStreamerService
- * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
 [scriptable, uuid(ae9887e3-ef5a-4466-a6fa-b3b695395cdd)]
 interface sbIGStreamerService : nsISupports
 {
-  void init();
+  const unsigned long PAD_DIRECTION_UNKNOWN = 0;
+  const unsigned long PAD_DIRECTION_SRC     = 1;
+  const unsigned long PAD_DIRECTION_SINK    = 2;
+
+  const unsigned long PAD_PRESENCE_ALWAYS    = 0;
+  const unsigned long PAD_PRESENCE_SOMETIMES = 1;
+  const unsigned long PAD_PRESENCE_REQUEST   = 2;
+
+  void inspect(in sbIGStreamerInspectHandler aHandler);
 };
 
 %{C++
 // {c27f50c0-6dae-45ee-883e-24fd3b30254b}
 #define SBGSTREAMERSERVICE_CID \
-	{ 0xc27f50c0, 0x6dae, 0x45ee, \
-	{ 0x88, 0x3e, 0x24, 0xfd, 0x3b, 0x30, 0x25, 0x4b } }
+  { 0xc27f50c0, 0x6dae, 0x45ee,                               \
+  { 0x88, 0x3e, 0x24, 0xfd, 0x3b, 0x30, 0x25, 0x4b } }
 
 #define SBGSTREAMERSERVICE_CONTRACTID "@songbirdnest.com/Songbird/Playback/GStreamer/Service;1"
 #define SBGSTREAMERSERVICE_CLASSNAME  "GStreamerService"
 %}
-

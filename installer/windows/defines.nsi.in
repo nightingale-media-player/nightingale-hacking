@@ -51,6 +51,11 @@
 !define FlashRedistributableInstallerEXE "flash_installer.exe"
 #endif
 
+#ifdef MEDIA_CORE_GST
+!define IncludeLib "true"
+!define IncludeGStreamerPlugins "true"
+#endif
+
 #ifdef SONGBIRD_OFFICIAL
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}\"
 !define PreferredInstallerName    "${BrandShortName}_${AppVersion}_${ARCH}.exe"

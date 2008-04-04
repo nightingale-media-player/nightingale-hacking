@@ -22,19 +22,14 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../..
+DEPTH = ../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = $(NULL)
-
-# Build the gstreamer dir if either MEDIA_CORE_GST or MEDIA_CORE_GST_SYSTEM
-# are set
-ifneq (_,$(MEDIA_CORE_GST)_$(MEDIA_CORE_GST_SYSTEM))
-  SUBDIRS += gstreamer
-endif
+JAR_MANIFEST = jar.mn
 
 include $(topsrcdir)/build/rules.mk
+

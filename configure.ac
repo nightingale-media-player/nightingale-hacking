@@ -566,18 +566,7 @@ case "$SB_PLATFORM" in
     AC_SUBST(PTHREAD_LIBS, $LIBS)
     LIBS=$_SAVE_LIBS
 
-    # Our GStreamer component needs GTK headers (we don't link, so we only
-    #   take the flags). We only check for gtk2 right now, if we _really_
-    #    need gtk1 support we can add it later but we should resist at all costs.
-    GST_MAJORMINOR=0.10
-    GST_REQS=0.10.1
-    GSTPLUG_REQS=0.10.7
-
-    PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= $GST_REQS gstreamer-plugins-base-0.10 >= $GSTPLUG_REQS)
     PKG_CHECK_MODULES(GTK, gtk+-2.0)
-    AC_SUBST(GSTREAMER_CFLAGS)
-    GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
-    AC_SUBST(GSTREAMER_LIBS)
     AC_SUBST(GTK_CFLAGS)
     AC_SUBST(GTK_LIBS)
 
@@ -722,16 +711,17 @@ AC_SUBST(SB_DEPENDENCIES_DIR)
 MEDIA_CORE_VLC=
 MEDIA_CORE_WMP=
 MEDIA_CORE_GST=
+MEDIA_CORE_GST_SYSTEM=
 MEDIA_CORE_QT=
 
 AC_ARG_WITH(media-core,
-            [  --with-media-core=vlc,windowsmedia,gstreamer,qt,default,none  Media cores to enable],
+            [  --with-media-core=vlc,windowsmedia,gstreamer,gstreamer-system,qt,default,none  Media cores to enable],
             [ SB_MEDIA_CORES=$withval ],
             [ SB_MEDIA_CORES=default ])
 for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
     if test "$option" = "default"; then
         if test "$SB_PLATFORM" = "linux"; then
-            MEDIA_CORE_GST=1
+            MEDIA_CORE_GST_SYSTEM=1
         elif test "$SB_PLATFORM" = "windows"; then
             MEDIA_CORE_VLC=1
             MEDIA_CORE_WMP=1
@@ -749,15 +739,22 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
         MEDIA_CORE_WMP=1
     elif test "$option" = "gstreamer"; then
         MEDIA_CORE_GST=1
+    elif test "$option" = "gstreamer-system"; then
+        MEDIA_CORE_GST_SYSTEM=1
     elif test "$option" = "qt"; then
         MEDIA_CORE_QT=1
     else
         AC_MSG_ERROR([Unknown --with-media-core option $option])
     fi
+
+    if test "$MEDIA_CORE_GST" = "1" -a "$MEDIA_CORE_GST_SYSTEM" = "1"; then
+        AC_MSG_ERROR([You can not build the gstreamer and gstreamer-system media cores at the same time])
+    fi
 done
 AC_SUBST(MEDIA_CORE_VLC)
 AC_SUBST(MEDIA_CORE_WMP)
 AC_SUBST(MEDIA_CORE_GST)
+AC_SUBST(MEDIA_CORE_GST_SYSTEM)
 AC_SUBST(MEDIA_CORE_QT)
 
 FORCE_MEDIA_CORE_VLC=
@@ -792,6 +789,24 @@ AC_SUBST(FORCE_MEDIA_CORE_VLC)
 AC_SUBST(FORCE_MEDIA_CORE_WMP)
 AC_SUBST(FORCE_MEDIA_CORE_GST)
 AC_SUBST(FORCE_MEDIA_CORE_QT)
+
+#
+# If we're building with MEDIA_CORE_GST_SYSTEM, find our required packages
+#
+
+if test "$MEDIA_CORE_GST_SYSTEM" = "1"; then
+
+  GST_MAJORMINOR=0.10
+  GST_REQS=0.10.1
+  GSTPLUG_REQS=0.10.7
+
+  PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= $GST_REQS gstreamer-plugins-base-0.10 >= $GSTPLUG_REQS)
+  AC_SUBST(GSTREAMER_CFLAGS)
+
+  GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
+  AC_SUBST(GSTREAMER_LIBS)
+
+fi
 
 #
 # Check for --with-searchplugins

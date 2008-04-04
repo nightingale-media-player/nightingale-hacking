@@ -121,50 +121,24 @@ function SBVideoInitialize()
     // and hide all of the rest of them.
     //
 
-    if (platform == "Windows_NT") {
-      // Windows, prefer VLC.
+    var hasGst =
+      Components.classes["@songbirdnest.com/Songbird/Playback/GStreamer/Service;1"] != null;
 
-      // Hide GStreamer
-      if (theGSTBox)
-        theGSTBox.hidden = true;
-
-      /*
-      // Hide Flash
-      if (theFLBox) theFLBox.hidden = true;
-      // Hide Totem
-      if (theTotemBox) theTotemBox.hidden = true;
-      */
+    if (hasGst) {
+      CoreGStreamerSimpleDocumentInit("box_gstreamer_simple");
+      if (theVLCBox) {
+        theVLCBox.hidden = true;
+      }
     }
-    else if (platform == "Darwin") {
+    else {
+      if (theGSTBox) {
+        theGSTBox.hidden = true;
+      }
+    }
+
+    if (platform == "Darwin") {
       var quitMenuItem = document.getElementById("menu_FileQuitItem");
       quitMenuItem.removeAttribute("hidden");
-
-      // MacOSX, prefer VLC.
-
-      // Hide GStreamer
-      if (theGSTBox)
-        theGSTBox.hidden = true;
-
-      /*
-      // Hide Flash
-      if (theFLBox) theFLBox.hidden = true;
-      // Hide Totem
-      if (theTotemBox) theTotemBox.hidden = true;
-      */
-    }
-    else if (platform == "Linux") {
-      //Linux, prefer totem-gstreamer
-
-      //CoreVLCDocumentInit( "core_vlc_document" );
-      //InitPlaybackCoreMPlayer( "core_mp_frame" );
-      //InitPlaybackCoreFlash( "core_flash_frame" );
-      //CoreTotemDocumentInit( "core_totem_frame" );
-      CoreGStreamerSimpleDocumentInit( "box_gstreamer_simple" );
-
-      /*
-      // Hide Flash
-      if (theFLBox) theFLBox.hidden = true;
-      */
     }
 
     // If we are a top level window, hide us.

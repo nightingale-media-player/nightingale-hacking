@@ -10,10 +10,13 @@
 #include "nsIStringBundle.h"
 
 #include <gst/gst.h>
+
+#ifdef MOZ_WIDGET_GTK2
 #include <gst/interfaces/xoverlay.h>
 
 #include <gtk/gtkwindow.h>
 #include <gdk/gdkx.h>
+#endif
 
 #include "sbIGStreamerSimple.h"
 
@@ -82,10 +85,12 @@ private:
   // currently counts down from 10 for a 3 second wait.
   int         mDelayHide; 
 
+#ifdef MOZ_WIDGET_GTK2
   GstElement* mVideoSink;
   GdkWindow*  mGdkWin;
   GdkWindow*  mNativeWin;
   GdkWindow*  mGdkWinFull;
+#endif
 
   PRBool mIsAtEndOfStream;
   PRBool mIsPlayingVideo;

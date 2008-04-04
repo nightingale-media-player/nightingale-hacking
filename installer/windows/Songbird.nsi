@@ -250,6 +250,14 @@ Section "-Application" Section1
   File /r scripts
   File /r ${XULRunnerDir}
 
+!ifdef IncludeLib
+    File /r lib
+!endif
+
+!ifdef IncludeGStreamerPlugins
+    File /r gst-plugins
+!endif
+
   ; The XULRunner stub loader also fails to find certain symbols when launched
   ; without a profile (yes, it's confusing). The quick work around is to 
   ; leave a copy of msvcr71.dll in xulrunner/ as well.
@@ -455,6 +463,8 @@ Section "Uninstall"
   RMDir /r $INSTDIR\plugins
   RMDir /r $INSTDIR\searchplugins
   RMDir /r $INSTDIR\scripts
+  RMDir /r $INSTDIR\lib
+  RMDir /r $INSTDIR\gst-plugins
   RMDir /r $INSTDIR\${XULRunnerDir}
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

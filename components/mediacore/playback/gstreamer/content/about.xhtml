@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>about:gstreamer</title>
+  <script type="application/javascript">
+<![CDATA[
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
+function parseClass(klass) {
+
+  var a = klass.split("/");
+
+  var c = {
+    encoder: a.indexOf("Encoder") >= 0,
+    decoder: a.indexOf("Decoder") >= 0,
+    demuxer: a.indexOf("Demuxer") >= 0,
+    audio:   a.indexOf("Audio") >= 0,
+    video:   a.indexOf("Video") >= 0
+  }
+
+  return c;
+}
+
+
+function onLoad() {
+
+  var gst =
+    Cc["@songbirdnest.com/Songbird/Playback/GStreamer/Service;1"]
+    .getService(Ci.sbIGStreamerService);
+
+  var audioDecoders = [];
+  var videoDecoders = [];
+  var demuxers = [];
+
+  var handler = {
+    _currentPlugin: null,
+    _currentFactoryClass: null,
+    _currentFactoryName: null,
+    beginInspect: function() {
+    },
+    endInspect: function() {
+    },
+    beginPluginInfo: function(aName, aDescription, aFilename, aVersion, aLicense, aSource, aPackage, aOrigin) {
+      this._currentPlugin = aName;
+    },
+    endPluginInfo: function() {
+      this._currentPlugin = null;
+    },
+    beginFactoryInfo: function(aLongName, aClass, aDescription, aAuthor, aRankName, aRank) {
+      this._currentFactoryName = aLongName;
+      this._currentFactoryClass = aClass;
+    },
+    endFactoryInfo: function() {
+      this._currentFactoryName = null;
+      this._currentFactoryClass = null;
+    },
+    beginPadTemplateInfo: function(aName, aDirection, aPresence, aCodecDescription) {
+      if (aDirection == Ci.sbIGStreamerService.PAD_DIRECTION_SINK) {
+        var o = {
+          plugin: this._currentPlugin,
+          factory: this._currentFactoryName,
+          codecDescription: aCodecDescription
+        }
+
+        var c = parseClass(this._currentFactoryClass);
+        if (c.decoder && c.audio) {
+          audioDecoders.push(o);
+        }
+        if (c.decoder && c.video) {
+          videoDecoders.push(o);
+        }
+        if (c.demuxer) {
+          demuxers.push(o);
+        }
+      }
+    },
+    endPadTemplateInfo: function() {
+    }
+  };
+
+  gst.inspect(handler);
+
+  var body = document.getElementById("body");
+
+  function appendDef(name, value) {
+    var dl = document.createElement("dl");
+    var dt = document.createElement("dt");
+    var dd = document.createElement("dd");
+    dt.textContent = name;
+    dd.textContent = value;
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+    body.appendChild(dl);
+  }
+
+  function appendTableRow(table, a) {
+    var tr = document.createElement("tr");
+    a.forEach(function(e) {
+      var td = document.createElement("td");
+      td.textContent = e;
+      tr.appendChild(td);
+    });
+    table.appendChild(tr);
+  }
+
+  function writeList(name, a) {
+    var h1 = document.createElement("h1");
+    h1.textContent = name;
+    body.appendChild(h1);
+
+    var table = document.createElement("table");
+    appendTableRow(table, ["plugin", "factory", "codec description"]);
+
+    a.forEach(function(e) {
+      appendTableRow(table, [e.plugin, e.factory, e.codecDescription]);
+    });
+
+    body.appendChild(table);
+  }
+
+  writeList("Audio Decoders", audioDecoders);
+  writeList("Video Decoders", videoDecoders);
+  writeList("Demuxers", demuxers);
+}
+
+]]>
+  </script>
+</head>
+<body id="body" onload="onLoad();">
+</body>
+</html>

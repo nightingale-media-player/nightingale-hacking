@@ -1,6 +1,7 @@
 #include "sbGStreamerSimple.h"
 #include "nsIInterfaceRequestorUtils.h"
 
+#include <sbIGStreamerService.h>
 #include "nsIBaseWindow.h"
 #include "nsIBoxObject.h"
 #include "nsIBrowserDOMWindow.h"
@@ -72,10 +73,12 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mPixelAspectRatioD(1),
   mVideoWidth(0),
   mVideoHeight(0),
+#ifdef MOZ_WIDGET_GTK2
   mVideoSink(NULL),
   mGdkWin(NULL),
   mNativeWin(NULL),
   mGdkWinFull(NULL),
+#endif
   mIsAtEndOfStream(PR_TRUE),
   mIsPlayingVideo(PR_FALSE),
   mFullscreen(PR_FALSE),
@@ -111,6 +114,12 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   TRACE(("sbGStreamerSimple[0x%.8x] - Init", this));
 
   nsresult rv;
+
+  // We need to make sure the gstreamer service component has been loaded
+  // since it calls gst_init for us
+  nsCOMPtr<sbIGStreamerService> service =
+    do_GetService(SBGSTREAMERSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if(mInitialized) {
     return NS_OK;
@@ -170,6 +179,7 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   target->AddEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
   target->AddEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
 
+#ifdef MOZ_WIDGET_GTK2
   mNativeWin = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
 
   LOG(("Found native window %x", mNativeWin));
@@ -186,11 +196,14 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   attributes.event_mask = 0;
 
   mGdkWin = gdk_window_new(mNativeWin, &attributes, GDK_WA_X | GDK_WA_Y);
+#endif
   mRedrawCursor = false;
   mOldCursorX = -1;
   mOldCursorY = -1;
   mDelayHide = 10;
+#ifdef MOZ_WIDGET_GTK2
   gdk_window_show(mGdkWin);
+#endif
 
   rv = SetupPlaybin();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -207,17 +220,19 @@ sbGStreamerSimple::SetupPlaybin()
 
   if (!mPlay) {
     mPlay = gst_element_factory_make("playbin", "play");
+
+#ifdef MOZ_WIDGET_GTK2
     GstElement *audioSink = gst_element_factory_make("gconfaudiosink",
                                                      "audio-sink");
     g_object_set(mPlay, "audio-sink", audioSink, NULL);
- 
+
     mVideoSink = gst_element_factory_make("gconfvideosink", "video-sink");
     if (!mVideoSink) {
         mVideoSink = gst_element_factory_make("ximagesink", "video-sink");
     }
 
     g_object_set(mPlay, "video-sink", mVideoSink, NULL);
-
+#endif
     mBus = gst_element_get_bus(mPlay);
     gst_bus_set_sync_handler(mBus, &syncHandlerHelper, this);
 
@@ -273,7 +288,8 @@ sbGStreamerSimple::GetUri(nsAString& aUri)
 NS_IMETHODIMP
 sbGStreamerSimple::SetUri(const nsAString& aUri)
 {
-  TRACE(("sbGStreamerSimple[0x%.8x] - SetUri", this));
+  TRACE(("sbGStreamerSimple[0x%.8x] - SetUri(%s)", this,
+         NS_LossyConvertUTF16toASCII(aUri).get()));
 
   nsresult rv;
 
@@ -317,7 +333,7 @@ void
 sbGStreamerSimple::ReparentToRootWin(sbGStreamerSimple* gsts)
 {
   NS_ASSERTION(gsts, "gsts is null");
-
+#ifdef MOZ_WIDGET_GTK2
   GdkScreen *fullScreen = NULL;
   GdkWindowAttr attributes;
   gint fullWidth, fullHeight;
@@ -344,6 +360,7 @@ sbGStreamerSimple::ReparentToRootWin(sbGStreamerSimple* gsts)
   gdk_window_move_resize(gsts->mGdkWin, 0, 0, fullWidth, fullHeight);
   gsts->Resize();
   gsts->mFullscreen = PR_TRUE;
+#endif
   return;
 }
 
@@ -351,12 +368,13 @@ void
 sbGStreamerSimple::ReparentToChromeWin(sbGStreamerSimple* gsts)
 {
   NS_ASSERTION(gsts, "gsts is null");
-
+#ifdef MOZ_WIDGET_GTK2
   gdk_window_unfullscreen(gsts->mGdkWin);
   gdk_window_reparent(gsts->mGdkWin, gsts->mNativeWin, 0, 0);
   gsts->Resize();
   gdk_window_destroy(gsts->mGdkWinFull);
   gsts->mGdkWinFull = NULL;
+#endif
   return;
 }
 
@@ -375,10 +393,10 @@ NS_IMETHODIMP
 sbGStreamerSimple::SetFullscreen(PRBool aFullscreen)
 {
   TRACE(("sbGStreamerSimple[0x%.8x] - SetFullscreen", this));
-
+#ifdef MOZ_WIDGET_GTK2
   mFullscreen = aFullscreen;
   if(!mFullscreen && mGdkWinFull != NULL) ReparentToChromeWin(this);
-
+#endif
   return NS_OK;
 }
 
@@ -668,9 +686,11 @@ sbGStreamerSimple::Stop()
   gst_element_set_state(mPlay, GST_STATE_NULL);
   mIsAtEndOfStream = PR_TRUE;
   mIsPlayingVideo = PR_FALSE;
+#ifdef MOZ_WIDGET_GTK2
   if(mFullscreen && mGdkWinFull != NULL) {
     ReparentToChromeWin(this);
   }
+#endif
   mCursorIntervalTimer->Cancel();
   mLastErrorCode = 0;
   mBufferingPercent = 0;
@@ -724,6 +744,7 @@ sbGStreamerSimple::RestartPlaybin()
 bool 
 sbGStreamerSimple::SetInvisibleCursor(sbGStreamerSimple* gsts)
 {
+#ifdef MOZ_WIDGET_GTK2
   guint32 data = 0;
   GdkPixmap* pixmap = gdk_bitmap_create_from_data(NULL, (gchar*)&data, 1, 1);
   GdkColor color = { 0, 0, 0, 0 };
@@ -735,16 +756,19 @@ sbGStreamerSimple::SetInvisibleCursor(sbGStreamerSimple* gsts)
   if(gsts->mGdkWinFull != NULL )
     gdk_window_set_cursor(gsts->mGdkWinFull, cursor);
   gdk_cursor_unref(cursor);
+#endif
   return true;
 }
 
 bool 
 sbGStreamerSimple::SetDefaultCursor(sbGStreamerSimple* gsts) 
 {
+#ifdef MOZ_WIDGET_GTK2
   gdk_window_set_cursor(gsts->mGdkWin, NULL);
   gdk_window_set_cursor(gsts->mNativeWin, NULL);
   if(gsts->mGdkWinFull != NULL )
     gdk_window_set_cursor(gsts->mGdkWinFull, NULL);
+#endif
   return false;
 }
 
@@ -753,7 +777,7 @@ NS_IMETHODIMP
 sbGStreamerSimple::Notify(nsITimer *aTimer)
 {
   NS_ENSURE_ARG_POINTER(aTimer);
-
+#ifdef MOZ_WIDGET_GTK2
   GdkDisplay *gdkDisplay;
   GdkWindow *gdkWin = this->mGdkWin;
   gint newCursorX=-1;
@@ -788,6 +812,7 @@ sbGStreamerSimple::Notify(nsITimer *aTimer)
       }
     }
   }
+#endif
   return NS_OK;
 }
 
@@ -822,6 +847,7 @@ sbGStreamerSimple::HandleEvent(nsIDOMEvent* aEvent)
 NS_IMETHODIMP
 sbGStreamerSimple::Resize()
 {
+#ifdef MOZ_WIDGET_GTK2
   PRInt32 x, y, width, height;
   nsCOMPtr<nsIBoxObject> boxObject;
   mVideoOutputElement->GetBoxObject(getter_AddRefs(boxObject));
@@ -858,7 +884,7 @@ sbGStreamerSimple::Resize()
       gdk_window_move_resize(mGdkWin, newX, newY, newWidth, newHeight);
     }
   }
-
+#endif
   return NS_OK;
 }
 
@@ -1062,9 +1088,11 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       mIsAtEndOfStream = PR_TRUE;
       mBufferingPercent = 0;
       mIsPlayingVideo = PR_FALSE;
+#ifdef MOZ_WIDGET_GTK2
       if(mFullscreen && mGdkWinFull != NULL) {
         ReparentToChromeWin(this);
       }
+#endif
       mCursorIntervalTimer->Cancel();
 
       if ( !isErrorAlreadyHandled && isPluginOrCodecError ) {
@@ -1112,6 +1140,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
       mIsPlayingVideo = PR_FALSE;
       mBufferingPercent = 0;
       mCursorIntervalTimer->Cancel();
+#ifdef MOZ_WIDGET_GTK2
       if(mFullscreen && mGdkWinFull != NULL) {
 
         nsresult rv;
@@ -1129,6 +1158,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
         proxy->SetFullscreen(PR_FALSE);
       }
+#endif
       break;
     }
 
@@ -1147,6 +1177,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
     }
 
     case GST_MESSAGE_ELEMENT: {
+#ifdef MOZ_WIDGET_GTK2
       if(gst_structure_has_name(message->structure, "prepare-xwindow-id") && mVideoSink != NULL) {
         GstElement *element = NULL;
         GstXOverlay *xoverlay = NULL;
@@ -1175,6 +1206,7 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 
         mIsPlayingVideo = PR_TRUE;
       }
+#endif
       break;
     }
 
