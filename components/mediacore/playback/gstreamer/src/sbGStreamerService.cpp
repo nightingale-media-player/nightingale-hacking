@@ -36,8 +36,6 @@
 #include <nsDirectoryServiceDefs.h>
 #include <nsAppDirectoryServiceDefs.h>
 
-#include <windows.h>
-
 #if XP_WIN
   #define PATH_LIST_SEPARATOR ';'
 #elif XP_UNIX
