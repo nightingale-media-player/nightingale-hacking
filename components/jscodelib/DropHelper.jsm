@@ -1027,7 +1027,12 @@ var ExternalDropHandler = {
         var item = this._getFirstItemByProperty(this._targetList.library, 
                         "http://songbirdnest.com/data/1.0#contentURL", 
                         aURI.spec);
-
+        // If we didn't find the content URL try the originURL
+        if (!item) {
+            item = this._getFirstItemByProperty(this._targetList.library, 
+                                                "http://songbirdnest.com/data/1.0#originURL", 
+                                                aURI.spec);
+        }        
         // if the item didnt exist before, create it now
         if (!item) {
           item = this._targetList.library.createMediaItem(aURI);
