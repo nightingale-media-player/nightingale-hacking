@@ -179,7 +179,7 @@ function loadData(databaseGuid, databaseLocation) {
   a = data.split("\n");
   for(var i = 0; i < a.length - 1; i++) {
     var b = a[i].split("\t");
-    dbq.addQuery("insert into resource_properties (guid, property_id, obj, obj_sortable) values (?, ?, ?, ?)");
+    dbq.addQuery("insert into resource_properties (media_item_id, property_id, obj, obj_sortable) values ((select media_item_id from media_items where guid = ?), ?, ?, ?)");
     dbq.bindStringParameter(0, b[0]);
     dbq.bindInt32Parameter(1, b[1]);
     dbq.bindStringParameter(2, b[2]);
