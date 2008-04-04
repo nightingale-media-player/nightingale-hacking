@@ -88,22 +88,26 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
 
   *aNoMoreForBatch = PR_FALSE;
 
+  nsresult rv;
+
+  // Always listen to all added lists.
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
+  if (list) {
+    rv = mDevice->ListenToList(list);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   if(mIgnoreListener) {
     return NS_OK;
   }
 
-  nsresult rv;
-
   //XXXAus: Before adding to queue, make sure it doesn't come from
   //another device. Ask DeviceManager for the device library
   //containing this item.
-  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
   if (list) {
     // new playlist
     rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_NEW_PLAYLIST,
                               aMediaItem, aMediaList, aIndex);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mDevice->ListenToList(list);
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
     // Hide the item. It is the responsibility of the device to make the item
