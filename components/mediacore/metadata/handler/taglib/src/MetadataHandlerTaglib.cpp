@@ -186,42 +186,6 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
 
 
 /**
-* \brief Get the mimetypes supported by this handler (probably DEPRECATED)
-* \todo Make sure it's safe to deprecate these.  Only the cores should need to
-*       return mimetype/extension info, I think.
-* \param pMIMECount The number of mimetypes returned in the array
-* \param pMIMETypeList The array of mimetypes supported by this handler
-*/
-
-NS_IMETHODIMP sbMetadataHandlerTaglib::SupportedMIMETypes(
-    PRUint32                    *pMIMECount,
-    PRUnichar                   ***pMIMETypeList)
-{
-    LOG(("1: SupportedMIMETypes\n"));
-
-    return (NS_ERROR_NOT_IMPLEMENTED);
-}
-
-
-/**
-* \brief Get the extensions supported by this handler (probably DEPRECATED)
-* \todo Make sure it's safe to deprecate these.  Only the cores should need to
-*       return mimetype/extension info, I think.
-* \param pExtCount The number of extensions returned in the array
-* \param pExtList The array of extensions supported by this handler
-*/
-
-NS_IMETHODIMP sbMetadataHandlerTaglib::SupportedFileExtensions(
-    PRUint32                    *pExtCount,
-    PRUnichar                   ***pExtList)
-{
-    LOG(("1: SupportedFileExtensions\n"));
-
-    return (NS_ERROR_NOT_IMPLEMENTED);
-}
-
-
-/**
 * \brief Start the read operation
 *
 * After getting a handler from the sbIMetadataManager, the user code usually

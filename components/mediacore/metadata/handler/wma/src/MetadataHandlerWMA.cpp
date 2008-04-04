@@ -158,20 +158,6 @@ sbMetadataHandlerWMA::~sbMetadataHandlerWMA()
 }
 
 NS_IMETHODIMP
-sbMetadataHandlerWMA::SupportedMIMETypes(PRUint32* aMIMECount,
-                                         PRUnichar*** aMIMETypes)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbMetadataHandlerWMA::SupportedFileExtensions(PRUint32* eExtCount,
-                                              PRUnichar*** aExts)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
 sbMetadataHandlerWMA::GetChannel(nsIChannel** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
