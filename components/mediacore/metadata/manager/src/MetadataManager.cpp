@@ -139,6 +139,9 @@ sbMetadataManager *sbMetadataManager::GetSingleton()
 /* sbIMetadataHandler GetHandlerForMediaURL (in wstring strURL); */
 NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, sbIMetadataHandler **_retval)
 {
+  // TODO Bad times! Shouldn't do anything involving channels off of the main thread.
+  // Need to refactor to use streams instead of channels.
+
   sbSimpleAutoLock lock(m_pContractListLock);
 
   if(!_retval) return NS_ERROR_NULL_POINTER;

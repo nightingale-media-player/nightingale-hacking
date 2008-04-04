@@ -4023,6 +4023,7 @@ NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumerationEnd(
     {
         result = pMetadataJobManager->NewJob(mpMediaItemArray,
                                              5,
+                                             sbIMetadataJob::JOBTYPE_READ,
                                              getter_AddRefs(pMetadataJob));
     }
 

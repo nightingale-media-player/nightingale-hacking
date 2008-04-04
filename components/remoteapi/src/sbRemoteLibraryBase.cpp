@@ -169,7 +169,7 @@ public:
       if (createJob) {
         nsCOMPtr<sbIMetadataJob> job;
 
-        rv = metaJobManager->NewJob( mediaItems, 150, getter_AddRefs(job) );
+        rv = metaJobManager->NewJob( mediaItems, 150, sbIMetadataJob::JOBTYPE_READ, getter_AddRefs(job) );
         NS_ENSURE_SUCCESS(rv, rv);
 
         mMetadataJob = job;
@@ -492,7 +492,7 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
       if (createJob) {
         nsCOMPtr<sbIMetadataJob> job;
 
-        rv = metaJobManager->NewJob( mediaItems, 150, getter_AddRefs(job) );
+        rv = metaJobManager->NewJob( mediaItems, 150, sbIMetadataJob::JOBTYPE_READ, getter_AddRefs(job) );
         NS_ENSURE_SUCCESS(rv, rv);
 
         mMetadataJob = job;

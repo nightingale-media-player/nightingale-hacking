@@ -62,6 +62,9 @@
 #define SONGBIRD_METADATAJOBMANAGER_CLASSNAME \
 "Songbird Metadata Job Manager Interface"
 
+#define SONGBIRD_METADATAJOBMANAGER_DESCRIPTION \
+"Songbird Metadata Job Manager Service"
+
 // {883C63A5-8195-4294-8D41-A21FE16A0D7C}
 #define SONGBIRD_METADATAJOBMANAGER_CID \
 { 0x883C63A5, 0x8195, 0x4294, { 0x8D, 0x41, 0xA2, 0x1F, 0xE1, 0x6A, 0x0D, 0x7C } }
@@ -78,16 +81,14 @@ class sbMetadataJobManager : public sbIMetadataJobManager, public nsIObserver
   sbMetadataJobManager();
   virtual ~sbMetadataJobManager();
 
-  static sbMetadataJobManager *GetSingleton();
-
 protected:
-  nsresult InitCurrentTasks();
+  nsresult Init();
+  nsresult Shutdown();
+  nsresult RestartExistingJobs();
   nsresult ExecuteQuery( const nsAString &aQueryStr );
 
   nsCOMPtr< sbIDatabaseQuery >  mQuery;
   nsCOMArray< sbIMetadataJob >  mJobArray;
 };
-
-extern sbMetadataJobManager *gMetadataJobManager;
 
 #endif // __METADATA_JOBMANAGER_H__

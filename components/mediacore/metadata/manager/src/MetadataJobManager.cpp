@@ -37,6 +37,7 @@
 #include <nsComponentManagerUtils.h>
 #include <xpcom/nsServiceManagerUtils.h>
 #include <xpcom/nsIObserverService.h>
+#include <nsIAppStartupNotifier.h>
 #include <nsArrayUtils.h>
 
 #include <sbISQLBuilder.h>
@@ -54,7 +55,10 @@
 extern PRLogModuleInfo* gMetadataLog;
 #endif
 
-#define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
+#define NS_APPSTARTUP_CATEGORY           "app-startup"
+#define NS_FINAL_UI_STARTUP_OBSERVER_ID  "final-ui-startup"
+#define NS_PROFILE_SHUTDOWN_OBSERVER_ID  "profile-before-change"
+
 
 // DEFINES ====================================================================
 
@@ -66,49 +70,69 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbMetadataJobManager, sbIMetadataJobManager, nsIOb
 
 sbMetadataJobManager::sbMetadataJobManager()
 {
-  MOZ_COUNT_CTOR(sbMetadataJobManager);
-  nsresult rv;
-
-  // TODO:
-  // - Get us instantiated at startup, somehow?
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-  if(NS_SUCCEEDED(rv)) {
-    observerService->AddObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
-  }
-  else {
-    NS_ERROR("Unable to register profile-before-change shutdown observer");
-  }
-
-  mQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1");
-  NS_ASSERTION(mQuery, "Unable to create sbMetadataJobManager::mQuery");
-  mQuery->SetDatabaseGUID( sbMetadataJob::DATABASE_GUID() );
-  mQuery->SetAsyncQuery( PR_FALSE );
-
-  nsCOMPtr< sbIDataRemote > dataDisplayString = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1" );
-  NS_ASSERTION(dataDisplayString, "Unable to create sbMetadataJob::dataCurrentMetadataJobs");
-  dataDisplayString->Init( NS_LITERAL_STRING("backscan.status"), NS_LITERAL_STRING("") );
-  dataDisplayString->SetStringValue( NS_LITERAL_STRING("") );
-  nsCOMPtr< sbIDataRemote > dataCurrentMetadataJobs = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1" );
-  NS_ASSERTION(dataCurrentMetadataJobs, "Unable to create sbMetadataJob::dataCurrentMetadataJobs");
-  dataCurrentMetadataJobs->Init( NS_LITERAL_STRING("backscan.concurrent"), NS_LITERAL_STRING("") );
-  dataCurrentMetadataJobs->SetIntValue( 0 );
-
-  rv = InitCurrentTasks();
 }
 
 sbMetadataJobManager::~sbMetadataJobManager()
 {
-  MOZ_COUNT_DTOR(sbMetadataJobManager);
 }
+
+nsresult sbMetadataJobManager::Init()
+{
+  nsresult rv;
+  
+  PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Metadata Job Manager starting up..."));
+
+  mQuery = do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mQuery->SetDatabaseGUID( sbMetadataJob::DATABASE_GUID() );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mQuery->SetAsyncQuery( PR_FALSE );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr< sbIDataRemote > dataDisplayString = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  dataDisplayString->Init( NS_LITERAL_STRING("backscan.status"), NS_LITERAL_STRING("") );
+  dataDisplayString->SetStringValue( NS_LITERAL_STRING("") );
+  nsCOMPtr< sbIDataRemote > dataCurrentMetadataJobs = do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  dataCurrentMetadataJobs->Init( NS_LITERAL_STRING("backscan.concurrent"), NS_LITERAL_STRING("") );
+  dataCurrentMetadataJobs->SetIntValue( 0 );
+  
+  return rv;
+}
+
+
+nsresult sbMetadataJobManager::Shutdown()
+{
+  PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Metadata Job Manager shutting down..."));
+  
+  // the act of cancelling jobs may get us more jobs as the threads shut down.
+  // so we have to keep checking the number of jobs outstanding.
+  while (1) {
+    PRInt32 i = mJobArray.Count() - 1;
+    if (i < 0)
+      break;
+    mJobArray[ i ]->Cancel();
+    mJobArray.RemoveObjectAt(i);
+  }
+  NS_ASSERTION(0 == mJobArray.Count(), "Metadata jobs remaining after stopping the manager");
+
+  mQuery = nsnull;
+
+  return NS_OK;
+}
+
+
 
 NS_IMETHODIMP 
 sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray,
                              PRUint32 aSleepMS,
+                             PRUint16 aJobType,
                              sbIMetadataJob **_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaItemsArray);
   NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mQuery, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv;
 
@@ -146,7 +170,10 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray,
 
   }
 
-  nsCOMPtr<sbIMetadataJob> task = do_CreateInstance("@songbirdnest.com/Songbird/MetadataJob;1", &rv);
+  nsRefPtr<sbMetadataJob> task = new sbMetadataJob();
+  NS_ENSURE_TRUE(task, NS_ERROR_OUT_OF_MEMORY);
+  // TODO remove factoryinit!
+  rv = task->FactoryInit();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create a resource guid for this job.
@@ -190,71 +217,79 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray,
   NS_ENSURE_SUCCESS(rv, rv);
   rv = ExecuteQuery( insertItem );      
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // TODO save read/write status
 
   // Kick off the task with the proper data
-  rv = task->Init(tableName, aMediaItemsArray, aSleepMS);
+  rv = task->Init(tableName, aMediaItemsArray, aSleepMS, aJobType);
   NS_ENSURE_SUCCESS(rv, rv);
   mJobArray.AppendObject( task );
+
   NS_ADDREF(*_retval = task);
   return NS_OK;
 }
 
-
-NS_IMETHODIMP sbMetadataJobManager::Stop()
-{
-  // the act of cancelling jobs may get us more jobs as the threads shut down.
-  // so we have to keep checking the number of jobs outstanding.
-  while (1) {
-    PRInt32 i = mJobArray.Count() - 1;
-    if (i < 0)
-      break;
-    mJobArray[ i ]->Cancel();
-    mJobArray.RemoveObjectAt(i);
-  }
-  NS_ASSERTION(0 == mJobArray.Count(), "Metadata jobs remaining after stopping the manager");
-  return NS_OK;
-}
-
-sbMetadataJobManager * sbMetadataJobManager::GetSingleton()
-{
-  if (gMetadataJobManager) {
-    NS_ADDREF(gMetadataJobManager);
-    return gMetadataJobManager;
-  }
-
-  NS_NEWXPCOM(gMetadataJobManager, sbMetadataJobManager);
-  if (!gMetadataJobManager)
-    return nsnull;
-
-  //One of these addref's is for the global instance we use.
-  NS_ADDREF(gMetadataJobManager);
-  //This one is for the interface.
-  NS_ADDREF(gMetadataJobManager);
-
-  return gMetadataJobManager;
-}
-
 // nsIObserver
 NS_IMETHODIMP
-sbMetadataJobManager::Observe(nsISupports *aSubject, const char *aTopic,
-                               const PRUnichar *aData)
+sbMetadataJobManager::Observe(nsISupports *aSubject, 
+                              const char *aTopic,
+                              const PRUnichar *aData)
 {
-  if(!strcmp(aTopic, NS_PROFILE_SHUTDOWN_OBSERVER_ID)) {
-    nsresult rv;
-
-    PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Metadata Job Manager shutting down..."));
-
-    Stop();
-
-    nsCOMPtr<nsIObserverService> observerService =
-      do_GetService("@mozilla.org/observer-service;1", &rv);
+  nsresult rv;
+  //
+  // Initial app start
+  //
+  if (!strcmp(aTopic, APPSTARTUP_CATEGORY)) {
+  
+    // Listen for profile startup and profile shutdown messages
+    nsCOMPtr<nsIObserverService> obsSvc =
+      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    observerService->RemoveObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
+    nsCOMPtr<nsIObserver> observer =
+      do_QueryInterface(NS_ISUPPORTS_CAST(nsIObserver*, this), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = obsSvc->AddObserver(observer, NS_FINAL_UI_STARTUP_OBSERVER_ID, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = obsSvc->AddObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } 
+  //
+  // Profile Up
+  //
+  else if (!strcmp(NS_FINAL_UI_STARTUP_OBSERVER_ID, aTopic)) {
+    
+    rv = Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    // TODO We should defer this until after the UI is fully up.
+    // Unfortunately there is no appropriate observer topic at this time.
+    rv = RestartExistingJobs();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  //
+  // Profile Down
+  //
+  else if (!strcmp(NS_PROFILE_SHUTDOWN_OBSERVER_ID, aTopic)) {
+
+    rv = Shutdown();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Remove all the observer callbacks
+    nsCOMPtr<nsIObserverService> obsSvc =
+      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIObserver> observer =
+      do_QueryInterface(NS_ISUPPORTS_CAST(nsIObserver*, this), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = obsSvc->RemoveObserver(observer, NS_FINAL_UI_STARTUP_OBSERVER_ID);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = obsSvc->RemoveObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   return NS_OK;
 }
 
-nsresult sbMetadataJobManager::InitCurrentTasks()
+nsresult sbMetadataJobManager::RestartExistingJobs()
 {
   nsresult rv;
 
@@ -290,11 +325,15 @@ nsresult sbMetadataJobManager::InitCurrentTasks()
     NS_ENSURE_SUCCESS(rv, rv);
     PRUint32 aSleep = strSleep.ToInteger(&rv);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMetadataJob> task = do_CreateInstance("@songbirdnest.com/Songbird/MetadataJob;1", &rv);
+    
+    nsRefPtr<sbMetadataJob> task = new sbMetadataJob();
+    NS_ENSURE_TRUE(task, NS_ERROR_OUT_OF_MEMORY);
+    // TODO remove factoryinit!
+    rv = task->FactoryInit();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = task->Init(tableName, nsnull, aSleep);
+    // TODO get read/write
+    rv = task->Init(tableName, nsnull, aSleep, sbIMetadataJob::JOBTYPE_READ);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mJobArray.AppendObject( task ); // Keep a reference around to it.

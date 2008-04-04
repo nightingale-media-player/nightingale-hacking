@@ -99,7 +99,15 @@ public:
   sbMetadataJob();
   virtual ~sbMetadataJob();
 
+  // TODO combine these into one method
   nsresult FactoryInit();
+  nsresult Init(const nsAString & aTableName, 
+                nsIArray *aMediaItemsArray, 
+                PRUint32 aSleepMS,
+                PRUint16 aJobType);
+
+  // TODO used to be on the interface.  Consider removing?
+  nsresult GetTableName(nsAString & aTableName);
 
   static void MetadataJobTimer(nsITimer *aTimer, void *aClosure)
   {
@@ -186,6 +194,7 @@ protected:
   nsString                      mStatusDisplayString;
   nsCOMPtr<sbIDataRemote>       mDataStatusDisplay;
   nsCOMPtr<sbIDataRemote>       mDataCurrentMetadataJobs;
+  PRUint16                      mJobType;
   nsString                      mTableName;
   PRUint32                      mSleepMS;
   nsCOMPtr<sbIDatabaseQuery>    mMainThreadQuery;

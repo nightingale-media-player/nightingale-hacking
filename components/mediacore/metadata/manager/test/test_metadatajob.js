@@ -125,7 +125,6 @@ function onComplete(aSubject, aTopic, aData) {
 
   // Are you really complete?
   assertEqual( aTopic, "complete" );
-  assertEqual( aData, gTestMetadataJob.tableName );
   assertTrue( gTestMetadataJob.completed );
   
   // Debug output.  Output everything before testing anything so we can see

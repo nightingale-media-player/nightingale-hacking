@@ -231,10 +231,18 @@ sbMetadataJob::FactoryInit()
   return NS_OK;
 }
 
-/* readonly attribute AString tableName; */
-NS_IMETHODIMP sbMetadataJob::GetTableName(nsAString & aTableName)
+// TODO no longer part of the interface.  Move if needed.
+nsresult sbMetadataJob::GetTableName(nsAString & aTableName)
 {
   aTableName = mTableName;
+  return NS_OK;
+}
+
+/* readonly attribute unsigned short type; */
+NS_IMETHODIMP sbMetadataJob::GetType(PRUint16 *aJobType)
+{
+  NS_ENSURE_ARG_POINTER( aJobType );
+  *aJobType = mJobType;
   return NS_OK;
 }
 
@@ -261,8 +269,11 @@ NS_IMETHODIMP sbMetadataJob::RemoveObserver()
   return NS_OK;
 }
 
-/* void init (in AString aTableName, in nsIArray aMediaItemsArray); */
-NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMediaItemsArray, PRUint32 aSleepMS)
+
+nsresult sbMetadataJob::Init(const nsAString & aTableName, 
+                             nsIArray *aMediaItemsArray, 
+                             PRUint32 aSleepMS,
+                             PRUint16 aJobType)
 {
   nsresult rv;
 
@@ -275,6 +286,7 @@ NS_IMETHODIMP sbMetadataJob::Init(const nsAString & aTableName, nsIArray *aMedia
   }
 
   mTableName = aTableName;
+  mJobType = aJobType;
   mSleepMS = aSleepMS;
 
   //  - Initialize the task table in the database
@@ -843,6 +855,9 @@ sbMetadataJob::RunThreadBatchFunc(nsISupports* aUserData)
 
     writePending.AppendElement(item);
 
+    // TODO: Consider removing this!
+    // On my machine I get a 30% speedup with no loss of interactivity.
+    // Need to test on a slow single-core machine first.
     PR_Sleep(PR_MillisecondsToInterval(params->sleepMS));
   }
 

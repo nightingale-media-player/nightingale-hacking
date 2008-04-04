@@ -34,20 +34,34 @@ interface nsIArray;
 interface nsIObserver;
 /**
 * \interface sbIMetadataJob sbIMetadataJob.h
-* \brief Metadata Job represents the status of a running metadata scanning task
+* \brief Metadata Job represents the status of a running metadata task
 *
 * You get an sbIMetadataJob by calling sbIMetadataJobManager::newJob()
 * with an nsIArray of sbIMediaItem.
 * 
 * \sa sbILibrary, sbIMediaItem, sbIMetadataJobManager
 */
-[scriptable, uuid(C38FD6BD-3335-4392-A3DE-1855ECEDA4F8)]
+[scriptable, uuid(b8da3f00-ff8b-11dc-95ff-0800200c9a66)]
 interface sbIMetadataJob : nsISupports
 {
+
   /**
-   * \brief The tableName for this task, used by the manager.
+   * \brief Constant indicating that this job will read metadata
+   *        from files into associated media items.
    */
-  readonly attribute AString tableName;
+  const unsigned short JOBTYPE_READ = 0;
+
+  /**
+   * \brief Constant indicating that this job will attempt to write metadata
+   *        from media items back into associated files.
+   */
+  const unsigned short JOBTYPE_WRITE = 1;
+  
+  /**
+   * \brief Indicates whether this is a read or write job. 
+   * See JOBTYPE_READ and JOBTYPE_WRITE.
+   */
+  readonly attribute unsigned short type;
 
   /**
    * \brief True if it has shutdown its timer and thread.
@@ -57,21 +71,6 @@ interface sbIMetadataJob : nsISupports
   readonly attribute boolean completed;
 
   /**
-   * \brief Initialize a task with a specific guid and, optionally, an nsIArray of sbMediaItems
-   *
-   * The metadata task will track its progress through a database table 
-   * so it can depend on its information always available upon app restart.
-   *
-   * There is a window of time while it is copying the given array into the 
-   * database that a crash or shutdown will lose the enqueueing of the task.
-   *
-   * \param aTableName The table name assigned to this task.
-   * \param aMediaItemsArray An array filled with media items to be scanned.
-   * \param aSleepMS How much of an interval/sleep per loop in and out of thread.
-   */
-  void init( in AString aTableName, in nsIArray aMediaItemsArray, in unsigned long aSleepMS );
-
-  /**
    * \brief Add some more media items to the job's queue.
    *
    * Appending to a completed job will throw an error.
@@ -79,7 +78,7 @@ interface sbIMetadataJob : nsISupports
    * THIS METHOD APPENDS ALL THE ITEMS TO THE DATABASE QUEUE, BLOCKING UNTIL COMPLETE.
    * Try to only give it small (< 500 items) arrays in batches.
    *
-   * \param aMediaItemsArray An array filled with media items to be scanned.
+   * \param aMediaItemsArray An array filled with media items to be processed.
    */
   void append( in nsIArray aMediaItemsArray );
 

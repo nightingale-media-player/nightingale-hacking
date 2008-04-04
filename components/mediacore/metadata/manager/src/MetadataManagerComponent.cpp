@@ -28,8 +28,12 @@
 * \file  MetadataManagerComponent.cpp
 * \brief Songbird Metadata Manager Component Factory and Main Entry Point.
 */
+#include <nsCOMPtr.h>
+#include <nsServiceManagerUtils.h>
+#include <nsIAppStartupNotifier.h>
+#include <nsICategoryManager.h>
+#include <nsIGenericFactory.h>
 
-#include "nsIGenericFactory.h"
 #include "MetadataManager.h"
 #include "MetadataChannel.h"
 #include "MetadataJobManager.h"
@@ -38,8 +42,50 @@
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataManager, sbMetadataManager::GetSingleton)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataChannel)
-NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbMetadataJobManager, sbMetadataJobManager::GetSingleton)
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataJob, FactoryInit)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMetadataJobManager)
+
+
+
+// Registration functions for becoming a startup observer
+static NS_METHOD
+sbMetadataJobManagerRegisterSelf(nsIComponentManager* aCompMgr,
+                                 nsIFile* aPath,
+                                 const char* registryLocation,
+                                 const char* componentType,
+                                 const nsModuleComponentInfo* info)
+{
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> categoryManager =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = categoryManager->
+         AddCategoryEntry(APPSTARTUP_CATEGORY,
+                          SONGBIRD_METADATAJOBMANAGER_DESCRIPTION,
+                          "service," SONGBIRD_METADATAJOBMANAGER_CONTRACTID,
+                          PR_TRUE, PR_TRUE, nsnull);
+  return rv;
+}
+
+static NS_METHOD
+sbMetadataJobManagerUnregisterSelf(nsIComponentManager* aCompMgr,
+                                   nsIFile* aPath,
+                                   const char* registryLocation,
+                                   const nsModuleComponentInfo* info)
+{
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> categoryManager =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = categoryManager->DeleteCategoryEntry(APPSTARTUP_CATEGORY,
+                                            SONGBIRD_METADATAJOBMANAGER_DESCRIPTION,
+                                            PR_TRUE);
+
+  return rv;
+}
+
+
 
 static nsModuleComponentInfo sbMetadataManagerComponent[] =
 {
@@ -61,16 +107,15 @@ static nsModuleComponentInfo sbMetadataManagerComponent[] =
     SONGBIRD_METADATAJOBMANAGER_CLASSNAME,
     SONGBIRD_METADATAJOBMANAGER_CID,
     SONGBIRD_METADATAJOBMANAGER_CONTRACTID,
-    sbMetadataJobManagerConstructor
-  },
-
-  {
-    SONGBIRD_METADATAJOB_CLASSNAME,
-    SONGBIRD_METADATAJOB_CID,
-    SONGBIRD_METADATAJOB_CONTRACTID,
-    sbMetadataJobConstructor
+    sbMetadataJobManagerConstructor,
+    sbMetadataJobManagerRegisterSelf,
+    sbMetadataJobManagerUnregisterSelf
   }
 };
+
+
+
+// TODO Consider changing the following:
 
 #ifdef PR_LOGGING
 PRLogModuleInfo *gMetadataLog;
@@ -91,9 +136,6 @@ sbMetadataManagerComponentDestructor(nsIModule* module)
 {
   NS_IF_RELEASE(gMetadataManager);
   gMetadataManager = nsnull;
-  
-  NS_IF_RELEASE(gMetadataJobManager);
-  gMetadataJobManager = nsnull;
 }
 
 NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdMetadataManagerComponent,
