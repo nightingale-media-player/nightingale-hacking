@@ -1313,9 +1313,9 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
     rv = builder->AddJoin(sbISQLBuilder::JOIN_INNER,
                           kResourceProperties,
                           kConditionAlias,
-                          kGuid,
+                          kMediaItemId,
                           baseAlias,
-                          kGuid);
+                          kMediaItemId);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = AddCriterionForCondition(builder, aCondition, info);
@@ -1582,9 +1582,9 @@ sbLocalDatabaseSmartMediaList::AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuil
 {
   NS_ENSURE_ARG_POINTER(aBuilder);
 
-  NS_NAMED_LITERAL_STRING(kGuid,               "guid");
   NS_NAMED_LITERAL_STRING(kObjSortable,        "obj_sortable");
   NS_NAMED_LITERAL_STRING(kPropertyId,         "property_id");
+  NS_NAMED_LITERAL_STRING(kMediaItemId,        "media_item_id");
   NS_NAMED_LITERAL_STRING(kResourceProperties, "resource_properties");
   NS_NAMED_LITERAL_STRING(kSelectAlias,        "_select");
 
@@ -1613,9 +1613,9 @@ sbLocalDatabaseSmartMediaList::AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuil
     rv = aBuilder->AddJoin(sbISQLBuilder::JOIN_INNER,
                            kResourceProperties,
                            kSelectAlias,
-                           kGuid,
+                           kMediaItemId,
                            aBaseTableAlias,
-                           kGuid);
+                           kMediaItemId);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRUint32 propertyDBID;
@@ -1647,10 +1647,10 @@ sbLocalDatabaseSmartMediaList::AddLimitColumnAndJoin(sbISQLSelectBuilder* aBuild
   NS_ENSURE_ARG_POINTER(aBuilder);
 
   NS_NAMED_LITERAL_STRING(kContentLength,      "content_length");
-  NS_NAMED_LITERAL_STRING(kGuid,               "guid");
   NS_NAMED_LITERAL_STRING(kLimitAlias,         "_limit");
   NS_NAMED_LITERAL_STRING(kObjSortable,        "obj_sortable");
   NS_NAMED_LITERAL_STRING(kPropertyId,         "property_id");
+  NS_NAMED_LITERAL_STRING(kMediaItemId,        "media_item_id");
   NS_NAMED_LITERAL_STRING(kResourceProperties, "resource_properties");
 
   nsresult rv;
@@ -1671,9 +1671,9 @@ sbLocalDatabaseSmartMediaList::AddLimitColumnAndJoin(sbISQLSelectBuilder* aBuild
         rv = aBuilder->AddJoin(sbISQLBuilder::JOIN_INNER,
                                kResourceProperties,
                                kLimitAlias,
-                               kGuid,
+                               kMediaItemId,
                                aBaseTableAlias,
-                               kGuid);
+                               kMediaItemId);
         NS_ENSURE_SUCCESS(rv, rv);
 
         PRUint32 propertyId;

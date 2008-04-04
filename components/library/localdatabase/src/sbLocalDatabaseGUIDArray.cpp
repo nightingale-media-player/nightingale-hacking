@@ -186,7 +186,6 @@ sbLocalDatabaseGUIDArray::GetFetchSize(PRUint32 *aFetchSize)
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::SetFetchSize(PRUint32 aFetchSize)
 {
-  NS_ENSURE_ARG_MIN(aFetchSize, 1);
   mFetchSize = aFetchSize;
 
   return NS_OK;
@@ -1108,6 +1107,11 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
 
   PRUint32 indexB = mLengthX;
   PRUint32 indexC = mLength - 1;
+
+  // A fetch size of 0 means fetch everything
+  if (aFetchSize == 0) {
+    aFetchSize = mLength;
+  }
 
   /*
    * Divide the array up into cells and figure out what cell to fetch

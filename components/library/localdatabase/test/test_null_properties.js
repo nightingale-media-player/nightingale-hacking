@@ -35,8 +35,6 @@ function runTest () {
   var library = createLibrary("test_null_properties", null, false);
   library.clear();
 
-//  testResource(library, library.guid);
-
   var item = library.createMediaItem(newURI("http://foo.com/"));
   library.sync();
   testResource(library, item.guid);
@@ -52,7 +50,8 @@ function testResource(library, guid) {
   var nullprop = "http://songbirdnest.com/data/1.0#foo";
 
   var originalLength = r.getProperties().length;
-  var originalProps = countProperties(guid);
+  var mediaItemId = r.QueryInterface(Ci.sbILocalDatabaseMediaItem).mediaItemId;
+  var originalProps = countProperties(mediaItemId);
 
   assertEqual(r.getProperty(nullprop), null);
 
@@ -60,7 +59,7 @@ function testResource(library, guid) {
   assertEqual(r.getProperties().length, originalLength);
   assertEqual(r.getProperty(nullprop), null);
   library.sync();
-  assertEqual(countProperties(guid), originalProps);
+  assertEqual(countProperties(mediaItemId), originalProps);
 
   var library2 = createLibrary("test_null_properties", null, false);
   var r2 = library2.getItemByGuid(guid);
@@ -71,7 +70,7 @@ function testResource(library, guid) {
   assertEqual(r.getProperties().length, originalLength + 1);
   assertEqual(r.getProperty(nullprop), "");
   library.sync();
-  assertEqual(countProperties(guid), originalProps + 1);
+  assertEqual(countProperties(mediaItemId), originalProps + 1);
 
   var library3 = createLibrary("test_null_properties", null, false);
   var r3 = library3.getItemByGuid(guid);
@@ -82,7 +81,7 @@ function testResource(library, guid) {
   assertEqual(r.getProperties().length, originalLength);
   assertEqual(r.getProperty(nullprop), null);
   library.sync();
-  assertEqual(countProperties(guid), originalProps);
+  assertEqual(countProperties(mediaItemId), originalProps);
 
   var library4 = createLibrary("test_null_properties", null, false);
   var r4 = library4.getItemByGuid(guid);
@@ -121,13 +120,13 @@ function testResource(library, guid) {
 
 }
 
-function countProperties(resourceGuid) {
+function countProperties(mediaItemId) {
   var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
               .createInstance(Ci.sbIDatabaseQuery);
 
   dbq.setDatabaseGUID("test_null_properties");
   dbq.setAsyncQuery(false);
-  dbq.addQuery("select count(1) from resource_properties where guid = '" + resourceGuid + "'");
+  dbq.addQuery("select count(1) from resource_properties where media_item_id = " + mediaItemId);
   dbq.execute();
 
   var dbr = dbq.getResultObject();

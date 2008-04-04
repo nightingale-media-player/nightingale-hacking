@@ -815,10 +815,10 @@ sbLocalDatabaseLibrary::CreateQueries()
   rv = insert->SetIntoTableName(NS_LITERAL_STRING("resource_properties"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = insert->AddColumn(NS_LITERAL_STRING("guid"));
+  rv = insert->AddColumn(NS_LITERAL_STRING("media_item_id"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = insert->AddValueParameter();
+  rv = insert->AddValueRaw(NS_LITERAL_STRING("(select media_item_id from media_items where guid = ?)"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = insert->AddColumn(NS_LITERAL_STRING("property_id"));

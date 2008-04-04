@@ -89,6 +89,18 @@ sbSQLInsertBuilder::AddValueParameter()
 }
 
 NS_IMETHODIMP
+sbSQLInsertBuilder::AddValueRaw(const nsAString& aValue)
+{
+  sbValueItem* vi = mValueList.AppendElement();
+  NS_ENSURE_TRUE(vi, NS_ERROR_OUT_OF_MEMORY);
+
+  vi->type        = eIsRaw;
+  vi->stringValue = aValue;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbSQLInsertBuilder::GetIntoTableName(nsAString& aIntoTableName)
 {
   aIntoTableName = mIntoTableName;
@@ -178,6 +190,9 @@ sbSQLInsertBuilder::ToString(nsAString& _retval)
         }
         case eInteger32:
           buff.AppendInt(vi.int32Value);
+          break;
+        case eIsRaw:
+          buff.Append(vi.stringValue);
           break;
       }
 

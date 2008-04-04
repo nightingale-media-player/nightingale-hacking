@@ -31,6 +31,10 @@
 #include <nsIObjectInputStream.h>
 #include <nsIObjectOutputStream.h>
 
+// Uncomment this to log the selection list whenever it changes.  This is
+// normally ifdef'd out because it can be really slow
+//#define LOG_SELECTION
+
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseMediaListViewSelection,
                    sbIMediaListViewSelection)
 
@@ -636,12 +640,20 @@ sbLocalDatabaseMediaListViewSelection::GetUniqueIdForIndex(PRUint32 aIndex,
 void
 sbLocalDatabaseMediaListViewSelection::LogSelection()
 {
+#ifdef LOG_SELECTION
   nsString list;
 
   if (mSelectionIsAll) {
     list.AssignLiteral("all");
   }
   else {
+    PRUint32 oldFetchSize;
+    nsresult rv = mArray->GetFetchSize(&oldFetchSize);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    rv = mArray->SetFetchSize(0);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
     for (PRUint32 i = 0; i < mLength; i++) {
       nsString uid;
       GetUniqueIdForIndex(i, uid);
@@ -652,11 +664,15 @@ sbLocalDatabaseMediaListViewSelection::LogSelection()
         list.Append(' ');
       }
     }
+
+    rv = mArray->SetFetchSize(oldFetchSize);
+    NS_ENSURE_SUCCESS(rv, /* void */);
   }
 
   TRACE(("sbLocalDatabaseMediaListViewSelection[0x%.8x] - LogSelection() "
          "length: %d, selection: %s",
          this, mLength, NS_LossyConvertUTF16toASCII(list).get()));
+#endif
 }
 #endif
 

@@ -323,7 +323,7 @@ interface sbISQLSelectBuilder : sbISQLWhereBuilder
 * \interface sbISQLInsertBuilder
 * \brief Interface for building INSERT statements
 */
-[scriptable, uuid(4674061d-4513-4608-acaa-1d92fbdec424)]
+[scriptable, uuid(8c584d54-2fa1-4965-8345-f1eda5a1e304)]
 interface sbISQLInsertBuilder : sbISQLBuilder
 {
   /**
@@ -353,6 +353,13 @@ interface sbISQLInsertBuilder : sbISQLBuilder
    * \brief Add a parameter to the value list
    */
   void addValueParameter();
+
+  /**
+   * \brief Add a raw string the value list.  Note that this does not do any
+   *        escaping of the value so please only use this if you know what
+   *        you are doing.
+   */
+  void addValueRaw(in AString aValue);
 
   /**
    * \brief Table to insert into

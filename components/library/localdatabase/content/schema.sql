@@ -51,16 +51,16 @@ create table properties (
 );
 
 create table resource_properties (
-  guid text not null,
+  media_item_id integer not null,
   property_id integer not null,
   obj text not null,
   obj_sortable text,
-  primary key (guid, property_id)
+  primary key (media_item_id, property_id)
 );
 create index idx_resource_properties_property_id_obj on resource_properties (property_id, obj);
 create index idx_resource_properties_obj_sortable on resource_properties (obj_sortable);
-create index idx_resource_properties_guid_property_id_obj_sortable on resource_properties (guid, property_id, obj_sortable);
-create index idx_resource_properties_property_id_obj_sortable_guid on resource_properties (property_id, obj_sortable, guid);
+create index idx_resource_properties_media_item_id_property_id_obj_sortable on resource_properties (media_item_id, property_id, obj_sortable);
+create index idx_resource_properties_property_id_obj_sortable_media_item_id on resource_properties (property_id, obj_sortable, media_item_id);
 
 create table simple_media_lists (
   media_item_id integer not null,
@@ -77,7 +77,7 @@ create index idx_simple_media_lists_member_media_item_id on simple_media_lists (
 create trigger tgr_media_items_simple_media_lists_delete before delete on media_items
 begin
   delete from simple_media_lists where member_media_item_id = OLD.media_item_id or media_item_id = OLD.media_item_id; /**/
-  delete from resource_properties where guid = OLD.guid; /**/
+  delete from resource_properties where media_item_id = OLD.media_item_id; /**/
 end;
 
 /* static data */
@@ -99,5 +99,4 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 
 insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
 
-insert into library_metadata (name, value) values ('version', '0.3.0');
-
+insert into library_metadata (name, value) values ('version', '2');

@@ -84,6 +84,10 @@ public:
                                      PRUint32 *aPropertyDBID);
 
 private:
+  nsresult GetBag(const nsAString& aGuid,
+                  PRUint32 aMediaItemId,
+                  sbILocalDatabaseResourcePropertyBag** _retval);
+
   // Pending write count.
   PRUint32 mWritePendingCount;
 
@@ -102,10 +106,16 @@ private:
   // mPropertiesSelect has an owning reference to this
   sbISQLBuilderCriterionIn* mPropertiesInCriterion;
 
+  // Used to template the library media item properties select statement
+  nsCOMPtr<sbISQLSelectBuilder> mLibraryMediaItemPropertiesSelect;
+
   // Used to template the media items select statement
   nsCOMPtr<sbISQLSelectBuilder> mMediaItemsSelect;
   // mMediaItemsSelect has an owning reference to this
   sbISQLBuilderCriterionIn* mMediaItemsInCriterion;
+
+  // Used to template the library media item select statement
+  nsCOMPtr<sbISQLSelectBuilder> mLibraryMediaItemSelect;
 
   // Used to template the properties table insert that generates
   // the property ID for the property in the current library.
@@ -165,6 +175,7 @@ public:
   NS_DECL_SBILOCALDATABASERESOURCEPROPERTYBAG
 
   sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache,
+                                     PRUint32 mMediaItemId,
                                      const nsAString& aGuid);
 
   ~sbLocalDatabaseResourcePropertyBag();
@@ -184,7 +195,7 @@ private:
 
   PRUint32  mWritePendingCount;
   nsString  mGuid;
-
+  PRUint32  mMediaItemId;
   // Dirty Property ID's
   PRLock* mDirtyLock;
   nsTHashtable<nsUint32HashKey> mDirty;

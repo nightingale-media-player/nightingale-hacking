@@ -354,9 +354,9 @@ sbLocalDatabaseQuery::GetResortQuery(nsAString& aQuery)
     rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
                            PROPERTIES_TABLE,
                            CONPROP_ALIAS,
-                           GUID_COLUMN,
+                           MEDIAITEMID_COLUMN,
                            MEDIAITEMS_ALIAS,
-                           GUID_COLUMN);
+                           MEDIAITEMID_COLUMN);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->CreateMatchCriterionLong(CONPROP_ALIAS,
@@ -414,10 +414,10 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   // constraint on the obj_sortable column
   nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
   rv = mBuilder->CreateMatchCriterionTable(NS_LITERAL_STRING("_p0"),
-                                           GUID_COLUMN,
+                                           MEDIAITEMID_COLUMN,
                                            sbISQLSelectBuilder::MATCH_EQUALS,
                                            MEDIAITEMS_ALIAS,
-                                           GUID_COLUMN,
+                                           MEDIAITEMID_COLUMN,
                                            getter_AddRefs(criterionGuid));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -772,9 +772,9 @@ sbLocalDatabaseQuery::AddFilters()
           rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
                                  PROPERTIES_TABLE,
                                  tableAlias,
-                                 GUID_COLUMN,
+                                 MEDIAITEMID_COLUMN,
                                  MEDIAITEMS_ALIAS,
-                                 GUID_COLUMN);
+                                 MEDIAITEMID_COLUMN);
           NS_ENSURE_SUCCESS(rv, rv);
 
           // Add the propery constraint for the filter
@@ -848,20 +848,20 @@ sbLocalDatabaseQuery::AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType 
   nsString tmpTableName;
   tmpTableName.AssignLiteral("_s");
   tmpTableName.AppendInt(addJoinInfo->joinCounter);
-  
+
   // We are going to add a join with the following constraints:
   // 1. _mi.guid = _s#.guid
   // 2. _s#.property_id in (3, 2, 1)
   // 3. _s#.obj_sortable like '%term%'
   // Where # is index of join (joinCounter) and term is search term we are matching.
-  
-  // first add the guid match
+
+  // first add the media_item_id match
   nsCOMPtr<sbISQLBuilderCriterion> searchCriterion;
   rv = builder->CreateMatchCriterionTable(tmpTableName,
-                                          GUID_COLUMN,
+                                          MEDIAITEMID_COLUMN,
                                           sbISQLSelectBuilder::MATCH_EQUALS,
                                           NS_LITERAL_STRING("_mi"),
-                                          GUID_COLUMN,
+                                          MEDIAITEMID_COLUMN,
                                           getter_AddRefs(searchCriterion));
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
@@ -1011,9 +1011,9 @@ sbLocalDatabaseQuery::AddPrimarySort()
   rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
                          PROPERTIES_TABLE,
                          SORT_ALIAS,
-                         GUID_COLUMN,
+                         MEDIAITEMID_COLUMN,
                          MEDIAITEMS_ALIAS,
-                         GUID_COLUMN);
+                         MEDIAITEMID_COLUMN);
   NS_ENSURE_SUCCESS(rv, rv);
 
   /*
@@ -1039,12 +1039,13 @@ sbLocalDatabaseQuery::AddPrimarySort()
   NS_ENSURE_SUCCESS(rv, rv);
 
   /*
-   * Sort on guid to make the order of the rows always the same.  Make sure we
-   * sort on the same direction as the primary sort so reversing the primary
-   * sort will reverse the ordering when the primary sort values are the same.
+   * Sort on media_item_id to make the order of the rows always the same.  Make
+   * sure we sort on the same direction as the primary sort so reversing the
+   * primary sort will reverse the ordering when the primary sort values are
+   * the same.
    */
   rv = mBuilder->AddOrder(SORT_ALIAS,
-                          GUID_COLUMN,
+                          MEDIAITEMID_COLUMN,
                           mSorts->ElementAt(0).ascending);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1094,9 +1095,9 @@ sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
       rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
                              PROPERTIES_TABLE,
                              GETNOTNULL_ALIAS,
-                             GUID_COLUMN,
+                             MEDIAITEMID_COLUMN,
                              MEDIAITEMS_ALIAS,
-                             GUID_COLUMN);
+                             MEDIAITEMID_COLUMN);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = mBuilder->CreateMatchCriterionLong(GETNOTNULL_ALIAS,
@@ -1154,9 +1155,9 @@ sbLocalDatabaseQuery::AddDistinctConstraint()
     rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
                            PROPERTIES_TABLE,
                            DISTINCT_ALIAS,
-                           GUID_COLUMN,
+                           MEDIAITEMID_COLUMN,
                            MEDIAITEMS_ALIAS,
-                           GUID_COLUMN);
+                           MEDIAITEMID_COLUMN);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbISQLBuilderCriterion> property;
@@ -1266,10 +1267,10 @@ sbLocalDatabaseQuery::AddJoinToGetNulls()
   else {
     nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
     rv = mBuilder->CreateMatchCriterionTable(GETNULL_ALIAS,
-                                             GUID_COLUMN,
+                                             MEDIAITEMID_COLUMN,
                                              sbISQLSelectBuilder::MATCH_EQUALS,
                                              MEDIAITEMS_ALIAS,
-                                             GUID_COLUMN,
+                                             MEDIAITEMID_COLUMN,
                                              getter_AddRefs(criterionGuid));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1351,10 +1352,10 @@ sbLocalDatabaseQuery::AddMultiSorts()
 
     nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
     rv = mBuilder->CreateMatchCriterionTable(joinedAlias,
-                                             GUID_COLUMN,
+                                             MEDIAITEMID_COLUMN,
                                              sbISQLSelectBuilder::MATCH_EQUALS,
                                              MEDIAITEMS_ALIAS,
-                                             GUID_COLUMN,
+                                             MEDIAITEMID_COLUMN,
                                              getter_AddRefs(criterionGuid));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1399,9 +1400,9 @@ sbLocalDatabaseQuery::AddMultiSorts()
 
   }
 
-  // Sort on the base table's guid column so make sure things are sorted the
-  // same on all platforms
-  rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS, GUID_COLUMN, PR_TRUE);
+  // Sort on the base table's media_item_id column so make sure things are
+  // sorted the same on all platforms
+  rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

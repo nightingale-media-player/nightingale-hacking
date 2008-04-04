@@ -158,6 +158,11 @@ AC_ARG_WITH(extensions,
             [ SB_EXTENSIONS=default])
 AC_SUBST(SB_EXTENSIONS)
 
+#
+# Check for enabled library performance tests
+#
+
+AC_SUBST(SB_ENABLE_LIBRARY_PERF)
 
 #
 # Check platform

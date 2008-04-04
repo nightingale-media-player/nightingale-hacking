@@ -69,10 +69,11 @@ interface sbILocalDatabasePropertyCache : nsISupports
  * \interface sbILocalDatabaseResourcePropertyBag
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(c09564c7-8623-47e2-8fd7-e551e2f028bf)]
+[scriptable, uuid(84cb5676-58da-46c3-8359-d4e11420f531)]
 interface sbILocalDatabaseResourcePropertyBag : nsISupports
 {
   readonly attribute AString guid;
+  readonly attribute unsigned long mediaItemId;
   readonly attribute boolean writePending;
   readonly attribute nsIStringEnumerator ids;
 

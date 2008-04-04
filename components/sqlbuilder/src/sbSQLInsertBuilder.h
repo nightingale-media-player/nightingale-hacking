@@ -51,7 +51,8 @@ private:
     eIsNull,
     eString,
     eInteger32,
-    eIsParameter
+    eIsParameter,
+    eIsRaw
   };
 
   struct sbValueItem

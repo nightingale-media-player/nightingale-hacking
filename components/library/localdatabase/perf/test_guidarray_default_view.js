@@ -25,24 +25,30 @@
 */
 
 /**
- * \file sbILocalDatabaseMediaItem.idl
- * \brief Definition of the sbILocalDatabaseMediaItem interfaces
+ * \brief Test file
  */
 
-#include "nsISupports.idl"
-interface sbILocalDatabaseResourcePropertyBag;
+function runTest () {
+  runPerfTest("guidarray default view", perfTest);
+}
 
-/**
- * \interface sbILocalDatabaseMediaItem
- * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
- */
-[scriptable, uuid(8a477686-216c-4dfa-9515-282ff685d69f)]
-interface sbILocalDatabaseMediaItem : nsISupports
-{
-  readonly attribute unsigned long mediaItemId;
+function perfTest(library, timer) {
 
-  attribute sbILocalDatabaseResourcePropertyBag propertyBag;
+  Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
-  [notxpcom] void SetSuppressNotifications(in boolean aSuppress);
-};
+  var array = newGuidArray(library);
+  array.addSort(SBProperties.artistName, true);
+  array.addSort(SBProperties.albumName, true);
+  array.addSort(SBProperties.trackNumber, true);
+  array.addFilter(SBProperties.hidden, new StringArrayEnumerator(["0"]), false);
+  array.addFilter(SBProperties.isList, new StringArrayEnumerator(["0"]), false);
 
+  timer.start();
+
+  array.getGuidByIndex(0);
+  array.getGuidByIndex(array.length / 2);
+  array.getGuidByIndex(array.length - 1);
+
+  timer.stop();
+
+}
