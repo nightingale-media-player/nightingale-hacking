@@ -1,0 +1,251 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Sync widget.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-sync">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <!-- Position controls in center and let them -->
+      <!-- grow but don't extend boundary to edges. -->
+      <xul:hbox flex="1">
+
+        <!-- Spacer to position controls in center. -->
+        <xul:spacer flex="1"/>
+
+        <!-- Position controls at top. -->
+        <xul:vbox flex="1">
+
+          <!-- Content management panel header and buttons. -->
+          <xul:hbox class="content-management-header-box" align="baseline">
+  
+            <!-- Header label and info. -->
+            <xul:label class="content-management-header-label"
+                       value="&device.sync.header.label;"/>
+            <xul:label sbid="content_management_header_info_label"
+                       class="content-management-header-info"/>
+  
+            <!-- Spacer to position buttons to the right. -->
+            <xul:spacer flex="1"/>
+  
+            <!-- Cancel and save buttons. -->
+            <xul:button sbid="cancel_button"
+                        label="&window.cancel;"
+                        action="cancel"
+                        oncommand="DeviceSyncWidget.onAction(event);"/>
+            <xul:button sbid="save_button"
+                        label="&window.save;"
+                        action="save"
+                        oncommand="DeviceSyncWidget.onAction(event);"/>
+  
+          </xul:hbox>
+
+          <!-- Management preferences groupbox. -->
+          <xul:groupbox>
+
+            <!-- Management preferences. -->
+            <xul:vbox class="content-controls"
+                      oncommand="DeviceSyncWidget.onRadioChange();">
+
+              <!-- Content management radio group. -->
+              <xul:radiogroup sbid="content_management_radio_group" flex="1">
+
+                <xul:radio sbid="content_auto_sync_radio"
+                           label="&device.sync.auto_sync.label;"/>
+                <xul:radiogroup sbid="content_auto_sync_type_radio_group">
+                  <xul:radio sbid="content_auto_sync_all_radio"
+                             label="&device.sync.sync_all.label;"/>
+                  <xul:radio
+                          sbid="content_auto_sync_selected_radio"
+                          label="&device.sync.sync_selected.label;"/>
+                  <xul:listbox sbid="content_auto_sync_playist_listbox"
+                               class="indent"
+                               rows="5"
+                               onselect="DeviceSyncWidget.musicPrefsUpdateButtons();"/>
+                </xul:radiogroup>
+                <xul:radio sbid="content_manual_radio"
+                           label="&device.sync.manual.label;"/>
+
+              </xul:radiogroup>
+              
+            </xul:vbox>
+
+          </xul:groupbox>
+
+          <!-- Spacer to position elements at top. -->
+          <xul:spacer flex="1"/>
+
+        </xul:vbox>
+
+        <!-- Spacer to position controls in center. -->
+        <xul:spacer flex="1"/>
+
+      </xul:hbox>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Widget fields.
+       *
+       *   deviceID                Bound device identifier.
+       -->
+
+      <field name="deviceID"/>
+
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+      {
+        /* Import external services. */
+        this.importExternalServices();
+
+        /* Bind to the device. */
+        this.bind();
+      }
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+      {
+        /* Finalize the iPod music management services. */
+        DeviceSyncWidget.finalize(this);
+      }
+      ]]></destructor>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal music management panel services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+      {
+        /* Import the device sync services. */
+        if (typeof(DeviceSyncWidget) == "undefined") {
+          var jsLoader;
+  
+          /* Get the Javascript sub-script loader services. */
+          jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                               .getService
+                                  (Components.interfaces.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+                  ("chrome://songbird/content/scripts/device/deviceSync.js",
+                   null);
+        }
+        
+      }
+      ]]></body></method>
+
+
+      <!--
+       * bind
+       *
+       *   This function binds the device status widget to a specific device.
+       -->
+
+      <method name="bind"><body><![CDATA[
+      {
+        var deviceID;
+
+        /* Get the device ID.  Do nothing if device has not changed. */
+        deviceID = this.getAttribute("device-id");
+        if ((deviceID == this.deviceID) || (!deviceID))
+            return;
+        this.deviceID = deviceID;
+
+        /* Re-initialize the device music management services. */
+        DeviceSyncWidget.finalize(this);
+        DeviceSyncWidget.initialize(this);
+      }
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="DOMAttrModified" action="this.bind();"/>
+    </handlers>
+
+  </binding>
+
+</bindings>

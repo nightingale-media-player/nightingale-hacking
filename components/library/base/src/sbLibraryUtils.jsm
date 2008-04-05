@@ -483,3 +483,64 @@ LibraryUtils.RemovalMonitor.prototype = {
   }
 }
 
+/**
+ * \class LibraryUtils.MediaListEnumeratorToArray
+ * \brief Enumerates items in a media list and stores them in an array.
+ */
+LibraryUtils.MediaListEnumeratorToArray = function() {
+}
+
+LibraryUtils.MediaListEnumeratorToArray.prototype = {
+  //
+  // Media list enumeration array listener fields.
+  //
+  //   array                    Enumeration array.
+  //
+
+  array: null,
+
+
+  /**
+   * \brief Called when enumeration is about to begin.
+   *
+   * \param aMediaList - The media list that is being enumerated.
+   *
+   * \return true to begin enumeration, false to cancel.
+   */
+
+  onEnumerationBegin: function DSW_MLEAL_onEnumerationBegin(aMediaList) {
+    // Initialize the enumeration array.
+    this.array = [];
+    return Ci.sbIMediaListEnumerationListener.CONTINUE;
+  },
+
+
+  /**
+   * \brief Called once for each item in the enumeration.
+   *
+   * \param aMediaList - The media list that is being enumerated.
+   * \param aMediaItem - The media item.
+   *
+   * \return true to continue enumeration, false to cancel.
+   */
+
+  onEnumeratedItem: function DSW_MLEAL_onEnumeratedItem(aMediaList,
+                                                        aMediaItem) {
+    // Add the item to the enumeration array.
+    this.array.push(aMediaItem);
+    return Ci.sbIMediaListEnumerationListener.CONTINUE;
+  },
+
+
+  /**
+   * \brief Called when enumeration has completed.
+   *
+   * \param aMediaList - The media list that is being enumerated.
+   * \param aStatusCode - A code to determine if the enumeration was successful.
+   */
+
+  onEnumerationEnd: function DSW_MLEAL_onEnumerationEnd(aMediaList,
+                                                        aStatusCode) {
+  }
+}
+

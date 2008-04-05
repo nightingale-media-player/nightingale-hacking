@@ -468,3 +468,6 @@ sb-device-progress {
     -moz-binding: url("chrome://songbird/content/bindings/device/deviceProgress.xml#sb-device-progress");
 }
 
+sb-device-sync {
+    -moz-binding: url("chrome://songbird/content/bindings/device/deviceSync.xml#sb-device-sync");
+}

@@ -8,6 +8,7 @@
 <!ENTITY window.apply       "Apply" >
 <!ENTITY window.cancel      "Cancel" >
 <!ENTITY window.browse      "Browse..." >
+<!ENTITY window.save        "Save">
 
 <!-- Mac system menu -->
 <!ENTITY menu.mac.exit                  "Quit &brandShortName;" >
@@ -426,4 +427,10 @@
 
 <!ENTITY device.unsupported_media.dialog.title  "Incompatible Files Detected">
 <!ENTITY device.unsupported_media.dialog.enable "Tell me when incompatible files are detected">
+
+<!ENTITY device.sync.header.label "Sync Settings">
+<!ENTITY device.sync.auto_sync.label "Sync">
+<!ENTITY device.sync.sync_all.label "All music, video and playlists">
+<!ENTITY device.sync.sync_selected.label "Selected playlists:">
+<!ENTITY device.sync.manual.label "Manually manage">
 
