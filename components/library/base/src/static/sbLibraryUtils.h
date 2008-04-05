@@ -30,6 +30,9 @@
 #include <nsCOMPtr.h>
 #include <pratom.h>
 
+class sbIMediaItem;
+class sbILibrary;
+
 class sbLibraryBatchHelper
 {
 public:
@@ -68,6 +71,21 @@ public:
 
 private:
   PRInt32 mDepth;
+};
+
+class sbLibraryUtils
+{
+  /**
+   * Given an item and a library, attempt to locate a matching item in the
+   * library.  Returns null (and success) if not found.
+   *
+   * \param aItem    The item to find; not necessarily owned by aLibrary
+   * \param aLibrary The library to look in
+   * \return         The found item, or null
+   */
+  static nsresult GetItemInLibrary(/* in */  sbIMediaItem * aItem,
+                                   /* in */  sbILibrary   * aLibrary,
+                                   /* out */ sbIMediaItem **_retval);
 };
 
 #endif // __SBLIBRARYUTILS_H__

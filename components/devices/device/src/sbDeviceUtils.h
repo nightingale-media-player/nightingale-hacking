@@ -29,12 +29,17 @@
 #define __SBDEVICEUTILS__H__
 
 #include <nscore.h>
+#include <nsCOMPtr.h>
+#include <nsIMutableArray.h>
 #include <nsStringGlue.h>
+
+#include <sbIMediaListListener.h>
 
 #include "sbBaseDevice.h"
 #include "sbDeviceStatus.h"
 
 class nsIFile;
+class nsIMutableArray;
 
 /**
  * Utilities to aid in implementing devices
@@ -56,11 +61,22 @@ public:
                                    nsIFile **_retval);
 
   /**
-   * Mark all items in a list / library as not available (sets
-   * the availability property to 0).
-   * \param aMediaList The list or library to process.
+   * Sets a property on all items that match a filter in a list / library.
+   * \param aMediaList      [in] The list or library to process.
+   * \param aPropertyId     [in] The id of the property to set.
+   * \param aPropertyValue  [in] The value of the property to set to.
+   * \param aPoprertyFilter [in] A set of properties to filter on.
+   *                             Pass in null to set on all items.
+   *
+   * For example, to set all items in a library as unavailable, call:
+   * sbDeviceUtils::BulkSetProperty(library,
+   *                                NS_LITERAL_STRING(SB_PROPERTY_AVAILABILITY),
+   *                                NS_LITERAL_STRING("0"));
    */
-  static nsresult MarkAllItemsUnavailable(/* in */ sbIMediaList *aMediaList);
+  static nsresult BulkSetProperty(sbIMediaList *aMediaList,
+                                  const nsAString& aPropertyId,
+                                  const nsAString& aPropertyValue,
+                                  sbIPropertyArray* aPropertyFilter = nsnull);
 
   /**
    * Delete all items that are marked not available (availability == 0)
@@ -72,6 +88,28 @@ public:
   static nsresult CreateStatusFromRequest(/* in */ const nsAString &aDeviceID,
                                           /* in */ sbBaseDevice::TransferRequest *aRequest, 
                                           /* out */ sbDeviceStatus **aStatus);
+
+  /**
+   * Stores the enumerated items in an nsIArray
+   * \see sbIMediaList::EnumerateAllItems
+   * \see sbIMediaList::EnumerateItemsByProperty
+   * \see sbIMediaList::EnumerateItemsByProperies
+   */
+  class SnapshotEnumerationListener : public sbIMediaListEnumerationListener
+  {
+  public:
+    NS_DECL_ISUPPORTS
+    NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+  
+    nsresult Init();
+    nsresult GetArray(nsIArray **aArray);
+  
+  protected:
+    virtual ~SnapshotEnumerationListener() {};
+    nsCOMPtr<nsIMutableArray> mArray;
+  };
 };
+
+
 
 #endif /* __SBDEVICEUTILS__H__ */

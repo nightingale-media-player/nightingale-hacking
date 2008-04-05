@@ -27,6 +27,10 @@ topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
+SUBDIRS = \
+  static \
+  $(NULL)
+
 include $(DEPTH)/build/autodefs.mk
 
 target := sbLibraryManager
@@ -42,6 +46,7 @@ CPP_SRCS = sbLibraryChangeset.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/library/base/public \
+               $(topsrcdir)/components/library/base/src/static/ \
                $(topsrcdir)/components/include \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/library/base/src \

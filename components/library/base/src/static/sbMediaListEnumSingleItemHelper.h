@@ -44,11 +44,14 @@ class sbMediaListEnumSingleItemHelper : public sbIMediaListEnumerationListener
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
 
 public:
-  sbMediaListEnumSingleItemHelper();
+  static sbMediaListEnumSingleItemHelper* New();
+
+public:
   already_AddRefed<sbIMediaItem> GetItem();
   already_AddRefed<sbIMediaList> GetList();
 
 private:
+  sbMediaListEnumSingleItemHelper();
   ~sbMediaListEnumSingleItemHelper();
 
 protected:

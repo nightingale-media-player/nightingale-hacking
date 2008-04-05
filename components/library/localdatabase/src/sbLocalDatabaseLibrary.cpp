@@ -3378,7 +3378,7 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
     NS_ENSURE_SUCCESS(rv, rv);
   
     nsRefPtr<sbMediaListEnumSingleItemHelper> guidCheckHelper =
-      new sbMediaListEnumSingleItemHelper();
+      sbMediaListEnumSingleItemHelper::New();
     NS_ENSURE_TRUE(guidCheckHelper, NS_ERROR_OUT_OF_MEMORY);
     
     rv = this->EnumerateItemsByProperties(originGuidArray,

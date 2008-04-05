@@ -33,6 +33,11 @@
 NS_IMPL_ISUPPORTS1(sbMediaListEnumSingleItemHelper,
                    sbIMediaListEnumerationListener)
 
+sbMediaListEnumSingleItemHelper* sbMediaListEnumSingleItemHelper::New()
+{
+  return new sbMediaListEnumSingleItemHelper();
+}
+
 sbMediaListEnumSingleItemHelper::sbMediaListEnumSingleItemHelper()
 {
   /* member initializers and constructor code */

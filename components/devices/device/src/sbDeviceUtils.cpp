@@ -104,11 +104,18 @@ nsresult sbDeviceUtils::GetOrganizedPath(/* in */ nsIFile *aParent,
 
 /**
  * \class Device Utilities: Media List enumeration listener that 
- *        marks all items in a library unavailable.
+ *        marks all items in a library with a property
  */
-class sbDeviceUtilsMarkUnavailableEnumerationListener : public sbIMediaListEnumerationListener
+class sbDeviceUtilsBulkSetPropertyEnumerationListener :
+  public sbIMediaListEnumerationListener
 {
 public:
+  sbDeviceUtilsBulkSetPropertyEnumerationListener(const nsAString& aId,
+                                                  const nsAString& aValue)
+  : mId(aId),
+    mValue(aValue)
+  {}
+
   NS_DECL_ISUPPORTS
 
   NS_IMETHODIMP OnEnumerationBegin(sbIMediaList *aMediaList, PRUint16 *_retval) {
@@ -121,8 +128,7 @@ public:
     NS_ENSURE_ARG_POINTER(aItem);
     NS_ENSURE_ARG_POINTER(_retval);
 
-    nsresult rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_AVAILABILITY), 
-                                     NS_LITERAL_STRING("0"));
+    nsresult rv = aItem->SetProperty(mId, mValue);
     NS_ENSURE_SUCCESS(rv, rv);
 
     *_retval = sbIMediaListEnumerationListener::CONTINUE;
@@ -135,77 +141,45 @@ public:
   }
 
 protected:
-  virtual ~sbDeviceUtilsMarkUnavailableEnumerationListener() {};
+  nsString mId;
+  nsString mValue;
+  virtual ~sbDeviceUtilsBulkSetPropertyEnumerationListener() {}
 };
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceUtilsMarkUnavailableEnumerationListener,
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceUtilsBulkSetPropertyEnumerationListener,
                               sbIMediaListEnumerationListener);
 
 /*static*/
-nsresult sbDeviceUtils::MarkAllItemsUnavailable(sbIMediaList *aMediaList)
+nsresult sbDeviceUtils::BulkSetProperty(sbIMediaList *aMediaList,
+                                        const nsAString& aPropertyId,
+                                        const nsAString& aPropertyValue,
+                                        sbIPropertyArray* aPropertyFilter)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
-  nsRefPtr<sbDeviceUtilsMarkUnavailableEnumerationListener> listener;
-  NS_NEWXPCOM(listener, sbDeviceUtilsMarkUnavailableEnumerationListener);
+  nsRefPtr<sbDeviceUtilsBulkSetPropertyEnumerationListener> listener =
+    new sbDeviceUtilsBulkSetPropertyEnumerationListener(aPropertyId,
+                                                        aPropertyValue);
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
 
-  return aMediaList->EnumerateAllItems(listener, sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  if (!aPropertyFilter) {
+    // set all items
+    return aMediaList->EnumerateAllItems(listener,
+                                         sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  }
+
+  // set some filtered set of items
+  return aMediaList->EnumerateItemsByProperties(aPropertyFilter,
+                                                listener,
+                                                sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
 }
-
-
-class sbDeviceUtilsDeleteUnavailableEnumerationListener : public sbIMediaListEnumerationListener
-{
-public:
-  NS_DECL_ISUPPORTS
-
-    NS_IMETHODIMP OnEnumerationBegin(sbIMediaList *aMediaList, PRUint16 *_retval) {
-      NS_ENSURE_ARG_POINTER(_retval);
-      *_retval = sbIMediaListEnumerationListener::CONTINUE;
-      return NS_OK;
-  }
-
-  NS_IMETHODIMP OnEnumeratedItem(sbIMediaList *aMediaList, sbIMediaItem *aItem, PRUint16 *_retval) {
-    NS_ENSURE_ARG_POINTER(aItem);
-    NS_ENSURE_ARG_POINTER(_retval);
-    
-    nsresult rv = mArray->AppendElement(aItem, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    *_retval = sbIMediaListEnumerationListener::CONTINUE;
-
-    return NS_OK;
-  }
-
-  NS_IMETHODIMP OnEnumerationEnd(sbIMediaList *aMediaList, nsresult aStatusCode) {
-    return NS_OK;
-  }
-
-  nsresult Init() {
-    nsresult rv;
-    mArray = do_CreateInstance("@mozilla.org/array;1", &rv);
-    return rv;
-  }
-
-  nsresult GetArray(nsIArray **aArray) {
-    NS_ENSURE_ARG_POINTER(aArray);
-    return CallQueryInterface(mArray, aArray);
-  }
-
-protected:
-  virtual ~sbDeviceUtilsDeleteUnavailableEnumerationListener() {};
-  nsCOMPtr<nsIMutableArray> mArray;
-};
-
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceUtilsDeleteUnavailableEnumerationListener,
-                              sbIMediaListEnumerationListener);
 
 /*static*/
 nsresult sbDeviceUtils::DeleteUnavailableItems(sbIMediaList *aMediaList)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
-  nsRefPtr<sbDeviceUtilsDeleteUnavailableEnumerationListener> listener;
-  NS_NEWXPCOM(listener, sbDeviceUtilsDeleteUnavailableEnumerationListener);
+  nsRefPtr<sbDeviceUtils::SnapshotEnumerationListener> listener =
+    new sbDeviceUtils::SnapshotEnumerationListener();
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = listener->Init();
@@ -294,3 +268,58 @@ nsresult sbDeviceUtils::CreateStatusFromRequest(/* in */ const nsAString &aDevic
 
   return NS_OK;
 }
+
+NS_IMETHODIMP sbDeviceUtils::SnapshotEnumerationListener
+                           ::OnEnumerationBegin(sbIMediaList *aMediaList,
+                                                PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = sbIMediaListEnumerationListener::CANCEL;
+  
+  // clear the list, so we can re-use the enumerator if appropriate
+  nsresult rv = mArray->Clear();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDeviceUtils::SnapshotEnumerationListener
+                           ::OnEnumeratedItem(sbIMediaList *aMediaList,
+                                              sbIMediaItem *aItem,
+                                              PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  
+  nsresult rv = mArray->AppendElement(aItem, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDeviceUtils::SnapshotEnumerationListener
+                           ::OnEnumerationEnd(sbIMediaList *aMediaList,
+                                              nsresult aStatusCode)
+{
+  NS_ENSURE_SUCCESS(aStatusCode, aStatusCode);
+  return NS_OK;
+}
+
+nsresult sbDeviceUtils::SnapshotEnumerationListener::Init()
+{
+  nsresult rv;
+  mArray = do_CreateInstance("@mozilla.org/array;1", &rv);
+  return rv;
+}
+
+nsresult sbDeviceUtils::SnapshotEnumerationListener::GetArray(nsIArray **aArray)
+{
+  NS_ENSURE_ARG_POINTER(aArray);
+  return CallQueryInterface(mArray, aArray);
+}
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceUtils::SnapshotEnumerationListener,
+                              sbIMediaListEnumerationListener);

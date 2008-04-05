@@ -135,16 +135,22 @@ interface sbIDevice : nsISupports
   const unsigned long REQUEST_FLAG_USER  = 0x80000000;
   const unsigned long REQUEST_FLAG_WRITE = 0x40000000;
 
+  /* note that request type 0 is reserved */
   const unsigned long REQUEST_RESERVED  = 0;
+  
+  /* read requests */
   const unsigned long REQUEST_MOUNT     = 1;
   const unsigned long REQUEST_READ      = 2;
   const unsigned long REQUEST_EJECT     = 3;
   const unsigned long REQUEST_SUSPEND   = 4;
 
+  /* write requests */
   const unsigned long REQUEST_WRITE         = REQUEST_FLAG_WRITE + 1;
   const unsigned long REQUEST_DELETE        = REQUEST_FLAG_WRITE + 2;
   const unsigned long REQUEST_SYNC          = REQUEST_FLAG_WRITE + 3;
+  /* delete all files on the device */
   const unsigned long REQUEST_WIPE          = REQUEST_FLAG_WRITE + 4;
+  /* move an item inside one playlist */
   const unsigned long REQUEST_MOVE          = REQUEST_FLAG_WRITE + 5;
   const unsigned long REQUEST_UPDATE        = REQUEST_FLAG_WRITE + 6;
   const unsigned long REQUEST_NEW_PLAYLIST  = REQUEST_FLAG_WRITE + 7;
