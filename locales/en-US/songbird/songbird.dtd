@@ -434,3 +434,6 @@
 <!ENTITY device.sync.sync_selected.label "Selected playlists:">
 <!ENTITY device.sync.manual.label "Manually manage">
 
+<!ENTITY device.management.tabs.music.label "Music">
+<!ENTITY device.management.tabs.tools.label "Tools">
+
