@@ -78,22 +78,30 @@ function runTest () {
   /* TODO: device.content */
   
   /* TODO: device.parameters */
-  
+ 
   with (Components.interfaces.sbIDevice) {
     device.setPreference("state", 0);
     assertEqual(device.state, STATE_IDLE);
     device.setPreference("state", 1);
-    assertEqual(device.state, STATE_DOWNLOADING);
+    assertEqual(device.state, STATE_SYNCING);
     device.setPreference("state", 2);
-    assertEqual(device.state, STATE_UPLOADING);
+    assertEqual(device.state, STATE_COPYING);
     device.setPreference("state", 3);
-    assertEqual(device.state, STATE_BUSY);
-    device.setPreference("state", 4);
     assertEqual(device.state, STATE_DELETING);
+    device.setPreference("state", 4);
+    assertEqual(device.state, STATE_UPDATING);
     device.setPreference("state", 5);
-    assertEqual(device.state, STATE_DOWNLOAD_PAUSED);
+    assertEqual(device.state, STATE_MOUNTING);
     device.setPreference("state", 6);
+    assertEqual(device.state, STATE_DOWNLOADING);
+    device.setPreference("state", 7);
+    assertEqual(device.state, STATE_UPLOADING);
+    device.setPreference("state", 8);
+    assertEqual(device.state, STATE_DOWNLOAD_PAUSED);
+    device.setPreference("state", 9);
     assertEqual(device.state, STATE_UPLOAD_PAUSED);
+    device.setPreference("state", 10);
+    assertEqual(device.state, STATE_DISCONNECTED);
   }
   
   /* test as a event target */
