@@ -513,6 +513,48 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
   return NS_OK;
 }
 
+/* readonly attribute boolean isBusy; */
+NS_IMETHODIMP sbBaseDevice::GetIsBusy(PRBool *aIsBusy)
+{
+  NS_ENSURE_ARG_POINTER(aIsBusy);
+  NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
+  nsAutoLock lock(mStateLock);
+  switch (mState) {
+    case STATE_IDLE:
+    case STATE_DOWNLOAD_PAUSED:
+    case STATE_UPLOAD_PAUSED:
+      *aIsBusy = PR_FALSE;
+    break;
+  
+    default:
+      *aIsBusy = PR_TRUE;
+    break;
+  }
+  return NS_OK;
+}
+
+/* readonly attribute boolean canDisconnect; */
+NS_IMETHODIMP sbBaseDevice::GetCanDisconnect(PRBool *aCanDisconnect)
+{
+  NS_ENSURE_ARG_POINTER(aCanDisconnect);
+  NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
+  nsAutoLock lock(mStateLock);
+  switch(mState) {
+    case STATE_IDLE:
+    case STATE_MOUNTING:
+    case STATE_DISCONNECTED:
+    case STATE_DOWNLOAD_PAUSED:
+    case STATE_UPLOAD_PAUSED:
+      *aCanDisconnect = PR_TRUE;
+    break;
+  
+    default:
+      *aCanDisconnect = PR_FALSE;
+    break;
+  }
+  return NS_OK;
+}
+
 /* readonly attribute unsigned long state; */
 NS_IMETHODIMP sbBaseDevice::GetState(PRUint32 *aState)
 {

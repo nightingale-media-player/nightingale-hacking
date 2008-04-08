@@ -162,6 +162,8 @@ public:
   virtual nsresult ProcessRequest() = 0;
 
   /* sbIDevice */
+  NS_IMETHOD GetIsBusy(PRBool *aIsBusy);
+  NS_IMETHOD GetCanDisconnect(PRBool *aCanDisconnect);
   NS_IMETHOD GetState(PRUint32 *aState);
 
   /**

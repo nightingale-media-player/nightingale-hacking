@@ -115,22 +115,44 @@ interface sbIDevice : nsISupports
    * The device's properties.
    */
   readonly attribute sbIDeviceProperties properties;
+  
   /**
-   * Whether the device is busy, etc.
+   * Whether the device is currently performing a busy operation, like copying
+   * or deleting. This is defined by the device as to what states determine the
+   * device is busy.
+   */
+  readonly attribute boolean isBusy;
+  
+  /**
+   * Whether it is safe to disconnect the device, generally this is when it
+   * is not performing a critical operation like copying a file to/from the
+   * device. This is also defined by the device as to what states determine the
+   * device can be disconnected. Usefull for when the user wants to shutdown
+   * the application.
+   */
+  readonly attribute boolean canDisconnect;
+  
+  /**
+   * Whether the device is busy, idle, syncing, mounting, etc.
    * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_*
    * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_*
    * @see STATE_*
    */
   readonly attribute unsigned long state;
 
-  const unsigned long STATE_IDLE            = 0;
-  const unsigned long STATE_DOWNLOADING     = 1;
-  const unsigned long STATE_UPLOADING       = 2;
-  const unsigned long STATE_BUSY            = 3;
-  const unsigned long STATE_DELETING        = 4;
-  const unsigned long STATE_DOWNLOAD_PAUSED = 5;
-  const unsigned long STATE_UPLOAD_PAUSED   = 6;
-  const unsigned long STATE_DISCONNECTED    = 9;
+  const unsigned long STATE_IDLE            = 0;  // Not doing anything
+  const unsigned long STATE_SYNCING         = 1;  // Performing a sync
+  // These are not related to syncing (used for manual mode)
+  const unsigned long STATE_COPYING         = 2;  // Copying a single file
+  const unsigned long STATE_DELETING        = 3;  // Deleting a single file
+  const unsigned long STATE_UPDATING        = 4;  // Updating a single file
+  const unsigned long STATE_MOUNTING        = 5;  // (un)Mounting the device
+  const unsigned long STATE_DOWNLOADING     = 6;
+  const unsigned long STATE_UPLOADING       = 7;
+  const unsigned long STATE_DOWNLOAD_PAUSED = 8;
+  const unsigned long STATE_UPLOAD_PAUSED   = 9;
+  const unsigned long STATE_DISCONNECTED    = 10; // Device is disconnected
+
 
   const unsigned long REQUEST_FLAG_USER  = 0x80000000;
   const unsigned long REQUEST_FLAG_WRITE = 0x40000000;
