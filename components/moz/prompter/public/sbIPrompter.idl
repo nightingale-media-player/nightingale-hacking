@@ -1,0 +1,72 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+#include "nsIPromptService.idl"
+
+/**
+ * \interface sbIPrompter
+ *
+ * The sbIPrompter interface provides an nsIPromptService to environments
+ * without a default window (e.g., XPCOM components).  This interface allows
+ * a parent window type to be set to be used as the parent window for all
+ * nsIPromptService methods.  In addition, the sbIPrompter interface can be set
+ * to wait for a parent window to be available before calling the
+ * nsIPromptService methods.
+ * If the parent window type is not available and wait for window is false,
+ * dialogs are opened with the currently active window as the parent.
+ *
+ * "@songbirdnest.com/Songbird/Prompter;1"
+ * Use create instance with this component.  The default parent window type
+ * is "Songbird:Main".  The default waitForWindow is false.
+ */
+
+[scriptable, uuid(5aa8de5b-48f8-4dd9-a967-63c674b621aa)]
+interface sbIPrompter : nsIPromptService
+{
+  /**
+   * The parent window type.
+   */
+  attribute AString parentWindowType;
+
+  /**
+   * If true, wait for a parent window of the configured type to be available
+   * before prompting.
+   */
+  attribute boolean waitForWindow;
+
+  /**
+   * Open a dialog window.
+   * \sa nsIDOMWindowInternal.openDialog
+   */
+  [noscript] nsIDOMWindow openDialog(in DOMString   aUrl,
+                                     in DOMString   aName,
+                                     in DOMString   aOptions,
+                                     in nsISupports aExtraArgument);
+};
+
