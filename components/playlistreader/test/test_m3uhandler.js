@@ -34,36 +34,6 @@ function runTest () {
 
   var tests;
   var platform = getPlatform();
-  if (platform == "Linux" || platform == "Darwin") {
-    tests = [
-      {
-        originalURI: null,
-        file: "maclin_parse.m3u",
-        result: "maclin_parsem3u_result.xml"
-      },
-      {
-        originalURI: "http://www.foo.com/",
-        file: "relative_remote.m3u",
-        result: "relative_remote_result.xml"
-      },
-      {
-        originalURI: "http://www.foo.com/mp3/",
-        file: "absolute_remote.m3u",
-        result: "absolute_remote_result.xml"
-      },
-      {
-        originalURI: "file:///home/steve/blah.m3u",
-        file: "maclin_relative_local.m3u",
-        result: "maclin_relative_local_result.xml"
-      },
-      {
-        originalURI: null,
-        file: "maclin_utf8.m3u",
-        result: "maclin_utf8_result.xml"
-      }
-    ];
-  }
-
   if (platform == "Windows_NT") {
     tests = [
       {
@@ -90,6 +60,34 @@ function runTest () {
         originalURI: null,
         file: "win_utf8.m3u",
         result: "win_utf8_result.xml"
+      }
+    ];
+  } else {
+    tests = [
+      {
+        originalURI: null,
+        file: "maclin_parse.m3u",
+        result: "maclin_parsem3u_result.xml"
+      },
+      {
+        originalURI: "http://www.foo.com/",
+        file: "relative_remote.m3u",
+        result: "relative_remote_result.xml"
+      },
+      {
+        originalURI: "http://www.foo.com/mp3/",
+        file: "absolute_remote.m3u",
+        result: "absolute_remote_result.xml"
+      },
+      {
+        originalURI: "file:///home/steve/blah.m3u",
+        file: "maclin_relative_local.m3u",
+        result: "maclin_relative_local_result.xml"
+      },
+      {
+        originalURI: null,
+        file: "maclin_utf8.m3u",
+        result: "maclin_utf8_result.xml"
       }
     ];
   }

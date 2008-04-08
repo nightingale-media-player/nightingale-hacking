@@ -1,1 +1,4 @@
-SB_DBENGINE { local: sqlite*; };
+SB_DBENGINE { 
+  global: NSGetModule;
+  local: *; 
+};

@@ -233,6 +233,7 @@ function sbDownloadDeviceHelper_getDefaultMusicFolder()
       break;
 
     case "Linux":
+    case "SunOS":
       musicDir = dirService.getFile("Home", {});
       musicDir.append("Music");
 

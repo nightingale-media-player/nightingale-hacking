@@ -72,16 +72,15 @@ function runTest () {
 
   // Test loadPlaylist, local file
   mediaList.clear();
-  if (platform == "Linux" || platform == "Darwin") {
-    var fileUri = getFileUri(getFile("maclin_parse.m3u"));
-    manager.loadPlaylist(fileUri, mediaList, null, false, null);
-    assertMediaList(mediaList, getFile("maclin_parsem3u_result.xml"));
-  }
   if (platform == "Windows_NT") {
     mediaList.clear();
     var fileUri = getFileUri(getFile("win_parse.m3u"));
     manager.loadPlaylist(fileUri, mediaList, null, false, null);
     assertMediaList(mediaList, getFile("win_parsem3u_result.xml"));
+  } else {
+    var fileUri = getFileUri(getFile("maclin_parse.m3u"));
+    manager.loadPlaylist(fileUri, mediaList, null, false, null);
+    assertMediaList(mediaList, getFile("maclin_parsem3u_result.xml"));
   }
 
   // Test loadPlaylist, remote file

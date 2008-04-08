@@ -46,6 +46,8 @@ catch (e) {
     platform = "Darwin";
   else if (user_agent.indexOf("Linux") != -1)
     platform = "Linux";
+  else if (user_agent.indexOf("SunOS") != -1)
+    platform = "SunOS";
 }
 
 var meta_key_str;

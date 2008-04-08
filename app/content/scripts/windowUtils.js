@@ -701,6 +701,7 @@ function moveElement(e, before) {
  * \retval Windows_NT Running under Windows.
  * \retval Darwin Running under Darwin/OS X.
  * \retval Linux Running under Linux.
+ * \retval SunOS Running under Solaris.
  */
 function getPlatformString()
 {
@@ -719,6 +720,8 @@ function getPlatformString()
       return "Darwin";
     else if (user_agent.indexOf("Linux") != -1)
       return "Linux";
+    else if (user_agent.indexOf("SunOS") != -1)
+      return "SunOS";
     return "";
   }
 }

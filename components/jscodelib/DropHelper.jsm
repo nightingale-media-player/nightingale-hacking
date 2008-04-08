@@ -1204,6 +1204,8 @@ var ExternalDropHandler = {
         return "Darwin";
       else if (user_agent.indexOf("Linux") != -1)
         return "Linux";
+      else if (user_agent.indexOf("SunOS") != -1)
+        return "SunOS";
       return "";
     }
   }

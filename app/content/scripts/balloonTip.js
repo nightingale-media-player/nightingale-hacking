@@ -130,9 +130,8 @@ BalloonTip.prototype = {
     // work after the window has been initialized)
     var raisedflag;
     switch (getPlatformString()) {
-      case "Linux":// raisedflag = ",popup"; break;
-      case "Windows_NT": raisedflag = ",alwaysRaised"; break;
-      default: raisedflag = ""; break;
+      case "Darwin": raisedflag = ""; break;
+      default: raisedflag = ",alwaysRaised"; break;
     }
     // Open the window (cloaked)
     this.tipWindow = window.openDialog("chrome://songbird/content/xul/balloonTip.xul", "_blank", "chrome,modal=no,titlebar=no,resizable=no"+raisedflag, this);

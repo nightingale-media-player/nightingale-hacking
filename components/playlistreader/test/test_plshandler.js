@@ -34,36 +34,6 @@ function runTest () {
 
   var tests;
   var platform = getPlatform();
-  if (platform == "Linux" || platform == "Darwin") {
-    tests = [
-      {
-        originalURI: null,
-        file: "maclin_parse.pls",
-        result: "maclin_parsepls_result.xml"
-      },
-      {
-        originalURI: "http://www.foo.com/",
-        file: "relative_remote.pls",
-        result: "relative_remote_result.xml"
-      },
-      {
-        originalURI: "http://www.foo.com/mp3",
-        file: "absolute_remote.pls",
-        result: "absolute_remote_result.xml"
-      },
-      {
-        originalURI: "file:///home/steve/blah.pls",
-        file: "maclin_relative_local.pls",
-        result: "maclin_relative_local_result.xml"
-      },
-      {
-        originalURI: null,
-        file: "maclin_utf8.pls",
-        result: "maclin_utf8_result.xml"
-      }
-    ];
-  }
-
   if (platform == "Windows_NT") {
     tests = [
       {
@@ -90,6 +60,34 @@ function runTest () {
         originalURI: null,
         file: "win_utf8.pls",
         result: "win_utf8_result.xml"
+      }
+    ];
+  } else {
+    tests = [
+      {
+        originalURI: null,
+        file: "maclin_parse.pls",
+        result: "maclin_parsepls_result.xml"
+      },
+      {
+        originalURI: "http://www.foo.com/",
+        file: "relative_remote.pls",
+        result: "relative_remote_result.xml"
+      },
+      {
+        originalURI: "http://www.foo.com/mp3",
+        file: "absolute_remote.pls",
+        result: "absolute_remote_result.xml"
+      },
+      {
+        originalURI: "file:///home/steve/blah.pls",
+        file: "maclin_relative_local.pls",
+        result: "maclin_relative_local_result.xml"
+      },
+      {
+        originalURI: null,
+        file: "maclin_utf8.pls",
+        result: "maclin_utf8_result.xml"
       }
     ];
   }
