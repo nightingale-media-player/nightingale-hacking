@@ -198,6 +198,7 @@ sbDeviceProperties::GetProperties(nsIPropertyBag2 * *aProperties)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_IF_ADDREF( *aProperties = mProperties );
+  return NS_OK;
 }
 
