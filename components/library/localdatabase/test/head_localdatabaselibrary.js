@@ -635,3 +635,28 @@ function getFile(fileName) {
   file.append(fileName);
   return file;
 }
+
+function execQuery(databaseGuid, sql) {
+
+  var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+              .createInstance(Ci.sbIDatabaseQuery);
+
+  dbq.setDatabaseGUID(databaseGuid);
+  dbq.setAsyncQuery(false);
+  dbq.addQuery(sql);
+  dbq.execute();
+
+  var result = dbq.getResultObject();
+  var rows = result.getRowCount();
+  var cols = result.getColumnCount();
+
+  var d = [];
+  for (var i = 0; i < rows; i++) {
+    var r = [];
+    for (var j = 0; j < cols; j++) {
+      r.push(result.getRowCell(i, j));
+    }
+    d.push(r);
+  }
+  return d;
+}

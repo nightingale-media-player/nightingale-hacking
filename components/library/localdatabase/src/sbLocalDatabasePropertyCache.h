@@ -181,15 +181,32 @@ public:
   ~sbLocalDatabaseResourcePropertyBag();
 
   nsresult Init();
-  nsresult PutValue(PRUint32 aPropertyID, const nsAString& aValue);
+  nsresult PutValue(PRUint32 aPropertyID,
+                    const nsAString& aValue,
+                    const nsAString& aSortable);
 
   nsresult EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, void *aClosure, PRUint32 *aDirtyCount);
   nsresult SetDirty(PRBool aDirty);
 
 private:
 
+  struct sbValuePair {
+    sbValuePair(const nsAString& aValue, const nsAString& aSortable) :
+      value(aValue),
+      sortable(aSortable)
+    {};
+
+    nsString value;
+    nsString sortable;
+  };
+
+  static PLDHashOperator PR_CALLBACK
+    PropertyBagKeysToArray(const PRUint32& aPropertyID,
+                           sbValuePair* aValuePair,
+                           void *aArg);
+
   sbLocalDatabasePropertyCache* mCache;
-  nsClassHashtableMT<nsUint32HashKey, nsString> mValueMap;
+  nsClassHashtableMT<nsUint32HashKey, sbValuePair> mValueMap;
 
   nsCOMPtr<sbIPropertyManager> mPropertyManager;
 

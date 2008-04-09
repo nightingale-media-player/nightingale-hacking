@@ -186,6 +186,9 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = mPropertiesSelect->AddColumn(kResourcePropertiesAlias, kObj);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mPropertiesSelect->AddColumn(kResourcePropertiesAlias, kObjSortable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = mPropertiesSelect->AddJoin(sbISQLBuilder::JOIN_INNER,
                                   kResourceProperties,
                                   kResourcePropertiesAlias,
@@ -587,10 +590,14 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
             rv = result->GetRowCell(row, 3, obj);
             NS_ENSURE_SUCCESS(rv, rv);
 
+            nsString objSortable;
+            rv = result->GetRowCell(row, 4, objSortable);
+            NS_ENSURE_SUCCESS(rv, rv);
+
             // XXXben FIX ME
             sbLocalDatabaseResourcePropertyBag* bagClassPtr =
               static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-            rv = bagClassPtr->PutValue(propertyID, obj);
+            rv = bagClassPtr->PutValue(propertyID, obj, objSortable);
 
             NS_ENSURE_SUCCESS(rv, rv);
           }
@@ -658,7 +665,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
                 // XXXben FIX ME
                 sbLocalDatabaseResourcePropertyBag* bagClassPtr =
                   static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-                rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value);
+                rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value, value);
 
                 NS_ENSURE_SUCCESS(rv, rv);
               }
@@ -713,10 +720,14 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
         rv = result->GetRowCell(row, 1, obj);
         NS_ENSURE_SUCCESS(rv, rv);
 
+        nsAutoString objSortable;
+        rv = result->GetRowCell(row, 2, objSortable);
+        NS_ENSURE_SUCCESS(rv, rv);
+
         // XXXben FIX ME
         sbLocalDatabaseResourcePropertyBag* bagClassPtr =
           static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-        rv = bagClassPtr->PutValue(propertyID, obj);
+        rv = bagClassPtr->PutValue(propertyID, obj, objSortable);
         NS_ENSURE_SUCCESS(rv, rv);
       }
 
@@ -749,7 +760,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
           // XXXben FIX ME
           sbLocalDatabaseResourcePropertyBag* bagClassPtr =
             static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-          rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value);
+          rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value, value);
 
           NS_ENSURE_SUCCESS(rv, rv);
         }
@@ -859,6 +870,30 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
   }
 
   return rv;
+}
+
+NS_IMETHODIMP
+sbLocalDatabasePropertyCache::AreCached(const PRUnichar **aGUIDArray,
+                                        PRUint32 aGUIDArrayCount,
+                                        PRBool* _retval)
+{
+  TRACE(("sbLocalDatabasePropertyCache[0x%.8x] - AreCached(%d)", this,
+         aGUIDArrayCount));
+  NS_ENSURE_ARG_POINTER(aGUIDArray);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
+
+  for (PRUint32 i = 0; i < aGUIDArrayCount; i++) {
+    nsDependentString guid(aGUIDArray[i]);
+    if (!mCache.Get(guid, nsnull)) {
+      *_retval = PR_FALSE;
+      return NS_OK;
+    }
+  }
+
+  *_retval = PR_TRUE;
+  return NS_OK;
 }
 
 PR_STATIC_CALLBACK(PLDHashOperator)
@@ -997,13 +1032,8 @@ sbLocalDatabasePropertyCache::Write()
               NS_ENSURE_SUCCESS(rv, rv);
             }
             else {
-              nsCOMPtr<sbIPropertyInfo> propertyInfo;
-              rv = mPropertyManager->GetPropertyInfo(propertyID,
-                                                     getter_AddRefs(propertyInfo));
-              NS_ENSURE_SUCCESS(rv, rv);
-
               nsString sortable;
-              rv = propertyInfo->MakeSortable(value, sortable);
+              rv = bagLocal->GetSortablePropertyByID(dirtyProps[j], sortable);
               NS_ENSURE_SUCCESS(rv, rv);
 
               rv = query->AddQuery(mPropertiesInsertOrReplace);
@@ -1429,10 +1459,10 @@ sbLocalDatabaseResourcePropertyBag::Init()
   return NS_OK;
 }
 
-PR_STATIC_CALLBACK(PLDHashOperator)
-PropertyBagKeysToArray(const PRUint32& aPropertyID,
-                       nsString* aValue,
-                       void *aArg)
+/* static */ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseResourcePropertyBag::PropertyBagKeysToArray(const PRUint32& aPropertyID,
+                                                           sbValuePair* aValuePair,
+                                                           void *aArg)
 {
   nsTArray<PRUint32>* propertyIDs = static_cast<nsTArray<PRUint32>*>(aArg);
   if (propertyIDs->AppendElement(aPropertyID)) {
@@ -1508,10 +1538,29 @@ sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyDBID,
 {
   if(aPropertyDBID > 0) {
     nsAutoLock lock(mDirtyLock);
-    nsString* value;
+    sbValuePair* pair;
 
-    if (mValueMap.Get(aPropertyDBID, &value)) {
-      _retval = *value;
+    if (mValueMap.Get(aPropertyDBID, &pair)) {
+      _retval = pair->value;
+      return NS_OK;
+    }
+  }
+
+  // The value hasn't been set, so return a void string.
+  _retval.SetIsVoid(PR_TRUE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseResourcePropertyBag::GetSortablePropertyByID(PRUint32 aPropertyDBID,
+                                                            nsAString& _retval)
+{
+  if(aPropertyDBID > 0) {
+    nsAutoLock lock(mDirtyLock);
+    sbValuePair* pair;
+
+    if (mValueMap.Get(aPropertyDBID, &pair)) {
+      _retval = pair->sortable;
       return NS_OK;
     }
   }
@@ -1525,10 +1574,15 @@ NS_IMETHODIMP
 sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
                                                 const nsAString & aValue)
 {
-  nsCOMPtr<sbIPropertyInfo> propertyInfo;
-  PRUint32 propertyDBID = mCache->GetPropertyDBIDInternal(aPropertyID);
-
   nsresult rv;
+
+  PRUint32 propertyDBID = mCache->GetPropertyDBIDInternal(aPropertyID);
+  if(propertyDBID == 0) {
+    rv = mCache->InsertPropertyIDInLibrary(aPropertyID, &propertyDBID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbIPropertyInfo> propertyInfo;
   rv = mPropertyManager->GetPropertyInfo(aPropertyID,
                                          getter_AddRefs(propertyInfo));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1539,44 +1593,33 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 
 #if defined(PR_LOGGING)
   if(NS_UNLIKELY(!valid)) {
-    LOG(("Failed to set property %s with value %s",
-      NS_ConvertUTF16toUTF8(aPropertyID).get(),
-      NS_ConvertUTF16toUTF8(aValue).get()));
+    LOG(("Failed to set property id %s with value %s",
+         NS_ConvertUTF16toUTF8(aPropertyID).get(),
+         NS_ConvertUTF16toUTF8(aValue).get()));
   }
 #endif
 
   NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
 
-  if(propertyDBID == 0) {
-    rv = mCache->InsertPropertyIDInLibrary(aPropertyID, &propertyDBID);
-    NS_ENSURE_SUCCESS(rv, rv);
+  nsString sortable;
+  rv = propertyInfo->MakeSortable(aValue, sortable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = PutValue(propertyDBID, aValue, sortable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mCache->AddDirtyGUID(mGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PR_Lock(mDirtyLock);
+  mDirty.PutEntry(propertyDBID);
+  PR_Unlock(mDirtyLock);
+
+  if(++mWritePendingCount > SB_LOCALDATABASE_MAX_PENDING_CHANGES) {
+    rv = Write();
   }
 
-  return SetPropertyByDBID(propertyDBID, aValue);
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseResourcePropertyBag::SetPropertyByDBID(PRUint32 aPropertyDBID,
-                                                      const nsAString & aValue)
-{
-  nsresult rv = NS_ERROR_INVALID_ARG;
-  if(aPropertyDBID > 0) {
-    rv = PutValue(aPropertyDBID, aValue);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mCache->AddDirtyGUID(mGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PR_Lock(mDirtyLock);
-    mDirty.PutEntry(aPropertyDBID);
-    PR_Unlock(mDirtyLock);
-
-    if(++mWritePendingCount > SB_LOCALDATABASE_MAX_PENDING_CHANGES) {
-      rv = Write();
-    }
-  }
-
-  return rv;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
@@ -1595,12 +1638,13 @@ NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
 
 nsresult
 sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
-                                             const nsAString& aValue)
+                                             const nsAString& aValue,
+                                             const nsAString& aSortable)
 {
-  nsAutoPtr<nsString> value(new nsString(aValue));
-  PRBool success = mValueMap.Put(aPropertyID, value);
+  nsAutoPtr<sbValuePair> pair(new sbValuePair(aValue, aSortable));
+  PRBool success = mValueMap.Put(aPropertyID, pair);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  value.forget();
+  pair.forget();
 
   return NS_OK;
 }

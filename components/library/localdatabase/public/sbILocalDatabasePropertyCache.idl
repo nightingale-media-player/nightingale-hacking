@@ -39,7 +39,7 @@ interface nsIURI;
  * \interface sbILocalDatabasePropertyCache
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(c6ce50ff-38a5-49b8-987e-9597ce679ca1)]
+[scriptable, uuid(979d79c6-5c72-46c4-a4e0-8d51fef3184c)]
 interface sbILocalDatabasePropertyCache : nsISupports
 {
   readonly attribute boolean writePending;
@@ -60,6 +60,9 @@ interface sbILocalDatabasePropertyCache : nsISupports
   void cacheProperties([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray,
                      in unsigned long aGUIDArrayCount);
 
+  boolean areCached([array, size_is(aGUIDArrayCount)] in wstring aGUIDArray,
+                    in unsigned long aGUIDArrayCount);
+
   void write();
 
   unsigned long getPropertyDBID(in AString aPropertyID);
@@ -69,7 +72,7 @@ interface sbILocalDatabasePropertyCache : nsISupports
  * \interface sbILocalDatabaseResourcePropertyBag
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(84cb5676-58da-46c3-8359-d4e11420f531)]
+[scriptable, uuid(d0b38c70-434e-4498-a7ad-41d3ebb8625a)]
 interface sbILocalDatabaseResourcePropertyBag : nsISupports
 {
   readonly attribute AString guid;
@@ -95,8 +98,9 @@ interface sbILocalDatabaseResourcePropertyBag : nsISupports
    */
   AString getPropertyByID(in unsigned long aPropertyDBID);
 
+  AString getSortablePropertyByID(in unsigned long aPropertyDBID);
+
   void setProperty(in AString aPropertyID, in AString aValue);
-  void setPropertyByDBID(in unsigned long aPropertyDBID, in AString aValue);
 
   void write();
 };

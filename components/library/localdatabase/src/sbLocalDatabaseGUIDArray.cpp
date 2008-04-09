@@ -37,6 +37,7 @@
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
 #include <nsIWeakReference.h>
+#include <nsMemory.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
 #include <prprf.h>
@@ -46,11 +47,13 @@
 #include <sbILibrary.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
+#include <sbILocalDatabasePropertyCache.h>
 #include <sbISQLBuilder.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
+#include <sbMemoryUtils.h>
 
 #define DEFAULT_FETCH_SIZE 20
 
@@ -274,8 +277,13 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
   SortSpec* ss = mSorts.AppendElement();
   NS_ENSURE_TRUE(ss, NS_ERROR_OUT_OF_MEMORY);
 
-  ss->property  = aProperty;
-  ss->ascending = aAscending;
+  ss->property   = aProperty;
+  ss->ascending  = aAscending;
+
+  if (mPropertyCache) {
+    nsresult rv = mPropertyCache->GetPropertyDBID(aProperty, &ss->propertyId);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return Invalidate();
 }
@@ -1371,6 +1379,57 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   return NS_OK;
 }
 
+/* static */ int
+sbLocalDatabaseGUIDArray::SortBags(const void* a, const void* b, void* closure)
+{
+  sbILocalDatabaseResourcePropertyBag* bagA =
+    *static_cast<sbILocalDatabaseResourcePropertyBag* const *>(a);
+
+  sbILocalDatabaseResourcePropertyBag* bagB =
+    *static_cast<sbILocalDatabaseResourcePropertyBag* const *>(b);
+
+  nsTArray<SortSpec>* sorts = static_cast<nsTArray<SortSpec>*>(closure);
+  NS_ASSERTION(sorts->Length() > 1, "Multisorting with single sort!");
+
+  nsresult rv;
+  for (PRUint32 i = 1; i < sorts->Length(); i++) {
+    PRUint32 propertyId = sorts->ElementAt(i).propertyId;
+    PRBool ascending = sorts->ElementAt(i).ascending;
+
+    nsString valueA;
+    rv = bagA->GetSortablePropertyByID(propertyId, valueA);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString valueB;
+    rv = bagB->GetSortablePropertyByID(propertyId, valueB);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (valueA == valueB) {
+      continue;
+    }
+
+    if (ascending) {
+      return valueA > valueB ? 1 : -1;
+    }
+    else {
+      return valueA < valueB ? 1 : -1;
+    }
+
+  }
+
+  // If we reach here, the two bags are equal.  Use the mediaItemId of the bags
+  // to break the tie
+  PRUint32 mediaItemIdA;
+  rv = bagA->GetMediaItemId(&mediaItemIdA);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 mediaItemIdB;
+  rv = bagB->GetMediaItemId(&mediaItemIdB);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return mediaItemIdA > mediaItemIdB ? 1 : -1;
+}
+
 nsresult
 sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
                                    PRUint32 aEndIndex,
@@ -1400,6 +1459,77 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
     return NS_OK;
   }
 
+  PRUint32 rangeLength = aEndIndex - aStartIndex + 1;
+
+  // We can sort these rows in memory in the case where the entire group of
+  // rows lies within the fetched chunk, meaning for a distinct primary sort
+  // value, the rows with this value is not the first or last row in the
+  // chunk.  It also is not the only value in the chunk.
+  if (!aIsFirst && !aIsLast && !aIsOnly && mPropertyCache) {
+
+    nsTArray<const PRUnichar*> guids(rangeLength);
+    for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
+      const PRUnichar** appended =
+        guids.AppendElement(mCache[i]->guid.get());
+      NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+    }
+
+    // Grab the propety bags of all the items that are in the range that
+    // we're sorting
+    PRUint32 bagsCount = 0;
+    sbILocalDatabaseResourcePropertyBag** bags = nsnull;
+    rv = mPropertyCache->GetProperties(guids.Elements(),
+                                       rangeLength,
+                                       &bagsCount,
+                                       &bags);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbAutoFreeXPCOMPointerArray<sbILocalDatabaseResourcePropertyBag> freeBags(bagsCount,
+                                                                              bags);
+
+    // Do the sort
+    NS_QuickSort(bags,
+                 bagsCount,
+                 sizeof(sbILocalDatabaseResourcePropertyBag*),
+                 SortBags,
+                 &mSorts);
+
+    // Update mCache with the results of the sort.  Create a copy of all the
+    // items that we are going to reorder, then update the cache in the order
+    // of the sorted bags
+    nsClassHashtable<nsStringHashKey, ArrayItem> lookup;
+    PRBool success = lookup.Init(bagsCount);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
+      ArrayItem* item = mCache[i];
+      nsAutoPtr<ArrayItem> copy(new ArrayItem(*item));
+      NS_ENSURE_TRUE(copy, NS_ERROR_OUT_OF_MEMORY);
+      success = lookup.Put(copy->guid, copy);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+      copy.forget();
+    }
+
+    for (PRUint32 i = 0; i < bagsCount; i++) {
+      nsString guid;
+      rv = bags[i]->GetGuid(guid);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      ArrayItem* item;
+      PRBool found = lookup.Get(guid, &item);
+      NS_ENSURE_TRUE(found, NS_ERROR_UNEXPECTED);
+      nsAutoPtr<ArrayItem> copy(new ArrayItem(*item));
+      NS_ENSURE_TRUE(copy, NS_ERROR_OUT_OF_MEMORY);
+      nsAutoPtr<ArrayItem>* replaced =
+        mCache.ReplaceElementsAt(i + aStartIndex,
+                                 1,
+                                 copy.get());
+      NS_ENSURE_TRUE(replaced, NS_ERROR_OUT_OF_MEMORY);
+      copy.forget();
+    }
+
+    return NS_OK;
+  }
+
   nsCOMPtr<sbIDatabaseQuery> query;
   if(aIsNull) {
     rv = MakeQuery(mNullResortQuery, getter_AddRefs(query));
@@ -1424,8 +1554,6 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 rangeLength = aEndIndex - aStartIndex + 1;
 
   /*
    * Make sure we get at least the number of rows back from the query that

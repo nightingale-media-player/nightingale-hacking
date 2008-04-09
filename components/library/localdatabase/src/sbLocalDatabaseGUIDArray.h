@@ -65,12 +65,23 @@ public:
 
   struct SortSpec {
     nsString property;
+    PRUint32 propertyId;
     PRBool ascending;
   };
 
 private:
 
   struct ArrayItem {
+    ArrayItem(const ArrayItem& aOther) :
+      mediaItemId(aOther.mediaItemId),
+      guid(aOther.guid),
+      sortPropertyValue(aOther.sortPropertyValue),
+      ordinal(aOther.ordinal),
+      rowid(aOther.rowid)
+    {
+      MOZ_COUNT_CTOR(ArrayItem);
+    }
+
     ArrayItem(PRUint32 aMediaItemId,
               const nsAString& aGuid,
               const nsAString& aValue,
@@ -82,6 +93,7 @@ private:
       ordinal(aOrdinal),
       rowid(aRowid)
     {
+      MOZ_COUNT_CTOR(ArrayItem);
     };
 
     ArrayItem(PRUint32 aMediaItemId,
@@ -95,7 +107,13 @@ private:
       ordinal(aOrdinal),
       rowid(aRowid)
     {
+      MOZ_COUNT_CTOR(ArrayItem);
     };
+
+    ~ArrayItem()
+    {
+      MOZ_COUNT_DTOR(ArrayItem);
+    }
 
     PRUint32 mediaItemId;
     nsString guid;
@@ -139,6 +157,8 @@ private:
   nsresult GetByIndexInternal(PRUint32 aIndex, ArrayItem** _retval);
 
   PRInt32 GetPropertyId(const nsAString& aProperty);
+
+  static int SortBags(const void* a, const void* b, void* closure);
 
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
