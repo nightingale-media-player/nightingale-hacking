@@ -1461,6 +1461,9 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
 
   PRUint32 rangeLength = aEndIndex - aStartIndex + 1;
 
+  // XXX Disable memory sorting since it appears to slow things down with the
+  // index fix from bug 8612
+#if 0
   // We can sort these rows in memory in the case where the entire group of
   // rows lies within the fetched chunk, meaning for a distinct primary sort
   // value, the rows with this value is not the first or last row in the
@@ -1529,6 +1532,7 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
 
     return NS_OK;
   }
+#endif
 
   nsCOMPtr<sbIDatabaseQuery> query;
   if(aIsNull) {
