@@ -27,12 +27,16 @@
 
 #include "sbMockDevice.h"
 
-#include <nsCOMPtr.h>
-#include <nsComponentManagerUtils.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIVariant.h>
+#include <nsIWritablePropertyBag2.h>
+
+#include <nsCOMPtr.h>
+#include <nsComponentManagerUtils.h>
+#include <nsISupportsUtils.h>
 #include <nsServiceManagerUtils.h>
+#include <nsXPCOMCIDInternal.h>
 
 /* for an actual device, you would probably want to actually sort the prefs on
  * the device itself (and not the mozilla prefs system).  And even if you do end
@@ -42,9 +46,14 @@
 #define DEVICE_PREF_BRANCH \
   "songbird.devices.mock.00000000-0000-0000-c000-000000000046."
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbMockDevice,
-                              sbIDevice,
-                              sbIDeviceEventTarget)
+NS_IMPL_THREADSAFE_ADDREF(sbMockDevice)
+NS_IMPL_THREADSAFE_RELEASE(sbMockDevice)
+NS_INTERFACE_MAP_BEGIN(sbMockDevice)
+  NS_INTERFACE_MAP_ENTRY(sbIMockDevice)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbIDevice, sbBaseDevice)
+  NS_INTERFACE_MAP_ENTRY(sbIDeviceEventTarget)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIDeviceEventTarget)
+NS_INTERFACE_MAP_END
 
 sbMockDevice::sbMockDevice()
  : mIsConnected(PR_FALSE)
@@ -296,24 +305,32 @@ NS_IMETHODIMP sbMockDevice::GetProperties(sbIDeviceProperties * *theProperties)
 
 NS_IMETHODIMP sbMockDevice::SubmitRequest(PRUint32 aRequest, nsIPropertyBag2 *aRequestParameters)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;  
+  nsRefPtr<TransferRequest> transferRequest;
+  nsresult rv = CreateTransferRequest(aRequest,
+                                      aRequestParameters,
+                                      getter_AddRefs(transferRequest));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return PushRequest(transferRequest);
 }
 
 nsresult sbMockDevice::ProcessRequest()
 {
-  nsRefPtr<TransferRequest> request;
-  nsresult rv = PopRequest(getter_AddRefs(request));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  if (!request)
-    return NS_OK;
-  
-  // XXX mook todo :)
+  /* don't process, let the js deal with it */
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbMockDevice::CancelRequests()
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsID* id;
+  nsresult rv = GetId(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  char idString[NSID_LENGTH];
+  id->ToProvidedString(idString);
+  NS_Free(id);
+  
+  return ClearRequests(NS_ConvertASCIItoUTF16(idString));
 }
 
 NS_IMETHODIMP sbMockDevice::Eject()
@@ -321,3 +338,68 @@ NS_IMETHODIMP sbMockDevice::Eject()
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+NS_IMETHODIMP sbMockDevice::GetState(PRUint32 *aState)
+{
+  return sbBaseDevice::GetState(aState);
+}
+/****************************** sbIMockDevice ******************************/
+
+#define SET_PROP(type, name) \
+  rv = bag->SetPropertyAs ## type(NS_LITERAL_STRING(#name), request->name); \
+  NS_ENSURE_SUCCESS(rv, rv);
+
+/* nsIPropertyBag2 PopRequest (); */
+NS_IMETHODIMP sbMockDevice::PopRequest(nsIPropertyBag2 **_retval)
+{
+  // while it's easier to reuse PeekRequest, that sort of defeats the purpose
+  // of testing.
+  NS_ENSURE_ARG_POINTER(_retval);
+  
+  nsRefPtr<TransferRequest> request;
+  nsresult rv = sbBaseDevice::PopRequest(getter_AddRefs(request));
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(request, NS_ERROR_FAILURE);
+  
+  nsCOMPtr<nsIWritablePropertyBag2> bag =
+    do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  SET_PROP(Interface, item);
+  SET_PROP(Interface, list);
+  SET_PROP(Interface, data);
+  SET_PROP(Uint32, index);
+  SET_PROP(Uint32, otherIndex);
+  SET_PROP(Uint32, batchCount);
+  SET_PROP(Uint32, batchIndex);
+  SET_PROP(Uint32, itemTransferID);
+  SET_PROP(Int32, priority);
+  
+  return CallQueryInterface(bag, _retval);
+}
+
+/* nsIPropertyBag2 PeekRequest (); */
+NS_IMETHODIMP sbMockDevice::PeekRequest(nsIPropertyBag2 **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  
+  nsRefPtr<TransferRequest> request;
+  nsresult rv = sbBaseDevice::PeekRequest(getter_AddRefs(request));
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(request, NS_ERROR_FAILURE);
+  
+  nsCOMPtr<nsIWritablePropertyBag2> bag =
+    do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  SET_PROP(Interface, item);
+  SET_PROP(Interface, list);
+  SET_PROP(Interface, data);
+  SET_PROP(Uint32, index);
+  SET_PROP(Uint32, otherIndex);
+  SET_PROP(Uint32, batchCount);
+  SET_PROP(Uint32, batchIndex);
+  SET_PROP(Uint32, itemTransferID);
+  SET_PROP(Int32, priority);
+  
+  return CallQueryInterface(bag, _retval);
+}

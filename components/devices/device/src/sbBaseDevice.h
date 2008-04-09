@@ -28,13 +28,15 @@
 #ifndef __SBBASEDEVICE__H__
 #define __SBBASEDEVICE__H__
 
+#include <deque>
+#include <map>
+
 #include "sbIDevice.h"
 #include "sbBaseDeviceEventTarget.h"
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
-#include <nsDeque.h>
 #include <nsISupportsImpl.h>
 #include <prlock.h>
 
@@ -57,8 +59,8 @@ class sbIDeviceLibrary;
  *  - Set the hidden property on all medialists in the library when
  *    done mounting.
  */
-class sbBaseDevice : public sbIDevice,
-                     public sbBaseDeviceEventTarget
+class NS_HIDDEN sbBaseDevice : public sbIDevice,
+                               public sbBaseDeviceEventTarget
 {
 public:
   struct TransferRequest : public nsISupports {
@@ -74,8 +76,6 @@ public:
 
     /* note that type 0 is reserved */
     enum {
-      REQUEST_RESERVED    = sbIDevice::REQUEST_RESERVED,
-
       /* read requests */
       REQUEST_MOUNT         = sbIDevice::REQUEST_MOUNT,
       REQUEST_READ          = sbIDevice::REQUEST_READ,
@@ -96,18 +96,20 @@ public:
     
     int type;                        /* one of the REQUEST_* constants,
                                           or a custom type */
-    nsCOMPtr<sbIMediaItem> item;       /* the item this request pertains to */
-    nsCOMPtr<sbIMediaList> list;       /* the list this request is to act on */
-    nsCOMPtr<nsISupports>  data;       /* optional data that may or may not be used by a type of request */
-    PRUint32 index;                    /* the index in the list for this action */
-    PRUint32 otherIndex;               /* any secondary index needed */
-
+    nsCOMPtr<sbIMediaItem> item;     /* the item this request pertains to */
+    nsCOMPtr<sbIMediaList> list;     /* the list this request is to act on */
+    nsCOMPtr<nsISupports>  data;     /* optional data that may or may not be used by a type of request */
+    PRUint32 index;                  /* the index in the list for this action */
+    PRUint32 otherIndex;             /* any secondary index needed */
     PRUint32 batchCount;             /* the number of items in this batch
                                           (batch = run of requests of the same
                                           type) */
     PRUint32 batchIndex;             /* index of item in the batch to process */
 
     PRUint32 itemTransferID;         /* id for this item transfer */
+    
+    static const PRInt32 PRIORITY_DEFAULT = -1;
+    PRInt32 priority;                /* priority for the request (lower first) */
 
     NS_DECL_ISUPPORTS
     /**
@@ -134,22 +136,24 @@ public:
                         sbIMediaItem* aItem = nsnull,
                         sbIMediaList* aList = nsnull,
                         PRUint32 aIndex = PR_UINT32_MAX,
-                        PRUint32 aOtherIndex = PR_UINT32_MAX);
+                        PRUint32 aOtherIndex = PR_UINT32_MAX,
+                        PRInt32 aPriority = 0x1000000);
 
   nsresult PushRequest(TransferRequest *aRequest);
 
   /* remove the next request to be processed; note that _retval will be null
-     if there are no requests left */
+     while returning NS_OK if there are no requests left */
   nsresult PopRequest(TransferRequest** _retval);
 
   /* get a reference to the next request without removing it; note that _retval
-     will be null if there are no requests left */
+     will be null while returning NS_OK if there are no requests left */
   nsresult PeekRequest(TransferRequest** _retval);
   
   /* remove a given request from the transfer queue
      note: returns NS_OK on sucessful removal,
            and NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA if no match was found.
-     if the request is not unique, removes the first matching one */
+     if the request is not unique, removes the first matching one
+     (note that it is not possible to filter by priority) */
   nsresult RemoveRequest(const int aType,
                          sbIMediaItem* aItem = nsnull,
                          sbIMediaList* aList = nsnull);
@@ -251,9 +255,18 @@ protected:
   friend class sbBaseDeviceInitHelper;
   void Init();
 
+private:
+  /**
+   * Helper for PopRequest / PeekRequest
+   */
+  nsresult GetFirstRequest(PRBool aRemove, TransferRequest** _retval);
+
 protected:
   PRLock *mRequestLock;
-  nsDeque/*<TransferRequest>*/ mRequests;
+  typedef std::deque<nsRefPtr<TransferRequest> > TransferRequestQueue;
+  typedef std::map<PRInt32, TransferRequestQueue> TransferRequestQueueMap;
+  TransferRequestQueueMap mRequests;
+  PRUint32 mLastTransferID;
   PRLock *mStateLock;
   PRInt32 mState;
   sbDeviceStatistics mDeviceStatistics;

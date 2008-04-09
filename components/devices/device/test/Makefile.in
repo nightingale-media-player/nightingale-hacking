@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbDeviceDeviceTesterInterfaces.idl \
+             sbIMockDevice.idl \
              $(NULL)
 
 XPIDL_INCLUDES = $(topsrcdir)/components/devices/device/public \

@@ -117,4 +117,78 @@ function runTest () {
   assertTrue(wasFired, "event handler not called");
   
   device.removeEventListener(handler);
+  
+  /* test as sbIMockDevice (request push/pop) */
+  device.QueryInterface(Ci.sbIMockDevice);
+  
+  // simple index-only
+  device.submitRequest(device.REQUEST_UPDATE,
+                       createPropertyBag({index: 10}));
+  checkPropertyBag(device.popRequest(), {index: 10});
+  
+  // priority
+  const MAXINT = (-1) >>> 1; // max signed int (to test that we're not allocating)
+  device.submitRequest(device.REQUEST_UPDATE,
+                       createPropertyBag({index: MAXINT, priority: MAXINT}));
+  device.submitRequest(device.REQUEST_UPDATE,
+                       createPropertyBag({index: 99, priority: 99}));
+  device.submitRequest(device.REQUEST_UPDATE,
+                       createPropertyBag({index: 100, priority: -100}));
+  checkPropertyBag(device.popRequest(), {index: 99, priority: 99});
+  checkPropertyBag(device.popRequest(), {index: 100}); /* default */
+  checkPropertyBag(device.popRequest(), {index: MAXINT, priority: MAXINT});
+  
+  // peek
+  device.submitRequest(device.REQUEST_UPDATE,
+                       createPropertyBag({index: 42}));
+  checkPropertyBag(device.peekRequest(), {index: 42});
+  checkPropertyBag(device.popRequest(), {index: 42});
+  
+  // test the properties
+  var item = { QueryInterface:function(){return this} };
+  item.wrappedJSObject = item;
+  var list = { QueryInterface:function(){return this} };
+  list.wrappedJSObject = list;
+  var data = { /* nothing needed */ };
+  data.wrappedJSObject = data;
+  var params = { item: item,
+                 list: list,
+                 data: data,
+                 index: 999,
+                 otherIndex: 1024,
+                 priority: 37};
+  device.submitRequest(0x01dbeef, createPropertyBag(params));
+  var request= device.popRequest();
+  checkPropertyBag(request, params);
+  log("item transfer ID: " + request.getProperty("itemTransferID"));
+  assertTrue(request.getProperty("itemTransferID") > 3,
+             "Obviously bad item transfer ID");
+}
+
+
+function createPropertyBag(aParams) {
+  var bag = Cc["@mozilla.org/hash-property-bag;1"]
+              .createInstance(Ci.nsIWritablePropertyBag);
+  for (var name in aParams) {
+    bag.setProperty(name, aParams[name]);
+  }
+  return bag;
+}
+
+function checkPropertyBag(aBag, aParams) {
+  for (var name in  aParams) {
+    try {
+      var val = aBag.getProperty(name);
+    } catch (e) {
+      log('Failed to get property "' + name + '"');
+      throw(e);
+    }
+    assertTrue(val, 'Cannot find property "' + name + '"');
+    if (typeof(aParams[name]) == "object" && "wrappedJSObject" in aParams[name])
+      val = val.wrappedJSObject;
+    assertEqual(aParams[name],
+                val,
+                'property "' + name + '" not equal');
+    log('"' + name + '" is ' + val);
+  }
 }

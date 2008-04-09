@@ -41,12 +41,11 @@ interface sbIDeviceParameters;
 
 /**
  * \interface sbIDevice
- * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(500cd0ed-d670-4013-a6bf-53e4ff0ec501)]
+[scriptable, uuid(98fcf422-d1e7-47fc-bd6f-9027d8c4952a)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -157,9 +156,6 @@ interface sbIDevice : nsISupports
   const unsigned long REQUEST_FLAG_USER  = 0x80000000;
   const unsigned long REQUEST_FLAG_WRITE = 0x40000000;
 
-  /* note that request type 0 is reserved */
-  const unsigned long REQUEST_RESERVED  = 0;
-  
   /* read requests */
   const unsigned long REQUEST_MOUNT     = 1;
   const unsigned long REQUEST_READ      = 2;
