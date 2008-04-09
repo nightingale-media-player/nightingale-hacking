@@ -158,11 +158,13 @@ function runTest () {
                  otherIndex: 1024,
                  priority: 37};
   device.submitRequest(0x01dbeef, createPropertyBag(params));
-  var request= device.popRequest();
+  var request = device.popRequest();
   checkPropertyBag(request, params);
   log("item transfer ID: " + request.getProperty("itemTransferID"));
   assertTrue(request.getProperty("itemTransferID") > 3,
              "Obviously bad item transfer ID");
+  
+  request = null; /* unleak */
 }
 
 
