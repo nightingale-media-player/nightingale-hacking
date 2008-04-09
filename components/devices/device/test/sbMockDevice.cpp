@@ -338,10 +338,22 @@ NS_IMETHODIMP sbMockDevice::Eject()
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+NS_IMETHODIMP sbMockDevice::GetIsBusy(PRBool *aIsBusy)
+{
+  return sbBaseDevice::GetIsBusy(aIsBusy);
+}
+
+NS_IMETHODIMP sbMockDevice::GetCanDisconnect(PRBool *aCanDisconnect)
+{
+  return sbBaseDevice::GetCanDisconnect(aCanDisconnect);
+}
+
 NS_IMETHODIMP sbMockDevice::GetState(PRUint32 *aState)
 {
   return sbBaseDevice::GetState(aState);
 }
+
+
 /****************************** sbIMockDevice ******************************/
 
 #define SET_PROP(type, name) \

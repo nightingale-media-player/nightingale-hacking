@@ -36,6 +36,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICE
   NS_DECL_SBIMOCKDEVICE
+
 public:
   nsresult ProcessRequest();
 
