@@ -741,31 +741,29 @@ sbLocalDatabaseQuery::AddFilters()
           matchType = sbISQLSelectBuilder::MATCH_NOTEQUALS;
         }
 
-        rv = mBuilder->CreateMatchCriterionNull(MEDIAITEMS_ALIAS,
-                                                MEDIALISTYPEID_COLUMN,
-                                                matchType,
-                                                getter_AddRefs(nullCriterion));
-        NS_ENSURE_SUCCESS(rv, rv);
-
         // XXX HACK XXX HACK XXX HACK UGH
         // The |media_list_type_id is null| constraint will cause sqlite to
         // access the data using the idx_media_items_media_list_type_id index
         // which turns out to be a poor choice because the values in that
-        // column are mostly null.  Adding |media_list_type_id is null OR
-        // media_list_type_id is null| to the query causes sqlite to not
-        // use the index, and should allow it to select a better one.
+        // column are mostly null.  Using |+_mi.media_list_type_id| in the
+        // criterion causes sqlite to not use the index, and should allow it
+        // to select a better one.
         //
         // Possibly related sqlite bug:
         //   http://www.sqlite.org/cvstrac/tktview?tn=3036
         // I also posted about this issue on sqlite-users:
         //   http://www.mail-archive.com/sqlite-users@sqlite.org/msg32924.html
-        nsCOMPtr<sbISQLBuilderCriterion> indexKillingCriterion;
-        rv = mBuilder->CreateOrCriterion(nullCriterion,
-                                         nullCriterion,
-                                         getter_AddRefs(indexKillingCriterion));
+        nsString indexKillingAlias;
+        indexKillingAlias.AssignLiteral("+");
+        indexKillingAlias.Append(MEDIAITEMS_ALIAS);
+
+        rv = mBuilder->CreateMatchCriterionNull(indexKillingAlias,
+                                                MEDIALISTYPEID_COLUMN,
+                                                matchType,
+                                                getter_AddRefs(nullCriterion));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = mBuilder->AddCriterion(indexKillingCriterion);
+        rv = mBuilder->AddCriterion(nullCriterion);
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
