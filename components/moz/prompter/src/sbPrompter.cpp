@@ -47,7 +47,11 @@
 #include "sbPrompter.h"
 
 // Mozilla imports.
+#include <nsAutoLock.h>
+#include <nsComponentManagerUtils.h>
+#include <nsIProxyObjectManager.h>
 #include <nsServiceManagerUtils.h>
+#include <nsThreadUtils.h>
 
 
 //------------------------------------------------------------------------------
@@ -85,6 +89,14 @@ sbPrompter::OpenDialog(const nsAString& aUrl,
 {
   nsresult rv;
 
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return prompter->OpenDialog(aUrl, aName, aOptions, aExtraArgument, _retval);
+  }
+
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent;
   rv = GetParent(getter_AddRefs(parent));
@@ -117,14 +129,15 @@ sbPrompter::OpenDialog(const nsAString& aUrl,
 NS_IMETHODIMP
 sbPrompter::GetParentWindowType(nsAString& aParentWindowType)
 {
+  nsAutoLock autoLock(mPrompterLock);
   aParentWindowType.Assign(mParentWindowType);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbPrompter::SetParentWindowType
-              (const nsAString& aParentWindowType)
+sbPrompter::SetParentWindowType(const nsAString& aParentWindowType)
 {
+  nsAutoLock autoLock(mPrompterLock);
   mParentWindowType.Assign(aParentWindowType);
   return NS_OK;
 }
@@ -139,6 +152,7 @@ NS_IMETHODIMP
 sbPrompter::GetWaitForWindow(PRBool* aWaitForWindow)
 {
   NS_ENSURE_ARG_POINTER(aWaitForWindow);
+  nsAutoLock autoLock(mPrompterLock);
   *aWaitForWindow = mWaitForWindow;
   return NS_OK;
 }
@@ -146,6 +160,7 @@ sbPrompter::GetWaitForWindow(PRBool* aWaitForWindow)
 NS_IMETHODIMP
 sbPrompter::SetWaitForWindow(PRBool aWaitForWindow)
 {
+  nsAutoLock autoLock(mPrompterLock);
   mWaitForWindow = aWaitForWindow;
   return NS_OK;
 }
@@ -167,6 +182,14 @@ sbPrompter::Alert(nsIDOMWindow*    aParent,
                   const PRUnichar* aText)
 {
   nsresult rv;
+
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return prompter->Alert(aParent, aDialogTitle, aText);
+  }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
@@ -192,6 +215,18 @@ sbPrompter::AlertCheck(nsIDOMWindow*    aParent,
                        PRBool*          aCheckState)
 {
   nsresult rv;
+
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return prompter->AlertCheck(aParent,
+                                aDialogTitle, 
+                                aText,
+                                aCheckMsg,
+                                aCheckState);
+  }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
@@ -221,6 +256,14 @@ sbPrompter::Confirm(nsIDOMWindow*    aParent,
 {
   nsresult rv;
 
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return prompter->Confirm(aParent, aDialogTitle, aText, _retval);
+  }
+
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
@@ -249,6 +292,19 @@ sbPrompter::ConfirmCheck(nsIDOMWindow*    aParent,
                          PRBool*          _retval)
 {
   nsresult rv;
+
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return prompter->ConfirmCheck(aParent,
+                                  aDialogTitle,
+                                  aText,
+                                  aCheckMsg,
+                                  aCheckState,
+                                  _retval);
+  }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
@@ -284,6 +340,23 @@ sbPrompter::ConfirmEx(nsIDOMWindow*    aParent,
                       PRInt32*         _retval)
 {
   nsresult rv;
+
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return prompter->ConfirmEx(aParent,
+                               aDialogTitle,
+                               aText,
+                               aButtonFlags,
+                               aButton0Title,
+                               aButton1Title,
+                               aButton2Title,
+                               aCheckMsg,
+                               aCheckState,
+                               _retval);
+  }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
@@ -321,6 +394,20 @@ sbPrompter::Prompt(nsIDOMWindow*    aParent,
 {
   nsresult rv;
 
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return prompter->Prompt(aParent,
+                            aDialogTitle,
+                            aText,
+                            aValue,
+                            aCheckMsg,
+                            aCheckState,
+                            _retval);
+  }
+
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
@@ -354,6 +441,21 @@ sbPrompter::PromptUsernameAndPassword(nsIDOMWindow*    aParent,
                                       PRBool*          _retval)
 {
   nsresult rv;
+
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return prompter->PromptUsernameAndPassword(aParent,
+                                               aDialogTitle,
+                                               aText,
+                                               aUsername,
+                                               aPassword,
+                                               aCheckMsg,
+                                               aCheckState,
+                                               _retval);
+  }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
@@ -389,6 +491,20 @@ sbPrompter::PromptPassword(nsIDOMWindow*    aParent,
 {
   nsresult rv;
 
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return prompter->PromptPassword(aParent,
+                                    aDialogTitle,
+                                    aText,
+                                    aPassword,
+                                    aCheckMsg,
+                                    aCheckState,
+                                    _retval);
+  }
+
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
@@ -421,6 +537,20 @@ sbPrompter::Select(nsIDOMWindow*     aParent,
                    PRBool*           _retval)
 {
   nsresult rv;
+
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return prompter->Select(aParent,
+                            aDialogTitle,
+                            aText,
+                            aCount,
+                            aSelectList,
+                            aOutSelection,
+                            _retval);
+  }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
@@ -469,7 +599,89 @@ sbPrompter::Observe(nsISupports*     aSubject,
                     const char*      aTopic,
                     const PRUnichar* aData)
 {
-  /*XXXeps handle quit application and other events. */
+  nsresult rv;
+
+  // Dispatch processing of the event.
+  if (!strcmp(aTopic, "sbPrompter::InitOnMainThread")) {
+    rv = InitOnMainThread();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird prompter services.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * Construct a Songbird prompter object.
+ */
+
+sbPrompter::sbPrompter()
+{
+}
+
+
+/**
+ * Destroy a Songbird prompter object.
+ */
+
+sbPrompter::~sbPrompter()
+{
+  // Dispose of prompter lock.
+  if (mPrompterLock)
+    nsAutoLock::DestroyLock(mPrompterLock);
+  mPrompterLock = nsnull;
+}
+
+
+/**
+ * Initialize the prompter services.
+ */
+
+nsresult
+sbPrompter::Init()
+{
+  nsresult rv;
+
+  // Create a lock for the prompter.
+  mPrompterLock = nsAutoLock::NewLock("sbPrompter::mPrompterLock");
+  NS_ENSURE_TRUE(mPrompterLock, NS_ERROR_OUT_OF_MEMORY);
+
+  // Set defaults.
+  {
+    nsAutoLock autoLock(mPrompterLock);
+    mParentWindowType = NS_LITERAL_STRING("Songbird:Main");
+    mWaitForWindow = PR_FALSE;
+  }
+
+  // Perform initialization on main thread.  If not already on main thread,
+  // create a main thread proxy to this nsIObserver interface and initialize on
+  // the main thread through it.
+  if (NS_IsMainThread()) {
+    rv = InitOnMainThread();
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    nsCOMPtr<nsIObserver> proxyObserver;
+    nsCOMPtr<nsIProxyObjectManager>
+      proxyObjectManager = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = proxyObjectManager->GetProxyForObject
+                               (NS_PROXY_TO_MAIN_THREAD,
+                                NS_GET_IID(nsIObserver),
+                                NS_ISUPPORTS_CAST(nsIObserver*, this),
+                                nsIProxyObjectManager::INVOKE_SYNC |
+                                nsIProxyObjectManager::FORCE_PROXY_CREATION,
+                                getter_AddRefs(proxyObserver));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = proxyObserver->Observe(nsnull, "sbPrompter::InitOnMainThread", nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -481,11 +693,11 @@ sbPrompter::Observe(nsISupports*     aSubject,
 //------------------------------------------------------------------------------
 
 /**
- * Initialize the prompter services.
+ * Initialize the prompter services on the main thread.
  */
 
 nsresult
-sbPrompter::Init()
+sbPrompter::InitOnMainThread()
 {
   nsresult rv;
 
@@ -503,10 +715,6 @@ sbPrompter::Init()
   mPromptService = do_GetService("@mozilla.org/embedcomp/prompt-service;1",
                                  &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Set defaults.
-  mParentWindowType = NS_LITERAL_STRING("Songbird:Main");
-  mWaitForWindow = PR_FALSE;
 
   return NS_OK;
 }
@@ -547,6 +755,37 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
     NS_ADDREF(*aParent = parent);
   else
     *aParent = nsnull;
+
+  return NS_OK;
+}
+
+
+/**
+ * Return this prompter proxied to the main thread in aPrompter.
+ *
+ * \param aPrompter             Returned proxied prompter.
+ */
+
+nsresult
+sbPrompter::GetProxiedPrompter(sbIPrompter** aPrompter)
+{
+  nsresult rv;
+
+  // Validate arguments.
+  NS_ASSERTION(aPrompter, "aPrompter is null");
+
+  // Create a main thread proxy for the prompter.
+  nsCOMPtr<nsIProxyObjectManager>
+    proxyObjectManager = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = proxyObjectManager->GetProxyForObject
+                             (NS_PROXY_TO_MAIN_THREAD,
+                              NS_GET_IID(sbIPrompter),
+                              NS_ISUPPORTS_CAST(sbIPrompter*, this),
+                              nsIProxyObjectManager::INVOKE_SYNC |
+                              nsIProxyObjectManager::FORCE_PROXY_CREATION,
+                              (void**) aPrompter);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

@@ -72,8 +72,12 @@ public:
 
 
   //
-  // Internal Songbird prompter services.
+  // Songbird prompter services.
   //
+
+  sbPrompter();
+
+  virtual ~sbPrompter();
 
   nsresult Init();
 
@@ -87,13 +91,19 @@ public:
 private:
 
   //
+  // mPrompterLock               Prompter lock.
   // mWindowMediator             Window mediator service.
   // mWindowWatcher              Window watcher service.
   // mPromptService              Prompt service.
   // mParentWindowType           Parent window type.
   // mWaitForWindow              If true, wait for parent window type.
   //
+  // The following fields must only be accessed under the prompter lock:
+  //   mParentWindowType
+  //   mWaitForWindow
+  //
 
+  PRLock*                        mPrompterLock;
   nsCOMPtr<nsIWindowMediator>    mWindowMediator;
   nsCOMPtr<nsIWindowWatcher>     mWindowWatcher;
   nsCOMPtr<nsIPromptService>     mPromptService;
@@ -105,7 +115,11 @@ private:
   // Internal Songbird prompter services.
   //
 
+  nsresult InitOnMainThread();
+
   nsresult GetParent(nsIDOMWindow** aParent);
+
+  nsresult GetProxiedPrompter(sbIPrompter** aPrompter);
 };
 
 
