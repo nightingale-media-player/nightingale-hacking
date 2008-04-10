@@ -431,7 +431,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Write(
   return rv;
 }
 
-NS_IMETHODIMP sbMetadataHandlerTaglib::WriteInternal(
+nsresult sbMetadataHandlerTaglib::WriteInternal(
     PRInt32                     *pWriteCount)
 {
     nsCOMPtr<nsIStandardURL>    pStandardURL;
