@@ -79,4 +79,9 @@ interface sbIDeviceManager2 : nsISupports
   sbIDeviceEvent createEvent(in unsigned long aType,
                              [optional] in nsIVariant aData,
                              [optional] in nsISupports aOrigin);
+
+  /**
+   * Can all devices be disconnected?
+   */
+  readonly attribute boolean canDisconnect;
 };

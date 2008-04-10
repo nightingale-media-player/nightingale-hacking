@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+<!-- XUL source file for the wait for completion dialog box. -->
+
+<!-- Import external definitions. -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<!-- Set up dialog box window. -->
+<dialog xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="dialog"
+        title="&device.dialog.wait_for_completion.title;"
+        flex="1"
+        hidechrome="true"
+        ondialogaccept="window.close();"
+        onload="return (gWaitForCompletion.onLoad());"
+        onunload="gWaitForCompletion.onUnload();"
+        buttonlabelaccept="&device.dialog.wait_for_completion.quit;">
+
+  <!-- Use Songbird window region. -->
+  <windowregion/>
+
+  <!-- Dialog box description. -->
+  <description value="&device.dialog.wait_for_completion.msg;"/>
+
+  <!-- Import the Songbird services code. -->  
+  <script type="application/x-javascript" 
+          src="chrome://songbird/content/scripts/windowUtils.js" />
+
+  <!-- Import the dialog box Javascript code. -->  
+  <script type="application/x-javascript" 
+          src="chrome://songbird/content/scripts/waitForCompletion.js"/>
+
+</dialog>

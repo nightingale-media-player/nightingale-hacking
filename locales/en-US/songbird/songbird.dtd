@@ -124,6 +124,10 @@
 
 <!ENTITY device.context.eject  "Eject" >
 
+<!ENTITY device.dialog.wait_for_completion.title  "Waiting for devices.">
+<!ENTITY device.dialog.wait_for_completion.msg    "Waiting for all device operations to complete.  Click &quot;Quit&quot; to stop waiting and quit application.">
+<!ENTITY device.dialog.wait_for_completion.quit   "Quit">
+
 <!ENTITY tooltip.miniplayer       "Switch to Miniplayer" >
 <!ENTITY tooltip.minimize         "Minimize" >
 <!ENTITY tooltip.maximize         "Maximize/Restore" >

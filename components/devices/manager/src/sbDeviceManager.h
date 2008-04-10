@@ -71,6 +71,7 @@ protected:
   nsresult Init();
   nsresult PrepareShutdown();
   nsresult FinalShutdown();
+  nsresult QuitApplicationGranted();
 
 protected:
   PRMonitor* mMonitor;

@@ -39,16 +39,19 @@
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
+#include <nsIDOMWindow.h>
 
 #include "sbIDeviceController.h"
 #include "sbDeviceEvent.h"
 
+#include <sbIPrompter.h>
 #include <sbILibraryManager.h>
 
 /* observer topics */
-#define NS_PROFILE_STARTUP_OBSERVER_ID  "profile-after-change"
-#define NS_QUIT_APPLICATION_OBSERVER_ID "profile-change-teardown"
-#define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
+#define NS_PROFILE_STARTUP_OBSERVER_ID          "profile-after-change"
+#define NS_QUIT_APPLICATION_OBSERVER_ID         "profile-change-teardown"
+#define NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID "quit-application-granted"
+#define NS_PROFILE_SHUTDOWN_OBSERVER_ID         "profile-before-change"
 
 NS_IMPL_THREADSAFE_ADDREF(sbDeviceManager)
 NS_IMPL_THREADSAFE_RELEASE(sbDeviceManager)
@@ -401,6 +404,9 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     rv = obsSvc->AddObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
     
+    rv = obsSvc->AddObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = obsSvc->AddObserver(observer, NS_QUIT_APPLICATION_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -409,6 +415,9 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
 
   } else if (!strcmp(NS_PROFILE_STARTUP_OBSERVER_ID, aTopic)) {
     rv = this->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else if (!strcmp(NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID, aTopic)) {
+    rv = this->QuitApplicationGranted();
     NS_ENSURE_SUCCESS(rv, rv);
   } else if (!strcmp(NS_QUIT_APPLICATION_OBSERVER_ID, aTopic)) {
     rv = this->PrepareShutdown();
@@ -430,6 +439,9 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
     
     rv = obsSvc->RemoveObserver(observer, NS_QUIT_APPLICATION_OBSERVER_ID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = obsSvc->RemoveObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->RemoveObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
@@ -521,6 +533,73 @@ nsresult sbDeviceManager::Init()
   // connect all the devices
   //rv = this->UpdateDevices();
   //NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult sbDeviceManager::GetCanDisconnect(PRBool* aCanDisconnect)
+{
+  NS_ENSURE_ARG_POINTER(aCanDisconnect);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv;
+
+  // get an array of our devices
+  nsCOMPtr<nsIArray> devices;
+  rv = GetDevices(getter_AddRefs(devices));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length;
+  rv = devices->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // for each of them, can we disconnect?
+  PRBool canDisconnect = PR_TRUE;
+  for (PRUint32 i = 0; i < length; ++i) {
+    nsCOMPtr<sbIDevice> device;
+    rv = devices->QueryElementAt(i, NS_GET_IID(sbIDevice),
+                                 getter_AddRefs(device));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = device->GetCanDisconnect(&canDisconnect);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!canDisconnect) {
+      break;
+    }
+  }
+
+  *aCanDisconnect = canDisconnect;
+
+  return NS_OK;
+}
+
+nsresult sbDeviceManager::QuitApplicationGranted()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv;
+
+  // we're about to shut down. let's make sure all the devices are
+  // ok with that...
+  PRBool canDisconnect;
+  rv = GetCanDisconnect(&canDisconnect);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!canDisconnect) {
+    // one of our devices doesn't want to be disconnected
+    nsCOMPtr<sbIPrompter> prompter =
+      do_GetService("@songbirdnest.com/Songbird/Prompter;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMWindow> dialogWindow;
+    prompter->OpenDialog(NS_LITERAL_STRING(
+          "chrome://songbird/content/xul/waitForCompletion.xul"),
+        NS_LITERAL_STRING("waitForCompletion"), 
+        NS_LITERAL_STRING(""), nsnull, getter_AddRefs(dialogWindow));
+  }
 
   return NS_OK;
 }
