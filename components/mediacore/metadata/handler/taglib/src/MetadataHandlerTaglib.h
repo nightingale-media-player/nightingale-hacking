@@ -87,6 +87,7 @@
 #include <sbIProxiedServices.h>
 
 /* TagLib imports. */
+#include <fileref.h>
 #include <id3v2tag.h>
 #include <mp4itunestag.h>
 #include <apetag.h>
@@ -204,6 +205,8 @@ private:
 private:
     nsresult ReadInternal(
         PRInt32                     *pReadCount);
+    nsresult WriteInternal(
+        PRInt32                     *pWriteCount);
 
     void ReadID3v2Tags(
         TagLib::ID3v2::Tag          *pTag,
@@ -258,6 +261,12 @@ private:
      */
 
 private:
+    // please be careful to call these appropriately.
+    // don't call release without first doing an acquire
+    // and don't try to acquire twice in a thread without releasing.
+    nsresult AcquireTaglibLock();
+    nsresult ReleaseTaglibLock();
+
     nsresult ReadMetadata();
 
     void GuessCharset(

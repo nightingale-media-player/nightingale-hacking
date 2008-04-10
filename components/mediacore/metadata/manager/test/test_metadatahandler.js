@@ -57,20 +57,40 @@ function runTest () {
   // Write out new values
   handler.props.clear();
   var newProperties = {};
-  newProperties[SBProperties.artistName] = "New Artist";
   newProperties[SBProperties.albumName] = "New Album";
-  newProperties[SBProperties.tracKName] = "New Track";
+  newProperties[SBProperties.artistName] = "New Artist";
+  newProperties[SBProperties.trackName] = "New Track";
+  newProperties[SBProperties.year] = "2008";
+  newProperties[SBProperties.trackNumber] = "13";
   SBProperties.addToArray(newProperties, handler.props);
   
-  // TODO Write this to disk
-  //handler.write();
+  // Write this to disk
+  handler.write();
   
-  // TODO Get a new handler just to make sure it isn't cheating somehow
-  //handler.close();
-  //handler = gMetadataManager.getHandlerForMediaURL(file.spec);
-    
+  // Get a new handler just to make sure it isn't cheating somehow
+  handler.close();
+  handler = gMetadataManager.getHandlerForMediaURL(file.spec);
+  handler.read();
+  
   // Confirm that writing succeeded.
   assertObjectIsSubsetOf(newProperties, SBProperties.arrayToJSObject(handler.props));  
   
+  // reset the values for the next test.
+  handler.props.clear();
+  newProperties[SBProperties.albumName] = "X";
+  newProperties[SBProperties.artistName] = "X";
+  newProperties[SBProperties.trackName] = "X";
+  newProperties[SBProperties.year] = "1982";
+  newProperties[SBProperties.trackNumber] = "23";
+  SBProperties.addToArray(newProperties, handler.props);
+  
+  // Write this to disk
+  handler.write();
   handler.close();
+  handler = gMetadataManager.getHandlerForMediaURL(file.spec);
+  handler.read();
+  
+  // Confirm that writing succeeded.
+  assertObjectIsSubsetOf(newProperties, SBProperties.arrayToJSObject(handler.props));  
+
 }

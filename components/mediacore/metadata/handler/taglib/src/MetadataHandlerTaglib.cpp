@@ -199,71 +199,66 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     PRInt32                     *pReadCount)
 {
   nsresult rv;
+  AcquireTaglibLock();
+  rv = ReadInternal(pReadCount); 
+  ReleaseTaglibLock(); 
+  // note that although ReleaseTaglibLock() has a return value, it always succeeds
+  // so we're really we're most interested in the return value from ReadInternal();
+  
+  return rv;
+}
 
+nsresult sbMetadataHandlerTaglib::AcquireTaglibLock() 
+{
   // TagLib is not thread safe so we must do this elaborate dance
   // to ensure that only one thread toches taglib at a time as well
   // as make sure the main thread can process events while waiting
   // its turn.  This is done by busy-waiting around sBusyFlag.  If
   // you are the main thread, process events while busy waiting.
 
+  nsCOMPtr<nsIThread> mainThread;
   if (NS_IsMainThread()) {
-    nsCOMPtr<nsIThread> mainThread = do_GetMainThread();
-
-    PRBool gotLock = PR_FALSE;
-    while (!gotLock) {
-      // Scope the lock
-      {
-        nsAutoLock lock(sBusyLock);
-        if (!sBusyFlag) {
-          sBusyFlag = PR_TRUE;
-          gotLock = PR_TRUE;
-        }
-      }
-
-      if (!gotLock) {
-        NS_ProcessPendingEvents(mainThread, 100);
-      }
-
-    }
-
-    rv = ReadInternal(pReadCount);
-
-    // Scope the lock
-    {
-      nsAutoLock lock(sBusyLock);
-      sBusyFlag = PR_FALSE;
-    }
-
+    mainThread = do_GetMainThread();
   }
   else {
     // To prevent an army of busy waiting background threads,
     // use a lock here so only one background thread can enter
     // this section at a time.
-    nsAutoLock lock(sBackgroundLock);
-
-    PRBool gotLock = PR_FALSE;
-    while (!gotLock) {
-      // Scope the lock
-      {
-        nsAutoLock lock(sBusyLock);
-        if (!sBusyFlag) {
-          sBusyFlag = PR_TRUE;
-          gotLock = PR_TRUE;
-        }
-      }
-    }
-
-    rv = ReadInternal(pReadCount);
-
+    PR_Lock(sBackgroundLock);
+  }
+  
+  PRBool gotLock = PR_FALSE;
+  while (!gotLock) {
     // Scope the lock
     {
       nsAutoLock lock(sBusyLock);
-      sBusyFlag = PR_FALSE;
+      if (!sBusyFlag) {
+        sBusyFlag = PR_TRUE;
+        gotLock = PR_TRUE;
+      }
     }
+    
+    if (mainThread && !gotLock) {
+      NS_ProcessPendingEvents(mainThread, 100);
+    }
+    
+  }
+  return NS_OK;
+}
 
+nsresult sbMetadataHandlerTaglib::ReleaseTaglibLock() {
+  // let another background thread into the busywait.
+  if (!NS_IsMainThread()) {
+    PR_Unlock(sBackgroundLock);
   }
 
-  return rv;
+  // Scope the lock
+  {
+    nsAutoLock lock(sBusyLock);
+    sBusyFlag = PR_FALSE;
+  }
+
+  return NS_OK;
 }
 
 nsresult sbMetadataHandlerTaglib::ReadInternal(
@@ -422,17 +417,162 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
 * items in the sbIMetadataValues object if the underlying file format does
 * not support the given keys.
 *
-* \todo Make anything actually work with a write operation
 * \return -1 if operating asynchronously, otherwise the number of metadata
 *            values written (0 on failure)
 */
-
 NS_IMETHODIMP sbMetadataHandlerTaglib::Write(
     PRInt32                     *pWriteCount)
 {
-    LOG(("1: Write\n"));
+  nsresult rv;
+  AcquireTaglibLock();
+  rv = WriteInternal(pWriteCount);
+  ReleaseTaglibLock();
 
-    return (NS_ERROR_NOT_IMPLEMENTED);
+  return rv;
+}
+
+NS_IMETHODIMP sbMetadataHandlerTaglib::WriteInternal(
+    PRInt32                     *pWriteCount)
+{
+    nsCOMPtr<nsIStandardURL>    pStandardURL;
+    nsCOMPtr<nsIURI>            pURI;
+    nsCOMPtr<nsIFile>           pFile;
+    nsCString                   urlSpec;
+    nsCString                   urlScheme;
+    nsAutoString                filePath;
+    nsresult                    result = NS_OK;
+
+    /* Get the TagLib sbISeekableChannel file IO manager. */
+    mpTagLibChannelFileIOManager =
+            do_GetService
+                ("@songbirdnest.com/Songbird/sbTagLibChannelFileIOManager;1",
+                 &result);
+
+    /* Get the channel URL info. */
+    if (NS_SUCCEEDED(result))
+        result = mpChannel->GetURI(getter_AddRefs(pURI));
+    if (NS_SUCCEEDED(result))
+    {
+        pStandardURL = do_CreateInstance("@mozilla.org/network/standard-url;1",
+                                         &result);
+    }
+    if (NS_SUCCEEDED(result))
+    {
+        result = pStandardURL->Init(pStandardURL->URLTYPE_STANDARD,
+                                    0,
+                                    NS_LITERAL_CSTRING(""),
+                                    nsnull,
+                                    pURI);
+    }
+    if (NS_SUCCEEDED(result))
+        mpURL = do_QueryInterface(pStandardURL, &result);
+    if (NS_SUCCEEDED(result))
+        result = mpURL->GetSpec(urlSpec);
+    if (NS_SUCCEEDED(result))
+        result = mpURL->GetScheme(urlScheme);
+
+    if (!urlScheme.Equals(NS_LITERAL_CSTRING("file")))
+    {
+      return NS_ERROR_NOT_IMPLEMENTED;
+    }
+     
+    /* Get the metadata local file path. */
+    if (NS_SUCCEEDED(result))
+    {
+      result = mpFileProtocolHandler->GetFileFromURLSpec(
+        urlSpec, 
+        getter_AddRefs(pFile)
+      );
+    }
+
+    if (NS_SUCCEEDED(result))
+      result = pFile->GetPath(mMetadataPath);
+
+    /* WRITE the metadata. */
+    if (NS_SUCCEEDED(result)) {
+      // on windows, we leave this as an nsAString
+      // beginreading doesn't promise to return a null terminated string
+      // this is RFB
+      TagLib::FileRef f(NS_ConvertUTF16toUTF8(mMetadataPath).BeginReading());
+          
+      nsAutoString propertyValue;
+      result = mpMetadataPropertyArray->GetPropertyValue(
+          NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), propertyValue
+      );
+      if (NS_SUCCEEDED(result)) {
+        f.tag()->setTitle(NS_ConvertUTF16toUTF8(propertyValue).BeginReading());
+      }
+      
+      result = mpMetadataPropertyArray->GetPropertyValue(
+          NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), propertyValue
+      );
+      if (NS_SUCCEEDED(result)) {
+        f.tag()->setArtist(NS_ConvertUTF16toUTF8(propertyValue).BeginReading());
+      }
+      
+      result = mpMetadataPropertyArray->GetPropertyValue(
+        NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), propertyValue
+      );
+      if (NS_SUCCEEDED(result)) {
+        f.tag()->setAlbum(NS_ConvertUTF16toUTF8(propertyValue).BeginReading());
+      }
+
+      result = mpMetadataPropertyArray->GetPropertyValue(
+        NS_LITERAL_STRING(SB_PROPERTY_COMMENT), propertyValue
+      );
+      if (NS_SUCCEEDED(result)) {
+        f.tag()->setComment(NS_ConvertUTF16toUTF8(propertyValue).BeginReading());
+      }
+
+      result = mpMetadataPropertyArray->GetPropertyValue(
+        NS_LITERAL_STRING(SB_PROPERTY_GENRE), propertyValue
+      );
+      if (NS_SUCCEEDED(result)) {
+        f.tag()->setGenre(NS_ConvertUTF16toUTF8(propertyValue).BeginReading());
+      }
+
+      result = mpMetadataPropertyArray->GetPropertyValue(
+        NS_LITERAL_STRING(SB_PROPERTY_YEAR), propertyValue
+      );
+      if (NS_SUCCEEDED(result)) {
+        int year;
+        int numRead = sscanf(
+          NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+          "%d",
+          &year
+        );
+        if (numRead == 1) {
+          f.tag()->setYear(year);
+        }
+        else {
+          f.tag()->setYear(0);
+          // this should clear out the year field
+        }
+      }
+
+      result = mpMetadataPropertyArray->GetPropertyValue(
+        NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER), propertyValue
+      );
+      if (NS_SUCCEEDED(result)) {
+        int track;
+        int numRead = sscanf(
+          NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+          "%d",
+          &track
+        );
+        if (numRead == 1) {
+          f.tag()->setTrack(track);
+        }
+        else {
+          f.tag()->setTrack(0);
+          // this should clear out the track field
+        }
+      }
+          
+      f.save();
+    }
+    
+    return (NS_OK);
 }
 
 
@@ -500,9 +640,8 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetProps(
 NS_IMETHODIMP sbMetadataHandlerTaglib::SetProps(
     sbIMutablePropertyArray     *ppPropertyArray)
 {
-    LOG(("1: SetProps\n"));
-
-    return (NS_ERROR_NOT_IMPLEMENTED);
+    mpMetadataPropertyArray = ppPropertyArray;
+    return (NS_OK);
 }
 
 NS_IMETHODIMP sbMetadataHandlerTaglib::GetCompleted(
