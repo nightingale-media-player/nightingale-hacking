@@ -1137,3 +1137,60 @@ var SBWindow = {
   }
 };
 
+/**
+ * Based on original code from Mozilla's browser/base/content/browser.js
+ *
+ * Update the global flag that tracks whether or not any edit UI (the Edit menu,
+ * edit-related items in the context menu) is visible, then update the edit
+ * commands' enabled state accordingly.  We use this flag to skip updating the
+ * edit commands on focus or selection changes when no UI is visible to
+ * improve performance (including pageload performance, since focus changes
+ * when you load a new page).
+ *
+ * If UI is visible, we use goUpdateGlobalEditMenuItems to set the commands'
+ * enabled state so the UI will reflect it appropriately.
+ * 
+ * If the UI isn't visible, we enable all edit commands so keyboard shortcuts
+ * still work and just lazily disable them as needed when the user presses a
+ * shortcut.
+ *
+ * This doesn't work on Mac, since Mac menus flash when users press their
+ * keyboard shortcuts, so edit UI is essentially always visible on the Mac,
+ * and we need to always update the edit commands.  Thus on Mac this function
+ * is a no op.
+ */
+var gEditUIVisible = true;
+function updateEditUIVisibility()
+{
+  if ( getPlatformString() != "Darwin" ) {
+    let editMenuPopupState = document.getElementById("menu_EditPopup").state;
+    let contextMenuPopupState = document.getElementById("contentAreaContextMenu").state;
+
+    // The UI is visible if the Edit menu is opening or open, if the context menu
+    // is open, or if the toolbar has been customized to include the Cut, Copy,
+    // or Paste toolbar buttons.
+    gEditUIVisible = editMenuPopupState == "showing" ||
+                     editMenuPopupState == "open" ||
+                     contextMenuPopupState == "showing" ||
+                     contextMenuPopupState == "open" ? true : false;
+
+    // If UI is visible, update the edit commands' enabled state to reflect
+    // whether or not they are actually enabled for the current focus/selection.
+    if (gEditUIVisible) {
+      goUpdateGlobalEditMenuItems();
+    } else {
+      // Otherwise, enable all commands, so that keyboard shortcuts still work,
+      // then lazily determine their actual enabled state when the user presses
+      // a keyboard shortcut.
+      goSetCommandEnabled("cmd_undo", true);
+      goSetCommandEnabled("cmd_redo", true);
+      goSetCommandEnabled("cmd_cut", true);
+      goSetCommandEnabled("cmd_copy", true);
+      goSetCommandEnabled("cmd_paste", true);
+      goSetCommandEnabled("cmd_selectAll", true);
+      goSetCommandEnabled("cmd_delete", true);
+      goSetCommandEnabled("cmd_switchTextDirection", true);
+    }
+  }
+}
+                                                                                                                                                                                                        

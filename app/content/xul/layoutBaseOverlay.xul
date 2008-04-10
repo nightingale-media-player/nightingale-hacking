@@ -96,17 +96,51 @@
       </menupopup>
     </menu>
 
-    <menu id="edit-menu" label="&menu.edit;"  accesskey="&menu.edit.accesskey;">
-      <menupopup id="menu_EditPopup">
-        <menuitem id="menuitem_edit_undo" disabled="true" label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"/>
+    <!-- Pulled from browser/base/content/browser-menubar.inc and lightly modified -->
+    <menu id="edit-menu" label="&menu.edit;" accesskey="&menu.edit.accesskey;">
+      <menupopup id="menu_EditPopup"
+                 onpopupshowing="updateEditUIVisibility()"
+                 onpopuphidden="updateEditUIVisibility()">
+        <menuitem label="&menu.edit.undo;"
+                  key="undo-key"
+                  accesskey="&menu.edit.undo.accesskey;"
+                  command="cmd_undo"/>
+        <menuitem label="&menu.edit.redo;"
+                  key="redo-key"
+                  accesskey="&menu.edit.redo.accesskey;"
+                  command="cmd_redo"/>
         <menuseparator/>
-        <menuitem id="menuitem_edit_cut" disabled="true" label="&menu.edit.cut;" accesskey="&menu.edit.cut.accesskey;"/>
-        <menuitem id="menuitem_edit_copy" disabled="true" label="&menu.edit.copy;" accesskey="&menu.edit.copy.accesskey;"/>
-        <menuitem id="menuitem_edit_paste"  disabled="true" label="&menu.edit.paste;" accesskey="&menu.edit.paste.accesskey;"/>
-        <menuitem id="menuitem_edit_clear" disabled="true" label="&menu.edit.clear;" accesskey="&menu.edit.clear.accesskey;"/>
+        <menuitem label="&menu.edit.cut;"
+                  key="cut-key"
+                  accesskey="&menu.edit.cut.accesskey;"
+                  command="cmd_cut"/>
+        <menuitem label="&menu.edit.copy;"
+                  key="copy-key"
+                  accesskey="&menu.edit.copy.accesskey;"
+                  command="cmd_copy"/>
+        <menuitem label="&menu.edit.paste;"
+                  key="paste-key"
+                  accesskey="&menu.edit.paste.accesskey;"
+                  command="cmd_paste"/>
+        <menuitem label="&menu.edit.delete;"
+                  key="delete-key"
+                  accesskey="&menu.edit.delete.accesskey;"
+                  command="cmd_delete"/>
         <menuseparator/>
-        <menuitem id="menuitem_edit_selall" disabled="true" label="&menu.edit.selall;" accesskey="&menu.edit.selall.accesskey;"/>
-        <menuitem id="menuitem_edit_selnone" disabled="true" label="&menu.edit.selnone;" accesskey="&menu.edit.selnone.accesskey;"/>
+        <menuitem label="&menu.edit.selall;"
+                  key="selectall-key"
+                  accesskey="&menu.edit.selall.accesskey;"
+                  command="cmd_selectAll"/>
+        <menuseparator/>
+        <menuitem id="menu_find"
+                  label="&menu.edit.find;"
+                  key="find-key"
+                  accesskey="&menu.edit.find.accesskey;"
+                  command="cmd_find"/>
+        <menuitem label="&menu.edit.findagain;"
+                  key="findagain-key"
+                  accesskey="&menu.edit.findagain.accesskey;"
+                  command="cmd_findAgain"/>
       </menupopup>
     </menu>
 
@@ -213,7 +247,17 @@
     <!-- **                                                                 ** -->
     <!-- ********************************************************************* -->
 
-    <!-- no common command -->
+    <commandset>
+      <command id="cmd_undo" oncommand="goDoCommand('cmd_undo')"/>
+      <command id="cmd_redo" oncommand="goDoCommand('cmd_redo')"/>
+      <command id="cmd_cut" oncommand="goDoCommand('cmd_cut')"/>
+      <command id="cmd_copy"  oncommand="goDoCommand('cmd_copy')"/>
+      <command id="cmd_paste" oncommand="goDoCommand('cmd_paste')"/>
+      <command id="cmd_selectAll" oncommand="goDoCommand('cmd_selectAll')"/>
+      <command id="cmd_delete" oncommand="goDoCommand('cmd_delete')"/>
+      <command id="cmd_find" oncommand="goDoCommand('cmd_find')"/>
+      <command id="cmd_findAgain" oncommand="goDoCommand('cmd_findAgain')"/>
+    </commandset>
     
     <!-- ********************************************************************* -->
     <!-- **                                                                 ** -->
@@ -266,16 +310,20 @@
       <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('menuitem_file_file');"/>
       <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('menuitem_file_url');"/>
       <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
+      <key id="redo-key" modifiers="accel" key="&menu.edit.redo.key;" />
       <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />
       <key id="copy-key" modifiers="accel" key="&menu.edit.copy.key;" />
       <key id="paste-key" modifiers="accel" key="&menu.edit.paste.key;" />
-      <key id="selectall-key" modifiers="accel" key="A" />
+      <key id="selectall-key" modifiers="accel" key="&menu.edit.selall.key;" />
+      <key id="delete-key" modifiers="" key="&menu.edit.delete.key;" />
+      <key id="find-key" modifiers="accel" key="&menu.edit.find.key;" />
+      <key id="findagain-key" modifiers="accel" key="&menu.edit.findagain.key;" />
       <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
       <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
       <key id="sanitize-key" modifiers="accel,shift" key="&sanitize.key;" oncommand="doMenu('menu.clearprivatedata');"/>
       <key id="downloadmgr-key" modifiers="accel,shift" key="&downloadmgr.key;" oncommand="doMenu('menu_downloadmgr');"/>
     </keyset>
-    
+
 
     <!-- ********************************************************************* -->
     <!-- **                                                                 ** -->
@@ -301,6 +349,8 @@
   <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript"   
   src="chrome://global/content/dialogOverlay.js" />
+  <script type="application/x-javascript"
+  src="chrome://global/content/editMenuOverlay.js"/>
 
   <!-- Dataremotes utility functions -->
   <script type="application/x-javascript" 

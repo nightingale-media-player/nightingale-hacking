@@ -48,12 +48,20 @@
 
 <!ENTITY menu.edit          "Edit" >
 <!ENTITY menu.edit.undo     "Undo" >
+<!ENTITY menu.edit.redo     "Redo" >
 <!ENTITY menu.edit.cut      "Cut" >
 <!ENTITY menu.edit.copy     "Copy" >
 <!ENTITY menu.edit.paste    "Paste" >
 <!ENTITY menu.edit.clear    "Clear" >
+<!ENTITY menu.edit.delete   "Delete" >
 <!ENTITY menu.edit.selall   "Select All" >
 <!ENTITY menu.edit.selnone  "Select None" >
+<!ENTITY menu.edit.find        "Find" >
+<!ENTITY menu.edit.findagain   "Find Again" >
+
+<!-- Linux edit menu -->
+<!ENTITY menu.linux.preferences           "Preferences...">
+<!ENTITY menu.linux.preferences.accesskey "N">
 
 <!ENTITY menu.controls      "Controls" >
 <!ENTITY menu.control.play  "Play/Pause" >
@@ -273,12 +281,16 @@
 
 <!ENTITY menu.edit.accesskey          "E" >
 <!ENTITY menu.edit.undo.accesskey     "U" >
+<!ENTITY menu.edit.redo.accesskey     "R" >
 <!ENTITY menu.edit.cut.accesskey      "T" >
 <!ENTITY menu.edit.copy.accesskey     "C" >
 <!ENTITY menu.edit.paste.accesskey    "P" >
+<!ENTITY menu.edit.delete.accesskey   "D" >
 <!ENTITY menu.edit.clear.accesskey    "L" >
 <!ENTITY menu.edit.selall.accesskey   "A" >
 <!ENTITY menu.edit.selnone.accesskey  "N" >
+<!ENTITY menu.edit.find.accesskey        "F" >
+<!ENTITY menu.edit.findagain.accesskey   "G" >
 
 <!ENTITY menu.controls.accesskey      "C" >
 <!ENTITY menu.control.play.accesskey  "P" >
@@ -384,9 +396,14 @@
 <!ENTITY menu.file.mini.key            "M" >
 <!ENTITY menu.file.dominspector        "I" >
 <!ENTITY menu.edit.undo.key            "Z" >
+<!ENTITY menu.edit.redo.key            "Y" >
 <!ENTITY menu.edit.cut.key             "X" >
 <!ENTITY menu.edit.copy.key            "C" >
 <!ENTITY menu.edit.paste.key           "V" >
+<!ENTITY menu.edit.selall.key          "A" >
+<!ENTITY menu.edit.delete.key          "Del" >
+<!ENTITY menu.edit.find.key            "F" >
+<!ENTITY menu.edit.findagain.key       "G" >
 <!ENTITY jumpto.key                    "J" >
 <!ENTITY search.key                    "F" >
 <!ENTITY locationbar.key               "L" >

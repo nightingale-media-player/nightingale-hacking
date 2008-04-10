@@ -11,6 +11,7 @@ songbird.jar:
 % overlay chrome://browser/content/sanitize.xul                              chrome://songbird/content/xul/preferences/sanitizeOverlay.xul
 % overlay chrome://mozapps/content/downloads/unknownContentType.xul          chrome://songbird/content/xul/unknownContentTypeOverlay.xul
 @include_all_to content/songbird/xul/
+% overlay chrome://songbird/content/xul/layoutBaseOverlay.xul                chrome://songbird/content/xul/linuxMenuOverlay.xul OS=Linux
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul                chrome://songbird/content/xul/macMenuOverlay.xul OS=Darwin
 #ifdef MEDIA_CORE_VLC
 % overlay chrome://songbird/content/xul/songbird.xul                         chrome://songbird/content/xul/coreVLCOverlay.xul
