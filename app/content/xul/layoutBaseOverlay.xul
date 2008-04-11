@@ -248,6 +248,12 @@
     <!-- ********************************************************************* -->
 
     <commandset>
+      <commandset id="editMenuCommandSetAll" commandupdater="true" events="focus,select"
+                  oncommandupdate="goUpdateGlobalEditMenuItems()"/>
+      <commandset id="editMenuCommandSetUndo" commandupdater="true" events="undo"
+                  oncommandupdate="goUpdateUndoEditMenuItems()"/>
+      <commandset id="editMenuCommandSetPaste" commandupdater="true" events="clipboard"
+                  oncommandupdate="goUpdatePasteMenuItems()"/>
       <command id="cmd_undo" oncommand="goDoCommand('cmd_undo')"/>
       <command id="cmd_redo" oncommand="goDoCommand('cmd_redo')"/>
       <command id="cmd_cut" oncommand="goDoCommand('cmd_cut')"/>
