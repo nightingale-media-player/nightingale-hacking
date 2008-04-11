@@ -102,23 +102,33 @@
         ]]>
         </body>
       </method>
-
-      <!--
-        Populates the this menupopup with a menu allowing selection
-        of compatible skins and layouts.
-      -->
+      
       <!--  NOTE: this function uses _addToMenu directly instead of returning an array of content -->
       <!--        either method is fine, and here this one probably makes more sense  -->
       <method name="generateMenuItems">
         <body>
         <![CDATA[
+          /*
+           Create the feather related portion of the view menu. This involves
+           building a 2-nd tier level menu with the list of all the feathers
+           installed and an associatd list of the available views for the 
+           current selected feather. The output of this method will create
+           a menu that looks like this:
+           
+           ------------------------------- 
+           | Feathers                 >  | -----------------------------
+           |-----------------------------| |   Dove                    |
+           | X Full Media Web Player     | |   Killer Eagle            |
+           |   Min Media Player          | | X Rubber Ducky (default)  |
+           |   ...                       | |---------------------------|
+           |-----------------------------| | Get More Feathers...      |
+                                           -----------------------------
+           */
+        
           this._currentLayout = this._feathersManager.currentLayoutURL; 
           this._currentSkin = this._feathersManager.currentSkinName;
 
-          // Add a section with the layouts available for the current skin
-          this._appendSelectedFeathersSection();
-
-          // Add the "All Feathers" menu
+          // Add the "Feathers" menu
           var allFeathersLabel = "feathers.allfeathers";
           try {
             allFeathersLabel =
@@ -129,66 +139,59 @@
 
           var allFeathers = document.createElement("menu");
           allFeathers.setAttribute("label", allFeathersLabel);
-
+          
           var allFeathersPopup = document.createElement("menupopup");
           allFeathers.appendChild(allFeathersPopup);
-
+           
           this._addToMenu(allFeathers);
+          this._addToMenu(document.createElement("menuseparator"));
+          this.appendCurrentFeatherLayoutsSection();
 
-          // Add a menu for each skin
           var skins = this._enumToArray(this._feathersManager.getSkinDescriptions(), 
-                                         Components.interfaces.sbISkinDescription);              
-          
-          for (var i=0; i < skins.length; i++) {
+                                        Components.interfaces.sbISkinDescription);              
+          for (var i = 0; i < skins.length; i++) {
             var skin = skins[i];
             
-            // Get all layouts for this skin
             var layouts = this._enumToArray(
               this._feathersManager.getLayoutsForSkin(skin.internalName), 
               Components.interfaces.sbILayoutDescription
             );
-
+            
             // Skip skins with no compatible layouts
-            if (layouts.length == 0) continue;
+            if (layouts.length == 0) 
+              continue;
             
-            // Build a menu for this skin
-            var skinMenu = this._makeSkinMenu(skin);
-            
-            // Attach a menuitem for each compatible layout
-            for (var j = 0; j < layouts.length; j++) {
-              var item = this._makeLayoutMenuItem(skin, layouts[j]);
-              // Hack: remove the extra checked state.
-              // (We may want this back later) 
-              item.removeAttribute("type");
-              item.removeAttribute("checked");                  
-              skinMenu.firstChild.appendChild(item);
-            }
-            
-            allFeathersPopup.appendChild(skinMenu);
+            // Build a menuitem for this skin, use the first layout.
+            var skinMenuItem = this._makeSkinMenuItem(skin, layouts[0]);
+            allFeathersPopup.appendChild(skinMenuItem);
           }
-          
           this._appendGetMoreFeathers(allFeathersPopup);
         ]]>
         </body>
       </method>
 
       <!-- Return a menu with menupopup for the given layout -->
-      <method name="_makeSkinMenu">
+      <method name="_makeSkinMenuItem">
         <parameter name="skin"/>
+        <parameter name="layout"/>
         <body>
         <![CDATA[
-          var menu = document.createElement("menu");
-          menu.setAttribute("label", skin.name);
-          menu.setAttribute("internalName", skin.internalName);
-
-          var menupopup = document.createElement("menupopup");
-          menu.appendChild(menupopup);
-
-          return menu;
+          var item = document.createElement("menuitem");
+          item.setAttribute("label", skin.name);
+          item.setAttribute("internalName", skin.internalName);
+          
+          if (this._currentSkin == skin.internalName)
+            item.setAttribute("checked", "true"); 
+          
+          item.setAttribute("name", "feathers.item");
+          item.setAttribute("skinName", skin.internalName);
+          item.setAttribute("layoutURL", layout.url);
+          item.setAttribute("type", "radio");
+          
+          return item;
         ]]>
         </body>
       </method>
-
 
       <!-- Return a menuitem element for the given skin-layout pair -->
       <method name="_makeLayoutMenuItem">
@@ -212,24 +215,13 @@
         </body>
       </method>
 
-
       <!-- Append a section with the layouts available for the current skin -->
-      <method name="_appendSelectedFeathersSection">
+      <method name="appendCurrentFeatherLayoutsSection">
         <body>
         <![CDATA[
           // Get the current skin
           var skin = this._feathersManager.getSkinDescription(
                               this._feathersManager.currentSkinName);
-          
-          // Make a disabled menuitem to act as a label above 
-          // the layouts
-          var item = document.createElement("menuitem");
-          item.setAttribute("label", skin.name);
-          item.setAttribute("name", "feathers.item");
-          item.setAttribute("disabled", "true");
-          item.setAttribute("class", "feathers-menu-selected-skin-title");
-          
-          this._addToMenu(item);
           
           var layouts = this._enumToArray(
             this._feathersManager.getLayoutsForSkin(skin.internalName), 
