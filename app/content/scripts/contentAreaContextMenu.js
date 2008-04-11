@@ -67,6 +67,11 @@
  ***** END LICENSE BLOCK *****
 */
 
+if (!window.DNDUtils)
+  Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+if (!window.LibraryUtils) 
+  Components.utils.import("resource://app/jsmodules/LibraryUtils.jsm");
+
 function ContentAreaContextMenu(aXulMenu, aBrowser) {
   this.target            = null;
   this.browser           = null;
@@ -83,6 +88,7 @@ function ContentAreaContextMenu(aXulMenu, aBrowser) {
   this.onSaveableLink    = false;
   this.onMetaDataItem    = false;
   this.onMathML          = false;
+  this.onMedia           = false;
   this.link              = false;
   this.linkURL           = "";
   this.linkURI           = null;
@@ -138,6 +144,7 @@ ContentAreaContextMenu.prototype = {
     this.initSpellingItems();
     this.initSaveItems();
     this.initClipboardItems();
+    this.initMediaItems();
   },
 
   initOpenItems: function CM_initOpenItems() {
@@ -350,6 +357,17 @@ ContentAreaContextMenu.prototype = {
     this.showItem("context-copyimage", this.onImage);
     this.showItem("context-sep-copyimage", this.onImage);
   },
+  
+  initMediaItems: function () {
+    this.showItem("context-playmedia", this.onMedia);
+    this.showItem("context-downloadmedia", this.onMedia);
+    this.showItem("context-addmediatoplaylist", this.onMedia);
+    this.showItem("context-sep-media", this.onMedia);
+    
+    if (this.onMedia) {
+      this.updateAddToPlaylist();
+    }
+  },
 
   // Set various context menu attributes based on the state of the world.
   setTarget: function (aNode, aRangeParent, aRangeOffset) {
@@ -374,6 +392,7 @@ ContentAreaContextMenu.prototype = {
     this.linkURI           = null;
     this.linkProtocol      = "";
     this.onMathML          = false;
+    this.onMedia           = false;
     this.inFrame           = false;
     this.hasBGImage        = false;
     this.bgImageURL        = "";
@@ -584,6 +603,8 @@ ContentAreaContextMenu.prototype = {
         // If someone built with composer disabled, we can't get an editing session.
       }
 
+      this.onMedia = gPPS.isMediaURL(this.linkURL);
+
       if (isEditable) {
         this.onTextInput       = true;
         this.onKeywordField    = false;
@@ -592,6 +613,7 @@ ContentAreaContextMenu.prototype = {
         this.onCompletedImage  = false;
         this.onMetaDataItem    = false;
         this.onMathML          = false;
+        this.onMedia           = false;
         this.inFrame           = false;
         this.hasBGImage        = false;
         this.isDesignMode      = true;
@@ -1164,6 +1186,201 @@ ContentAreaContextMenu.prototype = {
 
   switchPageDirection: function CM_switchPageDirection() {
     SwitchDocumentDirection(this.browser.contentWindow);
+  },
+  
+  // recreate the list of menuitems for 'add to playlist'
+  updateAddToPlaylist: function CM_updateAddToPlaylist() {
+    var sep = document.getElementById("context-sep-playlists");
+    var popup = sep.parentNode;
+    var elements = document.getElementsByAttribute("type", "addtoplaylist");
+    while (elements.length > 0) {
+      popup.removeChild(elements[0]);
+    }
+    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                         .getService(Components.interfaces.sbILibraryManager);
+    var libs = libraryManager.getLibraries();
+    var nadded = 0;
+    while (libs.hasMoreElements()) {
+      var library = libs.getNext();
+      nadded += this.updateAddToPlaylistForLibrary(library);
+    }
+    
+    // show the 'no playlist' item only if we didn't add any ourselves
+    this.showItem("context-addmediatoplaylist-noplaylist", (nadded == 0));
+  },
+  
+  // create all the menuitems for 'add to playlist' for a particular library
+  updateAddToPlaylistForLibrary: function CM_addToPlayListForLibrary(aLibrary) {
+    // we insert all the items before the separator
+    var sep = document.getElementById("context-sep-playlists");
+    var popup = sep.parentNode;
+    var nadded = 0;
+    // listener receives all the playlists for this library
+    var listener = {
+      obj: this,
+      items: [],
+      _downloadListGUID: null,
+      _libraryServicePane: null,
+      onEnumerationBegin: function() {
+        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                              .getService(Components.interfaces.nsIPrefBranch2);
+        this._downloadListGUID =
+          prefs.getComplexValue("songbird.library.download",
+                                Components.interfaces.nsISupportsString);
+
+        this._libraryServicePane = 
+          Components.classes['@songbirdnest.com/servicepane/library;1']
+          .getService(Components.interfaces.sbILibraryServicePaneService);
+      },
+      onEnumerationEnd: function() { },
+      onEnumeratedItem: function(list, item) {
+        // discard hidden and non-simple playlists
+        var hidden = item.getProperty("http://songbirdnest.com/data/1.0#hidden");
+        if (hidden == "1" ||
+            item.type != "simple") {
+          return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+        }
+        
+        // discard more playlists
+
+        // XXXlone use policy system when bug 4017 is fixed
+        if (item.guid == this._downloadListGUID) {
+          return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+        }
+        
+        // XXXlone use policy system when bug 4017 is fixed
+        function isHidden(node) {
+          while (node) {
+            if (node.hidden) return true;
+            node = node.parentNode;
+          }
+          return false;
+        }
+        var node = this._libraryServicePane.getNodeForLibraryResource(item);
+        if (!node || isHidden(node)) {
+          return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+        }
+
+        // we want this playlist in the menu, make an item for it
+        var menuitem = document.createElement("menuitem");
+        menuitem.setAttribute("type", "addtoplaylist");
+        menuitem.setAttribute("library", aLibrary.guid);
+        menuitem.setAttribute("playlist", item.guid);
+        if (!item.name ||
+             item.name == "") {
+          songbird_bundle = document.getElementById("songbird_strings");
+          menuitem.setAttribute("label", songbird_bundle.getString("addMediaToPlaylistCmd.unnamedPlaylist"));
+        } else {
+          menuitem.setAttribute("label", item.name);
+        }
+        menuitem.setAttribute("oncommand", "gContextMenu.addMediaToPlaylist(event);");
+        popup.insertBefore(menuitem, sep);
+        
+        // count the number of items we created
+        nadded++;
+
+        // keep enumerating please
+        return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+      }
+    };
+
+    // start the enumeration
+    aLibrary.enumerateItemsByProperty("http://songbirdnest.com/data/1.0#isList", "1",
+                                        listener );
+    
+    // return the number of items we created
+    return nadded;
+  },
+  
+  // called when an 'add to playlist' menu item has been clicked
+  addMediaToPlaylist: function CM_addMediaToPlaylist(aEvent) {
+    // get the playlist that is targeted by the menu that triggered the event
+    var libraryguid = aEvent.target.getAttribute("library");
+    var playlistguid = aEvent.target.getAttribute("playlist");
+
+    var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                         .getService(Components.interfaces.sbILibraryManager);
+    var library = libraryManager.getLibrary(libraryguid);
+    if (library) {
+      var playlist = library.getMediaItem(playlistguid);
+      if (playlist) {
+        // add the item to that playlist
+        this._addMediaToPlaylist(playlist);
+        return;
+      }
+    }
+    // couldn't find either the library or the playlist, that's bad.
+    throw new Error("addMediaToPlaylist invoked with invalid playlist");
+  },
+  
+  // called when the 'new playlist' menuitem has been clicked
+  addMediaToNewPlaylist: function CM_addMediaToNewPlaylist() {
+    // create a new playlist, the servicepane will take over and
+    // enter edition mode, but the playlist will be created
+    // immediately, only with a temporary name
+    var newMediaList = window.makeNewPlaylist("simple");
+    this._addMediaToPlaylist(newMediaList);
+  },
+
+  // add the context link to a playlist
+  _addMediaToPlaylist: function CM__addMediaToPlaylist(aPlaylist) {
+    // we use the drop helper code because it does everything we need,
+    // including starting a metadata scanning job, and reporting the
+    // result of the action on the statusbar
+    ExternalDropHandler.dropUrlsOnList(window, [this.linkURL], aPlaylist, -1, null);
+  },
+  
+  downloadMedia: function CM_downloadMedia() {
+    // find the item in the web library, it should be there because the user
+    // right clicked on a url to get here, so it should have been handled by
+    // the scraper.
+    var item = 
+      getFirstItemByProperty(LibraryUtils.webLibrary, 
+                             "http://songbirdnest.com/data/1.0#contentURL", 
+                             this.linkURL);
+    if (!item)                         
+      item = 
+        getFirstItemByProperty(LibraryUtils.webLibrary, 
+                               "http://songbirdnest.com/data/1.0#originURL", 
+                               this.linkURL);
+    // still, it's possible to right click on a media url without having a corresponding 
+    // item in the web library, because maybe the user has disabled the scraper somehow, 
+    // or it failed, or there is another tab open with the web library and the user has
+    // deleted the track from it without reloading the current webpage, or something.
+    // so:
+    if (!item) {
+      // if the item does not exist, drop it into the web library
+      var dropHandlerListener = {
+        onDropComplete: function(aTargetList,
+                                 aImportedInLibrary,
+                                 aDuplicates,
+                                 aInsertedInMediaList,
+                                 aOtherDropsHandled) {
+          // do not show the standard report on the status bar
+          return false;
+        },
+        onFirstMediaItem: function(aTargetList, aFirstMediaItem) { },
+      };
+      ExternalDropHandler.dropUrlsOnList(window, [this.linkURL], LibraryUtils.webLibrary, -1, dropHandlerListener);
+      // we only gave a single item, it'll be dropped synchronously.
+      // look for the item again
+      item = getFirstItemByProperty(LibraryUtils.webLibrary, 
+                                    "http://songbirdnest.com/data/1.0#contentURL", 
+                                    this.linkURL);
+      if (!item) {
+        throw new Error("Failed to find media item after dropping it in the web library");
+      }
+    }
+    
+    // start downloading the item
+    var ddh = Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                                .getService(Components.interfaces.sbIDownloadDeviceHelper);
+    ddh.downloadItem(item);
+  },
+  
+  playMedia: function CM_playMedia() {
+    gBrowser.handleMediaURL(this.linkURL, true, false, null, gBrowser.currentURI.spec);
   }
+
 };
 

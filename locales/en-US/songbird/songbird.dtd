@@ -458,14 +458,22 @@
 <!ENTITY device.management.tabs.music.label "Music">
 <!ENTITY device.management.tabs.tools.label "Tools">
 
-<!ENTITY openLinkCmdInDefaultBrowser.label      "Open Link In Default Web Browser">
-<!ENTITY openLinkCmdInDefaultBrowser.accesskey  "o">
-<!ENTITY openPageCmdInDefaultBrowser.label      "Open Page In Default Web Browser">
-<!ENTITY openPageCmdInDefaultBrowser.accesskey  "o">
-<!ENTITY openFrameCmdInDefaultBrowser.label     "Open Frame In Default Web Browser">
-<!ENTITY openFrameCmdInDefaultBrowser.accesskey "o">
-<!ENTITY openImageCmdInDefaultBrowser.label     "Open Image In Default Web Browser">
-<!ENTITY openImageCmdInDefaultBrowser.accesskey "o">
-<!ENTITY copySelectionCmd.label                 "Copy Selected Text">
-<!ENTITY copySelectionCmd.accesskey             "c">
-
+<!ENTITY openLinkCmdInDefaultBrowser.label              "Open Link In Default Web Browser">
+<!ENTITY openLinkCmdInDefaultBrowser.accesskey          "o">
+<!ENTITY openPageCmdInDefaultBrowser.label              "Open Page In Default Web Browser">
+<!ENTITY openPageCmdInDefaultBrowser.accesskey          "o">
+<!ENTITY openFrameCmdInDefaultBrowser.label             "Open Frame In Default Web Browser">
+<!ENTITY openFrameCmdInDefaultBrowser.accesskey         "o">
+<!ENTITY openImageCmdInDefaultBrowser.label             "Open Image In Default Web Browser">
+<!ENTITY openImageCmdInDefaultBrowser.accesskey         "o">
+<!ENTITY copySelectionCmd.label                         "Copy Selected Text">
+<!ENTITY copySelectionCmd.accesskey                     "c">
+<!ENTITY playMediaCmd.label                             "Play">
+<!ENTITY playMediaCmd.accesskey                         "p">
+<!ENTITY downloadMediaCmd.label                         "Download">
+<!ENTITY downloadMediaCmd.accesskey                     "d">
+<!ENTITY addMediaToPlaylistCmd.label                    "Add To Playlist">
+<!ENTITY addMediaToPlaylistCmd.accesskey                "a">
+<!ENTITY addMediaToPlaylistCmd.noPlaylist.label         "&lt;No Playlists&gt;">
+<!ENTITY addMediaToPlaylistCmd.newPlaylist.label        "New Playlist">
+<!ENTITY addMediaToPlaylistCmd.newPlaylist.accesskey    "n">

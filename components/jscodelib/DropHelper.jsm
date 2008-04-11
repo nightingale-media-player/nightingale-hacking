@@ -584,6 +584,12 @@ var InternalDropHandler = {
                                 totalInserted,
                                 otherDrops);
       }
+    } else {
+      DNDUtils.standardReport(targetList,
+                              totalImported,
+                              totalDups, 
+                              totalInserted,
+                              otherDrops);
     }
   },
   
@@ -905,9 +911,10 @@ var ExternalDropHandler = {
       this._importInProgress = true;
       
       // begin processing array of dropped items
-      this._nextImportDropFrame();
+      // (the first item will be handled immediately, and the subsequent
+      // ones will be processed each time a new "frame" occurs, on a timer)
+      this._importDropFrame();
     }
-
   },
   
   // give a little bit of time for the main thread to react to UI events, and 
@@ -1176,6 +1183,12 @@ var ExternalDropHandler = {
                                 this._totalInserted,
                                 this._otherDrops);
       }
+    } else {
+      DNDUtils.standardReport(this._targetList,
+                              this._totalImported,
+                              this._totalDups, 
+                              this._totalInserted,
+                              this._otherDrops);
     }
     
     // and reset references we do not need anymore, coz leaks suck

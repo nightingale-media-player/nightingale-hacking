@@ -922,7 +922,7 @@
       <!-- Called when the user clicks on a media URL in a web page.
            Handles playing from the web playlist, opening as a playlist, etc. 
         -->
-      <method name="_handleMediaURL">
+      <method name="handleMediaURL">
         <parameter name="aURL" />
         <parameter name="aShouldBeginPlayback" />
         <parameter name="forcePlaylist" />
@@ -1060,7 +1060,7 @@
           }
           catch ( err )
           {
-            alert("sb-tabbrowser::_handleMediaURL(" + aURL + "); " + err );
+            alert("sb-tabbrowser::handleMediaURL(" + aURL + "); " + err );
           }
           return retval;
         ]]></body>
@@ -1285,7 +1285,7 @@
               case "html.context.open":
                 // can be track or playlist
                 // try dealing with media, might just be web content.
-                if ( !this._handleMediaURL(this._urlForHTMLContextMenu, true, false, null, this.currentURI.spec) )
+                if ( !this.handleMediaURL(this._urlForHTMLContextMenu, true, false, null, this.currentURI.spec) )
                 {
                   this.loadURI(this._urlForHTMLContextMenu, this.currentURI.spec, null);
                 }
@@ -1293,7 +1293,7 @@
               case "html.context.opentab":
                 // can be track or playlist
                 // try dealing with media, might just be web content.
-                if ( !this._handleMediaURL(this._urlForHTMLContextMenu, true, false, '_blank', this.currentURI.spec) )
+                if ( !this.handleMediaURL(this._urlForHTMLContextMenu, true, false, '_blank', this.currentURI.spec) )
                 {
                   this.loadOneTab(this._urlForHTMLContextMenu, this.currentURI, null, null, null, null);
                 }
@@ -1310,7 +1310,7 @@
               break;
               case "html.context.play":
                 // can be track or playlist
-                this._handleMediaURL(this._urlForHTMLContextMenu, true, false);
+                this.handleMediaURL(this._urlForHTMLContextMenu, true, false);
               break;
               case "html.context.download":
                 // figure out the media item for the url
@@ -1353,7 +1353,7 @@
               break;
               case "html.context.playlist":
                 // Add playlists to the service pane (force it as a playlist)
-                this._handleMediaURL(this._urlForHTMLContextMenu, false, true);
+                this.handleMediaURL(this._urlForHTMLContextMenu, false, true);
               break;
               case "html.context.copytoclipboard":
                 var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
@@ -1369,76 +1369,10 @@
       <method name="onContextPopupShowing">
         <parameter name="popup" />
         <parameter name="event" />
-        <body>
-            <![CDATA[
-          
+        <body><![CDATA[
           window.gContextMenu = new ContentAreaContextMenu(popup, window.getBrowser()); 
           this._popupShowing = gContextMenu.shouldDisplay;
-          
           return this._popupShowing;
-
-/*        xxxlone: disabled until bug 8395 is fixed, will be merged with contentAreaContextMenu.js
-
-          this._popupShowing = false;
-
-          var XLINK_NS = 'http://www.w3.org/1999/xlink';
-
-          this._urlForHTMLContextMenu = '';
-
-          // are we on a link?
-          var onLink = false;
-          var elem = document.popupNode; // the node that triggered the popup
-          // walk up the DOM looking for a link of some sort
-          while (elem) {
-            if(elem.nodeType == Node.ELEMENT_NODE) {
-              if (elem instanceof HTMLAnchorElement && elem.href ||
-                  elem instanceof HTMLAreaElement ||
-                  elem instanceof HTMLLinkElement ||
-                  elem.getAttribute(XLINK_NS, 'type') == 'simple') {
-                onLink = true;
-                break;
-              }
-            }
-            elem = elem.parentNode;
-          }
-          if (elem && onLink) {
-            // looks like we've got something
-            if (elem.href) {
-              // it's some kind of HTML link
-              this._urlForHTMLContextMenu = elem.href;
-            } else if (elem.hasAttributeNS(XLINK_NS, 'href')) {
-              // it's an XLink link
-              var xlink_href = elem.getAttributeNS(XLINK_NS, 'href');
-              if (!xlink_href || !xlink_href.match(/\S/)) {
-                // no link - fail
-                onLink = false;
-              }
-              // use the IO service to make the URL absolute
-              var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-                .getService(Components.interfaces.nsIIOService);
-              var baseURI  = ioService.newURI(elem.baseURI, null, null);
-              onLink = true;
-              this._urlForHTMLContextMenu = ioService.newURI(baseURI.resolve(xlink_href), null, null).spec;
-            } else {
-              // we shouldn't get here, but if we do that thing we thought was a link isn't
-              onLink = false;
-            }
-
-          }
-
-          if (this._urlForHTMLContextMenu) {
-            // Disable "Add" if the url isn't media or is already there.
-            document.getElementById("html.context.download").setAttribute("disabled",
-              SBUrlExistsInDatabase(this._urlForHTMLContextMenu) ||
-              !gPPS.isMediaURL(this._urlForHTMLContextMenu));
-            // allow the popup to be shown
-            this._popupShowing = true;
-
-          }
-
-          return this._popupShowing; // should show
-*/
-          
         ]]></body>
       </method>
 
@@ -1590,7 +1524,7 @@
           // we need to handle playlists and media items specially
           if ( gPPS.isPlaylistURL(href) ||
                gPPS.isMediaURL(href) ) {
-            this._handleMediaURL(href, false, false, target, referrer);
+            this.handleMediaURL(href, false, false, target, referrer);
             event.stopPropagation();
             event.preventDefault();
           } else {

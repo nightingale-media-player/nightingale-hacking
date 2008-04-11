@@ -101,6 +101,30 @@
        oncommand="gContextMenu.openLinkInDefaultBrowser();"/>
     <menuseparator id="context-sep-openexternal"/>
 
+    <menuitem id="context-playmedia"
+       label="&playMediaCmd.label;"
+       accesskey="&playMediaCmd.accesskey;"
+       oncommand="gContextMenu.playMedia();"/>
+    <menuitem id="context-downloadmedia"
+       label="&downloadMediaCmd.label;"
+       accesskey="&downloadMediaCmd.accesskey;"
+       oncommand="gContextMenu.downloadMedia();"/>
+    <menu id="context-addmediatoplaylist" 
+       label="&addMediaToPlaylistCmd.label;" 
+       accesskey="&addMediaToPlaylistCmd.accesskey;">
+      <menupopup>
+        <menuitem id="context-addmediatoplaylist-noplaylist"
+           label="&addMediaToPlaylistCmd.noPlaylist.label;"
+           disabled="true"/>
+        <menuseparator id="context-sep-playlists"/>
+        <menuitem id="context-addmediatoplaylist-newplaylist"
+           label="&addMediaToPlaylistCmd.newPlaylist.label;"
+           accesskey="&addMediaToPlaylistCmd.newPlaylist.accesskey;"
+           oncommand="gContextMenu.addMediaToNewPlaylist();"/>
+      </menupopup>
+    </menu>
+    <menuseparator id="context-sep-media"/>
+
     <menuitem id="context-savelink"
        label="&saveLinkCmd.label;"
        accesskey="&saveLinkCmd.accesskey;"
@@ -182,42 +206,44 @@
        command="cmd_selectAll"/>
     <menuseparator id="context-sep-selectall"/>
     <menuseparator id="frame-sep"/>
-    <menu id="frame" label="&thisFrameMenu.label;" accesskey="&thisFrameMenu.accesskey;">
-     <menupopup>
-       <menuitem id="context-showonlythisframe"
-           label="&showOnlyThisFrameCmd.label;"
-           accesskey="&showOnlyThisFrameCmd.accesskey;"
-           oncommand="gContextMenu.showOnlyThisFrame();"/>
-       <menuitem id="context-openframeintab"
-           label="&openFrameCmdInTab.label;"
-           accesskey="&openFrameCmdInTab.accesskey;"
-           oncommand="gContextMenu.openFrameInTab();"/>
-       <menuseparator/>
-       <menuitem id="context-reloadframe"
-           label="&reloadFrameCmd.label;"
-           accesskey="&reloadFrameCmd.accesskey;"
-           oncommand="gContextMenu.reloadFrame();"/>
-       <menuseparator/>
-       <menuitem id="context-openframeexternal"
-          label="&openFrameCmdInDefaultBrowser.label;"
-          accesskey="&openFrameCmdInDefaultBrowser.accesskey;"
-          oncommand="gContextMenu.openFrameInDefaultBrowser();"/>
-       <menuseparator id="context-sep-openframeexternal"/>
-       <menuitem id="context-bookmarkframe"
-           label="&bookmarkThisFrameCmd.label;"
-           accesskey="&bookmarkThisFrameCmd.accesskey;"
-           oncommand="gContextMenu.addBookmarkForFrame();"/>
-       <menuitem id="context-saveframe"
-           label="&saveFrameCmd.label;"
-           accesskey="&saveFrameCmd.accesskey;"
-           oncommand="saveDocument(gContextMenu.target.ownerDocument);"/>
-       <menuseparator/>
-       <menuitem id="context-viewframesource"
-           label="&viewFrameSourceCmd.label;"
-           accesskey="&viewFrameSourceCmd.accesskey;"
-           oncommand="gContextMenu.viewFrameSource();"
-           observes="isFrameImage"/>
-     </menupopup>
+    <menu id="frame" 
+       label="&thisFrameMenu.label;" 
+       accesskey="&thisFrameMenu.accesskey;">
+      <menupopup>
+        <menuitem id="context-showonlythisframe"
+            label="&showOnlyThisFrameCmd.label;"
+            accesskey="&showOnlyThisFrameCmd.accesskey;"
+            oncommand="gContextMenu.showOnlyThisFrame();"/>
+        <menuitem id="context-openframeintab"
+            label="&openFrameCmdInTab.label;"
+            accesskey="&openFrameCmdInTab.accesskey;"
+            oncommand="gContextMenu.openFrameInTab();"/>
+        <menuseparator/>
+        <menuitem id="context-reloadframe"
+            label="&reloadFrameCmd.label;"
+            accesskey="&reloadFrameCmd.accesskey;"
+            oncommand="gContextMenu.reloadFrame();"/>
+        <menuseparator/>
+        <menuitem id="context-openframeexternal"
+           label="&openFrameCmdInDefaultBrowser.label;"
+           accesskey="&openFrameCmdInDefaultBrowser.accesskey;"
+           oncommand="gContextMenu.openFrameInDefaultBrowser();"/>
+        <menuseparator id="context-sep-openframeexternal"/>
+        <menuitem id="context-bookmarkframe"
+            label="&bookmarkThisFrameCmd.label;"
+            accesskey="&bookmarkThisFrameCmd.accesskey;"
+            oncommand="gContextMenu.addBookmarkForFrame();"/>
+        <menuitem id="context-saveframe"
+            label="&saveFrameCmd.label;"
+            accesskey="&saveFrameCmd.accesskey;"
+            oncommand="saveDocument(gContextMenu.target.ownerDocument);"/>
+        <menuseparator/>
+        <menuitem id="context-viewframesource"
+            label="&viewFrameSourceCmd.label;"
+            accesskey="&viewFrameSourceCmd.accesskey;"
+            oncommand="gContextMenu.viewFrameSource();"
+            observes="isFrameImage"/>
+      </menupopup>
     </menu>
     <menuseparator id="frame-sep-after"/>
     <menuseparator id="context-sep-properties"/>
