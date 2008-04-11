@@ -441,6 +441,9 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
     nsCString                   urlScheme;
     nsAutoString                filePath;
     nsresult                    result = NS_OK;
+  
+    // TODO must ensure metadata is set before writing
+    NS_ENSURE_TRUE(mpMetadataPropertyArray, NS_ERROR_NOT_INITIALIZED);
 
     /* Get the TagLib sbISeekableChannel file IO manager. */
     mpTagLibChannelFileIOManager =
@@ -494,7 +497,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       // beginreading doesn't promise to return a null terminated string
       // this is RFB
       TagLib::FileRef f(NS_ConvertUTF16toUTF8(mMetadataPath).BeginReading());
-          
+      
       nsAutoString propertyValue;
       result = mpMetadataPropertyArray->GetPropertyValue(
           NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), propertyValue
@@ -572,6 +575,8 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       f.save();
     }
     
+    // TODO need to set pWriteCount
+  
     return (NS_OK);
 }
 
