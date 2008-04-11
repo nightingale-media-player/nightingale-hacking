@@ -254,6 +254,12 @@ pref("songbird.mediacore.normalize", false);
 #endif
 
 //
+// Metadata prefs
+//
+// Disable metadata for now. Too experimental.
+pref("songbird.metadata.enableWriting", false);
+
+//
 // Sanitize prefs
 //
 pref("privacy.sanitize.promptOnSanitize", true);

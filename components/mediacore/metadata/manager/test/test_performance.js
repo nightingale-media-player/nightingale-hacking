@@ -88,17 +88,6 @@ function runTest () {
 
 }
 
-function MetadataJobObserver(completeFunc) {
-  this._completeFunc = completeFunc;
-}
-
-MetadataJobObserver.prototype = {
-  observe: function(aSubject, aTopic, aData)
-  {
-    this._completeFunc.call(this, aSubject, aTopic, aData);
-  }
-}
-
 function onComplete(aSubject, aTopic, aData) {
   aSubject.QueryInterface(Components.interfaces.sbIMetadataJob).removeObserver();
 

@@ -85,6 +85,7 @@ protected:
   nsresult Init();
   nsresult Shutdown();
   nsresult RestartExistingJobs();
+  nsresult EnsureWritePermitted();
   nsresult ExecuteQuery( const nsAString &aQueryStr );
 
   nsCOMPtr< sbIDatabaseQuery >  mQuery;

@@ -109,17 +109,6 @@ function runTest () {
   testPending();
 }
 
-function MetadataJobObserver(completeFunc) {
-  this._completeFunc = completeFunc;
-}
-
-MetadataJobObserver.prototype = {
-  observe: function(aSubject, aTopic, aData)
-  {
-    this._completeFunc.call(this, aSubject, aTopic, aData);
-  }
-}
-
 function onComplete(aSubject, aTopic, aData) {
   gTestMetadataJob.removeObserver();
 

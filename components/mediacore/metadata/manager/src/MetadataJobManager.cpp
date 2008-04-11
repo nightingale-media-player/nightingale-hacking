@@ -39,6 +39,12 @@
 #include <xpcom/nsIObserverService.h>
 #include <nsIAppStartupNotifier.h>
 #include <nsArrayUtils.h>
+#include "nsIPrefBranch.h"
+#include "nsIPromptService.h"
+#include "nsIWindowMediator.h"
+#include "nsIDOMWindow.h"
+#include "nsIDOMWindowInternal.h"
+
 
 #include <sbISQLBuilder.h>
 #include <sbSQLBuilderCID.h>
@@ -136,6 +142,13 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray,
 
   nsresult rv;
 
+  // Do not allow write jobs unless the user has specifically given
+  // permission.  
+  if (aJobType == sbIMetadataJob::JOBTYPE_WRITE) {
+    rv = EnsureWritePermitted();
+    NS_ENSURE_SUCCESS(rv, rv);
+  } 
+
   // Ensure that all of the items are from the same library
   PRUint32 length;
   rv = aMediaItemsArray->GetLength(&length);
@@ -213,12 +226,14 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray,
   NS_ENSURE_SUCCESS(rv, rv);
   rv = insert->AddValueLong( aSleepMS );
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = insert->AddColumn( NS_LITERAL_STRING("job_type") );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = insert->AddValueLong( aJobType );
+  NS_ENSURE_SUCCESS(rv, rv);
   rv = insert->ToString( insertItem );
   NS_ENSURE_SUCCESS(rv, rv);
   rv = ExecuteQuery( insertItem );      
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  // TODO save read/write status
 
   // Kick off the task with the proper data
   rv = task->Init(tableName, aMediaItemsArray, aSleepMS, aJobType);
@@ -297,7 +312,7 @@ nsresult sbMetadataJobManager::RestartExistingJobs()
   nsAutoString createTable;
   createTable.AppendLiteral( "CREATE TABLE IF NOT EXISTS " );
   createTable += sbMetadataJob::DATABASE_GUID();
-  createTable.AppendLiteral( " (job_guid TEXT NOT NULL PRIMARY KEY, ms_delay INTEGER NOT NULL)" );
+  createTable.AppendLiteral( " (job_guid TEXT NOT NULL PRIMARY KEY, ms_delay INTEGER NOT NULL, job_type INTEGER NOT NULL)" );
   rv = ExecuteQuery( createTable );      
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -319,11 +334,14 @@ nsresult sbMetadataJobManager::RestartExistingJobs()
   // Launch the unfinished tasks
   for ( PRUint32 i = 0; i < rowCount; i++ )
   {
-    nsAutoString tableName, strSleep;
+    nsAutoString tableName, strSleep, strType;
     rv = result->GetRowCell(i, 0, tableName);
     rv = result->GetRowCell(i, 1, strSleep);
+    rv = result->GetRowCell(i, 2, strType);
     NS_ENSURE_SUCCESS(rv, rv);
     PRUint32 aSleep = strSleep.ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    PRUint16 jobType = strType.ToInteger(&rv);
     NS_ENSURE_SUCCESS(rv, rv);
     
     nsRefPtr<sbMetadataJob> task = new sbMetadataJob();
@@ -332,14 +350,83 @@ nsresult sbMetadataJobManager::RestartExistingJobs()
     rv = task->FactoryInit();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // TODO get read/write
-    rv = task->Init(tableName, nsnull, aSleep, sbIMetadataJob::JOBTYPE_READ);
+    rv = task->Init(tableName, nsnull, aSleep, jobType);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mJobArray.AppendObject( task ); // Keep a reference around to it.
   }
 
   return rv;
+}
+
+/**
+ * Return NS_OK if write jobs are permitted, or 
+ * NS_ERROR_NOT_AVAILABLE if not.
+ *
+ * May prompt the user to permit write jobs.
+ */
+nsresult sbMetadataJobManager::EnsureWritePermitted()
+{
+  nsresult rv;
+
+  PRBool enableWriting = PR_FALSE;
+  nsCOMPtr<nsIPrefBranch> prefService =
+  do_GetService( "@mozilla.org/preferences-service;1", &rv );
+  NS_ENSURE_SUCCESS( rv, rv);
+  prefService->GetBoolPref( "songbird.metadata.enableWriting", &enableWriting );
+
+  if (!enableWriting) {    
+    
+    // Let the user know what the situation is. 
+    // Allow them to enable writing if desired.
+    
+    PRBool promptOnWrite = PR_TRUE;
+    prefService->GetBoolPref( "songbird.metadata.promptOnWrite", &promptOnWrite );
+    
+    if (promptOnWrite) {
+      // Don't bother to prompt unless there is a player window open.
+      // This avoids popping a modal dialog mid unit test.
+      nsCOMPtr<nsIWindowMediator> windowMediator =
+        do_GetService("@mozilla.org/appshell/window-mediator;1", &rv);
+      NS_ENSURE_SUCCESS( rv, rv);
+      nsCOMPtr<nsIDOMWindowInternal> mainWindow;  
+      windowMediator->GetMostRecentWindow(NS_LITERAL_STRING("Songbird:Main").get(),
+                                          getter_AddRefs(mainWindow));
+      if (mainWindow) {
+        nsCOMPtr<nsIPromptService> promptService =
+          do_GetService("@mozilla.org/embedcomp/prompt-service;1", &rv);
+        NS_ENSURE_SUCCESS( rv, rv);
+
+        PRBool promptResult = PR_FALSE;
+        PRBool checkState = PR_FALSE;
+
+        // TODO Clean up, localize, or remove from the product
+        rv = promptService->ConfirmCheck(mainWindow,                  
+              NS_LITERAL_STRING("WARNING! TAG WRITING IS EXPERIMENTAL!").get(),
+              NS_MULTILINE_LITERAL_STRING( 
+                NS_LL("Are you sure you want to write metadata changes")
+                NS_LL(" back to your media files?\n\nTag writing has not been tested yet,")
+                NS_LL(" and may damage your media files.  If you'd like to help us test")
+                NS_LL(" this functionality, great, but we advise you to back up your media first.")
+              ).get(),
+              NS_LITERAL_STRING("Don't show this dialog again").get(),
+              &checkState, 
+              &promptResult);  
+        NS_ENSURE_SUCCESS( rv, rv);
+        
+        if (checkState) {
+          prefService->SetBoolPref( "songbird.metadata.promptOnWrite", PR_FALSE );
+        }
+        
+        if (promptResult) {
+          prefService->SetBoolPref( "songbird.metadata.enableWriting", PR_TRUE );
+          enableWriting = PR_TRUE;
+        }
+      }
+    }
+  }
+
+  return (enableWriting) ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
 nsresult sbMetadataJobManager::ExecuteQuery( const nsAString &aQueryStr )

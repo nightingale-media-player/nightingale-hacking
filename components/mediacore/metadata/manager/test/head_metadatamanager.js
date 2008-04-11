@@ -129,3 +129,15 @@ function assertObjectIsSubsetOf(mapA, mapB) {
   }
 }
 
+function MetadataJobObserver(completeFunc) {
+  this._completeFunc = completeFunc;
+}
+
+MetadataJobObserver.prototype = {
+  observe: function(aSubject, aTopic, aData)
+  {
+    this._completeFunc.call(this, aSubject, aTopic, aData);
+  }
+}
+
+

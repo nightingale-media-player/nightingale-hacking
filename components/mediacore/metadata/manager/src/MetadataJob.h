@@ -74,7 +74,8 @@
 #define SONGBIRD_METADATAJOB_CID \
 { 0xC38FD6BD, 0x3335, 0x4392, { 0xA3, 0xDE, 0x18, 0x55, 0xEC, 0xED, 0xA4, 0xF8 } }
 
-#define SBMETADATAJOB_DATABASE_GUID "sbMetadataJob"
+// TODO Update.  Revving this basically abandons old database files.
+#define SBMETADATAJOB_DATABASE_GUID "metadataJobV2Exp"
 
 // FUNCTIONS ==================================================================
 
@@ -128,7 +129,7 @@ protected:
       nsString _item_guid = EmptyString(),
       nsString _url = EmptyString(),
       nsString _worker_thread = EmptyString(),
-      nsString _is_scanned = EmptyString(),
+      nsString _is_started = EmptyString(),
       sbIMediaItem* _item = nsnull,
       sbIMetadataHandler *_handler = nsnull
     ) :
@@ -136,7 +137,7 @@ protected:
       item_guid( _item_guid ),
       url( _url ),
       worker_thread( _worker_thread ),
-      is_scanned( _is_scanned ),
+      is_started( _is_started ),
       item( _item ),
       handler( _handler )
     {
@@ -151,7 +152,7 @@ protected:
     nsString item_guid;
     nsString url;
     nsString worker_thread;
-    nsString is_scanned;
+    nsString is_started;
     nsCOMPtr<sbIMediaItem> item;
     nsCOMPtr<sbIMetadataHandler> handler;
   protected:
@@ -168,14 +169,14 @@ protected:
 
   static nsresult AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsString aTableName, sbIMediaItem *aMediaItem, jobitem_t **_retval );
   static nsresult GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableName, PRBool isWorkerThread, jobitem_t **_retval );
-  static nsresult SetItemIsScanned( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
-  static nsresult SetItemIsWritten( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
-  static nsresult SetItemsAreWritten( sbIDatabaseQuery *aQuery, nsString aTableName, nsTArray<nsRefPtr<jobitem_t> > &aItemArray );
+  static nsresult SetItemIsStarted( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
+  static nsresult SetItemIsCompleted( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
+  static nsresult SetItemsAreCompleted( sbIDatabaseQuery *aQuery, nsString aTableName, nsTArray<nsRefPtr<jobitem_t> > &aItemArray );
   static nsresult SetItemIs( const nsAString &aColumnString, sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE, PRBool aValue = PR_TRUE );
   static nsresult SetItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
   static nsresult ClearItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
-  static nsresult ResetUnwritten( sbIDatabaseQuery *aQuery, nsString aTableName );
-  static nsresult StartHandlerForItem( jobitem_t *aItem );
+  static nsresult ResetIncomplete( sbIDatabaseQuery *aQuery, nsString aTableName );
+  static nsresult StartHandlerForItem( jobitem_t *aItem, PRUint16 aJobType);
   static nsresult AddMetadataToItem( jobitem_t *aItem, sbIURIMetadataHelper *aURIMetadataHelper );
   static nsresult AddDefaultMetadataToItem( jobitem_t *aItem, sbIMediaItem *aMediaItem );
   static nsresult CreateDefaultItemName( const nsAString &aURLString, nsAString &retval );
