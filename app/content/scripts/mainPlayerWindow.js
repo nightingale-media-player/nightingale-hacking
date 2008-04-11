@@ -23,6 +23,37 @@
 // END SONGBIRD GPL
 //
  */
+ 
+ 
+var gTabBrowser = null;
+
+var gSongbirdWindowController = 
+{
+  doCommand: function(aCommand)
+  {
+    if (aCommand == "cmd_find")
+      gTabBrowser.onFindCommand();
+    else if (aCommand == "cmd_findAgain")
+      gTabBrowser.onFindAgainCommand();
+  },
+  
+  supportsCommand: function(aCommand)
+  {
+    if (aCommand == "cmd_find" || aCommand == "cmd_findAgain")
+      return true;
+      
+    return false;
+  },
+  
+  isCommandEnabled: function(aCommand)
+  {
+    if (!gTabBrowser.isSelectedTabMediaPage() &&
+        (aCommand == "cmd_find" || aCommand == "cmd_findAgain"))
+      return true;
+    
+    return false;
+  }
+};
 
 
 /**
@@ -55,9 +86,10 @@ var gSongbirdPlayerWindow = {
     
     window.focus();
     windowPlacementSanityChecks();
+    
+    gTabBrowser = document.getElementById("content");
+    top.controllers.insertControllerAt(0, gSongbirdWindowController);
   },
-
-
 
 
   /**

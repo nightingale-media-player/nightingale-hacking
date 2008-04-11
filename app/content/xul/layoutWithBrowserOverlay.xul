@@ -334,7 +334,7 @@
                   boolean="true"
                   inverted="true" />
       </command>
-
+      
       <command id="View:PageSource" oncommand="BrowserViewSourceOfDocument(content.document);" observes="isImage"/>
     </commandset>
     
@@ -358,7 +358,14 @@
       <key id="newtab-key" modifiers="accel" key="&menu.file.newtab.key;" oncommand="doMenu('menuitem_file_newtab');"/>
       <key id="closetab-key" modifiers="accel" key="&menu.file.closetab.key;" oncommand="doMenu('menuitem_file_closetab');"/>
       <!-- key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/ -->
-      <key id="search-key" modifiers="accel" key="&search.key;" oncommand="document.getElementById('search_widget').onFirstMousedown();"/>
+      <!-- 
+        Due to the mozilla bug 330458, loading the XUL key/command overlay information from |layoutBaseOverlay.xul|
+        doesn't load into this file. In order to get the find key events to work via key-strokes, we have to 
+        duplicate the key definition here.
+      -->
+      <key id="find-key" modifiers="accel" key="&menu.edit.find.key;" oncommand="goDoCommand('cmd_find');" />
+      <key id="findagain-key" modifiers="accel" key="&menu.edit.findagain.key;" oncommand="goDoCommand('cmd_findAgain');" />
+      
       <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
       <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>
 

@@ -841,10 +841,40 @@
           var event = document.createEvent("Events");
           event.initEvent("TabContentChange", true, false);
           this.dispatchEvent(event);
+          
+          this._updateFindbarState();
+          
+          document.commandDispatcher.updateCommands("tabchange");
         ]]></body>
       </method>
       
+      <method name="_updateFindbarState">
+        <body>
+          <![CDATA[
+            // If we are about to show a media page, let's supress the findbar. 
+            // Calling |closeFindbar()| simply hides the findbar from
+            // the content view and saves the contents of the search.
+            if (this.isSelectedTabMediaPage() && !this.isFindbarHidden) {
+              this.closeFindbar();
+              this._mFindbarIsSuppressed = true;
+            }
+            // Now the tab content that we are switching to is not a media page
+            // and we have suppressed the findbar - it's time to show it now.
+            else if (!this.isSelectedTabMediaPage() && this._mFindbarIsSuppressed) {
+              this.showFindbar();
+              this._mFindbarIsSuppressed = false;
+            }
+          ]]>
+        </body>
+      </method>
       
+      <method name="isSelectedTabMediaPage">
+        <body>
+          <![CDATA[
+            return this.selectedTab.mediaPage != null;
+          ]]>
+        </body>
+      </method>
       
       <!-- a bunch of methods from browser_xbl_temp.js / songbird_hack.js.
            I'm not convinced they belong here, but till we refactor a couple
@@ -1590,6 +1620,7 @@
         // Watch the inner medialist in case the tab needs to be closed                         
         this._mediaListRemovalMonitor = new LibraryUtils.RemovalMonitor(this);
         
+        this._mFindbarIsSuppressed = false;
       ]]></constructor>
      <destructor><![CDATA[
         this.destroy();

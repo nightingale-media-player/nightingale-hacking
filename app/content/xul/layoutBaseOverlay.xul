@@ -254,6 +254,8 @@
                   oncommandupdate="goUpdateUndoEditMenuItems()"/>
       <commandset id="editMenuCommandSetPaste" commandupdater="true" events="clipboard"
                   oncommandupdate="goUpdatePasteMenuItems()"/>
+      <commandset id="editMenuCommandSetFind" commandupdater="true" events="focus, select, tabchange"
+                  oncommandupdate="goUpdateGlobalFindMenuItems()"/>
       <command id="cmd_undo" oncommand="goDoCommand('cmd_undo')"/>
       <command id="cmd_redo" oncommand="goDoCommand('cmd_redo')"/>
       <command id="cmd_cut" oncommand="goDoCommand('cmd_cut')"/>

@@ -114,6 +114,11 @@
                      class="tabbrowser-tab" label="&untitledTab;" crop="end"/>
           </xul:tabs>
         </xul:hbox>
+        
+        <xul:vbox id="findbar_box">
+          <xul:findbar browserid="content" id="FindToolbar" />
+        </xul:vbox>
+        
         <xul:tabpanels flex="1" class="plain" selectedIndex="0" anonid="panelcontainer">
           <xul:notificationbox flex="1">
             <xul:browser flex="1" type="content-primary" message="true" disablehistory="true"
@@ -2102,6 +2107,42 @@
           ]]>
         </body>
       </method>
+      
+      <method name="onFindCommand">
+        <body>
+          <![CDATA[
+            this._mFindbar.onFindCommand();
+          ]]>
+        </body>
+      </method>
+
+      <method name="onFindAgainCommand">
+        <body>
+          <![CDATA[
+            this._mFindbar.onFindAgainCommand();
+          ]]>
+        </body>
+      </method>
+      
+      <method name="showFindbar">
+        <body>
+          <![CDATA[
+            this._mFindbar.removeAttribute("hidden");
+          ]]>
+        </body>
+      </method>
+
+      <method name="closeFindbar">
+        <body>
+          <![CDATA[
+            this._mFindbar.setAttribute("hidden", "true");
+          ]]>
+        </body>
+      </method>
+      
+      <property name="isFindbarHidden"
+                onget="return this._mFindbar.getAttribute('hidden');"
+                readonly="true" />
 
       <!-- BEGIN FORWARDED BROWSER PROPERTIES.  IF YOU ADD A PROPERTY TO THE BROWSER ELEMENT
            MAKE SURE TO ADD IT HERE AS WELL. -->
@@ -2449,7 +2490,7 @@
       <constructor>
         <![CDATA[
           this.mCurrentBrowser = this.mPanelContainer.childNodes[0].firstChild;
-
+          
           var localName = this.localName;
           this.mCurrentBrowser.getTabBrowser = function() { 
             var tabBrowser = this.parentNode;
@@ -2467,6 +2508,8 @@
           this.mTabContainer.childNodes[0].linkedPanel = uniqueId;
           this.mTabContainer.childNodes[0]._tPos = 0;
           this.mTabContainer.childNodes[0].linkedBrowser = this.mPanelContainer.childNodes[0].firstChild;
+          
+          this._mFindbar = document.getAnonymousElementByAttribute(this, "id", "FindToolbar");
         ]]>
       </constructor>
 

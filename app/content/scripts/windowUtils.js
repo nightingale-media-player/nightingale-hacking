@@ -1,6 +1,6 @@
 /*
-//
 // BEGIN SONGBIRD GPL
+//
 //
 // This file is part of the Songbird web player.
 //
@@ -1193,4 +1193,17 @@ function updateEditUIVisibility()
     }
   }
 }
+
+
+/**
+ * This method assits with updating the global findbar information. This update
+ * is used to help update the find/find again functionality depending on what
+ * type of content is currently loaded into the content view (tab-browser).
+ */
+function goUpdateGlobalFindMenuItems()
+{
+  goUpdateCommand("cmd_find");
+  goUpdateCommand("cmd_findAgain");
+}
+
                                                                                                                                                                                                         
