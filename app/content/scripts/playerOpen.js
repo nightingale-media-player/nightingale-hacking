@@ -308,7 +308,14 @@ try
   // not available. Eventually this should be replaced by code that opens a new 
   // Songbird window, when we are able to do that, but for now, open in the 
   // default external browser.
+  // If what you want to do is ALWAYS open in the default external browser,
+  // use SBOpenURLInDefaultBrowser directly!
   function SBBrowserOpenURLInNewWindow( the_url ) {
+    SBOpenURLInDefaultBrowser(the_url);
+  }
+  
+  // This function opens a URL externally, in the default web browser for the system
+  function SBOpenURLInDefaultBrowser( the_url ) {
     var externalLoader = (Components
               .classes["@mozilla.org/uriloader/external-protocol-service;1"]
             .getService(Components.interfaces.nsIExternalProtocolService));

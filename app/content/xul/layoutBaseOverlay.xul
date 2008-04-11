@@ -257,10 +257,11 @@
       <command id="cmd_undo" oncommand="goDoCommand('cmd_undo')"/>
       <command id="cmd_redo" oncommand="goDoCommand('cmd_redo')"/>
       <command id="cmd_cut" oncommand="goDoCommand('cmd_cut')"/>
-      <command id="cmd_copy"  oncommand="goDoCommand('cmd_copy')"/>
+      <command id="cmd_copy" oncommand="goDoCommand('cmd_copy')"/>
       <command id="cmd_paste" oncommand="goDoCommand('cmd_paste')"/>
-      <command id="cmd_selectAll" oncommand="goDoCommand('cmd_selectAll')"/>
       <command id="cmd_delete" oncommand="goDoCommand('cmd_delete')"/>
+      <command id="cmd_selectAll" oncommand="goDoCommand('cmd_selectAll')"/>
+      <command id="cmd_switchTextDirection" oncommand="goDoCommand('cmd_switchTextDirection');"/>
       <command id="cmd_find" oncommand="goDoCommand('cmd_find')"/>
       <command id="cmd_findAgain" oncommand="goDoCommand('cmd_findAgain')"/>
     </commandset>
@@ -340,6 +341,7 @@
     <!-- this id matches Firefox's --> 
     <stringbundleset id="stringbundleset">
       <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
+      <stringbundle id="bundle_brand" src="chrome://branding/locale/brand.properties"/>
     </stringbundleset> 
 
   <!-- end overlay group -->

@@ -245,9 +245,10 @@
     
       <!-- CONTEXT MENU FOR THE MAIN PANE HTML LINKS -->
       <popup id="contentAreaContextMenu"
-            onpopupshowing="if(event.target!=this)return true; return gBrowser.onContextPopupShowing(this, event)"
-            onpopuphiding="gBrowser.onContextPopupHiding(this)"
+            onpopupshowing="if (event.target != this) return true; return gBrowser.onContextPopupShowing(this, event)"
+            onpopuphiding="if (event.target == this) gBrowser.onContextPopupHiding(this)"
             oncommand="gBrowser.onHTMLContextMenu(event.target)">
+<!--    xxxlone disabled until bug 8395 is fixed, will be merged with contentAreaContextOverlay.xul
         <menuitem id="html.context.open" label="&html.context.open;"/>
         <menuitem id="html.context.opentab" label="&html.context.opentab;" />
         <menuitem id="html.context.openexternal" label="&html.context.openexternal;"/>
@@ -256,6 +257,8 @@
         <menuitem id="html.context.playlist"  label="&html.context.playlist;"/>
         <menuseparator/>
         <menuitem id="html.context.copytoclipboard" label="&html.context.copytoclipboard;"/>
+        <menuseparator/>
+-->
       </popup>
 
       <!-- EDIT POPUP FOR THE MAIN PANE PLAYLIST -->
@@ -447,10 +450,8 @@
   src="chrome://songbird/content/scripts/xpInstallHat.js" />
 
   <!-- Window Controller -->
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/mainPlayerWindow.js" />
-
-
 
   <!-- ********************************************************************* -->
   <!-- **                                                                 ** -->

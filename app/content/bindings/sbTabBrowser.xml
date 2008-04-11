@@ -1369,7 +1369,16 @@
       <method name="onContextPopupShowing">
         <parameter name="popup" />
         <parameter name="event" />
-        <body><![CDATA[
+        <body>
+            <![CDATA[
+          
+          window.gContextMenu = new ContentAreaContextMenu(popup, window.getBrowser()); 
+          this._popupShowing = gContextMenu.shouldDisplay;
+          
+          return this._popupShowing;
+
+/*        xxxlone: disabled until bug 8395 is fixed, will be merged with contentAreaContextMenu.js
+
           this._popupShowing = false;
 
           var XLINK_NS = 'http://www.w3.org/1999/xlink';
@@ -1428,12 +1437,16 @@
           }
 
           return this._popupShowing; // should show
+*/
+          
         ]]></body>
       </method>
 
       <method name="onContextPopupHiding">
         <parameter name="popup"/>
-        <body><![CDATA[
+        <body>
+          <![CDATA[
+          window.gContextMenu = null; 
           this._popupShowing = false;
         ]]></body>
       </method>

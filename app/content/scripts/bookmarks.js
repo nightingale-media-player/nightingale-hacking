@@ -29,7 +29,7 @@
 var bmManager = {
   svc: Components.classes['@songbirdnest.com/servicepane/bookmarks;1']
                          .getService(Components.interfaces.sbIBookmarks),
-  addBookmark : function() {
+  addBookmark : function bmManager_addBookmark() {
     var browser = window.gBrowser;
     if (browser) {
       var theurl = browser.currentURI.spec;
@@ -39,37 +39,53 @@ var bmManager = {
       if (locationBar.value != theurl) {
         theurl = locationBar.value;
       }
-      
-      if (!this.svc.bookmarkExists(theurl)) {
-        var thelabel = browser.contentDocument.title;
-        if (thelabel == "") thelabel = theurl;
-        
-        var theicon = "http://" + browser.currentURI.hostPort + "/favicon.ico";
-        var faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"]
-                             .getService(Components.interfaces.nsIFaviconService);
-          
-        try {
-          theicon = faviconService.getFaviconForPage(browser.currentURI).spec;
-          
-          // Favicon URI's are prepended with "moz-anno:favicon:".
-          if(theicon.indexOf("moz-anno:favicon:") == 0) {
-            theicon = theicon.substr(17);
-          }
-        }
-        catch(e) {
-          if (Components.lastResult != Components.results.NS_ERROR_NOT_AVAILABLE)
-            Components.utils.reportError(e);
-        }
 
-        // XXX: The bookmark service should eventually get the favicon from the favicon service instead
-        // of simply saving the URI to the favicon. :(
-        this.svc.addBookmark(theurl, thelabel, theicon);
-      } else {
-        // tell user it already exists
-        gPrompt.alert( window, 
-                      SBString( "bookmarks.addmsg.title", "Bookmark" ),
-                      SBString( "bookmarks.addmsg.msg", "This bookmark already exists" ) );
-      }
+      var thelabel = browser.contentDocument.title;
+      if (thelabel == "") thelabel = theurl;
+      
+      this.addBookmarkForPage(theurl, thelabel);
     }
+  },
+  
+  addBookmarkForPage: function bmManager_addBookmarkForPage(aLocation, aTitle) {
+    if (!(aLocation instanceof Components.interfaces.nsIURI)) {
+      // if we didn't get a uri, assume we got a url
+
+      var uri = (Components.classes["@mozilla.org/network/io-service;1"]
+                           .getService(Components.interfaces.nsIIOService)
+                           .newURI(aLocation, null, null));
+      aLocation = uri;
+    }
+    
+    var theurl = aLocation.spec;
+
+    if (!this.svc.bookmarkExists(theurl)) {
+      var theicon = "http://" + aLocation.hostPort + "/favicon.ico";
+      var faviconService = Components.classes["@mozilla.org/browser/favicon-service;1"]
+                           .getService(Components.interfaces.nsIFaviconService);
+        
+      try {
+        theicon = faviconService.getFaviconForPage(aLocation).spec;
+        
+        // Favicon URI's are prepended with "moz-anno:favicon:".
+        if(theicon.indexOf("moz-anno:favicon:") == 0) {
+          theicon = theicon.substr(17);
+        }
+      }
+      catch(e) {
+        if (Components.lastResult != Components.results.NS_ERROR_NOT_AVAILABLE)
+          Components.utils.reportError(e);
+      }
+
+      // XXX: The bookmark service should eventually get the favicon from the favicon service instead
+      // of simply saving the URI to the favicon. :(
+      this.svc.addBookmark(theurl, aTitle, theicon);
+    } else {
+      // tell user it already exists
+      gPrompt.alert( window, 
+                    SBString( "bookmarks.addmsg.title", "Bookmark" ),
+                    SBString( "bookmarks.addmsg.msg", "This bookmark already exists" ) );
+    }
+
   }
 };

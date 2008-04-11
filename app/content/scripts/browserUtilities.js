@@ -42,8 +42,6 @@ if (typeof(Cc) == "undefined")
 if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
-
-var goPrefWindow = 0;
 var gBidiUI = false;
 
 function getBrowserURL()
@@ -641,4 +639,102 @@ window.QueryInterface(Ci.nsIInterfaceRequestor)
       .getInterface(Ci.nsIXULWindow)
       .XULBrowserWindow = window.XULBrowserWindow;
 
+
+function makeURLAbsolute(aBase, aUrl)
+{
+  // Note:  makeURI() will throw if aUri is not a valid URI
+  return makeURI(aUrl, null, makeURI(aBase)).spec;
+}
+
+function getBrowserSelection(aCharLen) {
+ // selections of more than 150 characters aren't useful
+ const kMaxSelectionLen = 150;
+ const charLen = Math.min(aCharLen || kMaxSelectionLen, kMaxSelectionLen);
+
+ var focusedWindow = document.commandDispatcher.focusedWindow;
+ var selection = focusedWindow.getSelection().toString();
+
+ if (selection) {
+   if (selection.length > charLen) {
+     // only use the first charLen important chars. see bug 221361
+     var pattern = new RegExp("^(?:\\s*.){0," + charLen + "}");
+     pattern.test(selection);
+     selection = RegExp.lastMatch;
+   }
+
+   selection = selection.replace(/^\s+/, "")
+                        .replace(/\s+$/, "")
+                        .replace(/\s+/g, " ");
+
+   if (selection.length > charLen)
+     selection = selection.substr(0, charLen);
+ }
+ return selection;
+}
+
+function mimeTypeIsTextBased(aMimeType)
+{
+  return /^text\/|\+xml$/.test(aMimeType) ||
+         aMimeType == "application/x-javascript" ||
+         aMimeType == "application/javascript" ||
+         aMimeType == "application/xml" ||
+         aMimeType == "mozilla.application/cached-xul";
+}
+
+function BrowserReload() 
+{
+  const reloadFlags = nsIWebNavigation.LOAD_FLAGS_NONE;
+  return BrowserReloadWithFlags(reloadFlags);
+}
+
+function BrowserReloadWithFlags(reloadFlags)
+{
+  /* First, we'll try to use the session history object to reload so
+   * that framesets are handled properly. If we're in a special
+   * window (such as view-source) that has no session history, fall
+   * back on using the web navigation's reload method.
+   */
+
+  var webNav = getWebNavigation();
+  try {
+    var sh = webNav.sessionHistory;
+    if (sh)
+      webNav = sh.QueryInterface(nsIWebNavigation);
+  } catch (e) {
+  }
+
+  try {
+    webNav.reload(reloadFlags);
+  } catch (e) {
+  }
+}
+
+function getWebNavigation()
+{
+  try {
+    return gBrowser.webNavigation;
+  } catch (e) {
+    return null;
+  }
+}
+
+function formatURL(aFormat, aIsPref) {
+  var formatter = Cc["@mozilla.org/toolkit/URLFormatterService;1"]
+                    .getService(Ci.nsIURLFormatter);
+  return aIsPref ? 
+    formatter.formatURLPref(aFormat) : formatter.formatURL(aFormat);
+}
+
+var gPrefService;
+var gNavigatorBundle;
+
+function onInitBrowserUtilities() {
+  window.removeEventListener("load", onInitBrowserUtilities, false);
+  gNavigatorBundle = document.getElementById("bundle_browser");
+  var gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
+                               .getService(Components.interfaces.nsIPrefBranch2);
+  gBidiUI = isBidiEnabled();
+}
+
+window.addEventListener("load", onInitBrowserUtilities, false);
 

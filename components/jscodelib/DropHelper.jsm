@@ -1046,8 +1046,7 @@ var ExternalDropHandler = {
 
         // if the item is valid, and we are inserting in a medialist, insert it 
         // to the requested position
-        if (item && 
-            (this._targetList != this._targetList.library)) {
+        if (item) {
           if ((this._targetList instanceof this._Ci.sbIOrderableMediaList) &&
               (this._targetPosition >= 0) && 
               (this._targetPosition < this._targetList.length)) {
@@ -1056,7 +1055,6 @@ var ExternalDropHandler = {
           } else {
             this._targetList.add(item);
           }
-          
           this._totalInserted++;
         }
         // report the first item that was dropped
