@@ -48,6 +48,7 @@ SONGBIRD_VLCPLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/plugins/*$(DLL_SUFFIX) \
 endif
 
 SONGBIRD_DIST = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
+                $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
                 $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
                 $(NULL)
 
@@ -65,6 +66,8 @@ endif # windows
 
 ifeq (linux,$(SB_PLATFORM))
 
+SONGBIRD_XULRUNNER += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/libtag.so*
+
 # non-existent variable, VLC no-worky on linux yet...
 ifdef (MEDIA_CORE_VLC)
 ifdef (SB_LINUX_VLC)
@@ -73,14 +76,15 @@ VLC_PLUGIN = libvlcplugin
 SONGBIRD_PLUGINS += $(PLUGINS_DIR)/vlc/plugins/$(VLC_PLUGIN)$(DLL_SUFFIX)
 SONGBIRD_COMPONENTS += $(PLUGINS_DIR)/vlc/components/vlcintf.xpt
 SONGBIRD_VLCPLUGINS = $(PLUGINS_DIR)/vlc/vlcplugins/*$(DLL_SUFFIX)
-endif
+endif # SB_LINUX_VLC
 
-SONGBIRD_XULRUNNER = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3.0.0 \
-                     $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3 \
-                     $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3.so \
-                     $(NULL)
-endif
+SONGBIRD_XULRUNNER += $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3.0.0 \
+                      $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3 \
+                      $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3.so \
+                      $(NULL)
 endif # MEDIA_CORE_VLC
+
+endif # linux
 
 ifeq (macosx,$(SB_PLATFORM))
 
@@ -93,6 +97,7 @@ endif
 runtimelibs::
 	$(MKDIR) -p $(SONGBIRD_MACOS)
 	$(CP) -dfp $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+               $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                $(SONGBIRD_MACOS) \
                $(NULL)

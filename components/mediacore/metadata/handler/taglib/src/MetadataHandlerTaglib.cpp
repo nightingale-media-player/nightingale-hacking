@@ -939,7 +939,7 @@ void sbMetadataHandlerTaglib::AddID3v2Tag(
         {
             PRInt32                     length;
 
-            PR_sscanf(frameList.front()->toString().to8Bit(true).c_str(),
+            PR_sscanf(frameList.front()->toString().toCString(true),
                       "%d",
                       &length);
             length *= 1000;
@@ -1045,7 +1045,7 @@ void sbMetadataHandlerTaglib::AddAPETag(
         {
             PRInt32                     length;
 
-            PR_sscanf(item.toString().to8Bit(true).c_str(),
+            PR_sscanf(item.toString().toCString(true),
                       "%d",
                       &length);
             length *= 1000;
@@ -1378,7 +1378,7 @@ void sbMetadataHandlerTaglib::GuessCharset(
     // XXXben We can't use the TagLib::String iterators here because TagLib was
     //        not compiled with -fshort_wchar whereas this component (and
     //        mozilla) are. Iterate manually instead.
-    std::string data = tagString.to8Bit(true);
+    std::string data = tagString.toCString(true);
     NS_ConvertUTF8toUTF16 expandedData(data.c_str());
 
     const PRUnichar *begin, *end;
@@ -1405,7 +1405,7 @@ void sbMetadataHandlerTaglib::GuessCharset(
     //        exited for UTF16 and ASCII.
 
     // see if it's valid utf8; if yes, assume it _is_ indeed utf8
-    std::string raw = tagString.to8Bit();
+    std::string raw = tagString.toCString();
     if (IsLikelyUTF8(nsDependentCString(raw.c_str(), raw.length()))) {
         nsCOMPtr<nsIUTF8ConverterService> utf8Service;
         mProxiedServices->GetUtf8ConverterService(getter_AddRefs(utf8Service));
@@ -1499,7 +1499,7 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
         return aString;
     }
 
-    std::string data = aString.to8Bit(false);
+    std::string data = aString.toCString(false);
 #if XP_WIN
     if (strcmp("CP_ACP", aCharset) == 0) {
         // convert to CP_ACP
@@ -1914,7 +1914,7 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
     /* Add the metadata value. */
     result = mpMetadataPropertyArray->AppendProperty
                         (NS_ConvertUTF8toUTF16(name),
-                         NS_ConvertUTF8toUTF16(value.to8Bit(true).c_str()));
+                         NS_ConvertUTF8toUTF16(value.toCString(true)));
 
     return (result);
 }
