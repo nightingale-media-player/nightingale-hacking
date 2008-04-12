@@ -48,4 +48,28 @@ private:
   T** mArray;
 };
 
+template <class T>
+class sbAutoFreeXPCOMArray
+{
+public:
+  sbAutoFreeXPCOMArray(PRUint32 aCount, T aArray)
+  : mCount(aCount),
+    mArray(aArray)
+  {
+    if (aCount) {
+      NS_ASSERTION(aArray, "Null pointer!");
+    }
+  }
+
+  ~sbAutoFreeXPCOMArray()
+  {
+    NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(mCount, mArray);
+  }
+
+private:
+  PRUint32 mCount;
+  T mArray;
+};
+
+
 #endif /* __SBMEMORYUTILS_H__ */

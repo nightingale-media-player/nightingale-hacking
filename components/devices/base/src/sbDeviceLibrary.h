@@ -32,6 +32,7 @@
 #include <sbIMediaListListener.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
 
+#include <pref/nsIPrefBranch.h>
 #include <nsInterfaceHashtable.h>
 #include <prlock.h>
 
@@ -126,6 +127,11 @@ private:
     AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey,
                                    sbIDeviceLibraryListener* aEntry,
                                    void* aUserData);
+
+  /**
+   * \breif Gets the pref branch for the library sync preferences.
+   */
+  nsresult GetSyncPrefBranch(nsIPrefBranch** _retval);
 
   /**
    * \brief Create a library for a device instance.

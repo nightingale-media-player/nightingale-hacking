@@ -53,6 +53,7 @@
 #include <nsXPFEComponentsCID.h>
 #include <prlog.h>
 #include <sbLibraryManager.h>
+#include <sbMemoryUtils.h>
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibraryFactory.h"
 
@@ -106,29 +107,6 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
 #define DEFAULT_COLUMNSPEC_WEB_LIBRARY \
   "http://songbirdnest.com/data/1.0#trackName 264 http://songbirdnest.com/data/1.0#duration 56 http://songbirdnest.com/data/1.0#artistName 209 http://songbirdnest.com/data/1.0#originPageImage 44 http://songbirdnest.com/data/1.0#created 119 d http://songbirdnest.com/data/1.0#downloadButton 83"
 
-
-template <class T>
-class sbAutoFreeXPCOMArray
-{
-public:
-  sbAutoFreeXPCOMArray(PRUint32 aCount, T aArray)
-  : mCount(aCount),
-    mArray(aArray)
-  {
-    if (aCount) {
-      NS_ASSERTION(aArray, "Null pointer!");
-    }
-  }
-
-  ~sbAutoFreeXPCOMArray()
-  {
-    NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(mCount, mArray);
-  }
-
-private:
-  PRUint32 mCount;
-  T mArray;
-};
 
 NS_IMPL_ISUPPORTS2(sbLocalDatabaseLibraryLoader, sbILibraryLoader, nsIObserver)
 sbLocalDatabaseLibraryLoader::sbLocalDatabaseLibraryLoader()
