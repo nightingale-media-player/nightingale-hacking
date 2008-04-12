@@ -1,0 +1,56 @@
+? .mozconfig.mk
+? .mozconfig.out
+? compiled
+? fix-chrome-xhr.patch
+? sanity.diff
+? content/base/sanity.diff
+? content/base/test/bug426308-redirect.sjs
+? content/base/test/sanity.diff
+? content/base/test/test_bug426308.html
+Index: content/base/src/nsXMLHttpRequest.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/content/base/src/nsXMLHttpRequest.cpp,v
+retrieving revision 1.233
+diff -u -p -r1.233 nsXMLHttpRequest.cpp
+--- content/base/src/nsXMLHttpRequest.cpp	26 Mar 2008 02:46:08 -0000	1.233
++++ content/base/src/nsXMLHttpRequest.cpp	12 Apr 2008 00:23:09 -0000
+@@ -2231,24 +2231,27 @@ nsXMLHttpRequest::OnChannelRedirect(nsIC
+   NS_PRECONDITION(aNewChannel, "Redirect without a channel?");
+ 
+   nsresult rv;
++
++  if (!(mState & XML_HTTP_REQUEST_XSITEENABLED)) {
++    nsCOMPtr<nsIURI> oldURI;
++    rv = aOldChannel->GetURI(getter_AddRefs(oldURI));
++    NS_ENSURE_SUCCESS(rv, rv);
++
++    nsCOMPtr<nsIURI> newURI;
++    rv = aNewChannel->GetURI(getter_AddRefs(newURI));
++    NS_ENSURE_SUCCESS(rv, rv);
++
++    rv = nsContentUtils::GetSecurityManager()->
++      CheckSameOriginURI(oldURI, newURI, PR_TRUE);
++    NS_ENSURE_SUCCESS(rv, rv);
++  }
++
+   if (mChannelEventSink) {
+     rv =
+       mChannelEventSink->OnChannelRedirect(aOldChannel, aNewChannel, aFlags);
+     NS_ENSURE_SUCCESS(rv, rv);
+   }
+ 
+-  nsCOMPtr<nsIURI> oldURI;
+-  rv = aOldChannel->GetURI(getter_AddRefs(oldURI));
+-  NS_ENSURE_SUCCESS(rv, rv);
+-
+-  nsCOMPtr<nsIURI> newURI;
+-  rv = aNewChannel->GetURI(getter_AddRefs(newURI));
+-  NS_ENSURE_SUCCESS(rv, rv);
+-
+-  rv = nsContentUtils::GetSecurityManager()->
+-    CheckSameOriginURI(oldURI, newURI, PR_TRUE);
+-  NS_ENSURE_SUCCESS(rv, rv);
+-
+   mChannel = aNewChannel;
+ 
+   return NS_OK;
