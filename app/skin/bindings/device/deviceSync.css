@@ -39,26 +39,9 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */
 
-.content-management-header-box
-{
-  margin-bottom:10px;
-}
-
 groupbox {
   margin:0;
   padding:0;
-}
-
-.content-management-header-label {
-  font-size:160%;
-}
-
-.content-management-header-info {
-  font-size:120%;
-}
-
-.content-management-header-box {
-  margin-bottom:10px;
 }
 
 radiogroup radiogroup {
