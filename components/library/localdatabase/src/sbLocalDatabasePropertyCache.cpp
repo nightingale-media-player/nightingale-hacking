@@ -168,45 +168,43 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   mPropertiesSelect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesSelect->SetBaseTableName(kMediaItems);
+  rv = mPropertiesSelect->SetBaseTableName(kResourceProperties);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesSelect->SetBaseTableAlias(kMediaItemsAlias);
+  rv = mPropertiesSelect->AddColumn(EmptyString(), kMediaItemId);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesSelect->AddColumn(kMediaItemsAlias, kMediaItemId);
+  rv = mPropertiesSelect->AddColumn(EmptyString(), kPropertyId);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesSelect->AddColumn(kMediaItemsAlias, kGUID);
+  rv = mPropertiesSelect->AddColumn(EmptyString(), kObj);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesSelect->AddColumn(kResourcePropertiesAlias, kPropertyId);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mPropertiesSelect->AddColumn(kResourcePropertiesAlias, kObj);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mPropertiesSelect->AddColumn(kResourcePropertiesAlias, kObjSortable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mPropertiesSelect->AddJoin(sbISQLBuilder::JOIN_INNER,
-                                  kResourceProperties,
-                                  kResourcePropertiesAlias,
-                                  kMediaItemId,
-                                  kMediaItemsAlias,
-                                  kMediaItemId);
-
+  rv = mPropertiesSelect->AddColumn(EmptyString(), kObjSortable);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
-  rv = mPropertiesSelect->CreateMatchCriterionIn(kMediaItemsAlias,
-                                                 kGUID,
+  rv = mPropertiesSelect->CreateMatchCriterionIn(EmptyString(),
+                                                 kMediaItemId,
                                                  getter_AddRefs(inCriterion));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mPropertiesSelect->AddCriterion(inCriterion);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Keep a non-owning reference to this
+  mPropertiesInCriterion = inCriterion;
+  /*
+  rv = mPropertiesSelect->AddOrder(EmptyString(),
+                                   kMediaItemId,
+                                   PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPropertiesSelect->AddOrder(EmptyString(),
+                                   kPropertyId,
+                                   PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  */
   // Select properties for the library media item
   mLibraryMediaItemPropertiesSelect =
     do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
@@ -232,19 +230,6 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mLibraryMediaItemPropertiesSelect->AddCriterion(mediaItemZero);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Keep a non-owning reference to this
-  mPropertiesInCriterion = inCriterion;
-
-  rv = mPropertiesSelect->AddOrder(kResourcePropertiesAlias,
-                                   kMediaItemId,
-                                   PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mPropertiesSelect->AddOrder(kResourcePropertiesAlias,
-                                   kPropertyId,
-                                   PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create the media_items query and the library_media_item query.  These queries
@@ -525,170 +510,38 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
     }
   }
 
-  // The below section must be single threaded since a lot of shared
-  // data gets touched
-  {
-    nsAutoLock lock(mCachePropertiesLock);
+  PRUint32 numMisses = misses.Length();
 
-    // Look up and cache each of the misses
-    PRUint32 numMisses = misses.Length();
-    if (numMisses > 0) {
-      PRUint32 inNum = 0;
-      for (PRUint32 j = 0; j < numMisses; j++) {
+  // If there were no misses and we don't have to cache the library media
+  // item, just return since there is nothing to do
+  if (numMisses == 0 && !cacheLibraryMediaItem) {
+    return NS_OK;
+  }
 
-        // Add each guid to the query and execute the query when we've added
-        // MAX_IN_LENGTH of them (or when we are on the last one)
-        rv = mPropertiesInCriterion->AddString(misses[j]);
-        NS_ENSURE_SUCCESS(rv, rv);
+  // Look up and cache the misses. The below section must be single threaded
+  // since a lot of shared data gets touched
+  nsAutoLock lock(mCachePropertiesLock);
 
-        if (inNum > MAX_IN_LENGTH || j + 1 == numMisses) {
-          rv = mPropertiesSelect->ToString(sql);
-          NS_ENSURE_SUCCESS(rv, rv);
+  // Start with the top level properties.  This pulls the data from the
+  // media_items table for each requested guid.  This also serves to
+  // translate the guid to a media_item_id so we can use the id for
+  // the next lookup on the resource_properties table
 
-          nsCOMPtr<sbIDatabaseQuery> query;
-          rv = MakeQuery(sql, getter_AddRefs(query));
-          NS_ENSURE_SUCCESS(rv, rv);
+  // As we read in the data from media_item_ids, keep a map of the id to
+  // property bag so we don't need guids in the second pass
+  nsTArray<PRUint32> missesIds(numMisses);
+  nsInterfaceHashtable<nsUint32HashKey, sbILocalDatabaseResourcePropertyBag> idToBagMap;
+  PRBool success = idToBagMap.Init(numMisses);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-          rv = query->Execute(&dbOk);
-          NS_ENSURE_SUCCESS(rv, rv);
-          NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+  PRUint32 inNum = 0;
+  for (PRUint32 j = 0; j < numMisses; j++) {
 
-          nsCOMPtr<sbIDatabaseResult> result;
-          rv = query->GetResultObject(getter_AddRefs(result));
-          NS_ENSURE_SUCCESS(rv, rv);
+    rv = mMediaItemsInCriterion->AddString(misses[j]);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-          PRUint32 rowCount;
-          rv = result->GetRowCount(&rowCount);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          for (PRUint32 row = 0; row < rowCount; row++) {
-
-            nsString mediaItemIdStr;
-            rv = result->GetRowCell(row, 0, mediaItemIdStr);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            PRUint32 mediaItemId = mediaItemIdStr.ToInteger(&rv);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            nsString guid;
-            rv = result->GetRowCell(row, 1, guid);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-            rv = GetBag(guid, mediaItemId, getter_AddRefs(bag));
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            // Add each property / object pair to the current bag
-            nsAutoString propertyIDStr;
-            rv = result->GetRowCell(row, 2, propertyIDStr);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            PRUint32 propertyID = propertyIDStr.ToInteger(&rv);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            nsAutoString obj;
-            rv = result->GetRowCell(row, 3, obj);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            nsString objSortable;
-            rv = result->GetRowCell(row, 4, objSortable);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            // XXXben FIX ME
-            sbLocalDatabaseResourcePropertyBag* bagClassPtr =
-              static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-            rv = bagClassPtr->PutValue(propertyID, obj, objSortable);
-
-            NS_ENSURE_SUCCESS(rv, rv);
-          }
-
-          mPropertiesInCriterion->Clear();
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-
-      }
-
-      // Do the same thing for top level properties
-      inNum = 0;
-      for (PRUint32 j = 0; j < numMisses; j++) {
-
-        // Skip the library resource guid
-        if (!misses[j].Equals(mLibraryResourceGUID)) {
-          rv = mMediaItemsInCriterion->AddString(misses[j]);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-
-        if (inNum > MAX_IN_LENGTH || j + 1 == numMisses) {
-          rv = mMediaItemsSelect->ToString(sql);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          nsCOMPtr<sbIDatabaseQuery> query;
-          rv = MakeQuery(sql, getter_AddRefs(query));
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          rv = query->Execute(&dbOk);
-          NS_ENSURE_SUCCESS(rv, rv);
-          NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-
-          nsCOMPtr<sbIDatabaseResult> result;
-          rv = query->GetResultObject(getter_AddRefs(result));
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          PRUint32 rowCount;
-          rv = result->GetRowCount(&rowCount);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          for (PRUint32 row = 0; row < rowCount; row++) {
-
-            nsString mediaItemIdStr;
-            rv = result->GetRowCell(row, 0, mediaItemIdStr);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            PRUint32 mediaItemId = mediaItemIdStr.ToInteger(&rv);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            nsAutoString guid;
-            rv = result->GetRowCell(row, 1, guid);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-            rv = GetBag(guid, mediaItemId, getter_AddRefs(bag));
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
-              nsAutoString value;
-              rv = result->GetRowCell(row, i + 1, value);
-              NS_ENSURE_SUCCESS(rv, rv);
-
-              if (!value.IsVoid()) {
-
-                // XXXben FIX ME
-                sbLocalDatabaseResourcePropertyBag* bagClassPtr =
-                  static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-                rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value, value);
-
-                NS_ENSURE_SUCCESS(rv, rv);
-              }
-            }
-
-          }
-
-          mMediaItemsInCriterion->Clear();
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-
-      }
-
-    }
-
-    // Cache the library's property data from library_media_item and
-    // resource_properties
-    if (cacheLibraryMediaItem) {
-      nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
-      rv = GetBag(mLibraryResourceGUID, 0, getter_AddRefs(bag));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mLibraryMediaItemPropertiesSelect->ToString(sql);
+    if (inNum > MAX_IN_LENGTH || j + 1 == numMisses) {
+      rv = mMediaItemsSelect->ToString(sql);
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<sbIDatabaseQuery> query;
@@ -709,31 +562,61 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
 
       for (PRUint32 row = 0; row < rowCount; row++) {
 
-        nsString propertyIDStr;
-        rv = result->GetRowCell(row, 0, propertyIDStr);
+        nsString mediaItemIdStr;
+        rv = result->GetRowCell(row, 0, mediaItemIdStr);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        PRUint32 propertyID = propertyIDStr.ToInteger(&rv);
+        PRUint32 mediaItemId = mediaItemIdStr.ToInteger(&rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        nsAutoString obj;
-        rv = result->GetRowCell(row, 1, obj);
+        nsString guid;
+        rv = result->GetRowCell(row, 1, guid);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        nsAutoString objSortable;
-        rv = result->GetRowCell(row, 2, objSortable);
+        nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+        rv = GetBag(guid, mediaItemId, getter_AddRefs(bag));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        // XXXben FIX ME
-        sbLocalDatabaseResourcePropertyBag* bagClassPtr =
-          static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-        rv = bagClassPtr->PutValue(propertyID, obj, objSortable);
-        NS_ENSURE_SUCCESS(rv, rv);
+        for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
+          nsString value;
+          rv = result->GetRowCell(row, i + 1, value);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          if (!value.IsVoid()) {
+
+            // XXXben FIX ME
+            sbLocalDatabaseResourcePropertyBag* bagClassPtr =
+              static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
+            rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value, value);
+
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+        }
+
+        PRUint32* appended = missesIds.AppendElement(mediaItemId);
+        NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+
+        PRBool success = idToBagMap.Put(mediaItemId, bag);
+        NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
       }
 
-      rv = mLibraryMediaItemSelect->ToString(sql);
+      mMediaItemsInCriterion->Clear();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // Now do the data from resource_properties
+  inNum = 0;
+  for (PRUint32 j = 0; j < numMisses; j++) {
+
+    rv = mPropertiesInCriterion->AddLong(missesIds[j]);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (inNum > MAX_IN_LENGTH || j + 1 == numMisses) {
+      rv = mPropertiesSelect->ToString(sql);
       NS_ENSURE_SUCCESS(rv, rv);
 
+      nsCOMPtr<sbIDatabaseQuery> query;
       rv = MakeQuery(sql, getter_AddRefs(query));
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -741,35 +624,144 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
+      nsCOMPtr<sbIDatabaseResult> result;
       rv = query->GetResultObject(getter_AddRefs(result));
       NS_ENSURE_SUCCESS(rv, rv);
 
+      PRUint32 rowCount;
       rv = result->GetRowCount(&rowCount);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      NS_ASSERTION(rowCount == 1, "Failed to get data from library_media_item");
+      for (PRUint32 row = 0; row < rowCount; row++) {
 
-
-      for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
-        nsString value;
-        rv = result->GetRowCell(0, i, value);
+        nsString mediaItemIdStr;
+        rv = result->GetRowCell(row, 0, mediaItemIdStr);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        if (!value.IsVoid()) {
+        PRUint32 mediaItemId = mediaItemIdStr.ToInteger(&rv);
+        NS_ENSURE_SUCCESS(rv, rv);
 
-          // XXXben FIX ME
-          sbLocalDatabaseResourcePropertyBag* bagClassPtr =
-            static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-          rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value, value);
+        nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+        idToBagMap.Get(mediaItemId, getter_AddRefs(bag));
+        NS_ENSURE_TRUE(bag, NS_ERROR_FAILURE);
 
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
+        // Add each property / object pair to the current bag
+        nsString propertyIDStr;
+        rv = result->GetRowCell(row, 1, propertyIDStr);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRUint32 propertyID = propertyIDStr.ToInteger(&rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsString obj;
+        rv = result->GetRowCell(row, 2, obj);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsString objSortable;
+        rv = result->GetRowCell(row, 3, objSortable);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // XXXben FIX ME
+        sbLocalDatabaseResourcePropertyBag* bagClassPtr =
+          static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
+        rv = bagClassPtr->PutValue(propertyID, obj, objSortable);
+
+        NS_ENSURE_SUCCESS(rv, rv);
       }
+
+      mPropertiesInCriterion->Clear();
+      NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    TRACE(("sbLocalDatabasePropertyCache[0x%.8x] - CacheProperties() - Misses %d", this,
-           numMisses));
   }
+
+  // Cache the library's property data from library_media_item and
+  // resource_properties
+  if (cacheLibraryMediaItem) {
+    nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+    rv = GetBag(mLibraryResourceGUID, 0, getter_AddRefs(bag));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mLibraryMediaItemPropertiesSelect->ToString(sql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDatabaseQuery> query;
+    rv = MakeQuery(sql, getter_AddRefs(query));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->Execute(&dbOk);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+    nsCOMPtr<sbIDatabaseResult> result;
+    rv = query->GetResultObject(getter_AddRefs(result));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 rowCount;
+    rv = result->GetRowCount(&rowCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 row = 0; row < rowCount; row++) {
+
+      nsString propertyIDStr;
+      rv = result->GetRowCell(row, 0, propertyIDStr);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 propertyID = propertyIDStr.ToInteger(&rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString obj;
+      rv = result->GetRowCell(row, 1, obj);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString objSortable;
+      rv = result->GetRowCell(row, 2, objSortable);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // XXXben FIX ME
+      sbLocalDatabaseResourcePropertyBag* bagClassPtr =
+        static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
+      rv = bagClassPtr->PutValue(propertyID, obj, objSortable);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = mLibraryMediaItemSelect->ToString(sql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = MakeQuery(sql, getter_AddRefs(query));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->Execute(&dbOk);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+    rv = query->GetResultObject(getter_AddRefs(result));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = result->GetRowCount(&rowCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ASSERTION(rowCount == 1, "Failed to get data from library_media_item");
+
+    for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
+      nsString value;
+      rv = result->GetRowCell(0, i, value);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (!value.IsVoid()) {
+
+        // XXXben FIX ME
+        sbLocalDatabaseResourcePropertyBag* bagClassPtr =
+          static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
+        rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value, value);
+
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
+  TRACE(("sbLocalDatabasePropertyCache[0x%.8x] - CacheProperties() - Misses %d", this,
+         numMisses));
 
   return NS_OK;
 }
