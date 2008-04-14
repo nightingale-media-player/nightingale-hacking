@@ -54,7 +54,7 @@ interface sbIPropertyArray;
  *
  * \sa List of "see also" interfaces
  */
-[scriptable, uuid(4517f0f3-a142-40d8-aed0-1ecf8246efec)]
+[scriptable, uuid(f18b311a-5a30-4ee4-a406-9b794438f4e8)]
 interface sbIMediaList : sbIMediaItem
 {
   /*
@@ -467,6 +467,27 @@ interface sbIMediaList : sbIMediaItem
   void enumerateItemsByProperties(in sbIPropertyArray aProperties,
                                   in sbIMediaListEnumerationListener aEnumerationListener,
                                   [optional] in unsigned short aEnumerationType);
+
+  /**
+   * Get all items that have a certain property set to the specified value.
+   *
+   * \param aPropertyID The property id.
+   * \param aPropertyValue The property value.
+   * \return An array of sbIMediaItem elements.
+   * \throw NS_ERROR_NOT_AVAILABLE when no items match the criteria.
+   */
+  nsIArray getItemsByProperty(in AString aPropertyID,
+                              in AString aPropertyValue);
+
+  /**
+   * Get all items that have a all properties set to the values
+   * specified.
+   *
+   * \param aProperties The property array containing property key/value pairs.
+   * \return An array of sbIMediaItem elements.
+   * \throw NS_ERROR_NOT_AVAILABLE when no items match the criteria.
+   */
+  nsIArray getItemsByProperties(in sbIPropertyArray aProperties);
 
   /**
    * \brief Get the first index of a media item in the list

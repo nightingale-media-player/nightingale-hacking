@@ -63,6 +63,8 @@
     }                                                                          \
   PR_END_MACRO
 
+class nsIArray;
+class nsIMutableArray;
 class nsIStringEnumerator;
 class nsStringHashKey;
 class sbGUIDArrayEnumerator;

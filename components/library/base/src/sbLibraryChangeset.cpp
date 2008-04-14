@@ -275,11 +275,11 @@ nsresult sbLibraryChange::Init()
 
 nsresult sbLibraryChange::InitWithValues(PRUint32 aOperation,
                                          PRUint64 aTimestamp, 
-                                         sbIMediaItem *aItem,
+                                         sbIMediaItem *aSourceItem,
+                                         sbIMediaItem *aDestinationItem,
                                          nsIArray *aProperties)
 {
-  NS_ENSURE_ARG_POINTER(aItem);
-  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(aSourceItem);
 
   nsresult rv = Init();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -296,9 +296,11 @@ nsresult sbLibraryChange::InitWithValues(PRUint32 aOperation,
 
   {
     nsAutoLock lock(mItemLock);
-    mItem = aItem;
+    mSourceItem = aSourceItem;
+    mDestinationItem = aDestinationItem ? aDestinationItem : aSourceItem;
   }
 
+  if(aProperties)
   {
     nsAutoLock lock(mPropertiesLock);
     mProperties = aProperties;
@@ -323,13 +325,15 @@ nsresult sbLibraryChange::SetTimestamp(PRUint64 aTimestamp)
   return NS_OK;
 }
 
-nsresult sbLibraryChange::SetItem(sbIMediaItem *aItem)
+nsresult sbLibraryChange::SetItems(sbIMediaItem *aSourceItem,
+                                   sbIMediaItem *aDestinationItem)
 {
-  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aSourceItem);
 
   {
     nsAutoLock lock(mItemLock);
-    mItem = aItem;
+    mSourceItem = aSourceItem;
+    mDestinationItem = aDestinationItem ? aDestinationItem : aSourceItem;
   }
 
   return NS_OK;
@@ -367,13 +371,24 @@ NS_IMETHODIMP sbLibraryChange::GetTimestamp(PRUint64 *aTimestamp)
   return NS_OK;
 }
 
-/* readonly attribute sbIMediaItem item; */
-NS_IMETHODIMP sbLibraryChange::GetItem(sbIMediaItem * *aItem)
+/* readonly attribute sbIMediaItem sourceItem; */
+NS_IMETHODIMP sbLibraryChange::GetSourceItem(sbIMediaItem * *aItem)
 {
   NS_ENSURE_ARG_POINTER(aItem);
   
   nsAutoLock lock(mItemLock);
-  NS_IF_ADDREF(*aItem = mItem);
+  NS_IF_ADDREF(*aItem = mSourceItem);
+
+  return *aItem ? NS_OK : NS_ERROR_NOT_AVAILABLE;
+}
+
+/* readonly attribute sbIMediaItem destinationItem; */
+NS_IMETHODIMP sbLibraryChange::GetDestinationItem(sbIMediaItem * *aItem)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  nsAutoLock lock(mItemLock);
+  NS_IF_ADDREF(*aItem = mDestinationItem);
 
   return *aItem ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
@@ -384,7 +399,7 @@ NS_IMETHODIMP sbLibraryChange::GetItemIsList(PRBool *aItemIsList)
   NS_ENSURE_ARG_POINTER(aItemIsList);
   
   nsresult rv;
-  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mItem, &rv);
+  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mSourceItem, &rv);
   if(rv == NS_ERROR_NO_INTERFACE) {
     *aItemIsList = PR_FALSE;
     return NS_OK;
@@ -463,6 +478,8 @@ nsresult sbLibraryChangeset::Init()
 
   mChangesLock = nsAutoLock::NewLock("sbLibraryChangeset::mChangesLock");
   NS_ENSURE_TRUE(mChangesLock, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
 }
 
 nsresult sbLibraryChangeset::InitWithValues(nsIArray *aSourceLists,

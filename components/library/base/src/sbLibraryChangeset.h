@@ -112,13 +112,15 @@ public:
   nsresult Init();
   nsresult InitWithValues(PRUint32 aOperation,
                           PRUint64 aTimestamp, 
-                          sbIMediaItem *aItem,
+                          sbIMediaItem *aSourceItem,
+                          sbIMediaItem *aDestinationItem,
                           nsIArray *aProperties);
 
   nsresult SetOperation(PRUint32 aOperation);
 
   nsresult SetTimestamp(PRUint64 aTimestamp);
-  nsresult SetItem(sbIMediaItem *aItem);
+  nsresult SetItems(sbIMediaItem *aSourceItem,
+                    sbIMediaItem *aDestinationItem);
   nsresult SetProperties(nsIArray *aProperties);
 
 private:
@@ -132,7 +134,8 @@ protected:
   PRUint64 mTimestamp;
 
   PRLock*                 mItemLock;
-  nsCOMPtr<sbIMediaItem>  mItem;
+  nsCOMPtr<sbIMediaItem>  mSourceItem;
+  nsCOMPtr<sbIMediaItem>  mDestinationItem;
 
   PRLock*             mPropertiesLock;
   nsCOMPtr<nsIArray>  mProperties;
@@ -159,6 +162,7 @@ public:
 
   nsresult SetSourceLists(nsIArray *aSourceLists);
   nsresult SetDestinationList(sbIMediaList *aDestinationList);
+  
   nsresult SetChanges(nsIArray *aChanges);
 
 private:

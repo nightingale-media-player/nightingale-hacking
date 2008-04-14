@@ -51,10 +51,13 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseMediaListView.cpp \
            sbLocalDatabaseMediaListViewSelection.cpp \
            sbLocalDatabaseMediaListViewState.cpp \
+           sbLocalMediaListBaseEnumerationListener.cpp \
            sbDatabaseResultStringEnumerator.cpp \
            sbPlaylistTreeSelection.cpp \
            sbFilterTreeSelection.cpp \
            sbSelectionListUtils.cpp \
+           sbLocalDatabaseDiffingService.cpp \
+           $(topsrcdir)/components/library/base/src/sbLibraryChangeset.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
@@ -69,6 +72,7 @@ CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(MOZSDK_INCLUDE_DIR)/appcomps \
                $(MOZSDK_INCLUDE_DIR)/content \
                $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/gfx \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/layout \
@@ -98,7 +102,7 @@ endif
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4 \

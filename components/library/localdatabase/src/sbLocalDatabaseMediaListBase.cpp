@@ -26,6 +26,7 @@
 
 #include "sbLocalDatabaseMediaListBase.h"
 
+#include <nsIMutableArray.h>
 #include <nsIStringBundle.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
@@ -64,6 +65,7 @@
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabasePropertyCache.h"
+#include "sbLocalMediaListBaseEnumerationListener.h"
 
 #define DEFAULT_PROPERTIES_URL "chrome://songbird/locale/songbird.properties"
 
@@ -806,6 +808,58 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
   return NS_OK;
 }
 
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetItemsByProperty(const nsAString & aPropertyID, 
+                                                 const nsAString & aPropertyValue, 
+                                                 nsIArray **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsRefPtr<sbLocalMediaListBaseEnumerationListener> enumerator;
+  NS_NEWXPCOM(enumerator, sbLocalMediaListBaseEnumerationListener);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = enumerator->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = EnumerateItemsByProperty(aPropertyID, 
+                                aPropertyValue, 
+                                enumerator, 
+                                sbIMediaList::ENUMERATIONTYPE_LOCKING);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = enumerator->GetArray(_retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbLocalDatabaseMediaListBase::GetItemsByProperties(sbIPropertyArray *aProperties, 
+                                                   nsIArray **_retval)
+{
+  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsRefPtr<sbLocalMediaListBaseEnumerationListener> enumerator;
+  NS_NEWXPCOM(enumerator, sbLocalMediaListBaseEnumerationListener);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = enumerator->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = EnumerateItemsByProperties(aProperties, 
+                                  enumerator, 
+                                  sbIMediaList::ENUMERATIONTYPE_LOCKING);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = enumerator->GetArray(_retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::IndexOf(sbIMediaItem* aMediaItem,
                                       PRUint32 aStartFrom,
@@ -1055,3 +1109,4 @@ sbGUIDArrayValueEnumerator::GetNext(nsAString& _retval)
 
   return NS_OK;
 }
+

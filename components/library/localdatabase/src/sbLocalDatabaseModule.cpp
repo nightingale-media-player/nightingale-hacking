@@ -29,6 +29,7 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseAsyncGUIDArray.h"
+#include "sbLocalDatabaseDiffingService.h"
 #include "sbLocalDatabaseLibraryFactory.h"
 #include "sbLocalDatabaseLibraryLoader.h"
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
@@ -38,6 +39,7 @@
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbLocalDatabaseLibraryFactory,
                                          sbLocalDatabaseLibraryFactory::GetInstance)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseDiffingService)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryLoader)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSimpleMediaListFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseAsyncGUIDArray, Init)
@@ -74,6 +76,13 @@ static const nsModuleComponentInfo components[] =
     sbLocalDatabaseLibraryLoaderConstructor,
     sbLocalDatabaseLibraryLoaderRegisterSelf,
     sbLocalDatabaseLibraryLoaderUnregisterSelf
+  },
+  {
+    SB_LOCALDATABASE_DIFFINGSERVICE_DESCRIPTION,
+    SB_LOCALDATABASE_DIFFINGSERVICE_CID,
+    SB_LOCALDATABASE_DIFFINGSERVICE_CONTRACTID,
+    sbLocalDatabaseDiffingServiceConstructor,
+    sbLocalDatabaseDiffingService::RegisterSelf,
   },
   {
     SB_LOCALDATABASE_SIMPLEMEDIALISTFACTORY_DESCRIPTION,

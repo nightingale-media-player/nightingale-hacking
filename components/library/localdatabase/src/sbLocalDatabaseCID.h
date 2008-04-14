@@ -119,3 +119,17 @@
     { 0xaa, 0x24, 0xba, 0xeb, 0x64, 0x23, 0x1d, 0xfa }               \
   }
 
+
+#define SB_LOCALDATABASE_DIFFINGSERVICE_DESCRIPTION                  \
+  "Songbird Library Diffing Service"
+#define SB_LOCALDATABASE_DIFFINGSERVICE_CONTRACTID                   \
+  "@songbirdnest.com/Songbird/Library/DiffingService;1"              
+#define SB_LOCALDATABASE_DIFFINGSERVICE_CLASSNAME                    \
+  "sbLibraryDiffingService"
+#define SB_LOCALDATABASE_DIFFINGSERVICE_CID                          \
+{  /* a3786151-dba2-46c5-9e07-5f958c233f1a */                        \
+  0xa3786151,                                                        \
+  0xdba2,                                                            \
+  0x46c5,                                                            \
+  { 0x9e, 0x7, 0x5f, 0x95, 0x8c, 0x23, 0x3f, 0x1a }                  \
+}

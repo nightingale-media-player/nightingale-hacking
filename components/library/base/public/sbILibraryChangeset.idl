@@ -103,7 +103,7 @@ interface sbIPropertyChange : sbIChangeOperation
  * \interface sbILibraryChange
  * \sa sbILibraryChangeset sbIPropertyChange sbIChangeOperation
  */
-[scriptable, uuid(8788f1b4-d646-40b5-843b-eb025ddf9d72)]
+[scriptable, uuid(e8db7394-2256-45b1-b079-28fbbcb7f5b9)]
 interface sbILibraryChange : sbIChangeOperation
 {
   /**
@@ -114,9 +114,17 @@ interface sbILibraryChange : sbIChangeOperation
   readonly attribute unsigned long long timestamp;
 
   /**
-   * The item affected by the change.
+   * The source item that triggered the change.
    */
-  readonly attribute sbIMediaItem   item;
+  readonly attribute sbIMediaItem   sourceItem;
+
+  /**
+   * The destination item that should recieve the change.
+   *
+   * The destination item may be the same as the 
+   * source item.
+   */
+  readonly attribute sbIMediaItem destinationItem;
   
   /**
    * Indicates if the item changed is a list.
@@ -132,6 +140,9 @@ interface sbILibraryChange : sbIChangeOperation
    * The item properties affected by the change.
    *
    * This is an array of sbIPropertyChange elements.
+   *
+   * \note This may be null if the item in question was
+   *       deleted.
    */
   readonly attribute nsIArray       properties;
 };
