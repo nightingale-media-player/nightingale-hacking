@@ -64,13 +64,13 @@
         <xul:vbox flex="1">
 
           <!-- Content management panel header and buttons. -->
-          <xul:hbox class="content-management-header-box" align="baseline">
+          <xul:hbox class="device-tab-header-box" align="baseline">
   
             <!-- Header label and info. -->
-            <xul:label class="content-management-header-label"
+            <xul:label class="device-tab-header-label"
                        value="&device.sync.header.label;"/>
             <xul:label sbid="content_management_header_info_label"
-                       class="content-management-header-info"/>
+                       class="device-tab-header-info"/>
   
             <!-- Spacer to position buttons to the right. -->
             <xul:spacer flex="1"/>
