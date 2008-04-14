@@ -66,13 +66,15 @@ sbBaseDeviceLibraryListener::SetIgnoreListener(PRBool aIgnoreListener)
 NS_IMETHODIMP 
 sbBaseDeviceLibraryListener::OnBatchBegin(sbIMediaList *aMediaList)
 {
-  return NS_OK;
+  return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_BEGIN,
+                              nsnull, aMediaList);
 }
 
 NS_IMETHODIMP 
 sbBaseDeviceLibraryListener::OnBatchEnd(sbIMediaList *aMediaList)
 {
-  return NS_OK;
+  return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_END,
+                              nsnull, aMediaList);
 }
 
 NS_IMETHODIMP
@@ -504,11 +506,13 @@ sbBaseDeviceMediaListListener::OnListCleared(sbIMediaList *aMediaList,
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnBatchBegin(sbIMediaList *aMediaList)
 {
-  return NS_OK;
+  return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_BEGIN,
+                              nsnull, aMediaList);
 }
 
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnBatchEnd(sbIMediaList *aMediaList)
 {
-  return NS_OK;
+  return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_END,
+                              nsnull, aMediaList);
 }

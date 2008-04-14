@@ -43,6 +43,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/dataremote/public \
                $(topsrcdir)/components/devices/base/src \
+               $(topsrcdir)/components/library/base/src/static \
                $(topsrcdir)/components/library/localdatabase/src/ \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/property/src \
@@ -57,5 +58,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
 STATIC_LIB = $(target_name)$(LIB_SUFFIX)
 
 STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbBaseDeviceHelper.js
 
 include $(topsrcdir)/build/rules.mk

@@ -70,3 +70,6 @@ interface sbIPrompter : nsIPromptService
                                      in nsISupports aExtraArgument);
 };
 
+%{C++
+#define SONGBIRD_PROMPTER_CONTRACTID "@songbirdnest.com/Songbird/Prompter;1"
+%}C++

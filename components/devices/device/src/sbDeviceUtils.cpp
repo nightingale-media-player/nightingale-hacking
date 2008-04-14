@@ -27,6 +27,7 @@
 
 #include "sbDeviceUtils.h"
 
+#include <nsArrayUtils.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsCRT.h>
@@ -38,6 +39,7 @@
 #include <nsIURL.h>
 
 #include "sbBaseDevice.h"
+#include "sbIDeviceContent.h"
 #include "sbIDeviceLibrary.h"
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
@@ -267,6 +269,54 @@ nsresult sbDeviceUtils::CreateStatusFromRequest(/* in */ const nsAString &aDevic
   status.forget(aStatus);
 
   return NS_OK;
+}
+
+/* static */
+nsresult sbDeviceUtils::GetDeviceLibraryForItem(sbIDevice* aDevice,
+                                                sbIMediaItem* aItem,
+                                                sbIDeviceLibrary** _retval)
+{
+  NS_ASSERTION(aDevice, "Getting device library with no device");
+  NS_ASSERTION(aItem, "Getting device library for nothing");
+  NS_ASSERTION(_retval, "null retval");
+  
+  nsresult rv;
+  
+  nsCOMPtr<sbILibrary> ownerLibrary;
+  rv = aItem->GetLibrary(getter_AddRefs(ownerLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // mediaItem.library is not a sbIDeviceLibrary, test GUID :(
+  nsCOMPtr<sbIDeviceContent> content;
+  rv = aDevice->GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIArray> libraries;
+  rv = content->GetLibraries(getter_AddRefs(libraries));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRUint32 libraryCount;
+  rv = libraries->GetLength(&libraryCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  for (PRUint32 index = 0; index < libraryCount; ++index) {
+    nsCOMPtr<sbIDeviceLibrary> deviceLib =
+      do_QueryElementAt(libraries, index, &rv);
+    if (NS_FAILED(rv))
+      continue;
+    
+    PRBool equalsLibrary;
+    rv = ownerLibrary->Equals(deviceLib, &equalsLibrary);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    if (equalsLibrary) {
+      deviceLib.forget(_retval);
+      return NS_OK;
+    }
+  }
+
+  *_retval = nsnull;
+  return NS_ERROR_FAILURE;
 }
 
 NS_IMETHODIMP sbDeviceUtils::SnapshotEnumerationListener

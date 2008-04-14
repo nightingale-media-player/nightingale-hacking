@@ -27,9 +27,16 @@
 
 #include "sbLibraryUtils.h"
 
+#include <nsIFile.h>
+#include <nsIFileURL.h>
+#include <nsIProxyObjectManager.h>
+#include <nsIThread.h>
+#include <nsIURI.h>
+
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsStringAPI.h>
+#include <nsThreadUtils.h>
 
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
@@ -37,8 +44,10 @@
 #include <sbIPropertyArray.h>
 
 #include <sbPropertiesCID.h>
+#include <sbProxiedComponentManager.h>
 #include "sbMediaListEnumSingleItemHelper.h"
 #include <sbStandardProperties.h>
+#include <sbStringUtils.h>
 
 /* static */
 nsresult sbLibraryUtils::GetItemInLibrary(/* in */  sbIMediaItem*  aItem,
@@ -164,5 +173,55 @@ nsresult sbLibraryUtils::GetItemInLibrary(/* in */  sbIMediaItem*  aItem,
 
   // give up
   *_retval = nsnull;
+  return NS_OK;
+}
+
+/* static */
+nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
+                                          /* out */ PRInt64      * _retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  nsresult rv = aItem->GetContentLength(_retval);
+
+  if(NS_FAILED(rv)) {
+    // try to get the length from disk
+    nsCOMPtr<nsIThread> target;
+    rv = NS_GetMainThread(getter_AddRefs(target));
+
+    // Proxy item to get contentURI.
+    nsCOMPtr<sbIMediaItem> proxiedItem;
+    rv = do_GetProxyForObject(target,
+                              NS_GET_IID(sbIMediaItem),
+                              aItem,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(proxiedItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // If we fail to get it from the mime type, attempt to get it from the file extension.
+    nsCOMPtr<nsIURI> contentURI;
+    rv = proxiedItem->GetContentSrc(getter_AddRefs(contentURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(contentURI, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    // note that this will abort if this is not a local file.  This is the
+    // desired behaviour.
+
+    nsCOMPtr<nsIFile> file;
+    rv = fileURL->GetFile(getter_AddRefs(file));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = file->GetFileSize(_retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString strContentLength;
+    AppendInt(strContentLength, *_retval);
+
+    rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
+                            strContentLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
   return NS_OK;
 }

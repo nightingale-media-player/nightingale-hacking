@@ -90,6 +90,14 @@ public:
                                           /* out */ sbDeviceStatus **aStatus);
 
   /**
+   * Given a device and a media item, find the sbIDeviceLibrary for it
+   * this is necessary because the device library is a wrapper
+   */
+  static nsresult GetDeviceLibraryForItem(/* in */  sbIDevice* aDevice,
+                                          /* in */  sbIMediaItem* aItem,
+                                          /* out */ sbIDeviceLibrary** _retval);
+
+  /**
    * Stores the enumerated items in an nsIArray
    * \see sbIMediaList::EnumerateAllItems
    * \see sbIMediaList::EnumerateItemsByProperty

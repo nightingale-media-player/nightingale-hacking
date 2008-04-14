@@ -44,6 +44,8 @@
 #include "sbIMediaList.h"
 #include "sbDeviceStatistics.h"
 
+class nsITimer;
+
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
 class sbBaseDeviceMediaListListener;
@@ -81,6 +83,10 @@ public:
       REQUEST_READ          = sbIDevice::REQUEST_READ,
       REQUEST_EJECT         = sbIDevice::REQUEST_EJECT,
       REQUEST_SUSPEND       = sbIDevice::REQUEST_SUSPEND,
+      
+      /* not in sbIDevice, internal use */
+      REQUEST_BATCH_BEGIN,
+      REQUEST_BATCH_END,
       
       /* write requests */
       REQUEST_WRITE         = sbIDevice::REQUEST_WRITE,
@@ -137,9 +143,9 @@ public:
                         sbIMediaList* aList = nsnull,
                         PRUint32 aIndex = PR_UINT32_MAX,
                         PRUint32 aOtherIndex = PR_UINT32_MAX,
-                        PRInt32 aPriority = 0x1000000);
+                        PRInt32 aPriority = TransferRequest::PRIORITY_DEFAULT);
 
-  nsresult PushRequest(TransferRequest *aRequest);
+  virtual nsresult PushRequest(TransferRequest *aRequest);
 
   /* remove the next request to be processed; note that _retval will be null
      while returning NS_OK if there are no requests left */
@@ -245,8 +251,8 @@ public:
    */
   PRBool IsRequestAborted()
   {
-    NS_ASSERTION(mRequestLock, "mRequestLock must be initialized");
-    nsAutoLock lock(mRequestLock);
+    NS_ASSERTION(mRequestMonitor, "mRequestMonitor must be initialized");
+    nsAutoMonitor mon(mRequestMonitor);
     PRBool const abort = mAbortCurrentRequest;
     mAbortCurrentRequest = PR_FALSE;
     return abort;
@@ -262,7 +268,12 @@ private:
   nsresult GetFirstRequest(PRBool aRemove, TransferRequest** _retval);
 
 protected:
-  PRLock *mRequestLock;
+  /* to block the background thread from transferring files while the batch
+     has not completed */
+  PRMonitor * mRequestMonitor;
+  nsRefPtr<TransferRequest> mRequestBatchStart;
+  nsCOMPtr<nsITimer> mRequestBatchTimer;
+
   typedef std::deque<nsRefPtr<TransferRequest> > TransferRequestQueue;
   typedef std::map<PRInt32, TransferRequestQueue> TransferRequestQueueMap;
   TransferRequestQueueMap mRequests;
@@ -275,6 +286,14 @@ protected:
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtable<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
+
+protected:
+ /**
+   * Go through the given queue to make sure that there is enough free space
+   * to complete the write requests.  If not, and the user agrees, attempt to
+   * transfer a subset.
+   */
+  virtual nsresult EnsureSpaceForWrite(TransferRequestQueue& aQueue);
 };
 
 #endif /* __SBBASEDEVICE__H__ */

@@ -28,26 +28,45 @@
 #include "sbBaseDevice.h"
 
 #include <algorithm>
+#include <set>
 #include <vector>
+
+#include <nsIPropertyBag2.h>
+#include <nsITimer.h>
+#include <nsIVariant.h>
 
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
-#include <nsIPropertyBag2.h>
-#include <nsIVariant.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 
-#include "sbDeviceLibrary.h"
-#include "sbDeviceStatus.h"
-#include "sbDeviceUtils.h"
 #include "sbIDeviceEvent.h"
+#include "sbIDeviceHelper.h"
 #include "sbIDeviceManager.h"
 #include "sbILibrary.h"
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
+
+#include "sbDeviceLibrary.h"
+#include "sbDeviceStatus.h"
+#include "sbDeviceUtils.h"
 #include "sbLibraryListenerHelpers.h"
+#include "sbLibraryUtils.h"
+#include "sbStandardDeviceProperties.h"
 #include "sbStandardProperties.h"
+
+/*
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbBaseDevice:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gBaseDeviceLog = nsnull;
+#endif
+
+#undef LOG
+#define LOG(args) PR_LOG(gBaseDeviceLog, PR_LOG_WARN, args)
+
 
 #define DEFAULT_COLUMNSPEC_DEVICE_LIBRARY SB_PROPERTY_TRACKNAME " 265 "     \
                                           SB_PROPERTY_DURATION " 43 "       \
@@ -185,17 +204,23 @@ sbBaseDevice::sbBaseDevice() :
   mAbortCurrentRequest(PR_FALSE),
   mLastTransferID(0)
 {
+#ifdef PR_LOGGING
+  if (!gBaseDeviceLog) {
+    gBaseDeviceLog = PR_NewLogModule( "sbBaseDevice" );
+  }
+#endif
+
   mStateLock = nsAutoLock::NewLock(__FILE__ "::mStateLock");
   NS_ASSERTION(mStateLock, "Failed to allocate state lock");
 
-  mRequestLock = nsAutoLock::NewLock(__FILE__ "::mRequestLock");
-  NS_ASSERTION(mRequestLock, "Failed to allocate request lock");
+  mRequestMonitor = nsAutoMonitor::NewMonitor(__FILE__ "::mRequestMonitor");
+  NS_ASSERTION(mRequestMonitor, "Failed to allocate request monitor");
 }
 
 sbBaseDevice::~sbBaseDevice()
 {
-  if (mStateLock)
-    nsAutoLock::DestroyLock(mStateLock);
+  if (mRequestMonitor)
+    nsAutoMonitor::DestroyMonitor(mRequestMonitor);
 }
 
 nsresult sbBaseDevice::PushRequest(const int aType,
@@ -205,10 +230,10 @@ nsresult sbBaseDevice::PushRequest(const int aType,
                                    PRUint32 aOtherIndex,
                                    PRInt32 aPriority)
 {
-  NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(aType != 0, NS_ERROR_INVALID_ARG);
 
-  TransferRequest* req = TransferRequest::New();
+  nsRefPtr<TransferRequest> req = TransferRequest::New();
   NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
   req->type = aType;
   req->item = aItem;
@@ -225,13 +250,11 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
   NS_ENSURE_ARG_POINTER(aRequest);
 
   { /* scope for request lock */
-    nsAutoLock lock(mRequestLock);
+    nsAutoMonitor requestMon(mRequestMonitor);
     
     /* decide where this request will be inserted */
     // figure out which queue we're looking at
     PRInt32 priority = aRequest->priority;
-    if (priority < 0)
-      priority = 0x1000000;
     TransferRequestQueue& queue = mRequests[priority];
     
     // initialize some properties of the request
@@ -296,19 +319,28 @@ nsresult sbBaseDevice::GetFirstRequest(PRBool aRemove,
                                        sbBaseDevice::TransferRequest** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mRequestLock);
+  nsAutoMonitor reqMon(mRequestMonitor);
   
+  // Note: we shouldn't remove any empty queues from the map either, if we're
+  // not going to pop the request.
+  
+  TransferRequestQueueMap::iterator mapIt = mRequests.begin();
   while (!mRequests.empty()) {
     // always pop the request from the first queue
-    TransferRequestQueueMap::iterator mapIt = mRequests.begin();
-
+    
     TransferRequestQueue& queue = mapIt->second;
-
+    
     if (queue.empty()) {
-      // this queue is empty, remove it
-      mRequests.erase(mapIt);
+      if (aRemove) {
+        // this queue is empty, remove it
+        mRequests.erase(mapIt);
+        mapIt = mRequests.begin();
+      } else {
+        // go to the next queue
+        ++mapIt;
+      }
       continue;
     }
 
@@ -318,6 +350,7 @@ nsresult sbBaseDevice::GetFirstRequest(PRBool aRemove,
       queue.pop_front();
       if (queue.empty()) {
         mRequests.erase(mapIt);
+        mapIt = mRequests.begin();
       }
     }
     request.forget(_retval);
@@ -352,9 +385,9 @@ nsresult sbBaseDevice::RemoveRequest(const int aType,
                                      sbIMediaItem* aItem,
                                      sbIMediaList* aList)
 {
-  NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mRequestLock);
+  nsAutoMonitor reqMon(mRequestMonitor);
 
   // always pop the request from the first queue
   // can't just test for empty because we may have junk requests
@@ -385,7 +418,7 @@ nsresult sbBaseDevice::RemoveRequest(const int aType,
   return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
 }
 
-typedef std::vector<sbBaseDevice::TransferRequest *> sbBaseDeviceTransferRequests;
+typedef std::vector<nsRefPtr<sbBaseDevice::TransferRequest> > sbBaseDeviceTransferRequests;
 
 /**
  * This iterates over the transfer requests and removes the Songbird library
@@ -397,7 +430,7 @@ static nsresult RemoveLibraryItems(sbBaseDeviceTransferRequests const & items, s
   for (sbBaseDeviceTransferRequests::const_iterator iter = items.begin(); 
        iter != end;
        ++iter) {
-    sbBaseDevice::TransferRequest * request = *iter; 
+    nsRefPtr<sbBaseDevice::TransferRequest> request = *iter; 
     // If this is a request that adds an item to the device we need to remove
     // it from the device since it never was copied
     if (request->type == sbBaseDevice::TransferRequest::REQUEST_WRITE) {
@@ -406,7 +439,6 @@ static nsresult RemoveLibraryItems(sbBaseDeviceTransferRequests const & items, s
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
-    NS_RELEASE(request);
   }
   return NS_OK;
 }
@@ -422,9 +454,9 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
   rv = SetState(STATE_IDLE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ENSURE_TRUE(mRequestLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
   {
-    nsAutoLock lock(mRequestLock);
+    nsAutoMonitor reqMon(mRequestMonitor);
     
     if(!mRequests.empty()) {
       // Save off the library items that are pending to avoid any
@@ -444,38 +476,43 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
 
       mAbortCurrentRequest = PR_TRUE;
       mRequests.clear();
+    }
+  }
+  
+  // must not hold onto the monitor while we create sbDeviceStatus objects
+  // because that involves proxying to the main thread
 
-      rv = RemoveLibraryItems(requests, this);
+  if (!requests.empty()) {
+    rv = RemoveLibraryItems(requests, this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    if (request) {
+      nsRefPtr<sbDeviceStatus> status;
+      rv = sbDeviceUtils::CreateStatusFromRequest(aDeviceID, 
+                                                  request.get(), 
+                                                  getter_AddRefs(status));
       NS_ENSURE_SUCCESS(rv, rv);
-
-      if (request) {
-        nsRefPtr<sbDeviceStatus> status;
-        rv = sbDeviceUtils::CreateStatusFromRequest(aDeviceID, 
-                                                    request.get(), 
-                                                    getter_AddRefs(status));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // All done cancelling, make sure we set appropriate state.
-        status->StateMessage(NS_LITERAL_STRING("Completed"));
-        status->Progress(100);
-
-        status->SetItem(request->item);
-        status->SetList(request->list);
-
-        status->WorkItemProgress(request->batchIndex);
-        status->WorkItemProgressEndCount(request->batchCount);
-
-        nsCOMPtr<nsIWritableVariant> var =
-          do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = var->SetAsISupports(request->item);
-        NS_ENSURE_SUCCESS(rv, rv);
-        
-        CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
-                               var,
-                               PR_TRUE);
-      }
+  
+      // All done cancelling, make sure we set appropriate state.
+      status->StateMessage(NS_LITERAL_STRING("Completed"));
+      status->Progress(100);
+  
+      status->SetItem(request->item);
+      status->SetList(request->list);
+  
+      status->WorkItemProgress(request->batchIndex);
+      status->WorkItemProgressEndCount(request->batchCount);
+  
+      nsCOMPtr<nsIWritableVariant> var =
+        do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+  
+      rv = var->SetAsISupports(request->item);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
+                             var,
+                             PR_TRUE);
     }
   }
 
@@ -809,6 +846,204 @@ nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
   NS_ENSURE_SUCCESS(rv, rv);
   
   return DispatchEvent(deviceEvent, aAsync, nsnull);
+}
+
+struct EnsureSpaceForWriteRemovalHelper {
+  EnsureSpaceForWriteRemovalHelper(std::set<sbIMediaItem*>& aItemsToRemove)
+    : mItemsToRemove(aItemsToRemove.begin(), aItemsToRemove.end())
+  {
+  }
+  
+  // by COM rules, we are only guranteed that comparing nsISupports* is valid
+  struct COMComparator {
+    bool operator()(nsISupports* aLeft, nsISupports* aRight) {
+      return nsCOMPtr<nsISupports>(do_QueryInterface(aLeft)) <
+               nsCOMPtr<nsISupports>(do_QueryInterface(aRight));
+    }
+  };
+  
+  bool operator() (nsRefPtr<sbBaseDevice::TransferRequest> & aRequest) {
+    // remove all requests where either the item or the list is to be removed
+    return (mItemsToRemove.end() != mItemsToRemove.find(aRequest->item) ||
+            mItemsToRemove.end() != mItemsToRemove.find(aRequest->list));
+  }
+  
+  std::set<sbIMediaItem*, COMComparator> mItemsToRemove;
+};
+
+nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
+{
+  LOG(("                        sbBaseDevice::EnsureSpaceForWrite++\n"));
+  
+  // We will possibly want to remove some writes.  Unfortunately, this may be
+  // followed by some other actions (add-to-list, etc.) dealing with those items.
+  // and yet we need to keep everything that does get executed in the same order
+  // as the original queue.
+  // So, we keep a std::map where the key is all media items to be written
+  // (since writing the same item twice should not result in the space being
+  // used twice).  For convenience later, the value is the size of the file.
+  
+  nsresult rv;
+  std::map<sbIMediaItem*, PRInt64> itemsToWrite; // not owning
+  // all items in itemsToWrite should have a reference from the request queue
+  // XXX Mook: Do we need to be holding nsISupports* instead?
+  
+  NS_ASSERTION(NS_IsMainThread(),
+               "sbBaseDevice::EnsureSpaceForWrite expected to be on main thread");
+  
+  // we have a batch that has some sort of write
+  // check to see if it will all fit on the device
+  TransferRequestQueue::iterator batchStart = aQueue.begin();
+  TransferRequestQueue::iterator end = aQueue.end();
+  
+  // shift batchStart to where we last were
+  while (batchStart != end && *batchStart != mRequestBatchStart)
+    ++batchStart;
+  
+  // get the total size of the request
+  PRInt64 contentLength, totalLength = 0;
+  nsCOMPtr<sbIDeviceLibrary> ownerLibrary;
+  
+  TransferRequestQueue::iterator request;
+  for (request = batchStart; request != end; ++request) {
+    if ((*request)->type != TransferRequest::REQUEST_WRITE)
+      continue;
+    
+    if (!ownerLibrary) {
+      rv = sbDeviceUtils::GetDeviceLibraryForItem(this,
+                                                  (*request)->list,
+                                                  getter_AddRefs(ownerLibrary));
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_STATE(ownerLibrary);
+    } else {
+      #if DEBUG
+        nsCOMPtr<sbIDeviceLibrary> newLibrary;
+        rv = sbDeviceUtils::GetDeviceLibraryForItem(this,
+                                                    (*request)->list,
+                                                    getter_AddRefs(newLibrary));
+        NS_ENSURE_SUCCESS(rv, rv);
+        NS_ENSURE_STATE(newLibrary);
+        NS_ENSURE_STATE(SameCOMIdentity(ownerLibrary, newLibrary));
+      #endif /* DEBUG */
+    }
+    if (itemsToWrite.end() != itemsToWrite.find((*request)->item)) {
+      // this item is already in the set, don't worry about it
+      continue;
+    }
+    
+    rv = sbLibraryUtils::GetContentLength((*request)->item,
+                                          &contentLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    totalLength += contentLength;
+    LOG(("r(%08x) i(%08x) sbBaseDevice::EnsureSpaceForWrite - size %u\n",
+         *request, (*request)->item, contentLength));
+    
+    itemsToWrite[(*request)->item] = contentLength;
+  }
+  
+  // ask the helper to figure out if we have space
+  nsCOMPtr<sbIDeviceHelper> deviceHelper =
+    do_GetService("@songbirdnest.com/Songbird/Device/Base/Helper;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRUint64 freeSpace;
+  PRBool continueWrite;
+  rv = deviceHelper->HasSpaceForWrite(totalLength,
+                                      ownerLibrary,
+                                      this,
+                                      &freeSpace,
+                                      &continueWrite);
+  
+  // there are three cases to go from here:
+  // (1) fill up the device, with whatever fits, in random order (sync)
+  // (2) fill up the device, with whatever fits, in given order (manual)
+  // (3) user chose to abort
+  
+  // In the (1) case, if we first shuffle the list, it becomes case (2)
+  // and case (2) is just case (3) with fewer files to remove
+  
+  // copy the set of items into a orderable list
+  std::vector<sbIMediaItem*> itemList;
+  std::map<sbIMediaItem*, PRInt64>::iterator itemsBegin = itemsToWrite.begin(),
+                                             itemsEnd = itemsToWrite.end(),
+                                             itemsNext;
+  for (itemsNext = itemsBegin; itemsNext != itemsEnd; ++itemsNext) {
+    itemList.push_back(itemsNext->first);
+  }
+  // and a set of items we can't fit
+  std::set<sbIMediaItem*> itemsToRemove;
+  
+  if (!continueWrite) {
+    // we need to remove everything
+    itemsToRemove.insert(itemList.begin(), itemList.end());
+  } else {
+    PRUint32 mgmtType;
+    rv = ownerLibrary->GetMgmtType(&mgmtType);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
+      // shuffle the list
+      std::random_shuffle(itemList.begin(), itemList.end());
+    }
+    
+    // fit as much of the list as possible
+    std::vector<sbIMediaItem*>::iterator begin = itemList.begin(),
+                                         end = itemList.end(),
+                                         next;
+    PRInt64 bytesRemaining = freeSpace;
+    for (next = begin; next != end; ++next) {
+      if (bytesRemaining > itemsToWrite[*next]) {
+        // this will fit
+        bytesRemaining -= itemsToWrite[*next];
+      } else {
+        // won't fit, remove it
+        itemsToRemove.insert(*next);
+      }
+    }
+  }
+
+  // locate all the items we don't want to copy and remove from the songbird
+  // device library
+  std::set<sbIMediaItem*>::iterator removalEnd = itemsToRemove.end();
+  for (request = batchStart; request != end; ++request) {
+    if ((*request)->type != TransferRequest::REQUEST_WRITE ||
+        removalEnd == itemsToRemove.find((*request)->item))
+    {
+      // not a write we don't want
+      continue;
+    }
+    
+    rv = (*request)->list->Remove((*request)->item);
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    // tell the user about it
+    nsCOMPtr<nsIWritableVariant> var =
+      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = var->SetAsISupports((*request)->item);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_NOT_ENOUGH_FREESPACE,
+                                var,
+                                PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  // remove the requests from the queue; however, since removing any one item
+  // will invalidate the iterators, we use std::remove_if to bump all the
+  // things we don't want to the end of the queue first.
+  EnsureSpaceForWriteRemovalHelper removeHelper(itemsToRemove);
+  TransferRequestQueue::iterator newEnd =
+    std::remove_if(batchStart, end, removeHelper);
+  LOG(("                        sbBaseDevice::EnsureSpaceForWrite - erasing %u items", end - newEnd));
+  aQueue.erase(newEnd, end);
+  
+  // need to fix up the batch counts
+  
+  LOG(("                        sbBaseDevice::EnsureSpaceForWrite--\n"));
+  return NS_OK;
 }
 
 /* a helper class to proxy sbBaseDevice::Init onto the main thread

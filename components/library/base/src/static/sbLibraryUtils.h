@@ -75,6 +75,7 @@ private:
 
 class sbLibraryUtils
 {
+public:
   /**
    * Given an item and a library, attempt to locate a matching item in the
    * library.  Returns null (and success) if not found.
@@ -86,6 +87,15 @@ class sbLibraryUtils
   static nsresult GetItemInLibrary(/* in */  sbIMediaItem * aItem,
                                    /* in */  sbILibrary   * aLibrary,
                                    /* out */ sbIMediaItem **_retval);
+  
+  /**
+   * Attempt to get the content length of the media item
+   *
+   * \param aItem    The item to look up
+   * \retur          The content length of the item (or throw an exception)
+   */
+  static nsresult GetContentLength(/* in */  sbIMediaItem * aItem,
+                                   /* out */ PRInt64      * _retval);
 };
 
 #endif // __SBLIBRARYUTILS_H__

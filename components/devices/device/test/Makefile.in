@@ -83,7 +83,9 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                               $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/device/src/sbDeviceCore$(DEBUG:%=_d) \
+                              $(SONGBIRD_OBJDIR)/components/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \
                               $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+                              $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
                               $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) $(XPIDL_MODULE)

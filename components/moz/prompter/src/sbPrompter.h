@@ -127,7 +127,7 @@ private:
 // Songbird prompter component defs.
 //
 
-#define SONGBIRD_PROMPTER_CONTRACTID "@songbirdnest.com/Songbird/Prompter;1"
+// contract ID defined in sbIPrompter.idl
 #define SONGBIRD_PROMPTER_CLASSNAME "Songbird Prompter"
 #define SONGBIRD_PROMPTER_CID \
   /* {fa7ec5bd-7cab-4a63-a970-7bc4e83ee891} */ \
