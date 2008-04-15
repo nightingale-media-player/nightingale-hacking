@@ -241,6 +241,12 @@ GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
                           gstdirectsoundsink \
                           $(NULL)
 
+GST_PLUGINS_BAD_LIBS_NAMES = libgstdshow \
+                             $(NULL)
+
+GST_PLUGINS_BAD_NAMES += libgstdshowdecwrapper \
+                         $(NULL)
+
 GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \
          $(addsuffix -$(GLIB_VERSION)-0$(DLL_SUFFIX), $(GLIB_NAMES)))
 
@@ -257,6 +263,9 @@ GSTREAMER = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/bin/, \
 
 GST_PLUGINS_BASE_LIBS = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/bin/, \
                           $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX), $(GST_PLUGINS_BASE_LIBS_NAMES)))
+
+GST_PLUGINS_BAD_LIBS = $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/bin/, \
+                         $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GST_PLUGINS_BAD_LIBS_NAMES)))
 
 OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/bin/, \
         $(addsuffix $(DEBUG:%=_d)$(DLL_SUFFIX), $(OGG_NAMES)))
@@ -289,6 +298,7 @@ SONGBIRD_LIB += $(GLIB) \
                 $(GETTEXT) \
                 $(GSTREAMER) \
                 $(GST_PLUGINS_BASE_LIBS) \
+                $(GST_PLUGINS_BAD_LIBS) \
                 $(OGG) \
                 $(VORBIS) \
                 $(OIL) \
@@ -297,7 +307,7 @@ SONGBIRD_LIB += $(GLIB) \
 SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
                         $(GST_PLUGINS_BASE) \
                         $(GST_PLUGINS_GOOD) \
-#                        $(GST_PLUGINS_BAD) \
+                        $(GST_PLUGINS_BAD) \
                         $(NULL)
 
 endif # windows
