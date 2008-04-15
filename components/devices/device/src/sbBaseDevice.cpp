@@ -856,7 +856,7 @@ struct EnsureSpaceForWriteRemovalHelper {
   
   // by COM rules, we are only guranteed that comparing nsISupports* is valid
   struct COMComparator {
-    bool operator()(nsISupports* aLeft, nsISupports* aRight) {
+    bool operator()(nsISupports* aLeft, nsISupports* aRight) const {
       return nsCOMPtr<nsISupports>(do_QueryInterface(aLeft)) <
                nsCOMPtr<nsISupports>(do_QueryInterface(aRight));
     }
