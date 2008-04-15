@@ -99,6 +99,7 @@ var DPW = {
 
     // Initialize object fields.
     this._deviceID = this._widget.deviceID;
+    this._device = this._widget.device;
 
     // Initialize the device services.
     this._deviceInitialize();
@@ -293,8 +294,6 @@ var DPW = {
    */
 
   _deviceInitialize: function DPW__deviceInitialize() {
-    // Get the device object.
-    this._device = this._getDevice(this._deviceID);
     // Add a listener for status operations
     if (this._device) {
       var deviceEventTarget = this._device;
@@ -569,24 +568,6 @@ var DPW = {
   _deviceIsSyncing: function DPW__deviceIsSyncing() {
     return this._isSyncing;
   },
-
-  /**
-   * \brief Get the device object for the device ID specified by aDeviceID.
-   *
-   * \param aDeviceID       Device identifier.
-   *
-   * \return sbIDevice device object.
-   */
-
-  _getDevice: function DPW__getDevice(aDeviceID) {
-    try {
-      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                            .getService(Ci.sbIDeviceManager2);
-      return deviceManager.getDevice(Components.ID(aDeviceID));
-    } catch (err) {
-      return null;
-    }
-  }
 };
 
 

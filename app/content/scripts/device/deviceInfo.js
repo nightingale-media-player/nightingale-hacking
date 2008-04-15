@@ -87,11 +87,9 @@ var DIW = {
   // Device info object fields.
   //
   //   _widget                  Device info widget.
-  //   _deviceID                Device ID.
   //
 
   _widget: null,
-  _deviceID: null,
 
 
   /**
@@ -106,10 +104,7 @@ var DIW = {
     this._widget = aWidget;
 
     // Initialize object fields.
-    this._deviceID = this._widget.deviceID;
-
-    // Initialize the device services.
-    this._deviceInitialize();
+    this._device = this._widget.device;
 
     // Show specified elements.
     this._showElements();
@@ -147,7 +142,6 @@ var DIW = {
 
     // Clear object fields.
     this._widget = null;
-    this._deviceID = null;
   },
 
 
@@ -582,16 +576,6 @@ var DIW = {
 
 
   /**
-   * \brief Initialize the device services.
-   */
-
-  _deviceInitialize: function DIW__deviceInitialize() {
-    // Get the device object.
-    this._device = this._getDevice(this._deviceID);
-  },
-
-
-  /**
    * \brief Finalize the device services.
    */
 
@@ -844,25 +828,6 @@ var DIW = {
   _eject: function DIW__eject() {
     this._device.eject();
   },
-
-
-  /**
-   * \brief Get the device object for the device ID specified by aDeviceID.
-   *
-   * \param aDeviceID       Device identifier.
-   *
-   * \return sbIDevice device object.
-   */
-
-  _getDevice: function DIW__getDevice(aDeviceID) {
-    try {
-      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                            .getService(Ci.sbIDeviceManager2);
-      return deviceManager.getDevice(Components.ID(aDeviceID));
-    } catch (err) {
-      return null;
-    }
-  }
 };
 
 

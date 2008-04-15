@@ -86,7 +86,6 @@ var DCW = {
   //
   //   _cfg                       Configuration.
   //   _widget                    Device capacity widget.
-  //   _deviceID                  Device ID.
   //   _device                    sbIDevice object.
   //   _updateInterval            Timing interval used for updating UI.
   //   _capTable                  Table of capacity values.
@@ -94,7 +93,6 @@ var DCW = {
 
   _cfg: DCWCfg,
   _widget: null,
-  _deviceID: null,
   _device: null,
   _updateInterval: null,
   _capTable: null,
@@ -112,11 +110,8 @@ var DCW = {
     this._widget = aWidget;
 
     // Initialize object fields.
-    this._deviceID = this._widget.deviceID;
+    this._device = this._widget.device;
     this._capTable = {};
-
-    // Get the device object.
-    this._device = this._getDevice(this._deviceID);
 
     // Update the UI.
     this._update();
@@ -141,7 +136,6 @@ var DCW = {
 
     // Clear object fields.
     this._widget = null;
-    this._deviceID = null;
   },
 
 
@@ -322,25 +316,6 @@ var DCW = {
     capTable.other = otherSpace;
     return capTable;
   },
-
-
-  /**
-   * \brief Get the device object for the device ID specified by aDeviceID.
-   *
-   * \param aDeviceID       Device identifier.
-   *
-   * \return sbIDevice device object.
-   */
-
-  _getDevice: function DCW__getDevice(aDeviceID) {
-    try {
-      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                            .getService(Ci.sbIDeviceManager2);
-      return deviceManager.getDevice(Components.ID(aDeviceID));
-    } catch (err) {
-      return null;
-    }
-  }
 };
 
 

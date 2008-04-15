@@ -68,13 +68,11 @@ var DeviceSyncWidget = {
   // Device sync object fields.
   //
   //   _widget                  Device sync widget.
-  //   _deviceID                Device ID.
   //   _deviceLibrary           Device library we are working wth.
   //   _isIdle                  Flag for state of device.
   //
 
   _widget: null,
-  _deviceID: null,
   _deviceLibrary: null,
   _isIdle: true,
 
@@ -90,10 +88,7 @@ var DeviceSyncWidget = {
     this._widget = aWidget;
     
     // Initialize object fields.
-    this._deviceID = this._widget.deviceID;
-
-    // Initialize the device services.
-    this._deviceInitialize();
+    this._device = this._widget.device;
 
     // Get the device library we are dealing with
     // Currently we just grab the first one since we only deal with one library
@@ -120,7 +115,6 @@ var DeviceSyncWidget = {
 
     // Clear object fields.
     this._widget = null;
-    this._deviceID = null;
   },
 
   //----------------------------------------------------------------------------
@@ -692,15 +686,6 @@ var DeviceSyncWidget = {
   _device: null,
 
   /**
-   * \brief Initialize the device services.
-   */
-
-  _deviceInitialize: function DeviceSyncWidget__deviceInitialize() {
-    // Get the device object.
-    this._device = this._getDevice(this._deviceID);
-  },
-
-  /**
    * \brief Finalize the device services.
    */
 
@@ -708,22 +693,4 @@ var DeviceSyncWidget = {
     // Clear object fields.
     this._device = null;
   },
-
-  /**
-   * \brief Get the device object for the device ID specified by aDeviceID.
-   *
-   * \param aDeviceID       Device identifier.
-   *
-   * \return sbIDevice device object.
-   */
-
-  _getDevice: function DeviceSyncWidget__getDevice(aDeviceID) {
-    try {
-      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                            .getService(Ci.sbIDeviceManager2);
-      return deviceManager.getDevice(Components.ID(aDeviceID));
-    } catch (err) {
-      return null;
-    }
-  }
 };
