@@ -114,7 +114,7 @@ public:
 
     PRUint32 itemTransferID;         /* id for this item transfer */
     
-    static const PRInt32 PRIORITY_DEFAULT = -1;
+    static const PRInt32 PRIORITY_DEFAULT = 0x1000000;
     PRInt32 priority;                /* priority for the request (lower first) */
 
     NS_DECL_ISUPPORTS

@@ -133,7 +133,7 @@ function runTest () {
   device.submitRequest(device.REQUEST_UPDATE,
                        createPropertyBag({index: 99, priority: 99}));
   device.submitRequest(device.REQUEST_UPDATE,
-                       createPropertyBag({index: 100, priority: -100}));
+                       createPropertyBag({index: 100}));
   checkPropertyBag(device.popRequest(), {index: 99, priority: 99});
   checkPropertyBag(device.popRequest(), {index: 100}); /* default */
   checkPropertyBag(device.popRequest(), {index: MAXINT, priority: MAXINT});
