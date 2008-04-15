@@ -199,8 +199,6 @@ private:
 // Songbird window watcher component defs.
 //
 
-#define SB_WINDOWWATCHER_CONTRACTID                                            \
-          "@songbirdnest.com/Songbird/window-watcher;1"
 #define SB_WINDOWWATCHER_CLASSNAME "sbWindowWatcher"
 #define SB_WINDOWWATCHER_CID                                                   \
   /* {4d83ab89-f909-4e71-8d5d-d0884d0cb788} */                                 \

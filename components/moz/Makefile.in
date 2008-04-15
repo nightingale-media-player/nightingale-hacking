@@ -38,6 +38,6 @@ SUBDIRS = strings \
           windowwatcher \
           $(NULL)
 
-SUBDIRDEPS = prompter : threads
+SUBDIRDEPS = prompter : windowwatcher
 
 include $(topsrcdir)/build/rules.mk

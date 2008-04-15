@@ -123,3 +123,13 @@ interface sbICallWithWindowCallback : nsISupports
   void handleWindowCallback(in nsIDOMWindow aWindow);
 };
 
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_WINDOWWATCHER_CONTRACTID \
+          "@songbirdnest.com/Songbird/window-watcher;1"
+%}C++
+
