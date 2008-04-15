@@ -405,6 +405,7 @@
 <!ENTITY menu.edit.find.key            "F" >
 <!ENTITY menu.edit.findagain.key       "G" >
 <!ENTITY jumpto.key                    "J" >
+<!ENTITY switchfeathers.key            "M" >
 <!ENTITY search.key                    "F" >
 <!ENTITY locationbar.key               "L" >
 <!ENTITY trackeditor.key               "E" >

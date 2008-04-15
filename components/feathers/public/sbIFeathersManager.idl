@@ -48,7 +48,7 @@ interface sbIFeathersManagerListener;
 *
 * \sa sbISkinDescription, sbILayoutDescription, sbIFeathersChangeListener
 */
-[scriptable, uuid(c828093c-ad61-4866-971d-2f63fd733f99)]
+[scriptable, uuid(43bfaddc-488d-4727-b4f2-d4587cdabd98)]
 interface sbIFeathersManager : nsISupports
 {
   /**
@@ -268,6 +268,12 @@ interface sbIFeathersManager : nsISupports
    */
   void switchFeathers(in AString aLayoutURL, 
                       in AString aInternalName);
+                      
+
+  /**
+   * \brief Switch to the next layout for the current loaded feather.
+   */
+  void switchToNextLayout();
 
   /**
    * \brief Launch the player window for the current feathers

@@ -327,6 +327,7 @@
       <key id="delete-key" modifiers="" key="&menu.edit.delete.key;" />
       <key id="find-key" modifiers="accel" key="&menu.edit.find.key;" />
       <key id="findagain-key" modifiers="accel" key="&menu.edit.findagain.key;" />
+      <key id="switch-feathers-key" modifiers="accel,shift" key="&switchfeathers.key;" oncommand="toggleNextFeatherLayout();"/>
       <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
       <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
       <key id="sanitize-key" modifiers="accel,shift" key="&sanitize.key;" oncommand="doMenu('menu.clearprivatedata');"/>

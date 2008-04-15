@@ -852,21 +852,7 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   getLayoutsForSkin: function getLayoutsForSkin(internalName) {
-    this._init();
-
-    var layouts = [];
-    
-    // Find skin descriptions that are compatible with the given layout.
-    for (var layout in this._mappings) {
-      if (internalName in this._mappings[layout]) {
-        var desc = this.getLayoutDescription(layout);
-        if (desc) {
-          layouts.push(desc);
-        }      
-      }
-    }
-      
-    return new ArrayEnumerator( layouts );
+    return new ArrayEnumerator( this._getLayoutsArrayForSkin(internalName) );
   },
 
 
@@ -913,6 +899,32 @@ FeathersManager.prototype = {
     var callback = new FeathersManager_switchFeathers_callback(this, layoutURL, internalName);
     this._switching = true;
     timer.initWithCallback(callback, 0, Ci.nsITimer.TYPE_ONE_SHOT);
+  },
+  
+  /**
+   * \sa sbIFeathersManager
+   */
+  switchToNextLayout: function switchToNextLayout() {
+    var curSkinName = this.currentSkinName;
+    var curLayoutURL = this.currentLayoutURL;
+    
+    // Find the next layout (if one exists):
+    var nextLayout;
+    var layouts = this._getLayoutsArrayForSkin(curSkinName);
+    for (var i = 0; i < layouts.length; i++) {
+      if (layouts[i].url == curLayoutURL) {
+        if (i >= layouts.length - 1) {
+          nextLayout = layouts[0];
+        } 
+        else {
+          nextLayout = layouts[i+1];
+        }
+      }
+    }
+    
+    if (nextLayout != null && nextLayout.url != curLayoutURL) {
+      this.switchFeathers(nextLayout.url, curSkinName);
+    }
   },
   
   
@@ -984,6 +996,28 @@ FeathersManager.prototype = {
     if (index > -1) {
       this._listeners.splice(index,1);
     }
+  },
+  
+  
+  /**
+   * Get an array of the layouts for the current skin.
+   */
+  _getLayoutsArrayForSkin: function _getLayoutsArrayForSkin(internalName) {
+    this._init();
+    
+    var layouts = [];
+    
+    // Find skin descriptions that are compatible with the given layout.
+    for (var layout in this._mappings) {
+      if (internalName in this._mappings[layout]) {
+        var desc = this.getLayoutDescription(layout);
+        if (desc) {
+          layouts.push(desc);
+        }      
+      }
+    }
+    
+    return layouts;
   },
 
 

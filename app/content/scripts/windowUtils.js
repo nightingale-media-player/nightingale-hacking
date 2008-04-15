@@ -1206,4 +1206,20 @@ function goUpdateGlobalFindMenuItems()
   goUpdateCommand("cmd_findAgain");
 }
 
+
+
+/**
+ * Global function to cycle the current feather to the next layout.
+ */
+var gFeathersManager = null;
+function toggleNextFeatherLayout()
+{
+  if (!gFeathersManager) {
+    gFeathersManager = 
+      Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
+        .getService(Components.interfaces.sbIFeathersManager);
+  }
+
+  gFeathersManager.switchToNextLayout();
+}
                                                                                                                                                                                                         
