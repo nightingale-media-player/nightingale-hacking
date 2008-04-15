@@ -848,19 +848,19 @@ nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
   return DispatchEvent(deviceEvent, aAsync, nsnull);
 }
 
+// by COM rules, we are only guranteed that comparing nsISupports* is valid
+struct COMComparator {
+  bool operator()(nsISupports* aLeft, nsISupports* aRight) const {
+    return nsCOMPtr<nsISupports>(do_QueryInterface(aLeft)) <
+             nsCOMPtr<nsISupports>(do_QueryInterface(aRight));
+  }
+};
+
 struct EnsureSpaceForWriteRemovalHelper {
-  EnsureSpaceForWriteRemovalHelper(std::set<sbIMediaItem*>& aItemsToRemove)
+  EnsureSpaceForWriteRemovalHelper(std::set<sbIMediaItem*,COMComparator>& aItemsToRemove)
     : mItemsToRemove(aItemsToRemove.begin(), aItemsToRemove.end())
   {
   }
-  
-  // by COM rules, we are only guranteed that comparing nsISupports* is valid
-  struct COMComparator {
-    bool operator()(nsISupports* aLeft, nsISupports* aRight) const {
-      return nsCOMPtr<nsISupports>(do_QueryInterface(aLeft)) <
-               nsCOMPtr<nsISupports>(do_QueryInterface(aRight));
-    }
-  };
   
   bool operator() (nsRefPtr<sbBaseDevice::TransferRequest> & aRequest) {
     // remove all requests where either the item or the list is to be removed
@@ -972,7 +972,7 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
     itemList.push_back(itemsNext->first);
   }
   // and a set of items we can't fit
-  std::set<sbIMediaItem*> itemsToRemove;
+  std::set<sbIMediaItem*, COMComparator> itemsToRemove;
   
   if (!continueWrite) {
     // we need to remove everything
@@ -1005,7 +1005,7 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
 
   // locate all the items we don't want to copy and remove from the songbird
   // device library
-  std::set<sbIMediaItem*>::iterator removalEnd = itemsToRemove.end();
+  std::set<sbIMediaItem*,COMComparator>::iterator removalEnd = itemsToRemove.end();
   for (request = batchStart; request != end; ++request) {
     if ((*request)->type != TransferRequest::REQUEST_WRITE ||
         removalEnd == itemsToRemove.find((*request)->item))
@@ -1032,15 +1032,90 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
   }
   
   // remove the requests from the queue; however, since removing any one item
-  // will invalidate the iterators, we use std::remove_if to bump all the
-  // things we don't want to the end of the queue first.
-  EnsureSpaceForWriteRemovalHelper removeHelper(itemsToRemove);
-  TransferRequestQueue::iterator newEnd =
-    std::remove_if(batchStart, end, removeHelper);
-  LOG(("                        sbBaseDevice::EnsureSpaceForWrite - erasing %u items", end - newEnd));
-  aQueue.erase(newEnd, end);
-  
-  // need to fix up the batch counts
+  // will invalidate the iterators, we first shift all the valid ones to the
+  // start of the queue, then remove all the unwanted ones in a batch.  Good
+  // thing nsRefPtr has useful assignment.
+  // while doing this, we also use this as an opportunity to fix the batch
+  // counts.
+  { /* scope */
+    TransferRequestQueue::iterator
+      batchStart, // the start of the current batch
+      batchNext,  // an iterator to calculate batch sizes
+      nextFree,   // the place to insert the next item
+      nextItem,   // the next item to examine
+      queueEnd = aQueue.end();
+    batchStart = nextFree = nextItem = aQueue.begin();
+    /* the request queue:
+      -------------------------------------------------------------------------
+         ^- batch start    ^- next free          ^- next item        queue end-^
+     */
+    int lastType = 0; /* reserved */
+    PRUint32 batchSize = 0;
+    for (;; ++nextItem) {
+      /* sanity checking; not really needed */
+      NS_ASSERTION(batchStart <= nextFree, "invalid iterator state");
+      NS_ASSERTION(nextFree   <= nextItem, "invalid iterator state");
+      NS_ASSERTION(nextItem   <= queueEnd, "invalid iterator state");
+      
+      bool remove = (nextItem != queueEnd) &&
+                      (removalEnd != itemsToRemove.find((*nextItem)->item) ||
+                       removalEnd != itemsToRemove.find((*nextItem)->list));
+      
+      if (remove) {
+        // go to the next item; don't fix up batch counts, so that we end up
+        // merging requests
+        continue;
+      }
+      
+      int newType = 0;
+      if (nextItem != queueEnd) {
+        newType = (*nextItem)->IsCountable() ? (*nextItem)->type : 0;
+      } else {
+        // at the end of queue; force a type change
+        newType = lastType + 1;
+      }
+      if ((lastType != 0) &&
+          (newType != 0) &&
+          (lastType != newType))
+      {
+        // the request type changed; need to fix up the batch counts
+        PRUint32 batchIndex = 1;
+        for (; batchStart != nextFree; ++batchStart) {
+          if ((*batchStart)->IsCountable()) {
+            NS_ASSERTION((*batchStart)->type == lastType,
+                         "Unexpected item type");
+            (*batchStart)->batchIndex = batchIndex;
+            (*batchStart)->batchCount = batchSize;
+            ++batchIndex;
+          }
+        }
+        NS_ASSERTION(batchIndex == batchSize + 1,
+                     "Unexpected ending batch index");
+        batchSize = 0;
+      }
+      
+      if (nextItem == queueEnd) {
+        // end of queue
+        break;
+      }
+      
+      if (newType != 0) {
+        // this is a countable request, possibly of a different type
+        lastType = newType;
+        ++batchSize;
+      }
+      
+      if (nextFree != nextItem) {
+        // shift the request, if necessary
+        *nextFree = *nextItem;
+      }
+      
+      ++nextFree;
+    }
+    
+    LOG(("                        sbBaseDevice::EnsureSpaceForWrite - erasing %u items", queueEnd - nextFree));
+    aQueue.erase(nextFree, queueEnd);
+  }
   
   LOG(("                        sbBaseDevice::EnsureSpaceForWrite--\n"));
   return NS_OK;
