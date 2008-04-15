@@ -27,9 +27,11 @@
 */
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // Songbird prompter.
 //
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
@@ -78,6 +80,9 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbPrompter,
  * method like nsIPromptService does so that the dialog is presented event when
  * no windows are available.
  * \sa nsIDOMWindowInternal.openDialog
+ *
+ * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
+ * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
@@ -91,16 +96,37 @@ sbPrompter::OpenDialog(const nsAString& aUrl,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
     nsCOMPtr<sbIPrompter> prompter;
     rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, rv);
-    return prompter->OpenDialog(aUrl, aName, aOptions, aExtraArgument, _retval);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->OpenDialog(aUrl, aName, aOptions, aExtraArgument, _retval);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
   }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent;
   rv = GetParent(getter_AddRefs(parent));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
 
   // Set up dialog options.  Add the same options that nsIPromptService uses.
   nsAutoString options(aOptions);
@@ -109,12 +135,15 @@ sbPrompter::OpenDialog(const nsAString& aUrl,
   options.AppendLiteral("centerscreen,chrome,modal,titlebar");
 
   // Open the dialog.
-  return mWindowWatcher->OpenWindow(parent,
-                                    NS_ConvertUTF16toUTF8(aUrl).get(),
-                                    NS_ConvertUTF16toUTF8(aName).get(),
-                                    NS_ConvertUTF16toUTF8(options).get(),
-                                    aExtraArgument,
-                                    _retval);
+  rv = mWindowWatcher->OpenWindow(parent,
+                                  NS_ConvertUTF16toUTF8(aUrl).get(),
+                                  NS_ConvertUTF16toUTF8(aName).get(),
+                                  NS_ConvertUTF16toUTF8(options).get(),
+                                  aExtraArgument,
+                                  _retval);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 
@@ -174,6 +203,9 @@ sbPrompter::SetWaitForWindow(PRBool aWaitForWindow)
 
 /**
  * Forward Alert.
+ *
+ * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
+ * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
@@ -185,26 +217,53 @@ sbPrompter::Alert(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
     nsCOMPtr<sbIPrompter> prompter;
     rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, rv);
-    return prompter->Alert(aParent, aDialogTitle, aText);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->Alert(aParent, aDialogTitle, aText);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
   }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
     rv = GetParent(getter_AddRefs(parent));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
   }
 
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
+
   // Forward method call.
-  return mPromptService->Alert(parent, aDialogTitle, aText);
+  rv = mPromptService->Alert(parent, aDialogTitle, aText);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 
 /**
  * Forward AlertCheck.
+ *
+ * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
+ * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
@@ -218,34 +277,61 @@ sbPrompter::AlertCheck(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
     nsCOMPtr<sbIPrompter> prompter;
     rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, rv);
-    return prompter->AlertCheck(aParent,
-                                aDialogTitle, 
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->AlertCheck(aParent,
+                                aDialogTitle,
                                 aText,
                                 aCheckMsg,
                                 aCheckState);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
   }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
     rv = GetParent(getter_AddRefs(parent));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
   }
 
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
+
   // Forward method call.
-  return mPromptService->AlertCheck(parent,
-                                    aDialogTitle,
-                                    aText,
-                                    aCheckMsg,
-                                    aCheckState);
+  rv = mPromptService->AlertCheck(parent,
+                                  aDialogTitle,
+                                  aText,
+                                  aCheckMsg,
+                                  aCheckState);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 
 /**
  * Forward Confirm.
+ *
+ * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
+ * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
@@ -258,29 +344,53 @@ sbPrompter::Confirm(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
     nsCOMPtr<sbIPrompter> prompter;
     rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, rv);
-    return prompter->Confirm(aParent, aDialogTitle, aText, _retval);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->Confirm(aParent, aDialogTitle, aText, _retval);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
   }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
     rv = GetParent(getter_AddRefs(parent));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
   }
 
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
+
   // Forward method call.
-  return mPromptService->Confirm(parent,
-                                 aDialogTitle,
-                                 aText,
-                                 _retval);
+  rv = mPromptService->Confirm(parent, aDialogTitle, aText, _retval);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 
 /**
  * Forward ConfirmCheck.
+ *
+ * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
+ * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
@@ -295,36 +405,63 @@ sbPrompter::ConfirmCheck(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
     nsCOMPtr<sbIPrompter> prompter;
     rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, rv);
-    return prompter->ConfirmCheck(aParent,
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->ConfirmCheck(aParent,
                                   aDialogTitle,
                                   aText,
                                   aCheckMsg,
                                   aCheckState,
                                   _retval);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
   }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
     rv = GetParent(getter_AddRefs(parent));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
   }
 
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
+
   // Forward method call.
-  return mPromptService->ConfirmCheck(parent,
-                                      aDialogTitle,
-                                      aText,
-                                      aCheckMsg,
-                                      aCheckState,
-                                      _retval);
+  rv = mPromptService->ConfirmCheck(parent,
+                                    aDialogTitle,
+                                    aText,
+                                    aCheckMsg,
+                                    aCheckState,
+                                    _retval);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 
 /**
  * Forward ConfirmEx.
+ *
+ * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
+ * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
@@ -343,10 +480,15 @@ sbPrompter::ConfirmEx(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
     nsCOMPtr<sbIPrompter> prompter;
     rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, rv);
-    return prompter->ConfirmEx(aParent,
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->ConfirmEx(aParent,
                                aDialogTitle,
                                aText,
                                aButtonFlags,
@@ -356,31 +498,53 @@ sbPrompter::ConfirmEx(nsIDOMWindow*    aParent,
                                aCheckMsg,
                                aCheckState,
                                _retval);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
   }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
     rv = GetParent(getter_AddRefs(parent));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
   }
 
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
+
   // Forward method call.
-  return mPromptService->ConfirmEx(parent,
-                                   aDialogTitle,
-                                   aText,
-                                   aButtonFlags,
-                                   aButton0Title,
-                                   aButton1Title,
-                                   aButton2Title,
-                                   aCheckMsg,
-                                   aCheckState,
-                                   _retval);
+  rv = mPromptService->ConfirmEx(parent,
+                                 aDialogTitle,
+                                 aText,
+                                 aButtonFlags,
+                                 aButton0Title,
+                                 aButton1Title,
+                                 aButton2Title,
+                                 aCheckMsg,
+                                 aCheckState,
+                                 _retval);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 
 /**
  * Forward Prompt.
+ *
+ * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
+ * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
@@ -396,38 +560,65 @@ sbPrompter::Prompt(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
     nsCOMPtr<sbIPrompter> prompter;
     rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, rv);
-    return prompter->Prompt(aParent,
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->Prompt(aParent,
                             aDialogTitle,
                             aText,
                             aValue,
                             aCheckMsg,
                             aCheckState,
                             _retval);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
   }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
     rv = GetParent(getter_AddRefs(parent));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
   }
 
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
+
   // Forward method call.
-  return mPromptService->Prompt(parent,
-                                aDialogTitle,
-                                aText,
-                                aValue,
-                                aCheckMsg,
-                                aCheckState,
-                                _retval);
+  rv = mPromptService->Prompt(parent,
+                              aDialogTitle,
+                              aText,
+                              aValue,
+                              aCheckMsg,
+                              aCheckState,
+                              _retval);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 
 /**
  * Forward PromptUsernameAndPassword.
+ *
+ * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
+ * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
@@ -444,10 +635,15 @@ sbPrompter::PromptUsernameAndPassword(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
     nsCOMPtr<sbIPrompter> prompter;
     rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, rv);
-    return prompter->PromptUsernameAndPassword(aParent,
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->PromptUsernameAndPassword(aParent,
                                                aDialogTitle,
                                                aText,
                                                aUsername,
@@ -455,29 +651,51 @@ sbPrompter::PromptUsernameAndPassword(nsIDOMWindow*    aParent,
                                                aCheckMsg,
                                                aCheckState,
                                                _retval);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
   }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
     rv = GetParent(getter_AddRefs(parent));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
   }
 
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
+
   // Forward method call.
-  return mPromptService->PromptUsernameAndPassword(parent,
-                                                   aDialogTitle,
-                                                   aText,
-                                                   aUsername,
-                                                   aPassword,
-                                                   aCheckMsg,
-                                                   aCheckState,
-                                                   _retval);
+  rv = mPromptService->PromptUsernameAndPassword(parent,
+                                                 aDialogTitle,
+                                                 aText,
+                                                 aUsername,
+                                                 aPassword,
+                                                 aCheckMsg,
+                                                 aCheckState,
+                                                 _retval);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 
 /**
  * Forward PromptPassword.
+ *
+ * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
+ * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
@@ -493,38 +711,65 @@ sbPrompter::PromptPassword(nsIDOMWindow*    aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
     nsCOMPtr<sbIPrompter> prompter;
     rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, rv);
-    return prompter->PromptPassword(aParent,
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->PromptPassword(aParent,
                                     aDialogTitle,
                                     aText,
                                     aPassword,
                                     aCheckMsg,
                                     aCheckState,
                                     _retval);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
   }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
     rv = GetParent(getter_AddRefs(parent));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
   }
 
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
+
   // Forward method call.
-  return mPromptService->PromptPassword(parent,
-                                        aDialogTitle,
-                                        aText,
-                                        aPassword,
-                                        aCheckMsg,
-                                        aCheckState,
-                                        _retval);
+  rv = mPromptService->PromptPassword(parent,
+                                      aDialogTitle,
+                                      aText,
+                                      aPassword,
+                                      aCheckMsg,
+                                      aCheckState,
+                                      _retval);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 
 /**
  * Forward Select.
+ *
+ * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
+ * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
@@ -540,33 +785,57 @@ sbPrompter::Select(nsIDOMWindow*     aParent,
 
   // If not on main thread, proxy to it.
   if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
     nsCOMPtr<sbIPrompter> prompter;
     rv = GetProxiedPrompter(getter_AddRefs(prompter));
-    NS_ENSURE_SUCCESS(rv, rv);
-    return prompter->Select(aParent,
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->Select(aParent,
                             aDialogTitle,
                             aText,
                             aCount,
                             aSelectList,
                             aOutSelection,
                             _retval);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
   }
 
   // Get the parent window.
   nsCOMPtr<nsIDOMWindow> parent = aParent;
   if (!parent) {
     rv = GetParent(getter_AddRefs(parent));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
   }
 
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
+
   // Forward method call.
-  return mPromptService->Select(parent,
-                                aDialogTitle,
-                                aText,
-                                aCount,
-                                aSelectList,
-                                aOutSelection,
-                                _retval);
+  rv = mPromptService->Select(parent,
+                              aDialogTitle,
+                              aText,
+                              aCount,
+                              aSelectList,
+                              aOutSelection,
+                              _retval);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
 }
 
 
@@ -701,14 +970,14 @@ sbPrompter::InitOnMainThread()
 {
   nsresult rv;
 
-  // Get the window mediator service.
-  mWindowMediator = do_GetService("@mozilla.org/appshell/window-mediator;1",
-                                  &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Get the window watcher service.
   mWindowWatcher = do_GetService("@mozilla.org/embedcomp/window-watcher;1",
                                  &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the Songbird window watcher service.
+  mSBWindowWatcher =
+    do_GetService("@songbirdnest.com/Songbird/window-watcher;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the prompt service.
@@ -733,15 +1002,21 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
   nsCOMPtr<nsIDOMWindow> parent;
   nsresult rv;
 
-  // Get the parent.
-  nsCOMPtr<nsIDOMWindowInternal> _parent;
-  rv = mWindowMediator->GetMostRecentWindow(mParentWindowType.get(),
-                                            getter_AddRefs(_parent));
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (_parent) {
-    parent = do_QueryInterface(_parent, &rv);
+  // Operate under lock.
+  nsAutoLock autoLock(mPrompterLock);
+
+  // If the Songbird window watcher is shutting down, don't wait for a window.
+  {
+    PRBool isShuttingDown;
+    rv = mSBWindowWatcher->GetIsShuttingDown(&isShuttingDown);
     NS_ENSURE_SUCCESS(rv, rv);
+    if (isShuttingDown)
+      mWaitForWindow = PR_FALSE;
   }
+
+  // Get the parent.
+  rv = mSBWindowWatcher->GetWindow(mParentWindowType, getter_AddRefs(parent));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // If no window of the configured type is available and we're not waiting for
   // one, use the currently active window as the parent.
@@ -751,10 +1026,7 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
   }
 
   // Return results.
-  if (parent)
-    NS_ADDREF(*aParent = parent);
-  else
-    *aParent = nsnull;
+  NS_IF_ADDREF(*aParent = parent);
 
   return NS_OK;
 }
@@ -769,10 +1041,11 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
 nsresult
 sbPrompter::GetProxiedPrompter(sbIPrompter** aPrompter)
 {
-  nsresult rv;
-
   // Validate arguments.
   NS_ASSERTION(aPrompter, "aPrompter is null");
+
+  // Function variables.
+  nsresult rv;
 
   // Create a main thread proxy for the prompter.
   nsCOMPtr<nsIProxyObjectManager>

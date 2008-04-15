@@ -29,6 +29,14 @@
 #ifndef __SB_PROMPTER_H__
 #define __SB_PROMPTER_H__
 
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//
+// Songbird prompter.
+//
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 /** 
  * \file  sbPrompter.h
  * \brief Songbird Prompter Definitions.
@@ -36,12 +44,12 @@
 
 // Songbird imports.
 #include <sbIPrompter.h>
+#include <sbIWindowWatcher.h>
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
 #include <nsIDOMWindowInternal.h>
 #include <nsIObserver.h>
-#include <nsIWindowMediator.h>
 #include <nsIWindowWatcher.h>
 #include <nsStringAPI.h>
 
@@ -92,8 +100,8 @@ private:
 
   //
   // mPrompterLock               Prompter lock.
-  // mWindowMediator             Window mediator service.
   // mWindowWatcher              Window watcher service.
+  // mSBWindowWatcher            Songbird window watcher service.
   // mPromptService              Prompt service.
   // mParentWindowType           Parent window type.
   // mWaitForWindow              If true, wait for parent window type.
@@ -103,12 +111,12 @@ private:
   //   mWaitForWindow
   //
 
-  PRLock*                        mPrompterLock;
-  nsCOMPtr<nsIWindowMediator>    mWindowMediator;
-  nsCOMPtr<nsIWindowWatcher>     mWindowWatcher;
-  nsCOMPtr<nsIPromptService>     mPromptService;
-  nsString                       mParentWindowType;
-  PRBool                         mWaitForWindow;
+  PRLock*                       mPrompterLock;
+  nsCOMPtr<nsIWindowWatcher>    mWindowWatcher;
+  nsCOMPtr<sbIWindowWatcher>    mSBWindowWatcher;
+  nsCOMPtr<nsIPromptService>    mPromptService;
+  nsString                      mParentWindowType;
+  PRBool                        mWaitForWindow;
 
 
   //
@@ -137,6 +145,7 @@ private:
     0x4a63, \
     { 0xa9, 0x70, 0x7b, 0xc4, 0xe8, 0x3e, 0xe8, 0x91 } \
   }
+
 
 #endif // __SB_PROMPTER_H__
 

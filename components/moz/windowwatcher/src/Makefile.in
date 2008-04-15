@@ -30,20 +30,22 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 ifdef DEBUG
-target_name = sbPrompter_d
+target_name = sbWindowWatcher_d
 else
-target_name = sbPrompter
+target_name = sbWindowWatcher
 endif
 
-CPP_SRCS = sbPrompter.cpp \
-           sbPrompterModule.cpp \
+CPP_SRCS = sbWindowWatcher.cpp \
+           sbWindowWatcherModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/moz/prompter/public \
-               $(DEPTH)/components/moz/windowwatcher/public \
+CPP_INCLUDES = $(DEPTH)/components/moz/windowwatcher/public \
+               $(DEPTH)/components/moz/prompter/public \
                $(topsrcdir)/components/include \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/appshell \
                $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
