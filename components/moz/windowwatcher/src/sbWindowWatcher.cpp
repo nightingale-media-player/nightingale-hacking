@@ -1056,7 +1056,7 @@ sbWindowWatcherWaitForWindow::~sbWindowWatcherWaitForWindow()
  * \param aWindowType         Type of window to get.
  */
 
-NS_IMETHODIMP
+nsresult
 sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
 {
   nsresult rv;
