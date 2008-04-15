@@ -48,7 +48,8 @@
    *****************************************************************************
    ************************************************************************* -->
 
-  <binding id="sb-device-capacity">
+   <binding id="sb-device-capacity" 
+     extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
 
     <!-- ***********************************************************************
      *
@@ -120,15 +121,6 @@
     <implementation>
 
       <!--
-       * Widget fields.
-       *
-       *   deviceID                 Bound device identifier.
-       -->
-
-      <field name="deviceID"/>
-
-
-      <!--
        * constructor
        *
        *   This method constructs the widget.
@@ -137,9 +129,6 @@
       <constructor> <![CDATA[
         /* Import external services. */
         this.importExternalServices();
-
-        /* Bind to the device. */
-        this.bind();
       ]]></constructor>
 
 
@@ -183,27 +172,6 @@
         }
       ]]></body></method>
 
-
-      <!--
-       * bind
-       *
-       *   This function binds the device capacity widget to a specific device.
-       -->
-
-      <method name="bind"><body><![CDATA[
-        var                       deviceID;
-
-        /* Get the device ID.  Do nothing if device has not changed. */
-        deviceID = this.getAttribute("device-id");
-        if ((deviceID == this.deviceID) || (!deviceID))
-          return;
-        this.deviceID = deviceID;
-
-        /* Re-initialize the device capacity services. */
-        DCW.finalize(this);
-        DCW.initialize(this);
-      ]]></body></method>
-
     </implementation>
 
 
@@ -214,7 +182,11 @@
      *********************************************************************** -->
 
     <handlers>
-      <handler event="DOMAttrModified" action="this.bind();"/>
+      <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device capacity services. */
+        DCW.finalize(this);
+        DCW.initialize(this);
+        ]]></handler>
     </handlers>
 
 
