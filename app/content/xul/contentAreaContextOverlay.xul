@@ -164,6 +164,10 @@
        label="&bookmarkPageCmd2.label;"
        accesskey="&bookmarkPageCmd2.accesskey;"
        oncommand="gContextMenu.bookmarkThisPage();"/>
+    <menuitem id="context-subscribemedia-page"
+       label="&subscribeMediaPageCmd.label;"
+       accesskey="&subscribeMediaPageCmd.accesskey;"
+       oncommand="gContextMenu.subscribeMediaPage();"/>
     <menuitem id="context-savepage"
        label="&savePageCmd.label;"
        accesskey="&savePageCmd.accesskey2;"
@@ -233,6 +237,10 @@
             label="&bookmarkThisFrameCmd.label;"
             accesskey="&bookmarkThisFrameCmd.accesskey;"
             oncommand="gContextMenu.addBookmarkForFrame();"/>
+        <menuitem id="context-subscribemedia-frame"
+           label="&subscribeMediaFrameCmd.label;"
+           accesskey="&subscribeMediaFrameCmd.accesskey;"
+           oncommand="gContextMenu.subscribeMediaFrame();"/>
         <menuitem id="context-saveframe"
             label="&saveFrameCmd.label;"
             accesskey="&saveFrameCmd.accesskey;"

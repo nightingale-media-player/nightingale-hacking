@@ -367,6 +367,13 @@ ContentAreaContextMenu.prototype = {
     if (this.onMedia) {
       this.updateAddToPlaylist();
     }
+    
+    var showSubscribe = SBDataGetBoolValue("browser.cansubscription") &&
+                        !this.onLink &&
+                        !this.onImage &&
+                        !this.onTextInput;
+    this.showItem("context-subscribemedia-page", showSubscribe);
+    this.showItem("context-subscribemedia-frame", showSubscribe);
   },
 
   // Set various context menu attributes based on the state of the world.
@@ -1380,6 +1387,19 @@ ContentAreaContextMenu.prototype = {
   
   playMedia: function CM_playMedia() {
     gBrowser.handleMediaURL(this.linkURL, true, false, null, gBrowser.currentURI.spec);
+  },
+  
+  subscribeMediaPage: function CM_subscribeToPage() {
+    this._subscribeMedia(gBrowser.currentURI);
+  },
+  
+  subscribeMediaFrame: function CM_subscribeToFrame() {
+    var doc = this.target.ownerDocument;
+    this._subscribeMedia(doc.documentURIObject);
+  },
+  
+  _subscribeMedia: function CM_subscribeToURL(aURI) {
+    SBSubscribe(null, aURI);
   }
 
 };

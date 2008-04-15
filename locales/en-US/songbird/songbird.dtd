@@ -478,3 +478,7 @@
 <!ENTITY addMediaToPlaylistCmd.noPlaylist.label         "&lt;No Playlists&gt;">
 <!ENTITY addMediaToPlaylistCmd.newPlaylist.label        "New Playlist">
 <!ENTITY addMediaToPlaylistCmd.newPlaylist.accesskey    "n">
+<!ENTITY subscribeMediaPageCmd.label                    "Subscribe To This Page...">
+<!ENTITY subscribeMediaPageCmd.accesskey                "u">
+<!ENTITY subscribeMediaFrameCmd.label                   "Subscribe To This Frame...">
+<!ENTITY subscribeMediaFrameCmd.accesskey               "u">
