@@ -34,7 +34,7 @@ function runTest () {
   gMetadataManager = Components.classes["@songbirdnest.com/Songbird/MetadataManager;1"]
                                 .getService(Components.interfaces.sbIMetadataManager);
                               
-  var file = newFileURI(newAppRelativeFile("testharness/metadatamanager/handlerTest.mp3"));
+  var file = newFileURI(newAppRelativeFile("testharness/metadatamanager/files/handlerTest.mp3"));
   var handler = gMetadataManager.getHandlerForMediaURL(file.spec);
   
   assertNotEqual(handler, null);

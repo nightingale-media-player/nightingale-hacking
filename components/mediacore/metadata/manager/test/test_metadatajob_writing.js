@@ -27,48 +27,39 @@
 /**
  * \brief Test creation and execution of metadata writing jobs
  */
+ 
+var gTestFileLocation = "testharness/metadatamanager/files/";
 
-var gLocalFiles = [
-  "testharness/metadatamanager/test1.mp3",
-  "testharness/metadatamanager/test2.mp3",
-  "testharness/metadatamanager/test3.mp3"
-];
-
+// TODO Confirm this extension list. Don't forget to update files/Makefile.in as well.
+var gSupportedFileExtensions = [
+    "mp3", "flac", "mpc", "m4a", "mov", "m4p", 
+    "m4v", "ogg", "oga", "ogv", "ogm", "ogx"
+  ];
+  
 
 /**
  * Copy some media files into a temp directory, then confirm that metadata
  * properties can be modified using a write job.
  */
 function runTest() {
-    
+  
+  // Make a copy of everything in the test file folder
+  // so that our changes don't interfere with other tests
+  var testFolder = getCopyOfFolder(newAppRelativeFile(gTestFileLocation), "_temp_writing_files");
+
+  // Now find all the media files in our testing directory
+  var urls = getMediaFilesInFolder(testFolder);
+
   // Make sure we have files to test
-  assertEqual(gLocalFiles.length > 0, true);
-  
-  // Convert file paths into nsIFiles
-  for (var i = 0; i < gLocalFiles.length; i++) {
-    gLocalFiles[i] = newAppRelativeFile(gLocalFiles[i]);
-    assertNotEqual( gLocalFiles[i], null );
-  }
-  
-  // Copy all the test files into a temp folder so that
-  // writing metadata doesn't interfere with other tests
-  var tempFolder = gLocalFiles[0].parent;
-  var temp;
-  tempFolder.append("metadatajob_write_test");
-  tempFolder.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0700);
-  for (var i = 0; i < gLocalFiles.length; i++) {
-    gLocalFiles[i].copyTo(tempFolder, null);
-    temp = tempFolder.clone();
-    temp.append(gLocalFiles[i].leafName);
-    gLocalFiles[i] = temp;
-  }
+  assertEqual(urls.length > 0, true);
   
   ///////////////////////////
   // Import the test items //
   ///////////////////////////
   var library = createNewLibrary( "test_metadatajob_writing_library" );
-  var items = importFilesToLibrary(gLocalFiles, library);
-  assertEqual(items.length, gLocalFiles.length);
+  var items = importFilesToLibrary(urls, library);
+  assertEqual(items.length, urls.length);
+  
   var job = startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_READ);
   
   // Wait for reading to complete before continuing
@@ -80,10 +71,22 @@ function runTest() {
     //////////////////////////////////////
     // Save new metadata into the files //
     //////////////////////////////////////
+
+    var unicodeSample =
+            "\u008C\u00A2\u00FE" + // Latin-1 Sup
+            "\u141A\u142B\u1443" + // Canadian Aboriginal
+            "\u184F\u1889\u1896" + // Mongolian
+            "\u4E08\u4E02\u9FBB" + // CJK Unified Extension
+            "\u4DCA\u4DC5\u4DD9" + // Hexagram Symbols
+            "\u0308\u030F\u034F" + // Combining Diacritics
+            "\u033C\u034C\u035C" +
+            "\uD800\uDC83\uD800" + // Random Surrogate Pairs 
+            "\uDC80\uD802\uDD00";
+
     for each (var item in items) {
-      item.setProperty(SBProperties.artistName, SBProperties.artistName);
-      item.setProperty(SBProperties.albumName, SBProperties.albumName);
-      item.setProperty(SBProperties.trackName, SBProperties.trackName);
+      item.setProperty(SBProperties.artistName, SBProperties.artistName + unicodeSample);
+      item.setProperty(SBProperties.albumName, SBProperties.albumName + unicodeSample);
+      item.setProperty(SBProperties.trackName, SBProperties.trackName + unicodeSample);
       // TODO expand 
     }
     
@@ -94,6 +97,7 @@ function runTest() {
     prefSvc.setBoolPref("songbird.metadata.enableWriting", false);
     try {
       startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_WRITE);
+      // This line should not be reached, as startMetadataJob should throw NS_ERROR_NOT_AVAILABLE
       throw new Error("MetadataJobManager does not respect enableWriting pref!");
     } catch (e) {
       if (Components.lastResult != Components.results.NS_ERROR_NOT_AVAILABLE) {
@@ -114,8 +118,8 @@ function runTest() {
       // Now reimport and confirm that the write went ok //
       /////////////////////////////////////////////////////
       library.clear();
-      items = importFilesToLibrary(gLocalFiles, library);
-      assertEqual(items.length, gLocalFiles.length);
+      items = importFilesToLibrary(urls, library);
+      assertEqual(items.length, urls.length);
       job = startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_READ);
 
       // Wait for reading to complete before continuing
@@ -125,14 +129,14 @@ function runTest() {
         job.removeObserver();
         
         for each (var item in items) {
-          assertEqual(item.getProperty(SBProperties.artistName), SBProperties.artistName);
-          assertEqual(item.getProperty(SBProperties.albumName), SBProperties.albumName);
-          assertEqual(item.getProperty(SBProperties.trackName), SBProperties.trackName);
+          assertEqual(item.getProperty(SBProperties.artistName), SBProperties.artistName + unicodeSample);
+          assertEqual(item.getProperty(SBProperties.albumName), SBProperties.albumName + unicodeSample);
+          assertEqual(item.getProperty(SBProperties.trackName), SBProperties.trackName + unicodeSample);
           // TODO expand 
         }
        
         // We're done, so kill all the temp files
-        tempFolder.remove(true);
+        testFolder.remove(true);
         job = null;
         gTest = null;    
         testFinished();
@@ -142,16 +146,64 @@ function runTest() {
   testPending();
 }
 
+
+/**
+ * Copy the given folder to tempName, returning an nsIFile
+ * for the new location
+ */
+function getCopyOfFolder(folder, tempName) {
+  assertNotEqual(folder, null);
+  folder.copyTo(folder.parent, tempName);
+  folder = folder.parent;
+  folder.append(tempName);
+  assertEqual(folder.exists(), true);
+  return folder;
+}
+
+
+/**
+ * Get an array of all media files below the given folder
+ */
+function getMediaFilesInFolder(folder) {
+  var scan = Cc["@songbirdnest.com/Songbird/FileScan;1"]
+               .createInstance(Ci.sbIFileScan);
+  var query = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
+               .createInstance(Ci.sbIFileScanQuery);
+  query.setDirectory(folder.path);
+  query.setRecurse(true);
+  
+  for each (var extension in gSupportedFileExtensions) {
+    query.addFileExtension(extension);
+  }
+
+  scan.submitQuery(query);
+
+  log("Scanning...");
+
+  while (query.isScanning()) {
+    sleep(1000);
+  }
+  
+  assertEqual(query.getFileCount() > 0, true);
+  var urls = query.getResultRangeAsURIs(0, query.getFileCount() - 1);
+
+  return urls;
+}
+
+
 /**
  * Add files to a library, returning media items
  */
 function importFilesToLibrary(files, library) {
-  var items = [];
-  for each (var file in files) {
-    items.push(library.createMediaItem(newFileURI(file)));
+  var items = library.batchCreateMediaItems(files, null, true);
+  assertEqual(items.length, files.length);
+  var jsItems = [];
+  for (var i = 0; i < items.length; i++) {
+    jsItems.push(items.queryElementAt(i, Ci.sbIMediaItem));
   }
-  return items;
+  return jsItems;
 }
+
 
 /**
  * Get a metadata job for the given items

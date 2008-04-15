@@ -43,7 +43,7 @@ function runTest () {
   gServer.start(port);
   gServer.registerDirectory("/", getFile("."));
 
-  var prefix = "http://localhost:" + port + "/";
+  var prefix = "http://localhost:" + port + "/files/";
 
   var library = createNewLibrary( "test_metadatajob" );
 

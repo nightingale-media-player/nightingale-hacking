@@ -22,23 +22,34 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../../../..
+DEPTH = ../../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = metadatamanager
+SONGBIRD_TEST_COMPONENT = metadatamanager/files
 
-SONGBIRD_TESTS = $(srcdir)/head_metadatamanager.js \
-                 $(srcdir)/test_metadatajob_reading.js \
-                 $(srcdir)/test_metadatajob_writing.js \
-                 $(srcdir)/test_metadatahandler.js \
+SONGBIRD_TESTS = $(srcdir)/*.mp3 \
+#                 $(srcdir)/*.wma \
+#                 $(srcdir)/*.wmv \
+#                 $(srcdir)/*.asf \
+#                 $(srcdir)/*.asx \
+#                 $(srcdir)/*.avi \
+#                 $(srcdir)/*.flac \
+#                 $(srcdir)/*.mpc \
+#                 $(srcdir)/*.m4a \
+#                 $(srcdir)/*.mov \
+#                 $(srcdir)/*.m4p \
+#                 $(srcdir)/*.m4v \
+#                 $(srcdir)/*.ogg \
+#                 $(srcdir)/*.oga \
+#                 $(srcdir)/*.ogv \
+#                 $(srcdir)/*.ogm \
+#                 $(srcdir)/*.ogx \
                  $(NULL)
 
-SUBDIRS = files \
-          $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 
