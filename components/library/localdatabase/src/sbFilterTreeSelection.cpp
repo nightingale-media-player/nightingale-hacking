@@ -24,6 +24,7 @@
 //
 */
 
+#include "sbSelectionListUtils.h"
 #include "sbFilterTreeSelection.h"
 #include "sbLocalDatabaseTreeView.h"
 
@@ -70,6 +71,8 @@ sbFilterTreeSelection::IsSelected(PRInt32 index, PRBool* _retval)
 NS_IMETHODIMP
 sbFilterTreeSelection::Select(PRInt32 index)
 {
+  sbAutoSuppressSelectionEvents suppress(mTreeSelection);
+
   nsresult rv = mTreeSelection->Select(index);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -94,6 +97,8 @@ sbFilterTreeSelection::TimedSelect(PRInt32 index, PRInt32 delay)
 NS_IMETHODIMP
 sbFilterTreeSelection::ToggleSelect(PRInt32 index)
 {
+  sbAutoSuppressSelectionEvents suppress(mTreeSelection);
+
   nsresult rv =  mTreeSelection->ToggleSelect(index);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -108,6 +113,8 @@ sbFilterTreeSelection::RangedSelect(PRInt32 startIndex,
                                     PRInt32 endIndex,
                                     PRBool augment)
 {
+  sbAutoSuppressSelectionEvents suppress(mTreeSelection);
+
   nsresult rv = mTreeSelection->RangedSelect(startIndex, endIndex, augment);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -121,6 +128,8 @@ NS_IMETHODIMP
 sbFilterTreeSelection::ClearRange(PRInt32 startIndex,
                                   PRInt32 endIndex)
 {
+  sbAutoSuppressSelectionEvents suppress(mTreeSelection);
+
   nsresult rv =  mTreeSelection->ClearRange(startIndex, endIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -133,6 +142,8 @@ sbFilterTreeSelection::ClearRange(PRInt32 startIndex,
 NS_IMETHODIMP
 sbFilterTreeSelection::ClearSelection()
 {
+  sbAutoSuppressSelectionEvents suppress(mTreeSelection);
+
   nsresult rv =  mTreeSelection->ClearSelection();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -151,6 +162,8 @@ sbFilterTreeSelection::InvertSelection()
 NS_IMETHODIMP
 sbFilterTreeSelection::SelectAll()
 {
+  sbAutoSuppressSelectionEvents suppress(mTreeSelection);
+
   nsresult rv =  mTreeSelection->Select(0);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -184,8 +197,10 @@ NS_IMETHODIMP
 sbFilterTreeSelection::AdjustSelection(PRInt32 index, PRInt32 count)
 {
   nsresult rv;
-  
-  // if index is 0 or count is -1, there is no need to pass 
+
+  sbAutoSuppressSelectionEvents suppress(mTreeSelection);
+
+  // if index is 0 or count is -1, there is no need to pass
   // the call to the selection object
   if (index != 0 && count != -1) {
     rv =  mTreeSelection->AdjustSelection(index, count);
@@ -242,12 +257,6 @@ sbFilterTreeSelection::CheckIsSelectAll()
 {
   nsresult rv;
 
-  // Don't attempt to determine if we are a select all tree if we are
-  // rebuilding
-  if (mTreeView->mIsRebuilding) {
-    return NS_OK;
-  }
-
   PRInt32 rowCount;
   rv = mTreeView->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -273,9 +282,8 @@ sbFilterTreeSelection::CheckIsSelectAll()
     selectedCount == rowCount;
 
   if (isSelectAll) {
-    mTreeView->mSelectionChanging = PR_TRUE;
+    // Note that all callers should have supressed selection
     rv = mTreeSelection->Select(0);
-    mTreeView->mSelectionChanging = PR_FALSE;
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

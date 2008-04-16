@@ -67,32 +67,20 @@ sbPlaylistTreeSelection::GetCount(PRInt32* aCount)
 NS_IMETHODIMP
 sbPlaylistTreeSelection::IsSelected(PRInt32 index, PRBool* _retval)
 {
-  // The tree body frame uses IsSelected to determine if rows are selected.  If
-  // we are in the middle of a row count requery, there is a brief point in
-  // time where the tree body's idea of how many rows the tree has differs from
-  // the number of rows in the view.  Return false when this is the case.
-  if (mTreeView->mCachedRowCountDirty) {
-    *_retval = PR_FALSE;
-    return NS_OK;
-  }
   return mViewSelection->IsIndexSelected(index, _retval);
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::Select(PRInt32 index)
 {
-  nsresult rv;
   mShiftSelectPivot = -1;
-
   return mViewSelection->SelectOnly(index);
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::TimedSelect(PRInt32 index, PRInt32 delay)
 {
-  nsresult rv;
   mShiftSelectPivot = -1;
-
   return mViewSelection->SelectOnly(index);
 }
 

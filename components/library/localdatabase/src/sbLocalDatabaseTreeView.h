@@ -32,7 +32,6 @@
 #include <nsIClassInfo.h>
 #include <nsITreeView.h>
 #include <nsITreeSelection.h>
-#include <sbILocalDatabaseAsyncGUIDArray.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabaseTreeView.h>
 #include <sbIMediaListViewTreeView.h>
@@ -72,7 +71,6 @@ class sbLocalDatabaseTreeViewState;
 
 class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
                                 public nsIClassInfo,
-                                public sbILocalDatabaseAsyncGUIDArrayListener,
                                 public sbILocalDatabaseGUIDArrayListener,
                                 public sbIMediaListViewTreeView,
                                 public sbILocalDatabaseTreeView,
@@ -90,7 +88,6 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
   NS_DECL_NSITREEVIEW
-  NS_DECL_SBILOCALDATABASEASYNCGUIDARRAYLISTENER
   NS_DECL_SBILOCALDATABASEGUIDARRAYLISTENER
   NS_DECL_SBIMEDIALISTVIEWTREEVIEW
   NS_DECL_SBILOCALDATABASETREEVIEW
@@ -102,7 +99,7 @@ public:
   ~sbLocalDatabaseTreeView();
 
   nsresult Init(sbLocalDatabaseMediaListView* aListView,
-                sbILocalDatabaseAsyncGUIDArray* aArray,
+                sbILocalDatabaseGUIDArray* aArray,
                 sbIPropertyArray* aCurrentSort,
                 sbLocalDatabaseTreeViewState* aState);
 
@@ -130,8 +127,6 @@ private:
     eDistinct
   };
 
-  nsresult UpdateRowCount(PRUint32 aRowCount);
-
   nsresult GetPropertyForTreeColumn(nsITreeColumn* aTreeColumn,
                                     nsAString& aProperty);
 
@@ -141,16 +136,6 @@ private:
   nsresult GetCellPropertyValue(PRInt32 aIndex,
                                 nsITreeColumn *aTreeColumn,
                                 nsAString& _retval);
-
-  nsresult GetPropertyBag(const nsAString& aGuid,
-                          PRUint32 aIndex,
-                          sbILocalDatabaseResourcePropertyBag** _retval);
-
-  nsresult GetPageCachedStatus(PRUint32 aIndex, PageCacheStatus* aStatus);
-
-  nsresult SetPageCachedStatus(PRUint32 aIndex, PageCacheStatus aStatus);
-
-  nsresult InvalidateCache();
 
   nsresult SaveSelectionList();
 
@@ -172,6 +157,12 @@ private:
                                           const nsAString& aGuid,
                                           void* aUserData);
 
+  static nsresult PR_CALLBACK
+    SelectionListGuidsEnumeratorCallback(PRUint32 aIndex,
+                                         const nsAString& aId,
+                                         const nsAString& aGuid,
+                                         void* aUserData);
+
   inline PRUint32 TreeToArray(PRInt32 aRow) {
     return (PRUint32) (mFakeAllRow ? aRow - 1 : aRow);
   }
@@ -187,13 +178,19 @@ private:
   inline nsresult GetColumnPropertyInfo(nsITreeColumn* aColumn,
                                         sbIPropertyInfo** aPropertyInfo);
 
-  nsresult GetPropertyInfoAndCachedValue(PRInt32 aRow,
-                                         nsITreeColumn* aColumn,
-                                         nsAString& aValue,
-                                         sbIPropertyInfo** aPropertyInfo);
+  nsresult GetPropertyInfoAndValue(PRInt32 aRow,
+                                   nsITreeColumn* aColumn,
+                                   nsAString& aValue,
+                                   sbIPropertyInfo** aPropertyInfo);
 
   nsresult GetPlayingProperty(PRUint32 aIndex,
                               nsISupportsArray* properties);
+
+  nsresult GetBag(PRUint32 aIndex,
+                  sbILocalDatabaseResourcePropertyBag** aBag);
+
+  nsresult GetBag(const nsAString& aGuid,
+                  sbILocalDatabaseResourcePropertyBag** aBag);
 
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
@@ -207,34 +204,20 @@ private:
   sbIMediaListViewSelection* mViewSelection;
 
   // The async guid array given to us by our view
-  nsCOMPtr<sbILocalDatabaseAsyncGUIDArray> mArray;
+  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
 
-  // The cached row count of the async guid array
-  PRUint32 mCachedRowCount;
+  // The cached length of the guid array
+  PRUint32 mArrayLength;
 
   // The fetch size of the guid array.  This is used to compute the size of
   // our pages when tracking their cached status
   PRUint32 mFetchSize;
-
-  // Cache that maps row index number to a property bag of properties
-  nsInterfaceHashtable<nsUint32HashKey, sbILocalDatabaseResourcePropertyBag> mRowCache;
-
-  // Tracks the cache status of each page as determined by the fetch size of
-  // the guid array.  Note that the values in this hash table are actually
-  // from the PageCacheStatus enum defined above.
-  nsDataHashtable<nsUint32HashKey, PRUint32> mPageCacheStatus;
 
   // The property cache that is linked with the guid array
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
   // Current sort property
   nsString mCurrentSortProperty;
-
-  // This variable along with  mGetByIndexAsyncPending manage which row index
-  // is "on deck" to be requested.  If mNextGetByIndexAsync is not -1 when a
-  // request completes, it is automatically requested next.  This makes sure
-  // that we only have one pending request to the guid array at a time.
-  PRInt32 mNextGetByIndexAsync;
 
   // Stuff the tree view needs to track
   nsCOMPtr<nsITreeSelection> mSelection;
@@ -243,9 +226,6 @@ private:
 
   // Weak listener
   nsCOMPtr<nsIWeakReference> mObserver;
-
-  // Temporary cache of visible rows while refreshing
-  nsInterfaceHashtable<nsUint32HashKey, sbILocalDatabaseResourcePropertyBag> mDirtyRowCache;
 
   // Do we manage our selection?  Filters do, playlists don't
   PRBool mManageSelection;
@@ -266,41 +246,16 @@ private:
   // True when the everything is selected
   PRPackedBool mSelectionIsAll;
 
-  // True if the cached row count is no longer valid
-  PRPackedBool mCachedRowCountDirty;
-
-  // True if a row count request from the async guid array is pending
-  PRPackedBool mCachedRowCountPending;
-
-  // Array busy flag that is managed by the onStateChange() callback on the
-  // listener.  When this is true, you will block when you call a non-async
-  // method on the guid array
-  PRPackedBool mIsArrayBusy;
-
   // Current sort direction
   PRPackedBool mCurrentSortDirectionIsAscending;
 
-  // See mNextGetByIndexAsync
-  PRPackedBool mGetByIndexAsyncPending;
-
-  // Used to cause a selection clear on the next async response.
-  PRPackedBool mClearSelectionPending;
-
   // Should we include a fake "All" row in the tree
   PRPackedBool mFakeAllRow;
-
-  // Flag to indicate that the tree is changing its selection
-  PRPackedBool mSelectionChanging;
 
   // True when we have a listener added to the playback service
   PRPackedBool mIsListeningToPlayback;
 
   nsString mLocalizedAll;
-  
-  PRPackedBool mIsRebuilding;
-
-  typedef nsTObserverArray<sbILocalDatabaseTreeViewListener *> sbListenerArray;
-  sbListenerArray mListeners;
 };
 
 class sbLocalDatabaseTreeViewState : public nsISerializable
@@ -325,4 +280,3 @@ protected:
 };
 
 #endif /* __SBLOCALDATABASETREEVIEW_H__ */
-

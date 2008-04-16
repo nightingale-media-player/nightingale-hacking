@@ -32,6 +32,27 @@ var SB_NS = "http://songbirdnest.com/data/1.0#";
 
 function runPerfTest(aName, aTestFunc) {
 
+  var library = getLibrary();
+  var timer = new Timer();
+  aTestFunc.apply(this, [library, timer]);
+
+  log("***************** " + aName + " " + libraryFile + " " + timer.elapsed() + "ms");
+
+  if (resultFile) {
+    var outputFile = Components.classes["@mozilla.org/file/local;1"]
+    .createInstance(Ci.nsILocalFile);
+    outputFile.initWithPath(resultFile);
+
+    var fos = Cc["@mozilla.org/network/file-output-stream;1"]
+    .createInstance(Ci.nsIFileOutputStream);
+    var s = aName + "\t" + libraryFile + "\t" + timer.elapsed() + "\n";
+    fos.init(outputFile, 0x02 | 0x08 | 0x10, 0666, 0);
+    fos.write(s, s.length);
+    fos.close();
+  }
+}
+
+function getLibrary() {
   var environment =
     Components.classes["@mozilla.org/process/environment;1"]
               .getService(Components.interfaces.nsIEnvironment);
@@ -54,25 +75,7 @@ function runPerfTest(aName, aTestFunc) {
   var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
                 createInstance(Ci.nsIWritablePropertyBag2);
   hashBag.setPropertyAsInterface("databaseFile", file);
-  var library = libraryFactory.createLibrary(hashBag);
-
-  var timer = new Timer();
-  aTestFunc.apply(this, [library, timer]);
-
-  log("***************** " + aName + " " + libraryFile + " " + timer.elapsed() + "ms");
-
-  if (resultFile) {
-    var outputFile = Components.classes["@mozilla.org/file/local;1"]
-    .createInstance(Ci.nsILocalFile);
-    outputFile.initWithPath(resultFile);
-
-    var fos = Cc["@mozilla.org/network/file-output-stream;1"]
-    .createInstance(Ci.nsIFileOutputStream);
-    var s = aName + "\t" + libraryFile + "\t" + timer.elapsed() + "\n";
-    fos.init(outputFile, 0x02 | 0x08 | 0x10, 0666, 0);
-    fos.write(s, s.length);
-    fos.close();
-  }
+  return libraryFactory.createLibrary(hashBag);
 }
 
 function Timer() {

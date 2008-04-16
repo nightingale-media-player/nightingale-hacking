@@ -166,7 +166,7 @@
 
   // Install our special keyNavigate function. The signature must match the
   // keyNavigate method in tree.xml.
-  this.tree.keyNavigate = this._treeKeyNavigate;
+  this.tree._keyNavigate = this._treeKeyNavigate;
 
   // Load the drag and drop helper, if needed
   if (typeof(nsDragAndDrop) == "undefined") {

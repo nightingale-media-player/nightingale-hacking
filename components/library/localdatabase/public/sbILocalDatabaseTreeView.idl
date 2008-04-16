@@ -35,35 +35,16 @@ interface nsIStringEnumerator;
 interface nsITreeColumn;
 
 /**
- * \interface sbILocalDatabaseTreeViewListener
- * \brief Listener class for sbILocalDatabaseTreeView events
- */
-[scriptable, uuid(8e51ac56-d9da-4ebc-a9f1-ae453faeac98)]
-interface sbILocalDatabaseTreeViewListener : nsISupports
-{
-  /**
-   * \brief Called when the view is getting rebuilt
-   */
-  void onRebuild();
-
-  /**
-   * \brief Called after the view is done rebuilding
-   */
-  void didRebuild();
-};
-
-/**
  * \interface sbILocalDatabaseTreeView
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(3b40669f-2da4-4bb0-93e4-fa1708326b6a)]
+[scriptable, uuid(bc5e40f7-a042-4603-a4b4-10f7dafcc139)]
 interface sbILocalDatabaseTreeView : nsISupports
 {
   const unsigned long MOUSE_STATE_NONE  = 0;
   const unsigned long MOUSE_STATE_HOVER = 1;
   const unsigned long MOUSE_STATE_DOWN  = 2;
 
-  readonly attribute boolean selectionChanging;
   void setSort(in AString aProperty, in boolean aDirection);
 
   void invalidateRowsByGuid(in AString aGuid);
@@ -72,7 +53,6 @@ interface sbILocalDatabaseTreeView : nsISupports
                      in nsITreeColumn aColumn,
                      in unsigned long aState);
 
-  void addListener(in sbILocalDatabaseTreeViewListener aListener);
-  void removeListener(in sbILocalDatabaseTreeViewListener aListener);
+  readonly attribute boolean selectionIsAll;
+  nsIStringEnumerator getSelectedValues();
 };
-

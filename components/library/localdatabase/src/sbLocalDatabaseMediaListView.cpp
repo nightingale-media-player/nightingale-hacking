@@ -1555,7 +1555,7 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
   }
 
   rv = mArray->ClearFilters();
-    NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Update filters
   // XXXsteve Eventually we should simply pass the library constraint directly

@@ -26,6 +26,7 @@
 
 #include "sbSelectionListUtils.h"
 
+#include <nsTArray.h>
 #include <nsIObjectOutputStream.h>
 
 PLDHashOperator PR_CALLBACK
@@ -62,6 +63,22 @@ SB_CopySelectionListCallback(nsStringHashKey::KeyType aKey,
 
   PRBool success = list->Put(aKey, aEntry);
   NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+PLDHashOperator PR_CALLBACK
+SB_SelectionListGuidsToTArrayCallback(nsStringHashKey::KeyType aKey,
+                                      nsString aEntry,
+                                      void* aUserData)
+{
+  NS_ASSERTION(aUserData, "Null userData!");
+
+  nsTArray<nsString>* list = static_cast<nsTArray<nsString>*>(aUserData);
+  NS_ASSERTION(list, "Could not cast user data");
+
+  nsString* appended = list->AppendElement(aEntry);
+  NS_ENSURE_TRUE(appended, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;
 }

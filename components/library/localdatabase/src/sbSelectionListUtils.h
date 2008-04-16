@@ -29,6 +29,7 @@
 
 #include <nsStringGlue.h>
 #include <nsDataHashtable.h>
+#include <nsITreeSelection.h>
 
 typedef nsDataHashtable<nsStringHashKey, nsString> sbSelectionList;
 
@@ -41,5 +42,37 @@ NS_HIDDEN_(PLDHashOperator) PR_CALLBACK
   SB_CopySelectionListCallback(nsStringHashKey::KeyType aKey,
                                nsString aEntry,
                                void* aUserData);
+
+NS_HIDDEN_(PLDHashOperator) PR_CALLBACK
+  SB_SelectionListGuidsToTArrayCallback(nsStringHashKey::KeyType aKey,
+                                        nsString aEntry,
+                                        void* aUserData);
+
+class sbAutoSuppressSelectionEvents
+{
+public:
+  sbAutoSuppressSelectionEvents(nsITreeSelection* aSelection) :
+    mSelection(aSelection)
+  {
+    NS_ASSERTION(aSelection, "aSelection is null");
+#ifdef DEBUG
+    nsresult rv =
+#endif
+    mSelection->SetSelectEventsSuppressed(PR_TRUE);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set");
+  }
+
+  ~sbAutoSuppressSelectionEvents()
+  {
+#ifdef DEBUG
+    nsresult rv =
+#endif
+    mSelection->SetSelectEventsSuppressed(PR_FALSE);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to unset");
+  }
+
+private:
+  nsITreeSelection* mSelection;
+};
 
 #endif // __SBSELECTIONLISTUTILS_H__

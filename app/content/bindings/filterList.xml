@@ -50,7 +50,7 @@
       </xul:hbox>
     </content>
 
-    <implementation type="application/x-javascript" name="songbird_filterlist" implements="sbICascadeFilterSetListener,sbILocalDatabaseTreeViewListener">
+    <implementation type="application/x-javascript" name="songbird_filterlist" implements="sbICascadeFilterSetListener">
 
       <constructor>
       </constructor>
@@ -60,8 +60,6 @@
   if (this._isBound) {
     this.cfs.removeListener(this);
     
-    this.tree.view.removeListener(this);
-
     // Force the tree to forget about the view.  This is required in the case
     // where we are going to immediately load a new tree using the same view.
     // When this happens nsTreeBodyFrame will get a Destroy() call *after*
@@ -88,6 +86,9 @@
       <!-- If this filterlist is bound to anything -->
       <field name="_isBound">false</field>
 
+      <!-- Tab delimited list of the last selection, null means all -->
+      <field name="_lastSelection">null</field>
+
       <field name="_XUL_NS" readonly="true">
         "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
       </field>
@@ -108,7 +109,6 @@
   this.index = index;
   this._property = cfs.getProperty(index);
   this.tree.view = cfs.getTreeView(index);
-  this.tree.view.addListener(this);
 
   // Get the property info for the property
   var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
@@ -162,13 +162,17 @@
             while (treeColumns.lastChild)
               treeColumns.removeChild(treeColumns.lastChild);
               
-            // create dummy column
+            // Add new column
             var treecol = document.createElementNS(this._XUL_NS, "treecol");
-            treecol.setAttribute("label", "...");
+            treecol.setAttribute("bind", this._property);
+            treecol.setAttribute("sortDirection", "ascending");
+            treecol.setAttribute("sortActive", "true");
             treecol.setAttribute("flex", "1");
             treeColumns.appendChild(treecol);
-            
-            this._changingProperty = true;
+            this.treecol = treecol;
+
+            this._updateColumnLabel(this.index);
+            this._saveCascadeFilterState();
           ]]>
         </body>
       </method>
@@ -191,57 +195,53 @@
       <method name="_updateColumnLabel">
         <body>
           <![CDATA[
-            var n = this.cfs.getValueCount(this.index, true); 
+            var n = this.cfs.getValueCount(this.index, false);
             var itemsstr;
             switch (n) {
               case 0:
-                itemsstr = SBString("library.noitem", "no items");
+                itemsstr = this._getString("library.noitem", "no items");
                 break;
               case 1:
-                itemsstr = n + " " + SBString("library.oneitem", "item");
+                itemsstr = n + " " + this._getString("library.oneitem", "item");
                 break;
               default:
-                itemsstr = n + " " + SBString("library.manyitem", "items");
+                itemsstr = n + " " + this._getString("library.manyitem", "items");
                 break;
             }
             this.treecol.setAttribute("label", this._propertyInfo.displayName + " (" + itemsstr + ")");
           ]]>
         </body>
       </method>
-      
+
       <method name="_onFilterListSelect">
         <parameter name="event"/>
         <body>
 <![CDATA[
+  // Note that we check the new list of selected values against _lastSelection
+  // to prevent reapplying the same filter
+
   var ldbtv = this.tree.view.QueryInterface(this._Ci.sbILocalDatabaseTreeView);
-  if (ldbtv.selectionChanging) {
+  if (ldbtv.selectionIsAll) {
+    if (this._lastSelection == null) {
+      return;
+    }
+    this._lastSelection = null;
+    this.cfs.set(this.index, [], 0);
     return;
   }
 
-  var count = this.cfs.getValueCount(this.index, true);
-  var sel = this.tree.view.selection;
   var values = [];
-  var rangeCount = sel.getRangeCount();
-  for (var i = 0; i < rangeCount; i++) {
-    var min = {};
-    var max = {};
-    sel.getRangeAt(i, min, max);
-
-    // If the "all" row is selected, clear the values for this filter
-    if (min.value == 0) {
-      this.cfs.set(this.index, [], 0);
-      return;
-    }
-
-    for (var j = min.value; j <= max.value; j++) {
-      // The actual number of rows in the view can lag behind the number of
-      // rows in the tree, so make sure we don't select those
-      if (j - 1 < count) {
-        var value = this.cfs.getValueAt(this.index, j - 1);
-        values.push(value);
-      }
-    }
+  var enumerator = ldbtv.getSelectedValues();
+  while (enumerator.hasMore()) {
+    values.push(enumerator.getNext());
   }
+
+  var thisSelection = values.join("\t");
+  if (thisSelection == this._lastSelection) {
+    return;
+  }
+
+  this._lastSelection = thisSelection;
   this.cfs.set(this.index, values, values.length);
 ]]>
         </body>
@@ -277,68 +277,27 @@
         </body>
       </method>
 
-      <method name="onRebuild">
+      <method name="_getString">
+        <parameter name="name"/>
+        <parameter name="defaultValue"/>
         <body>
-          <![CDATA[
-            // do nothing
-          ]]>
+<![CDATA[
+  if (!this._stringbundle) {
+    var src = "chrome://songbird/locale/songbird.properties";
+    var stringBundleService = this._Cc["@mozilla.org/intl/stringbundle;1"]
+                                  .getService(this._Ci.nsIStringBundleService);
+    this._stringbundle = stringBundleService.createBundle(src);
+  }
+
+  try {
+    return this._stringbundle.GetStringFromName(name);
+  }
+  catch(e) {
+    return defaultValue;
+  }
+]]>
         </body>
       </method>
-
-      <method name="didRebuild">
-        <body>
-          if (this._changingProperty) {
-            this._changingProperty = false;
-
-            var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
-
-            // Remove dummy column
-            while (treeColumns.lastChild)
-              treeColumns.removeChild(treeColumns.lastChild);
-
-            // Add real column
-            var treecol = document.createElementNS(this._XUL_NS, "treecol");
-            treecol.setAttribute("bind", this._property);
-            treecol.setAttribute("sortDirection", "ascending");
-            treecol.setAttribute("sortActive", "true");
-            treecol.setAttribute("flex", "1");
-            treeColumns.appendChild(treecol);
-            this.treecol = treecol;
-
-            this._updateColumnLabel(this.index);
-            this._saveCascadeFilterState();
-          }
-          
-          //XXXlone - remove this when bug 8015 is closed
-
-          // When there is a selection on this filterlist, and the user removes
-          // all the resulting mediaitems from his playlist widget, all previously
-          // selected items in the filterlist disapear automatically, and we
-          // want to reselect the ALL item. This is supposed to happen automatically
-          // but does not because the check for this condition relies on testing
-          // whether the selection is empty or not (in sbFilterTreeSelection::CheckIsSelectAll),
-          // although that happens before the selection is actually cleared (in 
-          // sbLocalDatabaseTreeView::OnGetGuidByIndex). The fix for now, until
-          // bug 8015 is closed, is to cause a call to CheckIsSelectAll to occur again
-          // by calling adjustSelection with benign values (as soon as possible, since 
-          // the selection will be cleared right when we return from here). If after that call, 
-          // the selection is cleared, it's because the ALL item was reselected. 
-          // In this case, empty the filter.
-          
-          var curIndex = this.tree.view.selection.currentIndex;
-          // if we are already on ALL, there is no need for any of this.
-          if (curIndex != 0) {
-            setTimeout(function(o) {
-              o.tree.view.selection.adjustSelection(-1, 0);
-              var newIndex = o.tree.view.selection.currentIndex;
-              if (newIndex == 0) {
-                o.cfs.set(o.index, [], 0);
-              }
-            }, 0, this);
-          }
-        </body>
-      </method>
-
     </implementation>
 
   </binding>
@@ -438,5 +397,3 @@
   </binding>
 
 </bindings>
-
-
