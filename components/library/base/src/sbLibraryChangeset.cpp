@@ -279,8 +279,6 @@ nsresult sbLibraryChange::InitWithValues(PRUint32 aOperation,
                                          sbIMediaItem *aDestinationItem,
                                          nsIArray *aProperties)
 {
-  NS_ENSURE_ARG_POINTER(aSourceItem);
-
   nsresult rv = Init();
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -294,10 +292,14 @@ nsresult sbLibraryChange::InitWithValues(PRUint32 aOperation,
     mTimestamp = aTimestamp;
   }
 
-  {
+  if(aSourceItem) {
     nsAutoLock lock(mItemLock);
     mSourceItem = aSourceItem;
-    mDestinationItem = aDestinationItem ? aDestinationItem : aSourceItem;
+  }
+
+  if(aDestinationItem) {
+    nsAutoLock lock(mItemLock);
+    mDestinationItem = aDestinationItem;
   }
 
   if(aProperties)

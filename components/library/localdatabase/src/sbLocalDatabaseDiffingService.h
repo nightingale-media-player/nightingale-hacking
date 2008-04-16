@@ -88,7 +88,11 @@ public:
   nsresult CreateItemAddedLibraryChange(sbIMediaItem *aSourceItem,
                                         sbILibraryChange **aLibraryChange);
 
-  nsresult CreateItemDeletedLibraryChange(sbIMediaItem *aSourceItem,
+  nsresult CreateItemMovedLibraryChange(sbIMediaItem *aSourceItem,
+                                        PRUint32 aItemOrdinal,
+                                        sbILibraryChange **aLibraryChange);
+
+  nsresult CreateItemDeletedLibraryChange(sbIMediaItem *aDestinationItem,
                                           sbILibraryChange **aLibraryChange);
 
   /**
