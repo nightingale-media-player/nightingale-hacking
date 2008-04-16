@@ -82,7 +82,6 @@
             onselect="_onPlaylistSelectClick(event);"
             onclick="_onPlaylistClick(event);"
             oncontextmenu="_onPlaylistContextClick(event);"
-            onkeypress="_onPlaylistKeypress(event);"
             ondraggesture="_onDragGesture(event);"
             ondragover="_onDragOver(event);"
             ondragdrop="_onDragDrop(event);"
@@ -194,6 +193,8 @@
                         this._onCommandClosure,
                         true);
 
+  // Add the controller to respond to the edit menu
+  this.tree.controllers.appendController(this._commandController);
 ]]>
       </constructor>
 
@@ -1441,33 +1442,66 @@
         </body>
       </method>
 
-      <method name="_onPlaylistKeypress">
-        <parameter name="evt"/>
-        <body>
-<![CDATA[
-  // XXXAus: Useful for debugging, don't remove.
-  //dump("charcode = " + evt.charCode + " - keycode = " + evt.keyCode + "\n");
+      <field name="_commandController"><![CDATA[
+        ({
+          _self: this,
+          doCommand: function(aCommand) {
+            var listView = this._self._mediaListView;
+            switch (aCommand) {
+              case "cmd_copy":
+                var val = "";
 
-  // Handle Ctrl-a
-  var isKeyValid = (evt.charCode == 'a'.charCodeAt(0));
-  var isDarwin = (getPlatformString() == "Darwin");
+                // if there is selection, set val to the csv string of artist, album, track
+                if ( listView.selection.count > 0 ) {
+                  // get an enumerator for the selected items as sbIIndexedMediaItems
+                  var items = listView.selection.selectedIndexedMediaItems;
+                  while ( items.hasMoreElements() ) {
+                    var item = items.getNext().mediaItem;
+                    if (item) {
+                      val += item.getProperty("http://songbirdnest.com/data/1.0#artistName") + ", ";
+                      val += item.getProperty("http://songbirdnest.com/data/1.0#albumName") + ", ";
+                      val += item.getProperty("http://songbirdnest.com/data/1.0#trackName") + "\n";
+                    }
+                  }
+                }
 
-if ( ( isDarwin && isKeyValid && evt.metaKey ) ||
-       ( !isDarwin && isKeyValid && evt.ctrlKey)) {
-
-    // Prevent the default and stop propagation since
-    // we are handling this event completely.
-    // See bug #491 and #4546
-    evt.preventDefault();
-    evt.stopPropagation();
-
-    this.treeView.selection.selectAll();
-
-    return;
-  }
-]]>
-        </body>
-      </method>
+                // put the data on the clipboard 
+                Cc["@mozilla.org/widget/clipboardhelper;1"]
+                  .getService(Ci.nsIClipboardHelper)
+                  .copyString(val);
+                break;
+              case "cmd_selectAll":
+                listView.selection.selectAll();
+                break;
+              case "cmd_delete":
+                listView.removeSelectedMediaItems();
+                listView.selection.selectNone();
+                break;
+            }
+          },
+          supportsCommand: function(aCommand) {
+            switch (aCommand) {
+              case "cmd_selectAll":
+              case "cmd_delete":
+              case "cmd_copy":
+                return true;
+            }
+            return false;
+          },
+          isCommandEnabled: function(aCommand) {
+            if ( aCommand == 'cmd_selectAll' ) {
+              return true;
+            } else if ( aCommand == 'cmd_copy' ||
+                        aCommand == 'cmd_delete' ) {
+              if (this._self._mediaListView.selection.count > 0 ) {
+                return true;
+              }
+            }
+            return false;
+          },
+          onEvent: function(aEventName) {}
+        })
+      ]]></field>
 
       <method name="_onPlaylistContextClick">
         <parameter name="evt"/>

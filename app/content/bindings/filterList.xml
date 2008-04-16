@@ -50,9 +50,15 @@
       </xul:hbox>
     </content>
 
-    <implementation type="application/x-javascript" name="songbird_filterlist" implements="sbICascadeFilterSetListener">
+    <implementation type="application/x-javascript"
+                    name="songbird_filterlist"
+                    implements="sbICascadeFilterSetListener">
 
       <constructor>
+<![CDATA[
+  // Add the controller to respond to the edit menu
+  this.tree.controllers.appendController(this._commandController);
+]]>
       </constructor>
 
       <destructor>
@@ -95,6 +101,80 @@
       <field name="_Cc"     readonly="true">Components.classes</field>
       <field name="_Ci"     readonly="true">Components.interfaces</field>
       <field name="_Cr"     readonly="true">Components.results</field>
+
+      <field name="_commandController" readonly="true"><![CDATA[
+        ({
+          _self: this,
+          doCommand: function(aCommand) {
+            switch (aCommand) {
+              case "cmd_copy":
+                var numValues = this._self.cfs.getValueCount(this._self.index, true);
+                var val = "";
+
+                // if there is selection, set val to the csv string of properties
+                var sel = this._self.tree.view.selection;
+                if ( sel.count > 0 ) {
+                  var rangeCount = sel.getRangeCount();
+                  for (var i = 0; i < rangeCount; i++) {
+                    var min = {};
+                    var max = {};
+                    sel.getRangeAt(i, min, max);
+                
+                    // If the "all" row is selected, do everything
+                    if (min.value == 0) {
+                      // reset
+                      val = "";
+
+                      // Add all the values
+                      for (var k = 0; k < numValues ; k++) {
+                        val += this._self.cfs.getValueAt(this._self.index, k) + "\n";
+                      }
+
+                      // end the loop to copy to clipboard; 
+                      break;
+                    }
+
+                    // loop over each range and add the values to val
+                    for (var j = min.value; j <= max.value; j++) {
+                      // The actual number of rows in the view can lag behind the number of
+                      // rows in the tree, so make sure we don't select those
+                      if (j - 1 < numValues) {
+                        var stuff = this._self.cfs.getValueAt(this._self.index, j - 1);
+                        val += this._self.cfs.getValueAt(this._self.index, j - 1) + "\n";
+                      }
+                    }
+                  }
+                }
+                Cc["@mozilla.org/widget/clipboardhelper;1"]
+                  .getService(Ci.nsIClipboardHelper)
+                  .copyString(val);
+                break;
+              case "cmd_selectAll":
+                this._self.tree.view.selection.selectAll();
+                break;
+            }
+          },
+          supportsCommand: function(aCommand) {
+            switch (aCommand) {
+              case "cmd_copy":
+              case "cmd_selectAll":
+                return true;
+            }
+            return false;
+          },
+          isCommandEnabled: function(aCommand) {
+            if ( aCommand == 'cmd_selectAll' ) {
+              return true;
+            } else if ( aCommand == 'cmd_copy' ) {
+              if ( this._self.tree.view.selection.count > 0 ) {
+                return true;
+              }
+            }
+            return false;
+          },
+          onEvent: function(aEventName) {}
+        })
+      ]]></field>
 
       <method name="bind">
         <parameter name="cfs"/>
