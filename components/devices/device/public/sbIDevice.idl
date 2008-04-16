@@ -173,6 +173,9 @@ interface sbIDevice : nsISupports
   const unsigned long REQUEST_UPDATE        = REQUEST_FLAG_WRITE + 6;
   const unsigned long REQUEST_NEW_PLAYLIST  = REQUEST_FLAG_WRITE + 7;
 
+  /* reset the device to its factory state */
+  const unsigned long REQUEST_FACTORY_RESET = REQUEST_FLAG_WRITE + 8;
+
   /**
    * 
    */
