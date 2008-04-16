@@ -459,6 +459,9 @@
 <!ENTITY device.management.tabs.music.label "Music">
 <!ENTITY device.management.tabs.tools.label "Tools">
 
+<!ENTITY device.tools.button.reset_warnings.label       "Reset warning messages">
+<!ENTITY device.tools.button.restore_settings.label     "Restore to factory settings">
+
 <!ENTITY openLinkCmdInDefaultBrowser.label              "Open Link In Default Web Browser">
 <!ENTITY openLinkCmdInDefaultBrowser.accesskey          "o">
 <!ENTITY openPageCmdInDefaultBrowser.label              "Open Page In Default Web Browser">

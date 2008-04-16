@@ -471,3 +471,9 @@ sb-device-progress {
 sb-device-sync {
     -moz-binding: url("chrome://songbird/content/bindings/device/deviceSync.xml#sb-device-sync");
 }
+
+sb-device-tools
+{
+    -moz-binding: url("chrome://songbird/content/bindings/device/deviceTools.xml#sb-device-tools");
+}
+

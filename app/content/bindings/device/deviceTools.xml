@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device tools panel widget.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-tools"
+     extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <!-- Position groupbox in center and let it grow -->
+      <!-- but don't extend its boundary to edges.     -->
+      <xul:hbox flex="1">
+
+        <!-- Spacer to position groupbox in center. -->
+        <xul:spacer flex="1"/>
+
+        <!-- Position elements at top. -->
+        <xul:vbox flex="1">
+          <!-- panel header -->
+          <xul:hbox class="device-tab-header-box" align="baseline">
+  
+            <!-- Header label and info. -->
+            <xul:label class="device-tab-header-label"
+                       value="&device.management.tabs.tools.label;"/>
+            <xul:label sbid="content_management_header_info_label"
+                       class="device-tab-header-info"/>
+  
+            <!-- Spacer to position buttons to the right. -->
+            <xul:spacer flex="1"/>
+  
+          </xul:hbox>
+
+          <!-- Button groupbox. -->
+          <xul:groupbox flex="1">
+
+            <!-- Center buttons inside groupbox but don't let them grow. -->
+            <xul:hbox pack="center">
+              <xul:vbox>
+                <xul:button label="&device.tools.button.reset_warnings.label;"
+                            oncommand="resetWarnings();"/>
+                <xul:button label="&device.tools.button.restore_settings.label;"
+                            oncommand="restoreToFactoryDefaults();"/>
+              </xul:vbox>
+            </xul:hbox>
+
+          </xul:groupbox>
+
+          <xul:spacer flex="1"/>
+
+        </xul:vbox>
+
+        <xul:spacer flex="1"/>
+
+      </xul:hbox>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+      <method name="resetWarnings">
+        <body><![CDATA[
+          this.device.resetWarningDialogs();
+          ]]></body>
+      </method>
+
+      <method name="restoreToFactoryDefaults">
+        <body><![CDATA[
+          var prompter = 
+              Components.classes['@songbirdnest.com/Songbird/Prompter;1']
+              .getService(Components.interfaces.sbIPrompter);
+
+          var confirmed = prompter.confirm(window, 
+              SBString('device.dialog.factoryrestore.title'),
+              SBFormattedString('device.dialog.factoryrestore.message', 
+                [this.device.name]));
+
+          if (confirmed) {
+            var bag = Components.classes['@mozilla.org/hash-property-bag;1']
+                .createInstance(Components.interfaces.nsIPropertyBag2);
+            this.device.submitRequest(
+                Components.interfaces.sbIDevice.REQUEST_FACTORY_RESET, bag);
+          }
+          ]]></body>
+      </method>
+
+    </implementation>
+  </binding>
+
+</bindings>
