@@ -39,9 +39,9 @@ var gLocalMediaItems = [];
 var PORT_NUMBER = getTestServerPortNumber();
 
 var gRemoteUrls = [
-  <>http://localhost:{PORT_NUMBER}/files/test1.mp3</>,
-  <>http://localhost:{PORT_NUMBER}/files/test2.mp3</>,
-  <>http://localhost:{PORT_NUMBER}/files/test3.mp3</>
+  <>http://localhost:{PORT_NUMBER}/test1.mp3</>,
+  <>http://localhost:{PORT_NUMBER}/test2.mp3</>,
+  <>http://localhost:{PORT_NUMBER}/test3.mp3</>
 ];
 var gRemoteMediaItems = [];
 
