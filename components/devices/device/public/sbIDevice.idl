@@ -189,4 +189,11 @@ interface sbIDevice : nsISupports
    * Eject device.
    */
   void eject();
+
+  /* Set the enabled state on a named warning dialog */
+  void setWarningDialogEnabled(in AString aWarning, in boolean aEnabled);
+  /* Get the enabled state on a named warning dialog */
+  boolean getWarningDialogEnabled(in AString aWarning);
+  /* Reset the enabled state of all warning dialogs */
+  void resetWarningDialogs();
 };

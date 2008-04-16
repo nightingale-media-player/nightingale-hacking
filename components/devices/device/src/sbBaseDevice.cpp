@@ -34,6 +34,8 @@
 #include <nsIPropertyBag2.h>
 #include <nsITimer.h>
 #include <nsIVariant.h>
+#include <nsIPrefService.h>
+#include <nsIPrefBranch.h>
 
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
@@ -74,6 +76,9 @@ static PRLogModuleInfo* gBaseDeviceLog = nsnull;
                                           SB_PROPERTY_ALBUMNAME " 159 "     \
                                           SB_PROPERTY_GENRE " 53 "          \
                                           SB_PROPERTY_RATING   " 80"        \
+
+#define PREF_DEVICE_PREFERENCES_BRANCH "songbird.device.preferences."
+#define PREF_WARNING "warning."
 
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbBaseDevice::TransferRequest)
 
@@ -1166,4 +1171,104 @@ void sbBaseDevice::Init()
   nsresult rv = manager->GetWeakReference(getter_AddRefs(mParentEventTarget));
   if (NS_FAILED(rv))
     mParentEventTarget = nsnull;
+}
+
+NS_IMETHODIMP sbBaseDevice::SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled)
+{
+  nsresult rv;
+
+  // get the pref branch for this device
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  rv = GetPrefBranch(getter_AddRefs(prefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get the key for this warning
+  nsString prefKey(NS_LITERAL_STRING(PREF_WARNING));
+  prefKey.Append(aWarning);
+
+  // set the pref
+  rv = prefBranch->SetBoolPref(NS_ConvertUTF16toUTF8(prefKey).get(), aEnabled);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbBaseDevice::GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  // get the pref branch for this device
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  rv = GetPrefBranch(getter_AddRefs(prefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get the key for this warning
+  nsString prefKey(NS_LITERAL_STRING(PREF_WARNING));
+  prefKey.Append(aWarning);
+
+  // does the pref exist?
+  PRBool hasValue;
+  rv = prefBranch->PrefHasUserValue(NS_ConvertUTF16toUTF8(prefKey).get(), &hasValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (hasValue) {
+    // get the pref
+    rv = prefBranch->GetBoolPref(NS_ConvertUTF16toUTF8(prefKey).get(), _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // by default warnings are enabled
+    *_retval = PR_TRUE;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbBaseDevice::ResetWarningDialogs()
+{
+  nsresult rv;
+
+  // get the pref branch for this device
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  rv = GetPrefBranch(getter_AddRefs(prefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // the key for all warnings
+  nsString prefKey(NS_LITERAL_STRING(PREF_WARNING));
+
+  // clear the prefs
+  rv = prefBranch->DeleteBranch(NS_ConvertUTF16toUTF8(prefKey).get());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
+{
+  NS_ENSURE_ARG_POINTER(aPrefBranch);
+
+  nsresult rv;
+
+  // get the prefs service
+  nsCOMPtr<nsIPrefService> prefService = 
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get id of this device
+  nsID* id;
+  rv = GetId(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get that as a string
+  char idString[NSID_LENGTH];
+  id->ToProvidedString(idString);
+  NS_Free(id);
+
+  // create the pref key
+  nsCString prefKey(PREF_DEVICE_PREFERENCES_BRANCH);
+  prefKey.Append(idString);
+  
+  return prefService->GetBranch(prefKey.get(), aPrefBranch);
+
 }

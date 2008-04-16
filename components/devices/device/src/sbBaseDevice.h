@@ -45,6 +45,7 @@
 #include "sbDeviceStatistics.h"
 
 class nsITimer;
+class nsIPrefBranch;
 
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
@@ -257,6 +258,11 @@ public:
     mAbortCurrentRequest = PR_FALSE;
     return abort;
   }
+
+  NS_SCRIPTABLE NS_IMETHOD SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled);
+  NS_SCRIPTABLE NS_IMETHOD GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval);
+  NS_SCRIPTABLE NS_IMETHOD ResetWarningDialogs(void);
+
 protected:
   friend class sbBaseDeviceInitHelper;
   void Init();
@@ -294,6 +300,9 @@ protected:
    * transfer a subset.
    */
   virtual nsresult EnsureSpaceForWrite(TransferRequestQueue& aQueue);
+
+  /* get a prefbranch for this device */
+  nsresult GetPrefBranch(nsIPrefBranch** aPrefBranch);
 };
 
 #endif /* __SBBASEDEVICE__H__ */

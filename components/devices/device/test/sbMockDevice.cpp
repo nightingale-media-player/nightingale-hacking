@@ -415,3 +415,18 @@ NS_IMETHODIMP sbMockDevice::PeekRequest(nsIPropertyBag2 **_retval)
   
   return CallQueryInterface(bag, _retval);
 }
+
+NS_IMETHODIMP sbMockDevice::SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled)
+{
+  return sbBaseDevice::SetWarningDialogEnabled(aWarning, aEnabled);
+}
+
+NS_IMETHODIMP sbMockDevice::GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval)
+{
+  return sbBaseDevice::GetWarningDialogEnabled(aWarning, _retval);
+}
+
+NS_IMETHODIMP sbMockDevice::ResetWarningDialogs()
+{
+  return sbBaseDevice::ResetWarningDialogs();
+}
