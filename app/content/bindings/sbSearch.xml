@@ -227,6 +227,10 @@
           var textBox = this._textbox;
           var textValue = this.value;
 
+          if (this._editIdleInterval) {
+            clearInterval(this._editIdleInterval);
+          }
+
           this.updateLiveSearchAttribute();
 
           // Go-button clicks in live search mode clear the search terms
