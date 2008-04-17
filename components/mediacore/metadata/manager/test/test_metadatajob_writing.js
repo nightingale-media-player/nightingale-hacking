@@ -138,7 +138,6 @@ function runTest() {
         // We're done, so kill all the temp files
         testFolder.remove(true);
         job = null;
-        gTest = null;    
         testFinished();
       }));
     }));
