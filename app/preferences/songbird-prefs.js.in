@@ -14,6 +14,7 @@ pref("toolkit.singletonWindowType", "Songbird:Main");
 pref("general.useragent.extra.songbird", "Songbird/@SB_MILESTONE@ (@SB_BUILD_ID@)");
 
 pref("general.skins.selectedSkin", "rubberducky/0.2");
+pref("accessibility.typeaheadfind.flashBar", 1);
 
 // Dump the current ram footprint when minimized.
 pref("config.trim_on_minimize", true);
