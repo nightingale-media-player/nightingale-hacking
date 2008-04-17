@@ -125,19 +125,18 @@ sbMacWindowZoomController.prototype = {
   _init: function() {
     // Listen to document dragging events, we need a closure when a message
     // is dispatched directly through the document object.
-    var self = this;
     this._windowdragexit = function(evt) {
       self._onWindowDragged();
     };
     this._windowresized = function(evt) {
       self._onWindowResized();
     };
+    this._documentunload = function(evt) {
+      self._onUnload();
+    };
     document.addEventListener("ondragexit", this._windowdragexit, false);
     document.addEventListener("resize", this._windowresized, false);
-    
-    var observerService = Cc["@mozilla.org/observer-service;1"]
-                            .getService(Ci.nsIObserverService);
-    observerService.addObserver(this, "quit-application-granted", false);
+    document.addEventListener("unload", this._documentunload, false);
   },
   
   _onWindowResized: function() { 
@@ -198,34 +197,21 @@ sbMacWindowZoomController.prototype = {
       this._mIsResizeEventFromZoom = true;
     }
   },
- 
+  
+  _onUnload: function() {
+    document.removeEventListener("ondragexit", this._windowdragexit, false);
+    document.removeEventListener("resize", this._windowresized, false);
+    document.removeEventListener("unload", this._documentunload, false);
+    this._windowdragexit = null;
+    this._windowresized = null;
+    this._documentunload = null;
+  },
+  
   _saveWindowCoords: function() {
     this._mSavedYPos = parseInt(document.documentElement.boxObject.screenY);
     this._mSavedXPos = parseInt(document.documentElement.boxObject.screenX);
     this._mSavedWidth = parseInt(document.documentElement.boxObject.width);
     this._mSavedHeight = parseInt(document.documentElement.boxObject.height);
-  },
-  
-  observe: function(aSubject, aTopic, aData) {
-    
-    if (aTopic == "quit-application-granted") {
-      document.removeEventListener("ondragexit", this._windowdragexit, false);
-      document.removeEventListener("resize", this._onWindowResized, false);
-      this._windowdragexit = null;
-      this._windowresized = null;
-
-      var observerService = Cc["@mozilla.org/observer-service;1"]
-                              .getService(Ci.nsIObserverService);
-      observerService.removeObserver(this, "quit-application-granted");
-    }
-    
-  },
-  
-  QueryInterface: function(iid) {
-    if (!iid.equals(Ci.nsIObserver) && !iid.equals(Ci.nsISupports)) {
-      throw new Components.results.NS_ERROR_NO_INTERFACE;
-    }
-    return this;
   }
 };
 
