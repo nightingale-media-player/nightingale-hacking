@@ -98,10 +98,23 @@ var DeviceSyncWidget = {
     this._deviceLibrary = this._device.content.libraries
                               .queryElementAt(0, Ci.sbIDeviceLibrary);
 
-    /* Initialize, read, and apply the music preferences. */
+    // Initialize, read, and apply the music preferences.
     this.musicPrefsInitialize();
     this.musicPrefsRead();
     this.musicPrefsApply();
+
+    // Listen for device events.
+    var deviceEventTarget =
+          this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+    deviceEventTarget.addEventListener(this);
+
+    // Listen for changes to playlists.
+    LibraryUtils.mainLibrary.addListener
+      (this,
+       false,
+         Ci.sbIMediaList.LISTENER_FLAGS_ITEMADDED |
+         Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
+         Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED);
   },
 
 
@@ -110,11 +123,22 @@ var DeviceSyncWidget = {
    */
 
   finalize: function DeviceSyncWidget_finalize() {
+    // Remove library listener.
+    LibraryUtils.mainLibrary.removeListener(this);
+
+    // Stop listeneing for device events.
+    if (this._device) {
+      var deviceEventTarget =
+            this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.removeEventListener(this);
+    }
+
     // Finalize the device services.
     this._deviceFinalize();
 
     // Clear object fields.
     this._widget = null;
+    this._device = null;
   },
 
   //----------------------------------------------------------------------------
@@ -150,11 +174,198 @@ var DeviceSyncWidget = {
     }
   },
   
-  onRadioChange: function DeviceSyncWidget_onRadioChange() {
+  onUIPrefChange: function DeviceSyncWidget_onUIPrefChange() {
     /* Extract and reapply the preferences. */
     this.musicPrefsExtract();
     this.musicPrefsApply();
   },
+
+
+  /**
+   * \brief Handle changes to the library playlists.
+   */
+
+  _onPlaylistChange: function DeviceSyncWidget_onPlaylistChange() {
+    // Make a copy of the current sync preferences.
+    var prevSyncPrefs = {};
+    this.musicPrefsCopy(this._syncPrefs, prevSyncPrefs);
+
+    // Re-initialize the sync preferences.
+    this.musicPrefsInitialize();
+
+    // Re-read the preferences to update the stored preference set.
+    this.musicPrefsRead();
+
+    // Copy previous preference values and apply them.
+    this.musicPrefsCopyValues(prevSyncPrefs, this._syncPrefs);
+    this.musicPrefsApply();
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device sync sbIDeviceEventListener services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * \brief Handle the device event specified by aEvent.
+   *
+   * \param aEvent              Device event.
+   */
+
+  onDeviceEvent: function DeviceSyncWidget_onDeviceEvent(aEvent) {
+    // Dispatch processing of the event.
+    switch(aEvent.type)
+    {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED :
+        // If any sync preferences changed, re-read and apply the preferences.
+        var prevSyncPrefs = {};
+        var curSyncPrefs = {};
+        this.musicPrefsCopy(this._storedSyncPrefs, prevSyncPrefs);
+        this.musicPrefsCopy(this._storedSyncPrefs, curSyncPrefs);
+        this.musicPrefsRead(curSyncPrefs);
+        if (this.musicPrefsChanged(prevSyncPrefs, curSyncPrefs)) {
+          this.musicPrefsRead();
+          this.musicPrefsApply();
+        }
+        break;
+
+      default :
+        break;
+    }
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device sync sbIMediaListListener services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * \brief Called when a media item is added to the list.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The new media item.
+   * \return True if you do not want any further onItemAdded notifications for
+   *         the current batch.  If there is no current batch, the return value
+   *         is ignored.
+   */
+
+  onItemAdded: function DeviceSyncWidget_onItemAdded(aMediaList,
+                                                     aMediaItem,
+                                                     aIndex) {
+    // Handle playlist changes.
+    if (aMediaItem.getProperty(SBProperties.isList))
+        this._onPlaylistChange();
+
+    return false;
+  },
+
+
+  /**
+   * \brief Called before a media item is removed from the list.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The media item to be removed
+   * \return True if you do not want any further onBeforeItemRemoved
+   *         notifications for the current batch.  If there is no current batch,
+   *         the return value is ignored.
+   */
+
+  onBeforeItemRemoved: function DeviceSyncWidget_onBeforeItemRemoved
+                                  (aMediaList,
+                                   aMediaItem,
+                                   aIndex) {
+    return true;
+  },
+
+
+  /**
+   * \brief Called after a media item is removed from the list.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The removed media item.
+   * \return True if you do not want any further onAfterItemRemoved for the
+   *         current batch.  If there is no current batch, the return value is
+   *         ignored.
+   */
+
+  onAfterItemRemoved: function DeviceSyncWidget_onAfterItemRemoved
+                                 (aMediaList,
+                                  aMediaItem,
+                                  aIndex) {
+    // Handle playlist changes.
+    if (aMediaItem.getProperty(SBProperties.isList))
+        this._onPlaylistChange();
+
+    return false;
+  },
+
+
+  /**
+   * \brief Called when a media item is changed.
+   * \param aMediaList The list that has changed.
+   * \param aMediaItem The item that has changed.
+   * \param aProperties Array of properties that were updated.  Each property's
+   *        value is the previous value of the property
+   * \return True if you do not want any further onItemUpdated notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+
+  onItemUpdated: function DeviceSyncWidget_onItemUpdated(aMediaList,
+                                                         aMediaItem,
+                                                         aIndex,
+                                                         aProperties) {
+    // Handle playlist changes.
+    if (aMediaItem.getProperty(SBProperties.isList))
+        this._onPlaylistChange();
+
+    return false;
+  },
+
+
+  /**
+   * \brief Called when a media list is cleared.
+   * \return True if you do not want any further onListCleared notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+
+  onListCleared: function DeviceSyncWidget_onListCleared(aMediaList) {
+    // Handle playlist changes.
+    this.onPlaylistChange();
+
+    return false;
+  },
+
+
+  /**
+   * \brief Called when the library is about to perform multiple operations at
+   *        once.
+   *
+   * This notification can be used to optimize behavior. The consumer may
+   * choose to ignore further onItemAdded or onItemRemoved notifications until
+   * the onBatchEnd notification is received.
+   *
+   * \param aMediaList The list that has changed.
+   */
+
+  onBatchBegin: function DeviceSyncWidget_onBatchBegin(aMediaList) {},
+
+
+  /**
+   * \brief Called when the library has finished performing multiple operations
+   *        at once.
+   *
+   * This notification can be used to optimize behavior. The consumer may
+   * choose to stop ignoring onItemAdded or onItemRemoved notifications after
+   * receiving this notification.
+   *
+   * \param aMediaList The list that has changed.
+   */
+
+  onBatchEnd: function DeviceSyncWidget_onBatchEnd(aMediaList) {},
+
 
   //----------------------------------------------------------------------------
   //
@@ -355,28 +566,38 @@ var DeviceSyncWidget = {
   /*
    * musicPrefsRead
    *
-   * \breif This function reads the music preferences from the preference storage.  The
-   * preference values are read into the working music preference and stored music
-   * preference objects.
+   * \brief This function reads the music preferences from the preference
+   *        storage into the preferences object specified by aPrefs.  If a
+   *        preferences object is not specified, this function reads the
+   *        preferences into the working music preferences.  In addition, this
+   *        function updates the stored music preferences object.
    */
 
-  musicPrefsRead: function DeviceSyncWidget_musicPrefsRead()
+  musicPrefsRead: function DeviceSyncWidget_musicPrefsRead(aPrefs)
   {
+      var                         readPrefs;
       var                         storedSyncPlaylistList;
       var                         syncPlaylistList;
       var                         syncPlaylistML;
       var                         guid;
       var                         i;
 
+      /* If no preference object is specified, */
+      /* read into the working preferences.    */
+      if (aPrefs)
+          readPrefs = aPrefs;
+      else
+          readPrefs = this._syncPrefs;
+
       /* Read the management type preference. */
-      this._syncPrefs.mgmtType.value = this._deviceLibrary.mgmtType;
+      readPrefs.mgmtType.value = this._deviceLibrary.mgmtType;
       
       /* Read the stored sync playlist list preferences. */
       storedSyncPlaylistList =
                         this._deviceLibrary.getSyncPlaylistList(this.mDeviceID);
 
       /* Clear and read the sync playlist list preferences. */
-      syncPlaylistList = this._syncPrefs.syncPlaylistList;
+      syncPlaylistList = readPrefs.syncPlaylistList;
       for (guid in syncPlaylistList)
           syncPlaylistList[guid].value = false;
       for (i = 0; i < storedSyncPlaylistList.length; i++)
@@ -389,7 +610,7 @@ var DeviceSyncWidget = {
   
       /* Make a copy of the stored music prefs. */
       this._storedSyncPrefs = {};
-      this.musicPrefsCopy(this._syncPrefs, this._storedSyncPrefs);
+      this.musicPrefsCopy(readPrefs, this._storedSyncPrefs);
   },
 
 
@@ -419,7 +640,9 @@ var DeviceSyncWidget = {
       {
           if (syncPlaylistList[guid].value)
           {
-              mediaList = this.mSBMainLib.getMediaItem(guid);
+              /* Get the playlist media list.  If it */
+              /* no longer exists, don't store it.   */
+              mediaList = LibraryUtils.mainLibrary.getMediaItem(guid);
               if (mediaList)
                   storePlaylistList.appendElement(mediaList, false);
           }
@@ -654,7 +877,7 @@ var DeviceSyncWidget = {
       {
           if (aSrcPrefs[field] instanceof Object)
           {
-              if (typeof(aDstPrefs[field]) != undefined)
+              if (typeof(aDstPrefs[field]) != "undefined")
                   this.musicPrefsCopyValues(aSrcPrefs[field], aDstPrefs[field]);
           }
           else
@@ -692,5 +915,5 @@ var DeviceSyncWidget = {
   _deviceFinalize: function DeviceSyncWidget__deviceFinalize() {
     // Clear object fields.
     this._device = null;
-  },
+  }
 };

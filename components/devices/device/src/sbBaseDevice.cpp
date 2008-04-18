@@ -249,9 +249,9 @@ static void CheckRequestBatch(std::deque<nsRefPtr<sbBaseDevice::TransferRequest>
 #endif /* DEBUG */
 
 sbBaseDevice::sbBaseDevice() :
-  mAbortCurrentRequest(PR_FALSE),
   mLastTransferID(0),
-  mLastRequestPriority(PR_INT32_MIN)
+  mLastRequestPriority(PR_INT32_MIN),
+  mAbortCurrentRequest(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gBaseDeviceLog) {
@@ -751,6 +751,26 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
 {
   NS_ENSURE_ARG_POINTER(_retval);
   
+  nsRefPtr<sbDeviceLibrary> devLib = new sbDeviceLibrary(this);
+  NS_ENSURE_TRUE(devLib, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = InitializeDeviceLibrary(devLib, aId, aLibraryLocation);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = devLib->QueryInterface(NS_GET_IID(sbIDeviceLibrary),
+                              reinterpret_cast<void**>(_retval));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::InitializeDeviceLibrary
+                         (sbDeviceLibrary* aDevLib,
+                          const nsAString& aId,
+                          nsIURI*          aLibraryLocation)
+{
+  NS_ENSURE_ARG_POINTER(aDevLib);
+  
   if (!mMediaListListeners.IsInitialized()) {
     // we expect to be unintialized, but just in case...
     if (!mMediaListListeners.Init()) {
@@ -758,27 +778,21 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
     }
   }
   
-  nsRefPtr<sbDeviceLibrary> devLib = new sbDeviceLibrary(this);
-  NS_ENSURE_TRUE(devLib, NS_ERROR_OUT_OF_MEMORY);
-  nsresult rv = devLib->Initialize(aId);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = devLib->QueryInterface(NS_GET_IID(sbIDeviceLibrary),
-                              reinterpret_cast<void**>(_retval));
+  nsresult rv = aDevLib->Initialize(aId);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Hide the library on creation. The device is responsible
   // for showing it is done mounting.
-  rv = devLib->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                           NS_LITERAL_STRING("1"));
+  rv = aDevLib->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                            NS_LITERAL_STRING("1"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = devLib->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), 
+  rv = aDevLib->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), 
                             NS_LITERAL_STRING("1"));
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = devLib->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
-                           NS_ConvertASCIItoUTF16(NS_LITERAL_CSTRING(DEFAULT_COLUMNSPEC_DEVICE_LIBRARY)));
+  rv = aDevLib->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
+                            NS_ConvertASCIItoUTF16(NS_LITERAL_CSTRING(DEFAULT_COLUMNSPEC_DEVICE_LIBRARY)));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbBaseDeviceLibraryListener> libListener = new sbBaseDeviceLibraryListener();
@@ -787,7 +801,7 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
   rv = libListener->Init(this);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = devLib->AddDeviceLibraryListener(libListener);
+  rv = aDevLib->AddDeviceLibraryListener(libListener);
   NS_ENSURE_SUCCESS(rv, rv);
   
   // hook up the media list listeners to the existing lists
@@ -795,10 +809,10 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
     new MediaListListenerAttachingEnumerator(this);
   NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
   
-  rv = devLib->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                                        NS_LITERAL_STRING("1"),
-                                        enumerator,
-                                        sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  rv = aDevLib->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                         NS_LITERAL_STRING("1"),
+                                         enumerator,
+                                         sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
   libListener.swap(mLibraryListener);
@@ -1081,7 +1095,7 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
     
     totalLength += contentLength;
     LOG(("r(%08x) i(%08x) sbBaseDevice::EnsureSpaceForWrite - size %u\n",
-         *request, (*request)->item, contentLength));
+         (void*) *request, (void*) (*request)->item, contentLength));
     
     itemsToWrite[(*request)->item] = contentLength;
   }

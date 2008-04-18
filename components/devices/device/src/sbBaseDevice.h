@@ -33,6 +33,7 @@
 
 #include "sbIDevice.h"
 #include "sbBaseDeviceEventTarget.h"
+#include "sbDeviceLibrary.h"
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -197,6 +198,16 @@ public:
   nsresult CreateDeviceLibrary(const nsAString& aId,
                                nsIURI* aLibraryLocation,
                                sbIDeviceLibrary** _retval);
+
+  /**
+   * Initialize a library for the device
+   * @param aDevLib the device library to initialize.
+   * @param aId the ID for the library
+   * @param aLibraryLocation the file to name the library, or null to use some default
+   */
+  nsresult InitializeDeviceLibrary(sbDeviceLibrary* aDevLib,
+                                   const nsAString& aId,
+                                   nsIURI*          aLibraryLocation);
   
   /**
    * Called when a media list has been added to the device library
@@ -291,7 +302,7 @@ protected:
   PRUint32 mLastTransferID;
   PRInt32 mLastRequestPriority; // to make sure peek returns the same
   PRLock *mStateLock;
-  PRInt32 mState;
+  PRUint32 mState;
   sbDeviceStatistics mDeviceStatistics;
   PRBool mAbortCurrentRequest;
   

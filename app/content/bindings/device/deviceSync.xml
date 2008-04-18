@@ -93,7 +93,7 @@
 
             <!-- Management preferences. -->
             <xul:vbox class="content-controls"
-                      oncommand="DeviceSyncWidget.onRadioChange();">
+                      oncommand="DeviceSyncWidget.onUIPrefChange();">
 
               <!-- Content management radio group. -->
               <xul:radiogroup sbid="content_management_radio_group" flex="1">
@@ -109,7 +109,8 @@
                   <xul:listbox sbid="content_auto_sync_playist_listbox"
                                class="indent"
                                rows="5"
-                               onselect="DeviceSyncWidget.musicPrefsUpdateButtons();"/>
+                               onkeyup="DeviceSyncWidget.onUIPrefChange();"
+                               onclick="DeviceSyncWidget.onUIPrefChange();"/>
                 </xul:radiogroup>
                 <xul:radio sbid="content_manual_radio"
                            label="&device.sync.manual.label;"/>

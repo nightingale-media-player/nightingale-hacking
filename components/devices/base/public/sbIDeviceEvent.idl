@@ -123,6 +123,9 @@ interface sbIDeviceEvent : nsISupports
   // device generic state changed
   const unsigned long EVENT_DEVICE_STATE_CHANGED        = EVENT_DEVICE_BASE + 26;
 
+  // device preferences changed
+  const unsigned long EVENT_DEVICE_PREFS_CHANGED        = EVENT_DEVICE_BASE + 27;
+
   /**
    * 
    */
