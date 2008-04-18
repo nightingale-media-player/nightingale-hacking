@@ -83,6 +83,7 @@ SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
                       
 # TODO: Post 0.5 we need to remove js modules from the line above
 SONGBIRD_JSMODULES =  $(srcdir)/sbAddToPlaylist.jsm \
+                      $(srcdir)/sbAddToDevice.jsm \
                       $(srcdir)/kPlaylistCommands.jsm \
                       $(NULL)
 

@@ -1003,10 +1003,10 @@ var ExternalDropHandler = {
           // mediascan dialog is modal, but it is better to check than
           // to lose drops
           this._nextImportDropFrame();
-        } 
-        
-        // all done.
-        this._dropComplete();
+        } else {
+          // all done.
+          this._dropComplete();
+        }
       }
     } catch (e) {
 

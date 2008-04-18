@@ -565,7 +565,6 @@ addToPlaylistHelper.prototype = {
       }
     } catch (e) {
       Components.utils.reportError(e);
-      alert("addToPlaylist.js - handleCommand - " + e);
     }
     return false;
   },
