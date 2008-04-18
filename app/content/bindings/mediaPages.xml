@@ -134,6 +134,7 @@
             item.setAttribute("name", "mediapage.item");
             item.setAttribute("disabled", "true");
             item.setAttribute("class", "mediapage-menu-selected-page-title");
+            this._addToMenu(document.createElement("menuseparator"));
             this._addToMenu(item);
           }
 

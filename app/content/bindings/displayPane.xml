@@ -64,8 +64,6 @@
               <menuitem label="&menu.displaypane.hide;"
                         anonid="menuitem_hide"/>
               <menuseparator/>
-              <menuitem label="&menu.displaypane.not-available;"
-                        disabled="true" anonid="items_none"/>
               <menuitem label="&menu.displaypane.recommended;"
                         disabled="true" anonid="items_recommended"/>
               <dummy anonid="items_recommended_start"/>
@@ -350,8 +348,6 @@
           }
           buildList(endRecommend, recommended, this, "items_recommended");
           buildList(endAll, all, this, "items_all");
-	  // show the "None" header if we have exactly zero items
-	  this._getElem("items_none").collapsed = (recommended.length + all.length > 0);
         } catch(e) {
           Components.utils.reportError(e);
         }
@@ -448,6 +444,11 @@
             
           var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
                                   .getService(Components.interfaces.sbIDisplayPaneManager);
+
+          // if there are no display panes don't add the submenus
+          if ( !paneMgr.contentList.hasMoreElements() )
+            return;
+
           var enumerator = paneMgr.instantiatorsList;
           if (enumerator.hasMoreElements()) {
           
