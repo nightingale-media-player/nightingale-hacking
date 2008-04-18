@@ -46,7 +46,8 @@ nsresult
 sbLocalMediaListBaseEnumerationListener::Init()
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  nsCOMPtr<nsIMutableArray> array =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   array.swap(mArray);

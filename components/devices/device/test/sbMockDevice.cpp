@@ -38,6 +38,10 @@
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCIDInternal.h>
 
+#include <sbIDeviceLibrary.h>
+
+#include <sbDeviceContent.h>
+
 /* for an actual device, you would probably want to actually sort the prefs on
  * the device itself (and not the mozilla prefs system).  And even if you do end
  * up wanting to store things in the prefs system for some odd reason, you would
@@ -289,7 +293,26 @@ NS_IMETHODIMP sbMockDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabiliti
 /* readonly attribute sbIDeviceContent content; */
 NS_IMETHODIMP sbMockDevice::GetContent(sbIDeviceContent * *aContent)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+  if (!mContent) {
+    nsRefPtr<sbDeviceContent> deviceContent = sbDeviceContent::New();
+    NS_ENSURE_TRUE(deviceContent, NS_ERROR_OUT_OF_MEMORY);
+    rv = deviceContent->Initialize();
+    NS_ENSURE_SUCCESS(rv, rv);
+    mContent = deviceContent;
+    
+    // make a mock library too
+    NS_NAMED_LITERAL_STRING(LIBID, "mock-library.mock-device");
+    nsCOMPtr<sbIDeviceLibrary> devLib;
+    rv = CreateDeviceLibrary(LIBID, nsnull, getter_AddRefs(devLib));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = mContent->AddLibrary(devLib);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+  }
+  NS_ADDREF(*aContent = mContent);
+  return NS_OK;
 }
 
 /* readonly attribute nsIPropertyBag2 parameters; */
@@ -352,6 +375,12 @@ NS_IMETHODIMP sbMockDevice::GetState(PRUint32 *aState)
 {
   return sbBaseDevice::GetState(aState);
 }
+
+NS_IMETHODIMP sbMockDevice::SyncLibraries()
+{
+  return sbBaseDevice::SyncLibraries();
+}
+
 
 
 /****************************** sbIMockDevice ******************************/

@@ -36,7 +36,6 @@ CPP_SRCS = sbBaseDeviceController.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/controller/public \
-               $(DEPTH)/components/devices/device/public \
                $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/marshall/public \
                $(topsrcdir)/components/devices/base/src \

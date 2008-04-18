@@ -530,7 +530,7 @@ var DPW = {
    */
   _deviceSync: function DPW__deviceSync() {
     try {
-      this._device.sync();
+      this._device.syncLibraries();
       this._progressInfoBox.hidden = false;
     } catch (e) {
       this._test_curItemIndex = 0;  // STEVO: TEST SYNC STUFF

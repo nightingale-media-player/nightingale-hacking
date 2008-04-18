@@ -29,8 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbIDevice.idl \
-             sbIDeviceHelper.idl \
+XPIDL_SRCS = sbIDeviceHelper.idl \
              sbIDeviceErrorMonitor.idl \
              $(NULL)
 

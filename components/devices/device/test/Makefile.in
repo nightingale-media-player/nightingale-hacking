@@ -33,7 +33,7 @@ XPIDL_SRCS = sbDeviceDeviceTesterInterfaces.idl \
              sbIMockDevice.idl \
              $(NULL)
 
-XPIDL_INCLUDES = $(topsrcdir)/components/devices/device/public \
+XPIDL_INCLUDES = $(topsrcdir)/components/devices/base/public \
                  $(NULL)
 
 XPIDL_MODULE = DeviceDeviceTester.xpt
@@ -47,6 +47,7 @@ CPP_SRCS = sbDeviceDeviceTesterModule.cpp \
            $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
            $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
            $(topsrcdir)/components/devices/base/src/sbDeviceLibrary.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceContent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/device/test \
@@ -77,10 +78,12 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
                             xpcomglue_s \
                             xpcom \
+                            sbDeviceBase$(DEBUG:%=_d) \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                              $(NULL)
+                           $(DEPTH)/components/devices/base/src/
+                           $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/device/src/sbDeviceCore$(DEBUG:%=_d) \
                               $(SONGBIRD_OBJDIR)/components/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \

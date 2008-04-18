@@ -28,6 +28,8 @@
 #include "sbBaseDevice.h"
 #include "sbIMockDevice.h"
 
+class sbDeviceContent;
+
 class sbMockDevice : public sbBaseDevice,
                      public sbIMockDevice
 {
@@ -42,6 +44,7 @@ public:
 
 protected:
   PRBool mIsConnected;
+  nsCOMPtr<sbDeviceContent> mContent;
   
 private:
   ~sbMockDevice();

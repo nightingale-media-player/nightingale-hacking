@@ -24,32 +24,44 @@
 //
 */
 
+/* base class */
 #include "sbDeviceLibrary.h"
 
-#include <nsAutoLock.h>
-#include <nsArrayUtils.h>
-#include <nsThreadUtils.h>
-#include <nsCOMArray.h>
-#include <nsIWritablePropertyBag2.h>
-#include <nsXPCOM.h>
+/* mozilla interfaces */
 #include <nsIFileURL.h>
 #include <nsIPrefService.h>
-#include <nsMemory.h>
-#include <nsServiceManagerUtils.h>
+#include <nsIWritablePropertyBag2.h>
+
+/* nspr headers */
+#include <prlog.h>
+#include <prprf.h>
+#include <prtime.h>
+
+/* mozilla headers */
+#include <nsAppDirectoryServiceDefs.h>
+#include <nsArrayUtils.h>
+#include <nsAutoLock.h>
+#include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsDirectoryServiceUtils.h>
-#include <nsAppDirectoryServiceDefs.h>
+#include <nsMemory.h>
+#include <nsServiceManagerUtils.h>
+#include <nsThreadUtils.h>
+#include <nsXPCOM.h>
+#include <nsXPCOMCIDInternal.h>
 
+/* songbird interfaces */
+#include <sbIDevice.h>
+#include <sbIDeviceContent.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
 #include <sbIPropertyArray.h>
+
+/* songbird headers */
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
 #include <sbProxyUtils.h>
 
-#include <prlog.h>
-#include <prprf.h>
-#include <prtime.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS7(sbDeviceLibrary,
                               sbIMediaListListener,
@@ -77,7 +89,9 @@ static PRLogModuleInfo* gDeviceLibraryLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
-sbDeviceLibrary::sbDeviceLibrary() : mLock(nsnull)
+sbDeviceLibrary::sbDeviceLibrary(sbIDevice* aDevice)
+  : mLock(nsnull),
+    mDevice(aDevice)
 {
 #ifdef PR_LOGGING
   if (!gDeviceLibraryLog) {
@@ -124,6 +138,9 @@ sbDeviceLibrary::Finalize()
 
   if (deviceLibrary)
     UnregisterDeviceLibrary(deviceLibrary);
+  
+  // let go of the owner device
+  mDevice = nsnull;
 
   return NS_OK;
 }
@@ -138,7 +155,7 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIWritablePropertyBag2> libraryProps = 
-    do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+    do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIFile> libraryFile;
@@ -454,6 +471,74 @@ sbDeviceLibrary::AddToSyncPlaylistList(sbIMediaList *aPlaylist)
 }
 
 NS_IMETHODIMP
+sbDeviceLibrary::Sync()
+{
+  nsresult rv;
+  
+  nsCOMPtr<sbIDevice> device;
+  rv = GetDevice(getter_AddRefs(device));
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ASSERTION(device,
+               "sbDeviceLibrary::GetDevice returned success with no device");
+  
+  nsCOMPtr<sbILibraryManager> libraryManager =
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbILibrary> mainLib;
+  rv = libraryManager->GetMainLibrary(getter_AddRefs(mainLib));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  #if DEBUG
+    // sanity check that we're using the right device
+    { /* scope */
+      nsCOMPtr<sbIDeviceContent> content;
+      rv = device->GetContent(getter_AddRefs(content));
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsCOMPtr<nsIArray> libraries;
+      rv = content->GetLibraries(getter_AddRefs(libraries));
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      PRUint32 libraryCount;
+      rv = libraries->GetLength(&libraryCount);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      PRBool found = PR_FALSE;
+      for (PRUint32 index = 0; index < libraryCount; ++index) {
+        nsCOMPtr<sbIDeviceLibrary> library =
+          do_QueryElementAt(libraries, index, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        if (SameCOMIdentity(NS_ISUPPORTS_CAST(sbILibrary*, this), library)) {
+          found = PR_TRUE;
+          break;
+        }
+      }
+      NS_ASSERTION(found,
+                   "sbDeviceLibrary has device that doesn't hold this library");
+    }
+  #endif /* DEBUG */
+  
+  nsCOMPtr<nsIWritablePropertyBag2> requestParams =
+    do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("item"),
+                                             mainLib);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("list"),
+                                             NS_ISUPPORTS_CAST(sbIMediaList*, this));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = device->SubmitRequest(sbIDevice::REQUEST_SYNC, requestParams);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDeviceLibrary::AddDeviceLibraryListener(sbIDeviceLibraryListener* aListener)
 {
   TRACE(("sbDeviceLibrary[0x%x] - AddListener", this));
@@ -700,10 +785,19 @@ sbDeviceLibrary::CreateMediaItem(nsIURI *aContentUri,
                                                              aAllowDuplicates,
                                                              &mShouldProcceed));
   if (mPerformAction) {
-    return mDeviceLibrary->CreateMediaItem(aContentUri,
-                                           aProperties,
-                                           aAllowDuplicates,
-                                           _retval);
+    nsresult rv;
+    nsCOMPtr<sbILibrary> lib;
+    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                              NS_GET_IID(sbILibrary),
+                              mDeviceLibrary,
+                              NS_PROXY_SYNC,
+                              getter_AddRefs(lib));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    return lib->CreateMediaItem(aContentUri,
+                                aProperties,
+                                aAllowDuplicates,
+                                _retval);
   } else {
     return NS_OK;
   }
@@ -726,6 +820,17 @@ sbDeviceLibrary::CreateMediaList(const nsAString & aType,
   } else {
     return NS_OK;
   }
+}
+
+/*
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbDeviceLibrary::GetDevice(sbIDevice **aDevice)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_IF_ADDREF(*aDevice = mDevice);
+  return *aDevice ? NS_OK : NS_ERROR_UNEXPECTED;
 }
 
 /*

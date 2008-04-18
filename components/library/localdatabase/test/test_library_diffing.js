@@ -92,18 +92,18 @@ function testLibraryToLibraryDiffing() {
   
   itemProperties = createPropertyArray();
   appendPropertiesToArray(destinationItemDeletedProperties, itemProperties);
-  var deletedItemA = destinationLibrary.createMediaItem(destinationItemDeletedURI, 
-                                                        itemProperties);
+  var deletedItem = destinationLibrary.createMediaItem(destinationItemDeletedURI, 
+                                                       itemProperties);
 
   itemProperties = createPropertyArray();
   appendPropertiesToArray(sourceItemModifiedProperties, itemProperties);
-  var modifiedItem = sourceLibrary.createMediaItem(sourceItemModifiedURI, 
-                                                   itemProperties);
+  var modifiedItemA = sourceLibrary.createMediaItem(sourceItemModifiedURI, 
+                                                    itemProperties);
   
   itemProperties = createPropertyArray();
   appendPropertiesToArray(destinationItemModifiedProperties, itemProperties);
-  var deletedItemB = destinationLibrary.createMediaItem(destinationItemModifiedURI, 
-                                                        itemProperties);
+  var modifiedItemB = destinationLibrary.createMediaItem(destinationItemModifiedURI, 
+                                                         itemProperties);
   
   itemProperties = createPropertyArray();
   appendPropertiesToArray(sourceItemNotModifiedProperties, itemProperties);
@@ -140,8 +140,7 @@ function testLibraryToLibraryDiffing() {
   var addedChange = null;
   
   var deletedOps = 0;
-  var deletedChangeA = null;
-  var deletedChangeB = null;
+  var deletedChange = null;
   
   var modifiedOps = 0;
   var modifiedChange = null;
@@ -156,15 +155,18 @@ function testLibraryToLibraryDiffing() {
     switch(change.operation) {
       case Ci.sbIChangeOperation.ADDED: 
         addedOps++; 
-        addedChange = change; 
+        addedChange = change;
+        log("added " + change.sourceItem.contentSrc.spec + "\n");
       break;
       case Ci.sbIChangeOperation.DELETED: 
         deletedOps++; 
-        deletedOps == 1 ? deletedChangeA = change : deletedChangeB = change; 
+        deletedChange = change; 
+        log("deleted " + change.destinationItem.contentSrc.spec + "\n");
       break;
       case Ci.sbIChangeOperation.MODIFIED: 
         modifiedOps++; 
         modifiedChange = change; 
+        log("modified " + change.sourceItem.contentSrc.spec + "\n");
       break;
       default: 
         unknownOps++;
@@ -172,7 +174,7 @@ function testLibraryToLibraryDiffing() {
   }
   
   assertEqual(addedOps, 1, "Wrong number of added operation!");
-  assertEqual(deletedOps, 2, "Wrong number of deleted operations!");
+  assertEqual(deletedOps, 1, "Wrong number of deleted operations!");
   assertEqual(modifiedOps, 1, "Wrong number of modified operation!");
   assertEqual(unknownOps, 0, "There should _not_ be any unknown operations!");
   
@@ -188,16 +190,7 @@ function testLibraryToLibraryDiffing() {
   }
 
   try {
-    deletedChangeA.properties;
-  }
-  catch(e) {
-    assertEqual(e.result, 
-                Cr.NS_ERROR_NOT_AVAILABLE, 
-                "There should be no property changes available for deleted operations!");
-  }
-
-  try {
-    deletedChangeB.properties;
+    deletedChange.properties;
   }
   catch(e) {
     assertEqual(e.result, 

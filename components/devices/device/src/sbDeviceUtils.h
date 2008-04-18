@@ -96,28 +96,7 @@ public:
   static nsresult GetDeviceLibraryForItem(/* in */  sbIDevice* aDevice,
                                           /* in */  sbIMediaItem* aItem,
                                           /* out */ sbIDeviceLibrary** _retval);
-
-  /**
-   * Stores the enumerated items in an nsIArray
-   * \see sbIMediaList::EnumerateAllItems
-   * \see sbIMediaList::EnumerateItemsByProperty
-   * \see sbIMediaList::EnumerateItemsByProperies
-   */
-  class SnapshotEnumerationListener : public sbIMediaListEnumerationListener
-  {
-  public:
-    NS_DECL_ISUPPORTS
-    NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
-  
-    nsresult Init();
-    nsresult GetArray(nsIArray **aArray);
-  
-  protected:
-    virtual ~SnapshotEnumerationListener() {};
-    nsCOMPtr<nsIMutableArray> mArray;
-  };
 };
-
 
 
 #endif /* __SBDEVICEUTILS__H__ */

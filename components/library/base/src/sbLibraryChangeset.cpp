@@ -401,7 +401,14 @@ NS_IMETHODIMP sbLibraryChange::GetItemIsList(PRBool *aItemIsList)
   NS_ENSURE_ARG_POINTER(aItemIsList);
   
   nsresult rv;
-  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mSourceItem, &rv);
+  nsCOMPtr<sbIMediaList> mediaList;
+  if (mSourceItem) {
+    mediaList = do_QueryInterface(mSourceItem, &rv);
+  } else {
+    // no source, use dest
+    mediaList = do_QueryInterface(mDestinationItem, &rv);
+  }
+  
   if(rv == NS_ERROR_NO_INTERFACE) {
     *aItemIsList = PR_FALSE;
     return NS_OK;

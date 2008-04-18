@@ -33,22 +33,25 @@
 
 #include <nsIPropertyBag2.h>
 #include <nsITimer.h>
+#include <nsIURI.h>
 #include <nsIVariant.h>
 #include <nsIPrefService.h>
 #include <nsIPrefBranch.h>
 
+#include <nsArrayUtils.h>
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 
-#include "sbIDeviceEvent.h"
-#include "sbIDeviceHelper.h"
-#include "sbIDeviceManager.h"
-#include "sbILibrary.h"
-#include "sbIMediaItem.h"
-#include "sbIMediaList.h"
+#include <sbIDeviceContent.h>
+#include <sbIDeviceEvent.h>
+#include <sbIDeviceHelper.h>
+#include <sbIDeviceManager.h>
+#include <sbILibrary.h>
+#include <sbIMediaItem.h>
+#include <sbIMediaList.h>
 
 #include "sbDeviceLibrary.h"
 #include "sbDeviceStatus.h"
@@ -205,15 +208,56 @@ PRBool sbBaseDevice::TransferRequest::IsCountable() const
          type != sbIDevice::REQUEST_UPDATE;
 }
 
+
+/**
+ * Utility function to check a transfer request queue for proper batching
+ */
+#if DEBUG
+static void CheckRequestBatch(std::deque<nsRefPtr<sbBaseDevice::TransferRequest> >::const_iterator aBegin,
+                              std::deque<nsRefPtr<sbBaseDevice::TransferRequest> >::const_iterator aEnd)
+{
+  PRUint32 lastIndex = 0, lastCount = 0;
+  int lastType = 0;
+  
+  for (;aBegin != aEnd; ++aBegin) {
+    if (!(*aBegin)->IsCountable()) {
+      // we don't care about any non-countable things
+      continue;
+    }
+    if (lastType == 0 || lastType != (*aBegin)->type) {
+      // type change
+      NS_ASSERTION(lastIndex == lastCount, "type change with missing items");
+      NS_ASSERTION((lastType == 0) || ((*aBegin)->batchIndex == 1),
+                   "batch does not start with 1");
+      NS_ASSERTION((*aBegin)->batchCount > 0, "empty batch");
+      lastType = (*aBegin)->type;
+      lastCount = (*aBegin)->batchCount;
+      lastIndex = (*aBegin)->batchIndex;
+    } else {
+      // continue batch
+      NS_ASSERTION(lastCount == (*aBegin)->batchCount,
+                   "mismatched batch count");
+      NS_ASSERTION(lastIndex + 1 == (*aBegin)->batchIndex,
+                   "unexpected index");
+      lastIndex = (*aBegin)->batchIndex;
+    }
+  }
+  
+  // check end of queue too
+  NS_ASSERTION(lastIndex == lastCount, "end of queue with missing items");
+}
+#endif /* DEBUG */
+
 sbBaseDevice::sbBaseDevice() :
   mAbortCurrentRequest(PR_FALSE),
-  mLastTransferID(0)
+  mLastTransferID(0),
+  mLastRequestPriority(PR_INT32_MIN)
 {
 #ifdef PR_LOGGING
   if (!gBaseDeviceLog) {
     gBaseDeviceLog = PR_NewLogModule( "sbBaseDevice" );
   }
-#endif
+#endif /* PR_LOGGING */
 
   mStateLock = nsAutoLock::NewLock(__FILE__ "::mStateLock");
   NS_ASSERTION(mStateLock, "Failed to allocate state lock");
@@ -226,6 +270,34 @@ sbBaseDevice::~sbBaseDevice()
 {
   if (mRequestMonitor)
     nsAutoMonitor::DestroyMonitor(mRequestMonitor);
+}
+
+NS_IMETHODIMP sbBaseDevice::SyncLibraries()
+{
+  nsresult rv;
+
+  nsCOMPtr<sbIDeviceContent> content;
+  rv = GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIArray> libraries;
+  rv = content->GetLibraries(getter_AddRefs(libraries));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRUint32 libraryCount;
+  rv = libraries->GetLength(&libraryCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  for (PRUint32 index = 0; index < libraryCount; ++index) {
+    nsCOMPtr<sbIDeviceLibrary> deviceLib =
+      do_QueryElementAt(libraries, index, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = deviceLib->Sync();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  return NS_OK;
 }
 
 nsresult sbBaseDevice::PushRequest(const int aType,
@@ -253,6 +325,18 @@ nsresult sbBaseDevice::PushRequest(const int aType,
 nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
 {
   NS_ENSURE_ARG_POINTER(aRequest);
+  
+  #if DEBUG
+    // XXX Mook: if writing, make sure that we're writing from a file
+    if (aRequest->type == TransferRequest::REQUEST_WRITE) {
+      NS_ASSERTION(aRequest->item, "writing with no item");
+      nsCOMPtr<nsIURI> aSourceURI;
+      aRequest->item->GetContentSrc(getter_AddRefs(aSourceURI));
+      PRBool schemeIs = PR_FALSE;
+      aSourceURI->SchemeIs("file", &schemeIs);
+      NS_ASSERTION(schemeIs, "writing from device, but not from file!");
+    }
+  #endif
 
   { /* scope for request lock */
     nsAutoMonitor requestMon(mRequestMonitor);
@@ -261,6 +345,10 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     // figure out which queue we're looking at
     PRInt32 priority = aRequest->priority;
     TransferRequestQueue& queue = mRequests[priority];
+    
+    #if DEBUG
+      CheckRequestBatch(queue.begin(), queue.end());
+    #endif /* DEBUG */
     
     // initialize some properties of the request
     aRequest->itemTransferID = mLastTransferID++;
@@ -274,8 +362,7 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     nsRefPtr<TransferRequest> last;
     if (begin != end) {
       // the queue is not empty
-      --end;
-      last = *end;
+      last = queue.back();
     }
     
     // when calculating batch counts, we skip over invalid requests and updates
@@ -284,19 +371,21 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     {
       while (last && !last->IsCountable())
       {
+        --end;
         if (begin == end) {
+          // nothing left in the queue
           last = nsnull;
           break;
+        } else {
+          last = *(end - 1);
         }
-        --end;
-        last = *end;
       }
   
       if (last && last->type == aRequest->type) {
         // same type of request, batch them
         aRequest->batchCount += last->batchCount;
         aRequest->batchIndex = aRequest->batchCount;
-    
+        
         while (begin != end) {
           nsRefPtr<TransferRequest> oldReq = *--end;
           if (!oldReq->IsCountable()) {
@@ -315,8 +404,13 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     }
     
     queue.push_back(aRequest);
+    
+    #if DEBUG
+      CheckRequestBatch(queue.begin(), queue.end());
+    #endif /* DEBUG */
+    
   } /* end scope for request lock */
-
+  
   return ProcessRequest();
 }
 
@@ -331,11 +425,21 @@ nsresult sbBaseDevice::GetFirstRequest(PRBool aRemove,
   // Note: we shouldn't remove any empty queues from the map either, if we're
   // not going to pop the request.
   
-  TransferRequestQueueMap::iterator mapIt = mRequests.begin();
-  while (!mRequests.empty()) {
+  // try to find the last peeked request
+  TransferRequestQueueMap::iterator mapIt =
+    mRequests.find(mLastRequestPriority);
+  if (mapIt == mRequests.end()) {
+    mapIt = mRequests.begin();
+  }
+
+  while (mapIt != mRequests.end()) {
     // always pop the request from the first queue
     
     TransferRequestQueue& queue = mapIt->second;
+    
+    #if DEBUG
+      CheckRequestBatch(queue.begin(), queue.end());
+    #endif
     
     if (queue.empty()) {
       if (aRemove) {
@@ -350,18 +454,30 @@ nsresult sbBaseDevice::GetFirstRequest(PRBool aRemove,
     }
 
     nsRefPtr<TransferRequest> request = queue.front();
+    
     if (aRemove) {
       // we want to pop the request
       queue.pop_front();
       if (queue.empty()) {
         mRequests.erase(mapIt);
         mapIt = mRequests.begin();
+      } else {
+        #if DEBUG
+          CheckRequestBatch(queue.begin(), queue.end());
+        #endif
       }
+      // forget the last seen priority
+      mLastRequestPriority = PR_INT32_MIN;
+    } else {
+      // record the last seen priority
+      mLastRequestPriority = mapIt->first;
     }
+    
     request.forget(_retval);
     return NS_OK;
   }
   // there are no queues left
+  mLastRequestPriority = PR_INT32_MIN;
   *_retval = nsnull;
   return NS_OK;
 }
@@ -405,6 +521,10 @@ nsresult sbBaseDevice::RemoveRequest(const int aType,
     // more possibly dummy item accounting
     TransferRequestQueue::iterator queueIt = queue.begin(),
                                    queueEnd = queue.end();
+    
+    #if DEBUG
+      CheckRequestBatch(queueIt, queueEnd);
+    #endif
 
     for (; queueIt != queueEnd; ++queueIt) {
       nsRefPtr<TransferRequest> request = *queueIt;
@@ -414,9 +534,19 @@ nsresult sbBaseDevice::RemoveRequest(const int aType,
       {
         // found; remove
         queue.erase(queueIt);
+
+        #if DEBUG
+          CheckRequestBatch(queue.begin(), queue.end());
+        #endif /* DEBUG */
+
         return NS_OK;
       }
     }
+
+    #if DEBUG
+      CheckRequestBatch(queue.begin(), queue.end());
+    #endif /* DEBUG */
+    
   }
 
   // there are no queues left
@@ -472,11 +602,20 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
         const TransferRequestQueue& queue = mapIt->second;
         TransferRequestQueue::const_iterator queueIt = queue.begin(),
                                              queueEnd = queue.end();
+        
+        #if DEBUG
+          CheckRequestBatch(queueIt, queueEnd);
+        #endif
+        
         for (; queueIt != queueEnd; ++queueIt) {
           if ((*queueIt)->type == sbBaseDevice::TransferRequest::REQUEST_WRITE) {
             requests.push_back(*queueIt);
           }
         }
+        
+        #if DEBUG
+          CheckRequestBatch(queue.begin(), queue.end());
+        #endif
       }
 
       mAbortCurrentRequest = PR_TRUE;
@@ -619,7 +758,7 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
     }
   }
   
-  nsRefPtr<sbDeviceLibrary> devLib = new sbDeviceLibrary();
+  nsRefPtr<sbDeviceLibrary> devLib = new sbDeviceLibrary(this);
   NS_ENSURE_TRUE(devLib, NS_ERROR_OUT_OF_MEMORY);
   nsresult rv = devLib->Initialize(aId);
   NS_ENSURE_SUCCESS(rv, rv);

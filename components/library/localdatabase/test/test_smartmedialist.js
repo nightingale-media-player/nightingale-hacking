@@ -598,7 +598,7 @@ function testSerialize(library) {
                        "1164844762000",
                        "",
                        false);
-  library.sync();
+  library.flush();
 
   // Create a second instance of the library and get the same list and see
   // if they match

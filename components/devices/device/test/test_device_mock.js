@@ -61,6 +61,23 @@ function runTest () {
   
   assertFalse(device.threaded);
   
+  test_prefs(device);
+  
+  /* TODO: device.capabilities */
+  
+  /* TODO: device.content */
+  
+  /* TODO: device.parameters */
+  
+  test_event(device);
+  
+  test_request(device);
+  
+  test_library(device);
+ 
+}
+
+function test_prefs(device) {
   assertTrue(typeof(device.getPreference("hello")) == "undefined");
   
   device.setPreference("world", 3);
@@ -73,12 +90,6 @@ function runTest () {
   assertEqual(device.getPreference("world"), true);
   assertEqual(typeof(device.getPreference("world")), "boolean");
   
-  /* TODO: device.capabilities */
-  
-  /* TODO: device.content */
-  
-  /* TODO: device.parameters */
- 
   with (Components.interfaces.sbIDevice) {
     device.setPreference("state", 0);
     assertEqual(device.state, STATE_IDLE);
@@ -103,7 +114,9 @@ function runTest () {
     device.setPreference("state", 10);
     assertEqual(device.state, STATE_DISCONNECTED);
   }
-  
+}
+
+function test_event(device) {
   /* test as a event target */
   // I didn't bother with CI on the mock device
   device.QueryInterface(Components.interfaces.sbIDeviceEventTarget);
@@ -117,7 +130,9 @@ function runTest () {
   assertTrue(wasFired, "event handler not called");
   
   device.removeEventListener(handler);
-  
+}
+
+function test_request(device) {
   /* test as sbIMockDevice (request push/pop) */
   device.QueryInterface(Ci.sbIMockDevice);
   
@@ -167,6 +182,13 @@ function runTest () {
   request = null; /* unleak */
 }
 
+function test_library(device) {
+  assertEqual(device,
+              device.content
+                    .libraries
+                    .queryElementAt(0, Ci.sbIDeviceLibrary)
+                    .device);
+}
 
 function createPropertyBag(aParams) {
   var bag = Cc["@mozilla.org/hash-property-bag;1"]

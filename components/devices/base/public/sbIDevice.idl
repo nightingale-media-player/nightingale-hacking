@@ -26,7 +26,6 @@
 
 /**
  * \file sbIDevice.idl
- * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  */
 
 #include "nsISupports.idl"
@@ -45,7 +44,7 @@ interface sbIDeviceParameters;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(98fcf422-d1e7-47fc-bd6f-9027d8c4952a)]
+[scriptable, uuid(5e65f09a-b47c-41f7-bb4e-0174a3a956eb)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -70,6 +69,8 @@ interface sbIDevice : nsISupports
 
   /**
    * Called when the device is to finalize.
+   *
+   * Device implementations must call sbIDeviceContent::Finalize
    */
   void disconnect();
 
@@ -175,7 +176,7 @@ interface sbIDevice : nsISupports
 
   /* reset the device to its factory state */
   const unsigned long REQUEST_FACTORY_RESET = REQUEST_FLAG_WRITE + 8;
-
+  
   /**
    * 
    */
@@ -184,6 +185,11 @@ interface sbIDevice : nsISupports
    * Cancel all current pending requests
    */
   void cancelRequests();
+  
+  /**
+   * Call sync() on all libraries attached to this device
+   */
+  void syncLibraries();
 
   /**
    * Eject device.

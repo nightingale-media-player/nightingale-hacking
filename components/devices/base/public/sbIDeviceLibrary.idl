@@ -204,10 +204,9 @@ interface sbIDeviceLibraryListener : nsISupports
  
 /**
  * \interface sbIDeviceLibrary
- * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(08e84687-a775-4219-b510-fed144fb25c8)]
+[scriptable, uuid(c477d296-f25b-42a4-98bf-0b5d77dcebb4)]
 interface sbIDeviceLibrary : sbILibrary
 {
   /**
@@ -274,6 +273,15 @@ interface sbIDeviceLibrary : sbILibrary
    */
 
   void addToSyncPlaylistList(in sbIMediaList aPlaylist);
+  
+  /**
+   * \brief Initiates a sync operation on this library
+   *
+   * This is a no-op if this library is in manual management mode.
+   *
+   */
+  
+  void sync();
 
 
   /**

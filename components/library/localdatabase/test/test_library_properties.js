@@ -49,7 +49,7 @@ function runTest () {
   // Library properties should survive a clear
   library.clear();
 
-  library.sync();
+  library.flush();
   library = null;
 
   // file copy the database file so we can open it again

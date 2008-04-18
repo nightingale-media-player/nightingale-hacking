@@ -2806,7 +2806,7 @@ sbLocalDatabaseLibrary::Optimize()
  * See sbILibrary
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::Sync()
+sbLocalDatabaseLibrary::Flush()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Sync()", this));
 

@@ -183,7 +183,7 @@ interface sbILibrary : sbIMediaList
   /**
    * \brief Called when the library should save any cached data to disk
    */
-  void sync();
+  void flush();
 
   /**
    * \brief Create many media items from a list of URIs, and notify their

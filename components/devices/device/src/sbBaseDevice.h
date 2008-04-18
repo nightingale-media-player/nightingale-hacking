@@ -135,6 +135,13 @@ public:
   };
   
 public:
+  /* selected methods from sbIDevice */
+  NS_IMETHOD GetIsBusy(PRBool *aIsBusy);
+  NS_IMETHOD GetCanDisconnect(PRBool *aCanDisconnect);
+  NS_IMETHOD GetState(PRUint32 *aState);
+  NS_IMETHOD SyncLibraries(void);
+  
+public:
   sbBaseDevice();
   ~sbBaseDevice();
   
@@ -153,7 +160,10 @@ public:
   nsresult PopRequest(TransferRequest** _retval);
 
   /* get a reference to the next request without removing it; note that _retval
-     will be null while returning NS_OK if there are no requests left */
+   * will be null while returning NS_OK if there are no requests left
+   * once a request has been peeked, it will be returned for further PeekRequest
+   * and PopRequest calls until after it has been popped.
+   */
   nsresult PeekRequest(TransferRequest** _retval);
   
   /* remove a given request from the transfer queue
@@ -171,11 +181,6 @@ public:
   /* A request has been added, process the request
      (or schedule it to be processed) */
   virtual nsresult ProcessRequest() = 0;
-
-  /* sbIDevice */
-  NS_IMETHOD GetIsBusy(PRBool *aIsBusy);
-  NS_IMETHOD GetCanDisconnect(PRBool *aCanDisconnect);
-  NS_IMETHOD GetState(PRUint32 *aState);
 
   /**
    * Set the device state
@@ -284,6 +289,7 @@ protected:
   typedef std::map<PRInt32, TransferRequestQueue> TransferRequestQueueMap;
   TransferRequestQueueMap mRequests;
   PRUint32 mLastTransferID;
+  PRInt32 mLastRequestPriority; // to make sure peek returns the same
   PRLock *mStateLock;
   PRInt32 mState;
   sbDeviceStatistics mDeviceStatistics;

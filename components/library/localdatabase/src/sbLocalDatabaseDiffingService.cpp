@@ -186,7 +186,7 @@ sbLocalDatabaseDiffingService::CreateItemAddedLibraryChange(
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMutableArray> propertyChanges = 
-    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 propertyCount = 0;
@@ -325,7 +325,7 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
 
   nsresult rv;
   nsCOMPtr<nsIMutableArray> propertyChanges = 
-    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 sourceLength;
@@ -872,7 +872,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIMutableArray> libraryChanges = 
-    do_CreateInstance("@mozilla.org/array;1", &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbLocalDatabaseDiffingServiceEnumerator> sourceEnum;
@@ -1071,6 +1071,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
     nsString strPropertyValue;
 
     // We verify it's presence using contentURL and originURL.
+    PRBool found = PR_FALSE;
     for(PRUint32 currentProperty = 0; currentProperty < propertyCount; ++currentProperty) {
       
       nsCOMPtr<sbIProperty> property;
@@ -1082,22 +1083,24 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
 
       if(itemsInSource.GetEntry(strPropertyValue)) {
         // Present in source, continue with next item instead.
+        found = PR_TRUE;
         break;
       }
-      else {
-        // Not present in source, indicate that the item was removed from the source.
-        nsCOMPtr<sbILibraryChange> libraryChange;
-        rv = CreateItemDeletedLibraryChange(item, getter_AddRefs(libraryChange));
-        NS_ENSURE_SUCCESS(rv, rv);
+    }
+    if (!found) {
+      // Not present in source, indicate that the item was removed from the source.
+      nsCOMPtr<sbILibraryChange> libraryChange;
+      rv = CreateItemDeletedLibraryChange(item, getter_AddRefs(libraryChange));
+      NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = libraryChanges->AppendElement(libraryChange, PR_FALSE);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
+      rv = libraryChanges->AppendElement(libraryChange, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
   // That's it, we should have a valid changeset.
-  nsCOMPtr<nsIMutableArray> sources = do_CreateInstance("@mozilla.org/array;1", &rv);
+  nsCOMPtr<nsIMutableArray> sources =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sources->AppendElement(aSourceLibrary, PR_FALSE);
@@ -1213,7 +1216,7 @@ sbLocalDatabaseDiffingServiceEnumerator::Init()
   NS_ENSURE_FALSE(mArray, NS_ERROR_ALREADY_INITIALIZED);
 
   nsresult rv;
-  mArray = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  mArray = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

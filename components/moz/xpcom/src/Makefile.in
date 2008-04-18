@@ -29,33 +29,28 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbDeviceManager2$(DEBUG:%=_d)
+target_name = sbxpcom$(DEBUG:%=_d)
 
-CPP_SRCS = sbDeviceManagerModule.cpp \
-           sbDeviceManager.cpp \
-           $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
-           $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
+CPP_SRCS = nsArray.cpp \
+           sbXPCOMModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
-               $(DEPTH)/components/devices/controller/public \
-               $(DEPTH)/components/devices/manager/public \
-               $(DEPTH)/components/devices/marshall/public \
-               $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/moz/prompter/public \
-               $(topsrcdir)/components/devices/base/src \
-               $(MOZSDK_INCLUDE_DIR) \
+CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+               $(MOZSDK_INCLUDE_DIR)/docshell \
                $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/dom \
-               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+               $(MOZSDK_IDL_DIR) \
+               $(DEPS_DIR)/wpdsdk/Include \
                $(NULL)
 
-#XXX Mook : Temporary hack pending bug 7150 (proper static lib)
-CPP_INCLUDES += $(topsrcdir)/components/include \
-                $(NULL)
+# build a component (ie: a dynamically loadable module)
+IS_COMPONENT = 1
+LIBSONGBIRD_COMPONENT = SongbirdXPCOMLib
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
@@ -70,7 +65,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
-LIBSONGBIRD_COMPONENT = SongbirdDeviceManager
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk

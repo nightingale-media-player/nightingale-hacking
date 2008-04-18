@@ -1,3 +1,4 @@
+/* vim: set sw=2 :miv */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -41,11 +42,11 @@
 #define SB_DECL_SBILIBRARY_OVERRIDES  \
   NS_IMETHOD CreateMediaItem(nsIURI *aContentUri, sbIPropertyArray *aProperties, PRBool aAllowDuplicates, sbIMediaItem **_retval); \
   NS_IMETHOD CreateMediaList(const nsAString & aType, sbIPropertyArray *aProperties, sbIMediaList **_retval);  \
+  NS_IMETHOD GetDevice(sbIDevice * *aDevice); \
 
 // Use this macro to declare functions that forward the behavior of this
 // interface to another object in a safe way.
 #define SB_FORWARD_SAFE_SBILIBRARY(_to) \
-  NS_IMETHOD GetDevice(sbIDevice * *aDevice) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDevice(aDevice); } \
   NS_IMETHOD GetSupportsForeignMediaItems(PRBool *aSupportsForeignMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetSupportsForeignMediaItems(aSupportsForeignMediaItems); } \
   NS_IMETHOD GetCreationParameters(nsIPropertyBag2 * *aCreationParameters) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreationParameters(aCreationParameters); } \
   NS_IMETHOD GetFactory(sbILibraryFactory * *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetFactory(aFactory); } \
@@ -55,7 +56,7 @@
   NS_IMETHOD GetMediaListTypes(nsIStringEnumerator * *aMediaListTypes) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaListTypes(aMediaListTypes); } \
   NS_IMETHOD RegisterMediaListFactory(sbIMediaListFactory *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->RegisterMediaListFactory(aFactory); } \
   NS_IMETHOD Optimize(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Optimize(); } \
-  NS_IMETHOD Sync(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Sync(); } \
+  NS_IMETHOD Flush(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Flush(); } \
   NS_IMETHOD BatchCreateMediaItems(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItems(aURIArray, aPropertyArrayArray, aAllowDuplicates, _retval); } \
   NS_IMETHOD BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListener *aListener, nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsAsync(aListener, aURIArray, aPropertyArrayArray, aAllowDuplicates); } 
 
@@ -102,7 +103,7 @@ public:
   NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_SBILOCALDATABASEMEDIALISTCOPYLISTENER
 
-  sbDeviceLibrary();
+  sbDeviceLibrary(sbIDevice* aDevice);
   virtual ~sbDeviceLibrary();
 
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mDeviceLibrary)
@@ -188,6 +189,11 @@ private:
    *        location under the users profile.
    */
   nsCOMPtr<sbILibrary> mDeviceLibrary;
+
+  /**
+   * \brief the device this library belongs to
+   */
+  nsCOMPtr<sbIDevice> mDevice;
 
   /**
    * \brief A list of listeners.

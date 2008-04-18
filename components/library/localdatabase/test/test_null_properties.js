@@ -36,11 +36,11 @@ function runTest () {
   library.clear();
 
   var item = library.createMediaItem(newURI("http://foo.com/"));
-  library.sync();
+  library.flush();
   testResource(library, item.guid);
 
   var list = library.createMediaList("simple");
-  library.sync();
+  library.flush();
   testResource(library, list.guid);
 }
 
@@ -58,7 +58,7 @@ function testResource(library, guid) {
   r.setProperty(nullprop, null);
   assertEqual(r.getProperties().length, originalLength);
   assertEqual(r.getProperty(nullprop), null);
-  library.sync();
+  library.flush();
   assertEqual(countProperties(mediaItemId), originalProps);
 
   var library2 = createLibrary("test_null_properties", null, false);
@@ -69,7 +69,7 @@ function testResource(library, guid) {
   r.setProperty(nullprop, "");
   assertEqual(r.getProperties().length, originalLength + 1);
   assertEqual(r.getProperty(nullprop), "");
-  library.sync();
+  library.flush();
   assertEqual(countProperties(mediaItemId), originalProps + 1);
 
   var library3 = createLibrary("test_null_properties", null, false);
@@ -80,7 +80,7 @@ function testResource(library, guid) {
   r.setProperty(nullprop, null);
   assertEqual(r.getProperties().length, originalLength);
   assertEqual(r.getProperty(nullprop), null);
-  library.sync();
+  library.flush();
   assertEqual(countProperties(mediaItemId), originalProps);
 
   var library4 = createLibrary("test_null_properties", null, false);
@@ -92,7 +92,7 @@ function testResource(library, guid) {
   r.setProperty(SBProperties.contentMimeType, null);
   assertEqual(r.getProperties().length, originalLength);
   assertEqual(r.getProperty(SBProperties.contentMimeType), null);
-  library.sync();
+  library.flush();
 
   var library5 = createLibrary("test_null_properties", null, false);
   var r5 = library5.getItemByGuid(guid);
@@ -111,7 +111,7 @@ function testResource(library, guid) {
   r.setProperty(SBProperties.contentMimeType, null);
   assertEqual(r.getProperties().length, originalLength);
   assertEqual(r.getProperty(SBProperties.contentMimeType), null);
-  library.sync();
+  library.flush();
 
   var library7 = createLibrary("test_null_properties", null, false);
   var r7 = library7.getItemByGuid(guid);

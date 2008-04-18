@@ -22,23 +22,14 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = strings \
-          domevents \
-          prompter \
-          proxy \
-          threads \
-          variant \
-          windowwatcher \
-          xpcom \
+SUBDIRS = src \
           $(NULL)
-
-SUBDIRDEPS = prompter : windowwatcher
 
 include $(topsrcdir)/build/rules.mk
