@@ -50,9 +50,13 @@ function runTest() {
   
   // Bogus files
   var fakeFile = newAppRelativeFile("testharness/metadatamanager/errorcases/fake-file.mp3");
+  fakeFile = getFileCopy(fakeFile, "fake-file-temp.mp3");
   files.push(fakeFile);
+  filesToRemove.push(fakeFile);
   var corruptFile = newAppRelativeFile("testharness/metadatamanager/errorcases/corrupt.mp3");
+  corruptFile = getFileCopy(corruptFile, "corrupt-file-temp.mp3");
   files.push(corruptFile);
+  filesToRemove.push(corruptFile);
   
   // Misc file permissions
   file = newAppRelativeFile("testharness/metadatamanager/errorcases/access-tests.mp3");  
