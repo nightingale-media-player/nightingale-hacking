@@ -60,6 +60,8 @@ STATIC_LIB = $(target_name)$(LIB_SUFFIX)
 
 STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbBaseDeviceHelper.js
+SONGBIRD_COMPONENTS = $(srcdir)/sbBaseDeviceHelper.js \
+                      $(srcdir)/sbDeviceErrorMonitor.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

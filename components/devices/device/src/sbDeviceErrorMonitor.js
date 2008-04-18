@@ -1,0 +1,301 @@
+/** vim: ts=2 sw=2 expandtab
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+
+/**
+ * \file sbDeviceErrorMonitor.js
+ * \brief This service monitors devices for errors and stores them for easy
+ *        access later.
+ *
+ */
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
+if (typeof(Ce) == "undefined")
+  var Ce = Components.Exception;
+
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+
+var deviceErrorMonitorConfig = {
+  className:      "Songbird Device Error Monitor Service",
+  cid:            Components.ID("{7a2a55d1-0270-4789-bc7c-12ffaa19b4cd}"),
+  contractID:     "@songbirdnest.com/device/error-monitor-service;1",
+  
+  ifList: [ Ci.sbIDeviceEventListener,
+            Ci.nsIObserver ],
+            
+  categoryList:
+  [
+    {
+      category: 'app-startup',
+      entry: 'service-device-error-monitor',
+      value: 'service,@songbirdnest.com/device/error-monitor-service;1'
+    }
+  ]
+};
+
+function deviceErrorMonitor () {
+  this._initialized = false;
+  var obsSvc = Cc['@mozilla.org/observer-service;1']
+                 .getService(Ci.nsIObserverService);
+
+  // We want to wait untill profile-after-change to initialize
+  obsSvc.addObserver(this, 'profile-after-change', false);
+  obsSvc.addObserver(this, 'quit-application', false);
+}
+
+deviceErrorMonitor.prototype = {
+  // XPCOM stuff
+  classDescription: deviceErrorMonitorConfig.className,
+  classID: deviceErrorMonitorConfig.cid,
+  contractID: deviceErrorMonitorConfig.contractID,
+  _xpcom_categories: deviceErrorMonitorConfig.categoryList,
+
+  // Internal properties
+  _deviceManagerSvc: null,
+  _deviceList: [],
+  _sbStrings: null,
+  
+  // Internal functions
+  
+  /**
+   * \brief Initialize the deviceErrorMonitor service.
+   */
+  _init: function deviceErrorMonitor__init() {
+    this._deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                               .getService(Ci.sbIDeviceManager2);
+    this._deviceManagerSvc.addEventListener(this);
+    var sbs = Cc["@mozilla.org/intl/stringbundle;1"]
+                .getService(Ci.nsIStringBundleService);
+    this._sbStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+  },
+
+  /**
+   * \brief Shutdown (cleanup) the deviceErrorMonitorService.
+   */
+  _shutdown: function deviceErrorMonitor__shutdown() {
+    this._deviceManagerSvc.removeEventListener(this);
+    while(this._deviceList.length > 0) {
+      if (this._deviceList[0].device) {
+        this._removeDevice(this._deviceList[0].device);
+      }
+    }
+  },
+
+  /**
+   * \brief Adds a device that has just connected to the list of available
+   *        devices to monitor for errors.
+   *
+   * \param aDevice Device to add to the list.
+   */
+  _addDevice: function deviceErrorMonitor__addDevice(aDevice) {
+    var devIndex = this._findDeviceIndex(aDevice);
+    if (devIndex == -1) {
+
+      var deviceEventTarget = aDevice.QueryInterface(Ci.sbIDeviceEventTarget);
+      if (deviceEventTarget) {
+        deviceEventTarget.addEventListener(this);
+      }
+      var newDeviceObj = {};
+      newDeviceObj.device = aDevice;
+      newDeviceObj.errorList = [];
+      this._deviceList.push(newDeviceObj);
+    }
+  },
+  
+  /**
+   * \brief Remove a device from the list of available devices to monitor for
+   *        errors.
+   *
+   * \params aDevice Device to remove from the list.
+   */
+  _removeDevice: function deviceErrorMonitor__removeDevice(aDevice) {
+    var devIndex = this._findDeviceIndex(aDevice);
+    if (devIndex > -1) {
+
+      var device = this._deviceList[devIndex].device;
+      var deviceEventTarget = aDevice.QueryInterface(Ci.sbIDeviceEventTarget);
+      if (deviceEventTarget) {
+        deviceEventTarget.removeEventListener(this);
+      }
+      this._deviceList.splice(devIndex, 1);
+    }
+  },
+  
+  /**
+   * \brief Finds a device index in the device list.
+   *
+   * \param aDevice Device to locate in the list.
+   * \returns index in _deviceList aDevice is located
+   */
+  _findDeviceIndex: function deviceErrorMonitor__findDeviceIndex(aDevice) {
+    for (var i = 0; i < this._deviceList.length; i++) {
+      if (this._deviceList[i].device == aDevice) {
+        return i;
+      }
+    }
+    return -1;
+  },
+
+  /**
+   * \brief Save an error in the list of errors for a device.
+   *
+   * \param aDeviceEvent Event from the device.
+   * \param aErrorMsg Error Message to display with the item.
+   */
+  _logError: function deviceErrorMonitor__logError(aDeviceEvent, aErrorMsg) {
+    var device = aDeviceEvent.target.QueryInterface(Ci.sbIDevice);
+    if (device) {
+      var devIndex = this._findDeviceIndex(device);
+      if (devIndex > -1) {
+        var mediaItem = aDeviceEvent.data.QueryInterface(Ci.sbIMediaItem);
+        var mediaURL = mediaItem.getProperty(SBProperties.contentURL);
+        mediaURL = decodeURIComponent(mediaURL);
+        var fullErrorMsg = aErrorMsg + ": " + mediaURL;
+
+        this._deviceList[devIndex].errorList.push(fullErrorMsg);
+      }
+    }
+  },
+
+  /**
+   * \brief Gets an error string from the string bundle.
+   *
+   * \param aStringId the id of the string to get with out the device.error.
+   * \returns an error string or the full string key if not available.
+   */
+  _getErrorString: function deviceErrorMonitor__getErrorString(aStringId) {
+    var stringKey = "device.errror.";
+    var errorString = aStringId;
+    try {
+      errorString = this._sbStrings.GetStringFromName(stringKey + aStringId);
+    } catch (err) {
+      errorString = stringKey;
+    }
+    return errorString;
+  },
+
+  // sbIDeviceErrorMonitor
+  
+  /**
+   * \brief Checks to see if a device has had any recent errors.
+   *
+   * \param aDevice device to check for errors on.
+   * \returns true if any errors are currently registered for this device.
+   */
+  deviceHasErrors: function deviceErrorMonitor_deviceHasErrors(aDevice) {
+    var errorItems = Cc["@mozilla.org/array;1"]
+                            .createInstance(Ci.nsIMutableArray);
+    var devIndex = this._findDeviceIndex(aDevice);
+    
+    if (devIndex > -1) {
+      if (this._deviceList[devIndex].errorList.length > 0) {
+        return true;
+      }
+    }
+    return false;
+  },
+
+  /**
+   * \brief Gets an array of strings (nsISupportsString) that indicate errors
+   *        that have happend on this device recently.
+   *
+   * \param aDevice device to get error list from.
+   * \returns array of error strings, empty if no errors exist yet.
+   */
+  getErrorsForDevice: function deviceErrorMonitor_getErrorsForDevice(aDevice) {
+    var errorItems = Cc["@mozilla.org/array;1"]
+                            .createInstance(Ci.nsIMutableArray);
+    var devIndex = this._findDeviceIndex(aDevice);
+    
+    if (devIndex > -1) {
+      for(var i = 0; i < this._deviceList[devIndex].errorList.length; i++) {
+        var errorString = this._deviceList[devIndex].errorList[i];
+        errorItems.appendElement(errorString, false);
+      }
+    }
+    
+    return errorItems;
+  },
+
+  // sbIDeviceEventListener
+  onDeviceEvent: function deviceErrorMonitor_onDeviceEvent(aDeviceEvent) {
+    switch(aDeviceEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED:
+        var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
+        this._addDevice(device);
+      break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED:
+        var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
+        this._removeDevice(device);
+      break;
+    
+      // And error has occured, we need to store it for later
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ACCESS_DENIED:
+        this._logError(aDeviceEvent, this._getErrorString("access_denied"));
+      break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_NOT_ENOUGH_FREESPACE:
+        this._logError(aDeviceEvent, this._getErrorString("not_enough_free_space"));
+      break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_NOT_AVAILABLE:
+        this._logError(aDeviceEvent, this._getErrorString("not_available"));
+      break;
+    }
+  },
+
+  // nsIObserver
+  observe: function deviceErrorMonitor_observer(subject, topic, data) {
+    var obsSvc = Cc['@mozilla.org/observer-service;1']
+                   .getService(Ci.nsIObserverService);
+                   
+    switch (topic) {
+      case 'quit-application':
+        obsSvc.removeObserver(this, 'quit-application');
+        this._shutdown();
+      break;
+      case 'profile-after-change':
+        obsSvc.removeObserver(this, 'profile-after-change');
+        this._init();
+      break;
+    }
+  },
+  
+  // nsISupports
+  QueryInterface: XPCOMUtils.generateQI(deviceErrorMonitorConfig.ifList)
+};
+
+/**
+ * /brief XPCOM initialization code
+ */
+function NSGetModule(compMgr, fileSpec) {
+  return XPCOMUtils.generateModule([deviceErrorMonitor]);
+}

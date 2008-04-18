@@ -1,0 +1,309 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<!-- ***************************************************************************
+ *
+ * Device error media dialog box.
+ *
+ *   This dialog box presents a list of media that has caused an error, possibly
+ * a transfer or update error.
+ * Dialog box arguments are passed in using an nsIDialogParamBlock with the
+ * following parameters:
+ *
+ *   String                     String parameters.
+ *     options                  Comma separated list of options.
+ *       windowTitle            Title of the window.
+ *       listLabel              Label that goes above the listbox.
+ *       errorMsg               Message displayed above the listbox.
+ *       showAgainMsg           Message displayed beside check box.
+ *       maxRows                Maximum number of rows to show at a time.
+ *       allowDisable           Allow user to disable dialog box.
+ *   objects                    nsISupports parameters.
+ *     nsIDevice                Device object.
+ *     nsIArray                 Array of error details (nsISupportsString).
+ *
+ *************************************************************************** -->
+
+<!-- Unsupported media dialog box. -->
+<dialog
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  id="device_error_dialog"
+  hidechrome="true"
+  flex="1"
+  type="songbird"
+  buttons="accept"
+  ondialogaccept="onExit();"
+  onload="deviceErrorDlg.onLoad();"
+  onunload="deviceErrorDlg.onUnload();">
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <!-- Use Songbird window region. -->
+  <windowregion/>
+
+  <vbox>
+
+    <!-- Dialog box description. -->
+    <description id="error_msg"/>
+
+    <!-- Unsupported media list. -->
+    <sb-closable-box id="error_listbox_box">
+      <listbox id="error_listbox" flex="1"/>
+    </sb-closable-box>
+
+    <!-- Dialog enable checkbox. -->
+    <checkbox id="dialog_enable"
+              checked="true"
+              hidden="true"/>
+
+  </vbox>
+
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the Songbird services. -->  
+  <script type="application/x-javascript"
+          src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/windowUtils.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+
+  <!-- Unsupported media dialog services. -->
+  <script><![CDATA[
+
+    //
+    // Defs.
+    //
+
+    if (typeof(Cc) == "undefined")
+      var Cc = Components.classes;
+    if (typeof(Ci) == "undefined")
+      var Ci = Components.interfaces;
+    if (typeof(Cr) == "undefined")
+      var Cr = Components.results;
+    if (typeof(Cu) == "undefined")
+      var Cu = Components.utils;
+
+    Cu.import("resource://app/components/sbProperties.jsm");
+
+    //
+    // Unsupported media dialog services object.
+    //
+
+    var deviceErrorDlg = {
+
+      //
+      // Object fields.
+      //
+      //   _device              sbIDevice object.
+      //   _options             Dialog options object.
+      //   _friendlyName        Device friendly name.
+      //
+
+      _device: null,
+      _options: null,
+      _friendlyName: null,
+
+
+      //------------------------------------------------------------------------
+      //
+      // Public functions.
+      //
+      //------------------------------------------------------------------------
+
+      /**
+       * \brief Handle load events.
+       */
+
+      onLoad: function deviceErrorDlg_onLoad() {
+        if (!this._shouldShow()) {
+          window.close();
+        }
+        
+        // Get the UI parameters.
+        var dialogPB = window.arguments[0].QueryInterface
+                                             (Ci.nsIDialogParamBlock);
+        this._device = dialogPB.objects.queryElementAt(0, Ci.sbIDevice);
+        var errorItems = dialogPB.objects.queryElementAt(1, Ci.nsIArray);
+
+        // Decode the options.
+        this._options = {};
+        this._options.listLabel = SBString("device.error.dialog.listbox.caption");
+        this._options.windowTitle = SBString("device.error.dialog.title");
+        this._options.errorMessage = SBFormattedString("device.error.dialog.msg",
+                                          [ errorItems.length,
+                                            this._getDeviceFriendlyName() ]);
+        this._options.showAgainMsg = SBString("device.error.dialog.enable");
+        this._options.maxRows = 9;
+        this._options.allowDisable = false;
+        
+        var options = dialogPB.GetString(0);
+        if (options) {
+          options = options.split(",");
+          for (var i = 0; i < options.length; i++) {
+            var keyValue = options[i].split("=");
+            if (keyValue && keyValue[1]) {
+              this._options[keyValue[0]] = keyValue[1];
+            } else {
+              this._options[options[i]] = true;
+            }
+          }
+        }
+
+        // Set the media listbox box label.
+        var listboxBoxElem = document.getElementById("error_listbox_box");
+        listboxBoxElem.setAttribute("label", this._options.listLabel);
+
+        // Set the dialog message.
+        var dialogMsgTextNode = document.createTextNode(this._options.errorMessage);
+        var dialogMsgElem = document.getElementById("error_msg");
+        dialogMsgElem.appendChild(dialogMsgTextNode);
+
+        // Set the Show Again check box label
+        var showAgainElem = document.getElementById("dialog_enable");
+        showAgainElem.setAttribute("label", this._options.showAgainMsg);
+        
+        // Set the window title
+        var windowTitle = document.getElementById('dialog-titlebar');
+        windowTitle.title = this._options.windowTitle;
+        
+        // Fill the unsupported media listbox.
+        var listboxElem = document.getElementById("error_listbox");
+        for (var i = 0; i < errorItems.length; i++) {
+          var errorDetail;
+          try {
+            errorDetail = errorItems.queryElementAt(i, Ci.nsISupportsString)
+                                    .toString();
+          } catch (err) {
+            errorDetail = SBString("device.error.dialog.unknown_error");
+          }
+
+          // Add the error to the listbox.
+          listboxElem.appendItem(errorDetail);
+        }
+
+        // Set the number of device error listbox rows.
+        var numRows = errorItems.length;
+        if (numRows > this._options.maxRows)
+          numRows = this._options.maxRows;
+        listboxElem.setAttribute("rows", numRows + 1);
+
+        // Show the dialog enable checkbox.
+        if (this._options.allowDisable) {
+          var dialogEnableElem = document.getElementById("dialog_enable");
+          dialogEnableElem.hidden = false;
+        }
+      },
+
+
+      /**
+       * \brief Handle unload events.
+       */
+
+      onUnload: function deviceErrorDlg_onUnload() {
+        // Check if this dialog should be disabled.
+        if (this._options.allowDisable) {
+          var dialogEnableElem = document.getElementById("dialog_enable");
+          if (!dialogEnableElem.checked)
+            this._disableDialog();
+        }
+      },
+
+
+      //------------------------------------------------------------------------
+      //
+      // Internal functions.
+      //
+      //------------------------------------------------------------------------
+
+      /**
+       * \brief Return the device friendly name.
+       *
+       * \return Device friendly name.
+       */
+
+      _getDeviceFriendlyName: function
+                                deviceErrorDlg__getDeviceFriendlyName() {
+        var friendlyName
+        try {
+          friendlyName = this._device.properties.friendlyName;
+        } catch (e) {
+          friendlyName = SBString("device.error.dialog.unknown_error");
+        }
+        return friendlyName;
+      },
+
+      /**
+       * \brief Check if the disable dialog preference is set
+       */
+      _shouldShow: function deviceErrorDlg__shouldShow() {
+        var prefBranch  = Cc["@mozilla.org/preferences-service;1"]
+                            .getService(Ci.nsIPrefBranch);
+        var shouldShow = true;
+        try {
+          shouldShow = prefBranch.getBoolPref("songbird.device.error.dialog.shouldShow");
+        } catch (err) {
+        }
+        
+        return shouldShow;
+      },
+
+      /**
+       * \brief Disable this dialog from being presented for the device.
+       */
+
+      _disableDialog: function deviceErrorDlg__disableDialog() {
+        var prefBranch  = Cc["@mozilla.org/preferences-service;1"]
+                            .getService(Ci.nsIPrefBranch);
+        prefBranch.setBoolPref("songbird.device.error.dialog.shouldShow", false);
+      }
+    };
+
+  ]]></script>
+
+</dialog>
