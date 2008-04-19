@@ -183,11 +183,16 @@ function test_request(device) {
 }
 
 function test_library(device) {
+  if (!device.connected)
+    device.connect();
   assertEqual(device,
               device.content
                     .libraries
                     .queryElementAt(0, Ci.sbIDeviceLibrary)
                     .device);
+  // stop a circular reference
+  if (device.connected)
+    device.disconnect();
 }
 
 function createPropertyBag(aParams) {

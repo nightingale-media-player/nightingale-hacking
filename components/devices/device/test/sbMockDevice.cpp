@@ -113,6 +113,13 @@ NS_IMETHODIMP sbMockDevice::Connect()
 NS_IMETHODIMP sbMockDevice::Disconnect()
 {
   NS_ENSURE_STATE(mIsConnected);
+  
+  nsresult rv;
+  if (mContent) {
+    rv = mContent->Finalize();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
   mIsConnected = PR_FALSE;
   return NS_OK;
 }
