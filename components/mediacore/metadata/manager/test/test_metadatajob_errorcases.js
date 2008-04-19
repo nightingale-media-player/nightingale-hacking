@@ -67,7 +67,12 @@ function runTest() {
   
   var writeonly = getFileCopy(file, "writeonly.mp3");
   writeonly.permissions = 0200;
-  files.push(writeonly);
+  // If we aren't able to set write only, don't bother with this test (e.g. on windows)
+  if (writeonly.permissions == 0200) {
+    files.push(writeonly);
+  } else {
+    log("MetadataJob_ErrorCases: platform does not support write-only.");
+  }
   filesToRemove.push(writeonly);
   
   var noaccess = getFileCopy(file, "noaccess.mp3");
@@ -117,7 +122,7 @@ function runTest() {
 
     // print errors, since otherwise they will be eaten by the observe call
     } catch (e) {
-      dump("\nERROR: " + e + "\n");
+      log("\nERROR: " + e + "\n");
       assertEqual(true, false);
     }
   }
@@ -146,7 +151,7 @@ function runTest() {
 
     // print errors, since otherwise they will be eaten by the observe call
     } catch (e) {
-      dump("\nERROR: " + e + "\n");
+      log("\nERROR: " + e + "\n");
       assertEqual(true, false);
     }
   }
@@ -169,7 +174,7 @@ function runTest() {
       var libraryChangeset = diffingService.createChangeset(library2, 
                                                             library1);
       var changes = libraryChangeset.changes;
-      dump("\n\n\nMetadataJob_ErrorCases: There are " + changes.length + 
+      log("\n\n\nMetadataJob_ErrorCases: There are " + changes.length + 
            " differences between library1 and library2.\n\n");
       var changesEnum = changes.enumerate();
       
@@ -181,19 +186,19 @@ function runTest() {
         var change = changesEnum.getNext().QueryInterface(Ci.sbILibraryChange);
         var propEnum = change.properties.enumerate();
         var url = change.sourceItem.contentSrc.spec;
-        dump("MetadataJob_ErrorCases: changes in " + 
+        log("MetadataJob_ErrorCases: changes in " + 
              url + "\n");
-        assertEqual(url == fakeFileURL || url == corruptFileURL, true);
         while(propEnum.hasMoreElements()) {
           var prop = propEnum.getNext().QueryInterface(Ci.sbIPropertyChange);
-          dump("\t\t[" + prop.id + "] " + prop.oldValue + " -> " + prop.newValue + "\n");
+          log("\t\t[" + prop.id + "] " + prop.oldValue + " -> " + prop.newValue + "\n");
         }
+        assertEqual(url == fakeFileURL || url == corruptFileURL, true);
       }
       assertEqual(changes.length, 2);
 
     // print errors, since otherwise they will be eaten by the observe call
     } catch (e) {
-      dump("\nERROR: " + e + "\n");
+      log("\nERROR: " + e + "\n");
       assertEqual(true, false);
     }
     finish();
