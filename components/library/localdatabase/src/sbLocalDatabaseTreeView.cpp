@@ -403,6 +403,37 @@ sbLocalDatabaseTreeView::Rebuild()
     }
   }
 
+  // Check to see if the sort of the underlying array has changed
+  nsCOMPtr<sbIPropertyArray> sort;
+  rv = mArray->GetCurrentSort(getter_AddRefs(sort));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIProperty> property;
+  rv = sort->GetPropertyAt(0, getter_AddRefs(property));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString arraySortProperty;
+  rv = property->GetId(arraySortProperty);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool arraySortDirectionIsAscending;
+  nsString direction;
+  rv = property->GetValue(direction);
+  NS_ENSURE_SUCCESS(rv, rv);
+  arraySortDirectionIsAscending = direction.EqualsLiteral("a");
+
+  if (!arraySortProperty.Equals(mCurrentSortProperty) ||
+      arraySortDirectionIsAscending != mCurrentSortDirectionIsAscending) {
+
+    mCurrentSortProperty = arraySortProperty;
+    mCurrentSortDirectionIsAscending = arraySortDirectionIsAscending;
+
+    rv = UpdateColumnSortAttributes(arraySortProperty,
+                                    arraySortDirectionIsAscending);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Update the number of rows in the tree widget
   PRUint32 oldRowCount = mArrayLength;
   rv = mArray->GetLength(&mArrayLength);
   NS_ENSURE_SUCCESS(rv, rv);
