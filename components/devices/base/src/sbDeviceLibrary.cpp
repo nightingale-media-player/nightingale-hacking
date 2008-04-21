@@ -90,8 +90,8 @@ static PRLogModuleInfo* gDeviceLibraryLog = nsnull;
 #endif /* PR_LOGGING */
 
 sbDeviceLibrary::sbDeviceLibrary(sbIDevice* aDevice)
-  : mLock(nsnull),
-    mDevice(aDevice)
+  : mDevice(aDevice),
+    mLock(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gDeviceLibraryLog) {

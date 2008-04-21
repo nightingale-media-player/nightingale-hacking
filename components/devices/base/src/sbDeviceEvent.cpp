@@ -42,8 +42,8 @@ sbDeviceEvent* sbDeviceEvent::CreateEvent() {
 }
 
 sbDeviceEvent::sbDeviceEvent()
- : mWasDispatched(PR_FALSE),
-   mType(0)
+ : mType(0),
+   mWasDispatched(PR_FALSE)
 {
   /* member initializers and constructor code */
 }

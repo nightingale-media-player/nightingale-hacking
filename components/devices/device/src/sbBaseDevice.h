@@ -130,7 +130,9 @@ public:
      */
     PRBool IsCountable() const;
     static TransferRequest * New();
-  private:
+
+    /* Don't allow manual construction/destruction, but allow sub-classing. */
+  protected:
     TransferRequest() {}
     ~TransferRequest(){} /* we're refcounted, no manual deleting! */
   };
