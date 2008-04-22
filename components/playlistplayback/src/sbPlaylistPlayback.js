@@ -1045,6 +1045,9 @@ PlaylistPlayback.prototype = {
         if(e.result == 0x80780001) {
           return true;
         }
+        else {
+          Components.utils.reportError(e);
+        }
       }
 
       LOG( "playURL() '" + core.getId() + "'(" + this.position + "/" +
