@@ -29,6 +29,12 @@
 
 #include <nsCOMPtr.h>
 #include <pratom.h>
+#include <nsServiceManagerUtils.h>
+#include <nsComponentManagerUtils.h>
+
+#include <sbILibrary.h>
+#include <sbILibraryManager.h>
+#include <nsStringAPI.h>
 
 class sbIMediaItem;
 class sbILibrary;
@@ -97,6 +103,33 @@ public:
   static nsresult GetContentLength(/* in */  sbIMediaItem * aItem,
                                    /* out */ PRInt64      * _retval);
 };
+
+/**
+ * Retrieves the main library
+ */
+inline
+nsresult GetMainLibrary(sbILibrary ** aMainLibrary) {
+  nsresult rv;
+  nsCOMPtr<sbILibraryManager> libManager =
+      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbILibrary> mainLibrary;
+  return libManager->GetMainLibrary(aMainLibrary);
+}
+
+/**
+ * Retrieves the ID of the main library
+ */
+inline
+nsresult GetMainLibraryId(nsAString & aLibraryId) {
+
+  nsCOMPtr<sbILibrary> mainLibrary;
+  nsresult rv = GetMainLibrary(getter_AddRefs(mainLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return mainLibrary->GetGuid(aLibraryId);
+}
 
 #endif // __SBLIBRARYUTILS_H__
 
