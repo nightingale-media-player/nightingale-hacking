@@ -1380,7 +1380,7 @@
                 Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                           .getService(Components.interfaces.sbIPlaylistPlayback);
              playbackService.playView(this.mediaListView, 
-                Math.max(this.mediaListView.treeView.selection.currentIndex, 0));
+                Math.max(this.mediaListView.selection.currentIndex, 0));
            }
          ]]>
         </body>
@@ -1474,8 +1474,7 @@
                 listView.selection.selectAll();
                 break;
               case "cmd_delete":
-                listView.removeSelectedMediaItems();
-                listView.selection.selectNone();
+                this._self.removeSelectedTracks();
                 break;
             }
           },
@@ -1630,7 +1629,6 @@
         <parameter name="evt"/>
         <body>
 <![CDATA[
-  this.treeView.selectionChanged();
   this.refreshCommands(true);
   this.sendSelChangeEvent();
 ]]>
@@ -2274,7 +2272,7 @@
       <method name="deselectAll">
         <body>
         <![CDATA[
-          this.treeView.selection.clearSelection();
+          this.mediaListView.selection.selectNone();
         ]]>
         </body>
       </method>
@@ -2870,8 +2868,8 @@
       <method name="highlightItem">
         <parameter name="aIndex" />
         <body><![CDATA[
-          this.treeView.selection.clearSelection();
-          this.treeView.selection.select(aIndex);
+          this.mediaListView.selection.selectNone();
+          this.mediaListView.selection.select(aIndex);
           this.treeView.selection.tree.ensureRowIsVisible(aIndex);
           ]]></body>
       </method>

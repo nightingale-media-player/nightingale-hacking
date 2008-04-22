@@ -789,9 +789,9 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
   rv = mLibrary->RemoveSelected(selection, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Invalidate current index as its row has been removed
+  // Invalidate current selection as it has been removed
   if (isSelected) {
-    rv = mSelection->SetCurrentIndex(-1);
+    rv = mSelection->SelectNone();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
