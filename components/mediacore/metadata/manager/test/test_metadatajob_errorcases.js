@@ -102,12 +102,12 @@ function runTest() {
   /////////////////////////////////////
   
   // Called when the first scan into library1 completes 
-  function onLib1ReadComplete(aSubject, aTopic, aData) {
-    assertEqual(aTopic, "complete");
-    assertTrue(aSubject.completed);
-    aSubject.removeObserver();
-    
+  function onLib1ReadComplete(aSubject, aTopic, aData) {    
     try {
+      assertEqual(aTopic, "complete");
+      assertTrue(aSubject.completed);
+      aSubject.removeObserver();
+      
       // Ok great, lets try writing back new metadata for all the files via library 2
       for each (var item in items2) {
         item.setProperty(SBProperties.artistName, SBProperties.artistName);
@@ -134,10 +134,11 @@ function runTest() {
     
   // Called when the write out from library2 completes
   function onWriteComplete(aSubject, aTopic, aData) {
-    assertEqual(aTopic, "complete");
-    assertTrue(aSubject.completed);
-    aSubject.removeObserver();
     try {
+      assertEqual(aTopic, "complete");
+      assertTrue(aSubject.completed);
+      aSubject.removeObserver();
+      
       // Nothing should have been written.  
       // Make sure by reimporting library2 and comparing it with library1 
       library2.clear();
@@ -163,10 +164,10 @@ function runTest() {
 
   // Called when reading metadata back into library2 completes
   function onLib2ReadComplete(aSubject, aTopic, aData) {
-    assertEqual(aTopic, "complete");
-    assertTrue(aSubject.completed);
-    aSubject.removeObserver();
     try {
+      assertEqual(aTopic, "complete");
+      assertTrue(aSubject.completed);
+      aSubject.removeObserver();
       // Make sure writing didnt break anything by
       // comparing library1 with library2
       var diffingService = Cc["@songbirdnest.com/Songbird/Library/DiffingService;1"]
@@ -208,12 +209,18 @@ function runTest() {
   // Get rid of temp files and finish the test //
   ///////////////////////////////////////////////
   function finish() {
-    // Clean up temp files
-    for each (file in filesToRemove) {
-      file.remove(true);
-    }
-    job = null;
-      
+    try {
+      // Clean up temp files
+      for each (file in filesToRemove) {
+        // Restore file perms so that windows can remove the file
+        file.permissions = 0600; 
+          
+        file.remove(true);
+      }
+      job = null;
+    } catch (e) {
+      log("ERROR: " + e + "\n");
+    }  
     testFinished();
   }
   
