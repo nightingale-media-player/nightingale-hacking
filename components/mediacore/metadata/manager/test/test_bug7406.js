@@ -53,9 +53,9 @@ function runTest () {
     "file:///media/sdb1/steve/old/steve/fakemp3s/Sigur%20R%C3%B3s/%C3%81g%C3%A6tis%20Byrjun/3%20Star%C3%A1lfur.mp3",
     "file:///media/sdb1/steve/old/steve/fakemp3s/Sigur%20R%C3%B3s/%C3%81g%C3%A6tis%20Byrjun/4%20Flugufrelsarinn.mp3",
     "file:///media/sdb1/steve/old/steve/fakemp3s/Sigur%20R%C3%B3s/%C3%81g%C3%A6tis%20Byrjun/5%20Ny%20Batteri.mp3",
-    prefix + "test1.mp3",
-    prefix + "test2.mp3",
-    prefix + "test3.mp3"
+    prefix + "MP3_ID3v1.mp3",
+    prefix + "MP3_ID3v23.mp3",
+    prefix + "FLAC.flac"
   ];
 
   gTestMetadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]

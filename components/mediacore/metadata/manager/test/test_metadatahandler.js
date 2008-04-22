@@ -34,8 +34,10 @@ function runTest () {
   gMetadataManager = Components.classes["@songbirdnest.com/Songbird/MetadataManager;1"]
                                 .getService(Components.interfaces.sbIMetadataManager);
                               
-  var file = newFileURI(newAppRelativeFile("testharness/metadatamanager/files/handlerTest.mp3"));
-  var handler = gMetadataManager.getHandlerForMediaURL(file.spec);
+  var file = newAppRelativeFile("testharness/metadatamanager/files/MP3_ID3v23.mp3");
+  file = getCopyOfFile(file, "handler_test.mp3");
+  var fileURL = newFileURI(file).spec;
+  var handler = gMetadataManager.getHandlerForMediaURL(fileURL);
   
   assertNotEqual(handler, null);
   
@@ -47,9 +49,9 @@ function runTest () {
   
   // Verify that initially all properties are X
   var expectedProperties = {};
-  expectedProperties[SBProperties.artistName] = "X";
-  expectedProperties[SBProperties.albumName] = "X";
-  expectedProperties[SBProperties.trackName] = "X";
+  expectedProperties[SBProperties.artistName] = "Songbird";
+  expectedProperties[SBProperties.albumName] = "Unit Test Classics";
+  expectedProperties[SBProperties.trackName] = "Sample";
   
   assertObjectIsSubsetOf(expectedProperties, SBProperties.arrayToJSObject(handler.props));
   
@@ -69,28 +71,26 @@ function runTest () {
   
   // Get a new handler just to make sure it isn't cheating somehow
   handler.close();
-  handler = gMetadataManager.getHandlerForMediaURL(file.spec);
+  handler = gMetadataManager.getHandlerForMediaURL(fileURL);
   handler.read();
   
   // Confirm that writing succeeded.
   assertObjectIsSubsetOf(newProperties, SBProperties.arrayToJSObject(handler.props));  
   
-  // reset the values for the next test.
-  handler.props.clear();
-  newProperties[SBProperties.albumName] = "X";
-  newProperties[SBProperties.artistName] = "X";
-  newProperties[SBProperties.trackName] = "X";
-  newProperties[SBProperties.year] = "1982";
-  newProperties[SBProperties.trackNumber] = "23";
-  SBProperties.addToArray(newProperties, handler.props);
-  
-  // Write this to disk
-  handler.write();
   handler.close();
-  handler = gMetadataManager.getHandlerForMediaURL(file.spec);
-  handler.read();
-  
-  // Confirm that writing succeeded.
-  assertObjectIsSubsetOf(newProperties, SBProperties.arrayToJSObject(handler.props));  
+  file.remove(false);
+}
 
+
+/**
+ * Copy the given folder to tempName, returning an nsIFile
+ * for the new location
+ */
+function getCopyOfFile(file, tempName) {
+  assertNotEqual(file, null);
+  file.copyTo(file.parent, tempName);
+  file = file.parent;
+  file.append(tempName);
+  assertEqual(file.exists(), true);
+  return file;
 }

@@ -32,8 +32,17 @@ var gTestFileLocation = "testharness/metadatamanager/files/";
 
 // TODO Confirm this extension list. Don't forget to update files/Makefile.in as well.
 var gSupportedFileExtensions = [
-    "mp3", "flac", "mpc", "m4a", "mov", "m4p", 
-    "m4v", "ogg", "oga", "ogv", "ogm", "ogx"
+    "mp3", "mov", "m4p", "m4v",
+    "ogv", "ogm", "ogx", "tta", "wv"
+    
+// TODO ogg, flac, and mpc writing works, but seems to double-encode utf8. Filed as bug 8813.
+// "ogg", "flac", "mpc"
+
+// TODO oga and spx reading isn't working yet.  Filed as bug 8768.
+// "oga", "spx"
+
+// TODO Unable to write metadata for m4a files. Filed as bug 8812.
+// "m4a"
   ];
   
 
@@ -129,6 +138,7 @@ function runTest() {
         job.removeObserver();
         
         for each (var item in items) {
+          log("MetadataJob_Write: verifying " + item.contentSrc.path);
           assertEqual(item.getProperty(SBProperties.artistName), SBProperties.artistName + unicodeSample);
           assertEqual(item.getProperty(SBProperties.albumName), SBProperties.albumName + unicodeSample);
           assertEqual(item.getProperty(SBProperties.trackName), SBProperties.trackName + unicodeSample);

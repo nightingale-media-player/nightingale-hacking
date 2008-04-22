@@ -32,23 +32,30 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = metadatamanager/files
 
 SONGBIRD_TESTS = $(srcdir)/*.mp3 \
-#                 $(srcdir)/*.wma \
+                 $(srcdir)/*.wma \
+                 $(srcdir)/*.flac \
+                 $(srcdir)/*.mpc \
+                 $(srcdir)/*.m4a \
+                 $(srcdir)/*.ogg \
+                 $(srcdir)/*.oga \
+                 $(srcdir)/*.aac \
+                 $(srcdir)/*.spx \
+                 $(srcdir)/*.tta \
+                 $(srcdir)/*.wav \
+                 $(srcdir)/*.wv \
+                 $(NULL)
+#                 $(srcdir)/*.ogv \
+#                 $(srcdir)/*.ogm \
+#                 $(srcdir)/*.ogx \
+#                 $(srcdir)/*.mov \
+#                 $(srcdir)/*.m4p \
+#                 $(srcdir)/*.m4v \
 #                 $(srcdir)/*.wmv \
 #                 $(srcdir)/*.asf \
 #                 $(srcdir)/*.asx \
 #                 $(srcdir)/*.avi \
-#                 $(srcdir)/*.flac \
-#                 $(srcdir)/*.mpc \
-#                 $(srcdir)/*.m4a \
-#                 $(srcdir)/*.mov \
-#                 $(srcdir)/*.m4p \
-#                 $(srcdir)/*.m4v \
-#                 $(srcdir)/*.ogg \
-#                 $(srcdir)/*.oga \
-#                 $(srcdir)/*.ogv \
-#                 $(srcdir)/*.ogm \
-#                 $(srcdir)/*.ogx \
-                 $(NULL)
+
+
 
 
 include $(topsrcdir)/build/rules.mk

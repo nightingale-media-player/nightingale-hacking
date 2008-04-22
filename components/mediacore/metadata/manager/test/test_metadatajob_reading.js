@@ -25,41 +25,60 @@
 */
 
 /**
- * \brief Test file
+ * \brief Test reading from various media formats
  */
 
-// The local and remote urls point to the same file, to be tested by the given matrix
-var gLocalFiles = [
-  "testharness/metadatamanager/files/test1.mp3",
-  "testharness/metadatamanager/files/test2.mp3",
-  "testharness/metadatamanager/files/test3.mp3"
-];
-var gLocalMediaItems = [];
+var gFileLocation = "testharness/metadatamanager/files/";
 
 var PORT_NUMBER = getTestServerPortNumber();
+var gRemoteURLPrefix = "http://localhost:" + PORT_NUMBER + "/";
 
-var gRemoteUrls = [
-  <>http://localhost:{PORT_NUMBER}/test1.mp3</>,
-  <>http://localhost:{PORT_NUMBER}/test2.mp3</>,
-  <>http://localhost:{PORT_NUMBER}/test3.mp3</>
-];
+var gDefaultMetadata = {};
+gDefaultMetadata[SBProperties.artistName] = "Songbird";
+gDefaultMetadata[SBProperties.albumName]  = "Unit Test Classics";
+gDefaultMetadata[SBProperties.trackName]  = "Sample";
+
+// Map of media files to expected metadata
+var gFiles = {};
+gFiles["FLAC.flac"] = gDefaultMetadata;
+gFiles["MP3_ID3v1.mp3"] = gDefaultMetadata;
+gFiles["MP3_ID3v1_and_ID3v2.mp3"] = gDefaultMetadata;
+gFiles["MP3_ID3v1_ID3v2_APE2.mp3"] = gDefaultMetadata;
+gFiles["MP3_ID3v1v22.mp3"] = gDefaultMetadata;
+gFiles["MP3_ID3v1v23.mp3"] = gDefaultMetadata;
+gFiles["MP3_ID3v1v24.mp3"] = gDefaultMetadata;
+gFiles["MP3_ID3v22.mp3"] = gDefaultMetadata;
+gFiles["MP3_ID3v23.mp3"] = gDefaultMetadata;
+gFiles["MP3_ID3v24.mp3"] = gDefaultMetadata;
+gFiles["MP3_NoTags.mp3"] = {};
+gFiles["MPEG4_Audio_Apple_Lossless.m4a"] = gDefaultMetadata;
+gFiles["MusePack.mpc"] = gDefaultMetadata;
+gFiles["Ogg_Vorbis.ogg"] = gDefaultMetadata;
+
+gFiles["TrueAudio.tta"] = gDefaultMetadata;
+gFiles["WavPack.wv"] = gDefaultMetadata;
+gFiles["\u2606\u2606\u2606\u2606\u2606\u2606.mp3"] = gDefaultMetadata;
+
+gFiles["MP3_ID3v1_Shift_JIS.mp3"] = {};
+gFiles["MP3_ID3v1_Shift_JIS.mp3"][SBProperties.artistName] = "\u7406\u591A";
+gFiles["MP3_ID3v1_Shift_JIS.mp3"][SBProperties.albumName]  = "Monologue -\u3082\u306E\u308D\u3049\u3050-";
+
+// TODO Not working at the moment. Filed as bug 8768
+// gFiles["Speex.spx"] = gDefaultMetadata;
+// gFiles["Ogg_FLAC.oga"] = gDefaultMetadata;
+
+
+
+var gLocalMediaItems = [];
 var gRemoteMediaItems = [];
-
-var gTestMatrix = [
-  [ "http://songbirdnest.com/data/1.0#artistName", "Chrysostomos" ],  
-  [ "http://songbirdnest.com/data/1.0#trackName", "Trisagion" ],                
-  [ "http://songbirdnest.com/data/1.0#albumName", "The Singing Dictionary" ]        
-];
+var gFileList = [];
 
 var gTestMetadataJobManager = null;
 var gTestMetadataJob = null;
 
 var gTestInterval = null;
 
-var gNumTestItems = gLocalFiles.length;
-
 var gServer;
-
 
 function runTest () {
   var gTestLibrary = createNewLibrary( "test_metadatajob" );
@@ -70,17 +89,16 @@ function runTest () {
               .createInstance(Ci.nsIHttpServer);
 
   gServer.start(PORT_NUMBER);
-  var file = newAppRelativeFile(gLocalFiles[0]).parent;
+  var file = newAppRelativeFile(gFileLocation);
   gServer.registerDirectory("/", file);
 
-  // Make sure you didn't screw up your data entry.
-  assertEqual( gNumTestItems, gRemoteUrls.length );
-  assertEqual( gNumTestItems, gTestMatrix.length );
-
-  for ( var i = 0; i < gNumTestItems; i++ )
-  {
-    // Add gLocalFiles to it
-    var localPath = newAppRelativeFile( gLocalFiles[ i ] );
+  for (var fileName in gFiles) {
+    log("MetadataJob_Reading: enqueueing file " + fileName);
+  
+    gFileList.push(fileName);
+  
+    // Add gFiles to it
+    var localPath = newAppRelativeFile( gFileLocation + fileName );
     assertNotEqual( localPath, null );
     var localPathURI = newFileURI( localPath );
     assertNotEqual( localPathURI, null );
@@ -88,71 +106,82 @@ function runTest () {
     assertNotEqual( localPathMI, null );
     gLocalMediaItems.push( localPathMI );
     gTestMediaItems.appendElement( localPathMI, false );
-/*    
-*/    
+
     // Add gRemoteUrls to it
-    var remotePathURI = newURI( gRemoteUrls[ i ] );
+    var remotePathURI = newURI( gRemoteURLPrefix + fileName );
     assertNotEqual( remotePathURI, null );
     var remotePathMI = gTestLibrary.createMediaItem( remotePathURI );
     assertNotEqual( remotePathMI, null );
     gRemoteMediaItems.push( remotePathMI );
     gTestMediaItems.appendElement( remotePathMI, false );
   }
+  
   // Request metadata for both local and remote urls at the same time.  Woo!
   gTestMetadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
                                 .getService(Components.interfaces.sbIMetadataJobManager);
-  gTestMetadataJob = gTestMetadataJobManager.newJob( gTestMediaItems, 5 );                                
-
+  gTestMetadataJob = gTestMetadataJobManager.newJob( gTestMediaItems, 5 );
   var gTestObserver = new MetadataJobObserver(onComplete);
+  
   // Set an observer to know when we complete
   gTestMetadataJob.setObserver( gTestObserver );
   testPending();
 }
 
 function onComplete(aSubject, aTopic, aData) {
-  gTestMetadataJob.removeObserver();
+  try { 
+    gTestMetadataJob.removeObserver();
 
-  // Are you really complete?
-  assertEqual( aTopic, "complete" );
-  assertTrue( gTestMetadataJob.completed );
-  
-  // Debug output.  Output everything before testing anything so we can see
-  // the full set of data instead of quitting on the first error.
-  for ( var i = 0; i < gNumTestItems; i++ )
-  {
-    var property = gTestMatrix[ i ][ 0 ];
-    var value = gTestMatrix[ i ][ 1 ];
-    var local = null, remote = null;
-    try {
-      local = gLocalMediaItems[ i ].getProperty( property );
-    } catch (e) { log( e ); }
-    try {
-      remote = gRemoteMediaItems[ i ].getProperty( property );
-    } catch (e) { log( e ); }
-    log( property + " -- test:" + value + " ?= local:" + local + " ?= remote:" + remote );
-  }
-  
-  // Compare the values from the items to the expected results in gTestMatrix
-  for ( var i = 0; i < gNumTestItems; i++ )
-  {
-    var property = gTestMatrix[ i ][ 0 ];
-    var value = gTestMatrix[ i ][ 1 ];
-    var local = null, remote = null;
-    try {
-      local = gLocalMediaItems[ i ].getProperty( property );
-    } catch (e) {}
-    try {
-      remote = gRemoteMediaItems[ i ].getProperty( property );
-    } catch (e) {}
-    assertEqual( value, local );
-    assertEqual( value, remote );
-  }
+    // Are you really complete?
+    assertEqual(aTopic, "complete");
+    assertTrue(gTestMetadataJob.completed);
+    
+    assertTrue(gFileList.length > 0);
+    
+    // Print metadata or all items so we can see the full set of data instead
+    // of just quitting on the first error
+    for (var i = 0; i < gFileList.length; i++) {
+      var fileName = gFileList[i];
+      var expectedProperties = gFiles[fileName];
+      var localProperties = 
+          SBProperties.arrayToJSObject(gLocalMediaItems[i].getProperties());
+      var remoteProperties = 
+          SBProperties.arrayToJSObject(gRemoteMediaItems[i].getProperties()); 
+      
+      log("\n\n--------------------------------------------------------------");
+      log("MetadataJob_Reading: results for " + fileName);
+      log("Expected properties: " + expectedProperties.toSource());
+      log("\nLocal properties: " + localProperties.toSource());
+      log("\nRemote properties: " + remoteProperties.toSource());
+    }
+    
+    // Now actually verify the metadata
+    for (var i = 0; i < gFileList.length; i++) {
+      var fileName = gFileList[i];
+      var expectedProperties = gFiles[fileName];
+      
+      log("MetadataJob_Reading: comparing local properties for " + fileName);
+      
+      // Verify local properties
+      assertObjectIsSubsetOf(expectedProperties, 
+          SBProperties.arrayToJSObject(gLocalMediaItems[i].getProperties()));
 
-  // So testing is complete
-  gTestMetadataJobManager = null;
-  gTestMetadataJob = null;
-  
-  gServer.stop();
-  
-  testFinished(); // Complete the testing
+      log("MetadataJob_Reading: comparing remote properties for " + fileName);
+            
+      // Verify remote properties
+      assertObjectIsSubsetOf(expectedProperties, 
+          SBProperties.arrayToJSObject(gRemoteMediaItems[i].getProperties()));      
+    }
+    
+
+    // So testing is complete
+    gTestMetadataJobManager = null;
+    gTestMetadataJob = null;
+    
+    gServer.stop();
+    
+  } catch (e) {
+    log("ERROR: " + e);
+    assertEqual(true, false);
+  }
+  testFinished(); 
 }

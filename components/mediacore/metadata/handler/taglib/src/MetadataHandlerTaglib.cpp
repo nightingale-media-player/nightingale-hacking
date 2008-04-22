@@ -153,16 +153,15 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
 
     /* Check for supported files. */
     if (   (_url.Find(".flac", PR_TRUE) != -1)
-        || (_url.Find(".mov", PR_TRUE) != -1)
         || (_url.Find(".mpc", PR_TRUE) != -1)
         || (_url.Find(".mp3", PR_TRUE) != -1)
         || (_url.Find(".m4a", PR_TRUE) != -1)
         || (_url.Find(".m4p", PR_TRUE) != -1)
-        || (_url.Find(".m4v", PR_TRUE) != -1)
         || (_url.Find(".oga", PR_TRUE) != -1)
-        || (_url.Find(".ogm", PR_TRUE) != -1)
-        || (_url.Find(".ogv", PR_TRUE) != -1)
-        || (_url.Find(".ogx", PR_TRUE) != -1)
+        || (_url.Find(".wv", PR_TRUE) != -1)
+        || (_url.Find(".spx", PR_TRUE) != -1)
+        || (_url.Find(".tta", PR_TRUE) != -1)
+        || (_url.Find(".oga", PR_TRUE) != -1)
         || (_url.Find(".ogg", PR_TRUE) != -1))
     {
         vote = 1;
