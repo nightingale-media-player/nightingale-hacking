@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
 //
 // BEGIN SONGBIRD GPL
@@ -24,7 +25,6 @@
 //
 -->
 
-<?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <window
