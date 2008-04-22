@@ -229,6 +229,13 @@ public:
   nsresult SetIgnoreMediaListListeners(PRBool aIgnoreListener);
 
   /**
+   * Set the ignore flag on all library listeners registered for the
+   * library for this device
+   * \param aIgnoreListener Ignore flag value.
+   */
+
+  nsresult SetIgnoreLibraryListener(PRBool aIgnoreListener);
+  /**
    * Set all media lists in the library hidden. This is useful
    * for hiding the lists during mounting operations.
    * \param aLibrary The library containing the media lists you wish to hide.
@@ -307,7 +314,10 @@ protected:
   PRUint32 mState;
   sbDeviceStatistics mDeviceStatistics;
   PRBool mAbortCurrentRequest;
-  
+#ifdef DEBUG
+  PRBool mMediaListListenerIgnored;
+  PRBool mLibraryListenerIgnored;
+#endif
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtable<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;

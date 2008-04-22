@@ -252,6 +252,10 @@ sbBaseDevice::sbBaseDevice() :
   mLastTransferID(0),
   mLastRequestPriority(PR_INT32_MIN),
   mAbortCurrentRequest(PR_FALSE)
+#ifdef DEBUG
+  , mMediaListListenerIgnored(PR_FALSE),
+  mLibraryListenerIgnored(PR_FALSE)
+#endif
 {
 #ifdef PR_LOGGING
   if (!gBaseDeviceLog) {
@@ -878,11 +882,28 @@ PLDHashOperator sbBaseDevice::EnumerateIgnoreMediaListListeners(nsISupports* aKe
 nsresult 
 sbBaseDevice::SetIgnoreMediaListListeners(PRBool aIgnoreListener)
 {
+  NS_ASSERTION((aIgnoreListener && !mMediaListListenerIgnored) || 
+                 (!aIgnoreListener && mMediaListListenerIgnored), 
+               "SetIgnoreMediaListListeners was called more than once with the same aIgnoreListener value");
+#ifdef DEBUG
+  mMediaListListenerIgnored = aIgnoreListener;
+#endif
   mMediaListListeners.EnumerateRead(sbBaseDevice::EnumerateIgnoreMediaListListeners, 
                                     &aIgnoreListener);
   return NS_OK;
 }
 
+nsresult
+sbBaseDevice::SetIgnoreLibraryListener(PRBool aIgnoreListener)
+{
+  NS_ASSERTION((aIgnoreListener && !mLibraryListenerIgnored) || 
+                 (!aIgnoreListener && mLibraryListenerIgnored), 
+               "SetIgnoreMediaListListeners was called more than once with the same aIgnoreListener value");
+#ifdef DEBUG
+  mLibraryListenerIgnored = aIgnoreListener;
+#endif
+  return mLibraryListener->SetIgnoreListener(aIgnoreListener);
+}
 
 nsresult 
 sbBaseDevice::SetMediaListsHidden(sbIMediaList *aLibrary, PRBool aHidden)
