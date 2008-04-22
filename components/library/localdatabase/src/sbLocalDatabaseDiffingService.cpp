@@ -819,16 +819,13 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
   // Ensure that all items present will be in the correct order
   // by explicity including a move operation for each item present 
   // the source.
-  nsCOMPtr<sbIMediaListView> sourceView;
-  rv = aSourceList->CreateView(nsnull, getter_AddRefs(sourceView));
+
+  PRUint32 sourceListLength = 0;
+  rv = aSourceList->GetLength(&sourceListLength);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  PRUint32 sourceViewLength = 0;
-  rv = sourceView->GetLength(&sourceViewLength);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  for(PRUint32 i = 0; i < sourceViewLength; ++i) {
-    rv = sourceView->GetItemByIndex(i, getter_AddRefs(item));
+  for(PRUint32 i = 0; i < sourceListLength; ++i) {
+    rv = aSourceList->GetItemByIndex(i, getter_AddRefs(item));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbILibraryChange> libraryChange;
