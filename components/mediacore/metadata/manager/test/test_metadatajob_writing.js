@@ -32,8 +32,10 @@ var gTestFileLocation = "testharness/metadatamanager/files/";
 
 // TODO Confirm this extension list. Don't forget to update files/Makefile.in as well.
 var gSupportedFileExtensions = [
-    "mp3", "mov", "m4p", "m4v",
-    "ogv", "ogm", "ogx", "tta", "wv"
+    "mp3", "mov", "m4p", "ogm", "ogx", "tta", "wv"
+    
+// TODO Taglib does not support video files
+// "m4v", "ogv"
     
 // TODO ogg, flac, and mpc writing works, but seems to double-encode utf8. Filed as bug 8813.
 // "ogg", "flac", "mpc"
