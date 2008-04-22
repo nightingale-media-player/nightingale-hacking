@@ -495,7 +495,13 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       // on windows, we leave this as an nsAString
       // beginreading doesn't promise to return a null terminated string
       // this is RFB
-      TagLib::FileRef f(NS_ConvertUTF16toUTF8(mMetadataPath).BeginReading());
+#if XP_WIN
+      nsAString &filePath = mMetadataPath;
+#else
+      nsCAutoString filePath = NS_ConvertUTF16toUTF8(mMetadataPath);
+#endif
+
+      TagLib::FileRef f(filePath.BeginReading());
       
       nsAutoString propertyValue;
       result = mpMetadataPropertyArray->GetPropertyValue(
