@@ -125,6 +125,7 @@ sbMacWindowZoomController.prototype = {
   _init: function() {
     // Listen to document dragging events, we need a closure when a message
     // is dispatched directly through the document object.
+    var self = this;
     this._windowdragexit = function(evt) {
       self._onWindowDragged();
     };
