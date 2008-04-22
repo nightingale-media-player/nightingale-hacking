@@ -445,16 +445,7 @@ try
   
   function onJumpToPlay(event) {
     var playlist = document.getElementById("jumpto.playlist");
-    var first=0;
-    var rangeCount = playlist.mediaListView.treeView.selection.getRangeCount();
-    if (rangeCount > 0)
-    {
-      var start = {};
-      var end = {};
-      playlist.mediaListView.treeView.selection.getRangeAt( 0, start, end );
-      first = start.value;
-    }
-        
+
     // check whether the user has selected an unfiltered entry, and if that's the case, reset the search and filters for the playlist.
     if (source_search == "" && source_filters.length == 0) {
       _resetSearchString(source_view);
@@ -462,7 +453,8 @@ try
       if (search_widget) search_widget.loadPlaylistSearchString();
     }
 
-    var mediaItem = playlist.mediaListView.getItemByIndex(first);
+    var mediaItem = playlist.mediaListView.selection.currentMediaItem;
+
     var rowid;
     if (!play_own_view) {
       if (sync_sort) 
