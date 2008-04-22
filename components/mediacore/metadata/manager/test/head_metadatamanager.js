@@ -141,3 +141,29 @@ MetadataJobObserver.prototype = {
 }
 
 
+/**
+ * Copy the given folder to tempName, returning an nsIFile
+ * for the new location
+ */
+function getCopyOfFolder(folder, tempName) {
+  assertNotEqual(folder, null);
+  folder.copyTo(folder.parent, tempName);
+  folder = folder.parent;
+  folder.append(tempName);
+  assertEqual(folder.exists(), true);
+  return folder;
+}
+
+
+/**
+ * Copy the given folder to tempName, returning an nsIFile
+ * for the new location
+ */
+function getCopyOfFile(file, tempName) {
+  assertNotEqual(file, null);
+  file.copyTo(file.parent, tempName);
+  file = file.parent;
+  file.append(tempName);
+  assertEqual(file.exists(), true);
+  return file;
+}

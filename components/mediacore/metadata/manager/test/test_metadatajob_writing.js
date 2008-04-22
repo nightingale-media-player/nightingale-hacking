@@ -57,6 +57,13 @@ function runTest() {
   // Make a copy of everything in the test file folder
   // so that our changes don't interfere with other tests
   var testFolder = getCopyOfFolder(newAppRelativeFile(gTestFileLocation), "_temp_writing_files");
+  
+  // Make a file with a unicode filename.  This would be checked in, except
+  // the windows build system can't handle unicode filenames.
+  var unicodeFile = testFolder.clone();
+  unicodeFile.append("MP3_ID3v23.mp3");
+  unicodeFile = getCopyOfFile(unicodeFile, "\u2606\u2606\u2606\u2606\u2606\u2606.mp3");
+  
 
   // Now find all the media files in our testing directory
   var urls = getMediaFilesInFolder(testFolder);
@@ -155,20 +162,6 @@ function runTest() {
     }));
   }));
   testPending();
-}
-
-
-/**
- * Copy the given folder to tempName, returning an nsIFile
- * for the new location
- */
-function getCopyOfFolder(folder, tempName) {
-  assertNotEqual(folder, null);
-  folder.copyTo(folder.parent, tempName);
-  folder = folder.parent;
-  folder.append(tempName);
-  assertEqual(folder.exists(), true);
-  return folder;
 }
 
 

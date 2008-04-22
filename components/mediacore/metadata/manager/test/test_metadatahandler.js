@@ -81,16 +81,3 @@ function runTest () {
   file.remove(false);
 }
 
-
-/**
- * Copy the given folder to tempName, returning an nsIFile
- * for the new location
- */
-function getCopyOfFile(file, tempName) {
-  assertNotEqual(file, null);
-  file.copyTo(file.parent, tempName);
-  file = file.parent;
-  file.append(tempName);
-  assertEqual(file.exists(), true);
-  return file;
-}

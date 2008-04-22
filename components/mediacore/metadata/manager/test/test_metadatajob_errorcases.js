@@ -50,22 +50,22 @@ function runTest() {
   
   // Bogus files
   var fakeFile = newAppRelativeFile("testharness/metadatamanager/errorcases/fake-file.mp3");
-  fakeFile = getFileCopy(fakeFile, "fake-file-temp.mp3");
+  fakeFile = getCopyOfFile(fakeFile, "fake-file-temp.mp3");
   files.push(fakeFile);
   filesToRemove.push(fakeFile);
   var corruptFile = newAppRelativeFile("testharness/metadatamanager/errorcases/corrupt.mp3");
-  corruptFile = getFileCopy(corruptFile, "corrupt-file-temp.mp3");
+  corruptFile = getCopyOfFile(corruptFile, "corrupt-file-temp.mp3");
   files.push(corruptFile);
   filesToRemove.push(corruptFile);
   
   // Misc file permissions
   file = newAppRelativeFile("testharness/metadatamanager/errorcases/access-tests.mp3");  
-  var readonly = getFileCopy(file, "readonly.mp3");
+  var readonly = getCopyOfFile(file, "readonly.mp3");
   readonly.permissions = 0400;
   files.push(readonly);
   filesToRemove.push(readonly);
   
-  var writeonly = getFileCopy(file, "writeonly.mp3");
+  var writeonly = getCopyOfFile(file, "writeonly.mp3");
   writeonly.permissions = 0200;
   // If we aren't able to set write only, don't bother with this test (e.g. on windows)
   if (writeonly.permissions == 0200) {
@@ -75,7 +75,7 @@ function runTest() {
   }
   filesToRemove.push(writeonly);
   
-  var noaccess = getFileCopy(file, "noaccess.mp3");
+  var noaccess = getCopyOfFile(file, "noaccess.mp3");
   noaccess.permissions = 0000;  
   files.push(noaccess);
   filesToRemove.push(noaccess);
@@ -243,18 +243,6 @@ function importFilesToLibrary(files, library) {
     items.push(library.createMediaItem(file));
   }
   return items;
-}
-
-
-/**
- * Duplicate the given file
- */
-function getFileCopy(file, newName) {
-  file.copyTo(file.parent, newName);
-  file = file.parent;
-  file.append(newName);
-  assertEqual(file.exists(), true);
-  return file;
 }
 
 

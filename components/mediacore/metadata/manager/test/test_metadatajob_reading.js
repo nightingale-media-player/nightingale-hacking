@@ -67,7 +67,7 @@ gFiles["MP3_ID3v1_Shift_JIS.mp3"][SBProperties.albumName]  = "Monologue -\u3082\
 // gFiles["Speex.spx"] = gDefaultMetadata;
 // gFiles["Ogg_FLAC.oga"] = gDefaultMetadata;
 
-
+var gFilesToRemove = [];
 
 var gLocalMediaItems = [];
 var gRemoteMediaItems = [];
@@ -84,6 +84,13 @@ function runTest () {
   var gTestLibrary = createNewLibrary( "test_metadatajob" );
   var gTestMediaItems = Components.classes["@mozilla.org/array;1"]
                                   .createInstance(Components.interfaces.nsIMutableArray);
+
+  // Make a file with a unicode filename.  This would be checked in, except
+  // the windows build system can't handle unicode filenames.
+  var unicodeFile = newAppRelativeFile(gFileLocation);
+  unicodeFile.append("MP3_ID3v23.mp3");
+  unicodeFile = getCopyOfFile(unicodeFile, "\u2606\u2606\u2606\u2606\u2606\u2606.mp3");
+  gFilesToRemove.push(unicodeFile);
 
   gServer = Cc["@mozilla.org/server/jshttp;1"]
               .createInstance(Ci.nsIHttpServer);
@@ -183,5 +190,14 @@ function onComplete(aSubject, aTopic, aData) {
     log("ERROR: " + e);
     assertEqual(true, false);
   }
+  
+  // Clean up temp files
+  try {
+    for each (file in gFilesToRemove) {
+      file.remove(false);
+    }
+  } catch (e) {
+    log("ERROR: " + e + "\n");
+  }  
   testFinished(); 
 }
