@@ -154,23 +154,51 @@ sbCommandLineHandler.prototype = {
       catch (e) {
         exception = e;
       }
+      
 
-      // Fake the sequence of observer notifications for app shutdown. This
-      // sequence should match that of canQuitApplication (from
-      // globalOverlay.js) and nsAppStartup::Quit (from nsAppStartup.cpp).
-      var os = Cc["@mozilla.org/observer-service;1"].
-               getService(Ci.nsIObserverService);
+      var platformStr = Cc["@mozilla.org/system-info;1"]
+                        .getService(Ci.nsIPropertyBag2).getProperty("name");
+      
+      // If we are on Mac, unfortunately the event-queue slows down to slug
+      // speed when there isn't a window open and we are shutting down. Since 
+      // there isn't a window being used on these unit tests - the hybrid
+      // Cocoa/Gecko event loop takes a long time (over 20 minutes) to kill the
+      // 100 or so threads that get spooled up during the test cases.
+      // 
+      // To fix this problem, we will use a nasty little hack. Open up the a
+      // plain window that closes itself after a couple of seconds. This fires
+      // the application shutdown procedure just as if we had closed the main
+      // Songbird window.
+      //
+      // Yes - I know this sucks, I hate myself a little more for doing this.
+      if (platformStr == "Darwin") {
+        var ww = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                 .getService(Ci.nsIWindowWatcher);
+        
+        ww.openWindow(null, 
+                      "chrome://songbird/content/xul/unitTestShutdownWin.xul", 
+                      "shutdownwin", "chrome", null);
+      }
+      else {
+        // Everything other than Mac, follow this 'standard' shutdown procedure:
+        //
+        // Fake the sequence of observer notifications for app shutdown. This
+        // sequence should match that of canQuitApplication (from
+        // globalOverlay.js) and nsAppStartup::Quit (from nsAppStartup.cpp).
+        var os = Cc["@mozilla.org/observer-service;1"].
+                 getService(Ci.nsIObserverService);
 
-      // We don't care if anyone tries to cancel quit...
-      var dummyCancelQuit = Cc["@mozilla.org/supports-PRBool;1"].
-                            createInstance(Ci.nsISupportsPRBool);
-      os.notifyObservers(dummyCancelQuit, "quit-application-requested", null);
+        // We don't care if anyone tries to cancel quit...
+        var dummyCancelQuit = Cc["@mozilla.org/supports-PRBool;1"].
+                              createInstance(Ci.nsISupportsPRBool);
+        os.notifyObservers(dummyCancelQuit, "quit-application-requested", null);
 
-      os.notifyObservers(null, "quit-application-granted", null);
+        os.notifyObservers(null, "quit-application-granted", null);
 
-      var appStartup = Cc["@mozilla.org/toolkit/app-startup;1"]
-                         .getService(Ci.nsIAppStartup);
-      appStartup.quit(Ci.nsIAppStartup.eAttemptQuit);
+        var appStartup = Cc["@mozilla.org/toolkit/app-startup;1"]
+                           .getService(Ci.nsIAppStartup);
+        appStartup.quit(Ci.nsIAppStartup.eAttemptQuit);
+      }
 
       if (exception) {
         throw Cr.NS_ERROR_ABORT;
