@@ -58,4 +58,12 @@ interface sbIDeviceErrorMonitor : nsISupports {
    * \returns array of error strings, empty if no errors exist yet.
    */
   nsIArray getErrorsForDevice(in sbIDevice aDevice);
+  
+  /**
+   * \brief Clears the array of error strings for a device.
+   *
+   * \param aDevice device to clear error list from.
+   */
+  void clearErrorsForDevice(in sbIDevice aDevice);
+  
 };

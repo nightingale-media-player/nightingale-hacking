@@ -59,16 +59,22 @@
     <content>
 
       <xul:groupbox sbid="device_progress_box" class="device-progress-groupbox"
-                    flex="1"
                     orient="horizontal">
 
         <!-- Device operation progress box. -->
-        <xul:vbox flex="1" pack="center" sbid="progress_information_box">
+        <xul:vbox pack="center"
+                  sbid="progress_information_box"
+                  class="device-progress-information-box">
 
           <!-- Progress text 1 label. -->
-          <xul:label observestarget="true"
+          <xul:label sbid="progress_text1_label"
+                     observestarget="true"
                      observeskey="text1"
                      observesattribute="value"
+                     crop="end"
+                     error="false"
+                     action="show_errors"
+                     onclick="DPW.onAction(event);"
                      class="dev-progress-text1-label"/>
 
           <!-- Operation progress meter. -->
@@ -83,6 +89,7 @@
           <xul:label observestarget="true"
                      observeskey="text2"
                      observesattribute="value"
+                     crop="end"
                      class="dev-progress-text2-label"/>
 
         </xul:vbox>

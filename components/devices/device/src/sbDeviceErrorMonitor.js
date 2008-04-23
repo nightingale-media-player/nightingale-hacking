@@ -34,12 +34,8 @@ if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
 if (typeof(Ci) == "undefined")
   var Ci = Components.interfaces;
-if (typeof(Cr) == "undefined")
-  var Cr = Components.results;
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
-if (typeof(Ce) == "undefined")
-  var Ce = Components.Exception;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
@@ -50,6 +46,7 @@ var deviceErrorMonitorConfig = {
   contractID:     "@songbirdnest.com/device/error-monitor-service;1",
   
   ifList: [ Ci.sbIDeviceEventListener,
+            Ci.sbIDeviceErrorMonitor,
             Ci.nsIObserver ],
             
   categoryList:
@@ -179,9 +176,13 @@ deviceErrorMonitor.prototype = {
         var mediaItem = aDeviceEvent.data.QueryInterface(Ci.sbIMediaItem);
         var mediaURL = mediaItem.getProperty(SBProperties.contentURL);
         mediaURL = decodeURIComponent(mediaURL);
-        var fullErrorMsg = aErrorMsg + ": " + mediaURL;
-
-        this._deviceList[devIndex].errorList.push(fullErrorMsg);
+        var errorString =  Cc["@mozilla.org/supports-string;1"]
+                             .createInstance(Ci.nsISupportsString);
+        errorString.data = this._sbStrings.formatStringFromName(
+                                                        "device.error.format",
+                                                        [aErrorMsg, mediaURL]);
+        dump("*** STEVO: logging error [" + errorString.data + "]\n");
+        this._deviceList[devIndex].errorList.push(errorString);
       }
     }
   },
@@ -193,13 +194,10 @@ deviceErrorMonitor.prototype = {
    * \returns an error string or the full string key if not available.
    */
   _getErrorString: function deviceErrorMonitor__getErrorString(aStringId) {
-    var stringKey = "device.errror.";
     var errorString = aStringId;
     try {
-      errorString = this._sbStrings.GetStringFromName(stringKey + aStringId);
-    } catch (err) {
-      errorString = stringKey;
-    }
+      errorString = this._sbStrings.GetStringFromName(aStringId);
+    } catch (err) {}
     return errorString;
   },
 
@@ -246,6 +244,19 @@ deviceErrorMonitor.prototype = {
     return errorItems;
   },
 
+  /**
+   * \brief Clears the array of error strings for a device.
+   *
+   * \param aDevice device to clear error list from.
+   */
+  clearErrorsForDevice: function deviceErrorMonitor_clearErrorsForDevice(aDevice) {
+    var devIndex = this._findDeviceIndex(aDevice);
+    
+    if (devIndex > -1) {
+      this._deviceList[devIndex].errorList = [];
+    }
+  },
+
   // sbIDeviceEventListener
   onDeviceEvent: function deviceErrorMonitor_onDeviceEvent(aDeviceEvent) {
     switch(aDeviceEvent.type) {
@@ -261,14 +272,26 @@ deviceErrorMonitor.prototype = {
     
       // And error has occured, we need to store it for later
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ACCESS_DENIED:
-        this._logError(aDeviceEvent, this._getErrorString("access_denied"));
+        this._logError(aDeviceEvent,
+                       this._getErrorString("device.error.access_denied"));
       break;
       case Ci.sbIDeviceEvent.EVENT_DEVICE_NOT_ENOUGH_FREESPACE:
-        this._logError(aDeviceEvent, this._getErrorString("not_enough_free_space"));
+        this._logError(aDeviceEvent,
+                       this._getErrorString("device.error.not_enough_free_space"));
       break;
       case Ci.sbIDeviceEvent.EVENT_DEVICE_NOT_AVAILABLE:
-        this._logError(aDeviceEvent, this._getErrorString("not_available"));
+        this._logError(aDeviceEvent,
+                       this._getErrorString("device.error.not_available"));
       break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ERROR_UNEXPECTED:
+        this._logError(aDeviceEvent,
+                       this._getErrorString("device.error.unexpected"));
+      break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE:
+        this._logError(aDeviceEvent,
+                       this._getErrorString("device.error.unsupported_type"));
+      break;
+
     }
   },
 
