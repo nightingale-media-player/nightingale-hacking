@@ -944,7 +944,7 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
                                     nsIPropertyBag2 *aRequestParameters,
                                     TransferRequest **aTransferRequest)
 {
-  NS_ENSURE_ARG_RANGE(aRequest, REQUEST_MOUNT, REQUEST_NEW_PLAYLIST);
+  NS_ENSURE_ARG_RANGE(aRequest, REQUEST_MOUNT, REQUEST_FACTORY_RESET);
   NS_ENSURE_ARG_POINTER(aRequestParameters);
   NS_ENSURE_ARG_POINTER(aTransferRequest);
 
