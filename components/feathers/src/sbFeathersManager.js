@@ -720,6 +720,23 @@ FeathersManager.prototype = {
       this._mappings[layoutURL] = {};
     }
     this._mappings[layoutURL][internalName] = {showChrome: aShowChrome, onTop: aOnTop};
+
+    // check if this layout/skin combination has already been seen, 
+    // if it hasn't then we want to switch to it in openPlayerWindow,
+    // so remember it
+    var branch = this.getFeatherPrefBranch(layoutURL, internalName);
+    var seen = false;
+    try {
+      seen = branch.getBoolPref("seen");
+    } catch (e) { }
+    if (!seen) {
+      branch.setBoolPref("seen", true);
+      if (!this._autoswitch) {
+        this._autoswitch = {};
+        this._autoswitch.skin = internalName;
+        this._autoswitch.layoutURL = layoutURL;
+      }
+    }
     
     // Notify observers
     this._onUpdate();
@@ -934,8 +951,16 @@ FeathersManager.prototype = {
    */
   openPlayerWindow: function openPlayerWindow() {
     
-    // First, check to make sure the current
-    // feathers are valid
+    this._init();
+
+    // First, check if we should auto switch to a new skin/layout
+    if (this._autoswitch) {
+      this._layoutDataRemote.stringValue = this._autoswitch.layoutURL;
+      this._skinDataRemote.stringValue = this._autoswitch.skin;
+      this._autoswitch = null;
+    } 
+    
+    // Check to make sure the current feathers are valid
     var layoutDescription = this.getLayoutDescription(this.currentLayoutURL);
     var skinDescription = this.getSkinDescription(this.currentSkinName);
     if (layoutDescription == null || skinDescription == null) {
