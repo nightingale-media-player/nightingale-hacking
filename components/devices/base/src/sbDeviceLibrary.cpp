@@ -315,10 +315,9 @@ sbDeviceLibrary::GetMgmtType(PRUint32 *aMgmtType)
   }
 
   // Double check that it is a valid number
-  if ( (signedMgmtType < sbIDeviceLibrary::MGMT_TYPE_MANUAL) ||
-       (signedMgmtType > sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS) ) {
-    return NS_ERROR_ILLEGAL_VALUE;
-  }
+  NS_ENSURE_ARG_RANGE(signedMgmtType,
+                      sbIDeviceLibrary::MGMT_TYPE_MANUAL,
+                      sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
 
   *aMgmtType = signedMgmtType;
   return NS_OK;
@@ -328,12 +327,12 @@ NS_IMETHODIMP
 sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
 {
   nsresult rv;
+  PRUint32 origMgmtType = sbIDeviceLibrary::MGMT_TYPE_MANUAL;
   
   // Check we are setting to a valid number
-  if ( (aMgmtType < sbIDeviceLibrary::MGMT_TYPE_MANUAL) ||
-       (aMgmtType > sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS) ) {
-    return NS_ERROR_ILLEGAL_VALUE;
-  }
+  NS_ENSURE_ARG_RANGE(aMgmtType,
+                      sbIDeviceLibrary::MGMT_TYPE_MANUAL,
+                      sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
 
   nsCString mgmtTypeKey(PREF_SYNC_MGMTTYPE);
 
@@ -351,7 +350,24 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  return syncListsBranch->SetIntPref( mgmtTypeKey.get(), aMgmtType );
+  rv = GetMgmtType(&origMgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = syncListsBranch->SetIntPref( mgmtTypeKey.get(), aMgmtType );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if ( (origMgmtType != aMgmtType) &&
+       (aMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) ) {
+    // sync
+    nsCOMPtr<sbIDevice> device;
+    rv = GetDevice(getter_AddRefs(device));
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ASSERTION(device,
+                 "sbDeviceLibrary::GetDevice returned success with no device");
+    rv = device->SyncLibraries();
+  }
+
+  return rv;
 }
 
 NS_IMETHODIMP
