@@ -33,6 +33,7 @@
 #define SB_PROPERTY_CONTENTURL                "http://songbirdnest.com/data/1.0#contentURL"
 #define SB_PROPERTY_CONTENTMIMETYPE           "http://songbirdnest.com/data/1.0#contentMimeType"
 #define SB_PROPERTY_CONTENTLENGTH             "http://songbirdnest.com/data/1.0#contentLength"
+#define SB_PROPERTY_HASH                      "http://songbirdnest.com/data/1.0#hash"
 #define SB_PROPERTY_TRACKNAME                 "http://songbirdnest.com/data/1.0#trackName"
 #define SB_PROPERTY_ALBUMNAME                 "http://songbirdnest.com/data/1.0#albumName"
 #define SB_PROPERTY_ARTISTNAME                "http://songbirdnest.com/data/1.0#artistName"

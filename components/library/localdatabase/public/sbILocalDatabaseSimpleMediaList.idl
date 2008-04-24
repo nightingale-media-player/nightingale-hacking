@@ -45,7 +45,7 @@ interface sbIPropertyArray;
 interface sbILocalDatabaseMediaListCopyListener : nsISupports
 {
   void onItemCopied(in sbIMediaItem aSourceItem, 
-                        in sbIMediaItem aDestItem);
+                    in sbIMediaItem aDestItem);
 };
 
 /**

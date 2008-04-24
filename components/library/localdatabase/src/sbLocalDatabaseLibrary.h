@@ -45,6 +45,7 @@
 #include <nsStringGlue.h>
 #include <sbIMediaListFactory.h>
 
+class nsICryptoHash;
 class nsIPropertyBag2;
 class nsIURI;
 class nsIWeakReference;
@@ -210,6 +211,7 @@ private:
   nsresult AddNewItemQuery(sbIDatabaseQuery* aQuery,
                            const PRUint32 aMediaItemTypeID,
                            const nsAString& aURISpecOrPrefix,
+                           const nsAString& aHash,
                            nsAString& _retval);
 
   nsresult AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
@@ -264,8 +266,16 @@ private:
   nsresult GetAllListsByType(const nsAString& aType, sbMediaListArray* aArray);
 
   nsresult FilterExistingURIs(nsIArray* aURIs, nsIArray** aFilteredURIs);
+  nsresult FilterExistingItems(nsIArray* aURIs, 
+                               const nsTArray<nsCString>& aHashes, 
+                               nsIArray** aFilteredURIs,
+                               nsTArray<nsCString>& aFilteredHashes);
 
   nsresult GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID);
+  nsresult GetGuidFromHash(const nsACString& aHash, nsAString &aGUID);
+
+  nsresult GetHashesForContentURIs(nsIArray* aURIs, nsTArray<nsCString>& aHashes);
+  nsresult GetHashFromContentURI(nsIURI* aURI, nsACString& aHash);
 
   nsresult Shutdown();
 
@@ -314,6 +324,9 @@ private:
 
   // Get media item IDs for a URL query
   nsString mGetGuidsFromContentUrl;
+
+  // Get media item GUID for a hash query.
+  nsString mGetGuidsForHash;
 
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
 
@@ -426,6 +439,7 @@ public:
 
   nsresult InitQuery(sbIDatabaseQuery* aQuery,
                      nsIArray* aURIArray,
+                     const nsTArray<nsCString>& aHashes,
                      nsIArray* aPropertyArrayArray);
   nsresult NotifyAndGetItems(nsIArray** _retval);
 
@@ -436,10 +450,11 @@ protected:
 private:
   // When this is used for an async batch, the helper will have an owning
   // reference to the callback
-  sbLocalDatabaseLibrary* mLibrary;
+  sbLocalDatabaseLibrary*     mLibrary;
   sbBatchCreateTimerCallback* mCallback;
-  nsCOMPtr<nsIArray> mURIArray;
-  nsTArray<nsString> mGuids;
+  nsCOMPtr<nsIArray>  mURIArray;
+  nsTArray<nsString>  mGuids;
+  nsTArray<nsCString> mHashes;
   PRUint32 mLength;
 };
 

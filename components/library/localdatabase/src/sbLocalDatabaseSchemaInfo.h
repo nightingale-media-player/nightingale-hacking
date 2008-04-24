@@ -84,10 +84,15 @@ static sbStaticProperty sStaticProperties[] = {
     SB_PROPERTY_ISLIST,
     "media_list_type_id",
     PR_UINT32_MAX - 7,
-  }
+  },
+  {
+    SB_PROPERTY_HASH,
+    "content_hash",
+    PR_UINT32_MAX - 8,
+  },
 };
 
-static const PRUint32 sStaticPropertyCount = 8;
+static const PRUint32 sStaticPropertyCount = 9;
 
 static PRBool
 SB_IsTopLevelProperty(PRUint32 aPropertyDBID)

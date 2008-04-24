@@ -44,12 +44,15 @@ public:
 
   nsresult Init();
   nsresult GetArray(nsIArray ** aArray);
+  
+  nsresult SetHasItems(PRBool aHasItems);
 
 private:
   ~sbLocalMediaListBaseEnumerationListener();
 
 protected:
   nsCOMPtr<nsIMutableArray> mArray;
+  PRPackedBool mHasItems;
 };
 
 

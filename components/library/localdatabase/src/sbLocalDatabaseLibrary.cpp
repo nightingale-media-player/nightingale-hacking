@@ -30,7 +30,9 @@
 #include <nsArrayUtils.h>
 #include <nsIClassInfo.h>
 #include <nsIClassInfoImpl.h>
+#include <nsICryptoHash.h>
 #include <nsIFile.h>
+#include <nsIFileStreams.h>
 #include <nsIFileURL.h>
 #include <nsIMutableArray.h>
 #include <nsIObserverService.h>
@@ -38,6 +40,7 @@
 #include <nsIPrefService.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIPropertyBag2.h>
+#include <nsISeekableStream.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
 #include <nsISupportsPrimitives.h>
@@ -136,6 +139,7 @@ static char* kInsertQueryColumns[] = {
   "created",
   "updated",
   "content_url",
+  "content_hash",
   "hidden",
   "media_list_type_id"
 };
@@ -865,6 +869,29 @@ sbLocalDatabaseLibrary::CreateQueries()
   rv = builder->ToString(mGetGuidsFromContentUrl);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Build mGetGuidsForHash
+  rv = builder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(),
+                          NS_LITERAL_STRING("guid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->CreateMatchCriterionParameter(EmptyString(),
+                                              NS_LITERAL_STRING("content_hash"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->ToString(mGetGuidsForHash);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -924,6 +951,7 @@ nsresult
 sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
                                         const PRUint32 aMediaItemTypeID,
                                         const nsAString& aURISpec,
+                                        const nsAString& aHash,
                                         nsAString& _retval)
 {
   NS_ENSURE_ARG_POINTER(aQuery);
@@ -969,12 +997,21 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
     rv = aQuery->BindStringParameter(3, aURISpec);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    if(!aHash.IsEmpty()) {
+      rv = aQuery->BindStringParameter(4, aHash);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = aQuery->BindNullParameter(4);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     // Not hidden by default
-    rv = aQuery->BindInt32Parameter(4, 0);
+    rv = aQuery->BindInt32Parameter(5, 0);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Media items don't have a media_list_type_id.
-    rv = aQuery->BindNullParameter(5);
+    rv = aQuery->BindNullParameter(6);
     NS_ENSURE_SUCCESS(rv, rv);
  }
   else {
@@ -989,12 +1026,15 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
     rv = aQuery->BindStringParameter(3, newSpec);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    rv = aQuery->BindNullParameter(4);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     // Not hidden by default
-    rv = aQuery->BindInt32Parameter(4, 0);
+    rv = aQuery->BindInt32Parameter(5, 0);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Record the media list type.
-    rv = aQuery->BindInt32Parameter(5, aMediaItemTypeID);
+    rv = aQuery->BindInt32Parameter(6, aMediaItemTypeID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1788,6 +1828,220 @@ sbLocalDatabaseLibrary::FilterExistingURIs(nsIArray* aURIs,
   return NS_OK;
 }
 
+nsresult 
+sbLocalDatabaseLibrary::FilterExistingItems(nsIArray* aURIs, 
+                                            const nsTArray<nsCString>& aHashes, 
+                                            nsIArray** aFilteredURIs,
+                                            nsTArray<nsCString>& aFilteredHashes)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - FilterExistingItems()", this));
+
+  NS_ENSURE_ARG_POINTER(aURIs);
+  NS_ENSURE_ARG_POINTER(aFilteredURIs);
+
+  nsresult rv;
+
+  PRUint32 length = 0;
+  rv = aURIs->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 hashesLength = 0;
+  hashesLength = aHashes.Length();
+
+  NS_ASSERTION(length == hashesLength, 
+    "Length of URI array and hashes array should always match.");
+
+  nsCOMPtr<nsIMutableArray> filtered =
+    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the incoming array is empty, do nothing
+  if (length == 0 && 
+      hashesLength == 0) {
+    NS_ADDREF(*aFilteredURIs = filtered);
+    return NS_OK;
+  }
+
+  nsInterfaceHashtable<nsCStringHashKey, nsIURI> uniques;
+  PRBool success = uniques.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  nsTHashtable<nsCStringHashKey> uniqueHashes;
+  success = uniqueHashes.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  nsTArray<nsCString> originalOrder;
+  nsTArray<nsCString> originalHashesOrder;
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query), PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLSelectBuilder> builder =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("content_url"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("content_hash"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterionIn> inCriterionContentURL;
+  rv = builder->CreateMatchCriterionIn(EmptyString(),
+                                       NS_LITERAL_STRING("content_url"),
+                                       getter_AddRefs(inCriterionContentURL));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterionIn> inCriterionHash;
+  rv = builder->CreateMatchCriterionIn(EmptyString(),
+                                       NS_LITERAL_STRING("content_hash"),
+                                       getter_AddRefs(inCriterionHash));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> orCriterionContentURLHash;
+  rv = builder->CreateOrCriterion(inCriterionContentURL, 
+                                  inCriterionHash, 
+                                  getter_AddRefs(orCriterionContentURLHash));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(orCriterionContentURLHash);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add url's to inCriterionContentURL
+  PRUint32 incount = 0;
+  for (PRUint32 i = 0; i < length; i++) {
+
+    nsCOMPtr<nsIURI> uri = do_QueryElementAt(aURIs, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCString spec;
+    rv = uri->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCString* appended = originalOrder.AppendElement(spec);
+    NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+
+    // We want to build a list of unique URIs, and also only add these unique
+    // URIs to the query
+    if (!uniques.Get(spec, nsnull)) {
+
+      success = uniques.Put(spec, uri);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+      rv = inCriterionContentURL->AddString(NS_ConvertUTF8toUTF16(spec));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      incount++;
+    }
+
+    nsCString hash = aHashes[i];
+
+    appended = originalHashesOrder.AppendElement(hash);
+    NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+
+    // We want to build a list of unique hashes, and also only add these unique
+    // hashes to the query
+    if (!uniqueHashes.GetEntry(hash)) {
+
+      nsCStringHashKey *hashKey = uniqueHashes.PutEntry(hash);
+      NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
+
+      rv = inCriterionHash->AddString(NS_ConvertUTF8toUTF16(hash));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      incount++;
+    }
+
+    if (incount > MAX_IN_LENGTH || i + 1 == length) {
+
+      nsAutoString sql;
+      rv = builder->ToString(sql);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = query->AddQuery(sql);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = inCriterionContentURL->Clear();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = inCriterionHash->Clear();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      incount = 0;
+    }
+  }
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Remove any found URIs from the unique list since they are duplicates
+  for (PRUint32 i = 0; i < rowCount; i++) {
+    nsString value;
+
+    // Remove URI.
+    rv = result->GetRowCell(i, 0, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    uniques.Remove(NS_ConvertUTF16toUTF8(value));
+
+    rv = result->GetRowCell(i, 1, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Remove Hash if set.
+    if(!value.IsEmpty()) {
+      uniqueHashes.RemoveEntry(NS_ConvertUTF16toUTF8(value));
+    }
+  }
+
+  // Finally, add the remaning URIs to the output array.  Use the original
+  // order as a reference so we don't scramble things up
+  for (PRUint32 i = 0; i < length; i++) {
+    
+    nsCOMPtr<nsIURI> uri;
+    nsCStringHashKey *hashKey = nsnull;
+
+    if (uniques.Get(originalOrder[i], getter_AddRefs(uri)) &&
+        (hashKey = uniqueHashes.GetEntry(originalHashesOrder[i]))) {
+      
+      rv = filtered->AppendElement(uri, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCString *element = aFilteredHashes.AppendElement(originalHashesOrder[i]);
+      NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
+
+      // Remove them as we find them so we don't include duplicates from the
+      // original array
+      uniques.Remove(originalOrder[i]);
+
+      // Remove the hash as well if it is non-empty.
+      // We only remove it when it's non-empty because there
+      // always needs to be an empty hash in the list to enable
+      // non-hashed items to behave properly.
+      if(!originalHashesOrder[i].IsEmpty()) {
+        uniqueHashes.RemoveEntry(originalHashesOrder[i]);
+      }
+    }
+  }
+
+  NS_ADDREF(*aFilteredURIs = filtered);
+
+  return NS_OK;
+}
+
 nsresult
 sbLocalDatabaseLibrary::GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID)
 {
@@ -1832,6 +2086,194 @@ sbLocalDatabaseLibrary::GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID)
 
   return NS_OK;
 }
+
+nsresult 
+sbLocalDatabaseLibrary::GetGuidFromHash(const nsACString& aHash, 
+                                        nsAString &aGUID)
+{
+  NS_ENSURE_TRUE(!aHash.IsEmpty(), NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mGetGuidsForHash);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(0, NS_ConvertUTF8toUTF16(aHash));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbresult;
+  rv = query->Execute(&dbresult);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbresult, dbresult);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (rowCount == 0) {
+    // The hash was not found
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  rv = result->GetRowCell(0, 0, aGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbLocalDatabaseLibrary::GetHashesForContentURIs(nsIArray* aURIs, 
+                                                nsTArray<nsCString>& aHashes)
+{
+  NS_ENSURE_ARG_POINTER(aURIs);
+
+  PRUint32 length = 0;
+  nsresult rv = aURIs->GetLength(&length);
+
+  PRBool success = aHashes.SetCapacity(length);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCString hash;
+  nsCString *element = nsnull;
+
+  nsCOMPtr<nsIURI> uri;
+
+  for(PRUint32 i = 0; i < length; ++i) {
+    uri = do_QueryElementAt(aURIs, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = GetHashFromContentURI(uri, hash);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    element = aHashes.AppendElement(hash);
+    NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
+// Macro used in GetHashFromContentURI.
+// All failure cases result in NS_OK and a empty hash
+// being returned.
+#define SB_ENSURE_SUCCESS_TRUNCATE_HASH(__rv) \
+  PR_BEGIN_MACRO          \
+  if(NS_FAILED(__rv)) {   \
+    aHash.Truncate();     \
+    return NS_OK;         \
+  }                       \
+  PR_END_MACRO
+
+#define DEFAULT_HASHING_READ_SIZE (262144)
+#define DEFAULT_ID3V1_SIZE        (128)
+
+nsresult 
+sbLocalDatabaseLibrary::GetHashFromContentURI(nsIURI* aURI, nsACString& aHash)
+{
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  PRBool isLocalFile = PR_FALSE;
+  
+  nsresult rv = aURI->SchemeIs("file", &isLocalFile);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
+
+  // Only compute hashes for local files.
+  if(!isLocalFile) {
+    aHash.Truncate();
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(aURI, &rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
+
+  nsCOMPtr<nsIFile> file;
+  rv = fileURL->GetFile(getter_AddRefs(file));
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
+
+  PRBool fileExists = PR_FALSE;
+
+  rv = file->Exists(&fileExists);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
+  
+  // File doesn't actually exist, return empty hash.
+  if(!fileExists) {
+    aHash.Truncate();
+    return NS_OK;
+  }
+
+  PRInt64 fileSize = 0;
+  PRInt64 seekByte = 0;
+  PRInt64 readSize = 0;
+  
+  rv = file->GetFileSize(&fileSize);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Zero byte file, skip.
+  if(!fileSize) {
+    aHash.Truncate();
+    return NS_OK;
+  }
+
+  // XXXAus: 
+  // 
+  // This is attempting to read from the middle of the file to
+  // avoid metadata tags in the beginning and end of the file.
+  // As you can see, we attempt to avoid id3v1 tags at the end but
+  // we do not account for other tag formats that may be present
+  // at the end of the file (since I don't think there are any :)).
+
+  seekByte = fileSize / 2;
+  if(seekByte > DEFAULT_HASHING_READ_SIZE) {
+    readSize = DEFAULT_HASHING_READ_SIZE;
+  }
+  else {
+    readSize = seekByte - DEFAULT_ID3V1_SIZE;
+    
+    // Hmm , looks like we don't get to try and skip the tag data.
+    if(readSize < 0) {
+      readSize = seekByte;
+    }
+  }
+
+  nsCOMPtr<nsIFileInputStream> inputStream = 
+    do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = inputStream->Init(file, -1, -1, nsIFileInputStream::CLOSE_ON_EOF);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISeekableStream> seekableStream = 
+    do_QueryInterface(inputStream, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = seekableStream->Seek(nsISeekableStream::NS_SEEK_SET,
+                            seekByte);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIInputStream> bufferedInputStream;
+  rv = NS_NewBufferedInputStream(getter_AddRefs(bufferedInputStream), 
+                                 inputStream, readSize);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsICryptoHash> cryptoHash = 
+    do_CreateInstance("@mozilla.org/security/hash;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = cryptoHash->Init(nsICryptoHash::MD5);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = cryptoHash->UpdateFromStream(bufferedInputStream, readSize);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return cryptoHash->Finish(PR_TRUE, aHash);
+}
+
+#undef SB_ENSURE_SUCCESS_TRUNCATE_HASH
 
 nsresult
 sbLocalDatabaseLibrary::Shutdown()
@@ -2299,11 +2741,15 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
   nsresult rv = aUri->GetSpec(spec);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCAutoString hash;
+  rv = GetHashFromContentURI(aUri, hash);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateMediaItem(%s)", this,
          spec.get()));
 
   // If we don't allow duplicates, check to see if there is already a media
-  // item with this uri.  If so, return it.
+  // item with this uri or with the same hash.  If so, return it.
   if (!aAllowDuplicates) {
     nsresult rv;
     nsCOMPtr<nsIMutableArray> array =
@@ -2314,17 +2760,39 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIArray> filtered;
-    rv = FilterExistingURIs(array, getter_AddRefs(filtered));
+
+    nsTArray<nsCString> hashes;
+    nsTArray<nsCString> filteredHashes;
+    
+    nsCString *element = hashes.AppendElement(hash);
+    NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
+    
+    rv = FilterExistingItems(array, hashes, getter_AddRefs(filtered), filteredHashes);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRUint32 length;
     rv = filtered->GetLength(&length);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    nsString guid;
+
     // The uri was filtered out, therefore it exists.  Get it and return it
     if (length == 0) {
-      nsString guid;
       rv = GetGuidFromContentURI(aUri, guid);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = GetMediaItem(guid, _retval);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_OK;
+    }
+
+    PRUint32 hashesLength = filteredHashes.Length();
+
+    // The hash was filtered out, therefore it exists. Get it and return it.
+    if(!hash.IsEmpty() && 
+       hashesLength == 0) {
+      rv = GetGuidFromHash(hash, guid);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = GetMediaItem(guid, _retval);
@@ -2347,6 +2815,7 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
   rv = AddNewItemQuery(query,
                        SB_MEDIAITEM_TYPEID,
                        NS_ConvertUTF8toUTF16(spec),
+                       NS_ConvertUTF8toUTF16(hash),
                        guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2420,7 +2889,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString guid;
-  rv = AddNewItemQuery(query, factoryInfo->typeID, aType, guid);
+  rv = AddNewItemQuery(query, factoryInfo->typeID, aType, EmptyString(), guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (aProperties) {
@@ -2868,11 +3337,24 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   nsresult rv;
 
   nsCOMPtr<nsIArray> filteredArray;
+  nsTArray<nsCString> filteredHashes;
+
   if (aAllowDuplicates) {
     filteredArray = aURIArray;
+
+    rv = GetHashesForContentURIs(aURIArray, filteredHashes);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    rv = FilterExistingURIs(aURIArray, getter_AddRefs(filteredArray));
+    nsTArray<nsCString> hashes;
+
+    rv = GetHashesForContentURIs(aURIArray, hashes);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = FilterExistingItems(aURIArray, 
+                             hashes, 
+                             getter_AddRefs(filteredArray), 
+                             filteredHashes);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -2900,7 +3382,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   }
 
   // Set up the batch add query
-  rv = helper->InitQuery(query, filteredArray, aPropertyArrayArray);
+  rv = helper->InitQuery(query, filteredArray, filteredHashes, aPropertyArrayArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 dbResult;
@@ -3946,6 +4428,7 @@ sbBatchCreateHelper::sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary,
 nsresult
 sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
                                nsIArray* aURIArray,
+                               const nsTArray<nsCString>& aHashes,
                                nsIArray* aPropertyArrayArray)
 {
   NS_ASSERTION(aQuery, "aQuery is null");
@@ -3961,18 +4444,28 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
   }
   queryCount++;
 
-  PRUint32 listLength;
+  PRUint32 listLength = 0;
   rv = aURIArray->GetLength(&listLength);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 hashesLength = aHashes.Length();
+
+  NS_ASSERTION(hashesLength == listLength, 
+    "URI array length and hashes array length do not match!");
+
+  nsCAutoString spec;
+  nsCAutoString hash;
+  nsCOMPtr<nsIURI> uri;
 
   // Add a query to insert each new item and record the guids that were
   // generated for the future inserts
   for (PRUint32 i = 0; i < listLength; i++) {
 
-    nsCOMPtr<nsIURI> uri = do_QueryElementAt(aURIArray, i, &rv);
+    uri = do_QueryElementAt(aURIArray, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCAutoString spec;
+    
+    hash = aHashes[i];
+   
     rv = uri->GetSpec(spec);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3980,6 +4473,7 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
     rv = mLibrary->AddNewItemQuery(aQuery,
                                    SB_MEDIAITEM_TYPEID,
                                    NS_ConvertUTF8toUTF16(spec),
+                                   NS_ConvertUTF8toUTF16(hash),
                                    guid);
     NS_ENSURE_SUCCESS(rv, rv);
 

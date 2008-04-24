@@ -115,6 +115,10 @@ interface sbILibraryChange : sbIChangeOperation
 
   /**
    * The source item that triggered the change.
+   *
+   * In the case where the sourceItem was added;
+   * the destinationItem will be the same as the 
+   * sourceItem.
    */
   readonly attribute sbIMediaItem   sourceItem;
 
@@ -123,6 +127,10 @@ interface sbILibraryChange : sbIChangeOperation
    *
    * The destination item may be the same as the 
    * source item.
+   *
+   * In the case where the sourceItem was added;
+   * the destinationItem will be the same as the
+   * sourceItem.
    */
   readonly attribute sbIMediaItem destinationItem;
   

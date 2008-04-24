@@ -19,12 +19,15 @@ create table media_items (
   content_url text not null,
   content_mime_type text,
   content_length integer,
+  content_hash text,
   hidden integer not null check(hidden in (0, 1)),
   media_list_type_id integer
 );
 create index idx_media_items_hidden on media_items (hidden);
 create index idx_media_items_created on media_items (created);
 create index idx_media_items_content_url on media_items (content_url);
+create index idx_media_items_content_hash on media_items (content_hash);
+create index idx_media_items_content_url_content_hash on media_items (content_url, content_hash);
 create index idx_media_items_media_list_type_id on media_items (media_list_type_id);
 create index idx_media_items_hidden_media_list_type_id on media_items (hidden, media_list_type_id);
 
@@ -35,6 +38,7 @@ create table library_media_item (
   content_url text not null,
   content_mime_type text,
   content_length integer,
+  content_hash text,
   hidden integer not null check(hidden in (0, 1)),
   media_list_type_id integer
 );
@@ -99,4 +103,4 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 
 insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
 
-insert into library_metadata (name, value) values ('version', '2');
+insert into library_metadata (name, value) values ('version', '3');

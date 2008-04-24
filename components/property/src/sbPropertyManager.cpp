@@ -405,6 +405,15 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Hash (empty string if can't determine or cannot generate).
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_HASH),
+                    NS_LITERAL_STRING("property.content_hash"),
+                    stringBundle,
+                    PR_TRUE,
+                    PR_FALSE,
+                    sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
+                    PR_TRUE, PR_FALSE);
+
   //Track name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
                     NS_LITERAL_STRING("property.track_name"),

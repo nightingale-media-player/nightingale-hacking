@@ -35,6 +35,7 @@ NS_IMPL_ISUPPORTS1(sbLocalMediaListBaseEnumerationListener ,
                    sbIMediaListEnumerationListener)
 
 sbLocalMediaListBaseEnumerationListener ::sbLocalMediaListBaseEnumerationListener ()
+: mHasItems(PR_FALSE)
 {
 }
 
@@ -60,7 +61,14 @@ sbLocalMediaListBaseEnumerationListener::GetArray(nsIArray **aArray)
 {
   NS_ENSURE_ARG_POINTER(aArray);
   NS_IF_ADDREF(*aArray = mArray);
-  return *aArray ? NS_OK : NS_ERROR_NOT_AVAILABLE;
+  return mHasItems ? NS_OK : NS_ERROR_NOT_AVAILABLE;
+}
+
+nsresult
+sbLocalMediaListBaseEnumerationListener::SetHasItems(PRBool aHasItems)
+{
+  mHasItems = aHasItems;
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -82,6 +90,10 @@ sbLocalMediaListBaseEnumerationListener::OnEnumeratedItem(sbIMediaList *aMediaLi
 
   nsresult rv = mArray->AppendElement(aMediaItem, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!mHasItems) {
+    mHasItems = PR_TRUE;
+  }
 
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
 

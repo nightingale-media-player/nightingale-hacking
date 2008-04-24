@@ -279,6 +279,7 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
   NS_NAMED_LITERAL_STRING(createdProperty,    SB_PROPERTY_CREATED);
   NS_NAMED_LITERAL_STRING(updatedProperty,    SB_PROPERTY_UPDATED);
   NS_NAMED_LITERAL_STRING(guidProperty,       SB_PROPERTY_GUID);
+  NS_NAMED_LITERAL_STRING(hashProperty,       SB_PROPERTY_HASH);
 
   for (PRUint32 i = 0; i < length; i++) {
     nsCOMPtr<sbIProperty> property;

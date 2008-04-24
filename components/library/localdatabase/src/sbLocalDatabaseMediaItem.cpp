@@ -53,48 +53,6 @@ static void AppendInt(nsAString &str, PRInt64 val)
   str.Append(NS_ConvertASCIItoUTF16(buf));
 }
 
-struct sbStaticProperty {
-  const char* mPropertyID;
-  const char* mColumn;
-  PRUint32    mDBID;
-};
-
-enum {
-  sbPropCreated = 0,
-  sbPropUpdated,
-  sbPropContentUrl,
-  sbPropMimeType,
-  sbPropContentLength,
-};
-
-static sbStaticProperty kStaticProperties[] = {
-  {
-    SB_PROPERTY_CREATED,
-    "created",
-    PR_UINT32_MAX,
-  },
-  {
-    SB_PROPERTY_UPDATED,
-    "updated",
-    PR_UINT32_MAX - 1,
-  },
-  {
-    SB_PROPERTY_CONTENTURL,
-    "content_url",
-    PR_UINT32_MAX - 2,
-  },
-  {
-    SB_PROPERTY_CONTENTMIMETYPE,
-    "content_mime_type",
-    PR_UINT32_MAX - 3,
-  },
-  {
-    SB_PROPERTY_CONTENTLENGTH,
-    "content_length",
-    PR_UINT32_MAX - 4,
-  }
-};
-
 NS_IMPL_THREADSAFE_ADDREF(sbLocalDatabaseMediaItem)
 NS_IMPL_THREADSAFE_RELEASE(sbLocalDatabaseMediaItem)
 
@@ -328,7 +286,7 @@ sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
   NS_ENSURE_ARG_POINTER(aCreated);
 
   nsAutoString str;
-  nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropCreated].mPropertyID), str);
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CREATED), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 convertedItems = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
@@ -350,7 +308,7 @@ sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
   NS_ENSURE_ARG_POINTER(aUpdated);
 
   nsAutoString str;
-  nsresult rv = GetProperty(NS_ConvertUTF8toUTF16(kStaticProperties[sbPropUpdated].mPropertyID), str);
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 convertedItems = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
