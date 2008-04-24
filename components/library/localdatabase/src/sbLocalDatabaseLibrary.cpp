@@ -2242,33 +2242,33 @@ sbLocalDatabaseLibrary::GetHashFromContentURI(nsIURI* aURI, nsACString& aHash)
 
   nsCOMPtr<nsIFileInputStream> inputStream = 
     do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
 
   rv = inputStream->Init(file, -1, -1, nsIFileInputStream::CLOSE_ON_EOF);
-  NS_ENSURE_SUCCESS(rv, rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
 
   nsCOMPtr<nsISeekableStream> seekableStream = 
     do_QueryInterface(inputStream, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
   
   rv = seekableStream->Seek(nsISeekableStream::NS_SEEK_SET,
                             seekByte);
-  NS_ENSURE_SUCCESS(rv, rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
 
   nsCOMPtr<nsIInputStream> bufferedInputStream;
   rv = NS_NewBufferedInputStream(getter_AddRefs(bufferedInputStream), 
                                  inputStream, readSize);
-  NS_ENSURE_SUCCESS(rv, rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
 
   nsCOMPtr<nsICryptoHash> cryptoHash = 
     do_CreateInstance("@mozilla.org/security/hash;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
 
   rv = cryptoHash->Init(nsICryptoHash::MD5);
-  NS_ENSURE_SUCCESS(rv, rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
 
   rv = cryptoHash->UpdateFromStream(bufferedInputStream, readSize);
-  NS_ENSURE_SUCCESS(rv, rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
 
   return cryptoHash->Finish(PR_TRUE, aHash);
 }
