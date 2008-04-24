@@ -265,7 +265,7 @@ var DPW = {
       this._dText1Remote.stringValue =
                 SBFormattedString("device.status.progress_complete_" +
                                     aOperationHead,
-                                  [this._totalItems]);
+                                  [this._totalItems.intValue]);
       this._dText2Remote.stringValue =
                                   SBString("device.status.progress_idle");
 
