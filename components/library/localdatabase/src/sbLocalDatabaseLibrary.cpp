@@ -2235,8 +2235,9 @@ sbLocalDatabaseLibrary::GetHashFromContentURI(nsIURI* aURI, nsACString& aHash)
     readSize = seekByte - DEFAULT_ID3V1_SIZE;
     
     // Hmm , looks like we don't get to try and skip the tag data.
-    if(readSize < 0) {
-      readSize = seekByte;
+    if(readSize <= 0) {
+      readSize = fileSize;
+      seekByte = 0;
     }
   }
 
@@ -2770,29 +2771,29 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
     rv = FilterExistingItems(array, hashes, getter_AddRefs(filtered), filteredHashes);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint32 length;
-    rv = filtered->GetLength(&length);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     nsString guid;
-
-    // The uri was filtered out, therefore it exists.  Get it and return it
-    if (length == 0) {
-      rv = GetGuidFromContentURI(aUri, guid);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = GetMediaItem(guid, _retval);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      return NS_OK;
-    }
 
     PRUint32 hashesLength = filteredHashes.Length();
 
     // The hash was filtered out, therefore it exists. Get it and return it.
     if(!hash.IsEmpty() && 
-       hashesLength == 0) {
-      rv = GetGuidFromHash(hash, guid);
+      hashesLength == 0) {
+        rv = GetGuidFromHash(hash, guid);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = GetMediaItem(guid, _retval);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        return NS_OK;
+    }
+
+    PRUint32 length;
+    rv = filtered->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // The uri was filtered out, therefore it exists.  Get it and return it
+    if (length == 0) {
+      rv = GetGuidFromContentURI(aUri, guid);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = GetMediaItem(guid, _retval);
