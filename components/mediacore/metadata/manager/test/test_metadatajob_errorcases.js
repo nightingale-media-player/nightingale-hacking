@@ -240,7 +240,7 @@ function importFilesToLibrary(files, library) {
     if (!(file instanceof Components.interfaces.nsIURI)) {
       file = newFileURI(file);
     }
-    items.push(library.createMediaItem(file));
+    items.push(library.createMediaItem(file, null, true));
   }
   return items;
 }

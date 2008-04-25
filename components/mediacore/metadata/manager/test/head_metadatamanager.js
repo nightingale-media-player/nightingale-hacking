@@ -147,8 +147,9 @@ MetadataJobObserver.prototype = {
  */
 function getCopyOfFolder(folder, tempName) {
   assertNotEqual(folder, null);
-  folder.copyTo(folder.parent, tempName);
-  folder = folder.parent;
+  var tempFolder = getTempFolder();
+  folder.copyTo(tempFolder, tempName);
+  folder = tempFolder.clone();
   folder.append(tempName);
   assertEqual(folder.exists(), true);
   return folder;
@@ -159,11 +160,42 @@ function getCopyOfFolder(folder, tempName) {
  * Copy the given folder to tempName, returning an nsIFile
  * for the new location
  */
-function getCopyOfFile(file, tempName) {
+function getCopyOfFile(file, tempName, optionalLocation) {
   assertNotEqual(file, null);
-  file.copyTo(file.parent, tempName);
-  file = file.parent;
+  var folder = optionalLocation ? optionalLocation : getTempFolder();
+  file.copyTo(folder, tempName);
+  file = folder.clone();
   file.append(tempName);
   assertEqual(file.exists(), true);
   return file;
+}
+
+/**
+ * Get a temporary folder for use in metadata tests.
+ * Will be removed in tail_metadatamanager.js
+ */
+var gTempFolder = null;
+function getTempFolder() {
+  if (gTempFolder) {
+    return gTempFolder;
+  }
+  gTempFolder = Components.classes["@mozilla.org/file/directory_service;1"]
+                       .getService(Components.interfaces.nsIProperties)
+                       .get("TmpD", Components.interfaces.nsIFile);
+  gTempFolder.append("songbird_metadata_tests.tmp");
+  gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0666);
+  return gTempFolder;
+}
+
+
+/**
+ * Get rid of the temp folder created by getTempFolder.
+ * Called in tail_metadatamanager.js
+ */
+function removeTempFolder() {
+  if (gTempFolder && gTempFolder.exists()) {
+    gTempFolder.remove(true);
+  } else {
+    log("\n\n\nMetadata Manager Test may not have performed cleanup.  Temp files may exist.\n\n\n");
+  }
 }

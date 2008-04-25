@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = metadatamanager
 
 SONGBIRD_TESTS = $(srcdir)/head_metadatamanager.js \
+                 $(srcdir)/tail_metadatamanager.js \
                  $(srcdir)/test_metadatajob_reading.js \
                  $(srcdir)/test_metadatajob_writing.js \
                  $(srcdir)/test_metadatahandler.js \

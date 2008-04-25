@@ -67,8 +67,6 @@ gFiles["MP3_ID3v1_Shift_JIS.mp3"][SBProperties.albumName]  = "Monologue -\u3082\
 // gFiles["Speex.spx"] = gDefaultMetadata;
 // gFiles["Ogg_FLAC.oga"] = gDefaultMetadata;
 
-var gFilesToRemove = [];
-
 var gLocalMediaItems = [];
 var gRemoteMediaItems = [];
 var gFileList = [];
@@ -85,19 +83,23 @@ function runTest () {
   var gTestMediaItems = Components.classes["@mozilla.org/array;1"]
                                   .createInstance(Components.interfaces.nsIMutableArray);
 
+  // Make a copy of everything in the test file folder
+  // so that our changes don't interfere with other tests
+  var testFolder = getCopyOfFolder(newAppRelativeFile(gFileLocation), "_temp_reading_files");
+  
   // Make a file with a unicode filename.  This would be checked in, except
   // the windows build system can't handle unicode filenames.
-  var unicodeFile = newAppRelativeFile(gFileLocation);
+  var unicodeFile = testFolder.clone();
   unicodeFile.append("MP3_ID3v23.mp3");
-  unicodeFile = getCopyOfFile(unicodeFile, "\u2606\u2606\u2606\u2606\u2606\u2606.mp3");
-  gFilesToRemove.push(unicodeFile);
+  unicodeFile = getCopyOfFile(unicodeFile, "\u2606\u2606\u2606\u2606\u2606\u2606.mp3", testFolder);
+
 
   gServer = Cc["@mozilla.org/server/jshttp;1"]
               .createInstance(Ci.nsIHttpServer);
 
   gServer.start(PORT_NUMBER);
-  var file = newAppRelativeFile(gFileLocation);
-  gServer.registerDirectory("/", file);
+
+  gServer.registerDirectory("/", testFolder.clone());
 
   for (var fileName in gFiles) {
     log("MetadataJob_Reading: enqueueing file " + fileName);
@@ -105,11 +107,13 @@ function runTest () {
     gFileList.push(fileName);
   
     // Add gFiles to it
-    var localPath = newAppRelativeFile( gFileLocation + fileName );
+    var localPath = testFolder.clone();
+    localPath.append(fileName);
     assertNotEqual( localPath, null );
     var localPathURI = newFileURI( localPath );
     assertNotEqual( localPathURI, null );
-    var localPathMI = gTestLibrary.createMediaItem( localPathURI );
+    // Allow duplicates, since many of the files have the same hash value
+    var localPathMI = gTestLibrary.createMediaItem( localPathURI, null, true );
     assertNotEqual( localPathMI, null );
     gLocalMediaItems.push( localPathMI );
     gTestMediaItems.appendElement( localPathMI, false );
@@ -188,16 +192,9 @@ function onComplete(aSubject, aTopic, aData) {
     
   } catch (e) {
     log("ERROR: " + e);
+    gServer.stop();
     assertEqual(true, false);
   }
   
-  // Clean up temp files
-  try {
-    for each (file in gFilesToRemove) {
-      file.remove(false);
-    }
-  } catch (e) {
-    log("ERROR: " + e + "\n");
-  }  
   testFinished(); 
 }
