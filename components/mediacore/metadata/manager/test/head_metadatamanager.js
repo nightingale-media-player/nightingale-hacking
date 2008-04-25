@@ -183,7 +183,7 @@ function getTempFolder() {
                        .getService(Components.interfaces.nsIProperties)
                        .get("TmpD", Components.interfaces.nsIFile);
   gTempFolder.append("songbird_metadata_tests.tmp");
-  gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0666);
+  gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
   return gTempFolder;
 }
 
