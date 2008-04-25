@@ -41,6 +41,7 @@
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
+#include <nsInterfaceHashtable.h>
 #include <nsITimer.h>
 #include <nsStringGlue.h>
 #include <sbIMediaListFactory.h>
@@ -161,6 +162,17 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
     PRPackedBool hasListType;
   };
 
+  struct sbMediaItemPair {
+    sbMediaItemPair(sbIMediaItem *aSource,
+                    sbIMediaItem *aDestination)
+    : sourceItem(aSource)
+    , destinationItem(aDestination)
+    { }
+
+    nsCOMPtr<sbIMediaItem> sourceItem;
+    nsCOMPtr<sbIMediaItem> destinationItem;
+  };
+
   typedef nsClassHashtable<nsStringHashKey, sbMediaListFactoryInfo>
           sbMediaListFactoryInfoTable;
 
@@ -229,6 +241,11 @@ private:
                             sbMediaListFactoryInfo* aEntry,
                             void* aUserData);
 
+  static PLDHashOperator PR_CALLBACK
+    NotifyCopyListeners(nsISupportsHashKey::KeyType aKey,
+                        sbILocalDatabaseLibraryCopyListener *aCopyListener,
+                        void* aUserData);
+                        
   static PLDHashOperator PR_CALLBACK
     NotifyListsItemUpdated(nsISupportsHashKey::KeyType aKey,
                            sbMediaItemArray* aEntry,
@@ -345,6 +362,10 @@ private:
 
   // This monitor protects calls to GetMediaItem.
   PRMonitor *mMonitor;
+
+  // Hashtable that holds all the copy listeners.
+  nsInterfaceHashtableMT<nsISupportsHashKey, 
+                         sbILocalDatabaseLibraryCopyListener> mCopyListeners;
 };
 
 /**
@@ -367,7 +388,14 @@ public:
 private:
   sbLocalDatabaseLibrary* mFriendLibrary;
   PRBool mShouldInvalidate;
+  
   sbMediaItemArray mNotificationList;
+
+  // This list is to enable copyListener notifications
+  // which must have the original item and the newly
+  // created item available for the listener.
+  sbMediaItemArray mOriginalItemList;
+
   PRUint32 mLength;
 };
 

@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbILocalDatabaseAsyncGUIDArray.idl \
+             sbILocalDatabaseLibraryCopyListener.idl \
              sbILocalDatabaseGUIDArray.idl \
              sbILocalDatabaseLibrary.idl \
              sbILocalDatabaseMediaItem.idl \

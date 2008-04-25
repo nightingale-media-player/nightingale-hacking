@@ -37,6 +37,7 @@ interface nsIURI;
 interface sbIMediaItem;
 interface sbIMediaList;
 interface sbIDatabaseQuery;
+interface sbILocalDatabaseLibraryCopyListener;
 interface sbILocalDatabaseGUIDArray;
 interface sbILocalDatabasePropertyCache;
 interface sbILocalDatabaseResourcePropertyBag;
@@ -52,7 +53,7 @@ class sbLocalDatabaseLibrary;
  * \interface sbILocalDatabaseLibrary
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(2fbd49f8-3c95-437b-b3ac-efaeefb86d6a)]
+[scriptable, uuid(c73c2057-e0bf-4caa-8f48-9b4582909b51)]
 interface sbILocalDatabaseLibrary : nsISupports
 {
   readonly attribute AString databaseGuid;
@@ -65,6 +66,16 @@ interface sbILocalDatabaseLibrary : nsISupports
   readonly attribute nsIURI databaseLocation;
 
   readonly attribute sbILocalDatabasePropertyCache propertyCache;
+  
+  /**
+   * \brief Add a copy listener to this library.
+   */
+  void addCopyListener(in sbILocalDatabaseLibraryCopyListener aCopyListener);
+
+  /**
+   * \brief Remove a copy listener from this library.
+   */
+  void removeCopyListener(in sbILocalDatabaseLibraryCopyListener aCopyListener);
 
   ACString getContractIdForGuid(in AString aGuid);
 
@@ -72,6 +83,9 @@ interface sbILocalDatabaseLibrary : nsISupports
 
   void NotifyListenersItemUpdated(in sbIMediaItem aItem,
                                   in sbIPropertyArray aProperties);
+
+  void notifyCopyListenersItemCopied(in sbIMediaItem aSourceItem,
+                                     in sbIMediaItem aDestinationItem);
 
   sbIDatabaseQuery createQuery();
 

@@ -40,6 +40,7 @@
 #include <nsIPrefService.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIPropertyBag2.h>
+#include <nsIProxyObjectManager.h>
 #include <nsISeekableStream.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
@@ -52,6 +53,7 @@
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
 #include <sbILibraryResource.h>
+#include <sbILocalDatabaseLibraryCopyListener.h>
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
@@ -87,6 +89,7 @@
 #include "sbLocalDatabaseSmartMediaListFactory.h"
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbMediaListEnumSingleItemHelper.h"
+#include <sbProxyUtils.h>
 #include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
@@ -197,6 +200,9 @@ sbLibraryInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList
     PRBool success = mNotificationList.AppendObject(newMediaItem);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
+    success = mOriginalItemList.AppendObject(aMediaItem);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
     mShouldInvalidate = PR_TRUE;
   }
 
@@ -226,10 +232,33 @@ sbLibraryInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList
 
   // Notify our listeners
   PRUint32 count = mNotificationList.Count();
+
+  PRUint32 originalItemsCount = mOriginalItemList.Count();
+
+  // Ensure the newly created item list (mNotificationList)
+  // has the same amount of items as the original items list.
+  NS_ENSURE_TRUE(count == originalItemsCount, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbILibrary> originalLibrary;
+  nsCOMPtr<sbILocalDatabaseLibrary> originalLocalDatabaseLibrary;
+
   for (PRUint32 i = 0; i < count; i++) {
+    // First, normal notifications.
     mFriendLibrary->NotifyListenersItemAdded(libraryList,
                                              mNotificationList[i],
                                              mLength + i);
+
+    // Then, we notify the owning library that an item was copied from it
+    // into another library.
+    rv = mOriginalItemList[i]->GetLibrary(getter_AddRefs(originalLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    originalLocalDatabaseLibrary = do_QueryInterface(originalLibrary, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // It's better here to continue rather than halt on error.
+    originalLocalDatabaseLibrary->NotifyCopyListenersItemCopied(mOriginalItemList[i],
+                                                                mNotificationList[i]);
   }
 
   return NS_OK;
@@ -455,6 +484,9 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   // This may be null.
   mDatabaseLocation = aDatabaseLocation;
 
+  PRBool success = mCopyListeners.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
   // Find our resource GUID. This identifies us within the library (as opposed
   // to the database file used by the DBEngine).
   nsCOMPtr<sbISQLSelectBuilder> builder =
@@ -557,7 +589,7 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize the media list factory table.
-  PRBool success = mMediaListFactoryTable.Init();
+  success = mMediaListFactoryTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   rv = RegisterDefaultMediaListFactories();
@@ -2474,11 +2506,48 @@ sbLocalDatabaseLibrary::GetPropertyCache(sbILocalDatabasePropertyCache** aProper
  * See sbILocalDatabaseLibrary
  */
 NS_IMETHODIMP
+sbLocalDatabaseLibrary::AddCopyListener(sbILocalDatabaseLibraryCopyListener *aCopyListener)
+{
+  NS_ENSURE_ARG_POINTER(aCopyListener);
+
+  nsCOMPtr<sbILocalDatabaseLibraryCopyListener> proxiedListener;
+  
+  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                                     NS_GET_IID(sbILocalDatabaseLibraryCopyListener),
+                                     aCopyListener,
+                                     NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
+                                     getter_AddRefs(proxiedListener));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool success = mCopyListeners.Put(aCopyListener, proxiedListener);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+/**
+ * See sbILocalDatabaseLibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::RemoveCopyListener(sbILocalDatabaseLibraryCopyListener *aCopyListener)
+{
+  NS_ENSURE_ARG_POINTER(aCopyListener);
+  mCopyListeners.Remove(aCopyListener);
+  return NS_OK;
+}
+
+/**
+ * See sbILocalDatabaseLibrary
+ */
+NS_IMETHODIMP
 sbLocalDatabaseLibrary::CreateQuery(sbIDatabaseQuery** _retval)
 {
   return MakeStandardQuery(_retval);
 }
 
+/**
+ * See sbILocalDatabaseLibrary
+ */
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem,
                                                    sbIPropertyArray* aProperties)
@@ -2517,6 +2586,43 @@ sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem,
          this, PR_Now() - timer));
 
   return NS_OK;
+}
+
+/**
+ * See sbILocalDatabaseLibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::NotifyCopyListenersItemCopied(sbIMediaItem *aSourceItem,
+                                                      sbIMediaItem *aDestinationItem)
+{
+  NS_ENSURE_ARG_POINTER(aSourceItem);
+  NS_ENSURE_ARG_POINTER(aDestinationItem);
+
+  nsAutoPtr<sbMediaItemPair> mediaItemPair = 
+    new sbMediaItemPair(aSourceItem, aDestinationItem);
+
+  mCopyListeners.EnumerateRead(sbLocalDatabaseLibrary::NotifyCopyListeners,
+                               mediaItemPair);
+
+  return NS_OK;
+}
+
+/* static */PLDHashOperator PR_CALLBACK
+sbLocalDatabaseLibrary::NotifyCopyListeners(nsISupportsHashKey::KeyType aKey,
+                                            sbILocalDatabaseLibraryCopyListener *aCopyListener,
+                                            void* aUserData)
+{
+  NS_ASSERTION(aCopyListener, "Null entry in the hash?!");
+  NS_ASSERTION(aUserData, "Null user data!");
+
+  sbMediaItemPair *items = static_cast<sbMediaItemPair *>(aUserData);
+  NS_ENSURE_TRUE(items, PL_DHASH_STOP);
+
+  nsresult rv = aCopyListener->OnItemCopied(items->sourceItem, 
+                                            items->destinationItem);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
 }
 
 /* static */ PLDHashOperator PR_CALLBACK
@@ -3895,6 +4001,16 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
 
   // And let everyone know about it.
   NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), newMediaItem, length);
+
+  // Also let the owning library of the original item know that
+  // an item was copied from it into another library.
+  nsCOMPtr<sbILocalDatabaseLibrary> originalLocalDatabaseLibrary;
+  originalLocalDatabaseLibrary = do_QueryInterface(itemLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // It's better here to continue rather than halt on error.
+  originalLocalDatabaseLibrary->NotifyCopyListenersItemCopied(aMediaItem,
+                                                              newMediaItem);
 
   return NS_OK;
 }
