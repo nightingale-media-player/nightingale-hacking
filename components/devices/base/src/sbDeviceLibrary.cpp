@@ -277,6 +277,21 @@ sbDeviceLibrary::GetSyncPrefBranch(nsIPrefBranch** _retval)
     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // If we're not on the main thread proxy the service
+  PRBool const isMainThread = NS_IsMainThread();
+  if (!isMainThread) {
+    nsCOMPtr<nsIPrefService> proxy;
+    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                              NS_GET_IID(nsIPrefService),
+                              prefService,
+                              nsIProxyObjectManager::INVOKE_SYNC |
+                              nsIProxyObjectManager::FORCE_PROXY_CREATION,
+                              getter_AddRefs(proxy));
+    if (NS_FAILED(rv))
+      return rv;
+    prefService.swap(proxy);
+  }
+
   nsCString prefKey(PREF_SYNC_BRANCH);
   nsString guid;
   rv = mDeviceLibrary->GetGuid(guid);
