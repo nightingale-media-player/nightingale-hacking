@@ -229,8 +229,8 @@ AddonMetadataReader.prototype = {
     }
 
     for each (var prop in SkinDescription.prototype.optionalProperties) {
-      if(layout[prop][0]) {
-        description[prop] = layout[prop][0];
+      if(skin[prop][0]) {
+        description[prop] = skin[prop][0];
       }
     }
     
@@ -250,6 +250,7 @@ AddonMetadataReader.prototype = {
 
     if (skin.compatibleLayout) {
       var compatibleLayouts = skin.compatibleLayout;
+      var hasRegisteredDefault = false;
       for (var i = 0; i < compatibleLayouts.length; i++) {
         var compatibleLayout = compatibleLayouts[i];
 
@@ -280,6 +281,24 @@ AddonMetadataReader.prototype = {
           showChrome, 
           onTop
         );
+
+        // If this is the first element in the RDF - or the layout is set to
+        // be the default layout, let's assign these attributes here.
+        if ((i == 0) || 
+            (compatibleLayout.isDefault && 
+            compatibleLayout.isDefault[0] == "true")) 
+        {
+          this._manager.setDefaultLayout(layoutUrl, description.internalName);
+          
+          if (hasRegisteredDefault) {
+            Components.utils.reportError(
+              "A default layout has already been assigned for " + 
+              description.internalName
+            );
+          }
+          
+          hasRegisteredDefault = true;
+        }
       }
       
       if (errorList.length > 0) {
@@ -338,7 +357,9 @@ AddonMetadataReader.prototype = {
         var compatibleSkin = compatibleSkins[i];
   
         var internalName;
-        if(compatibleSkin.internalName && compatibleSkin.internalName[0].length != 0) {
+        if (compatibleSkin.internalName && 
+           compatibleSkin.internalName[0].length != 0) 
+        {
           internalName  = compatibleSkin.internalName[0];
         }
         else {
@@ -351,7 +372,7 @@ AddonMetadataReader.prototype = {
             compatibleSkin.showChrome[0] == "true") {
           showChrome = true;
         }
-        var onTop = false
+        var onTop = false;
         if (compatibleSkin.onTop && 
             compatibleSkin.onTop[0] == "true") {
           onTop = true;
@@ -382,8 +403,6 @@ AddonMetadataReader.prototype = {
    * \param errorList Array of error messages
    */
   _reportErrors: function _reportErrors(contextMessage, errorList) {
-    var consoleService = Cc["@mozilla.org/consoleservice;1"].
-         getService(Ci.nsIConsoleService);
     for (var i = 0; i  < errorList.length; i++) {
       Components.utils.reportError("Feathers Metadata Reader: " 
                                        + contextMessage + errorList[i]);
@@ -419,6 +438,7 @@ function FeathersManager() {
   
   this._skins = {};
   this._layouts = {};
+  this._skinDefaults = {};
   this._mappings = {};
   this._listeners = [];
 };
@@ -441,6 +461,10 @@ FeathersManager.prototype = {
   
   // Hash of layout descriptions keyed by URL
   _layouts: null,
+  
+  // Hash of default layouts for skins.
+  _skinDefaults: null,
+                                                                  
   
   
   // Hash of layout URL to hash of compatible skin internalNames, pointing to 
@@ -754,7 +778,50 @@ FeathersManager.prototype = {
     }  
   },
   
-
+  /**
+   * \sa sbIFeathersManager
+   */
+  setDefaultLayout: function setDefaultLayout(aLayoutURL, aInternalName) {
+    if (!(typeof(aLayoutURL) == "string" && 
+          typeof(aInternalName) == "string")) 
+    {
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    }
+    
+    this._skinDefaults[aInternalName] = aLayoutURL;
+    this._onUpdate();  // notify observers
+  },
+  
+  /**
+   * \sa sbIFeathersManager
+   */
+  getDefaultLayout: function getDefaultLayout(aInternalName) {
+    if (!typeof(aInternalName) == "string") {
+      throw Components.results.NS_ERROR_INVALID_ARG;
+    }
+    
+    this._init();
+    var defaultLayoutURL = this._skinDefaults[aInternalName];
+    
+    // If a default URL isn't registered, just use the first compatible 
+    // layout registered for the skin identifier.
+    if (!defaultLayoutURL) {
+      for (var curLayoutURL in this._mappings) {
+        if (aInternalName in this._mappings[curLayoutURL]) {
+          defaultLayoutURL = curLayoutURL;
+          break;
+        }
+      }
+    }
+    
+    // Something is terribly wrong - no layouts are registered for this skin
+    if (!defaultLayoutURL) {
+      throw Components.results.NS_ERROR_FAILURE;
+    }
+    
+    return defaultLayoutURL;
+  },
+    
   /**
    * \sa sbIFeathersManager
    */

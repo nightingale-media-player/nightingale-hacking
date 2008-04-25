@@ -48,7 +48,7 @@ interface sbIFeathersManagerListener;
 *
 * \sa sbISkinDescription, sbILayoutDescription, sbIFeathersChangeListener
 */
-[scriptable, uuid(43bfaddc-488d-4727-b4f2-d4587cdabd98)]
+[scriptable, uuid(61c28aec-66a6-49f2-85df-9629c7e3d84f)]
 interface sbIFeathersManager : nsISupports
 {
   /**
@@ -184,8 +184,42 @@ interface sbIFeathersManager : nsISupports
   void unassertCompatibility(in AString aLayoutURL,
                              in AString aInternalName);
  
+  
+  
+  /**
+   * \brief Designate a default layout for a skin. 
+   *
+   * NOTE: The default layout can be set in the RDF install of a feather
+   *       by specifiying a |<songbird:isDefault>true</songbird:isDefault>|
+   *       tag in the skin description.
+   *
+   *       If no default layout has been specified, than the layoutURL that
+   *       is first listed in the install RDF will be specified as the default.
+   *
+   * \param aLayoutURL URL for a XUL winodw
+   * \param aInternalName Identifier for a skin.
+   */
+  void setDefaultLayout(in AString aLayoutURL, in AString aInternalName);
+  
+  
+  
+  /**
+   * \brief Get the default layout (as a URL) for a given skin name.
+   *
+   * NOTE: The default layout can be set in the RDF install of a feather
+   *       by specifiying a |<songbird:isDefault>true</songbird:isDefault>|
+   *       tag in the skin description.
+   *
+   *       If no default layout has been specified, than the layoutURL that
+   *       is first listed in the install RDF will be specified as the default.
+   *
+   * \param aInternalName The identifier for a skin.
+   * \return The URL for the default XUL window.
+   */
+  AString getDefaultLayout(in AString aInternalName);
+  
 
-
+  
   /**
    * \brief Should window chrome be used with the given window-skin pair
    *
