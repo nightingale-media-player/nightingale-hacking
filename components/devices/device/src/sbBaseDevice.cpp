@@ -1050,7 +1050,9 @@ struct EnsureSpaceForWriteRemovalHelper {
   std::set<sbIMediaItem*, COMComparator> mItemsToRemove;
 };
 
-nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
+nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue,
+                                           PRBool * aRequestRemoved,
+                                           nsIArray** aItemsToWrite)
 {
   LOG(("                        sbBaseDevice::EnsureSpaceForWrite++\n"));
   
@@ -1088,6 +1090,13 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
     if ((*request)->type != TransferRequest::REQUEST_WRITE)
       continue;
     
+    nsCOMPtr<sbILibrary> requestLib =
+      do_QueryInterface((*request)->list, &rv);
+    if (NS_FAILED(rv) || !requestLib) {
+      // this is an add to playlist request, don't worry about size
+      continue;
+    }
+    
     if (!ownerLibrary) {
       rv = sbDeviceUtils::GetDeviceLibraryForItem(this,
                                                   (*request)->list,
@@ -1115,10 +1124,31 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
     NS_ENSURE_SUCCESS(rv, rv);
     
     totalLength += contentLength;
-    LOG(("r(%08x) i(%08x) sbBaseDevice::EnsureSpaceForWrite - size %u\n",
+    LOG(("r(%08x) i(%08x) sbBaseDevice::EnsureSpaceForWrite - size %lld\n",
          (void*) *request, (void*) (*request)->item, contentLength));
     
     itemsToWrite[(*request)->item] = contentLength;
+  }
+  
+  LOG(("                        sbBaseDevice::EnsureSpaceForWrite - %u items = %lld bytes\n",
+       itemsToWrite.size(), totalLength));
+
+  if (itemsToWrite.size() < 1) {
+    // there were no items to write (they were all add to playlist requests)
+    if (aRequestRemoved) {
+      // we didn't remove anything (there was nothing to remove)
+      *aRequestRemoved = PR_FALSE;
+    }
+    if (aItemsToWrite) {
+      // the caller wants to know which items we will end up copying
+      // give it an empty list
+      nsCOMPtr<nsIMutableArray> items =
+        do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = CallQueryInterface(items, aItemsToWrite); // addrefs
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    return NS_OK;
   }
   
   // ask the helper to figure out if we have space
@@ -1133,6 +1163,9 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
                                       this,
                                       &freeSpace,
                                       &continueWrite);
+  
+  LOG(("                        sbBaseDevice::EnsureSpaceForWrite - %u items = %lld bytes / free %lld bytes\n",
+       itemsToWrite.size(), totalLength, freeSpace));
   
   // there are three cases to go from here:
   // (1) fill up the device, with whatever fits, in random order (sync)
@@ -1156,6 +1189,10 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
   if (!continueWrite) {
     // we need to remove everything
     itemsToRemove.insert(itemList.begin(), itemList.end());
+    itemList.clear();
+    if (aRequestRemoved) {
+      *aRequestRemoved = PR_TRUE;
+    }
   } else {
     PRUint32 mgmtType;
     rv = ownerLibrary->GetMgmtType(&mgmtType);
@@ -1178,6 +1215,7 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
       } else {
         // won't fit, remove it
         itemsToRemove.insert(*next);
+        *next = nsnull; /* wipe out the sbIMediaItem* */
       }
     }
   }
@@ -1294,6 +1332,31 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
     
     LOG(("                        sbBaseDevice::EnsureSpaceForWrite - erasing %u items", queueEnd - nextFree));
     aQueue.erase(nextFree, queueEnd);
+  }
+  
+  if (aItemsToWrite) {
+    // the caller wants to know which items we will end up copying
+    nsCOMPtr<nsIMutableArray> items =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    std::vector<sbIMediaItem*>::const_iterator begin = itemList.begin(),
+                                               end = itemList.end();
+    for (; begin != end; ++begin) {
+      if (*begin) {
+        // this is an actual item to write
+        nsCOMPtr<nsISupports> supports = do_QueryInterface(*begin, &rv);
+        if (NS_SUCCEEDED(rv) && supports) {
+          rv = items->AppendElement(supports, PR_FALSE);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+    }
+    rv = CallQueryInterface(items, aItemsToWrite); // addrefs
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  if (aRequestRemoved) {
+    *aRequestRemoved = !(itemsToRemove.empty());
   }
   
   LOG(("                        sbBaseDevice::EnsureSpaceForWrite--\n"));

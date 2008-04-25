@@ -27,6 +27,8 @@
 
 #include "sbLibraryListenerHelpers.h"
 
+#include <pratom.h>
+
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbBaseDevice.h"
@@ -38,7 +40,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceLibraryListener,
 
 sbBaseDeviceLibraryListener::sbBaseDeviceLibraryListener() 
 : mDevice(nsnull),
-  mIgnoreListener(PR_FALSE)
+  mIgnoreListenerCounter(0)
 {
 }
 
@@ -59,7 +61,12 @@ sbBaseDeviceLibraryListener::Init(sbBaseDevice* aDevice)
 nsresult 
 sbBaseDeviceLibraryListener::SetIgnoreListener(PRBool aIgnoreListener)
 {
-  mIgnoreListener = aIgnoreListener;
+  if (aIgnoreListener) {
+    PR_AtomicIncrement(&mIgnoreListenerCounter);
+  } else {
+    PRInt32 result = PR_AtomicDecrement(&mIgnoreListenerCounter);
+    NS_ASSERTION(result >= 0, "invalid device library ignore listener counter");
+  }
   return NS_OK;
 }
 
@@ -99,7 +106,7 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if(mIgnoreListener) {
+  if(mIgnoreListenerCounter > 0) {
     return NS_OK;
   }
 
@@ -153,7 +160,7 @@ sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
 
   *aNoMoreForBatch = PR_FALSE;
 
-  if(mIgnoreListener) {
+  if(mIgnoreListenerCounter > 0) {
     return NS_OK;
   }
   
@@ -178,7 +185,7 @@ sbBaseDeviceLibraryListener::OnListCleared(sbIMediaList *aMediaList,
   
   /* yay, we're going to wipe the device! */
 
-  if(mIgnoreListener) {
+  if(mIgnoreListenerCounter > 0) {
     return NS_OK;
   }
   
@@ -204,7 +211,7 @@ sbBaseDeviceLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
 
   *aNoMoreForBatch = PR_FALSE;
 
-  if(mIgnoreListener) {
+  if(mIgnoreListenerCounter > 0) {
     return NS_OK;
   }
 
@@ -228,7 +235,7 @@ sbBaseDeviceLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
   
   *aNoMoreForBatch = PR_FALSE;
   
-  if(mIgnoreListener) {
+  if(mIgnoreListenerCounter > 0) {
     return NS_OK;
   }
 

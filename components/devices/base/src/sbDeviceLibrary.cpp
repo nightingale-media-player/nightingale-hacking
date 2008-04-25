@@ -391,7 +391,8 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray **_retval)
   NS_ENSURE_ARG_POINTER( _retval );
   nsresult rv;
 
-  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  nsCOMPtr<nsIMutableArray> array =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsCOMPtr<sbILibraryManager> libManager =

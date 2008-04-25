@@ -504,7 +504,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIMutableArray> libraryChanges = 
-    do_CreateInstance("@mozilla.org/array;1", &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbLocalDatabaseDiffingServiceEnumerator> sourceEnum;
@@ -837,7 +837,8 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
   }
 
   // That's it, we should have a valid changeset.
-  nsCOMPtr<nsIMutableArray> sources = do_CreateInstance("@mozilla.org/array;1", &rv);
+  nsCOMPtr<nsIMutableArray> sources =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sources->AppendElement(aSourceList, PR_FALSE);

@@ -169,8 +169,8 @@ deviceErrorMonitor.prototype = {
    * \param aErrorMsg Error Message to display with the item.
    */
   _logError: function deviceErrorMonitor__logError(aDeviceEvent, aErrorMsg) {
-    var device = aDeviceEvent.target.QueryInterface(Ci.sbIDevice);
-    if (device) {
+    var device = aDeviceEvent.target;
+    if (device instanceof Ci.sbIDevice) {
       var devIndex = this._findDeviceIndex(device);
       if (devIndex > -1) {
         var mediaItem = aDeviceEvent.data.QueryInterface(Ci.sbIMediaItem);

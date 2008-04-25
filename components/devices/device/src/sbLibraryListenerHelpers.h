@@ -54,7 +54,7 @@ protected:
   // The device owns the listener, so use a non-owning reference here
   sbBaseDevice* mDevice;
 
-  PRBool mIgnoreListener;
+  PRInt32 mIgnoreListenerCounter;
 };
 
 class sbDeviceBaseLibraryCopyListener : public sbILocalDatabaseMediaListCopyListener

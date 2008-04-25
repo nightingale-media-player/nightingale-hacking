@@ -327,8 +327,17 @@ protected:
    * Go through the given queue to make sure that there is enough free space
    * to complete the write requests.  If not, and the user agrees, attempt to
    * transfer a subset.
+   *
+   * \param aQueue the queue to check size for
+   * \param aRequestsRemoved [out, optional] true if at least one request had
+   *                         to be removed
+   * \param aItemsToCopy [out, optional] the items that will be copied
+   *                     note this won't be set if all items will be copied or
+   *                     if the device library is in manual mode
    */
-  virtual nsresult EnsureSpaceForWrite(TransferRequestQueue& aQueue);
+  virtual nsresult EnsureSpaceForWrite(TransferRequestQueue& aQueue,
+                                       PRBool * aRequetsRemoved = nsnull,
+                                       nsIArray** aItemsToWrite = nsnull);
 
   /* get a prefbranch for this device */
   nsresult GetPrefBranch(nsIPrefBranch** aPrefBranch);
