@@ -72,6 +72,9 @@ nsArray::nsArray(const nsCOMArray_base& aBaseArray)
 nsArray::~nsArray()
 {
     Clear();
+    if (mLock) {
+        nsAutoLock::DestroyLock(mLock);
+    }
 }
 
 NS_IMPL_THREADSAFE_ADDREF(nsArray)
