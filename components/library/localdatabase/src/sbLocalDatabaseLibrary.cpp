@@ -2598,8 +2598,8 @@ sbLocalDatabaseLibrary::NotifyCopyListenersItemCopied(sbIMediaItem *aSourceItem,
   NS_ENSURE_ARG_POINTER(aSourceItem);
   NS_ENSURE_ARG_POINTER(aDestinationItem);
 
-  nsAutoPtr<sbMediaItemPair> mediaItemPair = 
-    new sbMediaItemPair(aSourceItem, aDestinationItem);
+  nsAutoPtr<sbMediaItemPair> 
+    mediaItemPair(new sbMediaItemPair(aSourceItem, aDestinationItem));
 
   mCopyListeners.EnumerateRead(sbLocalDatabaseLibrary::NotifyCopyListeners,
                                mediaItemPair);
