@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
+
 <!--
 /*
- //
+//
 // BEGIN SONGBIRD GPL
 //
 // This file is part of the Songbird web player.
@@ -26,23 +27,37 @@
 //
  */
 -->
+
+<?xml-stylesheet href="chrome://global/skin/defaultDisplayPane.css" type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
-<!DOCTYPE window [
-<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
-<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
-%brandDTD;
-%songbirdDTD;
-]>
 
-<window
- xmlns:html="http://www.w3.org/1999/xhtml"
- xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
- id="default-display-pane"
->
+<window title="Default Display Pane"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<!-- TODO: add content here -->
+  <vbox flex="1">
+    <vbox flex="1" align="right">
+      <vbox class="arrow"></vbox>
+      <vbox flex="1" class="line vertical"></vbox>
+    </vbox>
+    <vbox>
+      <hbox flex="1" pack="center" align="center">
+        <hbox class="corner none"></hbox>
+        <spacer flex="1" />
+        <hbox class="corner bottomToRight"></hbox>
+        <spacer flex="1" class="line horizontal" />
+        <hbox class="corner leftToTop"></hbox>
+      </hbox>
+    </vbox>
+    <vbox flex="1" class="vertical line"></vbox>
+  </vbox>
+
+  <vbox pack="center" align="center" class="instructions">
+    <label class="instruction">Select an add-on from the menu</label>
+    <label>or</label>
+    <label class="instruction">Visit the <html:a href="http://addons.songbirdnest.com/display-panes/">Add-on Site</html:a> to browse add-ons</label>
+  </vbox>
+
+<spacer flex="1" />
 
 </window>
-

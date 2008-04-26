@@ -204,7 +204,7 @@ DisplayPaneManager.prototype = {
 
   _getString: function(aName, aDefault) {
     if (!this._stringbundle) {
-      var src = "chrome://songbird/locale/brand.properties";
+      var src = "chrome://branding/locale/brand.properties";
       var stringBundleService = Components.classes["@mozilla.org/intl/stringbundle;1"]
                                   .getService(Components.interfaces.nsIStringBundleService);
       this._stringbundle = stringBundleService.createBundle(src);
