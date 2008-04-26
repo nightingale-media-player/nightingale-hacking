@@ -75,16 +75,6 @@
                 </menupopup>
               </menu>
               <menuseparator/>
-              <!--
-              <menu label="&menu.displaypane.title;">
-                <menupopup anonid="title_popup">
-                  <menuitem label="&menu.displaypane.title.show;" type="radio" value=""/>
-                  <menuitem label="&menu.displaypane.title.auto;" type="radio"/>
-                  <menuitem label="&menu.displaypane.title.hide;" type="radio"/>
-                </menupopup>
-              </menu>
-              <menuseparator/>
-              -->
               <menuitem label="&menu.displaypane.get;" oncommand="onMenu(this)"
                         value="songbird.url.addons"/>
             </menupopup>
@@ -167,6 +157,7 @@
       <xbl:destructor><![CDATA[
         this.destroy();
       ]]></xbl:destructor>
+
       <xbl:property name="contentGroup" readonly="true">
         <xbl:getter><![CDATA[
           return this.getAttribute("contentgroup");
@@ -231,7 +222,8 @@
             return null;
           return document.getElementById(this.getAttribute("splitter"));
         ]]></xbl:getter>
-      </xbl:property>      <xbl:property name="_hidden">
+      </xbl:property>
+      <xbl:property name="_hidden">
         <xbl:getter><![CDATA[
           var splitter = this._splitter;
           if (!splitter)
@@ -271,7 +263,7 @@
           // list anyway
 
           if (aEvent && aEvent.originalTarget.getAttribute("anonid") != "menu") {
-            // this is a sub-menu even bubbling up
+            // this is a sub-menu event bubbling up
             return true;
           }
           
@@ -451,40 +443,47 @@
 
           var enumerator = paneMgr.instantiatorsList;
           if (enumerator.hasMoreElements()) {
-          
-            // do we really need a separator?
+            // do we need a separator?
             var sib = this.previousSibling;
             do {
               if (sib == null || sib.localName == "menuseparator") {
                 // no separator required
                 break;
-              }
-              if (sib.localName == "menuitem") {
+              } else {
                 // insert a separator between elements
                 var sep = document.createElement("menuseparator");
                 this.parentNode.insertBefore(sep, this);
                 this._items.push(sep);
                 break;
-              
               }
-            } while(sib = sib.previousSibling);
-            
+            } while (sib = sib.previousSibling);
           }
+
+          // for each display pane instantiator registered with the manager
+          // create a menu item and stuff it in the view menu
           while (enumerator.hasMoreElements()) {
             var instantiator = enumerator.getNext();
             instantiator.QueryInterface(Components.interfaces.sbIDisplayPaneInstantiator);
             instantiator.QueryInterface(Components.interfaces.nsIDOMXULElement);
-            item = document.createElement("menu");
+            item = document.createElement("menuitem");
             var label = instantiator.contentGroup;
             if (instantiator.hasAttribute("label")) {
               label = instantiator.getAttribute("label");
             }
             item.setAttribute("label", label);
             item.setAttribute("target", instantiator.id);
-            item.className = "menu-iconic displaypane-topmenu";
 
-            var popup = instantiator.popup;
-            item.appendChild(document.importNode(popup, true));
+            var oncommand = function(aEvent, aId) {
+              var binding = document.getElementById(aId);
+              var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                                      .getService(Components.interfaces.sbIDisplayPaneManager);
+              var paneinfo = paneMgr.defaultPaneInfo;
+              binding.loadContent(paneinfo);
+            }
+            item.setAttribute("oncommand",
+                              "(" + uneval(oncommand) + ")(event, '" + instantiator.id + "')");
+            item.className = "menuitem-iconic displaypane-topmenu";
+
             this.parentNode.insertBefore(item, this);
             this._items.push(item);
           }

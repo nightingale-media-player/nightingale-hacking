@@ -128,14 +128,25 @@
           var hideGetMore = this.getAttribute("hideGetMore");
 
           if (hideTitle != "true") {
-            // Make a disabled menuitem to act as a label above the page items
-            var item = document.createElement("menuitem");
-            item.setAttribute("label", ml.name);
-            item.setAttribute("name", "mediapage.item");
-            item.setAttribute("disabled", "true");
-            item.setAttribute("class", "mediapage-menu-selected-page-title");
+            // Add the 'Media Views' menu
+            var mediaPagesLabel = "mediapages.label";
+            try {
+              mediaPagesLabel =
+                this._stringBundle.GetStringFromName(mediaPagesLabel);
+            } catch (e) { 
+            }
+
+            // create the menu to add to the parent
+            var mediaPagesMenu = document.createElement("menu");
+            mediaPagesMenu.setAttribute("label", mediaPagesLabel);
+
+            // create the popup menu that will hold the mediapage menuitems
+            var mediaPagesPopup = document.createElement("menupopup");
+            mediaPagesMenu.appendChild(mediaPagesPopup);
+
+            // add to the parent
             this._addToMenu(document.createElement("menuseparator"));
-            this._addToMenu(item);
+            this._addToMenu(mediaPagesMenu);
           }
 
           var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
@@ -163,10 +174,13 @@
             else {
               item.setAttribute("checked", "false");
             }
-          
-            item.setAttribute("class", "mediapage-menu-selected-page");
-            
-            this._addToMenu(item);
+         
+            if ( hideTitle ) { 
+              // we hide the title for the popup menu, so add it directly 
+              this._addToMenu(item);
+            } else {
+              mediaPagesPopup.appendChild(item);
+            }
           }
           
           // If the current window has a browser/servicepane, then add a link

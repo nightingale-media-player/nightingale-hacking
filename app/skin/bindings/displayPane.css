@@ -40,29 +40,24 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */
 
-menu[target="displaypane_contentpane_bottom"] {
+menuitem[target="displaypane_contentpane_bottom"] {
   list-style-image: url(chrome://songbird/skin/icons/displaypane-contentpane-bottom.png);
   -moz-image-region: rect(0px, 13px, 13px, 0px);
 }
 
-menu[target="displaypane_servicepane_bottom"] {
+menuitem[target="displaypane_servicepane_bottom"] {
   list-style-image: url(chrome://songbird/skin/icons/displaypane-servicepane-bottom.png);
   -moz-image-region: rect(0px, 13px, 13px, 0px);
 }
 
-menu[target="displaypane_right_sidebar"] {
+menuitem[target="displaypane_right_sidebar"] {
   list-style-image: url(chrome://songbird/skin/icons/displaypane-right-sidebar.png);
   -moz-image-region: rect(0px, 13px, 13px, 0px);
 }
 
 /* on hover, use the bottom half of the image (does not apply on Mac) */
-menu.displaypane-topmenu[_moz-menuactive="true"],
-menu.displaypane-topmenu[open="true"] {
+menuitem.displaypane-topmenu[_moz-menuactive="true"] {
   -moz-image-region: rect(13px, 13px, 26px, 0px);
-}
-
-menu.displaypane-topmenu > menupopup {
-  list-style-image: none;
 }
 
 sb-displaypane .favicon {
@@ -82,10 +77,6 @@ sb-displaypane .favicon {
   border-bottom: none;
 }
 
-.sb-displaypane-menubutton > menupopup {
-  list-style-image: none;
-}
-
 .sb-displaypane-label {
   margin-top: 0;
   margin-bottom: 0;
@@ -97,8 +88,7 @@ sb-displaypane .favicon {
   display: none;
 }
 
-
-#displaypane_right_sidebar_splitter[state="collapsed"]
-{
+#displaypane_right_sidebar_splitter[state="collapsed"] {
   margin-left: 7px;
 }
+

@@ -28,7 +28,7 @@
         <songbird:contentUrl>chrome://songbird-test-display-pane/content/testDisplayPane.html</songbird:contentUrl>
         <songbird:contentIcon>http://www.songbirdnest.com/favicon.ico</songbird:contentIcon>
         <songbird:defaultWidth>180</songbird:defaultWidth>
-        <songbird:defaultHeight>2</songbird:defaultHeight>
+        <songbird:defaultHeight>50</songbird:defaultHeight>
         <songbird:suggestedContentGroups>test-content-group</songbird:suggestedContentGroups>
         <songbird:showOnInstall>false</songbird:showOnInstall>
       </Description>

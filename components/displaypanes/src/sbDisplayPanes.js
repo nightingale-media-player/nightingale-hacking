@@ -194,14 +194,48 @@ DisplayPaneManager.prototype = {
                             .getService(Components.interfaces.nsIConsoleService);
     consoleService.logStringMessage(str);
   },
-  
+
   _contentList: [],
   _instantiatorsList: [],
   _delayedInstantiations: [],
   _listenersList: [],
   
   _addonMetadataLoaded: false,
+
+  _getString: function(aName, aDefault) {
+    if (!this._stringbundle) {
+      var src = "chrome://songbird/locale/brand.properties";
+      var stringBundleService = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                                  .getService(Components.interfaces.nsIStringBundleService);
+      this._stringbundle = stringBundleService.createBundle(src);
+    }
+        
+    try {
+      return this._stringbundle.GetStringFromName(aName);
+    }
+    catch(e) {
+      return aDefault;
+    }
+
+  },
   
+  _defaultPaneInfo: null,
+  
+  get defaultPaneInfo() {
+    if (!this._defaultPaneInfo) {
+      var paneInfo = {
+        contentUrl: this._getString("displaypane.default.url",  "chrome://songbird/content/xul/defaultDisplayPane.xul"),
+        contentTitle: this._getString("displaypane.default.title",  "Default Display Pane"),
+        contentIcon: this._getString("displaypane.default.icon",  "http://songbirdnest.com/favicon.ico"),
+        defaultWidth: this._getString("displaypane.default.width",  "150"),
+        defaultHeight: this._getString("displaypane.default.height",  "75"),
+        suggestedContentGroups: this._getString("displaypane.default.groups",  "")
+      };
+      this._defaultPaneInfo = paneInfo;
+    }
+    return this._defaultPaneInfo;
+  },
+
   /**
    * Make sure that we've read display pane registration
    * metadata from all extension install.rdf files.
@@ -484,3 +518,4 @@ DisplayPaneManager.prototype = {
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([DisplayPaneManager]);
 }
+

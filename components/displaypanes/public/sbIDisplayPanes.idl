@@ -203,6 +203,12 @@ interface sbIDisplayPaneManager : nsISupports
   
   void addListener(in sbIDisplayPaneListener aListener);
   void removeListener(in sbIDisplayPaneListener aListener);
+
+  /**
+   * Pane info for the default panes that appear when the display
+   *   panes are shown before choosing a pane to view.
+   */
+  readonly attribute sbIDisplayPaneContentInfo defaultPaneInfo;
 };
 
 

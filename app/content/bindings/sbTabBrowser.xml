@@ -185,7 +185,7 @@
         var pane = document.importNode(doc.documentElement, true);
         
         // evil hack to get the localizable name from the dtd
-        pane.setAttribute("label", ]]>"&displaypane.name.browser;"<![CDATA[);
+        pane.setAttribute("label", ]]>"&displaypane.browser.label;"<![CDATA[);
         this.parentNode.appendChild(pane);
 
         /*var pane = document.createElement("sb-displaypane");
