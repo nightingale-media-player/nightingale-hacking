@@ -29,6 +29,8 @@
 
 <!-- Import external definitions. -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/content/commonDialog.css"
+                 type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
                  type="text/css"?>
@@ -81,10 +83,15 @@
   <!-- Use Songbird window region. -->
   <windowregion/>
 
-  <vbox>
+  <!-- Information container box.  Use "infoContainer" -->
+  <!-- id to get commonDialog.css styling.             -->
+  <vbox id="infoContainer">
 
-    <!-- Dialog box description. -->
-    <description id="error_msg"/>
+    <!-- Dialog box description.  Enclose in "info.body" -->
+    <!-- vbox to get commonDialog.css styling.           -->
+    <vbox id="info.body">
+      <description id="error_msg"/>
+    </vbox>
 
     <!-- Unsupported media list. -->
     <sb-closable-box id="error_listbox_box">
@@ -105,7 +112,7 @@
    *
    ************************************************************************* -->
 
-  <!-- Import the Songbird services. -->  
+  <!-- Import the Songbird services. -->
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
@@ -164,7 +171,7 @@
         if (!this._shouldShow()) {
           window.close();
         }
-        
+
         // Get the UI parameters.
         var dialogPB = window.arguments[0].QueryInterface
                                              (Ci.nsIDialogParamBlock);
@@ -175,13 +182,13 @@
         this._options = {};
         this._options.listLabel = SBString("device.error.dialog.listbox.caption");
         this._options.windowTitle = SBString("device.error.dialog.title");
-        this._options.errorMessage = SBFormattedString("device.error.dialog.msg",
+        this._options.errorMsg = SBFormattedString("device.error.dialog.msg",
                                           [ errorItems.length,
                                             this._getDeviceFriendlyName() ]);
         this._options.showAgainMsg = SBString("device.error.dialog.enable");
         this._options.maxRows = 9;
         this._options.allowDisable = false;
-        
+
         var options = dialogPB.GetString(0);
         if (options) {
           options = options.split(",");
@@ -200,18 +207,18 @@
         listboxBoxElem.setAttribute("label", this._options.listLabel);
 
         // Set the dialog message.
-        var dialogMsgTextNode = document.createTextNode(this._options.errorMessage);
+        var dialogMsgTextNode = document.createTextNode(this._options.errorMsg);
         var dialogMsgElem = document.getElementById("error_msg");
         dialogMsgElem.appendChild(dialogMsgTextNode);
 
         // Set the Show Again check box label
         var showAgainElem = document.getElementById("dialog_enable");
         showAgainElem.setAttribute("label", this._options.showAgainMsg);
-        
+
         // Set the window title
         var windowTitle = document.getElementById('dialog-titlebar');
         windowTitle.title = this._options.windowTitle;
-        
+
         // Fill the unsupported media listbox.
         var listboxElem = document.getElementById("error_listbox");
         for (var i = 0; i < errorItems.length; i++) {
@@ -289,7 +296,7 @@
           shouldShow = prefBranch.getBoolPref("songbird.device.error.dialog.shouldShow");
         } catch (err) {
         }
-        
+
         return shouldShow;
       },
 

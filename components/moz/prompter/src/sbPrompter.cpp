@@ -75,18 +75,24 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbPrompter,
 //------------------------------------------------------------------------------
 
 /**
- * Open a dialog window.
- * Instead of using the openDialog method, use the nsIWindowWatcher.openWindow
- * method like nsIPromptService does so that the dialog is presented event when
- * no windows are available.
- * \sa nsIDOMWindowInternal.openDialog
+ * Open a dialog window with with the chrome URL specified by aUrl and parent
+ * specified by aParent.  The window name is specified by aName and the window
+ * options are specified by aOptions.  Additional window arguments may be
+ * provided in aExtraArguments.
+ *
+ * \param aParent             Parent window.
+ * \param aUrl                URL of window chrome.
+ * \param aName               Window name.
+ * \param aOptions            Window options.
+ * \param aExtraArguments     Extra window arguments.
  *
  * When called on the main-thread, return NS_ERROR_NOT_AVAILABLE if window of
  * configured type is not available and configured to wait for window.
  */
 
 NS_IMETHODIMP
-sbPrompter::OpenDialog(const nsAString& aUrl,
+sbPrompter::OpenDialog(nsIDOMWindow*    aParent,
+                       const nsAString& aUrl,
                        const nsAString& aName,
                        const nsAString& aOptions,
                        nsISupports*     aExtraArgument,
@@ -104,7 +110,12 @@ sbPrompter::OpenDialog(const nsAString& aUrl,
     // Call proxied prompter until a window is available.
     while (1) {
       // Call the proxied prompter.
-      rv = prompter->OpenDialog(aUrl, aName, aOptions, aExtraArgument, _retval);
+      rv = prompter->OpenDialog(aParent,
+                                aUrl,
+                                aName,
+                                aOptions,
+                                aExtraArgument,
+                                _retval);
       if (rv != NS_ERROR_NOT_AVAILABLE)
         NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
       if (NS_SUCCEEDED(rv))
@@ -119,9 +130,11 @@ sbPrompter::OpenDialog(const nsAString& aUrl,
   }
 
   // Get the parent window.
-  nsCOMPtr<nsIDOMWindow> parent;
-  rv = GetParent(getter_AddRefs(parent));
-  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+  nsCOMPtr<nsIDOMWindow> parent = aParent;
+  if (!parent) {
+    rv = GetParent(getter_AddRefs(parent));
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+  }
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.

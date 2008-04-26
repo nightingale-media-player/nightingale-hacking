@@ -30,18 +30,24 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_COMPONENTS = $(srcdir)/ArrayConverter.jsm \
-                      $(srcdir)/XPCOMUtils.jsm \
-                      $(srcdir)/RDFHelper.jsm \
                       $(srcdir)/DropHelper.jsm \
+                      $(srcdir)/RDFHelper.jsm \
+                      $(srcdir)/SBDataRemoteUtils.jsm \
                       $(srcdir)/SBTimer.jsm \
+                      $(srcdir)/StringUtils.jsm \
+                      $(srcdir)/WindowUtils.jsm \
+                      $(srcdir)/XPCOMUtils.jsm \
                       $(NULL)
 
 # TODO: Post 0.5 we need to remove js modules from the line above
 SONGBIRD_JSMODULES = $(srcdir)/ArrayConverter.jsm \
-                     $(srcdir)/XPCOMUtils.jsm \
-                     $(srcdir)/RDFHelper.jsm \
                      $(srcdir)/DropHelper.jsm \
+                     $(srcdir)/RDFHelper.jsm \
+                     $(srcdir)/SBDataRemoteUtils.jsm \
                      $(srcdir)/SBTimer.jsm \
+                     $(srcdir)/StringUtils.jsm \
+                     $(srcdir)/WindowUtils.jsm \
+                     $(srcdir)/XPCOMUtils.jsm \
                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

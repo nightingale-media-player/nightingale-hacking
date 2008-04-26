@@ -33,13 +33,14 @@
  * \interface sbIPrompter
  *
  *   The sbIPrompter interface provides an nsIPromptService to environments
- * without a default window (e.g., XPCOM components).  This interface allows
- * a parent window type to be set to be used as the parent window for all
- * nsIPromptService methods.  In addition, the sbIPrompter interface can be set
- * to wait for a parent window to be available before calling the
- * nsIPromptService methods.
- *   If the parent window type is not available and wait for window is false,
- * dialogs are opened with the currently active window as the parent.
+ * without a default window (e.g., XPCOM components).  For all methods that take
+ * a parent window as an argument, the parent may be set to null.  This
+ * interface allows a parent window type to be set to be used as the parent
+ * window in these cases.
+ *   In addition, the sbIPrompter interface can be set to wait for a parent
+ * window to be available before calling the nsIPromptService methods.  If the
+ * parent window type is not available and wait for window is false, dialogs are
+ * opened with the currently active window as the parent.
  *   A window is not considered to be available until after its overlays have
  * loaded.
  *   If a method is called from a non-main thread, and wait for window is set,
@@ -54,7 +55,7 @@
  * is "Songbird:Main".  The default waitForWindow is false.
  */
 
-[scriptable, uuid(5aa8de5b-48f8-4dd9-a967-63c674b621aa)]
+[scriptable, uuid(b3369b4b-83d6-4dca-bab8-2ac0c706f7c0)]
 interface sbIPrompter : nsIPromptService
 {
   /**
@@ -69,13 +70,23 @@ interface sbIPrompter : nsIPromptService
   attribute boolean waitForWindow;
 
   /**
-   * Open a dialog window.
-   * \sa nsIDOMWindowInternal.openDialog
+   * Open a dialog window with with the chrome URL specified by aUrl and parent
+   * specified by aParent.  The window name is specified by aName and the window
+   * options are specified by aOptions.  Additional window arguments may be
+   * provided in aExtraArguments.
+   *
+   * \param aParent             Parent window.
+   * \param aUrl                URL of window chrome.
+   * \param aName               Window name.
+   * \param aOptions            Window options.
+   * \param aExtraArguments     Extra window arguments.
    */
-  [noscript] nsIDOMWindow openDialog(in DOMString   aUrl,
-                                     in DOMString   aName,
-                                     in DOMString   aOptions,
-                                     in nsISupports aExtraArgument);
+
+  nsIDOMWindow openDialog(in nsIDOMWindow aParent,
+                          in DOMString    aUrl,
+                          in DOMString    aName,
+                          in DOMString    aOptions,
+                          in nsISupports  aExtraArgument);
 };
 
 %{C++

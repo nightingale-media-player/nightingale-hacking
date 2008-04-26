@@ -595,10 +595,13 @@ nsresult sbDeviceManager::QuitApplicationGranted()
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIDOMWindow> dialogWindow;
-    prompter->OpenDialog(NS_LITERAL_STRING(
-          "chrome://songbird/content/xul/waitForCompletion.xul"),
-        NS_LITERAL_STRING("waitForCompletion"), 
-        NS_LITERAL_STRING(""), nsnull, getter_AddRefs(dialogWindow));
+    prompter->OpenDialog
+      (nsnull,
+       NS_LITERAL_STRING("chrome://songbird/content/xul/waitForCompletion.xul"),
+       NS_LITERAL_STRING("waitForCompletion"),
+       NS_LITERAL_STRING(""),
+       nsnull,
+       getter_AddRefs(dialogWindow));
   }
 
   return NS_OK;
