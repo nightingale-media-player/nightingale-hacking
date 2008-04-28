@@ -153,6 +153,12 @@ BalloonTip.prototype = {
   originalWindow: null,
   gotmetrics: false,
   
+  doneUncloak: false,
+  lastW: -1,
+  lastH: -1,
+  lastX: -32768,
+  lastY: -32768,
+  
   autoCloseTimeoutElapsed: function() {
     var now = new Date().getTime();
     var diff = (now - this.initTimeStamp)/1000;
@@ -470,20 +476,37 @@ BalloonTip.prototype = {
           break;
       }
 
-      // Move the tip window to where it should be
-      this.tipWindow.resizeTo(best.w, best.h);
+      if (this.lastW != best.w ||
+          this.lastH != best.h) {
+        
+        // Move the tip window to where it should be
+        this.tipWindow.resizeTo(best.w, best.h);
+        
+        this.lastW = best.w;
+        this.lastH = best.h;
+      }
       
-      // And resize it to what we computed (this is necessary because removing the unused arrows while keeping the window
-      // the same size makes the content bigger than it needs to be, so we have to shrink the window by the calculated 
-      // offset in order for the content size to remain the same as what was automatically determined to be the best
-      // by ui engine)
-      this.tipWindow.moveTo(best.x, best.y);
+      if (this.lastX != best.x ||
+          this.lastY != best.y) {
+        
+        // And resize it to what we computed (this is necessary because removing the unused arrows while keeping the window
+        // the same size makes the content bigger than it needs to be, so we have to shrink the window by the calculated 
+        // offset in order for the content size to remain the same as what was automatically determined to be the best
+        // by ui engine)
+        this.tipWindow.moveTo(best.x, best.y);
+        
+        this.lastX = best.x;
+        this.lastY = best.y;
+      }
       
-      // Now that the window is correctly positioned and sized, uncloak it
-      var windowCloak =
-        Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
-                  .getService(Components.interfaces.sbIWindowCloak);
-      windowCloak.uncloak(this.tipWindow); 
+      if (!this.doneUncloak) {
+        // Now that the window is correctly positioned and sized, uncloak it
+        var windowCloak =
+          Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
+                    .getService(Components.interfaces.sbIWindowCloak);
+        windowCloak.uncloak(this.tipWindow); 
+        this.doneUncloak = true;
+      }
       
       // All done, but follow the position of the anchor element on the screen.
       setTimeout(function(obj) { obj.computePositionAndOrientation(); }, 100, this);
