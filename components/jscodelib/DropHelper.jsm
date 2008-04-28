@@ -1039,15 +1039,28 @@ var ExternalDropHandler = {
             item = this._getFirstItemByProperty(this._targetList.library, 
                                                 "http://songbirdnest.com/data/1.0#originURL", 
                                                 aURI.spec);
-        }        
+        }
+        
         // if the item didnt exist before, create it now
+        var itemAdded = false;
         if (!item) {
+          var currentTime = new Date();
           item = this._targetList.library.createMediaItem(aURI);
-          if (item) {
+          
+          // Ensure we have an item and that it was created before 'currentTime'.
+          // We check the creation time specifically because items created before
+          // 'currentTime' were not created but rather returned to us.
+          if (item && item.mediaCreated > currentTime) {
+            
             this._scanList.appendElement(item, false);
             this._totalImported++;
+            
+            itemAdded = true;
           }
-        } else {
+        } 
+
+        // The item was not added because it was a duplicate.
+        if(!itemAdded) {
           this._totalDups++;
         }
 
