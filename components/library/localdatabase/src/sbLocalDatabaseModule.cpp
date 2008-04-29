@@ -104,4 +104,11 @@ static const nsModuleComponentInfo components[] =
   }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdLocalDatabaseLibraryModule, components)
+static void sbLocalDatabaseDestructor(nsIModule *me) {
+  // This object is already destroyed, we just need
+  // to null it out so that the singleton constructor
+  // won't attempt to use a dead instance.
+  gLibraryFactory = nsnull;
+}
+
+NS_IMPL_NSGETMODULE_WITH_DTOR(SongbirdLocalDatabaseLibraryModule, components, sbLocalDatabaseDestructor)
