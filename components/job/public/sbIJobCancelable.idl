@@ -26,7 +26,7 @@
 
 #include "nsISupports.idl"
 
-[uuid(fba55d60-1174-11dd-bd0b-0800200c9a66)]
+[scriptable, uuid(fba55d60-1174-11dd-bd0b-0800100c9a66)]
 interface sbIJobCancelable : nsISupports
 {
   /**

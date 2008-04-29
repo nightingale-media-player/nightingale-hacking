@@ -129,15 +129,20 @@ function assertObjectIsSubsetOf(mapA, mapB) {
   }
 }
 
-function MetadataJobObserver(completeFunc) {
-  this._completeFunc = completeFunc;
-}
 
-MetadataJobObserver.prototype = {
-  observe: function(aSubject, aTopic, aData)
-  {
-    this._completeFunc.call(this, aSubject, aTopic, aData);
+/**
+ * Dump information for an sbIJobProgress interface.
+ * Used for debugging.
+ */
+function reportJobProgress(job, jobName) {
+  log("\n\n\nMetadata - " + jobName + " job progress - " + 
+      job.progress + "/" + job.total + ", " + job.errorCount + " failed. " +
+      "Status " + job.statusText + " (" + job.status + "), Title: " + job.titleText);
+  var errorEnumerator = job.getErrorMessages();
+  while (errorEnumerator.hasMore()) {
+    log("MetadataJob " + jobName + " - failed url: " + errorEnumerator.getNext());
   }
+  log("\n\n");
 }
 
 

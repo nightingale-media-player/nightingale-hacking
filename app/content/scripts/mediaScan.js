@@ -41,7 +41,6 @@ theProgress.value = 0;
 
 var gFileScan = null;
 var gDirectoriesToScan = [];
-var gOldJobs = [];
 var aFileScanQuery = null;
 
 var theTargetLibrary = null;
@@ -265,7 +264,12 @@ function appendToMetadataQueue( aItemArray ) {
     // If we need to, make a new job.
     var createNewJob = false;
     var freakout = false;
-    if ( typeof gMediaScanMetadataJob == 'unknown' || gMediaScanMetadataJob == null || gMediaScanMetadataJob.complete ) {
+    if ( typeof gMediaScanMetadataJob == 'undefined' || 
+         gMediaScanMetadataJob == null || 
+         gMediaScanMetadataJob
+            .QueryInterface(Components.interfaces.sbIJobProgress)
+            .status != Components.interfaces.sbIJobProgress.STATUS_RUNNING ) 
+    {
       createNewJob = true;
     } else {
       try {
@@ -281,7 +285,6 @@ function appendToMetadataQueue( aItemArray ) {
     
     // Create and submit a metadata job for the new items
     if ( createNewJob ) {
-      gOldJobs.push( gMediaScanMetadataJob ); // Just in case?  Keep a reference on it?  This seems odd.
       var metadataJobManager =
         Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
                   .getService(Components.interfaces.sbIMetadataJobManager);

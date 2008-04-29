@@ -47,6 +47,8 @@
 #include <nsIStringBundle.h>
 #include <nsIUUIDGenerator.h>
 
+#include <sbIJobCancelable.h>
+
 #include "sbIDatabaseQuery.h"
 #include "sbIDatabaseResult.h"
 

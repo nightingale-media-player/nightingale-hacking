@@ -38,6 +38,7 @@ XPIDL_SRCS = sbIMetadataHandler.idl \
              $(NULL)
 
 XPIDL_INCLUDES = $(topsrcdir)/components/property/public \
+                 $(topsrcdir)/components/job/public \
                  $(NULL)
 
 XPIDL_MODULE = sbMetadataManager.xpt

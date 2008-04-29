@@ -68,10 +68,10 @@ function runTest() {
   var writeonly = getCopyOfFile(file, "writeonly.mp3");
   writeonly.permissions = 0200;
   // If we aren't able to set write only, don't bother with this test (e.g. on windows)
-  if (writeonly.permissions == 0200) {
+  if ((writeonly.permissions & 0777) == 0200) {
     files.push(writeonly);
   } else {
-    log("MetadataJob_ErrorCases: platform does not support write-only.");
+    log("MetadataJob_ErrorCases: platform does not support write-only. Perms=" + (writeonly.permissions & 0777));
   }
   filesToRemove.push(writeonly);
   
@@ -102,11 +102,19 @@ function runTest() {
   /////////////////////////////////////
   
   // Called when the first scan into library1 completes 
-  function onLib1ReadComplete(aSubject, aTopic, aData) {    
+  function onLib1ReadComplete(job) {    
     try {
-      assertEqual(aTopic, "complete");
-      assertTrue(aSubject.completed);
-      aSubject.removeObserver();
+      reportJobProgress(job, "onLib1ReadComplete");
+          
+      if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+        return;
+      }
+      job.removeJobProgressListener(onLib1ReadComplete);
+      
+      // Verify job progress reporting.
+      assertEqual(files.length, job.total);
+      assertEqual(files.length, job.progress);
+      assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
       
       // Ok great, lets try writing back new metadata for all the files via library 2
       for each (var item in items2) {
@@ -118,7 +126,7 @@ function runTest() {
       job = startMetadataJob(items2, Components.interfaces.sbIMetadataJob.JOBTYPE_WRITE);
       
       // Wait for reading to complete before continuing
-      job.setObserver({ observe: onWriteComplete });      
+      job.addJobProgressListener(onWriteComplete); 
 
     // print errors, since otherwise they will be eaten by the observe call
     } catch (e) {
@@ -133,22 +141,32 @@ function runTest() {
   //////////////////////////////////////
     
   // Called when the write out from library2 completes
-  function onWriteComplete(aSubject, aTopic, aData) {
+  function onWriteComplete(job) {
     try {
-      assertEqual(aTopic, "complete");
-      assertTrue(aSubject.completed);
-      aSubject.removeObserver();
+      reportJobProgress(job, "onWriteComplete");
+
+      if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+        return;
+      }
+      job.removeJobProgressListener(onWriteComplete);
       
       // Nothing should have been written.  
       // Make sure by reimporting library2 and comparing it with library1 
       library2.clear();
       items2 = importFilesToLibrary(files, library2);
       assertEqual(items2.length, files.length);
+      
+      // Verify job progress reporting.
+      assertEqual(files.length - 2, job.errorCount);
+      assertEqual(files.length, job.total);
+      assertEqual(files.length, job.progress);
+      assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
+      
 
       job = startMetadataJob(items2, Components.interfaces.sbIMetadataJob.JOBTYPE_READ);
 
       // Wait for reading to complete before continuing
-      job.setObserver({ observe:  onLib2ReadComplete });      
+      job.addJobProgressListener(onLib2ReadComplete); 
 
     // print errors, since otherwise they will be eaten by the observe call
     } catch (e) {
@@ -163,11 +181,15 @@ function runTest() {
   ///////////////////////////////////////
 
   // Called when reading metadata back into library2 completes
-  function onLib2ReadComplete(aSubject, aTopic, aData) {
+  function onLib2ReadComplete(job) {
     try {
-      assertEqual(aTopic, "complete");
-      assertTrue(aSubject.completed);
-      aSubject.removeObserver();
+      reportJobProgress(job, "onLib2ReadComplete");
+
+      if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+        return;
+      }
+      job.removeJobProgressListener(onLib2ReadComplete);
+      
       // Make sure writing didnt break anything by
       // comparing library1 with library2
       var diffingService = Cc["@songbirdnest.com/Songbird/Library/DiffingService;1"]
@@ -196,7 +218,14 @@ function runTest() {
         assertEqual(url == fakeFileURL || url == corruptFileURL, true);
       }
       assertEqual(changes.length, 2);
-
+      
+      // Verify job progress reporting.  Do this last since the info above is
+      // useful for debugging.
+      assertEqual(changes.length, job.errorCount);
+      assertEqual(files.length, job.total);
+      assertEqual(files.length, job.progress);
+      assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
+      
     // print errors, since otherwise they will be eaten by the observe call
     } catch (e) {
       log("\nERROR: " + e + "\n");
@@ -220,12 +249,12 @@ function runTest() {
       job = null;
     } catch (e) {
       log("ERROR: " + e + "\n");
-    }  
+    }
     testFinished();
   }
   
   // Wait for reading to complete before continuing
-  job.setObserver({ observe: onLib1ReadComplete });
+  job.addJobProgressListener(onLib1ReadComplete);
   testPending();
 }
 
@@ -266,4 +295,3 @@ function startMetadataJob(items, type) {
   
   return job;
 }
-

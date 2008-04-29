@@ -36,7 +36,7 @@
 #include <nscore.h>
 #include <prlock.h>
 #include <prmon.h>
-
+#include <nsAutoLock.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsCOMArray.h>
@@ -49,6 +49,7 @@
 #include <xpcom/nsIObserver.h>
 #include <nsIStringBundle.h>
 #include <nsInterfaceHashtable.h>
+#include <nsIClassInfo.h>
 
 #include <sbILibraryManager.h>
 #include <sbIDatabaseQuery.h>
@@ -58,6 +59,8 @@
 #include <sbIMetadataManager.h>
 #include <sbIMetadataHandler.h>
 #include <sbIMetadataJob.h>
+#include <sbIJobProgress.h>
+#include <sbIJobCancelable.h>
 
 #include <set>
 
@@ -75,7 +78,7 @@
 { 0xC38FD6BD, 0x3335, 0x4392, { 0xA3, 0xDE, 0x18, 0x55, 0xEC, 0xED, 0xA4, 0xF8 } }
 
 // TODO Update.  Revving this basically abandons old database files.
-#define SBMETADATAJOB_DATABASE_GUID "metadataJobV2Exp"
+#define SBMETADATAJOB_DATABASE_GUID "metadataJobV3Exp"
 
 // FUNCTIONS ==================================================================
 
@@ -88,20 +91,25 @@ class sbIPropertyArray;
 class sbIPropertyManager;
 class sbMetadataJobProcessorThread;
 
-class sbMetadataJob : public sbIMetadataJob
+class sbMetadataJob : public nsIClassInfo,
+                      public sbIMetadataJob, 
+                      public sbIJobProgress,  
+                      public sbIJobCancelable
 {
   friend class sbMetadataJobProcessorThread;
   friend class sbMediaListBatchCallback;
 
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_NSICLASSINFO
   NS_DECL_SBIMETADATAJOB
+  NS_DECL_SBIJOBPROGRESS
+  NS_DECL_SBIJOBCANCELABLE
+
 
   sbMetadataJob();
   virtual ~sbMetadataJob();
 
-  // TODO combine these into one method
-  nsresult FactoryInit();
   nsresult Init(const nsAString & aTableName, 
                 nsIArray *aMediaItemsArray, 
                 PRUint32 aSleepMS,
@@ -161,37 +169,58 @@ protected:
   };
 
   nsresult RunTimer();
-  nsresult ProcessInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &aStart, PRUint32 aEnd);
+  nsresult RunInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &aStart, PRUint32 aEnd);
+  nsresult ProcessInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &aStart, PRUint32 aEnd);  
   nsresult ProcessTimer();
   nsresult CancelTimer();
   nsresult RunThread( PRBool * bShutdown );
+  nsresult ProcessThread( PRBool *aShutdown, sbIDatabaseQuery *aQuery, nsIThread* aThread );
   nsresult FinishJob();
 
-  static nsresult AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsString aTableName, sbIMediaItem *aMediaItem, jobitem_t **_retval );
-  static nsresult GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableName, PRBool isWorkerThread, jobitem_t **_retval );
-  static nsresult SetItemIsStarted( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
-  static nsresult SetItemIsCompleted( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
-  static nsresult SetItemsAreCompleted( sbIDatabaseQuery *aQuery, nsString aTableName, nsTArray<nsRefPtr<jobitem_t> > &aItemArray );
-  static nsresult SetItemIs( const nsAString &aColumnString, sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE, PRBool aValue = PR_TRUE );
-  static nsresult SetItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
-  static nsresult ClearItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
-  static nsresult ResetIncomplete( sbIDatabaseQuery *aQuery, nsString aTableName );
-  static nsresult StartHandlerForItem( jobitem_t *aItem, PRUint16 aJobType);
-  static nsresult AddMetadataToItem( jobitem_t *aItem, sbIURIMetadataHelper *aURIMetadataHelper );
-  static nsresult AddDefaultMetadataToItem( jobitem_t *aItem, sbIMediaItem *aMediaItem );
-  static nsresult CreateDefaultItemName( const nsAString &aURLString, nsAString &retval );
-  static nsresult AppendIfValid(sbIPropertyManager* aPropertyManager, sbIMutablePropertyArray* aProperties, const nsAString& aID, const nsAString& aValue);
-  static nsresult GetJobLibrary( sbIDatabaseQuery *aQuery, const nsAString& aTableName, sbILibrary **_retval );
-  static nsresult DropJobTable( sbIDatabaseQuery *aQuery, const nsAString& aTableName );
+  nsresult AddItemToJobTableQuery( sbIDatabaseQuery *aQuery, nsString aTableName, sbIMediaItem *aMediaItem, jobitem_t **_retval );
+  nsresult GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableName, PRBool isWorkerThread, jobitem_t **_retval );
+  nsresult SetItemIsStarted( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
+  nsresult SetItemIsFailed( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem);
+  nsresult SetItemIsCompleted( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE );
+  nsresult SetItemsAreCompleted( sbIDatabaseQuery *aQuery, nsString aTableName, nsTArray<nsRefPtr<jobitem_t> > &aItemArray );
+  nsresult SetItemIs( const nsAString &aColumnString, sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem, PRBool aExecute = PR_TRUE, PRBool aValue = PR_TRUE );
+  nsresult SetItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
+  nsresult ClearItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
+  nsresult ResetIncomplete( sbIDatabaseQuery *aQuery, nsString aTableName );
+  nsresult sbMetadataJob::InitProgressReporting();
+  nsresult UpdateErrorMessages();
+  nsresult StartHandlerForItem( jobitem_t *aItem, PRUint16 aJobType);
+  nsresult AddMetadataToItem( jobitem_t *aItem, sbIURIMetadataHelper *aURIMetadataHelper );
+  nsresult AddDefaultMetadataToItem( jobitem_t *aItem, sbIMediaItem *aMediaItem );
+  nsresult CreateDefaultItemName( const nsAString &aURLString, nsAString &retval );
+  nsresult AppendIfValid(sbIPropertyManager* aPropertyManager, sbIMutablePropertyArray* aProperties, const nsAString& aID, const nsAString& aValue);
+  nsresult GetJobLibrary( sbIDatabaseQuery *aQuery, const nsAString& aTableName, sbILibrary **_retval );
+  nsresult DropJobTable( sbIDatabaseQuery *aQuery, const nsAString& aTableName );
 
-  static nsresult ProcessInitBatchFunc(nsISupports* aUserData);
+  static nsresult RunInitBatchFunc(nsISupports* aUserData);
   static nsresult RunThreadBatchFunc(nsISupports* aUserData);
+  
+  static PLDHashOperator PR_CALLBACK
+    AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey,
+                                   sbIJobProgressListener* aEntry,
+                                   void* aUserData);  
+
+  nsresult OnJobProgress();
+  nsresult SetStatusText(nsAString& aText);
 
   void IncrementDataRemote();
   void DecrementDataRemote();
 
   nsCOMArray<sbIMediaItem>      mInitArray;
   PRUint32                      mInitCount;
+  PRUint16                      mStatus;
+  PRInt32                       mCompletedItemCount;
+  PRInt32                       mTotalItemCount;
+  PRInt32                       mErrorCount;
+  nsTArray<nsString>            mErrorMessages;
+  nsString                      mStatusText;
+  nsString                      mTitleText;
+  PRLock*                       mStatusTextLock;
   nsString                      mStatusDisplayString;
   nsCOMPtr<sbIDataRemote>       mDataStatusDisplay;
   nsCOMPtr<sbIDataRemote>       mDataCurrentMetadataJobs;
@@ -203,14 +232,13 @@ protected:
   nsCOMPtr<nsIThread>           mThread;
   nsTArray<nsRefPtr<jobitem_t> > mTimerWorkers;
   nsCOMPtr<sbMetadataJobProcessorThread> mMetadataJobProcessor;
-  nsCOMPtr<nsIObserver>         mObserver;
   nsCOMPtr<sbIURIMetadataHelper> mURIMetadataHelper;
   nsCOMPtr<sbILibrary>          mLibrary;
-  PRPackedBool                  mCompleted;
   PRPackedBool                  mInitCompleted;
   PRPackedBool                  mInitExecuted;
   PRPackedBool                  mTimerCompleted;
   PRPackedBool                  mThreadCompleted;
+  nsInterfaceHashtable<nsISupportsHashKey, sbIJobProgressListener> mListeners;
 };
 
 class sbMetadataJobProcessorThread : public nsIRunnable

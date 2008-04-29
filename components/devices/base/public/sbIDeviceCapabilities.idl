@@ -140,7 +140,7 @@ interface sbIDeviceCapabilities : nsISupports
   void getSupportedFormats(in PRUint32 aContentType,
                            out unsigned long aArrayCount,
                            [retval, array, size_is(aArrayCount)]
-                           out string aSuportedFormats);
+                           out string aSupportedFormats);
 
   /**
    * An array of nsISupportsPRUint32 values defined in sbIDeviceEvent.idl

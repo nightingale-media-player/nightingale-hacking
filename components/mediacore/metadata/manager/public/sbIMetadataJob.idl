@@ -24,24 +24,24 @@
 //
 */
 
-/**
-* \file sbIMetadataJob.idl
-* \brief The Metadata Backscanner scans unscanned media items for new metadata.
-*/
+
 #include "nsISupports.idl"
 
 interface nsIArray;
-interface nsIObserver;
+
 /**
-* \interface sbIMetadataJob sbIMetadataJob.h
-* \brief Metadata Job represents the status of a running metadata task
-*
-* You get an sbIMetadataJob by calling sbIMetadataJobManager::newJob()
-* with an nsIArray of sbIMediaItem.
-* 
-* \sa sbILibrary, sbIMediaItem, sbIMetadataJobManager
-*/
-[scriptable, uuid(b8da3f00-ff8b-11dc-95ff-0800200c9a66)]
+ * \interface sbIMetadataJob sbIMetadataJob.h
+ * \brief Metadata Job represents the status of a running metadata task
+ *
+ * You get an sbIMetadataJob by calling sbIMetadataJobManager::newJob()
+ * with an nsIArray of sbIMediaItem.
+ *
+ * Use the sbIJobProgress interface to receive progress notifications, and
+ * sbIJobCancelable to cancel the job.
+ * 
+ * \sa sbILibrary, sbIMediaItem, sbIMetadataJobManager, sbIJobProgress, sbIJobCancelable
+ */
+[scriptable, uuid(b8aa3f00-ff8b-11dc-95ff-0800200c9a66)]
 interface sbIMetadataJob : nsISupports
 {
 
@@ -64,13 +64,6 @@ interface sbIMetadataJob : nsISupports
   readonly attribute unsigned short type;
 
   /**
-   * \brief True if it has shutdown its timer and thread.
-   *
-   * Appending to a completed job will throw an error.
-   */
-  readonly attribute boolean completed;
-
-  /**
    * \brief Add some more media items to the job's queue.
    *
    * Appending to a completed job will throw an error.
@@ -81,23 +74,5 @@ interface sbIMetadataJob : nsISupports
    * \param aMediaItemsArray An array filled with media items to be processed.
    */
   void append( in nsIArray aMediaItemsArray );
-
-  /**
-   * \brief Cancel a task 
-   *
-   * Stop all metadata processing.  Thread shuts down gently.
-   */
-  void cancel();
-
-  /**
-   * \brief Set an observer to be informed when the task quits.
-   *
-   *  "complete" - Finished normally
-   *  "cancel"   - Cancelled
-   *
-   * \param aObserver The observer object.
-   */
-  void setObserver( in nsIObserver aObserver );
-  void removeObserver();
 };
 

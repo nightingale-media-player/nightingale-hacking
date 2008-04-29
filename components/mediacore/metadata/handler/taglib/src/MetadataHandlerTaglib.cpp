@@ -400,7 +400,7 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
     /* Return results. */
     *pReadCount = readCount;
 
-    return (NS_OK);
+    return result;
 }
 
 
@@ -502,6 +502,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
 #endif
 
       TagLib::FileRef f(filePath.BeginReading());
+      NS_ENSURE_TRUE(f.file()->isOpen(), NS_ERROR_FAILURE);
       
       nsAutoString propertyValue;
       result = mpMetadataPropertyArray->GetPropertyValue(
@@ -577,12 +578,17 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         }
       }
           
-      f.save();
+      // Attempt to save the metadata
+      if (f.save()) {
+        result = NS_OK;
+      } else {
+        result = NS_ERROR_FAILURE;      
+      } 
     }
     
     // TODO need to set pWriteCount
   
-    return (NS_OK);
+    return result;
 }
 
 

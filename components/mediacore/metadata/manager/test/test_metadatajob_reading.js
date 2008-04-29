@@ -72,9 +72,6 @@ var gRemoteMediaItems = [];
 var gFileList = [];
 
 var gTestMetadataJobManager = null;
-var gTestMetadataJob = null;
-
-var gTestInterval = null;
 
 var gServer;
 
@@ -130,22 +127,21 @@ function runTest () {
   // Request metadata for both local and remote urls at the same time.  Woo!
   gTestMetadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
                                 .getService(Components.interfaces.sbIMetadataJobManager);
-  gTestMetadataJob = gTestMetadataJobManager.newJob( gTestMediaItems, 5 );
-  var gTestObserver = new MetadataJobObserver(onComplete);
+  var job = gTestMetadataJobManager.newJob( gTestMediaItems, 5 );
   
   // Set an observer to know when we complete
-  gTestMetadataJob.setObserver( gTestObserver );
+  job.addJobProgressListener(onComplete);
   testPending();
 }
 
-function onComplete(aSubject, aTopic, aData) {
+function onComplete(job) {
   try { 
-    gTestMetadataJob.removeObserver();
+    if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+      return;
+    }
 
-    // Are you really complete?
-    assertEqual(aTopic, "complete");
-    assertTrue(gTestMetadataJob.completed);
-    
+    job.removeJobProgressListener(onComplete);
+
     assertTrue(gFileList.length > 0);
     
     // Print metadata or all items so we can see the full set of data instead
@@ -186,7 +182,6 @@ function onComplete(aSubject, aTopic, aData) {
 
     // So testing is complete
     gTestMetadataJobManager = null;
-    gTestMetadataJob = null;
     
     gServer.stop();
     

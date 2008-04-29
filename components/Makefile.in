@@ -43,6 +43,7 @@ SUBDIRS = addonmetadata \
           feathers \
           filescan \
           integration \
+          job \
           library \
           jscodelib \
           mediacore \
@@ -65,16 +66,14 @@ ifdef SB_ENABLE_TESTS
 SUBDIRS += testharness
 endif
 
-SUBDIRDEPS  = mediacore : library
+SUBDIRDEPS  = mediacore : library job moz
 SUBDIRDEPS2 = playlistreader : library
-SUBDIRDEPS3 = devicesobsolete : library
-SUBDIRDEPS4 = devicesobsolete : mediacore
-SUBDIRDEPS5 = integration : devicesobsolete
-SUBDIRDEPS6 = library : sqlbuilder moz property metrics
-SUBDIRDEPS7 = remoteapi : library
-SUBDIRDEPS8 = remoteapi : moz
-SUBDIRDEPS9 = contenthandling : playlistplayback
-SUBDIRDEPS10 = devices : library property
+SUBDIRDEPS3 = devicesobsolete : library mediacore
+SUBDIRDEPS4 = integration : devicesobsolete
+SUBDIRDEPS5 = library : sqlbuilder moz property metrics
+SUBDIRDEPS6 = remoteapi : library moz
+SUBDIRDEPS7 = contenthandling : playlistplayback
+SUBDIRDEPS8 = devices : library property
 
 ifdef SB_ENABLE_STATIC
 SUBDIRS += static

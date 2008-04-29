@@ -112,13 +112,17 @@ nsresult sbMetadataJobManager::Shutdown()
 {
   PR_LOG(gMetadataLog, PR_LOG_DEBUG, ("Metadata Job Manager shutting down..."));
   
+  nsresult rv;
+  
   // the act of cancelling jobs may get us more jobs as the threads shut down.
   // so we have to keep checking the number of jobs outstanding.
   while (1) {
     PRInt32 i = mJobArray.Count() - 1;
     if (i < 0)
       break;
-    mJobArray[ i ]->Cancel();
+    nsCOMPtr<sbIJobCancelable> cancelableJob(do_QueryInterface(mJobArray[ i ]));
+    rv = cancelableJob->Cancel();
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel a metadata job");
     mJobArray.RemoveObjectAt(i);
   }
   NS_ASSERTION(0 == mJobArray.Count(), "Metadata jobs remaining after stopping the manager");
@@ -185,9 +189,6 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray,
 
   nsRefPtr<sbMetadataJob> task = new sbMetadataJob();
   NS_ENSURE_TRUE(task, NS_ERROR_OUT_OF_MEMORY);
-  // TODO remove factoryinit!
-  rv = task->FactoryInit();
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Create a resource guid for this job.
   nsCOMPtr<nsIUUIDGenerator> uuidGen =
@@ -346,9 +347,6 @@ nsresult sbMetadataJobManager::RestartExistingJobs()
     
     nsRefPtr<sbMetadataJob> task = new sbMetadataJob();
     NS_ENSURE_TRUE(task, NS_ERROR_OUT_OF_MEMORY);
-    // TODO remove factoryinit!
-    rv = task->FactoryInit();
-    NS_ENSURE_SUCCESS(rv, rv);
 
     rv = task->Init(tableName, nsnull, aSleep, jobType);
     NS_ENSURE_SUCCESS(rv, rv);

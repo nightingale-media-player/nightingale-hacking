@@ -78,9 +78,8 @@ function runTest () {
       index++;
     }
 
-    var obs = gTestMetadataJobManager.newJob(a, 5);
-    var gTestObserver = new MetadataJobObserver(onComplete);
-    obs.setObserver(gTestObserver);
+    var job = gTestMetadataJobManager.newJob(a, 5);
+    job.addJobProgressListener(onComplete);
     count++;
     log("length = " + a.length + " count = " + count);
   }
@@ -88,9 +87,12 @@ function runTest () {
 
 }
 
-function onComplete(aSubject, aTopic, aData) {
-  aSubject.QueryInterface(Components.interfaces.sbIMetadataJob).removeObserver();
+function onComplete(job) {
+  if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+    return;
+  }
 
+  job.removeJobProgressListener(onComplete);
   log("done = " + count);
   count--;
   if (count == 0) {

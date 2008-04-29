@@ -70,10 +70,10 @@ function runTest () {
       }
     }
 
-    var obs = gTestMetadataJobManager.newJob(a, 5);
-    var gTestObserver = new MetadataJobObserver(onComplete);
+    var job = gTestMetadataJobManager.newJob(a, 5);
+
     // Set an observer to know when we complete
-    obs.setObserver( gTestObserver );
+    job.addJobProgressListener( onComplete );
     count++;
     log("length = " + a.length + " count = " + count);
   }
@@ -82,19 +82,12 @@ function runTest () {
 
 }
 
-function MetadataJobObserver(completeFunc) {
-  this._completeFunc = completeFunc;
-}
-
-MetadataJobObserver.prototype = {
-  observe: function(aSubject, aTopic, aData)
-  {
-    this._completeFunc.call(this, aSubject, aTopic, aData);
+function onComplete(job) {
+  if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+    return;
   }
-}
 
-function onComplete(aSubject, aTopic, aData) {
-  aSubject.QueryInterface(Components.interfaces.sbIMetadataJob).removeObserver();
+  job.removeJobProgressListener(onComplete);
 
   log("done = " + count);
   count--;

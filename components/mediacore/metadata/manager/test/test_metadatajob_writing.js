@@ -81,10 +81,13 @@ function runTest() {
   var job = startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_READ);
   
   // Wait for reading to complete before continuing
-  job.setObserver(new MetadataJobObserver(function onReadComplete(aSubject, aTopic, aData) {
-    assertEqual(aTopic, "complete");
-    assertTrue(aSubject.completed);
-    job.removeObserver();
+  job.addJobProgressListener(function onReadComplete(job) {
+    reportJobProgress(job, "MetadataJob_Writing - onReadComplete");
+    
+    if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+      return;
+    }
+    job.removeJobProgressListener(onReadComplete);
   
     //////////////////////////////////////
     // Save new metadata into the files //
@@ -127,10 +130,20 @@ function runTest() {
     prefSvc.setBoolPref("songbird.metadata.enableWriting", oldWritingEnabledPref); 
     
     // Wait for writing to complete before continuing
-    job.setObserver(new MetadataJobObserver(function onReadComplete(aSubject, aTopic, aData) {
-      assertEqual(aTopic, "complete");
-      assertTrue(aSubject.completed);
-      job.removeObserver();
+    job.addJobProgressListener(function onWriteComplete(job) {
+      reportJobProgress(job, "MetadataJob_Writing - onWriteComplete");
+    
+      if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+        return;
+      }
+      job.removeJobProgressListener(onWriteComplete);
+      
+      // Verify job progress reporting.  
+      // NOTE: Comment these out to receive more useful debug information
+      assertEqual(urls.length, job.total);
+      assertEqual(urls.length, job.progress);
+      assertEqual(0, job.errorCount);
+      assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_SUCCEEDED);
       
       /////////////////////////////////////////////////////
       // Now reimport and confirm that the write went ok //
@@ -141,10 +154,19 @@ function runTest() {
       job = startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_READ);
 
       // Wait for reading to complete before continuing
-      job.setObserver(new MetadataJobObserver(function onSecondReadComplete(aSubject, aTopic, aData) {
-        assertEqual(aTopic, "complete");
-        assertTrue(aSubject.completed);
-        job.removeObserver();
+      job.addJobProgressListener(function onSecondReadComplete(job) {
+        reportJobProgress(job, "MetadataJob_Writing - onSecondReadComplete");
+        if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+          return;
+        }
+        job.removeJobProgressListener(onSecondReadComplete);
+        
+        // Verify job progress reporting.  
+        // NOTE: Comment these out to receive more useful debug information
+        assertEqual(urls.length, job.total);
+        assertEqual(urls.length, job.progress);
+        assertEqual(0, job.errorCount);
+        assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_SUCCEEDED);
         
         for each (var item in items) {
           log("MetadataJob_Write: verifying " + item.contentSrc.path);
@@ -158,9 +180,9 @@ function runTest() {
         testFolder.remove(true);
         job = null;
         testFinished();
-      }));
-    }));
-  }));
+      });
+    });
+  });
   testPending();
 }
 

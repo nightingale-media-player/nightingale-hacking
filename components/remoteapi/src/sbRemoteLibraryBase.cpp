@@ -55,6 +55,7 @@
 #include <sbIPropertyArray.h>
 #include <sbIWrappedMediaItem.h>
 #include <sbIWrappedMediaList.h>
+#include <sbIJobProgress.h>
 
 #include <jsapi.h>
 #include <nsArrayEnumerator.h>
@@ -149,13 +150,15 @@ public:
 
       // Already have a job, check completion status.
       if (mMetadataJob) {
-        PRBool completed;
-
-        rv = mMetadataJob->GetCompleted(&completed);
+        nsCOMPtr<sbIJobProgress> jobProgress(do_QueryInterface(mMetadataJob, &rv));
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        PRUint16 status;
+        rv = jobProgress->GetStatus(&status);
         NS_ENSURE_SUCCESS(rv, rv);
 
         // Job hasn't completed yet, attempt to append to it.
-        if (!completed) {
+        if (status == sbIJobProgress::STATUS_RUNNING) {
           rv = mMetadataJob->Append( mediaItems );
 
           // If the append succeeds, there is no need to create a new job.
@@ -472,13 +475,15 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
 
       // Already have a job, check completion status.
       if (mMetadataJob) {
-        PRBool completed;
-
-        rv = mMetadataJob->GetCompleted(&completed);
+        nsCOMPtr<sbIJobProgress> jobProgress(do_QueryInterface(mMetadataJob, &rv));
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        PRUint16 status;
+        rv = jobProgress->GetStatus(&status);
         NS_ENSURE_SUCCESS(rv, rv);
 
         // Job hasn't completed yet, attempt to append to it.
-        if (!completed) {
+        if (status == sbIJobProgress::STATUS_RUNNING) {
           rv = mMetadataJob->Append( mediaItems );
 
           // If the append succeeds, there is no need to create a new job.

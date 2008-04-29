@@ -41,7 +41,7 @@ interface sbIJobProgressListener;
  *
  * \note This interface is likely to change before 1.0
  */
-[uuid(72287c30-1173-11dd-bd0b-0800200c9a66)]
+[scriptable, uuid(72287c30-1173-11dd-bd0b-0800200c9b66)]
 interface sbIJobProgress : nsISupports
 {
   /**
@@ -121,7 +121,7 @@ interface sbIJobProgress : nsISupports
  * \interface sbIJobProgressListener
  * \brief Implemented to receive notifications from sbIJobProgress interfaces
  */
-[uuid(75302170-1174-11dd-bd0b-0800200c9a66)]
+[scriptable, function, uuid(75302170-1174-11dd-bd0b-0200200c9a66)]
 interface sbIJobProgressListener : nsISupports
 {
   /**

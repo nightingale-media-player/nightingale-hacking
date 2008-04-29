@@ -33,6 +33,7 @@
 #include <nspr.h>
 #include <nscore.h>
 #include <nsAutoLock.h>
+#include <pratom.h>
 
 #include <nsArrayUtils.h>
 #include <unicharutil/nsUnicharUtils.h>
@@ -47,7 +48,8 @@
 #include <nsThreadUtils.h>
 #include <nsMemory.h>
 #include <nsNetUtil.h>
-
+#include <nsIClassInfoImpl.h>
+#include <nsIProgrammingLanguage.h>
 #include <nsIURI.h>
 #include <nsIIOService.h>
 #include <pref/nsIPrefService.h>
@@ -67,6 +69,10 @@
 #include <sbPropertiesCID.h>
 #include <sbSQLBuilderCID.h>
 #include <sbProxyUtils.h>
+
+#include <sbStringUtils.h>
+#include <sbTArrayStringEnumerator.h>
+
 
 #include "MetadataJob.h"
 #include "sbMetadataUtils.h"
@@ -98,141 +104,75 @@ const PRUint32 TIMER_LOOP_MS = 500;
 
 // CLASSES ====================================================================
 
-class sbProcessInitParams : public nsISupports
+class sbRunInitParams : public nsISupports
 {
   NS_DECL_ISUPPORTS
 public:
-  sbProcessInitParams(nsCOMPtr<sbIDatabaseQuery>& aQuery,
-                      nsCOMArray<sbIMediaItem>& aItemArray,
-                      const nsString& aTableName,
-                      PRUint32& aStartIndex,
-                      PRUint32 aEndIndex, 
-                      PRUint16 aJobType)
-  : query(aQuery), itemArray(aItemArray), tableName(aTableName),
-    startIndex(aStartIndex), endIndex(aEndIndex), jobType(aJobType)
+  sbRunInitParams(sbMetadataJob* aJob,
+                  nsCOMArray<sbIMediaItem>& aItemArray,
+                  PRUint32& aStartIndex,
+                  PRUint32 aEndIndex)
+  : job(aJob), itemArray(aItemArray), startIndex(aStartIndex), endIndex(aEndIndex)
   { }
-
-  nsCOMPtr<sbIDatabaseQuery>& query;
+  sbMetadataJob* job; // Non-owning. 
   nsCOMArray<sbIMediaItem>& itemArray;
-  const nsString& tableName;
   PRUint32& startIndex;
   const PRUint32 endIndex;
-  const PRUint16 jobType;
 };
-NS_IMPL_ISUPPORTS0(sbProcessInitParams)
+NS_IMPL_ISUPPORTS0(sbRunInitParams)
 
 class sbRunThreadParams : public nsISupports
 {
   NS_DECL_ISUPPORTS
 public:
-  sbRunThreadParams(nsCOMPtr<sbIDatabaseQuery>& aQuery,
-                    nsCOMPtr<sbIURIMetadataHelper>& aHelper,
+  sbRunThreadParams(sbMetadataJob* aJob,
+                    nsCOMPtr<sbIDatabaseQuery>& aQuery,
                     nsCOMPtr<nsIThread>& aThread,
-                    const nsString& aTableName,
-                    PRBool* const aShutdown,
-                    PRUint32 aSleepMS,
-                    PRUint16 aJobType)
-  : query(aQuery), helper(aHelper), thread(aThread), tableName(aTableName),
-    shutdown(aShutdown), sleepMS(aSleepMS), jobType(aJobType)
+                    PRBool* const aShutdown)
+  : job(aJob), query(aQuery), thread(aThread), shutdown(aShutdown)
   { }
-
+  sbMetadataJob* job; // Non-owning. 
   nsCOMPtr<sbIDatabaseQuery>& query;
-  nsCOMPtr<sbIURIMetadataHelper>& helper;
   nsCOMPtr<nsIThread>& thread;
-  const nsString& tableName;
   PRBool* const shutdown;
-  const PRUint32 sleepMS;
-  const PRUint16 jobType;
 };
 NS_IMPL_ISUPPORTS0(sbRunThreadParams)
 
 NS_IMPL_ADDREF(sbMetadataJob::jobitem_t)
 NS_IMPL_RELEASE(sbMetadataJob::jobitem_t)
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataJob, sbIMetadataJob);
+NS_IMPL_THREADSAFE_ISUPPORTS4(sbMetadataJob, nsIClassInfo, sbIMetadataJob, sbIJobProgress, sbIJobCancelable);
+NS_IMPL_CI_INTERFACE_GETTER4(sbMetadataJob, nsIClassInfo, sbIMetadataJob, sbIJobProgress, sbIJobCancelable)
+NS_DECL_CLASSINFO(sbMetadataJob)
+NS_IMPL_THREADSAFE_CI(sbMetadataJob)
+
+
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataJobProcessorThread, nsIRunnable)
 
 sbMetadataJob::sbMetadataJob() :
   mInitCount( 0 ),
+  mStatus( sbIJobProgress::STATUS_RUNNING ),
+  mCompletedItemCount( 0 ),
+  mTotalItemCount( 0 ),
+  mErrorCount( 0 ),
+  mStatusTextLock( nsnull ),
   mMetadataJobProcessor( nsnull ),
-  mCompleted( PR_FALSE ),
   mInitCompleted( PR_FALSE ),
   mInitExecuted( PR_FALSE ),
   mTimerCompleted( PR_FALSE ),
   mThreadCompleted( PR_FALSE )
 {
   TRACE(("sbMetadataJob[0x%.8x] - ctor", this));
+
+  mStatusTextLock = nsAutoLock::NewLock("MetadataJob status text lock");
+  NS_ASSERTION(mStatusTextLock,
+               "sbMetadataJob::mStatusTextLock failed to create lock!");
 }
 
 sbMetadataJob::~sbMetadataJob()
 {
   TRACE(("sbMetadataJob[0x%.8x] - dtor", this));
-}
-
-nsresult
-sbMetadataJob::FactoryInit()
-{
-  nsresult rv;
-
-  mTimerWorkers.SetLength(NUM_CONCURRENT_MAINTHREAD_ITEMS);
-
-  mMainThreadQuery =
-    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMainThreadQuery->SetDatabaseGUID( sbMetadataJob::DATABASE_GUID() );
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mDataStatusDisplay =
-    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mDataStatusDisplay->Init( NS_LITERAL_STRING("backscan.status"),
-                                 NS_LITERAL_STRING("") );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mDataCurrentMetadataJobs =
-    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mDataCurrentMetadataJobs->Init( NS_LITERAL_STRING("backscan.concurrent"),
-                                       NS_LITERAL_STRING("") );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIURIMetadataHelper> uriMetadataHelper = new sbURIMetadataHelper();
-  NS_ENSURE_TRUE(uriMetadataHelper, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                            NS_GET_IID(sbIURIMetadataHelper),
-                            uriMetadataHelper,
-                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(mURIMetadataHelper));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // We only use one string, so read it in here.
-  nsCOMPtr<nsIStringBundle> stringBundle;
-  nsCOMPtr<nsIStringBundleService> StringBundleService =
-    do_GetService("@mozilla.org/intl/stringbundle;1", &rv );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties",
-                                          getter_AddRefs( stringBundle ) );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString scanning;
-  rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("back_scan.scanning").get(),
-                                        getter_Copies(scanning) );
-  if (NS_FAILED(rv)) {
-    scanning.AssignLiteral("Scanning");
-  }
-  scanning.AppendLiteral(" ... ");
-  mStatusDisplayString = scanning;
-  mDataStatusDisplay->SetStringValue( mStatusDisplayString );
-  return NS_OK;
+  nsAutoLock::DestroyLock(mStatusTextLock);
 }
 
 // TODO no longer part of the interface.  Move if needed.
@@ -250,29 +190,109 @@ NS_IMETHODIMP sbMetadataJob::GetType(PRUint16 *aJobType)
   return NS_OK;
 }
 
-/* readonly attribute PRBool completed; */
-NS_IMETHODIMP sbMetadataJob::GetCompleted(PRBool *aCompleted)
+/* readonly attribute unsigned short status; */
+NS_IMETHODIMP sbMetadataJob::GetStatus(PRUint16 *aStatus)
 {
-  NS_ENSURE_ARG_POINTER( aCompleted );
-  (*aCompleted) = mCompleted;
+  NS_ENSURE_ARG_POINTER( aStatus );
+  *aStatus = mStatus;
   return NS_OK;
 }
 
-/* void setObserver( in nsIObserver aObserver ); */
-NS_IMETHODIMP sbMetadataJob::SetObserver(nsIObserver *aObserver)
+/* readonly attribute unsigned AString statusText; */
+NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
 {
-  NS_ENSURE_ARG_POINTER( aObserver );
-  mObserver = aObserver;
+  // Status text may be updated from the worker thread
+  nsAutoLock lock(mStatusTextLock);
+  aText = mStatusText;
   return NS_OK;
 }
 
-/* void removeObserver(); */
-NS_IMETHODIMP sbMetadataJob::RemoveObserver()
+nsresult sbMetadataJob::SetStatusText(nsAString& aText)
 {
-  mObserver = nsnull;
+  // Status text may be updated from the worker thread
+  nsAutoLock lock(mStatusTextLock);
+  mStatusText = aText;
   return NS_OK;
 }
 
+/* readonly attribute AString titleText; */
+NS_IMETHODIMP sbMetadataJob::GetTitleText(nsAString& aText)
+{
+  aText = mTitleText;
+  return NS_OK;
+}
+
+/* readonly attribute unsigned long progress; */
+NS_IMETHODIMP sbMetadataJob::GetProgress(PRUint32 *aProgress)
+{
+  NS_ENSURE_ARG_POINTER( aProgress );
+  *aProgress = mCompletedItemCount;
+  return NS_OK;
+}
+
+/* readonly attribute unsigned long total; */
+NS_IMETHODIMP sbMetadataJob::GetTotal(PRUint32 *aTotal)
+{
+  NS_ENSURE_ARG_POINTER( aTotal );
+  *aTotal = mTotalItemCount;
+  return NS_OK;
+}
+
+/* readonly attribute unsigned long errorCount; */
+NS_IMETHODIMP sbMetadataJob::GetErrorCount(PRUint32 *aCount)
+{
+  NS_ENSURE_ARG_POINTER( aCount );
+  *aCount = mErrorCount;
+  return NS_OK;
+}
+
+/* nsIStringEnumerator getErrorMessages(); */
+NS_IMETHODIMP sbMetadataJob::GetErrorMessages(nsIStringEnumerator **aMessages)
+{
+  NS_ENSURE_ARG_POINTER( aMessages );
+  *aMessages = nsnull;
+  nsresult rv;
+  rv = UpdateErrorMessages();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIStringEnumerator> enumerator = new sbTArrayStringEnumerator(&mErrorMessages);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+  
+  enumerator.forget(aMessages);
+
+  return NS_OK;
+}
+
+/* void addJobProgressListener( in sbIJobProgressListener aListener ); */
+NS_IMETHODIMP sbMetadataJob::AddJobProgressListener(sbIJobProgressListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+  
+  if (mListeners.Get(aListener, nsnull)) {
+    NS_WARNING("Trying to add a listener twice!");
+    return NS_OK;
+  }
+    
+  PRBool success = mListeners.Put(aListener, aListener);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  
+  return NS_OK;
+}
+
+/* void removeJobProgressListener( in sbIJobProgressListener aListener ); */
+NS_IMETHODIMP sbMetadataJob::RemoveJobProgressListener(sbIJobProgressListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+  
+#ifdef DEBUG
+  if (!mListeners.Get(aListener, nsnull)) {
+    NS_WARNING("Trying to remove a listener that was never added!");
+  }
+#endif
+  mListeners.Remove(aListener);
+  
+  return NS_OK;
+}
 
 nsresult sbMetadataJob::Init(const nsAString & aTableName, 
                              nsIArray *aMediaItemsArray, 
@@ -282,6 +302,49 @@ nsresult sbMetadataJob::Init(const nsAString & aTableName,
   nsresult rv;
 
   NS_ENSURE_TRUE(!aTableName.IsEmpty(), NS_ERROR_INVALID_ARG);
+  NS_ASSERTION(NS_IsMainThread(), "Init called off the main thread!");
+  
+  mDataStatusDisplay =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataStatusDisplay->Init( NS_LITERAL_STRING("backscan.status"),
+                                 EmptyString() );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mDataCurrentMetadataJobs =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDataCurrentMetadataJobs->Init( NS_LITERAL_STRING("backscan.concurrent"),
+                                       EmptyString() );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+
+  mTimerWorkers.SetLength(NUM_CONCURRENT_MAINTHREAD_ITEMS);
+
+  mMainThreadQuery =
+    do_CreateInstance("@songbirdnest.com/Songbird/DatabaseQuery;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMainThreadQuery->SetDatabaseGUID( sbMetadataJob::DATABASE_GUID() );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIURIMetadataHelper> uriMetadataHelper = new sbURIMetadataHelper();
+  NS_ENSURE_TRUE(uriMetadataHelper, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                            NS_GET_IID(sbIURIMetadataHelper),
+                            uriMetadataHelper,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(mURIMetadataHelper));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  
   // aMediaItemsArray may be null, but not zero length
   if (aMediaItemsArray) {
     PRUint32 length;
@@ -292,6 +355,10 @@ nsresult sbMetadataJob::Init(const nsAString & aTableName,
   mTableName = aTableName;
   mJobType = aJobType;
   mSleepMS = aSleepMS;
+                                                    
+  PRBool succeeded = mListeners.Init();
+  NS_ENSURE_TRUE(succeeded, NS_ERROR_OUT_OF_MEMORY);
+
 
   //  - Initialize the task table in the database
   //      (library guid, item guid, url, worker_thread, is_started)
@@ -321,6 +388,9 @@ nsresult sbMetadataJob::Init(const nsAString & aTableName,
 
                               // True if the item is currently being processed (ignore on restart, item failed)
                               "is_current INTEGER NOT NULL DEFAULT 0, "
+                              
+                              // True if the item could not be processed
+                              "is_failed INTEGER NOT NULL DEFAULT 0, "
 
                               "PRIMARY KEY (library_guid, item_guid) )" );
   rv = mMainThreadQuery->AddQuery( createTable );
@@ -354,6 +424,10 @@ nsresult sbMetadataJob::Init(const nsAString & aTableName,
 
   // Update any old items that were started but not completed
   rv = ResetIncomplete( mMainThreadQuery, mTableName );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Init the progress counters based on preexisting items in the table
+  rv = InitProgressReporting();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Append any new items in the array to the task table
@@ -407,13 +481,16 @@ NS_IMETHODIMP sbMetadataJob::Append(nsIArray *aMediaItemsArray)
   NS_ENSURE_ARG_POINTER( aMediaItemsArray );
   nsresult rv;
 
-  if (mCompleted)
+  if (mStatus != sbIJobProgress::STATUS_RUNNING)
     return NS_ERROR_UNEXPECTED;
 
   // How many Media Items?
   PRUint32 length;
   rv = aMediaItemsArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Add to the total length of the job
+  mTotalItemCount += length;
 
   // Determine the library this job is associated with
   if (!mLibrary && length > 0) {
@@ -451,14 +528,24 @@ NS_IMETHODIMP sbMetadataJob::Append(nsIArray *aMediaItemsArray)
 
   // Run the loop to send all of these items onto our work queue in the database
   PRUint32 start = 0;
-  ProcessInit(appendArray, start, length);
+  RunInit(appendArray, start, length);
 
 //  mInitCompleted = PR_FALSE;
 
   return NS_OK;
 }
 
-/* void cancel (); */
+
+
+/* boolean canCancel; */
+NS_IMETHODIMP sbMetadataJob::GetCanCancel(PRBool *_retval)
+{
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+
+/* void cancel(); */
 NS_IMETHODIMP sbMetadataJob::Cancel()
 {
   // Quit the timer.
@@ -476,18 +563,19 @@ NS_IMETHODIMP sbMetadataJob::Cancel()
     }
   }
 
-  if ( mObserver )
-    mObserver->Observe( this, "cancel", mTableName.get() );
-
+  // Notify observers
+  OnJobProgress();
+  
   return NS_OK;
 }
+
 
 nsresult sbMetadataJob::RunTimer()
 {
   nsresult rv = ProcessTimer();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mCompleted) {
+  if (mStatus != sbIJobProgress::STATUS_RUNNING) {
     mTimer = nsnull;
   }
   else {
@@ -501,7 +589,7 @@ nsresult sbMetadataJob::RunTimer()
   return NS_OK;
 }
 
-nsresult sbMetadataJob::ProcessInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &aStart, PRUint32 aEnd)
+nsresult sbMetadataJob::RunInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &aStart, PRUint32 aEnd)
 {
   nsresult rv;
 
@@ -509,11 +597,11 @@ nsresult sbMetadataJob::ProcessInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaListBatchCallback> batchCallback =
-    new sbMediaListBatchCallback(&sbMetadataJob::ProcessInitBatchFunc);
+    new sbMediaListBatchCallback(&sbMetadataJob::RunInitBatchFunc);
   NS_ENSURE_TRUE(batchCallback, NS_ERROR_OUT_OF_MEMORY);
 
-  nsRefPtr<sbProcessInitParams> params =
-    new sbProcessInitParams(mMainThreadQuery, aArray, mTableName, aStart, aEnd, mJobType);
+  nsRefPtr<sbRunInitParams> params =
+    new sbRunInitParams(this, aArray, aStart, aEnd);
   NS_ENSURE_TRUE(params, NS_ERROR_OUT_OF_MEMORY);
 
   rv = libraryMediaList->RunInBatchMode(batchCallback, params);
@@ -523,47 +611,55 @@ nsresult sbMetadataJob::ProcessInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &
 }
 
 /* static */ nsresult
-sbMetadataJob::ProcessInitBatchFunc(nsISupports* aUserData)
+sbMetadataJob::RunInitBatchFunc(nsISupports* aUserData)
 {
   NS_ENSURE_ARG_POINTER(aUserData);
 
-  sbProcessInitParams* params = static_cast<sbProcessInitParams*>(aUserData);
-  NS_ASSERTION(params->query, "Null query!");
+  sbRunInitParams* params = static_cast<sbRunInitParams*>(aUserData);
+  params->job->ProcessInit(params->itemArray, params->startIndex, params->endIndex);
+  
+  return NS_OK;
+}
 
-  nsresult rv = params->query->ResetQuery();
+nsresult sbMetadataJob::ProcessInit(nsCOMArray<sbIMediaItem> &aArray, PRUint32 &aStart, PRUint32 aEnd)
+{
+  NS_ASSERTION(mMainThreadQuery, "Null query!");
+
+  nsresult rv = mMainThreadQuery->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = params->query->AddQuery(NS_LITERAL_STRING("begin"));
+  rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("begin"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  for ( ; params->startIndex < params->endIndex; params->startIndex++) {
+  for ( ; aStart < aEnd; aStart++) {
     // Place the item info on the query to track in our own database, get back
     // a temporary job item.
     nsRefPtr<jobitem_t> tempItem;
-    AddItemToJobTableQuery(params->query, params->tableName,
-                           params->itemArray[params->startIndex],
+    AddItemToJobTableQuery(mMainThreadQuery, mTableName,
+                           aArray[aStart],
                            getter_AddRefs(tempItem));
 
-    if (params->jobType == sbIMetadataJob::JOBTYPE_READ) {
+    if (mJobType == sbIMetadataJob::JOBTYPE_READ) {
       // Use the temporary item to stuff a default title value in the properties
       // cache (don't flush to library database, yet)
-      AddDefaultMetadataToItem(tempItem, params->itemArray[params->startIndex]);
+      AddDefaultMetadataToItem(tempItem, aArray[aStart]);
     }
   }
 
-  rv = params->query->AddQuery(NS_LITERAL_STRING("commit"));
+  rv = mMainThreadQuery->AddQuery(NS_LITERAL_STRING("commit"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = params->query->SetAsyncQuery(PR_FALSE);
+  rv = mMainThreadQuery->SetAsyncQuery(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 error;
-  rv = params->query->Execute(&error);
+  rv = mMainThreadQuery->Execute(&error);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
+
 
 nsresult sbMetadataJob::ProcessTimer()
 {
@@ -586,7 +682,7 @@ nsresult sbMetadataJob::ProcessTimer()
       // the enqueueing of the metadata item-jobs into the database.  We should figure
       // out some way to prevent shutdown, but it is NOT crashproof while in this loop.
       //
-      rv = ProcessInit( mInitArray, mInitCount, end );
+      rv = RunInit( mInitArray, mInitCount, end );
       NS_ENSURE_SUCCESS(rv, rv);
 
       // Relaunch the thread if it has completed and we add new task items.
@@ -637,7 +733,11 @@ nsresult sbMetadataJob::ProcessTimer()
           // NS_ENSURE_SUCCESS(rv, rv); // Allow it to fail.  We already put a default value in for it.
         }
  
-        rv = SetItemIsCompleted( mMainThreadQuery, mTableName, item );
+        if (NS_SUCCEEDED(rv)) {
+          rv = SetItemIsCompleted( mMainThreadQuery, mTableName, item );
+        } else {
+          rv = SetItemIsFailed( mMainThreadQuery, mTableName, item );
+        }
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
@@ -686,7 +786,7 @@ nsresult sbMetadataJob::ProcessTimer()
                "Unable to add metadata for( %s )", this,
                NS_LossyConvertUTF16toASCII(item->url).get()));
         // Record this item as completed.
-        rv = SetItemIsCompleted( mMainThreadQuery, mTableName, item );
+        rv = SetItemIsFailed( mMainThreadQuery, mTableName, item );
         NS_ENSURE_SUCCESS(rv, rv);
         // Leave mTimerWorkers null for the next loop.
       }
@@ -706,9 +806,13 @@ nsresult sbMetadataJob::ProcessTimer()
 
   // Keep going through the timer until the thread completes,
   // then cleanup the working table.
-  if ( finished && mThreadCompleted )
+  if ( finished && mThreadCompleted ) { 
     this->FinishJob();
-
+  } else {
+    // Notify observers
+    OnJobProgress();
+  }
+  
   // Cleanup the timer loop.
   return NS_OK;
 }
@@ -753,8 +857,7 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
   NS_ENSURE_TRUE(batchCallback, NS_ERROR_OUT_OF_MEMORY);
 
   nsRefPtr<sbRunThreadParams> params =
-    new sbRunThreadParams(workerThreadQuery, mURIMetadataHelper, mThread,
-                           mTableName, bShutdown, mSleepMS, mJobType);
+    new sbRunThreadParams(this, workerThreadQuery, mThread, bShutdown);
   NS_ENSURE_TRUE(params, NS_ERROR_OUT_OF_MEMORY);
 
   while (!*bShutdown) {
@@ -774,19 +877,27 @@ nsresult sbMetadataJob::RunThread( PRBool * bShutdown )
 sbMetadataJob::RunThreadBatchFunc(nsISupports* aUserData)
 {
   NS_ENSURE_ARG_POINTER(aUserData);
-
   sbRunThreadParams* params = static_cast<sbRunThreadParams*>(aUserData);
+  
+  return params->job->ProcessThread(params->shutdown, params->query, params->thread);
+}
+
+nsresult sbMetadataJob::ProcessThread(PRBool *aShutdown, sbIDatabaseQuery *aQuery, nsIThread* aThread)
+{
+  NS_ENSURE_ARG_POINTER(aShutdown);
+  NS_ENSURE_ARG_POINTER(aQuery);
+  
   nsresult rv = NS_ERROR_NOT_AVAILABLE;
 
   nsTArray<nsRefPtr<sbMetadataJob::jobitem_t> > completedItems;
 
   for (PRUint32 count = 0;
-       !(*params->shutdown) && (count < NUM_ITEMS_BEFORE_FLUSH);
+       !(*aShutdown) && (count < NUM_ITEMS_BEFORE_FLUSH);
        count++) {
 
     // Get the next task
     nsRefPtr<sbMetadataJob::jobitem_t> item;
-    rv = GetNextItem(params->query, params->tableName, PR_TRUE, getter_AddRefs(item));
+    rv = GetNextItem(aQuery, mTableName, PR_TRUE, getter_AddRefs(item));
     if (rv == NS_ERROR_NOT_AVAILABLE) {
       break;
     }
@@ -808,37 +919,37 @@ sbMetadataJob::RunThreadBatchFunc(nsISupports* aUserData)
 #endif
 
     // Get ready to launch a handler
-    rv = SetItemIsCurrent(params->query, params->tableName, item);
+    rv = SetItemIsCurrent(aQuery, mTableName, item);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = SetItemIsStarted(params->query, params->tableName, item);
+    rv = SetItemIsStarted(aQuery, mTableName, item);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Create the metadata handler and launch it
-    rv = StartHandlerForItem(item, params->jobType);
+    rv = StartHandlerForItem(item, mJobType);
     if (NS_SUCCEEDED(rv)) {
       // Wait at least a half second for it to complete
       PRBool completed;
       int counter = 0;
       for (item->handler->GetCompleted(&completed);
-           !completed && !(*params->shutdown) && counter < 25;
+           !completed && !(*aShutdown) && counter < 25;
            item->handler->GetCompleted(&completed), counter++) {
 
         // Run at most 10 messages.
         PRBool event = PR_FALSE;
-        int evtcounter = 0;
-        for (params->thread->ProcessNextEvent(PR_FALSE, &event);
-             event && evtcounter < 10;
-             params->thread->ProcessNextEvent(PR_FALSE, &event), evtcounter++) {
+        int eventCount = 0;
+        for (aThread->ProcessNextEvent(PR_FALSE, &event);
+             event && eventCount < 10;
+             aThread->ProcessNextEvent(PR_FALSE, &event), eventCount++) {
           PR_Sleep(PR_MillisecondsToInterval(0));
         }
         // Sleep at least 20ms
         PR_Sleep(PR_MillisecondsToInterval(20));
       }
 
-      if (params->jobType == sbIMetadataJob::JOBTYPE_READ) {
+      if (mJobType == sbIMetadataJob::JOBTYPE_READ) {
         // Make an sbIMediaItem and push the metadata into it
-        rv = AddMetadataToItem(item, params->helper);
+        rv = AddMetadataToItem(item, mURIMetadataHelper);
       }
       
       // Close the handler by hand since we know we're done with it and
@@ -855,51 +966,67 @@ sbMetadataJob::RunThreadBatchFunc(nsISupports* aUserData)
              "Unable to add metadata for( %s )",
              NS_LossyConvertUTF16toASCII(item->url).get()));
 
-      if (params->jobType == sbIMetadataJob::JOBTYPE_READ) {
+      SetItemIsFailed(aQuery, mTableName, item);
+
+      if (mJobType == sbIMetadataJob::JOBTYPE_READ) {
         // Don't leave the row completely blank. Please.
         AddDefaultMetadataToItem(item, item->item);
       }
+    } else {
+      // Mark completed items in batches
+      completedItems.AppendElement(item);
     }
 
     // Ah, if we got here we must not have crashed.
-    rv = ClearItemIsCurrent(params->query, params->tableName, item);
+    rv = ClearItemIsCurrent(aQuery, mTableName, item);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    completedItems.AppendElement(item);
 
     // TODO: Consider removing this!
     // On my machine I get a 30% speedup with no loss of interactivity.
     // Need to test on a slow single-core machine first.
-    PR_Sleep(PR_MillisecondsToInterval(params->sleepMS));
+    PR_Sleep(PR_MillisecondsToInterval(mSleepMS));
   }
 
   // Flush the completed items list.
-  nsresult rvOuter = SetItemsAreCompleted(params->query, params->tableName,
-                                        completedItems);
+  nsresult rvOuter = SetItemsAreCompleted(aQuery, 
+                                          mTableName,
+                                          completedItems);
   NS_ENSURE_SUCCESS(rvOuter, rvOuter);
 
   // Return the rv from within the loop.
   return rv;
 }
 
+
 nsresult sbMetadataJob::FinishJob()
 {
   nsresult rv;
   this->CancelTimer();
 
-  mCompleted = PR_TRUE;
-
+  if (mErrorCount == 0) {
+    mStatus = sbIJobProgress::STATUS_SUCCEEDED;
+  } else {
+    // HACK: cause the error list to be cached, so the getMessages won't fail
+    // once the database table has been dropped.  
+    UpdateErrorMessages();
+  
+    mStatus = sbIJobProgress::STATUS_FAILED;    
+  }
+  
   if (mThread) {
     mThread->Shutdown();
     mThread = nsnull;
   }
-
-  if ( mObserver )
-    mObserver->Observe( this, "complete", mTableName.get() );
+  
+  // Notify observers
+  OnJobProgress();
+  
+  // We're done. No more notifications needed.
+  mListeners.Clear();
 
   // Decrement the atomic counter
   DecrementDataRemote();
-
+  
   rv = DropJobTable(mMainThreadQuery, mTableName);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1135,7 +1262,7 @@ nsresult sbMetadataJob::GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableNa
     }
 
     // If we get here, we were unable to find the media item associated with
-    // the metadata job.  Just mark the item as started and complete and
+    // the metadata job.  Just mark the item as started and failed and
     // continue
 
     TRACE(("sbMetadataJob - GetNextItem - Item with guid '%s' has gone away",
@@ -1151,7 +1278,7 @@ nsresult sbMetadataJob::GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableNa
     NS_ENSURE_TRUE(tempItem, NS_ERROR_OUT_OF_MEMORY);
     rv = SetItemIsStarted( aQuery, aTableName, tempItem );
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = SetItemIsCompleted( aQuery, aTableName, tempItem );
+    rv = SetItemIsFailed( aQuery, aTableName, tempItem );
     NS_ENSURE_SUCCESS(rv, rv);
  }
 
@@ -1277,13 +1404,39 @@ nsresult sbMetadataJob::SetItemIsStarted( sbIDatabaseQuery *aQuery, nsString aTa
   return SetItemIs( NS_LITERAL_STRING("is_started"), aQuery, aTableName, aItem, PR_TRUE );
 }
 
+nsresult sbMetadataJob::SetItemIsFailed( sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem)
+{
+  nsresult rv;
+
+  rv = aQuery->SetAsyncQuery( PR_FALSE );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetItemIs( NS_LITERAL_STRING("is_failed"), aQuery, aTableName, aItem, PR_FALSE, PR_TRUE );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = SetItemIsCompleted(aQuery, aTableName, aItem, PR_FALSE );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 error;
+  rv = aQuery->Execute( &error );
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
+  
+  PR_AtomicIncrement(&mErrorCount);
+  
+  return rv;
+}
+
 nsresult sbMetadataJob::SetItemIsCompleted( sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem, PRBool aExecute )
 {
   nsresult rv = SetItemIs( NS_LITERAL_STRING("is_completed"), aQuery, aTableName, aItem, aExecute );
+  NS_ENSURE_SUCCESS(rv, rv);
   if ( aItem->handler ) {
     aItem->handler->Close();  // You are so done.
     aItem->handler = nsnull;
   }
+  PR_AtomicIncrement(&mCompletedItemCount);
   return rv;
 }
 
@@ -1378,6 +1531,9 @@ nsresult sbMetadataJob::SetItemIs( const nsAString &aColumnString, sbIDatabaseQu
 
 nsresult sbMetadataJob::SetItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem )
 {
+  // Set filename as the job status
+  nsresult rv = SetStatusText(aItem->url);
+  NS_ENSURE_SUCCESS(rv, rv);
   return SetItemIs( NS_LITERAL_STRING("is_current"), aQuery, aTableName, aItem, PR_TRUE );
 }
 
@@ -1440,6 +1596,173 @@ nsresult sbMetadataJob::ResetIncomplete( sbIDatabaseQuery *aQuery, nsString aTab
   NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
   return NS_OK;
 }
+
+/**
+ * Set up progress strings and restore progress/total/errorcount 
+ * based on the database.
+ */
+nsresult sbMetadataJob::InitProgressReporting()
+{
+  NS_ENSURE_TRUE(mMainThreadQuery, NS_ERROR_NOT_INITIALIZED);
+  nsresult rv;
+  
+
+  // Localize our strings
+  nsCOMPtr<nsIStringBundle> stringBundle;
+  nsCOMPtr<nsIStringBundleService> StringBundleService =
+    do_GetService("@mozilla.org/intl/stringbundle;1", &rv );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties",
+                                          getter_AddRefs( stringBundle ) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the dataremote text to be shown in the status bar
+  nsString scanning;
+  rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("back_scan.scanning").get(),
+                                        getter_Copies(scanning) );
+  if (NS_FAILED(rv)) {
+    scanning.AssignLiteral("Scanning");
+  }
+  mStatusDisplayString = scanning;
+
+  mDataStatusDisplay->SetStringValue( mStatusDisplayString );
+
+
+  // Get the title for sbIJobProgress
+  nsString title;
+  if (mJobType == sbIMetadataJob::JOBTYPE_WRITE) {
+    rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("metadatajob.writing.title").get(),
+                                          getter_Copies(title) );
+  } else {
+    rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("metadatajob.reading.title").get(),
+                                          getter_Copies(title) );
+  }
+  if (NS_FAILED(rv)) {
+    title.AssignLiteral("Metadata Job");
+  }
+  mTitleText = title;
+    
+
+  // Find the total number of items in the job
+  nsAutoString selectCount(NS_LITERAL_STRING("select count(*) from "));
+  selectCount.Append(mTableName);
+  
+  // Find out how many are already complete
+  nsAutoString whereComplete(selectCount);
+  whereComplete.AppendLiteral(" where is_completed=1");
+
+  // Find out how many are already complete
+  nsAutoString whereFailed(selectCount);
+  whereFailed.AppendLiteral(" where is_failed=1");
+
+
+  // Make it go.
+  rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mMainThreadQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mMainThreadQuery->AddQuery( selectCount );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mMainThreadQuery->AddQuery( whereComplete );
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mMainThreadQuery->AddQuery( whereFailed );
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRInt32 error;
+  rv = mMainThreadQuery->Execute( &error );
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
+
+  // And return what it got.
+  nsCOMPtr< sbIDatabaseResult > pResult;
+  rv = mMainThreadQuery->GetResultObject( getter_AddRefs(pResult) );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = pResult->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (rowCount != 3) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsAutoString value;
+  
+  // Get total
+  rv = pResult->GetRowCell(0, 0, value);
+  NS_ENSURE_SUCCESS(rv, rv);  
+  mTotalItemCount = value.ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get complete
+  rv = pResult->GetRowCell(1, 0, value);
+  NS_ENSURE_SUCCESS(rv, rv);  
+  mCompletedItemCount = value.ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get failed
+  rv = pResult->GetRowCell(2, 0, value);
+  NS_ENSURE_SUCCESS(rv, rv);  
+  mErrorCount = value.ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  TRACE(("sbMetadataJob[0x%.8x] - MAIN THREAD - InitProgressReporting() %d/%d completed, %d failed",
+         this, mCompletedItemCount, mTotalItemCount, mErrorCount));
+  
+  return NS_OK;
+}
+
+/**
+ * Update mErrorMessages with the current list of failed
+ * URLs from the database.
+ */
+nsresult sbMetadataJob::UpdateErrorMessages() 
+{
+  NS_ENSURE_TRUE(mMainThreadQuery, NS_ERROR_NOT_INITIALIZED);
+  nsresult rv;
+
+  if (mErrorCount > 0 && mStatus == sbIJobProgress::STATUS_RUNNING) {
+   
+    // Find all failed items
+    nsAutoString selectFailed(NS_LITERAL_STRING("select url from "));
+    selectFailed.Append(mTableName);
+    selectFailed.AppendLiteral(" where is_failed=1");
+
+    // Make it go.
+    rv = mMainThreadQuery->SetAsyncQuery( PR_FALSE );
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mMainThreadQuery->ResetQuery();
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mMainThreadQuery->AddQuery( selectFailed );
+    NS_ENSURE_SUCCESS(rv, rv);
+    PRInt32 error;
+    rv = mMainThreadQuery->Execute( &error );
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
+
+    // And return what it got.
+    nsCOMPtr< sbIDatabaseResult > pResult;
+    rv = mMainThreadQuery->GetResultObject( getter_AddRefs(pResult) );
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 rowCount;
+    rv = pResult->GetRowCount(&rowCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mErrorMessages.Clear();
+  
+    for (PRUint32 i = 0; i < rowCount; i++) {
+      nsString value;
+      rv = pResult->GetRowCell(i, 0, value);
+      NS_ENSURE_SUCCESS(rv, rv);  
+      nsString* appended = mErrorMessages.AppendElement(value);
+      NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+    }
+  }
+
+  return NS_OK;
+}
+
 
 nsresult sbMetadataJob::StartHandlerForItem( sbMetadataJob::jobitem_t *aItem, PRUint16 aJobType)
 {
@@ -1640,6 +1963,44 @@ sbMetadataJob::AppendIfValid(sbIPropertyManager* aPropertyManager,
   return NS_OK;
 }
 
+/**
+ * Hash callback to add listeners to an array
+ */
+/* static */ PLDHashOperator PR_CALLBACK
+sbMetadataJob::AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey,
+                                                sbIJobProgressListener* aEntry,
+                                                void* aUserData)
+{
+  NS_ASSERTION(aKey, "Null key in hashtable!");
+  NS_ASSERTION(aEntry, "Null entry in hashtable!");
+  
+  nsCOMArray<sbIJobProgressListener>* array =
+  static_cast<nsCOMArray<sbIJobProgressListener>*>(aUserData);
+  
+  PRBool success = array->AppendObject(aEntry);
+  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+  
+  return PL_DHASH_NEXT;
+}
+
+/**
+ * Notify listeners of job progress.  Called periodically by the main thread timer.
+ */
+nsresult 
+sbMetadataJob::OnJobProgress() 
+{
+  nsCOMArray<sbIJobProgressListener> listeners;
+  mListeners.EnumerateRead(AddListenersToCOMArrayCallback, &listeners);
+
+  PRInt32 count = listeners.Count();
+  for (PRInt32 index = 0; index < count; index++) {
+    nsCOMPtr<sbIJobProgressListener> listener = listeners.ObjectAt(index);
+    NS_ASSERTION(listener, "Null listener!"); 
+    listener->OnJobProgress(this);
+  }
+  return NS_OK;
+}
+
 void sbMetadataJob::IncrementDataRemote()
 {
   PRInt64 current;
@@ -1656,3 +2017,4 @@ void sbMetadataJob::DecrementDataRemote()
   // Set to the decremented value
   mDataCurrentMetadataJobs->SetIntValue( --current );
 }
+
