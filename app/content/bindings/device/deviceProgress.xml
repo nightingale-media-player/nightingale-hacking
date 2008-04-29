@@ -71,7 +71,7 @@
                      observestarget="true"
                      observeskey="text1"
                      observesattribute="value"
-                     crop="end"
+                     crop="none"
                      error="false"
                      action="show_errors"
                      onclick="DPW.onAction(event);"
