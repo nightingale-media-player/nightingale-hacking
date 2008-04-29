@@ -1425,7 +1425,8 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     // keep track of the library/item guid that we just copied from
     NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
     NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
-    nsString existingGuid, sourceGuid;
+    NS_NAMED_LITERAL_STRING(PROP_ORIGINURL, SB_PROPERTY_ORIGINURL);
+    nsString existingGuid, sourceGuid, originURL;
     
     nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
       do_QueryInterface(properties, &rv);
@@ -1450,6 +1451,16 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
       NS_ENSURE_SUCCESS(rv, rv);
       
       rv = mutableProperties->AppendProperty(PROP_ITEM, sourceGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = properties->GetPropertyValue(PROP_ORIGINURL, originURL);
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      nsCString spec;
+      rv = contentUri->GetSpec(spec);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mutableProperties->AppendProperty(PROP_ORIGINURL, NS_ConvertUTF8toUTF16(spec));
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
@@ -2883,7 +2894,7 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
 
     // The hash was filtered out, therefore it exists. Get it and return it.
     if(!hash.IsEmpty() && 
-      hashesLength == 0) {
+       hashesLength == 0) {
         rv = GetGuidFromHash(hash, guid);
         NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2932,8 +2943,34 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
                                          getter_AddRefs(filteredProperties));
     NS_ENSURE_SUCCESS(rv, rv);
 
+    nsString originURL;
+    rv = filteredProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL), 
+                                              originURL); 
+    if(rv == NS_ERROR_NOT_AVAILABLE) {
+      nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
+        do_QueryInterface(filteredProperties, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                             NS_ConvertUTF8toUTF16(spec));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     PRUint32 junk;
     rv = AddItemPropertiesQueries(query, guid, filteredProperties, &junk);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                           NS_ConvertUTF8toUTF16(spec));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 junk;
+    rv = AddItemPropertiesQueries(query, guid, mutableProperties, &junk);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -4610,6 +4647,17 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
                                                      getter_AddRefs(filteredProperties));
       NS_ENSURE_SUCCESS(rv, rv);
 
+      nsString originURL;
+      rv = filteredProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                                originURL);
+      if(rv == NS_ERROR_NOT_AVAILABLE) {
+        nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
+          do_QueryInterface(filteredProperties);
+        rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                               NS_ConvertUTF8toUTF16(spec));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
       PRUint32 addedCount;
       rv = mLibrary->AddItemPropertiesQueries(aQuery,
                                               guid,
@@ -4625,6 +4673,30 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
         queryCount++;
       }
 
+    }
+    else {
+      nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
+        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                             NS_ConvertUTF8toUTF16(spec));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 addedCount;
+      rv = mLibrary->AddItemPropertiesQueries(aQuery,
+                                              guid,
+                                              mutableProperties,
+                                              &addedCount);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for (PRUint32 j = 0; j < addedCount; j++) {
+        if (mCallback) {
+          rv = mCallback->AddMapping(queryCount, i);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        queryCount++;
+      }
     }
 
     nsString* success = mGuids.AppendElement(guid);
