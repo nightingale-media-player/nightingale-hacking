@@ -87,6 +87,7 @@ SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
                       $(srcdir)/sbStorageFormatter.jsm \
                       $(srcdir)/sbTimeFormatter.jsm \
                       $(srcdir)/sbColumnSpecParser.jsm \
+                      $(srcdir)/sbLibrarySearchSuggester.js \
                       $(NULL)
 
 # TODO: Post 0.5 we need to remove js modules from the line above
