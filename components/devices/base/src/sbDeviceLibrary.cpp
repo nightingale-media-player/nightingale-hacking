@@ -30,6 +30,7 @@
 /* mozilla interfaces */
 #include <nsIFileURL.h>
 #include <nsIPrefService.h>
+#include <nsIVariant.h>
 #include <nsIWritablePropertyBag2.h>
 
 /* nspr headers */
@@ -53,6 +54,9 @@
 /* songbird interfaces */
 #include <sbIDevice.h>
 #include <sbIDeviceContent.h>
+#include <sbIDeviceEvent.h>
+#include <sbIDeviceEventTarget.h>
+#include <sbIDeviceManager.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
 #include <sbIPropertyArray.h>
@@ -72,7 +76,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS7(sbDeviceLibrary,
                               sbIMediaItem,
                               sbILibraryResource)
 
-#define PREF_SYNC_BRANCH    "songbird.device.library."
+#define PREF_SYNC_PREFIX    "library."
+#define PREF_SYNC_BRANCH    ".sync."
 #define PREF_SYNC_MGMTTYPE  "mgmtType"
 #define PREF_SYNC_LISTS     "playlist."
 
@@ -292,7 +297,17 @@ sbDeviceLibrary::GetSyncPrefBranch(nsIPrefBranch** _retval)
     prefService.swap(proxy);
   }
 
-  nsCString prefKey(PREF_SYNC_BRANCH);
+  nsCString prefKey("songbird.device.");
+  nsID* id;
+  rv = mDevice->GetId(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+  char idString[NSID_LENGTH];
+  id->ToProvidedString(idString);
+  NS_Free(id);
+  prefKey.Append(idString);
+  prefKey.AppendLiteral(".preferences.");
+
+  prefKey.AppendLiteral(PREF_SYNC_PREFIX);
   nsString guid;
   rv = mDeviceLibrary->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -311,36 +326,50 @@ NS_IMETHODIMP
 sbDeviceLibrary::GetMgmtType(PRUint32 *aMgmtType)
 {
   NS_ENSURE_ARG_POINTER(aMgmtType);
+  NS_ENSURE_STATE(mDevice);
 
   nsresult rv;
-  nsCString mgmtTypeKey(PREF_SYNC_MGMTTYPE);
+  nsString prefKey(NS_L(PREF_SYNC_PREFIX)), guid;
 
-  nsCOMPtr<nsIPrefBranch> syncListsBranch;
-  rv = GetSyncPrefBranch(getter_AddRefs(syncListsBranch));
+  rv = mDeviceLibrary->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 prefType;
-  rv = syncListsBranch->GetPrefType(mgmtTypeKey.get(), &prefType);
-  NS_ENSURE_SUCCESS(rv, rv);
+  prefKey.Append(guid);
+  prefKey.AppendLiteral(PREF_SYNC_BRANCH PREF_SYNC_MGMTTYPE);
 
-  PRInt32 signedMgmtType = sbIDeviceLibrary::MGMT_TYPE_MANUAL;
-  if (prefType == nsIPrefBranch::PREF_INT) {
-    rv = syncListsBranch->GetIntPref( mgmtTypeKey.get(), &signedMgmtType );
+  nsCOMPtr<nsIVariant> var;
+  rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // check if a value exists
+  PRUint16 dataType;
+  rv = var->GetDataType(&dataType);
+  if (dataType == nsIDataType::VTYPE_VOID ||
+      dataType == nsIDataType::VTYPE_EMPTY)
+  {
+    // no value, default to manual
+    *aMgmtType = sbIDeviceLibrary::MGMT_TYPE_MANUAL;
+  } else {
+    // has a value
+    PRInt32 mgmtType;
+    rv = var->GetAsInt32(&mgmtType);
     NS_ENSURE_SUCCESS(rv, rv);
+    
+    // Double check that it is a valid number
+    NS_ENSURE_ARG_RANGE(mgmtType,
+                        sbIDeviceLibrary::MGMT_TYPE_MANUAL,
+                        sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+    
+    *aMgmtType = mgmtType;
   }
-
-  // Double check that it is a valid number
-  NS_ENSURE_ARG_RANGE(signedMgmtType,
-                      sbIDeviceLibrary::MGMT_TYPE_MANUAL,
-                      sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
-
-  *aMgmtType = signedMgmtType;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
 {
+  NS_ENSURE_STATE(mDevice);
+
   nsresult rv;
   PRUint32 origMgmtType = sbIDeviceLibrary::MGMT_TYPE_MANUAL;
   
@@ -348,41 +377,37 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
   NS_ENSURE_ARG_RANGE(aMgmtType,
                       sbIDeviceLibrary::MGMT_TYPE_MANUAL,
                       sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+  
+  nsString prefKey(NS_L(PREF_SYNC_PREFIX)), guid;
 
-  nsCString mgmtTypeKey(PREF_SYNC_MGMTTYPE);
-
-  nsCOMPtr<nsIPrefBranch> syncListsBranch;
-  rv = GetSyncPrefBranch(getter_AddRefs(syncListsBranch));
+  rv = mDeviceLibrary->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  prefKey.Append(guid);
+  prefKey.AppendLiteral(PREF_SYNC_BRANCH PREF_SYNC_MGMTTYPE);
 
-  PRInt32 oldPrefType;
-  rv = syncListsBranch->GetPrefType(mgmtTypeKey.get(), &oldPrefType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (oldPrefType != nsIPrefBranch::PREF_INVALID &&
-      oldPrefType != nsIPrefBranch::PREF_INT) {
-    rv = syncListsBranch->ClearUserPref(mgmtTypeKey.get());
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
+  // figure out the old pref first
   rv = GetMgmtType(&origMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = syncListsBranch->SetIntPref( mgmtTypeKey.get(), aMgmtType );
+  nsCOMPtr<nsIWritableVariant> var =
+    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = var->SetAsInt32(aMgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mDevice->SetPreference(prefKey, var);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if ( (origMgmtType != aMgmtType) &&
        (aMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) ) {
     // sync
-    nsCOMPtr<sbIDevice> device;
-    rv = GetDevice(getter_AddRefs(device));
+    rv = mDevice->SyncLibraries();
     NS_ENSURE_SUCCESS(rv, rv);
-    NS_ASSERTION(device,
-                 "sbDeviceLibrary::GetDevice returned success with no device");
-    rv = device->SyncLibraries();
   }
 
-  return rv;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -422,12 +447,10 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray **_retval)
 
     // We want to extract the guid from the pref name, if it starts with the
     // PREF_SYNC_LISTS text
-    PRUint32 branchLength = NS_LITERAL_CSTRING(PREF_SYNC_LISTS).Length();
-    PRInt32 firstDotIndex = guidPref.FindChar('.', branchLength);
-    NS_ASSERTION(firstDotIndex != -1, "Bad guid string!");
-    PRUint32 guidLength = firstDotIndex - branchLength;
-    NS_ASSERTION(guidLength > 0, "Bad guid string!");
-    nsCAutoString guidString(Substring(guidPref, branchLength, guidLength));
+    nsCAutoString guidString(guidPref);
+    if (StringBeginsWith(guidPref, NS_LITERAL_CSTRING(PREF_SYNC_LISTS))) {
+      guidString = Substring(guidPref, NS_ARRAY_LENGTH(PREF_SYNC_LISTS));
+    }
   
     nsCOMPtr<sbIMediaItem> syncPlaylistItem;
     rv = mainLibrary->GetItemByGuid(NS_ConvertUTF8toUTF16(guidString),
@@ -485,18 +508,24 @@ sbDeviceLibrary::AddToSyncPlaylistList(sbIMediaList *aPlaylist)
   NS_ENSURE_ARG_POINTER(aPlaylist);
   nsresult rv;
   
+  nsString prefKey(NS_L(PREF_SYNC_PREFIX)), guid;
+  rv = mDeviceLibrary->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  prefKey.Append(guid);
+  prefKey.AppendLiteral(PREF_SYNC_BRANCH);
+
   // Get the guid of the list
-  nsString guid;
   rv = aPlaylist->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
+  prefKey.Append(guid);
 
-  nsCOMPtr<nsIPrefBranch> syncListsBranch;
-  rv = GetSyncPrefBranch(getter_AddRefs(syncListsBranch));
+  nsCOMPtr<nsIWritableVariant> var =
+    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCString guidListKey(PREF_SYNC_LISTS);
-  guidListKey.Append(NS_ConvertUTF16toUTF8(guid).get());
-  rv = syncListsBranch->SetBoolPref( guidListKey.get(), PR_TRUE );
+  rv = var->SetAsBool(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mDevice->SetPreference(prefKey, var);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

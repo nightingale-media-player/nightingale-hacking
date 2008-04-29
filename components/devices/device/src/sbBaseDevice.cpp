@@ -37,6 +37,7 @@
 #include <nsIVariant.h>
 #include <nsIPrefService.h>
 #include <nsIPrefBranch.h>
+#include <nsIProxyObjectManager.h>
 
 #include <nsArrayUtils.h>
 #include <nsAutoLock.h>
@@ -58,6 +59,7 @@
 #include "sbDeviceUtils.h"
 #include "sbLibraryListenerHelpers.h"
 #include "sbLibraryUtils.h"
+#include "sbProxyUtils.h"
 #include "sbStandardDeviceProperties.h"
 #include "sbStandardProperties.h"
 
@@ -80,7 +82,7 @@ static PRLogModuleInfo* gBaseDeviceLog = nsnull;
                                           SB_PROPERTY_GENRE " 53 "          \
                                           SB_PROPERTY_RATING   " 80"        \
 
-#define PREF_DEVICE_PREFERENCES_BRANCH "songbird.device.preferences."
+#define PREF_DEVICE_PREFERENCES_BRANCH "songbird.device."
 #define PREF_WARNING "warning."
 
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbBaseDevice::TransferRequest)
@@ -662,6 +664,212 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
                              var,
                              PR_TRUE);
     }
+  }
+
+  return NS_OK;
+}
+
+/* nsIVariant getPreference (in AString aPrefName); */
+NS_IMETHODIMP sbBaseDevice::GetPreference(const nsAString & aPrefName, nsIVariant **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
+  nsresult rv;
+
+  // get the pref branch for this device
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  rv = GetPrefBranch(getter_AddRefs(prefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  NS_ConvertUTF16toUTF8 prefNameUTF8(aPrefName);
+
+  // get tht type of the pref
+  PRInt32 prefType;
+  rv = prefBranch->GetPrefType(prefNameUTF8.get(), &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // create a writable variant
+  nsCOMPtr<nsIWritableVariant> writableVariant =
+    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // get the value of our pref
+  switch (prefType) {
+    case nsIPrefBranch::PREF_INVALID: {
+      rv = writableVariant->SetAsEmpty();
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    }
+    case nsIPrefBranch::PREF_STRING: {
+      char* _value = NULL;
+      rv = prefBranch->GetCharPref(prefNameUTF8.get(), &_value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsCString value;
+      value.Adopt(_value);
+      
+      // set the value of the variant to the value of the pref
+      rv = writableVariant->SetAsACString(value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    }
+    case nsIPrefBranch::PREF_INT: {
+      PRInt32 value;
+      rv = prefBranch->GetIntPref(prefNameUTF8.get(), &value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = writableVariant->SetAsInt32(value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    }
+    case nsIPrefBranch::PREF_BOOL: {
+      PRBool value;
+      rv = prefBranch->GetBoolPref(prefNameUTF8.get(), &value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = writableVariant->SetAsBool(value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    }
+  }
+
+  return CallQueryInterface(writableVariant, _retval);
+}
+
+/* void setPreference (in AString aPrefName, in nsIVariant aPrefValue); */
+NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVariant *aPrefValue)
+{
+  NS_ENSURE_ARG_POINTER(aPrefValue);
+  NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
+  nsresult rv;
+
+  // get the pref branch for this device
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  rv = GetPrefBranch(getter_AddRefs(prefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ConvertUTF16toUTF8 prefNameUTF8(aPrefName);
+  
+  // figure out what sort of variant we have
+  PRUint16 dataType;
+  rv = aPrefValue->GetDataType(&dataType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // figure out what sort of data we used to have
+  PRInt32 prefType;
+  rv = prefBranch->GetPrefType(prefNameUTF8.get(), &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRBool hasChanged = PR_FALSE;
+  
+  switch (dataType) {
+    case nsIDataType::VTYPE_INT8:
+    case nsIDataType::VTYPE_INT16:
+    case nsIDataType::VTYPE_INT32:
+    case nsIDataType::VTYPE_INT64:
+    case nsIDataType::VTYPE_UINT8:
+    case nsIDataType::VTYPE_UINT16:
+    case nsIDataType::VTYPE_UINT32:
+    case nsIDataType::VTYPE_UINT64:
+    case nsIDataType::VTYPE_FLOAT:
+    case nsIDataType::VTYPE_DOUBLE:
+    {
+      // some sort of number
+      PRInt32 oldValue, value;
+      rv = aPrefValue->GetAsInt32(&value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      if (prefType != nsIPrefBranch::PREF_INT) {
+        hasChanged = PR_TRUE;
+      } else {
+        rv = prefBranch->GetIntPref(prefNameUTF8.get(), &oldValue);
+        if (NS_SUCCEEDED(rv) && oldValue != value) {
+          hasChanged = PR_TRUE;
+        }
+      }
+      
+      rv = prefBranch->SetIntPref(prefNameUTF8.get(), value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      break;
+    }
+
+    case nsIDataType::VTYPE_BOOL:
+    {
+      // a bool pref
+      PRBool oldValue, value;
+      rv = aPrefValue->GetAsBool(&value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      if (prefType != nsIPrefBranch::PREF_BOOL) {
+        hasChanged = PR_TRUE;
+      } else {
+        rv = prefBranch->GetBoolPref(prefNameUTF8.get(), &oldValue);
+        if (NS_SUCCEEDED(rv) && oldValue != value) {
+          hasChanged = PR_TRUE;
+        }
+      }
+
+      rv = prefBranch->SetBoolPref(prefNameUTF8.get(), value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      break;
+    }
+
+    case nsIDataType::VTYPE_VOID:
+    case nsIDataType::VTYPE_EMPTY:
+    {
+      // unset the pref
+      if (prefType != nsIPrefBranch::PREF_INVALID) {
+        rv = prefBranch->ClearUserPref(prefNameUTF8.get());
+        NS_ENSURE_SUCCESS(rv, rv);
+        hasChanged = PR_TRUE;
+      }
+      
+      break;
+    }
+    
+    default:
+    {
+      // assume a string
+      nsCString value;
+      rv = aPrefValue->GetAsACString(value);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (prefType != nsIPrefBranch::PREF_STRING) {
+        hasChanged = PR_TRUE;
+      } else {
+        char* oldValue;
+        rv = prefBranch->GetCharPref(prefNameUTF8.get(), &oldValue);
+        if (NS_SUCCEEDED(rv)) {
+          if (!(value.Equals(oldValue))) {
+            hasChanged = PR_TRUE;
+          }
+          NS_Free(oldValue);
+        }
+      }
+      
+      rv = prefBranch->SetCharPref(prefNameUTF8.get(), value.get());
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      break;
+    }
+  }
+  
+  if (hasChanged) {
+    // fire the pref change event
+    nsCOMPtr<sbIDeviceManager2> devMgr =
+      do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<sbIDeviceEvent> event;
+    rv = devMgr->CreateEvent(sbIDeviceEvent::EVENT_DEVICE_PREFS_CHANGED,
+                             nsnull, nsnull, getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    PRBool success;
+    rv = this->DispatchEvent(event, PR_FALSE, &success);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -1414,17 +1622,19 @@ NS_IMETHODIMP sbBaseDevice::SetWarningDialogEnabled(const nsAString & aWarning, 
 {
   nsresult rv;
 
-  // get the pref branch for this device
-  nsCOMPtr<nsIPrefBranch> prefBranch;
-  rv = GetPrefBranch(getter_AddRefs(prefBranch));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // get the key for this warning
   nsString prefKey(NS_LITERAL_STRING(PREF_WARNING));
   prefKey.Append(aWarning);
 
-  // set the pref
-  rv = prefBranch->SetBoolPref(NS_ConvertUTF16toUTF8(prefKey).get(), aEnabled);
+  // have a variant to set
+  nsCOMPtr<nsIWritableVariant> var =
+    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = var->SetAsBool(aEnabled);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = SetPreference(prefKey, var);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1436,27 +1646,27 @@ NS_IMETHODIMP sbBaseDevice::GetWarningDialogEnabled(const nsAString & aWarning, 
 
   nsresult rv;
 
-  // get the pref branch for this device
-  nsCOMPtr<nsIPrefBranch> prefBranch;
-  rv = GetPrefBranch(getter_AddRefs(prefBranch));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // get the key for this warning
   nsString prefKey(NS_LITERAL_STRING(PREF_WARNING));
   prefKey.Append(aWarning);
-
-  // does the pref exist?
-  PRBool hasValue;
-  rv = prefBranch->PrefHasUserValue(NS_ConvertUTF16toUTF8(prefKey).get(), &hasValue);
+  
+  nsCOMPtr<nsIVariant> var;
+  rv = GetPreference(prefKey, getter_AddRefs(var));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  if (hasValue) {
-    // get the pref
-    rv = prefBranch->GetBoolPref(NS_ConvertUTF16toUTF8(prefKey).get(), _retval);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else {
+  
+  // does the pref exist?
+  PRUint16 dataType;
+  rv = var->GetDataType(&dataType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (dataType == nsIDataType::VTYPE_EMPTY ||
+      dataType == nsIDataType::VTYPE_VOID)
+  {
     // by default warnings are enabled
     *_retval = PR_TRUE;
+  } else {
+    rv = var->GetAsBool(_retval);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -1492,6 +1702,21 @@ nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // If we're not on the main thread proxy the service
+  PRBool const isMainThread = NS_IsMainThread();
+  if (!isMainThread) {
+    nsCOMPtr<nsIPrefService> proxy;
+    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                              NS_GET_IID(nsIPrefService),
+                              prefService,
+                              nsIProxyObjectManager::INVOKE_SYNC |
+                              nsIProxyObjectManager::FORCE_PROXY_CREATION,
+                              getter_AddRefs(proxy));
+    if (NS_FAILED(rv))
+      return rv;
+    prefService.swap(proxy);
+  }
+
   // get id of this device
   nsID* id;
   rv = GetId(&id);
@@ -1505,6 +1730,7 @@ nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
   // create the pref key
   nsCString prefKey(PREF_DEVICE_PREFERENCES_BRANCH);
   prefKey.Append(idString);
+  prefKey.AppendLiteral(".preferences.");
   
   return prefService->GetBranch(prefKey.get(), aPrefBranch);
 

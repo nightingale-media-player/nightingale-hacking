@@ -184,7 +184,8 @@ deviceErrorMonitor.prototype = {
                              .createInstance(Ci.nsISupportsString);
         errorString.data = this._sbStrings.formatStringFromName(
                                                         "device.error.format",
-                                                        [aErrorMsg, mediaURL]);
+                                                        [aErrorMsg, mediaURL],
+                                                        1);
         this._deviceList[devIndex].errorList.push(errorString);
       }
     }
