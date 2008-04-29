@@ -39,6 +39,7 @@ if (typeof(Cu) == "undefined")
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
 var deviceErrorMonitorConfig = {
   className:      "Songbird Device Error Monitor Service",
@@ -173,32 +174,20 @@ deviceErrorMonitor.prototype = {
     if (device instanceof Ci.sbIDevice) {
       var devIndex = this._findDeviceIndex(device);
       if (devIndex > -1) {
-        var mediaItem = aDeviceEvent.data.QueryInterface(Ci.sbIMediaItem);
-        var mediaURL = mediaItem.getProperty(SBProperties.contentURL);
-        mediaURL = decodeURIComponent(mediaURL);
+        if (aDeviceEvent.data && (aDeviceEvent.data instanceof Ci.sbIMediaItem)) {
+          var mediaURL = aDeviceEvent.data.getProperty(SBProperties.contentURL);
+          mediaURL = decodeURIComponent(mediaURL);
+        } else {
+          mediaURL = SBString("device.info.unknown");
+        }
         var errorString =  Cc["@mozilla.org/supports-string;1"]
                              .createInstance(Ci.nsISupportsString);
         errorString.data = this._sbStrings.formatStringFromName(
                                                         "device.error.format",
                                                         [aErrorMsg, mediaURL]);
-        dump("*** STEVO: logging error [" + errorString.data + "]\n");
         this._deviceList[devIndex].errorList.push(errorString);
       }
     }
-  },
-
-  /**
-   * \brief Gets an error string from the string bundle.
-   *
-   * \param aStringId the id of the string to get with out the device.error.
-   * \returns an error string or the full string key if not available.
-   */
-  _getErrorString: function deviceErrorMonitor__getErrorString(aStringId) {
-    var errorString = aStringId;
-    try {
-      errorString = this._sbStrings.GetStringFromName(aStringId);
-    } catch (err) {}
-    return errorString;
   },
 
   // sbIDeviceErrorMonitor
@@ -273,23 +262,23 @@ deviceErrorMonitor.prototype = {
       // And error has occured, we need to store it for later
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ACCESS_DENIED:
         this._logError(aDeviceEvent,
-                       this._getErrorString("device.error.access_denied"));
+                       SBString("device.error.access_denied"));
       break;
       case Ci.sbIDeviceEvent.EVENT_DEVICE_NOT_ENOUGH_FREESPACE:
         this._logError(aDeviceEvent,
-                       this._getErrorString("device.error.not_enough_free_space"));
+                       SBString("device.error.not_enough_free_space"));
       break;
       case Ci.sbIDeviceEvent.EVENT_DEVICE_NOT_AVAILABLE:
         this._logError(aDeviceEvent,
-                       this._getErrorString("device.error.not_available"));
+                       SBString("device.error.not_available"));
       break;
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ERROR_UNEXPECTED:
         this._logError(aDeviceEvent,
-                       this._getErrorString("device.error.unexpected"));
+                       SBString("device.error.unexpected"));
       break;
       case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE:
         this._logError(aDeviceEvent,
-                       this._getErrorString("device.error.unsupported_type"));
+                       SBString("device.error.unsupported_type"));
       break;
 
     }
