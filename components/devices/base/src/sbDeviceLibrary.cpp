@@ -329,7 +329,7 @@ sbDeviceLibrary::GetMgmtType(PRUint32 *aMgmtType)
   NS_ENSURE_STATE(mDevice);
 
   nsresult rv;
-  nsString prefKey(NS_L(PREF_SYNC_PREFIX)), guid;
+  nsString prefKey(NS_LITERAL_STRING(PREF_SYNC_PREFIX)), guid;
 
   rv = mDeviceLibrary->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -378,7 +378,7 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
                       sbIDeviceLibrary::MGMT_TYPE_MANUAL,
                       sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
   
-  nsString prefKey(NS_L(PREF_SYNC_PREFIX)), guid;
+  nsString prefKey(NS_LITERAL_STRING(PREF_SYNC_PREFIX)), guid;
 
   rv = mDeviceLibrary->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -508,7 +508,7 @@ sbDeviceLibrary::AddToSyncPlaylistList(sbIMediaList *aPlaylist)
   NS_ENSURE_ARG_POINTER(aPlaylist);
   nsresult rv;
   
-  nsString prefKey(NS_L(PREF_SYNC_PREFIX)), guid;
+  nsString prefKey(NS_LITERAL_STRING(PREF_SYNC_PREFIX)), guid;
   rv = mDeviceLibrary->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
   prefKey.Append(guid);
