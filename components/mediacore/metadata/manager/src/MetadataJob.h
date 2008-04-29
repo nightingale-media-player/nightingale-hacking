@@ -187,7 +187,7 @@ protected:
   nsresult SetItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
   nsresult ClearItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, jobitem_t *aItem );
   nsresult ResetIncomplete( sbIDatabaseQuery *aQuery, nsString aTableName );
-  nsresult sbMetadataJob::InitProgressReporting();
+  nsresult InitProgressReporting();
   nsresult UpdateErrorMessages();
   nsresult StartHandlerForItem( jobitem_t *aItem, PRUint16 aJobType);
   nsresult AddMetadataToItem( jobitem_t *aItem, sbIURIMetadataHelper *aURIMetadataHelper );
