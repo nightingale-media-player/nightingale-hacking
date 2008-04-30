@@ -39,6 +39,7 @@ function runTest() {
   var files = [];
   var filesToRemove = [];
 
+  var isWindows = getPlatform() == "Windows_NT";
   
   ///////////////////////
   // Set up test files //
@@ -47,6 +48,7 @@ function runTest() {
   // A file that doesnt exist
   var file = newAppRelativeFile("testharness/metadatamanager/errorcases/file_that_doesnt_exist.mp3");
   assertEqual(file.exists(), false);
+  files.push(file);
   
   // Bogus files
   var fakeFile = newAppRelativeFile("testharness/metadatamanager/errorcases/fake-file.mp3");
@@ -157,7 +159,7 @@ function runTest() {
       assertEqual(items2.length, files.length);
       
       // Verify job progress reporting.
-      assertEqual(files.length - 2, job.errorCount);
+      assertEqual(job.total - 2, job.errorCount);
       assertEqual(files.length, job.total);
       assertEqual(files.length, job.progress);
       assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
@@ -221,7 +223,11 @@ function runTest() {
       
       // Verify job progress reporting.  Do this last since the info above is
       // useful for debugging.
-      assertEqual(changes.length, job.errorCount);
+      if (isWindows) {
+        assertEqual(job.errorCount, 1);
+      } else {
+        assertEqual(job.errorCount, 3);
+      }
       assertEqual(files.length, job.total);
       assertEqual(files.length, job.progress);
       assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);

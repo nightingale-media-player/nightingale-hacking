@@ -346,7 +346,7 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
 
         /* Read the metadata. */
         if (NS_SUCCEEDED(result))
-            ReadMetadata();
+            result = ReadMetadata();
     }
 
     /* If metadata reading is not complete, start an */
