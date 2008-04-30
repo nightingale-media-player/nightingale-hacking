@@ -844,6 +844,9 @@
           
           this._updateFindbarState();
           
+          // Update the loading status of the web-toolbar items:
+          this.loading = this.selectedTab.isRunningURL;
+          
           document.commandDispatcher.updateCommands("tabchange");
         ]]></body>
       </method>
@@ -2131,6 +2134,13 @@
            by tab.setUpMediaPage. -->
       <field name="_highlightViewIndexOnLoad">null</field>
       
+      <!-- Used to save the URL that is loading so that we can properly match
+           the web progress messages -->
+      <field name="_loadingURL">""</field>
+      
+      <!-- Used to determine if a tab is currently running or loading a URL.
+           This is useful for updating the browser controls per-each-tab. -->
+      <field name="isRunningURL">false</field>
 
       <method name="setUpMediaPage">
         <body><![CDATA[
@@ -2229,10 +2239,6 @@
           return newList;
         ]]></body>
       </method>
-
-      <!-- Used to save the URL that is loading so that we can properly match
-           the web progress messages -->
-      <field name="_loadingURL">""</field>
 
       <!-- nsIWebProgressListener implementation -->
       <method name="onLocationChange">
@@ -2375,14 +2381,16 @@
             return;
           }
 
-          const nsIWebProgressListener =
+          const nsIWebProgressListener = 
             Components.interfaces.nsIWebProgressListener;
+            
           if (aState & nsIWebProgressListener.STATE_STOP) {
             if (!(this.linkedBrowser.contentDocument &&
                   this.linkedBrowser.contentDocument.documentURI == this._loadingURL)) {
               return;
             }
             this._loadingURL = "";
+            this.isRunningURL = false;
 
             if (this.mediaPage) {
 
@@ -2405,6 +2413,9 @@
               this._metrics.metricsInc("app.browser", "pageViews", "");
               this.scanWebPage();
             }
+          }
+          else if (aState & nsIWebProgressListener.STATE_START) {
+            this.isRunningURL = true;
           }
         ]]></body>
       </method>
