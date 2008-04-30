@@ -437,6 +437,16 @@
       <field name="_lastMouseDownColumn">null</field>
       <field name="_lastMouseOverRow">-1</field>
       <field name="_lastMouseOverColumn">null</field>
+      
+      <!-- internal helper -->
+      <property name="_isReadOnly" readonly="true">
+        <getter><![CDATA[
+          return !!(
+            parseInt(this.mediaList.getProperty(SBProperties.isReadOnly)) ||
+            parseInt(this.library.getProperty(SBProperties.isReadOnly))
+            );
+        ]]></getter>
+      </property>
 
       <!-- Drag and Drop flavors -->
       <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEM"  readonly="true">
@@ -685,6 +695,10 @@
         <parameter name="col"/>
         <body>
 <![CDATA[
+  if (this._isReadOnly) {
+    // read only mode, don't start
+    return;
+  }
   if (row == null)
     row = this.edit_row;
   if (col == null)
@@ -2411,10 +2425,7 @@
         
         // whether we can accept the drop or not
         canDrop: function(event, session) {
-          var mediaList = this._self.mediaListView.mediaList;
-          if (parseInt(mediaList.getProperty(SBProperties.isReadOnly)) ||
-              parseInt(mediaList.library.getProperty(SBProperties.isReadOnly)))
-          {
+          if (this._self._isReadOnly) {
             // this is a playlist for a readonly library, can't drop
             return false;
           }
@@ -2794,9 +2805,7 @@
   if (session != null)
     this._dragSession = session.QueryInterface(this._Ci.nsIDragSession);
   
-  if (parseInt(this.mediaList.getProperty(SBProperties.isReadOnly)) ||
-      parseInt(this.library.getProperty(SBProperties.isReadOnly)))
-  {
+  if (this._isReadOnly) {
     // this is a playlist for a readonly library, can't drop
     return false;
   }
