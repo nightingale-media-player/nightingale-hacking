@@ -26,25 +26,26 @@
 <!ENTITY menu.mac.hideothers.modifiers  "accel,alt">
 <!ENTITY menu.mac.showall               "Show All">
 
-<!ENTITY menu.file          "File" >
-<!ENTITY menu.file.new      "New Playlist..." >
-<!ENTITY menu.file.smart    "New Smart Playlist..." >
-<!ENTITY menu.file.remote   "New Subscription..." >
-<!ENTITY menu.file.folder   "New Folder..." >
-<!ENTITY menu.file.open     "Open a File..." >
-<!ENTITY menu.file.url      "Open from URL..." >
-<!ENTITY menu.file.playlist "Import a Playlist..." >
-<!ENTITY menu.file.newtab   "New Tab" >
-<!ENTITY menu.file.closetab "Close Tab" >
-<!ENTITY menu.file.scan     "Scan for Media..." >
-<!ENTITY menu.file.dlfolder "Set Download Folder..." >
-<!ENTITY menu.file.watch    "Set Watched Folders..." >
-<!ENTITY menu.file.htmlbar  "Always Show Web Bar" >
-<!ENTITY menu.file.skin     "Alternate Skin" >
-<!ENTITY menu.file.window   "Open Main Window" >
-<!ENTITY menu.file.mini     "Open Mini Player" >
-<!ENTITY menu.file.about    "About &brandShortName;..." >
-<!ENTITY menu.file.exit     "Exit" >
+<!ENTITY menu.file              "File" >
+<!ENTITY menu.file.new          "New Playlist..." >
+<!ENTITY menu.file.smart        "New Smart Playlist..." >
+<!ENTITY menu.file.remote       "New Subscription..." >
+<!ENTITY menu.file.folder       "New Folder..." >
+<!ENTITY menu.file.open         "Open a File..." >
+<!ENTITY menu.file.url          "Open from URL..." >
+<!ENTITY menu.file.playlist     "Import a Playlist..." >
+<!ENTITY menu.file.newtab       "New Tab" >
+<!ENTITY menu.file.closetab     "Close Tab" >
+<!ENTITY menu.file.scan         "Scan for Media..." >
+<!ENTITY menu.file.viewmetadata "View Metadata...">
+<!ENTITY menu.file.dlfolder     "Set Download Folder..." >
+<!ENTITY menu.file.watch        "Set Watched Folders..." >
+<!ENTITY menu.file.htmlbar      "Always Show Web Bar" >
+<!ENTITY menu.file.skin         "Alternate Skin" >
+<!ENTITY menu.file.window       "Open Main Window" >
+<!ENTITY menu.file.mini         "Open Mini Player" >
+<!ENTITY menu.file.about        "About &brandShortName;..." >
+<!ENTITY menu.file.exit         "Exit" >
 
 <!ENTITY menu.edit          "Edit" >
 <!ENTITY menu.edit.undo     "Undo" >
@@ -258,29 +259,30 @@
 
 <!ENTITY setup.groupbox.width "386">
 
-<!ENTITY menu.file.accesskey          "F" >
-<!ENTITY menu.file.new.accesskey      "N" >
-<!ENTITY menu.file.smart.accesskey    "S" >
-<!ENTITY menu.file.remote.accesskey   "R" >
-<!ENTITY menu.file.folder.accesskey   "L" >
-<!ENTITY menu.file.open.accesskey     "O" >
-<!ENTITY menu.file.url.accesskey      "U" >
-<!ENTITY menu.file.playlist.accesskey "I" >
-<!ENTITY menu.file.newtab.accesskey   "T" >
-<!ENTITY menu.file.closetab.accesskey "C" >
-<!ENTITY menu.file.scan.accesskey     "M" >
-<!ENTITY menu.file.dlfolder.accesskey "D" >
-<!ENTITY menu.file.watch.accesskey    "W" >
-<!ENTITY locale.language.accesskey    "L" >
-<!ENTITY menu.feathers.accesskey      "r" >
-<!ENTITY menu.view.accesskey          "V" >
-<!ENTITY menu.preferences.accesskey   "O" >
-<!ENTITY menu.extensions.accesskey    "A" >
-<!ENTITY menu.viewpagesource.accesskey "V" >
-<!ENTITY menu.clearprivatedata.accesskey "P" >
-<!ENTITY menu.errorconsole.accesskey  "C" >
-<!ENTITY menu.file.exit.accesskey     "X" >
-<!ENTITY menu.downloadmgr.accesskey   "D" >
+<!ENTITY menu.file.accesskey              "F" >
+<!ENTITY menu.file.new.accesskey          "N" >
+<!ENTITY menu.file.smart.accesskey        "S" >
+<!ENTITY menu.file.remote.accesskey       "R" >
+<!ENTITY menu.file.folder.accesskey       "L" >
+<!ENTITY menu.file.open.accesskey         "O" >
+<!ENTITY menu.file.url.accesskey          "U" >
+<!ENTITY menu.file.playlist.accesskey     "I" >
+<!ENTITY menu.file.newtab.accesskey       "T" >
+<!ENTITY menu.file.closetab.accesskey     "C" >
+<!ENTITY menu.file.scan.accesskey         "M" >
+<!ENTITY menu.file.viewmetadata.accesskey "E" >
+<!ENTITY menu.file.dlfolder.accesskey     "D" >
+<!ENTITY menu.file.watch.accesskey        "W" >
+<!ENTITY locale.language.accesskey        "L" >
+<!ENTITY menu.feathers.accesskey          "r" >
+<!ENTITY menu.view.accesskey              "V" >
+<!ENTITY menu.preferences.accesskey       "O" >
+<!ENTITY menu.extensions.accesskey        "A" >
+<!ENTITY menu.viewpagesource.accesskey    "V" >
+<!ENTITY menu.clearprivatedata.accesskey  "P" >
+<!ENTITY menu.errorconsole.accesskey      "C" >
+<!ENTITY menu.file.exit.accesskey         "X" >
+<!ENTITY menu.downloadmgr.accesskey       "D" >
 
 <!ENTITY menu.edit.accesskey          "E" >
 <!ENTITY menu.edit.undo.accesskey     "U" >

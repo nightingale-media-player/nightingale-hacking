@@ -1415,7 +1415,7 @@
             theTE.focus();
           } else {
             const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
-            const TEFEATURES = "chrome,dialog=no,resizable=no";
+            const TEFEATURES = "chrome,centerscreen";
             SBOpenWindow(TEURL, "track_editor", TEFEATURES, this);
           }
         ]]>
@@ -1476,6 +1476,9 @@
               case "cmd_delete":
                 this._self.removeSelectedTracks();
                 break;
+              case "cmd_viewmetadata":
+                  this._self.onPlaylistEditor();
+                break;
             }
           },
           supportsCommand: function(aCommand) {
@@ -1483,6 +1486,7 @@
               case "cmd_selectAll":
               case "cmd_delete":
               case "cmd_copy":
+              case "cmd_viewmetadata":
                 return true;
             }
             return false;
@@ -1491,7 +1495,8 @@
             if ( aCommand == 'cmd_selectAll' ) {
               return true;
             } else if ( aCommand == 'cmd_copy' ||
-                        aCommand == 'cmd_delete' ) {
+                        aCommand == 'cmd_delete' ||
+                        aCommand == 'cmd_viewmetadata') {
               if (this._self._mediaListView.selection.count > 0 ) {
                 return true;
               }

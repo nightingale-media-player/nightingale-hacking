@@ -38,22 +38,126 @@ See app/content/xul/trackEditor.xul
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-#track_editor
-{
-  width:  550px; 
+#title {
+  font-size: x-large;
 }
 
-sb-trackeditor-drawer > .drawer-box > .drawer-content
-{
-  height: 185px !important;
+#title {
+  width: 10em !important;
+  overflow: hidden;
 }
 
-sb-exttrackeditor-drawer > .drawer-box > .drawer-content
-{
-  height: 225px !important;
+#mainSection #artistName, #mainSection #albumName {
+  font-size: large;
 }
 
-sb-tageditor-drawer > .drawer-box > .drawer-content
-{
-  height: 150px !important;
+#primaryImageURL {
+    margin: 8px;
+}
+
+#trackNumber, #totalTracks, #discNumber, #totalDiscs {
+  width: 2em !important;
+  overflow: hidden;
+}
+
+#genre {
+  width: 8em;
+}
+
+#year {
+  width: 4em !important;
+  overflow: hidden;
+}
+
+.number {
+  font-style: italic !important;
+}
+
+#mainSection textbox {
+  -moz-border-radius: 0px;
+  border: 0px;
+  background-color: transparent;
+  padding: 0px;
+}
+
+#mainSection textbox:hover {
+  border-bottom: 1px solid grey;
+  margin-bottom: 4px;
+}
+
+#mainSection label { 
+    margin-right: 0px;
+}
+
+#advanced-contents {
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#advanced-warning {
+    font-weight: bold; color: red;
+}
+
+.advanced-label {
+    width: 150px !important;
+    overflow: hidden;
+}
+
+.hidden {
+    display: none;
+}
+
+label {
+    overflow: hidden;
+}
+
+/** Ratings stuff stolzen from app/content/skin/bindings/playlist.css
+    apply rating states by repositioning a large background image.
+    This prevents flickering on state change **/
+.rating {
+  background-repeat: no-repeat;
+  background-image: url(chrome://songbird/skin/tree/ratings.png);
+}
+
+.rating0 {
+  background-position:4px 0px;
+}
+
+.rating0[selected] {
+  background-position:4px -18px;
+}
+
+.rating1 {
+  background-position:4px -36px;
+}
+.rating1[selected] {
+  background-position:4px -54px;
+}
+
+.rating2 {
+  background-position:4px -72px;
+}
+.rating2[selected] {
+  background-position:4px -90px;
+}
+
+.rating3 {
+  background-position:4px -108px;
+}
+.rating3[selected] {
+  background-position:4px -126px;
+}
+
+.rating4 {
+  background-position:4px -144px;
+}
+.rating4[selected] {
+  background-position:4px -162px;
+}
+
+.rating5 {
+  background-position:4px -180px;
+}
+.rating5[selected] {
+  background-position:4px -198px;
 }
