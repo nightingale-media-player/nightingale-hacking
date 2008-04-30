@@ -1,3 +1,4 @@
+/* vim: sw=2 : */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -65,6 +66,7 @@
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
 #include <sbProxyUtils.h>
+#include <sbStandardProperties.h>
 
 
 NS_IMPL_THREADSAFE_ISUPPORTS7(sbDeviceLibrary,
@@ -400,11 +402,21 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
   rv = mDevice->SetPreference(prefKey, var);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if ( (origMgmtType != aMgmtType) &&
-       (aMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) ) {
-    // sync
-    rv = mDevice->SyncLibraries();
-    NS_ENSURE_SUCCESS(rv, rv);
+  if (origMgmtType != aMgmtType) {
+    if (aMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
+      // sync
+      rv = mDevice->SyncLibraries();
+      NS_ENSURE_SUCCESS(rv, rv);
+      // mark this as read-only
+      rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
+                             NS_LITERAL_STRING("1"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    } else {
+      // mark this as read-write
+      rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
+                             EmptyString());
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;

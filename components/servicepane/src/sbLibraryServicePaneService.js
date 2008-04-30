@@ -468,6 +468,13 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow
   var list = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
   if (list) {
     dump('canDrop on a list\n');
+    
+    // check if the list is in a readonly library
+    if (parseInt(list.library.getProperty(SBProperties.isReadOnly))) {
+      // this is a list for a readonly library, can't drop
+      return false;
+    }
+    
     // XXX Mook: hack for bug 4760 to do special handling for the download
     // playlist.  This will need to be expanded later to use IDLs on the
     // list so that things like extensions can do this too.

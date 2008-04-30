@@ -2411,6 +2411,13 @@
         
         // whether we can accept the drop or not
         canDrop: function(event, session) {
+          var mediaList = this._self.mediaListView.mediaList;
+          if (parseInt(mediaList.getProperty(SBProperties.isReadOnly)) ||
+              parseInt(mediaList.library.getProperty(SBProperties.isReadOnly)))
+          {
+            // this is a playlist for a readonly library, can't drop
+            return false;
+          }
           return (InternalDropHandler.isSupported(session) ||
                   ExternalDropHandler.isSupported(session));
         },
@@ -2786,6 +2793,13 @@
   var session = dragService.getCurrentSession();
   if (session != null)
     this._dragSession = session.QueryInterface(this._Ci.nsIDragSession);
+  
+  if (parseInt(this.mediaList.getProperty(SBProperties.isReadOnly)) ||
+      parseInt(this.library.getProperty(SBProperties.isReadOnly)))
+  {
+    // this is a playlist for a readonly library, can't drop
+    return false;
+  }
 
   // look for the source of the dnd, if it is ourselves, we need to test whether
   // we are a sorted playlist, or a library (cannot reorder tracks in a library), 
