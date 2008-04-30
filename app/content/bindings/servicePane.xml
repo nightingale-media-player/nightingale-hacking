@@ -612,7 +612,7 @@
           var obj={}, row={}, col={};
           this.mTree.treeBoxObject.getCellAt(event.clientX, event.clientY, row, col, obj);
 
-          if (row.value >= 0) {
+          if ((obj.value != 'twisty') && (row.value >= 0)) {
             this.loadSelectedNode(event);
           }
         }
