@@ -32,6 +32,7 @@
  * Note: This file is dependent on chrome://global/content/globalOverlay.js
  */
  
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
@@ -724,56 +725,6 @@ function checkAltF4(evt)
     evt.preventDefault();
     quitApp();
   }
-}
-
-var SBStringBundleBundle = Components.classes["@mozilla.org/intl/stringbundle;1"]
-                                     .getService(Components.interfaces.nsIStringBundleService)
-                                     .createBundle("chrome://songbird/locale/songbird.properties");
-
-/**
- * \brief Lookup a string in the songbird.properties locale file.
- * \param key The key for the string.
- * \param dflt The
- * \param bundle Optional string bundle.
- */
-function SBString( key, dflt, bundle )
-{
-  // Get the string bundle.
-  var stringBundle = bundle ? bundle : SBStringBundleBundle;
-
-  // If there is no default, the key is the default.
-  var retval = (dflt) ? dflt : key;
-  try {
-    retval = stringBundle.GetStringFromName(key);
-  } catch (e) {}
-  return retval;
-}
-
-/**
- * \brief Get the formatted localized string with the key specified by aKey
- *        using the format parameters specified by aParams and the string bundle
- *        specified by aStringBundle.
- *        If no string bundle is specified, get the string from the Songbird
- *        bundle.  If a string cannot be found, return aKey.
- *
- * \param aKey                  Localized string key.
- * \param aParams               Format params array.
- * \param aStringBundle         Optional string bundle.
- */
-
-function SBFormattedString(aKey, aParams, aStringBundle) {
-  // Get the string bundle.
-  var stringBundle = aStringBundle ? aStringBundle : SBStringBundleBundle;
-
-  // Set the default value.
-  var value = aKey;
-
-  // Try formatting string from bundle.
-  try {
-    value = stringBundle.formatStringFromName(aKey, aParams, aParams.length);
-  } catch(ex) {}
-
-  return value;
 }
 
 /**

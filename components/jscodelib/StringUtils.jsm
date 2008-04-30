@@ -59,10 +59,7 @@ const Cr = Components.results
 //
 //------------------------------------------------------------------------------
 
-var SBStringBundleBundle =
-      Cc["@mozilla.org/intl/stringbundle;1"]
-        .getService(Ci.nsIStringBundleService)
-        .createBundle("chrome://songbird/locale/songbird.properties");
+var gSBStringDefaultBundle = null;
 
 
 //------------------------------------------------------------------------------
@@ -87,7 +84,7 @@ var SBStringBundleBundle =
 
 function SBString(aKey, aDefault, aStringBundle) {
   // Get the string bundle.
-  var stringBundle = aStringBundle ? aStringBundle : SBStringBundleBundle;
+  var stringBundle = aStringBundle ? aStringBundle : SBStringGetDefaultBundle();
 
   // Set the default value.
   var value = aDefault ? aDefault : aKey;
@@ -117,7 +114,7 @@ function SBString(aKey, aDefault, aStringBundle) {
 
 function SBFormattedString(aKey, aParams, aStringBundle) {
   // Get the string bundle.
-  var stringBundle = aStringBundle ? aStringBundle : SBStringBundleBundle;
+  var stringBundle = aStringBundle ? aStringBundle : SBStringGetDefaultBundle();
 
   // Set the default value.
   var value = aKey;
@@ -153,7 +150,7 @@ function SBFormattedString(aKey, aParams, aStringBundle) {
 
 function SBFormattedCountString(aKeyBase, aCount, aDefault, aStringBundle) {
   // Get the string bundle.
-  var stringBundle = aStringBundle ? aStringBundle : SBStringBundleBundle;
+  var stringBundle = aStringBundle ? aStringBundle : SBStringGetDefaultBundle();
 
   // Produce the string key.
   var key = aKeyBase;
@@ -171,5 +168,29 @@ function SBFormattedCountString(aKeyBase, aCount, aDefault, aStringBundle) {
   } catch(ex) {}
 
   return value;
+}
+
+
+//------------------------------------------------------------------------------
+//
+// Internal string utility services.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * Return the default Songbird localized string bundle.
+ *
+ * \return Default Songbird localized string bundle.
+ */
+
+function SBStringGetDefaultBundle() {
+  if (!gSBStringDefaultBundle) {
+    gSBStringDefaultBundle =
+      Cc["@mozilla.org/intl/stringbundle;1"]
+        .getService(Ci.nsIStringBundleService)
+        .createBundle("chrome://songbird/locale/songbird.properties");
+  }
+
+  return gSBStringDefaultBundle;
 }
 
