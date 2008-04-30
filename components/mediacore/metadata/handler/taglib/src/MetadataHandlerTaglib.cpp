@@ -473,7 +473,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
     if (NS_SUCCEEDED(result))
         result = mpURL->GetScheme(urlScheme);
 
-    if (!urlScheme.Equals(NS_LITERAL_CSTRING("file")))
+    if (!urlScheme.EqualsLiteral("file"))
     {
       return NS_ERROR_NOT_IMPLEMENTED;
     }
@@ -509,35 +509,40 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
           NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), propertyValue
       );
       if (NS_SUCCEEDED(result)) {
-        f.tag()->setTitle(NS_ConvertUTF16toUTF8(propertyValue).BeginReading());
+        f.tag()->setTitle(TagLib::String(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+                                         TagLib::String::UTF8));
       }
       
       result = mpMetadataPropertyArray->GetPropertyValue(
           NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), propertyValue
       );
       if (NS_SUCCEEDED(result)) {
-        f.tag()->setArtist(NS_ConvertUTF16toUTF8(propertyValue).BeginReading());
+        f.tag()->setArtist(TagLib::String(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+                                          TagLib::String::UTF8));
       }
       
       result = mpMetadataPropertyArray->GetPropertyValue(
         NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), propertyValue
       );
       if (NS_SUCCEEDED(result)) {
-        f.tag()->setAlbum(NS_ConvertUTF16toUTF8(propertyValue).BeginReading());
+        f.tag()->setAlbum(TagLib::String(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+                                         TagLib::String::UTF8));
       }
 
       result = mpMetadataPropertyArray->GetPropertyValue(
         NS_LITERAL_STRING(SB_PROPERTY_COMMENT), propertyValue
       );
       if (NS_SUCCEEDED(result)) {
-        f.tag()->setComment(NS_ConvertUTF16toUTF8(propertyValue).BeginReading());
+        f.tag()->setComment(TagLib::String(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+                                           TagLib::String::UTF8));
       }
 
       result = mpMetadataPropertyArray->GetPropertyValue(
         NS_LITERAL_STRING(SB_PROPERTY_GENRE), propertyValue
       );
       if (NS_SUCCEEDED(result)) {
-        f.tag()->setGenre(NS_ConvertUTF16toUTF8(propertyValue).BeginReading());
+        f.tag()->setGenre(TagLib::String(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+                                         TagLib::String::UTF8));
       }
 
       result = mpMetadataPropertyArray->GetPropertyValue(
