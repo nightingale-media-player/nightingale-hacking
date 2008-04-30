@@ -2892,6 +2892,27 @@
 ]]>
         </body>
       </method>
+      
+      <method name="onCellEdited">
+        <parameter name="aItem"/>
+        <parameter name="aPropertyName"/>
+        <parameter name="aOldValue"/>
+        <body>
+          <![CDATA[
+            // Data has been changed so we need to write back the metadata
+            var mediaItemArray = Cc["@mozilla.org/array;1"]
+                                .createInstance(Ci.nsIMutableArray);
+            mediaItemArray.appendElement(aItem, false);
+            var manager = Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                              .getService(Ci.sbIMetadataJobManager);
+            var job = manager.newJob(mediaItemArray,
+                                     5,                 // Sleep time on thread
+                                     Ci.sbIMetadataJob.JOBTYPE_WRITE);
+            // XXX TODO: Add in the new progress listener for the job here
+          
+          ]]>
+        </body>
+      </method>
 
       <method name="highlightItem">
         <parameter name="aIndex" />

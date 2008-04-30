@@ -48,8 +48,6 @@
 #include <sbIMediaListView.h>
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
-#include <sbIMetadataJob.h>
-#include <sbIMetadataJobManager.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
 #include <sbISortableMediaListView.h>
@@ -2045,28 +2043,15 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
   if (!value.Equals(oldValue)) {
     rv = item->SetProperty(bind, value);
     NS_ENSURE_SUCCESS(rv, rv);
-    
-    // Now we need to update the actual tag!
-    nsCOMPtr<nsIMutableArray> mediaItemArray = do_CreateInstance("@mozilla.org/array;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    rv = mediaItemArray->AppendElement(item, false);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    nsCOMPtr<sbIMetadataJobManager> manager = do_GetService("@songbirdnest.com/Songbird/MetadataJobManager;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    PRUint32 sleepInterval = 5; // put a 5 millisecond sleep on the job thread
-    nsCOMPtr<sbIMetadataJob> job;
-    rv = manager->NewJob(mediaItemArray,
-                         sleepInterval,
-                         sbIMetadataJob::JOBTYPE_WRITE,
-                         getter_AddRefs(job));
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    // XXX TODO: Add error checking so we can notify the user if it failed to
-    //           write the metadata and maybe revert back the value.
-
+    if (mObserver) {
+      nsCOMPtr<sbIMediaListViewTreeViewObserver> observer =
+        do_QueryReferent(mObserver);
+      if (observer) {
+        rv = observer->OnCellEdited(item, bind, oldValue);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
   }
 
   return NS_OK;

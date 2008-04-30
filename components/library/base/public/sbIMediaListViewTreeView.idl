@@ -50,6 +50,17 @@ interface sbIMediaListViewTreeViewObserver : nsISupports
   boolean canDrop(in long index, in long orientation);
   void drop(in long row, in long orientation);
   void cycleHeader(in nsITreeColumn col);
+  
+  /**
+   * \brief Called back when a cell has been edited in the playlist tree
+   *
+   * \param item media item this affects (has already been changed)
+   * \param property name of the property changed
+   * \param oldValue old value of the property
+   */
+  void onCellEdited(in sbIMediaItem item,
+                    in AString property,
+                    in AString oldValue);
 };
 
 /**

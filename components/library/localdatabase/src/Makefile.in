@@ -67,7 +67,6 @@ CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/playlistplayback/public \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/sqlbuilder/public \
-               $(DEPTH)/components/mediacore/metadata/manager/public \
                $(MOZSDK_IDL_DIR) \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/appcomps \
