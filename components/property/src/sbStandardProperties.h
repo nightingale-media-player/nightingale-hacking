@@ -97,5 +97,5 @@
 #define SB_PROPERTY_DEFAULT_MEDIAPAGE_URL     "http://songbirdnest.com/data/1.0#defaultMediaPageURL"
 #define SB_PROPERTY_ONLY_CUSTOM_MEDIAPAGES    "http://songbirdnest.com/data/1.0#onlyCustomMediaPages"
 #define SB_PROPERTY_AVAILABILITY              "http://songbirdnest.com/data/1.0#availability"
-
+#define SB_PROPERTY_ALBUMARTISTNAME           "http://songbirdnest.com/data/1.0#albumArtistName"
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

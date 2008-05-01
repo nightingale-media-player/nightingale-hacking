@@ -903,6 +903,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       0, PR_FALSE, 0, PR_FALSE,
                       PR_FALSE, PR_FALSE);
 
+  // Album/Artist Name
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTISTNAME),
+                    NS_LITERAL_STRING("property.albumartistname"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
