@@ -221,7 +221,9 @@ PublicPlaylistCommands.prototype = {
 
       this.m_cmd_Remove.setCommandEnabledCallback(null,
                                                   "library_cmd_remove",
-                                                  plCmd_IsAnyTrackSelected);
+                                                  plCmd_AND(
+                                                    plCmd_IsAnyTrackSelected,
+                                                    plCmd_CanModifyPlaylist));
 
       // The second item, only created by the keyboard shortcuts instantiator
       this.m_cmd_Remove.appendAction(null,
@@ -239,7 +241,9 @@ PublicPlaylistCommands.prototype = {
 
       this.m_cmd_Remove.setCommandEnabledCallback(null,
                                                   "library_cmd_remove2",
-                                                  plCmd_IsAnyTrackSelected);
+                                                  plCmd_AND(
+                                                    plCmd_IsAnyTrackSelected,
+                                                    plCmd_CanModifyPlaylist));
 
       this.m_cmd_Remove.setCommandVisibleCallback(null,
                                                   "library_cmd_remove2",
@@ -267,7 +271,9 @@ PublicPlaylistCommands.prototype = {
 
       this.m_cmd_Edit.setCommandEnabledCallback(null,
                                                 "library_cmd_edit",
-                                                plCmd_IsAnyTrackSelected);
+                                                plCmd_AND(
+                                                  plCmd_IsAnyTrackSelected,
+                                                  plCmd_CanModifyPlaylist));
 
       // --------------------------------------------------------------------------
       // The DOWNLOAD button
@@ -453,6 +459,11 @@ PublicPlaylistCommands.prototype = {
                                                "&command.playlist.shortcut.modifiers.remove",
                                                true);
 
+      this.m_cmd_list_Remove.setCommandEnabledCallback
+                                                (null,
+                                                 "playlist_cmd_remove",
+                                                 plCmd_CanModifyPlaylist);
+
       // --------------------------------------------------------------------------
       // The Rename Playlist action
       // --------------------------------------------------------------------------
@@ -471,6 +482,11 @@ PublicPlaylistCommands.prototype = {
                                                "&command.playlist.shortcut.keycode.rename",
                                                "&command.playlist.shortcut.modifiers.rename",
                                                true);
+
+      this.m_cmd_list_Rename.setCommandEnabledCallback
+                                                (null,
+                                                 "playlist_cmd_rename",
+                                                 plCmd_CanModifyPlaylist);
 
       // --------------------------------------------------------------------------
 
@@ -1070,10 +1086,18 @@ function plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost) {
   return (medialist.library != medialist);
 }
 
+// Returns true if the playlist can be modified (is not read-only)
+function plCmd_CanModifyPlaylist(aContext, aSubMenuId, aCommandId, aHost) {
+  var medialist = unwrap(aContext.medialist);
+  return !(parseInt(medialist.getProperty(SBProperties.isReadOnly)) ||
+           parseInt(medialist.library.getProperty(SBProperties.isReadOnly)));
+}
+
 // Returns true if the conditions are ok for adding tracks to the library
 function plCmd_CanAddToLibrary(aContext, aSubMenuId, aCommandId, aHost) {
   return plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) &&
-        plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost);
+         plCmd_CanModifyPlaylist(aContext, aSubMenuId, aCommandId, aHost) &&
+         plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost);
 }
 
 // Returns true if a download is currently in progress (not paused)
@@ -1123,6 +1147,30 @@ function plCmd_WebMediaHistoryHasItems(aContext, aSubMenuId, aCommandId, aHost) 
 function plCmd_ContextHasBrowser(aContext, aSubMenuId, aCommandId, aHost) {
   var window = unwrap(aContext.window);
   return (window.gBrowser);
+}
+
+// Returns the conjunction of the result of the inputs
+function plCmd_AND( /* comma separated list (not array) of functions */ ) {
+  var methods = Array.prototype.concat.apply([], arguments);
+  return function _plCmd_Conjunction(aContext, aSubMenuId, aCommandId, aHost) {
+    for each (var f in methods) {
+      if (!f(aContext, aSubMenuId, aCommandId, aHost))
+        return false;
+    }
+    return true;
+  }
+}
+
+// Returns the disjunction of the result of the inputs
+function plCmd_OR( /* comma separated list (not array) of functions */ ) {
+  var methods = Array.prototype.concat.apply([], arguments);
+  return function _plCmd_Disjunction(aContext, aSubMenuId, aCommandId, aHost) {
+    for each (var f in methods) {
+      if (f(aContext, aSubMenuId, aCommandId, aHost))
+        return true;
+    }
+    return false;
+  }
 }
 
 // Always return false

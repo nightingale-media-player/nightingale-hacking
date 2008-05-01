@@ -194,7 +194,7 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
     rv = do_GetProxyForObject(target,
                               NS_GET_IID(sbIMediaItem),
                               aItem,
-                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              NS_PROXY_SYNC,
                               getter_AddRefs(proxiedItem));
     NS_ENSURE_SUCCESS(rv, rv);
 
