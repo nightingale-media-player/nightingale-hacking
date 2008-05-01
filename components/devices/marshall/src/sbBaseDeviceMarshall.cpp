@@ -74,10 +74,29 @@ void AppendDeviceController(nsCOMPtr<nsISupports> & ptr,
   nsCString controllerName;
   nsresult rv;
   if (stringValue && NS_SUCCEEDED(stringValue->GetData(controllerName))) {
-    nsCOMPtr<sbIDeviceController> deviceController(do_CreateInstance(nsCString(controllerName).get() , &rv));
-    if (NS_SUCCEEDED(rv) && deviceController) {
-      controllers->AppendElement(deviceController, PR_FALSE);
+    nsCOMPtr<sbIDeviceController> deviceController =
+      do_CreateInstance(controllerName.get() , &rv);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    
+    // check if the device manager already has a matching controller
+    nsCOMPtr<sbIDeviceControllerRegistrar> controllerRegistrar =
+      do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    
+    nsID* controllerId = nsnull;
+    rv = deviceController->GetId(&controllerId);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    
+    nsCOMPtr<sbIDeviceController> existingController;
+    rv = controllerRegistrar->GetController(controllerId,
+                                            getter_AddRefs(existingController));
+    NS_Free(controllerId);
+    
+    if (NS_SUCCEEDED(rv) && existingController) {
+      deviceController = existingController;
     }
+    
+    controllers->AppendElement(deviceController, PR_FALSE);
   }
 }
 static nsresult CopyCategoriesToArray(nsCOMPtr<nsISimpleEnumerator> & enumerator,
