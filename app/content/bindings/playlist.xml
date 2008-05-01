@@ -1498,6 +1498,18 @@
               case "cmd_viewmetadata":
                   this._self.onPlaylistEditor();
                 break;
+              case "cmd_find":
+                var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                               .getService(Components.interfaces.nsIWindowMediator);
+                var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main");  
+                if (songbirdWindow && songbirdWindow.gSearchHandler) {
+                  var searchBar = songbirdWindow.gSearchHandler.getSearchBar();
+                  if (searchBar) {
+                    searchBar.select();
+                    searchBar.focus();
+                  }
+                }
+                break;
             }
           },
           supportsCommand: function(aCommand) {
@@ -1506,12 +1518,14 @@
               case "cmd_delete":
               case "cmd_copy":
               case "cmd_viewmetadata":
+              case "cmd_find":
                 return true;
             }
             return false;
           },
           isCommandEnabled: function(aCommand) {
-            if ( aCommand == 'cmd_selectAll' ) {
+            if ( aCommand == 'cmd_selectAll' ||
+                 aCommand == 'cmd_find') {
               return true;
             } else if ( aCommand == 'cmd_copy' ||
                         aCommand == 'cmd_delete' ||
