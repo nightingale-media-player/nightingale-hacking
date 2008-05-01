@@ -111,6 +111,10 @@ label {
     overflow: hidden;
 }
 
+*[edited] {
+  font-weight: bold; color: yellow;
+}
+
 /** Ratings stuff stolzen from app/content/skin/bindings/playlist.css
     apply rating states by repositioning a large background image.
     This prevents flickering on state change **/

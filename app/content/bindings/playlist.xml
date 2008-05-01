@@ -2908,17 +2908,16 @@
             // Defer a tick, as the job manager may launch a dialog which 
             // at this time will totally lock up the player.
             setTimeout(function() {
-            var mediaItemArray = Cc["@mozilla.org/array;1"]
-                                .createInstance(Ci.nsIMutableArray);
-            mediaItemArray.appendElement(aItem, false);
-            var manager = Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                              .getService(Ci.sbIMetadataJobManager);
-            var job = manager.newJob(mediaItemArray,
-                                     5,                 // Sleep time on thread
-                                     Ci.sbIMetadataJob.JOBTYPE_WRITE);
-          
+	      var mediaItemArray = Cc["@mozilla.org/array;1"]
+				  .createInstance(Ci.nsIMutableArray);
+	      mediaItemArray.appendElement(aItem, false);
+	      var manager = Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+				.getService(Ci.sbIMetadataJobManager);
+	      var job = manager.newJob(mediaItemArray,
+				       5,                 // Sleep time on thread
+				       Ci.sbIMetadataJob.JOBTYPE_WRITE);          
                 SBJobUtils.showProgressDialog(job, null);
-              }, 0);
+            }, 0);
           ]]>
         </body>
       </method>

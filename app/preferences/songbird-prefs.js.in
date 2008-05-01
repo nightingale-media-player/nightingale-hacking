@@ -263,6 +263,9 @@ pref("songbird.mediacore.normalize", false);
 //
 // Disable metadata for now. Too experimental.
 pref("songbird.metadata.enableWriting", false);
+pref("songbird.trackeditor.askEditMultiple", true);
+pref("songbird.trackeditor.enableAdvancedTab", true);
+pref("songbird.trackeditor.rememberedTab", 0);
 
 //
 // Sanitize prefs

@@ -47,11 +47,11 @@
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="track_editor"
  windowtype="Songbird:TrackEditor"
- title="&trackeditor.title;"
+ title="Metadata"
  type="songbird"
  onload="TrackEditor.onLoadTrackEditor();"
  onunload="TrackEditor.onUnloadTrackEditor();"
- height="500"
+ height="650"
  width="500"
  hidechrome="true"
  buttons="none"
@@ -66,13 +66,12 @@
 
   <notificationbox id="trackeditor-notification" flex="1">
   
-  <tabbox flex="1">
+  <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox">
     <tabs>
       <tab label="Summary"/>
       <tab label="Edit"/>
       <tab label="Lyrics" />
       <!--tab disabled="true" label="Sort Values"/-->
-      <tab label="Advanced" />
     </tabs>
   
     <tabpanels flex="1">
@@ -202,7 +201,9 @@
       <vbox id="info-tab">
         <label property-type="label" 
                property="http://songbirdnest.com/data/1.0#trackName"/>
-        <textbox flex="1" 
+        <!-- this one element gets an ID so we can look it up and disable it -->
+        <textbox flex="1"
+                 id="infoTab-trackName"
                  property="http://songbirdnest.com/data/1.0#trackName"
                  multicheck="true"
                  type="autocomplete"
@@ -225,10 +226,13 @@
                      type="autocomplete"
                      autocompletesearch="library-distinct-properties"/>
   
-            <!--label property-type="label" 
+            <label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#albumArtistName"/>
-            <textbox property="http://songbirdnest.com/data/1.0#albumArtistName"
-                     multicheck="true"/-->
+            <textbox flex="1"
+                     property="http://songbirdnest.com/data/1.0#albumArtistName"
+                     multicheck="true"
+                     type="autocomplete"
+                     autocompletesearch="library-distinct-properties"/>
   
             <label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#composerName"/>
@@ -245,6 +249,7 @@
                      property="http://songbirdnest.com/data/1.0#comment"
                      multicheck="true"/>
   
+        <!-- deferred from 0.6 until we have an actual use for this column -->
         <!--label property-type="label" property="http://songbirdnest.com/data/1.0#grouping"/>
           <textbox property="http://songbirdnest.com/data/1.0#grouping" multicheck="true"/>
         -->
@@ -257,9 +262,10 @@
                      type="autocomplete"
                      autocompletesearch="library-distinct-properties"/>
   
+            <!-- deferred from 0.6 until supported by sorting algos -->
             <!--label property-type="label" 
-                   property="http://songbirdnest.com/data/1.0#partOfCompilation"/>
-            <checkbox property="http://songbirdnest.com/data/1.0#partOfCompilation" 
+                   property="http://songbirdnest.com/data/1.0#isPartOfCompilation"/>
+            <checkbox property="http://songbirdnest.com/data/1.0#isPartOfCompilation" 
                       multicheck="true"/-->
           </vbox>
           <vbox flex="1">
@@ -326,21 +332,25 @@
       <!--vbox id="sort-value">
         <label>Coming soon.</label>
       </vbox-->
-      <vbox flex="1" id="advanced">
-        <!-- todo: rename to advanced tab -->
-        <label id="advanced-warning">WARNING: Editing these values could ruin Christmas.</label>
-        <!-- the track editor controller fills this in with all the properties -->
-        <!-- todo: grid? -->
-      </vbox>
+      
     </tabpanels>
   </tabbox>
   
   <hbox>
-    <button label="&lt;" accesskey="p" onclick="TrackEditor.prev()"/>
-    <button label="&gt;" accesskey="n" onclick="TrackEditor.next()"/>
+    <button id="prev-button"
+            label="&lt;"
+            accesskey="p"
+            tooltiptext="Previous"
+            onclick="TrackEditor.apply(); TrackEditor.prev()"/>
+    <button id="next-button"
+            label="&gt;"
+            accesskey="n"
+            tooltiptext="Next"
+            onclick="TrackEditor.apply(); TrackEditor.next()"/>
     <spacer flex="1"/>
-    <button label="Reset" accesskey="r" onclick="TrackEditor.reset()"/>
+    <button label="Cancel" accesskey="c" onclick="window.close()"/>
     <button label="Apply" accesskey="a" onclick="TrackEditor.apply()"/>
+    <button label="OK" accesskey="o" onclick="TrackEditor.apply(); window.close();"/>
   </hbox>
   </notificationbox>
 
@@ -406,7 +416,7 @@
             for(var i = 0; i < multichecks.length; i++) {
               var tb = multichecks[i];
               var cb = tb.linkedCheckbox;
-              
+
               if (numSelected > 1) {
                 // Determine whether or not all the values for this selection are the same.
                 // Oh god, I hate this bit.
@@ -438,6 +448,23 @@
                 cb.setAttribute("class", "hidden"); // TODO: this is bad
               }
             }
+            
+            // SPECIAL CASE FOR TITLE
+            var disable = (numSelected > 1) ? "true" : "false";
+            var tb = document.getElementById("infoTab-trackName");
+            var cb = tb.parentNode.getElementsByTagName("checkbox")[0];
+            tb.setAttribute("disabled", disable);
+            cb.setAttribute("disabled", disable);
+            
+            // DISABLE NEXT/PREV BUTTONS AT TOP/BOTTOM OF LIST
+            // TODO: komi suggests wraparound as a pref
+            var idx = this.mediaListView.selection.currentIndex;
+            var atStart = (idx == 0)
+            var atEnd   = (idx == this.mediaListView.length - 1);
+            var prev = document.getElementById("prev-button");
+            var next = document.getElementById("next-button");
+            prev.setAttribute("disabled", (atStart ? "true" : "false"));
+            next.setAttribute("disabled", (atEnd ? "true" : "false"));
           };
           ]]>
   </script>

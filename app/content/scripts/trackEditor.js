@@ -25,23 +25,45 @@ var TrackEditor = {
     var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main"); 
     this.gBrowser = songbirdWindow.gBrowser;
     
-    this.gBrowser.addEventListener(
-      'TabContentChange', 
-      function() {
-        that.onTabContentChange();
-      }, 
+    var enableAdvanced = Application.prefs.getValue(
+      "songbird.trackeditor.enableAdvancedTab",
       false
     );
+    if (enableAdvanced) {
+      // this code assumes that the number of tabs and tabpanels is aligned
+      var tabbox = document.getElementById("trackeditor-tabbox");
+      var tabs = tabbox.getElementsByTagName("tabs")[0];
+      var tabpanels = tabbox.getElementsByTagName("tabpanels")[0];
+      
+      var tab = document.createElement("tab");
+      tab.setAttribute("label", "Advanced");
+      tabs.appendChild(tab);
+      
+      var panel = document.createElement("vbox");
+      panel.setAttribute("flex", "1");
+      tabpanels.appendChild(panel);
+      
+      this.populateAdvancedTab(panel);
+    }
     
-    this.populateAdvancedTab();
     this.watchTextboxesBlur();
+    
+    // note that this code USED to watch tabContent and selection and library
+    // changes, but we've implemented track editor as a modal dialog, so there's
+    // no need for any of that now. still, the names are there, so it can be
+    // brought back if the desire arises
     this.onTabContentChange();
   },
 
-  populateAdvancedTab: function() {
+  populateAdvancedTab: function(advancedTab) {
     // Create elements for the properties in the Advanced Property Tab
-    var advancedTab = document.getElementById("advanced");
-
+    var label = document.createElement("label");
+    label.setAttribute("id", "advanced-warning");
+    var labelText = document.createTextNode(
+      "WARNING: Editing these values could ruin Christmas."
+    );
+    label.appendChild(labelText);
+    
     var advancedContainer = document.createElement("vbox");
     advancedContainer.id = "advanced-contents";
     advancedContainer.setAttribute("flex", "1");
@@ -78,15 +100,15 @@ var TrackEditor = {
   },
 
   onTabContentChange: function() {
-    if(this.mediaListView) {
-      this.mediaListView.selection.removeListener(this);
-      this.mediaListView.mediaList.removeListener(this);
-    }
+    // We don't listen to nobody.
+    //if(this.mediaListView) {
+      //this.mediaListView.mediaList.removeListener(this);
+    //}
+    
     this.mediaListView = this.gBrowser.currentMediaListView;
-    this.mediaListView.selection.addListener(this);
-
+    
     //this.mediaListView.mediaList.addListener(this); 
-    // disabled for demo purposes. this watches for changes from the playlist widget.
+    //we're assuming a modal dialog for now, so don't reflect changes.
 
     // update the autocomplete parameters so we point
     // at the right library
@@ -133,7 +155,7 @@ var TrackEditor = {
     // a bunch of user-uneditable properties that change when playback starts
     // hmm    
     for (var i = 0; i < aOldPropertiesArray.length; i++) {
-      // fuck me this is weak
+      // this is weak
       var property = aOldPropertiesArray.getPropertyAt(i);
       var propInfo = this._propertyManager.getPropertyInfo(property.id);
       
@@ -194,7 +216,6 @@ var TrackEditor = {
 
     // on an image, format truncates, then returns!
     // we don't want that.
-    // KILL IAN FOR THIS?
     if (property == SBProperties.primaryImageURL) {
       return value;
     }
@@ -255,16 +276,13 @@ var TrackEditor = {
   },
   
   onCurrentIndexChanged: function() {
-    // foo bar baz
-    // don't do nothin
-    // yet...
     // maybe we ought to make a multi-select use the 
     // current item for some kind of hinting?
   },
   
   onUnloadTrackEditor: function() {
     // break the cycles
-    this.gBrowser.removeEventListener("TabContentChange", this, false);
+    //this.gBrowser.removeEventListener("TabContentChange", this, false);
     this.mediaListView.selection.removeListener(this);
     this.mediaListView.mediaList.removeListener(this);
     this.mediaListView = null;
@@ -273,7 +291,7 @@ var TrackEditor = {
   watchTextboxesBlur: function() {
     var somethings = document.getElementsByAttribute("property", "*");
     for (var i = 0; i < somethings.length; i++) {
-      somethings[i].setAttribute("onchange", "TrackEditor.onTextboxChange(this)");
+      somethings[i].setAttribute("oninput", "TrackEditor.onTextboxChange(this)");
     }
   },
 
@@ -292,7 +310,6 @@ var TrackEditor = {
     // be sure the value set was good, and if not, reset it, notifying the user
     // TODO: blank values should be legal for all fields and right now they don't necessarily validate...
     if (elt.value != "" && !propInfo.validate(elt.value)) {
-      alert("Bad value for " + propInfo.displayName);
       elt.reset();
     }
     
@@ -304,50 +321,15 @@ var TrackEditor = {
       }
       else {
         syncers[i].value = elt.value;
-      }
-    }
-
-    var trackEditor = this;
-    var notificationBox = document.getElementById("trackeditor-notification");
-    var applyNotification = notificationBox.getNotificationWithValue("apply-changes");
-    
-    if (elt.value != elt.defaultValue && !applyNotification) {
-      notificationBox
-        .appendNotification(
-                            "Apply These Changes?",
-                            "apply-changes",
-                            null, // no image
-                            3, // info, high priority
-                            [
-                             { 
-                               accessKey: "A",
-                               callback: function() { TrackEditor.apply() },
-                               label: "Apply"
-                             },
-                             {
-                               accessKey: "R",
-                               callback: function() { TrackEditor.reset() },
-                               label: "Reset"
-                             }
-                           ]
-                          );
-    }
-    // TODO: this *sucks* for performance (not that it matters yet)
-    //       still, maybe we should store all this state somewhere 
-    else if (applyNotification) {
-      var somethings = document.getElementsByTagName("textbox");
-      for (var i = 0; i < somethings.length; i++) {
-        if (!somethings[i].hasAttribute("property")) {
-          continue;
+        
+        if (elt.value != elt.defaultValue) {
+          syncers[i].setAttribute("edited", "true");
         }
-        if (somethings[i].value != somethings[i].defaultValue) {
-          // STOP processing the values, we found one that is changed!
-          return;
+        else {
+          syncers[i].removeAttribute("edited");
         }
       }
-      // well, i guess there are no other changes left.
-      notificationBox.removeNotification(applyNotification);
-    }                                        
+    }
   },
 
   next: function() {
@@ -356,9 +338,14 @@ var TrackEditor = {
     if (idx == null || idx == undefined) { return; }
     
     idx = idx+1;
-    if (idx >= this.mediaListView.length) { idx = 0; }
+    if (idx >= this.mediaListView.length) {
+      //idx = 0; // wrap around
+      idx = this.mediaListView.length - 1 // bump
+    }
 
     this.mediaListView.selection.selectOnly(idx);
+    // called explicitly since we aren't watching
+    this.onSelectionChanged();
   },
 
   prev: function() {
@@ -367,10 +354,16 @@ var TrackEditor = {
     if (idx == null || idx == undefined) { return; }
     
     idx = idx-1;
-    if (idx < 0) { idx = this.mediaListView.length - 1; }
+    if (idx < 0) {
+      //idx = this.mediaListView.length - 1; // wrap around
+      idx = 0; // bump
+    }
 
     this.mediaListView.selection.selectOnly(idx);
+    // called explicitly since we aren't watching
+    this.onSelectionChanged();
   },
+  
   reset: function() {
     var somethings = document.getElementsByTagName("textbox");
     for (var i = 0; i < somethings.length; i++) {
@@ -393,7 +386,9 @@ var TrackEditor = {
       for (var i = 0; i < somethings.length; i++) {
         var tb = somethings[i];
         var property = tb.getAttribute("property");
-        if(tb.value != tb.defaultValue && blacklist[property] == "ask-multiple") {
+        if(tb.value != tb.defaultValue
+          && blacklist[property] && blacklist[property] == "ask-multiple") {
+          
           blacklist[property] == "already-asked";
           // it's cool, this array gets created each time.
           // todo: "Don't ask me again."
@@ -423,7 +418,8 @@ var TrackEditor = {
         // so they should go into the media items okay
         var property = tb.getAttribute("property");
         tb.defaultValue = tb.value;
-
+        tb.removeAttribute("edited"); // we're now back to normal
+        
         // go through the list setting properties and queuing items
         var sIMI = this.mediaListView.selection.selectedIndexedMediaItems;
         var j = 0;
@@ -440,7 +436,33 @@ var TrackEditor = {
         }
       }
     }
-    
+
+  /* TODO: finish or nix this
+    // isPartOfCompilation gets special treatment because
+    // this is our only user-exposed boolean property right now
+    // TODO: generalize this to be more like the textboxes above
+    //       boy, it would be really nice if it were really boolean instead of
+    //       a 1/0 clamped number...
+    var property = SBProperties.isPartOfCompilation;
+    var compilation = document.getElementsByAttribute("property", property)[0];
+    if (compilation.checked) {
+      // go through the list setting properties and queuing items
+        var sIMI = this.mediaListView.selection.selectedIndexedMediaItems;
+        var j = 0;
+        while (sIMI.hasMoreElements()) {
+          j++;          
+          var mI = sIMI.getNext()
+            .QueryInterface(Ci.sbIIndexedMediaItem)
+            .mediaItem;
+
+          if (mI.getProperty(property) != tb.value) {
+            mI.setProperty(property, (tb.value ? "1" : "0"));
+            needsWriting[j] = true; // keep track of these suckers
+          }
+        }
+    }
+  */
+  
     var mediaItemArray = Cc["@mozilla.org/array;1"]
                         .createInstance(Ci.nsIMutableArray);
     // go through the list setting properties and queuing items
@@ -456,10 +478,12 @@ var TrackEditor = {
         mediaItemArray.appendElement(mI, false);
       }
     }
-    var manager = Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                      .getService(Ci.sbIMetadataJobManager);
-    var job = manager.newJob(mediaItemArray, 5, Ci.sbIMetadataJob.JOBTYPE_WRITE);
-
-    SBJobUtils.showProgressDialog(job, null);
+    if (mediaItemArray.length > 0) {
+      var manager = Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                        .getService(Ci.sbIMetadataJobManager);
+      var job = manager.newJob(mediaItemArray, 5, Ci.sbIMetadataJob.JOBTYPE_WRITE);
+      
+      SBJobUtils.showProgressDialog(job, null);
+    }
   }
 };
