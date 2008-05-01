@@ -32,24 +32,38 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
-<!DOCTYPE window [
+<!DOCTYPE dialog [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
 <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
 %brandDTD;
 %songbirdDTD;
 ]>
 
-<window
+<!-- Include this to import the standard overlays for a window that does not contain a gBrowser element -->
+<?xul-overlay href="chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul"?>
+
+<dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="track_editor"
+ windowtype="Songbird:TrackEditor"
  title="&trackeditor.title;"
  type="songbird"
  onload="TrackEditor.onLoadTrackEditor();"
  onunload="TrackEditor.onUnloadTrackEditor();"
  height="500"
  width="500"
+ hidechrome="true"
+ buttons="none"
+ persist="screenX screenY"
 >
+
+  <!-- standard overlays insertion point for popups, commands, broadcasters, keys and stringbundles -->
+  <sb-support id="mainSupportSet"/>
+
+  <!-- menubar on osx -->
+  <menubar id="main-menubar" hidden="true" oncommand="onMenu(event.target)" mousethrough="never"/>
+
   <notificationbox id="trackeditor-notification" flex="1">
   
   <tabbox flex="1">
@@ -427,4 +441,4 @@
           };
           ]]>
   </script>
-</window>
+</dialog>

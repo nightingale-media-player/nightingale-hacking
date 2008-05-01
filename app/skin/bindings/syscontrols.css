@@ -301,12 +301,16 @@ sb-feathers-toggle-button[mac="true"] > hbox > .sb-feathers-toggle-button > .cli
   -moz-image-region: rect(45px 56px 60px 42px); 
 }*/
 
-
 /** 
 *******************************************************************************
-RESIZERS
+WINDOW FRAME
 *******************************************************************************
 */ 
+
+sb-sys-outer-frame
+{
+  -moz-box-orient: vertical;
+}
 
 .sb-sys-outer-frame-resizer
 {

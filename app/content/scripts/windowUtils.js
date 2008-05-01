@@ -574,7 +574,11 @@ function getXULWindowFromWindow(win) // taken from venkman source
  */
 function SBOpenModalDialog( url, param1, param2, param3, parentWindow )
 {
-  if (!parentWindow) parentWindow = window;
+  if (!parentWindow) { 
+    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                       .getService(Components.interfaces.nsIWindowMediator);
+    parentWindow = wm.getMostRecentWindow("Songbird:Main");
+  }
   // bonus stuff to shut the mac up.
   var chromeFeatures = ",modal=yes,resizable=no";
   if (SBDataGetBoolValue("accessibility.enabled")) chromeFeatures += ",titlebar=yes";
@@ -591,7 +595,12 @@ function SBOpenModalDialog( url, param1, param2, param3, parentWindow )
  */
 function SBOpenWindow( url, param1, param2, param3, parentWindow )
 {
-  if (!parentWindow) parentWindow = window;
+  if (!parentWindow) { 
+    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                       .getService(Components.interfaces.nsIWindowMediator);
+    parentWindow = wm.getMostRecentWindow("Songbird:Main");
+  }
+  
   var titlebar = ",modal=no";
   if (SBDataGetBoolValue("accessibility.enabled")) {
     titlebar += ",titlebar=yes";

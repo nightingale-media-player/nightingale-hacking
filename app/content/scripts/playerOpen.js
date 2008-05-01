@@ -533,7 +533,7 @@ function SBTrackEditorOpen( parentWindow, playlist )
     theTE.focus();
   } else {
     const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
-    const TEFEATURES = "chrome,dialog=no,resizable=no";
+    const TEFEATURES = "chrome,centerscreen=yes,toolbar=no,popup=no,resizable=no";
     
     // HAAAAAAAAAACK. The track editor is a) broken and b) depends on the playlist
     if (!playlist) {
@@ -544,7 +544,7 @@ function SBTrackEditorOpen( parentWindow, playlist )
     if (!playlist) {
       playlist = gBrowser.currentOuterPlaylist;
     }
-    SBOpenWindow(TEURL, "track_editor", TEFEATURES, playlist, parentWindow);
+    SBOpenWindow(TEURL, "track_editor", TEFEATURES, playlist, null);
   }
 }
 

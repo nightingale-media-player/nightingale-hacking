@@ -388,7 +388,7 @@ nsresult sbMetadataJobManager::EnsureWritePermitted()
         do_GetService("@mozilla.org/appshell/window-mediator;1", &rv);
       NS_ENSURE_SUCCESS( rv, rv);
       nsCOMPtr<nsIDOMWindowInternal> mainWindow;  
-      windowMediator->GetMostRecentWindow(NS_LITERAL_STRING("Songbird:Main").get(),
+      windowMediator->GetMostRecentWindow(nsnull,
                                           getter_AddRefs(mainWindow));
       if (mainWindow) {
         nsCOMPtr<nsIPromptService> promptService =

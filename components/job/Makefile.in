@@ -30,9 +30,10 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = public \
+          src \
           $(NULL)
 
-#SUBDIRDEPS = src : public
+SUBDIRDEPS = src : public
 
 #ifdef SB_ENABLE_TESTS
 #SUBDIRS += test

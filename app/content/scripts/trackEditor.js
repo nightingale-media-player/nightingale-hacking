@@ -5,6 +5,8 @@ if (typeof(Cc) == "undefined")
 if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
+Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
+
 // TODO: clean up trackeditor into two classes
 //       probably move button-ey/listen-ey things out from other logic
 Components.utils.import("resource://app/components/sbProperties.jsm");
@@ -458,10 +460,6 @@ var TrackEditor = {
                       .getService(Ci.sbIMetadataJobManager);
     var job = manager.newJob(mediaItemArray, 5, Ci.sbIMetadataJob.JOBTYPE_WRITE);
 
-    // Wait for writing to complete before continuing
-    job.setObserver( { observe: function(aSubject, aTopic, aData) {
-      alert("Writing job finished!");
-      job.removeObserver();
-     }});
+    SBJobUtils.showProgressDialog(job, null);
   }
 };

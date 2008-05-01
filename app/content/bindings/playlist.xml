@@ -146,6 +146,11 @@
     if (!ColumnSpecParser)
       throw new Error("Import of ColumnSpecParser module failed");
   }
+  if (typeof(SBJobUtils) == "undefined") {
+    Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
+    if (!ColumnSpecParser)
+      throw new Error("Import of SBJobUtils module failed");
+  }
 
   // Attach event handler closures
   var self = this;
@@ -1424,13 +1429,13 @@
         <![CDATA[
           var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                             .getService(Components.interfaces.nsIWindowMediator);
-          var theTE = wm.getMostRecentWindow("track_editor");
+          var theTE = wm.getMostRecentWindow("Songbird:TrackEditor");
           if (theTE) {
             theTE.focus();
           } else {
             const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
-            const TEFEATURES = "chrome,centerscreen";
-            SBOpenWindow(TEURL, "track_editor", TEFEATURES, this);
+            const TEFEATURES = "chrome,centerscreen=yes,toolbar=no,popup=no,resizable=no";
+            SBOpenWindow(TEURL, "track_editor", TEFEATURES, this, null);
           }
         ]]>
         </body>
@@ -2899,7 +2904,10 @@
         <parameter name="aOldValue"/>
         <body>
           <![CDATA[
-            // Data has been changed so we need to write back the metadata
+            // Data has been changed so we need to write back the metadata.
+            // Defer a tick, as the job manager may launch a dialog which 
+            // at this time will totally lock up the player.
+            setTimeout(function() {
             var mediaItemArray = Cc["@mozilla.org/array;1"]
                                 .createInstance(Ci.nsIMutableArray);
             mediaItemArray.appendElement(aItem, false);
@@ -2908,8 +2916,9 @@
             var job = manager.newJob(mediaItemArray,
                                      5,                 // Sleep time on thread
                                      Ci.sbIMetadataJob.JOBTYPE_WRITE);
-            // XXX TODO: Add in the new progress listener for the job here
           
+                SBJobUtils.showProgressDialog(job, null);
+              }, 0);
           ]]>
         </body>
       </method>

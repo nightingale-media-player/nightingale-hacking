@@ -100,7 +100,7 @@ extern PRLogModuleInfo* gMetadataLog;
 const PRUint32 NUM_CONCURRENT_MAINTHREAD_ITEMS = 3;
 const PRUint32 NUM_ITEMS_BEFORE_FLUSH = 200;
 const PRUint32 NUM_ITEMS_PER_INIT_LOOP = 100;
-const PRUint32 TIMER_LOOP_MS = 500;
+const PRUint32 TIMER_LOOP_MS = 200;
 
 // CLASSES ====================================================================
 
@@ -975,6 +975,10 @@ nsresult sbMetadataJob::ProcessThread(PRBool *aShutdown, sbIDatabaseQuery *aQuer
     } else {
       // Mark completed items in batches
       completedItems.AppendElement(item);
+      
+      // Increment the completed item count immediately so that 
+      // the sbIJobProgress is always up to date
+      PR_AtomicIncrement(&mCompletedItemCount);
     }
 
     // Ah, if we got here we must not have crashed.
@@ -1017,6 +1021,9 @@ nsresult sbMetadataJob::FinishJob()
     mThread->Shutdown();
     mThread = nsnull;
   }
+  
+  // Clear out the status text
+  mStatusText = EmptyString();
   
   // Notify observers
   OnJobProgress();
@@ -1423,6 +1430,7 @@ nsresult sbMetadataJob::SetItemIsFailed( sbIDatabaseQuery *aQuery, nsString aTab
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(error == 0, NS_ERROR_FAILURE);
   
+  PR_AtomicIncrement(&mCompletedItemCount);
   PR_AtomicIncrement(&mErrorCount);
   
   return rv;
@@ -1436,7 +1444,11 @@ nsresult sbMetadataJob::SetItemIsCompleted( sbIDatabaseQuery *aQuery, nsString a
     aItem->handler->Close();  // You are so done.
     aItem->handler = nsnull;
   }
+  // Items may be marked completed in batches for performance reasons, but
+  // we want to increment the counter as soon as an item is completed
+  if (aExecute) {
   PR_AtomicIncrement(&mCompletedItemCount);
+  }
   return rv;
 }
 
