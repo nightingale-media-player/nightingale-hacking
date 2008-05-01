@@ -173,10 +173,18 @@ var TrackEditor = {
     var somethings = document.getElementsByAttribute("property", "*");
     var numSelected = this.mediaListView.selection.count;
 
+    var readOnlyProperty = this.mediaListView.mediaList.library.getProperty(SBProperties.isReadOnly)
+    var isReadOnly = readOnlyProperty && readOnlyProperty == "1";
+    
     // update the notificationbox at the top.
     var notificationBox = document.getElementById("trackeditor-notification");
     
     notificationBox.removeAllNotifications();
+    if (isReadOnly) {
+      notificationBox.appendNotification("The current item may not be modified. The library is read-only.",
+                                         "read-only", null, 1);
+    }
+    
     if (numSelected > 1) {
         notificationBox.appendNotification("Selected " + numSelected + " tracks.", 
                                            "multi-select", null, 1);
@@ -199,11 +207,19 @@ var TrackEditor = {
         var mediaItem = this.mediaListView.selection.currentMediaItem;
         var value = this.getPropertyValue(property, mediaItem);
         elt.removeAttribute("disabled");
+        if (isReadOnly)
+          elt.setAttribute("readonly", true);
+        else
+          elt.removeAttribute("readonly");
         elt.clickSelectsAll = true;
       }
       else { // >1 selected
         var value = this.determineMultipleValue(elt);
         elt.removeAttribute("disabled");
+        if (isReadOnly)
+          elt.setAttribute("readonly", true);
+        else
+          elt.removeAttribute("readonly");
         elt.clickSelectsAll = true;
       }
       this.applyMediaItem(elt, value);
