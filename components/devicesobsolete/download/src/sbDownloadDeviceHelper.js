@@ -224,8 +224,7 @@ function sbDownloadDeviceHelper_getDefaultMusicFolder()
   var musicDir;
   switch (platform) {
     case "WINNT":
-      musicDir = dirService.getFile("Pers", {});
-      musicDir.append("My Music");
+      musicDir = dirService.getFile("Music", {});
       break;
 
     case "Darwin":

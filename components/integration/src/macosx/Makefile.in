@@ -66,6 +66,7 @@ CMM_SRCS = NativeWindowFromNode.mm \
            sbNativeWindowManager.mm \
            IntegrationComponent.mm \
            WindowCloak.mm \
+           sbMacFSObserverService.mm \
            $(NULL)
 
 DYNAMIC_LIB_OBJS = $(patsubst %.mm,%$(OBJ_SUFFIX),$(notdir $(CMM_SRCS)))
