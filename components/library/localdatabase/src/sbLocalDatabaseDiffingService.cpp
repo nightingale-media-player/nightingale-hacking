@@ -45,6 +45,7 @@
 #include <nsTHashtable.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
+#include <nsTArray.h>
 #include <nsXPCOMCID.h>
 
 #include <sbLibraryChangeset.h>
@@ -582,7 +583,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
   // For each item in the source, verify presence in destination media list.
   for(PRUint32 current = 0; current < sourceLength; ++current) {
 
-    // We verify it's presence using contentURL and originURL.
+    // We verify its presence using contentURL and originURL.
     item = do_QueryElementAt(sourceArray, current, &rv);
 
     // Bad item
@@ -613,7 +614,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
     nsCOMPtr<sbIMediaItem> itemDestination;
 
     for(PRUint32 currentProperty = 0; 
-        currentProperty < propertyCount && hasFoundItem == PR_FALSE; 
+        currentProperty < propertyCount && !hasFoundItem; 
         ++currentProperty) {
 
       rv = currentArray->GetPropertyAt(currentProperty,
@@ -653,7 +654,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
 
       // Figure out how many occurrences of the item we have
       // in the source, this will help us figure out if we should
-      // mark an item "added" instead of "modified" when it's 
+      // mark an item "added" instead of "modified" when its 
       // present more than once.
       nsCOMPtr<nsIArray> foundItemsInSource;
       rv = aSourceList->GetItemsByProperty(strPropertyID,
@@ -755,7 +756,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
 
     nsString strPropertyValue;
 
-    // We verify it's presence using contentURL and originURL.
+    // We verify its presence using contentURL and originURL.
     for(PRUint32 currentProperty = 0; currentProperty < propertyCount; ++currentProperty) {
 
       nsCOMPtr<sbIProperty> property;
@@ -937,7 +938,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
   // For each item in the source, verify presence in destination library.
   for(PRUint32 current = 0; current < sourceLength; ++current) {
 
-    // We verify it's presence using contentURL and originURL.
+    // We verify its presence using contentURL and originURL.
     item = do_QueryElementAt(sourceArray, current, &rv);
 
     // Bad item
@@ -968,7 +969,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
     nsCOMPtr<sbIMediaItem> itemDestination;
 
     for(PRUint32 currentProperty = 0; 
-        currentProperty < propertyCount && hasFoundItem == PR_FALSE; 
+        currentProperty < propertyCount && !hasFoundItem; 
         ++currentProperty) {
       rv = currentArray->GetPropertyAt(currentProperty,
                                        getter_AddRefs(property));
@@ -1005,8 +1006,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
       PRUint32 foundItemsCount = 0;
       rv = foundItems->GetLength(&foundItemsCount);
       if(NS_FAILED(rv) ||
-         foundItemsCount > 1 ||
-         !foundItemsCount) {
+         foundItemsCount != 1) {
         continue;
       }
 
@@ -1068,7 +1068,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
 
     nsString strPropertyValue;
 
-    // We verify it's presence using contentURL and originURL.
+    // We verify its presence using contentURL and originURL.
     PRBool found = PR_FALSE;
     for(PRUint32 currentProperty = 0; currentProperty < propertyCount; ++currentProperty) {
       
@@ -1109,6 +1109,353 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
                                         libraryChanges);
   NS_ENSURE_SUCCESS(rv, rv);
   
+  NS_ADDREF(*aLibraryChangeset = libraryChangeset);
+
+  return NS_OK;
+}
+
+nsresult 
+sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
+                                  nsIArray *aSourceLists,
+                                  sbILibrary *aDestinationLibrary,
+                                  sbILibraryChangeset **aLibraryChangeset)
+{
+  NS_ENSURE_ARG_POINTER(aSourceLists);
+  NS_ENSURE_ARG_POINTER(aDestinationLibrary);
+  NS_ENSURE_ARG_POINTER(aLibraryChangeset);
+
+  // First, we build a hashtable of all the unique GUIDs.
+  PRUint32 sourcesLength = 0;
+  nsresult rv = aSourceLists->GetLength(&sourcesLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> sourceList;
+  nsCOMPtr<sbIMediaItem> sourceItem;
+  nsString sourceItemGUID;
+
+  nsTArray<nsString> uniqueItemGUIDs;
+  nsInterfaceHashtable<nsStringHashKey, sbIMediaItem> uniqueItems;
+  PRBool success = uniqueItems.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  // Items present in the source (in the form of contentURL, originURL and 
+  // originGUID for each).
+  nsTHashtable<nsStringHashKey> itemsInSource;
+  success = itemsInSource.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<sbIMutablePropertyArray> propertyArray = 
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = propertyArray->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = propertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), 
+                                     EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = propertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                     EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = propertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                                     EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString contentURL, originURL, originGUID;
+
+  for(PRUint32 currentSource = 0; 
+      currentSource < sourcesLength; 
+      ++currentSource) {
+    
+    sourceList = do_QueryElementAt(aSourceLists, currentSource, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 sourceLength = 0;
+    rv = sourceList->GetLength(&sourceLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for(PRUint32 currentItem = 0;
+        currentItem < sourceLength;
+        ++currentItem) {
+      
+      rv = sourceList->GetItemByIndex(currentItem, 
+                                      getter_AddRefs(sourceItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbIPropertyArray> currentArray;
+      rv = sourceItem->GetProperties(propertyArray, getter_AddRefs(currentArray));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = currentArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                          contentURL);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Already in the list, skip.
+      if(itemsInSource.GetEntry(contentURL)) {
+        continue;
+      }
+      
+      // It's ok for this property to not be available.
+      rv = currentArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                          originURL);
+      if(NS_FAILED(rv) && rv != NS_ERROR_NOT_AVAILABLE) {
+        return rv;
+      }
+
+      // Already in the list, skip.
+      if(!originURL.IsEmpty() &&
+         itemsInSource.GetEntry(originURL)) {
+        continue;
+      }
+
+      // It's ok for this property to not be available.
+      rv = currentArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                                          originGUID);
+      if(NS_FAILED(rv) && rv != NS_ERROR_NOT_AVAILABLE) {
+        return rv;
+      }
+      
+      // Already in the list, skip.
+      if(!originGUID.IsEmpty() && 
+         itemsInSource.GetEntry(originGUID)) {
+        continue;
+      }
+
+      // contentURL not in the list yet, add it. We don't need to check
+      // for empty with this property value since it's _required_.
+      nsStringHashKey *hashKey = itemsInSource.PutEntry(contentURL);
+      NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
+
+      // originURL not in the list yet, add it.
+      if(!originURL.IsEmpty()) {
+        hashKey = itemsInSource.PutEntry(originURL);
+        NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
+      }
+
+      // originGUID not in the list yet, add it.
+      if(!originGUID.IsEmpty()) {
+        hashKey = itemsInSource.PutEntry(originGUID);
+        NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
+      }
+
+      rv = sourceItem->GetGuid(sourceItemGUID);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // We are finally certain that the item not in final list, add it.
+      if(!uniqueItems.Get(sourceItemGUID, nsnull)) {
+        success = uniqueItems.Put(sourceItemGUID, sourceItem);
+        NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+        nsString *element = uniqueItemGUIDs.AppendElement(sourceItemGUID);
+        NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
+      }
+    }
+  }
+
+  nsRefPtr<sbLibraryChangeset> libraryChangeset;
+  NS_NEWXPCOM(libraryChangeset, sbLibraryChangeset);
+  NS_ENSURE_TRUE(libraryChangeset, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<nsIMutableArray> libraryChanges = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsRefPtr<sbLocalDatabaseDiffingServiceEnumerator> destinationEnum;
+  NS_NEWXPCOM(destinationEnum, sbLocalDatabaseDiffingServiceEnumerator);
+  NS_ENSURE_TRUE(destinationEnum, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = destinationEnum->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aDestinationLibrary->EnumerateAllItems(destinationEnum, 
+    sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> destinationArray;
+  rv = destinationEnum->GetArray(getter_AddRefs(destinationArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 destinationLength = 0;
+  rv = destinationArray->GetLength(&destinationLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item;
+  nsCOMPtr<sbIMediaItem> itemDestination;
+
+  PRUint32 sourceLength = uniqueItemGUIDs.Length();
+
+  // For each item in the source, verify presence in destination library.
+  for(PRUint32 current = 0; current < sourceLength; ++current) {
+
+    // We verify its presence using contentURL and originURL.
+    success = uniqueItems.Get(uniqueItemGUIDs[current], 
+                              getter_AddRefs(item));
+
+    // Bad item
+    NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+
+    nsCOMPtr<sbIPropertyArray> currentArray;
+    rv = item->GetProperties(propertyArray, getter_AddRefs(currentArray));
+
+    // Couldn't get properties required.
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 propertyCount = 0;
+    rv = currentArray->GetLength(&propertyCount);
+
+    // Couldn't get the property count or property count 
+    // is unexpected, skip item and continue.
+    if(NS_FAILED(rv) ||
+       propertyCount != 3) {
+      continue;
+    }
+
+    nsString strPropertyID;
+    nsString strPropertyValue;
+
+    PRBool hasFoundItem = PR_FALSE;
+    nsCOMPtr<nsIArray> foundItems;
+    nsCOMPtr<sbIProperty> property;
+    nsCOMPtr<sbIMediaItem> itemDestination;
+
+    for(PRUint32 currentProperty = 0; 
+        currentProperty < propertyCount && !hasFoundItem; 
+        ++currentProperty) {
+      rv = currentArray->GetPropertyAt(currentProperty,
+                                       getter_AddRefs(property));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = property->GetId(strPropertyID);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = property->GetValue(strPropertyValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if(strPropertyValue.IsEmpty()) {
+        continue;
+      }
+
+      // Try and find it.
+      rv = aDestinationLibrary->GetItemsByProperty(strPropertyID, 
+                                                   strPropertyValue,
+                                                   getter_AddRefs(foundItems));
+
+      if(rv == NS_ERROR_NOT_AVAILABLE) {
+        continue;
+      }
+
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Hooray, we found it. Add it the found list.
+      nsStringHashKey *successHashkey = itemsInSource.PutEntry(strPropertyValue);
+      NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
+
+      // There's no way to be certain which item is correct if we get multiple matches.
+      // Because of this, we will reject multiple matches on contentURL and originURL 
+      // until we can create hashes of files to enable identifying them uniquely.
+      PRUint32 foundItemsCount = 0;
+      rv = foundItems->GetLength(&foundItemsCount);
+      if(NS_FAILED(rv) ||
+        foundItemsCount > 1 ||
+        !foundItemsCount) {
+          continue;
+      }
+
+      itemDestination = do_QueryElementAt(foundItems, 0, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // We have something that seems like a pretty good match.
+      hasFoundItem = PR_TRUE;
+    }
+
+    if(hasFoundItem) {
+      // Present in destination, verify for property changes.
+      nsCOMPtr<sbILibraryChange> libraryChange;
+      rv = CreateLibraryChangeFromItems(item, itemDestination, getter_AddRefs(libraryChange));
+
+      // Item did not change.
+      if(rv == NS_ERROR_NOT_AVAILABLE) {
+        continue;
+      }
+
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = libraryChanges->AppendElement(libraryChange, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      // Not present in destination, get all properties for item and indicate it was added.
+      nsCOMPtr<sbILibraryChange> libraryChange;
+      rv = CreateItemAddedLibraryChange(item, getter_AddRefs(libraryChange));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = libraryChanges->AppendElement(libraryChange, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // For each item in the destination
+  for(PRUint32 current = 0; current < destinationLength; ++current) {
+    
+    // Verify if present in source library.
+    item = do_QueryElementAt(destinationArray, current, &rv);
+    // Bad item.
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIPropertyArray> currentArray;
+    rv = item->GetProperties(propertyArray, getter_AddRefs(currentArray));
+
+    // Couldn't get properties required.
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 propertyCount = 0;
+    rv = currentArray->GetLength(&propertyCount);
+
+    // Couldn't get the property count or property count 
+    // is unexpected, skip item and continue.
+    if(NS_FAILED(rv) ||
+       propertyCount != 3) {
+      continue;
+    }
+
+    nsString strPropertyValue;
+
+    // We verify its presence using contentURL and originURL.
+    PRBool found = PR_FALSE;
+    for(PRUint32 currentProperty = 0; currentProperty < propertyCount; ++currentProperty) {
+
+      nsCOMPtr<sbIProperty> property;
+      rv = currentArray->GetPropertyAt(currentProperty, getter_AddRefs(property));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = property->GetValue(strPropertyValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if(itemsInSource.GetEntry(strPropertyValue)) {
+        // Present in source, continue with next item instead.
+        found = PR_TRUE;
+        break;
+      }
+    }
+    if (!found) {
+      // Not present in source, indicate that the item was removed from the source.
+      nsCOMPtr<sbILibraryChange> libraryChange;
+      rv = CreateItemDeletedLibraryChange(item, getter_AddRefs(libraryChange));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = libraryChanges->AppendElement(libraryChange, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // That's it, we should have a valid changeset.
+  rv = libraryChangeset->InitWithValues(aSourceLists,
+                                        aDestinationLibrary,
+                                        libraryChanges);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   NS_ADDREF(*aLibraryChangeset = libraryChangeset);
 
   return NS_OK;
@@ -1157,7 +1504,33 @@ NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateMultiChangeset(nsIArray *aSou
   NS_ENSURE_ARG_POINTER(aDestination);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  // Sources must be media lists.
+  PRUint32 sourcesLength = 0;
+  rv = aSources->GetLength(&sourcesLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> sourceList;
+  for(PRUint32 current = 0; current < sourcesLength; ++current) {
+    sourceList = do_QueryElementAt(aSources, current, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Destination must be a library.
+  nsCOMPtr<sbILibrary> destinationLibrary = 
+    do_QueryInterface(aDestination);
+  NS_ENSURE_TRUE(destinationLibrary, NS_ERROR_INVALID_ARG);
+
+  nsCOMPtr<sbILibraryChangeset> changeset;
+  rv = CreateLibraryChangesetFromListsToLibrary(aSources, 
+                                                destinationLibrary, 
+                                                getter_AddRefs(changeset));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  changeset.forget(_retval);
+  
+  return NS_OK;
 }
 
 /* AString createChangesetAsync (in sbIMediaList aSource, in sbIMediaList aDestination, [optional] in nsIObserver aObserver); */

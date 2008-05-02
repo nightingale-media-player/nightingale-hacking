@@ -81,6 +81,8 @@ interface sbILibraryDiffingService : nsISupports
    * Applying these changes out of order to the destination will have
    * adverse effects.
    *
+   * \note The Destination must be library.
+   *
    * \param aSources The source libraries or media lists.
    * \param aDestination The destination library or media list.
    * \return A changeset.

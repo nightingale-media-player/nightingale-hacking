@@ -131,6 +131,10 @@ public:
                                                sbILibrary *aDestinationLibrary,
                                                sbILibraryChangeset **aLibraryChangeset);
 
+  nsresult CreateLibraryChangesetFromListsToLibrary(nsIArray *aSourceLists,
+                                                    sbILibrary *aDestinationLibrary,
+                                                    sbILibraryChangeset **aLibraryChangeset);
+
 private:
   ~sbLocalDatabaseDiffingService();
 
