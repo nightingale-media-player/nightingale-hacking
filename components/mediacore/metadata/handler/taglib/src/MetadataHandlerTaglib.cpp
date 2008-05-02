@@ -86,6 +86,36 @@
   #include <windows.h>
 #endif
 
+#define writeProperty(SB_PROPERTY, method)             \
+  PR_BEGIN_MACRO                                       \
+  result = mpMetadataPropertyArray->GetPropertyValue(  \
+    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);    \
+  if (NS_SUCCEEDED(result)) {                          \
+    f.tag()->set##method(TagLib::String(               \
+      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),\
+      TagLib::String::UTF8));                          \
+  }                                                    \
+  PR_END_MACRO
+
+#define writeNumericProperty(SB_PROPERTY, method)      \
+  PR_BEGIN_MACRO                                       \
+  result = mpMetadataPropertyArray->GetPropertyValue(  \
+    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);    \
+  if (NS_SUCCEEDED(result)) {                          \
+    int method;                                        \
+    int numRead = sscanf(                              \
+      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(), \
+      "%d",                                            \
+      &method);                                        \
+    if (numRead == 1) {                                \
+      f.tag()->set##method(method);                    \
+    }                                                  \
+    else {                                             \
+      f.tag()->set##method(0);                         \
+    }                                                  \
+  }                                                    \
+  PR_END_MACRO
+
 /*******************************************************************************
  *
  * Taglib metadata handler logging services.
@@ -505,83 +535,31 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       NS_ENSURE_TRUE(f.file()->isOpen(), NS_ERROR_FAILURE);
       
       nsAutoString propertyValue;
-      result = mpMetadataPropertyArray->GetPropertyValue(
-          NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), propertyValue
-      );
-      if (NS_SUCCEEDED(result)) {
-        f.tag()->setTitle(TagLib::String(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
-                                         TagLib::String::UTF8));
-      }
       
-      result = mpMetadataPropertyArray->GetPropertyValue(
-          NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), propertyValue
-      );
-      if (NS_SUCCEEDED(result)) {
-        f.tag()->setArtist(TagLib::String(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
-                                          TagLib::String::UTF8));
-      }
+      // writeProperty is a natty macro
+      writeProperty(SB_PROPERTY_TRACKNAME, Title);
+      writeProperty(SB_PROPERTY_ARTISTNAME, Artist);
+      writeProperty(SB_PROPERTY_ALBUMARTISTNAME, AlbumArtist);
+      writeProperty(SB_PROPERTY_ALBUMNAME, Album);
+      writeProperty(SB_PROPERTY_COMMENT, Comment);
+      writeProperty(SB_PROPERTY_LYRICS, Lyrics);
+      writeProperty(SB_PROPERTY_GENRE, Genre);
+      writeProperty(SB_PROPERTY_PRODUCERNAME, Producer);
+      writeProperty(SB_PROPERTY_COMPOSERNAME, Composer);
+      writeProperty(SB_PROPERTY_CONDUCTORNAME, Conductor);
+      writeProperty(SB_PROPERTY_LYRICISTNAME, Lyricist);
+      writeProperty(SB_PROPERTY_RECORDLABELNAME, RecordLabel);
+      writeProperty(SB_PROPERTY_RATING, Rating);
+      writeProperty(SB_PROPERTY_LANGUAGE, Language);
+      writeProperty(SB_PROPERTY_KEY, Key);
+      writeProperty(SB_PROPERTY_COPYRIGHT, License);
+      writeProperty(SB_PROPERTY_COPYRIGHTURL, LicenseUrl);
+      writeNumericProperty(SB_PROPERTY_YEAR, Year);
+      writeNumericProperty(SB_PROPERTY_TRACKNUMBER, Track);
+      writeNumericProperty(SB_PROPERTY_TOTALTRACKS, TotalTracks);
+      writeNumericProperty(SB_PROPERTY_DISCNUMBER, Disc);
+      writeNumericProperty(SB_PROPERTY_TOTALDISCS, TotalDiscs);
       
-      result = mpMetadataPropertyArray->GetPropertyValue(
-        NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), propertyValue
-      );
-      if (NS_SUCCEEDED(result)) {
-        f.tag()->setAlbum(TagLib::String(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
-                                         TagLib::String::UTF8));
-      }
-
-      result = mpMetadataPropertyArray->GetPropertyValue(
-        NS_LITERAL_STRING(SB_PROPERTY_COMMENT), propertyValue
-      );
-      if (NS_SUCCEEDED(result)) {
-        f.tag()->setComment(TagLib::String(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
-                                           TagLib::String::UTF8));
-      }
-
-      result = mpMetadataPropertyArray->GetPropertyValue(
-        NS_LITERAL_STRING(SB_PROPERTY_GENRE), propertyValue
-      );
-      if (NS_SUCCEEDED(result)) {
-        f.tag()->setGenre(TagLib::String(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
-                                         TagLib::String::UTF8));
-      }
-
-      result = mpMetadataPropertyArray->GetPropertyValue(
-        NS_LITERAL_STRING(SB_PROPERTY_YEAR), propertyValue
-      );
-      if (NS_SUCCEEDED(result)) {
-        int year;
-        int numRead = sscanf(
-          NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
-          "%d",
-          &year
-        );
-        if (numRead == 1) {
-          f.tag()->setYear(year);
-        }
-        else {
-          f.tag()->setYear(0);
-          // this should clear out the year field
-        }
-      }
-
-      result = mpMetadataPropertyArray->GetPropertyValue(
-        NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER), propertyValue
-      );
-      if (NS_SUCCEEDED(result)) {
-        int track;
-        int numRead = sscanf(
-          NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
-          "%d",
-          &track
-        );
-        if (numRead == 1) {
-          f.tag()->setTrack(track);
-        }
-        else {
-          f.tag()->setTrack(0);
-          // this should clear out the track field
-        }
-      }
           
       // Attempt to save the metadata
       if (f.save()) {

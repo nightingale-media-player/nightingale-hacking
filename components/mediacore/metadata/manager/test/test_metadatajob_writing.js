@@ -45,13 +45,13 @@ var gSupportedFileExtensions = [
 // TODO Unable to write metadata for m4a files. Filed as bug 8812.
 // "m4a"
   ];
-  
 
 /**
  * Copy some media files into a temp directory, then confirm that metadata
  * properties can be modified using a write job.
  */
 function runTest() {
+  /* SETUP */
   
   // Make a copy of everything in the test file folder
   // so that our changes don't interfere with other tests
@@ -63,6 +63,10 @@ function runTest() {
   unicodeFile.append("MP3_ID3v23.mp3");
   unicodeFile = getCopyOfFile(unicodeFile, "\u2606\u2606\u2606\u2606\u2606\u2606.mp3");
   
+  var prefSvc = Cc["@mozilla.org/preferences-service;1"]
+                .getService(Ci.nsIPrefBranch);
+  var oldWritingEnabledPref = prefSvc.getBoolPref("songbird.metadata.enableWriting");
+  prefSvc.setBoolPref("songbird.metadata.enableWriting", true);
 
   // Now find all the media files in our testing directory
   var urls = getMediaFilesInFolder(testFolder);
@@ -91,7 +95,6 @@ function runTest() {
     //////////////////////////////////////
     // Save new metadata into the files //
     //////////////////////////////////////
-
     var unicodeSample =
             "\u008C\u00A2\u00FE" + // Latin-1 Sup
             "\u141A\u142B\u1443" + // Canadian Aboriginal
@@ -102,32 +105,53 @@ function runTest() {
             "\u033C\u034C\u035C" +
             "\uD800\uDC83\uD800" + // Random Surrogate Pairs 
             "\uDC80\uD802\uDD00";
-
-    for each (var item in items) {
-      item.setProperty(SBProperties.artistName, SBProperties.artistName + unicodeSample);
-      item.setProperty(SBProperties.albumName, SBProperties.albumName + unicodeSample);
-      item.setProperty(SBProperties.trackName, SBProperties.trackName + unicodeSample);
-      // TODO expand 
-    }
     
-    // While we're at it, confirm that metadata can only be written when allowed via prefs
-    var prefSvc = Cc["@mozilla.org/preferences-service;1"]
-                  .getService(Ci.nsIPrefBranch);
-    var oldWritingEnabledPref = prefSvc.getBoolPref("songbird.metadata.enableWriting");
-    prefSvc.setBoolPref("songbird.metadata.enableWriting", false);
-    try {
-      startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_WRITE);
-      // This line should not be reached, as startMetadataJob should throw NS_ERROR_NOT_AVAILABLE
-      throw new Error("MetadataJobManager does not respect enableWriting pref!");
-    } catch (e) {
-      if (Components.lastResult != Components.results.NS_ERROR_NOT_AVAILABLE) {
-        throw new Error("MetadataJobManager does not respect enableWriting pref!");
+    var successValues = [
+      // test a basic value
+      [SBProperties.trackName, SBProperties.trackName],
+      
+      // try a blank one
+      // bug <NNN>: comes back as "null" after reading
+      //[SBProperties.artistName, ""],
+      
+      // and some unicode
+      [SBProperties.albumName, SBProperties.albumName + unicodeSample],
+      
+      // what about a longer one? (ID3v1 only allows 30 char.)
+      // bug <NNN>: id3v22 files are coming back truncated but not ID3v1 for some reason
+      //[SBProperties.comment,
+      //  SBProperties.comment + SBProperties.comment + SBProperties.comment],
+      
+      // this is slightly thorny, because the specs allow for multiple values
+      // but our database just concats things together.
+      // we need to think about this
+      [SBProperties.genre, SBProperties.genre],
+      
+      // bug <NNN>: need to fix metadata reading to match writing
+      //[SBProperties.producerName, SBProperties.producerName],
+      //[SBProperties.composerName, SBProperties.composerName],
+      //[SBProperties.lyricistName, SBProperties.lyricistName],
+      //[SBProperties.lyrics, SBProperties.lyrics],
+      
+      // bug <NNN>: having a track number to set clobbers the totalTracks
+      // (in fact, it always clobbers total tracks for id3v2)
+      //[SBProperties.trackNumber, 7],
+      //[SBProperties.totalTracks, 13],
+      
+      // bug <nnn>: Can't null/zero out numeric values!
+      //[SBProperties.discNumber, ""],
+      [SBProperties.year, 2004]
+    ];
+
+    // set all mediaitems to the supplied metadata
+    for each (var item in items) {
+      for each (var pair in successValues) {
+        item.setProperty(pair[0], pair[1]);
       }
     }
-    prefSvc.setBoolPref("songbird.metadata.enableWriting", true);
+
     job = startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_WRITE);
-    prefSvc.setBoolPref("songbird.metadata.enableWriting", oldWritingEnabledPref); 
-    
+
     // Wait for writing to complete before continuing
     job.addJobProgressListener(function onWriteComplete(job) {
       reportJobProgress(job, "MetadataJob_Writing - onWriteComplete");
@@ -167,14 +191,24 @@ function runTest() {
         assertEqual(0, job.errorCount);
         assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_SUCCEEDED);
         
+        var failedFiles = 0;
         for each (var item in items) {
+          var failedProperties = 0;
           log("MetadataJob_Write: verifying " + item.contentSrc.path);
-          assertEqual(item.getProperty(SBProperties.artistName), SBProperties.artistName + unicodeSample);
-          assertEqual(item.getProperty(SBProperties.albumName), SBProperties.albumName + unicodeSample);
-          assertEqual(item.getProperty(SBProperties.trackName), SBProperties.trackName + unicodeSample);
-          // TODO expand 
+          for each (var pair in successValues) {
+            if (item.getProperty(pair[0]) != pair[1]) {
+              log("MetadataJob_Write: \n" + pair[0]+ ":\nfound:\t" + item.getProperty(pair[0])
+                  + "\nwanted:\t" + pair[1]);
+              failedProperties++;
+            }
+          }
+          if (failedProperties != 0) {
+            failedFiles++;
+          }
         }
-       
+        assertEqual(failedFiles, 0, "Some files failed to write correctly.");
+        
+        prefSvc.setBoolPref("songbird.metadata.enableWriting", oldWritingEnabledPref); 
         // We're done, so kill all the temp files
         testFolder.remove(true);
         job = null;
