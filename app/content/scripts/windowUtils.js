@@ -1153,7 +1153,17 @@ function goUpdateGlobalFindMenuItems()
   goUpdateCommand("cmd_findAgain");
 }
 
-
+/**
+ * This method assists with updating the menu items.
+ * See the <commandset id="fileMenuCommandSetMetadata" tag in
+ * layoutBaseOverlay.xul
+ */
+function goUpdateGlobalMetadataMenuItems()
+{
+  // This will call playlist.xml:_commandController.isCommandEnabled with
+  // cmd_viewmetadata as the parameter
+  goUpdateCommand("cmd_viewmetadata");
+}
 
 /**
  * Global function to cycle the current feather to the next layout.

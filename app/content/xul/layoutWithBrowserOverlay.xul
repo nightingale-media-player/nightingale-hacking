@@ -75,8 +75,9 @@
         <menuseparator insertbefore="menu_FileScanSeparator"/>
         <menuitem id="menuitem_file_newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;" insertbefore="menu_FileScanSeparator"/>
         <menuitem id="menuitem_file_closetab" key="closetab-key" class="menuitem-iconic" label="&menu.file.closetab;" accesskey="&menu.file.closetab.accesskey;" insertbefore="menu_FileScanSeparator"/>
+        <menuitem id="menuitem_file_viewmetadata" key="viewmetadata-key" class="menuitem-iconic" label="&menu.file.viewmetadata;" accesskey="&menu.file.viewmetadata.accesskey;" insertbefore="songbird_menu_locale" command="cmd_viewmetadata"/>
+        <menuseparator insertbefore="songbird_menu_locale"/>
       </menupopup>
-
 
 
       <menupopup id="menu_viewPopup">
@@ -336,6 +337,7 @@
       </command>
       
       <command id="View:PageSource" oncommand="BrowserViewSourceOfDocument(content.document);" observes="isImage"/>
+      <command id="cmd_viewmetadata" oncommand="goDoCommand('cmd_viewmetadata');"/>
     </commandset>
     
     <!-- ********************************************************************* -->
@@ -379,6 +381,7 @@
       <key id="key_reload" key="&reloadCmd.commandkey;" command="Browser:Reload" modifiers="accel" />
       <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
       <key id="key_stop" keycode="VK_ESCAPE" oncommand="gBrowser.stop();"/>
+      <key id="viewmetadata-key" modifiers="accel" key="&menu.file.viewmetadata.accesskey;" command="cmd_viewmetadata"/>
     </keyset>
 
 

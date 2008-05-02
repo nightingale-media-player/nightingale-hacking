@@ -87,12 +87,6 @@
         <menuseparator id="menu_FileScanSeparator"/>
         <menuitem id="menuitem_file_scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
         <menuseparator/>
-        <menuitem id="menuitem_file_viewmetadata"
-                  class="menuitem-iconic"
-                  label="&menu.file.viewmetadata;"
-                  accesskey="&menu.file.viewmetadata.accesskey;"
-                  command="cmd_viewmetadata"/>
-        <menuseparator/>
         <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
           <menupopup id="locale-popup" onpopupshowing="fillLocaleList(this);" />
         </menu>
@@ -261,6 +255,8 @@
                   oncommandupdate="goUpdatePasteMenuItems()"/>
       <commandset id="editMenuCommandSetFind" commandupdater="true" events="focus, select, tabchange"
                   oncommandupdate="goUpdateGlobalFindMenuItems()"/>
+      <commandset id="fileMenuCommandSetMetadata" commandupdater="true" events="focus, select"
+                  oncommandupdate="goUpdateGlobalMetadataMenuItems()"/>
       <command id="cmd_undo" oncommand="goDoCommand('cmd_undo')"/>
       <command id="cmd_redo" oncommand="goDoCommand('cmd_redo')"/>
       <command id="cmd_cut" oncommand="goDoCommand('cmd_cut')"/>
@@ -271,7 +267,6 @@
       <command id="cmd_switchTextDirection" oncommand="goDoCommand('cmd_switchTextDirection');"/>
       <command id="cmd_find" oncommand="goDoCommand('cmd_find')"/>
       <command id="cmd_findAgain" oncommand="goDoCommand('cmd_findAgain')"/>
-      <command id="cmd_viewmetadata" oncommand="goDoCommand('cmd_viewmetadata')"/>
     </commandset>
     
     <!-- ********************************************************************* -->
@@ -324,7 +319,6 @@
     <keyset id="mainKeyset">
       <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('menuitem_file_file');"/>
       <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('menuitem_file_url');"/>
-      <key id="viewmetadata-key" modifiers="accel" key="&menu.file.viewmetadata.accesskey;"/>
       <key id="undo-key" modifiers="accel" key="&menu.edit.undo.key;" />
       <key id="redo-key" modifiers="accel" key="&menu.edit.redo.key;" />
       <key id="cut-key" modifiers="accel" key="&menu.edit.cut.key;" />

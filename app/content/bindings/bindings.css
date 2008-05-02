@@ -224,18 +224,6 @@ sb-mini-player-controls {
   -moz-binding: url("chrome://songbird/content/bindings/miniPlayer.xml#sb-mini-player-controls") !important;
 }
 
-sb-tageditor-drawer {
-  -moz-binding: url("chrome://songbird/content/bindings/tagEditor.xml#tageditor") !important;
-}
-
-sb-trackeditor-drawer {
-  -moz-binding: url("chrome://songbird/content/bindings/trackEditor.xml#trackeditor") !important;
-}
-
-sb-exttrackeditor-drawer {
-  -moz-binding: url("chrome://songbird/content/bindings/trackEditor.xml#exttrackeditor") !important;
-}
-
 sb-dbedit-label {
   -moz-binding: url("chrome://songbird/content/bindings/dbControls.xml#label");
 }
