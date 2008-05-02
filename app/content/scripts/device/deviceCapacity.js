@@ -309,13 +309,11 @@ var DCW = {
 
     // Set up the device capacity table.
     var capTable = {};
-    capTable.total = totalSpace;
-    capTable.free = freeSpace;
-    capTable.music = musicSpace;
-    capTable.video = videoSpace;
-    capTable.other = otherSpace;
+    capTable.total = Math.max(0, totalSpace);
+    capTable.free = Math.max(0, freeSpace);
+    capTable.music = Math.max(0, musicSpace);
+    capTable.video = Math.max(0, videoSpace);
+    capTable.other = Math.max(0, otherSpace);
     return capTable;
   },
 };
-
-
