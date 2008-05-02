@@ -206,7 +206,7 @@ protected:
                                    void* aUserData);  
 
   nsresult OnJobProgress();
-  nsresult SetStatusText(nsAString& aText);
+  nsresult SetCurrentItem(nsRefPtr<jobitem_t> &aJobItem);
 
   void IncrementDataRemote();
   void DecrementDataRemote();
@@ -218,9 +218,9 @@ protected:
   PRInt32                       mTotalItemCount;
   PRInt32                       mErrorCount;
   nsTArray<nsString>            mErrorMessages;
-  nsString                      mStatusText;
+  nsRefPtr<jobitem_t>           mCurrentItem;
+  PRLock*                       mCurrentItemLock;
   nsString                      mTitleText;
-  PRLock*                       mStatusTextLock;
   nsString                      mStatusDisplayString;
   nsCOMPtr<sbIDataRemote>       mDataStatusDisplay;
   nsCOMPtr<sbIDataRemote>       mDataCurrentMetadataJobs;

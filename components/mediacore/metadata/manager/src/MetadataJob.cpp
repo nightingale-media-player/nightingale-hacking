@@ -155,7 +155,8 @@ sbMetadataJob::sbMetadataJob() :
   mCompletedItemCount( 0 ),
   mTotalItemCount( 0 ),
   mErrorCount( 0 ),
-  mStatusTextLock( nsnull ),
+  mCurrentItem( nsnull ),
+  mCurrentItemLock( nsnull ),
   mMetadataJobProcessor( nsnull ),
   mInitCompleted( PR_FALSE ),
   mInitExecuted( PR_FALSE ),
@@ -164,15 +165,15 @@ sbMetadataJob::sbMetadataJob() :
 {
   TRACE(("sbMetadataJob[0x%.8x] - ctor", this));
 
-  mStatusTextLock = nsAutoLock::NewLock("MetadataJob status text lock");
-  NS_ASSERTION(mStatusTextLock,
-               "sbMetadataJob::mStatusTextLock failed to create lock!");
+  mCurrentItemLock = nsAutoLock::NewLock("MetadataJob status text lock");
+  NS_ASSERTION(mCurrentItemLock,
+               "sbMetadataJob::mCurrentItemLock failed to create lock!");
 }
 
 sbMetadataJob::~sbMetadataJob()
 {
   TRACE(("sbMetadataJob[0x%.8x] - dtor", this));
-  nsAutoLock::DestroyLock(mStatusTextLock);
+  nsAutoLock::DestroyLock(mCurrentItemLock);
 }
 
 // TODO no longer part of the interface.  Move if needed.
@@ -201,17 +202,72 @@ NS_IMETHODIMP sbMetadataJob::GetStatus(PRUint16 *aStatus)
 /* readonly attribute unsigned AString statusText; */
 NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
 {
-  // Status text may be updated from the worker thread
-  nsAutoLock lock(mStatusTextLock);
-  aText = mStatusText;
-  return NS_OK;
+  nsresult rv = NS_OK;
+  
+  // If the job is still running, report the leaf file name
+  // as status.
+  if (mStatus == sbIJobProgress::STATUS_RUNNING) {
+    // The current item may be updated from the worker thread
+    nsAutoLock lock(mCurrentItemLock);
+    nsAutoString url = mCurrentItem->url;
+    
+    // Only show the leaf filename
+    PRInt32 lastSlash = url.RFindChar('/');
+    if (lastSlash != -1 && lastSlash < url.Length() - 1) {
+      url.Cut(0, lastSlash + 1);
+    }
+    aText = url;
+  } else if (mStatus == sbIJobProgress::STATUS_FAILED) {
+    // If we've failed, give a localized explanation.
+    nsAutoString text;
+    
+    // Only set the status text for write jobs, since read jobs
+    // are not currently reflected in the UI.
+    if (mJobType == sbIMetadataJob::JOBTYPE_WRITE) {
+    
+      nsCOMPtr<nsIStringBundle> stringBundle;
+      nsCOMPtr<nsIStringBundleService> StringBundleService =
+        do_GetService("@mozilla.org/intl/stringbundle;1", &rv );
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = StringBundleService->CreateBundle( "chrome://songbird/locale/songbird.properties",
+                                              getter_AddRefs( stringBundle ) );
+      NS_ENSURE_SUCCESS(rv, rv);
+    
+      // Single failure in single item write job
+      if (mTotalItemCount == 1) {
+        rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("metadatajob.writing.failed.one").get(),
+                                              getter_Copies(text) );      
+      // Single error in multiple file write job
+      } else if (mErrorCount == 1) {
+        rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("metadatajob.writing.failed.oneofmany").get(),
+                                              getter_Copies(text) );
+      // Multiple errors in multiple file write job
+      } else {
+        rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("metadatajob.writing.failed.manyofmany").get(),
+                                              getter_Copies(text) );
+      }
+      
+      if (NS_FAILED(rv)) {
+        text.AssignLiteral("Job Failed");
+      }
+      
+      aText = text;
+    }  
+  
+  } else {
+    // Clear out the status text
+    aText = EmptyString();
+  } 
+  
+  return rv;
 }
 
-nsresult sbMetadataJob::SetStatusText(nsAString& aText)
+nsresult sbMetadataJob::SetCurrentItem(nsRefPtr<jobitem_t> &aJobItem)
 {
-  // Status text may be updated from the worker thread
-  nsAutoLock lock(mStatusTextLock);
-  mStatusText = aText;
+  // Current item may be updated from the worker thread
+  nsAutoLock lock(mCurrentItemLock);
+  mCurrentItem = aJobItem;
   return NS_OK;
 }
 
@@ -1022,9 +1078,6 @@ nsresult sbMetadataJob::FinishJob()
     mThread = nsnull;
   }
   
-  // Clear out the status text
-  mStatusText = EmptyString();
-  
   // Notify observers
   OnJobProgress();
   
@@ -1543,8 +1596,8 @@ nsresult sbMetadataJob::SetItemIs( const nsAString &aColumnString, sbIDatabaseQu
 
 nsresult sbMetadataJob::SetItemIsCurrent( sbIDatabaseQuery *aQuery, nsString aTableName, sbMetadataJob::jobitem_t *aItem )
 {
-  // Set filename as the job status
-  nsresult rv = SetStatusText(aItem->url);
+  nsRefPtr<jobitem_t> itemRef(aItem);
+  nsresult rv = SetCurrentItem(itemRef);
   NS_ENSURE_SUCCESS(rv, rv);
   return SetItemIs( NS_LITERAL_STRING("is_current"), aQuery, aTableName, aItem, PR_TRUE );
 }
@@ -1629,32 +1682,36 @@ nsresult sbMetadataJob::InitProgressReporting()
                                           getter_AddRefs( stringBundle ) );
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the dataremote text to be shown in the status bar
-  nsString scanning;
-  rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("back_scan.scanning").get(),
-                                        getter_Copies(scanning) );
-  if (NS_FAILED(rv)) {
-    scanning.AssignLiteral("Scanning");
-  }
-  mStatusDisplayString = scanning;
 
-  mDataStatusDisplay->SetStringValue( mStatusDisplayString );
-
-
-  // Get the title for sbIJobProgress
-  nsString title;
   if (mJobType == sbIMetadataJob::JOBTYPE_WRITE) {
     rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("metadatajob.writing.title").get(),
-                                          getter_Copies(title) );
+                                          getter_Copies(mTitleText) );
+    if (NS_FAILED(rv)) {
+      mTitleText.AssignLiteral("Metadata Write Job");
+    }
+    
+    rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("back_scan.writing").get(),
+                                          getter_Copies(mStatusDisplayString) );
+    if (NS_FAILED(rv)) {
+      mStatusDisplayString.AssignLiteral("Writing");
+    }
+    
   } else {
     rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("metadatajob.reading.title").get(),
-                                          getter_Copies(title) );
-  }
-  if (NS_FAILED(rv)) {
-    title.AssignLiteral("Metadata Job");
-  }
-  mTitleText = title;
+                                          getter_Copies(mTitleText) );
+    if (NS_FAILED(rv)) {
+      mTitleText.AssignLiteral("Metadata Read Job");
+    }
     
+    rv = stringBundle->GetStringFromName( NS_LITERAL_STRING("back_scan.scanning").get(),
+                                          getter_Copies(mStatusDisplayString) );
+    if (NS_FAILED(rv)) {
+      mStatusDisplayString.AssignLiteral("Scanning");
+    }
+  }
+    
+  mDataStatusDisplay->SetStringValue( mStatusDisplayString );
+  
 
   // Find the total number of items in the job
   nsAutoString selectCount(NS_LITERAL_STRING("select count(*) from "));

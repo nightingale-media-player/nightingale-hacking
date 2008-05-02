@@ -36,5 +36,6 @@ See SBJobUtils.jsm and sbIJobProgress.idl.
 */
 
 #job_progress_dialog {
-  width: 300px;
+  width: 500px;
+  max-width: 500px;
 }

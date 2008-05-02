@@ -66,7 +66,7 @@ var SBJobUtils = {
       }
      
       // Parent to the main window by default
-      if (!aWindow) {
+      if (!aWindow || aWindow.closed) {
         var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                            .getService(Components.interfaces.nsIWindowMediator);
         aWindow = wm.getMostRecentWindow("Songbird:Main");

@@ -387,6 +387,8 @@
 
 <!ENTITY setupprogress.installingextensions "Installing Add-ons" >
 
+<!ENTITY jobprogress.details "Details" >
+
 <!ENTITY menu.updateCmd.label          "Check for Updates...">
 <!ENTITY menu.updateCmd.accessKey      "o">
 <!ENTITY trackeditor.disclaimer        "The Track Editor feature is not yet complete.  Edited metadata is saved only in &brandShortName;'s database.  In a future version, metadata edited here will be saved to your media files as well.">

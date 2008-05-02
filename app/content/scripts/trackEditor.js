@@ -505,7 +505,7 @@ var TrackEditor = {
                         .getService(Ci.sbIMetadataJobManager);
       var job = manager.newJob(mediaItemArray, 5, Ci.sbIMetadataJob.JOBTYPE_WRITE);
       
-      SBJobUtils.showProgressDialog(job, null);
+      SBJobUtils.showProgressDialog(job, window);
     }
   }
 };

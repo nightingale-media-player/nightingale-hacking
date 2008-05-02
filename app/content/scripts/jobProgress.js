@@ -39,6 +39,8 @@ var JobProgressDialog = {
   // UI elements
   _label: null,
   _progressMeter: null,
+  _errorContainer: null,
+  _errorList: null,
 
 
   /**
@@ -56,15 +58,19 @@ var JobProgressDialog = {
 
     this._job.addJobProgressListener(this);
 
-    this._label = document.getElementById("jobprogress_status_label");
-    this._progressMeter = document.getElementById("jobprogress_progressmeter");    
-    this._updateUI();
+    this._description = document.getElementById("jobprogress_status_desc");
+    this._progressMeter = document.getElementById("jobprogress_progressmeter");
+    this._errorContainer = document.getElementById("jobprogress_error_box");
+    this._errorList = document.getElementById("jobprogress_error_list");
     
     // Show cancel if allowed
     if (this._job instanceof Ci.sbIJobCancelable) {
       document.documentElement.buttons = "cancel";
-    }    
-  },
+    }
+    
+    // Initialize the UI
+    this.onJobProgress();
+  },  
 
   /**
    * Called when the dialog is closed
@@ -73,7 +79,6 @@ var JobProgressDialog = {
     this._job.removeJobProgressListener(this);
     this._job = null;
   },
-  
 
   /**
    * Called when the job is canceled by the user
@@ -87,29 +92,54 @@ var JobProgressDialog = {
    * Called periodically by the monitored sbIJobProgress
    */
   onJobProgress: function JobProgressDialog_onJobProgress(aJob) {
-    this._updateUI();
+    this._updateProgressUI();
     
     if (this._job.status == Ci.sbIJobProgress.STATUS_SUCCEEDED) {
       window.close();
     } else if (this._job.status == Ci.sbIJobProgress.STATUS_FAILED) {
-      // TODO
+      document.documentElement.buttons = "accept";
+      this._showErrors();
     }
   },
   
   /**
    * Update the UI elements with the state of the job
    */
-  _updateUI: function JobProgressDialog__updateUI() {
-    this._label.value = this._job.statusText;
+  _updateProgressUI: function JobProgressDialog__updateUI() {
+    this._formatDescription(this._description, this._job.statusText);
     this._setTitle(this._job.titleText);
     
     if (this._job.total <= 0) {
       this._progressMeter.mode = "undetermined";
     } else {
       this._progressMeter.mode = "determined";
-      var progress = Math.round((this._job.progress / this._job.total) * 100);
-      this._progressMeter.value = new String(progress);
+      this._progressMeter.value = Math.round((this._job.progress / this._job.total) * 100);
     }
+    
+    window.sizeToContent();
+  },
+  
+  /**
+   * Hide the progress bar and display a list of error messages
+   */
+  _showErrors: function () {
+    this._progressMeter.hidden = true;
+    this._errorContainer.hidden = false;
+    
+    var messages = this._job.getErrorMessages();
+    var message;
+    while (messages.hasMore()) {
+      message = unescape(messages.getNext());
+      var item = this._errorList.appendItem(message);
+      item.setAttribute("crop", "center");
+      item.setAttribute("tooltiptext", message);
+    }
+    
+    var rows = this._job.errorCount;
+    if (this._errorList.hasAttribute("maxrows")) {
+      rows = parseInt(this._errorList.getAttribute("maxrows"));
+    } 
+    this._errorList.setAttribute("rows", Math.min(rows, this._job.errorCount) + 1);
   },
   
   /**
@@ -121,6 +151,26 @@ var JobProgressDialog = {
     if (windowTitle) {
       windowTitle.title = aTitle;
     }
+  },
+  
+  /**
+   * Localized strings cannot have line breaks. As a result, we have to 
+   * jump through hoops and convert \n to <br/>.  Bleh.
+   */
+  _formatDescription: function(aDescription, aMessage) {  
+    aMessage = unescape(aMessage);
+    var lines = aMessage.split("\n");
+    if (lines.length > 1) {
+      aDescription.textContent = "";
+      for (var i = 0; i < lines.length; i++) {
+        aDescription.appendChild(document.createTextNode(lines[i]));
+        aDescription.appendChild(document.createElementNS("http://www.w3.org/1999/xhtml","html:br"));
+      }
+    } else {
+      aDescription.textContent = lines[0];
+    }
   }
+  
+  
 }
 

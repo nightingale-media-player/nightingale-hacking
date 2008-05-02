@@ -528,12 +528,12 @@ function SBTrackEditorOpen( parentWindow, playlist )
 {
   var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Components.interfaces.nsIWindowMediator);
-  var theTE = wm.getMostRecentWindow("track_editor");
+  var theTE = wm.getMostRecentWindow("Songbird:TrackEditor");
   if (theTE) {
     theTE.focus();
   } else {
     const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
-    const TEFEATURES = "chrome,centerscreen=yes,toolbar=no,popup=no,resizable=no";
+    const TEFEATURES = "chrome,centerscreen=yes,toolbar=no,popup=no,modal=yes,resizable=no";
     
     // HAAAAAAAAAACK. The track editor is a) broken and b) depends on the playlist
     if (!playlist) {

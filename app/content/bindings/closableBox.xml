@@ -67,7 +67,7 @@
                        mousethrough="never"
                        onclick="toggleOpenClose(event);"/>
           </xul:vbox>
-          <xul:label xbl:inherits="value=label"/>
+          <xul:label xbl:inherits="value=label" onclick="toggleOpenClose(event);"/>
         </xul:hbox>
 
         <!-- Box contents. -->

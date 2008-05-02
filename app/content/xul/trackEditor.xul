@@ -349,7 +349,6 @@
             onclick="TrackEditor.apply(); TrackEditor.next()"/>
     <spacer flex="1"/>
     <button label="Cancel" accesskey="c" onclick="window.close()"/>
-    <button label="Apply" accesskey="a" onclick="TrackEditor.apply()"/>
     <button label="OK" accesskey="o" onclick="TrackEditor.apply(); window.close();"/>
   </hbox>
   </notificationbox>
