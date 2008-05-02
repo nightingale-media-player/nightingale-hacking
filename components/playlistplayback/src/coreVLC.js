@@ -160,7 +160,7 @@ function CoreVLC()
                               "m4v", "oga", "ogv",  "ogx"];
   this._mediaUrlSchemes = ["mms", "rstp"];
 
-  this._videoUrlExtensions = ["wmv", "asf", "avi", "mov",  "qt", "mpg",
+  this._videoUrlExtensions = ["wmv", "asf", "avi", "flv", "mov",  "qt", "mpg",
                               "m4v", "mp4", "mp2", "mpeg", "mpe", "mkv",
                               "ogm", "ogv", "ogx"];
 
