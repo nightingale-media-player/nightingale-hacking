@@ -60,15 +60,20 @@ try
       var node = evt.originalTarget;
       while (node != document && node != null)
       {
-        // if your object implements an evt on the wheel,
-        // but is not one of these, you should prevent the 
-        // evt from bubbling
+        // if your object implements an event on the wheel,
+        // but is not one of these, you should either give
+        // it an attribute of wheelvolume="false" or
+        // prevent the event from bubbling altogether
         if (node.tagName == "tree") return;
         if (node.tagName == "xul:tree") return;
         if (node.tagName == "listbox") return;
         if (node.tagName == "xul:listbox") return;
         if (node.tagName == "browser") return;
         if (node.tagName == "xul:browser") return;
+        
+        if (node.getAttribute && 
+            node.getAttribute("wheelvolume") == "false") 
+          return;
         node = node.parentNode;
       }
 

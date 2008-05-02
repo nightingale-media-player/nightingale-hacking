@@ -56,6 +56,7 @@
  hidechrome="true"
  buttons="none"
  persist="screenX screenY"
+ wheelvolume="false"
 >
 
   <!-- standard overlays insertion point for popups, commands, broadcasters, keys and stringbundles -->
@@ -73,7 +74,7 @@
       <tab label="Lyrics" />
       <!--tab disabled="true" label="Sort Values"/-->
     </tabs>
-  
+
     <tabpanels flex="1">
       <vbox flex="1" id="summary-tab">
         <hbox flex="1">
