@@ -293,7 +293,7 @@ LibrarySearchSuggester.prototype = {
       previousResult = null;
       
       // start anew
-      this._distinctValues = [];
+      this._distinctValues = {};
 
       // get the library manager if needed
       if (!this._libraryManager) {
@@ -302,44 +302,44 @@ LibrarySearchSuggester.prototype = {
             .getService(Ci.sbILibraryManager);
       }
 
+      // parse search parameters
+      var params = searchParam.split(";");
+      var prop = params[0];
+      var guid = params[1];
+      var additionalValues = params[2];
+
       // Record distinct values for a library
       function getDistinctValues(aLibrary, obj) {
         if (!aLibrary) 
           return;
-        var values = aLibrary.getDistinctValuesForProperty(searchParam);
+        var values = aLibrary.getDistinctValuesForProperty(prop);
         while (values.hasMore()) { 
-          obj._distinctValues.push(values.getNext());
+          // is there a way to assert a key without doing an assignment ?
+          obj._distinctValues[values.getNext()] = true;
         }
       }
-
-      // look for a semicolon separator in the search parameter
-      var sep = searchParam.indexOf(";");
-      // if we found one, assume the second part of the string
-      // is a library guid, otherwise, search through all libs
-      if (sep >= 0) {
-        var guid = searchParam.substr(sep+1);
-        searchParam = searchParam.slice(0, sep);
+      
+      // If we have a guid in the params, get the distinct values
+      // from a library with that guid, otherwise, get them from
+      // all libraries
+      if (guid && guid.length > 0) {
         getDistinctValues(this._libraryManager.getLibrary(guid), this);
       } else {
         var libs = this._libraryManager.getLibraries();
         while (libs.hasMoreElements()) {
           getDistinctValues(libs.getNext(), this);
         }
-        // Since the results come from several libraries, 
-        // we need to sort them, and remove duplicate entries
-        this._distinctValues = this._distinctValues.sort();
-        // for all entries except the last one,
-        for (var i=0;i<this._distinctValues.length-1;i++) {
-          // if this entry and the next are the same,
-          if (this._distinctValues[i] == this._distinctValues[i+1]) {
-            // remove it
-            this._distinctValues.splice(i, 1);
-            // and recheck this entry for more dups
-            i--;
-          }
+      }
+      
+      // If we have additional values, add them to the 
+      // distinct values array
+      if (additionalValues && additionalValues.length > 0) {
+        var values = additionalValues.split(",");
+        for each (var value in values) {
+          this._distinctValues[value] = true;
         }
       }
-
+      
       // set this cache to expire in 5s
 
       if (!this._timer)
@@ -373,7 +373,7 @@ LibrarySearchSuggester.prototype = {
           results.push(value);
       }
     } else {
-      for each (var value in this._distinctValues) {
+      for (var value in this._distinctValues) {
         if (startsWith(value, search))
           results.push(value);
       }

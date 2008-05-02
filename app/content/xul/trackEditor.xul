@@ -205,9 +205,7 @@
         <textbox flex="1"
                  id="infoTab-trackName"
                  property="http://songbirdnest.com/data/1.0#trackName"
-                 multicheck="true"
-                 type="autocomplete"
-                 autocompletesearch="library-distinct-properties"/>
+                 multicheck="true"/>
   
         <hbox>
           <vbox flex="3">
@@ -256,12 +254,13 @@
   
             <label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#genre"/>
-            <textbox flex="1" 
+            <textbox flex="1"
+                     id="genredropdown"
                      property="http://songbirdnest.com/data/1.0#genre"
                      multicheck="true"
                      type="autocomplete"
-                     autocompletesearch="library-distinct-properties"/>
-  
+                     autocompletesearch="library-distinct-properties"
+                     defaultdistinctproperties="Alternative,Blues/R&amp;B,Books&amp;Spoken,Children's Music,Classical,Comedy,Country,Dance,Easy Listening,Electronic,Folk,Hip Hop/Rap,Holiday,House,Industrial,Jazz,New Age,Podcast,Pop,Raggae,Religious,Rock,Science,Sountrack,Techno,Trance,Unclassifiable,World"/>  
             <!-- deferred from 0.6 until supported by sorting algos -->
             <!--label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#isPartOfCompilation"/>

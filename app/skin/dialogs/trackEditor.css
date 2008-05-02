@@ -64,6 +64,11 @@ See app/content/xul/trackEditor.xul
   width: 8em;
 }
 
+#genredropdown > .autocomplete-history-dropmarker {
+  -moz-binding: url("chrome://global/content/bindings/autocomplete.xml#history-dropmarker");
+  display: inline;
+}
+
 #year {
   width: 4em !important;
   overflow: hidden;

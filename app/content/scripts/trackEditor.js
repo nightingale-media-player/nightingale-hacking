@@ -126,6 +126,9 @@ var TrackEditor = {
     // in the xul, but the suggestions would then come
     // from all the libraries in the system instead of only
     // the one whom the displayed list belongs to.
+    // In addition, textboxes that have a defaultdistinctproperties
+    // attribute need to have that value appended to the
+    // search param attribute as well. 
     var library = this.mediaListView.mediaList.library;
     if (!library) 
       return;
@@ -143,7 +146,10 @@ var TrackEditor = {
           textbox.getAttribute("autocompletesearch")
                  .indexOf("library-distinct-properties") >= 0) {
           var property = textbox.getAttribute("property");
-          textbox.setAttribute("autocompletesearchparam", property + ";" + libraryGuid);
+          var defvals = textbox.getAttribute("defaultdistinctproperties");
+          var param = property + ";" + libraryGuid;
+          if (defvals && defvals != "") param += ";" + defvals;
+          textbox.setAttribute("autocompletesearchparam", param);       
       }
     }
   },
