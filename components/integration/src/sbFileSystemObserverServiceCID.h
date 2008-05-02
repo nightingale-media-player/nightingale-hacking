@@ -35,7 +35,7 @@
 
 #define SONGBIRD_FILESYSTEMOBSERVERSERVICE_CID            \
 { /* 8a8433b9-16d7-44a8-991a-308121bb96d8 */              \
-  0x8a8433b9,                                             \ 
+  0x8a8433b9,                                             \
   0x16d7,                                                 \
   0x44a8,                                                 \
   { 0x99, 0x1a, 0x30, 0x81, 0x21, 0xbb, 0x96, 0xd8 }      \
