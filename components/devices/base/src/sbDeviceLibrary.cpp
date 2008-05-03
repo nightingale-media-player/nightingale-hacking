@@ -461,7 +461,7 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray **_retval)
     // PREF_SYNC_LISTS text
     nsCAutoString guidString(guidPref);
     if (StringBeginsWith(guidPref, NS_LITERAL_CSTRING(PREF_SYNC_LISTS))) {
-      guidString = Substring(guidPref, NS_ARRAY_LENGTH(PREF_SYNC_LISTS));
+      guidString = Substring(guidPref, NS_ARRAY_LENGTH(PREF_SYNC_LISTS) - 1);
     }
   
     nsCOMPtr<sbIMediaItem> syncPlaylistItem;
@@ -529,6 +529,7 @@ sbDeviceLibrary::AddToSyncPlaylistList(sbIMediaList *aPlaylist)
   // Get the guid of the list
   rv = aPlaylist->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
+  prefKey.AppendLiteral(PREF_SYNC_LISTS);
   prefKey.Append(guid);
 
   nsCOMPtr<nsIWritableVariant> var =
