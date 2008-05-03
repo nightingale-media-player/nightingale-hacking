@@ -367,11 +367,19 @@ sbLocalDatabaseMediaItem::GetUserEditable(PRBool* aUserEditable)
         rv = fileUrl->GetFile(getter_AddRefs(file));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        PRBool isWritable;
-        file->IsWritable(&isWritable);
+        PRBool exists;
+        rv = file->Exists(&exists);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        *aUserEditable = isWritable;
+        PRBool isWritable = PR_FALSE;
+        if (exists) {
+          rv = file->IsWritable(&isWritable);
+          if (NS_FAILED(rv)) {
+            isWritable = PR_FALSE;
+          }
+        }
+
+        *aUserEditable = isWritable && exists;
       } else {
         // Not a local file
         *aUserEditable = PR_FALSE;
