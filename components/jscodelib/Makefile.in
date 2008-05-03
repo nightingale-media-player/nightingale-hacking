@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_COMPONENTS = $(srcdir)/ArrayConverter.jsm \
                       $(srcdir)/DropHelper.jsm \
+                      $(srcdir)/DOMUtils.jsm \
                       $(srcdir)/RDFHelper.jsm \
                       $(srcdir)/SBDataRemoteUtils.jsm \
                       $(srcdir)/SBTimer.jsm \
@@ -42,6 +43,7 @@ SONGBIRD_COMPONENTS = $(srcdir)/ArrayConverter.jsm \
 # TODO: Post 0.5 we need to remove js modules from the line above
 SONGBIRD_JSMODULES = $(srcdir)/ArrayConverter.jsm \
                      $(srcdir)/DropHelper.jsm \
+                     $(srcdir)/DOMUtils.jsm \
                      $(srcdir)/RDFHelper.jsm \
                      $(srcdir)/SBDataRemoteUtils.jsm \
                      $(srcdir)/SBTimer.jsm \

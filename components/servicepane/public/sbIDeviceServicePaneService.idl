@@ -39,7 +39,7 @@ interface sbIDevice;
  * \interface sbIDeviceServicePaneService
  * \brief Provides information about devices needed by the service pane
  */
-[scriptable, uuid(315cfa2e-9199-45d9-bdab-dafac4a87125)]
+[scriptable, uuid(9e680f0f-5f1e-44e6-b4d8-46f02edfb311)]
 interface sbIDeviceServicePaneService : nsISupports {
   /* \brief Attempts to create a service pane node for a given device. Will
    *        group similar devices together in the service pane.
@@ -59,4 +59,22 @@ interface sbIDeviceServicePaneService : nsISupports {
    * \note This method is designed for the new Device API.
    */
   sbIServicePaneNode createNodeForDevice2 (in sbIDevice aDevice);
+
+  /* \brief Return the service pane node for the given device.
+   *
+   * \param aDevice an sbIDevice.
+   * \return a service pane node that represents the given device
+   */
+  sbIServicePaneNode getNodeForDevice (in sbIDevice aDevice);
+
+  /* \brief If aEnabled is true, fill the service pane context menu for the
+   *        device node specified by aNode with a default set of device menu
+   *        items.
+   *
+   * \param aNode               Device node.
+   * \param aEnabled            If true, fill context menu with default items.
+   */
+  void setFillDefaultContextMenu ( in sbIServicePaneNode aNode,
+                                   in boolean            aEnabled);
 };
+

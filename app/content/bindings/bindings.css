@@ -436,32 +436,59 @@ sb-playlist-menuitems {
 
 /* Device bindings */
 
+sb-device-control {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control");
+}
+
+sb-device-eject-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-eject-command");
+}
+
+sb-device-get-info-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-get-info-command");
+}
+
+sb-device-model-capacity-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-model-capacity-command");
+}
+
+sb-device-new-playlist-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-new-playlist-command");
+}
+
+sb-device-rename-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-rename-command");
+}
+
+sb-device-sync-cancel-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-sync-cancel-command");
+}
+
 sb-device-battery {
-    -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-battery") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-battery") !important;
 }
 
 sb-device-capacity {
-    -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacity.xml#sb-device-capacity");
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacity.xml#sb-device-capacity");
 }
 
 sb-device-capacity-legend {
-    -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacity.xml#sb-device-capacity-legend");
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceCapacity.xml#sb-device-capacity-legend");
 }
 
 sb-device-info {
-    -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-info");
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-info");
 }
 
 sb-device-progress {
-    -moz-binding: url("chrome://songbird/content/bindings/device/deviceProgress.xml#sb-device-progress");
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceProgress.xml#sb-device-progress");
 }
 
 sb-device-sync {
-    -moz-binding: url("chrome://songbird/content/bindings/device/deviceSync.xml#sb-device-sync");
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceSync.xml#sb-device-sync");
 }
 
-sb-device-tools
-{
-    -moz-binding: url("chrome://songbird/content/bindings/device/deviceTools.xml#sb-device-tools");
+sb-device-tools {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceTools.xml#sb-device-tools");
 }
 

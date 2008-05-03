@@ -31,14 +31,18 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const Cu = Components.utils;
 
 const CONTRACTID = "@songbirdnest.com/servicepane/device;1";
 
 const NC='http://home.netscape.com/NC-rdf#';
 const SP = "http://songbirdnest.com/rdf/servicepane#";
+const DEVICESP_NS = "http://songbirdnest.com/rdf/device-servicepane#";
 
 const URN_PREFIX_DEVICE = "urn:device:";
 const DEVICE_NODE_WEIGHT = -2
+
+Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 
 /**
  * Given the arguments var of a function, dump the
@@ -90,14 +94,38 @@ function sbDeviceServicePane_servicePaneInit(sps) {
 
   // keep track of the service pane service
   this._servicePane = sps;
+
+  // load the device context menu document
+  this._deviceContextMenuDoc =
+        DOMUtils.loadDocument
+          ("chrome://songbird/content/xul/device/deviceContextMenu.xul");
 }
 
 sbDeviceServicePane.prototype.shutdown =
 function sbDeviceServicePane_shutdown() {
+  // release object references
+  this._servicePane = null;
+  this._deviceContextMenuDoc = null;
 }
 
 sbDeviceServicePane.prototype.fillContextMenu =
 function sbDeviceServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow) {
+  // Get the node device ID.  Do nothing if not a device node.
+  var deviceID = aNode.getAttributeNS(DEVICESP_NS, "device-id");
+  if (!deviceID)
+    return;
+
+  // Do nothing if not set to fill with the default device context menu items.
+  var fillDefaultContextMenu = aNode.getAttributeNS(DEVICESP_NS,
+                                                    "fillDefaultContextMenu");
+  if (fillDefaultContextMenu != "true")
+    return;
+
+  // Import device context menu items into the context menu.
+  DOMUtils.importChildElements(aContextMenu,
+                               this._deviceContextMenuDoc,
+                               "device_context_menu_items",
+                               { "device-id": deviceID });
 }
 
 sbDeviceServicePane.prototype.fillNewItemMenu =
@@ -172,6 +200,7 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
 
   // Refresh the information just in case it is supposed to change
   node.contractid = CONTRACTID;
+  node.setAttributeNS(DEVICESP_NS, "device-id", aDevice.id);
   node.setAttributeNS(SP, "Weight", DEVICE_NODE_WEIGHT);
   node.contractid = CONTRACTID;
   node.editable = false;
@@ -195,6 +224,27 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
   this._servicePane.sortNode(node);
 
   return node;
+}
+
+sbDeviceServicePane.prototype.getNodeForDevice =
+function sbDeviceServicePane_getNodeForDevice(aDevice) {
+  // Get the Node.
+  var id = this._deviceURN2(aDevice);
+  return this._servicePane.getNode(id);
+}
+
+sbDeviceServicePane.prototype.setFillDefaultContextMenu =
+function sbDeviceServicePane_setFillDefaultContxtMenu(aNode,
+                                                      aEnabled) {
+  if (aEnabled) {
+    aNode.setAttributeNS("http://songbirdnest.com/rdf/device-servicepane#",
+                         "fillDefaultContextMenu",
+                         "true");
+  } else {
+    aNode.setAttributeNS("http://songbirdnest.com/rdf/device-servicepane#",
+                         "fillDefaultContextMenu",
+                         "false");
+  }
 }
 
 /////////////////////
