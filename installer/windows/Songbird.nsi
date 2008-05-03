@@ -339,8 +339,8 @@ Section "-Application" Section1
   ; These need special handling on uninstall since they may be overwritten by
   ; an install into a different location.
   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
-  WriteRegStr HKLM "$0" "$INSTDIR\${FileMainEXE}" ""
   WriteRegStr HKLM "$0" "Path" "$INSTDIR"
+  WriteRegStr HKLM "$0" "" "$INSTDIR\${FileMainEXE}"
 
   ; Add XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
   WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}" "" ""
