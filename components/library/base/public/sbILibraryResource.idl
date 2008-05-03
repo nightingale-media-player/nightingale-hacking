@@ -108,6 +108,11 @@ interface sbILibraryResource : nsISupports
    *        set on this resource
    */
   readonly attribute nsIStringEnumerator propertyIDs;
+  
+  /**
+   * \brief True if users should be allowed to modify the resource
+   */
+  readonly attribute boolean userEditable;
 
   /**
    * \brief Get the value of a property of this resource

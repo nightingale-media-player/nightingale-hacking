@@ -322,6 +322,70 @@ sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
  * See sbILibraryResource
  */
 NS_IMETHODIMP
+sbLocalDatabaseMediaItem::GetUserEditable(PRBool* aUserEditable)
+{
+  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
+  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
+
+  NS_ENSURE_ARG_POINTER(aUserEditable);
+
+  // Item is not editable if the item or its parent have
+  // been explicitly marked as read-only.
+  
+  nsAutoString str;
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY), str);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (str.EqualsLiteral("1")) {
+    *aUserEditable = PR_FALSE;
+  } else if (mLibrary) {
+    rv = mLibrary->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY), str);
+    NS_ENSURE_SUCCESS(rv, rv);
+    *aUserEditable = !str.EqualsLiteral("1");
+  } else {
+    *aUserEditable = PR_TRUE;
+  }
+
+  // If this item represents a media file and has not
+  // been explicitly marked as read-only, check
+  // that we are able to write to the file
+  if (*aUserEditable) {
+
+    nsCOMPtr<sbIMediaList> list = 
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaItem*,this));
+
+    if (!list) {
+      nsRefPtr<nsIURI> uri;
+      rv = this->GetContentSrc(getter_AddRefs(uri));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(uri, &rv);
+
+      // File must be local and writable
+      if (NS_SUCCEEDED(rv)) {
+        nsCOMPtr<nsIFile> file;
+        rv = fileUrl->GetFile(getter_AddRefs(file));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRBool isWritable;
+        file->IsWritable(&isWritable);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        *aUserEditable = isWritable;
+      } else {
+        // Not a local file
+        *aUserEditable = PR_FALSE;
+      }
+    }
+  }
+
+  return NS_OK;
+}
+
+/**
+ * See sbILibraryResource
+ */
+NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetPropertyIDs(nsIStringEnumerator** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
