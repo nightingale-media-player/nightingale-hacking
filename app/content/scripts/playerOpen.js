@@ -231,7 +231,8 @@ try
 
         aPlaylistReaderManager.originalURI = fp.fileURL;
         var success = aPlaylistReaderManager.loadPlaylist(fp.fileURL, mediaList, null, false, null);
-        if (success == 1) {
+        if (success == 1 &&
+            mediaList.length) {
           var array = Components.classes["@mozilla.org/array;1"]
                                 .createInstance(Components.interfaces.nsIMutableArray);
           for (var i = 0; i < mediaList.length; i++) {
@@ -251,7 +252,6 @@ try
         } else {
           library.remove(mediaList);
         }
-
       }
     }
     catch(err)
