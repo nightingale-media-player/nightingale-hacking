@@ -54,6 +54,7 @@ Imported by bindings.css or directly into feathers.
 
 .dev-progress-text1-label {
   font-size:110%;
+  min-height:16px;
 }
 
 .dev-progress-text1-label[error="true"] {
