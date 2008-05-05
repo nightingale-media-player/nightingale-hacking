@@ -44,7 +44,7 @@ interface sbIPropertyArray;
 *
 * \sa sbILibraryPropertiesManager
 */
-[scriptable, uuid(2bcef7e9-e400-4367-a9bb-0b40c6a37ce9)]
+[scriptable, uuid(d0ed8ac0-1a2a-11dd-bd0b-0800200c9a66)]
 interface sbILibraryResource : nsISupports
 {
   /**

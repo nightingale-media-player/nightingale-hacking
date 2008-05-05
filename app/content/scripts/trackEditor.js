@@ -12,6 +12,8 @@ Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/components/sbProperties.jsm");
 
 var TrackEditor = {
+  
+  
   _propertyManager: Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                       .getService(Ci.sbIPropertyManager),
   
@@ -179,12 +181,34 @@ var TrackEditor = {
     var somethings = document.getElementsByAttribute("property", "*");
     var numSelected = this.mediaListView.selection.count;
 
-    var readOnlyProperty = this.mediaListView.mediaList.library.getProperty(SBProperties.isReadOnly)
-    var isReadOnly = readOnlyProperty && readOnlyProperty == "1";
+    // TODO isReadOnly behaviour is to be modified in bug 8932
+    var isReadOnly = false;
+    
+    if (numSelected == 1) {
+      isReadOnly = !this.mediaListView.selection.currentMediaItem.userEditable;
+      // TODO Disable all editing
+    } else {
+      var items = this.mediaListView.selection.selectedIndexedMediaItems;
+      var readOnlyItemCount = 0;
+      while (items.hasMoreElements()) {
+        var item = items.getNext()
+                        .QueryInterface(Components.interfaces.sbIIndexedMediaItem)
+                        .mediaItem;
+        if (!item.userEditable) {
+          readOnlyItemCount++;
+        }
+      }
+      
+      isReadOnly = readOnlyItemCount > 0;
+      if (readOnlyItemCount == numSelected) {
+        // TODO Nothing is writeable.  Better disable all edit boxes.
+      }
+    }
     
     // update the notificationbox at the top.
     var notificationBox = document.getElementById("trackeditor-notification");
     
+    // update the notificationbox at the top.    
     notificationBox.removeAllNotifications();
     if (isReadOnly) {
       notificationBox.appendNotification("The current item may not be modified. The library is read-only.",
@@ -213,10 +237,11 @@ var TrackEditor = {
         var mediaItem = this.mediaListView.selection.currentMediaItem;
         var value = this.getPropertyValue(property, mediaItem);
         elt.removeAttribute("disabled");
-        if (isReadOnly)
+        if (isReadOnly) {
           elt.setAttribute("readonly", true);
-        else
+        } else {
           elt.removeAttribute("readonly");
+        }
         elt.clickSelectsAll = true;
       }
       else { // >1 selected
@@ -394,6 +419,7 @@ var TrackEditor = {
   },
   apply: function() {
     if (this.mediaListView.selection.count < 0) {
+      // TODO WTF, REMOVE THIS!
       alert("Apply what? Select some tracks, foo!");
       return;
     }
@@ -496,7 +522,7 @@ var TrackEditor = {
         .QueryInterface(Ci.sbIIndexedMediaItem)
         .mediaItem;
       
-      if (needsWriting[j]) {
+      if (needsWriting[j] && mI.userEditable) {
         mediaItemArray.appendElement(mI, false);
       }
     }

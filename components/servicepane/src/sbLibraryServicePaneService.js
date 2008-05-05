@@ -470,7 +470,7 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow
     dump('canDrop on a list\n');
     
     // check if the list is in a readonly library
-    if (parseInt(list.library.getProperty(SBProperties.isReadOnly))) {
+    if (!list.library.userEditable) {
       // this is a list for a readonly library, can't drop
       return false;
     }
