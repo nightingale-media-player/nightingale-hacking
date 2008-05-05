@@ -330,6 +330,14 @@
       <method name="_onFilterListDblClick">
         <body>
           <![CDATA[
+           var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                                .getService(Components.interfaces.sbIPlaylistPlayback);
+           var view = gPPS.playingView;
+
+           if (view != null) {
+             view.treeView.selection.currentIndex = 0;
+           }
+
            // Send a play event and hope someone cares
            var event = document.createEvent("Events");
            event.initEvent("Play", true, true);
