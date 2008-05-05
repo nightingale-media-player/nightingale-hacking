@@ -30,6 +30,8 @@
 
 function runTest() {
 
+  Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+
   var databaseGUID = "test_allowduplicates";
   var library = createLibrary(databaseGUID, null, false);
 
@@ -76,27 +78,44 @@ function runTest() {
       assertEqual(result, Cr.NS_OK);
       assertEqual(array.length, this.arrayLength);
       assertEqual(library.length, this.libraryLength);
+
+      // Verify that the media item content src matches the origin URL
+      for (var i = 0; i < array.length; i++) {
+        var mediaItem = array.queryElementAt(i, Ci.sbIMediaItem);
+        var originURL = mediaItem.getProperty(SBProperties.originURL);
+        assertEqual(mediaItem.contentSrc.spec, originURL);
+      }
+
       this.that.testFinished();
       test = null;
     }
   };
 
+  // Create media item properties to match media items to content src URI's.
+  var toAddProps =
+        Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  for (var i = 0; i < toAdd.length; i++) {
+    var uri = toAdd.queryElementAt(i, Ci.nsIURI);
+    var properties = [ [ SBProperties.originURL, uri.spec ] ];
+    toAddProps.appendElement(SBProperties.createArray(properties), false);
+  }
+
   // 2 tracks added, library will have 2 items, no duplicates
   listener.arrayLength = 2;
   listener.libraryLength = 2;
-  library.batchCreateMediaItemsAsync(listener, toAdd);
+  library.batchCreateMediaItemsAsync(listener, toAdd, toAddProps);
   testPending();
 
   // 0 tracks added, library will have 2 items, no duplicates
   listener.arrayLength = 0;
   listener.libraryLength = 2;
-  library.batchCreateMediaItemsAsync(listener, toAdd);
+  library.batchCreateMediaItemsAsync(listener, toAdd, toAddProps);
   testPending();
 
-  // 0 tracks added, library will have 2 items, duplicates allowed
+  // 4 tracks added, library will have 6 items, duplicates allowed
   listener.arrayLength = 4;
   listener.libraryLength = 6;
-  library.batchCreateMediaItemsAsync(listener, toAdd, null, true);
+  library.batchCreateMediaItemsAsync(listener, toAdd, toAddProps, true);
   testPending();
 
 }

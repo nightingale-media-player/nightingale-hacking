@@ -283,10 +283,12 @@ private:
   nsresult GetAllListsByType(const nsAString& aType, sbMediaListArray* aArray);
 
   nsresult FilterExistingURIs(nsIArray* aURIs, nsIArray** aFilteredURIs);
-  nsresult FilterExistingItems(nsIArray* aURIs, 
-                               const nsTArray<nsCString>& aHashes, 
+  nsresult FilterExistingItems(nsIArray* aURIs,
+                               const nsTArray<nsCString>& aHashes,
+                               nsIArray* aPropertyArrayArray,
                                nsIArray** aFilteredURIs,
-                               nsTArray<nsCString>& aFilteredHashes);
+                               nsTArray<nsCString>& aFilteredHashes,
+                               nsIArray** aFilteredPropertyArrayArray);
 
   nsresult GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID);
   nsresult GetGuidFromHash(const nsACString& aHash, nsAString &aGUID);

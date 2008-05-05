@@ -1871,11 +1871,14 @@ sbLocalDatabaseLibrary::FilterExistingURIs(nsIArray* aURIs,
   return NS_OK;
 }
 
-nsresult 
-sbLocalDatabaseLibrary::FilterExistingItems(nsIArray* aURIs, 
-                                            const nsTArray<nsCString>& aHashes, 
-                                            nsIArray** aFilteredURIs,
-                                            nsTArray<nsCString>& aFilteredHashes)
+nsresult
+sbLocalDatabaseLibrary::FilterExistingItems
+                          (nsIArray* aURIs,
+                           const nsTArray<nsCString>& aHashes,
+                           nsIArray* aPropertyArrayArray,
+                           nsIArray** aFilteredURIs,
+                           nsTArray<nsCString>& aFilteredHashes,
+                           nsIArray** aFilteredPropertyArrayArray)
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - FilterExistingItems()", this));
 
@@ -1897,6 +1900,14 @@ sbLocalDatabaseLibrary::FilterExistingItems(nsIArray* aURIs,
   nsCOMPtr<nsIMutableArray> filtered =
     do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIMutableArray> filteredPropertyArrayArray;
+  if (aPropertyArrayArray) {
+    filteredPropertyArrayArray = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    filteredPropertyArrayArray = nsnull;
+  }
 
   // If the incoming array is empty, do nothing
   if (length == 0 && 
@@ -2066,6 +2077,14 @@ sbLocalDatabaseLibrary::FilterExistingItems(nsIArray* aURIs,
       nsCString *element = aFilteredHashes.AppendElement(originalHashesOrder[i]);
       NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
 
+      if (aPropertyArrayArray && filteredPropertyArrayArray) {
+        nsCOMPtr<sbIPropertyArray> properties =
+          do_QueryElementAt(aPropertyArrayArray, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = filteredPropertyArrayArray->AppendElement(properties, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
       // Remove them as we find them so we don't include duplicates from the
       // original array
       uniques.Remove(originalOrder[i]);
@@ -2081,6 +2100,8 @@ sbLocalDatabaseLibrary::FilterExistingItems(nsIArray* aURIs,
   }
 
   NS_ADDREF(*aFilteredURIs = filtered);
+  if (aFilteredPropertyArrayArray)
+    NS_IF_ADDREF(*aFilteredPropertyArrayArray = filteredPropertyArrayArray);
 
   return NS_OK;
 }
@@ -2885,7 +2906,12 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
     nsCString *element = hashes.AppendElement(hash);
     NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
     
-    rv = FilterExistingItems(array, hashes, getter_AddRefs(filtered), filteredHashes);
+    rv = FilterExistingItems(array,
+                             hashes,
+                             nsnull,
+                             getter_AddRefs(filtered),
+                             filteredHashes,
+                             nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString guid;
@@ -3482,9 +3508,11 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
 
   nsCOMPtr<nsIArray> filteredArray;
   nsTArray<nsCString> filteredHashes;
+  nsCOMPtr<nsIArray> filteredPropertyArrayArray;
 
   if (aAllowDuplicates) {
     filteredArray = aURIArray;
+    filteredPropertyArrayArray = aPropertyArrayArray;
 
     rv = GetHashesForContentURIs(aURIArray, filteredHashes);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -3495,10 +3523,12 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
     rv = GetHashesForContentURIs(aURIArray, hashes);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = FilterExistingItems(aURIArray, 
-                             hashes, 
-                             getter_AddRefs(filteredArray), 
-                             filteredHashes);
+    rv = FilterExistingItems(aURIArray,
+                             hashes,
+                             aPropertyArrayArray,
+                             getter_AddRefs(filteredArray),
+                             filteredHashes,
+                             getter_AddRefs(filteredPropertyArrayArray));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -3526,7 +3556,10 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   }
 
   // Set up the batch add query
-  rv = helper->InitQuery(query, filteredArray, filteredHashes, aPropertyArrayArray);
+  rv = helper->InitQuery(query,
+                         filteredArray,
+                         filteredHashes,
+                         filteredPropertyArrayArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 dbResult;
