@@ -186,21 +186,25 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
 
   if(NS_FAILED(rv)) {
     // try to get the length from disk
-    nsCOMPtr<nsIThread> target;
-    rv = NS_GetMainThread(getter_AddRefs(target));
+    nsCOMPtr<sbIMediaItem> item(aItem);
+    
+    if (!NS_IsMainThread()) {
+      // Proxy item to get contentURI.
+      // Note that we do *not* call do_GetProxyForObject if we're already on
+      // the main thread - doing that causes us to process the next pending event
+      nsCOMPtr<nsIThread> target;
+      rv = NS_GetMainThread(getter_AddRefs(target));
+  
+      rv = do_GetProxyForObject(target,
+                                NS_GET_IID(sbIMediaItem),
+                                aItem,
+                                NS_PROXY_SYNC,
+                                getter_AddRefs(item));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
-    // Proxy item to get contentURI.
-    nsCOMPtr<sbIMediaItem> proxiedItem;
-    rv = do_GetProxyForObject(target,
-                              NS_GET_IID(sbIMediaItem),
-                              aItem,
-                              NS_PROXY_SYNC,
-                              getter_AddRefs(proxiedItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // If we fail to get it from the mime type, attempt to get it from the file extension.
     nsCOMPtr<nsIURI> contentURI;
-    rv = proxiedItem->GetContentSrc(getter_AddRefs(contentURI));
+    rv = item->GetContentSrc(getter_AddRefs(contentURI));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(contentURI, &rv);
