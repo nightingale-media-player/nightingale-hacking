@@ -152,6 +152,8 @@ interface sbIDevice : nsISupports
   const unsigned long STATE_DOWNLOAD_PAUSED = 8;
   const unsigned long STATE_UPLOAD_PAUSED   = 9;
   const unsigned long STATE_DISCONNECTED    = 10; // Device is disconnected
+  const unsigned long STATE_BUSY            = 11; // Busy with unspecified
+                                                  // operation
 
   const unsigned long STATE_USER            = 0x20000000;
 
