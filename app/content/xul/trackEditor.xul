@@ -67,7 +67,7 @@
 
   <notificationbox id="trackeditor-notification" flex="1">
   
-  <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox">
+  <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox" mousethrough="never">
     <tabs>
       <tab label="Summary"/>
       <tab label="Edit"/>
@@ -309,18 +309,19 @@
                      property="http://songbirdnest.com/data/1.0#rating"
                      multicheck="true"/>
             
-           <hbox>
-       <image
+            <hbox>
+              <image
                 class="art"
                 height="64"
                 width="64"
                 property="http://songbirdnest.com/data/1.0#primaryImageURL"/>
-       <box/><!-- spacerbox -->
-     </hbox>
-          </vbox>
-        </hbox>
+                <box/><!-- spacerbox -->
+              </hbox>
+            </vbox>
   
-      </vbox>
+          </hbox>
+
+        </vbox>
   
       <vbox id="lyrics-tab">
         <textbox flex="1"
