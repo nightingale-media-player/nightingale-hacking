@@ -1128,6 +1128,14 @@ sbBaseDevice::SetMediaListsHidden(sbIMediaList *aLibrary, PRBool aHidden)
   return rv;
 }
 
+nsresult sbBaseDevice::IgnoreMediaItem(sbIMediaItem * aItem) {
+  return mLibraryListener->IgnoreMediaItem(aItem);
+}
+
+nsresult sbBaseDevice::UnignoreMediaItem(sbIMediaItem * aItem) {
+  return mLibraryListener->UnignoreMediaItem(aItem);
+}
+
 nsresult 
 sbBaseDevice::DeleteItem(sbIMediaList *aLibrary, sbIMediaItem *aItem)
 {

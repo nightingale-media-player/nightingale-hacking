@@ -33,14 +33,81 @@
 #include "sbIMediaList.h"
 #include "sbBaseDevice.h"
 
+nsresult 
+sbBaseIgnore::SetIgnoreListener(PRBool aIgnoreListener) {
+  if (aIgnoreListener) {
+    PR_AtomicIncrement(&mIgnoreListenerCounter);
+  } else {
+    PRInt32 result = PR_AtomicDecrement(&mIgnoreListenerCounter);
+    NS_ASSERTION(result >= 0, "invalid device library ignore listener counter");
+  }
+  return NS_OK;
+}
+
+nsresult sbBaseIgnore::IgnoreMediaItem(sbIMediaItem * aItem) {
+  NS_ENSURE_ARG_POINTER(aItem);
+  
+  nsString guid;
+  nsresult rv = aItem->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsAutoLock lock(mLock);
+  
+  PRInt32 itemCount = 0;
+  // We don't care if this fails, itemCount is zero in that case which is fine
+  // We have to assume failure is always due to "not found"
+  mIgnored.Get(guid, &itemCount);
+  if (!mIgnored.Put(guid, ++itemCount))
+    return NS_ERROR_FAILURE;
+
+  return NS_OK;
+}
+
+/**
+ * Returns PR_TRUE if the item is currently being ignored
+ */
+PRBool sbBaseIgnore::MediaItemIgnored(sbIMediaItem * aItem) {
+  NS_ENSURE_ARG_POINTER(aItem);
+  
+  nsString guid;
+  // If ignoring all or ignoring this specific item return PR_TRUE
+  if (mIgnoreListenerCounter > 0)
+    return PR_TRUE;
+  nsAutoLock lock(mLock);
+  nsresult rv = aItem->GetGuid(guid);
+  
+  // If the guid was valid and it's in our ignore list then it's ignored
+  return (NS_SUCCEEDED(rv) && mIgnored.Get(guid, nsnull)) ? PR_TRUE : 
+                                                            PR_FALSE;
+}
+
+nsresult sbBaseIgnore::UnignoreMediaItem(sbIMediaItem * aItem) {
+  nsString guid;
+  nsresult rv = aItem->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsAutoLock lock(mLock);
+  PRInt32 itemCount = 0;
+  if (!mIgnored.Get(guid, &itemCount)) {
+    // We're out of balance at this point
+    return NS_ERROR_FAILURE;
+  }
+  // If the item count is less than zero then remove the guid else just decrement it
+  if (--itemCount == 0) {
+    mIgnored.Remove(guid);
+  }
+  else
+    mIgnored.Put(guid, itemCount);
+  return NS_OK;
+}
+
 //sbBaseDeviceLibraryListener class.
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceLibraryListener, 
                               sbIDeviceLibraryListener,
                               nsISupportsWeakReference);
 
 sbBaseDeviceLibraryListener::sbBaseDeviceLibraryListener() 
-: mDevice(nsnull),
-  mIgnoreListenerCounter(0)
+: mDevice(nsnull)
 {
 }
 
@@ -55,18 +122,6 @@ sbBaseDeviceLibraryListener::Init(sbBaseDevice* aDevice)
 
   mDevice = aDevice;
 
-  return NS_OK;
-}
-
-nsresult 
-sbBaseDeviceLibraryListener::SetIgnoreListener(PRBool aIgnoreListener)
-{
-  if (aIgnoreListener) {
-    PR_AtomicIncrement(&mIgnoreListenerCounter);
-  } else {
-    PRInt32 result = PR_AtomicDecrement(&mIgnoreListenerCounter);
-    NS_ASSERTION(result >= 0, "invalid device library ignore listener counter");
-  }
   return NS_OK;
 }
 
@@ -106,7 +161,7 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if(mIgnoreListenerCounter > 0) {
+  if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
 
@@ -160,7 +215,7 @@ sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
 
   *aNoMoreForBatch = PR_FALSE;
 
-  if(mIgnoreListenerCounter > 0) {
+  if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
   
@@ -185,7 +240,7 @@ sbBaseDeviceLibraryListener::OnListCleared(sbIMediaList *aMediaList,
   
   /* yay, we're going to wipe the device! */
 
-  if(mIgnoreListenerCounter > 0) {
+  if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
   
@@ -211,7 +266,7 @@ sbBaseDeviceLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
 
   *aNoMoreForBatch = PR_FALSE;
 
-  if(mIgnoreListenerCounter > 0) {
+  if(MediaItemIgnored(aMediaItem)) {
     return NS_OK;
   }
 
@@ -235,7 +290,7 @@ sbBaseDeviceLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
   
   *aNoMoreForBatch = PR_FALSE;
   
-  if(mIgnoreListenerCounter > 0) {
+  if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
 
@@ -320,8 +375,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryCopyListener,
                               sbILocalDatabaseMediaListCopyListener);
 
 sbDeviceBaseLibraryCopyListener::sbDeviceBaseLibraryCopyListener()
-: mDevice(nsnull),
-  mIgnoreListener(PR_FALSE)
+: mDevice(nsnull)
 {
 
 }
@@ -338,13 +392,6 @@ sbDeviceBaseLibraryCopyListener::Init(sbBaseDevice* aDevice)
 
   mDevice = aDevice;
 
-  return NS_OK;
-}
-
-nsresult 
-sbDeviceBaseLibraryCopyListener::SetIgnoreListener(PRBool aIgnoreListener)
-{
-  mIgnoreListener = aIgnoreListener;
   return NS_OK;
 }
 
@@ -367,8 +414,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseDeviceMediaListListener,
                               sbIMediaListListener)
 
 sbBaseDeviceMediaListListener::sbBaseDeviceMediaListListener()
-: mDevice(nsnull),
-  mIgnoreListener(PR_FALSE)
+: mDevice(nsnull)
 {
   
 }
@@ -387,13 +433,6 @@ sbBaseDeviceMediaListListener::Init(sbBaseDevice* aDevice)
   return NS_OK;
 }
 
-nsresult 
-sbBaseDeviceMediaListListener::SetIgnoreListener(PRBool aIgnoreListener)
-{
-  mIgnoreListener = aIgnoreListener;
-  return NS_OK;
-}
-
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnItemAdded(sbIMediaList *aMediaList,
                                            sbIMediaItem *aMediaItem,
@@ -404,7 +443,7 @@ sbBaseDeviceMediaListListener::OnItemAdded(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
 
-  if(mIgnoreListener) {
+  if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
 
@@ -451,7 +490,7 @@ sbBaseDeviceMediaListListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
 
-  if(mIgnoreListener) {
+  if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
 
@@ -486,7 +525,7 @@ sbBaseDeviceMediaListListener::OnItemMoved(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
 
-  if(mIgnoreListener) {
+  if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
 
@@ -513,6 +552,9 @@ sbBaseDeviceMediaListListener::OnListCleared(sbIMediaList *aMediaList,
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnBatchBegin(sbIMediaList *aMediaList)
 {
+  if(MediaItemIgnored(aMediaList)) {
+    return NS_OK;
+  }
   return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_BEGIN,
                               nsnull, aMediaList);
 }
@@ -520,6 +562,9 @@ sbBaseDeviceMediaListListener::OnBatchBegin(sbIMediaList *aMediaList)
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnBatchEnd(sbIMediaList *aMediaList)
 {
+  if(MediaItemIgnored(aMediaList)) {
+    return NS_OK;
+  }
   return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_END,
                               nsnull, aMediaList);
 }

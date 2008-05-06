@@ -235,8 +235,8 @@ public:
    * library for this device
    * \param aIgnoreListener Ignore flag value.
    */
-
   nsresult SetIgnoreLibraryListener(PRBool aIgnoreListener);
+
   /**
    * Set all media lists in the library hidden. This is useful
    * for hiding the lists during mounting operations.
@@ -244,6 +244,16 @@ public:
    * \param aHidden True to hide, false to show.
    */
   nsresult SetMediaListsHidden(sbIMediaList *aLibrary, PRBool aHidden);
+
+  /**
+   * Ignores events for the given media item
+   */
+  nsresult IgnoreMediaItem(sbIMediaItem * aItem);
+  
+  /**
+   * Restores listening to events for the given item
+   */
+  nsresult UnignoreMediaItem(sbIMediaItem * aItem);
 
   /**
    * Delete an item from the library and suppress notifications during

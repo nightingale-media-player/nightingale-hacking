@@ -30,14 +30,62 @@
 #include "sbIMediaListListener.h"
 #include <sbStandardProperties.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
+#include <nsDataHashtable.h>
 #include <nsWeakReference.h>
 
 class sbBaseDevice;
 class sbIDevice;
 
+/**
+ * This class provides the common ignore logic for listener helpers
+ */
+class sbBaseIgnore
+{
+public:
+  /**
+   * Ignores all items. This obviously will supersede item specific ignores
+   */
+  nsresult SetIgnoreListener(PRBool aIgnoreListener);
+  /**
+   * Sets an ignore for a given item. Returns PR_FALSE if the item is already
+   * being ignored
+   */
+  nsresult IgnoreMediaItem(sbIMediaItem * aItem);
+  /**
+   * Resumes listening for an item if it has been ignored
+   */
+  nsresult UnignoreMediaItem(sbIMediaItem * aItem);
+protected:
+  /**
+   * Returns PR_TRUE if the item is currently being ignored
+   */
+  PRBool MediaItemIgnored(sbIMediaItem * aItem);
+  /**
+   * Initializes the lock and ignore listener count
+   */
+  sbBaseIgnore() : mLock(nsAutoLock::NewLock("sbBaseIgnore::mLock")), 
+                   mIgnoreListenerCounter(0) {
+    mIgnored.Init();
+    NS_ASSERTION(mLock, "Failed to allocate sbBaseIgnore::mLock");
+  }
+  /**
+   * Destroys the lock and various other cleanup
+   */
+  ~sbBaseIgnore() {
+    nsAutoLock::DestroyLock(mLock);
+    mLock = nsnull;
+  }
+private:
+  nsDataHashtable<nsStringHashKey,PRInt32> mIgnored;
+  PRLock * mLock;
+  PRInt32 mIgnoreListenerCounter;
+};
+
 class sbBaseDeviceLibraryListener : public sbIDeviceLibraryListener,
-                                    public nsSupportsWeakReference
+                                    public nsSupportsWeakReference,
+                                    public sbBaseIgnore
 {
 public:
   NS_DECL_ISUPPORTS
@@ -48,16 +96,13 @@ public:
 
   nsresult Init(sbBaseDevice* aDevice);
 
-  nsresult SetIgnoreListener(PRBool aIgnoreListener);
-
 protected:
   // The device owns the listener, so use a non-owning reference here
   sbBaseDevice* mDevice;
-
-  PRInt32 mIgnoreListenerCounter;
 };
 
-class sbDeviceBaseLibraryCopyListener : public sbILocalDatabaseMediaListCopyListener
+class sbDeviceBaseLibraryCopyListener : public sbILocalDatabaseMediaListCopyListener,
+                                        public sbBaseIgnore
 {
 public:
   NS_DECL_ISUPPORTS
@@ -68,16 +113,13 @@ public:
 
   nsresult Init(sbBaseDevice* aDevice);
 
-  nsresult SetIgnoreListener(PRBool aIgnoreListener);
-
 protected:
   // The device owns the listener, so use a non-owning reference here
   sbBaseDevice* mDevice;
-  
-  PRBool mIgnoreListener;
 };
 
-class sbBaseDeviceMediaListListener : public sbIMediaListListener
+class sbBaseDeviceMediaListListener : public sbIMediaListListener,
+                                      public sbBaseIgnore
 {
 public:
   NS_DECL_ISUPPORTS
@@ -87,13 +129,9 @@ public:
   
   nsresult Init(sbBaseDevice* aDevice);
 
-  nsresult SetIgnoreListener(PRBool aIgnoreListener);
-
 protected:
   virtual ~sbBaseDeviceMediaListListener();
 
   // The device owns the listener, so use a non-owning reference here
   sbBaseDevice* mDevice;
-
-  PRBool mIgnoreListener;
 };
