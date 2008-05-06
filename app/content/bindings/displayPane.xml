@@ -470,22 +470,34 @@
             instantiator.QueryInterface(Components.interfaces.sbIDisplayPaneInstantiator);
             instantiator.QueryInterface(Components.interfaces.nsIDOMXULElement);
             item = document.createElement("menuitem");
+            var isCollapsed = instantiator.collapsed;
             var label = instantiator.contentGroup;
             if (instantiator.hasAttribute("label")) {
               label = instantiator.getAttribute("label");
             }
-            item.setAttribute("label", label);
-            item.setAttribute("target", instantiator.id);
 
-            var oncommand = function(aEvent, aId) {
+            var strKey = (isCollapsed ? "menu.displaypane.title.show" : "menu.displaypane.title.hide");
+            var labelPrefix = this.getLocalizedString(strKey);
+            item.setAttribute("label", labelPrefix + " " + label);
+            item.setAttribute("target", instantiator.id);
+            
+            var loadcmd = function(aEvent, aId) {
               var binding = document.getElementById(aId);
               var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
                                       .getService(Components.interfaces.sbIDisplayPaneManager);
               var paneinfo = paneMgr.defaultPaneInfo;
               binding.loadContent(paneinfo);
             }
+            var unloadcmd = function(aEvent, aId) {
+              var binding = document.getElementById(aId);
+              var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                                      .getService(Components.interfaces.sbIDisplayPaneManager);
+              binding.hide();
+            }
             item.setAttribute("oncommand",
-                              "(" + uneval(oncommand) + ")(event, '" + instantiator.id + "')");
+                              "(" + 
+                              (instantiator.collapsed ? (uneval(loadcmd)) : (uneval(unloadcmd))) + 
+                              ")(event, '" + instantiator.id + "')");
             item.className = "menuitem-iconic displaypane-topmenu";
 
             this.parentNode.insertBefore(item, this);
@@ -495,6 +507,31 @@
           Components.utils.reportError(e);
         }
         ]]></xbl:body>
+      </xbl:method>
+      <xbl:method name="getLocalizedString">
+        <xbl:parameter name="aKey" />
+        <xbl:body>
+          <![CDATA[
+            if (!this._strBundle) {
+              var retVal = "";
+              
+              var strBundleService = 
+                Components.classes["@mozilla.org/intl/stringbundle;1"]
+                  .getService(Components.interfaces.nsIStringBundleService); 
+              
+              this._strBundle = 
+                strBundleService.createBundle("chrome://songbird/locale/songbird.properties");          
+            }
+            
+            try {
+              retVal = this._strBundle.GetStringFromName(aKey);
+            }
+            catch (e) {
+            }
+            
+            return retVal;
+          ]]>
+        </xbl:body>
       </xbl:method>
     </xbl:implementation>
   </xbl:binding>

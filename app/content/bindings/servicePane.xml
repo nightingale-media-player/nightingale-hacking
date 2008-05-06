@@ -51,7 +51,7 @@
           <xul:grippy/>
         </xul:sb-smart-splitter>
         <xul:sb-displaypane id="displaypane_servicepane_bottom"
-                            label="&displaypane.servicepane.label;"
+                            label="&displaypane.name.servicepane;"
                             splitter="displaypane_servicepane_bottom_splitter"
                             contentgroup="servicepane"/>
       </xul:vbox>

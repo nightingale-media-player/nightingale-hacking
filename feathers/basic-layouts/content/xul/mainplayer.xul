@@ -162,7 +162,7 @@
             <grippy/>
           </sb-smart-splitter>
           <sb-displaypane id="displaypane_right_sidebar" contentgroup="sidebar"
-                          orient="vertical" label="&displaypane.sidebar.label;"
+                          orient="vertical" label="&displaypane.name.sidebar;"
                           splitter="displaypane_right_sidebar_splitter"/>
         </hbox>
       </vbox>
