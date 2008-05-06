@@ -350,7 +350,7 @@ sbLocalDatabaseQuery::GetResortQuery(nsAString& aQuery)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    // Join the properties tabe to apply the constraint
+    // Join the properties table to apply the constraint
     rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
                            PROPERTIES_TABLE,
                            CONPROP_ALIAS,
@@ -484,7 +484,7 @@ sbLocalDatabaseQuery::AddCountColumns()
     }
     else {
       rv = mBuilder->AddColumn(EmptyString(),
-                               NS_LITERAL_STRING("count(distinct _d.obj)"));
+                               NS_LITERAL_STRING("count(distinct _d.obj_sortable)"));
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -1135,7 +1135,7 @@ sbLocalDatabaseQuery::AddDistinctConstraint()
 {
   nsresult rv;
 
-  // When doing a distict query, add a constraint so we only select media items
+  // When doing a distinct query, add a constraint so we only select media items
   // that have a value for the primary sort
   if (SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
     nsAutoString columnName;
@@ -1186,7 +1186,7 @@ sbLocalDatabaseQuery::AddDistinctConstraint()
 
     nsCOMPtr<sbISQLBuilderCriterion> notEmptyString;
     rv = mBuilder->CreateMatchCriterionString(DISTINCT_ALIAS,
-                                              OBJ_COLUMN,
+                                              OBJSORTABLE_COLUMN,
                                               sbISQLSelectBuilder::MATCH_NOTEQUALS,
                                               EmptyString(),
                                               getter_AddRefs(notEmptyString));
@@ -1243,7 +1243,7 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
     else {
       nsCOMPtr<sbISQLBuilderCriterion> notEmptyString;
       rv = mBuilder->CreateMatchCriterionString(SORT_ALIAS,
-                                                OBJ_COLUMN,
+                                                OBJSORTABLE_COLUMN,
                                                 sbISQLSelectBuilder::MATCH_NOTEQUALS,
                                                 EmptyString(),
                                                 getter_AddRefs(notEmptyString));
@@ -1252,7 +1252,7 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
       rv = mBuilder->AddCriterion(notEmptyString);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mBuilder->AddGroupBy(SORT_ALIAS, OBJ_COLUMN);
+      rv = mBuilder->AddGroupBy(SORT_ALIAS, OBJSORTABLE_COLUMN);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
