@@ -1420,16 +1420,7 @@
         <parameter name="evt"/>
         <body>
         <![CDATA[
-          var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                            .getService(Components.interfaces.nsIWindowMediator);
-          var theTE = wm.getMostRecentWindow("Songbird:TrackEditor");
-          if (theTE) {
-            theTE.focus();
-          } else {
-            const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
-            const TEFEATURES = "chrome,centerscreen=yes,toolbar=no,popup=no,modal=yes,resizable=no";
-            SBOpenWindow(TEURL, "track_editor", TEFEATURES, this, null);
-          }
+          SBTrackEditorOpen();
         ]]>
         </body>
       </method>

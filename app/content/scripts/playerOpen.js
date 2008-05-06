@@ -524,27 +524,63 @@ function SBExtensionsManagerOpen( parentWindow )
   parentWindow.openDialog(EM_URL, "", EM_FEATURES);
 }
 
-function SBTrackEditorOpen( parentWindow, playlist )
-{
-  var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                     .getService(Components.interfaces.nsIWindowMediator);
-  var theTE = wm.getMostRecentWindow("Songbird:TrackEditor");
-  if (theTE) {
-    theTE.focus();
-  } else {
-    const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
-    const TEFEATURES = "chrome,centerscreen=yes,toolbar=no,popup=no,modal=yes,resizable=no";
-    
-    // HAAAAAAAAAACK. The track editor is a) broken and b) depends on the playlist
-    if (!playlist) {
-      if (gBrowser.currentMediaPage && gBrowser.currentMediaPage._playlist) {
-        playlist = gBrowser.currentMediaPage._playlist;
+function SBTrackEditorOpen( parentWindow, playlist ) {
+  var browser;
+  if (typeof SBGetBrowser == 'function') 
+    browser = SBGetBrowser();
+  if (browser) {
+    if (browser.currentMediaPage) {
+      var view = browser.currentMediaPage.mediaListView;
+      if (view) {
+        var numSelected = view.selection.count;
+        if (numSelected > 1) {
+          const BYPASSKEY = "trackeditor.multiplewarning.bypass";
+          const STRINGROOT = "trackeditor.multiplewarning.";
+          if (!SBDataGetBoolValue(BYPASSKEY)) {
+            var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                          .getService(Components.interfaces.nsIPromptService);
+            check = { value: false };
+            
+            var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                                .getService(Components.interfaces.nsIStringBundleService);
+            var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+            var strTitle = songbirdStrings.GetStringFromName(STRINGROOT + "title");
+            var strMsg = songbirdStrings.formatStringFromName(STRINGROOT + "message", [numSelected], 1);
+            var strCheck = songbirdStrings.GetStringFromName(STRINGROOT + "check");
+            
+            var r = promptService.confirmEx(window, 
+                                    strTitle, 
+                                    strMsg, 
+                                    Ci.nsIPromptService.STD_YES_NO_BUTTONS, 
+                                    null, 
+                                    null, 
+                                    null, 
+                                    strCheck, 
+                                    check);
+            if (check.value == true) {
+              SBDataSetBoolValue(BYPASSKEY, true);
+            }
+            if (r == 1) { // 0 = yes, 1 = no
+              return;
+            }
+          }
+        }
+         
+        // xxxlone> note that the track editor is modal, so the window will 
+        // never exist. the code is left here in case we ever change back to
+        // a modeless track editor.
+        var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                           .getService(Components.interfaces.nsIWindowMediator);
+        var theTE = wm.getMostRecentWindow("Songbird:TrackEditor");
+        if (theTE) {
+          theTE.focus();
+        } else {
+          const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
+          const TEFEATURES = "chrome,centerscreen=yes,toolbar=no,popup=no,modal=yes,resizable=no";
+          SBOpenWindow(TEURL, "Songbird:TrackEditor", TEFEATURES, this, parentWindow);
+        }
       }
     }
-    if (!playlist) {
-      playlist = gBrowser.currentOuterPlaylist;
-    }
-    SBOpenWindow(TEURL, "track_editor", TEFEATURES, playlist, null);
   }
 }
 
