@@ -5,6 +5,7 @@ bin_files="regxpcom*
            xpidl*
            xpt_dump*
            xpt_link*
+           mozcrt19*
 "
 
 # lib_files are relative to $objdir/dist/lib/
