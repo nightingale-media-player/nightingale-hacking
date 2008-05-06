@@ -429,28 +429,33 @@ deviceControlWidget.prototype = {
     this._currentReadOnly = readOnly;
 
     // Update widget attributes.
-    this._updateAttribute("accesskey");
-    this._updateAttribute("action");
-    this._updateAttribute("disabled");
-    this._updateAttribute("label");
+    var updateAttributeList = [];
+    this._updateAttribute("accesskey", updateAttributeList);
+    this._updateAttribute("action", updateAttributeList);
+    this._updateAttribute("disabled", updateAttributeList);
+    this._updateAttribute("label", updateAttributeList);
 
     // Update bound element attributes.
     if (this._boundElem != this._widget) {
       DOMUtils.copyAttributes(this._widget,
                               this._boundElem,
-                              [ "label", "accesskey", "action", "disabled" ]);
+                              updateAttributeList,
+                              true);
     }
   },
 
 
   /**
    * Update the widget attribute specified by aAttrName to reflect changes to
-   * the device state.
+   * the device state.  If a value is specified for the attribute, add the
+   * attribute name to the attribute update list specified by aAttrList.
    *
    * \param aAttrName           Name of attribute to update.
+   * \param aAttrList           List of attributes to update.
    */
 
-  _updateAttribute: function deviceControlWidget__updateAttribute(aAttrName) {
+  _updateAttribute: function deviceControlWidget__updateAttribute(aAttrName,
+                                                                  aAttrList) {
     // Get the attribute value for the current state.
     attrVal = {};
     if (this._currentReadOnly &&
@@ -469,12 +474,19 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "busy")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_IDLE) &&
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
-    else this._getStateAttribute(attrVal, aAttrName, "default");
+    else if (this._getStateAttribute(attrVal, aAttrName, "default")) {}
+    else this._getStateAttribute(attrVal, aAttrName, null);
 
     // Do nothing if no attribute value to set.
     if ((typeof(attrVal.value) == "undefined") || (attrVal.value == null))
       return;
     attrVal = attrVal.value;
+
+    // If attribute value is "remove_attribute", remove the attribute instead
+    // of setting it.
+    var removeAttr = false;
+    if (attrVal == "remove_attribute")
+      removeAttr = true;
 
     // Replace "device_model_cap" in attribute value with the device
     // model/capacity string.
@@ -484,15 +496,21 @@ deviceControlWidget.prototype = {
     }
 
     // Update attribute value.
-    this._widget.setAttribute(aAttrName, attrVal);
+    if (!removeAttr)
+      this._widget.setAttribute(aAttrName, attrVal);
+    else
+      this._widget.removeAttribute(aAttrName);
+    aAttrList.push(aAttrName);
   },
 
 
   /**
-   * Get the state attribute value for the attribute with the name specified by
-   * aAttrName and the state specified by aAttrState.  Return the state
+   *   Get the state attribute value for the attribute with the name specified
+   * by aAttrName and the state specified by aAttrState.  Return the state
    * attribute value in aAttrVal.  If a state attribute value is available,
    * return true; otherwise return false and don't return anything in aAttrVal.
+   *   If aAttrState is not specified, simply return the attribute with the name
+   * specified by aAttrName.
    *
    * \param aAttrVal            Returned state attribute value.
    * \param aAttrName           Attribute name.
@@ -506,7 +524,9 @@ deviceControlWidget.prototype = {
                                   aAttrName,
                                   aAttrState) {
     // Get the state attribute name.
-    var stateAttrName = aAttrName + "_" + aAttrState;
+    var stateAttrName = aAttrName;
+    if (aAttrState)
+      stateAttrName += "_" + aAttrState;
 
     // Return false if no state attribute value available.
     if (!this._widget.hasAttribute(stateAttrName))

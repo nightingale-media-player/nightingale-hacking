@@ -98,18 +98,21 @@
                        showid="name"
                        crop="end"
                        hidden="true"/>
+
             <xul:button sbid="more_info_button"
                         class="more-info-button"
                         showid="moreinfo"
-                        action="more_info"
-                        oncommand="DIW.onAction(event);"
                         hidden="true"/>
+            <xul:sb-device-get-info-command bindelem="prev"
+                                            xbl:inherits="device-id"/>
+
             <xul:button sbid="eject_button"
                         class="eject-button"
                         showid="eject"
-                        action="eject"
-                        oncommand="DIW.onAction(event);"
                         hidden="true"/>
+            <xul:sb-device-eject-command bindelem="prev"
+                                         xbl:inherits="device-id"/>
+
           </xul:hbox>
 
           <!-- Device specs. -->

@@ -73,9 +73,12 @@
    *
    *   Actions
    *   =======
+   *   cancel                   Cancel all device operations.
    *   eject                    Eject device.
+   *   get_info                 Display device info.
    *   new_playlist             Create new device playlist.
    *   rename                   Rename device.
+   *   sync                     Sync device.
    *
    *   Binding specs
    *   =============
@@ -88,6 +91,7 @@
    *   ===============
    *   device_model_cap         Set to the device model/capacity string (e.g.,
    *                            "Apple iPod(3.8GB)").
+   *   remove_attribute         Remove the attribute.
    *
    *   Events
    *   ======
@@ -98,6 +102,7 @@
    *   This widget may be bound to a device by setting the "device-id"
    * attribute.  When the widget is bound to a device, the "deviceBound" event
    * is dispatched.
+   *
    *   This widget updates its attributes based upon the device state.  These
    * attributes include the accesskey, action, disabled, and label attributes.
    * The attribute setting for a particular state is specified with an attribute
@@ -111,10 +116,14 @@
    * device state changes and updates the attribute state settings accordingly.
    * Otheriwse, the attribute state settings are only updated when the widget is
    * bound to a device.
+   *
    *   The widget provides support for psuedo-entities in attribute state
    * setting values.  A psuedo-entity string is replaced with a matching string
    * value.  For example, anywhere "device_model_cap" appears in an attribute
    * state setting, it may be replaced by "Apple iPod(3.8GB)".
+   *   If an attribute state setting value is equal to the psuedo-entity
+   * "remove_attribute", the attribute is removed for that state.
+   *
    *   Device control widgets may be bound to other elements.  The device
    * control state attribute values are copied to the bound element.  The
    * element to which a device control widget is bound is set with the bindelem
@@ -123,6 +132,7 @@
    * device control binding may be forwarded using the bindforward attribute.
    * If the bindforward attribute is set, the bindelem binding spec is relative
    * to the bindforward specified element.
+   *
    *   The device control widget provides a "command" event handler.  The action
    * taken by this handler is specified by the action attribute.
    *
@@ -260,7 +270,7 @@
                          accesskey="&command.device.ejectdevice.accesskey;"
                          action="eject"
                          listentodevice="true"
-                         disabled_default="false"
+                         disabled_default="remove_attribute"
                          disabled_busy="true"/>
     </content>
   </binding>
@@ -327,7 +337,7 @@
                          accesskey="&menu.file.new.accesskey;"
                          action="new_playlist"
                          listentodevice="true"
-                         disabled_default="false"
+                         disabled_default="remove_attribute"
                          disabled_readonly="true"/>
     </content>
   </binding>
@@ -393,7 +403,7 @@
         accesskey_update="&command.device.canceldeviceupdate.accesskey;"
         action_update="cancel"
 
-        disabled_default="false"
+        disabled_default="remove_attribute"
         disabled_mount="true"/>
     </content>
   </binding>

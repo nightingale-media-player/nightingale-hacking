@@ -367,36 +367,6 @@ var DIW = {
 
   //----------------------------------------------------------------------------
   //
-  // Device info event handler services.
-  //
-  //----------------------------------------------------------------------------
-
-  /**
-   * \brief Handle the event specified by aEvent for elements with defined
-   *        actions.
-   *
-   * \param aEvent              Event to handle.
-   */
-
-  onAction: function DIW_onAction(aEvent) {
-    // Dispatch processing of action.
-    switch (aEvent.target.getAttribute("action")) {
-      case "eject" :
-        this._eject();
-        break;
-
-      case "more_info" :
-        this._presentMoreInfo();
-        break;
-
-      default :
-        break;
-    }
-  },
-
-
-  //----------------------------------------------------------------------------
-  //
   // Device info XUL services.
   //
   //----------------------------------------------------------------------------
@@ -537,21 +507,6 @@ var DIW = {
 
     // Update the device specs.
     this._deviceSpecUpdateAll();
-  },
-
-
-  /**
-   * \brief Present the more info dialog.
-   */
-
-  _presentMoreInfo: function DIW__presentMoreInfo() {
-    SBWindow.openModalDialog
-               (window,
-                "chrome://songbird/content/xul/device/deviceInfoDialog.xul",
-                "",
-                "chrome,centerscreen",
-                [ this._device ],
-                null);
   },
 
 
@@ -818,16 +773,7 @@ var DIW = {
       // default image dictated by CSS.
       return null;
     }
-  },
-
-
-  /**
-   * \brief Eject the device.
-   */
-
-  _eject: function DIW__eject() {
-    this._device.eject();
-  },
+  }
 };
 
 

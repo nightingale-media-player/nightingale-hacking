@@ -142,24 +142,33 @@ var DOMUtils = {
   /**
    * Copy the attributes specified by aAttributeList from the element specified
    * by aSrcElem to the element specified by aDstElem.  If an attribute is not
-   * set in aSrcElem, do not change that attribute in aDstElem.
+   * set in aSrcElem, do not change that attribute in aDstElem unless
+   * aRemoveAttributes is true; if aRemoveAttributes is true, remove the
+   * attribute from aDstElem.
    *
    * \param aSrcElem            Source element.
    * \param aDstElem            Destination element.
    * \param aAttributeList      Array of attribute names.
+   * \param aRemoveAttributes   Remove attributes from aDstElem that aren't set
+   *                            in aSrcElem.
    */
 
   copyAttributes: function DOMUtils_copyAttributes(aSrcElem,
                                                    aDstElem,
-                                                   aAttributeList) {
+                                                   aAttributeList,
+                                                   aRemoveAttributes) {
     // Copy the attributes.
     for (var i = 0; i < aAttributeList.length; i++) {
       // Get attribute name.
       var attribute = aAttributeList[i];
 
-      // Do nothing if source element does not have the attribute.
-      if (!aSrcElem.hasAttribute(attribute))
+      // If source element does not have the attribute, do nothing or remove
+      // the attribute as specified.
+      if (!aSrcElem.hasAttribute(attribute)) {
+        if (aRemoveAttributes)
+          aDstElem.removeAttribute(attribute);
         continue;
+      }
 
       // Copy the attribute from the source element to the destination if the
       // attribute values differ.
