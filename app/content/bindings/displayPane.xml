@@ -74,7 +74,6 @@
                   <dummy anonid="items_all_end"/>
                 </menupopup>
               </menu>
-              <menuseparator/>
               <menuitem label="&menu.displaypane.get;" oncommand="onMenu(this)"
                         value="songbird.url.addons"/>
             </menupopup>
@@ -87,14 +86,13 @@
     
     <xbl:implementation implements="sbIDisplayPaneInstantiator">
       <xbl:constructor><![CDATA[
-      try{
+      try {
         this._lastURL = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
                                   .createInstance(Components.interfaces.sbIDataRemote);
-	// if the stateid attribute doesn't exist, fall back to id.
-	// (and if that fails too, use contentGroup)
-	var stateid = this.getAttribute("stateid") ||
-	              this.id ||
-		      this.contentGroup;
+                                  
+      	// if the stateid attribute doesn't exist, fall back to id.
+      	// (and if that fails too, use contentGroup)
+      	var stateid = this.getAttribute("stateid") || this.id || this.contentGroup;
         this._lastURL.init("displayPanes." + stateid + ".lastURL", null);
 
         // do not register until our browser is ready
@@ -312,6 +310,7 @@
           
           // actually generate the menu items
           function buildList(aEndMarker, aArray, aBinding, aHeader) {
+            var shouldInsertSeparator = false;
             aArray.sort(addonPaneSorter);
             for each (var item in aArray) {
               var elem = document.createElement("menuitem");
@@ -335,7 +334,16 @@
               elem.setAttribute("oncommand",
                                 "(" + uneval(oncommand) + ")(event, '" + aBinding.id + "')");
               aEndMarker.parentNode.insertBefore(elem, aEndMarker);
+
+              shouldInsertSeparator = true;
             }
+            
+            // Only draw a separator if we inserted a least one menuitem.
+            if (shouldInsertSeparator) {
+              var sep = document.createElement("menuseparator");
+              aEndMarker.parentNode.insertBefore(sep, aEndMarker);
+            }
+              
             aBinding._getElem(aHeader).collapsed = (aArray.length < 1);
           }
           buildList(endRecommend, recommended, this, "items_recommended");
@@ -436,11 +444,7 @@
             
           var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
                                   .getService(Components.interfaces.sbIDisplayPaneManager);
-
-          // if there are no display panes don't add the submenus
-          if ( !paneMgr.contentList.hasMoreElements() )
-            return;
-
+          
           var enumerator = paneMgr.instantiatorsList;
           if (enumerator.hasMoreElements()) {
             // do we need a separator?
