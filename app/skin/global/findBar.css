@@ -49,9 +49,9 @@ findbar .checkbox-check {
 findbar > .find-field-container > textbox.findbar-textbox {
   -moz-binding: url("chrome://global/content/bindings/findbar.xml#findbar-textbox");
   -moz-appearance: none;
-  height: 21px !important;
+  min-height: 21px !important;
   width: 150px !important;
-  margin:0 8px 0 0;
+  margin:0 8px 0 0 !important;
   padding: 3px 4px 1px;
 }
 findbar > .find-field-container > textbox.findbar-textbox[status="notfound"] {
