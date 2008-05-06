@@ -910,6 +910,24 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Peristent ID of the object on the device (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEVICE_PERISTENT_ID), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Playcount when last sync'd (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_PLAYCOUNT), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Skip count when last sync'd (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_SKIPCOUNT), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

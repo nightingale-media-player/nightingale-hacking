@@ -98,4 +98,10 @@
 #define SB_PROPERTY_ONLY_CUSTOM_MEDIAPAGES    "http://songbirdnest.com/data/1.0#onlyCustomMediaPages"
 #define SB_PROPERTY_AVAILABILITY              "http://songbirdnest.com/data/1.0#availability"
 #define SB_PROPERTY_ALBUMARTISTNAME           "http://songbirdnest.com/data/1.0#albumArtistName"
+
+// Device library specific properties
+#define SB_PROPERTY_DEVICE_PERISTENT_ID       "http://songbirdnest.com/data/1.0#deviceId"
+#define SB_PROPERTY_LAST_SYNC_PLAYCOUNT       "http://songbirdnest.com/data/1.0#playCount_AtLastSync"
+#define SB_PROPERTY_LAST_SYNC_SKIPCOUNT       "http://songbirdnest.com/data/1.0#skipCount_AtLastSync"
+
 #endif /* __SB_STANDARD_PROPERTIES_H__ */
