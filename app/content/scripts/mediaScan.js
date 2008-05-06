@@ -47,10 +47,9 @@ var theTargetLibrary = null;
 var theTargetPlaylist = null;
 var theTargetInsertIndex = -1;
 
-// Init the text box to the last url played (shrug).
 var polling_interval;
 
-var CHUNK_SIZE = 200;
+var CHUNK_SIZE = 50;
 var nextStartIndex = 0;
 var batchLoadsPending = 0;
 var closePending = false;
@@ -94,8 +93,9 @@ function onLoad()
       }
       theTargetInsertIndex = window.arguments[0].target_pl_row;
       gDirectoriesToScan = window.arguments[0].URL;
-      if (typeof window.arguments[0].autoClose != "undefined")
+      if (typeof window.arguments[0].autoClose != "undefined") {
         autoClose = window.arguments[0].autoClose;
+      }
       onFirstItem = window.arguments[0].onFirstItem;
       if (!isinstance(gDirectoriesToScan, Array)) {
         gDirectoriesToScan = [gDirectoriesToScan];
@@ -197,7 +197,7 @@ function onPollScan()
     if (accumulatorArray.length < CHUNK_SIZE && scanIsDone && gDirectoriesToScan.length > 0) {
       // Ooops, NOP.
     } else {
-      // Create a temporary track nane for all of the found tracks
+      // Create a temporary track name for all of the found tracks
       var propsArray =
         Components.classes["@mozilla.org/array;1"]
                   .createInstance(Components.interfaces.nsIMutableArray);
@@ -206,8 +206,7 @@ function onPollScan()
         let props =
           Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
                     .createInstance(Components.interfaces.sbIMutablePropertyArray);
-        props.appendProperty(SBProperties.trackName,
-                            createDefaultTitle(uri));
+        props.appendProperty(SBProperties.trackName, createDefaultTitle(uri));
         propsArray.appendElement(props, false);
       }
 
@@ -263,7 +262,6 @@ function appendToMetadataQueue( aItemArray ) {
     
     // If we need to, make a new job.
     var createNewJob = false;
-    var freakout = false;
     if ( typeof gMediaScanMetadataJob == 'undefined' || 
          gMediaScanMetadataJob == null || 
          gMediaScanMetadataJob
@@ -278,7 +276,6 @@ function appendToMetadataQueue( aItemArray ) {
       } catch(e) {
         // Sometimes, there might be a race condition, yea?
         Components.utils.reportError(e);
-        freakout = true;
         createNewJob = true;
       }
     }
@@ -289,19 +286,17 @@ function appendToMetadataQueue( aItemArray ) {
         Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
                   .getService(Components.interfaces.sbIMetadataJobManager);
       gMediaScanMetadataJob = metadataJobManager.newJob(aItemArray, 5);
-/*      
-      if (freakout)
-        alert("FREAKOUT!");
-*/  
     }
   } catch (e) {
     Components.utils.reportError(e);
   }
 }
 
+// global level array to hold the tracks found in filescan that need metadata
+var metadataScanArray = Components.classes["@mozilla.org/array;1"]
+  .createInstance(Components.interfaces.nsIMutableArray);
+
 function sbBatchCreateListener(aArray) {
-  this._array = aArray;
-  this._length = aArray.length;
 }
 
 sbBatchCreateListener.prototype.onProgress = 
@@ -421,11 +416,16 @@ function sbBatchCreateListener_onComplete(aItemArray, aResult)
   
   // New items to be sent for metadata scanning.
   if (itemArray.length > 0) {
-    appendToMetadataQueue( itemArray );
+    var length = itemArray.length;
+    for (let i = 0; i < length; i++) {
+      metadataScanArray.appendElement(itemArray.queryElementAt(i, Ci.sbIMediaItem), false);
+    }
   }
-  
 
   if (batchLoadsPending == 0 && scanIsDone) {
+
+    // delay scanning until all batches have been completed
+    appendToMetadataQueue( metadataScanArray );
 
     if (gDirectoriesToScan.length > 0) {
       scanNextDirectory();
@@ -488,7 +488,6 @@ function doOK()
   if (document.getElementById("watch_check").checked) {
     // XXX need to port folder watcher
     // var wfManager = new CWatchFolderManager();
-    // XXXredfive - componentize WatchFolderManager
     // wfManager.CreateWatchFolderManager();
     // wfManager.AddWatchFolder(aFileScanQuery.getDirectory()); 
   }
