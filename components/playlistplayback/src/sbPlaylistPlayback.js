@@ -836,16 +836,9 @@ PlaylistPlayback.prototype = {
     var selectedCore = this.core;
     if (!selectedCore)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-    
-    var extension = getFileExtensionFromURI(aURI);
-    // HACK ALERT - some streams do not have file extensions but we need
-    //              to pass an arg to comply with XPIDL. see bug 2565.
-    if (! extension)
-      extension = " ";   
-    LOG("_selectCoreForURI: extension = " + extension);
-    
+
     var coreSupport =
-      this._callMethodOnAllCores("getSupportForFileExtension", [extension]);
+      this._callMethodOnAllCores("getSupportForURI", [aURI]);
     LOG("_selectCoreForURI: coreSupport = " + coreSupport);
     
     var newCoreIndex = -1;
@@ -2274,4 +2267,5 @@ function NSGetModule(compMgr, fileSpec) {
       true);
   });
 }
+
 

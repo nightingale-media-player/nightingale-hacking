@@ -36,6 +36,7 @@
 interface nsIDOMHTMLElement;
 interface nsIDOMHTMLObjectElement;
 interface nsIStringEnumerator;
+interface nsIURI;
 
 /**
  * \interface sbICoreWrapper
@@ -43,7 +44,7 @@ interface nsIStringEnumerator;
  * Defines the inteface for objects that will provide playback functionality
  * \sa baseCore coreFlash
  */
-[scriptable, uuid(ea5d3666-c790-4bf8-8d2f-780bb90e5579)]
+[scriptable, uuid(c926a50b-2eb5-4b61-8bc9-7dea785d40ce)]
 interface sbICoreWrapper : nsISupports
 {
   /**
@@ -242,8 +243,8 @@ interface sbICoreWrapper : nsISupports
    */
   boolean getActive();
 
-  /**
-   * 
+  /** 
+   * \brief Get the level of support for a specific URI.
    */
-  long getSupportForFileExtension(in AString aFileExtension);
+  long getSupportForURI(in nsIURI aURI);
 };

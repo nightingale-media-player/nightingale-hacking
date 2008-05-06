@@ -158,6 +158,28 @@ CoreBase.prototype =
     }
     return aURL;
   },
+  
+  /**
+   * Returns the extension (without '.') from a URI object
+   */
+  getFileExtensionFromURI: function getFileExtensionFromURI(aURI)
+  {
+    if (!aURI.QueryInterface(Components.interfaces.nsIURI))
+       throw Components.results.NS_ERROR_INVALID_ARG;
+
+    var extension = null;
+    try {
+      var url = aURI.QueryInterface(Components.interfaces.nsIURL);
+      extension = url.fileExtension;
+    }
+    catch (e) {
+      var spec = aURI.spec;
+      var result = spec.match(/\.([^\.\s]+)$/);
+      if (result)
+        extension = result[1];
+    }
+    return extension;
+  },
 
   // Debugging helper functions
 
@@ -261,4 +283,5 @@ StringArrayEnumerator.prototype.QueryInterface = function(iid) {
     throw Components.results.NS_ERROR_NO_INTERFACE;
   return this;
 };
+
 
