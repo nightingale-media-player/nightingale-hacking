@@ -477,8 +477,7 @@
             }
 
             var strKey = (isCollapsed ? "menu.displaypane.title.show" : "menu.displaypane.title.hide");
-            var labelPrefix = this.getLocalizedString(strKey);
-            item.setAttribute("label", labelPrefix + " " + label);
+            item.setAttribute("label", this.formatString(strKey, label));
             item.setAttribute("target", instantiator.id);
             
             var loadcmd = function(aEvent, aId) {
@@ -508,8 +507,9 @@
         }
         ]]></xbl:body>
       </xbl:method>
-      <xbl:method name="getLocalizedString">
-        <xbl:parameter name="aKey" />
+      <xbl:method name="formatString">
+        <xbl:parameter name="aStrKey" />
+        <xbl:parameter name="aLabel" />
         <xbl:body>
           <![CDATA[
             if (!this._strBundle) {
@@ -524,7 +524,7 @@
             }
             
             try {
-              retVal = this._strBundle.GetStringFromName(aKey);
+              retVal = this._strBundle.formatStringFromName(aStrKey, [ aLabel ], 1);
             }
             catch (e) {
             }
