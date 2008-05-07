@@ -59,7 +59,7 @@ endif # _MSC_VER==1400
 
 endif # windows
 
-ifeq (linux,$(SB_PLATFORM))
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)
 
 SONGBIRD_XULRUNNER += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/libtag.so*
 
@@ -438,9 +438,11 @@ all:: copy-extensions
 .PHONY : copy-extensions
 copy-extensions : gunzip_file
 	@echo $(xulrunner_extensions)
+ifneq (,$(xulrunner_extensions))
 	$(MKDIR) -p $(SONGBIRD_EXTENSIONSDIR)
 	for item in $(xulrunner_extensions); do \
     $(RM) -rf $(SONGBIRD_EXTENSIONSDIR)/$$item; \
     $(MV) -f $(SONGBIRD_XULRUNNERDIR)/extensions/$$item $(SONGBIRD_EXTENSIONSDIR); \
   done
 	$(RM) -rf $(SONGBIRD_XULRUNNERDIR)/extensions
+endif
