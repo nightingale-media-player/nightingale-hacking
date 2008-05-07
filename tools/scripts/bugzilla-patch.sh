@@ -6,4 +6,4 @@ if [ $# = 0 ]; then
   exit 1
 fi
 
-wget -q -O -  http://bugzilla.songbirdnest.com/attachment.cgi?id=$1 | patch -p0
+wget -q -O -  http://bugzilla.songbirdnest.com/attachment.cgi?id=$1 | patch $2
