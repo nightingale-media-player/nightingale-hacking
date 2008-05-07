@@ -219,6 +219,26 @@ case "$target" in
       ;;
     esac
   ;;
+  *solaris*)
+    SB_PLATFORM="solaris"
+    case "$target_cpu" in
+      *86)
+        SB_ARCH="$target_cpu"
+      ;;
+      x86_64)
+        SB_ARCH="$target_cpu"
+      ;;
+      sparc)
+        SB_ARCH="$target_cpu"
+      ;;
+      *)
+        AC_MSG_ERROR(Unsupported architecture)
+      ;;
+    esac
+  ;;
+  *)
+    AC_MSG_ERROR(Unsupported platform $target)
+  ;;
 esac
 AC_SUBST(SB_PLATFORM)
 AC_SUBST(SB_ARCH)
@@ -274,8 +294,12 @@ _SAVE_CXXFLAGS=$CXXFLAGS
 
 case "$SB_PLATFORM" in
   windows)
-  AC_CHECK_PROG(CC, cl, cl)
-  AC_CHECK_PROG(CXX, cl, cl)
+  AC_PROG_CC(cl gcc)
+  AC_PROG_CXX(cl g++)
+  ;;
+  solaris)
+  AC_PROG_CC(cc gcc)
+  AC_PROG_CXX(CC g++)
   ;;
   *)
   AC_PROG_CC
@@ -286,6 +310,8 @@ esac
 # Restore saved flags
 CFLAGS=$_SAVE_CFLAGS
 CXXFLAGS=$_SAVE_CXXFLAGS
+GNU_CC=$GCC
+AC_SUBST(GNU_CC)
 
 AC_CHECK_PROG(PERL, perl, perl)
 if test -z "$PERL"; then AC_MSG_ERROR(Perl not found); fi
@@ -317,15 +343,15 @@ if test -z "$RM"; then AC_MSG_ERROR(Rm not found); fi
 AC_CHECK_PROG(MKDIR, mkdir, mkdir)
 if test -z "$MKDIR"; then AC_MSG_ERROR(Mkdir not found); fi
 
-AC_CHECK_PROG(AWK, awk, awk)
+AC_CHECK_PROGS(AWK, ${AWK} gawk awk)
 if test -z "$AWK"; then AC_MSG_ERROR(Awk not found); fi
 
-AC_CHECK_PROGS(CP, ${CP} gnucp gcp cp, "")
+AC_CHECK_PROGS(CP, ${CP} gnucp gcp cp)
 if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
 
 AC_CHECK_PROG(GZIP, gzip, gzip)
 AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
-AC_CHECK_PROG(TAR, tar, tar)
+AC_CHECK_PROGS(TAR, ${TAR} gtar tar)
 
 AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
 
@@ -379,7 +405,7 @@ case "$SB_PLATFORM" in
     AC_DEFINE(XP_UNIX)
     AC_DEFINE(NO_X11)
   ;;
-  linux)
+  linux|solaris)
     BIN_SUFFIX=
     OBJ_SUFFIX=".o"
     LIB_SUFFIX=".a"
@@ -617,6 +643,65 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
   ;;
+  solaris)
+    XULRUNNERDIR="/xulrunner"
+
+    _SAVE_LIBS=$LIBS
+    LIBS=
+    AC_SEARCH_LIBS([pthread_create], [pthread])
+    AC_SUBST(PTHREAD_LIBS, $LIBS)
+    LIBS=$_SAVE_LIBS
+
+    GST_MAJORMINOR=0.10
+    GST_REQS=0.10.1
+    GSTPLUG_REQS=0.10.7
+
+    PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 >= $GST_REQS gstreamer-plugins-base-0.10 >= $GSTPLUG_REQS)
+    PKG_CHECK_MODULES(GTK, gtk+-2.0)
+    AC_SUBST(GSTREAMER_CFLAGS)
+    GSTREAMER_LIBS="$GSTREAMER_LIBS -lgstinterfaces-$GST_MAJORMINOR -lgstvideo-$GST_MAJORMINOR -lgstaudio-$GST_MAJORMINOR"
+    AC_SUBST(GSTREAMER_LIBS)
+    AC_SUBST(GTK_CFLAGS)
+    AC_SUBST(GTK_LIBS)
+
+    if test "$GNU_CC" = "yes" ; then
+      AC_MSG_ERROR([GCC not yet supported])
+      LDFLAGS_DLL="-shared"
+    else
+      # Sun Studio compiler (cc/CC)
+      SUN_COMPILER_FLAGS="-c -KPIC"
+      if test "$enable_debug" = "yes"; then
+        SUN_COMPILER_FLAGS="-g $SUN_COMPILER_FLAGS"
+      # Disable stab section for now. Breakpad needs this.
+      # else
+      # SUN_COMPILER_FLAGS="-xs -xdebugformat=stabs $SUN_COMPILER_FLAGS"
+      fi
+
+      CFLAGS="$CFLAGS $SUN_COMPILER_FLAGS"
+      CXXFLAGS="$CXXFLAGS $SUN_COMPILER_FLAGS"
+      LDFLAGS_DLL="-G -z defs -library=Cstd,Crun -lc"
+      USING_RANLIB=1
+    fi
+
+    CFLAGS_INCLUDE_PREFIX="-I"
+    CFLAGS_INCLUDE_SUFFIX=""
+    LDFLAGS_LIB="-static"
+    LDFLAGS_OUT_PREFIX="-o "
+    LDFLAGS_OUT_SUFFIX=""
+    LDFLAGS_PATH_PREFIX="-L"
+    LDFLAGS_PATH_SUFFIX=""
+    LDFLAGS_IMPORT_PREFIX="-l"
+    LDFLAGS_IMPORT_SUFFIX=""
+    LNFLAGS="-f -s"
+    ARFLAGS="cr"
+    ARFLAGS_OUT_PREFIX=""
+    ARFLAGS_OUT_SUFFIX=""
+    ARFLAGS_PATH_PREFIX=""
+    ARFLAGS_PATH_SUFFIX=""
+    ARFLAGS_LIB=""
+    UNZIPFLAGS="-u -o -q -X"
+    UNZIPFLAGS_EXTRACT="-d"
+  ;;
 esac
 
 AC_SUBST(ARFLAGS)
@@ -720,16 +805,23 @@ AC_ARG_WITH(media-core,
             [ SB_MEDIA_CORES=default ])
 for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
     if test "$option" = "default"; then
-        if test "$SB_PLATFORM" = "linux"; then
-            MEDIA_CORE_GST_SYSTEM=1
-        elif test "$SB_PLATFORM" = "windows"; then
-            MEDIA_CORE_VLC=1
-            MEDIA_CORE_WMP=1
-            MEDIA_CORE_QT=1
-        elif test "$SB_PLATFORM" = "macosx"; then
-            MEDIA_CORE_VLC=1
-            MEDIA_CORE_QT=1
-        fi
+         case "$SB_PLATFORM" in
+            windows)
+                MEDIA_CORE_VLC=1
+                MEDIA_CORE_WMP=1
+                MEDIA_CORE_QT=1
+            ;;
+            macosx)
+                MEDIA_CORE_VLC=1
+                MEDIA_CORE_QT=1
+            ;;
+            linux|solaris)
+                MEDIA_CORE_GST_SYSTEM=1
+            ;;
+            *)
+                AC_MSG_ERROR([No platform default media cores found; please manually specify --with-media-core=])
+            ;;
+        esac
     elif test "$option" = "none"; then
         # Nothing needs to be set here
         true

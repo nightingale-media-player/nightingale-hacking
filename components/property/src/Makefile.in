@@ -105,7 +105,7 @@ endif
 DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_stringutils) \
                               $(NULL)
 
-ifneq (linux,$(SB_PLATFORM))
+ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 else
   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s

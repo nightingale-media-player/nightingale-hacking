@@ -55,6 +55,10 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             xpcomglue_s \
                             $(NULL)
 
+ifeq (solaris,$(SB_PLATFORM))
+DYNAMIC_LIB_EXTRA_IMPORTS += m
+endif
+
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \

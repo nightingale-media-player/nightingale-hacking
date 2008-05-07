@@ -135,6 +135,11 @@ ifeq (linux,$(SB_PLATFORM))
                              $(NULL)
 endif
 
+ifeq (solaris,$(SB_PLATFORM))
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+  DYNAMIC_LIB_EXTRA_FLAGS += -M $(srcdir)/hide-sqlite.ver
+endif
+
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 

@@ -33,6 +33,7 @@
 #include <nsIModule.h>
 #include <nsXPCOM.h>
 #include <sbLibraryLoaderUtils.h>
+#include <mozilla-config.h>
 
 static char kRealComponent[] = "sbGStreamer" MOZ_DLL_SUFFIX;
 

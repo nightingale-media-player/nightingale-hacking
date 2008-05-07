@@ -17,6 +17,12 @@ lib_files="*js3250.*
            *xpcom.*
            *xpcomglue_s.*
            *mozjs*
+           *xul*
+           *smime3*
+           *ssl3*
+           *nss3*
+           *nssutil3*
+           *sqlite3*
 "
 
 # symbol_files are relative to $objdir
@@ -98,10 +104,15 @@ if [ $# != 3 ]; then
   exit 1
 fi
 
-uname_os=`uname -o`
-if test "$uname_os" == "Msys" -o "$uname_os" == "Cygwin"; then
-is_windows="1"
-fi
+MAKE=make
+case `uname -s` in
+  CYGWIN*|MINGW*)
+    is_windows="1"
+    ;;
+  SunOS)
+    MAKE=gmake
+    ;;
+esac
 
 relsrcdir="$1"
 temp1=`dirname "$relsrcdir"`
@@ -123,8 +134,10 @@ sdkdir="`cd \"$temp1\" 2>/dev/null && pwd || echo \"$temp1\"`/$temp2"
 mkdir -p "$sdkdir"
 
 # build in bsdiff to enable partial update patches (binary diffs)
-notice "making bsdiff..."
-cd "$objdir"/other-licenses/bsdiff && make
+if test -d "$objdir"/other-licenses/bsdiff; then
+  notice "making bsdiff..."
+  cd "$objdir"/other-licenses/bsdiff && $MAKE
+fi
 
 notice "copying binary files..."
 cd "$sdkdir" && mkdir -p bin
@@ -162,7 +175,9 @@ cd "$distdir/sdk" && cp -RLfp * "$sdkdir/frozen"
 notice "copying scripts..."
 cd "$sdkdir" && mkdir -p scripts
 cd "$srcdir" && cp -Lfp $build_script_files "$sdkdir/scripts"
-cd "$srcdir/tools/update-packaging" && cp -Lfp $update_script_files "$sdkdir/scripts"
+if test -d "$srcdir"/tools/update-packaging; then
+  cd "$srcdir/tools/update-packaging" && cp -Lfp $update_script_files "$sdkdir/scripts"
+fi
 cd "$srcdir" && cp -Lfp $breakpad_script_files "$sdkdir/scripts"
 
 notice "performing post-processing..."

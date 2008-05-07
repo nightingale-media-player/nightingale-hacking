@@ -36,7 +36,12 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbHotkeyActions.js
 ifeq ($(SB_PLATFORM), windows)
 SUBDIRS = win32
 else
-SUBDIRS = $(SB_PLATFORM)
+ifeq ($(SB_PLATFORM), macosx)
+SUBDIRS = macosx
+else
+# XXX Mook: for now everybody else is linux (including solaris)
+SUBDIRS = linux
+endif
 endif
 
 

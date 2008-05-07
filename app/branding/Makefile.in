@@ -36,7 +36,7 @@ ICON_TARGET_NAME = default
 ifeq (windows,$(SB_PLATFORM))
 ICON_EXTENSION = ico
 endif
-ifeq (linux,$(SB_PLATFORM))
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
 ICON_EXTENSION = xpm
 endif
 ifeq (macosx,($SB_PLATFORM))

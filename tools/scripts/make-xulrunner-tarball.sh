@@ -1,5 +1,9 @@
 #!/bin/sh
 
+TAR=tar
+which gtar 2>&1 >/dev/null && \
+  TAR=gtar
+
 notice() {
   echo $* 1>&2
 }
@@ -27,6 +31,6 @@ echo cd "$bindir"
 cd "$bindir" 
 
 notice "creating tarball in dest..."
-tar czvhf $tarball *
+$TAR czvhf $tarball *
 
 notice "done."
