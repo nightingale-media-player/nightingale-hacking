@@ -1200,6 +1200,20 @@ nsresult sbBaseDevice::InitializeDeviceLibrary
   return NS_OK;
 }
 
+void sbBaseDevice::FinalizeDeviceLibrary(sbIDeviceLibrary* aDevLib)
+{
+  // Finalize and clear the media list listeners.
+  EnumerateFinalizeMediaListListenersInfo enumerateInfo;
+  enumerateInfo.device = this;
+  enumerateInfo.library = aDevLib;
+  mMediaListListeners.Enumerate
+                        (sbBaseDevice::EnumerateFinalizeMediaListListeners,
+                         &enumerateInfo);
+
+  // Finalize the device library.
+  aDevLib->Finalize();
+}
+
 nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
 {
   NS_ENSURE_ARG_POINTER(aList);
@@ -1240,6 +1254,41 @@ nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
   
   mMediaListListeners.Put(list, listener);
   return NS_OK;
+}
+
+PLDHashOperator sbBaseDevice::EnumerateFinalizeMediaListListeners
+                                (nsISupports* aKey,
+                                 nsRefPtr<sbBaseDeviceMediaListListener>& aData,
+                                 void* aClosure)
+{
+  nsresult rv;
+
+  // Get the device and library for which to finalize media list listeners.
+  EnumerateFinalizeMediaListListenersInfo*
+    enumerateInfo =
+      static_cast<EnumerateFinalizeMediaListListenersInfo*>(aClosure);
+  sbBaseDevice* device = enumerateInfo->device;
+  nsCOMPtr<sbILibrary> library = enumerateInfo->library;
+
+  // Get the listener media list.
+  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(aKey, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  // Do nothing if media list is contained in another library.
+  nsCOMPtr<sbILibrary> mediaListLibrary;
+  PRBool               equals;
+  rv = mediaList->GetLibrary(getter_AddRefs(mediaListLibrary));
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  rv = mediaListLibrary->Equals(library, &equals);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  if (!equals)
+    return PL_DHASH_NEXT;
+
+  // Remove the media list listener.
+  mediaList->RemoveListener(aData);
+  device->mMediaListListeners.Remove(aKey);
+
+  return PL_DHASH_NEXT;
 }
 
 PLDHashOperator sbBaseDevice::EnumerateIgnoreMediaListListeners(nsISupports* aKey,

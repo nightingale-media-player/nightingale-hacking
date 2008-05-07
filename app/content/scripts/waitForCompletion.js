@@ -57,7 +57,7 @@ gWaitForCompletion.onLoad = function()
     device = device.QueryInterface(Components.interfaces.sbIDeviceEventTarget);
     if (device) {
       device.addEventListener(this);
-      this.mDevices.push(this);
+      this.mDevices.push(device);
     }
   }
 }
@@ -71,7 +71,7 @@ gWaitForCompletion.onUnload = function()
 
     /* we shouldn't have to do this but it looks like we have to */
     for (var i=0; i<this.mDevices.length; i++) {
-      mDevices[i].removeEventListener(this);
+      this.mDevices[i].removeEventListener(this);
     }
   }
 }

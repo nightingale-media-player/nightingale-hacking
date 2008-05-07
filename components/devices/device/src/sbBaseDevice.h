@@ -218,7 +218,8 @@ public:
   nsresult SetState(PRUint32 aState);
   
   /**
-   * Create a local database library for the device
+   * Create a local database library for the device.  The library must be
+   * finalized by calling FinalizeDeviceLibrary.
    * @param aId the ID for the library
    * @param aLibraryLocation the file to name the library, or null to use some default
    * @return the library created (or re-used if it exists)
@@ -228,7 +229,8 @@ public:
                                sbIDeviceLibrary** _retval);
 
   /**
-   * Initialize a library for the device
+   * Initialize a library for the device.  The library must be finalized by
+   * calling FinalizeDeviceLibrary.
    * @param aDevLib the device library to initialize.
    * @param aId the ID for the library
    * @param aLibraryLocation the file to name the library, or null to use some default
@@ -236,13 +238,30 @@ public:
   nsresult InitializeDeviceLibrary(sbDeviceLibrary* aDevLib,
                                    const nsAString& aId,
                                    nsIURI*          aLibraryLocation);
-  
+
+  /**
+   * Finalize a library for the device
+   * @param aDevLib the device library to finalize.
+   */
+  void FinalizeDeviceLibrary(sbIDeviceLibrary* aDevLib);
+
   /**
    * Called when a media list has been added to the device library
    * @param aList the media list to listen for modifications
    */
   nsresult ListenToList(sbIMediaList* aList);
-  
+
+  typedef struct {
+    sbBaseDevice*        device;
+    nsCOMPtr<sbILibrary> library;
+  } EnumerateFinalizeMediaListListenersInfo;
+
+  static NS_HIDDEN_(PLDHashOperator)
+           EnumerateFinalizeMediaListListeners
+            (nsISupports* aKey,
+             nsRefPtr<sbBaseDeviceMediaListListener>& aData,
+             void* aClosure);
+
   static NS_HIDDEN_(PLDHashOperator) EnumerateIgnoreMediaListListeners(nsISupports* aKey,
                                                                        nsRefPtr<sbBaseDeviceMediaListListener> aData,
                                                                        void* aClosure);
