@@ -25,6 +25,7 @@
 
 #ifdef DEBUG
 !define DebugBuild            "Debug Build"
+!define MozCRuntime           "mozcrt19d.dll"
 #if _MSC_VER==1310
 !define CRuntime              "msvcr71d.dll"
 !define CPPRuntime            "msvcp71d.dll"
@@ -35,6 +36,7 @@
 #endif
 #else
 !define DebugBuild            ""
+!define MozCRuntime           "mozcrt19.dll"
 #if _MSC_VER==1310
 !define CRuntime              "msvcr71.dll"
 !define CPPRuntime            "msvcp71.dll"

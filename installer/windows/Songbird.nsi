@@ -265,10 +265,9 @@ Section "-Application" Section1
   ; The XULRunner stub loader also fails to find certain symbols when launched
   ; without a profile (yes, it's confusing). The quick work around is to 
   ; leave a copy of msvcr71.dll in xulrunner/ as well.
+  SetOutPath $INSTDIR
+  File ${XULRunnerDir}\${MozCRuntime}
   ${If} ${AtLeastWinVista}
-    SetOutPath $INSTDIR\${XULRunnerDir}
-    File ${CRuntime}
-    File ${CPPRuntime}
     StrCpy $LinkIconFile ${VistaIcon}
   ${Else}
     StrCpy $LinkIconFile ${PreferredIcon}
@@ -278,10 +277,6 @@ Section "-Application" Section1
   ; until BMO 350616 gets fixed
   !ifdef CRuntimeManifest
     SetOutPath $INSTDIR
-    File ${CRuntime}
-    File ${CPPRuntime}
-    File ${CRuntimeManifest}
-    SetOutPath $INSTDIR\${XULRunnerDir}
     File ${CRuntime}
     File ${CPPRuntime}
     File ${CRuntimeManifest}
@@ -446,6 +441,7 @@ Section "Uninstall"
   Delete $INSTDIR\${FileMainEXE}
   Delete $INSTDIR\${CRuntime}
   Delete $INSTDIR\${CPPRuntime}
+  Delete $INSTDIR\${MozCRuntime}
   Delete $INSTDIR\${CRuntimeManifest}
   Delete $INSTDIR\${PreferredIcon}
   Delete $INSTDIR\${VistaIcon}
