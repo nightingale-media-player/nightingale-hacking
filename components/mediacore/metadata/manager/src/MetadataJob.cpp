@@ -1915,7 +1915,11 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
   }
 
   // Loop through the returned props to copy to the new props
-  for ( PRUint32 i = 0; NS_SUCCEEDED(rv); i++ ) {
+  PRUint32 propsLength = 0;
+  rv = props->GetLength(&propsLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for ( PRUint32 i = 0; i < propsLength && NS_SUCCEEDED(rv); i++ ) {
     nsCOMPtr<sbIProperty> prop;
     rv = props->GetPropertyAt( i, getter_AddRefs(prop) );
     if ( NS_FAILED(rv) )
@@ -2020,7 +2024,7 @@ sbMetadataJob::AppendIfValid(sbIPropertyManager* aPropertyManager,
   nsresult rv = aPropertyManager->GetPropertyInfo(aID, getter_AddRefs(info));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isValid;
+  PRBool isValid = PR_FALSE;
   rv = info->Validate(aValue, &isValid);
   NS_ENSURE_SUCCESS(rv, rv);
 

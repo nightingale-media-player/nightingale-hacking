@@ -314,6 +314,9 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
     {
         mpMetadataPropertyArray = 
           do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &result);
+
+        result = mpMetadataPropertyArray->SetStrict(PR_FALSE);
+        NS_ENSURE_SUCCESS(result, result);
     }
 
     /* Get the channel URL info. */
