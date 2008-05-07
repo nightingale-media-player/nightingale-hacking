@@ -1661,6 +1661,11 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
+  if (evt.target.tagName != 'treechildren') {
+    // we only want to handle events targetted a treechildren
+    return;
+  }
+
   var bo = this.tree.treeBoxObject;
   try
   {
