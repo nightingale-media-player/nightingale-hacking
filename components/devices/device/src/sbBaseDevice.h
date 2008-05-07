@@ -149,7 +149,15 @@ public:
 public:
   sbBaseDevice();
   ~sbBaseDevice();
-  
+
+  /* check if device is linked to the local sync partner */
+  nsresult SyncCheckLinkedPartner(PRBool  aRequestPartnerChange,
+                                  PRBool* aIsLinkedLocally);
+
+  /* request that the device sync partner be changed to the local sync
+     partner */
+  nsresult SyncRequestPartnerChange(PRBool* aPartnerChangeGranted);
+
   /* add a transfer/action request to the request queue */
   nsresult  PushRequest(const int aType,
                         sbIMediaItem* aItem = nsnull,
@@ -182,7 +190,23 @@ public:
   
   /* clear the request queue */
   nsresult ClearRequests(const nsAString &aDeviceID);
-  
+
+  /**
+   * Internally set preference specified by aPrefName to the value specified by
+   * aPrefValue.  If the new preference value is different than that old, return
+   * true in aHasChanged unless aHasChanged is null.
+   * This method may be used for loading preferences from device storage.  It
+   * will not send preference changed events.
+   *
+   * @param aPrefName Name of the preference to set.
+   * @param aPrefValue Value to set preference.
+   * @param aHasChanged True if preference value changed.
+   */
+
+  nsresult SetPreferenceInternal(const nsAString& aPrefName,
+                                 nsIVariant*      aPrefValue,
+                                 PRBool*          aHasChanged);
+
   /* A request has been added, process the request
      (or schedule it to be processed) */
   virtual nsresult ProcessRequest() = 0;

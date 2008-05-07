@@ -53,6 +53,9 @@
 #include <sbILibrary.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
+#include <sbIPrompter.h>
+#include <sbStringBundle.h>
+#include <sbVariantUtils.h>
 
 #include "sbDeviceLibrary.h"
 #include "sbDeviceStatus.h"
@@ -303,6 +306,152 @@ NS_IMETHODIMP sbBaseDevice::SyncLibraries()
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::SyncCheckLinkedPartner(PRBool  aRequestPartnerChange,
+                                              PRBool* aIsLinkedLocally)
+{
+  NS_ENSURE_ARG_POINTER(aIsLinkedLocally);
+
+  nsresult rv;
+
+  // Get the device sync partner ID and determine if the device is linked to a
+  // sync partner.
+  PRBool               deviceIsLinked;
+  nsCOMPtr<nsIVariant> deviceSyncPartnerIDVariant;
+  nsAutoString         deviceSyncPartnerID;
+  rv = GetPreference(NS_LITERAL_STRING("SyncPartner"),
+                     getter_AddRefs(deviceSyncPartnerIDVariant));
+  if (NS_SUCCEEDED(rv)) {
+    rv = deviceSyncPartnerIDVariant->GetAsAString(deviceSyncPartnerID);
+    NS_ENSURE_SUCCESS(rv, rv);
+    deviceIsLinked = PR_TRUE;
+  } else {
+    deviceIsLinked = PR_FALSE;
+  }
+
+  // Get the local sync partner ID.
+  nsAutoString localSyncPartnerID;
+  rv = GetMainLibraryId(localSyncPartnerID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if device is linked to local sync partner.
+  PRBool isLinkedLocally = PR_FALSE;
+  if (deviceIsLinked)
+    isLinkedLocally = deviceSyncPartnerID.Equals(localSyncPartnerID);
+
+  // If device is not linked locally, request that its sync partner be changed.
+  if (!isLinkedLocally && aRequestPartnerChange) {
+    // Request that the device sync partner be changed.
+    PRBool partnerChangeGranted;
+    rv = SyncRequestPartnerChange(&partnerChangeGranted);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Change the sync partner if the request was granted.
+    if (partnerChangeGranted) {
+      rv = SetPreference(NS_LITERAL_STRING("SyncPartner"),
+                         sbNewVariant(localSyncPartnerID));
+      NS_ENSURE_SUCCESS(rv, rv);
+      isLinkedLocally = PR_TRUE;
+    }
+  }
+
+  // Return results.
+  *aIsLinkedLocally = isLinkedLocally;
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::SyncRequestPartnerChange(PRBool* aPartnerChangeGranted)
+{
+  NS_ENSURE_ARG_POINTER(aPartnerChangeGranted);
+
+  nsresult rv;
+
+  // Get the device name.
+  nsString deviceName;
+  rv = GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the main library name.
+  nsCOMPtr<sbILibrary> mainLibrary;
+  nsString             libraryName;
+  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mainLibrary->GetName(libraryName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get a prompter that waits for a window.
+  nsCOMPtr<sbIPrompter> prompter =
+                          do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = prompter->SetWaitForWindow(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the localized string bundle.
+  sbStringBundle bundle("chrome://songbird/locale/songbird.properties");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+
+  // Ensure that the library name is not empty.
+  if (libraryName.IsEmpty()) {
+    libraryName = bundle.Get("servicesource.library");
+  }
+
+  // Get the prompt title.
+  nsAString const& title = bundle.Get("device.dialog.sync_confirmation.title");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+
+  // Get the prompt message.
+  PRUnichar const* formatParams[2];
+  formatParams[0] = deviceName.BeginReading();
+  formatParams[1] = libraryName.BeginReading();
+  nsAString const& message =
+                     bundle.Format("device.dialog.sync_confirmation.msg",
+                                   formatParams,
+                                   2);
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+
+  // Configure the buttons.
+  PRUint32 buttonFlags = 0;
+
+  // Configure the no button as button 0.
+  nsAString const& noButton =
+                     bundle.Get("device.dialog.sync_confirmation.no_button");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+  buttonFlags += (nsIPromptService::BUTTON_POS_0 *
+                  nsIPromptService::BUTTON_TITLE_IS_STRING);
+
+  // Configure the sync button as button 1.
+  nsAString const& syncButton =
+                     bundle.Get("device.dialog.sync_confirmation.sync_button");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+  buttonFlags += (nsIPromptService::BUTTON_POS_1 *
+                  nsIPromptService::BUTTON_TITLE_IS_STRING) +
+                 nsIPromptService::BUTTON_POS_1_DEFAULT;
+  PRInt32 grantPartnerChangeIndex = 1;
+
+  // Query the user to determine whether the device sync partner should be
+  // changed to the local partner.
+  PRInt32 buttonPressed;
+  rv = prompter->ConfirmEx(nsnull,
+                           title.BeginReading(),
+                           message.BeginReading(),
+                           buttonFlags,
+                           noButton.BeginReading(),
+                           syncButton.BeginReading(),
+                           nsnull,                      // No button 2.
+                           nsnull,                      // No check message.
+                           nsnull,                      // No check result.
+                           &buttonPressed);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if partner change request was granted.
+  if (buttonPressed == grantPartnerChangeIndex)
+    *aPartnerChangeGranted = PR_TRUE;
+  else
+    *aPartnerChangeGranted = PR_FALSE;
+
   return NS_OK;
 }
 
@@ -743,25 +892,56 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
   NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
   nsresult rv;
 
+  PRBool hasChanged = PR_FALSE;
+  rv = SetPreferenceInternal(aPrefName, aPrefValue, &hasChanged);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (hasChanged) {
+    // fire the pref change event
+    nsCOMPtr<sbIDeviceManager2> devMgr =
+      do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDeviceEvent> event;
+    rv = devMgr->CreateEvent(sbIDeviceEvent::EVENT_DEVICE_PREFS_CHANGED,
+                             nsnull, nsnull, getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool success;
+    rv = this->DispatchEvent(event, PR_FALSE, &success);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::SetPreferenceInternal(const nsAString& aPrefName,
+                                             nsIVariant*      aPrefValue,
+                                             PRBool*          aHasChanged)
+{
+  NS_ENSURE_ARG_POINTER(aPrefValue);
+  NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
+  nsresult rv;
+
   // get the pref branch for this device
   nsCOMPtr<nsIPrefBranch> prefBranch;
   rv = GetPrefBranch(getter_AddRefs(prefBranch));
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ConvertUTF16toUTF8 prefNameUTF8(aPrefName);
-  
+
   // figure out what sort of variant we have
   PRUint16 dataType;
   rv = aPrefValue->GetDataType(&dataType);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // figure out what sort of data we used to have
   PRInt32 prefType;
   rv = prefBranch->GetPrefType(prefNameUTF8.get(), &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   PRBool hasChanged = PR_FALSE;
-  
+
   switch (dataType) {
     case nsIDataType::VTYPE_INT8:
     case nsIDataType::VTYPE_INT16:
@@ -778,7 +958,7 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
       PRInt32 oldValue, value;
       rv = aPrefValue->GetAsInt32(&value);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       if (prefType != nsIPrefBranch::PREF_INT) {
         hasChanged = PR_TRUE;
       } else {
@@ -787,10 +967,10 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
           hasChanged = PR_TRUE;
         }
       }
-      
+
       rv = prefBranch->SetIntPref(prefNameUTF8.get(), value);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       break;
     }
 
@@ -800,7 +980,7 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
       PRBool oldValue, value;
       rv = aPrefValue->GetAsBool(&value);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       if (prefType != nsIPrefBranch::PREF_BOOL) {
         hasChanged = PR_TRUE;
       } else {
@@ -812,7 +992,7 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
 
       rv = prefBranch->SetBoolPref(prefNameUTF8.get(), value);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       break;
     }
 
@@ -825,10 +1005,10 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
         NS_ENSURE_SUCCESS(rv, rv);
         hasChanged = PR_TRUE;
       }
-      
+
       break;
     }
-    
+
     default:
     {
       // assume a string
@@ -848,29 +1028,17 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
           NS_Free(oldValue);
         }
       }
-      
+
       rv = prefBranch->SetCharPref(prefNameUTF8.get(), value.get());
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       break;
     }
   }
-  
-  if (hasChanged) {
-    // fire the pref change event
-    nsCOMPtr<sbIDeviceManager2> devMgr =
-      do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    nsCOMPtr<sbIDeviceEvent> event;
-    rv = devMgr->CreateEvent(sbIDeviceEvent::EVENT_DEVICE_PREFS_CHANGED,
-                             nsnull, nsnull, getter_AddRefs(event));
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    PRBool success;
-    rv = this->DispatchEvent(event, PR_FALSE, &success);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+
+  // return has changed status
+  if (aHasChanged)
+    *aHasChanged = hasChanged;
 
   return NS_OK;
 }
