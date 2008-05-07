@@ -59,7 +59,7 @@ endif # _MSC_VER==1400
 
 endif # windows
 
-ifeq (,$(filter-out linux solaris,$(SB_PLATFORM))
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
 
 SONGBIRD_XULRUNNER += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/libtag.so*
 
