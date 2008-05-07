@@ -55,7 +55,7 @@ findbar > .find-field-container > textbox.findbar-textbox {
   padding: 3px 4px 1px;
 }
 findbar > .find-field-container > textbox.findbar-textbox[status="notfound"] {
-  color: #ff7f7f; /* pink-ish red */
+  color: #ff7f7f !important; /* pink-ish red */
 }
 
 /* close button */
