@@ -497,35 +497,35 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Year
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_YEAR),
                       NS_LITERAL_STRING("property.year"),
-                      stringBundle, PR_TRUE, PR_TRUE, 1877, PR_TRUE, 0, PR_FALSE,
+                      stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE, 9999, PR_TRUE,
                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Track number
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
                       NS_LITERAL_STRING("property.track_no"),
-                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE,
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 999, PR_TRUE,
                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Disc Number
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
                       NS_LITERAL_STRING("property.disc_no"),
-                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE,
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 999, PR_TRUE,
                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Total Discs
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS),
                       NS_LITERAL_STRING("property.total_discs"),
-                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE,
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 999, PR_TRUE,
                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Total tracks
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS),
                       NS_LITERAL_STRING("property.total_tracks"),
-                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE,
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 999, PR_TRUE,
                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -629,7 +629,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //BPM
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_BPM),
                       NS_LITERAL_STRING("property.bpm"),
-                      stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE, 0, PR_FALSE,
+                      stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE, 999, PR_TRUE,
                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 

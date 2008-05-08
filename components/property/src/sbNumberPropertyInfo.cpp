@@ -184,6 +184,40 @@ NS_IMETHODIMP sbNumberPropertyInfo::Validate(const nsAString & aValue, PRBool *_
   sbSimpleAutoLock lockRadix(mRadixLock);
   const char *fmt = GetFmtFromRadix(mRadix);
 
+  // First, check that all of the characters are valid 
+  // digits for this radix, because simply parsing the
+  // string using PR_sscanf would be successful for
+  // strings containing invalid trailing characters.
+  // Assume that the utf8 string does not contain extended 
+  // characters, if it does, it'll simply fail validation
+  // anyway, which it should.
+
+  const char *p = narrow.get();
+  PRBool invalid = PR_FALSE;
+  while (*p && !invalid) {
+    switch (mRadix) {
+      case sbINumberPropertyInfo::RADIX_8:
+        invalid = (*p < '0' || *p > '7');
+        break;
+      case sbINumberPropertyInfo::RADIX_10:
+        invalid = (*p < '0' || *p > '9');
+        break;
+      case sbINumberPropertyInfo::RADIX_16:
+        invalid = !((*p >= '0' && *p <= '9') ||
+                    (*p >= 'a' && *p <= 'f') ||
+                    (*p >= 'A' && *p <= 'F'));
+        break;
+    }
+    p++;
+  }
+  
+  if (invalid) {
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+  
+  // Next, parse the value, and check min/max
+
   sbSimpleAutoLock lockMinMax(mMinMaxValueLock);
   *_retval = PR_TRUE;
 
