@@ -672,6 +672,28 @@ function ServicePaneService_getNodeForURL(aURL) {
   return (target) ? this.getNode(target.Value) : null;
 }
 
+ServicePaneService.prototype.getNodesByAttributeNS =
+function ServicePaneService_getNodesByAttributeNS(aNamespace, aName, aValue) {
+  if (!this._initialized) { this.init(); }
+
+  var property = RDFSVC.GetResource(aNamespace+aName);
+  var target = RDFSVC.GetLiteral(aValue);
+  var sourceEnum = this._dataSource.GetSources(property, target, true);
+
+  var nodeList = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  while (sourceEnum.hasMoreElements()) {
+    var source = sourceEnum.getNext().QueryInterface(Ci.nsIRDFResource);
+    if (source) {
+      var node = this.getNode(source.Value);
+      if (node) {
+        nodeList.appendElement(node, false);
+      }
+    }
+  }
+
+  return nodeList.QueryInterface(Ci.nsIArray);
+}
+
 ServicePaneService.prototype.sortNode =
 function ServicePaneService_sortNode(aNode) {
   // move node to the end of the service pane.

@@ -31,6 +31,7 @@
 
 #include "nsISupports.idl"
 
+interface nsIArray;
 interface nsIRDFDataSource;
 interface nsIRDFResource;
 interface nsIDOMXULElement;
@@ -176,7 +177,7 @@ interface sbIServicePaneListener : nsISupports {
 *
 * @halfbaked
 */
-[scriptable, uuid(7dbc8193-4dc5-4bd4-bd9c-cef1552c216c)]
+[scriptable, uuid(01935bf0-70a4-4334-b166-0349ced535bf)]
 interface sbIServicePaneService : nsISupports
 {
   /**
@@ -225,6 +226,16 @@ interface sbIServicePaneService : nsISupports
    * \return node object, or null if it couldn't be found
    */
   sbIServicePaneNode getNodeForURL(in AString aURL);
+
+  /* \brief Get all nodes with the given attribute value
+   * \param aNamespace the attribute namespace
+   * \param aName the attribute name
+   * \param aValue the attribute value
+   * \return nsIArray of sbIServicePaneNode nodes with attribute value
+   */
+  nsIArray getNodesByAttributeNS(in AString aNamespace,
+                                 in AString aName,
+                                 in AString aValue);
 
   /* \brief Sort a node based on its weight attribute
    * \param aNode the node to sort

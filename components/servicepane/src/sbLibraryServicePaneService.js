@@ -974,7 +974,7 @@ sbLibraryServicePane.prototype._refreshLibraryNodes =
 function sbLibraryServicePane__refreshLibraryNodes(aLibrary) {
   var id = this._libraryURN(aLibrary);
   var node = this._servicePane.getNode(id);
-  this._hideLibraryNodes(node);
+  this._scanForRemovedItems(aLibrary);
   this._ensureLibraryNodeExists(aLibrary);
   this._processListsInLibrary(aLibrary);
 }
@@ -1134,7 +1134,10 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   var customType = aLibrary.getProperty(SBProperties.customType);
 
   // Refresh the information just in case it is supposed to change
-  node.name = aLibrary.name;
+  // Don't set name if it hasn't changed to avoid a UI redraw
+  if (node.name != aLibrary.name) {
+    node.name = aLibrary.name;
+  }
   node.url = null;
   node.contractid = CONTRACTID;
   node.editable = false;
@@ -1204,7 +1207,10 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   var libCustomType = aMediaList.library.getProperty(SBProperties.customType);
 
   // Refresh the information just in case it is supposed to change
-  node.name = aMediaList.name;
+  // Don't set name if it hasn't changed to avoid a UI redraw
+  if (node.name != aMediaList.name) {
+    node.name = aMediaList.name;
+  }
   node.url = null;
   node.contractid = CONTRACTID;
   if (customType == 'download') {
@@ -1285,6 +1291,33 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
   fnode.editable = false;
   fnode.setAttributeNS(SP, 'Weight', 3);
   return fnode;
+}
+
+
+sbLibraryServicePane.prototype._scanForRemovedItems =
+function sbLibraryServicePane__scanForRemovedItems(aLibrary) {
+  // Get the list of nodes for items within the library
+  var libraryItemNodeList = this._servicePane.getNodesByAttributeNS
+                                                (LSP,
+                                                 "LibraryGUID",
+                                                 aLibrary.guid);
+
+  // Remove nodes whose items no longer exist
+  var libraryItemNodeEnum = libraryItemNodeList.enumerate();
+  while (libraryItemNodeEnum.hasMoreElements()) {
+    // Get the library item node
+    libraryItemNode =
+      libraryItemNodeEnum.getNext().QueryInterface(Ci.sbIServicePaneNode);
+
+    // Skip library nodes
+    if (this._nodeIsLibrary(libraryItemNode))
+      continue;
+
+    // Remove node if item no longer exists
+    var mediaItem = this._getItemForURN(libraryItemNode.id);
+    if (!mediaItem)
+      this._servicePane.removeNode(libraryItemNode);
+  }
 }
 
 
