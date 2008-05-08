@@ -239,7 +239,7 @@ sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
   rv = AddFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Always sort nulls by ascending media item so thier posistions never change
+  // Always sort nulls by ascending media item so their positions never change
   rv = mBuilder->AddOrder(MEDIAITEMS_ALIAS,
                           MEDIAITEMID_COLUMN,
                           PR_TRUE);
@@ -943,9 +943,9 @@ sbLocalDatabaseQuery::AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType 
 
   // Finally add the join that will search the media_items
   rv = builder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_INNER,
-                         PROPERTIES_TABLE,
-                         tmpTableName,
-                         searchCriterion);
+                                     PROPERTIES_TABLE,
+                                     tmpTableName,
+                                     searchCriterion);
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
   // Increment the join counter so the next join will not have the same table names.

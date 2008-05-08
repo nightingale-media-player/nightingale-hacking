@@ -70,6 +70,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsHashKeys.h>
 #include <nsID.h>
+#include <nsIInputStreamPump.h>
 #include <nsMemory.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
@@ -2191,155 +2192,6 @@ sbLocalDatabaseLibrary::GetGuidFromHash(const nsACString& aHash,
   return NS_OK;
 }
 
-nsresult 
-sbLocalDatabaseLibrary::GetHashesForContentURIs(nsIArray* aURIs, 
-                                                nsTArray<nsCString>& aHashes)
-{
-  NS_ENSURE_ARG_POINTER(aURIs);
-
-  PRUint32 length = 0;
-  nsresult rv = aURIs->GetLength(&length);
-
-  PRBool success = aHashes.SetCapacity(length);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  nsCString hash;
-  nsCString *element = nsnull;
-
-  nsCOMPtr<nsIURI> uri;
-
-  for(PRUint32 i = 0; i < length; ++i) {
-    uri = do_QueryElementAt(aURIs, i, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = GetHashFromContentURI(uri, hash);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    element = aHashes.AppendElement(hash);
-    NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
-  }
-
-  return NS_OK;
-}
-
-// Macro used in GetHashFromContentURI.
-// All failure cases result in NS_OK and a empty hash
-// being returned.
-#define SB_ENSURE_SUCCESS_TRUNCATE_HASH(__rv) \
-  PR_BEGIN_MACRO          \
-  if(NS_FAILED(__rv)) {   \
-    aHash.Truncate();     \
-    return NS_OK;         \
-  }                       \
-  PR_END_MACRO
-
-#define DEFAULT_HASHING_READ_SIZE (262144)
-#define DEFAULT_ID3V1_SIZE        (128)
-
-nsresult 
-sbLocalDatabaseLibrary::GetHashFromContentURI(nsIURI* aURI, nsACString& aHash)
-{
-  NS_ENSURE_ARG_POINTER(aURI);
-
-  PRBool isLocalFile = PR_FALSE;
-  
-  nsresult rv = aURI->SchemeIs("file", &isLocalFile);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-
-  // Only compute hashes for local files.
-  if(!isLocalFile) {
-    aHash.Truncate();
-    return NS_OK;
-  }
-
-  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(aURI, &rv);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-
-  nsCOMPtr<nsIFile> file;
-  rv = fileURL->GetFile(getter_AddRefs(file));
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-
-  PRBool fileExists = PR_FALSE;
-
-  rv = file->Exists(&fileExists);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-  
-  // File doesn't actually exist, return empty hash.
-  if(!fileExists) {
-    aHash.Truncate();
-    return NS_OK;
-  }
-
-  PRInt64 fileSize = 0;
-  PRInt64 seekByte = 0;
-  PRInt64 readSize = 0;
-  
-  rv = file->GetFileSize(&fileSize);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Zero byte file, skip.
-  if(!fileSize) {
-    aHash.Truncate();
-    return NS_OK;
-  }
-
-  // XXXAus: 
-  // 
-  // This is attempting to read from the middle of the file to
-  // avoid metadata tags in the beginning and end of the file.
-  // As you can see, we attempt to avoid id3v1 tags at the end but
-  // we do not account for other tag formats that may be present
-  // at the end of the file (since I don't think there are any :)).
-
-  seekByte = fileSize / 2;
-  if(seekByte > DEFAULT_HASHING_READ_SIZE) {
-    readSize = DEFAULT_HASHING_READ_SIZE;
-  }
-  else {
-    readSize = seekByte - DEFAULT_ID3V1_SIZE;
-    
-    // Hmm , looks like we don't get to try and skip the tag data.
-    if(readSize <= 0) {
-      readSize = fileSize;
-      seekByte = 0;
-    }
-  }
-
-  nsCOMPtr<nsIFileInputStream> inputStream = 
-    do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-
-  rv = inputStream->Init(file, -1, -1, nsIFileInputStream::CLOSE_ON_EOF);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-
-  nsCOMPtr<nsISeekableStream> seekableStream = 
-    do_QueryInterface(inputStream, &rv);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-  
-  rv = seekableStream->Seek(nsISeekableStream::NS_SEEK_SET,
-                            seekByte);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-
-  nsCOMPtr<nsIInputStream> bufferedInputStream;
-  rv = NS_NewBufferedInputStream(getter_AddRefs(bufferedInputStream), 
-                                 inputStream, readSize);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-
-  nsCOMPtr<nsICryptoHash> cryptoHash = 
-    do_CreateInstance("@mozilla.org/security/hash;1", &rv);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-
-  rv = cryptoHash->Init(nsICryptoHash::MD5);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-
-  rv = cryptoHash->UpdateFromStream(bufferedInputStream, readSize);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH(rv);
-
-  return cryptoHash->Finish(PR_TRUE, aHash);
-}
-
-#undef SB_ENSURE_SUCCESS_TRUNCATE_HASH
-
 nsresult
 sbLocalDatabaseLibrary::Shutdown()
 {
@@ -2880,12 +2732,18 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
   nsresult rv = aUri->GetSpec(spec);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCAutoString hash;
-  rv = GetHashFromContentURI(aUri, hash);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   TRACE(("LocalDatabaseLibrary[0x%.8x] - CreateMediaItem(%s)", this,
          spec.get()));
+
+  nsRefPtr<sbHashHelper> hashHelper(new sbHashHelper());
+  NS_ENSURE_STATE(hashHelper);
+
+  rv = hashHelper->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCAutoString hash;
+  rv = hashHelper->GetHash(aUri, hash);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // If we don't allow duplicates, check to see if there is already a media
   // item with this uri or with the same hash.  If so, return it.
@@ -3506,33 +3364,90 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
 
   nsresult rv;
 
+  nsRefPtr<sbHashHelper> hashHelper(new sbHashHelper());
+  NS_ENSURE_STATE(hashHelper);
+
+  rv = hashHelper->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // init hashhelper
+  hashHelper->mLibrary = this;
+  hashHelper->mURIArray = aURIArray;
+  hashHelper->mHashArray = new nsTArray<nsCString>();
+  hashHelper->mPropertyArrayArray = aPropertyArrayArray;
+  hashHelper->mAllowDuplicates = aAllowDuplicates;
+  hashHelper->mListener = aListener;
+  hashHelper->mRetValArray = _retval;
+
+  {
+    nsAutoMonitor mon(hashHelper->mHashingCompleteMonitor);
+    hashHelper->mHashingComplete = PR_FALSE;
+  }
+
+  // if async, just return and build the query in a callback.
+  PRBool runAsync = aListener ? PR_TRUE : PR_FALSE;
+
+  if (runAsync) {
+    // all other processing will happen when hashing has finished
+    TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsInternal() - Running ASYNC",
+           this));
+
+    rv = hashHelper->GetHashes();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
+  }
+
+  // not async, start creating the hashes using the hashHelper 
+  // and wait for it to complete.
+  rv = hashHelper->GetHashes();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  {
+    nsAutoMonitor mon(hashHelper->mHashingCompleteMonitor);
+    while (!hashHelper->mHashingComplete) {
+      mon.Wait( PR_MillisecondsToInterval(50) );
+      NS_ProcessPendingEvents(nsnull, 1000);
+      TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsInternal() - looping!!!!!!",
+         this));
+    }
+  }
+
+  rv = CompleteBatchCreateMediaItems(hashHelper);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseLibrary::CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper)
+{
+  TRACE(("sbLocalDatabaseLibrary[0x%.8x] - CompleteBatchCreateMediaItems(aHashHelper)", this));
+  //TRACE(("sbLocalDatabaseLibrary[0x%.8x] - CompleteBatchCreateMediaItems()", this));
+  NS_ASSERTION((aHashHelper->mListener && !aHashHelper->mRetValArray) ||
+               (!aHashHelper->mListener && aHashHelper->mRetValArray),
+               "Only one of |aHashHelper->mListener| and |aHashHelper->mRetValArray| should be set!");
+
+  nsresult rv;
   nsCOMPtr<nsIArray> filteredArray;
   nsTArray<nsCString> filteredHashes;
   nsCOMPtr<nsIArray> filteredPropertyArrayArray;
 
-  if (aAllowDuplicates) {
-    filteredArray = aURIArray;
-    filteredPropertyArrayArray = aPropertyArrayArray;
-
-    rv = GetHashesForContentURIs(aURIArray, filteredHashes);
-    NS_ENSURE_SUCCESS(rv, rv);
+  if (aHashHelper->mAllowDuplicates) {
+    filteredArray = aHashHelper->mURIArray;
+    filteredPropertyArrayArray = aHashHelper->mPropertyArrayArray;
   }
   else {
-    nsTArray<nsCString> hashes;
-
-    rv = GetHashesForContentURIs(aURIArray, hashes);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = FilterExistingItems(aURIArray,
-                             hashes,
-                             aPropertyArrayArray,
-                             getter_AddRefs(filteredArray),
+    rv = FilterExistingItems(aHashHelper->mURIArray, 
+                             *(aHashHelper->mHashArray),
+                             aHashHelper->mPropertyArrayArray,
+                             getter_AddRefs(filteredArray), 
                              filteredHashes,
                              getter_AddRefs(filteredPropertyArrayArray));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  PRBool runAsync = aListener ? PR_TRUE : PR_FALSE;
+  PRBool runAsync = aHashHelper->mListener ? PR_TRUE : PR_FALSE;
 
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = MakeStandardQuery(getter_AddRefs(query), runAsync);
@@ -3542,7 +3457,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   nsRefPtr<sbBatchCreateHelper> helper;
 
   if (runAsync) {
-    callback = new sbBatchCreateTimerCallback(this, aListener, query);
+    callback = new sbBatchCreateTimerCallback(this, aHashHelper->mListener, query);
     NS_ENSURE_TRUE(callback, NS_ERROR_OUT_OF_MEMORY);
 
     rv = callback->Init();
@@ -3581,7 +3496,8 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
     // This value 333 is magical.  I copied it from the old media scan code.  I
     // assumed it was a number that was reached through experience tweaking the
     // callback frequency.
-    rv = timer->InitWithCallback(callback, 333, nsITimer::TYPE_REPEATING_SLACK);
+    //rv = timer->InitWithCallback(callback, 333, nsITimer::TYPE_REPEATING_SLACK);
+    rv = timer->InitWithCallback(callback, 100, nsITimer::TYPE_REPEATING_SLACK);
     if (NS_FAILED(rv)) {
       NS_WARNING("InitWithCallback failed!");
       success = mBatchCreateTimers.RemoveObject(timer);
@@ -3596,7 +3512,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Return the array of media items
-    NS_ADDREF(*_retval = array);
+    NS_ADDREF(*aHashHelper->mRetValArray = array);
   }
 
   return NS_OK;
@@ -4455,7 +4371,315 @@ sbLocalDatabaseLibrary::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-NS_IMPL_ISUPPORTS1(sbBatchCreateTimerCallback, nsITimerCallback);
+NS_IMPL_ISUPPORTS0(sbBatchCreateContext);
+
+NS_IMPL_ISUPPORTS1(sbHashHelper, nsIStreamListener);
+
+nsresult
+sbHashHelper::GetHashes()
+{
+  TRACE(("sbHashHelper[0x%.8x] - GetHashes()", this));
+  NS_ENSURE_STATE(mURIArray);
+  NS_ENSURE_STATE(mHashArray);
+
+  PRUint32 length = 0;
+  nsresult rv = mURIArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool success = mHashArray->SetCapacity(length);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCString hash;
+
+  for(PRUint32 i = 0; i < length; ++i) {
+    LOG(("sbHashHelper[0x%.8x] - GetHashes(): i=%d", this, i));
+
+    nsRefPtr<sbBatchCreateContext> context(new sbBatchCreateContext());
+    NS_ENSURE_STATE(context);
+
+    context->mURI = do_QueryElementAt(mURIArray, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = GetHash(context);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
+}
+
+#define SB_ENSURE_SUCCESS_TRUNCATE_HASH2(__rv) \
+  SB_ENSURE_TRUE_TRUNCATE_HASH(NS_SUCCEEDED(__rv))
+
+#define SB_ENSURE_TRUE_TRUNCATE_HASH(__cond) \
+  PR_BEGIN_MACRO                             \
+  if(!__cond) {                              \
+    aContext->mHash.Truncate();              \
+    AddHashInternal(aContext->mHash);        \
+    NS_WARNING("\n\n*** FAILED ***\n\n");    \
+    return NS_OK;                            \
+  }                                          \
+  PR_END_MACRO
+
+#define DEFAULT_HASHING_READ_SIZE (131072)
+#define DEFAULT_ID3V1_SIZE        (128)
+
+nsresult 
+sbHashHelper::GetHash(nsIURI* aURI, nsACString& aHash)
+{
+  TRACE(("sbHashHelper[0x%.8x] - GetHash(aURI, aHash)", this));
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  nsresult rv;
+
+  nsRefPtr<sbBatchCreateContext> context(new sbBatchCreateContext());
+  NS_ENSURE_STATE(context);
+
+  context->mURI = aURI;
+
+  rv = GetHash(context);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  aHash = context->mHash;
+  return NS_OK;
+}
+
+nsresult
+sbHashHelper::GetHash(sbBatchCreateContext *aContext)
+{
+  TRACE(("sbHashHelper[0x%.8x] - GetHash(aContext)", this));
+  NS_ENSURE_STATE(aContext);
+  NS_ENSURE_STATE(aContext->mURI);
+
+  PRBool isLocalFile = PR_FALSE;
+  
+  nsresult rv = aContext->mURI->SchemeIs("file", &isLocalFile);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  // Only compute hashes for local files.
+  SB_ENSURE_TRUE_TRUNCATE_HASH(isLocalFile);
+
+  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(aContext->mURI, &rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  nsCOMPtr<nsIFile> file;
+  rv = fileURL->GetFile(getter_AddRefs(file));
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  PRBool fileExists = PR_FALSE;
+
+  rv = file->Exists(&fileExists);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+  
+  // File doesn't actually exist, return empty hash.
+  SB_ENSURE_TRUE_TRUNCATE_HASH(fileExists);
+
+  PRInt64 fileSize = 0;
+  PRInt64 seekByte = 0;
+  PRInt64 readSize = 0;
+  
+  rv = file->GetFileSize(&fileSize);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Zero byte file, skip.
+  SB_ENSURE_TRUE_TRUNCATE_HASH(fileSize);
+
+  // XXXAus: 
+  // 
+  // This is attempting to read from the middle of the file to
+  // avoid metadata tags in the beginning and end of the file.
+  // As you can see, we attempt to avoid id3v1 tags at the end but
+  // we do not account for other tag formats that may be present
+  // at the end of the file (since I don't think there are any :)).
+
+  seekByte = fileSize / 2;
+  if(seekByte > DEFAULT_HASHING_READ_SIZE) {
+    readSize = DEFAULT_HASHING_READ_SIZE;
+  }
+  else {
+    readSize = seekByte - DEFAULT_ID3V1_SIZE;
+    
+    // Hmm , looks like we don't get to try and skip the tag data.
+    if(readSize <= 0) {
+      readSize = fileSize;
+      seekByte = 0;
+    }
+  }
+
+  // Set the state on the context
+  aContext->mFileSize = fileSize;
+  aContext->mReadSize = readSize;
+  aContext->mSeekByte = seekByte;
+
+  nsCOMPtr<nsIFileInputStream> inputStream = 
+    do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  rv = inputStream->Init(file, -1, -1, nsIFileInputStream::CLOSE_ON_EOF);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  nsCOMPtr<nsIInputStream> bufferedInputStream;
+  rv = NS_NewBufferedInputStream(getter_AddRefs(bufferedInputStream), 
+                                 inputStream,
+                                 aContext->mReadSize);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  nsCOMPtr<nsISeekableStream> seekableStream = 
+    do_QueryInterface(bufferedInputStream, &rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+  
+  rv = seekableStream->Seek(nsISeekableStream::NS_SEEK_SET,
+                            aContext->mSeekByte);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  if (mListener) {
+    // we're async, so use the async inputPump
+    nsCOMPtr<nsIInputStreamPump> inputPump;
+    inputPump = do_CreateInstance(NS_INPUTSTREAMPUMP_CONTRACTID, &rv);
+    rv = inputPump->Init(bufferedInputStream,
+                         aContext->mSeekByte,
+                         aContext->mReadSize,
+                         2048,
+                         128,
+                         PR_TRUE);
+    SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+    // kick off the read and get the callback in OnDataAvailable
+    rv = inputPump->AsyncRead( this, aContext );
+    SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+  } else {
+    rv = ComputeHash(aContext, bufferedInputStream);
+    SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+  }
+
+  return NS_OK;
+}
+
+/* nsIStreamListener */
+NS_IMETHODIMP
+sbHashHelper::OnDataAvailable(nsIRequest *request,
+                              nsISupports *ctxt,
+                              nsIInputStream *input,
+                              PRUint32 offset,
+                              PRUint32 count)
+{
+  TRACE(("sbHashHelper[0x%.8x] - OnDataAvailable()", this));
+
+  nsresult rv;
+
+  // must be called aContext to work in macros
+  nsRefPtr<sbBatchCreateContext> aContext((sbBatchCreateContext*) ctxt);
+  SB_ENSURE_TRUE_TRUNCATE_HASH(aContext);
+
+  // make double sure we have data
+  PRUint32 dataAvailable;
+  rv = input->Available(&dataAvailable);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  rv = ComputeHash(aContext, input);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  TRACE(("sbHashHelper[0x%.8x] - OnDataAvailable() complete", this));
+  return NS_OK;
+}
+
+nsresult
+sbHashHelper::ComputeHash(sbBatchCreateContext *aContext,
+                          nsIInputStream *aInput)
+{
+  TRACE(("sbHashHelper[0x%.8x] - ComputeHash()", this));
+
+  nsCAutoString spec;
+  nsresult rv = aContext->mURI->GetSpec(spec);
+  NS_ENSURE_SUCCESS(rv, rv);
+  TRACE(("sbHashHelper[%.8x] - Computehash(%s)", this, spec.get()));
+
+  nsCOMPtr<nsICryptoHash> cryptoHash = 
+    do_CreateInstance("@mozilla.org/security/hash;1", &rv);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  rv = cryptoHash->Init(nsICryptoHash::MD5);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  rv = cryptoHash->UpdateFromStream(aInput, aContext->mReadSize);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  rv = cryptoHash->Finish(PR_TRUE, aContext->mHash);
+  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
+
+  TRACE(("sbHashHelper[0x%.8x] - ComputeHash() complete", this));
+  return AddHashInternal(aContext->mHash);
+}
+
+nsresult
+sbHashHelper::AddHashInternal(nsACString &aHash)
+{
+  // this can get called when without a full setup so if we don't
+  // have a hash array just return okay.
+  if (!mHashArray) {
+    return NS_OK;
+  }
+
+  nsCString *element = mHashArray->AppendElement(aHash);
+  NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
+
+  PRUint32 listLength = 0;
+  mURIArray->GetLength(&listLength);
+  PRUint32 hashesLength = mHashArray->Length();
+
+  // If this is the last has we are adding, notify
+  if ( listLength == hashesLength ) {
+    {
+      nsAutoMonitor mon(mHashingCompleteMonitor);
+      mHashingComplete = PR_TRUE;
+      mon.Notify();
+    }
+  }
+  return NS_OK;
+}
+
+
+NS_IMETHODIMP
+sbHashHelper::OnStopRequest(nsIRequest *request,
+                            nsISupports *ctxt,
+                            nsresult status)
+{
+  TRACE(("sbHashHelper[0x%.8x] - OnStopRequest()", this));
+
+  PRUint32 listLength = 0;
+  mURIArray->GetLength(&listLength);
+  PRUint32 hashesLength = mHashArray->Length();
+
+  ++mStops;
+
+  if (hashesLength == listLength) {
+    TRACE(("sbHashHelper[0x%.8x] - OnStopRequest() - &&&&&&&&&&& DONE &&&&&&&&&&&&& %d:%d:%d", this, mStops, listLength, hashesLength));
+    if (mListener) {
+      // We're async and have already returned from the BatchCreateCall
+      nsresult rv = mLibrary->CompleteBatchCreateMediaItems(this);
+      NS_ENSURE_SUCCESS(rv, rv);
+    } else {
+      // We're synchronous and waiting on the completion var
+      {
+        nsAutoMonitor mon(mHashingCompleteMonitor);
+        mHashingComplete = PR_TRUE;
+        mon.Notify();
+      }
+    }
+  } else {
+    TRACE(("sbHashHelper[0x%.8x] - OnStopRequest() - ########### NOT DONE ############# %d:%d:%d", this, mStops, listLength, hashesLength));
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbHashHelper::OnStartRequest(nsIRequest *request,
+                             nsISupports *ctxt)
+{
+  TRACE(("sbHashHelper[0x%.8x] - OnStartRequest()", this));
+  return NS_OK;
+}
+
+NS_IMPL_ISUPPORTS1(sbBatchCreateTimerCallback,
+                   nsITimerCallback);
 
 sbBatchCreateTimerCallback::sbBatchCreateTimerCallback(sbLocalDatabaseLibrary* aLibrary,
                                                        sbIBatchCreateMediaItemsListener* aListener,
@@ -4504,11 +4728,13 @@ sbBatchCreateTimerCallback::BatchHelper()
 NS_IMETHODIMP
 sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
 {
+  TRACE(("sbBatchCreateTimerCallback[0x%.8x] - Notify()", this));
   NS_ENSURE_ARG_POINTER(aTimer);
 
   PRBool complete;
   nsresult rv = NotifyInternal(aTimer, &complete);
   if (NS_SUCCEEDED(rv) && !complete) {
+    TRACE(("sbBatchCreateTimerCallback[0x%.8x] - Notify() - NOT COMPLETE - EARLY RETURN", this));
     // Everything looks fine, let the timer continue.
     return NS_OK;
   }
@@ -4536,6 +4762,7 @@ nsresult
 sbBatchCreateTimerCallback::NotifyInternal(nsITimer* aTimer,
                                            PRBool* _retval)
 {
+  TRACE(("sbBatchCreateTimerCallback[0x%.8x] - NotifyInternal()", this));
   NS_ASSERTION(_retval, "Null retval!");
 
   nsresult rv;
@@ -4590,6 +4817,7 @@ sbBatchCreateTimerCallback::NotifyInternal(nsITimer* aTimer,
     PRBool success = mQueryToIndexMap.Get(currentQuery, &itemIndex);
     NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
 
+    TRACE(("sbBatchCreateTimerCallback[0x%.8x] - NotifyInternal() - calling OnProgress(%d)", this, itemIndex));
     mListener->OnProgress(itemIndex);
 
     *_retval = PR_FALSE;
@@ -4618,6 +4846,7 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
                                const nsTArray<nsCString>& aHashes,
                                nsIArray* aPropertyArrayArray)
 {
+  TRACE(("sbBatchCreateHelper[0x%.8x] - InitQuery()", this));
   NS_ASSERTION(aQuery, "aQuery is null");
 
   mURIArray = aURIArray;
@@ -4650,7 +4879,7 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
 
     uri = do_QueryElementAt(aURIArray, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+   
     hash = aHashes[i];
    
     rv = uri->GetSpec(spec);
@@ -4663,6 +4892,7 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
                                    NS_ConvertUTF8toUTF16(hash),
                                    guid);
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("sbBatchCreateHelper[0x%.8x] - InitQuery() -- added new itemQuery", this));
 
     if (mCallback) {
       rv = mCallback->AddMapping(queryCount, i);
@@ -4754,6 +4984,7 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
 nsresult
 sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
 {
+  TRACE(("sbBatchCreateTimerCallback[0x%.8x] - NotifyAndGetItems()", this ));
   NS_ASSERTION(_retval, "_retval is null");
 
   nsresult rv;
@@ -4830,13 +5061,13 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       nsCOMArray<sbIMediaItem>* mappedItems = nsnull;
       urlToItemsMap.Get(url, &mappedItems);
       if (!mappedItems) {
-        nsAutoPtr<nsCOMArray<sbIMediaItem> > array(new nsCOMArray<sbIMediaItem>);
-        NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
+        nsAutoPtr<nsCOMArray<sbIMediaItem> > itemArray(new nsCOMArray<sbIMediaItem>);
+        NS_ENSURE_TRUE(itemArray, NS_ERROR_OUT_OF_MEMORY);
 
-        success = urlToItemsMap.Put(url, array);
+        success = urlToItemsMap.Put(url, itemArray);
         NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-        mappedItems = array.forget();
+        mappedItems = itemArray.forget();
       }
 
       success = mappedItems->AppendObject(mediaItem);
@@ -4859,14 +5090,14 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       rv = uri->GetSpec(spec);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMArray<sbIMediaItem>* mappedItems = nsnull;
-      urlToItemsMap.Get(NS_ConvertUTF8toUTF16(spec), &mappedItems);
-      if (mappedItems) {
-        NS_ASSERTION(mappedItems->Count(), "No item to notify");
+      nsCOMArray<sbIMediaItem>* moreMappedItems = nsnull;
+      urlToItemsMap.Get(NS_ConvertUTF8toUTF16(spec), &moreMappedItems);
+      if (moreMappedItems) {
+        NS_ASSERTION(moreMappedItems->Count(), "No item to notify");
         mLibrary->NotifyListenersItemAdded(SB_IMEDIALIST_CAST(mLibrary),
-                                           mappedItems->ObjectAt(0),
+                                           moreMappedItems->ObjectAt(0),
                                            mLength + notifiedCount);
-        success = mappedItems->RemoveObjectAt(0);
+        success = moreMappedItems->RemoveObjectAt(0);
         NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
         notifiedCount++;
       }

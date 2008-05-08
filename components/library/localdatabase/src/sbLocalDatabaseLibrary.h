@@ -42,16 +42,18 @@
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
 #include <nsInterfaceHashtable.h>
+#include <nsIStreamListener.h>
 #include <nsITimer.h>
+#include <nsIURI.h>
 #include <nsStringGlue.h>
 #include <sbIMediaListFactory.h>
 
 class nsICryptoHash;
 class nsIPropertyBag2;
-class nsIURI;
 class nsIWeakReference;
 class nsStringHashKey;
 class sbAutoBatchHelper;
+class sbHashHelper;
 class sbIBatchCreateMediaItemsListener;
 class sbILibraryFactory;
 class sbILocalDatabasePropertyCache;
@@ -133,6 +135,7 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
   friend class sbLocalDatabasePropertyCache;
   friend class sbBatchCreateTimerCallback;
   friend class sbBatchCreateHelper;
+  friend class sbHashHelper;
 
   struct sbMediaListFactoryInfo {
     sbMediaListFactoryInfo()
@@ -293,8 +296,8 @@ private:
   nsresult GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID);
   nsresult GetGuidFromHash(const nsACString& aHash, nsAString &aGUID);
 
-  nsresult GetHashesForContentURIs(nsIArray* aURIs, nsTArray<nsCString>& aHashes);
-  nsresult GetHashFromContentURI(nsIURI* aURI, nsACString& aHash);
+  //nsresult GetHashesForContentURIs(nsIArray* aURIs, nsTArray<nsCString>& aHashes);
+  //nsresult GetHashFromContentURI(nsIURI* aURI, nsACString& aHash);
 
   nsresult Shutdown();
 
@@ -303,6 +306,7 @@ private:
                                          PRBool aAllowDuplicates,
                                          sbIBatchCreateMediaItemsListener* aListener,
                                          nsIArray** _retval);
+  nsresult CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper);
 
 private:
   // This is the GUID used by the DBEngine to uniquely identify the sqlite
@@ -423,6 +427,101 @@ private:
   nsCOMArray<sbIMediaItem> mNotificationList;
   nsTArray<PRUint32> mNotificationIndexes;
   PRPackedBool mItemEnumerated;
+};
+
+class sbBatchCreateContext : public nsISupports
+{
+friend class sbLocalDatabaseLibrary;
+friend class sbHashHelper;
+
+public:
+
+  NS_DECL_ISUPPORTS
+
+  sbBatchCreateContext()
+  : mFileSize(0),
+    mSeekByte(0),
+    mReadSize(0)
+  {
+    MOZ_COUNT_CTOR(sbBatchCreateContext);
+  };
+
+  ~sbBatchCreateContext()
+  {
+    MOZ_COUNT_DTOR(sbBatchCreateContext);
+  }
+
+private:
+  nsCString mHash;
+  nsCOMPtr<nsIURI> mURI;
+
+  PRInt64 mFileSize;
+  PRInt64 mSeekByte;
+  PRInt64 mReadSize;
+
+};
+
+class sbHashHelper : public nsIStreamListener
+{
+friend class sbLocalDatabaseLibrary;
+
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISTREAMLISTENER
+  NS_DECL_NSIREQUESTOBSERVER
+
+  sbHashHelper()
+  : mLibrary(nsnull),
+    mURIArray(nsnull),
+    mHashArray(nsnull),
+    mRetValArray(nsnull),
+    mAllowDuplicates(PR_FALSE),
+    mPropertyArrayArray(nsnull),
+    mListener(nsnull),
+    mHashingCompleteMonitor(nsnull),
+    mHashingComplete(PR_FALSE),
+    mStops(0)
+  {
+    MOZ_COUNT_CTOR(sbHashHelper);
+  }
+
+  ~sbHashHelper()
+  {
+    MOZ_COUNT_DTOR(sbHashHelper);
+    if(mHashingCompleteMonitor) {
+      nsAutoMonitor::DestroyMonitor(mHashingCompleteMonitor);
+    }
+  }
+
+  nsresult Init()
+  {
+    mHashingCompleteMonitor = nsAutoMonitor::NewMonitor("sbHashHelper::mHashingCompleteMonitor");
+    NS_ENSURE_TRUE(mHashingCompleteMonitor, NS_ERROR_OUT_OF_MEMORY);
+    return NS_OK;
+  }
+
+  nsresult GetHashes();
+  nsresult GetHash(sbBatchCreateContext *aContext);
+  nsresult GetHash(nsIURI* aURI, nsACString& aHash);
+  nsresult ComputeHash(sbBatchCreateContext *aContext,
+                       nsIInputStream *aInput);
+  
+
+private:
+  nsresult AddHashInternal(nsACString& aHash);
+
+  sbLocalDatabaseLibrary *mLibrary;
+  nsCOMPtr<nsIArray> mURIArray;
+  nsTArray<nsCString> *mHashArray;
+  nsIArray **mRetValArray;
+
+  PRBool mAllowDuplicates;
+  nsCOMPtr<nsIArray> mPropertyArrayArray;
+  nsCOMPtr<sbIBatchCreateMediaItemsListener> mListener;
+
+  PRMonitor *mHashingCompleteMonitor;
+  PRBool mHashingComplete;
+  PRUint32 mStops;
 };
 
 // Forward declare
