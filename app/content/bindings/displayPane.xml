@@ -243,13 +243,7 @@
                   .nextSibling.collapsed = val;
           if (val != this.collapsed)
             this.collapsed = val;
-          // remember to clear the pane so we don't load it on next start
-          try {
-            this._getElem("content").loadURI("about:blank", null, null);
-          } catch (e) {
-            /* don't really care */
-          }
-          this._lastURL.stringValue = "";
+
           return val;
         ]]></xbl:setter>
       </xbl:property>
@@ -479,12 +473,17 @@
             var strKey = (isCollapsed ? "menu.displaypane.title.show" : "menu.displaypane.title.hide");
             item.setAttribute("label", this.formatString(strKey, label));
             item.setAttribute("target", instantiator.id);
+            item.setAttribute("url", instantiator.contentUrl);
             
             var loadcmd = function(aEvent, aId) {
               var binding = document.getElementById(aId);
               var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
                                       .getService(Components.interfaces.sbIDisplayPaneManager);
-              var paneinfo = paneMgr.defaultPaneInfo;
+
+              var paneinfo = paneMgr.getPaneInfo(binding.contentUrl);
+              if (!paneinfo)
+                paneinfo = paneMgr.defaultPaneInfo;
+              
               binding.loadContent(paneinfo);
             }
             var unloadcmd = function(aEvent, aId) {
