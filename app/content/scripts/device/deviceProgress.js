@@ -56,6 +56,7 @@ if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
 Cu.import("resource://app/components/sbProperties.jsm");
+Cu.import("resource://app/components/WindowUtils.jsm");
 
 /**
  * \brief Constants for the completed states.
@@ -361,7 +362,7 @@ var DPW = {
                                  .getService(Ci.sbIDeviceErrorMonitor);
       if (deviceErrorMonitor.deviceHasErrors(this._device)) {
         var errorItems = deviceErrorMonitor.getErrorsForDevice(this._device);
-        SBWindow.openModalDialog
+        WindowUtils.openModalDialog
                    (window,
                     "chrome://songbird/content/xul/device/deviceErrorDialog.xul",
                     "device_error_dialog",

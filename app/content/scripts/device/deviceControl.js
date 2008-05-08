@@ -49,6 +49,7 @@
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm");
+Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
 
 //------------------------------------------------------------------------------
@@ -302,7 +303,7 @@ deviceControlWidget.prototype = {
 
   _getDeviceInfo: function deviceControlWidget__getDeviceInfo() {
     // Show the device info dialog.
-    SBWindow.openModalDialog
+    WindowUtils.openModalDialog
       (window,
        "chrome://songbird/content/xul/device/deviceInfoDialog.xul",
        "",
