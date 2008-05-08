@@ -57,6 +57,12 @@ ifeq ($(_MSC_VER), 1400)
 SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
 endif # _MSC_VER==1400
 
+ifdef DEBUG
+MOZ_WIN32_CUSTOM_CRT = $(SONGBIRD_XULRUNNERDIR)/mozcrt19d.dll
+else
+MOZ_WIN32_CUSTOM_CRT = $(SONGBIRD_XULRUNNERDIR)/mozcrt19.dll
+endif
+
 endif # windows
 
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))

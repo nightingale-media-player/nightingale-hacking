@@ -231,6 +231,7 @@ Section "-Application" Section1
   File ${FileMainEXE}
   File ${CRuntime}
   File ${CPPRuntime}
+  File ${MozCRuntime}
   File ${PreferredIcon}
   File ${VistaIcon}
   
@@ -265,8 +266,6 @@ Section "-Application" Section1
   ; The XULRunner stub loader also fails to find certain symbols when launched
   ; without a profile (yes, it's confusing). The quick work around is to 
   ; leave a copy of msvcr71.dll in xulrunner/ as well.
-  SetOutPath $INSTDIR
-  File ${XULRunnerDir}\${MozCRuntime}
   ${If} ${AtLeastWinVista}
     StrCpy $LinkIconFile ${VistaIcon}
   ${Else}

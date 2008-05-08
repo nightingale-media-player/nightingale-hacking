@@ -1477,6 +1477,11 @@ ifdef MSMANIFEST_TOOL
     -OUTPUTRESOURCE:$(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))\;1
 endif # MSVC with manifest tool
 	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
+ifeq (windows,$(SB_PLATFORM))
+	# On Win32, the stub requires the custom CRT in the same directory now,
+	# if it's enabled; move that along if we find it too...
+	test -e $(MOZ_WIN32_CUSTOM_CRT) && $(CYGWIN_WRAPPER) $(CP) -vf $(MOZ_WIN32_CUSTOM_CRT) $(sb_executable_dir)
+endif
 
 #.PHONY : move_sb_stub_executable
 
