@@ -38,6 +38,31 @@ See app/content/xul/trackEditor.xul
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+/** TEMP **/
+textbox[edited] {
+ border: 1px solid red !important;
+}
+
+#notification_box {
+  background-color: blue;
+}
+
+#notification_box.notification-warning {
+  background-color: yellow;
+}
+
+.notification-warning > #notification_text {
+  color: black !important;
+}
+
+#notification_box.notification-info {
+  background-color: lightblue;
+}
+
+#notification_text {
+  color: white !important;
+}
+
 #title {
   font-size: x-large;
 }
@@ -67,6 +92,13 @@ See app/content/xul/trackEditor.xul
 #genredropdown > .autocomplete-history-dropmarker {
   -moz-binding: url("chrome://global/content/bindings/autocomplete.xml#history-dropmarker");
   display: inline;
+}
+
+/** Note: when we force the dropdown like this it does not respect the readonly
+    attribute.  For now just force it off when readonly **/
+#genredropdown[readonly] > .autocomplete-history-dropmarker {
+  -moz-binding: none;
+  display: none;
 }
 
 #year {

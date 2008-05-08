@@ -1,3 +1,39 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+
+/******************************************************************************
+ *
+ * \file trackEditor.js 
+ * \brief Dialog and UI controllers for viewing and modifying metadata
+ *        associated with the main window sbIMediaListViewSelection
+ *
+ *****************************************************************************/
+
+
 if (typeof(Ci) == "undefined")
   var Ci = Components.interfaces;
 if (typeof(Cc) == "undefined")
@@ -6,49 +42,378 @@ if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
 Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
-
-// TODO: clean up trackeditor into two classes
-//       probably move button-ey/listen-ey things out from other logic
 Components.utils.import("resource://app/components/sbProperties.jsm");
 
+
+
+/******************************************************************************
+ *
+ * \class TrackEditorState 
+ * \brief Wraps an sbIMediaListViewSelection interface, adding accessors
+ *        and listener support.
+ *
+ * This class maintains the state of the track editor.  UI widgets read from, 
+ * write to, and observe the instance of this class available at TrackEditor.state.
+ *
+ * Since the track editor has no knowledge of the widgets extension authors 
+ * are free to customize the UI.
+ *
+ *****************************************************************************/
+function TrackEditorState() {
+  this._propertyListeners = {};
+  this._initListeners = [];
+  this._properties = {};
+}
+TrackEditorState.prototype = {
+  
+  _propertyManager: Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                      .getService(Ci.sbIPropertyManager),
+  
+  // Array of media items that the track editor is operating on
+  _selectedItems: null,
+    
+  // Internal data structure
+  // Example:
+  // {
+  //   propertyName: { 
+  //     hasMultiple: false,
+  //     edited: false,
+  //     value: "",
+  //     originalValue: ""
+  //   }
+  // }
+  _properties: null,
+  
+  // Cached count of items with userEditable == true
+  _writableItemCount: null,
+  
+  // Map of properties to listener arrays
+  _propertyListeners: null,
+  
+  // Array of listeners to be notified only when the selection is reinited
+  _initListeners: null,
+  
+  /** 
+   * Initialize the state object around an sbIMediaListViewSelection.
+   * May be called again to reinitialize with a new selection.
+   */
+  init: function TrackEditorState_init(mediaListSelection) {
+    this._selectedItems = [];
+    var items = mediaListSelection.selectedIndexedMediaItems;
+    while (items.hasMoreElements()) {
+      var item = items.getNext()
+                      .QueryInterface(Components.interfaces.sbIIndexedMediaItem)
+                      .mediaItem;
+      this._selectedItems.push(item);
+    }
+    
+    this._properties = {};
+    this._writableItemCount = null;
+
+    this._notifyInitListeners();
+    this._notifyPropertyListeners();
+  },
+  
+  
+  /**
+   * If there is nothing to write, there is nothing to edit
+   */
+  get isDisabled() {    
+    return this.writableItemCount == 0;
+  },
+  
+  /**
+   * Figure out how many items can be edited and cache the value
+   */
+  get writableItemCount() {
+    if (this._writableItemCount == null) {    
+      this._writableItemCount = 0;
+      if (this._selectedItems && this._selectedItems.length > 0) {
+        
+        // TODO do we want to handle 200,000 selected tracks?
+        for each (var item in this._selectedItems) {
+          if (item.userEditable) {
+            this._writableItemCount++;
+          }
+        }
+      }
+    }
+    return this._writableItemCount;
+  },
+  
+  /** 
+   * JS array of sbIMediaItems that the track editor
+   * is currently targeting
+   */
+  get selectedItems() {
+    return this._selectedItems;
+  },
+  
+  /** 
+   * Get a formatted, displayable value for the given property
+   */
+  getPropertyValue: function(property) {
+    this._ensurePropertyData(property);
+    return this._properties[property].value;
+  },
+
+  /** 
+   * Restore the original value for the given
+   * property
+   */  
+  resetPropertyValue: function(property) {
+    if (property in this._properties) {
+      delete this._properties[property];
+    }
+    this._ensurePropertyData(property);
+    this._notifyPropertyListeners(property);
+  },
+  
+  /** 
+   * Returns true if there is more than one value between the
+   * selected media items for the given property.
+   *
+   * Note that this value will be false as soon as 
+   * the property has been edited by the user.
+   */
+  hasMultipleValuesForProperty: function(property) {
+    this._ensurePropertyData(property);
+    return this._properties[property].hasMultiple;
+  },
+  
+  /** 
+   * Save/broadcast a new value for the given property.
+   * Note that this does not write back to the selected media items.
+   */
+  setPropertyValue: function(property, value) {
+    this._ensurePropertyData(property);
+    this._properties[property].value = value;
+    this._properties[property].edited = 
+        this._properties[property].value != this._properties[property].originalValue;
+
+    // Multiple values no longer matter
+    this._properties[property].hasMultiple = false;
+    
+    this._notifyPropertyListeners(property);
+  },
+  
+  /** 
+   * Returns true if the value for the given property
+   * differs from the original media item value
+   */
+  isPropertyEdited: function(property) {
+    this._ensurePropertyData(property);
+    return this._properties[property].edited;
+  },
+  
+  /** 
+   * Returns an array of the property names that have
+   * been modified by the track editor
+   */
+  getEditedProperties: function() {
+    var editedList = [];
+    for (var propertyName in this._properties) {
+      if (this._properties[propertyName].edited) {
+        editedList.push(propertyName);
+      }
+    }
+    return editedList;
+  },
+  
+  /** 
+   * Makes sure that the _properties hash contains a record for 
+   * the given property
+   */
+  _ensurePropertyData: function TrackEditorState__ensurePropertyData(property) {
+    // If the data has already been created, nothing to do
+    if (property in this._properties) {
+      return;
+    }
+    
+    // Set up the empty structure
+    this._properties[property] = {
+      edited: false,
+      hasMultiple: false,
+      value: "",
+      originalValue: ""
+    }
+    
+    // Populate the structure
+    if (this._selectedItems && this._selectedItems.length > 0) {      
+      var value = this._selectedItems[0].getProperty(property);
+
+      if (this._selectedItems.length > 1) {
+        // Look through the selection to see if all items have the same value
+        // for this property
+        for each (var item in this._selectedItems) {
+          if (value != item.getProperty(property)) {
+            this._properties[property].hasMultiple = true;
+            // TODO localize or something
+            value = "* Various *";
+            break;
+          }
+        }
+      }
+
+      // Format the string if needed
+      // Note that on an image, format truncates, then returns!
+      if (value && property != SBProperties.primaryImageURL &&
+          !this._properties[property].hasMultiple) 
+      {
+        var propInfo = this._propertyManager.getPropertyInfo(property);
+        
+        // Formatting can fail. :(
+        try { 
+          value = propInfo.format(value); 
+        }
+        catch (e) { 
+          Components.utils.reportError("TrackEditor::getPropertyValue("+property+") - "+value+": " + e +"\n");
+        }
+      }
+
+      this._properties[property].value = value;
+      this._properties[property].originalValue = value;
+    }
+  },
+  
+  /** 
+   * Add an object to be notified when the editor state for the given
+   * property changes.
+   * 
+   * The listener object must provide a onTrackEditorPropertyChange function
+   */
+  addPropertyListener: function(property, listener) {
+    if (!("onTrackEditorPropertyChange" in listener)) {
+      throw new Error("Listener must provide a onTrackEditorPropertyChange function");
+    }
+    
+    if (!(property in this._propertyListeners)) {
+      this._propertyListeners[property] = [listener];
+    } else {
+      this._propertyListeners[property].push(listener);
+    }
+  },
+    
+  /** 
+   * Remove a previously added property listener
+   */
+  removePropertyListener: function(property, listener) {
+    if (property in this._propertyListeners) {
+      var array = this._propertyListeners[property];
+      var index = array.indexOf(listener);
+      if (index > -1) {
+        array.splice(index,1);
+      }
+    }
+  },
+  
+  /** 
+   * Add an object to be notified when the editor is updated with a 
+   * new selection state.
+   * 
+   * The listener object must provide a onTrackEditorInit function
+   */
+  addInitListener: function(listener) {
+    if (!("onTrackEditorInit" in listener)) {
+      throw new Error("Listener must provide a onTrackEditorInit function");
+    }
+    this._initListeners.push(listener);
+  },
+  
+  /** 
+   * Remove a previously added init listener
+   */
+  removeInitListener: function(listener) {
+    var index = this._initListeners.indexOf(listener);
+    if (index > -1) {
+      this._initListeners.splice(index,1);
+    }
+  },
+  
+  /** 
+   * Broadcast change notification to listeners interested in the 
+   * given property, or all if property is null
+   */
+  _notifyPropertyListeners: function TrackEditorState__notifyPropertyListeners(property) {
+    // If no property was specified, notify everyone
+    if (property == null) {
+      for each (var listenerArray in this._propertyListeners) {
+        for each (var listener in listenerArray) {
+          listener.onTrackEditorPropertyChange(property);
+        }
+      }
+    } else {
+      // Otherwise just notify listeners interested in 
+      // this specific property
+      var listeners = this._propertyListeners[property];
+      if (listeners) {
+        for each (var listener in listeners) {
+          listener.onTrackEditorPropertyChange(property);
+        }
+      }
+    }
+  },
+  
+  /** 
+   * Broadcast the fact that a new selection has been set
+   */
+  _notifyInitListeners: function TrackEditorState__notifyInitListeners() {
+    for each (var listener in this._initListeners) {
+      listener.onTrackEditorInit();
+    }
+  },
+}
+
+
+
+
+
+
+/******************************************************************************
+ *
+ * \class TrackEditor 
+ * \brief Base controller for track editor windows, including trackEditor.xul.
+ *
+ * Responsible for setting up default UI elements and maintaining the 
+ * state object 
+ *
+ *****************************************************************************/
 var TrackEditor = {
   
   
   _propertyManager: Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                       .getService(Ci.sbIPropertyManager),
+             
+  // TrackEditorState object
+  state: null,
   
-  onLoadTrackEditor: function() {
-    var that = this;
+  // List of references to widget objects
+  _elements: [],
+  
+  // Message header elements 
+  _notificationBox: null,
+  _notificationText: null,  
+  
+  // TODO consolidate?
+  _browser: null,
+  mediaListView: null,
+  
+  /**
+   * Called when the dialog loads
+   */
+  onLoadTrackEditor: function TrackEditor_onLoadTrackEditor() {
     
     // Get the main window.
     var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
                           .getService(Ci.nsIWindowMediator);
 
     var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main"); 
-    this.gBrowser = songbirdWindow.gBrowser;
+    this._browser = songbirdWindow.gBrowser;
     
-    var enableAdvanced = Application.prefs.getValue(
-      "songbird.trackeditor.enableAdvancedTab",
-      false
-    );
-    if (enableAdvanced) {
-      // this code assumes that the number of tabs and tabpanels is aligned
-      var tabbox = document.getElementById("trackeditor-tabbox");
-      var tabs = tabbox.getElementsByTagName("tabs")[0];
-      var tabpanels = tabbox.getElementsByTagName("tabpanels")[0];
-      
-      var tab = document.createElement("tab");
-      tab.setAttribute("label", "Advanced");
-      tabs.appendChild(tab);
-      
-      var panel = document.createElement("vbox");
-      panel.setAttribute("flex", "1");
-      tabpanels.appendChild(panel);
-      
-      this.populateAdvancedTab(panel);
-    }
+    this.state = new TrackEditorState();  
     
-    this.watchTextboxesBlur();
+    // Prepare the UI
+    this._setUpDefaultWidgets();
     
     // note that this code USED to watch tabContent and selection and library
     // changes, but we've implemented track editor as a modal dialog, so there's
@@ -56,106 +421,115 @@ var TrackEditor = {
     // brought back if the desire arises
     this.onTabContentChange();
   },
+  
+  /**
+   * Find and configure known DOM elements
+   */
+  _setUpDefaultWidgets: function TrackEditor__setUpDefaultWidgets() {
 
-  populateAdvancedTab: function(advancedTab) {
-    // Create elements for the properties in the Advanced Property Tab
-    var label = document.createElement("label");
-    label.setAttribute("id", "advanced-warning");
-    var labelText = document.createTextNode(
-      "WARNING: Editing these values could ruin Christmas."
-    );
-    label.appendChild(labelText);
+    // TODO: profiling shows that setting the value of a textbox can
+    // take up to 200ms.  Multiply that by 40 textboxes and performance
+    // can suffer.  Do some more tests and determine the impact of
+    // the advanced tab
     
-    var advancedContainer = document.createElement("vbox");
-    advancedContainer.id = "advanced-contents";
-    advancedContainer.setAttribute("flex", "1");
-
-    var propertiesEnumerator = this._propertyManager.propertyIDs;
-    while (propertiesEnumerator.hasMore()) {
-      var property = propertiesEnumerator.getNext();
-      var propInfo = this._propertyManager.getPropertyInfo(property);
-      
-      if (propInfo.userViewable) {
-        var container = document.createElement("hbox");
-        advancedContainer.appendChild(container);
-        
-        var label = document.createElement("label");
-        label.setAttribute("class", "advanced-label");
-        label.setAttribute("property", property);
-        label.setAttribute("property-type", "label");
-        container.appendChild(label);
-
-        if (propInfo.userEditable) {
-          var textbox = document.createElement("textbox");
-          textbox.setAttribute("property", property);
-          container.appendChild(textbox);
-        }
-        else {
-          var label = document.createElement("label");
-          label.setAttribute("property", property);
-          container.appendChild(label);
-        }
+    // Since the edit pane is all that is required for launch we  
+    // are disabling all other panes.  They can be selectively
+    // re-enabled once they've been polished.  
+    
+    // TODO/TEMP for now use the advanced editing pref to show 
+    // the unpolished tabs
+    
+    // Set up the advanced tab
+    var enableAdvanced = Application.prefs.getValue(
+                           "songbird.trackeditor.enableAdvancedTab", false);
+    if (enableAdvanced) {
+      // this code assumes that the number of tabs and tabpanels is aligned
+      var tabbox = document.getElementById("trackeditor-tabbox");
+      this._elements.push(new TrackEditorAdvancedTab(tabbox));
+    } else {
+      // TODO remove this
+      var tabBox = document.getElementById("trackeditor-tabbox");
+      var tabs = tabBox.parentNode.getElementsByTagName("tabs")[0];
+      tabBox.selectedIndex = 1;
+      tabs.hidden = true;
+    }
+    
+    // Add an additional layer of control to all elements with a property
+    // attribute.  This will cause the elements to be updated when the
+    // selection model changes, and vice versa.
+    var elements = document.getElementsByAttribute("property", "*");
+    for each (var element in elements) {
+      if (element.tagName == "label") {
+        this._elements.push(new TrackEditorLabel(element));
+      } else if (element.tagName == "textbox") {
+        this._elements.push(new TrackEditorTextbox(element));
       }
     }
-    // we add this at the end so that there is just a single reflow
-    advancedTab.appendChild(advancedContainer);
+    
+    this._notificationBox = document.getElementById("notification_box");
+    this._notificationText = document.getElementById("notification_text");
+    this._notificationBox.hidden = true;
+  },
+  
+  
+  /**
+   * Show/hide warning messages as needed in the header of the dialog
+   */
+  _updateNotificationBox: function TrackEditor__updateNotificationBox() {
+    this.state.selectedItems.length
+    
+    var itemCount = this.state.selectedItems.length;
+    var writableCount = this.state.writableItemCount;
+    
+    var message;
+    var class = "notification-warning";
+    
+    // TODO localize!
+    if (itemCount > 1) {
+      if (writableCount == itemCount) {
+        message = "Editing metadata for " + itemCount + " media items.";
+        class = "notification-info";
+      } else if (writableCount >= 1) {
+        message = "Metadata cannot be edited for " + (itemCount - writableCount) +
+          " of the " + itemCount + " selected items.";
+      } else {
+        message = "Metadata for the selected items cannot be edited.";
+      }
+    } else if (writableCount == 0) {
+      message = "Metadata for the selected item cannot be edited.";
+    }
+      
+    if (message) {
+      this._notificationBox.className = class;
+      this._notificationText.textContent = message;
+      this._notificationBox.hidden = false;
+    } else {
+      this._notificationBox.hidden = true;
+    }
   },
 
-  onTabContentChange: function() {
+  /**
+   * Called when the state of the main window browser changes.
+   * TODO: or at least it would be if we were a non-modal dialog
+   */
+  onTabContentChange: function TrackEditor_onTabContentChange() {
     // We don't listen to nobody.
     //if(this.mediaListView) {
       //this.mediaListView.mediaList.removeListener(this);
     //}
     
-    this.mediaListView = this.gBrowser.currentMediaListView;
+    this.mediaListView = this._browser.currentMediaListView;
     
     //this.mediaListView.mediaList.addListener(this); 
     //we're assuming a modal dialog for now, so don't reflect changes.
-
-    // update the autocomplete parameters so we point
-    // at the right library
-    this.setTextboxesAutoComplete();
     
     this.onSelectionChanged();
   },
 
-  setTextboxesAutoComplete: function() {
-    // Set the autocompletesearchparam attribute of all
-    // our autocomplete textboxes to 'property;guid', where
-    // property is the mediaitem property that the textbox
-    // edits, and guid is the guid of the currently displayed
-    // library. We could omit the guid and set only the property
-    // in the xul, but the suggestions would then come
-    // from all the libraries in the system instead of only
-    // the one whom the displayed list belongs to.
-    // In addition, textboxes that have a defaultdistinctproperties
-    // attribute need to have that value appended to the
-    // search param attribute as well. 
-    var library = this.mediaListView.mediaList.library;
-    if (!library) 
-      return;
-    var libraryGuid = library.guid;
-    var textboxes = document.getElementsByTagName("textbox");
-    for (var i = 0; i < textboxes.length; i++) {
-      var textbox = textboxes[i];
-      // verify that this is an autocomplete textbox, and that
-      // it belongs to us: avoid changing the param for a
-      // textbox that autocompletes to something else than
-      // distinct props. Note that we look for the search id
-      // anywhere in the attribute, because we could be getting
-      // suggestions from multiple suggesters
-      if (textbox.getAttribute("type") == "autocomplete" &&
-          textbox.getAttribute("autocompletesearch")
-                 .indexOf("library-distinct-properties") >= 0) {
-          var property = textbox.getAttribute("property");
-          var defvals = textbox.getAttribute("defaultdistinctproperties");
-          var param = property + ";" + libraryGuid;
-          if (defvals && defvals != "") param += ";" + defvals;
-          textbox.setAttribute("autocompletesearchparam", param);       
-      }
-    }
-  },
-
+  // TODO this isn't hooked up to anything!
+  // TODO should be fixed, as playback may modify metadata while
+  // we are editing it
+  /*
   onItemUpdated: function(aMediaList, aMediaItem, aOldPropertiesArray) {
     // we have to treat this just like a selection change
     // so that multiple-selection values are correctly updated
@@ -175,210 +549,62 @@ var TrackEditor = {
         return;
       }
     }
+  },*/
+  
+  /**
+   * Called when the media item selection in the main player window changes
+   */
+  onSelectionChanged: function TrackEditor_onSelectionChanged() {
+    
+    // TODO build a data structure
+    this.state.init(this.mediaListView.selection);    
+    
+    // TODO consider a separate function
+   
+    // Special case the title and track number
+    // It doesn't make sense to apply the same title and track number
+    // to multiple tracks, so just disable the option. 
+    // If the user really wants it they can use the advanced tab.
+    function disableTextBox(id, disable) {
+      debugger;
+      var tb = document.getElementById(id);
+      var cb = tb.parentNode.getElementsByTagName("checkbox")[0];
+      tb.disabled = disable;
+      cb.disabled = disable;
+    }
+    var disable = this.mediaListView.selection.count > 1;
+    disableTextBox("infoTab-trackName", disable);
+    disableTextBox("infoTab-trackNumber", disable);
+ 
+    // DISABLE NEXT/PREV BUTTONS AT TOP/BOTTOM OF LIST
+    // TODO: komi suggests wraparound as a pref
+    var idx = this.mediaListView.selection.currentIndex;
+    var atStart = (idx == 0)
+    var atEnd   = (idx == this.mediaListView.length - 1);
+    var prev = document.getElementById("prev-button");
+    var next = document.getElementById("next-button");
+    prev.setAttribute("disabled", (atStart ? "true" : "false"));
+    next.setAttribute("disabled", (atEnd ? "true" : "false"));
+
+    this._updateNotificationBox();
   },
   
-  onSelectionChanged: function() {
-    var somethings = document.getElementsByAttribute("property", "*");
-    var numSelected = this.mediaListView.selection.count;
-
-    // TODO isReadOnly behaviour is to be modified in bug 8932
-    var isReadOnly = false;
-    
-    if (numSelected == 1) {
-      isReadOnly = !this.mediaListView.selection.currentMediaItem.userEditable;
-      // TODO Disable all editing
-    } else {
-      var items = this.mediaListView.selection.selectedIndexedMediaItems;
-      var readOnlyItemCount = 0;
-      while (items.hasMoreElements()) {
-        var item = items.getNext()
-                        .QueryInterface(Components.interfaces.sbIIndexedMediaItem)
-                        .mediaItem;
-        if (!item.userEditable) {
-          readOnlyItemCount++;
-        }
-      }
-      
-      isReadOnly = readOnlyItemCount > 0;
-      if (readOnlyItemCount == numSelected) {
-        // TODO Nothing is writeable.  Better disable all edit boxes.
-      }
-    }
-    
-    // update the notificationbox at the top.
-    var notificationBox = document.getElementById("trackeditor-notification");
-    
-    // update the notificationbox at the top.    
-    notificationBox.removeAllNotifications();
-    if (isReadOnly) {
-      notificationBox.appendNotification("The current item may not be modified. The library is read-only.",
-                                         "read-only", null, 1);
-    }
-    
-    if (numSelected > 1) {
-        notificationBox.appendNotification("Selected " + numSelected + " tracks.", 
-                                           "multi-select", null, 1);
-    }
-    
-    // set all textbox values based on the number of items selected
-    for (var i = 0; i < somethings.length; i++) {
-      var elt = somethings[i];
-      var property = elt.getAttribute("property");
-      var propInfo = this._propertyManager.getPropertyInfo(property);
-
-      if(elt.hasAttribute("property-type") && elt.getAttribute("property-type") == "label") {
-        var value = propInfo.displayName;
-      }
-      else if (numSelected == 0) {
-        var value = propInfo.displayName;
-        elt.setAttribute("disabled", true);
-      }
-      else if (numSelected == 1) {
-        var mediaItem = this.mediaListView.selection.currentMediaItem;
-        var value = this.getPropertyValue(property, mediaItem);
-        elt.removeAttribute("disabled");
-        if (isReadOnly) {
-          elt.setAttribute("readonly", true);
-        } else {
-          elt.removeAttribute("readonly");
-        }
-        elt.clickSelectsAll = true;
-      }
-      else { // >1 selected
-        var value = this.determineMultipleValue(elt);
-        elt.removeAttribute("disabled");
-        if (isReadOnly)
-          elt.setAttribute("readonly", true);
-        else
-          elt.removeAttribute("readonly");
-        elt.clickSelectsAll = true;
-      }
-      this.applyMediaItem(elt, value);
-    }
-  },
-
-  getPropertyValue: function(property, mediaItem) {
-    var propInfo = this._propertyManager.getPropertyInfo(property);
-    var value = mediaItem.getProperty(property);
-
-    // on an image, format truncates, then returns!
-    // we don't want that.
-    if (property == SBProperties.primaryImageURL) {
-      return value;
-    }
-    
-    // oh great. this doesn't work either.
-    if (value == "" || value == null) {
-      return value;
-    }
-    
-    // formatting can fail. :(
-    try { 
-      value = propInfo.format( value ); 
-    }
-    catch (e) { 
-      dump("TrackEditor::getPropertyValue("+property+") - "+value+": " + e +"\n");
-    }
-    return value;
-  },
-
-  determineMultipleValue: function(elt) {
-    var property = elt.getAttribute("property");
-    var propInfo = this._propertyManager.getPropertyInfo(property);
-    
-    if(elt.hasAttribute("property-type")) {
-      if(elt.getAttribute("property-type") == "label") {
-        return propInfo.displayName;
-      }
-    }
-
-    // otherwise, we have a real value
-    var sIMI = this.mediaListView.selection.selectedIndexedMediaItems;
-
-    var sharedValue = this.mediaListView
-                          .selection
-                          .currentMediaItem
-                          .getProperty(property);
-
-    while (sIMI.hasMoreElements()) {
-      var mI = sIMI.getNext()
-                   .QueryInterface(Components.interfaces.sbIIndexedMediaItem)
-                   .mediaItem;
-      if (mI.getProperty(property) != sharedValue) {
-        return "* Various *";
-      }
-    }
-    
-    return sharedValue;
-  },
-
-  applyMediaItem: function(elt, value) {
-    if (elt.nodeName == "label" || elt.nodeName == "textbox") {
-      elt.value = value;
-      elt.defaultValue = value;
-    }
-    else if (elt.nodeName == "image") {
-      elt.setAttribute("src", value);
-    }
-  },
-  
-  onCurrentIndexChanged: function() {
-    // maybe we ought to make a multi-select use the 
-    // current item for some kind of hinting?
-  },
-  
+  /**
+   * Called when the media item selection in the main player window changes
+   * TODO not being run at the moment?
+   */
   onUnloadTrackEditor: function() {
     // break the cycles
-    //this.gBrowser.removeEventListener("TabContentChange", this, false);
+    //this._browser.removeEventListener("TabContentChange", this, false);
     this.mediaListView.selection.removeListener(this);
     this.mediaListView.mediaList.removeListener(this);
     this.mediaListView = null;
   },
 
-  watchTextboxesBlur: function() {
-    var somethings = document.getElementsByAttribute("property", "*");
-    for (var i = 0; i < somethings.length; i++) {
-      somethings[i].setAttribute("oninput", "TrackEditor.onTextboxChange(this)");
-    }
-  },
-
-  onTextboxChange: function(elt) {
-    var property = elt.getAttribute("property");
-    var propInfo;
-    try {
-      propInfo = this._propertyManager.getPropertyInfo(property);
-    }
-    catch (e) {
-      // propInfo fails when there is no property of that name
-      // indcating we don't need to care about this blur.
-      return;
-    }
-
-    // be sure the value set was good, and if not, reset it, notifying the user
-    // TODO: blank values should be legal for all fields and right now they don't necessarily validate...
-    if (elt.value != "" && !propInfo.validate(elt.value)) {
-      elt.reset();
-    }
-    
-    // synchronize textboxes elsewhere in the dialog
-    var syncers = document.getElementsByAttribute("property", property);
-    for(var i = 0; i < syncers.length; i++) {
-      if(syncers[i].getAttribute("property-type") == "label") {
-        continue; // skip labels
-      }
-      else {
-        syncers[i].value = elt.value;
-        
-        if (elt.value != elt.defaultValue) {
-          syncers[i].setAttribute("edited", "true");
-        }
-        else {
-          syncers[i].removeAttribute("edited");
-        }
-      }
-    }
-  },
-
+  /**
+   * Called by the right arrow button.  Increments the selection
+   * index in the main player window
+   */
   next: function() {
     var idx = this.mediaListView.selection.currentIndex;
 
@@ -395,6 +621,10 @@ var TrackEditor = {
     this.onSelectionChanged();
   },
 
+  /**
+   * Called by the left arrow button.  Decrements the selection
+   * index in the main player window
+   */
   prev: function() {
     var idx = this.mediaListView.selection.currentIndex;
 
@@ -411,80 +641,43 @@ var TrackEditor = {
     this.onSelectionChanged();
   },
   
+  /**
+   * Purge any edits made by the user. 
+   * TODO Currently unused.
+   */
   reset: function() {
-    var somethings = document.getElementsByTagName("textbox");
-    for (var i = 0; i < somethings.length; i++) {
-      somethings[i].reset();
-    }
+    // Reiniting with the existing selection will
+    // refresh all UI
+    onSelectionChanged();
   },
+
+  /**
+   * Write property changes back to the selected media items
+   * and if possible to the on disk files.
+   */  
   apply: function() {
-    if (this.mediaListView.selection.count < 0) {
-      // TODO WTF, REMOVE THIS!
-      alert("Apply what? Select some tracks, foo!");
+    
+    var properties = this.state.getEditedProperties();
+    var items = this.state.selectedItems;
+    if (items.length == 0 || properties.length == 0) {
       return;
     }
-    var somethings = document.getElementsByTagName("textbox");
-
-    // todo: move this somewhere more sensible
-    var blacklist = {}
-    blacklist[SBProperties.trackName] = "ask-multiple";
-    blacklist[SBProperties.trackNumber] = "ask-multiple";
-
-    if (this.mediaListView.selection.count > 1) {
-      for (var i = 0; i < somethings.length; i++) {
-        var tb = somethings[i];
-        var property = tb.getAttribute("property");
-        if(tb.value != tb.defaultValue
-          && blacklist[property] && blacklist[property] == "ask-multiple") {
-          
-          blacklist[property] == "already-asked";
-          // it's cool, this array gets created each time.
-          // todo: "Don't ask me again."
-          // todo: nonugly title
-          // todo: make into a notifcationbox(?)
-          var propInfo = this._propertyManager.getPropertyInfo(property);
-          if (!confirm("Are you sure you want to change the "+propInfo.displayName
-                       +" for all selected tracks?")) {
-            tb.reset();
-            return;
-          }
-          else {
-            break; // only ask once
-          }
+    
+    // Apply each modified property back onto the selected items,
+    // keeping track of which items have been modified
+    var needsWriting = new Array(items.length);
+    for each (property in properties) {
+      for (var i = 0; i < items.length; i++) {
+        var value = TrackEditor.state.getPropertyValue(property);
+        var item = items[i];
+        if (value != item.getProperty(property)) {
+          item.setProperty(property, value);
+          needsWriting[i] = true;
         }
       }
     }
-
-    var needsWriting = new Array(this.mediaListView.selection.count);
-    // we use a counter for noting items that need writing in the while loop below. 
-    // (we can't decorate XPCOM objects, and can't index into selection (i think))
-
-    for (var i = 0; i < somethings.length; i++) {
-      var tb = somethings[i];
-      if(tb.defaultValue != tb.value) {
-        // update the default value. we know these values validate,
-        // so they should go into the media items okay
-        var property = tb.getAttribute("property");
-        tb.defaultValue = tb.value;
-        tb.removeAttribute("edited"); // we're now back to normal
-        
-        // go through the list setting properties and queuing items
-        var sIMI = this.mediaListView.selection.selectedIndexedMediaItems;
-        var j = 0;
-        while (sIMI.hasMoreElements()) {
-          j++;          
-          var mI = sIMI.getNext()
-            .QueryInterface(Ci.sbIIndexedMediaItem)
-            .mediaItem;
-
-          if (mI.getProperty(property) != tb.value) {
-            mI.setProperty(property, tb.value);
-            needsWriting[j] = true; // keep track of these suckers
-          }
-        }
-      }
-    }
-
+      
+    
   /* TODO: finish or nix this
     // isPartOfCompilation gets special treatment because
     // this is our only user-exposed boolean property right now
@@ -510,20 +703,14 @@ var TrackEditor = {
         }
     }
   */
-  
+    
+    // Add all items that need writing into an array 
+    // and hand them off to the metadata manager
     var mediaItemArray = Cc["@mozilla.org/array;1"]
                         .createInstance(Ci.nsIMutableArray);
-    // go through the list setting properties and queuing items
-    var sIMI = this.mediaListView.selection.selectedIndexedMediaItems;
-    var j = 0;
-    while (sIMI.hasMoreElements()) {
-      j++;          
-      var mI = sIMI.getNext()
-        .QueryInterface(Ci.sbIIndexedMediaItem)
-        .mediaItem;
-      
-      if (needsWriting[j] && mI.userEditable) {
-        mediaItemArray.appendElement(mI, false);
+    for (var i = 0; i < items.length; i++) {
+      if (needsWriting[i] && items[i].userEditable) {
+        mediaItemArray.appendElement(items[i], false);
       }
     }
     if (mediaItemArray.length > 0) {
@@ -535,3 +722,350 @@ var TrackEditor = {
     }
   }
 };
+
+
+
+
+
+/******************************************************************************
+ *
+ * \class TrackEditorWidgetBase 
+ * \brief Base wrapper for UI elements that need to observe a track editor
+ *        property value
+ *
+ * To be wrapped by this function an element must have a property attribute
+ * and .value accessor.
+ *
+ * Note that to add UI to the track editor you DO NOT need to use
+ * this or other wrapper classes.  Use this, use XBL, use your own script, just
+ * observe TrackEditor.state and post back user changes.
+ *
+ *****************************************************************************/
+function TrackEditorWidgetBase(element) {
+  this._element = element;
+  
+  TrackEditor.state.addPropertyListener(this.property, this);
+}
+TrackEditorWidgetBase.prototype = {  
+  // The DOM element that this object is responsible for
+  _element: null,
+  
+  get property() {
+    return this._element.getAttribute("property");
+  },
+  
+  onTrackEditorPropertyChange: function TrackEditorWidgetBase_onTrackEditorPropertyChange() {
+    this._element.value = TrackEditor.state.getPropertyValue(this.property);
+  }
+}
+
+
+
+
+
+/******************************************************************************
+ *
+ * \class TrackEditorLabel 
+ * \brief Extends TrackEditorWidgetBase for label elements that should 
+ *        reflect propert information
+ *
+ * If the label has a property-type="label" attribute it will receive the 
+ * title associated with the property attribute. Otherwise the label will
+ * receive the current editor display value for property.
+ *
+ *****************************************************************************/
+function TrackEditorLabel(element) {
+  
+  // If requested, just show the title of the property
+  if (element.hasAttribute("property-type") && 
+      element.getAttribute("property-type") == "label") {
+        
+    var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                   .getService(Ci.sbIPropertyManager);
+    var propInfo = propMan.getPropertyInfo(element.getAttribute("property"));
+    element.setAttribute("value", propInfo.displayName);   
+    
+  } else {
+    // Otherwise, this label should show the value of the 
+    // property, so call the parent constructor
+    TrackEditorWidgetBase.call(this, element);
+  }
+}
+TrackEditorLabel.prototype = {
+  __proto__: TrackEditorWidgetBase.prototype,
+}
+
+
+
+
+
+/******************************************************************************
+ *
+ * \class TrackEditorInputWidget 
+ * \brief Extends TrackEditorWidgetBase to provide a base for widgets that
+ *        need to read from AND write back to the track editor state.
+ *
+ * Wraps the given element to manage the readonly attribute based on
+ * track editor state and a checkbox.  Synchronizes readonly state between 
+ * all input elements for a given property.
+ * 
+ * Assumes widgets with .value and .readonly accessors and a 
+ * property attribute.
+ *
+ *****************************************************************************/
+function TrackEditorInputWidget(element) {
+  
+  // Otherwise, this label should show the value of the 
+  // property, so call the parent constructor
+  TrackEditorWidgetBase.call(this, element);  
+  
+  TrackEditor.state.addInitListener(this);
+  
+  // Create preceding checkbox to enable/disable when 
+  // multiple tracks are selected
+  this._createCheckbox();
+  
+  // Add a set value function?
+}
+TrackEditorInputWidget.prototype = {
+  __proto__: TrackEditorWidgetBase.prototype, 
+  
+  // Checkbox used to enable/disable the input widget
+  // when multiple tracks are selected
+  _checkbox: null,
+  
+  _createCheckbox: function() {
+    var hbox = document.createElement("hbox");
+    this._element.parentNode.replaceChild(hbox, this._element);
+    this._checkbox = document.createElement("checkbox");
+    this._checkbox.hidden = true;
+    var self = this;
+    this._checkbox.addEventListener("command", 
+      function() { self.onCheckboxCommand(); }, false);
+    hbox.appendChild(this._checkbox);
+    hbox.appendChild(this._element);
+  },
+  
+  onCheckboxCommand: function() {
+    if (this._checkbox.checked) {
+      if (this._element.hasAttribute("readonly")) {
+        this._element.removeAttribute("readonly");
+      }
+      
+      if (TrackEditor.state.hasMultipleValuesForProperty(this.property)) {
+        // Clear out the *Various* text
+        TrackEditor.state.setPropertyValue(this.property, "");
+      }
+      
+      this._element.focus();
+    } else {
+      TrackEditor.state.resetPropertyValue(this.property);
+      this._checkbox.checked = false;
+      this._element.setAttribute("readonly", "true");
+    }
+  },
+  
+  onTrackEditorInit: function() {
+    this._checkbox.hidden = TrackEditor.state.selectedItems.length <= 1; 
+    
+    // If none of the selected items can be modified, disable all editing
+    if (TrackEditor.state.isDisabled) {
+      this._checkbox.disabled = true;
+      this._element.setAttribute("readonly", "true");
+    }
+  },
+  
+  onTrackEditorPropertyChange: function TrackEditorInputWidget_onTrackEditorPropertyChange() {
+    TrackEditorWidgetBase.prototype.onTrackEditorPropertyChange.call(this);
+    this._checkbox.checked = !TrackEditor.state.hasMultipleValuesForProperty(this.property);
+    if (!this._checkbox.checked) {
+      if (!this._element.hasAttribute("readonly")) {
+        this._element.setAttribute("readonly", "true");
+      }
+    } else if (this._element.hasAttribute("readonly") && !this._checkbox.disabled) { 
+      this._element.removeAttribute("readonly");
+      
+      if (this._element.hasAttribute("disabled")) {    
+        this._element.removeAttribute("disabled");
+        this._checkbox.removeAttribute("disabled");
+      }
+    }
+  }
+}
+
+
+
+
+
+
+/******************************************************************************
+ *
+ * \class TrackEditorTextbox 
+ * \brief Extends TrackEditorInputWidget to add textbox specific details
+ *
+ * Binds the given textbox to track editor state for a property, and mananges
+ * input, updates, edited attribute, and autocomplete configuration.
+ *
+ *****************************************************************************/
+function TrackEditorTextbox(element) {
+  
+  TrackEditorInputWidget.call(this, element);  
+  
+  var self = this;
+  element.addEventListener("input",
+          function() { self.onUserInput(); }, false);
+}
+TrackEditorTextbox.prototype = {
+  __proto__: TrackEditorInputWidget.prototype,
+  
+  onUserInput: function() {
+    var value = this._element.value;
+    TrackEditor.state.setPropertyValue(this.property, value);
+    
+    // TODO VALIDATION!
+    // When to validate? oninput? onchange?
+    /*
+    if (elt.value != "" && !propInfo.validate(elt.value)) {
+      elt.reset();
+    }*/
+  },
+  
+  onTrackEditorInit: function TrackEditorTextbox_onTrackEditorInit() {
+    TrackEditorInputWidget.prototype.onTrackEditorInit.call(this);
+
+    if (this._element.getAttribute("type") == "autocomplete") {
+      this._configureAutoComplete();
+    }
+  },
+  
+  onTrackEditorPropertyChange: function TrackEditorTextbox_onTrackEditorPropertyChange() {
+    var property = this.property;
+    
+    // Indicate if this property has been edited
+    if (TrackEditor.state.isPropertyEdited(this.property)) 
+    {
+      if (!this._element.hasAttribute("edited")) {
+        this._element.setAttribute("edited", "true");
+      }
+    } else if (this._element.hasAttribute("edited")) {
+      this._element.removeAttribute("edited"); 
+    } 
+
+    TrackEditorInputWidget.prototype.onTrackEditorPropertyChange.call(this);
+  },
+  
+  _configureAutoComplete: function TrackEditorTextbox__configureAutoComplete() {
+    // Set the autocompletesearchparam attribute of the
+    // autocomplete textbox to 'property;guid', where
+    // property is the mediaitem property that the textbox
+    // edits, and guid is the guid of the currently displayed
+    // library. We could omit the guid and set only the property
+    // in the xul, but the suggestions would then come
+    // from all the libraries in the system instead of only
+    // the one whom the displayed list belongs to.
+    // In addition, textboxes that have a defaultdistinctproperties
+    // attribute need to have that value appended to the
+    // search param attribute as well. 
+    if (!TrackEditor.mediaListView) 
+      return;
+    var library = TrackEditor.mediaListView.mediaList.library;
+    if (!library) 
+      return;
+    var libraryGuid = library.guid;
+
+    // verify that this is an autocomplete textbox, and that
+    // it belongs to us: avoid changing the param for a
+    // textbox that autocompletes to something else than
+    // distinct props. Note that we look for the search id
+    // anywhere in the attribute, because we could be getting
+    // suggestions from multiple suggesters
+    if (this._element.getAttribute("autocompletesearch")
+                     .indexOf("library-distinct-properties") >= 0) {
+      var defvals = this._element.getAttribute("defaultdistinctproperties");
+      var param = this.property + ";" + libraryGuid;
+      if (defvals && defvals != "") {
+        param += ";" + defvals;
+      }
+      this._element.setAttribute("autocompletesearchparam", param);       
+    }
+  }
+}
+
+
+
+
+
+
+/******************************************************************************
+ *
+ * \class TrackEditorAdvancedTab 
+ * \brief A tab panel that displays all properties in the system
+ *
+ *****************************************************************************/
+function TrackEditorAdvancedTab(tabBox) {
+  var tabs = tabBox.getElementsByTagName("tabs")[0];
+  var tabPanels = tabBox.getElementsByTagName("tabpanels")[0];
+  var tab = document.createElement("tab");
+  
+  // TODO localize
+  tab.setAttribute("label", "Advanced");
+  tabs.appendChild(tab);
+  
+  var panel = document.createElement("vbox");
+  panel.setAttribute("flex", "1");
+  tabPanels.appendChild(panel);
+  
+  this._populateTab(panel);
+}
+TrackEditorAdvancedTab.prototype = {
+  
+  /**
+   * Create grid of labels and text boxes for all known properties
+   */
+  _populateTab: function TrackEditorAdvancedTab__populateTab(advancedTab) {
+    // Create elements for the properties in the Advanced Property Tab
+    var label = document.createElement("label");
+    label.setAttribute("id", "advanced-warning");
+    var labelText = document.createTextNode(
+                      "WARNING: Editing these values could ruin Christmas.");
+    label.appendChild(labelText);
+    
+    var advancedContainer = document.createElement("vbox");
+    advancedContainer.id = "advanced-contents";
+    advancedContainer.setAttribute("flex", "1");
+
+    var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                   .getService(Ci.sbIPropertyManager);
+
+    var propertiesEnumerator = propMan.propertyIDs;
+    while (propertiesEnumerator.hasMore()) {
+      var property = propertiesEnumerator.getNext();
+      var propInfo = propMan.getPropertyInfo(property);
+      
+      if (propInfo.userViewable) {
+        var container = document.createElement("hbox");
+        advancedContainer.appendChild(container);
+        
+        var label = document.createElement("label");
+        label.setAttribute("class", "advanced-label");
+        label.setAttribute("property", property);
+        label.setAttribute("property-type", "label");
+        container.appendChild(label);
+
+        if (propInfo.userEditable) {
+          var textbox = document.createElement("textbox");
+          textbox.setAttribute("property", property);
+          container.appendChild(textbox);
+        }
+        else {
+          var label = document.createElement("label");
+          label.setAttribute("property", property);
+          container.appendChild(label);
+        }
+      }
+    }
+    // we add this at the end so that there is just a single reflow
+    advancedTab.appendChild(advancedContainer);
+  }
+}
+
