@@ -184,50 +184,36 @@ NS_IMETHODIMP sbNumberPropertyInfo::Validate(const nsAString & aValue, PRBool *_
   sbSimpleAutoLock lockRadix(mRadixLock);
   const char *fmt = GetFmtFromRadix(mRadix);
 
-  // First, check that all of the characters are valid 
-  // digits for this radix, because simply parsing the
-  // string using PR_sscanf would be successful for
-  // strings containing invalid trailing characters.
-  // Assume that the utf8 string does not contain extended 
-  // characters, if it does, it'll simply fail validation
-  // anyway, which it should.
-
-  const char *p = narrow.get();
-  PRBool invalid = PR_FALSE;
-  while (*p && !invalid) {
-    switch (mRadix) {
-      case sbINumberPropertyInfo::RADIX_8:
-        invalid = (*p < '0' || *p > '7');
-        break;
-      case sbINumberPropertyInfo::RADIX_10:
-        invalid = (*p < '0' || *p > '9');
-        break;
-      case sbINumberPropertyInfo::RADIX_16:
-        invalid = !((*p >= '0' && *p <= '9') ||
-                    (*p >= 'a' && *p <= 'f') ||
-                    (*p >= 'A' && *p <= 'F'));
-        break;
-    }
-    p++;
-  }
-  
-  if (invalid) {
-    *_retval = PR_FALSE;
-    return NS_OK;
-  }
-  
-  // Next, parse the value, and check min/max
-
-  sbSimpleAutoLock lockMinMax(mMinMaxValueLock);
   *_retval = PR_TRUE;
-
-  if(PR_sscanf(narrow.get(), fmt, &value) != 1) {
+  
+  // Add a string parsing specifier, to catch extra characters behind 
+  // the number. Limit string parsing to 16 chars, we just want to check
+  // if something's there anyway, we don't want to do anything with the 
+  // actual string
+  nsAutoString ext_fmt;
+  ext_fmt.AssignLiteral(fmt);
+  ext_fmt += NS_LITERAL_STRING("%16s");
+  const char remainder[17]="";
+  PRInt32 r = PR_sscanf(narrow.get(), NS_LossyConvertUTF16toASCII(ext_fmt).get(), &value, remainder);
+  if (r < 1) {
+    // We got less than one parameter (the number) that parsed correctly,
+    // the value is not valid.
     *_retval = PR_FALSE;
-    return NS_OK;
   }
 
+  // Otherwise, check whether we got something in the string. Can't rely on the
+  // return value from PR_sscanf here because a number by itself will still parse
+  // an empty trailing string successfully
+  if (*remainder != 0) {
+    // We got extra characters, the value is not valid.
+    *_retval = PR_FALSE;
+  }
+
+  // Now check min & max constraints
+  sbSimpleAutoLock lockMinMax(mMinMaxValueLock);
   if(value < mMinValue ||
      value > mMaxValue) {
+     // Value is above or below limits, not valid.
      *_retval = PR_FALSE;
   }
 
