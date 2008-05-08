@@ -99,13 +99,7 @@ try
       {
         installXPI( uri.spec );
       }
-      // Load the HTML page if necessary
-      else if ( isHTMLFileExtension( uri.spec ) )
-      {
-        if ( isHTML( fp.file ))
-          gBrowser.loadURI( uri.spec );
-      }
-      else
+      else if ( PPS.isMediaURL(uri.spec) )
       {
         // And if we're good, play it.
         SBDataSetBoolValue("faceplate.seenplaying", false);
@@ -132,6 +126,12 @@ try
         
         // Play the item
         gPPS.playView(view, index);
+      }
+      else
+      {
+        // Unknown type, let the browser figure out what the best course
+        // of action is.
+        gBrowser.loadURI( uri.spec );
       }
     }
   }
@@ -742,54 +742,6 @@ function isXPI(filename) {
   return /\.(xpi|jar)$/i.test(filename);
 }
 
-/**
- * \brief Check to see if a file is really HTML.
- * \param inFile The |nsIFile| to peek inside of
- * \return If the file is of HTML content or not.
- */
-function isHTML(inFile) {
-  var isHTML = false;
-  
-  // Check the file extension before attempting to sneak inside the file:
-  var fileStream = 
-    Components.classes["@mozilla.org/network/file-input-stream;1"]
-              .createInstance(Components.interfaces.nsIFileInputStream);
-  
-  var scriptStream =
-    Components.classes["@mozilla.org/scriptableinputstream;1"]
-              .createInstance(Components.interfaces.nsIScriptableInputStream);
-              
-  try {
-    fileStream.init(inFile, -1, 0, 0);
-    scriptStream.init(fileStream);
-  
-    // Look in the first 2k of a file for '<HTML>'.
-    var str = scriptStream.read(2048);
-    
-    isHTML = containsHTMLStartTag(str);
-    if (!isHTML) {
-      // Nothing in the first 2k, let's have one more look at the next 2k:
-      str = scriptStream.read(2048);
-      isHTML = containsHTMLStartTag(str);
-    }
-    
-    fileStream.close();
-    scriptStream.close();
-  }
-  catch (e) {
-  } 
-  
-  return isHTML;
-}
-
-function containsHTMLStartTag(inBuffer) {
-  return (inBuffer.toLowerCase().indexOf("<html") > -1);
-}
-
-function isHTMLFileExtension(inFilename) {
-  return /\.(html|htm)$/i.test(inFilename);
-}
-
 // Prompt the user to install the given XPI.
 function installXPI(localFilename)
 {
@@ -797,7 +749,6 @@ function installXPI(localFilename)
   InstallTrigger.install( inst );  // "InstallTrigger" is a Moz Global.  Don't grep for it.
   // http://developer.mozilla.org/en/docs/XPInstall_API_Reference:InstallTrigger_Object
 }
-
 
 /**
  * \brief Import a URL into the main library.
