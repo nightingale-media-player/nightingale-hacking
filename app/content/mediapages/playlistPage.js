@@ -201,7 +201,7 @@ window.mediaPage = {
           filterSet = filterSet.split(";");
         } else {
           filterSet = [
-                       SBProperties.year,
+                       SBProperties.genre,
                        SBProperties.artistName,
                        SBProperties.albumName
                        ];
