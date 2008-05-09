@@ -102,11 +102,6 @@ RATINGS CONTROL
   padding-right: 5px;
 }
 
-sb-rating[edited] .rating-background {
- border: 1px solid red !important;
- -moz-border-radius: 5px;
-}
-
 sb-rating {
   -moz-user-focus: normal;
   height: 22px;

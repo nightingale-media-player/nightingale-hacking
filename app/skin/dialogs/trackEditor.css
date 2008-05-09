@@ -103,3 +103,7 @@ textbox.short-number-input {
     overflow: hidden;
 }
 
+sb-rating[edited] .rating-background {
+ border: 1px solid red !important;
+ -moz-border-radius: 5px;
+}
