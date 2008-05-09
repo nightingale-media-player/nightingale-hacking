@@ -76,5 +76,7 @@
 	<string>0.5</string>
 	<key>NSAppleScriptEnabled</key>
 	<true/>
+	<key>CGDisableCoalescedUpdates</key>
+	<true/>
 </dict>
 </plist>
