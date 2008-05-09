@@ -59,6 +59,7 @@
  wheelvolume="false"
 >
 
+
   <!-- standard overlays insertion point for popups, commands, broadcasters, keys and stringbundles -->
   <sb-support id="mainSupportSet"/>
 
@@ -70,6 +71,7 @@
     <description id="notification_text" />
   </hbox>
   
+  
   <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox" mousethrough="never">
     <tabs>
       <tab label="Summary"/>
@@ -80,15 +82,18 @@
 
     <tabpanels flex="1">
       <vbox flex="1" id="summary-tab">
+      <!--  Summary page disabled.  Needs styling and layout.
+            When implementing this MAKE SURE THAT LABELS CROP!
+      
         <hbox flex="1">
-          <!-- why is this in an hbox? -->
+
           <div id="album-art" height="128" width="128">
             <image
                 id="primaryImageURL"
                 height="128"
                 width="128"
                 property="http://songbirdnest.com/data/1.0#primaryImageURL"/>
-            <html:box/><!-- dummy for spacing -->
+            <html:box/><
           </div>
           <vbox flex="1" id="mainSection">
             <hbox id="title">
@@ -100,7 +105,7 @@
             </hbox>
             <label id="artistName" property="http://songbirdnest.com/data/1.0#artistName"/>
             <label id="albumName" property="http://songbirdnest.com/data/1.0#albumName"/>
-            
+
             <hbox id="track-and-disc-numbers">
               <deck id="track-number-details">
                 <hbox>
@@ -130,7 +135,7 @@
                 </hbox>
               </deck>
             </hbox>
-  
+
             <hbox id="genre-and-year">
               <label
                   property-type="label"
@@ -149,7 +154,7 @@
             </hbox>
           </vbox>
         </hbox>
-        
+
         <groupbox>
           <grid flex="1">
             <columns>
@@ -158,7 +163,7 @@
               <column flex="1"/>
               <column flex="2"/>
             </columns>
-        
+
             <rows>
               <row>
                 <label
@@ -199,119 +204,145 @@
               <label>No download information.</label>
             </hbox>
           </deck>
-        </groupbox>
+        </groupbox>-->
       </vbox>
-  
-      <vbox id="info-tab">
+
+
+
+      <vbox id="info-tab">      
+      
         <label property-type="label" 
                property="http://songbirdnest.com/data/1.0#trackName"/>
         <!-- this one element gets an ID so we can look it up and disable it -->
-        <textbox flex="1"
-                 id="infoTab-trackName"
+        <textbox id="infotab_trackname_textbox"
+                 tabindex="10"
+                 flex="1"
                  property="http://songbirdnest.com/data/1.0#trackName"/>
-  
+
         <hbox>
-          <vbox flex="3">
+          <vbox id="info_left_column" flex="1">
+            <!-- NOTE:  We're leaving extra tabindex space to allow for generated elements -->
+          
             <label property-type="label" property="http://songbirdnest.com/data/1.0#artistName"/>
-            <textbox flex="1" 
-                     property="http://songbirdnest.com/data/1.0#artistName"
+            <textbox property="http://songbirdnest.com/data/1.0#artistName"
                      type="autocomplete"
+                     tabindex="20"
+                     flex="1"
                      autocompletesearch="library-distinct-properties"/>
-  
+
+
             <label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#albumName"/>
-            <textbox flex="1" 
-                     property="http://songbirdnest.com/data/1.0#albumName"
+            <textbox property="http://songbirdnest.com/data/1.0#albumName"
                      type="autocomplete"
+                     tabindex="40"
+                     flex="1"
                      autocompletesearch="library-distinct-properties"/>
-  
+                     
             <label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#albumArtistName"/>
-            <textbox flex="1"
-                     property="http://songbirdnest.com/data/1.0#albumArtistName"
+            <textbox property="http://songbirdnest.com/data/1.0#albumArtistName"
                      type="autocomplete"
+                     flex="1"
+                     tabindex="70"
                      autocompletesearch="library-distinct-properties"/>
-  
+
             <label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#composerName"/>
-            <textbox flex="1" 
-                     property="http://songbirdnest.com/data/1.0#composerName"
+            <textbox property="http://songbirdnest.com/data/1.0#composerName"
                      type="autocomplete"
+                     flex="1"
+                     tabindex="100"
                      autocompletesearch="library-distinct-properties"/>
-  
+
             <label property-type="label" property="http://songbirdnest.com/data/1.0#comment"/>
 
-            <textbox flex="1" 
-                     multiline="true" 
+            <textbox multiline="true" 
                      rows="4" 
+                     flex="1"
+                     tabindex="120"
                      property="http://songbirdnest.com/data/1.0#comment"/> 
-  
+
         <!-- deferred from 0.6 until we have an actual use for this column -->
         <!--label property-type="label" property="http://songbirdnest.com/data/1.0#grouping"/>
           <textbox property="http://songbirdnest.com/data/1.0#grouping" />
         -->
-  
+
             <label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#genre"/>
-            <textbox flex="1"
-                     id="genredropdown"
+            <textbox id="genredropdown"
                      property="http://songbirdnest.com/data/1.0#genre"
                      type="autocomplete"
+                     flex="1"
+                     tabindex="130"
                      autocompletesearch="library-distinct-properties"
                      defaultdistinctproperties="Alternative,Blues/R&amp;B,Books&amp;Spoken,Children's Music,Classical,Comedy,Country,Dance,Easy Listening,Electronic,Folk,Hip Hop/Rap,Holiday,House,Industrial,Jazz,New Age,Podcast,Pop,Raggae,Religious,Rock,Science,Sountrack,Techno,Trance,Unclassifiable,World"/>  
+
             <!-- deferred from 0.6 until supported by sorting algos -->
             <!--label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#isPartOfCompilation"/>
             <checkbox property="http://songbirdnest.com/data/1.0#isPartOfCompilation" 
                       />-->
           </vbox>
-          <vbox flex="1">
+          
+          <vbox id="info_right_column">
+          
             <label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#year"/>
-            <textbox flex="1" 
-                     property="http://songbirdnest.com/data/1.0#year"
-                     type="autocomplete"
-                     autocompletesearch="library-distinct-properties"/>
-  
+            <textbox property="http://songbirdnest.com/data/1.0#year"
+                       type="autocomplete"
+                       tabindex="30"
+                       flex="1"
+                       class="long-number-input"
+                       autocompletesearch="library-distinct-properties"/>
+
             <label property-type="label" property="http://songbirdnest.com/data/1.0#trackNumber"/>
             <hbox>
-              <textbox id="infoTab-trackNumber" 
+              <textbox id="infotab_tracknumber_textbox" 
+                       class="short-number-input"
+                       tabindex="50"
                        property="http://songbirdnest.com/data/1.0#trackNumber"/>
               <label>/</label> 
-              <textbox id="totalTracks" 
+              <textbox class="short-number-input"
+                       tabindex="60"
                        property="http://songbirdnest.com/data/1.0#totalTracks"/>
             </hbox>
-            
+
             <label property-type="label" property="http://songbirdnest.com/data/1.0#discNumber"/>
             <hbox>
-              <textbox id="discNumber" 
+              <textbox class="short-number-input"
+                       tabindex="80"
                        property="http://songbirdnest.com/data/1.0#discNumber"/>
               <label>/</label> 
-              <textbox id="totalDiscs" 
+              <textbox class="short-number-input"
+                       tabindex="90"
                        property="http://songbirdnest.com/data/1.0#totalDiscs"/>
             </hbox>
-  
+
             <label property-type="label" property="http://songbirdnest.com/data/1.0#bpm"/>
-            <textbox property="http://songbirdnest.com/data/1.0#bpm"/>
-  
-            <!-- TODO: rating widget -->
+            <textbox property="http://songbirdnest.com/data/1.0#bpm" 
+                     flex="1" 
+                     tabindex="110"
+                     class="long-number-input" />
+
+            <!-- TODO: rating widget 
             <label property-type="label" property="http://songbirdnest.com/data/1.0#rating"/>
             <textbox flex="1" 
                      property="http://songbirdnest.com/data/1.0#rating"/>
-            
+            TODO: image
             <hbox>
               <image
                 class="art"
                 height="64"
                 width="64"
                 property="http://songbirdnest.com/data/1.0#primaryImageURL"/>
-                <box/><!-- spacerbox -->
-              </hbox>
-            </vbox>
-          </hbox>
-          <spacer flex="1" />
-        </vbox>
-  
+              <box/>
+            </hbox>-->
+          </vbox>
+        </hbox>
+        <spacer flex="1" />
+      </vbox>
+
       <vbox id="lyrics-tab">
         <textbox flex="1"
                  id="lyrics-editor"
@@ -322,7 +353,7 @@
       <!--vbox id="sort-value">
         <label>Coming soon.</label>
       </vbox-->
-      
+
     </tabpanels>
   </tabbox>
   

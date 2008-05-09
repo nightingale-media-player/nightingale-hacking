@@ -63,30 +63,13 @@ textbox[edited] {
   color: white !important;
 }
 
-#title {
-  font-size: x-large;
+
+textbox.long-number-input {
+  width: 4em !important;
 }
 
-#title {
-  width: 10em !important;
-  overflow: hidden;
-}
-
-#mainSection #artistName, #mainSection #albumName {
-  font-size: large;
-}
-
-#primaryImageURL {
-    margin: 8px;
-}
-
-#trackNumber, #totalTracks, #discNumber, #totalDiscs {
+textbox.short-number-input {
   width: 2em !important;
-  overflow: hidden;
-}
-
-#genre {
-  width: 8em;
 }
 
 #genredropdown > .autocomplete-history-dropmarker {
@@ -101,29 +84,9 @@ textbox[edited] {
   display: none;
 }
 
-#year {
-  width: 4em !important;
-  overflow: hidden;
-}
 
 .number {
   font-style: italic !important;
-}
-
-#mainSection textbox {
-  -moz-border-radius: 0px;
-  border: 0px;
-  background-color: transparent;
-  padding: 0px;
-}
-
-#mainSection textbox:hover {
-  border-bottom: 1px solid grey;
-  margin-bottom: 4px;
-}
-
-#mainSection label { 
-    margin-right: 0px;
 }
 
 #advanced-contents {
@@ -140,17 +103,6 @@ textbox[edited] {
     overflow: hidden;
 }
 
-.hidden {
-    display: none;
-}
-
-label {
-    overflow: hidden;
-}
-
-*[edited] {
-  font-weight: bold; color: yellow;
-}
 
 /** Ratings stuff stolzen from app/content/skin/bindings/playlist.css
     apply rating states by repositioning a large background image.

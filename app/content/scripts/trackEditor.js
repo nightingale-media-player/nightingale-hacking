@@ -61,7 +61,7 @@ Components.utils.import("resource://app/components/sbProperties.jsm");
  *****************************************************************************/
 function TrackEditorState() {
   this._propertyListeners = {};
-  this._initListeners = [];
+  this._selectionListeners = [];
   this._properties = {};
 }
 TrackEditorState.prototype = {
@@ -91,13 +91,13 @@ TrackEditorState.prototype = {
   _propertyListeners: null,
   
   // Array of listeners to be notified only when the selection is reinited
-  _initListeners: null,
+  _selectionListeners: null,
   
   /** 
    * Initialize the state object around an sbIMediaListViewSelection.
    * May be called again to reinitialize with a new selection.
    */
-  init: function TrackEditorState_init(mediaListSelection) {
+  setSelection: function TrackEditorState_setSelection(mediaListSelection) {
     this._selectedItems = [];
     var items = mediaListSelection.selectedIndexedMediaItems;
     while (items.hasMoreElements()) {
@@ -110,7 +110,7 @@ TrackEditorState.prototype = {
     this._properties = {};
     this._writableItemCount = null;
 
-    this._notifyInitListeners();
+    this._notifySelectionListeners();
     this._notifyPropertyListeners();
   },
   
@@ -248,8 +248,7 @@ TrackEditorState.prototype = {
         for each (var item in this._selectedItems) {
           if (value != item.getProperty(property)) {
             this._properties[property].hasMultiple = true;
-            // TODO localize or something
-            value = "* Various *";
+            value = "";
             break;
           }
         }
@@ -311,22 +310,22 @@ TrackEditorState.prototype = {
    * Add an object to be notified when the editor is updated with a 
    * new selection state.
    * 
-   * The listener object must provide a onTrackEditorInit function
+   * The listener object must provide a onTrackEditorSelectionChange function
    */
-  addInitListener: function(listener) {
-    if (!("onTrackEditorInit" in listener)) {
-      throw new Error("Listener must provide a onTrackEditorInit function");
+  addSelectionListener: function(listener) {
+    if (!("onTrackEditorSelectionChange" in listener)) {
+      throw new Error("Listener must provide a onTrackEditorSelectionChange function");
     }
-    this._initListeners.push(listener);
+    this._selectionListeners.push(listener);
   },
   
   /** 
-   * Remove a previously added init listener
+   * Remove a previously added selection listener
    */
-  removeInitListener: function(listener) {
-    var index = this._initListeners.indexOf(listener);
+  removeSelectionListener: function(listener) {
+    var index = this._selectionListeners.indexOf(listener);
     if (index > -1) {
-      this._initListeners.splice(index,1);
+      this._selectionListeners.splice(index,1);
     }
   },
   
@@ -357,9 +356,9 @@ TrackEditorState.prototype = {
   /** 
    * Broadcast the fact that a new selection has been set
    */
-  _notifyInitListeners: function TrackEditorState__notifyInitListeners() {
-    for each (var listener in this._initListeners) {
-      listener.onTrackEditorInit();
+  _notifySelectionListeners: function TrackEditorState__notifySelectionListeners() {
+    for each (var listener in this._selectionListeners) {
+      listener.onTrackEditorSelectionChange();
     }
   },
 }
@@ -387,13 +386,9 @@ var TrackEditor = {
   // TrackEditorState object
   state: null,
   
-  // List of references to widget objects
-  _elements: [],
-  
-  // Message header elements 
-  _notificationBox: null,
-  _notificationText: null,  
-  
+  // Hash of ID to widget objects
+  _elements: {},
+    
   // TODO consolidate?
   _browser: null,
   mediaListView: null,
@@ -457,18 +452,41 @@ var TrackEditor = {
     // Add an additional layer of control to all elements with a property
     // attribute.  This will cause the elements to be updated when the
     // selection model changes, and vice versa.
+    
+    this._elements["anonymous"] = []; // Keep elements without ids in a list
+    
+    // Potentially anonymous elements that need wrapping
     var elements = document.getElementsByAttribute("property", "*");
     for each (var element in elements) {
+      var wrappedElement = null;
       if (element.tagName == "label") {
-        this._elements.push(new TrackEditorLabel(element));
+        wrappedElement = new TrackEditorLabel(element);
       } else if (element.tagName == "textbox") {
-        this._elements.push(new TrackEditorTextbox(element));
+        wrappedElement = new TrackEditorTextbox(element);
+      }
+      
+      if (wrappedElement) {
+        if (element.id) {
+          this._elements[element.id] = wrappedElement;
+        } else {
+          this._elements["anonymous"].push(wrappedElement);
+        }
       }
     }
     
-    this._notificationBox = document.getElementById("notification_box");
-    this._notificationText = document.getElementById("notification_text");
-    this._notificationBox.hidden = true;
+    // Known elements we're going to want to use.
+    elements = ["notification_box", "notification_text",
+                "prev-button", "next-button"];
+    // I'd love to do this in the previous loop, but getElementsByAttribute
+    // returns an HTMLCollection, not an array.
+    for each (var elementName in elements) {
+      var element = document.getElementById(elementName);
+      if (element) {
+        this._elements[elementName] = element;
+      } 
+    }
+
+    this._elements["notification_box"].hidden = true;
   },
   
   
@@ -500,11 +518,11 @@ var TrackEditor = {
     }
       
     if (message) {
-      this._notificationBox.className = class;
-      this._notificationText.textContent = message;
-      this._notificationBox.hidden = false;
+      this._elements["notification_box"].className = class;
+      this._elements["notification_text"].textContent = message;
+      this._elements["notification_box"].hidden = false;
     } else {
-      this._notificationBox.hidden = true;
+      this._elements["notification_box"].hidden = true;
     }
   },
 
@@ -557,7 +575,7 @@ var TrackEditor = {
   onSelectionChanged: function TrackEditor_onSelectionChanged() {
     
     // TODO build a data structure
-    this.state.init(this.mediaListView.selection);    
+    this.state.setSelection(this.mediaListView.selection);    
     
     // TODO consider a separate function
    
@@ -565,26 +583,17 @@ var TrackEditor = {
     // It doesn't make sense to apply the same title and track number
     // to multiple tracks, so just disable the option. 
     // If the user really wants it they can use the advanced tab.
-    function disableTextBox(id, disable) {
-      debugger;
-      var tb = document.getElementById(id);
-      var cb = tb.parentNode.getElementsByTagName("checkbox")[0];
-      tb.disabled = disable;
-      cb.disabled = disable;
-    }
-    var disable = this.mediaListView.selection.count > 1;
-    disableTextBox("infoTab-trackName", disable);
-    disableTextBox("infoTab-trackNumber", disable);
+    var disable = this.state.selectedItems.length > 1;
+    this._elements["infotab_trackname_textbox"].disabled = disable;
+    this._elements["infotab_tracknumber_textbox"].disabled = disable;
  
     // DISABLE NEXT/PREV BUTTONS AT TOP/BOTTOM OF LIST
     // TODO: komi suggests wraparound as a pref
     var idx = this.mediaListView.selection.currentIndex;
     var atStart = (idx == 0)
     var atEnd   = (idx == this.mediaListView.length - 1);
-    var prev = document.getElementById("prev-button");
-    var next = document.getElementById("next-button");
-    prev.setAttribute("disabled", (atStart ? "true" : "false"));
-    next.setAttribute("disabled", (atEnd ? "true" : "false"));
+    this._elements["prev-button"].setAttribute("disabled", (atStart ? "true" : "false"));
+    this._elements["next-button"].setAttribute("disabled", (atEnd ? "true" : "false"));
 
     this._updateNotificationBox();
   },
@@ -754,8 +763,23 @@ TrackEditorWidgetBase.prototype = {
     return this._element.getAttribute("property");
   },
   
+  get element() {
+    return this._element;
+  },
+  
+  get disabled() {
+    return this._element.disabled;
+  },
+  
+  set disabled(val) {
+    this._element.disabled = val;
+  },
+  
   onTrackEditorPropertyChange: function TrackEditorWidgetBase_onTrackEditorPropertyChange() {
-    this._element.value = TrackEditor.state.getPropertyValue(this.property);
+    var value = TrackEditor.state.getPropertyValue(this.property);
+    if (value != this._element.value) {
+      this._element.value = value;
+    }
   }
 }
 
@@ -819,13 +843,11 @@ function TrackEditorInputWidget(element) {
   // property, so call the parent constructor
   TrackEditorWidgetBase.call(this, element);  
   
-  TrackEditor.state.addInitListener(this);
+  TrackEditor.state.addSelectionListener(this);
   
   // Create preceding checkbox to enable/disable when 
   // multiple tracks are selected
   this._createCheckbox();
-  
-  // Add a set value function?
 }
 TrackEditorInputWidget.prototype = {
   __proto__: TrackEditorWidgetBase.prototype, 
@@ -838,19 +860,31 @@ TrackEditorInputWidget.prototype = {
     var hbox = document.createElement("hbox");
     this._element.parentNode.replaceChild(hbox, this._element);
     this._checkbox = document.createElement("checkbox");
+    
+    // In order for tabbing to work in the desired order
+    // we need to apply tabindex to all elements.
+    if (this._element.hasAttribute("tabindex")) {
+      var value = parseInt(this._element.getAttribute("tabindex")) - 1;
+      this._checkbox.setAttribute("tabindex", value);
+    }
     this._checkbox.hidden = true;
+
     var self = this;
     this._checkbox.addEventListener("command", 
       function() { self.onCheckboxCommand(); }, false);
+    
     hbox.appendChild(this._checkbox);
     hbox.appendChild(this._element);
   },
   
+  set disabled(val) {
+    this._checkbox.disabled = val;
+    this._element.disabled = val;
+  },
+  
   onCheckboxCommand: function() {
     if (this._checkbox.checked) {
-      if (this._element.hasAttribute("readonly")) {
-        this._element.removeAttribute("readonly");
-      }
+      this._element.disabled = false;
       
       if (TrackEditor.state.hasMultipleValuesForProperty(this.property)) {
         // Clear out the *Various* text
@@ -861,34 +895,33 @@ TrackEditorInputWidget.prototype = {
     } else {
       TrackEditor.state.resetPropertyValue(this.property);
       this._checkbox.checked = false;
-      this._element.setAttribute("readonly", "true");
+      this._element.disabled = true;
     }
   },
   
-  onTrackEditorInit: function() {
+  onTrackEditorSelectionChange: function() {
     this._checkbox.hidden = TrackEditor.state.selectedItems.length <= 1; 
     
     // If none of the selected items can be modified, disable all editing
     if (TrackEditor.state.isDisabled) {
       this._checkbox.disabled = true;
       this._element.setAttribute("readonly", "true");
+    } else {
+      this._checkbox.disabled = false;
+      this._element.disabled = false;
+      this._element.removeAttribute("readonly");
     }
   },
   
   onTrackEditorPropertyChange: function TrackEditorInputWidget_onTrackEditorPropertyChange() {
+    
     TrackEditorWidgetBase.prototype.onTrackEditorPropertyChange.call(this);
+    
     this._checkbox.checked = !TrackEditor.state.hasMultipleValuesForProperty(this.property);
     if (!this._checkbox.checked) {
-      if (!this._element.hasAttribute("readonly")) {
-        this._element.setAttribute("readonly", "true");
-      }
-    } else if (this._element.hasAttribute("readonly") && !this._checkbox.disabled) { 
-      this._element.removeAttribute("readonly");
-      
-      if (this._element.hasAttribute("disabled")) {    
-        this._element.removeAttribute("disabled");
-        this._checkbox.removeAttribute("disabled");
-      }
+      this._element.disabled = true;
+    } else if (!this._checkbox.disabled) { 
+      this._element.disabled = false;
     }
   }
 }
@@ -919,8 +952,7 @@ TrackEditorTextbox.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
   
   onUserInput: function() {
-    var value = this._element.value;
-    TrackEditor.state.setPropertyValue(this.property, value);
+    TrackEditor.state.setPropertyValue(this.property, this._element.value);
     
     // TODO VALIDATION!
     // When to validate? oninput? onchange?
@@ -930,8 +962,8 @@ TrackEditorTextbox.prototype = {
     }*/
   },
   
-  onTrackEditorInit: function TrackEditorTextbox_onTrackEditorInit() {
-    TrackEditorInputWidget.prototype.onTrackEditorInit.call(this);
+  onTrackEditorSelectionChange: function TrackEditorTextbox_onTrackEditorSelectionChange() {
+    TrackEditorInputWidget.prototype.onTrackEditorSelectionChange.call(this);
 
     if (this._element.getAttribute("type") == "autocomplete") {
       this._configureAutoComplete();
@@ -942,8 +974,7 @@ TrackEditorTextbox.prototype = {
     var property = this.property;
     
     // Indicate if this property has been edited
-    if (TrackEditor.state.isPropertyEdited(this.property)) 
-    {
+    if (TrackEditor.state.isPropertyEdited(this.property)) {
       if (!this._element.hasAttribute("edited")) {
         this._element.setAttribute("edited", "true");
       }
@@ -988,8 +1019,14 @@ TrackEditorTextbox.prototype = {
       }
       this._element.setAttribute("autocompletesearchparam", param);       
     }
+    
+    // Grr, autocomplete textboxes don't handle tabindex, so we have to 
+    // get out hands dirty.  Filed as Moz Bug 432886.
+    this._element.inputField.tabIndex = this._element.tabIndex;
   }
 }
+
+
 
 
 

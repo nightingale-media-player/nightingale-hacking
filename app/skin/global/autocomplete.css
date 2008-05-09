@@ -48,15 +48,6 @@
 
 textbox {
   cursor: default;
-  padding: 0;
-}
-
-/* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
-textbox.padded {
-  padding-top: 1px;
-  padding-bottom: 1px;
-  -moz-padding-start: 2px;
-  -moz-padding-end: 0px;
 }
 
 .autocomplete-textbox-container {
@@ -224,4 +215,3 @@ toolbarpaletteitem > toolbaritem > textbox > hbox > hbox > html|*.textbox-input 
 toolbarpaletteitem > toolbaritem > * > textbox > hbox > hbox > html|*.textbox-input {
   visibility: hidden;
 }
-
