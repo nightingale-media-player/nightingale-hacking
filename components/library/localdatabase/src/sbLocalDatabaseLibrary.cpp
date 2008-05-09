@@ -600,6 +600,9 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   success = mMediaItemTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
+  success = mHashHelpers.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
   // See if the user has specified a different analyze count limit. We don't
   // care if any of this fails.
   nsCOMPtr<nsIPrefBranch> prefBranch =
@@ -2101,6 +2104,7 @@ sbLocalDatabaseLibrary::FilterExistingItems
   }
 
   NS_ADDREF(*aFilteredURIs = filtered);
+  
   if (aFilteredPropertyArrayArray)
     NS_IF_ADDREF(*aFilteredPropertyArrayArray = filteredPropertyArrayArray);
 
@@ -3367,6 +3371,9 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   nsRefPtr<sbHashHelper> hashHelper(new sbHashHelper());
   NS_ENSURE_STATE(hashHelper);
 
+  PRBool success = mHashHelpers.Put(hashHelper, hashHelper);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
   rv = hashHelper->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3403,13 +3410,16 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   rv = hashHelper->GetHashes();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIThread> currentThread(do_GetCurrentThread());
+  NS_ABORT_IF_FALSE(currentThread, "Failed to get current thread!");
+
   {
     nsAutoMonitor mon(hashHelper->mHashingCompleteMonitor);
     while (!hashHelper->mHashingComplete) {
-      mon.Wait( PR_MillisecondsToInterval(50) );
-      NS_ProcessPendingEvents(nsnull, 1000);
+      mon.Wait( PR_MillisecondsToInterval(1) );
+      NS_ProcessPendingEvents(currentThread, SHUTDOWN_ASYNC_GRANULARITY_MS);
       TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsInternal() - looping!!!!!!",
-         this));
+             this));
     }
   }
 
@@ -3433,8 +3443,11 @@ sbLocalDatabaseLibrary::CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper)
   nsTArray<nsCString> filteredHashes;
   nsCOMPtr<nsIArray> filteredPropertyArrayArray;
 
+  mHashHelpers.Remove(aHashHelper);
+  
   if (aHashHelper->mAllowDuplicates) {
     filteredArray = aHashHelper->mURIArray;
+    filteredHashes = *(aHashHelper->mHashArray);
     filteredPropertyArrayArray = aHashHelper->mPropertyArrayArray;
   }
   else {
@@ -3450,7 +3463,7 @@ sbLocalDatabaseLibrary::CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper)
   PRBool runAsync = aHashHelper->mListener ? PR_TRUE : PR_FALSE;
 
   nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeStandardQuery(getter_AddRefs(query), runAsync);
+  rv = MakeStandardQuery(getter_AddRefs(query), PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbBatchCreateTimerCallback> callback;
@@ -3496,8 +3509,7 @@ sbLocalDatabaseLibrary::CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper)
     // This value 333 is magical.  I copied it from the old media scan code.  I
     // assumed it was a number that was reached through experience tweaking the
     // callback frequency.
-    //rv = timer->InitWithCallback(callback, 333, nsITimer::TYPE_REPEATING_SLACK);
-    rv = timer->InitWithCallback(callback, 100, nsITimer::TYPE_REPEATING_SLACK);
+    rv = timer->InitWithCallback(callback, 333, nsITimer::TYPE_REPEATING_SLACK);
     if (NS_FAILED(rv)) {
       NS_WARNING("InitWithCallback failed!");
       success = mBatchCreateTimers.RemoveObject(timer);
@@ -4403,6 +4415,25 @@ sbHashHelper::GetHashes()
     rv = GetHash(context);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Check to see if we're already done.
+  PRUint32 hashesLength = mHashArray->Length();
+  if(hashesLength == length) {
+    if (mListener) {
+      // We're async and have already returned from the BatchCreateCall
+      nsresult rv = mLibrary->CompleteBatchCreateMediaItems(this);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+    } else {
+      // We're synchronous and waiting on the completion var
+      {
+        nsAutoMonitor mon(mHashingCompleteMonitor);
+        mHashingComplete = PR_TRUE;
+        mon.Notify();
+      }
+    }
+  }
+
   return NS_OK;
 }
 
@@ -4414,7 +4445,7 @@ sbHashHelper::GetHashes()
   if(!__cond) {                              \
     aContext->mHash.Truncate();              \
     AddHashInternal(aContext->mHash);        \
-    NS_WARNING("\n\n*** FAILED ***\n\n");    \
+    NS_WARNING("Unable to compute hash, returning empty hash.");    \
     return NS_OK;                            \
   }                                          \
   PR_END_MACRO
@@ -4622,7 +4653,9 @@ sbHashHelper::AddHashInternal(nsACString &aHash)
   NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
 
   PRUint32 listLength = 0;
-  mURIArray->GetLength(&listLength);
+  nsresult rv = mURIArray->GetLength(&listLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRUint32 hashesLength = mHashArray->Length();
 
   // If this is the last has we are adding, notify
@@ -4644,6 +4677,8 @@ sbHashHelper::OnStopRequest(nsIRequest *request,
 {
   TRACE(("sbHashHelper[0x%.8x] - OnStopRequest()", this));
 
+  nsRefPtr<sbHashHelper> grip(this);
+
   PRUint32 listLength = 0;
   mURIArray->GetLength(&listLength);
   PRUint32 hashesLength = mHashArray->Length();
@@ -4656,6 +4691,7 @@ sbHashHelper::OnStopRequest(nsIRequest *request,
       // We're async and have already returned from the BatchCreateCall
       nsresult rv = mLibrary->CompleteBatchCreateMediaItems(this);
       NS_ENSURE_SUCCESS(rv, rv);
+
     } else {
       // We're synchronous and waiting on the completion var
       {

@@ -296,9 +296,6 @@ private:
   nsresult GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID);
   nsresult GetGuidFromHash(const nsACString& aHash, nsAString &aGUID);
 
-  //nsresult GetHashesForContentURIs(nsIArray* aURIs, nsTArray<nsCString>& aHashes);
-  //nsresult GetHashFromContentURI(nsIURI* aURI, nsACString& aHash);
-
   nsresult Shutdown();
 
   nsresult BatchCreateMediaItemsInternal(nsIArray* aURIArray,
@@ -372,6 +369,10 @@ private:
   // Hashtable that holds all the copy listeners.
   nsInterfaceHashtableMT<nsISupportsHashKey, 
                          sbILocalDatabaseLibraryCopyListener> mCopyListeners;
+
+  // Hashtable that holds all the hash helpers.
+  nsInterfaceHashtableMT<nsISupportsHashKey,
+                         nsIStreamListener> mHashHelpers;
 };
 
 /**
@@ -490,6 +491,9 @@ public:
     MOZ_COUNT_DTOR(sbHashHelper);
     if(mHashingCompleteMonitor) {
       nsAutoMonitor::DestroyMonitor(mHashingCompleteMonitor);
+    }
+    if(mHashArray) {
+      delete mHashArray;
     }
   }
 
