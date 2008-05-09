@@ -48,6 +48,11 @@ textbox[invalid] {
  border: 1px solid red !important;
 }
 
+sb-rating[edited] .rating-background {
+ border: 1px solid green !important;
+ -moz-border-radius: 5px;
+}
+
 #notification_box {
   background-color: blue;
 }
@@ -110,7 +115,3 @@ textbox.short-number-input {
     overflow: hidden;
 }
 
-sb-rating[edited] .rating-background {
- border: 1px solid red !important;
- -moz-border-radius: 5px;
-}
