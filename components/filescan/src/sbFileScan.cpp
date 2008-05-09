@@ -416,7 +416,7 @@ sbFileScan::sbFileScan()
     NS_ASSERTION(pThreadRunner, "Unable to create sbFileScanThread");
     if (!pThreadRunner)
       break;
-    nsresult rv = NS_NewThread(getter_AddRefs(m_pThread),
+    rv = NS_NewThread(getter_AddRefs(m_pThread),
                                pThreadRunner);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbFileScanThread");
   } while (PR_FALSE); // Only do this once
@@ -434,7 +434,6 @@ sbFileScan::sbFileScan()
     NS_ERROR("Unable to register xpcom-shutdown observer");
     m_AttemptShutdownOnDestruction = PR_TRUE;
   }
-
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -584,11 +583,27 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
                     if (localFile) {
                       nsCString spec;
                       nsresult rv2 = localFile->GetPersistentDescriptor(spec);
-                      NS_WARNING(spec.BeginReading());
-                      nsCOMPtr<nsIURI> pNewURI;
+
                       if (NS_SUCCEEDED(rv2)) {
+                        if(!mNetUtil) {
+                      	  mNetUtil = do_CreateInstance("@mozilla.org/network/util;1",
+                      	                               &rv2);
+                      	  NS_ENSURE_SUCCESS(rv2, rv2);
+                        }
+
+                        nsCString escapedSpec;
+                        rv2 = mNetUtil->EscapeString(spec,
+                                                     nsINetUtil::ESCAPE_XPALPHAS,
+                                                     escapedSpec);
+                        NS_ENSURE_SUCCESS(rv2, rv2);
+
+                        nsCOMPtr<nsIURI> pNewURI;
+
                         spec.Insert("file://", 0);
-                        rv2 = pIOService->NewURI(spec, nsnull, nsnull, getter_AddRefs(pNewURI));
+                        rv2 = pIOService->NewURI(escapedSpec,
+                                                 nsnull,
+                                                 nsnull,
+                                                 getter_AddRefs(pNewURI));
                         if (NS_SUCCEEDED(rv2)) {
                           pURI = pNewURI;
                         }
@@ -768,7 +783,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
             if(pEntry)
             {
-              PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;;
+              PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;
               pEntry->IsFile(&bIsFile);
               pEntry->IsDirectory(&bIsDirectory);
               pEntry->IsHidden(&bIsHidden);
@@ -790,10 +805,27 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
                     if (localFile) {
                       nsCString spec;
                       nsresult rv2 = localFile->GetPersistentDescriptor(spec);
-                      nsCOMPtr<nsIURI> pNewURI;
+
                       if (NS_SUCCEEDED(rv2)) {
+                        if(!mNetUtil) {
+                      	  mNetUtil = do_CreateInstance("@mozilla.org/network/util;1",
+                      	                               &rv2);
+                      	  NS_ENSURE_SUCCESS(rv2, rv2);
+                        }
+
+                        nsCString escapedSpec;
+                        rv2 = mNetUtil->EscapeString(spec,
+                                                     nsINetUtil::ESCAPE_XPALPHAS,
+                                                     escapedSpec);
+                        NS_ENSURE_SUCCESS(rv2, rv2);
+
+                        nsCOMPtr<nsIURI> pNewURI;
+
                         spec.Insert("file://", 0);
-                        rv2 = pIOService->NewURI(spec, nsnull, nsnull, getter_AddRefs(pNewURI));
+                        rv2 = pIOService->NewURI(escapedSpec,
+                                                 nsnull,
+                                                 nsnull,
+                                                 getter_AddRefs(pNewURI));
                         if (NS_SUCCEEDED(rv2)) {
                           pURI = pNewURI;
                         }
