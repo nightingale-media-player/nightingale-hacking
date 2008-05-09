@@ -48,10 +48,11 @@ function runTest() {
   assertEqual(value, null);
 
   // A zero rating is not valid
+  // XXXlone yes it is now, it is treated as null, remove when bug 8033 is fixed
   assertTrue(info.validate(null));
   assertTrue(info.validate("1"));
   assertTrue(info.validate("5"));
-  assertFalse(info.validate("0"));
+  assertTrue(info.validate("0"));
   assertFalse(info.validate("1000"));
   assertFalse(info.validate("foo"));
 
