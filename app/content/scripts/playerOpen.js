@@ -564,6 +564,9 @@ function SBTrackEditorOpen( parentWindow, playlist ) {
               return;
             }
           }
+        } else if (numSelected < 1) {
+          // no track is selected, can't invoke the track editor on nothing !
+          return;
         }
          
         // xxxlone> note that the track editor is modal, so the window will 
