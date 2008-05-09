@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+          
+  <binding id="sb-rating">
+    <content>
+      <xul:hbox class="rating-box">
+        <xul:stack mousethrough="never">
+          <xul:spacer class="rating-background"/>
+          <xul:spacer sid="stars" class="rating-stars" xbl:inherit="value" />
+        </xul:stack>
+      </xul:hbox>
+    </content>
+    <implementation>
+      <field name="stars">document.getAnonymousElementByAttribute(this, 'sid', 'stars');</field>
+      <constructor>
+        <![CDATA[
+          // assign a default value
+          this.value = 0;
+          this.oldValue = 0;
+          this.lastStar = -1;
+        ]]>
+      </constructor>
+      <property name="value">
+        <getter>
+          return this.getAttribute("value");
+        </getter>
+        <setter>
+          if (!val || val == "") val = 0;
+          this.setAttribute("value", val);
+          this.stars.setAttribute("value", val);
+        </setter>
+      </property>
+      <method name="canEdit">
+        <body>
+          <![CDATA[
+            return (!this.disabled && 
+                    this.getAttribute("readonly") != "true");
+          ]]>
+        </body>
+      </method>
+      <method name="handleMouseEvent">
+        <parameter name="event"/>
+        <parameter name="type"/>
+        <body>
+          <![CDATA[
+            // types
+            const HOVER=0;
+            const DOWN=1;
+            const UP=2;
+            
+            // calculate dimensions
+            var starwidth = this.stars.boxObject.width / 5;
+            
+            // figure out where we clicked
+            var v = parseInt( ( (event.screenX - 
+                                 this.stars.boxObject.screenX)
+                                -1 )
+                              / starwidth );
+
+            // add 1 because star 0 is rating 1
+            v = v + 1;
+            
+            // handle out of bounds
+            if (v > 5) v = 5;
+            if (v < 1) v = 1;
+            
+            var star = v;
+            
+            if (star == this.lastStar) {
+              return;
+            } else {
+              this.lastStar = -1;
+            }
+              
+            // if this is a DOWN event, and the old value is the 
+            // same as the one clicked, remove all stars (set to 0)
+            if (type == DOWN && this.oldValue == v) {
+              v = 0;
+            }
+              
+            // let the css change the background image to reflect
+            // the current value
+            this.value = v;
+            
+            // store the new value in place of the old one so
+            // that it sticks when the mouse leaves the element  
+            if (type == DOWN || type == UP) {
+              if (this.oldValue != v) {
+                this.oldValue = v;
+                // notify listeners that the value changed
+                var evt = document.createEvent("UIEvents");
+                evt.initUIEvent("input", true, false, window, 0);
+                this.dispatchEvent(evt);
+              }
+              // remember not to handle events until we
+              // reach a different star
+              this.lastStar = star;
+            }
+          ]]>
+        </body>
+      </method>
+    </implementation>
+    <handlers>
+      <handler event="mouseover">
+        <![CDATA[
+          if (!this.canEdit()) return;
+          this.lastStar = -1;
+          this.oldValue = this.value;
+        ]]>
+      </handler>
+      <handler event="mouseout">
+        <![CDATA[
+          if (!this.canEdit()) return;
+          this.value = this.oldValue;
+        ]]>
+      </handler>
+      <handler event="mousemove">
+        <![CDATA[
+          if (!this.canEdit()) return;
+          this.handleMouseEvent(event, 0);
+        ]]>
+      </handler>
+      <!-- set the value on mousedown so that reaction is immediate
+           and also on mouseup so that dragging works -->
+      <handler event="mousedown">
+        <![CDATA[
+          if (!this.canEdit()) return;
+          this.lastStar = -1;
+          this.handleMouseEvent(event, 1);
+        ]]>
+      </handler>
+      <handler event="mouseup">
+        <![CDATA[
+          if (!this.canEdit()) return;
+          this.handleMouseEvent(event, 2);
+          this.lastStar = -1;
+        ]]>
+      </handler>
+      <handler event="keydown">
+        <![CDATA[
+          if (!this.canEdit()) return;
+          var newv = -1;
+          var oldv = parseInt(this.value);
+          if (event.keyCode == 
+            Components.interfaces.nsIDOMKeyEvent.DOM_VK_RIGHT) {
+            newv = oldv + 1;
+          } else if (event.keyCode == 
+            Components.interfaces.nsIDOMKeyEvent.DOM_VK_LEFT) {
+            newv = oldv - 1;
+          }
+          if (newv != -1) {
+            if (newv > 5) newv = 5;
+            if (newv < 0) newv = 0;
+            if (this.value != newv) {
+              this.oldValue = newv;
+              this.value = newv;
+              // notify listeners that the value changed
+              var evt = document.createEvent("UIEvents");
+              evt.initUIEvent("input", true, false, window, 0);
+              this.dispatchEvent(evt);
+            }
+          }
+        ]]>
+      </handler>
+    </handlers>
+  </binding>
+</bindings>
+ 

@@ -225,7 +225,7 @@ sbRatingPropertyInfo::Validate(const nsAString& aValue, PRBool* _retval)
 
   nsresult rv;
   PRUint32 rating = aValue.ToInteger(&rv);
-  if (NS_SUCCEEDED(rv) && rating > 0 && rating <= MAX_RATING) {
+  if (NS_SUCCEEDED(rv) && rating >= 0 && rating <= MAX_RATING) {
     return NS_OK;
   }
 

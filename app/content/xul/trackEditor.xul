@@ -325,11 +325,10 @@
                      tabindex="110"
                      class="long-number-input" />
 
-            <!-- TODO: rating widget 
             <label property-type="label" property="http://songbirdnest.com/data/1.0#rating"/>
-            <textbox flex="1" 
-                     property="http://songbirdnest.com/data/1.0#rating"/>
-            TODO: image
+            <sb-rating property="http://songbirdnest.com/data/1.0#rating"/>
+
+            <!-- TODO: image
             <hbox>
               <image
                 class="art"

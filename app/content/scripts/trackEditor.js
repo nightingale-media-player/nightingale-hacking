@@ -463,6 +463,8 @@ var TrackEditor = {
         wrappedElement = new TrackEditorLabel(element);
       } else if (element.tagName == "textbox") {
         wrappedElement = new TrackEditorTextbox(element);
+      } else if (element.tagName == "sb-rating") {
+        wrappedElement = new TrackEditorRating(element);
       }
       
       if (wrappedElement) {
@@ -1027,6 +1029,52 @@ TrackEditorTextbox.prototype = {
 }
 
 
+
+
+
+
+/******************************************************************************
+ *
+ * \class TrackEditorRating
+ * \brief Extends TrackEditorInputWidget to add rating specific details
+ *
+ * Binds the given sb-rating to track editor state for a property, and manages
+ * input, updates, and edited attribute
+ *
+ *****************************************************************************/
+function TrackEditorRating(element) {
+  
+  TrackEditorInputWidget.call(this, element);  
+  
+  var self = this;
+  element.addEventListener("input",
+          function() { self.onUserInput(); }, false);
+}
+
+TrackEditorRating.prototype = {
+  __proto__: TrackEditorInputWidget.prototype,
+  
+  onUserInput: function() {
+    var value = this._element.value;
+    TrackEditor.state.setPropertyValue(this.property, value);
+  },
+  
+  onTrackEditorPropertyChange: function TrackEditorRating_onTrackEditorPropertyChange() {
+    var property = this.property;
+    
+    // Indicate if this property has been edited
+    if (TrackEditor.state.isPropertyEdited(this.property)) 
+    {
+      if (!this._element.hasAttribute("edited")) {
+        this._element.setAttribute("edited", "true");
+      }
+    } else if (this._element.hasAttribute("edited")) {
+      this._element.removeAttribute("edited"); 
+    } 
+
+    TrackEditorInputWidget.prototype.onTrackEditorPropertyChange.call(this);
+  },
+}
 
 
 

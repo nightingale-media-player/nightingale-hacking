@@ -492,3 +492,6 @@ sb-device-tools {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceTools.xml#sb-device-tools");
 }
 
+sb-rating {
+  -moz-binding: url("chrome://songbird/content/bindings/ratingsControl.xml#sb-rating");
+}
