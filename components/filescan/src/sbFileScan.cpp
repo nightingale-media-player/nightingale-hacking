@@ -30,7 +30,7 @@
  */
 
 // INCLUDES ===================================================================
-#include "FileScan.h"
+#include "sbFileScan.h"
 #include "nspr.h"
 
 #include <nspr/prmem.h>
@@ -584,6 +584,7 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
                     if (localFile) {
                       nsCString spec;
                       nsresult rv2 = localFile->GetPersistentDescriptor(spec);
+                      NS_WARNING(spec.BeginReading());
                       nsCOMPtr<nsIURI> pNewURI;
                       if (NS_SUCCEEDED(rv2)) {
                         spec.Insert("file://", 0);

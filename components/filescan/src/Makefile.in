@@ -35,8 +35,8 @@ else
 target_name = sbFileScan
 endif
 
-CPP_SRCS = FileScan.cpp \
-           FileScanComponent.cpp \
+CPP_SRCS = sbFileScan.cpp \
+           sbFileScanComponent.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/filescan/public \

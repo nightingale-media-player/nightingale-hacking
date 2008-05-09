@@ -31,7 +31,7 @@
 
 #include "nsIGenericFactory.h"
 
-#include "FileScan.h"
+#include "sbFileScan.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileScan)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileScanQuery)
