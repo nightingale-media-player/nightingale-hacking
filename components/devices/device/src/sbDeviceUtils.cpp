@@ -187,13 +187,20 @@ nsresult sbDeviceUtils::DeleteUnavailableItems(sbIMediaList *aMediaList)
   rv = aMediaList->GetItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_AVAILABILITY),
                                       NS_LITERAL_STRING("0"),
                                       getter_AddRefs(array));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_SUCCEEDED(rv)) {
 
-  nsCOMPtr<nsISimpleEnumerator> enumerator;
-  rv = array->Enumerate(getter_AddRefs(enumerator));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return aMediaList->RemoveSome(enumerator);
+    nsCOMPtr<nsISimpleEnumerator> enumerator;
+    rv = array->Enumerate(getter_AddRefs(enumerator));
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    return aMediaList->RemoveSome(enumerator);
+  }
+  // No items is not an error
+  else if (rv == NS_ERROR_NOT_AVAILABLE) {
+    return NS_OK;
+  }
+  // Return failure of GetItemsByProperty
+  return rv;
 }
 
 /*static*/ 

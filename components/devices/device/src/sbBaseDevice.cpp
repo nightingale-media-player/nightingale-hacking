@@ -256,11 +256,8 @@ static void CheckRequestBatch(std::deque<nsRefPtr<sbBaseDevice::TransferRequest>
 sbBaseDevice::sbBaseDevice() :
   mLastTransferID(0),
   mLastRequestPriority(PR_INT32_MIN),
-  mAbortCurrentRequest(PR_FALSE)
-#ifdef DEBUG
-  , mMediaListListenerIgnored(PR_FALSE),
-  mLibraryListenerIgnored(PR_FALSE)
-#endif
+  mAbortCurrentRequest(PR_FALSE),
+  mIgnoreMediaListCount(0)
 {
 #ifdef PR_LOGGING
   if (!gBaseDeviceLog) {
@@ -279,6 +276,9 @@ sbBaseDevice::~sbBaseDevice()
 {
   if (mRequestMonitor)
     nsAutoMonitor::DestroyMonitor(mRequestMonitor);
+  
+  if (mStateLock)
+    nsAutoLock::DestroyLock(mStateLock);
 }
 
 NS_IMETHODIMP sbBaseDevice::SyncLibraries()
@@ -1217,6 +1217,7 @@ void sbBaseDevice::FinalizeDeviceLibrary(sbIDeviceLibrary* aDevLib)
 nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
 {
   NS_ENSURE_ARG_POINTER(aList);
+  
   NS_ASSERTION(mMediaListListeners.IsInitialized(),
                "sbBaseDevice::ListenToList called before listener hash is initialized!");
   
@@ -1251,7 +1252,12 @@ nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
                          PR_FALSE, /* weak */
                          0, /* all */
                          nsnull /* filter */);
+  NS_ENSURE_SUCCESS(rv, rv);
   
+  // If we're currently ignoring listeners then we need to ignore this one too
+  // else we'll get out of balance
+  if (mIgnoreMediaListCount > 0)
+    listener->SetIgnoreListener(PR_TRUE);
   mMediaListListeners.Put(list, listener);
   return NS_OK;
 }
@@ -1307,12 +1313,11 @@ PLDHashOperator sbBaseDevice::EnumerateIgnoreMediaListListeners(nsISupports* aKe
 nsresult 
 sbBaseDevice::SetIgnoreMediaListListeners(PRBool aIgnoreListener)
 {
-  NS_ASSERTION((aIgnoreListener && !mMediaListListenerIgnored) || 
-                 (!aIgnoreListener && mMediaListListenerIgnored), 
-               "SetIgnoreMediaListListeners was called more than once with the same aIgnoreListener value");
-#ifdef DEBUG
-  mMediaListListenerIgnored = aIgnoreListener;
-#endif
+  if (aIgnoreListener)
+    PR_AtomicIncrement(&mIgnoreMediaListCount);
+  else
+    PR_AtomicDecrement(&mIgnoreMediaListCount);
+  
   mMediaListListeners.EnumerateRead(sbBaseDevice::EnumerateIgnoreMediaListListeners, 
                                     &aIgnoreListener);
   return NS_OK;
@@ -1321,12 +1326,6 @@ sbBaseDevice::SetIgnoreMediaListListeners(PRBool aIgnoreListener)
 nsresult
 sbBaseDevice::SetIgnoreLibraryListener(PRBool aIgnoreListener)
 {
-  NS_ASSERTION((aIgnoreListener && !mLibraryListenerIgnored) || 
-                 (!aIgnoreListener && mLibraryListenerIgnored), 
-               "SetIgnoreMediaListListeners was called more than once with the same aIgnoreListener value");
-#ifdef DEBUG
-  mLibraryListenerIgnored = aIgnoreListener;
-#endif
   return mLibraryListener->SetIgnoreListener(aIgnoreListener);
 }
 

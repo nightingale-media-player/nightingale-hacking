@@ -369,13 +369,11 @@ protected:
   PRUint32 mState;
   sbDeviceStatistics mDeviceStatistics;
   PRBool mAbortCurrentRequest;
-#ifdef DEBUG
-  PRBool mMediaListListenerIgnored;
-  PRBool mLibraryListenerIgnored;
-#endif
+  PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
+  
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
-  nsDataHashtable<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
+  nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
 
 protected:
  /**
