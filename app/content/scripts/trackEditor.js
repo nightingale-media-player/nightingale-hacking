@@ -76,10 +76,11 @@ TrackEditorState.prototype = {
   // Example:
   // {
   //   propertyName: { 
-  //     hasMultiple: false,
+  //     hasMultiple: false,  (multiple values between selected items)
   //     edited: false,
   //     value: "",
-  //     originalValue: ""
+  //     originalValue: "".
+  //     knownInvalid: false  (verified to be ivalid)
   //   }
   // }
   _properties: null,
@@ -167,6 +168,11 @@ TrackEditorState.prototype = {
     }
     this._ensurePropertyData(property);
     this._notifyPropertyListeners(property);
+
+    
+    // The ok/prev/next buttons may need updating.
+    // TODO This is a bit hackish, but good enough for now.
+    TrackEditor.updateControls();
   },
   
   /** 
@@ -190,6 +196,11 @@ TrackEditorState.prototype = {
     this._properties[property].value = value;
     this._properties[property].edited = 
         this._properties[property].value != this._properties[property].originalValue;
+    
+    // The property has changed, and may be valid.
+    // We don't want to validate on every change,
+    // so wait until someone calls validatePropertyValue()
+    this._properties[property].knownInvalid = false;
 
     // Multiple values no longer matter
     this._properties[property].hasMultiple = false;
@@ -204,6 +215,53 @@ TrackEditorState.prototype = {
   isPropertyEdited: function(property) {
     this._ensurePropertyData(property);
     return this._properties[property].edited;
+  },
+  
+  /** 
+   * Returns true if the value has been verified
+   * as invalid.  Note that validation
+   * only happens on request, not on set.
+   */
+  isPropertyInvalidated: function(property) {
+    this._ensurePropertyData(property);
+    return this._properties[property].knownInvalid;
+  },
+  
+  /** 
+   * Performs validation on the value of the given
+   * property, and then broadcasts a notification.
+   * Check the result via isPropertyInvalidated.
+   */
+  validatePropertyValue: function(property) {
+    this._ensurePropertyData(property);
+    
+    // If no changes were made, don't bother invalidating
+    if (this._properties[property].edited) {  
+      var propInfo = this._propertyManager.getPropertyInfo(property);    
+      this._properties[property].knownInvalid = 
+          !propInfo.validate(this._properties[property].value);
+    }
+    
+    this._notifyPropertyListeners(property);
+    
+    // The ok/prev/next buttons may need updating.
+    // TODO This is a bit hackish, but good enough for now.
+    TrackEditor.updateControls();
+  },
+  
+  /** 
+   * Returns true if at least one property has been
+   * determined to be invalid.  
+   * Note that validation must be explicitly requested
+   * via validatePropertyValue().
+   */
+  hasKnownInvalidValues: function() {
+    for (var propertyName in this._properties) {
+      if (this._properties[propertyName].knownInvalid) {
+        return true;
+      }
+    }
+    return false;
   },
   
   /** 
@@ -235,7 +293,8 @@ TrackEditorState.prototype = {
       edited: false,
       hasMultiple: false,
       value: "",
-      originalValue: ""
+      originalValue: "",
+      knownInvalid: false,
     }
     
     // Populate the structure
@@ -268,6 +327,10 @@ TrackEditorState.prototype = {
         catch (e) { 
           Components.utils.reportError("TrackEditor::getPropertyValue("+property+") - "+value+": " + e +"\n");
         }
+      }
+      
+      if (value == null) {
+        value = "";
       }
 
       this._properties[property].value = value;
@@ -478,7 +541,8 @@ var TrackEditor = {
     
     // Known elements we're going to want to use.
     elements = ["notification_box", "notification_text",
-                "prev-button", "next-button"];
+                "prev_button", "next_button",
+                "ok_button", "cancel_button"];
     // I'd love to do this in the previous loop, but getElementsByAttribute
     // returns an HTMLCollection, not an array.
     for each (var elementName in elements) {
@@ -495,8 +559,7 @@ var TrackEditor = {
   /**
    * Show/hide warning messages as needed in the header of the dialog
    */
-  _updateNotificationBox: function TrackEditor__updateNotificationBox() {
-    this.state.selectedItems.length
+  updateNotificationBox: function TrackEditor__updateNotificationBox() {
     
     var itemCount = this.state.selectedItems.length;
     var writableCount = this.state.writableItemCount;
@@ -526,6 +589,34 @@ var TrackEditor = {
     } else {
       this._elements["notification_box"].hidden = true;
     }
+  },
+  
+  /**
+   * Update the dialog controls based on the current state
+   */
+  updateControls: function TrackEditor__updateControls() {
+  
+   // Hacky special case the title and track number
+   // It doesn't make sense to apply the same title and track number
+   // to multiple tracks, so just disable the option. 
+   // If the user really wants it they can use the advanced tab.
+   var disable = this.state.selectedItems.length > 1;
+   this._elements["infotab_trackname_textbox"].disabled = disable;
+   this._elements["infotab_tracknumber_textbox"].disabled = disable;
+   
+   // If the user has entered invalid data, disable all 
+   // UI that would cause an apply()
+   var hasErrors = this.state.hasKnownInvalidValues();
+   
+   this._elements["ok_button"].disabled = hasErrors;
+   
+   // DISABLE NEXT/PREV BUTTONS AT TOP/BOTTOM OF LIST
+   // TODO: komi suggests wraparound as a pref
+   var idx = this.mediaListView.selection.currentIndex;
+   var atStart = (idx == 0)
+   var atEnd   = (idx == this.mediaListView.length - 1);
+   this._elements["prev_button"].setAttribute("disabled", (atStart || hasErrors ? "true" : "false"));
+   this._elements["next_button"].setAttribute("disabled", (atEnd  || hasErrors ? "true" : "false"));
   },
 
   /**
@@ -578,26 +669,9 @@ var TrackEditor = {
     
     // TODO build a data structure
     this.state.setSelection(this.mediaListView.selection);    
-    
-    // TODO consider a separate function
-   
-    // Special case the title and track number
-    // It doesn't make sense to apply the same title and track number
-    // to multiple tracks, so just disable the option. 
-    // If the user really wants it they can use the advanced tab.
-    var disable = this.state.selectedItems.length > 1;
-    this._elements["infotab_trackname_textbox"].disabled = disable;
-    this._elements["infotab_tracknumber_textbox"].disabled = disable;
- 
-    // DISABLE NEXT/PREV BUTTONS AT TOP/BOTTOM OF LIST
-    // TODO: komi suggests wraparound as a pref
-    var idx = this.mediaListView.selection.currentIndex;
-    var atStart = (idx == 0)
-    var atEnd   = (idx == this.mediaListView.length - 1);
-    this._elements["prev-button"].setAttribute("disabled", (atStart ? "true" : "false"));
-    this._elements["next-button"].setAttribute("disabled", (atEnd ? "true" : "false"));
 
-    this._updateNotificationBox();
+    this.updateNotificationBox();
+    this.updateControls();
   },
   
   /**
@@ -617,6 +691,10 @@ var TrackEditor = {
    * index in the main player window
    */
   next: function() {
+    if (!this.apply()) {
+      return;
+    }
+
     var idx = this.mediaListView.selection.currentIndex;
 
     if (idx == null || idx == undefined) { return; }
@@ -637,6 +715,10 @@ var TrackEditor = {
    * index in the main player window
    */
   prev: function() {
+    if (!this.apply()) {
+      return;
+    }
+    
     var idx = this.mediaListView.selection.currentIndex;
 
     if (idx == null || idx == undefined) { return; }
@@ -663,15 +745,29 @@ var TrackEditor = {
   },
 
   /**
+   * Attempt to write out property changes and close the dialog
+   */
+  closeAndApply: function() {
+    if (this.apply()) {
+      window.close();
+    }
+  },
+
+  /**
    * Write property changes back to the selected media items
    * and if possible to the on disk files.
    */  
   apply: function() {
     
+    if (this.state.hasKnownInvalidValues()) {
+      Components.utils.reportError("TrackEditor: attempt to call apply() with known invalid state");
+      return false;
+    }
+    
     var properties = this.state.getEditedProperties();
     var items = this.state.selectedItems;
     if (items.length == 0 || properties.length == 0) {
-      return;
+      return true;
     }
     
     // Apply each modified property back onto the selected items,
@@ -731,6 +827,8 @@ var TrackEditor = {
       
       SBJobUtils.showProgressDialog(job, window);
     }
+    
+    return true;
   }
 };
 
@@ -847,6 +945,10 @@ function TrackEditorInputWidget(element) {
   
   TrackEditor.state.addSelectionListener(this);
   
+  var self = this;
+  element.addEventListener("blur",
+          function() { self.onBlur(); }, false);
+  
   // Create preceding checkbox to enable/disable when 
   // multiple tracks are selected
   this._createCheckbox();
@@ -925,6 +1027,11 @@ TrackEditorInputWidget.prototype = {
     } else if (!this._checkbox.disabled) { 
       this._element.disabled = false;
     }
+  },
+  
+  onBlur: function() {    
+    // Determine if the value is ok
+    TrackEditor.state.validatePropertyValue(this.property);
   }
 }
 
@@ -949,19 +1056,51 @@ function TrackEditorTextbox(element) {
   var self = this;
   element.addEventListener("input",
           function() { self.onUserInput(); }, false);
+
+  var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                 .getService(Ci.sbIPropertyManager);
+  var propInfo = propMan.getPropertyInfo(this.property);
+  if (propInfo instanceof Ci.sbINumberPropertyInfo || 
+      this._element.getAttribute("isnumeric") == "true") {
+    this._isNumeric = true;
+    this._minValue = propInfo.minValue;
+    this._maxValue = propInfo.maxValue;
+    element.addEventListener("keypress",
+            function(evt) { self.onKeypress(evt); }, false);
+  }
 }
 TrackEditorTextbox.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
   
+  // If set true, filter out non-numeric input
+  _isNumeric: false, 
+  _minValue: 0, 
+  _maxValue: 0, 
+  
   onUserInput: function() {
-    TrackEditor.state.setPropertyValue(this.property, this._element.value);
-    
-    // TODO VALIDATION!
-    // When to validate? oninput? onchange?
-    /*
-    if (elt.value != "" && !propInfo.validate(elt.value)) {
-      elt.reset();
-    }*/
+    var value = this._element.value;
+    if (this._isNumeric) {
+      var number = parseInt(value); 
+      if (number != NaN) {
+        if (number < this._minValue) {
+          value = new String(this._minValue);
+        } else if (number > this._maxValue) {
+          value = new String(this._maxValue);
+        }        
+      }
+    }
+    TrackEditor.state.setPropertyValue(this.property, value);
+  },
+  
+  onKeypress: function(evt) {    
+    // If numeric, suppress all keys
+    if (this._isNumeric) {
+      if (!evt.ctrlKey && !evt.metaKey && !evt.altKey && evt.charCode) {
+        if (evt.charCode < 48 || evt.charCode > 57) {
+          evt.preventDefault();
+        }
+      }
+    }
   },
   
   onTrackEditorSelectionChange: function TrackEditorTextbox_onTrackEditorSelectionChange() {
@@ -982,7 +1121,16 @@ TrackEditorTextbox.prototype = {
       }
     } else if (this._element.hasAttribute("edited")) {
       this._element.removeAttribute("edited"); 
-    } 
+    }
+    
+    // Indicate if this property is known to be invalid
+    if (TrackEditor.state.isPropertyInvalidated(this.property)) {
+      if (!this._element.hasAttribute("invalid")) {
+        this._element.setAttribute("invalid", "true");
+      }
+    } else if (this._element.hasAttribute("invalid")) {
+      this._element.removeAttribute("invalid"); 
+    }
 
     TrackEditorInputWidget.prototype.onTrackEditorPropertyChange.call(this);
   },

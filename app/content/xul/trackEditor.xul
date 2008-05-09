@@ -357,19 +357,19 @@
   </tabbox>
   
   <hbox>
-    <button id="prev-button"
+    <button id="prev_button"
             label="&lt;"
             accesskey="p"
             tooltiptext="Previous"
-            onclick="TrackEditor.apply(); TrackEditor.prev()"/>
-    <button id="next-button"
+            oncommand="TrackEditor.prev()"/>
+    <button id="next_button"
             label="&gt;"
             accesskey="n"
             tooltiptext="Next"
-            onclick="TrackEditor.apply(); TrackEditor.next()"/>
+            oncommand="TrackEditor.next()"/>
     <spacer flex="1"/>
-    <button label="Cancel" accesskey="c" onclick="window.close()"/>
-    <button label="OK" accesskey="o" onclick="TrackEditor.apply(); window.close();"/>
+    <button id="cancel_button" label="Cancel" accesskey="c" oncommand="window.close()"/>
+    <button id="ok_button" label="OK" accesskey="o" oncommand="TrackEditor.closeAndApply();"/>
   </hbox>
 
   <script type="application/x-javascript"

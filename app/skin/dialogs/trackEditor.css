@@ -38,8 +38,13 @@ See app/content/xul/trackEditor.xul
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-/** TEMP **/
+
 textbox[edited] {
+ border: 1px solid green !important;
+}
+
+/** Note that this style exists elsewhere **/
+textbox[invalid] {
  border: 1px solid red !important;
 }
 
@@ -71,6 +76,8 @@ textbox.long-number-input {
 textbox.short-number-input {
   width: 2em !important;
 }
+
+
 
 #genredropdown > .autocomplete-history-dropmarker {
   -moz-binding: url("chrome://global/content/bindings/autocomplete.xml#history-dropmarker");
