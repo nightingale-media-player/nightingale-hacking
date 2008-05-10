@@ -297,6 +297,14 @@ private:
   nsresult GetGuidFromHash(const nsACString& aHash, nsAString &aGUID);
 
   nsresult Shutdown();
+  
+  /* possibly create an item, and report if it was.
+     See sbILibrary::CreateMediaItem.*/
+  nsresult CreateMediaItemInternal(nsIURI* aUri,
+                                   sbIPropertyArray* aProperties,
+                                   PRBool aAllowDuplicates,
+                                   PRBool* aWasCreated,
+                                   sbIMediaItem** _retval);
 
   nsresult BatchCreateMediaItemsInternal(nsIArray* aURIArray,
                                          nsIArray* aPropertyArrayArray,

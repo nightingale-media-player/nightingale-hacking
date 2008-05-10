@@ -41,6 +41,7 @@
 // override in sbDeviceLibrary.
 #define SB_DECL_SBILIBRARY_OVERRIDES  \
   NS_IMETHOD CreateMediaItem(nsIURI *aContentUri, sbIPropertyArray *aProperties, PRBool aAllowDuplicates, sbIMediaItem **_retval); \
+  NS_IMETHOD CreateMediaItemIfNotExist(nsIURI *aContentUri, sbIPropertyArray *aProperties, sbIMediaItem **aResultItem, PRBool *_retval); \
   NS_IMETHOD CreateMediaList(const nsAString & aType, sbIPropertyArray *aProperties, sbIMediaList **_retval);  \
   NS_IMETHOD GetDevice(sbIDevice * *aDevice); \
 

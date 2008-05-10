@@ -1044,13 +1044,15 @@ var ExternalDropHandler = {
         // if the item didnt exist before, create it now
         var itemAdded = false;
         if (!item) {
-          var currentTime = new Date();
-          item = this._targetList.library.createMediaItem(aURI);
+          var holder = {};
+          var wasCreated = this._targetList
+                               .createMediaItemIfNotExist(aURI, null, holder);
+          item = holder.value;
           
           // Ensure we have an item and that it was created before 'currentTime'.
           // We check the creation time specifically because items created before
           // 'currentTime' were not created but rather returned to us.
-          if (item && item.mediaCreated > currentTime) {
+          if (wasCreated && item) {
             
             this._scanList.appendElement(item, false);
             this._totalImported++;

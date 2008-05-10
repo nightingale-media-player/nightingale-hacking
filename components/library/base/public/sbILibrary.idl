@@ -78,7 +78,7 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(a1ae0a35-b86a-42e8-b1ba-e4807ac745c2)]
+[scriptable, uuid(a297421b-1986-46ff-8d03-96c310a0125b)]
 interface sbILibrary : sbIMediaList
 {
   /**
@@ -123,6 +123,16 @@ interface sbILibrary : sbIMediaList
   sbIMediaItem createMediaItem(in nsIURI aContentUri,
                                [optional] in sbIPropertyArray aProperties,
                                [optional] in boolean aAllowDuplicates);
+  
+  /**
+   * \brief Create a new media item, disallowing duplicates, and return if it did.
+   * \param [optional] aResultItem the item that was created (or found)
+   * \return Whether a new media item was created
+   * \see createMediaItem
+   */
+  boolean createMediaItemIfNotExist(in nsIURI aContentUri,
+                                    [optional] in sbIPropertyArray aProperties,
+                                    [optional] out sbIMediaItem aResultItem);
 
   /**
    * \brief Creates a new media list

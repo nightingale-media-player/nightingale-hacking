@@ -2731,7 +2731,54 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
 {
   NS_ENSURE_ARG_POINTER(aUri);
   NS_ENSURE_ARG_POINTER(_retval);
+  
+  PRBool wasCreated; /* ignored */
+  return CreateMediaItemInternal(aUri,
+                                 aProperties,
+                                 aAllowDuplicates,
+                                 &wasCreated,
+                                 _retval);
+}
 
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
+                                                  sbIPropertyArray *aProperties,
+                                                  sbIMediaItem **aResultItem,
+                                                  PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aUri);
+  NS_ENSURE_ARG_POINTER(_retval);
+  
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> resultItem;
+  
+  rv = CreateMediaItemInternal(aContentUri,
+                               aProperties,
+                               PR_FALSE, /* never allow duplicates */
+                               _retval,
+                               getter_AddRefs(resultItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (aResultItem) {
+    resultItem.forget(aResultItem);
+  }
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
+                                                sbIPropertyArray* aProperties,
+                                                PRBool aAllowDuplicates,
+                                                PRBool* aWasCreated,
+                                                sbIMediaItem** _retval)
+{
+  NS_PRECONDITION(aUri, "No URI");
+  NS_PRECONDITION(aWasCreated, "No out bool");
+  NS_PRECONDITION(_retval, "No return item");
+  
   nsCAutoString spec;
   nsresult rv = aUri->GetSpec(spec);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2803,6 +2850,8 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
 
       rv = GetMediaItem(guid, _retval);
       NS_ENSURE_SUCCESS(rv, rv);
+      
+      *aWasCreated = PR_FALSE;
 
       return NS_OK;
     }
@@ -2896,6 +2945,7 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
     NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), mediaItem, length);
   }
 
+  *aWasCreated = PR_TRUE;
   NS_ADDREF(*_retval = mediaItem);
   return NS_OK;
 }
