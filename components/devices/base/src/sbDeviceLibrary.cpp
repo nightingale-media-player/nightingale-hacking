@@ -881,6 +881,39 @@ sbDeviceLibrary::CreateMediaItem(nsIURI *aContentUri,
  * See sbILibrary
  */
 NS_IMETHODIMP 
+sbDeviceLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
+                                           sbIPropertyArray *aProperties,
+                                           sbIMediaItem **aResultItem,
+                                           PRBool *_retval)
+{
+  NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeCreateMediaItem(aContentUri,
+                                                             aProperties,
+                                                             PR_FALSE,
+                                                             &mShouldProcceed));
+  if (mPerformAction) {
+    nsresult rv;
+    nsCOMPtr<sbILibrary> lib;
+    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                              NS_GET_IID(sbILibrary),
+                              mDeviceLibrary,
+                              NS_PROXY_SYNC,
+                              getter_AddRefs(lib));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    return lib->CreateMediaItemIfNotExist(aContentUri,
+                                aProperties,
+                                aResultItem,
+                                _retval);
+  } else {
+    return NS_OK;
+  }
+}
+
+/*
+ * See sbILibrary
+ */
+NS_IMETHODIMP 
 sbDeviceLibrary::CreateMediaList(const nsAString & aType,
                                  sbIPropertyArray *aProperties,
                                  sbIMediaList **_retval)
