@@ -47,7 +47,7 @@
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="track_editor"
  windowtype="Songbird:TrackEditor"
- title="Metadata"
+ title="&trackeditor.title;"
  type="songbird"
  onload="TrackEditor.onLoadTrackEditor();"
  onunload="TrackEditor.onUnloadTrackEditor();"
@@ -74,9 +74,9 @@
   
   <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox" mousethrough="never">
     <tabs>
-      <tab label="Summary"/>
-      <tab label="Edit"/>
-      <tab label="Lyrics" />
+      <tab label="&trackeditor.tab.summary.title;"/>
+      <tab label="&trackeditor.tab.edit.title;"/>
+      <tab label="&trackeditor.tab.lyrics.title;" />
       <!--tab disabled="true" label="Sort Values"/-->
     </tabs>
 
@@ -360,16 +360,16 @@
     <button id="prev_button"
             label="&lt;"
             accesskey="p"
-            tooltiptext="Previous"
+            tooltiptext="&tooltip.control.back;"
             oncommand="TrackEditor.prev()"/>
     <button id="next_button"
             label="&gt;"
             accesskey="n"
-            tooltiptext="Next"
+            tooltiptext="&tooltip.control.fwd;"
             oncommand="TrackEditor.next()"/>
     <spacer flex="1"/>
-    <button id="cancel_button" label="Cancel" accesskey="c" oncommand="window.close()"/>
-    <button id="ok_button" label="OK" accesskey="o" oncommand="TrackEditor.closeAndApply();"/>
+    <button id="cancel_button" label="&window.cancel;" oncommand="window.close()"/>
+    <button id="ok_button" label="&window.ok;" oncommand="TrackEditor.closeAndApply();"/>
   </hbox>
 
   <script type="application/x-javascript"

@@ -43,6 +43,7 @@ if (typeof(Cr) == "undefined")
 
 Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/components/sbProperties.jsm");
+Components.utils.import("resource://app/components/StringUtils.jsm");
 
 
 
@@ -68,6 +69,7 @@ TrackEditorState.prototype = {
   
   _propertyManager: Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                       .getService(Ci.sbIPropertyManager),
+
   
   // Array of media items that the track editor is operating on
   _selectedItems: null,
@@ -566,20 +568,19 @@ var TrackEditor = {
     
     var message;
     var class = "notification-warning";
-    
-    // TODO localize!
+
     if (itemCount > 1) {
       if (writableCount == itemCount) {
-        message = "Editing metadata for " + itemCount + " media items.";
+        message = SBFormattedString("trackeditor.notification.editingmultiple", [itemCount]);                
         class = "notification-info";
       } else if (writableCount >= 1) {
-        message = "Metadata cannot be edited for " + (itemCount - writableCount) +
-          " of the " + itemCount + " selected items.";
+        message = SBFormattedString("trackeditor.notification.somereadonly",
+                                    [(itemCount - writableCount), itemCount]);
       } else {
-        message = "Metadata for the selected items cannot be edited.";
+        message = SBString("trackeditor.notification.multiplereadonly");
       }
     } else if (writableCount == 0) {
-      message = "Metadata for the selected item cannot be edited.";
+      message = SBString("trackeditor.notification.singlereadonly");
     }
       
     if (message) {
@@ -1237,8 +1238,7 @@ function TrackEditorAdvancedTab(tabBox) {
   var tabPanels = tabBox.getElementsByTagName("tabpanels")[0];
   var tab = document.createElement("tab");
   
-  // TODO localize
-  tab.setAttribute("label", "Advanced");
+  tab.setAttribute("label", SBString("trackeditor.tab.advanced"));
   tabs.appendChild(tab);
   
   var panel = document.createElement("vbox");
@@ -1256,6 +1256,7 @@ TrackEditorAdvancedTab.prototype = {
     // Create elements for the properties in the Advanced Property Tab
     var label = document.createElement("label");
     label.setAttribute("id", "advanced-warning");
+    // TODO remove or localize
     var labelText = document.createTextNode(
                       "WARNING: Editing these values could ruin Christmas.");
     label.appendChild(labelText);

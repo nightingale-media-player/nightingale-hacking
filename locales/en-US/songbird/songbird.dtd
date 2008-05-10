@@ -323,7 +323,13 @@
 <!ENTITY bookmarks.edit.icon   "Icon:" >
 
 
-<!ENTITY trackeditor.title            "Track Editor" >
+<!ENTITY trackeditor.title                        "Track Editor" >
+<!ENTITY trackeditor.tab.summary.title            "Summary" >
+<!ENTITY trackeditor.tab.edit.title               "Edit" >
+<!ENTITY trackeditor.tab.lyrics.title             "Lyrics" >
+
+
+<!-- The following strings are from the old track editor, and can be remove one day -->
 <!ENTITY trackeditor.trackdata        "Track Data" >
 <!ENTITY trackeditor.exttrackdata     "Extended Data" >
 <!ENTITY trackeditor.tags             "Tags" >
