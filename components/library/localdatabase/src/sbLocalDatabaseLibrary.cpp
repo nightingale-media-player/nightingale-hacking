@@ -2749,7 +2749,7 @@ sbLocalDatabaseLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
                                                   sbIMediaItem **aResultItem,
                                                   PRBool *_retval)
 {
-  NS_ENSURE_ARG_POINTER(aUri);
+  NS_ENSURE_ARG_POINTER(aContentUri);
   NS_ENSURE_ARG_POINTER(_retval);
   
   nsresult rv;
