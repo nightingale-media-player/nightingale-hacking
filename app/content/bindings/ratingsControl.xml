@@ -63,6 +63,20 @@
           this.stars.setAttribute("value", val);
         </setter>
       </property>
+      <property name="disabled">
+        <getter>
+          return this.getAttribute("disabled") == "true";
+        </getter>
+        <setter>
+          if (val == false || 
+              val == "false" || 
+              val == "" || 
+              !val)
+            this.removeAttribute("disabled");
+          else
+            this.setAttribute("disabled", val);
+        </setter>
+      </property>
       <method name="canEdit">
         <body>
           <![CDATA[
