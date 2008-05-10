@@ -1065,6 +1065,7 @@ function TrackEditorTextbox(element) {
     this._isNumeric = true;
     this._minValue = propInfo.minValue;
     this._maxValue = propInfo.maxValue;
+    this._maxDigits = new String(this._maxValue).length;
     element.addEventListener("keypress",
             function(evt) { self.onKeypress(evt); }, false);
   }
@@ -1075,29 +1076,25 @@ TrackEditorTextbox.prototype = {
   // If set true, filter out non-numeric input
   _isNumeric: false, 
   _minValue: 0, 
-  _maxValue: 0, 
+  _maxValue: 0,
+  _maxDigits: 0,
   
   onUserInput: function() {
     var value = this._element.value;
-    if (this._isNumeric) {
-      var number = parseInt(value); 
-      if (number != NaN) {
-        if (number < this._minValue) {
-          value = new String(this._minValue);
-        } else if (number > this._maxValue) {
-          value = new String(this._maxValue);
-        }        
-      }
-    }
     TrackEditor.state.setPropertyValue(this.property, value);
   },
   
   onKeypress: function(evt) {    
-    // If numeric, suppress all keys
+    // If numeric, suppress all other keys.
+    // TODO/NOTE: THIS DOES NOT WORK FOR NEGATIVE VALUES!
     if (this._isNumeric) {
       if (!evt.ctrlKey && !evt.metaKey && !evt.altKey && evt.charCode) {
         if (evt.charCode < 48 || evt.charCode > 57) {
           evt.preventDefault();
+        // If typing the key would make the value too long, prevent keypress
+        } else if (this._element.value.length + 1 > this._maxDigits &&
+                   this._element.selectionStart == this._element.selectionEnd) {
+          evt.preventDefault();        
         }
       }
     }
