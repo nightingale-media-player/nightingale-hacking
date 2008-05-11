@@ -197,27 +197,18 @@ public:
 private:
     static PRUint32             sNextChannelID;
 
-
-    /*
-     * Private taglib metadata handler ID3v2 services.
-     */
-
 private:
     nsresult ReadInternal(
         PRInt32                     *pReadCount);
     nsresult WriteInternal(
         PRInt32                     *pWriteCount);
 
+    /*
+     * Private taglib metadata handler ID3v2 services.
+     */
     void ReadID3v2Tags(
         TagLib::ID3v2::Tag          *pTag,
         const char                  *charset = 0);
-
-    void AddID3v2Tag(
-        TagLib::ID3v2::FrameListMap &frameListMap,
-        const char                  *frameID,
-        const char                  *metadataName,
-        const char                  *charset = 0);
-
 
     /*
      * Private taglib metadata handler APE services.
@@ -226,12 +217,6 @@ private:
 private:
     void ReadAPETags(
         TagLib::APE::Tag          *pTag);
-
-    void AddAPETag(
-        TagLib::APE::ItemListMap &itemListMap,
-        const char                  *frameID,
-        const char                  *metadataName);
-
 
     /*
      * Private taglib metadata handler Xiph services.

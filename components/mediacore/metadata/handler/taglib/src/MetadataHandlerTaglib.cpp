@@ -86,34 +86,34 @@
   #include <windows.h>
 #endif
 
-#define writeProperty(SB_PROPERTY, method)             \
-  PR_BEGIN_MACRO                                       \
-  result = mpMetadataPropertyArray->GetPropertyValue(  \
-    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);    \
-  if (NS_SUCCEEDED(result)) {                          \
-    f.tag()->set##method(TagLib::String(               \
-      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),\
-      TagLib::String::UTF8));                          \
-  }                                                    \
+#define WRITE_PROPERTY(result, SB_PROPERTY, method)         \
+  PR_BEGIN_MACRO                                            \
+  result = mpMetadataPropertyArray->GetPropertyValue(       \
+    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);         \
+  if (NS_SUCCEEDED(result)) {                               \
+    f.tag()->set##method(TagLib::String(                    \
+      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),  \
+      TagLib::String::UTF8));                               \
+  }                                                         \
   PR_END_MACRO
 
-#define writeNumericProperty(SB_PROPERTY, method)      \
-  PR_BEGIN_MACRO                                       \
-  result = mpMetadataPropertyArray->GetPropertyValue(  \
-    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);    \
-  if (NS_SUCCEEDED(result)) {                          \
-    int method;                                        \
-    int numRead = sscanf(                              \
-      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(), \
-      "%d",                                            \
-      &method);                                        \
-    if (numRead == 1) {                                \
-      f.tag()->set##method(method);                    \
-    }                                                  \
-    else {                                             \
-      f.tag()->set##method(0);                         \
-    }                                                  \
-  }                                                    \
+#define WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY, method) \
+  PR_BEGIN_MACRO                                            \
+  result = mpMetadataPropertyArray->GetPropertyValue(       \
+    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);         \
+  if (NS_SUCCEEDED(result)) {                               \
+    int method;                                             \
+    int numRead = sscanf(                                   \
+      NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),  \
+      "%d",                                                 \
+      &method);                                             \
+    if (numRead == 1) {                                     \
+      f.tag()->set##method(method);                         \
+    }                                                       \
+    else {                                                  \
+      f.tag()->set##method(0);                              \
+    }                                                       \
+  }                                                         \
   PR_END_MACRO
 
 /*******************************************************************************
@@ -539,31 +539,32 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       
       nsAutoString propertyValue;
       
-      // writeProperty is a natty macro
-      writeProperty(SB_PROPERTY_TRACKNAME, Title);
-      writeProperty(SB_PROPERTY_ARTISTNAME, Artist);
-      writeProperty(SB_PROPERTY_ALBUMARTISTNAME, AlbumArtist);
-      writeProperty(SB_PROPERTY_ALBUMNAME, Album);
-      writeProperty(SB_PROPERTY_COMMENT, Comment);
-      writeProperty(SB_PROPERTY_LYRICS, Lyrics);
-      writeProperty(SB_PROPERTY_GENRE, Genre);
-      writeProperty(SB_PROPERTY_PRODUCERNAME, Producer);
-      writeProperty(SB_PROPERTY_COMPOSERNAME, Composer);
-      writeProperty(SB_PROPERTY_CONDUCTORNAME, Conductor);
-      writeProperty(SB_PROPERTY_LYRICISTNAME, Lyricist);
-      writeProperty(SB_PROPERTY_RECORDLABELNAME, RecordLabel);
-      writeProperty(SB_PROPERTY_RATING, Rating);
-      writeProperty(SB_PROPERTY_LANGUAGE, Language);
-      writeProperty(SB_PROPERTY_KEY, Key);
-      writeProperty(SB_PROPERTY_COPYRIGHT, License);
-      writeProperty(SB_PROPERTY_COPYRIGHTURL, LicenseUrl);
-      writeNumericProperty(SB_PROPERTY_YEAR, Year);
-      writeNumericProperty(SB_PROPERTY_TRACKNUMBER, Track);
-      writeNumericProperty(SB_PROPERTY_TOTALTRACKS, TotalTracks);
-      writeNumericProperty(SB_PROPERTY_DISCNUMBER, Disc);
-      writeNumericProperty(SB_PROPERTY_TOTALDISCS, TotalDiscs);
-      
-          
+      // WRITE_PROPERTY is a natty macro
+      WRITE_PROPERTY(result, SB_PROPERTY_TRACKNAME, Title);
+      WRITE_PROPERTY(result, SB_PROPERTY_ARTISTNAME, Artist);
+      WRITE_PROPERTY(result, SB_PROPERTY_ALBUMARTISTNAME, AlbumArtist);
+      WRITE_PROPERTY(result, SB_PROPERTY_ALBUMNAME, Album);
+      WRITE_PROPERTY(result, SB_PROPERTY_COMMENT, Comment);
+      WRITE_PROPERTY(result, SB_PROPERTY_LYRICS, Lyrics);
+      WRITE_PROPERTY(result, SB_PROPERTY_GENRE, Genre);
+      WRITE_PROPERTY(result, SB_PROPERTY_PRODUCERNAME, Producer);
+      WRITE_PROPERTY(result, SB_PROPERTY_COMPOSERNAME, Composer);
+      WRITE_PROPERTY(result, SB_PROPERTY_CONDUCTORNAME, Conductor);
+      WRITE_PROPERTY(result, SB_PROPERTY_LYRICISTNAME, Lyricist);
+      WRITE_PROPERTY(result, SB_PROPERTY_RECORDLABELNAME, RecordLabel);
+      WRITE_PROPERTY(result, SB_PROPERTY_RATING, Rating);
+      WRITE_PROPERTY(result, SB_PROPERTY_LANGUAGE, Language);
+      WRITE_PROPERTY(result, SB_PROPERTY_KEY, Key);
+      WRITE_PROPERTY(result, SB_PROPERTY_COPYRIGHT, License);
+      WRITE_PROPERTY(result, SB_PROPERTY_COPYRIGHTURL, LicenseUrl);
+      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_YEAR, Year);
+      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TRACKNUMBER, Track);
+      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TOTALTRACKS, TotalTracks);
+      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_DISCNUMBER, Disc);
+      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TOTALDISCS, TotalDiscs);
+      WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_BPM, Bpm);
+      // todo: isCompilation! + Tests!
+
       // Attempt to save the metadata
       if (f.save()) {
         result = NS_OK;
@@ -833,35 +834,17 @@ PRUint32 sbMetadataHandlerTaglib::sNextChannelID = 0;
 
 static char *ID3v2Map[][2] =
 {
-    { "COMM", SB_PROPERTY_COMMENT },
-    { "TALB", SB_PROPERTY_ALBUMNAME },
-    { "TBPM", SB_PROPERTY_BPM },
-    { "TCOM", SB_PROPERTY_COMPOSERNAME },
-    { "TCOP", SB_PROPERTY_COPYRIGHT },
     { "TENC", SB_PROPERTY_SOFTWAREVENDOR },
-    { "TIME", SB_PROPERTY_DURATION },
-    { "TIT2", SB_PROPERTY_TRACKNAME },
     { "TIT3", SB_PROPERTY_SUBTITLE },
-    { "TKEY", SB_PROPERTY_KEY },
-    { "TLAN", SB_PROPERTY_LANGUAGE },
-    { "TLEN", SB_PROPERTY_DURATION },
 //    { "TMED", "mediatype" },
 //    { "TOAL", "original_album" },
 //    { "TOPE", "original_artist" },
 //    { "TORY", "original_year" },
-    { "TPE1", SB_PROPERTY_ARTISTNAME },
 //    { "TPE2", "accompaniment" },
-    { "TPE3", SB_PROPERTY_CONDUCTORNAME },
 //    { "TPE4", "interpreter_remixer" },
-    { "TPOS", SB_PROPERTY_DISCNUMBER },
-    { "TPUB", SB_PROPERTY_RECORDLABELNAME },
-    { "TRCK", SB_PROPERTY_TRACKNUMBER },
-    { "TYER", SB_PROPERTY_YEAR },
     { "UFID", SB_PROPERTY_METADATAUUID },
 //    { "USER", "terms_of_use" },
-    { "USLT", SB_PROPERTY_LYRICS },
 //    { "WCOM", "commercialinfo_url" },
-    { "WCOP", SB_PROPERTY_COPYRIGHTURL },
 //    { "WOAR", "artist_url" },
 //    { "WOAS", "source_url" },
 //    { "WORS", "netradio_url" },
@@ -884,71 +867,39 @@ static char *ID3v2Map[][2] =
  */
 
 void sbMetadataHandlerTaglib::ReadID3v2Tags(
-    TagLib::ID3v2::Tag          *pTag,
-    const char                  *aCharset)
+  TagLib::ID3v2::Tag          *pTag,
+  const char                  *aCharset)
 {
-    TagLib::ID3v2::FrameListMap frameListMap;
-    int                         numMetadataEntries;
-    int                         i;
+  TagLib::ID3v2::FrameListMap frameListMap;
+  int                         numMetadataEntries;
+  int                         i;
 
-    /* Do nothing if no tags are present. */
-    if (!pTag)
-        return;
+  /* Do nothing if no tags are present. */
+  if (!pTag) {
+      return;
+  }
 
-    /* Get the frame list map. */
-    frameListMap = pTag->frameListMap();
+  frameListMap = pTag->frameListMap();
 
-    /* Add the metadata entries. */
-    numMetadataEntries = sizeof(ID3v2Map) / sizeof(ID3v2Map[0]);
-    for (i = 0; i < numMetadataEntries; i++)
-        AddID3v2Tag(frameListMap, ID3v2Map[i][0], ID3v2Map[i][1], aCharset);
-}
-
-
-/*
- * AddID3v2Tag
- *
- *   --> frameListMap           Frame list map.
- *   --> frameID                ID3v2 frame ID.
- *   --> metadataName           Metadata name.
- *   --> charset                The character set the tags are assumed to be in
- *                              Pass in null to do no conversion
- *
- *   This function adds the ID3v2 tag with the ID3v2 frame ID specified by
- * frameID from the frame list map specified by frameListMap to the set of
- * metadata values with the metadata name specified by metadataName.
- */
-
-void sbMetadataHandlerTaglib::AddID3v2Tag(
-    TagLib::ID3v2::FrameListMap &frameListMap,
-    const char                  *frameID,
-    const char                  *metadataName,
-    const char                  *charset)
-{
-    TagLib::ID3v2::FrameList    frameList;
-
-    /* Add the frame metadata. */
-    frameList = frameListMap[frameID];
-    if (!frameList.isEmpty())
-    {
-        /* Convert length to microseconds. */
-        if (!strcmp(metadataName, SB_PROPERTY_DURATION))
-        {
-            PRInt32                     length;
-
-            PR_sscanf(frameList.front()->toString().toCString(true),
-                      "%d",
-                      &length);
-            length *= 1000;
-            AddMetadataValue(metadataName, length);
-            return;
-        }
-
-        /* Just copy all other metadata. */
-        TagLib::String value = ConvertCharset(frameList.front()->toString(),
-                                              charset);
-        AddMetadataValue(metadataName, value);
+  /* Add the metadata entries. */
+  numMetadataEntries = sizeof(ID3v2Map) / sizeof(ID3v2Map[0]);
+  for (i = 0; i < numMetadataEntries; i++) {
+    TagLib::ID3v2::FrameList frameList = frameListMap[ID3v2Map[i][0]];
+    if(!frameList.isEmpty()) {
+      TagLib::String value = ConvertCharset(frameList.front()->toString(), aCharset);
+      AddMetadataValue(ID3v2Map[i][1], value);
     }
+  }
+  
+  // Specialcase for TLEN which we keep in microseconds and ID3v2 stores in ms
+  TagLib::ID3v2::FrameList frameList = frameListMap["TLEN"];
+  if (!frameList.isEmpty())
+  {
+    PRInt32 length;
+    PR_sscanf(frameList.front()->toString().toCString(true), "%d", &length);
+    AddMetadataValue(ID3v2Map[i][1], length * 1000);
+  }
+  return;
 }
 
 
@@ -966,20 +917,9 @@ void sbMetadataHandlerTaglib::AddID3v2Tag(
 // see http://wiki.hydrogenaudio.org/index.php?title=APE_key
 static char *APEMap[][2] =
 {
-    { "Title", SB_PROPERTY_TRACKNAME },
     { "Subtitle", SB_PROPERTY_SUBTITLE },
-    { "Artist", SB_PROPERTY_ARTISTNAME },
-    { "Album", SB_PROPERTY_ALBUMNAME },
 //    { "Debut album", "original_album" },
-    { "Publisher", SB_PROPERTY_RECORDLABELNAME },
-    { "Conductor", SB_PROPERTY_CONDUCTORNAME },
-    { "Track", SB_PROPERTY_TRACKNUMBER },
-    { "Composer", SB_PROPERTY_COMPOSERNAME },
-    { "Comment", SB_PROPERTY_COMMENT },
-    { "Copyright", SB_PROPERTY_COPYRIGHT },
 //    { "File", "source_url" },
-    { "Year", SB_PROPERTY_YEAR },
-    { "Genre", SB_PROPERTY_GENRE }
 };
 
 
@@ -1009,49 +949,11 @@ void sbMetadataHandlerTaglib::ReadAPETags(
 
     /* Add the metadata entries. */
     numMetadataEntries = sizeof(APEMap) / sizeof(APEMap[0]);
-    for (i = 0; i < numMetadataEntries; i++)
-        AddAPETag(itemListMap, APEMap[i][0], APEMap[i][1]);
-}
-
-
-/*
- * AddAPETag
- *
- *   --> itemListMap            Item list map.
- *   --> itemID                 APE item ID.
- *   --> metadataName           Metadata name.
- *
- *   This function adds the APE tag with the APE frame ID specified by
- * frameID from the frame list map specified by frameListMap to the set of
- * metadata values with the metadata name specified by metadataName.
- */
-
-void sbMetadataHandlerTaglib::AddAPETag(
-    TagLib::APE::ItemListMap    &itemListMap,
-    const char                  *itemID,
-    const char                  *metadataName)
-{
-    TagLib::APE::Item item;
-
-    /* Add the frame metadata. */
-    item = itemListMap[itemID];
-    if (!item.isEmpty())
-    {
-        /* Convert length to microseconds. */
-        if (!strcmp(metadataName, SB_PROPERTY_DURATION))
-        {
-            PRInt32                     length;
-
-            PR_sscanf(item.toString().toCString(true),
-                      "%d",
-                      &length);
-            length *= 1000;
-            AddMetadataValue(metadataName, length);
-            return;
-        }
-
-        /* Just copy all other metadata. */
-        AddMetadataValue(metadataName, item.toString());
+    for (i = 0; i < numMetadataEntries; i++) {
+      TagLib::APE::Item item = itemListMap[APEMap[i][0]];
+      if (!item.isEmpty()) {
+        AddMetadataValue(APEMap[i][1], item.toString());
+      }
     }
 }
 
@@ -1061,18 +963,6 @@ void sbMetadataHandlerTaglib::AddAPETag(
  * Private taglib metadata handler Xiph services.
  *
  ******************************************************************************/
-
-/*
- * XiphMap                      Map of Xiph tag names to Songbird metadata
- *                              names.
- */
-
-static char *XiphMap[][2] =
-{
-    { "TRACKNUMBER", SB_PROPERTY_TRACKNUMBER },
-    { "DATE", SB_PROPERTY_YEAR }
-};
-
 
 /*
  * ReadXiphTags
@@ -1086,81 +976,8 @@ static char *XiphMap[][2] =
 void sbMetadataHandlerTaglib::ReadXiphTags(
     TagLib::Ogg::XiphComment    *pTag)
 {
-    TagLib::Ogg::FieldListMap   fieldListMap;
-    int                         numMetadataEntries;
-    int                         i;
-
-    /* Do nothing if no tags are present. */
-    if (!pTag)
-        return;
-
-    fieldListMap = pTag->fieldListMap();
-
-    /* Add the metadata entries. */
-    numMetadataEntries = sizeof(XiphMap) / sizeof(XiphMap[0]);
-    for (i = 0; i < numMetadataEntries; i++)
-        AddXiphTag(fieldListMap, XiphMap[i][0], XiphMap[i][1]);
+  // nothing to do here. all the xiph properties we're interested in are already being read
 }
-
-
-/*
- * AddXiphTag
- *
- *   --> fieldListMap           Field list map.
- *   --> fieldName              Xiph field name.
- *   --> metadataName           Metadata name.
- *
- *   This function adds the Xiph tag with the Xiph field name specified by
- * fieldName from the field list map specified by fieldListMap to the set of
- * metadata values with the metadata name specified by metadataName.
- */
-
-void sbMetadataHandlerTaglib::AddXiphTag(
-    TagLib::Ogg::FieldListMap   &fieldListMap,
-    const char                  *fieldName,
-    const char                  *metadataName)
-{
-    TagLib::StringList          fieldList;
-
-    /* Add the field metadata. */
-    fieldList = fieldListMap[fieldName];
-    if (!fieldList.isEmpty())
-        AddMetadataValue(metadataName, fieldList.front());
-}
-
-
-/*******************************************************************************
- *
- * Private taglib metadata handler mp4 services.
- *
- ******************************************************************************/
-
-/*
- * ReadMP4Tags
- *
- *   --> pTag                   MP4 tag object.
- *
- *   This function reads MP4 tags from the MP4 tag object specified by pTag.
- * The read tags are added to the set of metadata values.
- *   This function only reads the MP4 specific tags.
- */
-
-void sbMetadataHandlerTaglib::ReadMP4Tags(
-    TagLib::MP4::Tag            *pTag)
-{
-    /* Add MP4 specific tags. */
-    if (!pTag->composer().isEmpty())
-        AddMetadataValue(SB_PROPERTY_COMPOSERNAME, pTag->composer());
-    if (pTag->numTracks())
-        AddMetadataValue(SB_PROPERTY_TOTALTRACKS, pTag->numTracks());
-    if (pTag->disk())
-        AddMetadataValue(SB_PROPERTY_DISCNUMBER, pTag->disk());
-    if (pTag->numDisks())
-        AddMetadataValue(SB_PROPERTY_TOTALDISCS, pTag->numDisks());
-    if (pTag->bpm())
-        AddMetadataValue(SB_PROPERTY_BPM, pTag->bpm());
-}
-
 
 /*******************************************************************************
  *
@@ -1227,15 +1044,6 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
         isValid = ReadMPEGFile(mMetadataPath);
     }
 
-    /* Fix up track and disc number metadata. */
-    if (isValid && !mMetadataChannelRestart)
-    {
-        FixTrackDiscNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                           NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS));
-        FixTrackDiscNumber(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                           NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS));
-    }
-
     /* Check if the metadata reading is complete. */
     if (isValid && !mMetadataChannelRestart)
         CompleteRead();
@@ -1289,48 +1097,52 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
     TagLib::File                *pTagFile,
     const char                  *aCharset)
 {
-    TagLib::Tag                 *pTag;
-    TagLib::AudioProperties     *pAudioProperties;
-    PRBool                      isValid = PR_TRUE;
+  TagLib::Tag                 *pTag;
+  TagLib::AudioProperties     *pAudioProperties;
 
-    /* Check for NULL file. */
-    if (!pTagFile)
-        isValid = PR_FALSE;
-
-    /* Check if the file metadata is valid. */
-    if (isValid)
-    {
-        if (!pTagFile->isValid())
-            isValid = PR_FALSE;
-    }
-
-    /* Get the tag info. */
-    if (isValid)
-    {
-        pTag = pTagFile->tag();
-        // yay random charset guessing!
-        AddMetadataValue(SB_PROPERTY_ALBUMNAME, ConvertCharset(pTag->album(), aCharset));
-        AddMetadataValue(SB_PROPERTY_ARTISTNAME, ConvertCharset(pTag->artist(), aCharset));
-        AddMetadataValue(SB_PROPERTY_COMMENT, ConvertCharset(pTag->comment(), aCharset));
-        AddMetadataValue(SB_PROPERTY_GENRE, ConvertCharset(pTag->genre(), aCharset));
-        AddMetadataValue(SB_PROPERTY_TRACKNAME, ConvertCharset(pTag->title(), aCharset));
-        AddMetadataValue(SB_PROPERTY_TRACKNUMBER, pTag->track());
-        AddMetadataValue(SB_PROPERTY_YEAR, pTag->year());
-    }
-
-    /* Get the audio properties. */
-    if (isValid)
-    {
-        pAudioProperties = pTagFile->audioProperties();
-        if (pAudioProperties)
-        {
-            AddMetadataValue(SB_PROPERTY_BITRATE, pAudioProperties->bitrate());
-            AddMetadataValue(SB_PROPERTY_SAMPLERATE, pAudioProperties->sampleRate());
-            AddMetadataValue(SB_PROPERTY_DURATION, pAudioProperties->length() * 1000000);
-        }
-    }
-
-    return (isValid);
+  /* We want to be sure we have a legit file ref. */
+  if (!pTagFile || !pTagFile->isValid()) {
+    return false; // not valid!
+  }
+  
+  pTag = pTagFile->tag();
+  if (pTag) {
+    // yay random charset guessing!
+    AddMetadataValue(SB_PROPERTY_TRACKNAME,       ConvertCharset(pTag->title(), aCharset));
+    AddMetadataValue(SB_PROPERTY_ARTISTNAME,      ConvertCharset(pTag->artist(), aCharset));
+    AddMetadataValue(SB_PROPERTY_ALBUMARTISTNAME, ConvertCharset(pTag->albumArtist(), aCharset));
+    AddMetadataValue(SB_PROPERTY_ALBUMNAME,       ConvertCharset(pTag->album(), aCharset));
+    AddMetadataValue(SB_PROPERTY_COMMENT,         ConvertCharset(pTag->comment(), aCharset));
+    AddMetadataValue(SB_PROPERTY_LYRICS,          ConvertCharset(pTag->lyrics(), aCharset));
+    AddMetadataValue(SB_PROPERTY_GENRE,           ConvertCharset(pTag->genre(), aCharset));
+    AddMetadataValue(SB_PROPERTY_PRODUCERNAME,    ConvertCharset(pTag->producer(), aCharset));
+    AddMetadataValue(SB_PROPERTY_COMPOSERNAME,    ConvertCharset(pTag->composer(), aCharset));
+    AddMetadataValue(SB_PROPERTY_CONDUCTORNAME,   ConvertCharset(pTag->conductor(), aCharset));
+    AddMetadataValue(SB_PROPERTY_LYRICISTNAME,    ConvertCharset(pTag->lyricist(), aCharset));
+    AddMetadataValue(SB_PROPERTY_RECORDLABELNAME, ConvertCharset(pTag->recordLabel(), aCharset));
+    AddMetadataValue(SB_PROPERTY_RATING,          ConvertCharset(pTag->rating(), aCharset));
+    AddMetadataValue(SB_PROPERTY_LANGUAGE,        ConvertCharset(pTag->language(), aCharset));
+    AddMetadataValue(SB_PROPERTY_KEY,             ConvertCharset(pTag->key(), aCharset));
+    AddMetadataValue(SB_PROPERTY_COPYRIGHT,       ConvertCharset(pTag->license(), aCharset));
+    AddMetadataValue(SB_PROPERTY_COPYRIGHTURL,    ConvertCharset(pTag->licenseUrl(), aCharset));
+    AddMetadataValue(SB_PROPERTY_YEAR,            pTag->year());
+    AddMetadataValue(SB_PROPERTY_TRACKNUMBER,     pTag->track());
+    AddMetadataValue(SB_PROPERTY_TOTALTRACKS,     pTag->totalTracks());
+    AddMetadataValue(SB_PROPERTY_DISCNUMBER,      pTag->disc());
+    AddMetadataValue(SB_PROPERTY_TOTALDISCS,      pTag->totalDiscs());
+    AddMetadataValue(SB_PROPERTY_BPM,             pTag->bpm());
+    // todo: compilation!
+  }
+  
+  pAudioProperties = pTagFile->audioProperties();
+  if (pAudioProperties)
+  {
+      AddMetadataValue(SB_PROPERTY_BITRATE, pAudioProperties->bitrate());
+      AddMetadataValue(SB_PROPERTY_SAMPLERATE, pAudioProperties->sampleRate());
+      AddMetadataValue(SB_PROPERTY_DURATION, pAudioProperties->length() * 1000000);
+  }
+  
+  return true; // file was valid
 }
 
 
@@ -1600,7 +1412,7 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
     if (NS_SUCCEEDED(result) && isValid)
         isValid = ReadFile(pTagFile);
 
-    /* Read the ID3v2 metadata. */
+    /* Read the Xiph comment metadata. */
     if (NS_SUCCEEDED(result) && isValid)
         ReadXiphTags(pTagFile->xiphComment());
 
@@ -1809,10 +1621,6 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File(
     if (NS_SUCCEEDED(result) && isValid)
         isValid = ReadFile(pTagFile);
 
-    /* Read the MP4 specific metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
-        ReadMP4Tags(static_cast<TagLib::MP4::Tag *>(pTagFile->tag()));
-
     /* File is invalid on any error. */
     if (NS_FAILED(result))
         isValid = PR_FALSE;
@@ -1943,56 +1751,4 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
                                       valueString);
 
     return (result);
-}
-
-
-/*
- * FixTrackDiscNumber
- *
- *   --> numberKey              Number metadata key.
- *   --> totalKey               Total metadata key.
- *
- *   This function fixes up track and disc number metadata values that contain
- * both the number and total values (e.g., "1 of 12" or "1/12").  The track or
- * disc number key is specified by numberKey and the total key is specified by
- * totalKey.
- */
-
-void sbMetadataHandlerTaglib::FixTrackDiscNumber(
-    nsString                    numberKey,
-    nsString                    totalKey)
-{
-    nsAutoString                numberValue;
-    nsAutoString                numberField;
-    nsAutoString                totalField;
-    int                         numberInt;
-    int                         totalInt;
-    PRInt32                     mark;
-    nsresult                    result = NS_OK;
-
-    /* Get the number value. */
-    result = mpMetadataPropertyArray->GetPropertyValue
-                                          (numberKey, numberValue);
-
-    /* Search for "of" or "/". */
-    if ((mark = numberValue.Find("of", PR_TRUE)) == -1)
-        mark = numberValue.Find("/", PR_TRUE);
-
-    /* If number value contains both the number and the total, split it up. */
-    if (mark != -1)
-    {
-        /* Get the number and total fields. */
-        numberField = StringHead(numberValue, mark);
-        totalField = StringTail(numberValue, numberValue.Length() - mark - 1);
-
-        /* Convert the fields to integers. */
-        numberInt = atoi(NS_ConvertUTF16toUTF8(numberField).get());
-        totalInt = atoi(NS_ConvertUTF16toUTF8(totalField).get());
-
-        /* Add the number and total metadata values. */
-        AddMetadataValue(NS_ConvertUTF16toUTF8(numberKey).get(),
-                         numberInt);
-        AddMetadataValue(NS_ConvertUTF16toUTF8(totalKey).get(),
-                         totalInt);
-    }
 }
