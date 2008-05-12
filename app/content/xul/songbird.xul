@@ -124,6 +124,10 @@
   src="chrome://browser/content/sanitize.js" />
   <script type="application/x-javascript" 
   src="chrome://songbird/content/scripts/sanitize.js" />
+  
+  <!-- 0.6 Feedback Delegate, manages prompting the user for a survey -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/feedbackDelegate.js" />
 
    
 </window>

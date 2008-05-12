@@ -515,3 +515,12 @@
 <!ENTITY subscribeMediaPageCmd.accesskey                "u">
 <!ENTITY subscribeMediaFrameCmd.label                   "Subscribe To This Frame...">
 <!ENTITY subscribeMediaFrameCmd.accesskey               "u">
+
+<!ENTITY feedback.dialog.title      "Help Make Songbird Better!">
+<!ENTITY feedback.dialog.yes        "Yes">
+<!ENTITY feedback.dialog.no         "No">
+<!ENTITY feedback.dialog.sentence1  "Will you help us make Songbird better by taking a quick, anonymous survey?">
+<!ENTITY feedback.dialog.sentence2  "If you're not interested, we will not ask you again.  Thanks for considering and we appreciate you using Songbird!">
+<!ENTITY feedback.dialog.sentence3  "Regards,">
+<!ENTITY feedback.dialog.sentence4  "The Songbird Team">
+
