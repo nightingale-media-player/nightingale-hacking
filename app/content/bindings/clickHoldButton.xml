@@ -162,12 +162,15 @@
      <handler event="mousedown">
        <![CDATA[
        clearInterval(this.popupInterval);
-       this.delayPopup(300);
+       if (event.button == 0)
+         this.delayPopup(300);
        ]]>
      </handler>
      <handler event="mouseup">
        <![CDATA[
        clearInterval(this.popupInterval);
+       if (event.button == 2)
+         this.delayPopup(0);
        ]]>
      </handler>
      <handler event="mouseout">
