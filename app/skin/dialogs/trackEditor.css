@@ -39,56 +39,112 @@ See app/content/xul/trackEditor.xul
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 
-textbox[edited] {
- border: 1px solid green !important;
+/** TODO: Move all colors to rubberducky **/
+
+.dialog-content-box {
+  padding:5px !important;
+}
+label {
+  padding:0;
+  margin:5px 5px 0 !important;
 }
 
+
+
+/* checkboxes */
+checkbox {
+  margin-right:0 !important;
+  max-width:20px !important;
+}
+checkbox .checkbox-label-box {
+  display:none;
+}
+
+
+
+/* inputs */
+textbox,
+sb-rating {
+  -moz-border-radius:5px;
+  border-top:1px solid rgb(0,0,0) !important; /** Button Highlight */
+  border-right:1px solid rgb(0,0,0) !important; /** Button Shadow */ 
+  border-bottom:1px solid rgb(92,95,88) !important; /** Button Shadow */ 
+  border-left:1px solid rgb(0,0,0) !important; /** Button Shadow */ 
+  background-color: rgb(15,16,15) !important; /** Groove */
+}
+
+sb-rating {
+ margin: 5px;
+}
+
+textbox[disabled],
+sb-rating[disabled] {
+  opacity:0.33;
+}
+textbox[edited] {
+ color:rgb(255,246,133);
+}
 /** Note that this style exists elsewhere **/
 textbox[invalid] {
- border: 1px solid red !important;
-}
-
-sb-rating[edited] .rating-background {
- border: 1px solid green !important;
- -moz-border-radius: 5px;
-}
-
-#notification_box {
-  background-color: blue;
-}
-
-#notification_box.notification-warning {
-  background-color: yellow;
-}
-
-.notification-warning > #notification_text {
-  color: black !important;
-}
-
-#notification_box.notification-info {
-  background-color: lightblue;
-}
-
-#notification_text {
-  color: white !important;
+  background-color:rgb(51,25,25) !important;
+  color:rgb(255,127,127) !important;
 }
 
 
+
+/* number inputs */
 textbox.long-number-input {
   width: 4em !important;
 }
-
 textbox.short-number-input {
   width: 2em !important;
 }
 
 
 
+/* notification */
+#notification_box {
+  -moz-border-radius:3px;
+  margin:0 10px;
+  border:1px solid !important;
+  border-top:1px solid rgb(0,0,0) !important; /** Button Highlight */
+  border-right:1px solid rgb(0,0,0) !important; /** Button Shadow */ 
+  border-bottom:1px solid rgb(92,95,88) !important; /** Button Shadow */ 
+  border-left:1px solid rgb(0,0,0) !important; /** Button Shadow */
+}
+#notification_box.notification-warning {
+  background-color: rgb(230,172,172);
+}
+.notification-warning > #notification_text {
+  color: rgb(80,40,40) !important;
+}
+#notification_box.notification-info {
+  background-color: rgb(255,255,200);
+}
+#notification_text {
+  color: rgb(80,80,40) !important;
+}
+
+
+
+/* genre */
 #genredropdown > .autocomplete-history-dropmarker {
   -moz-binding: url("chrome://global/content/bindings/autocomplete.xml#history-dropmarker");
   display: inline;
-}
 
+  padding:0 !important;
+  margin:0 !important;
+  border:none !important;
+  max-height:14px !important;
+  max-width:14px !important;
+
+  background-image:url('chrome://songbird/skin/menu/dropmarker.png');
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+#genredropdown > .autocomplete-history-dropmarker image {
+  display:none;
+}
 /** Note: when we force the dropdown like this it does not respect the readonly
     attribute.  For now just force it off when readonly **/
 #genredropdown[readonly] > .autocomplete-history-dropmarker {
@@ -96,6 +152,60 @@ textbox.short-number-input {
   display: none;
 }
 
+
+/* buttons */
+button {
+  font-size:12px;
+}
+button label {
+  font-size:12px;
+  apdding:0;
+  margin:0 0 1px !important;
+}
+#prev_button,
+#next_button {
+  width:28px !important;
+  min-width:0px !important;
+
+  min-height:26px !important;
+  padding:0;
+}
+#prev_button label,
+#next_button label {
+  display:none;
+}
+#prev_button {
+  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+#prev_button:hover {
+  -moz-image-region: rect(16px 16px 32px 0px);
+}
+#prev_button[disabled="true"] {
+  -moz-image-region: rect(48px 16px 64px 0px);
+}
+#prev_button[active="true"] {
+  -moz-image-region: rect(32px 16px 48px 0px);
+}
+#next_button {
+  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 32px 16px 16px);
+}
+#next_button:hover {
+  -moz-image-region: rect(16px 32px 32px 16px);
+}
+#next_button[disabled="true"] {
+  -moz-image-region: rect(48px 32px 64px 16px);
+}
+#next_button[active="true"] {
+  -moz-image-region: rect(32px 32px 48px 16px);
+}
+
+
+
+/**
+
+The following for the advanced pane
 
 .number {
   font-style: italic !important;
@@ -115,3 +225,4 @@ textbox.short-number-input {
     overflow: hidden;
 }
 
+**/

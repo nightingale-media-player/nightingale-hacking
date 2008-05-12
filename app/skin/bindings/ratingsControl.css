@@ -39,76 +39,72 @@ RATINGS CONTROL
   background-repeat: no-repeat;
   background-image: url(chrome://songbird/skin/ratings/ratings.png);
   width: 70px;
-  height: 20px;
-  left: 3px;
-  top: 2px;
+  height: 18px;
 }
 
 .rating-stars[value="0"] {
   background-position:0px -18px;
 }
-
-.rating-stars[value="0"]:hover {
+sb-rating[edited] .rating-stars[value="0"] {
+  background-position:0px -36px;
+}
+.rating-stars[value="0"]:hover,
+sb-rating[edited] .rating-stars[value="0"]:hover {
   background-position:0px 0px;
 }
 
 .rating-stars[value="1"] {
+  background-position:0px -72px;
+}
+sb-rating[edited] .rating-stars[value="1"] {
+  background-position:0px -90px;
+}
+.rating-stars[value="1"]:hover,
+sb-rating[edited] .rating-stars[value="1"]:hover {
   background-position:0px -54px;
 }
 
-.rating-stars[value="1"]:hover {
-  background-position:0px -36px;
-}
-
 .rating-stars[value="2"] {
-  background-position:0px -90px;
-}
-
-.rating-stars[value="2"]:hover {
-  background-position:0px -72px;
-}
-
-.rating-stars[value="3"] {
   background-position:0px -126px;
 }
-
-.rating-stars[value="3"]:hover {
+sb-rating[edited] .rating-stars[value="2"] {
+  background-position:0px -144px;
+}
+.rating-stars[value="2"]:hover,
+sb-rating[edited] .rating-stars[value="2"]:hover {
   background-position:0px -108px;
 }
 
-.rating-stars[value="4"] {
-  background-position:0px -162px;
-}
 
-.rating-stars[value="4"]:hover {
-  background-position:0px -144px;
+.rating-stars[value="3"] {
+  background-position:0px -180px;
+}
+sb-rating[edited] .rating-stars[value="3"] {
+  background-position:0px -198px;
+}
+.rating-stars[value="3"]:hover,
+sb-rating[edited] .rating-stars[value="3"]:hover {
+   background-position:0px -162px;
+ }
+
+.rating-stars[value="4"] {
+  background-position:0px -234px;
+}
+sb-rating[edited] .rating-stars[value="4"] {
+  background-position:0px -252px;
+}
+.rating-stars[value="4"]:hover,
+sb-rating[edited] .rating-stars[value="4"]:hover {
+  background-position:0px -216px;
 }
 
 .rating-stars[value="5"] {
-  background-position:0px -198px;
+  background-position:0px -288px;
 }
-
-.rating-stars[value="5"]:hover {
-  background-position:0px -180px;
+sb-rating[edited] .rating-stars[value="5"] {
+  background-position:0px -306px;
 }
-
-.rating-background {
-  width: 76px;
-  height: 22px;
-}
-
-.rating-box {
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-sb-rating {
-  -moz-user-focus: normal;
-  height: 22px;
-}
-
-sb-rating:focus .rating-background {
-  outline: 1px dotted #474948;
-  outline-offset: -2px;
-  -moz-outline-radius: 5px;
+.rating-stars[value="5"]:hover,
+sb-rating[edited] .rating-stars[value="5"]:hover {
+  background-position:0px -270px;
 }

@@ -51,7 +51,7 @@
  type="songbird"
  onload="TrackEditor.onLoadTrackEditor();"
  onunload="TrackEditor.onUnloadTrackEditor();"
- height="650"
+ height="600"
  width="500"
  hidechrome="true"
  buttons="none"
@@ -255,14 +255,6 @@
                      tabindex="100"
                      autocompletesearch="library-distinct-properties"/>
 
-            <label property-type="label" property="http://songbirdnest.com/data/1.0#comment"/>
-
-            <textbox multiline="true" 
-                     rows="4" 
-                     flex="1"
-                     tabindex="120"
-                     property="http://songbirdnest.com/data/1.0#comment"/> 
-
         <!-- deferred from 0.6 until we have an actual use for this column -->
         <!--label property-type="label" property="http://songbirdnest.com/data/1.0#grouping"/>
           <textbox property="http://songbirdnest.com/data/1.0#grouping" />
@@ -274,7 +266,7 @@
                      property="http://songbirdnest.com/data/1.0#genre"
                      type="autocomplete"
                      flex="1"
-                     tabindex="130"
+                     tabindex="120"
                      autocompletesearch="library-distinct-properties"
                      defaultdistinctproperties="Alternative,Blues/R&amp;B,Books&amp;Spoken,Children's Music,Classical,Comedy,Country,Dance,Easy Listening,Electronic,Folk,Hip Hop/Rap,Holiday,House,Industrial,Jazz,New Age,Podcast,Pop,Raggae,Religious,Rock,Science,Sountrack,Techno,Trance,Unclassifiable,World"/>  
 
@@ -339,6 +331,15 @@
             </hbox>-->
           </vbox>
         </hbox>
+
+        <label property-type="label" property="http://songbirdnest.com/data/1.0#comment"/>
+
+        <textbox multiline="true" 
+                 rows="4" 
+                 flex="1"
+                 tabindex="130"
+                 property="http://songbirdnest.com/data/1.0#comment"/>
+                 
         <spacer flex="1" />
       </vbox>
 
