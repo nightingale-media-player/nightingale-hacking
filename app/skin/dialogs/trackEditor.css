@@ -61,6 +61,10 @@ checkbox .checkbox-label-box {
 }
 
 
+#info_right_column {
+  margin-left: 10px;
+}
+
 
 /* inputs */
 textbox,
@@ -73,8 +77,13 @@ sb-rating {
   background-color: rgb(15,16,15) !important; /** Groove */
 }
 
+textbox {
+  padding:3px;
+}
+
 sb-rating {
  margin: 5px;
+ padding: 1px 5px 2px 5px;
 }
 
 textbox[disabled],
@@ -97,9 +106,14 @@ textbox.long-number-input {
   width: 4em !important;
 }
 textbox.short-number-input {
-  width: 2em !important;
+  width: 3em !important;
 }
 
+
+.separator-label {
+  margin: 0px !important;
+  padding: 0px !important;
+}
 
 
 /* notification */
@@ -111,6 +125,7 @@ textbox.short-number-input {
   border-right:1px solid rgb(0,0,0) !important; /** Button Shadow */ 
   border-bottom:1px solid rgb(92,95,88) !important; /** Button Shadow */ 
   border-left:1px solid rgb(0,0,0) !important; /** Button Shadow */
+  font-size: 12px;
 }
 #notification_box.notification-warning {
   background-color: rgb(230,172,172);

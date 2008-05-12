@@ -294,18 +294,22 @@
                        class="short-number-input"
                        tabindex="50"
                        property="http://songbirdnest.com/data/1.0#trackNumber"/>
-              <label>/</label> 
+              <vbox pack="center">
+                <label class="separator-label" value="/" /> 
+              </vbox>
               <textbox class="short-number-input"
                        tabindex="60"
                        property="http://songbirdnest.com/data/1.0#totalTracks"/>
-            </hbox>
+            </hbox> 
 
             <label property-type="label" property="http://songbirdnest.com/data/1.0#discNumber"/>
             <hbox>
               <textbox class="short-number-input"
                        tabindex="80"
                        property="http://songbirdnest.com/data/1.0#discNumber"/>
-              <label>/</label> 
+              <vbox pack="center">
+                <label class="separator-label" value="/" />
+              </vbox>
               <textbox class="short-number-input"
                        tabindex="90"
                        property="http://songbirdnest.com/data/1.0#totalDiscs"/>
@@ -335,7 +339,7 @@
         <label property-type="label" property="http://songbirdnest.com/data/1.0#comment"/>
 
         <textbox multiline="true" 
-                 rows="4" 
+                 rows="5" 
                  flex="1"
                  tabindex="130"
                  property="http://songbirdnest.com/data/1.0#comment"/>

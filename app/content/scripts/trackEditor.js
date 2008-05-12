@@ -611,13 +611,16 @@ var TrackEditor = {
    
    this._elements["ok_button"].disabled = hasErrors;
    
-   // DISABLE NEXT/PREV BUTTONS AT TOP/BOTTOM OF LIST
-   // TODO: komi suggests wraparound as a pref
+   // Disable next/prev at top/bottom of list, and when
+   // editing multiple items
    var idx = this.mediaListView.selection.currentIndex;
    var atStart = (idx == 0)
    var atEnd   = (idx == this.mediaListView.length - 1);
-   this._elements["prev_button"].setAttribute("disabled", (atStart || hasErrors ? "true" : "false"));
-   this._elements["next_button"].setAttribute("disabled", (atEnd  || hasErrors ? "true" : "false"));
+   var hasMultiple = this.mediaListView.selection.count > 1;
+   this._elements["prev_button"].setAttribute("disabled", 
+      (atStart || hasErrors || hasMultiple ? "true" : "false"));
+   this._elements["next_button"].setAttribute("disabled", 
+      (atEnd  || hasErrors || hasMultiple ? "true" : "false"));
   },
 
   /**
