@@ -226,7 +226,7 @@
           
           var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
                                     .getService(Components.interfaces.nsIURLFormatter);
-          var getMoreURL = formatter.formatURLPref("extensions.getMoreExtensionsURL");
+          var getMoreURL = formatter.formatURLPref("songbird.url.addons.mediaviews");
           item.setAttribute("label", getMoreText);
           item.setAttribute("name", "menu.getmore");
           item.setAttribute("uri", getMoreURL);

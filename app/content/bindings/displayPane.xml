@@ -75,7 +75,7 @@
                 </menupopup>
               </menu>
               <menuitem label="&menu.displaypane.get;" oncommand="onMenu(this)"
-                        value="songbird.url.addons"/>
+                        value="songbird.url.addons.displaypanes"/>
             </menupopup>
           </button>
         </hbox>
