@@ -72,6 +72,17 @@ function runTest () {
   assertTrue(item1.equals(listListener.removedBefore[0].item));
   assertTrue(item1.equals(listListener.removedAfter[0].item));
   
+  // test createMediaItemIfNotExist
+  var item4 = {};
+  var hasItem4 = library.createMediaItemIfNotExist(uri2, null, item4);
+  assertFalse(hasItem4);
+  assertTrue(item4.value.equals(item3));
+  var uri3 = ios.newURI("file:///quux", null, null);
+  hasItem4 = library.createMediaItemIfNotExist(uri3, null, item4);
+  assertTrue(hasItem4);
+  assertFalse(item4.value.equals(item3));
+  library.remove(item4.value);
+  
   // Test if removing items from the library also remove items from the
   // playlist.
   var enumerationListener = new TestMediaListEnumerationListener();
