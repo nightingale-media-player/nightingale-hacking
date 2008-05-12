@@ -38,6 +38,37 @@ const PREF_DOWNLOAD_MUSIC_FOLDER       = "songbird.download.music.folder";
 const PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT = "songbird.download.music.alwaysPrompt";
 
 /**
+ * \brief Get the name of the platform we are running on.
+ * \return The name of the OS platform. (ie. Windows).
+ * \retval Windows_NT Running under Windows.
+ * \retval Darwin Running under Darwin/OS X.
+ * \retval Linux Running under Linux.
+ * \retval SunOS Running under Solaris.
+ */
+function getPlatformString() 
+{
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    return sysInfo.getProperty("name");
+  }
+  catch (e) {
+    dump("System-info not available, trying the user agent string.\n");
+    var user_agent = navigator.userAgent;
+    if (user_agent.indexOf("Windows") != -1)
+      return "Windows_NT";
+    else if (user_agent.indexOf("Mac OS X") != -1)
+      return "Darwin";
+    else if (user_agent.indexOf("Linux") != -1)
+      return "Linux";
+    else if (user_agent.indexOf("SunOS") != -1)
+      return "SunOS";
+    return "";
+  }
+}
+
+/**
  * Our super-smart heuristic for determining if the download folder is valid.
  */
 function folderIsValid(folder) {
@@ -55,8 +86,16 @@ function folderIsValid(folder) {
 function makeFile(path) {
   var file = Cc["@mozilla.org/file/local;1"].
              createInstance(Ci.nsILocalFile);
+
+  // Ensure all paths are lowercase for Windows.
+  // See bug #7178.
+  var actualPath = path;
+  if(getPlatformString() == "Windows_NT") {
+    actualPath = actualPath.toLowerCase();
+  }
+
   try {
-    file.initWithPath(path);
+    file.initWithPath(actualPath);
   }
   catch (e) {
     return null;
@@ -71,7 +110,15 @@ function makeFileURL(path)
 {
   // Can't use the IOService because we have callers off of the main thread...
   // Super lame hack instead.
-  return "file://" + path;
+
+  // Ensure all paths are lowercase for Windows.
+  // See bug #7178.
+  var actualPath = path;
+  if(getPlatformString() == "Windows_NT") {
+    actualPath = actualPath.toLowerCase();
+  }
+  
+  return "file://" + actualPath;
 }
 
 function sbDownloadDeviceHelper()
@@ -383,8 +430,17 @@ function sbDownloadDeviceHelper__setDownloadDestinationIfNotSet(aItems,
   for each (var item in aItems) {
     try {
       var curDestination = item.getProperty(SBProperties.destination);
-      if (!curDestination)
-        item.setProperty(SBProperties.destination, aDownloadPath);
+      if (!curDestination) {
+        
+        // Ensure all paths are lowercase for Windows.
+        // See bug #7178.
+        var actualDestination = aDownloadPath;
+        if(getPlatformString() == "Windows_NT") {
+          actualDestination = actualDestination.toLowerCase();
+        }
+        
+        item.setProperty(SBProperties.destination, actualDestination);
+      }
     }
     catch (e) {
       // We're not allowed to set the download destination on remote media items
