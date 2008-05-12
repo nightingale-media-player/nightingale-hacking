@@ -531,7 +531,15 @@ function createDefaultTitle(aURI) {
               .getService(Components.interfaces.nsINetUtil);
 
   var s = netutil.unescapeString(aURI.spec,
-                                 Components.interfaces.nsINetUtil.ESCAPE_ALL);
+                                 Components.interfaces.nsINetUtil.ESCAPE_XPALPHAS);
+
+  var unicodeConverter = 
+    Components.classes["@mozilla.org/intl/scriptableunicodeconverter"]
+              .createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
+  unicodeConverter.charset = "UTF-8";
+
+  s = unicodeConverter.ConvertToUnicode(s);
+
   var lastSlash = s.lastIndexOf("/");
   if (lastSlash >= 0) {
     s = s.substr(lastSlash + 1);
