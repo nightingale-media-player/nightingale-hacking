@@ -49,6 +49,7 @@
 
 #include <necko/nsIURI.h>
 #include <necko/nsIFileStreams.h>
+#include <necko/nsIFileURL.h>
 #include <necko/nsIIOService.h>
 
 #include <necko/nsNetUtil.h>
@@ -176,6 +177,41 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
     rv = pURI->GetScheme(cstrScheme);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+#if defined(XP_UNIX) && !defined(XP_MACOSX)
+  // If local file and on Linux, attempt to use file persistent descriptor
+  // instead of using the plain old file path.
+  // See bug #6227 and #6341.
+  if(cstrScheme.EqualsLiteral("file")) {
+    
+    nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(pURI, &rv);
+    if(NS_SUCCEEDED(rv)) {
+      
+      nsCOMPtr<nsIFile> file;
+      rv = fileURL->GetFile(getter_AddRefs(file));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIFile> cloneFile;
+      rv = file->Clone(getter_AddRefs(cloneFile));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsILocalFile> localFile(do_QueryInterface(cloneFile));
+      
+      if (localFile) {
+        nsCString spec;
+        nsresult rv2 = localFile->GetPersistentDescriptor(spec);
+        nsCOMPtr<nsIURI> pNewURI;
+        if (NS_SUCCEEDED(rv2)) {
+          spec.Insert("file://", 0);
+          rv2 = pIOService->NewURI(spec, nsnull, nsnull, getter_AddRefs(pNewURI));
+          if (NS_SUCCEEDED(rv2)) {
+            pURI = pNewURI;
+          }
+        }
+      }
+    }
+  }
+#endif
 
   rv = pIOService->NewChannelFromURI(pURI, getter_AddRefs(pChannel));
   NS_ENSURE_SUCCESS(rv, rv);
