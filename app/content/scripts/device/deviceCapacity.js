@@ -315,5 +315,5 @@ var DCW = {
     capTable.video = Math.max(0, videoSpace);
     capTable.other = Math.max(0, otherSpace);
     return capTable;
-  },
+  }
 };

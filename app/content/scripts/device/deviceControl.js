@@ -458,7 +458,7 @@ deviceControlWidget.prototype = {
   _updateAttribute: function deviceControlWidget__updateAttribute(aAttrName,
                                                                   aAttrList) {
     // Get the attribute value for the current state.
-    attrVal = {};
+    var attrVal = {};
     if (this._currentReadOnly &&
         this._getStateAttribute(attrVal, aAttrName, "readonly")) {}
     else if (!this._currentReadOnly &&

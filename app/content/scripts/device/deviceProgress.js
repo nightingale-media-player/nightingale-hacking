@@ -714,7 +714,7 @@ var DPW = {
    */
   _deviceIsSyncing: function DPW__deviceIsSyncing() {
     return this._isSyncing;
-  },
+  }
 };
 
 

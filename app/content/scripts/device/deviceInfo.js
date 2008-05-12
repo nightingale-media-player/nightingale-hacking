@@ -116,7 +116,7 @@ var DIW = {
     this._update();
     
     // Watch for device changes
-    this._device.addEventListener(this);
+    this._device.QueryInterface(Ci.sbIDeviceEventTarget).addEventListener(this);
   },
 
   onDeviceEvent : function DIW_onDeviceEvent(anEvent) {
@@ -134,7 +134,8 @@ var DIW = {
     
     // Stop listening
     if (this._device != null) {
-      this._device.removeEventListener(this);
+      this._device.QueryInterface(Ci.sbIDeviceEventTarget)
+                  .removeEventListener(this);
     }
     
     // Finalize the device services.

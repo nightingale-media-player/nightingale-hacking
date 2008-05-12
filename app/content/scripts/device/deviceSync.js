@@ -727,10 +727,10 @@ var DeviceSyncWidget = {
 
   musicPrefsUpdateButtons: function DeviceSyncWidget_musicPrefsUpdateButtons()
   {
-    /* Show the save and cancel buttons if the   */
+    /* Show the save and cancel buttons if the      */
     /* prefs have changed; otherwise, disable them. */
-    cancelButton = this._getElement("cancel_button");
-    saveButton = this._getElement("save_button");
+    var cancelButton = this._getElement("cancel_button");
+    var saveButton = this._getElement("save_button");
     if (this.musicPrefsChanged(this._syncPrefs, this._storedSyncPrefs))
     {
         cancelButton.disabled = false;
