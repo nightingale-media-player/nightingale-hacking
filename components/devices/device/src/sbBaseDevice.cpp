@@ -51,9 +51,11 @@
 #include <sbIDeviceHelper.h>
 #include <sbIDeviceManager.h>
 #include <sbILibrary.h>
+#include <sbILibraryDiffingService.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbIPrompter.h>
+#include <sbLocalDatabaseCID.h>
 #include <sbStringBundle.h>
 #include <sbVariantUtils.h>
 
@@ -306,152 +308,6 @@ NS_IMETHODIMP sbBaseDevice::SyncLibraries()
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
-  return NS_OK;
-}
-
-nsresult sbBaseDevice::SyncCheckLinkedPartner(PRBool  aRequestPartnerChange,
-                                              PRBool* aIsLinkedLocally)
-{
-  NS_ENSURE_ARG_POINTER(aIsLinkedLocally);
-
-  nsresult rv;
-
-  // Get the device sync partner ID and determine if the device is linked to a
-  // sync partner.
-  PRBool               deviceIsLinked;
-  nsCOMPtr<nsIVariant> deviceSyncPartnerIDVariant;
-  nsAutoString         deviceSyncPartnerID;
-  rv = GetPreference(NS_LITERAL_STRING("SyncPartner"),
-                     getter_AddRefs(deviceSyncPartnerIDVariant));
-  if (NS_SUCCEEDED(rv)) {
-    rv = deviceSyncPartnerIDVariant->GetAsAString(deviceSyncPartnerID);
-    NS_ENSURE_SUCCESS(rv, rv);
-    deviceIsLinked = PR_TRUE;
-  } else {
-    deviceIsLinked = PR_FALSE;
-  }
-
-  // Get the local sync partner ID.
-  nsAutoString localSyncPartnerID;
-  rv = GetMainLibraryId(localSyncPartnerID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Check if device is linked to local sync partner.
-  PRBool isLinkedLocally = PR_FALSE;
-  if (deviceIsLinked)
-    isLinkedLocally = deviceSyncPartnerID.Equals(localSyncPartnerID);
-
-  // If device is not linked locally, request that its sync partner be changed.
-  if (!isLinkedLocally && aRequestPartnerChange) {
-    // Request that the device sync partner be changed.
-    PRBool partnerChangeGranted;
-    rv = SyncRequestPartnerChange(&partnerChangeGranted);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Change the sync partner if the request was granted.
-    if (partnerChangeGranted) {
-      rv = SetPreference(NS_LITERAL_STRING("SyncPartner"),
-                         sbNewVariant(localSyncPartnerID));
-      NS_ENSURE_SUCCESS(rv, rv);
-      isLinkedLocally = PR_TRUE;
-    }
-  }
-
-  // Return results.
-  *aIsLinkedLocally = isLinkedLocally;
-
-  return NS_OK;
-}
-
-nsresult sbBaseDevice::SyncRequestPartnerChange(PRBool* aPartnerChangeGranted)
-{
-  NS_ENSURE_ARG_POINTER(aPartnerChangeGranted);
-
-  nsresult rv;
-
-  // Get the device name.
-  nsString deviceName;
-  rv = GetName(deviceName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the main library name.
-  nsCOMPtr<sbILibrary> mainLibrary;
-  nsString             libraryName;
-  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mainLibrary->GetName(libraryName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get a prompter that waits for a window.
-  nsCOMPtr<sbIPrompter> prompter =
-                          do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = prompter->SetWaitForWindow(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the localized string bundle.
-  sbStringBundle bundle("chrome://songbird/locale/songbird.properties");
-  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
-
-  // Ensure that the library name is not empty.
-  if (libraryName.IsEmpty()) {
-    libraryName = bundle.Get("servicesource.library");
-  }
-
-  // Get the prompt title.
-  nsAString const& title = bundle.Get("device.dialog.sync_confirmation.title");
-  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
-
-  // Get the prompt message.
-  PRUnichar const* formatParams[2];
-  formatParams[0] = deviceName.BeginReading();
-  formatParams[1] = libraryName.BeginReading();
-  nsAString const& message =
-                     bundle.Format("device.dialog.sync_confirmation.msg",
-                                   formatParams,
-                                   2);
-  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
-
-  // Configure the buttons.
-  PRUint32 buttonFlags = 0;
-
-  // Configure the no button as button 0.
-  nsAString const& noButton =
-                     bundle.Get("device.dialog.sync_confirmation.no_button");
-  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
-  buttonFlags += (nsIPromptService::BUTTON_POS_0 *
-                  nsIPromptService::BUTTON_TITLE_IS_STRING);
-
-  // Configure the sync button as button 1.
-  nsAString const& syncButton =
-                     bundle.Get("device.dialog.sync_confirmation.sync_button");
-  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
-  buttonFlags += (nsIPromptService::BUTTON_POS_1 *
-                  nsIPromptService::BUTTON_TITLE_IS_STRING) +
-                 nsIPromptService::BUTTON_POS_1_DEFAULT;
-  PRInt32 grantPartnerChangeIndex = 1;
-
-  // Query the user to determine whether the device sync partner should be
-  // changed to the local partner.
-  PRInt32 buttonPressed;
-  rv = prompter->ConfirmEx(nsnull,
-                           title.BeginReading(),
-                           message.BeginReading(),
-                           buttonFlags,
-                           noButton.BeginReading(),
-                           syncButton.BeginReading(),
-                           nsnull,                      // No button 2.
-                           nsnull,                      // No check message.
-                           nsnull,                      // No check result.
-                           &buttonPressed);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Check if partner change request was granted.
-  if (buttonPressed == grantPartnerChangeIndex)
-    *aPartnerChangeGranted = PR_TRUE;
-  else
-    *aPartnerChangeGranted = PR_FALSE;
-
   return NS_OK;
 }
 
@@ -1959,3 +1815,480 @@ nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
   return prefService->GetBranch(prefKey.get(), aPrefBranch);
 
 }
+
+//------------------------------------------------------------------------------
+//
+// Device sync services.
+//
+//------------------------------------------------------------------------------
+
+nsresult sbBaseDevice::SyncCheckLinkedPartner(PRBool  aRequestPartnerChange,
+                                              PRBool* aIsLinkedLocally)
+{
+  NS_ENSURE_ARG_POINTER(aIsLinkedLocally);
+
+  nsresult rv;
+
+  // Get the device sync partner ID and determine if the device is linked to a
+  // sync partner.
+  PRBool               deviceIsLinked;
+  nsCOMPtr<nsIVariant> deviceSyncPartnerIDVariant;
+  nsAutoString         deviceSyncPartnerID;
+  rv = GetPreference(NS_LITERAL_STRING("SyncPartner"),
+                     getter_AddRefs(deviceSyncPartnerIDVariant));
+  if (NS_SUCCEEDED(rv)) {
+    rv = deviceSyncPartnerIDVariant->GetAsAString(deviceSyncPartnerID);
+    NS_ENSURE_SUCCESS(rv, rv);
+    deviceIsLinked = PR_TRUE;
+  } else {
+    deviceIsLinked = PR_FALSE;
+  }
+
+  // Get the local sync partner ID.
+  nsAutoString localSyncPartnerID;
+  rv = GetMainLibraryId(localSyncPartnerID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if device is linked to local sync partner.
+  PRBool isLinkedLocally = PR_FALSE;
+  if (deviceIsLinked)
+    isLinkedLocally = deviceSyncPartnerID.Equals(localSyncPartnerID);
+
+  // If device is not linked locally, request that its sync partner be changed.
+  if (!isLinkedLocally && aRequestPartnerChange) {
+    // Request that the device sync partner be changed.
+    PRBool partnerChangeGranted;
+    rv = SyncRequestPartnerChange(&partnerChangeGranted);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Change the sync partner if the request was granted.
+    if (partnerChangeGranted) {
+      rv = SetPreference(NS_LITERAL_STRING("SyncPartner"),
+                         sbNewVariant(localSyncPartnerID));
+      NS_ENSURE_SUCCESS(rv, rv);
+      isLinkedLocally = PR_TRUE;
+    }
+  }
+
+  // Return results.
+  *aIsLinkedLocally = isLinkedLocally;
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::SyncRequestPartnerChange(PRBool* aPartnerChangeGranted)
+{
+  NS_ENSURE_ARG_POINTER(aPartnerChangeGranted);
+
+  nsresult rv;
+
+  // Get the device name.
+  nsString deviceName;
+  rv = GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the main library name.
+  nsCOMPtr<sbILibrary> mainLibrary;
+  nsString             libraryName;
+  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mainLibrary->GetName(libraryName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get a prompter that waits for a window.
+  nsCOMPtr<sbIPrompter> prompter =
+                          do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = prompter->SetWaitForWindow(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the localized string bundle.
+  sbStringBundle bundle("chrome://songbird/locale/songbird.properties");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+
+  // Ensure that the library name is not empty.
+  if (libraryName.IsEmpty()) {
+    libraryName = bundle.Get("servicesource.library");
+  }
+
+  // Get the prompt title.
+  nsAString const& title = bundle.Get("device.dialog.sync_confirmation.title");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+
+  // Get the prompt message.
+  PRUnichar const* formatParams[2];
+  formatParams[0] = deviceName.BeginReading();
+  formatParams[1] = libraryName.BeginReading();
+  nsAString const& message =
+                     bundle.Format("device.dialog.sync_confirmation.msg",
+                                   formatParams,
+                                   2);
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+
+  // Configure the buttons.
+  PRUint32 buttonFlags = 0;
+
+  // Configure the no button as button 0.
+  nsAString const& noButton =
+                     bundle.Get("device.dialog.sync_confirmation.no_button");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+  buttonFlags += (nsIPromptService::BUTTON_POS_0 *
+                  nsIPromptService::BUTTON_TITLE_IS_STRING);
+
+  // Configure the sync button as button 1.
+  nsAString const& syncButton =
+                     bundle.Get("device.dialog.sync_confirmation.sync_button");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+  buttonFlags += (nsIPromptService::BUTTON_POS_1 *
+                  nsIPromptService::BUTTON_TITLE_IS_STRING) +
+                 nsIPromptService::BUTTON_POS_1_DEFAULT;
+  PRInt32 grantPartnerChangeIndex = 1;
+
+  // Query the user to determine whether the device sync partner should be
+  // changed to the local partner.
+  PRInt32 buttonPressed;
+  rv = prompter->ConfirmEx(nsnull,
+                           title.BeginReading(),
+                           message.BeginReading(),
+                           buttonFlags,
+                           noButton.BeginReading(),
+                           syncButton.BeginReading(),
+                           nsnull,                      // No button 2.
+                           nsnull,                      // No check message.
+                           nsnull,                      // No check result.
+                           &buttonPressed);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if partner change request was granted.
+  if (buttonPressed == grantPartnerChangeIndex)
+    *aPartnerChangeGranted = PR_TRUE;
+  else
+    *aPartnerChangeGranted = PR_FALSE;
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aRequest);
+
+  // Function variables.
+  nsresult rv;
+
+  // Do nothing if device is not linked to the local sync partner.
+  PRBool isLinkedLocally;
+  rv = SyncCheckLinkedPartner(PR_TRUE, &isLinkedLocally);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!isLinkedLocally)
+    return NS_OK;
+
+  // Produce the sync change set.
+  nsCOMPtr<sbILibraryChangeset> changeset;
+  rv = SyncProduceChangeset(aRequest, getter_AddRefs(changeset));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Apply changes to the destination library.
+  nsCOMPtr<sbIDeviceLibrary> dstLib = do_QueryInterface(aRequest->list, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = SyncApplyChanges(dstLib, changeset);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
+                                   sbILibraryChangeset** aChangeset)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aRequest);
+  NS_ENSURE_ARG_POINTER(aChangeset);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the sync source and destination libraries.
+  nsCOMPtr<sbILibrary> srcLib = do_QueryInterface(aRequest->item, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIDeviceLibrary> dstLib = do_QueryInterface(aRequest->list, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set up to force a diff on all media lists so that all source and
+  // destination media lists can be compared with each other.
+  rv = SyncForceDiffMediaLists(dstLib);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the list of sync media lists.
+  nsCOMPtr<nsIArray> syncList;
+  PRUint32           syncMode;
+  rv = dstLib->GetMgmtType(&syncMode);
+  NS_ENSURE_SUCCESS(rv, rv);
+  switch (syncMode)
+  {
+    case sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL:
+    {
+      // Create a sync all array containing the entire source library.
+      nsCOMPtr<nsIMutableArray>
+        syncAllList =
+          do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
+                            &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = syncAllList->AppendElement(srcLib, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Set the sync list.
+      syncList = do_QueryInterface(syncAllList, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    } break;
+
+    case sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS:
+      rv = dstLib->GetSyncPlaylistList(getter_AddRefs(syncList));
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+
+    default:
+      NS_ENSURE_SUCCESS(NS_ERROR_ILLEGAL_VALUE, NS_ERROR_ILLEGAL_VALUE);
+      break;
+  }
+
+  // Get the diffing service.
+  nsCOMPtr<sbILibraryDiffingService>
+    diffService = do_GetService(SB_LOCALDATABASE_DIFFINGSERVICE_CONTRACTID,
+                                &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Produce the sync changeset.
+  nsCOMPtr<sbILibraryChangeset> changeset;
+  rv = diffService->CreateMultiChangeset(syncList,
+                                         dstLib,
+                                         getter_AddRefs(changeset));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return results.
+  NS_ADDREF(*aChangeset = changeset);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SyncApplyChanges(sbIMediaList*        aDstMediaList,
+                               sbILibraryChangeset* aChangeset)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDstMediaList);
+  NS_ENSURE_ARG_POINTER(aChangeset);
+
+  // Function variables.
+  PRBool   success;
+  nsresult rv;
+
+  // Create some change list arrays.
+  nsCOMArray<sbILibraryChange> mediaListChangeList;
+  nsCOMPtr<nsIMutableArray> addItemList =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIMutableArray> deleteItemList =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the list of all changes.
+  nsCOMPtr<nsIArray> changeList;
+  PRUint32           changeCount;
+  rv = aChangeset->GetChanges(getter_AddRefs(changeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = changeList->GetLength(&changeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Group changes for later processing but apply property updates immediately.
+  for (PRUint32 i = 0; i < changeCount; i++) {
+    // Get the next change.
+    nsCOMPtr<sbILibraryChange> change = do_QueryElementAt(changeList, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Put the change into the appropriate list.
+    PRUint32 operation;
+    rv = change->GetOperation(&operation);
+    NS_ENSURE_SUCCESS(rv, rv);
+    switch (operation)
+    {
+      case sbIChangeOperation::DELETED:
+        {
+          nsCOMPtr<sbIMediaItem> mediaItem;
+          rv = change->GetDestinationItem(getter_AddRefs(mediaItem));
+          NS_ENSURE_SUCCESS(rv, rv);
+          rv = deleteItemList->AppendElement(mediaItem, PR_FALSE);
+          NS_ENSURE_SUCCESS(rv, rv);
+        } break;
+
+      case sbIChangeOperation::ADDED:
+        {
+          nsCOMPtr<sbIMediaItem> mediaItem;
+          rv = change->GetSourceItem(getter_AddRefs(mediaItem));
+          NS_ENSURE_SUCCESS(rv, rv);
+          rv = addItemList->AppendElement(mediaItem, PR_FALSE);
+          NS_ENSURE_SUCCESS(rv, rv);
+        } break;
+
+      case sbIChangeOperation::MODIFIED:
+        {
+          // If the change is to a media list, add it to the media list change
+          // list.
+          PRBool itemIsList;
+          rv = change->GetItemIsList(&itemIsList);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (itemIsList) {
+            success = mediaListChangeList.AppendObject(change);
+            NS_ENSURE_SUCCESS(success, NS_ERROR_FAILURE);
+          }
+
+          // Update the item properties.
+          rv = SyncUpdateProperties(change);
+          NS_ENSURE_SUCCESS(rv, rv);
+        } break;
+
+      default:
+        break;
+    }
+  }
+
+  // Delete items.
+  nsCOMPtr<nsISimpleEnumerator> deleteItemEnum;
+  rv = deleteItemList->Enumerate(getter_AddRefs(deleteItemEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aDstMediaList->RemoveSome(deleteItemEnum);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add items.
+  nsCOMPtr<nsISimpleEnumerator> addItemEnum;
+  rv = addItemList->Enumerate(getter_AddRefs(addItemEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aDstMediaList->AddSome(addItemEnum);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Sync the media lists.
+  rv = SyncMediaLists(mediaListChangeList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SyncMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList)
+{
+  nsresult rv;
+
+  // Just replace the destination media lists with the source media lists.
+  // TODO: just apply changes between the source and destination lists.
+
+  // Sync each media list.
+  for (PRInt32 i = 0; i < aMediaListChangeList.Count(); i++) {
+    // Get the media list change.
+    nsCOMPtr<sbILibraryChange> change = aMediaListChangeList[i];
+
+    // Get the destination media list item and library.
+    nsCOMPtr<sbILibrary>   dstLibrary;
+    nsCOMPtr<sbIMediaItem> dstMediaListItem;
+    rv = change->GetDestinationItem(getter_AddRefs(dstMediaListItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = dstMediaListItem->GetLibrary(getter_AddRefs(dstLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Remove the destination media list item.
+    rv = dstLibrary->Remove(dstMediaListItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the source media list item.
+    nsCOMPtr<sbIMediaItem> srcMediaListItem;
+    rv = change->GetSourceItem(getter_AddRefs(srcMediaListItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add the source media list item to the destination library.
+    rv = dstLibrary->Add(srcMediaListItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SyncUpdateProperties(sbILibraryChange* aChange)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aChange);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the item to update.
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  rv = aChange->GetDestinationItem(getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the list of properties to update.
+  nsCOMPtr<nsIArray> propertyList;
+  PRUint32           propertyCount;
+  rv = aChange->GetProperties(getter_AddRefs(propertyList));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = propertyList->GetLength(&propertyCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update properties.
+  for (PRUint32 i = 0; i < propertyCount; i++) {
+    // Get the next property to update.
+    nsCOMPtr<sbIPropertyChange>
+      property = do_QueryElementAt(propertyList, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the property info.
+    nsAutoString propertyID;
+    nsAutoString propertyValue;
+    rv = property->GetId(propertyID);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = property->GetNewValue(propertyValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Update the property, ignoring errors.
+    mediaItem->SetProperty(propertyID, propertyValue);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SyncForceDiffMediaLists(sbIMediaList* aMediaList)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the list of media lists.  Do nothing if none available.
+  nsCOMPtr<nsIArray> mediaListList;
+  rv = aMediaList->GetItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                      NS_LITERAL_STRING("1"),
+                                      getter_AddRefs(mediaListList));
+  if (NS_FAILED(rv))
+    return NS_OK;
+
+  // Set the force diff property on each media list.
+  PRUint32 mediaListCount;
+  rv = mediaListList->GetLength(&mediaListCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < mediaListCount; i++) {
+    // Get the media list.
+    nsCOMPtr<sbIMediaList> mediaList = do_QueryElementAt(mediaListList, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set the force diff property.
+    rv = mediaList->SetProperty
+                      (NS_LITERAL_STRING(DEVICE_PROPERTY_SYNC_FORCE_DIFF),
+                       NS_LITERAL_STRING("1"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+

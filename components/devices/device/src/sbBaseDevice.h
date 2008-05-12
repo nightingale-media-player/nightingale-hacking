@@ -41,6 +41,7 @@
 #include <nsISupportsImpl.h>
 #include <prlock.h>
 
+#include <sbILibraryChangeset.h>
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbDeviceStatistics.h"
@@ -52,6 +53,10 @@ class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
 class sbBaseDeviceMediaListListener;
 class sbIDeviceLibrary;
+
+/* Property used to force a sync diff. */
+#define DEVICE_PROPERTY_SYNC_FORCE_DIFF \
+          "http://songbirdnest.com/device/1.0#forceDiff"
 
 /**
  * Base class for implementing a device
@@ -149,14 +154,6 @@ public:
 public:
   sbBaseDevice();
   ~sbBaseDevice();
-
-  /* check if device is linked to the local sync partner */
-  nsresult SyncCheckLinkedPartner(PRBool  aRequestPartnerChange,
-                                  PRBool* aIsLinkedLocally);
-
-  /* request that the device sync partner be changed to the local sync
-     partner */
-  nsresult SyncRequestPartnerChange(PRBool* aPartnerChangeGranted);
 
   /* add a transfer/action request to the request queue */
   nsresult  PushRequest(const int aType,
@@ -394,6 +391,86 @@ protected:
 
   /* get a prefbranch for this device */
   nsresult GetPrefBranch(nsIPrefBranch** aPrefBranch);
+
+  /**
+   * Check if device is linked to the local sync partner.  If it is, return true
+   * in aIsLinkedLocally; otherwise, return false.  If aRequestPartnerChange is
+   * true and the device is not linked locally, make a request to the user to
+   * change the device sync partner to the local sync partner.
+   *
+   * \param aRequestPartnerChange   Request that the sync partner be changed to
+   *                                the local sync partner.
+   * \param aIsLinkedLocally        Returned true if the device is linked to the
+   *                                local sync partner.
+   */
+  nsresult SyncCheckLinkedPartner(PRBool  aRequestPartnerChange,
+                                  PRBool* aIsLinkedLocally);
+
+  /**
+   * Make a request to the user to change the device sync partner to the local
+   * sync partner.  If the user grants the request, return true in
+   * aPartnerChangeGranted; otherwise, return true.
+   *
+   * \param aPartnerChangeGranted   Returned true if the user granted the
+   *                                request.
+   */
+  nsresult SyncRequestPartnerChange(PRBool* aPartnerChangeGranted);
+
+  /**
+   * Handle the sync request specified by aRequest.
+   *
+   * \param aRequest              Request data record.
+   */
+  nsresult HandleSyncRequest(TransferRequest* aRequest);
+
+  /**
+   * Produce the sync change set for the sync request specified by aRequest and
+   * return the change set in aChangeset.
+   *
+   * \param aRequest              Sync request data record.
+   * \param aChangeset            Sync request change set.
+   */
+  nsresult SyncProduceChangeset(TransferRequest*      aRequest,
+                                sbILibraryChangeset** aChangeset);
+
+  /**
+   * Apply the sync change set specified by aChangeset to the media list
+   * specified by aDstMediaList.
+   *
+   * \param aDstMediaList         Media list to which to apply sync change set.
+   * \param aChangeset            Set of sync changes.
+   */
+  nsresult SyncApplyChanges(sbIMediaList*        aDstMediaList,
+                            sbILibraryChangeset* aChangeset);
+
+  /**
+   * Synchronize all the media lists in the list of media list changes specified
+   * by aMediaListChangeList.
+   *
+   * \param aMediaListChangeList  List of media list changes.
+   */
+  nsresult SyncMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList);
+
+  /**
+   * Update the properties of a media item as specified by the sync change
+   * specified by aChange.
+   *
+   * \param aChange               Changes to make to media item.
+   */
+  nsresult SyncUpdateProperties(sbILibraryChange* aChange);
+
+  /**
+   * Set up all media lists within the media list specified by aMediaList to
+   * trigger a difference when syncing.  The media list aMediaList is not set up
+   * to force a difference.
+   *
+   * This function triggers a difference by setting a property that should not
+   * be set on any source media lists.
+   *
+   * \param aMediaList            Media list containing media lists to force
+   *                              differences.
+   */
+  nsresult SyncForceDiffMediaLists(sbIMediaList* aMediaList);
 };
 
 #endif /* __SBBASEDEVICE__H__ */
