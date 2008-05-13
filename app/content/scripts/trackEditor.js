@@ -1022,7 +1022,6 @@ TrackEditorInputWidget.prototype = {
   },
   
   onTrackEditorPropertyChange: function TrackEditorInputWidget_onTrackEditorPropertyChange() {
-    
     TrackEditorWidgetBase.prototype.onTrackEditorPropertyChange.call(this);
     
     this._checkbox.checked = !TrackEditor.state.hasMultipleValuesForProperty(this.property);
@@ -1084,8 +1083,16 @@ TrackEditorTextbox.prototype = {
   _maxDigits: 0,
   
   onUserInput: function() {
-    var value = this._element.value;
-    TrackEditor.state.setPropertyValue(this.property, value);
+    var self = this;
+    // Defer updating the model by a tick.  This is necessary because
+    // html:input elements (inside of textbox) send oninput too early
+    // when undoing from empty state to a previous value.  html:textarea
+    // sends oninput with value==previous, where html:input sends oninput
+    // with value=="".  This bug has been filed as BMO 433574.
+    setTimeout(function() { 
+        var value = self._element.value;
+        TrackEditor.state.setPropertyValue(self.property, value);
+      }, 0 );
   },
   
   onKeypress: function(evt) {    
@@ -1113,6 +1120,8 @@ TrackEditorTextbox.prototype = {
   },
   
   onTrackEditorPropertyChange: function TrackEditorTextbox_onTrackEditorPropertyChange() {
+    TrackEditorInputWidget.prototype.onTrackEditorPropertyChange.call(this);
+
     var property = this.property;
     
     // Indicate if this property has been edited
@@ -1120,8 +1129,18 @@ TrackEditorTextbox.prototype = {
       if (!this._element.hasAttribute("edited")) {
         this._element.setAttribute("edited", "true");
       }
-    } else if (this._element.hasAttribute("edited")) {
-      this._element.removeAttribute("edited"); 
+    } else {
+      if (this._element.hasAttribute("edited")) {
+        this._element.removeAttribute("edited"); 
+      }
+
+      // If this is the original un-edited value, set it as the
+      // default for the textbox and reset the undo history
+      var value = TrackEditor.state.getPropertyValue(property);
+      if (this._element.defaultValue != value) {
+        this._element.defaultValue = value;
+        this._element.reset();
+      }
     }
     
     // Indicate if this property is known to be invalid
@@ -1132,8 +1151,6 @@ TrackEditorTextbox.prototype = {
     } else if (this._element.hasAttribute("invalid")) {
       this._element.removeAttribute("invalid"); 
     }
-
-    TrackEditorInputWidget.prototype.onTrackEditorPropertyChange.call(this);
   },
   
   _configureAutoComplete: function TrackEditorTextbox__configureAutoComplete() {
@@ -1172,7 +1189,7 @@ TrackEditorTextbox.prototype = {
     }
     
     // Grr, autocomplete textboxes don't handle tabindex, so we have to 
-    // get out hands dirty.  Filed as Moz Bug 432886.
+    // get our hands dirty.  Filed as Moz Bug 432886.
     this._element.inputField.tabIndex = this._element.tabIndex;
   }
 }
