@@ -370,8 +370,10 @@ addToDeviceHelper.prototype = {
     var devices = Array();
     // turn into a js array
     for (var i=0;i<registrar.devices.length;i++) {
-      devices.push(
-        registrar.devices.queryElementAt(i, Components.interfaces.sbIDevice)
+      var device = registrar.devices.queryElementAt
+                                       (i, Components.interfaces.sbIDevice);
+      if (device && device.connected)
+        devices.push(device);
       );
     }
     // order of devices returned by the registrar is undefined, 
