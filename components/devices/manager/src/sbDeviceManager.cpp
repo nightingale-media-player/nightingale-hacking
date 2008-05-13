@@ -55,18 +55,20 @@
 
 NS_IMPL_THREADSAFE_ADDREF(sbDeviceManager)
 NS_IMPL_THREADSAFE_RELEASE(sbDeviceManager)
-NS_IMPL_QUERY_INTERFACE6_CI(sbDeviceManager,
+NS_IMPL_QUERY_INTERFACE7_CI(sbDeviceManager,
                             sbIDeviceManager2,
                             sbIDeviceControllerRegistrar,
                             sbIDeviceRegistrar,
                             sbIDeviceEventTarget,
+                            nsISupportsWeakReference,
                             nsIClassInfo,
                             nsIObserver)
-NS_IMPL_CI_INTERFACE_GETTER4(sbDeviceManager,
+NS_IMPL_CI_INTERFACE_GETTER5(sbDeviceManager,
                              sbIDeviceManager2,
                              sbIDeviceControllerRegistrar,
                              sbIDeviceRegistrar,
-                             sbIDeviceEventTarget)
+                             sbIDeviceEventTarget,
+                             nsISupportsWeakReference)
 
 NS_DECL_CLASSINFO(sbDeviceManager)
 NS_IMPL_THREADSAFE_CI(sbDeviceManager)

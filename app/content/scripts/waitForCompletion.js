@@ -49,17 +49,6 @@ gWaitForCompletion.onLoad = function()
 
   /* listen to all device events */
   this.mDeviceManager.addEventListener(this);
-
-  /* we shouldn't need to do this but we seem to */
-  var devices = this.mDeviceManager.devices.enumerate();
-  while (devices.hasMoreElements()) {
-    var device = devices.getNext();
-    device = device.QueryInterface(Components.interfaces.sbIDeviceEventTarget);
-    if (device) {
-      device.addEventListener(this);
-      this.mDevices.push(device);
-    }
-  }
 }
 
 /* window unload event handler */
@@ -68,11 +57,6 @@ gWaitForCompletion.onUnload = function()
   // remove ourselves as a device event listener
   if (this.mDeviceManager) {
     this.mDeviceManager.removeEventListener(this);
-
-    /* we shouldn't have to do this but it looks like we have to */
-    for (var i=0; i<this.mDevices.length; i++) {
-      this.mDevices[i].removeEventListener(this);
-    }
   }
 }
 

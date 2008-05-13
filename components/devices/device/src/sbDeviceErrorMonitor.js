@@ -118,10 +118,6 @@ deviceErrorMonitor.prototype = {
     var devIndex = this._findDeviceIndex(aDevice);
     if (devIndex == -1) {
 
-      var deviceEventTarget = aDevice.QueryInterface(Ci.sbIDeviceEventTarget);
-      if (deviceEventTarget) {
-        deviceEventTarget.addEventListener(this);
-      }
       var newDeviceObj = {};
       newDeviceObj.device = aDevice;
       newDeviceObj.errorList = [];
@@ -140,10 +136,6 @@ deviceErrorMonitor.prototype = {
     if (devIndex > -1) {
 
       var device = this._deviceList[devIndex].device;
-      var deviceEventTarget = aDevice.QueryInterface(Ci.sbIDeviceEventTarget);
-      if (deviceEventTarget) {
-        deviceEventTarget.removeEventListener(this);
-      }
       this._deviceList.splice(devIndex, 1);
     }
   },
@@ -170,7 +162,7 @@ deviceErrorMonitor.prototype = {
    * \param aErrorMsg Error Message to display with the item.
    */
   _logError: function deviceErrorMonitor__logError(aDeviceEvent, aErrorMsg) {
-    var device = aDeviceEvent.target;
+    var device = aDeviceEvent.origin;
     if (device instanceof Ci.sbIDevice) {
       var devIndex = this._findDeviceIndex(device);
       if (devIndex > -1) {
