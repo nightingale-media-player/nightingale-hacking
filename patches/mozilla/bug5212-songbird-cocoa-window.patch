@@ -230,11 +230,11 @@ diff -u -p -r1.141 nsCocoaWindow.mm
 +                                                 name:NSWindowDidMoveNotification 
 +                                               object:self];
 +    [[NSNotificationCenter defaultCenter] addObserver:self 
-+                                             selector:@selector(windowDidMove:)
++                                             selector:@selector(windowDidBecomeMain:)
 +                                                 name:NSWindowDidBecomeMainNotification 
 +                                               object:self];
 +    [[NSNotificationCenter defaultCenter] addObserver:self 
-+                                             selector:@selector(windowDidMove:)
++                                             selector:@selector(windowDidResignMain:)
 +                                                 name:NSWindowDidResignMainNotification 
 +                                               object:self];
 +  }
