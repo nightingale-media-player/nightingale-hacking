@@ -578,9 +578,9 @@ function SBTrackEditorOpen( parentWindow, playlist ) {
         if (theTE) {
           theTE.focus();
         } else {
-          const TEURL = "chrome://songbird/content/xul/trackEditor.xul";
-          const TEFEATURES = "chrome,centerscreen=yes,toolbar=no,popup=no,modal=yes,resizable=no";
-          SBOpenWindow(TEURL, "Songbird:TrackEditor", TEFEATURES, this, parentWindow);
+          SBOpenModalDialog("chrome://songbird/content/xul/trackEditor.xul", 
+                            "Songbird:TrackEditor", "chrome,centerscreen", 
+                            this, parentWindow);
         }
       }
     }
