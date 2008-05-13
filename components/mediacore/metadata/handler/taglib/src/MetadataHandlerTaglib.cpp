@@ -103,7 +103,7 @@
     NS_LITERAL_STRING(SB_PROPERTY), propertyValue);         \
   if (NS_SUCCEEDED(result)) {                               \
     int method;                                             \
-    int numRead = sscanf(                                   \
+    int numRead = PR_sscanf(                                \
       NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),  \
       "%d",                                                 \
       &method);                                             \

@@ -136,9 +136,11 @@ function runTest() {
       //[SBProperties.rating, 3],
       
       // make sure track numbers work
-      // bug 9089: sometimes these come back as null in the read/write roundtrip
-      //[SBProperties.trackNumber, 7],
-      //[SBProperties.totalTracks, 13],
+      [SBProperties.trackNumber, 7],
+      [SBProperties.totalTracks, 13],
+      
+      [SBProperties.discNumber, 1],
+      [SBProperties.totalDiscs, 2],
       
       // what about a longer one? (ID3v1 only allows 30 char.)
       // bug 9088: id3v22 files are coming back truncated but not ID3v1 for some reason
@@ -148,7 +150,7 @@ function runTest() {
       // try a blank one
       // bug <NNN>: comes back as "null" after reading
       //[SBProperties.artistName, ""],
-            
+
       // what about a partial disc number?
       //[SBProperties.totalDiscs, 0], // TODO: reconcile 0/""/null
       //[SBProperties.totalDiscs, 2],
