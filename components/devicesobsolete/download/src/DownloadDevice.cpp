@@ -3401,8 +3401,16 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         result = pSrcURI->GetSpec(srcSpec);
 
     /* Update the download media item content source property. */
-    if (NS_SUCCEEDED(result))
+    if (NS_SUCCEEDED(result)) {
+#if defined(XP_WIN)
+        nsCString actualSrcSpec;
+        ToLowerCase(srcSpec, actualSrcSpec);
+        
+        result = mpDstURI->SetSpec(actualSrcSpec);
+        NS_ENSURE_SUCCESS(result, result);
+#endif
         result = mpMediaItem->SetContentSrc(mpDstURI);
+    }
 
     /* Add the download media item to the destination library. */
     if (NS_SUCCEEDED(result))
