@@ -1148,9 +1148,8 @@ PLDHashOperator sbBaseDevice::EnumerateFinalizeMediaListListeners
 
   // Remove the media list listener.
   mediaList->RemoveListener(aData);
-  device->mMediaListListeners.Remove(aKey);
 
-  return PL_DHASH_NEXT;
+  return PL_DHASH_REMOVE;
 }
 
 PLDHashOperator sbBaseDevice::EnumerateIgnoreMediaListListeners(nsISupports* aKey,
