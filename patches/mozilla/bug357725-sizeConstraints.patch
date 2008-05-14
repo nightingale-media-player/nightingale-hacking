@@ -502,125 +502,131 @@ diff -u -p -r1.13 nsResizerFrame.h
  }; // class nsResizerFrame
  
  #endif /* nsResizerFrame_h___ */
-Index: widget/public/nsIWidget.h
-===================================================================
-RCS file: /cvsroot/mozilla/widget/public/nsIWidget.h,v
-retrieving revision 3.168
-diff -u -p -r3.168 nsIWidget.h
---- widget/public/nsIWidget.h	18 Jan 2008 18:39:51 -0000	3.168
-+++ widget/public/nsIWidget.h	1 Feb 2008 18:29:12 -0000
-@@ -95,10 +95,10 @@ typedef nsEventStatus (*PR_CALLBACK EVEN
- #define NS_NATIVE_PLUGIN_PORT_CG    101
- #endif
- 
--// a6593177-ba36-400e-8812-a0d36b3af17b
-+// A91909C0-E958-4ca9-BF4D-BC35CD814245
- #define NS_IWIDGET_IID \
--{ 0xa6593177, 0xba36, 0x400e, \
--  { 0x88, 0x12, 0xa0, 0xd3, 0x6b, 0x3a, 0xf1, 0x7b } }
-+{ 0xa91909c0, 0xe958, 0x4ca9, \
-+  { 0xbf, 0x4d, 0xbc, 0x35, 0xcd, 0x81, 0x42, 0x45 } }
- 
- // Hide the native window systems real window type so as to avoid
- // including native window system types and APIs. This is necessary
-@@ -252,6 +252,38 @@ struct nsWidgetInitData {
- };
- 
- /**
-+ * Size constraints for a widget
-+ * @see nsBaseWidget::SetSizeConstraints()
-+ */
-+struct SizeConstraints {
-+  SizeConstraints(PRInt32 aMinWidth,
-+                  PRInt32 aMaxWidth,
-+                  PRInt32 aMinHeight,
-+                  PRInt32 aMaxHeight)
-+  : minWidth(aMinWidth),
-+    maxWidth(aMaxWidth),
-+    minHeight(aMinHeight),
-+    maxHeight(aMaxHeight)
-+  {
-+  }
-+  SizeConstraints()
-+  : minWidth(MIN_CONSTRAINT),
-+    maxWidth(MAX_CONSTRAINT),
-+    minHeight(MIN_CONSTRAINT),
-+    maxHeight(MAX_CONSTRAINT)
-+  {
-+  }
-+
-+  PRInt32 minWidth;
-+  PRInt32 maxWidth;
-+  PRInt32 minHeight;
-+  PRInt32 maxHeight;
-+  
-+  enum { MIN_CONSTRAINT = 0 };
-+  enum { MAX_CONSTRAINT = PR_INT32_MAX };
-+};
-+
-+/**
-  * The base class for all the widgets. It provides the interface for
-  * all basic and necessary functionality.
-  */
-@@ -454,6 +486,58 @@ class nsIWidget : public nsISupports {
-                                  PRInt32 *aY) = 0;
- 
-     /**
-+     * Platform-dependent method that uses the OS to ensure that the size of
-+     * widget never exceeds the given minimum or maximum values. Also affects
-+     * the behavior of the <xul:resizer> element.
-+     *
-+     * This is only guaranteed to work on top-level window widgets (i.e.
-+     * widgets created with the 'eWindowType_dialog', 'eWindowType_toplevel',
-+     * or 'eWindowType_invisible' windowTypes that have no parent). Calling
-+     * this function on any other type of window will throw
-+     * NS_ERROR_UNEXPECTED. In contrast, calls to GetSizeConstraints will
-+     * always succeed, but each constraint will be set to -1.
-+     *
-+     * XXXbent All of the following pixel values are supposed to be device
-+     *         pixels, but note that we currently assume device pixels map 1:1
-+     *         to CSS pixels.
-+     *
-+     * @param aMinWidth: the minimum width in device pixels (-1 to ignore)
-+     * @param aMaxWidth: the maximum width in device pixels (-1 to ignore)
-+     * @param aMinHeight: the minimum height in device pixels (-1 to ignore)
-+     * @param aMaxHeight: the maximum height in device pixels (-1 to ignore)
-+     *
-+     * @throws NS_ERROR_UNEXPECTED if called on a non-top-level widget
-+     **/
-+    NS_IMETHOD SetSizeConstraints(PRInt32 aMinWidth,
-+                                  PRInt32 aMaxWidth,
-+                                  PRInt32 aMinHeight,
-+                                  PRInt32 aMaxHeight) = 0;
-+
-+    /**
-+     * Return the size constraints currently observed by the widget.
-+     *
-+     * You can pass nsnull for any of the parameters if you don't care to
-+     * retrieve their value. Constraint values set to -1 by this function
-+     * indicate that that particular constraint is not observed.
-+     *
-+     * Calling this function on non-top-level widgets will succeed, however
-+     * *all* constraints will be reported as -1 (unconstrained).
-+     *
-+     * XXXbent All of the following pixel values are supposed to be device
-+     *         pixels, but note that we currently assume device pixels map 1:1
-+     *         to CSS pixels.
-+     *
-+     * @param aMinWidth: the minimum width of the widget in device pixels
-+     * @param aMaxWidth: the maximum width for the widget in device pixels
-+     * @param aMinHeight: the minimum height for the widget in device pixels
-+     * @param aMaxHeight: the maximum height for the widget in device pixels
-+     **/
-+    NS_IMETHOD GetSizeConstraints(PRInt32* aMinWidth,
-+                                  PRInt32* aMaxWidth,
-+                                  PRInt32* aMinHeight,
-+                                  PRInt32* aMaxHeight) = 0;
-+
-+    /**
-      * Move this widget.
-      *
-      * @param aX the new x position expressed in the parent's coordinate system
+ Index: widget/public/nsIWidget.h
+ ===================================================================
+ RCS file: /cvsroot/mozilla/widget/public/nsIWidget.h,v
+ retrieving revision 3.172
+ diff -u -8 -r3.172 nsIWidget.h
+ --- widget/public/nsIWidget.h	7 May 2008 04:46:37 -0000	3.172
+ +++ widget/public/nsIWidget.h	14 May 2008 17:16:45 -0000
+ @@ -256,16 +256,48 @@
+    nsWindowType mWindowType;
+    nsBorderStyle mBorderStyle;
+    nsContentType mContentType;  // Exposed so screen readers know what's UI
+    PRPackedBool mUnicode;
+    nsPopupType mPopupHint;
+  };
+
+  /**
+ + * Size constraints for a widget
+ + * @see nsBaseWidget::SetSizeConstraints()
+ + */
+ +struct SizeConstraints {
+ +  SizeConstraints(PRInt32 aMinWidth,
+ +                  PRInt32 aMaxWidth,
+ +                  PRInt32 aMinHeight,
+ +                  PRInt32 aMaxHeight)
+ +  : minWidth(aMinWidth),
+ +    maxWidth(aMaxWidth),
+ +    minHeight(aMinHeight),
+ +    maxHeight(aMaxHeight)
+ +  {
+ +  }
+ +  SizeConstraints()
+ +  : minWidth(MIN_CONSTRAINT),
+ +    maxWidth(MAX_CONSTRAINT),
+ +    minHeight(MIN_CONSTRAINT),
+ +    maxHeight(MAX_CONSTRAINT)
+ +  {
+ +  }
+ +
+ +  PRInt32 minWidth;
+ +  PRInt32 maxWidth;
+ +  PRInt32 minHeight;
+ +  PRInt32 maxHeight;
+ +  
+ +  enum { MIN_CONSTRAINT = 0 };
+ +  enum { MAX_CONSTRAINT = PR_INT32_MAX };
+ +};
+ +
+ +/**
+   * The base class for all the widgets. It provides the interface for
+   * all basic and necessary functionality.
+   */
+  class nsIWidget : public nsISupports {
+
+    public:
+
+      NS_DECLARE_STATIC_IID_ACCESSOR(NS_IWIDGET_IID)
+ @@ -468,16 +500,68 @@
+       * @return vapid success indication. but see also the parameters.
+       *
+       **/
+      NS_IMETHOD ConstrainPosition(PRBool aAllowSlop,
+                                   PRInt32 *aX,
+                                   PRInt32 *aY) = 0;
+
+      /**
+ +     * Platform-dependent method that uses the OS to ensure that the size of
+ +     * widget never exceeds the given minimum or maximum values. Also affects
+ +     * the behavior of the <xul:resizer> element.
+ +     *
+ +     * This is only guaranteed to work on top-level window widgets (i.e.
+ +     * widgets created with the 'eWindowType_dialog', 'eWindowType_toplevel',
+ +     * or 'eWindowType_invisible' windowTypes that have no parent). Calling
+ +     * this function on any other type of window will throw
+ +     * NS_ERROR_UNEXPECTED. In contrast, calls to GetSizeConstraints will
+ +     * always succeed, but each constraint will be set to -1.
+ +     *
+ +     * XXXbent All of the following pixel values are supposed to be device
+ +     *         pixels, but note that we currently assume device pixels map 1:1
+ +     *         to CSS pixels.
+ +     *
+ +     * @param aMinWidth: the minimum width in device pixels (-1 to ignore)
+ +     * @param aMaxWidth: the maximum width in device pixels (-1 to ignore)
+ +     * @param aMinHeight: the minimum height in device pixels (-1 to ignore)
+ +     * @param aMaxHeight: the maximum height in device pixels (-1 to ignore)
+ +     *
+ +     * @throws NS_ERROR_UNEXPECTED if called on a non-top-level widget
+ +     **/
+ +    NS_IMETHOD SetSizeConstraints(PRInt32 aMinWidth,
+ +                                  PRInt32 aMaxWidth,
+ +                                  PRInt32 aMinHeight,
+ +                                  PRInt32 aMaxHeight) = 0;
+ +
+ +    /**
+ +     * Return the size constraints currently observed by the widget.
+ +     *
+ +     * You can pass nsnull for any of the parameters if you don't care to
+ +     * retrieve their value. Constraint values set to -1 by this function
+ +     * indicate that that particular constraint is not observed.
+ +     *
+ +     * Calling this function on non-top-level widgets will succeed, however
+ +     * *all* constraints will be reported as -1 (unconstrained).
+ +     *
+ +     * XXXbent All of the following pixel values are supposed to be device
+ +     *         pixels, but note that we currently assume device pixels map 1:1
+ +     *         to CSS pixels.
+ +     *
+ +     * @param aMinWidth: the minimum width of the widget in device pixels
+ +     * @param aMaxWidth: the maximum width for the widget in device pixels
+ +     * @param aMinHeight: the minimum height for the widget in device pixels
+ +     * @param aMaxHeight: the maximum height for the widget in device pixels
+ +     **/
+ +    NS_IMETHOD GetSizeConstraints(PRInt32* aMinWidth,
+ +                                  PRInt32* aMaxWidth,
+ +                                  PRInt32* aMinHeight,
+ +                                  PRInt32* aMaxHeight) = 0;
+ +
+ +    /**
+       * Move this widget.
+       *
+       * @param aX the new x position expressed in the parent's coordinate system
+       * @param aY the new y position expressed in the parent's coordinate system
+       *
+       **/
+      NS_IMETHOD Move(PRInt32 aX, PRInt32 aY) = 0;
+
 Index: widget/src/windows/nsWindow.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/windows/nsWindow.cpp,v
