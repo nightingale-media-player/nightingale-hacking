@@ -105,12 +105,16 @@ if [ $# != 3 ]; then
 fi
 
 MAKE=make
+CP=cp
 case `uname -s` in
   CYGWIN*|MINGW*)
     is_windows="1"
     ;;
   SunOS)
     MAKE=gmake
+	if [ -x /usr/gnu/bin/cp ]; then
+		CP=/usr/gnu/bin/cp
+	fi
     ;;
 esac
 
@@ -141,44 +145,44 @@ fi
 
 notice "copying binary files..."
 cd "$sdkdir" && mkdir -p bin
-cd "$distdir/bin" && cp -Lfp $bin_files "$sdkdir/bin"
-cd "$distdir/host/bin" && cp -Lfp $update_bin_files "$sdkdir/bin"
+cd "$distdir/bin" && $CP -Lfp $bin_files "$sdkdir/bin"
+cd "$distdir/host/bin" && $CP -Lfp $update_bin_files "$sdkdir/bin"
 
 # breakpad binaries differ by platform
 if test -n "$is_windows"; then
-cd "$srcdir" && cp -Lfp $breakpad_bin_files_win "$sdkdir/bin"
+cd "$srcdir" && $CP -Lfp $breakpad_bin_files_win "$sdkdir/bin"
 else
-cd "$distdir/host/bin" && cp -Lfp $breakpad_bin_files_nix "$sdkdir/bin"
+cd "$distdir/host/bin" && $CP -Lfp $breakpad_bin_files_nix "$sdkdir/bin"
 fi
 
 notice "copying library files..."
 cd "$sdkdir" && mkdir -p lib
 # some os don't have all these files, so silence errors
-cd "$distdir/lib" && cp -Lfp $lib_files "$sdkdir/lib" 2>/dev/null
+cd "$distdir/lib" && $CP -Lfp $lib_files "$sdkdir/lib" 2>/dev/null
 
 notice "copying symbol files..."
 # some os don't have these files, so silence errors
-cd "$objdir" && cp -Lfp $symbol_files "$sdkdir/lib" 2>/dev/null
+cd "$objdir" && $CP -Lfp $symbol_files "$sdkdir/lib" 2>/dev/null
 
 notice "copying include files..."
 cd "$sdkdir" && mkdir -p include
-cd "$distdir/include" && cp -RLfp * "$sdkdir/include"
+cd "$distdir/include" && $CP -RLfp * "$sdkdir/include"
 
 notice "copying idl files..."
 cd "$sdkdir" && mkdir -p idl
-cd "$distdir/idl" && cp -Lfp * "$sdkdir/idl"
+cd "$distdir/idl" && $CP -Lfp * "$sdkdir/idl"
 
 notice "copying frozen sdk..."
 cd "$sdkdir" && mkdir -p frozen
-cd "$distdir/sdk" && cp -RLfp * "$sdkdir/frozen"
+cd "$distdir/sdk" && $CP -RLfp * "$sdkdir/frozen"
 
 notice "copying scripts..."
 cd "$sdkdir" && mkdir -p scripts
-cd "$srcdir" && cp -Lfp $build_script_files "$sdkdir/scripts"
+cd "$srcdir" && $CP -Lfp $build_script_files "$sdkdir/scripts"
 if test -d "$srcdir"/tools/update-packaging; then
-  cd "$srcdir/tools/update-packaging" && cp -Lfp $update_script_files "$sdkdir/scripts"
+  cd "$srcdir/tools/update-packaging" && $CP -Lfp $update_script_files "$sdkdir/scripts"
 fi
-cd "$srcdir" && cp -Lfp $breakpad_script_files "$sdkdir/scripts"
+cd "$srcdir" && $CP -Lfp $breakpad_script_files "$sdkdir/scripts"
 
 notice "performing post-processing..."
 
