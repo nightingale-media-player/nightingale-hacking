@@ -858,14 +858,7 @@ function plCmd_Play_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
 function plCmd_Edit_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
     var playlist = unwrap(aContext.playlist);
-    if ( plCmd_IsToolbarInstantiator(aContext, aSubMenuId, aCommandId, aHost) ||
-        playlist.mediaListView.selection.count > 1 ) {
-      // Open the multiple tracks editor for this playlist and its selection
-      playlist.onPlaylistEditor();
-    } else {
-      // Edit the context cell
-      playlist.startCellEditing();
-    }
+    playlist.onPlaylistEditor();
   }
 }
 
