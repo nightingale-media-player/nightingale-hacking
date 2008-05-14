@@ -149,6 +149,9 @@ ShowUninstDetails hide
 !insertmacro MUI_UNPAGE_INSTFILES
 
 ; Finish Page
+!ifdef IsOfficialBuild
+  !define MUI_PAGE_CUSTOMFUNCTION_SHOW un.PromptSurvey
+!endif
 !insertmacro MUI_UNPAGE_FINISH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -699,6 +702,18 @@ Function un.CloseApp
 
   end:
   ${nsProcess::Unload}
+FunctionEnd
+
+;
+; Show a prompt to allow the user to take a survey.
+;
+Function un.PromptSurvey
+
+  MessageBox MB_YESNO|MB_ICONQUESTION "${TakeSurveyMessage}" IDNO exit
+  ExecShell "open" "http://www.surveymonkey.com/s.aspx?sm=PzpxLFChwaxzVfT4H0qbKg_3d_3d"
+
+  exit:
+  
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -65,6 +65,7 @@
 !define PreferredInstallerIcon    songbird_installer.ico
 !define PreferredUninstallerIcon  songbird_installer.ico
 !define VistaIcon                 songbird_vista.ico
+!define IsOfficialBuild           "true"
 #else
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}_${BUILD_ID}\"
 !define PreferredInstallerName    "${BrandShortName}_${AppVersion}_${BUILD_ID}_${ARCH}.exe"
@@ -82,3 +83,4 @@
 !define DirectoryNotEmptyMessage    "The folder selected for installation is not empty. $\n$\nYou must choose an empty folder to continue installation of ${BrandShortName}. "
 !define AbortInstallMessage         "Are you sure you want to cancel installation of ${BrandShortName}?"
 !define FlashRedistributableInstallMessage "Installing Adobe Flash Redistributable"
+!define TakeSurveyMessage "We're sorry to see that you uninstalled Songbird. $\n$\nWill you consider helping us make Songbird better by taking a quick anonymous survey to help us improve the product?$\nIt shouldn't take more than 30 seconds to complete."
