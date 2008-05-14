@@ -1191,6 +1191,37 @@ TrackEditorTextbox.prototype = {
     // Grr, autocomplete textboxes don't handle tabindex, so we have to 
     // get our hands dirty.  Filed as Moz Bug 432886.
     this._element.inputField.tabIndex = this._element.tabIndex;
+    
+    // And we need to fix the dropdown not showing up...
+    // (Songbird bug 9149, same moz bug)
+    var marker = this._element
+                     .ownerDocument
+                     .getAnonymousElementByAttribute(this._element,
+                                                     "anonid",
+                                                     "historydropmarker");
+    if ("showPopup" in marker) {
+      // only hack the method if it's the same
+
+      // here is the expected function...
+      function showPopup() {
+        var textbox = document.getBindingParent(this);
+        textbox.showHistoryPopup();
+      };
+      
+      // and we compare it with uneval to make sure the existing one is expected
+      if (uneval(showPopup) == uneval(marker.showPopup)) {
+        // the existing function looks like what we expect
+        marker.showPopup = function showPopup_hacked() {
+          var textbox = document.getBindingParent(this);
+          setTimeout(function(){
+            textbox.showHistoryPopup();
+          }, 0);
+        }
+      } else {
+        // the function does not match; this should not happen in practice
+        dump("trackEditor - autocomplete marker showPopup mismatch!\n");
+      }
+    }
   }
 }
 

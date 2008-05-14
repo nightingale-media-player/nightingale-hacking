@@ -100,7 +100,7 @@ AutoCompleteResult.prototype = {
     if (this._results.length > 0) {
       return Ci.nsIAutoCompleteResult.RESULT_SUCCESS;
     } else {
-      Ci.nsIAutoCompleteResult.RESULT_NOMATCH;
+      return Ci.nsIAutoCompleteResult.RESULT_NOMATCH;
     }
   },
 
