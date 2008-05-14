@@ -677,7 +677,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Metadata UUID
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_METADATAUUID),
                     NS_LITERAL_STRING("property.metadata_uuid"),
-                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -742,13 +742,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE),
                     NS_LITERAL_STRING("property.origin_page"),
-                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGETITLE),
                     NS_LITERAL_STRING("property.origin_pagetitle"),
-                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
+                    stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -844,6 +844,9 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = iBuilder->SetRemoteWritable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = iBuilder->SetUserEditable(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = iBuilder->Get(getter_AddRefs(propertyInfo));
