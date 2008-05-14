@@ -3375,6 +3375,7 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         nsCOMPtr<nsIURI> pDstURI;
         result = mpIOService->NewFileURI(mpDstFile, getter_AddRefs(mpDstURI));
         NS_ENSURE_SUCCESS(result, result);
+        
         nsCString dstCSpec;
         result = mpDstURI->GetSpec(dstCSpec);
         NS_ENSURE_SUCCESS(result, result);
@@ -3403,10 +3404,10 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
     /* Update the download media item content source property. */
     if (NS_SUCCEEDED(result)) {
 #if defined(XP_WIN)
-        nsCString actualSrcSpec;
-        ToLowerCase(srcSpec, actualSrcSpec);
+        nsCString actualDstSpec;
+        ToLowerCase(NS_ConvertUTF16toUTF8(mDstURISpec), actualDstSpec);
         
-        result = mpDstURI->SetSpec(actualSrcSpec);
+        result = mpDstURI->SetSpec(actualDstSpec);
         NS_ENSURE_SUCCESS(result, result);
 #endif
         result = mpMediaItem->SetContentSrc(mpDstURI);
