@@ -65,6 +65,7 @@
 #include <nsIStandardURL.h>
 #include <nsICharsetDetector.h>
 #include <nsIUTF8ConverterService.h>
+#include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
@@ -206,9 +207,31 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
     {
         vote = -1;
     }
+    
+    /* we can only handle things with mozilla protocol handlers */
+    if (vote >= 0) {
+        nsresult rv;
+        nsCOMPtr<nsIIOService> ios = do_GetIOService(&rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        nsCOMPtr<nsIProtocolHandler> protocolHandler;
+        nsCString scheme;
+        
+        rv = ios->ExtractScheme(NS_ConvertUTF16toUTF8(_url), scheme);
+        if (NS_SUCCEEDED(rv)) {
+            rv = ios->GetProtocolHandler(scheme.BeginReading(),
+                                         getter_AddRefs(protocolHandler));
+        }
+        if (NS_FAILED(rv)) {
+            // can't deal with the url
+            LOG(("sbMetadataHandlerTaglib::Vote - can't handle scheme %s\n",
+                 scheme.BeginReading()));
+            vote = -1;
+        }
+    }
 
     /* Return results. */
     *pVote = vote;
+    LOG(("sbMetadataHandlerTaglib::Vote - voting to %d\n", vote));
 
     return (NS_OK);
 }
@@ -341,6 +364,9 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
         result = mpURL->GetSpec(urlSpec);
     if (NS_SUCCEEDED(result))
         result = mpURL->GetScheme(urlScheme);
+    
+    LOG(("sbMetadataHandlerTaglib::ReadInternal - spec is %s\n",
+         urlSpec.BeginReading()));
 
 #ifdef MOZ_CRASHREPORTER
     /* Add crash reporter annotation. */

@@ -1,3 +1,4 @@
+/* vim: set sw=2 :miv */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -1610,6 +1611,8 @@ nsresult sbMetadataJob::ClearItemIsCurrent( sbIDatabaseQuery *aQuery, nsString a
 nsresult sbMetadataJob::ResetIncomplete( sbIDatabaseQuery *aQuery, nsString aTableName )
 {
   NS_ENSURE_ARG_POINTER( aQuery );
+  
+  LOG(("sbMetadataJob - resetting incomplete jobs\n"));
 
   nsresult rv;
 
@@ -1841,9 +1844,41 @@ nsresult sbMetadataJob::StartHandlerForItem( sbMetadataJob::jobitem_t *aItem, PR
   // Don't bother to chew the CPU or the filesystem by reading metadata.
   if ( aItem->item && !aItem->url.IsEmpty() )
   {
-    nsCOMPtr<sbIMetadataManager> MetadataManager = do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
+    LOG(("sbMetadataJob::StartHandlerForItem: getting handler for %s\n",
+         NS_LossyConvertUTF16toASCII(aItem->url).get()));
+    nsCOMPtr<sbIMetadataManager> MetadataManager =
+      do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = MetadataManager->GetHandlerForMediaURL( aItem->url, getter_AddRefs(aItem->handler) );
+    rv = MetadataManager->GetHandlerForMediaURL( aItem->url,
+                                                 getter_AddRefs(aItem->handler) );
+    if (rv == NS_ERROR_UNEXPECTED) {
+      // no handler for uri, try getting a handler for originURL if available
+      nsString originUrl;
+      rv = aItem->item->GetProperty( NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                     originUrl );
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (originUrl.IsEmpty()) {
+        // no origin URL, too bad - restore the error
+        rv = NS_ERROR_UNEXPECTED;
+      } else {
+        // only use origin url if it's a local file
+        // unfortunately, we can't touch the IO service since this can run on
+        // a background thread
+        if (StringBeginsWith(originUrl, NS_LITERAL_STRING("file://"))) {
+          aItem->url = originUrl;
+          rv = MetadataManager->GetHandlerForMediaURL( originUrl,
+                                                       getter_AddRefs(aItem->handler) );
+        } else {
+          // nope, can't use non-file origin url
+          rv = NS_ERROR_UNEXPECTED;
+        }
+      }
+    }
+    #if PR_LOGGING
+    if (NS_FAILED(rv)) {
+      LOG(("Failed to find metadata handler\n"));
+    }
+    #endif /* PR_LOGGING */
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(aItem->handler, NS_ERROR_FAILURE);
     
@@ -1874,6 +1909,8 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
 
 // TODO:
   // - Update the metadata handlers to use the new keystrings
+  
+  LOG(("sbMetadataJob::AddMetadataToItem - starting\n"));
 
   // Get the sbIMediaItem we're supposed to be updating
   nsCOMPtr<sbIMediaItem> item = aItem->item;
@@ -1953,6 +1990,9 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
   // And then put the properties into the item
   rv = item->SetProperties(newProps);
   // NS_ENSURE_SUCCESS(rv, rv);
+  
+  LOG(("sbMetadataJob::AddMetadataToItem - finished with end rv %08x\n",
+       rv));
 
   return NS_OK;
 }
