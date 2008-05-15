@@ -3,10 +3,9 @@
 /* ::::: find toolbar ::::: */
 
 findbar {
-  border-top: 1px solid #474948; /** Rubber Highlight */
-  border-bottom: 1px solid #202220; /** Button Shadow */
-  min-height:29px;
+  min-height: 29px;
 }
+
 findbar > label,
 findbar > toolbarbutton > .toolbarbutton-text,
 findbar > .find-buttons-container > toolbarbutton > .toolbarbutton-text,
@@ -117,11 +116,8 @@ findbar > toolbarbutton.findbar-highlight[checked="true"]:hover {
   -moz-image-region: rect(64px 48px 80px 32px);
 }
 findbar > toolbarbutton.findbar-highlight[checked="true"] {
-  border-top: 1px solid #202220 !important; /** Button Shadow */ 
-  border-left: 1px solid #202220 !important; /** Button Shadow */ 
-  border-bottom: 1px solid #797f76 !important; /** Button Highlight */
-  border-right: 1px solid #202220 !important; /** Button Shadow */ 
-  background-color:transparent;
+  background-color: #FFFF00;
+  border-color: #818100;
 }
 
 findbar .checkbox-icon,

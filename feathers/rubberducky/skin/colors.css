@@ -2003,3 +2003,23 @@ MOZILLA DOWNLOAD WINDOW
   border-top-color: #202220; /** Button Shadow */
   border-top-style: solid;
 }
+
+
+/** 
+*******************************************************************************
+FINDBAR
+*******************************************************************************
+*/
+findbar {
+  border-top: 1px solid #474948; /** Rubber Highlight */
+  border-bottom: 1px solid #202220; /** Button Shadow */
+}
+
+
+findbar > toolbarbutton.findbar-highlight[checked="true"] {
+  border-top: 1px solid #202220 !important; /** Button Shadow */ 
+  border-left: 1px solid #202220 !important; /** Button Shadow */ 
+  border-bottom: 1px solid #797f76 !important; /** Button Highlight */
+  border-right: 1px solid #202220 !important; /** Button Shadow */ 
+  background-color:transparent;
+}
