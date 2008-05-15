@@ -225,29 +225,34 @@ PublicPlaylistCommands.prototype = {
                                                     plCmd_IsAnyTrackSelected,
                                                     plCmd_CanModifyPlaylist));
 
-      // The second item, only created by the keyboard shortcuts instantiator
-      this.m_cmd_Remove.appendAction(null,
-                                     "library_cmd_remove2",
-                                     "&command.remove",
-                                     "&command.tooltip.remove",
-                                     plCmd_Remove_TriggerCallback);
+      // The second item, only created by the keyboard shortcuts instantiator,
+      // and only for the mac.
+      var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                    .getService(Components.interfaces.nsIPropertyBag2);
+      if ( sysInfo.getProperty("name") == "Darwin" ) {
+        this.m_cmd_Remove.appendAction(null,
+                                       "library_cmd_remove2",
+                                       "&command.remove",
+                                       "&command.tooltip.remove",
+                                       plCmd_Remove_TriggerCallback);
 
-      this.m_cmd_Remove.setCommandShortcut(null,
-                                           "library_cmd_remove2",
-                                           "&command.shortcut.key.altremove",
-                                           "&command.shortcut.keycode.altremove",
-                                           "&command.shortcut.modifiers.altremove",
-                                           true);
+        this.m_cmd_Remove.setCommandShortcut(null,
+                                             "library_cmd_remove2",
+                                             "&command.shortcut.key.altremove",
+                                             "&command.shortcut.keycode.altremove",
+                                             "&command.shortcut.modifiers.altremove",
+                                             true);
 
-      this.m_cmd_Remove.setCommandEnabledCallback(null,
-                                                  "library_cmd_remove2",
-                                                  plCmd_AND(
-                                                    plCmd_IsAnyTrackSelected,
-                                                    plCmd_CanModifyPlaylist));
+        this.m_cmd_Remove.setCommandEnabledCallback(null,
+                                                    "library_cmd_remove2",
+                                                    plCmd_AND(
+                                                      plCmd_IsAnyTrackSelected,
+                                                      plCmd_CanModifyPlaylist));
 
-      this.m_cmd_Remove.setCommandVisibleCallback(null,
-                                                  "library_cmd_remove2",
-                                                  plCmd_IsShortcutsInstantiator);
+        this.m_cmd_Remove.setCommandVisibleCallback(null,
+                                                    "library_cmd_remove2",
+                                                    plCmd_IsShortcutsInstantiator);
+      }
 
       // --------------------------------------------------------------------------
       // The EDIT button

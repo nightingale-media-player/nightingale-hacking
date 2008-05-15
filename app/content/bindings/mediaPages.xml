@@ -115,8 +115,21 @@
       <method name="generateMenuItems">
         <body>
         <![CDATA[
-          // bail out if we don't have a mediaPage
+          var mediaPagesLabel = "mediapages.label";
+          try {
+            mediaPagesLabel =
+              this._stringBundle.GetStringFromName(mediaPagesLabel);
+          } catch (e) { 
+          }
+
+          // bail out if we don't have a mediaPage, but still create
+          // a disabled menu item
           if (!gBrowser.currentMediaPage) {
+            var mediaPagesMenu = document.createElement("menu");
+            mediaPagesMenu.setAttribute("label", mediaPagesLabel);
+            mediaPagesMenu.setAttribute("disabled", "true");
+            this._addToMenu(document.createElement("menuseparator"));
+            this._addToMenu(mediaPagesMenu);
             return;
           }
           
@@ -129,12 +142,6 @@
 
           if (hideTitle != "true") {
             // Add the 'Media Views' menu
-            var mediaPagesLabel = "mediapages.label";
-            try {
-              mediaPagesLabel =
-                this._stringBundle.GetStringFromName(mediaPagesLabel);
-            } catch (e) { 
-            }
 
             // create the menu to add to the parent
             var mediaPagesMenu = document.createElement("menu");

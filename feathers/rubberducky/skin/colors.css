@@ -1240,6 +1240,10 @@ menuitem[disabled="true"],
 menuitem[disabled="true"]:hover,
 menuitem[disabled="true"] > label,
 menuitem[disabled="true"]:hover > label
+menu[disabled="true"],
+menu[disabled="true"]:hover,
+menu[disabled="true"] > label,
+menu[disabled="true"]:hover > label
 {
   color: #5c5f58 !important; /** Selected Focus Row */
 }
