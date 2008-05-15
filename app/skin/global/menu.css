@@ -117,9 +117,8 @@ menuitem[type="radio"] > .menu-iconic-left {
   -moz-image-region: auto;
 }
 
-.menu-right[disabled="true"] {
-  list-style-image: url(chrome://global/skin/menu/menu-arrow-dis.gif);
-  -moz-image-region: auto;
+.menu-right[disabled="true"] > image {
+  opacity:0.5;
 }
 
 /* ::::: menu/menuitems in menubar ::::: */
