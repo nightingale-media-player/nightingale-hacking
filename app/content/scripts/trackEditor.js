@@ -80,6 +80,7 @@ TrackEditorState.prototype = {
   //   propertyName: { 
   //     hasMultiple: false,  (multiple values between selected items)
   //     edited: false,
+  //     enabled: false,      (allowed to be saved)
   //     value: "",
   //     originalValue: "".
   //     knownInvalid: false  (verified to be ivalid)
@@ -170,11 +171,6 @@ TrackEditorState.prototype = {
     }
     this._ensurePropertyData(property);
     this._notifyPropertyListeners(property);
-
-    
-    // The ok/prev/next buttons may need updating.
-    // TODO This is a bit hackish, but good enough for now.
-    TrackEditor.updateControls();
   },
   
   /** 
@@ -220,6 +216,28 @@ TrackEditorState.prototype = {
   },
   
   /** 
+   * Returns true if the given property has been
+   * enabled for editing.  In some cases
+   * attempting to edit a value may automatically
+   * enabled editing.
+   */
+  isPropertyEnabled: function(property) {
+    this._ensurePropertyData(property);
+    return this._properties[property].enabled;
+  },
+  
+  /** 
+   * Set/unset the enabled flag for the given property.
+   * Used to control whether changes will be written
+   * out to the selected media items.
+   */
+  setPropertyEnabled: function(property, enabled) {
+    this._ensurePropertyData(property);
+    this._properties[property].enabled = enabled;
+    this._notifyPropertyListeners(property);
+  },
+  
+  /** 
    * Returns true if the value has been verified
    * as invalid.  Note that validation
    * only happens on request, not on set.
@@ -245,21 +263,18 @@ TrackEditorState.prototype = {
     }
     
     this._notifyPropertyListeners(property);
-    
-    // The ok/prev/next buttons may need updating.
-    // TODO This is a bit hackish, but good enough for now.
-    TrackEditor.updateControls();
   },
   
   /** 
-   * Returns true if at least one property has been
+   * Returns true if at least one enabled property has been
    * determined to be invalid.  
    * Note that validation must be explicitly requested
    * via validatePropertyValue().
    */
-  hasKnownInvalidValues: function() {
+  isKnownInvalid: function() {
     for (var propertyName in this._properties) {
-      if (this._properties[propertyName].knownInvalid) {
+      if (this._properties[propertyName].knownInvalid && 
+          this._properties[propertyName].enabled) {
         return true;
       }
     }
@@ -267,17 +282,18 @@ TrackEditorState.prototype = {
   },
   
   /** 
-   * Returns an array of the property names that have
-   * been modified by the track editor
+   * Returns an array of property names that have been
+   * explicitly enabled for writing.  
+   * Note that the values may or may not have been edited.
    */
-  getEditedProperties: function() {
-    var editedList = [];
+  getEnabledProperties: function() {
+    var enabledList = [];
     for (var propertyName in this._properties) {
-      if (this._properties[propertyName].edited) {
-        editedList.push(propertyName);
+      if (this._properties[propertyName].enabled) {
+        enabledList.push(propertyName);
       }
     }
-    return editedList;
+    return enabledList;
   },
   
   /** 
@@ -293,6 +309,7 @@ TrackEditorState.prototype = {
     // Set up the empty structure
     this._properties[property] = {
       edited: false,
+      enabled: false,
       hasMultiple: false,
       value: "",
       originalValue: "",
@@ -336,13 +353,23 @@ TrackEditorState.prototype = {
       }
 
       this._properties[property].value = value;
-      this._properties[property].originalValue = value;
+      
+      // If there are multiple value for this property,
+      // default to edited as "", but disabled.
+      // This way the user can null out the multiple values
+      // simply by enabling the field.
+      if (this._properties[property].hasMultiple) {
+        this._properties[property].edited = true;
+        this._properties[property].originalValue = null;
+      } else {
+        this._properties[property].originalValue = value;
+      }
     }
   },
   
   /** 
    * Add an object to be notified when the editor state for the given
-   * property changes.
+   * property changes. Pass "all" to be notified of all property changes.
    * 
    * The listener object must provide a onTrackEditorPropertyChange function
    */
@@ -413,6 +440,16 @@ TrackEditorState.prototype = {
       if (listeners) {
         for each (var listener in listeners) {
           listener.onTrackEditorPropertyChange(property);
+        }
+      }
+      
+      // Notify those who explicitly want to hear about all changes.
+      if (property != "all") {
+        var listeners = this._propertyListeners["all"];
+        if (listeners) {
+          for each (var listener in listeners) {
+            listener.onTrackEditorPropertyChange(property);
+          }
         }
       }
     }
@@ -543,7 +580,7 @@ var TrackEditor = {
     
     // Known elements we're going to want to use.
     elements = ["notification_box", "notification_text",
-                "prev_button", "next_button",
+                "prev_button", "next_button", "infotab_trackname_label",
                 "ok_button", "cancel_button"];
     // I'd love to do this in the previous loop, but getElementsByAttribute
     // returns an HTMLCollection, not an array.
@@ -555,6 +592,10 @@ var TrackEditor = {
     }
 
     this._elements["notification_box"].hidden = true;
+    
+    
+    // Monitor all changes in order to update the dialog controls
+    this.state.addPropertyListener("all", this);
   },
   
   
@@ -596,18 +637,10 @@ var TrackEditor = {
    * Update the dialog controls based on the current state
    */
   updateControls: function TrackEditor__updateControls() {
-  
-   // Hacky special case the title and track number
-   // It doesn't make sense to apply the same title and track number
-   // to multiple tracks, so just disable the option. 
-   // If the user really wants it they can use the advanced tab.
-   var disable = this.state.selectedItems.length > 1;
-   this._elements["infotab_trackname_textbox"].disabled = disable;
-   this._elements["infotab_tracknumber_textbox"].disabled = disable;
    
    // If the user has entered invalid data, disable all 
    // UI that would cause an apply()
-   var hasErrors = this.state.hasKnownInvalidValues();
+   var hasErrors = this.state.isKnownInvalid();
    
    this._elements["ok_button"].disabled = hasErrors;
    
@@ -675,6 +708,21 @@ var TrackEditor = {
     this.state.setSelection(this.mediaListView.selection);    
 
     this.updateNotificationBox();
+    this.updateControls();
+ 
+    // Hacky special case to hide the title when editing multiple items.
+    // We assume you don't want to set multiple titles at once.
+    var hidden = this.state.selectedItems.length > 1;
+    this._elements["infotab_trackname_textbox"].hidden = hidden;
+    this._elements["infotab_trackname_label"].hidden = hidden;
+  },
+  
+  /**
+   * Called any time a property value is modified by the UI
+   */
+  onTrackEditorPropertyChange: function TrackEditor_onTrackEditorPropertyChange(property) {
+    // Update dialog controls, since the validation state may have changed.
+    // TODO: this may hurt performance, since it is executed on every keystroke!
     this.updateControls();
   },
   
@@ -763,12 +811,12 @@ var TrackEditor = {
    */  
   apply: function() {
     
-    if (this.state.hasKnownInvalidValues()) {
+    if (this.state.isKnownInvalid()) {
       Components.utils.reportError("TrackEditor: attempt to call apply() with known invalid state");
       return false;
     }
     
-    var properties = this.state.getEditedProperties();
+    var properties = this.state.getEnabledProperties();
     var items = this.state.selectedItems;
     if (items.length == 0 || properties.length == 0) {
       return true;
@@ -778,6 +826,9 @@ var TrackEditor = {
     // keeping track of which items have been modified
     var needsWriting = new Array(items.length);
     for each (property in properties) {
+      if (!TrackEditor.state.isPropertyEdited(property)) {
+        continue;
+      }
       for (var i = 0; i < items.length; i++) {
         var value = TrackEditor.state.getPropertyValue(property);
         var item = items[i];
@@ -990,20 +1041,18 @@ TrackEditorInputWidget.prototype = {
     this._element.disabled = val;
   },
   
+  get hidden() {
+    return this._element.parentNode.hidden;
+  },
+  
+  set hidden(val) {
+    this._element.parentNode.hidden = val;
+  },
+  
   onCheckboxCommand: function() {
+    TrackEditor.state.setPropertyEnabled(this.property, this._checkbox.checked);
     if (this._checkbox.checked) {
-      this._element.disabled = false;
-      
-      if (TrackEditor.state.hasMultipleValuesForProperty(this.property)) {
-        // Clear out the *Various* text
-        TrackEditor.state.setPropertyValue(this.property, "");
-      }
-      
       this._element.focus();
-    } else {
-      TrackEditor.state.resetPropertyValue(this.property);
-      this._checkbox.checked = false;
-      this._element.disabled = true;
     }
   },
   
@@ -1024,12 +1073,7 @@ TrackEditorInputWidget.prototype = {
   onTrackEditorPropertyChange: function TrackEditorInputWidget_onTrackEditorPropertyChange() {
     TrackEditorWidgetBase.prototype.onTrackEditorPropertyChange.call(this);
     
-    this._checkbox.checked = !TrackEditor.state.hasMultipleValuesForProperty(this.property);
-    if (!this._checkbox.checked) {
-      this._element.disabled = true;
-    } else if (!this._checkbox.disabled) { 
-      this._element.disabled = false;
-    }
+    this._checkbox.checked = TrackEditor.state.isPropertyEnabled(this.property);
   },
   
   onBlur: function() {    
@@ -1092,6 +1136,11 @@ TrackEditorTextbox.prototype = {
     setTimeout(function() { 
         var value = self._element.value;
         TrackEditor.state.setPropertyValue(self.property, value);
+        
+        // Auto-enable property write-back
+        if (!TrackEditor.state.isPropertyEnabled(self.property)) {
+          TrackEditor.state.setPropertyEnabled(self.property, true);
+        }
       }, 0 );
   },
   
@@ -1254,6 +1303,11 @@ TrackEditorRating.prototype = {
   onUserInput: function() {
     var value = this._element.value;
     TrackEditor.state.setPropertyValue(this.property, value);
+
+    // Auto-enable property write-back
+    if (!TrackEditor.state.isPropertyEnabled(this.property)) {
+      TrackEditor.state.setPropertyEnabled(this.property, true);
+    }
   },
   
   onTrackEditorPropertyChange: function TrackEditorRating_onTrackEditorPropertyChange() {

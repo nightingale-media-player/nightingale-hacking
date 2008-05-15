@@ -109,10 +109,18 @@ textbox.short-number-input {
   width: 3em !important;
 }
 
-
+/* Slash between two numeric boxes */
 .separator-label {
   margin: 0px !important;
   padding: 0px !important;
+}
+
+/* Align checkbox with the top left of multiline textboxes */
+.multiline-textbox-container > hbox {
+  -moz-box-align: start;
+}
+.multiline-textbox-container > hbox > checkbox {
+  margin-top: 8px;
 }
 
 
@@ -174,7 +182,7 @@ button {
 }
 button label {
   font-size:12px;
-  apdding:0;
+  padding:0;
   margin:0 0 1px !important;
 }
 #prev_button,
