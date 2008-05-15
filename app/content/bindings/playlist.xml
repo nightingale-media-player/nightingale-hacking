@@ -680,7 +680,47 @@
     <method name="removeSelectedTracks">
       <body>
 <![CDATA[
-  this.mediaListView.removeSelectedMediaItems();
+        var numSelected = this.mediaListView.selection.count;
+        const BYPASSKEY = "playlist.confirmremovetracks.bypass";
+        const STRINGROOT_UNIQUE = "playlist.confirmremoveitem.";
+        const STRINGROOT_MULTIPLE = "playlist.confirmremoveitems.";
+        if (!SBDataGetBoolValue(BYPASSKEY)) {
+          var STRINGROOT = (numSelected > 1) ? STRINGROOT_MULTIPLE : STRINGROOT_UNIQUE;
+          var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                        .getService(Components.interfaces.nsIPromptService);
+          check = { value: false };
+          
+          var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                              .getService(Components.interfaces.nsIStringBundleService);
+          var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+          var strTitle = songbirdStrings.GetStringFromName(STRINGROOT + "title");
+          var strMsg = songbirdStrings.GetStringFromName(STRINGROOT + "message");
+          var strCheck = songbirdStrings.GetStringFromName("dialog.confirm.dontaskme");
+          
+          var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                                .getService(Ci.sbIDeviceManager2);
+          if (deviceManager.marshalls.length > 0) {
+            strMsg += "\n\n" + songbirdStrings.GetStringFromName(STRINGROOT + "devicewarning");
+          }
+                    
+          var retval = 
+            promptService.confirmEx(window, 
+                                    strTitle, 
+                                    strMsg, 
+                                    Ci.nsIPromptService.STD_YES_NO_BUTTONS, 
+                                    null, 
+                                    null, 
+                                    null, 
+                                    strCheck, 
+                                    check);
+          if (check.value == true) {
+            SBDataSetBoolValue(BYPASSKEY, true);
+          }
+          if (retval == 1) { // 0 = yes, 1 = no
+            return;
+          }
+        }
+        this.mediaListView.removeSelectedMediaItems();
 ]]>
       </body>
     </method>
