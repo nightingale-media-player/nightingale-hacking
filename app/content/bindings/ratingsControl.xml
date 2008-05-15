@@ -150,6 +150,7 @@
     <handlers>
       <handler event="mouseover">
         <![CDATA[
+          if (event.originalTarget != this.stars) return;
           if (!this.canEdit()) return;
           this.lastStar = -1;
           this.oldValue = this.value;
@@ -157,12 +158,15 @@
       </handler>
       <handler event="mouseout">
         <![CDATA[
+          if (event.originalTarget != this.stars) return;
           if (!this.canEdit()) return;
+          this.lastStar = -1;
           this.value = this.oldValue;
         ]]>
       </handler>
       <handler event="mousemove">
         <![CDATA[
+          if (event.originalTarget != this.stars) return;
           if (!this.canEdit()) return;
           this.handleMouseEvent(event, 0);
         ]]>
@@ -171,6 +175,7 @@
            and also on mouseup so that dragging works -->
       <handler event="mousedown">
         <![CDATA[
+          if (event.originalTarget != this.stars) return;
           if (!this.canEdit()) return;
           this.lastStar = -1;
           this.handleMouseEvent(event, 1);
@@ -178,9 +183,9 @@
       </handler>
       <handler event="mouseup">
         <![CDATA[
+          if (event.originalTarget != this.stars) return;
           if (!this.canEdit()) return;
           this.handleMouseEvent(event, 2);
-          this.lastStar = -1;
         ]]>
       </handler>
       <handler event="keydown">
