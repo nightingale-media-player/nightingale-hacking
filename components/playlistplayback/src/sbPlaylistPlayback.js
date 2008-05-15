@@ -378,6 +378,9 @@ PlaylistPlayback.prototype = {
   _playlistReaderManager: null,
 
   _listeners: [],
+
+  // for playtime metrics
+  _playStartTime: 0,
   
   /**
    * XXXAus: This data is private and should not be used for any purpose
@@ -1560,9 +1563,17 @@ PlaylistPlayback.prototype = {
   },
 
   // Routes core playback status changes to the playing/paused ui data remote
+  // and to the playback time metrics code
   _onPollStates: function ( len, pos, core ) {
+    var wasActuallyPlaying = this._playing.boolValue && 
+                             !this._paused.boolValue;
+    
     this._playing.boolValue = core.getPlaying();
     this._paused.boolValue = core.getPaused();
+    
+    var nowActuallyPlaying = this._playing.boolValue && 
+                             !this._paused.boolValue;
+    this._metricsPlayStateCheck(wasActuallyPlaying, nowActuallyPlaying);
   },
 
   // Routes metadata (and their possible updates) to the metadata ui data remotes
@@ -2236,6 +2247,29 @@ PlaylistPlayback.prototype = {
     var thread = Components.classes["@mozilla.org/thread-manager;1"]
                   .getService().currentThread;
     //thread.sleep(ms);  
+  },
+  
+  _metricsPlayStateCheck: function 
+    PPS_metricsPlayStateCheck(wasPlaying, nowPlaying) {
+      if (wasPlaying != nowPlaying) {
+        if (nowPlaying) this._metricsStartPlaying();
+        else this._metricsStopPlaying();
+      }
+  },
+  
+  _metricsStartPlaying: function PPS_metricsStartPlaying() {
+    if (this._playStartTime == 0) {
+      this._playStartTime = new Date().getTime();
+    }
+  },
+
+  _metricsStopPlaying: function PPS_metricsStartPlaying() {
+    if (this._playStartTime != 0) {
+      var timeNow = new Date().getTime();
+      var seconds = ( (timeNow - this._playStartTime) / 1000 );
+      this.metrics_add("mediacore", "playtime", null, seconds);
+      this._playStartTime = 0;
+    }
   },
   
   /**
