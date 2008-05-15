@@ -116,8 +116,6 @@ findbar > toolbarbutton.findbar-highlight[checked="true"]:hover {
   -moz-image-region: rect(64px 48px 80px 32px);
 }
 findbar > toolbarbutton.findbar-highlight[checked="true"] {
-  background-color: #FFFF00;
-  border-color: #818100;
 }
 
 findbar .checkbox-icon,
