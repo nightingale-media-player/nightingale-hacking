@@ -1,8 +1,21 @@
 #!/bin/sh
 
+# Ugh. So stupid.
+# Mac OS 10.4, which is what's on the buildbots, uses bash 2.05,
+# which doesn't have a builtin version of which. It calls /usr/bin/which, which
+# will stupidly 1. Not use proper return values (so the "which foo && 
+# do_something" construct fails), and 2. print everything to stderr, no matter
+# what, so doing cute tricks like test -z `which gtar 2>/dev/null` don't work
+# either.
+#
+# We know OS X has tar, so just ignore gtar detection on the mac... for now...
+#
+
 TAR=tar
-which gtar 2>&1 >/dev/null && \
-  TAR=gtar
+if [ `uname` != "Darwin" ];  then
+  which gtar 2>&1 >/dev/null && \
+    TAR=gtar
+fi
 
 notice() {
   echo $* 1>&2
