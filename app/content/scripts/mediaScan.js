@@ -49,8 +49,6 @@ var theTargetInsertIndex = -1;
 
 var polling_interval;
 
-var CHUNK_SIZE = 50;
-var nextStartIndex = 0;
 var batchLoadsPending = 0;
 var closePending = false;
 var autoClose = false;
@@ -137,7 +135,6 @@ function scanNextDirectory()
                 .createInstance(Components.interfaces.sbIFileScanQuery);
     if (gFileScan && aFileScanQuery)
     {
-      nextStartIndex = 0;
       scanIsDone = false;
       // do not use pop(), that would scan the directories in reverse order,
       // we want to maintain the order in which they were selected in the
@@ -153,7 +150,7 @@ function scanNextDirectory()
 
       gFileScan.submitQuery(aFileScanQuery);
       
-      polling_interval = setInterval( onPollScan, 133 );
+      polling_interval = setInterval( onPollScan, 33 );
       
       theTitle.value = SBString("media_scan.scanning", "Scanning") + " -- " + url;
     } else {
@@ -167,7 +164,7 @@ function scanNextDirectory()
   }
 }
 
-var accumulatorArray = Components.classes["@mozilla.org/array;1"]
+var accumulatorArray = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
   .createInstance(Components.interfaces.nsIMutableArray);
 function onPollScan()
 {
@@ -175,17 +172,12 @@ function onPollScan()
   // chunk size
   var count = aFileScanQuery.getFileCount();
   scanIsDone = !aFileScanQuery.isScanning();
-  if (count > 0 && (count - nextStartIndex > CHUNK_SIZE || scanIsDone)) {
 
-    // Grab the next chunk of scanned tracks from the query
-    var endIndex = scanIsDone ? count - 1 : nextStartIndex + CHUNK_SIZE - 1;
-    if (endIndex >= count) {
-      endIndex = count - 1;
-    }
+  if (scanIsDone) {
 
-    var array = aFileScanQuery.getResultRangeAsURIs(nextStartIndex, endIndex);
-    if (!scanIsDone)
-      nextStartIndex = endIndex + 1;
+    clearInterval(polling_interval);
+
+    var array = aFileScanQuery.getResultRangeAsURIs(0, count - 1);
 
     // Append the new array to the last array
     for (let i = 0; i < array.length; i++) {
@@ -193,42 +185,29 @@ function onPollScan()
         array.queryElementAt(i, Components.interfaces.nsIURI), false );
     }
 
-    // We don't have a full chunk, and there's still more directories to go...
-    if (accumulatorArray.length < CHUNK_SIZE && scanIsDone && gDirectoriesToScan.length > 0) {
-      // Ooops, NOP.
-    } else {
-      // Create a temporary track name for all of the found tracks
-      var propsArray =
-        Components.classes["@mozilla.org/array;1"]
-                  .createInstance(Components.interfaces.nsIMutableArray);
-      for (let i = 0; i < accumulatorArray.length; i++) {
-        let uri = accumulatorArray.queryElementAt(i, Components.interfaces.nsIURI);
-        let props =
-          Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                    .createInstance(Components.interfaces.sbIMutablePropertyArray);
-        props.appendProperty(SBProperties.trackName, createDefaultTitle(uri));
-        propsArray.appendElement(props, false);
-      }
-
-      // push all items on a fifo, so that each time the batch listener completes,
-      // we can grab the full list of items in the chunk again (not just those
-      // that were created), in order to be able to insert them in the target
-      // playlist regardless of whether they already existed or not
-      scannedChunks.push(accumulatorArray);
-
-      // Asynchronously load the scanned chunk into the library
-      var listener = new sbBatchCreateListener(accumulatorArray);
-      batchLoadsPending++;
-      theTargetLibrary.batchCreateMediaItemsAsync(listener, accumulatorArray, propsArray);
-      
-      // Make a new accumulator.
-      accumulatorArray = Components.classes["@mozilla.org/array;1"]
-        .createInstance(Components.interfaces.nsIMutableArray);    
+    // Create a temporary track name for all of the found tracks
+    var propsArray =
+      Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                .createInstance(Components.interfaces.nsIMutableArray);
+    for (let i = 0; i < accumulatorArray.length; i++) {
+      let uri = accumulatorArray.queryElementAt(i, Components.interfaces.nsIURI);
+      let props =
+        Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                  .createInstance(Components.interfaces.sbIMutablePropertyArray);
+      props.appendProperty(SBProperties.trackName, createDefaultTitle(uri));
+      propsArray.appendElement(props, false);
     }
-  }
 
-  if (scanIsDone) {
-    clearInterval(polling_interval);
+    // push all items on a fifo, so that each time the batch listener completes,
+    // we can grab the full list of items in the chunk again (not just those
+    // that were created), in order to be able to insert them in the target
+    // playlist regardless of whether they already existed or not
+    scannedChunks.push(accumulatorArray);
+
+    // Asynchronously load the scanned chunk into the library
+    var listener = new sbBatchCreateListener(accumulatorArray);
+    batchLoadsPending++;
+    theTargetLibrary.batchCreateMediaItemsAsync(listener, accumulatorArray, propsArray);
 
     // if we have more things to look at, do that
     if (gDirectoriesToScan.length > 0) {
@@ -293,7 +272,7 @@ function appendToMetadataQueue( aItemArray ) {
 }
 
 // global level array to hold the tracks found in filescan that need metadata
-var metadataScanArray = Components.classes["@mozilla.org/array;1"]
+var metadataScanArray = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
   .createInstance(Components.interfaces.nsIMutableArray);
 
 function sbBatchCreateListener(aArray) {
@@ -313,7 +292,7 @@ function sbBatchCreateListener_onComplete(aItemArray, aResult)
   if (aResult == Components.results.NS_OK) {
     itemArray = aItemArray;
   } else {
-    itemArray = Components.classes["@mozilla.org/array;1"]
+    itemArray = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                           .createInstance(Components.interfaces.nsIArray);
   }
 

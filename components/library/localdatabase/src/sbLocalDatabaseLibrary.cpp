@@ -30,7 +30,6 @@
 #include <nsArrayUtils.h>
 #include <nsIClassInfo.h>
 #include <nsIClassInfoImpl.h>
-#include <nsICryptoHash.h>
 #include <nsIFile.h>
 #include <nsIFileStreams.h>
 #include <nsIFileURL.h>
@@ -123,6 +122,10 @@
 #define DEFAULT_SORT_PROPERTY SB_PROPERTY_CREATED
 
 #define DEFAULT_FETCH_SIZE 1000
+
+#define DEFAULT_THREADPOOL_IDLE_THREAD_LIMIT (1)
+#define DEFAULT_THREADPOOL_THREAD_TIMEOUT    (60000) // in milliseconds
+#define DEFAULT_THREADPOOL_THREAD_LIMIT      (10)   // 10 thread limit.
 
 /**
  * To log this module, set the following environment variable:
@@ -627,6 +630,23 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
 
   mMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseLibrary::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  // Setup thread pool required for hashing.
+  nsCOMPtr<nsIThreadPool> threadPool = 
+    do_CreateInstance("@mozilla.org/thread-pool;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = threadPool->SetIdleThreadLimit(DEFAULT_THREADPOOL_IDLE_THREAD_LIMIT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = threadPool->SetIdleThreadTimeout(DEFAULT_THREADPOOL_THREAD_TIMEOUT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = threadPool->SetThreadLimit(DEFAULT_THREADPOOL_THREAD_LIMIT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Thread pool is setup.
+  threadPool.forget(getter_AddRefs(mHashingThreadPool));
 
   // Library initialized, ensure others can get notifications
   nsCOMPtr<sbILocalDatabaseMediaItem> item = 
@@ -1755,7 +1775,7 @@ sbLocalDatabaseLibrary::FilterExistingURIs(nsIArray* aURIs,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMutableArray> filtered =
-    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If the incoming array is empty, do nothing
@@ -1902,12 +1922,12 @@ sbLocalDatabaseLibrary::FilterExistingItems
     "Length of URI array and hashes array should always match.");
 
   nsCOMPtr<nsIMutableArray> filtered =
-    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMutableArray> filteredPropertyArrayArray;
   if (aPropertyArrayArray) {
-    filteredPropertyArrayArray = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    filteredPropertyArrayArray = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
     filteredPropertyArrayArray = nsnull;
@@ -2225,6 +2245,10 @@ sbLocalDatabaseLibrary::Shutdown()
     }
     LOG((LOG_SUBMESSAGE_SPACE "all timers have died"));
   }
+
+  // Shutdown the thread pool.
+  rv = mHashingThreadPool->Shutdown();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Explicitly release our property cache here so we make sure to write all
   // changes to disk (regardless of whether or not this library will be leaked)
@@ -2801,7 +2825,7 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
   if (!aAllowDuplicates) {
     nsresult rv;
     nsCOMPtr<nsIMutableArray> array =
-      do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = array->AppendElement(aUri, PR_FALSE);
@@ -3421,20 +3445,52 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   nsRefPtr<sbHashHelper> hashHelper(new sbHashHelper());
   NS_ENSURE_STATE(hashHelper);
 
-  PRBool success = mHashHelpers.Put(hashHelper, hashHelper);
+  PRBool success = 
+    mHashHelpers.Put(NS_ISUPPORTS_CAST(nsISupports *, hashHelper), 
+                     hashHelper);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   rv = hashHelper->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // init hashhelper
-  hashHelper->mLibrary = this;
-  hashHelper->mURIArray = aURIArray;
+  hashHelper->mLibrary = this;  
   hashHelper->mHashArray = new nsTArray<nsCString>();
   hashHelper->mPropertyArrayArray = aPropertyArrayArray;
   hashHelper->mAllowDuplicates = aAllowDuplicates;
   hashHelper->mListener = aListener;
   hashHelper->mRetValArray = _retval;
+  hashHelper->mReleaseTarget = do_GetMainThread();
+
+  // we have to create proxies for the URIs to avoid massive amounts 
+  // of assertions and potential crashes.
+  PRUint32 length = 0;
+  rv = aURIArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> uri;
+  nsCOMPtr<nsIURI> proxiedUri;
+  
+  nsCOMPtr<nsIMutableArray> actualArray = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 i = 0; i < length; ++i) {
+    uri = do_QueryElementAt(aURIArray, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = SB_GetProxyForObject(hashHelper->mReleaseTarget,
+                              NS_GET_IID(nsIURI),
+                              uri,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(proxiedUri));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = actualArray->AppendElement(proxiedUri, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  hashHelper->mURIArray = actualArray;
 
   {
     nsAutoMonitor mon(hashHelper->mHashingCompleteMonitor);
@@ -3449,7 +3505,9 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
     TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsInternal() - Running ASYNC",
            this));
 
-    rv = hashHelper->GetHashes();
+    // dispatch the hashing task to the thread pool.
+    rv = mHashingThreadPool->Dispatch(hashHelper, 
+                                      nsIEventTarget::DISPATCH_NORMAL);
     NS_ENSURE_SUCCESS(rv, rv);
 
     return NS_OK;
@@ -3483,7 +3541,7 @@ nsresult
 sbLocalDatabaseLibrary::CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper)
 {
   TRACE(("sbLocalDatabaseLibrary[0x%.8x] - CompleteBatchCreateMediaItems(aHashHelper)", this));
-  //TRACE(("sbLocalDatabaseLibrary[0x%.8x] - CompleteBatchCreateMediaItems()", this));
+
   NS_ASSERTION((aHashHelper->mListener && !aHashHelper->mRetValArray) ||
                (!aHashHelper->mListener && aHashHelper->mRetValArray),
                "Only one of |aHashHelper->mListener| and |aHashHelper->mRetValArray| should be set!");
@@ -3493,7 +3551,7 @@ sbLocalDatabaseLibrary::CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper)
   nsTArray<nsCString> filteredHashes;
   nsCOMPtr<nsIArray> filteredPropertyArrayArray;
 
-  mHashHelpers.Remove(aHashHelper);
+  nsRefPtr<sbHashHelper> grip(aHashHelper);
   
   if (aHashHelper->mAllowDuplicates) {
     filteredArray = aHashHelper->mURIArray;
@@ -3516,11 +3574,11 @@ sbLocalDatabaseLibrary::CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper)
   rv = MakeStandardQuery(getter_AddRefs(query), PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsRefPtr<sbBatchCreateTimerCallback> callback;
+  nsRefPtr<sbBatchCreateCallback> callback;
   nsRefPtr<sbBatchCreateHelper> helper;
 
   if (runAsync) {
-    callback = new sbBatchCreateTimerCallback(this, aHashHelper->mListener, query);
+    callback = new sbBatchCreateCallback(this, aHashHelper->mListener, query);
     NS_ENSURE_TRUE(callback, NS_ERROR_OUT_OF_MEMORY);
 
     rv = callback->Init();
@@ -3546,25 +3604,13 @@ sbLocalDatabaseLibrary::CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper)
   NS_ENSURE_TRUE(dbResult == 0, NS_ERROR_FAILURE);
 
   if (runAsync) {
-    // Start polling the query for completion
-    nsCOMPtr<nsITimer> timer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Stick the timer into a member array so we keep it alive while it does
-    // its thing.  It never gets removed from this array until this library
-    // gets deleted.
-    PRBool success = mBatchCreateTimers.AppendObject(timer);
-    NS_ENSURE_TRUE(success, rv);
-
-    // This value 333 is magical.  I copied it from the old media scan code.  I
-    // assumed it was a number that was reached through experience tweaking the
-    // callback frequency.
-    rv = timer->InitWithCallback(callback, 333, nsITimer::TYPE_REPEATING_SLACK);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("InitWithCallback failed!");
-      success = mBatchCreateTimers.RemoveObject(timer);
-      NS_ASSERTION(success, "Failed to remove a failed timer... Armageddon?");
-      return rv;
+    PRBool complete = PR_FALSE;
+    while(!complete) {
+      // Wait momentarily.
+      PR_Sleep(PR_MillisecondsToInterval(25));
+      // Notify listeners.
+      rv = callback->Notify(&complete);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
   else {
@@ -3576,6 +3622,8 @@ sbLocalDatabaseLibrary::CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper)
     // Return the array of media items
     NS_ADDREF(*aHashHelper->mRetValArray = array);
   }
+
+  mHashHelpers.Remove(NS_ISUPPORTS_CAST(nsISupports *, aHashHelper));
 
   return NS_OK;
 }
@@ -4435,7 +4483,8 @@ sbLocalDatabaseLibrary::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 
 NS_IMPL_ISUPPORTS0(sbBatchCreateContext);
 
-NS_IMPL_ISUPPORTS1(sbHashHelper, nsIStreamListener);
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbHashHelper, 
+                              nsIRunnable);
 
 nsresult
 sbHashHelper::GetHashes()
@@ -4611,54 +4660,9 @@ sbHashHelper::GetHash(sbBatchCreateContext *aContext)
                             aContext->mSeekByte);
   SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
 
-  if (mListener) {
-    // we're async, so use the async inputPump
-    nsCOMPtr<nsIInputStreamPump> inputPump;
-    inputPump = do_CreateInstance(NS_INPUTSTREAMPUMP_CONTRACTID, &rv);
-    rv = inputPump->Init(bufferedInputStream,
-                         aContext->mSeekByte,
-                         aContext->mReadSize,
-                         2048,
-                         128,
-                         PR_TRUE);
-    SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
-
-    // kick off the read and get the callback in OnDataAvailable
-    rv = inputPump->AsyncRead( this, aContext );
-    SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
-  } else {
-    rv = ComputeHash(aContext, bufferedInputStream);
-    SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
-  }
-
-  return NS_OK;
-}
-
-/* nsIStreamListener */
-NS_IMETHODIMP
-sbHashHelper::OnDataAvailable(nsIRequest *request,
-                              nsISupports *ctxt,
-                              nsIInputStream *input,
-                              PRUint32 offset,
-                              PRUint32 count)
-{
-  TRACE(("sbHashHelper[0x%.8x] - OnDataAvailable()", this));
-
-  nsresult rv;
-
-  // must be called aContext to work in macros
-  nsRefPtr<sbBatchCreateContext> aContext((sbBatchCreateContext*) ctxt);
-  SB_ENSURE_TRUE_TRUNCATE_HASH(aContext);
-
-  // make double sure we have data
-  PRUint32 dataAvailable;
-  rv = input->Available(&dataAvailable);
+  rv = ComputeHash(aContext, bufferedInputStream);
   SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
 
-  rv = ComputeHash(aContext, input);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
-
-  TRACE(("sbHashHelper[0x%.8x] - OnDataAvailable() complete", this));
   return NS_OK;
 }
 
@@ -4673,17 +4677,22 @@ sbHashHelper::ComputeHash(sbBatchCreateContext *aContext,
   NS_ENSURE_SUCCESS(rv, rv);
   TRACE(("sbHashHelper[%.8x] - Computehash(%s)", this, spec.get()));
 
-  nsCOMPtr<nsICryptoHash> cryptoHash = 
-    do_CreateInstance("@mozilla.org/security/hash;1", &rv);
+  // Lazy init so that it is created on the correct thread.
+  if(!mCryptoHash) {
+    nsCOMPtr<nsICryptoHash> cryptoHash = 
+      do_CreateInstance("@mozilla.org/security/hash;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    cryptoHash.forget(getter_AddRefs(mCryptoHash));
+  }
+
+  rv = mCryptoHash->Init(nsICryptoHash::MD5);
   SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
 
-  rv = cryptoHash->Init(nsICryptoHash::MD5);
+  rv = mCryptoHash->UpdateFromStream(aInput, aContext->mReadSize);
   SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
 
-  rv = cryptoHash->UpdateFromStream(aInput, aContext->mReadSize);
-  SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
-
-  rv = cryptoHash->Finish(PR_TRUE, aContext->mHash);
+  rv = mCryptoHash->Finish(PR_TRUE, aContext->mHash);
   SB_ENSURE_SUCCESS_TRUNCATE_HASH2(rv);
 
   TRACE(("sbHashHelper[0x%.8x] - ComputeHash() complete", this));
@@ -4708,7 +4717,7 @@ sbHashHelper::AddHashInternal(nsACString &aHash)
 
   PRUint32 hashesLength = mHashArray->Length();
 
-  // If this is the last has we are adding, notify
+  // If this is the last hash we are adding, notify
   if ( listLength == hashesLength ) {
     {
       nsAutoMonitor mon(mHashingCompleteMonitor);
@@ -4719,61 +4728,20 @@ sbHashHelper::AddHashInternal(nsACString &aHash)
   return NS_OK;
 }
 
-
 NS_IMETHODIMP
-sbHashHelper::OnStopRequest(nsIRequest *request,
-                            nsISupports *ctxt,
-                            nsresult status)
+sbHashHelper::Run() 
 {
-  TRACE(("sbHashHelper[0x%.8x] - OnStopRequest()", this));
-
-  nsRefPtr<sbHashHelper> grip(this);
-
-  PRUint32 listLength = 0;
-  mURIArray->GetLength(&listLength);
-  PRUint32 hashesLength = mHashArray->Length();
-
-  ++mStops;
-
-  if (hashesLength == listLength) {
-    TRACE(("sbHashHelper[0x%.8x] - OnStopRequest() - &&&&&&&&&&& DONE &&&&&&&&&&&&& %d:%d:%d", this, mStops, listLength, hashesLength));
-    if (mListener) {
-      // We're async and have already returned from the BatchCreateCall
-      nsresult rv = mLibrary->CompleteBatchCreateMediaItems(this);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-    } else {
-      // We're synchronous and waiting on the completion var
-      {
-        nsAutoMonitor mon(mHashingCompleteMonitor);
-        mHashingComplete = PR_TRUE;
-        mon.Notify();
-      }
-    }
-  } else {
-    TRACE(("sbHashHelper[0x%.8x] - OnStopRequest() - ########### NOT DONE ############# %d:%d:%d", this, mStops, listLength, hashesLength));
-  }
-  return NS_OK;
+  return GetHashes();
 }
 
-NS_IMETHODIMP
-sbHashHelper::OnStartRequest(nsIRequest *request,
-                             nsISupports *ctxt)
-{
-  TRACE(("sbHashHelper[0x%.8x] - OnStartRequest()", this));
-  return NS_OK;
-}
+NS_IMPL_THREADSAFE_ISUPPORTS0(sbBatchCreateCallback);
 
-NS_IMPL_ISUPPORTS1(sbBatchCreateTimerCallback,
-                   nsITimerCallback);
-
-sbBatchCreateTimerCallback::sbBatchCreateTimerCallback(sbLocalDatabaseLibrary* aLibrary,
-                                                       sbIBatchCreateMediaItemsListener* aListener,
-                                                       sbIDatabaseQuery* aQuery) :
+sbBatchCreateCallback::sbBatchCreateCallback(sbLocalDatabaseLibrary* aLibrary,
+                                             sbIBatchCreateMediaItemsListener* aListener,
+                                             sbIDatabaseQuery* aQuery) :
   mLibrary(aLibrary),
   mListener(aListener),
   mQuery(aQuery),
-  mTimer(nsnull),
   mQueryCount(0)
 {
   NS_ASSERTION(aLibrary, "Null library!");
@@ -4782,7 +4750,7 @@ sbBatchCreateTimerCallback::sbBatchCreateTimerCallback(sbLocalDatabaseLibrary* a
 }
 
 nsresult
-sbBatchCreateTimerCallback::Init()
+sbBatchCreateCallback::Init()
 {
   PRBool success = mQueryToIndexMap.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -4794,8 +4762,8 @@ sbBatchCreateTimerCallback::Init()
 }
 
 nsresult
-sbBatchCreateTimerCallback::AddMapping(PRUint32 aQueryIndex,
-                                       PRUint32 aItemIndex)
+sbBatchCreateCallback::AddMapping(PRUint32 aQueryIndex,
+                                  PRUint32 aItemIndex)
 {
   PRBool success = mQueryToIndexMap.Put(aQueryIndex, aItemIndex);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -4804,79 +4772,23 @@ sbBatchCreateTimerCallback::AddMapping(PRUint32 aQueryIndex,
 }
 
 sbBatchCreateHelper*
-sbBatchCreateTimerCallback::BatchHelper()
+sbBatchCreateCallback::BatchHelper()
 {
   NS_ASSERTION(mBatchHelper, "This shouldn't be null, did you call Init?!");
   return mBatchHelper;
 }
 
 
-NS_IMETHODIMP
-sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
-{
-  TRACE(("sbBatchCreateTimerCallback[0x%.8x] - Notify()", this));
-  NS_ENSURE_ARG_POINTER(aTimer);
-
-  PRBool complete;
-  nsresult rv = NotifyInternal(aTimer, &complete);
-  if (NS_SUCCEEDED(rv) && !complete) {
-    TRACE(("sbBatchCreateTimerCallback[0x%.8x] - Notify() - NOT COMPLETE - EARLY RETURN", this));
-    // Everything looks fine, let the timer continue.
-    return NS_OK;
-  }
-
-  // The library won't shut down until all the async timers are cleared, so
-  // cancel this timer if we're done or if there was some kind of error.
-
-  aTimer->Cancel();
-  mLibrary->mBatchCreateTimers.RemoveObject(aTimer);
-
-  // Gather the media items we added and call the listener.
-  nsCOMPtr<nsIArray> array;
-  if (NS_SUCCEEDED(rv))
-    rv = mBatchHelper->NotifyAndGetItems(getter_AddRefs(array));
-
-  mListener->OnComplete(array, rv);
-
-  // Report the earlier error, if any.
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 nsresult
-sbBatchCreateTimerCallback::NotifyInternal(nsITimer* aTimer,
-                                           PRBool* _retval)
+sbBatchCreateCallback::Notify(PRBool* _retval)
 {
-  TRACE(("sbBatchCreateTimerCallback[0x%.8x] - NotifyInternal()", this));
+  TRACE(("sbBatchCreateCallback[0x%.8x] - Notify()", this));
   NS_ASSERTION(_retval, "Null retval!");
 
   nsresult rv;
 
-  // Use mTimer as a "runonce" flag so that we can cache the query count.
-  if (!mTimer) {
-    rv = mQuery->GetQueryCount(&mQueryCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mTimer = aTimer;
-  }
-#ifdef DEBUG
-  else {
-    // Make sure this is the timer we think it should be.
-    NS_ASSERTION(mTimer == aTimer, "Not the timer we saw last time!");
-
-    PRUint32 queryCount;
-    rv = mQuery->GetQueryCount(&queryCount);
-    if (NS_SUCCEEDED(rv)) {
-      // Don't allow the query count to change! If we hit this assertion then
-      // mQuery is being modified by somebody after they gave it to us!
-      NS_ASSERTION(queryCount == mQueryCount, "mQuery should not be changed!");
-    }
-    else {
-      NS_ERROR("Failed to get QueryCount!");
-    }
-  }
-#endif
+  rv = mQuery->GetQueryCount(&mQueryCount);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Exit early if there's nothing to do.
   if (!mQueryCount) {
@@ -4896,6 +4808,15 @@ sbBatchCreateTimerCallback::NotifyInternal(nsITimer* aTimer,
   currentQuery++;
   NS_ASSERTION(currentQuery <= mQueryCount, "Invalid position!");
 
+  nsCOMPtr<nsIThread> mainThread = do_GetMainThread();
+  nsCOMPtr<sbIBatchCreateMediaItemsListener> proxiedListener;
+  rv = SB_GetProxyForObject(mainThread, 
+                            NS_GET_IID(sbIBatchCreateMediaItemsListener),
+                            mListener,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedListener));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (mQueryCount != currentQuery &&
       isExecuting) {
     // Notify listener of progress.
@@ -4904,21 +4825,37 @@ sbBatchCreateTimerCallback::NotifyInternal(nsITimer* aTimer,
     NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
 
     TRACE(("sbBatchCreateTimerCallback[0x%.8x] - NotifyInternal() - calling OnProgress(%d)", this, itemIndex));
-    mListener->OnProgress(itemIndex);
+
+    proxiedListener->OnProgress(itemIndex);
+
+    TRACE(("sbBatchCreateTimerCallback[0x%.8x] - Notify() - NOT COMPLETE - EARLY RETURN", this));
 
     *_retval = PR_FALSE;
+
     return NS_OK;
   }
 
+  // Gather the media items we added and call the listener.
+  nsCOMPtr<nsIArray> array;
+  rv = mBatchHelper->NotifyAndGetItems(getter_AddRefs(array));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  proxiedListener->OnComplete(array, rv);
+
+  // Report the earlier error, if any.
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Otherwise, we are done.
   *_retval = PR_TRUE;
+
   return NS_OK;
 }
 
-NS_IMPL_ADDREF(sbBatchCreateHelper)
-NS_IMPL_RELEASE(sbBatchCreateHelper)
+NS_IMPL_THREADSAFE_ADDREF(sbBatchCreateHelper)
+NS_IMPL_THREADSAFE_RELEASE(sbBatchCreateHelper)
 
 sbBatchCreateHelper::sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary,
-                                         sbBatchCreateTimerCallback* aCallback) :
+                                         sbBatchCreateCallback* aCallback) :
   mLibrary(aLibrary),
   mCallback(aCallback),
   mLength(0)
@@ -5075,7 +5012,7 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
 
   nsresult rv;
   nsCOMPtr<nsIMutableArray> array =
-    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 length = mGuids.Length();

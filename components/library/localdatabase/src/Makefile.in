@@ -90,6 +90,7 @@ CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(topsrcdir)/components/library/base/src/static \
                $(topsrcdir)/components/library/localdatabase/src \
                $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/moz/threads/src \
                $(topsrcdir)/components/property/src \
                $(topsrcdir)/components/sqlbuilder/src \
                $(NULL)
@@ -115,6 +116,7 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
   $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
   $(SONGBIRD_OBJDIR)/components/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \
   $(NULL)
 

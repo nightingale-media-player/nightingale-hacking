@@ -33,6 +33,7 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include "sbLocalDatabaseMediaListBase.h"
+#include <sbProxiedComponentManager.h>
 
 #include <prmon.h>
 #include <nsAutoLock.h>
@@ -41,9 +42,13 @@
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
+#include <nsICryptoHash.h>
 #include <nsInterfaceHashtable.h>
+#include <nsIRunnable.h>
 #include <nsIStreamListener.h>
 #include <nsITimer.h>
+#include <nsIThread.h>
+#include <nsIThreadPool.h>
 #include <nsIURI.h>
 #include <nsStringGlue.h>
 #include <sbIMediaListFactory.h>
@@ -133,7 +138,7 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
   friend class sbLibraryInsertingEnumerationListener;
   friend class sbLibraryRemovingEnumerationListener;
   friend class sbLocalDatabasePropertyCache;
-  friend class sbBatchCreateTimerCallback;
+  friend class sbBatchCreateCallback;
   friend class sbBatchCreateHelper;
   friend class sbHashHelper;
 
@@ -379,8 +384,11 @@ private:
                          sbILocalDatabaseLibraryCopyListener> mCopyListeners;
 
   // Hashtable that holds all the hash helpers.
-  nsInterfaceHashtableMT<nsISupportsHashKey,
-                         nsIStreamListener> mHashHelpers;
+  nsDataHashtableMT<nsISupportsHashKey,
+                    nsRefPtr<sbHashHelper> > mHashHelpers;
+
+  // Thread pool for running the hashing.
+  nsCOMPtr<nsIThreadPool> mHashingThreadPool;
 };
 
 /**
@@ -470,14 +478,13 @@ private:
 
 };
 
-class sbHashHelper : public nsIStreamListener
+class sbHashHelper : public nsIRunnable
 {
 friend class sbLocalDatabaseLibrary;
 
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_NSISTREAMLISTENER
-  NS_DECL_NSIREQUESTOBSERVER
+  NS_DECL_NSIRUNNABLE
 
   sbHashHelper()
   : mLibrary(nsnull),
@@ -527,9 +534,12 @@ private:
   nsTArray<nsCString> *mHashArray;
   nsIArray **mRetValArray;
 
+  nsCOMPtr<nsICryptoHash> mCryptoHash;
+
   PRBool mAllowDuplicates;
   nsCOMPtr<nsIArray> mPropertyArrayArray;
   nsCOMPtr<sbIBatchCreateMediaItemsListener> mListener;
+  nsCOMPtr<nsIThread> mReleaseTarget;
 
   PRMonitor *mHashingCompleteMonitor;
   PRBool mHashingComplete;
@@ -539,25 +549,26 @@ private:
 // Forward declare
 class sbBatchCreateHelper;
 
-class sbBatchCreateTimerCallback : public nsITimerCallback
+class sbBatchCreateCallback : public nsISupports
 {
 friend class sbLocalDatabaseLibrary;
 
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_NSITIMERCALLBACK
 
-  sbBatchCreateTimerCallback(sbLocalDatabaseLibrary* aLibrary,
-                             sbIBatchCreateMediaItemsListener* aListener,
-                             sbIDatabaseQuery* aQuery);
+  sbBatchCreateCallback(sbLocalDatabaseLibrary* aLibrary,
+                        sbIBatchCreateMediaItemsListener* aListener,
+                        sbIDatabaseQuery* aQuery);
 
   nsresult Init();
+
   nsresult AddMapping(PRUint32 aQueryIndex,
                       PRUint32 aItemIndex);
-  nsresult NotifyInternal(nsITimer* aTimer,
-                          PRBool* _retval);
-  sbBatchCreateHelper* BatchHelper();
 
+  nsresult Notify(PRBool* _retval);
+
+  sbBatchCreateHelper* BatchHelper();
+  
 private:
   sbLocalDatabaseLibrary* mLibrary;
   nsCOMPtr<sbIBatchCreateMediaItemsListener> mListener;
@@ -565,8 +576,8 @@ private:
   nsCOMPtr<sbIDatabaseQuery> mQuery;
   nsDataHashtable<nsUint32HashKey, PRUint32> mQueryToIndexMap;
 
-  nsITimer* mTimer;
   PRUint32 mQueryCount;
+
 };
 
 class sbBatchCreateHelper
@@ -576,7 +587,7 @@ public:
   NS_IMETHOD_(nsrefcnt) Release(void);
 
   sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary,
-                      sbBatchCreateTimerCallback* aCallback = nsnull);
+                      sbBatchCreateCallback* aCallback = nsnull);
 
   nsresult InitQuery(sbIDatabaseQuery* aQuery,
                      nsIArray* aURIArray,
@@ -592,7 +603,7 @@ private:
   // When this is used for an async batch, the helper will have an owning
   // reference to the callback
   sbLocalDatabaseLibrary*     mLibrary;
-  sbBatchCreateTimerCallback* mCallback;
+  sbBatchCreateCallback*      mCallback;
   nsCOMPtr<nsIArray>  mURIArray;
   nsTArray<nsString>  mGuids;
   nsTArray<nsCString> mHashes;
