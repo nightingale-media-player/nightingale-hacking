@@ -1,10 +1,10 @@
 Index: configure.in
 ===================================================================
 RCS file: /cvsroot/mozilla/configure.in,v
-retrieving revision 1.1967
-diff -u -8 -r1.1967 configure.in
---- configure.in	20 Mar 2008 19:17:09 -0000	1.1967
-+++ configure.in	6 May 2008 19:02:32 -0000
+retrieving revision 1.1992
+diff -u -8 -r1.1992 configure.in
+--- configure.in	5 May 2008 21:08:14 -0000	1.1992
++++ configure.in	14 May 2008 23:03:59 -0000
 @@ -37,16 +37,17 @@
  dnl   Benjamin Smedberg <benjamin@smedbergs.us>
  dnl   Howard Chu <hyc@symas.com>
@@ -23,7 +23,7 @@ diff -u -8 -r1.1967 configure.in
  dnl of those above. If you wish to allow use of your version of this file only
  dnl under the terms of either the GPL or the LGPL, and not to allow others to
  dnl use your version of this file under the terms of the MPL, indicate your
-@@ -6195,41 +6196,54 @@
+@@ -6315,29 +6316,38 @@
        WIN32_CUSTOM_CRT_DIR=`cd "$WIN32_CUSTOM_CRT_DIR" && pwd`
        _WIN_UNIX_CRT_PATH="$WIN32_CUSTOM_CRT_DIR"
      else
@@ -52,9 +52,9 @@ diff -u -8 -r1.1967 configure.in
      dnl Also pass this to NSPR/NSS
 -    DLLFLAGS="$DLLFLAGS -MANIFEST:NO"
 +    if test -z $MOZ_DEBUG; then
-+      DLLFLAGS="$DLLFLAGS -MANIFEST:NO -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd -DEFAULTLIB:mozcrt19"
++        DLLFLAGS="$DLLFLAGS -MANIFEST:NO -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd -DEFAULTLIB:mozcrt19"
 +    else
-+      DLLFLAGS="$DLLFLAGS -MANIFEST:NO -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd -NODEFAULTLIB:libcmt -NODEFAULTLIB:libcpmt -DEFAULTLIB:mozcrt19d"
++        DLLFLAGS="$DLLFLAGS -MANIFEST:NO -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd -NODEFAULTLIB:libcmt -NODEFAULTLIB:libcpmt -DEFAULTLIB:mozcrt19d"
 +    fi
      export DLLFLAGS
      ;;
@@ -62,6 +62,13 @@ diff -u -8 -r1.1967 configure.in
      AC_MSG_ERROR([--enable-jemalloc not supported on ${target}])
      ;;
    esac
+ 
+   AC_ARG_WITH([valgrind],
+@@ -6346,18 +6356,22 @@
+   AC_CHECK_HEADER([valgrind/valgrind.h], [], [enable_valgrind="no"])
+   if test "x$enable_valgrind" = "xyes" ; then
+     AC_DEFINE(MOZ_VALGRIND)
+   fi
  fi
  AC_SUBST(MOZ_MEMORY)
  AC_SUBST(WIN32_CRT_SRC_DIR)
@@ -84,11 +91,11 @@ diff -u -8 -r1.1967 configure.in
 Index: config/autoconf.mk.in
 ===================================================================
 RCS file: /cvsroot/mozilla/config/autoconf.mk.in,v
-retrieving revision 3.458
-diff -u -8 -r3.458 autoconf.mk.in
---- config/autoconf.mk.in	18 Mar 2008 17:37:00 -0000	3.458
-+++ config/autoconf.mk.in	6 May 2008 19:02:40 -0000
-@@ -579,21 +579,30 @@
+retrieving revision 3.462
+diff -u -8 -r3.462 autoconf.mk.in
+--- config/autoconf.mk.in	5 May 2008 21:08:14 -0000	3.462
++++ config/autoconf.mk.in	14 May 2008 23:03:59 -0000
+@@ -583,21 +583,30 @@
  MOZ_QUANTIFY	= @MOZ_QUANTIFY@
  MSMANIFEST_TOOL = @MSMANIFEST_TOOL@
  WIN32_REDIST_DIR = @WIN32_REDIST_DIR@
@@ -128,8 +135,8 @@ RCS file: /cvsroot/mozilla/config/config.mk,v
 retrieving revision 3.389
 diff -u -8 -r3.389 config.mk
 --- config/config.mk	6 Mar 2008 11:57:22 -0000	3.389
-+++ config/config.mk	6 May 2008 19:02:40 -0000
-@@ -230,16 +230,35 @@
++++ config/config.mk	14 May 2008 23:03:59 -0000
+@@ -230,16 +230,33 @@
  # append debug flags 
  # (these might have been above when processing MOZ_DBGRINFO_MODULES)
  OS_CFLAGS += $(_DEBUG_CFLAGS)
@@ -149,10 +156,8 @@ diff -u -8 -r3.389 config.mk
 +
 +ifeq ($(MOZ_DEBUG),1)
 +OS_LDFLAGS += $(MOZ_MEMORY_LDFLAGS) -DEFAULTLIB:mozcrt19d 
-+#-DEFAULTLIB:libcmtd -DEFAULTLIB:libcpmtd
 +else
 +OS_LDFLAGS += $(MOZ_MEMORY_LDFLAGS) -DEFAULTLIB:mozcrt19
-+##OS_LDFLAGS += $(MOZ_MEMORY_LDFLAGS) -DEFAULTLIB:mozcrt19 -DEFAULTLIB:libcmt -DEFAULTLIB:libcpmt
 +endif
 +endif
 +endif # MOZ_MEMORY
@@ -168,10 +173,10 @@ diff -u -8 -r3.389 config.mk
 Index: memory/jemalloc/Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/memory/jemalloc/Makefile.in,v
-retrieving revision 1.7
-diff -u -8 -r1.7 Makefile.in
---- memory/jemalloc/Makefile.in	15 Mar 2008 00:51:38 -0000	1.7
-+++ memory/jemalloc/Makefile.in	6 May 2008 19:23:47 -0000
+retrieving revision 1.9
+diff -u -8 -r1.9 Makefile.in
+--- memory/jemalloc/Makefile.in	8 May 2008 09:20:45 -0000	1.9
++++ memory/jemalloc/Makefile.in	14 May 2008 23:03:59 -0000
 @@ -16,16 +16,17 @@
  #
  # The Initial Developer of the Original Code is
@@ -293,14 +298,14 @@ diff -u -8 -r1.7 Makefile.in
  else
  
  MODULE_OPTIMIZE_FLAGS = -O2
- LIBRARY_NAME	= jemalloc
+ ifeq ($(OS_ARCH),SunOS)
 Index: memory/jemalloc/build-crt.py
 ===================================================================
 RCS file: /cvsroot/mozilla/memory/jemalloc/build-crt.py,v
 retrieving revision 1.1
 diff -u -8 -r1.1 build-crt.py
 --- memory/jemalloc/build-crt.py	4 Feb 2008 15:17:11 -0000	1.1
-+++ memory/jemalloc/build-crt.py	6 May 2008 19:23:47 -0000
++++ memory/jemalloc/build-crt.py	14 May 2008 23:03:59 -0000
 @@ -1,8 +1,16 @@
  #!/usr/bin/env python
  
@@ -325,8 +330,8 @@ RCS file: /cvsroot/mozilla/memory/jemalloc/crtsp1.diff,v
 retrieving revision 1.8
 diff -u -8 -r1.8 crtsp1.diff
 --- memory/jemalloc/crtsp1.diff	5 Mar 2008 19:09:52 -0000	1.8
-+++ memory/jemalloc/crtsp1.diff	6 May 2008 19:23:52 -0000
-@@ -1,197 +1,690 @@
++++ memory/jemalloc/crtsp1.diff	14 May 2008 23:03:59 -0000
+@@ -1,197 +1,716 @@
 -# The Microsoft C Runtime source code to which this document refers is available
 -# directly from Microsoft Corporation, under a separate license.
 -# Please ensure that if you are using that source code, you have appropriate
@@ -410,15 +415,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +924a
 +#ifndef MOZ_MEMORY
- .
--
--diff -re crt/src/crt0dat.c crt-sp1/src/crt0dat.c
--789d
--778d
--diff -re crt/src/crtexe.c crt-sp1/src/crtexe.c
--333,335d
--diff -re crt/src/crtheap.c crt-sp1/src/crtheap.c
--61c
++.
 +922a
 +#endif /* MOZ_MEMORY */ 
 +.
@@ -447,29 +444,58 @@ diff -u -8 -r1.8 crtsp1.diff
 +471a
 +#ifndef MOZ_MEMORY
 +.
-+340a
-+
++339a
 +#ifdef MOZ_MEMORY
-+#define _CrtSetDebugFillThreshold(t)        ((size_t)0)
-+#define _CrtDbgBreak()                      ((void)0)
-+#define _CrtSetDbgFlag(f)                   ((int)0)
-+#define _CrtDumpMemoryLeaks()               ((int)0)
-+#define _CrtSetDumpClient(f)                ((_CRT_DUMP_CLIENT)0)
-+#define _CrtGetDumpClient()                 ((_CRT_DUMP_CLIENT)0)
-+#define _CrtSetCheckCount(f)                ((int)0)
-+#define _CrtGetCheckCount()                 ((int)0)
-+#define _CrtMemDumpStatistics(s)            ((void)0)
-+#define _CrtDumpMemoryLeaks()               ((int)0)
-+// Defined in dbgint.h, but tc-Int doesn't include that, so redef here...
-+#define _free_base		free
-+#define _malloc_base		malloc
++// Defined in dbgint.h, but tc-Int doesn't include that header
++#define _free_base free
++#define _malloc_base malloc
 +#endif
++.
++329c
++#endif /* not defined _DEBUG */
 +
++#ifdef _DEBUG
++.
++322a
++#endif
++.
++318a
++#if (!defined(MOZ_MEMORY) && !defined(MOZ_DEBUG))
++.
++314a
++#endif
++.
++309a
++#if (!defined(MOZ_MEMORY) && !defined(MOZ_DEBUG))
++.
++308a
++#endif
++.
++302a
++#if (!defined(MOZ_MEMORY) && !defined(MOZ_DEBUG))
++.
++300a
++#endif /* MOZ_DEBUG */
++
++.
++204a
++#ifndef MOZ_DEBUG
++.
++191c
++#if (!(defined(_DEBUG)) || defined(MOZ_MEMORY))
 +.
 +diff -re crt/src/crtexe.c crtsp1/src/crtexe.c
 +333a
 +#endif
-+.
+ .
+-
+-diff -re crt/src/crt0dat.c crt-sp1/src/crt0dat.c
+-789d
+-778d
+-diff -re crt/src/crtexe.c crt-sp1/src/crtexe.c
+-333,335d
+-diff -re crt/src/crtheap.c crt-sp1/src/crtheap.c
+-61c
 +332a
 +#ifndef MOZ_MEMORY
 +.
@@ -527,12 +553,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +340a
 +#endif
- .
--359d
--340d
--310,311d
--300d
--287c
++.
 +339a
 +#ifndef MOZ_MEMORY
 +.
@@ -547,7 +568,12 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +299a
 +#ifndef MOZ_MEMORY
-+.
+ .
+-359d
+-340d
+-310,311d
+-300d
+-287c
 +287a
 +#endif
 +.
@@ -566,8 +592,15 @@ diff -u -8 -r1.8 crtsp1.diff
  extern BOOL malloc_init_hard(void);
  extern void malloc_shutdown(void);
 +#endif
-+
-+.
+ 
+ .
+-diff -re crt/src/dllcrt0.c crt-sp1/src/dllcrt0.c
+-236,237d
+-183d
+-173d
+-158d
+-153,155d
+-diff -re crt/src/intel/_sample_.def crt-sp1/src/intel/_sample_.def
 +diff -re crt/src/dbgint.h crtsp1/src/dbgint.h
 +208a
 +#endif
@@ -585,25 +618,30 @@ diff -u -8 -r1.8 crtsp1.diff
 +#endif /* MOZ_MEMORY */
 +.
 +137a
-+#ifdef MOZ_MEMORY
-+#ifdef __cplusplus
- 
-+#define _new_crt        new
-+
-+#endif  /* __cplusplus */
-+
-+#define _malloc_crt(s)          malloc(s)
-+#define _calloc_crt(c, s)       calloc(c, s)
-+#define _realloc_crt(p, s)      realloc(p, s)
-+#define _recalloc_crt(p, c, s)  _recalloc(p, c, s)
-+#define _expand_crt(p, s)       _expand(p, s)
-+#define _free_crt(p)            free(p)
-+#define _msize_crt(p)           _msize(p)
-+#define _dupenv_s_crt(ps1, size, s2)    _dupenv_s(ps1, size, s2)
-+#define _wdupenv_s_crt(ps1, size, s2)   _wdupenv_s(ps1, size, s2)
-+#define _malloc_base                    malloc
-+#define _free_base                    free
-+#else /* MOZ_MEMORY not defined */
++#ifndef MOZ_MEMORY
++.
++126,128c
++#ifdef _DEBUG
++.
++124a
++#endif /* mozilla memory and not debug */
++#endif /* not debug and jemalloc */
++.
++108a
++#if (!defined(MOZ_MEMORY) || (defined(MOZ_MEMORY) && !defined(MOZ_DEBUG)))
++.
++107a
++#endif /* mozilla memory and not debug */
++.
++100a
++#if (defined(MOZ_MEMORY) && !defined(_DEBUG))
++.
++88c
++#if defined (_SYSCRT) || defined (MRTDLL) || defined (_M_CEE_PURE) || defined(MOZ_MEMORY)
++.
++67,68c
++#if (!(defined(_DEBUG)) || defined(MOZ_MEMORY))
++/* Following comment is misleading; debug is off *or* we're jemalloc. */
 +.
 +diff -re crt/src/delete.cpp crtsp1/src/delete.cpp
 +11c
@@ -630,14 +668,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +158a
 +#endif
- .
--diff -re crt/src/dllcrt0.c crt-sp1/src/dllcrt0.c
--236,237d
--183d
--173d
--158d
--153,155d
--diff -re crt/src/intel/_sample_.def crt-sp1/src/intel/_sample_.def
++.
 +157a
 +#ifndef MOZ_MEMORY
 +.
@@ -688,10 +719,16 @@ diff -u -8 -r1.8 crtsp1.diff
 +732,733d
 +678a
 +    posix_memalign
-+.
+ .
+-403a
+-#if 0
 +652a
 +    memalign
-+.
+ .
+-diff -re crt/src/makefile crt-sp1/src/makefile
+-1745a
+-$(DEFFILE_DIR)\$(RETAIL_LIB_NAME).def : $(DEFFILE_DIR)\_sample_.def
+-	copy $** $@
 +508c
 +    malloc_usable_size
 +.
@@ -708,16 +745,10 @@ diff -u -8 -r1.8 crtsp1.diff
 +diff -re crt/src/makefile crtsp1/src/makefile
 +1237a
 +!endif
- .
--403a
--#if 0
++.
 +1236a
 +!if "$(MOZ_MEMORY)"!="1"
- .
--diff -re crt/src/makefile crt-sp1/src/makefile
--1745a
--$(DEFFILE_DIR)\$(RETAIL_LIB_NAME).def : $(DEFFILE_DIR)\_sample_.def
--	copy $** $@
++.
 +1231,1232c
 +!endif
 +
@@ -860,7 +891,13 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +333a
 +!if "$(MOZ_MEMORY)" != "1"
-+.
+ .
+-334,335d
+-329,330d
+-327d
+-323d
+-320d
+-diff -re crt/src/makefile.sub crt-sp1/src/makefile.sub
 +330a
 +!endif
 +        $(OBJDIR)\freea.obj    \
@@ -882,13 +919,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +320a
 +!endif
- .
--334,335d
--329,330d
--327d
--323d
--320d
--diff -re crt/src/makefile.sub crt-sp1/src/makefile.sub
++.
 +319a
 +!if "$(MOZ_MEMORY)" != "1"
 +.
@@ -957,12 +988,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +37c
 +            VALUE "OriginalFilename", "MOZCRT19.DLL"
- .
--diff -re crt/src/new.cpp crt-sp1/src/new.cpp
--60d
--52,55d
--37,38c
--        break;
++.
 +33c
 +            VALUE "InternalName", "MOZCRT19.DLL"
 +.
@@ -982,7 +1008,12 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +39c
 +            VALUE "OriginalFilename", "MOZCRT19_M.DLL"
-+.
+ .
+-diff -re crt/src/new.cpp crt-sp1/src/new.cpp
+-60d
+-52,55d
+-37,38c
+-        break;
 +37c
 +            VALUE "OriginalFilename", "MOZCRT19D_M.DLL"
 +.
@@ -1126,11 +1157,11 @@ diff -u -8 -r1.8 crtsp1.diff
 Index: memory/jemalloc/jemalloc.c
 ===================================================================
 RCS file: /cvsroot/mozilla/memory/jemalloc/jemalloc.c,v
-retrieving revision 1.9
-diff -u -8 -r1.9 jemalloc.c
---- memory/jemalloc/jemalloc.c	15 Mar 2008 03:51:44 -0000	1.9
-+++ memory/jemalloc/jemalloc.c	6 May 2008 19:23:55 -0000
-@@ -6129,18 +6129,35 @@
+retrieving revision 1.14
+diff -u -8 -r1.14 jemalloc.c
+--- memory/jemalloc/jemalloc.c	8 May 2008 05:36:40 -0000	1.14
++++ memory/jemalloc/jemalloc.c	14 May 2008 23:03:59 -0000
+@@ -6075,18 +6075,35 @@
  }
  
  size_t
@@ -1169,11 +1200,11 @@ diff -u -8 -r1.9 jemalloc.c
 Index: toolkit/xre/nsAppRunner.cpp
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/xre/nsAppRunner.cpp,v
-retrieving revision 1.210
-diff -u -8 -r1.210 nsAppRunner.cpp
---- toolkit/xre/nsAppRunner.cpp	5 Mar 2008 19:23:44 -0000	1.210
-+++ toolkit/xre/nsAppRunner.cpp	6 May 2008 03:10:44 -0000
-@@ -2415,17 +2415,17 @@
+retrieving revision 1.211
+diff -u -8 -r1.211 nsAppRunner.cpp
+--- toolkit/xre/nsAppRunner.cpp	9 Apr 2008 06:42:49 -0000	1.211
++++ toolkit/xre/nsAppRunner.cpp	14 May 2008 23:03:59 -0000
+@@ -2431,17 +2409,17 @@
    // application has crashed" dialog box.  This is mainly useful for
    // automated testing environments, e.g. tinderbox, where there's no need
    // for a dozen of the dialog boxes to litter the console
