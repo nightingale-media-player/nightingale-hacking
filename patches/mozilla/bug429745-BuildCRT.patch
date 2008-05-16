@@ -330,7 +330,7 @@ RCS file: /cvsroot/mozilla/memory/jemalloc/crtsp1.diff,v
 retrieving revision 1.8
 diff -u -8 -r1.8 crtsp1.diff
 --- memory/jemalloc/crtsp1.diff	5 Mar 2008 19:09:52 -0000	1.8
-+++ memory/jemalloc/crtsp1.diff	14 May 2008 23:03:59 -0000
++++ memory/jemalloc/crtsp1.diff	16 May 2008 07:18:14 -0000
 @@ -1,197 +1,716 @@
 -# The Microsoft C Runtime source code to which this document refers is available
 -# directly from Microsoft Corporation, under a separate license.
@@ -345,6 +345,8 @@ diff -u -8 -r1.8 crtsp1.diff
 -	 * this used to happen in _mtinit, but we need it before malloc
 -	 */
 -	_init_pointers();       /* initialize global function pointers */
+-
+-        if ( malloc_init_hard() )           /* initialize heap */
 +diff -re crt/src/crt0.c crtsp1/src/crt0.c
 +273a
 +#endif
@@ -355,13 +357,14 @@ diff -u -8 -r1.8 crtsp1.diff
 +        * this used to happen in _mtinit, but we need it before malloc
 +        */
 +        _init_pointers();       /* initialize global function pointers */
- 
-         if ( malloc_init_hard() )           /* initialize heap */
++
++        if ( malloc_init_hard() )           /* initialize heap */
 +#else
  .
  101a
+-extern BOOL malloc_init_hard(void);
 +#ifdef MOZ_MEMORY
- extern BOOL malloc_init_hard(void);
++extern BOOL malloc_init_hard(void);
 +#endif
  .
 -diff -re crt/src/_sample_.rc crt-sp1/src/_sample_.rc
@@ -430,7 +433,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +625a
 +#if (defined(_CRTDBG_MAP_ALLOC) && !defined(MOZ_MEMORY))
-+.
+ .
 +624d
 +616a
 +#endif
@@ -460,35 +463,23 @@ diff -u -8 -r1.8 crtsp1.diff
 +#endif
 +.
 +318a
-+#if (!defined(MOZ_MEMORY) && !defined(MOZ_DEBUG))
++#if (!defined(MOZ_MEMORY) && !defined(MOZ_MEMORY_DEBUG))
 +.
 +314a
 +#endif
 +.
 +309a
-+#if (!defined(MOZ_MEMORY) && !defined(MOZ_DEBUG))
++#if (!defined(MOZ_MEMORY) && !defined(MOZ_MEMORY_DEBUG))
 +.
 +308a
 +#endif
 +.
 +302a
-+#if (!defined(MOZ_MEMORY) && !defined(MOZ_DEBUG))
++#if (!defined(MOZ_MEMORY) && !defined(MOZ_MEMORY_DEBUG))
 +.
 +300a
-+#endif /* MOZ_DEBUG */
-+
-+.
-+204a
-+#ifndef MOZ_DEBUG
-+.
-+191c
-+#if (!(defined(_DEBUG)) || defined(MOZ_MEMORY))
-+.
-+diff -re crt/src/crtexe.c crtsp1/src/crtexe.c
-+333a
-+#endif
- .
--
++#endif /* MOZ_MEMORY_DEBUG */
+ 
 -diff -re crt/src/crt0dat.c crt-sp1/src/crt0dat.c
 -789d
 -778d
@@ -496,6 +487,23 @@ diff -u -8 -r1.8 crtsp1.diff
 -333,335d
 -diff -re crt/src/crtheap.c crt-sp1/src/crtheap.c
 -61c
+-    pv = calloc(count, size);
+-.
+-58,59d
+-diff -re crt/src/crtlib.c crt-sp1/src/crtlib.c
+-779,786d
+-416d
++.
++204a
++#ifndef MOZ_MEMORY_DEBUG
++.
++191c
++#if (!(defined(_DEBUG)) || defined(MOZ_MEMORY))
++.
++diff -re crt/src/crtexe.c crtsp1/src/crtexe.c
++333a
++#endif
++.
 +332a
 +#ifndef MOZ_MEMORY
 +.
@@ -505,7 +513,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +60a
 +#ifdef MOZ_MEMORY
-     pv = calloc(count, size);
++    pv = calloc(count, size);
 +#else
 +.
 +58a
@@ -526,11 +534,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +415a
 +#ifndef MOZ_MEMORY
- .
--58,59d
--diff -re crt/src/crtlib.c crt-sp1/src/crtlib.c
--779,786d
--416d
++.
  400a
 -		malloc_shutdown();
 -
@@ -574,26 +578,30 @@ diff -u -8 -r1.8 crtsp1.diff
 -310,311d
 -300d
 -287c
+-            /*
+-             * this used to happen in _mtinit, but we need it before malloc
+-             */
+-            _init_pointers();       /* initialize global function pointers */
+-
+-            if ( malloc_init_hard() )   /* initialize heap */
 +287a
 +#endif
 +.
 +286a
 +#ifdef MOZ_MEMORY
-             /*
-              * this used to happen in _mtinit, but we need it before malloc
-              */
-             _init_pointers();       /* initialize global function pointers */
- 
-             if ( malloc_init_hard() )   /* initialize heap */
++            /*
++             * this used to happen in _mtinit, but we need it before malloc
++             */
++            _init_pointers();       /* initialize global function pointers */
++
++            if ( malloc_init_hard() )   /* initialize heap */
 +#else
  .
  43a
-+#ifdef MOZ_MEMORY
- extern BOOL malloc_init_hard(void);
- extern void malloc_shutdown(void);
-+#endif
- 
- .
+-extern BOOL malloc_init_hard(void);
+-extern void malloc_shutdown(void);
+-
+-.
 -diff -re crt/src/dllcrt0.c crt-sp1/src/dllcrt0.c
 -236,237d
 -183d
@@ -601,6 +609,12 @@ diff -u -8 -r1.8 crtsp1.diff
 -158d
 -153,155d
 -diff -re crt/src/intel/_sample_.def crt-sp1/src/intel/_sample_.def
++#ifdef MOZ_MEMORY
++extern BOOL malloc_init_hard(void);
++extern void malloc_shutdown(void);
++#endif
++
++.
 +diff -re crt/src/dbgint.h crtsp1/src/dbgint.h
 +208a
 +#endif
@@ -628,7 +642,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +#endif /* not debug and jemalloc */
 +.
 +108a
-+#if (!defined(MOZ_MEMORY) || (defined(MOZ_MEMORY) && !defined(MOZ_DEBUG)))
++#if (!defined(MOZ_MEMORY) || (defined(MOZ_MEMORY) && !defined(MOZ_MEMORY_DEBUG)))
 +.
 +107a
 +#endif /* mozilla memory and not debug */
@@ -694,13 +708,16 @@ diff -u -8 -r1.8 crtsp1.diff
  1208d
  723,724d
  669a
-     posix_memalign
+-    posix_memalign
++    posix_memalign
  .
  643a
-     memalign
+-    memalign
++    memalign
  .
  500a
-     malloc_usable_size
+-    malloc_usable_size
++    malloc_usable_size
  .
  336,341d
  324d
@@ -708,7 +725,8 @@ diff -u -8 -r1.8 crtsp1.diff
  81d
 +15,16d
  9c
- LIBRARY MOZCRT19
+-LIBRARY MOZCRT19
++LIBRARY MOZCRT19
  .
 -diff -re crt/src/internal.h crt-sp1/src/internal.h
 -407a
@@ -719,16 +737,10 @@ diff -u -8 -r1.8 crtsp1.diff
 +732,733d
 +678a
 +    posix_memalign
- .
--403a
--#if 0
++.
 +652a
 +    memalign
- .
--diff -re crt/src/makefile crt-sp1/src/makefile
--1745a
--$(DEFFILE_DIR)\$(RETAIL_LIB_NAME).def : $(DEFFILE_DIR)\_sample_.def
--	copy $** $@
++.
 +508c
 +    malloc_usable_size
 +.
@@ -745,14 +757,20 @@ diff -u -8 -r1.8 crtsp1.diff
 +diff -re crt/src/makefile crtsp1/src/makefile
 +1237a
 +!endif
-+.
+ .
+-403a
+-#if 0
 +1236a
 +!if "$(MOZ_MEMORY)"!="1"
 +.
 +1231,1232c
 +!endif
 +
-+.
+ .
+-diff -re crt/src/makefile crt-sp1/src/makefile
+-1745a
+-$(DEFFILE_DIR)\$(RETAIL_LIB_NAME).def : $(DEFFILE_DIR)\_sample_.def
+-	copy $** $@
 +1227a
 +        $(OBJDIR_DLL_RAW)\errmode.obj \
 +        $(OBJDIR_DLL_RAW)\matherr.obj
@@ -769,28 +787,33 @@ diff -u -8 -r1.8 crtsp1.diff
  .
 -1228,1230d
  754c
- dll_ :: $(OBJROOT) $(OBJCPUDIR) $(OBJDIR_DLL) $(OBJDIR_DLL)\$(PURE_OBJ_DIR) \
+-dll_ :: $(OBJROOT) $(OBJCPUDIR) $(OBJDIR_DLL) $(OBJDIR_DLL)\$(PURE_OBJ_DIR) \
 -   	$(OBJDIR_DLL)\$(CPP_OBJ_DIR) \
 -   	$(RELDIR_CPU) $(PDBDIR_CPU_DLL) $(MAKE_DIRS_DLL)
++dll_ :: $(OBJROOT) $(OBJCPUDIR) $(OBJDIR_DLL) $(OBJDIR_DLL)\$(PURE_OBJ_DIR) \
 +        $(OBJDIR_DLL)\$(CPP_OBJ_DIR) \
 +        $(RELDIR_CPU) $(PDBDIR_CPU_DLL) $(MAKE_DIRS_DLL)
  .
  334c
- CC_OPTS_BASE=-c -nologo -Zlp8 -W3 -GFy -DWIND32
+-CC_OPTS_BASE=-c -nologo -Zlp8 -W3 -GFy -DWIND32
++CC_OPTS_BASE=-c -nologo -Zlp8 -W3 -GFy -DWIND32
 +!if "$(MOZ_MEMORY)" != "1"
 +CC_OPTS_BASE=$(CC_OPTS_BASE) -WX
 +!endif
  .
  307,309c
- LINKER=link
- LINKLIB=link -lib
- LINKIMPLIB=link -lib
+-LINKER=link
+-LINKLIB=link -lib
+-LINKIMPLIB=link -lib
++LINKER=link
++LINKLIB=link -lib
++LINKIMPLIB=link -lib
  .
  302,304c
- LINKER=link -nologo
- LINKLIB=link -lib -nologo
- LINKIMPLIB=link -lib -nologo
- .
+-LINKER=link -nologo
+-LINKLIB=link -lib -nologo
+-LINKIMPLIB=link -lib -nologo
+-.
 -209d
 -21,22c
 -RETAIL_DLL_NAME=MOZCRT19
@@ -805,6 +828,18 @@ diff -u -8 -r1.8 crtsp1.diff
 -618d
 -402d
 -342,353c
+-        $(OBJDIR)\jemalloc.obj \
+-.
+-334,335d
+-329,330d
+-327d
+-323d
+-320d
+-diff -re crt/src/makefile.sub crt-sp1/src/makefile.sub
++LINKER=link -nologo
++LINKLIB=link -lib -nologo
++LINKIMPLIB=link -lib -nologo
++.
 +209a
 +!endif
 +.
@@ -880,7 +915,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +353a
 +!else
-         $(OBJDIR)\jemalloc.obj \
++        $(OBJDIR)\jemalloc.obj \
 +!endif
 +.
 +341a
@@ -891,13 +926,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +333a
 +!if "$(MOZ_MEMORY)" != "1"
- .
--334,335d
--329,330d
--327d
--323d
--320d
--diff -re crt/src/makefile.sub crt-sp1/src/makefile.sub
++.
 +330a
 +!endif
 +        $(OBJDIR)\freea.obj    \
@@ -925,7 +954,8 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +diff -re crt/src/makefile.sub crtsp1/src/makefile.sub
  103c
- LIB=link -lib -nologo
+-LIB=link -lib -nologo
++LIB=link -lib -nologo
  .
  69c
 -CFLAGS=$(CFLAGS) -O2 -DMOZ_MEMORY=1 -DMOZ_MEMORY_WINDOWS=1
@@ -943,7 +973,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +# I'm in ur crt, munging your cflags...
 +MOZ_CFLAGS=-DMOZ_MEMORY=1 -DMOZ_MEMORY_WINDOWS=1
 +!if "$(MOZ_DEBUG)" == "1"
-+MOZ_CFLAGS=$(MOZ_CFLAGS) -DMOZ_DEBUG=1
++MOZ_CFLAGS=$(MOZ_CFLAGS) -DMOZ_MEMORY_DEBUG=1 -DMOZ_DEBUG=1
 +!endif
 +!else
 +MOZ_CFLAGS=
@@ -973,7 +1003,8 @@ diff -u -8 -r1.8 crtsp1.diff
 -diff -re crt/src/mlock.c crt-sp1/src/mlock.c
 +diff -re crt/src/mlock.c crtsp1/src/mlock.c
  274c
- #endif
+-#endif
++#endif
  .
  262a
 -#if 0
@@ -1008,12 +1039,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +39c
 +            VALUE "OriginalFilename", "MOZCRT19_M.DLL"
- .
--diff -re crt/src/new.cpp crt-sp1/src/new.cpp
--60d
--52,55d
--37,38c
--        break;
++.
 +37c
 +            VALUE "OriginalFilename", "MOZCRT19D_M.DLL"
 +.
@@ -1087,24 +1113,29 @@ diff -u -8 -r1.8 crtsp1.diff
 +diff -re crt/src/nothrownew.cpp crtsp1/src/nothrownew.cpp
 +71a
 +#endif
-+.
+ .
+-diff -re crt/src/new.cpp crt-sp1/src/new.cpp
+-60d
+-52,55d
+-37,38c
+-        break;
 +56a
 +#ifndef MOZ_MEMORY
  .
 -diff -re crt/src/nothrownew.cpp crt-sp1/src/nothrownew.cpp
  37a
- #endif
+-#endif
++#endif
  .
  31a
 -#if 1
 -        break;
+-#else
+-
 +#ifdef MOZ_MEMORY
 +	break;
- #else
--
- .
--diff -re crt/src/tidtable.c crt-sp1/src/tidtable.c
--393,394d
++#else
++.
 +diff -re crt/src/stdthrow.cpp crtsp1/src/stdthrow.cpp
 +24c
 +            //::_CrtDbgBreak();
@@ -1153,15 +1184,62 @@ diff -u -8 -r1.8 crtsp1.diff
 +diff -re crt/src/xlocale crtsp1/src/xlocale
 +137c
 + #if (defined(_DEBUG) && !defined(MOZ_MEMORY))
-+.
+ .
+-diff -re crt/src/tidtable.c crt-sp1/src/tidtable.c
+-393,394d
 Index: memory/jemalloc/jemalloc.c
 ===================================================================
 RCS file: /cvsroot/mozilla/memory/jemalloc/jemalloc.c,v
 retrieving revision 1.14
 diff -u -8 -r1.14 jemalloc.c
 --- memory/jemalloc/jemalloc.c	8 May 2008 05:36:40 -0000	1.14
-+++ memory/jemalloc/jemalloc.c	14 May 2008 23:03:59 -0000
-@@ -6075,18 +6075,35 @@
++++ memory/jemalloc/jemalloc.c	16 May 2008 07:16:46 -0000
+@@ -1519,34 +1519,40 @@
+  */
+ 
+ #ifdef MALLOC_BALANCE
+ /* Define the PRNG used for arena assignment. */
+ static __thread uint32_t balance_x;
+ PRN_DEFINE(balance, balance_x, 1297, 1301)
+ #endif
+ 
++#ifdef MOZ_MEMORY_WINDOWS
++#define moz_getpid() GetCurrentProcessId()
++#else
++#define moz_getpid() getpid()
++#endif
++
+ #ifdef MALLOC_UTRACE
+ static int
+ utrace(const void *addr, size_t len)
+ {
+ 	malloc_utrace_t *ut = (malloc_utrace_t *)addr;
+ 
+ 	assert(len == sizeof(malloc_utrace_t));
+ 
+ 	if (ut->p == NULL && ut->s == 0 && ut->r == NULL)
+-		malloc_printf("%d x USER malloc_init()\n", getpid());
++		malloc_printf("%d x USER malloc_init()\n", moz_getpid());
+ 	else if (ut->p == NULL && ut->r != NULL) {
+-		malloc_printf("%d x USER %p = malloc(%zu)\n", getpid(), ut->r,
++		malloc_printf("%d x USER %p = malloc(%zu)\n", moz_getpid(), ut->r,
+ 		    ut->s);
+ 	} else if (ut->p != NULL && ut->r != NULL) {
+-		malloc_printf("%d x USER %p = realloc(%p, %zu)\n", getpid(),
++		malloc_printf("%d x USER %p = realloc(%p, %zu)\n", moz_getpid(),
+ 		    ut->r, ut->p, ut->s);
+ 	} else
+-		malloc_printf("%d x USER free(%p)\n", getpid(), ut->p);
++		malloc_printf("%d x USER free(%p)\n", moz_getpid(), ut->p);
+ 
+ 	return (0);
+ }
+ #endif
+ 
+ static inline const char *
+ _getprogname(void)
+ {
+@@ -6075,18 +6081,35 @@
  }
  
  size_t
