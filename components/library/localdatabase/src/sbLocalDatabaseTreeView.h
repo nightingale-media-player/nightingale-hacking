@@ -139,6 +139,8 @@ private:
 
   nsresult SaveSelectionList();
 
+  nsresult RestoreSelection();
+
   nsresult EnumerateSelection(sbSelectionEnumeratorCallbackFunc aFunc,
                               void* aUserData);
 

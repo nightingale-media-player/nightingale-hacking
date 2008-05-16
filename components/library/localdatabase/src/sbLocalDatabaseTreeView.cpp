@@ -392,17 +392,6 @@ sbLocalDatabaseTreeView::Rebuild()
 
   nsresult rv;
 
-  if (mManageSelection && mRealSelection) {
-    if (mSelectionIsAll) {
-      rv = mRealSelection->Select(0);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      rv = mRealSelection->ClearSelection();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
   // Check to see if the sort of the underlying array has changed
   nsCOMPtr<sbIPropertyArray> sort;
   rv = mArray->GetCurrentSort(getter_AddRefs(sort));
@@ -437,6 +426,11 @@ sbLocalDatabaseTreeView::Rebuild()
   PRUint32 oldRowCount = mArrayLength;
   rv = mArray->GetLength(&mArrayLength);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // If we're managing the selection, restore it
+  if (mManageSelection) {
+    RestoreSelection();
+  }
 
   if (mTreeBoxObject) {
     // Change the number of rows in the tree by the difference between the
@@ -623,6 +617,55 @@ sbLocalDatabaseTreeView::SaveSelectionList()
   return NS_OK;
 }
 
+
+nsresult
+sbLocalDatabaseTreeView::RestoreSelection()
+{
+  NS_ASSERTION
+    (mManageSelection,
+     "RestoreSelection() called but we're not managing selection");
+
+  // If no selection is set, don't restore anything
+  if (!mRealSelection) {
+    return NS_OK;
+  }
+
+  nsresult rv;
+  if (mSelectionIsAll) {
+    rv = mRealSelection->Select(0);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // Start with an empty selection
+    rv = mRealSelection->ClearSelection();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Check each item to see if it needs to be selected.  Enumerating the
+    // selection list can't be done because it's not possible to get the array
+    // index from a unique ID.
+    for (PRUint32 i = 0; i < mArrayLength; i++) {
+      // Stop if nothing more to select
+      if (!mSelectionList.Count()) {
+        break;
+      }
+
+      // Get the unique ID for the current item
+      nsString id;
+      rv = GetUniqueIdForIndex(i, id);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Select item if it's in the selection list
+      if (mSelectionList.Get(id, nsnull)) {
+        // Don't apply this selection any more
+        mSelectionList.Remove(id);
+
+        // Select row in the real selection
+        PRInt32 row = ArrayToTree(i);
+        rv = mRealSelection->ToggleSelect(row);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+}
 
 nsresult
 sbLocalDatabaseTreeView::EnumerateSelection(sbSelectionEnumeratorCallbackFunc aFunc,
@@ -1311,6 +1354,11 @@ sbLocalDatabaseTreeView::SetSelection(nsITreeSelection* aSelection)
   // through our proxy
   mRealSelection = aSelection;
 
+  // If we're managing the selection, restore it
+  if (mManageSelection) {
+    RestoreSelection();
+  }
+
   return NS_OK;
 }
 
@@ -1382,33 +1430,18 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
 
   // If we are not managing our selection, sync up the selected state of this
   // row with the view's selection
-  if (!IsAllRow(row) && mRealSelection) {
-    if (mManageSelection) {
-      nsString id;
-      rv = GetUniqueIdForIndex(index, id);
+  if (!mManageSelection && !IsAllRow(row) && mViewSelection && mRealSelection) {
+    PRBool viewIsSelected;
+    rv = mViewSelection->IsIndexSelected(row, &viewIsSelected);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool treeIsSelected;
+    rv = mRealSelection->IsSelected(row, &treeIsSelected);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (viewIsSelected != treeIsSelected) {
+      rv = mRealSelection->ToggleSelect(row);
       NS_ENSURE_SUCCESS(rv, rv);
-      if (mSelectionList.Get(id, nsnull)) {
-        mSelectionList.Remove(id);
-
-        rv = mRealSelection->ToggleSelect(row);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-    else {
-      if (mViewSelection) {
-        PRBool viewIsSelected;
-        rv = mViewSelection->IsIndexSelected(row, &viewIsSelected);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        PRBool treeIsSelected;
-        rv = mRealSelection->IsSelected(row, &treeIsSelected);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        if (viewIsSelected != treeIsSelected) {
-          rv = mRealSelection->ToggleSelect(row);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
     }
   }
 
