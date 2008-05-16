@@ -479,7 +479,7 @@ nsCString GetContentDispositionFilename(const nsACString &contentDisposition)
     }
   }
 
-  ReplaceChars(filename, NS_LITERAL_CSTRING(FILE_ILLEGAL_CHARACTERS), '_');
+  ReplaceChars(filename, nsDependentCString(FILE_ILLEGAL_CHARACTERS), '_');
 
   return filename;
 }
@@ -3360,7 +3360,7 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         }
 
         /* strip out characters not valid in file names */
-        nsString illegalChars(NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS));
+        nsString illegalChars(NS_ConvertASCIItoUTF16(FILE_ILLEGAL_CHARACTERS));
         illegalChars.AppendLiteral(FILE_PATH_SEPARATOR);
         ReplaceChars(leafName, illegalChars, PRUnichar('_'));
 

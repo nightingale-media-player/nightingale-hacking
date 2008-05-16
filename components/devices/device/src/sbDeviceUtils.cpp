@@ -58,7 +58,7 @@ nsresult sbDeviceUtils::GetOrganizedPath(/* in */ nsIFile *aParent,
   
   nsresult rv;
   
-  nsString kIllegalChars = NS_LITERAL_STRING(FILE_ILLEGAL_CHARACTERS);
+  nsString kIllegalChars = NS_ConvertASCIItoUTF16(FILE_ILLEGAL_CHARACTERS);
   kIllegalChars.AppendLiteral(FILE_PATH_SEPARATOR);
 
   nsCOMPtr<nsIFile> file;
