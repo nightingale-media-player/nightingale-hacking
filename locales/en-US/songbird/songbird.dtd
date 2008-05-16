@@ -504,9 +504,9 @@
 <!ENTITY copySelectionCmd.accesskey                     "c">
 <!ENTITY playMediaCmd.label                             "Play">
 <!ENTITY playMediaCmd.accesskey                         "p">
-<!ENTITY downloadMediaCmd.label                         "Download">
+<!ENTITY downloadMediaCmd.label                         "Download To Library">
 <!ENTITY downloadMediaCmd.accesskey                     "d">
-<!ENTITY addMediaToPlaylistCmd.label                    "Add To Playlist">
+<!ENTITY addMediaToPlaylistCmd.label                    "Download To Playlist">
 <!ENTITY addMediaToPlaylistCmd.accesskey                "a">
 <!ENTITY addMediaToPlaylistCmd.noPlaylist.label         "&lt;No Playlists&gt;">
 <!ENTITY addMediaToPlaylistCmd.newPlaylist.label        "New Playlist">
