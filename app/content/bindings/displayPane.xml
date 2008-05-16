@@ -89,11 +89,15 @@
       try {
         this._lastURL = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
                                   .createInstance(Components.interfaces.sbIDataRemote);
+        this._lastHiddenState = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
+                                  .createInstance(Components.interfaces.sbIDataRemote);
                                   
       	// if the stateid attribute doesn't exist, fall back to id.
       	// (and if that fails too, use contentGroup)
       	var stateid = this.getAttribute("stateid") || this.id || this.contentGroup;
         this._lastURL.init("displayPanes." + stateid + ".lastURL", null);
+        
+        this._lastHiddenState.init("displayPanes." + stateid + ".isHidden", null);
 
         // do not register until our browser is ready
         var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
@@ -104,7 +108,7 @@
 
         // load the last opened URL
         var paneLoaded = false;
-        if (this._lastURL.stringValue) {
+        if (this._lastURL.stringValue && !this._lastHiddenState.boolValue) {
           var paneinfo = paneMgr.getPaneInfo(this._lastURL.stringValue);
           if (paneinfo) {
             // hide the pane as soon as possible if the url is about:blank
@@ -135,7 +139,7 @@
               document.addEventListener("sb-overlay-load", function() {
                 document.removeEventListener("sb-overlay-load", arguments.callee, false);
                 var paneinfo = paneMgr.getPaneInfo(self._lastURL.stringValue);
-                if (paneinfo) {
+                if (paneinfo && !self._lastHiddenState.boolValue) {
                   self._internalLoadURL(paneinfo);
                 } else {
                   // still nothing
@@ -387,6 +391,7 @@
           
           // save the last loaded URL
           this._lastURL.stringValue = aPaneInfo.contentUrl;
+          this._lastHiddenState.boolValue = this._hidden;
         } catch(e) {
           Components.utils.reportError(e);
         }
@@ -395,6 +400,7 @@
       <xbl:method name="hide">
         <xbl:body><![CDATA[
           this._hidden = true;
+          this._lastHiddenState.boolValue = true;
         ]]></xbl:body>
       </xbl:method>
       <xbl:method name="_getElem">
