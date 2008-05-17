@@ -1460,7 +1460,7 @@
         <parameter name="evt"/>
         <body>
         <![CDATA[
-          SBTrackEditorOpen();
+          SBTrackEditorOpen("edit");
         ]]>
         </body>
       </method>
@@ -1519,9 +1519,6 @@
               case "cmd_delete":
                 this._self.removeSelectedTracks();
                 break;
-              case "cmd_viewmetadata":
-                  this._self.onPlaylistEditor();
-                break;
               case "cmd_find":
                 var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                                                .getService(Components.interfaces.nsIWindowMediator);
@@ -1541,7 +1538,6 @@
               case "cmd_selectAll":
               case "cmd_delete":
               case "cmd_copy":
-              case "cmd_viewmetadata":
               case "cmd_find":
                 return true;
             }
@@ -1552,8 +1548,7 @@
                  aCommand == 'cmd_find') {
               return true;
             } else if ( aCommand == 'cmd_copy' ||
-                        aCommand == 'cmd_delete' ||
-                        aCommand == 'cmd_viewmetadata') {
+                        aCommand == 'cmd_delete' ) {
               if (this._self._mediaListView.selection.count > 0 ) {
                 return true;
               }

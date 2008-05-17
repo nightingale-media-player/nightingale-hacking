@@ -1025,13 +1025,15 @@ function goUpdateGlobalFindMenuItems()
 
 /**
  * This method assists with updating the menu items.
- * See the <commandset id="fileMenuCommandSetMetadata" tag in
+ * See the <commandset id="toolsMenuCommandSetMetadata" tag in
  * layoutBaseOverlay.xul
  */
 function goUpdateGlobalMetadataMenuItems()
 {
-  // This will call playlist.xml:_commandController.isCommandEnabled with
-  // cmd_viewmetadata as the parameter
+  // This will call gSongbirdWindowController.isCommandEnabled in
+  // mainPlayerWindow.js with the command id as the parameter
+  goUpdateCommand("cmd_metadata");
+  goUpdateCommand("cmd_editmetadata");
   goUpdateCommand("cmd_viewmetadata");
 }
 

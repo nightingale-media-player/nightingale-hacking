@@ -35,11 +35,21 @@ var gSongbirdWindowController =
       gTabBrowser.onFindCommand();
     else if (aCommand == "cmd_findAgain")
       gTabBrowser.onFindAgainCommand();
+    else if (aCommand == "cmd_metadata")
+      SBTrackEditorOpen(); // open to the last selected tab
+    else if (aCommand == "cmd_editmetadata")
+      SBTrackEditorOpen("edit"); // open to the 'edit' tab
+    else if (aCommand == "cmd_viewmetadata")
+      SBTrackEditorOpen("summary"); // open to the 'summary' tab
   },
   
   supportsCommand: function(aCommand)
   {
     if (aCommand == "cmd_find" || aCommand == "cmd_findAgain")
+      return true;
+    if (aCommand == "cmd_metadata" ||
+        aCommand == "cmd_editmetadata" ||
+        aCommand == "cmd_viewmetadata")
       return true;
       
     return false;
@@ -50,6 +60,21 @@ var gSongbirdWindowController =
     if (!gTabBrowser.isSelectedTabMediaPage() &&
         (aCommand == "cmd_find" || aCommand == "cmd_findAgain"))
       return true;
+    if (aCommand == "cmd_metadata" ||
+        aCommand == "cmd_editmetadata" ||
+        aCommand == "cmd_viewmetadata") {
+      var browser;
+      if (typeof SBGetBrowser == 'function') 
+        browser = SBGetBrowser();
+      if (browser) {
+        if (browser.currentMediaPage) {
+          var view = browser.currentMediaPage.mediaListView;
+          if (view) {
+            return view.selection.count > 0;
+          }
+        }
+      }
+    }
     
     return false;
   }

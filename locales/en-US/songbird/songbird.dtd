@@ -37,7 +37,7 @@
 <!ENTITY menu.file.newtab       "New Tab" >
 <!ENTITY menu.file.closetab     "Close Tab" >
 <!ENTITY menu.file.scan         "Scan for Media..." >
-<!ENTITY menu.file.viewmetadata "View Metadata...">
+<!ENTITY menu.file.viewmetadata "View Metadata..."> <!-- obsolete -->
 <!ENTITY menu.file.dlfolder     "Set Download Folder..." >
 <!ENTITY menu.file.watch        "Set Watched Folders..." >
 <!ENTITY menu.file.htmlbar      "Always Show Web Bar" >
@@ -100,7 +100,8 @@
 <!ENTITY menu.services        "Services" >
 <!ENTITY menu.services.browse "Browse Add-ons..." >
 
-<!ENTITY menu.tools         "Tools" >
+<!ENTITY menu.tools           "Tools" >
+<!ENTITY menu.tools.metadata  "Metadata Editor...">
 
 <!ENTITY menu.help          "Help" >
 <!ENTITY menu.help.bugz     "Report a Bug" >
@@ -270,7 +271,7 @@
 <!ENTITY menu.file.newtab.accesskey       "T" >
 <!ENTITY menu.file.closetab.accesskey     "C" >
 <!ENTITY menu.file.scan.accesskey         "M" >
-<!ENTITY menu.file.viewmetadata.accesskey "E" >
+<!ENTITY menu.file.viewmetadata.accesskey "E" > <!-- obsolete -->
 <!ENTITY menu.file.dlfolder.accesskey     "D" >
 <!ENTITY menu.file.watch.accesskey        "W" >
 <!ENTITY locale.language.accesskey        "L" >
@@ -309,7 +310,8 @@
 
 <!ENTITY menu.services.accesskey      "S" >
 
-<!ENTITY menu.tools.accesskey         "T" >
+<!ENTITY menu.tools.accesskey          "T" >
+<!ENTITY menu.tools.metadata.accesskey "E" >
 
 <!ENTITY menu.help.accesskey          "H" >
 <!ENTITY menu.help.bugz.accesskey     "B" >
@@ -323,9 +325,9 @@
 <!ENTITY bookmarks.edit.icon   "Icon:" >
 
 
-<!ENTITY trackeditor.title                        "Track Editor" >
+<!ENTITY trackeditor.title                        "Metadata Editor" >
 <!ENTITY trackeditor.tab.summary.title            "Summary" >
-<!ENTITY trackeditor.tab.edit.title               "Edit" >
+<!ENTITY trackeditor.tab.edit.title               "Properties" >
 <!ENTITY trackeditor.tab.lyrics.title             "Lyrics" >
 
 

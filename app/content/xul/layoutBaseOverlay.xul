@@ -255,7 +255,7 @@
                   oncommandupdate="goUpdatePasteMenuItems()"/>
       <commandset id="editMenuCommandSetFind" commandupdater="true" events="focus, select, tabchange"
                   oncommandupdate="goUpdateGlobalFindMenuItems()"/>
-      <commandset id="fileMenuCommandSetMetadata" commandupdater="true" events="focus, select"
+      <commandset id="toolsMenuCommandSetMetadata" commandupdater="true" events="focus, select, tabchange"
                   oncommandupdate="goUpdateGlobalMetadataMenuItems()"/>
       <command id="cmd_undo" oncommand="goDoCommand('cmd_undo')"/>
       <command id="cmd_redo" oncommand="goDoCommand('cmd_redo')"/>

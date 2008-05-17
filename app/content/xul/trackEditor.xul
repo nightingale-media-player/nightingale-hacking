@@ -75,9 +75,9 @@
   
   <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox" mousethrough="never">
     <tabs>
-      <tab label="&trackeditor.tab.summary.title;"/>
-      <tab label="&trackeditor.tab.edit.title;"/>
-      <tab label="&trackeditor.tab.lyrics.title;" />
+      <tab label="&trackeditor.tab.summary.title;" id="summary"/>
+      <tab label="&trackeditor.tab.edit.title;" id="edit"/>
+      <tab label="&trackeditor.tab.lyrics.title;" id="lyrics"/>
       <!--tab disabled="true" label="Sort Values"/-->
     </tabs>
 

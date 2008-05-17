@@ -524,7 +524,8 @@ function SBExtensionsManagerOpen( parentWindow )
   parentWindow.openDialog(EM_URL, "", EM_FEATURES);
 }
 
-function SBTrackEditorOpen( parentWindow, playlist ) {
+function SBTrackEditorOpen( initialTab, parentWindow ) {
+  if (!parentWindow) parentWindow = window;
   var browser;
   if (typeof SBGetBrowser == 'function') 
     browser = SBGetBrowser();
@@ -580,7 +581,7 @@ function SBTrackEditorOpen( parentWindow, playlist ) {
         } else {
           SBOpenModalDialog("chrome://songbird/content/xul/trackEditor.xul", 
                             "Songbird:TrackEditor", "chrome,centerscreen", 
-                            this, parentWindow);
+                            initialTab, parentWindow);
         }
       }
     }

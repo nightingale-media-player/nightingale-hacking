@@ -75,8 +75,6 @@
         <menuseparator insertbefore="menu_FileScanSeparator"/>
         <menuitem id="menuitem_file_newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;" insertbefore="menu_FileScanSeparator"/>
         <menuitem id="menuitem_file_closetab" key="closetab-key" class="menuitem-iconic" label="&menu.file.closetab;" accesskey="&menu.file.closetab.accesskey;" insertbefore="menu_FileScanSeparator"/>
-        <menuitem id="menuitem_file_viewmetadata" key="viewmetadata-key" class="menuitem-iconic" label="&menu.file.viewmetadata;" accesskey="&menu.file.viewmetadata.accesskey;" insertbefore="songbird_menu_locale" command="cmd_viewmetadata"/>
-        <menuseparator insertbefore="songbird_menu_locale"/>
       </menupopup>
 
 
@@ -231,6 +229,10 @@
         <menuitem accesskey="&pageSourceCmd.accesskey;" label="&pageSourceCmd.label;" key="key_viewSource" command="View:PageSource"/>
       </menupopup>
 
+      <menupopup id="menu_ToolsPopup">
+        <menuitem id="menuitem_tools_metadata" key="metadata-key" class="menuitem-iconic" label="&menu.tools.metadata;" accesskey="&menu.tools.metadata.accesskey;" insertbefore="menu_downloadmgr" command="cmd_metadata"/>
+        <menuseparator insertbefore="menu_downloadmgr"/>
+      </menupopup>
 
   <!-- group overlay items for popups, command, broadcasters, keys and 
        stringbundles into a single target -->
@@ -337,6 +339,8 @@
       </command>
       
       <command id="View:PageSource" oncommand="BrowserViewSourceOfDocument(content.document);" observes="isImage"/>
+      <command id="cmd_metadata" oncommand="goDoCommand('cmd_metadata');"/>
+      <command id="cmd_editmetadata" oncommand="goDoCommand('cmd_editmetadata');"/>
       <command id="cmd_viewmetadata" oncommand="goDoCommand('cmd_viewmetadata');"/>
     </commandset>
     
@@ -381,7 +385,7 @@
       <key id="key_reload" key="&reloadCmd.commandkey;" command="Browser:Reload" modifiers="accel" />
       <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
       <key id="key_stop" keycode="VK_ESCAPE" oncommand="gBrowser.stop();"/>
-      <key id="viewmetadata-key" modifiers="accel" key="&menu.file.viewmetadata.accesskey;" command="cmd_viewmetadata"/>
+      <key id="metadata-key" modifiers="accel" key="&menu.tools.metadata.accesskey;" command="cmd_metadata"/>
     </keyset>
 
 

@@ -260,7 +260,6 @@ PublicPlaylistCommands.prototype = {
 
       this.m_cmd_Edit = new PlaylistCommandsBuilder();
 
-      // The first item, always created
       this.m_cmd_Edit.appendAction(null,
                                    "library_cmd_edit",
                                    "&command.edit",

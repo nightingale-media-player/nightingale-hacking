@@ -517,6 +517,17 @@ var TrackEditor = {
     // no need for any of that now. still, the names are there, so it can be
     // brought back if the desire arises
     this.onTabContentChange();
+    
+    var initialTab = window.arguments[0];
+    if (initialTab) {
+      var tabBox = document.getElementById("trackeditor-tabbox");
+      var tabs = tabBox.parentNode.getElementsByTagName("tab");
+      for each (var tab in tabs) {
+        if (tab.id == initialTab) {
+          tabBox.selectedTab = tab;
+        }
+      }
+    }
   },
   
   /**
@@ -545,10 +556,10 @@ var TrackEditor = {
       this._elements.push(new TrackEditorAdvancedTab(tabbox));
     } else {
       // TODO remove this
-      var tabBox = document.getElementById("trackeditor-tabbox");
-      var tabs = tabBox.parentNode.getElementsByTagName("tabs")[0];
-      tabBox.selectedIndex = 1;
-      tabs.hidden = true;
+      //var tabBox = document.getElementById("trackeditor-tabbox");
+      //var tabs = tabBox.parentNode.getElementsByTagName("tabs")[0];
+      //tabBox.selectedIndex = 1;
+      //tabs.hidden = true;
     }
     
     // Add an additional layer of control to all elements with a property
@@ -1344,6 +1355,7 @@ function TrackEditorAdvancedTab(tabBox) {
   var tab = document.createElement("tab");
   
   tab.setAttribute("label", SBString("trackeditor.tab.advanced"));
+  tab.setAttribute("id", "advanced");
   tabs.appendChild(tab);
   
   var panel = document.createElement("vbox");
