@@ -106,7 +106,7 @@ TrackEditorState.prototype = {
     var items = mediaListSelection.selectedIndexedMediaItems;
     while (items.hasMoreElements()) {
       var item = items.getNext()
-                      .QueryInterface(Components.interfaces.sbIIndexedMediaItem)
+                      .QueryInterface(Ci.sbIIndexedMediaItem)
                       .mediaItem;
       this._selectedItems.push(item);
     }
@@ -313,8 +313,8 @@ TrackEditorState.prototype = {
       hasMultiple: false,
       value: "",
       originalValue: "",
-      knownInvalid: false,
-    }
+      knownInvalid: false
+    };
     
     // Populate the structure
     if (this._selectedItems && this._selectedItems.length > 0) {      
@@ -333,18 +333,24 @@ TrackEditorState.prototype = {
       }
 
       // Format the string if needed
-      // Note that on an image, format truncates, then returns!
-      if (value && property != SBProperties.primaryImageURL &&
-          !this._properties[property].hasMultiple) 
+      if (value) 
       {
-        var propInfo = this._propertyManager.getPropertyInfo(property);
-        
-        // Formatting can fail. :(
-        try { 
-          value = propInfo.format(value); 
+        if (property == SBProperties.primaryImageURL) {
+          // can't format. for an image, format truncates the value to ""!
         }
-        catch (e) { 
-          Components.utils.reportError("TrackEditor::getPropertyValue("+property+") - "+value+": " + e +"\n");
+        else if (this._properties[property].hasMultiple) {
+          // we keep multiple values as "".
+        }
+        else {
+          var propInfo = this._propertyManager.getPropertyInfo(property);
+          
+          // Formatting can fail. :(
+          try { 
+            value = propInfo.format(value); 
+          }
+          catch (e) { 
+            Components.utils.reportError("TrackEditor::getPropertyValue("+property+") - "+value+": " + e +"\n");
+          }
         }
       }
       
@@ -539,29 +545,27 @@ var TrackEditor = {
     // take up to 200ms.  Multiply that by 40 textboxes and performance
     // can suffer.  Do some more tests and determine the impact of
     // the advanced tab
-    
-    // Since the edit pane is all that is required for launch we  
-    // are disabling all other panes.  They can be selectively
-    // re-enabled once they've been polished.  
-    
-    // TODO/TEMP for now use the advanced editing pref to show 
-    // the unpolished tabs
-    
+
     // Set up the advanced tab
     var enableAdvanced = Application.prefs.getValue(
                            "songbird.trackeditor.enableAdvancedTab", false);
     if (enableAdvanced) {
       // this code assumes that the number of tabs and tabpanels is aligned
       var tabbox = document.getElementById("trackeditor-tabbox");
-      this._elements.push(new TrackEditorAdvancedTab(tabbox));
-    } else {
-      // TODO remove this
-      //var tabBox = document.getElementById("trackeditor-tabbox");
-      //var tabs = tabBox.parentNode.getElementsByTagName("tabs")[0];
-      //tabBox.selectedIndex = 1;
-      //tabs.hidden = true;
+      this._elements["advancedTab"] = new TrackEditorAdvancedTab(tabbox);
     }
+    else {
+      var tabBox = document.getElementById("trackeditor-tabbox");
+      var tabs = tabBox.tabs;
     
+      // FIXME: hid summary and lyrics tabs halfheartedly
+      //        (you can probably still keyboard shortcut to them)
+      tabs.getItemAtIndex(0).setAttribute("hidden", "true");
+      tabs.getItemAtIndex(2).setAttribute("hidden", "true");
+      tabs.setAttribute("hidden", "true");
+      tabBox.selectedIndex = 1;
+    }
+ 
     // Add an additional layer of control to all elements with a property
     // attribute.  This will cause the elements to be updated when the
     // selection model changes, and vice versa.
@@ -573,7 +577,21 @@ var TrackEditor = {
     for each (var element in elements) {
       var wrappedElement = null;
       if (element.tagName == "label") {
-        wrappedElement = new TrackEditorLabel(element);
+        var property = element.getAttribute("property")
+        var propertyInfo = this._propertyManager.getPropertyInfo(property);
+        
+        if (element.getAttribute("property-type") != "label" &&
+            propertyInfo.type == "uri") {
+          wrappedElement = new TrackEditorURILabel(element);
+        }
+        else if (element.getAttribute("property-type") != "label" &&
+                 property == SBProperties.originPage) {
+          // FIXME: originPage should be a uri type, but isn't!
+          wrappedElement = new TrackEditorOriginLabel(element);
+        }
+        else {
+          wrappedElement = new TrackEditorLabel(element);
+        }
       } else if (element.tagName == "textbox") {
         wrappedElement = new TrackEditorTextbox(element);
       } else if (element.tagName == "sb-rating") {
@@ -619,12 +637,12 @@ var TrackEditor = {
     var writableCount = this.state.writableItemCount;
     
     var message;
-    var class = "notification-warning";
+    var notificationClass = "notification-warning";
 
     if (itemCount > 1) {
       if (writableCount == itemCount) {
         message = SBFormattedString("trackeditor.notification.editingmultiple", [itemCount]);                
-        class = "notification-info";
+        notificationClass = "notification-info";
       } else if (writableCount >= 1) {
         message = SBFormattedString("trackeditor.notification.somereadonly",
                                     [(itemCount - writableCount), itemCount]);
@@ -636,7 +654,7 @@ var TrackEditor = {
     }
       
     if (message) {
-      this._elements["notification_box"].className = class;
+      this._elements["notification_box"].className = notificationClass;
       this._elements["notification_text"].textContent = message;
       this._elements["notification_box"].hidden = false;
     } else {
@@ -718,6 +736,18 @@ var TrackEditor = {
     // TODO build a data structure
     this.state.setSelection(this.mediaListView.selection);    
 
+    var tabBox = document.getElementById("trackeditor-tabbox");
+    var tabs = tabBox.tabs;
+    
+    // Disable summary page if multiple items are selected.
+    if (this.state.selectedItems.length > 1) {
+      // warning: assumes summary page is at tabs[0]
+      if (tabBox.selectedIndex == 0) {
+        tabBox.selectedIndex = 1;
+      }
+      tabs.getItemAtIndex(0).setAttribute("disabled", "true");
+    }
+    
     this.updateNotificationBox();
     this.updateControls();
  
@@ -969,7 +999,7 @@ function TrackEditorLabel(element) {
   // If requested, just show the title of the property
   if (element.hasAttribute("property-type") && 
       element.getAttribute("property-type") == "label") {
-        
+    
     var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                    .getService(Ci.sbIPropertyManager);
     var propInfo = propMan.getPropertyInfo(element.getAttribute("property"));
@@ -983,11 +1013,209 @@ function TrackEditorLabel(element) {
 }
 TrackEditorLabel.prototype = {
   __proto__: TrackEditorWidgetBase.prototype,
+};
+
+
+/******************************************************************************
+ *
+ * \class TrackEditorURILabel 
+ * \brief Extends TrackEditorLabel for label elements containing URLs
+ *
+ * If the label has a property-type="label" attribute it will receive the 
+ * title associated with the property attribute. Otherwise the label will
+ * receive the current editor display value for property.
+ *
+ *****************************************************************************/
+function TrackEditorURILabel(element) {
+  TrackEditorLabel.call(this, element);
+  
+  this._button = document.createElement("button");
+  this._button.setAttribute("class", "goto-url");
+  
+  var self = this;
+  this._button.addEventListener("command", 
+      function() { self.onButtonCommand(); }, false);
+  
+  element.parentNode.insertBefore(this._button, element.nextSibling);
 }
+TrackEditorURILabel.prototype = {
+  __proto__: TrackEditorLabel.prototype,
+  _ioService: Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService),
+  
+  onTrackEditorPropertyChange: function TrackEditorWidgetBase_onTrackEditorPropertyChange() {
+    var value = TrackEditor.state.getPropertyValue(this.property);
+    
+    var formattedValue = value;
+    try {
+      // reformat the URI as a native file path
+      var ioService = Cc["@mozilla.org/network/io-service;1"]
+                        .getService(Ci.nsIIOService); 
+      var uri = ioService.newURI(value, null, null);
+      if (uri.scheme == "file") {
+        formattedValue = uri.QueryInterface(Ci.nsIFileURL).file.path;
+      }
+    }
+    catch(e) {
+      /* it's okay, we just leave formattedValue == value in this case */
+    }
+    
+    if (value != this._element.value) {
+      this._element.value = value;
+    }
+  
+    if (value != this._button.value) {
+      this._button.value = value;
+    }
+  },
+  
+  onButtonCommand: function()
+  {
+    this.loadOrRevealURI(this._button.value);
+  },
+  
+  loadOrRevealURI: function(uriLocation)
+  {
+    var uri = this._ioService.newURI(uriLocation, null, null);
+    if (uri.scheme == "file") {
+      this.revealURI(uri);
+    }
+    else {
+      this.promptAndLoadURI(uriLocation);
+    }
+  },
+  
+  revealURI: function(uri) {
+    // Cribbed from mozilla/toolkit/mozapps/downloads/content/downloads.js 
+    f = uri.QueryInterface(Ci.nsIFileURL).file;
+    
+    try {
+      // Show the directory containing the file and select the file
+      f.reveal();
+    } catch (e) {
+      // If reveal fails for some reason (e.g., it's not implemented on unix or
+      // the file doesn't exist), try using the parent if we have it.
+      let parent = f.parent.QueryInterface(Ci.nsILocalFile);
+      if (!parent)
+        return;
+  
+      try {
+        // "Double click" the parent directory to show where the file should be
+        parent.launch();
+      } catch (e) {
+        // If launch also fails (probably because it's not implemented), let the
+        // OS handler try to open the parent
+        openExternal(parent);
+      }
+    }
+  },
+  
+  promptAndLoadURI: function(uriLocation) {
+    var properties = TrackEditor.state.getEnabledProperties();
+    
+    var edits = 0;
+    for (var i = 0; i < properties.length; i++) {
+      if (TrackEditor.state.isPropertyEdited(properties[i])) {
+        edits++;
+      }
+    }
+    
+    var items = TrackEditor.state.selectedItems;
+    if (items.length == 0 || edits == 0) {
+      // No need to muck about with prompts. Just banish the window.
+      TrackEditor._browser.loadOneTab(uriLocation, null, null, null, false, false);
+      window.close();
+      return;
+    }
+    
+    // This is not a local file, so open it in a new tab and dismiss
+    // the track editor. (Prompt first.)
+    
+    var titleMessage = SBString("trackeditor.closewarning.title");
+    var dialogMessage = SBString("trackeditor.closewarning.message");
+    var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                      .getService(Components.interfaces.nsIPromptService);
+    var flags = prompts.BUTTON_TITLE_DONT_SAVE * prompts.BUTTON_POS_0 +
+          prompts.BUTTON_TITLE_CANCEL          * prompts.BUTTON_POS_1 +
+          prompts.BUTTON_TITLE_OK              * prompts.BUTTON_POS_2;
+    
+    try {
+      var button = prompts.confirmEx(window, titleMessage, dialogMessage, flags, 
+           null, null, null, null, {});
+      switch (button) {
+        case 0:
+          TrackEditor._browser.loadOneTab(uriLocation, null, null, null, true, false);
+          window.close();
+        case 1: return;
+        case 2:
+          TrackEditor._browser.loadOneTab(uriLocation, null, null, null, true, false);
+          TrackEditor.closeAndApply();
+      }
+    } catch(e) {
+      Components.utils.reportError(e);
+    }
+  }
+};
 
-
-
-
+/******************************************************************************
+ *
+ * \class TrackEditorOriginLabel 
+ * \brief Extends TrackEditorURILabel for the originPage property.
+ *        Basically the same, except with originPage{Title, Image} for display.
+ *
+ *****************************************************************************/
+function TrackEditorOriginLabel(element) {
+  TrackEditorURILabel.call(this, element);
+  TrackEditor.state.addPropertyListener(SBProperties.originPageTitle, this);
+}
+TrackEditorOriginLabel.prototype = {
+  __proto__: TrackEditorURILabel.prototype,
+  
+  onTrackEditorPropertyChange: function (property) {
+    // NB: no property value ==> all properties liable to have changed
+    if (property == SBProperties.originPage      || !property) {
+      this.onTrackEditorPagePropertyChange();
+    }
+    if (property == SBProperties.originPageTitle || !property) {
+      this.onTrackEditorPageTitlePropertyChange();
+    }
+    if (property == SBProperties.originPageImage || !property) {
+      this.onTrackEditorPageImagePropertyChange();
+    }
+  },
+  
+  onTrackEditorPagePropertyChange: function() {
+    var value = TrackEditor.state.getPropertyValue(this.property);
+    
+    var formattedValue = value;
+    try {
+      // reformat the URI as a native file path
+      var ioService = Cc["@mozilla.org/network/io-service;1"]
+                        .getService(Ci.nsIIOService); 
+      var uri = ioService.newURI(value, null, null);
+      if (uri.scheme == "file") {
+        formattedValue = uri.QueryInterface(Ci.nsIFileURL).file.path;
+      }
+    }
+    catch(e) {
+      /* it's okay, we just leave formattedValue == value in this case */
+    }
+    
+    if (value != this._button.value) {
+      this._button.value = value;
+    }
+  },
+  
+  onTrackEditorPageTitlePropertyChange: function() {
+    var title = TrackEditor.state.getPropertyValue(SBProperties.originPageTitle);
+    if (title != this._element.title) {
+      this._element.value = title;
+    }
+  },
+  
+  onTrackEditorPageImagePropertyChange: function() {
+    // TODO: this
+  }
+};
 
 /******************************************************************************
  *
@@ -1012,8 +1240,7 @@ function TrackEditorInputWidget(element) {
   TrackEditor.state.addSelectionListener(this);
   
   var self = this;
-  element.addEventListener("blur",
-          function() { self.onBlur(); }, false);
+  element.addEventListener("blur", function() { self.onBlur(); }, false);
   
   // Create preceding checkbox to enable/disable when 
   // multiple tracks are selected
@@ -1359,6 +1586,7 @@ function TrackEditorAdvancedTab(tabBox) {
   tabs.appendChild(tab);
   
   var panel = document.createElement("vbox");
+  panel.style.overflow = "scroll"
   panel.setAttribute("flex", "1");
   tabPanels.appendChild(panel);
   

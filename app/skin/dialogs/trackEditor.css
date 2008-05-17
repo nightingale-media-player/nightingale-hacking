@@ -99,8 +99,26 @@ textbox[invalid] {
   color:rgb(255,127,127) !important;
 }
 
+button.goto-url label {
+  display: none;
+}
+button.goto-url {
+  list-style-image: url(chrome://songbird/skin/buttons/goto-url-button.png);
+  
+  width:12px !important;
+  min-width:0px !important;
 
+  min-height:12px !important;
+  padding:2px;
+}
 
+button.goto-url {
+  -moz-image-region: rect(0px 12px 12px 0px);
+}
+
+button.goto-url:hover {
+  -moz-image-region: rect(12px 12px 24px 0px);
+}
 /* number inputs */
 textbox.long-number-input {
   width: 4em !important;

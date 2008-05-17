@@ -83,8 +83,8 @@
 
     <tabpanels flex="1">
       <vbox flex="1" id="summary-tab">
-      <!--  Summary page disabled.  Needs styling and layout.
-            When implementing this MAKE SURE THAT LABELS CROP!
+      <!--  Summary page.  Needs styling and layout.
+            When implementing this MAKE SURE THAT LABELS CROP! -->
       
         <hbox flex="1">
 
@@ -94,121 +94,109 @@
                 height="128"
                 width="128"
                 property="http://songbirdnest.com/data/1.0#primaryImageURL"/>
-            <html:box/><
+            <html:box/>
           </div>
           <vbox flex="1" id="mainSection">
-            <hbox id="title">
-              <label flex="1" property="http://songbirdnest.com/data/1.0#trackName"/>
-              <spacer flex="*"/>
-              <label width="5" value="("/>
-              <label width="40" property="http://songbirdnest.com/data/1.0#duration"/>
-              <label width="5" value=")"/>
-            </hbox>
-            <label id="artistName" property="http://songbirdnest.com/data/1.0#artistName"/>
-            <label id="albumName" property="http://songbirdnest.com/data/1.0#albumName"/>
-
-            <hbox id="track-and-disc-numbers">
-              <deck id="track-number-details">
-                <hbox>
-                  <label>Track: </label>
-                  <label id="trackNumber" 
-                         property="http://songbirdnest.com/data/1.0#trackNumber"/>
-                  <label>of</label> 
-                  <label id="totalTracks" 
-                           property="http://songbirdnest.com/data/1.0#totalTracks"/>
-                </hbox>
-                <hbox id="no-track-info">
-                  <label>No Track Number</label>
-                 </hbox>
-              </deck>
-              <deck id="multi-disc-details">
-                <hbox>
-                  <label>(Disc: </label>
-                  <label id="discNumber"
-                           property="http://songbirdnest.com/data/1.0#discNumber"/>
-                  <label>of</label> 
-                  <label id="totalDiscs"
-                           property="http://songbirdnest.com/data/1.0#totalDiscs"/>
-                  <label>)</label>
-                </hbox>
-                <hbox id="no-disc-info">
-                  <label class="blank">No Disc Info</label>
-                </hbox>
-              </deck>
-            </hbox>
-
-            <hbox id="genre-and-year">
-              <label
-                  property-type="label"
-                  property="http://songbirdnest.com/data/1.0#genre"/>
-              <label width="5">:</label>
-              <label
-                  id="genre"
-                  property="http://songbirdnest.com/data/1.0#genre"/>
-              <label
-                  property-type="label"
-                  property="http://songbirdnest.com/data/1.0#year"/>
-              <label>:</label>
-              <label
-                  id="year"
-                  property="http://songbirdnest.com/data/1.0#year"/>
-            </hbox>
+            <label property="http://songbirdnest.com/data/1.0#trackName" crop="end"/>
+            <label width="40" property="http://songbirdnest.com/data/1.0#duration" crop="end"/>
+            <label id="artistName" property="http://songbirdnest.com/data/1.0#artistName" crop="end"/>
+            <label id="albumName" property="http://songbirdnest.com/data/1.0#albumName" crop="end"/>
           </vbox>
         </hbox>
+        
+        <hbox id="main-block">
+          <!--
+             - The left column of the main data block.
+             -->
+          <vbox id="left-column">
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#playCount"/>
+              <label property="http://songbirdnest.com/data/1.0#playCount"/>
+            </hbox>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
+              <label property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
+            </hbox>
 
-        <groupbox>
-          <grid flex="1">
-            <columns>
-              <column flex="1"/>
-              <column flex="2"/>
-              <column flex="1"/>
-              <column flex="2"/>
-            </columns>
-
-            <rows>
-              <row>
-                <label
-                    property="http://songbirdnest.com/data/1.0#created"
-                    property-type="label"/>
-                <label
-                    property="http://songbirdnest.com/data/1.0#created"/>
-                <label
-                    property="http://songbirdnest.com/data/1.0#updated"
-                    property-type="label"/>
-                <label
-                    property="http://songbirdnest.com/data/1.0#updated"/>
-              </row>
-              <row>
-                <label>Plays</label>
-                <hbox>
-                  <label property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
-                  <label>/</label>
-                  <label property="http://songbirdnest.com/data/1.0#playCount"/>
-                </hbox>
-                <label>Skips</label>
-                <hbox>
-                  <label property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
-                  <label>/</label>
-                  <label property="http://songbirdnest.com/data/1.0#skipCount"/>
-                </hbox>
-              </row>
-            </rows>
-          </grid>
-          <deck id="download-details">
-            <hbox flex="1">
-              <label>Downloaded from</label>
-              <label flex="1" property="http://songbirdnest.com/data/1.0#originURL" crop="end"/>
-              <label>on</label>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#skipCount"/>
+              <label property="http://songbirdnest.com/data/1.0#skipCount"/>
+            </hbox>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
+              <label property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
+            </hbox>
+            
+            <!-- ONE LINE SPACER GOES HERE -->
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#contentLength"/>
+              <label property="http://songbirdnest.com/data/1.0#contentLength"/>
+            </hbox>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#bitrate"/>
+              <label property="http://songbirdnest.com/data/1.0#bitrate"/>
+              <label>kbps</label><!-- TODO: format should (be able to) do this -->
+            </hbox>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#samplerate"/>
+              <label property="http://songbirdnest.com/data/1.0#samplerate"/>
+              <label>kHz</label> <!--TODO: should say kHz -->
+            </hbox>
+            
+            <!-- spacer line goes here -->
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#recordLabelName"/>
+              <label property="http://songbirdnest.com/data/1.0#recordLabelName"/>
+            </hbox>
+          </vbox>
+          
+          <!--
+             - The right column of the main data block.
+             -->
+          <vbox id="right-column">
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#updated"/>
+              <label property="http://songbirdnest.com/data/1.0#updated"/>
+            </hbox>
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#created"/>
               <label property="http://songbirdnest.com/data/1.0#created"/>
             </hbox>
             <hbox>
-              <label>No download information.</label>
+              <!-- todo: use the page title / icon here -->
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#originPage"/>
+              <label property="http://songbirdnest.com/data/1.0#originPage"/>
             </hbox>
-          </deck>
-        </groupbox>-->
+            
+            <!-- gap -->
+            
+            <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#softwareVendor"/>
+              <label property="http://songbirdnest.com/data/1.0#softwareVendor"/>
+            </hbox>
+            
+          </vbox>
+        </hbox>
+        
+        <!-- content URL spans the bottom -->
+        <hbox>
+              <label property-type="label"
+                     property="http://songbirdnest.com/data/1.0#contentURL"/>
+              <label property="http://songbirdnest.com/data/1.0#contentURL" crop="center" flex="1"/>
+        </hbox>
       </vbox>
-
-
 
       <vbox id="info-tab">      
       
@@ -270,7 +258,7 @@
                      flex="1"
                      tabindex="120"
                      autocompletesearch="library-distinct-properties"
-                     defaultdistinctproperties="Alternative,Blues/R&amp;B,Books&amp;Spoken,Children's Music,Classical,Comedy,Country,Dance,Easy Listening,Electronic,Folk,Hip Hop/Rap,Holiday,House,Industrial,Jazz,New Age,Podcast,Pop,Raggae,Religious,Rock,Science,Sountrack,Techno,Trance,Unclassifiable,World"/>  
+                     defaultdistinctproperties="Alternative,Blues/R&amp;B,Books&amp;Spoken,Children's Music,Classical,Comedy,Country,Dance,Easy Listening,Electronic,Folk,Hip Hop/Rap,Holiday,House,Industrial,Jazz,New Age,Nerdcore,Podcast,Pop,Raggae,Religious,Rock,Science,Soundtrack,Techno,Trance,Unclassifiable,World"/>  
 
             <!-- deferred from 0.6 until supported by sorting algos -->
             <!--label property-type="label" 
