@@ -1674,7 +1674,7 @@ private:
   sbBaseDevice* mDevice;
 };
 
-void sbBaseDevice::Init()
+nsresult sbBaseDevice::Init()
 {
   NS_ASSERTION(NS_IsMainThread(),
                "base device init not on main thread, implement proxying");
@@ -1682,19 +1682,23 @@ void sbBaseDevice::Init()
     // we need to get the weak reference on the main thread because it is not
     // threadsafe, but we only ever use it from the main thread
     nsCOMPtr<nsIRunnable> event = new sbBaseDeviceInitHelper(this);
-    NS_DispatchToMainThread(event, NS_DISPATCH_SYNC);
-    return;
+    return NS_DispatchToMainThread(event, NS_DISPATCH_SYNC);
   }
   
+  nsresult rv;
   // get a weak ref of the device manager
   nsCOMPtr<nsISupportsWeakReference> manager =
-    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2");
-  if (!manager)
-    return;
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
   
-  nsresult rv = manager->GetWeakReference(getter_AddRefs(mParentEventTarget));
-  if (NS_FAILED(rv))
+  rv = manager->GetWeakReference(getter_AddRefs(mParentEventTarget));
+  if (NS_FAILED(rv)) {
     mParentEventTarget = nsnull;
+    return rv;
+  }
+  
+  // Perform derived class intialization
+  return InitDevice();
 }
 
 NS_IMETHODIMP sbBaseDevice::SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled)

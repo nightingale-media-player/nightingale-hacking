@@ -342,8 +342,15 @@ public:
 
 protected:
   friend class sbBaseDeviceInitHelper;
-  void Init();
-
+  /**
+   * Base class initialization this will call the InitDevice first then
+   * do the intialization needed by the sbDeviceBase
+   */
+  nsresult Init();
+  /**
+   * This allows the derived classes to be initialized if needed
+   */
+  virtual nsresult InitDevice() { return NS_OK; }
 private:
   /**
    * Helper for PopRequest / PeekRequest
