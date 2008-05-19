@@ -1,0 +1,333 @@
+Index: xpcom/io/SpecialSystemDirectory.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/io/SpecialSystemDirectory.cpp,v
+retrieving revision 1.40
+diff -u -8 -r1.40 SpecialSystemDirectory.cpp
+--- xpcom/io/SpecialSystemDirectory.cpp 14 Mar 2008 18:34:21 -0000  1.40
++++ xpcom/io/SpecialSystemDirectory.cpp 2 May 2008 17:24:27 -0000
+@@ -736,16 +736,32 @@
+         case Win_Fonts:
+         {
+             return GetWindowsFolder(CSIDL_FONTS, aFile);
+         }
+         case Win_Templates:
+         {
+             return GetWindowsFolder(CSIDL_TEMPLATES, aFile);
+         }
++        case Win_Documents:
++        {
++            return GetWindowsFolder(CSIDL_MYDOCUMENTS, aFile);
++        }
++        case Win_Pictures:
++        {
++            return GetWindowsFolder(CSIDL_MYPICTURES, aFile);
++        }
++        case Win_Music:
++        {
++            return GetWindowsFolder(CSIDL_MYMUSIC, aFile);
++        }
++        case Win_Video:
++        {
++            return GetWindowsFolder(CSIDL_MYVIDEO, aFile);
++        }
+ #ifndef WINCE
+         case Win_Common_Startmenu:
+         {
+             return GetWindowsFolder(CSIDL_COMMON_STARTMENU, aFile);
+         }
+         case Win_Common_Programs:
+         {
+             return GetWindowsFolder(CSIDL_COMMON_PROGRAMS, aFile);
+@@ -753,24 +769,44 @@
+         case Win_Common_Startup:
+         {
+             return GetWindowsFolder(CSIDL_COMMON_STARTUP, aFile);
+         }
+         case Win_Common_Desktopdirectory:
+         {
+             return GetWindowsFolder(CSIDL_COMMON_DESKTOPDIRECTORY, aFile);
+         }
++        case Win_Common_Documents:
++        {
++            return GetWindowsFolder(CSIDL_COMMON_DOCUMENTS, aFile);
++        }
++        case Win_Common_Pictures:
++        {
++            return GetWindowsFolder(CSIDL_COMMON_PICTURES, aFile);
++        }
++        case Win_Common_Music:
++        {
++            return GetWindowsFolder(CSIDL_COMMON_MUSIC, aFile);
++        }
++        case Win_Common_Video:
++        {
++            return GetWindowsFolder(CSIDL_COMMON_VIDEO, aFile);
++        }
+         case Win_Printhood:
+         {
+             return GetWindowsFolder(CSIDL_PRINTHOOD, aFile);
+         }
+         case Win_Cookies:
+         {
+             return GetWindowsFolder(CSIDL_COOKIES, aFile);
+         }
++        case Win_DiscBurning:
++        {
++            return GetWindowsFolder(CSIDL_CDBURN_AREA, aFile);
++        }
+ #endif
+         case Win_Appdata:
+         {
+             return GetWindowsFolder(CSIDL_APPDATA, aFile);
+         }
+ 
+         case Win_LocalAppdata:
+         {
+Index: xpcom/io/SpecialSystemDirectory.h
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/io/SpecialSystemDirectory.h,v
+retrieving revision 1.10
+diff -u -8 -r1.10 SpecialSystemDirectory.h
+--- xpcom/io/SpecialSystemDirectory.h 12 Mar 2008 22:35:56 -0000  1.10
++++ xpcom/io/SpecialSystemDirectory.h 2 May 2008 17:24:27 -0000
+@@ -105,16 +105,25 @@
+   Win_Common_Startup        =   223,   
+   Win_Common_Desktopdirectory = 224,   
+   Win_Appdata               =   225,   
+   Win_Printhood             =   226,   
+   Win_Cookies               =   227, 
+   Win_LocalAppdata          =   228,
+   Win_ProgramFiles          =   229,
+   Win_Downloads             =   230,
++  Win_Common_Documents      =   231, 
++  Win_Common_Pictures       =   232,
++  Win_Common_Music          =   233,
++  Win_Common_Video          =   234,
++  Win_Documents             =   235,
++  Win_Pictures              =   236,
++  Win_Music                 =   237,
++  Win_Video                 =   238,
++  Win_DiscBurning           =   239,
+   
+   Unix_LocalDirectory       =   301,   
+   Unix_LibDirectory         =   302,   
+   Unix_HomeDirectory        =   303,
+   Unix_XDG_Desktop          =   304,
+   Unix_XDG_Documents        =   305,
+   Unix_XDG_Download         =   306,
+   Unix_XDG_Music            =   307,
+Index: xpcom/io/nsDirectoryService.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/io/nsDirectoryService.cpp,v
+retrieving revision 1.95
+diff -u -8 -r1.95 nsDirectoryService.cpp
+--- xpcom/io/nsDirectoryService.cpp 12 Mar 2008 22:35:56 -0000  1.95
++++ xpcom/io/nsDirectoryService.cpp 2 May 2008 17:24:27 -0000
+@@ -345,21 +345,30 @@
+ nsIAtom*  nsDirectoryService::sNetwork = nsnull;
+ nsIAtom*  nsDirectoryService::sNethood = nsnull;
+ nsIAtom*  nsDirectoryService::sFonts = nsnull;
+ nsIAtom*  nsDirectoryService::sTemplates = nsnull;
+ nsIAtom*  nsDirectoryService::sCommon_Startmenu = nsnull;
+ nsIAtom*  nsDirectoryService::sCommon_Programs = nsnull;
+ nsIAtom*  nsDirectoryService::sCommon_Startup = nsnull;
+ nsIAtom*  nsDirectoryService::sCommon_Desktopdirectory = nsnull;
++nsIAtom*  nsDirectoryService::sCommon_Documents = nsnull;
++nsIAtom*  nsDirectoryService::sCommon_Pictures = nsnull;
++nsIAtom*  nsDirectoryService::sCommon_Music = nsnull;
++nsIAtom*  nsDirectoryService::sCommon_Video = nsnull;
+ nsIAtom*  nsDirectoryService::sAppdata = nsnull;
+ nsIAtom*  nsDirectoryService::sLocalAppdata = nsnull;
+ nsIAtom*  nsDirectoryService::sPrinthood = nsnull;
+ nsIAtom*  nsDirectoryService::sWinCookiesDirectory = nsnull;
+ nsIAtom*  nsDirectoryService::sDefaultDownloadDirectory = nsnull;
++nsIAtom*  nsDirectoryService::sDocuments = nsnull;
++nsIAtom*  nsDirectoryService::sPictures = nsnull;
++nsIAtom*  nsDirectoryService::sMusic = nsnull;
++nsIAtom*  nsDirectoryService::sVideo = nsnull;
++nsIAtom*  nsDirectoryService::sDiscBurning = nsnull;
+ #elif defined (XP_UNIX)
+ nsIAtom*  nsDirectoryService::sLocalDirectory = nsnull;
+ nsIAtom*  nsDirectoryService::sLibDirectory = nsnull;
+ nsIAtom*  nsDirectoryService::sDefaultDownloadDirectory = nsnull;
+ nsIAtom*  nsDirectoryService::sXDGDesktop = nsnull;
+ nsIAtom*  nsDirectoryService::sXDGDocuments = nsnull;
+ nsIAtom*  nsDirectoryService::sXDGDownload = nsnull;
+ nsIAtom*  nsDirectoryService::sXDGMusic = nsnull;
+@@ -461,21 +470,30 @@
+     { NS_WIN_NETWORK_DIR,          &nsDirectoryService::sNetwork },
+     { NS_WIN_NETHOOD_DIR,          &nsDirectoryService::sNethood },
+     { NS_WIN_FONTS_DIR,            &nsDirectoryService::sFonts },
+     { NS_WIN_TEMPLATES_DIR,        &nsDirectoryService::sTemplates },
+     { NS_WIN_COMMON_STARTMENU_DIR, &nsDirectoryService::sCommon_Startmenu },
+     { NS_WIN_COMMON_PROGRAMS_DIR,  &nsDirectoryService::sCommon_Programs },
+     { NS_WIN_COMMON_STARTUP_DIR,   &nsDirectoryService::sCommon_Startup },
+     { NS_WIN_COMMON_DESKTOP_DIRECTORY, &nsDirectoryService::sCommon_Desktopdirectory },
++    { NS_WIN_COMMON_DOCUMENTS,     &nsDirectoryService::sCommon_Documents },
++    { NS_WIN_COMMON_PICTURES,      &nsDirectoryService::sCommon_Pictures },
++    { NS_WIN_COMMON_MUSIC,         &nsDirectoryService::sCommon_Music },
++    { NS_WIN_COMMON_VIDEO,         &nsDirectoryService::sCommon_Video },
+     { NS_WIN_APPDATA_DIR,          &nsDirectoryService::sAppdata },
+     { NS_WIN_LOCAL_APPDATA_DIR,    &nsDirectoryService::sLocalAppdata },
+     { NS_WIN_PRINTHOOD,            &nsDirectoryService::sPrinthood },
+     { NS_WIN_COOKIES_DIR,          &nsDirectoryService::sWinCookiesDirectory },
+     { NS_WIN_DEFAULT_DOWNLOAD_DIR, &nsDirectoryService::sDefaultDownloadDirectory },
++    { NS_WIN_DOCUMENTS,            &nsDirectoryService::sDocuments },
++    { NS_WIN_PICTURES,             &nsDirectoryService::sPictures },
++    { NS_WIN_MUSIC,                &nsDirectoryService::sMusic },
++    { NS_WIN_VIDEO,                &nsDirectoryService::sVideo },
++    { NS_WIN_DISCBURNING,          &nsDirectoryService::sDiscBurning },
+ #elif defined (XP_UNIX)
+     { NS_UNIX_LOCAL_DIR,           &nsDirectoryService::sLocalDirectory },
+     { NS_UNIX_LIB_DIR,             &nsDirectoryService::sLibDirectory },
+     { NS_UNIX_DEFAULT_DOWNLOAD_DIR, &nsDirectoryService::sDefaultDownloadDirectory },
+     { NS_UNIX_XDG_DESKTOP_DIR,     &nsDirectoryService::sXDGDesktop },
+     { NS_UNIX_XDG_DOCUMENTS_DIR,   &nsDirectoryService::sXDGDocuments },
+     { NS_UNIX_XDG_DOWNLOAD_DIR,    &nsDirectoryService::sXDGDownload },
+     { NS_UNIX_XDG_MUSIC_DIR,       &nsDirectoryService::sXDGMusic },
+@@ -1129,16 +1147,32 @@
+     else if (inAtom == nsDirectoryService::sCommon_Startup)
+     {
+         rv = GetSpecialSystemDirectory(Win_Common_Startup, getter_AddRefs(localFile)); 
+     }
+     else if (inAtom == nsDirectoryService::sCommon_Desktopdirectory)
+     {
+         rv = GetSpecialSystemDirectory(Win_Common_Desktopdirectory, getter_AddRefs(localFile)); 
+     }
++    else if (inAtom == nsDirectoryService::sCommon_Documents)
++    {
++        rv = GetSpecialSystemDirectory(Win_Common_Documents, getter_AddRefs(localFile));
++    }
++    else if (inAtom == nsDirectoryService::sCommon_Pictures)
++    {
++        rv = GetSpecialSystemDirectory(Win_Common_Pictures, getter_AddRefs(localFile));
++    }
++    else if (inAtom == nsDirectoryService::sCommon_Music)
++    {
++        rv = GetSpecialSystemDirectory(Win_Common_Music, getter_AddRefs(localFile));
++    }
++    else if (inAtom == nsDirectoryService::sCommon_Video)
++    {
++        rv = GetSpecialSystemDirectory(Win_Common_Video, getter_AddRefs(localFile));
++    }
+     else if (inAtom == nsDirectoryService::sAppdata)
+     {
+         rv = GetSpecialSystemDirectory(Win_Appdata, getter_AddRefs(localFile)); 
+     }
+     else if (inAtom == nsDirectoryService::sLocalAppdata)
+     {
+         rv = GetSpecialSystemDirectory(Win_LocalAppdata, getter_AddRefs(localFile)); 
+     }
+@@ -1149,16 +1183,36 @@
+     else if (inAtom == nsDirectoryService::sWinCookiesDirectory)
+     {
+         rv = GetSpecialSystemDirectory(Win_Cookies, getter_AddRefs(localFile)); 
+     }
+     else if (inAtom == nsDirectoryService::sDefaultDownloadDirectory)
+     {
+         rv = GetSpecialSystemDirectory(Win_Downloads, getter_AddRefs(localFile));
+     }
++    else if (inAtom == nsDirectoryService::sDocuments)
++    {
++        rv = GetSpecialSystemDirectory(Win_Documents, getter_AddRefs(localFile));
++    }
++    else if (inAtom == nsDirectoryService::sPictures)
++    {
++        rv = GetSpecialSystemDirectory(Win_Pictures, getter_AddRefs(localFile));
++    }
++    else if (inAtom == nsDirectoryService::sMusic)
++    {
++        rv = GetSpecialSystemDirectory(Win_Music, getter_AddRefs(localFile));
++    }
++    else if (inAtom == nsDirectoryService::sVideo)
++    {
++        rv = GetSpecialSystemDirectory(Win_Video, getter_AddRefs(localFile));
++    }
++    else if (inAtom == nsDirectoryService::sDiscBurning)
++    {
++        rv = GetSpecialSystemDirectory(Win_DiscBurning, getter_AddRefs(localFile));
++    }
+ #elif defined (XP_UNIX)
+ 
+     else if (inAtom == nsDirectoryService::sLocalDirectory)
+     {
+         rv = GetSpecialSystemDirectory(Unix_LocalDirectory, getter_AddRefs(localFile)); 
+     }
+     else if (inAtom == nsDirectoryService::sLibDirectory)
+     {
+Index: xpcom/io/nsDirectoryService.h
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/io/nsDirectoryService.h,v
+retrieving revision 1.35
+diff -u -8 -r1.35 nsDirectoryService.h
+--- xpcom/io/nsDirectoryService.h 12 Mar 2008 22:35:56 -0000  1.35
++++ xpcom/io/nsDirectoryService.h 2 May 2008 17:24:27 -0000
+@@ -147,21 +147,30 @@
+     static nsIAtom *sNetwork;
+     static nsIAtom *sNethood;
+     static nsIAtom *sFonts;
+     static nsIAtom *sTemplates;
+     static nsIAtom *sCommon_Startmenu;
+     static nsIAtom *sCommon_Programs;
+     static nsIAtom *sCommon_Startup;
+     static nsIAtom *sCommon_Desktopdirectory;
++    static nsIAtom *sCommon_Documents;
++    static nsIAtom *sCommon_Pictures;
++    static nsIAtom *sCommon_Music;
++    static nsIAtom *sCommon_Video;
+     static nsIAtom *sAppdata;
+     static nsIAtom *sLocalAppdata;
+     static nsIAtom *sPrinthood;
+     static nsIAtom *sWinCookiesDirectory;
+     static nsIAtom *sDefaultDownloadDirectory;
++    static nsIAtom *sDocuments;
++    static nsIAtom *sPictures;
++    static nsIAtom *sMusic;
++    static nsIAtom *sVideo;
++    static nsIAtom *sDiscBurning;
+ #elif defined (XP_UNIX)
+     static nsIAtom *sLocalDirectory;
+     static nsIAtom *sLibDirectory;
+     static nsIAtom *sXDGDesktop;
+     static nsIAtom *sXDGDocuments;
+     static nsIAtom *sXDGDownload;
+     static nsIAtom *sXDGMusic;
+     static nsIAtom *sXDGPictures;
+Index: xpcom/io/nsDirectoryServiceDefs.h
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/io/nsDirectoryServiceDefs.h,v
+retrieving revision 1.32
+diff -u -8 -r1.32 nsDirectoryServiceDefs.h
+--- xpcom/io/nsDirectoryServiceDefs.h 12 Mar 2008 22:40:51 -0000  1.32
++++ xpcom/io/nsDirectoryServiceDefs.h 2 May 2008 17:24:27 -0000
+@@ -172,21 +172,30 @@
+     #define NS_WIN_NETWORK_DIR                  "NetW"
+     #define NS_WIN_NETHOOD_DIR                  "netH"
+     #define NS_WIN_FONTS_DIR                    "Fnts"
+     #define NS_WIN_TEMPLATES_DIR                "Tmpls"
+     #define NS_WIN_COMMON_STARTMENU_DIR         "CmStrt"
+     #define NS_WIN_COMMON_PROGRAMS_DIR          "CmPrgs"
+     #define NS_WIN_COMMON_STARTUP_DIR           "CmStrt"
+     #define NS_WIN_COMMON_DESKTOP_DIRECTORY     "CmDeskP"
++    #define NS_WIN_COMMON_DOCUMENTS             "CmDocs"
++    #define NS_WIN_COMMON_PICTURES              "CmPics"
++    #define NS_WIN_COMMON_MUSIC                 "CmMusic"
++    #define NS_WIN_COMMON_VIDEO                 "CmVideo"
+     #define NS_WIN_APPDATA_DIR                  "AppData"
+     #define NS_WIN_LOCAL_APPDATA_DIR            "LocalAppData"
+     #define NS_WIN_PRINTHOOD                    "PrntHd"
+     #define NS_WIN_COOKIES_DIR                  "CookD"
+     #define NS_WIN_DEFAULT_DOWNLOAD_DIR         "DfltDwnld"
++    #define NS_WIN_DOCUMENTS                    "Docs"
++    #define NS_WIN_PICTURES                     "Pics"
++    #define NS_WIN_MUSIC                        "Music"
++    #define NS_WIN_VIDEO                        "Video"
++    #define NS_WIN_DISCBURNING                  "DiscBurning"
+ #elif defined (XP_UNIX)
+     #define NS_UNIX_LOCAL_DIR                   "Locl"
+     #define NS_UNIX_LIB_DIR                     "LibD"
+     #define NS_UNIX_HOME_DIR                    NS_OS_HOME_DIR
+     #define NS_UNIX_XDG_DESKTOP_DIR             "XDGDesk"
+     #define NS_UNIX_XDG_DOCUMENTS_DIR           "XDGDocs"
+     #define NS_UNIX_XDG_DOWNLOAD_DIR            "XDGDwnld"
+     #define NS_UNIX_XDG_MUSIC_DIR               "XDGMusic"
