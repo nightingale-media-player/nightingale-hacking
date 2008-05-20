@@ -78,7 +78,7 @@ toolbarbutton.findbar-closebutton:hover:active {
 
 /* find-next button */
 .find-buttons-container > toolbarbutton.findbar-find-next {
-  list-style-image: url("chrome://global/skin/icons/find.png");
+  list-style-image: url("chrome://songbird/skin/buttons/find.png");
   -moz-image-region: rect(0px 16px 16px 0px) !important;
 }
 .find-buttons-container > toolbarbutton.findbar-find-next:hover {
@@ -90,7 +90,7 @@ toolbarbutton.findbar-closebutton:hover:active {
 
 /* find-previous button */
 .find-buttons-container > toolbarbutton.findbar-find-previous {
-  list-style-image: url("chrome://global/skin/icons/find.png");
+  list-style-image: url("chrome://songbird/skin/buttons/find.png");
   -moz-image-region: rect(0px 32px 16px 16px);
 }
 .find-buttons-container > toolbarbutton.findbar-find-previous:hover {
@@ -102,7 +102,7 @@ toolbarbutton.findbar-closebutton:hover:active {
 
 /* highlight button */
 toolbarbutton.findbar-highlight {
-  list-style-image: url("chrome://global/skin/icons/find.png");
+  list-style-image: url("chrome://songbird/skin/buttons/find.png");
   -moz-image-region: rect(0px 48px 16px 32px);
 }
 toolbarbutton.findbar-highlight:hover {
