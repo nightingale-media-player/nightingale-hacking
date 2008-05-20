@@ -2020,10 +2020,11 @@ findbar {
 }
 
 
-findbar > toolbarbutton.findbar-highlight[checked="true"] {
+.findbar-container > toolbarbutton[checked="true"] {
   border-top: 1px solid #202220 !important; /** Button Shadow */ 
   border-left: 1px solid #202220 !important; /** Button Shadow */ 
   border-bottom: 1px solid #797f76 !important; /** Button Highlight */
   border-right: 1px solid #202220 !important; /** Button Shadow */ 
-  background-color:transparent;
+  background-color:transparent !important;
 }
+
