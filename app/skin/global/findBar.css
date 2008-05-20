@@ -3,7 +3,8 @@
 /* ::::: find toolbar ::::: */
 
 findbar {
-  min-height: 28px;
+  min-height: 29px;
+  padding:1px 0;
 }
 
 label,
@@ -15,11 +16,12 @@ description.findbar-find-status {
   font-size:10px;
 }
 
+
 /* buttons - next, previous, highlight */
 toolbarbutton,
 .find-buttons-container > toolbarbutton {
-	padding:1px 4px 2px;
-	margin:3px 8px 2px 0;
+  padding:1px 6px 2px;
+  margin:0px 8px 0px 0;
 }
 toolbarbutton > .toolbarbutton-icon,
 .find-buttons-container > toolbarbutton > .toolbarbutton-icon {
@@ -41,7 +43,7 @@ checkbox {
 }
 .checkbox-check {
   -moz-appearance: checkbox-small;
-  margin:1px 4px 0 0;
+  margin:0px 4px 0 0;
 }
 
 /* input textbox */
@@ -109,7 +111,7 @@ toolbarbutton.findbar-highlight:hover {
 toolbarbutton.findbar-highlight[disabled="true"] {
   -moz-image-region: rect(32px 48px 48px 32px) !important;
 }
-toolbarbutton.findbar-highlight:active, findbar > .findbar-highlight[checked="true"] {
+toolbarbutton.findbar-highlight:active, .findbar-container > .findbar-highlight[checked="true"] {
   -moz-image-region: rect(48px 48px 64px 32px);
 }
 toolbarbutton.findbar-highlight[checked="true"]:hover {
