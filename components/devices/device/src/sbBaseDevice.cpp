@@ -54,6 +54,7 @@
 #include <sbILibraryDiffingService.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
+#include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbStringBundle.h>
@@ -1068,6 +1069,99 @@ void sbBaseDevice::FinalizeDeviceLibrary(sbIDeviceLibrary* aDevLib)
 
   // Finalize the device library.
   aDevLib->Finalize();
+  mPlaylistSyncListeners.Clear();
+}
+
+nsresult sbBaseDevice::ShouldListenToPlaylist(sbIMediaList * aMainList,
+                                              sbIDeviceLibrary * aDeviceLibrary,
+                                              PRBool & aShoudlListen)
+{
+  NS_PRECONDITION(aMainList, "aMainList cannot be null");
+  NS_PRECONDITION(aDeviceLibrary, "aDeviceLibrary cannot be null");
+  nsresult rv;
+#if DEBUG
+  nsCOMPtr<sbILibrary> listLib;
+  rv= aMainList->GetLibrary(getter_AddRefs(listLib));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> mainLib;
+  rv = GetMainLibrary(getter_AddRefs(mainLib));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRBool equals;
+  NS_ASSERTION(NS_SUCCEEDED(mainLib->Equals(listLib, &equals)) && equals,
+               "ShouldListenToPlaylist called with a non-mainlibrary playlist");
+  
+#endif
+  
+  PRUint32 syncMode;
+  rv = aDeviceLibrary->GetMgmtType(&syncMode);
+  PRBool listenToChanges = (syncMode != sbIDeviceLibrary::MGMT_TYPE_MANUAL);
+  if (listenToChanges) {
+    // If we're only interested in certain playlists check that list
+    if (syncMode != sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
+      
+      listenToChanges = PR_FALSE;
+      // Get the lists of playlists that we're care about
+      nsCOMPtr<nsIArray> playlists;
+      rv = aDeviceLibrary->GetSyncPlaylistList(getter_AddRefs(playlists));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Retrieve the guid of the main library item        
+      nsAutoString mainItemGuid;
+      rv = aMainList->GetGuid(mainItemGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsAutoString playlistItemGuid;
+      nsCOMPtr<sbIMediaItem> playlist;
+
+      // See if the playlist is in the list of playlists to sync
+      PRUint32 length;
+      rv = playlists->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for (PRUint32 index = 0; index < length; ++index) {
+        playlist = do_QueryElementAt(playlists, index, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = playlist->GetGuid(playlistItemGuid);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // If we found it, indicate that we want to listen for changes to 
+        // this playlist
+        if (mainItemGuid.Equals(playlistItemGuid)) {
+          listenToChanges = PR_TRUE;
+          break;
+        }
+      }
+    }
+  }
+  aShoudlListen = listenToChanges;
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::ListenToPlaylist(sbIMediaList * aMainMediaList,
+                                        sbIDeviceLibrary * aDeviceLibrary)
+{
+
+  nsRefPtr<sbPlaylistSyncListener> listener = 
+    new sbPlaylistSyncListener(aDeviceLibrary);
+  NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = aMainMediaList->AddListener(listener,
+                                            PR_FALSE, /* not weak */
+                                            0 , /* all */
+                                            nsnull /* filter */);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // We should never get here with a duplicate playlist as ListenToPlaylist
+  // will bail before calling if that's the case.
+  mPlaylistSyncListeners.AppendObject(listener);
+  // TODO: XXX Ugly hack, we have to keep a reference to the playlist else 
+  // our listener goes deaf
+  mPlaylistSyncListeners.AppendObject(aMainMediaList);
+
+  return NS_OK;
 }
 
 nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
@@ -1115,7 +1209,47 @@ nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
   if (mIgnoreMediaListCount > 0)
     listener->SetIgnoreListener(PR_TRUE);
   mMediaListListeners.Put(list, listener);
-  return NS_OK;
+  
+  nsCOMPtr<sbILibrary> mainLibrary;
+
+  // Get the songbird main library
+  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
+  // Get the device library for the playlist
+  rv = sbDeviceUtils::GetDeviceLibraryForItem(this, 
+                                              aList,
+                                              getter_AddRefs(deviceLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the corresponding playlist in the main library if it doesn't exist
+  // then we can't listen to it
+  nsCOMPtr<sbIMediaItem> mainMediaListAsItem;
+  rv = sbLibraryUtils::GetItemInLibrary(list, 
+                                        mainLibrary,
+                                        getter_AddRefs(mainMediaListAsItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If we can't find it then just ignore it.
+  if (!mainMediaListAsItem)
+     return NS_OK;
+
+  nsCOMPtr<sbIMediaList> mainMediaList = do_QueryInterface(mainMediaListAsItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Figure out if we should even listen to this playlist
+  PRBool shouldListen;
+  rv = ShouldListenToPlaylist(mainMediaList,
+                              deviceLibrary,
+                              shouldListen);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (shouldListen)
+    return ListenToPlaylist(mainMediaList,
+                            deviceLibrary);
+  else
+    return NS_OK;
 }
 
 PLDHashOperator sbBaseDevice::EnumerateFinalizeMediaListListeners

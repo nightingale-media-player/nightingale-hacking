@@ -37,6 +37,7 @@
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
+#include <nsCOMArray.h>
 #include <nsDataHashtable.h>
 #include <nsISupportsImpl.h>
 #include <prlock.h>
@@ -378,6 +379,7 @@ protected:
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
+  nsCOMArray<nsISupports> mPlaylistSyncListeners;
 
 protected:
  /**
@@ -478,6 +480,25 @@ protected:
    *                              differences.
    */
   nsresult SyncForceDiffMediaLists(sbIMediaList* aMediaList);
+
+  /**
+   * Determine if we should listen to a playlist
+   * \param aMainList this is the playlist on the main library
+   * \param aDeviceLibrary The device library
+   * \param aShoudListen out parameter that denotes whether the
+   *        playlist should be listened to
+   */
+  nsresult ShouldListenToPlaylist(sbIMediaList * aMainList,
+                                  sbIDeviceLibrary * aDeviceLibrary,
+                                  PRBool & aShoudlListen);
+
+  /**
+   * This function listens to the playlist aMainMediaList
+   * \param aMainmediaList The media list to listen to
+   * \param aDeviceLibrary the device library
+   */
+  nsresult ListenToPlaylist(sbIMediaList * aMainMediaList,
+                            sbIDeviceLibrary * aDeviceLibrary);
 };
 
 #endif /* __SBBASEDEVICE__H__ */

@@ -1388,6 +1388,36 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
   rv = aMediaItem->GetProperties(nsnull, getter_AddRefs(properties));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
+  NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
+
+  nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
+    do_QueryInterface(properties, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString existingGuid, sourceGuid;
+  rv = properties->GetPropertyValue(PROP_LIBRARY, existingGuid);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    nsCOMPtr<sbILibrary> oldLibrary;
+    rv = aMediaItem->GetLibrary(getter_AddRefs(oldLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = oldLibrary->GetGuid(sourceGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = mutableProperties->AppendProperty(PROP_LIBRARY, sourceGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = properties->GetPropertyValue(PROP_ITEM, existingGuid);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    rv = aMediaItem->GetGuid(sourceGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mutableProperties->AppendProperty(PROP_ITEM, sourceGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   nsCOMPtr<sbIMediaItem> newItem;
   nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
 
@@ -1447,37 +1477,9 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
   }
   else {
     // keep track of the library/item guid that we just copied from
-    NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
-    NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
     NS_NAMED_LITERAL_STRING(PROP_ORIGINURL, SB_PROPERTY_ORIGINURL);
-    nsString existingGuid, sourceGuid, originURL;
+    nsString originURL;
     
-    nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
-      do_QueryInterface(properties, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = properties->GetPropertyValue(PROP_LIBRARY, existingGuid);
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      nsCOMPtr<sbILibrary> oldLibrary;
-      rv = aMediaItem->GetLibrary(getter_AddRefs(oldLibrary));
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      rv = oldLibrary->GetGuid(sourceGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      rv = mutableProperties->AppendProperty(PROP_LIBRARY, sourceGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    
-    rv = properties->GetPropertyValue(PROP_ITEM, existingGuid);
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      rv = aMediaItem->GetGuid(sourceGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      rv = mutableProperties->AppendProperty(PROP_ITEM, sourceGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
     rv = properties->GetPropertyValue(PROP_ORIGINURL, originURL);
     if (rv == NS_ERROR_NOT_AVAILABLE) {
       nsCString spec;
