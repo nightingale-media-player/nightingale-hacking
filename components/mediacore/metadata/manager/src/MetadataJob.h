@@ -78,7 +78,7 @@
 { 0xC38FD6BD, 0x3335, 0x4392, { 0xA3, 0xDE, 0x18, 0x55, 0xEC, 0xED, 0xA4, 0xF8 } }
 
 // TODO Update.  Revving this basically abandons old database files.
-#define SBMETADATAJOB_DATABASE_GUID "metadataJobV3Exp"
+#define SBMETADATAJOB_DATABASE_GUID "metadataJobV06"
 
 // FUNCTIONS ==================================================================
 
@@ -225,6 +225,7 @@ protected:
   nsCOMPtr<sbIDataRemote>       mDataStatusDisplay;
   nsCOMPtr<sbIDataRemote>       mDataCurrentMetadataJobs;
   PRUint16                      mJobType;
+  PRBool                        mEnableRatingWrite;
   nsString                      mTableName;
   PRUint32                      mSleepMS;
   nsCOMPtr<sbIDatabaseQuery>    mMainThreadQuery;

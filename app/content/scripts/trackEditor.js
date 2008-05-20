@@ -863,6 +863,8 @@ var TrackEditor = {
       return true;
     }
     
+    var enableRatingWrite = Application.prefs.getValue("songbird.metadata.ratings.enableWriting", false);
+    
     // Apply each modified property back onto the selected items,
     // keeping track of which items have been modified
     var needsWriting = new Array(items.length);
@@ -875,7 +877,13 @@ var TrackEditor = {
         var item = items[i];
         if (value != item.getProperty(property)) {
           item.setProperty(property, value);
-          needsWriting[i] = true;
+          
+          // Flag the item as needing a metadata-write job.
+          // Do not start a write-job if all that has changed is the 
+          // rating, and rating-write isn't enabled.
+          if (property != SBProperties.rating || enableRatingWrite) {
+            needsWriting[i] = true;
+          }
         }
       }
     }

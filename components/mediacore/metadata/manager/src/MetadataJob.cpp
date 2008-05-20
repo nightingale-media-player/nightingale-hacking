@@ -158,6 +158,7 @@ sbMetadataJob::sbMetadataJob() :
   mErrorCount( 0 ),
   mCurrentItem( nsnull ),
   mCurrentItemLock( nsnull ),
+  mEnableRatingWrite( PR_FALSE ),
   mMetadataJobProcessor( nsnull ),
   mInitCompleted( PR_FALSE ),
   mInitExecuted( PR_FALSE ),
@@ -376,6 +377,11 @@ nsresult sbMetadataJob::Init(const nsAString & aTableName,
                                        EmptyString() );
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Figure out if we are allowed to write rating values to files
+  nsCOMPtr<nsIPrefBranch> prefService =
+      do_GetService( "@mozilla.org/preferences-service;1", &rv );
+  NS_ENSURE_SUCCESS( rv, rv);
+  prefService->GetBoolPref( "songbird.metadata.ratings.enableWriting", &mEnableRatingWrite);
 
   mTimerWorkers.SetLength(NUM_CONCURRENT_MAINTHREAD_ITEMS);
 
@@ -1887,6 +1893,33 @@ nsresult sbMetadataJob::StartHandlerForItem( sbMetadataJob::jobitem_t *aItem, PR
     if (aJobType == sbIMetadataJob::JOBTYPE_WRITE) {
       nsCOMPtr<sbIPropertyArray> props;
       rv = aItem->item->GetProperties(nsnull, getter_AddRefs(props));
+
+      // If we aren't allowed to write the rating, remove it from 
+      // the property array.  :(
+      if (!mEnableRatingWrite) {
+
+        PRUint32 propertyCount;
+        rv = props->GetLength(&propertyCount);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<nsIMutableArray> array = do_QueryInterface(props, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        for (PRUint32 i = 0; i < propertyCount; i++) {
+          nsCOMPtr<sbIProperty> property;
+          rv = props->GetPropertyAt(i, getter_AddRefs(property));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          nsString propertyID;
+          rv = property->GetId(propertyID);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (propertyID.EqualsLiteral(SB_PROPERTY_RATING)) {
+            array->RemoveElementAt(i);
+            break;
+          }
+        }
+      }
+
       nsCOMPtr<sbIMutablePropertyArray> writeProps = do_QueryInterface(props, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
       rv = aItem->handler->SetProps(writeProps);
