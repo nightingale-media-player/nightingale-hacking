@@ -41,30 +41,36 @@ function runTest () {
 
   var search = LibraryUtils.createConstraint([
     [
-      [SBProperties.artistName, ["%"]]
+      [SBProperties.artistName, ["o'bar"]]
     ]
   ]);
   view.searchConstraint = search;
   assertEqual(view.length, 0);
 
   view.searchConstraint = null;
-  view.getItemByIndex(2)
-      .setProperty("http://songbirdnest.com/data/1.0#artistName", "Some%thing");
+  view.getItemByIndex(2).setProperty(SBProperties.artistName, "o'bar");
   view.searchConstraint = search;
   assertEqual(view.length, 1);
-  
+
+
  search = LibraryUtils.createConstraint([
     [
-      [SBProperties.artistName, ["\\"]]
+      [SBProperties.artistName, ["foo bar"]]
     ]
   ]);
   view.searchConstraint = search;
   assertEqual(view.length, 0);
 
   view.searchConstraint = null;
-  view.getItemByIndex(0)
-      .setProperty("http://songbirdnest.com/data/1.0#artistName", "Some\\thing");
+  view.getItemByIndex(2).setProperty(SBProperties.artistName, "foo bar");
   view.searchConstraint = search;
   assertEqual(view.length, 1);
-}
 
+ search = LibraryUtils.createConstraint([
+    [
+      [SBProperties.artistName, ["foo bar baz"]]
+    ]
+  ]);
+  view.searchConstraint = search;
+  assertEqual(view.length, 0);
+}

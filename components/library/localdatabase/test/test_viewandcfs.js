@@ -98,11 +98,7 @@ function runTest () {
   view.filterConstraint = filter;
 
   // Set up cfs
-  cfs.appendSearch([
-    SBProperties.artistName,
-    SBProperties.albumName,
-    SBProperties.trackName
-  ], 3);
+  cfs.appendSearch(["*"], 1);
   cfs.appendFilter(SBProperties.genre);
   cfs.appendFilter(SBProperties.artistName);
   cfs.appendFilter(SBProperties.albumName);
@@ -192,9 +188,7 @@ function runTest () {
 
   assertTrue(view.searchConstraint.equals(LibraryUtils.createConstraint([
     [
-      [SBProperties.artistName, ["Beat"]],
-      [SBProperties.albumName,  ["Beat"]],
-      [SBProperties.trackName,  ["Beat"]]
+      ["*", ["Beat"]]
     ]
   ])));
   assertTrue(view.filterConstraint.equals(filter));
@@ -212,9 +206,7 @@ function runTest () {
 
   assertTrue(view.searchConstraint.equals(LibraryUtils.createConstraint([
     [
-      [SBProperties.artistName, ["Beat"]],
-      [SBProperties.albumName,  ["Beat"]],
-      [SBProperties.trackName,  ["Beat"]]
+      ["*", ["Beat"]]
     ]
   ])));
   assertEqual(view.filterConstraint, null);
@@ -250,4 +242,3 @@ function assertView(view, list) {
   }
 
 }
-

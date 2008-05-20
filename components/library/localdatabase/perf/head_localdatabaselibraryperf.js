@@ -36,16 +36,19 @@ function runPerfTest(aName, aTestFunc) {
   var timer = new Timer();
   aTestFunc.apply(this, [library, timer]);
 
-  log("***************** " + aName + " " + libraryFile + " " + timer.elapsed() + "ms");
+  log("***************** " + aName + " " + library.databaseGuid + " " + timer.elapsed() + "ms");
 
+  var environment = Cc["@mozilla.org/process/environment;1"]
+                      .getService(Ci.nsIEnvironment);
+  var resultFile =  environment.get("SB_PERF_RESULTS");
   if (resultFile) {
-    var outputFile = Components.classes["@mozilla.org/file/local;1"]
-    .createInstance(Ci.nsILocalFile);
+    var outputFile = Cc["@mozilla.org/file/local;1"]
+                       .createInstance(Ci.nsILocalFile);
     outputFile.initWithPath(resultFile);
 
     var fos = Cc["@mozilla.org/network/file-output-stream;1"]
-    .createInstance(Ci.nsIFileOutputStream);
-    var s = aName + "\t" + libraryFile + "\t" + timer.elapsed() + "\n";
+                .createInstance(Ci.nsIFileOutputStream);
+    var s = aName + "\t" + library.databaseGuid + "\t" + timer.elapsed() + "\n";
     fos.init(outputFile, 0x02 | 0x08 | 0x10, 0666, 0);
     fos.write(s, s.length);
     fos.close();
@@ -53,17 +56,14 @@ function runPerfTest(aName, aTestFunc) {
 }
 
 function getLibrary() {
-  var environment =
-    Components.classes["@mozilla.org/process/environment;1"]
-              .getService(Components.interfaces.nsIEnvironment);
+  var environment = Cc["@mozilla.org/process/environment;1"]
+                      .getService(Ci.nsIEnvironment);
 
   var libraryFile;
   if (!environment.exists("SB_PERF_LIBRARY")) {
     fail("SB_PERF_LIBRARY must be set");
   }
   libraryFile = environment.get("SB_PERF_LIBRARY");
-
-  var resultFile =  environment.get("SB_PERF_RESULTS");
 
   var file = Components.classes["@mozilla.org/file/local;1"]
                        .createInstance(Ci.nsILocalFile);
@@ -105,34 +105,6 @@ function newGuidArray(aLibrary) {
   array.fetchSize = 1000;
 
   return array;
-}
-
-function readFile(fileName) {
-
-  var file = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("resource:app", Ci.nsIFile);
-  file.append("testharness");
-  file.append("localdatabaselibrary");
-  file.append(fileName);
-
-  var data = "";
-  var fstream = Cc["@mozilla.org/network/file-input-stream;1"]
-                  .createInstance(Ci.nsIFileInputStream);
-  var sstream = Cc["@mozilla.org/scriptableinputstream;1"]
-                  .createInstance(Ci.nsIScriptableInputStream);
-  fstream.init(file, -1, 0, 0);
-  sstream.init(fstream);
-
-  var str = sstream.read(4096);
-  while (str.length > 0) {
-    data += str;
-    str = sstream.read(4096);
-  }
-
-  sstream.close();
-  fstream.close();
-  return data;
 }
 
 function newFileURI(file) {

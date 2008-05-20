@@ -5,6 +5,8 @@ drop table if exists resource_properties;
 drop table if exists library_metadata;
 drop table if exists simple_media_lists;
 drop table if exists library_media_item;
+drop table if exists resource_properties_fts;
+drop table if exists resource_properties_fts_all;
 
 create table library_metadata (
   name text primary key,
@@ -75,11 +77,23 @@ create index idx_simple_media_lists_media_item_id_member_media_item_id on simple
 create unique index idx_simple_media_lists_media_item_id_ordinal on simple_media_lists (media_item_id, ordinal);
 create index idx_simple_media_lists_member_media_item_id on simple_media_lists (member_media_item_id);
 
+create virtual table resource_properties_fts using FTS3 (
+  propertyid,
+  obj
+);
+
+create virtual table resource_properties_fts_all using FTS3 (
+  alldata
+);
+
 /* note the empty comment blocks at the end of the lines in the body of the
    trigger need to be there to prevent the parser from splitting on the
-   line ending semicolon */
+   line ending semicolon
+*/
 create trigger tgr_media_items_simple_media_lists_delete before delete on media_items
 begin
+  delete from resource_properties_fts_all where rowid = OLD.media_item_id; /**/
+  delete from resource_properties_fts where rowid in (select rowid from resource_properties where media_item_id = OLD.media_item_id); /**/
   delete from simple_media_lists where member_media_item_id = OLD.media_item_id or media_item_id = OLD.media_item_id; /**/
   delete from resource_properties where media_item_id = OLD.media_item_id; /**/
 end;
@@ -103,4 +117,4 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 
 insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
 
-insert into library_metadata (name, value) values ('version', '3');
+insert into library_metadata (name, value) values ('version', '4');

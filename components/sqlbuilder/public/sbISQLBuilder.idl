@@ -43,7 +43,7 @@ interface sbISQLSelectBuilder;
 * The interface is inspired by Squiggle:
 * http://joe.truemesh.com/squiggle/javadoc/index.html
 */
-[scriptable, uuid(9286bd63-ffb4-44e6-a3e6-a6cf8f457cb1)]
+[scriptable, uuid(0e07f2fe-98e7-4790-b23c-f7d06ada138f)]
 interface sbISQLBuilder : nsISupports
 {
   const unsigned long MATCH_EQUALS       = 0;
@@ -53,6 +53,7 @@ interface sbISQLBuilder : nsISupports
   const unsigned long MATCH_LESS         = 4;
   const unsigned long MATCH_LESSEQUAL    = 5;
   const unsigned long MATCH_LIKE         = 6;
+  const unsigned long MATCH_MATCH        = 7;
 
   /**
    * \brief Value for the limit clause
@@ -94,6 +95,33 @@ interface sbISQLBuilder : nsISupports
                in AString aJoinedColumnName,
                in AString aJoinToTableName,
                in AString aJoinToColumnName);
+
+  /**
+   * \brief Add a join to the query
+   * \param aJoinType Join type, must be one of the JOIN constant values
+   * \param aJoinedTableName Table name of the table to join
+   * \param aJoinedTableAlias Alias to give the joined table, null for none
+   * \param aJoinedColumnName Column from joined table to use in join
+   *        expression
+   * \param aJoinToTableName Table name of the table to join to
+   * \param aJoinToColumnName Column from the joined to table to use in join
+   *        expression
+   * \param aRequiresFromTableIndexHint This will attempt to add a hint to
+   *        the join statement so that sqlite uses the correct index.
+   * \param aRequiresToTableIndexHint This will attempt to add a hint to 
+   *        the join statement so that sqlite uses the correct index.
+   * \note  Do not use this method unless you know _exactly_ why you are using it.
+   *        Attempting to add a hint for index use can break queries or make them
+   *        extremely slow.
+   */
+  void addJoinWithIndexHint(in unsigned long aJoinType,
+                            in AString aJoinedTableName,
+                            in AString aJoinedTableAlias,
+                            in AString aJoinedColumnName,
+                            in AString aJoinToTableName,
+                            in AString aJoinToColumnName,
+                            in boolean aRequiresFromTableIndexHint,
+                            in boolean aRequiresToTableIndexHint);
 
   /**
    * \brief Add a subquery join join to the query

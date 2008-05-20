@@ -98,11 +98,6 @@ function runTest () {
                   true);
   assertEqual(array.length, 47);
 
-  // Add another search
-  array.addFilter("http://songbirdnest.com/data/1.0#albumName",
-                  new StringArrayEnumerator(["high"]),
-                  true);
-  assertEqual(array.length, 0);
   array.clearFilters();
 
   // Full library, mixed property filter and search

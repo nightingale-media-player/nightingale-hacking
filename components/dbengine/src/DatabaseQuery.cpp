@@ -518,7 +518,8 @@ NS_IMETHODIMP CDatabaseQuery::ResetQuery()
 
   // These should be in sync, but just in case
   NS_ASSERTION( !m_IsExecuting, "Resetting a query that is executing!!!!!");
-  NS_ASSERTION( m_QueryHasCompleted, "Resetting a query that is not complete!!!!!");
+  NS_ASSERTION( m_QueryHasCompleted || m_CurrentQuery == PR_UINT32_MAX, 
+    "Resetting a query that is not complete!!!!!");
 
   // Make sure no-one is touching m_IsExecuting
   PR_Lock(m_StateLock);

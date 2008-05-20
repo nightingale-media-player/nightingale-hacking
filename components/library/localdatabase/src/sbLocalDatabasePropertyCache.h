@@ -52,6 +52,7 @@ class sbISQLBuilderCriterionIn;
 class sbISQLInsertBuilder;
 class sbISQLSelectBuilder;
 class sbISQLUpdateBuilder;
+class sbISQLDeleteBuilder;
 
 class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache,
                                      public nsIObserver
@@ -126,6 +127,22 @@ private:
 
   // Property delete query
   nsString mPropertiesDelete;
+
+  // Media items fts delete query
+  nsCOMPtr<sbISQLDeleteBuilder> mMediaItemsFtsDelete;
+  sbISQLBuilderCriterionIn* mMediaItemsFtsDeleteInCriterion;
+
+  // Media items fts insert query
+  nsCOMPtr<sbISQLInsertBuilder> mMediaItemsFtsInsert;
+  sbISQLBuilderCriterionIn* mMediaItemsFtsInsertInCriterion;
+
+  // Media items fts all delete query
+  nsCOMPtr<sbISQLDeleteBuilder> mMediaItemsFtsAllDelete;
+  sbISQLBuilderCriterionIn* mMediaItemsFtsAllDeleteInCriterion;
+
+  // Media items fts all insert query
+  nsCOMPtr<sbISQLInsertBuilder> mMediaItemsFtsAllInsert;
+  sbISQLBuilderCriterionIn* mMediaItemsFtsAllInsertInCriterion;
 
   // Used to template the media item property update statement
   nsDataHashtable<nsUint32HashKey, nsString> mMediaItemsUpdateQueries;

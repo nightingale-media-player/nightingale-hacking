@@ -74,7 +74,8 @@
 #define USE_SQLITE_READ_UNCOMMITTED
 #define USE_SQLITE_MEMORY_TEMP_STORE
 #define USE_SQLITE_BUSY_TIMEOUT
-#define USE_SQLITE_SHARED_CACHE
+// Can not use FTS with shared cache enabled
+//#define USE_SQLITE_SHARED_CACHE
 
 #define SQLITE_MAX_RETRIES            666
 
@@ -1487,6 +1488,9 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
               nsCAutoString log;
               log.Append(szErr);
               log.AppendLiteral("\n");
+              log.AppendLiteral("\nThe query that caused the error is:\n");
+              log.Append(NS_LossyConvertUTF16toASCII(strQuery));
+              log.AppendLiteral("\n");
               NS_WARNING(log.get());
             }
 #endif
@@ -1553,6 +1557,8 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
         const char *szErr = sqlite3_errmsg(pDB);
         nsCAutoString log;
         log.Append(szErr);
+        log.AppendLiteral("\nThe query that caused the error is:\n");
+        log.Append(NS_LossyConvertUTF16toASCII(strQuery));
         log.AppendLiteral("\n");
         NS_WARNING(log.get());
       }

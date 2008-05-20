@@ -228,10 +228,16 @@ sbSQLSelectBuilder::ToString(nsAString& _retval)
       buff.Append(str);
     }
     else {
+      if(ji.requiresJoinFromIndexUsageFix) {
+        buff.AppendLiteral("+");
+      }
       buff.Append(ji.joinToTableName);
       buff.AppendLiteral(".");
       buff.Append(ji.joinToColumnName);
       buff.AppendLiteral(" = ");
+      if(ji.requiresJoinToIndexUsageFix) {
+        buff.AppendLiteral("+");
+      }
       if (!ji.joinedTableAlias.IsEmpty()) {
         buff.Append(ji.joinedTableAlias);
         buff.AppendLiteral(".");

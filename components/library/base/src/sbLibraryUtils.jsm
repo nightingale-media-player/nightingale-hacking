@@ -154,11 +154,7 @@ var LibraryUtils = {
     // Set up a standard search filter.  
     // It can always be replaced later.
     var filter = mediaListView.cascadeFilterSet;
-    filter.appendSearch([
-      SBProperties.artistName,
-      SBProperties.albumName,
-      SBProperties.trackName
-    ], 3);
+    filter.appendSearch(["*"], 1);
    
     if (aSearchString) {
       // Set the search 

@@ -49,10 +49,12 @@
 #define MEDIALISTYPEID_COLUMN NS_LITERAL_STRING("media_list_type_id")
 #define ROWID_COLUMN          NS_LITERAL_STRING("rowid")
 
-#define PROPERTIES_TABLE       NS_LITERAL_STRING("resource_properties")
-#define MEDIAITEMS_TABLE       NS_LITERAL_STRING("media_items")
-#define SIMPLEMEDIALISTS_TABLE NS_LITERAL_STRING("simple_media_lists")
-#define PROPERTYIDS_TABLE      NS_LITERAL_STRING("properties")
+#define PROPERTIES_TABLE         NS_LITERAL_STRING("resource_properties")
+#define PROPERTIES_FTS_TABLE     NS_LITERAL_STRING("resource_properties_fts")
+#define PROPERTIES_FTS_ALL_TABLE NS_LITERAL_STRING("resource_properties_fts_all")
+#define MEDIAITEMS_TABLE         NS_LITERAL_STRING("media_items")
+#define SIMPLEMEDIALISTS_TABLE   NS_LITERAL_STRING("simple_media_lists")
+#define PROPERTYIDS_TABLE        NS_LITERAL_STRING("properties")
 
 #define MEDIAITEMS_ALIAS NS_LITERAL_STRING("_mi")
 #define CONSTRAINT_ALIAS NS_LITERAL_STRING("_con")
@@ -666,58 +668,8 @@ sbLocalDatabaseQuery::AddFilters()
 
   PRUint32 joinNum = 0;
 
-  // First do the searches.  We are going to combine all the search properties
-  // into one subquery
-  PRBool hasSearch = PR_FALSE;
-
-  nsClassHashtable<nsStringHashKey, sbUint32Array> searchTermToPropertyArray;
-  PRBool success = searchTermToPropertyArray.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  // Combine all searches with the same term into one search
-  PRUint32 len = mFilters->Length();
-  for (PRUint32 i = 0; i < len; i++) {
-    const sbLocalDatabaseGUIDArray::FilterSpec& fs = mFilters->ElementAt(i);
-    if (fs.isSearch) {
-
-      // Right now we don't support top level property searches
-      if (SB_IsTopLevelProperty(fs.property)) {
-        NS_ERROR("Top level properties not supported for search");
-        return NS_ERROR_INVALID_ARG;
-      }
-
-      for (PRUint32 j = 0; j < fs.values.Length(); j++) {
-        sbUint32Array* uint32Array;
-        PRBool arrayExists = searchTermToPropertyArray.Get(fs.values[j],
-                                                           &uint32Array);
-        if (!arrayExists) {
-          nsAutoPtr<sbUint32Array> newArray(new sbUint32Array());
-          NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
-          success = searchTermToPropertyArray.Put(fs.values[j], newArray);  // we now use an array of terms
-                                                                            // instead of just one
-          NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-          uint32Array = newArray.forget();
-        }
-
-        if (!fs.property.EqualsLiteral("*")) {
-          PRUint32* appended =
-            uint32Array->AppendElement(GetPropertyId(fs.property));
-          NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
-        }
-      }
-
-      hasSearch = PR_TRUE;
-    }
-  }
-
-  if (hasSearch) {
-    sbAddJoinInfo info(mBuilder);
-    searchTermToPropertyArray.EnumerateRead(AddJoinSubqueryForSearchCallback,
-                                            &info);
-  }
-
   // Add the filters as joins
-
+  PRUint32 len = mFilters->Length();
   for (PRUint32 i = 0; i < len; i++) {
     const sbLocalDatabaseGUIDArray::FilterSpec& fs = mFilters->ElementAt(i);
 
@@ -824,6 +776,125 @@ sbLocalDatabaseQuery::AddFilters()
     }
   }
 
+  // Add search constraints
+
+  PRInt32 searchIndex = -1;
+  PRBool isEverythingSearch = PR_FALSE;
+
+  for (PRUint32 i = 0; i < len; i++) {
+    const sbLocalDatabaseGUIDArray::FilterSpec& fs = mFilters->ElementAt(i);
+    if (fs.isSearch) {
+      if (searchIndex < 0) {
+
+        if (SB_IsTopLevelProperty(fs.property)) {
+          NS_WARNING("Top level properties not supported in search");
+          return NS_ERROR_INVALID_ARG;
+        }
+
+        searchIndex = i;
+        if (fs.property.EqualsLiteral("*")) {
+          isEverythingSearch = PR_TRUE;
+        }
+        break;
+      }
+    }
+  }
+
+  if (searchIndex >= 0) {
+
+    // XXX Now that we are using sqlite FTS, we need to live with its
+    // limitations, such as not being able to have more than one MATCH
+    // in there WHERE clause.  This prevents us from joining the fts table
+    // more than once.  From my testing, it seems like the fastest way to
+    // do this is to use a single fts join with both an obj MATCH and
+    // propertyid IN (when needed) in the where clause.  The match string
+    // will be each string in the value list for the filter.  The propertyid
+    // in list will be the ids of all of the properties from all of the
+    // filters (if needed).  Note that this means that every search filter
+    // must have the same value list.  This is enforced in
+    // sbLocalDatabaseMediaListView::SetSearchConstraint
+
+    if (isEverythingSearch) {
+      // Join the all fts table.  The foreign key of this table is the
+      // media item id so we can simply join it to _mi
+      rv = mBuilder->AddJoinWithIndexHint(sbISQLSelectBuilder::JOIN_INNER,
+                                          PROPERTIES_FTS_ALL_TABLE,
+                                          NS_LITERAL_STRING("_fts"),
+                                          ROWID_COLUMN,
+                                          MEDIAITEMS_ALIAS,
+                                          MEDIAITEMID_COLUMN,
+                                          PR_FALSE,
+                                          PR_TRUE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      // This is not the everything search so we need to use the per-property
+      // fts table.  The foreign key on that table is the resource_properties
+      // row id, so we must join both a "bridge" table as well as the fts table
+      rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                             PROPERTIES_TABLE,
+                             NS_LITERAL_STRING("_fts_bridge"),
+                             MEDIAITEMID_COLUMN,
+                             MEDIAITEMS_ALIAS,
+                             MEDIAITEMID_COLUMN);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                             PROPERTIES_FTS_TABLE,
+                             NS_LITERAL_STRING("_fts"),
+                             ROWID_COLUMN,
+                             NS_LITERAL_STRING("_fts_bridge"),
+                             ROWID_COLUMN);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // Add the match constraint
+    nsString match;
+    const sbLocalDatabaseGUIDArray::FilterSpec& fs =
+      mFilters->ElementAt(searchIndex);
+    for (PRUint32 i = 0; i < fs.values.Length(); i++) {
+
+      nsString stripped(fs.values[i]);
+      stripped.StripChars("*");
+
+      match.AppendLiteral("'");
+      match.Append(stripped);
+      match.AppendLiteral("*'");
+
+      if (i + 1 < fs.values.Length()) {
+        match.AppendLiteral(" ");
+      }
+    }
+
+    nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    rv = mBuilder->CreateMatchCriterionString(NS_LITERAL_STRING("_fts"),
+                                              isEverythingSearch ?
+                                                NS_LITERAL_STRING("alldata") :
+                                                NS_LITERAL_STRING("obj"),
+                                              sbISQLSelectBuilder::MATCH_MATCH,
+                                              match,
+                                              getter_AddRefs(criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mBuilder->AddCriterion(criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add the property ID constraint if needed
+    if (!isEverythingSearch) {
+      nsCOMPtr<sbISQLBuilderCriterion> criterion;
+      rv = mBuilder->CreateMatchCriterionLong(NS_LITERAL_STRING("_fts"),
+                                              NS_LITERAL_STRING("propertyid"),
+                                              sbISQLSelectBuilder::MATCH_EQUALS,
+                                              GetPropertyId(fs.property),
+                                              getter_AddRefs(criterion));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mBuilder->AddCriterion(criterion);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+  }
+
   // If this is a top level distinct query, make sure the primary sort property
   // is never null
   if (mIsDistinct && SB_IsTopLevelProperty(mSorts->ElementAt(0).property)) {
@@ -843,117 +914,6 @@ sbLocalDatabaseQuery::AddFilters()
 
   return NS_OK;
 }
-
-/* static */ PLDHashOperator PR_CALLBACK
-sbLocalDatabaseQuery::AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType aKey,
-                                                       sbUint32Array* searchPropertyIds,
-                                                       void* aUserData)
-{
-  NS_ASSERTION(searchPropertyIds, "Null entry in the hash?!");
-  NS_ASSERTION(aUserData, "Null userData!");
-
-  nsresult rv;
-
-  sbAddJoinInfo* addJoinInfo =
-    static_cast<sbAddJoinInfo*>(aUserData);
-  NS_ENSURE_TRUE(addJoinInfo, PL_DHASH_STOP);
-
-  nsCOMPtr<sbISQLSelectBuilder> builder(addJoinInfo->builder);
-
-  // Create the table name for this join
-  nsString tmpTableName;
-  tmpTableName.AssignLiteral("_s");
-  tmpTableName.AppendInt(addJoinInfo->joinCounter);
-
-  // We are going to add a join with the following constraints:
-  // 1. _mi.guid = _s#.guid
-  // 2. _s#.property_id in (3, 2, 1)
-  // 3. _s#.obj_sortable like '%term%'
-  // Where # is index of join (joinCounter) and term is search term we are matching.
-
-  // first add the media_item_id match
-  nsCOMPtr<sbISQLBuilderCriterion> searchCriterion;
-  rv = builder->CreateMatchCriterionTable(tmpTableName,
-                                          MEDIAITEMID_COLUMN,
-                                          sbISQLSelectBuilder::MATCH_EQUALS,
-                                          NS_LITERAL_STRING("_mi"),
-                                          MEDIAITEMID_COLUMN,
-                                          getter_AddRefs(searchCriterion));
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-  // Fix up the searchTerm so we escape any % characters
-  nsAutoString searchTerm;
-  searchTerm.AppendLiteral("%");
-  searchTerm.Append(aKey);
-  // escape '%' in the user-entered search string
-  PRInt32 offset = nsString_FindCharInSet(searchTerm, "\\%", 1);
-  while (offset != -1) {
-    searchTerm.Insert(PRUnichar('\\'), offset);
-    offset = nsString_FindCharInSet(searchTerm, "\\%", offset + 2); // skip the escaped %
-  }
-  searchTerm.AppendLiteral("%");
-
-  // Now add the property_id match (if we need to)
-  // If any search properties were found, add the constraint here.  If there
-  // are no search properties, we will do a full search by not adding any
-  // constraint
-  if (searchPropertyIds->Length() > 0) {
-
-    nsCOMPtr<sbISQLBuilderCriterionIn> inCriterion;
-    rv = builder->CreateMatchCriterionIn(tmpTableName,
-                                         PROPERTYID_COLUMN,
-                                         getter_AddRefs(inCriterion));
-    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-    for (PRUint32 i = 0; i < searchPropertyIds->Length(); i++) {
-      rv = inCriterion->AddLong(searchPropertyIds->ElementAt(i));
-      NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-    }
-
-    nsCOMPtr<sbISQLBuilderCriterion> criterion =
-      do_QueryInterface(inCriterion, &rv);
-    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-    nsCOMPtr<sbISQLBuilderCriterion> propertyIdAndSearchCriteria;
-    rv = builder->CreateAndCriterion(searchCriterion,
-                                     criterion,
-                                     getter_AddRefs(propertyIdAndSearchCriteria));
-    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-    searchCriterion = propertyIdAndSearchCriteria;
-  }
-
-  // Now append the search term
-  nsCOMPtr<sbISQLBuilderCriterion> likeCriterion;
-  rv = builder->CreateMatchCriterionString(tmpTableName,
-                                           OBJSORTABLE_COLUMN,
-                                           sbISQLSelectBuilder::MATCH_LIKE,
-                                           searchTerm,
-                                           getter_AddRefs(likeCriterion));
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-  nsCOMPtr<sbISQLBuilderCriterion> guidAndLikeCriteria;
-  rv = builder->CreateAndCriterion(searchCriterion,
-                                   likeCriterion,
-                                   getter_AddRefs(guidAndLikeCriteria));
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-  searchCriterion = guidAndLikeCriteria;
-
-  NS_ASSERTION(searchCriterion, "Have search but didn't get any criteria!");
-
-  // Finally add the join that will search the media_items
-  rv = builder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_INNER,
-                                     PROPERTIES_TABLE,
-                                     tmpTableName,
-                                     searchCriterion);
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-  // Increment the join counter so the next join will not have the same table names.
-  addJoinInfo->joinCounter++;
-  return PL_DHASH_NEXT;
-}
-
-
 
 nsresult
 sbLocalDatabaseQuery::AddRange()

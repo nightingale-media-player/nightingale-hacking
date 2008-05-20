@@ -1176,87 +1176,48 @@ sbLocalDatabaseMediaListView::SetSearchConstraint(sbILibraryConstraint* aSearchC
 {
   nsresult rv;
 
-  // Searches can only be specified as multiple groups of the same properties,
-  // each properties in the group having the same value.  This check should
-  // go away once we fully support a generalized library constraint for
-  // a search (see bug 5955)
+  // Searches can only be specified as a constraint with a single group, and
+  // only a single property within the group.  This is due to the way the
+  // sqlite fts works and it makes me wonder if we should make the parameter
+  // to this method less general.
   if (aSearchConstraint) {
     PRUint32 groupCount;
     rv = aSearchConstraint->GetGroupCount(&groupCount);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Only one group allowed
+    NS_ENSURE_TRUE(groupCount == 1, NS_ERROR_INVALID_ARG);
+
     nsCOMPtr<sbILibraryConstraintGroup> firstGroup;
     rv = aSearchConstraint->GetGroup(0, getter_AddRefs(firstGroup));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool equals;
-    for (PRUint32 i = 0; i < groupCount; i++) {
+    nsCOMPtr<nsIStringEnumerator> firstGroupProperties;
+    rv = firstGroup->GetProperties(getter_AddRefs(firstGroupProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbILibraryConstraintGroup> group;
-      rv = aSearchConstraint->GetGroup(i, getter_AddRefs(group));
+    nsString property;
+    rv = firstGroupProperties->GetNext(property);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Only one property allowed
+    PRBool hasMore;
+    rv = firstGroupProperties->HasMore(&hasMore);
+    NS_ENSURE_FALSE(hasMore, NS_ERROR_INVALID_ARG);
+
+    // Make sure all of the values are not empty
+    nsCOMPtr<nsIStringEnumerator> values;
+    rv = firstGroup->GetValues(property, getter_AddRefs(values));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool hasMoreValues;
+    while (NS_SUCCEEDED(values->HasMore(&hasMoreValues)) && hasMoreValues) {
+      nsString value;
+      rv = values->GetNext(value);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // The property list of each group must be the same
-      nsCOMPtr<nsIStringEnumerator> firstGroupProperties;
-      rv = firstGroup->GetProperties(getter_AddRefs(firstGroupProperties));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<nsIStringEnumerator> properties;
-      rv = group->GetProperties(getter_AddRefs(properties));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = SB_StringEnumeratorEquals(firstGroupProperties, properties, &equals);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if (!equals) {
+      if (value.IsEmpty()) {
         return NS_ERROR_INVALID_ARG;
-      }
-
-      // The values of each property in a single group must be the same
-      rv = group->GetProperties(getter_AddRefs(properties));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsString firstProperty;
-      rv = properties->GetNext(firstProperty);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRBool hasMore;
-      while (NS_SUCCEEDED(properties->HasMore(&hasMore)) && hasMore) {
-        nsString property;
-        rv = properties->GetNext(property);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        nsCOMPtr<nsIStringEnumerator> firstPropertyValues;
-        rv = group->GetValues(firstProperty,
-                              getter_AddRefs(firstPropertyValues));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        nsCOMPtr<nsIStringEnumerator> values;
-        rv = group->GetValues(property, getter_AddRefs(values));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = SB_StringEnumeratorEquals(firstPropertyValues, values, &equals);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        if (!equals) {
-          return NS_ERROR_INVALID_ARG;
-        }
-
-        // Make sure all of the values are not empty
-        rv = group->GetValues(property, getter_AddRefs(values));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        PRBool hasMoreValues;
-        while (NS_SUCCEEDED(values->HasMore(&hasMoreValues)) && hasMoreValues) {
-          nsString value;
-          rv = values->GetNext(value);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          if (value.IsEmpty()) {
-            return NS_ERROR_INVALID_ARG;
-          }
-        }
-
       }
     }
   }

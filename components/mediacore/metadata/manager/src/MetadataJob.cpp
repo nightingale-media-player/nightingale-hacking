@@ -571,7 +571,7 @@ NS_IMETHODIMP sbMetadataJob::Append(nsIArray *aMediaItemsArray)
     nsCOMPtr<sbIMediaItem> mediaItem = do_QueryElementAt(aMediaItemsArray, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Ensure that all of the items in thie job are from the same library
+    // Ensure that all of the items in this job are from the same library
     nsCOMPtr<sbILibrary> otherLibrary;
     rv = mediaItem->GetLibrary(getter_AddRefs(otherLibrary));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1051,6 +1051,9 @@ nsresult sbMetadataJob::ProcessThread(PRBool *aShutdown, sbIDatabaseQuery *aQuer
     // TODO: Consider removing this!
     // On my machine I get a 30% speedup with no loss of interactivity.
     // Need to test on a slow single-core machine first.
+    
+    // XXXAus: I think we could probably make it sleep 0 so that the thread
+    //         would at least yield.
     PR_Sleep(PR_MillisecondsToInterval(mSleepMS));
   }
 
@@ -1095,6 +1098,10 @@ nsresult sbMetadataJob::FinishJob()
   DecrementDataRemote();
   
   rv = DropJobTable(mMainThreadQuery, mTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Flush.
+  rv = mLibrary->Flush();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

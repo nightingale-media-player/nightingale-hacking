@@ -50,12 +50,7 @@ function runTest () {
 
   search = LibraryUtils.createConstraint([
     [
-      [SBProperties.artistName, ["AC/DC"]],
-      [SBProperties.trackName,  ["AC/DC"]]
-    ],
-    [
-      [SBProperties.artistName, ["Thrill"]],
-      [SBProperties.trackName,  ["Thrill"]]
+      [SBProperties.trackName, ["Shoot", "Thrill"]],
     ]
   ]);
   view.searchConstraint = search;
@@ -118,11 +113,11 @@ function runTest () {
 
   view.searchConstraint = null;
   assertEqual(view.length, 20);
-  
+
   // Test the search box
   searchBoxTest("ac dc", 10);
   searchBoxTest("you ace", 4);
-  searchBoxTest("of to the", 2);
+  searchBoxTest("of to the", 1);
 }
 
 function searchBoxTest(searchTerm, resultViewLength) {
@@ -131,7 +126,7 @@ function searchBoxTest(searchTerm, resultViewLength) {
   var cfs = view.cascadeFilterSet;
 
   cfs.appendSearch(["*"], 1);
-  var searchArray = searchTerm.split(" ");  
+  var searchArray = searchTerm.split(" ");
   cfs.set(0, searchArray, searchArray.length);
   assertEqual(view.length, resultViewLength);
 }

@@ -902,6 +902,123 @@ sbLocalDatabaseLibrary::CreateQueries()
   rv = insert->ToString(mInsertPropertyQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Build mInsertPropertyFtsQuery
+  rv = insert->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->SetIntoTableName(NS_LITERAL_STRING("resource_properties_fts"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("rowid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("propertyid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("obj"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLSelectBuilder> subselect =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(NS_LITERAL_STRING("_rp"),
+                            NS_LITERAL_STRING("rowid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(NS_LITERAL_STRING("_rp"),
+                            NS_LITERAL_STRING("property_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(NS_LITERAL_STRING("_rp"),
+                            NS_LITERAL_STRING("obj"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->SetBaseTableAlias(NS_LITERAL_STRING("_mi"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                          NS_LITERAL_STRING("resource_properties"),
+                          NS_LITERAL_STRING("_rp"),
+                          NS_LITERAL_STRING("media_item_id"),
+                          NS_LITERAL_STRING("_mi"),
+                          NS_LITERAL_STRING("media_item_id"));
+
+
+  rv = subselect->CreateMatchCriterionParameter(NS_LITERAL_STRING("_mi"),
+                                                NS_LITERAL_STRING("guid"),
+                                                sbISQLSelectBuilder::MATCH_EQUALS,
+                                                getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->SetSelect(subselect);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->ToString(mInsertPropertyFtsQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Build mInsertPropertyFtsAllQuery
+  rv = insert->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->SetIntoTableName(NS_LITERAL_STRING("resource_properties_fts_all"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("rowid"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddColumn(NS_LITERAL_STRING("alldata"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  subselect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(NS_LITERAL_STRING("_mi"),
+                            NS_LITERAL_STRING("media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(EmptyString(),
+                            NS_LITERAL_STRING("group_concat(_rp.obj, ' ')"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->SetBaseTableName(NS_LITERAL_STRING("media_items"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->SetBaseTableAlias(NS_LITERAL_STRING("_mi"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                          NS_LITERAL_STRING("resource_properties"),
+                          NS_LITERAL_STRING("_rp"),
+                          NS_LITERAL_STRING("media_item_id"),
+                          NS_LITERAL_STRING("_mi"),
+                          NS_LITERAL_STRING("media_item_id"));
+
+  rv = subselect->CreateMatchCriterionParameter(NS_LITERAL_STRING("_mi"),
+                                                NS_LITERAL_STRING("guid"),
+                                                sbISQLSelectBuilder::MATCH_EQUALS,
+                                                getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddGroupBy(NS_LITERAL_STRING("_mi"),
+                             NS_LITERAL_STRING("media_item_id"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->SetSelect(subselect);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->ToString(mInsertPropertyFtsAllQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Build mGetGuidsFromContentUrl
   rv = builder->Reset();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1122,6 +1239,7 @@ sbLocalDatabaseLibrary::AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
 
   PRUint32 count = 0;
 
+  PRBool hasProperties = PR_FALSE;
   for (PRUint32 i = 0; i < length; i++) {
     nsCOMPtr<sbIProperty> property;
     rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
@@ -1167,6 +1285,7 @@ sbLocalDatabaseLibrary::AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
+      hasProperties = PR_TRUE;
       nsCOMPtr<sbIPropertyInfo> propertyInfo;
       rv = propMan->GetPropertyInfo(id, getter_AddRefs(propertyInfo));
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1192,6 +1311,22 @@ sbLocalDatabaseLibrary::AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
 
       count++;
     }
+  }
+
+  if (hasProperties) {
+    rv = aQuery->AddQuery(mInsertPropertyFtsQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = aQuery->BindStringParameter(0, aGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = aQuery->AddQuery(mInsertPropertyFtsAllQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = aQuery->BindStringParameter(0, aGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    count += 2;
   }
 
   if (update) {

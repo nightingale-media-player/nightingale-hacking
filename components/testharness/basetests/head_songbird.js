@@ -362,3 +362,152 @@ ExtensionSchemeMatcher.prototype.match = function(aStr) {
 }
 
 _consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
+
+function loadData(databaseGuid, databaseLocation) {
+
+  var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+              .createInstance(Ci.sbIDatabaseQuery);
+
+  dbq.setDatabaseGUID(databaseGuid);
+  if (databaseLocation) {
+    dbq.databaseLocation = databaseLocation;
+  }
+  dbq.setAsyncQuery(false);
+  dbq.addQuery("create temporary table tmp_rowids (id integer);");
+  dbq.addQuery("begin");
+
+  var data = readFile("media_items.txt");
+  var a = data.split("\n");
+  for(var i = 0; i < a.length - 1; i++) {
+    var b = a[i].split("\t");
+    dbq.addQuery("insert into media_items (guid, created, updated, content_url, content_mime_type, content_length, hidden, media_list_type_id) values (?, ?, ?, ?, ?, ?, ?, ?)");
+    dbq.bindStringParameter(0, b[1]);
+    dbq.bindInt64Parameter(1, b[2]);
+    dbq.bindInt64Parameter(2, b[3]);
+    dbq.bindStringParameter(3, b[4]);
+    dbq.bindStringParameter(4, b[5]);
+    if(b[5] == "") {
+      dbq.bindNullParameter(5);
+    }
+    else {
+      dbq.bindInt32Parameter(5, b[6]);
+    }
+    dbq.bindInt32Parameter(6, b[7]);
+    if(b[8] == "" || b[8] == "0") {
+      dbq.bindNullParameter(7);
+    }
+    else {
+      dbq.bindInt32Parameter(7, b[8]);
+    }
+  }
+
+  data = readFile("resource_properties.txt");
+  a = data.split("\n");
+  for(var i = 0; i < a.length - 1; i++) {
+    var b = a[i].split("\t");
+    dbq.addQuery("insert into resource_properties (media_item_id, property_id, obj, obj_sortable) values ((select media_item_id from media_items where guid = ?), ?, ?, ?)");
+    dbq.bindStringParameter(0, b[0]);
+    dbq.bindInt32Parameter(1, b[1]);
+    dbq.bindStringParameter(2, b[2]);
+    dbq.bindStringParameter(3, b[3]);
+  }
+
+  data = readFile("simple_media_lists.txt");
+  a = data.split("\n");
+  for(var i = 0; i < a.length - 1; i++) {
+    var b = a[i].split("\t");
+    dbq.addQuery("insert into simple_media_lists (media_item_id, member_media_item_id, ordinal) values ((select media_item_id from media_items where guid = ?), (select media_item_id from media_items where guid = ?), ?)");
+    dbq.bindStringParameter(0, b[0]);
+    dbq.bindStringParameter(1, b[1]);
+    dbq.bindInt32Parameter(2, b[2]);
+  }
+
+  // XXXsteve I need to use a temp table here to avoid this bug:
+  // http://www.sqlite.org/cvstrac/tktview?tn=3082
+  dbq.addQuery("insert into tmp_rowids select rowid from resource_properties_fts;");
+  dbq.addQuery("insert into resource_properties_fts (rowid, propertyid, obj) " +
+               " select rowid, property_id, obj from resource_properties where rowid not in (" +
+               "select id from tmp_rowids)");
+  dbq.addQuery("delete from tmp_rowids");
+  dbq.addQuery("insert into tmp_rowids select rowid from resource_properties_fts_all;");
+  dbq.addQuery("insert into resource_properties_fts_all (rowid, alldata) " +
+               " select media_item_id, group_concat(obj, ' ') from resource_properties where media_item_id not in (" +
+               "select id from tmp_rowids) group by media_item_id");
+
+  dbq.addQuery("insert into resource_properties_fts_all (alldata) values ('foo');");
+
+  dbq.addQuery("commit");
+  dbq.addQuery("drop table tmp_rowids");
+  dbq.execute();
+  dbq.resetQuery();
+
+}
+
+function readFile(fileName) {
+
+  var file = Cc["@mozilla.org/file/directory_service;1"]
+               .getService(Ci.nsIProperties)
+               .get("resource:app", Ci.nsIFile);
+  file.append("testharness");
+  file.append("localdatabaselibrary");
+  file.append(fileName);
+
+  var data = "";
+  var fstream = Cc["@mozilla.org/network/file-input-stream;1"]
+                  .createInstance(Ci.nsIFileInputStream);
+  var sstream = Cc["@mozilla.org/scriptableinputstream;1"]
+                  .createInstance(Ci.nsIScriptableInputStream);
+  fstream.init(file, -1, 0, 0);
+  sstream.init(fstream);
+
+  var str = sstream.read(4096);
+  while (str.length > 0) {
+    data += str;
+    str = sstream.read(4096);
+  }
+
+  sstream.close();
+  fstream.close();
+  return data;
+}
+
+function createLibrary(databaseGuid, databaseLocation, init) {
+
+  if (typeof(init) == "undefined") {
+    init = true;
+  }
+
+  var directory;
+  if (databaseLocation) {
+    directory = databaseLocation.QueryInterface(Ci.nsIFileURL).file;
+  }
+  else {
+    directory = Cc["@mozilla.org/file/directory_service;1"].
+                getService(Ci.nsIProperties).
+                get("ProfD", Ci.nsIFile);
+    directory.append("db");
+  }
+
+  var file = directory.clone();
+  file.append(databaseGuid + ".db");
+
+  var libraryFactory =
+    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
+      .getService(Ci.sbILibraryFactory);
+  var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
+                createInstance(Ci.nsIWritablePropertyBag2);
+  hashBag.setPropertyAsInterface("databaseFile", file);
+  var library = libraryFactory.createLibrary(hashBag);
+  try {
+    if (init) {
+      library.clear();
+    }
+  }
+  catch(e) {
+  }
+
+  if (init) {
+    loadData(databaseGuid, databaseLocation);
+  }
+  return library;
+}

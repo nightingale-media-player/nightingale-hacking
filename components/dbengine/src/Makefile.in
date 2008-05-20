@@ -87,7 +87,19 @@ C_EXTRA_DEFS += -DSQLITE_ALLOW_XTHREAD_CONNECT=1 \
                 -DSQLITE_THREADSAFE=1 \
                 -DTEMP_STORE=2 \
                 -DNO_TCL \
+                -DSQLITE_CORE \
+                -DSQLITE_ENABLE_FTS3 \
                 $(NULL)
+
+# If this is gcc, suppress some warnings when we compile sqlite
+ifeq (gcc, $(CC))
+  CFLAGS += -Wno-conversion \
+            -Wno-pointer-arith \
+            -Wno-cast-align \
+            -Wno-uninitialized \
+            -Wno-unused \
+            $(NULL)
+endif
 
 C_SRCS = sqlite3.c \
          $(NULL)

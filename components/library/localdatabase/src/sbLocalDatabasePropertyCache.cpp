@@ -157,8 +157,13 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   NS_NAMED_LITERAL_STRING(kMediaItems, "media_items");
   NS_NAMED_LITERAL_STRING(kMediaItemsAlias, "mi");
   NS_NAMED_LITERAL_STRING(kLibraryMediaItem, "library_media_item");
+  NS_NAMED_LITERAL_STRING(kResourcePropertiesFts, "resource_properties_fts");
+  NS_NAMED_LITERAL_STRING(kResourcePropertiesFtsAll, "resource_properties_fts_all");
   NS_NAMED_LITERAL_STRING(kGUID, "guid");
+  NS_NAMED_LITERAL_STRING(kRowid, "rowid");
+  NS_NAMED_LITERAL_STRING(kAllData, "alldata");
   NS_NAMED_LITERAL_STRING(kPropertyId, "property_id");
+  NS_NAMED_LITERAL_STRING(kFtsPropertyId, "propertyid");
   NS_NAMED_LITERAL_STRING(kObj, "obj");
   NS_NAMED_LITERAL_STRING(kObjSortable, "obj_sortable");
   NS_NAMED_LITERAL_STRING(kMediaItemId, "media_item_id");
@@ -194,17 +199,7 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
 
   // Keep a non-owning reference to this
   mPropertiesInCriterion = inCriterion;
-  /*
-  rv = mPropertiesSelect->AddOrder(EmptyString(),
-                                   kMediaItemId,
-                                   PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertiesSelect->AddOrder(EmptyString(),
-                                   kPropertyId,
-                                   PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-  */
   // Select properties for the library media item
   mLibraryMediaItemPropertiesSelect =
     do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
@@ -411,6 +406,155 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deleteb->ToString(mPropertiesDelete);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Media items delete fts query.  This query deletes all of the fts data
+  // for the media items specified in the in criterion
+   mMediaItemsFtsDelete =
+    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsDelete->SetTableName(kResourcePropertiesFts);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLSelectBuilder> subselect =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(EmptyString(), kRowid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->SetBaseTableName(kResourceProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->CreateMatchCriterionIn(EmptyString(),
+                                         kMediaItemId,
+                                         getter_AddRefs(inCriterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddCriterion(inCriterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mMediaItemsFtsDeleteInCriterion = inCriterion;
+
+  rv = mMediaItemsFtsDelete->CreateMatchCriterionIn(EmptyString(),
+                                                    kRowid,
+                                                    getter_AddRefs(inCriterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = inCriterion->AddSubquery(subselect);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsDelete->AddCriterion(inCriterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Media items insert fts query.  This query inserts all of the fts data
+  // for the media items specified in the in criterion
+  mMediaItemsFtsInsert =
+    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsInsert->SetIntoTableName(kResourcePropertiesFts);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsInsert->AddColumn(kRowid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsInsert->AddColumn(kFtsPropertyId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsInsert->AddColumn(kObj);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  subselect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(EmptyString(), kRowid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(EmptyString(), kPropertyId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(EmptyString(), kObj);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->SetBaseTableName(kResourceProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->CreateMatchCriterionIn(EmptyString(),
+                                         kMediaItemId,
+                                         getter_AddRefs(inCriterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddCriterion(inCriterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mMediaItemsFtsInsertInCriterion = inCriterion;
+
+  rv = mMediaItemsFtsInsert->SetSelect(subselect);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Media items delete fts all query.  This query deletes all of the fts data
+  // for the media items specified in the in criterion
+   mMediaItemsFtsAllDelete =
+    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsAllDelete->SetTableName(kResourcePropertiesFtsAll);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsAllDelete->CreateMatchCriterionIn(EmptyString(),
+                                                       kRowid,
+                                                       getter_AddRefs(inCriterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsAllDelete->AddCriterion(inCriterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mMediaItemsFtsAllDeleteInCriterion = inCriterion;
+
+  // Media items insert fts all query.  This query inserts all of the fts data
+  // for the media items specified in the in criterion
+  mMediaItemsFtsAllInsert =
+    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsAllInsert->SetIntoTableName(kResourcePropertiesFtsAll);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsAllInsert->AddColumn(kRowid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMediaItemsFtsAllInsert->AddColumn(kAllData);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  subselect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(EmptyString(), kMediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddColumn(EmptyString(),
+                            NS_LITERAL_STRING("group_concat(obj)"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->SetBaseTableName(kResourceProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->CreateMatchCriterionIn(EmptyString(),
+                                         kMediaItemId,
+                                         getter_AddRefs(inCriterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddCriterion(inCriterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = subselect->AddGroupBy(EmptyString(), kMediaItemId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mMediaItemsFtsAllInsertInCriterion = inCriterion;
+
+  rv = mMediaItemsFtsAllInsert->SetSelect(subselect);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = LoadProperties();
@@ -947,6 +1091,64 @@ sbLocalDatabasePropertyCache::Write()
     rv = MakeQuery(NS_LITERAL_STRING("begin"), getter_AddRefs(query));
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Run through the list of dirty items and build the fts delete/insert
+    // queries
+    rv = mMediaItemsFtsDeleteInCriterion->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mMediaItemsFtsInsertInCriterion->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mMediaItemsFtsAllDeleteInCriterion->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mMediaItemsFtsAllInsertInCriterion->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
+      nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
+      if (mCache.Get(dirtyGuids[i], getter_AddRefs(bag))) {
+        PRUint32 mediaItemId;
+        rv = bag->GetMediaItemId(&mediaItemId);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mMediaItemsFtsDeleteInCriterion->AddLong(mediaItemId);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mMediaItemsFtsInsertInCriterion->AddLong(mediaItemId);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mMediaItemsFtsAllDeleteInCriterion->AddLong(mediaItemId);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mMediaItemsFtsAllInsertInCriterion->AddLong(mediaItemId);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+
+    nsString mediaItemsFtsDeleteSql;
+    rv = mMediaItemsFtsDelete->ToString(mediaItemsFtsDeleteSql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString mediaItemsFtsInsertSql;
+    rv = mMediaItemsFtsInsert->ToString(mediaItemsFtsInsertSql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString mediaItemsFtsAllDeleteSql;
+    rv = mMediaItemsFtsAllDelete->ToString(mediaItemsFtsAllDeleteSql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString mediaItemsFtsAllInsertSql;
+    rv = mMediaItemsFtsAllInsert->ToString(mediaItemsFtsAllInsertSql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // The first queries are to delete the fts data of the updated items
+    rv = query->AddQuery(mediaItemsFtsDeleteSql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->AddQuery(mediaItemsFtsAllDeleteSql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     //For each GUID, there's a property bag that needs to be processed as well.
     for(PRUint32 i = 0; i < dirtyGuidCount; i++) {
       nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
@@ -1047,6 +1249,14 @@ sbLocalDatabasePropertyCache::Write()
         }
       }
     }
+
+    // Finally, insert the new fts data for the updated items
+    rv = query->AddQuery(mediaItemsFtsInsertSql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->AddQuery(mediaItemsFtsAllInsertSql);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = query->AddQuery(NS_LITERAL_STRING("commit"));
     NS_ENSURE_SUCCESS(rv, rv);
 

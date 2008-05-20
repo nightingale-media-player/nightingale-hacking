@@ -138,42 +138,6 @@ function DBG(s) {
 }
 
 /**
- * Helper to make a new library
- *
- * We can't delete the file we create as there is no way
- * to force the database engine to let go of it.
- */
-function createLibrary(databaseGuid) {
-
-  var directory;
-  directory = Cc["@mozilla.org/file/directory_service;1"].
-              getService(Ci.nsIProperties).
-              get("ProfD", Ci.nsIFile);
-  directory.append("db");
-
-  var file = directory.clone();
-  file.append("servicepanetest-" + databaseGuid + ".db");
-
-  if (file.exists()) {
-    file.remove(false);
-  }
-
-  var libraryFactory =
-    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
-      .getService(Ci.sbILibraryFactory);
-  var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
-                createInstance(Ci.nsIWritablePropertyBag2);
-  hashBag.setPropertyAsInterface("databaseFile", file);
-  var library = libraryFactory.createLibrary(hashBag);
-  try {
-    library.clear();
-  }
-  catch(e) {
-  }
-  return library;
-}
-
-/**
  * Debug helper to print the structure of the tree to the console
  */
 function showTree(root, prefix) {

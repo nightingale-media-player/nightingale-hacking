@@ -68,6 +68,9 @@ sbSQLBuilderCriterionBase::AppendMatchTo(nsAString& aStr)
     case sbISQLWhereBuilder::MATCH_LIKE:
       aStr.AppendLiteral(" like ");
       break;
+    case sbISQLWhereBuilder::MATCH_MATCH:
+      aStr.AppendLiteral(" match ");
+      break;
     default:
       NS_NOTREACHED("Unknown Match Type");
   }

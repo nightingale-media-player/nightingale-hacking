@@ -337,6 +337,8 @@ private:
   nsString mGetTypeForGUIDQuery;
   nsString mGetMediaItemIdForGUIDQuery;
   nsString mInsertMediaItemQuery;
+  nsString mInsertPropertyFtsQuery;
+  nsString mInsertPropertyFtsAllQuery;
   nsString mMediaListFactoriesQuery;
   nsString mInsertMediaListFactoryQuery;
 

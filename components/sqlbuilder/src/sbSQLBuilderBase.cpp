@@ -118,6 +118,35 @@ sbSQLBuilderBase::AddJoin(PRUint32 aJoinType,
   ji->joinToColumnName = aJoinToColumnName;
   ji->criterion        = nsnull;
   ji->subquery         = nsnull;
+  ji->requiresJoinFromIndexUsageFix = PR_FALSE;
+  ji->requiresJoinToIndexUsageFix = PR_FALSE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLBuilderBase::AddJoinWithIndexHint(PRUint32 aJoinType,
+                                       const nsAString& aJoinedTableName,
+                                       const nsAString& aJoinedTableAlias,
+                                       const nsAString& aJoinedColumnName,
+                                       const nsAString& aJoinToTableName,
+                                       const nsAString& aJoinToColumnName,
+                                       PRBool aRequiresFromTableIndexHint,
+                                       PRBool aRequiresToTableIndexHint)
+{
+  sbJoinInfo* ji = mJoins.AppendElement();
+  NS_ENSURE_TRUE(ji, NS_ERROR_OUT_OF_MEMORY);
+
+  ji->type             = aJoinType;
+  ji->joinedTableName  = aJoinedTableName;
+  ji->joinedTableAlias = aJoinedTableAlias;
+  ji->joinedColumnName = aJoinedColumnName;
+  ji->joinToTableName  = aJoinToTableName;
+  ji->joinToColumnName = aJoinToColumnName;
+  ji->criterion        = nsnull;
+  ji->subquery         = nsnull;
+  ji->requiresJoinFromIndexUsageFix = aRequiresFromTableIndexHint;
+  ji->requiresJoinToIndexUsageFix = aRequiresToTableIndexHint;
 
   return NS_OK;
 }
@@ -143,6 +172,8 @@ sbSQLBuilderBase::AddSubqueryJoin(PRUint32 aJoinType,
   ji->joinToColumnName = aJoinToColumnName;
   ji->criterion        = nsnull;
   ji->subquery         = aJoinedSubquery;
+  ji->requiresJoinFromIndexUsageFix = PR_FALSE;
+  ji->requiresJoinToIndexUsageFix = PR_FALSE;
 
   return NS_OK;
 }
@@ -164,6 +195,8 @@ sbSQLBuilderBase::AddJoinWithCriterion(PRUint32 aJoinType,
   ji->joinToColumnName = EmptyString();
   ji->criterion        = aCriterion;
   ji->subquery         = nsnull;
+  ji->requiresJoinFromIndexUsageFix = PR_FALSE;
+  ji->requiresJoinToIndexUsageFix = PR_FALSE;
 
   return NS_OK;
 }

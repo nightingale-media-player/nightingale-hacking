@@ -38,33 +38,6 @@ function getFile(fileName) {
   return file;
 }
 
-function createLibrary(databaseGuid, databaseLocation) {
-
-  var directory;
-  if (databaseLocation) {
-    directory = databaseLocation.QueryInterface(Ci.nsIFileURL).file;
-  }
-  else {
-    directory = Cc["@mozilla.org/file/directory_service;1"].
-                getService(Ci.nsIProperties).
-                get("ProfD", Ci.nsIFile);
-    directory.append("db");
-  }
-  
-  var file = directory.clone();
-  file.append(databaseGuid + ".db");
-
-  var libraryFactory =
-    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
-      .getService(Ci.sbILibraryFactory);
-  var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
-                createInstance(Ci.nsIWritablePropertyBag2);
-  hashBag.setPropertyAsInterface("databaseFile", file);
-  var library = libraryFactory.createLibrary(hashBag);
-  library.clear();
-  return library;
-}
-
 function newURI(spec) {
   var ioService = Cc["@mozilla.org/network/io-service;1"].
                   getService(Ci.nsIIOService);

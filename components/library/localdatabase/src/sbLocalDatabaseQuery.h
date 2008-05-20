@@ -71,6 +71,7 @@ private:
     PRUint32 joinCounter;
     nsCOMPtr<sbISQLSelectBuilder> builder;
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    nsString match;
   };
 
   nsresult AddCountColumns();
@@ -92,11 +93,6 @@ private:
                       const nsAString& aColumn,
                       nsAString& aExpr);
 
-  static PLDHashOperator PR_CALLBACK
-    AddJoinSubqueryForSearchCallback(nsStringHashKey::KeyType aKey,
-                                     sbUint32Array* aEntry,
-                                     void* aUserData);
-
   nsString mBaseTable;
   nsString mBaseConstraintColumn;
   PRUint32 mBaseConstraintValue;
@@ -112,4 +108,3 @@ private:
 };
 
 #endif /* __SBLOCALDATABASEQUERY_H__ */
-
