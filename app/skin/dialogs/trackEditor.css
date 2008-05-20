@@ -70,6 +70,7 @@ checkbox .checkbox-label-box {
 textbox,
 sb-rating {
   -moz-border-radius:5px;
+  min-height: 22px;
   border-top:1px solid rgb(0,0,0) !important; /** Button Highlight */
   border-right:1px solid rgb(0,0,0) !important; /** Button Shadow */ 
   border-bottom:1px solid rgb(92,95,88) !important; /** Button Shadow */ 
