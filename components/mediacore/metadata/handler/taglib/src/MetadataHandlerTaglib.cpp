@@ -1769,7 +1769,12 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
     nsAutoString                valueString;
     nsresult                    result = NS_OK;
 
-    /* Convert the integer value into a string. */
+    //  Zero indicates no value
+    if (value == 0) {
+      return result;
+    }
+
+    /* Convert the integer value into a string. */    
     valueString.AppendInt(value);
 
     /* Add the metadata value. */

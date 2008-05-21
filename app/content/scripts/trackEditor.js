@@ -190,7 +190,7 @@ TrackEditorState.prototype = {
    * Note that this does not write back to the selected media items.
    */
   setPropertyValue: function(property, value) {
-    this._ensurePropertyData(property);
+    this._ensurePropertyData(property);    
     this._properties[property].value = value;
     this._properties[property].edited = 
         this._properties[property].value != this._properties[property].originalValue;
@@ -257,9 +257,13 @@ TrackEditorState.prototype = {
     
     // If no changes were made, don't bother invalidating
     if (this._properties[property].edited) {  
-      var propInfo = this._propertyManager.getPropertyInfo(property);    
+      
+      var value = this._properties[property].value;
+      if (value == "") {
+        value = null;
+      }
       this._properties[property].knownInvalid = 
-          !propInfo.validate(this._properties[property].value);
+          !this._properties[property].propInfo.validate(value);
     }
     
     this._notifyPropertyListeners(property);
@@ -313,6 +317,7 @@ TrackEditorState.prototype = {
       hasMultiple: false,
       value: "",
       originalValue: "",
+      propInfo: this._propertyManager.getPropertyInfo(property),
       knownInvalid: false
     };
     
@@ -342,11 +347,9 @@ TrackEditorState.prototype = {
           // we keep multiple values as "".
         }
         else {
-          var propInfo = this._propertyManager.getPropertyInfo(property);
-          
           // Formatting can fail. :(
           try { 
-            value = propInfo.format(value); 
+            value = this._properties[property].propInfo.format(value); 
           }
           catch (e) { 
             Components.utils.reportError("TrackEditor::getPropertyValue("+property+") - "+value+": " + e +"\n");
@@ -876,6 +879,11 @@ var TrackEditor = {
         var value = TrackEditor.state.getPropertyValue(property);
         var item = items[i];
         if (value != item.getProperty(property)) {
+          // Completely remove empty properties
+          if (value == "") {
+            value = null;
+          }
+          
           item.setProperty(property, value);
           
           // Flag the item as needing a metadata-write job.

@@ -1901,6 +1901,36 @@ nsresult sbMetadataJob::StartHandlerForItem( sbMetadataJob::jobitem_t *aItem, PR
       nsCOMPtr<sbIPropertyArray> props;
       rv = aItem->item->GetProperties(nsnull, getter_AddRefs(props));
 
+      nsCOMPtr<sbIMutablePropertyArray> writeProps = do_QueryInterface(props, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      // For all the basic values, if there is no value on 
+      // the item, it means we want to null out/remove 
+      // the value from the file.  This is painful, 
+      // but writing doesn't have to be fast.
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTISTNAME), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_COMMENT), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_LYRICS), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_GENRE), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_PRODUCERNAME), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_COMPOSERNAME), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_CONDUCTORNAME), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_LYRICISTNAME), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_RECORDLABELNAME), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_LANGUAGE), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_KEY), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_COPYRIGHT), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_COPYRIGHTURL), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_YEAR), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS), writeProps);
+      EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_BPM), writeProps);
+      
       // If we aren't allowed to write the rating, remove it from 
       // the property array.  :(
       if (!mEnableRatingWrite) {
@@ -1925,10 +1955,12 @@ nsresult sbMetadataJob::StartHandlerForItem( sbMetadataJob::jobitem_t *aItem, PR
             break;
           }
         }
+      } else {
+        // We are allowed to write rating, so ensure that it
+        // is either being set or nulled out
+        EnsurePropertyIsInArray(NS_LITERAL_STRING(SB_PROPERTY_RATING), writeProps);
       }
 
-      nsCOMPtr<sbIMutablePropertyArray> writeProps = do_QueryInterface(props, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
       rv = aItem->handler->SetProps(writeProps);
       NS_ENSURE_SUCCESS(rv, rv);
       rv = aItem->handler->Write( &async );
@@ -1937,6 +1969,31 @@ nsresult sbMetadataJob::StartHandlerForItem( sbMetadataJob::jobitem_t *aItem, PR
     }
   }
   return rv;
+}
+
+/**
+ * If the given property is not present in the given property array, 
+ * add a value of empty string for the property
+ */
+nsresult sbMetadataJob::EnsurePropertyIsInArray( const nsAString& aProperty,
+                                                 sbIMutablePropertyArray *aPropertyArray)
+{
+  NS_ASSERTION(!aProperty.IsEmpty(), "Don't pass an empty property id!");
+  NS_ENSURE_ARG_POINTER( aPropertyArray );
+
+  nsresult rv;
+  nsString value;
+  rv = aPropertyArray->GetPropertyValue(aProperty, value);
+
+  // If the property is not in the array, add it as an empty string
+  if (NS_FAILED(rv)) {
+    value = EmptyString();
+    value.SetIsVoid(PR_TRUE);
+    rv = aPropertyArray->AppendProperty(aProperty, value);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Metadata job failed to add null property");
+  }
+
+  return NS_OK;
 }
 
 nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,

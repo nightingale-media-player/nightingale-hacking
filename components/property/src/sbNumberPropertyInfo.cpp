@@ -178,13 +178,16 @@ NS_IMETHODIMP sbNumberPropertyInfo::Validate(const nsAString & aValue, PRBool *_
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
+  *_retval = PR_TRUE;
+  if (aValue.IsVoid()) {
+     return NS_OK;
+  }
+
   PRInt64 value = 0;
   NS_ConvertUTF16toUTF8 narrow(aValue);
 
   sbSimpleAutoLock lockRadix(mRadixLock);
   const char *fmt = GetFmtFromRadix(mRadix);
-
-  *_retval = PR_TRUE;
   
   // Add a string parsing specifier, to catch extra characters behind 
   // the number. Limit string parsing to 16 chars, we just want to check
@@ -263,10 +266,14 @@ NS_IMETHODIMP sbNumberPropertyInfo::Format(const nsAString & aValue, nsAString &
 NS_IMETHODIMP sbNumberPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv;
+  _retval = aValue;
+  if (aValue.IsVoid()) {
+     return NS_OK;
+  }
+
   PRInt64 value = 0;
   NS_ConvertUTF16toUTF8 narrow(aValue);
 
-  _retval = aValue;
   _retval.StripWhitespace();
 
   sbSimpleAutoLock lockRadix(mRadixLock);

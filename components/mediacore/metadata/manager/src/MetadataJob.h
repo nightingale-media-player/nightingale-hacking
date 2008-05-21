@@ -190,6 +190,7 @@ protected:
   nsresult InitProgressReporting();
   nsresult UpdateErrorMessages();
   nsresult StartHandlerForItem( jobitem_t *aItem, PRUint16 aJobType);
+  nsresult EnsurePropertyIsInArray( const nsAString& aProperty, sbIMutablePropertyArray *aPropertyArray );
   nsresult AddMetadataToItem( jobitem_t *aItem, sbIURIMetadataHelper *aURIMetadataHelper );
   nsresult AddDefaultMetadataToItem( jobitem_t *aItem, sbIMediaItem *aMediaItem );
   nsresult CreateDefaultItemName( const nsAString &aURLString, nsAString &retval );

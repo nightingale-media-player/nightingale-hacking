@@ -2964,8 +2964,8 @@
             // Don't bother writing the rating if the item is readonly, or 
             // if ratings are disabled
             // Note that it is OK to rate items that cannot be written to
-            if ((aPropertyName == SBProperties.rating && !aItem.userEditable) ||
-                 !Application.prefs.getValue("songbird.metadata.ratings.enableWriting", false)) {
+            if ((aPropertyName == SBProperties.rating && (!aItem.userEditable ||
+                 !Application.prefs.getValue("songbird.metadata.ratings.enableWriting", false)))) {
               return;
             }
             

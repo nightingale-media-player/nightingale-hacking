@@ -148,8 +148,7 @@ function runTest() {
       //  SBProperties.comment + SBProperties.comment + SBProperties.comment],
       
       // try a blank one
-      // bug <NNN>: comes back as "null" after reading
-      //[SBProperties.artistName, ""],
+      [SBProperties.artistName, null],
 
       // what about a partial disc number?
       //[SBProperties.totalDiscs, 0], // TODO: reconcile 0/""/null
