@@ -258,7 +258,7 @@
                      flex="1"
                      tabindex="120"
                      autocompletesearch="library-distinct-properties"
-                     defaultdistinctproperties="Alternative,Blues/R&amp;B,Books&amp;Spoken,Children's Music,Classical,Comedy,Country,Dance,Easy Listening,Electronic,Folk,Hip Hop/Rap,Holiday,House,Industrial,Jazz,New Age,Nerdcore,Podcast,Pop,Raggae,Religious,Rock,Science,Soundtrack,Techno,Trance,Unclassifiable,World"/>  
+                     defaultdistinctproperties="Alternative,Blues/R&amp;B,Books&amp;Spoken,Children's Music,Classical,Comedy,Country,Dance,Easy Listening,Electronic,Folk,Hip Hop/Rap,Holiday,House,Industrial,Jazz,New Age,Nerdcore,Podcast,Pop,Reggae,Religious,Rock,Science,Soundtrack,Techno,Trance,Unclassifiable,World"/>  
 
             <!-- deferred from 0.6 until supported by sorting algos -->
             <!--label property-type="label" 
