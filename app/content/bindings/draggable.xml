@@ -40,7 +40,7 @@
           onmousedown="onMouseDown();"
           onmouseup="onMouseUp();"
           onmousemove="onMouseMove();"
-          ondblclick="onDblClick();"/>
+          ondblclick="onDblClick(event);"/>
         <xul:vbox mousethrough="always" flex="1">
           <children />
         </xul:vbox>
@@ -153,6 +153,7 @@
         <parameter name="evt"/>
         <body>
           <![CDATA[
+            if (evt.button != 0) return;
             var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                           .getService(Components.interfaces.nsIPropertyBag2);
             if ( sysInfo.getProperty("name") == "Darwin" )
