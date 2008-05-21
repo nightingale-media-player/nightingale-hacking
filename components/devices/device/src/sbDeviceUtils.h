@@ -96,6 +96,35 @@ public:
   static nsresult GetDeviceLibraryForItem(/* in */  sbIDevice* aDevice,
                                           /* in */  sbIMediaItem* aItem,
                                           /* out */ sbIDeviceLibrary** _retval);
+
+  /**
+   * Search the library specified by aLibrary for an item with a device
+   * persisent ID property matching aDevicePersistentId.  Return the found item
+   * in aItem.
+   *
+   * \param aLibrary            [in]  Library in which to search for items.
+   * \param aDevicePersistentId [in]  Device persistent ID for which to search.
+   * \param aItem               [out] Found item.
+   */
+  static nsresult GetMediaItemByDevicePersistentId
+                    (/* in */  sbILibrary*      aLibrary,
+                     /* in */  const nsAString& aDevicePersistentId,
+                     /* out */ sbIMediaItem**   aItem);
+
+  /**
+   * Search the library specified by aLibrary for an item with a device
+   * persistent ID property matching aDevicePersistentId.  Return that item's
+   * origin media item in aItem.
+   *
+   * \param aLibrary            [in]  Library in which to search for items.
+   * \param aDevicePersistentId [in]  Device persistent ID for which to search.
+   * \param aItem               [out] Found origin item.
+   */
+
+  static nsresult GetOriginMediaItemByDevicePersistentId
+                    (/* in */  sbILibrary*      aLibrary,
+                     /* in */  const nsAString& aDevicePersistentId,
+                     /* out */ sbIMediaItem**   aItem);
 };
 
 

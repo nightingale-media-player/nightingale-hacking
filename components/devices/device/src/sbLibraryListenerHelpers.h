@@ -25,6 +25,9 @@
 //
 */
 
+#ifndef __SBLIBRARYLISTENERHELPERS__H__
+#define __SBLIBRARYLISTENERHELPERS__H__
+
 #include "sbIDeviceLibrary.h"
 #include "sbILocalDatabaseSimpleMediaList.h"
 #include "sbIMediaListListener.h"
@@ -157,3 +160,5 @@ protected:
    */
   sbILibrary * mDeviceLibrary;
 };
+#endif /* __SBLIBRARYLISTENERHELPERS__H__ */
+

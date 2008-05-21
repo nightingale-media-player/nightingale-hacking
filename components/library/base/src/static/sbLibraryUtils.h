@@ -102,6 +102,15 @@ public:
    */
   static nsresult GetContentLength(/* in */  sbIMediaItem * aItem,
                                    /* out */ PRInt64      * _retval);
+
+  /**
+   * Return the origin media item for the media item specified by aItem.
+   *
+   * \param aItem The item for which to get the origin media item.
+   * \return      The origin media item.
+   */
+  static nsresult GetOriginItem(/* in */ sbIMediaItem*   aItem,
+                                /* out */ sbIMediaItem** _retval);
 };
 
 /**

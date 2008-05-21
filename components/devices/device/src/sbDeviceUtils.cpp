@@ -44,6 +44,7 @@
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbIMediaListListener.h"
+#include "sbLibraryUtils.h"
 #include "sbStandardProperties.h"
 #include "sbStringUtils.h"
 
@@ -318,3 +319,66 @@ nsresult sbDeviceUtils::GetDeviceLibraryForItem(sbIDevice* aDevice,
   *_retval = nsnull;
   return NS_ERROR_FAILURE;
 }
+
+/* static */
+nsresult sbDeviceUtils::GetMediaItemByDevicePersistentId
+                          (sbILibrary*      aLibrary,
+                           const nsAString& aDevicePersistentId,
+                           sbIMediaItem**   aItem)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  nsresult rv;
+
+  // get the library items with the device persistent ID
+  nsCOMPtr<nsIArray> mediaItemList;
+  rv = aLibrary->GetItemsByProperty
+                   (NS_LITERAL_STRING(SB_PROPERTY_DEVICE_PERSISTENT_ID),
+                    aDevicePersistentId,
+                    getter_AddRefs(mediaItemList));
+  if (rv == NS_ERROR_NOT_AVAILABLE)
+    return NS_ERROR_NOT_AVAILABLE;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // ensure at least one item has the device persistent ID
+  PRUint32 length;
+  rv = mediaItemList->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (length < 1)
+    return NS_ERROR_NOT_AVAILABLE;
+
+  // get the first item with the persistent ID
+  rv = mediaItemList->QueryElementAt(0,
+                                     NS_GET_IID(sbIMediaItem),
+                                     (void**) aItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbDeviceUtils::GetOriginMediaItemByDevicePersistentId
+                          (sbILibrary*      aLibrary,
+                           const nsAString& aDevicePersistentId,
+                           sbIMediaItem**   aItem)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  nsresult rv;
+
+  // get the device media item from the device persistent ID
+  nsCOMPtr<sbIMediaItem> deviceMediaItem;
+  rv = GetMediaItemByDevicePersistentId(aLibrary,
+                                        aDevicePersistentId,
+                                        getter_AddRefs(deviceMediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get the original item from the device media item
+  rv = sbLibraryUtils::GetOriginItem(deviceMediaItem, aItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

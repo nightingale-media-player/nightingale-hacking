@@ -914,7 +914,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Peristent ID of the object on the device (internal use only)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEVICE_PERISTENT_ID), EmptyString(),
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEVICE_PERSISTENT_ID), EmptyString(),
                     stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);

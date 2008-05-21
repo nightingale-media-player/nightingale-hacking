@@ -100,7 +100,7 @@
 #define SB_PROPERTY_ALBUMARTISTNAME           "http://songbirdnest.com/data/1.0#albumArtistName"
 
 // Device library specific properties
-#define SB_PROPERTY_DEVICE_PERISTENT_ID       "http://songbirdnest.com/data/1.0#deviceId"
+#define SB_PROPERTY_DEVICE_PERSISTENT_ID      "http://songbirdnest.com/data/1.0#deviceId"
 #define SB_PROPERTY_LAST_SYNC_PLAYCOUNT       "http://songbirdnest.com/data/1.0#playCount_AtLastSync"
 #define SB_PROPERTY_LAST_SYNC_SKIPCOUNT       "http://songbirdnest.com/data/1.0#skipCount_AtLastSync"
 

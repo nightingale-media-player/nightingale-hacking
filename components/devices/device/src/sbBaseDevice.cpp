@@ -1271,7 +1271,6 @@ PLDHashOperator sbBaseDevice::EnumerateFinalizeMediaListListeners
   EnumerateFinalizeMediaListListenersInfo*
     enumerateInfo =
       static_cast<EnumerateFinalizeMediaListListenersInfo*>(aClosure);
-  sbBaseDevice* device = enumerateInfo->device;
   nsCOMPtr<sbILibrary> library = enumerateInfo->library;
 
   // Get the listener media list.
@@ -2393,6 +2392,14 @@ sbBaseDevice::SyncUpdateProperties(sbILibraryChange* aChange)
     NS_ENSURE_SUCCESS(rv, rv);
     rv = property->GetNewValue(propertyValue);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Don't sync properties set by the device.
+    if (propertyID.EqualsLiteral(SB_PROPERTY_CONTENTURL) ||
+        propertyID.EqualsLiteral(SB_PROPERTY_DEVICE_PERSISTENT_ID) ||
+        propertyID.EqualsLiteral(SB_PROPERTY_LAST_SYNC_PLAYCOUNT) ||
+        propertyID.EqualsLiteral(SB_PROPERTY_LAST_SYNC_SKIPCOUNT)) {
+      continue;
+    }
 
     // Update the property, ignoring errors.
     mediaItem->SetProperty(propertyID, propertyValue);

@@ -229,3 +229,36 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
   
   return NS_OK;
 }
+
+/* static */
+nsresult sbLibraryUtils::GetOriginItem(/* in */ sbIMediaItem*   aItem,
+                                       /* out */ sbIMediaItem** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  // Get the origin library and item GUIDs.
+  nsAutoString originLibraryGUID;
+  nsAutoString originItemGUID;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
+                          originLibraryGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                          originItemGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the origin item.
+  nsCOMPtr<sbILibraryManager> libraryManager =
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbILibrary> library;
+  rv = libraryManager->GetLibrary(originLibraryGUID, getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = library->GetItemByGuid(originItemGUID, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

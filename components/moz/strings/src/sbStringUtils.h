@@ -31,6 +31,37 @@
 
 class nsIStringEnumerator;
 
+/**
+ * Class used to create strings from other data types.
+ */
+class sbAutoString : public nsAutoString
+{
+public:
+  sbAutoString(int aValue)
+  {
+    char valueStr[64];
+
+    PR_snprintf(valueStr, sizeof(valueStr), "%d", aValue);
+    AssignLiteral(valueStr);
+  }
+
+  sbAutoString(PRUint32 aValue)
+  {
+    char valueStr[64];
+
+    PR_snprintf(valueStr, sizeof(valueStr), "%lu", aValue);
+    AssignLiteral(valueStr);
+  }
+
+  sbAutoString(PRUint64 aValue)
+  {
+    char valueStr[64];
+
+    PR_snprintf(valueStr, sizeof(valueStr), "%llu", aValue);
+    AssignLiteral(valueStr);
+  }
+};
+
 /// @see nsString::FindCharInSet
 PRInt32 nsString_FindCharInSet(const nsAString& aString,
                                const char *aPattern,
