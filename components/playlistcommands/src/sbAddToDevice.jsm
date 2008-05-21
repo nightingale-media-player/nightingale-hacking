@@ -27,6 +27,8 @@
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
 
+const Ci = Components.interfaces;
+
 const ADDTODEVICE_MENU_TYPE      = "submenu";
 const ADDTODEVICE_MENU_ID        = "library_cmd_addtodevice";
 const ADDTODEVICE_MENU_NAME      = "&command.addtodevice";
@@ -83,6 +85,11 @@ var SBPlaylistCommand_AddToDevice =
     m_Keycodes: new Array
     (
       ADDTODEVICE_MENU_KEYCODE
+    ),
+
+    m_Enableds: new Array
+    (
+      true
     ),
 
     m_Modifiers: new Array
@@ -187,7 +194,9 @@ var SBPlaylistCommand_AddToDevice =
 
   getCommandEnabled: function( aSubMenu, aIndex, aHost )
   {
-    return (this.m_Context.m_Playlist.tree.currentIndex != -1);
+    if (this.m_Context.m_Playlist.tree.currentIndex == -1) return false;
+    var cmds = this._getMenu(aSubMenu);
+    return cmds.m_Enableds[ aIndex ];
   },
 
   getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
@@ -357,6 +366,7 @@ addToDeviceHelper.prototype = {
     this.m_listofdevices.m_Ids = new Array();
     this.m_listofdevices.m_Names = new Array();
     this.m_listofdevices.m_Tooltips = new Array();
+    this.m_listofdevices.m_Enableds = new Array();
     this.m_listofdevices.m_Modifiers = new Array();
     this.m_listofdevices.m_Keys = new Array();
     this.m_listofdevices.m_Keycodes = new Array();
@@ -391,11 +401,13 @@ addToDeviceHelper.prototype = {
       var libraryguid;
       var device = devices[d];
       var devicename = device.properties.friendlyName;
+      var isEnabled = false;
       if (!devicename) 
         devicename = "Unnamed Device";
       if (device.content && device.content.libraries.length > 0) {
         var library = device.content.libraries.
-          queryElementAt(0, Components.interfaces.sbILibrary);
+          queryElementAt(0, Components.interfaces.sbIDeviceLibrary);
+        isEnabled = (library.mgmtType == Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
         libraryguid = library.guid;
       } else {
         continue;
@@ -406,6 +418,7 @@ addToDeviceHelper.prototype = {
                                       devicename);
       this.m_listofdevices.m_Names.push(devicename);
       this.m_listofdevices.m_Tooltips.push(devicename);
+      this.m_listofdevices.m_Enableds.push(isEnabled);
       this.m_listofdevices.m_Modifiers.push("");
       this.m_listofdevices.m_Keys.push("");
       this.m_listofdevices.m_Keycodes.push("");
