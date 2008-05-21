@@ -1236,22 +1236,11 @@ menuseparator
   border-top-color: #202220; /** Button Shadow */
 }
 
-menuitem[disabled="true"],
-menuitem[disabled="true"]:hover,
-menuitem[disabled="true"] > label,
-menuitem[disabled="true"]:hover > label
-menu[disabled="true"],
-menu[disabled="true"]:hover,
-menu[disabled="true"] > label,
-menu[disabled="true"]:hover > label
-{
-  color: #5c5f58 !important; /** Selected Focus Row */
-}
 menuitem > label,
 menupopup > menu > label,
 popup > menu > label
 {
-  color: #B3BAAC !important; /** Light Color 1 */
+  color: #B3BAAC; /** Light Color 1 */
 }
 
 menuitem:hover,
@@ -1262,7 +1251,7 @@ popup > menu:hover,
 popup > menu:hover > label
 {
   background-color: #8A8F84; /** Light Color 2 */
-  color: #feffff !important; /** Light Color Brightest */ 
+  color: #feffff; /** Light Color Brightest */
 }
 
 .menu-accel,
@@ -1284,9 +1273,21 @@ menupopup > menuitem[_moz-menuactive="true"] > label,
 popup > menu[_moz-menuactive="true"] > label,
 popup > menuitem[_moz-menuactive="true"] > label
 {
-  color: #feffff !important; /** Light Color Brightest */ 
+  	color: #feffff; /** Light Color Brightest */ 
 }
 
+menuitem[disabled="true"],
+menuitem[disabled="true"]:hover,
+menuitem[disabled="true"] > label,
+menuitem[disabled="true"]:hover > label
+menu[disabled="true"],
+menu[disabled="true"]:hover,
+menu[disabled="true"] > label,
+menu[disabled="true"]:hover > label
+{
+  color: #5c5f58 !important; /** Selected Focus Row */
+  background-color:transparent !important;
+}
 
 /* Tooltip **/
 
