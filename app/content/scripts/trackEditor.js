@@ -257,15 +257,32 @@ TrackEditorState.prototype = {
     
     // If no changes were made, don't bother invalidating
     if (this._properties[property].edited) {  
-      
+
       var value = this._properties[property].value;
       if (value == "") {
         value = null;
       }
-      this._properties[property].knownInvalid = 
-          !this._properties[property].propInfo.validate(value);
+
+      var valid = this._properties[property].propInfo.validate(value);
+      this._properties[property].knownInvalid = !valid;
+
+      // XXXAus: Because of bug 9045, we have to tie the totalTracks and 
+      // totalDiscs properties to trackNumber and discNumber and ensure
+      // that denominator is not smaller than the numerator.
+      if(valid) {
+        // Track number greater than total tracks, invalid value.
+        if(property == SBProperties.totalTracks &&
+           this._properties[SBProperties.trackNumber].value > value) {
+          this._properties[property].knownInvalid = true;
+        }
+        // Disc number greater than total discs, invalid value.
+        if(property == SBProperties.totalDiscs &&
+           this._properties[SBProperties.discNumber].value > value) {
+          this._properties[property].knownInvalid = true;
+        }
+      }
     }
-    
+
     this._notifyPropertyListeners(property);
   },
   
@@ -1367,6 +1384,7 @@ function TrackEditorTextbox(element) {
     this._minValue = propInfo.minValue;
     this._maxValue = propInfo.maxValue;
     this._maxDigits = new String(this._maxValue).length;
+    
     element.addEventListener("keypress",
             function(evt) { self.onKeypress(evt); }, false);
   }
