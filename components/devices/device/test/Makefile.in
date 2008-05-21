@@ -47,6 +47,7 @@ CPP_SRCS = sbDeviceDeviceTesterModule.cpp \
            $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
            $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
            $(topsrcdir)/components/devices/base/src/sbDeviceLibrary.cpp \
+           $(topsrcdir)/components/devices/base/src/sbDeviceLibraryHelpers.cpp \
            $(topsrcdir)/components/devices/base/src/sbDeviceContent.cpp \
            $(NULL)
 
@@ -59,6 +60,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/device/test \
                $(topsrcdir)/components/devices/base/src \
                $(topsrcdir)/components/devices/device/src \
                $(topsrcdir)/components/include \
+               $(topsrcdir)/components/library/base/src/static \
                $(topsrcdir)/components/library/localdatabase/src \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/property/src \

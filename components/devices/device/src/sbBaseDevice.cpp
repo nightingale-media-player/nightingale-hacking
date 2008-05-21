@@ -273,6 +273,9 @@ sbBaseDevice::sbBaseDevice() :
 
   mRequestMonitor = nsAutoMonitor::NewMonitor(__FILE__ "::mRequestMonitor");
   NS_ASSERTION(mRequestMonitor, "Failed to allocate request monitor");
+  
+  mRequestRemovalLock = nsAutoLock::NewLock(__FILE__ "::mRequestRemovalLock");
+  NS_ASSERTION(mRequestRemovalLock, "Failed to allocate request removal lock");
 }
 
 sbBaseDevice::~sbBaseDevice()
@@ -282,6 +285,9 @@ sbBaseDevice::~sbBaseDevice()
   
   if (mStateLock)
     nsAutoLock::DestroyLock(mStateLock);
+  
+  if (mRequestRemovalLock)
+    nsAutoLock::DestroyLock(mRequestRemovalLock);
 }
 
 NS_IMETHODIMP sbBaseDevice::SyncLibraries()
@@ -496,6 +502,8 @@ nsresult sbBaseDevice::GetFirstRequest(PRBool aRemove,
 
 nsresult sbBaseDevice::PopRequest(sbBaseDevice::TransferRequest** _retval)
 {
+  NS_PRECONDITION(!mRequestBatchTimer, "Poping a request while batched!");
+  nsAutoLock removalLock(mRequestRemovalLock);
   return GetFirstRequest(PR_TRUE, _retval);
 }
 

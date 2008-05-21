@@ -43,6 +43,7 @@
 #include <nsAppDirectoryServiceDefs.h>
 #include <nsArrayUtils.h>
 #include <nsAutoLock.h>
+#include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsDirectoryServiceUtils.h>
@@ -63,6 +64,8 @@
 #include <sbIPropertyArray.h>
 
 /* songbird headers */
+#include <sbDeviceLibraryHelpers.h>
+#include <sbLibraryUtils.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
 #include <sbProxyUtils.h>
@@ -133,6 +136,19 @@ sbDeviceLibrary::Initialize(const nsAString& aLibraryId)
 NS_IMETHODIMP
 sbDeviceLibrary::Finalize()
 {
+  // unhook the main library listener
+  if (mMainLibraryListener) {
+    nsCOMPtr<sbILibrary> mainLib;
+    nsresult rv;
+    rv = GetMainLibrary(getter_AddRefs(mainLib));
+    NS_ASSERTION(NS_SUCCEEDED(rv), "WTF this should never fail");
+    // if we fail, meh, too bad, we still need to get on with the releasing
+    if (NS_SUCCEEDED(rv)) {
+      rv = mainLib->RemoveListener(mMainLibraryListener);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "failed to remove main lib listener");
+    }
+    mMainLibraryListener = nsnull;
+  }
   // Get and clear the device library.
   nsCOMPtr<sbILibrary> deviceLibrary;
   {
@@ -219,6 +235,7 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   list = do_QueryInterface(mDeviceLibrary, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // hook up listeners
   rv = list->AddListener(this,
                          PR_FALSE,
                          sbIMediaList::LISTENER_FLAGS_ITEMADDED |
@@ -227,6 +244,29 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                          sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
                          nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbILibrary> mainLib;
+  rv = GetMainLibrary(getter_AddRefs(mainLib));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsRefPtr<sbLibraryItemUpdateListener> updateListener =
+    new sbLibraryItemUpdateListener(mDeviceLibrary);
+  NS_ENSURE_TRUE(updateListener, NS_ERROR_OUT_OF_MEMORY);
+  mMainLibraryListener = do_QueryInterface(updateListener, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // hook up the listener now if we need to
+  PRUint32 mgmtType;
+  rv = GetMgmtType(&mgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
+    rv = mainLib->AddListener(mMainLibraryListener,
+                              PR_FALSE,
+                              sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
+                              nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<sbILocalDatabaseSimpleMediaList> simpleList;
   simpleList = do_QueryInterface(list, &rv);
@@ -403,6 +443,10 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (origMgmtType != aMgmtType) {
+    nsCOMPtr<sbILibrary> mainLib;
+    rv = GetMainLibrary(getter_AddRefs(mainLib));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     if (aMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
       // sync
       rv = mDevice->SyncLibraries();
@@ -411,10 +455,22 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
       rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
                              NS_LITERAL_STRING("1"));
       NS_ENSURE_SUCCESS(rv, rv);
+
+      // hook up the metadata updating listener
+      rv = mainLib->AddListener(mMainLibraryListener,
+                                PR_FALSE,
+                                sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
+                                nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
     } else {
       // mark this as read-write
       rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
                              EmptyString());
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      // remove the metadata updating listener
+      rv = mainLib->RemoveListener(mMainLibraryListener);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }

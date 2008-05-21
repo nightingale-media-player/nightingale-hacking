@@ -360,8 +360,12 @@ private:
 
 protected:
   /* to block the background thread from transferring files while the batch
-     has not completed */
+     has not completed; if a delay is active, either the request monitor OR
+     the request removal lock needs to be held.  No requests may be removed
+     while the removal lock is behind held.  No actions (including pushing
+     additional requests) may be performed while the request monitor is held. */
   PRMonitor * mRequestMonitor;
+  PRLock * mRequestRemovalLock;
   nsRefPtr<TransferRequest> mRequestBatchStart;
   nsCOMPtr<nsITimer> mRequestBatchTimer;
 

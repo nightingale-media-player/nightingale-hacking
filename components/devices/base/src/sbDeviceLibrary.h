@@ -195,6 +195,11 @@ private:
    * \brief the device this library belongs to
    */
   nsCOMPtr<sbIDevice> mDevice;
+  
+  /**
+   * \brief the main library updating listener
+   */
+  nsCOMPtr<sbIMediaListListener> mMainLibraryListener;
 
   /**
    * \brief A list of listeners.
