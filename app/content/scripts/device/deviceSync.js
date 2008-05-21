@@ -763,7 +763,7 @@ var DeviceSyncWidget = {
         else if (this._getElement("content_auto_sync_selected_radio").selected)
             mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
       } else {
-          mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_MANUAL;
+          mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
       }
       this._syncPrefs.mgmtType.value = mgmtType;
       
