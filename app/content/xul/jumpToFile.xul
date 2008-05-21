@@ -61,6 +61,7 @@
         x_editable="false" 
         oncommand="onPlaylistlistSelect(event)" 
         onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();"
+        onkeypress="onPlaylistlistKeypress(event);" 
         flex="1"
       >
         <menupopup>

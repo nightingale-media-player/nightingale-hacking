@@ -415,6 +415,22 @@ try
     }
   }
   
+  function onPlaylistlistKeypress(evt) {
+    var menulist = document.getElementById("playable_list");
+    if (!menulist.open) {
+      switch (evt.keyCode) {
+        case evt.DOM_VK_DOWN:
+        case evt.DOM_VK_UP:
+          menulist.open = true;
+          break;
+        default:
+          return;
+      }
+      evt.preventDefault();
+      evt.stopPropagation();
+    }
+  }
+
   function onSearchEditIdle(evt) {
     if ( editIdleInterval )
     {
