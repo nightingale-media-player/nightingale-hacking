@@ -36,6 +36,7 @@
 #include <nsIGenericFactory.h>
 #include <nsAutoPtr.h>
 #include <nsIStringBundle.h>
+#include "sbBooleanPropertyInfo.h"
 #include "sbDatetimePropertyInfo.h"
 #include "sbNumberPropertyInfo.h"
 #include "sbStandardProperties.h"
@@ -344,21 +345,20 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Is List (internal use only)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ISLIST), EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
-                    PR_FALSE);
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISLIST), EmptyString(),
+                       stringBundle, PR_FALSE, PR_FALSE, PR_FALSE,
+                       PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Is Read Only (internal use)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY), EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
-                    PR_FALSE);
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY), EmptyString(),
+                       stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Only Custom Media Pages (internal use only)
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ONLY_CUSTOM_MEDIAPAGES), EmptyString(),
-                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
-                    PR_FALSE);
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ONLY_CUSTOM_MEDIAPAGES), 
+                       EmptyString(), stringBundle, PR_FALSE, PR_FALSE, 
+                       PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Date created
@@ -530,10 +530,10 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Is part of a compilation
-  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_ISPARTOFCOMPILATION),
-                      NS_LITERAL_STRING("property.is_part_of_compilation"),
-                      stringBundle, PR_TRUE, PR_TRUE, 0, PR_TRUE, 1, PR_TRUE,
-                      PR_TRUE, PR_TRUE);
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISPARTOFCOMPILATION),
+                       NS_LITERAL_STRING("property.is_part_of_compilation"),
+                       stringBundle, PR_TRUE, PR_TRUE, 
+                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Producer(s)
@@ -720,10 +720,10 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Hidden
-  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                      NS_LITERAL_STRING("property.hidden"),
-                      stringBundle, PR_FALSE, PR_FALSE,
-                      0, PR_TRUE, 1, PR_TRUE, PR_TRUE, PR_TRUE);
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                       NS_LITERAL_STRING("property.hidden"),
+                       stringBundle, PR_FALSE, PR_FALSE,
+                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Display columns
@@ -758,8 +758,8 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
     PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), EmptyString(),
-    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE, PR_FALSE);
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE), EmptyString(),
+                       stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Download button
@@ -876,10 +876,10 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Enable auto-download
-  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_ENABLE_AUTO_DOWNLOAD),
-                      EmptyString(),
-                      stringBundle, PR_FALSE, PR_FALSE,
-                      0, PR_TRUE, 1, PR_TRUE, PR_TRUE, PR_TRUE);
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ENABLE_AUTO_DOWNLOAD),
+                       EmptyString(),
+                       stringBundle, PR_FALSE, PR_FALSE,
+                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Transfer policy
@@ -1193,6 +1193,51 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
 
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbINumberPropertyInfo*, numberProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
+                                   const nsAString &aDisplayKey,
+                                   nsIStringBundle* aStringBundle,
+                                   PRBool aUserViewable,
+                                   PRBool aUserEditable,
+                                   PRBool aRemoteReadable,
+                                   PRBool aRemoteWritable)
+{
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
+  nsRefPtr<sbBooleanPropertyInfo> booleanProperty(new sbBooleanPropertyInfo());
+  NS_ENSURE_TRUE(booleanProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = booleanProperty->SetId(aPropertyID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aDisplayKey.IsEmpty()) {
+    nsAutoString displayValue;
+    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = booleanProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  rv = booleanProperty->SetUserViewable(aUserViewable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = booleanProperty->SetUserEditable(aUserEditable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIBooleanPropertyInfo*, booleanProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);

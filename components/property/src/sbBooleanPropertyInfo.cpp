@@ -79,7 +79,9 @@ NS_IMETHODIMP sbBooleanPropertyInfo::Validate(const nsAString & aValue, PRBool *
 {
   NS_ENSURE_ARG_POINTER(_retval);
   
-  if (aValue.EqualsLiteral("0") || aValue.EqualsLiteral("1")) {
+  if (aValue.IsVoid() || 
+      aValue.EqualsLiteral("0") || 
+      aValue.EqualsLiteral("1")) {
     *_retval = PR_TRUE;
   }
   else {

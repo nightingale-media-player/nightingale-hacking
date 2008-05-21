@@ -146,8 +146,7 @@ function testMediaPageManager() {
   );
   
   // now test that setting the opt-out works
-  // TODO: FIXME --- THIS PROPERTY IS A TEXT PROPERTY RIGHT NOW
-  list1.setProperty(SBProperties.onlyCustomMediaPages, "true");
+  list1.setProperty(SBProperties.onlyCustomMediaPages, "1");
   var pages = pageMgr.getAvailablePages(list1);
   var count = 0;
   var theOne;

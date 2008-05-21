@@ -409,7 +409,7 @@ var MediaPageMetadataReader = {
         // if we *only* target the "type" of the list
         // and the list wants to opt out
         if (numProperties == 1 && match["type"]) {
-          if (mediaList.getProperty(SBProperties.onlyCustomMediaPages) == "true") {
+          if (mediaList.getProperty(SBProperties.onlyCustomMediaPages) == "1") {
             return false;
           }
         }
@@ -450,7 +450,7 @@ var MediaPageMetadataReader = {
     var matchFunction = function(mediaList) {
       // opt-out lists will also exclude completely generic pages
       // this detail must be clearly communicated to the MP dev'rs!
-      return(mediaList && mediaList.getProperty(SBProperties.onlyCustomMediaPages) != "true");
+      return(mediaList && mediaList.getProperty(SBProperties.onlyCustomMediaPages) != "1");
     };
     return matchFunction;
   },
