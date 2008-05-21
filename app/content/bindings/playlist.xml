@@ -684,6 +684,8 @@
         const BYPASSKEY = "playlist.confirmremovetracks.bypass";
         const STRINGROOT_UNIQUE = "playlist.confirmremoveitem.";
         const STRINGROOT_MULTIPLE = "playlist.confirmremoveitems.";
+        const STRINGROOT_BTN = "playlist.button.";
+        const STRINGROOT_TYPE = "playlist.type.";
         if (!SBDataGetBoolValue(BYPASSKEY)) {
           var STRINGROOT = (numSelected > 1) ? STRINGROOT_MULTIPLE : STRINGROOT_UNIQUE;
           var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
@@ -694,8 +696,15 @@
                               .getService(Components.interfaces.nsIStringBundleService);
           var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
           var strTitle = songbirdStrings.GetStringFromName(STRINGROOT + "title");
-          var strMsg = songbirdStrings.GetStringFromName(STRINGROOT + "message");
+          
+          var contextKey = 
+            (this.mediaListView.mediaList instanceof Ci.sbILibrary) ? "library" : "playlist";
+          var strContext = songbirdStrings.GetStringFromName("playlist.type." + contextKey); 
+          var strMsg = songbirdStrings.formatStringFromName(STRINGROOT + "message", [strContext], 1);
+          
           var strCheck = songbirdStrings.GetStringFromName("dialog.confirm.dontaskme");
+          var removeStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "remove");
+          var cancelStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "cancel");
           
           var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                                 .getService(Ci.sbIDeviceManager2);
@@ -703,20 +712,25 @@
             strMsg += "\n\n" + songbirdStrings.GetStringFromName(STRINGROOT + "devicewarning");
           }
                     
+          var btnFlags = 
+            (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_0) +  // cancel
+            (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_1) +  // remove
+            Ci.nsIPromptService.BUTTON_POS_1_DEFAULT;
+                    
           var retval = 
             promptService.confirmEx(window, 
                                     strTitle, 
                                     strMsg, 
-                                    Ci.nsIPromptService.STD_YES_NO_BUTTONS, 
-                                    null, 
-                                    null, 
+                                    btnFlags,
+                                    cancelStr, 
+                                    removeStr, 
                                     null, 
                                     strCheck, 
                                     check);
           if (check.value == true) {
             SBDataSetBoolValue(BYPASSKEY, true);
           }
-          if (retval == 1) { // 0 = yes, 1 = no
+          if (retval == 0) { // 1 = yes, 0 = no
             return;
           }
         }
