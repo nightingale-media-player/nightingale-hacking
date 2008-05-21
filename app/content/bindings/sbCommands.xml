@@ -408,6 +408,12 @@
             var library = this.medialist ? this.medialist.library : null;
             var metricstype = library ? library.getProperty("http://songbirdnest.com/data/1.0#customType") : null;
             if (!metricstype) return;
+            var p = cmdid.indexOf(":");
+            if (p != -1) cmdid = cmdid.slice(0, p);
+            p = cmdid.indexOf(";");
+            if (p != -1) cmdid = cmdid.slice(0, p);
+            p = cmdid.indexOf(",");
+            if (p != -1) cmdid = cmdid.slice(0, p);
             metrics_inc(metricscategory, metricstype, cmdid);
           ]]>
         </body>

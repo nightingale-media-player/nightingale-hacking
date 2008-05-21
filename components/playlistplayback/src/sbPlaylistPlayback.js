@@ -74,6 +74,7 @@ const Cu = Components.utils;
 
 var gConsole    = null;
 var gOS         = null;
+var gMetrics    = null;
 
 /**
  * ----------------------------------------------------------------------------
@@ -263,10 +264,9 @@ function PlaylistPlayback() {
     gOS.addObserver(this, "profile-before-change", false);
   }
 
-  var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                 .getService(Components.interfaces.mozIJSSubScriptLoader);
-  jsLoader.loadSubScript("chrome://songbird/content/scripts/metrics.js", this);
-  
+  gMetrics =
+    Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+              .createInstance(Components.interfaces.sbIMetrics);
 
 } // PlaylistPlayback
 PlaylistPlayback.prototype.constructor = PlaylistPlayback;
@@ -1061,7 +1061,7 @@ PlaylistPlayback.prototype = {
       var protocol = spec.substr(0, spec.indexOf(":"));
       if (protocol.length < 1) 
         protocol = "???"
-      this.metrics_inc("mediacore.play.attempt", core.getId(), ext + "." + protocol);
+      gMetrics.metricsInc("mediacore.play.attempt", core.getId(), ext + "." + protocol);
     } catch( err ) {
       debug( "playURL:\n" + err + "\n" );
       return false;
@@ -1431,6 +1431,7 @@ PlaylistPlayback.prototype = {
       // Release Services to avoid memory leaks
       gConsole  = null;
       gOS       = null;
+      gMetrics  = null;
       break;
     }
   },
@@ -2267,7 +2268,7 @@ PlaylistPlayback.prototype = {
     if (this._playStartTime != 0) {
       var timeNow = new Date().getTime();
       var seconds = ( (timeNow - this._playStartTime) / 1000 );
-      this.metrics_add("mediacore", "playtime", null, seconds);
+      gMetrics.metricsAdd("mediacore", "playtime", null, seconds);
       this._playStartTime = 0;
     }
   },
