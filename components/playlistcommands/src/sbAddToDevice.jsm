@@ -406,8 +406,8 @@ addToDeviceHelper.prototype = {
         devicename = "Unnamed Device";
       if (device.content && device.content.libraries.length > 0) {
         var library = device.content.libraries.
-          queryElementAt(0, Components.interfaces.sbIDeviceLibrary);
-        isEnabled = (library.mgmtType == Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
+          queryElementAt(0, Components.interfaces.sbILibrary);
+        isEnabled = library.userEditable;
         libraryguid = library.guid;
       } else {
         continue;

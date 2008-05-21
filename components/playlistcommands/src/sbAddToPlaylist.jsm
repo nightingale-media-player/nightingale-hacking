@@ -92,6 +92,11 @@ var SBPlaylistCommand_AddToPlaylist =
       ADDTOPLAYLIST_MENU_KEYCODE
     ),
 
+    m_Enableds: new Array
+    (
+      true
+    ),
+
     m_Modifiers: new Array
     (
       ADDTOPLAYLIST_MENU_MODIFIERS
@@ -194,7 +199,9 @@ var SBPlaylistCommand_AddToPlaylist =
 
   getCommandEnabled: function( aSubMenu, aIndex, aHost )
   {
-    return (this.m_Context.m_Playlist.tree.currentIndex != -1);
+    if (this.m_Context.m_Playlist.tree.currentIndex == -1) return false;
+    var cmds = this._getMenu(aSubMenu);
+    return (aIndex in cmds.m_Enableds) && cmds.m_Enableds[ aIndex ];
   },
 
   getCommandShortcutModifiers: function ( aSubMenu, aIndex, aHost )
@@ -338,6 +345,11 @@ SBPlaylistCommand_DownloadToPlaylist.m_root_commands = {
     DOWNLOADTOPLAYLIST_MENU_KEYCODE
   ),
 
+  m_Enableds: new Array
+  (
+    true
+  ),
+
   m_Modifiers: new Array
   (
     DOWNLOADTOPLAYLIST_MENU_MODIFIERS
@@ -401,6 +413,7 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_Ids = new Array();
     this.m_listofplaylists.m_Names = new Array();
     this.m_listofplaylists.m_Tooltips = new Array();
+    this.m_listofplaylists.m_Enableds = new Array();
     this.m_listofplaylists.m_Modifiers = new Array();
     this.m_listofplaylists.m_Keys = new Array();
     this.m_listofplaylists.m_Keycodes = new Array();
@@ -419,6 +432,7 @@ addToPlaylistHelper.prototype = {
       this.m_listofplaylists.m_Ids.push("noplaylist");
       this.m_listofplaylists.m_Names.push("&command.addtoplaylist.noexistingplaylist");
       this.m_listofplaylists.m_Tooltips.push("&command.tooltip.addtoplaylist.noexistingplaylist");
+      this.m_listofplaylists.m_Enableds.push(false);
       this.m_listofplaylists.m_Modifiers.push("");
       this.m_listofplaylists.m_Keys.push("");
       this.m_listofplaylists.m_Keycodes.push("");
@@ -429,6 +443,7 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_Ids.push("separator");
     this.m_listofplaylists.m_Names.push("separator");
     this.m_listofplaylists.m_Tooltips.push("separator");
+    this.m_listofplaylists.m_Enableds.push(true);
     this.m_listofplaylists.m_Modifiers.push("");
     this.m_listofplaylists.m_Keys.push("");
     this.m_listofplaylists.m_Keycodes.push("");
@@ -438,6 +453,7 @@ addToPlaylistHelper.prototype = {
     this.m_listofplaylists.m_Ids.push(ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID);
     this.m_listofplaylists.m_Names.push("&command.addtoplaylist.createnew");
     this.m_listofplaylists.m_Tooltips.push("&command.addtoplaylist.createnew");
+    this.m_listofplaylists.m_Enableds.push(true);
     this.m_listofplaylists.m_Modifiers.push("");
     this.m_listofplaylists.m_Keys.push("");
     this.m_listofplaylists.m_Keycodes.push("");
@@ -509,6 +525,7 @@ addToPlaylistHelper.prototype = {
         this.obj.m_listofplaylists.m_Ids.push(ADDTOPLAYLIST_COMMAND_ID + item.library.guid + ";" + item.guid);
         this.obj.m_listofplaylists.m_Names.push(item.name ? item.name : "Unnamed Playlist");
         this.obj.m_listofplaylists.m_Tooltips.push(item.name ? item.name : "Unnamed Playlist");
+        this.obj.m_listofplaylists.m_Enableds.push(item.userEditable);
         this.obj.m_listofplaylists.m_Modifiers.push("");
         this.obj.m_listofplaylists.m_Keys.push("");
         this.obj.m_listofplaylists.m_Keycodes.push("");
