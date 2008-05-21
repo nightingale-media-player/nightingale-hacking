@@ -480,11 +480,25 @@
             {
               clearInterval( this._editIdleInterval );
             }
+            
+            var timeout = 1000;
+            var isBackspace = event.keyCode == KeyEvent.DOM_VK_BACK_SPACE;
+            var length = this._textbox.value.length;
+
+            // If a few chars have been entered, run the search sooner
+            // since it probably won't take long.             
+            if ( (length == 1 && isBackspace)  ||  // Empty search is fast 
+                 (length >= 2 && !isBackspace) ||  // Everything after three chars is fast
+                 (length > 3)) 
+            {
+              timeout = 100;
+            }             
+            
             this._editIdleInterval = setInterval( 
               function(o) { 
                 clearInterval( o._editIdleInterval );
                 o._onSearchEditIdle(); 
-              }, 1000, this);
+              }, timeout, this);
             break;      
         }
       ]]></handler>    
