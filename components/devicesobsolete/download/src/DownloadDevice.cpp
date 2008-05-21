@@ -2805,6 +2805,8 @@ nsresult sbDownloadSession::Suspend()
     /* Update the download media item download button property. */
     sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
     property.value->SetMode(sbDownloadButtonPropertyValue::ePaused);
+    
+    StopTimers();
 
     /* Mark session as suspended. */
     mSuspended = PR_TRUE;
@@ -2843,6 +2845,8 @@ nsresult sbDownloadSession::Resume()
     /* Update the download media item download button property. */
     sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
     property.value->SetMode(sbDownloadButtonPropertyValue::eDownloading);
+
+    StartTimers();
 
     /* Mark session as not suspended. */
     mSuspended = PR_FALSE;
