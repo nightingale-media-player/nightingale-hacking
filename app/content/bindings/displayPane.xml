@@ -55,7 +55,7 @@
                    menu button) -->
               <image anonid="icon" class="favicon"/>
             </vbox>
-            <label anonid="header" default="&menu.displaypane.title.default;"
+            <label anonid="header" xbl:inherits="default=label"
                    class="sb-displaypane-label" flex="1"/>
           </hbox>
           <button type="menu" mousethrough="never" class="sb-displaypane-menubutton">

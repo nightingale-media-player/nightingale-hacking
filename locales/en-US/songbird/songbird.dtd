@@ -88,7 +88,7 @@
 <!ENTITY menu.displaypane.title.show    "Show">
 <!ENTITY menu.displaypane.title.auto    "Auto Show/Hide">
 <!ENTITY menu.displaypane.title.hide    "Hide">
-<!ENTITY menu.displaypane.title.default "[untitled]">
+<!ENTITY menu.displaypane.title.default "[untitled]"> <!-- obsolete -->
 <!ENTITY menu.displaypane.get           "Get More Display Panes...">
 <!ENTITY displaypane.name.servicepane   "Service Pane Bottom">
 <!ENTITY displaypane.name.browser       "Content Pane Bottom">
