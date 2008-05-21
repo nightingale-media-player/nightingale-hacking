@@ -48,12 +48,25 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/servicepane/twisty-closed.png);
 }
 
+.servicepane-tree > treechildren::-moz-tree-twisty(open),
+.servicepane-tree > treechildren::-moz-tree-twisty(closed)
+{
+  -moz-image-region: rect(0px, 9px, 9px, 0px);
+}
+
+.servicepane-tree > treechildren::-moz-tree-twisty(open selected),
+.servicepane-tree > treechildren::-moz-tree-twisty(closed selected)
+{
+  -moz-image-region: rect(9px, 9px, 18px, 0px);
+}
 /* Service Pane Icons **/
 .servicepane-tree > treechildren::-moz-tree-image()
 {
   width: 16px;
   max-height: 16px;
 }
+
+
 
 .servicepane-tree > treechildren::-moz-tree-image( library ),
 .locationbar-image[properties~="library"],
