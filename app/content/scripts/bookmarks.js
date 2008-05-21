@@ -34,12 +34,6 @@ var bmManager = {
     if (browser) {
       var theurl = browser.currentURI.spec;
       
-      // First we check if the currentURI matches what is in the url bar
-      var locationBar = document.getElementById("location_bar");
-      if (locationBar.value != theurl) {
-        theurl = locationBar.value;
-      }
-
       var thelabel = browser.contentDocument.title;
       if (thelabel == "") thelabel = theurl;
       
