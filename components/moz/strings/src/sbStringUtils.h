@@ -28,6 +28,7 @@
 #define __SBSTRINGUTILS_H__
 
 #include <nsStringGlue.h>
+#include <prprf.h>
 
 class nsIStringEnumerator;
 
