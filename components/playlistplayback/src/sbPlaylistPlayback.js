@@ -1590,19 +1590,24 @@ PlaylistPlayback.prototype = {
     // the loop is hit, and that suits us, but it's really not clear)
 
     // Wait a bit, and then only ask infrequently
-    if ( 
-      ( pos_ms > 250 ) && // If we've gone more than a quarter of a second, AND
-      ( 
-        ( ( this._metadataPollCount++ % 20 ) == 0 ) /*|| // We skip 20 times, OR
-        ( this._set_metadata ) */// Someone says we're supposed to be setting metadata now.
-      )
-    ) {
+    if ( ( pos_ms > 250 ) && // If we've gone more than a quarter of a second, AND
+         ( this._metadataPollCount++ % 20 ) == 0 ) {
 
       // Sometimes the core is a little slower than we are and it returns
       // metadata for the previous song after we are already playing the next.
       // Make sure we're in sync and bail if not.
       if (core.getMetadata("url") != this._playURL.stringValue)
         return;
+
+      //Get current item using current index and current playing view.
+      var cur_index = this.currentIndex;
+      var cur_item = this._playingView.getItemByIndex(cur_index);
+      
+      // If the item is set read-only, do not attempt to overwrite any metadata.
+      // See bug #9045.
+      if (parseInt(cur_item.getProperty(SBProperties.isReadOnly))) {
+        return;
+      }
 
       // Ask, and ye shall receive
       var title = "" + core.getMetadata("title");
@@ -1661,9 +1666,6 @@ PlaylistPlayback.prototype = {
         genre = "";
         
       if ( this._set_metadata ) {
-        //Get current item using current index and current playing view.
-        var cur_index = this.currentIndex;
-        var cur_item = this._playingView.getItemByIndex(cur_index);
         
         //Set metadata for this item
         this._setItemMetadata( cur_item, title, this._metadataLen.intValue, album, artist, genre );
