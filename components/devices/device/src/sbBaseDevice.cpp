@@ -2262,6 +2262,16 @@ sbBaseDevice::SyncApplyChanges(sbIMediaList*        aDstMediaList,
           nsCOMPtr<sbIMediaItem> mediaItem;
           rv = change->GetDestinationItem(getter_AddRefs(mediaItem));
           NS_ENSURE_SUCCESS(rv, rv);
+
+          // it has a customtype then let's not do anything
+          nsString customType;
+          rv = mediaItem->GetProperty(
+              NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), customType);
+          if(!customType.IsEmpty() && 
+              !customType.Equals(NS_LITERAL_STRING("simple"))) {
+            break;
+          }
+
           rv = deleteItemList->AppendElement(mediaItem, PR_FALSE);
           NS_ENSURE_SUCCESS(rv, rv);
         } break;
@@ -2271,6 +2281,16 @@ sbBaseDevice::SyncApplyChanges(sbIMediaList*        aDstMediaList,
           nsCOMPtr<sbIMediaItem> mediaItem;
           rv = change->GetSourceItem(getter_AddRefs(mediaItem));
           NS_ENSURE_SUCCESS(rv, rv);
+
+          // it has a customtype then let's not do anything
+          nsString customType;
+          rv = mediaItem->GetProperty(
+              NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), customType);
+          if(!customType.IsEmpty() && 
+              !customType.Equals(NS_LITERAL_STRING("simple"))) {
+            break;
+          }
+
           rv = addItemList->AppendElement(mediaItem, PR_FALSE);
           NS_ENSURE_SUCCESS(rv, rv);
         } break;
@@ -2283,6 +2303,19 @@ sbBaseDevice::SyncApplyChanges(sbIMediaList*        aDstMediaList,
           rv = change->GetItemIsList(&itemIsList);
           NS_ENSURE_SUCCESS(rv, rv);
           if (itemIsList) {
+            nsCOMPtr<sbIMediaItem> mediaItem;
+            rv = change->GetSourceItem(getter_AddRefs(mediaItem));
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            // it has a customtype then let's not do anything
+            nsString customType;
+            rv = mediaItem->GetProperty(
+                NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), customType);
+            if(!customType.IsEmpty() && 
+                !customType.Equals(NS_LITERAL_STRING("simple"))) {
+              break;
+            }
+
             success = mediaListChangeList.AppendObject(change);
             NS_ENSURE_SUCCESS(success, NS_ERROR_FAILURE);
           }
