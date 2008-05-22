@@ -1,4 +1,4 @@
-/*
+﻿/*
 //
 // BEGIN SONGBIRD GPL
 //
@@ -273,11 +273,11 @@ function sbDownloadDeviceHelper_getDefaultMusicFolder()
     case "WINNT":
       musicDir = dirService.getFile("Pers", {});
       musicDir.append("My Music");
-      break;
+    break;
 
     case "Darwin":
       musicDir = dirService.getFile("Music", {});
-      break;
+    break;
 
     case "Linux":
     case "SunOS":
@@ -288,11 +288,11 @@ function sbDownloadDeviceHelper_getDefaultMusicFolder()
         musicDir = musicDir.parent;
         musicDir.append("music");
       }
-      break;
+    break;
 
     default:
       // Fall through and use the Desktop below.
-      break;
+    break;
   }
 
   // Make sure that the directory exists and is writable.
