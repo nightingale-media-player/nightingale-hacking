@@ -355,34 +355,37 @@ sbLocalDatabaseMediaItem::GetUserEditable(PRBool* aUserEditable)
       do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaItem*,this));
 
     if (!list) {
+      
+      // If not a list, assume we can't write unless proven otherwise.
+      // Don't NS_ENSURE_SUCCESS, since failure == not editable.
+      *aUserEditable = PR_FALSE;
+      
       nsRefPtr<nsIURI> uri;
       rv = this->GetContentSrc(getter_AddRefs(uri));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(uri, &rv);
-
-      // File must be local and writable
+      
       if (NS_SUCCEEDED(rv)) {
-        nsCOMPtr<nsIFile> file;
-        rv = fileUrl->GetFile(getter_AddRefs(file));
-        NS_ENSURE_SUCCESS(rv, rv);
+        nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(uri, &rv);
 
-        PRBool exists;
-        rv = file->Exists(&exists);
-        NS_ENSURE_SUCCESS(rv, rv);
+        // File must be local and writable
+        if (NS_SUCCEEDED(rv)) {
+          nsCOMPtr<nsIFile> file;
+          rv = fileUrl->GetFile(getter_AddRefs(file));
+          
+          if (NS_SUCCEEDED(rv)) {
+            PRBool exists;
+            rv = file->Exists(&exists);
+            NS_ENSURE_SUCCESS(rv, rv);
 
-        PRBool isWritable = PR_FALSE;
-        if (exists) {
-          rv = file->IsWritable(&isWritable);
-          if (NS_FAILED(rv)) {
-            isWritable = PR_FALSE;
+            PRBool isWritable = PR_FALSE;
+            if (exists) {
+              rv = file->IsWritable(&isWritable);
+              if (NS_FAILED(rv)) {
+                isWritable = PR_FALSE;
+              }
+            }
+            *aUserEditable = isWritable && exists;
           }
-        }
-
-        *aUserEditable = isWritable && exists;
-      } else {
-        // Not a local file
-        *aUserEditable = PR_FALSE;
+        }        
       }
     }
   }
