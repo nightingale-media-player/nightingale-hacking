@@ -416,15 +416,35 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
 
   } else if (!strcmp(NS_PROFILE_STARTUP_OBSERVER_ID, aTopic)) {
+    // Called after the profile has been loaded, so prefs and such are available
     rv = this->Init();
     NS_ENSURE_SUCCESS(rv, rv);
   } else if (!strcmp(NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID, aTopic)) {
+    // Called when the request to shutdown has been granted
+    // We can't watch the -requested notification since it may not always be
+    // fired :(. Due to Bug 9459 this will be called twice.
     rv = this->QuitApplicationGranted();
     NS_ENSURE_SUCCESS(rv, rv);
+    
+    // Remove the observer so we don't get called a second time, since we are
+    // shutting down anyways this should not cause problems.
+     nsCOMPtr<nsIObserverService> obsSvc =
+      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<nsIObserver> observer =
+      do_QueryInterface(NS_ISUPPORTS_CAST(nsIObserver*, this), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = obsSvc->RemoveObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
   } else if (!strcmp(NS_QUIT_APPLICATION_OBSERVER_ID, aTopic)) {
+    // Called during shutdown, the profile is still available
     rv = this->PrepareShutdown();
     NS_ENSURE_SUCCESS(rv, rv);
   } else if (!strcmp(NS_PROFILE_SHUTDOWN_OBSERVER_ID, aTopic)) {
+    // Called when near the end of shutdown, profile is just about to be gone
     rv = this->FinalShutdown();
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -441,9 +461,6 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
     
     rv = obsSvc->RemoveObserver(observer, NS_QUIT_APPLICATION_OBSERVER_ID);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = obsSvc->RemoveObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->RemoveObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
@@ -584,8 +601,8 @@ nsresult sbDeviceManager::QuitApplicationGranted()
 
   nsresult rv;
 
-  // we're about to shut down. let's make sure all the devices are
-  // ok with that...
+  // There has been a request to shutdown, let's check with the devices and if
+  // they are busy then query the user if they wish to force them to quit
   PRBool canDisconnect;
   rv = GetCanDisconnect(&canDisconnect);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -596,6 +613,9 @@ nsresult sbDeviceManager::QuitApplicationGranted()
       do_GetService("@songbirdnest.com/Songbird/Prompter;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // This will hold up a dialog, we do not continue
+    // until the dialog is closed, which will be closed automatically when
+    // the devices are no longer busy, or the user closes it.
     nsCOMPtr<nsIDOMWindow> dialogWindow;
     prompter->OpenDialog
       (nsnull,
@@ -606,6 +626,7 @@ nsresult sbDeviceManager::QuitApplicationGranted()
        getter_AddRefs(dialogWindow));
   }
 
+  // Ok now we can shutdown
   return NS_OK;
 }
 
