@@ -275,8 +275,32 @@ PublicPlaylistCommands.prototype = {
 
       this.m_cmd_Edit.setCommandEnabledCallback(null,
                                                 "library_cmd_edit",
-                                                plCmd_AND(
-                                                  plCmd_IsAnyTrackSelected,
+                                                plCmd_IsAnyTrackSelected);
+
+      this.m_cmd_Edit.setCommandVisibleCallback(null,
+                                                "library_cmd_edit",
+                                                plCmd_CanModifyPlaylist);
+
+      this.m_cmd_Edit.appendAction(null,
+                                   "library_cmd_edit_readonly",
+                                   "&command.edit.readonly",
+                                   "&command.tooltip.edit.readonly",
+                                   plCmd_Edit_TriggerCallback);
+
+      this.m_cmd_Edit.setCommandShortcut(null,
+                                         "library_cmd_edit_readonly",
+                                         "&command.shortcut.key.edit",
+                                         "&command.shortcut.keycode.edit",
+                                         "&command.shortcut.modifiers.edit",
+                                         true);
+
+      this.m_cmd_Edit.setCommandEnabledCallback(null,
+                                                "library_cmd_edit_readonly",
+                                                plCmd_IsAnyTrackSelected);
+
+      this.m_cmd_Edit.setCommandVisibleCallback(null,
+                                                "library_cmd_edit_readonly",
+                                                plCmd_NOT(
                                                   plCmd_CanModifyPlaylist));
 
       // --------------------------------------------------------------------------
@@ -1167,6 +1191,13 @@ function plCmd_OR( /* comma separated list (not array) of functions */ ) {
         return true;
     }
     return false;
+  }
+}
+
+// Returns the negation of the result of the input
+function plCmd_NOT( aFunction ) {
+  return function _plCmd_Negation(aContext, aSubMenuId, aCommandId, aHost) {
+    return !aFunction(aContext, aSubMenuId, aCommandId, aHost);
   }
 }
 
