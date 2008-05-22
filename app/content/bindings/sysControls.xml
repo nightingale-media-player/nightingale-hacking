@@ -201,12 +201,6 @@
           {
             case "dialog":
               // Hidden if we only want to show the close.
-              
-              // HACK: To conform with changes for 0.5 - we are hiding the close button only for dialogs
-              //       that come from |commonDialog.xul|. All other dialogs will have the close button.
-              if (document.documentElement.getAttribute("id") == "commonDialog")
-                document.getAnonymousElementByAttribute(this, 'sbid', 'close').setAttribute( "hidden", "true" );
-                
               document.getAnonymousElementByAttribute(this, 'sbid', 'mini').setAttribute( "hidden", "true" );
               document.getAnonymousElementByAttribute(this, 'sbid', 'maxi').setAttribute( "hidden", "true" );
               break;
@@ -534,16 +528,6 @@
             
           if ( this.getAttribute("overflow") == "true" )
             document.getAnonymousElementByAttribute(this, 'sbid', 'children').setAttribute( "style", "" );
-          
-          // Mac dialogs should not be allowed to be dragged around.
-          if ( this.getAttribute("type") == "dialog" && sysInfo.getProperty("name") == "Darwin" ) {
-            
-            // HACK: To conform with changes for 0.5 - we are making dialogs that come from
-            //       |commonDialog.xul| un-draggable. All other dialogs will be draggable.
-            if (document.documentElement.getAttribute("id") == "commonDialog") {
-              document.getAnonymousElementByAttribute(this, 'sbid', 'children').setDraggable(false);
-            }
-          }
         ]]>
       </constructor>
       

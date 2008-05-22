@@ -1,11 +1,16 @@
 Index: widget/src/cocoa/nsCocoaWindow.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
-retrieving revision 1.48
-diff -u -p -r1.48 nsCocoaWindow.h
---- widget/src/cocoa/nsCocoaWindow.h	27 Mar 2008 03:42:57 -0000	1.48
-+++ widget/src/cocoa/nsCocoaWindow.h	2 Apr 2008 19:15:02 -0000
-@@ -94,7 +94,11 @@ typedef struct _nsCocoaWindowList {
+retrieving revision 1.50
+diff -u -8 -r1.50 nsCocoaWindow.h
+--- widget/src/cocoa/nsCocoaWindow.h	2 May 2008 11:32:52 -0000	1.50
++++ widget/src/cocoa/nsCocoaWindow.h	22 May 2008 22:37:21 -0000
+@@ -89,17 +89,21 @@
+ 
+ 
+ @interface BorderlessWindow : NSWindow
+ {
+ }
  
  - (BOOL)canBecomeKeyWindow;
  - (BOOL)canBecomeMainWindow;
@@ -17,14 +22,54 @@ diff -u -p -r1.48 nsCocoaWindow.h
  @end
  
  
+ @interface WindowDelegate : NSObject
+ {
+   nsCocoaWindow* mGeckoWindow; // [WEAK] (we are owned by the window)
+   // Used to avoid duplication when we send NS_ACTIVATE/NS_GOTFOCUS and
+   // NS_DEACTIVATE/NS_LOSTFOCUS to Gecko for toplevel widgets.  Starts out
 Index: widget/src/cocoa/nsCocoaWindow.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
-retrieving revision 1.141
-diff -u -p -r1.141 nsCocoaWindow.mm
---- widget/src/cocoa/nsCocoaWindow.mm	27 Mar 2008 03:42:57 -0000	1.141
-+++ widget/src/cocoa/nsCocoaWindow.mm	2 Apr 2008 19:15:02 -0000
-@@ -348,10 +348,24 @@ nsresult nsCocoaWindow::StandardCreate(n
+retrieving revision 1.148
+diff -u -8 -r1.148 nsCocoaWindow.mm
+--- widget/src/cocoa/nsCocoaWindow.mm	7 May 2008 21:15:57 -0000	1.148
++++ widget/src/cocoa/nsCocoaWindow.mm	22 May 2008 22:37:21 -0000
+@@ -248,17 +248,28 @@
+             case eBorderStyle_all:
+               features |= NSClosableWindowMask;
+               features |= NSTitledWindowMask;
+               features |= NSResizableWindowMask;
+               features |= NSMiniaturizableWindowMask;
+               break;
+             default:
+               if (aInitData->mBorderStyle & eBorderStyle_title) {
+-                features |= NSTitledWindowMask;
++                
++                // SONGBIRD HACK:
++                // For feathers that are using the songbird-global-package
++                // and do not use operating system chrome, we don't want to
++                // add the |NSTitledWindowMask| to the dialog.
++                char *showChrome = nsnull;
++                prefs->GetCharPref("songbird.accessibility.enabled", &showChrome);
++                if (showChrome != nsnull && strcmp(showChrome, "0")) {
++                  features |= NSTitledWindowMask;
++                  NS_Free(showChrome);
++                }
++                
+                 features |= NSMiniaturizableWindowMask;
+               }
+               if (aInitData->mBorderStyle & eBorderStyle_resizeh)
+                 features |= NSResizableWindowMask;
+               if (aInitData->mBorderStyle & eBorderStyle_close)
+                 features |= NSClosableWindowMask;
+               break;
+           }
+@@ -347,20 +358,34 @@
+     // Note that we need to check the window type because we mark sheets sheets as 
+     // having titlebars.
+     if (mWindowType == eWindowType_toplevel &&
+         (features & NSTitledWindowMask))
+       windowClass = [ToolbarWindow class];
      // If we're a popup window we need to use the PopupWindow class.
      else if (mWindowType == eWindowType_popup)
        windowClass = [PopupWindow class];
@@ -53,7 +98,17 @@ diff -u -p -r1.141 nsCocoaWindow.mm
  
      // Create the window
      mWindow = [[windowClass alloc] initWithContentRect:rect styleMask:features 
-@@ -380,7 +394,11 @@ nsresult nsCocoaWindow::StandardCreate(n
+                                    backing:NSBackingStoreBuffered defer:YES];
+     
+     if (mWindowType == eWindowType_popup) {
+       [mWindow setAlphaValue:POPUP_DEFAULT_TRANSPARENCY];
+       [mWindow setLevel:NSPopUpMenuWindowLevel];
+@@ -379,17 +404,21 @@
+         [mWindow setContentView:newContentView];
+       }
+     }
+     else if (mWindowType == eWindowType_invisible) {
+       [mWindow setLevel:kCGDesktopWindowLevelKey];
      }
  
      [mWindow setBackgroundColor:[NSColor whiteColor]];
@@ -66,7 +121,17 @@ diff -u -p -r1.141 nsCocoaWindow.mm
      [mWindow setReleasedWhenClosed:NO];
  
      // setup our notification delegate. Note that setDelegate: does NOT retain.
-@@ -2341,3 +2359,231 @@ already_AddRefed<nsIDOMElement> GetFocus
+     mDelegate = [[WindowDelegate alloc] initWithGeckoWindow:this];
+     [mWindow setDelegate:mDelegate];
+     
+     mWindowMadeHere = PR_TRUE;
+   }
+@@ -2431,8 +2460,236 @@
+   BOOL retval = [super performKeyEquivalent:theEvent];
+   [nativeWindow release];
+   return retval;
+ 
+   NS_OBJC_END_TRY_ABORT_BLOCK_RETURN(NO);
  }
  
  @end
