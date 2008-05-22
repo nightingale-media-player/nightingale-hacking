@@ -680,7 +680,7 @@ function ServicePaneService_getNodesByAttributeNS(aNamespace, aName, aValue) {
   var target = RDFSVC.GetLiteral(aValue);
   var sourceEnum = this._dataSource.GetSources(property, target, true);
 
-  var nodeList = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  var nodeList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   while (sourceEnum.hasMoreElements()) {
     var source = sourceEnum.getNext().QueryInterface(Ci.nsIRDFResource);
     if (source) {

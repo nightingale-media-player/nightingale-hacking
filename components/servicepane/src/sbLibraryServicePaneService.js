@@ -160,7 +160,7 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
     if (list.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") {
       this._appendMenuItem(aContextMenu, "Properties", function(event) { //XXX todo: localize
 
-        var params = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+        var params = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
         params.appendElement(list, false);
 
         var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]

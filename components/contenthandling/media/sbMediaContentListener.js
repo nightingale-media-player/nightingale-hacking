@@ -35,7 +35,7 @@ const DESCRIPTION = "sbMediaContentListener";
 const CID         = "2803c9e8-b0b6-4dfe-8333-53430128f7e7";
 const CONTRACTID  = "@songbirdnest.com/contentlistener/media;1";
 
-const CONTRACTID_ARRAY              = "@mozilla.org/array;1";
+const CONTRACTID_ARRAY              = "@songbirdnest.com/moz/xpcom/threadsafe-array;1";
 const CONTRACTID_LIBRARYMANAGER     = "@songbirdnest.com/Songbird/library/Manager;1";
 const CONTRACTID_METADATAJOBMANAGER = "@songbirdnest.com/Songbird/MetadataJobManager;1";
 const CONTRACTID_OBSERVERSERVICE    = "@mozilla.org/observer-service;1";

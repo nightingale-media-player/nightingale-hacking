@@ -942,7 +942,7 @@ var TrackEditor = {
     
     // Add all items that need writing into an array 
     // and hand them off to the metadata manager
-    var mediaItemArray = Cc["@mozilla.org/array;1"]
+    var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Ci.nsIMutableArray);
     for (var i = 0; i < items.length; i++) {
       if (needsWriting[i] && items[i].userEditable) {

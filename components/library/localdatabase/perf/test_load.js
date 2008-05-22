@@ -66,8 +66,8 @@ function makeLibrary(aLength) {
   sstream.close();
   fstream.close();
 
-  var uris       = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
-  var properties = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  var uris       = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  var properties = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
 
   var a = data.split("\n");
   for (var i = 0; i < a.length && i < aLength; i++) {
@@ -133,8 +133,8 @@ function makeLibrary(aLength) {
     if (i > 0 && (i + 1) % 1000 == 0) {
       library.batchCreateMediaItems(uris, properties, true);
       dump("loading " + i + " a.length " + a.length + " length + " + aLength + "\n");
-      var uris       = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
-      var properties = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+      var uris       = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+      var properties = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
 
     }
 

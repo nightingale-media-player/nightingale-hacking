@@ -77,7 +77,7 @@ var gServer;
 
 function runTest () {
   var gTestLibrary = createNewLibrary( "test_metadatajob" );
-  var gTestMediaItems = Components.classes["@mozilla.org/array;1"]
+  var gTestMediaItems = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                                   .createInstance(Components.interfaces.nsIMutableArray);
 
   // Make a copy of everything in the test file folder

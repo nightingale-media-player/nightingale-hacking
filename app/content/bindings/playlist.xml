@@ -2970,7 +2970,7 @@
             }
             
             setTimeout(function() {
-              var mediaItemArray = Cc["@mozilla.org/array;1"]
+              var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                 .createInstance(Ci.nsIMutableArray);
               mediaItemArray.appendElement(aItem, false);
               var manager = Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]

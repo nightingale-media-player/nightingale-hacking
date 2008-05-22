@@ -1058,7 +1058,7 @@
                   }
                   else {
                     var array =
-                      Components.classes["@mozilla.org/array;1"]
+                      Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                                 .createInstance(Components.interfaces.nsIMutableArray);
                     for (var i = 0; i < mediaList.length; i++) {
                       array.appendElement(mediaList.getItemByIndex(i), false);

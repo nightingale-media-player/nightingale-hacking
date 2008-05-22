@@ -572,7 +572,7 @@ function testMultiListToLibraryDiffing() {
   sourceMediaListB.add(itemEE);
   sourceMediaListB.add(itemD);
 
-  var sourceMediaLists = Cc["@mozilla.org/array;1"]
+  var sourceMediaLists = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                            .createInstance(Ci.nsIMutableArray);
   sourceMediaLists.appendElement(sourceMediaListA, false);
   sourceMediaLists.appendElement(sourceMediaListB, false);

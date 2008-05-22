@@ -123,7 +123,7 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
   // If any items are to be added, add them in a batch
   if (aItems.length > 0) {
 
-    var uris = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+    var uris = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
     aItems.forEach(function(e) {
       uris.appendElement(e.uri, false);
     });

@@ -62,7 +62,7 @@ function runTest () {
                                 .getService(Components.interfaces.sbIMetadataJobManager);
 
   for (var i = 0; i < NUM_JOBS; i++) {
-    var a = Components.classes["@mozilla.org/array;1"]
+    var a = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                       .createInstance(Components.interfaces.nsIMutableArray);
     for (var k = 0; k < NUM_ITEMADD_LOOPS; k++) {
       for (var j = 0; j < urls.length; j++) {

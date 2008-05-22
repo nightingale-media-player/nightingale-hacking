@@ -216,7 +216,7 @@ sbPropertyArray::Enumerate(nsISimpleEnumerator** _retval)
 
   nsresult rv;
   nsCOMPtr<nsIMutableArray> array =
-    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
 
   nsAutoLock lock(mArrayLock);

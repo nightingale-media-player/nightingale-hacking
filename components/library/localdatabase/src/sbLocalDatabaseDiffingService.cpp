@@ -255,7 +255,7 @@ sbLocalDatabaseDiffingService::CreateItemMovedLibraryChange(sbIMediaItem *aSourc
   NS_ENSURE_TRUE(libraryChange, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<nsIMutableArray> propertyChanges = 
-    do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbPropertyChange> propertyChange;

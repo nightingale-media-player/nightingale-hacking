@@ -36,8 +36,8 @@ function runTest () {
   var databaseGUID = "test_batchcreate";
   var library = createLibrary(databaseGUID);
 
-  var toAdd = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
-  var propertyArray = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  var toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  var propertyArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = 1; i < 101; i++) {
     toAdd.appendElement(newURI("file:///foo/" + i + ".mp3"), false);
     var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
@@ -89,8 +89,8 @@ function runTest () {
   libraryListener.reset();
 
   // Do it again with duplcate URLs
-  toAdd = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
-  propertyArray = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  propertyArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = 1; i < 101; i++) {
     toAdd.appendElement(newURI("file:///foo/duplicate.mp3"), false);
     var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]

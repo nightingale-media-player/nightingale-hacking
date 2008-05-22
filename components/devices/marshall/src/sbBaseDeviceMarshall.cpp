@@ -123,7 +123,7 @@ nsIArray * sbBaseDeviceMarshall::RefreshControllers()
 {
   if (!mControllers) {
     nsresult rv;
-    mControllers = do_CreateInstance("@mozilla.org/array;1", &rv);
+    mControllers = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
     if (NS_FAILED(rv)) {
       NS_ERROR("unable to create an nsArray");
       return nsnull;

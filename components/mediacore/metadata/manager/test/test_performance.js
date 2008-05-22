@@ -69,7 +69,7 @@ function runTest () {
   log("jobs = " + jobs);
   var index = 0;
   for (var i = 0; i < jobs; i++) {
-    var a = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+    var a = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
     for (var j = 0; j < ITEMS_PER_JOB; j++) {
       if (index >= items.length) {
         break;

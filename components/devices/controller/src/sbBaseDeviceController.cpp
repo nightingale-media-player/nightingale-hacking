@@ -196,7 +196,8 @@ sbBaseDeviceController::GetDevicesInternal(nsIArray* *aDevices) {
   NS_ENSURE_ARG_POINTER(aDevices);
 
   nsresult rv;
-  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  nsCOMPtr<nsIMutableArray> array = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);
@@ -243,7 +244,8 @@ sbBaseDeviceController::ConnectDevicesInternal() {
   nsAutoMonitor mon(mMonitor);
 
   nsresult rv;
-  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  nsCOMPtr<nsIMutableArray> array = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 count;
@@ -268,7 +270,8 @@ sbBaseDeviceController::DisconnectDevicesInternal() {
   nsAutoMonitor mon(mMonitor);
 
   nsresult rv;
-  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  nsCOMPtr<nsIMutableArray> array = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 count;

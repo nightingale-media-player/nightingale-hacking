@@ -634,7 +634,7 @@ var DeviceSyncWidget = {
   
       /* Set up the store playlist list preference array. */
       storePlaylistList =
-                  Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+                  Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
       syncPlaylistList = this._syncPrefs.syncPlaylistList;
       for (guid in syncPlaylistList)
       {

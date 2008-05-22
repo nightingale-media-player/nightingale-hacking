@@ -192,7 +192,7 @@ deviceErrorMonitor.prototype = {
    * \returns true if any errors are currently registered for this device.
    */
   deviceHasErrors: function deviceErrorMonitor_deviceHasErrors(aDevice) {
-    var errorItems = Cc["@mozilla.org/array;1"]
+    var errorItems = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                             .createInstance(Ci.nsIMutableArray);
     var devIndex = this._findDeviceIndex(aDevice);
     
@@ -212,7 +212,7 @@ deviceErrorMonitor.prototype = {
    * \returns array of error strings, empty if no errors exist yet.
    */
   getErrorsForDevice: function deviceErrorMonitor_getErrorsForDevice(aDevice) {
-    var errorItems = Cc["@mozilla.org/array;1"]
+    var errorItems = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                             .createInstance(Ci.nsIMutableArray);
     var devIndex = this._findDeviceIndex(aDevice);
     

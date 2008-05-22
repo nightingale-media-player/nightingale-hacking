@@ -90,7 +90,7 @@ function runTest() {
   
   localDatabaseLibrary.removeCopyListener(sourceCopyListener);
   
-  var itemsArray = Cc["@mozilla.org/array;1"]
+  var itemsArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                      .createInstance(Ci.nsIMutableArray);
   
   itemsArray.appendElement(item1, false);

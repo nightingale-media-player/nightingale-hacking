@@ -158,7 +158,7 @@ var WindowUtils = {
       // it to the string list.
       if (arg instanceof Ci.nsISupports) {
         if (!dialogPB.objects) {
-          dialogPB.objects = Cc["@mozilla.org/array;1"]
+          dialogPB.objects = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                                .createInstance(Ci.nsIMutableArray);
         }
         dialogPB.objects.appendElement(arg, false);

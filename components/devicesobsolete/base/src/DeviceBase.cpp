@@ -250,7 +250,7 @@ sbDeviceBaseLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
   }
 
   nsCOMPtr<nsIMutableArray> items =
-    do_CreateInstance("@mozilla.org/array;1", &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = items->AppendElement(aMediaItem, PR_FALSE);
@@ -392,7 +392,7 @@ sbDeviceBaseLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   }
 
   nsCOMPtr<nsIMutableArray> items =
-    do_CreateInstance("@mozilla.org/array;1", &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = items->AppendElement(aMediaItem, PR_FALSE);
@@ -471,7 +471,7 @@ sbDeviceBaseLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
   nsresult rv;
 
   nsCOMPtr<nsIMutableArray> items;
-  items = do_CreateInstance("@mozilla.org/array;1", &rv);
+  items = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = items->AppendElement(aMediaItem, PR_FALSE);
@@ -602,7 +602,7 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
   nsresult rv;
   nsCOMPtr<nsIMutableArray> items;
 
-  items = do_CreateInstance("@mozilla.org/array;1", &rv);
+  items = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = items->AppendElement(aSourceItem, PR_FALSE);
@@ -1041,7 +1041,7 @@ sbDeviceBase::CreateTransferQueue(const nsAString &aDeviceIdentifier)
 {
   nsresult rv;
   nsCOMPtr<nsIMutableArray> deviceQueue = 
-    do_CreateInstance("@mozilla.org/array;1", &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(mDeviceQueues.Put(nsAutoString(aDeviceIdentifier), deviceQueue)) {

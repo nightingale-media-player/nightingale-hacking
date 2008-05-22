@@ -113,7 +113,8 @@ NS_IMETHODIMP sbDeviceManager::GetMarshalls(nsIArray * *aMarshalls)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
-  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  nsCOMPtr<nsIMutableArray> array = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
   PRUint32 count;
@@ -297,7 +298,8 @@ NS_IMETHODIMP sbDeviceManager::GetDevices(nsIArray * *aDevices)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
-  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  nsCOMPtr<nsIMutableArray> array = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
   PRUint32 count;

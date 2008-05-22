@@ -277,11 +277,11 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
   if (itemsToCreateCount) {
 
     nsCOMPtr<nsIMutableArray> oldItems =
-      do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIMutableArray> oldURIs =
-      do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Build a list of the items to create.
@@ -303,7 +303,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
     }
 
     nsCOMPtr<nsIMutableArray> propertyArrayArray =
-      do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRUint32 oldItemCount;

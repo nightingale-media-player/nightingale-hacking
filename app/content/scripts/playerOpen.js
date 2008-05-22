@@ -259,7 +259,7 @@ try
     var success = aPlaylistReaderManager.loadPlaylist(uri, mediaList, null, false, null);
     if (success == 1 &&
         mediaList.length) {
-      var array = Components.classes["@mozilla.org/array;1"]
+      var array = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                             .createInstance(Components.interfaces.nsIMutableArray);
       for (var i = 0; i < mediaList.length; i++) {
         array.appendElement(mediaList.getItemByIndex(i), false);
@@ -626,7 +626,7 @@ function SBSubscribe(mediaList, defaultUrl, parentWindow)
   if (defaultUrl && !(defaultUrl instanceof Components.interfaces.nsIURI))
     throw Components.results.NS_ERROR_INVALID_ARG;
 
-  var params = Components.classes["@mozilla.org/array;1"]
+  var params = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                          .createInstance(Components.interfaces.nsIMutableArray);
   params.appendElement(mediaList, false);
   params.appendElement(defaultUrl, false);
@@ -833,7 +833,7 @@ function SBImportURLIntoMainLibrary(url) {
   var metadataJobMgr = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
     .getService(Components.interfaces.sbIMetadataJobManager);
 
-  var items = Components.classes["@mozilla.org/array;1"]
+  var items = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
     .createInstance(Components.interfaces.nsIMutableArray);
 
   items.appendElement(mediaItem, false);
@@ -881,7 +881,7 @@ function SBImportURLIntoWebLibrary(url) {
   var metadataJobMgr = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
     .getService(Components.interfaces.sbIMetadataJobManager);
 
-  var items = Components.classes["@mozilla.org/array;1"]
+  var items = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
     .createInstance(Components.interfaces.nsIMutableArray);
 
   items.appendElement(mediaItem, false);

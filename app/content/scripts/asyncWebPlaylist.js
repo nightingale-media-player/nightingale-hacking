@@ -86,7 +86,7 @@ try
 
   function AsyncWebDocument(aDocument, aMediaListView, old_href_loop, context, aTitle)
   {
-    const CONTRACTID_ARRAY = "@mozilla.org/array;1";
+    const CONTRACTID_ARRAY = "@songbirdnest.com/moz/xpcom/threadsafe-array;1";
     const CONTRACTID_METADATAJOBMANAGER =
       "@songbirdnest.com/Songbird/MetadataJobManager;1";
     const CONTRACTID_FAVICONSERVICE = "@mozilla.org/browser/favicon-service;1";

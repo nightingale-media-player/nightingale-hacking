@@ -81,7 +81,8 @@ sbDeviceContent::Initialize()
   NS_ENSURE_TRUE(mDeviceLibrariesMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv;
-  mDeviceLibraries = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  mDeviceLibraries = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;

@@ -48,7 +48,7 @@ function runTest() {
 
   library.clear();
 
-  var toAdd = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  var toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   toAdd.appendElement(newURI("http://example.com/foo.mp3"), false);
   toAdd.appendElement(newURI("http://example.com/foo.mp3"), false);
   toAdd.appendElement(newURI("http://example.com/foo1.mp3"), false);
@@ -93,7 +93,7 @@ function runTest() {
 
   // Create media item properties to match media items to content src URI's.
   var toAddProps =
-        Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+        Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = 0; i < toAdd.length; i++) {
     var uri = toAdd.queryElementAt(i, Ci.nsIURI);
     var properties = [ [ SBProperties.originURL, uri.spec ] ];

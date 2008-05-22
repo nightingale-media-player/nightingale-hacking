@@ -815,7 +815,7 @@ var ExternalDropHandler = {
 
     // the array to record items to feed to the metadata scanner
     if (!this._scanList) {
-      this._scanList = this._Cc["@mozilla.org/array;1"]
+      this._scanList = this._Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                           .createInstance(this._Ci.nsIMutableArray);
     }
 

@@ -125,7 +125,7 @@ function importFilesToLibrary(files, library) {
  * Get a metadata job for the given items
  */
 function startMetadataJob(items, type) {
-  var array = Components.classes["@mozilla.org/array;1"]
+  var array = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Components.interfaces.nsIMutableArray);
   for each (var item in items) {
     array.appendElement(item, false);

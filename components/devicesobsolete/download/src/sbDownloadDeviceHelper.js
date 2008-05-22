@@ -143,9 +143,9 @@ function sbDownloadDeviceHelper_downloadItem(aMediaItem)
     return;
   }
 
-  let uriArray           = Cc["@mozilla.org/array;1"]
+  let uriArray           = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
-  let propertyArrayArray = Cc["@mozilla.org/array;1"]
+  let propertyArrayArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
 
   let item;
@@ -173,9 +173,9 @@ function sbDownloadDeviceHelper_downloadSome(aMediaItems)
     return;
   }
 
-  let uriArray           = Cc["@mozilla.org/array;1"]
+  let uriArray           = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
-  let propertyArrayArray = Cc["@mozilla.org/array;1"]
+  let propertyArrayArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
 
   var items = [];
@@ -211,9 +211,9 @@ function sbDownloadDeviceHelper_downloadAll(aMediaList)
     return;
   }
 
-  let uriArray           = Cc["@mozilla.org/array;1"]
+  let uriArray           = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
-  let propertyArrayArray = Cc["@mozilla.org/array;1"]
+  let propertyArrayArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
 
   var items = [];

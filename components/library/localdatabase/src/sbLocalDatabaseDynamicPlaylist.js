@@ -627,7 +627,7 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
 
   // Start a metadata job for the newly added items.  If there is a custom
   // destination, update each new item with it
-  var array = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  var array = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = this._oldLength; i < this._list.length; i++) {
     var item = this._list.getItemByIndex(i);
     if (destinationDir) {

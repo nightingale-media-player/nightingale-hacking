@@ -3971,7 +3971,7 @@ NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumerationBegin(
     NS_ENSURE_ARG_POINTER(_retval);
 
     /* Create an array to contain the media items to scan. */
-    mpMediaItemArray = do_CreateInstance("@mozilla.org/array;1", &result);
+    mpMediaItemArray = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &result);
 
     /* Return results. */
     if (NS_SUCCEEDED(result))

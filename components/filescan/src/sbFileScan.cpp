@@ -333,7 +333,7 @@ NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIs(PRUint32 aStartIndex,
 
   nsresult rv;
   nsCOMPtr<nsIMutableArray> array =
-    do_CreateInstance("@mozilla.org/array;1", &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
 
   for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
     nsCOMPtr<nsIURI> uri;

@@ -132,7 +132,7 @@ public:
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIMutableArray> mediaItems =
-                                 do_CreateInstance( NS_ARRAY_CONTRACTID, &rv );
+        do_CreateInstance( "@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv );
       NS_ENSURE_SUCCESS(rv, rv);
 
       for ( PRUint32 index = 0; index < length; index++ ) {
@@ -464,7 +464,8 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get MetadataJobManager!");
 
     if(NS_SUCCEEDED(rv)) {
-      nsCOMPtr<nsIMutableArray> mediaItems = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+      nsCOMPtr<nsIMutableArray> mediaItems = 
+        do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = mediaItems->AppendElement(mediaItem, PR_FALSE);

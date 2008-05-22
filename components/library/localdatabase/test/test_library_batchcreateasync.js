@@ -36,8 +36,8 @@ function runTest () {
   var databaseGUID = "test_batchcreateasync";
   var library = createLibrary(databaseGUID, null, true);
 
-  var toAdd = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
-  var propertyArray = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+  var toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+  var propertyArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
   for (var i = 0; i < 100; i++) {
     toAdd.appendElement(newURI("file:///foo/" + i + ".mp3"), false);
     var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
