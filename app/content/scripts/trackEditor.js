@@ -272,12 +272,12 @@ TrackEditorState.prototype = {
       if(valid) {
         // Track number greater than total tracks, invalid value.
         if(property == SBProperties.totalTracks &&
-           this._properties[SBProperties.trackNumber].value > value) {
+           parseInt(this._properties[SBProperties.trackNumber].value) > parseInt(value)) {
           this._properties[property].knownInvalid = true;
         }
         // Disc number greater than total discs, invalid value.
         if(property == SBProperties.totalDiscs &&
-           this._properties[SBProperties.discNumber].value > value) {
+           parseInt(this._properties[SBProperties.discNumber].value) > parseInt(value)) {
           this._properties[property].knownInvalid = true;
         }
       }
