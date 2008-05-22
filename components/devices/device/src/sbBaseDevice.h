@@ -503,6 +503,14 @@ protected:
    */
   nsresult ListenToPlaylist(sbIMediaList * aMainMediaList,
                             sbIDeviceLibrary * aDeviceLibrary);
+
+  /**
+   * Show a dialog box to ask the user if they would like the device ejected
+   * even though Songbird is currently playing from the device.
+   *
+   * \param aEject [out, retval]  Should the device be ejected?
+   */
+  nsresult PromptForEjectDuringPlayback(PRBool* aEject);
 };
 
 #endif /* __SBBASEDEVICE__H__ */

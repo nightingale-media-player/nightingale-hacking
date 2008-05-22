@@ -45,6 +45,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
+#include <nsIPromptService.h>
 
 #include <sbIDeviceContent.h>
 #include <sbIDeviceEvent.h>
@@ -58,6 +59,7 @@
 #include <sbIPrompter.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbStringBundle.h>
+#include <sbPrefBranch.h>
 #include <sbVariantUtils.h>
 
 #include "sbDeviceLibrary.h"
@@ -1936,8 +1938,7 @@ nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
                               nsIProxyObjectManager::INVOKE_SYNC |
                               nsIProxyObjectManager::FORCE_PROXY_CREATION,
                               getter_AddRefs(proxy));
-    if (NS_FAILED(rv))
-      return rv;
+    NS_ENSURE_SUCCESS(rv, rv);
     prefService.swap(proxy);
   }
 
@@ -2477,3 +2478,78 @@ sbBaseDevice::SyncForceDiffMediaLists(sbIMediaList* aMediaList)
   return NS_OK;
 }
 
+
+nsresult 
+sbBaseDevice::PromptForEjectDuringPlayback(PRBool* aEject)
+{
+  NS_ENSURE_ARG_POINTER(aEject);
+
+  nsresult rv;
+
+  sbPrefBranch prefBranch("songbird.device.dialog.", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hide_dialog = prefBranch.GetBoolPref("eject_while_playing", PR_FALSE);
+
+  if (hide_dialog) {
+    // if the dialog is disabled, continue as if the user had said yes
+    *aEject = PR_TRUE;
+    return NS_OK;
+  }
+
+  // get the prompter service and wait for a window to be available
+  nsCOMPtr<sbIPrompter> prompter =
+    do_GetService("@songbirdnest.com/Songbird/Prompter;1");
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = prompter->SetWaitForWindow(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get the stringbundle
+  sbStringBundle bundle("chrome://songbird/locale/songbird.properties");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+
+  // get the window title
+  nsString const& title = bundle.Get("device.dialog.eject_while_playing.title");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+ 
+  // get the device name 
+  nsString deviceName;
+  rv = GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  // an array of one is just a pointer
+  const PRUnichar* deviceNamePtr = deviceName.get();
+
+  // get the message, based on the device name
+  nsString const& message = 
+    bundle.Format("device.dialog.eject_while_playing.message", 
+        &deviceNamePtr, 1);
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+
+  // get the text for the eject button
+  nsString const& eject = 
+    bundle.Get("device.dialog.eject_while_playing.eject");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+
+  // get the text for the checkbox
+  nsString const& check = 
+    bundle.Get("device.dialog.eject_while_playing.dontask");
+  NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
+
+  // show the dialog box
+  PRBool accept;
+  rv = prompter->ConfirmEx(nsnull, title.get(), message.get(),
+      (nsIPromptService::BUTTON_POS_0 *
+       nsIPromptService::BUTTON_TITLE_IS_STRING) + 
+      (nsIPromptService::BUTTON_POS_1 *
+       nsIPromptService::BUTTON_TITLE_CANCEL), eject.get(), nsnull, nsnull, 
+      check.get(), &hide_dialog, &accept);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aEject = !accept;
+
+  // save the checkbox state
+  rv = prefBranch.SetBoolPref("eject_while_playing", hide_dialog);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}

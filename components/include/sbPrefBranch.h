@@ -34,7 +34,7 @@
 #include <nsIPrefService.h>
 
 /**
- * Helper class for string bundles to make the syntax a bit easier on the eyes
+ * Helper class for preferences to make the syntax a bit easier on the eyes
  * This can be used on non-main threads but each instance must only be used
  * by the thread that created it.
  */
@@ -49,7 +49,7 @@ public:
     NS_ASSERTION(aResult != nsnull, "null nsresult* passed into sbPrefBranch constructor");
     *aResult = NS_OK;
 
-    // special bonus macro for passing our 
+    // special bonus macro for passing our errors outwards
 #define __ENSURE_SUCCESS(rv) \
     PR_BEGIN_MACRO \
     if (NS_FAILED(rv)) { \
@@ -61,8 +61,8 @@ public:
     nsresult rv;
 
     // get the prefs service
-    mPrefService = 
-      do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+    nsCOMPtr<nsIPrefService> prefService;
+    prefService = do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
     __ENSURE_SUCCESS(rv);
 
     // If we're not on the main thread proxy the service
@@ -71,21 +71,34 @@ public:
       nsCOMPtr<nsIPrefService> proxy;
       rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(nsIPrefService),
-                                mPrefService,
-                                nsIProxyObjectManager::INVOKE_SYNC |
-                                nsIProxyObjectManager::FORCE_PROXY_CREATION,
+                                prefService,
+                                nsIProxyObjectManager::INVOKE_SYNC,
                                 getter_AddRefs(proxy));
       __ENSURE_SUCCESS(rv);
-      mPrefService.swap(proxy);
+      prefService.swap(proxy);
     }
 
     if (aRoot) {
-      rv = mPrefService->GetBranch(aRoot, getter_AddRefs(mPrefBranch));
+      rv = prefService->GetBranch(aRoot, getter_AddRefs(mPrefBranch));
       __ENSURE_SUCCESS(rv);
     } else {
-      mPrefBranch = do_QueryInterface(mPrefService, &rv);
+      mPrefBranch = do_QueryInterface(prefService, &rv);
       __ENSURE_SUCCESS(rv);
     }
+
+    // If we're not on the main thread, and we're not using the root
+    // then we need a proxy to the prefBranch too
+    if (!isMainThread && aRoot) {
+      nsCOMPtr<nsIPrefBranch> proxy;
+      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                NS_GET_IID(nsIPrefBranch),
+                                mPrefBranch,
+                                nsIProxyObjectManager::INVOKE_SYNC,
+                                getter_AddRefs(proxy));
+      __ENSURE_SUCCESS(rv);
+      mPrefBranch.swap(proxy);
+    }
+
 #undef __ENSURE_SUCCESS
   }
 
@@ -150,7 +163,6 @@ public:
   }
 
 private:
-  nsCOMPtr<nsIPrefService> mPrefService;
   nsCOMPtr<nsIPrefBranch> mPrefBranch;
   PRThread * mCreatingThread;
 };
