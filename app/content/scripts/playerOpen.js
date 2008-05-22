@@ -221,43 +221,65 @@ try
       var fp_status = fp.show();
       if ( fp_status == nsIFilePicker.returnOK )
       {
-        var library = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                .getService(Components.interfaces.sbILibraryManager).mainLibrary;
-
-        // Create the media list
-        var mediaList = library.createMediaList("simple");
-        mediaList.name = fp.file.leafName;
-        mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", fp.fileURL.spec);
-
-        aPlaylistReaderManager.originalURI = fp.fileURL;
-        var success = aPlaylistReaderManager.loadPlaylist(fp.fileURL, mediaList, null, false, null);
-        if (success == 1 &&
-            mediaList.length) {
-          var array = Components.classes["@mozilla.org/array;1"]
-                                .createInstance(Components.interfaces.nsIMutableArray);
-          for (var i = 0; i < mediaList.length; i++) {
-            array.appendElement(mediaList.getItemByIndex(i), false);
-          }
-
-          // Send the items in the new media list to the metadata scanner
-          var metadataJobManager =
-            Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                      .getService(Components.interfaces.sbIMetadataJobManager);
-          var metadataJob = metadataJobManager.newJob(array, 5);
-
-          // Give the new media list focus
-          if (typeof gBrowser != 'undefined') {
-            gBrowser.loadMediaList(mediaList);
-          }
-        } else {
-          library.remove(mediaList);
-        }
+        SBOpenPlaylistURI(fp.fileURL, fp.file.leafName);
       }
     }
     catch(err)
     {
       alert(err);
     }
+  }
+  
+  function SBOpenPlaylistURI(aURI, aName) {
+    var uri = aURI;
+    if(!(aURI instanceof Components.interfaces.nsIURI)) {
+      uri = newURI(aURI);
+    }
+    var name = aName;
+    if (!aName) {
+      name = uri.path;
+      var p = name.lastIndexOf(".");
+      if (p != -1) name = name.slice(0, p);
+      p = name.lastIndexOf("/");
+      if (p != -1) name = name.slice(p+1);
+    }
+    var aPlaylistReaderManager =
+      Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+                .getService(Components.interfaces.sbIPlaylistReaderManager);
+
+    var library = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                            .getService(Components.interfaces.sbILibraryManager).mainLibrary;
+
+    // Create the media list
+    var mediaList = library.createMediaList("simple");
+    mediaList.name = name;
+    mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", uri.spec);
+
+    aPlaylistReaderManager.originalURI = uri;
+    var success = aPlaylistReaderManager.loadPlaylist(uri, mediaList, null, false, null);
+    if (success == 1 &&
+        mediaList.length) {
+      var array = Components.classes["@mozilla.org/array;1"]
+                            .createInstance(Components.interfaces.nsIMutableArray);
+      for (var i = 0; i < mediaList.length; i++) {
+        array.appendElement(mediaList.getItemByIndex(i), false);
+      }
+
+      // Send the items in the new media list to the metadata scanner
+      var metadataJobManager =
+        Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                  .getService(Components.interfaces.sbIMetadataJobManager);
+      var metadataJob = metadataJobManager.newJob(array, 5);
+
+      // Give the new media list focus
+      if (typeof gBrowser != 'undefined') {
+        gBrowser.loadMediaList(mediaList);
+      }
+    } else {
+      library.remove(mediaList);
+      return null;
+    }
+    return mediaList;
   }
 
   function log(str)

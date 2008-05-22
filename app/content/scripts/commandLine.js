@@ -79,30 +79,38 @@ try
           aUriSpec.toLowerCase().indexOf("https:") == 0) {
         gBrowser.loadURI(aUriSpec);
       } else {
-        var dropHandlerListener = {
-          onDropComplete: function(aTargetList,
-                                   aImportedInLibrary,
-                                   aDuplicates,
-                                   aInsertedInMediaList,
-                                   aOtherDropsHandled) {
-            // show the standard report on the status bar
-            return true;
-          },
-          onFirstMediaItem: function(aTargetList, aFirstMediaItem) {
-            var view = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
+        if (gPPS.isPlaylistURL(aUriSpec)) {
+          var list = SBOpenPlaylistURI(aUriSpec);
+          if (list) {
+            var view = LibraryUtils.createStandardMediaListView(list);
+            gPPS.playView(view, 0);
+          }
+        } else {
+          var dropHandlerListener = {
+            onDropComplete: function(aTargetList,
+                                     aImportedInLibrary,
+                                     aDuplicates,
+                                     aInsertedInMediaList,
+                                     aOtherDropsHandled) {
+              // show the standard report on the status bar
+              return true;
+            },
+            onFirstMediaItem: function(aTargetList, aFirstMediaItem) {
+              var view = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
 
-            var index = view.getIndexForItem(aFirstMediaItem);
-            
-            // If we have a browser, try to show the view
-            if (window.gBrowser) {
-              gBrowser.showIndexInView(view, index);
-            }
-            
-            // Play the item
-            gPPS.playView(view, index);
-          },
-        };
-        ExternalDropHandler.dropUrls(window, [aUriSpec], dropHandlerListener);
+              var index = view.getIndexForItem(aFirstMediaItem);
+              
+              // If we have a browser, try to show the view
+              if (window.gBrowser) {
+                gBrowser.showIndexInView(view, index);
+              }
+              
+              // Play the item
+              gPPS.playView(view, index);
+            },
+          };
+          ExternalDropHandler.dropUrls(window, [aUriSpec], dropHandlerListener);
+        }
       }
       return true;
     },

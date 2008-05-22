@@ -207,25 +207,36 @@ sbCommandLineHandler.prototype = {
 
     // XXX bug 2186
     var count = cmdLine.length;
-
-    for (var i = 0; i < count; ++i) {
-      var curarg = cmdLine.getArgument(i);
-      if (curarg == "") continue;
-      if (curarg.match(/^-/)) {
-        // Components.utils.reportError("Warning: unrecognized command line flag " + curarg + "\n");
-        // To emulate the pre-nsICommandLine behavior, we ignore
-        // the argument after an unrecognized flag.
-        ++i;
-      } else {
+      for (var i = 0; i < count; ++i) {
+        // getArgument sometimes causes an exception for the last parameter, 
+        // even tho i is always below cmdLine.length ! This doesn't seem to
+        // ever happen when the commandline is starting the app, but seems to
+        // always do when the app is already started, and the commandline is
+        // received from another instance.
         try {
-          cmdLine.removeArguments(i, i);
-          urilist.push(resolveURIInternal(cmdLine, curarg));
+          var curarg = cmdLine.getArgument(i);
+        } catch (e) {
+          Components.utils.reportError(e);
+          // try next argument. there shouldn't be any, but just in case...
+          continue
         }
-        catch (e) {
-          Components.utils.reportError("Error opening URI '" + curarg + "' from the command line: " + e + "\n");
+
+        if (curarg == "") continue;
+        if (curarg.match(/^-/)) {
+          // Components.utils.reportError("Warning: unrecognized command line flag " + curarg + "\n");
+          // To emulate the pre-nsICommandLine behavior, we ignore
+          // the argument after an unrecognized flag.
+          ++i;
+        } else {
+          try {
+            cmdLine.removeArguments(i, i);
+            urilist.push(resolveURIInternal(cmdLine, curarg));
+          }
+          catch (e) {
+            Components.utils.reportError("Error opening URI '" + curarg + "' from the command line: " + e + "\n");
+          }
         }
       }
-    }
 
     for (var uri in urilist) {
       if (shouldLoadURI(urilist[uri])) {
