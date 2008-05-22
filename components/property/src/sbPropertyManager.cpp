@@ -435,7 +435,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = albumSortProfile->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Sorting by album will sort by album->disc no->track no
   rv = albumSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = albumSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -457,7 +462,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = artistSortProfile->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Sorting by artist also sorts by album->disc no->track no
+  //Sorting by artist will sort by artist->album->disc no->track no
   rv = artistSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
                                          NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
