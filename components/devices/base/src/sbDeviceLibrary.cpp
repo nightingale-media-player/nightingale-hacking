@@ -585,7 +585,11 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
         PRUint32 length;
         rv = playlists->GetLength(&length);
         NS_ENSURE_SUCCESS(rv, rv);
-        
+
+        // Need to stop listening to all the playlists so we can listen to just
+        // the selected ones
+        mMainLibraryListener->StopListeningToPlaylists();
+
         for (PRUint32 index = 0; index < length; ++index) {
           nsCOMPtr<sbIMediaList> list = do_QueryElementAt(playlists, index, &rv);
           NS_ENSURE_SUCCESS(rv, rv);
@@ -595,9 +599,7 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
         
         // remove the metadata updating listener
         rv = mainLib->RemoveListener(mMainLibraryListener);
-        NS_ENSURE_SUCCESS(rv, rv);
-        
-        mMainLibraryListener->StopListeningToPlaylists();
+        NS_ENSURE_SUCCESS(rv, rv);        
       }
     } else {
       

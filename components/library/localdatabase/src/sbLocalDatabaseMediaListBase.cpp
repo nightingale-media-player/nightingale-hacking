@@ -830,10 +830,7 @@ sbLocalDatabaseMediaListBase::GetItemsByProperty(const nsAString & aPropertyID,
                                 sbIMediaList::ENUMERATIONTYPE_LOCKING);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = enumerator->GetArray(_retval);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
+  return enumerator->GetArray(_retval);
 }
 
 NS_IMETHODIMP 

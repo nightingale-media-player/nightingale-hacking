@@ -872,10 +872,13 @@ sbLocalDatabaseMediaItem::GetContentLength(PRInt64* aContentLength)
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH), str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 itemsConverted = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
-                                     aContentLength);
-  NS_ENSURE_TRUE(itemsConverted > 0, NS_ERROR_FAILURE);
-
+  if (str.IsEmpty()) {
+    *aContentLength = 0;
+  } else {
+    PRInt32 itemsConverted = PR_sscanf(NS_ConvertUTF16toUTF8(str).get(), "%lld",
+                                       aContentLength);
+    NS_ENSURE_TRUE(itemsConverted > 0, NS_ERROR_FAILURE);
+  }
   return NS_OK;
 }
 
