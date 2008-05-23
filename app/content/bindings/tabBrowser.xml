@@ -2340,6 +2340,10 @@
                 onget="return this.mCurrentBrowser.contentTitle;"
                 readonly="true"/>
 
+      <property name="contentPrincipal"
+                onget="return this.mCurrentBrowser.contentPrincipal;"
+                readonly="true"/>
+
       <property name="securityUI"
                 onget="return this.mCurrentBrowser.securityUI;"
                 readonly="true"/>
