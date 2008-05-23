@@ -4,10 +4,14 @@ RCS file: /cvsroot/mozilla/extensions/venkman/resources/jar.mn,v
 retrieving revision 1.25
 diff -u -8 -p -r1.25 jar.mn
 --- extensions/venkman/resources/jar.mn	16 Jan 2008 20:43:44 -0000	1.25
-+++ extensions/venkman/resources/jar.mn	23 May 2008 02:30:43 -0000
-@@ -1,10 +1,10 @@
++++ extensions/venkman/resources/jar.mn	23 May 2008 20:41:23 -0000
+@@ -1,10 +1,14 @@
  venkman.jar:
 -% content venkman            %content/venkman/
++# XXX mattc: contentaccessible was added as a hack to 
++# get around new security rules in FF3.
++# Without this flag venkman cannot load stylesheets, and the
++# source code view fails to load.
 +% content venkman            %content/venkman/ contentaccessible=yes
  % content venkman-ff         %content/venkman/ff/
  % content venkman-sm         %content/venkman/sm/
@@ -23,7 +27,7 @@ RCS file: /cvsroot/mozilla/toolkit/mozapps/extensions/src/nsExtensionManager.js.
 retrieving revision 1.287
 diff -u -8 -p -r1.287 nsExtensionManager.js.in
 --- toolkit/mozapps/extensions/src/nsExtensionManager.js.in	11 Apr 2008 09:44:41 -0000	1.287
-+++ toolkit/mozapps/extensions/src/nsExtensionManager.js.in	23 May 2008 02:30:45 -0000
++++ toolkit/mozapps/extensions/src/nsExtensionManager.js.in	23 May 2008 20:41:25 -0000
 @@ -92,16 +92,17 @@ const FILE_CHROME_MANIFEST            = 
  const UNKNOWN_XPCOM_ABI               = "unknownABI";
  
@@ -78,7 +82,7 @@ diff -u -8 -p -r1.287 nsExtensionManager.js.in
        var trashFileName = itemID + "-trash";
        var itemLocationTrash = installLocation.location.clone();
        itemLocationTrash.append(trashFileName);
-@@ -2425,16 +2428,30 @@ function ExtensionManager() {
+@@ -2425,16 +2428,31 @@ function ExtensionManager() {
    // Register Global Install Location
    var appGlobalExtensions = getDirNoCreate(KEY_APPDIR, [DIR_EXTENSIONS]);
    var priority = Ci.nsIInstallLocation.PRIORITY_APP_SYSTEM_GLOBAL;
@@ -87,13 +91,14 @@ diff -u -8 -p -r1.287 nsExtensionManager.js.in
                                                      priority, false);
    InstallLocations.put(globalLocation);
  
-+  // Register XRE Global Install Location (may be xulrunner/extensions/)
++  // Register XRE Global Install Location if needed
++  // (e.g. app/xulrunner/extensions/ or app/Contents/Frameworks/XUL.framework/extensions/)
 +  try {
 +    var xreGlobalExtensions = getDirNoCreate(KEY_XREDIR, [DIR_EXTENSIONS]);
 +  }
 +  catch(e) { }
 +  
-+  if (xreGlobalExtensions) {
++  if (xreGlobalExtensions && (xreGlobalExtensions.path != appGlobalExtensions.path)) {
 +    var priority = Ci.nsIInstallLocation.PRIORITY_XRE_SYSTEM_GLOBAL;
 +    var xreLocation = new DirectoryInstallLocation(KEY_XRE_GLOBAL,
 +                                                   xreGlobalExtensions, true,
@@ -109,7 +114,7 @@ diff -u -8 -p -r1.287 nsExtensionManager.js.in
                                                       priority, false);
    InstallLocations.put(profileLocation);
  
-@@ -3613,17 +3630,17 @@ ExtensionManager.prototype = {
+@@ -3613,17 +3631,17 @@ ExtensionManager.prototype = {
          badItems.push(id);
          continue;
        }
@@ -128,7 +133,7 @@ diff -u -8 -p -r1.287 nsExtensionManager.js.in
            }
          }
        }
-@@ -3837,16 +3854,17 @@ ExtensionManager.prototype = {
+@@ -3837,16 +3855,17 @@ ExtensionManager.prototype = {
      // items since the datasource hasn't been created yet.
      var itemsToCheck = [];
      if (this._checkForFileChanges()) {
@@ -146,7 +151,7 @@ diff -u -8 -p -r1.287 nsExtensionManager.js.in
  
      // If there are no items to migrate settings for return early.
      if (itemsToCheck.length == 0)
-@@ -4937,16 +4955,17 @@ ExtensionManager.prototype = {
+@@ -4937,16 +4956,17 @@ ExtensionManager.prototype = {
            var restartRequired = this.installRequiresRestart(id, ds.getItemProperty(id, "type"))
            this._updateManifests(restartRequired);
            return;
@@ -164,7 +169,7 @@ diff -u -8 -p -r1.287 nsExtensionManager.js.in
          pointerFile.remove(false);
      }
  
-@@ -7097,17 +7116,17 @@ ExtensionsDataSource.prototype = {
+@@ -7097,17 +7117,17 @@ ExtensionsDataSource.prototype = {
        // with and maintained by this application AND it is installed in the
        // global install location (i.e. the place installed by the app installer)
        // it is and can be managed by the update file - it's not an item that has
@@ -183,7 +188,7 @@ diff -u -8 -p -r1.287 nsExtensionManager.js.in
      }
      return items;
    },
-@@ -7663,17 +7682,17 @@ ExtensionsDataSource.prototype = {
+@@ -7663,17 +7683,17 @@ ExtensionsDataSource.prototype = {
      // Assert properties with single values
      var singleProps = ["version", "updateURL", "updateService", "optionsURL",
                         "aboutURL", "iconURL", "internalName", "updateKey"];
@@ -202,7 +207,7 @@ diff -u -8 -p -r1.287 nsExtensionManager.js.in
        this._setProperty(this._inner, targetRes, property, literal);
      }
  
-@@ -8329,17 +8348,17 @@ ExtensionsDataSource.prototype = {
+@@ -8329,17 +8349,17 @@ ExtensionsDataSource.prototype = {
  
    /**
     * Get the em:appManaged property. This prevents extensions from hiding
