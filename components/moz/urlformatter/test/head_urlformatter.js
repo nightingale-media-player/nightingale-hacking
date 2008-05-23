@@ -41,7 +41,7 @@
  * for the Extension Manager component.
  */
 
-var PREFIX_NS_EM                    = "http://www.mozilla.org/2004/em-rdf#";
+const PREFIX_NS_EM_RDF                = "http://www.mozilla.org/2004/em-rdf#";
 const PREFIX_NS_CHROME                = "http://www.mozilla.org/rdf/chrome#";
 const PREFIX_ITEM_URI                 = "urn:mozilla:item:";
 
@@ -62,7 +62,7 @@ var gRDF = Components.classes["@mozilla.org/rdf/rdf-service;1"]
  * Utility functions
  */
 function EM_NS(property) {
-  return PREFIX_NS_EM + property;
+  return PREFIX_NS_EM_RDF + property;
 }
 
 function CHROME_NS(property) {
