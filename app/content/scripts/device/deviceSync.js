@@ -627,11 +627,11 @@ var DeviceSyncWidget = {
       var                         syncPlaylistList;
       var                         mediaList;
       var                         guid;
-  
-      
-      /* Write the management type preference. */
-      this._deviceLibrary.mgmtType = this._syncPrefs.mgmtType.value;
-  
+
+      /* we must read only the playlist list preference array before writing
+       * anything to the prefs, otherwise the act of writing will go and clobber
+       * our changes.
+       */
       /* Set up the store playlist list preference array. */
       storePlaylistList =
                   Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
@@ -647,6 +647,9 @@ var DeviceSyncWidget = {
                   storePlaylistList.appendElement(mediaList, false);
           }
       }
+
+      /* Write the management type preference. */
+      this._deviceLibrary.mgmtType = this._syncPrefs.mgmtType.value;
   
       /* Write the sync playlist list preferences. */
       this._deviceLibrary.setSyncPlaylistList(storePlaylistList);
