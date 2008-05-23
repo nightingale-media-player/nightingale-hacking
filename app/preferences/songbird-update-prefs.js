@@ -74,7 +74,7 @@ pref("app.update.incompatible.mode", 0);
 //  .. etc ..
 //
 pref("extensions.update.enabled", true);
-pref("extensions.update.url", "chrome://branding/locale/brand.properties");
+pref("extensions.update.url", "https://bundles.songbirdnest.com/extension_update?reqVersion=%REQ_VERSION%&id=%ITEM_ID%");
 pref("extensions.update.interval", 86400);  // Check for updates to Extensions and
                                             // Feathers every day
 // Non-symmetric (not shared by extensions) extension-specific [update] preferences
