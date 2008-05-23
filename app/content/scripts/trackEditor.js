@@ -952,9 +952,15 @@ var TrackEditor = {
     if (mediaItemArray.length > 0) {
       var manager = Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
                         .getService(Ci.sbIMetadataJobManager);
-      var job = manager.newJob(mediaItemArray, 5, Ci.sbIMetadataJob.JOBTYPE_WRITE);
       
-      SBJobUtils.showProgressDialog(job, window);
+      try {
+        var job = manager.newJob(mediaItemArray, 5, Ci.sbIMetadataJob.JOBTYPE_WRITE);
+      
+        SBJobUtils.showProgressDialog(job, window);
+      } catch (e) {
+        // Job will fail if writing is disabled by the pref
+        Components.utils.reportError(e);
+      }
     }
     
     return true;

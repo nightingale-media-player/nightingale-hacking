@@ -77,7 +77,7 @@ var SBJobUtils = {
          aWindow,
          "chrome://songbird/content/xul/jobProgress.xul",
          "job_progress_dialog",
-         "",
+         "chrome,centerscreen",
          [ aJobProgress ],
          null,
          null);

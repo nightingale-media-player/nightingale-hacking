@@ -38,16 +38,29 @@
  
  Launch via SBJobUtils.showProgressDialog in SBJobUtils.jsm.
  -->
+ 
+<!-- Include this to import the standard overlays for a window that does not contain a gBrowser element -->
+<?xul-overlay href="chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul"?>
+ 
 
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="job_progress_dialog"
  buttons="none"
+ type="songbird"
+ hidechrome="true"
  onload="JobProgressDialog.onLoad()"
  onunload="JobProgressDialog.onUnLoad()"
  ondialogcancel="JobProgressDialog.onCancel()"
 >
+
+  <!-- standard overlays insertion point for popups, commands, broadcasters, keys and stringbundles -->
+  <sb-support id="mainSupportSet"/>
+
+  <!-- menubar on osx -->
+  <menubar id="main-menubar" hidden="true" oncommand="onMenu(event.target)" mousethrough="never"/>
+
   <vbox>
     <description id="jobprogress_status_desc" />
     <progressmeter id="jobprogress_progressmeter" />

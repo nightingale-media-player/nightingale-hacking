@@ -51,11 +51,11 @@
  type="songbird"
  onload="TrackEditor.onLoadTrackEditor();"
  onunload="TrackEditor.onUnloadTrackEditor();"
+ ondialogaccept="TrackEditor.closeAndApply();"
  height="600"
  width="500"
  hidechrome="true"
  buttons="none"
- defaultButton="none"
  persist="screenX screenY"
  wheelvolume="false"
 >
