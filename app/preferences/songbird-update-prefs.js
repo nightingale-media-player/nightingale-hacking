@@ -78,8 +78,8 @@ pref("extensions.update.url", "https://bundles.songbirdnest.com/extension_update
 pref("extensions.update.interval", 86400);  // Check for updates to Extensions and
                                             // Feathers every day
 // Non-symmetric (not shared by extensions) extension-specific [update] preferences
-pref("extensions.getMoreExtensionsURL", "chrome://branding/locale/brand.properties");
-pref("extensions.getMoreThemesURL", "chrome://branding/locale/brand.properties");
+pref("extensions.getMoreExtensionsURL", "http://addons.songbirdnest.com/");
+pref("extensions.getMoreThemesURL", "http://addons.songbirdnest.com/tag/feathers");
 
 pref("extensions.blocklist.enabled", true);
 pref("extensions.blocklist.interval", 86400);
