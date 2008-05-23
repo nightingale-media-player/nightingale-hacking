@@ -257,6 +257,18 @@ function sbBookmarks_importBookmarks() {
   xhr.addEventListener('error', function(evt) {
     importError();
   }, false);
+
+  // XXXredfive - this will(may) change to the mozilla urlformatter when
+  //  bmo 430235 gets fixed.
+  // use the urlFormatter service to replace the %FOO% mumbo-jumbo
+  var urlFormatter = Components.classes["@songbirdnest.com/moz/sburlformatter;1"]
+                       .getService(Components.interfaces.sbIURLFormatter);
+
+  var pbag = Components.classes["@mozilla.org/hash-property-bag;1"]
+                       .createInstance(Components.interfaces.nsIWritablePropertyBag2);
+
+  bookmarksURL = urlFormatter.formatURL(bookmarksURL, pbag);
+
   xhr.QueryInterface(Ci.nsIXMLHttpRequest);
   xhr.open('GET', bookmarksURL, true);
   xhr.send(null);
