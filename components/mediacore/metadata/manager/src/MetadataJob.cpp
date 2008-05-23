@@ -139,8 +139,8 @@ public:
 };
 NS_IMPL_ISUPPORTS0(sbRunThreadParams)
 
-NS_IMPL_ADDREF(sbMetadataJob::jobitem_t)
-NS_IMPL_RELEASE(sbMetadataJob::jobitem_t)
+NS_IMPL_THREADSAFE_ADDREF(sbMetadataJob::jobitem_t)
+NS_IMPL_THREADSAFE_RELEASE(sbMetadataJob::jobitem_t)
 
 NS_IMPL_THREADSAFE_ISUPPORTS4(sbMetadataJob, nsIClassInfo, sbIMetadataJob, sbIJobProgress, sbIJobCancelable);
 NS_IMPL_CI_INTERFACE_GETTER4(sbMetadataJob, nsIClassInfo, sbIMetadataJob, sbIJobProgress, sbIJobCancelable)
@@ -211,14 +211,21 @@ NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
   if (mStatus == sbIJobProgress::STATUS_RUNNING) {
     // The current item may be updated from the worker thread
     nsAutoLock lock(mCurrentItemLock);
-    nsAutoString url = mCurrentItem->url;
     
-    // Only show the leaf filename
-    PRInt32 lastSlash = url.RFindChar('/');
-    if (lastSlash != -1 && lastSlash < url.Length() - 1) {
-      url.Cut(0, lastSlash + 1);
+    if (mCurrentItem) {
+      nsAutoString url = mCurrentItem->url;
+    
+      // Only show the leaf filename
+      PRInt32 lastSlash = url.RFindChar('/');
+      if (lastSlash != -1 && lastSlash < url.Length() - 1) {
+        url.Cut(0, lastSlash + 1);
+      }
+      aText = url;
+    } else {
+      // Clear out the status text
+      aText = EmptyString();
     }
-    aText = url;
+    
   } else if (mStatus == sbIJobProgress::STATUS_FAILED) {
     // If we've failed, give a localized explanation.
     nsAutoString text;
