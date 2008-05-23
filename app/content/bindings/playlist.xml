@@ -686,7 +686,21 @@
         const STRINGROOT_MULTIPLE = "playlist.confirmremoveitems.";
         const STRINGROOT_BTN = "playlist.button.";
         const STRINGROOT_TYPE = "playlist.type.";
-        if (!SBDataGetBoolValue(BYPASSKEY)) {
+
+        var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+        var selectedDevice =
+              deviceManager.getDeviceForItem(this.mediaListView.mediaList);
+
+        var disableDialog;
+        if (selectedDevice) {
+          disableDialog =
+            !selectedDevice.getWarningDialogEnabled("remove_tracks");
+        } else {
+          disableDialog = SBDataGetBoolValue(BYPASSKEY);
+        }
+
+        if (!disableDialog) {
           var STRINGROOT = (numSelected > 1) ? STRINGROOT_MULTIPLE : STRINGROOT_UNIQUE;
           var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                                         .getService(Components.interfaces.nsIPromptService);
@@ -697,18 +711,25 @@
           var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
           var strTitle = songbirdStrings.GetStringFromName(STRINGROOT + "title");
           
-          var contextKey = 
-            (this.mediaListView.mediaList instanceof Ci.sbILibrary) ? "library" : "playlist";
-          var strContext = songbirdStrings.GetStringFromName("playlist.type." + contextKey); 
+          if (selectedDevice) {
+            var strContext =
+                  songbirdStrings.formatStringFromName("playlist.type.device",
+                                                       [selectedDevice.name],
+                                                       1);
+          } else {
+            var contextKey =
+              (this.mediaListView.mediaList instanceof Ci.sbILibrary) ?
+                "library" : "playlist";
+            var strContext = songbirdStrings.GetStringFromName
+                                               ("playlist.type." + contextKey);
+          }
           var strMsg = songbirdStrings.formatStringFromName(STRINGROOT + "message", [strContext], 1);
           
           var strCheck = songbirdStrings.GetStringFromName("dialog.confirm.dontaskme");
           var removeStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "remove");
           var cancelStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "cancel");
           
-          var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                                .getService(Ci.sbIDeviceManager2);
-          if (deviceManager.marshalls.length > 0) {
+          if (!selectedDevice && (deviceManager.marshalls.length > 0)) {
             strMsg += "\n\n" + songbirdStrings.GetStringFromName(STRINGROOT + "devicewarning");
           }
                     
@@ -728,7 +749,11 @@
                                     strCheck, 
                                     check);
           if (check.value == true) {
-            SBDataSetBoolValue(BYPASSKEY, true);
+            if (selectedDevice) {
+              selectedDevice.setWarningDialogEnabled("remove_tracks", false);
+            } else {
+              SBDataSetBoolValue(BYPASSKEY, true);
+            }
           }
           if (retval == 0) { // 1 = yes, 0 = no
             return;

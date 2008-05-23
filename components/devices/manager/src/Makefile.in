@@ -42,8 +42,10 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/marshall/public \
                $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/moz/prompter/public \
                $(topsrcdir)/components/devices/base/src \
+               $(topsrcdir)/components/devices/device/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/nspr \
@@ -52,6 +54,13 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(NULL)
+
+COMPONENTS_OBJDIR = $(SONGBIRD_OBJDIR)/components
+DYNAMIC_LIB_STATIC_IMPORTS = \
+    $(COMPONENTS_OBJDIR)/devices/device/src/sbDeviceCore$(DEBUG:%=_d) \
+    $(COMPONENTS_OBJDIR)/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \
+    $(COMPONENTS_OBJDIR)/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+    $(COMPONENTS_OBJDIR)/moz/threads/src/sbMozThreads$(DEBUG:%=_d)
 
 #XXX Mook : Temporary hack pending bug 7150 (proper static lib)
 CPP_INCLUDES += $(topsrcdir)/components/include \

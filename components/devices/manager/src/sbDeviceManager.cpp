@@ -34,6 +34,7 @@
 #include <nsIProgrammingLanguage.h>
 #include <nsISupportsPrimitives.h>
 
+#include <nsArrayUtils.h>
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
@@ -43,6 +44,7 @@
 
 #include "sbIDeviceController.h"
 #include "sbDeviceEvent.h"
+#include "sbDeviceUtils.h"
 
 #include <sbIPrompter.h>
 #include <sbILibraryManager.h>
@@ -182,6 +184,46 @@ NS_IMETHODIMP sbDeviceManager::CreateEvent(PRUint32 aType,
                                            sbIDeviceEvent **_retval)
 {
   return sbDeviceEvent::CreateEvent(aType, aData, aOrigin, _retval);
+}
+
+/* sbIDevice sbIDeviceManager::getDeviceForItem(in sbIMediaItem aItem); */
+NS_IMETHODIMP sbDeviceManager::GetDeviceForItem(sbIMediaItem* aMediaItem,
+                                                sbIDevice**   _retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  // get the list of devices
+  nsCOMPtr<nsIArray> deviceList;
+  rv = GetDevices(getter_AddRefs(deviceList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // check each device for item
+  PRUint32 deviceCount;
+  rv = deviceList->GetLength(&deviceCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < deviceCount; i++) {
+    // get the next device
+    nsCOMPtr<sbIDevice> device = do_QueryElementAt(deviceList, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // try getting the device library for the item.  if one is found, the item
+    // belongs to the device
+    nsCOMPtr<sbIDeviceLibrary> library;
+    rv = sbDeviceUtils::GetDeviceLibraryForItem(device,
+                                                aMediaItem,
+                                                getter_AddRefs(library));
+    if (NS_SUCCEEDED(rv)) {
+      device.swap(*_retval);
+      return NS_OK;
+    }
+  }
+
+  *_retval = nsnull;
+
+  return NS_OK;
 }
 
 /* readonly attribute nsIArray sbIDeviceControllerRegistrar::controllers; */

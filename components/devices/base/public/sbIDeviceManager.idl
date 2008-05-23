@@ -26,10 +26,12 @@
 
 #include "nsISupports.idl"
 
-interface sbIDeviceEvent;
-interface sbIDeviceMarshall;
 interface nsIArray;
 interface nsIVariant;
+interface sbIDevice;
+interface sbIDeviceEvent;
+interface sbIDeviceMarshall;
+interface sbIMediaItem;
 
 /**
  * \interface sbIDeviceManager
@@ -42,7 +44,7 @@ interface nsIVariant;
  * XXXMook: rename this to sbIDeviceManager once the old interface has been
  * properly removed
  */
-[scriptable, uuid(0c9597b8-a530-411f-8672-5cfe0a19ab07)]
+[scriptable, uuid(2685D258-FFE3-4E78-AA0E-D15838416CED)]
 interface sbIDeviceManager2 : nsISupports
 {
   /**
@@ -79,6 +81,17 @@ interface sbIDeviceManager2 : nsISupports
   sbIDeviceEvent createEvent(in unsigned long aType,
                              [optional] in nsIVariant aData,
                              [optional] in nsISupports aOrigin);
+
+  /**
+   * Return the device to which the media item specified by aItem belongs.  If
+   * the media item does not belong to any device, return null.
+   *
+   * @param aItem Media item for which to get device.
+   *
+   * @return Device to which media item belongs.
+   */
+
+  sbIDevice getDeviceForItem(in sbIMediaItem aItem);
 
   /**
    * Can all devices be disconnected?
