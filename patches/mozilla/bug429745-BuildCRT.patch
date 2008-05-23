@@ -176,7 +176,7 @@ RCS file: /cvsroot/mozilla/memory/jemalloc/Makefile.in,v
 retrieving revision 1.9
 diff -u -8 -r1.9 Makefile.in
 --- memory/jemalloc/Makefile.in	8 May 2008 09:20:45 -0000	1.9
-+++ memory/jemalloc/Makefile.in	14 May 2008 23:03:59 -0000
++++ memory/jemalloc/Makefile.in	23 May 2008 01:42:57 -0000
 @@ -16,16 +16,17 @@
  #
  # The Initial Developer of the Original Code is
@@ -195,7 +195,7 @@ diff -u -8 -r1.9 Makefile.in
  # of those above. If you wish to allow use of your version of this file only
  # under the terms of either the GPL or the LGPL, and not to allow others to
  # use your version of this file under the terms of the MPL, indicate your
-@@ -46,41 +47,98 @@
+@@ -46,41 +47,103 @@
  MODULE		= jemalloc
  
  ifeq (WINNT,$(OS_TARGET))
@@ -275,13 +275,18 @@ diff -u -8 -r1.9 Makefile.in
 +	cp -v $(addprefix $(CRT_OBJ_DIR)/, $(WIN32_CRT_SRC_MEM_HEADERS)) $(CRT_OBJ_DIR)/build/intel
 +	# These do build correctly in debug mode; we don't need to remove them;
 +	# we continue to remove them in release mode, since they're still
-+	# somewhat broken there.
-+	#rm $(CRT_OBJ_DIR)/build/intel/{libcmtd,libcpmtd}.lib
++	# somewhat broken there; copy the libs and pdbs into the the objdir
++	cp -v $(CRT_OBJ_DIR)/build/intel/{libcmtd,libcpmtd}.{lib,pdb} .
 +else
 +	# release mode
  	#XXX: these don't link right for some reason
  	rm $(CRT_OBJ_DIR)/build/intel/{libcmt,libcpmt}.lib
++	# Enable if we ever remove the above 
++	# cp -v $(CRT_OBJ_DIR)/build/intel/{libcmt,libcpmt}.{lib,pdb} . 
 +endif
++	# Copy the pdbs and dlls in both modes into the objdir, so the rest of the 
++	# scripts can pick these up for pdbs symbol store/upload, etc.
++	cp -v $(CRT_OBJ_DIR)/build/intel/$(MOZ_CRT_DLL_NAME).{dll,pdb} . 
 +
  else
 -# Using a pre-built DLL, so just install it.

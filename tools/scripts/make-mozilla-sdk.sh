@@ -54,6 +54,8 @@ symbol_files="intl/unicharutil/util/nsunicharutils.pdb
               xpcom/stub/xpcom.pdb
               xulrunner/app/xulrunner.pdb
               xulrunner/stub/xulrunner-stub.pdb
+              memory/jemalloc/mozcrt19*.pdb
+              memory/jemalloc/libc*.pdb
 "
 
 # update_bin_files are relative to $objdir/dist/host/bin/
