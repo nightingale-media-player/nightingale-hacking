@@ -24,11 +24,11 @@
 //
  */
 
-#include "nsArray.h"
+#include "sbArray.h"
 
 #include <nsIGenericFactory.h>
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(nsArray)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbArray)
 
 // fill out data struct to register with component system
 static const nsModuleComponentInfo components[] =
@@ -37,7 +37,7 @@ static const nsModuleComponentInfo components[] =
     SB_THREADSAFE_ARRAY_CLASSNAME,
     SB_THREADSAFE_ARRAY_CID,
     SB_THREADSAFE_ARRAY_CONTRACTID,
-    nsArrayConstructor
+    sbArrayConstructor
   }
 };
 

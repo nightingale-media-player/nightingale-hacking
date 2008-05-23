@@ -31,7 +31,8 @@ include $(DEPTH)/build/autodefs.mk
 
 target_name = sbxpcom$(DEBUG:%=_d)
 
-CPP_SRCS = nsArray.cpp \
+CPP_SRCS = sbCOMArray.cpp \
+           sbArray.cpp \
            sbXPCOMModule.cpp \
            $(NULL)
 

@@ -37,7 +37,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include "nsAutoLock.h"
-#include "nsArray.h"
+#include "sbArray.h"
 #include "nsArrayEnumerator.h"
 #include "nsWeakReference.h"
 
@@ -51,25 +51,25 @@ struct findIndexOfClosure
 
 PR_STATIC_CALLBACK(PRBool) FindElementCallback(void* aElement, void* aClosure);
 
-NS_INTERFACE_MAP_BEGIN(nsArray)
+NS_INTERFACE_MAP_BEGIN(sbArray)
   NS_INTERFACE_MAP_ENTRY(nsIArray)
   NS_INTERFACE_MAP_ENTRY(nsIMutableArray)
   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, nsIMutableArray)
 NS_INTERFACE_MAP_END
 
-nsArray::nsArray()
+sbArray::sbArray()
 {
     mLock = nsAutoLock::NewLock("nsThreadsafeArray::mLock");
     NS_ASSERTION(mLock, "Failed to create lock");
 }
-nsArray::nsArray(const nsCOMArray_base& aBaseArray)
+sbArray::sbArray(const sbCOMArray_base& aBaseArray)
     : mArray(aBaseArray)
 {
     mLock = nsAutoLock::NewLock("nsThreadsafeArray::mLock");
     NS_ASSERTION(mLock, "Failed to create lock");
 }
 
-nsArray::~nsArray()
+sbArray::~sbArray()
 {
     Clear();
     if (mLock) {
@@ -77,11 +77,11 @@ nsArray::~nsArray()
     }
 }
 
-NS_IMPL_THREADSAFE_ADDREF(nsArray)
-NS_IMPL_THREADSAFE_RELEASE(nsArray)
+NS_IMPL_THREADSAFE_ADDREF(sbArray)
+NS_IMPL_THREADSAFE_RELEASE(sbArray)
 
 NS_IMETHODIMP
-nsArray::GetLength(PRUint32* aLength)
+sbArray::GetLength(PRUint32* aLength)
 {
     nsAutoLock lock(mLock);
     *aLength = mArray.Count();
@@ -89,7 +89,7 @@ nsArray::GetLength(PRUint32* aLength)
 }
 
 NS_IMETHODIMP
-nsArray::QueryElementAt(PRUint32 aIndex,
+sbArray::QueryElementAt(PRUint32 aIndex,
                         const nsIID& aIID,
                         void ** aResult)
 {
@@ -103,7 +103,7 @@ nsArray::QueryElementAt(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
-nsArray::IndexOf(PRUint32 aStartIndex, nsISupports* aElement,
+sbArray::IndexOf(PRUint32 aStartIndex, nsISupports* aElement,
                  PRUint32* aResult)
 {
     nsAutoLock lock(mLock);
@@ -126,7 +126,7 @@ nsArray::IndexOf(PRUint32 aStartIndex, nsISupports* aElement,
 }
 
 NS_IMETHODIMP
-nsArray::Enumerate(nsISimpleEnumerator **aResult)
+sbArray::Enumerate(nsISimpleEnumerator **aResult)
 {
     return NS_NewArrayEnumerator(aResult, static_cast<nsIArray*>(this));
 }
@@ -134,7 +134,7 @@ nsArray::Enumerate(nsISimpleEnumerator **aResult)
 // nsIMutableArray implementation
 
 NS_IMETHODIMP
-nsArray::AppendElement(nsISupports* aElement, PRBool aWeak)
+sbArray::AppendElement(nsISupports* aElement, PRBool aWeak)
 {
     PRBool result;
     if (aWeak) {
@@ -159,7 +159,7 @@ nsArray::AppendElement(nsISupports* aElement, PRBool aWeak)
 }
 
 NS_IMETHODIMP
-nsArray::RemoveElementAt(PRUint32 aIndex)
+sbArray::RemoveElementAt(PRUint32 aIndex)
 {
     nsAutoLock lock(mLock);
     PRBool result = mArray.RemoveObjectAt(aIndex);
@@ -167,7 +167,7 @@ nsArray::RemoveElementAt(PRUint32 aIndex)
 }
 
 NS_IMETHODIMP
-nsArray::InsertElementAt(nsISupports* aElement, PRUint32 aIndex, PRBool aWeak)
+sbArray::InsertElementAt(nsISupports* aElement, PRUint32 aIndex, PRBool aWeak)
 {
     nsCOMPtr<nsISupports> elementRef;
     if (aWeak) {
@@ -188,7 +188,7 @@ nsArray::InsertElementAt(nsISupports* aElement, PRUint32 aIndex, PRBool aWeak)
 }
 
 NS_IMETHODIMP
-nsArray::ReplaceElementAt(nsISupports* aElement, PRUint32 aIndex, PRBool aWeak)
+sbArray::ReplaceElementAt(nsISupports* aElement, PRUint32 aIndex, PRBool aWeak)
 {
     nsCOMPtr<nsISupports> elementRef;
     if (aWeak) {
@@ -209,7 +209,7 @@ nsArray::ReplaceElementAt(nsISupports* aElement, PRUint32 aIndex, PRBool aWeak)
 }
 
 NS_IMETHODIMP
-nsArray::Clear()
+sbArray::Clear()
 {
     nsAutoLock lock(mLock);
     mArray.Clear();

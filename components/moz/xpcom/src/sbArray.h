@@ -40,7 +40,7 @@
 #define nsArray_h__
 
 #include "nsIMutableArray.h"
-#include "nsCOMArray.h"
+#include "sbCOMArray.h"
 #include "nsCOMPtr.h"
 
 #define SB_THREADSAFE_ARRAY_CLASSNAME \
@@ -60,20 +60,20 @@ struct PRLock;
 // adapter class to map nsIArray->nsCOMArray
 // do NOT declare this as a stack or member variable, use
 // nsCOMArray instead!
-class nsArray : public nsIMutableArray
+class sbArray : public nsIMutableArray
 {
 public:
-    nsArray();
-    nsArray(const nsCOMArray_base& aBaseArray);
+    sbArray();
+    sbArray(const sbCOMArray_base& aBaseArray);
     
     NS_DECL_ISUPPORTS
     NS_DECL_NSIARRAY
     NS_DECL_NSIMUTABLEARRAY
 
 private:
-    ~nsArray();
+    ~sbArray();
 
-    nsCOMArray_base mArray;
+    sbCOMArray_base mArray;
     PRLock* mLock;
 };
 
