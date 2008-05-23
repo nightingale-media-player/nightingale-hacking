@@ -177,7 +177,7 @@ deviceErrorMonitor.prototype = {
         errorString.data = this._sbStrings.formatStringFromName(
                                                         "device.error.format",
                                                         [aErrorMsg, mediaURL],
-                                                        1);
+                                                        2);
         this._deviceList[devIndex].errorList.push(errorString);
       }
     }
