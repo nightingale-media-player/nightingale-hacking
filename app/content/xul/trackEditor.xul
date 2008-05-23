@@ -84,7 +84,7 @@
     <tabpanels flex="1">
       <vbox flex="1" id="summary-tab">
       <!--  Summary page.  Needs styling and layout.
-            When implementing this MAKE SURE THAT LABELS CROP! -->
+            When implementing this MAKE SURE THAT LABELS CROP! I MEAN IT! -->
       
         <hbox flex="1">
 
@@ -112,41 +112,41 @@
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#playCount"/>
-              <label property="http://songbirdnest.com/data/1.0#playCount"/>
+              <label property="http://songbirdnest.com/data/1.0#playCount" crop="end" />
             </hbox>
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
-              <label property="http://songbirdnest.com/data/1.0#lastPlayTime"/>
+              <label property="http://songbirdnest.com/data/1.0#lastPlayTime" crop="end" />
             </hbox>
 
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#skipCount"/>
-              <label property="http://songbirdnest.com/data/1.0#skipCount"/>
+              <label property="http://songbirdnest.com/data/1.0#skipCount" crop="end" />
             </hbox>
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
-              <label property="http://songbirdnest.com/data/1.0#lastSkipTime"/>
+              <label property="http://songbirdnest.com/data/1.0#lastSkipTime" crop="end" />
             </hbox>
             
             <!-- ONE LINE SPACER GOES HERE -->
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#contentLength"/>
-              <label property="http://songbirdnest.com/data/1.0#contentLength"/>
+              <label property="http://songbirdnest.com/data/1.0#contentLength" crop="end" />
             </hbox>
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#bitRate"/>
-              <label property="http://songbirdnest.com/data/1.0#bitRate"/>
+              <label property="http://songbirdnest.com/data/1.0#bitRate" crop="end" />
               <label>kbps</label><!-- TODO: format should (be able to) do this -->
             </hbox>
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#sampleRate"/>
-              <label property="http://songbirdnest.com/data/1.0#sampleRate"/>
+              <label property="http://songbirdnest.com/data/1.0#sampleRate" crop="end" />
               <label>kHz</label> <!--TODO: should say kHz -->
             </hbox>
             
@@ -154,7 +154,7 @@
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#recordLabelName"/>
-              <label property="http://songbirdnest.com/data/1.0#recordLabelName"/>
+              <label property="http://songbirdnest.com/data/1.0#recordLabelName" crop="end" />
             </hbox>
           </vbox>
           
@@ -165,18 +165,18 @@
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#updated"/>
-              <label property="http://songbirdnest.com/data/1.0#updated"/>
+              <label property="http://songbirdnest.com/data/1.0#updated" crop="end" />
             </hbox>
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#created"/>
-              <label property="http://songbirdnest.com/data/1.0#created"/>
+              <label property="http://songbirdnest.com/data/1.0#created" crop="end" />
             </hbox>
             <hbox>
               <!-- todo: use the page title / icon here -->
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#originPage"/>
-              <label property="http://songbirdnest.com/data/1.0#originPage"/>
+              <label property="http://songbirdnest.com/data/1.0#originPage" crop="end" />
             </hbox>
             
             <!-- gap -->
@@ -184,7 +184,7 @@
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#softwareVendor"/>
-              <label property="http://songbirdnest.com/data/1.0#softwareVendor"/>
+              <label property="http://songbirdnest.com/data/1.0#softwareVendor" crop="end" />
             </hbox>
             
           </vbox>
