@@ -239,14 +239,20 @@ pref("songbird.url.addons.displaypanes", "http://addons.songbirdnest.com/tag/dis
 pref("songbird.url.addons.feathers", "http://addons.songbirdnest.com/tag/feathers");
 pref("songbird.url.addons.mediaviews", "http://addons.songbirdnest.com/tag/mediaview");
 pref("browser.startup.homepage", "http://birdhouse.songbirdnest.com/");
-pref("songbird.url.firstrun", "http://birdhouse.songbirdnest.com/firstrun/");
-pref("songbird.url.bookmarks", "http://bundles.songbirdnest.com/bookmarks.xml");
+pref("songbird.url.firstrunpage", "http://birdhouse.songbirdnest.com/firstrun/");
 pref("songbird.url.bugzilla", "http://bugzilla.songbirdnest.com/");
-pref("songbird.url.bundles", "http://bundles.songbirdnest.com/getbundle/");
 pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
 pref("songbird.url.support", "http://songbirdnest.com/support/");
 pref("songbird.url.support.quicktime", "http://publicsvn.songbirdnest.com/trac/wiki/SettingUpQuickTime");
 pref("songbird.url.support.corefailure", "http://publicsvn.songbirdest.com/trac/wiki/CoreWrapperFailure");
+
+// urls that connect to hummingbird
+pref("songbird.url.bookmarks",
+     "https://bookmarks.songbirdnest.com/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/bookmarks.xml");
+pref("songbird.url.firstrun",
+     "https://firstrun.songbirdnest.com/bundles/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/firstrun.xml");
+pref("songbird.url.locales",
+     "https://locales.songbirdnest.com/bundles/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/locales.xml");
 
 // The breakpad report server to link to in about:crashes
 pref("breakpad.reportURL", "http://crashreports.songbirdnest.com/report/index/");

@@ -52,15 +52,23 @@ interface sbIBundle : nsISupports
   /**
    * \brief Bundle channel ID
    * Sets the bundle channel ID. This is used to construct the bundle data url. 
-   * Use sbIBundleDataListenerto monitor progress.
+   * Use sbIBundleDataListener to monitor progress.
    * \sa addBundleDataListener, removeBundleDataListener, sbIBundleDataListener
    */
   attribute AString bundleId;
 
   /**
+   * \brief Bundle URL
+   * Sets the bundle URL. This is the location of the bundle.
+   * Use sbIBundleDataListener to monitor progress.
+   * \sa addBundleDataListener, removeBundleDataListener, sbIBundleDataListener
+   */
+  attribute AString bundleURL;
+
+  /**
    * \brief Begin downloading the bundle data asynchronously
    * This method begins the asynchronous download of bundle data. 
-   * Use sbIBundleDataListenerto monitor progress.
+   * Use sbIBundleDataListener to monitor progress.
    * \param timeout Maximum time in milliseconds to wait for the server response.  Specify 0 to use the system socket timeout.
    * \sa addBundleDataListener, removeBundleDataListener, sbIBundleDataListener
    */

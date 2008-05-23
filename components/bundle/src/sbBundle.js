@@ -27,8 +27,6 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const SONGBIRD_BUNDLE_IID = Components.interfaces.sbIBundle;
 
-const SONGBIRD_GETBUNDLE_PREFKEY = "songbird.url.bundles";
-
 function Bundle() {
   this._datalisteners = new Array();
   this._installlisteners = new Array();
@@ -46,6 +44,7 @@ Bundle.prototype = {
   contractID:       "@songbirdnest.com/Songbird/Bundle;1",
 
   _bundleid: null,
+  _bundleURL: null,
   _req: null,
   _datalisteners: null,
   _installlisteners: null,
@@ -82,7 +81,18 @@ Bundle.prototype = {
       aStringValue = "";
     this._bundleid = aStringValue;
   },
+
+  set bundleURL(aBundleURL) {
+    // validate
+    if (aBundleURL == null)
+      aBundleURL = "";
+    this._bundleURL = aBundleURL;
+  },
   
+  get bundleURL() {
+    return this._bundleURL;
+  },
+
   retrieveBundleData: function(aTimeout) {
   
     if (this._init && this._req) {
@@ -108,13 +118,17 @@ Bundle.prototype = {
     var httpReq = this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest);
     httpReq.addEventListener("load", this._onload, false);
     httpReq.addEventListener("error", this._onerror, false);
-    
-    var prefsService =
-        Components.classes["@mozilla.org/preferences-service;1"].
-        getService(Components.interfaces.nsIPrefBranch);
+   
+    // XXXredfive - this will(may) change to the mozilla urlformatter when
+    //  bmo 430235 gets fixed.
+    // use the urlFormatter service to replace the %FOO% mumbo-jumbo
+    var urlFormatter = Components.classes["@songbirdnest.com/moz/sburlformatter;1"]
+                         .getService(Components.interfaces.sbIURLFormatter);
 
-    var baseURL = prefsService.getCharPref(SONGBIRD_GETBUNDLE_PREFKEY);
-    var url = baseURL + this._bundleid;
+    var pbag = Components.classes["@mozilla.org/hash-property-bag;1"]
+                 .createInstance(Components.interfaces.nsIWritablePropertyBag2);
+
+    var url = urlFormatter.formatURL(this._bundleURL, pbag);
 
     this._req.open('GET', url + this._getRandomParameter(), true); 
     this._req.send(null);

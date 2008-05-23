@@ -21,9 +21,8 @@ pref("app.update.mode", 1);
 pref("app.update.silent", false);
 
 // Update service URL:
-// XXXben Hardcoded 'en-US'. See bug 994.
-// XXXaus Hardcoded 'Songbird' to ensure auto update support. See bug 4344.
-pref("app.update.url", "https://updates.songbirdnest.com/update/1/Songbird/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/en-US/%CHANNEL%/update.xml");
+// Hardcoded 'en-US'. See bug 994.
+pref("app.update.url", "https://updates.songbirdnest.com/update/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/en-US/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml");
 
 // URL user can browse to manually if for some reason all update installation
 // attempts fail.  TODO: Change this URL
@@ -74,7 +73,7 @@ pref("app.update.incompatible.mode", 0);
 //  .. etc ..
 //
 pref("extensions.update.enabled", true);
-pref("extensions.update.url", "https://bundles.songbirdnest.com/extension_update?reqVersion=%REQ_VERSION%&id=%ITEM_ID%");
+pref("extensions.update.url", "https://addon-files.songbirdnest.com/updates/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/%ITEM_VERSION%/%ITEM_ID%/update.rdf");
 pref("extensions.update.interval", 86400);  // Check for updates to Extensions and
                                             // Feathers every day
 // Non-symmetric (not shared by extensions) extension-specific [update] preferences

@@ -69,6 +69,7 @@ try {
       var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
       menubar_locales_bundle = new sbIBundle();
       menubar_locales_bundle.bundleId = "locales";
+      menubar_locales_bundle.bundleURL = Application.prefs.getValue("songbird.url.locales", "default");
       menubar_locales_bundle.addBundleDataListener(menubarLocalesBundleCB);
       menubar_locales_bundle.retrieveBundleData(MENUBAR_LOCALESBUNDLE_TIMEOUT);
     } catch ( err ) {

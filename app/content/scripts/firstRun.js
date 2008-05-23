@@ -131,10 +131,12 @@ function initFirstRun() {
   }
 
 
+
   try {
     var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
     firstrun_bundle = new sbIBundle();
     firstrun_bundle.bundleId = "firstrun";
+    firstrun_bundle.bundleURL = Application.prefs.getValue("songbird.url.firstrun", "default");
     // XXX Matt: Ah crap, this is totally going to leak
     // XXX lone: how so ?
     firstrun_bundle.addBundleDataListener(firstRunBundleCB);
@@ -147,6 +149,7 @@ function initFirstRun() {
     var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
     locales_bundle = new sbIBundle();
     locales_bundle.bundleId = "locales";
+    locales_bundle.bundleURL = Application.prefs.getValue("songbird.url.locales", "default");
     locales_bundle.addBundleDataListener(localesBundleCB);
     locales_bundle.retrieveBundleData(FIRSTRUN_BUNDLE_TIMEOUT);
   } catch ( err ) {
@@ -415,19 +418,19 @@ function openConnectionSettings(evt)
   // restore old value
   psvc.setBoolPref("browser.preferences.instantApply", oldInstantApply);
   
-  var psvc = Components.classes["@mozilla.org/preferences-service;1"]
-                        .getService(Components.interfaces.nsIPrefService);
   psvc.savePrefFile(null);
   if (!firstrun_bundle) {
     var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
     firstrun_bundle = new sbIBundle();
     firstrun_bundle.bundleId = "firstrun";
+    firstrun_bundle.bundleURL = Application.prefs.getValue("songbird.url.firstrun", "default");
     firstrun_bundle.addBundleDataListener(firstRunBundleCB);
   }
   if (!locales_bundle) {
     var sbIBundle = new Components.Constructor("@songbirdnest.com/Songbird/Bundle;1", "sbIBundle");
     locales_bundle = new sbIBundle();
     locales_bundle.bundleId = "locales";
+    locales_bundle.bundleURL = Application.prefs.getValue("songbird.url.locales", "default");
     locales_bundle.addBundleDataListener(localesBundleCB);
   }
   reinitLanguageBox();
