@@ -490,6 +490,16 @@ function makeNewPlaylist(mediaListType) {
   if (!library) {
     throw("Could not find a library supporting lists of type " + mediaListType);
   }
+  
+  // Make sure the library is user editable, if it is not, use the main
+  // library instead of the currently selected library.
+  if (library.userEditable == false) {
+    var libraryManager = 
+      Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                .getService(Components.interfaces.sbILibraryManager);
+    
+    library = libraryManager.mainLibrary;
+  }
 
   // Create the playlist
   var mediaList = library.createMediaList(mediaListType);
