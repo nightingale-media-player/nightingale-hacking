@@ -386,6 +386,9 @@
       <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
       <key id="key_stop" keycode="VK_ESCAPE" oncommand="gBrowser.stop();"/>
       <key id="metadata-key" modifiers="accel" key="&menu.tools.metadata.accesskey;" command="cmd_metadata"/>
+
+      <key id="goBackKb"  keycode="VK_LEFT" command="Browser:Back" modifiers="alt"/>
+      <key id="goForwardKb"  keycode="VK_RIGHT" command="Browser:Forward" modifiers="alt"/>
     </keyset>
 
 
