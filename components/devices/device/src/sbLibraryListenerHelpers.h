@@ -38,8 +38,8 @@
 #include <nsDataHashtable.h>
 #include <nsWeakReference.h>
 
-class sbBaseDevice;
 class sbIDevice;
+class sbBaseDevice;
 
 /**
  * This class provides the common ignore logic for listener helpers
@@ -139,26 +139,4 @@ protected:
   sbBaseDevice* mDevice;
 };
 
-/**
- * Listens to events for a playlist and then performs a sync
- * on the playlist
- */
-class sbPlaylistSyncListener : public sbIMediaListListener
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBIMEDIALISTLISTENER
-  
-  sbPlaylistSyncListener(sbILibrary* aDeviceLibrary);
-  
-protected:
-  virtual ~sbPlaylistSyncListener();
-
-  /**
-   * The device own's us and device library owns the device so we're good.
-   * non owning pointer
-   */
-  sbILibrary * mDeviceLibrary;
-};
-#endif /* __SBLIBRARYLISTENERHELPERS__H__ */
-
+#endif

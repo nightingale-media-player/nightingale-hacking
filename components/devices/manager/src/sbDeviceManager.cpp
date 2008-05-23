@@ -612,7 +612,7 @@ nsresult sbDeviceManager::QuitApplicationGranted()
   if (!canDisconnect) {
     // one of our devices doesn't want to be disconnected
     nsCOMPtr<sbIPrompter> prompter =
-      do_GetService("@songbirdnest.com/Songbird/Prompter;1", &rv);
+      do_CreateInstance("@songbirdnest.com/Songbird/Prompter;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // This will hold up a dialog, we do not continue

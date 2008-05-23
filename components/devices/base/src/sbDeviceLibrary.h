@@ -28,14 +28,19 @@
 #ifndef __SBDEVICELIBRARY_H__
 #define __SBDEVICELIBRARY_H__
 
+#include <nsAutoPtr.h>
+#include <nsCOMPtr.h>
+#include <nsInterfaceHashtable.h>
+
 #include <sbIDeviceLibrary.h>
 #include <sbILibrary.h>
 #include <sbIMediaListListener.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
 
 #include <pref/nsIPrefBranch.h>
-#include <nsInterfaceHashtable.h>
 #include <prlock.h>
+
+#include "sbDeviceLibraryHelpers.h"
 
 // These are the methods from sbLibrary that we're going to
 // override in sbDeviceLibrary.
@@ -199,7 +204,7 @@ private:
   /**
    * \brief the main library updating listener
    */
-  nsCOMPtr<sbIMediaListListener> mMainLibraryListener;
+  nsRefPtr<sbLibraryUpdateListener> mMainLibraryListener;
 
   /**
    * \brief A list of listeners.

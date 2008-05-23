@@ -28,27 +28,114 @@
 /**
  * \file Listener helpers for sbDeviceLibrary
  */
+#ifndef __SBDEVICELIBRARYHELPERS_H__
+#define __SBDEVICELIBRARYHELPERS_H__
+
+#include <nsAutoPtr.h>
+#include <nsCOMArray.h>
+#include <nsCOMPtr.h>
 
 #include <sbIMediaListListener.h>
 
+class nsIArray;
 class sbILibrary;
+class sbIMediaList;
+
+class sbDeviceLibrary;
 
 /**
- * Listens to item update events to propagate into a second library
- * The target library must register this listener before going away.
+ * Listens to events for a playlist and then performs a sync
+ * on the playlist
  */
-class sbLibraryItemUpdateListener : public sbIMediaListListener
+class sbPlaylistSyncListener : public sbIMediaListListener
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTLISTENER
   
-  sbLibraryItemUpdateListener(sbILibrary* aTargetLibrary);
+  sbPlaylistSyncListener(sbILibrary* aTargetLibrary);
+
+  /**
+   * Add the media list to our list of lists
+   * TODO: XXX hack to keep the playlists from going away and our listeners from going deaf
+   */
+  nsresult AddMediaList(sbIMediaList * aList) {
+    NS_ASSERTION(mMediaLists.IndexOf(aList) == -1, "Media list already being listened to");
+    return mMediaLists.AppendObject(aList);
+  }
+
+  void StopListeningToPlaylists();  
+
+protected:
+  virtual ~sbPlaylistSyncListener();
+
+  /**
+   * The device owns us and device library owns the device so we're good.
+   * non owning pointer
+   */
+  sbILibrary * mTargetLibrary;
+
+  /**
+   * TODO: XXX hack to keep the playlists from going away and our listeners from going deaf
+   */
+  nsCOMArray<sbIMediaList> mMediaLists;
+};
+
+/**
+ * Listens to item update events to propagate into a second library
+ * The target library must register this listener before going away.
+ */
+class sbLibraryUpdateListener : public sbIMediaListListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTLISTENER
   
+  sbLibraryUpdateListener(sbILibrary * aTargetLibrary, 
+                          PRUint32 aMgmtType,
+                          nsIArray * aPlaylistsList);
+
+  /**
+   * Determine if we should listen to a playlist
+   * \param aMainList this is the playlist on the main library
+   * \param aShouldListen out parameter that denotes whether the
+   *        playlist should be listened to
+   */
+  nsresult ShouldListenToPlaylist(sbIMediaList * aMainList,
+                                  PRBool & aShouldListen);
+
+  /**
+   * This function adds a listener to the playlist aMainMediaList
+   * \param aMainMediaList The media list to listen to, must be in the mTargetLibrary
+   * \param aDeviceLibrary the device library
+   */
+  nsresult ListenToPlaylist(sbIMediaList * aMainMediaList);
+
+  /**
+   * Stops listening to the playlists
+   */
+  void StopListeningToPlaylists()
+  {
+    mPlaylistListener->StopListeningToPlaylists();
+  }
+  
+  /**
+   * Sets the management type for the listner
+   * \param aMgmtType A management type constant
+   */
+  void SetSyncMode(PRUint32 aMgmtType,
+                   nsIArray * aPlaylistsList);
 protected:
   /**
    * The target library holds a reference to us (to unregister), so it is
    * safe to not own a reference
    */
   sbILibrary* mTargetLibrary;
+  nsCOMPtr<nsIArray> mPlaylistsList;
+  
+  nsRefPtr<sbPlaylistSyncListener> mPlaylistListener;
+  
+  PRUint32 mMgmtType;
 };
+
+#endif

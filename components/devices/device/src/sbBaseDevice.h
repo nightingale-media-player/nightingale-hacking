@@ -365,9 +365,12 @@ protected:
      while the removal lock is behind held.  No actions (including pushing
      additional requests) may be performed while the request monitor is held. */
   PRMonitor * mRequestMonitor;
-  PRLock * mRequestRemovalLock;
   nsRefPtr<TransferRequest> mRequestBatchStart;
   nsCOMPtr<nsITimer> mRequestBatchTimer;
+  /**
+   * Protects the mRequestBatchTimer checking and setting
+   */
+  PRLock * mRequestBatchTimerLock;
 
   typedef std::deque<nsRefPtr<TransferRequest> > TransferRequestQueue;
   typedef std::map<PRInt32, TransferRequestQueue> TransferRequestQueueMap;
@@ -383,7 +386,6 @@ protected:
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
-  nsCOMArray<nsISupports> mPlaylistSyncListeners;
 
 protected:
  /**
@@ -485,24 +487,6 @@ protected:
    */
   nsresult SyncForceDiffMediaLists(sbIMediaList* aMediaList);
 
-  /**
-   * Determine if we should listen to a playlist
-   * \param aMainList this is the playlist on the main library
-   * \param aDeviceLibrary The device library
-   * \param aShoudListen out parameter that denotes whether the
-   *        playlist should be listened to
-   */
-  nsresult ShouldListenToPlaylist(sbIMediaList * aMainList,
-                                  sbIDeviceLibrary * aDeviceLibrary,
-                                  PRBool & aShoudlListen);
-
-  /**
-   * This function listens to the playlist aMainMediaList
-   * \param aMainmediaList The media list to listen to
-   * \param aDeviceLibrary the device library
-   */
-  nsresult ListenToPlaylist(sbIMediaList * aMainMediaList,
-                            sbIDeviceLibrary * aDeviceLibrary);
 
   /**
    * Show a dialog box to ask the user if they would like the device ejected
