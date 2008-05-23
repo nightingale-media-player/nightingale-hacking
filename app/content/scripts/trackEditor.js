@@ -192,18 +192,15 @@ TrackEditorState.prototype = {
   setPropertyValue: function(property, value) {
     this._ensurePropertyData(property);    
     this._properties[property].value = value;
-    this._properties[property].edited = 
-        this._properties[property].value != this._properties[property].originalValue;
-    
-    // The property has changed, and may be valid.
-    // We don't want to validate on every change,
-    // so wait until someone calls validatePropertyValue()
-    this._properties[property].knownInvalid = false;
+    this._properties[property].edited = true;
 
     // Multiple values no longer matter
     this._properties[property].hasMultiple = false;
     
-    this._notifyPropertyListeners(property);
+    // The property has changed, and may be valid.
+    // We don't want to validate on every change,
+    // so wait until someone calls validatePropertyValue()
+    this.validatePropertyValue(property);
   },
   
   /** 
@@ -271,13 +268,16 @@ TrackEditorState.prototype = {
       // that denominator is not smaller than the numerator.
       if(valid) {
         // Track number greater than total tracks, invalid value.
+        var numValue = parseInt(value);
         if(property == SBProperties.totalTracks &&
-           parseInt(this._properties[SBProperties.trackNumber].value) > parseInt(value)) {
+           !isNaN(numValue) &&
+           parseInt(this._properties[SBProperties.trackNumber].value) > numValue) {
           this._properties[property].knownInvalid = true;
         }
         // Disc number greater than total discs, invalid value.
         if(property == SBProperties.totalDiscs &&
-           parseInt(this._properties[SBProperties.discNumber].value) > parseInt(value)) {
+           !isNaN(numValue) &&
+           parseInt(this._properties[SBProperties.discNumber].value) > numValue) {
           this._properties[property].knownInvalid = true;
         }
       }
@@ -1278,9 +1278,6 @@ function TrackEditorInputWidget(element) {
   
   TrackEditor.state.addSelectionListener(this);
   
-  var self = this;
-  element.addEventListener("blur", function() { self.onBlur(); }, false);
-  
   // Create preceding checkbox to enable/disable when 
   // multiple tracks are selected
   this._createCheckbox();
@@ -1352,11 +1349,6 @@ TrackEditorInputWidget.prototype = {
     
     this._checkbox.checked = TrackEditor.state.isPropertyEnabled(this.property);
   },
-  
-  onBlur: function() {    
-    // Determine if the value is ok
-    TrackEditor.state.validatePropertyValue(this.property);
-  }
 }
 
 
