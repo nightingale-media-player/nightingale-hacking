@@ -1,0 +1,223 @@
+Index: extensions/venkman/resources/jar.mn
+===================================================================
+RCS file: /cvsroot/mozilla/extensions/venkman/resources/jar.mn,v
+retrieving revision 1.25
+diff -u -8 -p -r1.25 jar.mn
+--- extensions/venkman/resources/jar.mn	16 Jan 2008 20:43:44 -0000	1.25
++++ extensions/venkman/resources/jar.mn	23 May 2008 02:30:43 -0000
+@@ -1,10 +1,10 @@
+ venkman.jar:
+-% content venkman            %content/venkman/
++% content venkman            %content/venkman/ contentaccessible=yes
+ % content venkman-ff         %content/venkman/ff/
+ % content venkman-sm         %content/venkman/sm/
+ % skin    venkman modern/1.0 %skin/modern/venkman/
+ % overlay chrome://communicator/content/tasksOverlay.xul  chrome://venkman/content/venkman-overlay.xul      application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+ % overlay chrome://venkman/content/venkman-menus.xul      chrome://communicator/content/tasksOverlay.xul    application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+ % overlay chrome://venkman/content/venkman.xul            chrome://communicator/content/utilityOverlay.xul  application={92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}
+ % overlay chrome://browser/content/browser.xul            chrome://venkman/content/venkman-overlay.xul      application={ec8030f7-c20a-464f-9b0e-13a3a9e97384} application={a463f10c-3994-11da-9945-000d60ca027b}
+ % overlay chrome://messenger/content/messenger.xul        chrome://venkman/content/venkman-overlay.xul      application={3550f703-e582-4d05-9a08-453d09bdfdc6}
+Index: toolkit/mozapps/extensions/src/nsExtensionManager.js.in
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/mozapps/extensions/src/nsExtensionManager.js.in,v
+retrieving revision 1.287
+diff -u -8 -p -r1.287 nsExtensionManager.js.in
+--- toolkit/mozapps/extensions/src/nsExtensionManager.js.in	11 Apr 2008 09:44:41 -0000	1.287
++++ toolkit/mozapps/extensions/src/nsExtensionManager.js.in	23 May 2008 02:30:45 -0000
+@@ -92,16 +92,17 @@ const FILE_CHROME_MANIFEST            = 
+ const UNKNOWN_XPCOM_ABI               = "unknownABI";
+ 
+ const FILE_DEFAULT_THEME_JAR          = "classic.jar";
+ const TOOLKIT_ID                      = "toolkit@mozilla.org"
+ 
+ const KEY_PROFILEDIR                  = "ProfD";
+ const KEY_PROFILEDS                   = "ProfDS";
+ const KEY_APPDIR                      = "XCurProcD";
++const KEY_XREDIR                      = "GreD";
+ const KEY_TEMPDIR                     = "TmpD";
+ 
+ const EM_ACTION_REQUESTED_TOPIC       = "em-action-requested";
+ const EM_ITEM_INSTALLED               = "item-installed";
+ const EM_ITEM_UPGRADED                = "item-upgraded";
+ const EM_ITEM_UNINSTALLED             = "item-uninstalled";
+ const EM_ITEM_ENABLED                 = "item-enabled";
+ const EM_ITEM_DISABLED                = "item-disabled";
+@@ -114,16 +115,17 @@ const OP_NEEDS_UNINSTALL              = 
+ const OP_NEEDS_ENABLE                 = "needs-enable";
+ const OP_NEEDS_DISABLE                = "needs-disable";
+ 
+ const KEY_APP_PROFILE                 = "app-profile";
+ const KEY_APP_GLOBAL                  = "app-global";
+ const KEY_APP_SYSTEM_LOCAL            = "app-system-local";
+ const KEY_APP_SYSTEM_SHARE            = "app-system-share";
+ const KEY_APP_SYSTEM_USER             = "app-system-user";
++const KEY_XRE_GLOBAL                  = "xre-global";
+ 
+ const CATEGORY_INSTALL_LOCATIONS      = "extension-install-locations";
+ const CATEGORY_UPDATE_PARAMS          = "extension-update-params";
+ 
+ const PREFIX_NS_EM                    = "http://www.mozilla.org/2004/em-rdf#";
+ const PREFIX_NS_CHROME                = "http://www.mozilla.org/rdf/chrome#";
+ const PREFIX_ITEM_URI                 = "urn:mozilla:item:";
+ const PREFIX_EXTENSION                = "urn:mozilla:extension:";
+@@ -2012,16 +2014,17 @@ function safeInstallOperation(itemID, in
+         rollbackMove();
+         cleanUpTrash(itemLocationTrash);
+         throw e;
+       }
+     }
+   }
+   else if (installLocation.name == KEY_APP_PROFILE ||
+            installLocation.name == KEY_APP_GLOBAL ||
++           installLocation.name == KEY_XRE_GLOBAL ||
+            installLocation.name == KEY_APP_SYSTEM_USER) {
+     // Check for a pointer file and move it aside if it exists
+     var pointerFile = installLocation.location.clone();
+     pointerFile.append(itemID);
+     if (pointerFile.exists() && !pointerFile.isDirectory()) {
+       var trashFileName = itemID + "-trash";
+       var itemLocationTrash = installLocation.location.clone();
+       itemLocationTrash.append(trashFileName);
+@@ -2425,16 +2428,30 @@ function ExtensionManager() {
+   // Register Global Install Location
+   var appGlobalExtensions = getDirNoCreate(KEY_APPDIR, [DIR_EXTENSIONS]);
+   var priority = Ci.nsIInstallLocation.PRIORITY_APP_SYSTEM_GLOBAL;
+   var globalLocation = new DirectoryInstallLocation(KEY_APP_GLOBAL,
+                                                     appGlobalExtensions, true,
+                                                     priority, false);
+   InstallLocations.put(globalLocation);
+ 
++  // Register XRE Global Install Location (may be xulrunner/extensions/)
++  try {
++    var xreGlobalExtensions = getDirNoCreate(KEY_XREDIR, [DIR_EXTENSIONS]);
++  }
++  catch(e) { }
++  
++  if (xreGlobalExtensions) {
++    var priority = Ci.nsIInstallLocation.PRIORITY_XRE_SYSTEM_GLOBAL;
++    var xreLocation = new DirectoryInstallLocation(KEY_XRE_GLOBAL,
++                                                   xreGlobalExtensions, true,
++                                                   priority, false);
++    InstallLocations.put(xreLocation);
++  }
++
+   // Register App-Profile Install Location
+   var appProfileExtensions = getDirNoCreate(KEY_PROFILEDS, [DIR_EXTENSIONS]);
+   var priority = Ci.nsIInstallLocation.PRIORITY_APP_PROFILE;
+   var profileLocation = new DirectoryInstallLocation(KEY_APP_PROFILE,
+                                                      appProfileExtensions, false,
+                                                      priority, false);
+   InstallLocations.put(profileLocation);
+ 
+@@ -3613,17 +3630,17 @@ ExtensionManager.prototype = {
+         badItems.push(id);
+         continue;
+       }
+ 
+       if (ds.getItemProperty(id, "appManaged") == "true") {
+         // Force an update of the metadata for appManaged extensions since the
+         // last modified time is not updated for directories on FAT / FAT32
+         // filesystems when software update applies a new version of the app.
+-        if (location.name == KEY_APP_GLOBAL) {
++        if (location.name == KEY_APP_GLOBAL || location.name == KEY_XRE_GLOBAL) {
+           var installRDF = location.getItemFile(id, FILE_INSTALL_MANIFEST);
+           if (installRDF.exists()) {
+             var metadataDS = getInstallManifest(installRDF);
+             ds.addItemMetadata(id, metadataDS, location);
+             ds.updateProperty(id, "compatible");
+           }
+         }
+       }
+@@ -3837,16 +3854,17 @@ ExtensionManager.prototype = {
+     // items since the datasource hasn't been created yet.
+     var itemsToCheck = [];
+     if (this._checkForFileChanges()) {
+       // Create a list of all items that are to be installed so we can migrate
+       // these items's settings to the new datasource.
+       var items = PendingOperations.getOperations(OP_NEEDS_INSTALL);
+       for (i = items.length - 1; i >= 0; --i) {
+         if (items[i].locationKey == KEY_APP_PROFILE ||
++            items[i].locationKey == KEY_XRE_GLOBAL ||
+             items[i].locationKey == KEY_APP_GLOBAL)
+           itemsToCheck.push(items[i].id);
+       }
+       this._finishOperations();
+     }
+ 
+     // If there are no items to migrate settings for return early.
+     if (itemsToCheck.length == 0)
+@@ -4937,16 +4955,17 @@ ExtensionManager.prototype = {
+           var restartRequired = this.installRequiresRestart(id, ds.getItemProperty(id, "type"))
+           this._updateManifests(restartRequired);
+           return;
+         }
+       }
+     }
+     else if (installLocation.name == KEY_APP_PROFILE ||
+              installLocation.name == KEY_APP_GLOBAL ||
++             installLocation.name == KEY_XRE_GLOBAL ||
+              installLocation.name == KEY_APP_SYSTEM_USER) {
+       // Check for a pointer file and remove it if it exists
+       var pointerFile = installLocation.location.clone();
+       pointerFile.append(id);
+       if (pointerFile.exists() && !pointerFile.isDirectory())
+         pointerFile.remove(false);
+     }
+ 
+@@ -7097,17 +7116,17 @@ ExtensionsDataSource.prototype = {
+       // with and maintained by this application AND it is installed in the
+       // global install location (i.e. the place installed by the app installer)
+       // it is and can be managed by the update file - it's not an item that has
+       // been manually installed by the user into their profile dir, and as such
+       // it is always compatible with the next release of the application since
+       // we will continue to support it.
+       var locationKey = this.getItemProperty(id, "installLocation");
+       var appManaged = this.getItemProperty(id, "appManaged") == "true";
+-      if (appManaged && locationKey == KEY_APP_GLOBAL)
++      if (appManaged && (locationKey == KEY_APP_GLOBAL || locationKey == KEY_XRE_GLOBAL))
+         continue;
+ 
+       if (type != -1 && (type & desiredType) &&
+           !this.isCompatible(this, item, appVersion, platformVersion))
+         items.push(this.getItemForID(id));
+     }
+     return items;
+   },
+@@ -7663,17 +7682,17 @@ ExtensionsDataSource.prototype = {
+     // Assert properties with single values
+     var singleProps = ["version", "updateURL", "updateService", "optionsURL",
+                        "aboutURL", "iconURL", "internalName", "updateKey"];
+ 
+     // Items installed into restricted Install Locations can also be locked
+     // (can't be removed or disabled), and hidden (not shown in the UI)
+     if (installLocation.restricted)
+       singleProps = singleProps.concat(["locked", "hidden"]);
+-    if (installLocation.name == KEY_APP_GLOBAL)
++    if (installLocation.name == KEY_APP_GLOBAL || installLocation.name == KEY_XRE_GLOBAL)
+       singleProps = singleProps.concat(["appManaged"]);
+     for (var i = 0; i < singleProps.length; ++i) {
+       var property = EM_R(singleProps[i]);
+       var literal = installManifest.GetTarget(gInstallManifestRoot, property, true);
+       // If literal is null, _setProperty will remove any existing.
+       this._setProperty(this._inner, targetRes, property, literal);
+     }
+ 
+@@ -8329,17 +8348,17 @@ ExtensionsDataSource.prototype = {
+ 
+   /**
+    * Get the em:appManaged property. This prevents extensions from hiding
+    * extensions installed into locations other than the app-global location.
+    */
+   _rdfGet_appManaged: function(item, property) {
+     var id = stripPrefix(item.Value, PREFIX_ITEM_URI);
+     var locationKey = this.getItemProperty(id, "installLocation");
+-    if (locationKey != KEY_APP_GLOBAL)
++    if (locationKey != KEY_APP_GLOBAL && locationKey != KEY_XRE_GLOBAL)
+       return EM_L("false");
+     return null;
+   },
+ 
+   /**
+    * Get the em:hidden property. This prevents extensions from hiding
+    * extensions installed into locations other than restricted locations.
+    */
