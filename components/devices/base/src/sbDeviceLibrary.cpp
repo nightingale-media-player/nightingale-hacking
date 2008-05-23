@@ -604,8 +604,9 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
       mMainLibraryListener->SetSyncMode(aMgmtType, nsnull);
       
       // mark this as read-write
-      rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
-                             EmptyString());
+      nsString str;
+      str.SetIsVoid(PR_TRUE);
+      rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY), str);
       NS_ENSURE_SUCCESS(rv, rv);
       
       // remove the metadata updating listener
