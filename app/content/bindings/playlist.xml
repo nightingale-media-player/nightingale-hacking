@@ -1531,7 +1531,9 @@
                 listView.selection.selectAll();
                 break;
               case "cmd_delete":
-                this._self.removeSelectedTracks();
+                if (this._self.mediaList.userEditable) {
+                  this._self.removeSelectedTracks();
+                }
                 break;
               case "cmd_find":
                 var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
@@ -1558,14 +1560,17 @@
             return false;
           },
           isCommandEnabled: function(aCommand) {
-            if ( aCommand == 'cmd_selectAll' ||
-                 aCommand == 'cmd_find') {
-              return true;
-            } else if ( aCommand == 'cmd_copy' ||
-                        aCommand == 'cmd_delete' ) {
-              if (this._self._mediaListView.selection.count > 0 ) {
+            switch (aCommand) {
+              case "cmd_selectAll":
+              case "cmd_find":
                 return true;
-              }
+              case "cmd_delete":
+                if (!this._self.mediaList.userEditable) {
+                  return false;
+                }
+                // fall through to have selection
+              case "cmd_copy":
+                return (this._self._mediaListView.selection.count > 0);
             }
             return false;
           },
