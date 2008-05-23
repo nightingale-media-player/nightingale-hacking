@@ -1668,6 +1668,7 @@ TrackEditorAdvancedTab.prototype = {
         else {
           var label = document.createElement("label");
           label.setAttribute("property", property);
+          label.setAttribute("crop", "end");
           container.appendChild(label);
         }
       }

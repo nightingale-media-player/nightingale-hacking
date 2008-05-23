@@ -194,7 +194,7 @@
         <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#contentURL"/>
-              <label property="http://songbirdnest.com/data/1.0#contentURL" crop="center" flex="1"/>
+              <label property="http://songbirdnest.com/data/1.0#contentURL" crop="center"/>
         </hbox>
       </vbox>
 
