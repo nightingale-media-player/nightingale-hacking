@@ -48,6 +48,7 @@ class CDatabaseQuery;
 #include <nsCOMPtr.h>
 #include <nsTArray.h>
 #include <nsStringGlue.h>
+#include <nsIClassInfo.h>
 #include <nsInterfaceHashtable.h>
 #include <nsHashKeys.h>
 
@@ -94,7 +95,8 @@ class nsIEventTarget;
 class nsIURI;
 class sbIDatabaseEngine;
 
-class CDatabaseQuery : public sbIDatabaseQuery
+class CDatabaseQuery : public sbIDatabaseQuery,
+                       public nsIClassInfo
 {
 friend class CDatabaseEngine;
 friend class QueryProcessorThread;
@@ -109,6 +111,7 @@ public:
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDATABASEQUERY
+  NS_DECL_NSICLASSINFO
 
   nsresult Init();
 

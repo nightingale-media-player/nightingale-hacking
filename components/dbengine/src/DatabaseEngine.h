@@ -299,7 +299,9 @@ public:
     for(; current < length; current++) {
 
       CDatabaseQuery *pQuery = m_Queue[current];
-      nsresult rv = NS_ProxyRelease(pQuery->mLocationURIOwningThread, pQuery);
+      nsresult rv = 
+        NS_ProxyRelease(pQuery->mLocationURIOwningThread, 
+                        NS_ISUPPORTS_CAST(sbIDatabaseQuery *, pQuery));
 
       if (NS_FAILED(rv)) {
         NS_WARNING("Could not proxy release pQuery");

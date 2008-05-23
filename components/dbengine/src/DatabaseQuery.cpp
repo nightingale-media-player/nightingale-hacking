@@ -46,6 +46,8 @@
 #include <nsIServiceManager.h>
 #include <nsThreadUtils.h>
 #include <nsSupportsArray.h>
+#include <nsIClassInfoImpl.h>
+#include <nsIProgrammingLanguage.h>
 
 #include <sbProxyUtils.h>
 #include <sbLockUtils.h>
@@ -69,7 +71,20 @@ static PRLogModuleInfo* sDatabaseQueryLog = nsnull;
 // CDatabaseQuery Class
 //=============================================================================
 //-----------------------------------------------------------------------------
-NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseQuery, sbIDatabaseQuery)
+NS_IMPL_THREADSAFE_ADDREF(CDatabaseQuery)
+NS_IMPL_THREADSAFE_RELEASE(CDatabaseQuery)
+
+NS_INTERFACE_MAP_BEGIN(CDatabaseQuery)
+  NS_IMPL_QUERY_CLASSINFO(CDatabaseQuery)
+  NS_INTERFACE_MAP_ENTRY(sbIDatabaseQuery)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIDatabaseQuery)
+NS_INTERFACE_MAP_END
+
+NS_IMPL_CI_INTERFACE_GETTER1(CDatabaseQuery, 
+                             sbIDatabaseQuery)
+
+NS_DECL_CLASSINFO(CDatabaseQuery)
+NS_IMPL_THREADSAFE_CI(CDatabaseQuery)
 
 //-----------------------------------------------------------------------------
 CDatabaseQuery::CDatabaseQuery()

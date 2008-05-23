@@ -1586,7 +1586,9 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
     // Release the query on the same thread that the location URI class was
     // created on.  This prevents an assertion.
-    nsresult rv = NS_ProxyRelease(pQuery->mLocationURIOwningThread, pQuery);
+    nsresult rv = 
+      NS_ProxyRelease(pQuery->mLocationURIOwningThread, 
+                      NS_ISUPPORTS_CAST(sbIDatabaseQuery *, pQuery));
     if (NS_FAILED(rv)) {
       NS_WARNING("Could not proxy release pQuery");
       NS_RELEASE(pQuery);
