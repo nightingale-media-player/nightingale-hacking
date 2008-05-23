@@ -687,6 +687,13 @@ function BrowserReload()
   return BrowserReloadWithFlags(reloadFlags);
 }
 
+function BrowserReloadSkipCache()
+{
+  // Bypass proxy and cache.
+  const reloadFlags = nsIWebNavigation.LOAD_FLAGS_BYPASS_PROXY | nsIWebNavigation.LOAD_FLAGS_BYPASS_CACHE;
+  return BrowserReloadWithFlags(reloadFlags);
+}
+
 function BrowserReloadWithFlags(reloadFlags)
 {
   /* First, we'll try to use the session history object to reload so
@@ -725,15 +732,55 @@ function formatURL(aFormat, aIsPref) {
     formatter.formatURLPref(aFormat) : formatter.formatURL(aFormat);
 }
 
+function HandleAppCommandEvent(evt)
+{
+  evt.stopPropagation();
+  switch (evt.command) {
+  case "Back":
+    gBrowser.goBack();
+    break;
+  case "Forward":
+    gBrowser.goForward();
+    break;
+  case "Reload":
+    BrowserReloadSkipCache();
+    break;
+  case "Stop":
+    gBrowser.stop();
+    break;
+  case "Search":
+    BrowserSearch.webSearch();
+    break;
+  case "Bookmarks":
+    // Todo:
+    // - Open the service pane if it is closed
+    // - Expand the bookmarks folder if it's closed
+    // - EnsureVisible on the folder item
+    break;
+  case "Home":
+    gBrowser.goHome();
+    break;
+  default:
+    break;
+  }
+}
 var gPrefService;
 var gNavigatorBundle;
 
 function onInitBrowserUtilities() {
   window.removeEventListener("load", onInitBrowserUtilities, false);
+  window.addEventListener("unload", onShutdownBrowserUtilities, false);
   gNavigatorBundle = document.getElementById("bundle_browser");
   var gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
                                .getService(Components.interfaces.nsIPrefBranch2);
   gBidiUI = isBidiEnabled();
+
+  window.addEventListener("AppCommand", HandleAppCommandEvent, true);  
+}
+
+function onShutdownBrowserUtilities() {
+  window.removeEventListener("unload", onShutdownBrowserUtilities, false);
+  window.removeEventListener("AppCommand", HandleAppCommandEvent, true);  
 }
 
 window.addEventListener("load", onInitBrowserUtilities, false);
