@@ -41,7 +41,7 @@
  * for the Extension Manager component.
  */
 
-const PREFIX_NS_EM                    = "http://www.mozilla.org/2004/em-rdf#";
+var PREFIX_NS_EM                    = "http://www.mozilla.org/2004/em-rdf#";
 const PREFIX_NS_CHROME                = "http://www.mozilla.org/rdf/chrome#";
 const PREFIX_ITEM_URI                 = "urn:mozilla:item:";
 
