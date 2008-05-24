@@ -72,7 +72,8 @@ dialog,
 window,
 prefwindow,
 sb-playlist,
-page
+page,
+panel
 {
   background-color: #313131; /* color of the Main Window **/
   color: #B3BAAC; /* Light Color 1 */
