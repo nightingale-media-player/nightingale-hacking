@@ -454,9 +454,19 @@ try
   }
   
   function _applySearch() {
+    _resetSearchString(jumpto_view);
+
     var search = document.getElementById("jumpto.textbox").value;
     if (source_search != "") search = source_search + " " + search;
-    jumpto_view.searchConstraint = LibraryUtils.createStandardSearchConstraint(search);
+
+    var cfs = jumpto_view.cascadeFilterSet;
+    var searchIndex = cfs.appendSearch(["*"], 1);
+    if (search && search != "") {
+      var searchArray = search.split(" ");
+      cfs.set(searchIndex, searchArray, searchArray.length);
+    } else { 
+      cfs.set(searchIndex, [], 0);
+    }
   }
   
   function onJumpToPlay(event) {
@@ -617,7 +627,13 @@ try
   }
 
   function _resetSearchString( view ) {
-    view.searchConstraint = null;
+    var cfs = view.cascadeFilterSet;
+    for ( var i=0; i < cfs.length; i++ ) {
+      if (cfs.isSearch(i)) {
+        cfs.remove(i);
+        break;
+      }
+    }
   }
     
   function _getFilters( view ) {
@@ -654,6 +670,7 @@ try
     var cfs = view.cascadeFilterSet;
     if (!cfs || cfs.length <= 0) return false;
     for (var i=0;i<cfs.length;i++) {
+      if (cfs.isSearch(i)) continue;
       if (cfs.getProperty(i) == prop) return true;
     }
     return false;
