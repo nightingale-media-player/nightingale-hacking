@@ -387,8 +387,17 @@
       <key id="key_stop" keycode="VK_ESCAPE" oncommand="gBrowser.stop();"/>
       <key id="metadata-key" modifiers="accel" key="&menu.tools.metadata.accesskey;" command="cmd_metadata"/>
 
+#ifndef XP_MACOSX
       <key id="goBackKb"  keycode="VK_LEFT" command="Browser:Back" modifiers="alt"/>
       <key id="goForwardKb"  keycode="VK_RIGHT" command="Browser:Forward" modifiers="alt"/>
+#else
+      <key id="goBackKb" keycode="VK_LEFT" command="Browser:Back" modifiers="accel" />
+      <key id="goForwardKb" keycode="VK_RIGHT" command="Browser:Forward" modifiers="accel" />
+#endif
+#ifdef XP_UNIX
+      <key id="goBackKb2" key="&goBackCmd.commandKey;" command="Browser:Back" modifiers="accel"/>
+      <key id="goForwardKb2" key="&goForwardCmd.commandKey;" command="Browser:Forward" modifiers="accel"/>
+#endif
     </keyset>
 
 
