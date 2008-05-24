@@ -278,6 +278,8 @@
         <menuseparator sbid="blockedPopupSeparator"/>
       </menupopup>
 
+      <tooltip id="aHTMLTooltip" onpopupshowing="return FillInHTMLTooltip(document.tooltipNode);"/>
+      
     </popupset> 
 
 
