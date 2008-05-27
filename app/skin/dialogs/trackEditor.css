@@ -38,20 +38,30 @@ See app/content/xul/trackEditor.xul
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-
-/** TODO: Move all colors to rubberducky **/
+/* Structure */
+#info_right_column {
+  margin-left: 10px;
+}
 
 .dialog-content-box {
   padding:5px !important;
 }
+
+
+/* Labels */
 label {
   padding:0;
   margin:5px 5px 0 !important;
 }
 
+/* Slash between two numeric boxes */
+.separator-label {
+  margin: 0px !important;
+  padding: 0px !important;
+}
 
 
-/* checkboxes */
+/* Checkboxes */
 checkbox {
   margin-right:0 !important;
   max-width:20px !important;
@@ -61,21 +71,11 @@ checkbox .checkbox-label-box {
 }
 
 
-#info_right_column {
-  margin-left: 10px;
-}
-
-
-/* inputs */
+/* Inputs */
 textbox,
 sb-rating {
   -moz-border-radius:5px;
   min-height: 22px;
-  border-top:1px solid rgb(0,0,0) !important; /** Button Highlight */
-  border-right:1px solid rgb(0,0,0) !important; /** Button Shadow */ 
-  border-bottom:1px solid rgb(92,95,88) !important; /** Button Shadow */ 
-  border-left:1px solid rgb(0,0,0) !important; /** Button Shadow */ 
-  background-color: rgb(15,16,15) !important; /** Groove */
 }
 
 textbox {
@@ -91,15 +91,32 @@ textbox[disabled],
 sb-rating[disabled] {
   opacity:0.33;
 }
-textbox[edited] {
- color:rgb(255,246,133);
+
+/* Number inputs */
+textbox.long-number-input {
+  width: 4em !important;
 }
-/** Note that this style exists elsewhere **/
-textbox[invalid] {
-  background-color:rgb(51,25,25) !important;
-  color:rgb(255,127,127) !important;
+textbox.short-number-input {
+  width: 3em !important;
 }
 
+/* Align checkbox with the top left of multiline textboxes */
+.multiline-textbox-container > hbox {
+  -moz-box-align: start;
+}
+.multiline-textbox-container > hbox > checkbox {
+  margin-top: 8px;
+}
+
+
+/* Notification */
+.dialog-notification {
+  -moz-border-radius:3px;
+  margin:0 10px;
+}
+
+
+/* Buttons */
 button.goto-url label {
   display: none;
 }
@@ -120,82 +137,7 @@ button.goto-url {
 button.goto-url:hover {
   -moz-image-region: rect(12px 12px 24px 0px);
 }
-/* number inputs */
-textbox.long-number-input {
-  width: 4em !important;
-}
-textbox.short-number-input {
-  width: 3em !important;
-}
 
-/* Slash between two numeric boxes */
-.separator-label {
-  margin: 0px !important;
-  padding: 0px !important;
-}
-
-/* Align checkbox with the top left of multiline textboxes */
-.multiline-textbox-container > hbox {
-  -moz-box-align: start;
-}
-.multiline-textbox-container > hbox > checkbox {
-  margin-top: 8px;
-}
-
-
-/* notification */
-#notification_box {
-  -moz-border-radius:3px;
-  margin:0 10px;
-  border:1px solid !important;
-  border-top:1px solid rgb(0,0,0) !important; /** Button Highlight */
-  border-right:1px solid rgb(0,0,0) !important; /** Button Shadow */ 
-  border-bottom:1px solid rgb(92,95,88) !important; /** Button Shadow */ 
-  border-left:1px solid rgb(0,0,0) !important; /** Button Shadow */
-  font-size: 12px;
-}
-#notification_box.notification-warning {
-  background-color: rgb(230,172,172);
-}
-.notification-warning > #notification_text {
-  color: rgb(80,40,40) !important;
-}
-#notification_box.notification-info {
-  background-color: rgb(255,255,200);
-}
-#notification_text {
-  color: rgb(80,80,40) !important;
-}
-
-
-
-/* genre */
-#genredropdown > .autocomplete-history-dropmarker {
-  -moz-binding: url("chrome://global/content/bindings/autocomplete.xml#history-dropmarker");
-  display: inline;
-
-  padding:0 !important;
-  margin:0 !important;
-  border:none !important;
-  max-height:14px !important;
-  max-width:14px !important;
-
-  background-image:url('chrome://songbird/skin/menu/dropmarker.png');
-  background-position:center center;
-  background-repeat:no-repeat;
-}
-#genredropdown > .autocomplete-history-dropmarker image {
-  display:none;
-}
-/** Note: when we force the dropdown like this it does not respect the readonly
-    attribute.  For now just force it off when readonly **/
-#genredropdown[readonly] > .autocomplete-history-dropmarker {
-  -moz-binding: none;
-  display: none;
-}
-
-
-/* buttons */
 button {
   font-size:12px;
 }
@@ -204,6 +146,7 @@ button label {
   padding:0;
   margin:0 0 1px !important;
 }
+
 #prev_button,
 #next_button {
   width:28px !important;
@@ -247,7 +190,7 @@ button label {
 
 /**
 
-The following for the advanced pane
+The following are for the advanced pane
 
 .number {
   font-style: italic !important;
