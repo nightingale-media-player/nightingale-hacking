@@ -978,7 +978,7 @@ tabpanels {
 
 /** 
 *******************************************************************************
-NOTIFICATION HAT
+BROWSER NOTIFICATION HAT
 *******************************************************************************
 */
 notification[type="warning"]
@@ -1027,6 +1027,35 @@ notification > button:active
   border-right: 1px solid #B3BAAC; /** Light Color 1 */
   border-top: 1px solid #8A8F84; /** Light Color 2 */
 }
+
+
+/** 
+*******************************************************************************
+DIALOG NOTIFICATION BOX (used in the metadata editor)
+*******************************************************************************
+*/
+
+.dialog-notification {
+  border:1px solid !important;
+  border-top:1px solid rgb(0,0,0) !important; /** Button Highlight */
+  border-right:1px solid rgb(0,0,0) !important; /** Button Shadow */ 
+  border-bottom:1px solid rgb(92,95,88) !important; /** Button Shadow */ 
+  border-left:1px solid rgb(0,0,0) !important; /** Button Shadow */
+  font-size: 12px;
+}
+.dialog-notification.notification-warning {
+  background-color: rgb(230,172,172);
+}
+.dialog-notification.notification-warning > #notification_text {
+  color: rgb(80,40,40) !important;
+}
+.dialog-notification.notification-info {
+  background-color: rgb(255,255,200);
+}
+.dialog-notification-text {
+  color: rgb(80,80,40) !important;
+}
+
 
 
 
@@ -1464,10 +1493,29 @@ html|*.numberbox-input[disabled="true"]
 
 /* ..... invalid state ..... */
 textbox[invalid="true"] {
-  background-color: red;
+  background-color:rgb(51,25,25) !important;
+  color:rgb(255,127,127) !important;
 } 
 
+/* ..... edited state ..... */
+textbox[edited] {
+ color:rgb(255,246,133);
+}
 
+
+/**
+*******************************************************************************
+RATING WIDGET (used in the metadata editor)
+*******************************************************************************
+*/
+sb-rating {
+  border:1px solid;
+  border-bottom-color: #797f76; /** Button Highlight */
+  border-left-color: #202220; /** Button Shadow */ 
+  border-top-color: #202220; /** Button Shadow */ 
+  border-right-color: #202220; /** Button Shadow */
+  background-color: #0f100f; /** Groove */ 
+}
 
 /**
 *******************************************************************************

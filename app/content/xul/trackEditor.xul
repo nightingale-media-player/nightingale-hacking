@@ -68,8 +68,8 @@
   <menubar id="main-menubar" hidden="true" oncommand="onMenu(event.target)" mousethrough="never"/>
 
   <!-- Notification box used to warn when editing multiple tracks, etc. -->
-  <hbox id="notification_box" align="center" pack="center">
-    <description id="notification_text" />
+  <hbox id="notification_box" align="center" pack="center" class="dialog-notification">
+    <description id="notification_text" class="dialog-notification-text" />
   </hbox>
   
   
@@ -194,7 +194,7 @@
         <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#contentURL"/>
-              <label property="http://songbirdnest.com/data/1.0#contentURL" crop="center"/>
+              <label property="http://songbirdnest.com/data/1.0#contentURL" crop="center" flex="1" />
         </hbox>
       </vbox>
 
