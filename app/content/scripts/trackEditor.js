@@ -250,8 +250,10 @@ TrackEditorState.prototype = {
    * Check the result via isPropertyInvalidated.
    */
   validatePropertyValue: function(property) {
+    var needsNotification = true;
+
     this._ensurePropertyData(property);
-    
+
     // If no changes were made, don't bother invalidating
     if (this._properties[property].edited) {  
 
@@ -268,22 +270,53 @@ TrackEditorState.prototype = {
       // that denominator is not smaller than the numerator.
       if(valid) {
         // Track number greater than total tracks, invalid value.
-        var numValue = parseInt(value);
-        if(property == SBProperties.totalTracks &&
-           !isNaN(numValue) &&
-           parseInt(this._properties[SBProperties.trackNumber].value) > numValue) {
-          this._properties[property].knownInvalid = true;
+        if(property == SBProperties.totalTracks ||
+           property == SBProperties.trackNumber) {
+          
+          this._properties[SBProperties.totalTracks].knownInvalid = 
+           !isNaN(this._properties[SBProperties.totalTracks].value) &&
+           !isNaN(this._properties[SBProperties.trackNumber].value) &&
+           (parseInt(this._properties[SBProperties.totalTracks].value) < 
+            parseInt(this._properties[SBProperties.trackNumber].value))
+          
+          this._properties[SBProperties.trackNumber].knownInvalid = 
+            !isNaN(this._properties[SBProperties.totalTracks].value) &&
+            !isNaN(this._properties[SBProperties.trackNumber].value) &&
+            (parseInt(this._properties[SBProperties.trackNumber].value) > 
+             parseInt(this._properties[SBProperties.totalTracks].value))
+
+          needsNotification = false;
+
+          this._notifyPropertyListeners(SBProperties.totalTracks);
+          this._notifyPropertyListeners(SBProperties.trackNumber);
         }
         // Disc number greater than total discs, invalid value.
-        if(property == SBProperties.totalDiscs &&
-           !isNaN(numValue) &&
-           parseInt(this._properties[SBProperties.discNumber].value) > numValue) {
-          this._properties[property].knownInvalid = true;
+        if(property == SBProperties.totalDiscs ||
+           property == SBProperties.discNumber) {
+          
+          this._properties[SBProperties.totalDiscs].knownInvalid =
+            !isNaN(this._properties[SBProperties.totalDiscs].value) &&
+            !isNaN(this._properties[SBProperties.discNumber].value) &&
+            (parseInt(this._properties[SBProperties.discNumber].value) > 
+             parseInt(this._properties[SBProperties.totalDiscs].value));
+          
+          this._properties[SBProperties.discNumber].knownInvalid = 
+            !isNaN(this._properties[SBProperties.totalDiscs].value) &&
+            !isNaN(this._properties[SBProperties.discNumber].value) &&
+            (parseInt(this._properties[SBProperties.totalDiscs].value) <
+             parseInt(this._properties[SBProperties.discNumber].value));
+             
+          needsNotification = false;
+          
+          this._notifyPropertyListeners(SBProperties.totalDiscs);
+          this._notifyPropertyListeners(SBProperties.discNumber);
         }
       }
     }
 
-    this._notifyPropertyListeners(property);
+    if(needsNotification) {
+      this._notifyPropertyListeners(property);
+    }
   },
   
   /** 
