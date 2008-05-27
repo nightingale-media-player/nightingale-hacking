@@ -165,15 +165,6 @@
        ********************************************************************* -->
 
       <!--
-       * update
-       *
-       *   This function forces an update (repaint) of the progress widget.
-       -->
-      
-      <method name="update"><body><![CDATA[
-        DPW.update(this);
-      ]]></body></method>
-      <!--
        * importExternalServices
        *
        *   This function imports external services.

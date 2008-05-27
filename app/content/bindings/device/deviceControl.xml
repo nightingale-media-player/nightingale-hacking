@@ -70,6 +70,7 @@
    *   update                   Device is updating content.
    *   busy                     Device is busy.
    *   idle                     Device is idle.
+   *   mgmt_not_manual          Device is not configured for manual management.
    *
    *   Actions
    *   =======
@@ -386,24 +387,29 @@
         label_default="&command.device.devicesync;"
         accesskey_default="&command.device.devicesync.accesskey;"
         action_default="sync"
+        disabled_default="true"
+        disabled_mgmt_not_manual="remove_attribute"
 
         label_copy="&command.device.canceldevicecopy;"
         accesskey_copy="&command.device.canceldevicecopy.accesskey;"
         action_copy="cancel"
+        disabled_copy="remove_attribute"
 
         label_delete="&command.device.canceldevicedelete;"
         accesskey_delete="&command.device.canceldevicedelete.accesskey;"
         action_delete="cancel"
+        disabled_delete="remove_attribute"
 
         label_sync="&command.device.canceldevicesync;"
         accesskey_sync="&command.device.canceldevicesync.accesskey;"
         action_sync="cancel"
+        disabled_sync="remove_attribute"
 
         label_update="&command.device.canceldeviceupdate;"
         accesskey_update="&command.device.canceldeviceupdate.accesskey;"
         action_update="cancel"
+        disabled_update="remove_attribute"
 
-        disabled_default="remove_attribute"
         disabled_mount="true"/>
     </content>
   </binding>

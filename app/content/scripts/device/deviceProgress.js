@@ -140,7 +140,7 @@ var DPW = {
 
     // Hide the progress info by default and then update it.
     this._progressInfoBox.hidden = true;
-    this.update();
+    this._update();
   },
 
 
@@ -162,7 +162,7 @@ var DPW = {
    * \brief Update the device progress UI according to the current device state.
    */
 
-  update: function DPW_update() {
+  _update: function DPW__update() {
     // Get the sync, cancel and finish buttons.
     var syncButton   = this._getElement("sync_operation_button");
     var cancelButton = this._getElement("cancel_operation_button");
@@ -396,7 +396,7 @@ var DPW = {
     } catch (err) {
       Cu.reportError(err);
     }
-    this.update();
+    this._update();
   },
   
   /**
@@ -640,7 +640,7 @@ var DPW = {
         }
         this._updateDeviceInfo(aMediaItem);
         this._updateDeviceState(Ci.sbIDevice.STATE_IDLE);
-        this.update();
+        this._update();
       break;
     
       case Ci.sbIDeviceEvent.EVENT_DEVICE_SYNC_START:
@@ -657,7 +657,11 @@ var DPW = {
         }
         this._updateDeviceInfo(aMediaItem);
         this._updateDeviceState(this._device.state);
-        this.update();
+        this._update();
+      break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED:
+        this._update();
       break;
     }
   },
@@ -671,7 +675,7 @@ var DPW = {
       this._device.cancelRequests();
       this._updateDeviceInfo(null);
       this._updateDeviceState(Ci.sbIDevice.STATE_IDLE);
-      this.update();
+      this._update();
     } catch (e) {
       dump("Error: " + e);
       Cu.reportError("Error occurred when canceling requests: " + e);
@@ -690,7 +694,7 @@ var DPW = {
       Cu.reportError("Error occurred when attempting to sync: " + e);
       this._currentState = Ci.sbIDevice.STATE_IDLE;
       this._updateDeviceInfo(null);
-      this.update();
+      this._update();
     }
   },
 

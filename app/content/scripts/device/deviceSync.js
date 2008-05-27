@@ -167,8 +167,6 @@ var DeviceSyncWidget = {
         /* Extract and write the preferences. */
         this.musicPrefsExtract();
         this.musicPrefsWrite();
-        var deviceProgress = document.getElementById("sb-device-progress");
-        deviceProgress.update();
         break;
 
       default :

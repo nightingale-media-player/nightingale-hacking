@@ -102,6 +102,7 @@ deviceControlWidget.prototype = {
   //   _deviceListenerAdded     True if a device listener has been added.
   //   _currentState            Current device operational state.
   //   _currentReadOnly         Current device read only state.
+  //   _currentMgmtType         Current device management type.
   //
 
   _widget: null,
@@ -112,6 +113,7 @@ deviceControlWidget.prototype = {
   _deviceListenerAdded: false,
   _currentState: Ci.sbIDevice.STATE_IDLE,
   _currentReadOnly: false,
+  _currentMgmtType: Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL,
 
 
   //----------------------------------------------------------------------------
@@ -417,17 +419,20 @@ deviceControlWidget.prototype = {
     // Get the device state.
     var state = this._device.state;
     var readOnly = this._isReadOnly();
+    var mgmtType = this._deviceLibrary.mgmtType;
 
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
         (this._currentState == state) &&
-        (this._currentReadOnly == readOnly)) {
+        (this._currentReadOnly == readOnly) &&
+        (this._currentMgmtType == mgmtType)) {
       return;
     }
 
     // Update the current state.
     this._currentState = state;
     this._currentReadOnly = readOnly;
+    this._currentMgmtType = mgmtType;
 
     // Update widget attributes.
     var updateAttributeList = [];
@@ -468,6 +473,8 @@ deviceControlWidget.prototype = {
     else if ((this._currentState == Ci.sbIDevice.STATE_DELETING) &&
              this._getStateAttribute(attrVal, aAttrName, "delete")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_MOUNTING) &&
+             this._getStateAttribute(attrVal, aAttrName, "mount")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_SYNCING) &&
              this._getStateAttribute(attrVal, aAttrName, "sync")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_UPDATING) &&
              this._getStateAttribute(attrVal, aAttrName, "update")) {}
@@ -475,6 +482,8 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "busy")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_IDLE) &&
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
+    else if ((this._currentMgmtType != Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL) &&
+             this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
     else if (this._getStateAttribute(attrVal, aAttrName, "default")) {}
     else this._getStateAttribute(attrVal, aAttrName, null);
 
