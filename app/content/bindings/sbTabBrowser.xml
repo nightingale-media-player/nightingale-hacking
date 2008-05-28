@@ -281,13 +281,46 @@
             SBDataSetBoolValue( "firstrun.tabs.restore", true );
           } else {
 
+            // check if this is an invalid chrome url
+            var cr = Components.classes['@mozilla.org/chrome/chrome-registry;1']
+                .getService(Components.interfaces.nsIChromeRegistry);
+            var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                .getService(Components.interfaces.nsIIOService);
+            function isInvalidChromeURL(url) {
+              var uri;
+              // parse the URL
+              try {
+                uri = ios.newURI(url, null, null);
+              } catch (e) {
+                // can't parse the url, that will be handled elsewhere
+                return false;
+              }
+              // if it's not chrome then we don't care
+              if (uri.scheme != 'chrome') {
+                return false;
+              }
+              // resolve the chrome url with the registry
+              try {
+                uri = cr.convertChromeURL(uri);
+              } catch (e) {
+                // an exception here means that this chrome URL isn't valid
+                return true;
+              }
+              // if the scheme *is* chrome, then something's wrong
+              if (uri.scheme == 'chrome') {
+                return true;
+              }
+              // ok - things look fine
+              return false;
+            }
+
             // Otherwise, just restore whatever was there, previously.
             var tabs = this._tabState;
             if (tabs) {
               var location = "_top";
               var tab;              
-              for (var i=0; i<tabs.length; i++) {  
-                tab = tabs[i];             
+              for (var i=0; i<tabs.length; i++) {
+                tab = tabs[i];
                 // If the tab had a media page, restore it by reloading
                 // the media list
                 if (tab.listGUID) {
@@ -299,6 +332,10 @@
                   // BMO 420815 – XUL Cache interferes with onload when loading multiple 
                   //              instances of the same XUL file
                   var url = tab.pageURL;
+                  if (isInvalidChromeURL(url)) {
+                    // we don't want to restore invalid chrome URLs
+                    continue;
+                  }
                   if (url.indexOf("&bypassXULCache") == -1) {
                     url += "&bypassXULCache="+ Math.random();
                   }
@@ -308,9 +345,13 @@
                                          
                 // Otherwise just reload the URL
                 } else {
+                  if (isInvalidChromeURL(tab)) {
+                    // we don't want to restore invalid chrome URLs
+                    continue;
+                  }
                   this.loadURI(tab, null, null, null, location);
                 }
-                
+
                 // Load the first url into the current tab and subsequent 
                 // urls into new tabs 
                 location = "_blank";
