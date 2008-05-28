@@ -52,7 +52,7 @@
  onload="TrackEditor.onLoadTrackEditor();"
  onunload="TrackEditor.onUnloadTrackEditor();"
  ondialogaccept="TrackEditor.closeAndApply();"
- height="600"
+ height="620"
  width="500"
  hidechrome="true"
  buttons="none"
@@ -75,16 +75,18 @@
   
   <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox" mousethrough="never">
     <tabs>
-      <tab label="&trackeditor.tab.summary.title;" id="summary"/>
+      <!--><tab label="&trackeditor.tab.summary.title;" id="summary"/>-->
       <tab label="&trackeditor.tab.edit.title;" id="edit"/>
-      <tab label="&trackeditor.tab.lyrics.title;" id="lyrics"/>
+      <!--><tab label="&trackeditor.tab.lyrics.title;" id="lyrics"/>-->
       <!--tab disabled="true" label="Sort Values"/-->
     </tabs>
 
     <tabpanels flex="1">
+      
+      <!--
       <vbox flex="1" id="summary-tab">
-      <!--  Summary page.  Needs styling and layout.
-            When implementing this MAKE SURE THAT LABELS CROP! I MEAN IT! -->
+        Summary page.  Needs styling and layout.
+            When implementing this MAKE SURE THAT LABELS CROP! I MEAN IT! 
       
         <hbox flex="1">
 
@@ -105,9 +107,7 @@
         </hbox>
         
         <hbox id="main-block">
-          <!--
-             - The left column of the main data block.
-             -->
+             
           <vbox id="left-column">
             <hbox>
               <label property-type="label"
@@ -131,7 +131,7 @@
               <label property="http://songbirdnest.com/data/1.0#lastSkipTime" crop="end" />
             </hbox>
             
-            <!-- ONE LINE SPACER GOES HERE -->
+
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#contentLength"/>
@@ -141,16 +141,16 @@
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#bitRate"/>
               <label property="http://songbirdnest.com/data/1.0#bitRate" crop="end" />
-              <label>kbps</label><!-- TODO: format should (be able to) do this -->
+              <label>kbps</label>
             </hbox>
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#sampleRate"/>
               <label property="http://songbirdnest.com/data/1.0#sampleRate" crop="end" />
-              <label>kHz</label> <!--TODO: should say kHz -->
+              <label>kHz</label> 
             </hbox>
             
-            <!-- spacer line goes here -->
+
             <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#recordLabelName"/>
@@ -158,9 +158,6 @@
             </hbox>
           </vbox>
           
-          <!--
-             - The right column of the main data block.
-             -->
           <vbox id="right-column">
             <hbox>
               <label property-type="label"
@@ -173,13 +170,13 @@
               <label property="http://songbirdnest.com/data/1.0#created" crop="end" />
             </hbox>
             <hbox>
-              <!-- todo: use the page title / icon here -->
+
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#originPage"/>
               <label property="http://songbirdnest.com/data/1.0#originPage" crop="end" />
             </hbox>
             
-            <!-- gap -->
+
             
             <hbox>
               <label property-type="label"
@@ -190,14 +187,13 @@
           </vbox>
         </hbox>
         
-        <!-- content URL spans the bottom -->
         <hbox>
               <label property-type="label"
                      property="http://songbirdnest.com/data/1.0#contentURL"/>
               <label property="http://songbirdnest.com/data/1.0#contentURL" crop="center" flex="1" />
         </hbox>
       </vbox>
-
+  -->
       <vbox id="info-tab">      
       
         <label id="infotab_trackname_label"
@@ -330,26 +326,26 @@
 
         <!-- Wrap the multiline textbox in a container to that we can
              align the enable/disable checkbox that may appear next to it. -->
-        <vbox class="multiline-textbox-container">
+        <vbox class="multiline-textbox-container" flex="1">
           <textbox multiline="true" 
                    rows="5" 
                    flex="1"
                    tabindex="130"
                    property="http://songbirdnest.com/data/1.0#comment"/>
          </vbox>
-        <spacer flex="1" />
       </vbox>
-
+<!-- Lyrics is disabled for 0.6
       <vbox id="lyrics-tab">
         <textbox flex="1"
                  id="lyrics-editor"
                  multiline="true"
                  property="http://songbirdnest.com/data/1.0#lyrics"/> 
-        <!--button label="Fetch"/-->
+        <button label="Fetch"/>
       </vbox>
-      <!--vbox id="sort-value">
+      <vbox id="sort-value">
         <label>Coming soon.</label>
-      </vbox-->
+      </vbox
+  -->
 
     </tabpanels>
   </tabbox>

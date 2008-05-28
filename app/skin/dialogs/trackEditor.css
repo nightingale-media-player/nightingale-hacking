@@ -112,9 +112,33 @@ textbox.short-number-input {
 /* Notification */
 .dialog-notification {
   -moz-border-radius:3px;
-  margin:0 10px;
+  margin:0px 10px 5px 10px;
 }
 
+/* genre */
+#genredropdown > .autocomplete-history-dropmarker {
+  -moz-binding: url("chrome://global/content/bindings/autocomplete.xml#history-dropmarker");
+  display: inline;
+
+  padding:0 !important;
+  margin:0 !important;
+  border:none !important;
+  max-height:14px !important;
+  max-width:14px !important;
+
+  background-image:url('chrome://songbird/skin/menu/dropmarker.png');
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+#genredropdown > .autocomplete-history-dropmarker image {
+  display:none;
+}
+/** Note: when we force the dropdown like this it does not respect the readonly
+    attribute.  For now just force it off when readonly **/
+#genredropdown[readonly] > .autocomplete-history-dropmarker {
+  -moz-binding: none;
+  display: none;
+}
 
 /* Buttons */
 button.goto-url label {

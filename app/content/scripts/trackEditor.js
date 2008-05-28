@@ -608,15 +608,16 @@ var TrackEditor = {
       this._elements["advancedTab"] = new TrackEditorAdvancedTab(tabbox);
     }
     else {
+
       var tabBox = document.getElementById("trackeditor-tabbox");
       var tabs = tabBox.tabs;
-    
+      tabs.setAttribute("hidden", "true");
+      /*    
       // FIXME: hid summary and lyrics tabs halfheartedly
       //        (you can probably still keyboard shortcut to them)
       tabs.getItemAtIndex(0).setAttribute("hidden", "true");
       tabs.getItemAtIndex(2).setAttribute("hidden", "true");
-      tabs.setAttribute("hidden", "true");
-      tabBox.selectedIndex = 1;
+      tabBox.selectedIndex = 1;*/
     }
  
     // Add an additional layer of control to all elements with a property
@@ -690,12 +691,12 @@ var TrackEditor = {
     var writableCount = this.state.writableItemCount;
     
     var message;
-    var notificationClass = "notification-warning";
+    var notificationClass = "dialog-notification notification-warning";
 
     if (itemCount > 1) {
       if (writableCount == itemCount) {
         message = SBFormattedString("trackeditor.notification.editingmultiple", [itemCount]);                
-        notificationClass = "notification-info";
+        notificationClass = "dialog-notification notification-info";
       } else if (writableCount >= 1) {
         message = SBFormattedString("trackeditor.notification.somereadonly",
                                     [(itemCount - writableCount), itemCount]);
@@ -786,13 +787,14 @@ var TrackEditor = {
    */
   onSelectionChanged: function TrackEditor_onSelectionChanged() {
     
-    // TODO build a data structure
     this.state.setSelection(this.mediaListView.selection);    
-
+    
+    // Disable summary page if multiple items are selected.
+    // TODO summary page is commented out.
+    /*
     var tabBox = document.getElementById("trackeditor-tabbox");
     var tabs = tabBox.tabs;
     
-    // Disable summary page if multiple items are selected.
     if (this.state.selectedItems.length > 1) {
       // warning: assumes summary page is at tabs[0]
       if (tabBox.selectedIndex == 0) {
@@ -800,6 +802,7 @@ var TrackEditor = {
       }
       tabs.getItemAtIndex(0).setAttribute("disabled", "true");
     }
+    */
     
     this.updateNotificationBox();
     this.updateControls();

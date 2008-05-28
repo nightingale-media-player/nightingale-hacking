@@ -1046,7 +1046,7 @@ DIALOG NOTIFICATION BOX (used in the metadata editor)
 .dialog-notification.notification-warning {
   background-color: rgb(230,172,172);
 }
-.dialog-notification.notification-warning > #notification_text {
+.dialog-notification.notification-warning > .dialog-notification-text {
   color: rgb(80,40,40) !important;
 }
 .dialog-notification.notification-info {
