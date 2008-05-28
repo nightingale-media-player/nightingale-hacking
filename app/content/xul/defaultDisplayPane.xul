@@ -55,7 +55,7 @@
   <vbox pack="center" align="center" class="instructions">
     <label class="instruction">Select an add-on from the menu</label>
     <label>or</label>
-    <label class="instruction">Visit the<label class="text-link" href="http://addons.songbirdnest.com/display-panes/" value="Add-on Site"/>to browse add-ons</label>
+    <label class="instruction">Visit the<label class="text-link" href="http://addons.songbirdnest.com/tag/displaypane" value="Add-on Site"/>to browse add-ons</label>
   </vbox>
 
 <spacer flex="1" />
