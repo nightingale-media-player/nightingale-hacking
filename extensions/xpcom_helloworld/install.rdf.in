@@ -10,8 +10,8 @@
     <em:targetApplication>
       <Description>
         <em:id>songbird@songbirdnest.com</em:id>
-        <em:minVersion>0.3pre</em:minVersion>
-        <em:maxVersion>0.6.*</em:maxVersion>
+        <em:minVersion>0.7pre</em:minVersion>
+        <em:maxVersion>0.7rc1</em:maxVersion>
       </Description>
     </em:targetApplication>
 
