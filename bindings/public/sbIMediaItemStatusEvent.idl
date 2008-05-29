@@ -71,7 +71,7 @@ Example:
   /*
   Prop: item
 
-  The <MediaItem> corresponding to the event
+  The <MediaItem> corresponding to the event.
 
   Type: <MediaItem>
   */
@@ -80,7 +80,8 @@ Example:
   /*
   Prop: status
 
-  The <status> of the event
+  The status of the event as an nsresult value.  A status of NS_OK indicates
+  success.
 
   Type: <long>
   */
