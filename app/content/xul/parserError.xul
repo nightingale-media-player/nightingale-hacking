@@ -27,7 +27,19 @@
  */
 -->
 
-<!-- Warning: this file MUST NOT load songbird.dtd !! -->
+
+
+<!-- WARNING : this file MUST NOT load songbird.dtd !! -->
+
+<!-- The reason for this is because an error while parsing that dtd
+     may just be what caused this dialog to pop up, so in those cases,
+     this dialog would fail to load.
+     
+     For the same reason, the dialog that is shown when the user clicks
+     on "(See details)" should not load that dtd either -->
+
+
+
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
@@ -115,11 +127,16 @@
     }
     
     function showDetails() {
-      var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                                    .getService(Components.interfaces.nsIPromptService);
-      promptService.alert(null,
-                          "Error Details",
-                          window.arguments[0].QueryInterface(Components.interfaces.nsIConsoleMessage).message);
+      
+      // Do not use the prompt service, because it uses our titlebar, 
+      // which loads the sysControl bindings, which loads songbird.dtd
+      // (see comment at the top of this file for more details).
+      // Instead, load a minimal alert-like window.
+      
+      window.openDialog( "chrome://songbird/content/xul/parserErrorDetails.xul", 
+                         "_blank", 
+                         "chrome,modal=yes,centerscreen,resizable=no", 
+                         window.arguments[0].QueryInterface(Components.interfaces.nsIConsoleMessage).message);
     }
 
    ]]>
