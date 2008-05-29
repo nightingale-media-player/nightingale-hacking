@@ -180,7 +180,7 @@ pref("xpinstall.dialog.progress.skin", "chrome://browser/content/preferences/pre
 //
 
 // Search engines URL
-pref("browser.search.searchEnginesURL",      "http://addons.songbirdnest.com/search_engines");
+pref("browser.search.searchEnginesURL",      "http://addons.songbirdnest.com/tag/search");
 
 // pointer to the default engine name
 pref("browser.search.defaultenginename",      "chrome://branding/locale/brand.properties");
