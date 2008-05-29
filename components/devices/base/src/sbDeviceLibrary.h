@@ -31,6 +31,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsInterfaceHashtable.h>
+#include <nsIClassInfo.h>
 
 #include <sbIDeviceLibrary.h>
 #include <sbILibrary.h>
@@ -105,6 +106,8 @@ class sbDeviceLibrary : public sbIDeviceLibrary,
 {
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_NSICLASSINFO
+
   NS_DECL_SBIDEVICELIBRARY
   NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_SBILOCALDATABASEMEDIALISTCOPYLISTENER

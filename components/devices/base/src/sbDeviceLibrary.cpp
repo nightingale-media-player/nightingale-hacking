@@ -29,6 +29,8 @@
 #include "sbDeviceLibrary.h"
 
 /* mozilla interfaces */
+#include <nsIClassInfoImpl.h>
+#include <nsIProgrammingLanguage.h>
 #include <nsIFileURL.h>
 #include <nsIPrefService.h>
 #include <nsIVariant.h>
@@ -72,14 +74,31 @@
 #include <sbStandardProperties.h>
 
 
-NS_IMPL_THREADSAFE_ISUPPORTS7(sbDeviceLibrary,
-                              sbIMediaListListener,
-                              sbILocalDatabaseMediaListCopyListener,
-                              sbIDeviceLibrary,
-                              sbILibrary,
-                              sbIMediaList,
-                              sbIMediaItem,
-                              sbILibraryResource)
+NS_IMPL_THREADSAFE_ADDREF(sbDeviceLibrary)
+NS_IMPL_THREADSAFE_RELEASE(sbDeviceLibrary)
+
+NS_INTERFACE_MAP_BEGIN(sbDeviceLibrary)
+  NS_IMPL_QUERY_CLASSINFO(sbDeviceLibrary)
+  NS_INTERFACE_MAP_ENTRY(sbIDeviceLibrary)
+  NS_INTERFACE_MAP_ENTRY(sbILibrary)
+  NS_INTERFACE_MAP_ENTRY(sbIMediaList)
+  NS_INTERFACE_MAP_ENTRY(sbIMediaItem)
+  NS_INTERFACE_MAP_ENTRY(sbILibraryResource)
+  NS_INTERFACE_MAP_ENTRY(sbIMediaListListener)
+  NS_INTERFACE_MAP_ENTRY(sbILocalDatabaseMediaListCopyListener)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIDeviceLibrary)
+NS_INTERFACE_MAP_END
+  
+NS_IMPL_CI_INTERFACE_GETTER6(sbDeviceLibrary,
+                             nsIClassInfo,
+                             sbIDeviceLibrary,
+                             sbILibrary,
+                             sbIMediaList,
+                             sbIMediaItem,
+                             sbILibraryResource)
+
+NS_DECL_CLASSINFO(sbDeviceLibrary)
+NS_IMPL_THREADSAFE_CI(sbDeviceLibrary)
 
 #define PREF_SYNC_PREFIX    "library."
 #define PREF_SYNC_BRANCH    ".sync."
