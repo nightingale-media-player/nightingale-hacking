@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/bin/env python
 #
 # BEGIN SONGBIRD GPL
 # 
@@ -28,62 +28,30 @@ from datetime import datetime
 import sys
 import os
 
-DEFAULT_KEY = 'BuildID'
+defaultKey = "BuildID"
 
-def main(argv):                          
-   o = OptionParser()
-   o.add_option("-i", "--input-file", dest="inputFile",
-                help="Input file to preprocess.")
-   o.add_option("-o", "--output-file", dest="outputFile",
-                help="File to dump output to; defaults to STDOUT")
-   o.add_option("-k", "--key", action="append", dest="key",
-                help="Key to substitute a value for; the value MUST be a " +
-                     "declaration, i.e. --key variable=value")
+o = OptionParser()
+o.add_option("-i", "--input-file", dest="inputFile")
+o.add_option("-o", "--output-file", dest="outputFile")
+o.add_option("-k", "--key", dest="key")
 
-   (options, args) = o.parse_args()
+(options, args) = o.parse_args()
 
-   if options.inputFile is None:
-      o.print_help()
-      return -1
+buildID = os.environ.get("SB_BUILDID_OVERRIDE",
+                         datetime.now().strftime('%Y%m%d%H%M%S'))
 
-   keys = options.key
-   substitutions = {}
+key = options.key or defaultKey
 
-   #print "keys are %s" % keys
+lines = []
 
-   if keys is not None:
-      # Process all the substitutions
-      for key in keys:
-         if key.find('=') == -1:
-            o.print_help()
-            return -1
-         (substKey, substValue) = key.split('=')
-         substitutions[substKey] = substValue
+for line in open(options.inputFile, 'rb'):
+  if line.startswith(key):
+    line = key + "=%s\n" % buildID
+  lines.append(line)
 
-   # Make sure the BuildID gets specified
-   if DEFAULT_KEY not in substitutions.keys():
-      substitutions[DEFAULT_KEY] = os.environ.get('SB_BUILDID_OVERRIDE',
-                                                  datetime.now().strftime('%Y%m%d%H%M%S'))
-
-   #print "substitions are %s" % substitutions
-
-   lines = []
-
-   for line in open(options.inputFile, 'rb'):
-      for substKey in substitutions.keys():
-         if line.startswith(substKey):
-            line = substKey + '=' + substitutions[substKey] + "\n"
-            break
-      lines.append(line)
-
-   if options.outputFile:
-      output = open(options.outputFile, 'wb')
-      output.writelines(lines)
-      output.close()
-   else:
-      sys.stdout.writelines(lines)
-
-   return 0
-
-if __name__ == '__main__':
-   sys.exit(main(sys.argv[1:]))
+if options.outputFile:
+  output = open(options.outputFile, 'wb')
+  output.writelines(lines)
+  output.close()
+else:
+  sys.stdout.writelines(lines)
