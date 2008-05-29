@@ -75,6 +75,15 @@
       var dialog = document.documentElement;
       onAcceptChanged();
     }
+    
+    // onExit is called by the system close button in the titlebar
+    // for the dialog. Normally that function is provided by windowUtils,
+    // but that implementation only closes the dialog, not the app. 
+    // For the eula however, we want to automatically refuse the 
+    // agreement and close the app, so override the function locally.
+    function onExit() {
+      doClose("cancel");
+    }
 
     function doClose(ret) {
       // arg[0] is the eulaData passed in from the call that opened us.
