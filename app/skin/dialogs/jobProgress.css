@@ -39,3 +39,8 @@ See SBJobUtils.jsm and sbIJobProgress.idl.
   width: 500px;
   max-width: 500px;
 }
+
+#jobprogress_status_box {
+  min-height: 40px;
+  -moz-box-pack: end;
+}

@@ -97,8 +97,15 @@ var JobProgressDialog = {
     if (this._job.status == Ci.sbIJobProgress.STATUS_SUCCEEDED) {
       window.close();
     } else if (this._job.status == Ci.sbIJobProgress.STATUS_FAILED) {
-      document.documentElement.buttons = "accept";
-      this._showErrors();
+      
+      // If there is a main error summary, show the error messages
+      if (this._job.statusText) {
+        document.documentElement.buttons = "accept";
+        this._showErrors(); 
+      } else {
+        // Otherwise just close
+        window.close();
+      }
     }
   },
   

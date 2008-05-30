@@ -1046,6 +1046,7 @@ var ExternalDropHandler = {
         if (!item) {
           var holder = {};
           var wasCreated = this._targetList
+                               .library
                                .createMediaItemIfNotExist(aURI, null, holder);
           item = holder.value;
           

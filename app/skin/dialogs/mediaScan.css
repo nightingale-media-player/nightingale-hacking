@@ -41,5 +41,6 @@ Additional styles imported directly by the media scan dialog
 
 #media_scan 
 { 
-  width: 400px;
+  width: 500px;
+  max-width: 500px;
 } 

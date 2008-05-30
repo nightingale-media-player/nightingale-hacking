@@ -224,7 +224,7 @@
 <!ENTITY exists.title             "Playlist Exists">
 <!ENTITY exists.exists            "A playlist with that name already exists!">
 
-<!ENTITY media_scan.title         "Scan for Media">
+<!ENTITY media_scan.title         "Scanning for Media">
 <!ENTITY media_scan.watch         "Watch this folder for new media">
 
 <!ENTITY new_playlist.title       "Create New Playlist">

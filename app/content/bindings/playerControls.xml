@@ -1608,7 +1608,6 @@
         this.setAttribute( "hidden", "true" );
         this.data = "backscan.status";
 
-        // See if we want to pop our balloon tip.
         this.on_value_change = { 
           _that: null, 
           observe: function( aSubject, aTopic, aData ) { this._that.onValue( aData ); } 
@@ -1634,47 +1633,15 @@
           if ( parseInt( aData ) > 0  )
           {
             this.setAttribute( "hidden", "false" );
-            if ( ! SBDataGetBoolValue( "balloontip.backscan.shown" ) )
-            {
-              this.balloon = new BalloonTip();
-              // **************************
-              // Bug 7674
-              // (sigh) Apparently you can't pop 2 balloontips in the same frame?
-              // So set a timeout on it so it comes after the other balloontip.
-              setTimeout( function(xthis) {
-                xthis.balloon.onCloseCallback = xthis.onBalloonClose;
-                var title = SBString("balloontip.backscan.title", "Scanning For Metadata");
-                var text = SBString("balloontip.backscan.text", "This indicates that Songbird is scanning the files in your Library to import their Metadata Tags.");
-                xthis.balloon.showText(text, xthis, title, 'balloon-icon-songbird', null);
-                xthis.balloon._that = xthis;
-              }, 0, this );
-              SBDataSetBoolValue( "balloontip.backscan.shown", true );
-            }
           }
           else
           {
-            if ( ! this.balloon )
-              this.setAttribute( "hidden", "true" );
+            this.setAttribute( "hidden", "true" );
           }
         ]]>
       </body>
     </method>
     
-    <method name="onBalloonClose">
-      <parameter name="aBalloonInstance"/>
-      <parameter name="aCheckboxState"/>
-      <body>
-        <![CDATA[
-          var that = aBalloonInstance._that;
-          if ( SBDataGetIntValue("backscan.concurrent") < 1 )
-            that.setAttribute( "hidden", "true" );
-            
-          delete that.balloon;
-        ]]>
-      </body>
-    </method>
- 
-
    </implementation>
  
   </binding>

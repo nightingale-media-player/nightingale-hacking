@@ -1330,7 +1330,7 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
     TagLib::String              aString,
     const char                  *aCharset)
 {
-    if (!aCharset || !*aCharset) {
+    if (!aCharset || !*aCharset || aString.isNull() || aString.isEmpty()) {
         // no conversion
         return aString;
     }
@@ -1368,6 +1368,7 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
 #endif
 
     // convert via Mozilla
+    // TODO XXX This call takes 1/3 of our scan time right now!
     nsCOMPtr<nsIUTF8ConverterService> utf8Service;
     mProxiedServices->GetUtf8ConverterService(getter_AddRefs(utf8Service));
     if (utf8Service) {

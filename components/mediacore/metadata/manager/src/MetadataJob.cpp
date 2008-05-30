@@ -60,6 +60,7 @@
 #include <sbILibraryManager.h>
 #include <sbILibraryResource.h>
 #include <sbILocalDatabaseLibrary.h>
+#include <sbILocalDatabaseMediaItem.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
@@ -99,9 +100,9 @@ extern PRLogModuleInfo* gMetadataLog;
 
 // GLOBALS ====================================================================
 const PRUint32 NUM_CONCURRENT_MAINTHREAD_ITEMS = 3;
-const PRUint32 NUM_ITEMS_BEFORE_FLUSH = 200;
+const PRUint32 NUM_ITEMS_BEFORE_FLUSH = 400;
 const PRUint32 NUM_ITEMS_PER_INIT_LOOP = 100;
-const PRUint32 TIMER_LOOP_MS = 200;
+const PRUint32 TIMER_LOOP_MS = 100;
 
 // CLASSES ====================================================================
 
@@ -262,7 +263,7 @@ NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
       }
       
       aText = text;
-    }  
+    }
   
   } else {
     // Clear out the status text
@@ -1061,7 +1062,7 @@ nsresult sbMetadataJob::ProcessThread(PRBool *aShutdown, sbIDatabaseQuery *aQuer
     
     // XXXAus: I think we could probably make it sleep 0 so that the thread
     //         would at least yield.
-    PR_Sleep(PR_MillisecondsToInterval(mSleepMS));
+    PR_Sleep(PR_MillisecondsToInterval(0));
   }
 
   // Flush the completed items list.
@@ -2079,6 +2080,7 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
   //
   // TODO: Currently proxied to the main thread to placate nsIIOService.
   // This costs 15% when scanning 2500 tracks.
+  
   PRInt64 fileSize = 0;
   rv = aURIMetadataHelper->GetFileSize(aItem->url, &fileSize);
   if (NS_SUCCEEDED(rv)) {
@@ -2092,9 +2094,32 @@ nsresult sbMetadataJob::AddMetadataToItem( sbMetadataJob::jobitem_t *aItem,
   }
 
   // And then put the properties into the item
-  rv = item->SetProperties(newProps);
-  // NS_ENSURE_SUCCESS(rv, rv);
   
+  // TODO A great deal of time is spent setting
+  // properties on the items, since the items
+  // must query for ids, then query for all lists
+  // that contain the items, then call notify on all lists.
+  // I'd love to just disable this, but it turns out the
+  // notifications are necessary when dropping items
+  // from the desktop into a playlist.
+  // For the next release we should look at caching
+  // media item ids and list membership.
+/*
+  nsCOMPtr<sbILocalDatabaseMediaItem> localDBItem =
+    do_QueryInterface(item, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    localDBItem->SetSuppressNotifications(PR_TRUE);
+  } else {
+    localDBItem = nsnull;    
+  }
+*/
+  rv = item->SetProperties(newProps);
+  // NS_ENSURE_SUCCESS(rv, rv);  
+/*
+  if (localDBItem) {
+    localDBItem->SetSuppressNotifications(PR_FALSE);
+  }
+*/
   LOG(("sbMetadataJob::AddMetadataToItem - finished with end rv %08x\n",
        rv));
 

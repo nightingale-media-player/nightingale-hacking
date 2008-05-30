@@ -25,6 +25,7 @@
  */
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 
 var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                              .getService(Components.interfaces.sbIPlaylistPlayback);
@@ -91,9 +92,14 @@ function onLoad()
       }
       theTargetInsertIndex = window.arguments[0].target_pl_row;
       gDirectoriesToScan = window.arguments[0].URL;
-      if (typeof window.arguments[0].autoClose != "undefined") {
-        autoClose = window.arguments[0].autoClose;
-      }
+      
+      // HACK:  now that the metadata scan is modal, always autoclose the scan.
+      // This whole file needs to be rewritten.
+      autoClose = true;
+      //if (typeof window.arguments[0].autoClose != "undefined") {
+      //  autoClose = window.arguments[0].autoClose;
+      //}
+      
       onFirstItem = window.arguments[0].onFirstItem;
       if (!isinstance(gDirectoriesToScan, Array)) {
         gDirectoriesToScan = [gDirectoriesToScan];
@@ -265,6 +271,10 @@ function appendToMetadataQueue( aItemArray ) {
         Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
                   .getService(Components.interfaces.sbIMetadataJobManager);
       gMediaScanMetadataJob = metadataJobManager.newJob(aItemArray, 5);
+    
+      // HACK.  Make the media scan modal, since for 0.6 you can't really interact
+      // with the app while the scan is in progress.
+      SBJobUtils.showProgressDialog(gMediaScanMetadataJob, window);
     }
   } catch (e) {
     Components.utils.reportError(e);

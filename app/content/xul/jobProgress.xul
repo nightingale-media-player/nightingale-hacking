@@ -62,10 +62,12 @@
   <menubar id="main-menubar" hidden="true" oncommand="onMenu(event.target)" mousethrough="never"/>
 
   <vbox>
-    <description id="jobprogress_status_desc" />
+    <vbox id="jobprogress_status_box" >
+      <description id="jobprogress_status_desc" />
+    </vbox>
     <progressmeter id="jobprogress_progressmeter" />
     <sb-closable-box id="jobprogress_error_box" hidden="true" label="&jobprogress.details;">
-      <listbox id="jobprogress_error_list" flex="1" maxrows="3" mousethrough="never" />
+      <listbox id="jobprogress_error_list" flex="1" maxrows="10" mousethrough="never" />
     </sb-closable-box>
   </vbox>
 
