@@ -1332,7 +1332,7 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
 {
     if (!aCharset || !*aCharset || aString.isNull() || aString.isEmpty()) {
         // no conversion
-        return aString;
+        return TagLib::String();
     }
 
     std::string data = aString.toCString(false);
