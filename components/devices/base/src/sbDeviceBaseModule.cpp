@@ -39,10 +39,12 @@
 #include "sbContentTypeFormat.h"
 #include "sbDeviceProperties.h"
 #include "sbDeviceCapabilities.h"
+#include "sbDeviceStatus.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbContentTypeFormat);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceProperties);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapabilities);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceStatus);
 
 static nsModuleComponentInfo sbDeviceBaseComponents[] =
 {
@@ -65,6 +67,13 @@ static nsModuleComponentInfo sbDeviceBaseComponents[] =
     SONGBIRD_CONTENTTYPEFORMAT_CID,
     SONGBIRD_CONTENTTYPEFORMAT_CONTRACTID,
     sbContentTypeFormatConstructor
+  },
+
+  {
+    SONGBIRD_DEVICESTATUS_CLASSNAME,
+    SONGBIRD_DEVICESTATUS_CID,
+    SONGBIRD_DEVICESTATUS_CONTRACTID,
+    sbDeviceStatusConstructor
   }
 };
 

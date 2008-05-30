@@ -661,22 +661,6 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
     NS_ENSURE_SUCCESS(rv, rv);
   
     if (request) {
-      nsRefPtr<sbDeviceStatus> status;
-      rv = sbDeviceUtils::CreateStatusFromRequest(aDeviceID, 
-                                                  request.get(), 
-                                                  getter_AddRefs(status));
-      NS_ENSURE_SUCCESS(rv, rv);
-  
-      // All done cancelling, make sure we set appropriate state.
-      status->StateMessage(NS_LITERAL_STRING("Completed"));
-      status->Progress(100);
-  
-      status->SetItem(request->item);
-      status->SetList(request->list);
-  
-      status->WorkItemProgress(request->batchIndex);
-      status->WorkItemProgressEndCount(request->batchCount);
-  
       nsCOMPtr<nsIWritableVariant> var =
         do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);

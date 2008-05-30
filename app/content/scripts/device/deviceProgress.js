@@ -163,71 +163,76 @@ var DPW = {
    */
 
   _update: function DPW__update() {
-    // Get the sync, cancel and finish buttons.
     var syncButton   = this._getElement("sync_operation_button");
     var cancelButton = this._getElement("cancel_operation_button");
     var finishButton = this._getElement("finish_progress_button");
+    var progressMeter = this._getElement("progress_meter");
 
-    switch (this._currentState) {
-      case Ci.sbIDevice.STATE_SYNCING:
-        var propertyStub = "device.status.progress_footer_syncing_";
-        var propertyKey = "copying";
-        switch(this._device.state) {
-          case Ci.sbIDevice.STATE_COPYING:
-            propertyKey = "copying";
-          break;
-          case Ci.sbIDevice.STATE_UPDATING:
-            propertyKey = "updating";
-          break;
-          case Ci.sbIDevice.STATE_DELETING:
-            propertyKey = "deleting";
-          break;
+    syncButton.hidden = true;
+    finishButton.hidden = true;
+    
+    progressMeter.setAttribute("mode", "determined");
+
+    var deviceStatus = this._device.currentStatus;
+    var aMediaItem = deviceStatus.mediaItem;
+    var itemName;
+    var itemArtist;
+    var itemAlbum;
+    if (aMediaItem) {
+      itemName = aMediaItem.getProperty(SBProperties.trackName);
+      itemArtist = aMediaItem.getProperty(SBProperties.artistName);
+      itemAlbum = aMediaItem.getProperty(SBProperties.albumName);
+    }
+
+    var curProgress = Math.round((this._curItemIndex.intValue /
+                                  this._totalItems.intValue) * 100);
+
+    var aOperationHead;
+    var aOperationFoot;
+
+    cancelButton.hidden = false;
+    syncButton.hidden = true;
+    finishButton.hidden = true;
+
+    switch (deviceStatus.currentState) {
+      case Ci.sbIDevice.STATE_IDLE:
+        if (this._currentState != Ci.sbIDevice.STATE_IDLE) {
+          // We are actually complete
+          cancelButton.hidden = true;
+          syncButton.hidden = true;
+          finishButton.hidden = false;
+          switch (this._currentState) {
+            case Ci.sbIDevice.STATE_SYNCING:
+              aOperationHead = "syncing";
+            break;
+            case Ci.sbIDevice.STATE_COPYING:
+              aOperationHead = "copying";
+            break;
+            case Ci.sbIDevice.STATE_DELETING:
+              aOperationHead = "deleting";
+            break;
+            case Ci.sbIDevice.STATE_UPDATING:
+              aOperationHead = "updating";
+            break;
+            case Ci.sbIDevice.STATE_MOUNTING:
+              aOperationHead = "mounting";
+            break;
+          }
+          this._dText1Remote.stringValue =
+                        SBFormattedString("device.status.progress_complete_" +
+                                            aOperationHead,
+                                          [this._totalItems.intValue]);
+        } else {
+          cancelButton.hidden = true;
+          syncButton.hidden = false;
+          finishButton.hidden = true;
+          this._dText1Remote.stringValue = SBString("device.status.progress_idle");
+          this._progressInfoBox.hidden = true;
         }
-
-        this._updateDisplay("syncing", propertyStub + propertyKey, true);
-      break;
-    
-      case STATE_COMPLETE_SYNC:
-        this._updateDisplay("syncing", "syncing", true);
-      break;
-
-      case Ci.sbIDevice.STATE_MOUNTING:
-        this._updateDisplay("mounting", "mounting", true);
-      break;
-    
-      case STATE_COMPLETE_MOUNTING:
-        this._updateDisplay("mounting", "mounting", false);
-      break;
-    
-      case Ci.sbIDevice.STATE_COPYING:
-        this._updateDisplay("copying", "copying", true);
-      break;
-      case STATE_COMPLETE_COPY:
-        this._updateDisplay("copying", "copying", false);
-      break;
-
-      case Ci.sbIDevice.STATE_UPDATING:
-        this._updateDisplay("updating", "updating", true);
-      break;
-      case STATE_COMPLETE_UPDATE:
-        this._updateDisplay("updating", "updating", false);
-      break;
-
-      case Ci.sbIDevice.STATE_DELETING:
-        this._updateDisplay("deleting", "deleting", true);
-      break;
-      case STATE_COMPLETE_DELETE:
-        this._updateDisplay("deleting", "deleting", false);
-      break;
-
-      //case Ci.sbIDevice.STATE_IDLE:
-      default:
-        this._dText1Remote.stringValue = SBString("device.status.progress_idle");
+        
+        this._currentState = Ci.sbIDevice.STATE_IDLE;
         this._dText2Remote.stringValue = SBString("device.status.progress_idle");
-        this._progressInfoBox.hidden = true;
-        cancelButton.hidden = true;
-        syncButton.hidden = false;
-        finishButton.hidden = true;
+        this._dProgressRemote.intValue = 0;
 
         var mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
         var libraries = this._device.content.libraries;
@@ -235,8 +240,70 @@ var DPW = {
           mgmtType = libraries.queryElementAt(0, Ci.sbIDeviceLibrary).mgmtType;
         }
         syncButton.disabled = (mgmtType == Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
+
+        this._checkForErrors();
+        return;
+      break;
+      
+      case Ci.sbIDevice.STATE_SYNCING:
+        // Special handling for syncing, we use the substate
+        var syncSubKey = "idle";
+        switch(deviceStatus.currentSubState) {
+          case Ci.sbIDevice.STATE_COPYING:
+            syncSubKey = "copying";
+          break;
+          case Ci.sbIDevice.STATE_UPDATING:
+            syncSubKey = "updating";
+          break;
+          case Ci.sbIDevice.STATE_DELETING:
+            syncSubKey = "deleting";
+          break;
+        }
+        aOperationHead = "syncing";
+        aOperationFoot = "syncing_" + syncSubKey;
+        this._dProgressRemote.intValue = 0;
+        progressMeter.setAttribute("mode", "undetermined");
+        this._progressInfoBox.hidden = false;
+      break;
+
+      case Ci.sbIDevice.STATE_COPYING:
+        aOperationHead = "copying";
+        aOperationFoot = "copying";
+        this._dProgressRemote.intValue = curProgress;
+        this._progressInfoBox.hidden = false;
+      break;
+
+      case Ci.sbIDevice.STATE_UPDATING:
+        aOperationHead = "updating";
+        aOperationFoot = "updating";
+        this._dProgressRemote.intValue = curProgress;
+        this._progressInfoBox.hidden = false;
+      break;
+
+      case Ci.sbIDevice.STATE_DELETING:
+        aOperationHead = "deleting";
+        aOperationFoot = "deleting";
+        this._dProgressRemote.intValue = curProgress;
+        this._progressInfoBox.hidden = false;
+      break;
+
+      case Ci.sbIDevice.STATE_MOUNTING:
+        aOperationHead = "mounting";
+        aOperationFoot = "mounting";
+        this._dProgressRemote.intValue = 0;
+        progressMeter.setAttribute("mode", "undetermined");
+        this._progressInfoBox.hidden = false;
       break;
     }
+
+    this._dText1Remote.stringValue =
+            SBFormattedString("device.status.progress_header_" + aOperationHead,
+                              [this._curItemIndex.intValue,
+                               this._totalItems.intValue]);
+    this._dText2Remote.stringValue =
+            SBFormattedString("device.status.progress_footer_" + aOperationFoot,
+                              [itemName, itemArtist, itemAlbum]);
+    this._currentState = deviceStatus.currentState;
   },
 
   //----------------------------------------------------------------------------
@@ -305,63 +372,6 @@ var DPW = {
   //
   //----------------------------------------------------------------------------
 
-  _updateDisplay: function DPW__updateDisplay(aOperationHead,
-                                              aOperationFoot,
-                                              aBusy) {
-    var syncButton   = this._getElement("sync_operation_button");
-    var cancelButton = this._getElement("cancel_operation_button");
-    var finishButton = this._getElement("finish_progress_button");
-    var errorLink = this._getElement("progress_text1_label");
-    var progressMeter = this._getElement("progress_meter");
-
-    if (aBusy) {
-      this._dText1Remote.stringValue =
-                  SBFormattedString("device.status.progress_header_" +
-                                      aOperationHead,
-                                    [this._curItemIndex.intValue,
-                                     this._totalItems.intValue]);
-      this._dText2Remote.stringValue =
-                  SBFormattedString("device.status.progress_footer_" +
-                                      aOperationFoot,
-                                    [this._itemName,
-                                     this._itemArtist,
-                                     this._itemAlbum]);
-
-      if (this._currentState != Ci.sbIDevice.STATE_MOUNTING) {
-        // Now show progress for all items rather than each one.
-        var curProgress = Math.round((this._curItemIndex.intValue / this._totalItems.intValue) * 100);
-        progressMeter.setAttribute("mode", "determined");
-        this._dProgressRemote.intValue = curProgress;
-      } else {
-        progressMeter.setAttribute("mode", "undetermined");
-        this._dProgressRemote.intValue = 0;
-      }
-
-      this._progressInfoBox.hidden = false;
-      cancelButton.hidden = false;
-      syncButton.hidden = true;
-      finishButton.hidden = true;
-      errorLink.removeAttribute("error");
-    } else {
-      this._dText1Remote.stringValue =
-                SBFormattedString("device.status.progress_complete_" +
-                                    aOperationHead,
-                                  [this._totalItems.intValue]);
-      this._dText2Remote.stringValue =
-                                  SBString("device.status.progress_idle");
-
-      progressMeter.setAttribute("mode", "determined");
-      this._dProgressRemote.intValue = 100;
-
-      this._progressInfoBox.hidden = false;
-      cancelButton.hidden = true;
-      syncButton.hidden = true;
-      finishButton.hidden = false;
-
-      this._checkForErrors();
-    }
-  },
-
   _displayErrors: function DPW__displayErrors() {
     try {
       var deviceErrorMonitor = Cc["@songbirdnest.com/device/error-monitor-service;1"]
@@ -375,6 +385,9 @@ var DPW = {
                     "chrome,centerscreen",
                     [ "", this._device, errorItems ],
                     null);
+        // Clear the errors now that the user has seen them
+        deviceErrorMonitor.clearErrorsForDevice(this._device);
+        this._checkForErrors(this._device);
       }
     } catch (err) {
       Cu.reportError(err);
@@ -393,6 +406,7 @@ var DPW = {
       var deviceErrorMonitor = Cc["@songbirdnest.com/device/error-monitor-service;1"]
                                  .getService(Ci.sbIDeviceErrorMonitor);
       deviceErrorMonitor.clearErrorsForDevice(this._device);
+      this._checkForErrors(this._device);
     } catch (err) {
       Cu.reportError(err);
     }
@@ -526,6 +540,9 @@ var DPW = {
                                  .getService(Ci.sbIDeviceErrorMonitor);
       var hasErrors = deviceErrorMonitor.deviceHasErrors(this._device);
       errorLink.setAttribute("error", hasErrors);
+      if (hasErrors) {
+        this._progressInfoBox.hidden = false;
+      }
     } catch (err) {
       Cu.reportError(err);
     }
@@ -542,124 +559,20 @@ var DPW = {
   },
   
   /**
-   * \brief Updates the current state of the device for the UI
-   *
-   * \param aState state from the device
-   */
-  _updateDeviceState : function DPW__updateDeviceState(aState) {
-    // Ignore if the state has not changed
-    if (aState == this._currentState) {
-      return;
-    }
-
-    if (this._currentState == Ci.sbIDevice.STATE_IDLE) {
-      // Check if we are done the batch, if not, ignore this state change
-      if (this._curItemIndex.intValue != this._totalItems.intValue) {
-        return;
-      }
-    }
-
-    var newState = aState;
-
-    switch (this._currentState) {
-      case Ci.sbIDevice.STATE_SYNCING:
-        if (aState == Ci.sbIDevice.STATE_IDLE) {
-          newState = STATE_COMPLETE_SYNC;
-        }
-      break;
-    
-      case Ci.sbIDevice.STATE_COPYING:
-        if (aState == Ci.sbIDevice.STATE_IDLE) {
-          newState = STATE_COMPLETE_COPY;
-        }
-      break;
-    
-      case Ci.sbIDevice.STATE_UPDATING:
-        if (aState == Ci.sbIDevice.STATE_IDLE) {
-          newState = STATE_COMPLETE_UPDATE;
-        }
-      break;
-    
-      case Ci.sbIDevice.STATE_DELETING:
-        if (aState == Ci.sbIDevice.STATE_IDLE) {
-          newState = STATE_COMPLETE_DELETE;
-        }
-      break;
-    
-      case Ci.sbIDevice.STATE_MOUNTING:
-      case STATE_COMPLETE_MOUNTING:
-        if (aState == Ci.sbIDevice.STATE_IDLE) {
-          newState = STATE_COMPLETE_MOUNTING;
-        }
-      break;
-    
-      default:
-        newState = aState;
-      break;
-    }
-
-    this._currentState = newState;
-  },
-
-  /**
-   * \brief Updates the device sync/copy status
-   *
-   * \param aMediaItem the media item that is currently being processed.
-   */
-
-  _updateDeviceInfo : function DPW__updateDeviceInfo(aMediaItem) {
-
-    if (aMediaItem) {
-      this._itemName = aMediaItem.getProperty(SBProperties.trackName);
-      this._itemArtist = aMediaItem.getProperty(SBProperties.artistName);
-      this._itemAlbum = aMediaItem.getProperty(SBProperties.albumName);
-    } else {
-      this._itemName = SBString("device.info.unknown");
-      this._itemArtist = SBString("device.info.unknown");
-      this._itemAlbum = SBString("device.info.unknown");
-    }
-  },
-
-  /**
    * \brief Listener for device events.
    *
    * \sa sbIDeviceEvent.idl
    */
 
    onDeviceEvent : function DPW_onDeviceEvent(aEvent) {
-    // Something happened :)
     switch (aEvent.type) {
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_SYNC_END:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_END:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END:
-        var aMediaItem = aEvent.data;
-        if (aMediaItem instanceof Ci.sbIMediaItem) {
-          aMediaItem.QueryInterface(Ci.sbIMediaItem);
-        } else {
-          aMediaItem = null;
-        }
-        this._updateDeviceInfo(aMediaItem);
-        this._updateDeviceState(Ci.sbIDevice.STATE_IDLE);
-        this._update();
-      break;
-    
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_SYNC_START:
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_SYNC_PROGRESS:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_START:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_PROGRESS:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_START:
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_PROGRESS:
-        var aMediaItem = aEvent.data;
-        if (aMediaItem instanceof Ci.sbIMediaItem) {
-          aMediaItem.QueryInterface(Ci.sbIMediaItem);
-        } else {
-          aMediaItem = null;
-        }
-        this._updateDeviceInfo(aMediaItem);
-        this._updateDeviceState(this._device.state);
-        this._update();
-      break;
-
+      //case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_PROGRESS:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED:
         this._update();
       break;
@@ -673,8 +586,6 @@ var DPW = {
   _deviceCancelOperations: function DPW__deviceCancelOperations() {
     try {
       this._device.cancelRequests();
-      this._updateDeviceInfo(null);
-      this._updateDeviceState(Ci.sbIDevice.STATE_IDLE);
       this._update();
     } catch (e) {
       dump("Error: " + e);
@@ -693,7 +604,6 @@ var DPW = {
       dump("Error: " + e + "\n");
       Cu.reportError("Error occurred when attempting to sync: " + e);
       this._currentState = Ci.sbIDevice.STATE_IDLE;
-      this._updateDeviceInfo(null);
       this._update();
     }
   },

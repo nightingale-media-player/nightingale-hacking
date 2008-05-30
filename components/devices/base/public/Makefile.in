@@ -42,6 +42,7 @@ XPIDL_SRCS = sbIContentTypeFormat.idl \
              sbIDeviceProperties.idl \
              sbIDeviceRegistrar.idl \
              sbIDeviceManager.idl \
+             sbIDeviceStatus.idl \
              $(NULL)
 
 XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \

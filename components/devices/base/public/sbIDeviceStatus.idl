@@ -1,0 +1,98 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbIDeviceStatus.idl
+ */
+
+#include "nsISupports.idl"
+
+interface sbIMediaItem;
+interface sbIMediaList;
+
+/**
+ * \interface sbIDeviceStatus
+ * \note Implementations of this interface must be threadsafe.
+ *
+ * Holds the current status of a device, idle, syncing, etc with all the
+ * relevent information.
+ */
+[scriptable, uuid(7b2026c4-9193-4cbd-818a-0d07abaec854)]
+interface sbIDeviceStatus: nsISupports {
+  /**
+   * \brief The current overall state of the device.
+   * \sa sbIDevice::STATE_*
+  */
+  attribute unsigned long currentState;
+
+  /**
+   * \brief The current sub state of the device, copying could be a sub state
+   *        of the syncing state.
+   * \sa sbIDevice::STATE_*
+  */
+  attribute unsigned long currentSubState;
+
+  /**
+   * Sets the state message
+   */
+  attribute AString stateMessage;
+
+  /**
+   * Sets the current operation
+   */
+  attribute AString currentOperation;
+
+  /**
+   * Sets the current progress as a percent. Done is 100.0.
+   */
+  attribute double progress;
+
+  /**
+   * Sets the current work item # for example processing multiple files
+   */
+  attribute PRInt64 workItemProgress;
+
+  /**
+   * Sets the end count for processing multiple items
+   */
+  attribute PRInt64 workItemProgressEndCount;
+
+  /**
+   * Current Item being processed
+   */
+  attribute sbIMediaItem mediaItem;
+  
+  /**
+   * Current List being processed
+   */
+  attribute sbIMediaList mediaList;
+  
+  /**
+   * \brief Initialize the DeviceStatus component for a device
+   */
+  void init(in AString aDeviceID);
+};
+

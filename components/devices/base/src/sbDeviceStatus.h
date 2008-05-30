@@ -24,8 +24,8 @@
 // END SONGBIRD GPL
 //
 */
-#ifndef SBDEVICESTATUS_H_
-#define SBDEVICESTATUS_H_
+
+#include "sbIDeviceStatus.h"
 
 #include <nsStringAPI.h>
 #include <nsCOMPtr.h>
@@ -35,63 +35,20 @@
 class sbIDataRemote;
 class nsIProxyObjectManager;
 
-/**
- * This class is used to publish status information for the device.
- */
-class sbDeviceStatus : public nsISupports
+class sbDeviceStatus : public sbIDeviceStatus
 {
 public:
   NS_DECL_ISUPPORTS
-  /**
-   * Initializses the status object with the device ID
-   */
-  static already_AddRefed<sbDeviceStatus> New(nsAString const & deviceID);
-public:
-  /**
-   * Sets the state message
-   */
-  nsresult StateMessage(nsString const & msg);
-  /**
-   * Sets the current operation
-   */
-  nsresult CurrentOperation(nsString const & operationMessage);
-  /**
-   * Sets the current progress as a percent. Done is 100.0.
-   */
-  nsresult Progress(double percent);
-  /**
-   * Sets the current work item # for example processing multiple files
-   */
-  nsresult WorkItemProgress(PRUint32 current);
-  /**
-   * Sets the end count for processing multiple items
-   */
-  nsresult WorkItemProgressEndCount(PRUint32 count);
-  /**
-   * Sets the item currently being acted on
-   */
-  void SetItem(sbIMediaItem * item)
-  {
-    mItem = item;
-  }
-  /**
-   * Sets the list (Context) of the action
-   */
-  void SetList(sbIMediaList * list)
-  {
-    mList = list;
-  }
-private:
-  /**
-   * Initializses the status object with the device ID
-   */
-  sbDeviceStatus(nsAString const & deviceID);
-  /**
-   * cleanup
-   */
-  virtual ~sbDeviceStatus();
+  NS_DECL_SBIDEVICESTATUS
+  
+  sbDeviceStatus();
 
-  nsString const mDeviceID;
+private:
+  ~sbDeviceStatus();
+
+  nsString mDeviceID;
+  PRUint32 mCurrentState;
+  PRUint32 mCurrentSubState;
   nsCOMPtr<sbIDataRemote> mStatusRemote;
   nsCOMPtr<sbIDataRemote> mOperationRemote;
   nsCOMPtr<sbIDataRemote> mProgressRemote;
@@ -99,13 +56,24 @@ private:
   nsCOMPtr<sbIDataRemote> mWorkTotalCountRemote;
   nsCOMPtr<sbIMediaItem> mItem;
   nsCOMPtr<sbIMediaList> mList;
-  
+
   nsresult GetDataRemote(nsIProxyObjectManager* aProxyObjectManager,
                          const nsAString& aDataRemoteName,
                          const nsAString& aDataRemotePrefix,
                          void** appDataRemote);
-  
-  void Init();
+
 };
 
-#endif /*SBDEVICESTATUS_H_*/
+#define SONGBIRD_DEVICESTATUS_DESCRIPTION             \
+  "Songbird Device Status Component"
+#define SONGBIRD_DEVICESTATUS_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/DeviceStatus;1"
+#define SONGBIRD_DEVICESTATUS_CLASSNAME               \
+  "Songbird Device Status"
+#define SONGBIRD_DEVICESTATUS_CID                     \
+{ /* 7b2026c4-9193-4cbd-818a-0d 07 ab ae c8 54 */              \
+  0x7b2026c4,                                             \
+  0x9193,                                                 \
+  0x4cbd,                                                 \
+  {0x81, 0x8a, 0x0d, 0x07, 0xab, 0xae, 0xc8, 0x54}        \
+}

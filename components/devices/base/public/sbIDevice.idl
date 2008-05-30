@@ -37,6 +37,7 @@ interface sbIDeviceCapabilities;
 interface sbIDeviceContent;
 interface sbIDeviceProperties;
 interface sbIDeviceParameters;
+interface sbIDeviceStatus;
 
 /**
  * \interface sbIDevice
@@ -131,6 +132,14 @@ interface sbIDevice : nsISupports
    * the application.
    */
   readonly attribute boolean canDisconnect;
+  
+  /**
+   * A more detailed state of the device, with information on what item/list it
+   * is currently being worked on and includes possible substates for more
+   * complicated states.
+   * @see sbIDeviceStatus
+   */
+  readonly attribute sbIDeviceStatus currentStatus;
   
   /**
    * Whether the device is busy, idle, syncing, mounting, etc.

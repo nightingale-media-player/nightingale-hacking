@@ -36,7 +36,7 @@
 #include <sbIMediaListListener.h>
 
 #include "sbBaseDevice.h"
-#include "sbDeviceStatus.h"
+#include "sbIDeviceStatus.h"
 
 class nsIFile;
 class nsIMutableArray;
@@ -84,10 +84,6 @@ public:
    * \param aMediaList The list or library to prune.
    */
   static nsresult DeleteUnavailableItems(/* in */ sbIMediaList *aMediaList);
-
-  static nsresult CreateStatusFromRequest(/* in */ const nsAString &aDeviceID,
-                                          /* in */ sbBaseDevice::TransferRequest *aRequest, 
-                                          /* out */ sbDeviceStatus **aStatus);
 
   /**
    * Given a device and a media item, find the sbIDeviceLibrary for it

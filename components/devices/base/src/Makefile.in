@@ -39,10 +39,12 @@ CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbDeviceLibraryHelpers.cpp \
            sbDeviceProperties.cpp \
            sbDeviceCapabilities.cpp \
+           sbDeviceStatus.cpp \
            $(topsrcdir)/components/moz/strings/src/sbTArrayStringEnumerator.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
+CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
+               $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/property/public \

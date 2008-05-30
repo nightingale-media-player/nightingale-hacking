@@ -466,3 +466,8 @@ NS_IMETHODIMP sbMockDevice::ResetWarningDialogs()
 {
   return sbBaseDevice::ResetWarningDialogs();
 }
+
+NS_IMETHODIMP sbMockDevice::GetCurrentStatus(sbIDeviceStatus * *aCurrentStatus)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
