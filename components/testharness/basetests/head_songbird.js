@@ -424,10 +424,12 @@ function loadData(databaseGuid, databaseLocation) {
 
   // XXXsteve I need to use a temp table here to avoid this bug:
   // http://www.sqlite.org/cvstrac/tktview?tn=3082
+  /* XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617.
   dbq.addQuery("insert into tmp_rowids select rowid from resource_properties_fts;");
   dbq.addQuery("insert into resource_properties_fts (rowid, propertyid, obj) " +
                " select rowid, property_id, obj from resource_properties where rowid not in (" +
                "select id from tmp_rowids)");
+  */
   dbq.addQuery("delete from tmp_rowids");
   dbq.addQuery("insert into tmp_rowids select rowid from resource_properties_fts_all;");
   dbq.addQuery("insert into resource_properties_fts_all (rowid, alldata) " +

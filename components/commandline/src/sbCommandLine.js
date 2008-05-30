@@ -164,14 +164,17 @@ sbCommandLineHandler.prototype = {
       // there isn't a window being used on these unit tests - the hybrid
       // Cocoa/Gecko event loop takes a long time (over 20 minutes) to kill the
       // 100 or so threads that get spooled up during the test cases.
-      // 
+      
+      // Unfortunately, this also happens on Windows :(
+ 
       // To fix this problem, we will use a nasty little hack. Open up the a
       // plain window that closes itself after a couple of seconds. This fires
       // the application shutdown procedure just as if we had closed the main
       // Songbird window.
       //
       // Yes - I know this sucks, I hate myself a little more for doing this.
-      if (platformStr == "Darwin") {
+      if (platformStr == "Darwin" ||
+          platformStr == "Windows_NT") {
         var ww = Cc["@mozilla.org/embedcomp/window-watcher;1"]
                  .getService(Ci.nsIWindowWatcher);
         
@@ -180,7 +183,7 @@ sbCommandLineHandler.prototype = {
                       "shutdownwin", "chrome", null);
       }
       else {
-        // Everything other than Mac, follow this 'standard' shutdown procedure:
+        // Linux can follow this 'standard' shutdown procedure:
         //
         // Fake the sequence of observer notifications for app shutdown. This
         // sequence should match that of canQuitApplication (from

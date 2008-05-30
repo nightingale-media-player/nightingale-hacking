@@ -408,6 +408,9 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = deleteb->ToString(mPropertiesDelete);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  /* XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617
+             for more information.
+
   // Media items delete fts query.  This query deletes all of the fts data
   // for the media items specified in the in criterion
    mMediaItemsFtsDelete =
@@ -494,6 +497,8 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = mMediaItemsFtsInsert->SetSelect(subselect);
   NS_ENSURE_SUCCESS(rv, rv);
 
+    */
+
   // Media items delete fts all query.  This query deletes all of the fts data
   // for the media items specified in the in criterion
    mMediaItemsFtsAllDelete =
@@ -528,7 +533,8 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = mMediaItemsFtsAllInsert->AddColumn(kAllData);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  subselect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  nsCOMPtr<sbISQLSelectBuilder> subselect =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = subselect->AddColumn(EmptyString(), kMediaItemId);
@@ -1093,11 +1099,16 @@ sbLocalDatabasePropertyCache::Write()
 
     // Run through the list of dirty items and build the fts delete/insert
     // queries
+
+    /* XXXAus: resource_properties_fts is disabled for now. See bug 9488
+               and bug 9617 for more information.
+
     rv = mMediaItemsFtsDeleteInCriterion->Clear();
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mMediaItemsFtsInsertInCriterion->Clear();
     NS_ENSURE_SUCCESS(rv, rv);
+    */
 
     rv = mMediaItemsFtsAllDeleteInCriterion->Clear();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1112,11 +1123,14 @@ sbLocalDatabasePropertyCache::Write()
         rv = bag->GetMediaItemId(&mediaItemId);
         NS_ENSURE_SUCCESS(rv, rv);
 
+        /* XXXAus: resource_properties_fts is disabled for now. See bug 9488
+                   and bug 9617 for more information.
         rv = mMediaItemsFtsDeleteInCriterion->AddLong(mediaItemId);
         NS_ENSURE_SUCCESS(rv, rv);
 
         rv = mMediaItemsFtsInsertInCriterion->AddLong(mediaItemId);
         NS_ENSURE_SUCCESS(rv, rv);
+        */
 
         rv = mMediaItemsFtsAllDeleteInCriterion->AddLong(mediaItemId);
         NS_ENSURE_SUCCESS(rv, rv);
@@ -1126,6 +1140,9 @@ sbLocalDatabasePropertyCache::Write()
       }
     }
 
+    /* XXXAus: resource_properties_fts is disabled for now. See bug 9488
+               and bug 9617 for more information.
+    
     nsString mediaItemsFtsDeleteSql;
     rv = mMediaItemsFtsDelete->ToString(mediaItemsFtsDeleteSql);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1133,6 +1150,7 @@ sbLocalDatabasePropertyCache::Write()
     nsString mediaItemsFtsInsertSql;
     rv = mMediaItemsFtsInsert->ToString(mediaItemsFtsInsertSql);
     NS_ENSURE_SUCCESS(rv, rv);
+    */
 
     nsString mediaItemsFtsAllDeleteSql;
     rv = mMediaItemsFtsAllDelete->ToString(mediaItemsFtsAllDeleteSql);
@@ -1143,8 +1161,13 @@ sbLocalDatabasePropertyCache::Write()
     NS_ENSURE_SUCCESS(rv, rv);
 
     // The first queries are to delete the fts data of the updated items
+    
+    /* XXXAus: resource_properties_fts is disabled for now. See bug 9488
+               and bug 9617 for more information.
+    
     rv = query->AddQuery(mediaItemsFtsDeleteSql);
     NS_ENSURE_SUCCESS(rv, rv);
+    */
 
     rv = query->AddQuery(mediaItemsFtsAllDeleteSql);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1251,8 +1274,13 @@ sbLocalDatabasePropertyCache::Write()
     }
 
     // Finally, insert the new fts data for the updated items
+
+    /* XXXAus: resource_properties_fts is disabled for now. See bug 9488
+               and bug 9617 for more information.
+    
     rv = query->AddQuery(mediaItemsFtsInsertSql);
     NS_ENSURE_SUCCESS(rv, rv);
+    */
 
     rv = query->AddQuery(mediaItemsFtsAllInsertSql);
     NS_ENSURE_SUCCESS(rv, rv);

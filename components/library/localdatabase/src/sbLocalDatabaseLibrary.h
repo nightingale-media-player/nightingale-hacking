@@ -337,7 +337,11 @@ private:
   nsString mGetTypeForGUIDQuery;
   nsString mGetMediaItemIdForGUIDQuery;
   nsString mInsertMediaItemQuery;
-  nsString mInsertPropertyFtsQuery;
+  
+  // XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617
+  //         for more details.
+  //nsString mInsertPropertyFtsQuery;
+
   nsString mInsertPropertyFtsAllQuery;
   nsString mMediaListFactoriesQuery;
   nsString mInsertMediaListFactoryQuery;

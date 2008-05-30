@@ -814,6 +814,10 @@ sbLocalDatabaseQuery::AddFilters()
     // must have the same value list.  This is enforced in
     // sbLocalDatabaseMediaListView::SetSearchConstraint
 
+    // XXXAus: Because of bug 9488, all searches must use the everythingSearch.
+    // See bug 9488 and bug 9617 for more information.
+    isEverythingSearch = PR_TRUE;
+
     if (isEverythingSearch) {
       // Join the all fts table.  The foreign key of this table is the
       // media item id so we can simply join it to _mi
@@ -826,7 +830,10 @@ sbLocalDatabaseQuery::AddFilters()
                                           PR_FALSE,
                                           PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
+    
     }
+    
+    /* XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617.
     else {
       // This is not the everything search so we need to use the per-property
       // fts table.  The foreign key on that table is the resource_properties
@@ -847,6 +854,7 @@ sbLocalDatabaseQuery::AddFilters()
                              ROWID_COLUMN);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+    */
 
     // Add the match constraint
     nsString match;

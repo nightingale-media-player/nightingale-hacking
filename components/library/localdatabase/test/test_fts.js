@@ -36,8 +36,10 @@ function runTest () {
   library.clear();
   library.flush();
 
+  /* XXXAus: See bug 9488 and bug 9617
   assertEqual(countFtsRows("foo"), 0);
   assertEqual(countFtsRows("bar"), 0);
+  */
   assertEqual(countFtsAllRows("foo"), 0);
   assertEqual(countFtsAllRows("bar"), 0);
 
@@ -45,35 +47,48 @@ function runTest () {
   item.setProperty(SBProperties.albumName, "foo");
   library.flush();
 
+  /* XXXAus: See bug 9488 and bug 9617
   assertEqual(countFtsRows("foo"), 1);
   assertEqual(countFtsRows("bar"), 0);
+  */
   assertEqual(countFtsAllRows("foo"), 1);
   assertEqual(countFtsAllRows("bar"), 0);
 
   item.setProperty(SBProperties.albumName, "bar");
   library.flush();
 
+  /* XXXAus: See bug 9488 and bug 9617
   assertEqual(countFtsRows("foo"), 0);
   assertEqual(countFtsRows("bar"), 1);
+  */
   assertEqual(countFtsAllRows("foo"), 0);
   assertEqual(countFtsAllRows("bar"), 1);
 
   item.setProperty(SBProperties.artistName, "foo");
   library.flush();
 
+  /* XXXAus: See bug 9488 and bug 9617
   assertEqual(countFtsRows("foo"), 1);
   assertEqual(countFtsRows("bar"), 1);
+  */
   assertEqual(countFtsAllRows("foo"), 1);
   assertEqual(countFtsAllRows("bar"), 1);
 
   library.remove(item);
   library.flush();
 
+  /* XXXAus: See bug 9488 and bug 9617
   assertEqual(countFtsRows("foo"), 0);
   assertEqual(countFtsRows("bar"), 0);
+  */
   assertEqual(countFtsAllRows("foo"), 0);
   assertEqual(countFtsAllRows("bar"), 0);
 }
+
+/*
+
+XXXAus: Because of bug 9488, we had to disable search against specific
+        properties. See bug 9617 for more info.
 
 function countFtsRows(obj) {
   var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
@@ -86,6 +101,8 @@ function countFtsRows(obj) {
   var dbr = dbq.getResultObject();
   return parseInt(dbr.getRowCell(0, 0));
 }
+
+*/
 
 function countFtsAllRows(obj) {
   var dbq = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]

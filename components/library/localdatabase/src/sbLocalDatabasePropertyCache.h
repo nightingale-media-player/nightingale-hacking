@@ -129,12 +129,16 @@ private:
   nsString mPropertiesDelete;
 
   // Media items fts delete query
-  nsCOMPtr<sbISQLDeleteBuilder> mMediaItemsFtsDelete;
-  sbISQLBuilderCriterionIn* mMediaItemsFtsDeleteInCriterion;
+  // XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617
+  //         for more details.
+  //nsCOMPtr<sbISQLDeleteBuilder> mMediaItemsFtsDelete;
+  //sbISQLBuilderCriterionIn* mMediaItemsFtsDeleteInCriterion;
 
   // Media items fts insert query
-  nsCOMPtr<sbISQLInsertBuilder> mMediaItemsFtsInsert;
-  sbISQLBuilderCriterionIn* mMediaItemsFtsInsertInCriterion;
+  // XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617
+  //         for more details.
+  //nsCOMPtr<sbISQLInsertBuilder> mMediaItemsFtsInsert;
+  //sbISQLBuilderCriterionIn* mMediaItemsFtsInsertInCriterion;
 
   // Media items fts all delete query
   nsCOMPtr<sbISQLDeleteBuilder> mMediaItemsFtsAllDelete;

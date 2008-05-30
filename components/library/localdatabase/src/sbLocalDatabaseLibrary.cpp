@@ -902,6 +902,7 @@ sbLocalDatabaseLibrary::CreateQueries()
   rv = insert->ToString(mInsertPropertyQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  /* XXXAus: resource_properties_fts is disabled. See bug 9488 and 9617.
   // Build mInsertPropertyFtsQuery
   rv = insert->Reset();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -962,6 +963,7 @@ sbLocalDatabaseLibrary::CreateQueries()
 
   rv = insert->ToString(mInsertPropertyFtsQuery);
   NS_ENSURE_SUCCESS(rv, rv);
+  */
 
   // Build mInsertPropertyFtsAllQuery
   rv = insert->Reset();
@@ -976,7 +978,8 @@ sbLocalDatabaseLibrary::CreateQueries()
   rv = insert->AddColumn(NS_LITERAL_STRING("alldata"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  subselect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  nsCOMPtr<sbISQLSelectBuilder> subselect =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = subselect->AddColumn(NS_LITERAL_STRING("_mi"),
@@ -1314,11 +1317,13 @@ sbLocalDatabaseLibrary::AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
   }
 
   if (hasProperties) {
+    /* XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617.
     rv = aQuery->AddQuery(mInsertPropertyFtsQuery);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = aQuery->BindStringParameter(0, aGuid);
     NS_ENSURE_SUCCESS(rv, rv);
+    */
 
     rv = aQuery->AddQuery(mInsertPropertyFtsAllQuery);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1326,7 +1331,9 @@ sbLocalDatabaseLibrary::AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
     rv = aQuery->BindStringParameter(0, aGuid);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    count += 2;
+    // XXXAus: Don't forget to change this to count += 2; when the query above
+    //         is re-enabled.
+    count += 1;
   }
 
   if (update) {
