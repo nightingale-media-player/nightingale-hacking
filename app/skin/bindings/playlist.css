@@ -370,6 +370,16 @@ treecol[bind="http://songbirdnest.com/data/1.0#duration"] > label,
   padding-right:5px;
 }
 
+/**
+*******************************************************************************
+Track No Column
+*******************************************************************************
+*/
+treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"]
+{
+  text-align:right;
+}
+
 /** 
 *******************************************************************************
 Playlist Commands
