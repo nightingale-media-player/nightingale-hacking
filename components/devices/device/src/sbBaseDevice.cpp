@@ -1816,9 +1816,28 @@ nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
   nsCString prefKey(PREF_DEVICE_PREFERENCES_BRANCH);
   prefKey.Append(idString);
   prefKey.AppendLiteral(".preferences.");
-  
-  return prefService->GetBranch(prefKey.get(), aPrefBranch);
 
+  // get the pref branch 
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  rv = prefService->GetBranch(prefKey.get(), getter_AddRefs(prefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If we're not on the main thread proxy the pref branch
+  if (!isMainThread) {
+    nsCOMPtr<nsIPrefBranch> proxy;
+    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                              NS_GET_IID(nsIPrefBranch),
+                              prefBranch,
+                              nsIProxyObjectManager::INVOKE_SYNC |
+                              nsIProxyObjectManager::FORCE_PROXY_CREATION,
+                              getter_AddRefs(proxy));
+    NS_ENSURE_SUCCESS(rv, rv);
+    prefBranch.swap(proxy);
+  }
+
+  prefBranch.forget(aPrefBranch);
+
+  return rv;
 }
 
 //------------------------------------------------------------------------------
