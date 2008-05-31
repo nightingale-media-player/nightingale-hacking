@@ -548,8 +548,14 @@ function sbBookmarks_canDrop(aNode, aDragSession, aOrientation, aWindow) {
     }
   }
   if (aDragSession.isDataFlavorSupported(MOZ_URL_DRAG_TYPE)) {
-    return true;
 
+    // Check to ensure that we're not attempting to bookmark chrome URLs.
+    var dragData = this._getDragData(aDragSession, MOZ_URL_DRAG_TYPE);
+    if(dragData.indexOf("chrome://") == 0) {
+      return false;
+    }
+
+    return true;
   }
   return false;
 }
