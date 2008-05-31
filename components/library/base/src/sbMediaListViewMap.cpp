@@ -63,9 +63,6 @@ static PRLogModuleInfo* gMediaListViewMapLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-#define NS_PROFILE_STARTUP_OBSERVER_ID  "profile-after-change"
-#define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
-
 NS_IMPL_THREADSAFE_ISUPPORTS3(sbMediaListViewMap, nsIObserver,
                                                   nsISupportsWeakReference,
                                                   sbIMediaListViewMap)
@@ -124,11 +121,11 @@ sbMediaListViewMap::Init()
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = observerService->AddObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID,
+  rv = observerService->AddObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC,
                                     PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = observerService->AddObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID,
+  rv = observerService->AddObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
                                     PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -301,11 +298,11 @@ sbMediaListViewMap::Observe(nsISupports* aSubject,
   if (strcmp(aTopic, APPSTARTUP_TOPIC) == 0) {
     return NS_OK; // ???
   }
-  else if (strcmp(aTopic, NS_PROFILE_STARTUP_OBSERVER_ID) == 0) {
+  else if (strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC) == 0) {
 
     // Remove ourselves from the observer service.
     if (NS_SUCCEEDED(rv)) {
-      observerService->RemoveObserver(this, NS_PROFILE_STARTUP_OBSERVER_ID);
+      observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC);
     }
 
     // Startup
@@ -313,11 +310,11 @@ sbMediaListViewMap::Observe(nsISupports* aSubject,
 
     return NS_OK;
   }
-  else if (strcmp(aTopic, NS_PROFILE_SHUTDOWN_OBSERVER_ID) == 0) {
+  else if (strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC) == 0) {
 
     // Remove ourselves from the observer service.
     if (NS_SUCCEEDED(rv)) {
-      observerService->RemoveObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
+      observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
     }
 
     // Shutdown

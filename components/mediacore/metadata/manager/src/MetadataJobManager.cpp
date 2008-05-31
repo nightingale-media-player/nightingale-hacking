@@ -45,7 +45,7 @@
 #include "nsIDOMWindow.h"
 #include "nsIDOMWindowInternal.h"
 
-
+#include <sbILibraryManager.h>
 #include <sbISQLBuilder.h>
 #include <sbSQLBuilderCID.h>
 #include <sbIMediaItem.h>
@@ -63,7 +63,6 @@ extern PRLogModuleInfo* gMetadataLog;
 
 #define NS_APPSTARTUP_CATEGORY           "app-startup"
 #define NS_FINAL_UI_STARTUP_OBSERVER_ID  "final-ui-startup"
-#define NS_PROFILE_SHUTDOWN_OBSERVER_ID  "profile-before-change"
 
 
 // DEFINES ====================================================================
@@ -266,11 +265,11 @@ sbMetadataJobManager::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
     rv = obsSvc->AddObserver(observer, NS_FINAL_UI_STARTUP_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = obsSvc->AddObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
+    rv = obsSvc->AddObserver(observer, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   } 
   //
-  // Profile Up
+  // UI Up
   //
   else if (!strcmp(NS_FINAL_UI_STARTUP_OBSERVER_ID, aTopic)) {
     
@@ -283,9 +282,9 @@ sbMetadataJobManager::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
   }
   //
-  // Profile Down
+  // Library Down
   //
-  else if (!strcmp(NS_PROFILE_SHUTDOWN_OBSERVER_ID, aTopic)) {
+  else if (!strcmp(SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, aTopic)) {
 
     rv = Shutdown();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -299,7 +298,7 @@ sbMetadataJobManager::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
     rv = obsSvc->RemoveObserver(observer, NS_FINAL_UI_STARTUP_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = obsSvc->RemoveObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
+    rv = obsSvc->RemoveObserver(observer, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   return NS_OK;

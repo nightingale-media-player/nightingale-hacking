@@ -51,7 +51,6 @@
 
 /* observer topics */
 #define NS_PROFILE_STARTUP_OBSERVER_ID          "profile-after-change"
-#define NS_QUIT_APPLICATION_OBSERVER_ID         "profile-change-teardown"
 #define NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID "quit-application-granted"
 #define NS_PROFILE_SHUTDOWN_OBSERVER_ID         "profile-before-change"
 
@@ -453,7 +452,7 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     rv = obsSvc->AddObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = obsSvc->AddObserver(observer, NS_QUIT_APPLICATION_OBSERVER_ID, PR_FALSE);
+    rv = obsSvc->AddObserver(observer, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->AddObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
@@ -483,7 +482,7 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     rv = obsSvc->RemoveObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-  } else if (!strcmp(NS_QUIT_APPLICATION_OBSERVER_ID, aTopic)) {
+  } else if (!strcmp(SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, aTopic)) {
     // Called during shutdown, the profile is still available
     rv = this->PrepareShutdown();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -504,7 +503,7 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     rv = obsSvc->RemoveObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
     
-    rv = obsSvc->RemoveObserver(observer, NS_QUIT_APPLICATION_OBSERVER_ID);
+    rv = obsSvc->RemoveObserver(observer, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->RemoveObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID);

@@ -594,7 +594,7 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = observerService->AddObserver(this,
-                                    SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
+                                    SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC,
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1351,7 +1351,7 @@ sbLocalDatabasePropertyCache::Observe(nsISupports* aSubject,
                                       const char* aTopic,
                                       const PRUnichar* aData)
 {
-  if (strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC) == 0 ||
+  if (strcmp(aTopic, SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC) == 0 ||
       strcmp(aTopic, NS_XPCOM_SHUTDOWN_THREADS_OBSERVER_ID) == 0) {
 
     nsresult rv;

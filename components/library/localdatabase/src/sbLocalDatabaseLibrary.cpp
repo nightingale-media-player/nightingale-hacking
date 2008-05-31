@@ -624,7 +624,7 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = observerService->AddObserver(this,
-                                    SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
+                                    SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC,
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2393,6 +2393,10 @@ sbLocalDatabaseLibrary::Shutdown()
   // Shutdown the thread pool.
   rv = mHashingThreadPool->Shutdown();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get rid of any hash helpers, since if we hold them the security 
+  // component fails to shut down
+  mHashHelpers.Clear();
 
   // Explicitly release our property cache here so we make sure to write all
   // changes to disk (regardless of whether or not this library will be leaked)
@@ -4528,12 +4532,12 @@ sbLocalDatabaseLibrary::Observe(nsISupports *aSubject,
                                 const char *aTopic,
                                 const PRUnichar *aData)
 {
-  if (!strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC)) {
+  if (!strcmp(aTopic, SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC)) {
     nsresult rv;
     nsCOMPtr<nsIObserverService> observerService =
       do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
     if (NS_SUCCEEDED(rv)) {
-      observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
+      observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC);
     }
 
     rv = Shutdown();

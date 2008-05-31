@@ -69,7 +69,7 @@ static PRLogModuleInfo* gLibraryManagerLog = nsnull;
 #endif
 
 #define NS_PROFILE_STARTUP_OBSERVER_ID  "profile-after-change"
-#define NS_PROFILE_SHUTDOWN_OBSERVER_ID "profile-before-change"
+#define NS_PROFILE_TEARDOWN_OBSERVER_ID "profile-change-teardown"
 
 NS_IMPL_THREADSAFE_ISUPPORTS3(sbLibraryManager, nsIObserver,
                                                 nsISupportsWeakReference,
@@ -153,7 +153,7 @@ sbLibraryManager::Init()
                                     PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = observerService->AddObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID,
+  rv = observerService->AddObserver(this, NS_PROFILE_TEARDOWN_OBSERVER_ID,
                                     PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -917,16 +917,22 @@ sbLibraryManager::Observe(nsISupports* aSubject,
 
     return NS_OK;
   }
-  else if (strcmp(aTopic, NS_PROFILE_SHUTDOWN_OBSERVER_ID) == 0) {
+  else if (strcmp(aTopic, NS_PROFILE_TEARDOWN_OBSERVER_ID) == 0) {
 
     // Remove ourselves from the observer service.
     if (NS_SUCCEEDED(rv)) {
-      observerService->RemoveObserver(this, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
+      observerService->RemoveObserver(this, NS_PROFILE_TEARDOWN_OBSERVER_ID);
     }
 
     // Notify observers that we're about to release all libraries.
     rv = observerService->NotifyObservers(NS_ISUPPORTS_CAST(sbILibraryManager*, this),
                                           SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
+                                          nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Notify observers to actually shut down the libraries and anything library related
+    rv = observerService->NotifyObservers(NS_ISUPPORTS_CAST(sbILibraryManager*, this),
+                                          SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC,
                                           nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
 
