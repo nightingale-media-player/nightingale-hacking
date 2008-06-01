@@ -60,6 +60,10 @@ NS_IMETHODIMP
 sbDeviceStatus::SetCurrentState(PRUint32 aCurrentState)
 {
   mCurrentState = aCurrentState;
+  if (aCurrentState == sbIDevice::STATE_IDLE) {
+    nsresult rv = SetWorkItemProgress(0);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   return NS_OK;
 }
 

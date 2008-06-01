@@ -296,13 +296,19 @@ var DPW = {
       break;
     }
 
-    this._dText1Remote.stringValue =
-            SBFormattedString("device.status.progress_header_" + aOperationHead,
-                              [this._curItemIndex.intValue,
-                               this._totalItems.intValue]);
-    this._dText2Remote.stringValue =
-            SBFormattedString("device.status.progress_footer_" + aOperationFoot,
-                              [itemName, itemArtist, itemAlbum]);
+    if (this._curItemIndex.intValue != 0) {
+	    this._dText1Remote.stringValue =
+	            SBFormattedString("device.status.progress_header_" + aOperationHead,
+	                              [this._curItemIndex.intValue,
+	                               this._totalItems.intValue]);
+	    this._dText2Remote.stringValue =
+	            SBFormattedString("device.status.progress_footer_" + aOperationFoot,
+	                              [itemName, itemArtist, itemAlbum]);
+    }
+    else {
+    	this._dText1Remote.stringValue = "";
+    	this._dText2Remote.stringValue = "";
+    }
     this._currentState = deviceStatus.currentState;
   },
 
