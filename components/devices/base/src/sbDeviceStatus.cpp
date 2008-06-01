@@ -60,6 +60,8 @@ NS_IMETHODIMP
 sbDeviceStatus::SetCurrentState(PRUint32 aCurrentState)
 {
   mCurrentState = aCurrentState;
+  // If we're idle we want to set the curren index to zero so the JS code
+  // doesn't erroneously display counts ffrom the previous batch
   if (aCurrentState == sbIDevice::STATE_IDLE) {
     nsresult rv = SetWorkItemProgress(0);
     NS_ENSURE_SUCCESS(rv, rv);
