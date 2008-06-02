@@ -893,13 +893,13 @@ tab[selected="true"],
 
 label.tab-text
 {
-  color: #99A195 !important; /** Tab Text */
+  color: #99A195; /** Tab Text */
 }
 
 tab[selected="true"] > hbox > label.tab-text,
 .tabbrowser-tab[selected="true"] > hbox > label.tab-text
 {
-  color: #feffff !important; /** Light Color Brightest */
+  color: #feffff; /** Light Color Brightest */
 }
 
 tabpanels {
