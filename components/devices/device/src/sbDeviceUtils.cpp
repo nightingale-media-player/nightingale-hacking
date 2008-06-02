@@ -40,13 +40,35 @@
 
 #include "sbBaseDevice.h"
 #include "sbIDeviceContent.h"
+#include "sbIDeviceHelper.h"
 #include "sbIDeviceLibrary.h"
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbIMediaListListener.h"
+#include "sbIWindowWatcher.h"
 #include "sbLibraryUtils.h"
 #include "sbStandardProperties.h"
 #include "sbStringUtils.h"
+
+class sbDeviceUtilsQueryUserSpaceExceeded : public sbICallWithWindowCallback
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBICALLWITHWINDOWCALLBACK
+
+  nsresult Query(sbIDevice* aDevice,
+                 PRBool     aSync,
+                 PRInt64    aSpaceNeeded,
+                 PRInt64    aSpaceAvailable,
+                 PRBool*    aAbort);
+
+private:
+  nsCOMPtr<sbIDevice> mDevice;
+  PRBool              mSync;
+  PRInt64             mSpaceNeeded;
+  PRInt64             mSpaceAvailable;
+  PRBool*             mAbort;
+};
 
 /*static*/
 nsresult sbDeviceUtils::GetOrganizedPath(/* in */ nsIFile *aParent,
@@ -309,6 +331,96 @@ nsresult sbDeviceUtils::GetOriginMediaItemByDevicePersistentId
 
   // get the original item from the device media item
   rv = sbLibraryUtils::GetOriginItem(deviceMediaItem, aItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbDeviceUtils::QueryUserSpaceExceeded
+                          (/* in */  sbIDevice* aDevice,
+                           /* in */  PRBool     aSync,
+                           /* in */  PRInt64    aSpaceNeeded,
+                           /* in */  PRInt64    aSpaceAvailable,
+                           /* out */ PRBool*    aAbort)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aAbort);
+
+  nsresult rv;
+
+  // create a query object and query the user
+  nsRefPtr<sbDeviceUtilsQueryUserSpaceExceeded> query;
+  query = new sbDeviceUtilsQueryUserSpaceExceeded();
+  NS_ENSURE_TRUE(query, NS_ERROR_OUT_OF_MEMORY);
+  rv = query->Query(aDevice, aSync, aSpaceNeeded, aSpaceAvailable, aAbort);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+//------------------------------------------------------------------------------
+//
+// sbDeviceUtilsQueryUserSpaceExceeded class.
+//
+//------------------------------------------------------------------------------
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceUtilsQueryUserSpaceExceeded,
+                              sbICallWithWindowCallback)
+
+NS_IMETHODIMP
+sbDeviceUtilsQueryUserSpaceExceeded::HandleWindowCallback(nsIDOMWindow* aWindow)
+{
+  NS_ENSURE_ARG_POINTER(aWindow);
+
+  nsresult rv;
+
+  // get the device helper
+  nsCOMPtr<sbIDeviceHelper> deviceHelper =
+    do_GetService("@songbirdnest.com/Songbird/Device/Base/Helper;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // query the user
+  PRBool proceed;
+  rv = deviceHelper->QueryUserSpaceExceeded(aWindow,
+                                            mDevice,
+                                            mSync,
+                                            mSpaceNeeded,
+                                            mSpaceAvailable,
+                                            &proceed);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // return results
+  *mAbort = !proceed;
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceUtilsQueryUserSpaceExceeded::Query(sbIDevice* aDevice,
+                                           PRBool     aSync,
+                                           PRInt64    aSpaceNeeded,
+                                           PRInt64    aSpaceAvailable,
+                                           PRBool*    aAbort)
+{
+  nsresult rv;
+
+  // get the query parameters
+  mDevice = aDevice;
+  mSync = aSync;
+  mSpaceNeeded = aSpaceNeeded;
+  mSpaceAvailable = aSpaceAvailable;
+  mAbort = aAbort;
+
+  // wait to query user until a window is available
+  nsCOMPtr<sbIWindowWatcher> windowWatcher;
+  windowWatcher = do_GetService("@songbirdnest.com/Songbird/window-watcher;1",
+                                &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = windowWatcher->CallWithWindow(NS_LITERAL_STRING("Songbird:Main"),
+                                     this,
+                                     PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

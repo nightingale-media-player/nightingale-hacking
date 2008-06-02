@@ -28,6 +28,7 @@
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 
 const Ci = Components.interfaces;
@@ -122,6 +123,54 @@ BaseDeviceHelper.prototype = {
                                           null, /* checkbox message TODO */
                                           neverPromptAgain);
     return (!abortRequest);
+  },
+
+/*
+  boolean queryUserSpaceExceeded(in nsIDOMWindow       aParent,
+                                 in sbIDevice          aDevice,
+                                 in boolean            aSyncDeviceOperation,
+                                 in unsigned long long aSpaceNeeded,
+                                 in unsigned long long aSpaceAvailable);
+ */
+  queryUserSpaceExceeded: function BaseDeviceHelper_queryUserSpaceExceeded
+                                     (aParent,
+                                      aDevice,
+                                      aSyncDeviceOperation,
+                                      aSpaceNeeded,
+                                      aSpaceAvailable,
+                                      aAbort)
+  {
+    // get the branding string bundle
+    var bundleSvc = Cc["@mozilla.org/intl/stringbundle;1"]
+                      .getService(Ci.nsIStringBundleService);
+    var branding = bundleSvc.createBundle
+                               ("chrome://branding/locale/brand.properties");
+
+    var messageKeyPrefix = "device.error.not_enough_freespace.prompt." +
+                           (aSyncDeviceOperation ? "sync" : "manual");
+
+    var message = SBFormattedString
+                    (messageKeyPrefix + ".message",
+                     [ aDevice.name,
+                       StorageFormatter.format(aSpaceNeeded),
+                       StorageFormatter.format(aSpaceAvailable),
+                       SBString("brandShortName", "Songbird", branding) ]);
+
+    var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                     .getService(Ci.sbIPrompter);
+    var neverPromptAgain = { value: false };
+    var abortRequest = prompter.confirmEx
+                                  (aParent,
+                                   SBString(messageKeyPrefix + ".title"),
+                                   message,
+                                   Ci.nsIPromptService.STD_YES_NO_BUTTONS,
+                                   null,
+                                   null,
+                                   null,
+                                   null,
+                                   neverPromptAgain);
+
+    return !abortRequest;
   },
 
   contractID: "@songbirdnest.com/Songbird/Device/Base/Helper;1",

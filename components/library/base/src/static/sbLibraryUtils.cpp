@@ -181,10 +181,11 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
                                           /* out */ PRInt64      * _retval)
 {
   NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv = aItem->GetContentLength(_retval);
 
-  if(NS_FAILED(rv)) {
+  if(NS_FAILED(rv) || !*_retval) {
     // try to get the length from disk
     nsCOMPtr<sbIMediaItem> item(aItem);
     

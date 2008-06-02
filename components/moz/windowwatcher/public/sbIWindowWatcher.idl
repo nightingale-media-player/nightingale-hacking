@@ -48,7 +48,7 @@ interface nsIDOMWindow;
 
 interface sbICallWithWindowCallback;
 
-[scriptable, uuid(4a2ed7bd-b686-4229-9c47-22c3a6760a3c)]
+[scriptable, uuid(93cf33df-770f-49ec-afb7-20db242dd366)]
 interface sbIWindowWatcher : nsISupports
 {
   /**
@@ -64,14 +64,17 @@ interface sbIWindowWatcher : nsISupports
    *        specified by aWindowType.  Wait until a window of the specified type
    *        is available or until shutdown.  Call callback with null window on
    *        shutdown.  Call callback on main thread.
+   *        If aWait is true, don't return until callback is called.
    *
    * \param aWindowType         Type of window with which to call.
    * \param aCallback           Callback to call with window.
+   * \param aWait               If true, wait until calback is called.
    */
   /*XXXeps add cancel. */
 
   void callWithWindow(in AString                   aWindowType,
-                      in sbICallWithWindowCallback aCallback);
+                      in sbICallWithWindowCallback aCallback,
+                      [optional] in boolean        aWait);
 
 
   /**

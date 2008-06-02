@@ -81,14 +81,21 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbWindowWatcher,
  *        specified by aWindowType.  Wait until a window of the specified type
  *        is available or until shutdown.  Call callback with null window on
  *        shutdown.  Call callback on main thread.
+ *        If aWait is true, don't return until callback is called.
  *
  * \param aWindowType         Type of window with which to call.
  * \param aCallback           Callback to call with window.
+ * \param aWait               If true, wait until calback is called.
+ *
+ * When called on the main-thread with aWait set to true, return
+ * NS_ERROR_NOT_AVAILABLE if window of specified type is not available.  In all
+ * other error cases, return NS_ERROR_FAILURE.
  */
 
 NS_IMETHODIMP
 sbWindowWatcher::CallWithWindow(const nsAString&           aWindowType,
-                                sbICallWithWindowCallback* aCallback)
+                                sbICallWithWindowCallback* aCallback,
+                                PRBool                     aWait)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aCallback);
@@ -101,11 +108,24 @@ sbWindowWatcher::CallWithWindow(const nsAString&           aWindowType,
     // Get a main thread proxy to this instance.
     nsCOMPtr<sbIWindowWatcher> proxyWindowWatcher;
     rv = GetProxiedWindowWatcher(getter_AddRefs(proxyWindowWatcher));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
 
-    // Call back through the proxy.
-    rv = proxyWindowWatcher->CallWithWindow(aWindowType, aCallback);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // Call back through the proxy.  Wait for window if specified to do so.
+    rv = NS_OK;
+    while (1) {
+      // Call the proxied window watcher.  Exit loop on success or if not
+      // waiting.
+      rv = proxyWindowWatcher->CallWithWindow(aWindowType, aCallback, aWait);
+      if (NS_SUCCEEDED(rv) || !aWait)
+        break;
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+      // Wait for a window if none available.
+      rv = WaitForWindow(aWindowType);
+      NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+    }
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
 
     return NS_OK;
   }
@@ -116,7 +136,7 @@ sbWindowWatcher::CallWithWindow(const nsAString&           aWindowType,
   // Check if window is already available.
   nsCOMPtr<nsIDOMWindow> window;
   rv = GetWindow(aWindowType, getter_AddRefs(window));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
 
   // If a window is available or this instance is shutting down, call the
   // callback.  Otherwise, place the call with window information on the call
@@ -124,6 +144,13 @@ sbWindowWatcher::CallWithWindow(const nsAString&           aWindowType,
   if (window || mIsShuttingDown) {
     aCallback->HandleWindowCallback(window);
   } else {
+    // If specified to wait and the window is not available, return a not
+    // available error indication instead of enqueuing onto the call with window
+    // list.
+    if (aWait)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    // Place the call with window information on the call with window list.
     CallWithWindowInfo callWithWindowInfo;
     callWithWindowInfo.windowType = aWindowType;
     callWithWindowInfo.callback = aCallback;
@@ -227,7 +254,7 @@ sbWindowWatcher::WaitForWindow(const nsAString& aWindowType)
 {
   nsresult rv;
 
-  // This method may only be called on the main thread.
+  // This method may not be called on the main thread.
   NS_ENSURE_TRUE(!NS_IsMainThread(), NS_ERROR_UNEXPECTED);
 
   // Don't wait if this instance is shutting down.
@@ -1062,7 +1089,7 @@ sbWindowWatcherWaitForWindow::Wait(const nsAString& aWindowType)
   nsresult rv;
 
   // Set up to call this instance with a matching window.
-  rv = mSBWindowWatcher->CallWithWindow(aWindowType, this);
+  rv = mSBWindowWatcher->CallWithWindow(aWindowType, this, false);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Operate under the ready monitor.

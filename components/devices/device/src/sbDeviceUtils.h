@@ -121,6 +121,26 @@ public:
                     (/* in */  sbILibrary*      aLibrary,
                      /* in */  const nsAString& aDevicePersistentId,
                      /* out */ sbIMediaItem**   aItem);
+
+  /**
+   * Ask the user what action to take in response to an operation space exceeded
+   * event for the device specified by aDevice.  If aSync is true, the operation
+   * is a sync operation.  The amount of space needed for the operation is
+   * specified by aSpaceNeeded and the amount available by aSpaceAvailable.  If
+   * the user chooses to abort the operation, true is returned in aAbort.
+   *
+   * \param aDevice         [in] Target device of operation.
+   * \param aSync           [in] True if operation is a sync operation.
+   * \param aSpaceNeeded    [in] Space needed by operation.
+   * \param aSpaceAvailable [in] Space available to operation.
+   * \param aAbort          [out] True if user selected to abort operation.
+   */
+
+  static nsresult QueryUserSpaceExceeded(/* in */  sbIDevice* aDevice,
+                                         /* in */  PRBool     aSync,
+                                         /* in */  PRInt64    aSpaceNeeded,
+                                         /* in */  PRInt64    aSpaceAvailable,
+                                         /* out */ PRBool*    aAbort);
 };
 
 
