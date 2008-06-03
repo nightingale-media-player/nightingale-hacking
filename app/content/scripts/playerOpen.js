@@ -442,7 +442,10 @@ function SBScanMedia( parentWindow )
     var media_scan_data = new Object();
     media_scan_data.URL = [fp.file.path];
     // Open the modal dialog
-    SBOpenWindow( "chrome://songbird/content/xul/mediaScan.xul", "media_scan", "chrome,centerscreen", media_scan_data );
+    SBOpenModalDialog( "chrome://songbird/content/xul/mediaScan.xul",
+                       "media_scan",
+                       "chrome,centerscreen",
+                       media_scan_data );
   }
   theFileScanIsOpen.boolValue = false;
 }
