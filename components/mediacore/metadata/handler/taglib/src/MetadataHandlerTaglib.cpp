@@ -563,6 +563,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       TagLib::FileRef f(filePath.BeginReading());
       NS_ENSURE_TRUE(f.file(), NS_ERROR_FAILURE);
       NS_ENSURE_TRUE(f.file()->isOpen(), NS_ERROR_FAILURE);
+      NS_ENSURE_TRUE(f.file()->isValid(), NS_ERROR_FAILURE);
       
       nsAutoString propertyValue;
       

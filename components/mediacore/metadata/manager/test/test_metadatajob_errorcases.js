@@ -60,6 +60,11 @@ function runTest() {
   files.push(corruptFile);
   filesToRemove.push(corruptFile);
   
+  // Media files with the wrong extensions
+  files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/mp3-disguised-as.flac"));
+  files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/mp3-disguised-as.ogg"));
+  files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/ogg-disguised-as.m4a"));
+  
   // Misc file permissions
   file = newAppRelativeFile("testharness/metadatamanager/errorcases/access-tests.mp3");  
   var readonly = getCopyOfFile(file, "readonly.mp3");
@@ -224,9 +229,11 @@ function runTest() {
       // Verify job progress reporting.  Do this last since the info above is
       // useful for debugging.
       if (isWindows) {
-        assertEqual(job.errorCount, 1);
+        // Missing file plus three files with wrong extensions
+        assertEqual(job.errorCount, 4);
       } else {
-        assertEqual(job.errorCount, 3);
+        // Missing file, permission files, files with wrong extensiosn
+        assertEqual(job.errorCount, 6);
       }
       assertEqual(files.length, job.total);
       assertEqual(files.length, job.progress);
