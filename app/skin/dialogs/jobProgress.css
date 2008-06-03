@@ -37,10 +37,7 @@ See SBJobUtils.jsm and sbIJobProgress.idl.
 
 #job_progress_dialog {
   width: 500px;
+  min-width: 500px;
   max-width: 500px;
 }
 
-#jobprogress_status_box {
-  min-height: 40px;
-  -moz-box-pack: end;
-}
