@@ -173,7 +173,6 @@ var JobProgressDialog = {
    * jump through hoops and convert \n to <br/>.  Bleh.
    */
   _formatDescription: function(aDescription, aMessage) {  
-    aMessage = unescape(aMessage);
     var lines = aMessage.split("\n");
     if (lines.length > 1) {
       aDescription.textContent = "";

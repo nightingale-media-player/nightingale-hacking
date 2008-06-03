@@ -211,22 +211,53 @@ NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
   // as status.
   if (mStatus == sbIJobProgress::STATUS_RUNNING) {
     // The current item may be updated from the worker thread
-    nsAutoLock lock(mCurrentItemLock);
-    
-    if (mCurrentItem) {
-      nsAutoString url = mCurrentItem->url;
-    
-      // Only show the leaf filename
-      PRInt32 lastSlash = url.RFindChar('/');
-      if (lastSlash != -1 && lastSlash < url.Length() - 1) {
-        url.Cut(0, lastSlash + 1);
+    nsString escapedURL;
+
+    { /* scope for mCurrentItemLock */
+      nsAutoLock lock(mCurrentItemLock);
+      
+      if (mCurrentItem) {
+        escapedURL = mCurrentItem->url;
       }
-      aText = url;
-    } else {
-      // Clear out the status text
-      aText = EmptyString();
-    }
+    } /* end scope for mCurrentItemLock */
     
+    // need to unescape the file name
+    nsCOMPtr<nsIIOService> ioSvc =
+      do_GetService("@mozilla.org/network/io-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<nsIURI> uri;
+    rv = ioSvc->NewURI(NS_ConvertUTF16toUTF8(escapedURL),
+                       nsnull,
+                       nsnull,
+                       getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<nsIURL> url = do_QueryInterface(uri, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCString escapedFileName;
+    rv = url->GetFileName(escapedFileName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<nsINetUtil> netUtil =
+    do_GetService("@mozilla.org/network/util;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCString fileName;
+    rv = netUtil->UnescapeString(escapedFileName,
+                                 nsINetUtil::ESCAPE_URL_SKIP_CONTROL,
+                                 fileName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    aText.Assign(NS_ConvertUTF8toUTF16(fileName));
+    
+    // Force the filename to be one line in order to
+    // avoid sizeToContent pain
+    if (aText.Length() > 45) {
+      aText.Replace(20, aText.Length() - 40, NS_LITERAL_STRING("..."));
+    }
+      
   } else if (mStatus == sbIJobProgress::STATUS_FAILED) {
     // If we've failed, give a localized explanation.
     nsAutoString text;
@@ -1328,6 +1359,8 @@ nsresult sbMetadataJob::GetNextItem( sbIDatabaseQuery *aQuery, nsString aTableNa
         rv = item->GetProperty( NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
                                 uriSpec );
         NS_ENSURE_SUCCESS(rv, rv);
+        
+        LOG(("metadata job url: %s\n", NS_ConvertUTF16toUTF8(uriSpec).get()));
 
         nsRefPtr<jobitem_t> jobitem;
         jobitem = new jobitem_t( libraryGuid,
