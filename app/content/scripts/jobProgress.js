@@ -123,7 +123,15 @@ var JobProgressDialog = {
       this._progressMeter.value = Math.round((this._job.progress / this._job.total) * 100);
     }
     
-    window.sizeToContent();
+    // If the content is too big for the window (or the window has just loaded)
+    // then resize the window.   
+    // This madness is needed because calling sizeToContent twice with no
+    // change in dimensions results 1px of bonus width. 
+    // See https://bugzilla.mozilla.org/show_bug.cgi?id=230959
+    if (window.innerHeight < 10 ||
+        window.innerHeight != document.documentElement.boxObject.height) {
+      setTimeout(function() { window.sizeToContent(); }, 50);
+    }
   },
   
   /**
@@ -177,7 +185,5 @@ var JobProgressDialog = {
       aDescription.textContent = lines[0];
     }
   }
-  
-  
 }
 
