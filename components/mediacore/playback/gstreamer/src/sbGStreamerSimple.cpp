@@ -28,6 +28,7 @@
 #include "nsIWindowMediator.h"
 #include "nsServiceManagerUtils.h"
 #include "nsStringGlue.h"
+#include "nsThreadUtils.h"
 #include "prlog.h"
 
 /**
@@ -46,11 +47,18 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbGStreamerSimple,
                               nsIDOMEventListener,
                               nsITimerCallback)
 
-static GstBusSyncReply
+static void
 syncHandlerHelper(GstBus* bus, GstMessage* message, gpointer data)
 {
   sbGStreamerSimple* gsts = static_cast<sbGStreamerSimple*>(data);
-  return gsts->SyncHandler(bus, message);
+  gsts->SyncHandler(bus, message);
+}
+
+static void
+asyncHandlerHelper(GstBus* bus, GstMessage* message, gpointer data)
+{
+  sbGStreamerSimple* gsts = static_cast<sbGStreamerSimple*>(data);
+  gsts->AsyncHandler(bus, message);
 }
 
 static void
@@ -234,7 +242,12 @@ sbGStreamerSimple::SetupPlaybin()
     g_object_set(mPlay, "video-sink", mVideoSink, NULL);
 #endif
     mBus = gst_element_get_bus(mPlay);
-    gst_bus_set_sync_handler(mBus, &syncHandlerHelper, this);
+
+    gst_bus_add_signal_watch (mBus);
+    gst_bus_enable_sync_message_emission (mBus);
+
+    g_signal_connect (mBus, "message", G_CALLBACK (asyncHandlerHelper), this);
+    g_signal_connect (mBus, "sync-message", G_CALLBACK (syncHandlerHelper), this);
 
     // This signal lets us get info about the stream
     g_signal_connect(mPlay, "notify::stream-info",
@@ -930,6 +943,12 @@ sbGStreamerSimple::GetStringFromName(nsIStringBundle *aBundle,
   return NS_OK;
 }
 
+// Little stub to make the types required match */
+void sbGStreamerSimple::DoShowHelperPage(void)
+{
+  (void) ShowHelperPage();
+}
+
 NS_IMETHODIMP
 sbGStreamerSimple::ShowHelperPage(void)
 {
@@ -1006,7 +1025,7 @@ sbGStreamerSimple::ShowHelperPage(void)
 
   // Set our pref to what the check box state is
   prefService->SetBoolPref( "songbird.skipGStreamerHelp", checkState );
-  
+
   if (promptResult == 0) { // They clicked Yes
     // Load up the url to show the user how to configure
     // First we need to get the url from preferences
@@ -1020,11 +1039,11 @@ sbGStreamerSimple::ShowHelperPage(void)
       cstrURL,
       NULL, NULL, getter_AddRefs(uri));
     NS_ENSURE_SUCCESS( rv, rv);
-    
+  
     // Get the browser context so we can open a new tab with OpenURI,
     // this is very long and confusing since we are not in the dom.
     nsCOMPtr<nsIBrowserDOMWindow> bwin;
-    
+  
     nsCOMPtr<nsIWebNavigation> navNav(do_GetInterface(mainWindow, &rv));
     NS_ENSURE_SUCCESS( rv, rv);
     nsCOMPtr<nsIDocShellTreeItem> navItem(do_QueryInterface(navNav, &rv));
@@ -1042,7 +1061,7 @@ sbGStreamerSimple::ShowHelperPage(void)
         NS_ENSURE_SUCCESS( rv, rv);
       }
     }
-    
+   
     if (bwin && uri) {
       nsCOMPtr<nsIDOMWindow> container;
       rv = bwin->OpenURI(uri, 0,
@@ -1052,130 +1071,18 @@ sbGStreamerSimple::ShowHelperPage(void)
       NS_ENSURE_SUCCESS( rv, rv);
     }
   }
-  
+
   return NS_OK;
 }
 
-// Callbacks
-GstBusSyncReply
+// Callback for sync messages (to handle prepare-xwindow-id)
+void
 sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
 {
   GstMessageType msg_type;
   msg_type = GST_MESSAGE_TYPE(message);
 
   switch (msg_type) {
-    case GST_MESSAGE_ERROR: {
-      GError *error = NULL;
-      gchar *debug = NULL;
-
-      gst_message_parse_error(message, &error, &debug);
-
-      LOG(("Error message: %s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug)));
-
-      g_free (debug);
-
-      // Only show the message if this is a new error for this domain and if it
-      // is a plugin or codec missing error.
-      PRBool isErrorAlreadyHandled;
-      PRBool isPluginOrCodecError;
-      isErrorAlreadyHandled = ( (mLastDomain == error->domain) &&
-                                (mLastErrorCode == error->code) );
-      isPluginOrCodecError = ( (error->domain == GST_CORE_ERROR &&
-                                error->code == GST_CORE_ERROR_MISSING_PLUGIN) ||
-                               (error->domain == GST_STREAM_ERROR &&
-                                error->code == GST_STREAM_ERROR_CODEC_NOT_FOUND) );
-
-      mIsAtEndOfStream = PR_TRUE;
-      mBufferingPercent = 0;
-      mIsPlayingVideo = PR_FALSE;
-#ifdef MOZ_WIDGET_GTK2
-      if(mFullscreen && mGdkWinFull != NULL) {
-        ReparentToChromeWin(this);
-      }
-#endif
-      mCursorIntervalTimer->Cancel();
-
-      if ( !isErrorAlreadyHandled && isPluginOrCodecError ) {
-        mLastErrorCode = error->code;
-        mLastDomain = error->domain;
-
-        // If we fail to show the dialog to the user then we just return
-        // the GST_BUS_PASS success code so that the GST stuff will keep
-        // going and not worry about the dialog this time.
-        nsresult rv;
-        nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
-          do_GetService("@mozilla.org/xpcomproxy;1", &rv);
-        NS_ENSURE_SUCCESS(rv, GST_BUS_PASS);
-  
-        nsCOMPtr<sbIGStreamerSimple> proxy;
-        rv = proxyObjMgr->GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                                            NS_GET_IID(sbIGStreamerSimple),
-                                            NS_ISUPPORTS_CAST(sbIGStreamerSimple*, this),
-                                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                                            getter_AddRefs(proxy));
-        NS_ENSURE_SUCCESS(rv, GST_BUS_PASS); 
-  
-        rv = proxy->ShowHelperPage();
-        NS_ENSURE_SUCCESS(rv, GST_BUS_PASS);
-      }
-      break;
-    }
-    case GST_MESSAGE_WARNING: {
-      GError *error = NULL;
-      gchar *debug = NULL;
-
-      gst_message_parse_warning(message, &error, &debug);
-
-      LOG(("Warning message: %s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug)));
-
-      g_warning ("%s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug));
-
-      g_error_free (error);
-      g_free (debug);
-      break;
-    }
-
-    case GST_MESSAGE_EOS: {
-      mIsAtEndOfStream = PR_TRUE;
-      mIsPlayingVideo = PR_FALSE;
-      mBufferingPercent = 0;
-      mCursorIntervalTimer->Cancel();
-#ifdef MOZ_WIDGET_GTK2
-      if(mFullscreen && mGdkWinFull != NULL) {
-
-        nsresult rv;
-        nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
-          do_GetService("@mozilla.org/xpcomproxy;1", &rv);
-        NS_ENSURE_SUCCESS(rv, GST_BUS_PASS);
-
-        nsCOMPtr<sbIGStreamerSimple> proxy;
-        rv = proxyObjMgr->GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                                            NS_GET_IID(sbIGStreamerSimple),
-                                            NS_ISUPPORTS_CAST(sbIGStreamerSimple*, this),
-                                            NS_PROXY_ASYNC,
-                                            getter_AddRefs(proxy));
-        NS_ENSURE_SUCCESS(rv, GST_BUS_PASS); 
-
-        proxy->SetFullscreen(PR_FALSE);
-      }
-#endif
-      break;
-    }
-
-    case GST_MESSAGE_STATE_CHANGED: {
-      GstState old_state, new_state;
-      gchar *src_name;
-
-      gst_message_parse_state_changed(message, &old_state, &new_state, NULL);
-
-      src_name = gst_object_get_name(message->src);
-      LOG(("stage-changed: %s changed state from %s to %s", src_name,
-          gst_element_state_get_name (old_state),
-          gst_element_state_get_name (new_state)));
-      g_free (src_name);
-      break;
-    }
-
     case GST_MESSAGE_ELEMENT: {
 #ifdef MOZ_WIDGET_GTK2
       if(gst_structure_has_name(message->structure, "prepare-xwindow-id") && mVideoSink != NULL) {
@@ -1207,6 +1114,102 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
         mIsPlayingVideo = PR_TRUE;
       }
 #endif
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+// Callback for async messages (all normal GstBus messages */
+void
+sbGStreamerSimple::AsyncHandler(GstBus* bus, GstMessage* message)
+{
+  GstMessageType msg_type;
+  msg_type = GST_MESSAGE_TYPE(message);
+
+  switch (msg_type) {
+    case GST_MESSAGE_ERROR: {
+      GError *error = NULL;
+      gchar *debug = NULL;
+      PRBool isPluginOrCodecError;
+
+      gst_message_parse_error(message, &error, &debug);
+
+      LOG(("Error message: %s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug)));
+
+      g_free (debug);
+
+      mIsAtEndOfStream = PR_TRUE;
+      mBufferingPercent = 0;
+      mIsPlayingVideo = PR_FALSE;
+#ifdef MOZ_WIDGET_GTK2
+      if(mFullscreen && mGdkWinFull != NULL) {
+        ReparentToChromeWin(this);
+      }
+#endif
+      mCursorIntervalTimer->Cancel();
+
+      isPluginOrCodecError = ((error->domain == GST_CORE_ERROR &&
+                               error->code == GST_CORE_ERROR_MISSING_PLUGIN) ||
+                              (error->domain == GST_STREAM_ERROR &&
+                               error->code == GST_STREAM_ERROR_CODEC_NOT_FOUND));
+
+      /* We only show the helper page once - it doesn't give the user any
+       * specific information about what plugins are missing, so showing it
+       * every time is just noise.
+       */
+      if (isPluginOrCodecError && !mHasShownHelperPage) {
+        /* Display the helper page, but only dispatch this from the event loop;
+         * don't directly do this here (works around GStreamer bug #536521)
+         */
+        mHasShownHelperPage = true;
+
+        nsCOMPtr<nsIRunnable> event = NS_NEW_RUNNABLE_METHOD(sbGStreamerSimple,
+                this, DoShowHelperPage);
+        NS_DispatchToMainThread(event);
+      }
+      break;
+    }
+    case GST_MESSAGE_WARNING: {
+      GError *error = NULL;
+      gchar *debug = NULL;
+
+      gst_message_parse_warning(message, &error, &debug);
+
+      LOG(("Warning message: %s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug)));
+
+      g_warning ("%s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug));
+
+      g_error_free (error);
+      g_free (debug);
+      break;
+    }
+
+    case GST_MESSAGE_EOS: {
+      mIsAtEndOfStream = PR_TRUE;
+      mIsPlayingVideo = PR_FALSE;
+      mBufferingPercent = 0;
+      mCursorIntervalTimer->Cancel();
+#ifdef MOZ_WIDGET_GTK2
+      if(mFullscreen && mGdkWinFull != NULL) {
+        SetFullscreen(PR_FALSE);
+      }
+#endif
+      break;
+    }
+
+    case GST_MESSAGE_STATE_CHANGED: {
+      GstState old_state, new_state;
+      gchar *src_name;
+
+      gst_message_parse_state_changed(message, &old_state, &new_state, NULL);
+
+      src_name = gst_object_get_name(message->src);
+      LOG(("stage-changed: %s changed state from %s to %s", src_name,
+          gst_element_state_get_name (old_state),
+          gst_element_state_get_name (new_state)));
+      g_free (src_name);
       break;
     }
 
@@ -1258,8 +1261,6 @@ sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
   }
 
   //gst_message_unref(message); XXX: Do i need to unref this?
-
-  return GST_BUS_PASS;
 }
 
 void

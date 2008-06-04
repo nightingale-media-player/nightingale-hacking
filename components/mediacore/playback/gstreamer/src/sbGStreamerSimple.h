@@ -35,8 +35,11 @@ public:
   NS_IMETHODIMP
   Resize();
 
-  GstBusSyncReply
+  void
   SyncHandler(GstBus* bus, GstMessage* message);
+
+  void
+  AsyncHandler(GstBus* bus, GstMessage* message);
 
   void
   StreamInfoSet(GObject* obj, GParamSpec* pspec);
@@ -50,6 +53,8 @@ private:
   NS_IMETHODIMP SetupPlaybin();
 
   NS_IMETHODIMP DestroyPlaybin();
+
+  void DoShowHelperPage(void);
 
   NS_IMETHOD
   CreateBundle(const char *aURLSpec, nsIStringBundle **_retval);
@@ -84,6 +89,7 @@ private:
   // mDelayHide - 300ms timer for mouse polling so use to delay hiding; 
   // currently counts down from 10 for a 3 second wait.
   int         mDelayHide; 
+  bool        mHasShownHelperPage;
 
 #ifdef MOZ_WIDGET_GTK2
   GstElement* mVideoSink;
