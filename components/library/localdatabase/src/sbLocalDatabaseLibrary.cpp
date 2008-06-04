@@ -3590,6 +3590,8 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
 
   nsresult rv;
 
+  PRBool runAsync = aListener ? PR_TRUE : PR_FALSE;
+
   nsRefPtr<sbHashHelper> hashHelper(new sbHashHelper());
   NS_ENSURE_STATE(hashHelper);
 
@@ -3606,7 +3608,22 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   hashHelper->mHashArray = new nsTArray<nsCString>();
   hashHelper->mPropertyArrayArray = aPropertyArrayArray;
   hashHelper->mAllowDuplicates = aAllowDuplicates;
-  hashHelper->mListener = aListener;
+
+  if(runAsync) {
+    nsCOMPtr<nsIThread> currentThread(do_GetCurrentThread());
+    NS_ABORT_IF_FALSE(currentThread, "Failed to get current thread!");
+
+    nsCOMPtr<sbIBatchCreateMediaItemsListener> proxiedListener;
+    rv = SB_GetProxyForObject(currentThread, 
+                              NS_GET_IID(sbIBatchCreateMediaItemsListener),
+                              aListener,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(proxiedListener));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    hashHelper->mListener = proxiedListener;
+  }
+
   hashHelper->mRetValArray = _retval;
   hashHelper->mReleaseTarget = do_GetMainThread();
 
@@ -3646,8 +3663,6 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   }
 
   // if async, just return and build the query in a callback.
-  PRBool runAsync = aListener ? PR_TRUE : PR_FALSE;
-
   if (runAsync) {
     // all other processing will happen when hashing has finished
     TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsInternal() - Running ASYNC",
@@ -4956,15 +4971,6 @@ sbBatchCreateCallback::Notify(PRBool* _retval)
   currentQuery++;
   NS_ASSERTION(currentQuery <= mQueryCount, "Invalid position!");
 
-  nsCOMPtr<nsIThread> mainThread = do_GetMainThread();
-  nsCOMPtr<sbIBatchCreateMediaItemsListener> proxiedListener;
-  rv = SB_GetProxyForObject(mainThread, 
-                            NS_GET_IID(sbIBatchCreateMediaItemsListener),
-                            mListener,
-                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(proxiedListener));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   if (mQueryCount != currentQuery &&
       isExecuting) {
     // Notify listener of progress.
@@ -4974,7 +4980,7 @@ sbBatchCreateCallback::Notify(PRBool* _retval)
 
     TRACE(("sbBatchCreateTimerCallback[0x%.8x] - NotifyInternal() - calling OnProgress(%d)", this, itemIndex));
 
-    proxiedListener->OnProgress(itemIndex);
+    mListener->OnProgress(itemIndex);
 
     TRACE(("sbBatchCreateTimerCallback[0x%.8x] - Notify() - NOT COMPLETE - EARLY RETURN", this));
 
@@ -4988,7 +4994,7 @@ sbBatchCreateCallback::Notify(PRBool* _retval)
   rv = mBatchHelper->NotifyAndGetItems(getter_AddRefs(array));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  proxiedListener->OnComplete(array, rv);
+  mListener->OnComplete(array, rv);
 
   // Report the earlier error, if any.
   NS_ENSURE_SUCCESS(rv, rv);
