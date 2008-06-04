@@ -95,7 +95,8 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mBufferingPercent(0),
   mLastVolume(0),
   mVideoOutputElement(nsnull),
-  mDomWindow(nsnull)
+  mDomWindow(nsnull),
+  mHasShownHelperPage(PR_FALSE)
 {
   TRACE(("sbGStreamerSimple[0x%.8x] - Constructed", this));
   mArtist.Assign(EmptyString());
