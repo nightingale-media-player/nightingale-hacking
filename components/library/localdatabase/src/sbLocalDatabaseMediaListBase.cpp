@@ -102,6 +102,24 @@ sbLocalDatabaseMediaListBase::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = sbLocalDatabaseMediaItem::Init(aLibrary, aGuid, aOwnsLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRBool success = mFilteredProperties.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  nsStringHashKey *key = mFilteredProperties.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL));
+  NS_ENSURE_TRUE(key, NS_ERROR_OUT_OF_MEMORY);
+
+  key = mFilteredProperties.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_CREATED));
+  NS_ENSURE_TRUE(key, NS_ERROR_OUT_OF_MEMORY);
+
+  key = mFilteredProperties.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_UPDATED));
+  NS_ENSURE_TRUE(key, NS_ERROR_OUT_OF_MEMORY);
+
+  key = mFilteredProperties.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_GUID));
+  NS_ENSURE_TRUE(key, NS_ERROR_OUT_OF_MEMORY);
+
+  key = mFilteredProperties.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_HASH));
+  NS_ENSURE_TRUE(key, NS_ERROR_OUT_OF_MEMORY);
+
   return NS_OK;
 }
 
@@ -274,12 +292,6 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
   rv = aProperties->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING(contentURLProperty, SB_PROPERTY_CONTENTURL);
-  NS_NAMED_LITERAL_STRING(createdProperty,    SB_PROPERTY_CREATED);
-  NS_NAMED_LITERAL_STRING(updatedProperty,    SB_PROPERTY_UPDATED);
-  NS_NAMED_LITERAL_STRING(guidProperty,       SB_PROPERTY_GUID);
-  NS_NAMED_LITERAL_STRING(hashProperty,       SB_PROPERTY_HASH);
-
   for (PRUint32 i = 0; i < length; i++) {
     nsCOMPtr<sbIProperty> property;
     rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
@@ -290,10 +302,7 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
     NS_ENSURE_SUCCESS(rv, rv);
 
     // We never want these properties to be copied to a new item
-    if (id.Equals(contentURLProperty) ||
-        id.Equals(createdProperty) ||
-        id.Equals(updatedProperty) ||
-        id.Equals(guidProperty)) {
+    if (mFilteredProperties.GetEntry(id)) {
       continue;
     }
 

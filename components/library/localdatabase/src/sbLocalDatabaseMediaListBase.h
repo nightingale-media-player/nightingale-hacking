@@ -37,6 +37,7 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <nsTHashtable.h>
 #include <prmon.h>
 #include <prlock.h>
 
@@ -157,6 +158,12 @@ protected:
   PRMonitor* mFullArrayMonitor;
 
   PRBool mLockedEnumerationActive;
+
+  // The mFilteredProperties hash table caches the property ids
+  // that we always want to filter out of the property arrays that
+  // are used to create media items or set multiple properties
+  // on a library resource.
+  nsTHashtable<nsStringHashKey> mFilteredProperties;
 };
 
 /**
