@@ -59,8 +59,8 @@ dndDefaultHandler_module.onLoad = function(event)
 dndDefaultHandler_module.onUnload = function()
 {
   if (dndDefaultHandler_module.deinit_once++) { dump("WARNING: dndDefaultHandler_module double deinit!!\n"); return; }
-  document.removeEventListener( "dragover", dndDefaultHandler_module.onDragOver, true );
-  document.removeEventListener( "dragdrop", dndDefaultHandler_module.onDragDrop, true );
+  document.removeEventListener( "dragover", dndDefaultHandler_module.onDragOver, false );
+  document.removeEventListener( "dragdrop", dndDefaultHandler_module.onDragDrop, false );
   window.removeEventListener("load", dndDefaultHandler_module.onLoad, false);
   window.removeEventListener("unload", dndDefaultHandler_module.onUnload, false);
 }

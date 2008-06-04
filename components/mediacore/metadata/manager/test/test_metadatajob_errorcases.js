@@ -232,7 +232,7 @@ function runTest() {
         // Missing file plus three files with wrong extensions
         assertEqual(job.errorCount, 4);
       } else {
-        // Missing file, permission files, files with wrong extensiosn
+        // Missing file, permission files, files with wrong extensions
         assertEqual(job.errorCount, 6);
       }
       assertEqual(files.length, job.total);

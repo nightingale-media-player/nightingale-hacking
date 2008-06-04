@@ -44,6 +44,7 @@
  buttons="accept"
  width="480"
  height="360"
+ hidechrome="true"
  onload="return doInit();"
  ondialogaccept="return doOK();"
 >
