@@ -75,8 +75,7 @@ NS_IMPL_ISUPPORTS_INHERITED1(sbLocalDatabaseMediaListBase,
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
 : mFullArrayMonitor(nsnull),
-  mLockedEnumerationActive(PR_FALSE),
-  mBatchCount(0)
+  mLockedEnumerationActive(PR_FALSE)
 {
 }
 
@@ -1020,7 +1019,7 @@ sbLocalDatabaseMediaListBase::AddListener(sbIMediaListListener* aListener,
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::RemoveListener(sbIMediaListListener* aListener)
 {
-  return sbLocalDatabaseMediaListListener::RemoveListener(aListener);
+  return sbLocalDatabaseMediaListListener::RemoveListener(this, aListener);
 }
 
 NS_IMETHODIMP

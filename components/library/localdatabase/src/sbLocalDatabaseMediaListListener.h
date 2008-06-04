@@ -146,7 +146,8 @@ protected:
                        sbIPropertyArray* aPropertyFilter = nsnull);
 
   // Remove a listener from the array
-  nsresult RemoveListener(sbIMediaListListener* aListener);
+  nsresult RemoveListener(sbLocalDatabaseMediaListBase* aList,
+                          sbIMediaListListener* aListener);
 
   // Return the number of listeners
   PRUint32 ListenerCount();

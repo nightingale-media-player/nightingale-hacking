@@ -157,9 +157,6 @@ protected:
   PRMonitor* mFullArrayMonitor;
 
   PRBool mLockedEnumerationActive;
-
-private:
-  PRInt32 mBatchCount;
 };
 
 /**

@@ -199,6 +199,7 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
     NS_ENSURE_SUCCESS(rv, rv);
 
     for (PRUint32 i = 0; i < mBatchDepth; i++) {
+      (*added)->BeginBatch();
       rv = aListener->OnBatchBegin(aList);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnBatchBegin returned a failure code");
     }
@@ -208,7 +209,8 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
 }
 
 nsresult
-sbLocalDatabaseMediaListListener::RemoveListener(sbIMediaListListener* aListener)
+sbLocalDatabaseMediaListListener::RemoveListener(sbLocalDatabaseMediaListBase* aList,
+                                                 sbIMediaListListener* aListener)
 {
   TRACE(("LocalDatabaseMediaListListener[0x%.8x] - RemoveListener 0x%.8x",
          this, aListener));
@@ -220,9 +222,35 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbIMediaListListener* aListener
   nsresult rv;
   PRUint32 length = mListenerArray.Length();
 
+  // If this list is in a batch, the listener being removed should be 
+  // sent the batch end callback mBatchDepth times, otherwise, if that
+  // listener is re-registered immediately (like, for instance, in 
+  // sbLocalDatabaseMediaListView::UpdateListener, it will receive the
+  // onBatchBegin callback mBatchDepth times again, which will throw 
+  // its batch count out of balance. Technically, the batch has not
+  // actually ended, but preventing an out-of-balance batch count any 
+  // other way is going to be very hard, and very inelegant. This at 
+  // least keeps everything in balance at all times, and it can be 
+  // argued that the batch has indeed ended for that listener, since 
+  // no more callbacks will be issued to it after that (unless it is 
+  // re-registered, of course)
+  if (mBatchDepth > 0) {
+    nsCOMPtr<sbIMediaList> list =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaList*, aList), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 0; i < mBatchDepth; i++) {
+      rv = aListener->OnBatchEnd(aList);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnBatchEnd returned a failure code");
+    }
+  }
+
   nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
   for (PRUint32 i = 0; i < length; i++) {
     if(mListenerArray[i]->mRef == ref) {
+      for (PRUint32 j = 0; j < mBatchDepth; j++) {
+        mListenerArray[i]->EndBatch();
+      }
       mListenerArray.RemoveElementAt(i);
       return NS_OK;
     }
