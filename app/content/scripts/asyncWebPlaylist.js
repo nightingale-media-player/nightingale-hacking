@@ -415,7 +415,8 @@ try
             var url = "";
             this.finished = true;
             this.manager.popAsync();
-            if (aStatusCode == 0) {
+            if (aStatusCode == 0 ||
+                aStatusCode == Components.results.NS_BINDING_ABORTED) {
               // Get the redirected URL.
               var uriChecker =
                 aRequest.QueryInterface(Components.interfaces.nsIURIChecker);
@@ -433,7 +434,7 @@ try
                    return;
                  }
               }
-            } else {
+
               // (shrug) Time's up, go with what you have.
               url = this.url;
             }
@@ -488,7 +489,7 @@ try
         // Only allow 2 seconds per redirect?
         setTimeout( function() {
           if ( ! observer.finished ) {
-            checker.cancel(-1)
+            checker.cancel(Components.results.NS_BINDING_ABORTED);
           }
         }, 2000);
       }
