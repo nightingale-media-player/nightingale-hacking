@@ -123,9 +123,14 @@
 
 #define DEFAULT_FETCH_SIZE 1000
 
-#define DEFAULT_THREADPOOL_IDLE_THREAD_LIMIT (1)
+#define DEFAULT_THREADPOOL_IDLE_THREAD_LIMIT (0)
 #define DEFAULT_THREADPOOL_THREAD_TIMEOUT    (60000) // in milliseconds
-#define DEFAULT_THREADPOOL_THREAD_LIMIT      (10)   // 10 thread limit.
+
+// XXXAus: We have to use only one thread for the time being because 
+// of bug 9755. If more than one thread is used, the application will
+// often deadlock attempting to get proxied versions of the URI's required
+// for the hashing process.
+#define DEFAULT_THREADPOOL_THREAD_LIMIT      (1)   // 1 thread limit.
 
 /**
  * To log this module, set the following environment variable:

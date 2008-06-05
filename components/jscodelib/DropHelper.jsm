@@ -444,9 +444,11 @@ var InternalDropHandler = {
           var allItems = {
             items: [],
             onEnumerationBegin: function(aMediaList) {
+              this.items = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                             .createInstance(Ci.nsIMutableArray);
             },
             onEnumeratedItem: function(aMediaList, aMediaItem) {
-              this.items.push(aMediaItem);
+              this.items.appendElement(aMediaItem, false);
             },
             onEnumerationEnd: function(aMediaList, aResultCode) {
             }
@@ -454,8 +456,7 @@ var InternalDropHandler = {
 
           list.enumerateAllItems(allItems);
 
-          var itemEnum = ArrayConverter.enumerator(allItems.items);
-          targetList.insertSomeBefore(aDropPosition, itemEnum);
+          targetList.insertSomeBefore(aDropPosition, allItems.items.enumerate());
         } else {
           targetList.addAll(list);
         }
