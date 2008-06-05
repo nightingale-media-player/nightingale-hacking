@@ -39,9 +39,6 @@
 %songbirdDTD;
 ]>
 
-<!-- Include this to import the standard overlays for a window that does not contain a gBrowser element -->
-<?xul-overlay href="chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul"?>
-
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -59,13 +56,6 @@
  persist="screenX screenY"
  wheelvolume="false"
 >
-
-
-  <!-- standard overlays insertion point for popups, commands, broadcasters, keys and stringbundles -->
-  <sb-support id="mainSupportSet"/>
-
-  <!-- menubar on osx -->
-  <menubar id="main-menubar" hidden="true" oncommand="onMenu(event.target)" mousethrough="never"/>
 
   <!-- Notification box used to warn when editing multiple tracks, etc. -->
   <hbox id="notification_box" align="center" pack="center" class="dialog-notification">
@@ -368,5 +358,9 @@
 
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/trackEditor.js" />
+  <script type="application/x-javascript" 
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript" 
+          src="chrome://songbird/content/scripts/windowUtils.js" />
 
 </dialog>

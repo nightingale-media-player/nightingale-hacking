@@ -33,9 +33,6 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
-<!-- Include this to import the standard overlays for a window that does not contain a gBrowser element -->
-<?xul-overlay href="chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul"?>
-
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -48,16 +45,6 @@
  ondialogcancel="if ( doCancel() ) onExit( );"
  buttons="cancel"
 >
-  <!-- Astounding complexity! -->
-
-  <windowregion/>
-
-  <!-- standard overlays insertion point for popups, commands, broadcasters, keys and stringbundles -->
-  <sb-support id="mainSupportSet"/>
-
-  <!-- menubar on osx -->
-  <menubar id="main-menubar" hidden="true" oncommand="onMenu(event.target)" mousethrough="never"/>
-
   <hbox> 
     <label id="songbird_media_scan_title"  value="" flex="1" crop="end" control="songbird_media_scan"/>
   </hbox> 
@@ -78,5 +65,9 @@
   <!-- And intrepid instructions! -->  
   <script type="application/x-javascript"   
    src="chrome://songbird/content/scripts/mediaScan.js" />
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript"
+   src="chrome://songbird/content/scripts/windowUtils.js" />
 
 </dialog>

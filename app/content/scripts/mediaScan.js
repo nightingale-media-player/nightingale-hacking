@@ -26,6 +26,7 @@
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                              .getService(Components.interfaces.sbIPlaylistPlayback);
@@ -70,7 +71,8 @@ function onLoad()
   
   // disable the media scan menu item, since we're already in it (although that
   // does not disable the item in the parent window's menu)
-  document.getElementById("menuitem_file_scan").setAttribute("disabled", "true");
+  // This dialog is currently modal, so leaving this commented out for now.
+  //document.getElementById("menuitem_file_scan").setAttribute("disabled", "true");
 
   if ( ( typeof( window.arguments[0] ) != 'undefined' ) && ( typeof( window.arguments[0].URL ) != 'undefined' ) )
   {
