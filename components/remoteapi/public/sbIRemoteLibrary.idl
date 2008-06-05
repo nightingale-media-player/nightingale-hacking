@@ -59,7 +59,7 @@ Example:
   var library = songbird.siteLibrary("", "");
 
   //Create a medialist using the library.
-  var mediaList = library.createMediaList("simple");
+  var mediaList = library.createSimpleMediaList("Name of List");
 
   //Create some mediaitems and add them to the medialist.
   var itemURLs = ["http://path/to/song.mp3", "http://path/to/another/song.mp3"];
@@ -206,7 +206,7 @@ interface sbIRemoteLibrary : nsISupports
     get updated.
 
   See Also:
-    <createMediaList()>
+    <createSimpleMediaList()>
     <createMediaListFromURL()>
   */
   sbIMediaItem createMediaItem(in AString aURL);
@@ -251,7 +251,7 @@ interface sbIRemoteLibrary : nsISupports
 
   See Also:
     <createMediaItem()>
-    <createMediaList()>
+    <createSimpleMediaList()>
     <createMediaListFromURL()>
   */
   sbIRemoteMediaList createSimpleMediaList(in AString aName,
@@ -304,7 +304,7 @@ interface sbIRemoteLibrary : nsISupports
 
   See Also:
     <createMediaItem()>
-    <createMediaList()>
+    <createSimpleMediaList()>
   */
   void createMediaListFromURL(in AString aName,
                               in AString aURL,
@@ -325,7 +325,7 @@ interface sbIRemoteLibrary : nsISupports
    * \brief Get the media list with the given siteID.
    * \param aSiteID - The siteID of the media list to fetch
    * \return The corresponding media list, or null if not found
-   * \sa createMediaList
+   * \sa createSimpleMediaList
    */
   /*
   Method: getMediaListBySiteID()
@@ -351,7 +351,7 @@ interface sbIRemoteLibrary : nsISupports
     (end)
 
   See Also:
-    <createMediaList()>
+    <createSimpleMediaList()>
   */
   sbIRemoteMediaList getMediaListBySiteID( in AString aSiteID );
 

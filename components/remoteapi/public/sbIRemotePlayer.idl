@@ -559,7 +559,7 @@ interface sbIRemotePlayer : nsISupports
     var mediaItem = library.createMediaItem("http://path/to/item.mp3");
 
     //Create medialist to download.
-    var mediaList = library.createMediaList("simple");
+    var mediaList = library.createSimpleMediaList("Name of List");
 
     //Add item to medialist.
     mediaList.add(mediaItem);
