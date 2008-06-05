@@ -147,26 +147,61 @@ try
     if ( url_open_data.retval == "ok" )
     {
       var library = LibraryUtils.webLibrary;
-      var item = SBImportURLIntoWebLibrary(url_open_data.URL);
 
-      // And if we're good, play it.
-      SBDataSetStringValue("metadata.title", url_open_data.URL);
-      SBDataSetStringValue("metadata.artist", "");
-      SBDataSetStringValue("metadata.album", "");
-
-      // show the view and play
-
-      var view = LibraryUtils.createStandardMediaListView(library);
-
-      var index = view.getIndexForItem(item);
-      
-      // If we have a browser, try to show the view
-      if (window.gBrowser) {
-        gBrowser.showIndexInView(view, index);
+     // Use a nsIURI because it is safer and contains the scheme etc...
+      var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                          .getService(Components.interfaces.nsIIOService);
+      try {
+        alert(url_open_data.URL);
+        var uri = ios.newURI(url_open_data.URL, null, null);
       }
-      
-      // Play the item
-      gPPS.playView(view, index);
+      catch(e) {
+        // Bad URL :(
+        Components.utils.reportError(e);
+        return;
+      }
+
+      // See if we're asking for an extension
+      if ( isXPI( uri.spec ) )
+      {
+        installXPI( uri.spec );
+      }
+      else if ( gPPS.isMediaURL(uri.spec) )
+      {
+        var item = SBImportURLIntoWebLibrary(uri);
+
+        // And if we're good, play it.
+        SBDataSetBoolValue("faceplate.seenplaying", false);
+        SBDataSetStringValue("metadata.title", uri.spec);
+        SBDataSetStringValue("metadata.artist", "");
+        SBDataSetStringValue("metadata.album", "");
+
+        // Import the item.
+        var item = SBImportURLIntoMainLibrary(uri);
+
+        var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+                                  .getService(Components.interfaces.sbILibraryManager);
+
+        // show the view and play
+
+        var view = LibraryUtils.createStandardMediaListView(libraryManager.mainLibrary);
+
+        var index = view.getIndexForItem(item);
+        
+        // If we have a browser, try to show the view
+        if (window.gBrowser) {
+          gBrowser.showIndexInView(view, index);
+        }
+        
+        // Play the item
+        gPPS.playView(view, index);
+      }
+      else
+      {
+        // Unknown type, let the browser figure out what the best course
+        // of action is.
+        gBrowser.loadURI( uri.spec );
+      }
     }
   }
 
