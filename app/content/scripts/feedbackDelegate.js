@@ -43,7 +43,7 @@ const LAST_FEEDBACK_DATE = "Mon, 30 Jun 2008 00:00:00 GMT";
 const SURVEY_URL = "http://www.surveymonkey.com/s.aspx?sm=29bC_2bCt4FtbeKVqBU11jkA_3d_3d";
 const MIN_APP_SESSIONS  = 3;
 const MIN_TOTAL_RUNTIME = 30000;  // 30 minutes
-const STARTUP_DELAY     = 5000;     // 5 seconds
+const STARTUP_DELAY     = 5000;   // 5 seconds
 
 /**
  * Global vars:
@@ -72,7 +72,8 @@ FeedbackDelegate.prototype =
   _init: function()
   {
     // If feedback has been disabled (i.e. debug build), just exit.
-    if (gAppPrefs.get(PREF_DISABLE_FEEDBACK).value) {
+    var disablePrefs = gAppPrefs.get(PREF_DISABLE_FEEDBACK);
+    if (disablePrefs != null && disablePrefs.value) {
       return;
     }
     
