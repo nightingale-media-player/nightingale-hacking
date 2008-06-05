@@ -166,12 +166,18 @@ deviceErrorMonitor.prototype = {
     if (device instanceof Ci.sbIDevice) {
       var devIndex = this._findDeviceIndex(device);
       if (devIndex > -1) {
-        if (aDeviceEvent.data && (aDeviceEvent.data instanceof Ci.sbIMediaItem)) {
-          var mediaURL = aDeviceEvent.data.getProperty(SBProperties.contentURL);
-          mediaURL = decodeURIComponent(mediaURL);
+        var mediaURL = "";
+        if (aDeviceEvent.data) {
+          if (aDeviceEvent.data instanceof Ci.sbIMediaList) {
+            mediaURL = aDeviceEvent.data.name;
+          } else if (aDeviceEvent.data instanceof Ci.sbIMediaItem) {
+            mediaURL = aDeviceEvent.data.getProperty(SBProperties.contentURL);
+            mediaURL = decodeURIComponent(mediaURL);
+          }
         } else {
           mediaURL = SBString("device.info.unknown");
         }
+        
         var errorString =  Cc["@mozilla.org/supports-string;1"]
                              .createInstance(Ci.nsISupportsString);
         errorString.data = this._sbStrings.formatStringFromName(
