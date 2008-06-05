@@ -321,6 +321,7 @@ NS_IMETHODIMP sbFileScanQuery::Cancel()
   return NS_OK;
 } //Cancel
 
+//-----------------------------------------------------------------------------
 NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIs(PRUint32 aStartIndex,
                                                     PRUint32 aEndIndex,
                                                     nsIArray** _retval)
@@ -425,7 +426,7 @@ sbFileScan::sbFileScan()
     do_GetService("@mozilla.org/observer-service;1", &rv);
   if(NS_SUCCEEDED(rv)) {
     rv = observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID,
-      PR_FALSE);
+                                      PR_FALSE);
   }
 
   // This shouldn't be an 'else' case because we want to set this flag if
@@ -501,8 +502,8 @@ NS_IMETHODIMP sbFileScan::SubmitQuery(sbIFileScanQuery *pQuery)
 
   {
     nsAutoMonitor mon(m_pThreadMonitor);
-    m_QueryQueue.push_back(pQuery);
     pQuery->SetIsScanning(PR_TRUE);
+    m_QueryQueue.push_back(pQuery);
     m_ThreadQueueHasItem = PR_TRUE;
     mon.Notify();
   }
@@ -759,8 +760,14 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
     if(pDirEntries)
     {
       PRBool bHasMore = PR_FALSE;
+      PRBool keepRunning = PR_FALSE;
 
-      for(;;)
+      {
+        nsAutoMonitor mon(m_pThreadMonitor);
+        keepRunning = !m_ThreadShouldShutdown;
+      }
+
+      while(keepRunning)
       {
         // Allow us to get the hell out of here.
         PRBool cancel = PR_FALSE;
@@ -892,7 +899,15 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
           }
         }
 
-        PR_Sleep(PR_MillisecondsToInterval(1));
+        // Yield.
+        PR_Sleep(PR_MillisecondsToInterval(0));
+
+        // Check thread shutdown flag since it's possible for our thread
+        // to be in shutdown without the query being cancelled.
+        {
+          nsAutoMonitor mon(m_pThreadMonitor);
+          keepRunning = !m_ThreadShouldShutdown;
+        }
       }
     }
   }

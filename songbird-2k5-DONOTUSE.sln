@@ -13,7 +13,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "app", "app\app-2k5.vcproj",
 		{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC} = {653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}
 		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403} = {A71C1B20-D331-4A9B-9D7D-D6910EBCB403}
 		{581FC30D-8DE2-4824-8039-B9CA1BDCB179} = {581FC30D-8DE2-4824-8039-B9CA1BDCB179}
-		{1E13C50C-B3AD-48E5-8236-C1223BA17A89} = {1E13C50C-B3AD-48E5-8236-C1223BA17A89}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dataremote", "components\dataremote\dataremote-2k5.vcproj", "{653C9D44-8DD5-4A9B-91B6-FE8716C6DAFC}"
@@ -52,11 +51,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "integration", "components\i
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "metadatamanager", "components\mediacore\metadata\manager\metadatamanager-2k5.vcproj", "{A71C1B20-D331-4A9B-9D7D-D6910EBCB403}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "metadatatranscoding", "components\mediacore\transcoding\metadatatranscoding-2k5.vcproj", "{1E13C50C-B3AD-48E5-8236-C1223BA17A89}"
-	ProjectSection(ProjectDependencies) = postProject
-		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403} = {A71C1B20-D331-4A9B-9D7D-D6910EBCB403}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playlistplayback", "components\playlistplayback\playlistplayback-2k5.vcproj", "{4BE75698-527D-4261-96B3-57A80F6CF1D3}"
 EndProject
@@ -121,8 +115,6 @@ Global
 		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403}.Debug|Win32.Build.0 = Debug|Win32
 		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403}.Release|Win32.ActiveCfg = Release|Win32
 		{A71C1B20-D331-4A9B-9D7D-D6910EBCB403}.Release|Win32.Build.0 = Release|Win32
-		{1E13C50C-B3AD-48E5-8236-C1223BA17A89}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1E13C50C-B3AD-48E5-8236-C1223BA17A89}.Release|Win32.ActiveCfg = Release|Win32
 		{4BE75698-527D-4261-96B3-57A80F6CF1D3}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4BE75698-527D-4261-96B3-57A80F6CF1D3}.Debug|Win32.Build.0 = Debug|Win32
 		{4BE75698-527D-4261-96B3-57A80F6CF1D3}.Release|Win32.ActiveCfg = Release|Win32

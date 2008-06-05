@@ -384,7 +384,7 @@ function sbBatchCreateListener_onComplete(aItemArray, aResult)
 
       theTargetLibrary.
         enumerateItemsByProperties(propertyArray,
-                                  listener);
+                                   listener);
 
       if (mediaItems.length > 0) {
         // if we need to insert, then do so
