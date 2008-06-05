@@ -98,6 +98,8 @@ static PRLogModuleInfo* gBaseDeviceLog = nsnull;
 #define PREF_DEVICE_PREFERENCES_BRANCH "songbird.device."
 #define PREF_WARNING "warning."
 
+#define BATCH_TIMEOUT 100 /* number of milliseconds to wait for batching */
+
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbBaseDevice::TransferRequest)
 
 class MediaListListenerAttachingEnumerator : public sbIMediaListEnumerationListener
@@ -264,6 +266,7 @@ static void CheckRequestBatch(std::deque<nsRefPtr<sbBaseDevice::TransferRequest>
 #endif /* DEBUG */
 
 sbBaseDevice::sbBaseDevice() :
+  mNextBatchID(1),
   mLastTransferID(0),
   mLastRequestPriority(PR_INT32_MIN),
   mAbortCurrentRequest(PR_FALSE),
@@ -380,6 +383,8 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     aRequest->itemTransferID = mLastTransferID++;
     aRequest->batchIndex = 1;
     aRequest->batchCount = 1;
+    aRequest->batchID = 0;
+    aRequest->timeStamp = PR_Now();
     
     /* figure out the batch count */
     TransferRequestQueue::iterator begin = queue.begin(),
@@ -411,6 +416,7 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
         // same type of request, batch them
         aRequest->batchCount += last->batchCount;
         aRequest->batchIndex = aRequest->batchCount;
+        aRequest->batchID = last->batchID;
         
         while (begin != end) {
           nsRefPtr<TransferRequest> oldReq = *--end;
@@ -426,6 +432,15 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
                        "Unexpected batch count in old request");
           ++(oldReq->batchCount);
         }
+      } else {
+        // start of a new batch.  allocate a new batch ID atomically, ensuring
+        // its value is never 0 (assuming it's not incremeneted 2^32-1 times
+        // between the calls to PR_AtomicIncrement and that it's OK to sometimes
+        // increment a few times too often)
+        PRInt32 batchID = PR_AtomicIncrement(&mNextBatchID);
+        if (!batchID)
+          batchID = PR_AtomicIncrement(&mNextBatchID);
+        aRequest->batchID = batchID;
       }
     }
     
@@ -1346,6 +1361,66 @@ struct EnsureSpaceForWriteRemovalHelper {
   std::set<sbIMediaItem*, COMComparator> mItemsToRemove;
 };
 
+nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequest* aRequest,
+                                           PRBool*          aWait)
+{
+  NS_ENSURE_ARG_POINTER(aRequest);
+  NS_ENSURE_ARG_POINTER(aWait);
+
+  nsresult rv;
+
+  // default to not wait
+  *aWait = PR_FALSE;
+
+  // non-write requests are always ensured space
+  if (aRequest->type != TransferRequest::REQUEST_WRITE) {
+    aRequest->spaceEnsured = PR_TRUE;
+    return NS_OK;
+  }
+
+  // get the request's queue
+  TransferRequestQueue& queue = mRequests[aRequest->priority];
+
+  // find the end of the batch
+  nsRefPtr<TransferRequest> batchEndRequest;
+  TransferRequestQueue::iterator batchEndIter;
+  PRUint32 batchID = aRequest->batchID;
+  for (batchEndIter = queue.begin();
+       batchEndIter != queue.end();
+       batchEndIter++) {
+    // get the next request, skipping requests that are not a part of a batch
+    TransferRequest* request = *batchEndIter;
+    if (!request->batchID)
+      continue;
+
+    // if part of same batch, move the batch end; otherwise, exit loop
+    if (request->batchID == batchID)
+      batchEndRequest = request;
+    else
+      break;
+  }
+
+  // if the request at the end of the batch was not found, the specified request
+  // is not in the queue, and that's a failure
+  NS_ENSURE_TRUE(batchEndRequest, NS_ERROR_FAILURE);
+
+  // if complete batch is not yet in queue, wait
+  if ((PR_Now() - batchEndRequest->timeStamp) <
+      (BATCH_TIMEOUT * PR_USEC_PER_MSEC)) {
+    rv = WaitForBatchEnd();
+    NS_ENSURE_SUCCESS(rv, rv);
+    *aWait = PR_TRUE;
+    return NS_OK;
+  }
+
+  // ensure space for the write batch starting at the beginning of the queue
+  mRequestBatchStart = *(queue.begin());
+  rv = EnsureSpaceForWrite(queue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue,
                                            PRBool * aRequestRemoved,
                                            nsIArray** aItemsToWrite)
@@ -1364,9 +1439,6 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue,
   std::map<sbIMediaItem*, PRInt64> itemsToWrite; // not owning
   // all items in itemsToWrite should have a reference from the request queue
   // XXX Mook: Do we need to be holding nsISupports* instead?
-  
-  NS_ASSERTION(NS_IsMainThread(),
-               "sbBaseDevice::EnsureSpaceForWrite expected to be on main thread");
   
   // we have a batch that has some sort of write
   // check to see if it will all fit on the device
@@ -1418,6 +1490,7 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue,
     rv = sbLibraryUtils::GetContentLength((*request)->item,
                                           &contentLength);
     NS_ENSURE_SUCCESS(rv, rv);
+    contentLength += mPerTrackOverhead;
     
     totalLength += contentLength;
     LOG(("r(%08x) i(%08x) sbBaseDevice::EnsureSpaceForWrite - size %lld\n",
@@ -1452,17 +1525,43 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue,
     do_GetService("@songbirdnest.com/Songbird/Device/Base/Helper;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  PRUint64 freeSpace;
-  PRBool continueWrite;
-  rv = deviceHelper->HasSpaceForWrite(totalLength,
-                                      ownerLibrary,
-                                      this,
-                                      &freeSpace,
-                                      &continueWrite);
+  // get the device properties
+  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
+  nsCOMPtr<nsIPropertyBag2>     deviceProperties;
+  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get the free space and the music used space
+  PRInt64 freeSpace;
+  rv = deviceProperties->GetPropertyAsInt64
+                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
+                            &freeSpace);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get the management type
+  PRUint32 mgmtType;
+  rv = ownerLibrary->GetMgmtType(&mgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // if not enough free space is available, ask user what to do
+  PRBool continueWrite = PR_TRUE;
+  if (freeSpace < totalLength) {
+    PRBool abort;
+    rv = sbDeviceUtils::QueryUserSpaceExceeded
+                          (this,
+                           mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL,
+                           totalLength,
+                           freeSpace,
+                           &abort);
+    NS_ENSURE_SUCCESS(rv, rv);
+    continueWrite = !abort;
+  }
   
   LOG(("                        sbBaseDevice::EnsureSpaceForWrite - %u items = %lld bytes / free %lld bytes\n",
        itemsToWrite.size(), totalLength, freeSpace));
-  
+
   // there are three cases to go from here:
   // (1) fill up the device, with whatever fits, in random order (sync)
   // (2) fill up the device, with whatever fits, in given order (manual)
@@ -1490,10 +1589,6 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue,
       *aRequestRemoved = PR_TRUE;
     }
   } else {
-    PRUint32 mgmtType;
-    rv = ownerLibrary->GetMgmtType(&mgmtType);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
     if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
       // shuffle the list
       std::random_shuffle(itemList.begin(), itemList.end());
@@ -1516,19 +1611,21 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue,
     }
   }
 
-  // locate all the items we don't want to copy and remove from the songbird
-  // device library
+  // locate all the items we don't want to copy. remove these items after loop
+  // because removal can add requests to the queue and potentially invalidate
+  // the iterators
+  TransferRequestQueue requestItemRemoveQueue;
   std::set<sbIMediaItem*,COMComparator>::iterator removalEnd = itemsToRemove.end();
   for (request = batchStart; request != end; ++request) {
     if ((*request)->type != TransferRequest::REQUEST_WRITE ||
         removalEnd == itemsToRemove.find((*request)->item))
     {
       // not a write we don't want
+      (*request)->spaceEnsured = PR_TRUE;
       continue;
     }
     
-    rv = (*request)->list->Remove((*request)->item);
-    NS_ENSURE_SUCCESS(rv, rv);
+    requestItemRemoveQueue.push_back(*request);
   
     // tell the user about it
     nsCOMPtr<nsIWritableVariant> var =
@@ -1541,6 +1638,17 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue,
     rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_NOT_ENOUGH_FREESPACE,
                                 var,
                                 PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // remove all the items we don't want to copy from the songbird device library
+  TransferRequestQueue::iterator requestItemRemoveIter =
+                                   requestItemRemoveQueue.begin();
+  TransferRequestQueue::iterator requestItemRemoveEnd =
+                                   requestItemRemoveQueue.end();
+  for (; requestItemRemoveIter != requestItemRemoveEnd;
+         requestItemRemoveIter++) {
+    rv = (*requestItemRemoveIter)->list->Remove((*requestItemRemoveIter)->item);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
@@ -1659,6 +1767,38 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue,
   return NS_OK;
 }
 
+nsresult
+sbBaseDevice::WaitForBatchEnd()
+{
+  nsresult rv;
+
+  // wait for the complete batch to be pushed into the queue
+  rv = mBatchEndTimer->InitWithFuncCallback(WaitForBatchEndCallback,
+                                            this,
+                                            BATCH_TIMEOUT,
+                                            nsITimer::TYPE_ONE_SHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */
+void sbBaseDevice::WaitForBatchEndCallback(nsITimer* aTimer,
+                                           void* aClosure)
+{
+  // dispatch callback into non-static method
+  sbBaseDevice* self = reinterpret_cast<sbBaseDevice*>(aClosure);
+  NS_ASSERTION(self, "self is null");
+  self->WaitForBatchEndCallback();
+}
+
+void
+sbBaseDevice::WaitForBatchEndCallback()
+{
+  // start processing requests now that the complete batch is available
+  ProcessRequest();
+}
+
 /* a helper class to proxy sbBaseDevice::Init onto the main thread
  * needed because sbBaseDevice multiply-inherits from nsISupports, so
  * AddRef gets confused
@@ -1706,6 +1846,18 @@ nsresult sbBaseDevice::Init()
     return rv;
   }
   
+  // create a timer used to wait for complete batches in queue
+  nsCOMPtr<nsITimer> batchEndTimer = do_CreateInstance(NS_TIMER_CONTRACTID,
+                                                       &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                            NS_GET_IID(nsITimer),
+                            batchEndTimer,
+                            nsIProxyObjectManager::INVOKE_SYNC |
+                            nsIProxyObjectManager::FORCE_PROXY_CREATION,
+                            getter_AddRefs(mBatchEndTimer));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Perform derived class intialization
   return InitDevice();
 }
@@ -2075,7 +2227,8 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
 
   // If not enough space is available, ask the user what action to take.  If the
   // user does not abort the operation, create and sync to a sync media list
-  // that will fit in the available space.
+  // that will fit in the available space.  Otherwise, set the management type
+  // to manual and return with abort.
   if (availableSpace < totalSyncSize) {
     // Ask the user what action to take.
     PRBool abort;
@@ -2086,6 +2239,8 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
                                                &abort);
     NS_ENSURE_SUCCESS(rv, rv);
     if (abort) {
+      rv = dstLib->SetMgmtType(sbIDeviceLibrary::MGMT_TYPE_MANUAL);
+      NS_ENSURE_SUCCESS(rv, rv);
       *aAbort = PR_TRUE;
       return NS_OK;
     }
@@ -2160,7 +2315,7 @@ sbBaseDevice::SyncShuffleSyncItemList
   PRInt32 itemCount = aSyncItemList.Count();
 
   // Seed the random number generator for shuffling.
-  srand(PR_Now() & 0xFFFFFFFF);
+  srand((unsigned int) (PR_Now() & 0xFFFFFFFF));
 
   // Copy the sync item list to a vector and shuffle it.
   std::vector<sbIMediaItem*> randomItemList;
@@ -2358,10 +2513,11 @@ sbBaseDevice::SyncGetSyncItemSizes
     if (aSyncItemSizeMap.Get(mediaItem, nsnull))
       continue;
 
-    // Get the item size.
+    // Get the item size adding in the per track overhead.
     PRInt64 contentLength;
     rv = sbLibraryUtils::GetContentLength(mediaItem, &contentLength);
     NS_ENSURE_SUCCESS(rv, rv);
+    contentLength += mPerTrackOverhead;
 
     // Add item.
     success = aSyncItemList.AppendObject(mediaItem);

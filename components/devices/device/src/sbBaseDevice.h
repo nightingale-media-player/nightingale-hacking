@@ -125,6 +125,12 @@ public:
     static const PRInt32 PRIORITY_DEFAULT = 0x1000000;
     PRInt32 priority;                /* priority for the request (lower first) */
 
+    PRBool spaceEnsured;             /* true if enough free space is ensured for
+                                          request */
+    PRInt64 timeStamp;               /* time stamp of when request was
+                                          enqueued */
+    PRUint32 batchID;                /* ID of request batch */
+
     NS_DECL_ISUPPORTS
     /**
      * Returns PR_TRUE if the request is for a playlist and PR_FALSE otherwise
@@ -139,7 +145,7 @@ public:
 
     /* Don't allow manual construction/destruction, but allow sub-classing. */
   protected:
-    TransferRequest() {}
+    TransferRequest() : spaceEnsured(PR_FALSE) {}
     ~TransferRequest(){} /* we're refcounted, no manual deleting! */
   };
   
@@ -367,6 +373,8 @@ protected:
   PRMonitor * mRequestMonitor;
   nsRefPtr<TransferRequest> mRequestBatchStart;
   nsCOMPtr<nsITimer> mRequestBatchTimer;
+  nsCOMPtr<nsITimer> mBatchEndTimer;
+  PRInt32 mNextBatchID;
   /**
    * Protects the mRequestBatchTimer checking and setting
    */
@@ -389,6 +397,22 @@ protected:
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
 
 protected:
+  /**
+   * Make sure that there is enough free space to complete the write request
+   * specified by aRequest, taking batches into consideration.  If only a
+   * partial batch has been enqueued, return true in aWait, indicating that the
+   * caller should wait to process requests.  ProcessRequest will be called when
+   * the batch is complete.
+   * If not enough free space is available, ask the user what to do.
+   * Remove requests from the queue to make room.  Set the request spaceEnsured
+   * flag for requests that are ensured space on the device.
+   *
+   * \param aRequest the request to check size for
+   * \param aWait if true, caller should wait to process further requests
+   */
+  nsresult EnsureSpaceForWrite(TransferRequest* aRequest,
+                               PRBool*          aWait);
+
  /**
    * Go through the given queue to make sure that there is enough free space
    * to complete the write requests.  If not, and the user agrees, attempt to
@@ -404,6 +428,22 @@ protected:
   virtual nsresult EnsureSpaceForWrite(TransferRequestQueue& aQueue,
                                        PRBool * aRequetsRemoved = nsnull,
                                        nsIArray** aItemsToWrite = nsnull);
+
+  /**
+   * Wait for the end of a request batch to be enqueued.
+   */
+  nsresult WaitForBatchEnd();
+
+  /**
+   * Static callback for batch end wait timer.
+   */
+  static void WaitForBatchEndCallback(nsITimer* aTimer,
+                                      void* aClosure);
+
+  /**
+   * Object instance callback for batch end wait timer.
+   */
+  void WaitForBatchEndCallback();
 
   /* get a prefbranch for this device */
   nsresult GetPrefBranch(nsIPrefBranch** aPrefBranch);
