@@ -216,13 +216,11 @@ window.mediaPage = {
       for (var i = filters.length - 1; i > 0; i--) {
        filters.remove(i);
       }
-      if (!filters.isSearch(0)) {
-        filters.remove(0);
-        filters.appendSearch([
-          SBProperties.artistName,
-          SBProperties.albumName,
-          SBProperties.trackName
-        ], 3);
+      if (filters.length == 0 || !filters.isSearch(0)) {
+        if (filters.length == 1) {
+          filters.remove(0);
+        }
+        filters.appendSearch(["*"], 1);
       }
     }
   }
