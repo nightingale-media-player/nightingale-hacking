@@ -1,0 +1,159 @@
+Index: toolkit/xre/MacApplicationDelegate.mm
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/xre/MacApplicationDelegate.mm,v
+retrieving revision 1.8
+diff -u -8 -r1.8 MacApplicationDelegate.mm
+--- toolkit/xre/MacApplicationDelegate.mm	20 Feb 2008 17:34:22 -0000	1.8
++++ toolkit/xre/MacApplicationDelegate.mm	5 Jun 2008 21:28:15 -0000
+@@ -54,19 +54,31 @@
+ #include "nsComponentManagerUtils.h"
+ #include "nsCommandLineServiceMac.h"
+ #include "nsServiceManagerUtils.h"
+ #include "nsIAppStartup.h"
+ #include "nsIObserverService.h"
+ #include "nsISupportsPrimitives.h"
+ #include "nsObjCExceptions.h"
+ 
++#define ABOUT_MENUITEM_ID         1
++#define PREFERENCES_MENUTITEM_ID  2
++#define QUIT_MENUITEM_ID          3
++
+ @interface MacApplicationDelegate : NSObject
+ {
++  BOOL mIsSimulatingModalSession;
+ }
++@end
++
++@interface MacApplicationDelegate (Private)
++
++- (void)onBeginGeckoModalSession:(id)sender;
++- (void)onEndGeckoModalSession:(id)sender;
++- (void)configureAppMenu:(BOOL)inIsModal;  // better name?
+ 
+ @end
+ 
+ // Something to call from non-objective code.
+ 
+ // This is needed, on relaunch, to force the OS to use the "Cocoa Dock API"
+ // instead of the "Carbon Dock API".  For more info see bmo bug 377166.
+ void
+@@ -94,16 +106,38 @@
+   MacApplicationDelegate *delegate = [[MacApplicationDelegate alloc] init];
+   [[NSApplication sharedApplication] setDelegate:delegate];
+ 
+   NS_OBJC_END_TRY_ABORT_BLOCK;
+ }
+ 
+ @implementation MacApplicationDelegate
+ 
++- (id)init
++{
++  if ((self = [super init])) {
++    [[NSNotificationCenter defaultCenter] addObserver:self 
++                                             selector:@selector(onBeginGeckoModalSession:) 
++                                                 name:@"GeckoStartModal" 
++                                               object:nil];
++    [[NSNotificationCenter defaultCenter] addObserver:self 
++                                             selector:@selector(onEndGeckoModalSession:) 
++                                                 name:@"GeckoEndModal" 
++                                               object:nil];
++  }
++  
++  return self;
++}
++
++- (void)dealloc
++{
++  [[NSNotificationCenter defaultCenter] removeObserver:self];
++  [super dealloc];
++}
++
+ // Opening the application is handled specially elsewhere,
+ // don't define applicationOpenUntitledFile: .
+ 
+ // The method that NSApplication calls upon a request to reopen, such as when
+ // the Dock icon is clicked and no windows are open.
+ 
+ // A "visible" window may be miniaturized, so we can't skip
+ // nsCocoaNativeReOpen() if 'flag' is 'true'.
+@@ -231,16 +265,23 @@
+   // by window creation date, instead of the z-ordered list because that's what
+   // native apps do.
+   nsCOMPtr<nsISimpleEnumerator> windowList;
+   rv = wm->GetXULWindowEnumerator(nsnull, getter_AddRefs(windowList));
+   NS_ENSURE_SUCCESS(rv, nil);
+ 
+   // Iterate through our list of windows to create our menu
+   NSMenu *menu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
++  
++  // If we are currently running a gecko modal session, this item 
++  // needs to be disabled.
++  if (mIsSimulatingModalSession) {
++    [menu setAutoenablesItems:NO];
++  }
++  
+   PRBool more;
+   while (NS_SUCCEEDED(windowList->HasMoreElements(&more)) && more) {
+     // Get our native window
+     nsCOMPtr<nsISupports> xulWindow;
+     rv = windowList->GetNext(getter_AddRefs(xulWindow));
+     NS_ENSURE_SUCCESS(rv, nil);
+     NSWindow *cocoaWindow = GetCocoaWindowForXULWindow(xulWindow);
+     if (!cocoaWindow) continue;
+@@ -251,20 +292,24 @@
+                                      action:@selector(dockMenuItemSelected:)
+                               keyEquivalent:@""];
+     [menuItem setTarget:self];
+     [menuItem setRepresentedObject:cocoaWindow];
+ 
+     // If this is the foreground window, put a checkmark next to it
+     if (SameCOMIdentity(xulWindow, frontWindow))
+       [menuItem setState:NSOnState];
++    
++    if (mIsSimulatingModalSession)
++      [menuItem setEnabled:NO];
+ 
+     [menu addItem:menuItem];
+     [menuItem release];
+   }
++  
+   return menu;
+ 
+   NS_OBJC_END_TRY_ABORT_BLOCK_NIL;
+ }
+ 
+ // One of our dock menu items was selected
+ - (void)dockMenuItemSelected:(id)sender
+ {
+@@ -305,10 +350,31 @@
+   nsCOMPtr<nsIAppStartup> appService =
+            do_GetService("@mozilla.org/toolkit/app-startup;1");
+   if (appService)
+     appService->Quit(nsIAppStartup::eForceQuit);
+ 
+   return NSTerminateNow;
+ }
+ 
++- (void)onBeginGeckoModalSession:(id)sender
++{
++  mIsSimulatingModalSession = YES;
++  [self configureAppMenu:YES];
++}
++
++- (void)onEndGeckoModalSession:(id)sender
++{
++  mIsSimulatingModalSession = NO;
++  [self configureAppMenu:NO];
++}
++
++- (void)configureAppMenu:(BOOL)inIsModal
++{
++  NSMenu *menu = [[[NSApp mainMenu] itemAtIndex:0] submenu];
++  [menu setAutoenablesItems:!inIsModal];
++  [[menu itemWithTag:ABOUT_MENUITEM_ID] setEnabled:!inIsModal];
++  [[menu itemWithTag:PREFERENCES_MENUTITEM_ID] setEnabled:!inIsModal];
++  [[menu itemWithTag:QUIT_MENUITEM_ID] setEnabled:!inIsModal];
++}
++
+ @end
+ 
