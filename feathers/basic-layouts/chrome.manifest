@@ -1,0 +1,3 @@
+# This is a stub manifest intended keep the chrome registry happy and fix Bug 3679.
+# The real manifest for this extension is bundled with songbird.jar in the main app,
+# so that it will work in safe mode when extensions are disabled.

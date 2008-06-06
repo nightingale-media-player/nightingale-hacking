@@ -41,5 +41,6 @@ all:: extinstall
 extinstall :
 	@$(CYGWIN_WRAPPER)	$(MKDIR) -p $(EXTENSION_DIR)
 	$(CYGWIN_WRAPPER)	$(CP)	-f $(srcdir)/install.rdf $(EXTENSION_DIR)
+	$(CYGWIN_WRAPPER)	$(CP)	-f $(srcdir)/chrome.manifest $(EXTENSION_DIR)
 
 .PHONY : extinstall
