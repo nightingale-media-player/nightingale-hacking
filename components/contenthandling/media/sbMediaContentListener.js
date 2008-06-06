@@ -128,7 +128,7 @@ sbMediaContentListener.prototype = {
     var view = library.createView();
     var filter = LibraryUtils.createConstraint([
       [
-        [SBProperties.contentURL, url]
+        [SBProperties.contentURL, [url]]
       ]
     ]);
     view.filterConstraint = filter;;

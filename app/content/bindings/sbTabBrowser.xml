@@ -2381,9 +2381,10 @@
 
             var browser = this.linkedBrowser;
             var history = browser.webNavigation.sessionHistory;
-            var entry = history.getEntryAtIndex( history.index, false );
-            
-            this._viewForPage = viewMap.getView( browser, entry );
+            if (history.count > 0) {
+              var entry = history.getEntryAtIndex( history.index, false );            
+              this._viewForPage = viewMap.getView( browser, entry );
+            }
           }
 
           this.servicePaneNode = this._findServicePaneNode();

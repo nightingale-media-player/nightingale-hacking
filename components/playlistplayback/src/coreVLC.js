@@ -274,12 +274,12 @@ CoreVLC.prototype._applyPreferences = function ()
     this.LOG("gnutls module is missing, can't set config item.");
   }
   
+  var prefBranch = prefsService.QueryInterface(Ci.nsIPrefBranch2);
+  prefBranch.addObserver("songbird.mediacore.", this, false);
+
+  
   if(getPlatformString() == "Windows_NT") {
-    try {
-      var prefBranch = prefsService.QueryInterface(Ci.nsIPrefBranch2);
-      
-      prefBranch.addObserver("songbird.mediacore.", this, false);
-      
+    try {      
       var audioOut = prefBranch.getCharPref("songbird.mediacore.audioOut");
       this._setAudioOutput(audioOut);      
     }
@@ -1064,9 +1064,9 @@ CoreVLC.prototype.QueryInterface = function(iid)
 {
   if (!iid.equals(Ci.sbICoreWrapper) &&
       !iid.equals(Ci.nsIObserver) &&
-      !iid.equals(Ci.nsISupports))
+      !iid.equals(Ci.nsISupports)) {
     throw Components.results.NS_ERROR_NO_INTERFACE;
-    
+  }
   return this;
 };
 
@@ -1077,7 +1077,7 @@ CoreVLC.prototype.QueryInterface = function(iid)
  */
 try {
   var gCoreVLC = new CoreVLC();
-  window.addEventListener("unload", gCoreVLC.destroyCoreVLC, false);
+  window.addEventListener("unload", function() { gCoreVLC.destroyCoreVLC(); }, false);
 }
 catch (err) {
   dump("ERROR!!! coreVLC failed to create properly.\n");

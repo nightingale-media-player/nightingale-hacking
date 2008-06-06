@@ -32,6 +32,7 @@
 #include <nsIServiceManager.h>
 #include <nsIURI.h>
 #include <sbIPlaylistPlayback.h>
+#include <sbICoreWrapper.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
@@ -111,12 +112,19 @@ sbMediaSniffer::GetMIMETypeFromContent(nsIRequest* aRequest,
     do_GetService(SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isMediaURL;
+  PRBool isMediaURL = PR_FALSE;
 
-  // This will fail if there are no media cores registered (like at startup),
-  // so don't warn for this expected failure.
-  rv = playlistPlayback->IsMediaURL(NS_ConvertUTF8toUTF16(spec), &isMediaURL);
-
+  // If there are no media cores registered (like at startup),
+  // don't do anything
+  nsCOMPtr<sbICoreWrapper> core;
+  rv = playlistPlayback->GetCore(getter_AddRefs(core));
+  if (NS_SUCCEEDED(rv) && core) {
+    
+    // If there is at least one core, try to find out if this
+    // is a media file
+    rv = playlistPlayback->IsMediaURL(NS_ConvertUTF8toUTF16(spec), &isMediaURL);  
+  }
+  
   if (NS_SUCCEEDED(rv) && isMediaURL) {
     
     // We seem to think this is media, make sure the content type that

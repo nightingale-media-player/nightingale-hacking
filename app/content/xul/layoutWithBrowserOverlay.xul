@@ -452,8 +452,6 @@
   <!-- Bookmarks manager -->
   <script type="application/x-javascript" 
   src="chrome://songbird/content/scripts/bookmarks.js" />
-  <script type="application/x-javascript" 
-  src="chrome://songbird/content/scripts/bookmarksProxy.js" />
 
   <!-- Popup Blocker UI functions -->
   <script type="application/x-javascript" 

@@ -54,7 +54,7 @@ static PRLogModuleInfo* gDevicemanagerLog = nsnull;
 #define LOG(args) /* nothing */
 #endif
 
-#define SB_DEVICE_PREFIX "@songbirdnest.com/Songbird/Device/"
+#define SB_DEVICE_PREFIX "@songbirdnest.com/Songbird/OldDeviceImpl/"
 
 // This allows us to be initialized once and only once.
 PRBool sbDeviceManager::sServiceInitialized = PR_FALSE;

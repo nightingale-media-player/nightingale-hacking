@@ -108,12 +108,12 @@ sb-player-artist-label.faceplate-text
   margin: 0px;
 }
 
+.faceplate-curtrack-box:hover,
 .faceplate-curtrack-box:hover .faceplate-text
 {
-  text-decoration: underline !important;
+  text-decoration: underline;
   cursor: pointer;
-}  
-  
+}
 
 /* the seekbar slider */
 

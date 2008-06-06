@@ -420,10 +420,6 @@
   <script type="application/x-javascript" 
   src="chrome://songbird/content/scripts/jumpToFile.js" />
 
-  <!-- Javascript JSON utility -->
-  <script type="application/x-javascript" 
-  src="chrome://songbird/content/scripts/json.js" />
-
   <!-- Balloon tips -->
   <script type="application/x-javascript" 
   src="chrome://songbird/content/scripts/balloonTip.js" />

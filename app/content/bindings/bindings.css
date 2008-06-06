@@ -92,10 +92,6 @@ menupopup[type="search"] {
   -moz-binding: url("chrome://songbird/content/bindings/sbSearch.xml#sb-search-menupopup") !important;
 }
 
-sb-multistatebutton {
-  -moz-binding: url("chrome://songbird/content/bindings/multiStateButton.xml#multistatebutton") !important;
-}
-
 sb-windowregionset {
   -moz-binding: url("chrome://songbird/content/bindings/windowRegion.xml#windowregionset") !important;
 }

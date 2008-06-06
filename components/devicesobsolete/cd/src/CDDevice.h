@@ -41,7 +41,7 @@ class nsIStringBundle;
 
 // DEFINES ====================================================================
 #define SONGBIRD_CDDevice_CONTRACTID                      \
-  "@songbirdnest.com/Songbird/Device/CDDevice;1"
+  "@songbirdnest.com/Songbird/OldDeviceImpl/CDDevice;1"
 #define SONGBIRD_CDDevice_CLASSNAME                       \
   "Songbird CD Device"
 #define SONGBIRD_CDDevice_CID                             \
