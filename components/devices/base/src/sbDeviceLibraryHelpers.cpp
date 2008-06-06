@@ -55,8 +55,8 @@ void sbLibraryUpdateListener::SetSyncMode(PRUint32 aMgmtType,
   NS_ASSERTION(aMgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS && 
                  aPlaylistsList == nsnull,
                "Sync Management type isn't playlists but playlists were supplied");
-  NS_ASSERTION(aMgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS &&
-                 aPlaylistsList != nsnull,
+  NS_ASSERTION(aMgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS ||
+                 aPlaylistsList == nsnull,
                "Sync Management type is playlists but no playlists were supplied");
   mPlaylistsList = aPlaylistsList;
   mMgmtType = aMgmtType;
