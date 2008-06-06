@@ -572,12 +572,12 @@ var DPW = {
 
    onDeviceEvent : function DPW_onDeviceEvent(aEvent) {
     switch (aEvent.type) {
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_END:
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_START:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_PROGRESS:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_END:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_START:
-      //case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_PROGRESS:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_PROGRESS:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED:
         this._update();
