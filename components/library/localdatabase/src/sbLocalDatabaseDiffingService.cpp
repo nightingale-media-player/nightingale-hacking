@@ -1184,73 +1184,23 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
                                       getter_AddRefs(sourceItem));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbIPropertyArray> currentArray;
-      rv = sourceItem->GetProperties(propertyArray, getter_AddRefs(currentArray));
+      rv = AddToUniqueItemList(sourceItem,
+                               propertyArray,
+                               uniqueItems,
+                               uniqueItemGUIDs,
+                               itemsInSource);
       NS_ENSURE_SUCCESS(rv, rv);
+    }
 
-      rv = currentArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
-                                          contentURL);
+    // Add source list to the unique item list if it's not a library.
+    nsCOMPtr<sbILibrary> sourceListIsLibrary = do_QueryInterface(sourceList);
+    if (!sourceListIsLibrary) {
+      rv = AddToUniqueItemList(sourceList,
+                               propertyArray,
+                               uniqueItems,
+                               uniqueItemGUIDs,
+                               itemsInSource);
       NS_ENSURE_SUCCESS(rv, rv);
-
-      // Already in the list, skip.
-      if(itemsInSource.GetEntry(contentURL)) {
-        continue;
-      }
-      
-      // It's ok for this property to not be available.
-      rv = currentArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                          originURL);
-      if(NS_FAILED(rv) && rv != NS_ERROR_NOT_AVAILABLE) {
-        return rv;
-      }
-
-      // Already in the list, skip.
-      if(!originURL.IsEmpty() &&
-         itemsInSource.GetEntry(originURL)) {
-        continue;
-      }
-
-      // It's ok for this property to not be available.
-      rv = currentArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
-                                          originGUID);
-      if(NS_FAILED(rv) && rv != NS_ERROR_NOT_AVAILABLE) {
-        return rv;
-      }
-      
-      // Already in the list, skip.
-      if(!originGUID.IsEmpty() && 
-         itemsInSource.GetEntry(originGUID)) {
-        continue;
-      }
-
-      // contentURL not in the list yet, add it. We don't need to check
-      // for empty with this property value since it's _required_.
-      nsStringHashKey *hashKey = itemsInSource.PutEntry(contentURL);
-      NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
-
-      // originURL not in the list yet, add it.
-      if(!originURL.IsEmpty()) {
-        hashKey = itemsInSource.PutEntry(originURL);
-        NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
-      }
-
-      // originGUID not in the list yet, add it.
-      if(!originGUID.IsEmpty()) {
-        hashKey = itemsInSource.PutEntry(originGUID);
-        NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
-      }
-
-      rv = sourceItem->GetGuid(sourceItemGUID);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // We are finally certain that the item not in final list, add it.
-      if(!uniqueItems.Get(sourceItemGUID, nsnull)) {
-        success = uniqueItems.Put(sourceItemGUID, sourceItem);
-        NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-        nsString *element = uniqueItemGUIDs.AppendElement(sourceItemGUID);
-        NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
-      }
     }
   }
 
@@ -1457,6 +1407,95 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*aLibraryChangeset = libraryChangeset);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseDiffingService::AddToUniqueItemList(
+  sbIMediaItem*                                        aItem,
+  sbIPropertyArray*                                    aUniquePropSet,
+  nsInterfaceHashtable<nsStringHashKey, sbIMediaItem>& aUniqueItemList,
+  nsTArray<nsString>&                                  aUniqueItemGUIDList,
+  nsTHashtable<nsStringHashKey>&                       aUniqueItemPropTable)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aUniquePropSet);
+
+  PRBool success;
+  nsresult rv;
+
+  nsCOMPtr<sbIPropertyArray> currentArray;
+  rv = aItem->GetProperties(aUniquePropSet, getter_AddRefs(currentArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString contentURL;
+  rv = currentArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                      contentURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Already in the list, done.
+  if(aUniqueItemPropTable.GetEntry(contentURL)) {
+    return NS_OK;
+  }
+
+  // It's ok for this property to not be available.
+  nsString originURL;
+  rv = currentArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                      originURL);
+  if(rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Already in the list, done.
+  if(!originURL.IsEmpty() &&
+     aUniqueItemPropTable.GetEntry(originURL)) {
+    return NS_OK;
+  }
+
+  // It's ok for this property to not be available.
+  nsString originGUID;
+  rv = currentArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                                      originGUID);
+  if(rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Already in the list, done.
+  if(!originGUID.IsEmpty() &&
+     aUniqueItemPropTable.GetEntry(originGUID)) {
+    return NS_OK;
+  }
+
+  // contentURL not in the list yet, add it. We don't need to check
+  // for empty with this property value since it's _required_.
+  nsStringHashKey *hashKey = aUniqueItemPropTable.PutEntry(contentURL);
+  NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
+
+  // originURL not in the list yet, add it.
+  if(!originURL.IsEmpty()) {
+    hashKey = aUniqueItemPropTable.PutEntry(originURL);
+    NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  // originGUID not in the list yet, add it.
+  if(!originGUID.IsEmpty()) {
+    hashKey = aUniqueItemPropTable.PutEntry(originGUID);
+    NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  nsString sourceItemGUID;
+  rv = aItem->GetGuid(sourceItemGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // We are finally certain that the item not in final list, add it.
+  if(!aUniqueItemList.Get(sourceItemGUID, nsnull)) {
+    success = aUniqueItemList.Put(sourceItemGUID, aItem);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    nsString *element = aUniqueItemGUIDList.AppendElement(sourceItemGUID);
+    NS_ENSURE_TRUE(element, NS_ERROR_OUT_OF_MEMORY);
+  }
 
   return NS_OK;
 }

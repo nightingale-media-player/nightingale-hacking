@@ -602,6 +602,7 @@ function testMultiListToLibraryDiffing() {
   log("There are " + changes.length + " changes present in the changeset.");
 
   var addedOps = 0;
+  var addedListOps = 0;
   var addedChanges = [];
   
   var deletedOps = 0;
@@ -621,6 +622,8 @@ function testMultiListToLibraryDiffing() {
     switch(change.operation) {
       case Ci.sbIChangeOperation.ADDED: 
         addedOps++; 
+        if (change.itemIsList)
+          addedListOps++;
         addedChanges.push(change);
       break;
       case Ci.sbIChangeOperation.DELETED: 
@@ -640,7 +643,10 @@ function testMultiListToLibraryDiffing() {
   }
   
   log("There are " + addedOps + " added operations.");
-  assertEqual(addedOps, 2, "There should be 2 added operations");
+  assertEqual(addedOps, 4, "There should be 4 added operations");
+  
+  log("There are " + addedListOps + " added list operations.");
+  assertEqual(addedListOps, 2, "There should be 2 added list operations");
   
   log("There are " + deletedOps + " deleted operations.");
   assertEqual(deletedOps, 1, "There should be 1 deleted operations");

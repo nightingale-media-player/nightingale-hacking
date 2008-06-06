@@ -1520,11 +1520,6 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue,
     return NS_OK;
   }
   
-  // ask the helper to figure out if we have space
-  nsCOMPtr<sbIDeviceHelper> deviceHelper =
-    do_GetService("@songbirdnest.com/Songbird/Device/Base/Helper;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
   // get the device properties
   nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;

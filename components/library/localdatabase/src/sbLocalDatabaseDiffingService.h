@@ -44,6 +44,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsInterfaceHashtable.h>
+#include <nsTArray.h>
 
 #include <sbLibraryChangeset.h>
 
@@ -134,6 +135,22 @@ public:
   nsresult CreateLibraryChangesetFromListsToLibrary(nsIArray *aSourceLists,
                                                     sbILibrary *aDestinationLibrary,
                                                     sbILibraryChangeset **aLibraryChangeset);
+
+  /**
+   * Add an item to a unique item list.
+   *
+   * \param aItem The item to add.
+   * \param aUniquePropSet Set of properties to use to test for uniqueness.
+   * \param aUniqueItemList List of unique items.
+   * \param aUniqueItemGUIDList List of unique item GUIDs.
+   * \param aUniqueItemPropTable Table of unique item properties.
+   */
+  nsresult AddToUniqueItemList(
+    sbIMediaItem*                                        aSourceItem,
+    sbIPropertyArray*                                    aUniquePropSet,
+    nsInterfaceHashtable<nsStringHashKey, sbIMediaItem>& aUniqueItemList,
+    nsTArray<nsString>&                                  aUniqueItemGUIDList,
+    nsTHashtable<nsStringHashKey>&                       aUniqueItemPropTable);
 
 private:
   ~sbLocalDatabaseDiffingService();
