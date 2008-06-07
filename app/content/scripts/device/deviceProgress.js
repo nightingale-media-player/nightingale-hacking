@@ -194,13 +194,19 @@ var DPW = {
     syncButton.hidden = true;
     finishButton.hidden = true;
 
-    switch (deviceStatus.currentState) {
+    // Hack to get around the duality of state between derived devices and sbBaseDevice
+    var actualState = this._device.state;
+    if (actualState != Ci.sbIDevice.STATE_CANCEL) {
+      actualState = deviceStatus.currentState;
+    }
+    switch (actualState) {
       case Ci.sbIDevice.STATE_IDLE:
         if (this._currentState != Ci.sbIDevice.STATE_IDLE) {
           // We are actually complete
           cancelButton.hidden = true;
           syncButton.hidden = true;
           finishButton.hidden = false;
+          aOperationHead = null;
           switch (this._currentState) {
             case Ci.sbIDevice.STATE_SYNCING:
               aOperationHead = "syncing";
@@ -217,11 +223,20 @@ var DPW = {
             case Ci.sbIDevice.STATE_MOUNTING:
               aOperationHead = "mounting";
             break;
+            case Ci.sbIDevice.STATE_CANCEL:
+              this._dText1Remote.stringValue =
+                            SBString("device.status.progress_cancel");
+              cancelButton.hidden = true;
+              syncButton.hidden = true;
+              finishButton.hidden = false;
+            break;
           }
-          this._dText1Remote.stringValue =
-                        SBFormattedString("device.status.progress_complete_" +
-                                            aOperationHead,
-                                          [this._totalItems.intValue]);
+          if (aOperationHead) {
+              this._dText1Remote.stringValue =
+                            SBFormattedString("device.status.progress_complete_" +
+                                                aOperationHead,
+                                              [this._totalItems.intValue]);
+          }
         } else {
           cancelButton.hidden = true;
           syncButton.hidden = false;
@@ -244,6 +259,24 @@ var DPW = {
         this._checkForErrors();
         return;
       break;
+      case Ci.sbIDevice.STATE_CANCEL:
+        var syncButton   = this._getElement("sync_operation_button");
+        var cancelButton = this._getElement("cancel_operation_button");
+        var finishButton = this._getElement("finish_progress_button");
+      
+        this._dText1Remote.stringValue =
+                SBString("device.status.progress_header_cancelling");
+        this._dText2Remote.stringValue =
+                SBString("device.status.progress_footer_cancelling");
+        this._dProgressRemote.intValue = 0;
+      
+        this._progressInfoBox.hidden = false;     
+        cancelButton.hidden = false;
+        cancelButton.disabled = true;
+        syncButton.hidden = true;
+        finishButton.hidden = true;
+        this._currentState = actualState;
+        return;
       
       case Ci.sbIDevice.STATE_SYNCING:
         // Special handling for syncing, we use the substate
@@ -309,7 +342,7 @@ var DPW = {
     	this._dText1Remote.stringValue = "";
     	this._dText2Remote.stringValue = "";
     }
-    this._currentState = deviceStatus.currentState;
+    this._currentState = actualState;
   },
 
   //----------------------------------------------------------------------------

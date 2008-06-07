@@ -637,7 +637,7 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
   nsRefPtr<TransferRequest> request;
   PeekRequest(getter_AddRefs(request));
 
-  rv = SetState(STATE_IDLE);
+  rv = SetState(STATE_CANCEL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
