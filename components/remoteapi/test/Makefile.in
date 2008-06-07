@@ -61,6 +61,8 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_privileged_page.html \
                  $(srcdir)/test_properties.js \
                  $(srcdir)/test_properties_page.html \
+                 $(srcdir)/test_properties_urls.js \
+                 $(srcdir)/test_properties_urls_page.html \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

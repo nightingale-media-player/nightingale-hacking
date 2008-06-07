@@ -86,6 +86,7 @@ sbRemoteSiteLibraryResource::GetProperty( const nsAString &aID,
   if ( StringBeginsWith( contentURL, NS_LITERAL_STRING("file:") ) ) {
     LOG_RES(( "sbRemoteSiteLibraryResource::GetProperty() - "
               "Disallowing access to 'file:' URI from contentURL property" ));
+    _retval.AssignLiteral("__BLOCKED__");
     return NS_ERROR_FAILURE;
   }
   LOG_RES(( "sbRemoteSiteLibraryResource::GetProperty() - "

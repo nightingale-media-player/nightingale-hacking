@@ -28,6 +28,7 @@
 #include <sbIPropertyManager.h>
 
 #include "sbRemoteLibraryResource.h"
+#include <sbStandardProperties.h>
 #include <prlog.h>
 #include <nsServiceManagerUtils.h>
 
@@ -101,8 +102,30 @@ sbRemoteLibraryResource::GetProperty( const nsAString &aID,
     return NS_ERROR_FAILURE;
   }
 
-  // it all looks ok, pass this request on to the real media item
-  return mMediaItem->GetProperty( aID, _retval );
+  // readable property
+  nsString propVal;
+  rv = mMediaItem->GetProperty( aID, propVal );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // Protect against exposing file:// uris to the world.
+  if ( !aID.EqualsLiteral(SB_PROPERTY_ORIGINURL) ||
+       !aID.EqualsLiteral(SB_PROPERTY_COPYRIGHTURL) ||
+       !aID.EqualsLiteral(SB_PROPERTY_PRIMARYIMAGEURL) ) {
+
+    if ( StringBeginsWith( propVal, NS_LITERAL_STRING("file:") ) ) {
+      LOG_RES(( "sbRemoteLibraryResource::GetProperty() - "
+                "Disallowing access to 'file:' URI." ));
+      // Assign a dummy signal value
+      propVal.AssignLiteral("__BLOCKED__");
+    } else {
+      LOG_RES(( "sbRemoteLibraryResource::GetProperty() - "
+                "Allowing access to non-file URI: %s",
+                NS_LossyConvertUTF16toASCII(propVal).get() ));
+    }
+  }
+
+  _retval.Assign(propVal);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
