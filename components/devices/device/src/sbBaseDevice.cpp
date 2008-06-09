@@ -1372,8 +1372,9 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequest* aRequest,
   // default to not wait
   *aWait = PR_FALSE;
 
-  // non-write requests are always ensured space
-  if (aRequest->type != TransferRequest::REQUEST_WRITE) {
+  // non-write and playlist requests are always ensured space
+  if ((aRequest->type != TransferRequest::REQUEST_WRITE) ||
+      (aRequest->IsPlaylist())) {
     aRequest->spaceEnsured = PR_TRUE;
     return NS_OK;
   }
@@ -1388,8 +1389,16 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequest* aRequest,
   for (batchEndIter = queue.begin();
        batchEndIter != queue.end();
        batchEndIter++) {
-    // get the next request, skipping requests that are not a part of a batch
+    // get the next request
     TransferRequest* request = *batchEndIter;
+
+    // check for the target request
+    if (request == aRequest) {
+      batchEndRequest = request;
+      continue;
+    }
+
+    // skip requests that are not a part of a batch
     if (!request->batchID)
       continue;
 
@@ -2694,11 +2703,11 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
 }
 
 nsresult
-sbBaseDevice::SyncApplyChanges(sbIMediaList*        aDstMediaList,
+sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
                                sbILibraryChangeset* aChangeset)
 {
   // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aDstMediaList);
+  NS_ENSURE_ARG_POINTER(aDstLibrary);
   NS_ENSURE_ARG_POINTER(aChangeset);
 
   // Function variables.
@@ -2706,11 +2715,12 @@ sbBaseDevice::SyncApplyChanges(sbIMediaList*        aDstMediaList,
   nsresult rv;
 
   // Create some change list arrays.
+  nsCOMArray<sbIMediaList>     addMediaListList;
   nsCOMArray<sbILibraryChange> mediaListChangeList;
-  nsCOMPtr<nsIMutableArray> addItemList =
+  nsCOMPtr<nsIMutableArray>    addItemList =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIMutableArray> deleteItemList =
+  nsCOMPtr<nsIMutableArray>    deleteItemList =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2744,7 +2754,7 @@ sbBaseDevice::SyncApplyChanges(sbIMediaList*        aDstMediaList,
           nsString customType;
           rv = mediaItem->GetProperty(
               NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), customType);
-          if(!customType.IsEmpty() && 
+          if(!customType.IsEmpty() &&
               !customType.Equals(NS_LITERAL_STRING("simple"))) {
             break;
           }
@@ -2763,13 +2773,25 @@ sbBaseDevice::SyncApplyChanges(sbIMediaList*        aDstMediaList,
           nsString customType;
           rv = mediaItem->GetProperty(
               NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), customType);
-          if(!customType.IsEmpty() && 
+          if(!customType.IsEmpty() &&
               !customType.Equals(NS_LITERAL_STRING("simple"))) {
             break;
           }
 
-          rv = addItemList->AppendElement(mediaItem, PR_FALSE);
+          // Add item to add media list list or add item list.
+          PRBool itemIsList;
+          rv = change->GetItemIsList(&itemIsList);
           NS_ENSURE_SUCCESS(rv, rv);
+          if (itemIsList) {
+            nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem,
+                                                                 &rv);
+            NS_ENSURE_SUCCESS(rv, rv);
+            rv = addMediaListList.AppendObject(mediaList);
+            NS_ENSURE_SUCCESS(rv, rv);
+          } else {
+            rv = addItemList->AppendElement(mediaItem, PR_FALSE);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
         } break;
 
       case sbIChangeOperation::MODIFIED:
@@ -2788,7 +2810,7 @@ sbBaseDevice::SyncApplyChanges(sbIMediaList*        aDstMediaList,
             nsString customType;
             rv = mediaItem->GetProperty(
                 NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), customType);
-            if(!customType.IsEmpty() && 
+            if(!customType.IsEmpty() &&
                 !customType.Equals(NS_LITERAL_STRING("simple"))) {
               break;
             }
@@ -2811,18 +2833,61 @@ sbBaseDevice::SyncApplyChanges(sbIMediaList*        aDstMediaList,
   nsCOMPtr<nsISimpleEnumerator> deleteItemEnum;
   rv = deleteItemList->Enumerate(getter_AddRefs(deleteItemEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = aDstMediaList->RemoveSome(deleteItemEnum);
+  rv = aDstLibrary->RemoveSome(deleteItemEnum);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add items.
   nsCOMPtr<nsISimpleEnumerator> addItemEnum;
   rv = addItemList->Enumerate(getter_AddRefs(addItemEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = aDstMediaList->AddSome(addItemEnum);
+  rv = aDstLibrary->AddSome(addItemEnum);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add media lists.
+  PRInt32 count = addMediaListList.Count();
+  for (PRInt32 i = 0; i < count; i++) {
+    rv = SyncAddMediaList(aDstLibrary, addMediaListList[i]);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Sync the media lists.
   rv = SyncMediaLists(mediaListChangeList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SyncAddMediaList(sbIDeviceLibrary* aDstLibrary,
+                               sbIMediaList*     aMediaList)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDstLibrary);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  // Function variables.
+  nsresult rv;
+
+  // Create a main thread destination library proxy to add the media lists.
+  // This ensures that the library notification for the added media list is
+  // delivered and processed before media list items are added.  This ensures
+  // that a device listener is added for the added media list in time to get
+  // notifications for the added media list items.
+  nsCOMPtr<sbIDeviceLibrary> proxyDstLibrary;
+  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                            NS_GET_IID(sbIDeviceLibrary),
+                            aDstLibrary,
+                            nsIProxyObjectManager::INVOKE_SYNC |
+                            nsIProxyObjectManager::FORCE_PROXY_CREATION,
+                            getter_AddRefs(proxyDstLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Copy the media list.  Don't use the add method because it disables
+  // notifications until after the media list and its items are added.
+  nsCOMPtr<sbIMediaList> mediaList;
+  rv = proxyDstLibrary->CopyMediaList(NS_LITERAL_STRING("simple"),
+                                      aMediaList,
+                                      getter_AddRefs(mediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -2837,29 +2902,36 @@ sbBaseDevice::SyncMediaLists(nsCOMArray<sbILibraryChange>& aMediaListChangeList)
   // TODO: just apply changes between the source and destination lists.
 
   // Sync each media list.
-  for (PRInt32 i = 0; i < aMediaListChangeList.Count(); i++) {
+  PRInt32 count = aMediaListChangeList.Count();
+  for (PRInt32 i = 0; i < count; i++) {
     // Get the media list change.
     nsCOMPtr<sbILibraryChange> change = aMediaListChangeList[i];
 
     // Get the destination media list item and library.
-    nsCOMPtr<sbILibrary>   dstLibrary;
-    nsCOMPtr<sbIMediaItem> dstMediaListItem;
+    nsCOMPtr<sbIMediaItem>     dstMediaListItem;
+    nsCOMPtr<sbILibrary>       dstLibrary;
+    nsCOMPtr<sbIDeviceLibrary> dstDeviceLibrary;
     rv = change->GetDestinationItem(getter_AddRefs(dstMediaListItem));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = dstMediaListItem->GetLibrary(getter_AddRefs(dstLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+    dstDeviceLibrary = do_QueryInterface(dstLibrary, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Remove the destination media list item.
     rv = dstLibrary->Remove(dstMediaListItem);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Get the source media list item.
+    // Get the source media list.
     nsCOMPtr<sbIMediaItem> srcMediaListItem;
+    nsCOMPtr<sbIMediaList> srcMediaList;
     rv = change->GetSourceItem(getter_AddRefs(srcMediaListItem));
     NS_ENSURE_SUCCESS(rv, rv);
+    srcMediaList = do_QueryInterface(srcMediaListItem, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    // Add the source media list item to the destination library.
-    rv = dstLibrary->Add(srcMediaListItem);
+    // Add the source media list to the destination library.
+    rv = SyncAddMediaList(dstDeviceLibrary, srcMediaList);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

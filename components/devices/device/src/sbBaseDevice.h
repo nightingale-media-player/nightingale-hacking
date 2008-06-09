@@ -609,21 +609,32 @@ protected:
    * Produce the sync change set for the sync request specified by aRequest and
    * return the change set in aChangeset.
    *
-   * \param aRequest              Sync request data record.
-   * \param aChangeset            Sync request change set.
+   * \param aRequest            Sync request data record.
+   * \param aChangeset          Sync request change set.
    */
   nsresult SyncProduceChangeset(TransferRequest*      aRequest,
                                 sbILibraryChangeset** aChangeset);
 
   /**
-   * Apply the sync change set specified by aChangeset to the media list
-   * specified by aDstMediaList.
+   * Apply the sync change set specified by aChangeset to the device library
+   * specified by aDstLibrary.
    *
-   * \param aDstMediaList         Media list to which to apply sync change set.
-   * \param aChangeset            Set of sync changes.
+   * \param aDstLibrary         Device library to which to apply sync change
+   *                            set.
+   * \param aChangeset          Set of sync changes.
    */
-  nsresult SyncApplyChanges(sbIMediaList*        aDstMediaList,
+  nsresult SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
                             sbILibraryChangeset* aChangeset);
+
+  /**
+   * Add the media list specified by aMediaList to the device library specified
+   * by aDstLibrary.
+   *
+   * \param aDstLibrary         Device library to which to add media list.
+   * \param aMediaList          Media list to add.
+   */
+  nsresult SyncAddMediaList(sbIDeviceLibrary* aDstLibrary,
+                            sbIMediaList*     aMediaList);
 
   /**
    * Synchronize all the media lists in the list of media list changes specified
