@@ -152,7 +152,6 @@ try
       var ios = Components.classes["@mozilla.org/network/io-service;1"]
                           .getService(Components.interfaces.nsIIOService);
       try {
-        alert(url_open_data.URL);
         var uri = ios.newURI(url_open_data.URL, null, null);
       }
       catch(e) {
