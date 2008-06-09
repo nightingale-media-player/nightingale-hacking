@@ -185,44 +185,46 @@ function onPollScan()
 
     clearInterval(polling_interval);
 
-    var array = aFileScanQuery.getResultRangeAsURIs(0, count - 1);
+    if(count) {
+      var array = aFileScanQuery.getResultRangeAsURIs(0, count - 1);
 
-    // Append the new array to the last array
-    for (let i = 0; i < array.length; i++) {
-      accumulatorArray.appendElement( 
-        array.queryElementAt(i, Components.interfaces.nsIURI), false );
+      // Append the new array to the last array
+      for (let i = 0; i < array.length; i++) {
+        accumulatorArray.appendElement( 
+          array.queryElementAt(i, Components.interfaces.nsIURI), false );
+      }
+
+      // Create a temporary track name for all of the found tracks
+      var propsArray =
+        Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                  .createInstance(Components.interfaces.nsIMutableArray);
+      for (let i = 0; i < accumulatorArray.length; i++) {
+        let uri = accumulatorArray.queryElementAt(i, Components.interfaces.nsIURI);
+        let props =
+          Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                    .createInstance(Components.interfaces.sbIMutablePropertyArray);
+        props.appendProperty(SBProperties.trackName, createDefaultTitle(uri));
+        propsArray.appendElement(props, false);
+      }
+
+      // push all items on a fifo, so that each time the batch listener completes,
+      // we can grab the full list of items in the chunk again (not just those
+      // that were created), in order to be able to insert them in the target
+      // playlist regardless of whether they already existed or not
+      scannedChunks.push(accumulatorArray);
+
+      // Asynchronously load the scanned chunk into the library
+      var listener = new sbBatchCreateListener(accumulatorArray);
+      batchLoadsPending++;
+      theTargetLibrary.batchCreateMediaItemsAsync(listener, accumulatorArray, propsArray);
     }
-
-    // Create a temporary track name for all of the found tracks
-    var propsArray =
-      Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                .createInstance(Components.interfaces.nsIMutableArray);
-    for (let i = 0; i < accumulatorArray.length; i++) {
-      let uri = accumulatorArray.queryElementAt(i, Components.interfaces.nsIURI);
-      let props =
-        Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                  .createInstance(Components.interfaces.sbIMutablePropertyArray);
-      props.appendProperty(SBProperties.trackName, createDefaultTitle(uri));
-      propsArray.appendElement(props, false);
-    }
-
-    // push all items on a fifo, so that each time the batch listener completes,
-    // we can grab the full list of items in the chunk again (not just those
-    // that were created), in order to be able to insert them in the target
-    // playlist regardless of whether they already existed or not
-    scannedChunks.push(accumulatorArray);
-
-    // Asynchronously load the scanned chunk into the library
-    var listener = new sbBatchCreateListener(accumulatorArray);
-    batchLoadsPending++;
-    theTargetLibrary.batchCreateMediaItemsAsync(listener, accumulatorArray, propsArray);
 
     // if we have more things to look at, do that
     if (gDirectoriesToScan.length > 0) {
       scanNextDirectory();
       return;
     }
-    
+
     // We didn't find any items. Let's indicate this to the user.
     if(count < 1) {
       theTitle.value = SBString("media_scan.none", "Nothing");
