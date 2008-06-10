@@ -738,17 +738,21 @@
           }
                     
           var btnFlags = 
-            (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_0) +  // cancel
-            (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_1) +  // remove
-            Ci.nsIPromptService.BUTTON_POS_1_DEFAULT;
+            (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_0) +  // remove
+            (Ci.nsIPromptService.BUTTON_TITLE_IS_STRING * Ci.nsIPromptService.BUTTON_POS_1) +  // cancel
+            Ci.nsIPromptService.BUTTON_POS_0_DEFAULT;
                     
+          // XXX lone> see mozbug 345067, there is no way to tell the prompt service what
+          // code to return when the titlebar's X close button is clicked, it is always 1,
+          // so we have to make the cancel button the second button.
+
           var retval = 
             promptService.confirmEx(window, 
                                     strTitle, 
                                     strMsg, 
                                     btnFlags,
-                                    cancelStr, 
                                     removeStr, 
+                                    cancelStr, 
                                     null, 
                                     strCheck, 
                                     check);
@@ -759,7 +763,7 @@
               SBDataSetBoolValue(BYPASSKEY, true);
             }
           }
-          if (retval == 0) { // 1 = yes, 0 = no
+          if (retval == 1) { // 1 = cancel/X, 0 = remove
             return;
           }
         }

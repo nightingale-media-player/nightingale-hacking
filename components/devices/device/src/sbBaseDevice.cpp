@@ -2114,21 +2114,25 @@ nsresult sbBaseDevice::SyncRequestPartnerChange(PRBool* aPartnerChangeGranted)
   // Configure the buttons.
   PRUint32 buttonFlags = 0;
 
-  // Configure the no button as button 0.
+  // Configure the no button as button 1.
   nsAString const& noButton =
                      bundle.Get("device.dialog.sync_confirmation.no_button");
   NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
-  buttonFlags += (nsIPromptService::BUTTON_POS_0 *
+  buttonFlags += (nsIPromptService::BUTTON_POS_1 *
                   nsIPromptService::BUTTON_TITLE_IS_STRING);
 
-  // Configure the sync button as button 1.
+  // Configure the sync button as button 0.
   nsAString const& syncButton =
                      bundle.Get("device.dialog.sync_confirmation.sync_button");
   NS_ENSURE_SUCCESS(bundle.Result(), bundle.Result());
-  buttonFlags += (nsIPromptService::BUTTON_POS_1 *
+  buttonFlags += (nsIPromptService::BUTTON_POS_0 *
                   nsIPromptService::BUTTON_TITLE_IS_STRING) +
-                 nsIPromptService::BUTTON_POS_1_DEFAULT;
-  PRInt32 grantPartnerChangeIndex = 1;
+                 nsIPromptService::BUTTON_POS_0_DEFAULT;
+  PRInt32 grantPartnerChangeIndex = 0;
+
+  // XXX lone> see mozbug 345067, there is no way to tell the prompt service what
+  // code to return when the titlebar's X close button is clicked, it is always 1,
+  // so we have to make the No button the second button.
 
   // Query the user to determine whether the device sync partner should be
   // changed to the local partner.
@@ -2137,8 +2141,8 @@ nsresult sbBaseDevice::SyncRequestPartnerChange(PRBool* aPartnerChangeGranted)
                            title.BeginReading(),
                            message.BeginReading(),
                            buttonFlags,
-                           noButton.BeginReading(),
                            syncButton.BeginReading(),
+                           noButton.BeginReading(),
                            nsnull,                      // No button 2.
                            nsnull,                      // No check message.
                            nsnull,                      // No check result.
