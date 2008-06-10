@@ -270,6 +270,9 @@ Section "-Application" Section1
   ; without a profile (yes, it's confusing). The quick work around is to 
   ; leave a copy of msvcr71.dll in xulrunner/ as well.
   ${If} ${AtLeastWinVista}
+    SetOutPath $INSTDIR\${XULRunnerDir}
+    File ${CRuntime}
+    File ${CPPRuntime}
     StrCpy $LinkIconFile ${VistaIcon}
   ${Else}
     StrCpy $LinkIconFile ${PreferredIcon}
@@ -279,6 +282,10 @@ Section "-Application" Section1
   ; until BMO 350616 gets fixed
   !ifdef CRuntimeManifest
     SetOutPath $INSTDIR
+    File ${CRuntime}
+    File ${CPPRuntime}
+    File ${CRuntimeManifest}
+    SetOutPath $INSTDIR\${XULRunnerDir}
     File ${CRuntime}
     File ${CPPRuntime}
     File ${CRuntimeManifest}

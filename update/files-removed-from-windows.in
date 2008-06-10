@@ -6,6 +6,3 @@
 ./xulrunner/res/fonts/mathfontMTExtra.properties
 ./xulrunner/res/fonts/mathfontPUA.properties
 ./xulrunner/res/fonts/mathfontSymbol.properties
-./xulrunner/Microsoft.VC80.CRT.manifest
-./xulrunner/msvcp80.dll
-./xulrunner/msvcr80.dll
