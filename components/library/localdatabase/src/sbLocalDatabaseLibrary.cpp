@@ -2563,6 +2563,7 @@ sbLocalDatabaseLibrary::GetPropertyCache(sbILocalDatabasePropertyCache** aProper
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - GetPropertyCache()", this));
   NS_ENSURE_ARG_POINTER(aPropertyCache);
+  NS_ENSURE_TRUE(mPropertyCache, NS_ERROR_NOT_INITIALIZED);
   NS_ADDREF(*aPropertyCache = mPropertyCache);
   return NS_OK;
 }
@@ -3537,7 +3538,8 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::Flush()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Sync()", this));
-
+  NS_ENSURE_TRUE(mPropertyCache, NS_ERROR_NOT_INITIALIZED);
+  
   nsresult rv = mPropertyCache->Write();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -4441,7 +4443,8 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::Clear()
 {
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
-
+  NS_ENSURE_TRUE(mPropertyCache, NS_ERROR_NOT_INITIALIZED);
+  
   nsresult rv = mPropertyCache->Write();
   NS_ENSURE_SUCCESS(rv, rv);
 
