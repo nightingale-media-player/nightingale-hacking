@@ -200,15 +200,17 @@ nsresult sbDeviceUtils::BulkSetProperty(sbIMediaList *aMediaList,
 }
 
 /*static*/
-nsresult sbDeviceUtils::DeleteUnavailableItems(sbIMediaList *aMediaList)
+nsresult sbDeviceUtils::DeleteByProperty(sbIMediaList *aMediaList,
+                                         nsAString const & aProperty,
+                                         nsAString const & aValue)
 {
   nsresult rv;
   
   NS_ASSERTION(aMediaList, "Attempting to delete null media list");
   
   nsCOMPtr<nsIArray> array;
-  rv = aMediaList->GetItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_AVAILABILITY),
-                                      NS_LITERAL_STRING("0"),
+  rv = aMediaList->GetItemsByProperty(aProperty,
+                                      aValue,
                                       getter_AddRefs(array));
   if (NS_SUCCEEDED(rv)) {
 
@@ -224,6 +226,14 @@ nsresult sbDeviceUtils::DeleteUnavailableItems(sbIMediaList *aMediaList)
   }
   // Return failure of GetItemsByProperty
   return rv;
+}
+
+/*static*/
+nsresult sbDeviceUtils::DeleteUnavailableItems(sbIMediaList *aMediaList)
+{
+  return sbDeviceUtils::DeleteByProperty(aMediaList,
+                                         NS_LITERAL_STRING(SB_PROPERTY_AVAILABILITY),
+                                         NS_LITERAL_STRING("0"));
 }
 
 /* static */

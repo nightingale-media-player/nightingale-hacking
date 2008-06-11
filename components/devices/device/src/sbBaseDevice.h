@@ -59,6 +59,8 @@ class sbIDeviceLibrary;
 #define DEVICE_PROPERTY_SYNC_FORCE_DIFF \
           "http://songbirdnest.com/device/1.0#forceDiff"
 
+#define SB_ERROR_REQUEST_ABORTED NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 2 )
+
 /**
  * Base class for implementing a device
  *
@@ -346,6 +348,17 @@ public:
   NS_SCRIPTABLE NS_IMETHOD SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled);
   NS_SCRIPTABLE NS_IMETHOD GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval);
   NS_SCRIPTABLE NS_IMETHOD ResetWarningDialogs(void);
+
+  /** 
+   * Returns PR_TRUE if the request has been aborted or the device is 
+   * disconnected
+   */
+  PRBool IsRequestAbortedOrDeviceDisconnected() {
+    PRUint32 deviceState;
+    return (IsRequestAborted() || 
+        NS_FAILED(GetState(&deviceState)) || 
+        deviceState == sbIDevice::STATE_DISCONNECTED) ? PR_TRUE : PR_FALSE;
+  }
 
 protected:
   friend class sbBaseDeviceInitHelper;

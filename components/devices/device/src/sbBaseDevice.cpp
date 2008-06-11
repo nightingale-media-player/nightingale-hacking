@@ -370,6 +370,11 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
   { /* scope for request lock */
     nsAutoMonitor requestMon(mRequestMonitor);
     
+    // If we're aborting don't accept any more requests
+    if (mAbortCurrentRequest)
+    {
+      return SB_ERROR_REQUEST_ABORTED;
+    }
     /* decide where this request will be inserted */
     // figure out which queue we're looking at
     PRInt32 priority = aRequest->priority;
@@ -2185,6 +2190,10 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   nsCOMPtr<sbILibraryChangeset> changeset;
   rv = SyncProduceChangeset(aRequest, getter_AddRefs(changeset));
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (IsRequestAbortedOrDeviceDisconnected()) {
+    return SB_ERROR_REQUEST_ABORTED;
+  }
 
   // Apply changes to the destination library.
   nsCOMPtr<sbIDeviceLibrary> dstLib = do_QueryInterface(aRequest->list, &rv);
@@ -2735,9 +2744,12 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
   rv = changeList->GetLength(&changeCount);
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   // Group changes for later processing but apply property updates immediately.
   for (PRUint32 i = 0; i < changeCount; i++) {
+    if (IsRequestAbortedOrDeviceDisconnected()) {
+      return SB_ERROR_REQUEST_ABORTED;
+    }
     // Get the next change.
     nsCOMPtr<sbILibraryChange> change = do_QueryElementAt(changeList, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2833,6 +2845,9 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
     }
   }
 
+  if (IsRequestAbortedOrDeviceDisconnected()) {
+    return SB_ERROR_REQUEST_ABORTED;
+  }
   // Delete items.
   nsCOMPtr<nsISimpleEnumerator> deleteItemEnum;
   rv = deleteItemList->Enumerate(getter_AddRefs(deleteItemEnum));
@@ -2840,6 +2855,9 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   rv = aDstLibrary->RemoveSome(deleteItemEnum);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if (IsRequestAbortedOrDeviceDisconnected()) {
+    return SB_ERROR_REQUEST_ABORTED;
+  }
   // Add items.
   nsCOMPtr<nsISimpleEnumerator> addItemEnum;
   rv = addItemList->Enumerate(getter_AddRefs(addItemEnum));
@@ -2847,9 +2865,19 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   rv = aDstLibrary->AddSome(addItemEnum);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if (IsRequestAbortedOrDeviceDisconnected()) {
+    rv = sbDeviceUtils::DeleteByProperty(aDstLibrary,
+                                         NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                         NS_LITERAL_STRING("1"));
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to remove partial added items");
+    return SB_ERROR_REQUEST_ABORTED;
+  }
   // Add media lists.
   PRInt32 count = addMediaListList.Count();
   for (PRInt32 i = 0; i < count; i++) {
+    if (IsRequestAbortedOrDeviceDisconnected()) {
+      return SB_ERROR_REQUEST_ABORTED;
+    }
     rv = SyncAddMediaList(aDstLibrary, addMediaListList[i]);
     NS_ENSURE_SUCCESS(rv, rv);
   }

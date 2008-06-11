@@ -79,6 +79,15 @@ public:
                                   sbIPropertyArray* aPropertyFilter = nsnull);
 
   /**
+   * Delete all items that have the property with the given value
+   * \param aMediaList the list to remove items from
+   * \param aPropertyId the ID of the property we're interested in
+   * \param aValue The value of the property that if matched will be deleted
+   */
+  static nsresult DeleteByProperty(sbIMediaList *aMediaList,
+                                   nsAString const & aProperty,
+                                   nsAString const & aValue);
+  /**
    * Delete all items that are marked not available (availability == 0)
    * in a medialist / library.
    * \param aMediaList The list or library to prune.
