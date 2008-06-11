@@ -76,10 +76,13 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsIDialogParamBlock.h>
+#include <nsIFile.h>
 #include <nsIIOService.h>
 #include <nsIObserverService.h>
 #include <nsIPrefService.h>
+#include <nsIRunnable.h>
 #include <nsIStringBundle.h>
+#include <nsIThreadPool.h>
 #include <prmon.h>
 
 /* Songbird imports. */
@@ -166,6 +169,7 @@ class sbDownloadDevice : public nsIObserver,
      * mpDownloadSession        Current download session.
      * mpDeviceLock             Lock for download device access.
      * mDeviceIdentifier        Download device identifier.
+     * mFileMoveThreadPool      Thread pool to move files on completion
      */
 
     nsCOMPtr<sbIMediaList>      mpDownloadMediaList;
@@ -182,6 +186,7 @@ class sbDownloadDevice : public nsIObserver,
     PRMonitor                   *mpDeviceMonitor;
     nsString                    mDeviceIdentifier;
 
+    nsCOMPtr<nsIThreadPool>     mFileMoveThreadPool;
 
     /*
      * Private media list services.
@@ -502,6 +507,34 @@ private:
   nsCOMPtr<sbIMediaItem> mMediaItem;
   nsCOMPtr<sbIMediaItem> mStatusTarget;
   PRBool mReadOnly;
+};
+
+class sbDownloadSessionMoveHandler : public nsIRunnable
+{
+public:
+  explicit sbDownloadSessionMoveHandler(nsIFile *aSourceFile,
+                                        nsIFile *aDestinationPath,
+                                        const nsAString &aDestinationFileName,
+                                        sbIMediaItem *aDestinationItem) {
+    NS_ASSERTION(aSourceFile, "aSourceFile is null!");
+    NS_ASSERTION(aDestinationPath, "aDestinationPath is null!");
+    NS_ASSERTION(aDestinationItem, "aDestinationItem is null!");
+
+    mSourceFile = aSourceFile;
+    mDestinationPath = aDestinationPath;
+    mDestinationFileName = aDestinationFileName;
+    mDestinationItem = aDestinationItem;
+  }
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIRUNNABLE
+
+private:
+  nsCOMPtr<nsIFile> mSourceFile;
+  nsCOMPtr<nsIFile> mDestinationPath;
+  nsString          mDestinationFileName;
+
+  nsCOMPtr<sbIMediaItem> mDestinationItem;
 };
 
 #endif // __DOWNLOAD_DEVICE_H__

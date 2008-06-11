@@ -733,6 +733,23 @@ NS_IMETHODIMP sbDownloadDevice::Initialize()
         NS_ENSURE_SUCCESS(rv, rv);
     }
 
+    // Need thread pool to process file moves off the main thread.
+    nsCOMPtr<nsIThreadPool> threadPool = 
+      do_CreateInstance("@mozilla.org/thread-pool;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = threadPool->SetIdleThreadLimit(0);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = threadPool->SetIdleThreadTimeout(60000);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = threadPool->SetThreadLimit(1);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Thread pool is setup.
+    threadPool.forget(getter_AddRefs(mFileMoveThreadPool));
+
     /* Resume incomplete transfers. */
     ResumeTransfers();
 
@@ -3392,40 +3409,45 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         NS_ENSURE_SUCCESS(result, result);
     }
 
-    /* Move the temporary download file to the final location. */
-    result = mpDstFile->GetLeafName(fileName);
-    if (NS_SUCCEEDED(result))
-        result = mpDstFile->GetParent(getter_AddRefs(pFileDir));
-    if (NS_SUCCEEDED(result))
-        result = mpTmpFile->MoveTo(pFileDir, fileName);
-
     /* Save the content URL. */
     if (NS_SUCCEEDED(result))
-        result = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
+      result = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
     if (NS_SUCCEEDED(result))
-        result = pSrcURI->GetSpec(srcSpec);
+      result = pSrcURI->GetSpec(srcSpec);
 
     /* Update the download media item content source property. */
     if (NS_SUCCEEDED(result)) {
 #if defined(XP_WIN)
-        nsCString actualDstSpec;
-        ToLowerCase(NS_ConvertUTF16toUTF8(mDstURISpec), actualDstSpec);
-        
-        result = mpDstURI->SetSpec(actualDstSpec);
-        NS_ENSURE_SUCCESS(result, result);
+      nsCString actualDstSpec;
+      ToLowerCase(NS_ConvertUTF16toUTF8(mDstURISpec), actualDstSpec);
+
+      result = mpDstURI->SetSpec(actualDstSpec);
+      NS_ENSURE_SUCCESS(result, result);
 #endif
-        result = mpMediaItem->SetContentSrc(mpDstURI);
+      result = mpMediaItem->SetContentSrc(mpDstURI);
     }
 
     /* Add the download media item to the destination library. */
     if (NS_SUCCEEDED(result))
-        pDstMediaList = do_QueryInterface(mpDstLibrary, &result);
+      pDstMediaList = do_QueryInterface(mpDstLibrary, &result);
     if (NS_SUCCEEDED(result))
-        result = pDstMediaList->Add(mpMediaItem);
+      result = pDstMediaList->Add(mpMediaItem);
 
-    /* Update the destination library metadata. */
+    /* Move the temporary download file to the final location. */
+    result = mpDstFile->GetLeafName(fileName);
     if (NS_SUCCEEDED(result))
-        UpdateDstLibraryMetadata();
+        result = mpDstFile->GetParent(getter_AddRefs(pFileDir));
+    if (NS_SUCCEEDED(result)) {
+      nsRefPtr<sbDownloadSessionMoveHandler> moveHandler;
+      moveHandler = new sbDownloadSessionMoveHandler(mpTmpFile, 
+                                                     pFileDir, 
+                                                     fileName,
+                                                     mpMediaItem);
+      NS_ENSURE_TRUE(moveHandler, NS_ERROR_OUT_OF_MEMORY);
+
+      result = mpDownloadDevice->mFileMoveThreadPool->Dispatch(moveHandler,
+                                                               nsIEventTarget::DISPATCH_NORMAL);
+    }
 
     /* Update the web library with the local downloaded file URL. */
     if (NS_SUCCEEDED(result))
@@ -3475,9 +3497,9 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
 nsresult sbDownloadSession::UpdateDstLibraryMetadata()
 {
     nsCOMPtr<sbIMediaList>      pDstMediaList;
-    nsRefPtr<LibraryMetadataUpdater>
-                                pLibraryMetadataUpdater;
     nsCString                   dstSpec;
+    nsRefPtr<LibraryMetadataUpdater> 
+                                pLibraryMetadataUpdater;
     nsString                    durationStr;
     PRInt32                     duration;
     PRBool                      updateDstLibraryMetadata = PR_TRUE;
@@ -4158,4 +4180,35 @@ sbAutoDownloadButtonPropertyValue::~sbAutoDownloadButtonPropertyValue()
     }
   }
   MOZ_COUNT_DTOR(sbAutoDownloadButtonPropertyValue);
+}
+
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDownloadSessionMoveHandler, 
+                              nsIRunnable)
+
+NS_IMETHODIMP sbDownloadSessionMoveHandler::Run() {
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  
+  rv = mSourceFile->MoveTo(mDestinationPath, mDestinationFileName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMetadataJobManager> metadataJobManager;
+  nsCOMPtr<sbIMetadataJob>        metadataJob;
+
+  /* Create an array to contain the media items to scan. */
+  nsCOMPtr<nsIMutableArray> itemArray = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+
+  rv = itemArray->AppendElement(mDestinationItem, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* Start a metadata scanning job. */
+  metadataJobManager = 
+    do_GetService("@songbirdnest.com/Songbird/MetadataJobManager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return metadataJobManager->NewJob(itemArray,
+                                    5,
+                                    sbIMetadataJob::JOBTYPE_READ,
+                                    getter_AddRefs(metadataJob));
 }
