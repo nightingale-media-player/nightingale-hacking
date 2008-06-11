@@ -59,6 +59,7 @@
 #include <sbIMetadataManager.h>
 #include <sbIMetadataHandler.h>
 #include <sbIMetadataJob.h>
+#include <sbPIMetadataJob.h>
 #include <sbIJobProgress.h>
 #include <sbIJobCancelable.h>
 
@@ -93,6 +94,7 @@ class sbMetadataJobProcessorThread;
 
 class sbMetadataJob : public nsIClassInfo,
                       public sbIMetadataJob, 
+                      public sbPIMetadataJob,
                       public sbIJobProgress,  
                       public sbIJobCancelable
 {
@@ -103,17 +105,13 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
   NS_DECL_SBIMETADATAJOB
+  NS_DECL_SBPIMETADATAJOB
   NS_DECL_SBIJOBPROGRESS
   NS_DECL_SBIJOBCANCELABLE
 
 
   sbMetadataJob();
   virtual ~sbMetadataJob();
-
-  nsresult Init(const nsAString & aTableName, 
-                nsIArray *aMediaItemsArray, 
-                PRUint32 aSleepMS,
-                PRUint16 aJobType);
 
   // TODO used to be on the interface.  Consider removing?
   nsresult GetTableName(nsAString & aTableName);

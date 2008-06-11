@@ -143,11 +143,21 @@ NS_IMPL_ISUPPORTS0(sbRunThreadParams)
 NS_IMPL_THREADSAFE_ADDREF(sbMetadataJob::jobitem_t)
 NS_IMPL_THREADSAFE_RELEASE(sbMetadataJob::jobitem_t)
 
-NS_IMPL_THREADSAFE_ISUPPORTS4(sbMetadataJob, nsIClassInfo, sbIMetadataJob, sbIJobProgress, sbIJobCancelable);
-NS_IMPL_CI_INTERFACE_GETTER4(sbMetadataJob, nsIClassInfo, sbIMetadataJob, sbIJobProgress, sbIJobCancelable)
+NS_IMPL_THREADSAFE_ISUPPORTS5(sbMetadataJob, 
+                              nsIClassInfo, 
+                              sbIMetadataJob, 
+                              sbPIMetadataJob, 
+                              sbIJobProgress, 
+                              sbIJobCancelable);
+
+NS_IMPL_CI_INTERFACE_GETTER4(sbMetadataJob, 
+                             nsIClassInfo, 
+                             sbIMetadataJob, 
+                             sbIJobProgress, 
+                             sbIJobCancelable)
+
 NS_DECL_CLASSINFO(sbMetadataJob)
 NS_IMPL_THREADSAFE_CI(sbMetadataJob)
-
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataJobProcessorThread, nsIRunnable)
 

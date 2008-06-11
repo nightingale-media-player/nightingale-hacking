@@ -44,12 +44,14 @@
 #include "nsIWindowMediator.h"
 #include "nsIDOMWindow.h"
 #include "nsIDOMWindowInternal.h"
+#include <nsThreadUtils.h>
 
 #include <sbILibraryManager.h>
 #include <sbISQLBuilder.h>
 #include <sbSQLBuilderCID.h>
 #include <sbIMediaItem.h>
 #include <sbILibrary.h>
+#include <sbProxyUtils.h>
 
 #include <sbIDataRemote.h>
 
@@ -235,9 +237,27 @@ sbMetadataJobManager::NewJob(nsIArray *aMediaItemsArray,
   rv = ExecuteQuery( insertItem );      
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Kick off the task with the proper data
-  rv = task->Init(tableName, aMediaItemsArray, aSleepMS, aJobType);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // If we are not on the main thread, ensure we call init() on the metadatajob
+  // _on the main thread_. The metadatajob init method is not thread-safe.
+  if(!NS_IsMainThread()) {
+    nsCOMPtr<sbPIMetadataJob> proxiedJob;
+    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                              NS_GET_IID(sbPIMetadataJob),
+                              NS_ISUPPORTS_CAST(sbIMetadataJob *, task),
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(proxiedJob));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Kick off the task with the proper data
+    rv = proxiedJob->Init(tableName, aMediaItemsArray, aSleepMS, aJobType);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // Kick off the task with the proper data, proxy free.
+    rv = task->Init(tableName, aMediaItemsArray, aSleepMS, aJobType);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   mJobArray.AppendObject( task );
 
   NS_ADDREF(*_retval = task);

@@ -33,6 +33,7 @@ XPIDL_SRCS = sbIMetadataHandler.idl \
              sbIMetadataManager.idl \
              sbIMetadataChannel.idl \
              sbIMetadataJob.idl \
+             sbPIMetadataJob.idl \
              sbIMetadataJobManager.idl \
              sbIMetadataUtils.idl \
              $(NULL)

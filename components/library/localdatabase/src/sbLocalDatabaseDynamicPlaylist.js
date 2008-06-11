@@ -42,6 +42,8 @@ const SB_PROP_DESTINATION          = SB_NS + "destination"
 
 const SBLDBCOMP = "@songbirdnest.com/Songbird/Library/LocalDatabase/";
 
+const SB_FINAL_UI_STARTUP_TOPIC = "final-ui-startup";
+const SB_DEVICE_MANAGER_READY_TOPIC = "songbird-device-manager-ready";
 const SB_LIBRARY_MANAGER_READY_TOPIC = "songbird-library-manager-ready";
 const SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC = "songbird-library-manager-before-shutdown";
 
@@ -76,7 +78,8 @@ function sbLocalDatabaseDynamicPlaylistService()
 
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
-  obs.addObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC, false);
+  //obs.addObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC, false);
+  obs.addObserver(this, SB_DEVICE_MANAGER_READY_TOPIC, false);
   obs.addObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, false);
 }
 
@@ -174,7 +177,8 @@ function sbLocalDatabaseDynamicPlaylistService__shutdown()
 {
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
-  obs.removeObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC);
+  //obs.removeObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC);
+  obs.removeObserver(this, SB_DEVICE_MANAGER_READY_TOPIC);
   obs.removeObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
 
   if (this._started) {
@@ -582,7 +586,7 @@ function sbLocalDatabaseDynamicPlaylistService_notify(aTimer)
 sbLocalDatabaseDynamicPlaylistService.prototype.observe =
 function sbLocalDatabaseDynamicPlaylistService_observe(aSubject, aTopic, aData)
 {
-  if (aTopic == SB_LIBRARY_MANAGER_READY_TOPIC) {
+  if (aTopic == SB_DEVICE_MANAGER_READY_TOPIC) {
     this._startup();
   }
   else if(aTopic == SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC) {
