@@ -336,8 +336,8 @@ RCS file: /cvsroot/mozilla/memory/jemalloc/crtsp1.diff,v
 retrieving revision 1.8
 diff -u -8 -r1.8 crtsp1.diff
 --- memory/jemalloc/crtsp1.diff	5 Mar 2008 19:09:52 -0000	1.8
-+++ memory/jemalloc/crtsp1.diff	16 May 2008 07:18:14 -0000
-@@ -1,197 +1,716 @@
++++ memory/jemalloc/crtsp1.diff	12 Jun 2008 09:10:14 -0000
+@@ -1,197 +1,719 @@
 -# The Microsoft C Runtime source code to which this document refers is available
 -# directly from Microsoft Corporation, under a separate license.
 -# Please ensure that if you are using that source code, you have appropriate
@@ -748,12 +748,15 @@ diff -u -8 -r1.8 crtsp1.diff
 +    memalign
 +.
 +508c
++    _malloc_dbg
 +    malloc_usable_size
 +.
 +343,348d
 +331d
 +320,321d
-+260d
++260c
++    _free_dbg
++.
 +88,95d
 +81d
 +15,16d
@@ -1199,7 +1202,7 @@ RCS file: /cvsroot/mozilla/memory/jemalloc/jemalloc.c,v
 retrieving revision 1.14
 diff -u -8 -r1.14 jemalloc.c
 --- memory/jemalloc/jemalloc.c	8 May 2008 05:36:40 -0000	1.14
-+++ memory/jemalloc/jemalloc.c	16 May 2008 07:16:46 -0000
++++ memory/jemalloc/jemalloc.c	12 Jun 2008 00:27:34 -0000
 @@ -1519,34 +1519,40 @@
   */
  
@@ -1245,7 +1248,7 @@ diff -u -8 -r1.14 jemalloc.c
  static inline const char *
  _getprogname(void)
  {
-@@ -6075,18 +6081,35 @@
+@@ -6075,18 +6081,49 @@
  }
  
  size_t
@@ -1268,6 +1271,20 @@ diff -u -8 -r1.14 jemalloc.c
 +	return 1; /* COMPLETELY fake... */
 +}
 +// #endif
++
++VISIBLE
++void *
++_malloc_dbg(size_t size, int r0, const char* r1, int r2)
++{
++        return malloc(size);
++}
++
++VISIBLE
++void
++_free_dbg(void *ptr, int r0)
++{
++        return free(ptr);
++}
 +
  #endif
  

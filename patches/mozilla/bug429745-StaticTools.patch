@@ -4,8 +4,8 @@ RCS file: /cvsroot/mozilla/config/mkdepend/Makefile.in,v
 retrieving revision 1.16
 diff -u -8 -r1.16 Makefile.in
 --- config/mkdepend/Makefile.in	21 Feb 2007 20:06:33 -0000	1.16
-+++ config/mkdepend/Makefile.in	6 May 2008 19:02:41 -0000
-@@ -35,16 +35,18 @@
++++ config/mkdepend/Makefile.in	12 Jun 2008 09:52:56 -0000
+@@ -35,16 +35,19 @@
  #
  # ***** END LICENSE BLOCK *****
  
@@ -15,6 +15,7 @@ diff -u -8 -r1.16 Makefile.in
  VPATH		= @srcdir@
  
 +DISABLE_MOZ_MEMORY = 1
++USE_STATIC_LIBS = 1
 +
  include $(DEPTH)/config/autoconf.mk
  
@@ -30,8 +31,8 @@ RCS file: /cvsroot/mozilla/modules/libmar/tool/Makefile.in,v
 retrieving revision 1.7
 diff -u -8 -r1.7 Makefile.in
 --- modules/libmar/tool/Makefile.in	16 Apr 2006 16:29:28 -0000	1.7
-+++ modules/libmar/tool/Makefile.in	6 May 2008 19:23:56 -0000
-@@ -36,16 +36,18 @@
++++ modules/libmar/tool/Makefile.in	12 Jun 2008 09:52:56 -0000
+@@ -36,16 +36,19 @@
  #
  # ***** END LICENSE BLOCK *****
  
@@ -41,6 +42,7 @@ diff -u -8 -r1.7 Makefile.in
  VPATH		= @srcdir@
  
 +DISABLE_MOZ_MEMORY = 1
++USE_STATIC_LIBS = 1
 +
  include $(DEPTH)/config/autoconf.mk
  
@@ -53,11 +55,11 @@ diff -u -8 -r1.7 Makefile.in
 Index: toolkit/crashreporter/client/Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/crashreporter/client/Makefile.in,v
-retrieving revision 1.17
-diff -u -8 -r1.17 Makefile.in
---- toolkit/crashreporter/client/Makefile.in	20 Mar 2008 01:13:36 -0000	1.17
-+++ toolkit/crashreporter/client/Makefile.in	6 May 2008 19:26:50 -0000
-@@ -37,16 +37,18 @@
+retrieving revision 1.19
+diff -u -8 -r1.19 Makefile.in
+--- toolkit/crashreporter/client/Makefile.in	5 May 2008 21:08:15 -0000	1.19
++++ toolkit/crashreporter/client/Makefile.in	12 Jun 2008 09:52:56 -0000
+@@ -37,16 +37,19 @@
  # ***** END LICENSE BLOCK *****
  
  
@@ -67,6 +69,7 @@ diff -u -8 -r1.17 Makefile.in
  VPATH		= @srcdir@
  
 +DISABLE_MOZ_MEMORY = 1
++USE_STATIC_LIBS = 1
 +
  include $(DEPTH)/config/autoconf.mk
  
@@ -82,8 +85,8 @@ RCS file: /cvsroot/mozilla/xpcom/typelib/xpidl/Makefile.in,v
 retrieving revision 1.44
 diff -u -8 -r1.44 Makefile.in
 --- xpcom/typelib/xpidl/Makefile.in	23 Feb 2008 00:22:48 -0000	1.44
-+++ xpcom/typelib/xpidl/Makefile.in	6 May 2008 19:27:34 -0000
-@@ -35,16 +35,18 @@
++++ xpcom/typelib/xpidl/Makefile.in	12 Jun 2008 09:52:56 -0000
+@@ -35,16 +35,19 @@
  #
  # ***** END LICENSE BLOCK *****
  
@@ -93,6 +96,7 @@ diff -u -8 -r1.44 Makefile.in
  VPATH		= @srcdir@
  
 +DISABLE_MOZ_MEMORY = 1
++USE_STATIC_LIBS = 1
 +
  include $(DEPTH)/config/autoconf.mk
  
@@ -108,7 +112,7 @@ RCS file: /cvsroot/mozilla/xpcom/typelib/xpt/tools/Makefile.in,v
 retrieving revision 1.32
 diff -u -8 -r1.32 Makefile.in
 --- xpcom/typelib/xpt/tools/Makefile.in	17 Mar 2008 17:39:01 -0000	1.32
-+++ xpcom/typelib/xpt/tools/Makefile.in	6 May 2008 19:27:34 -0000
++++ xpcom/typelib/xpt/tools/Makefile.in	12 Jun 2008 09:52:56 -0000
 @@ -35,16 +35,18 @@
  #
  # ***** END LICENSE BLOCK *****
@@ -128,38 +132,3 @@ diff -u -8 -r1.32 Makefile.in
  SIMPLE_PROGRAMS	= xpt_dump$(BIN_SUFFIX) xpt_link$(BIN_SUFFIX)
  
  CSRCS		= xpt_dump.c xpt_link.c
-@@ -57,16 +59,34 @@
- HOST_SIMPLE_PROGRAMS	= $(addprefix host_, $(SIMPLE_PROGRAMS:$(BIN_SUFFIX)=$(HOST_BIN_SUFFIX)))
- HOST_CSRCS		= $(CSRCS)
- endif
- 
- LIBS		= $(DIST)/lib/$(LIB_PREFIX)xpt.$(LIB_SUFFIX)
- 
- include $(topsrcdir)/config/rules.mk
- 
-+# Compile directly against the static lib, so we can use xpt_*.exe during the
-+# build without the shared library path being set.
-+ifneq (,$(filter WINNT WINCE OS2,$(OS_ARCH)))
-+
-+ifndef GNU_CC
-+LDFLAGS += \
-+        -SUBSYSTEM:CONSOLE \
-+        -NODEFAULTLIB:MSVCRTD \
-+        -NODEFAULTLIB:LIBC \
-+        $(NULL)
-+
-+ifneq (,$(filter-out 1700 1710,$(_MSC_VER)))
-+LDFLAGS += -SAFESEH:NO
-+endif
-+
-+endif
-+endif
-+
- # Compile directly against the static lib, so we can use the tools
- # during the build without the shared library path being set.
- ifeq (,$(filter-out WINNT WINCE,$(OS_ARCH)))
- DEFINES		+= -DEXPORT_XPT_API
- endif
- 
- ifdef CROSS_COMPILE
- HOST_LIBS		= $(DIST)/host/lib/$(LIB_PREFIX)hostxpt.$(LIB_SUFFIX)
