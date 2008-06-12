@@ -94,7 +94,7 @@ DisplayPaneMetadataReader.prototype = {
       if (addons[i].displayPanes) {
         // TODO: remove this some time post 0.5 and before 1.0
         Components.utils.reportError(
-          "DisplayPanes: Use of the ²displayPanes> element in install.rdf " +
+          "DisplayPanes: Use of the <displayPanes> element in install.rdf " +
           "is deprecated. Remove that element and leave the contents as-is."
         );
         panes = addons[i].displayPanes[0].displayPane;
@@ -387,6 +387,8 @@ DisplayPaneManager.prototype = {
    * \see sbIDisplayPaneManager
    */
   registerInstantiator: function(aInstantiator) {
+    this.ensureAddonMetadataLoaded();
+    
     if (this._instantiatorsList.indexOf(aInstantiator) > -1) {
       Components.utils.reportError("Attempt to re-register instantiator ignored\n" +
                                    (new Error()).stack);
