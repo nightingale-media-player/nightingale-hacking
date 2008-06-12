@@ -59,7 +59,7 @@ retrieving revision 1.19
 diff -u -8 -r1.19 Makefile.in
 --- toolkit/crashreporter/client/Makefile.in	5 May 2008 21:08:15 -0000	1.19
 +++ toolkit/crashreporter/client/Makefile.in	12 Jun 2008 09:52:56 -0000
-@@ -37,16 +37,19 @@
+@@ -37,16 +37,18 @@
  # ***** END LICENSE BLOCK *****
  
  
@@ -69,7 +69,6 @@ diff -u -8 -r1.19 Makefile.in
  VPATH		= @srcdir@
  
 +DISABLE_MOZ_MEMORY = 1
-+USE_STATIC_LIBS = 1
 +
  include $(DEPTH)/config/autoconf.mk
  
