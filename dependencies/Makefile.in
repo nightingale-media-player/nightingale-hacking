@@ -102,7 +102,7 @@ endif
 
 runtimelibs::
 	$(MKDIR) -p $(SONGBIRD_MACOS)
-	$(CP) -dfp $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+	$(CP) -Lfp $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                $(SONGBIRD_MACOS) \
