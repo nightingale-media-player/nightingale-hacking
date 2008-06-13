@@ -444,7 +444,23 @@ include $(topsrcdir)/build/rules.mk
 # Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
 xulrunner_extensions = $(notdir $(wildcard $(SONGBIRD_XULRUNNERDIR)/extensions/*))
 
-all:: copy-extensions
+all:: copy-extensions addmsvcrtmanifest
+
+# WE have to add manifest information to the few remaining .exes that actually
+# link against the MSVCRT; see bug 10022
+ADD_MANIFEST_EXES = crashreporter.exe \
+                    mangle.exe \
+                    shlibsign.exe \
+                    $(NULL)
+
+addmsvcrtmanifest::
+ifdef MSMANIFEST_TOOL
+	for f in $(ADD_MANIFEST_EXES); do \
+   echo $(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(SONGBIRD_XULRUNNERDIR)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(SONGBIRD_XULRUNNERDIR))/$$f\;1 ; \
+   $(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(SONGBIRD_XULRUNNERDIR)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(SONGBIRD_XULRUNNERDIR))/$$f\;1 ; \
+   done
+endif # MSVC with manifest tool
+
 
 .PHONY : copy-extensions
 copy-extensions : gunzip_file
