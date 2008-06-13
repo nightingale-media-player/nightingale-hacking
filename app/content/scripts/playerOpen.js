@@ -609,7 +609,7 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
           if (!SBDataGetBoolValue(BYPASSKEY)) {
             var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                                           .getService(Components.interfaces.nsIPromptService);
-            check = { value: false };
+            var check = { value: false };
             
             var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
                                 .getService(Components.interfaces.nsIStringBundleService);

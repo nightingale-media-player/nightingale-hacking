@@ -139,11 +139,6 @@
               document.addEventListener("sb-overlay-load", function() {
                 document.removeEventListener("sb-overlay-load", arguments.callee, false);
                 
-                // If we are already showing something, nothing to do
-                if (!this._hidden) {
-                  return;
-                }
-                
                 var paneinfo = paneMgr.getPaneInfo(self._lastURL.stringValue);
                 if (paneinfo && !self._lastHiddenState.boolValue) {
                   self._internalLoadURL(paneinfo);
