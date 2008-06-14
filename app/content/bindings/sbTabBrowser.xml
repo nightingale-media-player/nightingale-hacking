@@ -1892,7 +1892,6 @@
         ]]></getter>
         <setter><![CDATA[
           if (!this._playlist) return;
-          dump('\n\n\nsetting outerWebPlaylistShowing to: '+val+'\n\n\n\n');
           this._playlist.setAttribute("hidden", !val);
           this._splitter.setAttribute("hidden", !val);
 
