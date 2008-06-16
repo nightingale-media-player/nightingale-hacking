@@ -96,8 +96,16 @@ appInit.onScriptInit = function()
   }
   
   // Show EULA, then the first run (if accepted) or exit (if rejected)
-  if ( doEULA( doFirstRun, quitApp ) ) {
-    doMainwinStart();
+  var environment = Cc["@mozilla.org/process/environment;1"]
+                      .getService(Ci.nsIEnvironment);
+  if ( environment.exists( "SONGBIRD_FIRST_RUN_WIZARD" ) ) {
+    if ( doFirstRun() ) {
+      doMainwinStart();
+    }
+  } else {
+    if ( doEULA( doFirstRun, quitApp ) ) {
+      doMainwinStart();
+    }
   }
 }
 window.addEventListener("load", appInit.onLoad, false);
@@ -292,10 +300,21 @@ function doFirstRun()
       data.document = document;
 
       // This cannot be modal it will block the download of extensions
-      window.openDialog( "chrome://songbird/content/xul/firstRun.xul",
-                         "firstrun", 
-                         "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
-                         data );
+      var environment = Cc["@mozilla.org/process/environment;1"]
+                          .getService(Ci.nsIEnvironment);
+      if ( environment.exists( "SONGBIRD_FIRST_RUN_WIZARD" ) ) {
+        window.openDialog
+                 ( "chrome://songbird/content/xul/firstRunWizard.xul",
+                   "firstrun",
+                   "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
+                   data );
+      } else {
+        window.openDialog
+                 ( "chrome://songbird/content/xul/firstRun.xul",
+                   "firstrun",
+                   "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
+                   data );
+      }
 
       // Do not open main window until the non-modal first run dialog returns
       return false;

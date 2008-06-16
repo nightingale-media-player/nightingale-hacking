@@ -526,3 +526,8 @@
 <!ENTITY feedback.dialog.sentence3  "Regards,">
 <!ENTITY feedback.dialog.sentence4  "The Songbird Team">
 
+<!-- First run wizard entities. -->
+<!ENTITY first_run.back_button.label     "Go Back">
+<!ENTITY first_run.cancel_button.label   "Cancel">
+<!ENTITY first_run.continue_button.label "Continue">
+
