@@ -427,11 +427,12 @@ CoreGStreamerSimple.prototype.getSupportedFileExtensions = function ()
   return new StringArrayEnumerator(this._mediaUrlExtensions);
 }
 
-CoreGStreamerSimple.prototype.getSupportForFileExtension = function(aFileExtension)
+CoreGStreamerSimple.prototype.getSupportForURI = function(aURI)
 {
+  var extension = this.getFileExtensionFromURI(aURI);
+  
   // Strip the beginning '.' if it exists and make it lowercase
-  var extension =
-    aFileExtension.charAt(0) == "." ? aFileExtension.slice(1) : aFileExtension;
+  extension = extension.charAt(0) == "." ? extension.slice(1) : extension;
   extension = extension.toLowerCase();
   
   // TODO: do something smarter here
