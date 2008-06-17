@@ -79,7 +79,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
-LIBSONGBIRD_COMPONENT = SongbirdDeviceManager
+LIBSONGBIRD_COMPONENT = SongbirdDeviceManager2
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk
