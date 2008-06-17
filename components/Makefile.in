@@ -45,6 +45,7 @@ SUBDIRS = addonmetadata \
           integration \
           job \
           library \
+          libraryimporter \
           jscodelib \
           mediacore \
           metrics \
