@@ -527,8 +527,5 @@
 <!ENTITY feedback.dialog.sentence4  "The Songbird Team">
 
 <!-- First run wizard entities. -->
-<!ENTITY first_run.back_command.label     "Go Back">
-<!ENTITY first_run.cancel_command.label   "Cancel">
-<!ENTITY first_run.continue_command.label "Continue">
-<!ENTITY first_run.finish_command.label   "Finish">
+<!ENTITY first_run.title                  "&brandShortName; Setup">
 

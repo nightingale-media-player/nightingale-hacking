@@ -35,20 +35,23 @@
 <?xml-stylesheet href="chrome://songbird-dialogs/skin/firstRunWizard.css"
                  type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
 
 <!-- First-run wizard. -->
-<dialog
+<wizard
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  id="first_run_wizard_dialog"
-  type="songbird"
+  id="first_run_wizard"
+  title="&first_run.title;"
   hidechrome="true"
-  buttons="none"
-  onload="firstRunWizard.doLoad();"
-  onunload="firstRunWizard.doUnload();"
-  oncommand="firstRunWizard.doCommand(event);"
+  onwizardfinish="firstRunWizard.doFinish();"
+  onwizardcancel="firstRunWizard.doCancel();"
 >
 
   <!-- *************************************************************************
@@ -57,41 +60,40 @@
    *
    ************************************************************************* -->
 
-  <!-- Commands. -->
-  <commandset>
-    <command id="cmd_back" label="&first_run.back_command.label;"/>
-    <command id="cmd_continue" label="&first_run.continue_command.label;"/>
-    <command id="cmd_finish" label="&first_run.finish_command.label;"/>
-    <command id="cmd_cancel" label="&first_run.cancel_command.label;"/>
-  </commandset>
+  <!-- EULA page. -->
+  <wizardpage label="&first_run.title;"
+              hideback="true"
+              hidecancel="true"
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-eula id="first_run_eula" class="first-run-wizard-page"/>
+  </wizardpage>
 
-  <!-- Use Songbird window region. -->
-  <windowregion/>
+  <!-- Welcome page. -->
+  <wizardpage label="&first_run.title;"
+              hideback="true"
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-welcome id="first_run_welcome" class="first-run-wizard-page"/>
+  </wizardpage>
 
-  <!-- Wizard box container. -->
-  <vbox id="first_run_wizard_box">
+  <!-- Import media page. -->
+  <wizardpage label="&first_run.title;"
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-import-media id="first_run_import_media"
+                               class="first-run-wizard-page"/>
+  </wizardpage>
 
-    <!-- Wizard deck. -->
-    <deck id="first_run_wizard_deck" panelcount="5">
+  <!-- Add-ons page. -->
+  <wizardpage label="&first_run.title;"
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-add-ons id="first_run_add_ons" class="first-run-wizard-page"/>
+  </wizardpage>
 
-      <sb-first-run-eula id="first_run_eula"/>
-      <sb-first-run-welcome id="first_run_welcome"/>
-      <sb-first-run-import-media id="first_run_import_media"/>
-      <sb-first-run-add-ons id="first_run_add_ons"/>
-      <sb-first-run-feedback id="first_run_feedback"/>
-
-    </deck>
-
-    <!-- Navigation box container. -->
-    <hbox id="first_run_navigation_box">
-      <button id="first_run_back_button" command="cmd_back"/>
-      <spacer flex="1"/>
-      <button id="first_run_cancel_button" command="cmd_cancel"/>
-      <button id="first_run_continue_button" command="cmd_continue"/>
-      <button id="first_run_finish_button" command="cmd_finish"/>
-    </hbox>
-
-  </vbox>
+  <!-- Feedback page. -->
+  <wizardpage label="&first_run.title;"
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-feedback id="first_run_feedback"
+                           class="first-run-wizard-page"/>
+  </wizardpage>
 
 
   <!-- *************************************************************************
@@ -112,5 +114,5 @@
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/firstRunWizard.js"/>
 
-</dialog>
+</wizard>
 

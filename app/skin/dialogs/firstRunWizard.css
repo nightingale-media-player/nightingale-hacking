@@ -36,20 +36,17 @@ Additional styles imported directly by the first run dialog.
 */
 
 /* Dialog styles. */
-#first_run_wizard_dialog {
+#first_run_wizard {
   height: 420px;
   width: 380px;
 }
 
-#first_run_wizard_box {
+/* Wizard page styles. */
+.first-run-wizard-page {
   -moz-box-flex: 1;
 }
 
-#first_run_wizard_deck {
-  -moz-box-flex: 1;
-}
-
-/* Panel widget styles. */
+/* Wizard page widget styles. */
 .sb-first-run-add-ons-box {
   -moz-box-flex: 1;
   -moz-box-align: center;

@@ -46,17 +46,6 @@
 //------------------------------------------------------------------------------
 
 var firstRunWizard = {
-  //
-  // First-run wizard object fields.
-  //
-  //   _currentPanel            Current wizard panel.
-  //   _panelCount              Number of wizard panels.
-  //
-
-  _currentPanel: 0,
-  _panelCount: 0,
-
-
   //----------------------------------------------------------------------------
   //
   // Event handling services.
@@ -64,108 +53,49 @@ var firstRunWizard = {
   //----------------------------------------------------------------------------
 
   /**
-   * Handle a window load event.
+   * Handle a wizard finish event.
    */
 
-  doLoad: function firstRunWizard_doLoad() {
-    // Get the number of wizard panels.
-    var wizardDeckElem = document.getElementById("first_run_wizard_deck");
-    this._panelCount = parseInt(wizardDeckElem.getAttribute("panelcount"));
-
-    // Update the first-run wizard UI.
-    this._update();
-  },
-
-
-  /**
-   * Handle a window unload event.
-   */
-
-  doUnload: function firstRunWizard_doUnload() {
+  doFinish: function firstRunWizard_doFinish() {
     // Indicate that the wizard is complete and should not be restarted.
     window.arguments[0].onComplete(false);
   },
 
 
   /**
-   * Handle the command event specified by aEvent.
-   *
-   * \param aEvent              Event to handle.
+   * Handle a wizard cancel event.
    */
 
-  doCommand: function firstRunWizard_doCommand(aEvent) {
-    // Process the command.
-    var commandID = aEvent.target.id
-    switch (commandID) {
-      case "cmd_back" :
-        if (this._currentPanel > 0)
-          this._currentPanel--;
-        break;
-
-      case "cmd_continue" :
-        if (this._currentPanel < (this._panelCount - 1))
-          this._currentPanel++;
-        break;
-
-      case "cmd_finish" :
-        onExit();
-        break;
-
-      case "cmd_cancel" :
-        onExit();
-        break;
-
-      default :
-        break;
-    }
-
-    // Update the UI.
-    this._update();
+  doCancel: function firstRunWizard_doCancel() {
+    // Indicate that the wizard is complete and should not be restarted.
+    window.arguments[0].onComplete(false);
   },
 
 
-  //----------------------------------------------------------------------------
-  //
-  // Internal first-run wizard services.
-  //
-  //----------------------------------------------------------------------------
-
   /**
-   * Update the first-run wizard UI.
+   * Handle a wizard page show event.
    */
 
-  _update: function firstRunWizard__update() {
-    // Hide back command on EULA and panel after EULA.
-    var backCommandElem = document.getElementById("cmd_back");
-    if (this._currentPanel < 2)
-      backCommandElem.setAttribute("hidden", "true");
-    else
-      backCommandElem.removeAttribute("hidden");
+  doPageShow: function firstRunWizard_doPageShow() {
+    // Get the current wizard page.
+    var wizardElem = document.getElementById("first_run_wizard");
+    var currentPage = wizardElem.currentPage;
 
-    // Hide cancel command on EULA panel.
-    var cancelCommandElem = document.getElementById("cmd_cancel");
-    if (this._currentPanel < 1)
-      cancelCommandElem.setAttribute("hidden", "true");
-    else
-      cancelCommandElem.removeAttribute("hidden");
+    // Hide or show the back button.
+    var backButton = wizardElem.getButton("back");
+    if (currentPage.getAttribute("hideback") == "true") {
+      backButton.setAttribute("hidden", "true");
+    } else {
+      backButton.removeAttribute("hidden");
+    }
 
-    // Hide finish command on all but the last panel.
-    var finishCommandElem = document.getElementById("cmd_finish");
-    if (this._currentPanel < (this._panelCount - 1))
-      finishCommandElem.setAttribute("hidden", "true");
-    else
-      finishCommandElem.removeAttribute("hidden");
-
-    // Hide continue command on the last panel.
-    var continueCommandElem = document.getElementById("cmd_continue");
-    if (this._currentPanel == (this._panelCount - 1))
-      continueCommandElem.setAttribute("hidden", "true");
-    else
-      continueCommandElem.removeAttribute("hidden");
-
-    // Update the wizard deck element selected index.
-    var wizardDeckElem = document.getElementById("first_run_wizard_deck");
-    wizardDeckElem.setAttribute("selectedIndex", this._currentPanel);
+    // Hide or show the cancel button.
+    var cancelButton = wizardElem.getButton("cancel");
+    if (currentPage.getAttribute("hidecancel") == "true") {
+      cancelButton.setAttribute("hidden", "true");
+    } else {
+      cancelButton.removeAttribute("hidden");
+    }
   }
 };
 
