@@ -46,7 +46,9 @@
   type="songbird"
   hidechrome="true"
   buttons="none"
+  onload="firstRunWizard.doLoad();"
   onunload="firstRunWizard.doUnload();"
+  oncommand="firstRunWizard.doCommand(event);"
 >
 
   <!-- *************************************************************************
@@ -54,6 +56,14 @@
    * Content.
    *
    ************************************************************************* -->
+
+  <!-- Commands. -->
+  <commandset>
+    <command id="cmd_back" label="&first_run.back_command.label;"/>
+    <command id="cmd_continue" label="&first_run.continue_command.label;"/>
+    <command id="cmd_finish" label="&first_run.finish_command.label;"/>
+    <command id="cmd_cancel" label="&first_run.cancel_command.label;"/>
+  </commandset>
 
   <!-- Use Songbird window region. -->
   <windowregion/>
@@ -74,16 +84,11 @@
 
     <!-- Navigation box container. -->
     <hbox id="first_run_navigation_box">
-      <button label="&first_run.back_button.label;"
-              action="back"
-              oncommand="firstRunWizard.doAction(event);"/>
+      <button id="first_run_back_button" command="cmd_back"/>
       <spacer flex="1"/>
-      <button label="&first_run.cancel_button.label;"
-              action="cancel"
-              oncommand="firstRunWizard.doAction(event);"/>
-      <button label="&first_run.continue_button.label;"
-              action="continue"
-              oncommand="firstRunWizard.doAction(event);"/>
+      <button id="first_run_cancel_button" command="cmd_cancel"/>
+      <button id="first_run_continue_button" command="cmd_continue"/>
+      <button id="first_run_finish_button" command="cmd_finish"/>
     </hbox>
 
   </vbox>
@@ -99,13 +104,13 @@
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://songbird/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
 
   <!-- Import the first run wizard services. -->
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/firstRunWizard.js" />
+          src="chrome://songbird/content/scripts/firstRunWizard.js"/>
 
 </dialog>
 

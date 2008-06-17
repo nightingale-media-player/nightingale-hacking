@@ -28,29 +28,54 @@
 
 /**
 * \file  firstRunWizard.js
-* \brief Javascript source for the first run wizard dialog.
+* \brief Javascript source for the first-run wizard dialog.
 */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// First run wizard dialog.
+// First-run wizard dialog.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //
-// First run wizard dialog services.
+// First-run wizard dialog services.
 //
 //------------------------------------------------------------------------------
 
 var firstRunWizard = {
+  //
+  // First-run wizard object fields.
+  //
+  //   _currentPanel            Current wizard panel.
+  //   _panelCount              Number of wizard panels.
+  //
+
+  _currentPanel: 0,
+  _panelCount: 0,
+
+
   //----------------------------------------------------------------------------
   //
   // Event handling services.
   //
   //----------------------------------------------------------------------------
+
+  /**
+   * Handle a window load event.
+   */
+
+  doLoad: function firstRunWizard_doLoad() {
+    // Get the number of wizard panels.
+    var wizardDeckElem = document.getElementById("first_run_wizard_deck");
+    this._panelCount = parseInt(wizardDeckElem.getAttribute("panelcount"));
+
+    // Update the first-run wizard UI.
+    this._update();
+  },
+
 
   /**
    * Handle a window unload event.
@@ -63,32 +88,30 @@ var firstRunWizard = {
 
 
   /**
-   * Handle the action event specified by aEvent.
+   * Handle the command event specified by aEvent.
    *
    * \param aEvent              Event to handle.
    */
 
-  doAction: function firstRunWizard_doAction(aEvent) {
-    // Get the number of panels and the currently selected panel.
-    var deckElem = document.getElementById("first_run_wizard_deck");
-    var panelCount = deckElem.getAttribute("panelcount");
-    var selectedIndex = deckElem.selectedIndex;
-    var newSelectedIndex = deckElem.selectedIndex;
-
-    // Process the action.
-    var action = aEvent.target.getAttribute("action");
-    switch (action) {
-      case "back" :
-        if (newSelectedIndex > 0)
-          newSelectedIndex--;
+  doCommand: function firstRunWizard_doCommand(aEvent) {
+    // Process the command.
+    var commandID = aEvent.target.id
+    switch (commandID) {
+      case "cmd_back" :
+        if (this._currentPanel > 0)
+          this._currentPanel--;
         break;
 
-      case "continue" :
-        if (newSelectedIndex < (panelCount - 1))
-          newSelectedIndex++;
+      case "cmd_continue" :
+        if (this._currentPanel < (this._panelCount - 1))
+          this._currentPanel++;
         break;
 
-      case "cancel" :
+      case "cmd_finish" :
+        onExit();
+        break;
+
+      case "cmd_cancel" :
         onExit();
         break;
 
@@ -96,9 +119,53 @@ var firstRunWizard = {
         break;
     }
 
-    // Update the selected index.
-    if (newSelectedIndex != selectedIndex)
-      deckElem.setAttribute("selectedIndex", newSelectedIndex);
+    // Update the UI.
+    this._update();
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal first-run wizard services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Update the first-run wizard UI.
+   */
+
+  _update: function firstRunWizard__update() {
+    // Hide back command on EULA and panel after EULA.
+    var backCommandElem = document.getElementById("cmd_back");
+    if (this._currentPanel < 2)
+      backCommandElem.setAttribute("hidden", "true");
+    else
+      backCommandElem.removeAttribute("hidden");
+
+    // Hide cancel command on EULA panel.
+    var cancelCommandElem = document.getElementById("cmd_cancel");
+    if (this._currentPanel < 1)
+      cancelCommandElem.setAttribute("hidden", "true");
+    else
+      cancelCommandElem.removeAttribute("hidden");
+
+    // Hide finish command on all but the last panel.
+    var finishCommandElem = document.getElementById("cmd_finish");
+    if (this._currentPanel < (this._panelCount - 1))
+      finishCommandElem.setAttribute("hidden", "true");
+    else
+      finishCommandElem.removeAttribute("hidden");
+
+    // Hide continue command on the last panel.
+    var continueCommandElem = document.getElementById("cmd_continue");
+    if (this._currentPanel == (this._panelCount - 1))
+      continueCommandElem.setAttribute("hidden", "true");
+    else
+      continueCommandElem.removeAttribute("hidden");
+
+    // Update the wizard deck element selected index.
+    var wizardDeckElem = document.getElementById("first_run_wizard_deck");
+    wizardDeckElem.setAttribute("selectedIndex", this._currentPanel);
   }
 };
 
