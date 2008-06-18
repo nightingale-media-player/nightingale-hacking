@@ -29,7 +29,9 @@
 
 #include <nsIStringBundle.h>
 
+#include <nsArrayEnumerator.h>
 #include <sbIPropertyManager.h>
+#include <sbLockUtils.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbImmutablePropertyInfo, sbIPropertyInfo)
 
@@ -38,8 +40,18 @@ sbImmutablePropertyInfo::sbImmutablePropertyInfo() :
   mUserViewable(PR_FALSE),
   mUserEditable(PR_FALSE),
   mRemoteReadable(PR_FALSE),
-  mRemoteWritable(PR_FALSE)
+  mRemoteWritable(PR_FALSE),
+  mOperatorsLock(nsnull)
 {
+  mOperatorsLock = PR_NewLock();
+  NS_ASSERTION(mOperatorsLock,
+    "sbImmutablePropertyInfo::mOperatorsLock failed to create lock!");
+}
+
+sbImmutablePropertyInfo::~sbImmutablePropertyInfo() {
+  if(mOperatorsLock) {
+    PR_DestroyLock(mOperatorsLock);
+  }
 }
 
 nsresult
@@ -251,19 +263,57 @@ sbImmutablePropertyInfo::SetUnits(const nsAString& aUnits)
 NS_IMETHODIMP
 sbImmutablePropertyInfo::GetOperators(nsISimpleEnumerator** aOperators)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aOperators);
+
+  sbSimpleAutoLock lock(mOperatorsLock);
+  return NS_NewArrayEnumerator(aOperators, mOperators);
 }
 NS_IMETHODIMP
 sbImmutablePropertyInfo::SetOperators(nsISimpleEnumerator* aOperators)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aOperators);
+
+  sbSimpleAutoLock lock(mOperatorsLock);
+  mOperators.Clear();
+
+  PRBool hasMore = PR_FALSE;
+  nsCOMPtr<nsISupports> object;
+
+  while( NS_SUCCEEDED(aOperators->HasMoreElements(&hasMore)) &&
+         hasMore  &&
+         NS_SUCCEEDED(aOperators->GetNext(getter_AddRefs(object)))) {
+    nsresult rv;
+    nsCOMPtr<sbIPropertyOperator> po = do_QueryInterface(object, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool success = mOperators.AppendObject(po);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbImmutablePropertyInfo::GetOperator(const nsAString& aOperator,
                                      sbIPropertyOperator** _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  sbSimpleAutoLock lock(mOperatorsLock);
+
+  PRUint32 length = mOperators.Count();
+  for (PRUint32 i = 0; i < length; i++) {
+    nsAutoString op;
+    nsresult rv = mOperators[i]->GetOperator(op);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (op.Equals(aOperator)) {
+      NS_ADDREF(*_retval = mOperators[i]);
+      return NS_OK;
+    }
+  }
+
+  *_retval = nsnull;
+  return NS_OK;
 }
 
 NS_IMETHODIMP

@@ -35,6 +35,7 @@
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
+#include "sbPropertyInfo.h"
 
 class sbRatingPropertyInfo : public sbImmutablePropertyInfo,
                              public sbIClickablePropertyInfo,
@@ -58,6 +59,8 @@ public:
   NS_IMETHOD Validate(const nsAString& aValue, PRBool* _retval);
 
   nsresult Init();
+
+  void InitializeOperators();
 };
 
 #endif /* __SBRATINGPROPERTYINFO_H__ */

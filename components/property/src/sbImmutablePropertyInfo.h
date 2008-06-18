@@ -33,6 +33,7 @@
 #include <nsIStringBundle.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
+#include <nsCOMArray.h>
 
 class sbImmutablePropertyInfo : public sbIPropertyInfo
 {
@@ -42,7 +43,7 @@ public:
   NS_DECL_SBIPROPERTYINFO
 
   sbImmutablePropertyInfo();
-  virtual ~sbImmutablePropertyInfo() {}
+  virtual ~sbImmutablePropertyInfo();
 
 protected:
   nsresult Init();
@@ -58,6 +59,8 @@ protected:
   PRBool mRemoteWritable;
   nsString mUnits;
   nsCOMPtr<nsIStringBundle> mBundle;
+  PRLock*   mOperatorsLock;
+  nsCOMArray<sbIPropertyOperator> mOperators;
 };
 
 #endif /* __SBIMMUTABLEPROPERTYINFO_H__ */

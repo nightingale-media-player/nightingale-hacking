@@ -435,6 +435,8 @@ NS_IMETHODIMP sbPropertyInfo::GetOperator(const nsAString & aOperator,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
+  sbSimpleAutoLock lock(mOperatorsLock);
+
   PRUint32 length = mOperators.Count();
   for (PRUint32 i = 0; i < length; i++) {
     nsAutoString op;
