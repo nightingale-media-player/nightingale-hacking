@@ -1,3 +1,29 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
 #ifndef _SB_GSTREAMER_SIMPLE_H_
 #define _SB_GSTREAMER_SIMPLE_H_
 
@@ -11,12 +37,7 @@
 
 #include <gst/gst.h>
 
-#ifdef MOZ_WIDGET_GTK2
-#include <gst/interfaces/xoverlay.h>
-
-#include <gtk/gtkwindow.h>
-#include <gdk/gdkx.h>
-#endif
+#include "sbIGstPlatformInterface.h"
 
 #include "sbIGStreamerSimple.h"
 
@@ -32,84 +53,73 @@ public:
 
   sbGStreamerSimple();
 
-  NS_IMETHODIMP
-  Resize();
-
-  void
-  SyncHandler(GstBus* bus, GstMessage* message);
-
-  void
-  AsyncHandler(GstBus* bus, GstMessage* message);
-
-  void
-  StreamInfoSet(GObject* obj, GParamSpec* pspec);
-
-  void
-  CapsSet(GObject* obj, GParamSpec* pspec);
-
 private:
   ~sbGStreamerSimple();
 
-  NS_IMETHODIMP SetupPlaybin();
+  // Static helpers for C callbacks
+  static void syncHandler (GstBus *bus, GstMessage *message, gpointer data); 
+  static void asyncHandler (GstBus *bus, GstMessage *message, gpointer data);
+  static void videoCapsSetHelper (GObject *obj, GParamSpec *pspec, 
+          sbGStreamerSimple *gsts);
+  static void streamInfoSetHelper (GObject *obj, GParamSpec *pspec, 
+          sbGStreamerSimple *gsts);
+  static void currentVideoSetHelper (GObject *obj, GParamSpec *pspec, 
+          sbGStreamerSimple *gsts);
 
-  NS_IMETHODIMP DestroyPlaybin();
+  NS_HIDDEN_(nsresult) Resize();
 
-  void DoShowHelperPage(void);
+  NS_HIDDEN_(void) PrepareVideoWindow(GstMessage *msg);
 
-  NS_IMETHOD
-  CreateBundle(const char *aURLSpec, nsIStringBundle **_retval);
+  NS_HIDDEN_(void) HandleMessage(GstMessage* message);
 
-  NS_IMETHOD
-  GetStringFromName(nsIStringBundle *aBundle, const nsAString & aName, nsAString & _retval);
+  NS_HIDDEN_(void) OnVideoCapsSet(GstCaps *caps);
 
-  bool 
-  SetInvisibleCursor(sbGStreamerSimple* gsts);
+  NS_HIDDEN_(void) OnStreamInfoSet();
 
-  bool 
-  SetDefaultCursor(sbGStreamerSimple* gsts);
+  NS_HIDDEN_(nsresult) SetupPlaybin();
 
-  void
-  ReparentToRootWin(sbGStreamerSimple* gsts);
+  NS_HIDDEN_(nsresult) DestroyPlaybin();
+  
+  NS_HIDDEN_(nsresult) RestartPlaybin();
 
-  void
-  ReparentToChromeWin(sbGStreamerSimple* gsts);
+  NS_HIDDEN_(void) ShowHelperPage(void);
+
+  NS_HIDDEN_(nsresult) CreateBundle(const char *aURLSpec, 
+          nsIStringBundle **_retval);
+
+  NS_HIDDEN_(nsresult) GetStringFromName(nsIStringBundle *aBundle, 
+          const nsAString & aName, nsAString & _retval);
+
+  NS_HIDDEN_(void) HandleErrorMessage(GstMessage *message);
+  NS_HIDDEN_(void) HandleWarningMessage(GstMessage *message);
+  NS_HIDDEN_(void) HandleStateChangeMessage(GstMessage *message);
+  NS_HIDDEN_(void) HandleBufferingMessage(GstMessage *message);
+  NS_HIDDEN_(void) HandleEOSMessage(GstMessage *message);
+  NS_HIDDEN_(void) HandleTagMessage(GstMessage *message);
 
   PRBool mInitialized;
 
   GstElement* mPlay;
-  GstBus*     mBus;
   guint       mPixelAspectRatioN;
   guint       mPixelAspectRatioD;
   gint        mVideoWidth;
   gint        mVideoHeight;
-  gint        mOldCursorX;
-  gint        mOldCursorY;
-  // mRedrawCursor - so as to not draw cursor if it's already drawn
-  bool        mRedrawCursor;
-  // mDelayHide - 300ms timer for mouse polling so use to delay hiding; 
-  // currently counts down from 10 for a 3 second wait.
-  int         mDelayHide; 
-  bool        mHasShownHelperPage;
 
-#ifdef MOZ_WIDGET_GTK2
-  GstElement* mVideoSink;
-  GdkWindow*  mGdkWin;
-  GdkWindow*  mNativeWin;
-  GdkWindow*  mGdkWinFull;
-#endif
+  sbIGstPlatformInterface *mPlatformInterface;
 
   PRBool mIsAtEndOfStream;
   PRBool mIsPlayingVideo;
-  PRBool mFullscreen;
+  PRBool mHasShownHelperPage;
   PRInt32 mLastErrorCode;
-  PRInt32 mLastDomain;
+  PRInt32 mLastErrorDomain;
   PRUint16 mBufferingPercent;
+
+  PRBool mIsUsingPlaybin2;
 
   double mLastVolume;
 
   nsCOMPtr<nsIDOMXULElement> mVideoOutputElement;
   nsCOMPtr<nsIDOMWindow> mDomWindow;
-  nsCOMPtr<nsITimer> mCursorIntervalTimer;
 
   nsString  mArtist;
   nsString  mAlbum;

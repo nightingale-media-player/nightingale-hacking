@@ -36,33 +36,35 @@ interface nsIDOMXULElement;
  * \interface sbIGStreamerSimple
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(7067ba5f-fce9-4d4e-9d79-c08c343ed4dd)]
+[scriptable, uuid(c102732f-2ef1-4c8a-8977-fd1d65bdea91)]
 interface sbIGStreamerSimple : nsISupports
 {
   attribute AString uri;
-  attribute double volume;
+  attribute double volume; // [0, 1] range
   attribute boolean fullscreen;
-  readonly attribute unsigned long long position;
+
+  readonly attribute unsigned long long position; // Nanoseconds. TODO: Is this zero based or not for non-zero-based streams?
   readonly attribute boolean isPlaying;
   readonly attribute boolean isPlayingVideo;
   readonly attribute boolean isPaused;
-  readonly attribute unsigned short bufferingPercent;
-  readonly attribute unsigned long long streamLength;
-  readonly attribute boolean isAtEndOfStream;
-  readonly attribute long lastErrorCode;
+  readonly attribute unsigned short bufferingPercent; // Spec out more sanely?
+  readonly attribute unsigned long long streamLength; // Nanoseconds
+  readonly attribute boolean isAtEndOfStream; // I doubt we want this at all
+  readonly attribute long lastErrorCode; // possible values? The other code only checks if this is > 0, not any special values, so should it be a boolean?
 
+  // Can we do better than this? Get arbitrary tags from the GStreamer backend?
   readonly attribute AString artist;
   readonly attribute AString album;
   readonly attribute AString title;
   readonly attribute AString genre;
 
   void init(in nsIDOMXULElement aVideoOutput);
+
+  // Core playback API 
   void play();
   void pause();
   void stop();
   void seek(in unsigned long long aTimeNanos);
-  void restartPlaybin();
-  void showHelperPage();
 };
 
 %{C++

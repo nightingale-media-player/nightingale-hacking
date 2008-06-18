@@ -1,3 +1,29 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
 #include "sbGStreamerSimple.h"
 #include "nsIInterfaceRequestorUtils.h"
 
@@ -31,6 +57,14 @@
 #include "nsThreadUtils.h"
 #include "prlog.h"
 
+#ifdef MOZ_WIDGET_GTK2
+#include "sbGStreamerPlatformGDK.h"
+#endif
+
+#ifdef XP_WIN
+#include "sbGStreamerPlatformWin32.h"
+#endif
+
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=gstreamer:5
@@ -47,56 +81,100 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbGStreamerSimple,
                               nsIDOMEventListener,
                               nsITimerCallback)
 
-static void
-syncHandlerHelper(GstBus* bus, GstMessage* message, gpointer data)
+// sync-message handler. Handles messages on streaming threads that must be
+// acted on synchronously (currently, just prepare-xwindow-id)
+/* static */ void
+sbGStreamerSimple::syncHandler(GstBus* bus, GstMessage* message, gpointer data)
 {
   sbGStreamerSimple* gsts = static_cast<sbGStreamerSimple*>(data);
-  gsts->SyncHandler(bus, message);
+
+  GstMessageType msg_type;
+  msg_type = GST_MESSAGE_TYPE(message);
+
+  switch (msg_type) {
+    case GST_MESSAGE_ELEMENT:
+      if (gst_structure_has_name (message->structure, "prepare-xwindow-id"))
+      {
+        gsts->PrepareVideoWindow(message);
+      }
+      break;
+    default:
+      break;
+  }
 }
 
-static void
-asyncHandlerHelper(GstBus* bus, GstMessage* message, gpointer data)
+/* static */ void
+sbGStreamerSimple::asyncHandler(GstBus* bus, GstMessage* message, gpointer data)
 {
   sbGStreamerSimple* gsts = static_cast<sbGStreamerSimple*>(data);
-  gsts->AsyncHandler(bus, message);
+
+  gsts->HandleMessage(message);
 }
 
-static void
-streamInfoSetHelper(GObject* obj, GParamSpec* pspec, sbGStreamerSimple* gsts)
+/* static */ void
+sbGStreamerSimple::videoCapsSetHelper(GObject* obj, GParamSpec* pspec, sbGStreamerSimple* gsts)
 {
-  gsts->StreamInfoSet(obj, pspec);
+  GstPad *pad = GST_PAD(obj);
+  GstCaps *caps = gst_pad_get_negotiated_caps (pad);
+
+  if (caps) {
+    gsts->OnVideoCapsSet(caps);
+    gst_caps_unref (caps);
+  }
 }
 
-static void
-capsSetHelper(GObject* obj, GParamSpec* pspec, sbGStreamerSimple* gsts)
+/* static */ void
+sbGStreamerSimple::streamInfoSetHelper(GObject* obj, GParamSpec* pspec, sbGStreamerSimple* gsts)
 {
-  gsts->CapsSet(obj, pspec);
+  gsts->OnStreamInfoSet();
+}
+
+/* static */ void
+sbGStreamerSimple::currentVideoSetHelper(GObject* obj, GParamSpec* pspec, sbGStreamerSimple* gsts)
+{
+  int current_video;
+  GstPad *pad;
+
+  /* Which video stream has been activated? */
+  g_object_get (obj, "current-video", &current_video, NULL);
+  NS_ASSERTION (current_video >= 0, "current video is negative");
+
+  /* Get the video pad for this stream number */
+  g_signal_emit_by_name (obj, "get-video-pad", current_video, &pad);
+
+  if (pad) {
+    GstCaps *caps;
+    caps = gst_pad_get_negotiated_caps (pad);
+    if (caps) {
+      gsts->OnVideoCapsSet (caps);
+      gst_caps_unref (caps);
+    }
+
+    g_signal_connect (pad, "notify::caps", 
+            G_CALLBACK(videoCapsSetHelper), gsts);
+
+    gst_object_unref (pad);
+  }
 }
 
 sbGStreamerSimple::sbGStreamerSimple() :
   mInitialized(PR_FALSE),
   mPlay(NULL),
-  mBus(NULL),
   mPixelAspectRatioN(1),
   mPixelAspectRatioD(1),
   mVideoWidth(0),
   mVideoHeight(0),
-#ifdef MOZ_WIDGET_GTK2
-  mVideoSink(NULL),
-  mGdkWin(NULL),
-  mNativeWin(NULL),
-  mGdkWinFull(NULL),
-#endif
+  mPlatformInterface(NULL),
   mIsAtEndOfStream(PR_TRUE),
   mIsPlayingVideo(PR_FALSE),
-  mFullscreen(PR_FALSE),
+  mHasShownHelperPage(PR_FALSE),
   mLastErrorCode(0),
-  mLastDomain(0),
+  mLastErrorDomain(0),
   mBufferingPercent(0),
+  mIsUsingPlaybin2(PR_FALSE),
   mLastVolume(0),
   mVideoOutputElement(nsnull),
-  mDomWindow(nsnull),
-  mHasShownHelperPage(PR_FALSE)
+  mDomWindow(nsnull)
 {
   TRACE(("sbGStreamerSimple[0x%.8x] - Constructed", this));
   mArtist.Assign(EmptyString());
@@ -133,19 +211,6 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   if(mInitialized) {
     return NS_OK;
   }
-
-  nsCOMPtr<nsIProxyObjectManager> proxyObjMgr = 
-        do_GetService("@mozilla.org/xpcomproxy;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsITimer> timer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = proxyObjMgr->GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
-                            NS_GET_IID(nsITimer),
-                            timer,
-                            NS_PROXY_ASYNC,
-                            getter_AddRefs(mCursorIntervalTimer));
-  NS_ENSURE_SUCCESS(rv, rv);
 
   mVideoOutputElement = aVideoOutput;
 
@@ -188,30 +253,16 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   target->AddEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
   target->AddEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
 
-#ifdef MOZ_WIDGET_GTK2
-  mNativeWin = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
-
-  LOG(("Found native window %x", mNativeWin));
-
-  // Create the video window
-  GdkWindowAttr attributes;
-
-  attributes.window_type = GDK_WINDOW_CHILD;
-  attributes.x = 0;
-  attributes.y = 0;
-  attributes.width = 0;
-  attributes.height = 0;
-  attributes.wclass = GDK_INPUT_OUTPUT;
-  attributes.event_mask = 0;
-
-  mGdkWin = gdk_window_new(mNativeWin, &attributes, GDK_WA_X | GDK_WA_Y);
-#endif
-  mRedrawCursor = false;
-  mOldCursorX = -1;
-  mOldCursorY = -1;
-  mDelayHide = 10;
-#ifdef MOZ_WIDGET_GTK2
-  gdk_window_show(mGdkWin);
+#if defined (MOZ_WIDGET_GTK2)
+  GdkWindow *native = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
+  LOG(("Found native window %x", native));
+  mPlatformInterface = new GDKPlatformInterface(native);
+#elif defined (XP_WIN)
+  HWND native = (HWND)widget->GetNativeData(NS_NATIVE_WIDGET);
+  LOG(("Found native window %x", native));
+  mPlatformInterface = new Win32PlatformInterface(native);
+#else
+  LOG(("No video backend available for this platform"));
 #endif
 
   rv = SetupPlaybin();
@@ -222,53 +273,68 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbGStreamerSimple::SetupPlaybin()
 {
   TRACE(("sbGStreamerSimple[0x%.8x] - SetupPlaybin", this));
 
   if (!mPlay) {
-    mPlay = gst_element_factory_make("playbin", "play");
-
-#ifdef MOZ_WIDGET_GTK2
-    GstElement *audioSink = gst_element_factory_make("gconfaudiosink",
-                                                     "audio-sink");
-    g_object_set(mPlay, "audio-sink", audioSink, NULL);
-
-    mVideoSink = gst_element_factory_make("gconfvideosink", "video-sink");
-    if (!mVideoSink) {
-        mVideoSink = gst_element_factory_make("ximagesink", "video-sink");
+    if (0) {
+      // playbin2 is a bit busted without a few patches, so disable this for
+      // now.
+      mIsUsingPlaybin2 = PR_TRUE;
+      mPlay = gst_element_factory_make("playbin2", "play");
+    }
+    else {
+      mIsUsingPlaybin2 = PR_FALSE;
+      mPlay = gst_element_factory_make("playbin", "play");
     }
 
-    g_object_set(mPlay, "video-sink", mVideoSink, NULL);
-#endif
-    mBus = gst_element_get_bus(mPlay);
+    if (mPlatformInterface) {
+      GstElement *videosink = mPlatformInterface->CreateVideoSink();
+      GstElement *audiosink = mPlatformInterface->CreateAudioSink();
+      g_object_set(mPlay, "video-sink", videosink, NULL);
+      g_object_set(mPlay, "audio-sink", audiosink, NULL);
+    }
 
-    gst_bus_add_signal_watch (mBus);
-    gst_bus_enable_sync_message_emission (mBus);
+    GstBus *bus = gst_element_get_bus(mPlay);
 
-    g_signal_connect (mBus, "message", G_CALLBACK (asyncHandlerHelper), this);
-    g_signal_connect (mBus, "sync-message", G_CALLBACK (syncHandlerHelper), this);
+    gst_bus_add_signal_watch (bus);
+    gst_bus_enable_sync_message_emission (bus);
 
-    // This signal lets us get info about the stream
-    g_signal_connect(mPlay, "notify::stream-info",
-      G_CALLBACK(streamInfoSetHelper), this);
+    // General GStreamer message handling.
+    g_signal_connect (bus, "message", G_CALLBACK (asyncHandler), this);
+
+    // Handle prepare-xwindow-id messages
+    g_signal_connect (bus, "sync-message", 
+            G_CALLBACK (syncHandler), this);
+
+    // Get notified when the current video stream changes.
+    // This will let us get info about the specific video stream being played.
+    if (mIsUsingPlaybin2) {
+      g_signal_connect(mPlay, "notify::current-video", 
+              G_CALLBACK(currentVideoSetHelper), this);
+    }
+    else {
+      g_signal_connect(mPlay, "notify::stream-info",
+              G_CALLBACK(streamInfoSetHelper), this);
+    }
+
+    gst_object_unref (bus);
+
+    // TODO: Hook up other audio/video signals/properties, and provide an 
+    // interface for selecting which one to play.
   }
 
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbGStreamerSimple::DestroyPlaybin()
 {
   TRACE(("sbGStreamerSimple[0x%.8x] - DestroyPlaybin", this));
 
-  if (mBus) {
-    gst_bus_set_flushing(mBus, TRUE);
-    mBus = NULL;
-  }
-
-  if (mPlay  && GST_IS_ELEMENT(mPlay)) {
+  if (mPlay && GST_IS_ELEMENT(mPlay)) {
     gst_element_set_state(mPlay, GST_STATE_NULL);
     gst_object_unref(mPlay);
     mPlay = NULL;
@@ -343,62 +409,21 @@ sbGStreamerSimple::GetVolume(double* aVolume)
   return NS_OK;
 }
 
-void
-sbGStreamerSimple::ReparentToRootWin(sbGStreamerSimple* gsts)
-{
-  NS_ASSERTION(gsts, "gsts is null");
-#ifdef MOZ_WIDGET_GTK2
-  GdkScreen *fullScreen = NULL;
-  GdkWindowAttr attributes;
-  gint fullWidth, fullHeight;
-  attributes.window_type = GDK_WINDOW_TOPLEVEL;
-  attributes.x = 0;
-  attributes.y = 0;
-  attributes.width = 0;
-  attributes.height = 0;
-  attributes.wclass = GDK_INPUT_OUTPUT;
-  attributes.event_mask = 0;
-
-  gsts->mGdkWinFull = gdk_window_new(NULL, &attributes, GDK_WA_X | GDK_WA_Y);
-  gdk_window_show(gsts->mGdkWinFull);
-  gdk_window_reparent(gsts->mGdkWin, gsts->mGdkWinFull, 0, 0);
-  gdk_window_fullscreen(gsts->mGdkWinFull);
-
-  // might be needed for fallback - 
-  //fullScreen = gdk_display_get_screen(gdk_x11_lookup_xdisplay(
-  //  GDK_WINDOW_XDISPLAY(gsts->mGdkWinFull)), 0);
-  fullScreen = gdk_screen_get_default();
-
-  fullWidth = gdk_screen_get_width(fullScreen);
-  fullHeight = gdk_screen_get_height(fullScreen);
-  gdk_window_move_resize(gsts->mGdkWin, 0, 0, fullWidth, fullHeight);
-  gsts->Resize();
-  gsts->mFullscreen = PR_TRUE;
-#endif
-  return;
-}
-
-void
-sbGStreamerSimple::ReparentToChromeWin(sbGStreamerSimple* gsts)
-{
-  NS_ASSERTION(gsts, "gsts is null");
-#ifdef MOZ_WIDGET_GTK2
-  gdk_window_unfullscreen(gsts->mGdkWin);
-  gdk_window_reparent(gsts->mGdkWin, gsts->mNativeWin, 0, 0);
-  gsts->Resize();
-  gdk_window_destroy(gsts->mGdkWinFull);
-  gsts->mGdkWinFull = NULL;
-#endif
-  return;
-}
-
 NS_IMETHODIMP
 sbGStreamerSimple::GetFullscreen(PRBool* aFullscreen)
 {
   NS_ENSURE_ARG_POINTER(aFullscreen);
   TRACE(("sbGStreamerSimple[0x%.8x] - GetFullscreen", this));
 
-  *aFullscreen = mFullscreen;
+  if (mPlatformInterface) {
+    bool fullscreen = mPlatformInterface->GetFullscreen ();
+
+    *aFullscreen = fullscreen;
+  }
+  else {
+    // Without a video manager we don't support fullscreen mode
+    *aFullscreen = PR_FALSE;
+  } 
 
   return NS_OK;
 }
@@ -407,11 +432,15 @@ NS_IMETHODIMP
 sbGStreamerSimple::SetFullscreen(PRBool aFullscreen)
 {
   TRACE(("sbGStreamerSimple[0x%.8x] - SetFullscreen", this));
-#ifdef MOZ_WIDGET_GTK2
-  mFullscreen = aFullscreen;
-  if(!mFullscreen && mGdkWinFull != NULL) ReparentToChromeWin(this);
-#endif
-  return NS_OK;
+  if (mPlatformInterface) {
+    mPlatformInterface->SetFullscreen (aFullscreen);
+    // Make sure it's drawn in the right location after this.
+    Resize();
+
+    return NS_OK;
+  }
+
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP
@@ -700,12 +729,9 @@ sbGStreamerSimple::Stop()
   gst_element_set_state(mPlay, GST_STATE_NULL);
   mIsAtEndOfStream = PR_TRUE;
   mIsPlayingVideo = PR_FALSE;
-#ifdef MOZ_WIDGET_GTK2
-  if(mFullscreen && mGdkWinFull != NULL) {
-    ReparentToChromeWin(this);
-  }
-#endif
-  mCursorIntervalTimer->Cancel();
+
+  SetFullscreen (FALSE);
+
   mLastErrorCode = 0;
   mBufferingPercent = 0;
 
@@ -730,7 +756,7 @@ sbGStreamerSimple::Seek(PRUint64 aTimeNanos)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbGStreamerSimple::RestartPlaybin()
 {
   TRACE(("sbGStreamerSimple[0x%.8x] - RestartPlaybin", this));
@@ -755,78 +781,13 @@ sbGStreamerSimple::RestartPlaybin()
   return NS_OK;
 }
 
-bool 
-sbGStreamerSimple::SetInvisibleCursor(sbGStreamerSimple* gsts)
-{
-#ifdef MOZ_WIDGET_GTK2
-  guint32 data = 0;
-  GdkPixmap* pixmap = gdk_bitmap_create_from_data(NULL, (gchar*)&data, 1, 1);
-  GdkColor color = { 0, 0, 0, 0 };
-  GdkCursor* cursor = gdk_cursor_new_from_pixmap(pixmap, 
-          pixmap, &color, &color, 0, 0);
-  gdk_pixmap_unref(pixmap);
-  gdk_window_set_cursor(gsts->mGdkWin, cursor);
-  gdk_window_set_cursor(gsts->mNativeWin, cursor);
-  if(gsts->mGdkWinFull != NULL )
-    gdk_window_set_cursor(gsts->mGdkWinFull, cursor);
-  gdk_cursor_unref(cursor);
-#endif
-  return true;
-}
-
-bool 
-sbGStreamerSimple::SetDefaultCursor(sbGStreamerSimple* gsts) 
-{
-#ifdef MOZ_WIDGET_GTK2
-  gdk_window_set_cursor(gsts->mGdkWin, NULL);
-  gdk_window_set_cursor(gsts->mNativeWin, NULL);
-  if(gsts->mGdkWinFull != NULL )
-    gdk_window_set_cursor(gsts->mGdkWinFull, NULL);
-#endif
-  return false;
-}
-
-//timeout function for determining when to hide/show mouse hide/show controls
 NS_IMETHODIMP 
 sbGStreamerSimple::Notify(nsITimer *aTimer)
 {
   NS_ENSURE_ARG_POINTER(aTimer);
-#ifdef MOZ_WIDGET_GTK2
-  GdkDisplay *gdkDisplay;
-  GdkWindow *gdkWin = this->mGdkWin;
-  gint newCursorX=-1;
-  gint newCursorY=-1;
 
-  if (gdkWin == NULL) 
-    return NS_OK;
+  // Not used, currently.
 
-  gdkDisplay = gdk_x11_lookup_xdisplay(GDK_WINDOW_XDISPLAY(gdkWin));
-
-  gdk_display_get_pointer(gdkDisplay, NULL, &newCursorX, &newCursorY, NULL);
-  if (newCursorX != this->mOldCursorX || 
-      newCursorY != this->mOldCursorY) {
-    // redraw cursor if mouse is invisible and the mouse has moved
-    if (this->mRedrawCursor) {
-      this->mRedrawCursor = SetDefaultCursor(this);
-      if(this->mFullscreen) ReparentToChromeWin(this);
-    }
-    this->mDelayHide = 10;
-    this->mOldCursorX = newCursorX;
-    this->mOldCursorY = newCursorY;
-  }
-  else {
-    if (this->mDelayHide > 0) {
-      this->mDelayHide-=1;
-    }
-    else {
-      // otherwise hide the cursor in the video window
-      this->mRedrawCursor = SetInvisibleCursor(this);
-      if (this->mGdkWinFull == NULL && this->mFullscreen) {
-        ReparentToRootWin(this);
-      }
-    }
-  }
-#endif
   return NS_OK;
 }
 
@@ -853,56 +814,38 @@ sbGStreamerSimple::HandleEvent(nsIDOMEvent* aEvent)
     return NS_OK;
   }
   else {
+    // All the other events we're listening for we need to call Resize()
+    // for, so we don't bother checking the event type
     return Resize();
   }
 
 }
 
-NS_IMETHODIMP
+nsresult
 sbGStreamerSimple::Resize()
 {
-#ifdef MOZ_WIDGET_GTK2
+  if (!mVideoOutputElement || !mPlatformInterface) {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
   PRInt32 x, y, width, height;
   nsCOMPtr<nsIBoxObject> boxObject;
-  mVideoOutputElement->GetBoxObject(getter_AddRefs(boxObject));
+  nsresult rv = mVideoOutputElement->GetBoxObject(getter_AddRefs(boxObject));
+  NS_ENSURE_SUCCESS (rv, rv);
+
   boxObject->GetX(&x);
   boxObject->GetY(&y);
   boxObject->GetWidth(&width);
   boxObject->GetHeight(&height);
 
-  PRInt32 newX, newY, newWidth, newHeight;
+  LOG(("Resize called: %d %d, %d %d", x, y, width, height));
 
-  // If we have not received a video size yet, size the video window to the
-  // size of the video output element
-  if(mVideoWidth == 0 && mVideoHeight == 0) {
-    gdk_window_move_resize(mGdkWin, x, y, width, height);
-  }
-  else {
-    if(mVideoWidth > 0 && mVideoHeight > 0) {
+  mPlatformInterface->Resize (x, y, width, height);
 
-      float ratioWidth  = (float) width  / (float) mVideoWidth;
-      float ratioHeight = (float) height / (float) mVideoHeight;
-      if(ratioWidth < ratioHeight) {
-        newWidth  = PRInt32(mVideoWidth  * ratioWidth);
-        newHeight = PRInt32(mVideoHeight * ratioWidth);
-        newX = x;
-        newY = ((height - newHeight) / 2) + y;
-      }
-      else {
-        newWidth  = PRInt32(mVideoWidth  * ratioHeight);
-        newHeight = PRInt32(mVideoHeight * ratioHeight);
-        newX = ((width - newWidth) / 2) + x;
-        newY = y;
-      }
-
-      gdk_window_move_resize(mGdkWin, newX, newY, newWidth, newHeight);
-    }
-  }
-#endif
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbGStreamerSimple::CreateBundle(const char *aURLSpec,
                                 nsIStringBundle **_retval)
 {
@@ -924,7 +867,7 @@ sbGStreamerSimple::CreateBundle(const char *aURLSpec,
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbGStreamerSimple::GetStringFromName(nsIStringBundle *aBundle,
                                      const nsAString & aName,
                                      nsAString & _retval)
@@ -944,36 +887,32 @@ sbGStreamerSimple::GetStringFromName(nsIStringBundle *aBundle,
   return NS_OK;
 }
 
-// Little stub to make the types required match */
-void sbGStreamerSimple::DoShowHelperPage(void)
-{
-  (void) ShowHelperPage();
-}
-
-NS_IMETHODIMP
+// TODO: Move all of this to a more flexible error reporting interface,
+// and rewrite the bits we can in JS.
+void
 sbGStreamerSimple::ShowHelperPage(void)
 {
   nsresult rv;
   PRBool skipNotify = PR_FALSE;
   nsCOMPtr<nsIPrefBranch> prefService =
          do_GetService( "@mozilla.org/preferences-service;1", &rv );
-  NS_ENSURE_SUCCESS( rv, rv);
+  NS_ENSURE_SUCCESS( rv, /* void */);
   prefService->GetBoolPref( "songbird.skipGStreamerHelp", &skipNotify );
 
   // Abort asking the user if the pref says to skip
   if (skipNotify == PR_TRUE) {
-    return NS_OK;
+    return;
   }
 
   nsCOMPtr<nsIPromptService> promptService =
     do_GetService("@mozilla.org/embedcomp/prompt-service;1", &rv);
-  NS_ENSURE_SUCCESS( rv, rv);
+  NS_ENSURE_SUCCESS( rv, /* void */);
 
   // If possible we want the alert to pop off of the 
   // main window and not the cheezy video window
   nsCOMPtr<nsIWindowMediator> windowMediator =
     do_GetService("@mozilla.org/appshell/window-mediator;1", &rv);
-  NS_ENSURE_SUCCESS( rv, rv);
+  NS_ENSURE_SUCCESS( rv, /* void */);
   nsCOMPtr<nsIDOMWindowInternal> mainWindow;  
   windowMediator->GetMostRecentWindow(NS_LITERAL_STRING("Songbird:Main").get(),
                                       getter_AddRefs(mainWindow));
@@ -982,7 +921,7 @@ sbGStreamerSimple::ShowHelperPage(void)
   nsCOMPtr<nsIStringBundle> stringBundle;
   rv = CreateBundle("chrome://songbird/locale/songbird.properties",
                     getter_AddRefs(stringBundle));
-  NS_ENSURE_SUCCESS( rv, rv);
+  NS_ENSURE_SUCCESS( rv, /* void */);
 
   nsAutoString windowTitle;
   nsAutoString windowText;
@@ -991,19 +930,19 @@ sbGStreamerSimple::ShowHelperPage(void)
   rv = GetStringFromName(stringBundle,
                          NS_LITERAL_STRING("mediacore.gstreamer.plugin.missing.title"),
                          windowTitle);
-  NS_ENSURE_SUCCESS( rv, rv);
+  NS_ENSURE_SUCCESS( rv, /* void */);
   rv = GetStringFromName(stringBundle,
                          NS_LITERAL_STRING("mediacore.gstreamer.plugin.missing.text"),
                          windowText);
-  NS_ENSURE_SUCCESS( rv, rv);
+  NS_ENSURE_SUCCESS( rv, /* void */);
   rv = GetStringFromName(stringBundle,
                          NS_LITERAL_STRING("mediacore.gstreamer.plugin.helpUrl"),
                          helpURL);
-  NS_ENSURE_SUCCESS( rv, rv);
+  NS_ENSURE_SUCCESS( rv, /* void */);
   rv = GetStringFromName(stringBundle,
                          NS_LITERAL_STRING("mediacorecheck.dialog.skipCheckboxLabel"),
                          checkLabel);
-  NS_ENSURE_SUCCESS( rv, rv);
+  NS_ENSURE_SUCCESS( rv, /* void */);
 
   // Ask the user if they would like to learn how to install the plug-ins
   // Get flags to indicate yes/no option dialog
@@ -1022,7 +961,7 @@ sbGStreamerSimple::ShowHelperPage(void)
         checkLabel.get(),                   // Check box label
         &checkState,                        // State of checkbox
         &promptResult);                     // Button Clicked
-  NS_ENSURE_SUCCESS( rv, rv);
+  NS_ENSURE_SUCCESS( rv, /* void */);
 
   // Set our pref to what the check box state is
   prefService->SetBoolPref( "songbird.skipGStreamerHelp", checkState );
@@ -1032,34 +971,34 @@ sbGStreamerSimple::ShowHelperPage(void)
     // First we need to get the url from preferences
     nsCOMPtr<nsIIOService> ioService =
       do_GetService("@mozilla.org/network/io-service;1", &rv);
-    NS_ENSURE_SUCCESS( rv, rv);
+    NS_ENSURE_SUCCESS( rv, /* void */);
 
     nsCOMPtr<nsIURI> uri;
     NS_ConvertUTF16toUTF8 cstrURL(helpURL);
     rv = ioService->NewURI(
       cstrURL,
       NULL, NULL, getter_AddRefs(uri));
-    NS_ENSURE_SUCCESS( rv, rv);
+    NS_ENSURE_SUCCESS( rv, /* void */);
   
     // Get the browser context so we can open a new tab with OpenURI,
     // this is very long and confusing since we are not in the dom.
     nsCOMPtr<nsIBrowserDOMWindow> bwin;
   
     nsCOMPtr<nsIWebNavigation> navNav(do_GetInterface(mainWindow, &rv));
-    NS_ENSURE_SUCCESS( rv, rv);
+    NS_ENSURE_SUCCESS( rv, /* void */);
     nsCOMPtr<nsIDocShellTreeItem> navItem(do_QueryInterface(navNav, &rv));
-    NS_ENSURE_SUCCESS( rv, rv);
+    NS_ENSURE_SUCCESS( rv, /* void */);
     if (navItem) {
       nsCOMPtr<nsIDocShellTreeItem> rootItem;
       rv = navItem->GetRootTreeItem(getter_AddRefs(rootItem));
-      NS_ENSURE_SUCCESS( rv, rv);
+      NS_ENSURE_SUCCESS( rv, /* void */);
       nsCOMPtr<nsIDOMWindow> rootWin(do_GetInterface(rootItem, &rv));
-      NS_ENSURE_SUCCESS( rv, rv);
+      NS_ENSURE_SUCCESS( rv, /* void */);
       nsCOMPtr<nsIDOMChromeWindow> chromeWin(do_QueryInterface(rootWin, &rv));
-      NS_ENSURE_SUCCESS( rv, rv);
+      NS_ENSURE_SUCCESS( rv, /* void */);
       if (chromeWin) {
         rv = chromeWin->GetBrowserDOMWindow(getter_AddRefs(bwin));
-        NS_ENSURE_SUCCESS( rv, rv);
+        NS_ENSURE_SUCCESS( rv, /* void */);
       }
     }
    
@@ -1069,207 +1008,182 @@ sbGStreamerSimple::ShowHelperPage(void)
                          nsIBrowserDOMWindow::OPEN_NEWTAB,
                          nsIBrowserDOMWindow::OPEN_EXTERNAL,
                          getter_AddRefs(container));
-      NS_ENSURE_SUCCESS( rv, rv);
+      NS_ENSURE_SUCCESS( rv, /* void */);
     }
   }
-
-  return NS_OK;
 }
 
-// Callback for sync messages (to handle prepare-xwindow-id)
+// Set our video window. Called when the video sink requires a window to draw
+// on.
+// Note: Called from a GStreamer streaming thread.
 void
-sbGStreamerSimple::SyncHandler(GstBus* bus, GstMessage* message)
+sbGStreamerSimple::PrepareVideoWindow(GstMessage *msg)
 {
-  GstMessageType msg_type;
-  msg_type = GST_MESSAGE_TYPE(message);
-
-  switch (msg_type) {
-    case GST_MESSAGE_ELEMENT: {
-#ifdef MOZ_WIDGET_GTK2
-      if(gst_structure_has_name(message->structure, "prepare-xwindow-id") && mVideoSink != NULL) {
-        GstElement *element = NULL;
-        GstXOverlay *xoverlay = NULL;
-
-        if (GST_IS_BIN (mVideoSink)) {
-          element = gst_bin_get_by_interface (GST_BIN (mVideoSink),
-                                              GST_TYPE_X_OVERLAY);
-        }
-        else {
-          element = mVideoSink;
-        }
-
-        if (GST_IS_X_OVERLAY (element)) {
-          xoverlay = GST_X_OVERLAY (element);
-        }
-        else {
-          xoverlay = NULL;
-        }
-
-        XID window = GDK_WINDOW_XWINDOW(mGdkWin);
-        gst_x_overlay_set_xwindow_id(xoverlay, window);
-        LOG(("Set xoverlay %d to windowid %d\n", xoverlay, window));
-
-        mCursorIntervalTimer->InitWithCallback(this,
-          300, nsITimer::TYPE_REPEATING_SLACK);
-
-        mIsPlayingVideo = PR_TRUE;
-      }
-#endif
-      break;
-    }
-    default:
-      break;
+  if (mPlatformInterface) {
+    // TODO: Figure out an appropriately generic interface here; is this sufficient?
+    mPlatformInterface->PrepareVideoWindow();
   }
+
+  mIsPlayingVideo = PR_TRUE;
 }
 
 // Callback for async messages (all normal GstBus messages */
-void
-sbGStreamerSimple::AsyncHandler(GstBus* bus, GstMessage* message)
+void sbGStreamerSimple::HandleMessage (GstMessage *message)
 {
   GstMessageType msg_type;
   msg_type = GST_MESSAGE_TYPE(message);
 
   switch (msg_type) {
-    case GST_MESSAGE_ERROR: {
-      GError *error = NULL;
-      gchar *debug = NULL;
-      PRBool isPluginOrCodecError;
-
-      gst_message_parse_error(message, &error, &debug);
-
-      LOG(("Error message: %s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug)));
-
-      g_free (debug);
-
-      mIsAtEndOfStream = PR_TRUE;
-      mBufferingPercent = 0;
-      mIsPlayingVideo = PR_FALSE;
-#ifdef MOZ_WIDGET_GTK2
-      if(mFullscreen && mGdkWinFull != NULL) {
-        ReparentToChromeWin(this);
-      }
-#endif
-      mCursorIntervalTimer->Cancel();
-
-      isPluginOrCodecError = ((error->domain == GST_CORE_ERROR &&
-                               error->code == GST_CORE_ERROR_MISSING_PLUGIN) ||
-                              (error->domain == GST_STREAM_ERROR &&
-                               error->code == GST_STREAM_ERROR_CODEC_NOT_FOUND));
-
-      /* We only show the helper page once - it doesn't give the user any
-       * specific information about what plugins are missing, so showing it
-       * every time is just noise.
-       */
-      if (isPluginOrCodecError && !mHasShownHelperPage) {
-        /* Display the helper page, but only dispatch this from the event loop;
-         * don't directly do this here (works around GStreamer bug #536521)
-         */
-        mHasShownHelperPage = true;
-
-        nsCOMPtr<nsIRunnable> event = NS_NEW_RUNNABLE_METHOD(sbGStreamerSimple,
-                this, DoShowHelperPage);
-        NS_DispatchToMainThread(event);
-      }
+    case GST_MESSAGE_ERROR:
+      HandleErrorMessage(message);
       break;
-    }
-    case GST_MESSAGE_WARNING: {
-      GError *error = NULL;
-      gchar *debug = NULL;
-
-      gst_message_parse_warning(message, &error, &debug);
-
-      LOG(("Warning message: %s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug)));
-
-      g_warning ("%s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug));
-
-      g_error_free (error);
-      g_free (debug);
+    case GST_MESSAGE_WARNING:
+      HandleWarningMessage(message);
       break;
-    }
-
-    case GST_MESSAGE_EOS: {
-      mIsAtEndOfStream = PR_TRUE;
-      mIsPlayingVideo = PR_FALSE;
-      mBufferingPercent = 0;
-      mCursorIntervalTimer->Cancel();
-#ifdef MOZ_WIDGET_GTK2
-      if(mFullscreen && mGdkWinFull != NULL) {
-        SetFullscreen(PR_FALSE);
-      }
-#endif
+    case GST_MESSAGE_STATE_CHANGED:
+      HandleStateChangeMessage(message);
       break;
-    }
-
-    case GST_MESSAGE_STATE_CHANGED: {
-      GstState old_state, new_state;
-      gchar *src_name;
-
-      gst_message_parse_state_changed(message, &old_state, &new_state, NULL);
-
-      src_name = gst_object_get_name(message->src);
-      LOG(("stage-changed: %s changed state from %s to %s", src_name,
-          gst_element_state_get_name (old_state),
-          gst_element_state_get_name (new_state)));
-      g_free (src_name);
+    case GST_MESSAGE_BUFFERING:
+      HandleBufferingMessage(message);
       break;
-    }
-
-    case GST_MESSAGE_TAG: {
-      GstTagList *tag_list;
-      gchar *value = NULL;
-      nsCAutoString temp;
-
-      gst_message_parse_tag(message, &tag_list);
-
-      if(gst_tag_list_get_string(tag_list, GST_TAG_ARTIST, &value)) {
-        temp.Assign(value);
-        mArtist.Assign(NS_ConvertUTF8toUTF16(temp).get());
-        g_free(value);
-      }
-
-      if(gst_tag_list_get_string(tag_list, GST_TAG_ALBUM, &value)) {
-        temp.Assign(value);
-        mAlbum.Assign(NS_ConvertUTF8toUTF16(temp).get());
-        g_free(value);
-      }
-
-      if(gst_tag_list_get_string(tag_list, GST_TAG_TITLE, &value)) {
-        temp.Assign(value);
-        mTitle.Assign(NS_ConvertUTF8toUTF16(temp).get());
-        g_free(value);
-      }
-
-      if(gst_tag_list_get_string(tag_list, GST_TAG_GENRE, &value)) {
-        temp.Assign(value);
-        mGenre.Assign(NS_ConvertUTF8toUTF16(temp).get());
-        g_free(value);
-      }
-
-      gst_tag_list_free(tag_list);
+    case GST_MESSAGE_EOS:
+      HandleEOSMessage(message);
       break;
-    }
-
-    case GST_MESSAGE_BUFFERING: {
-      gint percent = 0;
-      gst_structure_get_int (message->structure, "buffer-percent", &percent);
-      mBufferingPercent = percent;
-      TRACE(("Buffering (%u percent done)", percent));
+    case GST_MESSAGE_TAG:
+      HandleTagMessage(message);
       break;
-    }
-
     default:
       LOG(("Got message: %s", gst_message_type_get_name(msg_type)));
+      break;
+  }
+}
+
+void sbGStreamerSimple::HandleErrorMessage (GstMessage *message)
+{
+  GError *error = NULL;
+  gchar *debug = NULL;
+  PRBool isPluginOrCodecError;
+
+  gst_message_parse_error(message, &error, &debug);
+
+  LOG(("Error message: %s [%s]", GST_STR_NULL (error->message), 
+              GST_STR_NULL (debug)));
+
+  g_free (debug);
+
+  mIsAtEndOfStream = PR_TRUE;
+  mBufferingPercent = 0;
+  mIsPlayingVideo = PR_FALSE;
+  SetFullscreen (PR_FALSE);
+
+  isPluginOrCodecError = ((error->domain == GST_CORE_ERROR &&
+                           error->code == GST_CORE_ERROR_MISSING_PLUGIN) ||
+                          (error->domain == GST_STREAM_ERROR &&
+                           error->code == GST_STREAM_ERROR_CODEC_NOT_FOUND));
+
+  /* We only show the helper page once - it doesn't give the user any
+   * specific information about what plugins are missing, so showing it
+   * every time is just noise.
+   */
+  if (isPluginOrCodecError && !mHasShownHelperPage) {
+    /* Display the helper page, but only dispatch this from the event loop;
+     * don't directly do this here (works around GStreamer bug #536521)
+     */
+    mHasShownHelperPage = true;
+
+    nsCOMPtr<nsIRunnable> event = NS_NEW_RUNNABLE_METHOD(sbGStreamerSimple,
+            this, ShowHelperPage);
+    NS_DispatchToMainThread(event);
+  }
+}
+
+void sbGStreamerSimple::HandleWarningMessage (GstMessage *message)
+{
+  GError *error = NULL;
+  gchar *debug = NULL;
+
+  gst_message_parse_warning(message, &error, &debug);
+
+  LOG(("Warning message: %s [%s]", GST_STR_NULL (error->message), 
+              GST_STR_NULL (debug)));
+
+  g_warning ("%s [%s]", GST_STR_NULL (error->message), GST_STR_NULL (debug));
+
+  g_error_free (error);
+  g_free (debug);
+}
+
+void sbGStreamerSimple::HandleEOSMessage (GstMessage *message)
+{
+  mIsAtEndOfStream = PR_TRUE;
+  mIsPlayingVideo = PR_FALSE;
+  mBufferingPercent = 0;
+  SetFullscreen(PR_FALSE);
+}
+
+void sbGStreamerSimple::HandleStateChangeMessage (GstMessage *message)
+{
+  GstState old_state, new_state;
+  gchar *src_name;
+
+  gst_message_parse_state_changed(message, &old_state, &new_state, NULL);
+
+  src_name = gst_object_get_name(message->src);
+  LOG(("stage-changed: %s changed state from %s to %s", src_name,
+      gst_element_state_get_name (old_state),
+      gst_element_state_get_name (new_state)));
+  g_free (src_name);
+}
+
+/* TODO: We should use more of the available tag types */
+void sbGStreamerSimple::HandleTagMessage (GstMessage *message)
+{
+  GstTagList *tag_list;
+  gchar *value = NULL;
+
+  gst_message_parse_tag(message, &tag_list);
+
+  if(gst_tag_list_get_string(tag_list, GST_TAG_ARTIST, &value)) {
+    CopyUTF8toUTF16(nsDependentCString(value), mArtist);
+    g_free(value);
   }
 
-  //gst_message_unref(message); XXX: Do i need to unref this?
+  if(gst_tag_list_get_string(tag_list, GST_TAG_ALBUM, &value)) {
+    CopyUTF8toUTF16(nsDependentCString(value), mAlbum);
+    g_free(value);
+  }
+
+  if(gst_tag_list_get_string(tag_list, GST_TAG_TITLE, &value)) {
+    CopyUTF8toUTF16(nsDependentCString(value), mTitle);
+    g_free(value);
+  }
+
+  if(gst_tag_list_get_string(tag_list, GST_TAG_GENRE, &value)) {
+    CopyUTF8toUTF16(nsDependentCString(value), mGenre);
+    g_free(value);
+  }
+
+  gst_tag_list_free(tag_list);
+}
+
+/* TODO: We should pause when we receive a buffering message for a percentage
+ * less than 100, and go to playing when we receive a 100% message,
+ * so that we can re-buffer appropriately if we underrun
+ */
+void sbGStreamerSimple::HandleBufferingMessage (GstMessage *message)
+{
+  gint percent = 0;
+  gst_structure_get_int (message->structure, "buffer-percent", &percent);
+  mBufferingPercent = percent;
+  TRACE(("Buffering (%u percent done)", percent));
 }
 
 void
-sbGStreamerSimple::StreamInfoSet(GObject* obj, GParamSpec* pspec)
+sbGStreamerSimple::OnStreamInfoSet()
 {
   GList *streaminfo = NULL;
   GstPad *videopad = NULL;
-
+ 
   g_object_get (mPlay, "stream-info", &streaminfo, NULL);
   streaminfo = g_list_copy(streaminfo);
   g_list_foreach (streaminfo, (GFunc) g_object_ref, NULL);
@@ -1278,7 +1192,6 @@ sbGStreamerSimple::StreamInfoSet(GObject* obj, GParamSpec* pspec)
     gint type;
     GParamSpec *pspec;
     GEnumValue *val;
-
     if(!info) {
       continue;
     }
@@ -1297,39 +1210,46 @@ sbGStreamerSimple::StreamInfoSet(GObject* obj, GParamSpec* pspec)
   if(videopad) {
     GstCaps *caps;
 
-    if((caps = gst_pad_get_negotiated_caps(videopad))) {
-      CapsSet(G_OBJECT(videopad), NULL);
+    caps = gst_pad_get_negotiated_caps(videopad);
+    if (caps) {
+      OnVideoCapsSet (caps);
       gst_caps_unref(caps);
     }
-    g_signal_connect(videopad, "notify::caps", G_CALLBACK(capsSetHelper), this);
-  }
 
+    g_signal_connect(videopad, "notify::caps", 
+            G_CALLBACK(videoCapsSetHelper), this);
+  }
   g_list_foreach (streaminfo, (GFunc) g_object_unref, NULL);
   g_list_free (streaminfo);
 }
 
+/* TODO: Add any neccessary locking; this is called from a streaming thread */
 void
-sbGStreamerSimple::CapsSet(GObject* obj, GParamSpec* pspec)
+sbGStreamerSimple::OnVideoCapsSet(GstCaps *caps)
 {
-  GstPad *pad = GST_PAD(obj);
   GstStructure *s;
-  GstCaps *caps;
-
-  if(!(caps = gst_pad_get_negotiated_caps(pad))) {
-    return;
-  }
 
   s = gst_caps_get_structure(caps, 0);
   if(s) {
     gst_structure_get_int(s, "width", &mVideoWidth);
     gst_structure_get_int(s, "height", &mVideoHeight);
 
-/* This is unused, and causing asserts
+    /* pixel-aspect-ratio is optional */
     const GValue* par = gst_structure_get_value(s, "pixel-aspect-ratio");
-    mPixelAspectRatioN = gst_value_get_fraction_numerator(par);
-    mPixelAspectRatioD = gst_value_get_fraction_denominator(par);
-*/
-  }
+    if (par) {
+      mPixelAspectRatioN = gst_value_get_fraction_numerator(par);
+      mPixelAspectRatioD = gst_value_get_fraction_denominator(par);
+    }
+    else {
+      /* PAR not set; default to square pixels */
+      mPixelAspectRatioN = mPixelAspectRatioD = 1;
+    }
 
-  gst_caps_unref(caps);
+    if (mPlatformInterface) {
+      int num = mVideoWidth * mPixelAspectRatioN;
+      int denom = mVideoHeight * mPixelAspectRatioD;
+      mPlatformInterface->SetDisplayAspectRatio (num, denom);
+    }
+  }
 }
+

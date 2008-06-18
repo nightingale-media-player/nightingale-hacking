@@ -14,7 +14,19 @@ CPP_SRCS = \
       sbGStreamerModule.cpp \
       sbGStreamerService.cpp \
       sbGStreamerSimple.cpp \
+	  sbGStreamerPlatformBase.cpp
       $(NULL)
+
+ifeq (windows,$(SB_PLATFORM))
+	  CPP_SRCS += sbGStreamerPlatformWin32.cpp
+else
+ifeq (macosx, $(SB_PLATFORM))
+	   # Nothing yet; we don't have a macos implementation
+else
+	  # Others - linux, solaris, etc.
+	  CPP_SRCS += sbGStreamerPlatformGDK.cpp
+endif
+endif
 
 CPP_INCLUDES = \
       $(DEPTH)/components/mediacore/playback/gstreamer/public \
@@ -74,6 +86,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = \
       xpcomglue_s \
       xpcom \
       gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+      gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
       $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = \
@@ -110,9 +123,6 @@ else
     # everything else
     DYNAMIC_LIB_EXTRA_FLAGS += $(GTK_LIBS) \
                                $(NULL)
-    DYNAMIC_LIB_EXTRA_IMPORTS += gstinterfaces-$(GST_VERSION)$ \
-                                 $(NULL)
-
   endif
 endif
 
