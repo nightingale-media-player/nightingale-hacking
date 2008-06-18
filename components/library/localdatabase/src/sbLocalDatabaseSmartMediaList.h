@@ -72,9 +72,7 @@ JoinStringMapIntoQueryString(sbStringMap& aMap,
                              nsAString& aString);
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
-#define NS_FORWARD_SAFE_SBIMEDIALIST_ALL_BUT_TYPE(_to) \
-  NS_IMETHOD GetName(nsAString & aName) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetName(aName); } \
-  NS_IMETHOD SetName(const nsAString & aName) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetName(aName); } \
+#define NS_FORWARD_SAFE_SBIMEDIALIST_ALL_BUT_TYPEANDNAME(_to) \
   NS_IMETHOD GetLength(PRUint32 *aLength) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetLength(aLength); } \
   NS_IMETHOD GetItemByGuid(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemByGuid(aGuid, _retval); } \
   NS_IMETHOD GetItemByIndex(PRUint32 aIndex, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemByIndex(aIndex, _retval); } \
@@ -147,8 +145,10 @@ public:
 
   /* Forward all media list functions to mList except for the
      type getter */
-  NS_FORWARD_SAFE_SBIMEDIALIST_ALL_BUT_TYPE(mList)
+  NS_FORWARD_SAFE_SBIMEDIALIST_ALL_BUT_TYPEANDNAME(mList)
   NS_IMETHOD GetType(nsAString& aType);
+  NS_IMETHOD GetName(nsAString& aName);
+  NS_IMETHOD SetName(const nsAString& aName);
 
   nsresult Init(sbIMediaItem* aMediaItem);
 

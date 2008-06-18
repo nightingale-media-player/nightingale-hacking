@@ -2342,6 +2342,48 @@ sbLocalDatabaseSmartMediaList::OnBatchEnd(sbIMediaList* aMediaList)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::SetName(const nsAString& aName)
+{
+  if (!mList) return NS_ERROR_NULL_POINTER;
+  
+  // Create a property array to hold the changed property
+  nsresult rv;
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // read the old property
+  nsAutoString oldName;
+  rv = mList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME), oldName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // store it in the array
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME), oldName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // set the name to the inner list
+  mList->SetName(aName);
+
+  // notify that the name property changed for this list as well. this is so
+  // listeners that are watching for list name changes also get notified about
+  // us, and not just our inner list, since there is no way to go from the
+  // inner list to the outer one.
+  rv = mLocalDatabaseLibrary->NotifyListenersItemUpdated(this, properties);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::GetName(nsAString& aName)
+{
+  if (!mList) return NS_ERROR_NULL_POINTER;
+
+  // always return the name from the inner list, it is doing the localization
+  return mList->GetName(aName);
+}
+
 // nsIClassInfo
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::GetInterfaces(PRUint32* count, nsIID*** array)

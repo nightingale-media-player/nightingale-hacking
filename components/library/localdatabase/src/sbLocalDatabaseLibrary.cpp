@@ -1778,7 +1778,10 @@ sbLocalDatabaseLibrary::GetContainingLists(sbMediaItemArray* aItems,
 
     nsCOMPtr<sbILocalDatabaseMediaItem> item =
       do_QueryInterface(aItems->ObjectAt(i), &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (rv == NS_NOINTERFACE) {
+      // not a localdatabase mediaitem, continue enumeration
+      continue;
+    }
 
     PRUint32 mediaItemId;
     rv = item->GetMediaItemId(&mediaItemId);
