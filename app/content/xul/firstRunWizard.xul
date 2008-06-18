@@ -61,35 +61,42 @@
    ************************************************************************* -->
 
   <!-- EULA page. -->
-  <wizardpage label="&first_run.title;"
+  <wizardpage id="first_run_eula_page"
+              label="&first_run.title;"
               hideback="true"
               hidecancel="true"
               onpageshow="firstRunWizard.doPageShow();">
-    <sb-first-run-eula id="first_run_eula" class="first-run-wizard-page"/>
+    <sb-first-run-eula id="first_run_eula"
+                       class="first-run-wizard-page"
+                       onacceptchanged="firstRunWizard.doEULAAcceptChanged();"/>
   </wizardpage>
 
   <!-- Welcome page. -->
-  <wizardpage label="&first_run.title;"
+  <wizardpage id="first_run_welcome_page"
+              label="&first_run.title;"
               hideback="true"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-welcome id="first_run_welcome" class="first-run-wizard-page"/>
   </wizardpage>
 
   <!-- Import media page. -->
-  <wizardpage label="&first_run.title;"
+  <wizardpage id="first_run_import_media_page"
+              label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-import-media id="first_run_import_media"
                                class="first-run-wizard-page"/>
   </wizardpage>
 
   <!-- Add-ons page. -->
-  <wizardpage label="&first_run.title;"
+  <wizardpage id="first_run_add_ons_page"
+              label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-add-ons id="first_run_add_ons" class="first-run-wizard-page"/>
   </wizardpage>
 
   <!-- Feedback page. -->
-  <wizardpage label="&first_run.title;"
+  <wizardpage id="first_run_feedback_page"
+              label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-feedback id="first_run_feedback"
                            class="first-run-wizard-page"/>

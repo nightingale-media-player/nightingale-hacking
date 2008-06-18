@@ -47,13 +47,133 @@
 
   <binding id="sb-first-run-eula">
 
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
     <content>
 
-      <xul:hbox anonid="container_box" class="sb-first-run-eula-box">
-        <xul:label value="First run EULA"/>
-      </xul:hbox>
+      <xul:vbox anonid="container_box" class="sb-first-run-eula-box">
+
+        <xul:browser anonid="eula_browser"
+                     class="sb-first-run-eula-browser"
+                     src="chrome://songbird/content/html/eula.html"/>
+        <xul:checkbox anonid="accept_checkbox"
+                      label="&first_run.eula.accept_checkbox.label;"
+                      oncommand="_doAcceptChanged();"/>
+
+      </xul:vbox>
 
     </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Widget properties.
+       -->
+
+      <property name="accepted">
+        <getter><![CDATA[
+          return (this.getAttribute("accepted") == "true");
+        ]]></getter>
+        <setter><![CDATA[
+          // Check if the accepted setting changed.
+          var acceptChanged = (this.getAttribute("accepted") != val);
+
+          // Set the accepted setting.
+          this.setAttribute("accepted", val);
+          if (this._acceptCheckbox.checked != this.accepted)
+            this._acceptCheckbox.checked = this.accepted;
+
+          // Dispatch an event if the accepted setting changed.
+          if (acceptChanged)
+            this._dispatchEvent(this, "acceptchanged");
+        ]]></setter>
+      </property>
+
+
+      <!--
+        * Private fields.
+        *
+        *   _acceptCheckbox     Accept checkbox element.
+        -->
+
+      <field name="_acceptCheckbox">null</field>
+
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Get the accept checkbox element.
+        this._acceptCheckbox =
+          document.getAnonymousElementByAttribute(this,
+                                                  "anonid",
+                                                  "accept_checkbox");
+
+        // Default to not accepted.
+        this.accepted = false;
+      ]]></constructor>
+
+
+      <!--
+       * Handle an accept changed event.
+       -->
+
+      <method name="_doAcceptChanged"><body><![CDATA[
+        // Update the accepted property.
+        if (this.accepted != this._acceptCheckbox.checked)
+          this.accepted = this._acceptCheckbox.checked;
+      ]]></body></method>
+
+
+      <!--
+       * Dispatch the event of type specified by aType with the target specified
+       * by aTarget.
+       *
+       * \param aTarget         Target of the event.
+       * \param aType           Type of event.
+       -->
+
+      <method name="_dispatchEvent">
+        <parameter name="aTarget"/>
+        <parameter name="aType"/>
+        <body>
+        <![CDATA[
+          // Create the event.
+          var event = document.createEvent("Events");
+          event.initEvent(aType, true, true);
+
+          // Dispatch to DOM event handlers.
+          var noCancel = aTarget.dispatchEvent(event);
+
+          // Dispatch to XML attribute event handlers.
+          var handler = aTarget.getAttribute("on" + aType);
+          if (handler != "") {
+            var func = new Function("event", handler);
+            var returned = func.apply(aTarget, [event]);
+            if (returned == false)
+              noCancel = false;
+          }
+
+          return noCancel;
+        ]]>
+        </body>
+      </method>
+
+    </implementation>
 
   </binding>
 

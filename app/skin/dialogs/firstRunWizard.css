@@ -46,31 +46,37 @@ Additional styles imported directly by the first run dialog.
   -moz-box-flex: 1;
 }
 
-/* Wizard page widget styles. */
+/* Add-ons page styles. */
 .sb-first-run-add-ons-box {
   -moz-box-flex: 1;
   -moz-box-align: center;
   -moz-box-pack: center;
 }
 
+/* EULA page styles. */
 .sb-first-run-eula-box {
   -moz-box-flex: 1;
-  -moz-box-align: center;
-  -moz-box-pack: center;
 }
 
+.sb-first-run-eula-browser {
+  -moz-box-flex: 1;
+}
+
+/* Feedback page styles. */
 .sb-first-run-feedback-box {
   -moz-box-flex: 1;
   -moz-box-align: center;
   -moz-box-pack: center;
 }
 
+/* Import media page styles. */
 .sb-first-run-import-media-box {
   -moz-box-flex: 1;
   -moz-box-align: center;
   -moz-box-pack: center;
 }
 
+/* Welcome page styles. */
 .sb-first-run-welcome-box {
   -moz-box-flex: 1;
   -moz-box-align: center;

@@ -77,6 +77,32 @@ var firstRunWizard = {
    */
 
   doPageShow: function firstRunWizard_doPageShow() {
+    // Update the UI.
+    this._update();
+  },
+
+
+  /**
+   * Handle a EULA page accept changed event.
+   */
+
+  doEULAAcceptChanged: function firstRunWizard_doEULAAcceptChanged() {
+    // Update the UI.
+    this._update();
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal services.
+  //
+  //----------------------------------------------------------------------------
+
+  /*
+   * Update the UI.
+   */
+
+  _update: function firstRunWizard__update() {
     // Get the current wizard page.
     var wizardElem = document.getElementById("first_run_wizard");
     var currentPage = wizardElem.currentPage;
@@ -95,6 +121,12 @@ var firstRunWizard = {
       cancelButton.setAttribute("hidden", "true");
     } else {
       cancelButton.removeAttribute("hidden");
+    }
+
+    // Disable the continue button on the EULA page while EULA is not accepted.
+    if (currentPage.id == "first_run_eula_page") {
+      var firstRunEULAElem = document.getElementById("first_run_eula");
+      wizardElem.canAdvance = firstRunEULAElem.accepted;
     }
   }
 };

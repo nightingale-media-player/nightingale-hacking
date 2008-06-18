@@ -526,6 +526,9 @@
 <!ENTITY feedback.dialog.sentence3  "Regards,">
 <!ENTITY feedback.dialog.sentence4  "The Songbird Team">
 
-<!-- First run wizard entities. -->
+<!-- First-run wizard entities. -->
 <!ENTITY first_run.title                  "&brandShortName; Setup">
+
+<!-- First-run eula enitities. -->
+<!ENTITY first_run.eula.accept_checkbox.label "I have read and accepted the terms of this license.">
 
