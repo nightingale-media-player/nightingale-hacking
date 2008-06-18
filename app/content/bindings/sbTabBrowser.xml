@@ -38,7 +38,7 @@
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser">
-    <implementation implements="nsIWebProgressListener,sbITabBrowser,sbIServicePaneListener">
+    <implementation implements="sbITabBrowser,sbIServicePaneListener">
       <constructor><![CDATA[
         window.gBrowser = this;
 
@@ -50,8 +50,11 @@
           Components.utils.import("resource://app/jsmodules/LibraryUtils.jsm");
         if (!window.ArrayConverter) 
           Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+        if (!window.XPCOMUtils) 
+          Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
 
-        this.addProgressListener(this,
+        this.webProgressListener = this.createWebProgressListener();
+        this.addProgressListener(this.webProgressListener,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
             Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
 
@@ -205,6 +208,103 @@
         window.QueryInterface(Components.interfaces.nsIDOMChromeWindow)
               .browserDOMWindow = null;
       ]]></destructor>
+
+      <method name="createWebProgressListener">
+        <body><![CDATA[
+        // create an object which implements as much of nsIWebProgressListener as we're using
+        var tabBrowser = this;
+        return {
+          onLocationChange: function(aWebProgress, aRequest, aLocation) {
+            try {
+              // for some reason we need to do this dance to get scrollbars to
+              // show up
+              var nsIScrollable = Components.interfaces.nsIScrollable;
+              var scrollable = tabBrowser.webNavigation.QueryInterface(nsIScrollable);
+              scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_Y,
+                                                        nsIScrollable.Scrollbar_Auto);
+              scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_X,
+                                                       nsIScrollable.Scrollbar_Auto);
+
+              if (tabBrowser.webNavigation.sessionHistory) {
+                SBDataSetBoolValue('browser.cangoback', tabBrowser.webNavigation.canGoBack);
+                SBDataSetBoolValue('browser.cangofwd', tabBrowser.webNavigation.canGoForward);
+              }
+
+              // Nothing in the status text
+              SBDataSetStringValue( "faceplate.status.text", "");
+
+              if (!aLocation) {
+                aLocation = "about:blank";
+              }
+
+              // set the context-menu based on the chromeyness of the location
+              if (aLocation.scheme == 'chrome') {
+                //XXXAus: Disable bookmarking for chrome URI's to prevent
+                //stale bookmarks. See bug #4009.
+                SBDataSetBoolValue('browser.canbookmark', false);
+
+                tabBrowser.mCurrentBrowser.contextMenu = null;
+              }
+              else {
+                //XXXAus: Enable bookmarking for all other URI schemes.
+                //See bug #4009.
+                SBDataSetBoolValue('browser.canbookmark', true);
+
+                tabBrowser.mCurrentBrowser.contextMenu = tabBrowser.getAttribute('contentcontextmenu');
+              }
+
+              SBDataSetBoolValue('browser.cansubscription',
+                                 tabBrowser.mCurrentTab.outerPlaylistShowing);
+
+              // Let listeners know that the tab location has changed
+              tabBrowser.notifyTabContentChange();
+            }
+            catch ( err )
+            {
+              alert( "sb-tabbrowser::onLocationChange\n\n" + err );
+            }
+          },
+        
+          onStateChange: function(aWebProgress, aRequest, aState, aStatus) {
+            const nsIWebProgressListener =
+              Components.interfaces.nsIWebProgressListener;
+            
+            // if this state change isn't on the top-level window, ignore it
+            if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent ||
+                !(aState & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)) {
+              return;
+            }
+
+            if (aState & nsIWebProgressListener.STATE_START) {
+              // Start the spinner if necessary
+              tabBrowser.loading = true;
+            }
+            else if (aState & nsIWebProgressListener.STATE_STOP) {
+              // Stop the spinner if necessary
+              tabBrowser.loading = false;
+
+              // Let listeners know that the tab has finished loading
+              // but only if aStatus == 0, an nsresult representing whether the request 
+              // finished or was cancelled...
+              if (aStatus == 0) {
+                tabBrowser.notifyTabContentChange();
+              }
+
+              // Save the tab state after every page load, just in case we crash
+              if (tabBrowser.tabStateRestored) {
+                tabBrowser.saveTabState();
+              }
+            }
+          },
+          /* these are not called; refer to the sb-tabbrowser constructor where it's registered */
+          onProgressChange: function() { /* do nothing */ },
+          onStatusChange: function() { /* do nothing */ },
+          onSecurityChange: function() { /* do nothing */ },
+          QueryInterface : XPCOMUtils.generateQI([Ci.nsIWebProgressListener])
+        };
+        ]]>
+        </body>
+      </method>
 
       <field name="_tabStatePref">'songbird.browser.tab_state'</field>
       <property name="_tabState">
@@ -715,136 +815,6 @@
           return null;
         ]]></body>
       </method>
-
-      <!-- implementation of nsIWebProgressListener -->
-      <method name="onLocationChange">
-        <parameter name="aWebProgress" />
-        <parameter name="aRequest" />
-        <parameter name="aLocation" />
-        <body><![CDATA[
-          try {
-            // for some reason we need to do this dance to get scrollbars to
-            // show up
-            var nsIScrollable = Components.interfaces.nsIScrollable;
-            var scrollable = this.webNavigation.QueryInterface(nsIScrollable);
-            scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_Y,
-                                                      nsIScrollable.Scrollbar_Auto);
-            scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_X,
-                                                      nsIScrollable.Scrollbar_Auto);
-
-            if (this.webNavigation.sessionHistory) {
-              SBDataSetBoolValue('browser.cangoback', this.webNavigation.canGoBack);
-              SBDataSetBoolValue('browser.cangofwd', this.webNavigation.canGoForward);
-            }
-
-            // Nothing in the status text
-            SBDataSetStringValue( "faceplate.status.text", "");
-
-            if (!aLocation) {
-              aLocation = "about:blank";
-            }
-
-            // set the context-menu based on the chromeyness of the location
-            if (aLocation.scheme == 'chrome') {
-
-              //XXXAus: Disable bookmarking for chrome URI's to prevent
-              //stale bookmarks. See bug #4009.
-              SBDataSetBoolValue('browser.canbookmark', false);
-
-              this.mCurrentBrowser.contextMenu = null;
-
-            } else {
-
-              //XXXAus: Enable bookmarking for all other URI schemes.
-              //See bug #4009.
-              SBDataSetBoolValue('browser.canbookmark', true);
-
-              this.mCurrentBrowser.contextMenu = this.getAttribute('contentcontextmenu');
-
-            }
-
-            SBDataSetBoolValue('browser.cansubscription',
-                               this.mCurrentTab.outerPlaylistShowing);
-
-            // Let listeners know that the tab location has changed
-            this.notifyTabContentChange();
-          }
-          catch ( err )
-          {
-            alert( "sb-tabbrowser::onLocationChange\n\n" + err );
-          }
-        ]]></body>
-      </method>
-
-      <method name="onProgressChange">
-        <parameter name="aWebProgress" />
-        <parameter name="aRequest" />
-        <parameter name="aCurSelfProgress" />
-        <parameter name="aMaxSelfProgress" />
-        <parameter name="aCurTotalProgress" />
-        <parameter name="aMaxTotalProgress" />
-        <body><![CDATA[
-        /* NOTE: This is not called change the constructor above if you want this event */
-        ]]></body>
-      </method>
-
-      <method name="onSecurityChange">
-        <parameter name="aWebProgress" />
-        <parameter name="aRequest" />
-        <parameter name="aState" />
-        <body><![CDATA[
-        /* NOTE: This is not called change the constructor above if you want this event */
-        ]]></body>
-      </method>
-
-      <method name="onStateChange">
-        <parameter name="aWebProgress" />
-        <parameter name="aRequest" />
-        <parameter name="aState" />
-        <parameter name="aStatus" />
-        <body><![CDATA[
-          const nsIWebProgressListener =
-            Components.interfaces.nsIWebProgressListener;
-            
-          // if this state change isn't on the top-level window, ignore it
-          if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent ||
-              !(aState & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)) {
-            return;
-          }
-
-          if (aState & nsIWebProgressListener.STATE_START) {
-            // Start the spinner if necessary
-            this.loading = true;
-          }
-          else if (aState & nsIWebProgressListener.STATE_STOP) {
-            // Stop the spinner if necessary
-            this.loading = false;
-
-            // Let listeners know that the tab has finished loading
-            // but only if aStatus == 0, an nsresult representing whether the request 
-            // finished or was cancelled...
-            if (aStatus == 0) {
-              this.notifyTabContentChange();
-            }
-
-            // Save the tab state after every page load, just in case we crash
-            if (this.tabStateRestored) {
-              this.saveTabState();
-            }
-          }
-        ]]></body>
-      </method>
-
-      <method name="onStatusChange">
-        <parameter name="aWebProgress" />
-        <parameter name="aRequest" />
-        <parameter name="aState" />
-        <parameter name="aMessage" />
-        <body><![CDATA[
-        /* NOTE: This is not called change the constructor above if you want this event */
-        ]]></body>
-      </method>
-
 
       <!-- Sends a "TabContentChange" event from the current tab. 
            Called when the user switches tabs, and before and after
