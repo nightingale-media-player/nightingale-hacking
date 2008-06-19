@@ -69,6 +69,18 @@ var LibraryUtils = {
 
     return webLibrary;
   },
+  
+  getMediaListByGUID: function(aLibraryGUID, aMediaListGUID) {
+    var mediaList = (aLibraryGUID instanceof Ci.sbILibrary) ?
+                    aLibraryGUID :
+                    this.manager.getLibrary( aLibraryGUID );
+
+    // Are we loading the root library or a media list within it?
+    if (aMediaListGUID && aLibraryGUID != aMediaListGUID) {
+      mediaList = mediaList.getMediaItem( aMediaListGUID );  
+    }
+    return mediaList;
+  },
 
   _standardFilterConstraint: null,
   get standardFilterConstraint() {

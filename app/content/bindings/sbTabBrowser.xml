@@ -451,9 +451,10 @@
                     url += "&bypassXULCache="+ Math.random();
                   }
                   
-                  this.loadMediaListGUID(tab.libraryGUID, tab.listGUID, null,
-                                         location, url);
-                                         
+                  var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
+                                                             tab.listGUID);
+                  this.loadMediaList(list, null, location, null, url);
+                  
                 // Otherwise just reload the URL
                 } else {
                   if (isInvalidChromeURL(tab)) {
@@ -700,37 +701,6 @@
           ]]>
         </body>
       </method>
-      
-      
-      <!-- Use a Media Page to display the list with 
-           the given library/list GUIDs 
-        -->
-      <method name="loadMediaListGUID">
-        <parameter name="aLibraryGUID"/>
-        <parameter name="aListGUID"/>
-        <parameter name="aEvent"/>
-        <parameter name="aDefaultLocation"/>
-        <parameter name="aPageURL"/>
-        <body>
-          <![CDATA[
-            var libraryManager = 
-              Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                        .getService(Components.interfaces.sbILibraryManager);
-                        
-            var mediaList = libraryManager.getLibrary( aLibraryGUID );
-            
-            // Are we loading the root library or a media list within
-            // the library
-            if (aListGUID && aLibraryGUID != aListGUID) {
-              mediaList = mediaList.getMediaItem( aListGUID );            
-            }
-            
-            return this.loadMediaList(mediaList, aEvent, aDefaultLocation, 
-                               null, aPageURL);
-          ]]>
-        </body>
-      </method>
-      
       
 
       <!-- Reveal the given index in the given sbIMediaListView  -->
