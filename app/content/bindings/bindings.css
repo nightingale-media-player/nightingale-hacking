@@ -335,46 +335,46 @@ sb-status-progressmeter {
 /* BROWSER WIDGET */
 
 tabbrowser {
-  -moz-binding: url("chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowser.xml#tabbrowser") !important;
 }
 
 arrowscrollbox.tabbrowser-arrowscrollbox {
-  -moz-binding: url("chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser-arrowscrollbox") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowser.xml#tabbrowser-arrowscrollbox") !important;
 }
 
 tabs.tabbrowser-tabs {
-  -moz-binding: url("chrome://songbird/content/bindings/sbTabBrowser.xml#tabbrowser-tabs") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowser.xml#tabbrowser-tabs") !important;
 }
 
 menupopup.alltabs-popup {
-  -moz-binding: url("chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser-alltabs-popup") !important;  
+  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowser.xml#tabbrowser-alltabs-popup") !important;
 }
 
 toolbarbutton.tab-close-button {
-  -moz-binding: url("chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser-close-tab-button") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowser.xml#tabbrowser-close-tab-button") !important;
 }
 
 tab.tabbrowser-tab {
-  -moz-binding: url("chrome://songbird/content/bindings/sbTabBrowser.xml#tabbrowser-tab") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowser.xml#tabbrowser-tab") !important;
 }
 
 sb-tabbrowser {
-  -moz-binding: url("chrome://songbird/content/bindings/sbTabBrowser.xml#sb-tabbrowser") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowser.xml#sb-tabbrowser") !important;
 }
 
 /* LOCATION BAR */
 sb-locationbar-textbox {
-  -moz-binding: url("chrome://songbird/content/bindings/browserControls.xml#sb-locationbar-textbox") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/browserControls.xml#sb-locationbar-textbox") !important;
 }
 
 /* SPINNER */
 sb-browser-spinner {
-  -moz-binding: url("chrome://songbird/content/bindings/browserControls.xml#sb-browser-spinner") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/browserControls.xml#sb-browser-spinner") !important;
 }
 
 /* COMBINED STOP/RELOAD BUTTON */
 sb-browser-stopreload-button {
-  -moz-binding: url("chrome://songbird/content/bindings/browserControls.xml#sb-browser-stopreload-button") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/browserControls.xml#sb-browser-stopreload-button") !important;
 }
 
 /* DRAGGABLE */

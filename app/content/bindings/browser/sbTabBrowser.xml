@@ -37,7 +37,7 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser">
+  <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/browser/tabBrowser.xml#tabbrowser">
     <implementation implements="sbITabBrowser">
       <constructor><![CDATA[
         window.gBrowser = this;
@@ -1544,7 +1544,7 @@
 
 
   <!-- these are from globalBindings.xml -->
-  <binding id="tabbrowser-tab" extends="chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser-tab">
+  <binding id="tabbrowser-tab" extends="chrome://songbird/content/bindings/browser/tabBrowser.xml#tabbrowser-tab">
     <content closetabtext="&tabs.closeTab;" mousethrough="never">
       <xul:hbox class="tab-image-left" xbl:inherits="selected"/>
       <xul:hbox flex="1" class="tab-image-middle" align="center" xbl:inherits="selected">
@@ -2544,7 +2544,7 @@
   </binding>
 
    <binding id="tabbrowser-tabs"
-            extends="chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser-tabs">
+            extends="chrome://songbird/content/bindings/browser/tabBrowser.xml#tabbrowser-tabs">
     <content>
       <xul:stack flex="1" class="tabs-stack">
         <xul:vbox>
