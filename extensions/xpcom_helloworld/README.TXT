@@ -12,8 +12,8 @@ to bundle C++ XPCOM components in an add-on.
 Instructions
 ------------
 
-Follow the directions on http://publicsvn.songbirdnest.com
-to get and build the Songbird source code.
+Follow the directions to get and build the Songbird source code found here:
+http://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Core_Player_Development
 
 In release builds (make -f songbird.mk) the add-on
 is packaged as

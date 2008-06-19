@@ -15,7 +15,7 @@ don't mind a little pain.
 
 If you're running an old nightly, please remember you can always grab the
 latest nightly at:
-http://publicsvn.songbirdnest.com/wiki/Nightly_Builds
+http://wiki.songbirdnest.com/Developer/Articles/Builds/Nightly_Builds
 
 If you think you've found a bug, please ensure you can reproduce with a recent
 nightly and file your bug at http://bugzilla.songbirdnest.com
