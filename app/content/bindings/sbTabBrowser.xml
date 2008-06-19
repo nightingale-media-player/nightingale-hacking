@@ -38,7 +38,7 @@
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/tabBrowser.xml#tabbrowser">
-    <implementation implements="sbITabBrowser,sbIServicePaneListener">
+    <implementation implements="sbITabBrowser">
       <constructor><![CDATA[
         window.gBrowser = this;
 
@@ -187,17 +187,44 @@
           splitter.restoreLastState(true);
         }
 
-        // add a service pane listener
+        // add a service pane listener to keep in sync with changes there
+        // for example, if a playlist is renamed, if there are open tabs for that playlist
+        // they should be retitled.
         this._servicePaneService = 
             Components.classes['@songbirdnest.com/servicepane/service;1']
             .getService(Components.interfaces.sbIServicePaneService);
-        this._servicePaneService.init();
-        this._servicePaneService.addListener(this);
+        this._servicePaneService.init(); // TODO: make service pane init itself
+        this._servicePaneListener = {
+          nodePropertyChanged: function(aNodeId, aPropertyName) {
+            var SP_NS = 'http://songbirdnest.com/rdf/servicepane#';
+            var NC_NS = 'http://home.netscape.com/NC-rdf#';
+            if (aPropertyName != SP_NS+'Properties' &&
+                aPropertyName != NC_NS+'Name' &&
+                aPropertyName != SP_NS+'Image') {
+              // we only care about Properties and Image changing
+              return;
+            }
+
+            // go through the tabs
+            var tab = self.tabContainer.firstChild;
+            while(tab) {
+              // looking for one associated with the node that changed
+              if (tab.servicePaneNode && 
+                  tab.servicePaneNode.id == aNodeId) {
+                // and apply its properties
+                tab.applyPropertiesFromServicePaneNode();
+              }
+              tab = tab.nextSibling;
+            }
+          },
+          QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneListener])
+        }
+        this._servicePaneService.addListener(this._servicePaneListener);
       ]]></constructor>
       <destructor><![CDATA[
 
         // remove service pane listener        
-        this._servicePaneService.removeListener(this);
+        this._servicePaneService.removeListener(this._servicePaneListener);
         this._servicePaneService = null;
 
         this.removeProgressListener(this);
@@ -1428,35 +1455,6 @@
           this.loadURI(this.homePage, null, null);
         ]]></body>
       </method>
-
-      <!-- implement sbIServicePaneListener -->
-      <method name="nodePropertyChanged">
-        <parameter name="aNodeId" />
-        <parameter name="aPropertyName" />
-        <body><![CDATA[
-          var SP_NS = 'http://songbirdnest.com/rdf/servicepane#';
-          var NC_NS = 'http://home.netscape.com/NC-rdf#';
-          if (aPropertyName != SP_NS+'Properties' &&
-              aPropertyName != NC_NS+'Name' &&
-              aPropertyName != SP_NS+'Image') {
-            // we only care about Properties and Image changing
-            return;
-          }
-
-          // go through the tabs
-          var tab = this.tabContainer.firstChild;
-          while(tab) {
-            // looking for one associated with the node that changed
-            if (tab.servicePaneNode && 
-                tab.servicePaneNode.id == aNodeId) {
-              // and apply its properties
-              tab.applyPropertiesFromServicePaneNode();
-            }
-            tab = tab.nextSibling;
-          }
-          ]]></body>
-      </method>
-
     </implementation>
 
     <handlers>
