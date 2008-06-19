@@ -52,6 +52,7 @@
   hidechrome="true"
   onwizardfinish="firstRunWizard.doFinish();"
   onwizardcancel="firstRunWizard.doCancel();"
+  onkeypress="firstRunWizard.doKeyPress(event);"
 >
 
   <!-- *************************************************************************

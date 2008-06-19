@@ -92,6 +92,32 @@ var firstRunWizard = {
   },
 
 
+  /**
+   * Handle the key press event specified by aEvent.
+   *
+   * \param aEvent              Key press event.
+   */
+
+  doKeyPress: function firstRunWizard__doKeyPress(aEvent) {
+    // Get the pressed key code.
+    var keyCode = aEvent.keyCode;
+
+    // Get the current page.
+    var wizardElem = document.getElementById("first_run_wizard");
+    var currentPage = wizardElem.currentPage;
+
+    // If the current page is the EULA page, don't allow the wizard to process
+    // navigation key presses.
+    if ((currentPage.id == "first_run_eula_page") &&
+        ((keyCode == Ci.nsIDOMKeyEvent.DOM_VK_ESCAPE) ||
+         (keyCode == Ci.nsIDOMKeyEvent.DOM_VK_ENTER) ||
+         (keyCode == Ci.nsIDOMKeyEvent.DOM_VK_RETURN))) {
+      aEvent.stopPropagation();
+      aEvent.preventDefault();
+    }
+  },
+
+
   //----------------------------------------------------------------------------
   //
   // Internal services.
@@ -109,24 +135,34 @@ var firstRunWizard = {
 
     // Hide or show the back button.
     var backButton = wizardElem.getButton("back");
-    if (currentPage.getAttribute("hideback") == "true") {
-      backButton.setAttribute("hidden", "true");
-    } else {
-      backButton.removeAttribute("hidden");
-    }
+    if (currentPage.getAttribute("hideback") == "true")
+      backButton.hidden = true;
+    else
+      backButton.hidden = false;
 
     // Hide or show the cancel button.
     var cancelButton = wizardElem.getButton("cancel");
-    if (currentPage.getAttribute("hidecancel") == "true") {
-      cancelButton.setAttribute("hidden", "true");
-    } else {
-      cancelButton.removeAttribute("hidden");
-    }
+    if (currentPage.getAttribute("hidecancel") == "true")
+      cancelButton.hidden = true;
+    else
+      cancelButton.hidden = false;
 
     // Disable the continue button on the EULA page while EULA is not accepted.
     if (currentPage.id == "first_run_eula_page") {
       var firstRunEULAElem = document.getElementById("first_run_eula");
       wizardElem.canAdvance = firstRunEULAElem.accepted;
+    }
+
+    // Focus the next or finish buttons on all but the EULA page.
+    if (currentPage.id != "first_run_eula_page") {
+      // Focus the finish button if it's not hidden.  Otherwise, focus the next
+      // button.
+      var finishButton = wizardElem.getButton("finish");
+      var nextButton = wizardElem.getButton("next");
+      if (!finishButton.hidden)
+        finishButton.focus();
+      else if (!nextButton.hidden)
+        nextButton.focus();
     }
   }
 };
