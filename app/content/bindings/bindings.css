@@ -346,7 +346,7 @@ tabs.tabbrowser-tabs {
   -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowserTabStrip.xml#tabbrowser-tabs") !important;
 }
 
-menupopup.alltabs-popup {
+menupopup.tabs-alltabs-popup {
   -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-alltabs-popup") !important;
 }
 
