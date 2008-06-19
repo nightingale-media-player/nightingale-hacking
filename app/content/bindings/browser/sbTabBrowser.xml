@@ -105,50 +105,12 @@
         window.addEventListener("remoteapi", this.onRemoteAPI, true);
 
         // tell appshell how to open new tabs (sb bug 3757)
-        var self = this;
-        window.QueryInterface(Components.interfaces.nsIDOMChromeWindow)
-              .browserDOMWindow = {
-          openURI: function browserDOMWindow_openURI(aURI, aOpener, aWhere, aContext) {
-            // XXX Mook: for now, just always open in new tab (ignore aWhere)
-            if (aURI instanceof Components.interfaces.nsIURI)
-              aURI = aURI.spec;
-            // XXX Mook: if the tab isn't loaded in the background,
-            // onLocationChange freaks out; so we focus it later if needed
-            var newTab = self.loadOneTab("about:blank", null, null, null, true, false);
-            var newWindow = self.getBrowserForTab(newTab).docShell
-                                .QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                                .getInterface(Components.interfaces.nsIDOMWindow);
-            try {
-              var loadflags = (aContext == Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL) ?
-                         Components.interfaces.nsIWebNavigation.LOAD_FLAGS_FROM_EXTERNAL :
-                         Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE;
-              if (aOpener) {
-                var referrer =
-                        Components.classes["@mozilla.org/network/io-service;1"]
-                                  .getService(Components.interfaces.nsIIOService)
-                                  .newURI(aOpener.location, null, null);
-              }
-              if (!aURI)
-                aURI = "about:blank";
-              newWindow.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-                       .getInterface(Components.interfaces.nsIWebNavigation)
-                       .loadURI(aURI, loadflags, referrer, null, null);
-            } catch(e) {
-            }
-            var loadInBackground = self._prefsService
-                                       .getBoolPref("browser.tabs.loadDivertedInBackground");
-            if (!loadInBackground) {
-              self.selectedTab = newTab;
-            }
-            return newWindow;
-          },
-          isTabContentWindow: function browserDOMWindow_isTabContentWindow(aWindow) {
-            for (var ctr = 0; ctr < self.browsers.length; ctr++)
-              if (self.browsers.item(ctr).contentWindow == aWindow)
-                return true;
-            return false;
-          }
-        };
+        var subscriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                        .getService(Components.interfaces.mozIJSSubScriptLoader);
+        var scope = {};
+        subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/BrowserDOMWindow.js", scope);
+        window.QueryInterface(Components.interfaces.nsIDOMChromeWindow).browserDOMWindow =
+          new scope.BrowserDOMWindow(this);
 
         this.setAttribute("onnewtab", "onNewTab()");
 
@@ -190,6 +152,7 @@
         // add a service pane listener to keep in sync with changes there
         // for example, if a playlist is renamed, if there are open tabs for that playlist
         // they should be retitled.
+        var self = this;
         this._servicePaneService = 
             Components.classes['@songbirdnest.com/servicepane/service;1']
             .getService(Components.interfaces.sbIServicePaneService);
