@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!DOCTYPE bindings PUBLIC "-//MOZILLA//DTD XBL V1.0//EN" "http://www.mozilla.org/xbl"
+[
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%songbirdDTD;
+]
+>
+<!--
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+-->
+
+<bindings
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="tabbrowser-tabs"
+           extends="chrome://songbird/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-tabs">
+    <content>
+      <xul:stack flex="1" class="tabs-stack">
+        <xul:vbox>
+          <xul:spacer flex="1"/>
+          <xul:hbox class="tabs-bottom" align="center"/>
+        </xul:vbox>
+        <xul:vbox>
+          <xul:hbox>
+            <xul:stack>
+              <xul:spacer class="tabs-left"/>
+            </xul:stack>
+            <xul:arrowscrollbox anonid="arrowscrollbox" orient="horizontal" flex="1" style="min-width: 1px;" class="tabbrowser-arrowscrollbox">
+              <children/>
+            </xul:arrowscrollbox>
+            <xul:stack align="center" pack="end" hidden="true">
+              <!-- XXXMook the all-tabs button is hidden for now because it's
+                   totally broken - see songbird bug 4066 -->
+              <!-- XXXsspitzer hack
+                   this extra hbox with position: relative
+                   is needed to work around two bugs.
+                   see bugs #346307 and #346035
+              -->
+              <xul:hbox style="position: relative;">
+                <xul:hbox flex="1" class="tabs-alltabs-box"
+                          anonid="alltabs-box"/>
+              </xul:hbox>
+              <!-- XXXsspitzer hack
+                   this extra hbox with position: relative
+                   is needed to work around two bugs.
+                   see bugs #346307 and #346035
+              -->
+              <xul:hbox style="position: relative;">
+                <xul:hbox flex="1" class="tabs-alltabs-box-animate"
+                          anonid="alltabs-box-animate"/>
+              </xul:hbox>
+              <!-- XXXsspitzer hack
+                   this extra hbox with position: relative
+                   is needed to work around two bugs.
+                   see bugs #346307 and #346035
+              -->
+              <xul:hbox style="position: relative;">
+                <xul:toolbarbutton class="tabs-alltabs-button"
+                                   type="menu"
+                                   anonid="alltabs-button"
+                                   tooltipstring="&tabs.listAllTabs;">
+                  <xul:menupopup class="tabs-alltabs-popup"
+                                 anonid="alltabs-popup" position="after_end"/>
+                </xul:toolbarbutton>
+              </xul:hbox>
+            </xul:stack>
+            <xul:hbox class="tabs-closebutton-box" align="center" pack="end" anonid="tabstrip-closebutton">
+              <xul:toolbarbutton class="close-button tabs-closebutton"/>
+            </xul:hbox>
+          </xul:hbox>
+          <xul:spacer class="tabs-bottom-spacer"/>
+        </xul:vbox>
+      </xul:stack>
+    </content>
+  </binding>
+
+</bindings>
