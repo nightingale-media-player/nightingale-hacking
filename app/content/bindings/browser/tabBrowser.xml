@@ -70,46 +70,43 @@
         </xul:hbox>
         <xul:hbox class="tabbrowser-strip" collapsed="true" tooltip="_child" context="_child"
                   anonid="strip"
-                  ondraggesture="nsDragAndDrop.startDrag(event, this.parentNode.parentNode); event.stopPropagation();"
-                  ondragover="nsDragAndDrop.dragOver(event, this.parentNode.parentNode); event.stopPropagation();"
-                  ondragdrop="nsDragAndDrop.drop(event, this.parentNode.parentNode); event.stopPropagation();"
-                  ondragexit="nsDragAndDrop.dragExit(event, this.parentNode.parentNode); event.stopPropagation();">
-          <xul:tooltip onpopupshowing="return this.parentNode.parentNode.parentNode.createTooltip(event);"/>
-          <xul:menupopup anonid="tabContextMenu" onpopupshowing="this.parentNode.parentNode.parentNode.updatePopupMenu(this);">
+                  ondraggesture="nsDragAndDrop.startDrag(event, document.getBindingParent(this)); event.stopPropagation();"
+                  ondragover="nsDragAndDrop.dragOver(event, document.getBindingParent(this)); event.stopPropagation();"
+                  ondragdrop="nsDragAndDrop.drop(event, document.getBindingParent(this)); event.stopPropagation();"
+                  ondragexit="nsDragAndDrop.dragExit(event, document.getBindingParent(this)); event.stopPropagation();">
+          <xul:tooltip onpopupshowing="return document.getBindingParent(this).createTooltip(event);"/>
+          <xul:menupopup anonid="tabContextMenu" onpopupshowing="document.getBindingParent(this).updatePopupMenu(this);">
             <xul:menuitem label="&newTab.label;" accesskey="&newTab.accesskey;"
                           xbl:inherits="oncommand=onnewtab"/>
             <xul:menuseparator/>
             <xul:menuitem label="&reloadTab.label;" accesskey="&reloadTab.accesskey;"
-                          oncommand="var tabbrowser = this.parentNode.parentNode.parentNode.parentNode;
+                          oncommand="var tabbrowser = document.getBindingParent(this);
                                      tabbrowser.reloadTab(tabbrowser.mContextTab);"/>
             <xul:menuitem label="&reloadAllTabs.label;" accesskey="&reloadAllTabs.accesskey;"
                           tbattr="tabbrowser-multiple"
-                          oncommand="var tabbrowser = this.parentNode.parentNode.parentNode.parentNode;
+                          oncommand="var tabbrowser = document.getBindingParent(this);
                                      tabbrowser.reloadAllTabs(tabbrowser.mContextTab);"/>
             <xul:menuitem label="&closeOtherTabs.label;" accesskey="&closeOtherTabs.accesskey;"
                           tbattr="tabbrowser-multiple"
-                          oncommand="var tabbrowser = this.parentNode.parentNode.parentNode.parentNode;
+                          oncommand="var tabbrowser = document.getBindingParent(this);
                                      tabbrowser.removeAllTabsBut(tabbrowser.mContextTab);"/>
             <xul:menuseparator/>
             <xul:menuitem label="&closeTab.label;" accesskey="&closeTab.accesskey;"
                           tbattr="tabbrowser-multiple"
-                          oncommand="var tabbrowser = this.parentNode.parentNode.parentNode.parentNode;
+                          oncommand="var tabbrowser = document.getBindingParent(this);
                                      tabbrowser.removeTab(tabbrowser.mContextTab);"/>
           </xul:menupopup>
 
           <xul:tabs class="tabbrowser-tabs" flex="1"
                     anonid="tabcontainer"
                     setfocus="false"
-                    onclick="this.parentNode.parentNode.parentNode.onTabClick(event);"
+                    onclick="document.getBindingParent(this).onTabClick(event);"
                     xbl:inherits="onnewtab"
-                    ondblclick="this.parentNode.parentNode.parentNode.onTabBarDblClick(event);"
-                    onclosetab="var node = this.parentNode;
-                                while (node.localName != 'tabbrowser')
-                                  node = node.parentNode;
-                                node.removeCurrentTab();">
+                    ondblclick="document.getBindingParent(this).onTabBarDblClick(event);"
+                    onclosetab="document.getBindingParent(this).removeCurrentTab();">
             <xul:tab selected="true" validate="never"
-                     onerror="this.parentNode.parentNode.parentNode.parentNode.addToMissedIconCache(this.getAttribute('image'));
-                              this.parentNode.parentNode.parentNode.parentNode.setIcon(this, null);"
+                     onerror="document.getBindingParent(this).addToMissedIconCache(this.getAttribute('image'));
+                              document.getBindingParent(this).setIcon(this, null);"
                      maxwidth="250" width="0" minwidth="100" flex="100"
                      class="tabbrowser-tab" label="&untitledTab;" crop="end"/>
           </xul:tabs>
@@ -616,7 +613,7 @@
             if (docTitle) {
               newTitle += docElement.getAttribute("titlepreface");
               newTitle += docTitle;
-              if (navigator.userAgent.indexOf("Mac OS X") != -1)
+              if (navigator.oscpu.indexOf("Mac OS X") != -1)
                 modifier = "";
               if (modifier)
                 newTitle += sep;
@@ -922,16 +919,11 @@
         <parameter name="evt"/>
         <body>
           <![CDATA[
+            /* |this| is the <browser> */
             if (evt.target != this.contentDocument)
               return;
 
-            var i = 0;
-            for ( ; i < this.parentNode.parentNode.childNodes.length; i++) {
-              if (this.parentNode.parentNode.childNodes[i].firstChild == this)
-                break;
-            }
-
-            var tabBrowser = this.parentNode.parentNode.parentNode.parentNode;
+            var tabBrowser = document.getBindingParent(this);
 
             var tab = document.getAnonymousElementByAttribute(tabBrowser, "linkedpanel", this.parentNode.id);
             tabBrowser.setTabTitle(tab);
