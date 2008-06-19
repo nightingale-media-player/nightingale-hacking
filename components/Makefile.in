@@ -75,6 +75,7 @@ SUBDIRDEPS5 = library : sqlbuilder moz property metrics
 SUBDIRDEPS6 = remoteapi : library moz
 SUBDIRDEPS7 = contenthandling : playlistplayback
 SUBDIRDEPS8 = devices : library property
+SUBDIRDEPS9 = testharness : moz
 
 ifdef SB_ENABLE_STATIC
 SUBDIRS += static

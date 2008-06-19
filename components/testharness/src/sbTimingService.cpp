@@ -253,6 +253,7 @@ sbTimingService::StartPerfTimer(const nsAString & aTimerName)
   NS_ENSURE_TRUE(timer, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = timer->Init(aTimerName);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoLock lockTimers(mTimersLock);
 
