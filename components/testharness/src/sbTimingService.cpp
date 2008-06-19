@@ -123,8 +123,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbTimingService,
                               sbITimingService)
 
 sbTimingService::sbTimingService()
-: mActiveTimersLock(nsnull)
-, mLoggingLock(nsnull)
+: mLoggingLock(nsnull)
 , mLoggingEnabled(PR_TRUE)
 , mTimersLock(nsnull)
 , mResultsLock(nsnull)
@@ -136,9 +135,6 @@ sbTimingService::~sbTimingService()
 {
   MOZ_COUNT_DTOR(sbTimingService);
 
-  if(mActiveTimersLock) {
-    nsAutoLock::DestroyLock(mActiveTimersLock);
-  }
   if(mLoggingLock) {
     nsAutoLock::DestroyLock(mLoggingLock);
   }
@@ -150,7 +146,6 @@ sbTimingService::~sbTimingService()
   }
 
   mTimers.Clear();
-  mActiveTimers.Clear();
   mResults.Clear();
 }
 
@@ -184,10 +179,6 @@ sbTimingService::RegisterSelf(nsIComponentManager* aCompMgr,
 
 NS_METHOD
 sbTimingService::Init() {
-  mActiveTimersLock = 
-    nsAutoLock::NewLock("sbTimingService::mActiveTimersLock");
-  NS_ENSURE_TRUE(mActiveTimersLock, NS_ERROR_OUT_OF_MEMORY);
-
   mLoggingLock = nsAutoLock::NewLock("sbTimingService::mLoggingLock");
   NS_ENSURE_TRUE(mLoggingLock, NS_ERROR_OUT_OF_MEMORY);
 
@@ -197,10 +188,7 @@ sbTimingService::Init() {
   mResultsLock = nsAutoLock::NewLock("sbTimingService::mResultsLock");
   NS_ENSURE_TRUE(mResultsLock, NS_ERROR_OUT_OF_MEMORY);
 
-  PRBool success = mActiveTimers.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  success = mTimers.Init();
+  PRBool success = mTimers.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = mResults.Init();
@@ -215,12 +203,6 @@ sbTimingService::Init() {
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbTimingService::GetActivePerfTimers(nsIStringEnumerator * *aActivePerfTimers)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 NS_IMETHODIMP 
@@ -273,7 +255,6 @@ sbTimingService::StartPerfTimer(const nsAString & aTimerName)
   nsresult rv = timer->Init(aTimerName);
 
   nsAutoLock lockTimers(mTimersLock);
-  nsAutoLock lockActiveTimers(mActiveTimersLock);
 
   if(mTimers.Get(aTimerName, nsnull)) {
     return NS_ERROR_ALREADY_INITIALIZED;
@@ -281,9 +262,6 @@ sbTimingService::StartPerfTimer(const nsAString & aTimerName)
 
   PRBool success = mTimers.Put(aTimerName, timer);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  nsStringHashKey *hashKey = mActiveTimers.PutEntry(aTimerName);
-  NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -298,14 +276,12 @@ sbTimingService::StopPerfTimer(const nsAString & aTimerName, PRInt64 *_retval)
 
   {
     nsAutoLock lockTimers(mTimersLock);
-    nsAutoLock lockActiveTimers(mActiveTimersLock);
 
     if(!mTimers.Get(aTimerName, getter_AddRefs(timer))) {
       return NS_ERROR_NOT_INITIALIZED;
     }
 
     mTimers.Remove(aTimerName);
-    mActiveTimers.RemoveEntry(aTimerName);
   }
 
   sbTimingServiceTimer *rawTimer = 

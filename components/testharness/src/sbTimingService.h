@@ -88,9 +88,6 @@ public:
   nsresult FormatResultsToString(nsACString &aOutput);
 
 private:
-  PRLock *                      mActiveTimersLock;
-  nsTHashtable<nsStringHashKey> mActiveTimers;
-
   PRLock *          mLoggingLock;
   PRBool            mLoggingEnabled;
   nsCOMPtr<nsIFile> mLogFile;
