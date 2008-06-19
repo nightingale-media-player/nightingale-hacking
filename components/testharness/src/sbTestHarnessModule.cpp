@@ -31,26 +31,35 @@
 #include "sbLeakCanary.h"
 #include "sbTestHarnessConsoleListener.h"
 #include "sbTestHarnessCID.h"
+#include "sbTimingService.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTestHarnessConsoleListener)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbTimingService, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLeakCanary)
 
 static const nsModuleComponentInfo components[] =
 {
-	{
+  {
     "Test Harness Console Listener",
     SB_TESTHARNESSCONSOLELISTENER_CID,
     SB_TESTHARNESSCONSOLELISTENER_CONTRACTID,
     sbTestHarnessConsoleListenerConstructor,
     nsnull
-	},
-	{
+  },
+  {
+    SB_TIMINGSERVICE_DESCRIPTION,
+    SB_TIMINGSERVICE_CID,
+    SB_TIMINGSERVICE_CONTRACTID,
+    sbTimingServiceConstructor,
+    nsnull
+  },
+  {
     "Test Harness Leak Canary",
     SB_LEAKCANARY_CID,
     SB_LEAKCANARY_CONTRACTID,
     sbLeakCanaryConstructor,
     nsnull
-	}
+  }
 };
 
 NS_IMPL_NSGETMODULE(sbTestHarnessConsoleListenerModule, components)

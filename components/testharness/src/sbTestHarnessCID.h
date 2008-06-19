@@ -30,6 +30,20 @@
 #define SB_TESTHARNESSCONSOLELISTENER_CONTRACTID \
   "@songbirdnest.com/Songbird/TestHarness/ConsoleListener;1"
 
+#define SB_TIMINGSERVICE_DESCRIPTION    \
+  "Songbird Timing Service"
+#define SB_TIMINGSERVICE_CONTRACTID     \
+  "@songbirdnest.com/Songbird/TimingService;1"
+#define SB_TIMINGSERVICE_CLASSNAME      \
+  "Songbird Timing Service"
+#define SB_TIMINGSERVICE_CID            \
+{ /* 1f81bd64-a25a-4c25-b12e-9993add59177 */  \
+  0x1f81bd64,                                 \
+  0xa25a,                                     \
+  0x4c25,                                     \
+  { 0xb1, 0x2e, 0x99, 0x93, 0xad, 0xd5, 0x91, 0x77 } \
+}
+
 #define SB_LEAKCANARY_CID \
   { 0x14a72a82, 0x566c, 0x478d, \
   { 0xa7, 0xda, 0x2f, 0x32, 0xac, 0x7d, 0xa6, 0x26 } }

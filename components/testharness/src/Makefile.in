@@ -31,17 +31,21 @@ include $(DEPTH)/build/autodefs.mk
 
 target_name = sbTestHarness
 
-CPP_SRCS = sbTestHarnessModule.cpp \
-           sbLeakCanary.cpp \
+CPP_SRCS = sbLeakCanary.cpp \
+           sbTestHarnessModule.cpp \
            sbTestHarnessConsoleListener.cpp \
+           sbTimingService.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/testharness/public \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/locale \
                $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_IDL_DIR) \
+               $(topsrcdir)/components/moz/strings/src \
                $(NULL)
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
@@ -49,8 +53,10 @@ DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
+                            plds4 \
                             xpcom \
                             xpcomglue_s \
+                            $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
