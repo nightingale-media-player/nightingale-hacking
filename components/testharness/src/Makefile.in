@@ -56,8 +56,10 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4 \
                             xpcom \
                             xpcomglue_s \
-                            $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
                             $(NULL)
+                            
+DYNAMIC_LIB_STATIC_IMPORTS =  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+                              $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
