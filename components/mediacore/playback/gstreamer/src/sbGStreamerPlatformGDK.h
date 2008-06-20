@@ -36,10 +36,12 @@
 #include "sbIGstPlatformInterface.h"
 #include "sbGStreamerPlatformBase.h"
 
+#include <nsIBoxObject.h>
+
 class GDKPlatformInterface : public BasePlatformInterface
 {
 public:
-  GDKPlatformInterface (GdkWindow *win);
+  GDKPlatformInterface (nsIBoxObject *aVideoBox, GdkWindow *aWin);
 
   // Implementation of the rest of sbIGstPlatformInterface interface
   GstElement * CreateVideoSink ();
@@ -48,11 +50,15 @@ public:
 protected:
   // Implement virtual methods in BasePlatformInterface
   void MoveVideoWindow (int x, int y, int width, int height);
-  void SetXOverlayWindowID (GstXOverlay *xoverlay);
-  void FullScreen ();
+  void SetXOverlayWindowID (GstXOverlay *aXOverlay);
+  void FullScreen();
   void UnFullScreen();
 
 private:
+  // Callback for GDK events.
+  static GdkFilterReturn gdk_event_filter(GdkXEvent *gdk_xevent,
+        GdkEvent *event, gpointer data);
+
   // Set the cursor for the video window to an invisible cursor
   void SetInvisibleCursor();
   // Set the cursor for the video window to the default cursor

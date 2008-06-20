@@ -36,10 +36,11 @@
 class sbIGstPlatformInterface
 {
 public:
-  // Resize the available video window to the rectangle passed here.
+  // Resize the available video window to the current size/location of the
+  // video box object.
   // The actual video will often be smaller, in order to maintain the display
   // aspect ratio.
-  virtual void Resize (int x, int y, int width, int height) = 0;
+  virtual void ResizeToWindow () = 0;
 
   // Get the current fullscreen status (true for fullscreen, false for windowed)
   virtual bool GetFullscreen () = 0;

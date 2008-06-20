@@ -25,37 +25,37 @@
 */
 
 #include "sbGStreamerSimple.h"
-#include "nsIInterfaceRequestorUtils.h"
-
 #include <sbIGStreamerService.h>
-#include "nsIBaseWindow.h"
-#include "nsIBoxObject.h"
-#include "nsIBrowserDOMWindow.h"
-#include "nsIDocShellTreeItem.h"
-#include "nsIDocShellTreeOwner.h"
-#include "nsIDocument.h"
-#include "nsIDOMAbstractView.h"
-#include "nsIDOMChromeWindow.h"
-#include "nsIDOMDocument.h"
-#include "nsIDOMDocumentView.h"
-#include "nsIDOMEventTarget.h"
-#include "nsIDOMEvent.h"
-#include "nsIDOMEventListener.h"
-#include "nsIDOMWindow.h"
-#include "nsIDOMWindowInternal.h"
-#include "nsIDOMXULElement.h"
-#include "nsIIOService.h"
-#include "nsIPrefBranch.h"
-#include "nsIPromptService.h"
-#include "nsIProxyObjectManager.h"
-#include "nsIScriptGlobalObject.h"
-#include "nsIWebNavigation.h"
-#include "nsIWidget.h"
-#include "nsIWindowMediator.h"
-#include "nsServiceManagerUtils.h"
-#include "nsStringGlue.h"
-#include "nsThreadUtils.h"
-#include "prlog.h"
+
+#include <nsIInterfaceRequestorUtils.h>
+#include <nsIBaseWindow.h>
+#include <nsIBoxObject.h>
+#include <nsIBrowserDOMWindow.h>
+#include <nsIDocShellTreeItem.h>
+#include <nsIDocShellTreeOwner.h>
+#include <nsIDocument.h>
+#include <nsIDOMAbstractView.h>
+#include <nsIDOMChromeWindow.h>
+#include <nsIDOMDocument.h>
+#include <nsIDOMDocumentView.h>
+#include <nsIDOMEventTarget.h>
+#include <nsIDOMEvent.h>
+#include <nsIDOMEventListener.h>
+#include <nsIDOMWindow.h>
+#include <nsIDOMWindowInternal.h>
+#include <nsIDOMXULElement.h>
+#include <nsIIOService.h>
+#include <nsIPrefBranch.h>
+#include <nsIPromptService.h>
+#include <nsIProxyObjectManager.h>
+#include <nsIScriptGlobalObject.h>
+#include <nsIWebNavigation.h>
+#include <nsIWidget.h>
+#include <nsIWindowMediator.h>
+#include <nsServiceManagerUtils.h>
+#include <nsStringGlue.h>
+#include <nsThreadUtils.h>
+#include <prlog.h>
 
 #ifdef MOZ_WIDGET_GTK2
 #include "sbGStreamerPlatformGDK.h"
@@ -93,7 +93,7 @@ sbGStreamerSimple::syncHandler(GstBus* bus, GstMessage* message, gpointer data)
 
   switch (msg_type) {
     case GST_MESSAGE_ELEMENT:
-      if (gst_structure_has_name (message->structure, "prepare-xwindow-id"))
+      if (gst_structure_has_name(message->structure, "prepare-xwindow-id"))
       {
         gsts->PrepareVideoWindow(message);
       }
@@ -112,10 +112,11 @@ sbGStreamerSimple::asyncHandler(GstBus* bus, GstMessage* message, gpointer data)
 }
 
 /* static */ void
-sbGStreamerSimple::videoCapsSetHelper(GObject* obj, GParamSpec* pspec, sbGStreamerSimple* gsts)
+sbGStreamerSimple::videoCapsSetHelper(GObject* obj, GParamSpec* pspec, 
+        sbGStreamerSimple* gsts)
 {
   GstPad *pad = GST_PAD(obj);
-  GstCaps *caps = gst_pad_get_negotiated_caps (pad);
+  GstCaps *caps = gst_pad_get_negotiated_caps(pad);
 
   if (caps) {
     gsts->OnVideoCapsSet(caps);
@@ -124,36 +125,38 @@ sbGStreamerSimple::videoCapsSetHelper(GObject* obj, GParamSpec* pspec, sbGStream
 }
 
 /* static */ void
-sbGStreamerSimple::streamInfoSetHelper(GObject* obj, GParamSpec* pspec, sbGStreamerSimple* gsts)
+sbGStreamerSimple::streamInfoSetHelper(GObject* obj, GParamSpec* pspec, 
+        sbGStreamerSimple* gsts)
 {
   gsts->OnStreamInfoSet();
 }
 
 /* static */ void
-sbGStreamerSimple::currentVideoSetHelper(GObject* obj, GParamSpec* pspec, sbGStreamerSimple* gsts)
+sbGStreamerSimple::currentVideoSetHelper(GObject* obj, GParamSpec* pspec, 
+        sbGStreamerSimple* gsts)
 {
   int current_video;
   GstPad *pad;
 
   /* Which video stream has been activated? */
-  g_object_get (obj, "current-video", &current_video, NULL);
-  NS_ASSERTION (current_video >= 0, "current video is negative");
+  g_object_get(obj, "current-video", &current_video, NULL);
+  NS_ASSERTION(current_video >= 0, "current video is negative");
 
   /* Get the video pad for this stream number */
-  g_signal_emit_by_name (obj, "get-video-pad", current_video, &pad);
+  g_signal_emit_by_name(obj, "get-video-pad", current_video, &pad);
 
   if (pad) {
     GstCaps *caps;
-    caps = gst_pad_get_negotiated_caps (pad);
+    caps = gst_pad_get_negotiated_caps(pad);
     if (caps) {
-      gsts->OnVideoCapsSet (caps);
-      gst_caps_unref (caps);
+      gsts->OnVideoCapsSet(caps);
+      gst_caps_unref(caps);
     }
 
-    g_signal_connect (pad, "notify::caps", 
+    g_signal_connect(pad, "notify::caps", 
             G_CALLBACK(videoCapsSetHelper), gsts);
 
-    gst_object_unref (pad);
+    gst_object_unref(pad);
   }
 }
 
@@ -173,7 +176,6 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mBufferingPercent(0),
   mIsUsingPlaybin2(PR_FALSE),
   mLastVolume(0),
-  mVideoOutputElement(nsnull),
   mDomWindow(nsnull)
 {
   TRACE(("sbGStreamerSimple[0x%.8x] - Constructed", this));
@@ -181,6 +183,7 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mAlbum.Assign(EmptyString());
   mTitle.Assign(EmptyString());
   mGenre.Assign(EmptyString());
+
 }
 
 sbGStreamerSimple::~sbGStreamerSimple()
@@ -191,7 +194,6 @@ sbGStreamerSimple::~sbGStreamerSimple()
   // Do i need to close the video window?
 
   mDomWindow = nsnull;
-  mVideoOutputElement = nsnull;
 }
 
 NS_IMETHODIMP
@@ -212,9 +214,11 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
     return NS_OK;
   }
 
-  mVideoOutputElement = aVideoOutput;
+  // Get the box object representing the actual display area for the video.
+  nsCOMPtr<nsIBoxObject> boxObject;
+  rv = aVideoOutput->GetBoxObject(getter_AddRefs(boxObject));
+  NS_ENSURE_SUCCESS (rv, rv);
 
-  // Get a handle to the xul element's native window
   nsCOMPtr<nsIDOMDocument> domDocument;
   rv = aVideoOutput->GetOwnerDocument(getter_AddRefs(domDocument));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -256,11 +260,11 @@ sbGStreamerSimple::Init(nsIDOMXULElement* aVideoOutput)
 #if defined (MOZ_WIDGET_GTK2)
   GdkWindow *native = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
   LOG(("Found native window %x", native));
-  mPlatformInterface = new GDKPlatformInterface(native);
+  mPlatformInterface = new GDKPlatformInterface(boxObject, native);
 #elif defined (XP_WIN)
   HWND native = (HWND)widget->GetNativeData(NS_NATIVE_WIDGET);
   LOG(("Found native window %x", native));
-  mPlatformInterface = new Win32PlatformInterface(native);
+  mPlatformInterface = new Win32PlatformInterface(boxObject, native);
 #else
   LOG(("No video backend available for this platform"));
 #endif
@@ -320,7 +324,7 @@ sbGStreamerSimple::SetupPlaybin()
               G_CALLBACK(streamInfoSetHelper), this);
     }
 
-    gst_object_unref (bus);
+    gst_object_unref(bus);
 
     // TODO: Hook up other audio/video signals/properties, and provide an 
     // interface for selecting which one to play.
@@ -416,7 +420,7 @@ sbGStreamerSimple::GetFullscreen(PRBool* aFullscreen)
   TRACE(("sbGStreamerSimple[0x%.8x] - GetFullscreen", this));
 
   if (mPlatformInterface) {
-    bool fullscreen = mPlatformInterface->GetFullscreen ();
+    bool fullscreen = mPlatformInterface->GetFullscreen();
 
     *aFullscreen = fullscreen;
   }
@@ -433,7 +437,7 @@ sbGStreamerSimple::SetFullscreen(PRBool aFullscreen)
 {
   TRACE(("sbGStreamerSimple[0x%.8x] - SetFullscreen", this));
   if (mPlatformInterface) {
-    mPlatformInterface->SetFullscreen (aFullscreen);
+    mPlatformInterface->SetFullscreen(aFullscreen);
     // Make sure it's drawn in the right location after this.
     Resize();
 
@@ -730,7 +734,7 @@ sbGStreamerSimple::Stop()
   mIsAtEndOfStream = PR_TRUE;
   mIsPlayingVideo = PR_FALSE;
 
-  SetFullscreen (FALSE);
+  SetFullscreen(FALSE);
 
   mLastErrorCode = 0;
   mBufferingPercent = 0;
@@ -807,8 +811,6 @@ sbGStreamerSimple::HandleEvent(nsIDOMEvent* aEvent)
     target->RemoveEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
 
     mDomWindow = nsnull;
-    mVideoOutputElement = nsnull;
-
     mInitialized = PR_FALSE;
 
     return NS_OK;
@@ -824,25 +826,12 @@ sbGStreamerSimple::HandleEvent(nsIDOMEvent* aEvent)
 nsresult
 sbGStreamerSimple::Resize()
 {
-  if (!mVideoOutputElement || !mPlatformInterface) {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  if (mPlatformInterface) {
+    mPlatformInterface->ResizeToWindow();
+    return NS_OK;
   }
-
-  PRInt32 x, y, width, height;
-  nsCOMPtr<nsIBoxObject> boxObject;
-  nsresult rv = mVideoOutputElement->GetBoxObject(getter_AddRefs(boxObject));
-  NS_ENSURE_SUCCESS (rv, rv);
-
-  boxObject->GetX(&x);
-  boxObject->GetY(&y);
-  boxObject->GetWidth(&width);
-  boxObject->GetHeight(&height);
-
-  LOG(("Resize called: %d %d, %d %d", x, y, width, height));
-
-  mPlatformInterface->Resize (x, y, width, height);
-
-  return NS_OK;
+  else
+    return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 nsresult
@@ -1020,7 +1009,8 @@ void
 sbGStreamerSimple::PrepareVideoWindow(GstMessage *msg)
 {
   if (mPlatformInterface) {
-    // TODO: Figure out an appropriately generic interface here; is this sufficient?
+    // TODO: Figure out an appropriately generic interface here; is this 
+    // sufficient?
     mPlatformInterface->PrepareVideoWindow();
   }
 
@@ -1058,7 +1048,7 @@ void sbGStreamerSimple::HandleMessage (GstMessage *message)
   }
 }
 
-void sbGStreamerSimple::HandleErrorMessage (GstMessage *message)
+void sbGStreamerSimple::HandleErrorMessage(GstMessage *message)
 {
   GError *error = NULL;
   gchar *debug = NULL;
@@ -1069,7 +1059,7 @@ void sbGStreamerSimple::HandleErrorMessage (GstMessage *message)
   LOG(("Error message: %s [%s]", GST_STR_NULL (error->message), 
               GST_STR_NULL (debug)));
 
-  g_free (debug);
+  g_free(debug);
 
   mIsAtEndOfStream = PR_TRUE;
   mBufferingPercent = 0;
@@ -1097,7 +1087,7 @@ void sbGStreamerSimple::HandleErrorMessage (GstMessage *message)
   }
 }
 
-void sbGStreamerSimple::HandleWarningMessage (GstMessage *message)
+void sbGStreamerSimple::HandleWarningMessage(GstMessage *message)
 {
   GError *error = NULL;
   gchar *debug = NULL;
@@ -1113,7 +1103,7 @@ void sbGStreamerSimple::HandleWarningMessage (GstMessage *message)
   g_free (debug);
 }
 
-void sbGStreamerSimple::HandleEOSMessage (GstMessage *message)
+void sbGStreamerSimple::HandleEOSMessage(GstMessage *message)
 {
   mIsAtEndOfStream = PR_TRUE;
   mIsPlayingVideo = PR_FALSE;
@@ -1121,7 +1111,7 @@ void sbGStreamerSimple::HandleEOSMessage (GstMessage *message)
   SetFullscreen(PR_FALSE);
 }
 
-void sbGStreamerSimple::HandleStateChangeMessage (GstMessage *message)
+void sbGStreamerSimple::HandleStateChangeMessage(GstMessage *message)
 {
   GstState old_state, new_state;
   gchar *src_name;
@@ -1136,7 +1126,7 @@ void sbGStreamerSimple::HandleStateChangeMessage (GstMessage *message)
 }
 
 /* TODO: We should use more of the available tag types */
-void sbGStreamerSimple::HandleTagMessage (GstMessage *message)
+void sbGStreamerSimple::HandleTagMessage(GstMessage *message)
 {
   GstTagList *tag_list;
   gchar *value = NULL;
@@ -1170,10 +1160,10 @@ void sbGStreamerSimple::HandleTagMessage (GstMessage *message)
  * less than 100, and go to playing when we receive a 100% message,
  * so that we can re-buffer appropriately if we underrun
  */
-void sbGStreamerSimple::HandleBufferingMessage (GstMessage *message)
+void sbGStreamerSimple::HandleBufferingMessage(GstMessage *message)
 {
   gint percent = 0;
-  gst_structure_get_int (message->structure, "buffer-percent", &percent);
+  gst_structure_get_int(message->structure, "buffer-percent", &percent);
   mBufferingPercent = percent;
   TRACE(("Buffering (%u percent done)", percent));
 }
@@ -1197,10 +1187,10 @@ sbGStreamerSimple::OnStreamInfoSet()
     }
 
     g_object_get (info, "type", &type, NULL);
-    pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (info), "type");
-    val = g_enum_get_value (G_PARAM_SPEC_ENUM (pspec)->enum_class, type);
+    pspec = g_object_class_find_property(G_OBJECT_GET_CLASS (info), "type");
+    val = g_enum_get_value(G_PARAM_SPEC_ENUM (pspec)->enum_class, type);
 
-    if(!g_strcasecmp (val->value_nick, "video")) {
+    if(!g_strcasecmp(val->value_nick, "video")) {
       if (!videopad) {
         g_object_get(info, "object", &videopad, NULL);
       }
@@ -1219,8 +1209,8 @@ sbGStreamerSimple::OnStreamInfoSet()
     g_signal_connect(videopad, "notify::caps", 
             G_CALLBACK(videoCapsSetHelper), this);
   }
-  g_list_foreach (streaminfo, (GFunc) g_object_unref, NULL);
-  g_list_free (streaminfo);
+  g_list_foreach(streaminfo, (GFunc) g_object_unref, NULL);
+  g_list_free(streaminfo);
 }
 
 /* TODO: Add any neccessary locking; this is called from a streaming thread */
@@ -1248,7 +1238,7 @@ sbGStreamerSimple::OnVideoCapsSet(GstCaps *caps)
     if (mPlatformInterface) {
       int num = mVideoWidth * mPixelAspectRatioN;
       int denom = mVideoHeight * mPixelAspectRatioD;
-      mPlatformInterface->SetDisplayAspectRatio (num, denom);
+      mPlatformInterface->SetDisplayAspectRatio(num, denom);
     }
   }
 }

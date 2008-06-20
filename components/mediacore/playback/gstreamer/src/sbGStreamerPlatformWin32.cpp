@@ -28,8 +28,8 @@
 
 #include "sbGStreamerSimple.h"
 
-#include "prlog.h"
-#include "nsDebug.h"
+#include <prlog.h>
+#include <nsDebug.h>
 
 #ifdef PR_LOGGING
 extern PRLogModuleInfo* gGStreamerLog;
@@ -40,28 +40,51 @@ extern PRLogModuleInfo* gGStreamerLog;
 
 #define SB_VIDEOWINDOW_CLASSNAME L"SBGStreamerVideoWindow"
 
-Win32PlatformInterface::Win32PlatformInterface (HWND parent) : 
-    BasePlatformInterface(),
+// TODO: This is a temporary bit of "UI" to get out of fullscreen mode.
+// We'll do this properly at some point in the future.
+/* static */ LRESULT APIENTRY
+Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message, 
+        WPARAM wParam, LPARAM lParam)
+{
+  Win32PlatformInterface *platform = 
+      (Win32PlatformInterface *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+
+  switch (message) {
+    // If we're in full-screen mode, switch out on left-click
+    case WM_LBUTTONDOWN:
+      if (platform->mFullscreen) {
+        platform->SetFullscreen(false);
+        platform->ResizeToWindow();
+      }
+      break;
+  }
+
+  return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+Win32PlatformInterface::Win32PlatformInterface(nsIBoxObject *aVideoBox, 
+        HWND aParent) : 
+    BasePlatformInterface(aVideoBox),
     mWindow(NULL),
     mFullscreenWindow(NULL),
-    mParentWindow(NULL)
+    mParentWindow(aParent)
 {
   WNDCLASS WndClass;
 
-  ::ZeroMemory (&WndClass, sizeof (WNDCLASS));
+  ::ZeroMemory(&WndClass, sizeof (WNDCLASS));
 
   WndClass.style = CS_HREDRAW | CS_VREDRAW;
-  WndClass.hInstance = GetModuleHandle (NULL);
+  WndClass.hInstance = GetModuleHandle(NULL);
   WndClass.lpszClassName = SB_VIDEOWINDOW_CLASSNAME;
-  WndClass.hbrBackground = (HBRUSH) GetStockObject (BLACK_BRUSH);
+  WndClass.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
   WndClass.cbClsExtra = 0;
   WndClass.cbWndExtra = 0;
-  WndClass.lpfnWndProc = DefWindowProc;
-  WndClass.hCursor = ::LoadCursor (NULL, IDC_ARROW);
+  WndClass.lpfnWndProc = VideoWindowProc;
+  WndClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
  
-  ::RegisterClass (&WndClass);
+  ::RegisterClass(&WndClass);
 
-  mWindow = ::CreateWindowEx (
+  mWindow = ::CreateWindowEx(
           0,                                  // extended window style
           SB_VIDEOWINDOW_CLASSNAME,           // Class name
           L"Songbird GStreamer Video Window", // Window name
@@ -73,25 +96,25 @@ Win32PlatformInterface::Win32PlatformInterface (HWND parent) :
           WndClass.hInstance,                 // Module handle
           NULL);                              // Extra parameter
 
-  // Display our normal window 
-  ::ShowWindow (mWindow, SW_SHOWNORMAL);
+  ::SetWindowLongPtr(mWindow, GWLP_USERDATA, (LONG)this);
 
-  mParentWindow = parent;
+  // Display our normal window 
+  ::ShowWindow(mWindow, SW_SHOWNORMAL);
 }
 
 void
-Win32PlatformInterface::FullScreen ()
+Win32PlatformInterface::FullScreen()
 {
-  NS_ASSERTION (mFullscreenWindow == NULL, "Fullscreen window is not null");
+  NS_ASSERTION(mFullscreenWindow == NULL, "Fullscreen window is not null");
 
   HMONITOR monitor;
   MONITORINFO info;
 
-  monitor = ::MonitorFromWindow (mWindow, MONITOR_DEFAULTTOPRIMARY);
+  monitor = ::MonitorFromWindow(mWindow, MONITOR_DEFAULTTOPRIMARY);
   info.cbSize = sizeof (MONITORINFO);
-  ::GetMonitorInfo (monitor, &info);
+  ::GetMonitorInfo(monitor, &info);
 
-  mFullscreenWindow = ::CreateWindowEx (
+  mFullscreenWindow = ::CreateWindowEx(
     0,
     SB_VIDEOWINDOW_CLASSNAME,
     L"Songbird Fullscreen Video Window",
@@ -101,79 +124,80 @@ Win32PlatformInterface::FullScreen ()
     info.rcMonitor.right - info.rcMonitor.left,
     NULL, NULL, NULL, NULL);
 
-  ::SetParent (mWindow, mFullscreenWindow);
-  ::ShowWindow (mFullscreenWindow, SW_SHOWMAXIMIZED);
-  //::ShowWindow (mWindow, SW_SHOWMAXIMIZED);
+  ::SetWindowLongPtr(mWindow, GWLP_USERDATA, (LONG)this);
 
-  SetDisplayArea (info.rcMonitor.top, info.rcMonitor.left, 
+  ::SetParent(mWindow, mFullscreenWindow);
+  ::ShowWindow(mFullscreenWindow, SW_SHOWMAXIMIZED);
+
+  SetDisplayArea(info.rcMonitor.top, info.rcMonitor.left, 
         info.rcMonitor.bottom - info.rcMonitor.top, 
         info.rcMonitor.right - info.rcMonitor.left);
-  ResizeVideo ();
+  ResizeVideo();
 
-  ::ShowCursor (FALSE);
+  ::ShowCursor(FALSE);
 }
 
 void 
-Win32PlatformInterface::UnFullScreen ()
+Win32PlatformInterface::UnFullScreen()
 {
-  NS_ASSERTION (mFullscreenWindow, "Fullscreen window is null");
+  NS_ASSERTION(mFullscreenWindow, "Fullscreen window is null");
 
-  ::SetParent (mWindow, mParentWindow);
+  ::SetParent(mWindow, mParentWindow);
 
   // Our caller should call Resize() after this to make sure we get moved to
   // the correct location
-  ::ShowWindow (mWindow, SW_SHOWNORMAL);
+  ::ShowWindow(mWindow, SW_SHOWNORMAL);
   
-  ::DestroyWindow (mFullscreenWindow);
+  ::DestroyWindow(mFullscreenWindow);
   mFullscreenWindow = NULL;
 
-  ::ShowCursor (TRUE);
+  ::ShowCursor(TRUE);
 }
 
 
-void Win32PlatformInterface::MoveVideoWindow (int x, int y,
+void Win32PlatformInterface::MoveVideoWindow(int x, int y,
         int width, int height)
 {
-  ::SetWindowPos (mWindow, NULL, x, y, width, height, SWP_NOZORDER);
+  ::SetWindowPos(mWindow, NULL, x, y, width, height, SWP_NOZORDER);
 }
 
 
 GstElement *
-Win32PlatformInterface::CreateVideoSink ()
+Win32PlatformInterface::CreateVideoSink()
 {
-  mVideoSink = ::gst_element_factory_make ("dshowvideosink", NULL);
+  mVideoSink = ::gst_element_factory_make("dshowvideosink", NULL);
   if (!mVideoSink)
-    mVideoSink = ::gst_element_factory_make ("autovideosink", NULL);
+    mVideoSink = ::gst_element_factory_make("autovideosink", NULL);
 
   // Keep a reference to it.
   if (mVideoSink) 
-      gst_object_ref (mVideoSink);
+      gst_object_ref(mVideoSink);
 
   return mVideoSink;
 }
 
 GstElement *
-Win32PlatformInterface::CreateAudioSink ()
+Win32PlatformInterface::CreateAudioSink()
 {
   // Hopefully autoaudiosink will pick something appropriate...
   mAudioSink = gst_element_factory_make("autoaudiosink", "audio-sink");
 
   // Keep a reference to it.
   if (mAudioSink) 
-      gst_object_ref (mAudioSink);
+      gst_object_ref(mAudioSink);
 
   return mAudioSink;
 }
 
 void
-Win32PlatformInterface::SetXOverlayWindowID (GstXOverlay *xoverlay)
+Win32PlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
 {
   /* GstXOverlay is confusingly named - it's actually generic enough for windows
    * too, so the windows videosink implements it too.
    * So, we use the GstXOverlay interface to set the window handle here 
    */
-  gst_x_overlay_set_xwindow_id(xoverlay, (glong)mWindow);
-  LOG(("Set xoverlay %p to HWND %x\n", xoverlay, mWindow));
+  gst_x_overlay_set_xwindow_id(aXOverlay, (glong)mWindow);
+  LOG(("Set xoverlay %p to HWND %x\n", aXOverlay, mWindow));
 }
 
 

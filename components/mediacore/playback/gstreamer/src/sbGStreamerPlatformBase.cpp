@@ -26,8 +26,8 @@
 
 #include "sbGStreamerPlatformBase.h"
 
-#include "prlog.h"
-#include "nsDebug.h"
+#include <prlog.h>
+#include <nsDebug.h>
 
 #ifdef PR_LOGGING
 extern PRLogModuleInfo* gGStreamerLog;
@@ -36,7 +36,7 @@ extern PRLogModuleInfo* gGStreamerLog;
 #define TRACE(args) PR_LOG(gGStreamerLog, PR_LOG_DEBUG, args)
 #define LOG(args)   PR_LOG(gGStreamerLog, PR_LOG_WARN, args)
 
-BasePlatformInterface::BasePlatformInterface () : 
+BasePlatformInterface::BasePlatformInterface(nsIBoxObject *aVideoBox) : 
     sbIGstPlatformInterface(),
     mDisplayWidth(0),
     mDisplayHeight(0),
@@ -45,51 +45,62 @@ BasePlatformInterface::BasePlatformInterface () :
     mDARNum(1),
     mDARDenom(1),
     mFullscreen(false),
+    mVideoBox(aVideoBox),
     mVideoSink(NULL),
     mAudioSink(NULL)
 {
 }
 
-BasePlatformInterface::~BasePlatformInterface ()
+BasePlatformInterface::~BasePlatformInterface()
 {
   if (mVideoSink)
-    gst_object_unref (mVideoSink);
+    gst_object_unref(mVideoSink);
   if (mAudioSink)
-    gst_object_unref (mAudioSink);
+    gst_object_unref(mAudioSink);
 }
 
 bool
-BasePlatformInterface::GetFullscreen ()
+BasePlatformInterface::GetFullscreen()
 {
   return mFullscreen;
 }
 
 void
-BasePlatformInterface::SetFullscreen (bool fullscreen)
+BasePlatformInterface::SetFullscreen(bool aFullscreen)
 {
-  if (fullscreen && !mFullscreen) {
+  if (aFullscreen && !mFullscreen) {
     mFullscreen = true;
     FullScreen();
   }
-  else if (!fullscreen && mFullscreen) {
+  else if (!aFullscreen && mFullscreen) {
     mFullscreen = false;
     UnFullScreen();
+
+    // Make sure we're in the right place 
+    ResizeVideo();
   }
   // Otherwise, we're already in the right mode, so don't do anything.
 }
 
 void
-BasePlatformInterface::Resize (int x, int y, int width, int height)
+BasePlatformInterface::ResizeToWindow()
 {
+  // Only resize based on our XUL element if we're not in fullscreen mode.
   if (!mFullscreen) {
-    // Only resize based on our XUL element if we're not in fullscreen mode.
-    SetDisplayArea (x, y, width, height);
-    ResizeVideo ();
+    PRInt32 x, y, width, height;
+
+    mVideoBox->GetX(&x);
+    mVideoBox->GetY(&y);
+    mVideoBox->GetWidth(&width);
+    mVideoBox->GetHeight(&height);
+
+    SetDisplayArea(x, y, width, height);
+    ResizeVideo();
   }
 }
 
 void
-BasePlatformInterface::SetDisplayArea (int x, int y, int width, int height)
+BasePlatformInterface::SetDisplayArea(int x, int y, int width, int height)
 {
   mDisplayX = x;
   mDisplayY = y;
@@ -98,7 +109,7 @@ BasePlatformInterface::SetDisplayArea (int x, int y, int width, int height)
 }
 
 void
-BasePlatformInterface::ResizeVideo ()
+BasePlatformInterface::ResizeVideo()
 {
   LOG(("Resizing: %d, %d, %d, %d", mDisplayX, mDisplayY, 
               mDisplayWidth, mDisplayHeight));
@@ -126,27 +137,27 @@ BasePlatformInterface::ResizeVideo ()
     y = mDisplayY + (mDisplayHeight - height)/2;
   }
 
-  MoveVideoWindow (x, y, width, height);
+  MoveVideoWindow(x, y, width, height);
 }
 
 void
-BasePlatformInterface::SetDisplayAspectRatio (int numerator, int denominator)
+BasePlatformInterface::SetDisplayAspectRatio(int aNumerator, int aDenominator)
 {
-  mDARNum = numerator;
-  mDARDenom = denominator;
+  mDARNum = aNumerator;
+  mDARDenom = aDenominator;
 
   ResizeVideo();
 }
 
 void
-BasePlatformInterface::PrepareVideoWindow ()
+BasePlatformInterface::PrepareVideoWindow()
 {
   GstElement *element = NULL;
   GstXOverlay *xoverlay = NULL;
 
   if (GST_IS_BIN (mVideoSink)) {
     /* Get the actual implementing object from the bin */
-    element = gst_bin_get_by_interface (GST_BIN (mVideoSink),
+    element = gst_bin_get_by_interface(GST_BIN (mVideoSink),
             GST_TYPE_X_OVERLAY);
   }
   else {

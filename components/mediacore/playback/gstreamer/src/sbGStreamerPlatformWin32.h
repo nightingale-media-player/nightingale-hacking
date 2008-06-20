@@ -38,24 +38,27 @@
 class Win32PlatformInterface : public BasePlatformInterface
 {
 public:
-  Win32PlatformInterface (HWND win);
+  Win32PlatformInterface (nsIBoxObject *aVideoBox, HWND aWin);
 
   // Implement the rest of sbIGstPlatformInterface
-  GstElement * CreateVideoSink ();
-  GstElement * CreateAudioSink ();
+  GstElement * CreateVideoSink();
+  GstElement * CreateAudioSink();
 
 protected:
   // Implement virtual methods in BasePlatformInterface
-  void MoveVideoWindow (int x, int y, int width, int height);
-  void SetXOverlayWindowID (GstXOverlay *xoverlay);
-  void FullScreen ();
-  void UnFullScreen ();
+  void MoveVideoWindow(int x, int y, int width, int height);
+  void SetXOverlayWindowID(GstXOverlay *aXOverlay);
+  void FullScreen();
+  void UnFullScreen();
 
 private:
   HWND mWindow;           // The video window we're rendering into
   HWND mFullscreenWindow; // The fullscreen window we're parented to (when 
                           // in fullscreen mode)
   HWND mParentWindow;     // Our parent window in windowed mode.
+
+  static LRESULT APIENTRY VideoWindowProc(HWND hWnd, UINT message, 
+          WPARAM wParam, LPARAM lParam);
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_WIN32_H_

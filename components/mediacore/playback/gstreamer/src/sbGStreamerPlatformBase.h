@@ -27,6 +27,9 @@
 #ifndef _SB_GSTREAMER_PLATFORM_BASE_H_
 #define _SB_GSTREAMER_PLATFORM_BASE_H_
 
+#include <nsCOMPtr.h>
+#include <nsIBoxObject.h>
+
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
 
@@ -35,37 +38,37 @@
 class BasePlatformInterface : public sbIGstPlatformInterface
 {
 public:
-  BasePlatformInterface ();
+  BasePlatformInterface (nsIBoxObject *aVideoBox);
   virtual ~BasePlatformInterface ();
 
   // Implementation of (some parts of) the sbIGstPlatformInterface interface
   //
-  void Resize (int x, int y, int width, int height);
-  bool GetFullscreen ();
-  void SetFullscreen (bool fullscreen);
-  void SetDisplayAspectRatio (int numerator, int denominator);
+  void ResizeToWindow();
+  bool GetFullscreen();
+  void SetFullscreen(bool aFullscreen);
+  void SetDisplayAspectRatio(int aNumerator, int aDenominator);
   void PrepareVideoWindow();
 
 protected:
   // Set the display area available for rendering the video to
-  void SetDisplayArea (int x, int y, int width, int height);
+  void SetDisplayArea(int x, int y, int width, int height);
   // Resize the video to an appropriate (aspect-ratio preserving) subrectangle
   // of the currently set display area.
-  void ResizeVideo ();
+  void ResizeVideo();
 
   // Actually render the video window in this precise area, which has been
   // aspect-ratio corrected.
-  virtual void MoveVideoWindow (int x, int y, int width, int height) = 0;
+  virtual void MoveVideoWindow(int x, int y, int width, int height) = 0;
 
   // Set the window ID (as appropriate to the particular platform) on this
   // XOverlay object.
-  virtual void SetXOverlayWindowID (GstXOverlay *xoverlay) = 0;
+  virtual void SetXOverlayWindowID(GstXOverlay *aXOverlay) = 0;
 
   // Switch from windowed mode to full screen mode.
-  virtual void FullScreen () = 0;
+  virtual void FullScreen() = 0;
 
   // Set to windowed mode from full screen mode.
-  virtual void UnFullScreen () = 0;
+  virtual void UnFullScreen() = 0;
 
   int mDisplayWidth;  // Width of current display area
   int mDisplayHeight; // Height of current display area
@@ -76,6 +79,9 @@ protected:
   int mDARDenom;      // (numerator and denominator)
 
   bool mFullscreen;   // Are we currently in fullscreen mode?
+
+  nsCOMPtr<nsIBoxObject> mVideoBox; // The box object for the video display area
+
 
   GstElement *mVideoSink;        // The GStreamer video sink we created
   GstElement *mAudioSink;        // The GStreamer audio sink we created

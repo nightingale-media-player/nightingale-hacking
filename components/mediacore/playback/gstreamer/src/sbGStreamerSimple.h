@@ -27,18 +27,17 @@
 #ifndef _SB_GSTREAMER_SIMPLE_H_
 #define _SB_GSTREAMER_SIMPLE_H_
 
-#include "nsCOMPtr.h"
-#include "nsStringGlue.h"
-#include "nsIDOMEventListener.h"
-#include "nsIDOMWindow.h"
-#include "nsITimer.h"
-#include "nsComponentManagerUtils.h"
-#include "nsIStringBundle.h"
+#include <nsCOMPtr.h>
+#include <nsStringGlue.h>
+#include <nsIDOMEventListener.h>
+#include <nsIDOMWindow.h>
+#include <nsITimer.h>
+#include <nsComponentManagerUtils.h>
+#include <nsIStringBundle.h>
 
 #include <gst/gst.h>
 
 #include "sbIGstPlatformInterface.h"
-
 #include "sbIGStreamerSimple.h"
 
 class sbGStreamerSimple : public sbIGStreamerSimple,
@@ -57,13 +56,13 @@ private:
   ~sbGStreamerSimple();
 
   // Static helpers for C callbacks
-  static void syncHandler (GstBus *bus, GstMessage *message, gpointer data); 
-  static void asyncHandler (GstBus *bus, GstMessage *message, gpointer data);
-  static void videoCapsSetHelper (GObject *obj, GParamSpec *pspec, 
+  static void syncHandler(GstBus *bus, GstMessage *message, gpointer data); 
+  static void asyncHandler(GstBus *bus, GstMessage *message, gpointer data);
+  static void videoCapsSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerSimple *gsts);
-  static void streamInfoSetHelper (GObject *obj, GParamSpec *pspec, 
+  static void streamInfoSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerSimple *gsts);
-  static void currentVideoSetHelper (GObject *obj, GParamSpec *pspec, 
+  static void currentVideoSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerSimple *gsts);
 
   NS_HIDDEN_(nsresult) Resize();
@@ -118,7 +117,6 @@ private:
 
   double mLastVolume;
 
-  nsCOMPtr<nsIDOMXULElement> mVideoOutputElement;
   nsCOMPtr<nsIDOMWindow> mDomWindow;
 
   nsString  mArtist;

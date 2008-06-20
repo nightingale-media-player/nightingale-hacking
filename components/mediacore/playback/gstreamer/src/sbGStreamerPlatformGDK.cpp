@@ -26,8 +26,11 @@
 
 #include "sbGStreamerPlatformGDK.h"
 
-#include "prlog.h"
-#include "nsDebug.h"
+#include <gdk/gdkx.h>
+#include <X11/Xlib.h>
+
+#include <prlog.h>
+#include <nsDebug.h>
 
 #ifdef PR_LOGGING
 extern PRLogModuleInfo* gGStreamerLog;
@@ -36,10 +39,35 @@ extern PRLogModuleInfo* gGStreamerLog;
 #define TRACE(args) PR_LOG(gGStreamerLog, PR_LOG_DEBUG, args)
 #define LOG(args)   PR_LOG(gGStreamerLog, PR_LOG_WARN, args)
 
-GDKPlatformInterface::GDKPlatformInterface (GdkWindow *parent) : 
-    BasePlatformInterface(),
+// TODO: This is a temporary bit of "UI" to get out of fullscreen mode.
+// We'll do this properly at some point in the future.
+/* static */ GdkFilterReturn
+GDKPlatformInterface::gdk_event_filter(GdkXEvent *gdk_xevent, 
+        GdkEvent *event, gpointer data)
+{
+  GDKPlatformInterface *platform = (GDKPlatformInterface *)data;
+  XEvent *xevent = (XEvent *)gdk_xevent;
+
+  switch (xevent->type) {
+    case ButtonPress:
+    case ButtonRelease:
+      {
+        platform->SetFullscreen(false);
+        platform->ResizeToWindow();
+      }
+      break;
+    default:
+      break;
+  }
+
+  return GDK_FILTER_CONTINUE;
+}
+
+GDKPlatformInterface::GDKPlatformInterface(nsIBoxObject *aVideoBox, 
+        GdkWindow *aParent) : 
+    BasePlatformInterface(aVideoBox),
     mWindow(NULL),
-    mParentWindow(parent),
+    mParentWindow(aParent),
     mFullscreenWindow(NULL)
 {
   // Create the video window, initially with zero size.
@@ -60,13 +88,14 @@ GDKPlatformInterface::GDKPlatformInterface (GdkWindow *parent) :
 }
 
 void
-GDKPlatformInterface::FullScreen ()
+GDKPlatformInterface::FullScreen()
 {
   NS_ASSERTION (mFullscreenWindow == NULL, "Fullscreen window is non-null");
 
   GdkScreen *screen = NULL;
   gint screenWidth, screenHeight;
   GdkWindowAttr attributes;
+  XWindowAttributes xattrs;
 
   attributes.window_type = GDK_WINDOW_TOPLEVEL;
   attributes.x = 0;
@@ -83,6 +112,19 @@ GDKPlatformInterface::FullScreen ()
   gdk_window_reparent(mWindow, mFullscreenWindow, 0, 0);
   gdk_window_fullscreen(mFullscreenWindow);
 
+  // Start listening to button press events on this window and the fullscreen 
+  // window and register a gdk event filter to process them.
+  XGetWindowAttributes(GDK_DISPLAY (), GDK_WINDOW_XWINDOW (mWindow), &xattrs);
+  XSelectInput(GDK_DISPLAY (), GDK_WINDOW_XWINDOW (mWindow), 
+          xattrs.your_event_mask | ButtonPressMask);
+  gdk_window_add_filter(mWindow, gdk_event_filter, this);
+
+  XGetWindowAttributes(GDK_DISPLAY (), GDK_WINDOW_XWINDOW (mFullscreenWindow),
+          &xattrs);
+  XSelectInput(GDK_DISPLAY (), GDK_WINDOW_XWINDOW (mFullscreenWindow), 
+          xattrs.your_event_mask | ButtonPressMask);
+  gdk_window_add_filter(mFullscreenWindow, gdk_event_filter, this);
+
   // Get the default screen. This can be wrong, but GDK doesn't seem to properly
   // support multiple screens (?)
   screen = gdk_screen_get_default();
@@ -90,25 +132,22 @@ GDKPlatformInterface::FullScreen ()
   screenWidth = gdk_screen_get_width(screen);
   screenHeight = gdk_screen_get_height(screen);
 
-  SetDisplayArea (0, 0, screenWidth, screenHeight);
-  ResizeVideo ();
+  SetDisplayArea(0, 0, screenWidth, screenHeight);
+  ResizeVideo();
 
   /* Set the cursor invisible in full screen mode initially. */
   SetInvisibleCursor();
 
   // TODO: if the user moves the cursor, it should become visible.
-  // So, we need to get events for this window...
-  // Also, we should react to keyboard events in some appropriate way?
-
-  // TODO: No, this is wrong; this signal is on GtkWidget, not GdkWindow :-(
-  //mMotionHandlerId = g_signal_connect (G_OBJECT (mFullscreenWindow), 
-  //        "motion-notify-event", G_CALLBACK (motion-notify_cb), this);
 }
 
 void 
-GDKPlatformInterface::UnFullScreen ()
+GDKPlatformInterface::UnFullScreen()
 {
   NS_ASSERTION (mFullscreenWindow, "Fullscreen window is null");
+
+  gdk_window_remove_filter(mWindow, gdk_event_filter, this);
+  gdk_window_remove_filter(mFullscreenWindow, gdk_event_filter, this);
 
   gdk_window_unfullscreen(mWindow);
   gdk_window_reparent(mWindow, mParentWindow, 0, 0);
@@ -119,7 +158,7 @@ GDKPlatformInterface::UnFullScreen ()
 }
 
 void 
-GDKPlatformInterface::SetInvisibleCursor ()
+GDKPlatformInterface::SetInvisibleCursor()
 {
   guint32 data = 0;
   GdkPixmap* pixmap = gdk_bitmap_create_from_data(NULL, (gchar*)&data, 1, 1);
@@ -131,28 +170,32 @@ GDKPlatformInterface::SetInvisibleCursor ()
   gdk_pixmap_unref(pixmap);
 
   gdk_window_set_cursor(mWindow, cursor);
+  if (mFullscreenWindow)
+    gdk_window_set_cursor(mFullscreenWindow, cursor);
 
   gdk_cursor_unref(cursor);
 
 }
 
 void
-GDKPlatformInterface::SetDefaultCursor ()
+GDKPlatformInterface::SetDefaultCursor()
 {
   gdk_window_set_cursor(mWindow, NULL);
+  if (mFullscreenWindow)
+    gdk_window_set_cursor(mFullscreenWindow, NULL);
 }
 
 void 
-GDKPlatformInterface::MoveVideoWindow (int x, int y, int width, int height)
+GDKPlatformInterface::MoveVideoWindow(int x, int y, int width, int height)
 {
   gdk_window_move_resize(mWindow, x, y, width, height);
 }
 
 GstElement *
-GDKPlatformInterface::CreateVideoSink ()
+GDKPlatformInterface::CreateVideoSink()
 {
   if (mVideoSink) {
-    gst_object_unref (mVideoSink);
+    gst_object_unref(mVideoSink);
     mVideoSink = NULL;
   }
 
@@ -164,16 +207,16 @@ GDKPlatformInterface::CreateVideoSink ()
 
   // Keep a reference to it.
   if (mVideoSink) 
-      gst_object_ref (mVideoSink);
+      gst_object_ref(mVideoSink);
 
   return mVideoSink;
 }
 
 GstElement *
-GDKPlatformInterface::CreateAudioSink ()
+GDKPlatformInterface::CreateAudioSink()
 {
   if (mAudioSink) {
-    gst_object_unref (mAudioSink);
+    gst_object_unref(mAudioSink);
     mAudioSink = NULL;
   }
 
@@ -185,15 +228,15 @@ GDKPlatformInterface::CreateAudioSink ()
 
   // Keep a reference to it.
   if (mAudioSink) 
-      gst_object_ref (mAudioSink);
+      gst_object_ref(mAudioSink);
 
   return mAudioSink;
 }
 
-void GDKPlatformInterface::SetXOverlayWindowID (GstXOverlay *xoverlay)
+void GDKPlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
 {
   XID window = GDK_WINDOW_XWINDOW(mWindow);
-  gst_x_overlay_set_xwindow_id(xoverlay, window);
-  LOG(("Set xoverlay %d to windowid %d\n", xoverlay, window));
+  gst_x_overlay_set_xwindow_id(aXOverlay, window);
+  LOG(("Set xoverlay %d to windowid %d\n", aXOverlay, window));
 }
 

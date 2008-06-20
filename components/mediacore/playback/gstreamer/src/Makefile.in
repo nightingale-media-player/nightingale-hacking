@@ -14,7 +14,7 @@ CPP_SRCS = \
       sbGStreamerModule.cpp \
       sbGStreamerService.cpp \
       sbGStreamerSimple.cpp \
-	  sbGStreamerPlatformBase.cpp
+	  sbGStreamerPlatformBase.cpp \
       $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
@@ -97,6 +97,7 @@ DYNAMIC_LIB_IMPORT_PATHS = \
 ifdef MEDIA_CORE_GST_SYSTEM
   DYNAMIC_LIB_EXTRA_FLAGS = $(GSTREAMER_LIBS) \
                             $(GTK_LIBS) \
+                            -lX11 \
                             $(NULL)
 else
 
@@ -122,6 +123,7 @@ else
   else
     # everything else
     DYNAMIC_LIB_EXTRA_FLAGS += $(GTK_LIBS) \
+                               libX11 \
                                $(NULL)
   endif
 endif
