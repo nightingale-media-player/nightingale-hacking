@@ -232,6 +232,8 @@ function onPollScan()
       
       theProgress.removeAttribute( "mode" );
       document.documentElement.buttons = "accept";
+    } else {
+      theLabel.value = SBString("media_scan.findingdupes", "Removing duplicates...");
     }
   }
   else {
