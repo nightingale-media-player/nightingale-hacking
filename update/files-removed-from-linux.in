@@ -6,3 +6,4 @@
 ./xulrunner/res/fonts/mathfontMath1.properties
 ./xulrunner/res/fonts/mathfontMTExtra.properties
 ./xulrunner/res/fonts/mathfontMath2.properties
+./components/sbGStreamer.so
