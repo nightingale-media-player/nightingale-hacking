@@ -658,9 +658,40 @@
           var transArray = Components.classes["@mozilla.org/supports-array;1"].
               createInstance(Components.interfaces.nsISupportsArray);
           transArray.AppendElement(transferable);
-          this._dragService.invokeDragSession(event.target, transArray,
-              null, this._dragService.DRAGDROP_ACTION_COPY +
-              this._dragService.DRAGDROP_ACTION_MOVE);
+          
+          // Oh Lordy lordy, I'm so glad I could just steal this from 
+          // nsDragAndDrop.js instead of having to write it myself.
+          var region = null;
+          if (event.originalTarget.localName == "treechildren") {
+            // let's build the drag region
+            var tree = event.originalTarget.parentNode;
+            try {
+              region = Cc["@mozilla.org/gfx/region;1"]
+                        .createInstance(Ci.nsIScriptableRegion);
+              region.init();
+
+              var obo = tree.treeBoxObject;
+              var bo = obo.treeBody.boxObject;
+              var sel= obo.view.selection;
+
+              region.unionRect(bo.x, (obo.rowHeight * sel.currentIndex + bo.y),
+                               bo.width, obo.rowHeight);
+
+              //and finally, clip the result to be sure we don't spill over...
+              region.intersectRect(bo.x, bo.y, bo.width, bo.height);
+
+            } catch(ex) {
+              dump("Error while building selection region: " + ex + "\n");
+              region = null;
+            }
+          }
+          
+          this._dragService.invokeDragSessionWithImage(event.target, transArray,
+              region, this._dragService.DRAGDROP_ACTION_COPY +
+              this._dragService.DRAGDROP_ACTION_MOVE,
+              null, 0, 0,
+              event);
+          
           event.preventDefault();
         }
       ]]></handler>
