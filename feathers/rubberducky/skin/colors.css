@@ -638,6 +638,10 @@ tree
   border-right-color: #202220; /** Button Shadow */ 
 }
 
+.tree-scrollable-columns {
+  background-color: #313131;
+}
+
 treechildren::-moz-tree-row
 {
   border: 0px solid transparent !important;
@@ -713,6 +717,7 @@ listheader,
 tree treecol,
 .sb-displaypane-header
 {
+  min-width: 50px;
   background-color: #313131 !important;
   border-right: 1px solid #202220 !important; /** Button Shadow */
   border-top: 1px solid #474948; /** Rubber Highlight */

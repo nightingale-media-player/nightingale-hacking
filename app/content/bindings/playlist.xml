@@ -1230,13 +1230,13 @@
     var splitter = document.createElementNS(this._XUL_NS, "splitter");
     splitter.setAttribute("class", "tree-splitter");
     splitter.setAttribute("ordinal", ordinal - 1);
+    splitter.setAttribute("resizeafter", "grow");
     this._treecols.appendChild(splitter);
   }
 
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
   treecol.setAttribute("bind", propertyInfo.id);
-  treecol.setAttribute("label", propertyInfo.displayName);
-  treecol.setAttribute("flex", "1");
+  treecol.setAttribute("label", propertyInfo.displayName);  
   if (width) {
     treecol.setAttribute("width", width);
   }
