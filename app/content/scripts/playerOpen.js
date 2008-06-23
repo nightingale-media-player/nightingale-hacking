@@ -38,44 +38,53 @@ try
   function SBFileOpen( )
   {
     var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                           .getService(Components.interfaces.sbIPlaylistPlayback);
-    // Make a filepicker thingie
+                        .getService(Components.interfaces.sbIPlaylistPlayback);
+
+    // Make a filepicker thingie.
+    var nsIFilePicker = Components.interfaces.nsIFilePicker;
     var fp = Components.classes["@mozilla.org/filepicker;1"]
-            .createInstance(Components.interfaces.nsIFilePicker);
+            .createInstance(nsIFilePicker);
 
-    // get some text for the filepicker window
-    var sel = "Select";
-    try
-    {
-      sel = theSongbirdStrings.getString("faceplate.select");
-    } catch(e) {}
+    // Get some text for the filepicker window.
+    var sel = SBString("faceplate.select", "Select", theSongbirdStrings);
 
-    // initialize the filepicker with our text, a parent and the mode
-    fp.init(window, sel, Components.interfaces.nsIFilePicker.modeOpen);
+    // Initialize the filepicker with our text, a parent and the mode.
+    fp.init(window, sel, nsIFilePicker.modeOpen);
 
-    // Tell it what filters to be using
-    var mediafiles = "Media Files";
-    try
-    {
-      mediafiles = theSongbirdStrings.getString("open.mediafiles");
-    } catch(e) {}
+    var mediafiles = SBString("open.mediafiles", "Media Files", theSongbirdStrings);
 
     // ask the playback core for supported extensions
-    var files = "";
-    var eExtensions = PPS.getSupportedFileExtensions();
-    while (eExtensions.hasMore()) {
-      files += ( "*." + eExtensions.getNext() + "; ");
+    var ext;
+    var exts = new Array();
+    var extensions = PPS.getSupportedFileExtensions();
+    while (extensions.hasMore())
+    {
+      ext = extensions.getNext();
+      exts.push(ext);
     }
 
-    // add a filter to show only supported media files
-    fp.appendFilter(mediafiles, files);
-    
-    // add a filter to allow HTML files to be opened.
-    fp.appendFilters(Components.interfaces.nsIFilePicker.filterHTML);
+    // map ["mp3", "ogg"] to ["*.mp3", "*.ogg"]
+    var filters = exts.map(function(x){return "*." + x});
+
+    // Add a filter to show all files.
+    fp.appendFilters(nsIFilePicker.filterAll);
+    // Add a filter to show only HTML files.
+    fp.appendFilters(nsIFilePicker.filterHTML);
+    // Add a filter to show only supported media files.
+    fp.appendFilter(mediafiles, filters.join(";"));
+
+    // Add a new filter for each and every file extension.
+    var filetype;
+    for (i in exts)
+    {
+      filetype = SBFormattedString("open.filetype",
+                                   [exts[i].toUpperCase(), filters[i]]);
+      fp.appendFilter(filetype, filters[i]);
+    }
 
     // Show the filepicker
     var fp_status = fp.show();
-    if ( fp_status == Components.interfaces.nsIFilePicker.returnOK )
+    if ( fp_status == nsIFilePicker.returnOK )
     {
       // Use a nsIURI because it is safer and contains the scheme etc...
       var ios = Components.classes["@mozilla.org/network/io-service;1"]
@@ -212,44 +221,49 @@ try
         Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
                   .getService(Components.interfaces.sbIPlaylistReaderManager);
 
-      // Make a filepicker thingie
+      // Make a filepicker thingie.
       var nsIFilePicker = Components.interfaces.nsIFilePicker;
       var fp = Components.classes["@mozilla.org/filepicker;1"]
-              .createInstance(nsIFilePicker);
-      var sel = "Open Playlist";
-      try
-      {
-        sel = theSongbirdStrings.getString("faceplate.open.playlist");
-      } catch(e) {}
+                         .createInstance(nsIFilePicker);
+
+      // Get some text for the filepicker window.
+      var sel = SBString("faceplate.open.playlist", "Open Playlist",
+                         theSongbirdStrings);
+
+      // Initialize the filepicker with our text, a parent and the mode.
       fp.init(window, sel, nsIFilePicker.modeOpen);
 
-      // Tell it what filters to be using
-      var filterlist = "";
+      var playlistfiles = SBString("open.playlistfiles", "Playlist Files",
+                                   theSongbirdStrings);
+
+      var ext;
+      var exts = new Array();
       var extensionCount = new Object;
       var extensions = aPlaylistReaderManager.supportedFileExtensions(extensionCount);
 
-      var first = true;
-      for(var i = 0; i < extensions.length; i++)
+      for (i in extensions)
       {
-        var ext_list = extensions[i].split(",");
-        for(var j = 0; j < ext_list.length; j++)
-        {
-          var ext = ext_list[j];
-          if (ext.length > 0) {
-            if (!first) // skip the first one
-              filterlist += ";";
-            first = false;
-            filterlist += "*." + ext;
-          }
-        }
+        ext = extensions[i];
+        if (ext)
+          exts.push(ext);
       }
 
-      var playlistfiles = "Playlist Files";
-      try
+      // map ["m3u", "pls"] to ["*.m3u", "*.pls"]
+      var filters = exts.map(function(x){return "*." + x});
+
+      // Add a filter to show all files.
+      fp.appendFilters(nsIFilePicker.filterAll);
+      // Add a filter to show only supported playlist files.
+      fp.appendFilter(playlistfiles, filters.join(";"));
+
+      // Add a new filter for each and every file extension.
+      var filetype;
+      for (i in exts)
       {
-        playlistfiles = theSongbirdStrings.getString("open.playlistfiles");
-      } catch(e) {}
-      fp.appendFilter(playlistfiles, filterlist);
+        filetype = SBFormattedString("open.filetype", 
+                                     [exts[i].toUpperCase(), filters[i]]);
+        fp.appendFilter(filetype, filters[i]);
+      }
 
       // Show it
       var fp_status = fp.show();
@@ -452,13 +466,8 @@ function SBScanMedia( parentWindow )
   const nsIFilePicker = Components.interfaces.nsIFilePicker;
   const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
   var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
-  var welcome = "Welcome";
-  var scan = "Scan";
-  try
-  {
-    welcome = theSongbirdStrings.getString("faceplate.welcome");
-    scan = theSongbirdStrings.getString("faceplate.scan");
-  } catch(e) {}
+  var welcome = SBString("faceplate.welcome", "Welcome", theSongbirdStrings);
+  var scan = SBString("faceplate.scan", "Scan", theSongbirdStrings);
   if (getPlatformString() == "Darwin") {
     fp.init( window, scan, nsIFilePicker.modeGetFolder );
     var defaultDirectory =
