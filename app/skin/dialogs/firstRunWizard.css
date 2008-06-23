@@ -106,6 +106,10 @@ sb-first-run-import-media {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunImportMedia.xml#sb-first-run-import-media");
 }
 
+sb-first-run-locale {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunLocale.xml#sb-first-run-locale");
+}
+
 sb-first-run-welcome {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunWelcome.xml#sb-first-run-welcome");
 }

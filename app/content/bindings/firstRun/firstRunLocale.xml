@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * First run locale widget.
+   *
+   *   This widget checks the current locale and switches to a new locale if
+   * neccessary.  In addition, this widget will load and install the locale.
+   *   The target locale for first run is the user application locale.
+   *
+   * Properties:
+   *
+   *   localeSwitchRequired     True if a locale switch is required.
+   *   localeSwitchSucceeded    True if a locale switch completed successfully.
+   *   appRestartRequired       True if an application restart is required for
+   *                            a locale switch.
+   *
+   * Methods:
+   *
+   *   switchLocale             Switch to the target locale.
+   *   cancelSwitchLocale       Cancel any locale switch in progress.
+   *
+   * Events:
+   *
+   *   localeswitchcomplete     A locale switch has completed.  Check the
+   *                            localeSwitchSucceeded property to determine if
+   *                            the locale switch was successful.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-first-run-locale">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <xbl:content
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+      <vbox anonid="container_box" class="sb-first-run-eula-box">
+
+        <!-- XXXeps Placeholder label until UI design is provided. -->
+        <label value="Installing locale..."/>
+
+      </vbox>
+
+    </xbl:content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Widget properties.
+       -->
+
+      <!-- localeSwitchRequired -->
+      <field name="_localeSwitchRequired">false</field>
+      <property name="localeSwitchRequired" readonly="true">
+        <getter>
+          return this._localeSwitchRequired;
+        </getter>
+      </property>
+
+      <!-- localeSwitchSucceeded -->
+      <field name="_localeSwitchSucceeded">false</field>
+      <property name="localeSwitchSucceeded" readonly="true">
+        <getter>
+          return this._localeSwitchSucceeded;
+        </getter>
+      </property>
+
+      <!-- appRestartRequired -->
+      <field name="_appRestartRequired">false</field>
+      <property name="appRestartRequired" readonly="true">
+        <getter>
+          return this._appRestartRequired;
+        </getter>
+      </property>
+
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           Widget services object.
+       -->
+
+      <field name="_widgetSvc"/>
+
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new firstRunLocaleSvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        /* Finalize the widget services. */
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * Switch to the target locale.
+       -->
+
+      <method name="switchLocale"><body><![CDATA[
+        this._widgetSvc.switchLocale();
+      ]]></body></method>
+
+
+      <!--
+       * Cancel switch to the target locale.
+       -->
+
+      <method name="cancelSwitchLocale"><body><![CDATA[
+        this._widgetSvc.cancelSwitchLocale();
+      ]]></body></method>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the device control services.
+        if (typeof(firstRunLocaleSvc) == "undefined") {
+          var jsLoader;
+
+          // Get the Javascript sub-script loader services.
+          jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                               .getService
+                                  (Components.interfaces.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript("chrome://songbird/content/scripts/" +
+                                   "firstRun/firstRunLocale.js",
+                                 null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+  </binding> <!-- sb-first-run-locale -->
+
+</bindings>
+

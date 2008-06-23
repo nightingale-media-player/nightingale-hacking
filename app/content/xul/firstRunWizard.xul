@@ -50,6 +50,7 @@
   id="first_run_wizard"
   title="&first_run.title;"
   hidechrome="true"
+  onunload="firstRunWizard.doUnload();"
   onwizardfinish="firstRunWizard.doFinish();"
   onwizardcancel="firstRunWizard.doCancel();"
   onkeypress="firstRunWizard.doKeyPress(event);"
@@ -70,6 +71,18 @@
     <sb-first-run-eula id="first_run_eula"
                        class="first-run-wizard-page"
                        onacceptchanged="firstRunWizard.doEULAAcceptChanged();"/>
+  </wizardpage>
+
+  <!-- Locale page. -->
+  <wizardpage id="first_run_locale_page"
+              label="&first_run.title;"
+              hideback="true"
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-locale
+      id="first_run_locale"
+      class="first-run-wizard-page"
+      onpagehide="firstRunWizard.doPageHide(event);"
+      onlocaleswitchcomplete="firstRunWizard.doLocaleSwitchComplete();"/>
   </wizardpage>
 
   <!-- Welcome page. -->
@@ -117,6 +130,8 @@
           src="chrome://songbird/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/switchLocale.js"/>
 
   <!-- Import the first run wizard services. -->
   <script type="application/x-javascript"

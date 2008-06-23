@@ -41,16 +41,52 @@
 
 //------------------------------------------------------------------------------
 //
+// First-run wizard dialog defs.
+//
+//------------------------------------------------------------------------------
+
+// Component manager defs.
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
+
+
+//------------------------------------------------------------------------------
+//
 // First-run wizard dialog services.
 //
 //------------------------------------------------------------------------------
 
 var firstRunWizard = {
+  //
+  // First-run wizard fields.
+  //
+  //   _restartWizard           True if the wizard needs to be restarted.
+  //
+
+  _restartWizard: false,
+
+
   //----------------------------------------------------------------------------
   //
   // Event handling services.
   //
   //----------------------------------------------------------------------------
+
+  /**
+   * Handle an unload event.
+   */
+
+  doUnload: function firstRunWizard_doUnload() {
+    // Indicate that the wizard is complete and whether it should be restarted.
+    window.arguments[0].onComplete(this._restartWizard);
+  },
+
 
   /**
    * Handle a wizard finish event.
@@ -98,7 +134,7 @@ var firstRunWizard = {
    * \param aEvent              Key press event.
    */
 
-  doKeyPress: function firstRunWizard__doKeyPress(aEvent) {
+  doKeyPress: function firstRunWizard_doKeyPress(aEvent) {
     // Get the pressed key code.
     var keyCode = aEvent.keyCode;
 
@@ -114,6 +150,52 @@ var firstRunWizard = {
          (keyCode == Ci.nsIDOMKeyEvent.DOM_VK_RETURN))) {
       aEvent.stopPropagation();
       aEvent.preventDefault();
+    }
+  },
+
+
+  /**
+   * Handle the page hide event specified by aEvent.
+   *
+   * \param aEvent              Page hide event.
+   */
+
+  doPageHide: function firstRunWizard_doPageHide(aEvent) {
+    hiddenPage = aEvent.target;
+    switch (hiddenPage.id) {
+      case "first_run_locale" :
+        // Cancel any locale switch in progress.
+        hiddenPage.cancelSwitchLocale();
+        break;
+
+      default :
+        break;
+    }
+  },
+
+
+  /**
+   * Handle the locale switch complete event.
+   */
+
+  doLocaleSwitchComplete:
+    function firstRunWizard_doLocaleSwitchComplete() {
+    // Get the first run locale element.
+    var firstRunLocaleElem = document.getElementById("first_run_locale");
+
+    // If the locale switch succeeded, restart.  Otherwise, advance through the
+    // wizard without switching locales.
+    if (firstRunLocaleElem.localeSwitchSucceeded) {
+      if (firstRunLocaleElem.appRestartRequired) {
+        restartApp();
+      } else {
+        this._restartWizard = true;
+        document.defaultView.close();
+      }
+    } else {
+      var wizardElem = document.getElementById("first_run_wizard");
+      wizardElem.canAdvance = true;
+      wizardElem.advance();
     }
   },
 
@@ -151,6 +233,20 @@ var firstRunWizard = {
     if (currentPage.id == "first_run_eula_page") {
       var firstRunEULAElem = document.getElementById("first_run_eula");
       wizardElem.canAdvance = firstRunEULAElem.accepted;
+    }
+
+    // If showing the first-run locale page and a locale switch is required,
+    // switch the locale.  Otherwise, skip the first-run locale page.
+    if (currentPage.id == "first_run_locale_page") {
+      var firstRunLocaleElem = document.getElementById("first_run_locale");
+      if (firstRunLocaleElem.localeSwitchRequired) {
+        // Switch the locale, but don't allow advancing.
+        wizardElem.canAdvance = false;
+        firstRunLocaleElem.switchLocale();
+      } else {
+        wizardElem.canAdvance = true;
+        wizardElem.advance();
+      }
     }
 
     // Focus the next or finish buttons on all but the EULA page.
