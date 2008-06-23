@@ -1,0 +1,73 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface sbIMediaItem;
+interface sbIPropertyArray;
+
+/**
+ *
+ */
+[scriptable, uuid(2eef73e0-6383-46d8-ae1f-505a3424e259)]
+interface sbIPlaybackHistoryEntry : nsISupports
+{
+  /**
+   * \brief The item that was played.
+   */
+  readonly attribute sbIMediaItem item;
+  
+  /**
+   * \brief Timestamp indicating at which time the item started playing.
+   * \note The timestamp is a standard UNIX style timestamp.
+   */
+  readonly attribute long long timestamp;
+
+  /**
+   * \brief Duration of playback in microseconds.
+   * \note This is optional.
+   */
+  readonly attribute long long duration;
+
+  /**
+   * \brief Annotations to the entry. Annotations are properties.
+   * \sa sbIProperty
+   */
+  readonly attribute sbIPropertyArray annotations;
+
+  /**
+   * \brief Initialize a playback history entry
+   * \param aItem The media item for the entry.
+   * \param aTimestamp The time at which the item started playing.
+   * \param aDuration The duration of playback for the item for this entry.
+   * \param aAnnotations The annotations for the entry.
+   * \note The timestamp is a standard UNIX style timestamp.
+   */
+  void init(in sbIMediaItem aItem, 
+            in long long aTimestamp,
+            in long long aDuration,
+            in sbIPropertyArray aAnnotations);
+};
