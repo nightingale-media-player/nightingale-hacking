@@ -281,6 +281,15 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
   return NS_OK;
 } //Write
 
+NS_IMETHODIMP sbMetadataHandlerWMA::GetImageData(
+    PRInt32       aType,
+    nsACString&   aMimeType,
+    PRUint32*     aDataLen,
+    PRUint8**     aData)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 NS_IMETHODIMP
 sbMetadataHandlerWMA::GetProps(sbIMutablePropertyArray **_retval)
 {

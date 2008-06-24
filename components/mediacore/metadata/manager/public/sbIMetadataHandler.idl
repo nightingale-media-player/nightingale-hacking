@@ -45,6 +45,32 @@
 interface sbIMetadataHandler : nsISupports
 {
   /**
+   * \brief Constant for the type of image in the metadata, these are pulled
+   *        from the taglib/attachedpictureframe.h
+   */
+  const PRUint32 METADATA_IMAGE_TYPE_OTHER              = 0x00;
+  const PRUint32 METADATA_IMAGE_TYPE_FILEICON           = 0x01;
+  const PRUint32 METADATA_IMAGE_TYPE_OTHERFILEICON      = 0x02;
+  const PRUint32 METADATA_IMAGE_TYPE_FRONTCOVER         = 0x03;
+  const PRUint32 METADATA_IMAGE_TYPE_BACKCOVER          = 0x04;
+  const PRUint32 METADATA_IMAGE_TYPE_LEAFLETPAGE        = 0x05;
+  const PRUint32 METADATA_IMAGE_TYPE_MEDIA              = 0x06;
+  const PRUint32 METADATA_IMAGE_TYPE_LEADARTIST         = 0x07;
+  const PRUint32 METADATA_IMAGE_TYPE_ARTIST             = 0x08;
+  const PRUint32 METADATA_IMAGE_TYPE_CONDUCTOR          = 0x09;
+  const PRUint32 METADATA_IMAGE_TYPE_BAND               = 0x0A;
+  const PRUint32 METADATA_IMAGE_TYPE_COMPOSER           = 0x0B;
+  const PRUint32 METADATA_IMAGE_TYPE_LYRICIST           = 0x0C;
+  const PRUint32 METADATA_IMAGE_TYPE_RECORDINGLOCATION  = 0x0D;
+  const PRUint32 METADATA_IMAGE_TYPE_DURINGRECORDING    = 0x0E;
+  const PRUint32 METADATA_IMAGE_TYPE_DURINGPERFORMANCE  = 0x0F;
+  const PRUint32 METADATA_IMAGE_TYPE_MOVIESCREENCAPTURE = 0x10;
+  const PRUint32 METADATA_IMAGE_TYPE_COLOUREDFISH       = 0x11;
+  const PRUint32 METADATA_IMAGE_TYPE_ILLUSTRATION       = 0x12;
+  const PRUint32 METADATA_IMAGE_TYPE_BANDLOGO           = 0x13;
+  const PRUint32 METADATA_IMAGE_TYPE_PUBLISHERLOGO      = 0x14;
+  
+  /**
    * \brief An array of metadata properties
    *
    * Metadata properties read from or to be written to the file.
@@ -124,6 +150,28 @@ interface sbIMetadataHandler : nsISupports
    * \return -1 if operating asynchronously, otherwise the number of metadata values written (0 on failure)
    */
   PRInt32 write();
+
+  /**
+   * \brief Reads an image from the metadata if any are available
+   *
+   * \param aType const type for the image to retrieve (see METADATA_IMAGE_TYPE*)
+   * \param aMimeType Output parameter for mimetype of the image
+   * \param aDataLen Output parameter for length of image data
+   * \param aData Output parameter for binary data of image
+   *
+   * \example
+   *   var handler = metadataManager.getHandlerForMediaURL(localPathURI.spec);
+   *   var mimeTypeOutparam = {};
+   *   var outSize = {};
+   *   var imageData = handler.getImageData(Ci.sbIMetadataHandler
+   *                                         .METADATA_IMAGE_TYPE_OTHER,
+   *                                         mimeTypeOutparam,
+   *                                         outSize);
+   */
+  void getImageData(in PRInt32 aType,
+                    out AUTF8String aMimeType,
+                    out unsigned long aDataLen,
+                    [array,retval,size_is(aDataLen)] out octet aData);
 
   /**
    * \brief Be thou informst that one's sbIMetadataChannel has just received data

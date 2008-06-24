@@ -606,6 +606,154 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
     return result;
 }
 
+/**
+* \brief Extracts an image from the medatada
+*
+* This runs independent of the normal read operation so it will not fill in
+* the properties with the other tag information. It also operates on file scheme
+* uris only (local files), and works synchronously. Currently only id3 tags are
+* implemented.
+*
+* \param aType const type for the image to retrieve (see METADATA_IMAGE_TYPE*)
+* \param aMimeType Output parameter for mimetype of the image
+* \param aDataLen Output parameter for length of image data
+* \param aData Output parameter for binary data of image
+*/
+NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
+    PRInt32       aType,
+    nsACString&   aMimeType,
+    PRUint32*     aDataLen,
+    PRUint8**     aData)
+{
+  nsresult rv;
+
+  LOG(("sbMetadataHandlerTaglib::GetImageData\n"));
+
+  AcquireTaglibLock();
+  rv = GetImageDataInternal(aType, aMimeType, aDataLen, aData);
+  CompleteRead();
+  ReleaseTaglibLock(); 
+  return rv;
+}
+
+nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
+    PRInt32       aType,
+    nsACString&   aMimeType,
+    PRUint32*     aDataLen,
+    PRUint8**     aData)
+{
+  nsCOMPtr<nsIStandardURL>    pStandardURL;
+  nsCOMPtr<nsIURI>            pURI;
+  nsCOMPtr<nsIFile>           pFile;
+  nsCString                   urlSpec;
+  nsCString                   urlScheme;
+  nsCString                   fileExt;
+  nsresult                    result = NS_OK;
+
+  /* Get the channel URL info. */
+  result = mpChannel->GetURI(getter_AddRefs(pURI));
+  NS_ENSURE_SUCCESS(result, result);
+  pStandardURL = do_CreateInstance("@mozilla.org/network/standard-url;1",
+                                       &result);
+  NS_ENSURE_SUCCESS(result, result);
+  result = pStandardURL->Init(pStandardURL->URLTYPE_STANDARD,
+                              0,
+                              NS_LITERAL_CSTRING(""),
+                              nsnull,
+                              pURI);
+  NS_ENSURE_SUCCESS(result, result);
+  mpURL = do_QueryInterface(pStandardURL, &result);
+  NS_ENSURE_SUCCESS(result, result);
+  result = mpURL->GetSpec(urlSpec);
+  NS_ENSURE_SUCCESS(result, result);
+  result = mpURL->GetScheme(urlScheme);
+  NS_ENSURE_SUCCESS(result, result);
+  
+  if (urlScheme.EqualsLiteral("file"))
+  {
+    /* Get the metadata local file path. */
+    result = mpFileProtocolHandler->GetFileFromURLSpec
+                                                (urlSpec,
+                                                 getter_AddRefs(pFile));
+    NS_ENSURE_SUCCESS(result, result);
+  
+    result = pFile->GetPath(mMetadataPath);
+    NS_ENSURE_SUCCESS(result, result);
+  
+    /* Get the metadata file extension. */
+    result = mpURL->GetFileExtension(fileExt);
+    NS_ENSURE_SUCCESS(result, result);
+    ToLowerCase(fileExt);
+  
+    /* Read the metadata using the file extension */
+    /* to determine the metadata format.          */
+    if (fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
+      TagLib::ID3v2::FrameListMap     frameListMap;
+      nsAutoPtr<TagLib::MPEG::File>   pTagFile;
+  
+      /* Get the file path in the proper format for the platform. */
+#if XP_WIN
+      nsAString &filePath = mMetadataPath;
+#else
+      nsCAutoString filePath = NS_ConvertUTF16toUTF8(mMetadataPath);
+#endif
+  
+      /* Open and read the metadata file. */
+      pTagFile = new TagLib::MPEG::File();
+      if (!pTagFile)
+        return NS_ERROR_OUT_OF_MEMORY;
+      pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
+      pTagFile->open(filePath.BeginReading());
+      if (!pTagFile->isOpen()) {
+        result = NS_ERROR_FAILURE;
+      }
+      
+      if (!NS_FAILED(result)) {
+        pTagFile->read();
+        if (!pTagFile->isValid()) {
+          result = NS_ERROR_FILE_UNKNOWN_TYPE;
+        }
+      }
+  
+      if (!NS_FAILED(result)) {
+        /* Read the base file metadata. */
+        frameListMap = pTagFile->ID3v2Tag()->frameListMap();
+      
+        /*
+         * Extract the requested image from the metadata
+         */
+        TagLib::ID3v2::FrameList l= frameListMap["APIC"];
+        if (!l.isEmpty()){
+          TagLib::ID3v2::FrameList::ConstIterator it = l.begin();
+          TagLib::ID3v2::AttachedPictureFrame *p = 0l;
+          while(it != l.end()){
+            p =  static_cast<TagLib::ID3v2::AttachedPictureFrame *>(l.front());
+            if(p->type() == aType){
+              // Store the size of the data
+              *aDataLen = p->picture().size();
+              // Store the mimeType acquired from the image data
+              // these can sometimes be in a format like "PNG"
+              aMimeType.Assign(p->mimeType().toCString(), p->mimeType().length());
+              
+              // Copy the data over to a mozilla memory chunk so we don't break
+              // Things :).
+              *aData = static_cast<PRUint8 *>(nsMemory::Clone(p->picture().data(),
+                                                              *aDataLen));
+              break;
+            }
+            ++it;
+          }
+        }
+      }
+    } else {
+      result = NS_ERROR_FILE_UNKNOWN_TYPE;
+    }
+  } else {
+    result = NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  return result;
+}
 
 /**
 * \brief Be thou informst that one's sbIMetadataChannel has just received data

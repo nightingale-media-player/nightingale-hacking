@@ -79,6 +79,7 @@
 #include <nsIFileProtocolHandler.h>
 #include <nsIURL.h>
 #include <nsStringGlue.h>
+#include <nsMemory.h>
 
 /* Songbird imports. */
 #include <sbIMetadataHandler.h>
@@ -94,6 +95,7 @@
 #include <tag.h>
 #include <tfile.h>
 #include <xiphcomment.h>
+#include <attachedpictureframe.h>
 
 #include <nsAutoLock.h>
 
@@ -202,6 +204,12 @@ private:
         PRInt32                     *pReadCount);
     nsresult WriteInternal(
         PRInt32                     *pWriteCount);
+
+    nsresult GetImageDataInternal(
+        PRInt32                     aType,
+        nsACString                  &aMimeType,
+        PRUint32                    *aDataLen,
+        PRUint8                     **aData);
 
     /*
      * Private taglib metadata handler ID3v2 services.
