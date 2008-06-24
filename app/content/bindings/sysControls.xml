@@ -364,14 +364,12 @@
           <xul:sb-sys-title id="sb-sys-titlebar-osx-title-title" xbl:inherits="value"/> 
         </xul:hbox>
         <xul:hbox id="sb-sys-titlebar" align="center" flex="1">
-	  <xul:hbox id="sb-sys-titlebar-primary-content" flex="1">
-	    <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
-	    <xul:sb-sys-icon id="sb-sys-titlebar-icon" xbl:inherits="type"/>
-	    <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
-	    <children />
-	  </xul:hbox>
-	  <xul:spacer id="sb-sys-titlebar-spacer" flex="1"/>
-	  <xul:sb-feathers-toggle-button id="sb-sys-titlebar-feathers" sbid="feathers" popupanchor="bottomright" popupalign="topright" />
+          <xul:hbox id="sb-sys-titlebar-primary-content" flex="1">
+            <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
+            <xul:sb-sys-icon id="sb-sys-titlebar-icon" xbl:inherits="type"/>
+            <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
+            <children />
+          </xul:hbox>
           <xul:sb-sys-buttons id="sb-sys-titlebar-buttons" xbl:inherits="type"/>
         </xul:hbox>
       </xul:stack>
@@ -379,14 +377,9 @@
     <implementation>
       <constructor>
         <![CDATA[
-          var feathersButton = document.getAnonymousElementByAttribute(this, 'sbid', 'feathers');   
-    
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                         .getService(Components.interfaces.nsIPropertyBag2);
           if ( sysInfo.getProperty("name") == "Darwin" ) {
-            // Set an attribute on the feathers button so we can style it appropriately
-            feathersButton.setAttribute("mac", true);
-      
             // Hidden on Mac
             document.getAnonymousElementByAttribute(this, 'sbid', 'hide_mac').setAttribute( "hidden", "true" ); 
           } else {
@@ -394,20 +387,9 @@
             document.getAnonymousElementByAttribute(this, 'sbid', 'show_mac').setAttribute( "hidden", "true" );
 					}
       
-          // Hide feathers button when the OS titlebar is showing
-          this._feathersVisibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", feathersButton, "hidden", true );
-
           // Note:  Doesn't disappear in "plucked" mode -- essentially it becomes the Menubar.
         ]]>
       </constructor>
-      <destructor>
-        <![CDATA[
-          if (this._feathersVisibilityBinding) {
-            this._feathersVisibilityBinding.unbind();
-            this._feathersVisibilityBinding = null;
-          }
-        ]]>
-      </destructor>  
       <property name="title">
         <setter><![CDATA[
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
