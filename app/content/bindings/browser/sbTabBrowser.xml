@@ -119,8 +119,6 @@
         window.QueryInterface(Components.interfaces.nsIDOMChromeWindow).browserDOMWindow =
           new scope.BrowserDOMWindow(this);
 
-        this.setAttribute("onnewtab", "onNewTab()");
-
         this.webNavigation.sessionHistory =
             Components.classes["@mozilla.org/browser/shistory;1"]
             .createInstance(Components.interfaces.nsISHistory);
@@ -218,11 +216,6 @@
           this._prefsService.setCharPref(this._tabStatePref, val.toSource());
         ]]></setter>
       </property>
-      <method name="onNewTab">
-        <body><![CDATA[
-          this.loadURI(this.homePage, null, null, null, '_blank');
-        ]]></body>
-      </method>
       <method name="saveTabState">
         <body><![CDATA[
 
