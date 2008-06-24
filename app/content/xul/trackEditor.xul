@@ -340,7 +340,7 @@
     </tabpanels>
   </tabbox>
   
-  <hbox>
+  <hbox class="dialog-button-box">
     <button id="prev_button"
             label="&lt;"
             accesskey="p"
