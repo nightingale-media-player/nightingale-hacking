@@ -27,7 +27,7 @@
 /** 
 *******************************************************************************
 
-SONGBIRD WIDGET STYLES    
+SONGBIRD RUBBERDUCKY WIDGET STYLES    
 
 Imports styles for all the Songbird XBL widgets. 
 
@@ -44,6 +44,13 @@ chrome.manifest), or selectively import the style sheets into your feathers.
 For more information, see:
  *  http://developer.songbirdnest.com/ - The Songbird developer site
  *  http://developer.mozilla.org/en/docs/Chrome_Registration - Chrome.manifest details
+
+
+NOTE: This folder was forked from app/skin/bindings on 6/24/08
+in order to make way for a new default feather. We are
+copying the bindings CSS here so that feathers designed for
+version 0.6 and below will continue working.  Be aware
+that this folder is unlikely to be maintained going forward.
 
 *******************************************************************************
 */ 

@@ -40,7 +40,7 @@
   ======================================================================= */
   
   /* Import the basic XUL scrollbars look */    
-  @import url("chrome://songbird-global/skin/scrollbar-styles.css");
+  @import url("chrome://rubberducky-global/skin/scrollbar-styles.css");
 
 
   /* Import the current feathers */    

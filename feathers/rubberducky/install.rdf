@@ -17,8 +17,8 @@
       </Description>
     </em:targetApplication>
 
-    <em:name>Songbird Rubberducky (default)</em:name>
-    <em:description>Default Songbird theme</em:description>
+    <em:name>Songbird Rubberducky</em:name>
+    <em:description>A dark rubbery look</em:description>
     <em:locked>true</em:locked>
     <em:creator>Pioneers of the Inevitable</em:creator>
 
