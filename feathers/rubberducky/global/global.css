@@ -1,0 +1,76 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+
+/** 
+*******************************************************************************
+
+SONGBIRD GLOBAL SKIN
+
+A chrome://global/skin provider intended for use with feathers that fully
+style all XUL elements.
+
+The goal of the Songbird global is to provide a stable, minimal
+basis on which user feathers can build.  
+
+The global skin package contains images and style sheets loaded
+by the standard XUL elements, as well as global.css, which is
+loaded by all chrome windows.  
+
+Global is usually the platform specific provider included in
+XULRunner (Winstripe on Windows, and Pinstripe on Mac).  
+This makes things difficult when Songbird feathers want complete
+control over look and feel, and want the same appearance on
+all platforms.
+
+Feathers request the Songbird global through entries in their
+chrome.manifest configuration file.  See the Rubberducky chrome.manifest
+for an example.
+
+For more information, see http://developer.songbirdnest.com/
+
+*******************************************************************************
+*/ 
+
+
+
+/* all localizable skin settings shall live here */
+@import url("chrome://global/locale/intl.css");
+
+@import url("chrome://global/skin/formatting.css");
+
+@import url("chrome://global/skin/globalMisc.css");
+ 
+@import url("chrome://global/skin/songbirdBaseStyles.css");
+
+@import url("chrome://global/skin/bindings.css");
+
+
+
+/* Import the current feathers.  This allows feathers
+   to modify the look of XUL elements in all windows. */    
+@import url("chrome://songbird/skin/globalImport.css");
+

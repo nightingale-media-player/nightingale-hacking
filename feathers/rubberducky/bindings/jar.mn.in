@@ -1,0 +1,3 @@
+songbird.jar:
+% skin  songbird-bindings classic/1.0  %skin/bindings/
+@include_all_to skin/bindings/
