@@ -504,11 +504,6 @@
       <property name="currentOuterPlaylist" readonly="true"
                 onget="return this.mCurrentTab.outerPlaylist" />
 
-      <!-- control the visibility of the web playlist on the current tab -->
-      <property name="currentOuterPlaylistShowing"
-                onget="return this.mCurrentTab.outerPlaylistShowing"
-                onset="this.mCurrentTab.outerPlaylistShowing = val" />
-
       <!-- Get the sbIMediaPage for the current tab -->
       <property name="currentMediaPage" readonly="true"
                 onget="return this.mCurrentTab.mediaPage" />
@@ -525,19 +520,6 @@
       <property name="loading"
                 onget="return this._loading.boolValue"
                 onset="this._loading.boolValue = val;" />
-
-      <property name="showWebPlaylist">
-        <getter><![CDATA[
-          // the value is taken from the current tab
-          return this.currentOuterPlaylistShowing;
-        ]]></getter>
-        <setter><![CDATA[
-          // boolify the value that is passed in
-
-          var value = (val)?true:false;
-          this.currentOuterPlaylistShowing = value;
-        ]]></setter>
-      </property>
 
       <method name="getTabForView">
         <parameter name="aView" />
@@ -759,7 +741,7 @@
                   mediaList = this.mCurrentTab.outerPlaylist.mediaList;
                   if (mediaList) {
                     mediaList.clear();
-                    this.showWebPlaylist = true;
+                    this.selectedTab.outerPlaylistShowing = true;
                     var locationBar = document.getElementById("location_bar");
                     locationBar.uri = aURL;
                   }
