@@ -216,22 +216,27 @@
           var props = "";
           var text = null;
           var servicePaneNode = this.browser.selectedTab.servicePaneNode;
-          var val = this.browser.currentURI.spec;
+          var uri = this.browser.currentURI;
+          var spec = "about:blank";
           
-          if (this.browser.currentURI.schemeIs('chrome') && servicePaneNode) {
-            // Only cook the url for chrome urls
-            text = servicePaneNode.name;
-          
-            // Note that node.image only retrieves
-            // hardcoded image URLs.  If the image
-            // is supplied via CSS we need to use 
-            // the properties list instead.  
-            if (servicePaneNode.properties) {
-              props = servicePaneNode.properties;
+          if (uri) {
+            spec = uri.spec;
+            
+            if (uri.schemeIs('chrome') && servicePaneNode) {
+              // Only cook the url for chrome urls
+              text = servicePaneNode.name;
+            
+              // Note that node.image only retrieves
+              // hardcoded image URLs.  If the image
+              // is supplied via CSS we need to use 
+              // the properties list instead.  
+              if (servicePaneNode.properties) {
+                props = servicePaneNode.properties;
+              }
             }
           }
           
-          SBDataSetStringValue("browser.url.text", text?text:val);
+          SBDataSetStringValue("browser.url.text", text ? text : spec);
           
           if (servicePaneNode) {
            SBDataSetStringValue("browser.url.image", servicePaneNode.image ? servicePaneNode.image : '');

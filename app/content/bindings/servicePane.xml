@@ -403,11 +403,9 @@
       <method name="onBrowserTabChange">
         <body><![CDATA[
           try {
-            var url = this._browser.currentURI.spec;
-          
             // Is there a servicepane node for the current tab?
             var node = this._browser.selectedTab.servicePaneNode;
-            
+          
             if (node) {
               this.highlightNode(node);
             }

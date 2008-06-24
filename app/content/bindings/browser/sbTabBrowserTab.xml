@@ -57,10 +57,7 @@
         var self = this;
         window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
         this._hrefLoop = null;
-
-        this._progressFilter =
-          Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
-                    .createInstance(Components.interfaces.nsIWebProgress);
+          
         this._metrics =
           Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
                     .createInstance(Components.interfaces.sbIMetrics);
@@ -258,9 +255,14 @@
                                               true);
 
           // wire up the browser progress filter
-          this._progressFilter.addProgressListener(this, /* ignored */ null);
-          this.linkedBrowser.addProgressListener(this._progressFilter,
-            Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+          if (!this._progressFilter) {
+            this._progressFilter =
+              Components.classes["@mozilla.org/appshell/component/browser-status-filter;1"]
+                        .createInstance(Components.interfaces.nsIWebProgress);
+            this._progressFilter.addProgressListener(this, /* ignored */ null);
+            this.linkedBrowser.addProgressListener(this._progressFilter,
+              Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+          }
 
           nbox.appendChild(this._playlist);
 
