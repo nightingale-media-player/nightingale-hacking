@@ -63,6 +63,7 @@
     <li><a href="annotated.html"><span>Classes</span></a></li>
     <li class="current"><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <h1>components/devices/base/public/sbIDeviceLibrary.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
@@ -151,18 +152,35 @@
 <a name="l00202"></a>00202 
 <a name="l00203"></a>00203 };
 <a name="l00204"></a>00204  
-<a name="l00210"></a>00210 [scriptable, uuid(c18aec1c-3a10-4cc6-a192-1510056b9716)]
-<a name="l00211"></a><a class="code" href="interfacesb_i_device_library.html">00211</a> interface <a class="code" href="interfacesb_i_device_library.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceLibrary</a> : <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a>
-<a name="l00212"></a>00212 {
-<a name="l00217"></a>00217   <span class="keywordtype">void</span> initialize(in AString aLibraryId);
-<a name="l00218"></a>00218 
-<a name="l00222"></a>00222   <span class="keywordtype">void</span> finalize();
-<a name="l00223"></a>00223 
-<a name="l00228"></a>00228   <span class="keywordtype">void</span> addDeviceLibraryListener(in <a class="code" href="interfacesb_i_device_library_listener.html" title="Interface used to listen to changes to a device library.">sbIDeviceLibraryListener</a> aListener);
-<a name="l00229"></a>00229 
-<a name="l00234"></a>00234   <span class="keywordtype">void</span> removeDeviceLibraryListener(in <a class="code" href="interfacesb_i_device_library_listener.html" title="Interface used to listen to changes to a device library.">sbIDeviceLibraryListener</a> aListener);
-<a name="l00235"></a>00235 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:22 2008 for Songbird by&nbsp;
+<a name="l00209"></a>00209 [scriptable, uuid(c477d296-f25b-42a4-98bf-0b5d77dcebb4)]
+<a name="l00210"></a><a class="code" href="interfacesb_i_device_library.html">00210</a> interface <a class="code" href="interfacesb_i_device_library.html">sbIDeviceLibrary</a> : <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a>
+<a name="l00211"></a>00211 {
+<a name="l00216"></a>00216   <span class="keywordtype">void</span> initialize(in AString aLibraryId);
+<a name="l00217"></a>00217 
+<a name="l00221"></a>00221   <span class="keywordtype">void</span> finalize();
+<a name="l00222"></a>00222 
+<a name="l00229"></a><a class="code" href="interfacesb_i_device_library.html#a047257e829c05d773f2c10b82b66a7f">00229</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MGMT_TYPE_MANUAL            = 0;
+<a name="l00230"></a>00230 
+<a name="l00233"></a><a class="code" href="interfacesb_i_device_library.html#8531e1dd5dbbd169fcdac692ab57bcc8">00233</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MGMT_TYPE_SYNC_ALL          = 1;
+<a name="l00234"></a>00234 
+<a name="l00237"></a><a class="code" href="interfacesb_i_device_library.html#25967578b09f9f3835a28417bf319877">00237</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MGMT_TYPE_SYNC_PLAYLISTS    = 2;
+<a name="l00238"></a>00238 
+<a name="l00246"></a><a class="code" href="interfacesb_i_device_library.html#893527ce2a0a337ceeabd18540faa475">00246</a>   attribute PRUint32 mgmtType;
+<a name="l00247"></a>00247 
+<a name="l00256"></a>00256   nsIArray getSyncPlaylistList();
+<a name="l00257"></a>00257 
+<a name="l00266"></a>00266   <span class="keywordtype">void</span> setSyncPlaylistList(in nsIArray aPlaylistList);
+<a name="l00267"></a>00267 
+<a name="l00275"></a>00275   <span class="keywordtype">void</span> addToSyncPlaylistList(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aPlaylist);
+<a name="l00276"></a>00276   
+<a name="l00284"></a>00284   <span class="keywordtype">void</span> sync();
+<a name="l00285"></a>00285 
+<a name="l00286"></a>00286 
+<a name="l00291"></a>00291   <span class="keywordtype">void</span> addDeviceLibraryListener(in <a class="code" href="interfacesb_i_device_library_listener.html" title="Interface used to listen to changes to a device library.">sbIDeviceLibraryListener</a> aListener);
+<a name="l00292"></a>00292 
+<a name="l00297"></a>00297   <span class="keywordtype">void</span> removeDeviceLibraryListener(in <a class="code" href="interfacesb_i_device_library_listener.html" title="Interface used to listen to changes to a device library.">sbIDeviceLibraryListener</a> aListener);
+<a name="l00298"></a>00298 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:21 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

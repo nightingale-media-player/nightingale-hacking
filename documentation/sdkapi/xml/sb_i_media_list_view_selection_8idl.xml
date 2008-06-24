@@ -4,13 +4,13 @@
     <compoundname>sbIMediaListViewSelection.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="266">
+      <node id="298">
         <label>components/library/base/public/sbIMediaListViewSelection.idl</label>
         <link refid="sbIMediaListViewSelection.idl"/>
-        <childnode refid="267" relation="include">
+        <childnode refid="299" relation="include">
         </childnode>
       </node>
-      <node id="267">
+      <node id="299">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -96,6 +96,6 @@
 <codeline lineno="158" refid="interfacesb_i_media_list_view_selection_12bb3b38fee48e8de18e7c9592aad5481" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>selectionNotificationsSuppressed;</highlight></codeline>
 <codeline lineno="159"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/library/base/public/sbIMediaListViewSelection.idl"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl"/>
   </compounddef>
 </doxygen>

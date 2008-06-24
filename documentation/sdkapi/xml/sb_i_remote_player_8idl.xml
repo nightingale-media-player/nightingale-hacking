@@ -4,13 +4,13 @@
     <compoundname>sbIRemotePlayer.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="448">
+      <node id="502">
         <label>components/remoteapi/public/sbIRemotePlayer.idl</label>
         <link refid="sbIRemotePlayer.idl"/>
-        <childnode refid="449" relation="include">
+        <childnode refid="503" relation="include">
         </childnode>
       </node>
-      <node id="449">
+      <node id="503">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -484,7 +484,7 @@
 <codeline lineno="559"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>mediaItem<sp/>=<sp/>library.createMediaItem(&quot;http://path/to/item.mp3&quot;);</highlight></codeline>
 <codeline lineno="560"><highlight class="comment"></highlight></codeline>
 <codeline lineno="561"><highlight class="comment"><sp/><sp/><sp/><sp/>//Create<sp/>medialist<sp/>to<sp/>download.</highlight></codeline>
-<codeline lineno="562"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>mediaList<sp/>=<sp/>library.createMediaList(&quot;simple&quot;);</highlight></codeline>
+<codeline lineno="562"><highlight class="comment"><sp/><sp/><sp/><sp/>var<sp/>mediaList<sp/>=<sp/>library.createSimpleMediaList(&quot;Name<sp/>of<sp/>List&quot;);</highlight></codeline>
 <codeline lineno="563"><highlight class="comment"></highlight></codeline>
 <codeline lineno="564"><highlight class="comment"><sp/><sp/><sp/><sp/>//Add<sp/>item<sp/>to<sp/>medialist.</highlight></codeline>
 <codeline lineno="565"><highlight class="comment"><sp/><sp/><sp/><sp/>mediaList.add(mediaItem);</highlight></codeline>
@@ -1238,6 +1238,6 @@
 <codeline lineno="1356"><highlight class="normal"></highlight></codeline>
 <codeline lineno="1357"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemotePlayer.idl"/>
+    <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl"/>
   </compounddef>
 </doxygen>

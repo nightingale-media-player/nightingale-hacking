@@ -49,7 +49,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediapages/public/sbIMediaPageManager.idl" line="50"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="50"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_page_manager_1ee5875014d322d175a339af793dc7470" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -74,7 +74,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediapages/public/sbIMediaPageManager.idl" line="57"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="57"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_page_manager_15869ba37f805051bbf09ccc5f7f83533" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
@@ -101,7 +101,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediapages/public/sbIMediaPageManager.idl" line="66"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="66"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_page_manager_17b5bf3bf48c088d0f6a618ec326548c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_media_page_info" kindref="compound">sbIMediaPageInfo</ref></type>
@@ -126,7 +126,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediapages/public/sbIMediaPageManager.idl" line="86"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="86"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_page_manager_19ec7b0a91b3a5c7fafa3466cd1e693a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -162,14 +162,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediapages/public/sbIMediaPageManager.idl" line="94"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="94"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>The medialist page manager, used to register, unregister, enumerate, set and retrieve page/medialists associations. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/components/mediapages/public/sbIMediaPageManager.idl" line="41" bodyfile="z:/projects/songbird/components/mediapages/public/sbIMediaPageManager.idl" bodystart="40" bodyend="95"/>
+    <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="41" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="40" bodyend="95"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_page_manager_15869ba37f805051bbf09ccc5f7f83533" prot="public" virt="non-virtual"><scope>sbIMediaPageManager</scope><name>getAvailablePages</name></member>
       <member refid="interfacesb_i_media_page_manager_17b5bf3bf48c088d0f6a618ec326548c2" prot="public" virt="non-virtual"><scope>sbIMediaPageManager</scope><name>getPage</name></member>

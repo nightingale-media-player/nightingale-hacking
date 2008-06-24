@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -104,6 +105,10 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list.html#bb70c99d074eeaa0d17b2042824bf202">enumerateItemsByProperties</a> (in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> aProperties, in <a class="el" href="interfacesb_i_media_list_enumeration_listener.html">sbIMediaListEnumerationListener</a> aEnumerationListener,[optional] in unsigned short aEnumerationType)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Enumerate the media items that match a list of property IDs and values.  <a href="#bb70c99d074eeaa0d17b2042824bf202"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list.html#4937729ad5c31e326b306c3b9d28811a">getItemsByProperty</a> (in AString aPropertyID, in AString aPropertyValue)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list.html#b9d616412cdb0df6c7e1c793f8bd6e78">getItemsByProperties</a> (in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> aProperties)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list.html#3cc0eed8d4c3ac71ba2d805438c4adf6">indexOf</a> (in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> aMediaItem,[optional] in unsigned long aStartFrom)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the first index of a media item in the list.  <a href="#3cc0eed8d4c3ac71ba2d805438c4adf6"></a><br></td></tr>
@@ -393,6 +398,80 @@ Enumerate the media items that match a list of property IDs and values.
     <tr><td valign="top"></td><td valign="top"><em>aProperties</em>&nbsp;</td><td>- A list of property ID/value pairs. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aEnumerationListener</em>&nbsp;</td><td>- The enumeration listener. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>[optional]</em>&nbsp;</td><td>aEnumerationType - One of the ENUMERATIONTYPE values above. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="4937729ad5c31e326b306c3b9d28811a"></a><!-- doxytag: member="sbIMediaList::getItemsByProperty" ref="4937729ad5c31e326b306c3b9d28811a" args="(in AString aPropertyID, in AString aPropertyValue)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nsIArray sbIMediaList::getItemsByProperty           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aPropertyID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aPropertyValue</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get all items that have a certain property set to the specified value.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aPropertyID</em>&nbsp;</td><td>The property id. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aPropertyValue</em>&nbsp;</td><td>The property value. </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>An array of <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> elements. </dd></dl>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_AVAILABLE</em>&nbsp;</td><td>when no items match the criteria. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="b9d616412cdb0df6c7e1c793f8bd6e78"></a><!-- doxytag: member="sbIMediaList::getItemsByProperties" ref="b9d616412cdb0df6c7e1c793f8bd6e78" args="(in sbIPropertyArray aProperties)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nsIArray sbIMediaList::getItemsByProperties           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a>&nbsp;</td>
+          <td class="paramname"> <em>aProperties</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get all items that have a all properties set to the values specified.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aProperties</em>&nbsp;</td><td>The property array containing property key/value pairs. </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>An array of <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> elements. </dd></dl>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_AVAILABLE</em>&nbsp;</td><td>when no items match the criteria. </td></tr>
   </table>
 </dl>
 
@@ -843,7 +922,7 @@ Definition at line <a class="el" href="sb_i_media_list_8idl-source.html#l00139">
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_media_list_8idl-source.html">sbIMediaList.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:26 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:26 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

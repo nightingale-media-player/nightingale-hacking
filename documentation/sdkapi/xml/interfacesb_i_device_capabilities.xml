@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="90" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="90" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="90" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="90" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1db96af2563c0c7ff017ae379db1bb93b" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="91" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="91" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="91" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="91" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1e6dc5822d32abf01f9a54d45a53b9972" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="92" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="92" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="92" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="92" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1b71d156f1786e79a7fd3d9fa4189bce1" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="93" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="93" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="93" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="93" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_17048b66215ac2465b3981f373fbed783" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -72,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="94" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="94" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="94" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="94" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1cc62135a3ef12c7dbb5030b2507f6097" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -86,7 +86,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="95" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="95" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="95" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="95" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1e410779678c7eb44936af821c5b68369" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="96" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="96" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="96" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="96" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1a001147360de4e0db463f18f6e1a49a1" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -114,7 +114,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="97" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="97" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="97" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="97" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1264a755317ef2988c10f31951e8b575c" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -128,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="102" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="102" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="102" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="102" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1fcf744ed74e6e3f153c7224d866afb5a" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -142,7 +142,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="115" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="115" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="115" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="115" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1d50c6c34efa315316df71282618495ed" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -156,7 +156,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="116" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="116" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="116" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="116" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1552bbe81c7dbac935953fe65cab1b742" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -170,7 +170,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="117" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="117" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="117" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="117" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_139111b3bb501e0f9418dded121ec6048" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -184,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="118" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="118" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="118" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="118" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1715b0a5b47395dc8b2475a08cf959745" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -198,7 +198,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="119" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="119" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="119" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="119" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_143a55b41f0de584e454e2e144a4c731c" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -212,7 +212,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="120" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="120" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="120" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="120" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_11528ffc998bbb5c07d2e3501bb468074" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -226,7 +226,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="121" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="121" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="121" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="121" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1a295b2493363335748270a9925480eb2" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -240,7 +240,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="122" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="122" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="122" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="122" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_capabilities_1a7e8d6f144bfb21342b20f275f5dce6f" prot="public" static="no" mutable="no">
         <type>const PRUint32</type>
@@ -254,7 +254,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="127" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="127" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="127" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="127" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -293,7 +293,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="48"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="48"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_capabilities_1aabbda5466a5586827cace5706350fd9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -330,7 +330,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="57"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="57"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_capabilities_1e974724d380b6fa462d0786da3c22604" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -378,7 +378,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="67"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="67"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_capabilities_19e4ff93c47203ce86544167667a18bfe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -426,7 +426,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="77"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="77"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_capabilities_16d26ef734b6a0e5efbcad762524b8f87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -439,7 +439,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="83"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="83"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_capabilities_152d636956f340d8f10459f7673b9a834" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -461,7 +461,7 @@
 <para>An array of nsISupportsPRUint32 values defined above. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="110"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="110"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_capabilities_105e367726283198718a583e3b58685ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -487,12 +487,12 @@
 <para>An array of nsISupportsPRUint32 values defined above. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="135"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="135"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_device_capabilities_180b0ef86f83282c8e556dd55adf3077c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_device_capabilities_1a612ac3ce3075022e17b64c3f4aeaad9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIDeviceCapabilities::getSupportedFormats</definition>
-        <argsstring>(in PRUint32 aContentType, out unsigned long aArrayCount,[retval, array, size_is(aArrayCount)] out string aSuportedFormats)</argsstring>
+        <argsstring>(in PRUint32 aContentType, out unsigned long aArrayCount,[retval, array, size_is(aArrayCount)] out string aSupportedFormats)</argsstring>
         <name>getSupportedFormats</name>
         <param>
           <type>in PRUint32</type>
@@ -505,7 +505,7 @@
         <param>
           <attributes>[retval, array, size_is(aArrayCount)]</attributes>
           <type>out string</type>
-          <declname>aSuportedFormats</declname>
+          <declname>aSupportedFormats</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -513,7 +513,7 @@
 <para>Returns an array of <ref refid="interfacesb_i_content_type_format" kindref="compound">sbIContentTypeFormat</ref> objects. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="143"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="143"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_capabilities_148f39c26a7c927218ab3323d42fd31cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -535,7 +535,7 @@
 <para>An array of nsISupportsPRUint32 values defined in <ref refid="sb_i_device_event_8idl-source" kindref="compound">sbIDeviceEvent.idl</ref> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="150"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="150"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -543,7 +543,7 @@
     <detaileddescription>
 <para><simplesect kind="note"><para>Implementations of this interface must be threadsafe. </para></simplesect>
 </para>    </detaileddescription>
-    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" line="39" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="38" bodyend="151"/>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="39" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="38" bodyend="151"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_capabilities_1e974724d380b6fa462d0786da3c22604" prot="public" virt="non-virtual"><scope>sbIDeviceCapabilities</scope><name>addContentTypes</name></member>
       <member refid="interfacesb_i_device_capabilities_19e4ff93c47203ce86544167667a18bfe" prot="public" virt="non-virtual"><scope>sbIDeviceCapabilities</scope><name>addFormats</name></member>
@@ -567,7 +567,7 @@
       <member refid="interfacesb_i_device_capabilities_1e410779678c7eb44936af821c5b68369" prot="public" virt="non-virtual"><scope>sbIDeviceCapabilities</scope><name>FUNCTION_VIDEO_PLAYBACK</name></member>
       <member refid="interfacesb_i_device_capabilities_105e367726283198718a583e3b58685ce" prot="public" virt="non-virtual"><scope>sbIDeviceCapabilities</scope><name>getSupportedContentTypes</name></member>
       <member refid="interfacesb_i_device_capabilities_148f39c26a7c927218ab3323d42fd31cf" prot="public" virt="non-virtual"><scope>sbIDeviceCapabilities</scope><name>getSupportedEvents</name></member>
-      <member refid="interfacesb_i_device_capabilities_180b0ef86f83282c8e556dd55adf3077c" prot="public" virt="non-virtual"><scope>sbIDeviceCapabilities</scope><name>getSupportedFormats</name></member>
+      <member refid="interfacesb_i_device_capabilities_1a612ac3ce3075022e17b64c3f4aeaad9" prot="public" virt="non-virtual"><scope>sbIDeviceCapabilities</scope><name>getSupportedFormats</name></member>
       <member refid="interfacesb_i_device_capabilities_152d636956f340d8f10459f7673b9a834" prot="public" virt="non-virtual"><scope>sbIDeviceCapabilities</scope><name>getSupportedFunctionTypes</name></member>
       <member refid="interfacesb_i_device_capabilities_16d26ef734b6a0e5efbcad762524b8f87" prot="public" virt="non-virtual"><scope>sbIDeviceCapabilities</scope><name>initDone</name></member>
       <member refid="interfacesb_i_device_capabilities_1aabbda5466a5586827cace5706350fd9" prot="public" virt="non-virtual"><scope>sbIDeviceCapabilities</scope><name>setEventTypes</name></member>

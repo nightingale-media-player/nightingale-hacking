@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -80,7 +81,7 @@
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#2f7fc9fb8fd5130e1e040dfbda0876e6">retrieveBundleData</a> (in long aTimeout)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Begin downloading the bundle data asynchronously This method begins the asynchronous download of bundle data. Use sbIBundleDataListenerto monitor progress.  <a href="#2f7fc9fb8fd5130e1e040dfbda0876e6"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Begin downloading the bundle data asynchronously This method begins the asynchronous download of bundle data. Use <a class="el" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> to monitor progress.  <a href="#2f7fc9fb8fd5130e1e040dfbda0876e6"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#c21815fa4d93e0775d1444d9fd2c615f">addBundleDataListener</a> (in <a class="el" href="interfacesb_i_bundle_data_listener.html">sbIBundleDataListener</a> aListener)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a bundle data listener This method registers a bundle observer object associated with the download of bundle data in order to get error and completion callbacks.  <a href="#c21815fa4d93e0775d1444d9fd2c615f"></a><br></td></tr>
@@ -108,7 +109,10 @@
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#ab230f95877fef905b7f4d4122056e76">bundleId</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Bundle channel ID Sets the bundle channel ID. This is used to construct the bundle data url. Use sbIBundleDataListenerto monitor progress.  <a href="#ab230f95877fef905b7f4d4122056e76"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Bundle channel ID Sets the bundle channel ID. This is used to construct the bundle data url. Use <a class="el" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> to monitor progress.  <a href="#ab230f95877fef905b7f4d4122056e76"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#ca3ad8d9f0b9f55db2525c38877d5aad">bundleURL</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Bundle URL Sets the bundle URL. This is the location of the bundle. Use <a class="el" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> to monitor progress.  <a href="#ca3ad8d9f0b9f55db2525c38877d5aad"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_bundle.html#b6b996c7a5349eaf31ca91b59839bf94">bundleDataStatus</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Status of the bundle download.  <a href="#b6b996c7a5349eaf31ca91b59839bf94"></a><br></td></tr>
@@ -172,7 +176,7 @@ Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00050">50</
 <div class="memdoc">
 
 <p>
-Begin downloading the bundle data asynchronously This method begins the asynchronous download of bundle data. Use sbIBundleDataListenerto monitor progress. 
+Begin downloading the bundle data asynchronously This method begins the asynchronous download of bundle data. Use <a class="el" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> to monitor progress. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -443,12 +447,32 @@ const long BUNDLE_INSTALL_ERROR = 0; const long BUNDLE_INSTALL_SUCCESS = 1;<p>
 <div class="memdoc">
 
 <p>
-Bundle channel ID Sets the bundle channel ID. This is used to construct the bundle data url. Use sbIBundleDataListenerto monitor progress. 
+Bundle channel ID Sets the bundle channel ID. This is used to construct the bundle data url. Use <a class="el" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> to monitor progress. 
 <p>
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#c21815fa4d93e0775d1444d9fd2c615f" title="Add a bundle data listener This method registers a bundle observer object associated...">addBundleDataListener</a>, <a class="el" href="interfacesb_i_bundle.html#2ff42a66ab5ead61e3e786dd0e964351" title="Remove a bundle data listener This method unregisters a bundle observer object from...">removeBundleDataListener</a>, <a class="el" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> </dd></dl>
 
 <p>
 Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00058">58</a> of file <a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="ca3ad8d9f0b9f55db2525c38877d5aad"></a><!-- doxytag: member="sbIBundle::bundleURL" ref="ca3ad8d9f0b9f55db2525c38877d5aad" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">attribute AString <a class="el" href="interfacesb_i_bundle.html#ca3ad8d9f0b9f55db2525c38877d5aad">sbIBundle::bundleURL</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Bundle URL Sets the bundle URL. This is the location of the bundle. Use <a class="el" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> to monitor progress. 
+<p>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#c21815fa4d93e0775d1444d9fd2c615f" title="Add a bundle data listener This method registers a bundle observer object associated...">addBundleDataListener</a>, <a class="el" href="interfacesb_i_bundle.html#2ff42a66ab5ead61e3e786dd0e964351" title="Remove a bundle data listener This method unregisters a bundle observer object from...">removeBundleDataListener</a>, <a class="el" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> </dd></dl>
+
+<p>
+Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00066">66</a> of file <a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="b6b996c7a5349eaf31ca91b59839bf94"></a><!-- doxytag: member="sbIBundle::bundleDataStatus" ref="b6b996c7a5349eaf31ca91b59839bf94" args="" -->
@@ -467,7 +491,7 @@ Status of the bundle download.
 <p>
 const long BUNDLE_DATA_STATUS_ERROR = -1; const long BUNDLE_DATA_STATUS_DOWNLOADING = 0; const long BUNDLE_DATA_STATUS_SUCCESS = 1; 
 <p>
-Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00093">93</a> of file <a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a>.
+Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00101">101</a> of file <a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="8c78474d2172a000df84fc2436df7ed7"></a><!-- doxytag: member="sbIBundle::bundleExtensionCount" ref="8c78474d2172a000df84fc2436df7ed7" args="" -->
@@ -487,7 +511,7 @@ Number of extensions in the bundle document.
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_bundle.html#64e64e33811347aa26ce4db73a475966" title="DOM document for the bundle data. The interface to the bundle DOM document describing...">bundleDataDocument</a>, <a class="el" href="interfacesb_i_bundle.html#dc0e9ae859f0cf22393ac28e59dacef1" title="Gets an extension's attribute from its xml document source This method returns the...">getExtensionAttribute</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00120">120</a> of file <a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a>.
+Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00128">128</a> of file <a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="41fc07c93014d9c2baf82f95f9763d6a"></a><!-- doxytag: member="sbIBundle::restartRequired" ref="41fc07c93014d9c2baf82f95f9763d6a" args="" -->
@@ -507,12 +531,12 @@ Gets the flag indicating that a restart is needed This method gets the flag indi
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>Value of the flag </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00189">189</a> of file <a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a>.
+Definition at line <a class="el" href="sb_i_bundle_8idl-source.html#l00197">197</a> of file <a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/bundle/public/<a class="el" href="sb_i_bundle_8idl-source.html">sbIBundle.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:25 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:23 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

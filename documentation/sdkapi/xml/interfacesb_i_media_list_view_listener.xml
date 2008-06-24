@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" line="69"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListView.idl" line="69"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_listener_1023a82eff0c7437e46e0a007fada0867" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -36,7 +36,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" line="74"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListView.idl" line="74"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_listener_162850bd17c6f7b8a548f3eae828d2292" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" line="79"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListView.idl" line="79"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -61,7 +61,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" line="65" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl" bodystart="64" bodyend="80"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListView.idl" line="65" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListView.idl" bodystart="64" bodyend="80"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_view_listener_19a2f7f9b748fbf98ee855a7763e6a2cc" prot="public" virt="non-virtual"><scope>sbIMediaListViewListener</scope><name>onFilterChanged</name></member>
       <member refid="interfacesb_i_media_list_view_listener_1023a82eff0c7437e46e0a007fada0867" prot="public" virt="non-virtual"><scope>sbIMediaListViewListener</scope><name>onSearchChanged</name></member>

@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_file_system_observer" kind="interface" prot="public">
+    <compoundname>sbIFileSystemObserver</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_file_system_observer_17fa13fb80d483262a6d7c34d12d96ade" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileSystemObserver::onFileSystemChanged</definition>
+        <argsstring>(in nsIFile aFileSpec)</argsstring>
+        <name>onFileSystemChanged</name>
+        <param>
+          <type>in nsIFile</type>
+          <declname>aFileSpec</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback function when a file changed. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFileSpec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A file reference to the file that was changed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbIFileSystemObserverService.idl" line="58"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_system_observer_1b0d7c6f767e90c61f875ba5b7f69656a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileSystemObserver::onFileSystemRenamed</definition>
+        <argsstring>(in nsIFile aFileSpec)</argsstring>
+        <name>onFileSystemRenamed</name>
+        <param>
+          <type>in nsIFile</type>
+          <declname>aFileSpec</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback function when a file has been renamed. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFileSpec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The name of the file that was removed. This is NOT the reference to where the file was moved to. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbIFileSystemObserverService.idl" line="65"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_system_observer_1f83078b407c807152c5b27fe8b0d5e70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileSystemObserver::onFileSystemRemoved</definition>
+        <argsstring>(in nsIFile aFileSpec)</argsstring>
+        <name>onFileSystemRemoved</name>
+        <param>
+          <type>in nsIFile</type>
+          <declname>aFileSpec</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Callback function when a file is removed. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFileSpec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A file reference to the file that was removed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbIFileSystemObserverService.idl" line="71"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/integration/public/sbIFileSystemObserverService.idl" line="53" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbIFileSystemObserverService.idl" bodystart="52" bodyend="72"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_file_system_observer_17fa13fb80d483262a6d7c34d12d96ade" prot="public" virt="non-virtual"><scope>sbIFileSystemObserver</scope><name>onFileSystemChanged</name></member>
+      <member refid="interfacesb_i_file_system_observer_1f83078b407c807152c5b27fe8b0d5e70" prot="public" virt="non-virtual"><scope>sbIFileSystemObserver</scope><name>onFileSystemRemoved</name></member>
+      <member refid="interfacesb_i_file_system_observer_1b0d7c6f767e90c61f875ba5b7f69656a" prot="public" virt="non-virtual"><scope>sbIFileSystemObserver</scope><name>onFileSystemRenamed</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

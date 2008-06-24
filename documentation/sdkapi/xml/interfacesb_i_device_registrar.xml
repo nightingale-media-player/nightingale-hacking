@@ -15,7 +15,7 @@
 <para>An array of sbIDevices currently registered. The ordering within the array is undefined, even in consecutive reads. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="45" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="45" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="45" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -34,7 +34,7 @@
 <para>Registers an <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref> object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="50"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="50"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_registrar_1e98da593fce16a36e398ac10defb8a5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -51,7 +51,7 @@
 <para>Unregisters an <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref> object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="55"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="55"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_registrar_1cca1b08d1adf3de03754e44dfef95b27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
@@ -68,7 +68,7 @@
 <para>Retrieve a registered device. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="60"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="60"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -76,7 +76,7 @@
     <detaileddescription>
 <para><simplesect kind="note"><para>Implementations of this interface must be threadsafe. </para></simplesect>
 </para>    </detaileddescription>
-    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" line="40" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="39" bodyend="61"/>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" line="40" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl" bodystart="39" bodyend="61"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_registrar_15381c93672e78fa490ac631417b0b41f" prot="public" virt="non-virtual"><scope>sbIDeviceRegistrar</scope><name>devices</name></member>
       <member refid="interfacesb_i_device_registrar_1cca1b08d1adf3de03754e44dfef95b27" prot="public" virt="non-virtual"><scope>sbIDeviceRegistrar</scope><name>getDevice</name></member>

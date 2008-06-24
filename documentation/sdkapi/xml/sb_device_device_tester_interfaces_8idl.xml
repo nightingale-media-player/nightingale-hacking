@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_device_8idl" local="yes">sbIDevice.idl</includes>
     <incdepgraph>
-      <node id="102">
+      <node id="112">
         <label>components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl</label>
         <link refid="sbDeviceDeviceTesterInterfaces.idl"/>
-        <childnode refid="103" relation="include">
+        <childnode refid="113" relation="include">
         </childnode>
-        <childnode refid="104" relation="include">
+        <childnode refid="114" relation="include">
         </childnode>
       </node>
-      <node id="104">
+      <node id="114">
         <label>sbIDevice.idl</label>
         <link refid="sb_i_device_8idl"/>
-        <childnode refid="103" relation="include">
+        <childnode refid="113" relation="include">
         </childnode>
       </node>
-      <node id="103">
+      <node id="113">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -58,7 +58,7 @@
 <codeline lineno="26"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_device_8idl" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_device_8idl" kindref="compound">sbIDevice.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal">interface<sp/>nsIFile;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
@@ -72,10 +72,10 @@
 <codeline lineno="40"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(187d4370-b1d2-459c-8fa4-0b0187bb6d17)]</highlight></codeline>
-<codeline lineno="43" refid="interfacesb_i_device_device_tester_base" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_device_tester_base" kindref="compound">sbIDeviceDeviceTesterBase</ref><sp/>:<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>{</highlight></codeline>
+<codeline lineno="43" refid="interfacesb_i_device_device_tester_base" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_device_tester_base" kindref="compound">sbIDeviceDeviceTesterBase</ref><sp/>:<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>{</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="45"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl"/>
+    <location file="c:/builds/songbird/trunk/components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl"/>
   </compounddef>
 </doxygen>

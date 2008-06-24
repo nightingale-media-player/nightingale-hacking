@@ -4,13 +4,13 @@
     <compoundname>sbIPropertyManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="427">
+      <node id="481">
         <label>components/property/public/sbIPropertyManager.idl</label>
         <link refid="sbIPropertyManager.idl"/>
-        <childnode refid="428" relation="include">
+        <childnode refid="482" relation="include">
         </childnode>
       </node>
-      <node id="428">
+      <node id="482">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -231,6 +231,6 @@
 <codeline lineno="470"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="471"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/property/public/sbIPropertyManager.idl"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl"/>
   </compounddef>
 </doxygen>

@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" line="52" bodyfile="z:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" bodystart="52" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" bodystart="52" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -24,19 +24,19 @@
 <para>Media lists that implement this interface declare themselves as searchable. The search is applied as an additional constraint to the list.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="685">
+      <node id="809">
         <label>sbISearchableMediaListView</label>
         <link refid="interfacesb_i_searchable_media_list_view"/>
-        <childnode refid="686" relation="usage">
+        <childnode refid="810" relation="usage">
           <edgelabel>searchConstraint</edgelabel>
         </childnode>
       </node>
-      <node id="686">
+      <node id="810">
         <label>sbILibraryConstraint</label>
         <link refid="interfacesb_i_library_constraint"/>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" line="48" bodyfile="z:/projects/songbird/components/library/base/public/sbISearchableMediaListView.idl" bodystart="47" bodyend="53"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" line="48" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbISearchableMediaListView.idl" bodystart="47" bodyend="53"/>
     <listofallmembers>
       <member refid="interfacesb_i_searchable_media_list_view_19040d8c37c9591d2313659bd369f26b0" prot="public" virt="non-virtual"><scope>sbISearchableMediaListView</scope><name>searchConstraint</name></member>
     </listofallmembers>

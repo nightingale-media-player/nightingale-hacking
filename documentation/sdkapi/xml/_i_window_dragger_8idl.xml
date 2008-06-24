@@ -4,13 +4,13 @@
     <compoundname>IWindowDragger.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="169">
+      <node id="183">
         <label>components/integration/public/IWindowDragger.idl</label>
         <link refid="IWindowDragger.idl"/>
-        <childnode refid="170" relation="include">
+        <childnode refid="184" relation="include">
         </childnode>
       </node>
-      <node id="170">
+      <node id="184">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -62,6 +62,6 @@
 <codeline lineno="73"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="74"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/integration/public/IWindowDragger.idl"/>
+    <location file="c:/builds/songbird/trunk/components/integration/public/IWindowDragger.idl"/>
   </compounddef>
 </doxygen>

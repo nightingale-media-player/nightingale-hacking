@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -72,89 +73,41 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul>
 </div>
-<h1>sbIMetadataJob Interface Reference</h1><!-- doxytag: class="sbIMetadataJob" -->Metadata Job represents the status of a running metadata scanning task.  
+<h1>sbIMetadataJob Interface Reference</h1><!-- doxytag: class="sbIMetadataJob" -->Metadata Job represents the status of a running metadata task.  
 <a href="#_details">More...</a>
 <p>
 <a href="interfacesb_i_metadata_job-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_job.html#96d6a31af86f6a96f0b14b55bea9cead">init</a> (in AString aTableName, in nsIArray aMediaItemsArray, in unsigned long aSleepMS)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initialize a task with a specific guid and, optionally, an nsIArray of sbMediaItems.  <a href="#96d6a31af86f6a96f0b14b55bea9cead"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_job.html#32e0e57e1a8e1bfc0c389a382b363e6a">append</a> (in nsIArray aMediaItemsArray)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add some more media items to the job's queue.  <a href="#32e0e57e1a8e1bfc0c389a382b363e6a"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_job.html#8ea06c4295473139b4f09e467d2b800a">cancel</a> ()</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Cancel a task.  <a href="#8ea06c4295473139b4f09e467d2b800a"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_job.html#28d18f789eb3baa205f72f546806db5d">setObserver</a> (in nsIObserver aObserver)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set an observer to be informed when the task quits.  <a href="#28d18f789eb3baa205f72f546806db5d"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="385cf138c88c4975a783b295527f103f"></a><!-- doxytag: member="sbIMetadataJob::tableName" ref="385cf138c88c4975a783b295527f103f" args="" -->
-readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_job.html#385cf138c88c4975a783b295527f103f">tableName</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="56029ad63489ec9ed96a7fffa6194ae0"></a><!-- doxytag: member="sbIMetadataJob::JOBTYPE_READ" ref="56029ad63489ec9ed96a7fffa6194ae0" args="" -->
+const unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_job.html#56029ad63489ec9ed96a7fffa6194ae0">JOBTYPE_READ</a> = 0</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The tableName for this task, used by the manager. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_job.html#1b036ec22a1698fe19e2534b8c3cdb65">completed</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constant indicating that this job will read metadata from files into associated media items. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b3491c19711d1a2849bdeecec95909e6"></a><!-- doxytag: member="sbIMetadataJob::JOBTYPE_WRITE" ref="b3491c19711d1a2849bdeecec95909e6" args="" -->
+const unsigned short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_job.html#b3491c19711d1a2849bdeecec95909e6">JOBTYPE_WRITE</a> = 1</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">True if it has shutdown its timer and thread.  <a href="#1b036ec22a1698fe19e2534b8c3cdb65"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constant indicating that this job will attempt to write metadata from media items back into associated files. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="304db6d7f95066ff8c8e5c7b2c47a0d6"></a><!-- doxytag: member="sbIMetadataJob::type" ref="304db6d7f95066ff8c8e5c7b2c47a0d6" args="" -->
+readonly attribute unsigned <br>
+short&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_job.html#304db6d7f95066ff8c8e5c7b2c47a0d6">type</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Indicates whether this is a read or write job. See JOBTYPE_READ and JOBTYPE_WRITE. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Metadata Job represents the status of a running metadata scanning task. 
+Metadata Job represents the status of a running metadata task. 
 <p>
-You get an <a class="el" href="interfacesb_i_metadata_job.html" title="Metadata Job represents the status of a running metadata scanning task.">sbIMetadataJob</a> by calling <a class="el" href="interfacesb_i_metadata_job_manager.html#d8a4bd8fbf221a030bb7e554d85d1dbd" title="Start a new task scanning the given array of media items.">sbIMetadataJobManager::newJob()</a> with an nsIArray of <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>.<p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a>, <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>, <a class="el" href="interfacesb_i_metadata_job_manager.html" title="Metadata Job Manager scans local and remote tracks for metadata in own-thread and...">sbIMetadataJobManager</a> </dd></dl>
+You get an <a class="el" href="interfacesb_i_metadata_job.html" title="Metadata Job represents the status of a running metadata task.">sbIMetadataJob</a> by calling <a class="el" href="interfacesb_i_metadata_job_manager.html#9f265fad62cd8cc309f4a86c89d410d1" title="Start a new metadata processing task for the given array of media items.">sbIMetadataJobManager::newJob()</a> with an nsIArray of <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>.<p>
+Use the <a class="el" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> interface to receive progress notifications, and <a class="el" href="interfacesb_i_job_cancelable.html">sbIJobCancelable</a> to cancel the job.<p>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a>, <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>, <a class="el" href="interfacesb_i_metadata_job_manager.html" title="Coordinates batch metadata read/write jobs.">sbIMetadataJobManager</a>, <a class="el" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a>, <a class="el" href="interfacesb_i_job_cancelable.html">sbIJobCancelable</a> </dd></dl>
 
 <p>
 
 <p>
 Definition at line <a class="el" href="sb_i_metadata_job_8idl-source.html#l00045">45</a> of file <a class="el" href="sb_i_metadata_job_8idl-source.html">sbIMetadataJob.idl</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="96d6a31af86f6a96f0b14b55bea9cead"></a><!-- doxytag: member="sbIMetadataJob::init" ref="96d6a31af86f6a96f0b14b55bea9cead" args="(in AString aTableName, in nsIArray aMediaItemsArray, in unsigned long aSleepMS)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void sbIMetadataJob::init           </td>
-          <td>(</td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aTableName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in nsIArray&nbsp;</td>
-          <td class="paramname"> <em>aMediaItemsArray</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in unsigned long&nbsp;</td>
-          <td class="paramname"> <em>aSleepMS</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Initialize a task with a specific guid and, optionally, an nsIArray of sbMediaItems. 
-<p>
-The metadata task will track its progress through a database table so it can depend on its information always available upon app restart.<p>
-There is a window of time while it is copying the given array into the database that a crash or shutdown will lose the enqueueing of the task.<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aTableName</em>&nbsp;</td><td>The table name assigned to this task. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>aMediaItemsArray</em>&nbsp;</td><td>An array filled with media items to be scanned. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>aSleepMS</em>&nbsp;</td><td>How much of an interval/sleep per loop in and out of thread. </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
 <a class="anchor" name="32e0e57e1a8e1bfc0c389a382b363e6a"></a><!-- doxytag: member="sbIMetadataJob::append" ref="32e0e57e1a8e1bfc0c389a382b363e6a" args="(in nsIArray aMediaItemsArray)" -->
 <div class="memitem">
 <div class="memproto">
@@ -178,84 +131,15 @@ Appending to a completed job will throw an error.<p>
 THIS METHOD APPENDS ALL THE ITEMS TO THE DATABASE QUEUE, BLOCKING UNTIL COMPLETE. Try to only give it small (&lt; 500 items) arrays in batches.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aMediaItemsArray</em>&nbsp;</td><td>An array filled with media items to be scanned. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aMediaItemsArray</em>&nbsp;</td><td>An array filled with media items to be processed. </td></tr>
   </table>
 </dl>
 
-</div>
-</div><p>
-<a class="anchor" name="8ea06c4295473139b4f09e467d2b800a"></a><!-- doxytag: member="sbIMetadataJob::cancel" ref="8ea06c4295473139b4f09e467d2b800a" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void sbIMetadataJob::cancel           </td>
-          <td>(</td>
-          <td class="paramname">          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Cancel a task. 
-<p>
-Stop all metadata processing. Thread shuts down gently. 
-</div>
-</div><p>
-<a class="anchor" name="28d18f789eb3baa205f72f546806db5d"></a><!-- doxytag: member="sbIMetadataJob::setObserver" ref="28d18f789eb3baa205f72f546806db5d" args="(in nsIObserver aObserver)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void sbIMetadataJob::setObserver           </td>
-          <td>(</td>
-          <td class="paramtype">in nsIObserver&nbsp;</td>
-          <td class="paramname"> <em>aObserver</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Set an observer to be informed when the task quits. 
-<p>
-"complete" - Finished normally "cancel" - Cancelled<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aObserver</em>&nbsp;</td><td>The observer object. </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<hr><h2>Member Data Documentation</h2>
-<a class="anchor" name="1b036ec22a1698fe19e2534b8c3cdb65"></a><!-- doxytag: member="sbIMetadataJob::completed" ref="1b036ec22a1698fe19e2534b8c3cdb65" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">readonly attribute boolean <a class="el" href="interfacesb_i_metadata_job.html#1b036ec22a1698fe19e2534b8c3cdb65">sbIMetadataJob::completed</a>          </td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-True if it has shutdown its timer and thread. 
-<p>
-Appending to a completed job will throw an error. 
-<p>
-Definition at line <a class="el" href="sb_i_metadata_job_8idl-source.html#l00057">57</a> of file <a class="el" href="sb_i_metadata_job_8idl-source.html">sbIMetadataJob.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/mediacore/metadata/manager/public/<a class="el" href="sb_i_metadata_job_8idl-source.html">sbIMetadataJob.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:27 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:26 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

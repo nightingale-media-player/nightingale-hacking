@@ -4,13 +4,13 @@
     <compoundname>sbIDisplayPanes.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="133">
+      <node id="147">
         <label>components/displaypanes/public/sbIDisplayPanes.idl</label>
         <link refid="sbIDisplayPanes.idl"/>
-        <childnode refid="134" relation="include">
+        <childnode refid="148" relation="include">
         </childnode>
       </node>
-      <node id="134">
+      <node id="148">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -116,10 +116,12 @@
 <codeline lineno="203"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="204"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_display_pane_listener" kindref="compound">sbIDisplayPaneListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="205"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_display_pane_listener" kindref="compound">sbIDisplayPaneListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="206"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="207"><highlight class="normal"></highlight></codeline>
-<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211" refid="interfacesb_i_display_pane_manager_1c87db1fbfe5a04f3bc2a49222cbcfda6" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_display_pane_content_info" kindref="compound" tooltip="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</ref><sp/>defaultPaneInfo;</highlight></codeline>
+<codeline lineno="212"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl"/>
+    <location file="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl"/>
   </compounddef>
 </doxygen>

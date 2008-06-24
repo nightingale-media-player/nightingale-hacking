@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="47" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="47" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="47" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="47" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_native_window_manager_11ee32132eea4f1b6460d05a17dfb28e5" prot="public" static="no" mutable="no">
         <type>const PRInt32</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="48" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="48" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="48" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="48" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_native_window_manager_169a08fa55e3e2f7edf01627e671fc154" prot="public" static="no" mutable="no">
         <type>const PRInt32</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="49" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="49" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="49" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_native_window_manager_16143b3927ce4664996fa26e163891191" prot="public" static="no" mutable="no">
         <type>const PRInt32</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="50" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="50" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_native_window_manager_1806487be920a2036e43fd61604df0cfa" prot="public" static="no" mutable="no">
         <type>const PRInt32</type>
@@ -72,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="51" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="51" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="51" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_native_window_manager_1090fd34f801ecd15bc49c801758325cc" prot="public" static="no" mutable="no">
         <type>const PRInt32</type>
@@ -86,7 +86,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="52" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="52" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_native_window_manager_13c187802a8ca5d790696e18f7af65309" prot="public" static="no" mutable="no">
         <type>const PRInt32</type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="53" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="53" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="53" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_native_window_manager_17437924d4122b057b4886d21e8bf2166" prot="public" static="no" mutable="no">
         <type>const PRInt32</type>
@@ -114,7 +114,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="54" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="54" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_native_window_manager_1b9c604d877ffaadd5e138334b12e6524" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -127,7 +127,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="63" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="63" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="63" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="63" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_native_window_manager_10ee6ef396878a367f9e6dc68dc218c18" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -140,7 +140,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="71" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="71" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="71" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="71" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_native_window_manager_1892988330b4849e9b8ecfb51f2680818" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -153,7 +153,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="77" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="77" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="77" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="77" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -180,7 +180,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="60"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="60"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_native_window_manager_12e3190de8684c58fd18d3e4b56065eb9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -205,7 +205,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="68"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="68"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_native_window_manager_19481282cd8939eae22e623627d1512a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -226,14 +226,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="74"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="74"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>interface to the operating system&apos;s window manager This Interfaces to allows JavaScript to talk to the native operating system window manager in a somewhat cross-platform way. This interface is inspired by some of the GtkWindow interface. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" line="45" bodyfile="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl" bodystart="44" bodyend="78"/>
+    <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="44" bodyend="78"/>
     <listofallmembers>
       <member refid="interfacesb_i_native_window_manager_10ac3b54f1f6e0346809237263e1c8676" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>beginResizeDrag</name></member>
       <member refid="interfacesb_i_native_window_manager_1806487be920a2036e43fd61604df0cfa" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>DIRECTION_EAST</name></member>

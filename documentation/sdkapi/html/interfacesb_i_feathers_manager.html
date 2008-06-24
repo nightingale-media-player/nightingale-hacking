@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -112,6 +113,12 @@ nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#1cf705163c6a5ddf649c3eb71e092b81">unassertCompatibility</a> (in AString aLayoutURL, in AString aInternalName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Unassert compatibility of a skin-layout pair.  <a href="#1cf705163c6a5ddf649c3eb71e092b81"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#59240958004a6355e71349fb2cd95009">setDefaultLayout</a> (in AString aLayoutURL, in AString aInternalName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Designate a default layout for a skin.  <a href="#59240958004a6355e71349fb2cd95009"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#1003996757c3930698286eb62d5df260">getDefaultLayout</a> (in AString aInternalName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the default layout (as a URL) for a given skin name.  <a href="#1003996757c3930698286eb62d5df260"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#ad3b2e31c3dc72083f8d7408326658a0">isChromeEnabled</a> (in AString aLayoutURL, in AString aInternalName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Should window chrome be used with the given window-skin pair.  <a href="#ad3b2e31c3dc72083f8d7408326658a0"></a><br></td></tr>
@@ -133,6 +140,10 @@ nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#4481e6634ff2789cb61b7960e54cadd7">switchFeathers</a> (in AString aLayoutURL, in AString aInternalName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Switch to the given window-skin pair.  <a href="#4481e6634ff2789cb61b7960e54cadd7"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="0e89a4bcba0526b8f1408e48d642f08e"></a><!-- doxytag: member="sbIFeathersManager::switchToNextLayout" ref="0e89a4bcba0526b8f1408e48d642f08e" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#0e89a4bcba0526b8f1408e48d642f08e">switchToNextLayout</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Switch to the next layout for the current loaded feather. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_feathers_manager.html#9125c53897e784a2b10e5915811d911d">openPlayerWindow</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Launch the player window for the current feathers.  <a href="#9125c53897e784a2b10e5915811d911d"></a><br></td></tr>
@@ -434,6 +445,75 @@ TODO: Throw an exception if the mapping is currently in use?<p>
     <tr><td valign="top"></td><td valign="top"><em>aInternalName</em>&nbsp;</td><td>Identifier for a skin </td></tr>
   </table>
 </dl>
+
+</div>
+</div><p>
+<a class="anchor" name="59240958004a6355e71349fb2cd95009"></a><!-- doxytag: member="sbIFeathersManager::setDefaultLayout" ref="59240958004a6355e71349fb2cd95009" args="(in AString aLayoutURL, in AString aInternalName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIFeathersManager::setDefaultLayout           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aLayoutURL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aInternalName</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Designate a default layout for a skin. 
+<p>
+NOTE: The default layout can be set in the RDF install of a feather by specifiying a |&lt;songbird:isDefault&gt;true&lt;/songbird:isDefault&gt;| tag in the skin description.<p>
+If no default layout has been specified, than the layoutURL that is first listed in the install RDF will be specified as the default.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aLayoutURL</em>&nbsp;</td><td>URL for a XUL winodw </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aInternalName</em>&nbsp;</td><td>Identifier for a skin. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="1003996757c3930698286eb62d5df260"></a><!-- doxytag: member="sbIFeathersManager::getDefaultLayout" ref="1003996757c3930698286eb62d5df260" args="(in AString aInternalName)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AString sbIFeathersManager::getDefaultLayout           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aInternalName</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the default layout (as a URL) for a given skin name. 
+<p>
+NOTE: The default layout can be set in the RDF install of a feather by specifiying a |&lt;songbird:isDefault&gt;true&lt;/songbird:isDefault&gt;| tag in the skin description.<p>
+If no default layout has been specified, than the layoutURL that is first listed in the install RDF will be specified as the default.<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aInternalName</em>&nbsp;</td><td>The identifier for a skin. </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The URL for the default XUL window. </dd></dl>
 
 </div>
 </div><p>
@@ -773,7 +853,7 @@ Unregister modification callbacks.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/feathers/public/<a class="el" href="sb_i_feathers_manager_8idl-source.html">sbIFeathersManager.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:26 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

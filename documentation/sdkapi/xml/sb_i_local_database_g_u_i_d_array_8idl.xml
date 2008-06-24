@@ -5,26 +5,26 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_local_database_async_g_u_i_d_array_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl</includedby>
     <incdepgraph>
-      <node id="289">
+      <node id="321">
         <label>components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl</label>
         <link refid="sbILocalDatabaseGUIDArray.idl"/>
-        <childnode refid="290" relation="include">
+        <childnode refid="322" relation="include">
         </childnode>
       </node>
-      <node id="290">
+      <node id="322">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="291">
-        <label>components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl</label>
-        <link refid="sbILocalDatabaseGUIDArray.idl"/>
-        <childnode refid="292" relation="include">
-        </childnode>
-      </node>
-      <node id="292">
+      <node id="324">
         <label>components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl</label>
         <link refid="sb_i_local_database_async_g_u_i_d_array_8idl"/>
+      </node>
+      <node id="323">
+        <label>components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl</label>
+        <link refid="sbILocalDatabaseGUIDArray.idl"/>
+        <childnode refid="324" relation="include">
+        </childnode>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_local_database_g_u_i_d_array_listener" prot="public">sbILocalDatabaseGUIDArrayListener</innerclass>
@@ -137,6 +137,6 @@
 <codeline lineno="144"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="145"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl"/>
+    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl"/>
   </compounddef>
 </doxygen>

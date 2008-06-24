@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/bindings/public/sbIPlaylistClickEvent.idl" line="112" bodyfile="z:/projects/songbird/bindings/public/sbIPlaylistClickEvent.idl" bodystart="112" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" line="112" bodyfile="c:/builds/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" bodystart="112" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_playlist_click_event_1262e984ccab389d033ac636d167d3cdb" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/bindings/public/sbIPlaylistClickEvent.idl" line="121" bodyfile="z:/projects/songbird/bindings/public/sbIPlaylistClickEvent.idl" bodystart="121" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" line="121" bodyfile="c:/builds/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" bodystart="121" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -37,78 +37,91 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_widget" kindref="compound">sbIPlaylistWidget</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="505">
+      <node id="617">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="502" relation="public-inheritance">
+        <childnode refid="614" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="509">
+      <node id="621">
+        <label>sbIDeviceStatus</label>
+        <link refid="interfacesb_i_device_status"/>
+        <childnode refid="614" relation="usage">
+          <edgelabel>mediaItem</edgelabel>
+        </childnode>
+        <childnode refid="617" relation="usage">
+          <edgelabel>mediaList</edgelabel>
+        </childnode>
+      </node>
+      <node id="622">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="506">
+      <node id="618">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="507" relation="usage">
+        <childnode refid="619" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="509" relation="usage">
+        <childnode refid="621" relation="usage">
+          <edgelabel>currentStatus</edgelabel>
+        </childnode>
+        <childnode refid="622" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="510" relation="usage">
+        <childnode refid="623" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="504">
+      <node id="616">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="505" relation="public-inheritance">
+        <childnode refid="617" relation="public-inheritance">
         </childnode>
-        <childnode refid="506" relation="usage">
+        <childnode refid="618" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="508" relation="usage">
+        <childnode refid="620" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="503">
+      <node id="615">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="502">
+      <node id="614">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="503" relation="public-inheritance">
+        <childnode refid="615" relation="public-inheritance">
         </childnode>
-        <childnode refid="504" relation="usage">
+        <childnode refid="616" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="507">
+      <node id="619">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="508" relation="usage">
+        <childnode refid="620" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="508">
+      <node id="620">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="501">
+      <node id="613">
         <label>sbIPlaylistClickEvent</label>
         <link refid="interfacesb_i_playlist_click_event"/>
-        <childnode refid="502" relation="usage">
+        <childnode refid="614" relation="usage">
           <edgelabel>item</edgelabel>
         </childnode>
       </node>
-      <node id="510">
+      <node id="623">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/bindings/public/sbIPlaylistClickEvent.idl" line="99" bodyfile="z:/projects/songbird/bindings/public/sbIPlaylistClickEvent.idl" bodystart="98" bodyend="122"/>
+    <location file="c:/builds/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" line="99" bodyfile="c:/builds/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl" bodystart="98" bodyend="122"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_click_event_1262e984ccab389d033ac636d167d3cdb" prot="public" virt="non-virtual"><scope>sbIPlaylistClickEvent</scope><name>item</name></member>
       <member refid="interfacesb_i_playlist_click_event_1d1f910416b81b277102dd8026413816b" prot="public" virt="non-virtual"><scope>sbIPlaylistClickEvent</scope><name>property</name></member>

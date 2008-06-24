@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceManager.idl</compoundname>
     <includes local="yes">nsIObserver.idl</includes>
     <incdepgraph>
-      <node id="80">
+      <node id="85">
         <label>components/devicesobsolete/manager/public/sbIDeviceManager.idl</label>
         <link refid="bsolete/manager/public/sbIDeviceManager.idl"/>
-        <childnode refid="81" relation="include">
+        <childnode refid="86" relation="include">
         </childnode>
       </node>
-      <node id="81">
+      <node id="86">
         <label>nsIObserver.idl</label>
       </node>
     </incdepgraph>
@@ -25,7 +25,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="80"/>
+        <location file="c:/builds/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl" line="80"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -85,6 +85,6 @@
 <codeline lineno="81"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="82"><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/devicesobsolete/manager/public/sbIDeviceManager.idl"/>
+    <location file="c:/builds/songbird/trunk/components/devicesobsolete/manager/public/sbIDeviceManager.idl"/>
   </compounddef>
 </doxygen>

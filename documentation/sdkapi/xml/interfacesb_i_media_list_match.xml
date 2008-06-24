@@ -18,7 +18,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediapages/public/sbIMediaPageManager.idl" line="139"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="139"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -28,7 +28,7 @@
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MYURL,<sp/></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>function(aList)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(aList.type<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;simple&quot;</highlight><highlight class="normal">);<sp/>}<sp/>);</highlight></codeline>
 </programlisting> </para>    </detaileddescription>
-    <location file="z:/projects/songbird/components/mediapages/public/sbIMediaPageManager.idl" line="135" bodyfile="z:/projects/songbird/components/mediapages/public/sbIMediaPageManager.idl" bodystart="134" bodyend="140"/>
+    <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="135" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="134" bodyend="140"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_match_104cee51c63318c2c094dc71aa0b48fd3" prot="public" virt="non-virtual"><scope>sbIMediaListMatch</scope><name>match</name></member>
     </listofallmembers>

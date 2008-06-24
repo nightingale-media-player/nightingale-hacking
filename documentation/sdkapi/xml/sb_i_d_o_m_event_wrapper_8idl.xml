@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIDOMEvent.idl</includes>
     <incdepgraph>
-      <node id="383">
+      <node id="424">
         <label>nsIDOMEvent.idl</label>
       </node>
-      <node id="381">
+      <node id="422">
         <label>components/moz/domevents/public/sbIDOMEventWrapper.idl</label>
         <link refid="sbIDOMEventWrapper.idl"/>
-        <childnode refid="382" relation="include">
+        <childnode refid="423" relation="include">
         </childnode>
-        <childnode refid="383" relation="include">
+        <childnode refid="424" relation="include">
         </childnode>
       </node>
-      <node id="382">
+      <node id="423">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -65,6 +65,6 @@
 <codeline lineno="51"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/moz/domevents/public/sbIDOMEventWrapper.idl"/>
+    <location file="c:/builds/songbird/trunk/components/moz/domevents/public/sbIDOMEventWrapper.idl"/>
   </compounddef>
 </doxygen>

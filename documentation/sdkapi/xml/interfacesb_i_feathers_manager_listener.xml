@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl" line="49"/>
+        <location file="c:/builds/songbird/trunk/components/feathers/public/sbIFeathersManagerListener.idl" line="49"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_listener_129c526c7d75a44a89bc0ecdf1865afcc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -51,7 +51,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl" line="57"/>
+        <location file="c:/builds/songbird/trunk/components/feathers/public/sbIFeathersManagerListener.idl" line="57"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_feathers_manager_listener_1c75aa023f570a6424b6b9378cbba4905" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -87,7 +87,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl" line="65"/>
+        <location file="c:/builds/songbird/trunk/components/feathers/public/sbIFeathersManagerListener.idl" line="65"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -95,7 +95,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_feathers_manager" kindref="compound">sbIFeathersManager</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl" line="45" bodyfile="z:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl" bodystart="44" bodyend="66"/>
+    <location file="c:/builds/songbird/trunk/components/feathers/public/sbIFeathersManagerListener.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/feathers/public/sbIFeathersManagerListener.idl" bodystart="44" bodyend="66"/>
     <listofallmembers>
       <member refid="interfacesb_i_feathers_manager_listener_1c75aa023f570a6424b6b9378cbba4905" prot="public" virt="non-virtual"><scope>sbIFeathersManagerListener</scope><name>onFeathersSelectComplete</name></member>
       <member refid="interfacesb_i_feathers_manager_listener_129c526c7d75a44a89bc0ecdf1865afcc" prot="public" virt="non-virtual"><scope>sbIFeathersManagerListener</scope><name>onFeathersSelectRequest</name></member>

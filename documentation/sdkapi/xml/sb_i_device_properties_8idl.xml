@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceProperties.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="83">
+      <node id="88">
         <label>components/devices/base/public/sbIDeviceProperties.idl</label>
         <link refid="sbIDeviceProperties.idl"/>
-        <childnode refid="84" relation="include">
+        <childnode refid="89" relation="include">
         </childnode>
       </node>
-      <node id="84">
+      <node id="89">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -87,6 +87,6 @@
 <codeline lineno="123" refid="interfacesb_i_device_properties_1921e37c4912c740fe73360e362d9191c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIPropertyBag2<sp/>properties;</highlight></codeline>
 <codeline lineno="124"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceProperties.idl"/>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceProperties.idl"/>
   </compounddef>
 </doxygen>

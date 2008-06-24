@@ -58,44 +58,46 @@
 <codeline lineno="51"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_bundle_1ab230f95877fef905b7f4d4122056e76" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>bundleId;</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>retrieveBundleData(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aTimeout);</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addBundleDataListener(in<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound" tooltip="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeBundleDataListener(in<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound" tooltip="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="66" refid="interfacesb_i_bundle_1ca3ad8d9f0b9f55db2525c38877d5aad" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>bundleURL;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>retrieveBundleData(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aTimeout);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addBundleDataListener(in<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound" tooltip="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="85"><highlight class="normal"></highlight></codeline>
-<codeline lineno="93" refid="interfacesb_i_bundle_1b6b996c7a5349eaf31ca91b59839bf94" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>bundleDataStatus;</highlight></codeline>
-<codeline lineno="94" refid="interfacesb_i_bundle_1de9a6b29fe8dbb1cd33c3a23a94a28a9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_DATA_STATUS_ERROR<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>-1;</highlight></codeline>
-<codeline lineno="95" refid="interfacesb_i_bundle_127021decdb394e85da728f8a1731d2f9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_DATA_STATUS_DOWNLOADING<sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="96" refid="interfacesb_i_bundle_13cdfdc33967a7055cc28e6cae651cbfc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_DATA_STATUS_SUCCESS<sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"></highlight></codeline>
-<codeline lineno="102" refid="interfacesb_i_bundle_164e64e33811347aa26ce4db73a475966" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMDocument<sp/>bundleDataDocument;</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"></highlight></codeline>
-<codeline lineno="108" refid="interfacesb_i_bundle_1872dfb6bfbaf33819d607488ce02bde2" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>bundleDataText;</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"></highlight></codeline>
-<codeline lineno="114" refid="interfacesb_i_bundle_16f6788aa816aade7879cf249ba2dacd8" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>bundleDataVersion;</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="120" refid="interfacesb_i_bundle_18c78474d2172a000df84fc2436df7ed7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>bundleExtensionCount;<sp/></highlight></codeline>
-<codeline lineno="121"><highlight class="normal"></highlight></codeline>
-<codeline lineno="130"><highlight class="normal"><sp/><sp/>AString<sp/>getExtensionAttribute(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex,<sp/>in<sp/>AString<sp/>aAttributeName);</highlight></codeline>
-<codeline lineno="131"><highlight class="normal"></highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>getExtensionInstallFlag(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setExtensionInstallFlag(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aInstallFlag);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeBundleDataListener(in<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound" tooltip="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101" refid="interfacesb_i_bundle_1b6b996c7a5349eaf31ca91b59839bf94" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>bundleDataStatus;</highlight></codeline>
+<codeline lineno="102" refid="interfacesb_i_bundle_1de9a6b29fe8dbb1cd33c3a23a94a28a9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_DATA_STATUS_ERROR<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>-1;</highlight></codeline>
+<codeline lineno="103" refid="interfacesb_i_bundle_127021decdb394e85da728f8a1731d2f9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_DATA_STATUS_DOWNLOADING<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="104" refid="interfacesb_i_bundle_13cdfdc33967a7055cc28e6cae651cbfc" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_DATA_STATUS_SUCCESS<sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="interfacesb_i_bundle_164e64e33811347aa26ce4db73a475966" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDOMDocument<sp/>bundleDataDocument;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116" refid="interfacesb_i_bundle_1872dfb6bfbaf33819d607488ce02bde2" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>bundleDataText;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="interfacesb_i_bundle_16f6788aa816aade7879cf249ba2dacd8" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>bundleDataVersion;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="128" refid="interfacesb_i_bundle_18c78474d2172a000df84fc2436df7ed7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>bundleExtensionCount;<sp/></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/>AString<sp/>getExtensionAttribute(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex,<sp/>in<sp/>AString<sp/>aAttributeName);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>getExtensionInstallFlag(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
 <codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addBundleInstallListener(in<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound" tooltip="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"></highlight></codeline>
-<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeBundleInstallListener(in<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound" tooltip="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setExtensionInstallFlag(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aInstallFlag);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addBundleInstallListener(in<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound" tooltip="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="166"><highlight class="normal"></highlight></codeline>
-<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>installFlaggedExtensions(in<sp/>nsIDOMWindow<sp/>aWindow);</highlight></codeline>
-<codeline lineno="180" refid="interfacesb_i_bundle_1afca9abb7d06f78cd3c82785a3fee84d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_INSTALL_ERROR<sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="181" refid="interfacesb_i_bundle_1937bb7e919cc05a6b151af54d1911b56" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_INSTALL_SUCCESS<sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="182"><highlight class="normal"></highlight></codeline>
-<codeline lineno="189" refid="interfacesb_i_bundle_141fc07c93014d9c2baf82f95f9763d6a" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>restartRequired;</highlight></codeline>
-<codeline lineno="190"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="191"><highlight class="normal"></highlight></codeline>
-<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeBundleInstallListener(in<sp/><ref refid="interfacesb_i_bundle_install_listener" kindref="compound" tooltip="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>installFlaggedExtensions(in<sp/>nsIDOMWindow<sp/>aWindow);</highlight></codeline>
+<codeline lineno="188" refid="interfacesb_i_bundle_1afca9abb7d06f78cd3c82785a3fee84d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_INSTALL_ERROR<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="189" refid="interfacesb_i_bundle_1937bb7e919cc05a6b151af54d1911b56" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>BUNDLE_INSTALL_SUCCESS<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="interfacesb_i_bundle_141fc07c93014d9c2baf82f95f9763d6a" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>restartRequired;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/bundle/public/sbIBundle.idl"/>
+    <location file="c:/builds/songbird/trunk/components/bundle/public/sbIBundle.idl"/>
   </compounddef>
 </doxygen>

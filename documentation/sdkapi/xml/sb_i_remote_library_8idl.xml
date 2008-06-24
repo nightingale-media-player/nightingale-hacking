@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_remote_media_list_8idl" local="yes">sbIRemoteMediaList.idl</includes>
     <incdepgraph>
-      <node id="441">
+      <node id="495">
         <label>sbIRemoteMediaList.idl</label>
         <link refid="sb_i_remote_media_list_8idl"/>
-        <childnode refid="440" relation="include">
+        <childnode refid="494" relation="include">
         </childnode>
       </node>
-      <node id="439">
+      <node id="493">
         <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
         <link refid="sbIRemoteLibrary.idl"/>
-        <childnode refid="440" relation="include">
+        <childnode refid="494" relation="include">
         </childnode>
-        <childnode refid="441" relation="include">
+        <childnode refid="495" relation="include">
         </childnode>
       </node>
-      <node id="440">
+      <node id="494">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -87,7 +87,7 @@
 <codeline lineno="59"><highlight class="comment"><sp/><sp/>var<sp/>library<sp/>=<sp/>songbird.siteLibrary(&quot;&quot;,<sp/>&quot;&quot;);</highlight></codeline>
 <codeline lineno="60"><highlight class="comment"></highlight></codeline>
 <codeline lineno="61"><highlight class="comment"><sp/><sp/>//Create<sp/>a<sp/>medialist<sp/>using<sp/>the<sp/>library.</highlight></codeline>
-<codeline lineno="62"><highlight class="comment"><sp/><sp/>var<sp/>mediaList<sp/>=<sp/>library.createMediaList(&quot;simple&quot;);</highlight></codeline>
+<codeline lineno="62"><highlight class="comment"><sp/><sp/>var<sp/>mediaList<sp/>=<sp/>library.createSimpleMediaList(&quot;Name<sp/>of<sp/>List&quot;);</highlight></codeline>
 <codeline lineno="63"><highlight class="comment"></highlight></codeline>
 <codeline lineno="64"><highlight class="comment"><sp/><sp/>//Create<sp/>some<sp/>mediaitems<sp/>and<sp/>add<sp/>them<sp/>to<sp/>the<sp/>medialist.</highlight></codeline>
 <codeline lineno="65"><highlight class="comment"><sp/><sp/>var<sp/>itemURLs<sp/>=<sp/>[&quot;http://path/to/song.mp3&quot;,<sp/>&quot;http://path/to/another/song.mp3&quot;];</highlight></codeline>
@@ -201,7 +201,7 @@
 <codeline lineno="206"><highlight class="comment"><sp/><sp/><sp/><sp/>get<sp/>updated.</highlight></codeline>
 <codeline lineno="207"><highlight class="comment"></highlight></codeline>
 <codeline lineno="208"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="209"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaList()&gt;</highlight></codeline>
+<codeline lineno="209"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createSimpleMediaList()&gt;</highlight></codeline>
 <codeline lineno="210"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaListFromURL()&gt;</highlight></codeline>
 <codeline lineno="211"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="212"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>createMediaItem(in<sp/>AString<sp/>aURL);</highlight></codeline>
@@ -233,7 +233,7 @@
 <codeline lineno="251"><highlight class="comment"></highlight></codeline>
 <codeline lineno="252"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
 <codeline lineno="253"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaItem()&gt;</highlight></codeline>
-<codeline lineno="254"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaList()&gt;</highlight></codeline>
+<codeline lineno="254"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createSimpleMediaList()&gt;</highlight></codeline>
 <codeline lineno="255"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaListFromURL()&gt;</highlight></codeline>
 <codeline lineno="256"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="257"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_remote_media_list" kindref="compound" tooltip="An interface to control a media list from remote web pages.">sbIRemoteMediaList</ref><sp/>createSimpleMediaList(in<sp/>AString<sp/>aName,</highlight></codeline>
@@ -271,7 +271,7 @@
 <codeline lineno="304"><highlight class="comment"></highlight></codeline>
 <codeline lineno="305"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
 <codeline lineno="306"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaItem()&gt;</highlight></codeline>
-<codeline lineno="307"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaList()&gt;</highlight></codeline>
+<codeline lineno="307"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createSimpleMediaList()&gt;</highlight></codeline>
 <codeline lineno="308"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="309"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>createMediaListFromURL(in<sp/>AString<sp/>aName,</highlight></codeline>
 <codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aURL,</highlight></codeline>
@@ -304,7 +304,7 @@
 <codeline lineno="351"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
 <codeline lineno="352"><highlight class="comment"></highlight></codeline>
 <codeline lineno="353"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="354"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createMediaList()&gt;</highlight></codeline>
+<codeline lineno="354"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;createSimpleMediaList()&gt;</highlight></codeline>
 <codeline lineno="355"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="356"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_remote_media_list" kindref="compound" tooltip="An interface to control a media list from remote web pages.">sbIRemoteMediaList</ref><sp/>getMediaListBySiteID(<sp/>in<sp/>AString<sp/>aSiteID<sp/>);</highlight></codeline>
 <codeline lineno="357"><highlight class="normal"></highlight></codeline>
@@ -357,6 +357,6 @@
 <codeline lineno="444"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AUTF8String<sp/>aPath);</highlight></codeline>
 <codeline lineno="445"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteLibrary.idl"/>
+    <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl"/>
   </compounddef>
 </doxygen>

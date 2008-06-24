@@ -4,13 +4,13 @@
     <compoundname>sbIFeathersManagerListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="151">
+      <node id="165">
         <label>components/feathers/public/sbIFeathersManagerListener.idl</label>
         <link refid="sbIFeathersManagerListener.idl"/>
-        <childnode refid="152" relation="include">
+        <childnode refid="166" relation="include">
         </childnode>
       </node>
-      <node id="152">
+      <node id="166">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -64,6 +64,6 @@
 <codeline lineno="66"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="67"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/feathers/public/sbIFeathersManagerListener.idl"/>
+    <location file="c:/builds/songbird/trunk/components/feathers/public/sbIFeathersManagerListener.idl"/>
   </compounddef>
 </doxygen>

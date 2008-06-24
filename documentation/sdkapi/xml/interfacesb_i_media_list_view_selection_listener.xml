@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbIMediaListViewSelection.idl" line="46"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="46"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_selection_listener_1f1e13f35710d8d4036609d58006c7f67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -29,14 +29,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbIMediaListViewSelection.idl" line="52"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="52"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Listener interface that gets notified on selection changes. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/components/library/base/public/sbIMediaListViewSelection.idl" line="42" bodyfile="z:/projects/songbird/components/library/base/public/sbIMediaListViewSelection.idl" bodystart="41" bodyend="53"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" bodystart="41" bodyend="53"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_view_selection_listener_1f1e13f35710d8d4036609d58006c7f67" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelectionListener</scope><name>onCurrentIndexChanged</name></member>
       <member refid="interfacesb_i_media_list_view_selection_listener_1e32b324321861a159862185bab4e4e0d" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelectionListener</scope><name>onSelectionChanged</name></member>

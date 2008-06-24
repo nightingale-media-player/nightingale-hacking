@@ -5,25 +5,25 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_playlist_commands_builder_8idl" local="yes">components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</includedby>
     <incdepgraph>
-      <node id="388">
+      <node id="439">
         <label>components/playlistcommands/public/sbIPlaylistCommands.idl</label>
         <link refid="sbIPlaylistCommands.idl"/>
-        <childnode refid="389" relation="include">
+        <childnode refid="440" relation="include">
         </childnode>
       </node>
-      <node id="389">
+      <node id="440">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="391">
+      <node id="442">
         <label>components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</label>
         <link refid="sb_i_playlist_commands_builder_8idl-source"/>
       </node>
-      <node id="390">
+      <node id="441">
         <label>components/playlistcommands/public/sbIPlaylistCommands.idl</label>
         <link refid="sbIPlaylistCommands.idl"/>
-        <childnode refid="391" relation="include">
+        <childnode refid="442" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -159,6 +159,6 @@
 <codeline lineno="557"><highlight class="normal"></highlight></codeline>
 <codeline lineno="558"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/playlistcommands/public/sbIPlaylistCommands.idl"/>
+    <location file="c:/builds/songbird/trunk/components/playlistcommands/public/sbIPlaylistCommands.idl"/>
   </compounddef>
 </doxygen>

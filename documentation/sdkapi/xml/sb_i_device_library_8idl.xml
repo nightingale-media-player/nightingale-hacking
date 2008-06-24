@@ -5,40 +5,40 @@
     <includes refid="sb_i_library_8idl" local="yes">sbILibrary.idl</includes>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="74">
-        <label>sbILibraryResource.idl</label>
-        <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="75" relation="include">
-        </childnode>
-      </node>
-      <node id="72">
-        <label>sbIMediaList.idl</label>
-        <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="73" relation="include">
-        </childnode>
-      </node>
-      <node id="71">
-        <label>sbILibrary.idl</label>
-        <link refid="sb_i_library_8idl"/>
-        <childnode refid="72" relation="include">
-        </childnode>
-      </node>
-      <node id="70">
+      <node id="75">
         <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
         <link refid="sbIDeviceLibrary.idl"/>
-        <childnode refid="71" relation="include">
+        <childnode refid="76" relation="include">
         </childnode>
-        <childnode refid="75" relation="include">
+        <childnode refid="80" relation="include">
         </childnode>
       </node>
-      <node id="73">
+      <node id="77">
+        <label>sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="78" relation="include">
+        </childnode>
+      </node>
+      <node id="78">
         <label>sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="74" relation="include">
+        <childnode refid="79" relation="include">
         </childnode>
       </node>
-      <node id="75">
+      <node id="76">
+        <label>sbILibrary.idl</label>
+        <link refid="sb_i_library_8idl"/>
+        <childnode refid="77" relation="include">
+        </childnode>
+      </node>
+      <node id="80">
         <label>nsISupports.idl</label>
+      </node>
+      <node id="79">
+        <label>sbILibraryResource.idl</label>
+        <link refid="sb_i_library_resource_8idl"/>
+        <childnode refid="80" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_device_library_listener" prot="public">sbIDeviceLibraryListener</innerclass>
@@ -134,18 +134,35 @@
 <codeline lineno="202"><highlight class="normal"></highlight></codeline>
 <codeline lineno="203"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="204"><highlight class="normal"><sp/></highlight></codeline>
-<codeline lineno="210"><highlight class="normal">[scriptable,<sp/>uuid(c18aec1c-3a10-4cc6-a192-1510056b9716)]</highlight></codeline>
-<codeline lineno="211" refid="interfacesb_i_device_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_library" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceLibrary</ref><sp/>:<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref></highlight></codeline>
-<codeline lineno="212"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="217"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initialize(in<sp/>AString<sp/>aLibraryId);</highlight></codeline>
-<codeline lineno="218"><highlight class="normal"></highlight></codeline>
-<codeline lineno="222"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>finalize();</highlight></codeline>
-<codeline lineno="223"><highlight class="normal"></highlight></codeline>
-<codeline lineno="228"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addDeviceLibraryListener(in<sp/><ref refid="interfacesb_i_device_library_listener" kindref="compound" tooltip="Interface used to listen to changes to a device library.">sbIDeviceLibraryListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="229"><highlight class="normal"></highlight></codeline>
-<codeline lineno="234"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeDeviceLibraryListener(in<sp/><ref refid="interfacesb_i_device_library_listener" kindref="compound" tooltip="Interface used to listen to changes to a device library.">sbIDeviceLibraryListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="235"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="209"><highlight class="normal">[scriptable,<sp/>uuid(c477d296-f25b-42a4-98bf-0b5d77dcebb4)]</highlight></codeline>
+<codeline lineno="210" refid="interfacesb_i_device_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_library" kindref="compound">sbIDeviceLibrary</ref><sp/>:<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref></highlight></codeline>
+<codeline lineno="211"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initialize(in<sp/>AString<sp/>aLibraryId);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>finalize();</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229" refid="interfacesb_i_device_library_1a047257e829c05d773f2c10b82b66a7f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MGMT_TYPE_MANUAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233" refid="interfacesb_i_device_library_18531e1dd5dbbd169fcdac692ab57bcc8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MGMT_TYPE_SYNC_ALL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237" refid="interfacesb_i_device_library_125967578b09f9f3835a28417bf319877" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MGMT_TYPE_SYNC_PLAYLISTS<sp/><sp/><sp/><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246" refid="interfacesb_i_device_library_1893527ce2a0a337ceeabd18540faa475" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRUint32<sp/>mgmtType;</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/>nsIArray<sp/>getSyncPlaylistList();</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSyncPlaylistList(in<sp/>nsIArray<sp/>aPlaylistList);</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addToSyncPlaylistList(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aPlaylist);</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>sync();</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight></codeline>
+<codeline lineno="286"><highlight class="normal"></highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addDeviceLibraryListener(in<sp/><ref refid="interfacesb_i_device_library_listener" kindref="compound" tooltip="Interface used to listen to changes to a device library.">sbIDeviceLibraryListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"></highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeDeviceLibraryListener(in<sp/><ref refid="interfacesb_i_device_library_listener" kindref="compound" tooltip="Interface used to listen to changes to a device library.">sbIDeviceLibraryListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="298"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceLibrary.idl"/>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl"/>
   </compounddef>
 </doxygen>

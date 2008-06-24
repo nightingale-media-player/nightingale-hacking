@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -79,6 +80,10 @@
 <p>
 <a href="interfacesb_i_media_list_view_tree_view_observer-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view_tree_view_observer.html#7565e41da3444980a6b7d603609ed8f0">onCellEdited</a> (in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> item, in AString property, in AString oldValue)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called back when a cell has been edited in the playlist tree.  <a href="#7565e41da3444980a6b7d603609ed8f0"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="bd177db3a4cf9b97cff746533f3d386e"></a><!-- doxytag: member="sbIMediaListViewTreeViewObserver::DROP_BEFORE" ref="bd177db3a4cf9b97cff746533f3d386e" args="" -->
 const long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_view_tree_view_observer.html#bd177db3a4cf9b97cff746533f3d386e">DROP_BEFORE</a> = -1</td></tr>
@@ -95,9 +100,54 @@ Observer to implement the nsITreeView methods that a <a class="el" href="interfa
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_media_list_view_tree_view_8idl-source.html#l00044">44</a> of file <a class="el" href="sb_i_media_list_view_tree_view_8idl-source.html">sbIMediaListViewTreeView.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_media_list_view_tree_view_8idl-source.html#l00044">44</a> of file <a class="el" href="sb_i_media_list_view_tree_view_8idl-source.html">sbIMediaListViewTreeView.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="7565e41da3444980a6b7d603609ed8f0"></a><!-- doxytag: member="sbIMediaListViewTreeViewObserver::onCellEdited" ref="7565e41da3444980a6b7d603609ed8f0" args="(in sbIMediaItem item, in AString property, in AString oldValue)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIMediaListViewTreeViewObserver::onCellEdited           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a>&nbsp;</td>
+          <td class="paramname"> <em>item</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>property</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>oldValue</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Called back when a cell has been edited in the playlist tree. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>item</em>&nbsp;</td><td>media item this affects (has already been changed) </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>property</em>&nbsp;</td><td>name of the property changed </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>oldValue</em>&nbsp;</td><td>old value of the property </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_media_list_view_tree_view_8idl-source.html">sbIMediaListViewTreeView.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:26 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:26 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

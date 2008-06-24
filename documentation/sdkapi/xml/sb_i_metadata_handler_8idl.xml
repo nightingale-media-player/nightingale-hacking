@@ -4,54 +4,62 @@
     <compoundname>sbIMetadataHandler.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIChannel.idl</includes>
-    <includes refid="sb_i_metadata_values_8idl" local="yes">sbIMetadataValues.idl</includes>
+    <includes refid="sb_i_property_array_8idl" local="yes">sbIPropertyArray.idl</includes>
     <includedby refid="sb_i_metadata_channel_8idl" local="yes">components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</includedby>
     <includedby refid="sb_i_metadata_manager_8idl" local="yes">components/mediacore/metadata/manager/public/sbIMetadataManager.idl</includedby>
     <incdepgraph>
-      <node id="337">
-        <label>sbIMetadataValues.idl</label>
-        <link refid="sb_i_metadata_values_8idl"/>
-        <childnode refid="335" relation="include">
+      <node id="375">
+        <label>nsIArray.idl</label>
+      </node>
+      <node id="376">
+        <label>nsIMutableArray.idl</label>
+      </node>
+      <node id="374">
+        <label>sbIPropertyArray.idl</label>
+        <link refid="sb_i_property_array_8idl"/>
+        <childnode refid="375" relation="include">
+        </childnode>
+        <childnode refid="376" relation="include">
         </childnode>
       </node>
-      <node id="334">
+      <node id="371">
         <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
         <link refid="sbIMetadataHandler.idl"/>
-        <childnode refid="335" relation="include">
+        <childnode refid="372" relation="include">
         </childnode>
-        <childnode refid="336" relation="include">
+        <childnode refid="373" relation="include">
         </childnode>
-        <childnode refid="337" relation="include">
+        <childnode refid="374" relation="include">
         </childnode>
       </node>
-      <node id="335">
+      <node id="372">
         <label>nsISupports.idl</label>
       </node>
-      <node id="336">
+      <node id="373">
         <label>nsIChannel.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="340">
+      <node id="378">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
+        <link refid="sb_i_metadata_channel_8idl"/>
+      </node>
+      <node id="379">
         <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
         <link refid="sb_i_metadata_manager_8idl"/>
       </node>
-      <node id="338">
+      <node id="377">
         <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
         <link refid="sbIMetadataHandler.idl"/>
-        <childnode refid="339" relation="include">
+        <childnode refid="378" relation="include">
         </childnode>
-        <childnode refid="340" relation="include">
+        <childnode refid="379" relation="include">
         </childnode>
-      </node>
-      <node id="339">
-        <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
-        <link refid="sb_i_metadata_channel_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_metadata_handler" prot="public">sbIMetadataHandler</innerclass>
     <briefdescription>
-<para>A wrapper for an nsIChannel that buffers the incoming data. </para>    </briefdescription>
+<para>An interface for reading/writing file metadata tags. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <programlisting>
@@ -83,32 +91,55 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIChannel.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_metadata_values_8idl" kindref="compound" tooltip="A map of value+type pairs, keyed by string.">sbIMetadataValues.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_property_array_8idl" kindref="compound" tooltip="Definition of the sbIPropertyArray interface.">sbIPropertyArray.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(919FF2D3-616D-4035-A52F-08C239F334EE)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_metadata_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_handler" kindref="compound" tooltip="An object capable of returning the metadata from the url to a file.">sbIMetadataHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(58c271fb-336e-476d-96f6-bdba0e5f54e6)]</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_metadata_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_handler" kindref="compound" tooltip="An object capable of manipulating the metadata tags for a media file.">sbIMetadataHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="53" refid="interfacesb_i_metadata_handler_10d705e855c88cb318a6ecbf69d0ea546" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_metadata_values" kindref="compound" tooltip="A map of value+type pairs, keyed by string.">sbIMetadataValues</ref><sp/>values;</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="64" refid="interfacesb_i_metadata_handler_1978827eef884f62ce9da10d1344632a1" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRBool<sp/>completed;</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="79" refid="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIChannel<sp/>channel;</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/>PRInt32<sp/>vote(<sp/>in<sp/>AString<sp/>aUrl<sp/>);</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"></highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedMIMETypes(out<sp/>PRUint32<sp/>nMIMECount,<sp/>[array,<sp/>size_is<sp/>(nMIMECount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aMIMETypes);</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"></highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedFileExtensions(out<sp/>PRUint32<sp/>nExtCount,<sp/>[array,<sp/>size_is<sp/>(nExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"></highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/>PRInt32<sp/>read();</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"></highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/>PRInt32<sp/>write();</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"></highlight></codeline>
-<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onChannelData(<sp/>in<sp/>nsISupports<sp/>aChannel<sp/>);</highlight></codeline>
-<codeline lineno="154"><highlight class="normal"></highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>close();</highlight></codeline>
-<codeline lineno="159"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="51" refid="interfacesb_i_metadata_handler_11a1be28d93bd9e9dcf125ea81f8d3b6e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_OTHER<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00;</highlight></codeline>
+<codeline lineno="52" refid="interfacesb_i_metadata_handler_17a2d93e3fb98131ac2d8878d96e8181e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_FILEICON<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
+<codeline lineno="53" refid="interfacesb_i_metadata_handler_148b796ba015a3bb74adcfe5b1568053e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_OTHERFILEICON<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x02;</highlight></codeline>
+<codeline lineno="54" refid="interfacesb_i_metadata_handler_1f4d77f70862fddc330e042edfae42c56" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_FRONTCOVER<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x03;</highlight></codeline>
+<codeline lineno="55" refid="interfacesb_i_metadata_handler_1592d84353e0841ce48bef01c124fd95f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_BACKCOVER<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x04;</highlight></codeline>
+<codeline lineno="56" refid="interfacesb_i_metadata_handler_15b291b370eff73c92887422ea47931bb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_LEAFLETPAGE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x05;</highlight></codeline>
+<codeline lineno="57" refid="interfacesb_i_metadata_handler_121d241da714d89238bd965110072c4d4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_MEDIA<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x06;</highlight></codeline>
+<codeline lineno="58" refid="interfacesb_i_metadata_handler_1ea451378ef9cb8038fbbed44850ccac0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_LEADARTIST<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x07;</highlight></codeline>
+<codeline lineno="59" refid="interfacesb_i_metadata_handler_1fdacca06272e8edb52235092c3a25173" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_ARTIST<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x08;</highlight></codeline>
+<codeline lineno="60" refid="interfacesb_i_metadata_handler_150556893bf5cfb2111cc27a5de51454b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_CONDUCTOR<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x09;</highlight></codeline>
+<codeline lineno="61" refid="interfacesb_i_metadata_handler_15c50f5d65ae546332f6f3ddf5f12fbac" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_BAND<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x0A;</highlight></codeline>
+<codeline lineno="62" refid="interfacesb_i_metadata_handler_1a4c027277bebd2a3c4249da5e3c512a8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_COMPOSER<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x0B;</highlight></codeline>
+<codeline lineno="63" refid="interfacesb_i_metadata_handler_171868d2453b44473ced5a376f109023a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_LYRICIST<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x0C;</highlight></codeline>
+<codeline lineno="64" refid="interfacesb_i_metadata_handler_12399ea2a20923f147368baadd9ca4f18" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_RECORDINGLOCATION<sp/><sp/>=<sp/>0x0D;</highlight></codeline>
+<codeline lineno="65" refid="interfacesb_i_metadata_handler_149ef76a9da92240ab93e98a69734b521" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_DURINGRECORDING<sp/><sp/><sp/><sp/>=<sp/>0x0E;</highlight></codeline>
+<codeline lineno="66" refid="interfacesb_i_metadata_handler_12eddcf2646f5970935413176fdfefa26" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_DURINGPERFORMANCE<sp/><sp/>=<sp/>0x0F;</highlight></codeline>
+<codeline lineno="67" refid="interfacesb_i_metadata_handler_1a789760683447fe8fa1d6ffa77e7e756" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_MOVIESCREENCAPTURE<sp/>=<sp/>0x10;</highlight></codeline>
+<codeline lineno="68" refid="interfacesb_i_metadata_handler_1554e236ad0c8f9a32d5c15de68d53b16" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_COLOUREDFISH<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x11;</highlight></codeline>
+<codeline lineno="69" refid="interfacesb_i_metadata_handler_13e69dffc454a4ecee294c9149138b5ae" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_ILLUSTRATION<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x12;</highlight></codeline>
+<codeline lineno="70" refid="interfacesb_i_metadata_handler_11b991ff21b1799d146f60ae6aa3b56ad" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_BANDLOGO<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x13;</highlight></codeline>
+<codeline lineno="71" refid="interfacesb_i_metadata_handler_1e8c41bfa0d481d8defed080250275c7c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_PUBLISHERLOGO<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x14;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="81" refid="interfacesb_i_metadata_handler_1a2a140a5970440aac460137619d1c673" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_mutable_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances Note that implementations...">sbIMutablePropertyArray</ref><sp/>props;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="interfacesb_i_metadata_handler_1978827eef884f62ce9da10d1344632a1" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRBool<sp/>completed;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIChannel<sp/>channel;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>PRInt32<sp/>vote(<sp/>in<sp/>AString<sp/>aUrl<sp/>);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/>PRInt32<sp/>read();</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/>PRInt32<sp/>write();</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getImageData(in<sp/>PRInt32<sp/>aType,</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>AUTF8String<sp/>aMimeType,</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDataLen,</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,retval,size_is(aDataLen)]<sp/>out<sp/>octet<sp/>aData);</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onChannelData(<sp/>in<sp/>nsISupports<sp/>aChannel<sp/>);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>close();</highlight></codeline>
+<codeline lineno="193"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl"/>
   </compounddef>
 </doxygen>

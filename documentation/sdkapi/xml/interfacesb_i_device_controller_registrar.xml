@@ -15,7 +15,7 @@
 <para>An array of sbIDeviceControllers currently registered. The ordering within the array is undefined, even in consecutive reads. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="45" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="45" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="45" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -34,7 +34,7 @@
 <para>Registers an <ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref> object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="50"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="50"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_controller_registrar_163ef6f12a625b1e10f0e080ed40e8762" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -51,7 +51,7 @@
 <para>Unregisters an <ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref> object. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="55"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="55"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_controller_registrar_1b2095645bd9f79a0b26fc3ec185cb2d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_device_controller" kindref="compound">sbIDeviceController</ref></type>
@@ -68,7 +68,7 @@
 <para>Retrieve a registered controller. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="60"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="60"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -76,7 +76,7 @@
     <detaileddescription>
 <para><simplesect kind="note"><para>Implementations of this interface must be threadsafe. </para></simplesect>
 </para>    </detaileddescription>
-    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="40" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="39" bodyend="61"/>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" line="40" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceControllerRegistrar.idl" bodystart="39" bodyend="61"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_controller_registrar_12a923d203dd9c7d8fb2299351b0e3dd2" prot="public" virt="non-virtual"><scope>sbIDeviceControllerRegistrar</scope><name>controllers</name></member>
       <member refid="interfacesb_i_device_controller_registrar_1b2095645bd9f79a0b26fc3ec185cb2d8" prot="public" virt="non-virtual"><scope>sbIDeviceControllerRegistrar</scope><name>getController</name></member>

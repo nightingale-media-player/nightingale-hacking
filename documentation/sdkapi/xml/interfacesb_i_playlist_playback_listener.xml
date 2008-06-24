@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="54"/>
+        <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="54"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_16ff71da7d1aa1376aa76513b1580b740" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="63"/>
+        <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="63"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_10cb6feb91748886c00fd7cdd0ebedd9e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -87,14 +87,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="75"/>
+        <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="75"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Interface that handles the tracking of playback changes. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="50" bodyfile="z:/projects/songbird/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="49" bodyend="77"/>
+    <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="49" bodyend="77"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_playback_listener_16ff71da7d1aa1376aa76513b1580b740" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onBeforeTrackChange</name></member>
       <member refid="interfacesb_i_playlist_playback_listener_1e80492fbe57ece2ca318ecc7a7494d3e" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onStop</name></member>

@@ -63,6 +63,7 @@
     <li><a href="annotated.html"><span>Classes</span></a></li>
     <li class="current"><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <h1>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</h1><a href="sb_i_metadata_handler_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
@@ -93,32 +94,55 @@
 <a name="l00026"></a>00026 
 <a name="l00031"></a>00031 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00032"></a>00032 <span class="preprocessor">#include "nsIChannel.idl"</span>
-<a name="l00033"></a>00033 <span class="preprocessor">#include "<a class="code" href="sb_i_metadata_values_8idl.html" title="A map of value+type pairs, keyed by string.">sbIMetadataValues.idl</a>"</span>
+<a name="l00033"></a>00033 <span class="preprocessor">#include "<a class="code" href="sb_i_property_array_8idl.html" title="Definition of the sbIPropertyArray interface.">sbIPropertyArray.idl</a>"</span>
 <a name="l00034"></a>00034 
-<a name="l00044"></a>00044 [scriptable, uuid(919FF2D3-616D-4035-A52F-08C239F334EE)]
-<a name="l00045"></a><a class="code" href="interfacesb_i_metadata_handler.html">00045</a> interface <a class="code" href="interfacesb_i_metadata_handler.html" title="An object capable of returning the metadata from the url to a file.">sbIMetadataHandler</a> : nsISupports
+<a name="l00044"></a>00044 [scriptable, uuid(58c271fb-336e-476d-96f6-bdba0e5f54e6)]
+<a name="l00045"></a><a class="code" href="interfacesb_i_metadata_handler.html">00045</a> interface <a class="code" href="interfacesb_i_metadata_handler.html" title="An object capable of manipulating the metadata tags for a media file.">sbIMetadataHandler</a> : nsISupports
 <a name="l00046"></a>00046 {
-<a name="l00053"></a><a class="code" href="interfacesb_i_metadata_handler.html#0d705e855c88cb318a6ecbf69d0ea546">00053</a>   attribute <a class="code" href="interfacesb_i_metadata_values.html" title="A map of value+type pairs, keyed by string.">sbIMetadataValues</a> values;
-<a name="l00054"></a>00054 
-<a name="l00064"></a><a class="code" href="interfacesb_i_metadata_handler.html#978827eef884f62ce9da10d1344632a1">00064</a>   readonly attribute PRBool completed;
-<a name="l00065"></a>00065 
-<a name="l00079"></a><a class="code" href="interfacesb_i_metadata_handler.html#8311aa7b7bc4102d02465b47ded3e7f3">00079</a>   attribute nsIChannel channel;
-<a name="l00080"></a>00080 
-<a name="l00097"></a>00097   PRInt32 vote( in AString aUrl );
-<a name="l00098"></a>00098 
-<a name="l00105"></a>00105   <span class="keywordtype">void</span> supportedMIMETypes(out PRUint32 nMIMECount, [array, size_is (nMIMECount), retval] out wstring aMIMETypes);
-<a name="l00106"></a>00106 
-<a name="l00113"></a>00113   <span class="keywordtype">void</span> supportedFileExtensions(out PRUint32 nExtCount, [array, size_is (nExtCount), retval] out wstring aExts);
-<a name="l00114"></a>00114 
-<a name="l00124"></a>00124   PRInt32 read();
-<a name="l00125"></a>00125 
-<a name="l00141"></a>00141   PRInt32 write();
-<a name="l00142"></a>00142 
-<a name="l00153"></a>00153   <span class="keywordtype">void</span> onChannelData( in nsISupports aChannel );
-<a name="l00154"></a>00154 
-<a name="l00158"></a>00158   <span class="keywordtype">void</span> close();
-<a name="l00159"></a>00159 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:23 2008 for Songbird by&nbsp;
+<a name="l00051"></a><a class="code" href="interfacesb_i_metadata_handler.html#1a1be28d93bd9e9dcf125ea81f8d3b6e">00051</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_OTHER              = 0x00;
+<a name="l00052"></a><a class="code" href="interfacesb_i_metadata_handler.html#7a2d93e3fb98131ac2d8878d96e8181e">00052</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_FILEICON           = 0x01;
+<a name="l00053"></a><a class="code" href="interfacesb_i_metadata_handler.html#48b796ba015a3bb74adcfe5b1568053e">00053</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_OTHERFILEICON      = 0x02;
+<a name="l00054"></a><a class="code" href="interfacesb_i_metadata_handler.html#f4d77f70862fddc330e042edfae42c56">00054</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_FRONTCOVER         = 0x03;
+<a name="l00055"></a><a class="code" href="interfacesb_i_metadata_handler.html#592d84353e0841ce48bef01c124fd95f">00055</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_BACKCOVER          = 0x04;
+<a name="l00056"></a><a class="code" href="interfacesb_i_metadata_handler.html#5b291b370eff73c92887422ea47931bb">00056</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_LEAFLETPAGE        = 0x05;
+<a name="l00057"></a><a class="code" href="interfacesb_i_metadata_handler.html#21d241da714d89238bd965110072c4d4">00057</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_MEDIA              = 0x06;
+<a name="l00058"></a><a class="code" href="interfacesb_i_metadata_handler.html#ea451378ef9cb8038fbbed44850ccac0">00058</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_LEADARTIST         = 0x07;
+<a name="l00059"></a><a class="code" href="interfacesb_i_metadata_handler.html#fdacca06272e8edb52235092c3a25173">00059</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_ARTIST             = 0x08;
+<a name="l00060"></a><a class="code" href="interfacesb_i_metadata_handler.html#50556893bf5cfb2111cc27a5de51454b">00060</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_CONDUCTOR          = 0x09;
+<a name="l00061"></a><a class="code" href="interfacesb_i_metadata_handler.html#5c50f5d65ae546332f6f3ddf5f12fbac">00061</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_BAND               = 0x0A;
+<a name="l00062"></a><a class="code" href="interfacesb_i_metadata_handler.html#a4c027277bebd2a3c4249da5e3c512a8">00062</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_COMPOSER           = 0x0B;
+<a name="l00063"></a><a class="code" href="interfacesb_i_metadata_handler.html#71868d2453b44473ced5a376f109023a">00063</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_LYRICIST           = 0x0C;
+<a name="l00064"></a><a class="code" href="interfacesb_i_metadata_handler.html#2399ea2a20923f147368baadd9ca4f18">00064</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_RECORDINGLOCATION  = 0x0D;
+<a name="l00065"></a><a class="code" href="interfacesb_i_metadata_handler.html#49ef76a9da92240ab93e98a69734b521">00065</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_DURINGRECORDING    = 0x0E;
+<a name="l00066"></a><a class="code" href="interfacesb_i_metadata_handler.html#2eddcf2646f5970935413176fdfefa26">00066</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_DURINGPERFORMANCE  = 0x0F;
+<a name="l00067"></a><a class="code" href="interfacesb_i_metadata_handler.html#a789760683447fe8fa1d6ffa77e7e756">00067</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_MOVIESCREENCAPTURE = 0x10;
+<a name="l00068"></a><a class="code" href="interfacesb_i_metadata_handler.html#554e236ad0c8f9a32d5c15de68d53b16">00068</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_COLOUREDFISH       = 0x11;
+<a name="l00069"></a><a class="code" href="interfacesb_i_metadata_handler.html#3e69dffc454a4ecee294c9149138b5ae">00069</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_ILLUSTRATION       = 0x12;
+<a name="l00070"></a><a class="code" href="interfacesb_i_metadata_handler.html#1b991ff21b1799d146f60ae6aa3b56ad">00070</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_BANDLOGO           = 0x13;
+<a name="l00071"></a><a class="code" href="interfacesb_i_metadata_handler.html#e8c41bfa0d481d8defed080250275c7c">00071</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_PUBLISHERLOGO      = 0x14;
+<a name="l00072"></a>00072   
+<a name="l00081"></a><a class="code" href="interfacesb_i_metadata_handler.html#a2a140a5970440aac460137619d1c673">00081</a>   attribute <a class="code" href="interfacesb_i_mutable_property_array.html" title="An interface to carry around arrays of nsIProperty instances Note that implementations...">sbIMutablePropertyArray</a> props;
+<a name="l00082"></a>00082 
+<a name="l00092"></a><a class="code" href="interfacesb_i_metadata_handler.html#978827eef884f62ce9da10d1344632a1">00092</a>   readonly attribute PRBool completed;
+<a name="l00093"></a>00093 
+<a name="l00107"></a><a class="code" href="interfacesb_i_metadata_handler.html#8311aa7b7bc4102d02465b47ded3e7f3">00107</a>   attribute nsIChannel channel;
+<a name="l00108"></a>00108 
+<a name="l00125"></a>00125   PRInt32 vote( in AString aUrl );
+<a name="l00126"></a>00126 
+<a name="l00136"></a>00136   PRInt32 read();
+<a name="l00137"></a>00137 
+<a name="l00152"></a>00152   PRInt32 write();
+<a name="l00153"></a>00153 
+<a name="l00171"></a>00171   <span class="keywordtype">void</span> getImageData(in PRInt32 aType,
+<a name="l00172"></a>00172                     out AUTF8String aMimeType,
+<a name="l00173"></a>00173                     out <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aDataLen,
+<a name="l00174"></a>00174                     [array,retval,size_is(aDataLen)] out octet aData);
+<a name="l00175"></a>00175 
+<a name="l00187"></a>00187   <span class="keywordtype">void</span> onChannelData( in nsISupports aChannel );
+<a name="l00188"></a>00188 
+<a name="l00192"></a>00192   <span class="keywordtype">void</span> close();
+<a name="l00193"></a>00193 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

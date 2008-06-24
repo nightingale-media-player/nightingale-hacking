@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/remoteapi/public/sbISecurityAggregator.idl" line="56" bodyfile="z:/projects/songbird/components/remoteapi/public/sbISecurityAggregator.idl" bodystart="56" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" line="56" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" bodystart="56" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -24,55 +24,55 @@
 <para><simplesect kind="see"><para>nsISecurityCheckedComponent </para><para><ref refid="interfacesb_i_security_mixin" kindref="compound">sbISecurityMixin</ref> </para><para>sbRemotePlayer </para><para>sbSecurityMixin </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="691">
+      <node id="815">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
-      <node id="690">
+      <node id="814">
         <label>sbIRemoteCommands</label>
         <link refid="interfacesb_i_remote_commands"/>
-        <childnode refid="689" relation="usage">
+        <childnode refid="813" relation="usage">
           <edgelabel>owner</edgelabel>
         </childnode>
       </node>
-      <node id="693">
+      <node id="817">
         <label>sbIRemoteMediaList</label>
         <link refid="interfacesb_i_remote_media_list"/>
       </node>
-      <node id="689">
+      <node id="813">
         <label>sbIRemotePlayer</label>
         <link refid="interfacesb_i_remote_player"/>
-        <childnode refid="690" relation="usage">
+        <childnode refid="814" relation="usage">
           <edgelabel>commands</edgelabel>
         </childnode>
-        <childnode refid="691" relation="usage">
+        <childnode refid="815" relation="usage">
           <edgelabel>webLibrary
 mainLibrary
 siteLibrary</edgelabel>
         </childnode>
-        <childnode refid="692" relation="usage">
+        <childnode refid="816" relation="usage">
           <edgelabel>webPlaylist</edgelabel>
         </childnode>
-        <childnode refid="693" relation="usage">
+        <childnode refid="817" relation="usage">
           <edgelabel>downloadMediaList</edgelabel>
         </childnode>
       </node>
-      <node id="688">
+      <node id="812">
         <label>sbISecurityAggregator</label>
         <link refid="interfacesb_i_security_aggregator"/>
-        <childnode refid="689" relation="usage">
+        <childnode refid="813" relation="usage">
           <edgelabel>remotePlayer</edgelabel>
         </childnode>
       </node>
-      <node id="692">
+      <node id="816">
         <label>sbIRemoteWebPlaylist</label>
         <link refid="interfacesb_i_remote_web_playlist"/>
-        <childnode refid="693" relation="usage">
+        <childnode refid="817" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/remoteapi/public/sbISecurityAggregator.idl" line="55" bodyfile="z:/projects/songbird/components/remoteapi/public/sbISecurityAggregator.idl" bodystart="54" bodyend="57"/>
+    <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbISecurityAggregator.idl" bodystart="54" bodyend="57"/>
     <listofallmembers>
       <member refid="interfacesb_i_security_aggregator_17f6744e71a54a90025f2461a57123648" prot="public" virt="non-virtual"><scope>sbISecurityAggregator</scope><name>remotePlayer</name></member>
     </listofallmembers>

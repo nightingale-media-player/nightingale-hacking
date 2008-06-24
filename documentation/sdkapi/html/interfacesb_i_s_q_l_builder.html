@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -92,6 +93,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_s_q_l_builder.html#c043dcca0a024504bdfba272a183b165">addJoin</a> (in unsigned long aJoinType, in AString aJoinedTableName, in AString aJoinedTableAlias, in AString aJoinedColumnName, in AString aJoinToTableName, in AString aJoinToColumnName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a join to the query.  <a href="#c043dcca0a024504bdfba272a183b165"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_s_q_l_builder.html#d50570763487a6f4e0146400f1b1b3d1">addJoinWithIndexHint</a> (in unsigned long aJoinType, in AString aJoinedTableName, in AString aJoinedTableAlias, in AString aJoinedColumnName, in AString aJoinToTableName, in AString aJoinToColumnName, in boolean aRequiresFromTableIndexHint, in boolean aRequiresToTableIndexHint)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a join to the query.  <a href="#d50570763487a6f4e0146400f1b1b3d1"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_s_q_l_builder.html#00fa6e88ce37c3ddd278c4420f375367">addSubqueryJoin</a> (in unsigned long aJoinType, in <a class="el" href="interfacesb_i_s_q_l_select_builder.html">sbISQLSelectBuilder</a> aJoinedSubquery, in AString aJoinedTableAlias, in AString aJoinedColumnName, in AString aJoinToTableName, in AString aJoinToColumnName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a subquery join join to the query.  <a href="#00fa6e88ce37c3ddd278c4420f375367"></a><br></td></tr>
@@ -129,6 +133,9 @@ const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e08c6f669a944b7046f55c6484e0c7d3"></a><!-- doxytag: member="sbISQLBuilder::MATCH_LIKE" ref="e08c6f669a944b7046f55c6484e0c7d3" args="" -->
 const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_s_q_l_builder.html#e08c6f669a944b7046f55c6484e0c7d3">MATCH_LIKE</a> = 6</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e12d33fbbd1e6f912b69055b3e7b8713"></a><!-- doxytag: member="sbISQLBuilder::MATCH_MATCH" ref="e12d33fbbd1e6f912b69055b3e7b8713" args="" -->
+const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_s_q_l_builder.html#e12d33fbbd1e6f912b69055b3e7b8713">MATCH_MATCH</a> = 7</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3c7ea9b5a93d06b5651b2930d8b9b472"></a><!-- doxytag: member="sbISQLBuilder::limit" ref="3c7ea9b5a93d06b5651b2930d8b9b472" args="" -->
 attribute long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_s_q_l_builder.html#3c7ea9b5a93d06b5651b2930d8b9b472">limit</a></td></tr>
@@ -223,6 +230,86 @@ Add a join to the query.
     <tr><td valign="top"></td><td valign="top"><em>aJoinToColumnName</em>&nbsp;</td><td>Column from the joined to table to use in join expression </td></tr>
   </table>
 </dl>
+
+</div>
+</div><p>
+<a class="anchor" name="d50570763487a6f4e0146400f1b1b3d1"></a><!-- doxytag: member="sbISQLBuilder::addJoinWithIndexHint" ref="d50570763487a6f4e0146400f1b1b3d1" args="(in unsigned long aJoinType, in AString aJoinedTableName, in AString aJoinedTableAlias, in AString aJoinedColumnName, in AString aJoinToTableName, in AString aJoinToColumnName, in boolean aRequiresFromTableIndexHint, in boolean aRequiresToTableIndexHint)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbISQLBuilder::addJoinWithIndexHint           </td>
+          <td>(</td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aJoinType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aJoinedTableName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aJoinedTableAlias</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aJoinedColumnName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aJoinToTableName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aJoinToColumnName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in boolean&nbsp;</td>
+          <td class="paramname"> <em>aRequiresFromTableIndexHint</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in boolean&nbsp;</td>
+          <td class="paramname"> <em>aRequiresToTableIndexHint</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a join to the query. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aJoinType</em>&nbsp;</td><td>Join type, must be one of the JOIN constant values </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aJoinedTableName</em>&nbsp;</td><td>Table name of the table to join </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aJoinedTableAlias</em>&nbsp;</td><td>Alias to give the joined table, null for none </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aJoinedColumnName</em>&nbsp;</td><td>Column from joined table to use in join expression </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aJoinToTableName</em>&nbsp;</td><td>Table name of the table to join to </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aJoinToColumnName</em>&nbsp;</td><td>Column from the joined to table to use in join expression </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aRequiresFromTableIndexHint</em>&nbsp;</td><td>This will attempt to add a hint to the join statement so that sqlite uses the correct index. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aRequiresToTableIndexHint</em>&nbsp;</td><td>This will attempt to add a hint to the join statement so that sqlite uses the correct index. </td></tr>
+  </table>
+</dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Do not use this method unless you know _exactly_ why you are using it. Attempting to add a hint for index use can break queries or make them extremely slow. </dd></dl>
 
 </div>
 </div><p>
@@ -403,7 +490,7 @@ Return the generated SQL statement for the query.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/sqlbuilder/public/<a class="el" href="sb_i_s_q_l_builder_8idl-source.html">sbISQLBuilder.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:27 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:28 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

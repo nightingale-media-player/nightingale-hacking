@@ -4,13 +4,13 @@
     <compoundname>IWindowResizeHook.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="181">
+      <node id="195">
         <label>components/integration/public/IWindowResizeHook.idl</label>
         <link refid="IWindowResizeHook.idl"/>
-        <childnode refid="182" relation="include">
+        <childnode refid="196" relation="include">
         </childnode>
       </node>
-      <node id="182">
+      <node id="196">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -63,6 +63,6 @@
 <codeline lineno="85"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/integration/public/IWindowResizeHook.idl"/>
+    <location file="c:/builds/songbird/trunk/components/integration/public/IWindowResizeHook.idl"/>
   </compounddef>
 </doxygen>

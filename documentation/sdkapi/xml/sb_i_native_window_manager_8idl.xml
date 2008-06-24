@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIDOMMouseEvent.idl</includes>
     <incdepgraph>
-      <node id="187">
-        <label>components/integration/public/sbINativeWindowManager.idl</label>
-        <link refid="sbINativeWindowManager.idl"/>
-        <childnode refid="188" relation="include">
-        </childnode>
-        <childnode refid="189" relation="include">
-        </childnode>
-      </node>
-      <node id="189">
+      <node id="206">
         <label>nsIDOMMouseEvent.idl</label>
       </node>
-      <node id="188">
+      <node id="204">
+        <label>components/integration/public/sbINativeWindowManager.idl</label>
+        <link refid="sbINativeWindowManager.idl"/>
+        <childnode refid="205" relation="include">
+        </childnode>
+        <childnode refid="206" relation="include">
+        </childnode>
+      </node>
+      <node id="205">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -91,6 +91,6 @@
 <codeline lineno="77" refid="interfacesb_i_native_window_manager_1892988330b4849e9b8ecfb51f2680818" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsOnTop;</highlight></codeline>
 <codeline lineno="78"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/integration/public/sbINativeWindowManager.idl"/>
+    <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl"/>
   </compounddef>
 </doxygen>

@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceEventListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="64">
+      <node id="69">
         <label>components/devices/base/public/sbIDeviceEventListener.idl</label>
         <link refid="sbIDeviceEventListener.idl"/>
-        <childnode refid="65" relation="include">
+        <childnode refid="70" relation="include">
         </childnode>
       </node>
-      <node id="65">
+      <node id="70">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -56,6 +56,6 @@
 <codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDeviceEvent(in<sp/><ref refid="interfacesb_i_device_event" kindref="compound">sbIDeviceEvent</ref><sp/>aEvent);</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl"/>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceEventListener.idl"/>
   </compounddef>
 </doxygen>

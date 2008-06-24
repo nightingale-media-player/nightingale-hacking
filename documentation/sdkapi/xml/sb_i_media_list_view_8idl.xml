@@ -4,13 +4,13 @@
     <compoundname>sbIMediaListView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="260">
+      <node id="292">
         <label>components/library/base/public/sbIMediaListView.idl</label>
         <link refid="sbIMediaListView.idl"/>
-        <childnode refid="261" relation="include">
+        <childnode refid="293" relation="include">
         </childnode>
       </node>
-      <node id="261">
+      <node id="293">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -58,7 +58,7 @@
 <codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref>;</highlight></codeline>
-<codeline lineno="42"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mutable_property_array" kindref="compound">sbIMutablePropertyArray</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mutable_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances Note that implementations...">sbIMutablePropertyArray</ref>;</highlight></codeline>
 <codeline lineno="43"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_selection" kindref="compound" tooltip="Manage the selection of items within a view. This interface is a subset of nsITreeView...">sbIMediaListViewSelection</ref>;</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
 <codeline lineno="51"><highlight class="normal">[scriptable,<sp/>uuid(bb26d18e-8387-4512-9d99-8ce9b18f929b)]</highlight></codeline>
@@ -119,6 +119,6 @@
 <codeline lineno="217"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeSelectedMediaItems();</highlight></codeline>
 <codeline lineno="218"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/library/base/public/sbIMediaListView.idl"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListView.idl"/>
   </compounddef>
 </doxygen>

@@ -19,7 +19,7 @@
 <para>aEvent - information about the event </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl" line="45"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceEventListener.idl" line="45"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -27,7 +27,7 @@
     <detaileddescription>
 <para><simplesect kind="note"><para>Implementations of this interface are always called on the thread they are created.</para></simplesect>
 Used to listen to events on a particular device, controller, etc.</para><para>Any exceptions thrown from the event listeners are ignored. </para>    </detaileddescription>
-    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl" line="41" bodyfile="z:/projects/songbird/components/devices/base/public/sbIDeviceEventListener.idl" bodystart="40" bodyend="46"/>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceEventListener.idl" line="41" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceEventListener.idl" bodystart="40" bodyend="46"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_event_listener_1ea708f23bf95c1db68ffe08c686d4a66" prot="public" virt="non-virtual"><scope>sbIDeviceEventListener</scope><name>onDeviceEvent</name></member>
     </listofallmembers>

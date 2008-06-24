@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="445" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="445" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="445" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="445" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -25,49 +25,49 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="614">
+      <node id="732">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="612">
+      <node id="730">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="613" relation="public-inheritance">
+        <childnode refid="731" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="613">
+      <node id="731">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="614" relation="public-inheritance">
+        <childnode refid="732" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="617">
+      <node id="735">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="618" relation="usage">
+        <childnode refid="736" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
       </node>
-      <node id="618">
+      <node id="736">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="615">
+      <node id="733">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="616" relation="public-inheritance">
+        <childnode refid="734" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="616">
+      <node id="734">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="617" relation="public-inheritance">
+        <childnode refid="735" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="441" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="440" bodyend="446"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="441" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="440" bodyend="446"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>displayName</name></member>
       <member refid="interfacesb_i_text_property_info_181f045c485d9e68758526a32d239c282" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>enforceLowercase</name></member>

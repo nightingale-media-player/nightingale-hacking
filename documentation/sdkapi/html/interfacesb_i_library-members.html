@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -87,6 +88,7 @@
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#2d06325f48acd0eb7bd1d3da8d51dda5">copyMediaList</a>(in AString aType, in sbIMediaList aSource)</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library_resource.html#62a515cdcadcae2da7861391abbb36e4">created</a></td><td><a class="el" href="interfacesb_i_library_resource.html">sbILibraryResource</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#a9fe98d3fedb5e8dd8ed597829b8ce56">createMediaItem</a>(in nsIURI aContentUri,[optional] in sbIPropertyArray aProperties,[optional] in boolean aAllowDuplicates)</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#42f596caaed1cd39f4db42edc819f9c8">createMediaItemIfNotExist</a>(in nsIURI aContentUri,[optional] in sbIPropertyArray aProperties,[optional] out sbIMediaItem aResultItem)</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#62f2e88db6d62e1778ee96fbffc7dd1c">createMediaList</a>(in AString aType,[optional] in sbIPropertyArray aProperties)</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#94596861a47fd029591cb920bdd1d1d0">createView</a>([optional] in sbIMediaListViewState aState)</td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#283d3a82ec0021cfc02928330bd99cac">creationParameters</a></td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
@@ -98,8 +100,11 @@
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#ac5c344da31a52fc85cf7ed797cf1111">ENUMERATIONTYPE_SNAPSHOT</a></td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library_resource.html#32061d667e86c05b22d3ee6d57e24001">equals</a>(in sbILibraryResource aOtherLibraryResource)</td><td><a class="el" href="interfacesb_i_library_resource.html">sbILibraryResource</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#106f95a78294350f4def9d57d4c6df4a">factory</a></td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#04b2f426aecb73455a3b1245451f4af5">flush</a>()</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#6ab593212150bf9bf55b0a05207867a7">getItemByGuid</a>(in AString aGuid)</td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#2fd1e5e5bf2a9691bfde77a5a0eddd6a">getItemByIndex</a>(in unsigned long aIndex)</td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#b9d616412cdb0df6c7e1c793f8bd6e78">getItemsByProperties</a>(in sbIPropertyArray aProperties)</td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#4937729ad5c31e326b306c3b9d28811a">getItemsByProperty</a>(in AString aPropertyID, in AString aPropertyValue)</td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#8618c5edb57160383e123241856a181d">getMediaItem</a>(in AString aGuid)</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library_resource.html#91201a282a4020651d75455f2bbc963e">getProperties</a>([optional] in sbIPropertyArray aPropertyIDs)</td><td><a class="el" href="interfacesb_i_library_resource.html">sbILibraryResource</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library_resource.html#88a79d69e6ad049697c4b54d69aa98e5">getProperty</a>(in AString aID)</td><td><a class="el" href="interfacesb_i_library_resource.html">sbILibraryResource</a></td><td></td></tr>
@@ -138,12 +143,12 @@
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library_resource.html#79625ea92faf0b5dfadc74c840b2525b">setProperties</a>(in sbIPropertyArray aProperties)</td><td><a class="el" href="interfacesb_i_library_resource.html">sbILibraryResource</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library_resource.html#7d26996d427fa332307d53a124f0fc46">setProperty</a>(in AString aID, in AString aValue)</td><td><a class="el" href="interfacesb_i_library_resource.html">sbILibraryResource</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#24498844eb5629b212440b0b1db0cd17">supportsForeignMediaItems</a></td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#ec308d5681d1e7a38b0783f2fd0730cb">sync</a>()</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_item.html#febfa1e819a1155c461fb047cf4d0f5d">testIsAvailable</a>(in nsIObserver aObserver)</td><td><a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_item.html#d14095f80e5f7f2d02cce741016088d2">toString</a>()</td><td><a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#687bc602daf1ac786a7a0049b939c736">type</a></td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library_resource.html#377285cd148468c9550954df62ecad13">updated</a></td><td><a class="el" href="interfacesb_i_library_resource.html">sbILibraryResource</a></td><td></td></tr>
-</table><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:26 2008 for Songbird by&nbsp;
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_library_resource.html#faa01b7805181fabba68fd9a721e7d3d">userEditable</a></td><td><a class="el" href="interfacesb_i_library_resource.html">sbILibraryResource</a></td><td></td></tr>
+</table><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

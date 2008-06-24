@@ -3,18 +3,312 @@
   <compounddef id="interfacesb_i_metadata_handler" kind="interface" prot="public">
     <compoundname>sbIMetadataHandler</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_metadata_handler_10d705e855c88cb318a6ecbf69d0ea546" prot="public" static="no" mutable="no">
-        <type>attribute <ref refid="interfacesb_i_metadata_values" kindref="compound">sbIMetadataValues</ref></type>
-        <definition>attribute sbIMetadataValues sbIMetadataHandler::values</definition>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_11a1be28d93bd9e9dcf125ea81f8d3b6e" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER</definition>
         <argsstring></argsstring>
-        <name>values</name>
+        <name>METADATA_IMAGE_TYPE_OTHER</name>
+        <initializer> 0x00</initializer>
         <briefdescription>
-<para>The values object containing the metadata information. </para>        </briefdescription>
+<para>Constant for the type of image in the metadata, these are pulled from the taglib/attachedpictureframe.h. </para>        </briefdescription>
         <detaileddescription>
-<para>When the handler has successfully completed its <ref refid="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" kindref="member">read()</ref> operation, the values attribute will be filled with the metadata from the url. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="53" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="53" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="51" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_17a2d93e3fb98131ac2d8878d96e8181e" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_FILEICON</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_FILEICON</name>
+        <initializer> 0x01</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_148b796ba015a3bb74adcfe5b1568053e" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHERFILEICON</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_OTHERFILEICON</name>
+        <initializer> 0x02</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="53" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_1f4d77f70862fddc330e042edfae42c56" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_FRONTCOVER</name>
+        <initializer> 0x03</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_1592d84353e0841ce48bef01c124fd95f" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_BACKCOVER</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_BACKCOVER</name>
+        <initializer> 0x04</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_15b291b370eff73c92887422ea47931bb" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_LEAFLETPAGE</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_LEAFLETPAGE</name>
+        <initializer> 0x05</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="56" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_121d241da714d89238bd965110072c4d4" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_MEDIA</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_MEDIA</name>
+        <initializer> 0x06</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="57" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_1ea451378ef9cb8038fbbed44850ccac0" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_LEADARTIST</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_LEADARTIST</name>
+        <initializer> 0x07</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="58" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_1fdacca06272e8edb52235092c3a25173" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_ARTIST</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_ARTIST</name>
+        <initializer> 0x08</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="59" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_150556893bf5cfb2111cc27a5de51454b" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_CONDUCTOR</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_CONDUCTOR</name>
+        <initializer> 0x09</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="60" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_15c50f5d65ae546332f6f3ddf5f12fbac" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_BAND</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_BAND</name>
+        <initializer> 0x0A</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="61" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_1a4c027277bebd2a3c4249da5e3c512a8" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_COMPOSER</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_COMPOSER</name>
+        <initializer> 0x0B</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="62" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_171868d2453b44473ced5a376f109023a" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_LYRICIST</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_LYRICIST</name>
+        <initializer> 0x0C</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="63" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_12399ea2a20923f147368baadd9ca4f18" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_RECORDINGLOCATION</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_RECORDINGLOCATION</name>
+        <initializer> 0x0D</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="64" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_149ef76a9da92240ab93e98a69734b521" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_DURINGRECORDING</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_DURINGRECORDING</name>
+        <initializer> 0x0E</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="65" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_12eddcf2646f5970935413176fdfefa26" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_DURINGPERFORMANCE</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_DURINGPERFORMANCE</name>
+        <initializer> 0x0F</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="66" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_1a789760683447fe8fa1d6ffa77e7e756" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_MOVIESCREENCAPTURE</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_MOVIESCREENCAPTURE</name>
+        <initializer> 0x10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="67" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_1554e236ad0c8f9a32d5c15de68d53b16" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_COLOUREDFISH</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_COLOUREDFISH</name>
+        <initializer> 0x11</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="68" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_13e69dffc454a4ecee294c9149138b5ae" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_ILLUSTRATION</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_ILLUSTRATION</name>
+        <initializer> 0x12</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="69" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_11b991ff21b1799d146f60ae6aa3b56ad" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_BANDLOGO</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_BANDLOGO</name>
+        <initializer> 0x13</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="70" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_1e8c41bfa0d481d8defed080250275c7c" prot="public" static="no" mutable="no">
+        <type>const PRUint32</type>
+        <definition>const PRUint32 sbIMetadataHandler::METADATA_IMAGE_TYPE_PUBLISHERLOGO</definition>
+        <argsstring></argsstring>
+        <name>METADATA_IMAGE_TYPE_PUBLISHERLOGO</name>
+        <initializer> 0x14</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="71" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_1a2a140a5970440aac460137619d1c673" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_mutable_property_array" kindref="compound">sbIMutablePropertyArray</ref></type>
+        <definition>attribute sbIMutablePropertyArray sbIMetadataHandler::props</definition>
+        <argsstring></argsstring>
+        <name>props</name>
+        <briefdescription>
+<para>An array of metadata properties. </para>        </briefdescription>
+        <detaileddescription>
+<para>Metadata properties read from or to be written to the file.</para><para>When the handler has successfully completed its <ref refid="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" kindref="member">read()</ref> operation, the values attribute will be filled with the metadata from the url. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="81" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="81" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_handler_1978827eef884f62ce9da10d1344632a1" prot="public" static="no" mutable="no">
         <type>readonly attribute PRBool</type>
@@ -22,12 +316,12 @@
         <argsstring></argsstring>
         <name>completed</name>
         <briefdescription>
-<para>Whether or not the object has completed its <ref refid="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" kindref="member">read()</ref> operation. </para>        </briefdescription>
+<para>Whether or not the object has completed its read/write operation. </para>        </briefdescription>
         <detaileddescription>
-<para>This value is false until the handler completes its <ref refid="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" kindref="member">read()</ref> operation.</para><para>It is up to the implementor to determine if a <ref refid="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" kindref="member">read()</ref> call should operate asynchronously or by blocking. The user of the handler should not attempt to get the <ref refid="interfacesb_i_metadata_values" kindref="compound">sbIMetadataValues</ref> object before the <ref refid="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" kindref="member">read()</ref> is completed. </para>        </detaileddescription>
+<para>This value is false until the handler completes its read/write operation.</para><para>It is up to the implementor to determine if read/write calls should operate asynchronously or by blocking. The user of the handler should not attempt to get the <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref> object before the operation is completed. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="64" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="64" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="92" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="92" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" prot="public" static="no" mutable="no">
         <type>attribute nsIChannel</type>
@@ -40,7 +334,7 @@
 <para>The object is assigned an nsIChannel from the <ref refid="interfacesb_i_metadata_manager" kindref="compound">sbIMetadataManager</ref> after it has successfully voted for an url. In the Read call, the implementor may choose to pull the url from the channel and use that directly, or open the channel (either itself or using an <ref refid="interfacesb_i_metadata_channel" kindref="compound">sbIMetadataChannel</ref> as a helper) and stream the data to be parsed.</para><para>In general, for local files, it is faster to pull the url and handle the metadata read immediately rather than open the channel. For remote files, it&apos;s far easier to just use the channel infrastructure already setup. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="79" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="79" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="107" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="107" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -69,81 +363,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="97"/>
-      </memberdef>
-      <memberdef kind="function" id="interfacesb_i_metadata_handler_10e2be754f36f62a4984cb56576142ee4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void sbIMetadataHandler::supportedMIMETypes</definition>
-        <argsstring>(out PRUint32 nMIMECount,[array, size_is(nMIMECount), retval] out wstring aMIMETypes)</argsstring>
-        <name>supportedMIMETypes</name>
-        <param>
-          <type>out PRUint32</type>
-          <declname>nMIMECount</declname>
-        </param>
-        <param>
-          <attributes>[array, size_is(nMIMECount), retval]</attributes>
-          <type>out wstring</type>
-          <declname>aMIMETypes</declname>
-        </param>
-        <briefdescription>
-<para>Get the mimetypes supported by this handler (probably DEPRECATED). </para>        </briefdescription>
-        <detaileddescription>
-<para><xrefsect id="todo_1_todo000006"><xreftitle>Todo</xreftitle><xrefdescription><para>Make sure it&apos;s safe to deprecate these. Only the cores should need to return mimetype/extension info, I think. </para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>nMIMECount</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The number of mimetypes returned in the array </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>aMIMETypes</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The array of mimetypes supported by this handler </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="105"/>
-      </memberdef>
-      <memberdef kind="function" id="interfacesb_i_metadata_handler_17a6c8e683a208b6acae06a6ea4edd3b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void sbIMetadataHandler::supportedFileExtensions</definition>
-        <argsstring>(out PRUint32 nExtCount,[array, size_is(nExtCount), retval] out wstring aExts)</argsstring>
-        <name>supportedFileExtensions</name>
-        <param>
-          <type>out PRUint32</type>
-          <declname>nExtCount</declname>
-        </param>
-        <param>
-          <attributes>[array, size_is(nExtCount), retval]</attributes>
-          <type>out wstring</type>
-          <declname>aExts</declname>
-        </param>
-        <briefdescription>
-<para>Get the extensions supported by this handler (probably DEPRECATED). </para>        </briefdescription>
-        <detaileddescription>
-<para><xrefsect id="todo_1_todo000007"><xreftitle>Todo</xreftitle><xrefdescription><para>Make sure it&apos;s safe to deprecate these. Only the cores should need to return mimetype/extension info, I think. </para></xrefdescription></xrefsect><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>nExtCount</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The number of extensions returned in the array </para></parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>aExts</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>The array of extensions supported by this handler </para></parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="113"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="125"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -157,7 +377,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="124"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="136"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_15ebeaf138cfa866b44ad8aceccd4174c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -167,11 +387,41 @@
         <briefdescription>
 <para>Start the write operation. </para>        </briefdescription>
         <detaileddescription>
-<para>After getting a handler from the <ref refid="interfacesb_i_metadata_manager" kindref="compound">sbIMetadataManager</ref>, the user code may set an <ref refid="interfacesb_i_metadata_values" kindref="compound">sbIMetadataValues</ref> object into the handler and then call write to write the abstract metadata map into the specific metadata requirements of the file format supported by the handler.</para><para>Note that the number of items written may not always equal the number of items in the <ref refid="interfacesb_i_metadata_values" kindref="compound">sbIMetadataValues</ref> object if the underlying file format does not support the given keys.</para><para><xrefsect id="todo_1_todo000008"><xreftitle>Todo</xreftitle><xrefdescription><para>Make anything actually work with a write operation </para></xrefdescription></xrefsect><simplesect kind="return"><para>-1 if operating asynchronously, otherwise the number of metadata values written (0 on failure) </para></simplesect>
+<para>After getting a handler from the <ref refid="interfacesb_i_metadata_manager" kindref="compound">sbIMetadataManager</ref>, the user code may set an <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref> object into the handler and then call write to write the abstract metadata map into the specific metadata requirements of the file format supported by the handler.</para><para>Note that the number of items written may not always equal the number of items in the <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref> object if the underlying file format does not support the given keys.</para><para><simplesect kind="return"><para>-1 if operating asynchronously, otherwise the number of metadata values written (0 on failure) </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="141"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="152"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_handler_1b8d9bf349540dc64bf2e3f819e843328" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataHandler::getImageData</definition>
+        <argsstring>(in PRInt32 aType, out AUTF8String aMimeType, out unsigned long aDataLen,[array, retval, size_is(aDataLen)] out octet aData)</argsstring>
+        <name>getImageData</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aType</declname>
+        </param>
+        <param>
+          <type>out AUTF8String</type>
+          <declname>aMimeType</declname>
+        </param>
+        <param>
+          <type>out unsigned long</type>
+          <declname>aDataLen</declname>
+        </param>
+        <param>
+          <attributes>[array, retval, size_is(aDataLen)]</attributes>
+          <type>out octet</type>
+          <declname>aData</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="174"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -190,13 +440,13 @@
 <parametername>aChannel</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The <ref refid="interfacesb_i_metadata_channel" kindref="compound">sbIMetadataChannel</ref> delivering data. You&apos;ll have to QI for it. </para></parameterdescription>
+<para>The <ref refid="interfacesb_i_metadata_channel" kindref="compound">sbIMetadataChannel</ref> delivering data. You&apos;ll have to QI for it.  consider removing. <ref refid="interfacesb_i_metadata_channel" kindref="compound">sbIMetadataChannel</ref> appears to be unused. </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="153"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="187"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -204,42 +454,68 @@
         <argsstring>()</argsstring>
         <name>close</name>
         <briefdescription>
-<para>Close down the internals of the handler, stop any downloads, free any allocations. </para>        </briefdescription>
+<para>Close down the internals of the handler, stop any asynchronous operations, free any allocations. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="158"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="192"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-<para>An object capable of returning the metadata from the url to a file. </para>    </briefdescription>
+<para>An object capable of manipulating the metadata tags for a media file. </para>    </briefdescription>
     <detaileddescription>
 <para>User code requests a handler by calling <ref refid="interfacesb_i_metadata_manager_1ae19d169e02736347d183bf89ae8ffa6" kindref="member">sbIMetadataManager::getHandlerForMediaURL</ref> that then returns one of these.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_metadata_manager" kindref="compound">sbIMetadataManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="460">
+      <node id="544">
         <label>sbIMetadataHandler</label>
         <link refid="interfacesb_i_metadata_handler"/>
-        <childnode refid="461" relation="usage">
-          <edgelabel>values</edgelabel>
+        <childnode refid="545" relation="usage">
+          <edgelabel>props</edgelabel>
         </childnode>
       </node>
-      <node id="461">
-        <label>sbIMetadataValues</label>
-        <link refid="interfacesb_i_metadata_values"/>
+      <node id="546">
+        <label>sbIPropertyArray</label>
+        <link refid="interfacesb_i_property_array"/>
+      </node>
+      <node id="545">
+        <label>sbIMutablePropertyArray</label>
+        <link refid="interfacesb_i_mutable_property_array"/>
+        <childnode refid="546" relation="public-inheritance">
+        </childnode>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="46" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="45" bodyend="159"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="45" bodyend="193"/>
     <listofallmembers>
       <member refid="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>channel</name></member>
       <member refid="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>close</name></member>
       <member refid="interfacesb_i_metadata_handler_1978827eef884f62ce9da10d1344632a1" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>completed</name></member>
+      <member refid="interfacesb_i_metadata_handler_1b8d9bf349540dc64bf2e3f819e843328" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>getImageData</name></member>
+      <member refid="interfacesb_i_metadata_handler_1fdacca06272e8edb52235092c3a25173" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_ARTIST</name></member>
+      <member refid="interfacesb_i_metadata_handler_1592d84353e0841ce48bef01c124fd95f" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_BACKCOVER</name></member>
+      <member refid="interfacesb_i_metadata_handler_15c50f5d65ae546332f6f3ddf5f12fbac" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_BAND</name></member>
+      <member refid="interfacesb_i_metadata_handler_11b991ff21b1799d146f60ae6aa3b56ad" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_BANDLOGO</name></member>
+      <member refid="interfacesb_i_metadata_handler_1554e236ad0c8f9a32d5c15de68d53b16" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_COLOUREDFISH</name></member>
+      <member refid="interfacesb_i_metadata_handler_1a4c027277bebd2a3c4249da5e3c512a8" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_COMPOSER</name></member>
+      <member refid="interfacesb_i_metadata_handler_150556893bf5cfb2111cc27a5de51454b" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_CONDUCTOR</name></member>
+      <member refid="interfacesb_i_metadata_handler_12eddcf2646f5970935413176fdfefa26" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_DURINGPERFORMANCE</name></member>
+      <member refid="interfacesb_i_metadata_handler_149ef76a9da92240ab93e98a69734b521" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_DURINGRECORDING</name></member>
+      <member refid="interfacesb_i_metadata_handler_17a2d93e3fb98131ac2d8878d96e8181e" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_FILEICON</name></member>
+      <member refid="interfacesb_i_metadata_handler_1f4d77f70862fddc330e042edfae42c56" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_FRONTCOVER</name></member>
+      <member refid="interfacesb_i_metadata_handler_13e69dffc454a4ecee294c9149138b5ae" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_ILLUSTRATION</name></member>
+      <member refid="interfacesb_i_metadata_handler_1ea451378ef9cb8038fbbed44850ccac0" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_LEADARTIST</name></member>
+      <member refid="interfacesb_i_metadata_handler_15b291b370eff73c92887422ea47931bb" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_LEAFLETPAGE</name></member>
+      <member refid="interfacesb_i_metadata_handler_171868d2453b44473ced5a376f109023a" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_LYRICIST</name></member>
+      <member refid="interfacesb_i_metadata_handler_121d241da714d89238bd965110072c4d4" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_MEDIA</name></member>
+      <member refid="interfacesb_i_metadata_handler_1a789760683447fe8fa1d6ffa77e7e756" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_MOVIESCREENCAPTURE</name></member>
+      <member refid="interfacesb_i_metadata_handler_11a1be28d93bd9e9dcf125ea81f8d3b6e" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_OTHER</name></member>
+      <member refid="interfacesb_i_metadata_handler_148b796ba015a3bb74adcfe5b1568053e" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_OTHERFILEICON</name></member>
+      <member refid="interfacesb_i_metadata_handler_1e8c41bfa0d481d8defed080250275c7c" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_PUBLISHERLOGO</name></member>
+      <member refid="interfacesb_i_metadata_handler_12399ea2a20923f147368baadd9ca4f18" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>METADATA_IMAGE_TYPE_RECORDINGLOCATION</name></member>
       <member refid="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>onChannelData</name></member>
+      <member refid="interfacesb_i_metadata_handler_1a2a140a5970440aac460137619d1c673" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>props</name></member>
       <member refid="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>read</name></member>
-      <member refid="interfacesb_i_metadata_handler_17a6c8e683a208b6acae06a6ea4edd3b7" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>supportedFileExtensions</name></member>
-      <member refid="interfacesb_i_metadata_handler_10e2be754f36f62a4984cb56576142ee4" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>supportedMIMETypes</name></member>
-      <member refid="interfacesb_i_metadata_handler_10d705e855c88cb318a6ecbf69d0ea546" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>values</name></member>
       <member refid="interfacesb_i_metadata_handler_1e458a8ab0d74624ad43d7592c9fb548d" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>vote</name></member>
       <member refid="interfacesb_i_metadata_handler_15ebeaf138cfa866b44ad8aceccd4174c" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>write</name></member>
     </listofallmembers>

@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" line="90" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" bodystart="90" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" line="90" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" bodystart="90" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" line="68"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" line="68"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_commands_15972f94e1b63ea2240d81c5ffed006d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -63,7 +63,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" line="80"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" line="80"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_remote_commands_10d6362e7ef00167c3f34bb3dfefd5ea4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" line="87"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" line="87"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -108,48 +108,48 @@
     <detaileddescription>
 <para>TODO: Write this documentation </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="656">
+      <node id="780">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
-      <node id="654">
+      <node id="778">
         <label>sbIRemoteCommands</label>
         <link refid="interfacesb_i_remote_commands"/>
-        <childnode refid="655" relation="usage">
+        <childnode refid="779" relation="usage">
           <edgelabel>owner</edgelabel>
         </childnode>
       </node>
-      <node id="658">
+      <node id="782">
         <label>sbIRemoteMediaList</label>
         <link refid="interfacesb_i_remote_media_list"/>
       </node>
-      <node id="655">
+      <node id="779">
         <label>sbIRemotePlayer</label>
         <link refid="interfacesb_i_remote_player"/>
-        <childnode refid="654" relation="usage">
+        <childnode refid="778" relation="usage">
           <edgelabel>commands</edgelabel>
         </childnode>
-        <childnode refid="656" relation="usage">
+        <childnode refid="780" relation="usage">
           <edgelabel>webLibrary
 mainLibrary
 siteLibrary</edgelabel>
         </childnode>
-        <childnode refid="657" relation="usage">
+        <childnode refid="781" relation="usage">
           <edgelabel>webPlaylist</edgelabel>
         </childnode>
-        <childnode refid="658" relation="usage">
+        <childnode refid="782" relation="usage">
           <edgelabel>downloadMediaList</edgelabel>
         </childnode>
       </node>
-      <node id="657">
+      <node id="781">
         <label>sbIRemoteWebPlaylist</label>
         <link refid="interfacesb_i_remote_web_playlist"/>
-        <childnode refid="658" relation="usage">
+        <childnode refid="782" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" line="52" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemoteCommands.idl" bodystart="51" bodyend="91"/>
+    <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteCommands.idl" bodystart="51" bodyend="91"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_commands_14ad1d3e78b44bd0e3f2f451f340fef8b" prot="public" virt="non-virtual"><scope>sbIRemoteCommands</scope><name>addCommand</name></member>
       <member refid="interfacesb_i_remote_commands_125aba5bffa62ec5bb4d3288598958905" prot="public" virt="non-virtual"><scope>sbIRemoteCommands</scope><name>owner</name></member>

@@ -4,22 +4,47 @@
     <compoundname>sbIPropertyArray.idl</compoundname>
     <includes local="yes">nsIArray.idl</includes>
     <includes local="yes">nsIMutableArray.idl</includes>
+    <includedby refid="sb_i_metadata_handler_8idl" local="yes">components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</includedby>
     <incdepgraph>
-      <node id="418">
+      <node id="469">
         <label>nsIArray.idl</label>
       </node>
-      <node id="419">
+      <node id="470">
         <label>nsIMutableArray.idl</label>
       </node>
-      <node id="417">
+      <node id="468">
         <label>components/property/public/sbIPropertyArray.idl</label>
         <link refid="sbIPropertyArray.idl"/>
-        <childnode refid="418" relation="include">
+        <childnode refid="469" relation="include">
         </childnode>
-        <childnode refid="419" relation="include">
+        <childnode refid="470" relation="include">
         </childnode>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="473">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
+        <link refid="sb_i_metadata_channel_8idl"/>
+      </node>
+      <node id="474">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
+        <link refid="sb_i_metadata_manager_8idl"/>
+      </node>
+      <node id="471">
+        <label>components/property/public/sbIPropertyArray.idl</label>
+        <link refid="sbIPropertyArray.idl"/>
+        <childnode refid="472" relation="include">
+        </childnode>
+      </node>
+      <node id="472">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
+        <link refid="sb_i_metadata_handler_8idl"/>
+        <childnode refid="473" relation="include">
+        </childnode>
+        <childnode refid="474" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
     <innerclass refid="interfacesb_i_property" prot="public">sbIProperty</innerclass>
     <innerclass refid="interfacesb_i_property_array" prot="public">sbIPropertyArray</innerclass>
     <innerclass refid="interfacesb_i_mutable_property_array" prot="public">sbIMutablePropertyArray</innerclass>
@@ -77,15 +102,15 @@
 <codeline lineno="83" refid="interfacesb_i_property_array_127fc9af3c2ff93791bab98e11ec1c3fe" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>validated;</highlight></codeline>
 <codeline lineno="84"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="85"><highlight class="normal"></highlight></codeline>
-<codeline lineno="90"><highlight class="normal">[scriptable,<sp/>uuid(a47d226b-26eb-46b8-9d5a-f919def2ebfb)]</highlight></codeline>
-<codeline lineno="91" refid="interfacesb_i_mutable_property_array" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mutable_property_array" kindref="compound">sbIMutablePropertyArray</ref><sp/>:<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref></highlight></codeline>
-<codeline lineno="92"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>appendProperty(in<sp/>AString<sp/>aID,</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"></highlight></codeline>
-<codeline lineno="118" refid="interfacesb_i_mutable_property_array_1e13867716c7fa3d64006f8b9ff10a615" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>strict;</highlight></codeline>
-<codeline lineno="119"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">[scriptable,<sp/>uuid(a47d226b-26eb-46b8-9d5a-f919def2ebfb)]</highlight></codeline>
+<codeline lineno="93" refid="interfacesb_i_mutable_property_array" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mutable_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances Note that implementations...">sbIMutablePropertyArray</ref><sp/>:<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref></highlight></codeline>
+<codeline lineno="94"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>appendProperty(in<sp/>AString<sp/>aID,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="interfacesb_i_mutable_property_array_1e13867716c7fa3d64006f8b9ff10a615" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>strict;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/property/public/sbIPropertyArray.idl"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyArray.idl"/>
   </compounddef>
 </doxygen>

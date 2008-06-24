@@ -18,7 +18,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="49" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="49" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="49" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1e6f88f4330f1ae6e32ab6244e4292491" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="50" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="50" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_17932e380ede3501036cbbd15acb82ef2" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="51" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="51" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="51" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_10b508cc32009b229e56539e07c0e6877" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -60,7 +60,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="52" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="52" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1805277f380a5e4a4a260bb28d38ce731" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -74,7 +74,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="53" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="53" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="53" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1a65091061732a05911da854ea8f35ba8" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -88,7 +88,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="54" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="54" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1e08c6f669a944b7046f55c6484e0c7d3" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -102,7 +102,21 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="55" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="55" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1e12d33fbbd1e6f912b69055b3e7b8713" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbISQLBuilder::MATCH_MATCH</definition>
+        <argsstring></argsstring>
+        <name>MATCH_MATCH</name>
+        <initializer> 7</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="56" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="56" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_13c7ea9b5a93d06b5651b2930d8b9b472" prot="public" static="no" mutable="no">
         <type>attribute long</type>
@@ -115,7 +129,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="60" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="60" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="61" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="61" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1cd361a2636559e9627c09784d0099f82" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -128,7 +142,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="65" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="65" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="66" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="66" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_11998b6528f7f722b5f24ec83cf7a15dc" prot="public" static="no" mutable="no">
         <type>attribute long</type>
@@ -141,7 +155,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="70" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="70" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="71" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="71" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_159f35b321060198bf39a288bdd0df5a2" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -154,7 +168,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="75" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="75" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="76" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="76" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1fa1fa3b8ea1cb475f9ccc10ac519d484" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -168,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="77" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="77" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="78" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="78" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_s_q_l_builder_1ad6e58931a0e11662c919c0846503b8c" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -182,7 +196,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="78" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="78" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="79" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="79" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -264,7 +278,110 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="96"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="97"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_builder_1d50570763487a6f4e0146400f1b1b3d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISQLBuilder::addJoinWithIndexHint</definition>
+        <argsstring>(in unsigned long aJoinType, in AString aJoinedTableName, in AString aJoinedTableAlias, in AString aJoinedColumnName, in AString aJoinToTableName, in AString aJoinToColumnName, in boolean aRequiresFromTableIndexHint, in boolean aRequiresToTableIndexHint)</argsstring>
+        <name>addJoinWithIndexHint</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aJoinType</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aJoinedTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aJoinedTableAlias</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aJoinedColumnName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aJoinToTableName</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aJoinToColumnName</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aRequiresFromTableIndexHint</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aRequiresToTableIndexHint</declname>
+        </param>
+        <briefdescription>
+<para>Add a join to the query. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aJoinType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Join type, must be one of the JOIN constant values </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aJoinedTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Table name of the table to join </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aJoinedTableAlias</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Alias to give the joined table, null for none </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aJoinedColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column from joined table to use in join expression </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aJoinToTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Table name of the table to join to </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aJoinToColumnName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column from the joined to table to use in join expression </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aRequiresFromTableIndexHint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will attempt to add a hint to the join statement so that sqlite uses the correct index. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aRequiresToTableIndexHint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This will attempt to add a hint to the join statement so that sqlite uses the correct index. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>Do not use this method unless you know _exactly_ why you are using it. Attempting to add a hint for index use can break queries or make them extremely slow. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="124"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_100fa6e88ce37c3ddd278c4420f375367" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -344,7 +461,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="114"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="142"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_1c63876ce6d2eb2972a2d0c4eda3c2c44" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -402,7 +519,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="127"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="155"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_1942a3fc5adb7eea5a1a23cdd0a6be15c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -438,7 +555,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="135"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="163"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_137f276fb7a1b02e7f5398313e22bb43d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -451,7 +568,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="140"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="168"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_1f67c7d7433677925da7f20e036ea7ff0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -465,7 +582,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="146"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="174"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -473,45 +590,46 @@
     <detaileddescription>
 <para>Components implementing this interface are used to build SQL string. The interface is inspired by Squiggle: <ulink url="http://joe.truemesh.com/squiggle/javadoc/index.html">http://joe.truemesh.com/squiggle/javadoc/index.html</ulink> </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="751">
+      <node id="877">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="749" relation="public-inheritance">
+        <childnode refid="875" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="754">
+      <node id="880">
         <label>sbISQLUpdateBuilder</label>
         <link refid="interfacesb_i_s_q_l_update_builder"/>
-        <childnode refid="751" relation="public-inheritance">
+        <childnode refid="877" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="752">
+      <node id="878">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="751" relation="public-inheritance">
+        <childnode refid="877" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="749">
+      <node id="875">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
-      <node id="753">
+      <node id="879">
         <label>sbISQLSelectBuilder</label>
         <link refid="interfacesb_i_s_q_l_select_builder"/>
-        <childnode refid="751" relation="public-inheritance">
+        <childnode refid="877" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="750">
+      <node id="876">
         <label>sbISQLInsertBuilder</label>
         <link refid="interfacesb_i_s_q_l_insert_builder"/>
-        <childnode refid="749" relation="public-inheritance">
+        <childnode refid="875" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" line="48" bodyfile="z:/projects/songbird/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="47" bodyend="147"/>
+    <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="48" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="47" bodyend="175"/>
     <listofallmembers>
       <member refid="interfacesb_i_s_q_l_builder_1c043dcca0a024504bdfba272a183b165" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>addJoin</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1c63876ce6d2eb2972a2d0c4eda3c2c44" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>addJoinWithCriterion</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1d50570763487a6f4e0146400f1b1b3d1" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>addJoinWithIndexHint</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1942a3fc5adb7eea5a1a23cdd0a6be15c" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>addSubquery</name></member>
       <member refid="interfacesb_i_s_q_l_builder_100fa6e88ce37c3ddd278c4420f375367" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>addSubqueryJoin</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1fa1fa3b8ea1cb475f9ccc10ac519d484" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>JOIN_INNER</name></member>
@@ -524,6 +642,7 @@
       <member refid="interfacesb_i_s_q_l_builder_1805277f380a5e4a4a260bb28d38ce731" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>MATCH_LESS</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1a65091061732a05911da854ea8f35ba8" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>MATCH_LESSEQUAL</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1e08c6f669a944b7046f55c6484e0c7d3" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>MATCH_LIKE</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1e12d33fbbd1e6f912b69055b3e7b8713" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>MATCH_MATCH</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1e6f88f4330f1ae6e32ab6244e4292491" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>MATCH_NOTEQUALS</name></member>
       <member refid="interfacesb_i_s_q_l_builder_11998b6528f7f722b5f24ec83cf7a15dc" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>offset</name></member>
       <member refid="interfacesb_i_s_q_l_builder_159f35b321060198bf39a288bdd0df5a2" prot="public" virt="non-virtual"><scope>sbISQLBuilder</scope><name>offsetIsParameter</name></member>

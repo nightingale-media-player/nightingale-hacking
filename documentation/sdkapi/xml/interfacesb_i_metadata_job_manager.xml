@@ -3,10 +3,10 @@
   <compounddef id="interfacesb_i_metadata_job_manager" kind="interface" prot="public">
     <compoundname>sbIMetadataJobManager</compoundname>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_metadata_job_manager_1d8a4bd8fbf221a030bb7e554d85d1dbd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_metadata_job_manager_19f265fad62cd8cc309f4a86c89d410d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref></type>
         <definition>sbIMetadataJob sbIMetadataJobManager::newJob</definition>
-        <argsstring>(in nsIArray aMediaItemsArray, in unsigned long aSleepMS)</argsstring>
+        <argsstring>(in nsIArray aMediaItemsArray, in unsigned long aSleepMS,[optional] in unsigned short aJobType)</argsstring>
         <name>newJob</name>
         <param>
           <type>in nsIArray</type>
@@ -16,11 +16,16 @@
           <type>in unsigned long</type>
           <declname>aSleepMS</declname>
         </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in unsigned short</type>
+          <declname>aJobType</declname>
+        </param>
         <briefdescription>
-<para>Start a new task scanning the given array of media items. </para>        </briefdescription>
+<para>Start a new metadata processing task for the given array of media items. </para>        </briefdescription>
         <detaileddescription>
-<para>This task will launch a new metadata task and return the task object for monitoring.</para><para>You can construct the required array like so: <verbatim>
-      var toScan = Components.classes[&quot;@mozilla.org/array;1&quot;]
+<para>This method will launch a new metadata task and return the task object for monitoring.</para><para>You can construct the required array like so: <verbatim>
+      var toScan = Components.classes[&quot;@songbirdnest.com/moz/xpcom/threadsafe-array;1&quot;]
         .createInstance(Components.interfaces.nsIMutableArray);
 
       for (var i = 0; i &lt; 100; i++)
@@ -41,37 +46,28 @@
 <parameterdescription>
 <para>How much of an interval/sleep per loop in and out of thread. </para></parameterdescription>
 </parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aJobType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="interfacesb_i_metadata_job_156029ad63489ec9ed96a7fffa6194ae0" kindref="member">sbIMetadataJob.JOBTYPE_READ</ref> or <ref refid="interfacesb_i_metadata_job_1b3491c19711d1a2849bdeecec95909e6" kindref="member">sbIMetadataJob.JOBTYPE_WRITE</ref>.</para></parameterdescription>
+</parameteritem>
 </parameterlist>
-</para>        </detaileddescription>
+TODO: Consider changing aSleepMS to an priority enum. Callers shouldn&apos;t have to care about sleep time. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="81"/>
-      </memberdef>
-      <memberdef kind="function" id="interfacesb_i_metadata_job_manager_1670828ecd74c91874b45e46489191293" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void sbIMetadataJobManager::stop</definition>
-        <argsstring>()</argsstring>
-        <name>stop</name>
-        <briefdescription>
-<para>Shuts down the job manager and cancels any outstanding tasks. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="87"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="82"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-<para>Metadata Job Manager scans local and remote tracks for metadata in own-thread and in main-thread. </para>    </briefdescription>
+<para>Coordinates batch metadata read/write jobs. </para>    </briefdescription>
     <detaileddescription>
-<para>To qualify as local media the URI for the piece of media must begin with the following scheme:</para><para><itemizedlist>
-<listitem><para><ulink url="file://.">file://.</ulink></para></listitem></itemizedlist>
-</para><para>Remote media is scanned from the main thread using timer based workers.</para><para>An nsIArray of <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> are passed to this interface to begin a metadata scan task. An <ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref> element will be returned to the calling interface.</para><para>The Metadata Job Manager is a service and should be called via do_GetService. Because it relies upon starting timers into the main thread, <ref refid="interfacesb_i_metadata_job_manager_1d8a4bd8fbf221a030bb7e554d85d1dbd" kindref="member">newJob()</ref> may only be called from the main thread.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref>, <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>, <ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref> </para></simplesect>
+<para>Supports the creation of threaded read/write jobs for local media (URIs beginning with <ulink url="file://">file://</ulink>), and timer driven read jobs for remote media.</para><para>An nsIArray of <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> are passed to this interface to begin a metadata task. An <ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref> element will be returned to the calling interface.</para><para>The Metadata Job Manager is a service and should be called via do_GetService. Because it relies upon starting timers into the main thread, <ref refid="interfacesb_i_metadata_job_manager_19f265fad62cd8cc309f4a86c89d410d1" kindref="member">newJob()</ref> may only be called from the main thread.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref>, <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>, <ref refid="interfacesb_i_metadata_job" kindref="compound">sbIMetadataJob</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="60" bodyfile="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" bodystart="59" bodyend="88"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl" bodystart="54" bodyend="83"/>
     <listofallmembers>
-      <member refid="interfacesb_i_metadata_job_manager_1d8a4bd8fbf221a030bb7e554d85d1dbd" prot="public" virt="non-virtual"><scope>sbIMetadataJobManager</scope><name>newJob</name></member>
-      <member refid="interfacesb_i_metadata_job_manager_1670828ecd74c91874b45e46489191293" prot="public" virt="non-virtual"><scope>sbIMetadataJobManager</scope><name>stop</name></member>
+      <member refid="interfacesb_i_metadata_job_manager_19f265fad62cd8cc309f4a86c89d410d1" prot="public" virt="non-virtual"><scope>sbIMetadataJobManager</scope><name>newJob</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

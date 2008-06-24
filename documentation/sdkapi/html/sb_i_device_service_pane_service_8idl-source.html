@@ -63,6 +63,7 @@
     <li><a href="annotated.html"><span>Classes</span></a></li>
     <li class="current"><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <h1>components/servicepane/public/sbIDeviceServicePaneService.idl</h1><a href="sb_i_device_service_pane_service_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* vim: ts=2 sw=2 expandtab</span>
@@ -95,9 +96,9 @@
 <a name="l00033"></a>00033 
 <a name="l00034"></a>00034 interface <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a>;
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a>;
-<a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_device.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</a>;
+<a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_device.html">sbIDevice</a>;
 <a name="l00037"></a>00037 
-<a name="l00042"></a>00042 [scriptable, uuid(315cfa2e-9199-45d9-bdab-dafac4a87125)]
+<a name="l00042"></a>00042 [scriptable, uuid(9e680f0f-5f1e-44e6-b4d8-46f02edfb311)]
 <a name="l00043"></a><a class="code" href="interfacesb_i_device_service_pane_service.html">00043</a> interface <a class="code" href="interfacesb_i_device_service_pane_service.html" title="Provides information about devices needed by the service pane.">sbIDeviceServicePaneService</a> : nsISupports {
 <a name="l00044"></a>00044   <span class="comment">/* \brief Attempts to create a service pane node for a given device. Will</span>
 <a name="l00045"></a>00045 <span class="comment">   *        group similar devices together in the service pane.</span>
@@ -116,9 +117,27 @@
 <a name="l00058"></a>00058 <span class="comment">   * \return a service pane node that represents the given device</span>
 <a name="l00059"></a>00059 <span class="comment">   * \note This method is designed for the new Device API.</span>
 <a name="l00060"></a>00060 <span class="comment">   */</span>
-<a name="l00061"></a>00061   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> createNodeForDevice2 (in <a class="code" href="interfacesb_i_device.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</a> aDevice);
-<a name="l00062"></a>00062 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:24 2008 for Songbird by&nbsp;
+<a name="l00061"></a>00061   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> createNodeForDevice2 (in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
+<a name="l00062"></a>00062 
+<a name="l00063"></a>00063   <span class="comment">/* \brief Return the service pane node for the given device.</span>
+<a name="l00064"></a>00064 <span class="comment">   *</span>
+<a name="l00065"></a>00065 <span class="comment">   * \param aDevice an sbIDevice.</span>
+<a name="l00066"></a>00066 <span class="comment">   * \return a service pane node that represents the given device</span>
+<a name="l00067"></a>00067 <span class="comment">   */</span>
+<a name="l00068"></a>00068   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> getNodeForDevice (in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
+<a name="l00069"></a>00069 
+<a name="l00070"></a>00070   <span class="comment">/* \brief If aEnabled is true, fill the service pane context menu for the</span>
+<a name="l00071"></a>00071 <span class="comment">   *        device node specified by aNode with a default set of device menu</span>
+<a name="l00072"></a>00072 <span class="comment">   *        items.</span>
+<a name="l00073"></a>00073 <span class="comment">   *</span>
+<a name="l00074"></a>00074 <span class="comment">   * \param aNode               Device node.</span>
+<a name="l00075"></a>00075 <span class="comment">   * \param aEnabled            If true, fill context menu with default items.</span>
+<a name="l00076"></a>00076 <span class="comment">   */</span>
+<a name="l00077"></a>00077   <span class="keywordtype">void</span> setFillDefaultContextMenu ( in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode,
+<a name="l00078"></a>00078                                    in <span class="keywordtype">boolean</span>            aEnabled);
+<a name="l00079"></a>00079 };
+<a name="l00080"></a>00080 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

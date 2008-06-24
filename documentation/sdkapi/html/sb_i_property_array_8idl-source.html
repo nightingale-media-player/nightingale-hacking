@@ -63,6 +63,7 @@
     <li><a href="annotated.html"><span>Classes</span></a></li>
     <li class="current"><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <h1>components/property/public/sbIPropertyArray.idl</h1><a href="sb_i_property_array_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
@@ -114,15 +115,15 @@
 <a name="l00083"></a><a class="code" href="interfacesb_i_property_array.html#27fc9af3c2ff93791bab98e11ec1c3fe">00083</a>   readonly attribute <span class="keywordtype">boolean</span> validated;
 <a name="l00084"></a>00084 };
 <a name="l00085"></a>00085 
-<a name="l00090"></a>00090 [scriptable, uuid(a47d226b-26eb-46b8-9d5a-f919def2ebfb)]
-<a name="l00091"></a><a class="code" href="interfacesb_i_mutable_property_array.html">00091</a> interface <a class="code" href="interfacesb_i_mutable_property_array.html">sbIMutablePropertyArray</a> : <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>
-<a name="l00092"></a>00092 {
-<a name="l00103"></a>00103   <span class="keywordtype">void</span> appendProperty(in AString aID,
-<a name="l00104"></a>00104                       in AString aValue);
-<a name="l00105"></a>00105 
-<a name="l00118"></a><a class="code" href="interfacesb_i_mutable_property_array.html#e13867716c7fa3d64006f8b9ff10a615">00118</a>   attribute <span class="keywordtype">boolean</span> strict;
-<a name="l00119"></a>00119 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:23 2008 for Songbird by&nbsp;
+<a name="l00092"></a>00092 [scriptable, uuid(a47d226b-26eb-46b8-9d5a-f919def2ebfb)]
+<a name="l00093"></a><a class="code" href="interfacesb_i_mutable_property_array.html">00093</a> interface <a class="code" href="interfacesb_i_mutable_property_array.html" title="An interface to carry around arrays of nsIProperty instances Note that implementations...">sbIMutablePropertyArray</a> : <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>
+<a name="l00094"></a>00094 {
+<a name="l00105"></a>00105   <span class="keywordtype">void</span> appendProperty(in AString aID,
+<a name="l00106"></a>00106                       in AString aValue);
+<a name="l00107"></a>00107 
+<a name="l00120"></a><a class="code" href="interfacesb_i_mutable_property_array.html#e13867716c7fa3d64006f8b9ff10a615">00120</a>   attribute <span class="keywordtype">boolean</span> strict;
+<a name="l00121"></a>00121 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -72,7 +73,12 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul>
 </div>
-<h1>sbIMutablePropertyArray Interface Reference</h1><!-- doxytag: class="sbIMutablePropertyArray" --><!-- doxytag: inherits="sbIPropertyArray" --><p>Inheritance diagram for sbIMutablePropertyArray:
+<h1>sbIMutablePropertyArray Interface Reference</h1><!-- doxytag: class="sbIMutablePropertyArray" --><!-- doxytag: inherits="sbIPropertyArray" -->An interface to carry around arrays of nsIProperty instances Note that implementations of the interface should also provide nsIMutableArray. QI to nsIMutableArray to access add/remove/clear methods.  
+<a href="#_details">More...</a>
+<p>
+<code>import &quot;<a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a>&quot;;</code>
+<p>
+<p>Inheritance diagram for sbIMutablePropertyArray:
 <p><center><img src="interfacesb_i_mutable_property_array.png" usemap="#sbIMutablePropertyArray_map" border="0" alt=""></center>
 <map name="sbIMutablePropertyArray_map">
 <area href="interfacesb_i_property_array.html" alt="sbIPropertyArray" shape="rect" coords="0,0,155,24">
@@ -87,11 +93,11 @@
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-
+An interface to carry around arrays of nsIProperty instances Note that implementations of the interface should also provide nsIMutableArray. QI to nsIMutableArray to access add/remove/clear methods. 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_property_array_8idl-source.html#l00091">91</a> of file <a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_property_array_8idl-source.html#l00093">93</a> of file <a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="35d6d69803dc03bc2516fa4a218d6d2f"></a><!-- doxytag: member="sbIMutablePropertyArray::appendProperty" ref="35d6d69803dc03bc2516fa4a218d6d2f" args="(in AString aID, in AString aValue)" -->
 <div class="memitem">
 <div class="memproto">
@@ -150,12 +156,12 @@ Determines whether or not the appendProperty method will throw on invalid input 
 An example of improper usage is setting non-numeric text in a property whose parent <a class="el" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> is actually <a class="el" href="interfacesb_i_number_property_info.html" title="The property information specific to numeric fields.">sbINumberPropertyInfo</a>.<p>
 Note that this property can only be set if the implementing array is empty. Any attempt to set this property after 'appendProperty' has been called will throw NS_ERROR_FAILURE. 
 <p>
-Definition at line <a class="el" href="sb_i_property_array_8idl-source.html#l00118">118</a> of file <a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a>.
+Definition at line <a class="el" href="sb_i_property_array_8idl-source.html#l00120">120</a> of file <a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/property/public/<a class="el" href="sb_i_property_array_8idl-source.html">sbIPropertyArray.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:27 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:26 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

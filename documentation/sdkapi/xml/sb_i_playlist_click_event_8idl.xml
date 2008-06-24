@@ -4,14 +4,14 @@
     <compoundname>sbIPlaylistClickEvent.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
+      <node id="4">
+        <label>nsISupports.idl</label>
+      </node>
       <node id="3">
         <label>bindings/public/sbIPlaylistClickEvent.idl</label>
         <link refid="sbIPlaylistClickEvent.idl"/>
         <childnode refid="4" relation="include">
         </childnode>
-      </node>
-      <node id="4">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_playlist_click_event" prot="public">sbIPlaylistClickEvent</innerclass>
@@ -138,6 +138,6 @@
 <codeline lineno="121" refid="interfacesb_i_playlist_click_event_1262e984ccab389d033ac636d167d3cdb" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>item;</highlight></codeline>
 <codeline lineno="122"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/bindings/public/sbIPlaylistClickEvent.idl"/>
+    <location file="c:/builds/songbird/trunk/bindings/public/sbIPlaylistClickEvent.idl"/>
   </compounddef>
 </doxygen>

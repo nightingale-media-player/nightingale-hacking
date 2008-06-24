@@ -4,13 +4,13 @@
     <compoundname>IWindowCloak.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="166">
+      <node id="180">
         <label>components/integration/public/IWindowCloak.idl</label>
         <link refid="IWindowCloak.idl"/>
-        <childnode refid="167" relation="include">
+        <childnode refid="181" relation="include">
         </childnode>
       </node>
-      <node id="167">
+      <node id="181">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -60,6 +60,6 @@
 <codeline lineno="69"><highlight class="normal"><sp/><sp/>PRBool<sp/>isCloaked(in<sp/>nsIDOMWindow<sp/>aDOMWindow);</highlight></codeline>
 <codeline lineno="70"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/integration/public/IWindowCloak.idl"/>
+    <location file="c:/builds/songbird/trunk/components/integration/public/IWindowCloak.idl"/>
   </compounddef>
 </doxygen>

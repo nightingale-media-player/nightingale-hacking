@@ -63,6 +63,7 @@
     <li><a href="annotated.html"><span>Classes</span></a></li>
     <li class="current"><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <h1>components/devices/controller/public/sbIDeviceController.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
@@ -96,7 +97,7 @@
 <a name="l00029"></a>00029 interface nsIPropertyBag;
 <a name="l00030"></a>00030 interface nsIArray;
 <a name="l00031"></a>00031 
-<a name="l00032"></a>00032 interface <a class="code" href="interfacesb_i_device.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</a>;
+<a name="l00032"></a>00032 interface <a class="code" href="interfacesb_i_device.html">sbIDevice</a>;
 <a name="l00033"></a>00033 interface <a class="code" href="interfacesb_i_device_compatibility.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCompatibility</a>;
 <a name="l00034"></a>00034 
 <a name="l00040"></a>00040 [scriptable, uuid(b4b7ed5d-85f2-4d0b-a7c6-f235acad3fc0)]
@@ -112,15 +113,15 @@
 <a name="l00065"></a>00065 
 <a name="l00070"></a>00070   <a class="code" href="interfacesb_i_device_compatibility.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCompatibility</a> getCompatibility(in nsIPropertyBag aParams);
 <a name="l00071"></a>00071 
-<a name="l00075"></a>00075   <a class="code" href="interfacesb_i_device.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</a> createDevice(in nsIPropertyBag aParams);
+<a name="l00075"></a>00075   <a class="code" href="interfacesb_i_device.html">sbIDevice</a> createDevice(in nsIPropertyBag aParams);
 <a name="l00076"></a>00076 
-<a name="l00080"></a>00080   <span class="keywordtype">boolean</span> controlsDevice(in <a class="code" href="interfacesb_i_device.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</a> aDevice);
+<a name="l00080"></a>00080   <span class="keywordtype">boolean</span> controlsDevice(in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
 <a name="l00081"></a>00081 
 <a name="l00085"></a>00085   <span class="keywordtype">void</span> connectDevices();
 <a name="l00086"></a>00086 
 <a name="l00090"></a>00090   <span class="keywordtype">void</span> disconnectDevices();
 <a name="l00091"></a>00091 
-<a name="l00095"></a>00095   <span class="keywordtype">void</span> releaseDevice(in <a class="code" href="interfacesb_i_device.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</a> aDevice);
+<a name="l00095"></a>00095   <span class="keywordtype">void</span> releaseDevice(in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
 <a name="l00096"></a>00096 
 <a name="l00100"></a>00100   <span class="keywordtype">void</span> releaseDevices();
 <a name="l00101"></a>00101 };
@@ -193,7 +194,7 @@
 <a name="l00192"></a>00192 <span class="preprocessor">    return NS_OK;                                                              \</span>
 <a name="l00193"></a>00193 <span class="preprocessor">  }</span>
 <a name="l00194"></a>00194 <span class="preprocessor"></span>%}
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:22 2008 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:21 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

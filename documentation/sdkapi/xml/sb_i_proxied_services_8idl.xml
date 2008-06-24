@@ -4,13 +4,13 @@
     <compoundname>sbIProxiedServices.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="385">
+      <node id="430">
         <label>components/moz/proxy/public/sbIProxiedServices.idl</label>
         <link refid="sbIProxiedServices.idl"/>
-        <childnode refid="386" relation="include">
+        <childnode refid="431" relation="include">
         </childnode>
       </node>
-      <node id="386">
+      <node id="431">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -56,6 +56,6 @@
 <codeline lineno="34" refid="interfacesb_i_proxied_services_1918813b5112b1d83e4f86cd4c7c8b2de" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIUTF8ConverterService<sp/>utf8ConverterService;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/moz/proxy/public/sbIProxiedServices.idl"/>
+    <location file="c:/builds/songbird/trunk/components/moz/proxy/public/sbIProxiedServices.idl"/>
   </compounddef>
 </doxygen>

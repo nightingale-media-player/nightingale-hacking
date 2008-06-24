@@ -14,7 +14,7 @@
 <para>These have to be getter methods rather than attributes due to an XPConnect bug. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="76"/>
+        <location file="c:/builds/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="76"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_download_device_helper_151cc37287c7a91d1bf3693a710679982" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIFile</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="77"/>
+        <location file="c:/builds/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="77"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_download_device_helper_11329f1fe25957c5f1da940e29906d02a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIFile</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="78"/>
+        <location file="c:/builds/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="78"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_download_device_helper_15c37e0c431209e2fb339749af4892e82" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="80"/>
+        <location file="c:/builds/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="80"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_download_device_helper_16518dcc046d6cd45dc6d07bb39b9c0f6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -74,7 +74,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="82"/>
+        <location file="c:/builds/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="82"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_download_device_helper_1deccc18dc7e00f4189393a698e1e652e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -91,14 +91,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="84"/>
+        <location file="c:/builds/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="84"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="71" bodyfile="z:/projects/songbird/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="70" bodyend="85"/>
+    <location file="c:/builds/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" line="71" bodyfile="c:/builds/songbird/trunk/components/devicesobsolete/download/public/sbIDownloadDevice.idl" bodystart="70" bodyend="85"/>
     <listofallmembers>
       <member refid="interfacesb_i_download_device_helper_1deccc18dc7e00f4189393a698e1e652e" prot="public" virt="non-virtual"><scope>sbIDownloadDeviceHelper</scope><name>downloadAll</name></member>
       <member refid="interfacesb_i_download_device_helper_15c37e0c431209e2fb339749af4892e82" prot="public" virt="non-virtual"><scope>sbIDownloadDeviceHelper</scope><name>downloadItem</name></member>

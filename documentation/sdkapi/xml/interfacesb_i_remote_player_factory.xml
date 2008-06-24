@@ -22,14 +22,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/remoteapi/public/sbIRemotePlayerFactory.idl" line="37"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayerFactory.idl" line="37"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemotePlayerFactory.idl" line="35" bodyfile="z:/projects/songbird/components/remoteapi/public/sbIRemotePlayerFactory.idl" bodystart="34" bodyend="38"/>
+    <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayerFactory.idl" line="35" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayerFactory.idl" bodystart="34" bodyend="38"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_player_factory_1830c84eaceea41df7e992d3b60262d6d" prot="public" virt="non-virtual"><scope>sbIRemotePlayerFactory</scope><name>createPrivileged</name></member>
     </listofallmembers>

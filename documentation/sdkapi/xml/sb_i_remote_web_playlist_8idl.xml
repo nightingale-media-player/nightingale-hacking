@@ -4,13 +4,13 @@
     <compoundname>sbIRemoteWebPlaylist.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="457">
+      <node id="511">
         <label>components/remoteapi/public/sbIRemoteWebPlaylist.idl</label>
         <link refid="sbIRemoteWebPlaylist.idl"/>
-        <childnode refid="458" relation="include">
+        <childnode refid="512" relation="include">
         </childnode>
       </node>
-      <node id="458">
+      <node id="512">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -163,6 +163,6 @@
 <codeline lineno="153"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="154"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/remoteapi/public/sbIRemoteWebPlaylist.idl"/>
+    <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl"/>
   </compounddef>
 </doxygen>

@@ -23,14 +23,14 @@
 <para>Create a property </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/property/public/sbIPropertyFactory.idl" line="47"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyFactory.idl" line="47"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>An interface to create <ref refid="interfacesb_i_property" kindref="compound">sbIProperty</ref> instances. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/components/property/public/sbIPropertyFactory.idl" line="42" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyFactory.idl" bodystart="41" bodyend="48"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyFactory.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyFactory.idl" bodystart="41" bodyend="48"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_factory_1d203e5c6555113b4568631e95f54a755" prot="public" virt="non-virtual"><scope>sbIPropertyFactory</scope><name>createProperty</name></member>
     </listofallmembers>

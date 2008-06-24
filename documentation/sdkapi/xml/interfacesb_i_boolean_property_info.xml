@@ -40,7 +40,7 @@
         <link refid="interfacesb_i_property_array"/>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" line="469" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyManager.idl" bodystart="468" bodyend="470"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="469" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="468" bodyend="470"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>format</name></member>

@@ -63,6 +63,7 @@
     <li><a href="annotated.html"><span>Classes</span></a></li>
     <li class="current"><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <h1>components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl</h1><a href="sb_i_metadata_job_manager_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
@@ -94,16 +95,16 @@
 <a name="l00031"></a>00031 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00032"></a>00032 
 <a name="l00033"></a>00033 interface nsIArray;
-<a name="l00034"></a>00034 interface <a class="code" href="interfacesb_i_metadata_job.html" title="Metadata Job represents the status of a running metadata scanning task.">sbIMetadataJob</a>;
+<a name="l00034"></a>00034 interface <a class="code" href="interfacesb_i_metadata_job.html" title="Metadata Job represents the status of a running metadata task.">sbIMetadataJob</a>;
 <a name="l00035"></a>00035 
-<a name="l00058"></a>00058 [scriptable, uuid(883C63A5-8195-4294-8D41-A21FE16A0D7C)]
-<a name="l00059"></a><a class="code" href="interfacesb_i_metadata_job_manager.html">00059</a> interface <a class="code" href="interfacesb_i_metadata_job_manager.html" title="Metadata Job Manager scans local and remote tracks for metadata in own-thread and...">sbIMetadataJobManager</a> : nsISupports
-<a name="l00060"></a>00060 {
-<a name="l00081"></a>00081   <a class="code" href="interfacesb_i_metadata_job.html" title="Metadata Job represents the status of a running metadata scanning task.">sbIMetadataJob</a> newJob( in nsIArray aMediaItemsArray, in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aSleepMS );
-<a name="l00082"></a>00082 
-<a name="l00087"></a>00087   <span class="keywordtype">void</span> stop();
-<a name="l00088"></a>00088 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:23 2008 for Songbird by&nbsp;
+<a name="l00053"></a>00053 [scriptable, uuid(caabe490-001c-11dd-95ff-0800200c9a66)]
+<a name="l00054"></a><a class="code" href="interfacesb_i_metadata_job_manager.html">00054</a> interface <a class="code" href="interfacesb_i_metadata_job_manager.html" title="Coordinates batch metadata read/write jobs.">sbIMetadataJobManager</a> : nsISupports
+<a name="l00055"></a>00055 {
+<a name="l00080"></a>00080   <a class="code" href="interfacesb_i_metadata_job.html" title="Metadata Job represents the status of a running metadata task.">sbIMetadataJob</a> newJob( in nsIArray aMediaItemsArray, 
+<a name="l00081"></a>00081                          in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aSleepMS, 
+<a name="l00082"></a>00082                          [optional] in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aJobType );
+<a name="l00083"></a>00083 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

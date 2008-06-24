@@ -4,19 +4,19 @@
     <compoundname>sbIMetadataJobManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="344">
+      <node id="383">
         <label>components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl</label>
         <link refid="sbIMetadataJobManager.idl"/>
-        <childnode refid="345" relation="include">
+        <childnode refid="384" relation="include">
         </childnode>
       </node>
-      <node id="345">
+      <node id="384">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_metadata_job_manager" prot="public">sbIMetadataJobManager</innerclass>
     <briefdescription>
-<para>The Metadata Backscanner scans unscanned media items for new metadata. </para>    </briefdescription>
+<para>Manages the lifecycle of file metadata read/write jobs. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <programlisting>
@@ -49,16 +49,16 @@
 <codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job" kindref="compound" tooltip="Metadata Job represents the status of a running metadata scanning task.">sbIMetadataJob</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job" kindref="compound" tooltip="Metadata Job represents the status of a running metadata task.">sbIMetadataJob</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal">[scriptable,<sp/>uuid(883C63A5-8195-4294-8D41-A21FE16A0D7C)]</highlight></codeline>
-<codeline lineno="59" refid="interfacesb_i_metadata_job_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job_manager" kindref="compound" tooltip="Metadata Job Manager scans local and remote tracks for metadata in own-thread and...">sbIMetadataJobManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="60"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_metadata_job" kindref="compound" tooltip="Metadata Job represents the status of a running metadata scanning task.">sbIMetadataJob</ref><sp/>newJob(<sp/>in<sp/>nsIArray<sp/>aMediaItemsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSleepMS<sp/>);</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"></highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>stop();</highlight></codeline>
-<codeline lineno="88"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(caabe490-001c-11dd-95ff-0800200c9a66)]</highlight></codeline>
+<codeline lineno="54" refid="interfacesb_i_metadata_job_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job_manager" kindref="compound" tooltip="Coordinates batch metadata read/write jobs.">sbIMetadataJobManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_metadata_job" kindref="compound" tooltip="Metadata Job represents the status of a running metadata task.">sbIMetadataJob</ref><sp/>newJob(<sp/>in<sp/>nsIArray<sp/>aMediaItemsArray,<sp/></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSleepMS,<sp/></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>aJobType<sp/>);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJobManager.idl"/>
   </compounddef>
 </doxygen>

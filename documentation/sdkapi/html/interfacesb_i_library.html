@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -94,6 +95,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#a9fe98d3fedb5e8dd8ed597829b8ce56">createMediaItem</a> (in nsIURI aContentUri,[optional] in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> aProperties,[optional] in boolean aAllowDuplicates)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates a new media item  aContentUri The URI pointing to the content of the new media item.  <a href="#a9fe98d3fedb5e8dd8ed597829b8ce56"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#42f596caaed1cd39f4db42edc819f9c8">createMediaItemIfNotExist</a> (in nsIURI aContentUri,[optional] in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> aProperties,[optional] out <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> aResultItem)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a new media item, disallowing duplicates, and return if it did.  <a href="#42f596caaed1cd39f4db42edc819f9c8"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#62f2e88db6d62e1778ee96fbffc7dd1c">createMediaList</a> (in AString aType,[optional] in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> aProperties)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Creates a new media list.  <a href="#62f2e88db6d62e1778ee96fbffc7dd1c"></a><br></td></tr>
@@ -110,8 +114,8 @@
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#103b68674687a92cdb798c8e481aa2f7">optimize</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the library should remove unsupported media list types, unknown property types, temporary items, or otherwise optimize its performance or size. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ec308d5681d1e7a38b0783f2fd0730cb"></a><!-- doxytag: member="sbILibrary::sync" ref="ec308d5681d1e7a38b0783f2fd0730cb" args="()" -->
-void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#ec308d5681d1e7a38b0783f2fd0730cb">sync</a> ()</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="04b2f426aecb73455a3b1245451f4af5"></a><!-- doxytag: member="sbILibrary::flush" ref="04b2f426aecb73455a3b1245451f4af5" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#04b2f426aecb73455a3b1245451f4af5">flush</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the library should save any cached data to disk. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#5d4add99176f0b5a9d03948d2f0eee3b">batchCreateMediaItems</a> (in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] in boolean aAllowDuplicates)</td></tr>
@@ -151,7 +155,7 @@ The library interface is the primary means of exposing media library data to Son
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_library_8idl-source.html#l00078">78</a> of file <a class="el" href="sb_i_library_8idl-source.html">sbILibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_library_8idl-source.html#l00082">82</a> of file <a class="el" href="sb_i_library_8idl-source.html">sbILibrary.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="bc37a369815fbf2f1174658ce0ec5f98"></a><!-- doxytag: member="sbILibrary::resolve" ref="bc37a369815fbf2f1174658ce0ec5f98" args="(in nsIURI aUri)" -->
 <div class="memitem">
 <div class="memproto">
@@ -221,6 +225,50 @@ Creates a new media item  aContentUri The URI pointing to the content of the new
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>A new, persisted media item </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="42f596caaed1cd39f4db42edc819f9c8"></a><!-- doxytag: member="sbILibrary::createMediaItemIfNotExist" ref="42f596caaed1cd39f4db42edc819f9c8" args="(in nsIURI aContentUri,[optional] in sbIPropertyArray aProperties,[optional] out sbIMediaItem aResultItem)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbILibrary::createMediaItemIfNotExist           </td>
+          <td>(</td>
+          <td class="paramtype">in nsIURI&nbsp;</td>
+          <td class="paramname"> <em>aContentUri</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a>&nbsp;</td>
+          <td class="paramname"> <em>aProperties</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] out <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a>&nbsp;</td>
+          <td class="paramname"> <em>aResultItem</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Create a new media item, disallowing duplicates, and return if it did. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>[optional]</em>&nbsp;</td><td>aResultItem the item that was created (or found) </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Whether a new media item was created </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_library.html#a9fe98d3fedb5e8dd8ed597829b8ce56" title="Creates a new media item  aContentUri The URI pointing to the content of the new...">createMediaItem</a> </dd></dl>
 
 </div>
 </div><p>
@@ -453,7 +501,7 @@ Asychronously create many media items from a list of URIs.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_library_8idl-source.html">sbILibrary.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:26 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:25 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

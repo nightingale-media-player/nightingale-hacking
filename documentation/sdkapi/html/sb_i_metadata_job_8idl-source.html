@@ -63,9 +63,10 @@
     <li><a href="annotated.html"><span>Classes</span></a></li>
     <li class="current"><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
-<h1>components/mediacore/metadata/manager/public/sbIMetadataJob.idl</h1><a href="sb_i_metadata_job_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
+<h1>components/mediacore/metadata/manager/public/sbIMetadataJob.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
 <a name="l00004"></a>00004 <span class="comment">// </span>
@@ -91,28 +92,25 @@
 <a name="l00024"></a>00024 <span class="comment">//</span>
 <a name="l00025"></a>00025 <span class="comment">*/</span>
 <a name="l00026"></a>00026 
-<a name="l00031"></a>00031 <span class="preprocessor">#include "nsISupports.idl"</span>
-<a name="l00032"></a>00032 
-<a name="l00033"></a>00033 interface nsIArray;
-<a name="l00034"></a>00034 interface nsIObserver;
-<a name="l00044"></a>00044 [scriptable, uuid(C38FD6BD-3335-4392-A3DE-1855ECEDA4F8)]
-<a name="l00045"></a><a class="code" href="interfacesb_i_metadata_job.html">00045</a> interface <a class="code" href="interfacesb_i_metadata_job.html" title="Metadata Job represents the status of a running metadata scanning task.">sbIMetadataJob</a> : nsISupports
+<a name="l00027"></a>00027 
+<a name="l00028"></a>00028 <span class="preprocessor">#include "nsISupports.idl"</span>
+<a name="l00029"></a>00029 
+<a name="l00030"></a>00030 interface nsIArray;
+<a name="l00031"></a>00031 
+<a name="l00044"></a>00044 [scriptable, uuid(b8aa3f00-ff8b-11dc-95ff-0800200c9a66)]
+<a name="l00045"></a><a class="code" href="interfacesb_i_metadata_job.html">00045</a> interface <a class="code" href="interfacesb_i_metadata_job.html" title="Metadata Job represents the status of a running metadata task.">sbIMetadataJob</a> : nsISupports
 <a name="l00046"></a>00046 {
-<a name="l00050"></a><a class="code" href="interfacesb_i_metadata_job.html#385cf138c88c4975a783b295527f103f">00050</a>   readonly attribute AString tableName;
-<a name="l00051"></a>00051 
-<a name="l00057"></a><a class="code" href="interfacesb_i_metadata_job.html#1b036ec22a1698fe19e2534b8c3cdb65">00057</a>   readonly attribute <span class="keywordtype">boolean</span> completed;
-<a name="l00058"></a>00058 
-<a name="l00072"></a>00072   <span class="keywordtype">void</span> init( in AString aTableName, in nsIArray aMediaItemsArray, in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aSleepMS );
-<a name="l00073"></a>00073 
-<a name="l00084"></a>00084   <span class="keywordtype">void</span> append( in nsIArray aMediaItemsArray );
-<a name="l00085"></a>00085 
-<a name="l00091"></a>00091   <span class="keywordtype">void</span> cancel();
-<a name="l00092"></a>00092 
-<a name="l00101"></a>00101   <span class="keywordtype">void</span> setObserver( in nsIObserver aObserver );
-<a name="l00102"></a>00102   <span class="keywordtype">void</span> removeObserver();
-<a name="l00103"></a>00103 };
-<a name="l00104"></a>00104 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:23 2008 for Songbird by&nbsp;
+<a name="l00047"></a>00047 
+<a name="l00052"></a><a class="code" href="interfacesb_i_metadata_job.html#56029ad63489ec9ed96a7fffa6194ae0">00052</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> JOBTYPE_READ = 0;
+<a name="l00053"></a>00053 
+<a name="l00058"></a><a class="code" href="interfacesb_i_metadata_job.html#b3491c19711d1a2849bdeecec95909e6">00058</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> JOBTYPE_WRITE = 1;
+<a name="l00059"></a>00059   
+<a name="l00064"></a><a class="code" href="interfacesb_i_metadata_job.html#304db6d7f95066ff8c8e5c7b2c47a0d6">00064</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> type;
+<a name="l00065"></a>00065 
+<a name="l00076"></a>00076   <span class="keywordtype">void</span> append( in nsIArray aMediaItemsArray );
+<a name="l00077"></a>00077 };
+<a name="l00078"></a>00078 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -79,6 +80,15 @@
 <p>
 <a href="interfacesb_i_local_database_library-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ed04cb65d1c79ca47a9df4d0383644df"></a><!-- doxytag: member="sbILocalDatabaseLibrary::addCopyListener" ref="ed04cb65d1c79ca47a9df4d0383644df" args="(in sbILocalDatabaseLibraryCopyListener aCopyListener)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_library.html#ed04cb65d1c79ca47a9df4d0383644df">addCopyListener</a> (in <a class="el" href="interfacesb_i_local_database_library_copy_listener.html">sbILocalDatabaseLibraryCopyListener</a> aCopyListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a copy listener to this library. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ba4c66b49cac8e4aa37bf91f7c5e5731"></a><!-- doxytag: member="sbILocalDatabaseLibrary::removeCopyListener" ref="ba4c66b49cac8e4aa37bf91f7c5e5731" args="(in sbILocalDatabaseLibraryCopyListener aCopyListener)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_library.html#ba4c66b49cac8e4aa37bf91f7c5e5731">removeCopyListener</a> (in <a class="el" href="interfacesb_i_local_database_library_copy_listener.html">sbILocalDatabaseLibraryCopyListener</a> aCopyListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a copy listener from this library. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="27b7e647416d05c9c7cedd830ac78836"></a><!-- doxytag: member="sbILocalDatabaseLibrary::databaseGuid" ref="27b7e647416d05c9c7cedd830ac78836" args="" -->
 readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_library.html#27b7e647416d05c9c7cedd830ac78836">databaseGuid</a></td></tr>
@@ -97,7 +107,7 @@ readonly attribute <a class="el" href="interfacesb_i_local_database_property_cac
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_local_database_library_8idl-source.html#l00056">56</a> of file <a class="el" href="sb_i_local_database_library_8idl-source.html">sbILocalDatabaseLibrary.idl</a>.<hr><h2>Member Data Documentation</h2>
+Definition at line <a class="el" href="sb_i_local_database_library_8idl-source.html#l00057">57</a> of file <a class="el" href="sb_i_local_database_library_8idl-source.html">sbILocalDatabaseLibrary.idl</a>.<hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="de539f77d028fb1d3f41c2c16118e7b2"></a><!-- doxytag: member="sbILocalDatabaseLibrary::databaseLocation" ref="de539f77d028fb1d3f41c2c16118e7b2" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -114,7 +124,7 @@ Returns the folder in which the database is stored.
 <p>
 This can be null to indicate that the library lives in the default location 
 <p>
-Definition at line <a class="el" href="sb_i_local_database_library_8idl-source.html#l00065">65</a> of file <a class="el" href="sb_i_local_database_library_8idl-source.html">sbILocalDatabaseLibrary.idl</a>.
+Definition at line <a class="el" href="sb_i_local_database_library_8idl-source.html#l00066">66</a> of file <a class="el" href="sb_i_local_database_library_8idl-source.html">sbILocalDatabaseLibrary.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="51048be46119bcc652d4cfd1f06191a9"></a><!-- doxytag: member="sbILocalDatabaseLibrary::nativeLibrary" ref="51048be46119bcc652d4cfd1f06191a9" args="" -->
@@ -131,12 +141,12 @@ Definition at line <a class="el" href="sb_i_local_database_library_8idl-source.h
 <p>
 Oh My. We need this here to avoid a static cast in sbLocalDatabaseSimpleMediaListFactory where we need a sbLocalDatabaseLibrary class pointer to construct the simple media list. This is better than the static cast since it explicitly requires the implementing class to be able to return a sbLocalDatabaseLibrary pointer. 
 <p>
-Definition at line <a class="el" href="sb_i_local_database_library_8idl-source.html#l00085">85</a> of file <a class="el" href="sb_i_local_database_library_8idl-source.html">sbILocalDatabaseLibrary.idl</a>.
+Definition at line <a class="el" href="sb_i_local_database_library_8idl-source.html#l00099">99</a> of file <a class="el" href="sb_i_local_database_library_8idl-source.html">sbILocalDatabaseLibrary.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/localdatabase/public/<a class="el" href="sb_i_local_database_library_8idl-source.html">sbILocalDatabaseLibrary.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:26 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:26 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -11,48 +11,48 @@
     <includes local="no">nsStringGlue.h</includes>
     <includes local="no">nsXPCOMCID.h</includes>
     <incdepgraph>
-      <node id="216">
+      <node id="245">
         <label>nsServiceManagerUtils.h</label>
       </node>
-      <node id="217">
+      <node id="246">
         <label>nsStringGlue.h</label>
       </node>
-      <node id="212">
+      <node id="241">
         <label>nsICategoryManager.h</label>
       </node>
-      <node id="214">
-        <label>nsIFile.h</label>
-      </node>
-      <node id="215">
-        <label>nsCOMPtr.h</label>
-      </node>
-      <node id="213">
-        <label>nsIComponentManager.h</label>
-      </node>
-      <node id="211">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="210">
+      <node id="239">
         <label>components/library/base/public/sbILibraryLoader.idl</label>
         <link refid="sbILibraryLoader.idl"/>
-        <childnode refid="211" relation="include">
+        <childnode refid="240" relation="include">
         </childnode>
-        <childnode refid="212" relation="include">
+        <childnode refid="241" relation="include">
         </childnode>
-        <childnode refid="213" relation="include">
+        <childnode refid="242" relation="include">
         </childnode>
-        <childnode refid="214" relation="include">
+        <childnode refid="243" relation="include">
         </childnode>
-        <childnode refid="215" relation="include">
+        <childnode refid="244" relation="include">
         </childnode>
-        <childnode refid="216" relation="include">
+        <childnode refid="245" relation="include">
         </childnode>
-        <childnode refid="217" relation="include">
+        <childnode refid="246" relation="include">
         </childnode>
-        <childnode refid="218" relation="include">
+        <childnode refid="247" relation="include">
         </childnode>
       </node>
-      <node id="218">
+      <node id="243">
+        <label>nsIFile.h</label>
+      </node>
+      <node id="244">
+        <label>nsCOMPtr.h</label>
+      </node>
+      <node id="242">
+        <label>nsIComponentManager.h</label>
+      </node>
+      <node id="240">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="247">
         <label>nsXPCOMCID.h</label>
       </node>
     </incdepgraph>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="78"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="78"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_library_loader_8idl_11adc5a90e3e680cca3d9fb039668da40" prot="public" static="no">
         <name>SB_LIBRARY_LOADER_REGISTRATION</name>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbILibraryLoader.idl" line="144"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryLoader.idl" line="144"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -185,6 +185,6 @@
 <codeline lineno="144"><highlight class="preprocessor"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="145"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/library/base/public/sbILibraryLoader.idl"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryLoader.idl"/>
   </compounddef>
 </doxygen>

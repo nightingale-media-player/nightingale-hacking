@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_file_system_observer_service" kind="interface" prot="public">
+    <compoundname>sbIFileSystemObserverService</compoundname>
+    <includes refid="sb_i_file_system_observer_service_8idl" local="no">sbIFileSystemObserverService.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_file_system_observer_service_136ca90c1b757470ed5dffb461ab93fde" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileSystemObserverService::addResourceObserver</definition>
+        <argsstring>(in nsIFile aFileSpec, in sbIFileSystemObserver aObserver)</argsstring>
+        <name>addResourceObserver</name>
+        <param>
+          <type>in nsIFile</type>
+          <declname>aFileSpec</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_file_system_observer" kindref="compound">sbIFileSystemObserver</ref></type>
+          <declname>aObserver</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Add a file-system resource observer. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFileSpec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference to the file-system resource to observe. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A observer callback interface. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbIFileSystemObserverService.idl" line="89"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_file_system_observer_service_11d5e744b436f025e8dde222b6b6ced1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIFileSystemObserverService::removeResourceObserver</definition>
+        <argsstring>(in nsIFile aFileSpec, in sbIFileSystemObserver aObserver)</argsstring>
+        <name>removeResourceObserver</name>
+        <param>
+          <type>in nsIFile</type>
+          <declname>aFileSpec</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_file_system_observer" kindref="compound">sbIFileSystemObserver</ref></type>
+          <declname>aObserver</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Remove a file-system resource observer. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFileSpec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference to the file-system resource to stop observing. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A observer callback interface. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbIFileSystemObserverService.idl" line="97"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>File System observer service. This interface provides a OS-generic file-system notification system. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/integration/public/sbIFileSystemObserverService.idl" line="82" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbIFileSystemObserverService.idl" bodystart="81" bodyend="98"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_file_system_observer_service_136ca90c1b757470ed5dffb461ab93fde" prot="public" virt="non-virtual"><scope>sbIFileSystemObserverService</scope><name>addResourceObserver</name></member>
+      <member refid="interfacesb_i_file_system_observer_service_11d5e744b436f025e8dde222b6b6ced1c" prot="public" virt="non-virtual"><scope>sbIFileSystemObserverService</scope><name>removeResourceObserver</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -3,6 +3,7 @@
   <compounddef id="interfacesb_i_mutable_property_array" kind="interface" prot="public">
     <compoundname>sbIMutablePropertyArray</compoundname>
     <basecompoundref refid="interfacesb_i_property_array" prot="public" virt="non-virtual">sbIPropertyArray</basecompoundref>
+    <includes refid="sb_i_property_array_8idl" local="no">sbIPropertyArray.idl</includes>
       <sectiondef kind="public-attrib">
       <memberdef kind="variable" id="interfacesb_i_mutable_property_array_1e13867716c7fa3d64006f8b9ff10a615" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -15,7 +16,7 @@
 <para>Determines whether or not the appendProperty method will throw on invalid input (i.e. setting a value on a property whose <ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> &apos;validate&apos; method fails on that input). Defaults to true.</para><para>An example of improper usage is setting non-numeric text in a property whose parent <ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> is actually <ref refid="interfacesb_i_number_property_info" kindref="compound">sbINumberPropertyInfo</ref>.</para><para>Note that this property can only be set if the implementing array is empty. Any attempt to set this property after &apos;appendProperty&apos; has been called will throw NS_ERROR_FAILURE. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="118" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyArray.idl" bodystart="118" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="120" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="120" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -61,38 +62,38 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="104"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="106"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-    </briefdescription>
+<para>An interface to carry around arrays of nsIProperty instances Note that implementations of the interface should also provide nsIMutableArray. QI to nsIMutableArray to access add/remove/clear methods. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="486">
+      <node id="583">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="485">
+      <node id="582">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="486" relation="public-inheritance">
+        <childnode refid="583" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="488">
+      <node id="585">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="487">
+      <node id="584">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="488" relation="public-inheritance">
+        <childnode refid="585" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/property/public/sbIPropertyArray.idl" line="92" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyArray.idl" bodystart="91" bodyend="119"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyArray.idl" line="94" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyArray.idl" bodystart="93" bodyend="121"/>
     <listofallmembers>
       <member refid="interfacesb_i_mutable_property_array_135d6d69803dc03bc2516fa4a218d6d2f" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>appendProperty</name></member>
       <member refid="interfacesb_i_property_array_157fe133b17a5651f37654ec48dcc1969" prot="public" virt="non-virtual"><scope>sbIMutablePropertyArray</scope><name>getPropertyAt</name></member>

@@ -63,6 +63,7 @@
     <li><a href="annotated.html"><span>Classes</span></a></li>
     <li class="current"><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <h1>components/devices/base/public/sbIDeviceEvent.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
@@ -97,7 +98,7 @@
 <a name="l00030"></a>00030 
 <a name="l00031"></a>00031 interface <a class="code" href="interfacesb_i_device_event_target.html">sbIDeviceEventTarget</a>;
 <a name="l00032"></a>00032 
-<a name="l00037"></a>00037 [scriptable, uuid(d49fa358-2745-4df3-b592-ce6f3929d7b4)]
+<a name="l00037"></a>00037 [scriptable, uuid(86a4e796-5e8d-452c-8551-8078527278f6)]
 <a name="l00038"></a><a class="code" href="interfacesb_i_device_event.html">00038</a> interface <a class="code" href="interfacesb_i_device_event.html">sbIDeviceEvent</a> : nsISupports
 <a name="l00039"></a>00039 {
 <a name="l00043"></a><a class="code" href="interfacesb_i_device_event.html#a3e6c8fb430675ca5f3aa4ae51642836">00043</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> COMMAND_DEVICE_BASE         = 0x00000000;
@@ -138,47 +139,56 @@
 <a name="l00093"></a><a class="code" href="interfacesb_i_device_event.html#79b604bb27b605bf5d8ddd50ac15a187">00093</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_TRANSFER_END       = EVENT_DEVICE_BASE + 8;
 <a name="l00094"></a>00094 
 <a name="l00095"></a>00095   <span class="comment">// device state changes</span>
-<a name="l00096"></a><a class="code" href="interfacesb_i_device_event.html#1415c512117c6f65d586c2bc2924e1f1">00096</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_READ_START   = EVENT_DEVICE_BASE + 9;
-<a name="l00097"></a><a class="code" href="interfacesb_i_device_event.html#9060c1d692d63f47ba459d29872ba030">00097</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_READ_END     = EVENT_DEVICE_BASE + 10;
-<a name="l00098"></a><a class="code" href="interfacesb_i_device_event.html#bd57e28928f64b1eaa3b1880546cb5ea">00098</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_READ_FAILED  = EVENT_DEVICE_BASE + 11;
-<a name="l00099"></a><a class="code" href="interfacesb_i_device_event.html#641905b30b5e939b7237d2d92a7f18e1">00099</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_WRITE_START  = EVENT_DEVICE_BASE + 12;
-<a name="l00100"></a><a class="code" href="interfacesb_i_device_event.html#d8b61cdafc67f1dc18b6a82b35373a35">00100</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_WRITE_END    = EVENT_DEVICE_BASE + 13;
-<a name="l00101"></a><a class="code" href="interfacesb_i_device_event.html#15cfa72883c1b40027726af23a8e80f8">00101</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_WRITE_FAILED = EVENT_DEVICE_BASE + 14;
-<a name="l00102"></a>00102   
-<a name="l00103"></a><a class="code" href="interfacesb_i_device_event.html#dd5f1dc3960a9e868b404f0e3269cace">00103</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_INFO_CHANGED       = EVENT_DEVICE_BASE + 15;
-<a name="l00104"></a>00104 
-<a name="l00105"></a>00105   <span class="comment">// device transfer errors</span>
-<a name="l00106"></a><a class="code" href="interfacesb_i_device_event.html#dfd4bc5df321efc63be8e126365fb9dc">00106</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_READ_UNSUPPORTED_TYPE = EVENT_DEVICE_BASE + 15;
-<a name="l00107"></a><a class="code" href="interfacesb_i_device_event.html#025d005bffe694fddf1bc2eca2054b9b">00107</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE = EVENT_DEVICE_BASE + 16;
+<a name="l00096"></a><a class="code" href="interfacesb_i_device_event.html#8d974cccc6d78c1049fa7bdfa605f297">00096</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MOUNTING_START      = EVENT_DEVICE_BASE + 9;
+<a name="l00097"></a><a class="code" href="interfacesb_i_device_event.html#87e3b363f37c222d06ca2aa9cd6088c1">00097</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MOUNTING_PROGRESS   = EVENT_DEVICE_BASE + 10;
+<a name="l00098"></a><a class="code" href="interfacesb_i_device_event.html#c9be2f5527a222c3e0754e22d20ecca2">00098</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MOUNTING_END        = EVENT_DEVICE_BASE + 11;
+<a name="l00099"></a>00099 
+<a name="l00100"></a><a class="code" href="interfacesb_i_device_event.html#fff626742c936606d8272eebd5b888d6">00100</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_READY               = EVENT_DEVICE_BASE + 12;
+<a name="l00101"></a>00101 
+<a name="l00102"></a><a class="code" href="interfacesb_i_device_event.html#1415c512117c6f65d586c2bc2924e1f1">00102</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_READ_START   = EVENT_DEVICE_BASE + 13;
+<a name="l00103"></a><a class="code" href="interfacesb_i_device_event.html#9060c1d692d63f47ba459d29872ba030">00103</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_READ_END     = EVENT_DEVICE_BASE + 14;
+<a name="l00104"></a><a class="code" href="interfacesb_i_device_event.html#bd57e28928f64b1eaa3b1880546cb5ea">00104</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_READ_FAILED  = EVENT_DEVICE_BASE + 15;
+<a name="l00105"></a><a class="code" href="interfacesb_i_device_event.html#641905b30b5e939b7237d2d92a7f18e1">00105</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_WRITE_START  = EVENT_DEVICE_BASE + 16;
+<a name="l00106"></a><a class="code" href="interfacesb_i_device_event.html#d8b61cdafc67f1dc18b6a82b35373a35">00106</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_WRITE_END    = EVENT_DEVICE_BASE + 17;
+<a name="l00107"></a><a class="code" href="interfacesb_i_device_event.html#15cfa72883c1b40027726af23a8e80f8">00107</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_WRITE_FAILED = EVENT_DEVICE_BASE + 18;
 <a name="l00108"></a>00108   
-<a name="l00109"></a>00109   <span class="comment">// device general errors</span>
-<a name="l00110"></a><a class="code" href="interfacesb_i_device_event.html#e3e43349c6a65d0a77ed933f4f0e9b79">00110</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_ACCESS_DENIED        = EVENT_DEVICE_BASE + 17;
-<a name="l00111"></a><a class="code" href="interfacesb_i_device_event.html#a2aa4c5503d8fc89374764892e371a00">00111</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_NOT_ENOUGH_FREESPACE = EVENT_DEVICE_BASE + 18;
-<a name="l00112"></a><a class="code" href="interfacesb_i_device_event.html#479c606d0b2c0b6c88118d9cef195926">00112</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_NOT_AVAILABLE        = EVENT_DEVICE_BASE + 19;
-<a name="l00113"></a>00113 
-<a name="l00114"></a>00114   <span class="comment">// device generic catch-all error</span>
-<a name="l00115"></a><a class="code" href="interfacesb_i_device_event.html#18971da08fedeba93ff9655bcff41d23">00115</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_ERROR_UNEXPECTED     = EVENT_DEVICE_BASE + 20;
-<a name="l00116"></a>00116 
-<a name="l00117"></a>00117   <span class="comment">// device generic state changed</span>
-<a name="l00118"></a><a class="code" href="interfacesb_i_device_event.html#eff8c61f5561f8655fd6a569021fab93">00118</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_STATE_CHANGED        = EVENT_DEVICE_BASE + 21;
+<a name="l00109"></a><a class="code" href="interfacesb_i_device_event.html#dd5f1dc3960a9e868b404f0e3269cace">00109</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_INFO_CHANGED       = EVENT_DEVICE_BASE + 19;
+<a name="l00110"></a>00110 
+<a name="l00111"></a>00111   <span class="comment">// device transfer errors</span>
+<a name="l00112"></a><a class="code" href="interfacesb_i_device_event.html#dfd4bc5df321efc63be8e126365fb9dc">00112</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_READ_UNSUPPORTED_TYPE  = EVENT_DEVICE_BASE + 20;
+<a name="l00113"></a><a class="code" href="interfacesb_i_device_event.html#025d005bffe694fddf1bc2eca2054b9b">00113</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE = EVENT_DEVICE_BASE + 21;
+<a name="l00114"></a>00114   
+<a name="l00115"></a>00115   <span class="comment">// device general errors</span>
+<a name="l00116"></a><a class="code" href="interfacesb_i_device_event.html#e3e43349c6a65d0a77ed933f4f0e9b79">00116</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_ACCESS_DENIED        = EVENT_DEVICE_BASE + 22;
+<a name="l00117"></a><a class="code" href="interfacesb_i_device_event.html#a2aa4c5503d8fc89374764892e371a00">00117</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_NOT_ENOUGH_FREESPACE = EVENT_DEVICE_BASE + 23;
+<a name="l00118"></a><a class="code" href="interfacesb_i_device_event.html#479c606d0b2c0b6c88118d9cef195926">00118</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_NOT_AVAILABLE        = EVENT_DEVICE_BASE + 24;
 <a name="l00119"></a>00119 
-<a name="l00123"></a><a class="code" href="interfacesb_i_device_event.html#cb6bb266781dbcb22e4483ce400770e2">00123</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_CONTROLLER_BASE = 0x40020000;
-<a name="l00124"></a>00124 
-<a name="l00128"></a><a class="code" href="interfacesb_i_device_event.html#d0cb2fa10c2fbd9a903280b281d34713">00128</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_MARSHALL_BASE = 0x40040000;
-<a name="l00129"></a>00129 
-<a name="l00133"></a><a class="code" href="interfacesb_i_device_event.html#beb207b4c5548d656dc09351b4f9010c">00133</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_MANAGER_BASE = 0x40060000;
-<a name="l00134"></a>00134 
-<a name="l00138"></a><a class="code" href="interfacesb_i_device_event.html#ecdb97c08ac5f027a7bf08698584015a">00138</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_CLIENT_DEFINED = 0x60000000;
-<a name="l00139"></a>00139 
-<a name="l00143"></a><a class="code" href="interfacesb_i_device_event.html#f69e2495267db9ed5d9ffcdf7cd6fb78">00143</a>   readonly attribute PRUint32 type;
-<a name="l00144"></a>00144 
-<a name="l00148"></a><a class="code" href="interfacesb_i_device_event.html#99e5f65469f988f927910b9e939ee910">00148</a>   readonly attribute nsIVariant data;
-<a name="l00149"></a>00149 
-<a name="l00153"></a><a class="code" href="interfacesb_i_device_event.html#31f920c62af7a7f2792777c845e6effb">00153</a>   readonly attribute <a class="code" href="interfacesb_i_device_event_target.html">sbIDeviceEventTarget</a> target;
-<a name="l00154"></a>00154   
-<a name="l00158"></a><a class="code" href="interfacesb_i_device_event.html#2353ed11609dea758e4bbd0c0c67467f">00158</a>   readonly attribute nsISupports origin;
-<a name="l00159"></a>00159 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:22 2008 for Songbird by&nbsp;
+<a name="l00120"></a>00120   <span class="comment">// device generic catch-all error</span>
+<a name="l00121"></a><a class="code" href="interfacesb_i_device_event.html#18971da08fedeba93ff9655bcff41d23">00121</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_ERROR_UNEXPECTED     = EVENT_DEVICE_BASE + 25;
+<a name="l00122"></a>00122 
+<a name="l00123"></a>00123   <span class="comment">// device generic state changed</span>
+<a name="l00124"></a><a class="code" href="interfacesb_i_device_event.html#eff8c61f5561f8655fd6a569021fab93">00124</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_STATE_CHANGED        = EVENT_DEVICE_BASE + 26;
+<a name="l00125"></a>00125 
+<a name="l00126"></a>00126   <span class="comment">// device preferences changed</span>
+<a name="l00127"></a><a class="code" href="interfacesb_i_device_event.html#6693a6cfe6e255b496ad1bbcd9d04917">00127</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_DEVICE_PREFS_CHANGED        = EVENT_DEVICE_BASE + 27;
+<a name="l00128"></a>00128 
+<a name="l00132"></a><a class="code" href="interfacesb_i_device_event.html#cb6bb266781dbcb22e4483ce400770e2">00132</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_CONTROLLER_BASE = 0x40020000;
+<a name="l00133"></a>00133 
+<a name="l00137"></a><a class="code" href="interfacesb_i_device_event.html#d0cb2fa10c2fbd9a903280b281d34713">00137</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_MARSHALL_BASE = 0x40040000;
+<a name="l00138"></a>00138 
+<a name="l00142"></a><a class="code" href="interfacesb_i_device_event.html#beb207b4c5548d656dc09351b4f9010c">00142</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_MANAGER_BASE = 0x40060000;
+<a name="l00143"></a>00143 
+<a name="l00147"></a><a class="code" href="interfacesb_i_device_event.html#ecdb97c08ac5f027a7bf08698584015a">00147</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> EVENT_CLIENT_DEFINED = 0x60000000;
+<a name="l00148"></a>00148 
+<a name="l00152"></a><a class="code" href="interfacesb_i_device_event.html#f69e2495267db9ed5d9ffcdf7cd6fb78">00152</a>   readonly attribute PRUint32 type;
+<a name="l00153"></a>00153 
+<a name="l00157"></a><a class="code" href="interfacesb_i_device_event.html#99e5f65469f988f927910b9e939ee910">00157</a>   readonly attribute nsIVariant data;
+<a name="l00158"></a>00158 
+<a name="l00162"></a><a class="code" href="interfacesb_i_device_event.html#31f920c62af7a7f2792777c845e6effb">00162</a>   readonly attribute <a class="code" href="interfacesb_i_device_event_target.html">sbIDeviceEventTarget</a> target;
+<a name="l00163"></a>00163   
+<a name="l00167"></a><a class="code" href="interfacesb_i_device_event.html#2353ed11609dea758e4bbd0c0c67467f">00167</a>   readonly attribute nsISupports origin;
+<a name="l00168"></a>00168 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:21 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

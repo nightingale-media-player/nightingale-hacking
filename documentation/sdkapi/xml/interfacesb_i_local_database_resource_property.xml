@@ -24,7 +24,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="45"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="45"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -32,30 +32,30 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="310">
+      <node id="399">
         <label>sbILocalDatabaseResourceProperty</label>
         <link refid="interfacesb_i_local_database_resource_property"/>
-        <childnode refid="311" relation="public-inheritance">
+        <childnode refid="400" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="311">
+      <node id="400">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="312">
+      <node id="401">
         <label>sbILocalDatabaseResourceProperty</label>
         <link refid="interfacesb_i_local_database_resource_property"/>
-        <childnode refid="313" relation="public-inheritance">
+        <childnode refid="402" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="313">
+      <node id="402">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="43" bodyfile="z:/projects/songbird/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" bodystart="42" bodyend="46"/>
+    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" line="43" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl" bodystart="42" bodyend="46"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_resource_162a515cdcadcae2da7861391abbb36e4" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>created</name></member>
       <member refid="interfacesb_i_library_resource_132061d667e86c05b22d3ee6d57e24001" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>equals</name></member>
@@ -67,6 +67,7 @@
       <member refid="interfacesb_i_library_resource_179625ea92faf0b5dfadc74c840b2525b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>setProperties</name></member>
       <member refid="interfacesb_i_library_resource_17d26996d427fa332307d53a124f0fc46" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>setProperty</name></member>
       <member refid="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>updated</name></member>
+      <member refid="interfacesb_i_library_resource_1faa01b7805181fabba68fd9a721e7d3d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourceProperty</scope><name>userEditable</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

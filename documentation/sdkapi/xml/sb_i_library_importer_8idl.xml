@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="sb_i_library_importer_8idl" kind="file">
+    <compoundname>sbILibraryImporter.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <incdepgraph>
+      <node id="354">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="353">
+        <label>components/libraryimporter/base/public/sbILibraryImporter.idl</label>
+        <link refid="sbILibraryImporter.idl"/>
+        <childnode refid="354" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_library_importer_listener" prot="public">sbILibraryImporterListener</innerclass>
+    <innerclass refid="interfacesb_i_library_importer" prot="public">sbILibraryImporter</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*<sp/>-*-<sp/>Mode:<sp/>IDL;<sp/>tab-width:<sp/>2;<sp/>indent-tabs-mode:<sp/>nil;<sp/>c-basic-offset:<sp/>2<sp/>-*-<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>vim:<sp/>set<sp/>sw=2<sp/>:miv<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed</highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this</highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,</highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="26"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="27"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>*****************************************************************************</highlight></codeline>
+<codeline lineno="30"><highlight class="comment"><sp/>*******************************************************************************</highlight></codeline>
+<codeline lineno="31"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="32"><highlight class="comment"><sp/>*<sp/>Interface<sp/>description<sp/>for<sp/>the<sp/>library<sp/>importer<sp/>interface.</highlight></codeline>
+<codeline lineno="33"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="34"><highlight class="comment"><sp/>*******************************************************************************</highlight></codeline>
+<codeline lineno="35"><highlight class="comment"><sp/>******************************************************************************/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(7B6B4403-3FF7-4919-BAB5-F3821BA63F95)]</highlight></codeline>
+<codeline lineno="48" refid="interfacesb_i_library_importer_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_importer_listener" kindref="compound" tooltip="Interface for listening to library importer events.">sbILibraryImporterListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFirstRun();</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryChanged(</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aLibFilePath,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aGUID);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onImportError();</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onNonExistentMedia(</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aNonExistentMediaCount,</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aTrackCount);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onUnsupportedMedia();</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>AString<sp/>onDirtyPlaylist(</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aPlaylistName,</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aApplyAll);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal">[scriptable,<sp/>uuid(DBB06C29-EA16-4D9E-9E1E-0E83737DF26F)]</highlight></codeline>
+<codeline lineno="130" refid="interfacesb_i_library_importer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_importer" kindref="compound" tooltip="Interface for importing external libraries.">sbILibraryImporter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="131"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="133"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>Attributes.</highlight></codeline>
+<codeline lineno="134"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="135"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryType<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Library<sp/>type.</highlight></codeline>
+<codeline lineno="136"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryReadableType<sp/><sp/><sp/><sp/><sp/><sp/>Readable<sp/>library<sp/>type.</highlight></codeline>
+<codeline lineno="137"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryDefaultFileName<sp/><sp/><sp/>Default<sp/>library<sp/>file<sp/>name.</highlight></codeline>
+<codeline lineno="138"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryDefaultFilePath<sp/><sp/><sp/>Default<sp/>library<sp/>file<sp/>path.</highlight></codeline>
+<codeline lineno="139"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryFileExtensionList<sp/>Comma<sp/>separated<sp/>list<sp/>of<sp/>library<sp/>file<sp/>extensions.</highlight></codeline>
+<codeline lineno="140"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142" refid="interfacesb_i_library_importer_10d4853fa1579c2118bfa7234260936fd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryType;</highlight></codeline>
+<codeline lineno="143" refid="interfacesb_i_library_importer_137b3a2657a3c91ec13187396b18ea3f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryReadableType;</highlight></codeline>
+<codeline lineno="144" refid="interfacesb_i_library_importer_1e00ff2029f3d7cbe902338d31fd6b617" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryDefaultFileName;</highlight></codeline>
+<codeline lineno="145" refid="interfacesb_i_library_importer_12faee2e60507b60ca1603d9814a7a5b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryDefaultFilePath;</highlight></codeline>
+<codeline lineno="146" refid="interfacesb_i_library_importer_18a0f27bb74429044dfacc376dfe41039" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryFileExtensionList;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal">(</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aLibFilePath,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aGUID,</highlight></codeline>
+<codeline lineno="161" refid="interfacesb_i_library_importer_1eaa60eadd56028428745b9a86688966f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aCheckForChanges);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setListener(</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_library_importer_listener" kindref="compound" tooltip="Interface for listening to library importer events.">sbILibraryImporterListener</ref><sp/><sp/><sp/>aListener);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="c:/builds/songbird/trunk/components/libraryimporter/base/public/sbILibraryImporter.idl"/>
+  </compounddef>
+</doxygen>

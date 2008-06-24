@@ -88,7 +88,7 @@
 <codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="72"><highlight class="comment"><sp/><sp/>Prop:<sp/>item</highlight></codeline>
 <codeline lineno="73"><highlight class="comment"></highlight></codeline>
-<codeline lineno="74"><highlight class="comment"><sp/><sp/>The<sp/>&lt;MediaItem&gt;<sp/>corresponding<sp/>to<sp/>the<sp/>event</highlight></codeline>
+<codeline lineno="74"><highlight class="comment"><sp/><sp/>The<sp/>&lt;MediaItem&gt;<sp/>corresponding<sp/>to<sp/>the<sp/>event.</highlight></codeline>
 <codeline lineno="75"><highlight class="comment"></highlight></codeline>
 <codeline lineno="76"><highlight class="comment"><sp/><sp/>Type:<sp/>&lt;MediaItem&gt;</highlight></codeline>
 <codeline lineno="77"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
@@ -97,13 +97,14 @@
 <codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="81"><highlight class="comment"><sp/><sp/>Prop:<sp/>status</highlight></codeline>
 <codeline lineno="82"><highlight class="comment"></highlight></codeline>
-<codeline lineno="83"><highlight class="comment"><sp/><sp/>The<sp/>&lt;status&gt;<sp/>of<sp/>the<sp/>event</highlight></codeline>
-<codeline lineno="84"><highlight class="comment"></highlight></codeline>
-<codeline lineno="85"><highlight class="comment"><sp/><sp/>Type:<sp/>&lt;long&gt;</highlight></codeline>
-<codeline lineno="86"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="87" refid="interfacesb_i_media_item_status_event_1a9e3a1f4ceb3e435d8274ce8761c2bb7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>status;</highlight></codeline>
-<codeline lineno="88"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="83"><highlight class="comment"><sp/><sp/>The<sp/>status<sp/>of<sp/>the<sp/>event<sp/>as<sp/>an<sp/>nsresult<sp/>value.<sp/><sp/>A<sp/>status<sp/>of<sp/>NS_OK<sp/>indicates</highlight></codeline>
+<codeline lineno="84"><highlight class="comment"><sp/><sp/>success.</highlight></codeline>
+<codeline lineno="85"><highlight class="comment"></highlight></codeline>
+<codeline lineno="86"><highlight class="comment"><sp/><sp/>Type:<sp/>&lt;long&gt;</highlight></codeline>
+<codeline lineno="87"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="interfacesb_i_media_item_status_event_1a9e3a1f4ceb3e435d8274ce8761c2bb7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>status;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/bindings/public/sbIMediaItemStatusEvent.idl"/>
+    <location file="c:/builds/songbird/trunk/bindings/public/sbIMediaItemStatusEvent.idl"/>
   </compounddef>
 </doxygen>

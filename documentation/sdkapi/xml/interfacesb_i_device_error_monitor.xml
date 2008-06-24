@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_device_error_monitor" kind="interface" prot="public">
+    <compoundname>sbIDeviceErrorMonitor</compoundname>
+    <includes refid="sb_i_device_error_monitor_8idl" local="no">sbIDeviceErrorMonitor.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_device_error_monitor_14a17413c0fc401d8036ceef9299e8640" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIDeviceErrorMonitor::deviceHasErrors</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>deviceHasErrors</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+<para>Checks to see if a device has had any recent errors. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>device to check for errors on. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if any errors are currently registered for this device. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceErrorMonitor.idl" line="51"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_error_monitor_132ff87201b4d17d6598c3cec7126bf32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIArray</type>
+        <definition>nsIArray sbIDeviceErrorMonitor::getErrorsForDevice</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>getErrorsForDevice</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+<para>Gets an array of strings (nsISupportsString) that indicate errors that have happend on this device recently. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>device to get error list from. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>array of error strings, empty if no errors exist yet. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceErrorMonitor.idl" line="60"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_error_monitor_16723d5afadb97100c16df9ccd7c4c2a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceErrorMonitor::clearErrorsForDevice</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>clearErrorsForDevice</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+<para>Clears the array of error strings for a device. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>device to clear error list from. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceErrorMonitor.idl" line="67"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This service monitors devices for errors and stores them for easy access later. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceErrorMonitor.idl" line="43" bodyfile="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceErrorMonitor.idl" bodystart="43" bodyend="69"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_error_monitor_16723d5afadb97100c16df9ccd7c4c2a2" prot="public" virt="non-virtual"><scope>sbIDeviceErrorMonitor</scope><name>clearErrorsForDevice</name></member>
+      <member refid="interfacesb_i_device_error_monitor_14a17413c0fc401d8036ceef9299e8640" prot="public" virt="non-virtual"><scope>sbIDeviceErrorMonitor</scope><name>deviceHasErrors</name></member>
+      <member refid="interfacesb_i_device_error_monitor_132ff87201b4d17d6598c3cec7126bf32" prot="public" virt="non-virtual"><scope>sbIDeviceErrorMonitor</scope><name>getErrorsForDevice</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

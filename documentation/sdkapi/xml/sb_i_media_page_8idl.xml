@@ -4,13 +4,13 @@
     <compoundname>sbIMediaPage.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="371">
+      <node id="412">
         <label>components/mediapages/public/sbIMediaPage.idl</label>
         <link refid="sbIMediaPage.idl"/>
-        <childnode refid="372" relation="include">
+        <childnode refid="413" relation="include">
         </childnode>
       </node>
-      <node id="372">
+      <node id="413">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -66,6 +66,6 @@
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>
 <codeline lineno="89"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/mediapages/public/sbIMediaPage.idl"/>
+    <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl"/>
   </compounddef>
 </doxygen>

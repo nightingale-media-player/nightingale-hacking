@@ -4,13 +4,13 @@
     <compoundname>sbIOrderableMediaList.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="273">
+      <node id="305">
         <label>components/library/base/public/sbIOrderableMediaList.idl</label>
         <link refid="sbIOrderableMediaList.idl"/>
-        <childnode refid="274" relation="include">
+        <childnode refid="306" relation="include">
         </childnode>
       </node>
-      <node id="274">
+      <node id="306">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -75,6 +75,6 @@
 <codeline lineno="91"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="92"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/library/base/public/sbIOrderableMediaList.idl"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIOrderableMediaList.idl"/>
   </compounddef>
 </doxygen>

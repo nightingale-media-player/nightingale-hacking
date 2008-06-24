@@ -4,19 +4,19 @@
     <compoundname>sbIMetadataJob.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="341">
+      <node id="380">
         <label>components/mediacore/metadata/manager/public/sbIMetadataJob.idl</label>
         <link refid="sbIMetadataJob.idl"/>
-        <childnode refid="342" relation="include">
+        <childnode refid="381" relation="include">
         </childnode>
       </node>
-      <node id="342">
+      <node id="381">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_metadata_job" prot="public">sbIMetadataJob</innerclass>
     <briefdescription>
-<para>The Metadata Backscanner scans unscanned media items for new metadata. </para>    </briefdescription>
+    </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <programlisting>
@@ -46,28 +46,25 @@
 <codeline lineno="24"><highlight class="comment">//</highlight></codeline>
 <codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal">interface<sp/>nsIObserver;</highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(C38FD6BD-3335-4392-A3DE-1855ECEDA4F8)]</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_metadata_job" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job" kindref="compound" tooltip="Metadata Job represents the status of a running metadata scanning task.">sbIMetadataJob</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(b8aa3f00-ff8b-11dc-95ff-0800200c9a66)]</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_metadata_job" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_job" kindref="compound" tooltip="Metadata Job represents the status of a running metadata task.">sbIMetadataJob</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="50" refid="interfacesb_i_metadata_job_1385cf138c88c4975a783b295527f103f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>tableName;</highlight></codeline>
-<codeline lineno="51"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57" refid="interfacesb_i_metadata_job_11b036ec22a1698fe19e2534b8c3cdb65" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>completed;</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(<sp/>in<sp/>AString<sp/>aTableName,<sp/>in<sp/>nsIArray<sp/>aMediaItemsArray,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSleepMS<sp/>);</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>append(<sp/>in<sp/>nsIArray<sp/>aMediaItemsArray<sp/>);</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"></highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cancel();</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"></highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setObserver(<sp/>in<sp/>nsIObserver<sp/>aObserver<sp/>);</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeObserver();</highlight></codeline>
-<codeline lineno="103"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="interfacesb_i_metadata_job_156029ad63489ec9ed96a7fffa6194ae0" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>JOBTYPE_READ<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="interfacesb_i_metadata_job_1b3491c19711d1a2849bdeecec95909e6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>JOBTYPE_WRITE<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="64" refid="interfacesb_i_metadata_job_1304db6d7f95066ff8c8e5c7b2c47a0d6" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>type;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>append(<sp/>in<sp/>nsIArray<sp/>aMediaItemsArray<sp/>);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/mediacore/metadata/manager/public/sbIMetadataJob.idl"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataJob.idl"/>
   </compounddef>
 </doxygen>

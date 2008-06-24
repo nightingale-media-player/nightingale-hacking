@@ -4,13 +4,13 @@
     <compoundname>sbILibraryManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="220">
+      <node id="252">
         <label>components/library/base/public/sbILibraryManager.idl</label>
         <link refid="sbILibraryManager.idl"/>
-        <childnode refid="221" relation="include">
+        <childnode refid="253" relation="include">
         </childnode>
       </node>
-      <node id="221">
+      <node id="253">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -25,7 +25,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbILibraryManager.idl" line="124"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="124"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_library_manager_8idl_10f811f5ded3cc58d75023dbd5401f95e" prot="public" static="no">
         <name>SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC</name>
@@ -36,7 +36,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbILibraryManager.idl" line="128"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="128"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_library_manager_8idl_1f2e05e374292d5bfd8b20697a0cc4d44" prot="public" static="no">
+        <name>SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC</name>
+        <initializer>&quot;songbird-library-manager-shutdown&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="132"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_library_manager_8idl_1df9ef3e803a63291142cdf5b358c7d66" prot="public" static="no">
         <name>SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC</name>
@@ -47,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/library/base/public/sbILibraryManager.idl" line="132"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryManager.idl" line="136"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -130,12 +141,16 @@
 <codeline lineno="127"><highlight class="normal"></highlight><highlight class="comment">//<sp/>libraries<sp/>are<sp/>notified<sp/>of<sp/>shutdown</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="128"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC<sp/>&quot;songbird-library-manager-before-shutdown&quot;</highlight></codeline>
 <codeline lineno="129"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>notification<sp/>is<sp/>sent<sp/>when<sp/>shutdown<sp/>has<sp/>begun<sp/>and<sp/>after<sp/>the<sp/>individual</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/>libraries<sp/>are<sp/>notified<sp/>of<sp/>shutdown</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="132"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC<sp/>&quot;songbird-library-manager-after-shutdown&quot;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>notification<sp/>is<sp/>sent<sp/>when<sp/>shutdown<sp/>has<sp/>begun<sp/>and<sp/>notifies<sp/>individual</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/>libraries<sp/>to<sp/>immediately<sp/>shutdown</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC<sp/>&quot;songbird-library-manager-shutdown&quot;</highlight></codeline>
 <codeline lineno="133"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="134"><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>notification<sp/>is<sp/>sent<sp/>when<sp/>shutdown<sp/>has<sp/>begun<sp/>and<sp/>after<sp/>the<sp/>individual</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="comment">//<sp/>libraries<sp/>are<sp/>notified<sp/>of<sp/>shutdown</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC<sp/>&quot;songbird-library-manager-after-shutdown&quot;</highlight></codeline>
+<codeline lineno="137"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/library/base/public/sbILibraryManager.idl"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryManager.idl"/>
   </compounddef>
 </doxygen>

@@ -15,7 +15,7 @@
 <para>the URL to be displayed when the display pane is instantiated </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="55" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="55" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_display_pane_content_info_1136cd514433e497dc3b501718f88201e" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -28,7 +28,7 @@
 <para>the title of the pane when this pane is shown </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="59" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="59" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" line="59" bodyfile="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="59" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_display_pane_content_info_118a4abf37e69bb5f11bb0d8ce20e9143" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -41,7 +41,7 @@
 <para>the icon of the pane when this pane is shown </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="63" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="63" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" line="63" bodyfile="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="63" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_display_pane_content_info_17de1b35215f4d83f1273fdf1bfd24992" prot="public" static="no" mutable="no">
         <type>readonly attribute PRInt32</type>
@@ -54,7 +54,7 @@
 <para>the width of the pane when it is displayed in a vertical orientation </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="67" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="67" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" line="67" bodyfile="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="67" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_display_pane_content_info_1e1a1fa6d04495f67ecccfb89025bc92b" prot="public" static="no" mutable="no">
         <type>readonly attribute PRInt32</type>
@@ -67,7 +67,7 @@
 <para>the height of the pane when it is displayed in a horizontal orientation </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="71" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="71" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" line="71" bodyfile="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="71" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_display_pane_content_info_1431cbeac0d92f744e08a448e144d71d5" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -80,14 +80,14 @@
 <para>a semicolon-delmited list of content groups in which this pane is more suited for display. This is case-insensitive. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="76" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="76" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" line="76" bodyfile="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="76" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Information needed for a display pane to be instantiated. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" line="51" bodyfile="z:/projects/songbird/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="50" bodyend="77"/>
+    <location file="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" line="51" bodyfile="c:/builds/songbird/trunk/components/displaypanes/public/sbIDisplayPanes.idl" bodystart="50" bodyend="77"/>
     <listofallmembers>
       <member refid="interfacesb_i_display_pane_content_info_118a4abf37e69bb5f11bb0d8ce20e9143" prot="public" virt="non-virtual"><scope>sbIDisplayPaneContentInfo</scope><name>contentIcon</name></member>
       <member refid="interfacesb_i_display_pane_content_info_1136cd514433e497dc3b501718f88201e" prot="public" virt="non-virtual"><scope>sbIDisplayPaneContentInfo</scope><name>contentTitle</name></member>

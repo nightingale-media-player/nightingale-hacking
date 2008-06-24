@@ -10,30 +10,30 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="648">
+      <node id="772">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="647">
+      <node id="771">
         <label>sbIRatingPropertyBuilder</label>
         <link refid="interfacesb_i_rating_property_builder"/>
-        <childnode refid="648" relation="public-inheritance">
+        <childnode refid="772" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="650">
+      <node id="774">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="649">
+      <node id="773">
         <label>sbIRatingPropertyBuilder</label>
         <link refid="interfacesb_i_rating_property_builder"/>
-        <childnode refid="650" relation="public-inheritance">
+        <childnode refid="774" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="z:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" line="106" bodyfile="z:/projects/songbird/components/property/public/sbIPropertyBuilder.idl" bodystart="105" bodyend="107"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="106" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="105" bodyend="107"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbIRatingPropertyBuilder</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbIRatingPropertyBuilder</scope><name>displayNameKey</name></member>

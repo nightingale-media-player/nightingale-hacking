@@ -63,6 +63,7 @@
     <li><a href="annotated.html"><span>Classes</span></a></li>
     <li class="current"><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <h1>components/remoteapi/public/sbIRemoteLibrary.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
@@ -121,7 +122,7 @@
 <a name="l00059"></a>00059 <span class="comment">  var library = songbird.siteLibrary("", "");</span>
 <a name="l00060"></a>00060 <span class="comment"></span>
 <a name="l00061"></a>00061 <span class="comment">  //Create a medialist using the library.</span>
-<a name="l00062"></a>00062 <span class="comment">  var mediaList = library.createMediaList("simple");</span>
+<a name="l00062"></a>00062 <span class="comment">  var mediaList = library.createSimpleMediaList("Name of List");</span>
 <a name="l00063"></a>00063 <span class="comment"></span>
 <a name="l00064"></a>00064 <span class="comment">  //Create some mediaitems and add them to the medialist.</span>
 <a name="l00065"></a>00065 <span class="comment">  var itemURLs = ["http://path/to/song.mp3", "http://path/to/another/song.mp3"];</span>
@@ -235,7 +236,7 @@
 <a name="l00206"></a>00206 <span class="comment">    get updated.</span>
 <a name="l00207"></a>00207 <span class="comment"></span>
 <a name="l00208"></a>00208 <span class="comment">  See Also:</span>
-<a name="l00209"></a>00209 <span class="comment">    &lt;createMediaList()&gt;</span>
+<a name="l00209"></a>00209 <span class="comment">    &lt;createSimpleMediaList()&gt;</span>
 <a name="l00210"></a>00210 <span class="comment">    &lt;createMediaListFromURL()&gt;</span>
 <a name="l00211"></a>00211 <span class="comment">  */</span>
 <a name="l00212"></a>00212   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> createMediaItem(in AString aURL);
@@ -267,7 +268,7 @@
 <a name="l00251"></a>00251 <span class="comment"></span>
 <a name="l00252"></a>00252 <span class="comment">  See Also:</span>
 <a name="l00253"></a>00253 <span class="comment">    &lt;createMediaItem()&gt;</span>
-<a name="l00254"></a>00254 <span class="comment">    &lt;createMediaList()&gt;</span>
+<a name="l00254"></a>00254 <span class="comment">    &lt;createSimpleMediaList()&gt;</span>
 <a name="l00255"></a>00255 <span class="comment">    &lt;createMediaListFromURL()&gt;</span>
 <a name="l00256"></a>00256 <span class="comment">  */</span>
 <a name="l00257"></a>00257   <a class="code" href="interfacesb_i_remote_media_list.html" title="An interface to control a media list from remote web pages.">sbIRemoteMediaList</a> createSimpleMediaList(in AString aName,
@@ -305,7 +306,7 @@
 <a name="l00304"></a>00304 <span class="comment"></span>
 <a name="l00305"></a>00305 <span class="comment">  See Also:</span>
 <a name="l00306"></a>00306 <span class="comment">    &lt;createMediaItem()&gt;</span>
-<a name="l00307"></a>00307 <span class="comment">    &lt;createMediaList()&gt;</span>
+<a name="l00307"></a>00307 <span class="comment">    &lt;createSimpleMediaList()&gt;</span>
 <a name="l00308"></a>00308 <span class="comment">  */</span>
 <a name="l00309"></a>00309   <span class="keywordtype">void</span> createMediaListFromURL(in AString aName,
 <a name="l00310"></a>00310                               in AString aURL,
@@ -338,7 +339,7 @@
 <a name="l00351"></a>00351 <span class="comment">    (end)</span>
 <a name="l00352"></a>00352 <span class="comment"></span>
 <a name="l00353"></a>00353 <span class="comment">  See Also:</span>
-<a name="l00354"></a>00354 <span class="comment">    &lt;createMediaList()&gt;</span>
+<a name="l00354"></a>00354 <span class="comment">    &lt;createSimpleMediaList()&gt;</span>
 <a name="l00355"></a>00355 <span class="comment">  */</span>
 <a name="l00356"></a>00356   <a class="code" href="interfacesb_i_remote_media_list.html" title="An interface to control a media list from remote web pages.">sbIRemoteMediaList</a> getMediaListBySiteID( in AString aSiteID );
 <a name="l00357"></a>00357 
@@ -390,7 +391,7 @@
 <a name="l00443"></a>00443   [noscript] <span class="keywordtype">void</span> connectToSiteLibrary(in AUTF8String aDomain,
 <a name="l00444"></a>00444                                        in AUTF8String aPath);
 <a name="l00445"></a>00445 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Mar 11 14:58:23 2008 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

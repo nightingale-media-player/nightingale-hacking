@@ -4,14 +4,14 @@
     <compoundname>sbIMediaListFactory.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="254">
+      <node id="287">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="286">
         <label>components/library/base/public/sbIMediaListFactory.idl</label>
         <link refid="sbIMediaListFactory.idl"/>
-        <childnode refid="255" relation="include">
+        <childnode refid="287" relation="include">
         </childnode>
-      </node>
-      <node id="255">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_media_list_factory" prot="public">sbIMediaListFactory</innerclass>
@@ -63,6 +63,6 @@
 <codeline lineno="70"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/library/base/public/sbIMediaListFactory.idl"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListFactory.idl"/>
   </compounddef>
 </doxygen>

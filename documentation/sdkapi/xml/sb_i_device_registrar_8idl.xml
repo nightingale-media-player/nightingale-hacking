@@ -4,14 +4,14 @@
     <compoundname>sbIDeviceRegistrar.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="87">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="86">
+      <node id="91">
         <label>components/devices/base/public/sbIDeviceRegistrar.idl</label>
         <link refid="sbIDeviceRegistrar.idl"/>
-        <childnode refid="87" relation="include">
+        <childnode refid="92" relation="include">
         </childnode>
+      </node>
+      <node id="92">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_device_registrar" prot="public">sbIDeviceRegistrar</innerclass>
@@ -50,20 +50,20 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal">[scriptable,<sp/>uuid(eba35eee-89e8-4d7f-bc54-755cd28a4a57)]</highlight></codeline>
 <codeline lineno="39" refid="interfacesb_i_device_registrar" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_registrar" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceRegistrar</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_device_registrar_15381c93672e78fa490ac631417b0b41f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/>devices;</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"></highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"></highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_device" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDevice</ref><sp/>getDevice(in<sp/>nsIDPtr<sp/>aDeviceId);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>getDevice(in<sp/>nsIDPtr<sp/>aDeviceId);</highlight></codeline>
 <codeline lineno="61"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="z:/projects/songbird/components/devices/base/public/sbIDeviceRegistrar.idl"/>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceRegistrar.idl"/>
   </compounddef>
 </doxygen>
