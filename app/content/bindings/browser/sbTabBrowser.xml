@@ -53,7 +53,16 @@
         if (!window.XPCOMUtils) 
           Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
 
-        this.webProgressListener = this.createWebProgressListener();
+        /* load the tab progress listener object
+         * this is used to trigger notifyTabContentChange() / saveTabState()
+         * and to set various data remotes on location change, such as toolbar
+         * button states and setting <sb-tabbrowser>.loading
+         */
+        var subscriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                                        .getService(Components.interfaces.mozIJSSubScriptLoader);
+        var scope = {};
+        subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBTabProgressListener.js", scope);
+        this.webProgressListener = new scope.SBTabProgressListener(this);
         this.addProgressListener(this.webProgressListener,
             Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
             Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
@@ -105,9 +114,7 @@
         window.addEventListener("remoteapi", this.onRemoteAPI, true);
 
         // tell appshell how to open new tabs (sb bug 3757)
-        var subscriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                        .getService(Components.interfaces.mozIJSSubScriptLoader);
-        var scope = {};
+        scope = {};
         subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/BrowserDOMWindow.js", scope);
         window.QueryInterface(Components.interfaces.nsIDOMChromeWindow).browserDOMWindow =
           new scope.BrowserDOMWindow(this);
@@ -198,103 +205,6 @@
         window.QueryInterface(Components.interfaces.nsIDOMChromeWindow)
               .browserDOMWindow = null;
       ]]></destructor>
-
-      <method name="createWebProgressListener">
-        <body><![CDATA[
-        // create an object which implements as much of nsIWebProgressListener as we're using
-        var tabBrowser = this;
-        return {
-          onLocationChange: function(aWebProgress, aRequest, aLocation) {
-            try {
-              // for some reason we need to do this dance to get scrollbars to
-              // show up
-              var nsIScrollable = Components.interfaces.nsIScrollable;
-              var scrollable = tabBrowser.webNavigation.QueryInterface(nsIScrollable);
-              scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_Y,
-                                                        nsIScrollable.Scrollbar_Auto);
-              scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_X,
-                                                       nsIScrollable.Scrollbar_Auto);
-
-              if (tabBrowser.webNavigation.sessionHistory) {
-                SBDataSetBoolValue('browser.cangoback', tabBrowser.webNavigation.canGoBack);
-                SBDataSetBoolValue('browser.cangofwd', tabBrowser.webNavigation.canGoForward);
-              }
-
-              // Nothing in the status text
-              SBDataSetStringValue( "faceplate.status.text", "");
-
-              if (!aLocation) {
-                aLocation = "about:blank";
-              }
-
-              // set the context-menu based on the chromeyness of the location
-              if (aLocation.scheme == 'chrome') {
-                //XXXAus: Disable bookmarking for chrome URI's to prevent
-                //stale bookmarks. See bug #4009.
-                SBDataSetBoolValue('browser.canbookmark', false);
-
-                tabBrowser.mCurrentBrowser.contextMenu = null;
-              }
-              else {
-                //XXXAus: Enable bookmarking for all other URI schemes.
-                //See bug #4009.
-                SBDataSetBoolValue('browser.canbookmark', true);
-
-                tabBrowser.mCurrentBrowser.contextMenu = tabBrowser.getAttribute('contentcontextmenu');
-              }
-
-              SBDataSetBoolValue('browser.cansubscription',
-                                 tabBrowser.mCurrentTab.outerPlaylistShowing);
-
-              // Let listeners know that the tab location has changed
-              tabBrowser.notifyTabContentChange();
-            }
-            catch ( err )
-            {
-              alert( "sb-tabbrowser::onLocationChange\n\n" + err );
-            }
-          },
-        
-          onStateChange: function(aWebProgress, aRequest, aState, aStatus) {
-            const nsIWebProgressListener =
-              Components.interfaces.nsIWebProgressListener;
-            
-            // if this state change isn't on the top-level window, ignore it
-            if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent ||
-                !(aState & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)) {
-              return;
-            }
-
-            if (aState & nsIWebProgressListener.STATE_START) {
-              // Start the spinner if necessary
-              tabBrowser.loading = true;
-            }
-            else if (aState & nsIWebProgressListener.STATE_STOP) {
-              // Stop the spinner if necessary
-              tabBrowser.loading = false;
-
-              // Let listeners know that the tab has finished loading
-              // but only if aStatus == 0, an nsresult representing whether the request 
-              // finished or was cancelled...
-              if (aStatus == 0) {
-                tabBrowser.notifyTabContentChange();
-              }
-
-              // Save the tab state after every page load, just in case we crash
-              if (tabBrowser.tabStateRestored) {
-                tabBrowser.saveTabState();
-              }
-            }
-          },
-          /* these are not called; refer to the sb-tabbrowser constructor where it's registered */
-          onProgressChange: function() { /* do nothing */ },
-          onStatusChange: function() { /* do nothing */ },
-          onSecurityChange: function() { /* do nothing */ },
-          QueryInterface : XPCOMUtils.generateQI([Ci.nsIWebProgressListener])
-        };
-        ]]>
-        </body>
-      </method>
 
       <field name="_tabStatePref">'songbird.browser.tab_state'</field>
       <property name="_tabState">
