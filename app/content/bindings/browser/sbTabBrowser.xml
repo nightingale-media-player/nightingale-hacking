@@ -496,7 +496,7 @@
         <parameter name="aView" />
         <body><![CDATA[        
           // Search open tabs for an sbIMediaListView that is showing the given view
-          var tabs = this.mTabContainer.childNodes;
+          var tabs = this.mTabs;
           var tab;
           for (var i = 0; i < tabs.length; i++) {
             tab = tabs[i];
@@ -845,13 +845,12 @@
       <method name="getTabForDocument">
         <parameter name="aDocument" />
         <body><![CDATA[
-          var numTabs = this.mTabContainer.childNodes.length;
+          var numTabs = this.mTabs.length;
           for ( var index = 0; index < numTabs; index++ ) {
-            if ( this.mTabContainer
-                     .childNodes[index]
+            if ( this.mTabs[index]
                      .linkedBrowser
                      .contentDocument == aDocument ) {
-              return this.mTabContainer.childNodes[index];
+              return this.mTabs[index];
             }
           }
           return null;
