@@ -44,21 +44,25 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 
 const Application = Cc["@mozilla.org/fuel/application;1"].getService();
+const JSON = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
 
 const PREF_TAB_STATE = "songbird.browser.tab_state";
 const PREF_FIRSTRUN = "songbird.firstrun.tabs.restore";
 const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
 
 __defineGetter__("_tabState", function() {
-  if (Application.prefs.has(PREF_TAB_STATE)) {
-    // XXX Mook: EWW, JSON me
-    return eval(Application.prefs.getValue(PREF_TAB_STATE, "null"));
-  } else {
+  var state = Application.prefs.getValue(PREF_TAB_STATE, "null");
+  try {
+    return JSON.decode(state);
+  } catch(e) {
+    Components.utils.reportError("Error restoring tab state: invalid JSON\n" +
+                                 state);
     return null;
   }
 });
+
 __defineSetter__("_tabState", function(aValue) {
-  Application.prefs.setValue(PREF_TAB_STATE, aValue.toSource());
+  Application.prefs.setValue(PREF_TAB_STATE, JSON.encode(aValue));
 });
 
 var SBSessionStore = {
@@ -94,7 +98,9 @@ var SBSessionStore = {
   
   restoreTabState: function restoreTabState(aTabBrowser)
   {
-    if ( !Application.prefs.getValue(PREF_FIRSTRUN, false) ) {
+    var tabs = _tabState;
+    
+    if ( !tabs ) {
       // If we have never run the app before, load this keen stuff!@
       var homePageURL = aTabBrowser.homePage;
       var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, "about:blank");
@@ -137,48 +143,45 @@ var SBSessionStore = {
       }
   
       // Otherwise, just restore whatever was there, previously.
-      var tabs = _tabState;
-      if (tabs) {
-        var location = "_top";
-        var tab;              
-        for (var i=0; i<tabs.length; i++) {
-          tab = tabs[i];
-          // If the tab had a media page, restore it by reloading
-          // the media list
-          if (tab.listGUID) {
-  
-            // HACK! Add a random param to the querystring in order to avoid
-            // the XUL cache.  This is a work around for the following bugs:
-            //
-            // Bug 7896   - Media pages do not initialize when loaded from tab restore
-            // BMO 420815 - XUL Cache interferes with onload when loading multiple 
-            //              instances of the same XUL file
-            var url = tab.pageURL;
-            if (isInvalidChromeURL(url)) {
-              // we don't want to restore invalid chrome URLs
-              continue;
-            }
-            if (url.indexOf("&bypassXULCache") == -1) {
-              url += "&bypassXULCache="+ Math.random();
-            }
-            
-            var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
-                                                       tab.listGUID);
-            aTabBrowser.loadMediaList(list, null, location, null, url);
-            
-          // Otherwise just reload the URL
-          } else {
-            if (isInvalidChromeURL(tab)) {
-              // we don't want to restore invalid chrome URLs
-              continue;
-            }
-            aTabBrowser.loadURI(tab, null, null, null, location);
+      var location = "_top";
+      var tab;              
+      for (var i=0; i<tabs.length; i++) {
+        tab = tabs[i];
+        // If the tab had a media page, restore it by reloading
+        // the media list
+        if (tab.listGUID) {
+
+          // HACK! Add a random param to the querystring in order to avoid
+          // the XUL cache.  This is a work around for the following bugs:
+          //
+          // Bug 7896   - Media pages do not initialize when loaded from tab restore
+          // BMO 420815 - XUL Cache interferes with onload when loading multiple 
+          //              instances of the same XUL file
+          var url = tab.pageURL;
+          if (isInvalidChromeURL(url)) {
+            // we don't want to restore invalid chrome URLs
+            continue;
           }
-  
-          // Load the first url into the current tab and subsequent 
-          // urls into new tabs 
-          location = "_blank";
+          if (url.indexOf("&bypassXULCache") == -1) {
+            url += "&bypassXULCache="+ Math.random();
+          }
+          
+          var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
+                                                     tab.listGUID);
+          aTabBrowser.loadMediaList(list, null, location, null, url);
+          
+        // Otherwise just reload the URL
+        } else {
+          if (isInvalidChromeURL(tab)) {
+            // we don't want to restore invalid chrome URLs
+            continue;
+          }
+          aTabBrowser.loadURI(tab, null, null, null, location);
         }
+
+        // Load the first url into the current tab and subsequent 
+        // urls into new tabs 
+        location = "_blank";
       }
     }
     this.tabStateRestored = true;
