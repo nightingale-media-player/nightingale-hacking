@@ -87,6 +87,19 @@ Imported by bindings.css or directly into feathers.
   margin: 0;
 }
 
+/*
+ This is done in order for the timeelapsed text to have enough room for 4 numbers
+ in advance and for the progressbar not to be pushed to the right
+*/
+.sb-player-timeelapsed-label.faceplate-text {
+  min-width: 31px;
+  text-align: right;
+}
+sb-player-totaltime-label > .faceplate-text {
+  min-width: 31px;
+  text-align: left;
+}
+
 /* 
    Due to https://bugzilla.mozilla.org/show_bug.cgi?id=414711 the artist text
    spills over its boundaries a little bit and clips.  Adding a few pixels of 
