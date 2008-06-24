@@ -594,10 +594,6 @@
            the web progress messages -->
       <field name="_loadingURL">""</field>
       
-      <!-- Used to determine if a tab is currently running or loading a URL.
-           This is useful for updating the browser controls per-each-tab. -->
-      <field name="isRunningURL">false</field>
-
       <method name="setUpMediaPage">
         <body><![CDATA[
         if (!this.mediaPage) {
@@ -847,7 +843,6 @@
               return;
             }
             this._loadingURL = "";
-            this.isRunningURL = false;
 
             if (this.mediaPage) {
 
@@ -870,9 +865,6 @@
               this._metrics.metricsInc("app.browser", "pageViews", "");
               this.scanWebPage();
             }
-          }
-          else if (aState & nsIWebProgressListener.STATE_START) {
-            this.isRunningURL = true;
           }
         ]]></body>
       </method>

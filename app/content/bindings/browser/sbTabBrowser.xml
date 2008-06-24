@@ -710,7 +710,7 @@
           this._updateFindbarState();
           
           // Update the loading status of the web-toolbar items:
-          this.loading = this.selectedTab.isRunningURL;
+          this.loading = this.mIsBusy;
           
           document.commandDispatcher.updateCommands("tabchange");
         ]]></body>
