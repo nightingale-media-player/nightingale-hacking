@@ -114,6 +114,15 @@
         }
         window.addEventListener('load', this.windowLoadEventListener, true);
 
+        /* load the remote API handler bits
+         * this provides the onRemoteAPI() method that is pretty self-contained
+         * which is then triggered by the "remoteapi" DOM event.  It is used to
+         * let the user accept remote API requests (currently, as a notification
+         * box)
+         */
+        scope = {};
+        subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBRemoteAPIHandler.js", scope);
+        this.onRemoteAPI = scope.onRemoteAPI;
         window.addEventListener("remoteapi", this.onRemoteAPI, true);
 
         // tell appshell how to open new tabs (sb bug 3757)
@@ -821,140 +830,6 @@
             alert("sb-tabbrowser::handleMediaURL(" + aURL + "); " + err );
           }
           return retval;
-        ]]></body>
-      </method>
-
-
-
-      <method name="onRemoteAPI">
-        <parameter name="event" />
-        <body>
-              <![CDATA[
-          // todo:
-          //       hook up an action to do when the user clicks through, probably launch prepanel
-
-          try {
-            var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
-                     .getService(Components.interfaces.nsIStringBundleService);
-            var songbirdStrings = sbs.createBundle(
-                               "chrome://songbird/locale/songbird.properties");
-            var brandingStrings = sbs.createBundle(
-                                  "chrome://branding/locale/brand.properties");
-          } catch (e) { return; }
-
-          var notificationName = "remoteapi-called";
-          var message = "Web Page has accessed Songbird Directly";
-          var editOptionsLabel = "Edit Options...";
-          var editOptionsAccessKey = "O";
-          var allowAlwaysLabel = "Always Allow Site"
-          var iconURL = "";
-          var appName = "Songbird";
-          
-          try {
-            message = songbirdStrings
-                        .GetStringFromName("rapi.access.message." + event.categoryID);
-            editOptionsLabel = songbirdStrings
-                                .GetStringFromName("rapi.access.button.label.options");
-            editOptionsAccessKey = songbirdStrings
-                                     .GetStringFromName("rapi.access.button.accessKey.options");
-            allowAlwaysLabel = songbirdStrings
-                                 .GetStringFromName("rapi.access.button.label.allow.always");
-            iconURL = brandingStrings
-                        .GetStringFromName("rapi.access.iconURL");
-                        
-            appName = brandingStrings
-                        .GetStringFromName("brandShortName");
-          } catch (e) { }
-
-          message = message.replace(/\%S/, appName);
-
-          var closure = event;
-          
-          var allowAlwaysCallback = function(aHat, aButtonInfo) {
-            var nsIPermissionManager = Components.interfaces.nsIPermissionManager;
-            var permManager = Components.classes["@mozilla.org/permissionmanager;1"]
-                                .getService(nsIPermissionManager);
-            permManager.add(closure.siteScope, "rapi." + closure.categoryID, nsIPermissionManager.ALLOW_ACTION);
-            
-            var allowEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
-                             .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
-
-            allowEvt.initSecurityEvent( document,
-                                        closure.siteScope,
-                                        closure.category,
-                                        closure.categoryID,
-                                        true);
-
-            aHat.closeEvent = allowEvt;
-
-            // add metrics reporting here
-          }
-
-          var editOptionsCallback = function(aHat, aButtonInfo) {
-            var editEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
-                        .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
-
-            // this causes an access denied event to be sent to the page
-            editEvt.initSecurityEvent( document,
-                                       closure.siteScope,
-                                       closure.category,
-                                       closure.categoryID,
-                                       false);
-
-            aHat.closeEvent = editEvt;
-
-            var prefWindow = SBOpenPreferences("paneRemoteAPI");
-            if (prefWindow.gRemoteAPIPane) {
-              /* if the window is already open ask it to configure the 
-                 whitelist */
-              prefWindow.gRemoteAPIPane.configureWhitelist(closure.categoryID,
-                  closure.siteScope.spec);
-            } else {
-              /* if it's not yet open, ask it to open the whitelist when 
-                 it's ready */
-              prefWindow.pleaseConfigureWhitelist = 
-                  [closure.categoryID, closure.siteScope.spec];
-            }
-            
-
-            // add metrics reporting here
-          }
-
-          var buttons = [
-                         {
-                           label: editOptionsLabel,
-                           accessKey: editOptionsAccessKey,
-                           popup: null,
-                           callback: editOptionsCallback
-                         },
-                         {
-                           label: allowAlwaysLabel,
-                           accessKey: null,
-                           popup: null,
-                           callback: allowAlwaysCallback
-                         }
-                         ];
-
-          var browser = event.currentTarget
-                             .gBrowser.getBrowserForDocument(event.target);
-          var notificationBox = browser.parentNode;
-          const priority = notificationBox.PRIORITY_WARNING_MEDIUM;
-          var notification = event.currentTarget
-                                  .gBrowser
-                                  .showNotification(browser, notificationName, 
-                                                    message, iconURL, priority,
-                                                    buttons);
-          
-          var defaultEvt = Components.classes["@songbirdnest.com/remoteapi/security-event;1"]
-                             .createInstance(Components.interfaces.sbIMutableRemoteSecurityEvent);
-
-          defaultEvt.initSecurityEvent( document,
-                                        closure.siteScope,
-                                        closure.category,
-                                        closure.categoryID,
-                                        false);
-
-          notification.closeEvent = defaultEvt;
         ]]></body>
       </method>
       
