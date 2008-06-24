@@ -274,7 +274,7 @@
 
             // check to see if tabs are allowed
             if (returnValue == '_blank' &&
-                !this._prefsService.getBoolPref('browser.tabs.enabled')) {
+                !this.mPrefs.getBoolPref('browser.tabs.enabled')) {
               returnValue = '_top';
             }
 
@@ -469,12 +469,6 @@
           ]]>
         </body>
       </method>
-      
-
-      <field name="_prefsService">
-        Components.classes["@mozilla.org/preferences-service;1"].
-                getService(Components.interfaces.nsIPrefBranch);
-      </field>
       
 
       <!-- Get the web playlist for the current tab -->
