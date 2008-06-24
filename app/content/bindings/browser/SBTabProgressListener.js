@@ -128,8 +128,10 @@ SBTabProgressListener.prototype = {
       }
 
       // Save the tab state after every page load, just in case we crash
-      if (this._tabBrowser.tabStateRestored) {
-        this._tabBrowser.saveTabState();
+      if ("_sessionStore" in this._tabBrowser) {
+        if (this._tabBrowser._sessionStore.tabStateRestored) {
+          this._tabBrowser._sessionStore.saveTabState(this._tabBrowser);
+        }
       }
     }
   },

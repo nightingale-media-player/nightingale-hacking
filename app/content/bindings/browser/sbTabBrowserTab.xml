@@ -968,7 +968,7 @@
         this.destroy();
 
         // save the tab state soon
-        setTimeout("window.gBrowser.saveTabState();", 100);
+        setTimeout("window.gBrowser._sessionStore.saveTabState(window.gBrowser);", 100);
       ]]></handler>
 
       <handler event="dragenter"><![CDATA[

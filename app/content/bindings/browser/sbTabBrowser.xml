@@ -47,7 +47,7 @@
         if (!window.kPlaylistCommands) 
           Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
         if (!window.LibraryUtils) 
-          Components.utils.import("resource://app/jsmodules/LibraryUtils.jsm");
+          Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
         if (!window.ArrayConverter) 
           Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
         if (!window.XPCOMUtils) 
@@ -68,7 +68,10 @@
             Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
 
         this.loading = false;
-        this.tabStateRestored = false;
+        
+        scope = {};
+        subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBSessionStore.js", scope);
+        this._sessionStore = scope.SBSessionStore;
 
         // *****************************
         // BUG 8097 - Part 1
@@ -93,7 +96,7 @@
             if (event.target != this.document) {
               return;
             }
-            this.tabbrowser.restoreTabState();
+            this.tabbrowser._sessionStore.restoreTabState(this.tabbrowser);
             
             // *****************************
             // BUG 8097 - Part 2
@@ -204,142 +207,6 @@
               .browserDOMWindow = null;
       ]]></destructor>
 
-      <field name="_tabStatePref">'songbird.browser.tab_state'</field>
-      <property name="_tabState">
-        <getter><![CDATA[
-          if (this._prefsService.prefHasUserValue(this._tabStatePref)) {
-            return eval(this._prefsService.getCharPref(this._tabStatePref));
-          }
-          return null;
-        ]]></getter>
-        <setter><![CDATA[
-          this._prefsService.setCharPref(this._tabStatePref, val.toSource());
-        ]]></setter>
-      </property>
-      <method name="saveTabState">
-        <body><![CDATA[
-
-          var tab = this.mTabContainer.firstChild;
-          var urls = [];
-          while (tab) {
-            try {
-              // For media pages, store the list GUIDs
-              // so that the page can be restored correctly
-              if (tab.mediaPage) {
-                if (tab.mediaPage.mediaListView) {
-                  var mediaList = tab.mediaPage.mediaListView.mediaList;
-                  urls.push({
-                      listGUID: mediaList.guid,
-                      libraryGUID: mediaList.library.guid,
-                      pageURL: tab.linkedBrowser.currentURI.spec
-                    });
-                }
-              // For all other pages, just keep the URI
-              } else {
-                urls.push(tab.linkedBrowser.currentURI.spec);
-              }
-            } catch (e) { 
-              Components.utils.reportError(e);
-            }
-            tab = tab.nextSibling;
-          }
-          
-          this._tabState = urls;
-        ]]></body>
-      </method>
-      <method name="restoreTabState">
-        <body><![CDATA[
-          if ( !SBDataGetBoolValue( "firstrun.tabs.restore" ) ) {
-            // If we have never run the app before, load this keen stuff!@
-            var homePageURL = this.homePage;
-            var firstrunURL = SBDataGetStringValue( "url.firstrunpage" );
-            this.loadURI(homePageURL, null, null, null, '_top');
-            this.loadURI(firstrunURL, null, null, null, '_blank');
-            SBDataSetBoolValue( "firstrun.tabs.restore", true );
-          } else {
-
-            // check if this is an invalid chrome url
-            var cr = Components.classes['@mozilla.org/chrome/chrome-registry;1']
-                .getService(Components.interfaces.nsIChromeRegistry);
-            var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                .getService(Components.interfaces.nsIIOService);
-            function isInvalidChromeURL(url) {
-              var uri;
-              // parse the URL
-              try {
-                uri = ios.newURI(url, null, null);
-              } catch (e) {
-                // can't parse the url, that will be handled elsewhere
-                return false;
-              }
-              // if it's not chrome then we don't care
-              if (uri.scheme != 'chrome') {
-                return false;
-              }
-              // resolve the chrome url with the registry
-              try {
-                uri = cr.convertChromeURL(uri);
-              } catch (e) {
-                // an exception here means that this chrome URL isn't valid
-                return true;
-              }
-              // if the scheme *is* chrome, then something's wrong
-              if (uri.scheme == 'chrome') {
-                return true;
-              }
-              // ok - things look fine
-              return false;
-            }
-
-            // Otherwise, just restore whatever was there, previously.
-            var tabs = this._tabState;
-            if (tabs) {
-              var location = "_top";
-              var tab;              
-              for (var i=0; i<tabs.length; i++) {
-                tab = tabs[i];
-                // If the tab had a media page, restore it by reloading
-                // the media list
-                if (tab.listGUID) {
-
-                  // HACK! Add a random param to the querystring in order to avoid
-                  // the XUL cache.  This is a work around for the following bugs:
-                  //
-                  // Bug 7896   – Media pages do not initialize when loaded from tab restore
-                  // BMO 420815 – XUL Cache interferes with onload when loading multiple 
-                  //              instances of the same XUL file
-                  var url = tab.pageURL;
-                  if (isInvalidChromeURL(url)) {
-                    // we don't want to restore invalid chrome URLs
-                    continue;
-                  }
-                  if (url.indexOf("&bypassXULCache") == -1) {
-                    url += "&bypassXULCache="+ Math.random();
-                  }
-                  
-                  var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
-                                                             tab.listGUID);
-                  this.loadMediaList(list, null, location, null, url);
-                  
-                // Otherwise just reload the URL
-                } else {
-                  if (isInvalidChromeURL(tab)) {
-                    // we don't want to restore invalid chrome URLs
-                    continue;
-                  }
-                  this.loadURI(tab, null, null, null, location);
-                }
-
-                // Load the first url into the current tab and subsequent 
-                // urls into new tabs 
-                location = "_blank";
-              }
-            }
-          }
-          this.tabStateRestored = true;
-        ]]></body>
-      </method>
-      
       
       <!-- Override tabBrowser.setTabTitle in order to support
            service pane icons and titles for chrome URLs -->
