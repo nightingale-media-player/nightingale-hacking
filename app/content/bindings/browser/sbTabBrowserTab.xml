@@ -712,9 +712,7 @@
           if (document.tooltipNode) {
             // Optimise for the common case
             if (aWebProgress.DOMWindow == content) {
-              // TODO: Songbird does not have an aHTMLTooltip! 
-              // This needs to be copied from browser.xul!
-              //document.getElementById("aHTMLTooltip").hidePopup();
+              document.getElementById("aHTMLTooltip").hidePopup();
               document.tooltipNode = null;
             }
             else {
@@ -723,9 +721,7 @@
                     tooltipWindow != tooltipWindow.parent;
                     tooltipWindow = tooltipWindow.parent) {
                 if (tooltipWindow == aWebProgress.DOMWindow) {
-                  // TODO: Songbird does not have an aHTMLTooltip! 
-                  // This needs to be copied from browser.xul!
-                  //document.getElementById("aHTMLTooltip").hidePopup();
+                  document.getElementById("aHTMLTooltip").hidePopup();
                   document.tooltipNode = null;
                   break;
                 }
@@ -828,14 +824,15 @@
         <parameter name="aState" />
         <parameter name="aStatus" />
         <body><![CDATA[
+          const nsIWebProgressListener = 
+            Components.interfaces.nsIWebProgressListener;
+
           // if this state change isn't on the top-level window, ignore it
           if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent ||
-              !(aState & Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW)) {
+              !(aState & nsIWebProgressListener.STATE_IS_WINDOW)) {
             return;
           }
 
-          const nsIWebProgressListener = 
-            Components.interfaces.nsIWebProgressListener;
             
           if (aState & nsIWebProgressListener.STATE_STOP) {
             if (!(this.linkedBrowser.contentDocument &&
