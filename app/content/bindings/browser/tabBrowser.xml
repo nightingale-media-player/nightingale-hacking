@@ -954,6 +954,15 @@
 
             if (!title) {
 
+              if (browser.currentURI.spec) {
+                try {
+                  title = this.mURIFixup.createExposableURI(browser.currentURI).spec;
+                }
+                catch(ex) {
+                  title = browser.currentURI.spec;
+                }
+              }
+              
               if (title && title != "about:blank") {
                 // At this point, we now have a URI.
                 // Let's try to unescape it using a character set
@@ -1162,7 +1171,7 @@
             t.width = 0;
             t.setAttribute("flex", "100");
             t.setAttribute("validate", "never");
-            t.setAttribute("onerror", "this.parentNode.parentNode.parentNode.parentNode.addToMissedIconCache(this.getAttribute('image')); this.parentNode.parentNode.parentNode.parentNode.setIcon(this, null);");
+            t.setAttribute("onerror", "document.getBindingParent(this).addToMissedIconCache(this.getAttribute('image')); document.getBindingParent(this).setIcon(this, null);");
             t.className = "tabbrowser-tab";
 
             this.mTabContainer.appendChild(t);
@@ -1201,13 +1210,8 @@
             var b = document.createElementNS(
               "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
                                              "browser");
-            var localName = this.localName;
-            b.getTabBrowser = function() { 
-              var tabBrowser = this.parentNode;
-              while (tabBrowser && tabBrowser.localName != "tabbrowser" && 
-                     tabBrowser.localName != localName)
-                tabBrowser = tabBrowser.parentNode;
-              return tabBrowser;
+            b.getTabBrowser = function() {
+              return document.getBindingParent(this.parentNode);
             };
             b.setAttribute("type", "content-targetable");
             b.setAttribute("message", "true");
@@ -2487,13 +2491,8 @@
         <![CDATA[
           this.mCurrentBrowser = this.mPanelContainer.childNodes[0].firstChild;
           
-          var localName = this.localName;
-          this.mCurrentBrowser.getTabBrowser = function() { 
-            var tabBrowser = this.parentNode;
-            while (tabBrowser && tabBrowser.localName != "tabbrowser" && 
-                   tabBrowser.localName != localName)
-              tabBrowser = tabBrowser.parentNode;
-            return tabBrowser;
+          this.mCurrentBrowser.getTabBrowser = function() {
+            return document.getBindingParent(this.parentNode);
           };
 
           this.mCurrentTab = this.mTabContainer.firstChild;
