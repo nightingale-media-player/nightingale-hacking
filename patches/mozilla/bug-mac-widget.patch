@@ -1,11 +1,11 @@
 Index: widget/src/cocoa/nsChildView.h
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.h,v
-retrieving revision 1.93
-diff -u -8 -r1.93 nsChildView.h
---- widget/src/cocoa/nsChildView.h	7 May 2008 05:17:40 -0000	1.93
-+++ widget/src/cocoa/nsChildView.h	5 Jun 2008 21:25:37 -0000
-@@ -148,16 +148,21 @@
+retrieving revision 1.93.4.1
+diff -u -8 -r1.93.4.1 nsChildView.h
+--- widget/src/cocoa/nsChildView.h	30 May 2008 14:53:46 -0000	1.93.4.1
++++ widget/src/cocoa/nsChildView.h	25 Jun 2008 22:49:33 -0000
+@@ -118,16 +118,21 @@
    
    // rects that were invalidated during a draw, so have pending drawing
    NSMutableArray* mPendingDirtyRects;
@@ -27,18 +27,17 @@ diff -u -8 -r1.93 nsChildView.h
    // when handling |draggingUpdated:| messages.
    nsIDragService* mDragService;
    
-@@ -176,16 +181,19 @@
+@@ -139,16 +144,18 @@
+ - (void)viewsWindowDidResignKey;
+ 
  // Stop NSView hierarchy being changed during [ChildView drawRect:]
  - (void)delayedTearDown;
  
  - (void)setTransparent:(BOOL)transparent;
  
  - (void)sendFocusEvent:(PRUint32)eventType;
- 
- - (void) processPluginKeyEvent:(EventRef)aKeyEvent;
 +
 +- (void)setViewDisabled:(BOOL)inIsDisabled;
-+
  @end
  
  
@@ -50,11 +49,11 @@ diff -u -8 -r1.93 nsChildView.h
 Index: widget/src/cocoa/nsChildView.mm
 ===================================================================
 RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.mm,v
-retrieving revision 1.356
-diff -u -8 -r1.356 nsChildView.mm
---- widget/src/cocoa/nsChildView.mm	9 May 2008 23:14:57 -0000	1.356
-+++ widget/src/cocoa/nsChildView.mm	5 Jun 2008 21:25:37 -0000
-@@ -2942,19 +2942,75 @@
+retrieving revision 1.357.2.1
+diff -u -8 -r1.357.2.1 nsChildView.mm
+--- widget/src/cocoa/nsChildView.mm	30 May 2008 14:53:46 -0000	1.357.2.1
++++ widget/src/cocoa/nsChildView.mm	25 Jun 2008 22:49:33 -0000
+@@ -2938,19 +2938,75 @@
    }
  
    return retVal;
@@ -136,7 +135,7 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
 retrieving revision 1.50
 diff -u -8 -r1.50 nsCocoaWindow.h
 --- widget/src/cocoa/nsCocoaWindow.h	2 May 2008 11:32:52 -0000	1.50
-+++ widget/src/cocoa/nsCocoaWindow.h	5 Jun 2008 21:25:37 -0000
++++ widget/src/cocoa/nsCocoaWindow.h	25 Jun 2008 22:49:33 -0000
 @@ -89,17 +89,21 @@
  
  
@@ -184,7 +183,7 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
 retrieving revision 1.148
 diff -u -8 -r1.148 nsCocoaWindow.mm
 --- widget/src/cocoa/nsCocoaWindow.mm	7 May 2008 21:15:57 -0000	1.148
-+++ widget/src/cocoa/nsCocoaWindow.mm	5 Jun 2008 21:25:37 -0000
++++ widget/src/cocoa/nsCocoaWindow.mm	25 Jun 2008 22:49:34 -0000
 @@ -248,17 +248,30 @@
              case eBorderStyle_all:
                features |= NSClosableWindowMask;
