@@ -1874,12 +1874,18 @@ PlaylistPlayback.prototype = {
           next_index = parseInt( cur_index ) + parseInt( incr );
           LOG( "increment: " + next_index );
           // Are we at the end?
-          if ( next_index >= num_items ) 
+          if ( next_index >= num_items )  {
             // Are we REPEAT ALL?
             if ( this._repeat.intValue == sbIPlaylistPlayback.REPEAT_MODE_ALL )
               next_index = 0; // Start over
             else
               next_index = -1; // Give up
+          }
+          else if ( next_index < 0 ) {
+            // Are we REPEAT ALL?
+            if ( this._repeat.intValue == sbIPlaylistPlayback.REPEAT_MODE_ALL )
+              next_index = num_items - 1; // Move to end
+          }
         }
       }
       
@@ -2304,5 +2310,6 @@ function NSGetModule(compMgr, fileSpec) {
       true);
   });
 }
+
 
 
