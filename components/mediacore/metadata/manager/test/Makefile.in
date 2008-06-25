@@ -37,7 +37,7 @@ SONGBIRD_TESTS = $(srcdir)/head_metadatamanager.js \
                  $(srcdir)/test_metadatajob_writing.js \
                  $(srcdir)/test_metadatahandler.js \
                  $(srcdir)/test_metadatajob_errorcases.js \
-                 $(srcdir)/test_metadata_artwork.js \
+#                 $(srcdir)/test_metadata_artwork.js \
                  $(NULL)
 
 SUBDIRS = files \
