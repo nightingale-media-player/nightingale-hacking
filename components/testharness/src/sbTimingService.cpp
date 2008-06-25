@@ -314,9 +314,8 @@ sbTimingService::Observe(nsISupports* aSubject,
 
   nsAutoLock lock(mLoggingLock);
 
-  if(strcmp(aTopic, "profile-before-change") == 0 &&
-     mLoggingEnabled) {
-
+  if(strcmp(aTopic, "profile-before-change") == 0) {
+    
     nsCOMPtr<nsIObserverService> observerService = 
       do_GetService("@mozilla.org/observer-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -324,26 +323,28 @@ sbTimingService::Observe(nsISupports* aSubject,
     rv = observerService->RemoveObserver(this, "profile-before-change");
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Logging output is enabled; format and output to the console.
-    nsCString output;
-    rv = FormatResultsToString(output);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    printf(output.BeginReading());
-
-    // If we also have a log file, output to the logfile.
-    if(mLogFile) {
-      nsCOMPtr<nsIOutputStream> outputStream;
-      rv = NS_NewLocalFileOutputStream(getter_AddRefs(outputStream),
-                                       mLogFile);
+     if(mLoggingEnabled) {
+      // Logging output is enabled; format and output to the console.
+      nsCString output;
+      rv = FormatResultsToString(output);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      PRUint32 bytesOut = 0;
-      rv = outputStream->Write(output.BeginReading(), 
-                               output.Length(), 
-                               &bytesOut);
-      NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_TRUE(bytesOut == output.Length(), NS_ERROR_UNEXPECTED);
+      printf(output.BeginReading());
+
+      // If we also have a log file, output to the logfile.
+      if(mLogFile) {
+        nsCOMPtr<nsIOutputStream> outputStream;
+        rv = NS_NewLocalFileOutputStream(getter_AddRefs(outputStream),
+                                         mLogFile);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRUint32 bytesOut = 0;
+        rv = outputStream->Write(output.BeginReading(), 
+                                 output.Length(), 
+                                 &bytesOut);
+        NS_ENSURE_SUCCESS(rv, rv);
+        NS_ENSURE_TRUE(bytesOut == output.Length(), NS_ERROR_UNEXPECTED);
+      }
     }
   }
 
