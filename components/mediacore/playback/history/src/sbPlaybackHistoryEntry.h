@@ -24,45 +24,43 @@
 //
 */
 
-#ifndef __SB_PLAYBACKHISTORYSERVICE_H__
-#define __SB_PLAYBACKHISTORYSERVICE_H__
+#ifndef __SB_PLAYBACKHISTORYENTRY_H__
+#define __SB_PLAYBACKHISTORYENTRY_H__
 
-#include <sbIPlaybackHistoryService.h>
+#include <sbIPlaybackHistoryEntry.h>
 
 #include <nsIClassInfo.h>
-#include <nsIComponentManager.h>
-#include <nsIFile.h>
-#include <nsIGenericFactory.h>
-#include <nsIObserver.h>
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
-class sbPlaybackHistoryService : public sbIPlaybackHistoryService,
-                                 public nsIObserver
+#include <prlock.h>
+#include <prtime.h>
+
+#include <sbIMediaItem.h>
+#include <sbIPropertyArray.h>
+
+class sbPlaybackHistoryEntry : public sbIPlaybackHistoryEntry
 {
 public:
-  sbPlaybackHistoryService();
+  sbPlaybackHistoryEntry();
 
   NS_DECL_ISUPPORTS
-  NS_DECL_NSIOBSERVER
-  NS_DECL_SBIPLAYBACKHISTORYSERVICE
-
-  static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
-                                nsIFile* aPath,
-                                const char* aLoaderStr,
-                                const char* aType,
-                                const nsModuleComponentInfo *aInfo);
-
-  NS_METHOD Init();
-  
-  nsresult EnsureHistoryDatabaseAvailable();
+  NS_DECL_SBIPLAYBACKHISTORYENTRY
 
 protected:
-  ~sbPlaybackHistoryService();
+  ~sbPlaybackHistoryEntry();
 
 private:
+  PRLock* mLock;
 
+  nsCOMPtr<sbIMediaItem> mItem;
+  
+  PRTime mTimestamp;
+  PRTime mDuration;
+
+  nsCOMPtr<sbIPropertyArray> mAnnotations;
+  
 };
 
-#endif /* __SB_PLAYBACKHISTORYSERVICE_H__ */
+#endif /* __SB_PLAYBACKHISTORYENTRY_H__ */

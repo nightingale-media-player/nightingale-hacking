@@ -31,11 +31,18 @@ include $(DEPTH)/build/autodefs.mk
 
 target_name = sbPlaybackHistoryService$(DEBUG:%=_d)
 
-CPP_SRCS = sbPlaybackHistoryService.cpp \
+CPP_SRCS = sbPlaybackHistoryEntry.cpp \
+           sbPlaybackHistoryService.cpp \
+           sbPlaybackHistoryModule.cpp \
            $(NULL)
 
 CPP_INCLUDES = \
+      $(topsrcdir)/components/dbengine/src \
+      $(DEPTH)/components/dbengine/public \
       $(DEPTH)/components/mediacore/playback/history/public \
+      $(DEPTH)/components/library/base/public \
+      $(DEPTH)/components/property/public \
+      $(topsrcdir)/components/sqlbuilder/src \
       $(MOZSDK_INCLUDE_DIR) \
       $(MOZSDK_INCLUDE_DIR)/nspr \
       $(MOZSDK_INCLUDE_DIR)/xpcom \
@@ -63,5 +70,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
   $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
 
 LIBSONGBIRD_COMPONENT = SongbirdPlaybackHistoryServiceModule
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
 include $(topsrcdir)/build/rules.mk

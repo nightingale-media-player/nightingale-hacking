@@ -142,3 +142,21 @@ interface sbIPlaybackHistoryService : nsISupports
    */
   void clear();
 };
+
+%{C++
+
+#define SB_PLAYBACKHISTORYSERVICE_DESCRIPTION    \
+  "Songbird Playback History Service"
+#define SB_PLAYBACKHISTORYSERVICE_CONTRACTID     \
+  "@songbirdnest.com/Songbird/PlaybackHistoryService;1"
+#define SB_PLAYBACKHISTORYSERVICE_CLASSNAME      \
+  "sbPlaybackHistoryService"
+#define SB_PLAYBACKHISTORYSERVICE_CID            \
+{ /*{e4f7838e-9672-453e-818d-a0da84e64365}*/     \
+  0xe4f7838e,                                    \
+  0x9672,                                        \
+  0x453e,                                        \
+  { 0x81, 0x8d, 0xa0, 0xda, 0x84, 0xe6, 0x43, 0x65 }  \
+}
+
+%}

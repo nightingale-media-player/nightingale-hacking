@@ -71,3 +71,21 @@ interface sbIPlaybackHistoryEntry : nsISupports
             in long long aDuration,
             in sbIPropertyArray aAnnotations);
 };
+
+%{C++
+
+#define SB_PLAYBACKHISTORYENTRY_DESCRIPTION    \
+  "Songbird Playback History Entry"
+#define SB_PLAYBACKHISTORYENTRY_CONTRACTID     \
+  "@songbirdnest.com/Songbird/PlaybackHistoryEntry;1"
+#define SB_PLAYBACKHISTORYENTRY_CLASSNAME      \
+  "sbPlaybackHistoryEntry"
+#define SB_PLAYBACKHISTORYENTRY_CID            \
+{ /* 64abdd62-3481-4ce9-89c6-e02398a4aa5c */   \
+  0x64abdd62,                                  \
+  0x3481,                                      \
+  0x4ce9,                                      \
+  { 0x89, 0xc6, 0xe0, 0x23, 0x98, 0xa4, 0xaa, 0x5c }  \
+}
+
+%}

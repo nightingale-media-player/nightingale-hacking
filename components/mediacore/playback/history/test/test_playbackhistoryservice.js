@@ -25,5 +25,24 @@
 */
 
 function runTest() {
-  //XXXAus: Placeholder.
+  var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+
+  var testItemURL = ios.newURI("file:///alpha.mp3", null, null);
+  var testItemProperties = 
+    { artistName: "A", albumName: "Alpha", trackName: "Track Alpha", trackNumber: "1", year: "2000"};
+  
+  var entry = Cc["@songbirdnest.com/Songbird/PlaybackHistoryEntry;1"]
+                .createInstance(Ci.sbIPlaybackHistoryEntry);
+               
+  var library = createLibrary("test_playbackhistoryservice", null, false);
+  var item = library.createMediaItem(testItemURL, testItemProperties);
+  
+  var itemPlayedAt = new Date();
+  var itemPlayDuration = 1000 * 1000 * 1000;
+  
+  entry.init(item, itemPlayedAt, itemPlayDuration, null);
+  
+  assertEqual(entry.item, item);
+  assertEqual(entry.timestamp, itemPlayedAt.getTime());
+  assertEqual(entry.duration, itemPlayDuration);
 }
