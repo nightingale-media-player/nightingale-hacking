@@ -126,7 +126,7 @@
       <!--
        * Private fields.
        *
-       *   _widgetSvc           Widget services object.
+       *   _widgetSvc           First-run locale widget services object.
        -->
 
       <field name="_widgetSvc"/>
@@ -188,12 +188,12 @@
       <method name="_importExternalServices"><body><![CDATA[
         // Import the device control services.
         if (typeof(firstRunLocaleSvc) == "undefined") {
-          var jsLoader;
+          var Cc = Components.classes;
+          var Ci = Components.interfaces;
 
           // Get the Javascript sub-script loader services.
-          jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                               .getService
-                                  (Components.interfaces.mozIJSSubScriptLoader);
+          var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(Ci.mozIJSSubScriptLoader);
           jsLoader.loadSubScript("chrome://songbird/content/scripts/" +
                                    "firstRun/firstRunLocale.js",
                                  null);

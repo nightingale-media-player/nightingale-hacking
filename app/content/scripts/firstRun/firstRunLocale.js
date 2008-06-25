@@ -89,11 +89,11 @@ function firstRunLocaleSvc(aWidget) {
   this._widget = aWidget;
 }
 
-// Set the constructor.
-firstRunLocaleSvc.prototype.constructor = firstRunLocaleSvc;
-
 // Define the object.
 firstRunLocaleSvc.prototype = {
+  // Set the constructor.
+  constructor: firstRunLocaleSvc,
+
   //
   // Widget services fields.
   //
