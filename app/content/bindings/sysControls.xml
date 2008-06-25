@@ -292,21 +292,23 @@
 
   <binding id="sb-sys-dialog-titlebar">
     <content>
-      <xul:stack flex="1">
-        <xul:hbox id="sb-sys-dialog-titlebar-osx-title" sbid="show_mac" pack="center" flex="1">
-          <xul:sb-sys-title id="sb-sys-dialog-titlebar-osx-title-title" xbl:inherits="value"/> 
-        </xul:hbox>
-        <xul:hbox id="sb-sys-dialog-titlebar" flex="1">
-	  <xul:hbox id="sb-sys-dialog-titlebar-primary-content" flex="1">
-	    <xul:sb-sys-osx-buttons id="sb-sys-dialog-titlebar-osx-buttons" sbid="left_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
-	    <xul:sb-sys-title id="sb-sys-dialog-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
-	    <!-- TODO: allow external menu? -->
-	    <xul:menubar id="sb-sys-dialog-titlebar-menubar" />  
-	    <xul:spacer id="sb-sys-dialog-titlebar-spacer" flex="1"/>
-	  </xul:hbox>
-          <xul:sb-sys-buttons id="sb-sys-dialog-titlebar-buttons" sbid="right_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
-        </xul:hbox>
-      </xul:stack>
+      <xul:sb-draggable sbid="children" class="sb-sys-dialog-titlebar-draggable" flex="1">
+        <xul:stack>
+          <xul:hbox id="sb-sys-dialog-titlebar-osx-title" sbid="show_mac" pack="center" flex="1">
+            <xul:sb-sys-title id="sb-sys-dialog-titlebar-osx-title-title" xbl:inherits="value"/> 
+          </xul:hbox>
+          <xul:hbox id="sb-sys-dialog-titlebar" flex="1">
+        	  <xul:hbox id="sb-sys-dialog-titlebar-primary-content" flex="1">
+        	    <xul:sb-sys-osx-buttons id="sb-sys-dialog-titlebar-osx-buttons" sbid="left_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
+        	    <xul:sb-sys-title id="sb-sys-dialog-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
+        	    <!-- TODO: allow external menu? -->
+        	    <xul:menubar id="sb-sys-dialog-titlebar-menubar" />  
+        	    <xul:spacer id="sb-sys-dialog-titlebar-spacer" flex="1"/>
+        	  </xul:hbox>
+            <xul:sb-sys-buttons id="sb-sys-dialog-titlebar-buttons" sbid="right_buttons" type="dialog" xbl:inherits="hidden=nobuttons"/>
+          </xul:hbox>
+        </xul:stack>
+      </xul:sb-draggable>
     </content>
     <implementation>
       <constructor>
@@ -359,20 +361,22 @@
 
   <binding id="sb-sys-titlebar">
     <content>
-      <xul:stack flex="1">
-        <xul:hbox id="sb-sys-titlebar-osx-title" sbid="show_mac" pack="center" flex="1">
-          <xul:sb-sys-title id="sb-sys-titlebar-osx-title-title" xbl:inherits="value"/> 
-        </xul:hbox>
-        <xul:hbox id="sb-sys-titlebar" align="center" flex="1">
-          <xul:hbox id="sb-sys-titlebar-primary-content" flex="1">
-            <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
-            <xul:sb-sys-icon id="sb-sys-titlebar-icon" xbl:inherits="type"/>
-            <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
-            <children />
+      <xul:sb-draggable sbid="children" class="sb-sys-titlebar-draggable" flex="1">
+        <xul:stack>
+          <xul:hbox id="sb-sys-titlebar-osx-title" sbid="show_mac" pack="center" flex="1">
+            <xul:sb-sys-title id="sb-sys-titlebar-osx-title-title" xbl:inherits="value"/> 
           </xul:hbox>
-          <xul:sb-sys-buttons id="sb-sys-titlebar-buttons" xbl:inherits="type"/>
-        </xul:hbox>
-      </xul:stack>
+          <xul:hbox id="sb-sys-titlebar" align="center" flex="1">
+            <xul:hbox id="sb-sys-titlebar-primary-content" flex="1">
+              <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
+              <xul:sb-sys-icon id="sb-sys-titlebar-icon" xbl:inherits="type"/>
+              <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
+              <children />
+            </xul:hbox>
+            <xul:sb-sys-buttons id="sb-sys-titlebar-buttons" xbl:inherits="type"/>
+          </xul:hbox>
+        </xul:stack>
+      </xul:sb-draggable>
     </content>
     <implementation>
       <constructor>
@@ -450,10 +454,10 @@
               <xul:spacer hidden="true" sbid="x6" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-leftbottom"/>
             </xul:vbox>
 
-            <xul:sb-draggable id="sb-sys-outer-frame-children" sbid="children" class="sb-sys-outer-frame-chrome-background" flex="1" >
+            <xul:vbox flex="1">
               <children/>
-            </xul:sb-draggable>
-                  
+            </xul:vbox>
+      
             <xul:vbox>
               <xul:resizer hidden="true" sbid="r7" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-righttop" dir="topright" />
               <xul:spacer hidden="true" sbid="x7" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-righttop"/>

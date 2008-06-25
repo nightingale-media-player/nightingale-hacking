@@ -41,7 +41,7 @@
           onmouseup="onMouseUp();"
           onmousemove="onMouseMove();"
           ondblclick="onDblClick(event);"/>
-        <xul:vbox mousethrough="always" flex="1">
+        <xul:vbox>
           <children />
         </xul:vbox>
       </xul:stack>
