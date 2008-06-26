@@ -1750,7 +1750,15 @@ PlaylistPlayback.prototype = {
       
       // Don't go on to the next track if we see that we're stopping.
       if ( ! this._stopNextLoop )
-        this._playNextPrev(1);
+      {
+        // Are we in repeat one?
+        if ( this._repeat.intValue == sbIPlaylistPlayback.REPEAT_MODE_ONE ) {
+          this._playNextPrev(0);
+        }
+        else {
+          this._playNextPrev(1);
+        }
+      }
         
       this._stopNextLoop = false;
     }
@@ -1853,12 +1861,8 @@ PlaylistPlayback.prototype = {
       var next_index = -1;
       // Are we confused?
       if ( cur_index != -1 ) {
-        // Are we REPEAT ONE?
-        if ( this._repeat.intValue == sbIPlaylistPlayback.REPEAT_MODE_ONE ) {
-          next_index = cur_index;
-        }
-        // Are we SHUFFLE?
-        else if ( this._shuffle.boolValue ) {
+        // Ae we SHUFFLE?
+        if ( this._shuffle.boolValue ) {
           var increment = parseInt(incr);
           if(increment > -1) {
             next_index = this._shufflerGetNextTrack();
@@ -1881,6 +1885,7 @@ PlaylistPlayback.prototype = {
             else
               next_index = -1; // Give up
           }
+          // are we at the beginning ?
           else if ( next_index < 0 ) {
             // Are we REPEAT ALL?
             if ( this._repeat.intValue == sbIPlaylistPlayback.REPEAT_MODE_ALL )
