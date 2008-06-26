@@ -30,6 +30,29 @@
  * \sa sbICoreWrapper.idl coreBase.js
  */
 
+// Helper function to get a platform string.
+function getPlatformString() 
+{
+  try {
+    var sysInfo =
+      Components.classes["@mozilla.org/system-info;1"]
+                .getService(Components.interfaces.nsIPropertyBag2);
+    return sysInfo.getProperty("name");
+  }
+  catch (e) {
+    var user_agent = navigator.userAgent;
+    if (user_agent.indexOf("Windows") != -1)
+      return "Windows_NT";
+    else if (user_agent.indexOf("Mac OS X") != -1)
+      return "Darwin";
+    else if (user_agent.indexOf("Linux") != -1)
+      return "Linux";
+    else if (user_agent.indexOf("SunOS") != -1)
+      return "SunOS";
+    return "Unknown";
+  }
+}
+
 /**
  * \class CoreGStreamerSimple
  * \brief The CoreWrapper for the simple GStreamer Simple component
@@ -44,9 +67,14 @@ function CoreGStreamerSimple()
   this._oldVolume = 0;
   this._muted = false;
 
+  // Extensions we support in 'full' mode.
   this._mediaUrlExtensions = ["mp3", "ogg", "flac", "mpc", "wav", "m4a", "m4v",
                               "wmv", "asf", "avi",  "mov", "mpg", "mp4", "ogm",
                               "mp2", "mka", "mkv",  "oga", "ogv", "ogx", "wv"];
+
+  // Set of extensions to support in 'minimal' mode.
+  this._mediaUrlMinimalExtensions = ["flac"];
+
   this._mediaUrlSchemes = ["mms", "rstp"];
 
   this._videoUrlExtensions = ["wmv", "asf",  "avi", "mov", "mpg", "m4v", "mp4",
@@ -54,13 +82,60 @@ function CoreGStreamerSimple()
 
   this._unsupportedExtensions = [];
 
-  this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
-                                                     this._mediaUrlSchemes);
-  this._videoUrlMatcher = new ExtensionSchemeMatcher(this._videoUrlExtensions,
-                                                     []);
   this._uriChecker = null;
   this._lastPlayStart = null;
   this._hasShownHelpPrompt = false;
+
+  var environment = Components.classes["@mozilla.org/process/environment;1"]
+                              .getService(Components.interfaces.nsIEnvironment);
+
+  // Enable for all supported formats.
+  this._gstEnableAll = false;
+  // Enable for only a minimal set of formats. If both are false, this core
+  // is never used.
+  this._gstEnableMinimal = false;
+
+  var platform = getPlatformString()
+  if ((platform.indexOf("Windows_NT") < 0) && 
+      (platform.indexOf("Darwin") < 0))
+  {
+    // On linux/etc, we only have a gstreamer mediacore, so support everything.
+    this._gstEnableAll = true;
+  }
+  else {
+    if (environment.exists("SB_GST_ENABLE")) {
+      var enable = environement.get("SB_GST_ENABLE");
+      if (enable == "all")
+        this._gstEnableAll = true;
+      else {
+        // Otherwise disable completely.
+        this._gstEnableAll = false;
+        this._gstEnableMinimal = false;
+      }
+    }
+    else {
+      // If no environment variable is set, we default to just supporting
+      // the minimal set.
+      this._gstEnableMinimal = true;
+    }
+  }
+
+  if (this._gstEnableAll) {
+    this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,
+                                                       this._mediaUrlSchemes);
+    this._videoUrlMatcher = new ExtensionSchemeMatcher(this._videoUrlExtensions,
+                                                     []);
+  }
+  else if (this._gstEnableMinimal) {
+    this._mediaUrlMatcher = new ExtensionSchemeMatcher(
+            this._mediaUrlMinimalExtensions, []);
+    this._videoUrlMatcher = new ExtensionSchemeMatcher([], []);
+  }
+  else {
+    this._mediaUrlMatcher = new ExtensionSchemeMatcher([], []);
+    this._videoUrlMatcher = new ExtensionSchemeMatcher([], []);
+  }
+
 };
 
 // inherit the prototype from CoreBase
@@ -425,7 +500,12 @@ CoreGStreamerSimple.prototype.isVideoURL = function ( aURL )
 
 CoreGStreamerSimple.prototype.getSupportedFileExtensions = function ()
 {
-  return new StringArrayEnumerator(this._mediaUrlExtensions);
+  if (this._gstEnableAll)
+    return new StringArrayEnumerator(this._mediaUrlExtensions);
+  else if (this._gstEnableMinimal)
+    return new StringArrayEnumerator(this._mediaUrlMinimalExtensions);
+  else
+    return new StringArrayEnumerator([]);
 }
 
 CoreGStreamerSimple.prototype.getSupportForURI = function(aURI)
@@ -435,14 +515,28 @@ CoreGStreamerSimple.prototype.getSupportForURI = function(aURI)
   // Strip the beginning '.' if it exists and make it lowercase
   extension = extension.charAt(0) == "." ? extension.slice(1) : extension;
   extension = extension.toLowerCase();
-  
+
   // TODO: do something smarter here
-  if (this._mediaUrlExtensions.indexOf(extension) > -1)
+  if (this._gstEnableAll) {
+    if (this._mediaUrlExtensions.indexOf(extension) > -1)
+      return 1;
+    else if (this._unsupportedExtensions.indexOf(extension) > -1)
+      return -1;
+    else 
+      return 0; // We are the default handler for whomever.
+  }
+  // In minimal mode, we support a small set of formats.
+  else if (this._gstEnableMinimal && 
+           this._mediaUrlMinimalExtensions.indexOf(extension) > -1)
+  {
     return 1;
-  else if (this._unsupportedExtensions.indexOf(extension) > -1)
+  }
+  else {
+    // In minimal or 'off' mode, we don't want to ever be used, even as a 
+    // default.
     return -1;
+  }
   
-  return 0; // We are the default handler for whomever.
 };
 
 CoreGStreamerSimple.prototype.onStartRequest = function(request, context)
