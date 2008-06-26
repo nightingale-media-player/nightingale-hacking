@@ -32,6 +32,8 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = \
     sbIGStreamerService.idl \
     sbIGStreamerSimple.idl \
+    sbIGStreamerEvent.idl \
+    sbIGStreamerEventListener.idl \
     $(NULL)
 
 XPIDL_MODULE = sbGStreamer.xpt

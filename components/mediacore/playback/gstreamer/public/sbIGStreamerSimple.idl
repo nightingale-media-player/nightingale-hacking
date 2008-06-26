@@ -31,6 +31,7 @@
 #include "nsISupports.idl"
 
 interface nsIDOMXULElement;
+interface sbIGStreamerEventListener;
 
 /**
  * \interface sbIGStreamerSimple
@@ -65,6 +66,14 @@ interface sbIGStreamerSimple : nsISupports
   void pause();
   void stop();
   void seek(in unsigned long long aTimeNanos);
+
+  // Event listeners. 
+  
+  // Add an event listener for all gstreamer-related events.
+  void addEventListener(in sbIGStreamerEventListener aListener);
+  // Remove an event listener
+  void removeEventListener(in sbIGStreamerEventListener aListener);
+
 };
 
 %{C++

@@ -1,0 +1,47 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright© 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the “GPL”).
+// 
+// Software distributed under the License is distributed 
+// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+interface sbIGStreamerEvent;
+
+/**
+ * \interface sbIGStreamerEventListener
+ *
+ * Used to listen to events from the GStreamer service.
+ * This will always be called from the main thread.
+ *
+ * Any exceptions thrown from the event listeners are ignored.
+ */
+[scriptable, function, uuid(c229e824-702d-401a-8966-0694d319ca64)]
+interface sbIGStreamerEventListener : nsISupports
+{
+  /**
+   * aEvent - information about the event
+   */
+  void onGStreamerEvent(in sbIGStreamerEvent aEvent);
+};
+

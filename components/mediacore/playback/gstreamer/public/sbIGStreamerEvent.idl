@@ -1,0 +1,109 @@
+/*
+ //
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the �GPL�).
+// 
+// Software distributed under the License is distributed 
+// on an �AS IS� basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+/**
+ * \file sbIGStreamerEvent.idl
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS] 
+ * 
+ */
+#include "nsISupports.idl"
+
+/**
+ * \interface sbIGStreamerEvent
+ * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
+ */
+[scriptable, uuid(42afe6cf-d1bd-4a9e-b2f8-1ae42844dece)]
+interface sbIGStreamerEvent : nsISupports
+{
+  // Core GStreamer event types
+
+  // All error events are between EVENT_ERROR_FIRST and EVENT_ERROR_LAST. 
+  // Code may check this as a catch-all for reacting to errors.
+  const unsigned long EVENT_ERROR_FIRST = 0x01000000;
+
+  const unsigned long EVENT_ERROR_CORE_BASE = EVENT_ERROR_FIRST;
+  const unsigned long EVENT_ERROR_CORE_FAILED = EVENT_ERROR_CORE_BASE + 1;
+  const unsigned long EVENT_ERROR_CORE_TOO_LAZY = EVENT_ERROR_CORE_BASE + 2;
+  const unsigned long EVENT_ERROR_CORE_NOT_IMPLEMENTED = EVENT_ERROR_CORE_BASE + 3;
+  const unsigned long EVENT_ERROR_CORE_STATE_CHANGE = EVENT_ERROR_CORE_BASE + 4;
+  const unsigned long EVENT_ERROR_CORE_PAD = EVENT_ERROR_CORE_BASE + 5;
+  const unsigned long EVENT_ERROR_CORE_THREAD = EVENT_ERROR_CORE_BASE + 6;
+  const unsigned long EVENT_ERROR_CORE_NEGOTIATION = EVENT_ERROR_CORE_BASE + 7;
+  const unsigned long EVENT_ERROR_CORE_EVENT = EVENT_ERROR_CORE_BASE + 8;
+  const unsigned long EVENT_ERROR_CORE_SEEK = EVENT_ERROR_CORE_BASE + 9;
+  const unsigned long EVENT_ERROR_CORE_CAPS = EVENT_ERROR_CORE_BASE + 10;
+  const unsigned long EVENT_ERROR_CORE_TAG = EVENT_ERROR_CORE_BASE + 11;
+  const unsigned long EVENT_ERROR_CORE_MISSING_PLUGIN = EVENT_ERROR_CORE_BASE + 12;
+  const unsigned long EVENT_ERROR_CORE_CLOCK = EVENT_ERROR_CORE_BASE + 13;
+  const unsigned long EVENT_ERROR_CORE_DISABLED = EVENT_ERROR_CORE_BASE + 14;
+
+  const unsigned long EVENT_ERROR_LIBRARY_BASE = 0x02000000;
+  const unsigned long EVENT_ERROR_LIBRARY_FAILED = EVENT_ERROR_LIBRARY_BASE + 1;
+  const unsigned long EVENT_ERROR_LIBRARY_TOO_LAZY = EVENT_ERROR_LIBRARY_BASE + 2;
+  const unsigned long EVENT_ERROR_LIBRARY_INIT = EVENT_ERROR_LIBRARY_BASE + 3;
+  const unsigned long EVENT_ERROR_LIBRARY_SHUTDOWN = EVENT_ERROR_LIBRARY_BASE + 4;
+  const unsigned long EVENT_ERROR_LIBRARY_SETTINGS = EVENT_ERROR_LIBRARY_BASE + 5;
+  const unsigned long EVENT_ERROR_LIBRARY_ENCODE = EVENT_ERROR_LIBRARY_BASE + 6;
+
+  const unsigned long EVENT_ERROR_RESOURCE_BASE = 0x03000000;
+  const unsigned long EVENT_ERROR_RESOURCE_FAILED = EVENT_ERROR_RESOURCE_BASE + 1;
+  const unsigned long EVENT_ERROR_RESOURCE_TOO_LAZY = EVENT_ERROR_RESOURCE_BASE + 2;
+  const unsigned long EVENT_ERROR_RESOURCE_NOT_FOUND = EVENT_ERROR_RESOURCE_BASE + 3;
+  const unsigned long EVENT_ERROR_RESOURCE_BUSY = EVENT_ERROR_RESOURCE_BASE + 4;
+  const unsigned long EVENT_ERROR_RESOURCE_OPEN_READ = EVENT_ERROR_RESOURCE_BASE + 5;
+  const unsigned long EVENT_ERROR_RESOURCE_OPEN_WRITE = EVENT_ERROR_RESOURCE_BASE + 6;
+  const unsigned long EVENT_ERROR_RESOURCE_OPEN_READ_WRITE = EVENT_ERROR_RESOURCE_BASE + 7;
+  const unsigned long EVENT_ERROR_RESOURCE_CLOSE = EVENT_ERROR_RESOURCE_BASE + 8;
+  const unsigned long EVENT_ERROR_RESOURCE_READ = EVENT_ERROR_RESOURCE_BASE + 9;
+  const unsigned long EVENT_ERROR_RESOURCE_WRITE = EVENT_ERROR_RESOURCE_BASE + 10;
+  const unsigned long EVENT_ERROR_RESOURCE_SEEK = EVENT_ERROR_RESOURCE_BASE + 11;
+  const unsigned long EVENT_ERROR_RESOURCE_SYNC = EVENT_ERROR_RESOURCE_BASE + 12;
+  const unsigned long EVENT_ERROR_RESOURCE_SETTINGS = EVENT_ERROR_RESOURCE_BASE + 13;
+  const unsigned long EVENT_ERROR_RESOURCE_NO_SPACE_LEFT = EVENT_ERROR_RESOURCE_BASE + 14;
+
+  const unsigned long EVENT_ERROR_STREAM_BASE = 0x04000000;
+  const unsigned long EVENT_ERROR_STREAM_FAILED = EVENT_ERROR_STREAM_BASE + 1;
+  const unsigned long EVENT_ERROR_STREAM_TOO_LAZY = EVENT_ERROR_STREAM_BASE + 2;
+  const unsigned long EVENT_ERROR_STREAM_NOT_IMPLEMENTED = EVENT_ERROR_STREAM_BASE + 3;
+  const unsigned long EVENT_ERROR_STREAM_TYPE_NOT_FOUND = EVENT_ERROR_STREAM_BASE + 4;
+  const unsigned long EVENT_ERROR_STREAM_WRONG_TYPE = EVENT_ERROR_STREAM_BASE + 5;
+  const unsigned long EVENT_ERROR_STREAM_CODEC_NOT_FOUND = EVENT_ERROR_STREAM_BASE + 6;
+  const unsigned long EVENT_ERROR_STREAM_DECODE = EVENT_ERROR_STREAM_BASE + 7;
+  const unsigned long EVENT_ERROR_STREAM_ENCODE = EVENT_ERROR_STREAM_BASE + 8;
+  const unsigned long EVENT_ERROR_STREAM_DEMUX = EVENT_ERROR_STREAM_BASE + 9;
+  const unsigned long EVENT_ERROR_STREAM_MUX = EVENT_ERROR_STREAM_BASE + 10;
+  const unsigned long EVENT_ERROR_STREAM_FORMAT = EVENT_ERROR_STREAM_BASE + 11;
+  const unsigned long EVENT_ERROR_STREAM_DECRYPT = EVENT_ERROR_STREAM_BASE + 12;
+  const unsigned long EVENT_ERROR_STREAM_DECRYPT_NOKEY = EVENT_ERROR_STREAM_BASE + 13;
+
+  const unsigned long EVENT_ERROR_LAST = 0x05000000;
+
+  /* The event type */
+  readonly attribute unsigned long type;
+
+  /* A string message corresponding to this event */
+  readonly attribute AString message;
+};
+

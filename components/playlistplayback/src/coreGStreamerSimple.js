@@ -60,6 +60,7 @@ function CoreGStreamerSimple()
                                                      []);
   this._uriChecker = null;
   this._lastPlayStart = null;
+  this._hasShownHelpPrompt = false;
 };
 
 // inherit the prototype from CoreBase
@@ -470,11 +471,140 @@ CoreGStreamerSimple.prototype.onStopRequest = function(request, context, status)
   }
 };
 
+CoreGStreamerSimple.prototype.handleMissingPlugin = function ()
+{
+  // A specific plugin is missing. This generally means GStreamer is improperly
+  // installed (if we're using system gstreamer), or that something is very
+  // broken (if we're using the bundled gstreamer).
+  this.promptUserForHelp();
+}
+
+CoreGStreamerSimple.prototype.handleCodecNotFound = function ()
+{
+  // No plugin to handle this media type was found. Tell the user where to look?
+  this.promptUserForHelp()
+}
+
+CoreGStreamerSimple.prototype.promptUserForHelp = function ()
+{
+  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                        .getService(Components.interfaces.nsIPrefBranch);
+
+  skip = prefs.getPrefType("songbird.skipGStreamerHelp") &&
+         prefs.getBoolPref("songbird.skipGStreamerHelp");
+  if (skip || this._hasShownHelpPrompt)
+    return;
+
+  // We only show the help prompt once per run.
+  this._hasShownHelpPrompt = true;
+
+  var promptService = Components.classes[
+      "@mozilla.org/embedcomp/prompt-service;1"]
+      .getService(Components.interfaces.nsIPromptService);
+
+  var stringBundle = Components.classes["@mozilla.org/intl/stringbundle;1"].
+        getService(Components.interfaces.nsIStringBundleService).
+        createBundle("chrome://songbird/locale/songbird.properties");
+
+  function L10N(key) {
+    try {
+      return stringBundle.GetStringFromName(key);
+    } catch (e) {
+      Components.utils.reportError(e);
+    }
+  }
+
+  var neverPromptAgain = { value: false };
+
+  // Get a reference to the main window.
+  var windowMediator = Components.classes[
+      "@mozilla.org/appshell/window-mediator;1"]
+      .getService(Components.interfaces.nsIWindowMediator);
+  var mainWindow = windowMediator.getMostRecentWindow("Songbird:Main")
+
+  var promptResult = promptService.confirmEx(
+          mainWindow,
+          L10N("mediacore.gstreamer.plugin.missing.title"),
+          L10N("mediacore.gstreamer.plugin.missing.text"),
+          Components.interfaces.nsIPromptService.STD_YES_NO_BUTTONS,
+          null, null, null, // button labels (use defaults)
+          L10N("mediacorecheck.dialog.skipCheckboxLabel"),
+          neverPromptAgain);
+
+  prefs.setBoolPref("songbird.skipGStreamerHelp", neverPromptAgain.value);
+
+  if (promptResult == 0) {
+    // User clicked 'yes' - we should show them the help webpage.
+    var ioService =  Components.classes[
+              "@mozilla.org/network/io-service;1"]
+              .getService(Components.interfaces.nsIIOService);
+    var helpUrl = L10N("mediacore.gstreamer.plugin.helpUrl");
+
+    // This is excessively complex! Also, if you type things slightly wrong,
+    // it'll tend to crash the js interpreter, yay!
+    var browserDOMWindow = mainWindow.
+        getInterface(Components.interfaces.nsIWebNavigation).
+        QueryInterface(Components.interfaces.nsIDocShellTreeItem).
+        rootTreeItem.
+        QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+        getInterface(Components.interfaces.nsIDOMWindow).
+        QueryInterface(Components.interfaces.nsIDOMChromeWindow).
+        browserDOMWindow;
+
+    var uri = ioService.newURI(helpUrl, null, null);
+    browserDOMWindow.openURI(uri, null, 
+            Components.interfaces.nsIBrowserDOMWindow.OPEN_NEWTAB,
+            Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL);
+  }
+}
+
+CoreGStreamerSimple.prototype.handleUnknownType = function ()
+{
+  // The media type of this file couldn't be determined.
+}
+
+CoreGStreamerSimple.prototype.onGStreamerEvent = function (gstreamerEvent)
+{
+  if (gstreamerEvent.type == 
+          gstreamerEvent.EVENT_ERROR_CORE_MISSING_PLUGIN)
+  {
+    this.handleMissingPlugin();
+  }
+  else if (gstreamerEvent.type == 
+                gstreamerEvent.EVENT_ERROR_STREAM_CODEC_NOT_FOUND)
+  {
+    this.handleCodecNotFound();
+  }
+  else if (gstreamerEvent.type >= gstreamerEvent.EVENT_ERROR_FIRST &&
+           gstreamerEvent.type <= gstreamerEvent.EVENT_ERROR_LAST)
+  {
+    // Some other error has occurred. Not handled yet.
+  }
+  else {
+    // Some non-error event has occurred.
+    // We don't have any of these yet.
+  }
+}
+
+CoreGStreamerSimple.prototype.initCore = function(gstSimple)
+{
+  this.setObject(gstSimple);
+
+  gstSimple.addEventListener(this)
+}
+
+CoreGStreamerSimple.prototype.destroyCore = function()
+{
+  if (this._object != null)
+    this._object.removeEventListener(this)
+}
+
 /**
   * See nsISupports.idl
   */
 CoreGStreamerSimple.prototype.QueryInterface = function(iid) {
   if (!iid.equals(Components.interfaces.sbICoreWrapper) &&
+      !iid.equals(Components.interfaces.sbIGStreamerEventListener) &&
       !iid.equals(nsIRequestObserver) &&
       !iid.equals(Components.interfaces.nsISupports))
     throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -489,6 +619,8 @@ CoreGStreamerSimple.prototype.QueryInterface = function(iid) {
 
 try {
   var gGStreamerSimpleCore = new CoreGStreamerSimple();
+  window.addEventListener("unload", 
+          function() { gGStreamerSimpleCore.destroyCore(); }, false);
 }
 catch(err) {
   dump("ERROR!!! coreGStreamerSimple failed to create properly.");
@@ -508,7 +640,8 @@ function CoreGStreamerSimpleDocumentInit( id )
     var gstSimple = Components.classes["@songbirdnest.com/Songbird/Playback/GStreamer/Simple;1"]
                               .createInstance(Components.interfaces.sbIGStreamerSimple);
     gstSimple.init(videoElement);
-    gGStreamerSimpleCore.setObject(gstSimple);
+    gGStreamerSimpleCore.initCore(gstSimple);
+
     gPPS.addCore(gGStreamerSimpleCore, true);
     registeredCores.push(gGStreamerSimpleCore);
   }

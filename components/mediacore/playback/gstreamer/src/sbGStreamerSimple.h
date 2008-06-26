@@ -28,6 +28,7 @@
 #define _SB_GSTREAMER_SIMPLE_H_
 
 #include <nsCOMPtr.h>
+#include <nsCOMArray.h>
 #include <nsStringGlue.h>
 #include <nsIDOMEventListener.h>
 #include <nsIDOMWindow.h>
@@ -81,14 +82,6 @@ private:
   
   NS_HIDDEN_(nsresult) RestartPlaybin();
 
-  NS_HIDDEN_(void) ShowHelperPage(void);
-
-  NS_HIDDEN_(nsresult) CreateBundle(const char *aURLSpec, 
-          nsIStringBundle **_retval);
-
-  NS_HIDDEN_(nsresult) GetStringFromName(nsIStringBundle *aBundle, 
-          const nsAString & aName, nsAString & _retval);
-
   NS_HIDDEN_(void) HandleErrorMessage(GstMessage *message);
   NS_HIDDEN_(void) HandleWarningMessage(GstMessage *message);
   NS_HIDDEN_(void) HandleStateChangeMessage(GstMessage *message);
@@ -97,6 +90,8 @@ private:
   NS_HIDDEN_(void) HandleTagMessage(GstMessage *message);
 
   PRBool mInitialized;
+
+  nsCOMArray<sbIGStreamerEventListener> mListeners;
 
   GstElement* mPlay;
   guint       mPixelAspectRatioN;
@@ -108,7 +103,6 @@ private:
 
   PRBool mIsAtEndOfStream;
   PRBool mIsPlayingVideo;
-  PRBool mHasShownHelperPage;
   PRInt32 mLastErrorCode;
   PRInt32 mLastErrorDomain;
   PRUint16 mBufferingPercent;

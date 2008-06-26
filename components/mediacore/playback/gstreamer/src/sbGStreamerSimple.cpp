@@ -25,7 +25,11 @@
 */
 
 #include "sbGStreamerSimple.h"
+#include "sbGStreamerErrorEvent.h"
+
 #include <sbIGStreamerService.h>
+#include <sbIGStreamerEvent.h>
+#include <sbIGStreamerEventListener.h>
 
 #include <nsIInterfaceRequestorUtils.h>
 #include <nsIBaseWindow.h>
@@ -170,7 +174,6 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mPlatformInterface(NULL),
   mIsAtEndOfStream(PR_TRUE),
   mIsPlayingVideo(PR_FALSE),
-  mHasShownHelperPage(PR_FALSE),
   mLastErrorCode(0),
   mLastErrorDomain(0),
   mBufferingPercent(0),
@@ -834,174 +837,6 @@ sbGStreamerSimple::Resize()
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-nsresult
-sbGStreamerSimple::CreateBundle(const char *aURLSpec,
-                                nsIStringBundle **_retval)
-{
-  NS_ASSERTION(aURLSpec, "aURLSpec is null");
-  NS_ASSERTION(_retval, "_retval is null");
-  *_retval = nsnull;
-
-  nsresult rv;
-  nsCOMPtr<nsIStringBundleService> stringBundleService =
-    do_GetService(NS_STRINGBUNDLE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIStringBundle> stringBundle;
-  rv = stringBundleService->CreateBundle(aURLSpec,
-                                         getter_AddRefs(stringBundle));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ADDREF(*_retval = stringBundle);
-  return NS_OK;
-}
-
-nsresult
-sbGStreamerSimple::GetStringFromName(nsIStringBundle *aBundle,
-                                     const nsAString & aName,
-                                     nsAString & _retval)
-{
-  NS_ASSERTION(aBundle, "aBundle is null");
-
-  nsAutoString value;
-  nsresult rv = aBundle->GetStringFromName(aName.BeginReading(),
-                                           getter_Copies(value));
-  if (NS_SUCCEEDED(rv)) {
-    _retval.Assign(value);
-  }
-  else {
-    _retval.Truncate();
-  }
-
-  return NS_OK;
-}
-
-// TODO: Move all of this to a more flexible error reporting interface,
-// and rewrite the bits we can in JS.
-void
-sbGStreamerSimple::ShowHelperPage(void)
-{
-  nsresult rv;
-  PRBool skipNotify = PR_FALSE;
-  nsCOMPtr<nsIPrefBranch> prefService =
-         do_GetService( "@mozilla.org/preferences-service;1", &rv );
-  NS_ENSURE_SUCCESS( rv, /* void */);
-  prefService->GetBoolPref( "songbird.skipGStreamerHelp", &skipNotify );
-
-  // Abort asking the user if the pref says to skip
-  if (skipNotify == PR_TRUE) {
-    return;
-  }
-
-  nsCOMPtr<nsIPromptService> promptService =
-    do_GetService("@mozilla.org/embedcomp/prompt-service;1", &rv);
-  NS_ENSURE_SUCCESS( rv, /* void */);
-
-  // If possible we want the alert to pop off of the 
-  // main window and not the cheezy video window
-  nsCOMPtr<nsIWindowMediator> windowMediator =
-    do_GetService("@mozilla.org/appshell/window-mediator;1", &rv);
-  NS_ENSURE_SUCCESS( rv, /* void */);
-  nsCOMPtr<nsIDOMWindowInternal> mainWindow;  
-  windowMediator->GetMostRecentWindow(NS_LITERAL_STRING("Songbird:Main").get(),
-                                      getter_AddRefs(mainWindow));
-
-  // Get the localized strings using the helper functions above
-  nsCOMPtr<nsIStringBundle> stringBundle;
-  rv = CreateBundle("chrome://songbird/locale/songbird.properties",
-                    getter_AddRefs(stringBundle));
-  NS_ENSURE_SUCCESS( rv, /* void */);
-
-  nsAutoString windowTitle;
-  nsAutoString windowText;
-  nsAutoString helpURL;
-  nsAutoString checkLabel;
-  rv = GetStringFromName(stringBundle,
-                         NS_LITERAL_STRING("mediacore.gstreamer.plugin.missing.title"),
-                         windowTitle);
-  NS_ENSURE_SUCCESS( rv, /* void */);
-  rv = GetStringFromName(stringBundle,
-                         NS_LITERAL_STRING("mediacore.gstreamer.plugin.missing.text"),
-                         windowText);
-  NS_ENSURE_SUCCESS( rv, /* void */);
-  rv = GetStringFromName(stringBundle,
-                         NS_LITERAL_STRING("mediacore.gstreamer.plugin.helpUrl"),
-                         helpURL);
-  NS_ENSURE_SUCCESS( rv, /* void */);
-  rv = GetStringFromName(stringBundle,
-                         NS_LITERAL_STRING("mediacorecheck.dialog.skipCheckboxLabel"),
-                         checkLabel);
-  NS_ENSURE_SUCCESS( rv, /* void */);
-
-  // Ask the user if they would like to learn how to install the plug-ins
-  // Get flags to indicate yes/no option dialog
-  // Note: buttons need to be os dependent for position. (since this is currently
-  //       linux only we can assume Yes/No)
-  PRUint32 flags;
-  flags = nsIPromptService::BUTTON_TITLE_YES * nsIPromptService::BUTTON_POS_0 +
-          nsIPromptService::BUTTON_TITLE_NO * nsIPromptService::BUTTON_POS_1;
-
-  PRInt32 promptResult = 1;
-  PRBool checkState = PR_FALSE;
-  rv = promptService->ConfirmEx(mainWindow, // Window to bind to
-        windowTitle.get(),                  // Title of window
-        windowText.get(),                   // Text message
-        flags, NULL, NULL, NULL,            // button flags and titles (use default)
-        checkLabel.get(),                   // Check box label
-        &checkState,                        // State of checkbox
-        &promptResult);                     // Button Clicked
-  NS_ENSURE_SUCCESS( rv, /* void */);
-
-  // Set our pref to what the check box state is
-  prefService->SetBoolPref( "songbird.skipGStreamerHelp", checkState );
-
-  if (promptResult == 0) { // They clicked Yes
-    // Load up the url to show the user how to configure
-    // First we need to get the url from preferences
-    nsCOMPtr<nsIIOService> ioService =
-      do_GetService("@mozilla.org/network/io-service;1", &rv);
-    NS_ENSURE_SUCCESS( rv, /* void */);
-
-    nsCOMPtr<nsIURI> uri;
-    NS_ConvertUTF16toUTF8 cstrURL(helpURL);
-    rv = ioService->NewURI(
-      cstrURL,
-      NULL, NULL, getter_AddRefs(uri));
-    NS_ENSURE_SUCCESS( rv, /* void */);
-  
-    // Get the browser context so we can open a new tab with OpenURI,
-    // this is very long and confusing since we are not in the dom.
-    nsCOMPtr<nsIBrowserDOMWindow> bwin;
-  
-    nsCOMPtr<nsIWebNavigation> navNav(do_GetInterface(mainWindow, &rv));
-    NS_ENSURE_SUCCESS( rv, /* void */);
-    nsCOMPtr<nsIDocShellTreeItem> navItem(do_QueryInterface(navNav, &rv));
-    NS_ENSURE_SUCCESS( rv, /* void */);
-    if (navItem) {
-      nsCOMPtr<nsIDocShellTreeItem> rootItem;
-      rv = navItem->GetRootTreeItem(getter_AddRefs(rootItem));
-      NS_ENSURE_SUCCESS( rv, /* void */);
-      nsCOMPtr<nsIDOMWindow> rootWin(do_GetInterface(rootItem, &rv));
-      NS_ENSURE_SUCCESS( rv, /* void */);
-      nsCOMPtr<nsIDOMChromeWindow> chromeWin(do_QueryInterface(rootWin, &rv));
-      NS_ENSURE_SUCCESS( rv, /* void */);
-      if (chromeWin) {
-        rv = chromeWin->GetBrowserDOMWindow(getter_AddRefs(bwin));
-        NS_ENSURE_SUCCESS( rv, /* void */);
-      }
-    }
-   
-    if (bwin && uri) {
-      nsCOMPtr<nsIDOMWindow> container;
-      rv = bwin->OpenURI(uri, 0,
-                         nsIBrowserDOMWindow::OPEN_NEWTAB,
-                         nsIBrowserDOMWindow::OPEN_EXTERNAL,
-                         getter_AddRefs(container));
-      NS_ENSURE_SUCCESS( rv, /* void */);
-    }
-  }
-}
-
 // Set our video window. Called when the video sink requires a window to draw
 // on.
 // Note: Called from a GStreamer streaming thread.
@@ -1066,25 +901,16 @@ void sbGStreamerSimple::HandleErrorMessage(GstMessage *message)
   mIsPlayingVideo = PR_FALSE;
   SetFullscreen (PR_FALSE);
 
-  isPluginOrCodecError = ((error->domain == GST_CORE_ERROR &&
-                           error->code == GST_CORE_ERROR_MISSING_PLUGIN) ||
-                          (error->domain == GST_STREAM_ERROR &&
-                           error->code == GST_STREAM_ERROR_CODEC_NOT_FOUND));
+  nsCOMPtr<sbIGStreamerEvent> event = new sbGStreamerErrorEvent(error);
 
-  /* We only show the helper page once - it doesn't give the user any
-   * specific information about what plugins are missing, so showing it
-   * every time is just noise.
-   */
-  if (isPluginOrCodecError && !mHasShownHelperPage) {
-    /* Display the helper page, but only dispatch this from the event loop;
-     * don't directly do this here (works around GStreamer bug #536521)
-     */
-    mHasShownHelperPage = true;
-
-    nsCOMPtr<nsIRunnable> event = NS_NEW_RUNNABLE_METHOD(sbGStreamerSimple,
-            this, ShowHelperPage);
-    NS_DispatchToMainThread(event);
+  for (PRInt32 i = 0; i < mListeners.Count(); i++) {
+    LOG(("Dispatching error event to listener"));
+    nsresult rv = mListeners[i]->OnGStreamerEvent (event);
+    if (NS_FAILED (rv)) {
+      NS_WARNING("GStreamer event listener returned error");
+    }
   }
+
 }
 
 void sbGStreamerSimple::HandleWarningMessage(GstMessage *message)
@@ -1243,3 +1069,32 @@ sbGStreamerSimple::OnVideoCapsSet(GstCaps *caps)
   }
 }
 
+NS_IMETHODIMP sbGStreamerSimple::AddEventListener(sbIGStreamerEventListener *aListener)
+{
+  PRInt32 index = mListeners.IndexOf(aListener);
+  if (index >= 0) {
+    // Listener has already been added, can't re-add.
+    return NS_ERROR_FAILURE;
+  }
+
+  PRBool added = mListeners.AppendObject(aListener);
+  if (added)
+    return NS_OK;
+  else
+    return NS_ERROR_FAILURE;
+}
+
+NS_IMETHODIMP sbGStreamerSimple::RemoveEventListener(sbIGStreamerEventListener *aListener)
+{
+  PRInt32 index = mListeners.IndexOf(aListener);
+  if(index < 0) {
+    // No such listener.
+    return NS_ERROR_FAILURE;
+  }
+
+  PRBool removed = mListeners.RemoveObjectAt(index);
+  if (removed)
+    return NS_OK;
+  else
+    return NS_ERROR_FAILURE;
+}
