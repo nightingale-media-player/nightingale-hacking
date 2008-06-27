@@ -228,13 +228,9 @@
     <!-- **                                                                 ** -->
     <!-- ********************************************************************* -->
 
-    <popupset id="windowPopupSet">
-      <popup id="windowPopupMenu">
-        <menuitem id="alwaysOnTop" 
-          label="&menu.windowpopup.alwaysontop;" 
-          accesskey="&menu.windowpopup.alwaysontop.accesskey;" 
-          type="checkbox"
-          />
+    <popupset id="feathersPopupSet">
+      <popup id="feathersPopupMenu">
+        <sb-feathers-menuitems />
       </popup>
     </popupset>
 

@@ -45,8 +45,14 @@
     <implementation type="application/x-javascript" implements="nsIDOMEventListener">
       <constructor>
       <![CDATA[
-        this._feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
-                                   .getService(Components.interfaces.sbIFeathersManager);
+        this._feathersManager = 
+          Components.classes["@songbirdnest.com/songbird/feathersmanager;1"]
+                    .getService(Components.interfaces.sbIFeathersManager);
+          
+        this._nativeWinManager = 
+          Components.classes["@songbirdnest.com/integration/native-window-manager;1"]
+                    .getService(Components.interfaces.sbINativeWindowManager);
+          
         this._currentLayout = null;
         this._currentSkin = null;
         
@@ -61,6 +67,7 @@
       <destructor>
       <![CDATA[
         this._feathersManager = null;
+        this._nativeWinManager = null;
         this._currentLayout = null;
         this._currentSkin = null;
       ]]>
@@ -120,7 +127,7 @@
            installed and an associatd list of the available views for the 
            current selected feather. The output of this method will create
            a menu that looks like this:
-           
+
            ------------------------------- 
            | Feathers                 >  | -----------------------------
            |-----------------------------| |   Dove                    |
@@ -128,9 +135,13 @@
            |   Min Media Player          | | X Rubber Ducky (default)  |
            |   ...                       | |---------------------------|
            |-----------------------------| | Get More Feathers...      |
-                                           -----------------------------
+             (if supports "ontop" mode:)   -----------------------------
+           |-----------------------------|
+           | X Always On Top             |
+           |-----------------------------|
+                                           
            */
-        
+          
           this._currentLayout = this._feathersManager.currentLayoutURL; 
           this._currentSkin = this._feathersManager.currentSkinName;
 
@@ -152,6 +163,32 @@
           this._addToMenu(allFeathers);
           this._addToMenu(document.createElement("menuseparator"));
           this.appendCurrentFeatherLayoutsSection();
+          
+          // Check to see if "ontop" is supported with the current window manager
+          // and the current layout:
+          if (this._nativeWinManager && this._nativeWinManager.supportsOnTop && 
+              this._feathersManager.canOnTop(this._currentLayout, this._currentSkin))
+          {
+            var isOnTop = this._feathersManager.isOnTop(this._currentLayout,
+                                                        this._currentSkin);
+
+            var ontopLabel = SBString("feathers.alwaysontop", "Always On Top");      
+            var onTopMenuItem = document.createElement("menuitem");
+            onTopMenuItem.setAttribute("label", ontopLabel);
+            onTopMenuItem.setAttribute("type", "checkbox");                   
+            if (isOnTop)                           
+              onTopMenuItem.setAttribute("checked", "true");
+            this._addToMenu(document.createElement("menuseparator"));
+            this._addToMenu(onTopMenuItem);
+            
+            // Popup menuitem closure:   
+            var self = this;
+            this._onTopEventHandlerClosure = function(event) {
+              self._alwaysOnTopEventHandler(event);
+            };
+            
+            onTopMenuItem.addEventListener("command", this._onTopEventHandlerClosure, false);
+          }
 
           var skins = this._enumToArray(this._feathersManager.getSkinDescriptions(), 
                                         Components.interfaces.sbISkinDescription);              
@@ -173,6 +210,19 @@
           }
           this._appendGetMoreFeathers(allFeathersPopup);
         ]]>
+        </body>
+      </method>
+      
+      <method name="_alwaysOnTopEventHandler">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+            var shouldBeOnTop = event.target.getAttribute("checked") == "true";
+            this._nativeWinManager.setOnTop(window, shouldBeOnTop);
+            this._feathersManager.setOnTop(this._currentLayout, 
+                                           this._currentSkin,
+                                           shouldBeOnTop);
+          ]]>
         </body>
       </method>
 

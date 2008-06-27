@@ -805,110 +805,37 @@ function listProperties(obj, objName)
 
 
 /**
- * \brief event handler for the always-on-top menu item
- */
-var alwaysOnTopCommandHandler = {
-  handleEvent: function handleEvent(event) {
-    // get some services
-    var feathersManager = Components.classes[
-      '@songbirdnest.com/songbird/feathersmanager;1']
-      .getService(Components.interfaces.sbIFeathersManager);
-    var nativeWindowManager = Components.classes[
-      '@songbirdnest.com/integration/native-window-manager;1']
-      .getService(Components.interfaces.sbINativeWindowManager);
-   
-    // should we be on top 
-    var onTop = event.target.getAttribute('checked') == "true";
-
-    // tell the window manager if we want to be on top
-    nativeWindowManager.setOnTop(window, onTop);
-
-    // tell the feathers manager if we want to be on top
-    feathersManager.setOnTop(feathersManager.currentLayoutURL, 
-      feathersManager.currentSkinName, onTop);
-  }
-}
-
-
-/**
- * \brief handler for the window menu showing event
- */
-var windowPopupMenuShowingHandler = {
-  handleEvent: function handleEvent(event) {
-    // get the feathers manager
-    var feathersManager = Components.classes[
-      '@songbirdnest.com/songbird/feathersmanager;1']
-      .getService(Components.interfaces.sbIFeathersManager);
-
-    // is this feather on top?
-    var onTop = feathersManager.isOnTop(feathersManager.currentLayoutURL, 
-        feathersManager.currentSkinName);
-
-    // update the menu item state
-    var alwaysOnTopMenuItem = document.getElementById('alwaysOnTop');
-    alwaysOnTopMenuItem.setAttribute('checked', onTop?'true':'false');
-    
-  }
-}
-
-
-/**
  * \brief Handle initialization of layout windows
  */
 function onLayoutLoad(event) {
   // don't leak, plz
   window.removeEventListener('load', onLayoutLoad, false);
 
-  var feathersManager = Components.classes[
-    '@songbirdnest.com/songbird/feathersmanager;1']
-    .getService(Components.interfaces.sbIFeathersManager);
-  if (feathersManager.currentLayoutURL == window.location.href) {
-    // this is the primary window for the current layout
-
-    var alwaysOnTopMenuItem = document.getElementById('alwaysOnTop');
-    if (alwaysOnTopMenuItem) {
-      // the alwaysOnTop menu item exists
-
-      // get the native window manager service
-      var nativeWindowManager = Components.classes[
-        '@songbirdnest.com/integration/native-window-manager;1']
-        .getService(Components.interfaces.sbINativeWindowManager);
-      // can we always-on-top, and do we want to?
-      if (nativeWindowManager && nativeWindowManager.supportsOnTop &&
-          feathersManager.canOnTop(feathersManager.currentLayoutURL, 
-            feathersManager.currentSkinName)) {
-
-        var onTop = feathersManager.isOnTop(feathersManager.currentLayoutURL, 
-            feathersManager.currentSkinName);
-
-        // this feather can go on top let's set the checkbox state correctly
-        alwaysOnTopMenuItem.setAttribute('checked', onTop?'true':'false');
-
-        // add a handler for the menu item
-        alwaysOnTopMenuItem.addEventListener('command', 
-            alwaysOnTopCommandHandler, false);
-
-        // set the always on top state with the window manager
-        nativeWindowManager.setOnTop(window, onTop);
-
-      } else {
-        // if the feather can't go on top then let's hide the menu item
-        alwaysOnTopMenuItem.setAttribute('hidden', 'true');
-      }
+  var feathersMgr = 
+    Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
+              .getService(Components.interfaces.sbIFeathersManager);
+  
+  if (feathersMgr.currentLayoutURL == window.location.href) {
+     // this is the primary window for the current layout
+    var nativeWinMgr = 
+      Components.classes["@songbirdnest.com/integration/native-window-manager;1"]
+      .getService(Components.interfaces.sbINativeWindowManager);
+    
+    // Check to see if "ontop" is supported with the current window manager
+    // and the current layout:
+    if (nativeWinMgr && nativeWinMgr.supportsOnTop &&
+        feathersMgr.canOnTop(feathersMgr.currentLayoutURL, 
+                             feathersMgr.currentSkinName)) 
+    {
+      var isOnTop = feathersMgr.isOnTop(feathersMgr.currentLayoutURL,
+                                        feathersMgr.currentSkinName);
+      
+      nativeWinMgr.setOnTop(window, isOnTop);
     }
-
-    // when the popup menu shows...
-    var windowPopupMenu = document.getElementById('windowPopupMenu');
-    if (windowPopupMenu) {
-      windowPopupMenu.addEventListener('popupshowing', 
-          windowPopupMenuShowingHandler, false);
-    }
-  } else {
-    // this is some window other than the primary window for the current layout
   }
-
 }
 window.addEventListener('load', onLayoutLoad, false);
+
 
 /**
  * \brief Add a "platform" attribute to the current document's root element.

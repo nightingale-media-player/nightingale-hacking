@@ -361,7 +361,7 @@
 
   <binding id="sb-sys-titlebar">
     <content>
-      <xul:sb-draggable sbid="children" class="sb-sys-titlebar-draggable" flex="1">
+      <xul:sb-draggable sbid="children" class="sb-sys-titlebar-draggable" flex="1" xbl:inherits="context">
         <xul:stack>
           <xul:hbox id="sb-sys-titlebar-osx-title" sbid="show_mac" pack="center" flex="1">
             <xul:sb-sys-title id="sb-sys-titlebar-osx-title-title" xbl:inherits="value"/> 
