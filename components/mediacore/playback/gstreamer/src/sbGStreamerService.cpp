@@ -87,6 +87,7 @@ sbGStreamerService::Init()
   nsresult rv;
   NS_NAMED_LITERAL_STRING(kGstPluginSystemPath, "GST_PLUGIN_SYSTEM_PATH");
   NS_NAMED_LITERAL_STRING(kGstRegistry, "GST_REGISTRY");
+  PRBool bundledGst;
 
   nsCOMPtr<nsIEnvironment> envSvc =
     do_GetService("@mozilla.org/process/environment;1", &rv);
@@ -96,52 +97,61 @@ sbGStreamerService::Init()
     do_GetService("@mozilla.org/file/directory_service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-#ifndef GST_SYSTEM
-  // Set the plugin path.  This is gst-plugins in the dist directory
-  nsCOMPtr<nsIFile> pluginDir;
-  rv = directorySvc->Get("resource:app",
-                         NS_GET_IID(nsIFile),
-                         getter_AddRefs(pluginDir));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = pluginDir->Append(NS_LITERAL_STRING("gst-plugins"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString pluginDirStr;
-  rv = pluginDir->GetPath(pluginDirStr);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  LOG(("sbGStreamerService[0x%.8x] - Setting GST_PLUGIN_SYSTEM_PATH=%s", this,
-       NS_LossyConvertUTF16toASCII(pluginDirStr).get()));
-
-  rv = envSvc->Set(kGstPluginSystemPath, pluginDirStr);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = envSvc->Set(NS_LITERAL_STRING("GST_PLUGIN_PATH"), EmptyString());
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Set registry path
-  nsCOMPtr<nsIFile> registryPath;
-  rv = directorySvc->Get(NS_APP_USER_PROFILE_50_DIR,
-                         NS_GET_IID(nsIFile),
-                         getter_AddRefs(registryPath));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = registryPath->Append(NS_LITERAL_STRING("gstreamer-0.10"));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = registryPath->Append(NS_LITERAL_STRING("registry.bin"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString registryPathStr;
-  rv = registryPath->GetPath(registryPathStr);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  LOG(("sbGStreamerService[0x%.8x] - Setting GST_REGISTRY=%s", this,
-       NS_LossyConvertUTF16toASCII(registryPathStr).get()));
-
-  rv = envSvc->Set(kGstRegistry, registryPathStr);
+#if defined(XP_MACOSX) || defined(XP_WIN)
+  bundledGst = PR_TRUE;
+#else
+  // On unix, default to using the system gstreamer; only use the bundled one
+  // if this env var is set.
+  rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_BUNDLED"), &bundledGst);
   NS_ENSURE_SUCCESS(rv, rv);
 #endif
+
+  if (bundledGst) {
+    // Set the plugin path.  This is gst-plugins in the dist directory
+    nsCOMPtr<nsIFile> pluginDir;
+    rv = directorySvc->Get("resource:app",
+                           NS_GET_IID(nsIFile),
+                           getter_AddRefs(pluginDir));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = pluginDir->Append(NS_LITERAL_STRING("gst-plugins"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString pluginDirStr;
+    rv = pluginDir->GetPath(pluginDirStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG(("sbGStreamerService[0x%.8x] - Setting GST_PLUGIN_SYSTEM_PATH=%s", this,
+         NS_LossyConvertUTF16toASCII(pluginDirStr).get()));
+
+    rv = envSvc->Set(kGstPluginSystemPath, pluginDirStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = envSvc->Set(NS_LITERAL_STRING("GST_PLUGIN_PATH"), EmptyString());
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set registry path
+    nsCOMPtr<nsIFile> registryPath;
+    rv = directorySvc->Get(NS_APP_USER_PROFILE_50_DIR,
+                           NS_GET_IID(nsIFile),
+                           getter_AddRefs(registryPath));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = registryPath->Append(NS_LITERAL_STRING("gstreamer-0.10"));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = registryPath->Append(NS_LITERAL_STRING("registry.bin"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString registryPathStr;
+    rv = registryPath->GetPath(registryPathStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG(("sbGStreamerService[0x%.8x] - Setting GST_REGISTRY=%s", this,
+         NS_LossyConvertUTF16toASCII(registryPathStr).get()));
+
+    rv = envSvc->Set(kGstRegistry, registryPathStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
 #ifdef XP_MACOSX
   // XXX This is very bad according to edward!  But we need it until

@@ -35,6 +35,8 @@
 #include <sbLibraryLoaderUtils.h>
 #include <mozilla-config.h>
 
+#include <nsIEnvironment.h>
+
 static char kRealComponent[] = "sbGStreamer" MOZ_DLL_SUFFIX;
 
 extern "C" NS_EXPORT nsresult
@@ -43,6 +45,7 @@ NSGetModule(nsIComponentManager* aCompMgr,
             nsIModule* *aResult)
 {
   nsresult rv;
+  PRBool bundledGst;
 
   // aLocation starts off pointing to this component.
   nsCOMPtr<nsIFile> parent;
@@ -55,19 +58,32 @@ NSGetModule(nsIComponentManager* aCompMgr,
   rv = libDir->SetNativeLeafName(NS_LITERAL_CSTRING("lib"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Load the libraires in this lib dir from the libraries.txt list, unless
-  // this is a gstreamer system build
-#ifndef GST_SYSTEM
-  nsCOMPtr<nsIFile> manifest;
-  rv = parent->Clone(getter_AddRefs(manifest));
+  // Always bundled on OSX, Windows. Default to using the system version
+  // elsewhere, unless SB_GST_BUNDLED is set.
+#if defined(XP_MACOSX) || defined(XP_WIN)
+  bundledGst = PR_TRUE;
+#else
+  nsCOMPtr<nsIEnvironment> envSvc =
+    do_GetService("@mozilla.org/process/environment;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = manifest->AppendNative(NS_LITERAL_CSTRING("gst_libs.txt"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = SB_LoadLibraries(manifest);
+  rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_BUNDLED"), &bundledGst);
   NS_ENSURE_SUCCESS(rv, rv);
 #endif
+
+  if (bundledGst) {
+    // Load the libraries in this lib dir from the gst_libs.txt list,
+    // when we're running against the bundled version of gstreamer.
+    nsCOMPtr<nsIFile> manifest;
+    rv = parent->Clone(getter_AddRefs(manifest));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = manifest->AppendNative(NS_LITERAL_CSTRING("gst_libs.txt"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = SB_LoadLibraries(manifest);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = libDir->AppendNative(NS_LITERAL_CSTRING(kRealComponent));
   NS_ENSURE_SUCCESS(rv, rv);
