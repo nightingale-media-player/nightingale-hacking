@@ -39,6 +39,8 @@
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCID.h>
 
+#include <prprf.h>
+
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 #include <sbIPlaybackHistoryEntry.h>
