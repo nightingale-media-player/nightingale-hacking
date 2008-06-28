@@ -491,6 +491,10 @@ Component.prototype =
         /* Initialize the request services. */
         ITReq.initialize();
 
+        /* Manually start request processing even */
+        /* if an importer listener is not set.    */
+        ITReq.start();
+
         /* Create a handleAppStartupReq function with an object closure. */
         {
             var                     _this = this;

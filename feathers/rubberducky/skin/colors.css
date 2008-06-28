@@ -1598,6 +1598,11 @@ separator[orient="vertical"].groove-thin
   border-left: 1px solid #474948; /** Rubber Highlight */
 }
 
+/* class to allow any element to be "disabled" */
+.can-disable[disabled="true"] {
+  opacity: 0.5;
+}
+
 
 
 /** 

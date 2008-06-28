@@ -28,7 +28,12 @@
 -->
 
 <!-- Import external definitions. -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
 
 <bindings
       xmlns="http://www.mozilla.org/xbl"
@@ -47,15 +52,157 @@
 
   <binding id="sb-first-run-import-media">
 
-    <content>
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
 
-      <xul:hbox anonid="container_box" class="sb-first-run-import-media-box">
-        <xul:label value="First run import media"/>
-      </xul:hbox>
+    <xbl:content
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-    </content>
+      <vbox anonid="container_box" class="sb-first-run-import-media-box">
 
-  </binding>
+        <!-- Header. -->
+        <label class="sb-first-run-header"
+               value="&first_run.import_media.header.label;"/>
+        <description>&first_run.import_media.description;</description>
+
+        <!-- Radio group. -->
+        <radiogroup anonid="import_radiogroup"
+                    class="indent"
+                    oncommand="_doCommand(event);">
+
+          <!-- Import from iTunes radio button. -->
+          <radio anonid="itunes_radio"
+                 label="&first_run.import_media.radio.itunes.label;"/>
+          <description
+            class="indent sb-first-run-import-media-sub-radio can-disable"
+            parentradio="itunes_radio">
+            &first_run.import_media.itunes.description;
+          </description>
+          <checkbox class="indent sb-first-run-import-media-sub-radio"
+                    label="&first_run.import_media.itunes.keep_in_sync.label;"
+                    parentradio="itunes_radio"
+                    checked="true"/>
+
+          <!-- Scan directories radio button. -->
+          <radio anonid="scan_directories_radio"
+                 label="&first_run.import_media.radio.scan_directories.label;"/>
+          <description
+            class="indent sb-first-run-import-media-sub-radio can-disable"
+            parentradio="scan_directories_radio">
+            &first_run.import_media.scan_directories.description;
+          </description>
+          <hbox class="indent">
+            <textbox anonid="scan_directory_textbox"
+                     class="sb-first-run-import-media-scan-directory-textbox"
+                     parentradio="scan_directories_radio"/>
+            <button label="&window.browse;"
+                    parentradio="scan_directories_radio"
+                    action="browse_scan_directory"/>
+          </hbox>
+          <checkbox
+            class="indent sb-first-run-import-media-sub-radio"
+            label="&first_run.import_media.scan_directories.watch.label;"
+            parentradio="scan_directories_radio"
+            checked="true"/>
+
+          <!-- Don't import radio button. -->
+          <radio anonid="dont_import_radio"
+                 label="&first_run.import_media.radio.dont_import.label;"/>
+
+        </radiogroup>
+
+      </vbox>
+
+    </xbl:content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           First-run import media widget services object.
+       -->
+
+      <field name="_widgetSvc"/>
+
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new firstRunImportMediaSvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * Handle the command event specified by aEvent.
+       *
+       * \param aEvent          Command event.
+       -->
+
+      <method name="_doCommand">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          this._widgetSvc.doCommand(aEvent);
+        ]]></body>
+      </method>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the device control services.
+        if (typeof(firstRunImportMediaSvc) == "undefined") {
+          var jsLoader;
+
+          // Get the Javascript sub-script loader services.
+          jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                               .getService
+                                  (Components.interfaces.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript("chrome://songbird/content/scripts/" +
+                                   "firstRun/firstRunImportMedia.js",
+                                 null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+  </binding> <!-- sb-first-run-import-media -->
 
 </bindings>
 

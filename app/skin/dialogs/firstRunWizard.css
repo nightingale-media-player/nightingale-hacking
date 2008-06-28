@@ -46,6 +46,15 @@ Additional styles imported directly by the first run dialog.
   -moz-box-flex: 1;
 }
 
+.sb-first-run-header {
+  font-size: large;
+}
+
+.wizard-page-box {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 /* Add-ons page styles. */
 .sb-first-run-add-ons-box {
   -moz-box-flex: 1;
@@ -72,8 +81,15 @@ Additional styles imported directly by the first run dialog.
 /* Import media page styles. */
 .sb-first-run-import-media-box {
   -moz-box-flex: 1;
-  -moz-box-align: center;
-  -moz-box-pack: center;
+}
+
+.sb-first-run-import-media-sub-radio {
+  font-size: smaller;
+  margin-top: 0;
+}
+
+.sb-first-run-import-media-scan-directory-textbox {
+  -moz-box-flex: 1;
 }
 
 /* Welcome page styles. */

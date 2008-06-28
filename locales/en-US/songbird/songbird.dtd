@@ -529,6 +529,17 @@
 <!-- First-run wizard entities. -->
 <!ENTITY first_run.title                  "&brandShortName; Setup">
 
-<!-- First-run eula enitities. -->
+<!-- First-run eula entities. -->
 <!ENTITY first_run.eula.accept_checkbox.label "I have read and accepted the terms of this license.">
+
+<!-- First-run import media entities. -->
+<!ENTITY first_run.import_media.header.label                 "Import Media">
+<!ENTITY first_run.import_media.description                  "This page will walk you through importing media files into &brandShortName; by attempting to detect your local media. Once Songbird launches you can add additional media in a variety of ways.">
+<!ENTITY first_run.import_media.radio.itunes.label           "Migrate my iTunes Library">
+<!ENTITY first_run.import_media.radio.scan_directories.label "Scan directories on my computer">
+<!ENTITY first_run.import_media.radio.dont_import.label      "Don't import media now">
+<!ENTITY first_run.import_media.itunes.description           "It appears you have iTunes installed. Would you like to import your library into &brandShortName;?">
+<!ENTITY first_run.import_media.itunes.keep_in_sync.label    "Keep &brandShortName; in sync with iTunes">
+<!ENTITY first_run.import_media.scan_directories.description "Would you like &brandShortName; to attempt to import media by scanning specific directories on your computer?">
+<!ENTITY first_run.import_media.scan_directories.watch.label "Watch this folder for changes">
 

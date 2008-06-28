@@ -180,6 +180,51 @@ var DOMUtils = {
   },
 
 
+  /**
+   * Search the children of the element specified by aRootElem for elements
+   * with the attribute specified by aAttrName set to the value specified by
+   * aAttrValue.  Return an array containing all matching elements.
+   * If aAttrValue is not specified, return all elements with the specified
+   * attribute, regardless of value.
+   *
+   * \param aRootElem           Root element from which to start searching.
+   * \param aAttrName           Attribute name to search for.
+   * \param aAttrValue          Attribute value to search for.
+   *
+   * \return                    Array containing found elements.
+   */
+
+  getElementsByAttribute: function DOMUtils_getElementsByAttribute(aRootElem,
+                                                                   aAttrName,
+                                                                   aAttrValue) {
+    // Start searching for elements from the root.
+    var matchList = [];
+    this._getElementsByAttribute(aRootElem, aAttrName, aAttrValue, matchList);
+
+    return matchList;
+  },
+
+  _getElementsByAttribute: function
+                             DOMUtils__getElementsByAttribute(aRootElem,
+                                                              aAttrName,
+                                                              aAttrValue,
+                                                              aMatchList) {
+    // Search each of the children.
+    var childList = aRootElem.childNodes;
+    for (var i = 0; i < childList.length; i++) {
+      // Check the child node for a match.
+      var child = childList[i];
+      if (child.hasAttributes() && child.hasAttribute(aAttrName)) {
+        if (!aAttrValue || (child.getAttribute(aAttrName) == aAttrValue))
+          aMatchList.push(child);
+      }
+
+      // Check each of the child's children.
+      this._getElementsByAttribute(child, aAttrName, aAttrValue, aMatchList);
+    }
+  },
+
+
   //----------------------------------------------------------------------------
   //
   // DOM node destruction services.
