@@ -31,6 +31,9 @@ function runTest() {
   var testItemProperties = 
     { artistName: "A", albumName: "Alpha", trackName: "Track Alpha", trackNumber: "1", year: "2000"};
   
+  var history = Cc["@songbirdnest.com/Songbird/PlaybackHistoryService;1"]
+                  .getService(Ci.sbIPlaybackHistoryService);
+  
   var entry = Cc["@songbirdnest.com/Songbird/PlaybackHistoryEntry;1"]
                 .createInstance(Ci.sbIPlaybackHistoryEntry);
                
@@ -45,4 +48,8 @@ function runTest() {
   assertEqual(entry.item, item);
   assertEqual(entry.timestamp, itemPlayedAt.getTime());
   assertEqual(entry.duration, itemPlayDuration);
+  
+  history.addEntry(entry);
+  
+  history.clear();
 }

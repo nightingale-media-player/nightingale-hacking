@@ -4,13 +4,15 @@ drop table if exists playback_history_entry_annotations;
 
 create table playback_history_entries (
   entry_id integer primary key autoincrement, /*implicit index creation*/
-  library_guid text unique not null,          /*implicit index creation*/
-  media_item_guid text unique not null,       /*implicit index creation*/
+  library_guid text not null,
+  media_item_guid text not null,
   play_time integer not null,
   play_duration integer
 );
 
 create index idx_playback_history_entries_play_time on playback_history_entries (play_time);
+create index idx_playback_history_entries_media_item_guid on playback_history_entries (media_item_guid);
+create index idx_playback_history_entries_library_media_item_guid on playback_history_entries (library_guid, media_item_guid);
 
 create table properties (
   property_id integer primary key autoincrement, /* implicit index creation */

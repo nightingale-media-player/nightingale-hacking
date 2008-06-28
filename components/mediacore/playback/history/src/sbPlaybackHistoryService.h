@@ -38,6 +38,8 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
+#include <sbIDatabaseQuery.h>
+
 class sbPlaybackHistoryService : public sbIPlaybackHistoryService,
                                  public nsIObserver
 {
@@ -56,12 +58,30 @@ public:
 
   NS_METHOD Init();
   
+  nsresult CreateQueries();
+  nsresult CreateDefaultQuery(sbIDatabaseQuery **aQuery);
+
   nsresult EnsureHistoryDatabaseAvailable();
+
+  nsresult FillAddQueryParameters(sbIDatabaseQuery *aQuery,
+                                  sbIPlaybackHistoryEntry *aEntry);
+  nsresult FillAddAnnotationsQueryParameters(sbIDatabaseQuery *aQuery,
+                                             sbIPlaybackHistoryEntry *aEntry);
 
 protected:
   ~sbPlaybackHistoryService();
 
 private:
+  nsString mAddEntryQuery;
+
+  nsString mGetEntryByIndexQuery;
+  nsString mGetEntriesByIndexQuery;
+  nsString mGetEntriesByTimestampQuery;
+
+  nsString mRemoveEntriesByIndexQuery;
+  
+  nsString mRemoveAllEntriesQuery;
+  nsString mRemoveAllAnnotationsQuery;
 
 };
 

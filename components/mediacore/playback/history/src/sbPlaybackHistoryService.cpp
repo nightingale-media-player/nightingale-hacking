@@ -26,19 +26,23 @@
 
 #include "sbPlaybackHistoryService.h"
 
+#include <nsIArray.h>
 #include <nsICategoryManager.h>
 #include <nsIConverterInputStream.h>
 #include <nsIInputStream.h>
 #include <nsILocalFile.h>
 #include <nsIObserverService.h>
 
+#include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCID.h>
 
+#include <sbILibrary.h>
 #include <sbILibraryManager.h>
 #include <sbIPlaybackHistoryEntry.h>
+#include <sbISQLBuilder.h>
 
 #include <DatabaseQuery.h>
 #include <sbSQLBuilderCID.h>
@@ -51,6 +55,21 @@
 #define PLAYBACKHISTORY_DB_GUID "playbackhistory@songbirdnest.com"
 #define SCHEMA_URL \
   "chrome://songbird/content/mediacore/playback/history/playbackhistoryservice.sql"
+
+#define PLAYBACKHISTORY_ENTRIES_TABLE     "playback_history_entries"
+#define PLAYBACKHISTORY_ANNOTATIONS_TABLE "playback_history_entry_annotations"
+#define PLAYBACKHISTORY_PROPERTIES_TABLE  "properties"
+
+#define LIBRARY_GUID_COLUMN     "library_guid"
+#define MEDIA_ITEM_GUID_COLUMN  "media_item_guid"
+#define PLAY_TIME_COLUMN        "play_time"
+#define PLAY_DURATION_COLUMN    "play_duration"
+
+#define ENTRY_ID_COLUMN       "entry_id"
+#define PROPERTY_ID_COLUMN    "property_id"
+#define PROPERTY_NAME_COLUMN  "property_name"
+#define OBJ_COLUMN            "obj"
+#define OBJ_SORTABLE          "obj_sortable"
 
 //------------------------------------------------------------------------------
 // Support Functions
@@ -142,6 +161,121 @@ sbPlaybackHistoryService::Init()
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = CreateQueries();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::CreateQueries()
+{
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  NS_NAMED_LITERAL_STRING(playbackHistoryEntriesTableName, 
+                          PLAYBACKHISTORY_ENTRIES_TABLE);
+
+  NS_NAMED_LITERAL_STRING(playbackHistoryAnnotationsTableName,
+                          PLAYBACKHISTORY_ANNOTATIONS_TABLE);
+  
+  NS_NAMED_LITERAL_STRING(libraryGuidColumn, LIBRARY_GUID_COLUMN);
+  NS_NAMED_LITERAL_STRING(mediaItemGuidColumn, MEDIA_ITEM_GUID_COLUMN);
+  NS_NAMED_LITERAL_STRING(playTimeColumn, PLAY_TIME_COLUMN);
+  NS_NAMED_LITERAL_STRING(playDurationColumn, PLAY_DURATION_COLUMN);
+  
+  nsCOMPtr<sbISQLInsertBuilder> insertBuilder = 
+    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Query for Inserting new Playback History Entries.
+  rv = insertBuilder->SetIntoTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insertBuilder->AddColumn(libraryGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insertBuilder->AddColumn(mediaItemGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insertBuilder->AddColumn(playTimeColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insertBuilder->AddColumn(playDurationColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = insertBuilder->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = insertBuilder->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = insertBuilder->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = insertBuilder->AddValueParameter();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insertBuilder->ToString(mAddEntryQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insertBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Query for Inserting Annotations
+  // XXXAus: PLACEHOLDER
+
+  // Query for Getting Entries by Index
+  // XXXAus: PLACEHOLDER
+
+  // Query for Getting Entries by Timestamp
+  // XXXAus: PLACEHOLDER
+
+  // Query for Deleting Entries by Index
+  // XXXAus: PLACEHOLDER
+
+  // Query for Deleting All Entries
+  nsCOMPtr<sbISQLDeleteBuilder> deleteBuilder =
+    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
+
+  rv = deleteBuilder->SetTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteBuilder->ToString(mRemoveAllEntriesQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Query for Deleting All Annotations
+  rv = deleteBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteBuilder->SetTableName(playbackHistoryAnnotationsTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteBuilder->ToString(mRemoveAllAnnotationsQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbPlaybackHistoryService::CreateDefaultQuery(sbIDatabaseQuery **aQuery)
+{
+  NS_ENSURE_ARG_POINTER(aQuery);
+
+  NS_NAMED_LITERAL_STRING(playbackHistoryDatabaseGUID, 
+                          PLAYBACKHISTORY_DB_GUID);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIDatabaseQuery> query = 
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(playbackHistoryDatabaseGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  query.forget(aQuery);
+
   return NS_OK;
 }
 
@@ -225,6 +359,77 @@ sbPlaybackHistoryService::EnsureHistoryDatabaseAvailable()
   return NS_OK;
 }
 
+nsresult 
+sbPlaybackHistoryService::FillAddQueryParameters(sbIDatabaseQuery *aQuery,
+                                                 sbIPlaybackHistoryEntry *aEntry)
+{
+  NS_ENSURE_ARG_POINTER(aQuery);
+  NS_ENSURE_ARG_POINTER(aEntry);
+
+  nsCOMPtr<sbIMediaItem> item;
+  nsresult rv = aEntry->GetItem(getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> library;
+  rv = item->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString libraryGuid;
+  rv = library->GetGuid(libraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aQuery->BindStringParameter(0, libraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString itemGuid;
+  rv = item->GetGuid(itemGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aQuery->BindStringParameter(1, itemGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRTime timestamp = 0;
+  rv = aEntry->GetTimestamp(&timestamp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  char buf[30];
+  PRUint32 len = PR_snprintf(buf, sizeof(buf), "%lld", timestamp);
+
+  NS_ConvertASCIItoUTF16 timestampString(buf, len);
+  rv = aQuery->BindStringParameter(2, timestampString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRTime duration = 0;
+  rv = aEntry->GetDuration(&duration);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // duration is optional so if it's not present we bind to null instead of 0.
+  if(duration) {
+    len = PR_snprintf(buf, sizeof(buf), "%lld", duration);
+    NS_ConvertASCIItoUTF16 durationString(buf, len);
+    
+    rv = aQuery->BindStringParameter(3, durationString);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = aQuery->BindNullParameter(3);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::FillAddAnnotationsQueryParameters(
+                                           sbIDatabaseQuery *aQuery,
+                                           sbIPlaybackHistoryEntry *aEntry)
+{
+  NS_ENSURE_ARG_POINTER(aQuery);
+  NS_ENSURE_ARG_POINTER(aEntry);
+
+  return NS_OK;
+}
+
 //-----------------------------------------------------------------------------
 // nsIObserver
 //-----------------------------------------------------------------------------
@@ -302,17 +507,68 @@ sbPlaybackHistoryService::AddEntry(sbIPlaybackHistoryEntry *aEntry)
 {
   NS_ENSURE_ARG_POINTER(aEntry);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mAddEntryQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = FillAddQueryParameters(query, aEntry);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: PLACEHOLDER, doesn't do anything yet.
+  rv = FillAddAnnotationsQueryParameters(query, aEntry);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
-sbPlaybackHistoryService::AddEntries(nsIArray *aEntries, 
-                                     nsIArray **_retval)
+sbPlaybackHistoryService::AddEntries(nsIArray *aEntries)
 {
   NS_ENSURE_ARG_POINTER(aEntries);
-  NS_ENSURE_ARG_POINTER(_retval);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("BEGIN"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length = 0;
+  rv = aEntries->GetLength(&length);
+
+  for(PRUint32 current = 0; current < length; ++current) {
+    nsCOMPtr<sbIPlaybackHistoryEntry> entry = 
+      do_QueryElementAt(aEntries, current, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->AddQuery(mAddEntryQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = FillAddQueryParameters(query, entry);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // XXXAus: PLACEHOLDER, doesn't do anything yet.
+    rv = FillAddAnnotationsQueryParameters(query, entry);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = query->AddQuery(NS_LITERAL_STRING("COMMIT"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -376,5 +632,20 @@ sbPlaybackHistoryService::RemoveEntries(nsIArray *aEntries)
 NS_IMETHODIMP 
 sbPlaybackHistoryService::Clear()
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mRemoveAllEntriesQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mRemoveAllAnnotationsQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  return NS_OK;
 }

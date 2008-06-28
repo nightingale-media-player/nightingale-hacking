@@ -42,7 +42,7 @@ interface sbIPropertyArray;
  *
  * Getter methods assume that index 0 is the most recent entry.
  */
-[scriptable, uuid(478bd0a2-9564-4a5f-a1d7-b19b44e96fb8)]
+[scriptable, uuid(687d3779-7fdd-4d15-ac93-8799a01779eb)]
 interface sbIPlaybackHistoryService : nsISupports
 {
   /**
@@ -77,9 +77,10 @@ interface sbIPlaybackHistoryService : nsISupports
   /**
    * \brief Add entries to the playback history service.
    * \param aEntries An array of sbIPlaybackHistoryEntry objects.
-   * \note The array will contain sbIPlaybackHistoryEntry objects.
+   * \throws NS_ERROR_INVALID_ARG when the array does not 
+   *         contain sbIPlaybackHistoryEntry objects.
    */
-  nsIArray addEntries(in nsIArray aEntries);
+  void addEntries(in nsIArray aEntries);
 
   /**
    * \brief Get an entry by index. Negative indexes wrap from the last entry.
