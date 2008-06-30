@@ -210,7 +210,21 @@ button label {
   -moz-image-region: rect(32px 32px 48px 16px);
 }
 
-
+.art {
+  border: 1px inset #000000;
+  margin: 5px;
+  -moz-border-radius: 5px;
+  max-width: 81px;
+  max-height: 81px;
+  height: 81px;
+  width: 81px;
+}
+.art[edited="true"] {
+  border: 1px inset #FFFFA0;
+}
+.art:focus {
+  border: 1px inset #FFFFFF;
+}
 
 /**
 

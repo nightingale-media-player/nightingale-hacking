@@ -246,6 +246,17 @@
                      autocompletesearch="library-distinct-properties"
                      defaultdistinctproperties="Alternative,Blues/R&amp;B,Books&amp;Spoken,Children's Music,Classical,Comedy,Country,Dance,Easy Listening,Electronic,Folk,Hip Hop/Rap,Holiday,House,Industrial,Jazz,New Age,Nerdcore,Podcast,Pop,Reggae,Religious,Rock,Science,Soundtrack,Techno,Trance,Unclassifiable,World"/>  
 
+            <label property-type="label" property="http://songbirdnest.com/data/1.0#comment"/>
+            <!-- Wrap the multiline textbox in a container to that we can
+                 align the enable/disable checkbox that may appear next to it. -->
+            <vbox class="multiline-textbox-container" flex="1">
+              <textbox multiline="true" 
+                       rows="5" 
+                       flex="1"
+                       tabindex="130"
+                       property="http://songbirdnest.com/data/1.0#comment"/>
+            </vbox>
+
             <!-- deferred from 0.6 until supported by sorting algos -->
             <!--label property-type="label" 
                    property="http://songbirdnest.com/data/1.0#isPartOfCompilation"/>
@@ -300,29 +311,17 @@
             <label property-type="label" property="http://songbirdnest.com/data/1.0#rating"/>
             <sb-rating property="http://songbirdnest.com/data/1.0#rating"/>
 
-            <!-- TODO: image
-            <hbox>
-              <image
-                class="art"
-                height="64"
-                width="64"
-                property="http://songbirdnest.com/data/1.0#primaryImageURL"/>
-              <box/>
-            </hbox>-->
+            <label property-type="label"
+                   property="http://songbirdnest.com/data/1.0#primaryImageURL"
+                   value="&trackeditor.artwork.label;"/>
+            <image
+              class="art"
+              property="http://songbirdnest.com/data/1.0#primaryImageURL"
+              tabindex="120"/>
+
           </vbox>
         </hbox>
 
-        <label property-type="label" property="http://songbirdnest.com/data/1.0#comment"/>
-
-        <!-- Wrap the multiline textbox in a container to that we can
-             align the enable/disable checkbox that may appear next to it. -->
-        <vbox class="multiline-textbox-container" flex="1">
-          <textbox multiline="true" 
-                   rows="5" 
-                   flex="1"
-                   tabindex="130"
-                   property="http://songbirdnest.com/data/1.0#comment"/>
-         </vbox>
       </vbox>
 <!-- Lyrics is disabled for 0.6
       <vbox id="lyrics-tab">

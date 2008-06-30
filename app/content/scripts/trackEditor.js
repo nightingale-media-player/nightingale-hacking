@@ -190,7 +190,7 @@ TrackEditorState.prototype = {
    * Note that this does not write back to the selected media items.
    */
   setPropertyValue: function(property, value) {
-    this._ensurePropertyData(property);    
+    this._ensurePropertyData(property);
     this._properties[property].value = value;
     this._properties[property].edited = true;
 
@@ -521,7 +521,7 @@ TrackEditorState.prototype = {
     for each (var listener in this._selectionListeners) {
       listener.onTrackEditorSelectionChange();
     }
-  },
+  }
 }
 
 
@@ -650,6 +650,9 @@ var TrackEditor = {
         wrappedElement = new TrackEditorTextbox(element);
       } else if (element.tagName == "sb-rating") {
         wrappedElement = new TrackEditorRating(element);
+      } else if (element.tagName == "image") {
+        // Setup a TrackEditorArtwork wrappedElement
+        wrappedElement = new TrackEditorArtwork(element);
       }
       
       if (wrappedElement) {
@@ -1074,12 +1077,12 @@ function TrackEditorLabel(element) {
   // If requested, just show the title of the property
   if (element.hasAttribute("property-type") && 
       element.getAttribute("property-type") == "label") {
-    
+
     var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                    .getService(Ci.sbIPropertyManager);
     var propInfo = propMan.getPropertyInfo(element.getAttribute("property"));
-    element.setAttribute("value", propInfo.displayName);   
-    
+    element.setAttribute("value", propInfo.displayName);
+
   } else {
     // Otherwise, this label should show the value of the 
     // property, so call the parent constructor
@@ -1087,8 +1090,8 @@ function TrackEditorLabel(element) {
   }
 }
 TrackEditorLabel.prototype = {
-  __proto__: TrackEditorWidgetBase.prototype,
-};
+  __proto__: TrackEditorWidgetBase.prototype
+}
 
 
 /******************************************************************************
@@ -1290,7 +1293,7 @@ TrackEditorOriginLabel.prototype = {
   onTrackEditorPageImagePropertyChange: function() {
     // TODO: this
   }
-};
+}
 
 /******************************************************************************
  *
@@ -1384,7 +1387,7 @@ TrackEditorInputWidget.prototype = {
     TrackEditorWidgetBase.prototype.onTrackEditorPropertyChange.call(this);
     
     this._checkbox.checked = TrackEditor.state.isPropertyEnabled(this.property);
-  },
+  }
 }
 
 
@@ -1460,7 +1463,7 @@ TrackEditorTextbox.prototype = {
         // If typing the key would make the value too long, prevent keypress
         } else if (this._element.value.length + 1 > this._maxDigits &&
                    this._element.selectionStart == this._element.selectionEnd) {
-          evt.preventDefault();        
+          evt.preventDefault();
         }
       }
     }
@@ -1540,7 +1543,7 @@ TrackEditorTextbox.prototype = {
       if (defvals && defvals != "") {
         param += ";" + defvals;
       }
-      this._element.setAttribute("autocompletesearchparam", param);       
+      this._element.setAttribute("autocompletesearchparam", param);
     }
     
     // Grr, autocomplete textboxes don't handle tabindex, so we have to 
@@ -1630,10 +1633,48 @@ TrackEditorRating.prototype = {
     } 
 
     TrackEditorInputWidget.prototype.onTrackEditorPropertyChange.call(this);
-  },
+  }
 }
 
+/******************************************************************************
+ *
+ * \class TrackEditorArtwork
+ * \brief Extends TrackEditorInputWidget to add an artwork editor
+ *
+ * Binds the given image element
+ *
+ *****************************************************************************/
+function TrackEditorArtwork(element) {
+  
+  TrackEditorInputWidget.call(this, element);
+  
+  var self = this;
+  element.addEventListener("click",
+          function(evt) { self.onClick(evt); }, false);
 
+}
+TrackEditorArtwork.prototype = {
+  __proto__: TrackEditorInputWidget.prototype,
+  
+  onClick: function(aEvent) {
+    this._element.focus();
+  },
+  
+  onTrackEditorPropertyChange: function TrackEditorInputWidget_onTrackEditorPropertyChange() {
+    var value = TrackEditor.state.getPropertyValue(this.property);
+    
+    if (!value || value == "") {
+      value = "chrome://global/skin/no-cover.png";
+    }
+
+    if (value != this._element.getAttribute("value")) {
+      this._element.setAttribute("value", value);
+      this._element.setAttribute("src", value);
+    }
+    
+    this._checkbox.checked = TrackEditor.state.isPropertyEnabled(this.property);
+  }
+}
 
 
 
