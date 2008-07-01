@@ -28,12 +28,18 @@
 -->
 
 <!-- Import external definitions. -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
 
 <bindings
       xmlns="http://www.mozilla.org/xbl"
       xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-      xmlns:xbl="http://www.mozilla.org/xbl">
+      xmlns:xbl="http://www.mozilla.org/xbl"
+      xmlns:html="http://www.w3.org/1999/xhtml">
 
   <!-- *************************************************************************
    *****************************************************************************
@@ -49,9 +55,20 @@
 
     <content>
 
-      <xul:hbox anonid="container_box" class="sb-first-run-welcome-box">
-        <xul:label value="First run welcome"/>
-      </xul:hbox>
+      <xul:vbox anonid="container_box" class="sb-first-run-welcome-box">
+
+        <!-- First-run welcome image. -->
+        <xul:image class="sb-first-run-welcome-image"/>
+
+        <!-- First-run welcome text. -->
+        <xul:description>
+          &first_run.welcome.description.line1;
+          <html:br/>
+          <html:br/>
+          &first_run.welcome.description.line2;
+        </xul:description>
+
+      </xul:vbox>
 
     </content>
 

@@ -99,6 +99,10 @@ Additional styles imported directly by the first run dialog.
   -moz-box-pack: center;
 }
 
+.sb-first-run-welcome-image {
+  list-style-image: url(chrome://songbird-branding/skin/first-run-welcome.png);
+}
+
 
 /* *****************************************************************************
  *

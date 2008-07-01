@@ -543,3 +543,7 @@
 <!ENTITY first_run.import_media.scan_directories.description "Would you like &brandShortName; to attempt to import media by scanning specific directories on your computer?">
 <!ENTITY first_run.import_media.scan_directories.watch.label "Watch this folder for changes">
 
+<!-- First-run welcome entities. -->
+<!ENTITY first_run.welcome.description.line1 "&brandShortName; is a desktop media player mashed-up with the Web.">
+<!ENTITY first_run.welcome.description.line2 "This assistant handles the initial configuration of &brandShortName; and provides a basic introduction to the application&apos;s functionality.">
+
