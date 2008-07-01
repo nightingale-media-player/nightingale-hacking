@@ -37,8 +37,7 @@
 #include "sbLocalDatabaseMediaListViewState.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
-NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbLocalDatabaseLibraryFactory,
-                                         sbLocalDatabaseLibraryFactory::GetInstance)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseLibraryFactory, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseDiffingService)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryLoader)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSimpleMediaListFactory)
@@ -67,7 +66,8 @@ static const nsModuleComponentInfo components[] =
     SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION,
     SB_LOCALDATABASE_LIBRARYFACTORY_CID,
     SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID,
-    sbLocalDatabaseLibraryFactoryConstructor
+    sbLocalDatabaseLibraryFactoryConstructor,
+    sbLocalDatabaseLibraryFactory::RegisterSelf
   },
   {
     SB_LOCALDATABASE_LIBRARYLOADER_DESCRIPTION,
@@ -104,11 +104,4 @@ static const nsModuleComponentInfo components[] =
   }
 };
 
-static void sbLocalDatabaseDestructor(nsIModule *me) {
-  // This object is already destroyed, we just need
-  // to null it out so that the singleton constructor
-  // won't attempt to use a dead instance.
-  gLibraryFactory = nsnull;
-}
-
-NS_IMPL_NSGETMODULE_WITH_DTOR(SongbirdLocalDatabaseLibraryModule, components, sbLocalDatabaseDestructor)
+NS_IMPL_NSGETMODULE(SongbirdLocalDatabaseLibraryModule, components)

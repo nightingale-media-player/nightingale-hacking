@@ -26,6 +26,8 @@
 
 #include "sbLocalDatabaseLibraryFactory.h"
 
+#include <nsIAppStartupNotifier.h>
+#include <nsICategoryManager.h>
 #include <nsIConverterInputStream.h>
 #include <nsIFile.h>
 #include <nsIIOService.h>
@@ -66,8 +68,6 @@
 #define PERMISSIONS_DIRECTORY 0755
 
 #define CONVERTER_BUFFER_SIZE 8192
-
-sbLocalDatabaseLibraryFactory* gLibraryFactory = nsnull;
 
 static nsresult
 CreateDirectory(nsIFile* aDirectory)
@@ -142,23 +142,30 @@ GetDBFolder()
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryFactory, sbILibraryFactory)
 
-/* static */ sbLocalDatabaseLibraryFactory*
-sbLocalDatabaseLibraryFactory::GetInstance()
+/*static*/ NS_METHOD 
+sbLocalDatabaseLibraryFactory::RegisterSelf(nsIComponentManager* aCompMgr,
+                                            nsIFile* aPath,
+                                            const char* aLoaderStr,
+                                            const char* aType,
+                                            const nsModuleComponentInfo *aInfo)
 {
-  if (!gLibraryFactory) {
-    nsRefPtr<sbLocalDatabaseLibraryFactory> factory =
-      new sbLocalDatabaseLibraryFactory();
-    NS_ENSURE_TRUE(factory, nsnull);
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> categoryManager =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    nsresult rv = factory->Init();
-    NS_ENSURE_SUCCESS(rv, nsnull);
+  rv = categoryManager->AddCategoryEntry(APPSTARTUP_CATEGORY,
+                                         SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION,
+                                         "service," 
+                                         SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID,
+                                         PR_TRUE, 
+                                         PR_TRUE, 
+                                         nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    factory.swap(gLibraryFactory);
-    return gLibraryFactory;
-  }
-  NS_ADDREF(gLibraryFactory);
-  return gLibraryFactory;
+  return NS_OK;
 }
+
 
 nsresult
 sbLocalDatabaseLibraryFactory::Init()
