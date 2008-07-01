@@ -679,69 +679,38 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
   
     result = pFile->GetPath(mMetadataPath);
     NS_ENSURE_SUCCESS(result, result);
-  
-    /* Get the metadata file extension. */
-    result = mpURL->GetFileExtension(fileExt);
-    NS_ENSURE_SUCCESS(result, result);
-    ToLowerCase(fileExt);
-  
-    /* Read the metadata using the file extension */
-    /* to determine the metadata format.          */
-    if (fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
-      TagLib::ID3v2::FrameListMap     frameListMap;
-      nsAutoPtr<TagLib::MPEG::File>   pTagFile;
-  
-      /* Get the file path in the proper format for the platform. */
 #if XP_WIN
-      nsAString &filePath = mMetadataPath;
+    nsAString &filePath = mMetadataPath;
 #else
-      nsCAutoString filePath = NS_ConvertUTF16toUTF8(mMetadataPath);
+    nsCAutoString filePath = NS_ConvertUTF16toUTF8(mMetadataPath);
 #endif
-  
-      /* Open and read the metadata file. */
-      pTagFile = new TagLib::MPEG::File();
-      if (!pTagFile)
-        return NS_ERROR_OUT_OF_MEMORY;
-      pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-      pTagFile->open(filePath.BeginReading());
-      if (!pTagFile->isOpen()) {
-        result = NS_ERROR_FAILURE;
-      }
-      
-      if (!NS_FAILED(result)) {
-        pTagFile->read();
-        if (!pTagFile->isValid()) {
-          result = NS_ERROR_FILE_UNKNOWN_TYPE;
-        }
-      }
-  
-      if (!NS_FAILED(result)) {
-        /* Read the base file metadata. */
-        frameListMap = pTagFile->ID3v2Tag()->frameListMap();
-      
-        /*
-         * Extract the requested image from the metadata
-         */
-        TagLib::ID3v2::FrameList l= frameListMap["APIC"];
-        if (!l.isEmpty()){
-          TagLib::ID3v2::FrameList::ConstIterator it = l.begin();
-          TagLib::ID3v2::AttachedPictureFrame *p = 0l;
-          while(it != l.end()){
-            p =  static_cast<TagLib::ID3v2::AttachedPictureFrame *>(l.front());
-            if(p->type() == aType){
-              // Store the size of the data
-              *aDataLen = p->picture().size();
-              // Store the mimeType acquired from the image data
-              // these can sometimes be in a format like "PNG"
-              aMimeType.Assign(p->mimeType().toCString(), p->mimeType().length());
-              
-              // Copy the data over to a mozilla memory chunk so we don't break
-              // Things :).
-              *aData = static_cast<PRUint8 *>(nsMemory::Clone(p->picture().data(),
-                                                              *aDataLen));
-              break;
-            }
-            ++it;
+
+    /* Open and read the metadata file. */
+    TagLib::MPEG::File tagFile(filePath.BeginReading());
+    if (tagFile.ID3v2Tag()) {
+      /*
+       * Extract the requested image from the metadata
+       */
+      TagLib::ID3v2::FrameList frameList= tagFile.ID3v2Tag()->frameList("APIC");
+      if (!frameList.isEmpty()){
+        TagLib::ID3v2::AttachedPictureFrame *p = 0l;
+        for (TagLib::uint frameIndex = 0;
+             frameIndex < frameList.size();
+             frameIndex++) {
+          p =  static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList[frameIndex]);
+          if( p->type() == aType &&
+              p->picture().size() > 0){
+            // Store the size of the data
+            *aDataLen = p->picture().size();
+            // Store the mimeType acquired from the image data
+            // these can sometimes be in a format like "PNG"
+            aMimeType.Assign(p->mimeType().toCString(), p->mimeType().length());
+            
+            // Copy the data over to a mozilla memory chunk so we don't break
+            // Things :).
+            *aData = static_cast<PRUint8 *>(nsMemory::Clone(p->picture().data(),
+                                                            *aDataLen));
+            break;
           }
         }
       }
