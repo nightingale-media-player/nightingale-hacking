@@ -104,7 +104,7 @@ function CoreGStreamerSimple()
   }
   else {
     if (environment.exists("SB_GST_ENABLE")) {
-      var enable = environement.get("SB_GST_ENABLE");
+      var enable = environment.get("SB_GST_ENABLE");
       if (enable == "all")
         this._gstEnableAll = true;
       else {
