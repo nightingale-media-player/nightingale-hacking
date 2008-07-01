@@ -31,6 +31,7 @@
 #include <nsIConverterInputStream.h>
 #include <nsIInputStream.h>
 #include <nsILocalFile.h>
+#include <nsIMutableArray.h>
 #include <nsIObserverService.h>
 
 #include <nsArrayUtils.h>
@@ -47,7 +48,10 @@
 #include <sbISQLBuilder.h>
 
 #include <DatabaseQuery.h>
+#include <sbArray.h>
+#include <sbLibraryCID.h>
 #include <sbSQLBuilderCID.h>
+#include <sbStringUtils.h>
 
 #define NS_APPSTARTUP_CATEGORY           "app-startup"
 #define NS_APPSTARTUP_TOPIC              "app-startup"
@@ -61,7 +65,9 @@
 #define PLAYBACKHISTORY_ENTRIES_TABLE     "playback_history_entries"
 #define PLAYBACKHISTORY_ANNOTATIONS_TABLE "playback_history_entry_annotations"
 #define PLAYBACKHISTORY_PROPERTIES_TABLE  "properties"
+#define PLAYBACKHISTORY_COUNT_ENTRIES     "count(entry_id)"
 
+#define ENTRY_ID_COLUMN         "entry_id"
 #define LIBRARY_GUID_COLUMN     "library_guid"
 #define MEDIA_ITEM_GUID_COLUMN  "media_item_guid"
 #define PLAY_TIME_COLUMN        "play_time"
@@ -166,6 +172,9 @@ sbPlaybackHistoryService::Init()
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRBool success = mLibraries.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
   return NS_OK;
 }
 
@@ -179,12 +188,16 @@ sbPlaybackHistoryService::CreateQueries()
 
   NS_NAMED_LITERAL_STRING(playbackHistoryAnnotationsTableName,
                           PLAYBACKHISTORY_ANNOTATIONS_TABLE);
-  
+
+    NS_NAMED_LITERAL_STRING(playbackHistoryCountEntries, 
+                            PLAYBACKHISTORY_COUNT_ENTRIES);
+
+  NS_NAMED_LITERAL_STRING(entryIdColumn, ENTRY_ID_COLUMN);
   NS_NAMED_LITERAL_STRING(libraryGuidColumn, LIBRARY_GUID_COLUMN);
   NS_NAMED_LITERAL_STRING(mediaItemGuidColumn, MEDIA_ITEM_GUID_COLUMN);
   NS_NAMED_LITERAL_STRING(playTimeColumn, PLAY_TIME_COLUMN);
   NS_NAMED_LITERAL_STRING(playDurationColumn, PLAY_DURATION_COLUMN);
-  
+
   nsCOMPtr<sbISQLInsertBuilder> insertBuilder = 
     do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -226,18 +239,107 @@ sbPlaybackHistoryService::CreateQueries()
   // Query for Inserting Annotations
   // XXXAus: PLACEHOLDER
 
+  // Query for Entry Count
+  nsCOMPtr<sbISQLSelectBuilder> selectBuilder = 
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetBaseTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playbackHistoryCountEntries);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->ToString(mGetEntryCountQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Query for Getting Entries by Index
-  // XXXAus: PLACEHOLDER
+  rv = selectBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetBaseTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), entryIdColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), libraryGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), mediaItemGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playTimeColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playDurationColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddOrder(EmptyString(), playTimeColumn, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetLimitIsParameter(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetOffsetIsParameter(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->ToString(mGetEntriesByIndexQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Same as above, but ascending instead of descending.
+  rv = selectBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetBaseTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), entryIdColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), libraryGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), mediaItemGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playTimeColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playDurationColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddOrder(EmptyString(), playTimeColumn, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetLimitIsParameter(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetOffsetIsParameter(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->ToString(mGetEntriesByIndexQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->ToString(mGetEntriesByIndexQueryAscending);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Query for Getting Entries by Timestamp
   // XXXAus: PLACEHOLDER
 
   // Query for Deleting Entries by Index
-  // XXXAus: PLACEHOLDER
-
-  // Query for Deleting All Entries
   nsCOMPtr<sbISQLDeleteBuilder> deleteBuilder =
     do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //rv = deleteBuilder->SetTableName(playbackHistoryEntriesTableName);
+  //NS_ENSURE_SUCCESS(rv, rv);
+
+  //nsCOMPtr<sbISQLBuilderCriterion> criterion;
+
+  // Query for Deleting All Entries
+  rv = deleteBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deleteBuilder->SetTableName(playbackHistoryEntriesTableName);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -277,6 +379,89 @@ sbPlaybackHistoryService::CreateDefaultQuery(sbIDatabaseQuery **aQuery)
   NS_ENSURE_SUCCESS(rv, rv);
 
   query.forget(aQuery);
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::CreateEntryFromResultSet(sbIDatabaseResult *aResult,
+                                                   PRUint32 aRow,
+                                                   sbIPlaybackHistoryEntry **aEntry)
+{
+  NS_ENSURE_ARG_POINTER(aResult);
+  NS_ENSURE_ARG_POINTER(aEntry);
+
+  PRUint32 rowCount = 0;
+  nsresult rv = aResult->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(aRow < rowCount, NS_ERROR_INVALID_ARG);
+
+  nsString entryId;
+  rv = aResult->GetRowCell(aRow, 0, entryId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString libraryGuid;
+  rv = aResult->GetRowCell(aRow, 1, libraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString mediaItemGuid;
+  rv = aResult->GetRowCell(aRow, 2, mediaItemGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString playTime;
+  rv = aResult->GetRowCell(aRow, 3, playTime);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString playDuration;
+  rv = aResult->GetRowCell(aRow, 4, playDuration);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 timestamp = ToInteger64(playTime, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 duration = ToInteger64(playDuration, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = GetItem(libraryGuid, mediaItemGuid, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPlaybackHistoryEntry> entry;
+  rv = CreateEntry(item, timestamp, duration, nsnull, getter_AddRefs(entry));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  entry.forget(aEntry);
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::CreateEntriesFromResultSet(sbIDatabaseResult *aResult,
+                                                     nsIArray **aEntries)
+{
+  NS_ENSURE_ARG_POINTER(aResult);
+  NS_ENSURE_ARG_POINTER(aEntries);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIMutableArray> mutableArray = 
+    do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
+
+  PRUint32 rowCount = 0;
+  rv = aResult->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 currentRow = 0; currentRow < rowCount; ++currentRow) {
+    nsCOMPtr<sbIPlaybackHistoryEntry> entry;
+    
+    rv = CreateEntryFromResultSet(aResult, currentRow, getter_AddRefs(entry));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mutableArray->AppendElement(entry, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<nsIArray> array = do_QueryInterface(mutableArray);
+  array.forget(aEntries);
 
   return NS_OK;
 }
@@ -432,6 +617,37 @@ sbPlaybackHistoryService::FillAddAnnotationsQueryParameters(
   return NS_OK;
 }
 
+nsresult 
+sbPlaybackHistoryService::GetItem(const nsAString &aLibraryGuid,
+                                  const nsAString &aItemGuid,
+                                  sbIMediaItem **aItem)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbILibrary> library;
+  if(!mLibraries.Get(aLibraryGuid, getter_AddRefs(library))) {
+    nsCOMPtr<sbILibraryManager> libraryManager = 
+      do_GetService(SONGBIRD_LIBRARYMANAGER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = libraryManager->GetLibrary(aLibraryGuid, getter_AddRefs(library));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool success = mLibraries.Put(aLibraryGuid, library);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+  
+  nsCOMPtr<sbIMediaItem> item;
+  rv = library->GetMediaItem(aItemGuid, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  item.forget(aItem);
+
+  return NS_OK;
+}
+
+
 //-----------------------------------------------------------------------------
 // nsIObserver
 //-----------------------------------------------------------------------------
@@ -480,7 +696,37 @@ sbPlaybackHistoryService::GetEntryCount(PRUint64 *aEntryCount)
 {
   NS_ENSURE_ARG_POINTER(aEntryCount);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mGetEntryCountQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Make sure we get one row back
+  NS_ENSURE_TRUE(rowCount == 1, NS_ERROR_UNEXPECTED);
+
+  nsAutoString countStr;
+  rv = result->GetRowCell(0, 0, countStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aEntryCount = ToInteger64(countStr, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -579,7 +825,41 @@ sbPlaybackHistoryService::GetEntryByIndex(PRInt64 aIndex,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 actualIndex = aIndex;
+  if(actualIndex >= 0) {
+    rv = query->AddQuery(mGetEntriesByIndexQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = query->AddQuery(mGetEntriesByIndexQueryAscending);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    actualIndex = PR_ABS(actualIndex) - 1;
+  }
+
+  rv = query->BindInt64Parameter(0, 1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt64Parameter(1, actualIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = CreateEntryFromResultSet(result, 0, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -589,7 +869,41 @@ sbPlaybackHistoryService::GetEntriesByIndex(PRInt64 aStartIndex,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 actualIndex = aStartIndex;
+  if( actualIndex >= 0) {
+    rv = query->AddQuery(mGetEntriesByIndexQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = query->AddQuery(mGetEntriesByIndexQueryAscending);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    actualIndex = PR_ABS(actualIndex) - 1;
+  }
+
+  rv = query->BindInt64Parameter(0, aCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt64Parameter(1, actualIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CreateEntriesFromResultSet(result, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 

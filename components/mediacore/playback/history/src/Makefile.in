@@ -37,10 +37,13 @@ CPP_SRCS = sbPlaybackHistoryEntry.cpp \
            $(NULL)
 
 CPP_INCLUDES = \
-      $(topsrcdir)/components/dbengine/src \
       $(DEPTH)/components/dbengine/public \
+      $(topsrcdir)/components/dbengine/src \
       $(DEPTH)/components/mediacore/playback/history/public \
       $(DEPTH)/components/library/base/public \
+      $(topsrcdir)/components/library/base/src \
+      $(topsrcdir)/components/moz/strings/src \
+      $(topsrcdir)/components/moz/xpcom/src \
       $(DEPTH)/components/property/public \
       $(DEPTH)/components/sqlbuilder/public \
       $(topsrcdir)/components/sqlbuilder/src \

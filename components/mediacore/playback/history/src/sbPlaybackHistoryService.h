@@ -29,6 +29,7 @@
 
 #include <sbIPlaybackHistoryService.h>
 
+#include <nsIArray.h>
 #include <nsIClassInfo.h>
 #include <nsIComponentManager.h>
 #include <nsIFile.h>
@@ -36,9 +37,13 @@
 #include <nsIObserver.h>
 
 #include <nsCOMPtr.h>
+#include <nsHashKeys.h>
+#include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
 
 #include <sbIDatabaseQuery.h>
+#include <sbILibrary.h>
+#include <sbIMediaItem.h>
 
 class sbPlaybackHistoryService : public sbIPlaybackHistoryService,
                                  public nsIObserver
@@ -61,6 +66,13 @@ public:
   nsresult CreateQueries();
   nsresult CreateDefaultQuery(sbIDatabaseQuery **aQuery);
 
+  nsresult CreateEntryFromResultSet(sbIDatabaseResult *aResult,
+                                    PRUint32 aRow,
+                                    sbIPlaybackHistoryEntry **aEntry);
+
+  nsresult CreateEntriesFromResultSet(sbIDatabaseResult *aResult,
+                                      nsIArray **aEntries);
+
   nsresult EnsureHistoryDatabaseAvailable();
 
   nsresult FillAddQueryParameters(sbIDatabaseQuery *aQuery,
@@ -68,21 +80,29 @@ public:
   nsresult FillAddAnnotationsQueryParameters(sbIDatabaseQuery *aQuery,
                                              sbIPlaybackHistoryEntry *aEntry);
 
+  nsresult GetItem(const nsAString &aLibraryGuid,
+                   const nsAString &aItemGuid,
+                   sbIMediaItem **aItem);
+
 protected:
   ~sbPlaybackHistoryService();
 
 private:
   nsString mAddEntryQuery;
 
-  nsString mGetEntryByIndexQuery;
+  nsString mGetEntryCountQuery;
+
   nsString mGetEntriesByIndexQuery;
   nsString mGetEntriesByTimestampQuery;
 
   nsString mRemoveEntriesByIndexQuery;
+  nsString mGetEntriesByIndexQueryAscending;
+  nsString mRemoveAnnotationsByIndexQuery;
   
   nsString mRemoveAllEntriesQuery;
   nsString mRemoveAllAnnotationsQuery;
 
+  nsInterfaceHashtableMT<nsStringHashKey, sbILibrary> mLibraries;
 };
 
 #endif /* __SB_PLAYBACKHISTORYSERVICE_H__ */

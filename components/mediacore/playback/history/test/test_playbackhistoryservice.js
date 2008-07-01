@@ -38,6 +38,11 @@ function runTest() {
                 .createInstance(Ci.sbIPlaybackHistoryEntry);
                
   var library = createLibrary("test_playbackhistoryservice", null, false);
+  
+  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                         .getService(Ci.sbILibraryManager);
+  libraryManager.registerLibrary(library, false);
+  
   var item = library.createMediaItem(testItemURL, testItemProperties);
   
   var itemPlayedAt = new Date();
@@ -50,6 +55,23 @@ function runTest() {
   assertEqual(entry.duration, itemPlayDuration);
   
   history.addEntry(entry);
+
+  var itemPlayedAt2 = new Date();
+  var itemPlayDuration2 = 1000 * 1000 * 999;
+  
+  var entry2 = history.createEntry(item, itemPlayedAt2, itemPlayDuration2, null);
+  history.addEntry(entry2);
+  
+  log("The playback history service has " + history.entryCount + " entries.");
+  assertEqual(history.entryCount, 2);
+  
+  var entry_fromGetEntry = history.getEntryByIndex(0);
+  assertEqual(entry_fromGetEntry.item, item);
+  assertEqual(entry_fromGetEntry.timestamp, itemPlayedAt.getTime());
+  assertEqual(entry_fromGetEntry.duration, itemPlayDuration);
+  
+  var entries = history.getEntriesByIndex(0, 2);
+  assertEqual(entries.length, 2);
   
   history.clear();
 }
