@@ -532,6 +532,14 @@
 <!-- First-run eula entities. -->
 <!ENTITY first_run.eula.accept_checkbox.label "I have read and accepted the terms of this license.">
 
+<!-- First-run feedback entities. -->
+<!ENTITY first_run.feedback.header.label        "Help Make Songbird Better">
+<!ENTITY first_run.feedback.description         "Would you help us make &brandShortName; better by sending us feedback in the form of metrics and surveys on how you use the application?">
+<!ENTITY first_run.feedback.metrics.label       "Collect and send &brandShortName; usage metrics">
+<!ENTITY first_run.feedback.metrics.description "Metrics are completely anonymous and no personal information is collected.">
+<!ENTITY first_run.feedback.survey.label        "Contact me for short surveys">
+<!ENTITY first_run.feedback.survey.description  "We will contact you from time to time with simple, anonymous surveys on how we&apos;re doing through the application.">
+
 <!-- First-run import media entities. -->
 <!ENTITY first_run.import_media.header.label                 "Import Media">
 <!ENTITY first_run.import_media.description                  "This page will walk you through importing media files into &brandShortName; by attempting to detect your local media. Once Songbird launches you can add additional media in a variety of ways.">

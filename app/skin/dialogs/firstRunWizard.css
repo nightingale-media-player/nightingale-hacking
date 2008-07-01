@@ -55,6 +55,11 @@ Additional styles imported directly by the first run dialog.
   padding-right: 10px;
 }
 
+.sb-first-run-checkbox-description {
+  font-size: smaller;
+  margin-top: 0;
+}
+
 /* Add-ons page styles. */
 .sb-first-run-add-ons-box {
   -moz-box-flex: 1;
@@ -74,8 +79,6 @@ Additional styles imported directly by the first run dialog.
 /* Feedback page styles. */
 .sb-first-run-feedback-box {
   -moz-box-flex: 1;
-  -moz-box-align: center;
-  -moz-box-pack: center;
 }
 
 /* Import media page styles. */

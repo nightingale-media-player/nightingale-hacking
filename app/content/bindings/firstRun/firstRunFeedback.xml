@@ -28,7 +28,12 @@
 -->
 
 <!-- Import external definitions. -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
 
 <bindings
       xmlns="http://www.mozilla.org/xbl"
@@ -38,22 +43,94 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
-   * First run feedback widget.
+   * First-run feedback widget.
    *
-   *   This widget provides first run user feedback UI.
+   *   This widget provides first-run user feedback UI.
+   *
+   * Methods:
+   *
+   *   saveSettings             Save the user settings in the first-run wizard
+   *                            page.
    *
    *****************************************************************************
    ************************************************************************* -->
 
   <binding id="sb-first-run-feedback">
 
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
     <content>
 
-      <xul:hbox anonid="container_box" class="sb-first-run-feedback-box">
-        <xul:label value="First run feedback"/>
-      </xul:hbox>
+      <xul:vbox anonid="container_box" class="sb-first-run-feedback-box">
+
+        <!-- Header and description. -->
+        <xul:label class="sb-first-run-header"
+                   value="&first_run.feedback.header.label;"/>
+        <xul:description>
+          &first_run.feedback.description;
+        </xul:description>
+
+        <!-- Options box. -->
+        <xul:vbox anonid="options_box" class="indent">
+
+          <!-- Metrics collection checkbox. -->
+          <xul:checkbox anonid="metrics_checkbox"
+                        label="&first_run.feedback.metrics.label;"
+                        checked="true"/>
+          <xul:description class="indent sb-first-run-checkbox-description">
+            &first_run.feedback.metrics.description;
+          </xul:description>
+
+          <!-- Survey checkbox. -->
+          <xul:checkbox anonid="survey_checkbox"
+                        label="&first_run.feedback.survey.label;"
+                        checked="true"/>
+          <xul:description class="indent sb-first-run-checkbox-description">
+            &first_run.feedback.survey.description;
+          </xul:description>
+
+       </xul:vbox> <!-- options_box -->
+
+      </xul:vbox> <!-- container_box -->
 
     </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Save the user settings in the first-run wizard page.
+       -->
+
+      <method name="saveSettings"><body><![CDATA[
+        // Save the metrics collection setting.
+        var metricsCheckbox =
+              document.getAnonymousElementByAttribute(this,
+                                                      "anonid",
+                                                      "metrics_checkbox");
+        var metricsEnabled = metricsCheckbox.checked ? "1" : "0";
+        Application.prefs.setValue("app.metrics.enabled", metricsEnabled);
+
+        // Save the survey setting.
+        var surveyCheckbox =
+              document.getAnonymousElementByAttribute(this,
+                                                      "anonid",
+                                                      "survey_checkbox");
+        var surveyEnabled = surveyCheckbox.checked ? "1" : "0";
+        Application.prefs.setValue("app.survey.enabled", surveyEnabled);
+      ]]></body></method>
+
+    </implementation>
 
   </binding>
 

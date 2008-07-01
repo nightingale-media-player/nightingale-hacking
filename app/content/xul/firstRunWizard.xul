@@ -68,7 +68,9 @@
               hideback="true"
               hidecancel="true"
               onpageshow="firstRunWizard.doPageShow();">
-    <sb-first-run-eula id="first_run_eula" class="first-run-wizard-page"/>
+    <sb-first-run-eula id="first_run_eula"
+                       class="first-run-wizard-page"
+                       firstrunwizardpage="true"/>
   </wizardpage>
 
   <!-- Locale page. -->
@@ -79,6 +81,7 @@
     <sb-first-run-locale
       id="first_run_locale"
       class="first-run-wizard-page"
+      firstrunwizardpage="true"
       onpagehide="firstRunWizard.doPageHide(event);"
       onlocaleswitchcomplete="firstRunWizard.doLocaleSwitchComplete();"/>
   </wizardpage>
@@ -88,7 +91,9 @@
               label="&first_run.title;"
               hideback="true"
               onpageshow="firstRunWizard.doPageShow();">
-    <sb-first-run-welcome id="first_run_welcome" class="first-run-wizard-page"/>
+    <sb-first-run-welcome id="first_run_welcome"
+                          class="first-run-wizard-page"
+                          firstrunwizardpage="true"/>
   </wizardpage>
 
   <!-- Import media page. -->
@@ -96,14 +101,17 @@
               label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-import-media id="first_run_import_media"
-                               class="first-run-wizard-page"/>
+                               class="first-run-wizard-page"
+                               firstrunwizardpage="true"/>
   </wizardpage>
 
   <!-- Add-ons page. -->
   <wizardpage id="first_run_add_ons_page"
               label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();">
-    <sb-first-run-add-ons id="first_run_add_ons" class="first-run-wizard-page"/>
+    <sb-first-run-add-ons id="first_run_add_ons"
+                          class="first-run-wizard-page"
+                          firstrunwizardpage="true"/>
   </wizardpage>
 
   <!-- Feedback page. -->
@@ -111,7 +119,8 @@
               label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-feedback id="first_run_feedback"
-                           class="first-run-wizard-page"/>
+                           class="first-run-wizard-page"
+                           firstrunwizardpage="true"/>
   </wizardpage>
 
 

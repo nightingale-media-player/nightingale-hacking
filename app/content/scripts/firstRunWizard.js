@@ -83,6 +83,9 @@ var firstRunWizard = {
    */
 
   doUnload: function firstRunWizard_doUnload() {
+    // Indicate that the first-run checks have been made.
+    Application.prefs.setValue("songbird.firstrun.check.0.3", true);
+
     // Indicate that the wizard is complete and whether it should be restarted.
     window.arguments[0].onComplete(this._restartWizard);
   },
@@ -93,8 +96,8 @@ var firstRunWizard = {
    */
 
   doFinish: function firstRunWizard_doFinish() {
-    // Indicate that the wizard is complete and should not be restarted.
-    window.arguments[0].onComplete(false);
+    // Save wizard settings.
+    this._saveSettings();
   },
 
 
@@ -103,8 +106,7 @@ var firstRunWizard = {
    */
 
   doCancel: function firstRunWizard_doCancel() {
-    // Indicate that the wizard is complete and should not be restarted.
-    window.arguments[0].onComplete(false);
+    //XXXeps should any settings be saved (e.g., don't import any media)
   },
 
 
@@ -113,16 +115,6 @@ var firstRunWizard = {
    */
 
   doPageShow: function firstRunWizard_doPageShow() {
-    // Update the UI.
-    this._update();
-  },
-
-
-  /**
-   * Handle a EULA page accept changed event.
-   */
-
-  doEULAAcceptChanged: function firstRunWizard_doEULAAcceptChanged() {
     // Update the UI.
     this._update();
   },
@@ -253,6 +245,28 @@ var firstRunWizard = {
         finishButton.focus();
       else if (!nextButton.hidden)
         nextButton.focus();
+    }
+  },
+
+
+  /**
+   * Save settings from all wizard pages.
+   */
+
+  _saveSettings: function firstRunWizard__saveSettings() {
+    // Get all first-run wizard page elements.
+    var wizardElem = document.getElementById("first_run_wizard");
+    var firstRunWizardPageElemList =
+          DOMUtils.getElementsByAttribute(wizardElem,
+                                          "firstrunwizardpage",
+                                          "true");
+
+    // Save settings for each first-run wizard page.
+    for (var i = 0; i < firstRunWizardPageElemList.length; i++) {
+      // Invoke the page saveSettings method.
+      var firstRunWizardPageElem = firstRunWizardPageElemList[i];
+      if (typeof(firstRunWizardPageElem.saveSettings) == "function")
+        firstRunWizardPageElem.saveSettings();
     }
   }
 };
