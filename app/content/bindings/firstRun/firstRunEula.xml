@@ -28,7 +28,12 @@
 -->
 
 <!-- Import external definitions. -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
 
 <bindings
       xmlns="http://www.mozilla.org/xbl"
@@ -53,20 +58,21 @@
      *
      *********************************************************************** -->
 
-    <content>
+    <xbl:content
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-      <xul:vbox anonid="container_box" class="sb-first-run-eula-box">
+      <vbox anonid="container_box" class="sb-first-run-eula-box">
 
-        <xul:browser anonid="eula_browser"
-                     class="sb-first-run-eula-browser"
-                     src="chrome://songbird/content/html/eula.html"/>
-        <xul:checkbox anonid="accept_checkbox"
-                      label="&first_run.eula.accept_checkbox.label;"
-                      oncommand="_doAcceptChanged();"/>
+        <browser anonid="eula_browser"
+                 class="sb-first-run-eula-browser"
+                 src="chrome://songbird/content/html/eula.html"/>
+        <checkbox anonid="accept_checkbox"
+                  label="&first_run.eula.accept_checkbox.label;"
+                  oncommand="_widgetSvc.doAcceptChanged();"/>
 
-      </xul:vbox>
+      </vbox>
 
-    </content>
+    </xbl:content>
 
 
     <!-- ***********************************************************************
@@ -78,36 +84,12 @@
     <implementation>
 
       <!--
-       * Widget properties.
+       * Private fields.
+       *
+       *   _widgetSvc           First-run EULA widget services object.
        -->
 
-      <property name="accepted">
-        <getter><![CDATA[
-          return (this.getAttribute("accepted") == "true");
-        ]]></getter>
-        <setter><![CDATA[
-          // Check if the accepted setting changed.
-          var acceptChanged = (this.getAttribute("accepted") != val);
-
-          // Set the accepted setting.
-          this.setAttribute("accepted", val);
-          if (this._acceptCheckbox.checked != this.accepted)
-            this._acceptCheckbox.checked = this.accepted;
-
-          // Dispatch an event if the accepted setting changed.
-          if (acceptChanged)
-            this._dispatchEvent(this, "acceptchanged");
-        ]]></setter>
-      </property>
-
-
-      <!--
-        * Private fields.
-        *
-        *   _acceptCheckbox     Accept checkbox element.
-        -->
-
-      <field name="_acceptCheckbox">null</field>
+      <field name="_widgetSvc"/>
 
 
       <!--
@@ -117,61 +99,46 @@
        -->
 
       <constructor> <![CDATA[
-        // Get the accept checkbox element.
-        this._acceptCheckbox =
-          document.getAnonymousElementByAttribute(this,
-                                                  "anonid",
-                                                  "accept_checkbox");
+        // Import external services.
+        this._importExternalServices();
 
-        // Default to not accepted.
-        this.accepted = false;
+        // Create a widget services object.
+        this._widgetSvc = new firstRunEULASvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
       ]]></constructor>
 
 
       <!--
-       * Handle an accept changed event.
+       * destructor
+       *
+       *   This method destroys the widget.
        -->
 
-      <method name="_doAcceptChanged"><body><![CDATA[
-        // Update the accepted property.
-        if (this.accepted != this._acceptCheckbox.checked)
-          this.accepted = this._acceptCheckbox.checked;
-      ]]></body></method>
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
 
 
       <!--
-       * Dispatch the event of type specified by aType with the target specified
-       * by aTarget.
-       *
-       * \param aTarget         Target of the event.
-       * \param aType           Type of event.
+       * Import external services.
        -->
 
-      <method name="_dispatchEvent">
-        <parameter name="aTarget"/>
-        <parameter name="aType"/>
-        <body>
-        <![CDATA[
-          // Create the event.
-          var event = document.createEvent("Events");
-          event.initEvent(aType, true, true);
-
-          // Dispatch to DOM event handlers.
-          var noCancel = aTarget.dispatchEvent(event);
-
-          // Dispatch to XML attribute event handlers.
-          var handler = aTarget.getAttribute("on" + aType);
-          if (handler != "") {
-            var func = new Function("event", handler);
-            var returned = func.apply(aTarget, [event]);
-            if (returned == false)
-              noCancel = false;
-          }
-
-          return noCancel;
-        ]]>
-        </body>
-      </method>
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the first-run EULA widget services.
+        if (typeof(firstRunEULASvc) == "undefined") {
+          var Cc = Components.classes;
+          var Ci = Components.interfaces;
+          var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(Ci.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+            ("chrome://songbird/content/scripts/firstRun/firstRunEula.js",
+             null);
+        }
+      ]]></body></method>
 
     </implementation>
 

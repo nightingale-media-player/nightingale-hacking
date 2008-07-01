@@ -68,9 +68,7 @@
               hideback="true"
               hidecancel="true"
               onpageshow="firstRunWizard.doPageShow();">
-    <sb-first-run-eula id="first_run_eula"
-                       class="first-run-wizard-page"
-                       onacceptchanged="firstRunWizard.doEULAAcceptChanged();"/>
+    <sb-first-run-eula id="first_run_eula" class="first-run-wizard-page"/>
   </wizardpage>
 
   <!-- Locale page. -->

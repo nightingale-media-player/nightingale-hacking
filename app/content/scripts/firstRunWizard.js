@@ -229,12 +229,6 @@ var firstRunWizard = {
     else
       cancelButton.hidden = false;
 
-    // Disable the continue button on the EULA page while EULA is not accepted.
-    if (currentPage.id == "first_run_eula_page") {
-      var firstRunEULAElem = document.getElementById("first_run_eula");
-      wizardElem.canAdvance = firstRunEULAElem.accepted;
-    }
-
     // If showing the first-run locale page and a locale switch is required,
     // switch the locale.  Otherwise, skip the first-run locale page.
     if (currentPage.id == "first_run_locale_page") {
