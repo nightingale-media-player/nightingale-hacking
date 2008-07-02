@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- vim: set sw=2 : -->
 <!--
 /*
 //
@@ -44,15 +45,16 @@
   
   <binding id="volume-slider" extends="chrome://songbird/content/bindings/progressSlider.xml#progress-slider">
 
-   <handlers>
-     <handler event="progressSliderChange" action="this.onTrackVolume();"/>
-     <handler event="progressSliderRelease" action="this.onReleaseVolume();"/>
-   </handlers>
+    <handlers>
+      <handler event="progressSliderChange" action="this.onTrackVolume();"/>
+      <handler event="progressSliderRelease" action="this.onReleaseVolume();"/>
+    </handlers>
 
   <implementation>
 
     <constructor>
-        this.setAttribute("tooltiptext", "&tooltip.control.volume;")
+        /* outside CDATA to get localized entity */
+        this.setAttribute("tooltiptext", "&tooltip.control.volume;");
       <![CDATA[
         if (typeof(SBProperties) == "undefined") {
           Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
@@ -130,9 +132,6 @@
         <![CDATA[
           this.trackingVolume = false;
           this.gPPS.volume = this.value;
-          if (this.value != 0) {
-            this.remote_lastVolume.intValue = this.value;
-          }
         ]]>
       </body>
     </method>
@@ -150,6 +149,16 @@
         ]]>
       </body>
     </method>
+    
+    <!-- override the values in the progress slider to make it track the volume -->
+    <property name="lastValue">
+      <getter>
+        return this.remote_lastVolume.intValue;
+      </getter>
+      <setter>
+        this.remote_lastVolume.intValue = val;
+      </setter>
+    </property>
 
    </implementation>
  
