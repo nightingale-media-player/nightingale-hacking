@@ -327,6 +327,34 @@ sbPlaybackHistoryService::CreateQueries()
   // Query for Getting Entries by Timestamp
   // XXXAus: PLACEHOLDER
 
+  // Query for Getting All Entries
+  rv = selectBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetBaseTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), entryIdColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), libraryGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), mediaItemGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playTimeColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playDurationColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddOrder(EmptyString(), playTimeColumn, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->ToString(mGetAllEntriesQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Query for Deleting Entries by Index
   nsCOMPtr<sbISQLDeleteBuilder> deleteBuilder =
     do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
@@ -339,6 +367,9 @@ sbPlaybackHistoryService::CreateQueries()
   rv = deleteBuilder->CreateMatchCriterionIn(EmptyString(), 
                                             entryIdColumn,
                                             getter_AddRefs(criterionIn));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->Reset();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = selectBuilder->SetBaseTableName(playbackHistoryEntriesTableName);
@@ -789,7 +820,30 @@ sbPlaybackHistoryService::GetEntries(nsISimpleEnumerator * *aEntries)
 {
   NS_ENSURE_ARG_POINTER(aEntries);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mGetAllEntriesQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> array;
+  rv = CreateEntriesFromResultSet(result, getter_AddRefs(array));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = array->Enumerate(aEntries);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 

@@ -142,6 +142,16 @@ interface sbIPlaybackHistoryService : nsISupports
    * \brief Clear all entries from the playback history service.
    */
   void clear();
+
+  /**
+   *
+   */
+  //void addListener(in sbIPlaybackHistoryListener aListener);
+
+  /**
+   *
+   */
+  //void removeListener(in sbIPlaybackHistoryListener aListener);
 };
 
 %{C++

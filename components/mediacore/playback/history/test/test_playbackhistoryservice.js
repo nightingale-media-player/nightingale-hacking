@@ -67,6 +67,23 @@ function runTest() {
     log("The playback history service has " + history.entryCount + " entries.");
     assertEqual(history.entryCount, 2);
     
+    var entriesArray = [entry2, entry];
+    var enumEntries = history.entries;
+
+    // I hate you javascript scoping.    
+    {
+      let i = 0;
+      while(enumEntries.hasMoreElements()) {
+        let entry = enumEntries.getNext()
+                               .QueryInterface(Ci.sbIPlaybackHistoryEntry); 
+        assertEqual(entry.item, entriesArray[i].item);
+        assertEqual(entry.timestamp, entriesArray[i].timestamp);
+        assertEqual(entry.duration, entriesArray[i].duration);
+        
+        ++i;
+      }
+    }
+    
     var entry_fromGetEntry = history.getEntryByIndex(0);
     assertEqual(entry_fromGetEntry.item, item);
     assertEqual(entry_fromGetEntry.timestamp, itemPlayedAt2.getTime());

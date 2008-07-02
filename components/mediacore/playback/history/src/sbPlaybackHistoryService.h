@@ -96,6 +96,7 @@ private:
 
   nsString mGetEntryIDQuery;
 
+  nsString mGetAllEntriesQuery;
   nsString mGetEntriesByIndexQuery;
   nsString mGetEntriesByIndexQueryAscending;
 
