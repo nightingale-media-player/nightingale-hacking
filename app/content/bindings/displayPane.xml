@@ -61,19 +61,15 @@
           <button type="menu" mousethrough="never" class="sb-displaypane-menubutton">
             <menupopup onpopupshowing="return document.getBindingParent(this).buildMenu(event)"
                        anonid="menu">
+                       
               <menuitem label="&menu.displaypane.hide;"
                         anonid="menuitem_hide"/>
               <menuseparator/>
-              <menuitem label="&menu.displaypane.recommended;"
-                        disabled="true" anonid="items_recommended"/>
-              <dummy anonid="items_recommended_start"/>
-              <dummy anonid="items_recommended_end"/>
-              <menu label="&menu.displaypane.other;" anonid="items_all">
-                <menupopup anonid="items_all">
-                  <dummy anonid="items_all_start"/>
-                  <dummy anonid="items_all_end"/>
-                </menupopup>
-              </menu>
+
+              <!-- Placeholders for the registered display panes -->
+              <dummy anonid="display_panes_items_start" />
+              <dummy anonid="display_panes_items_end" />
+
               <menuitem label="&menu.displaypane.get;" oncommand="onMenu(this)"
                         value="songbird.url.addons.displaypanes"/>
             </menupopup>
@@ -253,72 +249,86 @@
         ]]></xbl:setter>
       </xbl:property>
       <xbl:method name="buildMenu">
-        <xbl:parameter name="aEvent"/>
-        <xbl:body><![CDATA[
-        try{
-          // eagerly build the whole menu, since we need to loop through the whole
-          // list anyway
-
-          if (aEvent && aEvent.originalTarget.getAttribute("anonid") != "menu") {
-            // this is a sub-menu event bubbling up
-            return true;
-          }
-          
-          // set the static commands
-          this._getElem("menuitem_hide").setAttribute("oncommand",
-                                                      "document.getElementById('" + this.id + "').hide()");
-          
-          var startRecommend = this._getElem("items_recommended_start");
-          var endRecommend = this._getElem("items_recommended_end");
-          var startAll = this._getElem("items_all_start");
-          var endAll = this._getElem("items_all_end");
-          
-          // remove the previously made items
-          while (startRecommend.nextSibling && startRecommend.nextSibling != endRecommend) {
-            startRecommend.parentNode.removeChild(startRecommend.nextSibling);
-          }
-          while (startAll.nextSibling && startAll.nextSibling != endAll) {
-            startAll.parentNode.removeChild(startAll.nextSibling);
-          }
-          
-          // find the items
-          var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                                  .getService(Components.interfaces.sbIDisplayPaneManager);
-          var recommended = [];
-          var all = [];
-          var enumerator = paneMgr.contentList;
-          var contentGroup = this.contentGroup.toUpperCase();
-          while (enumerator.hasMoreElements()) {
-            var item = enumerator.getNext();
-            item.QueryInterface(Components.interfaces.sbIDisplayPaneContentInfo);
-            var isRecommended = false;
-            var itemGroups = item.suggestedContentGroups.toUpperCase();
-            if (itemGroups.split(";").indexOf(contentGroup) != -1) {
-              recommended.push(item);
-            } else {
-              all.push(item);
+        <xbl:parameter name="aEvent" />
+        <xbl:body>
+          <![CDATA[
+          try {
+            // eagerly build the whole menu, since we need to loop through the whole
+            // list anyway
+            
+            if (aEvent && aEvent.originalTarget.getAttribute("anonid") != "menu") {
+              // this is a sub-menu event bubbling up
+              return true;
             }
-          }
           
-          // sort by title
-          function addonPaneSorter(x, y) {
-            if (x.contentTitle < y.contentTitle) return -1;
-            if (y.contentTitle < x.contentTitle) return 1;
-            return 0;
-          }
+            // set the static commands
+            this._getElem("menuitem_hide").setAttribute("oncommand",
+                                                        "document.getElementById('" + this.id + "').hide()");
           
-          // actually generate the menu items
-          function buildList(aEndMarker, aArray, aBinding, aHeader) {
+            // remove the previously made items
+            var itemsStartDummy = this._getElem("display_panes_items_start");
+            var itemsEndDummy = this._getElem("display_panes_items_end");
+            while (itemsStartDummy.nextSibling && itemsStartDummy.nextSibling != itemsEndDummy) {
+              itemsStartDummy.parentNode.removeChild(itemsStartDummy.nextSibling);
+            }
+          
+            var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                                    .getService(Components.interfaces.sbIDisplayPaneManager);
+            var contentGroup = this.contentGroup.toUpperCase();
+          
+            // Container structure for wrapping recommended flags with the current
+            // content group of this display pane.
+            function DisplayPaneItem(aContentInfo, aIsRecommended) {
+              this.contentInfo = aContentInfo;
+              this.isRecommended = aIsRecommended;
+            }
+            DisplayPaneItem.prototype = {
+              contentInfo: null,
+              isRecommended: false,
+            };
+          
+            // Iterate through the registered display pane items to bind them to
+            // the |DisplayPaneItem| structure.
+            var all = [];
+            var contentInfoEnum = paneMgr.contentList;
+            while (contentInfoEnum.hasMoreElements()) {
+              var curContentInfo = contentInfoEnum.getNext();
+              curContentInfo.QueryInterface(Components.interfaces.sbIDisplayPaneContentInfo);
+            
+              var isCurItemRecommended = false;
+              var itemGroups = curContentInfo.suggestedContentGroups.toUpperCase();
+              if (itemGroups.split(";").indexOf(contentGroup) != -1)
+                isCurItemRecommended = true;
+                          
+              all.push(new DisplayPaneItem(curContentInfo, isCurItemRecommended));
+            }
+          
+            // sort by title
+            function addonPaneSorter(x, y) {
+              if (x.contentInfo.contentTitle < y.contentInfo.contentTitle) return -1;
+              if (y.contentInfo.contentTitle < x.contentInfo.contentTitle) return 1;
+              return 0;
+            }
+            all.sort(addonPaneSorter);
+                          
+            // actually generate menuitems for each |DisplayPaneItem|.
             var shouldInsertSeparator = false;
-            aArray.sort(addonPaneSorter);
-            for each (var item in aArray) {
+            for each (var item in all) {
               var elem = document.createElement("menuitem");
-              elem.setAttribute("label", item.contentTitle);
-              elem.setAttribute("url", item.contentUrl);
-              elem.setAttribute("type", "radio")
-              if (item.contentUrl == aBinding.contentUrl) {
-                elem.setAttribute("checked", true);
+              elem.setAttribute("label", item.contentInfo.contentTitle);
+              elem.setAttribute("url", item.contentInfo.contentUrl);
+              elem.setAttribute("image", item.contentInfo.contentIcon);
+              elem.setAttribute("type", "radio");
+              elem.setAttribute("class", "displaypane-menuitem");
+    
+              if (item.contentInfo.contentUrl == this.contentUrl) {
+                elem.setAttribute("selected", "true");
               }
+            
+              if (item.isRecommended) {
+                elem.setAttribute("recommended", "true");
+              }
+              
               // since the menu item can be cloned, we embed an oncommand
               // that carries enough information to call this binding again
               // with the menu item being used.  This is unfortunately quite ugly.
@@ -331,26 +341,23 @@
                 binding.loadContent(paneinfo);
               }
               elem.setAttribute("oncommand",
-                                "(" + uneval(oncommand) + ")(event, '" + aBinding.id + "')");
-              aEndMarker.parentNode.insertBefore(elem, aEndMarker);
+                                "(" + uneval(oncommand) + ")(event, '" + this.id + "')");
+              itemsEndDummy.parentNode.insertBefore(elem, itemsEndDummy);
 
               shouldInsertSeparator = true;
             }
-            
+          
             // Only draw a separator if we inserted a least one menuitem.
             if (shouldInsertSeparator) {
               var sep = document.createElement("menuseparator");
-              aEndMarker.parentNode.insertBefore(sep, aEndMarker);
+              itemsEndDummy.parentNode.insertBefore(sep, itemsEndDummy);
             }
-              
-            aBinding._getElem(aHeader).collapsed = (aArray.length < 1);
           }
-          buildList(endRecommend, recommended, this, "items_recommended");
-          buildList(endAll, all, this, "items_all");
-        } catch(e) {
-          Components.utils.reportError(e);
-        }
-        ]]></xbl:body>
+          catch (e) {
+            Components.utils.reportError(e);
+          }
+          ]]>
+        </xbl:body>
       </xbl:method>
       <xbl:method name="loadContent">
         <xbl:parameter name="aPaneInfo"/>

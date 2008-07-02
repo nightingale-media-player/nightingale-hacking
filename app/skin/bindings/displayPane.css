@@ -69,12 +69,20 @@ sb-displaypane .favicon {
 .sb-displaypane-menubutton {
   height: 14px;
   padding: 0 2px 0 1px;
-  min-width: 0;
   list-style-image: url(chrome://songbird/skin/icons/displaypane-content-picker.png);
   margin: 0;
+  min-width: 0;
   -moz-border-radius: 0;
   border-left: none;
   border-bottom: none;
+}
+
+menuitem.displaypane-menuitem[selected] {
+  font-weight: bold; 
+}
+
+menuitem.displaypane-menuitem[recommended] {
+  /* empty for now */ 
 }
 
 .sb-displaypane-label {
