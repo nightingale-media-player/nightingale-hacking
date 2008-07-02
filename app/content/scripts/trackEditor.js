@@ -1078,10 +1078,12 @@ function TrackEditorLabel(element) {
   if (element.hasAttribute("property-type") && 
       element.getAttribute("property-type") == "label") {
 
-    var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                   .getService(Ci.sbIPropertyManager);
-    var propInfo = propMan.getPropertyInfo(element.getAttribute("property"));
-    element.setAttribute("value", propInfo.displayName);
+    if (element.getAttribute("value") == "") {
+      var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                     .getService(Ci.sbIPropertyManager);
+      var propInfo = propMan.getPropertyInfo(element.getAttribute("property"));
+      element.setAttribute("value", propInfo.displayName);
+    }
 
   } else {
     // Otherwise, this label should show the value of the 
@@ -1648,30 +1650,103 @@ function TrackEditorArtwork(element) {
   
   TrackEditorInputWidget.call(this, element);
   
-  var self = this;
-  element.addEventListener("click",
-          function(evt) { self.onClick(evt); }, false);
-
+  this._replaceLabel = SBString("trackeditor.artwork.replace");
+  this._addLabel = SBString("trackeditor.artwork.add");
+  this._createButton();
 }
 TrackEditorArtwork.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
+  _button: null,
+  _replaceLabel: null,
+  _addLabel: null,
   
-  onClick: function(aEvent) {
-    this._element.focus();
+  /**
+   * \brief Changes the value of the image property only if it different.
+   * \param newValue string of the uri to set this property to.
+   */
+  _imageSrcChange: function TrackEditorArtwork__imageSrcChange(newValue) {
+    var oldValue = TrackEditor.state.getPropertyValue(this.property);
+    
+    if (newValue != oldValue) {
+      // This will call onTrackEditorPropertyChange
+      TrackEditor.state.setPropertyValue(this.property, newValue);
+
+      // Auto-enable property write-back
+      if (!TrackEditor.state.isPropertyEnabled(this.property)) {
+        TrackEditor.state.setPropertyEnabled(this.property, true);
+      }
+    }
+  },
+
+  /**
+   * \brief Creates a button attached to this image so that the user can
+   *        select an image from the file system
+   */
+  _createButton: function TrackEditorArtwork__createButton() {
+    this._button = document.createElement("button");
+    var vbox = document.createElement("vbox");
+    this._element.parentNode.replaceChild(vbox, this._element);
+    
+    // In order for tabbing to work in the desired order
+    // we need to apply tabindex to all elements.
+    if (this._element.hasAttribute("tabindex")) {
+      var value = parseInt(this._element.getAttribute("tabindex")) + 1;
+      this._button.setAttribute("tabindex", value);
+    }
+
+    var self = this;
+    this._button.addEventListener("command", 
+      function() { self.onButtonCommand(); }, false);
+    
+    vbox.appendChild(this._element);
+    vbox.appendChild(this._button);
+  },
+
+  /**
+   * \brief Called when the user clicks the button, we then pop up a file
+   *        picker for them to choose an image file.
+   */
+  onButtonCommand: function TrackEditorArtwork_onButtonCommand() {
+    // Open the file picker
+    var filePicker = Cc["@mozilla.org/filepicker;1"]
+                       .createInstance(Ci.nsIFilePicker);
+    var windowTitle = SBString("trackeditor.filepicker.title");
+    filePicker.init( window, windowTitle, Ci.nsIFilePicker.modeOpen);
+    filePicker.appendFilters(Ci.nsIFilePicker.filterImages);
+    var fileResult = filePicker.show();
+    if (fileResult == Ci.nsIFilePicker.returnOK) {
+      this._imageSrcChange("file://" + filePicker.file.path);
+    }
   },
   
-  onTrackEditorPropertyChange: function TrackEditorInputWidget_onTrackEditorPropertyChange() {
+  onTrackEditorPropertyChange: function TrackEditorArtwork_onTrackEditorPropertyChange() {
     var value = TrackEditor.state.getPropertyValue(this.property);
+
+    if(!value || value == "") {
+      this._imageSrcChange("chrome://global/skin/no-cover.png");
+      return;
+    }
     
-    if (!value || value == "") {
-      value = "chrome://global/skin/no-cover.png";
+    if (value == "chrome://global/skin/no-cover.png") {
+      this._button.setAttribute("label", this._addLabel);
+    } else {
+      this._button.setAttribute("label", this._replaceLabel);
     }
 
     if (value != this._element.getAttribute("value")) {
       this._element.setAttribute("value", value);
       this._element.setAttribute("src", value);
     }
-    
+
+    // Indicate if this property has been edited
+    if (TrackEditor.state.isPropertyEdited(this.property)) {
+      if (!this._element.hasAttribute("edited")) {
+        this._element.setAttribute("edited", "true");
+      }
+    } else if (this._element.hasAttribute("edited")) {
+      this._element.removeAttribute("edited"); 
+    }
+
     this._checkbox.checked = TrackEditor.state.isPropertyEnabled(this.property);
   }
 }
