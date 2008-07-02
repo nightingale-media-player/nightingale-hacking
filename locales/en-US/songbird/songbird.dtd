@@ -9,6 +9,8 @@
 <!ENTITY window.cancel      "Cancel" >
 <!ENTITY window.browse      "Browse..." >
 <!ENTITY window.save        "Save">
+<!ENTITY window.yes         "Yes">
+<!ENTITY window.no          "No">
 
 <!-- Mac system menu -->
 <!ENTITY menu.mac.exit                  "Quit &brandShortName;" >
@@ -34,6 +36,7 @@
 <!ENTITY menu.file.open         "Open a File..." >
 <!ENTITY menu.file.url          "Open from URL..." >
 <!ENTITY menu.file.playlist     "Import a Playlist..." >
+<!ENTITY menu.file.library      "Import a Library..." >
 <!ENTITY menu.file.newtab       "New Tab" >
 <!ENTITY menu.file.closetab     "Close Tab" >
 <!ENTITY menu.file.scan         "Scan for Media..." >
@@ -268,6 +271,7 @@
 <!ENTITY menu.file.open.accesskey         "O" >
 <!ENTITY menu.file.url.accesskey          "U" >
 <!ENTITY menu.file.playlist.accesskey     "I" >
+<!ENTITY menu.file.library.accesskey      "P" >
 <!ENTITY menu.file.newtab.accesskey       "T" >
 <!ENTITY menu.file.closetab.accesskey     "C" >
 <!ENTITY menu.file.scan.accesskey         "M" >
@@ -554,4 +558,16 @@
 <!-- First-run welcome entities. -->
 <!ENTITY first_run.welcome.description.line1 "&brandShortName; is a desktop media player mashed-up with the Web.">
 <!ENTITY first_run.welcome.description.line2 "This assistant handles the initial configuration of &brandShortName; and provides a basic introduction to the application&apos;s functionality.">
+
+<!-- Import library dialog and preference pane entities. -->
+<!ENTITY import_library.dialog.title                      "Import a library">
+<!ENTITY import_library.prefs.title                       "Import">
+<!ENTITY import_library.library_file_label                "Library File:">
+<!ENTITY import_library.auto_import_checkbox              "Check for changes to iTunes library when Songbird launches">
+<!ENTITY import_library.auto_import_no_query_checkbox     "Initiate import without notification">
+<!ENTITY import_library.dont_import_playlists_checkbox    "Do not update playlists (Update songs only)">
+<!ENTITY import_library.unsupported_media_alert_checkbox  "Alert me when unsupported tracks or playlists are not imported">
+<!ENTITY import_library.unsupported_media_alert           "Some tracks were in an unsupported format.  These were not imported.">
+<!ENTITY import_library.prefs.path_group_caption          "Library Path">
+<!ENTITY import_library.prefs.options_group_caption       "Import Options">
 

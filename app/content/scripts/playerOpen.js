@@ -330,6 +330,15 @@ try
     return mediaList;
   }
 
+  function SBLibraryOpen( parentWindow )
+  {
+    SBOpenModalDialog("chrome://songbird/content/xul/importLibrary.xul",
+                      "",
+                      "chrome,centerscreen",
+                      null,
+                      parentWindow);
+  }
+
   function log(str)
   {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
