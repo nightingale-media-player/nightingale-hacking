@@ -79,6 +79,8 @@ public:
                                   sbIPlaybackHistoryEntry *aEntry);
   nsresult FillAddAnnotationsQueryParameters(sbIDatabaseQuery *aQuery,
                                              sbIPlaybackHistoryEntry *aEntry);
+  nsresult FillRemoveEntryQueryParameters(sbIDatabaseQuery *aQuery,
+                                          sbIPlaybackHistoryEntry *aEntry);
 
   nsresult GetItem(const nsAString &aLibraryGuid,
                    const nsAString &aItemGuid,
@@ -92,11 +94,17 @@ private:
 
   nsString mGetEntryCountQuery;
 
+  nsString mGetEntryIDQuery;
+
   nsString mGetEntriesByIndexQuery;
+  nsString mGetEntriesByIndexQueryAscending;
+
   nsString mGetEntriesByTimestampQuery;
+  nsString mGetEntriesByTimestampQueryAscending;
+
+  nsString mRemoveEntriesQuery;
 
   nsString mRemoveEntriesByIndexQuery;
-  nsString mGetEntriesByIndexQueryAscending;
   nsString mRemoveAnnotationsByIndexQuery;
   
   nsString mRemoveAllEntriesQuery;

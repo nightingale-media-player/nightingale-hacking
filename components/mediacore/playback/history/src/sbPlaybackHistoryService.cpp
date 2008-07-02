@@ -318,10 +318,10 @@ sbPlaybackHistoryService::CreateQueries()
   rv = selectBuilder->SetOffsetIsParameter(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = selectBuilder->ToString(mGetEntriesByIndexQuery);
+  rv = selectBuilder->ToString(mGetEntriesByIndexQueryAscending);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = selectBuilder->ToString(mGetEntriesByIndexQueryAscending);
+  rv = selectBuilder->Reset();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Query for Getting Entries by Timestamp
@@ -332,10 +332,68 @@ sbPlaybackHistoryService::CreateQueries()
     do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //rv = deleteBuilder->SetTableName(playbackHistoryEntriesTableName);
-  //NS_ENSURE_SUCCESS(rv, rv);
+  rv = deleteBuilder->SetTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  //nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  nsCOMPtr<sbISQLBuilderCriterionIn> criterionIn; 
+  rv = deleteBuilder->CreateMatchCriterionIn(EmptyString(), 
+                                            entryIdColumn,
+                                            getter_AddRefs(criterionIn));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetBaseTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), entryIdColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionLibraryGuid;
+  rv = selectBuilder->CreateMatchCriterionParameter(
+                              EmptyString(), 
+                              libraryGuidColumn,
+                              sbISQLBuilder::MATCH_EQUALS,
+                              getter_AddRefs(criterionLibraryGuid));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionMediaItemGuid;
+  rv = selectBuilder->CreateMatchCriterionParameter(
+                              EmptyString(), 
+                              mediaItemGuidColumn,
+                              sbISQLBuilder::MATCH_EQUALS,
+                              getter_AddRefs(criterionMediaItemGuid));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionPlayTime;
+  rv = selectBuilder->CreateMatchCriterionParameter(
+                              EmptyString(), 
+                              playTimeColumn,
+                              sbISQLBuilder::MATCH_EQUALS,
+                              getter_AddRefs(criterionPlayTime));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionLeft;
+  rv = selectBuilder->CreateAndCriterion(criterionLibraryGuid, 
+                                         criterionMediaItemGuid,
+                                         getter_AddRefs(criterionLeft));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionRight;
+  rv = selectBuilder->CreateAndCriterion(criterionLeft,
+                                         criterionPlayTime,
+                                         getter_AddRefs(criterionRight));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddCriterion(criterionRight);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = criterionIn->AddSubquery(selectBuilder);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteBuilder->AddCriterion(criterionIn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteBuilder->ToString(mRemoveEntriesQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Query for Deleting All Entries
   rv = deleteBuilder->Reset();
@@ -613,6 +671,49 @@ sbPlaybackHistoryService::FillAddAnnotationsQueryParameters(
 {
   NS_ENSURE_ARG_POINTER(aQuery);
   NS_ENSURE_ARG_POINTER(aEntry);
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::FillRemoveEntryQueryParameters(sbIDatabaseQuery *aQuery,
+                                                         sbIPlaybackHistoryEntry *aEntry)
+{
+  NS_ENSURE_ARG_POINTER(aQuery);
+  NS_ENSURE_ARG_POINTER(aEntry);
+
+  nsCOMPtr<sbIMediaItem> item;
+  nsresult rv = aEntry->GetItem(getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> library;
+  rv = item->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString libraryGuid;
+  rv = library->GetGuid(libraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aQuery->BindStringParameter(0, libraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString itemGuid;
+  rv = item->GetGuid(itemGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aQuery->BindStringParameter(1, itemGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRTime timestamp = 0;
+  rv = aEntry->GetTimestamp(&timestamp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  char buf[30];
+  PRUint32 len = PR_snprintf(buf, sizeof(buf), "%lld", timestamp);
+
+  NS_ConvertASCIItoUTF16 timestampString(buf, len);
+  rv = aQuery->BindStringParameter(2, timestampString);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -921,20 +1022,53 @@ sbPlaybackHistoryService::RemoveEntry(sbIPlaybackHistoryEntry *aEntry)
 {
   NS_ENSURE_ARG_POINTER(aEntry);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ConvertUTF16toUTF8 log(mRemoveEntriesQuery);
+
+  rv = query->AddQuery(mRemoveEntriesQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = FillRemoveEntryQueryParameters(query, aEntry);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
 sbPlaybackHistoryService::RemoveEntryByIndex(PRInt64 aIndex)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbIPlaybackHistoryEntry> entry;
+  
+  nsresult rv = GetEntryByIndex(aIndex, getter_AddRefs(entry));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RemoveEntry(entry);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
 sbPlaybackHistoryService::RemoveEntriesByIndex(PRInt64 aStartIndex, 
                                                PRUint64 aCount)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<nsIArray> entries;
+  
+  nsresult rv = GetEntriesByIndex(aStartIndex, aCount, getter_AddRefs(entries));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RemoveEntries(entries);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -942,7 +1076,38 @@ sbPlaybackHistoryService::RemoveEntries(nsIArray *aEntries)
 {
   NS_ENSURE_ARG_POINTER(aEntries);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length = 0;
+  rv = aEntries->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("BEGIN"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 current = 0; current < length; ++current) {
+    nsCOMPtr<sbIPlaybackHistoryEntry> entry = 
+      do_QueryElementAt(aEntries, current, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->AddQuery(mRemoveEntriesQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = FillRemoveEntryQueryParameters(query, entry);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = query->AddQuery(NS_LITERAL_STRING("COMMIT"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 

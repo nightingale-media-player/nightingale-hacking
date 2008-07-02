@@ -62,8 +62,8 @@ DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
 
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4 \
-                            xpcom \
                             xpcomglue_s \
+                            xpcom \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
