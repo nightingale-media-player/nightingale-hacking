@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<!-- Import library prefs overlay. -->
+<overlay id="import_library_prefpane_overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <!-- Import library preference pane. -->
+  <prefpane id="import_library_prefpane"
+            onpaneload="importLibraryPrefs.doPaneLoad();">
+
+    <!-- Library path preference controls. -->
+    <groupbox>
+
+      <!-- Library path preference group caption. -->
+      <caption label="&import_library.prefs.path_group_caption;"/>
+
+      <!-- Library path box. -->
+      <hbox id="import_library_path_box">
+
+        <!-- Library path text box. -->
+        <label value="&import_library.library_file_label;"/>
+        <textbox id="import_library_path_textbox"/>
+
+        <!-- Browse button. -->
+        <button id="import_library_browse_button" label="&window.browse;"/>
+
+      </hbox>
+
+    </groupbox>
+
+    <!-- Library import options group. -->
+    <groupbox>
+
+      <!-- Library import options group caption. -->
+      <caption label="&import_library.prefs.options_group_caption;"/>
+
+      <!-- Checkbox for startup auto import. -->
+      <checkbox id="import_library_auto_import_checkbox"
+                label="&import_library.auto_import_checkbox;"/>
+
+      <!-- Checkbox for auto import query. -->
+      <checkbox id="import_library_auto_import_no_query_checkbox"
+                label="&import_library.auto_import_no_query_checkbox;"
+                class="indent"/>
+
+      <!-- Checkbox for playlist import. -->
+      <checkbox id="import_library_dont_import_playlist_checkbox"
+                label="&import_library.dont_import_playlists_checkbox;"/>
+
+      <!-- Checkbox for alerting user on unsupported media. -->
+      <checkbox id="import_library_unsupported_media_alert_checkbox"
+                label="&import_library.unsupported_media_alert_checkbox;"/>
+
+    </groupbox>
+
+  </prefpane>
+
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the import library preferences pane services. -->
+  <script
+    type="application/x-javascript"
+    src="chrome://songbird/content/scripts/preferences/importLibraryPrefs.js"/>
+
+</overlay>
+

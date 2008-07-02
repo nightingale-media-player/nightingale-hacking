@@ -67,3 +67,23 @@ listheader
   padding-bottom: 4px;
 }
 
+
+/*
+ * Import library prefs styles.
+ */
+
+/* Import library prefs image. */
+radio[pane=import_library_prefpane] {
+  list-style-image: url(chrome://songbird/skin/preferences/import-library-prefs.png);
+}
+
+/* Import library prefs library path box style. */
+#import_library_path_box {
+  -moz-box-align: center;
+}
+
+/* Import library prefs library path text box style. */
+#import_library_path_textbox {
+  -moz-box-flex: 1;
+}
+
