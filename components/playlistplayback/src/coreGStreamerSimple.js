@@ -30,6 +30,8 @@
  * \sa sbICoreWrapper.idl coreBase.js
  */
 
+Components.utils.import("resource://app/components/StringUtils.jsm");
+
 // Helper function to get a platform string.
 function getPlatformString() 
 {
@@ -148,6 +150,8 @@ CoreGStreamerSimple.prototype.playURL = function ( aURL )
 {
   this._verifyObject();
   this._checkURL(aURL);
+
+  this._hasShownHelpPrompt = false;
 
   if (!aURL) {
     throw Components.results.NS_ERROR_INVALID_ARG;
@@ -565,21 +569,8 @@ CoreGStreamerSimple.prototype.onStopRequest = function(request, context, status)
   }
 };
 
-CoreGStreamerSimple.prototype.handleMissingPlugin = function ()
-{
-  // A specific plugin is missing. This generally means GStreamer is improperly
-  // installed (if we're using system gstreamer), or that something is very
-  // broken (if we're using the bundled gstreamer).
-  this.promptUserForHelp();
-}
-
-CoreGStreamerSimple.prototype.handleCodecNotFound = function ()
-{
-  // No plugin to handle this media type was found. Tell the user where to look?
-  this.promptUserForHelp()
-}
-
-CoreGStreamerSimple.prototype.promptUserForHelp = function ()
+CoreGStreamerSimple.prototype.promptUserForHelp = function (dialogTitle, 
+        dialogText, checkBoxLabel, helpUrl)
 {
   var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                         .getService(Components.interfaces.nsIPrefBranch);
@@ -589,24 +580,14 @@ CoreGStreamerSimple.prototype.promptUserForHelp = function ()
   if (skip || this._hasShownHelpPrompt)
     return;
 
-  // We only show the help prompt once per run.
+  // We only show the help prompt once per URL - so that multiple errors from
+  // a single URL don't get shown (usually the latter ones are useless - e.g.
+  // 'internal data flow error)
   this._hasShownHelpPrompt = true;
 
   var promptService = Components.classes[
       "@mozilla.org/embedcomp/prompt-service;1"]
       .getService(Components.interfaces.nsIPromptService);
-
-  var stringBundle = Components.classes["@mozilla.org/intl/stringbundle;1"].
-        getService(Components.interfaces.nsIStringBundleService).
-        createBundle("chrome://songbird/locale/songbird.properties");
-
-  function L10N(key) {
-    try {
-      return stringBundle.GetStringFromName(key);
-    } catch (e) {
-      Components.utils.reportError(e);
-    }
-  }
 
   var neverPromptAgain = { value: false };
 
@@ -618,24 +599,17 @@ CoreGStreamerSimple.prototype.promptUserForHelp = function ()
 
   var promptResult = promptService.confirmEx(
           mainWindow,
-          L10N("mediacore.gstreamer.plugin.missing.title"),
-          L10N("mediacore.gstreamer.plugin.missing.text"),
+          dialogTitle,
+          dialogText,
           Components.interfaces.nsIPromptService.STD_YES_NO_BUTTONS,
           null, null, null, // button labels (use defaults)
-          L10N("mediacorecheck.dialog.skipCheckboxLabel"),
+          checkBoxLabel,
           neverPromptAgain);
 
   prefs.setBoolPref("songbird.skipGStreamerHelp", neverPromptAgain.value);
 
   if (promptResult == 0) {
     // User clicked 'yes' - we should show them the help webpage.
-    var ioService =  Components.classes[
-              "@mozilla.org/network/io-service;1"]
-              .getService(Components.interfaces.nsIIOService);
-    var helpUrl = L10N("mediacore.gstreamer.plugin.helpUrl");
-
-    // This is excessively complex! Also, if you type things slightly wrong,
-    // it'll tend to crash the js interpreter, yay!
     var browserDOMWindow = mainWindow.
         getInterface(Components.interfaces.nsIWebNavigation).
         QueryInterface(Components.interfaces.nsIDocShellTreeItem).
@@ -645,7 +619,10 @@ CoreGStreamerSimple.prototype.promptUserForHelp = function ()
         QueryInterface(Components.interfaces.nsIDOMChromeWindow).
         browserDOMWindow;
 
-    var uri = ioService.newURI(helpUrl, null, null);
+    var uri =  Components.classes[
+              "@mozilla.org/network/io-service;1"]
+              .getService(Components.interfaces.nsIIOService)
+              .newURI(helpUrl, null, null);
     browserDOMWindow.openURI(uri, null, 
             Components.interfaces.nsIBrowserDOMWindow.OPEN_NEWTAB,
             Components.interfaces.nsIBrowserDOMWindow.OPEN_EXTERNAL);
@@ -659,25 +636,63 @@ CoreGStreamerSimple.prototype.handleUnknownType = function ()
 
 CoreGStreamerSimple.prototype.onGStreamerEvent = function (gstreamerEvent)
 {
+  // Hrm.. should we have different checkboxes/prefs for each type of error?
+  var checkboxLabel = SBString("mediacorecheck.dialog.skipCheckboxLabel");
+  var helpUrl = SBString("mediacore.gstreamer.plugin.helpUrl");
+  var showDialog = true;
+
   if (gstreamerEvent.type == 
           gstreamerEvent.EVENT_ERROR_CORE_MISSING_PLUGIN)
   {
-    this.handleMissingPlugin();
+    // A (specific) plugin is missing. Probably an installation issue.
+    var title = SBString("mediacore.gstreamer.plugin.missing.title");
+    var text = SBFormattedString("mediacore.gstreamer.plugin.missing.text",
+            [gstreamerEvent.message]);
   }
   else if (gstreamerEvent.type == 
                 gstreamerEvent.EVENT_ERROR_STREAM_CODEC_NOT_FOUND)
   {
-    this.handleCodecNotFound();
+    // An appropriate plugin couldn't be found. Probably this format isn't
+    // supported without downloading more plugins/addons.
+    var title = SBString("mediacore.gstreamer.plugin.codecnotfound.title");
+    var text = SBFormattedString(
+            "mediacore.gstreamer.plugin.codecnotfound.text", 
+            [gstreamerEvent.message]);
+  }
+  else if (gstreamerEvent.type == gstreamerEvent.EVENT_ERROR_RESOURCE_BUSY)
+  {
+    // Resource was busy. Usually this means that we don't have a software
+    // mixer, and the hardware is busy, or there's no free Xv port for video,
+    // etc.
+    var title = SBString("mediacore.gstreamer.resource.busy.title");
+    var text = SBFormattedString("mediacore.gstreamer.resource.busy.text", 
+            [gstreamerEvent.message]);
+  }
+  else if (gstreamerEvent.type >= gstreamerEvent.EVENT_ERROR_RESOURCE_BASE &&
+           gstreamerEvent.type < gstreamerEvent.EVENT_ERROR_STREAM_BASE)
+  {
+    // Some other resource error. Usually this means that the resource can't
+    // be read for some reason (doesn't exist, or permissions lacking, etc).
+    var title = SBString("mediacore.gstreamer.resource.error.title");
+    var text = SBFormattedString("mediacore.gstreamer.resource.error.text", 
+            [gstreamerEvent.message]);
   }
   else if (gstreamerEvent.type >= gstreamerEvent.EVENT_ERROR_FIRST &&
            gstreamerEvent.type <= gstreamerEvent.EVENT_ERROR_LAST)
   {
-    // Some other error has occurred. Not handled yet.
+    // Some other error has occurred. No specific handling yet.
+    var title = SBString("mediacore.gstreamer.generic.error.title");
+    var text = SBFormattedString("mediacore.gstreamer.generic.error.text", 
+            [gstreamerEvent.message]);
   }
   else {
     // Some non-error event has occurred.
     // We don't have any of these yet.
+    showDialog = false;
   }
+
+  if (showDialog)
+    this.promptUserForHelp(title, text, checkboxLabel, helpUrl);
 }
 
 CoreGStreamerSimple.prototype.initCore = function(gstSimple)

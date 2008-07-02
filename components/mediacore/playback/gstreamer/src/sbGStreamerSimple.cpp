@@ -175,7 +175,6 @@ sbGStreamerSimple::sbGStreamerSimple() :
   mIsAtEndOfStream(PR_TRUE),
   mIsPlayingVideo(PR_FALSE),
   mLastErrorCode(0),
-  mLastErrorDomain(0),
   mBufferingPercent(0),
   mIsUsingPlaybin2(PR_FALSE),
   mLastVolume(0),
@@ -896,7 +895,6 @@ void sbGStreamerSimple::HandleErrorMessage(GstMessage *message)
 
   g_free(debug);
 
-  mIsAtEndOfStream = PR_TRUE;
   mBufferingPercent = 0;
   mIsPlayingVideo = PR_FALSE;
   SetFullscreen (PR_FALSE);
@@ -911,6 +909,10 @@ void sbGStreamerSimple::HandleErrorMessage(GstMessage *message)
     }
   }
 
+  // Set this _after_ the listeners are done, not before. Allows the
+  // listeners to do useful things before we try to move onto the next
+  // URL.
+  mIsAtEndOfStream = PR_TRUE;
 }
 
 void sbGStreamerSimple::HandleWarningMessage(GstMessage *message)

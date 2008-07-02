@@ -104,7 +104,6 @@ private:
   PRBool mIsAtEndOfStream;
   PRBool mIsPlayingVideo;
   PRInt32 mLastErrorCode;
-  PRInt32 mLastErrorDomain;
   PRUint16 mBufferingPercent;
 
   PRBool mIsUsingPlaybin2;
