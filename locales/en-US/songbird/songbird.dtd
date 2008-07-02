@@ -244,25 +244,6 @@
 <!ENTITY menu.view                "View" >
 <!ENTITY about.version            "Version" >
 
-<!ENTITY setup.title              "&brandShortName; Setup Options" >
-<!ENTITY setup.retrievingxpilist  "Retrieving add-ons list. Please wait...">
-<!ENTITY setup.networkerror1      "Unable to retrieve add-ons list.  Please change your ">
-<!ENTITY setup.networkerror2      "Connection Settings">
-<!ENTITY setup.networkerror3      " or continue &brandShortName; Setup by clicking 'OK'.">
-<!ENTITY setup.metrics.optin      "Send anonymous usage metrics." >
-<!ENTITY setup.metrics.info       "Help us make &brandShortName; better by sending us metrics on how you use it.  Metrics are completely anonymous and no personal information is collected.">
-<!ENTITY setup.optionalextensions "Recommended Add-ons">
-<!ENTITY setup.defaultlanguage    "Default Language">
-<!ENTITY setup.privacy            "Privacy">
-<!ENTITY setupprogress.pleasewait "Please wait..." >
-<!ENTITY setupprogress.cancel     "Cancel">
-
-<!ENTITY setup.noupdate.header "This version of &brandShortName; is not compatible with your existing media library.">
-<!ENTITY setup.noupdate.description "&brandShortName; has created a new, empty media library.  Your existing library has not been deleted, but it cannot be imported into or used by this version of &brandShortName;.">
-<!ENTITY setup.noupdate.link_label "Details">
-
-<!ENTITY setup.groupbox.width "386">
-
 <!ENTITY menu.file.accesskey              "F" >
 <!ENTITY menu.file.new.accesskey          "N" >
 <!ENTITY menu.file.smart.accesskey        "S" >

@@ -95,17 +95,9 @@ appInit.onScriptInit = function()
     return;
   }
   
-  // Show EULA, then the first run (if accepted) or exit (if rejected)
-  var environment = Cc["@mozilla.org/process/environment;1"]
-                      .getService(Ci.nsIEnvironment);
-  if ( environment.exists( "SONGBIRD_FIRST_RUN_WIZARD" ) ) {
-    if ( doFirstRun() ) {
-      doMainwinStart();
-    }
-  } else {
-    if ( doEULA( doFirstRun, quitApp ) ) {
-      doMainwinStart();
-    }
+  // Show the first-run wizard
+  if ( doFirstRun() ) {
+    doMainwinStart();
   }
 }
 window.addEventListener("load", appInit.onLoad, false);
@@ -221,59 +213,6 @@ function doMainwinStart()
   feathersManager.openPlayerWindow();
 }
 
-// doEULA
-//
-// If it has not already been accepted, show the EULA and ask the user to
-//   accept. If it is not accepted we call or eval the aCancelAction, if
-//   it is accepted we call/eval aAcceptAction. The processing of the
-//   actions happens in a different scope (eula.xul) so the best way
-//   is to pass functions in that get called, instead of js.
-// returns false if the main window should not be opened as we are showing
-//   the EULA and awaitng acceptance by the user
-// returns true if the EULA has already been accepted previously
-function doEULA(aAcceptAction, aCancelAction)
-{
-  dump("doEULA\n");
-
-  //SB_LOG("doEULA");
-  // set to false just to be cautious
-  var retval = false;
-  try { 
-    // setup the callbacks
-    var eulaData = new Object();
-    eulaData.acceptAction = aAcceptAction;
-    eulaData.cancelAction = aCancelAction;
-
-    var eulaCheck = false;
-    try {
-      eulaCheck = gPrefs.getBoolPref("songbird.eulacheck");
-    } catch (err) { /* prefs throws an exepction if the pref is not there */ }
-
-    if ( !eulaCheck ) {
-      var eulaWindow =
-        window.openDialog("chrome://songbird/content/xul/eula.xul",
-                          "eula",
-                          "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
-                          eulaData );
-      eulaWindow.focus();
-
-      // We do not want to open the main window until we know EULA is accepted
-      return false;
-    }
-    // Eula has been previously accepted, move along, move along.
-    retval = true;  // if no accept action, just return true
-    if (aAcceptAction) {
-      if (typeof(aAcceptAction) == "function")
-        retval = aAcceptAction();
-      else
-        retval = eval(aAcceptAction);
-    }
-  } catch (err) {
-    SB_LOG("doEula", "" + err);
-  }
-  return retval; 
-}
-
 // doFirstRun
 //
 // Check the pref to see if this is the first run. If so, launch the firstrun
@@ -285,8 +224,14 @@ function doEULA(aAcceptAction, aCancelAction)
 //   main window on exit.
 function doFirstRun()
 {
-  dump("doFirstRun\n");
-    
+  // Skip first-run if allowed (debug mode) and set to skip
+  if (Application.prefs.getValue("songbird.first_run.allow_skip", false)) {
+    var environment = Cc["@mozilla.org/process/environment;1"]
+                        .getService(Ci.nsIEnvironment);
+    if (environment.exists("SONGBIRD_SKIP_FIRST_RUN"))
+      return true;
+  }
+
   try {
     var haveRun = false;
     try {
@@ -300,21 +245,11 @@ function doFirstRun()
       data.document = document;
 
       // This cannot be modal it will block the download of extensions
-      var environment = Cc["@mozilla.org/process/environment;1"]
-                          .getService(Ci.nsIEnvironment);
-      if ( environment.exists( "SONGBIRD_FIRST_RUN_WIZARD" ) ) {
-        window.openDialog
-                 ( "chrome://songbird/content/xul/firstRunWizard.xul",
-                   "firstrun",
-                   "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
-                   data );
-      } else {
-        window.openDialog
-                 ( "chrome://songbird/content/xul/firstRun.xul",
-                   "firstrun",
-                   "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
-                   data );
-      }
+      window.openDialog
+               ( "chrome://songbird/content/xul/firstRunWizard.xul",
+                 "firstrun",
+                 "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
+                 data );
 
       // Do not open main window until the non-modal first run dialog returns
       return false;
