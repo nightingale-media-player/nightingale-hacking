@@ -44,6 +44,8 @@ const SONGBIRD_PLAYLISTPLAYBACK_CID = Components.ID("{e1c06940-077d-4b66-b70d-71
 const SONGBIRD_COREWRAPPER_CONTRACTID = "@songbirdnest.com/Songbird/CoreWrapper;1";
 const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbirdnest.com/Songbird/DataRemote;1";
 const SONGBIRD_PLAYLISTREADERMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistReaderManager;1";
+const SONGBIRD_PLAYBACKHISTORYSERVICE_CONTRACTID = "@songbirdnest.com/Songbird/PlaybackHistoryService;1";
+const SONGBIRD_PLAYBACKHISTORYENTRY_CONTRACTID = "@songbirdnest.com/Songbird/PlaybackHistoryEntry;1";
 
 // String Bundles
 const URI_SONGBIRD_PROPERTIES = "chrome://songbird/locale/songbird.properties";
@@ -55,7 +57,7 @@ const sbIPlaylistPlayback      = Components.interfaces.sbIPlaylistPlayback;
 const sbIPlaylistReaderManager = Components.interfaces.sbIPlaylistReaderManager;
 const sbIMediaListView         = Components.interfaces.sbIMediaListView;
 
-const DEBUG = false;
+const DEBUG = true;
 
 // number of milliseconds for timer calling the playback loop
 const LOOP_DURATION = 250;
@@ -389,7 +391,13 @@ PlaylistPlayback.prototype = {
    * future, DO NOT RELY ON IT BEING AROUND.
    */
    _deviceTempDirectoriesForCleanup: [],
-  
+   
+  /**
+   * Playback History Service and support data.
+   */
+  _playbackHistory: null,
+  _historyPlayStartTime: 0,
+    
   /**
    * ---------------------------------------------
    * Private Methods
@@ -403,6 +411,11 @@ PlaylistPlayback.prototype = {
     try {
       // Attach all the sbDataRemote objects (via XPCOM!)
       this._attachDataRemotes();
+      
+      // Get playback history service
+      this._playbackHistory = Cc[SONGBIRD_PLAYBACKHISTORYSERVICE_CONTRACTID]
+                                .getService(Ci.sbIPlaybackHistoryService);
+      
       LOG("Songbird PlaylistPlayback Service loaded successfully");
     } catch( err ) {
       LOG( "!!! ERROR: sbPlaylistPlayback _init\n\n" + err + "\n" );
@@ -920,7 +933,7 @@ PlaylistPlayback.prototype = {
         core.play()
       } else {
         this.playView( this._playingView, 
-                       (this.currentIndex != -1) ? this.currentIndex : 0);
+                       (this.currentIndex != -1) ? this.currentIndex : -1);
       }
     }
     // Otherwise figure out the default action
@@ -933,20 +946,29 @@ PlaylistPlayback.prototype = {
   },
   
   playView: function(aView, aIndex) {
-    // XXXnewlib
-    if (!(aView && aIndex >= 0))
+    if (!aView)
       throw Components.results.NS_ERROR_INVALID_ARG;
+
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
+    var noPreviousView = !this._playingView;
     this._playingView = aView;
+
+    LOG("playView: noPreviousView? " + noPreviousView);
+    LOG("playView: index? " + aIndex);
+
+    // First time playing this view and shuffle not triggered.
+    if (noPreviousView &&
+        aIndex == -1 &&
+        this._shuffle.boolValue &&
+        !this._shuffleWasTriggered) {
+      aIndex = this._shufflerGetNextTrack();
+    }
 
     if (aIndex < 0) {
       aIndex = 0;
-      if (this._shuffle.boolValue) {
-        aIndex = this._shufflerGetNextTrack();
-      }
     }
     
     // pull metadata and filters from aSourceRef
@@ -1085,7 +1107,7 @@ PlaylistPlayback.prototype = {
       
 //    if ( ! this.playing )
 //      return;
-      
+
     // Ask the core very nicely to please stop.  Won't happen immediately.
     core.stop();
     
@@ -1110,7 +1132,7 @@ PlaylistPlayback.prototype = {
 */    
     this._playingVideo.boolValue = false;
     this._controlTriggered.stringValue = Date.now();
-
+    
     // Notify listeners of stop
     this._listeners.forEach(function(aListener) {
       try {
@@ -1574,6 +1596,7 @@ PlaylistPlayback.prototype = {
     
     var nowActuallyPlaying = this._playing.boolValue && 
                              !this._paused.boolValue;
+    
     this._metricsPlayStateCheck(wasActuallyPlaying, nowActuallyPlaying);
   },
 
@@ -1831,8 +1854,15 @@ PlaylistPlayback.prototype = {
     }
     else if (this._hasIncPlayCount) {
       this._playingItem.setProperty(SBProperties.lastPlayTime, Date.now());
-    }
 
+      var playDuration = Date.now() - this._historyPlayStartTime;
+      var entry = this._playbackHistory.createEntry(this._playingItem,
+                                                    this._historyPlayStartTime,
+                                                    playDuration, 
+                                                    null);
+      this._playbackHistory.addEntry(entry);
+      this._historyPlayStartTime = 0;
+    }
 
     // Get the index of the item that just finished from the view using the
     // stored view item UID.  This is so we can determine the "next" track
@@ -1910,7 +1940,8 @@ PlaylistPlayback.prototype = {
                                    .getService(Components.interfaces.sbILibraryManager);
     var view = LibraryUtils.createStandardMediaListView(libraryManager.mainLibrary);
     if (view.length > 0) {
-      this.playView(view, 0);
+      LOG("Playing default");
+      this.playView(view, -1);
     }
   },
   
@@ -2019,10 +2050,15 @@ PlaylistPlayback.prototype = {
     var availableIndexesLength = this._shuffleData.availableIndexes.length;
     var shuffleIndex = -1;
     
-    dump("\n\n" + this._shuffleData.position + " : " + (indexesLength - 1) + "\n\n");
+    LOG("view length: " + length);
+    LOG(this._shuffleData.position + " : " + (indexesLength - 1));
+    LOG("consumed indexes: " + indexesLength + "\navailable indexes: " + availableIndexesLength);
+    LOG("current shuffle position: " + this._shuffleData.position);
     
     // Check to see if we're in the shuffler history or not.
-    if ( this._shuffleData.position != (indexesLength - 1) ) {
+    if ( this._shuffleData.position != (indexesLength - 1) &&
+         indexesLength > 0 ) {
+      LOG("picking from the shuffle history");
       // We are indeed in the shuffler history, 
       // let's grab the next one in the list.
       this._shuffleData.position++;
@@ -2030,6 +2066,8 @@ PlaylistPlayback.prototype = {
       
       // Don't forget to tell everyone that shuffle was triggered.
       this._shuffleWasTriggered = true;
+      
+      LOG("Picked shuffle index: " + shuffleIndex);
       
       return shuffleIndex;
     }
@@ -2048,7 +2086,9 @@ PlaylistPlayback.prototype = {
     }
     
     shuffleIndex = Math.floor( availableIndexesLength * Math.random() );
+    LOG("Picked shuffle index: " + shuffleIndex);
     var actualIndex = this._shuffleData.availableIndexes[shuffleIndex];
+    LOG("Actual shuffle index: " + actualIndex);
 
     this._shuffleData.indexes.push(actualIndex);
     this._shuffleData.availableIndexes.splice(shuffleIndex, 1);
@@ -2093,6 +2133,8 @@ PlaylistPlayback.prototype = {
   // return true if what we are currently playing is not what the
   // shuffle data has been constructed for
   _shuffleViewChanged: function sbPlaylistPlayback_shuffleViewChanged() {
+    if (!this._playingView)
+      return true;
     if (this._playingView != this._shuffleData.shuffleView) 
       return true;
     if (this._playingView.length != this._shuffleData.shuffleView.length)
@@ -2274,10 +2316,11 @@ PlaylistPlayback.prototype = {
   _metricsStartPlaying: function PPS_metricsStartPlaying() {
     if (this._playStartTime == 0) {
       this._playStartTime = new Date().getTime();
+      this._historyPlayStartTime = this._playStartTime;
     }
   },
 
-  _metricsStopPlaying: function PPS_metricsStartPlaying() {
+  _metricsStopPlaying: function PPS_metricsStopPlaying() {
     if (this._playStartTime != 0) {
       var timeNow = new Date().getTime();
       var seconds = ( (timeNow - this._playStartTime) / 1000 );
