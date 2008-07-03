@@ -287,7 +287,7 @@ sbPlaybackHistoryService::CreateQueries()
   rv = selectBuilder->ToString(mGetEntriesByIndexQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Same as above, but ascending instead of descending.
+  // Query for Getting Entries by Index, Ascending.
   rv = selectBuilder->Reset();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -325,7 +325,88 @@ sbPlaybackHistoryService::CreateQueries()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Query for Getting Entries by Timestamp
-  // XXXAus: PLACEHOLDER
+  rv = selectBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetBaseTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), entryIdColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), libraryGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), mediaItemGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playTimeColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playDurationColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddOrder(EmptyString(), playTimeColumn, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionPlayTimeMin;
+  rv = selectBuilder->CreateMatchCriterionParameter(
+                                          EmptyString(), 
+                                          playTimeColumn,
+                                          sbISQLBuilder::MATCH_GREATEREQUAL,
+                                          getter_AddRefs(criterionPlayTimeMin));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionPlayTimeMax;
+  rv = selectBuilder->CreateMatchCriterionParameter(
+                                          EmptyString(), 
+                                          playTimeColumn,
+                                          sbISQLBuilder::MATCH_LESSEQUAL,
+                                          getter_AddRefs(criterionPlayTimeMax));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionPlayTimeRange;
+  rv = selectBuilder->CreateAndCriterion(criterionPlayTimeMin,
+                                         criterionPlayTimeMax,
+                                         getter_AddRefs(criterionPlayTimeRange));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddCriterion(criterionPlayTimeRange);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->ToString(mGetEntriesByTimestampQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Query for Getting Entries by Timestamp, Ascending.
+  rv = selectBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetBaseTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), entryIdColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), libraryGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), mediaItemGuidColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playTimeColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), playDurationColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddOrder(EmptyString(), playTimeColumn, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddCriterion(criterionPlayTimeRange);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->ToString(mGetEntriesByTimestampQueryAscending);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Query for Getting All Entries
   rv = selectBuilder->Reset();
@@ -1068,7 +1149,46 @@ sbPlaybackHistoryService::GetEntriesByTimestamp(PRInt64 aStartTimestamp,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  PRBool isAscending = aStartTimestamp > aEndTimestamp;
+  
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!isAscending) {
+    rv = query->AddQuery(mGetEntriesByTimestampQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt64Parameter(0, aStartTimestamp);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt64Parameter(1, aEndTimestamp);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = query->AddQuery(mGetEntriesByTimestampQueryAscending);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt64Parameter(0, aEndTimestamp);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt64Parameter(1, aStartTimestamp);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CreateEntriesFromResultSet(result, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -1079,8 +1199,6 @@ sbPlaybackHistoryService::RemoveEntry(sbIPlaybackHistoryEntry *aEntry)
   nsCOMPtr<sbIDatabaseQuery> query;
   nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ConvertUTF16toUTF8 log(mRemoveEntriesQuery);
 
   rv = query->AddQuery(mRemoveEntriesQuery);
   NS_ENSURE_SUCCESS(rv, rv);

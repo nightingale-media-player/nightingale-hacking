@@ -58,7 +58,7 @@ function runTest() {
     
     history.addEntry(entry);
 
-    var itemPlayedAt2 = new Date();
+    var itemPlayedAt2 = new Date().getTime() + 10000;
     var itemPlayDuration2 = 1000 * 1000 * 999;
     
     var entry2 = history.createEntry(item, itemPlayedAt2, itemPlayDuration2, null);
@@ -84,9 +84,19 @@ function runTest() {
       }
     }
     
+    {
+      let entries = history.getEntriesByTimestamp(itemPlayedAt, itemPlayedAt + 1);
+      assertEqual(entries.length, 1);
+      
+      let entry = entries.queryElementAt(0, Ci.sbIPlaybackHistoryEntry);
+      assertEqual(entry.item, item);
+      assertEqual(entry.timestamp, itemPlayedAt.getTime());
+      assertEqual(entry.duration, itemPlayDuration);
+    }
+    
     var entry_fromGetEntry = history.getEntryByIndex(0);
     assertEqual(entry_fromGetEntry.item, item);
-    assertEqual(entry_fromGetEntry.timestamp, itemPlayedAt2.getTime());
+    assertEqual(entry_fromGetEntry.timestamp, itemPlayedAt2);
     assertEqual(entry_fromGetEntry.duration, itemPlayDuration2);
     
     var entries = history.getEntriesByIndex(0, 2);
@@ -98,7 +108,7 @@ function runTest() {
     
     var remainingEntry = entries.queryElementAt(0, Ci.sbIPlaybackHistoryEntry);
     assertEqual(remainingEntry.item, item);
-    assertEqual(remainingEntry.timestamp, itemPlayedAt2.getTime());
+    assertEqual(remainingEntry.timestamp, itemPlayedAt2);
     assertEqual(remainingEntry.duration, itemPlayDuration2);
     
     history.clear();

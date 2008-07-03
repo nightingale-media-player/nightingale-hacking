@@ -139,6 +139,19 @@ interface sbIPlaybackHistoryService : nsISupports
   void removeEntries(in nsIArray aEntries);
 
   /**
+   *
+   */
+  //nsIArray getEntriesByAnnotation(in nsAString aAnnotationID, 
+  //                                in nsAString aAnnotationValue,
+  //                                [optional] in unsigned long aCount);
+  
+  /**
+   *
+   */
+  //nsIArray getEntriesByAnnotations(in sbIPropertyArray aAnnotations,
+  //                                 [optional] unsigned long aCount);
+
+  /**
    * \brief Clear all entries from the playback history service.
    */
   void clear();
