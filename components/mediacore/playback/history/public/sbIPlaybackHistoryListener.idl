@@ -26,7 +26,7 @@
 
 #include "nsISupports.idl"
 
-interface sbIPlaybackHistoryEntry;
+interface nsIArray;
 
 /**
  *
@@ -34,9 +34,23 @@ interface sbIPlaybackHistoryEntry;
 [scriptable, uuid(9d96b030-eb8c-4899-898c-9890f575e67b)]
 interface sbIPlaybackHistoryListener : nsISupports
 {
-  void onEntryAdded(in sbIPlaybackHistoryEntry aEntry);
+  /** 
+   *
+   */
+  void onEntriesAdded(in nsIArray aEntries);
 
-  void onEntryUpdated(in sbIPlaybackHistoryEntry aEntry);
+  /** 
+   *
+   */
+  void onEntriesUpdated(in nsIArray aEntries);
 
-  void onEntryRemoved(in sbIPlaybackHistoryEntry aEntry);
+  /** 
+   *
+   */
+  void onEntriesRemoved(in nsIArray aEntries);
+
+  /**
+   *
+   */
+  void onEntriesCleared();
 };

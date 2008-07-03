@@ -44,6 +44,7 @@
 #include <sbIDatabaseQuery.h>
 #include <sbILibrary.h>
 #include <sbIMediaItem.h>
+#include <sbIPlaybackHistoryListener.h>
 
 class sbPlaybackHistoryService : public sbIPlaybackHistoryService,
                                  public nsIObserver
@@ -60,6 +61,11 @@ public:
                                 const char* aLoaderStr,
                                 const char* aType,
                                 const nsModuleComponentInfo *aInfo);
+
+  static PLDHashOperator PR_CALLBACK AddListenersToCOMArrayCallback(
+                                          nsISupportsHashKey::KeyType aKey,
+                                          sbIPlaybackHistoryListener* aEntry,
+                                          void* aUserData);
 
   NS_METHOD Init();
   
@@ -85,6 +91,17 @@ public:
   nsresult GetItem(const nsAString &aLibraryGuid,
                    const nsAString &aItemGuid,
                    sbIMediaItem **aItem);
+
+  nsresult DoEntryAddedCallback(sbIPlaybackHistoryEntry *aEntry);
+  nsresult DoEntriesAddedCallback(nsIArray *aEntries);
+
+  nsresult DoEntryUpdatedCallback(sbIPlaybackHistoryEntry *aEntry);
+  nsresult DoEntriesUpdatedCallback(nsIArray *aEntry);
+  
+  nsresult DoEntryRemovedCallback(sbIPlaybackHistoryEntry *aEntry);
+  nsresult DoEntriesRemovedCallback(nsIArray *aEntry);
+  
+  nsresult DoEntriesClearedCallback();
 
 protected:
   ~sbPlaybackHistoryService();
@@ -112,6 +129,9 @@ private:
   nsString mRemoveAllAnnotationsQuery;
 
   nsInterfaceHashtableMT<nsStringHashKey, sbILibrary> mLibraries;
+
+  nsInterfaceHashtableMT<nsISupportsHashKey, 
+                         sbIPlaybackHistoryListener> mListeners;
 };
 
 #endif /* __SB_PLAYBACKHISTORYSERVICE_H__ */

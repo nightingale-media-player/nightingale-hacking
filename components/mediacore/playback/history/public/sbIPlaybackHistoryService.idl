@@ -31,6 +31,7 @@ interface nsISimpleEnumerator;
 
 interface sbIMediaItem;
 interface sbIPlaybackHistoryEntry;
+interface sbIPlaybackHistoryListener;
 interface sbIPropertyArray;
 
 /**
@@ -42,7 +43,7 @@ interface sbIPropertyArray;
  *
  * Getter methods assume that index 0 is the most recent entry.
  */
-[scriptable, uuid(687d3779-7fdd-4d15-ac93-8799a01779eb)]
+[scriptable, uuid(ff3e1c17-4b74-49c3-8932-4aef4bb3cbd2)]
 interface sbIPlaybackHistoryService : nsISupports
 {
   /**
@@ -159,12 +160,12 @@ interface sbIPlaybackHistoryService : nsISupports
   /**
    *
    */
-  //void addListener(in sbIPlaybackHistoryListener aListener);
+  void addListener(in sbIPlaybackHistoryListener aListener);
 
   /**
    *
    */
-  //void removeListener(in sbIPlaybackHistoryListener aListener);
+  void removeListener(in sbIPlaybackHistoryListener aListener);
 };
 
 %{C++

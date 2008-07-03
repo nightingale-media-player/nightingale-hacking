@@ -35,6 +35,7 @@
 #include <nsIObserverService.h>
 
 #include <nsArrayUtils.h>
+#include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
@@ -50,6 +51,7 @@
 #include <DatabaseQuery.h>
 #include <sbArray.h>
 #include <sbLibraryCID.h>
+#include <sbProxyUtils.h>
 #include <sbSQLBuilderCID.h>
 #include <sbStringUtils.h>
 
@@ -150,6 +152,23 @@ sbPlaybackHistoryService::RegisterSelf(nsIComponentManager* aCompMgr,
   return NS_OK;
 }
 
+/* static */ PLDHashOperator PR_CALLBACK
+sbPlaybackHistoryService::AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey,
+                                                         sbIPlaybackHistoryListener* aEntry,
+                                                         void* aUserData)
+{
+  NS_ASSERTION(aKey, "Null key in hashtable!");
+  NS_ASSERTION(aEntry, "Null entry in hashtable!");
+
+  nsCOMArray<sbIPlaybackHistoryListener>* array =
+    static_cast<nsCOMArray<sbIPlaybackHistoryListener>*>(aUserData);
+
+  PRBool success = array->AppendObject(aEntry);
+  NS_ENSURE_TRUE(success, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
 NS_METHOD 
 sbPlaybackHistoryService::Init()
 {
@@ -173,6 +192,9 @@ sbPlaybackHistoryService::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool success = mLibraries.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  success = mListeners.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
@@ -860,6 +882,183 @@ sbPlaybackHistoryService::GetItem(const nsAString &aLibraryGuid,
   return NS_OK;
 }
 
+nsresult 
+sbPlaybackHistoryService::DoEntryAddedCallback(sbIPlaybackHistoryEntry *aEntry)
+{
+  nsCOMArray<sbIPlaybackHistoryListener> listeners;
+
+  mListeners.EnumerateRead(AddListenersToCOMArrayCallback, 
+                           (void *)&listeners);
+
+  nsCOMPtr<sbIPlaybackHistoryListener> listener;
+  PRInt32 count = listeners.Count();
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIMutableArray> array = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = array->AppendElement(aEntry, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRInt32 current = 0; current < count; ++current) {
+    rv = listeners[current]->OnEntriesAdded(array);
+
+#if defined(DEBUG)
+    NS_ENSURE_SUCCESS(rv, rv);
+#endif
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::DoEntriesAddedCallback(nsIArray *aEntries)
+{
+  nsCOMArray<sbIPlaybackHistoryListener> listeners;
+
+  mListeners.EnumerateRead(AddListenersToCOMArrayCallback, 
+    (void *)&listeners);
+
+  nsCOMPtr<sbIPlaybackHistoryListener> listener;
+  PRInt32 count = listeners.Count();
+
+  for(PRInt32 current = 0; current < count; ++current) {
+    nsresult rv = listeners[current]->OnEntriesAdded(aEntries);
+
+#if defined(DEBUG)
+    NS_ENSURE_SUCCESS(rv, rv);
+#endif
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::DoEntryUpdatedCallback(sbIPlaybackHistoryEntry *aEntry)
+{
+  nsCOMArray<sbIPlaybackHistoryListener> listeners;
+
+  mListeners.EnumerateRead(AddListenersToCOMArrayCallback, 
+    (void *)&listeners);
+
+  nsCOMPtr<sbIPlaybackHistoryListener> listener;
+  PRInt32 count = listeners.Count();
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIMutableArray> array = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = array->AppendElement(aEntry, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRInt32 current = 0; current < count; ++current) {
+    rv = listeners[current]->OnEntriesUpdated(array);
+
+#if defined(DEBUG)
+    NS_ENSURE_SUCCESS(rv, rv);
+#endif
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::DoEntriesUpdatedCallback(nsIArray *aEntries)
+{
+  nsCOMArray<sbIPlaybackHistoryListener> listeners;
+
+  mListeners.EnumerateRead(AddListenersToCOMArrayCallback, 
+    (void *)&listeners);
+
+  nsCOMPtr<sbIPlaybackHistoryListener> listener;
+  PRInt32 count = listeners.Count();
+
+  for(PRInt32 current = 0; current < count; ++current) {
+    nsresult rv = listeners[current]->OnEntriesUpdated(aEntries);
+
+#if defined(DEBUG)
+    NS_ENSURE_SUCCESS(rv, rv);
+#endif
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::DoEntryRemovedCallback(sbIPlaybackHistoryEntry *aEntry)
+{
+  nsCOMArray<sbIPlaybackHistoryListener> listeners;
+
+  mListeners.EnumerateRead(AddListenersToCOMArrayCallback, 
+    (void *)&listeners);
+
+  nsCOMPtr<sbIPlaybackHistoryListener> listener;
+  PRInt32 count = listeners.Count();
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIMutableArray> array = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = array->AppendElement(aEntry, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRInt32 current = 0; current < count; ++current) {
+    rv = listeners[current]->OnEntriesRemoved(array);
+
+#if defined(DEBUG)
+    NS_ENSURE_SUCCESS(rv, rv);
+#endif
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::DoEntriesRemovedCallback(nsIArray *aEntries)
+{
+  nsCOMArray<sbIPlaybackHistoryListener> listeners;
+
+  mListeners.EnumerateRead(AddListenersToCOMArrayCallback, 
+    (void *)&listeners);
+
+  nsCOMPtr<sbIPlaybackHistoryListener> listener;
+  PRInt32 count = listeners.Count();
+
+  for(PRInt32 current = 0; current < count; ++current) {
+    nsresult rv = listeners[current]->OnEntriesRemoved(aEntries);
+
+#if defined(DEBUG)
+    NS_ENSURE_SUCCESS(rv, rv);
+#endif
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::DoEntriesClearedCallback()
+{
+  nsCOMArray<sbIPlaybackHistoryListener> listeners;
+
+  mListeners.EnumerateRead(AddListenersToCOMArrayCallback, 
+    (void *)&listeners);
+
+  nsCOMPtr<sbIPlaybackHistoryListener> listener;
+  PRInt32 count = listeners.Count();
+
+  for(PRInt32 current = 0; current < count; ++current) {
+    nsresult rv = listeners[current]->OnEntriesCleared();
+
+#if defined(DEBUG)
+    NS_ENSURE_SUCCESS(rv, rv);
+#endif
+  }
+
+  return NS_OK;
+}
 
 //-----------------------------------------------------------------------------
 // nsIObserver
@@ -1010,6 +1209,9 @@ sbPlaybackHistoryService::AddEntry(sbIPlaybackHistoryEntry *aEntry)
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
+  rv = DoEntryAddedCallback(aEntry);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -1051,6 +1253,9 @@ sbPlaybackHistoryService::AddEntries(nsIArray *aEntries)
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  rv = DoEntriesAddedCallback(aEntries);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1211,6 +1416,9 @@ sbPlaybackHistoryService::RemoveEntry(sbIPlaybackHistoryEntry *aEntry)
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
+  rv = DoEntryRemovedCallback(aEntry);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -1223,6 +1431,9 @@ sbPlaybackHistoryService::RemoveEntryByIndex(PRInt64 aIndex)
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RemoveEntry(entry);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DoEntryRemovedCallback(entry);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1238,6 +1449,9 @@ sbPlaybackHistoryService::RemoveEntriesByIndex(PRInt64 aStartIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RemoveEntries(entries);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DoEntriesRemovedCallback(entries);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1279,6 +1493,9 @@ sbPlaybackHistoryService::RemoveEntries(nsIArray *aEntries)
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
+  rv = DoEntriesRemovedCallback(aEntries);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -1299,6 +1516,41 @@ sbPlaybackHistoryService::Clear()
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  rv = DoEntriesClearedCallback();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbPlaybackHistoryService::AddListener(sbIPlaybackHistoryListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  // Make a proxy for the listener that will always send callbacks to the
+  // current thread.
+  nsCOMPtr<sbIPlaybackHistoryListener> proxy;
+  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+                                     NS_GET_IID(sbIPlaybackHistoryListener),
+                                     aListener,
+                                     NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                     getter_AddRefs(proxy));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add the proxy to the hash table, using the listener as the key.
+  PRBool success = mListeners.Put(aListener, proxy);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbPlaybackHistoryService::RemoveListener(sbIPlaybackHistoryListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  mListeners.Remove(aListener);
 
   return NS_OK;
 }
