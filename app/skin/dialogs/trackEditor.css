@@ -220,10 +220,10 @@ button label {
   width: 81px;
 }
 .art[edited="true"] {
-  border: 1px inset #FFFFA0;
+  border: 2px solid #FFFFA0;
 }
 .art:focus {
-  border: 1px inset #FFFFFF;
+  border: 2px solid #FFFFFF;
 }
 
 /**

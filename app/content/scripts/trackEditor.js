@@ -45,6 +45,7 @@ Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/components/sbProperties.jsm");
 Components.utils.import("resource://app/components/StringUtils.jsm");
 
+const ARTWORK_NO_COVER    = "chrome://global/skin/no-cover.png";
 
 
 /******************************************************************************
@@ -1653,6 +1654,11 @@ function TrackEditorArtwork(element) {
   this._replaceLabel = SBString("trackeditor.artwork.replace");
   this._addLabel = SBString("trackeditor.artwork.add");
   this._createButton();
+
+  var self = this;
+  element.addEventListener("click",
+          function(evt) { self.onClick(evt); }, false);
+
 }
 TrackEditorArtwork.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
@@ -1702,11 +1708,18 @@ TrackEditorArtwork.prototype = {
     vbox.appendChild(this._button);
   },
 
+
+  onClick: function TrackEditorArtwork_onClick(aEvent) {
+    this._element.focus();
+  },
+
   /**
    * \brief Called when the user clicks the button, we then pop up a file
    *        picker for them to choose an image file.
    */
   onButtonCommand: function TrackEditorArtwork_onButtonCommand() {
+    this._element.focus();
+    
     // Open the file picker
     var filePicker = Cc["@mozilla.org/filepicker;1"]
                        .createInstance(Ci.nsIFilePicker);
@@ -1721,23 +1734,40 @@ TrackEditorArtwork.prototype = {
   
   onTrackEditorPropertyChange: function TrackEditorArtwork_onTrackEditorPropertyChange() {
     var value = TrackEditor.state.getPropertyValue(this.property);
-
-    if(!value || value == "") {
-      this._imageSrcChange("chrome://global/skin/no-cover.png");
+    
+    if (value && value == this._element.getAttribute("src")) {
+      // Nothing has changed so leave it as is.
       return;
     }
     
-    if (value == "chrome://global/skin/no-cover.png") {
+    // Check if we have multiple values for this property
+    var allMatch = true;
+    if (TrackEditor.state.selectedItems.length > 1) {
+      allMatch = !TrackEditor.state.hasMultipleValuesForProperty(this.property);
+    }
+
+    // Lets check if this item is missing a cover
+    if( (!value || value == "") && allMatch ) {
+      this._imageSrcChange(ARTWORK_NO_COVER);
+      value = ARTWORK_NO_COVER;
+    }
+
+    // Update the button to the correct text
+    if (value == ARTWORK_NO_COVER) {
       this._button.setAttribute("label", this._addLabel);
     } else {
       this._button.setAttribute("label", this._replaceLabel);
     }
 
-    if (value != this._element.getAttribute("value")) {
-      this._element.setAttribute("value", value);
+    // Update the image depending on if we have multiple items or not.
+    if (allMatch) {
+      // All the items match on this property (or if there is only one)
       this._element.setAttribute("src", value);
+    } else {
+      // Multiple items that do not match show nothing
+      this._element.setAttribute("src", "");
     }
-
+    
     // Indicate if this property has been edited
     if (TrackEditor.state.isPropertyEdited(this.property)) {
       if (!this._element.hasAttribute("edited")) {
@@ -1829,4 +1859,5 @@ TrackEditorAdvancedTab.prototype = {
     advancedTab.appendChild(advancedContainer);
   }
 }
+
 
