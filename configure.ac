@@ -123,6 +123,19 @@ fi
 AC_SUBST(SB_ENABLE_TESTS)
 
 #
+#  Check for --enable-jemalloc
+#
+
+SB_USE_JEMALLOC=
+
+AC_ARG_ENABLE(jemalloc,
+              [  --enable-jemalloc       whether or not to use the jemalloc memory allocator (disabled by default)])
+if test "$enable_jemalloc" == "yes"; then
+  SB_USE_JEMALLOC=1
+fi
+AC_SUBST(SB_USE_JEMALLOC)
+
+#
 # Check for --enable-update-channel
 #
 
@@ -500,9 +513,17 @@ case "$SB_PLATFORM" in
     fi
 
     if test "$enable_debug" = "yes"; then
-      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MTd -Od -RTC1 -RTCc"
+      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Od -RTC1 -RTCc"
     else
-      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MT -Ox"
+      MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Ox"
+    fi
+
+    if test "$enable_jemalloc" != "yes"; then
+      if test "$enable_debug" = "yes"; then
+        MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MTd"
+      else
+        MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -MT"
+      fi
     fi
 
     # We always want to include "mozilla-config.h"
@@ -511,6 +532,16 @@ case "$SB_PLATFORM" in
     MSVC_LINKER_FLAGS="-NOLOGO -INCREMENTAL:NO -SUBSYSTEM:WINDOWS -MACHINE:X86 -DEBUG"
     if test "$enable_debug" != "yes"; then
       MSVC_LINKER_FLAGS="$MSVC_LINKER_FLAGS -OPT:REF -OPT:ICF"
+    fi
+
+    if test "$enable_jemalloc" = "yes"; then
+      if test "$enable_debug" = "yes"; then
+        MOZ_CRT_DLL_NAME="mozcrt19d"
+      else
+        MOZ_CRT_DLL_NAME="mozcrt19"
+      fi
+
+      MSVC_LINKER_FLAGS="$MSVC_LINKER_FLAGS -NODEFAULTLIB:MSVCRT -NODEFAULTLIB:MSVCRTD -NODEFAULTLIB:LIBCMT -NODEFAULTLIB:LIBCMTD -DEFAULTLIB:$MOZ_CRT_DLL_NAME"
     fi
 
     CFLAGS="$CFLAGS $MSVC_COMPILER_FLAGS -TC"

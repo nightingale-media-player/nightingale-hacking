@@ -56,14 +56,21 @@ ARFLAGS = -NOLOGO \
           $(NULL)
 
 ifdef DEBUG
-  C_FLAGS += -MTd \
-             -Od \
+  C_FLAGS += -Od \
              $(NULL)
 else
-  C_FLAGS += -MT \
-             -Ox \
+  C_FLAGS += -Ox \
              $(NULL)
 endif
+
+ifneq ($(SB_USE_JEMALLOC),1)
+  ifdef DEBUG
+    C_FLAGS += -MTd
+  else
+    C_FLAGS += -MT
+  endif
+endif
+
 
 endif
 
