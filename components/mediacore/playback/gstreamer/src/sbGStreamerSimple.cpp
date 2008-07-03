@@ -52,6 +52,7 @@
 #include <nsIPrefBranch.h>
 #include <nsIPromptService.h>
 #include <nsIProxyObjectManager.h>
+#include <nsIRunnable.h>
 #include <nsIScriptGlobalObject.h>
 #include <nsIWebNavigation.h>
 #include <nsIWidget.h>
@@ -80,6 +81,36 @@ extern PRLogModuleInfo* gGStreamerLog;
 #define TRACE(args) PR_LOG(gGStreamerLog, PR_LOG_DEBUG, args)
 #define LOG(args)   PR_LOG(gGStreamerLog, PR_LOG_WARN, args)
 
+class sbGstMessageEvent : public nsIRunnable
+{
+public:
+  NS_DECL_ISUPPORTS
+
+  explicit sbGstMessageEvent(GstMessage *msg, sbGStreamerSimple *gsts) :
+      mGST(gsts)
+  {
+    gst_message_ref(msg);
+    mMessage = msg;
+  }
+
+  ~sbGstMessageEvent() {
+    gst_message_unref(mMessage);
+  }
+
+  NS_IMETHOD Run()
+  {
+    mGST->HandleMessage(mMessage);
+    return NS_OK;
+  }
+
+private:
+  GstMessage *mMessage;
+  sbGStreamerSimple *mGST;
+};
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbGstMessageEvent,
+                              nsIRunnable)
+
 NS_IMPL_THREADSAFE_ISUPPORTS3(sbGStreamerSimple,
                               sbIGStreamerSimple,
                               nsIDOMEventListener,
@@ -100,19 +131,14 @@ sbGStreamerSimple::syncHandler(GstBus* bus, GstMessage* message, gpointer data)
       if (gst_structure_has_name(message->structure, "prepare-xwindow-id"))
       {
         gsts->PrepareVideoWindow(message);
+        return;
       }
-      break;
+      // Fall through for other ELEMENT messages.
     default:
+      nsCOMPtr<nsIRunnable> event = new sbGstMessageEvent(message, gsts);
+      NS_DispatchToMainThread(event);
       break;
   }
-}
-
-/* static */ void
-sbGStreamerSimple::asyncHandler(GstBus* bus, GstMessage* message, gpointer data)
-{
-  sbGStreamerSimple* gsts = static_cast<sbGStreamerSimple*>(data);
-
-  gsts->HandleMessage(message);
 }
 
 /* static */ void
@@ -308,10 +334,8 @@ sbGStreamerSimple::SetupPlaybin()
     gst_bus_add_signal_watch (bus);
     gst_bus_enable_sync_message_emission (bus);
 
-    // General GStreamer message handling.
-    g_signal_connect (bus, "message", G_CALLBACK (asyncHandler), this);
-
-    // Handle prepare-xwindow-id messages
+    // Handle GStreamer messages; synchronously, or dispatching to the
+    // main thread.
     g_signal_connect (bus, "sync-message", 
             G_CALLBACK (syncHandler), this);
 
@@ -886,7 +910,6 @@ void sbGStreamerSimple::HandleErrorMessage(GstMessage *message)
 {
   GError *error = NULL;
   gchar *debug = NULL;
-  PRBool isPluginOrCodecError;
 
   gst_message_parse_error(message, &error, &debug);
 

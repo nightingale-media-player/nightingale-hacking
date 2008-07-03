@@ -53,12 +53,13 @@ public:
 
   sbGStreamerSimple();
 
+  NS_HIDDEN_(void) HandleMessage(GstMessage *message);
+
 private:
   ~sbGStreamerSimple();
 
   // Static helpers for C callbacks
   static void syncHandler(GstBus *bus, GstMessage *message, gpointer data); 
-  static void asyncHandler(GstBus *bus, GstMessage *message, gpointer data);
   static void videoCapsSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerSimple *gsts);
   static void streamInfoSetHelper(GObject *obj, GParamSpec *pspec, 
@@ -69,8 +70,6 @@ private:
   NS_HIDDEN_(nsresult) Resize();
 
   NS_HIDDEN_(void) PrepareVideoWindow(GstMessage *msg);
-
-  NS_HIDDEN_(void) HandleMessage(GstMessage* message);
 
   NS_HIDDEN_(void) OnVideoCapsSet(GstCaps *caps);
 
