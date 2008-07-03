@@ -109,7 +109,7 @@ public:
                                          sbIPropertyOperator* aOperator,
                                          const nsAString& aLeftValue,
                                          const nsAString& aRightValue,
-                                         PRBool aLimit);
+                                         const nsAString& aDisplayUnit);
 
   virtual ~sbLocalDatabaseSmartMediaListCondition();
 
@@ -123,8 +123,7 @@ protected:
 
   nsString mLeftValue;
   nsString mRightValue;
-
-  PRBool   mLimit;
+  nsString mDisplayUnit;
 };
 
 class sbLocalDatabaseSmartMediaList : public sbILocalDatabaseSmartMediaList,

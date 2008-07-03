@@ -180,6 +180,7 @@
 <!ENTITY smart.library            "Select Library:" >
 <!ENTITY smart.limit              "Limit to" >
 <!ENTITY smart.match              "Match" >
+<!ENTITY smart.matchsingle        "Match the following condition:" >
 <!ENTITY smart.any                "any" >
 <!ENTITY smart.all                "all" >
 <!ENTITY smart.following          "of the following condition(s):" >   
@@ -208,6 +209,7 @@
 <!ENTITY smart.starts             "starts with" >
 <!ENTITY smart.ends               "ends with" >
 <!ENTITY smart.selectedby         "Selected by" >
+<!ENTITY smart.to                 "To" >
 
 <!ENTITY download.window          "Download" >
 <!ENTITY download.select          "Select destination folder:" >

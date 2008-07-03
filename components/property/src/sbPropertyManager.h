@@ -39,6 +39,7 @@
 class nsModuleComponentInfo;
 class nsIComponentManager;
 class nsIFile;
+class sbIPropertyUnitConverter;
 
 class sbPropertyManager : public sbIPropertyManager
 {
@@ -64,6 +65,14 @@ private:
                             PRBool aRemoteReadable,
                             PRBool aRemoteWritable);
 
+  nsresult RegisterDuration(const nsAString& aPropertyID,
+                            const nsAString& aDisplayKey,
+                            nsIStringBundle* aStringBundle,
+                            PRBool aUserViewable,
+                            PRBool aUserEditable,
+                            PRBool aRemoteReadable,
+                            PRBool aRemoteWritable);
+
   nsresult RegisterNumber(const nsAString& aPropertyID,
                           const nsAString& aDisplayKey,
                           nsIStringBundle* aStringBundle,
@@ -74,7 +83,8 @@ private:
                           PRInt32 aMaxValue,
                           PRBool aHasMaxValue,
                           PRBool aRemoteReadable,
-                          PRBool aRemoteWritable);
+                          PRBool aRemoteWritable,
+                          sbIPropertyUnitConverter *aConverter);
 
   nsresult RegisterProgress(const nsAString& aValuePropertyID,
                             const nsAString& aValueDisplayKey,

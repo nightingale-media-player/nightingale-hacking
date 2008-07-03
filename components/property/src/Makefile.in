@@ -49,6 +49,7 @@ CPP_SRCS = sbPropertyManager.cpp \
            sbNumberPropertyInfo.cpp \
            sbURIPropertyInfo.cpp \
            sbDatetimePropertyInfo.cpp \
+           sbDurationPropertyInfo.cpp \
            sbPropertiesModule.cpp \
            sbDownloadButtonPropertyBuilder.cpp \
            sbDownloadButtonPropertyInfo.cpp \
@@ -63,6 +64,11 @@ CPP_SRCS = sbPropertyManager.cpp \
            sbRatingPropertyBuilder.cpp \
            sbRatingPropertyInfo.cpp \
            sbAbstractPropertyBuilder.cpp \
+           sbPropertyUnitConverter.cpp \
+           sbDurationPropertyUnitConverter.cpp \
+           sbStoragePropertyUnitConverter.cpp \
+           sbFrequencyPropertyUnitConverter.cpp \
+           sbBitratePropertyUnitConverter.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/property/public \

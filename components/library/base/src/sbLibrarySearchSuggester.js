@@ -26,8 +26,22 @@
  
 /**
  * \file sbLibrarySearchSuggester.js
- * Provides autocomplete suggestions based on player state/context
- * Originally based on the Mozilla nsSearchSuggestions.js implementation
+ * Provides autocomplete suggestions based on distinct values for a property
+ * Originally based on the Mozilla nsSearchSuggestions.js implementation.
+ *
+ * The format of the searchparam attribute is the following:
+ *
+ *  property;libraryguid;defaultvalues;unit
+ *
+ *  - 'property' is a property id, such as http://songbirdnest.com/data/1.0#artistName
+ *  - 'libraryguid' is the guid of a library from which to get distinct values,
+ *    or no value to get from all libraries
+ *  - 'defaultvalues' is a comma separated list of additional default values
+ *    which are always matched against this input even if they are not part of
+ *    the distinct values set
+ *  - 'unit' is the unit into which the distinct values should be converted to
+ *    before being matched against the input and inserted in the suggestion
+ *    result set.
  */ 
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -255,10 +269,7 @@ LibrarySearchSuggester.prototype = {
    * nsIAutoCompleteSearch implementation.
    *
    * @param searchString    the user's query string
-   * @param searchParam     unused, "an extra parameter"; even though
-   *                        this parameter and the next are unused, pass
-   *                        them through in case the form history
-   *                        service wants them
+   * @param searchParam     the search parameter
    * @param previousResult  unused, a client-cached store of the previous
    *                        generated resultset for faster searching.
    * @param listener        object implementing nsIAutoCompleteObserver which
@@ -304,12 +315,15 @@ LibrarySearchSuggester.prototype = {
 
       // parse search parameters
       var params = searchParam.split(";");
-      var prop = params[0];
+             //Components.utils.reportError(params);
+
+      this._prop = params[0];
       var guid = params[1];
       var additionalValues = params[2];
+      this._conversionUnit = params[3];
 
       // Record distinct values for a library
-      function getDistinctValues(aLibrary, obj) {
+      function getDistinctValues(aLibrary, prop, obj) {
         if (!aLibrary) 
           return;
         var values = aLibrary.getDistinctValuesForProperty(prop);
@@ -323,11 +337,11 @@ LibrarySearchSuggester.prototype = {
       // from a library with that guid, otherwise, get them from
       // all libraries
       if (guid && guid.length > 0) {
-        getDistinctValues(this._libraryManager.getLibrary(guid), this);
+        getDistinctValues(this._libraryManager.getLibrary(guid), this._prop, this);
       } else {
         var libs = this._libraryManager.getLibraries();
         while (libs.hasMoreElements()) {
-          getDistinctValues(libs.getNext(), this);
+          getDistinctValues(libs.getNext(), this._prop, this);
         }
       }
       
@@ -360,7 +374,7 @@ LibrarySearchSuggester.prototype = {
     }
 
     var results = [];
-
+    
     // if this is a narrowing down of the previous search,
     // use the previousResults array, otherwise,
     // use the full distinctValues array
@@ -373,7 +387,20 @@ LibrarySearchSuggester.prototype = {
           results.push(value);
       }
     } else {
+
+      var converter = null;
+      if (this._conversionUnit && this._conversionUnit != "") {
+        var propertyManager = 
+          Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+            .getService(Ci.sbIPropertyManager);
+        var info = propertyManager.getPropertyInfo(this._prop);
+        converter = info.unitConverter;
+      }
+
       for (var value in this._distinctValues) {
+        if (converter) {
+          value = converter.convert(value, converter.nativeUnitId, this._conversionUnit);
+        }
         if (startsWith(value, search))
           results.push(value);
       }

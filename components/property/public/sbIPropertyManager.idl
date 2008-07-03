@@ -38,6 +38,7 @@ interface nsIStringBundle;
 interface nsIURI;
 interface sbIPropertyInfo;
 interface sbIPropertyArray;
+interface sbIPropertyUnitConverter;
 
 /**
 * \interface sbIPropertyManager
@@ -126,7 +127,7 @@ interface sbIPropertyOperator : nsISupports
 * \brief An interface used to describe a metadata property for use by the UI and other sbILibrary interfaces (smartplaylists, etc)
 * \sa sbIPropertyManager
 */
-[scriptable, uuid(769538d8-4e2b-457d-b76f-0db0150830a8)]
+[scriptable, uuid(c4e61f75-4d7d-46a2-8dc2-99e9474075b1)]
 interface sbIPropertyInfo : nsISupports
 {
   readonly attribute AString OPERATOR_EQUALS;
@@ -139,6 +140,10 @@ interface sbIPropertyInfo : nsISupports
   readonly attribute AString OPERATOR_BEGINSWITH;
   readonly attribute AString OPERATOR_ENDSWITH;
   readonly attribute AString OPERATOR_BETWEEN;
+  readonly attribute AString OPERATOR_ISTRUE;
+  readonly attribute AString OPERATOR_ISFALSE;
+  readonly attribute AString OPERATOR_INTHELAST;
+  readonly attribute AString OPERATOR_NOTINTHELAST;
 
   /* NOTE: if you change this list of null sort values, please update the
    * documentation in sbIRemoteWebPlaylist.idl as well, thanks!
@@ -226,13 +231,6 @@ interface sbIPropertyInfo : nsISupports
   //attribute nsIStringEnumerator values;
 
   /**
-   * \brief Display units (I.S. compliant please). This unit is appended
-   * at the end of the formatted string returned by sbIPropertyInfo::format().
-   * \note More information here: http://www.unc.edu/~rowlett/units/sipm.html
-   */
-  attribute AString units;
-
-  /**
    * \brief Enumerator of sbIPropertyOperator objects
    */
   attribute nsISimpleEnumerator operators;
@@ -273,6 +271,12 @@ interface sbIPropertyInfo : nsISupports
    * \return The formatted sorting value.
    */
   AString makeSortable(in AString aValue);
+
+  /**
+   * \brief A unit converter to convert to and from the units in
+   * which the property can be expressed.
+   */
+  attribute sbIPropertyUnitConverter unitConverter;
 };
 
 /**
@@ -358,7 +362,7 @@ interface sbIURIPropertyInfo : sbIPropertyInfo
  * \brief The property information specific to date/time fields
  * \sa sbIPropertyInfo
  */
-[scriptable, uuid(df7d6d96-db92-4e30-9f5a-01088f3d7dc5)]
+[scriptable, uuid(018eb992-2751-4c1b-aecb-44ba6f11df4a)]
 interface sbIDatetimePropertyInfo : sbIPropertyInfo
 {
   const long TIMETYPE_UNINITIALIZED = -1;
@@ -370,7 +374,6 @@ interface sbIDatetimePropertyInfo : sbIPropertyInfo
   
   /**
    * \brief HH:mm:ss.ms, in localized format. Limited to 24 hour days.
-   * \sa TIMETYPE_DURATION
    */
   const long TIMETYPE_TIME = 1; 
   
@@ -378,12 +381,6 @@ interface sbIDatetimePropertyInfo : sbIPropertyInfo
    * \brief Long date format, 2007-03-28 12:33:01 , no milliseconds.
    */
   const long TIMETYPE_DATETIME = 2;
-
-  /**
-   * \brief Duration, represented in HH:mm:ss.ms, in localized format.
-   * May exceed 24 hours.
-   */
-  const long TIMETYPE_DURATION = 3;
 
   /**
    * \brief Timestamp format, respects unix time, microsecond format.
@@ -399,33 +396,62 @@ interface sbIDatetimePropertyInfo : sbIPropertyInfo
   attribute long timeType;
 
   /**
-   * \brief A minimum time value to enforce when validating. If you do not
+   * \brief A minimum datetime value to enforce when validating. If you do not
    * wish to use this, set it to 0. 
    *
    * You must set this attribute in order for this object to function properly.
    * If you do not, all methods on this object will return 
    * NS_ERROR_NOT_INITIALIZED.
    */
-  attribute long long minTime;
+  attribute long long minDateTime;
 
   /**
-   * \brief A maximum time value to enforce when validating. If you do not
+   * \brief A maximum datetime value to enforce when validating. If you do not
    * wish to use this, set it to 0.
    *
    * You must set this attribute in order for this object to function properly.
    * If you do not, all methods on this object will return
    * NS_ERROR_NOT_INITIALIZED.
    */
-  attribute long long maxTime;
+  attribute long long maxDateTime;
+};
+
+/**
+ * \interface sbIDurationPropertyInfo
+ * \brief The property information specific to date/time fields
+ * \sa sbIPropertyInfo
+ */
+[scriptable, uuid(c353b0a3-f715-4001-ae1b-f39f3a0591fa)]
+interface sbIDurationPropertyInfo : sbIPropertyInfo
+{
+  /**
+   * \brief A minimum duration value to enforce when validating. If you do not
+   * wish to use this, set it to 0. 
+   *
+   * You must set this attribute in order for this object to function properly.
+   * If you do not, all methods on this object will return 
+   * NS_ERROR_NOT_INITIALIZED.
+   */
+  attribute long long minDuration;
 
   /**
-   * \brief Causes TIMETYPE_DURATION to display from -xx:xx:xx to 0 instead of
+   * \brief A maximum duration value to enforce when validating. If you do not
+   * wish to use this, set it to 0.
+   *
+   * You must set this attribute in order for this object to function properly.
+   * If you do not, all methods on this object will return
+   * NS_ERROR_NOT_INITIALIZED.
+   */
+  attribute long long maxDuration;
+
+  /**
+   * \brief Causes the formatting to display from -xx:xx:xx to 0 instead of
    * 0 to xx:xx:xx.
    */
   attribute boolean durationInverse;
 
   /**
-   * \brief Cause TIMETYPE_DURATION to display milliseconds.
+   * \brief Cause the formatting to display milliseconds.
    */
   attribute boolean durationWithMilliseconds;
 };

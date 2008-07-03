@@ -191,16 +191,25 @@ function testDatetimeInfo() {
   sample = "12431235123412499";
   assertEqual(datetimeInfo.validate(sample), true);
   log(datetimeInfo.format(sample));
+}
+
+function testDurationInfo() {
+  var durationInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Duration;1"]
+                      .createInstance(Ci.sbIDurationPropertyInfo);
+                      
+  durationInfo.id = "DatetimeInfo";
+  assertEqual(durationInfo.type, "duration");
   
-  datetimeInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Datetime;1"]
-                      .createInstance(Ci.sbIDatetimePropertyInfo);
+  var sample = "0";
   
-  datetimeInfo.id = "DatetimeInfoDuration";
-  datetimeInfo.timeType = Ci.sbIDatetimePropertyInfo.TIMETYPE_DURATION;
+  assertEqual(durationInfo.validate(sample), true);
+  log(durationInfo.format(sample));
+  
   sample = "12431235123412499";
-  log(datetimeInfo.format(sample));
+  assertEqual(durationInfo.validate(sample), true);
+  log(durationInfo.format(sample));
   
-  datetimeInfo.durationWithMilliseconds = true;
+  durationInfo.durationWithMilliseconds = true;
   log(datetimeInfo.format(sample));
 }
 
@@ -247,6 +256,10 @@ function runTest () {
 
   log("Testing DatetimePropertyInfo...");
   testDatetimeInfo();
+  log("OK");
+
+  log("Testing DurationPropertyInfo...");
+  testDurationInfo();
   log("OK");
 
   log("Testing BooleanPropertyInfo...");

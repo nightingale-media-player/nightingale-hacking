@@ -33,8 +33,9 @@ NS_IMPL_ISUPPORTS_INHERITED1(sbBooleanPropertyInfo, sbPropertyInfo,
 sbBooleanPropertyInfo::sbBooleanPropertyInfo()
 {
   MOZ_COUNT_CTOR(sbBooleanPropertyInfo);
-
   mType = NS_LITERAL_STRING("boolean");
+
+  Init();
 }
 
 sbBooleanPropertyInfo::~sbBooleanPropertyInfo()
@@ -68,6 +69,20 @@ nsresult sbBooleanPropertyInfo::InitializeOperators()
   rv = sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
   NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.notequal"));
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbPropertyInfo::GetOPERATOR_ISTRUE(op);
+  NS_ENSURE_SUCCESS(rv, rv);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.bool.istrue"));
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbPropertyInfo::GetOPERATOR_ISFALSE(op);
+  NS_ENSURE_SUCCESS(rv, rv);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.bool.isfalse"));
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);

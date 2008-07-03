@@ -36,12 +36,14 @@
           
   <binding id="sb-rating">
     <content>
-      <xul:hbox class="rating-box">
-        <xul:stack mousethrough="never">
-          <xul:spacer class="rating-background"/>
-          <xul:spacer sid="stars" class="rating-stars" xbl:inherit="value" />
-        </xul:stack>
-      </xul:hbox>
+        <xul:hbox class="rating-box" flex="1">
+        <xul:spacer flex="1"/>
+          <xul:stack mousethrough="never">
+            <xul:spacer class="rating-background"/>
+            <xul:spacer sid="stars" class="rating-stars" xbl:inherit="value" />
+          </xul:stack>
+        <xul:spacer flex="1"/>
+        </xul:hbox>
     </content>
     <implementation>
       <field name="stars">document.getAnonymousElementByAttribute(this, 'sid', 'stars');</field>

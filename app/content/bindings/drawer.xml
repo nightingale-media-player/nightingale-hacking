@@ -557,22 +557,66 @@
   </binding>
 
   <!-- MULTI CONTENT DRAWER BASE -->
+  
+  <!--
+  
+  The drawer-multi binding creates multiple items, each being a duplicate of the
+  template that it is given by way of its 'children' element.
+  
+  - Use addItem and removeItem to add and remove items. In addition, buttons
+    with sbtype="remove-drawer-item" and sbtype="add-drawer-item" in the template
+    will automatically cause items to be created and removed when they are clicked.
+  
+  - Use .items to list all instantiated items.
+  
+  - Use getItemElementByAttribute to retrieve one of the item's elements based on an
+    attribute. Instead of the item, you may give any of the item's children elements
+    as a parameter (for instance, if you got it via an event).
+  
+  - Use getItem(child) to retrieve the drawer item that contains a child.
+  
+  - Use setState/getState to store and retrieve the state of each item. The state
+    object contains one sub-object per item, each of these contains properties that
+    can be mapped to any property or attribute of the templatized items such that
+    setting a state property on the object used in setState will reflect that
+    property onto a property or attribute of the element. To do this, use the
+    following attributes on the elements:
+    
+    - drawer-prop-map="prop1=stateprop1,prop2=stateprop2"
+    - drawer-attr-map="attr1=stateprop3,attr2=stateprop4"
+    
+    For instance, with the above attributes, setState({stateprop1:"hello", 
+    stateprop3:"world"}) (for a single item drawer) will set element.prop1="hello" and 
+    element.setAttribute("attr1", "world").
+    
+    Upon calling getState, the values of the element's properties and attributes are copied
+    back into the state object, which is then returned.
+    
+    Properties and attributes may also be mapped unidirectionally, for either the
+    setState or the setState phase. For setState, use drawer-prop-map-set and
+    drawer-attr-map-set. For getState, use drawer-prop-map-get and drawer-attr-map-get.
+    
+    Note that state properties are set to the elements' properties and attributes regardless
+    of visibility, but are only copied back if the element is visible.
+  
+  -->
 
   <binding id="drawer-multi" extends="chrome://songbird/content/bindings/drawer.xml#drawer-base">
 
     <content>
       
-      <xul:vbox class="drawer-box" sbid="parent" flex="1">
+      <!-- Use a scrollbox so that we can scroll it manually -->
+      <xul:scrollbox orient="vertical" class="drawer-box" sbid="parent" flex="1">
         
         <xul:vbox hidden="true" sbid="template" class="drawer-content-item">
           <children/>
-        </xul:vbox>        
+        </xul:vbox>
 
         <!-- stuff gets stuffed here -->
 
         <xul:spacer sbid="before" height="1"/>
 
-      </xul:vbox>
+      </xul:scrollbox>
     </content>
 
     <implementation>
@@ -580,6 +624,9 @@
       <constructor>
         this.itemsize = -1;
       </constructor>
+
+      <!-- the array of draw items -->
+      <field name="items">this.parent.getElementsByAttribute( "sbtype", "drawer-item" );</field>
 
       <method name="start">
         <body>
@@ -635,10 +682,12 @@
           var n = statearray.length;
           for (var i=0; i<n; i++)
             this.addItem(true);
-          var item_nodes = this.parent.getElementsByAttribute( "sbtype", "drawer-item" );
+          var item_nodes = this.items;
           for (i=0;i<item_nodes.length;i++) { 
+            var node = item_nodes[i];
+            if (node.nodeType != Node.ELEMENT_NODE) continue;
             if (i >= n) break; // should never happen
-            this.setItemState(item_nodes[i], statearray[i]);
+            this.setItemState(node, statearray[i]);
           }
          ]]>
         </body>
@@ -650,32 +699,62 @@
         <body>
          <![CDATA[
           try {
-            var propmap_str = item_element.getAttribute("drawer-prop-map");
-            var propmap_array = propmap_str.split(",");
-            for (var p in propmap_array) {
-              var pair = propmap_array[p].split("=");
-              var elementproperty = pair[0];
-              var stateproperty = pair[1];
-              try {
-                var value = state[stateproperty];
-                if (value) item_element[elementproperty] = value;
-              } catch (e) { }
+            for each (var map in ["drawer-prop-map", "drawer-prop-map-set"]) {
+              var propmap_str = item_element.getAttribute(map);
+              if (!propmap_str || propmap_str == "") continue;
+              var propmap_array = propmap_str.split(",");
+              for (var p in propmap_array) {
+                var pair = propmap_array[p].split("=");
+                var elementproperty = pair[0];
+                var stateproperty = pair[1];
+                var not = false;
+                if (stateproperty.substr(0,1) == "!") {
+                  not = true;
+                  stateproperty = stateproperty.substr(1);
+                }
+                try {
+                  var value = state[stateproperty];
+                  if (value != null) {
+                    if (not) value = !value;
+                    item_element[elementproperty] = value;
+                  }
+                } catch (e) {
+                  Components.utils.reportError(e);
+                }
+              }
             }
-            var attrmap_str = item_element.getAttribute("drawer-attr-map");
-            var attrmap_array = attrmap_str.split(",");
-            for (var p in attrmap_array) {
-              var pair = attrmap_array[p].split("=");
-              var elementattribute = pair[0];
-              var stateproperty = pair[1];
-              try {
-                var value = state[stateproperty];
-                if (value) item_element.setAttribute(elementattribute, value);
-              } catch (e) { }
+            for each (var map in ["drawer-attr-map", "drawer-attr-map-set"]) {
+              var attrmap_str = item_element.getAttribute(map);
+              if (!attrmap_str || attrmap_str == "") continue;
+              var attrmap_array = attrmap_str.split(",");
+              for (var p in attrmap_array) {
+                var pair = attrmap_array[p].split("=");
+                var elementattribute = pair[0];
+                var stateproperty = pair[1];
+                var not = false;
+                if (stateproperty.substr(0,1) == "!") {
+                  not = true;
+                  stateproperty = stateproperty.substr(1);
+                }
+                try {
+                  var value = state[stateproperty];
+                  if (value != null) {
+                    if (not) value = !value;
+                    item_element.setAttribute(elementattribute, value);
+                  }
+                } catch (e) {
+                  Components.utils.reportError(e);
+                }
+              }
             }
           } catch (e) {
+            Components.utils.reportError(e);
           }
-          for (var i=0;i<item_element.childNodes.length;i++) 
-            this.setItemState(item_element.childNodes[i], state)
+          for (var i=0;i<item_element.childNodes.length;i++) {
+            var childnode = item_element.childNodes[i];
+            if (childnode.nodeType != Node.ELEMENT_NODE) continue;
+            this.setItemState(item_element.childNodes[i], state);
+          }
          ]]>
         </body>
       </method>
@@ -686,8 +765,11 @@
           var state = [];
           var item_nodes = this.parent.getElementsByAttribute( "sbtype", "drawer-item" );
           for (var i=0;i<item_nodes.length;i++) {
+            var node = item_nodes[i];
+            if (node.nodeType != Node.ELEMENT_NODE) continue;
+            if (node.hidden) continue;
             var obj = {};
-            this.getItemState(item_nodes[i], obj);
+            this.getItemState(node, obj);
             state.push(obj);
           }
           return state;
@@ -700,29 +782,56 @@
         <parameter name="state"/>
         <body>
          <![CDATA[
-          try {
-            var propmap_str = item_element.getAttribute("drawer-prop-map");
-            var propmap_array = propmap_str.split(",");
-            for (var p in propmap_array) {
-              var pair = propmap_array[p].split("=");
-              var elementproperty = pair[0];
-              var stateproperty = pair[1];
-              var value = item_element[elementproperty];
-              state[stateproperty] = value;
+            for each (var map in ["drawer-prop-map", "drawer-prop-map-get"]) {
+              try {
+                var propmap_str = item_element.getAttribute(map);
+                if (!propmap_str || propmap_str == "") continue;
+                var propmap_array = propmap_str.split(",");
+                for (var p in propmap_array) {
+                  var pair = propmap_array[p].split("=");
+                  var elementproperty = pair[0];
+                  var stateproperty = pair[1];
+                  var not = false;
+                  if (stateproperty.substr(0,1) == "!") {
+                    not = true;
+                    stateproperty = stateproperty.substr(1);
+                  }
+                  var value = item_element[elementproperty];
+                  if (not) value = !value;
+                  state[stateproperty] = value;
+                }
+              } catch (e) {
+                Components.utils.reportError(e);
+              }
             }
-            var attrmap_str = item_element.getAttribute("drawer-attr-map");
-            var attrmap_array = attrmap_str.split(",");
-            for (var p in attrmap_array) {
-              var pair = attrmap_array[p].split("=");
-              var elementattribute = pair[0];
-              var stateproperty = pair[1];
-              var value = item_element.getAttribute(elementattribute);
-              state[stateproperty] = value;
+            for each (var map in ["drawer-attr-map", "drawer-attr-map-get"]) {
+              try {
+                var attrmap_str = item_element.getAttribute(map);
+                if (!attrmap_str || attrmap_str == "") continue;
+                var attrmap_array = attrmap_str.split(",");
+                for (var p in attrmap_array) {
+                  var pair = attrmap_array[p].split("=");
+                  var elementattribute = pair[0];
+                  var stateproperty = pair[1];
+                  var not = false;
+                  if (stateproperty.substr(0,1) == "!") {
+                    not = true;
+                    stateproperty = stateproperty.substr(1);
+                  }
+                  var value = item_element.getAttribute(elementattribute);
+                  if (not) value = !value;
+                  state[stateproperty] = value;
+                }
+              } catch (e) {
+                Components.utils.reportError(e);
+              }
             }
-          } catch (e) {
-          }
-          for (var i=0;i<item_element.childNodes.length;i++) 
-            this.getItemState(item_element.childNodes[i], state)
+            for (var i=0;i<item_element.childNodes.length;i++) {
+              var childnode = item_element.childNodes[i];
+              if (childnode.nodeType != Node.ELEMENT_NODE) continue;
+              if (childnode.hidden) continue;
+              this.getItemState(childnode, state)
+            }
          ]]>
         </body>
       </method>
@@ -732,11 +841,65 @@
         <body>
           <![CDATA[
             while (element && element != document) {
-              if (element.getAttribute("sbtype") == "drawer-item") return element;
+              if (element.nodeType == Node.ELEMENT_NODE && 
+                  element.getAttribute("sbtype") == "drawer-item") 
+                return element;
               element = element.parentNode;
             }
             return null;
           ]]>
+        </body>
+      </method>
+
+      <method name="getItemElementByAttribute">
+        <parameter name="_item_or_child"/>
+        <parameter name="attribute"/>
+        <parameter name="attributeValue"/>
+        <parameter name="mustbevisible"/>
+        <body>
+          <![CDATA[
+          var item = this.getItem(_item_or_child);
+          if (!item) {
+            Components.utils.reportError("item is not a drawer item or any of its children");
+            return null;
+          }
+          var v = this._searchElement(item, attribute, attributeValue, mustbevisible);
+          return v;
+          ]]>
+        </body>
+      </method>
+
+      <method name="_searchElement">
+        <parameter name="parentNode"/>
+        <parameter name="attribute"/>
+        <parameter name="attributeValue"/>
+        <parameter name="mustbevisible"/>
+        <body>
+          <![CDATA[
+          var nodes = parentNode.childNodes;
+          for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            if (node.nodeType == Node.ELEMENT_NODE) {
+              if (mustbevisible && this._isHiddenDeep(node)) continue;
+              if (node.getAttribute(attribute) == attributeValue)
+                return node;
+              var found = this._searchElement(node, attribute, attributeValue, mustbevisible);
+              if (found) return found;
+            }
+          }
+          return null;
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_isHiddenDeep">
+        <parameter name="node"/>
+        <body>
+          while (node) {
+            if (node.hidden) return true;
+            node = node.parentNode;
+          }
+          return false;
         </body>
       </method>
 
@@ -752,6 +915,11 @@
           var e = document.createEvent("Events");
           e.initEvent("additem", false, true);
           this.dispatchEvent(e);
+          setTimeout(function(o) {
+              o.parent.boxObject.
+                QueryInterface(Components.interfaces.nsIScrollBoxObject).
+                  ensureElementIsVisible(o.lastcreateditem);
+            }, 0, this);
         </body>
       </method>
 

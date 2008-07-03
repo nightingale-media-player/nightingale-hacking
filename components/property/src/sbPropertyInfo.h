@@ -29,6 +29,7 @@
 
 #include <sbIPropertyManager.h>
 #include <sbIPropertyArray.h>
+#include "sbPropertyUnitConverter.h"
 
 #include <nsCOMPtr.h>
 #include <nsIURI.h>
@@ -46,6 +47,10 @@ NS_IMETHOD GetOPERATOR_CONTAINS(nsAString & aOPERATOR_CONTAINS) { return _to Get
 NS_IMETHOD GetOPERATOR_BEGINSWITH(nsAString & aOPERATOR_BEGINSWITH) { return _to GetOPERATOR_BEGINSWITH(aOPERATOR_BEGINSWITH); } \
 NS_IMETHOD GetOPERATOR_ENDSWITH(nsAString & aOPERATOR_ENDSWITH) { return _to GetOPERATOR_ENDSWITH(aOPERATOR_ENDSWITH); } \
 NS_IMETHOD GetOPERATOR_BETWEEN(nsAString & aOPERATOR_BETWEEN) { return _to GetOPERATOR_BETWEEN(aOPERATOR_BETWEEN); } \
+NS_IMETHOD GetOPERATOR_ISTRUE(nsAString & aOPERATOR_ISTRUE) { return _to GetOPERATOR_ISTRUE(aOPERATOR_ISTRUE); } \
+NS_IMETHOD GetOPERATOR_ISFALSE(nsAString & aOPERATOR_ISFALSE) { return _to GetOPERATOR_ISFALSE(aOPERATOR_ISFALSE); } \
+NS_IMETHOD GetOPERATOR_INTHELAST(nsAString & aOPERATOR_INTHELAST) { return _to GetOPERATOR_INTHELAST(aOPERATOR_INTHELAST); } \
+NS_IMETHOD GetOPERATOR_NOTINTHELAST(nsAString & aOPERATOR_NOTINTHELAST) { return _to GetOPERATOR_NOTINTHELAST(aOPERATOR_NOTINTHELAST); } \
 NS_IMETHOD GetNullSort(PRUint32 *aNullSort) { return _to GetNullSort(aNullSort); } \
 NS_IMETHOD SetNullSort(PRUint32 aNullSort) { return _to SetNullSort(aNullSort); } \
 NS_IMETHOD GetSortProfile(sbIPropertyArray * *aSortProfile) { return _to GetSortProfile(aSortProfile); } \
@@ -64,11 +69,11 @@ NS_IMETHOD GetRemoteReadable(PRBool *aRemoteReadable) { return _to GetRemoteRead
 NS_IMETHOD SetRemoteReadable(PRBool aRemoteReadable) { return _to SetRemoteReadable(aRemoteReadable); } \
 NS_IMETHOD GetRemoteWritable(PRBool *aRemoteWritable) { return _to GetRemoteWritable(aRemoteWritable); } \
 NS_IMETHOD SetRemoteWritable(PRBool aRemoteWritable) { return _to SetRemoteWritable(aRemoteWritable); } \
-NS_IMETHOD GetUnits(nsAString & aUnits) { return _to GetUnits(aUnits); } \
-NS_IMETHOD SetUnits(const nsAString & aUnits) { return _to SetUnits(aUnits); } \
 NS_IMETHOD GetOperators(nsISimpleEnumerator * *aOperators) { return _to GetOperators(aOperators); } \
 NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperators(aOperators); } \
-NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retval) { return _to GetOperator(aOperator, _retval); }
+NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retval) { return _to GetOperator(aOperator, _retval); } \
+NS_IMETHOD SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter) { return _to SetUnitConverter(aUnitConverter); } \
+NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetUnitConverter(retVal); }
 
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
   static_cast<sbIPropertyInfo*>(static_cast<__unambiguousBase>(__expr))
@@ -123,9 +128,6 @@ protected:
   PRLock*   mUserEditableLock;
   PRBool    mUserEditable;
 
-  PRLock*   mUnitsLock;
-  nsString  mUnits;
-  
   PRLock*   mOperatorsLock;
   nsCOMArray<sbIPropertyOperator> mOperators;
   
@@ -134,6 +136,9 @@ protected:
   
   PRLock*   mRemoteWritableLock;
   PRBool    mRemoteWritable;
+
+  PRLock*   mUnitConverterLock;
+  nsCOMPtr<sbIPropertyUnitConverter> mUnitConverter;
 };
 
 #endif /* __SBPROPERTYINFO_H__ */

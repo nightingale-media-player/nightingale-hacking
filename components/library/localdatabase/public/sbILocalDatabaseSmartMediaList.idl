@@ -39,7 +39,7 @@ interface sbIPropertyOperator;
  * \interface sbILocalDatabaseSmartMediaListCondition
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(de8a4e47-1e46-435d-9316-04ddfd18be2d)]
+[scriptable, uuid(4812112e-137c-411f-8631-7dac41ba4b70)]
 interface sbILocalDatabaseSmartMediaListCondition : nsISupports
 {
   /**
@@ -68,11 +68,13 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
   readonly attribute AString rightValue;
 
   /**
-   * \brief This condition is a global limit. For example,
-   * if you were to use the contentSize property, you can limit
-   * the total size of the smart media list in bytes.
+   * \brief The unit used to display the left and right values for
+   * this condition. This is purely for display purposes, as the values
+   * are always internally using the property's native unit. For instance,
+   * the contentLengh property is recorded in bytes, but kB, MB, or GB
+   * may be used as a display unit.
    */
-  readonly attribute boolean limit;
+  readonly attribute AString displayUnit;
 };
 
 /**
@@ -84,7 +86,7 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
  *
  * \sa sbIMediaList
  */
-[scriptable, uuid(50443d21-eae9-4563-a72d-c6f6b1ea499c)]
+[scriptable, uuid(91a8fdc5-c90f-467f-a9c3-634f694269cb)]
 interface sbILocalDatabaseSmartMediaList : sbIMediaList
 {
   const unsigned long MATCH_TYPE_ANY  = 0;
@@ -146,7 +148,7 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
                     in sbIPropertyOperator aOperator,
                     in AString aLeftValue,
                     in AString aRightValue,
-                    in boolean limit);
+                    in AString aDisplayUnit);
 
   /**
    * \brief Remove a condition.

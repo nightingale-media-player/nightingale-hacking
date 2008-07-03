@@ -41,7 +41,8 @@ sbImmutablePropertyInfo::sbImmutablePropertyInfo() :
   mUserEditable(PR_FALSE),
   mRemoteReadable(PR_FALSE),
   mRemoteWritable(PR_FALSE),
-  mOperatorsLock(nsnull)
+  mOperatorsLock(nsnull),
+  mUnitConverter(nsnull)
 {
   mOperatorsLock = PR_NewLock();
   NS_ASSERTION(mOperatorsLock,
@@ -127,6 +128,34 @@ NS_IMETHODIMP
 sbImmutablePropertyInfo::GetOPERATOR_BETWEEN(nsAString& aOPERATOR_BETWEEN)
 {
   aOPERATOR_BETWEEN.AssignLiteral(SB_OPERATOR_BETWEEN);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbImmutablePropertyInfo::GetOPERATOR_ISTRUE(nsAString& aOPERATOR_ISTRUE)
+{
+  aOPERATOR_ISTRUE.AssignLiteral(SB_OPERATOR_ISTRUE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbImmutablePropertyInfo::GetOPERATOR_ISFALSE(nsAString& aOPERATOR_ISFALSE)
+{
+  aOPERATOR_ISFALSE.AssignLiteral(SB_OPERATOR_ISFALSE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbImmutablePropertyInfo::GetOPERATOR_INTHELAST(nsAString& aOPERATOR_INTHELAST)
+{
+  aOPERATOR_INTHELAST.AssignLiteral(SB_OPERATOR_INTHELAST);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbImmutablePropertyInfo::GetOPERATOR_NOTINTHELAST(nsAString& aOPERATOR_NOTINTHELAST)
+{
+  aOPERATOR_NOTINTHELAST.AssignLiteral(SB_OPERATOR_NOTINTHELAST);
   return NS_OK;
 }
 
@@ -249,18 +278,6 @@ sbImmutablePropertyInfo::SetRemoteWritable(PRBool aRemoteWritable)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::GetUnits(nsAString& aUnits)
-{
-  aUnits = mUnits;
-  return NS_OK;
-}
-NS_IMETHODIMP
-sbImmutablePropertyInfo::SetUnits(const nsAString& aUnits)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
 sbImmutablePropertyInfo::GetOperators(nsISimpleEnumerator** aOperators)
 {
   NS_ENSURE_ARG_POINTER(aOperators);
@@ -349,3 +366,16 @@ sbImmutablePropertyInfo::MakeSortable(const nsAString& aValue,
   return NS_OK;
 }
 
+NS_IMETHODIMP 
+sbImmutablePropertyInfo::GetUnitConverter(sbIPropertyUnitConverter **retVal)
+{
+  *retVal = mUnitConverter;
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbImmutablePropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter)
+{
+  mUnitConverter = aUnitConverter;
+  return NS_OK;
+}

@@ -102,10 +102,11 @@ sbPropertyInfo::sbPropertyInfo()
 , mUserViewable(PR_TRUE)
 , mUserEditableLock(nsnull)
 , mUserEditable(PR_TRUE)
-, mUnitsLock(nsnull)
 , mOperatorsLock(nsnull)
 , mRemoteReadableLock(nsnull)
 , mRemoteWritableLock(nsnull)
+, mUnitConverter(nsnull)
+, mUnitConverterLock(nsnull)
 {
   mSortProfileLock = PR_NewLock();
   NS_ASSERTION(mSortProfileLock,
@@ -131,10 +132,6 @@ sbPropertyInfo::sbPropertyInfo()
   NS_ASSERTION(mUserEditableLock,
     "sbPropertyInfo::mUserEditableLock failed to create lock!");
 
-  mUnitsLock = PR_NewLock();
-  NS_ASSERTION(mUnitsLock,
-    "sbPropertyInfo::mUnitsLock failed to create lock!");
-
   mOperatorsLock = PR_NewLock();
   NS_ASSERTION(mOperatorsLock,
     "sbPropertyInfo::mOperatorsLock failed to create lock!");
@@ -146,6 +143,10 @@ sbPropertyInfo::sbPropertyInfo()
   mRemoteWritableLock = PR_NewLock();
   NS_ASSERTION(mRemoteWritableLock,
     "sbPropertyInfo::mRemoteWritableLock failed to create lock!");
+
+  mUnitConverterLock = PR_NewLock();
+  NS_ASSERTION(mUnitConverterLock,
+    "sbPropertyInfo::mUnitConverterLock failed to create lock!");
 }
 
 sbPropertyInfo::~sbPropertyInfo()
@@ -174,10 +175,6 @@ sbPropertyInfo::~sbPropertyInfo()
     PR_DestroyLock(mUserEditableLock);
   }
 
-  if(mUnitsLock) {
-    PR_DestroyLock(mUnitsLock);
-  }
-
   if(mOperatorsLock) {
     PR_DestroyLock(mOperatorsLock);
   }
@@ -188,6 +185,10 @@ sbPropertyInfo::~sbPropertyInfo()
 
   if(mRemoteWritableLock) {
     PR_DestroyLock(mRemoteWritableLock);
+  }
+
+  if(mUnitConverterLock) {
+    PR_DestroyLock(mUnitConverterLock);
   }
 }
 
@@ -248,6 +249,30 @@ NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_ENDSWITH(nsAString & aOPERATOR_ENDSWIT
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_BETWEEN(nsAString & aOPERATOR_BETWEEN)
 {
   aOPERATOR_BETWEEN = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_ISTRUE(nsAString & aOPERATOR_ISTRUE)
+{
+  aOPERATOR_ISTRUE = NS_LITERAL_STRING(SB_OPERATOR_ISTRUE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_ISFALSE(nsAString & aOPERATOR_ISFALSE)
+{
+  aOPERATOR_ISFALSE = NS_LITERAL_STRING(SB_OPERATOR_ISFALSE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_INTHELAST(nsAString & aOPERATOR_INTHELAST)
+{
+  aOPERATOR_INTHELAST = NS_LITERAL_STRING(SB_OPERATOR_INTHELAST);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_NOTINTHELAST(nsAString & aOPERATOR_NOTINTHELAST)
+{
+  aOPERATOR_NOTINTHELAST = NS_LITERAL_STRING(SB_OPERATOR_NOTINTHELAST);
   return NS_OK;
 }
 
@@ -381,24 +406,6 @@ NS_IMETHODIMP sbPropertyInfo::SetUserEditable(PRBool aUserEditable)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::GetUnits(nsAString & aUnits)
-{
-  sbSimpleAutoLock lock(mUnitsLock);
-  aUnits = mUnits;
-  return NS_OK;
-}
-NS_IMETHODIMP sbPropertyInfo::SetUnits(const nsAString & aUnits)
-{
-  sbSimpleAutoLock lock(mUnitsLock);
-
-  if(mUnits.IsEmpty()) {
-    mUnits = aUnits;
-    return NS_OK;
-  }
-
-  return NS_ERROR_ALREADY_INITIALIZED;
-}
-
 NS_IMETHODIMP sbPropertyInfo::GetOperators(nsISimpleEnumerator * *aOperators)
 {
   NS_ENSURE_ARG_POINTER(aOperators);
@@ -504,6 +511,27 @@ NS_IMETHODIMP sbPropertyInfo::SetRemoteWritable(PRBool aRemoteWritable)
 {
   sbSimpleAutoLock lock(mRemoteWritableLock);
   mRemoteWritable = aRemoteWritable;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetUnitConverter(sbIPropertyUnitConverter **aUnitConverter)
+{
+  NS_ENSURE_ARG_POINTER(aUnitConverter);
+
+  sbSimpleAutoLock lock(mUnitConverterLock);
+  if (mUnitConverter) {
+    NS_ADDREF(*aUnitConverter = mUnitConverter);
+  } else
+    *aUnitConverter = nsnull;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter)
+{
+  sbSimpleAutoLock lock(mUnitConverterLock);
+  mUnitConverter = aUnitConverter;
 
   return NS_OK;
 }

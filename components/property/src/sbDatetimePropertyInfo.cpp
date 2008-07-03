@@ -37,7 +37,6 @@
 
 static const char *gsFmtRadix10 = "%lld";
 static const char *gsSortFmtRadix10 = "%+020lld";
-static const char *gsFmtMilliseconds10 = "%04d";
 
 NS_IMPL_ADDREF_INHERITED(sbDatetimePropertyInfo, sbPropertyInfo);
 NS_IMPL_RELEASE_INHERITED(sbDatetimePropertyInfo, sbPropertyInfo);
@@ -50,13 +49,11 @@ NS_INTERFACE_TABLE_END
 NS_INTERFACE_TABLE_TAIL_INHERITING(sbPropertyInfo)
 
 sbDatetimePropertyInfo::sbDatetimePropertyInfo()
-: mDurationInversed(PR_FALSE)
-, mDurationDisplayMillisec(PR_FALSE)
-, mTimeTypeLock(nsnull)
+: mTimeTypeLock(nsnull)
 , mTimeType(sbIDatetimePropertyInfo::TIMETYPE_UNINITIALIZED)
-, mMinMaxTimeLock(nsnull)
-, mMinTime(0)
-, mMaxTime(LL_MAXINT)
+, mMinMaxDateTimeLock(nsnull)
+, mMinDateTime(0)
+, mMaxDateTime(LL_MAXINT)
 , mAppLocaleLock(nsnull)
 , mDateTimeFormatLock(nsnull)
 {
@@ -66,9 +63,9 @@ sbDatetimePropertyInfo::sbDatetimePropertyInfo()
   NS_ASSERTION(mTimeTypeLock,
     "sbDatetimePropertyInfo::mTimeTypeLock failed to create lock!");
 
-  mMinMaxTimeLock = PR_NewLock();
-  NS_ASSERTION(mMinMaxTimeLock,
-    "sbDatetimePropertyInfo::mMinMaxTimeLock failed to create lock!");
+  mMinMaxDateTimeLock = PR_NewLock();
+  NS_ASSERTION(mMinMaxDateTimeLock,
+    "sbDatetimePropertyInfo::mMinMaxDateTimeLock failed to create lock!");
 
   mAppLocaleLock = PR_NewLock();
   NS_ASSERTION(mAppLocaleLock,
@@ -86,8 +83,8 @@ sbDatetimePropertyInfo::~sbDatetimePropertyInfo()
   if(mTimeTypeLock) {
     PR_DestroyLock(mTimeTypeLock);
   }
-  if(mMinMaxTimeLock) {
-    PR_DestroyLock(mMinMaxTimeLock);
+  if(mMinMaxDateTimeLock) {
+    PR_DestroyLock(mMinMaxDateTimeLock);
   }
   if(mAppLocaleLock) {
     PR_DestroyLock(mAppLocaleLock);
@@ -130,6 +127,14 @@ void sbDatetimePropertyInfo::InitializeOperators()
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.between"));
   mOperators.AppendObject(propOp);
 
+  sbPropertyInfo::GetOPERATOR_INTHELAST(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.inthelast"));
+  mOperators.AppendObject(propOp);
+
+  sbPropertyInfo::GetOPERATOR_NOTINTHELAST(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.notinthelast"));
+  mOperators.AppendObject(propOp);
+
   return;
 }
 
@@ -146,9 +151,9 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Validate(const nsAString & aValue, PRBool 
     return NS_OK;
   }
 
-  sbSimpleAutoLock lock(mMinMaxTimeLock);
-  if(value < mMinTime ||
-     value > mMaxTime) {
+  sbSimpleAutoLock lock(mMinMaxDateTimeLock);
+  if(value < mMinDateTime ||
+     value > mMaxDateTime) {
     *_retval = PR_FALSE;
   }
 
@@ -174,9 +179,9 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
   }
 
   {
-    sbSimpleAutoLock lock(mMinMaxTimeLock);
-    if(value < mMinTime ||
-       value > mMaxTime) {
+    sbSimpleAutoLock lock(mMinMaxDateTimeLock);
+    if(value < mMinDateTime ||
+       value > mMaxDateTime) {
       return NS_ERROR_INVALID_ARG;
     }
   }
@@ -238,64 +243,6 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
           out);
       }
       break;
-
-      case sbIDatetimePropertyInfo::TIMETYPE_DURATION:
-      {
-        PRExplodedTime referenceTime = {0}, explodedTime = {0};
-        PR_ExplodeTime((PRTime) 0, PR_GMTParameters, &referenceTime);
-        PR_ExplodeTime((PRTime) value, PR_GMTParameters, &explodedTime);
-
-        PRInt32 delta = explodedTime.tm_year - referenceTime.tm_year;
-        if(delta) {
-          out.AppendInt(delta);
-          out.AppendLiteral("Y");
-        }
-
-        delta = explodedTime.tm_month - referenceTime.tm_month;
-        if(delta) {
-          out.AppendInt(delta);
-          out.AppendLiteral("M");
-        }
-
-        delta = explodedTime.tm_mday - referenceTime.tm_mday;
-        if(delta) {
-          out.AppendInt(delta);
-          out.AppendLiteral("D ");
-        }
-
-        PRInt32 hours = explodedTime.tm_hour - referenceTime.tm_hour;
-        if(hours) {
-          out.AppendInt(hours);
-          out.AppendLiteral(":");
-        }
-
-        PRInt32 mins = explodedTime.tm_min - referenceTime.tm_min;
-        if(hours && mins < 10 ) {
-          out.AppendLiteral("0");
-        }
-
-        out.AppendInt(mins);
-        out.AppendLiteral(":");
-
-        PRInt32 secs = explodedTime.tm_sec - referenceTime.tm_sec;
-        if(secs < 10) {
-          out.AppendLiteral("0");
-        }
-
-        out.AppendInt(secs);
-
-        if(mDurationDisplayMillisec) {
-          delta = (explodedTime.tm_usec - referenceTime.tm_usec)
-            / PR_USEC_PER_MSEC;
-
-          char c[32] = {0};
-          PR_snprintf(c, 32, gsFmtMilliseconds10, delta);
-
-          out.AppendLiteral(".");
-          out.Append(NS_ConvertUTF8toUTF16(c));
-        }
-      }
-      break;
     }
 
     NS_ENSURE_SUCCESS(rv, rv);
@@ -318,7 +265,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::MakeSortable(const nsAString & aValue, nsA
   _retval = aValue;
   _retval.StripWhitespace();
 
-  sbSimpleAutoLock lock(mMinMaxTimeLock);
+  sbSimpleAutoLock lock(mMinMaxDateTimeLock);
 
   if(PR_sscanf(narrow.get(), gsFmtRadix10, &value) != 1) {
     _retval = EmptyString();
@@ -365,64 +312,41 @@ NS_IMETHODIMP sbDatetimePropertyInfo::SetTimeType(PRInt32 aTimeType)
   return NS_ERROR_ALREADY_INITIALIZED;
 }
 
-NS_IMETHODIMP sbDatetimePropertyInfo::GetMinTime(PRInt64 *aMinTime)
+NS_IMETHODIMP sbDatetimePropertyInfo::GetMinDateTime(PRInt64 *aMinDateTime)
 {
-  NS_ENSURE_ARG_POINTER(aMinTime);
+  NS_ENSURE_ARG_POINTER(aMinDateTime);
 
-  sbSimpleAutoLock lock(mMinMaxTimeLock);
-  *aMinTime = mMinTime;
+  sbSimpleAutoLock lock(mMinMaxDateTimeLock);
+  *aMinDateTime = mMinDateTime;
 
   return NS_OK;
 }
-NS_IMETHODIMP sbDatetimePropertyInfo::SetMinTime(PRInt64 aMinTime)
+NS_IMETHODIMP sbDatetimePropertyInfo::SetMinDateTime(PRInt64 aMinDateTime)
 {
-  NS_ENSURE_ARG(aMinTime > -1);
+  NS_ENSURE_ARG(aMinDateTime > -1);
 
-  sbSimpleAutoLock lock(mMinMaxTimeLock);
-  mMinTime = aMinTime;
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP sbDatetimePropertyInfo::GetMaxTime(PRInt64 *aMaxTime)
-{
-  NS_ENSURE_ARG_POINTER(aMaxTime);
-
-  sbSimpleAutoLock lock(mMinMaxTimeLock);
-  *aMaxTime = mMaxTime;
-
-  return NS_OK;
-}
-NS_IMETHODIMP sbDatetimePropertyInfo::SetMaxTime(PRInt64 aMaxTime)
-{
-  NS_ENSURE_ARG(aMaxTime > -1);
-
-  sbSimpleAutoLock lock(mMinMaxTimeLock);
-  mMaxTime = aMaxTime;
+  sbSimpleAutoLock lock(mMinMaxDateTimeLock);
+  mMinDateTime = aMinDateTime;
 
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDatetimePropertyInfo::GetDurationInverse(PRBool *aDurationInverse)
+NS_IMETHODIMP sbDatetimePropertyInfo::GetMaxDateTime(PRInt64 *aMaxDateTime)
 {
-  NS_ENSURE_ARG_POINTER(aDurationInverse);
-  *aDurationInverse = mDurationInversed;
+  NS_ENSURE_ARG_POINTER(aMaxDateTime);
+
+  sbSimpleAutoLock lock(mMinMaxDateTimeLock);
+  *aMaxDateTime = mMaxDateTime;
+
   return NS_OK;
 }
-NS_IMETHODIMP sbDatetimePropertyInfo::SetDurationInverse(PRBool aDurationInverse)
+NS_IMETHODIMP sbDatetimePropertyInfo::SetMaxDateTime(PRInt64 aMaxDateTime)
 {
-  mDurationInversed = aDurationInverse;
+  NS_ENSURE_ARG(aMaxDateTime > -1);
+
+  sbSimpleAutoLock lock(mMinMaxDateTimeLock);
+  mMaxDateTime = aMaxDateTime;
+
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDatetimePropertyInfo::GetDurationWithMilliseconds(PRBool *aDurationWithMilliseconds)
-{
-  NS_ENSURE_ARG_POINTER(aDurationWithMilliseconds);
-  *aDurationWithMilliseconds = mDurationDisplayMillisec;
-  return NS_OK;
-}
-NS_IMETHODIMP sbDatetimePropertyInfo::SetDurationWithMilliseconds(PRBool aDurationWithMilliseconds)
-{
-  mDurationDisplayMillisec = aDurationWithMilliseconds;
-  return NS_OK;
-}

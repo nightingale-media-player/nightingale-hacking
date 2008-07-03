@@ -38,9 +38,8 @@ See app/content/xul/smartPlaylist.xul
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-#smart_playlist,
-{
-  width:  550px; 
+.dialog-content-box {
+  padding:5px !important;
 }
 
 #smartpl_select_library
@@ -61,10 +60,44 @@ See app/content/xul/smartPlaylist.xul
 
 #smart_songs_count
 {
-  width: 40px !important;
+  width: 40px;
 }
 
 sb-smart-conditions-drawer > sb-multi-drawer > .drawer-box > .drawer-content-item
 {
-  height: 28px !important;
+  height: 28px;
+}
+
+#propertypopup
+{
+  width: 140px;
+}
+
+#operatorpopup
+{
+  width: 140px;
+}
+
+#unitspopup
+{
+  width: 60px;
+}
+
+sb-rating {
+  -moz-border-radius:5px;
+  margin: 5px;
+  padding: 0px 5px 1px 5px;
+}
+
+.smart-condition-minus,
+.smart-condition-plus
+{
+  width:28px !important;
+  min-width:0px !important;
+  padding:0;
+}
+
+.smart_condition_rangeseparator
+{
+  padding-top: 3px;
 }

@@ -24,8 +24,8 @@
 //
 */
 
-#ifndef __SBDATETIMEPROPERTYINFO_H__
-#define __SBDATETIMEPROPERTYINFO_H__
+#ifndef __SBDURATIONPROPERTYINFO_H__
+#define __SBDURATIONPROPERTYINFO_H__
 
 #include <sbIPropertyManager.h>
 #include "sbPropertyInfo.h"
@@ -37,19 +37,19 @@
 #include <nsILocale.h>
 #include <nsILocaleService.h>
 #include <nsAutoLock.h>
-#include "sbPropertyUnitConverter.h"
+#include <sbIPropertyUnitConverter.h>
 
-class sbDatetimePropertyInfo : public sbPropertyInfo,
-                               public sbIDatetimePropertyInfo
+class sbDurationPropertyInfo : public sbPropertyInfo,
+                               public sbIDurationPropertyInfo
 
 {
 public:
   NS_DECL_ISUPPORTS
   NS_FORWARD_SBIPROPERTYINFO_NOVALIDATE_NOFORMAT(sbPropertyInfo::)
-  NS_DECL_SBIDATETIMEPROPERTYINFO
+  NS_DECL_SBIDURATIONPROPERTYINFO
 
-  sbDatetimePropertyInfo();
-  virtual ~sbDatetimePropertyInfo();
+  sbDurationPropertyInfo();
+  virtual ~sbDurationPropertyInfo();
 
   void InitializeOperators();
 
@@ -59,21 +59,18 @@ public:
   NS_IMETHOD MakeSortable(const nsAString & aValue, nsAString & _retval);
   
 protected:
-  PRLock* mTimeTypeLock;
-  PRInt32 mTimeType;
+  PRBool  mDurationInversed;
+  PRBool  mDurationDisplayMillisec;
 
-  PRLock* mMinMaxDateTimeLock;
-  PRInt64 mMinDateTime;
-  PRInt64 mMaxDateTime;
+  PRLock* mMinMaxDurationLock;
+  PRInt64 mMinDuration;
+  PRInt64 mMaxDuration;
 
   PRLock* mAppLocaleLock;
   nsCOMPtr<nsILocale> mAppLocale;
   
-  nsCOMPtr<sbIPropertyUnitConverter> mUnitConverter;
-  
   PRLock* mDateTimeFormatLock;
   nsCOMPtr<nsIDateTimeFormat> mDateTimeFormat;
-
 };
 
 #endif /* __SBDATETIMEPROPERTYINFO_H__ */

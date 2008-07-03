@@ -148,10 +148,10 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
       this._appendMenuItem(aContextMenu, "Properties", function(event) { //XXX todo: localize
         var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
                         .getService(Ci.nsIWindowWatcher);
-        watcher.openWindow(null,
+        watcher.openWindow(aParentWindow,
                           "chrome://songbird/content/xul/smartPlaylist.xul",
                           "_blank",
-                          "chrome,dialog=yes",
+                          "chrome,dialog=yes,centerscreen,modal,titlebar=no",
                           list);
       });
     }

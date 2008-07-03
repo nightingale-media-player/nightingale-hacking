@@ -34,6 +34,7 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <nsCOMArray.h>
+#include "sbPropertyUnitConverter.h"
 
 class sbImmutablePropertyInfo : public sbIPropertyInfo
 {
@@ -57,10 +58,11 @@ protected:
   PRBool mUserEditable;
   PRBool mRemoteReadable;
   PRBool mRemoteWritable;
-  nsString mUnits;
   nsCOMPtr<nsIStringBundle> mBundle;
   PRLock*   mOperatorsLock;
   nsCOMArray<sbIPropertyOperator> mOperators;
+
+  nsCOMPtr<sbIPropertyUnitConverter> mUnitConverter;
 };
 
 #endif /* __SBIMMUTABLEPROPERTYINFO_H__ */

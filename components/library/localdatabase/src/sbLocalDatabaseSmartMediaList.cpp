@@ -65,6 +65,8 @@
 #define RANDOM_ADD_CHUNK_SIZE 1000;
 #define SQL_IN_LIMIT 1000
 
+static const char *gsFmtRadix10 = "%lld";
+
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbLocalDatabaseSmartMediaList:5
@@ -222,13 +224,13 @@ sbLocalDatabaseSmartMediaListCondition::sbLocalDatabaseSmartMediaListCondition(c
                                                                                sbIPropertyOperator* aOperator,
                                                                                const nsAString& aLeftValue,
                                                                                const nsAString& aRightValue,
-                                                                               PRBool aLimit)
+                                                                               const nsAString& aDisplayUnit)
 : mLock(nsnull)
 , mPropertyID(aPropertyID)
 , mOperator(aOperator)
 , mLeftValue(aLeftValue)
 , mRightValue(aRightValue)
-, mLimit(aLimit)
+, mDisplayUnit(aDisplayUnit)
 {
   mLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaListCondition::mLock");
   NS_ASSERTION(mLock,
@@ -282,12 +284,10 @@ sbLocalDatabaseSmartMediaListCondition::GetRightValue(nsAString& aRightValue)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaListCondition::GetLimit(PRBool* aLimit)
+sbLocalDatabaseSmartMediaListCondition::GetDisplayUnit(nsAString& aDisplayUnit)
 {
-  NS_ENSURE_ARG_POINTER(aLimit);
-
   nsAutoLock lock(mLock);
-  *aLimit = mLimit;
+  aDisplayUnit = mDisplayUnit;
 
   return NS_OK;
 }
@@ -319,9 +319,7 @@ sbLocalDatabaseSmartMediaListCondition::ToString(nsAString& _retval)
   success = map.Put(NS_LITERAL_STRING("rightValue"), mRightValue);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  nsAutoString limit;
-  limit.AppendInt(mLimit);
-  success = map.Put(NS_LITERAL_STRING("limit"), limit);
+  success = map.Put(NS_LITERAL_STRING("displayUnit"), mDisplayUnit);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   rv = JoinStringMapIntoQueryString(map, _retval);
@@ -620,7 +618,7 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
                                                sbIPropertyOperator* aOperator,
                                                const nsAString& aLeftValue,
                                                const nsAString& aRightValue,
-                                               PRBool aLimit,
+                                               const nsAString& aDisplayUnit,
                                                sbILocalDatabaseSmartMediaListCondition** _retval)
 {
   NS_ENSURE_ARG_POINTER(aOperator);
@@ -628,7 +626,7 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
   NS_ENSURE_ARG(aPropertyID.Length() > 1);
 
   // Make sure the right value is void if the operator is anything else but
-  // between
+  // between, and that both are void if the operator is istrue or isfalse
   nsAutoString op;
   nsresult rv = aOperator->GetOperator(op);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -638,12 +636,18 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
     return NS_ERROR_ILLEGAL_VALUE;
   };
 
+  if ((op.EqualsLiteral(SB_OPERATOR_ISTRUE) ||
+       op.EqualsLiteral(SB_OPERATOR_ISFALSE)) &&
+      !aLeftValue.IsEmpty()) {
+    return NS_ERROR_ILLEGAL_VALUE;
+  };
+
   sbRefPtrCondition condition;
   condition = new sbLocalDatabaseSmartMediaListCondition(aPropertyID,
                                                          aOperator,
                                                          aLeftValue,
                                                          aRightValue,
-                                                         aLimit);
+                                                         aDisplayUnit);
   NS_ENSURE_TRUE(condition, NS_ERROR_OUT_OF_MEMORY);
 
   sbRefPtrCondition* success = mConditions.AppendElement(condition);
@@ -1397,12 +1401,39 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsAutoString value;
-  rv = aInfo->MakeSortable(aCondition->mLeftValue, value);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsAutoString op;
   rv = aCondition->mOperator->GetOperator(op);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString value;
+  nsAutoString leftValue;
+  if (op.EqualsLiteral(SB_OPERATOR_ISTRUE) ||
+      op.EqualsLiteral(SB_OPERATOR_ISFALSE)) {
+    leftValue = NS_LITERAL_STRING("1");
+  } else if (op.EqualsLiteral(SB_OPERATOR_INTHELAST) ||
+             op.EqualsLiteral(SB_OPERATOR_NOTINTHELAST)) {
+
+    PRTime timeValue = 0;
+    NS_ConvertUTF16toUTF8 narrow(aCondition->mLeftValue);
+
+    if(PR_sscanf(narrow.get(), gsFmtRadix10, &timeValue) != 1) {
+      return NS_ERROR_INVALID_ARG;
+    }
+
+    char out[32] = {0};
+    
+    PRTime now = PR_Now()/1000;
+    PRTime when = now - timeValue;
+    if(PR_snprintf(out, 32, gsFmtRadix10, when) == -1) {
+      return NS_ERROR_FAILURE;
+    }
+    NS_ConvertUTF8toUTF16 wide(out);
+    leftValue = wide;
+  } else {
+    leftValue = aCondition->mLeftValue;
+  }
+
+  rv = aInfo->MakeSortable(leftValue, value);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If this is a between operator, construct two conditions for it
@@ -1466,6 +1497,18 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   }
   else if (op.EqualsLiteral(SB_OPERATOR_LESSEQUAL)) {
     matchType = sbISQLBuilder::MATCH_LESSEQUAL;
+  }
+  else if (op.EqualsLiteral(SB_OPERATOR_ISTRUE)) {
+    matchType = sbISQLBuilder::MATCH_EQUALS;
+  }
+  else if (op.EqualsLiteral(SB_OPERATOR_ISFALSE)) {
+    matchType = sbISQLBuilder::MATCH_NOTEQUALS;
+  }
+  else if (op.EqualsLiteral(SB_OPERATOR_INTHELAST)) {
+    matchType = sbISQLBuilder::MATCH_GREATEREQUAL;
+  }
+  else if (op.EqualsLiteral(SB_OPERATOR_NOTINTHELAST)) {
+    matchType = sbISQLBuilder::MATCH_LESS;
   }
 
   if (matchType >= 0) {
@@ -2064,8 +2107,8 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
         nsAutoString property;
         nsAutoString leftValue;
         nsAutoString rightValue;
+        nsAutoString displayUnit;
         nsAutoString opString;
-        PRUint32 limit = sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE;
 
         if (conditionMap.Get(NS_LITERAL_STRING("property"), &value)) {
           property = value;
@@ -2079,12 +2122,12 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
           rightValue = value;
         }
 
-        if (conditionMap.Get(NS_LITERAL_STRING("operator"), &value)) {
-          opString = value;
+        if (conditionMap.Get(NS_LITERAL_STRING("displayUnit"), &value)) {
+          displayUnit = value;
         }
 
-        if (conditionMap.Get(NS_LITERAL_STRING("limit"), &value)) {
-          limit = value.ToInteger(&dontCare);
+        if (conditionMap.Get(NS_LITERAL_STRING("operator"), &value)) {
+          opString = value;
         }
 
         if (!property.IsEmpty() && !opString.IsEmpty()) {
@@ -2118,7 +2161,7 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
                                                                  op,
                                                                  leftValue,
                                                                  rightValue,
-                                                                 limit);
+                                                                 displayUnit);
           NS_ENSURE_TRUE(condition, NS_ERROR_OUT_OF_MEMORY);
 
           sbRefPtrCondition* victory = mConditions.AppendElement(condition);
