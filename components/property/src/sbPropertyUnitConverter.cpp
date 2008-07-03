@@ -31,8 +31,8 @@
 #include <nsCOMPtr.h>
 #include "nsEnumeratorUtils.h"
 #include "nsArrayEnumerator.h"
+#include <prprf.h>
 
-static const char *gsFmtRadix10 = "%lld";
 static const char *gsFmtFloatOut = "%f";
 static const char *gsFmtFloatIn = "%Lg";
 
@@ -56,10 +56,10 @@ sbPropertyUnit::sbPropertyUnit(const nsAString& aName,
                                const nsAString& aShortName,
                                const nsAString& aID)
 : mLock(nsnull)
-, mInitialized(PR_TRUE)
 , mName(aName)
 , mShortName(aShortName)
 , mID(aID)
+, mInitialized(PR_TRUE)
 {
   mLock = PR_NewLock();
   NS_ASSERTION(mLock, "sbPropertyOperator::mLock failed to create lock!");

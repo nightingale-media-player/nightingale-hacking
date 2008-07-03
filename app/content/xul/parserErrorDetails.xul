@@ -27,7 +27,16 @@
  */
 -->
 
-<!-- Warning: this file MUST NOT load songbird.dtd !! -->
+
+
+<!-- WARNING : this file MUST NOT load songbird.dtd !! -->
+
+<!-- The reason for this is because an error while parsing that dtd
+     may just be what caused the parser error to pop up, so in those
+     cases, this dialog would fail to load. -->
+
+
+
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
