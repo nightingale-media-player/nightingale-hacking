@@ -33,7 +33,24 @@
 
   <binding id="filterlist">
     <content>
-      <xul:hbox id="sb-filterlist" class="filterlist" flex="1" xbl:inherits="class">
+      <xul:stack flex="1" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        <!-- this box contains the nodes for the drag icon.
+             ideally, these nodes would be created at run-time.
+             unfortunately, it is very difficult to hide a node from view
+             without making it ineligible for dragSessionWithImage.
+             to get rid of this, figure out how to fix that call. -->
+        <box top="0" left="0">
+          <stack sbid="dragIcon">
+            <image sbid="dragImage"
+                   class="sb-playlist-drag-image"
+                   top="0"
+                   left="0"/>
+            <description sbid="dragBadge"
+                         class="sb-playlist-drag-badge"
+                         top="0"
+                         left="0"/>
+          </stack>
+        </box>
         <xul:tree
           id="sb-filterlist-tree"
           class="sb-filterlist-tree"
@@ -41,13 +58,14 @@
           flex="1"
           onselect="_onFilterListSelect(event);"
           ondblclick="_onFilterListDblClick(event);"
+          ondraggesture="_onFilterListDragGesture(event);"
           enableColumnDrag="false"
           xbl:inherits="class,enableColumnDrag,hidecolumnpicker"
         >
           <xul:treecols sbid="treeColumns" xbl:inherits="class"/>
           <xul:treechildren/>
         </xul:tree>
-      </xul:hbox>
+      </xul:stack>
     </content>
 
     <implementation type="application/x-javascript"
@@ -177,7 +195,7 @@
       ]]></field>
 
       <method name="bind">
-        <parameter name="cfs"/>
+        <parameter name="mediaListView"/>
         <parameter name="index"/>
         <body>
 <![CDATA[
@@ -185,10 +203,11 @@
     throw new Error("already bound");
   }
   this.setAttribute("sbtype", "filterlist");
-  this.cfs = cfs;
+  this.mediaListView = mediaListView;
+  this.cfs = mediaListView.cascadeFilterSet;
   this.index = index;
-  this._property = cfs.getProperty(index);
-  this.tree.view = cfs.getTreeView(index);
+  this._property = this.cfs.getProperty(index);
+  this.tree.view = this.cfs.getTreeView(index);
 
   // Get the property info for the property
   var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
@@ -383,6 +402,84 @@
   catch(e) {
     return defaultValue;
   }
+]]>
+        </body>
+      </method>
+            <!-- Items are dragged from the list -->
+      <method name="_onFilterListDragGesture">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+    // We only want to consider drag sessions initiated on the tree children.
+    if (event.target.localName != "treechildren"
+        || this.mediaListView.length == 0) {
+      return;
+    }
+
+    var transArray = this._makeTransferArray();
+    var icon = this._prepareDragIcon();
+    
+    // Begin the drag session!
+    var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
+                          .getService(this._Ci.nsIDragService);
+
+    var dragAction = this._Ci.nsIDragService.DRAGDROP_ACTION_COPY;
+    dragService.invokeDragSessionWithImage(event.target, transArray,
+                                              null, dragAction,
+                                              icon, 0, 0, event);
+
+    event.stopPropagation();
+]]>
+        </body>
+      </method>
+
+<!-- makeTransferArray
+     create an array based on the current state of the filter widget
+     which represents what should be dragged right now.
+  -->
+      <method name="_makeTransferArray">
+        <body>
+<![CDATA[
+  // Create the Transfer Array
+  var dnd = Components.classes["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+                    .getService(Components.interfaces.sbIDndSourceTracker);
+  dnd.reset();
+
+  var view = this.mediaListView;
+  var context = new DNDUtils.EntireMediaListViewTransferContext(view); // create the data
+  var handle = dnd.registerSource(context);                 // make it a source
+  var dataItem = new TransferData();                   // add it with a flavor
+  dataItem.addDataForFlavour("application/x-sb-transfer-media-items", handle);
+  var transArray = Components.classes["@mozilla.org/supports-array;1"]
+                           .createInstance(Components.interfaces.nsISupportsArray);
+  var trans = nsTransferable.set(dataItem); // put it into a transferable
+  transArray.AppendElement(trans);          // append it to a transferrable array
+  return transArray;
+]]>
+        </body>
+      </method>
+
+      <method name="_prepareDragIcon">
+        <body>
+<![CDATA[
+  // Prepare the badged drag icon for the drag session.
+  
+  // A few notes for the next poor bastard to stumble into this code.
+  // First, the node you return has to be part of a document tree, or it will
+  // crash mozilla. (mozbug: 439565) Second, the node has to be visible, or it 
+  // won't render. That means the browser has to have had time to load images, 
+  // so you need a place to stash the node. I've hidden mine behind the tree 
+  // widgets, but it's an awful hack. Awful, awful, awful.
+  // Oh, and you also can't(?) start a drag session in a callback?
+
+  var numRows = this.mediaListView.length;
+
+  var icon = document.getAnonymousElementByAttribute(this, "sbid", "dragIcon");
+  icon.setAttribute("items", numRows);
+  var badge = document.getAnonymousElementByAttribute(this, "sbid", "dragBadge");
+  badge.setAttribute("value", numRows);
+
+  return icon;
 ]]>
         </body>
       </method>

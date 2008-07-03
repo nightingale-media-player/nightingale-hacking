@@ -177,7 +177,12 @@ Currently a single clickhold button below the service tree
 {
   padding: 0px;
   margin: 0px;
-  height: 25px;  
+  height: 25px;
+}
+
+.servicepane-toolbar-box[dropOn]
+{
+ border: 2px inset red;
 }
 
 /** Offset menu to account for rounded button **/
@@ -191,7 +196,6 @@ Currently a single clickhold button below the service tree
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;
 }
-
 
 #menuitem_file_new {
   list-style-image: url(chrome://songbird/skin/icons/icon-playlist.png) ;

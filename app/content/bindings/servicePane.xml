@@ -573,20 +573,6 @@
                   event.screenX+5, event.screenY,
                   'context', null, null, null);
 
-      // This prevents the menu from working correctly on the mac, see
-      // bug 5178. It appears however that this is no longer needed anyway.
-      /*
-
-      // Setup a one-shot event listener to force the popup closed
-      // on the next click in the document
-      var pop = this.mPopup;
-      function doclistener() {
-        pop.hidePopup();
-        document.removeEventListener( "click", doclistener, false );
-      }
-      document.addEventListener( "click", doclistener, false );
-      */
-
       event.stopPropagation();
       event.preventBubble();
       event.preventDefault();
@@ -684,9 +670,10 @@
             }
           }
           
+          var dragAction = this._dragService.DRAGDROP_ACTION_COPY +
+                           this._dragService.DRAGDROP_ACTION_MOVE;
           this._dragService.invokeDragSessionWithImage(event.target, transArray,
-              region, this._dragService.DRAGDROP_ACTION_COPY +
-              this._dragService.DRAGDROP_ACTION_MOVE,
+              region, dragAction,
               null, 0, 0,
               event);
           
@@ -790,6 +777,12 @@
       <constructor><![CDATA[
         var service = Components.classes['@songbirdnest.com/servicepane/service;1']
           .getService(Components.interfaces.sbIServicePaneService);
+        this._service = service;
+        
+        this._dragService = Cc['@mozilla.org/widget/dragservice;1']
+                            .getService(Ci.nsIDragService);
+        
+        
         this._clickHold = document.getAnonymousElementByAttribute(this, 'anonid', 'clickhold');
         this._popup     = document.getAnonymousElementByAttribute(this, 'anonid', 'popup');
         
@@ -820,6 +813,85 @@
         }
         // this wasn't heading to any of our children - let's do the first one
         this._popup.firstChild.doCommand();
+      ]]></handler>
+      <handler event="dragenter"><![CDATA[
+        var session = this._dragService.getCurrentSession();
+        
+        var supported = DNDUtils.isSupported(session,
+          ["application/x-sb-transfer-media-list",
+           "application/x-sb-transfer-media-items"]);
+        if (supported) {
+          var element = this._clickHold.parentNode;
+          this._dragService.canDrop = true;
+          element.setAttribute("dropOn", "true");
+
+          // we handle the drop, do not let the default dnd handler get the event
+          event.stopPropagation();
+        }
+      ]]></handler>
+      <handler event="dragexit"><![CDATA[
+        var element = this._clickHold.parentNode;
+        element.removeAttribute("dropOn");
+
+        // we handle the drop, do not let the default dnd handler get the event
+        event.stopPropagation();
+      ]]></handler>
+      <handler event="dragdrop"><![CDATA[
+  try {
+    var element = event.target;
+    
+    var session = this._dragService.getCurrentSession();
+    
+    // Note that this is called by our tree observer
+    var dnd = Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+                .getService(Ci.sbIDndSourceTracker);
+  
+    // handle mediaitem drops
+    var data = DNDUtils.getTransferDataForFlavour("application/x-sb-transfer-media-list",
+                                              session);
+    if (data) {
+      var context = dnd.getSourceSupports(data)
+                       .QueryInterface(Ci.sbIMediaListTransferContext);
+      
+      var mediaList = SBNewPlaylist();
+      mediaList.addAll(context.list);
+      
+      return;
+    }
+  
+    data = DNDUtils.getTransferDataForFlavour("application/x-sb-transfer-media-items",
+                                              session);
+    if (data) {
+      var context = dnd.getSourceSupports(data)
+                       .QueryInterface(Ci.sbIMediaItemsTransferContext);
+
+      var mediaList = SBNewPlaylist();
+      mediaList.addSome(context.items);
+
+      return;
+    }
+
+    // handle external drops
+    var dropHandlerListener = {
+      onDropComplete: function(aTargetList,
+                               aImportedInLibrary,
+                               aDuplicates,
+                               aInsertedInMediaList,
+                               aOtherDropsHandled) { 
+        // show the standard report on the status bar
+        return true;
+      },
+      onFirstMediaItem: function(aTargetList, aFirstMediaItem) {}
+    };
+
+    ExternalDropHandler.dropOnList(window, 
+                                   session, 
+                                   this.mediaList, 
+                                   position, 
+                                   dropHandlerListener);
+                                   
+    event.stopPropagation();
+  } catch(e) { Components.utils.reportError(e); }
       ]]></handler>
     </handlers>
   </binding>

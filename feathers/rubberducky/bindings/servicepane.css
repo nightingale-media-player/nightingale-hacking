@@ -186,6 +186,11 @@ Currently a single clickhold button below the service tree
  margin-left: 8px;
 }
 
+.servicepane-toolbar-box[dropOn]
+{
+ border: 2px inset red;
+}
+
 /** Bind images to the button and button-popup on the Service Pane */
 .servicepane-toolbar-newitem-button
 {

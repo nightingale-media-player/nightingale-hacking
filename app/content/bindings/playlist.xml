@@ -36,6 +36,23 @@
   <binding id="playlist">
     <content mousethrough="never">
       <stack flex="1" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        <!-- this box contains the nodes for the drag icon.
+             ideally, these nodes would be created at run-time.
+             unfortunately, it is very difficult to hide a node from view
+             without making it ineligible for dragSessionWithImage.
+             to get rid of this, figure out how to fix that call. -->
+        <box top="0" left="0">
+          <stack sbid="dragIcon">
+            <image sbid="dragImage"
+                   class="sb-playlist-drag-image"
+                   top="0"
+                   left="0"/>
+            <description sbid="dragBadge"
+                         class="sb-playlist-drag-badge"
+                         top="0"
+                         left="0"/>
+          </stack>
+        </box>
         <vbox sbid="loading_box" pack="end" align="right" flex="1" >
           <vbox id="loading_box"  flex="1">
             <label id="loading_text" flex="1" value=""/>
@@ -634,7 +651,7 @@
       filterlist.setAttribute("flex", "1");
 
       parent.appendChild(filterlist);
-      filterlist.bind(cfs, i);
+      filterlist.bind(this.mediaListView, i);
       filters.push(filterlist);
 
       if (i < length - 1) {
@@ -991,7 +1008,7 @@
         <parameter name="aWidth"/>
         <body>
 <![CDATA[
-  // Find some important indexes
+  // Find some important indices
   var columnIndex       = -1;
   var beforeColumnIndex = -1;
   var lastVisibleIndex  = -1;
@@ -1115,7 +1132,7 @@
         <parameter name="aPropertyID"/>
         <body>
 <![CDATA[
-  // Find some important indexes
+  // Find some important indices
   var columnIndex       = -1;
   var firstHiddenIndex  = -1;
 
@@ -2167,9 +2184,7 @@
       </body>
     </method>
 
-
-
-    <method name="_addItem">
+    <method name="_addAllItems">
       <parameter name="source"/>
       <parameter name="item"/>
       <parameter name="row"/>
@@ -2211,30 +2226,17 @@
     }
   }
 
-  if (source.equals(ml)) {
-    var index = this.tree.view.selection.currentIndex;
-    if (!isAscending) {
-      index = this.mediaListView.length - (index + 1);
-    }
-
-    if (doInsert) {
-      ml.moveBefore(index, row);
-    }
-    else {
-      // Moving items within a list that is not orderable does nothing
-      if (isOrderable) {
-        ml.moveLast(index);
-      }
-    }
+  if (item.equals(ml)) {
+    return;
   }
   else {
     item.setProperty(SBProperties.downloadStatusTarget,
                      item.library.guid + "," + item.guid);
     if (doInsert) {
-      ml.insertBefore(row, item);
+      ml.insertAllBefore(row, item);
     }
     else {
-      ml.add(item);
+      ml.addAll(item);
     }
 
     var added = ml.length - oldLength;
@@ -2249,6 +2251,7 @@
     <method name="_addItems">
       <parameter name="source"/>
       <parameter name="enumerator"/>
+      <parameter name="indicesEnumerator"/>
       <parameter name="count"/>
       <parameter name="row"/>
       <parameter name="orientation"/>
@@ -2290,59 +2293,38 @@
   }
 
   if (source.equals(ml)) {
-    // Find the indexes of all the selected rows
-    var indexes = [];
+    // Find the indices of all the selected rows
+    var indices = [];
     var viewLength = this.mediaListView.length;
-    while (enumerator.hasMoreElements()) {
-      var index = enumerator.getNext().index;
+    while (indicesEnumerator.hasMoreElements()) {
+      var index = indicesEnumerator.getNext().index;
       if (!isAscending) {
         index = viewLength - (index + 1);
       }
-      indexes.push(index);
+      indices.push(index);
     }
 
     if (!isAscending) {
-      indexes.reverse();
+      indices.reverse();
     }
 
     if (doInsert) {
-      ml.moveSomeBefore(indexes, indexes.length, row);
+      ml.moveSomeBefore(indices, indices.length, row);
     }
     else {
       // Moving items within a list that is not orderable does nothing
       if (isOrderable) {
-        ml.moveSomeLast(indexes, indexes.length);
+        ml.moveSomeLast(indices, indices.length);
       }
     }
   }
   else {
-    // Create an enumerator that wraps the enumerator we were handed since
-    // the enumerator we get hands back sbIIndexedMediaItem, not just plain
-    // 'ol sbIMediaItems
-
     var self = this;
-    var unwrapper = {
-      hasMoreElements : function() {
-        return enumerator.hasMoreElements();
-      },
-      getNext : function() {
-        var item = enumerator.getNext().mediaItem;
-        item.setProperty(SBProperties.downloadStatusTarget,
-                         item.library.guid + "," + item.guid);
-        return item;
-      },
-      QueryInterface : function(iid) {
-        if (iid.equals(self._Ci.nsISimpleEnumerator) ||
-            iid.equals(self._Ci.nsISupports))
-          return this;
-        throw self._Cr.NS_NOINTERFACE;
-      }
-    }
     if (doInsert) {
-      ml.insertSomeBefore(row, unwrapper);
+      ml.insertSomeBefore(row, enumerator);
     }
     else {
-      ml.addSome(unwrapper);
+      ml.addSome(enumerator);
     }
 
     var added = ml.length - oldLength;
@@ -2413,22 +2395,6 @@
         </body>
       </method>
 
-      <method name="_di">
-        <parameter name="o"/>
-        <body>
-<![CDATA[
- for(var i in this._Ci) {
-   try {
-     o.QueryInterface(this._Ci[i]);
-     dump(i + "\n");
-   }
-   catch(e) {
-   }
- }
-]]>
-        </body>
-      </method>
-
     <method name="_downloadItem">
       <parameter name="item"/>
       <body>
@@ -2444,79 +2410,9 @@
         <![CDATA[({ 
         _self: this,
         
-        // we are dragging items from the list, construct the session data
-        onDragStart: function(event, xferData, dragAction) {
-          try {
-            var mediaListView = this._self._mediaListView;
-
-            var ml = mediaListView.mediaList;
-            var numRows = mediaListView.selection.count;
-            if (numRows == 0) {
-              // Nothing selected, dont drag
-              throw this._self._Cr.NS_OK;
-            }
-
-            var dnd = this._self._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
-                              .getService(this._self._Ci.sbIDndSourceTracker);
-            dnd.reset();
-
-            xferData.data = new TransferDataSet();
-            var data = new TransferData();
-
-            // If only one item is selected, send two flavors
-            var self = this;
-            if (numRows == 1) {
-              var item = mediaListView.selection.currentMediaItem;
-              if (!item) {
-                throw this._self._Cr.NS_OK;
-              }
-
-              if (item instanceof this._self._Ci.sbIMediaList) {
-                // If this is a list, send it as both a media item and a media list
-                var context = this._self._getSingleListTransferContext(item, ml);
-                var handle = dnd.registerSource(context);
-                data.addDataForFlavour(this._self._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
-                data.addDataForFlavour(this._self._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
-              }
-              else {
-                // If this is just a media item, send it only as a media item
-                var context = this._self._getSingleItemTransferContext(item, ml);
-                var handle = dnd.registerSource(context);
-                data.addDataForFlavour(this._self._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
-              }
-
-            }
-            else {
-              // We are sending more than one item.  We dont know (or care to find
-              // out) if all of the items to be sent are actually lists, so send
-              // as items
-
-              // initialize the context to have items
-              var context = this._self._getMultipleItemTransferContext(ml, numRows, mediaListView);
-              context.reset();
-
-              var handle = dnd.registerSource(context);
-              data.addDataForFlavour(this._self._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);
-            }
-
-            // Add the url of the item as well
-            // XXX: Probably want to make sure that this is a local file that exists
-            // before providing this flavor
-            //data.addDataForFlavour("text/x-moz-url", item.contentSrc);
-
-            xferData.data.push(data);
-
-            dragAction.action = this._self._Ci.nsIDragService.DRAGDROP_ACTION_COPY;
-          }
-          catch(e) {
-            // The drag and drop helper swallows exceptions, so report them and
-            // rethrow
-            if (e.result != this._self._Cr.NS_OK) {
-              Components.utils.reportError(e);
-            }
-            throw e;
-          }
-        },
+        // the function calling onDragStart was rewritten
+        // but we have left this husk here to satisfy nsDragAndDrop.js
+        onDragStart: function(event, transferData, dragAction) {},
         
         // whether we can accept the drop or not
         canDrop: function(event, session) {
@@ -2547,11 +2443,108 @@
         <parameter name="event"/>
         <body>
 <![CDATA[
-  // eventually calls this.nsDragAndDropObserver.onDragStart to fill
-  // the session with our data
-  if (event.target.localName == "treechildren") {
-    nsDragAndDrop.startDrag(event, this.nsDragAndDropObserver);
-  }
+    // We only want to consider drag sessions initiated on the tree children.
+    if (event.target.localName != "treechildren") {
+      return;
+    }
+
+    var view = this._mediaListView;
+    var numRows = view.selection.count;
+    if (numRows == 0) {
+      return; // Nothing selected to drag.
+    }
+
+    var transArray = this._prepareTransferArray(view);
+    var dragAction = Ci.nsIDragService.DRAGDROP_ACTION_COPY;
+    var icon       = this._prepareDragIcon();
+
+    var dragService = Cc["@mozilla.org/widget/dragservice;1"]
+                        .getService(Ci.nsIDragService);
+    dragService.invokeDragSessionWithImage(event.target, transArray,
+                                           null, dragAction,
+                                           icon, 0, 0, event);
+
+    event.stopPropagation();
+]]>
+        </body>
+      </method>
+
+      <method name="_prepareTransferArray">
+        <parameter name="view"/>
+        <body>
+<![CDATA[
+    var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+                      .getService(this._Ci.sbIDndSourceTracker);
+    dnd.reset();
+
+    var transferData = new TransferData();
+    // Create a context which describes the media items being moved.
+    var context = new DNDUtils.MediaListViewSelectionTransferContext(view);
+    var handle = dnd.registerSource(context);
+    transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);
+    
+    // add a second flavour for a single media item so it can be recognized by
+    // drop targets that only accept a single media item
+    if (view.selection.count == 1) {
+      transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
+
+      // for single media lists, we'll add another special flavor
+      var item = view.selection.currentMediaItem;
+      if (item instanceof this._Ci.sbIMediaList) {
+        var context = new DNDUtils.MediaListTransferContext(item, view.mediaList);
+        
+        context.QueryInterface(this._Ci.sbIMediaItemsTransferContext);
+        var handle = dnd.registerSource(context);
+        transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
+      }
+    }
+
+    var transArray = Cc["@mozilla.org/supports-array;1"]
+                       .createInstance(Ci.nsISupportsArray);
+    
+    var trans = Cc["@mozilla.org/widget/transferable;1"]
+                  .createInstance(Ci.nsITransferable);
+    for (var i = 0; i < transferData.dataList.length; ++i)  {
+      var currData = transferData.dataList[i];
+      var currFlavour = currData.flavour.contentType;
+      trans.addDataFlavor(currFlavour);
+      var supports = null; // nsISupports data
+      var length = 0;
+      if (currData.flavour.dataIIDKey == "nsISupportsString") {
+        supports = Components.classes["@mozilla.org/supports-string;1"]
+                             .createInstance(Components.interfaces.nsISupportsString);
+
+        supports.data = currData.supports;
+        length = supports.data.length;
+      }
+      else {
+        // non-string data.
+        supports = currData.supports;
+        length = this._Ci.nsITransferable.kFlavorHasDataProvider;
+      }
+      // length * 2 is because of sizeof(PRUnichar) and pure evil
+      trans.setTransferData(currFlavour, supports, length * 2);
+    }
+    transArray.AppendElement(trans);
+    
+    return transArray;
+]]>
+        </body>
+      </method>
+
+      <method name="_prepareDragIcon">
+        <body>
+<![CDATA[
+    // Prepare the badged drag icon for the drag session.
+    var numRows = this._mediaListView.selection.count;
+
+    var icon = document.getAnonymousElementByAttribute(this, "sbid", "dragIcon");
+    var badge = document.getAnonymousElementByAttribute(this, "sbid", "dragBadge");
+
+    icon.setAttribute("items", numRows);
+    badge.setAttribute("value", numRows);
+
+    return icon;
 ]]>
         </body>
       </method>
@@ -2601,22 +2594,12 @@
                     .getService(this._Ci.sbIDndSourceTracker);
 
   // handle mediaitem drops
-  
-  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM,
-                                                session);
-  if (data) {
-    var context = dnd.getSourceSupports(data)
-                     .QueryInterface(this._Ci.sbISingleItemTransferContext);
-    this._addItem(context.source, context.item, row, orientation);
-    return;
-  }
-
   data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
                                             session);
   if (data) {
     var context = dnd.getSourceSupports(data)
-                     .QueryInterface(this._Ci.sbISingleListTransferContext);
-    this._addItem(context.source, context.list, row, orientation);
+                     .QueryInterface(this._Ci.sbIMediaListTransferContext);
+    this._addAllItems(context.source, context.list, row, orientation);
     return;
   }
 
@@ -2624,15 +2607,12 @@
                                             session);
   if (data) {
     var context = dnd.getSourceSupports(data)
-                     .QueryInterface(this._Ci.sbIMultipleItemTransferContext);
-    this._addItems(context.source, context.items, context.count, row, orientation);
+                     .QueryInterface(this._Ci.sbIMediaItemsTransferContext);
+    this._addItems(context.source, context.items, context.indexedItems, context.count, row, orientation);
     return;
   }
   
-  // handle external drops
-  
   // figure out where the track insertion should occur
-
   var position = row;
   if (orientation != this._Ci.sbIMediaListViewTreeViewObserver.DROP_BEFORE) {
     position++;
@@ -2686,83 +2666,6 @@
                                  position, 
                                  dropHandlerListener);
 
-]]>
-        </body>
-      </method>
-
-      <method name="_getSingleListTransferContext">
-        <parameter name="item"/>
-        <parameter name="ml"/>
-        <body>
-<![CDATA[
-  function sbSingleListTransferContext(item, ml) {
-    this.item   = item;
-    this.list   = item;
-    this.source = ml;
-    this.count  = 1;
-  }
-  sbSingleListTransferContext.prototype = {
-    QueryInterface : function(iid) {
-      if (iid.equals(Components.interfaces.sbISingleItemTransferContext) ||
-          iid.equals(Components.interfaces.sbISingleListTransferContext) ||
-          iid.equals(Components.interfaces.nsISupports))
-        return this;
-      throw Components.results.NS_NOINTERFACE;
-    }
-  }
-  return new sbSingleListTransferContext(item, ml);
-]]>
-        </body>
-      </method>
-
-      <method name="_getSingleItemTransferContext">
-        <parameter name="item"/>
-        <parameter name="ml"/>
-        <body>
-<![CDATA[
-  function sbSingleItemTransferContext(item, ml) {
-    this.item   = item;
-    this.source = ml;
-    this.count  = 1;
-  }
-  sbSingleItemTransferContext.prototype = {
-    QueryInterface : function(iid) {
-      if (iid.equals(Components.interfaces.sbISingleItemTransferContext) ||
-          iid.equals(Components.interfaces.nsISupports))
-        return this;
-      throw Components.results.NS_NOINTERFACE;
-    }
-  }
-  return new sbSingleItemTransferContext(item, ml);
-]]>
-        </body>
-      </method>
-
-      <method name="_getMultipleItemTransferContext">
-        <parameter name="ml"/>
-        <parameter name="numRows"/>
-        <parameter name="mediaListView"/>
-        <body>
-<![CDATA[
-  function sbMultipleItemTransferContext(ml, numRows, mediaListView) {
-    this.items          = null;
-    this.source         = ml;
-    this.count          = numRows;
-    this._mediaListView = mediaListView;
-  }
-  sbMultipleItemTransferContext.prototype = {
-    reset: function() {
-      // fetch a new enumerator (reset it)
-      this.items = this._mediaListView.selection.selectedIndexedMediaItems;
-    },
-    QueryInterface : function(iid) {
-      if (iid.equals(Components.interfaces.sbIMultipleItemTransferContext) ||
-          iid.equals(Components.interfaces._Ci.nsISupports))
-        return this;
-      throw Components.results.NS_NOINTERFACE;
-    }
-  }
-  return new sbMultipleItemTransferContext(ml, numRows, mediaListView);
 ]]>
         </body>
       </method>
@@ -2913,36 +2816,31 @@
                     .getService(this._Ci.sbIDndSourceTracker);
 
   var context;
-  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, 
-                                                this._dragSession);
+  
+  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                            this._dragSession);
   if (data) {
     context = dnd.getSourceSupports(data)
-                 .QueryInterface(this._Ci.sbISingleItemTransferContext);
-  } else {
-    data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                .QueryInterface(this._Ci.sbIMediaListTransferContext);
+  }
+  else {
+    data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
                                               this._dragSession);
     if (data) {
       context = dnd.getSourceSupports(data)
-                  .QueryInterface(this._Ci.sbISingleListTransferContext);
+                   .QueryInterface(this._Ci.sbIMediaItemsTransferContext);
     } else {
-      data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
-                                                this._dragSession);
-      if (data) {
-        context = dnd.getSourceSupports(data)
-                     .QueryInterface(this._Ci.sbIMultipleItemTransferContext);
-      } else {
-        // the dnd does not contain songbird mediaitems, it cannot have 
-        // been made by ourselves, only accept the drop if it is a supported 
-        // flavour
-        if (!ExternalDropHandler.isSupported(this._dragSession)) 
-          return false;
-          
-        // we want to accept the drop, but ideally, we would test this.isOrdinalSort()
-        // and make it so the drop target cue is not shown. Unfortunately, returning
-        // false here, with an external drag and drop session, will prevent us from
-        // dropping entirely :/
-        return true;
-      }
+      // the dnd does not contain songbird mediaitems, it cannot have 
+      // been made by ourselves, only accept the drop if it is a supported 
+      // flavour
+      if (!ExternalDropHandler.isSupported(this._dragSession)) 
+        return false;
+        
+      // we want to accept the drop, but ideally, we would test this.isOrdinalSort()
+      // and make it so the drop target cue is not shown. Unfortunately, returning
+      // false here, with an external drag and drop session, will prevent us from
+      // dropping entirely :/
+      return true;
     }
   }
   

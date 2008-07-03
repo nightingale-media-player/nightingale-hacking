@@ -255,34 +255,24 @@ function sbLibraryServicePane__canDownloadDrop(aDragSession) {
     var context = DNDUtils.
       getInternalTransferDataForFlavour(aDragSession,
                                         TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
-                                        Ci.sbIMultipleItemTransferContext);
+                                        Ci.sbIMediaItemsTransferContext);
     var items = context.items;
     // we must remember to reset the context before we exit, so that when we
     // actually need the items in onDrop we can get them again!
-    var count = 0;
-    while (items.hasMoreElements()) {
-      var item = items.getNext();
-      item.QueryInterface(Ci.sbIIndexedMediaItem);
-      if (!canDownload(item.mediaItem)) {
-        context.reset();
-        return false;
-      }
+    var count = 0;    
+    var downloadable = true;
+    while (items.hasMoreElements() && downloadable) {
+      downloadable = canDownload(items.getNext());
       ++count;
     }
-    if (count < 1) {
-      // umm, where's that list of items?
-      context.reset();
-      return false;
-    }
-    // all items in the list are downloadable
+    
+    // we can't download nothing.
+    if (count == 0) { downloadable = false; }
+    
+    // rewind the items list.
     context.reset();
-    return true;
-  } else if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM)) {
-    var context = DNDUtils.
-      getInternalTransferDataForFlavour(aDragSession,
-                                        TYPE_X_SB_TRANSFER_MEDIA_ITEM,
-                                        Ci.sbISingleItemTransferContext);
-    return canDownload(context.item);
+    
+    return downloadable;
   } else {
     Components.utils.reportError("_getMediaListForDrop should have returned null");
     return false;
@@ -291,7 +281,6 @@ function sbLibraryServicePane__canDownloadDrop(aDragSession) {
 
 sbLibraryServicePane.prototype._getMediaListForDrop =
 function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrientation) {
-  dump('_getMediaListForDrop('+aNode+', '+aDragSession+', '+aOrientation+')\n');
   // work out what the drop would target and return an sbIMediaList to
   // represent that target, or null if the drop is not allowed
 
@@ -303,8 +292,6 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
 
   // are we dropping a list ?
   var dropList = aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_LIST);
-
-  dump('dropList='+dropList+'\n');
 
   // work out where the drop items are going
   var targetNode = aNode;
@@ -352,7 +339,7 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
       var draggedList = DNDUtils.
         getInternalTransferDataForFlavour(aDragSession,
                                           TYPE_X_SB_TRANSFER_MEDIA_LIST,
-                                          Ci.sbISingleListTransferContext);
+                                          Ci.sbIMediaListTransferContext);
       if (targetResource == draggedList.library) {
         return null;
       }
@@ -386,7 +373,7 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
       var draggedList = DNDUtils.
         getInternalTransferDataForFlavour(aDragSession,
                                           TYPE_X_SB_TRANSFER_MEDIA_LIST,
-                                          Ci.sbISingleListTransferContext);
+                                          Ci.sbIMediaListTransferContext);
       var fromResource = draggedList.library;
       
       var toResource = null;
@@ -458,15 +445,12 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
 
 sbLibraryServicePane.prototype.canDrop =
 function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow) {
-  dump('\n\n\ncanDrop:\n');
-  
   // don't allow drop on read-only nodes
   if (aNode.getAttributeNS(LSP, "ReadOnly") == "true")
     return false;
 
   var list = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
   if (list) {
-    dump('canDrop on a list\n');
     
     // check if the list is in a readonly library
     if (!list.library.userEditable) {
@@ -485,15 +469,12 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow
     return InternalDropHandler.isSupported(aDragSession) ||
            ExternalDropHandler.isSupported(aDragSession);
   } else {
-    dump('Drop refused\n');
     return false;
   }
 }
 
 sbLibraryServicePane.prototype.onDrop =
 function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow) {
-  dump('\n\n\nonDrop:\n');
-
   // don't allow drop on read-only nodes
   if (aNode.getAttributeNS(LSP, "ReadOnly") == "true")
     return;
@@ -541,7 +522,6 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow)
   };
 
   if (InternalDropHandler.isSupported(aDragSession)) {
-  
     // handle drop of internal items
     InternalDropHandler.dropOnList(aWindow, 
                                    aDragSession, 
@@ -579,14 +559,14 @@ function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
     count: 1,
     list: list,
     QueryInterface: function(iid) {
-      if (iid.equals(Components.interfaces.sbISingleListTransferContext) ||
+      if (iid.equals(Components.interfaces.sbIMediaListTransferContext) ||
           iid.equals(Components.interfaces.nsISupports)) {
         return this;
       }
       throw Components.results.NS_NOINTERFACE;
     }
-  }
-
+  };
+  
   // register the source context
   var dnd = Components.classes['@songbirdnest.com/Songbird/DndSourceTracker;1']
       .getService(Components.interfaces.sbIDndSourceTracker);

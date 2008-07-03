@@ -821,6 +821,35 @@ sbLocalDatabaseSimpleMediaList::AddAll(sbIMediaList* aMediaList)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::InsertAllBefore(PRUint32 aIndex,
+                                                 sbIMediaList* aMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+
+  sbAutoBatchHelper batchHelper(*this);
+
+  PRUint32 startingIndex;
+  nsresult rv = GetLength(&startingIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString startingOrdinal;
+  rv = GetBeforeOrdinal(aIndex, startingOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbSimpleMediaListInsertingEnumerationListener listener(this,
+                                                         aIndex,
+                                                         startingOrdinal);
+  rv =
+    aMediaList->EnumerateAllItems(&listener,
+                                  sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);

@@ -404,4 +404,25 @@ Playlist Commands
   min-width: 160px !important;
 }
 
+/** 
+*******************************************************************************
+Drag and drop Icon
+*******************************************************************************
+*/
 
+.sb-playlist-drag-image {
+  list-style-image: url(chrome://songbird/skin/icons/drag-document-icon.png);
+}
+
+.sb-playlist-drag-badge[value="1"] {
+  display: none;
+}
+
+.sb-playlist-drag-badge:not([value="1"]) {
+  font-weight: bold;
+  background-color: red;
+  margin-top: 16px;
+  margin-left: 16px;
+  padding: 4px;
+  -moz-border-radius: 8px 8px 8px 8px;
+}

@@ -264,6 +264,123 @@ var DNDUtils = {
   }
 }
 
+/* MediaListViewSelectionTransferContext
+ *
+ * Create a drag and drop context containing the selected items in the view
+ * which is passed in.
+ * Implements: sbIMediaItemsTransferContext
+ */
+DNDUtils.MediaListViewSelectionTransferContext = function (mediaListView) {
+    this.items          = null; // filled in during reset()
+    this.indexedItems   = null;
+    this.source         = mediaListView.mediaList;
+    this.count          = mediaListView.selection.count;
+    this._mediaListView = mediaListView;
+    this.reset();
+};
+DNDUtils.MediaListViewSelectionTransferContext.prototype = {
+    reset: function() {
+      // Create an enumerator that unwraps the sbIIndexedMediaItem enumerator
+      // which selection provides.
+      var enumerator = this._mediaListView.selection.selectedIndexedMediaItems;
+      this.items = {
+        hasMoreElements : function() {
+          return enumerator.hasMoreElements();
+        },
+        getNext : function() {
+          var item = enumerator.getNext().mediaItem
+                       .QueryInterface(Components.interfaces.sbIMediaItem);
+          
+          item.setProperty(SBProperties.downloadStatusTarget,
+                           item.library.guid + "," + item.guid);
+          return item;
+        },
+        QueryInterface : function(iid) {
+          if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
+              iid.equals(Components.interfaces.nsISupports))
+            return this;
+          throw Components.results.NS_NOINTERFACE;
+        }
+      };
+
+      // and here's the wrapped form for those cases where you want it
+      this.indexedItems = this._mediaListView.selection.selectedIndexedMediaItems;
+    },
+    QueryInterface : function(iid) {
+      if (iid.equals(Components.interfaces.sbIMediaItemsTransferContext) ||
+          iid.equals(Components.interfaces.nsISupports))
+        return this;
+      throw Components.results.NS_NOINTERFACE;
+    }
+  };
+  
+/* EntireMediaListViewTransferContext
+ *
+ * Create a drag and drop context containing all the items in the view
+ * which is passed in.
+ * Implements: sbIMediaItemsTransferContext
+ */
+DNDUtils.EntireMediaListViewTransferContext = function(view) {
+    this.items          = null;
+    this.indexedItems   = null;
+    this.source         = view.mediaList;
+    this.count          = view.length;
+    this._mediaListView = view;
+    this.reset();
+  }
+DNDUtils.EntireMediaListViewTransferContext.prototype = {
+  reset: function() {
+    // Create an ugly pseudoenumerator
+    var that = this;
+    this.items = {
+      i: 0,
+      hasMoreElements : function() {
+        return this.i < that._mediaListView.length;
+      },
+      getNext : function() {
+        var item = that._mediaListView.getItemByIndex(this.i++);
+        item.setProperty(SBProperties.downloadStatusTarget,
+                         item.library.guid + "," + item.guid);
+        return item;
+      },
+      QueryInterface : function(iid) {
+        if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
+            iid.equals(Components.interfaces.nsISupports))
+          return this;
+        throw Components.results.NS_NOINTERFACE;
+      }
+    };
+  },
+  QueryInterface : function(iid) {
+    if (iid.equals(Components.interfaces.sbIMediaItemsTransferContext) ||
+        iid.equals(Components.interfaces.nsISupports))
+      return this;
+    throw Components.results.NS_NOINTERFACE;
+  }
+};
+
+/* MediaListTransferContext
+ *
+ * A transfer context suitable for moving a single media list around the system.
+ * As of this writing, the only place to create a drag/drop session of a single
+ * media list is the service pane, though it is also possible that extension
+ * developers will create them in the playlist widget.
+ */
+DNDUtils.MediaListTransferContext = function (item, mediaList) {
+    this.item   = item;
+    this.list   = item;
+    this.source = mediaList;
+    this.count  = 1;
+  }
+DNDUtils.MediaListTransferContext.prototype = {
+    QueryInterface : function(iid) {
+      if (iid.equals(Components.interfaces.sbIMediaListTransferContext) ||
+          iid.equals(Components.interfaces.nsISupports))
+        return this;
+      throw Components.results.NS_NOINTERFACE;
+    }
+  }
+
 /*
 
   InternalDropHandler
@@ -402,7 +519,7 @@ var InternalDropHandler = {
       var context = DNDUtils.
         getInternalTransferDataForFlavour(session,
                                           TYPE_X_SB_TRANSFER_MEDIA_LIST, 
-                                          this._Ci.sbISingleListTransferContext);
+                                          this._Ci.sbIMediaListTransferContext);
       var list = context.list;
 
       // record metrics
@@ -475,15 +592,14 @@ var InternalDropHandler = {
       var context = DNDUtils.
         getInternalTransferDataForFlavour(session,
                                           TYPE_X_SB_TRANSFER_MEDIA_ITEMS, 
-                                          this._Ci.sbIMultipleItemTransferContext);
-
+                                          this._Ci.sbIMediaItemsTransferContext);
 
       var items = context.items;
       
       // are we dropping on a library ?
       if (targetList instanceof this._Ci.sbILibrary) {
         if (items.hasMoreElements() && 
-            items.getNext().mediaItem.library == targetList) {
+            items.getNext().library == targetList) {
           // can't add items to a library to which they already belong
           this._dropComplete(aListener, targetList, 0, context.count, 0, 0);
           return;
@@ -505,7 +621,7 @@ var InternalDropHandler = {
         var first = true;
         var position = aDropPosition;
         while (items.hasMoreElements()) {
-          var item = items.getNext().mediaItem;
+          var item = items.getNext();
           if (first) {
             first = false;
             if (aListener)
@@ -522,45 +638,6 @@ var InternalDropHandler = {
         }
       });
       this._dropComplete(aListener, targetList, context.count, 0, context.count, 0);
-    } else if (session.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEM)) {
-
-      var context = DNDUtils.
-        getInternalTransferDataForFlavour(session,
-                                          TYPE_X_SB_TRANSFER_MEDIA_ITEM, 
-                                          this._Ci.sbISingleItemTransferContext);
-
-      var item = context.item;
-
-      // are we dropping on a library ?
-      if (targetList instanceof this._Ci.sbILibrary) {
-        if (item.library == targetList) {
-          // can't add an item to a library to which it already belongs
-          this._dropComplete(aListener, targetList, 0, 1, 0, 0);
-          return;
-        }
-      }
-
-      item.setProperty(SBProperties.downloadStatusTarget,
-                       item.library.guid + "," + item.guid);
-      if (aDropPosition != -1 &&
-          targetList instanceof this._Ci.sbIOrderableMediaList) {
-        targetList.insertBefore(item, aDropPosition);
-      } else {
-        targetList.add(item);
-      }
-      if (aListener)
-        aListener.onFirstMediaItem(item);
-
-      this._dropComplete(aListener, targetList, 1, 0, 1, 0);
-
-      // Metrics!
-      var metrics_totype = targetList.library.getProperty(SBProperties.customType);
-      var metrics_fromtype = context.source.library.getProperty(SBProperties.customType);
-      this._metrics("app.servicepane.copy", 
-                         metrics_fromtype, 
-                         metrics_totype, 
-                         1);
-
     }
   },
 
