@@ -38,10 +38,6 @@
 /* ===== scrollbars.css =================================================
   == Styles used by XUL scrollbar-related elements.
   ======================================================================= */
-  
-  /* Import the basic XUL scrollbars look */    
-  @import url("chrome://songbird-global/skin/scrollbar-styles.css");
 
-
-  /* Import the current feathers */    
-  @import url("chrome://songbird/skin/globalImport.css");
+/* Import the current feathers */    
+@import url("chrome://songbird/skin/globalImport.css");

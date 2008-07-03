@@ -1,0 +1,178 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+
+
+.tabbrowser-tab > .tab-image-middle {
+  -moz-box-flex: 0 !important;
+}
+
+
+.tab-drop-indicator-bar {
+   display:none;
+   height: 10px;
+   margin-top: -10px;
+   position: relative;
+}
+.tab-drop-indicator {
+   height: 10px;
+   width: 12px;
+   margin-bottom: -40px;
+   position: relative;
+   background: url('chrome://songbird/skin/browser-tab-bar/icon-drop-indicator.png') left center no-repeat;
+}
+.tab-drop-indicator-bar[dragging="true"] {
+   display: -moz-box;
+}
+
+
+
+
+
+
+/**
+ * Tab Scrollbox Arrow Buttons
+ */
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up {
+  background-color:blue;
+  -moz-border-radius:0px;
+  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-left.png");
+}
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up[disabled="true"] {
+  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-left-disabled.png");
+}
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover {
+  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-left-disabled.png");
+}
+ 
+.tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover:active {
+  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-left-hover.png");
+}
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up > .toolbarbutton-icon {
+}
+
+.scrollbutton-rel-box > .scrollbutton-down-box {
+}
+
+.scrollbutton-rel-box > .scrollbutton-down {
+  background-color:yellow;
+  -moz-border-radius:0px;
+  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-right.png");
+}
+
+.scrollbutton-rel-box > .scrollbutton-down[disabled="true"] {
+  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-right-disabled.png");
+}
+
+.scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
+  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-right-disabled.png");
+}
+
+.scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
+  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-right-hover.png");
+}
+
+.scrollbutton-rel-box > .scrollbutton-down > .toolbarbutton-icon {
+}
+
+
+
+
+
+
+
+
+/**
+ * All Tabs Button
+ */
+
+.tabs-alltabs-box {
+}
+
+.tabs-alltabs-button  > .toolbarbutton-text {
+  display: none;
+}
+
+/**
+ * All Tabs Button
+ */
+
+.tabs-alltabs-button {
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png);
+  background-repeat:no-repeat;
+  background-position:left 0px;
+
+  -moz-border-radius:0px !important;
+  margin:0 0 0 1px;
+  padding: 0;
+  border: none;
+}
+
+.tabs-alltabs-button:hover {
+  background-position:left -30px;
+}
+.tabs-alltabs-button:active {
+  background-position:left -60px;
+}
+.tabs-alltabs-button[disabled="true"] {
+  background-position:left -90px !important;
+}
+.tabs-alltabs-button[open="true"] {
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
+  background-position:left -60px !important;
+}
+
+.scrollbutton-rel-box > .scrollbutton-down {
+}
+
+.scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
+}
+
+.scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
+}
+
+/**
+ * All Tabs Menupopup 
+ */
+
+.alltabs-item[selected="true"] {
+  font-weight: bold;
+}
+
+.alltabs-item > .menu-iconic-left > .menu-iconic-icon {
+  width: 16px;
+  height: 16px;
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-default-favicon.png") !important;
+}
+.alltabs-item[busy] > .menu-iconic-left > .menu-iconic-icon {
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-loading.png") !important;
+}
+
+
+
+.tab-close-button {
+ background-color:transparent !important;
+ -moz-border-radius:0px !important;
+ list-style-image: url(chrome://songbird/skin/browser-tab-bar/button-close.png) !important;
+ -moz-image-region: rect(0px 12px 12px 0px);
+ padding:0 !important;
+ margin:0 !important;
+ border: none;
+ cursor: default;
+}
+.tab-close-button > .toolbarbutton-icon {
+ padding:0;
+}
+
+.tab-close-button:hover {
+ -moz-image-region: rect(12px 12px 24px 0px);
+}
+.tab-close-button:hover:active {
+ -moz-image-region: rect(24px 12px 36px 0px);
+}
+.tab-close-button:hover[disabled="true"] {
+ -moz-image-region: rect(36px 12px 48px 0px) !important;
+}

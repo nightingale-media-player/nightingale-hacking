@@ -1,0 +1,40 @@
+description,
+caption,
+label
+{
+  color: rgb(40,40,40);
+}
+
+
+radiogroup {
+  padding:4px;
+  background-color:white;
+  border:1px solid gray;
+}
+
+
+
+
+groupbox {
+  background-color:white;
+  border:1px solid gray;
+}
+.groupbox-body {
+  padding: 4px;
+  margin: 0;
+}
+.groupbox-title {
+  background-color:white;
+  border:1px solid gray;
+  border-bottom:none;
+}
+.caption-text {
+  font-size:9px !important;
+  padding-top:2px;
+}
+
+
+separator {
+  border-top:1px solid red;
+  padding:4px 0;
+}

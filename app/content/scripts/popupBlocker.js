@@ -145,7 +145,7 @@ try
         if (popupCount > 1) message = message.replace("%S", popupCount);
 
         var notificationName = "popup-blocked";
-        var iconURL = "chrome://global/skin/icons/icon-blocked-popup.png";
+        var iconURL = "chrome://songbird/skin/notification-bar/icon-blocked-popup.png";
         var optionsLabel, optionsAccessKey;
         optionsLabel = "Options";
         optionsAccessKey = "O";

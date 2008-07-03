@@ -47,56 +47,40 @@
 /* :::::::::: menulist :::::::::: */
 
 menulist {
-  margin: 2px 4px;
-  min-height: 20px !important;
-  -moz-border-radius: 5px !important;
-  background-color: #202220; /** Dark Color 1 */ 
-  border: 1px solid;
-  border-top-color: #111111; /** Dark Border 3*/
-  border-left-color: #222222; /** Dark Border 4*/
-  border-bottom-color: #99A195; /** Dark Border 2*/
-  border-right-color: #99A194; /** Dark Border 1*/ 
 }
 
 menulist:focus,
 menulist[focused="true"] 
 {
-  background-color: #0f100f; /** Groove */
 }
 
 .menulist-label-box {
-  -moz-appearance: menulist-text;
   -moz-box-align: center;
   -moz-box-pack: center;  
 }
 
 .menulist-label {
-  margin: 1px 3px !important;
 }
 
 .menulist-description {
   font-style: italic;
-  color: GrayText;
-  -moz-margin-start: 1ex !important;
+  color: gray;
 }
 
 
 /* ..... dropmarker ..... */
 
 .menulist-dropmarker {
-  list-style-image: url("chrome://songbird/skin/menu/dropmarker.png");
+
 }
 
 /* ..... disabled state ..... */
 
 menulist[disabled="true"] {
-  color: #777777 !important;
 }
 
 menulist[disabled="true"] > .menulist-dropmarker 
 {
-  list-style-image: url("chrome://songbird/skin/menu/dropmarker-disabled.png");
-  padding: 1px !important;
 }
 
 /* ::::: editable menulists ::::: */
@@ -111,9 +95,6 @@ menulist[editable="true"][open="true"] > .menulist-dropmarker {
 .menulist-editable-input,
 .menulist-editable-box
 {
-  border: none !important;
-  padding: 2px 0px 0px 3px !important;
-  margin: 0px 0px 0px 0px !important;
   -moz-box-align: stretch !important; /* this is set to "center" on the mac.  yay. */
 }
 
@@ -132,24 +113,13 @@ html|*.menulist-editable-input {
 /* ::::: compact menulists ::::: */
 
 .menulist-compact {
-  -moz-box-align: center;
-  -moz-box-pack: center;
-  margin: 0;
-  border: 2px solid;
-  background-color: -moz-Dialog;
 }
 
 .menulist-compact > .menulist-label {
-  margin: 0 3px !important;
   text-align: right;
-
 }  
 
 .menulist-compact > .menulist-dropmarker {
-  margin-left: 2px;
-  border: none;
-  padding: 0 !important;
-  background: transparent;
 }
 
 .menulist-compact[open="true"] {
@@ -157,7 +127,6 @@ html|*.menulist-editable-input {
 
 
 listbox menulist:not([disabled]) {
-  color: #000;
 }
 
 

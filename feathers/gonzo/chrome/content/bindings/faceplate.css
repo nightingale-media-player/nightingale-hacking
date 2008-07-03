@@ -1,0 +1,241 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+
+
+/** 
+*******************************************************************************
+FACEPLATE
+
+Applies image and layout styles to the LCD faceplate screen.
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+
+/** Rounded corners for the faceplate **/
+
+
+/** Text **/
+.faceplate-text
+{
+  font-family: Lucida Grande, Arial, Helvetica, FreeSans, Sans-serif !important;
+  margin: 0;
+  color:white;
+}
+
+/* 
+   Due to https://bugzilla.mozilla.org/show_bug.cgi?id=414711 the artist text
+   spills over its boundaries a little bit and clips.  Adding a few pixels of 
+   L/R margin "fixes" it well enough until the moz bug is fixed. -gse 
+
+   sb-player-artist-label.faceplate-text
+   {
+     font-size: 12px !important; 
+     text-align: center;
+   }
+*/
+
+
+sb-player-title-label.faceplate-text
+{
+  font-weight:bold;
+}
+.faceplate-text
+{
+  font-size: 11px; 
+}
+.sb-player-artist-label,
+.sb-player-title-label {
+  margin-right:2px;
+}
+
+
+.faceplate-album-box,
+.faceplate-artist-box
+{
+  height: 14px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.faceplate-curtrack-box:hover,
+.faceplate-curtrack-box:hover .faceplate-text
+{
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* the seekbar slider */
+
+/** 
+  NOTE:
+  In order to keep the progress meter exactly in sync with  
+  the slider we make the slider thumb invisible, and paint
+  a fake thumb as a background image on the right edge
+  of the progress bar.
+ **/
+  
+.faceplate-progressmeter,
+.faceplate-seekbar
+{
+  height: 12px;
+}
+
+#track_info {
+  min-height:24px;
+  padding:0 8px;
+  border-bottom:1px solid gray;
+}
+.faceplate-seekinfo-box {
+  height:16px;
+  padding:0 8px;
+}
+
+
+
+sb-player-timeelapsed-label label,
+sb-player-totaltime-label label {
+  font-size:8px !important;
+}
+sb-player-timeelapsed-label ,
+sb-player-totaltime-label {
+/*  min-width:42px;*/
+  padding:0;
+  margin:0;
+}
+
+
+
+
+
+
+slider.sb-player-seek-slider,
+progressmeter.sb-player-seek-slider
+{
+  height: 12px;
+}
+
+thumb.sb-player-seek-slider 
+{
+  width: 12px;
+  height: 12px;
+  background-image: url(chrome://songbird/skin/media-control-pane/button-seek-thumb.png);
+  background-repeat: no-repeat;
+  background-position: center 0px;
+  border:none;
+}
+thumb.sb-player-seek-slider:hover {
+  background-position: center -12px;
+}
+thumb.sb-player-seek-slider:active {
+  background-position: center -24px;
+}
+thumb.sb-player-seek-slider[disabled="true"] {
+  background-position: center -36px;
+}
+
+progressmeter.sb-player-seek-slider > .progress-bar {
+  background-image:none;
+}
+
+
+thumb.sb-player-seek-slider  > gripper
+{
+  height: 12px;
+}
+progressmeter.sb-player-seek-slider
+{
+  height: 12px;
+  margin: 0px;
+  padding: 0px;
+  border: 0px !important;
+}
+progressmeter.sb-player-seek-slider > .progress-remainder
+{
+  height: 12px;
+  background-image: none;
+}
+progressmeter.sb-player-seek-slider > .progress-bar
+{
+  min-width:12px;
+  background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar-progress.png);
+  background-repeat:no-repeat;
+  background-position:8px 0 !important;
+
+}
+
+
+
+/**
+ * The following rules are there to allow showing the seek buffering animation
+ * when faceplate.buffering is true.
+ */
+sb-player-seek-slider[buffering="true"]
+{
+  background-image: url('chrome://songbird/skin/faceplate/seek-buffering-animation.png');
+  background-repeat: repeat-x;
+  background-position: center center;
+}
+sb-player-seek-slider[buffering="true"] > #sb-player-seek-slider
+{
+  display: none;
+}
+
+
+
+
+
+
+
+#faceplate_seekbar_box {
+}
+#faceplate_seekbar_box > .left-box > .left,
+#faceplate_seekbar_box > .right-box > .right {
+  min-width:8px;
+  min-height:12px;
+  background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar-left-right.png);
+  background-repeat:no-repeat;
+}
+#faceplate_seekbar_box > .left-box > .left {
+  background-position:left center;
+}
+#faceplate_seekbar_box > .right-box > .right {
+  background-position:right center;
+}
+#faceplate_seekbar_box > .middle {
+  margin:0 8px;
+  background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar.png);
+  background-repeat:repeat-x;
+  background-position:left center;
+}
+
+#faceplate_seekbar_box > .notches > hbox+hbox {
+  background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar-notch.png);
+  background-repeat:no-repeat;
+  background-position:left center;
+}

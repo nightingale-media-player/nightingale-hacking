@@ -71,7 +71,8 @@ sb-displaypane .favicon {
   padding: 0 2px 0 1px;
   list-style-image: url(chrome://songbird/skin/icons/displaypane-content-picker.png);
   margin: 0;
-  min-width: 0;
+  min-width: 10px;
+  background-color:red;
   -moz-border-radius: 0;
   border-left: none;
   border-bottom: none;

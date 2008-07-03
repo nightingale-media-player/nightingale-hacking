@@ -1,0 +1,36 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* ::::: scale ::::: */
+
+scale {
+}
+
+.scale-slider {
+  background: url("chrome://global/skin/scale/scale-tray-horiz.png") 0% 50% repeat-x;
+  height: 10px;
+  width: 100px;
+}
+
+.scale-slider[orient="vertical"]
+{
+   background: url("chrome://global/skin/scale/scale-tray-vert.png") 50% 0% repeat-y;
+  width: 10px;
+  height: 100px;
+}
+
+/* ::::: scale thumb ::::: */
+
+.scale-thumb {
+  min-width: 10px;
+  min-height: 10px;
+  padding: 0;
+  margin: 0;
+}
+
+.scale-thumb[orient="vertical"] {
+  min-width: 10px;
+  min-height: 10px;
+}
+
+.scale-thumb[disabled="true"] {
+}

@@ -1,0 +1,1963 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+@namespace html url("http://www.w3.org/1999/xhtml");
+
+
+
+/** 
+*******************************************************************************
+WINDOW CHROME
+These rules paint the resizeable window for Songbird.
+*******************************************************************************
+*/ 
+
+description,
+label {
+  font-family: Lucida Grande, Arial, Helvetica, FreeSans, Sans-serif !important;
+}
+
+
+wizard,
+dialog,
+window,
+prefwindow,
+sb-playlist,
+page,
+panel
+{
+  background-color: rgb(245,245,245);
+}
+
+window#mainplayer {
+  border:1px solid gray;
+}
+window[platform=Darwin] {
+  border:none !important;
+}
+window[platform=Darwin] sb-sys-titlebar {
+  font-family: Lucida Grande !important;
+  font-size: 13px !important;
+}
+sb-sys-close-button,
+sb-sys-maximize-button,
+sb-sys-minimize-button,
+sb-sys-hide-button
+{
+  background-color: transparent;
+  border:none;
+}
+
+
+
+
+
+
+toolbar {
+  border-bottom:1px solid gray;
+  max-height:29px;
+}
+
+
+
+
+
+/** 
+*******************************************************************************
+SERVICE PANE - a.k.a the Left Pane
+The Service Pane is the primary area for navigating through services and content. 
+It serves as the primary GUI entry point to content and services.
+*******************************************************************************
+*/ 
+
+
+#servicepane  {
+  background-color: rgb(235,235,235);
+}
+
+
+#servicepane_box > statusbar {
+  background-image:url('chrome://songbird/skin/service-pane/bg-status-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+
+
+.servicepane-tree > treecols > .tree-scrollable-columns {
+  border:none !important;
+}
+
+.servicepane-tree > treechildren::-moz-tree-row
+{
+  border:none;
+  background-color:transparent;
+  min-height:20px;
+}
+
+.servicepane-tree > treechildren::-moz-tree-cell
+{
+  border-right: none !important;
+  padding-left:4px;
+}
+
+.servicepane-tree > treechildren::-moz-tree-cell-text(selected) {
+  font-weight:bold;
+}
+
+/** Since it will be a difficult task to keep 
+the service pane and the browser in sync, 
+we should nix the painting of the selection.*/
+
+.servicepane-tree > treechildren::-moz-tree-row( selected ),
+.servicepane-tree > treechildren::-moz-tree-row( selected current focus )
+{
+  background-image: url('chrome://songbird/skin/service-pane/bg-selected-node.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( servicesource-bookmarks ),
+.servicepane-tree > treechildren::-moz-tree-image( servicesource-playlists ),
+.servicepane-tree > treechildren::-moz-tree-image( folder ) {
+  list-style-image:none;
+  display:none;
+  min-width:0px;
+  min-height:0px;
+  width:0px;
+  height:0px;
+}
+
+.servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-bookmarks ),
+.servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-playlists ),
+.servicepane-tree > treechildren::-moz-tree-cell-text( folder ) {
+  color:rgb(160,160,160);
+  font-weight:normal !important;
+}
+
+.servicepane-tree > treechildren::-moz-tree-cell( servicesource-bookmarks ),
+.servicepane-tree > treechildren::-moz-tree-cell( servicesource-playlists ),
+.servicepane-tree > treechildren::-moz-tree-cell( folder ) {
+  background-image: url('chrome://songbird/skin/service-pane/bg-container-node.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+}
+
+.servicepane-toolbar-newitem-button > .clickhold-button {
+  display:none;
+}
+
+
+
+
+
+/** 
+*******************************************************************************
+THE PLAYLIST
+*******************************************************************************
+*/ 
+
+
+
+
+
+
+.sb-commands-toolbar {
+  border-top:1px solid gray;
+}
+
+.sb-commands-toolbar-bkg {
+}
+
+
+
+
+listheader,
+treecol,
+treechildren::-moz-tree-cell {
+  border-left:1px solid transparent;
+  border-right:1px solid gray;
+  padding:0px 2px;
+}
+treechildren::-moz-tree-cell {
+  border-left:1px solid transparent;
+  border-right:1px solid transparent;
+}
+
+treecol[insertafter="true"],
+treechildren::-moz-tree-cell( insertafter ) {
+  border-right: 1px solid red !important;
+}
+
+treecol[insertbefore="true"],
+treechildren::-moz-tree-cell( insertbefore ) {
+  border-left: 1px solid green !important;
+}
+
+treechildren::-moz-tree-cell-text {
+  color:rgb(40,40,40);
+}
+treechildren::-moz-tree-row( odd ) {
+  background-color: rgb(255,255,255);
+}
+treechildren::-moz-tree-row( even ) {
+  background-color: rgb(250,250,250);
+}
+
+
+treechildren::-moz-tree-cell-text( selected ) {
+  color:rgb(40,40,40);
+}
+treechildren::-moz-tree-row( selected, odd ) {
+  background-color: rgb(225,225,225);
+}
+treechildren::-moz-tree-row( selected, even ) {
+  background-color: rgb(220,220,220);
+}
+
+treechildren::-moz-tree-cell-text( selected ) {
+  color:rgb(0,0,0);
+}
+treechildren::-moz-tree-row( selected, focus,odd ) {
+  background-color: rgb(225,225,255);
+}
+treechildren::-moz-tree-row( selected, focus, even ) {
+  background-color: rgb(220,220,250);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** 
+*******************************************************************************
+TREE
+*******************************************************************************
+*/
+
+treechildren::-moz-tree-cell-text {
+  color:rgb(40,40,40);
+}
+
+treechildren::-moz-tree-cell-text( selected ) {
+  color:rgb(0,0,0);
+}
+
+
+
+
+
+
+
+
+treechildren::-moz-tree-progressmeter {
+  background-image: url(chrome://songbird/skin/playlist/bg-progress.png) !important;
+  background-position:center center;
+  margin:0 !important;
+  padding-top:5px !important;
+  padding-bottom:5px !important;
+  min-height:18px;
+  color:magenta;
+}
+
+
+
+
+
+.sb-displaypane-header {
+  min-height:22px;
+  border-top:1px solid gray;
+}
+.sb-displaypane-menubutton {
+  border-right:none;
+}
+.sb-displaypane-header {
+  border-bottom:1px solid gray;
+}
+
+
+
+listheader,
+tree treecol {
+  background-color: rgb(225,225,225);
+/*  border-bottom:1px solid brown;*/
+}
+.tree-scrollable-columns {
+  background-color: cyan;
+}
+
+
+treecol > label {
+  color: rgb(120,120,120);
+}
+
+
+listheader,
+treecol {
+  background-image: url('chrome://songbird/skin/base-elements/bg-table-header.png');
+  background-position:center 0px;
+  background-repeat:repeat-x;
+}
+treecol[sortDirection="ascending"],
+treecol[sortDirection="descending"] {
+  background-position:center -80px;
+}
+
+treecol:hover {
+  background-color:rgb(200,200,200);
+  background-position:center -16px;
+}
+treecol[insertbefore="true"],
+treecol[insertafter="true"] {
+  background-position:center -0px;
+}
+
+treecol:active {
+  background-color:rgb(100,100,100);
+  background-position:center -32px;
+}
+treecol[dragging="true"] {
+  background-position:center -64px;
+}
+
+treecol[dragging="true"] > label,
+treecol[dragging="true"]:hover:active > label {
+  font-style:italic;
+  color:gray;
+}
+
+treecol[sortDirection="ascending"] > .treecol-sortdirection,
+.listheader-sortdirection[sortDirection="ascending"] {
+  list-style-image:  url("chrome://songbird/skin/base-elements/icon-sort-ascending.png");
+  background-position:center -30px;
+}
+treecol[sortDirection="descending"] > .treecol-sortdirection,
+.listheader-sortdirection[sortDirection="descending"] {
+  list-style-image:  url("chrome://songbird/skin/base-elements/icon-sort-descending.png");
+}
+
+
+
+
+
+
+/* komi: rm later*/
+treecolpicker {
+  
+}
+treecolpicker,
+.sb-displaypane-menubutton {
+  background-color:cyan;
+}
+
+listheader,
+tree treecol,
+treecolpicker {
+  min-height:0px !important;
+  height:16px !important;
+  max-height:16px !important;
+  font-size:9px !important;
+}
+
+
+
+/** 
+*******************************************************************************
+DISPLAY PANE
+*******************************************************************************
+*/
+
+.sb-displaypane-header,
+.sb-displaypane-menubutton
+{
+}
+
+#displaypane_right_sidebar
+{
+}
+
+
+
+/** 
+*******************************************************************************
+AUTOCOMPLETE POPUPS
+*******************************************************************************
+*/
+
+
+sb-locationbar-textbox .autocomplete-textbox {
+  padding-left:100px !important;
+}
+
+.autocomplete-treebody::-moz-tree-cell {
+  border-right: 0px !important; 
+}
+/*komi find out who is doing this*/
+.autocomplete-treebody::-moz-tree-cell-text(selected) {
+  color:rgb(40,40,40) !important;
+}
+.autocomplete-treebody::-moz-tree-row(selected) {
+  background-color:pink;
+}
+
+.autocomplete-treebody::-moz-tree-image(favicon) {
+  max-width:16px !important;
+  max-height:16px !important;
+  width:16px !important;
+  height:16px !important;
+  min-width:0 !important;
+  min-height:0 !important;
+}
+
+.autocomplete-treebody::-moz-tree-cell-text(treecolAutoCompleteComment) {
+  color: gray;
+}
+.autocomplete-treebody::-moz-tree-cell,
+.autocomplete-treebody::-moz-tree-cell-text {
+  padding:0 2px;
+  margin:0;
+}
+
+
+
+/** 
+*******************************************************************************
+TABBED BROWSER
+*******************************************************************************
+*/ 
+
+tabs {
+
+}
+
+.tabbrowser-strip
+{
+  background-color: rgb(80,80,80);
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png);
+  background-repeat:repeat-x;
+  background-position:center bottom;
+  max-height:26px;
+  min-height:26px;
+  padding-top:2px;
+}
+
+
+
+
+/** Top tabs **/
+tab,
+.tabbrowser-tab {
+}
+tab:not([selected="true"]),
+.tabbrowser-tab:not([selected="true"]) {
+
+}
+tab:hover:not([selected="true"]),
+.tabbrowser-tab:hover:not([selected="true"]) {
+}
+tab[selected="true"],
+.tabbrowser-tab[selected="true"] {
+
+}
+.tabbrowser-tab {
+  -moz-box-align: stretch;
+  -moz-box-pack: center;  
+  margin: 0;
+  padding: 0px;
+
+  
+  min-width: 1px !important;
+  text-align: center;
+  -moz-border-radius-topleft: 0 !important;
+  -moz-border-radius-topright: 0 !important;
+  -moz-background-clip: padding !important;
+}
+.tabbrowser-tab + .tabbrowser-tab {
+  margin-left: 1px;
+}
+
+.tabbrowser-tab > .tab-image-middle,
+.tabbrowser-tab > .tab-close-button {
+  margin: 0px;
+  padding: 0px;
+  min-height: 25px !important;
+  padding-bottom:3px !important;
+
+  
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png) !important;
+  background-repeat:no-repeat;
+  background-position:center 0px !important;
+}
+.tabbrowser-tab[selected="true"] > .tab-image-middle,
+.tabbrowser-tab[selected="true"] > .tab-close-button {
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
+}
+.tabbrowser-tab:hover > .tab-image-middle,
+.tabbrowser-tab:hover > .tab-close-button {
+  background-position:center -30px !important;
+}
+.tabbrowser-tab:active > .tab-image-middle,
+.tabbrowser-tab:active > .tab-close-button {
+  background-position:center -60px !important;
+}
+.tabbrowser-tab[disabled="true"] > .tab-image-middle,
+.tabbrowser-tab[disabled="true"] > .tab-close-button {
+  background-position:center -90px !important ;
+}
+.tabbrowser-tab > .tab-image-left,
+.tabbrowser-tab > .tab-image-right {
+  width:4px;
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png);
+  background-repeat:no-repeat;
+}
+.tabbrowser-tab[selected="true"] > .tab-image-left,
+.tabbrowser-tab[selected="true"] > .tab-image-right {
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
+}
+
+.tabbrowser-tab > .tab-image-left {
+  background-position:left 0px;
+}
+.tabbrowser-tab:hover > .tab-image-left {
+  background-position:left -30px;
+}
+.tabbrowser-tab:active > .tab-image-left {
+  background-position:left -60px;
+}
+.tabbrowser-tab[disabled="true"] > .tab-image-left {
+  background-position:left -90px;
+}
+
+.tabbrowser-tab > .tab-image-right {
+  background-position:right 0px;
+}
+.tabbrowser-tab:hover > .tab-image-right {
+  background-position:right -30px;
+}
+.tabbrowser-tab:active > .tab-image-right {
+  background-position:right -60px;
+}
+.tabbrowser-tab[disabled="true"] > .tab-image-right {
+  background-position:right -90px;
+}
+
+
+
+
+
+
+
+
+/** Bottom tabs **/
+.tab-bottom {
+}
+.tab-bottom:not([selected="true"]) {
+}
+.tab-bottom:hover:not([selected="true"]) {
+}
+.tab-bottom[selected="true"] {
+}
+
+/** General tab styles **/
+
+label.tab-text
+{
+  color:rgb(40,40,40);
+}
+
+tab[selected="true"] > hbox > label.tab-text,
+.tabbrowser-tab[selected="true"] > hbox > label.tab-text
+{
+}
+
+tabpanels {
+  background-color : transparent;
+}
+
+.tabs-bottom-spacer
+{
+
+}
+
+/** The bar between the tabs and the tab panels. **/
+.tabs-bottom {
+
+}
+
+/**
+ * Tab Scrollbox Arrow Buttons
+ */
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up {
+
+}
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover {
+
+}
+
+.tabbrowser-arrowscrollbox > stack > .scrollbutton-rel-box > .scrollbutton-down {
+
+}
+
+.tabbrowser-arrowscrollbox > stack > .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
+
+}
+
+
+
+
+
+/** 
+*******************************************************************************
+DIALOG NOTIFICATION BOX (used in the metadata editor)
+*******************************************************************************
+*/
+
+.dialog-notification {
+}
+.dialog-notification.notification-warning {
+  background-color: rgb(230,172,172);
+}
+.dialog-notification.notification-warning > .dialog-notification-text {
+  color: rgb(80,40,40) !important;
+}
+.dialog-notification.notification-info {
+  background-color: rgb(255,255,200);
+}
+.dialog-notification-text {
+  color: rgb(80,80,40) !important;
+}
+
+
+
+
+/** 
+*******************************************************************************
+BUTTONS
+*******************************************************************************
+*/ 
+
+/** TODO COMPRESS */
+
+#nav-bar toolbarbutton
+{
+  border:1px solid rgb(67,102,34);
+
+
+background-image:url('chrome://songbird/skin/nav-bar/bg-button.png');
+background-repeat:repeat-x;
+background-position:center 0px;
+
+  background-color:white;
+  -moz-border-radius:2px;
+  min-height:22px;
+  min-width:22px;
+  max-height:22px;
+  padding:0;
+  margin:0;
+}
+
+toolbarbutton[disabled="true"],
+toolbarbutton[disabled="true"]:active,
+toolbarbutton[disabled="true"]:hover
+{
+  opacity: 0.25;
+}
+
+toolbarbutton:hover
+{
+}
+
+toolbarbutton:active
+{
+}
+
+
+
+
+/* button button */
+
+button {
+  border:1px solid gray;
+  background-color:white;
+
+  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  
+  -moz-border-radius:0px;
+  padding:3px 0px;
+  margin:4px;
+  min-width:0px;
+  min-height:0px;
+}
+.button-text {
+  color:rgb(40,40,40);
+  font-size:11px;
+  padding:0px 8px;
+  margin:0;
+}
+button:hover {
+}
+button:active {
+}
+button[disabled="true"] {
+}
+
+button:focus {
+}
+button:focus > .button-box > label {
+}
+
+button[disabled="true"] .button-text {
+}
+
+.toolbarbutton-menubutton-button > .toolbarbutton-icon {
+  padding:0 !important;
+  margin:0 !important;
+  min-height:16px !important;
+  min-width:16px !important;
+  max-height:16px !important;
+  max-width:16px !important;
+}
+
+toolbarbutton[type="menu"] > .toolbarbutton-icon {
+  margin-left:2px;
+}
+
+.toolbarbutton-menubutton-button {
+  padding:2px !important;
+  border:none !important;
+  margin:0 !important;
+  min-height:0 !important;
+  min-width:0 !important;
+}
+toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
+  border-right:1px dotted gray !important;
+}
+
+
+
+toolbarbutton[type="menu"],
+toolbarbutton[type="menu-button"] {
+  padding:0 !important;
+}
+
+button > dropmarker.button-menubutton-dropmarker,
+button > .button-box > dropmarker.button-menu-dropmarker,
+toolbarbutton > dropmarker.toolbarbutton-menubutton-dropmarker {
+  padding-top:1px;
+}
+dropmarker {
+  width: 11px;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  border: none;
+  background-color: transparent;
+  -moz-image-region: auto;
+  margin:0;
+}
+.button-menubutton-button > .button-box {
+  border-right: 1px solid gray;
+}
+
+
+dropmarker:hover:active {
+/*  padding: 2px 0 0 2px !important;*/
+}
+
+
+.dropmarker-icon {
+  list-style-image: url("chrome://songbird/skin/menu/dropmarker.png");
+
+}
+
+dropmarker[disabled="true"] > .dropmarker-icon {
+}
+
+
+.button-menubutton-button,
+button[type="menu"] > .button-box {
+  margin:0 !important;
+  padding:0px;
+  background-image:none;
+  background-color:transparent;
+}
+
+.button-menubutton-button > .button-box {
+  padding:3px 0px;
+}
+button[type="menu"],
+button[type="menu-button"] {
+  padding:0;
+}
+
+
+
+
+button:hover > hbox > .button-text,
+button:hover {
+  
+}
+toolbarbutton:hover > .toolbarbutton-text,
+toolbarbutton:hover {
+}
+
+
+toolbarbutton[disabled="true"] > .toolbarbutton-text,
+toolbarbutton[disabled="true"]:active > .toolbarbutton-text,
+toolbarbutton[disabled="true"]:hover > .toolbarbutton-text {
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/** 
+*******************************************************************************
+DATEPICKER see the RICHLISTBOX for box styles
+*******************************************************************************
+*/
+.datepicker-gridlabel[selected="true"] {
+  background-color: #8A8F84;
+  color: #0f100f; /** Groove */
+}
+
+
+/** 
+*******************************************************************************
+MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
+*******************************************************************************
+*/
+
+/* The Top Menu (File, Edit, Etc...) **/
+menu > label
+{
+
+}
+
+menu:hover,
+menu:hover > label,
+menu[open],
+menu[open] > label,
+menu[_moz-menuactive="true"],
+menu[_moz-menuactive="true"] > label
+{
+
+}
+
+/* The Basic Menu Styles **/
+
+menupopup, 
+popup
+{
+  background-color:rgb(255,255,255);
+}
+
+menuseparator
+{
+  border-top-color: red;
+}
+
+menuitem > label,
+menupopup > menu > label,
+popup > menu > label
+{
+  color: rgb(40,40,40);
+  padding:0;
+  margin:0;
+}
+
+
+menuitem:hover,
+menuitem:hover > label,
+menupopup > menu:hover,
+menupopup > menu:hover > label,
+popup > menu:hover,
+popup > menu:hover > label
+{
+
+}
+
+.menu-accel,
+.menu-iconic-accel
+{
+
+}
+
+menupopup > menu[_moz-menuactive="true"],
+menupopup > menuitem[_moz-menuactive="true"],
+popup > menu[_moz-menuactive="true"],
+popup > menuitem[_moz-menuactive="true"]
+{
+  background-color: pink;
+}
+
+menupopup > menu[_moz-menuactive="true"] > label,
+menupopup > menuitem[_moz-menuactive="true"] > label,
+popup > menu[_moz-menuactive="true"] > label,
+popup > menuitem[_moz-menuactive="true"] > label
+{
+}
+
+menuitem[disabled="true"],
+menuitem[disabled="true"]:hover,
+menuitem[disabled="true"] > label,
+menuitem[disabled="true"]:hover > label
+menu[disabled="true"],
+menu[disabled="true"]:hover,
+menu[disabled="true"] > label,
+menu[disabled="true"]:hover > label
+{
+
+}
+
+/* Tooltip **/
+
+.tooltip-label {
+  color: rgb(40,40,40)
+}
+
+/** 
+*******************************************************************************
+THE SPLITTERS
+These let the user resize the frames in your box model.
+*******************************************************************************
+*/ 
+
+#filter_splitter > grippy
+{
+  margin: 0;
+}
+
+#filter_splitter:active
+{
+  margin: 0;
+}
+
+#servicepane_splitter,
+#search_splitter
+{
+  background-color: transparent;
+}
+
+#servicepane_splitter[state="collapsed"],
+#displaypane_right_sidebar_splitter[state="collapsed"],
+#displaypane_contentpane_bottom_splitter[state="collapsed"],
+#displaypane_servicepane_bottom_splitter[state="collapsed"]
+{
+  background-color: transparent;
+  border: 1px solid #202220;
+
+}
+
+#servicepane_splitter[state="collapsed"]:hover,
+#displaypane_right_sidebar_splitter[state="collapsed"]:hover,
+#displaypane_contentpane_bottom_splitter[state="collapsed"]:hover,
+#displaypane_servicepane_bottom_splitter[state="collapsed"]:hover
+{
+  border: 1px solid;
+  border-top-color: #474948; /** Rubber Highlight */
+  border-left-color: #474948; /** Rubber Highlight */
+  border-bottom-color: #202220;
+  border-right-color: #202220;
+  color: #FFF;  
+
+}
+
+#servicepane_splitter[state="collapsed"]:active,
+#displaypane_right_sidebar_splitter[state="collapsed"]:active,
+#displaypane_contentpane_bottom_splitter[state="collapsed"]:active,
+#displaypane_servicepane_bottom_splitter[state="collapsed"]:active
+{
+  border: 1px solid;
+  border-top-color: #202220;
+  border-left-color: #202220;
+  border-bottom-color: #474948; /** Rubber Highlight */
+  border-right-color: #474948; /** Rubber Highlight */
+  color: #FFF;  
+
+}
+
+#displaypane_contentpane_bottom_splitter,
+#displaypane_servicepane_bottom_splitter
+{
+  border-top: 1px solid #474948; /** Rubber Highlight */
+}
+
+#displaypane_servicepane_bottom_splitter,
+#displaypane_servicepane_bottom_splitter[state="collapsed"]
+{
+  background-color: #313131; /** color of the Main Window */
+}
+
+.playlist-splitter,
+.playlist-web-splitter
+{
+  border-top:1px solid gray;
+  border-bottom:1px solid gray;
+}
+
+.playlist-splitter:active,
+.playlist-web-splitter:active
+{
+  background-color: transparent;
+}
+
+.playlist-splitter[state="collapsed"],
+.playlist-web-splitter[state="collapsed"]
+{
+  background-color: #313131 !important;
+}
+
+#control_pane_splitter
+{
+  background-color: transparent;
+}
+
+#control_pane_splitter[state="collapsed"]
+{
+  background-color: transparent;
+}
+
+
+
+/** 
+*******************************************************************************
+TOOLTIPS
+*******************************************************************************
+*/
+
+tooltip
+{  
+  background-color: #EEE !important;
+  color: #0f100f !important; /** Groove  */
+}
+
+
+
+/** 
+*******************************************************************************
+TEXTBOX
+*******************************************************************************
+*/
+
+textbox,
+textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
+{
+  -moz-border-radius:0;
+  border:1px solid gray;
+  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  background-color:white;
+}
+
+textbox,
+textbox.padded, /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
+html|*.numberbox-input {
+  color: rgb(40,40,40);
+}
+
+/* ..... focused state ..... */
+textbox[focused="true"]
+{
+  background-color: rgb(255,255,235);
+}
+
+/* ..... readonly state ..... textbox[readonly="true"]  */
+
+/* ..... disabled state ..... */
+textbox[disabled="true"]
+{
+  cursor: default;
+}
+
+textbox[disabled="true"],
+html|*.numberbox-input[disabled="true"]
+{
+  color: #474948; /** Light Color 1 */
+}
+
+/* ..... invalid state ..... */
+textbox[invalid="true"] {
+  background-color:rgb(51,25,25) !important;
+  color:rgb(255,127,127) !important;
+} 
+
+/* ..... edited state ..... */
+textbox[edited] {
+ color:rgb(255,246,133);
+}
+
+
+/**
+*******************************************************************************
+RATING WIDGET (used in the metadata editor)
+*******************************************************************************
+*/
+sb-rating {
+
+}
+
+/**
+*******************************************************************************
+MISC
+*******************************************************************************
+*/
+
+button.button-menubutton-button,
+button.button-menubutton-button:active
+{
+  border: none !important;
+  padding: 0;
+  margin: 0;
+}
+
+
+
+
+
+/** 
+*******************************************************************************
+MENULIST
+*******************************************************************************
+*/
+
+.menulist-label
+{
+
+}
+
+menulist
+{
+  color: rgb(40,40,40);
+  background-color: white;
+  border:1px solid gray;
+  -moz-border-radius:0px !important;
+  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  padding:2px 0px !important;
+}
+
+menulist[disabled="true"]
+{
+  cursor: default;
+
+  background-color: transparent;
+}
+
+menulist[disabled="true"] > .menulist-label-box > .menulist-label
+{
+}
+
+menulist:focus,
+menulist[focused="true"] 
+{
+}
+
+
+
+/** 
+*******************************************************************************
+LISTBOX
+*******************************************************************************
+*/
+
+listbox
+{
+  border: 1px solid gray;
+  -moz-border-radius:0px;
+}
+
+/* ..... disabled state ..... */
+
+listbox[disabled="true"] {
+  opacity: 0.5;
+}
+
+listitem[selected="true"] > listcell > .listcell-label {
+}
+
+listbox:focus > listitem[selected="true"][current="true"] {
+}
+
+listitem[selected="true"] {
+}
+
+listbox:focus,
+listbox:focus > listitem[selected="true"] {  
+}
+
+/* ::::: checkmark image ::::: */
+
+.listcell-check {
+}
+
+
+
+/** 
+*******************************************************************************
+PROGRESSMETER
+*******************************************************************************
+*/
+
+progressmeter {
+  background-color:transparent !important;
+}
+
+
+
+/** 
+*******************************************************************************
+RICHLISTBOX
+*******************************************************************************
+*/
+.datepicker-mainbox,
+.datetimepicker-input,
+.datetimepicker-input-box ,
+richlistbox {
+
+}
+richlistitem
+{
+
+}
+
+richlistitem[selected="true"]
+{
+
+}
+
+richlistbox:focus > richlistitem[selected="true"] 
+{
+
+}
+
+/** This is bad bad bad, but fixing it requires making
+    labels inherit color, which will have side effects.
+    We will have to wait until 0.4 **/
+richlistitem[selected="true"] > label,
+richlistitem[selected="true"] > description {
+
+}
+
+
+richlistbox[seltype="multiple"]:focus > richlistitem[current="true"][selected="true"] {
+
+}
+
+
+
+/** 
+*******************************************************************************
+SMART PLAYLIST BUILDER
+*******************************************************************************
+*/
+
+.drawer-box
+{
+  border: 1px solid #202220;
+}
+
+
+
+/** 
+*******************************************************************************
+WIZARDS
+*******************************************************************************
+*/
+.wizard-header {
+  background-color: #0f100f; /** Groove */
+  border-bottom: 2px solid;
+  -moz-border-bottom-colors: #474948 /** Rubber Highlight */
+                             black;
+}
+
+/** Software Installer Dialog */
+installitem
+{
+  border: 0px solid !important;
+  background-color: #313131 !important;
+  color: #99A195; /** Tab Text */
+}
+#itemList
+{
+  background-color: #313131 !important;
+  border: none !important;
+}
+
+
+/** 
+*******************************************************************************
+DIALOGS
+*******************************************************************************
+*/
+
+/* on OS X there is a shadow on the window
+  so this border is considered undesirable.
+  see: bug 6399
+ */
+#mainplayer:not([platform=Darwin]),
+dialog:not([platform=Darwin])
+{
+  border:1px solid gray;
+}
+
+/*prefwindow*/
+.windowDialog
+{
+}
+
+/** Add a darker content box and appropriate padding **/
+.dialog-content-box {
+  margin: 0px !important;
+  padding: 0px !important;
+  
+}
+
+dialog:root[platform=Darwin] .dialog-content-box
+{
+  border: none;
+}
+
+
+
+/** 
+*******************************************************************************
+PREFERENCES
+*******************************************************************************
+*/
+
+/* View buttons */
+.viewSelector 
+{
+}
+
+#viewGroup,
+#progressBox
+{
+}
+
+#viewGroup radio:hover {
+  background:transparent !important;
+}
+
+/* Extensions */
+
+#extensionsBox > richlistbox
+{
+  border: none !important;
+}
+
+#extensionsBox > richlistbox > richlistitem[selected="true"]
+{
+  background-color: #202220 !important;
+  border-right: 1px solid #0f100f !important; /** Groove */
+  border-top: 1px solid #0f100f !important; /** Groove */
+  border-bottom: 1px solid #0f100f !important; /** Groove */
+  border-left: 1px solid #0f100f !important; /** Groove */
+}
+
+#extensionsView:focus > richlistitem[selected="true"]
+{
+  background-image: none !important;
+}
+
+label.addonName,
+label.addonVersion,
+label.descriptionWrap,
+#error_noupdate_header
+{
+  color: #B3BAAC !important; 
+}
+
+#extensionsBox > richlistbox > richlistitem[selected="true"] label.addonName,
+#extensionsBox > richlistbox > richlistitem[selected="true"] label.addonVersion,
+#extensionsBox > richlistbox > richlistitem[selected="true"] label.descriptionWrap,
+#extensionsBox > richlistbox > richlistitem[selected="true"] #error_noupdate_header
+{
+  color: #feffff !important; 
+}
+
+/* Pane Selector */
+
+prefwindow > .paneSelector,
+#viewGroup
+{
+
+}
+prefwindow > .paneSelector > radio,
+#viewGroup > radio
+{
+
+}
+prefwindow > .paneSelector > radio[selected="true"],
+#viewGroup > radio[selected="true"]
+{
+
+}
+prefwindow > .paneSelector > radio > .paneButtonLabel,
+#viewGroup > radio > .viewButtonLabel
+{
+
+}
+prefwindow > .paneSelector > radio[selected="true"] > .paneButtonLabel,
+#viewGroup > radio[selected="true"] > .viewButtonLabel
+{
+
+}
+
+prefwindow > .paneSelector {
+  padding:4px 4px 0px 4px;
+  -moz-box-pack:center;
+}
+
+prefwindow > .paneSelector > radio {
+  list-style-image:none !important;
+  border:1px solid red !important;
+  border-bottom:1px solid transparent !important;
+  -moz-border-radius-topleft:4px;
+  -moz-border-radius-topright:4px;
+  background-color:pink;
+  padding:2px 4px;
+  margin:0;
+}
+prefwindow > .paneSelector > radio+radio {
+  margin-left:4px;
+}
+prefwindow > .paneSelector > radio > image {
+  display:none !important;
+}
+prefwindow > .paneSelector > radio > label {
+  padding:0;
+  margin:0;
+}
+
+
+/** 
+*******************************************************************************
+ERRORS
+*******************************************************************************
+*/
+
+html|*.error-box,
+groupbox.error-box > .groupbox-body
+{
+  border: 1px solid red;
+}
+
+html|*.error-text,
+.error-text
+{
+  color: #F00;
+  font-weight: bold;
+}
+
+
+
+/** 
+*******************************************************************************
+DOM INSPECTOR
+*******************************************************************************
+*/
+
+
+
+
+
+/** 
+*******************************************************************************
+MOZILLA DOWNLOAD WINDOW
+*******************************************************************************
+*/
+
+#downloadManager {
+  background-color: #313131 !important; /* color of the Main Window **/
+}
+
+#downloadManager > #information {
+  background-color: black;
+}
+
+#downloadManager > #downloadView {
+
+  border: none;
+}
+
+#downloadManager > #search {
+  border-top-width: 1px;
+  border-top-color: #202220;
+  border-top-style: solid;
+}
+
+
+/** 
+*******************************************************************************
+FINDBAR
+*******************************************************************************
+*/
+findbar {
+  border-top: 1px solid #474948; /** Rubber Highlight */
+  border-bottom: 1px solid #202220;
+}
+
+
+.findbar-container > toolbarbutton[checked="true"] {
+  border-top: 1px solid #202220 !important; 
+  border-left: 1px solid #202220 !important; 
+  border-bottom: 1px solid #797f76 !important; /** Button Highlight */
+  border-right: 1px solid #202220 !important; 
+  background-color:transparent !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#titlebar_box {
+  min-height:22px !important;
+  height:22px !important;
+  max-height:22px !important;
+}
+sb-sys-titlebar {
+  overflow:hidden;
+}
+
+
+
+
+#control_pane_box {
+/*  border-top:1px solid brown;*/
+}
+#control_buttons_box,
+#shuffle_repeat_box {
+  padding:0 5px;
+}
+#control_buttons_box > .sb-player-button,
+#shuffle_repeat_box > .sb-player-button {
+  margin:0 3px;
+}
+#volume_box {
+  padding:0 8px;
+}
+#control_pane {
+  padding:0 4px;
+}
+
+#control_pane_box > .left-box > .left,
+#control_pane_box > .right-box > .right {
+  min-width:16px;
+  min-height:52px;
+  background-position:center top;
+  background-repeat:no-repeat;
+}
+#control_pane_box > .left-box > .left {
+  background-image: url(chrome://songbird/skin/media-control-pane/bg-media-control-pane-left.png);
+}
+#control_pane_box > .right-box > .right {
+  background-image: url(chrome://songbird/skin/media-control-pane/bg-media-control-pane-right.png);
+}
+
+#control_pane_box > .middle {
+  min-height:52px;
+  background-image: url(chrome://songbird/skin/media-control-pane/bg-media-control-pane.png);
+  background-repeat:repeat-x;
+  background-position:center top;
+  margin:0 16px;
+}
+
+
+#titlebar_box > .left-box > .left,
+#titlebar_box > .right-box > .right {
+  min-width:16px;
+  min-height:22px;
+  background-position:center top;
+  background-repeat:no-repeat;
+}
+#titlebar_box > .left-box > .left {
+  background-image: url(chrome://songbird/skin/window/bg-title-bar-left.png);
+}
+#titlebar_box > .right-box > .right {
+  background-image: url(chrome://songbird/skin/window/bg-title-bar-right.png);
+}
+#titlebar_box > .middle {
+  background-image: url(chrome://songbird/skin/window/bg-title-bar.png);
+  background-repeat:repeat-x;
+  background-position:center top;
+  margin:0 16px;
+}
+
+
+
+
+
+
+#nav_bar_box {
+}
+
+
+#nav_bar_box[protocol='http'] .media-only,
+#nav_bar_box[protocol='https'] .media-only,
+#nav_bar_box[protocol='ftp'] .media-only,
+#nav_bar_box[protocol='about'] .media-only,
+#nav_bar_box[protocol='chrome'] .web-only {
+  display:none;
+}
+#nav-bar {
+  border:none;
+  padding:3px 4px !important;
+  height:28px;
+}
+#nav-bar > * {
+  margin:0 2px !important;
+}
+#nav_bar_box[protocol='chrome'] .web-only-special {
+  visibility:hidden;
+}
+
+#nav_bar_box > .left-box > .left,
+#nav_bar_box > .right-box > .right {
+  min-width:16px;
+  min-height:28px;
+  background-position:center top;
+  background-repeat:no-repeat;
+}
+#nav_bar_box > .left-box > .left {
+  background-image: url(chrome://songbird/skin/nav-bar/bg-nav-bar-left.png);
+}
+#nav_bar_box > .right-box > .right {
+  background-image: url(chrome://songbird/skin/nav-bar/bg-nav-bar-right.png);
+}
+#nav_bar_box > .middle {
+  background-image: url(chrome://songbird/skin/nav-bar/bg-nav-bar.png);
+  background-repeat:repeat-x;
+  background-position:center top;
+  margin:0 16px;
+}
+
+
+
+
+
+
+
+
+
+#servicepane_splitter,
+#filter_splitter {
+  background-color:gray;
+  max-width:1px;
+  min-width:1px;
+}
+#inner_player_box {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+#servicepane_box {
+  background-color:rgb(80,80,80);
+/*  border-top:1px solid brown;*/
+}
+#servicepane_box[tab_bar_showing="true"] {
+  padding-top:22px;
+}
+#servicepane_box[tab_bar_showing="true"] > #servicepane {
+  border-top:1px solid gray;
+}
+
+
+#content .plain {
+/*  border-top:1px solid brown !important;*/
+}
+
+
+
+
+#bottom-bar {
+  min-height:9px;
+  max-height:9px;
+  border-top:1px solid gray;
+  
+  display:none;
+}
+#bottom-bar > .left-box > .left,
+#bottom-bar > .right-box > .right {
+  min-width:16px;
+  min-height:8px;
+  background-repeat:no-repeat;
+  background-position:center top;
+}
+#bottom-bar > .left-box > .left {
+  background-image:url('chrome://songbird/skin/window/bg-bottom-bar-left.png');
+}
+#bottom-bar > .right-box > .right {
+  background-image:url('chrome://songbird/skin/window/bg-bottom-bar-right.png');
+}
+#bottom-bar > .middle {
+  margin:0 16px;
+  background-image:url('chrome://songbird/skin/window/bg-bottom-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+
+
+
+
+tree treecol {
+  min-width: 64px;
+}
+
+treecol[bind="http://songbirdnest.com/data/1.0#rating"] {
+  min-width: 78px;
+}
+
+
+
+.closable-box-image,
+treechildren::-moz-tree-twisty(closed) {
+  width: 9px;
+  list-style-image: url("chrome://songbird/skin/base-elements/button-twisty-closed.png");
+}
+treechildren::-moz-tree-twisty(open),
+.closable-box-image[open="true"] {
+  width: 9px; /* The image's width is 10 pixels */
+  list-style-image: url("chrome://songbird/skin/base-elements/button-twisty-open.png");
+}
+.closable-box-image,
+.closable-box-image[open="true"],
+treechildren::-moz-tree-twisty( open ),
+treechildren::-moz-tree-twisty( closed ) {
+  -moz-image-region: rect(0px, 9px, 9px, 0px);
+}
+treechildren::-moz-tree-twisty( open selected ),
+treechildren::-moz-tree-twisty( closed selected ) {
+  -moz-image-region: rect(9px, 9px, 18px, 0px);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.sb-filterlist-tree,
+.sb-playlist-tree {
+  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png') !important;
+}
+
+
+.tree-columnpicker-icon {
+  list-style-image: none;
+}
+
+.sb-playlist-tree > treecol:last-child,
+treecol:last-child {
+  border-right:none !important;
+}
+
+
+
+
+treechildren#trDOMTreeBody::-moz-tree-row( selected )
+{
+  background-color:yellow;
+}
+
+treechildren#trDOMTreeBody::-moz-tree-cell-text(ELEMENT_NODE)
+{
+  color:rgb(40,40,40) !important;
+}
+treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous)
+{
+  color: red !important;
+}
+treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
+{
+}
+
+
+
+#new_faceplate_box {
+  padding:0 8px;
+  min-height:52px;
+}
+#new_faceplate > .left-box > .left,
+#new_faceplate > .right-box > .right,
+#new_faceplate_inactive > .left-box > .left,
+#new_faceplate_inactive > .right-box > .right {
+  min-width:2px;
+  min-height:44px;
+  background-repeat:no-repeat;
+  background-position:center center;
+}
+#new_faceplate > .left-box > .left {
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-left.png');
+}
+#new_faceplate > .right-box > .right {
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-right.png');  
+}
+#new_faceplate > .middle,
+#new_faceplate_inactive > .middle {
+  min-height:44px;
+  padding:2px 0;
+  margin:0 2px;
+  background-color:green;
+  background-repeat:repeat-x;
+  background-position:center center;
+}
+
+
+#new_faceplate > .middle {
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate.png');
+}
+#new_faceplate_inactive > .middle {
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive.png');
+}
+
+#new_faceplate_inactive > .left-box > .left {
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive-left.png');
+}
+#new_faceplate_inactive > .right-box > .right {
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive-right.png');
+}
+
+#faceplate-inactive-splash {
+  min-height:44px;
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive-splash.png');
+  background-repeat:no-repeat;
+  background-position:center center;
+}
+
+#faceplate-album-art {
+  min-width:40px;
+  min-height:40px;
+  max-width:40px;
+  max-height:40px;
+  
+  background-image: url(chrome://songbird/skin/tmp/sample-album-art.png);
+  background-repeat:no-repeat;
+  background-position:center center;
+}
+#new_faceplate_content {
+  min-height:44px;
+  padding:2px 2px;
+}
+
+
+
+
+.servicepane-tree > treechildren::-moz-tree-row( dropBefore ) {
+  border-top:1px solid red !important;
+}
+.servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
+  border-bottom:1px solid green !important;
+}
+.servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
+  border:2px solid blue !important;
+}
+
+
+
+
+.tab-icon-image {
+  max-width: 16px;
+  max-height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-default-favicon.png");
+}
+
+.tabbrowser-tab[busy] > .tab-icon-image,
+.tabbrowser-tab[busy] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url('chrome://songbird/skin/base-elements/icon-loading.png') !important;
+}
+
+
+.drawer-box {
+  border:1px dashed red;
+}
+
+
+
+.closable-box-image {
+  list-style-image:url("chrome://songbird/skin/base-elements/button-twisty-closed.png");
+}
+
+.closable-box-image[open="true"] {
+  list-style-image:url("chrome://songbird/skin/base-elements/button-twisty-open.png");
+}
+radiogroup {
+  background-color:purple !important;
+}

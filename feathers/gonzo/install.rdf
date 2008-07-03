@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>gonzo@songbirdnest.com</em:id>
+    <em:type>2</em:type>
+    <em:name>gonzo</em:name>
+    <em:version>0.0.0.1</em:version>
+
+
+    <em:description>new default feather in development</em:description>
+
+
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>0.7pre</em:minVersion>
+        <em:maxVersion>0.7pre</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+
+    <!-- Register an skin for the built in layouts. 
+         See http://developer.songbirdnest.com/feathers/ -->
+	    <songbird:feathers>
+	      <Description>
+	        <songbird:skin>
+	          <Description>
+	            <songbird:name>gonzo</songbird:name>
+	            <songbird:internalName>gonzo</songbird:internalName>
+	            <songbird:compatibleLayout>
+	              <Description>
+	                <songbird:layoutURL>chrome://gonzo/content/xul/mainplayer.xul</songbird:layoutURL>
+	                <songbird:showChrome>false</songbird:showChrome>
+	                <songbird:onTop>false</songbird:onTop>
+	              </Description>
+	            </songbird:compatibleLayout>
+	          </Description>
+	        </songbird:skin>
+	        <songbird:layout>
+	          <Description>
+	            <songbird:name>mainplayer.xul</songbird:name>
+	            <songbird:url>chrome://gonzo/content/xul/mainplayer.xul</songbird:url>
+	          </Description>
+	        </songbird:layout>
+	      </Description>
+	    </songbird:feathers>
+
+
+  </Description>
+</RDF>

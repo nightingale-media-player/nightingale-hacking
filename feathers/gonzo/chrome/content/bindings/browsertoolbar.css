@@ -1,0 +1,224 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+
+
+/** 
+*******************************************************************************
+WEB TOOLBAR IMAGES
+
+Applies images to the toolbar items in browserToolbarOverlay.xul.  
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+
+/** The back button **/
+#back-button {
+  list-style-image: url(chrome://songbird/skin/nav-bar/button-back.png);
+}
+#forward-button {
+  list-style-image: url(chrome://songbird/skin/nav-bar/button-forward.png);
+}
+#stop-button,
+.sb-browser-stopreload-stop-button {
+  list-style-image: url(chrome://songbird/skin/nav-bar/button-stop.png);
+}
+#reload-button,
+.sb-browser-stopreload-reload-button {
+  list-style-image: url(chrome://songbird/skin/nav-bar/button-reload.png);
+}
+#home-button {
+  list-style-image: url(chrome://songbird/skin/nav-bar/button-home.png);
+}
+#bookmark-button {
+  list-style-image: url(chrome://songbird/skin/nav-bar/button-add.png);
+}
+#mediapages-button > .toolbarbutton-icon {
+  list-style-image: url(chrome://songbird/skin/nav-bar/button-media-page.png);
+}
+
+
+#back-button,
+#forward-button,
+#stop-button,
+.sb-browser-stopreload-stop-button,
+#reload-button,
+.sb-browser-stopreload-reload-button,
+#home-button,
+#bookmark-button,
+#mediapages-button > .toolbarbutton-icon
+{
+  -moz-image-region: rect(0px 16px 16px 0px);
+  margin:0 2px;
+}
+#back-button:hover,
+#forward-button:hover,
+#stop-button:hover,
+.sb-browser-stopreload-stop-button:hover,
+#reload-button:hover,
+.sb-browser-stopreload-reload-button:hover,
+#home-button:hover,
+#bookmark-button:hover,
+#mediapages-button:hover > .toolbarbutton-icon
+{
+  -moz-image-region: rect(16px 16px 32px 0px);
+}
+#back-button:active,
+#forward-button:active,
+#stop-button:active,
+.sb-browser-stopreload-stop-button:active,
+#reload-button:active,
+.sb-browser-stopreload-reload-button:active,
+#home-button:active,
+#bookmark-button:active,
+#mediapages-button:active > .toolbarbutton-icon
+{
+  -moz-image-region: rect(32px 16px 48px 0px);
+}
+#back-button[disabled="true"],
+#forward-button[disabled="true"],
+#stop-button[disabled="true"],
+.sb-browser-stopreload-stop-button[disabled="true"],
+#reload-button[disabled="true"],
+.sb-browser-stopreload-reload-button[disabled="true"],
+#home-button[disabled="true"],
+#bookmark-button[disabled="true"],
+#mediapages-button[disabled="true"] > .toolbarbutton-icon
+{
+  -moz-image-region: rect(48px 16px 64px 0px) !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+
+
+
+#subscription-button
+{
+  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
+  -moz-image-region: rect(0px 112px 16px 96px);
+}
+#subscription-button:hover
+{
+  -moz-image-region: rect(16px 112px 32px 96px);
+}
+#subscription-button[disabled="true"]
+{
+  -moz-image-region: rect(48px 112px 64px 96px);
+}
+#subscription-button[active="true"]
+{
+  -moz-image-region: rect(32px 112px 48px 96px);
+}
+*/
+/** The Media Pages button **/
+
+
+/** 
+*******************************************************************************
+LOCATION TEXTBOX
+*******************************************************************************
+*/
+
+
+/* the box with the url image and the url textbox */
+.locationbar-textbox
+{
+  max-height: 22px;
+  min-height: 22px;
+  margin: 0px;
+  padding: 0px;
+}
+
+
+.locationbar-image
+{
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-default-favicon.png");
+  background-color: transparent;
+  height: 16px;
+  width: 16px;
+  max-height: 16px !important;
+  max-width: 16px !important;
+  min-height: 16px !important;
+  min-width: 16px !important;
+  margin: 0 4px 0 2px;
+  padding:0px;
+}
+
+
+/** Convert the favicon into a spinner animation when
+    the browser is loading **/ 
+.locationbar-textbox[loading="true"] > .locationbar-image {
+  background-image: url(chrome://songbird/skin/base-elements/icon-loading.png) !important;
+  width:16px;
+  height:16px;
+  padding-top:100px;
+  overflow:hidden;
+}
+
+/** NOTE: If the URL is from the servicepane it may have a hardcoded 
+    image URL or may get an icon from CSS.  In order to apply icons 
+    from CSS we reflect a list of properties onto the image element.  
+    See /app/skin/bindings/servicepane.css for details. **/
+    
+
+/** 
+************************************************************************************************************************************************
+SPINNER 
+Used to indicate that the system is busy doing something
+************************************************************************************************************************************************
+
+
+sb-browser-spinner
+{
+  background-color: transparent;
+}
+.browser-spinner-image
+{
+  list-style-image: url(chrome://songbird/skin/icons/spinner-stopped.png) ;  
+}
+.browser-spinner-image[spinning="true"]
+{
+  list-style-image: url(chrome://songbird/skin/icons/spinner-spin.png) ;
+}
+*/
