@@ -41,7 +41,7 @@
  *
  * \sa sbIMetadataManager
  */
-[scriptable, uuid(58c271fb-336e-476d-96f6-bdba0e5f54e6)]
+[scriptable, uuid(62f2be31-54cf-4728-84e8-923f5215b92a)]
 interface sbIMetadataHandler : nsISupports
 {
   /**
@@ -172,6 +172,26 @@ interface sbIMetadataHandler : nsISupports
                     out AUTF8String aMimeType,
                     out unsigned long aDataLen,
                     [array,retval,size_is(aDataLen)] out octet aData);
+
+  /**
+   * \brief Writes an image to the metadata
+   *
+   * \param aType const type for the image to write (see METADATA_IMAGE_TYPE*)
+   * \param aMimeType mimetype of the image
+   * \param aData Binary data of image
+   * \param aDataLen Length of image data
+   *
+   * \example
+   *   var handler = metadataManager.getHandlerForMediaURL(localPathURI.spec);
+   *   handler.setImageData(Ci.sbIMetadataHandler.METADATA_IMAGE_TYPE_OTHER,
+   *                        newMimeType,
+   *                        newImageData,
+   *                        newImageData.length);
+   */
+  void setImageData(in PRInt32 aType,
+                    in AUTF8String aMimeType,
+                    [const,array,size_is(aDataLen)] in octet aData,
+                     in unsigned long aDataLen);
 
   /**
    * \brief Be thou informst that one's sbIMetadataChannel has just received data

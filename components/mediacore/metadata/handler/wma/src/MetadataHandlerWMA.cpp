@@ -281,11 +281,22 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
   return NS_OK;
 } //Write
 
-NS_IMETHODIMP sbMetadataHandlerWMA::GetImageData(
+NS_IMETHODIMP
+sbMetadataHandlerWMA::GetImageData(
     PRInt32       aType,
-    nsACString&   aMimeType,
-    PRUint32*     aDataLen,
-    PRUint8**     aData)
+    nsACString    &aMimeType,
+    PRUint32      *aDataLen,
+    PRUint8       **aData)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbMetadataHandlerWMA::SetImageData(
+    PRInt32             aType,
+    const nsACString    &aMimeType,
+    const PRUint8       *aData,
+    PRUint32            aDataLen)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }

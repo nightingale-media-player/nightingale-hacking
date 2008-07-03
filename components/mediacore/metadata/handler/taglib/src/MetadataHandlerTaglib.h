@@ -56,12 +56,11 @@
                                     "Songbird Taglib Metadata Handler Component"
 #define SONGBIRD_METADATAHANDLERTAGLIB_CID                                     \
 {                                                                              \
-    0x42C6FDBB,                                                                \
-    0x59BB,                                                                    \
-    0x48BE,                                                                    \
-    { 0x82, 0x51, 0xD8, 0xF3, 0xBD, 0xAE, 0x0F, 0x63 }                         \
+    0x62f2be31,                                                                \
+    0x54cf,                                                                    \
+    0x4728,                                                                    \
+    { 0x84, 0xe8, 0x92, 0x3f, 0x52, 0x15, 0xb9, 0x2a }                         \
 }
-
 
 /* *****************************************************************************
  *
@@ -210,6 +209,12 @@ private:
         nsACString                  &aMimeType,
         PRUint32                    *aDataLen,
         PRUint8                     **aData);
+
+    nsresult SetImageDataInternal(
+        PRInt32                     aType,
+        const nsACString            &aMimeType,
+        const PRUint8               *aData,
+        PRUint32                    aDataLen);
 
     /*
      * Private taglib metadata handler ID3v2 services.

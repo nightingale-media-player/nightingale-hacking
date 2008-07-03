@@ -621,12 +621,13 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
 */
 NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
     PRInt32       aType,
-    nsACString&   aMimeType,
-    PRUint32*     aDataLen,
-    PRUint8**     aData)
+    nsACString    &aMimeType,
+    PRUint32      *aDataLen,
+    PRUint8       **aData)
 {
   nsresult rv;
-
+  NS_ENSURE_ARG_POINTER(aData);
+  
   LOG(("sbMetadataHandlerTaglib::GetImageData\n"));
 
   AcquireTaglibLock();
@@ -638,9 +639,9 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
 
 nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
     PRInt32       aType,
-    nsACString&   aMimeType,
-    PRUint32*     aDataLen,
-    PRUint8**     aData)
+    nsACString    &aMimeType,
+    PRUint32      *aDataLen,
+    PRUint8       **aData)
 {
   nsCOMPtr<nsIStandardURL>    pStandardURL;
   nsCOMPtr<nsIURI>            pURI;
@@ -649,6 +650,8 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
   nsCString                   urlScheme;
   nsCString                   fileExt;
   nsresult                    result = NS_OK;
+
+  NS_ENSURE_ARG_POINTER(aData);
 
   /* Get the channel URL info. */
   result = mpChannel->GetURI(getter_AddRefs(pURI));
@@ -668,9 +671,18 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
   NS_ENSURE_SUCCESS(result, result);
   result = mpURL->GetScheme(urlScheme);
   NS_ENSURE_SUCCESS(result, result);
-  
+ 
   if (urlScheme.EqualsLiteral("file"))
   {
+    /* Get the metadata file extension. */
+    result = mpURL->GetFileExtension(fileExt);
+    NS_ENSURE_SUCCESS(result, result);
+    ToLowerCase(fileExt);
+  
+    if (!fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
+      return NS_ERROR_NOT_IMPLEMENTED;
+    }
+   
     /* Get the metadata local file path. */
     result = mpFileProtocolHandler->GetFileFromURLSpec
                                                 (urlSpec,
@@ -693,7 +705,7 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
        */
       TagLib::ID3v2::FrameList frameList= tagFile.ID3v2Tag()->frameList("APIC");
       if (!frameList.isEmpty()){
-        TagLib::ID3v2::AttachedPictureFrame *p = 0l;
+        TagLib::ID3v2::AttachedPictureFrame *p = nsnull;
         for (TagLib::uint frameIndex = 0;
              frameIndex < frameList.size();
              frameIndex++) {
@@ -721,6 +733,134 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
     result = NS_ERROR_NOT_IMPLEMENTED;
   }
 
+  return result;
+}
+
+NS_IMETHODIMP sbMetadataHandlerTaglib::SetImageData(
+    PRInt32             aType,
+    const nsACString    &aMimeType,
+    const PRUint8       *aData,
+    PRUint32            aDataLen)
+{
+  nsresult rv;
+  NS_ENSURE_ARG_POINTER(aData);
+  NS_ENSURE_TRUE(aDataLen > 0, NS_ERROR_ILLEGAL_VALUE);
+  LOG(("sbMetadataHandlerTaglib::SetImageData\n"));
+
+  AcquireTaglibLock();
+  rv = SetImageDataInternal(aType, aMimeType, aData, aDataLen);
+  ReleaseTaglibLock(); 
+  return rv;
+}
+
+nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
+    PRInt32             aType,
+    const nsACString    &aMimeType,
+    const PRUint8       *aData,
+    PRUint32            aDataLen)
+{
+  nsCOMPtr<nsIStandardURL>    pStandardURL;
+  nsCOMPtr<nsIURI>            pURI;
+  nsCOMPtr<nsIFile>           pFile;
+  nsCString                   urlSpec;
+  nsCString                   urlScheme;
+  nsCString                   fileExt;
+  nsresult                    result = NS_OK;
+
+  NS_ENSURE_ARG_POINTER(aData);
+  NS_ENSURE_TRUE(aDataLen > 0, NS_ERROR_ILLEGAL_VALUE);
+
+  /* Get the channel URL info. */
+  result = mpChannel->GetURI(getter_AddRefs(pURI));
+  NS_ENSURE_SUCCESS(result, result);
+  pStandardURL = do_CreateInstance("@mozilla.org/network/standard-url;1",
+                                       &result);
+  NS_ENSURE_SUCCESS(result, result);
+  result = pStandardURL->Init(pStandardURL->URLTYPE_STANDARD,
+                              0,
+                              NS_LITERAL_CSTRING(""),
+                              nsnull,
+                              pURI);
+  NS_ENSURE_SUCCESS(result, result);
+  mpURL = do_QueryInterface(pStandardURL, &result);
+  NS_ENSURE_SUCCESS(result, result);
+  result = mpURL->GetSpec(urlSpec);
+  NS_ENSURE_SUCCESS(result, result);
+  result = mpURL->GetScheme(urlScheme);
+  NS_ENSURE_SUCCESS(result, result);
+
+  if (urlScheme.EqualsLiteral("file"))
+  {
+    /* Get the metadata file extension. */
+    result = mpURL->GetFileExtension(fileExt);
+    NS_ENSURE_SUCCESS(result, result);
+    ToLowerCase(fileExt);
+  
+    if (!fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
+      return NS_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /* Get the metadata local file path. */
+    result = mpFileProtocolHandler->GetFileFromURLSpec
+                                                (urlSpec,
+                                                 getter_AddRefs(pFile));
+    NS_ENSURE_SUCCESS(result, result);
+  
+    result = pFile->GetPath(mMetadataPath);
+    NS_ENSURE_SUCCESS(result, result);
+#if XP_WIN
+    nsAString &filePath = mMetadataPath;
+#else
+    nsCAutoString filePath = NS_ConvertUTF16toUTF8(mMetadataPath);
+#endif
+
+    /* Open and read the metadata file. */
+    TagLib::MPEG::File tagFile(filePath.BeginReading());
+    if (tagFile.ID3v2Tag()) {
+      // Create the picture frame and save
+      TagLib::ID3v2::AttachedPictureFrame *pic = new TagLib::ID3v2::AttachedPictureFrame;
+      // Set the mimetype
+      pic->setMimeType(TagLib::String(aMimeType.BeginReading(),
+                                      TagLib::String::UTF8));
+      
+      // Set the picture type (0x03 - FrontCover)
+      pic->setType(TagLib::ID3v2::AttachedPictureFrame::Type(aType));
+      
+      // Set the data
+      pic->setPicture(TagLib::ByteVector((const char *)aData, aDataLen));
+      
+      // Add the frame
+      tagFile.ID3v2Tag()->addFrame(pic);
+
+      // Now we have to remove any other existing frames of the same type
+      TagLib::ID3v2::FrameList frameList= tagFile.ID3v2Tag()->frameList("APIC");
+      if (!frameList.isEmpty()){
+        TagLib::ID3v2::AttachedPictureFrame *p = nsnull;
+        for (TagLib::uint frameIndex = 0;
+             frameIndex < frameList.size();
+             frameIndex++) {
+          p =  static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList[frameIndex]);
+          if( p->type() == aType &&
+              p != pic){
+            // Remove and free the memory for this frame
+            tagFile.ID3v2Tag()->removeFrame(p, true);
+          }
+        }
+      }
+
+      // Attempt to save the metadata
+      if (tagFile.save()) {
+        result = NS_OK;
+      } else {
+        result = NS_ERROR_FAILURE;
+      } 
+    } else {
+      result = NS_ERROR_FILE_UNKNOWN_TYPE;
+    }
+  } else {
+    result = NS_ERROR_NOT_IMPLEMENTED;
+  }
+  
   return result;
 }
 

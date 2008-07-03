@@ -29,16 +29,105 @@
  */
 
 var gFileLocation = "testharness/metadatamanager/files/";
+var gTestLibrary = createNewLibrary( "test_metadatajob" );
+var gTestMediaItems = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                        .createInstance(Ci.nsIMutableArray);
 
-function runTest () {
-  var gTestLibrary = createNewLibrary( "test_metadatajob" );
-  var gTestMediaItems = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                          .createInstance(Ci.nsIMutableArray);
+// Make a copy of everything in the test file folder
+// so that our changes don't interfere with other tests
+var testFolder = getCopyOfFolder(newAppRelativeFile(gFileLocation), "_temp_artwork_files");
 
-  // Make a copy of everything in the test file folder
-  // so that our changes don't interfere with other tests
-  var testFolder = getCopyOfFolder(newAppRelativeFile(gFileLocation), "_temp_reading_files");
+var metadataManager = Cc["@songbirdnest.com/Songbird/MetadataManager;1"]
+                        .getService(Ci.sbIMetadataManager);
+
+
+function compareArray(aFirstArray, aSecondArray) {
+  if (aFirstArray.length != aSecondArray.length) {
+    return false;
+  }
   
+  for (var aIndex = 0; aIndex < aFirstArray.length; aIndex++) {
+    if (aFirstArray[aIndex] != aSecondArray[aIndex]) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+function getImageData(imageFileName) {
+  var imageFile = testFolder.clone();
+  imageFile.append(imageFileName);
+  
+  var newMimeType = Cc["@mozilla.org/mime;1"]
+                   .getService(Ci.nsIMIMEService)
+                   .getTypeFromFile(imageFile);
+  var inputStream = Cc["@mozilla.org/network/file-input-stream;1"]
+                      .createInstance(Ci.nsIFileInputStream);
+  inputStream.init(imageFile, 0x01, 0600, 0);
+  var stream = Cc["@mozilla.org/binaryinputstream;1"]
+                 .createInstance(Ci.nsIBinaryInputStream);
+  stream.setInputStream(inputStream);
+  var size = inputStream.available();
+  // use a binary input stream to grab the bytes.
+  var bis = Cc["@mozilla.org/binaryinputstream;1"].
+            createInstance(Ci.nsIBinaryInputStream);
+  bis.setInputStream(inputStream);
+  var newImageData= bis.readByteArray(size);
+
+  return [newMimeType, newImageData];
+}
+
+function testWrite(testFileName, shouldPass) {
+  // Grab the test file
+  var writeFile = testFolder.clone();
+  writeFile.append(testFileName);
+
+  // Load the image data to save to the test file
+  var imageMimeType;
+  var imageData;
+  [imageMimeType, imageData] = getImageData("test.png");
+  assertNotEqual(imageData.length, 0);
+  
+  // Save the image data to the test file
+  var localPathURI = newFileURI( writeFile );
+  var handler = metadataManager.getHandlerForMediaURL(localPathURI.spec);
+
+  try {
+    handler.setImageData(Ci.sbIMetadataHandler.METADATA_IMAGE_TYPE_OTHER,
+                         imageMimeType,
+                         imageData,
+                         imageData.length);
+  } catch (err) {
+    if (shouldPass) {
+      assertEqual(true, false, err);
+    }
+  }
+  
+  try {
+    // now grab it from the same file and compare the results
+    var testMimeType = {};
+    var testDataSize = {};
+    var testImageData = handler.getImageData(Ci.sbIMetadataHandler
+                                          .METADATA_IMAGE_TYPE_OTHER,
+                                          testMimeType,
+                                          testDataSize);
+    
+    if (shouldPass) {
+      assertEqual(testMimeType.value, imageMimeType);
+      assertEqual(compareArray(imageData, testImageData), true);
+    } else {
+      assertNotEqual(testMimeType.value, imageMimeType);
+      assertNotEqual(compareArray(imageData, testImageData), true);
+    }
+  } catch(err) {
+    if (shouldPass) {
+      assertEqual(true, false, err);
+    }
+  }
+}
+
+function testRead() {
   // Read some artwork
   var artFiles = [ "MP3_ID3v1v22.mp3",
                    "MP3_ID3v1v24.mp3",
@@ -50,8 +139,6 @@ function runTest () {
                      "Ogg_Vorbis.ogg",
                      "TrueAudio.tta",
                      "FLAC.flac"];
-  var metadataManager = Cc["@songbirdnest.com/Songbird/MetadataManager;1"]
-                          .getService(Ci.sbIMetadataManager);
 
   // Read files that should have album art
   for (var index in artFiles) {
@@ -108,5 +195,13 @@ function runTest () {
       assertEqual(imageData, "");
     } catch (err) { }
   }
-  
+}
+
+function runTest () {
+  // First try to read some metadata
+  testRead();
+
+  // Now for writing an image to metadata
+  testWrite("MP3_ID3v24.mp3", true);
+  testWrite("Ogg_Vorbis.ogg", false);
 }

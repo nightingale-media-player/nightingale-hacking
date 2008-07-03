@@ -43,6 +43,7 @@ SONGBIRD_TESTS = $(srcdir)/*.mp3 \
                  $(srcdir)/*.tta \
                  $(srcdir)/*.wav \
                  $(srcdir)/*.wv \
+                 $(srcdir)/*.png \
                  $(NULL)
 #                 $(srcdir)/*.ogv \
 #                 $(srcdir)/*.ogm \
@@ -59,4 +60,5 @@ SONGBIRD_TESTS = $(srcdir)/*.mp3 \
 
 
 include $(topsrcdir)/build/rules.mk
+
 
