@@ -92,16 +92,16 @@ function testConditions(library) {
   assertEqual(list.conditionCount, 0);
 
   var op = getOperatorForProperty(albumProp, "=");
-  var condition1 = list.appendCondition(albumProp, op, "Back In Black", null, false);
+  var condition1 = list.appendCondition(albumProp, op, "Back In Black", null, "a");
   assertEqual(list.conditionCount, 1);
 
   assertEqual(condition1.propertyID, albumProp);
   assertEqual(condition1.operator, op);
   assertEqual(condition1.leftValue, "Back In Black");
   assertEqual(condition1.rightValue, null);
-  assertEqual(condition1.limit, false);
+  assertEqual(condition1.displayUnit, "a");
 
-  var condition2 = list.appendCondition(albumProp, op, "The Life of Riley", null, false);
+  var condition2 = list.appendCondition(albumProp, op, "The Life of Riley", null, "b");
   assertEqual(list.conditionCount, 2);
 
   assertEqual(list.getConditionAt(0), condition1);
@@ -635,7 +635,7 @@ function assertCondition(a, b) {
   assertEqual(a.operator.operator, b.operator.operator);
   assertEqual(a.leftValue, b.leftValue);
   assertEqual(a.rightValue, b.rightValue);
-  assertEqual(a.limit, b.limit);
+  assertEqual(a.displayUnit, b.displayUnit);
 }
 
 function assertTrackNumbers(list, a) {
