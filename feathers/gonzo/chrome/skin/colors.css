@@ -45,11 +45,14 @@ wizard,
 dialog,
 window,
 prefwindow,
-sb-playlist,
 page,
 panel
 {
   background-color: rgb(245,245,245);
+}
+
+window {
+  background-color:rgb(135,135,135);
 }
 
 window#mainplayer {
@@ -201,6 +204,11 @@ treechildren::-moz-tree-cell {
   border-right:1px solid gray;
   padding:0px 2px;
 }
+treecolpicker {
+  border-left:1px solid gray;
+}
+
+
 treechildren::-moz-tree-cell {
   border-left:1px solid transparent;
   border-right:1px solid transparent;
@@ -241,10 +249,10 @@ treechildren::-moz-tree-cell-text( selected ) {
   color:rgb(0,0,0);
 }
 treechildren::-moz-tree-row( selected, focus,odd ) {
-  background-color: rgb(225,225,255);
+  background-color: rgb(225,225,225);
 }
 treechildren::-moz-tree-row( selected, focus, even ) {
-  background-color: rgb(220,220,250);
+  background-color: rgb(220,220,220);
 }
 
 
@@ -295,17 +303,6 @@ treechildren::-moz-tree-progressmeter {
 
 
 
-.sb-displaypane-header {
-  min-height:22px;
-  border-top:1px solid gray;
-}
-.sb-displaypane-menubutton {
-  border-right:none;
-}
-.sb-displaypane-header {
-  border-bottom:1px solid gray;
-}
-
 
 
 listheader,
@@ -313,9 +310,9 @@ tree treecol {
   background-color: rgb(225,225,225);
 /*  border-bottom:1px solid brown;*/
 }
-.tree-scrollable-columns {
-  background-color: cyan;
-}
+
+
+
 
 
 treecol > label {
@@ -324,7 +321,9 @@ treecol > label {
 
 
 listheader,
-treecol {
+treecol,
+.tree-scrollable-columns,
+treecolpicker {
   background-image: url('chrome://songbird/skin/base-elements/bg-table-header.png');
   background-position:center 0px;
   background-repeat:repeat-x;
@@ -378,7 +377,6 @@ treecolpicker {
 }
 treecolpicker,
 .sb-displaypane-menubutton {
-  background-color:cyan;
 }
 
 listheader,
@@ -398,14 +396,6 @@ DISPLAY PANE
 *******************************************************************************
 */
 
-.sb-displaypane-header,
-.sb-displaypane-menubutton
-{
-}
-
-#displaypane_right_sidebar
-{
-}
 
 
 
@@ -673,7 +663,7 @@ BUTTONS
 
 #nav-bar toolbarbutton
 {
-  border:1px solid rgb(67,102,34);
+  border:1px solid rgb(28,67,0);
 
 
 background-image:url('chrome://songbird/skin/nav-bar/bg-button.png');
@@ -970,15 +960,11 @@ These let the user resize the frames in your box model.
   margin: 0;
 }
 
-#filter_splitter:active
-{
-  margin: 0;
+#filter_splitter:active {
 }
 
 #servicepane_splitter,
-#search_splitter
-{
-  background-color: transparent;
+#search_splitter {
 }
 
 #servicepane_splitter[state="collapsed"],
@@ -986,9 +972,7 @@ These let the user resize the frames in your box model.
 #displaypane_contentpane_bottom_splitter[state="collapsed"],
 #displaypane_servicepane_bottom_splitter[state="collapsed"]
 {
-  background-color: transparent;
-  border: 1px solid #202220;
-
+  background-color: red;
 }
 
 #servicepane_splitter[state="collapsed"]:hover,
@@ -996,13 +980,6 @@ These let the user resize the frames in your box model.
 #displaypane_contentpane_bottom_splitter[state="collapsed"]:hover,
 #displaypane_servicepane_bottom_splitter[state="collapsed"]:hover
 {
-  border: 1px solid;
-  border-top-color: #474948; /** Rubber Highlight */
-  border-left-color: #474948; /** Rubber Highlight */
-  border-bottom-color: #202220;
-  border-right-color: #202220;
-  color: #FFF;  
-
 }
 
 #servicepane_splitter[state="collapsed"]:active,
@@ -1010,55 +987,47 @@ These let the user resize the frames in your box model.
 #displaypane_contentpane_bottom_splitter[state="collapsed"]:active,
 #displaypane_servicepane_bottom_splitter[state="collapsed"]:active
 {
-  border: 1px solid;
-  border-top-color: #202220;
-  border-left-color: #202220;
-  border-bottom-color: #474948; /** Rubber Highlight */
-  border-right-color: #474948; /** Rubber Highlight */
-  color: #FFF;  
+}
 
+#servicepane_splitter,
+#filter_splitter,
+#displaypane_right_sidebar_splitter {
+  background-color:gray;
+  max-width:1px;
+  min-width:1px;
 }
 
 #displaypane_contentpane_bottom_splitter,
-#displaypane_servicepane_bottom_splitter
-{
-  border-top: 1px solid #474948; /** Rubber Highlight */
-}
-
 #displaypane_servicepane_bottom_splitter,
-#displaypane_servicepane_bottom_splitter[state="collapsed"]
-{
-  background-color: #313131; /** color of the Main Window */
+.playlist-splitter,
+.playlist-web-splitter {
+  min-height:4px;
+  max-height:4px;
+
+  background-image:url('chrome://songbird/skin/base-elements/bg-splitter-horizontal.png') !important;
+  background-repeat:repeat-x !important;
+  background-position:center top !important;
 }
 
-.playlist-splitter,
-.playlist-web-splitter
-{
-  border-top:1px solid gray;
-  border-bottom:1px solid gray;
+#displaypane_contentpane_bottom_splitter {
+  min-height:3px;
+  max-height:3px;
+  background-position:center -1px !important;
 }
 
 .playlist-splitter:active,
 .playlist-web-splitter:active
 {
-  background-color: transparent;
+
 }
 
 .playlist-splitter[state="collapsed"],
 .playlist-web-splitter[state="collapsed"]
 {
-  background-color: #313131 !important;
+  background-color: red !important;
 }
 
-#control_pane_splitter
-{
-  background-color: transparent;
-}
 
-#control_pane_splitter[state="collapsed"]
-{
-  background-color: transparent;
-}
 
 
 
@@ -1589,6 +1558,9 @@ sb-sys-titlebar {
 }
 #volume_box {
   padding:0 8px;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+  min-height:52px;
 }
 #control_pane {
   padding:0 4px;
@@ -1693,12 +1665,6 @@ sb-sys-titlebar {
 
 
 
-#servicepane_splitter,
-#filter_splitter {
-  background-color:gray;
-  max-width:1px;
-  min-width:1px;
-}
 #inner_player_box {
 
 }
@@ -1849,27 +1815,27 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 
 
 
-#new_faceplate_box {
+#faceplate_box {
   padding:0 8px;
   min-height:52px;
 }
-#new_faceplate > .left-box > .left,
-#new_faceplate > .right-box > .right,
-#new_faceplate_inactive > .left-box > .left,
-#new_faceplate_inactive > .right-box > .right {
+#faceplate > .left-box > .left,
+#faceplate > .right-box > .right,
+#faceplate_inactive > .left-box > .left,
+#faceplate_inactive > .right-box > .right {
   min-width:2px;
   min-height:44px;
   background-repeat:no-repeat;
   background-position:center center;
 }
-#new_faceplate > .left-box > .left {
+#faceplate > .left-box > .left {
   background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-left.png');
 }
-#new_faceplate > .right-box > .right {
+#faceplate > .right-box > .right {
   background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-right.png');  
 }
-#new_faceplate > .middle,
-#new_faceplate_inactive > .middle {
+#faceplate > .middle,
+#faceplate_inactive > .middle {
   min-height:44px;
   padding:2px 0;
   margin:0 2px;
@@ -1879,17 +1845,17 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 }
 
 
-#new_faceplate > .middle {
+#faceplate > .middle {
   background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate.png');
 }
-#new_faceplate_inactive > .middle {
+#faceplate_inactive > .middle {
   background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive.png');
 }
 
-#new_faceplate_inactive > .left-box > .left {
+#faceplate_inactive > .left-box > .left {
   background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive-left.png');
 }
-#new_faceplate_inactive > .right-box > .right {
+#faceplate_inactive > .right-box > .right {
   background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive-right.png');
 }
 
@@ -1910,7 +1876,7 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
   background-repeat:no-repeat;
   background-position:center center;
 }
-#new_faceplate_content {
+#faceplate_content {
   min-height:44px;
   padding:2px 2px;
 }
@@ -1961,3 +1927,11 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 radiogroup {
   background-color:purple !important;
 }
+
+
+
+
+
+
+
+

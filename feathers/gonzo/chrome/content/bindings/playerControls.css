@@ -190,21 +190,53 @@ Mute and Slider
 *******************************************************************************
 */
 
-.sb-player-mute-button-muteoff > .clickhold-button,
-.sb-player-mute-button-muteon > .clickhold-button {
-  list-style-image: url(chrome://songbird/skin/media-control-pane/button-mute-volume.png); 
+.sb-player-volume-slider {
+}
+
+.sb-player-volume-slider[sbid="sb-progress-slider-min"],
+.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+  margin:0;
+  padding:0;
+  background-image:none;
+  min-width:16px;
+  min-height:16px;
+  max-width:16px;
+  max-height:16px;
+  border:none;
+}
+
+.sb-player-volume-slider[sbid="sb-progress-slider-min"] {
+  list-style-image: url(chrome://songbird/skin/media-control-pane/button-min-volume.png);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+  list-style-image: url(chrome://songbird/skin/media-control-pane/button-max-volume.png);
+}
+
+
+.sb-player-volume-slider[sbid="sb-progress-slider-min"] {
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked] {
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked] {
+}
+
+
+.sb-player-volume-slider[sbid="sb-progress-slider-min"],
+.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
   -moz-image-region: rect(0px 16px 16px 0px);
 }
-.sb-player-mute-button-muteoff:hover > .clickhold-button,
-.sb-player-mute-button-muteon:hover > .clickhold-button {
+.sb-player-volume-slider[sbid="sb-progress-slider-min"]:hover,
+.sb-player-volume-slider[sbid="sb-progress-slider-max"]:hover {
   -moz-image-region: rect(16px 16px 32px 0px);
 }
-.sb-player-mute-button-muteoff:active > .clickhold-button,
-.sb-player-mute-button-muteon:active > .clickhold-button {
+.sb-player-volume-slider[sbid="sb-progress-slider-min"]:active,
+.sb-player-volume-slider[sbid="sb-progress-slider-max"]:active {
   -moz-image-region: rect(32px 16px 48px 0px);
 }
-.sb-player-mute-button-muteoff[disabled="true"] > .clickhold-button,
-.sb-player-mute-button-muteon[disabled="true"] > .clickhold-button {
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][disabled="true"],
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][disabled="true"] {
   -moz-image-region: rect(48px 16px 64px 0px);
 }
 
@@ -223,6 +255,7 @@ progressmeter.sb-player-volume-slider {
 
 sb-player-volume-slider {
 margin:0;
+padding:0;
 }
 
 /** The thumb does not respond to list-style-image, so we are forced to 
@@ -262,15 +295,23 @@ progressmeter.sb-player-volume-slider > .progress-remainder {
     background-position: right 0px;
   }
     
-    
+
 slider.sb-player-volume-slider,
 progressmeter.sb-player-volume-slider {
+  min-height: 12px !important;
   height: 12px !important;
+  max-height: 12px !important;
   border: none;
   background-color:transparent !important;
 }
 
+stack.sb-player-volume-slider {
+  padding:2px 0;
+}
 
+sb-player-volume-slider {
+
+}
 
 sb-player-volume-slider,
 thumb.sb-player-volume-slider > gripper,

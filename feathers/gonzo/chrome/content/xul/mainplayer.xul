@@ -115,9 +115,11 @@
           <vbox id="servicepane_box">
             <sb-servicepane id="servicepane" flex="1" browser="content" />
             <statusbar id="servicepane-status-bar" mousethrough="never">
+<!-- TODO remove -->
               <statusbarpanel>
                 <button label="Restart" onclick="var createDataRemote =  new Components.Constructor('@songbirdnest.com/Songbird/DataRemote;1',Components.interfaces.sbIDataRemote, 'init'); var restartSignal = createDataRemote('restart.restartnow', null); restartSignal.boolValue = true;" style="max-height:16px; max-width:16px; overflow:hidden; padding:0; margin:0; min-width:16px; width:16px;"/>
                 </statusbarpanel>
+<!-- /TODO -->
             </statusbar>
           </vbox>
           <sb-smart-splitter id="servicepane_splitter" state="open" collapse="never" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">
@@ -150,6 +152,8 @@
 
 
     <stack id="control_pane_box" pack="center">
+
+<!-- TODO Move corner xul into an sb-themed-frame-stack -->
       <hbox flex="1" align="left" class="left-box">
         <hbox class="left"/>
       </hbox>
@@ -157,33 +161,34 @@
         <hbox class="right"/>
       </hbox>
       <hbox flex="1" class="middle" />
+<!-- /TODO -->
 
       <hbox id="control_pane" flex="1">
-        <hbox id="control_buttons_box" pack="center" align="center" style="background-color:;">
-          <sb-player-back-button id="songbird_btn_back" class="sb-player-button"/>
-          <sb-player-playpause-button id="songbird_btn_play_pause" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
-          <sb-player-forward-button id="songbird_btn_fwd" class="sb-player-button" />
+        <hbox id="control_buttons_box" pack="center" align="center">
+          <sb-player-back-button id="play_back_button" class="sb-player-button"/>
+          <sb-player-playpause-button id="play_pause_button" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
+          <sb-player-forward-button id="play_fwd_button" class="sb-player-button" />
         </hbox>
 
-        <hbox id="volume_box" pack="center" align="center" style="background-color:;">
-          <sb-player-mute-button id="mute_button" />
-          <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100"/>
-          <sb-player-mute-button id="mute_button2" />
+        <hbox id="volume_box" pack="center" align="center">
+          <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100" minbutton="true" maxbutton="true"/>
         </hbox>
 
-        <hbox id="shuffle_repeat_box" pack="center" align="center" style="background-color:;">
+        <hbox id="shuffle_repeat_box" pack="center" align="center">
           <sb-player-shuffle-button class="sb-player-button" />
           <sb-player-repeat-button class="sb-player-button" />
         </hbox>
 
-        <hbox id="new_faceplate_box" flex="1" pack="center" align="center">
-          <stack id="new_faceplate" flex="1">
+<!-- TODO Break into XBLs -->
+        <hbox id="faceplate_box" flex="1" pack="center" align="center">
+          <stack id="faceplate" flex="1">
             <observes type="dataremote"
               key="faceplate.seenplaying"
               attribute="hidden"
               boolean="true"
               inverted="true" />
 
+<!-- TODO Move corner xul into an sb-themed-frame-stack -->
             <hbox flex="1" align="left" class="left-box">
               <hbox class="left"/>
             </hbox>
@@ -191,8 +196,9 @@
               <hbox class="right"/>
             </hbox>
             <hbox flex="1" class="middle" />
-            
-            <hbox id="new_faceplate_content" flex="1">
+<!-- /TODO -->
+
+            <hbox id="faceplate_content" flex="1">
               <vbox flex="1">
                 <hbox id="track_info" pack="center" align="center">
                   <sb-autoscroll id="sb-faceplate-autoscroll-box" class="faceplate-autoscroll-box" fitalign="left" flex="1" mousethrough="always">
@@ -200,7 +206,7 @@
                     <sb-player-artist-label class="faceplate-text" autotip="1" mousethrough="always"/>
                     <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
                   </sb-autoscroll>
-                  <hbox style="padding-left:6px;" id="faceplate-tool-bar">
+                  <hbox id="faceplate-tool-bar">
                     <sb-rating/>
                   </hbox>
                 </hbox>
@@ -228,8 +234,10 @@
               <hbox id="faceplate-album-art"/>
             </hbox>
           </stack>
+<!-- /TODO -->
 
-          <stack id="new_faceplate_inactive" flex="1">
+<!-- TODO Break into XBLs -->
+          <stack id="faceplate_inactive" flex="1">
             <observes type="dataremote"
                       key="faceplate.seenplaying"
                       attribute="hidden"
@@ -245,6 +253,7 @@
             <hbox flex="1" class="middle" />
             <hbox flex="1" id="faceplate-inactive-splash" />
           </stack>
+<!-- /TODO -->
 
         </hbox>
       </hbox>
@@ -252,6 +261,7 @@
 
 
     <stack id="bottom-bar" flex="1">
+<!-- TODO Move corner xul into an sb-themed-frame-stack -->
       <hbox flex="1" align="left" class="left-box">
         <hbox class="left"/>
       </hbox>
@@ -259,6 +269,7 @@
         <hbox class="right"/>
       </hbox>
       <hbox flex="1" class="middle" />
+<!-- /TODO -->
     </stack>
 
   </sb-sys-outer-frame>

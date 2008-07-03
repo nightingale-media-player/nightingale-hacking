@@ -204,6 +204,7 @@ button.css
 }
 
 button[type="default"] {
+  border:2px solid red !important;
 }
 
 button[disabled="true"] {

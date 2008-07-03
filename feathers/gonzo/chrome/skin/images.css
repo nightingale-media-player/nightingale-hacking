@@ -77,7 +77,7 @@ dialog
 #sb-playlist-splitter,
 .playlist-web-splitter
 {
-  background-image: none !important;
+  background-image: none;
 }
 
 

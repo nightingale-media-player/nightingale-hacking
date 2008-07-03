@@ -52,17 +52,23 @@ menuitem[target="displaypane_right_sidebar"] {
   list-style-image: url(chrome://songbird/skin/display-pane/right-sidebar.png);
 }
 
+
 sb-displaypane .favicon {
   max-width: 16px;
   max-height: 16px;
+  background-color:pink !important;
+  padding:0;
+  margin:0 0 1px 0;
 }
 
 .sb-displaypane-menubutton {
 }
 
 .sb-displaypane-label {
-  margin-top: 0;
-  margin-bottom: 0;
+  margin:0 0 1px 2px;
+  padding:0;
+  -moz-box-pack: center;
+  -moz-box-align: center;
 }
 
 .sb-displaypane-menubutton > .button-box > hbox > .button-text,
@@ -71,4 +77,68 @@ sb-displaypane .favicon {
 }
 
 #displaypane_right_sidebar_splitter[state="collapsed"] {
+}
+
+
+
+
+menuitem.displaypane-menuitem[selected] {
+  font-weight: bold; 
+}
+
+menuitem.displaypane-menuitem[recommended] {
+  background-image:url('chrome://songbird/skin/display-pane/icon-recommended.png');
+  background-position:right center;
+  background-repeat:no-repeat;
+  padding-right:20px !important;
+}
+
+
+.sb-displaypane-menubutton {
+  min-width: 15px !important;
+  max-width: 15px !important;
+  min-height:19px;
+  max-height:19px;
+  margin:0;
+  padding:0;
+  border:none;
+  border-left:1px solid gray;
+
+  background-image:url('chrome://songbird/skin/display-pane/bg-header.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  
+  list-style-image:url('chrome://songbird/skin/display-pane/button-addon-picker.png');
+}
+.sb-displaypane-header {
+  min-height:19px;
+  max-height:19px;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+  padding:0px 4px 0px 4px;
+
+  background-image:url('chrome://songbird/skin/display-pane/bg-header.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+
+}
+.sb-displaypane-header,
+.sb-displaypane-menubutton {
+}
+
+#displaypane_right_sidebar {
+  border:1px solid gray;
+  border-top:none;
+  border-left:none;
+}
+#displaypane_servicepane_bottom {
+  
+}
+#displaypane_contentpane_bottom {
+  border-bottom:1px solid gray;
+}
+
+
+
+.sb-displaypane-header > vbox > .favicon {
 }

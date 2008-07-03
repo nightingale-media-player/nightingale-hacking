@@ -58,7 +58,9 @@ dialog[platform="Darwin"] #sb-sys-title-title {
   max-height:22px !important;
 }
 .dialog-button-box {
-	background-color:rgb(135,135,135);
+  background-image: url(chrome://songbird/skin/window/bg-button-box.png);
+  background-repeat:repeat-x;
+  background-position:center top;
 }
 
 
@@ -66,20 +68,20 @@ dialog[platform="Darwin"] #sb-sys-title-title {
   -moz-box-pack:end;
 }
 
-#titlebar_box > .left-box > .left,
-#titlebar_box > .right-box > .right {
+#dialog-titlebar .left-box > .left,
+#dialog-titlebar .right-box > .right {
   min-width:16px;
   min-height:22px;
   background-position:center top;
   background-repeat:no-repeat;
 }
-#titlebar_box > .left-box > .left {
+#dialog-titlebar .left-box > .left {
   background-image: url(chrome://songbird/skin/window/bg-title-bar-left.png);
 }
-#titlebar_box > .right-box > .right {
+#dialog-titlebar .right-box > .right {
   background-image: url(chrome://songbird/skin/window/bg-title-bar-right.png);
 }
-#titlebar_box > .middle {
+#dialog-titlebar .middle {
   background-image: url(chrome://songbird/skin/window/bg-title-bar.png);
   background-repeat:repeat-x;
   background-position:center top;
