@@ -1,0 +1,149 @@
+/* ::::: find toolbar ::::: */
+
+findbar {
+  min-height: 24px;
+  max-height: 24px;
+  padding:0;
+
+  background-image:url('chrome://songbird/skin/find-bar/bg-find-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  
+  border:none;
+  
+  -moz-box-pack: center;
+  -moz-box-align: center;
+}
+
+findbar label,
+findbar toolbarbutton > .toolbarbutton-text,
+findbar .find-buttons-container > toolbarbutton > .toolbarbutton-text,
+findbar checkbox > .checkbox-label-box,
+.find-field-container > textbox.findbar-textbox,
+description.findbar-find-status {
+  font-size:10px;
+  font-family: Lucida Grande, Arial, Helvetica, FreeSans, Sans-serif !important;
+  padding:0;
+  margin:0;
+}
+
+
+/* buttons - next, previous, highlight */
+
+
+findbar toolbarbutton > .toolbarbutton-icon,
+.find-buttons-container > toolbarbutton > .toolbarbutton-icon {
+  height: 16px !important;
+  padding:0;
+  margin:0;
+}
+
+findbar toolbarbutton > .toolbarbutton-text,
+.find-buttons-container > toolbarbutton > .toolbarbutton-text,
+findbar checkbox > .checkbox-label-box {
+  height: 16px !important;
+  padding:0;
+  margin:0;
+}
+
+findbar .checkbox-check {
+  margin:0;
+}
+
+/* input textbox */
+.findbar-textbox {
+  -moz-binding: url("chrome://global/content/bindings/findbar.xml#findbar-textbox");
+  -moz-appearance: none;
+  min-height: 18px !important;
+  width: 150px !important;
+  margin:0 8px 0 2px !important;
+  padding:0;
+}
+.find-field-container > textbox.findbar-textbox[status="notfound"] {
+  color: red !important;
+}
+
+/* close button */
+toolbarbutton.findbar-closebutton {
+  border:none !important;
+  padding:0;
+  margin:0 8px;
+  list-style-image:url('chrome://songbird/skin/find-bar/button-close.png') !important;
+  max-height:12px;
+  max-width:12px;
+}
+toolbarbutton.findbar-closebutton {
+  -moz-image-region: rect(0px 12px 12px 0px);
+}
+toolbarbutton.findbar-closebutton:hover {
+  -moz-image-region: rect(12px 12px 24px 0px);
+}
+toolbarbutton.findbar-closebutton:active {
+  -moz-image-region: rect(24px 12px 36px 0px);
+}
+toolbarbutton.findbar-closebutton[disabled="true"] {
+  -moz-image-region: rect(36px 12px 48px 0px) !important;
+}
+
+
+/* find-next button */
+.find-buttons-container > toolbarbutton.findbar-find-next {
+  list-style-image:url('chrome://songbird/skin/find-bar/button-next.png');
+}
+.find-buttons-container > toolbarbutton.findbar-find-previous {
+  list-style-image:url('chrome://songbird/skin/find-bar/button-previous.png');
+}
+toolbarbutton.findbar-highlight {
+  list-style-image:url('chrome://songbird/skin/find-bar/button-highlight.png');
+}
+findbar checkbox {
+  margin:0;
+}
+findbar .toolbarbutton-text,
+findbar .checkbox-label {
+  padding:2px 8px 0 2px !important;
+  margin:0;
+}
+
+
+toolbarbutton.findbar-find-next,
+toolbarbutton.findbar-find-previous,
+toolbarbutton.findbar-highlight {
+  -moz-image-region: rect(0px 16px 16px 0px) !important;
+  padding:0;
+  margin:0;
+  -moz-box-pack: center;
+  -moz-box-align: center;
+}
+toolbarbutton.findbar-find-next:hover,
+toolbarbutton.findbar-find-previous:hover,
+toolbarbutton.findbar-highlight:hover {
+  -moz-image-region: rect(16px 16px 32px 0px) !important;
+}
+toolbarbutton.findbar-find-next:active,
+toolbarbutton.findbar-find-previous:active,
+toolbarbutton.findbar-highlight:active,
+toolbarbutton.findbar-highlight[checked="true"],
+toolbarbutton.findbar-highlight[checked="true"]:hover {
+  -moz-image-region: rect(32px 16px 48px 0px) !important;
+}
+toolbarbutton.findbar-find-next[disabled="true"],
+toolbarbutton.findbar-find-previous[disabled="true"],
+toolbarbutton.findbar-highlight[disabled="true"] {
+  -moz-image-region: rect(48px 16px 64px 0px) !important;
+}
+
+
+
+
+
+
+findbar .checkbox-icon,
+toolbarbutton.findbar-closebutton > .toolbarbutton-text,
+image.find-status-icon {
+  display: none;
+}
+
+.findbar-find-status {
+  color:red;
+}
