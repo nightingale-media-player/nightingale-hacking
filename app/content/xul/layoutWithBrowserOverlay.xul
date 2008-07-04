@@ -489,15 +489,17 @@
     
       <!-- IDs and classes match FireFox in order to make porting 
            extensions easier -->
-      <toolbarbutton id="back-button"  class="toolbarbutton-1 chromeclass-toolbar-additional"
-                     label="&tooltip.browser.back;"
-                     command="Browser:Back"
-                     tooltiptext="&tooltip.browser.back;"/>
+      <toolbaritem id="back-forward-buttons">
+        <toolbarbutton id="back-button"  class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       label="&tooltip.browser.back;"
+                       command="Browser:Back"
+                       tooltiptext="&tooltip.browser.back;"/>
                       
-      <toolbarbutton id="forward-button"  class="toolbarbutton-1 chromeclass-toolbar-additional"
-                     label="&tooltip.browser.fwd;"
-                     command="Browser:Forward"
-                     tooltiptext="&tooltip.browser.fwd;"/>
+        <toolbarbutton id="forward-button"  class="toolbarbutton-1 chromeclass-toolbar-additional"
+                       label="&tooltip.browser.fwd;"
+                       command="Browser:Forward"
+                       tooltiptext="&tooltip.browser.fwd;"/>
+      </toolbaritem>
                       
       <toolbarbutton id="reload-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
                      label="&tooltip.browser.refresh;"
@@ -518,7 +520,7 @@
                      label="&tooltip.browser.home;"
                      command="Browser:Home"
                      tooltiptext="&tooltip.browser.home;"/>
-                      
+
       <toolbarbutton id="bookmark-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
                      label="&tooltip.browser.bookmark;"
                      command="cmd_bm_newbookmark"
@@ -534,6 +536,17 @@
                    title="URL">
         <sb-locationbar-textbox id="location_bar"
                                 flex="1" align="center" />  
+                                
+        <sb-clickhold-toolbarbutton id="bookmark-subscribe-button" command="cmd_bm_newbookmark"
+                                    class="toolbarbutton-1 chromeclass-toolbar-additional">
+          <menupopup id="bookmark-subscribe-popup" popupanchor="bottomleft" popupalign="topleft">
+            <menuitem label="&tooltip.browser.bookmark;" tooltiptext="&tooltip.browser.bookmark;"
+                      command="cmd_bm_newbookmark" />
+            <menuitem label="&tooltip.browser.subscription;" tooltiptext="&tooltip.browser.subscription;"
+                      command="cmd_bm_newsubscription" />
+          </menupopup>
+        </sb-clickhold-toolbarbutton>
+        
       </toolbaritem>
       
       <splitter id="search-splitter">
@@ -562,7 +575,7 @@
              mode="icons" 
              iconsize="small"
              customizable="true"
-             defaultset="back-button,forward-button,stopreload-container,home-button,bookmark-button,subscription-button,urlbar-container,search-splitter,searchbar-container,mediapages-container"
+             defaultset="back-forward-buttons,stopreload-container,home-button,urlbar-container,search-splitter,searchbar-container,mediapages-container"
              flex="1">            
     </toolbar>
     

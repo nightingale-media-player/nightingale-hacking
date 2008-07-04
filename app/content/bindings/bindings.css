@@ -240,6 +240,10 @@ sb-clickhold-button {
   -moz-binding: url('chrome://songbird/content/bindings/clickHoldButton.xml#clickhold-button')
 }
 
+sb-clickhold-toolbarbutton {
+   -moz-binding: url('chrome://songbird/content/bindings/clickHoldButton.xml#clickhold-toolbarbutton')
+}
+
 sb-feathers-menuitems {
   -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-menuitems") !important;
 }

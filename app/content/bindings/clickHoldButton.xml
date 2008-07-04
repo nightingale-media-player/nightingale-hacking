@@ -191,6 +191,14 @@
      
    </handlers> 
   </binding>  
+  <binding id="clickhold-toolbarbutton"
+           extends="#clickhold-button">
+    <content>
+      <xul:toolbarbutton sbid="button" class="clickhold-button" xbl:inherits="label,flex,disabled,tooltiptext" />
+      <children includes="menupopup"/>
+      <children/>
+    </content>
+  </binding>
 </bindings>
 
 
