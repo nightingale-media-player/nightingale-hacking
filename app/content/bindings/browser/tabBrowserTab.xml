@@ -70,6 +70,163 @@
     <implementation>
       <field name="mOverCloseButton">false</field>
       <field name="mCorrespondingMenuitem">null</field>
+      
+      <!-- for drag-and-drop -->
+      <method name="getTransferData">
+        <parameter name="aEvent"/>
+        <parameter name="aXferData"/>
+        <parameter name="aDragAction"/>
+        <body>
+        <![CDATA[
+          var browser = this.linkedBrowser;
+          var URI = browser ? browser.currentURI : null;
+          if (URI) {
+            aXferData.data.addDataForFlavour("text/x-moz-url", URI.spec + "\n" + this.label);
+            aXferData.data.addDataForFlavour("text/unicode", URI.spec);
+            aXferData.data.addDataForFlavour("text/html", '<a href="' + URI.spec + '">' + this.label + '</a>');
+          } else {
+            aXferData.data.addDataForFlavour("text/unicode", "about:blank");
+          }
+        ]]>
+        </body>
+      </method>
+
+      <field name="mPrefs" readonly="true">
+        Components.classes['@mozilla.org/preferences-service;1']
+                  .getService(Components.interfaces.nsIPrefService)
+                  .getBranch(null);
+      </field>
+
+      <field name="_tabbrowser">null</field>
+      <property name="mTabBrowser">
+        <getter>
+        <![CDATA[
+          if (!this._tabbrowser) {
+          var tabs = document.getBindingParent(this);
+          this._tabbrowser = tabs &&
+                             (tabs.tabBrowser ||
+                              document.getBindingParent(tabs));
+          }
+          return this._tabbrowser;
+        ]]>
+        </getter>
+        <setter>
+          return this._tabbrowser = val;
+        </setter>
+      </property>
+      
+      <field name="mFaviconService">null</field>
+
+      <!-- public icon methods -->
+      <method name="setIcon">
+        <parameter name="aURI"/>
+        <body>
+          <![CDATA[
+            if (!this.mTabBrowser) {
+              Components.utils.reportError((new Error).stack);
+            }
+            var browser = this.mTabBrowser.getBrowserForTab(this);
+            if (browser) {
+              browser.mIconURL = aURI;
+            }
+
+            if(!this.mFaviconService) {
+              this.mFaviconService =
+                Components.classes["@mozilla.org/browser/favicon-service;1"]
+                          .getService(Components.interfaces.nsIFaviconService);
+            }
+            
+            if(aURI) {
+              try {
+                var uri = aURI;
+                if(!(aURI instanceof Components.interfaces.nsIURI)) {
+                  try {
+                    uri = Components.classes["@mozilla.org/network/io-service;1"]
+                                    .getService(Components.interfaces.nsIIOService)
+                                    .newURI(aURI, null, null);
+                  } catch (ex) {
+                    //ignore the exception
+                    uri = null;
+                  }
+                }
+
+                this.mFaviconService.setAndLoadFaviconForPage(browser.currentURI, 
+                                                              uri, 
+                                                              false);
+              }
+              catch(e) {
+                Components.utils.reportError(e);
+              }
+            }
+
+            this.updateIcon();
+
+            for (var i = 0; i < this.mTabBrowser.mProgressListeners.length; i++) {
+              var p = this.mTabBrowser.mProgressListeners[i];
+              if ('onLinkIconAvailable' in p) {
+                p.onLinkIconAvailable(browser);
+              }
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="updateIcon">
+        <body>
+          <![CDATA[
+            if (!this.mTabBrowser) {
+              Components.utils.reportError((new Error).stack);
+            }
+            var browser = this.mTabBrowser.getBrowserForTab(this);
+            if (!this.hasAttribute("busy") && browser && browser.mIconURL)
+              this.setAttribute("image", browser.mIconURL);
+            else
+              this.removeAttribute("image");
+          ]]>
+        </body>
+      </method>
+      
+      <!-- private icon methods -->
+      <method name="shouldLoadFavIcon">
+        <parameter name="aURI"/>
+        <body>
+          <![CDATA[
+            return (aURI && this.mPrefs.getBoolPref("browser.chrome.site_icons") &&
+                    this.mPrefs.getBoolPref("browser.chrome.favicons") &&
+                    ("schemeIs" in aURI) && (aURI.schemeIs("http") || aURI.schemeIs("https")));
+          ]]>
+        </body>
+      </method>
+      <method name="useDefaultIcon">
+        <body>
+          <![CDATA[
+            var browser = this.mTabBrowser.getBrowserForTab(this);
+            if (browser.contentDocument instanceof ImageDocument) {
+              if (this.mPrefs.getBoolPref("browser.chrome.site_icons")) {
+                try {
+                  var sz = this.mPrefs.getIntPref("browser.chrome.image_icons.max_size");
+                  if (!sz)
+                    return;
+
+                  var req = browser.contentDocument.imageRequest;
+                  if (!req || !req.image ||
+                      req.image.width > sz ||
+                      req.image.height > sz)
+                    return;
+
+                  this.setIcon(browser.currentURI.spec);
+                } catch (e) { }
+              }
+            }
+            else if (this.shouldLoadFavIcon(browser.currentURI)) {
+              var url = browser.currentURI.prePath + "/favicon.ico";
+              if (!this.mTabBrowser.isIconKnownMissing(url))
+                this.setIcon(url);
+            }
+          ]]>
+        </body>
+      </method>
+
     </implementation>
 
     <handlers>

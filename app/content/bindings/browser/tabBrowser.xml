@@ -65,15 +65,8 @@
       <xul:stringbundle anonid="tbstringbundle" src="chrome://browser/locale/tabbrowser.properties"/>
       <xul:tabbox anonid="tabbox" flex="1" eventnode="document" xbl:inherits="handleCtrlPageUpDown"
                   onselect="if (!('updateCurrentBrowser' in this.parentNode) || event.target.localName != 'tabpanels') return; this.parentNode.updateCurrentBrowser();">
-        <xul:hbox class="tab-drop-indicator-bar">
-          <xul:hbox class="tab-drop-indicator" mousethrough="always"/>
-        </xul:hbox>
         <xul:hbox class="tabbrowser-strip" collapsed="true" tooltip="_child" context="_child"
-                  anonid="strip"
-                  ondraggesture="nsDragAndDrop.startDrag(event, document.getBindingParent(this)); event.stopPropagation();"
-                  ondragover="nsDragAndDrop.dragOver(event, document.getBindingParent(this)); event.stopPropagation();"
-                  ondragdrop="nsDragAndDrop.drop(event, document.getBindingParent(this)); event.stopPropagation();"
-                  ondragexit="nsDragAndDrop.dragExit(event, document.getBindingParent(this)); event.stopPropagation();">
+                  anonid="strip">
           <xul:tooltip onpopupshowing="return document.getBindingParent(this).createTooltip(event);"/>
           <xul:menupopup anonid="tabContextMenu" onpopupshowing="document.getBindingParent(this).updatePopupMenu(this);">
             <xul:menuitem label="&newTab.label;" accesskey="&newTab.accesskey;"
@@ -104,9 +97,9 @@
                     xbl:inherits="onnewtab"
                     ondblclick="document.getBindingParent(this).onTabBarDblClick(event);"
                     onclosetab="document.getBindingParent(this).removeCurrentTab();">
-            <xul:tab selected="true" validate="never"
+            <xul:tab selected="true" validate="never" mousethrough="never"
                      onerror="document.getBindingParent(this).addToMissedIconCache(this.getAttribute('image'));
-                              document.getBindingParent(this).setIcon(this, null);"
+                              this.setIcon(null);"
                      maxwidth="250" width="0" minwidth="100" flex="100"
                      class="tabbrowser-tab" label="&untitledTab;" crop="end"/>
           </xul:tabs>
@@ -137,9 +130,6 @@
       </field>
       <field name="mTabBox" readonly="true">
         document.getAnonymousElementByAttribute(this, "anonid", "tabbox");
-      </field>
-      <field name="mTabDropIndicatorBar">
-        this.mTabBox.childNodes[0]
       </field>
       <field name="mStrip" readonly="true">
         document.getAnonymousElementByAttribute(this, "anonid", "strip");
@@ -326,7 +316,7 @@
 
                 if (!this.mBlank) {
                   this.mTab.setAttribute("busy", "true");
-                  this.mTabBrowser.updateIcon(this.mTab);
+                  this.mTab.updateIcon();
                   this.mTabBrowser.setTabTitleLoading(this.mTab);
 
                   if (this.mTabBrowser.mCurrentTab == this.mTab)
@@ -342,14 +332,14 @@
                     this.mBrowser.userTypedClear--;
 
                   if (!this.mBrowser.mIconURL)
-                    this.mTabBrowser.useDefaultIcon(this.mTab);
+                    this.mTab.useDefaultIcon();
                 }
 
                 if (this.mBlank)
                   this.mBlank = false;
 
                 this.mTab.removeAttribute("busy");
-                this.mTabBrowser.updateIcon(this.mTab);
+                this.mTab.updateIcon();
 
                 var location = aRequest.QueryInterface(nsIChannel).URI;
 
@@ -393,7 +383,7 @@
 
               if (aWebProgress.DOMWindow == this.mBrowser.contentWindow &&
                   aWebProgress.isLoadingDocument)
-                this.mTabBrowser.setIcon(this.mTab, null);
+                this.mTab.setIcon(null);
 
               // changing location, clear out the missing plugins list
               this.mTab.missingPlugins = null;
@@ -444,102 +434,6 @@
             }
           });
         ]]>
-        </body>
-      </method>
-
-      <method name="setIcon">
-        <parameter name="aTab"/>
-        <parameter name="aURI"/>
-        <body>
-          <![CDATA[
-            var browser = this.getBrowserForTab(aTab);
-            browser.mIconURL = aURI;
-
-            if(!this.mFaviconService) {
-              this.mFaviconService = Components.classes["@mozilla.org/browser/favicon-service;1"]
-                                       .getService(Components.interfaces.nsIFaviconService);
-            }
-            
-            if(aURI) {
-              try {
-                var uri = aURI;
-                if(!(aURI instanceof Components.interfaces.nsIURI)) {
-                  uri = newURI(aURI);
-                }
-
-                this.mFaviconService.setAndLoadFaviconForPage(browser.currentURI, 
-                                                              uri, 
-                                                              false);
-              }
-              catch(e) {
-                Components.utils.reportError(e);
-              }
-            }
-
-            this.updateIcon(aTab);
-
-            for (var i = 0; i < this.mProgressListeners.length; i++) {
-              var p = this.mProgressListeners[i];
-              if ('onLinkIconAvailable' in p) {
-                p.onLinkIconAvailable(browser);
-              }
-            }
-          ]]>
-        </body>
-      </method>
-
-      <method name="updateIcon">
-        <parameter name="aTab"/>
-        <body>
-          <![CDATA[
-            var browser = this.getBrowserForTab(aTab);
-            if (!aTab.hasAttribute("busy") && browser.mIconURL)
-              aTab.setAttribute("image", browser.mIconURL);
-            else
-              aTab.removeAttribute("image");
-          ]]>
-        </body>
-      </method>
-
-      <method name="shouldLoadFavIcon">
-        <parameter name="aURI"/>
-        <body>
-          <![CDATA[
-            return (aURI && this.mPrefs.getBoolPref("browser.chrome.site_icons") &&
-                    this.mPrefs.getBoolPref("browser.chrome.favicons") &&
-                    ("schemeIs" in aURI) && (aURI.schemeIs("http") || aURI.schemeIs("https")));
-          ]]>
-        </body>
-      </method>
-
-      <method name="useDefaultIcon">
-        <parameter name="aTab"/>
-        <body>
-          <![CDATA[
-            var browser = this.getBrowserForTab(aTab);
-            if (browser.contentDocument instanceof ImageDocument) {
-              if (this.mPrefs.getBoolPref("browser.chrome.site_icons")) {
-                try {
-                  var sz = this.mPrefs.getIntPref("browser.chrome.image_icons.max_size");
-                  if (!sz)
-                    return;
-
-                  var req = browser.contentDocument.imageRequest;
-                  if (!req || !req.image ||
-                      req.image.width > sz ||
-                      req.image.height > sz)
-                    return;
-
-                  this.setIcon(aTab, browser.currentURI.spec);
-                } catch (e) { }
-              }
-            }
-            else if (this.shouldLoadFavIcon(browser.currentURI)) {
-              var url = browser.currentURI.prePath + "/favicon.ico";
-              if (!this.isIconKnownMissing(url))
-                this.setIcon(aTab, url);
-            }
-          ]]>
         </body>
       </method>
 
@@ -603,8 +497,8 @@
             var docElement = this.ownerDocument.documentElement;
             var sep = docElement.getAttribute("titlemenuseparator");
 
-            if (this.docShell.contentViewer)
-              docTitle = this.contentTitle;
+            if (this.selectedBrowser.docShell.contentViewer)
+              docTitle = this.selectedBrowser.contentTitle;
 
             if (!docTitle)
               docTitle = docElement.getAttribute("titledefault");
@@ -910,7 +804,7 @@
               return;
 
             var tab = this.mTabContainer.childNodes[browserIndex];
-            this.setIcon(tab, href);
+            tab.setIcon(href);
           ]]>
         </body>
       </method>
@@ -1030,10 +924,11 @@
               this.mCurrentTab.setAttribute("busy", "true");
               this.mIsBusy = true;
               this.setTabTitleLoading(this.mCurrentTab);
-              this.updateIcon(this.mCurrentTab);
+              this.mCurrentTab.updateIcon();
             } else {
               this.setTabTitle(this.mCurrentTab);
-              this.setIcon(this.mCurrentTab, this.mCurrentBrowser.mIconURL);
+              this.mCurrentTab.mTabBrowser = this;
+              this.mCurrentTab.setIcon(this.mCurrentBrowser.mIconURL);
             }
 
             var filter;
@@ -1171,8 +1066,9 @@
             t.width = 0;
             t.setAttribute("flex", "100");
             t.setAttribute("validate", "never");
-            t.setAttribute("onerror", "document.getBindingParent(this).addToMissedIconCache(this.getAttribute('image')); document.getBindingParent(this).setIcon(this, null);");
+            t.setAttribute("onerror", this.mTabs[0].getAttribute("onerror"));
             t.className = "tabbrowser-tab";
+            t.mTabBrowser = this;
 
             this.mTabContainer.appendChild(t);
 
@@ -1715,271 +1611,6 @@
         </getter>
       </property>
 
-      <!-- Drag and drop observer API -->
-      <method name="onDragStart">
-        <parameter name="aEvent"/>
-        <parameter name="aXferData"/>
-        <parameter name="aDragAction"/>
-        <body>
-        <![CDATA[
-          if (aEvent.target.localName == "tab" &&
-              aEvent.originalTarget.localName != "toolbarbutton") {
-            aXferData.data = new TransferData();
-
-            var URI = this.getBrowserForTab(aEvent.target).currentURI;
-            if (URI) {
-              aXferData.data.addDataForFlavour("text/x-moz-url", URI.spec + "\n" + aEvent.target.label);
-              aXferData.data.addDataForFlavour("text/unicode", URI.spec);
-              aXferData.data.addDataForFlavour("text/html", '<a href="' + URI.spec + '">' + aEvent.target.label + '</a>');
-            } else {
-              aXferData.data.addDataForFlavour("text/unicode", "about:blank");
-            }
-          }
-        ]]>
-        </body>
-      </method>
-
-      <method name="canDrop">
-        <parameter name="aEvent"/>
-        <parameter name="aDragSession"/>
-        <body>
-          <![CDATA[
-            if (aDragSession.sourceNode &&
-                aDragSession.sourceNode.parentNode == this.mTabContainer &&
-                (aEvent.screenX >= aDragSession.sourceNode.boxObject.screenX &&
-                 aEvent.screenX <= (aDragSession.sourceNode.boxObject.screenX +
-                                    aDragSession.sourceNode.boxObject.width)))
-                return false;
-            return true;
-          ]]>
-        </body>
-      </method>
-
-      <field name="mDragTime">0</field>
-      <field name="mDragOverDelay">350</field>
-      <method name="onDragOver">
-        <parameter name="aEvent"/>
-        <parameter name="aFlavour"/>
-        <parameter name="aDragSession"/>
-        <body>
-          <![CDATA[
-            if (aDragSession.sourceNode) {
-              var tabStrip = this.mTabContainer.mTabstrip;
-
-              // autoscroll the tab strip if we drag over the scroll
-              // buttons, even if we aren't dragging a tab, but then
-              // return to avoid drawing the drop indicator
-              var pixelsToScroll = 0;
-
-              var targetAnonid = aEvent.originalTarget.getAttribute("anonid");
-              if (targetAnonid == "scrollbutton-up") {
-                pixelsToScroll = tabStrip.scrollIncrement * -1;
-                tabStrip.scrollByPixels(pixelsToScroll);
-              }
-              else if (targetAnonid == "scrollbutton-down" || 
-                       (targetAnonid == "alltabs-button" && 
-                        this.mTabContainer.getAttribute("overflow") == "true")) {
-                pixelsToScroll = tabStrip.scrollIncrement;
-                tabStrip.scrollByPixels(pixelsToScroll);
-              }
-
-              var isTabDrag = (aDragSession.sourceNode.parentNode == this.mTabContainer);
-              if (!isTabDrag && aEvent.target.localName == "tab") {
-                if (!this.mDragTime) 
-                  this.mDragTime = Date.now();
-                if (Date.now() >= this.mDragTime + this.mDragOverDelay)
-                  this.mTabContainer.selectedItem = aEvent.target;
-                return;
-              }
-
-              var newIndex = this.getNewIndex(aEvent);
-
-              var ib = this.mTabDropIndicatorBar;
-              var ind = ib.firstChild;
-              ib.setAttribute('dragging',
-                 aDragSession.canDrop ? 'true' : 'false');
-
-              var tabStripBoxObject = tabStrip.scrollBoxObject;
-              var halfIndWidth = Math.floor((ind.boxObject.width + 1) / 2);
-              if (window.getComputedStyle(this.parentNode, null)
-                        .direction == "ltr") {
-                var newMarginLeft;
-                var minMarginLeft = tabStripBoxObject.x - halfIndWidth -
-                                    ib.boxObject.x;
-                // make sure we don't place the tab drop indicator past the
-                // edge, or the containing box will flex and stretch
-                // the tab drop indicator bar, which will flex the url bar.  
-                // XXX todo
-                // just use first value if you can figure out how to get
-                // the tab drop indicator to crop instead of flex and stretch
-                // the tab drop indicator bar.
-                var maxMarginLeft = Math.min(
-                  (minMarginLeft + tabStripBoxObject.width), 
-                  (ib.boxObject.x + ib.boxObject.width - ind.boxObject.width));
-
-                // if we are scrolling, put the drop indicator at the edge
-                // so that it doesn't jump while scrolling
-                if (pixelsToScroll > 0)
-                  newMarginLeft = maxMarginLeft;
-                else if (pixelsToScroll < 0)
-                  newMarginLeft = minMarginLeft;
-                else {
-                if (newIndex == this.mTabs.length) {
-                    newMarginLeft = this.mTabs[newIndex-1].boxObject.screenX +
-                                    this.mTabs[newIndex-1].boxObject.width - 
-                                    this.boxObject.screenX - halfIndWidth;
-                } else {
-                    newMarginLeft = this.mTabs[newIndex].boxObject.screenX - 
-                                    this.boxObject.screenX - halfIndWidth;
-                }
-
-                  // ensure we never place the drop indicator beyond
-                  // our limits
-                  if (newMarginLeft < minMarginLeft)
-                    newMarginLeft = minMarginLeft;
-                  else if (newMarginLeft > maxMarginLeft)
-                    newMarginLeft = maxMarginLeft;
-                }
-                ind.style.marginLeft = newMarginLeft + 'px';
-              } else {
-                var newMarginRight;
-                var minMarginRight = tabStripBoxObject.x - halfIndWidth -
-                                     ib.boxObject.x;
-                // make sure we don't place the tab drop indicator past the
-                // edge, or the containing box will flex and stretch
-                // the tab drop indicator bar, which will flex the url bar.  
-                // XXX todo
-                // just use first value if you can figure out how to get
-                // the tab drop indicator to crop instead of flex and stretch
-                // the tab drop indicator bar.
-                var maxMarginRight = Math.min(
-                  (minMarginRight + tabStripBoxObject.width), 
-                  (ib.boxObject.x + ib.boxObject.width - ind.boxObject.width));
-
-                // if we are scrolling, put the drop indicator at the edge
-                // so that it doesn't jump while scrolling
-                if (pixelsToScroll > 0)
-                  newMarginRight = maxMarginRight;
-                else if (pixelsToScroll < 0)
-                  newMarginRight = minMarginRight;
-                else {
-                if (newIndex == this.mTabs.length) {
-                    newMarginRight = this.boxObject.width + 
-                                     this.boxObject.screenX -
-                                     this.mTabs[newIndex-1].boxObject.screenX -
-                                     halfIndWidth;
-                } else {
-                    newMarginRight = this.boxObject.width + 
-                                     this.boxObject.screenX -
-                                     this.mTabs[newIndex].boxObject.screenX -
-                                     this.mTabs[newIndex].boxObject.width -
-                                     halfIndWidth;
-                  }
-
-                  // ensure we never place the drop indicator beyond
-                  // our limits
-                  if (newMarginRight < minMarginRight)
-                    newMarginRight = minMarginRight;
-                  else if (newMarginRight > maxMarginRight)
-                    newMarginRight = maxMarginRight;
-                }
-                ind.style.marginRight = newMarginRight + 'px';
-              }
-            }
-          ]]>
-        </body>
-      </method>
-
-      <method name="onDrop">
-        <parameter name="aEvent"/>
-        <parameter name="aXferData"/>
-        <parameter name="aDragSession"/>
-        <body>
-          <![CDATA[
-            if (aDragSession.sourceNode && aDragSession.sourceNode.parentNode == this.mTabContainer) {
-              var newIndex = this.getNewIndex(aEvent);
-              var oldIndex = aDragSession.sourceNode._tPos;
-
-              if (newIndex > oldIndex)
-                newIndex--;
-              if (newIndex != oldIndex)
-                this.moveTabTo(this.mTabs[oldIndex], newIndex);
-            } else {
-              var url = transferUtils.retrieveURLFromData(aXferData.data, aXferData.flavour.contentType);
-
-              // valid urls don't contain spaces ' '; if we have a space it isn't a valid url.
-              // Also disallow dropping javascript: or data: urls--bail out
-              if (!url || !url.length || url.indexOf(" ", 0) != -1 ||
-                  /^\s*(javascript|data):/.test(url))
-                return;
-
-              this.dragDropSecurityCheck(aEvent, aDragSession, url);
-
-              var bgLoad = true;
-              try {
-                bgLoad = this.mPrefs.getBoolPref("browser.tabs.loadInBackground");
-              }
-              catch (e) { }
-
-              if (aEvent.shiftKey)
-                bgLoad = !bgLoad;
-
-              if (document.getBindingParent(aEvent.originalTarget).localName != "tab") {
-                // We're adding a new tab.
-                this.loadOneTab(getShortcutOrURI(url), null, null, null, bgLoad, false);
-              }
-              else {
-                // Load in an existing tab.
-                var tab = aEvent.target;
-                try {
-                  this.getBrowserForTab(tab).loadURI(getShortcutOrURI(url));
-                  if (this.mCurrentTab != tab && !bgLoad)
-                    this.selectedTab = tab;
-                } catch(ex) {
-                  // Just ignore invalid urls
-                }
-              }
-            }
-          ]]>
-        </body>
-      </method>
-
-      <method name="onDragExit">
-        <parameter name="aEvent"/>
-        <parameter name="aDragSession"/>
-        <body>
-          <![CDATA[
-            this.mDragTime = 0;
-
-            if (aDragSession.sourceNode &&
-                aDragSession.sourceNode.parentNode == this.mTabContainer &&
-                aDragSession.canDrop) {
-              var target = aEvent.relatedTarget;
-              while (target && target != this.mStrip)
-                target = target.parentNode;
-              if (target)
-                return;
-            }
-            this.mTabDropIndicatorBar.setAttribute('dragging','false');
-          ]]>
-        </body>
-      </method>
-
-      <method name="getSupportedFlavours">
-        <body>
-        <![CDATA[
-          var flavourSet = new FlavourSet();
-          flavourSet.appendFlavour("text/x-moz-url");
-          flavourSet.appendFlavour("text/unicode");
-          flavourSet.appendFlavour("application/x-moz-file", "nsIFile");
-          flavourSet.appendFlavour("application/x-sb-transfer-media-item");
-          flavourSet.appendFlavour("application/x-sb-transfer-media-list");
-          flavourSet.appendFlavour("application/x-sb-transfer-media-items");
-          return flavourSet;
-        ]]>
-        </body>
-      </method>
-
       <method name="moveTabTo">
         <parameter name="aTab"/>
         <parameter name="aIndex"/>
@@ -1990,12 +1621,14 @@
           this.mTabListeners.splice(aIndex, 0, this.mTabListeners.splice(aTab._tPos, 1)[0]);
 
           var oldPosition = aTab._tPos;
+          var linkedBrowser = aTab.linkedBrowser;
 
           aIndex = aIndex < aTab._tPos ? aIndex: aIndex+1;
           this.mCurrentTab._selected = false;
           // use .item() instead of [] because dragging to the end of the strip goes out of
           // bounds: .item() returns null (so it acts like appendChild), but [] throws
           this.mTabContainer.insertBefore(aTab, this.mTabContainer.childNodes.item(aIndex));
+          aTab.linkedBrowser = linkedBrowser;
           // invalidate cache, because mTabContainer is about to change
           this._browsers = null;
 
@@ -2281,68 +1914,12 @@
           if (!this._fastFind) {
             this._fastFind = Components.classes["@mozilla.org/typeaheadfind;1"]
                                        .createInstance(Components.interfaces.nsITypeAheadFind);
-            this._fastFind.init(this.docShell);
+            this._fastFind.init(this.selectedBrowser.docShell);
           }
           return this._fastFind;
         ]]>
         </getter>
       </property>
-
-      <property name="docShell"
-                onget="return this.mCurrentBrowser.docShell"
-                readonly="true"/>
-
-      <property name="webNavigation"
-                onget="return this.mCurrentBrowser.webNavigation"
-                readonly="true"/>
-
-      <property name="webBrowserFind"
-                readonly="true"
-                onget="return this.mCurrentBrowser.webBrowserFind"/>
-
-      <property name="webProgress"
-                readonly="true"
-                onget="return this.mCurrentBrowser.webProgress"/>
-
-      <property name="contentWindow"
-                readonly="true"
-                onget="return this.mCurrentBrowser.contentWindow"/>
-
-      <property name="sessionHistory"
-                onget="return this.mCurrentBrowser.sessionHistory;"
-                readonly="true"/>
-
-      <property name="markupDocumentViewer"
-                onget="return this.mCurrentBrowser.markupDocumentViewer;"
-                readonly="true"/>
-
-      <property name="contentViewerEdit"
-                onget="return this.mCurrentBrowser.contentViewerEdit;"
-                readonly="true"/>
-
-      <property name="contentViewerFile"
-                onget="return this.mCurrentBrowser.contentViewerFile;"
-                readonly="true"/>
-
-      <property name="documentCharsetInfo"
-                onget="return this.mCurrentBrowser.documentCharsetInfo;"
-                readonly="true"/>
-
-      <property name="contentDocument"
-                onget="return this.mCurrentBrowser.contentDocument;"
-                readonly="true"/>
-
-      <property name="contentTitle"
-                onget="return this.mCurrentBrowser.contentTitle;"
-                readonly="true"/>
-
-      <property name="contentPrincipal"
-                onget="return this.mCurrentBrowser.contentPrincipal;"
-                readonly="true"/>
-
-      <property name="securityUI"
-                onget="return this.mCurrentBrowser.securityUI;"
-                readonly="true"/>
 
       <method name="dragDropSecurityCheck">
         <parameter name="aEvent"/>

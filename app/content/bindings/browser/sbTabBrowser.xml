@@ -37,7 +37,7 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/browser/tabBrowser.xml#tabbrowser">
+  <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/browser/tabBrowserCompat.xml#tabbrowser-compat">
     <implementation implements="sbITabBrowser">
       <constructor><![CDATA[
         window.gBrowser = this;
@@ -68,6 +68,17 @@
             Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
 
         this.loading = false;
+        
+        // we moved the strip container to the tabs binding
+        var strip = document.getAnonymousElementByAttribute(this, "anonid", "strip");
+        if (strip && strip.collapsed) {
+          // don't collapse the outer box, collapse the inner <tabs> element instead
+          strip.collapsed = false;
+          this.mStrip.collapsed = true;
+        }
+        if (this.hasAttribute("tabstrip")) {
+          this.mStrip = document.getElementById(this.getAttribute("tabstrip"));
+        }
         
         scope = {};
         subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBSessionStore.js", scope);
@@ -108,7 +119,7 @@
         window.QueryInterface(Components.interfaces.nsIDOMChromeWindow).browserDOMWindow =
           new scope.BrowserDOMWindow(this);
 
-        this.webNavigation.sessionHistory =
+        this.selectedBrowser.webNavigation.sessionHistory =
             Components.classes["@mozilla.org/browser/shistory;1"]
             .createInstance(Components.interfaces.nsISHistory);
         this.browsers[0].removeAttribute("disablehistory");
@@ -193,6 +204,8 @@
               .browserDOMWindow = null;
       ]]></destructor>
 
+      <field name="_sessionStore">null</field>
+      <field name="_servicePaneService">null</field>
       
       <!-- Override tabBrowser.setTabTitle in order to support
            service pane icons and titles for chrome URLs -->
@@ -260,6 +273,16 @@
           <![CDATA[
             var returnValue = aTarget;
             
+            if ("_media" == aTarget) {
+              if (this.mediaTab) {
+                // force media things in the media tab
+                return "_media";
+              } else {
+                // there's no media tab
+                returnValue = "_top";
+              }
+            }
+            
             if (aEvent) {
               // if an event as supplied infer where we want to load this URI
               //
@@ -317,10 +340,12 @@
 
           
             var retval = null;
-            var where = this._checkTarget(aDefaultLocation, aEvent);
-            if (where == null || where == undefined) {
-              where= '_top';
+            var defaultLocation = aDefaultLocation;
+            if (!defaultLocation) {
+              defaultLocation = "_top";
             }
+            var where = this._checkTarget(defaultLocation, aEvent);
+            
 
             // make sure the referrer is an nsIURI
             if (aReferrerURI == '') {
@@ -334,6 +359,11 @@
               }
             }
 
+            // if we plan on opening it in the media tab, find it
+            if (where == "_media") {
+              where = this.mediaTab;
+            }
+
             // Now, actually open the URI
             if (where == "_blank") {
               var tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
@@ -345,7 +375,7 @@
               this.mCurrentTab._viewForPage = aMediaListView;
               this.mCurrentTab._isNewViewForPage = true;
               retval = this.mCurrentTab;
-            
+              
             // If aDefaultLocation is a tab, load there
             } else if (where && where.linkedBrowser) {
               var tab = where;
@@ -357,6 +387,27 @@
               // eek! unknown target
             }
             return retval;
+          ]]>
+        </body>
+      </method>
+      
+      <!-- override <tabbrowser>::removeTab to prevent the media tab from being
+           removed
+           -->
+      <method name="removeTab">
+        <parameter name="aTab"/>
+        <body>
+          <![CDATA[
+            if (aTab == this.mediaTab) {
+              return;
+            }
+            var proto = this;
+            while (proto && ("removeTab" in proto) && proto.removeTab == this.removeTab) {
+              proto = proto.__proto__;
+            }
+            if (proto)
+              return proto.removeTab.apply(this, arguments);
+            return;
           ]]>
         </body>
       </method>
@@ -561,7 +612,8 @@
       <method name="isSelectedTabMediaPage">
         <body>
           <![CDATA[
-            return this.selectedTab.mediaPage != null;
+            return this.selectedTab &&
+                   this.selectedTab.mediaPage != null;
           ]]>
         </body>
       </method>
@@ -857,7 +909,38 @@
         ]]></body>
       </method>
 
-      
+      <!-- media tab handling -->
+      <property name="mediaTab">
+        <getter><![CDATA[
+          if (!this.hasAttribute("hasmediatab"))
+            return null;
+          return this.mTabs[0];
+        ]]></getter>
+      </property>
+      <field name="_lastNonMediaTab">null</field>
+      <method name="isMediaTabURL">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          if (!aURL) {
+            return Components.results.NS_ERROR_INVALID_ARG;
+          }
+          if (!this.mediaTab) {
+            // we don't have a media tab
+            return false;
+          }
+          var url = aURL;
+          if (aURL instanceof Components.interfaces.nsIURI) {
+            url = aURL.spec;
+          }
+          if (!(/chrome:\/\//.test(url))) {
+            // not chrome
+            return false;
+          }
+          var node = this._servicePaneService.getNodeForURL(url);
+          if (!node) return false;
+          return true;
+        ]]></body>
+      </method>
       
       <!-- context menu handler -->
       <field name="_urlForHTMLContextMenu">null</field>
@@ -985,6 +1068,76 @@
           this.loadURI(this.homePage, null, null);
         ]]></body>
       </method>
+      
+      <!-- Override tabBrowser.xul to support moving the tab strip outside -->
+      <method name="onTitleChanged">
+        <parameter name="evt"/>
+        <body>
+          <![CDATA[
+            /* |this| is the <browser> */
+            if (evt.target != this.contentDocument)
+              return;
+
+            var tabBrowser = document.getBindingParent(this);
+
+            var tab = document.getAnonymousElementByAttribute(tabBrowser, "linkedpanel", this.parentNode.id);
+            if (!tab) {
+              tab = tabBrowser.mTabContainer.getElementsByAttribute("linkedpanel", this.parentNode.id)[0];
+            }
+            tabBrowser.setTabTitle(tab);
+
+            if (tab == tabBrowser.mCurrentTab)
+              tabBrowser.updateTitlebar();
+          ]]>
+        </body>
+      </method>
+
+      <field name="_strip">
+        document.getAnonymousElementByAttribute(this, "anonid", "tabcontainer");
+      </field>
+      <property name="mStrip">
+        <setter>
+          <![CDATA[
+            // override the onerror attribute because it asks for binding parent
+            function tab_onerror(event) {
+              gBrowser.addToMissedIconCache(this.getAttribute('image'));
+              this.setIcon(null);
+            }
+            
+            if (!val) {
+              throw Components.results.NS_ERROR_INVALID_ARG;
+            }
+            // we can't just move stuff around the DOM, because then anonymous
+            // nodes magically become real.  And breaks all sorts of things.
+            var selectedTab = this.mTabBox.selectedTab;
+            if (this._strip != val) {
+              this._strip.collapsed = true;
+              while (val.firstChild) {
+                val.removeChild(val.firstChild);
+              }
+              while (this._strip.firstChild) {
+                var tab = this._strip.firstChild;
+                var linkedBrowser = tab.linkedBrowser;
+                val.appendChild(tab);
+                tab.setAttribute("onerror", "(" + uneval(tab_onerror) + ").call(this, event)");
+                if (!(tab.linkedBrowser)) {
+                  tab.linkedBrowser = linkedBrowser;
+                }
+              }
+              this._strip.style.MozBinding = "";
+            }
+            this._strip = this.mTabContainer = val;
+            val._tabbrowser = this; // setting the private property!
+            this.mTabs = this.mTabContainer.childNodes;
+            this.mTabBox._tabs = this.mTabContainer;
+            this.mTabBox.selectedTab = selectedTab;
+          ]]>
+        </setter>
+        <getter>
+          return this._strip;
+        </getter>
+      </property>
+
     </implementation>
 
     <handlers>

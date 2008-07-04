@@ -36,6 +36,20 @@
     xmlns:xbl="http://www.mozilla.org/xbl"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <!--
+    - NOTE:
+    -   In Songbird, there can be a "fake" tab that lives inside the <tabs>
+    - element but outside the normal scrollbox.  This is used to be able to
+    - have a static tab that is always visible, even when there are too many
+    - tabs and the user scrolls all the way to the right (left in RTL).  It
+    - passes all events back to the real leftmost tab when visible, and the real
+    - tab is simply hidden from view (collapsed).
+    -
+    - The fake tab can only be min-width, because the real tab gets uncollapsed
+    - and the fake tab hidden when the scrollbox does not need to scroll.  See
+    - the underflow and overflow handlers in sbTabBrowserTabStrip.xml.
+    -->
 
   <!-- these are from globalBindings.xml -->
   <binding id="tabbrowser-tab" extends="chrome://songbird/content/bindings/browser/tabBrowserTab.xml#tabbrowser-tab">
@@ -65,6 +79,10 @@
         // Watch for page unloading so that we can store
         // the MediaListView state in the history
         this._onBrowserUnloadListener = function(e) {
+          if (!self.linkedBrowser) {
+            // this tab has no browser - e.g. the fake media tab
+            return;
+          }
           if (e.target.wrappedJSObject && 
             e.target.wrappedJSObject == self.linkedBrowser.contentDocument) 
           {
@@ -129,8 +147,10 @@
                                                    true);
 
             // Clear the progress filter.
-            this._progressFilter.removeProgressListener(this);
-            this.linkedBrowser.removeProgressListener(this._progressFilter);
+            if (this._progressFilter) {
+              this._progressFilter.removeProgressListener(this);
+              this.linkedBrowser.removeProgressListener(this._progressFilter);
+            }
             
             window.removeEventListener("unload", 
                   this._onBrowserUnloadListener, true);
@@ -146,6 +166,8 @@
         ]]></body>
       </method>
 
+      <!-- "linkedBrowser" is a browser, but if we have it as a field it breaks
+           tab drag-and-drop because that gets reinitialized -->
       <field name="_progressFilter">null</field>
       
       <!-- LibraryUtils.RemovalMonitor -->
@@ -181,7 +203,11 @@
               />
             </vbox>
           */
-
+          
+          if (!("linkedBrowser" in this) || !(this.linkedBrowser)) {
+            // no linked browser (e.g. fake media tab)
+            return;
+          }
           // get the notification box around the browser
           var nbox = this.linkedBrowser.parentNode;
 
@@ -333,7 +359,7 @@
       <property name="mediaPage" readonly="true">
         <getter><![CDATA[
 
-          if (!this.linkedBrowser.currentURI) {
+          if (!this.linkedBrowser || !this.linkedBrowser.currentURI) {
             // guard against null currentURI that can be caused by about:blank
             return null;
           }
@@ -443,7 +469,7 @@
             // the service pane info
             if (servicePaneNode) {
               if (servicePaneNode.image) {
-                gBrowser.setIcon(this, servicePaneNode.image);
+                this.setIcon(servicePaneNode.image);
               } 
               if (servicePaneNode.properties) {
                 properties = servicePaneNode.properties;
@@ -969,6 +995,48 @@
 
         // save the tab state soon
         setTimeout("window.gBrowser._sessionStore.saveTabState(window.gBrowser);", 100);
+      ]]></handler>
+
+      <handler event="DOMAttrModified" phase="target"><![CDATA[
+        if (!("linkedTab" in this) || !(this.linkedTab))
+          return;
+        const K_ATTRS_IGNORE = [
+          "collapsed", "width", "minwidth", "maxwidth", "flex"
+          ];
+        if (K_ATTRS_IGNORE.indexOf(event.attrName) != -1) {
+          return; // skip this attribute
+        }
+        // copy everything else over
+        if (event.attrChange == event.REMOVAL) {
+          this.linkedTab.removeAttribute(event.attrName);
+        } else {
+          this.linkedTab.setAttribute(event.attrName, event.newValue);
+        }
+      ]]></handler>
+      
+      <handler event="mousedown" button="0" phase="capturing"><![CDATA[
+        if (!("targetTab" in this) || !(this.targetTab)) {
+          return true;
+        }
+        var newEvent = document.createEvent("MouseEvent");
+        newEvent.initMouseEvent(event.type,
+                                event.bubbles,
+                                event.cancelable,
+                                event.view,
+                                event.detail,
+                                event.screenX,
+                                event.screenY,
+                                event.clientX,
+                                event.clientY,
+                                event.ctrlKey,
+                                event.altKey,
+                                event.shiftKey,
+                                event.metaKey,
+                                event.button,
+                                event.relatedTarget);
+        event.cancelBubble = true;
+        event.preventDefault();
+        return this.targetTab.dispatchEvent(newEvent);
       ]]></handler>
 
       <handler event="dragenter"><![CDATA[

@@ -69,38 +69,17 @@
         <children/>
       </xul:scrollbox>
       <xul:stack align="center" pack="end" class="scrollbutton-down-stack">
-        <!-- XXXsspitzer hack
-             this extra hbox with position: relative
-             is needed to work around two bugs.
-             see bugs #346307 and #346035 
-        -->
-        <xul:hbox style="position: relative;" class="scrollbutton-rel-box">
-          <xul:hbox flex="1" class="scrollbutton-down-box" 
-                             collapsed="true" anonid="down-box"/>
-        </xul:hbox>
-        <!-- XXXsspitzer hack
-             this extra hbox with position: relative
-             is needed to work around two bugs.
-             see bugs #346307 and #346035 
-        -->
-        <xul:hbox style="position: relative;" class="scrollbutton-rel-box">
-          <xul:hbox flex="1" class="scrollbutton-down-box-animate" 
-                             collapsed="true" anonid="down-box-animate"/>
-        </xul:hbox>
-        <!-- XXXsspitzer hack
-             this extra hbox with position: relative
-             is needed to work around two bugs.
-             see bugs #346307 and #346035 
-        -->
-        <xul:hbox style="position: relative;" class="scrollbutton-rel-box">
-          <xul:toolbarbutton class="scrollbutton-down" collapsed="true"
-                             xbl:inherits="orient"
-                             anonid="scrollbutton-down"
-                             onmousedown="_startScroll(1);"
-                             onmouseup="_stopScroll();"
-                             onmouseout="_stopScroll();"
-                             chromedir="&locale.dir;"/>
-        </xul:hbox>
+        <xul:hbox flex="1" class="scrollbutton-down-box" 
+                           collapsed="true" anonid="down-box"/>
+        <xul:hbox flex="1" class="scrollbutton-down-box-animate" 
+                           collapsed="true" anonid="down-box-animate"/>
+        <xul:toolbarbutton class="scrollbutton-down" collapsed="true"
+                           xbl:inherits="orient"
+                           anonid="scrollbutton-down"
+                           onmousedown="_startScroll(1);"
+                           onmouseup="_stopScroll();"
+                           onmouseout="_stopScroll();"
+                           chromedir="&locale.dir;"/>
       </xul:stack>
     </content>
     <implementation>
@@ -151,43 +130,32 @@
   </binding>
 
   <binding id="tabbrowser-tabs"
-           extends="chrome://global/content/bindings/tabbox.xml#tabs">
+           extends="chrome://songbird/content/bindings/browser/tabbox-draggable.xml#tabs-draggable">
     <content>
-      <xul:arrowscrollbox anonid="arrowscrollbox" orient="horizontal" flex="1" style="min-width: 1px;" class="tabbrowser-arrowscrollbox">
-        <children includes="tab"/>
-      </xul:arrowscrollbox>
+      <xul:stack flex="1" class="tabs-container"
+                 ondraggesture="nsDragAndDrop.startDrag(event, document.getBindingParent(this)); event.stopPropagation();"
+                 ondragover="nsDragAndDrop.dragOver(event, document.getBindingParent(this)); event.stopPropagation();"
+                 ondragdrop="nsDragAndDrop.drop(event, document.getBindingParent(this)); event.stopPropagation();"
+                 ondragexit="nsDragAndDrop.dragExit(event, document.getBindingParent(this)); event.stopPropagation();">
+        <xul:arrowscrollbox anonid="arrowscrollbox" orient="horizontal" flex="1" style="min-width: 1px;" class="tabbrowser-arrowscrollbox">
+          <children/>
+        </xul:arrowscrollbox>
+        <xul:hbox class="tab-drop-indicator-bar" mousethrough="always">
+          <xul:hbox class="tab-drop-indicator" mousethrough="always"/>
+        </xul:hbox>
+      </xul:stack>
+
       <xul:stack align="center" pack="end" class="tabs-alltabs-stack">
-        <!-- XXXsspitzer hack
-             this extra hbox with position: relative
-             is needed to work around two bugs.
-             see bugs #346307 and #346035 
-        -->
-        <xul:hbox style="position: relative;">
-          <xul:hbox flex="1" class="tabs-alltabs-box" anonid="alltabs-box"/>
-        </xul:hbox>
-        <!-- XXXsspitzer hack
-             this extra hbox with position: relative
-             is needed to work around two bugs.
-             see bugs #346307 and #346035 
-        -->
-        <xul:hbox style="position: relative;">
-          <xul:hbox flex="1" class="tabs-alltabs-box-animate" 
-                    anonid="alltabs-box-animate"/>
-        </xul:hbox>
-        <!-- XXXsspitzer hack
-             this extra hbox with position: relative
-             is needed to work around two bugs.
-             see bugs #346307 and #346035 
-        -->
-        <xul:hbox style="position: relative;">
-          <xul:toolbarbutton class="tabs-alltabs-button" type="menu"
-                             anonid="alltabs-button"
-                             tooltipstring="&listAllTabs.label;">
-            <xul:menupopup class="tabs-alltabs-popup"
-                           anonid="alltabs-popup" 
-                           position="after_end"/>
+        <xul:hbox flex="1" class="tabs-alltabs-box" anonid="alltabs-box"/>
+        <xul:hbox flex="1" class="tabs-alltabs-box-animate" 
+                  anonid="alltabs-box-animate"/>
+        <xul:toolbarbutton class="tabs-alltabs-button" type="menu"
+                           anonid="alltabs-button"
+                           tooltipstring="&listAllTabs.label;">
+          <xul:menupopup class="tabs-alltabs-popup"
+                         anonid="alltabs-popup" 
+                         position="after_end"/>
         </xul:toolbarbutton>
-        </xul:hbox>
       </xul:stack>
       <xul:hbox class="tabs-closebutton-box" align="center" pack="end" anonid="tabstrip-closebutton">
         <xul:toolbarbutton class="close-button tabs-closebutton"/>
@@ -208,7 +176,9 @@
           catch (e) {
           }
 
-          this.firstChild.minWidth = this.mTabMinWidth;
+          if (this.firstChild) {
+            this.firstChild.minWidth = this.mTabMinWidth;
+          }
           this.adjustTabstrip();
 
           pb2.addObserver("browser.tabs.closeButtons", 
@@ -264,6 +234,9 @@
       <field name="mTabstripClosebutton">
         document.getAnonymousElementByAttribute(this, "anonid", "tabstrip-closebutton");
       </field>
+      
+      <!-- public property: the tabbrowser this tab strip is attached to -->
+      <property name="tabBrowser" onget="return document.getBindingParent(this)" readonly="true"/>
 
       <field name="_prefObserver">({
         tabbox: this,
@@ -456,6 +429,128 @@
             this._stopAnimation();
         ]]></body>
       </method>
+      
+
+      <!-- Drag and drop observer API (overrides tabs-draggable) -->
+      <method name="canDrop">
+        <parameter name="aEvent"/>
+        <parameter name="aDragSession"/>
+        <body>
+          <![CDATA[
+            if (aEvent.getPreventDefault())
+                return false;
+        
+            if (aDragSession.sourceNode &&
+                aDragSession.sourceNode.parentNode == this)
+            {
+              // dragging from another tab in the same tabstrip
+              var boxObject = aDragSession.sourceNode.boxObject;
+              if (aEvent.screenX < boxObject.screenX ||
+                  aEvent.screenX > (boxObject.screenX + boxObject.width))
+                return true;
+            }
+            
+            // check flavours
+            var flavourSet = this.getSupportedFlavours();
+            for (var flavour in flavourSet.flavourTable)
+            {
+              if (aDragSession.isDataFlavorSupported(flavour))
+                return true;
+            }
+            return false;
+          ]]>
+        </body>
+      </method>
+
+      <method name="onDrop">
+        <parameter name="aEvent"/>
+        <parameter name="aXferData"/>
+        <parameter name="aDragSession"/>
+        <body>
+          <![CDATA[
+            if (aDragSession.sourceNode && aDragSession.sourceNode.parentNode == this) {
+              var newIndex = this._getNewIndex(aEvent);
+              var oldIndex = 0;
+              for (; oldIndex < this.childNodes.length; ++oldIndex) {
+                if (this.childNodes[oldIndex] == aDragSession.sourceNode)
+                  break;
+              }
+
+              if (newIndex > oldIndex)
+                newIndex--;
+              if (newIndex != oldIndex) {
+                this.moveTabTo(this.childNodes[oldIndex], newIndex);
+                return true;
+              }
+            } else {
+              var url = transferUtils.retrieveURLFromData(aXferData.data, aXferData.flavour.contentType);
+
+              // valid urls don't contain spaces ' '; if we have a space it isn't a valid url.
+              // Also disallow dropping javascript: or data: urls--bail out
+              if (!url || !url.length || url.indexOf(" ", 0) != -1 ||
+                  /^\s*(javascript|data):/.test(url))
+                return false;
+
+              this.tabBrowser.dragDropSecurityCheck(aEvent, aDragSession, url);
+
+              var bgLoad = true;
+              try {
+                bgLoad = this.mPrefs.getBoolPref("browser.tabs.loadInBackground");
+              }
+              catch (e) { }
+
+              if (aEvent.shiftKey)
+                bgLoad = !bgLoad;
+
+              if (document.getBindingParent(aEvent.originalTarget).localName != "tab") {
+                // We're adding a new tab.
+                this.tabBrowser.loadOneTab(getShortcutOrURI(url), null, null, null, bgLoad, false);
+                return true;
+              }
+              else {
+                // Load in an existing tab.
+                var tab = aEvent.target;
+                try {
+                  if (typeof(getShortcutOrURI) == "function") {
+                    url = getShortcutOrURI(url);
+                  }
+                  this.tabBrowser.getBrowserForTab(tab).loadURI(url);
+                  if (this.selectedItem != tab && !bgLoad)
+                    this.selectedItem = tab;
+                  return true;
+                } catch(ex) {
+                  // Just ignore invalid urls
+                }
+              }
+            }
+            return false;
+          ]]>
+        </body>
+      </method>
+
+      <method name="moveTabTo">
+        <parameter name="aTab"/>
+        <parameter name="aIndex"/>
+        <body>
+        <![CDATA[
+          // override the tabstrip moveTabTo
+          return this.tabBrowser.moveTabTo(aTab, aIndex);
+        ]]>
+        </body>
+      </method>
+
+      <method name="getSupportedFlavours">
+        <body>
+        <![CDATA[
+          var flavourSet = new FlavourSet();
+          flavourSet.appendFlavour("text/x-moz-url");
+          flavourSet.appendFlavour("text/unicode");
+          flavourSet.appendFlavour("application/x-moz-file", "nsIFile");
+          return flavourSet;
+        ]]>
+        </body>
+      </method>
+
     </implementation>
     <handlers>
       <handler event="TabSelect" action="this._handleTabSelect();"/>
@@ -605,6 +700,9 @@
 
         // Listen for changes in the tab bar.
         var tabbrowser = document.getBindingParent(tabcontainer);
+        if ("tabBrowser" in tabcontainer) {
+          tabbrowser = tabcontainer.tabBrowser;
+        }
         tabbrowser.addEventListener("TabOpen", this, false);
 
         // if an animation is in progress and the user
@@ -627,7 +725,15 @@
           menuItem.tab.mCorrespondingMenuitem = null;
           this.removeChild(menuItem);
         }
-        var tabbrowser = document.getBindingParent(document.getBindingParent(this));
+        
+        var tabbrowser = null;
+        var tabs = document.getBindingParent(this);
+        if ("tabBrowser" in tabs) {
+          // tabs is a <tabs>
+          tabbrowser = tabs.tabBrowser;
+        } else {
+          tabbrowser = document.getBindingParent(tabs);
+        }
         tabbrowser.removeEventListener("TabOpen", this, false);
       ]]></handler>
 
@@ -674,8 +780,9 @@
       <handler event="click" button="0"><![CDATA[
         var bindingParent = document.getBindingParent(this);
         if (bindingParent) {
-          var tabbedBrowser = document.getBindingParent(bindingParent);
           if (bindingParent.localName == "tab") {
+            var tabbedBrowser = bindingParent.parentNode.tabBrowser ||
+                                document.getBindingParent(bindingParent);
             /* The only sequence in which a second click event (i.e. dblclik)
              * can be dispatched on an in-tab close button is when it is shown
              * after the first click (i.e. the first click event was dispatched
@@ -705,8 +812,11 @@
             }
             tabbedBrowser.addEventListener("mousemove",  mouseMoveHandler, false);
           }
-          else // "tabs"
+          else { // "tabs"
+            tabbedBrowser = bindingParent.tabBrowser ||
+                            document.getBindingParent(bindingParent);
             tabbedBrowser.removeCurrentTab();
+          }
         }
       ]]></handler>
       <handler event="dblclick" button="0" phase="capturing">

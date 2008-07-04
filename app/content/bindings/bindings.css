@@ -347,7 +347,7 @@ arrowscrollbox.tabbrowser-arrowscrollbox {
 }
 
 tabs.tabbrowser-tabs {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowserTabStrip.xml#tabbrowser-tabs") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-tabs") !important;
 }
 
 menupopup.tabs-alltabs-popup {
@@ -359,11 +359,25 @@ toolbarbutton.tab-close-button {
 }
 
 tab.tabbrowser-tab {
-  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowserTab.xml#tabbrowser-tab") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/browser/tabBrowserTab.xml#tabbrowser-tab") !important;
 }
 
 sb-tabbrowser {
   -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowser.xml#sb-tabbrowser") !important;
+}
+
+tabs.tabbrowser-tabs.sb-tabbrowser-tabs,
+sb-tabbrowser tabs.tabbrowser-tabs {
+  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowserTabStrip.xml#tabbrowser-tabs") !important;
+}
+
+.sb-tabbrowser-tabs tab.tabbrowser-tab,
+sb-tabbrowser tab.tabbrowser-tab {
+  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBrowserTab.xml#tabbrowser-tab") !important;
+}
+
+sb-tabbrowser > tabbox {
+  -moz-binding: url("chrome://songbird/content/bindings/browser/sbTabBox.xml#sb-tabbox");
 }
 
 /* LOCATION BAR */

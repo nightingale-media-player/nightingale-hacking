@@ -79,7 +79,7 @@ function SetForcedCharset(charset)
 
 function BrowserSetForcedCharacterSet(aCharset)
 {
-  var docCharset = getBrowser().docShell.QueryInterface(
+  var docCharset = getBrowser().selectedBrowser.docShell.QueryInterface(
                             Components.interfaces.nsIDocCharset);
   docCharset.charset = aCharset;
   BrowserReloadWithFlags(nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
@@ -87,7 +87,7 @@ function BrowserSetForcedCharacterSet(aCharset)
 
 function BrowserSetForcedDetector(doReload)
 {
-  gBrowser.documentCharsetInfo.forcedDetector = true;
+  gBrowser.selectedBrowser.documentCharsetInfo.forcedDetector = true;
   if (doReload)
     BrowserReloadWithFlags(nsIWebNavigation.LOAD_FLAGS_CHARSET_CHANGE);
 }
@@ -177,7 +177,7 @@ function getBrowser()
 
 function getMarkupDocumentViewer()
 {
-  return gBrowser.markupDocumentViewer;
+  return gBrowser.selectedBrowser.markupDocumentViewer;
 }
 
 /* Begin Page Style Functions */

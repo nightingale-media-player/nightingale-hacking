@@ -30,7 +30,7 @@ var bmManager = {
   svc: Components.classes['@songbirdnest.com/servicepane/bookmarks;1']
                          .getService(Components.interfaces.sbIBookmarks),
   addBookmark : function bmManager_addBookmark() {
-    var browser = window.gBrowser;
+    var browser = window.gBrowser.selectedBrowser;
     if (browser) {
       var theurl = browser.currentURI.spec;
       

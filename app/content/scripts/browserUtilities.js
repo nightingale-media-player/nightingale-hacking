@@ -523,7 +523,7 @@ function loadURI(uri, referrer, postData, allowThirdPartyFixup)
 function getWebNavigation()
 {
   try {
-    return gBrowser.webNavigation;
+    return gBrowser.selectedBrowser.webNavigation;
   } catch (e) {
     return null;
   }
@@ -713,15 +713,6 @@ function BrowserReloadWithFlags(reloadFlags)
   try {
     webNav.reload(reloadFlags);
   } catch (e) {
-  }
-}
-
-function getWebNavigation()
-{
-  try {
-    return gBrowser.webNavigation;
-  } catch (e) {
-    return null;
   }
 }
 

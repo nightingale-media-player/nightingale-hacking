@@ -258,7 +258,7 @@
     <menuitem id="context-viewsource"
        label="&viewPageSourceCmd.label;"
        accesskey="&viewPageSourceCmd.accesskey;"
-       oncommand="BrowserViewSourceOfDocument(gContextMenu.browser.contentDocument);"
+       oncommand="BrowserViewSourceOfDocument(gContextMenu.tabbrowser.selectedBrowser.contentDocument);"
        observes="isImage"/>
     <menuseparator id="spell-separator" hidden="true"/>
     <menuitem id="spell-check-enabled"

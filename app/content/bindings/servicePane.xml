@@ -524,8 +524,9 @@
               Components.classes['@songbirdnest.com/servicepane/library;1']
               .getService(Components.interfaces.sbILibraryServicePaneService);
             var mediaList = libraryServicePane.getLibraryResourceForNode(node);
-            if (mediaList) {            
-              this.browser.loadMediaList(mediaList, event);
+            if (mediaList) {
+              var tab = this.browser.loadMediaList(mediaList, event, "_media");
+              this.browser.selectedTab = tab;
 
               // Record list type metrics for some reason.
               // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
@@ -542,6 +543,25 @@
                 "handle the selected node");
             }
           }
+        ]]></body>
+      </method>
+      <method name="isMediaTabURL">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          if (!aURL) {
+            return Components.results.NS_ERROR_INVALID_ARG;
+          }
+          var url = aURL;
+          if (aURL instanceof Components.interfaces.nsIURI) {
+            url = aURL.spec;
+          }
+          if (!(/chrome:\/\//.test(url))) {
+            // not chrome
+            return false;
+          }
+          var node = this.getNodeForURL(url);
+          if (!node) return false;
+          return true;
         ]]></body>
       </method>
     </implementation>

@@ -54,6 +54,7 @@ SBTabProgressListener.prototype = {
       // show up
       const nsIScrollable = Ci.nsIScrollable;
       var scrollable = this._tabBrowser
+                           .selectedBrowser
                            .webNavigation
                            .QueryInterface(nsIScrollable);
       scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_Y,
@@ -61,7 +62,7 @@ SBTabProgressListener.prototype = {
       scrollable.setDefaultScrollbarPreferences(nsIScrollable.ScrollOrientation_X,
                                                nsIScrollable.Scrollbar_Auto);
 
-      if (this._tabBrowser.webNavigation.sessionHistory) {
+      if (this._tabBrowser.selectedBrowser.webNavigation.sessionHistory) {
         SBDataSetBoolValue('browser.cangoback', this._tabBrowser.canGoBack);
         SBDataSetBoolValue('browser.cangofwd', this._tabBrowser.canGoForward);
       }

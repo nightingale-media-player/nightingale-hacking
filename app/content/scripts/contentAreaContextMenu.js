@@ -74,7 +74,7 @@ if (!window.LibraryUtils)
 
 function ContentAreaContextMenu(aXulMenu, aBrowser) {
   this.target            = null;
-  this.browser           = null;
+  this.tabbrowser        = null;
   this.menu              = null;
   this.isFrameImage      = false;
   this.onTextInput       = false;
@@ -120,7 +120,7 @@ ContentAreaContextMenu.prototype = {
   // Initialize context menu.
   initMenu: function CM_initMenu(aPopup, aBrowser) {
     this.menu = aPopup;
-    this.browser = aBrowser;
+    this.tabbrowser = aBrowser;
 
     this.isFrameImage = document.getElementById("isFrameImage");
 
@@ -703,10 +703,10 @@ ContentAreaContextMenu.prototype = {
     var doc = this.target.ownerDocument;
     var frameURL = doc.documentURIObject.spec;
 
-    urlSecurityCheck(frameURL, this.browser.contentPrincipal,
+    urlSecurityCheck(frameURL, this.tabbrowser.selectedBrowser.contentPrincipal,
                      Ci.nsIScriptSecurityManager.DISALLOW_SCRIPT);
     var referrer = doc.referrer;
-    this.browser.loadURI(frameURL, referrer ? makeURI(referrer) : null);
+    this.tabbrowser.loadURI(frameURL, referrer ? makeURI(referrer) : null);
   },
 
   // Open new "view source" window with the frame's URL.
@@ -716,7 +716,7 @@ ContentAreaContextMenu.prototype = {
 
   showImage: function(e) {
     urlSecurityCheck(this.imageURL,
-                     this.browser.contentPrincipal,
+                     this.tabbrowser.selectedBrowser.contentPrincipal,
                      Ci.nsIScriptSecurityManager.DISALLOW_SCRIPT);
 
     if (this.target instanceof Ci.nsIImageLoadingContent)
@@ -732,7 +732,7 @@ ContentAreaContextMenu.prototype = {
     else {
       viewURL = this.imageURL;
       urlSecurityCheck(viewURL,
-                       this.browser.contentPrincipal,
+                       this.tabbrowser.selectedBrowser.contentPrincipal,
                        Ci.nsIScriptSecurityManager.DISALLOW_SCRIPT);
     }
 
@@ -902,7 +902,7 @@ ContentAreaContextMenu.prototype = {
     var message = bundle_browser.getFormattedString(aBlock ?
      "imageBlockedWarning" : "imageAllowedWarning", [app, uri.host]);
 
-    var notificationBox = this.browser.getNotificationBox();
+    var notificationBox = this.tabbrowser.getNotificationBox();
     var notification = notificationBox.getNotificationWithValue("images-blocked");
 
     if (notification)
@@ -1188,11 +1188,11 @@ ContentAreaContextMenu.prototype = {
   },
 
   savePageAs: function CM_savePageAs() {
-    saveDocument(this.browser.contentDocument);
+    saveDocument(this.tabbrowser.selectedBrowser.contentDocument);
   },
 
   switchPageDirection: function CM_switchPageDirection() {
-    SwitchDocumentDirection(this.browser.contentWindow);
+    SwitchDocumentDirection(this.tabbrowser.selectedBrowser.contentWindow);
   },
   
   // recreate the list of menuitems for 'add to playlist'
