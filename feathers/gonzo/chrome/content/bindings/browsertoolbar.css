@@ -170,6 +170,14 @@ LOCATION TEXTBOX
   padding: 0px;
 }
 
+searchbar,
+.locationbar-textbox {
+  border-top:1px solid rgb(53,95,19);
+  border-right:1px solid rgb(78,124,38);
+  border-bottom:1px solid rgb(149,199,95);
+  border-left:1px solid rgb(78,124,38);
+}
+
 
 .locationbar-image
 {
@@ -192,7 +200,7 @@ LOCATION TEXTBOX
   background-image: url(chrome://songbird/skin/base-elements/icon-loading.png) !important;
   width:16px;
   height:16px;
-  padding-top:100px;
+  padding-top:1000px;
   overflow:hidden;
 }
 

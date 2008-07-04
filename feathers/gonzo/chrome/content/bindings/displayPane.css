@@ -62,6 +62,7 @@ sb-displaypane .favicon {
 }
 
 .sb-displaypane-menubutton {
+  -moz-border-radius:0px !important;
 }
 
 .sb-displaypane-label {

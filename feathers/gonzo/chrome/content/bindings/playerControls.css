@@ -67,7 +67,7 @@ Imported by bindings.css or directly into feathers.
   outline: none !important;
 }
 
-.sb-player-button label {
+.sb-player-button .button-text {
   display:none;
 }
 
@@ -77,6 +77,8 @@ Imported by bindings.css or directly into feathers.
 .sb-player-pause-button-pause > button,
 .sb-player-playpause-button-pause > button {  
   list-style-image: url(chrome://songbird/skin/media-control-pane/button-play-pause.png); 
+  background-image:none !important;
+  background-color:transparent !important;
 }
   /*play*/
   .sb-player-play-button-play > button,
@@ -213,15 +215,6 @@ Mute and Slider
 }
 
 
-.sb-player-volume-slider[sbid="sb-progress-slider-min"] {
-}
-.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked] {
-}
-.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
-}
-.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked] {
-}
-
 
 .sb-player-volume-slider[sbid="sb-progress-slider-min"],
 .sb-player-volume-slider[sbid="sb-progress-slider-max"] {
@@ -238,6 +231,23 @@ Mute and Slider
 .sb-player-volume-slider[sbid="sb-progress-slider-min"][disabled="true"],
 .sb-player-volume-slider[sbid="sb-progress-slider-max"][disabled="true"] {
   -moz-image-region: rect(48px 16px 64px 0px);
+}
+
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked],
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked] {
+  -moz-image-region: rect(0px 32px 16px 16px);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked]:hover,
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked]:hover {
+  -moz-image-region: rect(16px 32px 32px 16px);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked]:active,
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked]:active {
+  -moz-image-region: rect(32px 32px 48px 16px);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked][disabled="true"],
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked][disabled="true"] {
+  -moz-image-region: rect(48px 32px 64px 16px);
 }
 
 sb-player-mute-button {

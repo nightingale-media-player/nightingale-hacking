@@ -3,6 +3,8 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
+<?xml-stylesheet href="chrome://gonzo/content/css/mainplayer.css" type="text/css"?>
+
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
 <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
@@ -118,7 +120,7 @@
 <!-- TODO remove -->
               <statusbarpanel>
                 <button label="Restart" onclick="var createDataRemote =  new Components.Constructor('@songbirdnest.com/Songbird/DataRemote;1',Components.interfaces.sbIDataRemote, 'init'); var restartSignal = createDataRemote('restart.restartnow', null); restartSignal.boolValue = true;" style="max-height:16px; max-width:16px; overflow:hidden; padding:0; margin:0; min-width:16px; width:16px;"/>
-                </statusbarpanel>
+              </statusbarpanel>
 <!-- /TODO -->
             </statusbar>
           </vbox>
@@ -207,7 +209,7 @@
                     <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
                   </sb-autoscroll>
                   <hbox id="faceplate-tool-bar">
-                    <sb-rating property="http://songbirdnest.com/data/1.0#rating"/>
+                    <sb-rating/>
                   </hbox>
                 </hbox>
                 <hbox class="faceplate-seekinfo-box" align="center" pack="center">
@@ -231,7 +233,7 @@
                   <sb-player-totaltime-label class="faceplate-text" align="left" />
                 </hbox>
               </vbox>
-              <hbox id="faceplate-album-art"/>
+<!--              <hbox id="faceplate-album-art"/>-->
             </hbox>
           </stack>
 <!-- /TODO -->

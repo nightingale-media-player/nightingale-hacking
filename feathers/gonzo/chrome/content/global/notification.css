@@ -2,18 +2,23 @@
 
 notification {
   min-height: 35px;
+  background-position:center top;
+  background-repeat:repeat-x;
 }
 
 notification[type="info"] {
-  background-color: yellow;
+  background-color: rgb(235,235,255) !important;
+  background-image:url('chrome://songbird/skin/notification-bar/bg-info.png');
 }
 
 notification[type="warning"] {
-  background-color: orange !important;
+  background-color: rgb(255,255,235) !important;
+  background-image:url('chrome://songbird/skin/notification-bar/bg-warning.png');
 }
 
 notification[type="critical"] {
-  background-color: red;
+  background-color: rgb(255,235,235) !important;
+  background-image:url('chrome://songbird/skin/notification-bar/bg-critical.png');
 }
 
 .messageImage {

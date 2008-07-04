@@ -14,7 +14,7 @@ about.css
 }
 
 #version {
-  color: cyan;
+/*  color: cyan;*/
 }
 
 
@@ -369,7 +369,7 @@ toolbarbutton[disabled="true"][open="true"] {
 /** TODO Handle checked state in skin colors **/
 
 toolbarbutton[checked="true"] {
-  border:2px solid cyan;
+/*  border:2px solid cyan;*/
 }
     
 /* ::::: toolbarbutton menu ::::: */

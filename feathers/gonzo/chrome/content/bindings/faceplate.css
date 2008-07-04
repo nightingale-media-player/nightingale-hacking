@@ -99,11 +99,6 @@ sb-player-title-label.faceplate-text
   of the progress bar.
  **/
   
-.faceplate-progressmeter,
-.faceplate-seekbar
-{
-  height: 12px;
-}
 
 #track_info {
   min-height:24px;
@@ -132,6 +127,11 @@ sb-player-totaltime-label {
 
 
 
+.faceplate-progressmeter,
+.faceplate-seekbar
+{
+  height: 12px;
+}
 
 slider.sb-player-seek-slider,
 progressmeter.sb-player-seek-slider

@@ -140,6 +140,7 @@ we should nix the painting of the selection.*/
   background-image: url('chrome://songbird/skin/service-pane/bg-selected-node.png');
   background-repeat:repeat-x;
   background-position:left top;
+  background-color:rgb(152,202,100);
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( servicesource-bookmarks ),
@@ -239,21 +240,23 @@ treechildren::-moz-tree-cell-text( selected ) {
   color:rgb(40,40,40);
 }
 treechildren::-moz-tree-row( selected, odd ) {
-  background-color: rgb(225,225,225);
+  background-color: rgb(235,235,235);
 }
 treechildren::-moz-tree-row( selected, even ) {
-  background-color: rgb(220,220,220);
+  background-color: rgb(230,230,230);
 }
 
 treechildren::-moz-tree-cell-text( selected ) {
   color:rgb(0,0,0);
 }
-treechildren::-moz-tree-row( selected, focus,odd ) {
-  background-color: rgb(225,225,225);
+treechildren::-moz-tree-row( selected, focus, odd ) {
+  background-color: rgb(219,239,198);
 }
 treechildren::-moz-tree-row( selected, focus, even ) {
-  background-color: rgb(220,220,220);
+  background-color: rgb(214,234,193);
 }
+
+
 
 
 
@@ -700,14 +703,14 @@ toolbarbutton:active
 /* button button */
 
 button {
-  border:1px solid gray;
-  background-color:white;
+  border:1px solid rgb(80,80,80);
+  background-color:rgb(180,180,180);
 
   background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
   background-repeat:repeat-x;
   background-position:center top;
   
-  -moz-border-radius:0px;
+  -moz-border-radius:3px;
   padding:3px 0px;
   margin:4px;
   min-width:0px;
@@ -1055,7 +1058,12 @@ textbox,
 textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
 {
   -moz-border-radius:0;
-  border:1px solid gray;
+
+border-top:1px solid rgb(120,120,120);
+border-right:1px solid rgb(140,140,140);
+border-bottom:1px solid rgb(200,200,200);
+border-left:1px solid rgb(140,140,140);
+
   background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');
   background-repeat:repeat-x;
   background-position:center top;
@@ -1141,8 +1149,10 @@ MENULIST
 menulist
 {
   color: rgb(40,40,40);
-  background-color: white;
-  border:1px solid gray;
+
+  border:1px solid rgb(80,80,80);
+  background-color:rgb(180,180,180);
+
   -moz-border-radius:0px !important;
   background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
   background-repeat:repeat-x;
@@ -1508,17 +1518,11 @@ FINDBAR
 *******************************************************************************
 */
 findbar {
-  border-top: 1px solid #474948; /** Rubber Highlight */
-  border-bottom: 1px solid #202220;
 }
 
 
 .findbar-container > toolbarbutton[checked="true"] {
-  border-top: 1px solid #202220 !important; 
-  border-left: 1px solid #202220 !important; 
-  border-bottom: 1px solid #797f76 !important; /** Button Highlight */
-  border-right: 1px solid #202220 !important; 
-  background-color:transparent !important;
+  background-color:red;
 }
 
 
@@ -1552,7 +1556,9 @@ sb-sys-titlebar {
 #shuffle_repeat_box {
   padding:0 5px;
 }
-#control_buttons_box > .sb-player-button,
+#control_buttons_box > .sb-player-button {
+  margin:0 1px;
+}
 #shuffle_repeat_box > .sb-player-button {
   margin:0 3px;
 }
@@ -1935,3 +1941,10 @@ radiogroup {
 
 
 
+
+
+
+
+prefwindow * {
+  font-size:11px !important;
+}

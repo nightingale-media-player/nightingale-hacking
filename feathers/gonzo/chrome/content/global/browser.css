@@ -158,6 +158,8 @@
  -moz-border-radius:0px !important;
  list-style-image: url(chrome://songbird/skin/browser-tab-bar/button-close.png) !important;
  -moz-image-region: rect(0px 12px 12px 0px);
+ max-height:12px !important;
+ max-width:12px;
  padding:0 !important;
  margin:0 !important;
  border: none;

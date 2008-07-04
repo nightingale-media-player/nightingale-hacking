@@ -48,7 +48,6 @@ Imported by bindings.css or directly into feathers.
   max-width:200px;
 }
 searchbar {
-  border:1px solid gray;
   min-height:22px;
   padding:;
 }
@@ -66,6 +65,9 @@ searchbar {
   max-height:20px;
   border: none;
   border-right:1px solid gray;
+  -moz-border-radius:0 !important;
+  background-image:none;
+  background-color:white;
 }
 .searchbar-textbox {
   margin:0;
@@ -79,9 +81,16 @@ searchbar {
   margin:2px;
 }
 
+
+
+searchbar .search-go-button,
+searchbar .searchbar-textbox {
+
+}
+
 searchbar[focused="true"] .search-go-button,
 searchbar[focused="true"] .searchbar-textbox {
-  background-color: yellow !important;
+  background-color: rgb(255,255,235) !important;
 }
 searchbar:not([empty="true"])[livesearchmode="true"] .search-go-button,
 searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {

@@ -61,6 +61,7 @@ dialog[platform="Darwin"] #sb-sys-title-title {
   background-image: url(chrome://songbird/skin/window/bg-button-box.png);
   background-repeat:repeat-x;
   background-position:center top;
+  background-color:rgb(225,225,225);
 }
 
 
