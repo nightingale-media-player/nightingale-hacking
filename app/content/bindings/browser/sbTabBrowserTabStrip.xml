@@ -63,7 +63,7 @@
                 <xul:tab selected="true" validate="never" anonid="media-tab"
                          onerror="document.getBindingParent(this).tabBrowser.addToMissedIconCache(this.getAttribute('image'));
                                   this.setIcon(null);"
-                         width="100" collapsed="true"
+                         collapsed="true"
                          class="tabbrowser-tab" label="&untitledTab;" crop="end"/>
                 <xul:arrowscrollbox anonid="arrowscrollbox" orient="horizontal" flex="1"
                                     style="min-width: 1px;" class="tabbrowser-arrowscrollbox">
@@ -102,6 +102,11 @@
         if (this._mediaTab) {
           this._firstTab.linkedTab = this._mediaTab;
           this._mediaTab.targetTab = this._firstTab;
+          // yeah, XUL says attributes override CSS.  yay.
+          var width = window.getComputedStyle(this._firstTab, "").minWidth;
+          if (this._firstTab.hasAttribute("minwidth"))
+            width = parseInt(this._firstTab.getAttribute("minwidth"));
+          this._mediaTab.setAttribute("minwidth", width);
         }
       ]]></constructor>
 
