@@ -107,6 +107,9 @@
       <toolbox id="navigator-toolbox" flex="1"/>
     </stack>
 
+    <tabs id="tabstrip" class="tabbrowser-tabs sb-tabbrowser-tabs" setfocus="false" onclick="gBrowser.onTabClick(event);" ondblclick="gBrowser.onTabBarDblClick(event);" onclosetab="gBrowser.removeCurrentTab();">
+      <tab selected="true" validate="never" onerror="gBrowser.addToMissedIconCache(this.getAttribute('image')); gBrowser.setIcon(this, null);" maxwidth="180" width="0" minwidth="80" flex="100" class="tabbrowser-tab" crop="end"/>
+    </tabs>
 
     <vbox id="inner_player_box" flex="1">
       <vbox id="middle_pane_box" flex="1">
@@ -131,8 +134,11 @@
 
           <vbox flex="1" id="content_pane_box">
             <vbox id="appcontent" flex="1">
+
               <!-- BROWSER.  Note: these IDs are required for Firefox extension compatibility. -->
-              <sb-tabbrowser id="content" flex="1" contenttooltip="aHTMLTooltip" contentcontextmenu="contentAreaContextMenu" />
+              <sb-tabbrowser id="content" flex="1" contenttooltip="aHTMLTooltip" contentcontextmenu="contentAreaContextMenu" 
+                             hasmediatab="true"
+                             tabstrip="tabstrip"/>
               <!-- STATUS BAR.  Filled via overlay by layoutWithBrowserOverlay.xul. 
                    Note: this item must have id="status-bar" for Firefox 
                    extension compatibility.
