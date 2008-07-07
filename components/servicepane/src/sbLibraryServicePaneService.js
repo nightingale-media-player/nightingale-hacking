@@ -458,6 +458,12 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow
       return false;
     }
     
+    // check if the list is itself readonly
+    if (list.getProperty(SBProperties.isReadOnly)) {
+      // this list is readonly, can't drop
+      return false;
+    }
+    
     // XXX Mook: hack for bug 4760 to do special handling for the download
     // playlist.  This will need to be expanded later to use IDLs on the
     // list so that things like extensions can do this too.
