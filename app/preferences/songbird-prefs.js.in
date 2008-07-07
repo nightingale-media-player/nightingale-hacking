@@ -270,6 +270,9 @@ pref("songbird.mediacore.audioOut", "directsound");
 pref("songbird.mediacore.normalize", false);
 #endif
 
+// Playback History
+pref("songbird.mediacore.playback.history.enabled", true);
+
 //
 // Metadata prefs
 //

@@ -57,7 +57,7 @@ const sbIPlaylistPlayback      = Components.interfaces.sbIPlaylistPlayback;
 const sbIPlaylistReaderManager = Components.interfaces.sbIPlaylistReaderManager;
 const sbIMediaListView         = Components.interfaces.sbIMediaListView;
 
-const DEBUG = true;
+const DEBUG = false;
 
 // number of milliseconds for timer calling the playback loop
 const LOOP_DURATION = 250;
@@ -67,6 +67,9 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
+
+// Prefs
+const PREF_PLAYBACK_HISTORY_ENABLED = "songbird.mediacore.playback.history.enabled";
 
 /**
  * ----------------------------------------------------------------------------
@@ -1855,12 +1858,20 @@ PlaylistPlayback.prototype = {
     else if (this._hasIncPlayCount) {
       this._playingItem.setProperty(SBProperties.lastPlayTime, Date.now());
 
-      var playDuration = Date.now() - this._historyPlayStartTime;
-      var entry = this._playbackHistory.createEntry(this._playingItem,
-                                                    this._historyPlayStartTime,
-                                                    playDuration, 
-                                                    null);
-      this._playbackHistory.addEntry(entry);
+      const prefs = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication)
+                        .prefs;
+
+      if(prefs.has(PREF_PLAYBACK_HISTORY_ENABLED) &&
+         prefs.get(PREF_PLAYBACK_HISTORY_ENABLED).value) {
+        var playDuration = Date.now() - this._historyPlayStartTime;
+        var entry = this._playbackHistory.createEntry(this._playingItem,
+                                                      this._historyPlayStartTime,
+                                                      playDuration, 
+                                                      null);
+        this._playbackHistory.addEntry(entry);
+      }
+      
       this._historyPlayStartTime = 0;
     }
 
