@@ -110,6 +110,10 @@
 
       <property name="_mediaTab">
         <getter>
+          // note that the tabbrowser definition is just the first tab, which is
+          // not what we want; we still ask the tabbrowser if one exists though
+          if (!this._tabbrowser.mediaTab)
+            return null;
           return document.getAnonymousElementByAttribute(this, "anonid", "media-tab");
         </getter>
       </property>
