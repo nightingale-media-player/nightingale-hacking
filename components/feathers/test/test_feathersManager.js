@@ -36,6 +36,8 @@
 const DEFAULT_MAIN_LAYOUT_URL         = "chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul";
 const DEFAULT_SECONDARY_LAYOUT_URL    = "chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul";
 const DEFAULT_SKIN_NAME               = "rubberducky/0.2";
+const ALTERNATE_MAIN_LAYOUT_URL       = "chrome://gonzo/content/xul/mainplayer.xul";
+const ALTERNATE_SKIN_NAME             = "gonzo";
 
 
 var feathersManager =  Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
@@ -159,7 +161,7 @@ function wrapEnumerator(enumerator, iface)
 function assertEnumeratorEqualsArray(enumerator, list) {
   list = list.concat([]); // Clone list before modifying 
   for (var item in enumerator) {
-    assertEqual(list.indexOf(item.wrappedJSObject) > -1, true);
+    assertTrue(list.indexOf(item.wrappedJSObject) > -1);
     list.splice(list.indexOf(item.wrappedJSObject), 1);
   }
   assertEqual(list.length, 0);
@@ -175,7 +177,7 @@ function assertEnumeratorEqualsArray(enumerator, list) {
 function assertEnumeratorMatchesFieldArray(enumerator, field, list) {
   list = list.concat([]); // Clone list before modifying 
   for (var item in enumerator) {
-    assertEqual(list.indexOf(item[field]) > -1, true);
+    assertTrue(list.indexOf(item[field]) > -1);
     list.splice(list.indexOf(item[field]), 1);
   }
   assertEqual(list.length, 0);
@@ -195,14 +197,15 @@ function testAddonMetadataReader()
   // Verify all skins added properly
   // Bug 4588: Removed plucked and dove, add them back in to this test
   // when they are updated and shipping again.
-  var skinNames = [DEFAULT_SKIN_NAME];
+  var skinNames = [DEFAULT_SKIN_NAME, ALTERNATE_SKIN_NAME];
   assertEqual(feathersManager.skinCount, skinNames.length);
   var enumerator = wrapEnumerator(feathersManager.getSkinDescriptions(),
                      Components.interfaces.sbISkinDescription);
   assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
   
   // Verify all layouts added properly
-  var layoutURLs = [ DEFAULT_MAIN_LAYOUT_URL, DEFAULT_SECONDARY_LAYOUT_URL ];
+  var layoutURLs = [ DEFAULT_MAIN_LAYOUT_URL, DEFAULT_SECONDARY_LAYOUT_URL,
+                     ALTERNATE_MAIN_LAYOUT_URL ];
   assertEqual(feathersManager.layoutCount, layoutURLs.length);
   enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
                      Components.interfaces.sbILayoutDescription);
@@ -211,10 +214,13 @@ function testAddonMetadataReader()
   // Verify mappings
   enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[0]), 
                  Components.interfaces.sbISkinDescription);
-  assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
+  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [DEFAULT_SKIN_NAME]);
   enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[1]), 
                               Components.interfaces.sbISkinDescription);
-  assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
+  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [DEFAULT_SKIN_NAME]);
+  enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[2]), 
+                              Components.interfaces.sbISkinDescription);
+  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [ALTERNATE_SKIN_NAME]);
   
   // Verify showChrome
   assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[0]), false);
