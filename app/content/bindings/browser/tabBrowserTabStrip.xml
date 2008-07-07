@@ -263,7 +263,7 @@
         }
         });
       </field>
-      <field name="mTabMinWidth">100</field>
+      <field name="mTabMinWidth">80</field>
       <field name="mTabClipWidth">140</field>
       <field name="mCloseButtons">1</field>
 

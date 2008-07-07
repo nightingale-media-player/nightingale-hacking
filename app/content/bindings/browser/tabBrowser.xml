@@ -100,7 +100,7 @@
             <xul:tab selected="true" validate="never" mousethrough="never"
                      onerror="document.getBindingParent(this).addToMissedIconCache(this.getAttribute('image'));
                               this.setIcon(null);"
-                     maxwidth="250" width="0" minwidth="100" flex="100"
+                     maxwidth="180" width="0" minwidth="80" flex="100"
                      class="tabbrowser-tab" label="&untitledTab;" crop="end"/>
           </xul:tabs>
         </xul:hbox>
@@ -1061,7 +1061,7 @@
               t.setAttribute("label", aURI);
 
             t.setAttribute("crop", "end");
-            t.maxWidth = 250;
+            t.maxWidth = 180;
             t.minWidth = this.mTabContainer.mTabMinWidth;
             t.width = 0;
             t.setAttribute("flex", "100");
