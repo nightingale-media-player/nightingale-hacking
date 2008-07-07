@@ -39,7 +39,7 @@ interface sbIJobProgress;
  * Use sbIJobProgress to track job status and wait for completion.
  * \sa sbIDirectoryImportService, sbIJobProgress
  */
-[scriptable, uuid(70488be0-44a8-11dd-ae16-0800200caa66)]
+[scriptable, uuid(ca3d4300-4c75-11dd-ae16-0800200c9a66)]
 interface sbIDirectoryImportJob : nsISupports
 {
   /**
@@ -52,7 +52,7 @@ interface sbIDirectoryImportJob : nsISupports
   /**
    * \brief Number of new (unknown) items that were added to the library
    */
-  readonly attribute unsigned long totalImportedToLibrary;
+  readonly attribute unsigned long totalAddedToLibrary;
 
   /**
    * \brief Number of items that already existed in the target library
@@ -98,12 +98,13 @@ interface sbIDirectoryImportService : nsISupports
    *
    * \param aDirectories an array of nsIFile paths
    * \param aTargetMediaList the media list into which found items should be loaded
+   *        (defaults to the main library)
    * \param aTargetIndex the index into the media list where items should be inserted
    *        (ignored if aTargetMediaList is not an sbIOrderableMediaList)
    */
   sbIDirectoryImportJob import(in nsIArray aDirectories,
-                               in sbIMediaList aTargetMediaList,
-                               in PRInt32 aTargetIndex);
+                               [optional] in sbIMediaList aTargetMediaList,
+                               [optional] in PRInt32 aTargetIndex);
 };
 
 

@@ -28,34 +28,179 @@
  * \brief Test the directory importer service
  */
 
-function runTest () {
-  // TODO
-  /*
-  var directories = TODO;
-  var directoryImporter = Cc['@songbirdnest.com/songbird/feathersmanager;1']
-                            .getService(Ci.sbIDirectoryImportService);
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
-  var job = directoryImporter.import(directories);
+// This test relies on the sample files used in the metadata test cases
+var gDirectories = ArrayConverter.nsIArray([newAppRelativeFile("testharness/metadatamanager/files/")]);
+
+var gDirectoryImporter = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
+                            .getService(Ci.sbIDirectoryImportService);
+var gLibrary;
+var gMediaList;
+
+const MEDIALIST_TARGET_INDEX = 1;
+
+/**
+ * Start by creating a library and doing a directory import of the 
+ * metadata unit test files.
+ */
+function runTest () {
+  gLibrary = createLibrary("test_directoryimport", null, false);
+  gLibrary.clear();
+
+  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
+                          getService(Ci.sbILibraryManager);
+  libraryManager.registerLibrary(gLibrary, false);
   
-  job.addJobProgressListener(onComplete);
+  var job = gDirectoryImporter.import(gDirectories, gLibrary);
+  job.addJobProgressListener(onFirstImportProgress);
   testPending();
-  */
 }
 
 
-function onComplete(job) {
+/**
+ * Once the first directory import completes, confirm that
+ * we found some files, and that at least some of them 
+ * have expected metadata
+ */
+function onFirstImportProgress(job) {
   try {
-    if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+    log("DirectoryImport: onFirstImportProgress: " + job.statusText +
+        " status " + job.status + " added " + job.totalAddedToLibrary );
+    
+    // Just ignore progress while running
+    if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
       return;
     }
+    // Finished
+    job.removeJobProgressListener(onFirstImportProgress);
     
-    job.removeJobProgressListener(onComplete);
+    // Confirm that we got some items
+    log("DirectoryImport: onFirstImportProgress: totalAddedToLibrary=" + job.totalAddedToLibrary);
+    log("DirectoryImport: onFirstImportProgress: totalDuplicates=" + job.totalDuplicates);
+    log("DirectoryImport: onFirstImportProgress: gLibrary.length=" + gLibrary.length);
+    assertTrue(gLibrary.length > 0);
+    assertEqual(gLibrary.length, job.totalAddedToLibrary);
+    assertEqual(job.totalAddedToMediaList, 0);
+    assertTrue(job.enumerateNewItemsOnly().hasMoreElements());
+    assertTrue(job.enumerateAllItems().hasMoreElements());
+    assertTrue(job.enumerateNewItemsOnly().getNext() instanceof Ci.sbIMediaItem);
+    assertTrue(job.enumerateAllItems().getNext() instanceof Ci.sbIMediaItem);
     
-    // Confirm that we found the expected number of items, dupes, etc.
+    // Confirm that at least some metadata was scanned (the scanner is tested elsewhere).
+    // Most of the test files fail our dupe check, so just look for anything.
+    var foundSomeMetadata = false;
+    for (var i=0; i < gLibrary.length; i++) {
+      var item = gLibrary.getItemByIndex(i);
+      var artist = item.getProperty(SBProperties.artistName);
+      log("DirectoryImport: onFirstImportProgress: found item with artist=" + artist);
+      if (artist) {
+        foundSomeMetadata = true;
+        break;
+      }
+    }
+    assertEqual(foundSomeMetadata, true);
 
   } catch (e) {
     log("Error: " + e);
+    // Force the test to fail.  If we throw it will
+    // be eaten by the job progress notify function, 
+    // and the test will never finish.
     assertEqual(true, false);
   }
-  testFinished();
+  
+  startSecondImport();
+}
+
+/**
+ * Now test directory import into a media list.
+ */
+function startSecondImport () {
+  gMediaList = gLibrary.createMediaList("simple");
+  
+  // Add two items to the list, then have the importer
+  // insert all the items into the middle
+  gMediaList.add(gLibrary.getItemByIndex(1));
+  gMediaList.add(gLibrary.getItemByIndex(2));
+
+  var job = gDirectoryImporter.import(gDirectories, gMediaList, 
+                                      MEDIALIST_TARGET_INDEX);
+  job.addJobProgressListener(onSecondImportProgress);
+}
+
+ 
+/**
+ * Once the second directory import completes, 
+ * confirm that the files were inserted into the list
+ * as expected, and that the items were reported
+ * as dupes in the library
+ */
+function onSecondImportProgress(job) {
+ try {
+   log("DirectoryImport: onSecondImportProgress: " + job.statusText +
+       " status " + job.status + " added " + job.totalAddedToLibrary );
+
+   // Just ignore progress while running
+   if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
+     return;
+   }
+   // Finished
+   job.removeJobProgressListener(onSecondImportProgress);
+
+   log("DirectoryImport: onSecondImportProgress: totalAddedToLibrary=" + job.totalAddedToLibrary);
+   log("DirectoryImport: onSecondImportProgress: totalDuplicates=" + job.totalDuplicates);
+   log("DirectoryImport: onSecondImportProgress: totalAddedToMediaList=" + job.totalAddedToMediaList);
+   log("DirectoryImport: onSecondImportProgress: gLibrary.length=" + gLibrary.length);
+
+   // Make sure everything adds up
+   assertEqual(job.totalAddedToLibrary, 0);
+   assertTrue(job.totalDuplicates > 0);
+   assertEqual(gLibrary.length, job.totalAddedToMediaList + 1);
+   assertEqual(gLibrary.length - 1, gMediaList.length - 2);
+   assertEqual(gMediaList, job.targetMediaList);
+   assertEqual(job.targetIndex, MEDIALIST_TARGET_INDEX);
+   
+   // Should be no new items
+   assertEqual(job.enumerateNewItemsOnly().hasMoreElements(), false);
+   
+   // All found items should appear in order between the first and 
+   // last items in the new list.
+   var enumerator = job.enumerateAllItems();
+   for (var i=1; i < gMediaList.length - 1; i++) {
+     var item = gMediaList.getItemByIndex(i);
+     log("DirectoryImport: onSecondImportProgress: found item with guid=" +
+         item.guid);
+     assertTrue(enumerator.hasMoreElements());
+     assertEqual(enumerator.getNext(), item);
+   }
+
+ } catch (e) {
+   log("Error: " + e);
+   // Force the test to fail.  If we throw it will
+   // be eaten by the job progress notify function, 
+   // and the test will never finish.
+   assertEqual(true, false);
+ }
+
+ testFinished();
+}
+
+
+
+function newAppRelativeFile( path ) {
+
+  var file = Cc["@mozilla.org/file/directory_service;1"]
+               .getService(Ci.nsIProperties)
+               .get("resource:app", Ci.nsIFile);
+  file = file.clone();
+
+  var nodes = path.split("/");
+  for ( var i = 0, end = nodes.length; i < end; i++ )
+  {
+    file.append( nodes[ i ] );
+  }
+
+  return file;
 }

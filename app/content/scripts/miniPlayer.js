@@ -164,58 +164,6 @@ var gMiniplayer = {
 
 
 
-  ///////////////////////////
-  // Drag and Drop Support //
-  ///////////////////////////
-
-
-
-  /**
-   * Return mimetype-ish information indicating what is supported
-   */
-  getSupportedFlavours: function getSupportedFlavours()
-  {
-    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                            .getService(Components.interfaces.nsIConsoleService);
-    consoleService.logStringMessage("get flavours");
-    var flavours = new FlavourSet();
-
-    // TODO does this work under linux? I'm thinking no.
-
-    flavours.appendFlavour("application/x-moz-file","nsIFile");
-    //  flavours.appendFlavour("application/x-moz-url");
-    return flavours;
-  },
-
-  /**
-   * Called when an object is dragged over the miniplayer
-   */
-  onDragOver: function onDragOver( evt, flavour, session )
-  {
-    // Don't care...
-  },
-
-
-  /**
-   * Called when an object is released over the miniplayer
-   */
-  onDrop: function onDrop( evt, dropdata, session )
-  {
-    if ( dropdata.data != "" )
-    {
-      // if it has a path property
-      if ( dropdata.data.path )
-      {
-        var path = dropdata.data.path;
-        var isDir = dropdata.data.isDirectory();
-
-        // Handle drop on next frame
-        setTimeout( function(obj) { obj._handleDrop(path, isDir) }, 10, this);
-      }
-    }
-  },
-
-
   ////////////////////////////
   // Window Min/Max Support //
   ////////////////////////////
@@ -331,31 +279,6 @@ var gMiniplayer = {
 
     return;
   },
-
-  /**
-   * Helper function that acts on a dropped item.
-   * Called just after an object is dropped on the player.
-   */
-  _handleDrop: function _handleDrop(path, isDir) {
-    if ( isDir )
-    {
-      SBDataSetBoolValue( "media_scan.open", true );
-      theFileScanIsOpen.boolValue = true;
-      // otherwise, fire off the media scan page.
-      var media_scan_data = new Object();
-      media_scan_data.URL = [path];
-      // Open the non-modal dialog
-      SBOpenModalDialog( "chrome://songbird/content/xul/mediaScan.xul", "media_scan", "chrome,centerscreen", media_scan_data );
-      SBDataSetBoolValue( "media_scan.open", false );
-    }
-    else if ( gPPS.isMediaURL( path ) )
-    {
-      // add it to the db and play it.
-      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-      PPS.playAndImportURL(path); // if the url is already in the lib, it is not added twice
-    }
-  },
-
 
   /**
    * Figure out which operating system we are on

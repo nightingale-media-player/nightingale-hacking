@@ -53,8 +53,6 @@
  onload="gMiniplayer.onLoad();"
  onunload="gMiniplayer.onUnload();"
  onkeypress="gMiniplayer.onKeypress(event);"
- ondragover="nsDragAndDrop.dragOver( event, gMiniplayer );"
- ondragdrop="nsDragAndDrop.drop( event, gMiniplayer );"
  ondblclick="gMiniplayer.onDblClick(event);"
 
  persist="screenX screenY width"

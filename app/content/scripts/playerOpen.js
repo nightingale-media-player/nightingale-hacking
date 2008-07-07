@@ -468,10 +468,8 @@ function SBWatchFolders( parentWindow )
   SBOpenModalDialog( "chrome://songbird/content/xul/watchFolders.xul", "", "chrome,centerscreen", null, parentWindow );
 }
 
-var theFileScanIsOpen = SB_NewDataRemote( "media_scan.open", null );
 function SBScanMedia( parentWindow )
 {
-  theFileScanIsOpen.boolValue = true;
   const nsIFilePicker = Components.interfaces.nsIFilePicker;
   const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
   var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
@@ -491,15 +489,18 @@ function SBScanMedia( parentWindow )
   var res = fp.show();
   if ( res == nsIFilePicker.returnOK )
   {
-    var media_scan_data = new Object();
-    media_scan_data.URL = [fp.file.path];
-    // Open the modal dialog
-    SBOpenModalDialog( "chrome://songbird/content/xul/mediaScan.xul",
-                       "media_scan",
-                       "chrome,centerscreen",
-                       media_scan_data );
+    var importer = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
+                     .getService(Ci.sbIDirectoryImportService);
+    if (typeof(ArrayConverter) == "undefined") {
+      Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+    }
+    if (typeof(SBJobUtils) == "undefined") {
+      Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
+    }  
+    var directoryArray = ArrayConverter.nsIArray([fp.file]);
+    var job = importer.import(directoryArray);
+    SBJobUtils.showProgressDialog(job, window);
   }
-  theFileScanIsOpen.boolValue = false;
 }
 
 /** Legacy function **/

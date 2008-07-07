@@ -50,8 +50,15 @@ EXPORTED_SYMBOLS = [ "DNDUtils",
                      "ExternalDropHandler",
                      "InternalDropHandler" ];
 
-Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
-Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results;
+const Ce = Components.Exception;
+const Cu = Components.utils;
+
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
  
 
 /*
@@ -860,7 +867,7 @@ var ExternalDropHandler = {
 
   _importInProgress    : false, // are we currently importing a drop ?
   _fileList            : [],    // list of files URLs to import
-  _directoryList       : [],    // queue of directories to scan
+  _directoryList       : [],    // queue of nsIFile directories to scan
   _targetList          : null,  // target mediaList for the drop
   _targetPosition      : -1,    // position in the mediaList we should drop at
   _firstMediaItem      : null,  // first mediaItem that was handled in this drop
@@ -878,8 +885,8 @@ var ExternalDropHandler = {
   // _nextImportDropFrame method is called to schedule the next frame using a 
   // short timer, so as to give the UI time to catch up, and we keep doing that 
   // until everything in the file queue has been processed. when that's done, 
-  // we then look for queued directory scans, which we give to the mediaScan 
-  // modal dialog. after the directories have been processed, we notify the 
+  // we then look for queued directory scans, which we give to the directory 
+  // import service. after the directories have been processed, we notify the 
   // listener that processing has ended. Note that the function can take either
   // a drag session of an array of URLs. If both are provided, only the session
   // will be handled (ie, the method is not meant to be called with both a session
@@ -1043,7 +1050,7 @@ var ExternalDropHandler = {
             // is this is a directory?
             if (fileUrl.file.isDirectory()) {
               // yes, record it and delay processing
-              this._directoryList.push(fileUrl.file.path);
+              this._directoryList.push(fileUrl.file);
               // continue with the current batch
               this._nextImportDropFrame();
               return;
@@ -1201,64 +1208,32 @@ var ExternalDropHandler = {
   // trigger the import of all directory entries that have been defered until
   // this point. this launches the media scanner dialog box.
   _importDropDirectories: function() {
-
-    var SB_NewDataRemote = 
-      Components.Constructor("@songbirdnest.com/Songbird/DataRemote;1",
-                             "sbIDataRemote",
-                             "init");
-    var fileScanIsOpen = SB_NewDataRemote( "media_scan.open", null );
-
-    fileScanIsOpen.boolValue = true;
+    var importService = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
+                          .getService(Ci.sbIDirectoryImportService);
     
-    // fire off the media scan page
-    var media_scan_data = new Object();
-
-    // set up media scan target
-    media_scan_data.target_pl = this._targetList;
-    media_scan_data.target_pl_row = this._targetPosition;
+    var job = importService.import(ArrayConverter.nsIArray(this._directoryList),
+                                   this._targetList, this._targetPosition);
     
-    // attach the list of directories to scan
-    media_scan_data.URL = this._directoryList;
+    // Reset list of directories
+    this._directoryList = [];
+                                   
+    SBJobUtils.showProgressDialog(job, this._window, /** No delay **/ 0);
     
-    // receive notification of the first handled item
-    var cbObj = {
-      dropHandler: this,
-      onFirstItem: function(aItem) {
-        if (!this.dropHandler._firstMediaItem) {
-          this.dropHandler._firstMediaItem = aItem;
-          if (this.dropHandler._listener) {
-            this.dropHandler._listener.
-              onFirstMediaItem(this.dropHandler._targetList, aItem);
-          }
+    // If this job provided the first item, we may want to play it
+    if (!this._firstMediaItem) {
+      var allItems = job.enumerateAllItems();
+      if (allItems.hasMoreElements()) {
+        this._firstMediaItem = allItems.getNext().QueryInterface(Ci.sbIMediaItem);
+        if (this._listener) {
+          this._listener.
+            onFirstMediaItem(this._targetList, this._firstMediaItem);
         }
       }
-    };
-    media_scan_data.onFirstItem = cbObj;
-    
-    // reset list of directories
-    this._directoryList = [];
-    
-    // if we are dropping onto a playlist, and not just a library, then we
-    // want the import box to autoClose once it's done, because it is very
-    // misleading to see "No items added" just because the items were already in
-    // the library, although items have still been inserted in the target playlist
-    if (this._targetList != this._targetList.library)
-      media_scan_data.autoClose = true;
+    }
 
-    // Open the modal dialog
-    this._window.
-      SBOpenModalDialog( 
-        "chrome://songbird/content/xul/mediaScan.xul", 
-        "media_scan", 
-        "chrome,centerscreen", 
-        media_scan_data, 
-        this._window); 
-    
-    this._totalImported += media_scan_data.totalImportedToLibrary;
-    this._totalInserted += media_scan_data.totalAddedToMediaList;
-    this._totalDups += media_scan_data.totalDups;
-                              
-    fileScanIsOpen.boolValue = false;
+    this._totalImported += job.totalAddedToLibrary;
+    this._totalInserted += job.totalAddedToMediaList;
+    this._totalDups += job.totalDuplicates;
   },
   
   // called when the whole drop handling operation has completed, used
