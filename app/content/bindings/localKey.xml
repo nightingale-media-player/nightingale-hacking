@@ -373,17 +373,42 @@
               !currentmeta) return true;
           var mods = wantedmods.replace(/,/g, " ");
           var modsarray = mods.split(" ");
+          // result var
           var r = true;
+          // for each wanted modifier, AND the result var with the 
+          // actual state of the modifier, then reset its variable, 
+          // so that any modifier variable that stayed true at the
+          // end is an extra modifier that we did NOT want.
           for (var i in modsarray) {
             var mod = modsarray[i];
             if (mod == "accel") mod = this.accelkey;
             switch (mod) {
-              case "shift": r &= currentshift; break;
-              case "alt": r &= currentalt; break;
-              case "control": r &= currentctrl; break;
-              case "meta": r &= currentmeta; break;
+              case "shift": 
+                r &= currentshift; 
+                currentshift = 0; 
+                break;
+              case "alt": 
+                r &= currentalt; 
+                currentalt = 0; 
+                break;
+              case "control": 
+                r &= currentctrl; 
+                currentctrl = 0; 
+                break;
+              case "meta": 
+                r &= currentmeta; 
+                currentmeta = 0; 
+                break;
             }
           }
+          // if anything's left, there was too many modifiers,
+          // do not match the key
+          if (currentshift || 
+              currentalt || 
+              currentctrl || 
+              currentmeta) 
+            return false;
+          // return whether the wanted modifiers were set
           return r;
         ]]>
       </body>
