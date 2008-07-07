@@ -53,6 +53,7 @@ panel
 
 window {
   background-color:rgb(135,135,135);
+  background-color: rgb(245,245,245);
 }
 
 window#mainplayer {
@@ -61,9 +62,11 @@ window#mainplayer {
 window[platform=Darwin] {
   border:none !important;
 }
-window[platform=Darwin] sb-sys-titlebar {
+window[platform=Darwin] sb-sys-titlebar #sb-sys-title-title{
   font-family: Lucida Grande !important;
   font-size: 13px !important;
+  padding-top:3px;
+/*  opacity:0.9999;*/
 }
 sb-sys-close-button,
 sb-sys-maximize-button,
@@ -97,8 +100,13 @@ It serves as the primary GUI entry point to content and services.
 */ 
 
 
-#servicepane  {
-  background-color: rgb(235,235,235);
+#servicepane {
+  background-color: rgb(220,220,220) !important;
+  
+  
+  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-repeat:repeat-x;
+  background-position:center top;
 }
 
 
@@ -108,7 +116,9 @@ It serves as the primary GUI entry point to content and services.
   background-position:center top;
 }
 
-
+.servicepane-tree {
+  background-image:none !important;
+}
 .servicepane-tree > treecols > .tree-scrollable-columns {
   border:none !important;
 }
@@ -137,10 +147,13 @@ we should nix the painting of the selection.*/
 .servicepane-tree > treechildren::-moz-tree-row( selected ),
 .servicepane-tree > treechildren::-moz-tree-row( selected current focus )
 {
+  background-color:rgb(255,255,255);
+
   background-image: url('chrome://songbird/skin/service-pane/bg-selected-node.png');
   background-repeat:repeat-x;
   background-position:left top;
-  background-color:rgb(152,202,100);
+
+
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( servicesource-bookmarks ),
@@ -164,9 +177,10 @@ we should nix the painting of the selection.*/
 .servicepane-tree > treechildren::-moz-tree-cell( servicesource-bookmarks ),
 .servicepane-tree > treechildren::-moz-tree-cell( servicesource-playlists ),
 .servicepane-tree > treechildren::-moz-tree-cell( folder ) {
-  background-image: url('chrome://songbird/skin/service-pane/bg-container-node.png');
+/*  background-image: url('chrome://songbird/skin/service-pane/bg-container-node.png');
   background-repeat:repeat-x;
-  background-position:left top;
+  background-position:left top;*/
+  background-color:rgb(220,220,220) !important;
 }
 
 .servicepane-toolbar-newitem-button > .clickhold-button {
@@ -361,12 +375,12 @@ treecol[dragging="true"]:hover:active > label {
 
 treecol[sortDirection="ascending"] > .treecol-sortdirection,
 .listheader-sortdirection[sortDirection="ascending"] {
-  list-style-image:  url("chrome://songbird/skin/base-elements/icon-sort-ascending.png");
-  background-position:center -30px;
+  list-style-image:  url("chrome://songbird/skin/base-elements/icon-sort-ascending.png") !important;
 }
+
 treecol[sortDirection="descending"] > .treecol-sortdirection,
 .listheader-sortdirection[sortDirection="descending"] {
-  list-style-image:  url("chrome://songbird/skin/base-elements/icon-sort-descending.png");
+  list-style-image:  url("chrome://songbird/skin/base-elements/icon-sort-descending.png") !important;
 }
 
 
@@ -454,15 +468,14 @@ tabs {
 
 }
 
-.tabbrowser-strip
+.tabbrowser-tabs
 {
   background-color: rgb(80,80,80);
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png);
   background-repeat:repeat-x;
   background-position:center bottom;
-  max-height:26px;
-  min-height:26px;
-  padding-top:2px;
+
+  padding:0px 0px 0px 0px;
 }
 
 
@@ -471,6 +484,8 @@ tabs {
 /** Top tabs **/
 tab,
 .tabbrowser-tab {
+  max-width:180px;
+  min-width:80px;
 }
 tab:not([selected="true"]),
 .tabbrowser-tab:not([selected="true"]) {
@@ -501,16 +516,16 @@ tab[selected="true"],
 }
 
 .tabbrowser-tab > .tab-image-middle,
+.tabbrowser-tab > .tab-image-left,
+.tabbrowser-tab > .tab-image-right,
 .tabbrowser-tab > .tab-close-button {
   margin: 0px;
   padding: 0px;
   min-height: 25px !important;
-  padding-bottom:3px !important;
-
   
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png) !important;
   background-repeat:no-repeat;
-  background-position:center 0px !important;
+  background-position:center 2px;
 }
 .tabbrowser-tab[selected="true"] > .tab-image-middle,
 .tabbrowser-tab[selected="true"] > .tab-close-button {
@@ -518,20 +533,19 @@ tab[selected="true"],
 }
 .tabbrowser-tab:hover > .tab-image-middle,
 .tabbrowser-tab:hover > .tab-close-button {
-  background-position:center -30px !important;
+  background-position:center -28px !important;
 }
 .tabbrowser-tab:active > .tab-image-middle,
 .tabbrowser-tab:active > .tab-close-button {
-  background-position:center -60px !important;
+  background-position:center -58px !important;
 }
 .tabbrowser-tab[disabled="true"] > .tab-image-middle,
 .tabbrowser-tab[disabled="true"] > .tab-close-button {
-  background-position:center -90px !important ;
+  background-position:center -88px !important ;
 }
 .tabbrowser-tab > .tab-image-left,
 .tabbrowser-tab > .tab-image-right {
   width:4px;
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png);
   background-repeat:no-repeat;
 }
 .tabbrowser-tab[selected="true"] > .tab-image-left,
@@ -540,29 +554,29 @@ tab[selected="true"],
 }
 
 .tabbrowser-tab > .tab-image-left {
-  background-position:left 0px;
+  background-position:left 2px;
 }
 .tabbrowser-tab:hover > .tab-image-left {
-  background-position:left -30px;
+  background-position:left -28px;
 }
 .tabbrowser-tab:active > .tab-image-left {
-  background-position:left -60px;
+  background-position:left -58px;
 }
 .tabbrowser-tab[disabled="true"] > .tab-image-left {
-  background-position:left -90px;
+  background-position:left -88px;
 }
 
 .tabbrowser-tab > .tab-image-right {
-  background-position:right 0px;
+  background-position:right 2px;
 }
 .tabbrowser-tab:hover > .tab-image-right {
-  background-position:right -30px;
+  background-position:right -28px;
 }
 .tabbrowser-tab:active > .tab-image-right {
-  background-position:right -60px;
+  background-position:right -58px;
 }
 .tabbrowser-tab[disabled="true"] > .tab-image-right {
-  background-position:right -90px;
+  background-position:right -88px;
 }
 
 
@@ -612,22 +626,6 @@ tabpanels {
  * Tab Scrollbox Arrow Buttons
  */
 
-.tabbrowser-arrowscrollbox > .scrollbutton-up {
-
-}
-
-.tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover {
-
-}
-
-.tabbrowser-arrowscrollbox > stack > .scrollbutton-rel-box > .scrollbutton-down {
-
-}
-
-.tabbrowser-arrowscrollbox > stack > .scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
-
-}
-
 
 
 
@@ -668,6 +666,7 @@ BUTTONS
 {
   border:1px solid rgb(28,67,0);
 
+  border:1px solid rgb(53,95,19);
 
 background-image:url('chrome://songbird/skin/nav-bar/bg-button.png');
 background-repeat:repeat-x;
@@ -682,12 +681,32 @@ background-position:center 0px;
   margin:0;
 }
 
-toolbarbutton[disabled="true"],
-toolbarbutton[disabled="true"]:active,
-toolbarbutton[disabled="true"]:hover
-{
-  opacity: 0.25;
+
+#nav-bar toolbarbutton[disabled="true"] {
+  background-image:none !important;
+  background-color:rgb(151,202,98) !important;
 }
+
+#nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-icon,
+#nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-menu-dropmarker,
+#nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
+  opacity:0.25 !important;
+}
+
+#nav-bar toolbarbutton:hover {
+  background-position:center -20px;  
+}
+#nav-bar toolbarbutton:active {
+  background-position:center -40px;  
+}
+#nav-bar toolbarbutton:active > .toolbarbutton-icon,
+#nav-bar toolbarbutton:active > .toolbarbutton-menu-dropmarker,
+#nav-bar toolbarbutton:active > .toolbarbutton-menulist-dropmarker,
+#nav-bar toolbarbutton:active > .toolbarbutton-menubutton-dropmarker {
+  opacity:0.5 !important;
+}
+
+
 
 toolbarbutton:hover
 {
@@ -700,18 +719,103 @@ toolbarbutton:active
 
 
 
+
+menulist[disabled="true"]
+{
+  cursor: default;
+
+  background-color: transparent;
+}
+
+menulist[disabled="true"] > .menulist-label-box > .menulist-label
+{
+}
+
+menulist:focus,
+menulist[focused="true"] 
+{
+}
+
+menulist {
+  border:1px solid rgb(80,80,80);
+  background-color:rgb(180,180,180);
+  padding:0;
+  -moz-border-radius:3px;
+  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}
+.menulist-label {
+  padding:3px 8px;
+  margin:0;
+}
+
+
+.menulist-editable-box {
+
+border-top:1px solid rgb(120,120,120);
+border-right:1px solid rgb(140,140,140);
+border-bottom:1px solid rgb(200,200,200);
+border-left:1px solid rgb(140,140,140);
+
+  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  background-color:white;
+
+  
+  margin:2px 0px 1px 2px;
+  padding:0px 4px 1px 4px;
+}
+
+
 /* button button */
+
+.button-box {
+  padding:3px 8px;
+/*  border:1px solid green;*/
+}
+
+button:focus,
+checkbox:focus,
+radio[focused="true"] {
+  outline:2px solid lime !important;
+    outline-offset:0px !important;
+  -moz-outline-radius:5px !important;
+}
+
+button[disabled="true"] {
+  background-image:none;
+  background-color:rgb(180,180,180);
+}
+button[disabled="true"] .button-text {
+  color:gray;
+}
+
 
 button {
   border:1px solid rgb(80,80,80);
-  background-color:rgb(180,180,180);
 
+  
+    -moz-border-radius:3px;
+/*
+  -moz-border-bottom-colors: rgba(255,255,255,0.25) black !important;
+
+  -moz-border-radius-topleft:1px;
+  -moz-border-radius-topright:1px;
+
+  -moz-border-radius-bottomleft:2px;
+  -moz-border-radius-bottomright:2px;
+*/
+  
+  background-color:rgb(180,180,180);
+  
+  -moz-background-clip:padding;
   background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
   background-repeat:repeat-x;
   background-position:center top;
   
-  -moz-border-radius:3px;
-  padding:3px 0px;
+  padding:0px;
   margin:4px;
   min-width:0px;
   min-height:0px;
@@ -719,7 +823,7 @@ button {
 .button-text {
   color:rgb(40,40,40);
   font-size:11px;
-  padding:0px 8px;
+  padding:0px;
   margin:0;
 }
 button:hover {
@@ -734,8 +838,6 @@ button:focus {
 button:focus > .button-box > label {
 }
 
-button[disabled="true"] .button-text {
-}
 
 .toolbarbutton-menubutton-button > .toolbarbutton-icon {
   padding:0 !important;
@@ -758,7 +860,10 @@ toolbarbutton[type="menu"] > .toolbarbutton-icon {
   min-width:0 !important;
 }
 toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
-  border-right:1px dotted gray !important;
+  border-right:1px solid rgb(53,95,19) !important;
+  -moz-border-radius-topright:0px!important;
+  -moz-border-radius-bottomright:0px!important;
+  
 }
 
 
@@ -1144,36 +1249,6 @@ MENULIST
 .menulist-label
 {
 
-}
-
-menulist
-{
-  color: rgb(40,40,40);
-
-  border:1px solid rgb(80,80,80);
-  background-color:rgb(180,180,180);
-
-  -moz-border-radius:0px !important;
-  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
-  background-repeat:repeat-x;
-  background-position:center top;
-  padding:2px 0px !important;
-}
-
-menulist[disabled="true"]
-{
-  cursor: default;
-
-  background-color: transparent;
-}
-
-menulist[disabled="true"] > .menulist-label-box > .menulist-label
-{
-}
-
-menulist:focus,
-menulist[focused="true"] 
-{
 }
 
 
@@ -1686,7 +1761,6 @@ sb-sys-titlebar {
 
 
 #servicepane_box {
-  background-color:rgb(80,80,80);
 /*  border-top:1px solid brown;*/
 }
 #servicepane_box[tab_bar_showing="true"] {
@@ -1783,7 +1857,7 @@ treechildren::-moz-tree-twisty( closed selected ) {
 
 
 
-
+tree,
 .sb-filterlist-tree,
 .sb-playlist-tree {
   background-image: url('chrome://songbird/skin/base-elements/bg-empty.png') !important;
@@ -1897,7 +1971,8 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
   border-bottom:1px solid green !important;
 }
 .servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
-  border:2px solid blue !important;
+  border:2px solid black !important;
+  -moz-border-radius:6px;
 }
 
 
@@ -1929,9 +2004,6 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 
 .closable-box-image[open="true"] {
   list-style-image:url("chrome://songbird/skin/base-elements/button-twisty-open.png");
-}
-radiogroup {
-  background-color:purple !important;
 }
 
 

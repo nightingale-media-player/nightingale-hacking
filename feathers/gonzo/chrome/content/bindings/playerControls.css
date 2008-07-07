@@ -71,6 +71,13 @@ Imported by bindings.css or directly into feathers.
   display:none;
 }
 
+.sb-player-volume-slider .button-box,
+.sb-player-button .button-box {
+  padding:0;
+  margin:0;
+  border:none;
+}
+
 /*play&pause*/
 .sb-player-play-button-play > button,
 .sb-player-playpause-button-play > button,
@@ -205,6 +212,9 @@ Mute and Slider
   max-width:16px;
   max-height:16px;
   border:none;
+  
+  background-color:transparent;
+  -moz-border-radius:0;
 }
 
 .sb-player-volume-slider[sbid="sb-progress-slider-min"] {

@@ -55,12 +55,38 @@ Imported by bindings.css or directly into feathers.
 #home-button {
   list-style-image: url(chrome://songbird/skin/nav-bar/button-home.png);
 }
-#bookmark-button {
+#bookmark-subscribe-button > .clickhold-button {
   list-style-image: url(chrome://songbird/skin/nav-bar/button-add.png);
 }
 #mediapages-button > .toolbarbutton-icon {
   list-style-image: url(chrome://songbird/skin/nav-bar/button-media-page.png);
 }
+
+
+
+#bookmark-subscribe-button > .clickhold-button {
+  margin-left:0 !important;
+  margin-right:0 !important;
+  -moz-border-radius-topleft:0px !important;
+  -moz-border-radius-bottomleft:0px!important;
+  min-width:12px !important;
+  width:12px !important;
+  max-width:12px !important;
+}
+
+#forward-button {
+  border-left:none !important;
+  -moz-border-radius-topleft:0px !important;
+  -moz-border-radius-bottomleft:0px!important;
+  min-width:21px !important;
+  width:21px !important;
+  max-width:21px !important;
+}
+#back-button {
+  -moz-border-radius-topright:0px!important;
+  -moz-border-radius-bottomright:0px!important;
+}
+
 
 
 #back-button,
@@ -70,12 +96,17 @@ Imported by bindings.css or directly into feathers.
 #reload-button,
 .sb-browser-stopreload-reload-button,
 #home-button,
-#bookmark-button,
+#bookmark-subscribe-button > .clickhold-button,
 #mediapages-button > .toolbarbutton-icon
 {
   -moz-image-region: rect(0px 16px 16px 0px);
-  margin:0 2px;
+  margin:0 3px;
 }
+#bookmark-subscribe-button > .clickhold-button {
+  -moz-image-region: rect(0px 8px 8px 0px);
+  margin:0;
+}
+/*
 #back-button:hover,
 #forward-button:hover,
 #stop-button:hover,
@@ -83,7 +114,6 @@ Imported by bindings.css or directly into feathers.
 #reload-button:hover,
 .sb-browser-stopreload-reload-button:hover,
 #home-button:hover,
-#bookmark-button:hover,
 #mediapages-button:hover > .toolbarbutton-icon
 {
   -moz-image-region: rect(16px 16px 32px 0px);
@@ -95,7 +125,6 @@ Imported by bindings.css or directly into feathers.
 #reload-button:active,
 .sb-browser-stopreload-reload-button:active,
 #home-button:active,
-#bookmark-button:active,
 #mediapages-button:active > .toolbarbutton-icon
 {
   -moz-image-region: rect(32px 16px 48px 0px);
@@ -107,13 +136,22 @@ Imported by bindings.css or directly into feathers.
 #reload-button[disabled="true"],
 .sb-browser-stopreload-reload-button[disabled="true"],
 #home-button[disabled="true"],
-#bookmark-button[disabled="true"],
 #mediapages-button[disabled="true"] > .toolbarbutton-icon
 {
   -moz-image-region: rect(48px 16px 64px 0px) !important;
 }
 
-
+*/
+#back-button[disabled="true"] > .toolbarbutton-icon,
+#forward-button[disabled="true"] > .toolbarbutton-icon,
+#stop-button[disabled="true"] > .toolbarbutton-icon,
+.sb-browser-stopreload-stop-button[disabled="true"] > .toolbarbutton-icon,
+#reload-button[disabled="true"] > .toolbarbutton-icon,
+.sb-browser-stopreload-reload-button[disabled="true"] > .toolbarbutton-icon,
+#home-button[disabled="true"] > .toolbarbutton-icon,
+#bookmark-subscribe-button > .clickhold-button[disabled="true"] > .toolbarbutton-icon,
+#mediapages-button[disabled="true"] > .toolbarbutton-icon {
+}
 
 
 
@@ -168,7 +206,10 @@ LOCATION TEXTBOX
   min-height: 22px;
   margin: 0px;
   padding: 0px;
+  border-right:none !important;
+/*  background-color:white !important;*/
 }
+
 
 searchbar,
 .locationbar-textbox {
@@ -176,6 +217,11 @@ searchbar,
   border-right:1px solid rgb(78,124,38);
   border-bottom:1px solid rgb(149,199,95);
   border-left:1px solid rgb(78,124,38);
+  
+/*
+    border:1px solid rgb(28,67,0);
+*/
+
 }
 
 

@@ -8,8 +8,9 @@ label
 
 radiogroup {
   padding:4px;
-  background-color:white;
+  background-color:transparent;
   border:1px solid gray;
+  -moz-border-radius:3px;
 }
 
 
@@ -18,19 +19,28 @@ radiogroup {
 groupbox {
   background-color:white;
   border:1px solid gray;
+  -moz-border-radius:3px;
 }
 .groupbox-body {
   padding: 4px;
   margin: 0;
 }
 .groupbox-title {
-  background-color:white;
+  background-color:rgb(235,235,235) !important;
   border:1px solid gray;
   border-bottom:none;
+  -moz-border-radius-topleft:3px;
+  -moz-border-radius-topright:3px;
+  padding:0;
+  margin:0;
+}
+groupbox caption {
+  border-bottom:none !important;
+  padding:0 !important;
+  margin:0 !important;
 }
 .caption-text {
   font-size:9px !important;
-  padding-top:2px;
 }
 
 

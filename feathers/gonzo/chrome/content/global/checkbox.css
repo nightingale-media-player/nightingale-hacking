@@ -124,6 +124,6 @@ radio[selected="true"][disabled="true"] > .radio-check {
 checkbox[focused="true"],
 radio[focused="true"] {
 }
-checkbox[focused="true"][focused="true"],
+checkbox[disabled="true"][focused="true"],
 radio[disabled="true"][focused="true"] {
 }

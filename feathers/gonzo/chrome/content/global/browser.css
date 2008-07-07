@@ -34,21 +34,20 @@
  */
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up {
-  background-color:blue;
+  background-color:;
   -moz-border-radius:0px;
-  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-left.png");
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-sort-ascending.png") !important;
+  -moz-image-region:auto;
+  margin:0 1px;
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up[disabled="true"] {
-  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-left-disabled.png");
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover {
-  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-left-disabled.png");
 }
  
 .tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover:active {
-  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-left-hover.png");
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up > .toolbarbutton-icon {
@@ -57,25 +56,22 @@
 .scrollbutton-rel-box > .scrollbutton-down-box {
 }
 
-.scrollbutton-rel-box > .scrollbutton-down {
-  background-color:yellow;
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
+  background-color:yellow !important;
   -moz-border-radius:0px;
   list-style-image: url("chrome://songbird/skin/scrollbox/scroll-right.png");
 }
 
-.scrollbutton-rel-box > .scrollbutton-down[disabled="true"] {
-  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-right-disabled.png");
+.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down[disabled="true"] {
 }
 
-.scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
-  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-right-disabled.png");
+.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down:not([disabled="true"]):hover {
 }
 
-.scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
-  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-right-hover.png");
+.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down:not([disabled="true"]):hover:active {
 }
 
-.scrollbutton-rel-box > .scrollbutton-down > .toolbarbutton-icon {
+.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down > .toolbarbutton-icon {
 }
 
 
@@ -103,7 +99,7 @@
 .tabs-alltabs-button {
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png);
   background-repeat:no-repeat;
-  background-position:left 0px;
+  background-position:left 2px;
 
   -moz-border-radius:0px !important;
   margin:0 0 0 1px;
@@ -112,17 +108,17 @@
 }
 
 .tabs-alltabs-button:hover {
-  background-position:left -30px;
+  background-position:left -28px;
 }
 .tabs-alltabs-button:active {
-  background-position:left -60px;
+  background-position:left -58px;
 }
 .tabs-alltabs-button[disabled="true"] {
-  background-position:left -90px !important;
+  background-position:left -88px !important;
 }
 .tabs-alltabs-button[open="true"] {
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
-  background-position:left -60px !important;
+  background-position:left -58px !important;
 }
 
 .scrollbutton-rel-box > .scrollbutton-down {

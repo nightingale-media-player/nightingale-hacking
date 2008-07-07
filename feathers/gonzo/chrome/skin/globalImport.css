@@ -37,7 +37,7 @@ When the Songbird global skin is the active provider for the
 chrome://global/skin package, chrome://global/skin/global.css will 
 in turn import this global.css file. The Songbird global skin, 
 located at /app/skin/global and chrome://songbird-global/skin/, 
-is used with feathers that want complete control over the look and
+is used with feathers that want complete control over thee look and
 feel of the application.
 
 This file can be used to pull in additional styles that should be
@@ -54,10 +54,10 @@ For more information, visit http://developer.songbirdnest.com/
 /*
 @import url(chrome://songbird-bindings/skin/bindings.css); 
 */
-@import url(chrome://gonzo/content/bindings/bindings.css); 
+@import url(chrome://gonzo-dev/content/bindings/bindings.css); 
 
 /* size and positioning for the main application window 
-@import url(chrome://gonzo/content/css/mainplayer.css); 
+@import url(chrome://gonzo-dev/content/css/mainplayer.css); 
 */
 /* size and positioning for the miniplayer window 
 @import url(chrome://songbird/content/feathers/basic-layouts/css/miniplayer.css); 
