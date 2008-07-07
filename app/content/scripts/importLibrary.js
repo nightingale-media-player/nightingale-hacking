@@ -41,6 +41,16 @@
 
 //------------------------------------------------------------------------------
 //
+// Import library dialog imported services.
+//
+//------------------------------------------------------------------------------
+
+// Songbird imports.
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+
+
+//------------------------------------------------------------------------------
+//
 // Import library dialog defs.
 //
 //------------------------------------------------------------------------------
@@ -83,6 +93,24 @@ var importLibrary = {
                        [ "iTunes" ]);
     var userQueryNode = document.createTextNode(userQuery);
     queryDescElem.appendChild(userQueryNode);
+
+    // Initialize the import library preferences UI.
+    importLibraryPrefsUI.initialize();
+
+    // Read the import library preferences.
+    importLibraryPrefsUI.readPrefs();
+  },
+
+
+  /**
+   * Handle an accept event.
+   */
+
+  doAccept: function importLibrary_doAccept() {
+    // Write the import library preferences.
+    importLibraryPrefsUI.writePrefs();
+
+    return true;
   }
 }
 

@@ -56,7 +56,7 @@
   buttonlabelaccept="&window.yes;"
   buttonlabelcancel="&window.no;"
   onload="importLibrary.doLoad();"
-  ondialogaccept="onExit();"
+  ondialogaccept="if (importLibrary.doAccept()) onExit();"
 >
 
   <!-- *************************************************************************
@@ -64,6 +64,13 @@
    * Content.
    *
    ************************************************************************* -->
+
+  <!-- Dialog commands. -->
+  <commandset>
+    <command id="browse_command"
+             label="&window.browse;"
+             oncommand="importLibraryPrefsUI.doBrowseCommand(event);"/>
+  </commandset>
 
   <!-- Use Songbird window region. -->
   <windowregion/>
@@ -84,27 +91,40 @@
 
     <!-- Library path text box. -->
     <label value="&import_library.library_file_label;"/>
-    <textbox id="import_library_path_textbox"/>
+    <textbox id="import_library_path_textbox"
+             prefid="library_file_path_pref"
+             prefname="songbird.library_importer.library_file_path"
+             preftype="unichar"/>
 
     <!-- Browse button. -->
-    <button id="import_library_browse_button" label="&window.browse;"/>
+    <button id="import_library_browse_button" command="browse_command"/>
 
   </hbox> <!-- import_library_path_box -->
 
-  <!-- Checkboxes. -->
-  <vbox id="import_library_checkbox_box">
+  <!-- Library import options. -->
+  <vbox id="import_library_checkbox_box"
+        oncommand="importLibraryPrefsUI.doImportOptionsChange(event);">
 
     <!-- Checkbox for startup auto import. -->
     <checkbox id="import_library_auto_import_checkbox"
+              prefid="auto_import_pref"
+              prefname="songbird.library_importer.auto_import"
+              preftype="bool"
               label="&import_library.auto_import_checkbox;"/>
 
     <!-- Checkbox for auto import query. -->
     <checkbox id="import_library_auto_import_no_query_checkbox"
+              prefid="auto_import_no_query_pref"
+              prefname="songbird.library_import.auto_import_no_query"
+              preftype="bool"
               label="&import_library.auto_import_no_query_checkbox;"
               class="indent"/>
 
     <!-- Checkbox for playlist import. -->
     <checkbox id="import_library_dont_import_playlist_checkbox"
+              prefid="dont_import_playlists_pref"
+              prefname="songbird.library_import.dont_import_playlists"
+              preftype="bool"
               label="&import_library.dont_import_playlists_checkbox;"/>
 
   </vbox> <!-- Checkboxes. -->
@@ -120,13 +140,16 @@
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/windowUtils.js" />
+          src="chrome://songbird/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
 
   <!-- Import the import library dialog services. -->
+  <script
+    type="application/x-javascript"
+    src="chrome://songbird/content/scripts/preferences/importLibraryPrefs.js"/>
   <script type="application/x-javascript"
-          src="chrome://songbird/content/scripts/importLibrary.js" />
+          src="chrome://songbird/content/scripts/importLibrary.js"/>
 
 </dialog>
 

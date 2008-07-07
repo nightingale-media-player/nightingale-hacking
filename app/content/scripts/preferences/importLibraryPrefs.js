@@ -28,20 +28,31 @@
 
 /**
  * \file  importLibraryPrefs.js
- * \brief Javascript source for the import library preferences pane.
+ * \brief Javascript source for the import library preferences UI.
  */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Import library preferences pane.
+// Import library preferences UI services.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //
-// Import library preferences pane.
+// Import library preferences UI imported services.
+//
+//------------------------------------------------------------------------------
+
+// Songbird imports.
+Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+
+
+//------------------------------------------------------------------------------
+//
+// Import library preferences UI services defs.
 //
 //------------------------------------------------------------------------------
 
@@ -57,12 +68,359 @@ if (typeof(Cu) == "undefined")
 
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
-// Import library preferences pane services.
+// Import library preferences UI services.
+//
+//   These services provide support for implementing library importer preference
+// UI inside and outside of a preference window.
+//   Elements such as textboxes and checkboxes can be bound to preferences
+// without using real preference elements.  In these cases, the preference name
+// and type are specified with the "prefname" and "preftype" attributes.
+//   All preference or preference bound elements should specify the appropriate
+// preference ID from the following list using the "prefid" attribute:
+//
+//   library_file_path_pref     Library import file path preference.
+//   auto_import_pref           Startup auto-import preference.
+//   auto_import_no_query_pref  Auto-import no query preference.
+//   dont_import_playlists_pref Don't import playlists preference.
+//   unsupported_media_alert_pref
+//                              Alert user on unsupported media preference.
 //
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-var importLibraryPrefs = {
+var importLibraryPrefsUI = {
+  //
+  // Import library preferences UI services fields.
+  //
+  //   _userReadableLibraryType Type of library in user readable format.
+  //   _defaultLibraryFileName  Default file name of library.
+  //   _libraryFileExtFilter    Filter of library file extensions.
+  //   _prefBranch              Root preference branch object.
+  //
+
+  _userReadableLibraryType: null,
+  _defaultLibraryFileName: null,
+  _libraryFileExtFilter: null,
+  _prefBranch: null,
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Public services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Initialize the import library preferences UI services.
+   */
+
+  initialize: function importLibraryPrefsUI_initialize() {
+    // Get the library importer and its attributes.
+    //XXXeps don't hard code.
+    this._userReadableLibraryType = "iTunes";
+    this._defaultLibraryFileName = "iTunes Music Library.xml";
+    this._libraryFileExtFilter = "xml";
+
+    // Get the preferences branch.
+    this._prefBranch = Cc["@mozilla.org/preferences-service;1"]
+                         .getService(Ci.nsIPrefBranch);
+
+    // Update the UI.
+    this._update();
+  },
+
+
+  /**
+   * Read preference values into all elements bound to a preference.
+   */
+
+  readPrefs: function importLibraryPrefsUI_readPrefs() {
+    // Read the preferences into all preference bound elements.
+    var prefElemList = DOMUtils.getElementsByAttribute(document, "prefname");
+    for (var i = 0; i < prefElemList.length; i++) {
+      // Get the preference bound element.
+      var prefElem = prefElemList[i];
+
+      // Don't read into real preference elements.
+      if (prefElem.localName == "preference")
+        continue;
+
+      // Read the preference value and set the preference bound element value.
+      var prefValue = this._readPrefValue(prefElem);
+      this._setPrefElemValue(prefElem, prefValue);
+    }
+
+    // Update the UI.
+    this._update();
+  },
+
+
+  /**
+   * Write preference values from all elements bound to a preference.
+   */
+
+  writePrefs: function importLibraryPrefsUI_writePrefs() {
+    // Write the preferences from all preference bound elements.
+    var prefElemList = DOMUtils.getElementsByAttribute(document, "prefname");
+    for (var i = 0; i < prefElemList.length; i++) {
+      // Get the preference bound element.
+      var prefElem = prefElemList[i];
+
+      // Don't write from real preference elements.
+      if (prefElem.localName == "preference")
+        continue;
+
+      // Write the preference value from the preference bound element.
+      var prefValue = this._getPrefElemValue(prefElem);
+      this._writePrefValue(prefElem, prefValue);
+    }
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Event handling services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Handle the browse command event specified by aEvent.
+   *
+   * \param aEvent              Browse command event.
+   */
+
+  doBrowseCommand: function importLibraryPrefsUI_doBrowseCommand(aEvent) {
+    // Get the currently selected import library file and its directory.
+    var importLibraryPathPrefElem = this._getPrefElem("library_file_path_pref");
+    var importLibraryFile = Cc["@mozilla.org/file/local;1"]
+                              .createInstance(Ci.nsILocalFile);
+    var importLibraryDir = null;
+    try {
+      importLibraryFile.initWithPath(importLibraryPathPrefElem.value);
+      importLibraryDir = importLibraryFile.parent;
+    } catch (ex) {
+      importLibraryFile = null;
+      importLibraryDir = null;
+    }
+
+    // Set up a file picker for browsing.
+    var filePicker = Cc["@mozilla.org/filepicker;1"]
+                       .createInstance(Ci.nsIFilePicker);
+    var filePickerMsg = SBFormattedString("import_library.file_picker_msg",
+                                          [ this._userReadableLibraryType ]);
+    filePicker.init(window, filePickerMsg, Ci.nsIFilePicker.modeOpen);
+
+    // Set the file picker default file name.
+    filePicker.defaultString = this._defaultLibraryFileName;
+
+    // Set the file picker initial directory.
+    if (importLibraryDir && importLibraryDir.exists())
+      filePicker.displayDirectory = importLibraryDir;
+
+    // Set the list of file picker file extension filters.
+    var filePickerFilterMsg =
+          SBFormattedString("import_library.file_picker_filter_msg",
+                            [ this._userReadableLibraryType ]);
+    filePicker.appendFilter (filePickerFilterMsg, this._libraryFileExtFilter);
+
+    // Show the file picker.
+    var result = filePicker.show();
+
+    // Update the scan directory path.
+    if (result == Ci.nsIFilePicker.returnOK)
+      importLibraryPathPrefElem.value = filePicker.file.path;
+  },
+
+
+  /**
+   * Handle the import options change event specified aEvent.
+   *
+   * \param aEvent              Import options change event.
+   */
+
+  doImportOptionsChange: function
+                           importLibraryPrefsUI_doImportOptionsChange(aEvent) {
+    // Update the UI.
+    this._update();
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Update the UI.
+   */
+
+  _update: function importLibrary__update() {
+    // Get the auto-import preference value.
+    var autoImportPrefElem = this._getPrefElem("auto_import_pref");
+    var autoImportPrefValue = this._getPrefElemValue(autoImportPrefElem);
+
+    // Disable the auto-import query preference if auto-import is not enabled.
+    var autoImportNoQueryPrefElem = this._getPrefElem
+                                           ("auto_import_no_query_pref");
+    autoImportNoQueryPrefElem.disabled = !autoImportPrefValue;
+  },
+
+
+  /**
+   * Return the preference element with the preference ID specified by aPrefID.
+   *
+   * \param aPrefID             ID of preference element to get.
+   *
+   * \return                    Preference element.
+   */
+
+  _getPrefElem: function importLibrary__getPrefElem(aPrefID) {
+    // Get the requested element.
+    var prefElemList = DOMUtils.getElementsByAttribute(document,
+                                                       "prefid",
+                                                       aPrefID);
+    if (!prefElemList || (prefElemList.length == 0))
+      return null;
+
+    return prefElemList[0];
+  },
+
+
+  /**
+   * Return the preference value of the element specified by aElement.
+   *
+   * \param aElement            Element for which to get preference value.
+   *
+   * \return                    Preference value of element.
+   */
+
+  _getPrefElemValue: function importLibrary__getPrefElemValue(aElement) {
+    // Return the checked value for checkbox preferences.
+    if (aElement.localName == "checkbox")
+      return aElement.checked;
+
+    return aElement.value;
+  },
+
+
+  /**
+   * Set the preference value of the element specified by aElement to the value
+   * specified by aValue.
+   *
+   * \param aElement            Element for which to set preference value.
+   * \param aValue              Preference value.
+   */
+
+  _setPrefElemValue: function importLibrary__setPrefElemValue(aElement,
+                                                              aValue) {
+    // Set the checked value for checkbox preferences.
+    if (aElement.localName == "checkbox") {
+      aElement.checked = aValue;
+      return;
+    }
+
+    aElement.value = aValue;
+  },
+
+
+  /**
+   * Read and return the preference value from the element specified by
+   * aElement in the same manner as the "preference" xul element.
+   *
+   * \param aElement            Element for which to read preference value.
+   *
+   * \return                    Preference value.
+   */
+
+  _readPrefValue: function importLibraryPrefsUI__readPrefValue(aElement) {
+    // Get the preference name and type.
+    var prefName = aElement.getAttribute("prefname");
+    var prefType = aElement.getAttribute("preftype");
+
+    // Read the preference value.
+    var prefValue = null;
+    try {
+      switch (prefType) {
+        case "int" :
+          prefValue = this._prefBranch.getIntPref(prefName);
+          break;
+
+        case "bool" :
+          prefValue = this._prefBranch.getBoolPref(prefName);
+          if (aElement.getAttribute("prefinverted") == "true")
+            prefValue = !prefValue;
+          break;
+
+        case "string" :
+        case "unichar" :
+          prefValue = this._prefBranch.getComplexValue(prefName,
+                                                       Ci.nsISupportsString);
+          break;
+
+        default :
+          break;
+      }
+    } catch (ex) {}
+
+    return prefValue;
+  },
+
+
+  /**
+   * Write the preference value specified by aValue to the preference bound to
+   * the element specified by aElement in the same manner as the "preference"
+   * xul element.
+   *
+   * \param aElement            Element for which to write preference value.
+   * \param aValue              Preference value.
+   */
+
+  _writePrefValue: function importLibraryPrefsUI__writePrefValue(aElement,
+                                                                 aValue) {
+    // Get the preference name and type.
+    var prefName = aElement.getAttribute("prefname");
+    var prefType = aElement.getAttribute("preftype");
+
+    // Write the preference value.
+    switch(prefType) {
+      case "int" :
+        this._prefBranch.setIntPref(prefName, aValue);
+        break;
+
+      case "bool" :
+        if (aElement.getAttribute("prefinverted") == "true")
+          this._prefBranch.setBoolPref(prefName, !aValue);
+        else
+          this._prefBranch.setBoolPref(prefName, aValue);
+        break;
+
+      case "string" :
+      case "unichar" :
+        var value = Cc["@mozilla.org/supports-string;1"]
+                      .createInstance(Ci.nsISupportsString);
+        value.data = aValue;
+        this._prefBranch.setComplexValue(prefName, Ci.nsISupportsString, value);
+        break;
+
+      default :
+        break;
+    }
+  }
+}
+
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//
+// Import library preference pane services.
+//
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+var importLibraryPrefsPane = {
   //----------------------------------------------------------------------------
   //
   // Event handling services.
@@ -74,7 +432,8 @@ var importLibraryPrefs = {
    */
 
   doPaneLoad: function importLibraryPrefs_doPaneLoad() {
-    dump("importLibraryPrefs.doPaneLoad\n");
+    // Initialize the import library preferences UI.
+    importLibraryPrefsUI.initialize();
   }
 }
 

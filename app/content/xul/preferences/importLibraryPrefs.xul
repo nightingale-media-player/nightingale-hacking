@@ -47,7 +47,58 @@
 
   <!-- Import library preference pane. -->
   <prefpane id="import_library_prefpane"
-            onpaneload="importLibraryPrefs.doPaneLoad();">
+            onpaneload="importLibraryPrefsPane.doPaneLoad();">
+
+    <!-- Pane preferences. -->
+    <preferences>
+
+      <!-- Library path preference. -->
+      <preference
+        id="library_file_path_pref"
+        prefid="library_file_path_pref"
+        name="songbird.library_importer.library_file_path"
+        type="unichar"/>
+
+      <!-- Startup auto-import preference. -->
+      <preference
+        id="auto_import_pref"
+        prefid="auto_import_pref"
+        name="songbird.library_importer.auto_import"
+        type="bool"
+        onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
+
+      <!-- Auto-import no query preference. -->
+      <preference
+        id="auto_import_no_query_pref"
+        prefid="auto_import_no_query_pref"
+        name="songbird.library_import.auto_import_no_query"
+        type="bool"
+        onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
+
+      <!-- Import playlists preference. -->
+      <preference
+        id="dont_import_playlists_pref"
+        prefid="dont_import_playlists_pref"
+        name="songbird.library_import.dont_import_playlists"
+        type="bool"
+        onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
+
+      <!-- Alert user on unsupported media preference. -->
+      <preference
+        id="unsupported_media_alert_pref"
+        prefid="unsupported_media_alert_pref"
+        name="songbird.library_import.unsupported_media_alert"
+        type="bool"
+        onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
+
+    </preferences>
+
+    <!-- Pane commands. -->
+    <commandset>
+      <command id="browse_command"
+               label="&window.browse;"
+               oncommand="importLibraryPrefsUI.doBrowseCommand(event);"/>
+    </commandset>
 
     <!-- Library path preference controls. -->
     <groupbox>
@@ -60,10 +111,11 @@
 
         <!-- Library path text box. -->
         <label value="&import_library.library_file_label;"/>
-        <textbox id="import_library_path_textbox"/>
+        <textbox id="import_library_path_textbox"
+                 preference="library_file_path_pref"/>
 
         <!-- Browse button. -->
-        <button id="import_library_browse_button" label="&window.browse;"/>
+        <button id="import_library_browse_button" command="browse_command"/>
 
       </hbox>
 
@@ -77,19 +129,23 @@
 
       <!-- Checkbox for startup auto import. -->
       <checkbox id="import_library_auto_import_checkbox"
+                preference="auto_import_pref"
                 label="&import_library.auto_import_checkbox;"/>
 
       <!-- Checkbox for auto import query. -->
       <checkbox id="import_library_auto_import_no_query_checkbox"
+                preference="auto_import_no_query_pref"
                 label="&import_library.auto_import_no_query_checkbox;"
                 class="indent"/>
 
       <!-- Checkbox for playlist import. -->
       <checkbox id="import_library_dont_import_playlist_checkbox"
+                preference="dont_import_playlists_pref"
                 label="&import_library.dont_import_playlists_checkbox;"/>
 
       <!-- Checkbox for alerting user on unsupported media. -->
       <checkbox id="import_library_unsupported_media_alert_checkbox"
+                preference="unsupported_media_alert_pref"
                 label="&import_library.unsupported_media_alert_checkbox;"/>
 
     </groupbox>
