@@ -155,7 +155,7 @@ var gSongbirdPlayerWindow = {
  
         // XXX Tied to the treeView at the moment.  This needs to be made generic.
         playbackService.playView(view, 
-            Math.max(view.treeView.selection.currentIndex, 0));
+            Math.max(view.treeView.selection.currentIndex, -1));
         
         // Since we've handled this play event, prevent any fallback action from
         // occurring.

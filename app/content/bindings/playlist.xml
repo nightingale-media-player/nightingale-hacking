@@ -1496,7 +1496,7 @@
                 Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                           .getService(Components.interfaces.sbIPlaylistPlayback);
              playbackService.playView(this.mediaListView, 
-                Math.max(this.mediaListView.selection.currentIndex, 0));
+                Math.max(this.mediaListView.selection.currentIndex, -1));
            }
          ]]>
         </body>
