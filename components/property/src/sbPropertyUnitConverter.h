@@ -75,6 +75,9 @@ protected:
                     const nsAString &aUnitShortName, 
                     PRBool isNative = PR_FALSE);
 
+  void SetStringBundle(const nsAString &aStringBundle);
+
+
   NS_IMETHOD ConvertFromNativeToUnit(PRFloat64 aValue, 
                                      PRUint32 aUnitID, 
                                      PRFloat64 &_retVal)=0;
@@ -84,6 +87,7 @@ protected:
 
   PRLock* mLock;
   nsString mNative;
+  nsString mStringBundle;
 
   typedef struct {
     nsCOMPtr<sbIPropertyUnit> mUnit;

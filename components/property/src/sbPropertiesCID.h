@@ -85,6 +85,20 @@
 #define SB_DATETIMEPROPERTYINFO_CONTRACTID                 \
   "@songbirdnest.com/Songbird/Properties/Info/Datetime;1"
 
+#define SB_DURATIONPROPERTYINFO_DESCRIPTION                 \
+  "Songbird Duration Property Info Implementation"
+#define SB_DURATIONPROPERTYINFO_CID                         \
+  { /*{063ed9e8-90ab-4d7f-990f-9ac99491C967}*/              \
+    0x63ed9e8,                                              \
+    0x90ab,                                                 \
+    0x4d7f,                                                 \
+    { 0x99, 0xf, 0x9a, 0xc9, 0x94, 0x91, 0xc9, 0x67 }       \
+  }
+#define SB_DURATIONPROPERTYINFO_CONTRACTID                  \
+  "@songbirdnest.com/Songbird/Properties/Info/Duration;1"
+
+
+
 #define SB_NUMBERPROPERTYINFO_DESCRIPTION                  \
   "Songbird Number Property Info Implementation"
 #define SB_NUMBERPROPERTYINFO_CID                          \

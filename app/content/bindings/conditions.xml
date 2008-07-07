@@ -45,7 +45,7 @@
             class="smart-condition-item-box"
             align="center"
             flex="1"
-            oninput="document.getBindingParent(document.getBindingParent(this)).onInput(this);"
+            oninput="document.getBindingParent(document.getBindingParent(this)).onInput(this, event);"
             drawer-prop-map="useunits=useunits,interval=interval"
         >
           <!-- List of properties -->
@@ -53,7 +53,7 @@
               id="propertypopup" 
               class="smart-condition-list" 
               value="artist" 
-              drawer-prop-map="value=metadata" 
+              drawer-prop-map="value=metadata,gotuserinput1=gotuserinput1,gotuserinput2=gotuserinput2" 
               sizetopopup="none">
             <xul:menupopup class="smart-condition-popup">
             </xul:menupopup>
@@ -266,10 +266,13 @@
       </method>
       
       <!-- Create items for a menu based on a name/value array, and perform
-           localization of partial entities -->
+           localization of partial entities. Note that the stringBundleUrl
+           parameter is optional, the default songbird stringbundle will
+           be used if none was provided. -->
       <method name="_generateMenuPopup">
         <parameter name="aParent"/>
         <parameter name="aMenuitemArray"/>
+        <parameter name="stringBundleUrl"/>
         <body>
           <![CDATA[
             // Clear the current set of menuitems
@@ -288,9 +291,15 @@
                 obj = {};
               }
               
+              var stringBundle;
+              if (stringBundleUrl) {
+                stringBundle = this._Cc["@mozilla.org/intl/stringbundle;1"]
+                  .getService(this._Ci.nsIStringBundleService)
+                  .createBundle(stringBundleUrl);
+              }
               // Cook out the translated value if requested
               if ( name[0] == "&" ) {
-                name = SBString( name.substr( 1, name.length ), name );
+                name = SBString( name.substr( 1, name.length ), name, stringBundle );
               }
               
               // And append the menutitem to the list (and make it pretty)
@@ -314,7 +323,7 @@
           // todo: use whitelist
           while (ids.hasMore()) {
             var info = this._pm.getPropertyInfo(ids.getNext());
-            if (this._isMetadataWhitelisted(info.id))
+            if (this._isMetadataIncluded(info.id))
               metadata.push({ name: info.displayName, value: info.id });
           }
           
@@ -355,24 +364,39 @@
       <method name="onSelectProperty">
         <parameter name="propertypopup"/>
         <body>
-          this._refreshingUI++;
-          var condition = this.drawer.getItem(propertypopup);
-          var operatorpopup = 
-            this.drawer.getItemElementByAttribute(condition, 
-                                                  "id", 
-                                                  "operatorpopup");
-          var list = this._getOperators(propertypopup.value);
-          this._generateMenuPopup(operatorpopup, list);
-          this._selectDefaultOperator(condition,
-                                      operatorpopup, 
-                                      list, 
-                                      propertypopup.value);
-          this._generateUnitPopup(condition, propertypopup.value);
-          this._refreshingUI--;
-          this._updateUI(condition);
-          // setAutoComplete only after the rest of the ui has been updated
-          this._setAutoComplete(condition, propertypopup.value);
-          this._doValidation(this.drawer.getItem(propertypopup));
+          var oldRefreshValue = this._refreshingUI;
+          try {
+            this._refreshingUI++;
+            var condition = this.drawer.getItem(propertypopup);
+            var operatorpopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "operatorpopup");
+            var list = this._getOperators(propertypopup.value);
+            this._generateMenuPopup(operatorpopup, list);
+            this._selectDefaultOperator(condition,
+                                        operatorpopup, 
+                                        list, 
+                                        propertypopup.value);
+            this._generateUnitPopup(condition, propertypopup.value);
+            var unitspopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "unitspopup");
+            this._refreshingUI--;
+            this._updateUI(condition);
+            // setAutoComplete and prefill only after the rest of the ui has been updated
+            this._setAutoComplete(condition, propertypopup.value);
+            this._doPrefill(condition, 
+                            propertypopup, 
+                            propertypopup.value, 
+                            operatorpopup.value, 
+                            unitspopup.hidden ? null : unitspopup.value);
+            this._doValidation(this.drawer.getItem(propertypopup));
+          } catch (e) {
+            this._refreshingUI = oldRefreshValue;
+            Components.utils.reportError(e);
+          }
         </body>
       </method>
       
@@ -438,7 +462,9 @@
               // no units for this property
               return;
             }
-            this._generateMenuPopup(unitspopup, list);
+            this._generateMenuPopup(unitspopup, 
+                                    list, 
+                                    converter ? converter.stringBundle : null);
             this._selectUnit(condition, unitspopup);
           ]]>
         </body>
@@ -600,7 +626,11 @@
               case "text": 
                 def = info.OPERATOR_CONTAINS; 
                 break;
+              case "duration":
+                def = info.OPERATOR_GREATER;
+                break;
               case "number":
+              case "rating":
               default:
                 def = info.OPERATOR_EQUALS;
                 break;
@@ -630,11 +660,11 @@
       <method name="onSelectOperator">
         <parameter name="menu"/>
         <body>
-          if (this._refreshingUI)
+          if (this._refreshingUI) {
             return;
+          }
           var condition = this.drawer.getItem(menu);
           this._updateUI(condition);
-          this._doValidation(condition);
           this._selectUnit(condition);
           var propertypopup = 
             this.drawer.getItemElementByAttribute(condition, 
@@ -644,6 +674,143 @@
                                condition, 
                                propertypopup.value,
                                menu.value);
+
+          var operatorpopup = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "operatorpopup");
+
+          var unitspopup = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "id", 
+                                                  "unitspopup");
+          
+          this._doPrefill(condition, 
+                          propertypopup, 
+                          propertypopup.value, 
+                          operatorpopup.value, 
+                          unitspopup.hidden ? null : unitspopup.value);
+          this._doValidation(condition);
+        </body>
+      </method>
+      
+      <method name="_doPrefill">
+        <parameter name="condition"/>
+        <parameter name="propertypopup"/>
+        <parameter name="property"/>
+        <parameter name="operator"/>
+        <parameter name="unit"/>
+        <body>
+          <![CDATA[
+            // note that the prefill value should is in native units, always.
+            // also, it should always be a string.
+            var prefillValue;
+
+            // get property info for this metadata
+            var info = this._pm.getPropertyInfo(property);
+            
+            // first try to find a prefill value per property type
+            switch (info.type) {
+              case "datetime":
+                // default prefill on date depends on operator
+                switch (operator) {
+                  case info.OPERATOR_EQUALS:
+                  case info.OPERATOR_NOTEQUALS:
+                  case info.OPERATOR_GREATER:
+                  case info.OPERATOR_GREATEREQUAL:
+                  case info.OPERATOR_LESS:
+                  case info.OPERATOR_LESSEQUAL:
+                  case info.OPERATOR_BETWEEN:
+                    var d = new Date();
+                    prefillValue = ""+d.getTime();
+                    break;
+                  case info.OPERATOR_INTHELAST:
+                  case info.OPERATOR_NOTINTHELAST:
+                    prefillValue = "1";
+                    break;
+                }
+                break;
+              case "rating":
+                prefillValue = "5";
+                break;
+            }
+            // then based on the property itself
+            switch (property) {
+              case SBProperties.bitRate:
+                prefillValue = "128";
+                break;
+              case SBProperties.bpm:
+                prefillValue = "60";
+                break;
+              case SBProperties.discNumber:
+              case SBProperties.trackNumber:
+                prefillValue = "1";
+                break;
+              case SBProperties.skipCount:
+              case SBProperties.playCount:
+                prefillValue = "0";
+                break;
+              case SBProperties.sampleRate:
+                prefillValue = "44100";
+                break;
+              case SBProperties.contentLength:
+                prefillValue = "0";
+                break;
+              case SBProperties.duration:
+                prefillValue = "0";
+                break;
+              case SBProperties.year:
+                var d = new Date;
+                prefillValue = d.getFullYear();
+                break;
+            }
+            if (!prefillValue)
+              return;
+
+            // if we are using units, we need to convert from native
+            var nativeUnitId;
+            if (unit) {
+              // get the appropriate unit converter
+              if (info.type == "datetime") {
+                // datetime has no unit conversion that makes sense, unless we
+                // are using the inthelast/notinthelast operators, in which case
+                // we need to use the duration unit converter
+                var converter = 
+                  this._pm.getPropertyInfo(SBProperties.duration)
+                          .unitConverter;
+                nativeUnitId = converter.nativeUnitId;
+              } else {
+                nativeUnitId = info.unitConverter.nativeUnitId;
+              }
+            }
+            
+            // format from the native unit
+            var formattedPrefill = this._convertToUI(property, 
+                                                     operator, 
+                                                     prefillValue, 
+                                                     nativeUnitId);
+
+            // do not replace the user's input
+            if (!propertypopup.gotuserinput1) {
+              var value1 = 
+                this.drawer.getItemElementByAttribute(condition, 
+                                                      "sbid", 
+                                                      "conditionvalue1", 
+                                                      true); // get the visible one
+              if (value1)
+                value1.value = formattedPrefill;
+            }
+            if (!propertypopup.gotuserinput2) {
+              var value2 = 
+                this.drawer.getItemElementByAttribute(condition, 
+                                                      "sbid", 
+                                                      "conditionvalue2", 
+                                                      true); // get the visible one
+              if (value2)
+                value2.value = formattedPrefill;
+            }
+              
+          ]]>
         </body>
       </method>
       
@@ -671,10 +838,38 @@
       <!-- Whenever the user edits one of the fields, perform validation -->
       <method name="onInput">
         <parameter name="condition"/>
+        <parameter name="event"/>
         <body>
           if (this._refreshingUI)
             return;
           var condition = this.drawer.getItem(condition);
+
+          var value1 = 
+            this.drawer.getItemElementByAttribute(condition, 
+                                                  "sbid", 
+                                                  "conditionvalue1", 
+                                                  true); // get the visible one
+          if (this._isDeepChild(event.originalTarget, value1, condition)) {
+            var propertypopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "propertypopup");
+            propertypopup.gotuserinput1 = true;
+          } else {
+            var value2 = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "sbid", 
+                                                    "conditionvalue2", 
+                                                    true); // get the visible one
+            if (this._isDeepChild(event.originalTarget, value2, condition)) {
+              var propertypopup = 
+                this.drawer.getItemElementByAttribute(condition, 
+                                                      "id", 
+                                                      "propertypopup");
+              propertypopup.gotuserinput2 = true;
+            }
+          }
+
           this._doValidation(condition);
         </body>
       </method>
@@ -1149,7 +1344,7 @@
                     d.setUTCMinutes(minutes);
                     d.setUTCSeconds(seconds);
                     d.setUTCMilliseconds(milliseconds);
-                    value = d.getTime();
+                    value = d.getTime() * 1000;
                   }
                 } else {
                   value = null;
@@ -1244,7 +1439,10 @@
             // us a bad value to start with. don't show NaN, show empty.
             if (""+state.value == "NaN") 
               state.value = "";
-            
+              
+            if (state.value != "" && state.value != null)
+              state.gotuserinput1 = true;
+              
             if (state.interval) {
               state.value2 = 
                 this._convertToUI(state.metadata, 
@@ -1254,6 +1452,9 @@
               // same check as for value1
               if (""+state.value2 == "NaN") 
                 state.value2 = "";
+
+              if (state.value2 != "" && state.value2 != null)
+                state.gotuserinput2 = true;
             }
           ]]>
         </body>
@@ -1469,40 +1670,73 @@
         </body>
       </method>
       
-      <method name="_isMetadataWhitelisted">
+      <method name="_isMetadataIncluded">
         <parameter name="id"/>
         <body>
           <![CDATA[
-            switch (id) {
-              case SBProperties.albumName:
-              case SBProperties.albumArtistName:
-              case SBProperties.artistName:
-              case SBProperties.bitRate:
-              case SBProperties.bpm:
-              case SBProperties.comment:
-              case SBProperties.composerName:
-              case SBProperties.created:
-              case SBProperties.updated:
-              case SBProperties.discNumber:
-              case SBProperties.contentURL:
-              case SBProperties.genre:
-              case SBProperties.lastPlayTime:
-              case SBProperties.lastSkipTime:
-              case SBProperties.playCount:
-              case SBProperties.rating:
-              case SBProperties.sampleRate:
-              case SBProperties.contentLength:
-              case SBProperties.skipCount:
-              case SBProperties.originURL:
-              case SBProperties.originPage:
-              case SBProperties.originPageTitle:
-              case SBProperties.duration:
-              case SBProperties.trackName:
-              case SBProperties.trackNumber:
-              case SBProperties.year:
-                return true;
+            var info = this._pm.getPropertyInfo(id);
+            
+            // if the property is not visible by the user, discard it from
+            // the list
+            if (!info.userViewable) 
+              return false;
+            
+            // if the property is of a type that we don't know about,
+            // discard it as well
+            switch (info.type) {
+              case "datetime":
+              case "number":
+              case "boolean":
+              case "duration":
+              case "text":
+              case "uri":
+                break;
+              default:
+                return false;
             }
-            return false;
+
+            // if the user said he wants everything, give him everything we
+            // can support
+            var enableAll = Application.prefs.getValue(
+                           "songbird.smartplaylisteditor.enableAllProperties", false);
+            
+            if (enableAll) 
+              return true;
+            
+            // otherwise, discard more properties, based on design reqs
+            switch (id) {
+              // the following don't really make sense to search on, or maybe
+              // they could for some, but we don't want them anyway.
+              case SBProperties.ordinal:
+              case SBProperties.hash:
+              case SBProperties.copyright:
+              case SBProperties.copyrightURL:
+              case SBProperties.destination:
+              case SBProperties.downloadDetails:
+              case SBProperties.softwareVendor:
+              case SBProperties.key:
+              case SBProperties.lyrics:
+              case SBProperties.metadataUUID:
+              case SBProperties.mediaListName:
+              case SBProperties.subtitle:
+              case SBProperties.totalDiscs:
+              case SBProperties.totalTracks:
+              
+              // and these six get no love because we can't edit them in the
+              // track editor, and apparently, that's reason enough to prevent
+              // the user from making smart playlists based on their content
+              case SBProperties.isPartOfCompilation:
+              case SBProperties.conductorName:
+              case SBProperties.language:
+              case SBProperties.lyricistName:
+              case SBProperties.producerName:
+              case SBProperties.recordLabelName:
+                
+                return false;
+            }
+            
+            // the rest gets in
+            return true;
           ]]>
         </body>
       </method>

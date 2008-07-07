@@ -31,6 +31,7 @@
 // ctor - register all units
 sbFrequencyPropertyUnitConverter::sbFrequencyPropertyUnitConverter() 
 {
+  SetStringBundle(NS_LITERAL_STRING("chrome://songbird/locale/songbird.properties"));
   RegisterUnit(FREQUENCY_UNIT_HZ,
     NS_LITERAL_STRING("hz"),
     NS_LITERAL_STRING("&frequency.unit.hertz"), 

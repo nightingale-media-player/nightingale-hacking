@@ -75,7 +75,8 @@ var selectByList = [
 
 function updateOkButton() {
   var smartConditions = document.getElementById("smart_conditions");
-  var ok = document.getElementById("smart_ok");
+  var dialog = document.documentElement;
+  var ok = dialog.getButton("accept");
   ok.disabled = !smartConditions.isValid;
 }
 

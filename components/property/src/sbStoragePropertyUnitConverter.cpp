@@ -32,6 +32,7 @@
 // ctor - register all units
 sbStoragePropertyUnitConverter::sbStoragePropertyUnitConverter() 
 {
+  SetStringBundle(NS_LITERAL_STRING("chrome://songbird/locale/songbird.properties"));
   RegisterUnit(STORAGE_UNIT_BYTE,
     NS_LITERAL_STRING("b"),
     NS_LITERAL_STRING("&storage.unit.bytes"),

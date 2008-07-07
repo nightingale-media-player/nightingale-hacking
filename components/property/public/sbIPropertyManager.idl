@@ -276,7 +276,7 @@ interface sbIPropertyInfo : nsISupports
    * \brief A unit converter to convert to and from the units in
    * which the property can be expressed.
    */
-  attribute sbIPropertyUnitConverter unitConverter;
+  readonly attribute sbIPropertyUnitConverter unitConverter;
 };
 
 /**

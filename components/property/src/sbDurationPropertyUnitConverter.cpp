@@ -32,11 +32,16 @@
 // ctor - register all units
 sbDurationPropertyUnitConverter::sbDurationPropertyUnitConverter() 
 {
+  SetStringBundle(NS_LITERAL_STRING("chrome://songbird/locale/songbird.properties"));
+  RegisterUnit(DURATION_UNIT_MICROSECONDS,
+    NS_LITERAL_STRING("us"),
+    NS_LITERAL_STRING("&duration.unit.microseconds"), 
+    NS_LITERAL_STRING("&duration.unit.microseconds.short"), 
+    PR_TRUE);
   RegisterUnit(DURATION_UNIT_MILLISECONDS,
     NS_LITERAL_STRING("ms"),
     NS_LITERAL_STRING("&duration.unit.milliseconds"), 
-    NS_LITERAL_STRING("&duration.unit.millisecond.short"), 
-    PR_TRUE);
+    NS_LITERAL_STRING("&duration.unit.millisecond.short"));
   RegisterUnit(DURATION_UNIT_SECONDS,
     NS_LITERAL_STRING("sec"),
     NS_LITERAL_STRING("&duration.unit.seconds"),
@@ -79,29 +84,32 @@ sbDurationPropertyUnitConverter::ConvertFromNativeToUnit(PRFloat64 aValue,
                                                          PRFloat64 &_retVal)
 {
   switch (aUnitID) {
-    case DURATION_UNIT_MILLISECONDS:
+    case DURATION_UNIT_MICROSECONDS:
       // native unit, nothing to do
       break;
-    case DURATION_UNIT_SECONDS:
+    case DURATION_UNIT_MILLISECONDS:
       aValue /= 1000.0;
       break;
+    case DURATION_UNIT_SECONDS:
+      aValue /= (1000.0*1000.0);
+      break;
     case DURATION_UNIT_MINUTES:
-      aValue /= (1000.0*60.0);
+      aValue /= (1000.0*1000.0*60.0);
       break;
     case DURATION_UNIT_HOURS:
-      aValue /= (1000.0*60.0*60.0);
+      aValue /= (1000.0*1000.0*60.0*60.0);
       break;
     case DURATION_UNIT_DAYS:
-      aValue /= (1000.0*60.0*60.0*24.0);
+      aValue /= (1000.0*1000.0*60.0*60.0*24.0);
       break;
     case DURATION_UNIT_WEEKS:
-      aValue /= (1000.0*60.0*60.0*24.0*7.0);
+      aValue /= (1000.0*1000.0*60.0*60.0*24.0*7.0);
       break;
     case DURATION_UNIT_MONTHS:
-      aValue /= (1000.0*60.0*60.0*24.0*30.0);
+      aValue /= (1000.0*1000.0*60.0*60.0*24.0*30.0);
       break;
     case DURATION_UNIT_YEARS:
-      aValue /= (1000.0*60.0*60.0*24.0*365.0);
+      aValue /= (1000.0*1000.0*60.0*60.0*24.0*365.0);
       break;
     default:
       return NS_ERROR_INVALID_ARG;
@@ -117,29 +125,32 @@ sbDurationPropertyUnitConverter::ConvertFromUnitToNative(PRFloat64 aValue,
                                                          PRFloat64 &_retVal)
 {
   switch (aUnitID) {
-    case DURATION_UNIT_MILLISECONDS:
+    case DURATION_UNIT_MICROSECONDS:
       // native unit, nothing to do
       break;
-    case DURATION_UNIT_SECONDS:
+    case DURATION_UNIT_MILLISECONDS:
       aValue *= 1000.0;
       break;
+    case DURATION_UNIT_SECONDS:
+      aValue *= (1000.0*1000.0);
+      break;
     case DURATION_UNIT_MINUTES:
-      aValue *= (1000.0*60.0);
+      aValue *= (1000.0*1000.0*60.0);
       break;
     case DURATION_UNIT_HOURS:
-      aValue *= (1000.0*60.0*60.0);
+      aValue *= (1000.0*1000.0*60.0*60.0);
       break;
     case DURATION_UNIT_DAYS:
-      aValue *= (1000.0*60*60.0*24.0);
+      aValue *= (1000.0*1000.0*60*60.0*24.0);
       break;
     case DURATION_UNIT_WEEKS:
-      aValue *= (1000.0*60.0*60.0*24.0*7.0);
+      aValue *= (1000.0*1000.0*60.0*60.0*24.0*7.0);
       break;
     case DURATION_UNIT_MONTHS:
-      aValue *= (1000.0*60.0*60.0*24.0*30.0);
+      aValue *= (1000.0*1000.0*60.0*60.0*24.0*30.0);
       break;
     case DURATION_UNIT_YEARS:
-      aValue *= (1000.0*60.0*60.0*24.0*365.0);
+      aValue *= (1000.0*1000.0*60.0*60.0*24.0*365.0);
       break;
     default:
       return NS_ERROR_INVALID_ARG;

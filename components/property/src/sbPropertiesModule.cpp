@@ -28,6 +28,7 @@
 
 #include "sbBooleanPropertyInfo.h"
 #include "sbDatetimePropertyInfo.h"
+#include "sbDurationPropertyInfo.h"
 #include "sbDownloadButtonPropertyBuilder.h"
 #include "sbImagePropertyBuilder.h"
 #include "sbNumberPropertyInfo.h"
@@ -48,6 +49,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyManager, Init);
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbPropertyOperator);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDatetimePropertyInfo);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbDurationPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbNumberPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTextPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbURIPropertyInfo);
@@ -89,6 +91,12 @@ static const nsModuleComponentInfo components[] =
     SB_DATETIMEPROPERTYINFO_CID,
     SB_DATETIMEPROPERTYINFO_CONTRACTID,
     sbDatetimePropertyInfoConstructor
+  },
+  {
+    SB_DURATIONPROPERTYINFO_DESCRIPTION,
+    SB_DURATIONPROPERTYINFO_CID,
+    SB_DURATIONPROPERTYINFO_CONTRACTID,
+    sbDurationPropertyInfoConstructor
   },
   {
     SB_NUMBERPROPERTYINFO_DESCRIPTION,

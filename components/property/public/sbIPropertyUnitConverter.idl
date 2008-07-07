@@ -86,4 +86,9 @@ interface sbIPropertyUnitConverter : nsISupports
    * setting the property.
    */
   readonly attribute AString nativeUnitId;
+  
+  /**
+   * \brief The url to the string bundle used to localize partial entities
+   */
+  readonly attribute AString stringBundle;
 };

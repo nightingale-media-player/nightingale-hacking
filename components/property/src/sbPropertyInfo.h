@@ -107,6 +107,8 @@ public:
   sbPropertyInfo();
   virtual ~sbPropertyInfo();
 
+  NS_IMETHOD SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter);
+
 protected:
   PRUint32  mNullSort;
 

@@ -31,6 +31,7 @@
 // ctor - register all units
 sbBitratePropertyUnitConverter::sbBitratePropertyUnitConverter() 
 {
+  SetStringBundle(NS_LITERAL_STRING("chrome://songbird/locale/songbird.properties"));
   RegisterUnit(BITRATE_UNIT_BPS,
     NS_LITERAL_STRING("bps"),
     NS_LITERAL_STRING("&bitrate.unit.bitspersecond"), 

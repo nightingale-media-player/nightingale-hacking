@@ -46,6 +46,8 @@ public:
   sbImmutablePropertyInfo();
   virtual ~sbImmutablePropertyInfo();
 
+  NS_IMETHOD SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter);
+
 protected:
   nsresult Init();
 

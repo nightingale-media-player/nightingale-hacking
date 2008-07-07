@@ -50,7 +50,8 @@
  onload="doLoad();"
  onunload="doUnLoad();"
  ondialogaccept="doOK();"
- buttons="none"
+ ondialogcancel="doCancel();"
+ buttons="accept,cancel"
  hidechrome="true"
  height="185"
  width="700"
@@ -111,13 +112,6 @@
   </groupbox>
 
   <spacer height="5"/>
-
-  <hbox>
-    <spacer flex="1"/>
-    <button id="smart_ok" label="&window.ok;" oncommand="if ( doOK() ) onExit( );"/>
-    <spacer width="5"/>
-    <button label="&window.cancel;" oncommand="if ( doCancel() ) onExit( );"/>
-  </hbox>
 
   <!-- SCRIPTS -->
   <script type="application/x-javascript"

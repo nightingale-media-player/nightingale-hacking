@@ -274,3 +274,16 @@ NS_IMETHODIMP sbPropertyUnitConverter::GetNativeUnitId(nsAString &aNativeUnit)
   aNativeUnit = mNative;
   return NS_OK;
 }
+
+// url to the string bundle used to localize partial entities
+NS_IMETHODIMP sbPropertyUnitConverter::GetStringBundle(nsAString &aStringBundle)
+{
+  sbSimpleAutoLock lock(mLock);
+  aStringBundle = mStringBundle;
+  return NS_OK;
+}
+
+// sets the url to the string bundle -- not part of the interface, called by inheritors
+void sbPropertyUnitConverter::SetStringBundle(const nsAString &aStringBundle) {
+  mStringBundle = aStringBundle;
+}

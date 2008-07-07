@@ -35,6 +35,7 @@ public:
   virtual ~sbDurationPropertyUnitConverter();
 
   enum {
+    DURATION_UNIT_MICROSECONDS,
     DURATION_UNIT_MILLISECONDS,
     DURATION_UNIT_SECONDS,
     DURATION_UNIT_MINUTES,

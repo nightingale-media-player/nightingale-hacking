@@ -197,7 +197,7 @@ function testDurationInfo() {
   var durationInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Duration;1"]
                       .createInstance(Ci.sbIDurationPropertyInfo);
                       
-  durationInfo.id = "DatetimeInfo";
+  durationInfo.id = "DurationInfo";
   assertEqual(durationInfo.type, "duration");
   
   var sample = "0";
@@ -210,7 +210,7 @@ function testDurationInfo() {
   log(durationInfo.format(sample));
   
   durationInfo.durationWithMilliseconds = true;
-  log(datetimeInfo.format(sample));
+  log(durationInfo.format(sample));
 }
 
 function testBooleanInfo() {
