@@ -54,10 +54,10 @@ For more information, visit http://developer.songbirdnest.com/
 /*
 @import url(chrome://songbird-bindings/skin/bindings.css); 
 */
-@import url(chrome://gonzo-dev/content/bindings/bindings.css); 
+@import url(chrome://gonzo/content/bindings/bindings.css); 
 
 /* size and positioning for the main application window 
-@import url(chrome://gonzo-dev/content/css/mainplayer.css); 
+@import url(chrome://gonzo/content/css/mainplayer.css); 
 */
 /* size and positioning for the miniplayer window 
 @import url(chrome://songbird/content/feathers/basic-layouts/css/miniplayer.css); 
