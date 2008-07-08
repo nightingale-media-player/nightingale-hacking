@@ -173,7 +173,9 @@ var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
   log(numberInfo.makeSortable(sample));
   
   assertEqual(numberInfo.format(sample), "20.99");
-  assertEqual(numberInfo.makeSortable(sample), "+0000000000000000000000000020.9899999999999980");
+  
+  var sortable = numberInfo.makeSortable(sample);
+  assertEqual(sortable.indexOf("+0000000000000000000000000020.98999999"), 0);
 
   sample = "0.99";
   assertEqual(numberInfo.validate(sample), true);
