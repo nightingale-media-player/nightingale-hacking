@@ -175,7 +175,11 @@ var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
   assertEqual(numberInfo.format(sample), "20.99");
   
   var sortable = numberInfo.makeSortable(sample);
-  assertEqual(sortable.indexOf("+0000000000000000000000000020.98999999"), 0);
+
+  var eps = 1e-10; // nearly zero, because floating points don't compare well.
+
+  var delta = Math.abs(numberInfo.makeSortable(sample) - sample);
+  assertTrue(delta < eps, "make sortable doesn't perturb the value");
 
   sample = "0.99";
   assertEqual(numberInfo.validate(sample), true);
@@ -184,8 +188,9 @@ var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
   log(numberInfo.makeSortable(sample));
   
   assertEqual(numberInfo.format(sample), "0.99");
-  assertEqual(numberInfo.makeSortable(sample), "+0000000000000000000000000000.9900000000000000");
-  
+  var delta = Math.abs(numberInfo.makeSortable(sample) - sample);
+  assertTrue(delta < eps, "make sortable doesn't perturb the value");
+
   sample = "12347120349029834.1234341235";
   assertEqual(numberInfo.validate(sample), true);
 
@@ -193,7 +198,8 @@ var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
   log(numberInfo.makeSortable(sample));
   
   assertEqual(numberInfo.format(sample), "1.23471e+016");
-  assertEqual(numberInfo.makeSortable(sample), "+0000000000012347120349029834.0000000000000000");
+  var delta = Math.abs(numberInfo.makeSortable(sample) - sample);
+  assertTrue(delta < eps, true, "make sortable doesn't perturb the value");
 }
 
 function testUriInfo() {
