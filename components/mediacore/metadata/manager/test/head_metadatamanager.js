@@ -30,6 +30,8 @@
 
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
+var gFilesToClose = [];
+
 function newFileURI(file) {
   var ioService = Cc["@mozilla.org/network/io-service;1"].
                   getService(Ci.nsIIOService);

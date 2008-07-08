@@ -64,6 +64,7 @@ function getImageData(imageFileName) {
                    .getTypeFromFile(imageFile);
   var inputStream = Cc["@mozilla.org/network/file-input-stream;1"]
                       .createInstance(Ci.nsIFileInputStream);
+  gFilesToClose.push(inputStream);
   inputStream.init(imageFile, 0x01, 0600, 0);
   var stream = Cc["@mozilla.org/binaryinputstream;1"]
                  .createInstance(Ci.nsIBinaryInputStream);
