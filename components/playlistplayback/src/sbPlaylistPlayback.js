@@ -1155,7 +1155,7 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     this._playNextPrev(1);
     this._controlTriggered.stringValue = Date.now();
-    return this._playlistIndex;
+    return this._playlistIndex.intValue;
   },
 
   previous: function() {
@@ -1164,7 +1164,7 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     this._playNextPrev(-1);
     this._controlTriggered.stringValue = Date.now();
-    return this._playlistIndex;
+    return this._playlistIndex.intValue;
   },
 
   current: function() {
