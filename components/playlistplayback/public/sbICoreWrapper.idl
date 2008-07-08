@@ -33,8 +33,6 @@
  */
 #include "nsISupports.idl"
 
-interface nsIDOMHTMLElement;
-interface nsIDOMHTMLObjectElement;
 interface nsIStringEnumerator;
 interface nsIURI;
 
@@ -44,7 +42,7 @@ interface nsIURI;
  * Defines the inteface for objects that will provide playback functionality
  * \sa baseCore coreFlash
  */
-[scriptable, uuid(c926a50b-2eb5-4b61-8bc9-7dea785d40ce)]
+[scriptable, uuid(930062dc-b990-46f3-a486-c36adb00cc74)]
 interface sbICoreWrapper : nsISupports
 {
   /**
@@ -147,7 +145,7 @@ interface sbICoreWrapper : nsISupports
    *   cases.
    * \return The HTML element.
    */
-  nsIDOMHTMLElement getObject();
+  nsISupports getObject();
 
   /**
    * \brief Set the HTML element that implements playback functionality
@@ -159,7 +157,7 @@ interface sbICoreWrapper : nsISupports
    * \param aObject The HTML element
    * \return void
    */
-  void setObject(in nsIDOMHTMLElement aObject);
+  void setObject(in nsISupports aObject);
 
   /**
    * \brief Specify the url to play and start playback

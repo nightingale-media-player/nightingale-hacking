@@ -92,11 +92,14 @@ var gMetrics    = null;
  * @param   string
  *          The string to write to the error console..
  */  
-function LOG(string) {
+function LOG(string, error) {
   if (DEBUG) {
-    debug("***sbPlaylistPlayback*** " + string + "\n");
-    if (gConsole)
+    dump("***sbPlaylistPlayback*** " + string + "\n");
+    if (error)
+      dump("  " + error + "\n");
+    if (gConsole) {
       gConsole.logStringMessage(string);
+    }
   }
 } // LOG
 
@@ -421,7 +424,7 @@ PlaylistPlayback.prototype = {
       
       LOG("Songbird PlaylistPlayback Service loaded successfully");
     } catch( err ) {
-      LOG( "!!! ERROR: sbPlaylistPlayback _init\n\n" + err + "\n" );
+      LOG( "!!! ERROR: sbPlaylistPlayback _init", err );
     }
   },
   
@@ -587,6 +590,7 @@ PlaylistPlayback.prototype = {
    */
   _chooseNewCore : function() {
     var newIndex = this._cores.length > 0 ? 0 : -1;
+    LOG("_chooseNewCore - " + this._cores[newIndex].getId());
     this._swapCore(newIndex);
   },
 
@@ -764,18 +768,7 @@ PlaylistPlayback.prototype = {
     // This is a new core, so test and add it
     if (!core.QueryInterface(sbICoreWrapper))
       throw Components.results.NS_ERROR_NOINTERFACE;
-    
-    // Set initial data
-    core.setMute(this._muteData.boolValue);
-    
-    var volume = this._volume.intValue;
-    if (volume < 0)
-      volume = 0;
-    else if (volume > 255)
-      volume = 255;
-    
-    core.setVolume(volume);
-    
+        
     // Add to the list
     this._cores.push(core);
     
@@ -795,6 +788,10 @@ PlaylistPlayback.prototype = {
         this._cores.splice(i, 1);
         
         if (i == this._currentCoreIndex) {
+          // If we're deleting the last one we need move it back
+          if (this._currentCoreIndex == coreCount - 1) {
+            --this._currentCoreIndex;
+          }            
           // If that was our current core then we need a new one...
           this._chooseNewCore();          
         }
@@ -817,10 +814,12 @@ PlaylistPlayback.prototype = {
   
   _swapCore: function _swapCore(aNewCoreIndex) {
     
+    LOG("_swapCore(" + aNewCoreIndex + ")");
     var coreCount = this._cores.length;
+    LOG("coreCount=" + coreCount + ", _currentCoreIndex=" + this._currentCoreIndex);
     
     // If we have no cores left then there is nothing to do here.
-    if (coreCount == 0)
+    if (coreCount == 0 || aNewCoreIndex == this._currentCoreIndex)
       return;
 
     // Make sure the given index is valid before we do anything. -1 means we
@@ -834,16 +833,20 @@ PlaylistPlayback.prototype = {
       oldCore.deactivate();
     }
     
-    if (aNewCoreIndex > -1) {
-      // Try to show the new video element
-      var newCore = this._cores[aNewCoreIndex];
-      newCore.activate();        
-    }
-
     // Select the new one
     this._currentCoreIndex = aNewCoreIndex;
   },
-  
+  _tryActivate : function _tryActivate(core) {
+    var success = true;
+    try {
+      core.activate();
+    }
+    catch (e) {
+      LOG("activate failed for " + core.getId(), e);
+      success = false;
+    }
+    return success;
+  },
   /**
    * Tries to find a core that can handle the given extension. Selects and
    * returns the core and sets the optional aCoreFound argument to true. If no
@@ -852,10 +855,13 @@ PlaylistPlayback.prototype = {
    * to false.
    */
   _selectCoreForURI: function _selectCoreForURI(aURI, aCoreFound) {
+    LOG("_selectCoreForURI(" + aURI + ", " + aCoreFound + ")");
     var selectedCore = this.core;
-    if (!selectedCore)
+    if (!selectedCore) {
+      LOG("No core selected");
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
-
+    }
+    LOG("selectedCore=" + selectedCore.getId());
     var coreSupport =
       this._callMethodOnAllCores("getSupportForURI", [aURI]);
     LOG("_selectCoreForURI: coreSupport = " + coreSupport);
@@ -885,8 +891,37 @@ PlaylistPlayback.prototype = {
     
     // Select the new core.
     var newCore = this._cores[newCoreIndex];
+    // if the object is null then this is the first time
+    var firstTime = newCore.getObject() == null;
     this.selectCore(newCore);
-    return newCore;
+    
+    // Attempt to activate the core. If that fails try another
+    while (!this._tryActivate(newCore) && this._cores.length > 0) {
+      // Something is wrong so remove that core and try the next
+      this.removeCore(newCore);
+
+      // Return the newly selected core, if there is one
+      if (this._currentCoreIndex != -1)
+        newCore = this._cores[this._currentCoreIndex];
+      else
+        newCore = nsnull;
+    }
+    if (this._cores.length != 0) {
+      if (firstTime) {
+        // Set initial data
+        newCore.setMute(this._muteData.boolValue);
+        
+        var volume = this._volume.intValue;
+        if (volume < 0)
+          volume = 0;
+        else if (volume > 255)
+          volume = 255;
+        
+        newCore.setVolume(volume);
+      }
+      return newCore;
+    }
+    return nsnull;
   },
   
   /**
@@ -921,6 +956,7 @@ PlaylistPlayback.prototype = {
   },
   
   play: function() {
+    LOG("play");
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
@@ -949,7 +985,9 @@ PlaylistPlayback.prototype = {
   },
   
   playView: function(aView, aIndex) {
-    if (!aView)
+    LOG("playView");
+    // XXXnewlib
+    if (!(aView && aIndex >= 0))
       throw Components.results.NS_ERROR_INVALID_ARG;
 
     var core = this.core;
@@ -1018,6 +1056,7 @@ PlaylistPlayback.prototype = {
   },
 
   playURL: function(aURL) {
+    LOG("playURL");
     try  {
       var core = this.core;
       if (!core)
@@ -1088,13 +1127,14 @@ PlaylistPlayback.prototype = {
         protocol = "???"
       gMetrics.metricsInc("mediacore.play.attempt", core.getId(), ext + "." + protocol);
     } catch( err ) {
-      debug( "playURL:\n" + err + "\n" );
+      Components.utils.reportError(err);
       return false;
     }
     return true;
   },
   
   pause: function() {
+    LOG("pause");
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
@@ -1104,6 +1144,7 @@ PlaylistPlayback.prototype = {
   },
 
   stop: function() {
+    LOG("stop");
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
@@ -1150,6 +1191,7 @@ PlaylistPlayback.prototype = {
   },
 
   next: function() {
+    LOG("next");
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
@@ -1159,6 +1201,7 @@ PlaylistPlayback.prototype = {
   },
 
   previous: function() {
+    LOG("previous");
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
@@ -1168,6 +1211,7 @@ PlaylistPlayback.prototype = {
   },
 
   current: function() {
+    LOG("current");
     var core = this.core;
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;

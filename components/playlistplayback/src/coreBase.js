@@ -67,10 +67,14 @@ CoreBase.prototype =
   _playing : false,
   _paused  : false,
   _active  : false,
-
+  _initialized : false,
+  _debug : false,
+  
   _verifyObject: function () {
-    if ( this._object == null ) {
-      LOG("VERIFY OBJECT FAILED. OBJECT DOES NOT EXIST");
+    if ( this._object == null )
+      this.initialize();
+    if ( this._object == null) {
+      this.LOG("VERIFY OBJECT FAILED. OBJECT DOES NOT EXIST");
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     }
   },
@@ -102,6 +106,7 @@ CoreBase.prototype =
   },
 
   getObject : function () {
+    dump("\ncoreBase.getObject " + this._object + "\n");
     return this._object;
   },
 
@@ -109,19 +114,42 @@ CoreBase.prototype =
     if (this._object != aObject)
       this._object = aObject;
   },
-  
+  initialize : function () {
+    this.LOG("coreBase.initialize - " + this._id);
+    if (!this._initialized) {
+      try {
+        this._initialized = this.doInitialize();
+      }
+      catch (err) {
+        Components.utils.reportError(err);
+        this.LOG("Error: " + err);
+      }
+    }
+    this.LOG("coreBase.initialize returns " + this._initialized);
+    return this._initialized;
+  },
+  get active() {
+    return _active;
+  },
   activate : function activate() {
-    if (this._active)
-      return;
-    
+    dump("\ndwb\n");
+    this.LOG("Activate - " + this._active);
+    if (this._active) {
+      this.LOG("Already active");
+    }
+    this.initialize();
     this._verifyObject();
+    this.doActivate();
     this._active = true;
+    return true;
   },
 
   deactivate : function deactivate() {
-    if (!this._active)
+    this.LOG("Deactivate");
+    if (!this._active) {
+      this.LOG("Already deactivated");
       return;
-    
+    }
     this._verifyObject();
     try {
       this.stop();
@@ -129,7 +157,7 @@ CoreBase.prototype =
     catch (err) {
       this.LOG(err);
     }
-    
+    this.doDeactivate();
     this._active = false;
   },
 
@@ -192,9 +220,11 @@ CoreBase.prototype =
    *        The name of the derived class calling the method
    */
   LOG: function ( aString, aImplName ) {
-    if (!aImplName)
-      aImplName = "CoreBase";
-    dump("*** " + aImplName + " *** " + aString + "\n");
+    if (this._debug) {
+        if (!aImplName)
+          aImplName = "CoreBase";
+        dump("*** " + aImplName + "(" + this.getId() + ") *** " + aString + "\n");
+    }
   },
 
   /**

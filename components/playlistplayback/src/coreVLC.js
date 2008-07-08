@@ -193,6 +193,7 @@ CoreVLC.prototype.constructor = CoreVLC();
 // apply custom preferences to vlc
 CoreVLC.prototype._applyPreferences = function ()
 {
+  this.LOG("_applyPreferences", "CoreVLC");
   var log = this._object.log;
   var config = this._object.config;
   var prefsService = Cc["@mozilla.org/preferences-service;1"]
@@ -202,7 +203,7 @@ CoreVLC.prototype._applyPreferences = function ()
     log.verbosity = 1;
   }
   catch(e) {
-    this.LOG("failed to set log verbosity. log messages disabled.");
+    this.LOG("Failed to set verbosity: " + e, "CoreVLC");
   }
 
   //Be more generous about file caching.
@@ -211,7 +212,7 @@ CoreVLC.prototype._applyPreferences = function ()
     config.setConfigInt("access_file", "file-caching", 600);
   }
   catch(e) {
-    this.LOG("access_file module is missing, can't set config item.");
+    this.LOG("access_file module is missing, can't set config item: " + e, "CoreVLC");
   }
   
   //Be more generous about http caching.
@@ -220,7 +221,7 @@ CoreVLC.prototype._applyPreferences = function ()
     config.setConfigInt("access_http", "http-caching", 2000);
   }
   catch(e) {
-    this.LOG("access_http module is missing, can't set config item.");
+    this.LOG("access_http module is missing, can't set config item: " + e, "CoreVLC");
   }
   
   //Be more generous about ftp caching.
@@ -229,7 +230,7 @@ CoreVLC.prototype._applyPreferences = function ()
     config.setConfigInt("access_ftp", "ftp-caching", 2000);
   }
   catch(e) {
-    this.LOG("access_ftp module is missing, can't set config item.");
+    this.LOG("access_ftp module is missing, can't set config item: " + e, "CoreVLC");
   }
   
   //Be more generous about smb caching.
@@ -238,7 +239,7 @@ CoreVLC.prototype._applyPreferences = function ()
     config.setConfigInt("access_smb", "smb-caching", 1200);
   }
   catch(e) {
-    this.LOG("access_smb module is missing, can't set config item.");
+    this.LOG("access_smb module is missing, can't set config item: " + e, "CoreVLC");
   }
   
   //Automatically reconnect if http connection lost.
@@ -247,7 +248,7 @@ CoreVLC.prototype._applyPreferences = function ()
     config.setConfigBool("access_http", "http-reconnect", 1);
   }
   catch(e) {
-    this.LOG("access_http module is missing, can't set config item.");
+    this.LOG("access_http module is missing, can't set config item:" + e, "CoreVLC");
   }
   
   //Turn on volume normalization.
@@ -255,7 +256,7 @@ CoreVLC.prototype._applyPreferences = function ()
     this.handleNormalizeChange()
   }
   catch(e) {
-    this.LOG("volnorm module is missing, can't set config item.");
+    this.LOG("volnorm module is missing, can't set config item: " + e, "CoreVLC");
   }
     
   //Set user agent, read from moz prefs.
@@ -271,7 +272,7 @@ CoreVLC.prototype._applyPreferences = function ()
     config.setConfigInt("gnutls", "gnutls-cache-size", 128);
   }
   catch(e) {
-    this.LOG("gnutls module is missing, can't set config item.");
+    this.LOG("gnutls module is missing, can't set config item: " + e, "CoreVLC");
   }
   
   var prefBranch = prefsService.QueryInterface(Ci.nsIPrefBranch2);
@@ -284,7 +285,7 @@ CoreVLC.prototype._applyPreferences = function ()
       this._setAudioOutput(audioOut);      
     }
     catch(e) {
-      this.LOG(e);
+      this.LOG("Setting audioOut: " + e, "CoreVLC");
     }
   }
 };
@@ -424,7 +425,7 @@ CoreVLC.prototype._getLoginInfoForURI = function(aURI)
     return [userName.value, userPassword.value];
   }
   catch(e) {
-    this.LOG(e);
+    this.LOG("httpAuthManager.getAuthIdentity: " + e, "CoreVLC");
   }
 
   //Failed to get the info using http auth manager. Prompt user for information.
@@ -567,7 +568,7 @@ CoreVLC.prototype.handleAudioOutChange = function CoreVLC_handleAudioOutChange(p
     }
   }
   catch(e) { 
-    this.LOG(e);
+    this.LOG("handleAudioOutChange: " + e, "CoreVLC");
   }
 
   return;
@@ -591,7 +592,7 @@ CoreVLC.prototype.playURL = function (aURL)
 
   if (!aURL)
     throw Components.results.NS_ERROR_INVALID_ARG;
-  this.LOG("theURL: " + aURL);
+  this.LOG("theURL: " + aURL, "CoreVLC");
   
   var uri = newURI(aURL);
   if (!uri)
@@ -652,9 +653,8 @@ CoreVLC.prototype.play = function()
   
 CoreVLC.prototype.stop = function() 
 {
-  this._verifyObject();
-  
-  if (this._object.playlist.itemCount > 0) 
+  // Make sure we're initialized and that there is something to stop?
+  if (this._object && this._object.playlist.itemCount > 0) 
     this._object.playlist.stop();
 
   this._paused = false;
@@ -663,7 +663,8 @@ CoreVLC.prototype.stop = function()
   this._startTime = 0;
   this._savedTime = 0;
   
-  return this._object.playlist.isPlaying == false;
+  // Return true if not initialized or we've actually stopped
+  return this._object == null || this._object.playlist.isPlaying == false;
 };
   
 CoreVLC.prototype.pause = function()
@@ -696,12 +697,13 @@ CoreVLC.prototype.getPaused = function()
 
 CoreVLC.prototype.getPlaying = function() 
 {
-  this._verifyObject();
-  
   if(this._fakePosition) {
     return true;
   }
   
+  if (!this._object)
+    return false;
+    
   return this._object.playlist.isPlaying || this._paused;
 };
 
@@ -1001,12 +1003,42 @@ CoreVLC.prototype.getSupportedFileExtensions = function ()
   return new StringArrayEnumerator(this._mediaUrlExtensions);
 };
 
-CoreVLC.prototype.activate = function ()
+CoreVLC.prototype.doInitialize = function()
 {
-  if (this._active)
-    return;
-  
-  this._verifyObject();
+  dump("\nCoreVLC.initialize\n");
+  try
+  {
+    var theVLCBox = document.getElementById("box_vlc");
+    // XXX Mook: VLC seems... buggy in that if the <object> is initially 
+    // hidden it's not scriptable. Which breaks all sorts of things. 
+    // This might be a mozbug instead, not sure.
+    var vlcElement = document.createElementNS("http://www.w3.org/1999/xhtml", "html:object");
+    vlcElement.setAttribute("id", "core_vlc");
+    vlcElement.setAttribute("flex", "1");
+    vlcElement.setAttribute("autoplay", "0");
+    vlcElement.setAttribute("loop", "0");
+    vlcElement.setAttribute("repeat", "0");
+    vlcElement.setAttribute("type", "application/x-songbird-vlc-plugin");
+    vlcElement.setAttribute("version", "VideoLAN.VLCPlugin.2");
+    var theVLCInstance = theVLCBox.appendChild(vlcElement);
+    
+    // var theVLCInstance = document.getElementById( "core_vlc" );
+    this.setObject(theVLCInstance);
+    theVLCInstance.parentNode.hidden = true;
+    
+    // apply prefs to playback core
+    this._applyPreferences();
+  }
+  catch ( err )
+  {
+    dump( "\n!!! coreVLC failed to bind properly\n" + err );
+    return false;
+  }
+  return true;
+}
+
+CoreVLC.prototype.doActivate = function ()
+{
   try {
     var videoElement =
       this._object.QueryInterface(Components.interfaces.nsIDOMElement);
@@ -1027,21 +1059,14 @@ CoreVLC.prototype.activate = function ()
   // Fix the volume.
   this._object.audio.mute = this._muted;
   this._object.audio.volume = this._lastVolume;
-  
-  this._active = true;
 };
 
-CoreVLC.prototype.deactivate = function ()
+CoreVLC.prototype.doDeactivate = function ()
 {
-  if (!this._active)
-    return;
-  
   var videoElement =
     this._object.QueryInterface(Components.interfaces.nsIDOMElement);
   // hide the containing <hbox> because that has a flex= set
   videoElement.parentNode.hidden = true;
-
-  this._active = false;
 };
 
 CoreVLC.prototype.getSupportForURI = function (aURI) {
@@ -1089,25 +1114,17 @@ catch (err) {
   */
 function CoreVLCDocumentInit()
 {
-  try
-  {
+  dump("\nCoreVLCDocumentInit\n");
+  try {
     var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                          .getService(Components.interfaces.sbIPlaylistPlayback);
-    var theVLCInstance = document.getElementById( "core_vlc" );
-
     gCoreVLC.setId("VLC1");
-    gCoreVLC.setObject(theVLCInstance);
-    theVLCInstance.parentNode.hidden = true;
-    
-    // apply prefs to playback core
-    gCoreVLC._applyPreferences();
-
-    gPPS.addCore(gCoreVLC, true);
     registeredCores.push(gCoreVLC);
+    gPPS.addCore(gCoreVLC, true);
   }
-  catch ( err )
-  {
-    dump( "\n!!! coreVLC failed to bind properly\n" + err );
+  catch (e) {
+    this.LOG("Failed to register VLC Core:" + e, "CoreVLCDocumentInit");
+    Components.utils.reportError(e);
   }
 }
 
