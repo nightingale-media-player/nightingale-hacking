@@ -148,6 +148,52 @@ function testNumberInfo() {
   
 }
 
+function testNumberInfoFloatingPoint() {
+var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
+                    .createInstance(Ci.sbINumberPropertyInfo);
+  
+  numberInfo.id = "FloatingInfo";
+  assertEqual(numberInfo.type, "number");
+  
+  numberInfo.radix = Ci.sbINumberPropertyInfo.FLOAT;
+  
+  var sample = "123 not a number";
+  assertEqual(numberInfo.validate(sample), false);
+  try {
+    numberInfo.format(sample);
+  }
+  catch(err) {
+    assertEqual(err.result, Cr.NS_ERROR_INVALID_ARG);
+  }
+
+  sample = "20.99";
+  assertEqual(numberInfo.validate(sample), true);
+
+  log(numberInfo.format(sample));
+  log(numberInfo.makeSortable(sample));
+  
+  assertEqual(numberInfo.format(sample), "20.99");
+  assertEqual(numberInfo.makeSortable(sample), "+0000000000000000000000000020.9899999999999980");
+
+  sample = "0.99";
+  assertEqual(numberInfo.validate(sample), true);
+  
+  log(numberInfo.format(sample));
+  log(numberInfo.makeSortable(sample));
+  
+  assertEqual(numberInfo.format(sample), "0.99");
+  assertEqual(numberInfo.makeSortable(sample), "+0000000000000000000000000000.9900000000000000");
+  
+  sample = "12347120349029834.1234341235";
+  assertEqual(numberInfo.validate(sample), true);
+
+  log(numberInfo.format(sample));
+  log(numberInfo.makeSortable(sample));
+  
+  assertEqual(numberInfo.format(sample), "1.23471e+016");
+  assertEqual(numberInfo.makeSortable(sample), "+0000000000012347120349029834.0000000000000000");
+}
+
 function testUriInfo() {
   var uriInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/URI;1"]
                   .createInstance(Ci.sbIURIPropertyInfo);
@@ -248,8 +294,9 @@ function runTest () {
   
   log("Testing NumberPropertyInfo...");
   testNumberInfo();  
+  testNumberInfoFloatingPoint();
   log("OK");
-  
+ 
   log("Testing URIPropertyInfo...");
   testUriInfo();
   log("OK");

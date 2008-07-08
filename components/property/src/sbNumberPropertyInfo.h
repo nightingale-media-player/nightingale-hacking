@@ -61,6 +61,9 @@ protected:
   PRInt64 mMinValue;
   PRInt64 mMaxValue;
 
+  PRFloat64 mMinFloatValue;
+  PRFloat64 mMaxFloatValue;
+
   PRBool mHasSetMinValue;
   PRBool mHasSetMaxValue;
 

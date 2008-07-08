@@ -308,7 +308,7 @@ interface sbITextPropertyInfo : sbIPropertyInfo
  * \brief The property information specific to numeric fields
  * \sa sbIPropertyInfo
  */
-[scriptable, uuid(eb35eca3-a9ec-4e01-a9af-152c72086e68)]
+[scriptable, uuid(66d736f5-057e-4537-98f9-df2e1b560a13)]
 interface sbINumberPropertyInfo : sbIPropertyInfo
 {
   /**
@@ -327,6 +327,11 @@ interface sbINumberPropertyInfo : sbIPropertyInfo
   const unsigned long RADIX_16 = 16;
 
   /**
+   * \brief Signed floating point representation (eg. 14.89)
+   */
+  const unsigned long FLOAT = 0;
+
+  /**
    * \brief Minimum value allowed.
    */
   attribute long long minValue;
@@ -336,8 +341,18 @@ interface sbINumberPropertyInfo : sbIPropertyInfo
    */
   attribute long long maxValue;
 
+  /** 
+   * \brief Minimum floating point value allowed if number property is a float.
+   */
+  attribute double minFloatValue;
+
   /**
-   * \brief Radix (must be 8, 10 or 16).
+   * \brief Maximum float point value allowed if a number property is a float.
+   */
+  attribute double maxFloatValue;
+
+  /**
+   * \brief Radix (must be RADIX_8, RADIX_10, RADIX_16 or FLOAT).
    */
   attribute unsigned long radix;
 };
