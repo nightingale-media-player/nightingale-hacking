@@ -215,7 +215,7 @@
                     <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
                   </sb-autoscroll>
                   <hbox id="faceplate-tool-bar">
-                    <sb-rating/>
+                    <sb-nowplaying-rating/>
                   </hbox>
                 </hbox>
                 <hbox class="faceplate-seekinfo-box" align="center" pack="center">

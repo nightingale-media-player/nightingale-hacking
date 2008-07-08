@@ -509,3 +509,7 @@ sb-device-tools {
 sb-rating {
   -moz-binding: url("chrome://songbird/content/bindings/ratingsControl.xml#sb-rating");
 }
+
+sb-nowplaying-rating {
+  -moz-binding: url("chrome://songbird/content/bindings/ratingsControl.xml#sb-nowplaying-rating");
+}

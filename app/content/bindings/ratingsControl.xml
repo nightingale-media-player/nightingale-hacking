@@ -218,5 +218,162 @@
       </handler>
     </handlers>
   </binding>
+
+  <binding id="sb-nowplaying-rating">
+    <content>
+      <xul:sb-rating sbid="sb-rating-binding" />
+    </content>
+    <implementation>
+      <constructor>
+        <![CDATA[
+          Components.utils.import("resource://app/jsmodules/sbProperties.jsm", this);
+          Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm", this);
+        
+          var self = this;
+          this._ratingschange = function(evt) {
+            self.onRatingsChange(evt);
+          };
+          this._ratingBinding.addEventListener("input", this._ratingschange, true);
+        
+          // Media list listener, used to pickup "onchange" events for media items so
+          // the rating can be updated in this binding.
+          this._mediaListListener = {
+            _callback: this,
+            
+            onItemUpdated: function(aMediaList, aMediaItem, aIndex) {
+              if (aMediaItem == this._callback._curMediaItem)
+                this._callback.updateRatingsDisplay();
+            },
+            
+            onItemAdded: function(aMediaList, aMediaItem, aIndex) {
+            },
+            
+            onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) {
+            },
+            
+            onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) {
+            },
+            
+            onItemMoved: function(aMediaList, aFromIndex, aToIndex) {
+            },
+            
+            onListCleared: function(aMediaList) {
+            },
+            
+            onBatchBegin: function(aMediaList) {
+            },
+            
+            onBatchEnd: function(aMediaList) {
+            },
+            
+            QueryInterface: this._callback.XPCOMUtils.generateQI([Components.interfaces.sbIMediaListListener])
+          };
+
+          // Setup a playlist-playback listener to keep this binding in sync
+          // with the current playing track
+          this._playbackListener = {
+            _callback: this,
+          
+            onStop: function() { 
+            },
+          
+            onBeforeTrackChange: function(aItem, aView, aIndex) { 
+            },
+          
+            onTrackChange: function(aItem, aView, aIndex) {
+              this._callback.onTrackChange(aItem, aView.mediaList);
+            },
+          
+            QueryInterface: this._callback.XPCOMUtils.generateQI([Components.interfaces.sbIPlaylistPlaybackListener])
+          };
+      
+          var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                              .getService(Components.interfaces.sbIPlaylistPlayback);
+          pps.addListener(this._playbackListener);
+        ]]>
+      </constructor>
+      <destructor>
+        <![CDATA[        
+          this._ratingBinding.removeEventListener("input", this._ratingschange, true);
+          this._ratingschange = null;
+        
+          var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                              .getService(Components.interfaces.sbIPlaylistPlayback);
+          pps.removeListener(this._playbackListener);
+          this._playbackListener = null;
+        ]]>
+      </destructor>
+      <field name="_curMediaItem">null</field>
+      <field name="_curMediaList">null</field>
+      <property name="_ratingBinding" readonly="true">
+        <getter>
+          <![CDATA[
+            return document.getAnonymousElementByAttribute(this, "sbid", "sb-rating-binding");
+          ]]>
+        </getter>
+      </property>
+      <method name="onTrackChange">
+        <parameter name="aMediaItem"/>
+        <parameter name="aMediaList"/>
+        <body>
+          <![CDATA[          
+            this._curMediaItem = aMediaItem;
+            
+            // Remove the old listener
+            if (this._curMediaList != null)
+              this._curMediaList.removeListener(this._mediaListListener);
+            
+            this._curMediaList = aMediaList;
+            if (this._curMediaList)
+              this._curMediaList.addListener(this._mediaListListener);
+            
+            this.updateRatingsDisplay();
+          ]]>
+        </body>
+      </method>
+      <method name="updateRatingsDisplay">
+        <body>
+          <![CDATA[
+            // Make sure the media items rating information is in sync with the ratings binding
+            var curRating = this._curMediaItem.getProperty(SBProperties.rating);
+            this._ratingBinding.value = curRating;
+          ]]>
+        </body>
+      </method>
+      <method name="onRatingsChange">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+            if (!this._curMediaItem)
+              return;
+          
+            // Set the new rating value to be written in the metadata job
+            var newRating = this._ratingBinding.value;
+            this._curMediaItem.setProperty(SBProperties.rating, newRating);
+          
+            var self = this;
+            this._callback = function() {
+              var mediaItemArray = 
+                Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                          .createInstance(Components.interfaces.nsIMutableArray);
+                        
+              mediaItemArray.appendElement(self._curMediaItem, false);
+            
+              var manager = 
+                Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
+                          .getService(Components.interfaces.sbIMetadataJobManager);
+            
+              var job = manager.newJob(mediaItemArray, 5,  // Sleep time on thread
+                                       Components.interfaces.sbIMetadataJob.JOBTYPE_WRITE);          
+            
+              SBJobUtils.showProgressDialog(job, null);
+            }
+          
+            setTimeout(this._callback, 0);  
+          ]]>
+        </body>
+      </method>
+    </implementation>
+  </binding>
 </bindings>
  
