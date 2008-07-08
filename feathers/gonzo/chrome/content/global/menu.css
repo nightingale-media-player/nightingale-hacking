@@ -37,14 +37,15 @@ menuitem[_moz-menuactive="true"][disabled="true"] > label {
   -moz-margin-start: 1ex !important;
 }
 
-/*
-komi: mix this
+
 .menu-accel,
 .menu-iconic-accel {
   margin: 0px 0px 0px 0px !important;
-  padding-right: 4px;
+  padding-right: 8px;
+  color:gray;
+  font-style:normal !important;
 }
-*/
+
 
 .menu-text {
 }
@@ -78,27 +79,52 @@ menuitem[type="radio"] > .menu-iconic-left {
 
 /* ::::: menu/menuitems in menubar ::::: */
 
-menubar > menu {
-/*  padding: 2px 5px 2px 7px;
-  margin: 1px 0px 1px 0px;*/
-  background-color:cyan;
+
+#main-menubar > menu {
+  padding:0 5px 0 5px !important;
+  margin:0 0 0 0 !important;
+  font-size:10px;
+  border:1px solid transparent;
+  border-bottom:none;
+}
+.menubar-text {
+  color:rgb(120,120,120);
+}
+.menubar-text:hover {
+  color:rgb(40,40,40) !important;
 }
 
-menubar > menu[_moz-menuactive="true"][open="true"] {
 
+#main-menubar > menu[_moz-menuactive="true"][open="true"] {
+background-color:white;
+border:1px solid red;
+border-bottom:none;
 }
 
 /* ..... internal content .... */
 
 .menubar-left {
 /*  margin: 0px 2px 0px 0px;*/
-
+padding:0px;
+margin:0px;
 }
 
 .menubar-text {
 /*  margin: 0px 2px 0px 0px !important;*/
-
+padding:0px;
+margin:0px;
 }
+
+popup,
+menupopup {
+  border:1px solid red;
+}
+
+window[platform="Darwin"] popup,
+window[platform="Darwin"] menupopup {
+  border:0px solid transparent !important;
+}
+
 
 /* ::::: menu/menuitems in popups ::::: */
 

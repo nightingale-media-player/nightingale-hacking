@@ -16,7 +16,7 @@
 .tab-drop-indicator {
    height: 10px;
    width: 12px;
-   margin-bottom: -40px;
+   margin-top: -16px;
    position: relative;
    background: url('chrome://songbird/skin/browser-tab-bar/icon-drop-indicator.png') left center no-repeat;
 }
@@ -33,21 +33,30 @@
  * Tab Scrollbox Arrow Buttons
  */
 
-.tabbrowser-arrowscrollbox > .scrollbutton-up {
-  background-color:;
+.tabbrowser-arrowscrollbox > .scrollbutton-up,
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
+
   -moz-border-radius:0px;
-  list-style-image: url("chrome://songbird/skin/base-elements/icon-sort-ascending.png") !important;
+  list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-left.png") !important;
   -moz-image-region:auto;
-  margin:0 1px;
+  margin:0 1px 0 1px;
+    background-image: url('chrome://songbird/skin/browser-tab-bar/bg-scroll.png');
+    background-position:center 2px;
+    background-repeat:no-repeat;
+    min-width:16px;
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up[disabled="true"] {
 }
 
-.tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover {
+.tabbrowser-arrowscrollbox > .scrollbutton-up:hover,
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:hover {
+  background-position:center -28px;
 }
  
-.tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover:active {
+.tabbrowser-arrowscrollbox > .scrollbutton-up:active,
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:active {
+  background-position:center -58px !important;
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up > .toolbarbutton-icon {
@@ -57,15 +66,17 @@
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
-  background-color:yellow !important;
-  -moz-border-radius:0px;
-  list-style-image: url("chrome://songbird/skin/scrollbox/scroll-right.png");
+   margin:0 0 0 1px;
+  list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-right.png") !important;
+
 }
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down[collapsed="true"] {
+   margin:0px !important;
+}
+
+
 
 .tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down[disabled="true"] {
-}
-
-.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down:not([disabled="true"]):hover {
 }
 
 .tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down:not([disabled="true"]):hover:active {
@@ -77,9 +88,15 @@
 
 
 
+tab[first-tab="true"] > .tab-close-button,
+.tabs-container > hbox > tab > .tab-close-button {
+	display:none;
+}
 
 
-
+.tabbrowser-tab[collapsed="true"]+.tabbrowser-tab {
+  margin-left:0px !important;
+}
 
 /**
  * All Tabs Button

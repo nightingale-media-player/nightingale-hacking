@@ -37,7 +37,7 @@ These rules paint the resizeable window for Songbird.
 
 description,
 label {
-  font-family: Lucida Grande, Arial, Helvetica, FreeSans, Sans-serif !important;
+  font-family: Lucida Grande, Trebuchet MS, Arial, Helvetica, FreeSans, Sans-serif !important;
 }
 
 
@@ -57,17 +57,23 @@ window {
 }
 
 window#mainplayer {
-  border:1px solid gray;
 }
 window[platform=Darwin] {
   border:none !important;
 }
-window[platform=Darwin] sb-sys-titlebar #sb-sys-title-title{
+#sb-sys-title-title {
+  padding:0 5px 0 5px !important;
+  font-weight:bold;
+}
+window[platform=Darwin] #sb-sys-title-title{
   font-family: Lucida Grande !important;
   font-size: 13px !important;
-  padding-top:3px;
+  padding-top:3px !important;
+  font-weight:normal;
+
 /*  opacity:0.9999;*/
 }
+
 sb-sys-close-button,
 sb-sys-maximize-button,
 sb-sys-minimize-button,
@@ -504,8 +510,6 @@ tab[selected="true"],
   margin: 0;
   padding: 0px;
 
-  
-  min-width: 1px !important;
   text-align: center;
   -moz-border-radius-topleft: 0 !important;
   -moz-border-radius-topright: 0 !important;
@@ -686,6 +690,12 @@ background-position:center 0px;
   background-image:none !important;
   background-color:rgb(151,202,98) !important;
 }
+#nav-bar toolbarbutton:active > .toolbarbutton-icon,
+#nav-bar toolbarbutton:active > .toolbarbutton-menu-dropmarker,
+#nav-bar toolbarbutton:active > .toolbarbutton-menulist-dropmarker,
+#nav-bar toolbarbutton:active > .toolbarbutton-menubutton-dropmarker {
+  opacity:0.5 !important;
+}
 
 #nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-icon,
 #nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-menu-dropmarker,
@@ -698,12 +708,6 @@ background-position:center 0px;
 }
 #nav-bar toolbarbutton:active {
   background-position:center -40px;  
-}
-#nav-bar toolbarbutton:active > .toolbarbutton-icon,
-#nav-bar toolbarbutton:active > .toolbarbutton-menu-dropmarker,
-#nav-bar toolbarbutton:active > .toolbarbutton-menulist-dropmarker,
-#nav-bar toolbarbutton:active > .toolbarbutton-menubutton-dropmarker {
-  opacity:0.5 !important;
 }
 
 
@@ -779,7 +783,7 @@ border-left:1px solid rgb(140,140,140);
 button:focus,
 checkbox:focus,
 radio[focused="true"] {
-  outline:2px solid lime !important;
+  outline:2px solid lime;
     outline-offset:0px !important;
   -moz-outline-radius:5px !important;
 }
@@ -1396,8 +1400,21 @@ DIALOGS
 #mainplayer:not([platform=Darwin]),
 dialog:not([platform=Darwin])
 {
-  border:1px solid gray;
+
 }
+
+dialog:not([platform=Darwin]) {
+  border:3px solid red;
+  border-top:1px solid gray;
+  -moz-border-right-colors:gray transparent gray;
+  -moz-border-bottom-colors:gray transparent gray;
+  -moz-border-left-colors:gray transparent gray;
+  background-image: url(chrome://songbird/skin/window/bg-title-bar-resizer.png);
+  background-repeat:repeat-x;
+  background-position:center 1px;
+  background-color:rgb(200,200,200);
+}
+
 
 /*prefwindow*/
 .windowDialog
@@ -1408,7 +1425,7 @@ dialog:not([platform=Darwin])
 .dialog-content-box {
   margin: 0px !important;
   padding: 0px !important;
-  
+  background-color:rgb(250,250,250);
 }
 
 dialog:root[platform=Darwin] .dialog-content-box
@@ -1447,11 +1464,7 @@ PREFERENCES
 
 #extensionsBox > richlistbox > richlistitem[selected="true"]
 {
-  background-color: #202220 !important;
-  border-right: 1px solid #0f100f !important; /** Groove */
-  border-top: 1px solid #0f100f !important; /** Groove */
-  border-bottom: 1px solid #0f100f !important; /** Groove */
-  border-left: 1px solid #0f100f !important; /** Groove */
+background-color:red;
 }
 
 #extensionsView:focus > richlistitem[selected="true"]
@@ -1464,7 +1477,6 @@ label.addonVersion,
 label.descriptionWrap,
 #error_noupdate_header
 {
-  color: #B3BAAC !important; 
 }
 
 #extensionsBox > richlistbox > richlistitem[selected="true"] label.addonName,
@@ -1472,7 +1484,6 @@ label.descriptionWrap,
 #extensionsBox > richlistbox > richlistitem[selected="true"] label.descriptionWrap,
 #extensionsBox > richlistbox > richlistitem[selected="true"] #error_noupdate_header
 {
-  color: #feffff !important; 
 }
 
 /* Pane Selector */
@@ -1709,7 +1720,7 @@ sb-sys-titlebar {
 #nav-bar {
   border:none;
   padding:3px 4px !important;
-  height:28px;
+  height:29px;
 }
 #nav-bar > * {
   margin:0 2px !important;
@@ -1721,7 +1732,7 @@ sb-sys-titlebar {
 #nav_bar_box > .left-box > .left,
 #nav_bar_box > .right-box > .right {
   min-width:16px;
-  min-height:28px;
+  min-height:29px;
   background-position:center top;
   background-repeat:no-repeat;
 }
@@ -2011,10 +2022,10 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 
 
 
-
-
-
-
+tab[first-tab="true"],
+.tabs-container > hbox > tab {
+	margin-left:1px !important;
+}
 
 
 prefwindow * {

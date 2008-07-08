@@ -49,7 +49,6 @@
 }
 
 #commonDialog > .dialog-button-box {
-	margin-left: 80px;
 }
 */
 dialog { 
@@ -100,4 +99,11 @@ dialogheader {
 }
 
 #dialog.caseSensitive {
+}
+
+
+#sb-sys-dialog-titlebar-title {
+  min-height:22px;
+    -moz-box-align: center;
+  -moz-box-pack: center;
 }

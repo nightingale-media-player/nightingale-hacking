@@ -40,6 +40,11 @@ Imported by bindings.css or directly into feathers.
 /** the sb-player-button class is used to get an image-only button
     with no borders or padding.  **/
 
+.sb-player-button > button:focus,
+.sb-player-volume-slider:focus {
+	outline:none !important;
+}
+
 .sb-player-button,
 .sb-player-button > .clickhold-button
 {

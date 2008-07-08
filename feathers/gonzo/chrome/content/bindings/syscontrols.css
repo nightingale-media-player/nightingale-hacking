@@ -48,6 +48,12 @@ WINDOWS TITLE BAR
 *******************************************************************************
 */
 
+#sb-sys-titlebar-buttons {
+  min-height:22px;
+    -moz-box-align: center;
+  -moz-box-pack: center;  
+}
+
 
 /*  Topbar Icon 
 sb-sys-icon
@@ -71,10 +77,6 @@ sb-sys-icon
   margin-left: 16px !important;
 }
 
-
-.sb-feathers-toggle-button {
-  display:none;
-}
 */
 sb-sys-titlebar > menubar 
 {
@@ -89,13 +91,20 @@ sb-sys-titlebar > menubar
   overflow: hidden;
 }
 
-
 sb-sys-minimize-button {
   list-style-image: url(chrome://songbird/skin/window/button-minimize.png);
 }
+
 sb-sys-maximize-button {
-  list-style-image: url(chrome://songbird/skin/window/button-maximize.png);
+  background-image: url(chrome://songbird/skin/window/button-maximize.png);
+  background-position:left 0px;
+  background-repeat:no-repeat;
+  min-width:16px;
+  min-height:16px;
+  max-width:16px;
+  max-height:16px;
 }
+
 sb-sys-close-button {
   list-style-image: url(chrome://songbird/skin/window/button-close.png);
 }
@@ -104,22 +113,40 @@ sb-sys-minimize-button,
 sb-sys-maximize-button,
 sb-sys-close-button {
   -moz-image-region: rect(0px 16px 16px 0px);
+  margin:0 1px 0 0 !important;
+  background-position:left 0px;
 }
 sb-sys-minimize-button:hover,
 sb-sys-maximize-button:hover,
 sb-sys-close-button:hover {
   -moz-image-region: rect(16px 16px 32px 0px);
+  background-position:left -16px;
 }
 sb-sys-minimize-button:active,
 sb-sys-maximize-button:active,
 sb-sys-close-button:active {
   -moz-image-region: rect(32px 16px 48px 0px);
+  background-position:left -32px;
 }
 sb-sys-minimize-button[disabled="true"],
 sb-sys-maximize-button[disabled="true"],
 sb-sys-close-button[disabled="true"] {
   -moz-image-region: rect(48px 16px 64px 0px) !important;
+  background-position:left -48px;
 }
+sb-sys-maximize-button[checked] {
+  background-position:right 0px;
+}
+sb-sys-maximize-button[checked="true"]:hover {
+  background-position:right -16px;
+}
+sb-sys-maximize-button[checked="true"]:active {
+  background-position:right -32px;
+}
+sb-sys-maximize-button[checked="true"][disabled="true"] {
+  background-position:right -48px;
+}
+
 
 /*  Evict the checkbox guts, just use it for click handling */
 sb-sys-maximize-button > .checkbox-label-box,
@@ -128,24 +155,6 @@ sb-sys-maximize-button > .checkbox-check {
 }
 
 
-
-
-/* Restore
-
-komi: why?
-window[sizemode="maximized"] sb-sys-maximize-button 
-{
-  background-image: url(chrome://songbird/skin/buttons/sysbtns-win.png);
-  background-position: -54px 0px; 
-  background-repeat: no-repeat;
-  height: 9px;  
-  width: 9px;
-}
-window[sizemode="maximized"] sb-sys-maximize-button:hover
-{
-  background-position: -54px -9px; 
-}
- */
 
 
 /*  Hide (Video Window) */
@@ -189,11 +198,11 @@ MAC OSX TITLE BAR
 #sb-sys-osx-buttons > sb-sys-close-button,
 #sb-sys-osx-buttons > sb-sys-minimize-button,
 #sb-sys-osx-buttons > sb-sys-maximize-button {
-  margin:3px 5px 2px 0px;
+  margin:3px 5px 2px 0px !important;
 }
 
 #sb-sys-osx-buttons > sb-sys-close-button {
-  margin-left:7px;
+  margin-left:7px !important;
   list-style-image: url(chrome://songbird/skin/window/button-close-macos.png);
 }
 #sb-sys-osx-buttons > sb-sys-minimize-button {
@@ -237,31 +246,6 @@ MAC OSX TITLE BAR
 
 
 
-
-/**** NOTE: The Mac feathers button style is disabled, as it doesn't seem to
-	  match the operating system ****/
-/*  Switch Feathers 
-sb-feathers-toggle-button[mac="true"] > hbox > .sb-feathers-toggle-button > .clickhold-button
-{
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
-  -moz-image-region: rect(0px 56px 15px 42px);  
-}
-sb-feathers-toggle-button[mac="true"] > hbox > .sb-feathers-toggle-button > .clickhold-button:hover
-{
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
-  -moz-image-region: rect(15px 56px 30px 42px); 
-}
-sb-feathers-toggle-button[mac="true"] > hbox > .sb-feathers-toggle-button > .clickhold-button:active
-{
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
-  -moz-image-region: rect(30px 56px 45px 42px);
-}
-sb-feathers-toggle-button[mac="true"] > hbox > .sb-feathers-toggle-button > .clickhold-button[disabled="true"]
-{
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-mac-mono.png);
-  -moz-image-region: rect(45px 56px 60px 42px); 
-}*/
-
 /** 
 *******************************************************************************
 WINDOW FRAME
@@ -296,45 +280,102 @@ sb-sys-outer-frame
 /** Set resizer mouse cursors (why doesn't XULRunner provide this?) **/
 .sb-sys-outer-frame-resizer[dir="topleft"] {
   cursor: nw-resize;
+
 }
 .sb-sys-outer-frame-resizer[dir="top"] {
   cursor: n-resize;
+  border-top:1px solid gray;
+  background-color:rgb(200,200,200);
 }
 .sb-sys-outer-frame-resizer[dir="topright"] {
   cursor: ne-resize;
 }
 .sb-sys-outer-frame-resizer[dir="left"] {
   cursor: w-resize;
+  border-right:1px solid gray;
+  border-left:1px solid gray;
+  background-color:rgb(200,200,200);
 }
 .sb-sys-outer-frame-resizer[dir="right"] {
   cursor: e-resize;
+  border-right:1px solid gray;
+  border-left:1px solid gray;
+  background-color:rgb(200,200,200);
 }
 .sb-sys-outer-frame-resizer[dir="bottomleft"] {
   cursor: sw-resize;
+  background-color:rgb(200,200,200);
 }
 .sb-sys-outer-frame-resizer[dir="bottom"] {
   cursor: s-resize;
+  border-bottom:1px solid gray;
+  border-top:1px solid gray;
+  background-color:rgb(200,200,200);
 }
 .sb-sys-outer-frame-resizer[dir="bottomright"] {
   cursor: se-resize;
+  background-color:rgb(200,200,200);
+ }
+
+.sb-sys-outer-frame-resizer-rightbottom,
+.sb-sys-outer-frame-resizer-leftbottom,
+.sb-sys-outer-frame-resizer-righttop,
+.sb-sys-outer-frame-resizer-lefttop {
+  min-height:9px;
+border-left:1px solid gray;
+border-right:1px solid gray;
+}
+.sb-sys-outer-frame-resizer-righttop,
+.sb-sys-outer-frame-resizer-lefttop {
+    min-height:22px;
+  background-image: url(chrome://songbird/skin/window/bg-title-bar-resizer.png);
+  background-repeat:no-repeat;
+  background-position:center top;
+  
+    
+}
+.sb-sys-outer-frame-resizer-bottomleft {
+  min-width:12px;
+border-left:1px solid gray;
+border-bottom:1px solid gray;
+  background-image: url(chrome://songbird/skin/window/bg-resizer-bottom-corner.png);
+  background-repeat:no-repeat;
+  background-position:left top;
+}
+.sb-sys-outer-frame-resizer-bottomright {
+  min-width:12px;
+border-right:1px solid gray;
+border-bottom:1px solid gray;
+  background-image: url(chrome://songbird/skin/window/bg-resizer-bottom-corner.png);
+    background-repeat:no-repeat;
+  background-position:right top;
 }
 
+.sb-sys-outer-frame-resizer-topleft {
+  min-width:12px;
+border-left:1px solid gray;
+border-top:1px solid gray;
+}
+.sb-sys-outer-frame-resizer-topright {
+  min-width:12px;
+border-right:1px solid gray;
+border-top:1px solid gray;
+}
 
 /** Mac bottom right resizer **/
 
 window[platform=Darwin] .sb-sys-outer-frame-resizer {
   display:none;
 }
-
 .sb-sys-outer-frame-resizer-image {
   list-style-image: url(chrome://songbird/skin/window/button-resizer.png);
   -moz-image-region: rect(0px 12px 12px 0px);
   background-color:cyan;
   min-width:12px;
   min-height:12px;
-  border:2px solid red;
 }
-/** komi:no work :-( **/
+
+/** komi:no work :-( 
 .sb-sys-outer-frame-resizer-image:hover {
   -moz-image-region: rect(12px 12px 24px 0px);
 }
@@ -345,3 +386,4 @@ window[platform=Darwin] .sb-sys-outer-frame-resizer {
   -moz-image-region: rect(36px 12px 48px 0px);
 }
 
+**/
