@@ -61,7 +61,15 @@ function runTest() {
     var itemPlayedAt2 = new Date().getTime() + 10000;
     var itemPlayDuration2 = 1000 * 1000 * 999;
     
-    var entry2 = history.createEntry(item, itemPlayedAt2, itemPlayDuration2, null);
+    var annotations = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                        .createInstance(Ci.sbIPropertyArray);
+    annotations.appendProperty("http://songbirdnest.com/data/1.0#scrobbled", 
+                               "scrobbled");
+    
+    var entry2 = history.createEntry(item, 
+                                     itemPlayedAt2, 
+                                     itemPlayDuration2, 
+                                     annotations);
     history.addEntry(entry2);
     
     log("The playback history service has " + history.entryCount + " entries.");

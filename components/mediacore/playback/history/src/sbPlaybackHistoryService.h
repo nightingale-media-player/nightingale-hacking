@@ -37,6 +37,7 @@
 #include <nsIObserver.h>
 
 #include <nsCOMPtr.h>
+#include <nsDataHashtable.h>
 #include <nsHashKeys.h>
 #include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
@@ -92,6 +93,12 @@ public:
                    const nsAString &aItemGuid,
                    sbIMediaItem **aItem);
 
+  nsresult GetPropertyDBID(const nsAString &aPropertyID,
+                           PRUint32 *aPropertyDBID);
+  nsresult InsertPropertyID(const nsAString &aPropertyID, 
+                            PRUint32 *aPropertyDBID);
+  nsresult LoadPropertyIDs();
+
   nsresult DoEntryAddedCallback(sbIPlaybackHistoryEntry *aEntry);
   nsresult DoEntriesAddedCallback(nsIArray *aEntries);
 
@@ -108,10 +115,13 @@ protected:
 
 private:
   nsString mAddEntryQuery;
+  nsString mAddAnnotationQuery;
 
   nsString mGetEntryCountQuery;
 
   nsString mGetEntryIDQuery;
+  
+  nsString mInsertPropertyIDQuery;
 
   nsString mGetAllEntriesQuery;
   nsString mGetEntriesByIndexQuery;
@@ -132,6 +142,9 @@ private:
 
   nsInterfaceHashtableMT<nsISupportsHashKey, 
                          sbIPlaybackHistoryListener> mListeners;
+
+  nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyDBIDToID;
+  nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyIDToDBID;
 };
 
 #endif /* __SB_PLAYBACKHISTORYSERVICE_H__ */
