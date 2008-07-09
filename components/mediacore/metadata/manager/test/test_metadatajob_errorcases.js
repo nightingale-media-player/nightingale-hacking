@@ -44,7 +44,6 @@ function runTest() {
   ///////////////////////
   // Set up test files //
   ///////////////////////
-  
   // A file that doesnt exist
   var file = newAppRelativeFile("testharness/metadatamanager/errorcases/file_that_doesnt_exist.mp3");
   assertEqual(file.exists(), false);
@@ -64,14 +63,14 @@ function runTest() {
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/mp3-disguised-as.flac"));
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/mp3-disguised-as.ogg"));
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/ogg-disguised-as.m4a"));
-  
+
   // Misc file permissions
   file = newAppRelativeFile("testharness/metadatamanager/errorcases/access-tests.mp3");  
   var readonly = getCopyOfFile(file, "readonly.mp3");
   readonly.permissions = 0400;
   files.push(readonly);
   filesToRemove.push(readonly);
-  
+
   var writeonly = getCopyOfFile(file, "writeonly.mp3");
   writeonly.permissions = 0200;
   // If we aren't able to set write only, don't bother with this test (e.g. on windows)
@@ -89,7 +88,7 @@ function runTest() {
   
   // A remote file that doesn't exist
   files.push(newURI("http://localhost/remote/file/that/doesnt/exist.mp3"));
-  
+
     
   ///////////////////////////////////////
   // Load the files into two libraries //

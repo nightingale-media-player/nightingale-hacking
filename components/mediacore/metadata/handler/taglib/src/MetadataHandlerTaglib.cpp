@@ -1588,11 +1588,18 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
     TagLib::String              aString,
     const char                  *aCharset)
 {
+    // if null, return an empty (non-null) string instead
+    if (aString.isNull()) {
+        return TagLib::String();
+    }
+
+    // If UTF16 or ASCII, or we have no idea, 
+    // just leave the string as-is
     if (!aCharset || !*aCharset || 
-        !strcmp("us-ascii", aCharset) || 
-        !strcmp("utf-8", aCharset)) 
+        !strcmp("utf-8", aCharset) ||
+        !strcmp("us-ascii", aCharset))
+        
     {
-        // no conversion
         return aString;
     }
 
