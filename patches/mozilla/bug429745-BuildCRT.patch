@@ -178,7 +178,7 @@ RCS file: /cvsroot/mozilla/memory/jemalloc/Makefile.in,v
 retrieving revision 1.9
 diff -u -8 -r1.9 Makefile.in
 --- memory/jemalloc/Makefile.in	8 May 2008 09:20:45 -0000	1.9
-+++ memory/jemalloc/Makefile.in	11 Jun 2008 17:35:43 -0000
++++ memory/jemalloc/Makefile.in	9 Jul 2008 05:58:25 -0000
 @@ -16,16 +16,17 @@
  #
  # The Initial Developer of the Original Code is
@@ -197,7 +197,8 @@ diff -u -8 -r1.9 Makefile.in
  # of those above. If you wish to allow use of your version of this file only
  # under the terms of either the GPL or the LGPL, and not to allow others to
  # use your version of this file under the terms of the MPL, indicate your
-@@ -46,41 +47,102 @@
+@@ -45,47 +46,114 @@
+ 
  MODULE		= jemalloc
  
  ifeq (WINNT,$(OS_TARGET))
@@ -205,8 +206,10 @@ diff -u -8 -r1.9 Makefile.in
  # or you use a pre-built DLL.
  ifneq (,$(WIN32_CRT_SRC_DIR))
  # Building the CRT from source
- CRT_OBJ_DIR=./$(shell basename "$(WIN32_CRT_SRC_DIR)")
+-CRT_OBJ_DIR=./$(shell basename "$(WIN32_CRT_SRC_DIR)")
 -libs:: $(CRT_OBJ_DIR)/build/intel/mozcrt19.dll
+-	$(INSTALL) $< $(FINAL_TARGET)
++CRT_OBJ_DIR=$(shell pwd)/$(shell basename "$(WIN32_CRT_SRC_DIR)")
 +
 +
 +ifeq ($(MOZ_DEBUG),1)
@@ -215,14 +218,23 @@ diff -u -8 -r1.9 Makefile.in
 +else
 +MOZ_CRT_DLL_NAME = mozcrt19
 +MOZ_MEMORY_WIN32_CRTLIBS = libcmt libcmpt
-+endif
++endif # MOZ_DEBUG
 +
 +MOZ_CRT_DLL = $(CRT_OBJ_DIR)/build/intel/$(MOZ_CRT_DLL_NAME).dll
++MOZ_CRT_LIB = $(CRT_OBJ_DIR)/build/intel/$(MOZ_CRT_DLL_NAME).lib
++MOZ_CRT_PDB = $(CRT_OBJ_DIR)/build/intel/$(MOZ_CRT_DLL_NAME).pdb
 +
 +WIN32_CRT_SRC_MEM_HEADERS=crtdbg.h malloc.h xdebug xlocale
 +
-+libs:: $(MOZ_CRT_DLL)
- 	$(INSTALL) $< $(FINAL_TARGET)
++.PHONY: mozcrtlibs mozcrtruntimedll
++
++libs:: mozcrtlibs mozcrtruntimedll
++
++mozcrtlibs: $(MOZ_CRT_DLL) $(MOZ_CRT_LIB) $(MOZ_CRT_PDB)
++	$(INSTALL) $^ $(DIST)/lib
++
++mozcrtruntimedll: $(MOZ_CRT_DLL)
++	$(INSTALL) $^ $(FINAL_TARGET)
  
  # patch if necessary
  $(CRT_OBJ_DIR)/jemalloc.c: $(srcdir)/crtsp1.diff
@@ -275,22 +287,20 @@ diff -u -8 -r1.9 Makefile.in
 +	# the mozilla build uses the same headers that we used for the CRT
 +	# build; incidentally, this is why INCLUDE now gets munged
 +	cp -v $(addprefix $(CRT_OBJ_DIR)/, $(WIN32_CRT_SRC_MEM_HEADERS)) $(CRT_OBJ_DIR)/build/intel
-+	#XXX: these don't link right for some reason
+ 	#XXX: these don't link right for some reason
+-	rm $(CRT_OBJ_DIR)/build/intel/{libcmt,libcpmt}.lib
 +	# cp -v $(CRT_OBJ_DIR)/build/intel/{libcmtd,libcpmtd}.{lib,pdb} .
 +	rm $(CRT_OBJ_DIR)/build/intel/{libcmtd,libcpmtd}.lib
-+else
-+	# release mode
- 	#XXX: these don't link right for some reason
- 	rm $(CRT_OBJ_DIR)/build/intel/{libcmt,libcpmt}.lib
-+	# Enable if we ever remove the above 
-+	# cp -v $(CRT_OBJ_DIR)/build/intel/{libcmt,libcpmt}.{lib,pdb} . 
-+endif
-+	# Copy the pdbs and dlls in both modes into the objdir, so the rest of the 
-+	# scripts can pick these up for pdbs symbol store/upload, etc.
-+	cp -v $(CRT_OBJ_DIR)/build/intel/$(MOZ_CRT_DLL_NAME).{dll,pdb} . 
-+
  else
 -# Using a pre-built DLL, so just install it.
++	# release mode
++	#XXX: these don't link right for some reason
++	rm $(CRT_OBJ_DIR)/build/intel/{libcmt,libcpmt}.lib
++	# Enable if we ever remove the above 
++	# cp -v $(CRT_OBJ_DIR)/build/intel/{libcmt,libcpmt}.{lib,pdb} . 
++endif # MOZ_DEBUG
++
++else # $(WIN32_CRT_SRC_DIR) != ""
 +# Using a pre-built DLL, so just install it; can't redistrib the debug CRT, so
 +# no target for it.
 +ifdef ($(MOZ_DEBUG),1)
@@ -299,12 +309,36 @@ diff -u -8 -r1.9 Makefile.in
 +
  libs:: $(WIN32_CUSTOM_CRT_DIR)/mozcrt19.dll
  	$(INSTALL) $< $(FINAL_TARGET)
- endif
+-endif
++endif # neq(,$(WIN32_CRT_SRC_DIR)), i.e. pre-built mozcrt available
  
- else
+-else
++else # WINNT != $(OS_TARGET)
  
  MODULE_OPTIMIZE_FLAGS = -O2
  ifeq ($(OS_ARCH),SunOS)
+ ifndef GNU_CC
+ MODULE_OPTIMIZE_FLAGS = -xO5
+ endif
+ endif
+ 
+@@ -97,15 +165,15 @@
+ 
+ CSRCS		= \
+ 		jemalloc.c \
+ 		$(NULL)
+ 
+ #XXX: PGO on Linux causes problems here
+ # See bug 419470
+ NO_PROFILE_GUIDED_OPTIMIZE = 1
+-endif
++endif # (WINNT,$(OS_TARGET))
+ 
+ include $(topsrcdir)/config/rules.mk
+ 
+ ifeq (Darwin,$(OS_TARGET))
+ LDFLAGS += -init _jemalloc_darwin_init
+ endif
 Index: memory/jemalloc/build-crt.py
 ===================================================================
 RCS file: /cvsroot/mozilla/memory/jemalloc/build-crt.py,v
@@ -336,8 +370,8 @@ RCS file: /cvsroot/mozilla/memory/jemalloc/crtsp1.diff,v
 retrieving revision 1.8
 diff -u -8 -r1.8 crtsp1.diff
 --- memory/jemalloc/crtsp1.diff	5 Mar 2008 19:09:52 -0000	1.8
-+++ memory/jemalloc/crtsp1.diff	12 Jun 2008 09:10:14 -0000
-@@ -1,197 +1,719 @@
++++ memory/jemalloc/crtsp1.diff	9 Jul 2008 05:58:25 -0000
+@@ -1,197 +1,729 @@
 -# The Microsoft C Runtime source code to which this document refers is available
 -# directly from Microsoft Corporation, under a separate license.
 -# Please ensure that if you are using that source code, you have appropriate
@@ -554,7 +588,18 @@ diff -u -8 -r1.8 crtsp1.diff
 +391c
 +#if defined(_DEBUG) && !defined(MOZ_MEMORY)
 +// XXX: should do jemalloc's memory_statistics call here? -preed
-+.
+ .
+-359d
+-340d
+-310,311d
+-300d
+-287c
+-            /*
+-             * this used to happen in _mtinit, but we need it before malloc
+-             */
+-            _init_pointers();       /* initialize global function pointers */
+-
+-            if ( malloc_init_hard() )   /* initialize heap */
 +359a
 +#endif
 +.
@@ -578,18 +623,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +.
 +299a
 +#ifndef MOZ_MEMORY
- .
--359d
--340d
--310,311d
--300d
--287c
--            /*
--             * this used to happen in _mtinit, but we need it before malloc
--             */
--            _init_pointers();       /* initialize global function pointers */
--
--            if ( malloc_init_hard() )   /* initialize heap */
++.
 +287a
 +#endif
 +.
@@ -724,6 +758,11 @@ diff -u -8 -r1.8 crtsp1.diff
  500a
 -    malloc_usable_size
 +    malloc_usable_size
++.
++1402a
++    _malloc_crt
++    _calloc_crt
++    _realloc_crt
  .
  336,341d
  324d
@@ -751,35 +790,40 @@ diff -u -8 -r1.8 crtsp1.diff
 +    _malloc_dbg
 +    malloc_usable_size
 +.
++1408a
++    _malloc_crt
++    _calloc_crt
++    _realloc_crt
++.
 +343,348d
 +331d
 +320,321d
 +260c
 +    _free_dbg
-+.
+ .
+-403a
+-#if 0
 +88,95d
 +81d
 +15,16d
 +9c
 +LIBRARY MOZCRT19D
-+.
+ .
+-diff -re crt/src/makefile crt-sp1/src/makefile
+-1745a
+-$(DEFFILE_DIR)\$(RETAIL_LIB_NAME).def : $(DEFFILE_DIR)\_sample_.def
+-	copy $** $@
 +diff -re crt/src/makefile crtsp1/src/makefile
 +1237a
 +!endif
- .
--403a
--#if 0
++.
 +1236a
 +!if "$(MOZ_MEMORY)"!="1"
 +.
 +1231,1232c
 +!endif
 +
- .
--diff -re crt/src/makefile crt-sp1/src/makefile
--1745a
--$(DEFFILE_DIR)\$(RETAIL_LIB_NAME).def : $(DEFFILE_DIR)\_sample_.def
--	copy $** $@
++.
 +1227a
 +        $(OBJDIR_DLL_RAW)\errmode.obj \
 +        $(OBJDIR_DLL_RAW)\matherr.obj
