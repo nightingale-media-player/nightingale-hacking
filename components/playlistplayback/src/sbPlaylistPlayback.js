@@ -987,7 +987,7 @@ PlaylistPlayback.prototype = {
   playView: function(aView, aIndex) {
     LOG("playView");
     // XXXnewlib
-    if (!(aView && aIndex >= 0))
+    if (!aView)
       throw Components.results.NS_ERROR_INVALID_ARG;
 
     var core = this.core;
