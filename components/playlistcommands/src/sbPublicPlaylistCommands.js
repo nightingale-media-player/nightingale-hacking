@@ -1119,8 +1119,8 @@ function plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost) {
 
 // Returns true if the playlist can be modified (is not read-only)
 function plCmd_CanModifyPlaylist(aContext, aSubMenuId, aCommandId, aHost) {
-  return !plCmd_OR(plCmd_isReadOnlyLibrary,
-                   plCmd_isReadOnlyPlaylist);
+  return !(plCmd_isReadOnlyLibrary(aContext, aSubMenuId, aCommandId, aHost) ||
+           plCmd_isReadOnlyPlaylist(aContext, aSubMenuId, aCommandId, aHost));
 }
 
 // Returns true if the library the playlist is in is read-only
@@ -1203,7 +1203,7 @@ function plCmd_isReadWriteSmartPlaylist(aContext, aSubMenuId, aCommandId, aHost)
          !plCmd_isReadOnlyLibrary(aContext, aSubMenuId, aCommandId, aHost);
 }
 
-// Returns the conjunction of the result of the inputs
+// Returns a function that will return the conjunction of the result of the inputs
 function plCmd_AND( /* comma separated list (not array) of functions */ ) {
   var methods = Array.prototype.concat.apply([], arguments);
   return function _plCmd_Conjunction(aContext, aSubMenuId, aCommandId, aHost) {
@@ -1215,7 +1215,7 @@ function plCmd_AND( /* comma separated list (not array) of functions */ ) {
   }
 }
 
-// Returns the disjunction of the result of the inputs
+// Returns a function that will return the disjunction of the result of the inputs
 function plCmd_OR( /* comma separated list (not array) of functions */ ) {
   var methods = Array.prototype.concat.apply([], arguments);
   return function _plCmd_Disjunction(aContext, aSubMenuId, aCommandId, aHost) {
@@ -1227,7 +1227,7 @@ function plCmd_OR( /* comma separated list (not array) of functions */ ) {
   }
 }
 
-// Returns the negation of the result of the input
+// Returns a function that will return the negation of the result of the input
 function plCmd_NOT( aFunction ) {
   return function _plCmd_Negation(aContext, aSubMenuId, aCommandId, aHost) {
     return !aFunction(aContext, aSubMenuId, aCommandId, aHost);
