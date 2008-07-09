@@ -65,11 +65,12 @@ window[platform=Darwin] {
   padding:0 5px 0 5px !important;
   font-weight:bold;
 }
-window[platform=Darwin] #sb-sys-title-title{
+window[platform=Darwin] #sb-sys-title-title,
+dialog[platform=Darwin] #sb-sys-title-title {
   font-family: Lucida Grande !important;
   font-size: 13px !important;
   padding-top:3px !important;
-  font-weight:normal;
+  font-weight:normal !important;
 
 /*  opacity:0.9999;*/
 }
@@ -634,29 +635,6 @@ tabpanels {
 
 
 
-/** 
-*******************************************************************************
-DIALOG NOTIFICATION BOX (used in the metadata editor)
-*******************************************************************************
-*/
-
-.dialog-notification {
-}
-.dialog-notification.notification-warning {
-  background-color: rgb(230,172,172);
-}
-.dialog-notification.notification-warning > .dialog-notification-text {
-  color: rgb(80,40,40) !important;
-}
-.dialog-notification.notification-info {
-  background-color: rgb(255,255,200);
-}
-.dialog-notification-text {
-  color: rgb(80,80,40) !important;
-}
-
-
-
 
 /** 
 *******************************************************************************
@@ -1151,10 +1129,19 @@ TOOLTIPS
 
 tooltip
 {  
-  background-color: #EEE !important;
-  color: #0f100f !important; /** Groove  */
+  background-color: rgb(255,255,200) !important;
+  color: rgb(40,40,40) !important;
 }
 
+
+
+textbox[invalid="true"] {
+  background-color:red !important;
+  color:white !important;
+} 
+textbox[edited="true"] {
+  background-color:yellow;
+}
 
 
 /** 
@@ -1202,29 +1189,12 @@ textbox[disabled="true"]
 textbox[disabled="true"],
 html|*.numberbox-input[disabled="true"]
 {
-  color: #474948; /** Light Color 1 */
 }
 
 /* ..... invalid state ..... */
-textbox[invalid="true"] {
-  background-color:rgb(51,25,25) !important;
-  color:rgb(255,127,127) !important;
-} 
-
-/* ..... edited state ..... */
-textbox[edited] {
- color:rgb(255,246,133);
-}
 
 
-/**
-*******************************************************************************
-RATING WIDGET (used in the metadata editor)
-*******************************************************************************
-*/
-sb-rating {
 
-}
 
 /**
 *******************************************************************************

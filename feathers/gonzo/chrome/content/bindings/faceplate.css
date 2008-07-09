@@ -43,9 +43,10 @@ Imported by bindings.css or directly into feathers.
 /** Text **/
 .faceplate-text
 {
-  font-family: Lucida Grande, Arial, Helvetica, FreeSans, Sans-serif !important;
+  font-family: Lucida Grande, Trebuchet MS, Arial, Helvetica, FreeSans, Sans-serif !important;
   margin: 0;
-  color:white;
+  color:rgb(250,250,250);
+  font-size: 10px; 
 }
 
 /* 
@@ -60,17 +61,8 @@ Imported by bindings.css or directly into feathers.
    }
 */
 
-sb-player-title-label.faceplate-text
-{
-  font-weight:bold;
-}
-.faceplate-text
-{
-  font-size: 11px; 
-}
 .sb-player-artist-label,
 .sb-player-title-label {
-  margin-right:2px;
 }
 
 
@@ -235,6 +227,26 @@ sb-player-seek-slider[buffering="true"] > #sb-player-seek-slider
 
 #faceplate_seekbar_box > .notches > hbox+hbox {
   background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar-notch.png);
+  background-repeat:no-repeat;
+  background-position:left center;
+}
+
+
+#sb-player-title-label-label {
+  font-weight:bold;
+}
+#sb-player-artist-label-label,
+#sb-player-album-label-label {
+  color:rgb(215,215,215);
+}
+
+/* title will always be something /
+/*#sb-player-title-label-label:not([value=""]),*/
+#sb-player-artist-label-label:not([value=""]),
+#sb-player-album-label-label:not([value=""]) {
+  padding-left:12px;
+  
+  background-image: url(chrome://songbird/skin/media-control-pane/icon-text-delimiter.png);
   background-repeat:no-repeat;
   background-position:left center;
 }
