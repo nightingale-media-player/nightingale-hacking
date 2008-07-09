@@ -17,6 +17,7 @@ lib_files="*js3250.*
            *xpcom.*
            *xpcomglue_s.*
            *mozjs*
+           *mozcrt19*
            *xul*
            *smime3*
            *ssl3*
