@@ -197,7 +197,7 @@ var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
   log(numberInfo.format(sample));
   log(numberInfo.makeSortable(sample));
   
-  assertEqual(numberInfo.format(sample), "1.23471e+016");
+  assertEqual(parseFloat(numberInfo.format(sample)), 1.23471e+016);
   var delta = Math.abs(numberInfo.makeSortable(sample) - sample);
   assertTrue(delta < eps, true, "make sortable doesn't perturb the value");
 }
