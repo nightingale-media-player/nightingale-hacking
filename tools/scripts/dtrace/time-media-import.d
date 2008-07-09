@@ -1,12 +1,11 @@
 #!/usr/sbin/dtrace -Zs
 #pragma D option switchrate=10
+/*
+ Monitors time to import media files, providing a breakdown for file scanning, 
+ library item creation, and metadata scanning.
 
-#
-# Monitors time to import media files, providing a breakdown for file scanning, 
-# library item creation, and metadata scanning.
-#
-# Run with "sudo ./time-media-import.d -p<PID>"
-#
+ Run with "sudo ./time-media-import.d -p<PID>"
+*/
 
 dtrace:::BEGIN
 {

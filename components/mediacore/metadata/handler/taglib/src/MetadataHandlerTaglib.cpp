@@ -1588,7 +1588,10 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
     TagLib::String              aString,
     const char                  *aCharset)
 {
-    if (!aCharset || !*aCharset) {
+    if (!aCharset || !*aCharset || 
+        !strcmp("us-ascii", aCharset) || 
+        !strcmp("utf-8", aCharset)) 
+    {
         // no conversion
         return aString;
     }
