@@ -54,7 +54,6 @@
 #include <prmon.h>
 #include <nsIThread.h>
 #include <nsIRunnable.h>
-#include <nsIObserver.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_FILESCAN_CONTRACTID                     \
@@ -126,8 +125,7 @@ class sbFileScanThread;
  * \class sbFileScan
  * \brief
  */
-class sbFileScan : public sbIFileScan,
-                   public nsIObserver
+class sbFileScan : public sbIFileScan
 {
 public:
 
@@ -137,7 +135,6 @@ public:
   virtual ~sbFileScan();
 
   NS_DECL_ISUPPORTS
-  NS_DECL_NSIOBSERVER
   NS_DECL_SBIFILESCAN
 
   static void PR_CALLBACK QueryProcessor(sbFileScan* pFileScan);
@@ -152,8 +149,6 @@ protected:
   typedef std::deque<nsCOMPtr<nsISupports> > entrystack_t;
 
   nsresult Shutdown();
-
-  PRBool m_AttemptShutdownOnDestruction;
 
   PRMonitor* m_pThreadMonitor;
   nsCOMPtr<nsIThread> m_pThread;

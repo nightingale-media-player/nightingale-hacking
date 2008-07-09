@@ -41,7 +41,6 @@
 #include <unicharutil/nsUnicharUtils.h>
 #include <nsThreadUtils.h>
 #include <nsStringGlue.h>
-#include <nsIObserverService.h>
 #include <nsIMutableArray.h>
 #include <nsNetUtil.h>
 #include <sbLockUtils.h>
@@ -99,11 +98,13 @@ sbFileScanQuery::sbFileScanQuery(const nsString &strDirectory, const PRBool &bRe
   NS_ASSERTION(m_pExtensionsLock, "FileScanQuery.m_pExtensionsLock failed");
   NS_ASSERTION(m_pScanningLock, "FileScanQuery.m_pScanningLock failed");
   NS_ASSERTION(m_pCancelLock, "FileScanQuery.m_pCancelLock failed");
+  MOZ_COUNT_CTOR(sbFileScanQuery);
 } //ctor
 
 //-----------------------------------------------------------------------------
 /*virtual*/ sbFileScanQuery::~sbFileScanQuery()
 {
+  MOZ_COUNT_DTOR(sbFileScanQuery);
   if (m_pDirectoryLock)
     PR_DestroyLock(m_pDirectoryLock);
   if (m_pCurrentPathLock)
@@ -397,77 +398,42 @@ PRBool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension)
 //*****************************************************************************
 //  sbFileScan Class
 //*****************************************************************************
-NS_IMPL_ISUPPORTS2(sbFileScan, nsIObserver, sbIFileScan)
+NS_IMPL_ISUPPORTS1(sbFileScan, sbIFileScan)
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileScanThread, nsIRunnable)
 //-----------------------------------------------------------------------------
 sbFileScan::sbFileScan()
-: m_AttemptShutdownOnDestruction(PR_FALSE)
-, m_pThreadMonitor(nsAutoMonitor::NewMonitor("sbFileScan.m_pThreadMonitor"))
+: m_pThreadMonitor(nsAutoMonitor::NewMonitor("sbFileScan.m_pThreadMonitor"))
 , m_pThread(nsnull)
 , m_ThreadShouldShutdown(PR_FALSE)
 , m_ThreadQueueHasItem(PR_FALSE)
 {
   NS_ASSERTION(m_pThreadMonitor, "FileScan.m_pThreadMonitor failed");
+  MOZ_COUNT_CTOR(sbFileScan);
 
   nsresult rv;
 
   // Attempt to create the scan thread
-  do {
-    nsCOMPtr<nsIRunnable> pThreadRunner = new sbFileScanThread(this);
-    NS_ASSERTION(pThreadRunner, "Unable to create sbFileScanThread");
-    if (!pThreadRunner)
-      break;
+
+  nsCOMPtr<nsIRunnable> pThreadRunner = new sbFileScanThread(this);
+  NS_ASSERTION(pThreadRunner, "Unable to create sbFileScanThread");
+  if (pThreadRunner) {
     rv = NS_NewThread(getter_AddRefs(m_pThread),
-                               pThreadRunner);
+                             pThreadRunner);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbFileScanThread");
-  } while (PR_FALSE); // Only do this once
-
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-  if(NS_SUCCEEDED(rv)) {
-    rv = observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID,
-                                      PR_FALSE);
-  }
-
-  // This shouldn't be an 'else' case because we want to set this flag if
-  // either of the above calls failed
-  if (NS_FAILED(rv)) {
-    NS_ERROR("Unable to register xpcom-shutdown observer");
-    m_AttemptShutdownOnDestruction = PR_TRUE;
   }
 } //ctor
 
 //-----------------------------------------------------------------------------
 sbFileScan::~sbFileScan()
 {
-  if(m_AttemptShutdownOnDestruction) {
-    Shutdown();
-  }
+  MOZ_COUNT_DTOR(sbFileScan);
+  nsresult rv = NS_OK;
+  rv = Shutdown();
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to shut down sbFileScanThread");
 
   if (m_pThreadMonitor)
     nsAutoMonitor::DestroyMonitor(m_pThreadMonitor);
 } //dtor
-
-NS_IMETHODIMP
-sbFileScan::Observe(nsISupports *aSubject,
-                    const char *aTopic,
-                    const PRUnichar *aData)
-{
-  nsresult rv = NS_OK;
-
-  // Bail if we don't care about the message
-  if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID))
-    return rv;
-
-  rv = Shutdown();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // And remove ourselves from the observer service
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  return observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
-}
 
 nsresult
 sbFileScan::Shutdown()
@@ -689,7 +655,7 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
       nsAutoMonitor mon(pFileScan->m_pThreadMonitor);
 
       while (!pFileScan->m_ThreadQueueHasItem && !pFileScan->m_ThreadShouldShutdown)
-        mon.Wait(PR_MillisecondsToInterval(66));
+        mon.Wait();
 
       if (pFileScan->m_ThreadShouldShutdown) {
         return;
