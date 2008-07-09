@@ -837,13 +837,10 @@ function onLayoutLoad(event) {
     if (nativeWinMgr.supportsMinimumWindowSize) {
       var cstyle = window.getComputedStyle(document.documentElement, '');
       if (cstyle) {
-        var minWidth = cstyle.minWidth;
-        var minHeight = cstyle.minHeight;
-        
+        var minWidth = parseInt(cstyle.minWidth);
+        var minHeight = parseInt(cstyle.minHeight);
         if (minWidth > 0 && minHeight > 0) {
-          nativeWinMgr.setMinimumWindowSize(window, 
-                                            parseInt(cstyle.minWidth), 
-                                            parseInt(cstyle.minHeight)); 
+          nativeWinMgr.setMinimumWindowSize(window, minWidth, minHeight);
         }
       }
     }
