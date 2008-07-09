@@ -832,6 +832,21 @@ function onLayoutLoad(event) {
       
       nativeWinMgr.setOnTop(window, isOnTop);
     }
+    
+    // Set the min-window size if the window supports it
+    if (nativeWinMgr.supportsMinimumWindowSize) {
+      var cstyle = window.getComputedStyle(document.documentElement, '');
+      if (cstyle) {
+        var minWidth = cstyle.minWidth;
+        var minHeight = cstyle.minHeight;
+        
+        if (minWidth > 0 && minHeight > 0) {
+          nativeWinMgr.setMinimumWindowSize(window, 
+                                            parseInt(cstyle.minWidth), 
+                                            parseInt(cstyle.minHeight)); 
+        }
+      }
+    }
   }
 }
 window.addEventListener('load', onLayoutLoad, false);

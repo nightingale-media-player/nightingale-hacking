@@ -51,16 +51,23 @@ NS_IMETHODIMP sbNativeWindowManager::GetSupportsResizeDrag(PRBool *aSupportsResi
 }
 
 
-NS_IMETHODIMP sbNativeWindowManager::SetMinimumWindowSize(nsISupports *aWindow, PRInt32 aMinimumWidth, PRInt32 aMinimumHeight)
+NS_IMETHODIMP 
+sbNativeWindowManager::SetMinimumWindowSize(nsISupports *aWindow, 
+                                            PRInt32 aMinimumWidth, 
+                                            PRInt32 aMinimumHeight)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  id window = NativeWindowFromNode::get(aWindow);
+  if (window)
+    [window setMinSize:NSMakeSize(aMinimumWidth, aMinimumHeight)];
+  
+  return NS_OK;
 }
 
 
 NS_IMETHODIMP sbNativeWindowManager::GetSupportsMinimumWindowSize(PRBool *aSupportsMinimumWindowSize)
 {
   NS_ENSURE_ARG_POINTER(aSupportsMinimumWindowSize);
-  *aSupportsMinimumWindowSize = PR_FALSE;
+  *aSupportsMinimumWindowSize = PR_TRUE;
   return NS_OK;
 }
 
