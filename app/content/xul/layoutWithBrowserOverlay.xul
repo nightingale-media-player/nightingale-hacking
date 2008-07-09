@@ -538,7 +538,8 @@
                                 flex="1" align="center" />  
                                 
         <sb-clickhold-toolbarbutton id="bookmark-subscribe-button" command="cmd_bm_newbookmark"
-                                    class="toolbarbutton-1 chromeclass-toolbar-additional">
+                                    class="toolbarbutton-1 chromeclass-toolbar-additional"
+                                    tooltiptext="&tooltip.browser.bookmarksubscribe;">
           <menupopup id="bookmark-subscribe-popup" popupanchor="bottomleft" popupalign="topleft">
             <menuitem label="&tooltip.browser.bookmark;" tooltiptext="&tooltip.browser.bookmark;"
                       command="cmd_bm_newbookmark" />

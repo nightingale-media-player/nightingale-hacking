@@ -174,7 +174,7 @@
 <!ENTITY tooltip.browser.playlist "Show/Hide the Web Playlist" >
 <!ENTITY tooltip.browser.download "View Current Downloads" >
 <!ENTITY tooltip.browser.mediapages "Switch Media Views..." >
-
+<!ENTITY tooltip.browser.bookmarksubscribe "Add this page" >
 
 <!ENTITY smart.window             "Smart Playlist Builder" >
 <!ENTITY smart.library            "Select Library:" >
