@@ -163,8 +163,12 @@
     <menu id="view-menu" label="&menu.view;" accesskey="&menu.view.accesskey;">
       <menupopup id="menu_viewPopup">
         <sb-feathers-menuitems id="menuitem_view_feathers"/>
-        <sb-mediapages-menuitems id="menuitem_view_mediapages" hideGetMore="true"/>
         <sb-displaypane-menuitems id="menuitem_view_displaypanes"/>
+        
+        <menupopup>
+          <menuitem id="test" label="Flip Player Controls" oncommand="testFlipView();" />
+        </menupopup>
+          <sb-mediapages-menuitems id="menuitem_view_mediapages" hideGetMore="true"/>
       </menupopup>
     </menu>
 

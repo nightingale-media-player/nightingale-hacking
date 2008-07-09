@@ -217,6 +217,26 @@ sbMacWindowZoomController.prototype = {
   }
 };
 
+
+//
+// XXXkreeger: Temp function for testing view swamping.
+//
+var gIsControllerOnBottom = true;
+function testFlipView()
+{
+  var controllerStack = document.getElementById("control_pane_box");
+  
+  if (gIsControllerOnBottom) {
+    document.getElementById("control_pane_top_holder").appendChild(controllerStack);
+    gIsControllerOnBottom = false;
+  }
+  else {
+    document.getElementById("control_pane_bottom_holder").appendChild(controllerStack);
+    gIsControllerOnBottom = true;
+  }
+}
+
+
 // Only use our mac zoom controller on the mac:
 var macZoomWindowController = null;
 if (getPlatformString() == "Darwin")

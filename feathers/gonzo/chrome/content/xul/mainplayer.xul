@@ -92,6 +92,9 @@
       </sb-sys-titlebar>
     </stack>
 
+    <vbox id="control_pane_top_holder">
+    </vbox>
+
 
     <stack id="nav_bar_box">
       <hbox flex="1" align="left" class="left-box">
@@ -158,114 +161,115 @@
       </vbox>
     </vbox>
 
+    <vbox id="control_pane_bottom_holder">
+      <stack id="control_pane_box" pack="center">
 
-    <stack id="control_pane_box" pack="center">
-
-<!-- TODO Move corner xul into an sb-themed-frame-stack -->
-      <hbox flex="1" align="left" class="left-box">
-        <hbox class="left"/>
-      </hbox>
-      <hbox flex="1" align="right" class="right-box">
-        <hbox class="right"/>
-      </hbox>
-      <hbox flex="1" class="middle" />
-<!-- /TODO -->
-
-      <hbox id="control_pane" flex="1">
-        <hbox id="control_buttons_box" pack="center" align="center">
-          <sb-player-back-button id="play_back_button" class="sb-player-button"/>
-          <sb-player-playpause-button id="play_pause_button" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
-          <sb-player-forward-button id="play_fwd_button" class="sb-player-button" />
+  <!-- TODO Move corner xul into an sb-themed-frame-stack -->
+        <hbox flex="1" align="left" class="left-box">
+          <hbox class="left"/>
         </hbox>
-
-        <hbox id="volume_box" pack="center" align="center">
-          <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100" minbutton="true" maxbutton="true"/>
+        <hbox flex="1" align="right" class="right-box">
+          <hbox class="right"/>
         </hbox>
+        <hbox flex="1" class="middle" />
+  <!-- /TODO -->
 
-        <hbox id="shuffle_repeat_box" pack="center" align="center">
-          <sb-player-shuffle-button class="sb-player-button" />
-          <sb-player-repeat-button class="sb-player-button" />
-        </hbox>
+        <hbox id="control_pane" flex="1">
+          <hbox id="control_buttons_box" pack="center" align="center">
+            <sb-player-back-button id="play_back_button" class="sb-player-button"/>
+            <sb-player-playpause-button id="play_pause_button" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
+            <sb-player-forward-button id="play_fwd_button" class="sb-player-button" />
+          </hbox>
 
-<!-- TODO Break into XBLs -->
-        <hbox id="faceplate_box" flex="1" pack="center" align="center">
-          <stack id="faceplate" flex="1">
-            <observes type="dataremote"
-              key="faceplate.seenplaying"
-              attribute="hidden"
-              boolean="true"
-              inverted="true" />
+          <hbox id="volume_box" pack="center" align="center">
+            <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100" minbutton="true" maxbutton="true"/>
+          </hbox>
 
-<!-- TODO Move corner xul into an sb-themed-frame-stack -->
-            <hbox flex="1" align="left" class="left-box">
-              <hbox class="left"/>
-            </hbox>
-            <hbox flex="1" align="right" class="right-box">
-              <hbox class="right"/>
-            </hbox>
-            <hbox flex="1" class="middle" />
-<!-- /TODO -->
+          <hbox id="shuffle_repeat_box" pack="center" align="center">
+            <sb-player-shuffle-button class="sb-player-button" />
+            <sb-player-repeat-button class="sb-player-button" />
+          </hbox>
 
-            <hbox id="faceplate_content" flex="1">
-              <vbox flex="1">
-                <hbox id="track_info" pack="center" align="center">
-                  <sb-autoscroll id="sb-faceplate-autoscroll-box" class="faceplate-autoscroll-box" fitalign="left" flex="1" mousethrough="always">
-                    <sb-player-title-label class="faceplate-text" autotip="1" mousethrough="always"/>
-                    <sb-player-artist-label class="faceplate-text" autotip="1" mousethrough="always"/>
-                    <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
-                  </sb-autoscroll>
-                  <hbox id="faceplate-tool-bar">
-                    <sb-nowplaying-rating/>
+  <!-- TODO Break into XBLs -->
+          <hbox id="faceplate_box" flex="1" pack="center" align="center">
+            <stack id="faceplate" flex="1">
+              <observes type="dataremote"
+                key="faceplate.seenplaying"
+                attribute="hidden"
+                boolean="true"
+                inverted="true" />
+
+  <!-- TODO Move corner xul into an sb-themed-frame-stack -->
+              <hbox flex="1" align="left" class="left-box">
+                <hbox class="left"/>
+              </hbox>
+              <hbox flex="1" align="right" class="right-box">
+                <hbox class="right"/>
+              </hbox>
+              <hbox flex="1" class="middle" />
+  <!-- /TODO -->
+
+              <hbox id="faceplate_content" flex="1">
+                <vbox flex="1">
+                  <hbox id="track_info" pack="center" align="center">
+                    <sb-autoscroll id="sb-faceplate-autoscroll-box" class="faceplate-autoscroll-box" fitalign="left" flex="1" mousethrough="always">
+                      <sb-player-title-label class="faceplate-text" autotip="1" mousethrough="always"/>
+                      <sb-player-artist-label class="faceplate-text" autotip="1" mousethrough="always"/>
+                      <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
+                    </sb-autoscroll>
+                    <hbox id="faceplate-tool-bar">
+                      <sb-nowplaying-rating/>
+                    </hbox>
                   </hbox>
-                </hbox>
-                <hbox class="faceplate-seekinfo-box" align="center" pack="center">
-                  <sb-player-timeelapsed-label   class="faceplate-text" align="right"/>
-                  <stack id="faceplate_seekbar_box" flex="1">
-                    <hbox flex="1" align="left" class="left-box">
-                      <hbox class="left"/>
-                    </hbox>
-                    <hbox flex="1" align="right" class="right-box">
-                      <hbox class="right"/>
-                    </hbox>
-                    <hbox flex="1" class="middle" />
-                    <hbox flex="1" class="notches">
-                      <hbox flex="1"/>
-                      <hbox flex="1"/>
-                      <hbox flex="1"/>
-                      <hbox flex="1"/>
-                    </hbox>
-                    <sb-player-seek-slider class="faceplate-seekbar" flex="1" orient="horizontal"  maxpos="100" />
-                  </stack>
-                  <sb-player-totaltime-label class="faceplate-text" align="left" />
-                </hbox>
-              </vbox>
-<!--              <hbox id="faceplate-album-art"/>-->
-            </hbox>
-          </stack>
-<!-- /TODO -->
+                  <hbox class="faceplate-seekinfo-box" align="center" pack="center">
+                    <sb-player-timeelapsed-label   class="faceplate-text" align="right"/>
+                    <stack id="faceplate_seekbar_box" flex="1">
+                      <hbox flex="1" align="left" class="left-box">
+                        <hbox class="left"/>
+                      </hbox>
+                      <hbox flex="1" align="right" class="right-box">
+                        <hbox class="right"/>
+                      </hbox>
+                      <hbox flex="1" class="middle" />
+                      <hbox flex="1" class="notches">
+                        <hbox flex="1"/>
+                        <hbox flex="1"/>
+                        <hbox flex="1"/>
+                        <hbox flex="1"/>
+                      </hbox>
+                      <sb-player-seek-slider class="faceplate-seekbar" flex="1" orient="horizontal"  maxpos="100" />
+                    </stack>
+                    <sb-player-totaltime-label class="faceplate-text" align="left" />
+                  </hbox>
+                </vbox>
+  <!--              <hbox id="faceplate-album-art"/>-->
+              </hbox>
+            </stack>
+  <!-- /TODO -->
 
-<!-- TODO Break into XBLs -->
-          <stack id="faceplate_inactive" flex="1">
-            <observes type="dataremote"
-                      key="faceplate.seenplaying"
-                      attribute="hidden"
-                      boolean="true"
-                      inverted="false" />
+  <!-- TODO Break into XBLs -->
+            <stack id="faceplate_inactive" flex="1">
+              <observes type="dataremote"
+                        key="faceplate.seenplaying"
+                        attribute="hidden"
+                        boolean="true"
+                        inverted="false" />
 
-            <hbox flex="1" align="left" class="left-box">
-              <hbox class="left"/>
-            </hbox>
-            <hbox flex="1" align="right" class="right-box">
-              <hbox class="right"/>
-            </hbox>
-            <hbox flex="1" class="middle" />
-            <hbox flex="1" id="faceplate-inactive-splash" />
-          </stack>
-<!-- /TODO -->
+              <hbox flex="1" align="left" class="left-box">
+                <hbox class="left"/>
+              </hbox>
+              <hbox flex="1" align="right" class="right-box">
+                <hbox class="right"/>
+              </hbox>
+              <hbox flex="1" class="middle" />
+              <hbox flex="1" id="faceplate-inactive-splash" />
+            </stack>
+  <!-- /TODO -->
 
+          </hbox>
         </hbox>
-      </hbox>
-    </stack>
+      </stack>
+    </vbox>
 
 
     <stack id="bottom-bar" flex="1">
