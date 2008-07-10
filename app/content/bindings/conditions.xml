@@ -763,7 +763,7 @@
                 break;
             }
             if (!prefillValue)
-              return;
+              prefillValue = "";
 
             // if we are using units, we need to convert from native
             var nativeUnitId;
