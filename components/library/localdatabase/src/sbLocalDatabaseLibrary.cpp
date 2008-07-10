@@ -4490,10 +4490,15 @@ sbLocalDatabaseLibrary::Clear()
       do_QueryInterface(lists[i], &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Invalidate the list's item array because its content is gone
     rv = simple->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Notify the list's listeners that the list was cleared
+    NotifyListenersListCleared(lists[i]);
   }
 
+  // Notify the library's listeners that the library was cleared
   NotifyListenersListCleared(SB_IMEDIALIST_CAST(this));
 
   return NS_OK;

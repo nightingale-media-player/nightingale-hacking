@@ -740,12 +740,12 @@ sbLocalDatabaseSmartMediaList::Rebuild()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Invalidate our data simple media list
+  // Notify our inner list that its content changed
   nsCOMPtr<sbILocalDatabaseSimpleMediaList> ldsml =
     do_QueryInterface(mList, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = ldsml->Invalidate();
+  rv = ldsml->NotifyContentChanged();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

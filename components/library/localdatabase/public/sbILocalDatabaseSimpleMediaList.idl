@@ -57,7 +57,7 @@ interface sbILocalDatabaseMediaListCopyListener : nsISupports
  *
  * \sa sbIMediaList
  */
-[scriptable, uuid(72c5d04f-6c75-4155-adb8-b2e5755714d1)]
+[scriptable, uuid(a9045766-28a3-455f-a5fc-2a2eb7c863a3)]
 interface sbILocalDatabaseSimpleMediaList : nsISupports
 {
   attribute sbILocalDatabaseMediaListCopyListener copyListener;
@@ -112,5 +112,11 @@ interface sbILocalDatabaseSimpleMediaList : nsISupports
    * \brief Notify the simple media list's listeners that a batch has ended
    */
   void notifyListenersBatchEnd(in sbIMediaList aList);
+
+  /**
+   * \brief Notify the simple media list that its content was changed via an
+   * operation that bypassed listeners (ie, direct write to db)
+   */
+  void notifyContentChanged();
 };
 

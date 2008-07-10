@@ -1225,6 +1225,47 @@ sbLocalDatabaseSimpleMediaList::Clear()
   return NS_OK;
 }
 
+// Called when something external changed our content without going through the
+// normal means (ie, sbIMediaList). This is not a routine operation, normally
+// everything should go through the media list methods, but there are cases, 
+// such as smart playlists, where it makes sense to just copy the content of
+// one table into another. When this happens, none of the listeners will have
+// been notified of anything that may have happened to the items in the list.
+// For instance, this includes the medialistview, which does not refresh its
+// content. This method first triggers a LISTCLEARED notification, then enters
+// batch mode and sends one ITEMADDED per item in the list.
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
+{
+  // Invalidate the cached list
+  nsresult rv = mFullArray->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> mediaList =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // First, notify listeners that the list has been cleared
+  sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList);
+
+  // Then, start a batch and send an ITEMADDED notification for each item that
+  // we now have in the list
+
+  PRUint32 length;
+  rv = mFullArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  sbAutoBatchHelper batchHelper(*this);
+
+  for (PRUint32 index=0; index<length; index++) {
+    nsCOMPtr<sbIMediaItem> item;
+    rv = GetItemByIndex(index, getter_AddRefs(item));
+    NotifyListenersItemAdded(this, item, index);
+  }
+  
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::CreateView(sbIMediaListViewState* aState,
                                            sbIMediaListView** _retval)
