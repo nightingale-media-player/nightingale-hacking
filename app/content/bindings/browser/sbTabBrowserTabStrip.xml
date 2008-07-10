@@ -107,6 +107,10 @@
           if (this._firstTab.hasAttribute("minwidth"))
             width = parseInt(this._firstTab.getAttribute("minwidth"));
           this._mediaTab.setAttribute("minwidth", width);
+          
+          // add media tab CSS styles
+          this._firstTab.className += " sb-media-tab";
+          this._mediaTab.className += " sb-media-tab";
         }
       ]]></constructor>
 
