@@ -211,7 +211,42 @@ THE PLAYLIST
 
 .sb-commands-toolbar {
   border-top:1px solid gray;
+  background-color:rgb(135,135,135);
+/*
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png);
+  background-repeat:repeat-x;
+  background-position:center top;
+*/
+  background-color: rgb(220,220,220) !important;
+  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-repeat:repeat-x;
+  background-position:center top;
 }
+
+.sb-commands-toolbar toolbarbutton {
+    padding:2px 6px;
+  border:1px solid rgb(80,80,80);
+    -moz-border-radius:3px;
+  background-color:rgb(180,180,180);
+    
+  -moz-background-clip:padding;
+  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  
+  margin:4px;
+  min-width:0px;
+  min-height:0px;
+}
+.sb-commands-toolbar toolbarbutton .toolbarbutton-text {
+  color:rgb(40,40,40);
+  font-size:9px;
+  padding:0px;
+  margin:0;
+}
+
+
+
 
 .sb-commands-toolbar-bkg {
 }
@@ -272,9 +307,13 @@ treechildren::-moz-tree-cell-text( selected ) {
 }
 treechildren::-moz-tree-row( selected, focus, odd ) {
   background-color: rgb(219,239,198);
+
+  
+  
 }
 treechildren::-moz-tree-row( selected, focus, even ) {
   background-color: rgb(214,234,193);
+
 }
 
 
@@ -649,6 +688,8 @@ BUTTONS
   border:1px solid rgb(28,67,0);
 
   border:1px solid rgb(53,95,19);
+  
+  border:1px solid rgb(40,40,40);
 
 background-image:url('chrome://songbird/skin/nav-bar/bg-button.png');
 background-repeat:repeat-x;
@@ -667,6 +708,7 @@ background-position:center 0px;
 #nav-bar toolbarbutton[disabled="true"] {
   background-image:none !important;
   background-color:rgb(151,202,98) !important;
+  background-color:rgb(100,100,100) !important;
 }
 #nav-bar toolbarbutton:active > .toolbarbutton-icon,
 #nav-bar toolbarbutton:active > .toolbarbutton-menu-dropmarker,
@@ -1053,8 +1095,7 @@ These let the user resize the frames in your box model.
 #filter_splitter:active {
 }
 
-#servicepane_splitter,
-#search_splitter {
+#servicepane_splitter {
 }
 
 #servicepane_splitter[state="collapsed"],
@@ -1616,10 +1657,10 @@ sb-sys-titlebar {
   margin:0 1px;
 }
 #shuffle_repeat_box > .sb-player-button {
-  margin:0 3px;
+  margin:0 1px 0 2px;
 }
 #volume_box {
-  padding:0 8px;
+  padding:0 6px 0px 1px;
   -moz-box-pack: center;
   -moz-box-align: center;
   min-height:52px;
@@ -1884,10 +1925,10 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 #faceplate > .right-box > .right,
 #faceplate_inactive > .left-box > .left,
 #faceplate_inactive > .right-box > .right {
-  min-width:2px;
+  min-width:8px;
   min-height:44px;
   background-repeat:no-repeat;
-  background-position:center center;
+  background-position:center bottom;
 }
 #faceplate > .left-box > .left {
   background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-left.png');
@@ -1899,10 +1940,9 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 #faceplate_inactive > .middle {
   min-height:44px;
   padding:2px 0;
-  margin:0 2px;
-  background-color:green;
+  margin:0 8px;
   background-repeat:repeat-x;
-  background-position:center center;
+  background-position:center bottom;
 }
 
 

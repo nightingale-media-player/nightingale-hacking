@@ -158,6 +158,7 @@
       </vbox>
     </vbox>
 
+
     <stack id="control_pane_box" pack="center">
 
 <!-- TODO Move corner xul into an sb-themed-frame-stack -->
@@ -181,10 +182,6 @@
           <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100" minbutton="true" maxbutton="true"/>
         </hbox>
 
-        <hbox id="shuffle_repeat_box" pack="center" align="center">
-          <sb-player-shuffle-button class="sb-player-button" />
-          <sb-player-repeat-button class="sb-player-button" />
-        </hbox>
 
 <!-- TODO Break into XBLs -->
         <hbox id="faceplate_box" flex="1" pack="center" align="center">
@@ -208,11 +205,13 @@
             <hbox id="faceplate_content" flex="1">
               <vbox flex="1">
                 <hbox id="track_info" pack="center" align="center">
-                  <sb-autoscroll id="sb-faceplate-autoscroll-box" class="faceplate-autoscroll-box" fitalign="left" flex="1" mousethrough="always">
-                    <sb-player-title-label class="faceplate-text" autotip="1" mousethrough="always"/>
-                    <sb-player-artist-label class="faceplate-text" autotip="1" mousethrough="always"/>
-                    <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
-                  </sb-autoscroll>
+                  <sb-player-curtrack-box class="faceplate-curtrack-box" flex="1">
+                    <sb-autoscroll id="sb-faceplate-autoscroll-box" class="faceplate-autoscroll-box" fitalign="left" flex="1" mousethrough="always">
+                      <sb-player-title-label class="faceplate-text" autotip="1" mousethrough="always"/>
+                      <sb-player-artist-label class="faceplate-text" autotip="1" mousethrough="always"/>
+                      <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
+                    </sb-autoscroll>
+                  </sb-player-curtrack-box>
                   <hbox id="faceplate-tool-bar">
                     <sb-nowplaying-rating/>
                   </hbox>
@@ -263,6 +262,12 @@
 <!-- /TODO -->
 
         </hbox>
+        
+        <hbox id="shuffle_repeat_box" pack="center" align="center">
+          <sb-player-shuffle-button class="sb-player-button" />
+          <sb-player-repeat-button class="sb-player-button" />
+        </hbox>
+        
       </hbox>
     </stack>
 

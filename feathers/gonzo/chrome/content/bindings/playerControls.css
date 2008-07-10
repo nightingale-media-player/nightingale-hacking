@@ -359,6 +359,8 @@ progressmeter.sb-player-volume-slider > .progress-remainder
 .sb-player-shuffle-button-off > button,
 .sb-player-shuffle-button-on > button {
   list-style-image: url(chrome://songbird/skin/media-control-pane/button-shuffle.png);
+  background-color:transparent;
+  background-image:none;
 }
 .sb-player-shuffle-button-off > button {
   -moz-image-region: rect(0px 24px 24px 0px);
@@ -390,6 +392,8 @@ progressmeter.sb-player-volume-slider > .progress-remainder
 .sb-player-repeat-button-repall > button,
 .sb-player-repeat-button-rep1 > button {
   list-style-image: url(chrome://songbird/skin/media-control-pane/button-repeat.png);
+  background-color:transparent;
+  background-image:none;
 }
 .sb-player-repeat-button-repnone > button {
   -moz-image-region: rect(0px 24px 24px 0px);

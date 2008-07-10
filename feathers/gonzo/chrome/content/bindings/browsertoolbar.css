@@ -208,21 +208,29 @@ LOCATION TEXTBOX
   padding: 0px;
   border-right:none !important;
 /*  background-color:white !important;*/
+background-color:rgb(230,230,230);
 }
 
 
-searchbar,
+/*searchbar,*/
 .locationbar-textbox {
   border-top:1px solid rgb(53,95,19);
   border-right:1px solid rgb(78,124,38);
   border-bottom:1px solid rgb(149,199,95);
   border-left:1px solid rgb(78,124,38);
   
+  
+  border-top:1px solid rgb(40,40,40);
+  border-right:1px solid rgb(80,80,80);
+  border-bottom:1px solid rgb(120,120,120);
+  border-left:1px solid rgb(80,80,80);
+  
 /*
     border:1px solid rgb(28,67,0);
 */
 
 }
+
 
 
 .locationbar-image

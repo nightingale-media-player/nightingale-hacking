@@ -61,11 +61,6 @@ window#mainplayer
 #middle_pane_box
 {
   overflow: hidden;
-
-/*  padding-top:2px;
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png);
-  background-repeat:repeat-x;
-  background-position:center top;*/
 }
 
 #servicepane_box {
