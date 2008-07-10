@@ -34,8 +34,8 @@
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
 
-#include "MetadataManager.h"
-#include "MetadataChannel.h"
+#include "sbMetadataManager.h"
+#include "sbMetadataChannel.h"
 #include "MetadataJobManager.h"
 #include "MetadataJob.h"
 #include "prlog.h"

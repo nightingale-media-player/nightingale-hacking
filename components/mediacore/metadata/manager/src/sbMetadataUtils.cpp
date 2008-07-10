@@ -33,6 +33,10 @@
 #include <nsNetUtil.h>
 #include <nsThreadUtils.h>
 
+//
+// TODO destroy this file!
+//
+
 NS_IMPL_ISUPPORTS1(sbURIMetadataHelper, sbIURIMetadataHelper)
 
 NS_IMETHODIMP

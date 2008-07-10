@@ -35,8 +35,8 @@ else
 target_name = sbMetadataManager
 endif
 
-CPP_SRCS = MetadataManager.cpp \
-           MetadataChannel.cpp \
+CPP_SRCS = sbMetadataManager.cpp \
+           sbMetadataChannel.cpp \
            MetadataJobManager.cpp \
            MetadataJob.cpp \
            sbMetadataUtils.cpp \

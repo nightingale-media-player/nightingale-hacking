@@ -25,7 +25,7 @@
 */
 
 /**
-* \file MetadataChannel.h
+* \file sbMetadataChannel.h
 * \brief 
 */
 
@@ -44,7 +44,7 @@
 #include <necko/nsIIOService.h>
 #include <necko/nsNetUtil.h>
 
-#include "MetadataChannel.h"
+#include "sbMetadataChannel.h"
 
 #include "prlog.h"
 #ifdef PR_LOGGING

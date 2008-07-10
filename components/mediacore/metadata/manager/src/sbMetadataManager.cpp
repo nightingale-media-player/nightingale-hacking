@@ -25,16 +25,16 @@
 */
 
 /**
-* \file MetadataManager.h
-* \brief
-*/
+ * \file sbMetadataManager.h
+ * \brief
+ */
 
 #pragma once
 
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include <nspr.h>
-#include "MetadataManager.h"
+#include "sbMetadataManager.h"
 
 #include <xpcom/nsAutoLock.h>
 #include <xpcom/nsXPCOM.h>

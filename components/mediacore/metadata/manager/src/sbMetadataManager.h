@@ -25,9 +25,9 @@
 */
 
 /**
-* \file MetadataManager.h
-* \brief 
-*/
+ * \file sbMetadataManager.h
+ * \brief 
+ */
 
 #ifndef __METADATA_MANAGER_H__
 #define __METADATA_MANAGER_H__

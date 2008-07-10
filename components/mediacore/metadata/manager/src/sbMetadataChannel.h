@@ -25,9 +25,9 @@
 */
 
 /**
-* \file MetadataChannel.h
-* \brief 
-*/
+ * \file sbMetadataChannel.h
+ * \brief 
+ */
 
 #ifndef __METADATA_CHANNEL_H__
 #define __METADATA_CHANNEL_H__
