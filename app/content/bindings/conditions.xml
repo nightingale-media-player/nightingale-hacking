@@ -1171,6 +1171,7 @@
 
             // get the appropriate unit converter
             var converter;
+            var factor = 1;
             if (info.type == "datetime") {
               // datetime has no unit conversion that makes sense, unless we
               // are using the inthelast/notinthelast operators, in which case
@@ -1178,6 +1179,9 @@
               converter = 
                 this._pm.getPropertyInfo(SBProperties.duration)
                         .unitConverter;
+              // durations are in microsecond, but date/times are in
+              // milleseconds so we'll need to divide by 1000
+              factor = 1/1000;
             } else {
               converter = info.unitConverter;
             }
@@ -1212,7 +1216,7 @@
             //                              " from " + 
             //                              unit + " = " + value + 
             //                              " (" + metadata + ")");
-            return value;
+            return "" + (value * factor);
           ]]>
         </body>
       </method>
@@ -1235,6 +1239,7 @@
 
             // get the appropriate unit converter
             var converter;
+            var factor = 1;
             if (info.type == "datetime") {
               // datetime has no unit conversion that makes sense, unless we are
               // using the inthelast/notinthelast operators, in which case we
@@ -1242,6 +1247,9 @@
               converter = 
                 this._pm.getPropertyInfo(SBProperties.duration)
                         .unitConverter;
+              // durations are in microsecond, but date/times are in
+              // milleseconds so we'll need to multiply by 1000
+              factor = 1000;
             } else {
               converter = info.unitConverter;
             }
@@ -1270,7 +1278,7 @@
             //                              " to " +
             //                              unit + " = " + value + 
             //                              " (" + metadata + ")");
-            return value;
+            return "" + (value * factor);
           ]]>
         </body>
       </method>
