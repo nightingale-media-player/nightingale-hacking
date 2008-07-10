@@ -84,6 +84,19 @@
         subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBSessionStore.js", scope);
         this._sessionStore = scope.SBSessionStore;
 
+        // *****************************
+        // BUG 8097 - Part 1
+        // So we have to take the flex attrib off the first tab.
+        // We put the value back once we successfully restore the tabstate.
+        var flexTab = this.mTabContainer.firstChild;
+        flexTab.oldFlex = flexTab.getAttribute("flex");
+        flexTab.oldWidth = flexTab.width;
+        flexTab.oldMinWidth = flexTab.minWidth;
+        flexTab.flex = 0;
+        flexTab.width = flexTab.maxWidth;
+        flexTab.minWidth = flexTab.maxWidth;
+        // *****************************
+
         /* we want to know when the window has finished opening so we can
           restore tabs and other fun stuff
         */
@@ -96,8 +109,18 @@
             }
             this.tabbrowser._sessionStore.restoreTabState(this.tabbrowser);
             
-            // workaround for bug 8097
-            this.tabbrowser.selectedTab = this.tabbrowser.mTabs[0];
+            // *****************************
+            // BUG 8097 - Part 2
+            // So we have to take the flex attrib off the first tab.
+            // We put the value back once we successfully restore the tabstate.
+            flexTab.flex = flexTab.oldFlex;
+            flexTab.width = flexTab.oldWidth;
+            flexTab.minWidth = flexTab.oldMinWidth;
+            delete flexTab.oldFlex;
+            delete flexTab.oldWidth;
+            delete flexTab.oldMinWidth;
+            // *****************************
+            
           }
         }
         window.addEventListener('load', this.windowLoadEventListener, true);
