@@ -1210,8 +1210,10 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   // Set properties for styling purposes
   if (aMediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") {
     this._mergeProperties(node, ["medialist", "medialisttype-dynamic"]);
+    node.setAttributeNS(LSP, "ListSubscription", "1");
   } else {
     this._mergeProperties(node, ["medialist medialisttype-" + aMediaList.type]);
+    node.setAttributeNS(LSP, "ListSubscription", "0");
   }
   // Add the customType to the properties to encourage people to set it for CSS
   this._mergeProperties(node, [customType]);
@@ -1329,6 +1331,41 @@ function sbLibraryServicePane__insertLibraryNode(aNode, aLibrary) {
   }
 }
 
+/**
+ * Logic to determine where a media list node should appear
+ * in the service pane tree
+ */
+sbLibraryServicePane.prototype._insertNodeAfter =
+function sbLibraryServicePane__insertNodeAfter(aParent, aNode, aPrecedingNode) {
+  // don't be bad
+  if (!aParent.isContainer) {
+    dump("sbLibraryServicePane__insertNodeAfter: ");
+    dump("cannot insert under non-container node.\n");
+    return;
+  }
+  aParent.isOpen = true;
+
+  // the node we'll use to insertBefore
+  var next;
+  // if the preceding node is not null, use its next sibling, otherwise
+  // use the parent first child
+  if (aPrecedingNode)
+    next = aPrecedingNode.nextSibling;
+  else
+    next = aParent.firstChild;
+    
+  if (next) {
+    // if the next node is same node as the one we are inserting, 
+    // there is nothing to do
+    if (next.id != aNode.id) {
+      aParent.insertBefore(aNode, next);
+    }
+  } else {
+    // there is no next item, the parent has no item at all, so use
+    // append instead
+    aParent.appendChild(aNode);
+  }
+}
 
 /**
  * Logic to determine where a media list node should appear
@@ -1346,8 +1383,74 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
       // FIXME: put it right after the library
       this._servicePane.root.appendChild(aNode);
     } else {
+      var self = this;
+      // this describes each type of playlist with the attributes/value pairs
+      // that we can use to recognize it.
+      // Note that the "type" field should be unique. it is not used anywhere
+      // else than in this function, so you may use whatever you wish.
+      var type_smart =        { type: "smart",
+                                conditions: [ { attribute: "ListType",
+                                                value    : "smart" } ]
+                              };
+      var type_simple =       { type: "simple",
+                                conditions: [ { attribute: "ListType",
+                                                value    : "simple" },
+                                              { attribute: "ListSubscription",
+                                                value    : "0" } ]
+                              };
+      var type_subscription = { type: "subscription",
+                                conditions: [ { attribute: "ListType",
+                                                value    : "simple" },
+                                              { attribute: "ListSubscription",
+                                                value    : "1" } ]
+                              };
+      
+      // this is the order in which the playlists appear in the playlist folder
+      var playlistTypes = [ type_smart, 
+                            type_simple, 
+                            type_subscription ];
+      
+      // create a search array to be used in _findLastNodeByAttributes
+      // based on the type provided. If the type is not found, the search
+      // array will contain all the types, so the list will go to the end
+      // of the folder.
+      function makeSearchArray(aPlaylistType) {
+        var searchArray = [];
+        for (var i=0;i<playlistTypes.length;i++) {
+          var typeObject = playlistTypes[i];
+          searchArray.push(typeObject.conditions);
+          if (typeObject.type == aPlaylistType)
+            break;
+        }
+        return searchArray;
+      }
+      
+      // returns the playlist type for the given node
+      function getNodeType(aNode) {
+        for (var i=0;i<playlistTypes.length;i++) {
+          var typeObject = playlistTypes[i];
+          if (self._matchNode(aNode, typeObject.conditions))
+            return typeObject.type;
+        }
+      }
+
+      // make sure the playlist folder exists
       var folder = this._ensurePlaylistFolderExists();
-      folder.appendChild(aNode);
+      
+      // get the type for this node
+      var nodeType = getNodeType(aNode);
+      
+      // construct the search array
+      var searchArray = makeSearchArray(nodeType);
+
+      // look for the insertion point
+      var insertionPoint = this._findLastNodeByAttributes(folder, 
+                                                          searchArray,
+                                                          aNode);
+      
+      // insert at the right spot (if insertionPoint is null, the node will
+      // be inserted as the new first child)
+      this._insertNodeAfter(folder, aNode, insertionPoint);
     }
   }
   // If it is a secondary library playlist, it should be
@@ -1379,6 +1482,68 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
   }
 }
 
+/**
+ * Match a node to a list of attribute/value pairs. All of the values for a 
+ * node should match for this function to return true.
+ */
+sbLibraryServicePane.prototype._matchNode =
+function sbLibraryServicePane__matchNode(aNode, aAttributeValues) {
+  // it's a match if there are no attribute/value pairs in the list
+  var match = true;
+  
+  // match each of the attribute/value pairs
+  for each (var match in aAttributeValues) {
+    var attribute = match.attribute;
+    var value = match.value;
+    // if this is not a match, skip this condition
+    if (aNode.getAttributeNS(LSP, attribute) != value) {
+      match = false;
+      // don't test any more attribute/value pairs
+      break;
+    }    
+  }
+  
+  return match;
+}
+
+/**
+ * Finds the last node that matches any of the search criterions in a list,
+ * with an optional excluded node.
+ * Each search criterion is a list of attribute/pairs that must all match a node
+ * for the condition to be fulfilled.
+ */
+sbLibraryServicePane.prototype._findLastNodeByAttributes =
+function sbLibraryServicePane__findLastNodeByAttributes(aParent, 
+                                                        aSearchArray,
+                                                        aExcludedNode) {
+  var children = aParent.childNodes;
+  var lastMatch;
+  while (children.hasMoreElements()) {
+    var child = children.getNext().QueryInterface(Ci.sbIServicePaneNode);
+    
+    if (child.hidden)
+      continue;
+
+    // If this node belongs to the library service pane, and
+    // is not the node we are trying to insert, then check
+    // to see if this is a match
+    if (child.contractid == CONTRACTID && 
+        (!aExcludedNode || 
+          child.id != aExcludedNode.id)) {
+    
+      // check each of the search criteria
+      for each (var criterion in aSearchArray) {
+        if (this._matchNode(child, criterion)) {
+          // remember this node
+          lastMatch = child;
+          // don't test any more criteria
+          break;
+        }
+      }
+    }
+  } // end of while
+  return lastMatch;
+}
 
 
 /**
