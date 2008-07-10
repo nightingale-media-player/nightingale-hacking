@@ -299,7 +299,13 @@
         this._mediaTab.collapsed = false;
       ]]></handler>
       <handler event="select" phase="capturing"><![CDATA[
-        if (this.selectedItem != this._firstTab) {
+        if (this._mediaTab) {
+          // if a media tab exists, only set lastSelectedTab
+          // when we're not switching to it
+          if (this.selectedItem != this._firstTab)) {
+            this.lastSelectedTab = this.selectedItem;
+          }
+        } else {
           this.lastSelectedTab = this.selectedItem;
         }
       ]]></handler>

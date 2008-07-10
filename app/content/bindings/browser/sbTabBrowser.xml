@@ -360,8 +360,14 @@
             }
 
             // if we plan on opening it in the media tab, find it
-            if (where == "_media") {
-              where = this.mediaTab;
+            if (this.mediaTab) {
+              if (where == "_media") {
+                where = this.mediaTab;
+              } else if ("_top" == where &&
+                         this.selectedTab == this.mediaTab) {
+                // always open a new tab if currently on the media tab
+                where = "_blank";
+              }
             }
 
             // Now, actually open the URI
@@ -917,7 +923,11 @@
           return this.mTabs[0];
         ]]></getter>
       </property>
-      <field name="_lastNonMediaTab">null</field>
+      <property name="_lastNonMediaTab">
+        <getter>
+          return this.mStrip.lastSelectedTab;
+        </getter>
+      </property>
       <method name="isMediaTabURL">
         <parameter name="aURL"/>
         <body><![CDATA[
