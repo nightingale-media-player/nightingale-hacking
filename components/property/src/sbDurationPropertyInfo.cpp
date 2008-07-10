@@ -100,8 +100,8 @@ void sbDurationPropertyInfo::InitializeOperators()
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.notequal"));
   mOperators.AppendObject(propOp);
 
-  sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.lessequal"));
+  sbPropertyInfo::GetOPERATOR_GREATER(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.greater"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
@@ -112,8 +112,8 @@ void sbDurationPropertyInfo::InitializeOperators()
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.less"));
   mOperators.AppendObject(propOp);
 
-  sbPropertyInfo::GetOPERATOR_GREATER(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.greater"));
+  sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.lessequal"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_BETWEEN(op);

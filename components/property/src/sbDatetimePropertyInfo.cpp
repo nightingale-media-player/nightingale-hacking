@@ -107,8 +107,8 @@ void sbDatetimePropertyInfo::InitializeOperators()
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.noton"));
   mOperators.AppendObject(propOp);
 
-  sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onbefore"));
+  sbPropertyInfo::GetOPERATOR_GREATER(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.after"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
@@ -119,12 +119,8 @@ void sbDatetimePropertyInfo::InitializeOperators()
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.before"));
   mOperators.AppendObject(propOp);
 
-  sbPropertyInfo::GetOPERATOR_GREATER(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.after"));
-  mOperators.AppendObject(propOp);
-
-  sbPropertyInfo::GetOPERATOR_BETWEEN(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.between"));
+  sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onbefore"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_INTHELAST(op);
@@ -133,6 +129,10 @@ void sbDatetimePropertyInfo::InitializeOperators()
 
   sbPropertyInfo::GetOPERATOR_NOTINTHELAST(op);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.notinthelast"));
+  mOperators.AppendObject(propOp);
+
+  sbPropertyInfo::GetOPERATOR_BETWEEN(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.between"));
   mOperators.AppendObject(propOp);
 
   return;

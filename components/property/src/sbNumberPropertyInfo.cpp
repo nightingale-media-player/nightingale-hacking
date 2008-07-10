@@ -158,6 +158,14 @@ void sbNumberPropertyInfo::InitializeOperators()
   nsAutoString op;
   nsRefPtr<sbPropertyOperator> propOp;
 
+  sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.equal"));
+  mOperators.AppendObject(propOp);
+
+  sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.notequal"));
+  mOperators.AppendObject(propOp);
+
   sbPropertyInfo::GetOPERATOR_GREATER(op);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.greater"));
   mOperators.AppendObject(propOp);
@@ -172,14 +180,6 @@ void sbNumberPropertyInfo::InitializeOperators()
 
   sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.lessequal"));
-  mOperators.AppendObject(propOp);
-
-  sbPropertyInfo::GetOPERATOR_EQUALS(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.equal"));
-  mOperators.AppendObject(propOp);
-
-  sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.notequal"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_BETWEEN(op);

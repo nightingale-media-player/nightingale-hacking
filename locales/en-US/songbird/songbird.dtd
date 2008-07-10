@@ -210,6 +210,9 @@
 <!ENTITY smart.ends               "ends with" >
 <!ENTITY smart.selectedby         "Selected by" >
 <!ENTITY smart.to                 "To" >
+<!ENTITY smart.autoupdate         "Update">
+<!ENTITY smart.autoupdate.never   "Manual">
+<!ENTITY smart.autoupdate.whendisplayed "Auto">
 
 <!ENTITY download.window          "Download" >
 <!ENTITY download.select          "Select destination folder:" >

@@ -62,6 +62,14 @@ void sbRatingPropertyInfo::InitializeOperators()
   nsAutoString op;
   nsRefPtr<sbPropertyOperator> propOp;
 
+  sbImmutablePropertyInfo::GetOPERATOR_EQUALS(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.equal"));
+  mOperators.AppendObject(propOp);
+
+  sbImmutablePropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.notequal"));
+  mOperators.AppendObject(propOp);
+
   sbImmutablePropertyInfo::GetOPERATOR_GREATER(op);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.greater"));
   mOperators.AppendObject(propOp);
@@ -76,14 +84,6 @@ void sbRatingPropertyInfo::InitializeOperators()
 
   sbImmutablePropertyInfo::GetOPERATOR_LESSEQUAL(op);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.lessequal"));
-  mOperators.AppendObject(propOp);
-
-  sbImmutablePropertyInfo::GetOPERATOR_EQUALS(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.equal"));
-  mOperators.AppendObject(propOp);
-
-  sbImmutablePropertyInfo::GetOPERATOR_NOTEQUALS(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.notequal"));
   mOperators.AppendObject(propOp);
 
   sbImmutablePropertyInfo::GetOPERATOR_BETWEEN(op);
