@@ -414,6 +414,8 @@
               if (op.operator == info.OPERATOR_EQUALS) continue;
               if (op.operator == info.OPERATOR_NOTEQUALS) continue;
             }
+            if (op.operator == info.OPERATOR_LESSEQUAL) continue;
+            if (op.operator == info.OPERATOR_GREATEREQUAL) continue;
             list.push({ name: op.operatorReadable, value: op.operator });
           }
 
@@ -619,18 +621,14 @@
               case "boolean": 
                 def = info.OPERATOR_ISTRUE; 
                 break;
-              case "datetime":
-                def = info.OPERATOR_INTHELAST;
-                break;
               case "uri": 
               case "text": 
                 def = info.OPERATOR_CONTAINS; 
                 break;
               case "duration":
-                def = info.OPERATOR_GREATER;
-                break;
               case "number":
               case "rating":
+              case "datetime":
               default:
                 def = info.OPERATOR_EQUALS;
                 break;
@@ -1690,6 +1688,7 @@
               case "duration":
               case "text":
               case "uri":
+              case "rating":
                 break;
               default:
                 return false;
