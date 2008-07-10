@@ -472,8 +472,13 @@
                           "&listGUID=" + escape(aMediaList.guid);
             }
             
+            // if no default location specified, load in the media tab (if available)
+            var defaultLocation = aDefaultLocation;
+            if (!defaultLocation && this.mediaTab)
+              defaultLocation = "_media";
+            
             return this.loadURI(aPageURL, null, null, aEvent, 
-                                   aDefaultLocation, aMediaListView);
+                                defaultLocation, aMediaListView);
           ]]>
         </body>
       </method>

@@ -166,6 +166,11 @@ var SBSessionStore = {
             url += "&bypassXULCache="+ Math.random();
           }
           
+          if (location == "_top") {
+            // restore the first tab into the media tab, if available
+            location = "_media";
+          }
+          
           var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
                                                      tab.listGUID);
           aTabBrowser.loadMediaList(list, null, location, null, url);
