@@ -73,6 +73,15 @@ if (typeof(Cu) == "undefined")
 //------------------------------------------------------------------------------
 
 var importLibrary = {
+  //
+  // Import library dialog services fields.
+  //
+  //   _dialogPB                Dialog box parameter block.
+  //
+
+  _dialogPB: null,
+
+
   //----------------------------------------------------------------------------
   //
   // Event handling services.
@@ -84,6 +93,12 @@ var importLibrary = {
    */
 
   doLoad: function importLibrary_doLoad() {
+    // Get the dialog box parameters.
+    this._dialogPB = window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
+
+    // Default to not doing import.
+    this._dialogPB.SetString(0, "false");
+
     // Set the user query text.
     //XXXeps don't hardcode iTunes
     //XXXeps set query based on dialog params
@@ -109,6 +124,9 @@ var importLibrary = {
   doAccept: function importLibrary_doAccept() {
     // Write the import library preferences.
     importLibraryPrefsUI.writePrefs();
+
+    // Indicate that importing should be done.
+    this._dialogPB.SetString(0, "true");
 
     return true;
   }

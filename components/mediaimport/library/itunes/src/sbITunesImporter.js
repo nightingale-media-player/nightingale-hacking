@@ -41,7 +41,10 @@
  ******************************************************************************/
 
 /* Songbird imports. */
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 
 /*******************************************************************************
@@ -52,32 +55,32 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
  *******************************************************************************
  ******************************************************************************/
 
+/*
+ * className                    Name of component class.
+ * cid                          Component CID.
+ * contractID                   Component contract ID.
+ * ifList                       List of external component interfaces.
+ * categoryList                 List of component categories.
+ *
+ * dataFormatVersion            Data format version.
+ *                                1: < extension version 2.0
+ *                                2: extension version 2.0
+ * prefPrefix                   Prefix for component preferences.
+ *
+ * addTrackBatchSize            Number of tracks to add at a time.
+ *
+ * sigHashType                  Hash type to use for signature computation.
+ * sigDBGUID                    GUID of signature storage database.
+ * sigDBTable                   Signature storage database table name.
+ *
+ * reqPeriod                    Request processor execution period in
+ *                              milliseconds.
+ * reqPctCPU                    Request processor CPU execution percentage.
+ */
+
 var CompConfig =
 {
-    /*
-     * className                    Name of component class.
-     * cid                          Component CID.
-     * contractID                   Component contract ID.
-     * ifList                       List of external component interfaces.
-     *
-     * dataFormatVersion            Data format version.
-     *                                1: < extension version 2.0
-     *                                2: extension version 2.0
-     * localeBundlePath             Path to locale string bundle.
-     * prefPrefix                   Prefix for component preferences.
-     *
-     * addTrackBatchSize            Number of tracks to add at a time.
-     *
-     * sigHashType                  Hash type to use for signature computation.
-     * sigDBGUID                    GUID of signature storage database.
-     * sigDBTable                   Signature storage database table name.
-     *
-     * reqPeriod                    Request processor execution period in
-     *                              milliseconds.
-     * reqPctCPU                    Request processor CPU execution percentage.
-     */
-
-    className: "iTunes importer",
+    className: "iTunes Library Importer",
     cid: Components.ID("{D6B36046-899A-4C1C-8A97-67ADC6CB675F}"),
     contractID: "@songbirdnest.com/Songbird/ITunesImporter;1",
     ifList: [ Components.interfaces.nsISupports,
@@ -85,7 +88,6 @@ var CompConfig =
               Components.interfaces.sbILibraryImporter ],
 
     dataFormatVersion: 2,
-    localeBundlePath: "chrome://itunes_importer/locale/Importer.properties",
     prefPrefix: "library_import.itunes",
 
     addTrackBatchSize: 100,
@@ -97,6 +99,21 @@ var CompConfig =
     reqPeriod: 50,
     reqPctCPU: 50
 };
+
+CompConfig.categoryList =
+[
+    {
+        category: "library-importer",
+        entry:    CompConfig.className,
+        value:    CompConfig.contractID
+    },
+
+    {
+        category: "app-startup",
+        entry:    CompConfig.className,
+        value:    "service," + CompConfig.contractID
+    }
+];
 
 
 /*******************************************************************************
@@ -132,12 +149,22 @@ Component.prototype =
      **************************************************************************/
 
     /*
+     * classDescription             Description of component class.
+     * classID                      Component class ID.
+     * contractID                   Component contract ID.
+     * _xpcom_categories            List of component categories.
+     *
      * metaDataTable                Table of meta-data to extract from iTunes.
      * dataFormatVersion            Data format version.
      * localeBundlePath             Path to locale string bundle.
      * prefPrefix                   Prefix for component preferences.
      * addTrackBatchSize            Number of tracks to add at a time.
      */
+
+    classDescription: CompConfig.className,
+    classID: CompConfig.cid,
+    contractID: CompConfig.contractID,
+    _xpcom_categories: CompConfig.categoryList,
 
     metaDataTable:
     [
@@ -182,7 +209,6 @@ Component.prototype =
 
     /*
      * mOSType                      OS type.
-     * mLocale                      Locale string bundle.
      * mListener                    Listener for import events.
      * mExcludedPlaylistList        List of excluded playlists.
      * mHandleImportReqFunc         handleImportReq function with object
@@ -223,7 +249,6 @@ Component.prototype =
      */
 
     mOSType: null,
-    mLocale: null,
     mListener: null,
     mExcludedPlaylists: "",
     mHandleImportReqFunc: null,
@@ -439,36 +464,7 @@ Component.prototype =
      *
      **************************************************************************/
 
-    /*
-     * QueryInterface
-     *
-     *   --> interfaceID            Requested interface.
-     *
-     *   NS_ERROR_NO_INTERFACE      Requested interface is not supported.
-     *
-     *   This function returns a component object implementing the interface
-     * specified by interfaceID.
-     */
-
-    QueryInterface: function(interfaceID)
-    {
-        var                         interfaceSupported = false;
-        var                         i;
-
-        /* Check for supported interfaces. */
-        for (i = 0; i < CompConfig.ifList.length; i++)
-        {
-            if (interfaceID.equals(CompConfig.ifList[i]))
-            {
-                interfaceSupported = true;
-                break;
-            }
-        }
-        if (!interfaceSupported)
-            throw(Components.results.NS_ERROR_NO_INTERFACE);
-
-        return(this);
-    },
+    QueryInterface: XPCOMUtils.generateQI(CompConfig.ifList),
 
 
     /***************************************************************************
@@ -511,20 +507,9 @@ Component.prototype =
         /* Get the OS type. */
         this.mOSType = this.getOSType();
 
-        /* Get the locale string bundle. */
-        {
-            var                         stringBundleService;
-
-            stringBundleService =
-                Components.classes["@mozilla.org/intl/stringbundle;1"].
-                    getService(Components.interfaces.nsIStringBundleService);
-            this.mLocale =
-                        stringBundleService.createBundle(this.localeBundlePath);
-        }
-
         /* Get the list of excluded playlists. */
-        this.mExcludedPlaylists = this.mLocale.GetStringFromName
-                                        ("library_importer.excluded_playlists");
+        this.mExcludedPlaylists =
+          SBString("import_library.itunes.excluded_playlists", "");
 
         /* Get the IO service component. */
         this.mIOService = Components.
@@ -2971,162 +2956,9 @@ Component.prototype =
  *******************************************************************************
  ******************************************************************************/
 
-/*
- * NSGetModule
- *
- *   This function returns the component module.
- */
-
-function NSGetModule(comMgr, fileSpec)
-{
-    return (ComponentModule);
+function NSGetModule(compMgr, fileSpec) {
+  return XPCOMUtils.generateModule([Component]);
 }
-
-
-/*
- * Component module class.
- */
-
-var ComponentModule =
-{
-    /*
-     * registerSelf
-     *
-     *   This function registers the component module.
-     */
-
-    registerSelf: function(compMgr, fileSpec, location, type)
-    {
-        var                         categoryManager;
-
-        /* Register the component factory. */
-        compReg = compMgr.QueryInterface
-                                (Components.interfaces.nsIComponentRegistrar);
-        compReg.registerFactoryLocation(CompConfig.cid,
-                                        CompConfig.className,
-                                        CompConfig.contractID,
-                                        fileSpec,
-                                        location,
-                                        type);
-        /* Register to receive "app-startup" events. */
-        categoryManager =
-                    Components.classes
-                        ["@mozilla.org/categorymanager;1"].
-                        getService(Components.interfaces.nsICategoryManager);
-        categoryManager.addCategoryEntry("app-startup",
-                                         CompConfig.className,
-                                         "service," + CompConfig.contractID,
-                                         true,
-                                         true);
-    },
-
-
-    /*
-     * unregisterSelf
-     *
-     *   This function unregisters the component module.
-     */
-
-    unregisterSelf: function(compMgr, location, type)
-    {
-        var                         categoryManager;
-
-        /* Unregister to receive "app-startup" events. */
-        categoryManager =
-                    Components.classes
-                        ["@mozilla.org/categorymanager;1"].
-                        getService(Components.interfaces.nsICategoryManager);
-        categoryManager.deleteCategoryEntry("app-startup",
-                                            CompConfig.contractID,
-                                            true);
-    },
-
-
-    /*
-     * getClassObject
-     *
-     *   This function returns a factory for the component.
-     */
-
-    getClassObject: function(compMgr, classID, interfaceID)
-    {
-        /* Check for supported interfaces. */
-        if(!interfaceID.equals(Components.interfaces.nsIFactory))
-            throw(Components.results.NS_ERROR_NOT_IMPLEMENTED);
-
-        /* Check for supported component types. */
-        if(!classID.equals(CompConfig.cid))
-            throw(Components.results.NS_ERROR_NO_INTERFACE);
-
-        return(ComponentFactory);
-    },
-
-
-    /*
-     * canUnload
-     *
-     *   Not sure what this does.
-     */
-
-    canUnload: function(compMgr)
-    {
-        return true;
-    }
-};
-
-
-/*******************************************************************************
- *******************************************************************************
- *
- * Component factory.
- *
- *******************************************************************************
- ******************************************************************************/
-
-/*
- * Component factory class.
- */
-
-var ComponentFactory =
-{
-    /*
-     * createInstance
-     *
-     *   --> outer                  ???
-     *   --> interfaceID            ID of interface instance to create.
-     *
-     *   This function creates an instance of the component providing the
-     * interface specified by interfaceID.
-     */
-
-    createInstance: function(outer, interfaceID)
-    {
-        var                         instance;
-        var                         interfaceSupported = false;
-        var                         i;
-
-        /*zzz?*/
-        if (outer != null)
-            throw (Components.results.NS_ERROR_NO_AGGREGATION);
-
-        /* Check for supported interfaces. */
-        for (i = 0; i < CompConfig.ifList.length; i++)
-        {
-            if (interfaceID.equals(CompConfig.ifList[i]))
-            {
-                interfaceSupported = true;
-                break;
-            }
-        }
-        if (!interfaceSupported)
-            throw Components.results.NS_ERROR_INVALID_ARG;
-
-        /* Create an instance of the component. */
-        instance = (new Component()).QueryInterface(interfaceID);
-
-        return (instance);
-    }
-};
 
 
 /*******************************************************************************

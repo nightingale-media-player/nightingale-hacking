@@ -172,3 +172,26 @@ interface sbILibraryImporter : nsISupports
 };
 
 
+/**
+ * \interface sbILibraryImporterManager
+ *
+ *   The sbILibraryImporterManager interface is provided by the library importer
+ * manager.
+ *
+ * Implementations:
+ *
+ *   "@songbirdnest.com/Songbird/LibraryImporterManager;1"
+ *   Use get service with this component.
+ */
+
+[scriptable, uuid(81c027cd-1c4d-42d7-8b70-134cba5175a1)]
+interface sbILibraryImporterManager : nsISupports
+{
+  /**
+   * Default library importer.
+   */
+
+  attribute sbILibraryImporter defaultLibraryImporter;
+};
+
+

@@ -27,6 +27,7 @@
 // For Songbird properties.
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
 
 // Open functions
@@ -332,11 +333,32 @@ try
 
   function SBLibraryOpen( parentWindow )
   {
-    SBOpenModalDialog("chrome://songbird/content/xul/importLibrary.xul",
-                      "",
-                      "chrome,centerscreen",
-                      null,
-                      parentWindow);
+    // Get the default library importer.  Do nothing if none available.
+    var libraryImporterManager =
+          Cc["@songbirdnest.com/Songbird/LibraryImporterManager;1"]
+            .getService(Ci.sbILibraryImporterManager);
+    var libraryImporter = libraryImporterManager.defaultLibraryImporter;
+    if (!libraryImporter)
+      return;
+
+    // Present the import library dialog.
+    var doImport = {};
+    WindowUtils.openModalDialog
+                  (parentWindow,
+                   "chrome://songbird/content/xul/importLibrary.xul",
+                   "",
+                   "chrome,centerscreen",
+                   [],
+                   [ doImport ]);
+    doImport = doImport.value == "true" ? true : false;
+
+    // Import the library as user directs.
+    if (doImport) {
+      var libraryFilePath = Application.prefs.getValue
+                              ("songbird.library_importer.library_file_path",
+                               "");
+      libraryImporter.import(libraryFilePath, "songbird", false);
+    }
   }
 
   function log(str)
