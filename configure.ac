@@ -135,8 +135,12 @@ if test "$enable_jemalloc" == "no"; then
 fi
 # XXXX: TEMPORARY HACK; jemalloc is broken on debug right now
 if test "$enable_debug" == "yes"; then
-  AC_WARN(jemalloc not supported in debug mode; disabling...)
-  SB_USE_JEMALLOC=
+  if test "$enable_jemalloc" != "yes"; then
+    AC_WARN(jemalloc not supported in debug mode; disabling...)
+    SB_USE_JEMALLOC=
+  else
+    AC_WARN(--enable-jemalloc and --enable-debug is known to be broken. USE AT YOUR OWN RISK.)
+  fi
 fi
 AC_SUBST(SB_USE_JEMALLOC)
 
