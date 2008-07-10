@@ -26,104 +26,102 @@
 
 function runTest() {
 
-  try {
-    var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+  var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
 
-    var testItemURL = ios.newURI("file:///alpha.mp3", null, null);
-    var testItemProperties = 
-      { artistName: "A", albumName: "Alpha", trackName: "Track Alpha", trackNumber: "1", year: "2000"};
+  var testItemURL = ios.newURI("file:///alpha.mp3", null, null);
+  var testItemProperties = 
+    { artistName: "A", albumName: "Alpha", trackName: "Track Alpha", trackNumber: "1", year: "2000"};
+  
+  var history = Cc["@songbirdnest.com/Songbird/PlaybackHistoryService;1"]
+                  .getService(Ci.sbIPlaybackHistoryService);
+                  
+  history.clear();
+  
+  var entry = Cc["@songbirdnest.com/Songbird/PlaybackHistoryEntry;1"]
+                .createInstance(Ci.sbIPlaybackHistoryEntry);
+               
+  var library = createLibrary("test_playbackhistoryservice", null, false);
+  
+  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                         .getService(Ci.sbILibraryManager);
+  libraryManager.registerLibrary(library, false);
+  
+  var item = library.createMediaItem(testItemURL, testItemProperties);
+  
+  var itemPlayedAt = new Date();
+  var itemPlayDuration = 1000 * 1000 * 1000;
+  
+  entry.init(item, itemPlayedAt, itemPlayDuration, null);
+  
+  assertEqual(entry.item, item);
+  assertEqual(entry.timestamp, itemPlayedAt.getTime());
+  assertEqual(entry.duration, itemPlayDuration);
+  
+  history.addEntry(entry);
+
+  var itemPlayedAt2 = new Date().getTime() + 10000;
+  var itemPlayDuration2 = 1000 * 1000 * 999;
+  
+  var annotations = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                      .createInstance(Ci.sbIPropertyArray);
+  annotations.appendProperty("http://songbirdnest.com/data/1.0#scrobbled", 
+                             "scrobbled");
+  
+  var entry2 = history.createEntry(item, 
+                                   itemPlayedAt2, 
+                                   itemPlayDuration2, 
+                                   annotations);
+  history.addEntry(entry2);
+  
+  entry2.setAnnotation("http://songbirdnest.com/data/1.0#iheartthis", "true");
+  entry2.removeAnnotation("http://songbirdnest.com/data/1.0#iheartthis");
+  
+  log("The playback history service has " + history.entryCount + " entries.");
+  assertEqual(history.entryCount, 2);
+  
+  var entriesArray = [entry2, entry];
+  var enumEntries = history.entries;
+
+  // I hate you javascript scoping.    
+  {
+    let i = 0;
+    while(enumEntries.hasMoreElements()) {
+      let entry = enumEntries.getNext()
+                             .QueryInterface(Ci.sbIPlaybackHistoryEntry); 
+      assertEqual(entry.item, entriesArray[i].item);
+      assertEqual(entry.timestamp, entriesArray[i].timestamp);
+      assertEqual(entry.duration, entriesArray[i].duration);
+      
+      ++i;
+    }
+  }
+  
+  {
+    let entries = history.getEntriesByTimestamp(itemPlayedAt, itemPlayedAt + 1);
+    assertEqual(entries.length, 1);
     
-    var history = Cc["@songbirdnest.com/Songbird/PlaybackHistoryService;1"]
-                    .getService(Ci.sbIPlaybackHistoryService);
-    
-    var entry = Cc["@songbirdnest.com/Songbird/PlaybackHistoryEntry;1"]
-                  .createInstance(Ci.sbIPlaybackHistoryEntry);
-                 
-    var library = createLibrary("test_playbackhistoryservice", null, false);
-    
-    var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                           .getService(Ci.sbILibraryManager);
-    libraryManager.registerLibrary(library, false);
-    
-    var item = library.createMediaItem(testItemURL, testItemProperties);
-    
-    var itemPlayedAt = new Date();
-    var itemPlayDuration = 1000 * 1000 * 1000;
-    
-    entry.init(item, itemPlayedAt, itemPlayDuration, null);
-    
+    let entry = entries.queryElementAt(0, Ci.sbIPlaybackHistoryEntry);
     assertEqual(entry.item, item);
     assertEqual(entry.timestamp, itemPlayedAt.getTime());
     assertEqual(entry.duration, itemPlayDuration);
-    
-    history.addEntry(entry);
-
-    var itemPlayedAt2 = new Date().getTime() + 10000;
-    var itemPlayDuration2 = 1000 * 1000 * 999;
-    
-    var annotations = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                        .createInstance(Ci.sbIPropertyArray);
-    annotations.appendProperty("http://songbirdnest.com/data/1.0#scrobbled", 
-                               "scrobbled");
-    
-    var entry2 = history.createEntry(item, 
-                                     itemPlayedAt2, 
-                                     itemPlayDuration2, 
-                                     annotations);
-    history.addEntry(entry2);
-    
-    log("The playback history service has " + history.entryCount + " entries.");
-    assertEqual(history.entryCount, 2);
-    
-    var entriesArray = [entry2, entry];
-    var enumEntries = history.entries;
-
-    // I hate you javascript scoping.    
-    {
-      let i = 0;
-      while(enumEntries.hasMoreElements()) {
-        let entry = enumEntries.getNext()
-                               .QueryInterface(Ci.sbIPlaybackHistoryEntry); 
-        assertEqual(entry.item, entriesArray[i].item);
-        assertEqual(entry.timestamp, entriesArray[i].timestamp);
-        assertEqual(entry.duration, entriesArray[i].duration);
-        
-        ++i;
-      }
-    }
-    
-    {
-      let entries = history.getEntriesByTimestamp(itemPlayedAt, itemPlayedAt + 1);
-      assertEqual(entries.length, 1);
-      
-      let entry = entries.queryElementAt(0, Ci.sbIPlaybackHistoryEntry);
-      assertEqual(entry.item, item);
-      assertEqual(entry.timestamp, itemPlayedAt.getTime());
-      assertEqual(entry.duration, itemPlayDuration);
-    }
-    
-    var entry_fromGetEntry = history.getEntryByIndex(0);
-    assertEqual(entry_fromGetEntry.item, item);
-    assertEqual(entry_fromGetEntry.timestamp, itemPlayedAt2);
-    assertEqual(entry_fromGetEntry.duration, itemPlayDuration2);
-    
-    var entries = history.getEntriesByIndex(0, 2);
-    assertEqual(entries.length, 2);
-
-    history.removeEntry(entry);
-    log("After removing one entry, the history service has " + history.entryCount + " entry");
-    assertEqual(history.entryCount, 1);
-    
-    var remainingEntry = entries.queryElementAt(0, Ci.sbIPlaybackHistoryEntry);
-    assertEqual(remainingEntry.item, item);
-    assertEqual(remainingEntry.timestamp, itemPlayedAt2);
-    assertEqual(remainingEntry.duration, itemPlayDuration2);
-    
-    history.clear();
   }
-  finally {
-    history.clear();
-  }
+  
+  var entry_fromGetEntry = history.getEntryByIndex(0);
+  assertEqual(entry_fromGetEntry.item, item);
+  assertEqual(entry_fromGetEntry.timestamp, itemPlayedAt2);
+  assertEqual(entry_fromGetEntry.duration, itemPlayDuration2);
+  
+  var entries = history.getEntriesByIndex(0, 2);
+  assertEqual(entries.length, 2);
+
+  history.removeEntry(entry);
+  log("After removing one entry, the history service has " + history.entryCount + " entry");
+  assertEqual(history.entryCount, 1);
+  
+  var remainingEntry = entries.queryElementAt(0, Ci.sbIPlaybackHistoryEntry);
+  assertEqual(remainingEntry.item, item);
+  assertEqual(remainingEntry.timestamp, itemPlayedAt2);
+  assertEqual(remainingEntry.duration, itemPlayDuration2);
   
   return;
 }

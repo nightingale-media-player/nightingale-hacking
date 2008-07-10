@@ -309,6 +309,30 @@ sbPlaybackHistoryService::CreateQueries()
   rv = insertBuilder->ToString(mAddAnnotationQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Query to insert OR replace annotations
+  mAddOrReplaceAnnotationQuery.AssignLiteral("insert or replace into ");
+  mAddOrReplaceAnnotationQuery.Append(playbackHistoryAnnotationsTableName);
+  mAddOrReplaceAnnotationQuery.AppendLiteral(" (");
+  
+  mAddOrReplaceAnnotationQuery.Append(entryIdColumn);
+  mAddOrReplaceAnnotationQuery.AppendLiteral(",");
+
+  mAddOrReplaceAnnotationQuery.Append(propertyIdColumn);
+  mAddOrReplaceAnnotationQuery.AppendLiteral(",");
+
+  mAddOrReplaceAnnotationQuery.Append(objColumn);
+  mAddOrReplaceAnnotationQuery.AppendLiteral(",");
+
+  mAddOrReplaceAnnotationQuery.Append(objSortableColumn);
+
+  mAddOrReplaceAnnotationQuery.AppendLiteral(" )");
+  mAddOrReplaceAnnotationQuery.AppendLiteral(" values (?, ?, ?, ?)");
+
+  // Query to remove an annotation
+  mRemoveAnnotationQuery.AssignLiteral("delete from ");
+  mRemoveAnnotationQuery.Append(playbackHistoryAnnotationsTableName);
+  mRemoveAnnotationQuery.AppendLiteral(" where entry_id = ? AND property_id = ?");
+  
   // Query for Entry Count
   nsCOMPtr<sbISQLSelectBuilder> selectBuilder = 
     do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
@@ -522,6 +546,33 @@ sbPlaybackHistoryService::CreateQueries()
   rv = selectBuilder->ToString(mGetAllEntriesQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Query for Getting All Annotations Related to an Entry Id.
+  rv = selectBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->SetBaseTableName(playbackHistoryAnnotationsTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), propertyIdColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddColumn(EmptyString(), objColumn);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterionEntryId;
+  rv = selectBuilder->CreateMatchCriterionParameter(
+                                            EmptyString(), 
+                                            entryIdColumn,
+                                            sbISQLBuilder::MATCH_EQUALS,
+                                            getter_AddRefs(criterionEntryId));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->AddCriterion(criterionEntryId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->ToString(mGetAnnotationsForEntryQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Query for Deleting Entries by Index
   nsCOMPtr<sbISQLDeleteBuilder> deleteBuilder =
     do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
@@ -593,6 +644,26 @@ sbPlaybackHistoryService::CreateQueries()
   rv = deleteBuilder->ToString(mRemoveEntriesQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Query for Deleting Annotations
+  rv = deleteBuilder->Reset();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteBuilder->SetTableName(playbackHistoryEntriesTableName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = selectBuilder->CreateMatchCriterionParameter(
+                                        EmptyString(), 
+                                        entryIdColumn,
+                                        sbISQLBuilder::MATCH_EQUALS,
+                                        getter_AddRefs(criterionEntryId));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteBuilder->AddCriterion(criterionEntryId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deleteBuilder->ToString(mRemoveAnnotationsQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Query for Deleting All Entries
   rv = deleteBuilder->Reset();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -640,6 +711,68 @@ sbPlaybackHistoryService::CreateDefaultQuery(sbIDatabaseQuery **aQuery)
 }
 
 nsresult 
+sbPlaybackHistoryService::CreateAnnotationsFromEntryId(
+                                      PRInt64 aEntryId, 
+                                      sbIPropertyArray **aAnnotations)
+{
+  NS_ENSURE_ARG_POINTER(aAnnotations);
+  NS_ENSURE_ARG(aEntryId != -1);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mGetAnnotationsForEntryQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk = 0;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount = 0;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMutablePropertyArray> annotations = 
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);  
+
+  for(PRUint32 current = 0; current < rowCount; ++current) {
+    nsString propertyDBIDStr;
+    rv = result->GetRowCell(current, 0, propertyDBIDStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString annotationValue;
+    rv = result->GetRowCell(current, 1, annotationValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 propertyId = propertyDBIDStr.ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString annotationId;
+    PRBool success = mPropertyDBIDToID.Get(propertyId, &annotationId);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+    rv = annotations->AppendProperty(annotationId, annotationValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbIPropertyArray> immutableAnnotations = 
+    do_QueryInterface(annotations, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  immutableAnnotations.forget(aAnnotations);
+
+  return NS_OK;
+}
+
+
+nsresult 
 sbPlaybackHistoryService::CreateEntryFromResultSet(sbIDatabaseResult *aResult,
                                                    PRUint32 aRow,
                                                    sbIPlaybackHistoryEntry **aEntry)
@@ -652,8 +785,8 @@ sbPlaybackHistoryService::CreateEntryFromResultSet(sbIDatabaseResult *aResult,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(aRow < rowCount, NS_ERROR_INVALID_ARG);
 
-  nsString entryId;
-  rv = aResult->GetRowCell(aRow, 0, entryId);
+  nsString entryIdStr;
+  rv = aResult->GetRowCell(aRow, 0, entryIdStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString libraryGuid;
@@ -685,6 +818,11 @@ sbPlaybackHistoryService::CreateEntryFromResultSet(sbIDatabaseResult *aResult,
   nsCOMPtr<sbIPlaybackHistoryEntry> entry;
   rv = CreateEntry(item, timestamp, duration, nsnull, getter_AddRefs(entry));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 entryId = ToInteger64(entryIdStr, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  entry->SetEntryId(entryId);
 
   entry.forget(aEntry);
 
@@ -1478,10 +1616,26 @@ sbPlaybackHistoryService::AddEntry(sbIPlaybackHistoryEntry *aEntry)
   rv = FillAddAnnotationsQueryParameters(query, aEntry);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = query->AddQuery(NS_LITERAL_STRING("select last_insert_rowid()"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString entryIdStr;
+  rv = result->GetRowCell(0, 0, entryIdStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 entryId = ToInteger64(entryIdStr, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  aEntry->SetEntryId(entryId);
 
   rv = DoEntryAddedCallback(aEntry);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1515,7 +1669,6 @@ sbPlaybackHistoryService::AddEntries(nsIArray *aEntries)
     rv = FillAddQueryParameters(query, entry);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // XXXAus: PLACEHOLDER, doesn't do anything yet.
     rv = FillAddAnnotationsQueryParameters(query, entry);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1685,6 +1838,16 @@ sbPlaybackHistoryService::RemoveEntry(sbIPlaybackHistoryEntry *aEntry)
   rv = FillRemoveEntryQueryParameters(query, aEntry);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = query->AddQuery(mRemoveAnnotationsQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 entryId = -1;
+  rv = aEntry->GetEntryId(&entryId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt64Parameter(0, entryId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1774,6 +1937,25 @@ sbPlaybackHistoryService::RemoveEntries(nsIArray *aEntries)
 }
 
 NS_IMETHODIMP 
+sbPlaybackHistoryService::GetEntriesByAnnotation(
+                                  const nsAString & aAnnotationId, 
+                                  const nsAString & aAnnotationValue, 
+                                  PRUint32 aCount, 
+                                  nsIArray **_retval)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbPlaybackHistoryService::GetEntriesByAnnotations(
+                                            sbIPropertyArray *aAnnotations, 
+                                            PRUint32 aCount, 
+                                            nsIArray **_retval)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
 sbPlaybackHistoryService::Clear()
 {
   nsCOMPtr<sbIDatabaseQuery> query;
@@ -1823,8 +2005,85 @@ NS_IMETHODIMP
 sbPlaybackHistoryService::RemoveListener(sbIPlaybackHistoryListener *aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
-
   mListeners.Remove(aListener);
+  return NS_OK;
+}
+
+nsresult
+sbPlaybackHistoryService::AddOrUpdateAnnotation(
+                                              PRInt64 aEntryId,
+                                              const nsAString &aAnnotationId,
+                                              const nsAString &aAnnotationValue)
+{
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIPropertyManager> propMan =
+    do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyInfo> propertyInfo;
+  rv = propMan->GetPropertyInfo(aAnnotationId, getter_AddRefs(propertyInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString sortableValue;
+  rv = propertyInfo->MakeSortable(aAnnotationValue, sortableValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(mAddOrReplaceAnnotationQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt64Parameter(0, aEntryId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 propertyId = 0;
+  rv = GetPropertyDBID(aAnnotationId, &propertyId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt32Parameter(1, propertyId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(2, aAnnotationValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(3, sortableValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk = 0;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
+nsresult
+sbPlaybackHistoryService::RemoveAnnotation(PRInt64 aEntryId,
+                                           const nsAString &aAnnotationId)
+{
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = query->AddQuery(mRemoveAnnotationQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt64Parameter(0, aEntryId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 propertyId = 0;
+  rv = GetPropertyDBID(aAnnotationId, &propertyId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt32Parameter(1, propertyId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk = 0;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }

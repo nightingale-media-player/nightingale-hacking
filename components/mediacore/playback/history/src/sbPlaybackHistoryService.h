@@ -73,6 +73,9 @@ public:
   nsresult CreateQueries();
   nsresult CreateDefaultQuery(sbIDatabaseQuery **aQuery);
 
+  nsresult CreateAnnotationsFromEntryId(PRInt64 aEntryId, 
+                                        sbIPropertyArray **aAnnotations);
+
   nsresult CreateEntryFromResultSet(sbIDatabaseResult *aResult,
                                     PRUint32 aRow,
                                     sbIPlaybackHistoryEntry **aEntry);
@@ -115,7 +118,10 @@ protected:
 
 private:
   nsString mAddEntryQuery;
+  
   nsString mAddAnnotationQuery;
+  nsString mAddOrReplaceAnnotationQuery;
+  nsString mRemoveAnnotationQuery;
 
   nsString mGetEntryCountQuery;
 
@@ -130,11 +136,11 @@ private:
   nsString mGetEntriesByTimestampQuery;
   nsString mGetEntriesByTimestampQueryAscending;
 
-  nsString mRemoveEntriesQuery;
+  nsString mGetAnnotationsForEntryQuery;
 
-  nsString mRemoveEntriesByIndexQuery;
-  nsString mRemoveAnnotationsByIndexQuery;
-  
+  nsString mRemoveEntriesQuery;
+  nsString mRemoveAnnotationsQuery;
+
   nsString mRemoveAllEntriesQuery;
   nsString mRemoveAllAnnotationsQuery;
 

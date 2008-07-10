@@ -27,16 +27,25 @@
 #include "sbPlaybackHistoryEntry.h"
 
 #include <nsIClassInfoImpl.h>
+#include <nsIMutableArray.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIStringEnumerator.h>
 
+#include <nsArrayUtils.h>
 #include <nsAutoLock.h>
+#include <nsComponentManagerUtils.h>
+#include <nsServiceManagerUtils.h>
+
+#include <sbIPlaybackHistoryService.h>
+
+#include <sbPropertiesCID.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbPlaybackHistoryEntry, 
                               sbIPlaybackHistoryEntry)
 
 sbPlaybackHistoryEntry::sbPlaybackHistoryEntry()
 : mLock(nsnull)
+, mEntryId(-1)
 , mTimestamp(0)
 , mDuration(0)
 {
@@ -50,6 +59,33 @@ sbPlaybackHistoryEntry::~sbPlaybackHistoryEntry()
   if(mLock) {
     nsAutoLock::DestroyLock(mLock);
   }
+}
+
+NS_IMETHODIMP 
+sbPlaybackHistoryEntry::GetEntryId(PRInt64 *aEntryId)
+{
+  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aEntryId);
+  
+  nsAutoLock lock(mLock);
+  *aEntryId = mEntryId;
+
+  return NS_OK;
+}
+
+void
+sbPlaybackHistoryEntry::SetEntryId(PRInt64 aEntryId)
+{
+  NS_ENSURE_TRUE(mLock, );  
+
+  nsAutoLock lock(mLock);
+  
+  if(mEntryId != -1)
+    return;
+
+  mEntryId = aEntryId;
+
+  return;
 }
 
 NS_IMETHODIMP 
@@ -96,6 +132,145 @@ sbPlaybackHistoryEntry::GetAnnotations(sbIPropertyArray * *aAnnotations)
 
   nsAutoLock lock(mLock);
   NS_IF_ADDREF(*aAnnotations = mAnnotations);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbPlaybackHistoryEntry::GetAnnotation(const nsAString & aAnnotationId, 
+                                      nsAString & _retval)
+{
+  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+
+  _retval.Truncate();
+
+  nsAutoLock lock(mLock);
+
+  if(!mAnnotations)
+    return NS_OK;
+
+  nsresult rv = mAnnotations->GetPropertyValue(aAnnotationId, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbPlaybackHistoryEntry::HasAnnotation(const nsAString & aAnnotationId, 
+                                      PRBool *_retval)
+{
+  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+
+  *_retval = PR_FALSE;
+
+  nsAutoLock lock(mLock);
+
+  if(!mAnnotations)
+    return NS_OK;
+
+  nsString value;
+  nsresult rv = mAnnotations->GetPropertyValue(aAnnotationId, value);
+  
+  if(NS_SUCCEEDED(rv))
+    *_retval = PR_TRUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbPlaybackHistoryEntry::SetAnnotation(const nsAString & aAnnotationId, 
+                                      const nsAString & aAnnotationValue)
+{
+  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoLock lock(mLock);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMutablePropertyArray> annotations;
+
+  if(!mAnnotations) {
+    annotations = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mAnnotations = do_QueryInterface(annotations, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    annotations = do_QueryInterface(mAnnotations, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = annotations->AppendProperty(aAnnotationId, aAnnotationValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // The entry exists in the history service so we can actually set the
+  // annotation. If the entry doesn't exist yet, the annotations will 
+  // automatically be set when the entry is added to the history.
+  if(mEntryId != -1) {
+    nsCOMPtr<sbIPlaybackHistoryService> history = 
+      do_GetService(SB_PLAYBACKHISTORYSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = history->AddOrUpdateAnnotation(mEntryId, 
+                                        aAnnotationId, 
+                                        aAnnotationValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlaybackHistoryEntry::RemoveAnnotation(const nsAString &aAnnotationId)
+{
+  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoLock lock(mLock);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIMutableArray> annotations;
+
+  if(!mAnnotations) {
+    annotations = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mAnnotations = do_QueryInterface(annotations, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    annotations = do_QueryInterface(mAnnotations, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRUint32 length = 0;
+  rv = annotations->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 current = 0; current < length; ++current) {
+    nsCOMPtr<sbIProperty> property = 
+      do_QueryElementAt(annotations, current, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString id;
+    rv = property->GetId(id);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(aAnnotationId.Equals(id)) {
+      rv = annotations->RemoveElementAt(current);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      break;
+    }
+  }
+
+  if(mEntryId != -1) {
+    nsCOMPtr<sbIPlaybackHistoryService> history = 
+      do_GetService(SB_PLAYBACKHISTORYSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = history->RemoveAnnotation(mEntryId, aAnnotationId);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

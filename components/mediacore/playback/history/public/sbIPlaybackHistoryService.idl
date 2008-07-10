@@ -43,7 +43,7 @@ interface sbIPropertyArray;
  *
  * Getter methods assume that index 0 is the most recent entry.
  */
-[scriptable, uuid(ff3e1c17-4b74-49c3-8932-4aef4bb3cbd2)]
+[scriptable, uuid(c818767c-7474-436c-8bec-a95ad08cf1e5)]
 interface sbIPlaybackHistoryService : nsISupports
 {
   /**
@@ -142,15 +142,15 @@ interface sbIPlaybackHistoryService : nsISupports
   /**
    *
    */
-  //nsIArray getEntriesByAnnotation(in nsAString aAnnotationID, 
-  //                                in nsAString aAnnotationValue,
-  //                                [optional] in unsigned long aCount);
+  nsIArray getEntriesByAnnotation(in AString aAnnotationId, 
+                                  in AString aAnnotationValue,
+                                  [optional] in unsigned long aCount);
   
   /**
    *
    */
-  //nsIArray getEntriesByAnnotations(in sbIPropertyArray aAnnotations,
-  //                                 [optional] unsigned long aCount);
+  nsIArray getEntriesByAnnotations(in sbIPropertyArray aAnnotations,
+                                   [optional] in unsigned long aCount);
 
   /**
    * \brief Clear all entries from the playback history service.
@@ -158,14 +158,27 @@ interface sbIPlaybackHistoryService : nsISupports
   void clear();
 
   /**
-   *
+   * \brief Add a listener.
    */
   void addListener(in sbIPlaybackHistoryListener aListener);
 
   /**
-   *
+   * \brief Remove a listener.
    */
   void removeListener(in sbIPlaybackHistoryListener aListener);
+
+  /**
+   * \internal
+   */
+  [notxpcom] nsresult addOrUpdateAnnotation(in long long aEntryId,
+                                            in AString aAnnotationId,
+                                            in AString aAnnotationValue);
+
+  /**
+   * \internal
+   */
+  [notxpcom] nsresult removeAnnotation(in long long aEntryId,
+                                       in AString aAnnotationId);
 };
 
 %{C++

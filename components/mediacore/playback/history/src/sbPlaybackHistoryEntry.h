@@ -54,6 +54,7 @@ protected:
 private:
   PRLock* mLock;
 
+  PRInt64 mEntryId;
   nsCOMPtr<sbIMediaItem> mItem;
   
   PRTime mTimestamp;

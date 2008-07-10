@@ -32,9 +32,14 @@ interface sbIPropertyArray;
 /**
  *
  */
-[scriptable, uuid(2eef73e0-6383-46d8-ae1f-505a3424e259)]
+[scriptable, uuid(3e2733de-9e30-4bde-99f0-274bacdd0b20)]
 interface sbIPlaybackHistoryEntry : nsISupports
 {
+  /**
+   *
+   */
+  readonly attribute long long entryId;
+
   /**
    * \brief The item that was played.
    */
@@ -59,6 +64,36 @@ interface sbIPlaybackHistoryEntry : nsISupports
   readonly attribute sbIPropertyArray annotations;
 
   /**
+   * \brief Get an annotation by id.
+   * \param aAnnotationId The annotation id.
+   * \return The annotation value.
+   * \throw NS_ERROR_NOT_AVAILABLE when the annotation is not available.
+   */
+  AString getAnnotation(in AString aAnnotationId);
+
+  /**
+   * \brief Verify the presence of an annotation.
+   * \param aAnnotationId The annotation id.
+   * \retval true The annotation is present.
+   * \retval false The annotation is not available.
+   */
+  boolean hasAnnotation(in AString aAnnotationId);
+
+  /**
+   * \brief Set an annotation on the entry.
+   * \param aAnnotationId The annotation id.
+   * \param aAnnotationValue The annotation value.
+   */
+  void setAnnotation(in AString aAnnotationId, 
+                     in AString aAnnotationValue);
+
+  /** 
+   * \brief Remove an annotation from the entry.
+   * \param aAnnotationId The annotation id.
+   */
+  void removeAnnotation(in AString aAnnotationId);
+
+  /**
    * \brief Initialize a playback history entry
    * \param aItem The media item for the entry.
    * \param aTimestamp The time at which the item started playing.
@@ -70,6 +105,13 @@ interface sbIPlaybackHistoryEntry : nsISupports
             in long long aTimestamp,
             in long long aDuration,
             in sbIPropertyArray aAnnotations);
+
+  /**
+   * \brief Set the entry id.
+   * \note This method is for internal use only.
+   * \internal
+   */
+  [notxpcom] void setEntryId(in long long aEntryId);
 };
 
 %{C++
