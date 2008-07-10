@@ -285,7 +285,7 @@ firstRunLocaleSvc.prototype = {
                               (this._cfg.localeBundleDataLoadTimeout);
       } catch (ex) {
         this._localesBundleDataLoadComplete = true;
-        this._localesBundleDataLocalSucceeded = false;
+        this._localesBundleDataLoadSucceeded = false;
       }
     }
 

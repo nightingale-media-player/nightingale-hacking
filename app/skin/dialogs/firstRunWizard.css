@@ -60,13 +60,6 @@ Additional styles imported directly by the first run dialog.
   margin-top: 0;
 }
 
-/* Add-ons page styles. */
-.sb-first-run-add-ons-box {
-  -moz-box-flex: 1;
-  -moz-box-align: center;
-  -moz-box-pack: center;
-}
-
 /* EULA page styles. */
 .sb-first-run-eula-box {
   -moz-box-flex: 1;
@@ -109,12 +102,89 @@ Additional styles imported directly by the first run dialog.
 
 /* *****************************************************************************
  *
+ * First run wizard add-ons page styles.
+ *
+ ******************************************************************************/
+
+/* Add-ons page box style. */
+.sb-first-run-add-ons-box {
+  -moz-box-flex: 1;
+}
+
+/* Add-ons page status deck style. */
+.sb-first-run-add-ons-status-deck {
+  -moz-box-flex: 1;
+}
+
+/* Add-ons page status text box style. */
+.sb-first-run-add-ons-status-text-box {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+/* Add-ons page item listbox style. */
+.sb-first-run-add-ons-listbox {
+  -moz-box-flex: 1;
+}
+
+/* Add-ons page loading image style. */
+.sb-first-run-add-ons-loading-image {
+  list-style-image: url(chrome://songbird/skin/icons/spinner-spin.png);
+}
+
+
+/* *****************************************************************************
+ *
+ * First run wizard add-ons page item styles.
+ *
+ ******************************************************************************/
+
+/* Add-ons page item box style. */
+.sb-first-run-add-ons-item-box {
+  -moz-box-flex: 1;
+
+  /* Set max-width so that item description will properly wrap. */
+  /*XXXeps is there some way that wrap will work by just setting the first */
+  /*XXXeps run dialog width? */
+  max-width: 343px;
+}
+
+/* Add-ons page item image style. */
+.sb-first-run-add-ons-item-image-box {
+  width: 32px;
+  max-width: 32px;
+  height: 32px;
+  max-height: 32px;
+}
+
+.sb-first-run-add-ons-item-image {
+  /* Set a default add-on item image.  This may be  */
+  /* overridden by setting the image src attribute. */
+  list-style-image: url(chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png);
+}
+
+/* Add-ons page item description style. */
+.sb-first-run-add-ons-item-desc-box {
+  -moz-box-flex: 1;
+}
+
+.sb-first-run-add-ons-item-desc {
+  font-size: smaller;
+}
+
+
+/* *****************************************************************************
+ *
  * XBL bindings.
  *
  ******************************************************************************/
 
 sb-first-run-add-ons {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAddons.xml#sb-first-run-add-ons");
+}
+
+sb-first-run-add-ons-item {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAddons.xml#sb-first-run-add-ons-item");
 }
 
 sb-first-run-eula {

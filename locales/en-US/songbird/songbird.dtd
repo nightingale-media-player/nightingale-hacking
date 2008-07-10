@@ -516,6 +516,13 @@
 <!-- First-run wizard entities. -->
 <!ENTITY first_run.title                  "&brandShortName; Setup">
 
+<!-- First-run add-ons entities. -->
+<!ENTITY first_run.add_ons.header.label      "Recommended Add-ons">
+<!ENTITY first_run.add_ons.description.line1 "Add-ons extend &brandShortName;'s functionality, allowing you to customize your media player experience.">
+<!ENTITY first_run.add_ons.description.line2 "They can integrate with other applications and services, support connecting to external devices, change the appearance and more!">
+<!ENTITY first_run.add_ons.loading.label     "Retrieving recommended add-ons.">
+<!ENTITY first_run.add_ons.load_failed.label "Unable to retrieve recommended add-ons.">
+
 <!-- First-run eula entities. -->
 <!ENTITY first_run.eula.accept_checkbox.label "I have read and accepted the terms of this license.">
 
