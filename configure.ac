@@ -133,6 +133,11 @@ AC_ARG_ENABLE(jemalloc,
 if test "$enable_jemalloc" == "no"; then
   SB_USE_JEMALLOC=
 fi
+# XXXX: TEMPORARY HACK; jemalloc is broken on debug right now
+if test "$enable_debug" == "yes"; then
+  AC_WARN(jemalloc not supported in debug mode; disabling...)
+  SB_USE_JEMALLOC=
+fi
 AC_SUBST(SB_USE_JEMALLOC)
 
 #
