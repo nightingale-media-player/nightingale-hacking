@@ -27,20 +27,23 @@
 #ifndef __SB_STANDARD_OPERATORS_H__
 #define __SB_STANDARD_OPERATORS_H__
 
-#define SB_OPERATOR_EQUALS       "="
-#define SB_OPERATOR_NOTEQUALS    "!="
-#define SB_OPERATOR_GREATER      ">"
-#define SB_OPERATOR_GREATEREQUAL ">="
-#define SB_OPERATOR_LESS         "<"
-#define SB_OPERATOR_LESSEQUAL    "<="
-#define SB_OPERATOR_CONTAINS     "%?%"
-#define SB_OPERATOR_BEGINSWITH   "?%"
-#define SB_OPERATOR_ENDSWITH     "%?"
-#define SB_OPERATOR_BETWEEN      "^"
-#define SB_OPERATOR_ISTRUE       "1"
-#define SB_OPERATOR_ISFALSE      "0"
-#define SB_OPERATOR_INTHELAST    "|>"
-#define SB_OPERATOR_NOTINTHELAST "<|"
+#define SB_OPERATOR_EQUALS        "="
+#define SB_OPERATOR_NOTEQUALS     "!="
+#define SB_OPERATOR_GREATER       ">"
+#define SB_OPERATOR_GREATEREQUAL  ">="
+#define SB_OPERATOR_LESS          "<"
+#define SB_OPERATOR_LESSEQUAL     "<="
+#define SB_OPERATOR_CONTAINS      "%?%"
+#define SB_OPERATOR_NOTCONTAINS   "!%?%"
+#define SB_OPERATOR_BEGINSWITH    "?%"
+#define SB_OPERATOR_NOTBEGINSWITH "!?%"
+#define SB_OPERATOR_ENDSWITH      "%?"
+#define SB_OPERATOR_NOTENDSWITH   "!%?"
+#define SB_OPERATOR_BETWEEN       "^"
+#define SB_OPERATOR_ISTRUE        "1"
+#define SB_OPERATOR_ISFALSE       "0"
+#define SB_OPERATOR_INTHELAST     "|>"
+#define SB_OPERATOR_NOTINTHELAST  "<|"
 
 #endif /* __SB_STANDARD_OPERATORS_H__ */
 

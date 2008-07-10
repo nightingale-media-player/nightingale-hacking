@@ -68,6 +68,9 @@ sbSQLBuilderCriterionBase::AppendMatchTo(nsAString& aStr)
     case sbISQLWhereBuilder::MATCH_LIKE:
       aStr.AppendLiteral(" like ");
       break;
+    case sbISQLWhereBuilder::MATCH_NOTLIKE:
+      aStr.AppendLiteral(" not like ");
+      break;
     case sbISQLWhereBuilder::MATCH_MATCH:
       aStr.AppendLiteral(" match ");
       break;
@@ -135,7 +138,8 @@ sbSQLBuilderCriterionString::ToString(nsAString& _retval)
   _retval.AppendLiteral("'");
   _retval.Append(escapedValue);
   _retval.AppendLiteral("'");
-  if (mMatchType == sbISQLWhereBuilder::MATCH_LIKE) {
+  if (mMatchType == sbISQLWhereBuilder::MATCH_LIKE ||
+      mMatchType == sbISQLWhereBuilder::MATCH_NOTLIKE) {
     _retval.AppendLiteral(" ESCAPE '\\'");
   }
   return NS_OK;

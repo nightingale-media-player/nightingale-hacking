@@ -407,15 +407,29 @@
           var ops = info.operators;
           var list = [];
 
+          var enableAll = Application.prefs.getValue(
+                         "songbird.smartplaylisteditor.enableAllOperators", false);
+
           while (ops.hasMoreElements()) {
             var op = ops.getNext()
                         .QueryInterface(this._Ci.sbIPropertyOperator);
             if (info.type == "boolean") {
-              if (op.operator == info.OPERATOR_EQUALS) continue;
-              if (op.operator == info.OPERATOR_NOTEQUALS) continue;
+              // these two never make sense to present to the user along with
+              // the istrue/isfalse operators, though they are still exposed
+              // for completion and so someone could use them programatically
+              if (op.operator == info.OPERATOR_EQUALS ||
+                  op.operator == info.OPERATOR_NOTEQUALS) {
+                continue;
+              }
             }
-            if (op.operator == info.OPERATOR_LESSEQUAL) continue;
-            if (op.operator == info.OPERATOR_GREATEREQUAL) continue;
+            if (!enableAll) {
+              if (op.operator == info.OPERATOR_LESSEQUAL ||
+                  op.operator == info.OPERATOR_GREATEREQUAL ||
+                  op.operator == info.OPERATOR_NOTBEGINSWITH ||
+                  op.operator == info.OPERATOR_NOTENDSWITH) {
+                continue;
+              }
+            }
             list.push({ name: op.operatorReadable, value: op.operator });
           }
 
@@ -512,7 +526,7 @@
             // allow the units popup to show
             switch (info.type) {
               case "datetime":
-                return "w";
+                return "d";
               case "duration":
                 return "min";
             }

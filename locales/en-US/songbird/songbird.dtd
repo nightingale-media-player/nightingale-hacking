@@ -189,14 +189,14 @@
 <!ENTITY smart.artist             "artist" >
 <!ENTITY smart.genre              "genre" >
 <!ENTITY smart.title              "title" >
-<!ENTITY smart.high_rating        "high rating" >
-<!ENTITY smart.low_rating         "low rating" >
-<!ENTITY smart.most_recent        "most recent" >
-<!ENTITY smart.least_recent       "least recent" >
-<!ENTITY smart.most_often         "most often" >
-<!ENTITY smart.least_often        "least often" >
-<!ENTITY smart.most_added         "most added" >
-<!ENTITY smart.least_added        "least added" >
+<!ENTITY smart.high_rating        "highest rating" >
+<!ENTITY smart.low_rating         "lowest rating" >
+<!ENTITY smart.most_recent        "most recently played" >
+<!ENTITY smart.least_recent       "least recently played" >
+<!ENTITY smart.most_often         "most often played" >
+<!ENTITY smart.least_often        "least often played" >
+<!ENTITY smart.most_added         "most recently added" >
+<!ENTITY smart.least_added        "least recently added" >
 <!ENTITY smart.minutes            "minutes" >
 <!ENTITY smart.hours              "hours" >
 <!ENTITY smart.mb                 "MB" >

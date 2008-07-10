@@ -93,16 +93,21 @@
       <menulist id="smart_selected_list" value="random">
         <menupopup id="smart_selected_list_popup" >
           <menuitem id="smart_selected_list_random" label="&smart.random;" value="random" />
+          <menuseparator/>
           <menuitem id="smart_selected_list_album" label="&smart.album;" value="album" />
           <menuitem id="smart_selected_list_artist" label="&smart.artist;" value="artist" />
           <menuitem id="smart_selected_list_genre" label="&smart.genre;" value="genre" />
           <menuitem id="smart_selected_list_title" label="&smart.title;" value="title" />
+          <menuseparator/>
           <menuitem id="smart_selected_list_high_rating" label="&smart.high_rating;" value="high_rating" />
           <menuitem id="smart_selected_list_low_rating" label="&smart.low_rating;" value="low_rating" />
+          <menuseparator/>
           <menuitem id="smart_selected_list_most_recent" label="&smart.most_recent;" value="most_recent" />
           <menuitem id="smart_selected_list_least_recent" label="&smart.least_recent;" value="least_recent" />
+          <menuseparator/>
           <menuitem id="smart_selected_list_most_often" label="&smart.most_often;" value="most_often" />
           <menuitem id="smart_selected_list_least_often" label="&smart.least_often;" value="least_often" />
+          <menuseparator/>
           <menuitem id="smart_selected_list_most_added" label="&smart.most_added;" value="most_added" />
           <menuitem id="smart_selected_list_least_added" label="&smart.least_added;" value="least_added" />
         </menupopup>

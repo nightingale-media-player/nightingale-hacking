@@ -137,8 +137,11 @@ interface sbIPropertyInfo : nsISupports
   readonly attribute AString OPERATOR_LESS;
   readonly attribute AString OPERATOR_LESSEQUAL;
   readonly attribute AString OPERATOR_CONTAINS;
+  readonly attribute AString OPERATOR_NOTCONTAINS;
   readonly attribute AString OPERATOR_BEGINSWITH;
+  readonly attribute AString OPERATOR_NOTBEGINSWITH;
   readonly attribute AString OPERATOR_ENDSWITH;
+  readonly attribute AString OPERATOR_NOTENDSWITH;
   readonly attribute AString OPERATOR_BETWEEN;
   readonly attribute AString OPERATOR_ISTRUE;
   readonly attribute AString OPERATOR_ISFALSE;

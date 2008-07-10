@@ -1537,26 +1537,42 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
 
   // If were are any of the contains style operators, handle it here
   if (op.EqualsLiteral(SB_OPERATOR_CONTAINS) ||
+      op.EqualsLiteral(SB_OPERATOR_NOTCONTAINS) ||
       op.EqualsLiteral(SB_OPERATOR_ENDSWITH) ||
-      op.EqualsLiteral(SB_OPERATOR_BEGINSWITH)) {
+      op.EqualsLiteral(SB_OPERATOR_NOTENDSWITH) ||
+      op.EqualsLiteral(SB_OPERATOR_BEGINSWITH) ||
+      op.EqualsLiteral(SB_OPERATOR_NOTBEGINSWITH)) {
 
     nsAutoString like;
     if (op.EqualsLiteral(SB_OPERATOR_CONTAINS) ||
-        op.EqualsLiteral(SB_OPERATOR_ENDSWITH)) {
+        op.EqualsLiteral(SB_OPERATOR_NOTCONTAINS) ||
+        op.EqualsLiteral(SB_OPERATOR_ENDSWITH) ||
+        op.EqualsLiteral(SB_OPERATOR_NOTENDSWITH)) {
       like.AppendLiteral("%");
     }
 
     like.Append(value);
 
     if (op.EqualsLiteral(SB_OPERATOR_CONTAINS) ||
-        op.EqualsLiteral(SB_OPERATOR_BEGINSWITH)) {
+        op.EqualsLiteral(SB_OPERATOR_NOTCONTAINS) ||
+        op.EqualsLiteral(SB_OPERATOR_BEGINSWITH) ||
+        op.EqualsLiteral(SB_OPERATOR_NOTBEGINSWITH)) {
       like.AppendLiteral("%");
     }
 
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
+    PRUint32 match;
+    if (op.EqualsLiteral(SB_OPERATOR_CONTAINS) ||
+        op.EqualsLiteral(SB_OPERATOR_BEGINSWITH) ||
+        op.EqualsLiteral(SB_OPERATOR_ENDSWITH)) {
+      match = sbISQLBuilder::MATCH_LIKE;
+    } else {
+      match = sbISQLBuilder::MATCH_NOTLIKE;
+    }
+        
     rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
                                               columnName,
-                                              sbISQLBuilder::MATCH_LIKE,
+                                              match,
                                               like,
                                               getter_AddRefs(criterion));
     NS_ENSURE_SUCCESS(rv, rv);

@@ -76,12 +76,8 @@ void sbURIPropertyInfo::InitializeOperators()
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.contains"));
   mOperators.AppendObject(propOp);
 
-  sbPropertyInfo::GetOPERATOR_BEGINSWITH(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.starts"));
-  mOperators.AppendObject(propOp);
-
-  sbPropertyInfo::GetOPERATOR_ENDSWITH(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.ends"));
+  sbPropertyInfo::GetOPERATOR_NOTCONTAINS(op);
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_contain"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_EQUALS(op);
@@ -90,6 +86,22 @@ void sbURIPropertyInfo::InitializeOperators()
 
   sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.is_not"));
+  mOperators.AppendObject(propOp);
+
+  sbPropertyInfo::GetOPERATOR_BEGINSWITH(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.starts"));
+  mOperators.AppendObject(propOp);
+
+  sbPropertyInfo::GetOPERATOR_NOTBEGINSWITH(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_start"));
+  mOperators.AppendObject(propOp);
+
+  sbPropertyInfo::GetOPERATOR_ENDSWITH(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.ends"));
+  mOperators.AppendObject(propOp);
+
+  sbPropertyInfo::GetOPERATOR_NOTENDSWITH(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_end"));
   mOperators.AppendObject(propOp);
 
   return;

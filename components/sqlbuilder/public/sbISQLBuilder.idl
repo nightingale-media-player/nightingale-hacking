@@ -43,7 +43,7 @@ interface sbISQLSelectBuilder;
 * The interface is inspired by Squiggle:
 * http://joe.truemesh.com/squiggle/javadoc/index.html
 */
-[scriptable, uuid(0e07f2fe-98e7-4790-b23c-f7d06ada138f)]
+[scriptable, uuid(4f6f8c80-3382-44ea-b17b-35323ddd28f7)]
 interface sbISQLBuilder : nsISupports
 {
   const unsigned long MATCH_EQUALS       = 0;
@@ -53,7 +53,8 @@ interface sbISQLBuilder : nsISupports
   const unsigned long MATCH_LESS         = 4;
   const unsigned long MATCH_LESSEQUAL    = 5;
   const unsigned long MATCH_LIKE         = 6;
-  const unsigned long MATCH_MATCH        = 7;
+  const unsigned long MATCH_NOTLIKE      = 7;
+  const unsigned long MATCH_MATCH        = 8;
 
   /**
    * \brief Value for the limit clause
