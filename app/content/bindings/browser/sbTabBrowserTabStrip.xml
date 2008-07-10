@@ -302,7 +302,7 @@
         if (this._mediaTab) {
           // if a media tab exists, only set lastSelectedTab
           // when we're not switching to it
-          if (this.selectedItem != this._firstTab)) {
+          if (this.selectedItem != this._firstTab) {
             this.lastSelectedTab = this.selectedItem;
           }
         } else {
