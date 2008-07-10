@@ -352,7 +352,9 @@
     <!-- **                                                                 ** -->
     <!-- ********************************************************************* -->
 
-    <!-- No browser-specific brodcasters -->
+    <broadcasterset id="mainBroadcasterSet">
+      <broadcaster id="broadcastBrowserAtMediaPage" isAtMediaPage="false"/>
+    </broadcasterset>
 
 
     <!-- ********************************************************************* -->
@@ -509,7 +511,7 @@
       <toolbarbutton id="stop-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
                      label="&tooltip.browser.stop;"
                      command="Browser:Stop"
-                     tooltiptext="&tooltip.browser.stop;" />
+                     tooltiptext="&tooltip.browser.stop;"/>
 
       <!-- COMBINED STOP/RELOAD BUTTON -->
       <toolbaritem id="stopreload-container" title="&tooltip.search;">
@@ -550,9 +552,10 @@
         
       </toolbaritem>
       
-      <splitter id="search-splitter">
-      </splitter>
-
+      <toolbaritem id="nav-bar-spacer" flex="1"/>
+      
+      <splitter id="search-splitter"/>
+      
       <!-- SEARCH WIDGET -->
       <toolbaritem id="searchbar-container" align="center" flex="6"
                    title="&tooltip.search;">
@@ -576,8 +579,9 @@
              mode="icons" 
              iconsize="small"
              customizable="true"
-             defaultset="back-forward-buttons,stopreload-container,home-button,urlbar-container,search-splitter,searchbar-container,mediapages-container"
-             flex="1">            
+             defaultset="back-forward-buttons,stopreload-container,home-button,urlbar-container,nav-bar-spacer,mediapages-container,search-splitter,searchbar-container"
+             flex="1"
+             observes="broadcastBrowserAtMediaPage">            
     </toolbar>
     
     <toolbarset id="customToolbars" />

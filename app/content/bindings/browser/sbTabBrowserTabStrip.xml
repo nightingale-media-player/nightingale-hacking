@@ -304,6 +304,11 @@
           // when we're not switching to it
           if (this.selectedItem != this._firstTab) {
             this.lastSelectedTab = this.selectedItem;
+            document.getElementById("broadcastBrowserAtMediaPage")
+                    .removeAttribute("isAtMediaPage");
+          } else {
+            document.getElementById("broadcastBrowserAtMediaPage")
+                    .setAttribute("isAtMediaPage", true);
           }
         } else {
           this.lastSelectedTab = this.selectedItem;
