@@ -66,6 +66,7 @@
         this.minbutton.collapsed = false;
       if (this.hasAttribute("maxbutton"))
         this.maxbutton.collapsed = false;
+      this.progress.max = this._SCALE_MAX;
     </constructor>
     <destructor>
       document.removeEventListener("mouseup", this.globalMouseUp, true); 
@@ -79,6 +80,8 @@
     <field name="minbutton">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider-min');</field>
     <field name="maxbutton">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider-max');</field>
     <field name="lastValue">this.value</field>
+    
+    <field name="_SCALE_MAX" readonly="true">10000</field>
 
     <property name="value">
       <getter>
@@ -95,12 +98,11 @@
 
     <property name="progress_value">
       <getter>
-        return ( this.progress.getAttribute('value') * this.maxpos ) / 100;
+        return ( this.progress.getAttribute('value') * this.maxpos ) / this._SCALE_MAX;
       </getter>
       <setter>
       <![CDATA[
-        var prog = (val * 100) / this.maxpos;
-        
+        var prog = (val * this._SCALE_MAX) / this.maxpos;
         this.progress.setAttribute('value', prog);
       ]]>
       </setter>
