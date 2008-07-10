@@ -309,29 +309,50 @@ sbPlaybackHistoryService::CreateQueries()
   rv = insertBuilder->ToString(mAddAnnotationQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Query to insert OR replace annotations
-  mAddOrReplaceAnnotationQuery.AssignLiteral("insert or replace into ");
-  mAddOrReplaceAnnotationQuery.Append(playbackHistoryAnnotationsTableName);
-  mAddOrReplaceAnnotationQuery.AppendLiteral(" (");
+  // Query to insert annotations
+  mInsertAnnotationQuery.AssignLiteral("insert into ");
+  mInsertAnnotationQuery.Append(playbackHistoryAnnotationsTableName);
+  mInsertAnnotationQuery.AppendLiteral(" (");
   
-  mAddOrReplaceAnnotationQuery.Append(entryIdColumn);
-  mAddOrReplaceAnnotationQuery.AppendLiteral(",");
+  mInsertAnnotationQuery.Append(entryIdColumn);
+  mInsertAnnotationQuery.AppendLiteral(",");
 
-  mAddOrReplaceAnnotationQuery.Append(propertyIdColumn);
-  mAddOrReplaceAnnotationQuery.AppendLiteral(",");
+  mInsertAnnotationQuery.Append(propertyIdColumn);
+  mInsertAnnotationQuery.AppendLiteral(",");
 
-  mAddOrReplaceAnnotationQuery.Append(objColumn);
-  mAddOrReplaceAnnotationQuery.AppendLiteral(",");
+  mInsertAnnotationQuery.Append(objColumn);
+  mInsertAnnotationQuery.AppendLiteral(",");
 
-  mAddOrReplaceAnnotationQuery.Append(objSortableColumn);
+  mInsertAnnotationQuery.Append(objSortableColumn);
 
-  mAddOrReplaceAnnotationQuery.AppendLiteral(" )");
-  mAddOrReplaceAnnotationQuery.AppendLiteral(" values (?, ?, ?, ?)");
+  mInsertAnnotationQuery.AppendLiteral(" )");
+  mInsertAnnotationQuery.AppendLiteral(" values (?, ?, ?, ?)");
+
+  // Query to update an annotation
+  mUpdateAnnotationQuery.AssignLiteral("update ");
+  mUpdateAnnotationQuery.Append(playbackHistoryAnnotationsTableName);
+  mUpdateAnnotationQuery.AppendLiteral(" set ");
+  
+  mUpdateAnnotationQuery.Append(propertyIdColumn);
+  mUpdateAnnotationQuery.AppendLiteral(" = ?, ");
+
+  mUpdateAnnotationQuery.Append(objColumn);
+  mUpdateAnnotationQuery.AppendLiteral(" = ?, ");
+
+  mUpdateAnnotationQuery.Append(objSortableColumn);
+  mUpdateAnnotationQuery.AppendLiteral(" = ? ");
+  
+  mUpdateAnnotationQuery.AppendLiteral(" where entry_id = ?");
 
   // Query to remove an annotation
   mRemoveAnnotationQuery.AssignLiteral("delete from ");
   mRemoveAnnotationQuery.Append(playbackHistoryAnnotationsTableName);
   mRemoveAnnotationQuery.AppendLiteral(" where entry_id = ? AND property_id = ?");
+
+  // Query to figure out if an annotation is present already or not.
+  mIsAnnotationPresentQuery.AssignLiteral("select entry_id from ");
+  mIsAnnotationPresentQuery.Append(playbackHistoryAnnotationsTableName);
+  mIsAnnotationPresentQuery.AppendLiteral(" where entry_id = ? and property_id = ?");
   
   // Query for Entry Count
   nsCOMPtr<sbISQLSelectBuilder> selectBuilder = 
@@ -725,6 +746,9 @@ sbPlaybackHistoryService::CreateAnnotationsFromEntryId(
   rv = query->AddQuery(mGetAnnotationsForEntryQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = query->BindInt64Parameter(0, aEntryId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -815,15 +839,18 @@ sbPlaybackHistoryService::CreateEntryFromResultSet(sbIDatabaseResult *aResult,
   rv = GetItem(libraryGuid, mediaItemGuid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIPlaybackHistoryEntry> entry;
-  rv = CreateEntry(item, timestamp, duration, nsnull, getter_AddRefs(entry));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRInt64 entryId = ToInteger64(entryIdStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  entry->SetEntryId(entryId);
+  nsCOMPtr<sbIPropertyArray> annotations;
+  rv = CreateAnnotationsFromEntryId(entryId, getter_AddRefs(annotations));
+  NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIPlaybackHistoryEntry> entry;
+  rv = CreateEntry(item, timestamp, duration, annotations, getter_AddRefs(entry));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  entry->SetEntryId(entryId);
   entry.forget(aEntry);
 
   return NS_OK;
@@ -996,6 +1023,8 @@ sbPlaybackHistoryService::FillAddQueryParameters(sbIDatabaseQuery *aQuery,
     rv = aQuery->BindNullParameter(3);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  rv = aQuery->AddQuery(NS_LITERAL_STRING("select last_insert_rowid()"));
 
   return NS_OK;
 }
@@ -1616,9 +1645,6 @@ sbPlaybackHistoryService::AddEntry(sbIPlaybackHistoryEntry *aEntry)
   rv = FillAddAnnotationsQueryParameters(query, aEntry);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->AddQuery(NS_LITERAL_STRING("select last_insert_rowid()"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1680,6 +1706,32 @@ sbPlaybackHistoryService::AddEntries(nsIArray *aEntries)
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount = 0;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(length == rowCount, NS_ERROR_UNEXPECTED);
+
+  for(PRUint32 currentRow = 0; currentRow < rowCount; ++currentRow) {
+    nsString entryIdStr;
+    
+    rv = result->GetRowCell(currentRow, 0, entryIdStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIPlaybackHistoryEntry> entry = 
+      do_QueryElementAt(aEntries, currentRow, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt64 entryId = ToInteger64(entryIdStr, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    entry->SetEntryId(entryId);
+  }
 
   rv = DoEntriesAddedCallback(aEntries);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1943,6 +1995,57 @@ sbPlaybackHistoryService::GetEntriesByAnnotation(
                                   PRUint32 aCount, 
                                   nsIArray **_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsString sql;
+  sql.AssignLiteral("select entry_id, library_guid, media_item_guid, play_time, play_duration from ");
+  sql.AppendLiteral(PLAYBACKHISTORY_ENTRIES_TABLE);
+  sql.AppendLiteral(" where entry_id in ( ");
+
+  sql.AppendLiteral("select entry_id from ");
+  sql.AppendLiteral(PLAYBACKHISTORY_ANNOTATIONS_TABLE);
+  sql.AppendLiteral(" where property_id = ? and obj = ? ");
+
+  if(aCount > 0) {
+    sql.AppendLiteral(" limit ?");
+  }
+
+  sql.AppendLiteral(" ) ");
+  sql.AppendLiteral("order by play_time desc");
+
+  PRUint32 propertyId = 0;
+  nsresult rv = GetPropertyDBID(aAnnotationId, &propertyId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindInt32Parameter(0, propertyId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->BindStringParameter(1, aAnnotationValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(aCount > 0) {
+    rv = query->BindInt32Parameter(2, aCount);
+  }
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CreateEntriesFromResultSet(result, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -1952,6 +2055,83 @@ sbPlaybackHistoryService::GetEntriesByAnnotations(
                                             PRUint32 aCount, 
                                             nsIArray **_retval)
 {
+  NS_ENSURE_ARG_POINTER(aAnnotations);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsString sql;
+  sql.AssignLiteral("select entry_id, library_guid, media_item_guid, play_time, play_duration from ");
+  sql.AppendLiteral(PLAYBACKHISTORY_ENTRIES_TABLE);
+  sql.AppendLiteral(" where entry_id in ( ");
+
+  sql.AppendLiteral("select entry_id from ");
+  sql.AppendLiteral(PLAYBACKHISTORY_ANNOTATIONS_TABLE);
+  sql.AppendLiteral(" where property_id = ? and obj = ? ");
+
+  PRUint32 length = 0;
+  nsresult rv = aAnnotations->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 current = 0; current < length - 1; ++current) {
+    sql.AppendLiteral(" or property_id = ? and obj = ? ");
+  }
+
+  if(aCount > 0) {
+    sql.AppendLiteral(" limit ?");
+  }
+
+  sql.AppendLiteral(" ) ");
+  sql.AppendLiteral(" order by play_time desc");
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = CreateDefaultQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 current = 0, currentEntry = 0; 
+      current < length * 2; 
+      current += 2, ++currentEntry) {
+    
+    nsCOMPtr<sbIProperty> property;
+    rv = aAnnotations->GetPropertyAt(currentEntry, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString annotationId;
+    rv = property->GetId(annotationId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString annotationValue;
+    rv = property->GetValue(annotationValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 propertyId = 0;
+    rv = GetPropertyDBID(annotationId, &propertyId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt32Parameter(current, propertyId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindStringParameter(current + 1, annotationValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if(aCount > 0) {
+    rv = query->BindInt32Parameter(length * 2, aCount);
+  }
+
+  PRInt32 dbError = 0;
+  rv = query->Execute(&dbError);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CreateEntriesFromResultSet(result, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -2028,30 +2208,73 @@ sbPlaybackHistoryService::AddOrUpdateAnnotation(
   rv = propertyInfo->MakeSortable(aAnnotationValue, sortableValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRUint32 propertyId = 0;
+  rv = GetPropertyDBID(aAnnotationId, &propertyId);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = CreateDefaultQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->AddQuery(mAddOrReplaceAnnotationQuery);
+  rv = query->AddQuery(mIsAnnotationPresentQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindInt64Parameter(0, aEntryId);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 propertyId = 0;
-  rv = GetPropertyDBID(aAnnotationId, &propertyId);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = query->BindInt32Parameter(1, propertyId);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->BindStringParameter(2, aAnnotationValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(3, sortableValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRInt32 dbOk = 0;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount = 0;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(rowCount == 1) {
+    rv = query->AddQuery(mUpdateAnnotationQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt32Parameter(0, propertyId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindStringParameter(1, aAnnotationValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindStringParameter(2, sortableValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt64Parameter(3, aEntryId);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = query->AddQuery(mInsertAnnotationQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt64Parameter(0, aEntryId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindInt32Parameter(1, propertyId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindStringParameter(2, aAnnotationValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->BindStringParameter(3, sortableValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);

@@ -140,7 +140,11 @@ interface sbIPlaybackHistoryService : nsISupports
   void removeEntries(in nsIArray aEntries);
 
   /**
-   *
+   * \brief Get entries by their annotation value.
+   * \param aAnnotationId The annotation id.
+   * \param aAnnotationValue The annotation value.
+   * \param [optional] aCount The maximum number of entries to return.
+   * \note Results are ordered from newest to oldest.
    */
   nsIArray getEntriesByAnnotation(in AString aAnnotationId, 
                                   in AString aAnnotationValue,

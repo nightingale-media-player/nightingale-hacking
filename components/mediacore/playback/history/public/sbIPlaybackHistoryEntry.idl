@@ -36,7 +36,8 @@ interface sbIPropertyArray;
 interface sbIPlaybackHistoryEntry : nsISupports
 {
   /**
-   *
+   * \note This is not the _index_ of the entry.
+   * \internal
    */
   readonly attribute long long entryId;
 

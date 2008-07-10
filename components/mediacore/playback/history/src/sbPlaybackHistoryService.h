@@ -120,8 +120,10 @@ private:
   nsString mAddEntryQuery;
   
   nsString mAddAnnotationQuery;
-  nsString mAddOrReplaceAnnotationQuery;
+  nsString mInsertAnnotationQuery;
+  nsString mUpdateAnnotationQuery;
   nsString mRemoveAnnotationQuery;
+  nsString mIsAnnotationPresentQuery;
 
   nsString mGetEntryCountQuery;
 

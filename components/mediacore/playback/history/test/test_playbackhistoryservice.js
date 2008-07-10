@@ -74,6 +74,30 @@ function runTest() {
   history.addEntry(entry2);
   
   entry2.setAnnotation("http://songbirdnest.com/data/1.0#iheartthis", "true");
+  
+  var getByAnnotationArray = history.getEntriesByAnnotation("http://songbirdnest.com/data/1.0#iheartthis", "true");
+  assertEqual(getByAnnotationArray.length, 1);
+  var getByAnnotationEntry = getByAnnotationArray.queryElementAt(0, Ci.sbIPlaybackHistoryEntry);
+  assertEqual(getByAnnotationEntry.getAnnotation("http://songbirdnest.com/data/1.0#iheartthis"),
+              "true");
+              
+  entry2.setAnnotation("http://songbirdnest.com/data/1.0#ashamedDoNotScrobble", "true");
+
+  var annotations2 = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                      .createInstance(Ci.sbIPropertyArray);
+  annotations2.appendProperty("http://songbirdnest.com/data/1.0#iheartthis", 
+                              "true");
+  annotations2.appendProperty("http://songbirdnest.com/data/1.0#ashamedDoNotScrobble", 
+                              "true");
+
+  var getByAnnotationsArray = history.getEntriesByAnnotations(annotations2, 1);
+  assertEqual(getByAnnotationsArray.length, 1);
+  var getByAnnotationsEntry = getByAnnotationsArray.queryElementAt(0, Ci.sbIPlaybackHistoryEntry);
+  assertEqual(getByAnnotationsEntry.getAnnotation("http://songbirdnest.com/data/1.0#iheartthis"), 
+              "true");
+  assertEqual(getByAnnotationsEntry.getAnnotation("http://songbirdnest.com/data/1.0#ashamedDoNotScrobble"), 
+              "true");
+    
   entry2.removeAnnotation("http://songbirdnest.com/data/1.0#iheartthis");
   
   log("The playback history service has " + history.entryCount + " entries.");

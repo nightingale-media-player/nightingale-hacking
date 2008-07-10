@@ -76,7 +76,7 @@ sbPlaybackHistoryEntry::GetEntryId(PRInt64 *aEntryId)
 void
 sbPlaybackHistoryEntry::SetEntryId(PRInt64 aEntryId)
 {
-  NS_ENSURE_TRUE(mLock, );  
+  NS_ENSURE_TRUE(mLock, );
 
   nsAutoLock lock(mLock);
   
