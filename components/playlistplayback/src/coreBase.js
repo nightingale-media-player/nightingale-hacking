@@ -106,7 +106,6 @@ CoreBase.prototype =
   },
 
   getObject : function () {
-    dump("\ncoreBase.getObject " + this._object + "\n");
     return this._object;
   },
 
@@ -132,14 +131,14 @@ CoreBase.prototype =
     return _active;
   },
   activate : function activate() {
-    dump("\ndwb\n");
     this.LOG("Activate - " + this._active);
     if (this._active) {
       this.LOG("Already active");
     }
     this.initialize();
     this._verifyObject();
-    this.doActivate();
+    if (this.doActivate)
+      this.doActivate();
     this._active = true;
     return true;
   },
@@ -157,7 +156,8 @@ CoreBase.prototype =
     catch (err) {
       this.LOG(err);
     }
-    this.doDeactivate();
+    if (this.doDeactivate)
+      this.doDeactivate();
     this._active = false;
   },
 

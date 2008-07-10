@@ -590,7 +590,7 @@ PlaylistPlayback.prototype = {
    */
   _chooseNewCore : function() {
     var newIndex = this._cores.length > 0 ? 0 : -1;
-    LOG("_chooseNewCore - " + this._cores[newIndex].getId());
+    LOG("_chooseNewCore - " + (newIndex == -1 ? "None" : this._cores[newIndex].getId()));
     this._swapCore(newIndex);
   },
 
