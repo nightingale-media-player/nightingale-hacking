@@ -140,20 +140,27 @@ private:
   nsresult EnumerateItemsByPropertyInternal(const nsAString& aID,
                                             nsIStringEnumerator* aValueEnum,
                                             sbIMediaListEnumerationListener* aEnumerationListener);
-
+  /**
+   * Enumerates by properties using the previous filter that was set
+   */
+  nsresult EnumerateItemsByPropertyInternal(sbIMediaListEnumerationListener* aEnumerationListener);
   nsresult EnumerateItemsByPropertiesInternal(sbStringArrayHash* aPropertiesHash,
                                               sbIMediaListEnumerationListener* aEnumerationListener);
 
   // Called for the enumeration methods.
   nsresult EnumerateItemsInternal(sbGUIDArrayEnumerator* aEnumerator,
                                   sbIMediaListEnumerationListener* aListener);
-
+  /**
+   * Clears the partial cached array and clears the last values
+   */
+  void ClearCachedPartialArray();
 protected:
 
   // The mFullArray is a cached version of the full contents of the media
   // list this instance represents.
   nsCOMPtr<sbILocalDatabaseGUIDArray> mFullArray;
-
+  nsCOMPtr<sbILocalDatabaseGUIDArray> mCachedPartialArray;
+  
   // A monitor for changes to the media list.
   PRMonitor* mFullArrayMonitor;
 
@@ -164,6 +171,10 @@ protected:
   // are used to create media items or set multiple properties
   // on a library resource.
   nsTHashtable<nsStringHashKey> mFilteredProperties;
+  
+  // Used to track values passed in so we can optimize filtering of the arrays
+  nsString mLastID;
+  nsString mLastValue;
 };
 
 /**

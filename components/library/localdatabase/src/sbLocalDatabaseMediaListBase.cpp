@@ -196,6 +196,9 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& 
                                                                nsIStringEnumerator* aValueEnum,
                                                                sbIMediaListEnumerationListener* aEnumerationListener)
 {
+  // We should always be null, but just in case we're not
+  mCachedPartialArray = nsnull;
+
   // Make a new GUID array to talk to the database.
   nsCOMPtr<sbILocalDatabaseGUIDArray> guidArray;
   nsresult rv = mFullArray->Clone(getter_AddRefs(guidArray));
@@ -209,8 +212,23 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& 
   rv = guidArray->AddFilter(aID, aValueEnum, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Save off the guid array in case we need it.
+  mCachedPartialArray = guidArray;
+  
   // And make an enumerator to return the filtered items.
   sbGUIDArrayEnumerator enumerator(mLibrary, guidArray);
+
+  return EnumerateItemsInternal(&enumerator, aEnumerationListener);
+}
+
+/**
+ * Internal method that may be inside the monitor.
+ */
+nsresult
+sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(sbIMediaListEnumerationListener* aEnumerationListener)
+{
+  // And make an enumerator to return the filtered items.
+  sbGUIDArrayEnumerator enumerator(mLibrary, mCachedPartialArray);
 
   return EnumerateItemsInternal(&enumerator, aEnumerationListener);
 }
@@ -592,6 +610,12 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
 {
   NS_ENSURE_ARG_POINTER(aEnumerationListener);
 
+  // If this is a different filter wipe our cached array
+  if (!aID.Equals(mLastID) || !aValue.Equals(mLastValue)) {
+    mCachedPartialArray = nsnull;
+    mLastID = aID;
+    mLastValue = aValue;
+  }
   // A property id must be specified.
   NS_ENSURE_TRUE(!aID.IsEmpty(), NS_ERROR_INVALID_ARG);
 
@@ -637,8 +661,11 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
 
       if (NS_SUCCEEDED(rv)) {
         if (stepResult == sbIMediaListEnumerationListener::CONTINUE) {
-          rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
-                                                aEnumerationListener);
+          if (mCachedPartialArray)
+            rv = EnumerateItemsByPropertyInternal(aEnumerationListener);
+          else
+            rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
+                                                  aEnumerationListener);
         }
         else {
           // The user cancelled the enumeration.
@@ -656,7 +683,10 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
 
       if (NS_SUCCEEDED(rv)) {
         if (stepResult == sbIMediaListEnumerationListener::CONTINUE) {
-          rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
+          if (mCachedPartialArray)
+            rv = EnumerateItemsByPropertyInternal(aEnumerationListener);
+          else
+            rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
                                                 aEnumerationListener);
         }
         else {
@@ -686,7 +716,10 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
 {
   NS_ENSURE_ARG_POINTER(aProperties);
   NS_ENSURE_ARG_POINTER(aEnumerationListener);
-
+  
+  // This isn't a single value so we can't use the previous single value cached
+  ClearCachedPartialArray();
+  
   PRUint32 propertyCount;
   nsresult rv = aProperties->GetLength(&propertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1075,6 +1108,13 @@ sbLocalDatabaseMediaListBase::RunInBatchMode(sbIMediaListBatchCallback* aCallbac
   sbAutoBatchHelper helper(*this);
 
   return aCallback->RunBatched(aUserData);
+}
+
+void sbLocalDatabaseMediaListBase::ClearCachedPartialArray()
+{
+  mLastID.Truncate();
+  mLastValue.Truncate();
+  mCachedPartialArray= nsnull;
 }
 
 NS_IMPL_ISUPPORTS1(sbGUIDArrayValueEnumerator, nsIStringEnumerator)
