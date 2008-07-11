@@ -42,6 +42,7 @@ SUBDIRS = addonmetadata \
           faceplate \
           feathers \
           integration \
+          intl \
           job \
           library \
           jscodelib \
@@ -69,7 +70,7 @@ SUBDIRDEPS  = mediacore : library job moz
 SUBDIRDEPS2 = playlistreader : library
 SUBDIRDEPS3 = devicesobsolete : library mediacore
 SUBDIRDEPS4 = integration : devicesobsolete
-SUBDIRDEPS5 = library : sqlbuilder moz property metrics
+SUBDIRDEPS5 = library : sqlbuilder moz intl property metrics
 SUBDIRDEPS6 = remoteapi : library moz
 SUBDIRDEPS7 = contenthandling : playlistplayback
 SUBDIRDEPS8 = devices : library property

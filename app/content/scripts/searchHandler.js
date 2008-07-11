@@ -597,7 +597,22 @@ const gSearchHandler = {
     if (query == "" || query == null) {
       filters.set(0, [], 0);
     } else {
+
+      // XXXAus: Only on Windows for now. Other platforms will follow shortly.
+      // See bug 4185 for more detail.
+      if(getPlatformString() == "Windows") {
+        var stringTransform = 
+          Components.classes["@songbirdnest.com/Songbird/Intl/StringTransform;1"]
+                    .createInstance(Components.interfaces.sbIStringTransform);
+                    
+        var newQuery = stringTransform.normalizeString("",
+                              Ci.sbIStringTransform.TRANSFORM_IGNORE_NONSPACE,
+                              query);
+        query = newQuery;      
+      }
+      
       var valArray = query.split(" ");
+      
       filters.set(0, valArray, valArray.length);
     }
   },

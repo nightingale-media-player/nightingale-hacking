@@ -27,8 +27,11 @@
 #include "sbTextPropertyInfo.h"
 
 #include <nsAutoPtr.h>
+#include <nsComponentManagerUtils.h>
 #include <nsUnicharUtils.h>
 #include <nsMemory.h>
+
+#include <sbIStringTransform.h>
 
 #include <sbLockUtils.h>
 
@@ -193,6 +196,22 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
 
   CompressWhitespace(_retval);
   ToLowerCase(_retval);
+
+  // XXXAus: Only on Windows for now, will get other platforms _really_ soon.
+  // See bug 4185 for more detail.
+#if defined(XP_WIN)
+  nsCOMPtr<sbIStringTransform> stringTransform = 
+    do_CreateInstance(SB_STRINGTRANSFORM_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString outVal;
+  rv = stringTransform->NormalizeString(EmptyString(), 
+                                        sbIStringTransform::TRANSFORM_IGNORE_NONSPACE,
+                                        _retval, outVal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  _retval = outVal;
+#endif
 
   PRInt32 len = aValue.Length();
 

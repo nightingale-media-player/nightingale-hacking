@@ -541,7 +541,7 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = subselect->AddColumn(EmptyString(),
-                            NS_LITERAL_STRING("group_concat(obj)"));
+                            NS_LITERAL_STRING("group_concat(obj_sortable)"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = subselect->SetBaseTableName(kResourceProperties);

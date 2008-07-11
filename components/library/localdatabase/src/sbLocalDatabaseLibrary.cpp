@@ -992,7 +992,7 @@ sbLocalDatabaseLibrary::CreateQueries()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = subselect->AddColumn(EmptyString(),
-                            NS_LITERAL_STRING("group_concat(_rp.obj, ' ')"));
+                            NS_LITERAL_STRING("group_concat(_rp.obj_sortable, ' ')"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = subselect->SetBaseTableName(NS_LITERAL_STRING("media_items"));

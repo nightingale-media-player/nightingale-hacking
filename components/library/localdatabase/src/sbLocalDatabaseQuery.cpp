@@ -878,7 +878,7 @@ sbLocalDatabaseQuery::AddFilters()
     rv = mBuilder->CreateMatchCriterionString(NS_LITERAL_STRING("_fts"),
                                               isEverythingSearch ?
                                                 NS_LITERAL_STRING("alldata") :
-                                                NS_LITERAL_STRING("obj"),
+                                                NS_LITERAL_STRING("obj_sortable"),
                                               sbISQLSelectBuilder::MATCH_MATCH,
                                               match,
                                               getter_AddRefs(criterion));
