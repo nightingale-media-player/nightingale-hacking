@@ -31,7 +31,9 @@
 #include <nsUnicharUtils.h>
 #include <nsMemory.h>
 
+#if defined(XP_WIN)
 #include <sbIStringTransform.h>
+#endif
 
 #include <sbLockUtils.h>
 
