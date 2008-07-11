@@ -10,6 +10,7 @@
 @lib/libvorbis.dylib
 @lib/libvorbisenc.dylib
 @lib/libvorbisfile.dylib
+@lib/libFLAC.dylib
 @lib/libgstreamer-0.10.dylib
 @lib/libgstbase-0.10.dylib
 @lib/libgstdataprotocol-0.10.dylib

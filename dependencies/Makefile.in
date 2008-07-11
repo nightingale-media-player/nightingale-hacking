@@ -173,6 +173,9 @@ VORBIS_NAMES = vorbis \
                vorbisfile \
                $(NULL)
 
+FLAC_NAMES = FLAC \ 
+             $(NULL)
+
 OIL_NAMES = oil \
             $(NULL)
 
@@ -322,6 +325,7 @@ ifeq (macosx,$(SB_PLATFORM))
 
 GST_PLUGINS_GOOD_NAMES += gstosxaudio \
                           gstosxvideosink \
+                          gstflac \
                           $(NULL)
 
 GST_PLUGINS_BAD_NAMES += gstqtwrapper \
@@ -348,6 +352,9 @@ OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/lib, \
 VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
            $(addsuffix $(DLL_SUFFIX), $(VORBIS_NAMES)))
 
+FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/lib/lib, \
+           $(addsuffix $(DLL_SUFFIX), $(FLAC_NAMES)))
+
 OIL = $(addprefix $(DEPS_DIR)/liboil/$(SB_CONFIGURATION)/lib/lib, \
         $(addsuffix -$(OIL_VERSION)$(DLL_SUFFIX), $(OIL_NAMES)))
 
@@ -370,6 +377,7 @@ SONGBIRD_LIB += $(GLIB) \
                 $(GST_PLUGINS_BASE_LIBS) \
                 $(OGG) \
                 $(VORBIS) \
+                $(FLAC) \
                 $(OIL) \
                 $(NULL)
 
