@@ -1,38 +1,25 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 notification {
-  min-height: 35px;
+  min-height: 30px;
   background-position:center top;
   background-repeat:repeat-x;
+  padding: 0px 8px 1px 8px;
+  border-bottom:1px solid gray;
 }
 
-notification[type="info"] {
-  background-color: rgb(235,235,255) !important;
-  background-image:url('chrome://songbird/skin/notification-bar/bg-info.png');
-}
-
-notification[type="warning"] {
-  background-color: rgb(255,255,235) !important;
-  background-image:url('chrome://songbird/skin/notification-bar/bg-warning.png');
-}
-
-notification[type="critical"] {
-  background-color: rgb(255,235,235) !important;
-  background-image:url('chrome://songbird/skin/notification-bar/bg-critical.png');
-}
 
 .messageImage {
   width: 16px;
   height: 16px;
-  margin: 0px 1px 0px 6px;
+  margin: 0px;
 }
 
 .messageText {
-  -moz-margin-start: 5px;
+  margin-left: 4px;
 }
 
 .messageButton {
-  margin: 0px 5px 0px 5px;
 }
 
 .notification-inner {
@@ -59,32 +46,10 @@ notification[type="critical"] {
   display: none;
 }
 
-notification[type="warning"]
-{
-}
 
 .messageText,
 .messageText:hover,
-.messageText:active
-{
+.messageText:active {
+  font-size:10px;
 }
 
-notification > button {
-  margin:0;
-}
-
-notification > button > .button-box > .button-text
-{
-}
-
-notification > button:hover > .button-box > .button-text
-{
-}
-
-notification > button:active > .button-box > .button-text
-{
-}
-
-notification > button:active
-{
-}

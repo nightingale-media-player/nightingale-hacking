@@ -356,10 +356,9 @@ Drag and drop Icon
 .sb-playlist-drag-badge:not([value="1"]) {
   font-weight: bold;
   color:white;
-  background-color: green;
+  background-color: black;
   margin-top: 16px;
   margin-left: 16px;
   padding:2px 4px;
-  -moz-border-radius: 8px;
-  border:2px solid black;
+  -moz-border-radius: 4px;
 }

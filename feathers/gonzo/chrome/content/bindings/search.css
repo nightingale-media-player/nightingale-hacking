@@ -111,16 +111,21 @@ searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {
   background-repeat:repeat-x;
   background-position:center top;
   list-style-image: url("chrome://songbird/skin/nav-bar/button-search.png");
-  border: none !important;
-  border-right:1px solid red !important;
+
   padding: 0px 0px 0px 0px !important;
   margin: 0px !important;
   -moz-border-radius:0px !important;
-  background-color:red !important;
+
   min-height:22px !important;
   min-width:20px !important;
   max-height:22px !important;
   max-width:20px !important;
+
+  border-top:1px solid rgb(40,40,40) !important;
+  border-right:1px solid rgb(80,80,80) !important;
+  border-bottom:1px solid rgb(120,120,120) !important;
+  border-left:none !important;
+  
 }
 .search-go-button {
   -moz-image-region: rect(0px 16px 16px 0px);
@@ -159,12 +164,17 @@ searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
   color:gray;
 }
 searchbar:not([livesearchmode="true"]) > .searchbar-box > .search-go-button-stack > .search-go-button {
-  min-height:0px !important;
-  min-width:0px !important;
-  max-height:0px !important;
-  max-width:0px !important;
+  min-width:1px !important;
+  max-width:1px !important;
   list-style-image: none;
   -moz-image-region: rect(0px 0px 0px 0px);
+
+  border-top:1px solid rgb(40,40,40) !important;
+  border-right:1px solid rgb(80,80,80) !important;
+  border-bottom:1px solid rgb(120,120,120) !important;
+  border-left:none !important;
+
+background-color:red;
 }
 
 toolbarbutton.search-go-button > .toolbarbutton-text {

@@ -79,6 +79,7 @@ window#mainplayer
   display:none;
 }
 
+
 #nav-bar[isAtMediaPage] > #reload-button,
 #nav-bar[isAtMediaPage] > #stop-button,
 #nav-bar[isAtMediaPage] > #stopreload-container,
