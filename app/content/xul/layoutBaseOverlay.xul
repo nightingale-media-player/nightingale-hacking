@@ -163,8 +163,25 @@
     <menu id="view-menu" label="&menu.view;" accesskey="&menu.view.accesskey;">
       <menupopup id="menu_viewPopup">
         <sb-feathers-menuitems id="menuitem_view_feathers"/>
-        <sb-mediapages-menuitems id="menuitem_view_mediapages" hideGetMore="true"/>
+        <menuseparator/>
+        <menu id="player-control-location" label="&menu.switchplayercontrols;">
+          <menupopup id="player-controls">
+            <menuitem id="menuitem-move-player-location-top" 
+                      name="player-location"
+                      type="radio"
+                      observes="playercontrols_top"
+                      label="&menu.controllerontop;" 
+                      oncommand="movePlayerControls(true);" />
+            <menuitem id="menuitem-move-player-location-bottom" 
+                      name="player-location"
+                      type="radio"
+                      observes="playercontrols_bottom"
+                      label="&menu.controlleronbottom;" 
+                      oncommand="movePlayerControls(false);" />
+          </menupopup>
+        </menu>
         <sb-displaypane-menuitems id="menuitem_view_displaypanes"/>
+        <sb-mediapages-menuitems id="menuitem_view_mediapages" hideGetMore="true"/>
       </menupopup>
     </menu>
 
@@ -302,6 +319,8 @@
                   attribute="checked" 
                   boolean="true" />
       </broadcaster>
+      <broadcaster id="playercontrols_top" />
+      <broadcaster id="playercontrols_bottom" />
     </broadcasterset>
 
 

@@ -120,6 +120,9 @@
 <!ENTITY menu.errorconsole "Error Console">
 <!ENTITY menu.dominspector  "DOM Inspector" >
 <!ENTITY menu.downloadmgr   "File Downloads..." >
+<!ENTITY menu.switchplayercontrols  "Player Controls" >
+<!ENTITY menu.controllerontop       "Display at Top">
+<!ENTITY menu.controlleronbottom    "Display at Bottom">
 
 
 <!ENTITY html.context.open  "Open" >

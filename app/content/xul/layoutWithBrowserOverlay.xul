@@ -277,6 +277,22 @@
                   oncommand="gPopupBlockerObserver.dontShowMessage();"/>
         <menuseparator sbid="blockedPopupSeparator"/>
       </menupopup>
+      
+      <!-- POPUP FOR PLAYER CONTROLS MENU -->
+      <popup id="playerControlsPopupMenu">
+        <menuitem id="popupmenuitem-move-player-location-top" 
+                  name="player-location"
+                  type="radio"
+                  observes="playercontrols_top"
+                  label="&menu.controllerontop;" 
+                  oncommand="movePlayerControls(true);" />
+        <menuitem id="popupmenuitem-move-player-location-bottom" 
+                  name="player-location"
+                  type="radio"
+                  observes="playercontrols_bottom"
+                  label="&menu.controlleronbottom;" 
+                  oncommand="movePlayerControls(false);" />
+      </popup>
 
       <tooltip id="aHTMLTooltip" onpopupshowing="return FillInHTMLTooltip(document.tooltipNode);"/>
       

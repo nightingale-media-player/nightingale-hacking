@@ -63,7 +63,6 @@
   onclose="quitApp();"
   persist="screenX screenY width height sizemode"
 >
-  
   <!-- No matter what mig says, don't take this out!! -->
   <windowregion/>
   
@@ -92,185 +91,186 @@
       </sb-sys-titlebar>
     </stack>
 
+    <vbox flex="1" id="content_player_wrapper" playercontrols="bottom">
+      <vbox id="content_wrapper" flex="1">
+        <stack id="nav_bar_box">
+          <hbox flex="1" align="left" class="left-box">
+            <hbox class="left"/>
+          </hbox>
+          <hbox flex="1" align="right" class="right-box">
+            <hbox class="right"/>
+          </hbox>
+          <hbox flex="1" class="middle" />
+          <!-- BROWSER TOOLBAR.  Filled via overlay by layoutWithBrowserOverlay.xul and others. 
+               Note: this item must have id="navigator-toolbox" for Firefox extension compatibility.
+          -->
+          <toolbox id="navigator-toolbox" flex="1"/>
+        </stack>
 
-    <stack id="nav_bar_box">
-      <hbox flex="1" align="left" class="left-box">
-        <hbox class="left"/>
-      </hbox>
-      <hbox flex="1" align="right" class="right-box">
-        <hbox class="right"/>
-      </hbox>
-      <hbox flex="1" class="middle" />
-      <!-- BROWSER TOOLBAR.  Filled via overlay by layoutWithBrowserOverlay.xul and others. 
-           Note: this item must have id="navigator-toolbox" for Firefox extension compatibility.
-      -->
-      <toolbox id="navigator-toolbox" flex="1"/>
-    </stack>
+        <tabs id="tabstrip" class="tabbrowser-tabs sb-tabbrowser-tabs" setfocus="false" onclick="gBrowser.onTabClick(event);" ondblclick="gBrowser.onTabBarDblClick(event);" onclosetab="gBrowser.removeCurrentTab();">
+          <tab selected="true" validate="never" onerror="gBrowser.addToMissedIconCache(this.getAttribute('image')); gBrowser.setIcon(this, null);" maxwidth="180" width="0" minwidth="80" flex="100" class="tabbrowser-tab" crop="end"/>
+        </tabs>
 
-    <tabs id="tabstrip" class="tabbrowser-tabs sb-tabbrowser-tabs" setfocus="false" onclick="gBrowser.onTabClick(event);" ondblclick="gBrowser.onTabBarDblClick(event);" onclosetab="gBrowser.removeCurrentTab();">
-      <tab selected="true" validate="never" onerror="gBrowser.addToMissedIconCache(this.getAttribute('image')); gBrowser.setIcon(this, null);" maxwidth="180" width="0" minwidth="80" flex="100" class="tabbrowser-tab" crop="end"/>
-    </tabs>
-
-    <vbox id="inner_player_box" flex="1">
-      <vbox id="middle_pane_box" flex="1">
-        <hbox id="middle_pane_inner_box" flex="1">
+        <vbox id="inner_player_box" flex="1">
+          <vbox id="middle_pane_box" flex="1">
+            <hbox id="middle_pane_inner_box" flex="1">
 
 
-          <!-- SERVICE PANE -->
-          <vbox id="servicepane_box">
-            <sb-servicepane id="servicepane" flex="1" browser="content" />
-            <statusbar id="servicepane-status-bar" mousethrough="never">
-<!-- TODO remove -->
-              <statusbarpanel>
-                <button label="Restart" onclick="var createDataRemote =  new Components.Constructor('@songbirdnest.com/Songbird/DataRemote;1',Components.interfaces.sbIDataRemote, 'init'); var restartSignal = createDataRemote('restart.restartnow', null); restartSignal.boolValue = true;" style="max-height:16px; max-width:16px; overflow:hidden; padding:0; margin:0; min-width:16px; width:16px;"/>
-              </statusbarpanel>
+              <!-- SERVICE PANE -->
+              <vbox id="servicepane_box">
+                <sb-servicepane id="servicepane" flex="1" browser="content" />
+                <statusbar id="servicepane-status-bar" mousethrough="never">
+    <!-- TODO remove -->
+                  <statusbarpanel>
+                    <button label="Restart" onclick="var createDataRemote =  new Components.Constructor('@songbirdnest.com/Songbird/DataRemote;1',Components.interfaces.sbIDataRemote, 'init'); var restartSignal = createDataRemote('restart.restartnow', null); restartSignal.boolValue = true;" style="max-height:16px; max-width:16px; overflow:hidden; padding:0; margin:0; min-width:16px; width:16px;"/>
+                  </statusbarpanel>
+    <!-- /TODO -->
+                </statusbar>
+              </vbox>
+              <sb-smart-splitter id="servicepane_splitter" state="open" collapse="never" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">
+                <grippy/>
+              </sb-smart-splitter>
+
+
+              <vbox flex="1" id="content_pane_box">
+                <vbox id="appcontent" flex="1">
+
+                  <!-- BROWSER.  Note: these IDs are required for Firefox extension compatibility. -->
+                  <sb-tabbrowser id="content" flex="1" contenttooltip="aHTMLTooltip" contentcontextmenu="contentAreaContextMenu" 
+                                 hasmediatab="true"
+                                 tabstrip="tabstrip"/>
+                  <!-- STATUS BAR.  Filled via overlay by layoutWithBrowserOverlay.xul. 
+                       Note: this item must have id="status-bar" for Firefox 
+                       extension compatibility.
+                  -->
+                  <statusbar id="status-bar" mousethrough="never"/>
+                </vbox>
+              </vbox>
+
+
+              <!-- SIDEBAR DISPLAY PANE.  Controlled via the View menu and sbIDisplayPaneManager service. -->
+              <sb-smart-splitter collapse="after" orient="horizontal" resizeafter="closest" id="displaypane_right_sidebar_splitter">
+                <grippy/>
+              </sb-smart-splitter>
+              <sb-displaypane id="displaypane_right_sidebar" contentgroup="sidebar" orient="vertical" label="&displaypane.name.sidebar;" splitter="displaypane_right_sidebar_splitter"/>
+
+            </hbox>
+          </vbox>
+        </vbox>
+      </vbox>
+      <vbox id="player_wrapper" context="playerControlsPopupMenu">
+        <stack id="control_pane_box" pack="center" >
+          <!-- TODO Move corner xul into an sb-themed-frame-stack -->
+          <hbox flex="1" align="left" class="left-box">
+          <hbox class="left"/>
+          </hbox>
+          <hbox flex="1" align="right" class="right-box">
+          <hbox class="right"/>
+          </hbox>
+          <hbox flex="1" class="middle" />
+          <!-- /TODO -->
+
+          <hbox id="control_pane" flex="1">
+            <hbox id="control_buttons_box" pack="center" align="center">
+              <sb-player-back-button id="play_back_button" class="sb-player-button"/>
+              <sb-player-playpause-button id="play_pause_button" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
+              <sb-player-forward-button id="play_fwd_button" class="sb-player-button" />
+            </hbox>
+
+            <hbox id="volume_box" pack="center" align="center">
+              <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100" minbutton="true" maxbutton="true"/>
+            </hbox>
+            
+            <hbox id="faceplate_box" flex="1" pack="center" align="center">
+              <stack id="faceplate" flex="1">
+    
+                <observes type="dataremote"
+                          id="active-faceplate-observes"
+                          key="faceplate.seenplaying"
+                          attribute="hidden"
+                          boolean="true"
+                          inverted="true" />
+
+                <!-- TODO Move corner xul into an sb-themed-frame-stack -->
+                <hbox flex="1" align="left" class="left-box">
+                  <hbox class="left"/>
+                </hbox>
+                <hbox flex="1" align="right" class="right-box">
+                  <hbox class="right"/>
+                </hbox>
+                <hbox flex="1" class="middle" />
+                <!-- /TODO -->
+
+                <hbox id="faceplate_content" flex="1">
+                  <vbox flex="1">
+                    <hbox id="track_info" pack="center" align="center">
+                      <sb-player-curtrack-box class="faceplate-curtrack-box" flex="1">
+                        <sb-autoscroll id="sb-faceplate-autoscroll-box" class="faceplate-autoscroll-box" fitalign="left" flex="1" mousethrough="always">
+                          <sb-player-title-label class="faceplate-text" autotip="1" mousethrough="always"/>
+                          <sb-player-artist-label class="faceplate-text" autotip="1" mousethrough="always"/>
+                          <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
+                        </sb-autoscroll>
+                      </sb-player-curtrack-box>
+                      <hbox id="faceplate-tool-bar">
+                        <sb-nowplaying-rating/>
+                      </hbox>
+                    </hbox>
+                    <hbox class="faceplate-seekinfo-box" align="center" pack="center">
+                      <sb-player-timeelapsed-label   class="faceplate-text" align="right"/>
+                      <stack id="faceplate_seekbar_box" flex="1">
+                        <hbox flex="1" align="left" class="left-box">
+                          <hbox class="left"/>
+                        </hbox>
+                        <hbox flex="1" align="right" class="right-box">
+                          <hbox class="right"/>
+                        </hbox>
+                        <hbox flex="1" class="middle" />
+                        <hbox flex="1" class="notches">
+                          <hbox flex="1"/>
+                          <hbox flex="1"/>
+                          <hbox flex="1"/>
+                          <hbox flex="1"/>
+                        </hbox>
+                        <sb-player-seek-slider class="faceplate-seekbar" flex="1" orient="horizontal"  maxpos="100" />
+                      </stack>
+                      <sb-player-totaltime-label class="faceplate-text" align="left" />
+                    </hbox>
+                  </vbox>
+    <!--              <hbox id="faceplate-album-art"/>-->
+                </hbox>
+              </stack>
 <!-- /TODO -->
-            </statusbar>
-          </vbox>
-          <sb-smart-splitter id="servicepane_splitter" state="open" collapse="never" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">
-            <grippy/>
-          </sb-smart-splitter>
 
+              <stack id="faceplate_inactive" flex="1">
+                <observes type="dataremote"
+                          id="inactive-faceplate-observes"
+                          key="faceplate.seenplaying"
+                          attribute="hidden"
+                          boolean="true"
+                          inverted="false" />
 
-          <vbox flex="1" id="content_pane_box">
-            <vbox id="appcontent" flex="1">
+                <hbox flex="1" align="left" class="left-box">
+                  <hbox class="left"/>
+                </hbox>
+                <hbox flex="1" align="right" class="right-box">
+                  <hbox class="right"/>
+                </hbox>
+                <hbox flex="1" class="middle" />
+                <hbox flex="1" id="faceplate-inactive-splash" />
+              </stack>
+            </hbox>
+            
+            <hbox id="shuffle_repeat_box" pack="center" align="center">
+              <sb-player-shuffle-button class="sb-player-button" />
+              <sb-player-repeat-button class="sb-player-button" />
+            </hbox>
 
-              <!-- BROWSER.  Note: these IDs are required for Firefox extension compatibility. -->
-              <sb-tabbrowser id="content" flex="1" contenttooltip="aHTMLTooltip" contentcontextmenu="contentAreaContextMenu" 
-                             hasmediatab="true"
-                             tabstrip="tabstrip"/>
-              <!-- STATUS BAR.  Filled via overlay by layoutWithBrowserOverlay.xul. 
-                   Note: this item must have id="status-bar" for Firefox 
-                   extension compatibility.
-              -->
-              <statusbar id="status-bar" mousethrough="never"/>
-            </vbox>
-          </vbox>
-
-
-          <!-- SIDEBAR DISPLAY PANE.  Controlled via the View menu and sbIDisplayPaneManager service. -->
-          <sb-smart-splitter collapse="after" orient="horizontal" resizeafter="closest" id="displaypane_right_sidebar_splitter">
-            <grippy/>
-          </sb-smart-splitter>
-          <sb-displaypane id="displaypane_right_sidebar" contentgroup="sidebar" orient="vertical" label="&displaypane.name.sidebar;" splitter="displaypane_right_sidebar_splitter"/>
-
-        </hbox>
+            <hbox id="shuffle_repeat_box" pack="center" align="center">        
+            </hbox>
+          </hbox>
+        </stack>
       </vbox>
     </vbox>
-
-
-    <stack id="control_pane_box" pack="center">
-
-<!-- TODO Move corner xul into an sb-themed-frame-stack -->
-      <hbox flex="1" align="left" class="left-box">
-        <hbox class="left"/>
-      </hbox>
-      <hbox flex="1" align="right" class="right-box">
-        <hbox class="right"/>
-      </hbox>
-      <hbox flex="1" class="middle" />
-<!-- /TODO -->
-
-      <hbox id="control_pane" flex="1">
-        <hbox id="control_buttons_box" pack="center" align="center">
-          <sb-player-back-button id="play_back_button" class="sb-player-button"/>
-          <sb-player-playpause-button id="play_pause_button" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
-          <sb-player-forward-button id="play_fwd_button" class="sb-player-button" />
-        </hbox>
-
-        <hbox id="volume_box" pack="center" align="center">
-          <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100" minbutton="true" maxbutton="true"/>
-        </hbox>
-
-
-<!-- TODO Break into XBLs -->
-        <hbox id="faceplate_box" flex="1" pack="center" align="center">
-          <stack id="faceplate" flex="1">
-            <observes type="dataremote"
-              key="faceplate.seenplaying"
-              attribute="hidden"
-              boolean="true"
-              inverted="true" />
-
-<!-- TODO Move corner xul into an sb-themed-frame-stack -->
-            <hbox flex="1" align="left" class="left-box">
-              <hbox class="left"/>
-            </hbox>
-            <hbox flex="1" align="right" class="right-box">
-              <hbox class="right"/>
-            </hbox>
-            <hbox flex="1" class="middle" />
-<!-- /TODO -->
-
-            <hbox id="faceplate_content" flex="1">
-              <vbox flex="1">
-                <hbox id="track_info" pack="center" align="center">
-                  <sb-player-curtrack-box class="faceplate-curtrack-box" flex="1">
-                    <sb-autoscroll id="sb-faceplate-autoscroll-box" class="faceplate-autoscroll-box" fitalign="left" flex="1" mousethrough="always">
-                      <sb-player-title-label class="faceplate-text" autotip="1" mousethrough="always"/>
-                      <sb-player-artist-label class="faceplate-text" autotip="1" mousethrough="always"/>
-                      <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />
-                    </sb-autoscroll>
-                  </sb-player-curtrack-box>
-                  <hbox id="faceplate-tool-bar">
-                    <sb-nowplaying-rating/>
-                  </hbox>
-                </hbox>
-                <hbox class="faceplate-seekinfo-box" align="center" pack="center">
-                  <sb-player-timeelapsed-label   class="faceplate-text" align="right"/>
-                  <stack id="faceplate_seekbar_box" flex="1">
-                    <hbox flex="1" align="left" class="left-box">
-                      <hbox class="left"/>
-                    </hbox>
-                    <hbox flex="1" align="right" class="right-box">
-                      <hbox class="right"/>
-                    </hbox>
-                    <hbox flex="1" class="middle" />
-                    <hbox flex="1" class="notches">
-                      <hbox flex="1"/>
-                      <hbox flex="1"/>
-                      <hbox flex="1"/>
-                      <hbox flex="1"/>
-                    </hbox>
-                    <sb-player-seek-slider class="faceplate-seekbar" flex="1" orient="horizontal"  maxpos="100" />
-                  </stack>
-                  <sb-player-totaltime-label class="faceplate-text" align="left" />
-                </hbox>
-              </vbox>
-<!--              <hbox id="faceplate-album-art"/>-->
-            </hbox>
-          </stack>
-<!-- /TODO -->
-
-<!-- TODO Break into XBLs -->
-          <stack id="faceplate_inactive" flex="1">
-            <observes type="dataremote"
-                      key="faceplate.seenplaying"
-                      attribute="hidden"
-                      boolean="true"
-                      inverted="false" />
-
-            <hbox flex="1" align="left" class="left-box">
-              <hbox class="left"/>
-            </hbox>
-            <hbox flex="1" align="right" class="right-box">
-              <hbox class="right"/>
-            </hbox>
-            <hbox flex="1" class="middle" />
-            <hbox flex="1" id="faceplate-inactive-splash" />
-          </stack>
-<!-- /TODO -->
-
-        </hbox>
-        
-        <hbox id="shuffle_repeat_box" pack="center" align="center">
-          <sb-player-shuffle-button class="sb-player-button" />
-          <sb-player-repeat-button class="sb-player-button" />
-        </hbox>
-        
-      </hbox>
-    </stack>
-
 
     <stack id="bottom-bar" flex="1">
 <!-- TODO Move corner xul into an sb-themed-frame-stack -->

@@ -1643,7 +1643,10 @@ findbar {
 
 
 
-
+/** PLAYER CONTENT WRAPPER **/
+#content_player_wrapper[playercontrols='top'] {
+  -moz-box-direction: reverse;
+}
 
 
 
@@ -1820,8 +1823,6 @@ sb-sys-titlebar {
   min-height:9px;
   max-height:9px;
   border-top:1px solid gray;
-  
-  display:none;
 }
 #bottom-bar > .left-box > .left,
 #bottom-bar > .right-box > .right {
@@ -1841,6 +1842,9 @@ sb-sys-titlebar {
   background-image:url('chrome://songbird/skin/window/bg-bottom-bar.png');
   background-repeat:repeat-x;
   background-position:center top;
+}
+#content_player_wrapper[playercontrols='bottom']+#bottom-bar {
+  visibility: collapse;
 }
 
 

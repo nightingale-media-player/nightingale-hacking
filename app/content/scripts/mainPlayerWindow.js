@@ -26,6 +26,32 @@
  
  
 var gTabBrowser = null;
+var PREF_PLAYER_CONTROL_LOCATION = "songbird.playercontrol.location";
+
+
+// Assist with moving player controls by setting an attribute on the layout.
+function movePlayerControls(aIsOnTop)
+{
+  var locationVal = aIsOnTop ? "top" : "bottom";
+  var contentPlayerWrapper = document.getElementById("content_player_wrapper");
+  if (contentPlayerWrapper) {
+    contentPlayerWrapper.setAttribute("playercontrols", locationVal);
+    Application.prefs.setValue(PREF_PLAYER_CONTROL_LOCATION, locationVal);
+    
+    // Invoke the broadcasters
+    var broadcasterTop = document.getElementById("playercontrols_top");
+    var broadcasterBottom = document.getElementById("playercontrols_bottom");
+    if (aIsOnTop) {
+      broadcasterTop.setAttribute("checked", "true");
+      broadcasterBottom.removeAttribute("checked");
+    }
+    else {
+      broadcasterBottom.setAttribute("checked", "true");
+      broadcasterTop.removeAttribute("checked");
+    }
+  }
+}
+
 
 var gSongbirdWindowController = 
 {
@@ -114,6 +140,11 @@ var gSongbirdPlayerWindow = {
     
     gTabBrowser = document.getElementById("content");
     top.controllers.insertControllerAt(0, gSongbirdWindowController);
+    
+    // Set the player controls location
+    var playerControlsLocation = 
+      Application.prefs.getValue(PREF_PLAYER_CONTROL_LOCATION, false);
+    movePlayerControls((playerControlsLocation == "top"));
   },
 
 
