@@ -236,6 +236,9 @@ case "$target" in
       x86_64)
         SB_ARCH="$target_cpu"
       ;;
+      powerpc* | ppc*)
+        SB_ARCH="ppc"
+      ;;
       *)
         AC_MSG_ERROR(Unsupported architecture)
       ;;
