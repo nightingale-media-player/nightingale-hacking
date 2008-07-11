@@ -127,6 +127,27 @@ firstRunImportMediaSvc.prototype = {
   },
 
 
+  /**
+   * Save the user settings in the first run wizard page.
+   */
+
+  saveSettings: function firstRunImportMediaSvc_saveSettings() {
+    // Dispatch processing of the import settings radio group.
+    var importRadioGroupElem = this._getElement("import_radiogroup");
+    switch (importRadioGroupElem.value) {
+      case "scan_directories" :
+        var scanDirectoryTextBox = this._getElement("scan_directory_textbox");
+        Application.prefs.setValue("songbird.firstrun.do_scan_directory", true);
+        Application.prefs.setValue("songbird.firstrun.scan_directory_path",
+                                   scanDirectoryTextBox.value);
+        break;
+
+      default :
+        break;
+    }
+  },
+
+
   //----------------------------------------------------------------------------
   //
   // Widget event handler services.

@@ -252,6 +252,9 @@
 <!ENTITY menu.view                "View" >
 <!ENTITY about.version            "Version" >
 
+<!ENTITY setupprogress.pleasewait "Please wait..." >
+<!ENTITY setupprogress.cancel     "Cancel">
+
 <!ENTITY menu.file.accesskey              "F" >
 <!ENTITY menu.file.new.accesskey          "N" >
 <!ENTITY menu.file.smart.accesskey        "S" >

@@ -203,21 +203,33 @@ function resetMinMaxCallback()
 
 function SBPostOverlayLoad()
 {
-  // After the overlays load, launch the scan for media loop if no scans have
-  // previously occurred.  Check again if scan has occurred after a delay to
-  // allow other scanners to run first (e.g., iTunes importer).
-  var dataScan = SBDataGetBoolValue("firstrun.scancomplete");
-  if (dataScan != true)
-    setTimeout( SBPostOverlayLoad1, 1000 );
-}
+  // Check if a first-run directory scan should be done.
+  var firstRunDoScanDirectory =
+        Application.prefs.getValue("songbird.firstrun.do_scan_directory",
+                                   false);
+  if (firstRunDoScanDirectory) {
+    // Don't do a first-run directory scan again.
+    Application.prefs.setValue("songbird.firstrun.do_scan_directory", false);
 
-function SBPostOverlayLoad1()
-{
-  // Launch the scan for media loop if no scans have previously occurred.
-  var dataScan = SBDataGetBoolValue("firstrun.scancomplete");
-  if (dataScan != true)
-  {
-    SBDataSetBoolValue("firstrun.scancomplete", true);
-    SBScanMedia(null);
+    // Get the first-run scan directory.
+    var firstRunScanDirectoryPath =
+          Application.prefs.getValue("songbird.firstrun.scan_directory_path",
+                                     "");
+    var firstRunScanDirectory = Cc["@mozilla.org/file/local;1"]
+                                  .createInstance(Ci.nsILocalFile);
+    try {
+      firstRunScanDirectory.initWithPath(firstRunScanDirectoryPath);
+    } catch (ex) {
+      firstRunScanDirectory = null;
+    }
+
+    // Start scanning.  Report error if scan directory does not exist.
+    if (firstRunScanDirectory && firstRunScanDirectory.exists()) {
+      SBScanMedia(null, firstRunScanDirectory);
+    } else {
+      Cu.reportError("Scan directory does not exist: \"" +
+                     firstRunScanDirectoryPath + "\"\n");
+    }
   }
 }
+

@@ -47,6 +47,11 @@
    *
    *   This widget provides a first run import media UI.
    *
+   * Methods:
+   *
+   *   saveSettings             Save the user settings in the first-run wizard
+   *                            page.
+   *
    *****************************************************************************
    ************************************************************************* -->
 
@@ -75,19 +80,22 @@
 
           <!-- Import from iTunes radio button. -->
           <radio anonid="itunes_radio"
+                 value="itunes"
                  label="&first_run.import_media.radio.itunes.label;"/>
           <description
             class="indent sb-first-run-import-media-sub-radio can-disable"
             parentradio="itunes_radio">
             &first_run.import_media.itunes.description;
           </description>
-          <checkbox class="indent sb-first-run-import-media-sub-radio"
+          <checkbox anonid="itunes_keep_in_sync_checkbox"
+                    class="indent sb-first-run-import-media-sub-radio"
                     label="&first_run.import_media.itunes.keep_in_sync.label;"
                     parentradio="itunes_radio"
                     checked="true"/>
 
           <!-- Scan directories radio button. -->
           <radio anonid="scan_directories_radio"
+                 value="scan_directories"
                  label="&first_run.import_media.radio.scan_directories.label;"/>
           <description
             class="indent sb-first-run-import-media-sub-radio can-disable"
@@ -102,14 +110,18 @@
                     parentradio="scan_directories_radio"
                     action="browse_scan_directory"/>
           </hbox>
+          <!-- XXXeps Hide watch folder option for now. -->
           <checkbox
+            anonid="scan_directories_watch_checkbox"
             class="indent sb-first-run-import-media-sub-radio"
             label="&first_run.import_media.scan_directories.watch.label;"
             parentradio="scan_directories_radio"
-            checked="true"/>
+            checked="true"
+            hidden="true"/>
 
           <!-- Don't import radio button. -->
           <radio anonid="dont_import_radio"
+                 value="dont_import"
                  label="&first_run.import_media.radio.dont_import.label;"/>
 
         </radiogroup>
@@ -165,6 +177,15 @@
         if (this._widgetSvc)
             this._widgetSvc.finalize();
       ]]></destructor>
+
+
+      <!--
+       * Save the user settings in the first-run-wizard page.
+       -->
+
+      <method name="saveSettings"><body><![CDATA[
+        this._widgetSvc.saveSettings();
+      ]]></body></method>
 
 
       <!--

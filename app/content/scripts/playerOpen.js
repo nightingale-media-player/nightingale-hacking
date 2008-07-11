@@ -490,26 +490,34 @@ function SBWatchFolders( parentWindow )
   SBOpenModalDialog( "chrome://songbird/content/xul/watchFolders.xul", "", "chrome,centerscreen", null, parentWindow );
 }
 
-function SBScanMedia( parentWindow )
+function SBScanMedia( aParentWindow, aScanDirectory )
 {
-  const nsIFilePicker = Components.interfaces.nsIFilePicker;
-  const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
-  var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
-  var welcome = SBString("faceplate.welcome", "Welcome", theSongbirdStrings);
-  var scan = SBString("faceplate.scan", "Scan", theSongbirdStrings);
-  if (getPlatformString() == "Darwin") {
-    fp.init( window, scan, nsIFilePicker.modeGetFolder );
-    var defaultDirectory =
-    Components.classes["@mozilla.org/file/directory_service;1"]
-              .getService(Components.interfaces.nsIProperties)
-              .get("Home", Components.interfaces.nsIFile);
-    defaultDirectory.append("Music");
-    fp.displayDirectory = defaultDirectory;
-  } else {
-    fp.init( window, welcome + "\n\n" + scan, nsIFilePicker.modeGetFolder );
+  var scanDirectory = aScanDirectory;
+
+  if ( !scanDirectory ) {
+    const nsIFilePicker = Components.interfaces.nsIFilePicker;
+    const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
+    var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
+    var welcome = SBString("faceplate.welcome", "Welcome", theSongbirdStrings);
+    var scan = SBString("faceplate.scan", "Scan", theSongbirdStrings);
+    if (getPlatformString() == "Darwin") {
+      fp.init( window, scan, nsIFilePicker.modeGetFolder );
+      var defaultDirectory =
+      Components.classes["@mozilla.org/file/directory_service;1"]
+                .getService(Components.interfaces.nsIProperties)
+                .get("Home", Components.interfaces.nsIFile);
+      defaultDirectory.append("Music");
+      fp.displayDirectory = defaultDirectory;
+    } else {
+      fp.init( window, welcome + "\n\n" + scan, nsIFilePicker.modeGetFolder );
+    }
+    var res = fp.show();
+    if ( res != nsIFilePicker.returnOK )
+      return;
+    scanDirectory = fp.file;
   }
-  var res = fp.show();
-  if ( res == nsIFilePicker.returnOK )
+
+  if ( scanDirectory )
   {
     var importer = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
                      .getService(Ci.sbIDirectoryImportService);
@@ -519,7 +527,7 @@ function SBScanMedia( parentWindow )
     if (typeof(SBJobUtils) == "undefined") {
       Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
     }  
-    var directoryArray = ArrayConverter.nsIArray([fp.file]);
+    var directoryArray = ArrayConverter.nsIArray([scanDirectory]);
     var job = importer.import(directoryArray);
     SBJobUtils.showProgressDialog(job, window);
   }
