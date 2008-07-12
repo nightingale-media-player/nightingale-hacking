@@ -84,19 +84,6 @@
         subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBSessionStore.js", scope);
         this._sessionStore = scope.SBSessionStore;
 
-        // *****************************
-        // BUG 8097 - Part 1
-        // So we have to take the flex attrib off the first tab.
-        // We put the value back once we successfully restore the tabstate.
-        var flexTab = this.mTabContainer.firstChild;
-        flexTab.oldFlex = flexTab.getAttribute("flex");
-        flexTab.oldWidth = flexTab.width;
-        flexTab.oldMinWidth = flexTab.minWidth;
-        flexTab.flex = 0;
-        flexTab.width = flexTab.maxWidth;
-        flexTab.minWidth = flexTab.maxWidth;
-        // *****************************
-
         /* we want to know when the window has finished opening so we can
           restore tabs and other fun stuff
         */
@@ -110,15 +97,11 @@
             this.tabbrowser._sessionStore.restoreTabState(this.tabbrowser);
             
             // *****************************
-            // BUG 8097 - Part 2
-            // So we have to take the flex attrib off the first tab.
-            // We put the value back once we successfully restore the tabstate.
-            flexTab.flex = flexTab.oldFlex;
-            flexTab.width = flexTab.oldWidth;
-            flexTab.minWidth = flexTab.oldMinWidth;
-            delete flexTab.oldFlex;
-            delete flexTab.oldWidth;
-            delete flexTab.oldMinWidth;
+            // BUG 8097 - the tab strip is cut off when restoring with tabs
+            var strip = this.tabbrowser.mStrip;
+            if (!strip.hasAttribute("overflow")) {
+              strip._arrowscrollbox.ensureElementIsVisible(strip._firstTab);
+            }
             // *****************************
             
           }
@@ -146,9 +129,6 @@
             Components.classes["@mozilla.org/browser/shistory;1"]
             .createInstance(Components.interfaces.nsISHistory);
         this.browsers[0].removeAttribute("disablehistory");
-
-        // force tabbed mode
-        this.enterTabbedMode();
         
         // display pane
         XML.prettyPrinting = false;
