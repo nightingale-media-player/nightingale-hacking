@@ -167,6 +167,7 @@
     <handlers>
       <handler event="select" action="onSelect(event);"/>
       <handler event="blur" action="onBlur(event);"/>
+      <handler event="additem" action="onNewItem(event);"/>
     </handlers>
 
     <implementation>
@@ -237,6 +238,9 @@
           
           // Validate the values
           this._doAllValidations();
+          
+          // focus the first edit field of the first condition
+          this._focusDefault();
         </setter>
       </property>
       <property name="isValid">
@@ -1761,9 +1765,54 @@
           ]]>
         </body>
       </method>
+      
+      <!-- called whenever a new drawer item is created, this sets the default
+           property, which in turns select the default operator -->
+      <method name="onNewItem">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+            // get the new condition
+            var condition = this.drawer.getItem(event.originalTarget);
+            
+            // get the property popup
+            var propertypopup = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "propertypopup");
+            
+            // select "artist"
+            propertypopup.value = SBProperties.artistName;
+
+            // focus the default widget
+            this._focusDefault(condition);
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_focusDefault">
+        <parameter name="condition"/>
+        <body>
+          <![CDATA[
+            // if we were not given a condition, use the first one
+            if (!condition) {
+              condition = this.drawer.items[0];
+            }
+            // get the first value widget
+            var value = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "sbid", 
+                                                    "conditionvalue1", 
+                                                    true); // get the visible one
+            // focus it if it is there
+            if (value)
+              value.focus();
+          ]]>
+        </body>
+      </method>
 
       </implementation>
-
+      
   </binding>
 
 </bindings>

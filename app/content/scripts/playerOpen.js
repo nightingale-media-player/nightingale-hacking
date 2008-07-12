@@ -541,7 +541,24 @@ function SBNewPlaylist()
 
 function SBNewSmartPlaylist()
 {
-  return makeNewPlaylist("smart");
+  var obj = { newSmartPlaylist: null,
+              newPlaylistFunction: function() { 
+                return makeNewPlaylist("smart") 
+              } 
+            };
+
+  SBOpenModalDialog("chrome://songbird/content/xul/smartPlaylist.xul",
+                    "Songbird:SmartPlaylist",
+                    "chrome,dialog=yes,centerscreen,modal,titlebar=no",
+                    obj);
+
+  if (obj.newSmartPlaylist) {
+    if (typeof gBrowser != 'undefined') {
+      gBrowser.loadMediaList(obj.newSmartPlaylist);
+    }
+  }
+  
+  return obj.newSmartPlaylist;
 }
 
 /**

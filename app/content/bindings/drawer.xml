@@ -914,7 +914,7 @@
           this.nextlabelstate = null;
           var e = document.createEvent("Events");
           e.initEvent("additem", false, true);
-          this.dispatchEvent(e);
+          this.lastcreateditem.dispatchEvent(e);
           setTimeout(function(o) {
               o.parent.boxObject.
                 QueryInterface(Components.interfaces.nsIScrollBoxObject).

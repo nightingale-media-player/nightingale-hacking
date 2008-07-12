@@ -204,7 +204,7 @@
 <!ENTITY smart.hours              "hours" >
 <!ENTITY smart.mb                 "MB" >
 <!ENTITY smart.gb                 "GB" >
-<!ENTITY smart.songs              "songs" >
+<!ENTITY smart.songs              "items" >
 <!ENTITY smart.contains           "contains" >
 <!ENTITY smart.not_contain        "does not contain" >
 <!ENTITY smart.is                 "is" >
