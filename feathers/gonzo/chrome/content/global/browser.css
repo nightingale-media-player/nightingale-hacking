@@ -116,7 +116,7 @@ tab[first-tab="true"] > .tab-close-button,
 .tabs-alltabs-button {
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png);
   background-repeat:no-repeat;
-  background-position:left 2px;
+  background-position:left 0px;
 
   -moz-border-radius:0px !important;
   margin:0 0 0 1px;
@@ -125,17 +125,17 @@ tab[first-tab="true"] > .tab-close-button,
 }
 
 .tabs-alltabs-button:hover {
-  background-position:left -28px;
+  background-position:left -30px;
 }
 .tabs-alltabs-button:active {
-  background-position:left -58px;
+  background-position:left -60px;
 }
 .tabs-alltabs-button[disabled="true"] {
-  background-position:left -88px !important;
+  background-position:left -90px !important;
 }
 .tabs-alltabs-button[open="true"] {
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
-  background-position:left -58px !important;
+  background-position:left -60px !important;
 }
 
 .scrollbutton-rel-box > .scrollbutton-down {

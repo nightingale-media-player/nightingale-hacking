@@ -29,16 +29,16 @@ notification {
 .messageCloseButton {
   -moz-appearance: none;
   list-style-image: url("chrome://songbird/skin/notification-bar/button-close.png") !important;
-  -moz-image-region: rect(0px 16px 16px 0px);
+  -moz-image-region: rect(0px 12px 12px 0px);
 }
 .messageCloseButton:hover {
-  -moz-image-region: rect(16px 16px 32px 0px);
+  -moz-image-region: rect(12px 12px 24px 0px);
 }
 .messageCloseButton:active {
-  -moz-image-region: rect(32px 16px 48px 0px);
+  -moz-image-region: rect(24px 12px 36px 0px);
 }
 .messageCloseButton[disabled="true"] {
-  -moz-image-region: rect(48px 16px 64px 0px) !important;
+  -moz-image-region: rect(36px 12px 48px 0px) !important;
 }
 
 

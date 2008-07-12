@@ -56,6 +56,7 @@ sb-status-progressmeter {
 .progress-bar[flex="100"] {
   background-image: url(chrome://songbird/skin/base-elements/bg-progressbar-complete.png);
 }
+sb-status-progressmeter,
 .progress-remainder {
   background-image: url(chrome://songbird/skin/base-elements/bg-progressbar.png);
 }

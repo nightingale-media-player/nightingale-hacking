@@ -126,7 +126,7 @@ tab[selected="true"] {
 
 .tab-text {
   padding:0px;
-  margin:0px;
+  margin:0px 4px !important;
   font-size:11px;
 }
 tab[selected="true"] > .tab-middle > .tab-text {
@@ -155,8 +155,8 @@ tab[selected="true"] > .tab-middle > .tab-text {
   padding-left:0 !important;
 }
 .tabbrowser-tab > .tab-image-middle > .tab-text {
-  padding: 0px;
-  margin: 0px;
+  padding: 0px !important;
+  margin: 0px !important;
   background-color:transparent;
 }
 
