@@ -132,7 +132,7 @@
   <binding id="tabbrowser-tabs"
            extends="chrome://songbird/content/bindings/browser/tabbox-draggable.xml#tabs-draggable">
     <content>
-      <xul:stack flex="1" class="tabs-container"
+      <xul:stack flex="1" class="tabs-container" tooltip="_child"
                  ondraggesture="nsDragAndDrop.startDrag(event, document.getBindingParent(this)); event.stopPropagation();"
                  ondragover="nsDragAndDrop.dragOver(event, document.getBindingParent(this)); event.stopPropagation();"
                  ondragdrop="nsDragAndDrop.drop(event, document.getBindingParent(this)); event.stopPropagation();"
@@ -143,6 +143,7 @@
         <xul:hbox class="tab-drop-indicator-bar" mousethrough="always">
           <xul:hbox class="tab-drop-indicator" mousethrough="always"/>
         </xul:hbox>
+        <xul:tooltip onpopupshowing="return document.getBindingParent(this).createTooltip(event);"/>
       </xul:stack>
 
       <xul:stack align="center" pack="end" class="tabs-alltabs-stack">
@@ -548,6 +549,28 @@
           flavourSet.appendFlavour("application/x-moz-file", "nsIFile");
           return flavourSet;
         ]]>
+        </body>
+      </method>
+
+      <method name="createTooltip">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+            Components.utils.reportError('creating tooltip');
+            event.stopPropagation();
+            var tn = document.tooltipNode;
+            if (tn.localName != "tab")
+              return false; // Not a tab, so cancel the tooltip
+            if ("mOverCloseButton" in tn && tn.mOverCloseButton) {
+              event.target.setAttribute("label", tn.getAttribute("closetabtext"));
+              return true;
+            }
+            if (tn.hasAttribute("label")) {
+              event.target.setAttribute("label", tn.getAttribute("label"));
+              return true;
+            }
+            return false;
+          ]]>
         </body>
       </method>
 

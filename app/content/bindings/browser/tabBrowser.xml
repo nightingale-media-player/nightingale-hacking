@@ -65,9 +65,8 @@
       <xul:stringbundle anonid="tbstringbundle" src="chrome://browser/locale/tabbrowser.properties"/>
       <xul:tabbox anonid="tabbox" flex="1" eventnode="document" xbl:inherits="handleCtrlPageUpDown"
                   onselect="if (!('updateCurrentBrowser' in this.parentNode) || event.target.localName != 'tabpanels') return; this.parentNode.updateCurrentBrowser();">
-        <xul:hbox class="tabbrowser-strip" collapsed="true" tooltip="_child" context="_child"
+        <xul:hbox class="tabbrowser-strip" collapsed="true" context="_child"
                   anonid="strip">
-          <xul:tooltip onpopupshowing="return document.getBindingParent(this).createTooltip(event);"/>
           <xul:menupopup anonid="tabContextMenu" onpopupshowing="document.getBindingParent(this).updatePopupMenu(this);">
             <xul:menuitem label="&newTab.label;" accesskey="&newTab.accesskey;"
                           xbl:inherits="oncommand=onnewtab"/>
@@ -2042,27 +2041,6 @@
       <property name="userTypedValue"
                 onget="return this.mCurrentBrowser.userTypedValue;"
                 onset="return this.mCurrentBrowser.userTypedValue = val;"/>
-
-      <method name="createTooltip">
-        <parameter name="event"/>
-        <body>
-          <![CDATA[
-            event.stopPropagation();
-            var tn = document.tooltipNode;
-            if (tn.localName != "tab")
-              return false; // Not a tab, so cancel the tooltip
-            if ("mOverCloseButton" in tn && tn.mOverCloseButton) {
-              event.target.setAttribute("label", tn.getAttribute("closetabtext"));
-              return true;
-            }
-            if (tn.hasAttribute("label")) {
-              event.target.setAttribute("label", tn.getAttribute("label"));
-              return true;
-            }
-            return false;
-          ]]>
-        </body>
-      </method>
 
       <constructor>
         <![CDATA[

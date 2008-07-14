@@ -42,7 +42,7 @@
   <binding id="tabbrowser-tabs"
            extends="chrome://songbird/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-tabs">
     <content>
-      <xul:stack flex="1" class="tabs-stack">
+      <xul:stack flex="1" class="tabs-stack" tooltip="_child">
         <xul:vbox>
           <xul:spacer flex="1"/>
           <xul:hbox class="tabs-bottom" align="center"/>
@@ -95,6 +95,7 @@
           </xul:hbox>
           <xul:spacer class="tabs-bottom-spacer"/>
         </xul:vbox>
+        <xul:tooltip onpopupshowing="return document.getBindingParent(this).createTooltip(event);"/>
       </xul:stack>
     </content>
     <implementation>
