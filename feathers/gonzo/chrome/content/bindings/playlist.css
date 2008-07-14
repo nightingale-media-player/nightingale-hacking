@@ -128,41 +128,41 @@ Tree Progress Meter
 .sb-filterlist-tree > treechildren::-moz-tree-cell( rating ),
 .sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating0 )
 {
-  background-position:4px 0px;
+  background-position:left 0px;
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating1 ),
 .sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating1 )
 {
-  background-position:4px -18px;
+  background-position:left -18px;
 }
 
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating2 ),
 .sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating2 )
 {
-  background-position:4px -36px;
+  background-position:left -36px;
 }
 
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating3 ),
 .sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating3 )
 {
-  background-position:4px -54px;
+  background-position:left -54px;
 }
 
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating4 ),
 .sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating4 )
 {
-  background-position:4px -72px;
+  background-position:left -72px;
 }
 
 
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating5 ),
 .sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating5 )
 {
-  background-position:4px -90px;
+  background-position:left -90px;
 }
 
 
@@ -191,14 +191,13 @@ In-cell Buttons
        background-repeat:no-repeat;
        margin:0 0 0 7px !important;
        padding:1px 8px 2px 0 !important;
-       background-color:pink;
        font-size:9px;
 }
 
 /* button hover state */
 .sb-playlist-tree > treechildren::-moz-tree-cell( button cell-hover )
 {
-       background-position:0px -18px;
+       background-position:0px -18px !important;
 }
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-hover )
 {
@@ -208,7 +207,7 @@ In-cell Buttons
 /* button active state */
 .sb-playlist-tree > treechildren::-moz-tree-cell( button cell-active )
 {
-       background-position:0px -36px;
+       background-position:0px -36px !important;
 }
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-active )
 {

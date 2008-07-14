@@ -95,7 +95,7 @@ Imported by bindings.css or directly into feathers.
 
 #track_info {
   min-height:20px;
-  padding:0 8px !important;
+  padding:0 8px;
   margin-top:2px;
 }
 .faceplate-seekinfo-box {
@@ -180,7 +180,7 @@ progressmeter.sb-player-seek-slider > .progress-bar
   min-width:12px;
   background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar-progress.png);
   background-repeat:no-repeat;
-  background-position:8px 0 !important;
+  background-position:8px 0;
 
 }
 

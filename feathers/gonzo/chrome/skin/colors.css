@@ -320,13 +320,13 @@ treechildren::-moz-tree-cell-text( selected ) {
   color:rgb(0,0,0);
 }
 treechildren::-moz-tree-row( selected, focus, odd ) {
-  background-color: rgb(219,239,198);
+  background-color: rgb(240,200,200);
 
   
   
 }
 treechildren::-moz-tree-row( selected, focus, even ) {
-  background-color: rgb(214,234,193);
+  background-color: rgb(235,195,195);
 
 }
 
@@ -577,7 +577,7 @@ tab[selected="true"],
   -moz-background-clip: padding !important;
 }
 .tabbrowser-tab + .tabbrowser-tab {
-  margin-left: 1px;
+  margin-left: 0px !important;
 }
 
 .tabbrowser-tab > .tab-image-middle,
@@ -1417,23 +1417,17 @@ WIZARDS
 *******************************************************************************
 */
 .wizard-header {
-  background-color: #0f100f; /** Groove */
-  border-bottom: 2px solid;
-  -moz-border-bottom-colors: #474948 /** Rubber Highlight */
-                             black;
+
 }
 
 /** Software Installer Dialog */
 installitem
 {
-  border: 0px solid !important;
-  background-color: #313131 !important;
-  color: #99A195; /** Tab Text */
+
 }
 #itemList
 {
-  background-color: #313131 !important;
-  border: none !important;
+
 }
 
 
@@ -1453,7 +1447,7 @@ dialog:not([platform=Darwin])
 
 }
 
-dialog:not([platform=Darwin]) {
+dialog[platform] {
   border:3px solid red;
   border-top:1px solid gray;
   -moz-border-right-colors:gray transparent gray;
@@ -1464,7 +1458,9 @@ dialog:not([platform=Darwin]) {
   background-position:center 1px;
   background-color:rgb(200,200,200);
 }
-
+dialog[platform='Darwin'] {
+  border:none !important;
+song}
 
 /*prefwindow*/
 .windowDialog

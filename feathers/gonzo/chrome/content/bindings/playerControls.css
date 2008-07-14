@@ -434,3 +434,15 @@ progressmeter.sb-player-volume-slider > .progress-remainder
   -moz-image-region: rect(72px 72px 96px 48px);
 }
 
+
+
+
+#faceplate-tool-bar .rating-stars {
+  background-image: url('chrome://songbird/skin/media-control-pane/button-faceplate-ratings.png');
+}
+#faceplate-tool-bar .rating-box {
+  padding:0 4px;
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-ratings.png');
+  background-position:center center;
+  background-repeat:no-repeat;
+}

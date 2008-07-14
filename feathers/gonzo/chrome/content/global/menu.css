@@ -97,7 +97,7 @@ menuitem[type="radio"] > .menu-iconic-left {
 
 #main-menubar > menu[_moz-menuactive="true"][open="true"] {
 background-color:white;
-border:1px solid red;
+border:1px solid gray;
 border-bottom:none;
 }
 
@@ -117,7 +117,7 @@ margin:0px;
 
 popup,
 menupopup {
-  border:1px solid red;
+  border:1px solid gray;
 }
 
 window[platform="Darwin"] popup,
@@ -197,9 +197,7 @@ menuitem[checked="true"][disabled="true"] {
 /* ::::: menuseparator ::::: */
 
 menuseparator {
-/*  margin: 1px 0 0px 0;
-  padding: 1px 0 !important;
-  border-top: 1px dotted red;*/
+
   min-height:9px;
   background-image: url(chrome://songbird/skin/menu/bg-separator.png);
   background-position:center center;

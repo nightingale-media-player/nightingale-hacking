@@ -103,7 +103,6 @@ menuitem.displaypane-menuitem[recommended] {
   margin:0;
   padding:0;
   border:none;
-  border-left:1px solid gray;
 
   background-image:url('chrome://songbird/skin/display-pane/bg-header.png');
   background-repeat:repeat-x;

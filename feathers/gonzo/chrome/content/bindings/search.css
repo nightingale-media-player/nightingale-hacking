@@ -68,11 +68,20 @@ background-color:rgb(220,220,220);
   -moz-border-radius:0 !important;
   -moz-border-radius-topleft:3px !important;
   -moz-border-radius-bottomleft:3px !important;
-  background-image:none;
-  background-color:white;
-  
+
+  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
+    
   border:1px solid rgb(40,40,40);
 }
+.searchbar-engine-button:hover {
+  background-position:center -300px;
+}
+.searchbar-engine-button:active {
+  background-position:center -600px;
+}
+
 .searchbar-textbox {
   margin:0;
   min-height:22px;
