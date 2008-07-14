@@ -173,7 +173,7 @@ VORBIS_NAMES = vorbis \
                vorbisfile \
                $(NULL)
 
-FLAC_NAMES = FLAC \ 
+FLAC_NAMES = FLAC \
              $(NULL)
 
 OIL_NAMES = oil \
