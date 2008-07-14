@@ -155,10 +155,12 @@ tab[first-tab="true"] > .tab-close-button,
   font-weight: bold;
 }
 
+.alltabs-item {
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-default-favicon.png");
+}
 .alltabs-item > .menu-iconic-left > .menu-iconic-icon {
   width: 16px;
   height: 16px;
-  list-style-image: url("chrome://songbird/skin/base-elements/icon-default-favicon.png") !important;
 }
 .alltabs-item[busy] > .menu-iconic-left > .menu-iconic-icon {
   list-style-image: url("chrome://songbird/skin/base-elements/icon-loading.png") !important;

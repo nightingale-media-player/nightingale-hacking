@@ -641,6 +641,7 @@
               case "busy":
               case "image":
               case "selected":
+              case "properties":
                 if (aEvent.attrChange == aEvent.REMOVAL)
                   menuItem.removeAttribute(attrName);
                 else
@@ -699,6 +700,8 @@
             menuItem.setAttribute("busy", aTab.getAttribute("busy"));
           if (aTab.selected)
             menuItem.setAttribute("selected", "true");
+          if (aTab.hasAttribute("properties"))
+            menuItem.setAttribute("properties", aTab.getAttribute("properties"));
 
           // Keep some attributes of the menuitem in sync with its
           // corresponding tab (e.g. the tab label)
