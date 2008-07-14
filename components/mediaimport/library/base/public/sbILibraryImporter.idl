@@ -44,9 +44,17 @@
 * Implementors of this interface can listen to library importer events.
 */
 
-[scriptable, uuid(D2CC37F4-A5DB-4226-966F-C51A9AE5686F)]
+[scriptable, uuid(7B6B4403-3FF7-4919-BAB5-F3821BA63F95)]
 interface sbILibraryImporterListener : nsISupports
 {
+    /**
+     * \brief Handle first run events.  These events occur when the library
+     * importer is run for the first time.
+     */
+
+    void onFirstRun();
+
+
     /**
      * \brief Handle library changed events.  These events occur when the
      * contents of the import library change.
