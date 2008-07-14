@@ -93,9 +93,11 @@ firstRunImportMediaSvc.prototype = {
   // Widget services fields.
   //
   //   _widget                  First-run wizard import media widget.
+  //   _libraryImporter         Library importer object.
   //
 
   _widget: null,
+  _libraryImporter: null,
 
 
   //----------------------------------------------------------------------------
@@ -109,6 +111,10 @@ firstRunImportMediaSvc.prototype = {
    */
 
   initialize: function firstRunImportMediaSvc_initialize() {
+    // Get the library importer.
+    this._libraryImporter = Cc["@songbirdnest.com/Songbird/ITunesImporter;1"]
+                              .getService(Ci.sbILibraryImporter);
+
     // Select the default scan directory.
     this._selectDefaultScanDirectory();
 
@@ -137,9 +143,20 @@ firstRunImportMediaSvc.prototype = {
     switch (importRadioGroupElem.value) {
       case "scan_directories" :
         var scanDirectoryTextBox = this._getElement("scan_directory_textbox");
-        Application.prefs.setValue("songbird.firstrun.do_scan_directory", true);
         Application.prefs.setValue("songbird.firstrun.scan_directory_path",
                                    scanDirectoryTextBox.value);
+        Application.prefs.setValue("songbird.firstrun.do_scan_directory", true);
+        break;
+
+      case "itunes" :
+        var syncLibraryCheckbox =
+              this._getElement("itunes_keep_in_sync_checkbox");
+        Application.prefs.setValue("songbird.library_importer.auto_import",
+                                   syncLibraryCheckbox.checked);
+        Application.prefs.setValue
+                            ("songbird.library_importer.library_file_path",
+                             this._libraryImporter.libraryDefaultFilePath);
+        Application.prefs.setValue("songbird.firstrun.do_import_library", true);
         break;
 
       default :
@@ -258,9 +275,7 @@ firstRunImportMediaSvc.prototype = {
     // If an iTunes library file is present, enable the iTunes import option;
     // otherwise, disable it.
     var iTunesRadioElem = this._getElement("itunes_radio");
-    var iTunesImporter = Cc["@songbirdnest.com/Songbird/ITunesImporter;1"]
-                           .getService(Ci.sbILibraryImporter);
-    if (iTunesImporter.libraryDefaultFilePath)
+    if (this._libraryImporter.libraryDefaultFilePath)
       iTunesRadioElem.disabled = false;
     else
       iTunesRadioElem.disabled = true;

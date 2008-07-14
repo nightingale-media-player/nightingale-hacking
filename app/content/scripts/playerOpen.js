@@ -331,7 +331,7 @@ try
     return mediaList;
   }
 
-  function SBLibraryOpen( parentWindow )
+  function SBLibraryOpen( parentWindow, silent )
   {
     // Get the default library importer.  Do nothing if none available.
     var libraryImporterManager =
@@ -342,15 +342,20 @@ try
       return;
 
     // Present the import library dialog.
-    var doImport = {};
-    WindowUtils.openModalDialog
-                  (parentWindow,
-                   "chrome://songbird/content/xul/importLibrary.xul",
-                   "",
-                   "chrome,centerscreen",
-                   [],
-                   [ doImport ]);
-    doImport = doImport.value == "true" ? true : false;
+    var doImport;
+    if (!silent) {
+      doImport = {};
+      WindowUtils.openModalDialog
+                    (parentWindow,
+                     "chrome://songbird/content/xul/importLibrary.xul",
+                     "",
+                     "chrome,centerscreen",
+                     [],
+                     [ doImport ]);
+      doImport = doImport.value == "true" ? true : false;
+    } else {
+      doImport = true;
+    }
 
     // Import the library as user directs.
     if (doImport) {

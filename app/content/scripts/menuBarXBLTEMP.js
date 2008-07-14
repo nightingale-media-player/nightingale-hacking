@@ -52,7 +52,7 @@ function doMenu( command ) {
       SBPlaylistOpen();
     break;
     case "menuitem_file_library":
-      SBLibraryOpen();
+      SBLibraryOpen(null, false);
     break;
     case "menuitem_file_newtab":
       gBrowser.loadURI(gBrowser.homePage, null, null, null, '_blank');

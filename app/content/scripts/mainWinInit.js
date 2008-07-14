@@ -203,33 +203,58 @@ function resetMinMaxCallback()
 
 function SBPostOverlayLoad()
 {
-  // Check if a first-run directory scan should be done.
+  // Run first-run directory scan.
+  SBFirstRunScanDirectories();
+
+  // Run first-run library import.
+  SBFirstRunImportLibrary();
+}
+
+function SBFirstRunScanDirectories()
+{
+  // Do nothing if not set to scan directories.
   var firstRunDoScanDirectory =
         Application.prefs.getValue("songbird.firstrun.do_scan_directory",
                                    false);
-  if (firstRunDoScanDirectory) {
-    // Don't do a first-run directory scan again.
-    Application.prefs.setValue("songbird.firstrun.do_scan_directory", false);
+  if (!firstRunDoScanDirectory)
+    return;
 
-    // Get the first-run scan directory.
-    var firstRunScanDirectoryPath =
-          Application.prefs.getValue("songbird.firstrun.scan_directory_path",
-                                     "");
-    var firstRunScanDirectory = Cc["@mozilla.org/file/local;1"]
-                                  .createInstance(Ci.nsILocalFile);
-    try {
-      firstRunScanDirectory.initWithPath(firstRunScanDirectoryPath);
-    } catch (ex) {
-      firstRunScanDirectory = null;
-    }
+  // Don't do a first-run directory scan again.
+  Application.prefs.setValue("songbird.firstrun.do_scan_directory", false);
 
-    // Start scanning.  Report error if scan directory does not exist.
-    if (firstRunScanDirectory && firstRunScanDirectory.exists()) {
-      SBScanMedia(null, firstRunScanDirectory);
-    } else {
-      Cu.reportError("Scan directory does not exist: \"" +
-                     firstRunScanDirectoryPath + "\"\n");
-    }
+  // Get the first-run scan directory.
+  var firstRunScanDirectoryPath =
+        Application.prefs.getValue("songbird.firstrun.scan_directory_path", "");
+  var firstRunScanDirectory = Cc["@mozilla.org/file/local;1"]
+                                .createInstance(Ci.nsILocalFile);
+  try {
+    firstRunScanDirectory.initWithPath(firstRunScanDirectoryPath);
+  } catch (ex) {
+    firstRunScanDirectory = null;
   }
+
+  // Start scanning.  Report error if scan directory does not exist.
+  if (firstRunScanDirectory && firstRunScanDirectory.exists()) {
+    SBScanMedia(null, firstRunScanDirectory);
+  } else {
+    Cu.reportError("Scan directory does not exist: \"" +
+                   firstRunScanDirectoryPath + "\"\n");
+  }
+}
+
+function SBFirstRunImportLibrary()
+{
+  // Do nothing if not set to import library.
+  var firstRunDoImportLibrary =
+        Application.prefs.getValue("songbird.firstrun.do_import_library",
+                                   false);
+  if (!firstRunDoImportLibrary)
+    return;
+
+  // Don't do a first-run library import again.
+  Application.prefs.setValue("songbird.firstrun.do_import_library", false);
+
+  // Import library.
+  SBLibraryOpen(null, true);
 }
 
