@@ -1952,7 +1952,7 @@
   // If the mouse is not over any cell, do nothing more.
   if (!obj.value || (evt.type == "mouseout")) {
     return;
-  }
+  } 
 
   // Register a hover on all clickable properties that pass the hit test, or
   // all other cells
