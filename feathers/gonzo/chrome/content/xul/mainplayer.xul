@@ -129,6 +129,7 @@
       <!-- TODO remove -->
                     <statusbarpanel>
                       <button label="Restart" onclick="var createDataRemote =  new Components.Constructor('@songbirdnest.com/Songbird/DataRemote;1',Components.interfaces.sbIDataRemote, 'init'); var restartSignal = createDataRemote('restart.restartnow', null); restartSignal.boolValue = true;" style="max-height:16px; max-width:16px; overflow:hidden; padding:0; margin:0; min-width:16px; width:16px;"/>
+                      <sb-servicepane-toolbar id="servicepane_toolbar" />
                     </statusbarpanel>
       <!-- /TODO -->
                   </statusbar>

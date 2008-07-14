@@ -42,9 +42,6 @@
                 anonid="treepane"
                 mousethrough="never"
                 xbl:inherits="browser"/>
-          <xul:vbox id="sb_servicepane_toolbar"
-                style="-moz-binding:url(#toolbar)"
-                anonid="toolbar" />
           <children/>
         </xul:vbox>
         <xul:sb-smart-splitter collapse="after" orient="vertical" resizeafter="closest"

@@ -403,6 +403,11 @@ we should nix the painting of the selection.*/
   -moz-border-radius:3px;
 }
 
+.servicepane-toolbar-box
+{
+  -moz-box-flex: 1;
+}
+
 .servicepane-toolbar-newitem-button > .clickhold-button
 {
   border: 1px solid;

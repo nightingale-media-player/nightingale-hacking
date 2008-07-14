@@ -108,6 +108,10 @@ sb-servicepane {
   -moz-binding: url("chrome://songbird/content/bindings/servicePane.xml#servicepane") !important;
 }
 
+sb-servicepane-toolbar {
+  -moz-binding: url("chrome://songbird/content/bindings/servicePane.xml#toolbar") !important;
+}
+
 sb-extensions-drawer {
   -moz-binding: url("chrome://songbird/content/bindings/sbExtensions.xml#sbextensions") !important;
 }
