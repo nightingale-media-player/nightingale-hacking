@@ -855,6 +855,7 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
                 MEDIA_CORE_QT=1
             ;;
             macosx)
+                MEDIA_CORE_GST=1
                 MEDIA_CORE_VLC=1
                 MEDIA_CORE_QT=1
             ;;
