@@ -248,6 +248,7 @@ ifeq (windows,$(SB_PLATFORM))
 
 GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
                           gstdirectsoundsink \
+                          gstflac \
                           $(NULL)
 
 GST_PLUGINS_BAD_LIBS_NAMES = libgstdshow \
@@ -287,6 +288,10 @@ VORBIS_VERSIONED_NAMES = $(join $(VORBIS_NAMES), -0 -2 -3)
 VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
            $(addsuffix $(DLL_SUFFIX), $(VORBIS_VERSIONED_NAMES)))
 
+FLAC_VERSIONED_NAMES = $(join $(FLAC_NAMES), -8)
+FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/bin/, \
+           $(addsuffix $(DLL_SUFFIX), $(FLAC_VERSIONED_NAMES)))
+
 OIL = $(addprefix $(DEPS_DIR)/liboil/$(SB_CONFIGURATION)/bin/, \
         $(addsuffix -$(OIL_VERSION)-0$(DLL_SUFFIX), $(OIL_NAMES)))
 
@@ -310,6 +315,7 @@ SONGBIRD_LIB += $(GLIB) \
                 $(GST_PLUGINS_BAD_LIBS) \
                 $(OGG) \
                 $(VORBIS) \
+                $(FLAC) \
                 $(OIL) \
                 $(NULL)
 

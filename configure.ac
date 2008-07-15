@@ -850,6 +850,7 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
     if test "$option" = "default"; then
          case "$SB_PLATFORM" in
             windows)
+                MEDIA_CORE_GST=1
                 MEDIA_CORE_VLC=1
                 MEDIA_CORE_WMP=1
                 MEDIA_CORE_QT=1

@@ -91,7 +91,7 @@ Win32PlatformInterface::Win32PlatformInterface(nsIBoxObject *aVideoBox,
           WS_CHILD,                           // window style
           0, 0,                               // X,Y offset
           0, 0,                               // Width, height
-          parent,                             // Parent window
+          aParent,                            // Parent window
           NULL,                               // Menu, or child identifier
           WndClass.hInstance,                 // Module handle
           NULL);                              // Extra parameter
