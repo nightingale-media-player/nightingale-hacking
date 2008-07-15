@@ -135,8 +135,8 @@ RCS file: /cvsroot/mozilla/config/config.mk,v
 retrieving revision 3.389
 diff -u -8 -r3.389 config.mk
 --- config/config.mk	6 Mar 2008 11:57:22 -0000	3.389
-+++ config/config.mk	11 Jun 2008 12:12:56 -0000
-@@ -230,16 +230,35 @@
++++ config/config.mk	15 Jul 2008 22:10:59 -0000
+@@ -230,16 +230,48 @@
  # append debug flags 
  # (these might have been above when processing MOZ_DBGRINFO_MODULES)
  OS_CFLAGS += $(_DEBUG_CFLAGS)
@@ -150,18 +150,31 @@ diff -u -8 -r3.389 config.mk
 +# jemalloc crap; the INCLUDE and LIB paths are munged on Win32 by autoconf.mk
 +#
 +
++# jemalloc doesn't provide a static CRT to link against anyway
++# (memory/jemalloc/Makefile.in deletes the static .libs), so if static linking
++# was requested in the build system, automatically disable MOZ_MEMORY; see 
++# Songbird bug 10724, comment 3.
++ifdef USE_STATIC_LIBS
++  DISABLE_MOZ_MEMORY = 1
++endif
++
 +ifeq ($(MOZ_MEMORY),1)
-+ifndef USE_STATIC_LIBS
 +ifneq ($(DISABLE_MOZ_MEMORY),1)
 +MOZ_MEMORY_LDFLAGS += -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd
++MOZ_MEMORY_LDFLAGS += -NODEFAULTLIB:libcmt -NODEFAULTLIB:libcmtd
 +
 +ifeq ($(MOZ_DEBUG),1)
 +OS_LDFLAGS += $(MOZ_MEMORY_LDFLAGS) -DEFAULTLIB:mozcrt19d 
++# We need to throw extra symbols away, even in debug builds, when using
++# jemalloc; otherwise, we get conflicts between libcmtd in crashreporter's
++# (shared) library (which we statically compile crashreporter.exe against)
++# and the final xul.dll link; in release mode, this is the default.
++MOZ_MEMORY_LDFLAGS += -OPT:REF
 +else
 +OS_LDFLAGS += $(MOZ_MEMORY_LDFLAGS) -DEFAULTLIB:mozcrt19
 +endif # MOZ_DEBUG
++
 +endif # DISABLE_MOZ_MEMORY
-+endif # def USE_STATIC_LIBS
 +endif # MOZ_MEMORY
 +
  ifdef MOZ_DEBUG
@@ -370,8 +383,8 @@ RCS file: /cvsroot/mozilla/memory/jemalloc/crtsp1.diff,v
 retrieving revision 1.8
 diff -u -8 -r1.8 crtsp1.diff
 --- memory/jemalloc/crtsp1.diff	5 Mar 2008 19:09:52 -0000	1.8
-+++ memory/jemalloc/crtsp1.diff	9 Jul 2008 05:58:25 -0000
-@@ -1,197 +1,729 @@
++++ memory/jemalloc/crtsp1.diff	15 Jul 2008 20:23:57 -0000
+@@ -1,197 +1,730 @@
 -# The Microsoft C Runtime source code to which this document refers is available
 -# directly from Microsoft Corporation, under a separate license.
 -# Please ensure that if you are using that source code, you have appropriate
@@ -794,6 +807,7 @@ diff -u -8 -r1.8 crtsp1.diff
 +    _malloc_crt
 +    _calloc_crt
 +    _realloc_crt
++    _calloc_dbg
 +.
 +343,348d
 +331d
@@ -1246,7 +1260,7 @@ RCS file: /cvsroot/mozilla/memory/jemalloc/jemalloc.c,v
 retrieving revision 1.14
 diff -u -8 -r1.14 jemalloc.c
 --- memory/jemalloc/jemalloc.c	8 May 2008 05:36:40 -0000	1.14
-+++ memory/jemalloc/jemalloc.c	12 Jun 2008 00:27:34 -0000
++++ memory/jemalloc/jemalloc.c	15 Jul 2008 20:24:02 -0000
 @@ -1519,34 +1519,40 @@
   */
  
@@ -1292,7 +1306,7 @@ diff -u -8 -r1.14 jemalloc.c
  static inline const char *
  _getprogname(void)
  {
-@@ -6075,18 +6081,49 @@
+@@ -6075,18 +6081,56 @@
  }
  
  size_t
@@ -1328,8 +1342,15 @@ diff -u -8 -r1.14 jemalloc.c
 +_free_dbg(void *ptr, int r0)
 +{
 +        return free(ptr);
-+}
++} 
 +
++VISIBLE
++void *
++_calloc_dbg(size_t n, size_t s, int r0, const char* r1, int r2)
++{
++        return calloc(n, s);
++} 
++ 
  #endif
  
 +#endif /* MOZ_MEMORY_WINDOWS */
