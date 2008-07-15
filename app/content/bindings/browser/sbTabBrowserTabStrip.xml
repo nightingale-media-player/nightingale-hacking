@@ -123,6 +123,9 @@
     </content>
     <implementation>
       <constructor><![CDATA[
+        // load the data remote helpers locally
+        Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm",
+                                this);
         if (this._mediaTab) {
           this._firstTab.linkedTab = this._mediaTab;
           this._mediaTab.targetTab = this._firstTab;
@@ -328,14 +331,12 @@
           // when we're not switching to it
           if (this.selectedItem != this._firstTab) {
             this.lastSelectedTab = this.selectedItem;
-            document.getElementById("broadcastBrowserAtMediaPage")
-                    .removeAttribute("isAtMediaPage");
-          } else {
-            document.getElementById("broadcastBrowserAtMediaPage")
-                    .setAttribute("isAtMediaPage", true);
           }
+          this.SBDataSetBoolValue("browser.in_media_page",
+                                  this.selectedItem == this._firstTab);
         } else {
           this.lastSelectedTab = this.selectedItem;
+          this.SBDataSetBoolValue("browser.in_media_page", false);
         }
       ]]></handler>
     </handlers>

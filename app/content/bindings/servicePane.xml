@@ -60,8 +60,6 @@
         Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 
         window.gServicePane = this;
-        this.mTreePane = document.getAnonymousElementByAttribute(this, 'anonid', 'treepane');
-        this.mToolbar = document.getAnonymousElementByAttribute(this, 'anonid', 'toolbar');
       ]]></constructor>
 
       <method name="getSelectedNode">
@@ -87,8 +85,87 @@
         <parameter name="aURL"/>
         <body><![CDATA[return this.mTreePane.getURLProperties(aURL);]]></body>
       </method>
+      
+      <method name="initSpringLoadPanel">
+        <parameter name="aPanel"/>
+        <body><![CDATA[
+          setTimeout(function(){
+            var tree = document.getAnonymousElementByAttribute(
+                         aPanel.firstChild,
+                         "anonid", "proxytree");
+            if (tree.view)
+              tree.view.selection.clearSelection();
+  
+            while (tree.database.GetDataSources().hasMoreElements()) {
+              tree.database.RemoveDataSource(
+                  tree.database.GetDataSources().getNext());
+            }
+    
+            var service = Components.classes['@songbirdnest.com/servicepane/service;1']
+                                    .getService(Components.interfaces.sbIServicePaneService);
+            // add the datasource from the service
+            tree.database.AddDataSource(service.dataSource);
+            tree.ref = service.root.id;
+    
+            // and force a rebuild
+            tree.builder.rebuild();
+          }, 0);
+        ]]></body>
+      </method>
+      
+      <method name="onProxyClick">
+        <!-- the spring-loaded copy of the tree was clicked on -->
+        <parameter name="event"/>
+        <body><![CDATA[
+          var proxyTree = event.target;
+          while (proxyTree && !(proxyTree instanceof Components.interfaces.nsIDOMXULTreeElement))
+            proxyTree = proxyTree.parentNode;
+          var row = {}, col = {}, obj = {};
+          // need to manually find the node, because the real tree may have
+          // collapsed rows
+          proxyTree.boxObject.getCellAt(event.clientX, event.clientY, row, col, obj);
+          if ((obj.value == 'twisty') || (row.value < 0)) {
+            return;
+          }
+          var elem = proxyTree.view.getItemAtIndex(row.value);
+          var nodeid = elem.getAttribute("nodeid");
+          if (nodeid) {
+            var node = this.mTreePane.mService.getNode(nodeid);
+            this.mTreePane.loadNode(node, event);
+          }
+          var panel = document.getElementById("service_pane_spring_load_panel");
+          panel.hidePopup();
+        ]]></body>
+      </method>
+      
+      <property name="open">
+        <getter>
+          if (this.mSplitter) {
+            return this.mSplitter.getAttribute("state") == "open";
+          } else {
+            return this.boxObject.width > 0;
+          }
+        </getter>
+        <setter>
+          if (this.mSplitter) {
+            this.mSplitter.setAttribute("state", val ? "open" : "collapsed");
+          } else {
+            this.collapsed = val;
+          }
+        </setter>
+      </property>
 
       <field name="doneInit">false</field>
+      
+      <field name="mTreePane">
+        document.getAnonymousElementByAttribute(this, 'anonid', 'treepane');
+      </field>
+      <field name="mToolbar">
+        document.getAnonymousElementByAttribute(this, 'anonid', 'toolbar');
+      </field>
+      <field name="mSplitter">
+        document.getElementById('servicepane_splitter');
+      </field>
     </implementation>
    </binding>
 
@@ -418,25 +495,30 @@
       <!-- somewhat inspired by nsTreeBodyFrame::ComputeDropPosition -->
       <method name="computeEventPosition">
         <parameter name="event" />
+        <parameter name="aTree"/>
+        <parameter name="aNode"/>
         <body><![CDATA[
+        // deal with optional arguments
+        var tree = aTree || this.mTree;
+
         // what cell are we over?
         var row = { }, col = { }, child = { };
-        this.mTree.treeBoxObject.getCellAt(event.pageX, event.pageY, row, col, child);
+        tree.treeBoxObject.getCellAt(event.pageX, event.pageY, row, col, child);
 
         // what node is that?
-        var node = this.getNodeForRow(row.value);
+        var node = aNode || this.getNodeForRow(row.value);
 
         // where is that cell?
         var x = { }, y = { }, width = { }, height = { };
-        this.mTree.treeBoxObject.getCoordsForCellItem(row.value, col.value,
-            'cell', x, y, width, height);
+        tree.treeBoxObject.getCoordsForCellItem(row.value, col.value,
+                                                'cell', x, y, width, height);
 
         // what element is that?
-        var element = this.mTree.contentView.getItemAtIndex(row.value);
+        var element = tree.contentView.getItemAtIndex(row.value);
 
         // where in the cell are we?
         var position = (event.pageY - y.value -
-            this.mTree.treeBoxObject.treeBody.boxObject.y);
+                        tree.treeBoxObject.treeBody.boxObject.y);
         position = position / height.value;
 
         // so lets work out the orientation. the rules the real tree drag and
@@ -466,9 +548,9 @@
         }
 
         return { row: row.value,
-            node: node,
-            orientation: orientation,
-            element: element };
+                 node: node,
+                 orientation: orientation,
+                 element: element };
         ]]></body>
       </method>
       <method name="onPopupShown">
@@ -490,12 +572,17 @@
         <parameter name="event"/>
         <body><![CDATA[
           var node = this.getNodeForRow(this.mTree.currentIndex);
-          this.highlightNode(node);
-
-          if (!node) {
-            return;
+          this.highlightNode(node);  // also unhighlights other nodes
+          
+          if (node) {
+            this.loadNode(node, event);
           }
-
+        ]]></body>
+      </method>
+      <method name="loadNode">
+        <parameter name="node"/>
+        <parameter name="event"/>
+        <body><![CDATA[
           // If this node has a URL, just load it in the browser
           if (node.url) {
             var target = null;
@@ -564,6 +651,113 @@
           var node = this.mService.getNodeForURL(url);
           if (!node) return false;
           return true;
+        ]]></body>
+      </method>
+      
+      <!-- drag-and-drop helpers -->
+      <method name="_onDragGesture">
+        <parameter name="event"/>
+        <parameter name="node"/>
+        <body><![CDATA[
+          var transferable = {};
+          if (node && this.mService.onDragGesture(node.id, transferable)) {
+            transferable = transferable.value;
+            var transArray = Components.classes["@mozilla.org/supports-array;1"]
+                                       .createInstance(Components.interfaces.nsISupportsArray);
+            transArray.AppendElement(transferable);
+            
+            // Oh Lordy lordy, I'm so glad I could just steal this from 
+            // nsDragAndDrop.js instead of having to write it myself.
+            var region = null;
+            if (event.originalTarget.localName == "treechildren") {
+              // let's build the drag region
+              var tree = event.originalTarget.parentNode;
+              try {
+                region = Cc["@mozilla.org/gfx/region;1"]
+                          .createInstance(Ci.nsIScriptableRegion);
+                region.init();
+  
+                var obo = tree.treeBoxObject;
+                var bo = obo.treeBody.boxObject;
+                var sel= obo.view.selection;
+  
+                region.unionRect(bo.x, (obo.rowHeight * sel.currentIndex + bo.y),
+                                 bo.width, obo.rowHeight);
+  
+                //and finally, clip the result to be sure we don't spill over...
+                region.intersectRect(bo.x, bo.y, bo.width, bo.height);
+  
+              } catch(ex) {
+                dump("Error while building selection region: " + ex + "\n");
+                region = null;
+              }
+            }
+            
+            var dragAction = this._dragService.DRAGDROP_ACTION_COPY +
+                             this._dragService.DRAGDROP_ACTION_MOVE;
+            this._dragService.invokeDragSessionWithImage(event.target, transArray,
+                region, dragAction,
+                null, 0, 0,
+                event);
+            
+            event.preventDefault();
+          }
+        ]]></body>
+      </method>
+      
+      <method name="_onDragOver">
+        <parameter name="event"/>
+        <parameter name="aTree"/>
+        <parameter name="aNode"/>
+        <body><![CDATA[
+          var position = this.computeEventPosition(event, aTree, aNode);
+          var element = position.element;
+          // actually we want the treerow element which is the child
+          element = element.childNodes[0];
+          var node = position.node;
+          var orientation = position.orientation;
+  
+          // make sure we are tracking the right element
+          if (this._dragOverElement != element) {
+            if (this._dragOverElement) {
+              // we are now over another element - let us restore its properties
+              this._dragOverElement.setAttribute('properties',
+                  this._dragOverElement.getAttribute('savedproperties'));
+              this._dragOverElement.removeAttribute('savedproperties');
+            }
+            // save the new element
+            this._dragOverElement = element;
+            // and save its properties
+            element.setAttribute('savedproperties',
+                element.getAttribute('properties'));
+          }
+  
+          // set the property based on the orientation
+          // the properties are chosen based on:
+          //   http://developer.mozilla.org/en/docs/XUL_Tutorial:Styling_a_Tree
+          var properties = '';
+          if (orientation == -1) {
+            properties = 'dropBefore';
+          } else if (orientation == 1) {
+            properties = 'dropAfter';
+          } else {
+            properties = 'dropOn';
+          }
+  
+          // ask the backend if we are allowed to drop here
+          if (!this.mService.canDrop(node.id,
+              this._dragService.getCurrentSession(), orientation, window)) {
+            // if not, do not set any visual properties
+            properties = '';
+            this._dragService.canDrop = false;
+          } else {
+            this._dragService.canDrop = true;
+          }
+  
+          element.setAttribute('properties',
+              element.getAttribute('savedproperties') + ' ' + properties);
+          // we handle the drop, do not let the default dnd handler get the event
+          event.stopPropagation();
         ]]></body>
       </method>
     </implementation>
@@ -657,100 +851,11 @@
           return;
         }
         var node = this.getNodeForRow(row.value);
-
-        var transferable = {};
-        if (node && this.mService.onDragGesture(node.id, transferable)) {
-          transferable = transferable.value;
-          var transArray = Components.classes["@mozilla.org/supports-array;1"].
-              createInstance(Components.interfaces.nsISupportsArray);
-          transArray.AppendElement(transferable);
-          
-          // Oh Lordy lordy, I'm so glad I could just steal this from 
-          // nsDragAndDrop.js instead of having to write it myself.
-          var region = null;
-          if (event.originalTarget.localName == "treechildren") {
-            // let's build the drag region
-            var tree = event.originalTarget.parentNode;
-            try {
-              region = Cc["@mozilla.org/gfx/region;1"]
-                        .createInstance(Ci.nsIScriptableRegion);
-              region.init();
-
-              var obo = tree.treeBoxObject;
-              var bo = obo.treeBody.boxObject;
-              var sel= obo.view.selection;
-
-              region.unionRect(bo.x, (obo.rowHeight * sel.currentIndex + bo.y),
-                               bo.width, obo.rowHeight);
-
-              //and finally, clip the result to be sure we don't spill over...
-              region.intersectRect(bo.x, bo.y, bo.width, bo.height);
-
-            } catch(ex) {
-              dump("Error while building selection region: " + ex + "\n");
-              region = null;
-            }
-          }
-          
-          var dragAction = this._dragService.DRAGDROP_ACTION_COPY +
-                           this._dragService.DRAGDROP_ACTION_MOVE;
-          this._dragService.invokeDragSessionWithImage(event.target, transArray,
-              region, dragAction,
-              null, 0, 0,
-              event);
-          
-          event.preventDefault();
-        }
+        
+        this._onDragGesture(event, node);
       ]]></handler>
       <handler event="dragover"><![CDATA[
-        var position = this.computeEventPosition(event);
-        var element = position.element;
-        // actually we want the treerow element which is the child
-        element = element.childNodes[0];
-        var node = position.node;
-        var orientation = position.orientation;
-
-        // make sure we are tracking the right element
-        if (this._dragOverElement != element) {
-          if (this._dragOverElement) {
-            // we are now over another element - let us restore its properties
-            this._dragOverElement.setAttribute('properties',
-                this._dragOverElement.getAttribute('savedproperties'));
-            this._dragOverElement.removeAttribute('savedproperties');
-          }
-          // save the new element
-          this._dragOverElement = element;
-          // and save its properties
-          element.setAttribute('savedproperties',
-              element.getAttribute('properties'));
-        }
-
-        // set the property based on the orientation
-        // the properties are chosen based on:
-        //   http://developer.mozilla.org/en/docs/XUL_Tutorial:Styling_a_Tree
-        var properties = '';
-        if (orientation == -1) {
-          properties = 'dropBefore';
-        } else if (orientation == 1) {
-          properties = 'dropAfter';
-        } else {
-          properties = 'dropOn';
-        }
-
-        // ask the backend if we are allowed to drop here
-        if (!this.mService.canDrop(node.id,
-            this._dragService.getCurrentSession(), orientation, window)) {
-          // if not, do not set any visual properties
-          properties = '';
-          this._dragService.canDrop = false;
-        } else {
-          this._dragService.canDrop = true;
-        }
-
-        element.setAttribute('properties',
-            element.getAttribute('savedproperties') + ' ' + properties);
-        // we handle the drop, do not let the default dnd handler get the event
-        event.stopPropagation();
+        this._onDragOver(event);
       ]]></handler>
       <handler event="dragenter"><![CDATA[
         // we handle the drop, do not let the default dnd handler get the event
@@ -783,6 +888,163 @@
   </binding>
 
 
+  <binding id="proxyTreePane">
+    <content>
+      <tree xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+            flex="1" class="servicepane-tree" anonid="proxytree"
+            datasources="rdf:null" ref="SB:Root"
+            hidecolumnpicker="true" seltype="single"
+            mousethrough="never"
+            onclick="if (gServicePane) gServicePane.onProxyClick(event)"
+            >
+        <treecols>
+          <treecol primary="true" flex="1"/>
+        </treecols>
+        <template>
+          <rule>
+            <conditions>
+              <content uri="?start" />
+              <member container="?start" child="?node" />
+              <triple subject="?node"
+                      predicate="http://home.netscape.com/NC-rdf#Name"
+                      object="?name" />
+              <triple subject="?node"
+                      predicate="http://songbirdnest.com/rdf/servicepane#Hidden"
+                      object="false" />
+            </conditions>
+            <bindings>
+              <binding subject="?node"
+                       predicate="http://home.netscape.com/NC-rdf#Icon"
+                       object="?icon" />
+              <binding subject="?node"
+                       predicate="http://songbirdnest.com/rdf/servicepane#Open"
+                       object="?open" />
+              <binding subject="?node"
+                       predicate="http://songbirdnest.com/rdf/servicepane#Properties"
+                       object="?properties" />
+            </bindings>
+            <action>
+              <treechildren flex="1" properties="dropOn">
+                <treeitem open="true" uri="?node" nodeid="?node">
+                  <treerow>
+                    <treecell label="?name" src="?icon" properties="?properties"/>
+                  </treerow>
+                </treeitem>
+              </treechildren>
+            </action>
+          </rule>
+        </template>
+      </tree>
+    </content>
+    <implementation>
+      <field name="_tree">
+        document.getAnonymousElementByAttribute(this, 'anonid', 'proxytree');
+      </field>
+      <field name="_servicepane">gServicePane</field>
+      <field name="_treepane">this._servicepane.mTreePane</field>
+      <field name="_service">
+        Components.classes['@songbirdnest.com/servicepane/service;1']
+                  .getService(Components.interfaces.sbIServicePaneService);
+      </field>
+      <field name="_dragService">
+        Components.classes['@mozilla.org/widget/dragservice;1']
+                  .getService(Components.interfaces.nsIDragService);
+      </field>
+      <method name="getNodeForRow">
+        <parameter name="row" />
+        <body><![CDATA[
+          if (row < 0) {
+            return null;
+          }
+
+          // If this is a dont-build-content tree, use this:
+          //var id = this.mTree.builderView.getResourceAtIndex(row).Value;
+
+          var element = this._tree.contentView.getItemAtIndex(row);
+          if (element && element.hasAttribute('nodeid')) {
+            return this._service.getNode(element.getAttribute('nodeid'));
+          } else {
+            return null;
+          }
+        ]]></body>
+      </method>
+    </implementation>
+    <handlers>
+      <handler event="draggesture"><![CDATA[
+        var row = { }
+        var col = { }
+        var child = { }
+        this._tree.treeBoxObject.getCellAt(event.pageX, event.pageY, row, col, child);
+        if (col.value == null) {
+          // not a valid column; e.g., the scrollbar
+          return;
+        }
+        var node = this.getNodeForRow(row.value);
+        this._treepane._onDragGesture(event, node);
+      ]]></handler>
+      <handler event="dragover"><![CDATA[
+        var row = { }
+        var col = { }
+        var child = { }
+        this._tree.treeBoxObject.getCellAt(event.pageX, event.pageY, row, col, child);
+        if (col.value == null) {
+          // not a valid column; e.g., the scrollbar
+          return;
+        }
+        var node = this.getNodeForRow(row.value);
+        this._treepane._onDragOver(event, this._tree, node);
+      ]]></handler>
+      <handler event="dragenter"><![CDATA[
+        // we handle the drop, do not let the default dnd handler get the event
+        event.stopPropagation();
+      ]]></handler>
+      <handler event="dragexit"><![CDATA[
+        // if there is a highlighted element let us restore its state
+        if (this._treepane._dragOverElement) {
+          this._treepane._dragOverElement.setAttribute('properties',
+              this._treepane._dragOverElement.getAttribute('oldproperties'));
+          this._treepane._dragOverElement.removeAttribute('savedproperties');
+          this._treepane._dragOverElement = null;
+        }
+        // we handle the drop, do not let the default dnd handler get the event
+        event.stopPropagation();
+      ]]></handler>
+      <handler event="dragdrop"><![CDATA[
+        var row = { }
+        var col = { }
+        var child = { }
+        this._tree.treeBoxObject.getCellAt(event.pageX, event.pageY, row, col, child);
+        if (col.value == null) {
+          // not a valid column; e.g., the scrollbar
+          return;
+        }
+        var node = this.getNodeForRow(row.value);
+        var position = this._treepane.computeEventPosition(event, this._tree, node);
+        node = position.node;
+        var orientation = position.orientation;
+        var session = this._dragService.getCurrentSession();
+        if (this._service.canDrop(node.id, session, orientation, window)) {
+          this._service.onDrop(node.id, session, orientation, window);
+        }
+        this._dragService.endDragSession(true);
+        // we handle the drop, do not let the default dnd handler get the event
+        event.stopPropagation();
+        
+        // tell the parent to deal with the drop
+        var parent = this.parentNode;
+        if (parent instanceof Element) {
+          var newEvent = document.createEvent("MouseEvent");
+          newEvent.initMouseEvent("dragdrop", true, false, event.view,
+                                  event.detail, event.screenX, event.screenY,
+                                  event.clientX, event.clientY,
+                                  event.ctrlKey, event.altKey,
+                                  event.shiftKey, event.metaKey, 
+                                  event.button, event.relatedTarget);
+          parent.dispatchEvent(newEvent);
+        }
+      ]]></handler>
+    </handlers>
+  </binding>
 
   <binding id="toolbar">
     <content>

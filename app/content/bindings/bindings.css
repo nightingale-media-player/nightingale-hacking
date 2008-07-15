@@ -399,6 +399,11 @@ sb-browser-stopreload-button {
   -moz-binding: url("chrome://songbird/content/bindings/browser/browserControls.xml#sb-browser-stopreload-button") !important;
 }
 
+/* SPRING LOADED BUTTON */
+button[type="sb-spring"] {
+  -moz-binding: url("chrome://songbird/content/bindings/springLoadButton.xml#springload-button") !important;
+}
+
 /* DRAGGABLE */
 sb-draggable {
   -moz-binding: url("chrome://songbird/content/bindings/draggable.xml#draggable") !important;

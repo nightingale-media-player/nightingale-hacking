@@ -191,7 +191,17 @@ we should nix the painting of the selection.*/
 }
 
 
-
+/**
+ * The spring-loaded service pane panel
+ */
+#service_pane_spring_load_panel {
+  background: rgba(255, 0, 255, 0.6);
+  width: 300px;
+  height: 500px;
+}
+#service_pane_spring_load_panel > .service-pane-spring-load-tree {
+  -moz-binding: url(chrome://songbird/content/bindings/servicePane.xml#proxyTreePane);
+}
 
 
 /** 

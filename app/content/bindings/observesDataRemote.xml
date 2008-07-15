@@ -178,19 +178,11 @@
 
             // Make a function to translate the dataremote value
             // before it gets assigned to the parent
-            if (this.getAttribute("boolean") == "true") {
-              var isInverted = this.getAttribute("inverted") == "true";
-              this._processValue = function(value) {
-                value = value == "1";
-                return (isInverted) ? !value : value;
-              }
-            } else {
-              var onchange = this.getAttribute("onchange");            
-              if (!onchange) {
-                onchange = "return value;";
-              }
-              this._processValue = new Function("value", onchange);
+            var onchange = this.getAttribute("onchange");            
+            if (!onchange) {
+              onchange = "return value;";
             }
+            this._processValue = new Function("value", onchange);
               
             // Hook up for callbacks when the dataremote changes
             var newDataRemote = new Components.Constructor(
@@ -216,8 +208,16 @@
           
           var parent = this.parentNode;
           if (parent) {
-            parent.setAttribute(this._attribute, 
-                      this._processValue.apply(this, [this._dataremote.stringValue]));
+            var value = this._dataremote.stringValue;
+            if (this.getAttribute("boolean") == "true") {
+              value = (value == "1");
+              var isInverted = this.getAttribute("inverted") == "true";
+              if (isInverted) {
+                value = !value;
+              }
+            }
+            value = this._processValue.apply(this, [value]);
+            parent.setAttribute(this._attribute, value);
           }
           ]]>
         </body>

@@ -79,20 +79,19 @@ window#mainplayer
   display:none;
 }
 
-
-#nav-bar[isAtMediaPage] > #reload-button,
-#nav-bar[isAtMediaPage] > #stop-button,
-#nav-bar[isAtMediaPage] > #stopreload-container,
-#nav-bar[isAtMediaPage] > #home-button,
-#nav-bar[isAtMediaPage] > #bookmark-button,
-#nav-bar[isAtMediaPage] > #subscription-button,
-#nav-bar[isAtMediaPage] > #urlbar-container,
-#nav-bar[isAtMediaPage] > *[hideAtMediaPage] {
+#nav-bar[isAtMediaPage="true"] > #reload-button,
+#nav-bar[isAtMediaPage="true"] > #stop-button,
+#nav-bar[isAtMediaPage="true"] > #stopreload-container,
+#nav-bar[isAtMediaPage="true"] > #home-button,
+#nav-bar[isAtMediaPage="true"] > #bookmark-button,
+#nav-bar[isAtMediaPage="true"] > #subscription-button,
+#nav-bar[isAtMediaPage="true"] > #urlbar-container,
+#nav-bar[isAtMediaPage="true"] > *[hideAtMediaPage] {
   visibility: collapse;
 }
 
-#nav-bar:not([isAtMediaPage]) > #mediapages-container,
-#nav-bar:not([isAtMediaPage]) > #nav-bar-spacer,
-#nav-bar:not([isAtMediaPage]) > *[hideAtWebPage] {
+#nav-bar:not([isAtMediaPage="true"]) > #mediapages-container,
+#nav-bar:not([isAtMediaPage="true"]) > #nav-bar-spacer,
+#nav-bar:not([isAtMediaPage="true"]) > *[hideAtWebPage] {
   visibility: collapse;
 }

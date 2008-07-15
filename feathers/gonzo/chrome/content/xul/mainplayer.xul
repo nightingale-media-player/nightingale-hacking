@@ -107,15 +107,38 @@
           <toolbox id="navigator-toolbox" flex="1"/>
         </stack>
 
-        <tabs id="tabstrip" class="tabbrowser-tabs sb-tabbrowser-tabs"
-              setfocus="false" onclick="gBrowser.onTabClick(event);"
-              ondblclick="gBrowser.onTabBarDblClick(event);"
-              onclosetab="gBrowser.removeCurrentTab();"
-              collapsed="true">
-          <tab selected="true" validate="never"
-               onerror="gBrowser.addToMissedIconCache(this.getAttribute('image')); gBrowser.setIcon(this, null);"
-               class="tabbrowser-tab" crop="end"/>
-        </tabs>
+        <hbox id="tabstrip-container">
+          <button type="sb-spring" id="servicepane_spring_button" label="I10N"
+                  dragdelay="500" delay="2000"
+                  oncommand="gServicePane.open = !gServicePane.open; this.cancel();"
+                  popupelement="service_pane_spring_load_panel">
+            <observes type="dataremote" key="browser.in_media_page" boolean="true"
+                      attribute="disabled" onchange="
+                        const key = 'splitter.servicepane_splitter.was_collapsed';
+                        if (value) {
+                          /* going into media page mode */
+                          SBDataSetBoolValue(key, gServicePane.open);
+                          gServicePane.open = true;
+                        } else {
+                          /* going out of media page */
+                          gServicePane.open = SBDataGetBoolValue(key);
+                        }
+                        return value;
+                      "/>
+            <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
+                      attribute="springdisabled" inverted="true"/>
+          </button>
+          <tabs id="tabstrip" class="tabbrowser-tabs sb-tabbrowser-tabs"
+                setfocus="false" flex="1"
+                onclick="gBrowser.onTabClick(event);"
+                ondblclick="gBrowser.onTabBarDblClick(event);"
+                onclosetab="gBrowser.removeCurrentTab();"
+                collapsed="true">
+            <tab selected="true" validate="never"
+                 onerror="gBrowser.addToMissedIconCache(this.getAttribute('image')); gBrowser.setIcon(this, null);"
+                 class="tabbrowser-tab" crop="end"/>
+          </tabs>
+        </hbox>
 
         <vbox id="inner_player_box" flex="1">
           <vbox id="middle_pane_box" flex="1">
@@ -135,9 +158,10 @@
                   </statusbar>
                 </sb-servicepane>
               </vbox>
-              <sb-smart-splitter id="servicepane_splitter" state="open" collapse="never" resizebefore="closest" resizeafter="closest" metricscategory="app" metricsid="collapse.servicepane">
-                <grippy/>
-              </sb-smart-splitter>
+              <sb-smart-splitter id="servicepane_splitter" state="open"
+                                 resizebefore="closest" resizeafter="closest"
+                                 hideoncollapse="servicepane_box" showonopen="servicepane_box"
+                                 metricscategory="app" metricsid="collapse.servicepane"/>
 
 
               <vbox flex="1" id="content_pane_box">

@@ -260,6 +260,14 @@
       </popup>
 
       <panel type="autocomplete" id="PopupAutoComplete" noautofocus="true"/>
+      
+      <!-- POPUP FOR SPRING-LOADED SERVICE PANE -->
+      <panel id="service_pane_spring_load_panel"
+             onpopupshowing="gServicePane.initSpringLoadPanel(this);"
+             ondragdrop="this.hidePopup()"
+             position="after_start">
+        <box class="service-pane-spring-load-tree" flex="1"/>
+      </panel>
 
       <!-- POPUP FOR THE POPUPBLOCKER MENU -->
       <menupopup id="blockedPopupOptions" 
@@ -368,9 +376,7 @@
     <!-- **                                                                 ** -->
     <!-- ********************************************************************* -->
 
-    <broadcasterset id="mainBroadcasterSet">
-      <broadcaster id="broadcastBrowserAtMediaPage" isAtMediaPage="false"/>
-    </broadcasterset>
+    <!-- No browser-specific brodcasters -->
 
 
     <!-- ********************************************************************* -->
@@ -596,8 +602,9 @@
              iconsize="small"
              customizable="true"
              defaultset="back-forward-buttons,stopreload-container,home-button,urlbar-container,nav-bar-spacer,mediapages-container,search-splitter,searchbar-container"
-             flex="1"
-             observes="broadcastBrowserAtMediaPage">            
+             flex="1">
+             <observes type="dataremote" key="browser.in_media_page"
+                       boolean="true" attribute="isAtMediaPage"/>
     </toolbar>
     
     <toolbarset id="customToolbars" />
