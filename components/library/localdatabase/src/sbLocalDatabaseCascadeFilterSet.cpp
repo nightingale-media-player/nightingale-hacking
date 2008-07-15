@@ -40,6 +40,7 @@
 #include <nsISimpleEnumerator.h>
 #include <nsITreeView.h>
 #include <nsServiceManagerUtils.h>
+#include <nsISupportsPrimitives.h>
 #include <prlog.h>
 
 #include <DatabaseQuery.h>
@@ -479,6 +480,31 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
     }
   }
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseCascadeFilterSet::Get(PRUint16 aIndex,
+		nsIArray **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIMutableArray> outArr =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupportsString> supportsStr;
+  sbFilterSpec& fs = mFilters[aIndex];
+  for (PRUint32 i = 0; i < fs.values.Length(); i++) {
+    supportsStr = do_CreateInstance("@mozilla.org/supports-string;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    supportsStr->SetData(fs.values[i]);
+	  
+    outArr->AppendElement(supportsStr, PR_FALSE);
+  }
+  
+  NS_ADDREF(*_retval = outArr);
   return NS_OK;
 }
 

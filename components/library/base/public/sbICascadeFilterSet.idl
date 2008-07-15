@@ -33,6 +33,7 @@
 
 interface nsIStringEnumerator;
 interface nsITreeView;
+interface nsIArray;
 interface sbIMediaList;
 
 /**
@@ -95,8 +96,8 @@ interface sbICascadeFilterSet : nsISupports
    void changeFilter(in unsigned short aIndex, in AString aProperty);
 
   /**
-   * \brief Set the configuration of a filter.  Note that chaging a filter will
-   *        clear the configuration of all downstream filters.
+   * \brief Set the configuration of a filter.  Note that changing a filter
+   *        will clear the configuration of all downstream filters.
    * \param aIndex Index of the filter to be configured
    * \param aValueArray Array of values used to constrain the filter.  Note
    *        that only the first item in the array is used to constrain a
@@ -106,6 +107,13 @@ interface sbICascadeFilterSet : nsISupports
   void set(in unsigned short aIndex,
            [array, size_is(aValueArrayCount)] in wstring aValueArray,
            in unsigned long aValueArrayCount);
+
+  /**
+   * \brief Get the configuration of a filter.
+   * \param aIndex Index of the filter to retrieve the configuration from
+   * \return An array of values that the filter is currently configured for
+   */
+  nsIArray get(in unsigned short aIndex);
 
   /**
    * \brief Clear the configuration of all filters

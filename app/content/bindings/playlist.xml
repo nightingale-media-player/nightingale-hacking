@@ -654,6 +654,20 @@
       filterlist.bind(this.mediaListView, i);
       filters.push(filterlist);
 
+      // If this filter has a search-term set, then pre-select it in the
+      // widget
+      var filterValues = cfs.get(i).enumerate();
+      while (filterValues.hasMoreElements()) {
+        var filterValue = filterValues.getNext()
+          .QueryInterface(Ci.nsISupportsString);
+        // Now loop through our tree view and select this value
+        for (var j = 0; j < filterlist.tree.view.rowCount; j++) {
+          var col = filterlist.tree.columns.getColumnAt(0);
+          if (filterlist.tree.view.getCellText(j, col) == filterValue)
+            filterlist.tree.view.selection.select(j);
+        }
+      }
+
       if (i < length - 1) {
         var splitter = document.createElement("sb-smart-splitter");
         splitter.setAttribute("id", "filter_splitter" );
