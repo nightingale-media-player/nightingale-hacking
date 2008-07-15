@@ -400,7 +400,10 @@ ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
 
 GST_PLUGINS_BASE_NAMES += gstalsa \
                           gstximagesink \
-                          gstxvimagesink
+                          gstxvimagesink \
+                          $(NULL)
+
+GST_PLUGINS_GOOD_NAMES += gstflac \
                           $(NULL)
 
 GSTREAMER = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/lib, \
@@ -414,6 +417,9 @@ OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/lib, \
 
 VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
            $(addsuffix $(DLL_SUFFIX), $(VORBIS_NAMES)))
+
+FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/lib/lib, \
+           $(addsuffix $(DLL_SUFFIX), $(FLAC_NAMES)))
 
 OIL = $(addprefix $(DEPS_DIR)/liboil/$(SB_CONFIGURATION)/lib/lib, \
         $(addsuffix -$(OIL_VERSION)$(DLL_SUFFIX), $(OIL_NAMES)))
@@ -434,13 +440,14 @@ SONGBIRD_LIB += $(GSTREAMER) \
                 $(GST_PLUGINS_BASE_LIBS) \
                 $(OGG) \
                 $(VORBIS) \
+                $(FLAC) \
                 $(OIL) \
                 $(NULL)
 
 SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
                         $(GST_PLUGINS_BASE) \
                         $(GST_PLUGINS_GOOD) \
-#                        $(GST_PLUGINS_BAD) \
+                        $(GST_PLUGINS_BAD) \
                         $(NULL)
 
 endif # not mac or windows
