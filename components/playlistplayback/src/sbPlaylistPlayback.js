@@ -900,13 +900,15 @@ PlaylistPlayback.prototype = {
       // Something is wrong so remove that core and try the next
       this.removeCore(newCore);
 
-      // Return the newly selected core, if there is one
-      if (this._currentCoreIndex != -1)
+      // Try the newly selected core, if there is one
+      if (this._currentCoreIndex != -1) {
         newCore = this._cores[this._currentCoreIndex];
+        firstTime = newCore.getObject() == null;
+      }
       else
-        newCore = nsnull;
+        newCore = null;
     }
-    if (this._cores.length != 0) {
+    if (newCore != null) {
       if (firstTime) {
         // Set initial data
         newCore.setMute(this._muteData.boolValue);
@@ -921,7 +923,7 @@ PlaylistPlayback.prototype = {
       }
       return newCore;
     }
-    return nsnull;
+    return null;
   },
   
   /**

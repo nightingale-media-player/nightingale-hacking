@@ -117,7 +117,13 @@ CoreBase.prototype =
     this.LOG("coreBase.initialize - " + this._id);
     if (!this._initialized) {
       try {
-        this._initialized = this.doInitialize();
+        if (this.doInitialize) {
+          this._initialized = this.doInitialize();
+        }
+        else {
+          // Core has no doInitialize method; we're done
+          this._initialized = true;
+        }
       }
       catch (err) {
         Components.utils.reportError(err);

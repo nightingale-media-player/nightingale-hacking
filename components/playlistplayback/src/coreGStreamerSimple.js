@@ -267,11 +267,10 @@ CoreGStreamerSimple.prototype.pause = function ()
 
 CoreGStreamerSimple.prototype.stop = function ()
 {
-  this._verifyObject();
-
   try
   {
-    this._object.stop();
+    if (this._object)
+      this._object.stop();
     this._paused = false;
   }
   catch(e)
@@ -284,26 +283,33 @@ CoreGStreamerSimple.prototype.stop = function ()
 
 CoreGStreamerSimple.prototype.getPlaying = function ()
 {
-  this._verifyObject();
+  if (!this._object)
+    return false;
+
   var playing = (this._object.isPlaying || this._paused) && (!this._object.isAtEndOfStream);
   return playing;
 };
 
 CoreGStreamerSimple.prototype.getPlayingVideo = function ()
 {
-  this._verifyObject();
+  if (!this._object)
+    return false;
+
   return this._object.isPlayingVideo;
 };
 
 CoreGStreamerSimple.prototype.getPaused = function ()
 {
-  this._verifyObject();
+  if (!this._object)
+    return false;
+
   return this._paused;
 };
 
 CoreGStreamerSimple.prototype.getLength = function ()
 {
   this._verifyObject();
+
   var playLength = 0;
 
   try
@@ -336,6 +342,7 @@ CoreGStreamerSimple.prototype.getLength = function ()
 CoreGStreamerSimple.prototype.getPosition = function ()
 {
   this._verifyObject();
+
   var curPos = 0;
 
   var position = -1;
@@ -389,6 +396,7 @@ CoreGStreamerSimple.prototype.setPosition = function ( pos )
 CoreGStreamerSimple.prototype.getVolume = function ()
 {
   this._verifyObject();
+
   return Math.round(this._object.volume * 255);
 };
 
@@ -405,6 +413,7 @@ CoreGStreamerSimple.prototype.setVolume = function ( volume )
 CoreGStreamerSimple.prototype.getMute = function ()
 {
   this._verifyObject();
+
   return this._muted;
 };
 
@@ -427,6 +436,7 @@ CoreGStreamerSimple.prototype.setMute = function ( mute )
 CoreGStreamerSimple.prototype.getMetadata = function ( key )
 {
   this._verifyObject();
+
   var rv;
 
   switch(key) {
@@ -695,13 +705,6 @@ CoreGStreamerSimple.prototype.onGStreamerEvent = function (gstreamerEvent)
     this.promptUserForHelp(title, text, checkboxLabel, helpUrl);
 }
 
-CoreGStreamerSimple.prototype.initCore = function(gstSimple)
-{
-  this.setObject(gstSimple);
-
-  gstSimple.addEventListener(this)
-}
-
 CoreGStreamerSimple.prototype.destroyCore = function()
 {
   if (this._object != null)
@@ -719,6 +722,25 @@ CoreGStreamerSimple.prototype.QueryInterface = function(iid) {
     throw Components.results.NS_ERROR_NO_INTERFACE;
   return this;
 };
+
+CoreGStreamerSimple.prototype.setVideoElementId = function(id)
+{
+  this._videoId = id;
+}
+
+CoreGStreamerSimple.prototype.doInitialize = function()
+{
+  var videoElement = document.getElementById( this._videoId );
+  var gstSimple = Components.classes["@songbirdnest.com/Songbird/Playback/GStreamer/Simple;1"]
+                            .createInstance(Components.interfaces.sbIGStreamerSimple);
+  gstSimple.init(videoElement);
+
+  this.setObject(gstSimple);
+  gstSimple.addEventListener(this)
+
+  return true;
+}
+
 
 /**
  * ----------------------------------------------------------------------------
@@ -744,13 +766,8 @@ function CoreGStreamerSimpleDocumentInit( id )
   {
     var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                          .getService(Components.interfaces.sbIPlaylistPlayback);
-    var videoElement = document.getElementById( id );
     gGStreamerSimpleCore.setId("GStreamerSimple1");
-    var gstSimple = Components.classes["@songbirdnest.com/Songbird/Playback/GStreamer/Simple;1"]
-                              .createInstance(Components.interfaces.sbIGStreamerSimple);
-    gstSimple.init(videoElement);
-    gGStreamerSimpleCore.initCore(gstSimple);
-
+    gGStreamerSimpleCore.setVideoElementId(id);
     gPPS.addCore(gGStreamerSimpleCore, true);
     registeredCores.push(gGStreamerSimpleCore);
   }
