@@ -91,6 +91,7 @@ PublicPlaylistCommands.prototype = {
   m_defaultCommands               : null,
   m_webPlaylistCommands           : null,
   m_webMediaHistoryToolbarCommands: null,
+  m_smartPlaylistsCommands        : null,
   m_downloadCommands              : null,
   m_downloadToolbarCommands       : null,
   m_downloadCommandsServicePane   : null,
@@ -111,7 +112,10 @@ PublicPlaylistCommands.prototype = {
   m_cmd_PauseResumeDownload       : null, // auto-switching pause/resume track download
   m_cmd_CleanUpDownloads          : null, // clean up completed download items
   m_cmd_ClearHistory              : null, // clear the web media history
-
+  m_cmd_UpdateSmartPlaylist       : null, // update the smart playlist
+  m_cmd_EditSmartPlaylist         : null, // edit  the smart playlist properties
+  m_cmd_SmartPlaylistSep          : null, // a separator (its own object for visible cb)
+  
   // Commands that act on playlist themselves
   m_cmd_list_Remove               : null, // remove the selected playlist
   m_cmd_list_Rename               : null, // rename the selected playlist
@@ -544,6 +548,8 @@ PublicPlaylistCommands.prototype = {
 
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_UPDATESMARTMEDIALIST, this.m_cmd_UpdateSmartPlaylist);
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_EDITSMARTMEDIALIST, this.m_cmd_EditSmartPlaylist);
 
       // --------------------------------------------------------------------------
       // Construct and publish the main library commands
@@ -569,6 +575,73 @@ PublicPlaylistCommands.prototype = {
       this.m_defaultCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
 
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
+      
+
+      // --------------------------------------------------------------------------
+      // Construct and publish the smart playlists commands
+      // --------------------------------------------------------------------------
+
+      this.m_cmd_UpdateSmartPlaylist = new PlaylistCommandsBuilder();
+
+      this.m_cmd_UpdateSmartPlaylist.appendAction
+                                        (null,
+                                         "smartpl_cmd_update",
+                                         "&command.smartpl.update",
+                                         "&command.tooltip.smartpl.update",
+                                         plCmd_UpdateSmartPlaylist_TriggerCallback);
+
+      this.m_cmd_UpdateSmartPlaylist.setCommandShortcut
+                                  (null,
+                                   "smartpl_cmd_update",
+                                   "&command.shortcut.key.smartpl.update",
+                                   "&command.shortcut.keycode.smartpl.update",
+                                   "&command.shortcut.modifiers.smartpl.update",
+                                   true);
+
+      this.m_cmd_EditSmartPlaylist = new PlaylistCommandsBuilder();
+
+      this.m_cmd_EditSmartPlaylist.appendAction
+                                        (null,
+                                         "smartpl_cmd_properties",
+                                         "&command.smartpl.properties",
+                                         "&command.tooltip.smartpl.properties",
+                                         plCmd_EditSmartPlaylist_TriggerCallback);
+
+      this.m_cmd_EditSmartPlaylist.setCommandShortcut
+                                  (null,
+                                   "smartpl_cmd_properties",
+                                   "&command.shortcut.key.smartpl.properties",
+                                   "&command.shortcut.keycode.smartpl.properties",
+                                   "&command.shortcut.modifiers.smartpl.properties",
+                                   true);
+
+
+      this.m_smartPlaylistsCommands = new PlaylistCommandsBuilder();
+      
+      this.m_smartPlaylistsCommands.appendPlaylistCommands(null,
+                                                           "library_cmdobj_defaults",
+                                                           this.m_defaultCommands);
+
+      this.m_cmd_SmartPlaylistSep = new PlaylistCommandsBuilder();
+
+      this.m_cmd_SmartPlaylistSep.appendSeparator(null, "smartpl_separator");
+      
+      this.m_cmd_SmartPlaylistSep.setVisibleCallback(plCmd_NOT(plCmd_ShowForToolbarCheck));
+
+      this.m_smartPlaylistsCommands.appendPlaylistCommands(null,
+                                                           "smartpl_cmdobj_sep",
+                                                           this.m_cmd_SmartPlaylistSep);
+                                                           
+      this.m_smartPlaylistsCommands.appendPlaylistCommands(null,
+                                                           "smartpl_cmdobj_update",
+                                                           this.m_cmd_UpdateSmartPlaylist);
+
+      this.m_smartPlaylistsCommands.appendPlaylistCommands(null,
+                                                           "smartpl_cmdobj_properties",
+                                                           this.m_cmd_EditSmartPlaylist);
+      
+      this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SMARTPLAYLIST, this.m_smartPlaylistsCommands);
+      this.m_mgr.registerPlaylistCommandsMediaItem("", "smart", this.m_smartPlaylistsCommands);
 
       // --------------------------------------------------------------------------
       // Construct and publish the web playlist commands
@@ -775,6 +848,8 @@ PublicPlaylistCommands.prototype = {
 
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_UPDATESMARTMEDIALIST, this.m_cmd_UpdateSmartPlaylist);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_EDITSMARTMEDIALIST, this.m_cmd_EditSmartPlaylist);
 
     // Un-publish bundled commands
 
@@ -785,6 +860,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOADTOOLBAR, this.m_downloadToolbarCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DOWNLOADPLAYLIST, this.m_downloadCommandsServicePane);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SMARTPLAYLIST, this.m_smartPlaylistsCommands);
 
 
     // Un-register download playlist commands
@@ -820,6 +896,22 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.unregisterPlaylistCommandsMediaItem(webListGUID,
                                                    "",
                                                    this.m_webPlaylistCommands);
+
+    // Un-register web media history commands
+
+    this.m_mgr.
+      unregisterPlaylistCommandsMediaItem(webListGUID,
+                                          "",
+                                          this.m_webMediaHistoryToolbarCommands);
+
+    // Un-register smart playlist commands
+
+    this.m_mgr.
+      unregisterPlaylistCommandsMediaItem("", 
+                                          "smart", 
+                                          this.m_smartPlaylistsCommands);
+    
+
     // Un-register servicetree commands
 
     this.m_mgr.
@@ -844,9 +936,13 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_ClearHistory.shutdown();
     this.m_cmd_list_Remove.shutdown();
     this.m_cmd_list_Rename.shutdown();
+    this.m_cmd_UpdateSmartPlaylist.shutdown();
+    this.m_cmd_EditSmartPlaylist.shutdown();
+    this.m_cmd_SmartPlaylistSep.shutdown();
     this.m_defaultCommands.shutdown();
     this.m_webPlaylistCommands.shutdown();
     this.m_webMediaHistoryToolbarCommands.shutdown();
+    this.m_smartPlaylistsCommands.shutdown();
     this.m_downloadCommands.shutdown();
     this.m_downloadToolbarCommands.shutdown();
     this.m_downloadCommandsServicePane.shutdown();
@@ -1093,6 +1189,25 @@ function plCmd_RenameList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
     if (promptService.prompt(window, title, prompt, input, null, {})) {
       medialist.name = input.value;
     }
+  }
+}
+
+function plCmd_UpdateSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var medialist = unwrap(aContext.medialist);
+  if (medialist instanceof Ci.sbILocalDatabaseSmartMediaList)
+    medialist.rebuild();
+}
+
+function plCmd_EditSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var medialist = unwrap(aContext.medialist);
+  if (medialist instanceof Ci.sbILocalDatabaseSmartMediaList) {
+    var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                    .getService(Ci.nsIWindowWatcher);
+    watcher.openWindow(aContext.window,
+                      "chrome://songbird/content/xul/smartPlaylist.xul",
+                      "_blank",
+                      "chrome,dialog=yes,centerscreen,modal,titlebar=no",
+                      medialist);
   }
 }
 

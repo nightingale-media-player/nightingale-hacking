@@ -432,6 +432,13 @@
         <parameter name="aPageURL"/>
         <body>
           <![CDATA[
+            if (aMediaList instanceof Ci.sbILocalDatabaseSmartMediaList) {
+              Components.utils.reportError(aMediaList.autoUpdateMode);
+              if (aMediaList.autoUpdateMode == 
+                  aMediaList.AUTOUPDATE_WHENDISPLAYED)
+                aMediaList.rebuild();
+            }
+            
             // If we weren't passed a view, create one
             if (aMediaListView == null) {
               aMediaListView = LibraryUtils.createStandardMediaListView(aMediaList);

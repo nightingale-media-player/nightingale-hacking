@@ -53,7 +53,7 @@
  ondialogcancel="doCancel();"
  buttons="accept,cancel"
  hidechrome="true"
- height="185"
+ height="210"
  width="700"
 >
 
@@ -112,8 +112,24 @@
           <menuitem id="smart_selected_list_least_added" label="&smart.least_added;" value="least_added" />
         </menupopup>
       </menulist>
+      <spacer width="8"/>
+      <label   value="&smart.autoupdate;" control="smart_autoupdate_list"/>
+      <!-- XXXlone> uncomment when we have 3 update modes 
+      <menulist id="smart_autoupdate_list" value="whendisplayed">
+        <menupopup id="smart_autoupdate_list_popup" >
+          <menuitem id="smart_autoupdate_list_never" label="&smart.autoupdate.never;" value="never" />
+          <menuitem id="smart_autoupdate_list_whendisplayed" label="&smart.autoupdate.whendisplayed;" value="whendisplayed" />
+        </menupopup>
+      </menulist>
+      <spacer flex="1" height="25"/>
+      -->
+    </hbox>
+    <!-- XXXlone> remove this when we have 3 update modes, from here -->
+    <hbox>
+      <checkbox id="smart_autoupdate_check" label="&smart.autoupdate;"/>
       <spacer flex="1" height="25"/>
     </hbox>
+    <!-- XXXlone> to here -->
   </groupbox>
 
   <spacer height="5"/>

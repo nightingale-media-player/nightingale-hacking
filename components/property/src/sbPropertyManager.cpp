@@ -348,6 +348,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Outer Guid - the reverse of storage guid (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_OUTERGUID), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Is List (internal use only)
   rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISLIST), EmptyString(),
                        stringBundle, PR_FALSE, PR_FALSE, PR_FALSE,

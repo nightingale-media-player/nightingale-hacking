@@ -149,6 +149,16 @@
         <![CDATA[
           try {
             this.medialist = medialist;
+
+            var outerListGuid = this.medialist.getProperty(SBProperties.outerGUID);
+            if (outerListGuid) {
+              var library = this.medialist.library;
+              var outerList = library.getMediaItem(outerListGuid);
+              if (outerList) {
+                this.medialist = outerList;
+              }
+            }
+            
             this.playlist = playlist;
             this.defaultcommands = commands ? commands.duplicate() : null; 
             this.rescanCommands();

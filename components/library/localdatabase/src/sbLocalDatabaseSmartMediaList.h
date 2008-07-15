@@ -224,7 +224,7 @@ private:
   nsString mSelectPropertyID;
   PRBool   mSelectDirection;
   PRBool   mRandomSelection;
-  PRBool   mLiveUpdate;
+  PRUint32 mAutoUpdateMode;
 
   nsCOMPtr<sbIPropertyManager> mPropMan;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;

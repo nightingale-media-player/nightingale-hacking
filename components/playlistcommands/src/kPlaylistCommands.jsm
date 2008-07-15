@@ -44,6 +44,8 @@ var kPlaylistCommands = {
 
   MEDIALIST_REMOVE               : "{8be21529-6b2e-4ac7-b96d-c97d78dab81b}",
   MEDIALIST_RENAME               : "{b77c5259-62fc-4cd7-af79-ece9adb778b6}",
+  MEDIALIST_UPDATESMARTMEDIALIST : "{a21c0a87-9f0b-4f43-aafe-92c055a13a2d}",
+  MEDIALIST_EDITSMARTMEDIALIST   : "{5bc8bf35-57e9-4130-9f3a-d7a32367d70f}",
 
   // Bundled commands
   MEDIAITEM_DEFAULT              : "{5a5d24dd-0fed-4be0-b200-ac1ed9095d1f}",
@@ -51,6 +53,7 @@ var kPlaylistCommands = {
   MEDIAITEM_WEBTOOLBAR           : "{9b68b4b3-2362-47c9-92df-0d73aa3fc504}",
   MEDIAITEM_DOWNLOADPLAYLIST     : "{0bc53d42-81d1-437a-9ae6-d8c214a2eb0f}",
   MEDIAITEM_DOWNLOADTOOLBAR      : "{c8f507b2-904f-4769-9112-6eb067fc91c3}",
+  MEDIAITEM_SMARTPLAYLIST        : "{9a8b43d3-161a-4eb6-92b4-d96ad53497fc}",
 
   MEDIALIST_DEFAULT              : "{26c21ce7-bcdf-4857-86d4-82c9747c907f}",
   MEDIALIST_DOWNLOADPLAYLIST     : "{3d6125f1-e5cf-4c08-9c83-697ddf5809cb}"

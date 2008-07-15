@@ -274,6 +274,30 @@ function loadConditions()
     selectBy.value = "random";
   }
 
+
+  // Set autoupdate
+  const sbiLDSML = Components.interfaces.sbILocalDatabaseSmartMediaList;
+  // XXXlone> uncomment when we have 3 autoupdate modes
+  /* var autoUpdate = document.getElementById("smart_autoupdate_list");
+  switch (list.autoUpdateMode) {
+    case sbiLDSML.AUTOUPDATE_NEVER:
+      autoUpdate.value = "never";
+      break;
+    case sbiLDSML.AUTOUPDATE_WHENDISPLAYED:
+      autoUpdate.value = "whendisplayed";
+      break;
+    case sbiLDSML.AUTOUPDATE_LIVE:
+      autoUpdate.value = "live";
+      break;
+  }*/
+  // ---
+  
+  //XXXlone> remove when we have 3 autoupdate modes, from here
+  var autoUpdate = document.getElementById("smart_autoupdate_check");
+  autoUpdate.checked = 
+    list.autoUpdateMode == sbiLDSML.AUTOUPDATE_WHENDISPLAYED;
+  //XXXlone> to here
+
   // immediately update the match controls, so we don't have to wait for the drawer items
   updateMatchControls();
   // immediately update ok button, in case one of the loaded setting was actually invalid
@@ -378,6 +402,29 @@ function doOK()
       list.randomSelection = false;
       setSelectBy(list, selectBy.value);
     }
+
+    // Save auto update
+    const sbiLDSML = Components.interfaces.sbILocalDatabaseSmartMediaList;
+    // XXXlone> uncomment when we have 3 autoupdate modes
+    /*var autoUpdate = document.getElementById("smart_autoupdate_list");
+    switch (autoUpdate.value) {
+      case "never":
+        list.autoUpdateMode = sbiLDSML.AUTOUPDATE_NEVER;
+        break;
+      case "whendisplayed":
+        list.autoUpdateMode = sbiLDSML.AUTOUPDATE_WHENDISPLAYED;
+        break;
+      case "live":
+        list.autoUpdateMode = sbiLDSML.AUTOUPDATE_LIVE;
+        break;
+    }*/
+    // ---
+    //XXXlone> remove when we have 3 autoupdate modes, from here
+    var autoUpdate = document.getElementById("smart_autoupdate_check");
+    list.autoUpdateMode = autoUpdate.checked ? 
+                          sbiLDSML.AUTOUPDATE_WHENDISPLAYED :
+                          sbiLDSML.AUTOUPDATE_NEVER;
+    //XXXlone> to here
 
     list.rebuild();
   }

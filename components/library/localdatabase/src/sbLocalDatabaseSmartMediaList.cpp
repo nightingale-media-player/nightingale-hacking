@@ -359,7 +359,7 @@ sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
 , mLimit(0)
 , mSelectDirection(PR_TRUE)
 , mRandomSelection(PR_FALSE)
-, mLiveUpdate(PR_FALSE)
+, mAutoUpdateMode(sbILocalDatabaseSmartMediaList::AUTOUPDATE_NEVER)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseSmartMediaListLog) {
@@ -406,6 +406,18 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mList = do_QueryInterface(mediaItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // let the inner list know about us
+  nsAutoString guid;
+  rv = GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> mi =
+    do_QueryInterface(mList, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mi->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_OUTERGUID), guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Register self for "before delete" so we can delete our storage list
@@ -592,20 +604,20 @@ sbLocalDatabaseSmartMediaList::SetRandomSelection(PRBool aRandomSelection)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::GetLiveUpdate(PRBool* aLiveUpdate)
+sbLocalDatabaseSmartMediaList::GetAutoUpdateMode(PRUint32* aAutoUpdateMode)
 {
-  NS_ENSURE_ARG_POINTER(aLiveUpdate);
+  NS_ENSURE_ARG_POINTER(aAutoUpdateMode);
 
   nsAutoLock lock(mConditionsLock);
-  *aLiveUpdate = mLiveUpdate;
+  *aAutoUpdateMode = mAutoUpdateMode;
 
   return NS_OK;
 }
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::SetLiveUpdate(PRBool aLiveUpdate)
+sbLocalDatabaseSmartMediaList::SetAutoUpdateMode(PRUint32 aAutoUpdateMode)
 {
   nsAutoLock lock(mConditionsLock);
-  mLiveUpdate = aLiveUpdate;
+  mAutoUpdateMode = aAutoUpdateMode;
 
   nsresult rv = WriteConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2041,7 +2053,7 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
   mSelectPropertyID.Truncate();
   mSelectDirection = PR_TRUE;
   mRandomSelection = PR_FALSE;
-  mLiveUpdate = PR_FALSE;
+  mAutoUpdateMode = sbILocalDatabaseSmartMediaList::AUTOUPDATE_NEVER;
   mConditions.Clear();
 
   nsAutoString state;
@@ -2093,8 +2105,8 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
     mRandomSelection = value.EqualsLiteral("1");
   }
 
-  if (map.Get(NS_LITERAL_STRING("liveUpdate"), &value)) {
-    mLiveUpdate = value.EqualsLiteral("1");
+  if (map.Get(NS_LITERAL_STRING("autoUpdateMode"), &value)) {
+    PR_sscanf(NS_LossyConvertUTF16toASCII(value).get(), "%d", &mAutoUpdateMode);
   }
 
   if (map.Get(NS_LITERAL_STRING("conditionCount"), &value)) {
@@ -2238,9 +2250,9 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
   success = map.Put(NS_LITERAL_STRING("randomSelection"), randomSelection);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  nsAutoString liveUpdate;
-  liveUpdate.AppendLiteral(mLiveUpdate ? "1" : "0");
-  success = map.Put(NS_LITERAL_STRING("liveUpdate"), liveUpdate);
+  nsAutoString autoUpdateMode;
+  autoUpdateMode.AppendInt(mAutoUpdateMode);
+  success = map.Put(NS_LITERAL_STRING("autoUpdateMode"), autoUpdateMode);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsAutoString conditionCount;
@@ -2319,6 +2331,10 @@ sbLocalDatabaseSmartMediaList::OnBeforeItemRemoved(sbIMediaList* aMediaList,
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = list->Remove(mList);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> ldsml =
+      do_QueryInterface(mList, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
