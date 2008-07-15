@@ -46,7 +46,7 @@
             align="center"
             flex="1"
             oninput="document.getBindingParent(document.getBindingParent(this)).onInput(this, event);"
-            drawer-prop-map="useunits=useunits,interval=interval"
+            drawer-prop-map="interval=interval"
         >
           <!-- List of properties -->
           <xul:menulist 
@@ -128,7 +128,7 @@
                   value="&smart.to;" 
                   hidden="true" 
                   drawer-prop-map-set="hidden=!interval"
-                  class="smart_condition_rangeseparator"
+                  class="smart_condition_label smart_condition_rangeseparator"
               />
               <!-- Rating comparison field 2 -->
               <xul:sb-rating 
@@ -147,12 +147,17 @@
                 id="unitspopup" 
                 class="smart-condition-list"
                 hidden="true"
-                drawer-prop-map="value=unit" 
-                drawer-prop-map-set="hidden=!useunits" 
+                drawer-prop-map="value=unit,useunits=useunits" 
+                drawer-prop-map-set="hidden=!multiunits" 
                 sizetopopup="none">
               <xul:menupopup class="smart-condition-popup">
               </xul:menupopup>
             </xul:menulist>
+            <xul:label
+                id="unitlabel"
+                class="smart-condition-label smart_condition_singleunit"
+                hidden="true"
+                drawer-prop-map-set="value=unitlocale,hidden=!singleunit"/>
           </xul:hbox>
           <xul:button label="-" 
               class="smart-condition-minus" 
@@ -295,21 +300,32 @@
                 obj = {};
               }
               
-              var stringBundle;
-              if (stringBundleUrl) {
-                stringBundle = this._Cc["@mozilla.org/intl/stringbundle;1"]
-                  .getService(this._Ci.nsIStringBundleService)
-                  .createBundle(stringBundleUrl);
-              }
-              // Cook out the translated value if requested
-              if ( name[0] == "&" ) {
-                name = SBString( name.substr( 1, name.length ), name, stringBundle );
-              }
+              name = this._localize(name, stringBundleUrl);
               
               // And append the menutitem to the list (and make it pretty)
               aParent.appendItem( name, ( obj.value ) ? obj.value : index )
                      .setAttribute( "class", "smart-condition-item" );              
             }
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_localize">
+        <parameter name="str"/>
+        <parameter name="stringBundleUrl"/>
+        <body>
+          <![CDATA[
+            var stringBundle;
+            if (stringBundleUrl) {
+              stringBundle = this._Cc["@mozilla.org/intl/stringbundle;1"]
+                .getService(this._Ci.nsIStringBundleService)
+                .createBundle(stringBundleUrl);
+            }
+            // Cook out the translated value if requested
+            if ( str[0] == "&" ) {
+              str = SBString( str.substr( 1, str.length ), str, stringBundle );
+            }
+            return str;
           ]]>
         </body>
       </method>
@@ -395,7 +411,7 @@
                             propertypopup, 
                             propertypopup.value, 
                             operatorpopup.value, 
-                            unitspopup.hidden ? null : unitspopup.value);
+                            unitspopup.useunits ? unitspopup.value : null);
             this._doValidation(this.drawer.getItem(propertypopup));
           } catch (e) {
             this._refreshingUI = oldRefreshValue;
@@ -448,10 +464,26 @@
         <parameter name="metadata"/>
         <body>
           <![CDATA[
+            var units = this._getUnits(metadata);
             var unitspopup = 
               this.drawer.getItemElementByAttribute(condition, 
                                                     "id", 
                                                     "unitspopup");
+            if (units.length == 0) {
+              // no units for this property
+              return;
+            }
+            this._generateMenuPopup(unitspopup, 
+                                    units);
+            this._selectUnit(condition, unitspopup);
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_getUnits">
+        <parameter name="metadata"/>
+        <body>
+          <![CDATA[
             var list = [];
             var info = this._pm.getPropertyInfo(metadata);
             var converter;
@@ -472,20 +504,43 @@
               while (units.hasMoreElements()) {
                 var unit = units.getNext();
                 unit = unit.QueryInterface(this._Ci.sbIPropertyUnit)
+                // whitelist units on some properties and property types
+                switch (metadata) {
+                  case SBProperties.bitRate:
+                    if (unit.id != "kbps" &&
+                        unit.id != "mbps")
+                        continue;
+                    break;
+                  case SBProperties.sampleRate:
+                    if (unit.id != "khz")
+                      continue;
+                    break;
+                  case SBProperties.contentLength:
+                    if (unit.id != "kb" &&
+                        unit.id != "mb" &&
+                        unit.id != "gb")
+                      continue;
+                    break;
+                }
+                switch (info.type) {
+                  case "datetime":
+                    if (unit.id != "h" &&
+                        unit.id != "d" &&
+                        unit.id != "m")
+                      continue;
+                    break;
+                }
                 var u = {};
                 u.name = uselong ? unit.name : unit.shortName;
                 u.value = unit.id;
+                u.name = this._localize(u.name, 
+                                        converter ? 
+                                          converter.stringBundle : 
+                                          null);
                 list.push(u);
               }
             }
-            if (list.length == 0) {
-              // no units for this property
-              return;
-            }
-            this._generateMenuPopup(unitspopup, 
-                                    list, 
-                                    converter ? converter.stringBundle : null);
-            this._selectUnit(condition, unitspopup);
+            return list;
           ]]>
         </body>
       </method>
@@ -598,7 +653,7 @@
                                                     "id", 
                                                     "unitspopup");
             var unit;
-            if (!unitspopup.hidden)
+            if (unitspopup.useunits)
               unit = unitspopup.value;
             textbox1.setAttribute("autocompletesearch", 
                                   "library-distinct-properties");
@@ -705,7 +760,7 @@
                           propertypopup, 
                           propertypopup.value, 
                           operatorpopup.value, 
-                          unitspopup.hidden ? null : unitspopup.value);
+                          unitspopup.useunits ? unitspopup.value : null);
           this._doValidation(condition);
         </body>
       </method>
@@ -718,8 +773,7 @@
         <parameter name="unit"/>
         <body>
           <![CDATA[
-            // note that the prefill value should is in native units, always.
-            // also, it should always be a string.
+            // note that the prefill value should be in native units, always.
             var prefillValue;
 
             // get property info for this metadata
@@ -738,73 +792,61 @@
                   case info.OPERATOR_LESSEQUAL:
                   case info.OPERATOR_BETWEEN:
                     var d = new Date();
-                    prefillValue = ""+d.getTime();
+                    prefillValue = d.getTime();
                     break;
                   case info.OPERATOR_INTHELAST:
                   case info.OPERATOR_NOTINTHELAST:
-                    prefillValue = "1";
+                    prefillValue = 1000*60*60*24; // one day
                     break;
                 }
                 break;
               case "rating":
-                prefillValue = "5";
+                prefillValue = 5;
                 break;
             }
             // then based on the property itself
             switch (property) {
               case SBProperties.bitRate:
-                prefillValue = "128";
+                prefillValue = 128;
                 break;
               case SBProperties.bpm:
-                prefillValue = "60";
+                prefillValue = 60;
                 break;
               case SBProperties.discNumber:
               case SBProperties.trackNumber:
-                prefillValue = "1";
+                prefillValue = 1;
                 break;
               case SBProperties.skipCount:
               case SBProperties.playCount:
-                prefillValue = "0";
+                prefillValue = 0;
                 break;
               case SBProperties.sampleRate:
-                prefillValue = "44100";
+                prefillValue = 44100;
                 break;
               case SBProperties.contentLength:
-                prefillValue = "0";
+                prefillValue = 0;
                 break;
               case SBProperties.duration:
-                prefillValue = "0";
+                prefillValue = 0;
                 break;
               case SBProperties.year:
                 var d = new Date;
                 prefillValue = d.getFullYear();
                 break;
             }
-            if (!prefillValue)
+            // if no prefill value defined, prefill to an empty string
+            // (clear previous prefill)
+            if (prefillValue == undefined)
               prefillValue = "";
-
-            // if we are using units, we need to convert from native
-            var nativeUnitId;
-            if (unit) {
-              // get the appropriate unit converter
-              if (info.type == "datetime") {
-                // datetime has no unit conversion that makes sense, unless we
-                // are using the inthelast/notinthelast operators, in which case
-                // we need to use the duration unit converter
-                var converter = 
-                  this._pm.getPropertyInfo(SBProperties.duration)
-                          .unitConverter;
-                nativeUnitId = converter.nativeUnitId;
-              } else {
-                nativeUnitId = info.unitConverter.nativeUnitId;
-              }
-            }
             
-            // format from the native unit
+            // we need to value to be a string no matter what
+            prefillValue = ""+prefillValue;
+
+            // format from the native unit into the current unit
             var formattedPrefill = this._convertToUI(property, 
                                                      operator, 
                                                      prefillValue, 
-                                                     nativeUnitId);
+                                                     unit);
 
             // do not replace the user's input
             if (!propertypopup.gotuserinput1) {
@@ -936,7 +978,7 @@
                                                   "unitspopup");
           
           // if the popup is hidden, no unit conversion applies
-          var units = unitspopup.hidden ? null : unitspopup.value;
+          var units = unitspopup.useunits ? unitspopup.value : null;
           
           // get property info for this metadata
           var info = this._pm.getPropertyInfo(property.value);
@@ -1101,6 +1143,17 @@
                     break;
                 }
                 break;
+            }
+            if (state.useunits) {
+              var units = this._getUnits(state.metadata);
+              state.singleunit = units.length == 1;
+              state.multiunits = units.length > 1;
+              if (state.singleunit) {
+                state.unitlocale = units[0].name;
+              }
+            } else {
+              state.singleunit = false;
+              state.multiunits = false;
             }
           ]]>
         </body>
@@ -1672,7 +1725,7 @@
             this.drawer.getItemElementByAttribute(condition, 
                                                   "id", 
                                                   "unitspopup");
-          var units = unitspopup.hidden ? null : unitspopup.value;
+          var units = unitspopup.useunits ? unitspopup.value : null;
           
           // parse
           var value = this._convertFromUI(property.value, 

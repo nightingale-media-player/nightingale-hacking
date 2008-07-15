@@ -211,9 +211,9 @@
 <!ENTITY smart.is_not             "is not" >
 <!ENTITY smart.starts             "starts with" >
 <!ENTITY smart.ends               "ends with" >
-<!ENTITY smart.selectedby         "Selected by" >
-<!ENTITY smart.to                 "To" >
-<!ENTITY smart.autoupdate         "Update">
+<!ENTITY smart.selectedby         "selected by" >
+<!ENTITY smart.to                 "to" >
+<!ENTITY smart.autoupdate         "Auto update">
 <!ENTITY smart.autoupdate.never   "Manual">
 <!ENTITY smart.autoupdate.whendisplayed "Auto">
 
