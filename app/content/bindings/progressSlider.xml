@@ -61,16 +61,12 @@
    <implementation>
 
     <constructor>
-      document.addEventListener("mouseup", this.globalMouseUp, true);
       if (this.hasAttribute("minbutton"))
         this.minbutton.collapsed = false;
       if (this.hasAttribute("maxbutton"))
         this.maxbutton.collapsed = false;
       this.progress.max = this._SCALE_MAX;
     </constructor>
-    <destructor>
-      document.removeEventListener("mouseup", this.globalMouseUp, true); 
-    </destructor>
 
     <field name="tracking">0</field>
     <field name="box">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider');</field>
@@ -82,6 +78,9 @@
     <field name="lastValue">this.value</field>
     
     <field name="_SCALE_MAX" readonly="true">10000</field>
+    <field name="_TRACKING_NONE" readonly="true">0</field>
+    <field name="_TRACKING_SLIDER" readonly="true">1</field>
+    <field name="_TRACKING_THUMB" readonly="true">2</field>
 
     <property name="value">
       <getter>
@@ -167,18 +166,6 @@
       </body>
     </method>
 
-    <method name="globalMouseUp">
-      <parameter name="event"/>
-      <body>
-        <![CDATA[
-          if (!document.__TrackingSeeker__ || !document.__TrackingSeeker__.tracking) return;
-          document.__TrackingSeeker__.tracking = 0;
-          document.__TrackingSeeker__.is_tracking_data = false;
-          document.__TrackingSeeker__.sendReleaseEvent();
-        ]]>
-      </body>
-    </method>
-
     <method name="mouseonthumb">
       <parameter name="x"/>
       <parameter name="y"/>
@@ -197,19 +184,18 @@
       <parameter name="event"/>
       <body>
         <![CDATA[
-          if (event.button == 0 ) 
+          if (event.button == this._TRACKING_NONE ) 
           {
             if (this.mouseonthumb(event.screenX, event.screenY)) 
             { 
-              this.tracking = 2; 
+              this._tracking = this._TRACKING_THUMB; 
             } 
             else 
             {
-              document.__TrackingSeeker__ = this;
-              this.tracking = 1;
+              this._tracking = this._TRACKING_SLIDER;
               this.handlemouse(event);
             }
-            if ( this.tracking > 0 )
+            if ( this._tracking != this._TRACKING_NONE )
             {
               // Report if requested
               this.is_tracking_data = true;
@@ -224,8 +210,10 @@
       <parameter name="event"/>
       <body>
         <![CDATA[
-          if (this.tracking == 0) return;
-          this.tracking = 0;
+          if (this._tracking == this._TRACKING_NONE) 
+            return;
+          
+          this._tracking = this._TRACKING_NONE;
           this.is_tracking_data = false;
           this.sendReleaseEvent();
           if (this.value != 0 && this.value != this.maxpos)
@@ -237,9 +225,9 @@
     <method name="slidermousemove">
       <parameter name="event"/>
       <body>
-          if (this.tracking == 2) {
+          if (this._tracking == this._TRACKING_THUMB) {
             this.progress_value = this.value;
-          } else if (this.tracking == 0) {
+          } else if (this._tracking == this._TRACKING_NONE) {
             return;
           } else {
             this.handlemouse(event);
