@@ -203,6 +203,9 @@ function resetMinMaxCallback()
 
 function SBPostOverlayLoad()
 {
+  // Run first-run default smart playlist creation
+  SBFirstRunSmartPlaylists();
+
   // Run first-run directory scan.
   SBFirstRunScanDirectories();
 
@@ -258,3 +261,134 @@ function SBFirstRunImportLibrary()
   SBLibraryOpen(null, true);
 }
 
+function SBFirstRunSmartPlaylists() {
+  var defaultSmartPlaylists = SBDataGetIntValue("firstrun.smartplaylist");
+  if (defaultSmartPlaylists != 1) {
+    SBDataSetIntValue("firstrun.smartplaylist", 1)
+    createDefaultSmartPlaylists();
+  }
+}
+
+function createDefaultSmartPlaylists() {
+  var defaultSmartPlaylists = [];
+
+  var propertyManager = 
+    Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+              .getService(Components.interfaces.sbIPropertyManager);
+  var numberPI = 
+    propertyManager.getPropertyInfo(SBProperties.playCount);
+  var ratingPI = 
+    propertyManager.getPropertyInfo(SBProperties.rating);
+  var datePI = 
+    propertyManager.getPropertyInfo(SBProperties.created);
+    
+  const sbILDSML = Components.interfaces.sbILocalDatabaseSmartMediaList;
+  
+  // XXXlone> waiting for a patch to land before autoUpdateMode fields
+  // can be enabled
+
+  defaultSmartPlaylists = [
+    {
+      name: "&smart.defaultlist.highestrated",
+      conditions: [
+        { 
+          property     : SBProperties.rating,
+          operator     : ratingPI.getOperator(ratingPI.OPERATOR_GREATER),
+          leftValue    : 3,
+          rightValue   : null,
+          displayUnit  : null
+        }
+      ],
+      matchType        : sbILDSML.MATCH_TYPE_ALL,
+      limitType        : sbILDSML.LIMIT_TYPE_NONE,
+      limit            : 0,
+      selectPropertyID : SBProperties.rating,
+      selectDirection  : false,
+      randomSelection  : false,
+      autoUpdateMode   : sbILDSML.AUTOUPDATE_WHENDISPLAYED
+    },
+    {
+      name: "&smart.defaultlist.mostplayed",
+      conditions: [
+        { 
+          property     : SBProperties.playCount,
+          operator     : numberPI.getOperator(numberPI.OPERATOR_GREATER),
+          leftValue    : 0,
+          rightValue   : null,
+          displayUnit  : null
+        }
+      ],
+      matchType        : sbILDSML.MATCH_TYPE_ALL,
+      limitType        : sbILDSML.LIMIT_TYPE_ITEMS,
+      limit            : 25,
+      selectPropertyID : SBProperties.playCount,
+      selectDirection  : false,
+      randomSelection  : false,
+      autoUpdateMode   : sbILDSML.AUTOUPDATE_WHENDISPLAYED
+    },
+    {
+      name: "&smart.defaultlist.recentlyadded",
+      conditions: [
+        { 
+          property     : SBProperties.created,
+          operator     : datePI.getOperator(datePI.OPERATOR_INTHELAST),
+          leftValue    : 1000*60*60*24*30, // 30 days
+          rightValue   : null,
+          displayUnit  : "m"
+        }
+      ],
+      matchType        : sbILDSML.MATCH_TYPE_ALL,
+      limitType        : sbILDSML.LIMIT_TYPE_NONE,
+      limit            : 0,
+      selectPropertyID : SBProperties.created,
+      selectDirection  : false,
+      randomSelection  : false,
+      autoUpdateMode   : sbILDSML.AUTOUPDATE_WHENDISPLAYED
+    },
+    {
+      name: "&smart.defaultlist.recentlyplayed",
+      conditions: [
+        { 
+          property     : SBProperties.lastPlayTime,
+          operator     : datePI.getOperator(datePI.OPERATOR_INTHELAST),
+          leftValue    : 1000*60*60*24*7, // 7 days
+          rightValue   : null,
+          displayUnit  : "w"
+        }
+      ],
+      matchType        : sbILDSML.MATCH_TYPE_ALL,
+      limitType        : sbILDSML.LIMIT_TYPE_NONE,
+      limit            : 0,
+      selectPropertyID : SBProperties.lastPlayTime,
+      selectDirection  : false,
+      randomSelection  : false,
+      autoUpdateMode   : sbILDSML.AUTOUPDATE_WHENDISPLAYED
+    }
+  ];
+  
+  for each (var item in defaultSmartPlaylists) {
+    addSmartPlaylist(item);
+  }
+}
+
+function addSmartPlaylist(aItem) {
+  var libraryManager = 
+    Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+              .getService(Components.interfaces.sbILibraryManager);
+  
+  library = libraryManager.mainLibrary;
+  var mediaList = library.createMediaList("smart");
+  for (var prop in aItem) {
+    if (prop == "conditions") {
+      for each (var condition in aItem.conditions) {
+        mediaList.appendCondition(condition.property,
+                                  condition.operator,
+                                  condition.leftValue,
+                                  condition.rightValue,
+                                  condition.displayUnit);
+      }
+    } else {
+      mediaList[prop] = aItem[prop];
+    }
+  }
+}
