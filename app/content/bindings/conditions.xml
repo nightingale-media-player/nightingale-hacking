@@ -526,6 +526,7 @@
                   case "datetime":
                     if (unit.id != "h" &&
                         unit.id != "d" &&
+                        unit.id != "w" &&
                         unit.id != "m")
                       continue;
                     break;
