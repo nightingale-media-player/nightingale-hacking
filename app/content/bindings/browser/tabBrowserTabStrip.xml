@@ -132,7 +132,7 @@
   <binding id="tabbrowser-tabs"
            extends="chrome://songbird/content/bindings/browser/tabbox-draggable.xml#tabs-draggable">
     <content>
-      <xul:stack flex="1" class="tabs-container" tooltip="_child"
+      <xul:stack flex="1" class="tabs-container" tooltip="_child" context="_child"
                  ondraggesture="nsDragAndDrop.startDrag(event, document.getBindingParent(this)); event.stopPropagation();"
                  ondragover="nsDragAndDrop.dragOver(event, document.getBindingParent(this)); event.stopPropagation();"
                  ondragdrop="nsDragAndDrop.drop(event, document.getBindingParent(this)); event.stopPropagation();"
@@ -143,7 +143,32 @@
         <xul:hbox class="tab-drop-indicator-bar" mousethrough="always">
           <xul:hbox class="tab-drop-indicator" mousethrough="always"/>
         </xul:hbox>
+
         <xul:tooltip onpopupshowing="return document.getBindingParent(this).createTooltip(event);"/>
+        <xul:menupopup anonid="tabContextMenu" onpopupshowing="document.getBindingParent(this).updatePopupMenu(this);">
+          <xul:menuitem label="&newTab.label;" accesskey="&newTab.accesskey;"
+                        oncommand="document.getBindingParent(this)
+                                           .tabBrowser
+                                           .loadTabs(['about:blank'], false, false);"
+                        xbl:inherits="oncommand=onnewtab"/>
+          <xul:menuseparator/>
+          <xul:menuitem label="&reloadTab.label;" accesskey="&reloadTab.accesskey;"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.reloadTab(tabstrip.mContextTab);"/>
+          <xul:menuitem label="&reloadAllTabs.label;" accesskey="&reloadAllTabs.accesskey;"
+                        tbattr="tabbrowser-multiple"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.reloadAllTabs(tabstrip.mContextTab);"/>
+          <xul:menuitem label="&closeOtherTabs.label;" accesskey="&closeOtherTabs.accesskey;"
+                        tbattr="tabbrowser-multiple"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.removeAllTabsBut(tabstrip.mContextTab);"/>
+          <xul:menuseparator/>
+          <xul:menuitem label="&closeTab.label;" accesskey="&closeTab.accesskey;"
+                        tbattr="tabbrowser-multiple"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.removeTab(tabstrip.mContextTab);"/>
+        </xul:menupopup>
       </xul:stack>
 
       <xul:stack align="center" pack="end" class="tabs-alltabs-stack">
@@ -570,6 +595,20 @@
               return true;
             }
             return false;
+          ]]>
+        </body>
+      </method>
+      
+      <method name="updatePopupMenu">
+        <!-- update the per-tab context menu -->
+        <parameter name="aPopupMenu"/>
+        <body>
+          <![CDATA[
+            this.mContextTab = document.popupNode;
+            var disabled = this.childNodes.length < 2;
+            var menuItems = aPopupMenu.getElementsByAttribute("tbattr", "tabbrowser-multiple");
+            for (var i = 0; i < menuItems.length; i++)
+              menuItems[i].disabled = disabled;
           ]]>
         </body>
       </method>

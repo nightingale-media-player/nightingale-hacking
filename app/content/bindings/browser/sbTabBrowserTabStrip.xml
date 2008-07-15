@@ -42,7 +42,7 @@
   <binding id="tabbrowser-tabs"
            extends="chrome://songbird/content/bindings/browser/tabBrowserTabStrip.xml#tabbrowser-tabs">
     <content>
-      <xul:stack flex="1" class="tabs-stack" tooltip="_child">
+      <xul:stack flex="1" class="tabs-stack" tooltip="_child" context="_child">
         <xul:vbox>
           <xul:spacer flex="1"/>
           <xul:hbox class="tabs-bottom" align="center"/>
@@ -95,7 +95,30 @@
           </xul:hbox>
           <xul:spacer class="tabs-bottom-spacer"/>
         </xul:vbox>
+
         <xul:tooltip onpopupshowing="return document.getBindingParent(this).createTooltip(event);"/>
+        <xul:menupopup anonid="tabContextMenu" onpopupshowing="document.getBindingParent(this).updatePopupMenu(this);">
+          <xul:menuitem label="&newTab.label;" accesskey="&newTab.accesskey;"
+                        oncommand="doMenu('menuitem_file_newtab');"
+                        xbl:inherits="oncommand=onnewtab"/>
+          <xul:menuseparator/>
+          <xul:menuitem label="&reloadTab.label;" accesskey="&reloadTab.accesskey;"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.reloadTab(tabstrip.mContextTab);"/>
+          <xul:menuitem label="&reloadAllTabs.label;" accesskey="&reloadAllTabs.accesskey;"
+                        tbattr="tabbrowser-multiple"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.reloadAllTabs(tabstrip.mContextTab);"/>
+          <xul:menuitem label="&closeOtherTabs.label;" accesskey="&closeOtherTabs.accesskey;"
+                        tbattr="tabbrowser-multiple"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.removeAllTabsBut(tabstrip.mContextTab);"/>
+          <xul:menuseparator/>
+          <xul:menuitem label="&closeTab.label;" accesskey="&closeTab.accesskey;"
+                        tbattr="tabbrowser-multiple"
+                        oncommand="var tabstrip = document.getBindingParent(this);
+                                   tabstrip.tabBrowser.removeTab(tabstrip.mContextTab);"/>
+        </xul:menupopup>
       </xul:stack>
     </content>
     <implementation>

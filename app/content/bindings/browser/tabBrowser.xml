@@ -65,30 +65,7 @@
       <xul:stringbundle anonid="tbstringbundle" src="chrome://browser/locale/tabbrowser.properties"/>
       <xul:tabbox anonid="tabbox" flex="1" eventnode="document" xbl:inherits="handleCtrlPageUpDown"
                   onselect="if (!('updateCurrentBrowser' in this.parentNode) || event.target.localName != 'tabpanels') return; this.parentNode.updateCurrentBrowser();">
-        <xul:hbox class="tabbrowser-strip" collapsed="true" context="_child"
-                  anonid="strip">
-          <xul:menupopup anonid="tabContextMenu" onpopupshowing="document.getBindingParent(this).updatePopupMenu(this);">
-            <xul:menuitem label="&newTab.label;" accesskey="&newTab.accesskey;"
-                          xbl:inherits="oncommand=onnewtab"/>
-            <xul:menuseparator/>
-            <xul:menuitem label="&reloadTab.label;" accesskey="&reloadTab.accesskey;"
-                          oncommand="var tabbrowser = document.getBindingParent(this);
-                                     tabbrowser.reloadTab(tabbrowser.mContextTab);"/>
-            <xul:menuitem label="&reloadAllTabs.label;" accesskey="&reloadAllTabs.accesskey;"
-                          tbattr="tabbrowser-multiple"
-                          oncommand="var tabbrowser = document.getBindingParent(this);
-                                     tabbrowser.reloadAllTabs(tabbrowser.mContextTab);"/>
-            <xul:menuitem label="&closeOtherTabs.label;" accesskey="&closeOtherTabs.accesskey;"
-                          tbattr="tabbrowser-multiple"
-                          oncommand="var tabbrowser = document.getBindingParent(this);
-                                     tabbrowser.removeAllTabsBut(tabbrowser.mContextTab);"/>
-            <xul:menuseparator/>
-            <xul:menuitem label="&closeTab.label;" accesskey="&closeTab.accesskey;"
-                          tbattr="tabbrowser-multiple"
-                          oncommand="var tabbrowser = document.getBindingParent(this);
-                                     tabbrowser.removeTab(tabbrowser.mContextTab);"/>
-          </xul:menupopup>
-
+        <xul:hbox class="tabbrowser-strip" collapsed="true" anonid="strip">
           <xul:tabs class="tabbrowser-tabs" flex="1"
                     anonid="tabcontainer"
                     setfocus="false"
@@ -530,19 +507,6 @@
 */
 
             this.ownerDocument.title = newTitle;
-          ]]>
-        </body>
-      </method>
-
-      <method name="updatePopupMenu">
-        <parameter name="aPopupMenu"/>
-        <body>
-          <![CDATA[
-            this.mContextTab = document.popupNode;
-            var disabled = this.mPanelContainer.childNodes.length == 1;
-            var menuItems = aPopupMenu.getElementsByAttribute("tbattr", "tabbrowser-multiple");
-            for (var i = 0; i < menuItems.length; i++)
-              menuItems[i].disabled = disabled;
           ]]>
         </body>
       </method>
