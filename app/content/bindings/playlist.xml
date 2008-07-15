@@ -203,7 +203,7 @@
   };
   this.addEventListener("mousedown",
                         this._onMouseDownClosure,
-                        true);
+                        false);
                         
                         
   // Add a capturing listener so we can swallow command events
@@ -1535,6 +1535,10 @@
         <parameter name="evt"/>
         <body>
          <![CDATA[
+          // Don't process this event if it is for the scrollbar.
+          if (this._isScrollbarEvent(evt))
+            return;
+         
           // Check to see that the user double clicked on a row
           var row = {};
           var col = {};
@@ -1765,11 +1769,10 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
-  if (evt.target.tagName != 'treechildren') {
-    // we only want to handle events targetted a treechildren
+  // Don't process this event if it is for the scrollbar.
+  if (this._isScrollbarEvent(evt))
     return;
-  }
-
+    
   var bo = this.tree.treeBoxObject;
   try
   {
@@ -1909,11 +1912,27 @@
 ]]>
       </body>
     </method>
+    
+    <method name="_isScrollbarEvent">
+      <parameter name="aEvt"/>
+      <body>
+<![CDATA[
+  var targetLocalName = aEvt.originalTarget.localName;
+  return targetLocalName == "slider" || 
+         targetLocalName == "thumb"  ||
+         targetLocalName == "scrollbarbutton";
+]]>
+      </body>
+    </method>
 
     <method name="_onMouseMove">
       <parameter name="evt"/>
       <body>
 <![CDATA[
+  // Don't process this event if it is for the scrollbar.
+  if (this._isScrollbarEvent(evt))
+    return;
+ 
   var obj = {}, row = {}, col = {};
   var bo = this.tree.treeBoxObject;
   bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
@@ -2027,6 +2046,10 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
+  // Don't process this event if it is for the scrollbar.
+  if (this._isScrollbarEvent(evt))
+    return;
+
   var obj = {}, row = {}, col = {};
   var bo = this.tree.treeBoxObject;
   bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
@@ -2081,6 +2104,10 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
+  // Don't process this event if it is for the scrollbar.
+  if (this._isScrollbarEvent(evt))
+    return;
+
   var obj = {}, row = {}, col = {};
   var bo = this.tree.treeBoxObject;
   bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
