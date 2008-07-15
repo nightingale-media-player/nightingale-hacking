@@ -123,7 +123,7 @@ fi
 AC_SUBST(SB_ENABLE_TESTS)
 
 #
-#  Check for --disable-jemalloc (on by default)
+#  Check for --enable-jemalloc
 #
 
 SB_USE_JEMALLOC=1
@@ -132,6 +132,15 @@ AC_ARG_ENABLE(jemalloc,
               [  --enable-jemalloc       whether or not to use the jemalloc memory allocator (enabled by default)])
 if test "$enable_jemalloc" == "no"; then
   SB_USE_JEMALLOC=
+fi
+# XXXX: TEMPORARY HACK; jemalloc is broken on debug right now
+if test "$enable_debug" == "yes"; then
+  if test "$enable_jemalloc" != "yes"; then
+    AC_WARN(jemalloc not supported in debug mode; disabling...)
+    SB_USE_JEMALLOC=
+  else
+    AC_WARN(--enable-jemalloc and --enable-debug is known to be broken. USE AT YOUR OWN RISK.)
+  fi
 fi
 AC_SUBST(SB_USE_JEMALLOC)
 
