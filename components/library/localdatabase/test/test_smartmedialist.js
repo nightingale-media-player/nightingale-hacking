@@ -78,9 +78,9 @@ function testProperties(library) {
   list.randomSelection = true;
   assertEqual(list.randomSelection, true);
 
-  assertEqual(list.liveUpdate, false);
-  list.liveUpdate = true;
-  assertEqual(list.liveUpdate, true);
+  assertEqual(list.autoUpdateMode, Ci.sbILocalDatabaseSmartMediaList.AUTOUPDATE_NEVER);
+  list.autoUpdateMode = Ci.sbILocalDatabaseSmartMediaList.AUTOUPDATE_WHENDISPLAYED;
+  assertEqual(list.autoUpdateMode, Ci.sbILocalDatabaseSmartMediaList.AUTOUPDATE_WHENDISPLAYED);
 }
 
 function testConditions(library) {
