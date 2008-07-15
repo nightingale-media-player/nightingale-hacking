@@ -36,8 +36,11 @@ These rules paint the resizeable window for Songbird.
 */ 
 
 description,
-label {
-  font-family: Lucida Grande, Trebuchet MS, Arial, Helvetica, FreeSans, Sans-serif !important;
+label,
+menu,
+treechildren::-moz-tree-cell-text,
+html|input {
+  font-family: Lucida Grande, Trebuchet MS, Bitstream Vera Sans, FreeSans, Verdana, Arial, Sans-serif !important;
 }
 
 
