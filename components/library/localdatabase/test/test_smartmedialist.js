@@ -587,7 +587,7 @@ function testSerialize(library) {
   list.selectDirection = false;
   list.limit = 123;
   list.randomSelection = true;
-  list.liveUpdate = true;
+  list.autoUpdateMide = Ci.sbILocalDatabaseSmartMediaList.AUTOUPDATE_WHENSHOWN;
   list.appendCondition(albumProp,
                        getOperatorForProperty(albumProp, "%?%"),
                        "fat",
@@ -612,7 +612,7 @@ function testSerialize(library) {
   assertEqual(list.selectDirection, restoredList.selectDirection);
   assertEqual(list.limit, restoredList.limit);
   assertEqual(list.randomSelection, restoredList.randomSelection);
-  assertEqual(list.liveUpdate, restoredList.liveUpdate);
+  assertEqual(list.autoUpdateMode, restoredList.autoUpdateMode);
   assertEqual(list.conditionCount, restoredList.conditionCount);
 
   for (var i = 0; i < list.conditionCount; i++) {
@@ -626,6 +626,7 @@ function getOperatorForProperty(propertyID, operator) {
                   .getService(Ci.sbIPropertyManager);
   var info = propMan.getPropertyInfo(propertyID);
   var op = info.getOperator(operator);
+  assertNotEqual(op, null);
   return op;
 }
 
