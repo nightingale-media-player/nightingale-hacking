@@ -587,7 +587,7 @@ function testSerialize(library) {
   list.selectDirection = false;
   list.limit = 123;
   list.randomSelection = true;
-  list.autoUpdateMide = Ci.sbILocalDatabaseSmartMediaList.AUTOUPDATE_WHENSHOWN;
+  list.autoUpdateMode = Ci.sbILocalDatabaseSmartMediaList.AUTOUPDATE_WHENSHOWN;
   list.appendCondition(albumProp,
                        getOperatorForProperty(albumProp, "%?%"),
                        "fat",
