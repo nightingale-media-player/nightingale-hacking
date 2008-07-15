@@ -350,7 +350,7 @@ try
                      "chrome://songbird/content/xul/importLibrary.xul",
                      "",
                      "chrome,centerscreen",
-                     [],
+                     [ "manual" ],
                      [ doImport ]);
       doImport = doImport.value == "true" ? true : false;
     } else {

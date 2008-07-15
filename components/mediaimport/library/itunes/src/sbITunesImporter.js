@@ -47,6 +47,23 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 
+/* *****************************************************************************
+ *
+ * iTunes importer component defs.
+ *
+ ******************************************************************************/
+
+/* Component manager defs. */
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
+
+
 /*******************************************************************************
  *******************************************************************************
  *
@@ -241,10 +258,7 @@ Component.prototype =
      * mLibraryFilePathPref         Import library file path preference.
      * mAutoImportPref              Auto import preference.
      * mDontImportPlaylistsPref     Don't import playlists preference.
-     * mNotFirstRunDR               Not first run indication.
      * mLibPrevPathDR               Saved path of previously imported library.
-     * mLibPrevModTimeDR            Saved modification time of previously
-     *                              imported library.
      * mVersionDR                   Importer data format version.
      */
 
@@ -273,9 +287,7 @@ Component.prototype =
     mLibraryFilePathPref: null,
     mAutoImportPref: null,
     mDontImportPlaylistsPref: null,
-    mNotFirstRunDR: null,
     mLibPrevPathDR: null,
-    mLibPrevModTimeDR: null,
     mVersionDR: null,
 
 
@@ -364,6 +376,13 @@ Component.prototype =
         return (libraryPath);
     },
 
+    get libraryPreviouslyImported()
+    {
+        if (this.getPref("lib_prev_mod_time", "").length == 0)
+            return false;
+        return true;
+    },
+
 
     /*
      * \brief Initiate external library importing.
@@ -408,12 +427,6 @@ Component.prototype =
     {
         /* Set the listener. */
         this.mListener = aListener;
-
-        /* Only process requests while a listener is set. */
-        if (this.mListener)
-            ITReq.start();
-        else
-            ITReq.stop();
     },
 
 
@@ -560,27 +573,14 @@ Component.prototype =
                                      null);
 
         /* Get the importer data remotes. */
-        this.mNotFirstRunDR = Components.
-                            classes["@songbirdnest.com/Songbird/DataRemote;1"].
-                            createInstance(Components.interfaces.sbIDataRemote);
-        this.mNotFirstRunDR.init(this.prefPrefix + ".not_first_run", null);
         this.mLibPrevPathDR = Components.
                             classes["@songbirdnest.com/Songbird/DataRemote;1"].
                             createInstance(Components.interfaces.sbIDataRemote);
         this.mLibPrevPathDR.init(this.prefPrefix + ".lib_prev_path", null);
-        this.mLibPrevModTimeDR =
-                        Components.
-                            classes["@songbirdnest.com/Songbird/DataRemote;1"].
-                            createInstance(Components.interfaces.sbIDataRemote);
-        this.mLibPrevModTimeDR.init(this.prefPrefix + ".lib_prev_mod_time",
-                                    null);
         this.mVersionDR = Components.
                             classes["@songbirdnest.com/Songbird/DataRemote;1"].
                             createInstance(Components.interfaces.sbIDataRemote);
         this.mVersionDR.init(this.prefPrefix + ".version", null);
-
-        /* Migrate preference settings. */
-        this.migratePrefs();
 
         /* Activate the database services. */
         ITDB.activate();
@@ -657,21 +657,10 @@ Component.prototype =
         /* Activate the second stage importer services. */
         this.activate2();
 
-        /* If this is the first time the importer has been */
-        /* run, send a first run event to the listener.    */
-        if (!this.mNotFirstRunDR.boolValue)
-        {
-            /* Send a first run event. */
-            this.mListener.onFirstRun();
-
-            /* Save indication that import has been run once. */
-            this.mNotFirstRunDR.boolValue = true;
-        }
-
         /* Initiate importing if auto-import is enabled   */
         /* and the iTunes library file has been modified. */
-        else if (   this.mAutoImportPref.boolValue
-                 && this.mLibraryFilePathPref.stringValue)
+        if (   this.mAutoImportPref.boolValue
+            && this.mLibraryFilePathPref.stringValue)
         {
             /* If importing the same library      */
             /* file, check its modification time. */
@@ -681,8 +670,11 @@ Component.prototype =
                 file = Components.classes["@mozilla.org/file/local;1"].
                           createInstance(Components.interfaces.nsILocalFile);
                 file.initWithPath(this.mLibraryFilePathPref.stringValue);
-                if (file.lastModifiedTime == this.mLibPrevModTimeDR.stringValue)
+                if (file.lastModifiedTime ==
+                    this.getPref("lib_prev_mod_time", ""))
+                {
                     modified = false;
+                }
             }
 
             /* If the library file has been modified,    */
@@ -884,8 +876,8 @@ Component.prototype =
             if (this.mImport || (signature == storedSignature))
             {
                 this.mLibPrevPathDR.stringValue = libFilePath;
-                this.mLibPrevModTimeDR.stringValue =
-                                                this.mXMLFile.lastModifiedTime;
+                this.setPref("lib_prev_mod_time",
+                             this.mXMLFile.lastModifiedTime);
             }
 
             /* Update import data format version. */
@@ -1103,24 +1095,42 @@ Component.prototype =
 
 
     /*
-     * migratePrefs
+     * getPref
      *
-     *   This function migrates preference settings from previous versions to
-     * the current.
+     *   --> aPrefName          Name of preference to get.
+     *   --> aDefault           Default preference value.
+     *
+     *   <--                    Preference value.
+     *
+     *   This function reads and returns the value of the preference specified
+     * by aPrefName.  If the preference is not set, this function returns the
+     * default value specified by aDefault.
      */
 
-    migratePrefs: function()
+    getPref: function(aPrefName, aDefault)
     {
-        /* Migrate "not first run" setting. */
-        if (!this.mNotFirstRunDR.boolValue)
-        {
-            if (this.mLibraryFilePathPref.stringValue)
-                this.mNotFirstRunDR.boolValue = true;
-        }
+        var Application = Cc["@mozilla.org/fuel/application;1"]
+                              .getService(Ci.fuelIApplication);
+        return Application.prefs.getValue(this.prefPrefix + "." + aPrefName,
+                                          aDefault);
+    },
 
-        /* Migrate importer data format version setting. */
-        if (this.mNotFirstRunDR.boolValue && !this.mVersionDR.intValue)
-            this.mVersionDR.intValue = 1;
+
+    /*
+     * setPref
+     *
+     *   --> aPrefName          Name of preference to set.
+     *   --> aValue             Value to set.
+     *
+     *   This function sets the preference specified by aPrefName to the value
+     * specified by aValue.
+     */
+
+    setPref: function(aPrefName, aValue)
+    {
+        var Application = Cc["@mozilla.org/fuel/application;1"]
+                              .getService(Ci.fuelIApplication);
+        Application.prefs.setValue(this.prefPrefix + "." + aPrefName, aValue);
     },
 
 

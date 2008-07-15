@@ -71,7 +71,7 @@
       <preference
         id="auto_import_no_query_pref"
         prefid="auto_import_no_query_pref"
-        name="songbird.library_import.auto_import_no_query"
+        name="songbird.library_importer.auto_import_no_query"
         type="bool"
         onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
 
@@ -79,7 +79,7 @@
       <preference
         id="dont_import_playlists_pref"
         prefid="dont_import_playlists_pref"
-        name="songbird.library_import.dont_import_playlists"
+        name="songbird.library_importer.dont_import_playlists"
         type="bool"
         onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
 
@@ -87,7 +87,7 @@
       <preference
         id="unsupported_media_alert_pref"
         prefid="unsupported_media_alert_pref"
-        name="songbird.library_import.unsupported_media_alert"
+        name="songbird.library_importer.unsupported_media_alert.enabled"
         type="bool"
         onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
 

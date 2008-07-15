@@ -44,17 +44,9 @@
 * Implementors of this interface can listen to library importer events.
 */
 
-[scriptable, uuid(7B6B4403-3FF7-4919-BAB5-F3821BA63F95)]
+[scriptable, uuid(D2CC37F4-A5DB-4226-966F-C51A9AE5686F)]
 interface sbILibraryImporterListener : nsISupports
 {
-    /**
-     * \brief Handle first run events.  These events occur when the library
-     * importer is run for the first time.
-     */
-
-    void onFirstRun();
-
-
     /**
      * \brief Handle library changed events.  These events occur when the
      * contents of the import library change.
@@ -126,7 +118,7 @@ interface sbILibraryImporterListener : nsISupports
 * This interface is used for importing external libraries into Songbird.
 */
 
-[scriptable, uuid(DBB06C29-EA16-4D9E-9E1E-0E83737DF26F)]
+[scriptable, uuid(621DE988-6805-4C10-B701-AF22B4F62AE2)]
 interface sbILibraryImporter : nsISupports
 {
     /*
@@ -137,6 +129,8 @@ interface sbILibraryImporter : nsISupports
      * libraryDefaultFileName   Default library file name.
      * libraryDefaultFilePath   Default library file path.
      * libraryFileExtensionList Comma separated list of library file extensions.
+     * libraryPreviouslyImported
+     *                          True if a library has previously been imported.
      */
 
     readonly attribute AString  libraryType;
@@ -144,6 +138,7 @@ interface sbILibraryImporter : nsISupports
     readonly attribute AString  libraryDefaultFileName;
     readonly attribute AString  libraryDefaultFilePath;
     readonly attribute AString  libraryFileExtensionList;
+    readonly attribute boolean  libraryPreviouslyImported;
 
 
     /**

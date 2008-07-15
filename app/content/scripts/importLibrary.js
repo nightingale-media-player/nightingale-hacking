@@ -77,9 +77,16 @@ var importLibrary = {
   // Import library dialog services fields.
   //
   //   _dialogPB                Dialog box parameter block.
+  //   _importType              Type of import to perform.
+  //     "first_run"            Import run for the first time.
+  //     "manual"               Import manually initiated by user.
+  //     "manual_first_import"  First import manual initiated by user.
+  //     "changed"              Import intitiated due to change in library.
+  //     "error"                Import re-run after error.
   //
 
   _dialogPB: null,
+  _importType: null,
 
 
   //----------------------------------------------------------------------------
@@ -95,16 +102,33 @@ var importLibrary = {
   doLoad: function importLibrary_doLoad() {
     // Get the dialog box parameters.
     this._dialogPB = window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
+    this._importType = this._dialogPB.GetString(0);
 
     // Default to not doing import.
     this._dialogPB.SetString(0, "false");
+
+    // Get the library importer.
+    var libraryImporterManager =
+          Cc["@songbirdnest.com/Songbird/LibraryImporterManager;1"]
+            .getService(Ci.sbILibraryImporterManager);
+    var libraryImporter = libraryImporterManager.defaultLibraryImporter;
+    if (!libraryImporter) {
+      onExit();
+      return;
+    }
+
+    // Check if this is the first manual import.
+    if ((this._importType == "manual") &&
+        !libraryImporter.libraryPreviouslyImported) {
+      this._importType = "manual_first_import";
+    }
 
     // Set the user query text.
     //XXXeps don't hardcode iTunes
     //XXXeps set query based on dialog params
     var queryDescElem = document.getElementById("import_library_query");
     var userQuery = SBFormattedString
-                      ("import_library.dialog_query.manual_first_import",
+                      ("import_library.dialog_query." + this._importType,
                        [ "iTunes" ]);
     var userQueryNode = document.createTextNode(userQuery);
     queryDescElem.appendChild(userQueryNode);

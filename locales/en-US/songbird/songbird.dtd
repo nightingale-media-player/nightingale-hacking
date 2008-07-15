@@ -570,3 +570,11 @@
 <!ENTITY import_library.prefs.path_group_caption          "Library Path">
 <!ENTITY import_library.prefs.options_group_caption       "Import Options">
 
+<!-- Import library dirty playlist dialog entities. -->
+<!ENTITY import_library.dirty_playlist_dialog.title        "Playlist changed">
+<!ENTITY import_library.dirty_playlist_dialog.keep         "Keep the current &brandShortName; playlist (Do not import this playlist)">
+<!ENTITY import_library.dirty_playlist_dialog.merge        "Merge the current &brandShortName; and iTunes playlists">
+<!ENTITY import_library.dirty_playlist_dialog.replace      "Replace this &brandShortName; playlist with the current iTunes playlist">
+<!ENTITY import_library.dirty_playlist_dialog.note         "Note:  Merge and replace cannot be undone.">
+<!ENTITY import_library.dirty_playlist_dialog.apply_all    "Apply selection to all playlists">
+
