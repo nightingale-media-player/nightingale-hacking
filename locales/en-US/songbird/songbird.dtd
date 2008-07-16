@@ -400,6 +400,7 @@
 <!ENTITY callout.firstwebplaylist "&brandShortName; has found the following playable tracks.">
 
 <!ENTITY menu.file.new.key             "N" >
+<!ENTITY menu.file.smart.key           "N" >
 <!ENTITY menu.file.open.key            "O" >
 <!ENTITY menu.file.url.key             "U" >
 <!ENTITY menu.file.newtab.key          "T" >

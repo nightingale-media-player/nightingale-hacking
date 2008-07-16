@@ -387,6 +387,7 @@
     
     <keyset id="mainKeyset">
       <key id="newplaylist-key" modifiers="accel" key="&menu.file.new.key;" oncommand="doMenu('menuitem_file_new');"/>
+      <key id="newsmartplaylist-key" modifiers="accel,alt" key="&menu.file.smart.key;" oncommand="doMenu('menuitem_file_smart');"/>
       <key id="newtab-key" modifiers="accel" key="&menu.file.newtab.key;" oncommand="doMenu('menuitem_file_newtab');"/>
       <key id="closetab-key" modifiers="accel" key="&menu.file.closetab.key;" oncommand="doMenu('menuitem_file_closetab');"/>
       <!-- key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/ -->

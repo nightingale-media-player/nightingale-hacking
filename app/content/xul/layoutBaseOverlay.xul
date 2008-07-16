@@ -77,7 +77,7 @@
         <menuitem id="menuitem_file_library" class="menuitem-iconic" label="&menu.file.library;" accesskey="&menu.file.library.accesskey;" />
         <menuseparator />
         <menuitem id="menuitem_file_new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
-        <menuitem id="menuitem_file_smart" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;" />
+        <menuitem id="menuitem_file_smart" key="newsmartplaylist-key" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;" />
         <menuitem id="menuitem_file_remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;" />
         <!-- XXX lone: disabled; see bug 4387
         <menuitem id="menuitem_file_folder" class="menuitem-iconic" label="&menu.file.folder;" accesskey="&menu.file.folder.accesskey;" />
