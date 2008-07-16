@@ -1146,6 +1146,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   } if (customType == 'web') {
     // Set the weight of the web library
     node.setAttributeNS(SP, 'Weight', 5);
+    node.hidden = true;
   } else {
     // other libraries store the playlists under them, but only
     // assign the default value if they do not specifically tell

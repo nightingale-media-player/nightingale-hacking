@@ -488,20 +488,6 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
     }
   }
 
-  // ensure we have a birdhouse node
-  // this is kind of a hack
-  var birdhouse = this.getNode('http://birdhouse.songbirdnest.com/');
-  if (!birdhouse) {
-    birdhouse = this.addNode('http://birdhouse.songbirdnest.com/',
-      this._root, false);
-  }
-  birdhouse.url = 'http://birdhouse.songbirdnest.com/';
-  birdhouse.name = '&servicesource.welcome';
-  birdhouse.hidden = false;
-  birdhouse.editable = false;
-  birdhouse.properties = 'birdhouse';
-  birdhouse.setAttributeNS(SP, 'Weight', -5);
-
   // HACK ALERT
   // now, let's sort the top-level nodes by their weight.
   // this idea of node weight is stolen from Drupal menus
