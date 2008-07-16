@@ -53,7 +53,7 @@
               id="propertypopup" 
               class="smart-condition-list" 
               value="artist" 
-              drawer-prop-map="value=metadata,gotuserinput1=gotuserinput1,gotuserinput2=gotuserinput2" 
+              drawer-prop-map="value=metadata" 
               sizetopopup="none">
             <xul:menupopup class="smart-condition-popup">
             </xul:menupopup>
@@ -625,12 +625,9 @@
             this.drawer.getItemElementByAttribute(condition, 
                                                   "id", 
                                                   "propertypopup");
-          // retrieve saved unit
-          var unit = this._getMetadataMap("units", condition, property.value);
-          // if we haven't got a saved unit, use the default one
-          if (!unit || unit == "") {
-            unit = this._getDefaultUnit(property.value);
-          }
+          // use default unit
+          var unit = this._getDefaultUnit(property.value);
+
           if (!unit || unit == "") {
             // no default ? use the first available unit
             unitspopup.selectedIndex = 0;
@@ -908,33 +905,28 @@
             
             // we need to value to be a string no matter what
             prefillValue = ""+prefillValue;
-
+            
             // format from the native unit into the current unit
             var formattedPrefill = this._convertToUI(property, 
                                                      operator, 
                                                      prefillValue, 
                                                      unit);
 
-            // do not replace the user's input
-            if (!propertypopup.gotuserinput1) {
-              var value1 = 
-                this.drawer.getItemElementByAttribute(condition, 
-                                                      "sbid", 
-                                                      "conditionvalue1", 
-                                                      true); // get the visible one
-              if (value1)
-                value1.value = formattedPrefill;
-            }
-            if (!propertypopup.gotuserinput2) {
-              var value2 = 
-                this.drawer.getItemElementByAttribute(condition, 
-                                                      "sbid", 
-                                                      "conditionvalue2", 
-                                                      true); // get the visible one
-              if (value2)
-                value2.value = formattedPrefill;
-            }
-              
+            var value1 = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "sbid", 
+                                                    "conditionvalue1", 
+                                                    true); // get the visible one
+            if (value1)
+              value1.value = formattedPrefill;
+
+            var value2 = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "sbid", 
+                                                    "conditionvalue2", 
+                                                    true); // get the visible one
+            if (value2)
+              value2.value = formattedPrefill;
           ]]>
         </body>
       </method>
@@ -968,33 +960,6 @@
           if (this._refreshingUI)
             return;
           var condition = this.drawer.getItem(condition);
-
-          var value1 = 
-            this.drawer.getItemElementByAttribute(condition, 
-                                                  "sbid", 
-                                                  "conditionvalue1", 
-                                                  true); // get the visible one
-          if (this._isDeepChild(event.originalTarget, value1, condition)) {
-            var propertypopup = 
-              this.drawer.getItemElementByAttribute(condition, 
-                                                    "id", 
-                                                    "propertypopup");
-            propertypopup.gotuserinput1 = true;
-          } else {
-            var value2 = 
-              this.drawer.getItemElementByAttribute(condition, 
-                                                    "sbid", 
-                                                    "conditionvalue2", 
-                                                    true); // get the visible one
-            if (this._isDeepChild(event.originalTarget, value2, condition)) {
-              var propertypopup = 
-                this.drawer.getItemElementByAttribute(condition, 
-                                                      "id", 
-                                                      "propertypopup");
-              propertypopup.gotuserinput2 = true;
-            }
-          }
-
           this._doValidation(condition);
         </body>
       </method>
@@ -1583,9 +1548,6 @@
             if (""+state.value == "NaN") 
               state.value = "";
               
-            if (state.value != "" && state.value != null)
-              state.gotuserinput1 = true;
-              
             if (state.interval) {
               state.value2 = 
                 this._convertToUI(state.metadata, 
@@ -1595,9 +1557,6 @@
               // same check as for value1
               if (""+state.value2 == "NaN") 
                 state.value2 = "";
-
-              if (state.value2 != "" && state.value2 != null)
-                state.gotuserinput2 = true;
             }
           ]]>
         </body>
@@ -1626,34 +1585,19 @@
             // When the unit changes, we need to validate again, because 
             // although 0.5kB is okay, 0.5bytes is not.
             this._doValidation(condition);
-            
-            if (menu.value && menu.value != "") {
-              // Record that this is the unit we want for this property
-              // so that going back to this property later will reselect the
-              // same unit again (though only for this condition)
-              var property = 
-                this.drawer.getItemElementByAttribute(condition, 
-                                                      "id",
-                                                      "propertypopup");
-              this._setMetadataMap("units", condition, property.value, menu.value);
-            }
           ]]>
         </body>
       </method>
       
-      <!-- For each condition item, record the UI unit associated with its
+      <!-- For each condition item, record the UI operator associated with its
            metadata, so that switching back to these properties will reselect
-           these units by default -->
+           these operators by default -->
       <method name="_setMetadataMaps">
         <parameter name="state"/>
         <body>
         <![CDATA[
           var items = this.drawer.items;
           for (var i=0;i<items.length;i++) {
-            this._setMetadataMap("units", 
-                                 items[i], 
-                                 state[i].metadata, 
-                                 state[i].unit);
             this._setMetadataMap("operators", 
                                  items[i], 
                                  state[i].metadata, 
