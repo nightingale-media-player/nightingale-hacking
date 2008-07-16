@@ -51,7 +51,9 @@ const PREF_FIRSTRUN = "songbird.firstrun.tabs.restore";
 const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
 
 __defineGetter__("_tabState", function() {
-  var state = Application.prefs.getValue(PREF_TAB_STATE, "null");
+  var state = Application.prefs.getValue(PREF_TAB_STATE, null);
+  if (state === null)
+    return null;
   try {
     return JSON.decode(state);
   } catch(e) {
@@ -101,12 +103,18 @@ var SBSessionStore = {
     var tabs = _tabState;
     
     if ( !tabs ) {
-      // If we have never run the app before, load this keen stuff!@
-      var homePageURL = aTabBrowser.homePage;
-      var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, "about:blank");
-      aTabBrowser.loadURI(homePageURL, null, null, null, '_top');
-      aTabBrowser.loadURI(firstrunURL, null, null, null, '_blank');
-      Application.prefs.setValue(PREF_FIRSTRUN, true);
+      if (!Application.prefs.getValue(PREF_FIRSTRUN, false)) {
+        // If we have never run the app before, load this keen stuff!@
+        var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, "about:blank");
+        aTabBrowser.loadURI(firstrunURL, null, null, null, '_media');
+        Application.prefs.setValue(PREF_FIRSTRUN, true);
+      } else {
+        // let's just go to the main library
+        var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                       .getService(Ci.sbILibraryManager);
+        var mainLib = libMgr.mainLibrary;
+        aTabBrowser.loadMediaList(mainLib);
+      }
     } else {
   
       // check if this is an invalid chrome url
@@ -181,6 +189,13 @@ var SBSessionStore = {
             // we don't want to restore invalid chrome URLs
             continue;
           }
+          
+          // let the first run URL load in the media tab (again).
+          var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, null);
+          if (firstrunURL == tab && location == "_top") {
+            location = "_media";
+          }
+
           aTabBrowser.loadURI(tab, null, null, null, location);
         }
 
@@ -190,6 +205,11 @@ var SBSessionStore = {
       }
     }
     this.tabStateRestored = true;
+    
+    // tell the tab browser we switched tabs so it can update state correctly
+    var selectEvent = document.createEvent("Events");
+    selectEvent.initEvent("select", true, true);
+    aTabBrowser.dispatchEvent(selectEvent);
   },
   
   tabStateRestored: false
