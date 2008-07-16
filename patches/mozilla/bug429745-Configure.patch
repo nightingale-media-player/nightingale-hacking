@@ -1,10 +1,10 @@
 Index: configure
 ===================================================================
 RCS file: /cvsroot/mozilla/configure,v
-retrieving revision 1.2029
-diff -u -8 -r1.2029 configure
---- configure	5 May 2008 21:11:03 -0000	1.2029
-+++ configure	14 May 2008 23:24:25 -0000
+retrieving revision 1.2030
+diff -u -8 -r1.2030 configure
+--- configure	28 May 2008 18:31:02 -0000	1.2030
++++ configure	16 Jul 2008 18:05:49 -0000
 @@ -1105,17 +1105,17 @@
  STARTUP_NOTIFICATION_VERSION=0.8
  DBUS_VERSION=0.60
@@ -7402,34 +7402,61 @@ diff -u -8 -r1.2029 configure
    rm -fr conftest*
    ac_cv_sizeof_int_p=0
  fi
-@@ -16844,25 +16745,34 @@
+@@ -16832,37 +16733,58 @@
+             if test "$_CC_SUITE" -lt "8"; then
+         { echo "configure: error: Building jemalloc requires Visual C++ 2005 or better" 1>&2; exit 1; }
+     fi
+     if test -z "$WIN32_CRT_SRC_DIR" -a -z "$WIN32_CUSTOM_CRT_DIR"; then
+       if test -z "$VCINSTALLDIR" -o ! -d "$VCINSTALLDIR"; then
+         { echo "configure: error: When building jemalloc, either set WIN32_CRT_SRC_DIR to the path to the Visual C++ CRT source (usually VCINSTALLDIR\crt\src), or set WIN32_CUSTOM_CRT_DIR to the path to a folder containing a pre-built CRT DLL." 1>&2; exit 1; }
+       else
+         WIN32_CRT_SRC_DIR="$VCINSTALLDIR\crt\src"
++
+       fi
+     fi
+     if test -z "$WIN32_CRT_SRC_DIR"; then
+       # pre-built dll
        WIN32_CUSTOM_CRT_DIR=`cd "$WIN32_CUSTOM_CRT_DIR" && pwd`
        _WIN_UNIX_CRT_PATH="$WIN32_CUSTOM_CRT_DIR"
      else
++      # Validate either the variable we got from the user, or that our guess
++      # was correct...
++      if test ! -d "$WIN32_CRT_SRC_DIR"; then
++        { echo "configure: error: Invalid Win32 CRT source directory: ${WIN32_CRT_SRC_DIR}" 1>&2; exit 1; }
++      fi
        # CRT source directory
        WIN32_CRT_SRC_DIR=`cd "$WIN32_CRT_SRC_DIR" && pwd`
        _CRT_BASE_DIR=`basename "$WIN32_CRT_SRC_DIR"`
-       _WIN_UNIX_CRT_PATH="$_objdir/memory/jemalloc/$_CRT_BASE_DIR/build/intel"
+-      _WIN_UNIX_CRT_PATH="$_objdir/memory/jemalloc/$_CRT_BASE_DIR/build/intel"
++      _objdir_win=`pwd -W`
++      WIN32_CUSTOM_CRT_DIR="$_objdir_win/memory/jemalloc/$_CRT_BASE_DIR/build/intel"
++      WIN32_CUSTOM_CRT_PATH=`$PYTHON -c 'import sys, os.path; print os.path.normpath(sys.argv[1])' "$WIN32_CUSTOM_CRT_DIR"`
      fi
-+    # Save these off...
-+    STD_PATH="$PATH"
-+    STD_LIB="$LIB"
-+    STD_INCLUDE="$INCLUDE"
-             _WIN_CRT_PATH=`$PYTHON -c 'import sys, os.path; print os.path.normpath(sys.argv[1])' "$_WIN_UNIX_CRT_PATH"`
-     MOZ_LIB="$_WIN_CRT_PATH;$LIB"
+-            _WIN_CRT_PATH=`$PYTHON -c 'import sys, os.path; print os.path.normpath(sys.argv[1])' "$_WIN_UNIX_CRT_PATH"`
+-    MOZ_LIB="$_WIN_CRT_PATH;$LIB"
 -            MOZ_PATH="$PATH:$_WIN_UNIX_CRT_PATH"
-+    MOZ_INCLUDE="$_WIN_CRT_PATH;$INCLUDE"
-+            MOZ_PATH="$_WIN_UNIX_CRT_PATH:$PATH"
++    # Save these off...
++    ##STD_PATH="$PATH"
++    ##STD_LIB="$LIB"
++    ##STD_INCLUDE="$INCLUDE"
++
++            #_WIN_CRT_PATH=[`$PYTHON -c 'import sys, os.path; print os.path.normpath(sys.argv[1])' "$WIN32_CUSTOM_CRT_DIR"`]
++
++    ##MOZ_LIB="$_WIN_CRT_PATH;$LIB"
++    ##MOZ_INCLUDE="$_WIN_CRT_PATH;$INCLUDE"
++
++            #MOZ_PATH="$_WIN_UNIX_CRT_PATH:$PATH"
          cat >> confdefs.h <<\EOF
  #define _STATIC_CPPLIB 1
  EOF
  
          LDFLAGS="$LDFLAGS -MANIFEST:NO"
 -        DLLFLAGS="$DLLFLAGS -MANIFEST:NO"
-+        if test -z $MOZ_DEBUG; then
-+        DLLFLAGS="$DLLFLAGS -MANIFEST:NO -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd -DEFAULTLIB:mozcrt19"
++        MOZ_MEMORY_DLLFLAGS="-LIBPATH:\"$WIN32_CUSTOM_CRT_DIR\" -MANIFEST:NO -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd"
++    if test -z $MOZ_DEBUG; then
++        DLLFLAGS="$DLLFLAGS $MOZ_MEMORY_DLLFLAGS -DEFAULTLIB:mozcrt19"
 +    else
-+        DLLFLAGS="$DLLFLAGS -MANIFEST:NO -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd -NODEFAULTLIB:libcmt -NODEFAULTLIB:libcpmt -DEFAULTLIB:mozcrt19d"
++        DLLFLAGS="$DLLFLAGS $MOZ_MEMORY_DLLFLAGS -DEFAULTLIB:mozcrt19d"
 +    fi
      export DLLFLAGS
      ;;
@@ -7439,7 +7466,7 @@ diff -u -8 -r1.2029 configure
    esac
  
    # Check whether --with-valgrind or --without-valgrind was given.
-@@ -16870,27 +16780,27 @@
+@@ -16870,27 +16792,27 @@
    withval="$with_valgrind"
    enable_valgrind="yes"
  else
@@ -7449,19 +7476,19 @@ diff -u -8 -r1.2029 configure
    ac_safe=`echo "valgrind/valgrind.h" | sed 'y%./+-%__p_%'`
  echo $ac_n "checking for valgrind/valgrind.h""... $ac_c" 1>&6
 -echo "configure:16879: checking for valgrind/valgrind.h" >&5
-+echo "configure:16789: checking for valgrind/valgrind.h" >&5
++echo "configure:16801: checking for valgrind/valgrind.h" >&5
  if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 16884 "configure"
-+#line 16794 "configure"
++#line 16806 "configure"
  #include "confdefs.h"
  #include <valgrind/valgrind.h>
  EOF
  ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
 -{ (eval echo configure:16889: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
-+{ (eval echo configure:16799: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
++{ (eval echo configure:16811: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
  ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
  if test -z "$ac_err"; then
    rm -rf conftest*
@@ -7470,28 +7497,30 @@ diff -u -8 -r1.2029 configure
    echo "$ac_err" >&5
    echo "configure: failed program was:" >&5
    cat conftest.$ac_ext >&5
-@@ -16916,16 +16826,20 @@
+@@ -16913,16 +16835,22 @@
+ EOF
+ 
+   fi
  fi
  
  
  
  
++#AC_SUBST(STD_PATH)
++#AC_SUBST(STD_LIB)
++#AC_SUBST(STD_INCLUDE)
++#AC_SUBST(MOZ_PATH)
++#AC_SUBST(MOZ_LIB)
++#AC_SUBST(MOZ_INCLUDE)
  
  
  
-+
-+
-+
-+
  # Check whether --enable-wrap-malloc or --disable-wrap-malloc was given.
  if test "${enable_wrap_malloc+set}" = set; then
    enableval="$enable_wrap_malloc"
    if test "$enableval" = "yes"; then
      _WRAP_MALLOC=1
-   elif test "$enableval" = "no"; then
-     _WRAP_MALLOC= 
-   else
-@@ -16957,36 +16871,36 @@
+@@ -16957,36 +16885,36 @@
      _ENABLE_EFENCE= 
    else
      { echo "configure: error: Option, efence, does not take an argument ($enableval)." 1>&2; exit 1; }
@@ -7501,7 +7530,7 @@ diff -u -8 -r1.2029 configure
  if test -n "$_ENABLE_EFENCE"; then
      echo $ac_n "checking for malloc in -lefence""... $ac_c" 1>&6
 -echo "configure:16966: checking for malloc in -lefence" >&5
-+echo "configure:16880: checking for malloc in -lefence" >&5
++echo "configure:16894: checking for malloc in -lefence" >&5
  ac_lib_var=`echo efence'_'malloc | sed 'y%./+-%__p_%'`
  if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
@@ -7510,7 +7539,7 @@ diff -u -8 -r1.2029 configure
  LIBS="-lefence  $LIBS"
  cat > conftest.$ac_ext <<EOF
 -#line 16974 "configure"
-+#line 16888 "configure"
++#line 16902 "configure"
  #include "confdefs.h"
  /* Override any gcc2 internal prototype to avoid an error.  */
  /* We use char because int might match the return type of a gcc2
@@ -7522,7 +7551,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:16985: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-+if { (eval echo configure:16899: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:16913: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
    rm -rf conftest*
    eval "ac_cv_lib_$ac_lib_var=yes"
  else
@@ -7531,7 +7560,7 @@ diff -u -8 -r1.2029 configure
    rm -rf conftest*
    eval "ac_cv_lib_$ac_lib_var=no"
  fi
-@@ -17108,22 +17022,22 @@
+@@ -17108,22 +17036,22 @@
  ac_cpp='$CXXCPP $CPPFLAGS'
  ac_compile='${CXX-g++} -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext 1>&5'
  ac_link='${CXX-g++} -o conftest${ac_exeext} $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS 1>&5'
@@ -7541,13 +7570,13 @@ diff -u -8 -r1.2029 configure
  do
  echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
 -echo "configure:17117: checking for $ac_func" >&5
-+echo "configure:17031: checking for $ac_func" >&5
++echo "configure:17045: checking for $ac_func" >&5
  if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 17122 "configure"
-+#line 17036 "configure"
++#line 17050 "configure"
  #include "confdefs.h"
  /* System header to define __stub macros and hopefully few prototypes,
      which can conflict with char $ac_func(); below.  */
@@ -7556,7 +7585,7 @@ diff -u -8 -r1.2029 configure
  #ifdef __cplusplus
  extern "C"
  #endif
-@@ -17139,17 +17053,17 @@
+@@ -17139,17 +17067,17 @@
  #if defined (__stub_$ac_func) || defined (__stub___$ac_func)
  choke me
  #else
@@ -7566,7 +7595,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:17148: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-+if { (eval echo configure:17062: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:17076: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
    rm -rf conftest*
    eval "ac_cv_func_$ac_func=yes"
  else
@@ -7575,7 +7604,7 @@ diff -u -8 -r1.2029 configure
    rm -rf conftest*
    eval "ac_cv_func_$ac_func=no"
  fi
-@@ -17358,22 +17272,22 @@
+@@ -17358,22 +17286,22 @@
  ac_cpp='$CXXCPP $CPPFLAGS'
  ac_compile='${CXX-g++} -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext 1>&5'
  ac_link='${CXX-g++} -o conftest${ac_exeext} $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS 1>&5'
@@ -7585,13 +7614,13 @@ diff -u -8 -r1.2029 configure
  do
  echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
 -echo "configure:17367: checking for $ac_func" >&5
-+echo "configure:17281: checking for $ac_func" >&5
++echo "configure:17295: checking for $ac_func" >&5
  if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 17372 "configure"
-+#line 17286 "configure"
++#line 17300 "configure"
  #include "confdefs.h"
  /* System header to define __stub macros and hopefully few prototypes,
      which can conflict with char $ac_func(); below.  */
@@ -7600,7 +7629,7 @@ diff -u -8 -r1.2029 configure
  #ifdef __cplusplus
  extern "C"
  #endif
-@@ -17389,17 +17303,17 @@
+@@ -17389,17 +17317,17 @@
  #if defined (__stub_$ac_func) || defined (__stub___$ac_func)
  choke me
  #else
@@ -7610,7 +7639,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:17398: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-+if { (eval echo configure:17312: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:17326: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
    rm -rf conftest*
    eval "ac_cv_func_$ac_func=yes"
  else
@@ -7619,7 +7648,7 @@ diff -u -8 -r1.2029 configure
    rm -rf conftest*
    eval "ac_cv_func_$ac_func=no"
  fi
-@@ -17437,27 +17351,27 @@
+@@ -17437,27 +17365,27 @@
  EOF
  
  fi
@@ -7629,19 +7658,19 @@ diff -u -8 -r1.2029 configure
      ac_safe=`echo "unwind.h" | sed 'y%./+-%__p_%'`
  echo $ac_n "checking for unwind.h""... $ac_c" 1>&6
 -echo "configure:17446: checking for unwind.h" >&5
-+echo "configure:17360: checking for unwind.h" >&5
++echo "configure:17374: checking for unwind.h" >&5
  if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 17451 "configure"
-+#line 17365 "configure"
++#line 17379 "configure"
  #include "confdefs.h"
  #include <unwind.h>
  EOF
  ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
 -{ (eval echo configure:17456: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
-+{ (eval echo configure:17370: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
++{ (eval echo configure:17384: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
  ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
  if test -z "$ac_err"; then
    rm -rf conftest*
@@ -7650,7 +7679,7 @@ diff -u -8 -r1.2029 configure
    echo "$ac_err" >&5
    echo "configure: failed program was:" >&5
    cat conftest.$ac_ext >&5
-@@ -17466,22 +17380,22 @@
+@@ -17466,22 +17394,22 @@
  fi
  rm -f conftest*
  fi
@@ -7660,13 +7689,13 @@ diff -u -8 -r1.2029 configure
  do
  echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
 -echo "configure:17475: checking for $ac_func" >&5
-+echo "configure:17389: checking for $ac_func" >&5
++echo "configure:17403: checking for $ac_func" >&5
  if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 17480 "configure"
-+#line 17394 "configure"
++#line 17408 "configure"
  #include "confdefs.h"
  /* System header to define __stub macros and hopefully few prototypes,
      which can conflict with char $ac_func(); below.  */
@@ -7675,7 +7704,7 @@ diff -u -8 -r1.2029 configure
  /* We use char because int might match the return type of a gcc2
      builtin and then its argument prototype would still apply.  */
  char $ac_func();
-@@ -17494,17 +17408,17 @@
+@@ -17494,17 +17422,17 @@
  #if defined (__stub_$ac_func) || defined (__stub___$ac_func)
  choke me
  #else
@@ -7685,7 +7714,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:17503: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-+if { (eval echo configure:17417: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:17431: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
    rm -rf conftest*
    eval "ac_cv_func_$ac_func=yes"
  else
@@ -7694,7 +7723,7 @@ diff -u -8 -r1.2029 configure
    rm -rf conftest*
    eval "ac_cv_func_$ac_func=no"
  fi
-@@ -17616,39 +17530,39 @@
+@@ -17616,39 +17544,39 @@
  fi
  
  
@@ -7704,7 +7733,7 @@ diff -u -8 -r1.2029 configure
  
  echo $ac_n "checking for gcc -pipe support""... $ac_c" 1>&6
 -echo "configure:17625: checking for gcc -pipe support" >&5
-+echo "configure:17539: checking for gcc -pipe support" >&5
++echo "configure:17553: checking for gcc -pipe support" >&5
  if test -n "$GNU_CC" && test -n "$GNU_CXX" && test -n "$GNU_AS"; then
      echo '#include <stdio.h>' > dummy-hello.c
      echo 'int main() { printf("Hello World\n"); exit(0); }' >> dummy-hello.c
@@ -7720,7 +7749,7 @@ diff -u -8 -r1.2029 configure
          CFLAGS="$CFLAGS -pipe"
          cat > conftest.$ac_ext <<EOF
 -#line 17640 "configure"
-+#line 17554 "configure"
++#line 17568 "configure"
  #include "confdefs.h"
   #include <stdio.h> 
  int main() {
@@ -7728,7 +7757,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:17647: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
-+if { (eval echo configure:17561: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
++if { (eval echo configure:17575: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
    rm -rf conftest*
    _res_gcc_pipe="yes"
  else
@@ -7737,7 +7766,7 @@ diff -u -8 -r1.2029 configure
    rm -rf conftest*
    _res_gcc_pipe="no" 
  fi
-@@ -17680,26 +17594,26 @@
+@@ -17680,26 +17608,26 @@
    fi
  fi
  
@@ -7747,10 +7776,10 @@ diff -u -8 -r1.2029 configure
       CFLAGS="$CFLAGS ${_COMPILER_PREFIX}-Wno-long-long"
       echo $ac_n "checking whether compiler supports -Wno-long-long""... $ac_c" 1>&6
 -echo "configure:17689: checking whether compiler supports -Wno-long-long" >&5
-+echo "configure:17603: checking whether compiler supports -Wno-long-long" >&5
++echo "configure:17617: checking whether compiler supports -Wno-long-long" >&5
       cat > conftest.$ac_ext <<EOF
 -#line 17691 "configure"
-+#line 17605 "configure"
++#line 17619 "configure"
  #include "confdefs.h"
  
  int main() {
@@ -7758,7 +7787,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:17698: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
-+if { (eval echo configure:17612: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
++if { (eval echo configure:17626: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
    rm -rf conftest*
     _WARNINGS_CFLAGS="${_WARNINGS_CFLAGS} ${_COMPILER_PREFIX}-Wno-long-long"
  	  _WARNINGS_CXXFLAGS="${_WARNINGS_CXXFLAGS} ${_COMPILER_PREFIX}-Wno-long-long"
@@ -7767,7 +7796,7 @@ diff -u -8 -r1.2029 configure
    echo "configure: failed program was:" >&5
    cat conftest.$ac_ext >&5
    rm -rf conftest*
-@@ -17725,26 +17639,26 @@
+@@ -17725,26 +17653,26 @@
  
  
  
@@ -7777,10 +7806,10 @@ diff -u -8 -r1.2029 configure
  
  echo $ac_n "checking whether C compiler supports -fprofile-generate""... $ac_c" 1>&6
 -echo "configure:17734: checking whether C compiler supports -fprofile-generate" >&5
-+echo "configure:17648: checking whether C compiler supports -fprofile-generate" >&5
++echo "configure:17662: checking whether C compiler supports -fprofile-generate" >&5
  cat > conftest.$ac_ext <<EOF
 -#line 17736 "configure"
-+#line 17650 "configure"
++#line 17664 "configure"
  #include "confdefs.h"
  
  int main() {
@@ -7788,7 +7817,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:17743: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
-+if { (eval echo configure:17657: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
++if { (eval echo configure:17671: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
    rm -rf conftest*
     PROFILE_GEN_CFLAGS="-fprofile-generate"
                   result="yes" 
@@ -7797,7 +7826,7 @@ diff -u -8 -r1.2029 configure
    cat conftest.$ac_ext >&5
    rm -rf conftest*
    result="no"
-@@ -17754,26 +17668,26 @@
+@@ -17754,26 +17682,26 @@
  
  if test $result = "yes"; then
    PROFILE_GEN_LDFLAGS="-fprofile-generate"
@@ -7807,10 +7836,10 @@ diff -u -8 -r1.2029 configure
    CFLAGS="$_SAVE_CFLAGS -fprofile-arcs"
    echo $ac_n "checking whether C compiler supports -fprofile-arcs""... $ac_c" 1>&6
 -echo "configure:17763: checking whether C compiler supports -fprofile-arcs" >&5
-+echo "configure:17677: checking whether C compiler supports -fprofile-arcs" >&5
++echo "configure:17691: checking whether C compiler supports -fprofile-arcs" >&5
    cat > conftest.$ac_ext <<EOF
 -#line 17765 "configure"
-+#line 17679 "configure"
++#line 17693 "configure"
  #include "confdefs.h"
  
  int main() {
@@ -7818,7 +7847,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:17772: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
-+if { (eval echo configure:17686: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
++if { (eval echo configure:17700: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
    rm -rf conftest*
     PROFILE_GEN_CFLAGS="-fprofile-arcs"
                     result="yes" 
@@ -7827,7 +7856,7 @@ diff -u -8 -r1.2029 configure
    cat conftest.$ac_ext >&5
    rm -rf conftest*
    result="no"
-@@ -17833,26 +17747,26 @@
+@@ -17833,26 +17761,26 @@
      { echo "configure: error: Option, pedantic, does not take an argument ($enableval)." 1>&2; exit 1; }
    fi
  fi
@@ -7837,10 +7866,10 @@ diff -u -8 -r1.2029 configure
      CXXFLAGS="$CXXFLAGS ${_WARNINGS_CXXFLAGS} ${_COMPILER_PREFIX}-pedantic"
      echo $ac_n "checking whether C++ compiler has -pedantic long long bug""... $ac_c" 1>&6
 -echo "configure:17842: checking whether C++ compiler has -pedantic long long bug" >&5
-+echo "configure:17756: checking whether C++ compiler has -pedantic long long bug" >&5
++echo "configure:17770: checking whether C++ compiler has -pedantic long long bug" >&5
      cat > conftest.$ac_ext <<EOF
 -#line 17844 "configure"
-+#line 17758 "configure"
++#line 17772 "configure"
  #include "confdefs.h"
  $configure_static_assert_macros
  int main() {
@@ -7848,7 +7877,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:17851: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
-+if { (eval echo configure:17765: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
++if { (eval echo configure:17779: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
    rm -rf conftest*
    result="no"
  else
@@ -7857,7 +7886,7 @@ diff -u -8 -r1.2029 configure
    rm -rf conftest*
    result="yes" 
  fi
-@@ -17867,23 +17781,26 @@
+@@ -17867,23 +17795,26 @@
          ;;
      yes)
          { echo "configure: error: Your compiler appears to have a known bug where long long is miscompiled when using -pedantic.  Reconfigure using --disable-pedantic. " 1>&2; exit 1; }
@@ -7867,13 +7896,13 @@ diff -u -8 -r1.2029 configure
  
  echo $ac_n "checking for correct temporary object destruction order""... $ac_c" 1>&6
 -echo "configure:17876: checking for correct temporary object destruction order" >&5
-+echo "configure:17790: checking for correct temporary object destruction order" >&5
++echo "configure:17804: checking for correct temporary object destruction order" >&5
  if test "$cross_compiling" = yes; then
    result="maybe"
  else
    cat > conftest.$ac_ext <<EOF
 -#line 17881 "configure"
-+#line 17795 "configure"
++#line 17809 "configure"
  #include "confdefs.h"
 +#ifdef __cplusplus
 +extern "C" void exit(int);
@@ -7886,7 +7915,7 @@ diff -u -8 -r1.2029 configure
               };
               void func(char **arg) {}
               int m=2;
-@@ -17892,17 +17809,17 @@
+@@ -17892,17 +17823,17 @@
                    if (m==1) m = 0;
               }
               int main() {
@@ -7896,7 +7925,7 @@ diff -u -8 -r1.2029 configure
               
  EOF
 -if { (eval echo configure:17901: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
-+if { (eval echo configure:17818: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
++if { (eval echo configure:17832: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
  then
    result="yes"
  else
@@ -7905,7 +7934,7 @@ diff -u -8 -r1.2029 configure
    rm -fr conftest*
    result="no"
  fi
-@@ -17913,22 +17830,22 @@
+@@ -17913,22 +17844,22 @@
  
  if test "$result" = "no"; then
      { echo "configure: error: Your compiler does not follow the C++ specification for temporary object destruction order." 1>&2; exit 1; }
@@ -7915,13 +7944,13 @@ diff -u -8 -r1.2029 configure
  CXXFLAGS="$CXXFLAGS ${_WARNINGS_CXXFLAGS}"
  echo $ac_n "checking for correct overload resolution with const and templates""... $ac_c" 1>&6
 -echo "configure:17922: checking for correct overload resolution with const and templates" >&5
-+echo "configure:17839: checking for correct overload resolution with const and templates" >&5
++echo "configure:17853: checking for correct overload resolution with const and templates" >&5
  if eval "test \"`echo '$''{'ac_nscap_nonconst_opeq_bug'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 17927 "configure"
-+#line 17844 "configure"
++#line 17858 "configure"
  #include "confdefs.h"
  
                        template <class T>
@@ -7930,7 +7959,7 @@ diff -u -8 -r1.2029 configure
                          public:
                            T* myPtr;
                          };
-@@ -17948,17 +17865,17 @@
+@@ -17948,17 +17879,17 @@
  int main() {
  
                        Pointer<int> foo;
@@ -7940,7 +7969,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:17957: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
-+if { (eval echo configure:17874: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
++if { (eval echo configure:17888: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
    rm -rf conftest*
    ac_nscap_nonconst_opeq_bug="no"
  else
@@ -7949,7 +7978,7 @@ diff -u -8 -r1.2029 configure
    rm -rf conftest*
    ac_nscap_nonconst_opeq_bug="yes"
  fi
-@@ -18251,17 +18168,17 @@
+@@ -18251,17 +18182,17 @@
  
      if test "$MOZ_ENABLE_GTK2"; then
          succeeded=no
@@ -7959,7 +7988,7 @@ diff -u -8 -r1.2029 configure
  set dummy pkg-config; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:18260: checking for $ac_word" >&5
-+echo "configure:18177: checking for $ac_word" >&5
++echo "configure:18191: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_PKG_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -7968,7 +7997,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -18295,29 +18212,29 @@
+@@ -18295,29 +18226,29 @@
       echo "*** The pkg-config script could not be found. Make sure it is"
       echo "*** in your path, or set the PKG_CONFIG environment variable"
       echo "*** to the full path to pkg-config."
@@ -7978,7 +8007,7 @@ diff -u -8 -r1.2029 configure
       if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
          echo $ac_n "checking for libIDL-2.0 >= 0.8.0 glib-2.0 gobject-2.0""... $ac_c" 1>&6
 -echo "configure:18304: checking for libIDL-2.0 >= 0.8.0 glib-2.0 gobject-2.0" >&5
-+echo "configure:18221: checking for libIDL-2.0 >= 0.8.0 glib-2.0 gobject-2.0" >&5
++echo "configure:18235: checking for libIDL-2.0 >= 0.8.0 glib-2.0 gobject-2.0" >&5
  
          if $PKG_CONFIG --exists "libIDL-2.0 >= 0.8.0 glib-2.0 gobject-2.0" ; then
              echo "$ac_t""yes" 1>&6
@@ -7986,13 +8015,13 @@ diff -u -8 -r1.2029 configure
  
              echo $ac_n "checking LIBIDL_CFLAGS""... $ac_c" 1>&6
 -echo "configure:18311: checking LIBIDL_CFLAGS" >&5
-+echo "configure:18228: checking LIBIDL_CFLAGS" >&5
++echo "configure:18242: checking LIBIDL_CFLAGS" >&5
              LIBIDL_CFLAGS=`$PKG_CONFIG --cflags "libIDL-2.0 >= 0.8.0 glib-2.0 gobject-2.0"`
              echo "$ac_t""$LIBIDL_CFLAGS" 1>&6
  
              echo $ac_n "checking LIBIDL_LIBS""... $ac_c" 1>&6
 -echo "configure:18316: checking LIBIDL_LIBS" >&5
-+echo "configure:18233: checking LIBIDL_LIBS" >&5
++echo "configure:18247: checking LIBIDL_LIBS" >&5
              ## Remove evil flags like -Wl,--export-dynamic
              LIBIDL_LIBS="`$PKG_CONFIG --libs \"libIDL-2.0 >= 0.8.0 glib-2.0 gobject-2.0\" |sed s/-Wl,--export-dynamic//g`"
              echo "$ac_t""$LIBIDL_LIBS" 1>&6
@@ -8001,7 +8030,7 @@ diff -u -8 -r1.2029 configure
              LIBIDL_LIBS=""
              ## If we have a custom action on failure, don't print errors, but 
              ## do set a variable so people can do so.
-@@ -18431,17 +18348,17 @@
+@@ -18431,17 +18362,17 @@
        esac
    done
  
@@ -8011,7 +8040,7 @@ diff -u -8 -r1.2029 configure
  set dummy glib-config; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:18440: checking for $ac_word" >&5
-+echo "configure:18357: checking for $ac_word" >&5
++echo "configure:18371: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_GLIB_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8020,7 +8049,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_GLIB_CONFIG="$GLIB_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -18466,17 +18383,17 @@
+@@ -18466,17 +18397,17 @@
  if test -n "$GLIB_CONFIG"; then
    echo "$ac_t""$GLIB_CONFIG" 1>&6
  else
@@ -8030,7 +8059,7 @@ diff -u -8 -r1.2029 configure
    min_glib_version=1.2.0
    echo $ac_n "checking for GLIB - version >= $min_glib_version""... $ac_c" 1>&6
 -echo "configure:18475: checking for GLIB - version >= $min_glib_version" >&5
-+echo "configure:18392: checking for GLIB - version >= $min_glib_version" >&5
++echo "configure:18406: checking for GLIB - version >= $min_glib_version" >&5
    no_glib=""
    if test "$GLIB_CONFIG" = "no" ; then
      no_glib=yes
@@ -8039,7 +8068,7 @@ diff -u -8 -r1.2029 configure
      GLIB_LIBS=`$GLIB_CONFIG $glib_config_args --libs`
      glib_config_major_version=`$GLIB_CONFIG $glib_config_args --version | \
             sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
-@@ -18489,17 +18406,17 @@
+@@ -18489,17 +18420,17 @@
        ac_save_LIBS="$LIBS"
        CFLAGS="$CFLAGS $GLIB_CFLAGS"
        LIBS="$GLIB_LIBS $LIBS"
@@ -8049,7 +8078,7 @@ diff -u -8 -r1.2029 configure
  else
    cat > conftest.$ac_ext <<EOF
 -#line 18498 "configure"
-+#line 18415 "configure"
++#line 18429 "configure"
  #include "confdefs.h"
  
  #include <glib.h>
@@ -8058,7 +8087,7 @@ diff -u -8 -r1.2029 configure
  
  int 
  main ()
-@@ -18565,17 +18482,17 @@
+@@ -18565,17 +18496,17 @@
          printf("*** modify your LD_LIBRARY_PATH environment variable, or edit /etc/ld.so.conf\n");
          printf("*** so that the correct libraries are found at run-time))\n");
        }
@@ -8068,7 +8097,7 @@ diff -u -8 -r1.2029 configure
  
  EOF
 -if { (eval echo configure:18574: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
-+if { (eval echo configure:18491: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
++if { (eval echo configure:18505: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
  then
    :
  else
@@ -8077,7 +8106,7 @@ diff -u -8 -r1.2029 configure
    rm -fr conftest*
    no_glib=yes
  fi
-@@ -18599,27 +18516,27 @@
+@@ -18599,27 +18530,27 @@
       else
         if test -f conf.glibtest ; then
          :
@@ -8087,7 +8116,7 @@ diff -u -8 -r1.2029 configure
            LIBS="$LIBS $GLIB_LIBS"
            cat > conftest.$ac_ext <<EOF
 -#line 18608 "configure"
-+#line 18525 "configure"
++#line 18539 "configure"
  #include "confdefs.h"
  
  #include <glib.h>
@@ -8098,7 +8127,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:18618: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-+if { (eval echo configure:18535: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:18549: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
    rm -rf conftest*
     echo "*** The test program compiled, but did not run. This usually means"
            echo "*** that the run-time linker is not finding GLIB or finding the wrong"
@@ -8107,7 +8136,7 @@ diff -u -8 -r1.2029 configure
            echo "*** to the installed location  Also, make sure you have run ldconfig if that"
            echo "*** is required on your system"
  	  echo "***"
-@@ -18653,17 +18570,17 @@
+@@ -18653,17 +18584,17 @@
    rm -f conf.glibtest
  
  
@@ -8117,7 +8146,7 @@ diff -u -8 -r1.2029 configure
  set dummy libIDL-config; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:18662: checking for $ac_word" >&5
-+echo "configure:18579: checking for $ac_word" >&5
++echo "configure:18593: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_LIBIDL_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8126,7 +8155,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_LIBIDL_CONFIG="$LIBIDL_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -18688,17 +18605,17 @@
+@@ -18688,17 +18619,17 @@
  if test -n "$LIBIDL_CONFIG"; then
    echo "$ac_t""$LIBIDL_CONFIG" 1>&6
  else
@@ -8136,7 +8165,7 @@ diff -u -8 -r1.2029 configure
    min_libIDL_version=$LIBIDL_VERSION
    echo $ac_n "checking for libIDL - version >= $min_libIDL_version""... $ac_c" 1>&6
 -echo "configure:18697: checking for libIDL - version >= $min_libIDL_version" >&5
-+echo "configure:18614: checking for libIDL - version >= $min_libIDL_version" >&5
++echo "configure:18628: checking for libIDL - version >= $min_libIDL_version" >&5
    no_libIDL=""
    if test "$LIBIDL_CONFIG" = "no" ; then
      no_libIDL=yes
@@ -8145,7 +8174,7 @@ diff -u -8 -r1.2029 configure
      LIBIDL_LIBS=`$LIBIDL_CONFIG $libIDL_config_args --libs`
      # hack to allow us to keep using libIDL 0.6.3-0.6.7. Anyone may remove
      # this after we start requiring libIDL 0.6.8 or anything higher
-@@ -18715,17 +18632,17 @@
+@@ -18715,17 +18646,17 @@
        ac_save_LIBS="$LIBS"
        CFLAGS="$CFLAGS $LIBIDL_CFLAGS"
        LIBS="$LIBIDL_LIBS $LIBS"
@@ -8155,7 +8184,7 @@ diff -u -8 -r1.2029 configure
  else
    cat > conftest.$ac_ext <<EOF
 -#line 18724 "configure"
-+#line 18641 "configure"
++#line 18655 "configure"
  #include "confdefs.h"
  
  #include <stdio.h>
@@ -8164,7 +8193,7 @@ diff -u -8 -r1.2029 configure
  
  int 
  main ()
-@@ -18801,17 +18718,17 @@
+@@ -18801,17 +18732,17 @@
          printf("*** modify your LD_LIBRARY_PATH environment variable, or edit /etc/ld.so.conf\n");
          printf("*** so that the correct libraries are found at run-time))\n");
        }
@@ -8174,7 +8203,7 @@ diff -u -8 -r1.2029 configure
  
  EOF
 -if { (eval echo configure:18810: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
-+if { (eval echo configure:18727: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
++if { (eval echo configure:18741: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
  then
    :
  else
@@ -8183,7 +8212,7 @@ diff -u -8 -r1.2029 configure
    rm -fr conftest*
    no_libIDL=yes
  fi
-@@ -18835,28 +18752,28 @@
+@@ -18835,28 +18766,28 @@
       else
         if test -f conf.libIDLtest ; then
          :
@@ -8193,7 +8222,7 @@ diff -u -8 -r1.2029 configure
            LIBS="$LIBS $LIBIDL_LIBS"
            cat > conftest.$ac_ext <<EOF
 -#line 18844 "configure"
-+#line 18761 "configure"
++#line 18775 "configure"
  #include "confdefs.h"
  
  #include <stdio.h>
@@ -8205,7 +8234,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:18855: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-+if { (eval echo configure:18772: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:18786: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
    rm -rf conftest*
     echo "*** The test program compiled, but did not run. This usually means"
            echo "*** that the run-time linker is not finding libIDL or finding the wrong"
@@ -8214,7 +8243,7 @@ diff -u -8 -r1.2029 configure
            echo "*** to the installed location  Also, make sure you have run ldconfig if that"
            echo "*** is required on your system"
  	  echo "***"
-@@ -18886,17 +18803,17 @@
+@@ -18886,17 +18817,17 @@
  
          if test -z "$_LIBIDL_FOUND"; then
              succeeded=no
@@ -8224,7 +8253,7 @@ diff -u -8 -r1.2029 configure
  set dummy pkg-config; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:18895: checking for $ac_word" >&5
-+echo "configure:18812: checking for $ac_word" >&5
++echo "configure:18826: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_PKG_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8233,7 +8262,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -18930,29 +18847,29 @@
+@@ -18930,29 +18861,29 @@
       echo "*** The pkg-config script could not be found. Make sure it is"
       echo "*** in your path, or set the PKG_CONFIG environment variable"
       echo "*** to the full path to pkg-config."
@@ -8243,7 +8272,7 @@ diff -u -8 -r1.2029 configure
       if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
          echo $ac_n "checking for libIDL-2.0 >= 0.8.0""... $ac_c" 1>&6
 -echo "configure:18939: checking for libIDL-2.0 >= 0.8.0" >&5
-+echo "configure:18856: checking for libIDL-2.0 >= 0.8.0" >&5
++echo "configure:18870: checking for libIDL-2.0 >= 0.8.0" >&5
  
          if $PKG_CONFIG --exists "libIDL-2.0 >= 0.8.0" ; then
              echo "$ac_t""yes" 1>&6
@@ -8251,13 +8280,13 @@ diff -u -8 -r1.2029 configure
  
              echo $ac_n "checking LIBIDL_CFLAGS""... $ac_c" 1>&6
 -echo "configure:18946: checking LIBIDL_CFLAGS" >&5
-+echo "configure:18863: checking LIBIDL_CFLAGS" >&5
++echo "configure:18877: checking LIBIDL_CFLAGS" >&5
              LIBIDL_CFLAGS=`$PKG_CONFIG --cflags "libIDL-2.0 >= 0.8.0"`
              echo "$ac_t""$LIBIDL_CFLAGS" 1>&6
  
              echo $ac_n "checking LIBIDL_LIBS""... $ac_c" 1>&6
 -echo "configure:18951: checking LIBIDL_LIBS" >&5
-+echo "configure:18868: checking LIBIDL_LIBS" >&5
++echo "configure:18882: checking LIBIDL_LIBS" >&5
              ## Remove evil flags like -Wl,--export-dynamic
              LIBIDL_LIBS="`$PKG_CONFIG --libs \"libIDL-2.0 >= 0.8.0\" |sed s/-Wl,--export-dynamic//g`"
              echo "$ac_t""$LIBIDL_LIBS" 1>&6
@@ -8266,7 +8295,7 @@ diff -u -8 -r1.2029 configure
              LIBIDL_LIBS=""
              ## If we have a custom action on failure, don't print errors, but 
              ## do set a variable so people can do so.
-@@ -18979,17 +18896,17 @@
+@@ -18979,17 +18910,17 @@
          fi
      fi
                      if test -z "$_LIBIDL_FOUND" && test -z "$CROSS_COMPILE"; then
@@ -8276,7 +8305,7 @@ diff -u -8 -r1.2029 configure
  set dummy $ac_prog; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:18988: checking for $ac_word" >&5
-+echo "configure:18905: checking for $ac_word" >&5
++echo "configure:18919: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_ORBIT_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8285,7 +8314,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_ORBIT_CONFIG="$ORBIT_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -19016,49 +18933,49 @@
+@@ -19016,49 +18947,49 @@
    echo "$ac_t""no" 1>&6
  fi
  
@@ -8295,7 +8324,7 @@ diff -u -8 -r1.2029 configure
          if test -n "$ORBIT_CONFIG"; then
              echo $ac_n "checking for ORBit libIDL usability""... $ac_c" 1>&6
 -echo "configure:19025: checking for ORBit libIDL usability" >&5
-+echo "configure:18942: checking for ORBit libIDL usability" >&5
++echo "configure:18956: checking for ORBit libIDL usability" >&5
          	_ORBIT_CFLAGS=`${ORBIT_CONFIG} client --cflags`
      	    _ORBIT_LIBS=`${ORBIT_CONFIG} client --libs`
              _ORBIT_INC_PATH=`${PERL} -e '{ for $f (@ARGV) { print "$f " if ($f =~ m/^-I/); } }' -- ${_ORBIT_CFLAGS}`
@@ -8313,7 +8342,7 @@ diff -u -8 -r1.2029 configure
  else
    cat > conftest.$ac_ext <<EOF
 -#line 19042 "configure"
-+#line 18959 "configure"
++#line 18973 "configure"
  #include "confdefs.h"
  
  #include <stdlib.h>
@@ -8329,7 +8358,7 @@ diff -u -8 -r1.2029 configure
              
  EOF
 -if { (eval echo configure:19057: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
-+if { (eval echo configure:18974: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
++if { (eval echo configure:18988: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
  then
    _LIBIDL_FOUND=1
                  result="yes"
@@ -8338,7 +8367,7 @@ diff -u -8 -r1.2029 configure
    cat conftest.$ac_ext >&5
    rm -fr conftest*
    LIBIDL_CFLAGS=
-@@ -19104,17 +19021,17 @@
+@@ -19104,17 +19035,17 @@
  if test -z "${GLIB_CFLAGS}" || test -z "${GLIB_LIBS}" ; then
      if test "$MOZ_ENABLE_GTK2"; then
          succeeded=no
@@ -8348,7 +8377,7 @@ diff -u -8 -r1.2029 configure
  set dummy pkg-config; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:19113: checking for $ac_word" >&5
-+echo "configure:19030: checking for $ac_word" >&5
++echo "configure:19044: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_PKG_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8357,7 +8386,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -19148,29 +19065,29 @@
+@@ -19148,29 +19079,29 @@
       echo "*** The pkg-config script could not be found. Make sure it is"
       echo "*** in your path, or set the PKG_CONFIG environment variable"
       echo "*** to the full path to pkg-config."
@@ -8367,7 +8396,7 @@ diff -u -8 -r1.2029 configure
       if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
          echo $ac_n "checking for glib-2.0 >= 1.3.7 gobject-2.0""... $ac_c" 1>&6
 -echo "configure:19157: checking for glib-2.0 >= 1.3.7 gobject-2.0" >&5
-+echo "configure:19074: checking for glib-2.0 >= 1.3.7 gobject-2.0" >&5
++echo "configure:19088: checking for glib-2.0 >= 1.3.7 gobject-2.0" >&5
  
          if $PKG_CONFIG --exists "glib-2.0 >= 1.3.7 gobject-2.0" ; then
              echo "$ac_t""yes" 1>&6
@@ -8375,13 +8404,13 @@ diff -u -8 -r1.2029 configure
  
              echo $ac_n "checking GLIB_CFLAGS""... $ac_c" 1>&6
 -echo "configure:19164: checking GLIB_CFLAGS" >&5
-+echo "configure:19081: checking GLIB_CFLAGS" >&5
++echo "configure:19095: checking GLIB_CFLAGS" >&5
              GLIB_CFLAGS=`$PKG_CONFIG --cflags "glib-2.0 >= 1.3.7 gobject-2.0"`
              echo "$ac_t""$GLIB_CFLAGS" 1>&6
  
              echo $ac_n "checking GLIB_LIBS""... $ac_c" 1>&6
 -echo "configure:19169: checking GLIB_LIBS" >&5
-+echo "configure:19086: checking GLIB_LIBS" >&5
++echo "configure:19100: checking GLIB_LIBS" >&5
              ## Remove evil flags like -Wl,--export-dynamic
              GLIB_LIBS="`$PKG_CONFIG --libs \"glib-2.0 >= 1.3.7 gobject-2.0\" |sed s/-Wl,--export-dynamic//g`"
              echo "$ac_t""$GLIB_LIBS" 1>&6
@@ -8390,7 +8419,7 @@ diff -u -8 -r1.2029 configure
              GLIB_LIBS=""
              ## If we have a custom action on failure, don't print errors, but 
              ## do set a variable so people can do so.
-@@ -19245,17 +19162,17 @@
+@@ -19245,17 +19176,17 @@
        esac
    done
  
@@ -8400,7 +8429,7 @@ diff -u -8 -r1.2029 configure
  set dummy glib-config; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:19254: checking for $ac_word" >&5
-+echo "configure:19171: checking for $ac_word" >&5
++echo "configure:19185: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_GLIB_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8409,7 +8438,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_GLIB_CONFIG="$GLIB_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -19280,17 +19197,17 @@
+@@ -19280,17 +19211,17 @@
  if test -n "$GLIB_CONFIG"; then
    echo "$ac_t""$GLIB_CONFIG" 1>&6
  else
@@ -8419,7 +8448,7 @@ diff -u -8 -r1.2029 configure
    min_glib_version=${GLIB_VERSION}
    echo $ac_n "checking for GLIB - version >= $min_glib_version""... $ac_c" 1>&6
 -echo "configure:19289: checking for GLIB - version >= $min_glib_version" >&5
-+echo "configure:19206: checking for GLIB - version >= $min_glib_version" >&5
++echo "configure:19220: checking for GLIB - version >= $min_glib_version" >&5
    no_glib=""
    if test "$GLIB_CONFIG" = "no" ; then
      no_glib=yes
@@ -8428,7 +8457,7 @@ diff -u -8 -r1.2029 configure
      GLIB_LIBS=`$GLIB_CONFIG $glib_config_args --libs`
      glib_config_major_version=`$GLIB_CONFIG $glib_config_args --version | \
             sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
-@@ -19303,17 +19220,17 @@
+@@ -19303,17 +19234,17 @@
        ac_save_LIBS="$LIBS"
        CFLAGS="$CFLAGS $GLIB_CFLAGS"
        LIBS="$GLIB_LIBS $LIBS"
@@ -8438,7 +8467,7 @@ diff -u -8 -r1.2029 configure
  else
    cat > conftest.$ac_ext <<EOF
 -#line 19312 "configure"
-+#line 19229 "configure"
++#line 19243 "configure"
  #include "confdefs.h"
  
  #include <glib.h>
@@ -8447,7 +8476,7 @@ diff -u -8 -r1.2029 configure
  
  int 
  main ()
-@@ -19379,17 +19296,17 @@
+@@ -19379,17 +19310,17 @@
          printf("*** modify your LD_LIBRARY_PATH environment variable, or edit /etc/ld.so.conf\n");
          printf("*** so that the correct libraries are found at run-time))\n");
        }
@@ -8457,7 +8486,7 @@ diff -u -8 -r1.2029 configure
  
  EOF
 -if { (eval echo configure:19388: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
-+if { (eval echo configure:19305: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
++if { (eval echo configure:19319: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
  then
    :
  else
@@ -8466,7 +8495,7 @@ diff -u -8 -r1.2029 configure
    rm -fr conftest*
    no_glib=yes
  fi
-@@ -19413,27 +19330,27 @@
+@@ -19413,27 +19344,27 @@
       else
         if test -f conf.glibtest ; then
          :
@@ -8476,7 +8505,7 @@ diff -u -8 -r1.2029 configure
            LIBS="$LIBS $GLIB_LIBS"
            cat > conftest.$ac_ext <<EOF
 -#line 19422 "configure"
-+#line 19339 "configure"
++#line 19353 "configure"
  #include "confdefs.h"
  
  #include <glib.h>
@@ -8487,7 +8516,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:19432: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-+if { (eval echo configure:19349: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:19363: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
    rm -rf conftest*
     echo "*** The test program compiled, but did not run. This usually means"
            echo "*** that the run-time linker is not finding GLIB or finding the wrong"
@@ -8496,7 +8525,7 @@ diff -u -8 -r1.2029 configure
            echo "*** to the installed location  Also, make sure you have run ldconfig if that"
            echo "*** is required on your system"
  	  echo "***"
-@@ -19503,29 +19420,29 @@
+@@ -19503,29 +19434,29 @@
        ;;
    *)
        MOZ_LIBART_LIBS='-lmoz_art_lgpl -lm'
@@ -8506,13 +8535,13 @@ diff -u -8 -r1.2029 configure
  # for constant arguments.  Useless!
  echo $ac_n "checking for working alloca.h""... $ac_c" 1>&6
 -echo "configure:19512: checking for working alloca.h" >&5
-+echo "configure:19429: checking for working alloca.h" >&5
++echo "configure:19443: checking for working alloca.h" >&5
  if eval "test \"`echo '$''{'ac_cv_header_alloca_h'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 19517 "configure"
-+#line 19434 "configure"
++#line 19448 "configure"
  #include "confdefs.h"
  #include <alloca.h>
  int main() {
@@ -8520,7 +8549,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:19524: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-+if { (eval echo configure:19441: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:19455: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
    rm -rf conftest*
    ac_cv_header_alloca_h=yes
  else
@@ -8529,7 +8558,7 @@ diff -u -8 -r1.2029 configure
    rm -rf conftest*
    ac_cv_header_alloca_h=no
  fi
-@@ -19536,22 +19453,22 @@
+@@ -19536,22 +19467,22 @@
  if test $ac_cv_header_alloca_h = yes; then
    cat >> confdefs.h <<\EOF
  #define HAVE_ALLOCA_H 1
@@ -8539,13 +8568,13 @@ diff -u -8 -r1.2029 configure
  
  echo $ac_n "checking for alloca""... $ac_c" 1>&6
 -echo "configure:19545: checking for alloca" >&5
-+echo "configure:19462: checking for alloca" >&5
++echo "configure:19476: checking for alloca" >&5
  if eval "test \"`echo '$''{'ac_cv_func_alloca_works'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 19550 "configure"
-+#line 19467 "configure"
++#line 19481 "configure"
  #include "confdefs.h"
  
  #ifdef __GNUC__
@@ -8554,7 +8583,7 @@ diff -u -8 -r1.2029 configure
  # ifdef _MSC_VER
  #  include <malloc.h>
  #  define alloca _alloca
-@@ -19569,17 +19486,17 @@
+@@ -19569,17 +19500,17 @@
  #  endif
  # endif
  #endif
@@ -8564,7 +8593,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:19578: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-+if { (eval echo configure:19495: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:19509: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
    rm -rf conftest*
    ac_cv_func_alloca_works=yes
  else
@@ -8573,7 +8602,7 @@ diff -u -8 -r1.2029 configure
    rm -rf conftest*
    ac_cv_func_alloca_works=no
  fi
-@@ -19601,22 +19518,22 @@
+@@ -19601,22 +19532,22 @@
    # use ar to extract alloca.o from them instead of compiling alloca.c.
    ALLOCA=alloca.${ac_objext}
    cat >> confdefs.h <<\EOF
@@ -8583,13 +8612,13 @@ diff -u -8 -r1.2029 configure
  
  echo $ac_n "checking whether alloca needs Cray hooks""... $ac_c" 1>&6
 -echo "configure:19610: checking whether alloca needs Cray hooks" >&5
-+echo "configure:19527: checking whether alloca needs Cray hooks" >&5
++echo "configure:19541: checking whether alloca needs Cray hooks" >&5
  if eval "test \"`echo '$''{'ac_cv_os_cray'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 19615 "configure"
-+#line 19532 "configure"
++#line 19546 "configure"
  #include "confdefs.h"
  #if defined(CRAY) && ! defined(CRAY2)
  webecray
@@ -8598,7 +8627,7 @@ diff -u -8 -r1.2029 configure
  #endif
  
  EOF
-@@ -19631,22 +19548,22 @@
+@@ -19631,22 +19562,22 @@
  rm -f conftest*
  
  fi
@@ -8608,13 +8637,13 @@ diff -u -8 -r1.2029 configure
  for ac_func in _getb67 GETB67 getb67; do
    echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
 -echo "configure:19640: checking for $ac_func" >&5
-+echo "configure:19557: checking for $ac_func" >&5
++echo "configure:19571: checking for $ac_func" >&5
  if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 19645 "configure"
-+#line 19562 "configure"
++#line 19576 "configure"
  #include "confdefs.h"
  /* System header to define __stub macros and hopefully few prototypes,
      which can conflict with char $ac_func(); below.  */
@@ -8623,7 +8652,7 @@ diff -u -8 -r1.2029 configure
  /* We use char because int might match the return type of a gcc2
      builtin and then its argument prototype would still apply.  */
  char $ac_func();
-@@ -19659,17 +19576,17 @@
+@@ -19659,17 +19590,17 @@
  #if defined (__stub_$ac_func) || defined (__stub___$ac_func)
  choke me
  #else
@@ -8633,7 +8662,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:19668: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
-+if { (eval echo configure:19585: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
++if { (eval echo configure:19599: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
    rm -rf conftest*
    eval "ac_cv_func_$ac_func=yes"
  else
@@ -8642,7 +8671,7 @@ diff -u -8 -r1.2029 configure
    rm -rf conftest*
    eval "ac_cv_func_$ac_func=no"
  fi
-@@ -19686,25 +19603,25 @@
+@@ -19686,25 +19617,25 @@
  else
    echo "$ac_t""no" 1>&6
  fi
@@ -8652,7 +8681,7 @@ diff -u -8 -r1.2029 configure
  
  echo $ac_n "checking stack direction for C alloca""... $ac_c" 1>&6
 -echo "configure:19695: checking stack direction for C alloca" >&5
-+echo "configure:19612: checking stack direction for C alloca" >&5
++echo "configure:19626: checking stack direction for C alloca" >&5
  if eval "test \"`echo '$''{'ac_cv_c_stack_direction'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8661,7 +8690,7 @@ diff -u -8 -r1.2029 configure
  else
    cat > conftest.$ac_ext <<EOF
 -#line 19703 "configure"
-+#line 19620 "configure"
++#line 19634 "configure"
  #include "confdefs.h"
  find_stack_direction ()
  {
@@ -8670,7 +8699,7 @@ diff -u -8 -r1.2029 configure
    if (addr == 0)
      {
        addr = &dummy;
-@@ -19713,17 +19630,17 @@
+@@ -19713,17 +19644,17 @@
    else
      return (&dummy > addr) ? 1 : -1;
  }
@@ -8680,7 +8709,7 @@ diff -u -8 -r1.2029 configure
  }
  EOF
 -if { (eval echo configure:19722: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
-+if { (eval echo configure:19639: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
++if { (eval echo configure:19653: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
  then
    ac_cv_c_stack_direction=1
  else
@@ -8689,7 +8718,7 @@ diff -u -8 -r1.2029 configure
    rm -fr conftest*
    ac_cv_c_stack_direction=-1
  fi
-@@ -19760,27 +19677,27 @@
+@@ -19760,27 +19691,27 @@
  fi
  
  
@@ -8699,19 +8728,19 @@ diff -u -8 -r1.2029 configure
  ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
  echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
 -echo "configure:19769: checking for $ac_hdr" >&5
-+echo "configure:19686: checking for $ac_hdr" >&5
++echo "configure:19700: checking for $ac_hdr" >&5
  if eval "test \"`echo '$''{'ac_cv_header_$ac_safe'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
    cat > conftest.$ac_ext <<EOF
 -#line 19774 "configure"
-+#line 19691 "configure"
++#line 19705 "configure"
  #include "confdefs.h"
  #include <$ac_hdr>
  EOF
  ac_try="$ac_cpp conftest.$ac_ext >/dev/null 2>conftest.out"
 -{ (eval echo configure:19779: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
-+{ (eval echo configure:19696: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
++{ (eval echo configure:19710: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }
  ac_err=`grep -v '^ *+' conftest.out | grep -v "^conftest.${ac_ext}\$"`
  if test -z "$ac_err"; then
    rm -rf conftest*
@@ -8720,7 +8749,7 @@ diff -u -8 -r1.2029 configure
    echo "$ac_err" >&5
    echo "configure: failed program was:" >&5
    cat conftest.$ac_ext >&5
-@@ -19848,17 +19765,17 @@
+@@ -19848,17 +19779,17 @@
      fi
      if test "$MOZ_WIDGET_TOOLKIT" = "beos"; then
          succeeded=no
@@ -8730,7 +8759,7 @@ diff -u -8 -r1.2029 configure
  set dummy pkg-config; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:19857: checking for $ac_word" >&5
-+echo "configure:19774: checking for $ac_word" >&5
++echo "configure:19788: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_PKG_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8739,7 +8768,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -19892,29 +19809,29 @@
+@@ -19892,29 +19823,29 @@
       echo "*** The pkg-config script could not be found. Make sure it is"
       echo "*** in your path, or set the PKG_CONFIG environment variable"
       echo "*** to the full path to pkg-config."
@@ -8749,7 +8778,7 @@ diff -u -8 -r1.2029 configure
       if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
          echo $ac_n "checking for fontconfig freetype2""... $ac_c" 1>&6
 -echo "configure:19901: checking for fontconfig freetype2" >&5
-+echo "configure:19818: checking for fontconfig freetype2" >&5
++echo "configure:19832: checking for fontconfig freetype2" >&5
  
          if $PKG_CONFIG --exists "fontconfig freetype2" ; then
              echo "$ac_t""yes" 1>&6
@@ -8757,13 +8786,13 @@ diff -u -8 -r1.2029 configure
  
              echo $ac_n "checking CAIRO_FT_CFLAGS""... $ac_c" 1>&6
 -echo "configure:19908: checking CAIRO_FT_CFLAGS" >&5
-+echo "configure:19825: checking CAIRO_FT_CFLAGS" >&5
++echo "configure:19839: checking CAIRO_FT_CFLAGS" >&5
              CAIRO_FT_CFLAGS=`$PKG_CONFIG --cflags "fontconfig freetype2"`
              echo "$ac_t""$CAIRO_FT_CFLAGS" 1>&6
  
              echo $ac_n "checking CAIRO_FT_LIBS""... $ac_c" 1>&6
 -echo "configure:19913: checking CAIRO_FT_LIBS" >&5
-+echo "configure:19830: checking CAIRO_FT_LIBS" >&5
++echo "configure:19844: checking CAIRO_FT_LIBS" >&5
              ## Remove evil flags like -Wl,--export-dynamic
              CAIRO_FT_LIBS="`$PKG_CONFIG --libs \"fontconfig freetype2\" |sed s/-Wl,--export-dynamic//g`"
              echo "$ac_t""$CAIRO_FT_LIBS" 1>&6
@@ -8772,7 +8801,7 @@ diff -u -8 -r1.2029 configure
              CAIRO_FT_LIBS=""
              ## If we have a custom action on failure, don't print errors, but 
              ## do set a variable so people can do so.
-@@ -19995,17 +19912,17 @@
+@@ -19995,17 +19926,17 @@
      fi
  else
     succeeded=no
@@ -8782,7 +8811,7 @@ diff -u -8 -r1.2029 configure
  set dummy pkg-config; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:20004: checking for $ac_word" >&5
-+echo "configure:19921: checking for $ac_word" >&5
++echo "configure:19935: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_PKG_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8791,7 +8820,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -20039,29 +19956,29 @@
+@@ -20039,29 +19970,29 @@
       echo "*** The pkg-config script could not be found. Make sure it is"
       echo "*** in your path, or set the PKG_CONFIG environment variable"
       echo "*** to the full path to pkg-config."
@@ -8801,7 +8830,7 @@ diff -u -8 -r1.2029 configure
       if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
          echo $ac_n "checking for cairo >= $CAIRO_VERSION freetype2 fontconfig""... $ac_c" 1>&6
 -echo "configure:20048: checking for cairo >= $CAIRO_VERSION freetype2 fontconfig" >&5
-+echo "configure:19965: checking for cairo >= $CAIRO_VERSION freetype2 fontconfig" >&5
++echo "configure:19979: checking for cairo >= $CAIRO_VERSION freetype2 fontconfig" >&5
  
          if $PKG_CONFIG --exists "cairo >= $CAIRO_VERSION freetype2 fontconfig" ; then
              echo "$ac_t""yes" 1>&6
@@ -8809,13 +8838,13 @@ diff -u -8 -r1.2029 configure
  
              echo $ac_n "checking CAIRO_CFLAGS""... $ac_c" 1>&6
 -echo "configure:20055: checking CAIRO_CFLAGS" >&5
-+echo "configure:19972: checking CAIRO_CFLAGS" >&5
++echo "configure:19986: checking CAIRO_CFLAGS" >&5
              CAIRO_CFLAGS=`$PKG_CONFIG --cflags "cairo >= $CAIRO_VERSION freetype2 fontconfig"`
              echo "$ac_t""$CAIRO_CFLAGS" 1>&6
  
              echo $ac_n "checking CAIRO_LIBS""... $ac_c" 1>&6
 -echo "configure:20060: checking CAIRO_LIBS" >&5
-+echo "configure:19977: checking CAIRO_LIBS" >&5
++echo "configure:19991: checking CAIRO_LIBS" >&5
              ## Remove evil flags like -Wl,--export-dynamic
              CAIRO_LIBS="`$PKG_CONFIG --libs \"cairo >= $CAIRO_VERSION freetype2 fontconfig\" |sed s/-Wl,--export-dynamic//g`"
              echo "$ac_t""$CAIRO_LIBS" 1>&6
@@ -8824,7 +8853,7 @@ diff -u -8 -r1.2029 configure
              CAIRO_LIBS=""
              ## If we have a custom action on failure, don't print errors, but 
              ## do set a variable so people can do so.
-@@ -20089,17 +20006,17 @@
+@@ -20089,17 +20020,17 @@
     MOZ_CAIRO_LIBS=$CAIRO_LIBS
     if test "$MOZ_X11"; then
          succeeded=no
@@ -8834,7 +8863,7 @@ diff -u -8 -r1.2029 configure
  set dummy pkg-config; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:20098: checking for $ac_word" >&5
-+echo "configure:20015: checking for $ac_word" >&5
++echo "configure:20029: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_PKG_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8843,7 +8872,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -20133,29 +20050,29 @@
+@@ -20133,29 +20064,29 @@
       echo "*** The pkg-config script could not be found. Make sure it is"
       echo "*** in your path, or set the PKG_CONFIG environment variable"
       echo "*** to the full path to pkg-config."
@@ -8853,7 +8882,7 @@ diff -u -8 -r1.2029 configure
       if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
          echo $ac_n "checking for cairo-xlib-xrender >= $CAIRO_VERSION""... $ac_c" 1>&6
 -echo "configure:20142: checking for cairo-xlib-xrender >= $CAIRO_VERSION" >&5
-+echo "configure:20059: checking for cairo-xlib-xrender >= $CAIRO_VERSION" >&5
++echo "configure:20073: checking for cairo-xlib-xrender >= $CAIRO_VERSION" >&5
  
          if $PKG_CONFIG --exists "cairo-xlib-xrender >= $CAIRO_VERSION" ; then
              echo "$ac_t""yes" 1>&6
@@ -8861,13 +8890,13 @@ diff -u -8 -r1.2029 configure
  
              echo $ac_n "checking CAIRO_XRENDER_CFLAGS""... $ac_c" 1>&6
 -echo "configure:20149: checking CAIRO_XRENDER_CFLAGS" >&5
-+echo "configure:20066: checking CAIRO_XRENDER_CFLAGS" >&5
++echo "configure:20080: checking CAIRO_XRENDER_CFLAGS" >&5
              CAIRO_XRENDER_CFLAGS=`$PKG_CONFIG --cflags "cairo-xlib-xrender >= $CAIRO_VERSION"`
              echo "$ac_t""$CAIRO_XRENDER_CFLAGS" 1>&6
  
              echo $ac_n "checking CAIRO_XRENDER_LIBS""... $ac_c" 1>&6
 -echo "configure:20154: checking CAIRO_XRENDER_LIBS" >&5
-+echo "configure:20071: checking CAIRO_XRENDER_LIBS" >&5
++echo "configure:20085: checking CAIRO_XRENDER_LIBS" >&5
              ## Remove evil flags like -Wl,--export-dynamic
              CAIRO_XRENDER_LIBS="`$PKG_CONFIG --libs \"cairo-xlib-xrender >= $CAIRO_VERSION\" |sed s/-Wl,--export-dynamic//g`"
              echo "$ac_t""$CAIRO_XRENDER_LIBS" 1>&6
@@ -8876,7 +8905,7 @@ diff -u -8 -r1.2029 configure
              CAIRO_XRENDER_LIBS=""
              ## If we have a custom action on failure, don't print errors, but 
              ## do set a variable so people can do so.
-@@ -20216,17 +20133,17 @@
+@@ -20216,17 +20147,17 @@
      fi
  else
      succeeded=no
@@ -8886,7 +8915,7 @@ diff -u -8 -r1.2029 configure
  set dummy pkg-config; ac_word=$2
  echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
 -echo "configure:20225: checking for $ac_word" >&5
-+echo "configure:20142: checking for $ac_word" >&5
++echo "configure:20156: checking for $ac_word" >&5
  if eval "test \"`echo '$''{'ac_cv_path_PKG_CONFIG'+set}'`\" = set"; then
    echo $ac_n "(cached) $ac_c" 1>&6
  else
@@ -8895,7 +8924,7 @@ diff -u -8 -r1.2029 configure
    ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
    ;;
    ?:/*)			 
-@@ -20260,29 +20177,29 @@
+@@ -20260,29 +20191,29 @@
       echo "*** The pkg-config script could not be found. Make sure it is"
       echo "*** in your path, or set the PKG_CONFIG environment variable"
       echo "*** to the full path to pkg-config."
@@ -8905,7 +8934,7 @@ diff -u -8 -r1.2029 configure
       if $PKG_CONFIG --atleast-pkgconfig-version $PKG_CONFIG_MIN_VERSION; then
          echo $ac_n "checking for lcms >= $LCMS_VERSION""... $ac_c" 1>&6
 -echo "configure:20269: checking for lcms >= $LCMS_VERSION" >&5
-+echo "configure:20186: checking for lcms >= $LCMS_VERSION" >&5
++echo "configure:20200: checking for lcms >= $LCMS_VERSION" >&5
  
          if $PKG_CONFIG --exists "lcms >= $LCMS_VERSION" ; then
              echo "$ac_t""yes" 1>&6
@@ -8913,13 +8942,13 @@ diff -u -8 -r1.2029 configure
  
              echo $ac_n "checking LCMS_CFLAGS""... $ac_c" 1>&6
 -echo "configure:20276: checking LCMS_CFLAGS" >&5
-+echo "configure:20193: checking LCMS_CFLAGS" >&5
++echo "configure:20207: checking LCMS_CFLAGS" >&5
              LCMS_CFLAGS=`$PKG_CONFIG --cflags "lcms >= $LCMS_VERSION"`
              echo "$ac_t""$LCMS_CFLAGS" 1>&6
  
              echo $ac_n "checking LCMS_LIBS""... $ac_c" 1>&6
 -echo "configure:20281: checking LCMS_LIBS" >&5
-+echo "configure:20198: checking LCMS_LIBS" >&5
++echo "configure:20212: checking LCMS_LIBS" >&5
              ## Remove evil flags like -Wl,--export-dynamic
              LCMS_LIBS="`$PKG_CONFIG --libs \"lcms >= $LCMS_VERSION\" |sed s/-Wl,--export-dynamic//g`"
              echo "$ac_t""$LCMS_LIBS" 1>&6
@@ -8928,7 +8957,7 @@ diff -u -8 -r1.2029 configure
              LCMS_LIBS=""
              ## If we have a custom action on failure, don't print errors, but 
              ## do set a variable so people can do so.
-@@ -20620,24 +20537,24 @@
+@@ -20620,24 +20551,24 @@
      ac_ext=c
  # CFLAGS is not in ac_cpp because -g, -O, etc. are not valid cpp options.
  ac_cpp='$CPP $CPPFLAGS'
@@ -8938,7 +8967,7 @@ diff -u -8 -r1.2029 configure
  
      cat > conftest.$ac_ext <<EOF
 -#line 20629 "configure"
-+#line 20546 "configure"
++#line 20560 "configure"
  #include "confdefs.h"
  #include <gmodule.h>
  int main() {
@@ -8946,7 +8975,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:20636: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
-+if { (eval echo configure:20553: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
++if { (eval echo configure:20567: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
    :
  else
    echo "configure: failed program was:" >&5
@@ -8955,7 +8984,7 @@ diff -u -8 -r1.2029 configure
    { echo "configure: error: Cannot build ctl without gmodule support in glib." 1>&2; exit 1; }
  fi
  rm -f conftest*
-@@ -20941,17 +20858,17 @@
+@@ -20941,17 +20872,17 @@
     
  fi
  
@@ -8965,7 +8994,7 @@ diff -u -8 -r1.2029 configure
      CFLAGS="$CFLAGS $XCFLAGS"
      cat > conftest.$ac_ext <<EOF
 -#line 20950 "configure"
-+#line 20867 "configure"
++#line 20881 "configure"
  #include "confdefs.h"
  
          #include <stdio.h>
@@ -8974,7 +9003,7 @@ diff -u -8 -r1.2029 configure
          #include <X11/Intrinsic.h>
      
  int main() {
-@@ -20959,17 +20876,17 @@
+@@ -20959,17 +20890,17 @@
          Display *dpy = 0;
          if ((dpy = XOpenDisplay(NULL)) == NULL) {
              fprintf(stderr, ": can't open %s\n", XDisplayName(NULL));
@@ -8984,7 +9013,7 @@ diff -u -8 -r1.2029 configure
  ; return 0; }
  EOF
 -if { (eval echo configure:20968: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
-+if { (eval echo configure:20885: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
++if { (eval echo configure:20899: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
    :
  else
    echo "configure: failed program was:" >&5
@@ -8993,7 +9022,7 @@ diff -u -8 -r1.2029 configure
     { echo "configure: error: Could not compile basic X program." 1>&2; exit 1; } 
  fi
  rm -f conftest*
-@@ -21182,44 +21099,25 @@
+@@ -21182,44 +21113,25 @@
    fi
  
  rm -f confdefs.h.save
@@ -9047,7 +9076,7 @@ diff -u -8 -r1.2029 configure
  
  . ${srcdir}/allmakefiles.sh
  if test -z "${AS_PERL}"; then
-@@ -21546,18 +21444,22 @@
+@@ -21546,18 +21458,17 @@
  s%@MOZ_OPTIMIZE@%$MOZ_OPTIMIZE%g
  s%@MOZ_OPTIMIZE_FLAGS@%$MOZ_OPTIMIZE_FLAGS%g
  s%@MOZ_OPTIMIZE_LDFLAGS@%$MOZ_OPTIMIZE_LDFLAGS%g
@@ -9057,12 +9086,8 @@ diff -u -8 -r1.2029 configure
  s%@WIN32_CRT_SRC_DIR@%$WIN32_CRT_SRC_DIR%g
  s%@WIN32_CUSTOM_CRT_DIR@%$WIN32_CUSTOM_CRT_DIR%g
 -s%@MOZ_LIB@%$MOZ_LIB%g
-+s%@STD_PATH@%$STD_PATH%g
-+s%@STD_LIB@%$STD_LIB%g
-+s%@STD_INCLUDE@%$STD_INCLUDE%g
- s%@MOZ_PATH@%$MOZ_PATH%g
-+s%@MOZ_LIB@%$MOZ_LIB%g
-+s%@MOZ_INCLUDE@%$MOZ_INCLUDE%g
+-s%@MOZ_PATH@%$MOZ_PATH%g
++s%@WIN32_CUSTOM_CRT_PATH@%$WIN32_CUSTOM_CRT_PATH%g
  s%@DLLFLAGS@%$DLLFLAGS%g
  s%@MOZ_REFLOW_PERF@%$MOZ_REFLOW_PERF%g
  s%@MOZ_DEMANGLE_SYMBOLS@%$MOZ_DEMANGLE_SYMBOLS%g

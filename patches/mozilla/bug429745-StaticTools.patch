@@ -4,8 +4,8 @@ RCS file: /cvsroot/mozilla/config/mkdepend/Makefile.in,v
 retrieving revision 1.16
 diff -u -8 -r1.16 Makefile.in
 --- config/mkdepend/Makefile.in	21 Feb 2007 20:06:33 -0000	1.16
-+++ config/mkdepend/Makefile.in	12 Jun 2008 09:52:56 -0000
-@@ -35,16 +35,19 @@
++++ config/mkdepend/Makefile.in	16 Jul 2008 18:03:45 -0000
+@@ -35,16 +35,18 @@
  #
  # ***** END LICENSE BLOCK *****
  
@@ -14,7 +14,6 @@ diff -u -8 -r1.16 Makefile.in
  srcdir		= @srcdir@
  VPATH		= @srcdir@
  
-+DISABLE_MOZ_MEMORY = 1
 +USE_STATIC_LIBS = 1
 +
  include $(DEPTH)/config/autoconf.mk
@@ -31,8 +30,8 @@ RCS file: /cvsroot/mozilla/modules/libmar/tool/Makefile.in,v
 retrieving revision 1.7
 diff -u -8 -r1.7 Makefile.in
 --- modules/libmar/tool/Makefile.in	16 Apr 2006 16:29:28 -0000	1.7
-+++ modules/libmar/tool/Makefile.in	12 Jun 2008 09:52:56 -0000
-@@ -36,16 +36,19 @@
++++ modules/libmar/tool/Makefile.in	16 Jul 2008 18:03:45 -0000
+@@ -36,16 +36,18 @@
  #
  # ***** END LICENSE BLOCK *****
  
@@ -41,7 +40,6 @@ diff -u -8 -r1.7 Makefile.in
  srcdir		= @srcdir@
  VPATH		= @srcdir@
  
-+DISABLE_MOZ_MEMORY = 1
 +USE_STATIC_LIBS = 1
 +
  include $(DEPTH)/config/autoconf.mk
@@ -52,40 +50,120 @@ diff -u -8 -r1.7 Makefile.in
  endif
  
  # The mar executable is output into dist/host/bin since it is something that
+Index: toolkit/crashreporter/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/crashreporter/Makefile.in,v
+retrieving revision 1.18
+diff -u -8 -r1.18 Makefile.in
+--- toolkit/crashreporter/Makefile.in	20 Mar 2008 01:13:36 -0000	1.18
++++ toolkit/crashreporter/Makefile.in	16 Jul 2008 18:03:45 -0000
+@@ -104,14 +104,15 @@
+ 	nsExceptionHandler.h \
+ 	$(NULL)
+ 
+ CPPSRCS = \
+ 	nsExceptionHandler.cpp \
+ 	$(NULL)
+ 
+ FORCE_STATIC_LIB = 1
++USE_STATIC_LIBS = 1
+ 
+ ifdef ENABLE_TESTS
+ DIRS += test
+ endif
+ 
+ include $(topsrcdir)/config/rules.mk
 Index: toolkit/crashreporter/client/Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/toolkit/crashreporter/client/Makefile.in,v
 retrieving revision 1.19
 diff -u -8 -r1.19 Makefile.in
 --- toolkit/crashreporter/client/Makefile.in	5 May 2008 21:08:15 -0000	1.19
-+++ toolkit/crashreporter/client/Makefile.in	12 Jun 2008 09:52:56 -0000
-@@ -37,16 +37,18 @@
- # ***** END LICENSE BLOCK *****
++++ toolkit/crashreporter/client/Makefile.in	16 Jul 2008 18:03:45 -0000
+@@ -59,16 +59,18 @@
+   $(DEPTH)/toolkit/crashreporter/google-breakpad/src/client/windows/sender/$(LIB_PREFIX)crash_report_sender_s.$(LIB_SUFFIX) \
+   $(DEPTH)/toolkit/crashreporter/google-breakpad/src/common/windows/$(LIB_PREFIX)breakpad_windows_common_s.$(LIB_SUFFIX) \
+   $(NULL)
+ LOCAL_INCLUDES += -I$(srcdir)
+ RCINCLUDE = crashreporter.rc
+ DEFINES += -DUNICODE -D_UNICODE
+ OS_LIBS += $(call EXPAND_LIBNAME,comctl32 shell32 wininet shlwapi)
+ MOZ_WINCONSOLE = 0
++USE_STATIC_LIBS = 1
++FORCE_STATIC_LIB = 1
+ endif
  
+ ifeq ($(OS_ARCH),Darwin)
+ CMMSRCS += crashreporter_osx.mm
+ OS_LIBS += -framework Cocoa
+ LIBS += \
+   $(DEPTH)/toolkit/crashreporter/google-breakpad/src/client/mac/handler/$(LIB_PREFIX)exception_handler_s.$(LIB_SUFFIX) \
+   $(DEPTH)/toolkit/crashreporter/google-breakpad/src/common/mac/$(LIB_PREFIX)breakpad_mac_common_s.$(LIB_SUFFIX) \
+Index: toolkit/crashreporter/google-breakpad/src/client/windows/handler/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/crashreporter/google-breakpad/src/client/windows/handler/Makefile.in,v
+retrieving revision 1.2
+diff -u -8 -r1.2 Makefile.in
+--- toolkit/crashreporter/google-breakpad/src/client/windows/handler/Makefile.in	25 Jul 2007 01:06:11 -0000	1.2
++++ toolkit/crashreporter/google-breakpad/src/client/windows/handler/Makefile.in	16 Jul 2008 18:03:45 -0000
+@@ -49,10 +49,11 @@
+ DEFINES += -DUNICODE -D_UNICODE
  
- DEPTH		= ../../..
- topsrcdir	= @top_srcdir@
- srcdir		= @srcdir@
- VPATH		= @srcdir@
- 
-+DISABLE_MOZ_MEMORY = 1
-+
- include $(DEPTH)/config/autoconf.mk
- 
- PROGRAM = crashreporter$(BIN_SUFFIX)
- DIST_PROGRAM = crashreporter$(BIN_SUFFIX)
- REQUIRES	= \
+ CPPSRCS		= \
+ 		exception_handler.cc \
  		$(NULL)
  
- LOCAL_INCLUDES = -I$(srcdir)/../google-breakpad/src
+ # need static lib
+ FORCE_STATIC_LIB = 1
++USE_STATIC_LIBS = 1
+ 
+ include $(topsrcdir)/config/rules.mk
+Index: toolkit/crashreporter/google-breakpad/src/client/windows/sender/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/crashreporter/google-breakpad/src/client/windows/sender/Makefile.in,v
+retrieving revision 1.2
+diff -u -8 -r1.2 Makefile.in
+--- toolkit/crashreporter/google-breakpad/src/client/windows/sender/Makefile.in	25 Jul 2007 01:06:11 -0000	1.2
++++ toolkit/crashreporter/google-breakpad/src/client/windows/sender/Makefile.in	16 Jul 2008 18:03:45 -0000
+@@ -48,10 +48,11 @@
+ DEFINES += -DUNICODE -D_UNICODE
+ 
+ CPPSRCS		= \
+ 		crash_report_sender.cc \
+ 		$(NULL)
+ 
+ # need static lib
+ FORCE_STATIC_LIB = 1
++USE_STATIC_LIBS = 1
+ 
+ include $(topsrcdir)/config/rules.mk
+Index: toolkit/crashreporter/google-breakpad/src/common/windows/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/crashreporter/google-breakpad/src/common/windows/Makefile.in,v
+retrieving revision 1.4
+diff -u -8 -r1.4 Makefile.in
+--- toolkit/crashreporter/google-breakpad/src/common/windows/Makefile.in	20 Feb 2008 09:46:57 -0000	1.4
++++ toolkit/crashreporter/google-breakpad/src/common/windows/Makefile.in	16 Jul 2008 18:03:45 -0000
+@@ -50,10 +50,11 @@
+ CPPSRCS		= \
+ 		guid_string.cc \
+ 		http_upload.cc \
+ 		string_utils.cc \
+ 		$(NULL)
+ 
+ # need static lib
+ FORCE_STATIC_LIB = 1
++USE_STATIC_LIBS = 1
+ 
+ include $(topsrcdir)/config/rules.mk
 Index: xpcom/typelib/xpidl/Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/typelib/xpidl/Makefile.in,v
-retrieving revision 1.44
-diff -u -8 -r1.44 Makefile.in
---- xpcom/typelib/xpidl/Makefile.in	23 Feb 2008 00:22:48 -0000	1.44
-+++ xpcom/typelib/xpidl/Makefile.in	12 Jun 2008 09:52:56 -0000
-@@ -35,16 +35,19 @@
+retrieving revision 1.45
+diff -u -8 -r1.45 Makefile.in
+--- xpcom/typelib/xpidl/Makefile.in	28 May 2008 18:42:32 -0000	1.45
++++ xpcom/typelib/xpidl/Makefile.in	16 Jul 2008 18:03:45 -0000
+@@ -35,16 +35,18 @@
  #
  # ***** END LICENSE BLOCK *****
  
@@ -94,7 +172,6 @@ diff -u -8 -r1.44 Makefile.in
  srcdir		= @srcdir@
  VPATH		= @srcdir@
  
-+DISABLE_MOZ_MEMORY = 1
 +USE_STATIC_LIBS = 1
 +
  include $(DEPTH)/config/autoconf.mk
@@ -105,29 +182,66 @@ diff -u -8 -r1.44 Makefile.in
  # Sadly, the code here is too smart for the WinCE compiler's brain
  PROGRAM		= xpidl$(BIN_SUFFIX)
  SDK_BINARY  = $(PROGRAM)
+Index: xpcom/typelib/xpt/src/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/xpcom/typelib/xpt/src/Makefile.in,v
+retrieving revision 1.34
+diff -u -8 -r1.34 Makefile.in
+--- xpcom/typelib/xpt/src/Makefile.in	17 Mar 2008 17:39:00 -0000	1.34
++++ xpcom/typelib/xpt/src/Makefile.in	16 Jul 2008 18:03:46 -0000
+@@ -51,16 +51,17 @@
+ HOST_LIBRARY_NAME	= hostxpt
+ endif
+ 
+ CSRCS		= xpt_arena.c xpt_struct.c xpt_xdr.c
+ HOST_CSRCS	= $(CSRCS)
+ 
+ # we don't want the shared lib, but we want to force the creation of a static lib.
+ FORCE_STATIC_LIB = 1
++USE_STATIC_LIBS = 1
+ 
+ # Force use of PIC
+ FORCE_USE_PIC	= 1
+ 
+ # Don't use profile-guided optimization
+ NO_PROFILE_GUIDED_OPTIMIZE = 1
+ 
+ include $(topsrcdir)/config/rules.mk
 Index: xpcom/typelib/xpt/tools/Makefile.in
 ===================================================================
 RCS file: /cvsroot/mozilla/xpcom/typelib/xpt/tools/Makefile.in,v
-retrieving revision 1.32
-diff -u -8 -r1.32 Makefile.in
---- xpcom/typelib/xpt/tools/Makefile.in	17 Mar 2008 17:39:01 -0000	1.32
-+++ xpcom/typelib/xpt/tools/Makefile.in	12 Jun 2008 09:52:56 -0000
-@@ -35,16 +35,18 @@
- #
- # ***** END LICENSE BLOCK *****
+retrieving revision 1.33
+diff -u -8 -r1.33 Makefile.in
+--- xpcom/typelib/xpt/tools/Makefile.in	28 May 2008 18:42:32 -0000	1.33
++++ xpcom/typelib/xpt/tools/Makefile.in	16 Jul 2008 18:03:46 -0000
+@@ -55,23 +55,30 @@
  
- DEPTH		= ../../../..
- topsrcdir	= @top_srcdir@
- srcdir		= @srcdir@
- VPATH		= @srcdir@
+ ifdef CROSS_COMPILE
+ HOST_SIMPLE_PROGRAMS	= $(addprefix host_, $(SIMPLE_PROGRAMS:$(BIN_SUFFIX)=$(HOST_BIN_SUFFIX)))
+ HOST_CSRCS		= $(CSRCS)
+ endif
  
-+DISABLE_MOZ_MEMORY = 1 
+ LIBS		= $(DIST)/lib/$(LIB_PREFIX)xpt.$(LIB_SUFFIX)
+ 
++USE_STATIC_LIBS = 1
 +
- include $(DEPTH)/config/autoconf.mk
+ include $(topsrcdir)/config/rules.mk
  
- MODULE		= xpcom
- INTERNAL_TOOLS	= 1
+ # Do not link to jemalloc
+ ifeq ($(OS_ARCH),SunOS)
+ SOLARIS_JEMALLOC_LDFLAGS =
+ endif
  
- SIMPLE_PROGRAMS	= xpt_dump$(BIN_SUFFIX) xpt_link$(BIN_SUFFIX)
++# We're compiling statically; don't link against the DLL on Win32
++ifeq ($(OS_ARCH),WINNT)
++OS_LDFLAGS += -NODEFAULTLIB:MSVCRT -NODEFAULTLIB:MSVCRTD
++endif
++
+ # Compile directly against the static lib, so we can use the tools
+ # during the build without the shared library path being set.
+ ifeq (,$(filter-out WINNT WINCE,$(OS_ARCH)))
+ DEFINES		+= -DEXPORT_XPT_API
+ endif
  
- CSRCS		= xpt_dump.c xpt_link.c
+ ifdef CROSS_COMPILE
+ HOST_LIBS		= $(DIST)/host/lib/$(LIB_PREFIX)hostxpt.$(LIB_SUFFIX)

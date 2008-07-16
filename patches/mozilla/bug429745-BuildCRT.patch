@@ -1,10 +1,10 @@
 Index: configure.in
 ===================================================================
 RCS file: /cvsroot/mozilla/configure.in,v
-retrieving revision 1.1992
-diff -u -8 -r1.1992 configure.in
---- configure.in	5 May 2008 21:08:14 -0000	1.1992
-+++ configure.in	14 May 2008 23:03:59 -0000
+retrieving revision 1.1993
+diff -u -8 -r1.1993 configure.in
+--- configure.in	28 May 2008 18:23:27 -0000	1.1993
++++ configure.in	16 Jul 2008 17:55:54 -0000
 @@ -37,16 +37,17 @@
  dnl   Benjamin Smedberg <benjamin@smedbergs.us>
  dnl   Howard Chu <hyc@symas.com>
@@ -23,38 +23,58 @@ diff -u -8 -r1.1992 configure.in
  dnl of those above. If you wish to allow use of your version of this file only
  dnl under the terms of either the GPL or the LGPL, and not to allow others to
  dnl use your version of this file under the terms of the MPL, indicate your
-@@ -6315,29 +6316,38 @@
+@@ -6303,41 +6304,51 @@
+     if test "$_CC_SUITE" -lt "8"; then
+         AC_MSG_ERROR([Building jemalloc requires Visual C++ 2005 or better])
+     fi
+     if test -z "$WIN32_CRT_SRC_DIR" -a -z "$WIN32_CUSTOM_CRT_DIR"; then
+       if test -z "$VCINSTALLDIR" -o ! -d "$VCINSTALLDIR"; then
+         AC_MSG_ERROR([When building jemalloc, either set WIN32_CRT_SRC_DIR to the path to the Visual C++ CRT source (usually VCINSTALLDIR\crt\src), or set WIN32_CUSTOM_CRT_DIR to the path to a folder containing a pre-built CRT DLL.])
+       else
+         WIN32_CRT_SRC_DIR="$VCINSTALLDIR\crt\src"
++
+       fi
+     fi
+     if test -z "$WIN32_CRT_SRC_DIR"; then
+       # pre-built dll
        WIN32_CUSTOM_CRT_DIR=`cd "$WIN32_CUSTOM_CRT_DIR" && pwd`
        _WIN_UNIX_CRT_PATH="$WIN32_CUSTOM_CRT_DIR"
      else
++      # Validate either the variable we got from the user, or that our guess
++      # was correct...
++      if test ! -d "$WIN32_CRT_SRC_DIR"; then
++        AC_MSG_ERROR([Invalid Win32 CRT source directory: ${WIN32_CRT_SRC_DIR}])
++      fi
        # CRT source directory
        WIN32_CRT_SRC_DIR=`cd "$WIN32_CRT_SRC_DIR" && pwd`
        _CRT_BASE_DIR=`basename "$WIN32_CRT_SRC_DIR"`
-       _WIN_UNIX_CRT_PATH="$_objdir/memory/jemalloc/$_CRT_BASE_DIR/build/intel"
+-      _WIN_UNIX_CRT_PATH="$_objdir/memory/jemalloc/$_CRT_BASE_DIR/build/intel"
++      # Would just redefine _objdir above to use -W, but who knows what that
++      # will break.
++      _objdir_win=`pwd -W`
++      # If we're building source, we coopt this variable and point it at the
++      # directory containing the final .dll/.libs we compiled.
++      WIN32_CUSTOM_CRT_DIR="$_objdir_win/memory/jemalloc/$_CRT_BASE_DIR/build/intel"
      fi
-+    # Save these off...
-+    STD_PATH="$PATH"
-+    STD_LIB="$LIB"
-+    STD_INCLUDE="$INCLUDE"
-     dnl need win32 paths in LIB, hence this python abuse.  extra brackets
-     dnl are to avoid m4
-     _WIN_CRT_PATH=[`$PYTHON -c 'import sys, os.path; print os.path.normpath(sys.argv[1])' "$_WIN_UNIX_CRT_PATH"`]
-     MOZ_LIB="$_WIN_CRT_PATH;$LIB"
-+    MOZ_INCLUDE="$_WIN_CRT_PATH;$INCLUDE"
-     dnl Needs to be in PATH too, since our tools will wind up linked against it.
-     dnl This needs to be unix style.
+-    dnl need win32 paths in LIB, hence this python abuse.  extra brackets
+-    dnl are to avoid m4
+-    _WIN_CRT_PATH=[`$PYTHON -c 'import sys, os.path; print os.path.normpath(sys.argv[1])' "$_WIN_UNIX_CRT_PATH"`]
+-    MOZ_LIB="$_WIN_CRT_PATH;$LIB"
+-    dnl Needs to be in PATH too, since our tools will wind up linked against it.
+-    dnl This needs to be unix style.
 -    MOZ_PATH="$PATH:$_WIN_UNIX_CRT_PATH"
-+    MOZ_PATH="$_WIN_UNIX_CRT_PATH:$PATH"
++
      dnl Statically link the C++ stdlib.  We only use this for Breakpad anyway.
      AC_DEFINE(_STATIC_CPPLIB)
      dnl Don't generate a manifest, since we're linking to a custom CRT.
      LDFLAGS="$LDFLAGS -MANIFEST:NO"
      dnl Also pass this to NSPR/NSS
 -    DLLFLAGS="$DLLFLAGS -MANIFEST:NO"
++    MOZ_MEMORY_DLLFLAGS="-LIBPATH:\"$WIN32_CUSTOM_CRT_DIR\" -MANIFEST:NO -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd"
 +    if test -z $MOZ_DEBUG; then
-+        DLLFLAGS="$DLLFLAGS -MANIFEST:NO -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd -DEFAULTLIB:mozcrt19"
++        DLLFLAGS="$DLLFLAGS $MOZ_MEMORY_DLLFLAGS -DEFAULTLIB:mozcrt19"
 +    else
-+        DLLFLAGS="$DLLFLAGS -MANIFEST:NO -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd -NODEFAULTLIB:libcmt -NODEFAULTLIB:libcpmt -DEFAULTLIB:mozcrt19d"
++        DLLFLAGS="$DLLFLAGS $MOZ_MEMORY_DLLFLAGS -DEFAULTLIB:mozcrt19d"
 +    fi
      export DLLFLAGS
      ;;
@@ -64,7 +84,7 @@ diff -u -8 -r1.1992 configure.in
    esac
  
    AC_ARG_WITH([valgrind],
-@@ -6346,18 +6356,22 @@
+@@ -6346,18 +6357,17 @@
    AC_CHECK_HEADER([valgrind/valgrind.h], [], [enable_valgrind="no"])
    if test "x$enable_valgrind" = "xyes" ; then
      AC_DEFINE(MOZ_VALGRIND)
@@ -74,12 +94,8 @@ diff -u -8 -r1.1992 configure.in
  AC_SUBST(WIN32_CRT_SRC_DIR)
  AC_SUBST(WIN32_CUSTOM_CRT_DIR)
 -AC_SUBST(MOZ_LIB)
-+AC_SUBST(STD_PATH)
-+AC_SUBST(STD_LIB)
-+AC_SUBST(STD_INCLUDE)
- AC_SUBST(MOZ_PATH)
-+AC_SUBST(MOZ_LIB)
-+AC_SUBST(MOZ_INCLUDE)
+-AC_SUBST(MOZ_PATH)
++
  dnl Need to set this for make because NSS doesn't have configure
  AC_SUBST(DLLFLAGS)
  
@@ -94,33 +110,26 @@ RCS file: /cvsroot/mozilla/config/autoconf.mk.in,v
 retrieving revision 3.462
 diff -u -8 -r3.462 autoconf.mk.in
 --- config/autoconf.mk.in	5 May 2008 21:08:14 -0000	3.462
-+++ config/autoconf.mk.in	14 May 2008 23:03:59 -0000
-@@ -583,21 +583,30 @@
++++ config/autoconf.mk.in	16 Jul 2008 17:55:54 -0000
+@@ -580,24 +580,22 @@
+ MOZ_BROWSE_INFO	= @MOZ_BROWSE_INFO@
+ MOZ_TOOLS_DIR	= @MOZ_TOOLS_DIR@
+ MOZ_DEBUG_SYMBOLS = @MOZ_DEBUG_SYMBOLS@
  MOZ_QUANTIFY	= @MOZ_QUANTIFY@
  MSMANIFEST_TOOL = @MSMANIFEST_TOOL@
  WIN32_REDIST_DIR = @WIN32_REDIST_DIR@
  WIN32_CRT_SRC_DIR = @WIN32_CRT_SRC_DIR@
  WIN32_CUSTOM_CRT_DIR = @WIN32_CUSTOM_CRT_DIR@
++WIN32_CUSTOM_CRT_PATH= @WIN32_CUSTOM_CRT_PATH@
++
  # These are for custom CRT building
  ifdef MOZ_MEMORY
- ifneq (,$(WIN32_CRT_SRC_DIR)$(WIN32_CUSTOM_CRT_DIR))
+-ifneq (,$(WIN32_CRT_SRC_DIR)$(WIN32_CUSTOM_CRT_DIR))
 -export LIB = @MOZ_LIB@
-+ifeq ($(DISABLE_MOZ_MEMORY),1)
-+export PATH = @STD_PATH@
-+export LIB = @STD_LIB@
-+export INCLUDE = @STD_INCLUDE@
-+else # DISABLE_MOZ_MEMORY
- export PATH = @MOZ_PATH@
-+export LIB = @MOZ_LIB@
-+ifdef MOZ_DEBUG
-+export INCLUDE = @MOZ_INCLUDE@
-+endif # MOZ_DEBUG
-+endif # DISABLE_MOZ_MEMORY
+-export PATH = @MOZ_PATH@
  DLLFLAGS = @DLLFLAGS@
+ endif
 -endif
--endif
-+endif # WIN32 CRT flags are set
-+endif # MOZ_MEMORY
  
  # python options.
  MOZ_PYTHON_EXTENSIONS = @MOZ_PYTHON_EXTENSIONS@
@@ -135,8 +144,8 @@ RCS file: /cvsroot/mozilla/config/config.mk,v
 retrieving revision 3.389
 diff -u -8 -r3.389 config.mk
 --- config/config.mk	6 Mar 2008 11:57:22 -0000	3.389
-+++ config/config.mk	15 Jul 2008 22:10:59 -0000
-@@ -230,16 +230,48 @@
++++ config/config.mk	16 Jul 2008 17:55:54 -0000
+@@ -230,16 +230,51 @@
  # append debug flags 
  # (these might have been above when processing MOZ_DBGRINFO_MODULES)
  OS_CFLAGS += $(_DEBUG_CFLAGS)
@@ -158,23 +167,26 @@ diff -u -8 -r3.389 config.mk
 +  DISABLE_MOZ_MEMORY = 1
 +endif
 +
-+ifeq ($(MOZ_MEMORY),1)
-+ifneq ($(DISABLE_MOZ_MEMORY),1)
++ifeq ($(MOZ_MEMORY)_$(DISABLE_MOZ_MEMORY),1_)
++
++MOZ_MEMORY_LDFLAGS += -LIBPATH:$(WIN32_CUSTOM_CRT_DIR)
 +MOZ_MEMORY_LDFLAGS += -NODEFAULTLIB:msvcrt -NODEFAULTLIB:msvcrtd
 +MOZ_MEMORY_LDFLAGS += -NODEFAULTLIB:libcmt -NODEFAULTLIB:libcmtd
 +
 +ifeq ($(MOZ_DEBUG),1)
-+OS_LDFLAGS += $(MOZ_MEMORY_LDFLAGS) -DEFAULTLIB:mozcrt19d 
-+# We need to throw extra symbols away, even in debug builds, when using
-+# jemalloc; otherwise, we get conflicts between libcmtd in crashreporter's
-+# (shared) library (which we statically compile crashreporter.exe against)
-+# and the final xul.dll link; in release mode, this is the default.
-+MOZ_MEMORY_LDFLAGS += -OPT:REF
++  # We need to throw extra symbols away, even in debug builds, when using
++  # jemalloc; otherwise, we get conflicts between libcmtd in crashreporter's
++  # (shared) library (which we statically compile crashreporter.exe against)
++  # and the final xul.dll link; in release mode, this is the default.
++  MOZ_MEMORY_LDFLAGS += -DEFAULTLIB:mozcrt19d -OPT:REF
 +else
-+OS_LDFLAGS += $(MOZ_MEMORY_LDFLAGS) -DEFAULTLIB:mozcrt19
++  MOZ_MEMORY_LDFLAGS += -DEFAULTLIB:mozcrt19
 +endif # MOZ_DEBUG
 +
-+endif # DISABLE_MOZ_MEMORY
++OS_CFLAGS += -I$(WIN32_CUSTOM_CRT_DIR)
++OS_CXXFLAGS += -I$(WIN32_CUSTOM_CRT_DIR)
++OS_LDFLAGS += $(MOZ_MEMORY_LDFLAGS)
++
 +endif # MOZ_MEMORY
 +
  ifdef MOZ_DEBUG
