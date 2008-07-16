@@ -282,10 +282,12 @@
         <parameter name="aParent"/>
         <parameter name="aMenuitemArray"/>
         <parameter name="stringBundleUrl"/>
+        <parameter name="noRemoveItems"/>
         <body>
           <![CDATA[
             // Clear the current set of menuitems
-            aParent.removeAllItems();
+            if (!noRemoveItems)
+              aParent.removeAllItems();
           
             // And generate a new set of menuitem children
             for ( var index = 0; index < aMenuitemArray.length; index++ ) {
@@ -336,29 +338,93 @@
       <method name="fillMetadata">
         <body>
         <![CDATA[
-          var metadata = [];
-
-          var ids = this._pm.propertyIDs;
+          var seen = {};
+          var top_metadata = [];
+          var bottom_metadata = [];
           
-          // todo: use whitelist
-          while (ids.hasMore()) {
-            var info = this._pm.getPropertyInfo(ids.getNext());
-            if (this._isMetadataIncluded(info.id))
-              metadata.push({ name: info.displayName, value: info.id });
+          // add properties from a string enumerator 
+          var that = this;
+          function addProperties(enumerator, toplist, bottomlist) {
+            while (enumerator.hasMore()) {
+              var prop = enumerator.getNext();
+              // if we already have it, skip it
+              if (prop in seen)
+                continue;
+              // remember that we have it
+              seen[prop] = true;
+              // get info about that property
+              var info = that._pm.getPropertyInfo(prop);
+              // if the user can't see the property, it shouldn't be in
+              // the list
+              if (!info.userViewable) 
+                continue;
+              // if the property is of an unsupported type, discard it
+              if (!that._isSupportedType(info.type))
+                continue;
+              // item name and id
+              var entry = { name: info.displayName, value: info.id };
+              // insert in the appropriate list
+              if (toplist && that._isInternalMetadata(prop))
+                toplist.push(entry);
+              else
+                bottomlist.push(entry);
+            }
           }
           
+          // get the smart playlist property registrar
+          var registrar = 
+            this.
+              _Cc["@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1"]
+                 .getService(Components.interfaces
+                                       .sbISmartPlaylistPropertyRegistrar);
+          
+          // get the list of properties for the default context. this will
+          // eventually be extended to include specific contexts depending
+          // on the source for the smart playlist data
+          var props = registrar.getPropertiesForContext("default");
+
+          // add the properties registered for this context, use either top or
+          // bottom array depending on whether the property is internal or
+          // third party
+          addProperties(props, top_metadata, bottom_metadata);
+
+          // see if the user has asked to see all the properties
+          var enableAll = Application.prefs.getValue(
+                         "songbird.smartplaylisteditor.enableAllProperties", false);
+
+          if (enableAll) {
+            // and if he has, insert all the remaining props here, use the
+            // bottom array no matter what
+            var ids = this._pm.propertyIDs;
+            addProperties(ids, null, bottom_metadata);
+          }
+          
+          // sort function
           function sortEntry(a, b) {
             if (a.name < b.name) return -1;
             if (a.name > b.name) return 1;
             return 0;
           }
           
-          metadata.sort(sortEntry);
+          // sort the top array
+          top_metadata.sort(sortEntry);
 
+          // get the property popup
           var popup = document.getAnonymousElementByAttribute(this,
                                                               "id",
                                                               "propertypopup");
-          this._generateMenuPopup(popup, metadata);
+          // insert the top array items in the popup
+          this._generateMenuPopup(popup, top_metadata);
+  
+          // if the bottom array has anything, add it too
+          if (bottom_metadata.length > 0) {
+            // but first, sort the data
+            bottom_metadata.sort(sortEntry);
+            // and add a separator
+            popup.menupopup.appendChild(document.createElement("menuseparator"));
+            // then do the actual insertion of additional items
+            this._generateMenuPopup(popup, bottom_metadata, null, true);
+          }
         ]]>
         </body>
       </method>
@@ -993,21 +1059,22 @@
             forcevalid = true;
           }
           
-          // Before validating value1, first convert it from UI units/format
-          // into native units/format
-          var v = value1.value;
-          v = this._convertFromUI(property.value, operator.value, v, units);
-          
-          // Then validate and set the invalid attribute accordingly
-          if (!v || 
-              v == "" || 
-              (!forcevalid && 
-               !info.validate(v)
-              )
-             ) {
-            value1.setAttribute("invalid", "true");
-          } else {
-            value1.setAttribute("invalid", "false");
+          // it is valid for no value to be visible (boolean)
+          if (value1) {
+            // Before validating value1, first convert it from UI units/format
+            // into native units/format
+            var v = value1.value;
+            v = this._convertFromUI(property.value, operator.value, v, units);
+            
+            // Then validate and set the invalid attribute accordingly
+            if (!v || 
+                v == "" || 
+                (!forcevalid && 
+                 !info.validate(v))) {
+              value1.setAttribute("invalid", "true");
+            } else {
+              value1.setAttribute("invalid", "false");
+            }
           }
 
           // If the second user input widget is visible, validate it too
@@ -1029,9 +1096,7 @@
             if (!v || 
                 v == "" || 
                 (!forcevalid && 
-                 !info.validate(v)
-                )
-               ) {
+                 !info.validate(v))) {
               value2.setAttribute("invalid", "true");
             } else {
               value2.setAttribute("invalid", "false");
@@ -1748,20 +1813,11 @@
         </body>
       </method>
       
-      <method name="_isMetadataIncluded">
-        <parameter name="id"/>
+      <method name="_isSupportedType">
+        <parameter name="type"/>
         <body>
           <![CDATA[
-            var info = this._pm.getPropertyInfo(id);
-            
-            // if the property is not visible by the user, discard it from
-            // the list
-            if (!info.userViewable) 
-              return false;
-            
-            // if the property is of a type that we don't know about,
-            // discard it as well
-            switch (info.type) {
+            switch (type) {
               case "datetime":
               case "number":
               case "boolean":
@@ -1773,49 +1829,19 @@
               default:
                 return false;
             }
-
-            // if the user said he wants everything, give him everything we
-            // can support
-            var enableAll = Application.prefs.getValue(
-                           "songbird.smartplaylisteditor.enableAllProperties", false);
-            
-            if (enableAll) 
-              return true;
-            
-            // otherwise, discard more properties, based on design reqs
-            switch (id) {
-              // the following don't really make sense to search on, or maybe
-              // they could for some, but we don't want them anyway.
-              case SBProperties.ordinal:
-              case SBProperties.hash:
-              case SBProperties.copyright:
-              case SBProperties.copyrightURL:
-              case SBProperties.destination:
-              case SBProperties.downloadDetails:
-              case SBProperties.softwareVendor:
-              case SBProperties.key:
-              case SBProperties.lyrics:
-              case SBProperties.metadataUUID:
-              case SBProperties.mediaListName:
-              case SBProperties.subtitle:
-              case SBProperties.totalDiscs:
-              case SBProperties.totalTracks:
-              
-              // and these six get no love because we can't edit them in the
-              // track editor, and apparently, that's reason enough to prevent
-              // the user from making smart playlists based on their content
-              case SBProperties.isPartOfCompilation:
-              case SBProperties.conductorName:
-              case SBProperties.language:
-              case SBProperties.lyricistName:
-              case SBProperties.producerName:
-              case SBProperties.recordLabelName:
-                
-                return false;
-            }
-            
-            // the rest gets in
             return true;
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_isInternalMetadata">
+        <parameter name="metadata"/>
+        <body>
+          <![CDATA[
+            for each (var prop in SBProperties) {
+              if (metadata == prop) return true;
+            }
+            return false;
           ]]>
         </body>
       </method>

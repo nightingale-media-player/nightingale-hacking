@@ -88,6 +88,42 @@ Enumerator.prototype = {
   }
 }
 
+/**
+ * Get a string enumerator.
+ *
+ * @param aItemsList JavaScript array to enumerate.
+ */
+function StringEnumerator(aItemsList) {
+  this._itemsList = aItemsList;
+  this._iteratorPosition = 0;
+}
+StringEnumerator.prototype = {
+  // nsIStringEnumerator
+  hasMore: function hasMore() {
+    return (this._iteratorPosition < this._itemsList.length);
+  },
+
+  // nsIStringEnumerator
+  getNext: function getNext() {
+    if (!(this.hasMore())) {
+      throw Components.results.NS_ERROR_FAILURE;
+    }
+    var type = this._itemsList[this._iteratorPosition];
+    this._iteratorPosition++;
+    return type;
+  },
+
+  // nsISupports
+  QueryInterface: function QueryInterface(aIID)
+  {
+    if (aIID.equals(Components.interfaces.nsIStringEnumerator) ||
+        aIID.equals(Components.interfaces.nsISupports))
+      return this;
+
+    throw Components.results.NS_ERROR_NO_INTERFACE;
+  }
+}
+
 function NSArray(aItemsList) {
   this._itemsList = aItemsList;
 }
@@ -172,6 +208,15 @@ var ArrayConverter = {
    */
   enumerator: function get_enumerator(/* in JSArray */ aArray) {
     return new Enumerator(aArray);
+  },
+
+  /**
+   * Return a nsIStringEnumerator for a JavaScript array.
+   *
+   * @param aArray JavaScript array to convert.
+   */
+  stringEnumerator: function get_stringEnumerator(/* in JSArray */ aArray) {
+    return new StringEnumerator(aArray);
   },
 
   /**

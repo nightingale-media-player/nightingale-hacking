@@ -121,7 +121,7 @@ endif
 LIBSONGBIRD_COMPONENT = SongbirdPropertiesModule
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      sbProperties.jsm \
+                      $(srcdir)/sbSmartPlaylistPropertyRegistrar.js \
                       $(NULL)
                       
 # TODO: Post 0.5 we need to remove js modules from the line above           
