@@ -731,8 +731,17 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
 
   // If this is a mediaitem, make a mediaitem node
   } else if (aResource instanceof Ci.sbIMediaItem) {
+    // Check if this is a storage list for an outer list
+    var outerListGuid = aResource.getProperty(SBProperties.outerGUID);
+    if (outerListGuid) {
+      var library = aResource.library;
+      var outerList = library.getMediaItem(outerListGuid);
+      if (outerList) {
+        aResource = outerList;
+      }
+    }
+    // Look for the node
     node = this._servicePane.getNode(this._itemURN(aResource));
-
   // Else we don't know what to do, so
   // the arg must be invalid
   } else {
