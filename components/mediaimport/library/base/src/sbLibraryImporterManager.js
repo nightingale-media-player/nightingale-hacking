@@ -128,7 +128,11 @@ sbLibraryImporterManager.prototype = {
   //   _xpcom_categories        List of component categories.
   //
   //   _cfg                     Configuration settings.
+  //   _isInitialized           True if the library importer manager has been
+  //                            initialized.
   //   _libraryImporterList     List of library importers.
+  //   _prefsAvailable          True if preferences are available.
+  //   _observerSvc             Observer services object.
   //
 
   classDescription: sbLibraryImporterManagerCfg.className,
@@ -137,7 +141,10 @@ sbLibraryImporterManager.prototype = {
   _xpcom_categories: sbLibraryImporterManagerCfg.categoryList,
 
   _cfg: sbLibraryImporterManagerCfg,
+  _isInitialized: false,
   _libraryImporterList: null,
+  _prefsAvailable: false,
+  _observerSvc: null,
 
 
   //----------------------------------------------------------------------------
@@ -179,7 +186,7 @@ sbLibraryImporterManager.prototype = {
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
     var noQuery = Application.prefs.getValue
-                    ("songbird.library_importer.auto_import_no_query");
+                    ("songbird.library_importer.auto_import_no_query", false);
     if (!noQuery) {
       var doImport = {};
       WindowUtils.openModalDialog
@@ -350,6 +357,14 @@ sbLibraryImporterManager.prototype = {
         this._handleAppStartup();
         break;
 
+      case "profile-after-change" :
+        this._handleProfileAfterChange();
+        break;
+
+      case "songbird-library-manager-ready" :
+        this._handleLibraryManagerReady();
+        break;
+
       case "quit-application" :
         this._handleAppQuit();
         break;
@@ -386,6 +401,31 @@ sbLibraryImporterManager.prototype = {
 
 
   /**
+   * Handle profile after change events.
+   */
+
+  _handleProfileAfterChange:
+    function sbLibraryImporterManager__handleProfileAfterChange() {
+    // Preferences are now available.
+    this._prefsAvailable = true;
+
+    // Initialize the services.
+    this._initialize();
+  },
+
+
+  /**
+   * Handle library manager ready events.
+   */
+
+  _handleLibraryManagerReady:
+    function sbLibraryImporterManager__handleLibraryManagerReady() {
+    // Initialize the services.
+    this._initialize();
+  },
+
+
+  /**
    * Handle application quit events.
    */
 
@@ -406,16 +446,46 @@ sbLibraryImporterManager.prototype = {
    */
 
   _initialize: function sbLibraryImporterManager__initialize() {
+    // Do nothing if already initialized.
+    if (this._isInitialized)
+      return;
+
     // Set up observers.
-    var observerSvc = Cc["@mozilla.org/observer-service;1"]
-                        .getService(Ci.nsIObserverService);
-    observerSvc.addObserver(this, "quit-application", false);
+    if (!this._observerSvc) {
+      this._observerSvc = Cc["@mozilla.org/observer-service;1"]
+                            .getService(Ci.nsIObserverService);
+      this._observerSvc.addObserver(this, "quit-application", false);
+      this._observerSvc.addObserver(this, "profile-after-change", false);
+      this._observerSvc.addObserver(this,
+                                    "songbird-library-manager-ready",
+                                    false);
+    }
+
+    // Wait until preferences are available.
+    if (!this._prefsAvailable)
+      return;
+
+    // Wait until the library manager services are available.
+    try {
+      var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                             .getService(Ci.sbILibraryManager);
+      if (!libraryManager.mainLibrary)
+        return;
+    } catch (ex) {
+      return;
+    }
 
     // Initialize the list of library importers.
     this._libraryImporterList = [];
 
     // Add all library importers.
     this._addAllLibraryImporters();
+
+    // Initialization is now complete.
+    this._isInitialized = true;
+
+    // Initiate auto-import if configured to do so.
+    this._autoImport();
   },
 
 
@@ -425,9 +495,9 @@ sbLibraryImporterManager.prototype = {
 
   _finalize: function sbLibraryImporterManager__finalize() {
     // Remove observers.
-    var observerSvc = Cc["@mozilla.org/observer-service;1"]
-                        .getService(Ci.nsIObserverService);
-    observerSvc.removeObserver(this, "quit-application");
+    this._observerSvc.removeObserver(this, "quit-application");
+    this._observerSvc.removeObserver(this, "profile-after-change");
+    this._observerSvc.removeObserver(this, "songbird-library-manager-ready");
 
     // Remove all library importers.
     this._removeAllLibraryImporters();
@@ -475,6 +545,9 @@ sbLibraryImporterManager.prototype = {
     // Get the library importer.
     var libraryImporter = Cc[aContractID].getService(Ci.sbILibraryImporter);
 
+    // Initialize the library importer.
+    libraryImporter.initialize();
+
     // Set the library importer listener.
     libraryImporter.setListener(this);
 
@@ -498,6 +571,9 @@ sbLibraryImporterManager.prototype = {
 
       // Unset the library importer listener.
       libraryImporter.setListener(null);
+
+      // Finalize the library importer.
+      libraryImporter.finalize();
     }
   },
 
@@ -513,6 +589,44 @@ sbLibraryImporterManager.prototype = {
       if (this._libraryImporterList.length > 0)
         this.defaultLibraryImporter = this._libraryImporterList[0];
     }
+  },
+
+
+  /**
+   * Initiate auto-importing as configured.
+   */
+
+  _autoImport: function sbLibraryImporterManager_autoImport() {
+    // Get the auto-import preferences.
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+    var autoImport =
+          Application.prefs.getValue("songbird.library_importer.auto_import",
+                                     false);
+
+    // Do nothing if not auto-importing.
+    if (!autoImport || !this.defaultLibraryImporter)
+      return;
+
+    // Wait until the main Songbird window is ready before initiating
+    // auto-import.  This ensures any import modal dialogs have a parent.
+    var windowWatcher = Cc["@songbirdnest.com/Songbird/window-watcher;1"]
+                          .getService(Ci.sbIWindowWatcher);
+    var _this = this;
+    var func = function(aWindow) { _this._autoImportWithWindow(aWindow); };
+    windowWatcher.callWithWindow("Songbird:Main", func, false);
+  },
+
+  _autoImportWithWindow:
+    function sbLibraryImporterManager_autoImportWithWindow(aWindow) {
+    // Initiate auto-import.
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+    var libraryFilePath = Application.prefs.getValue
+                            ("songbird.library_importer.library_file_path",
+                             "");
+    if (libraryFilePath)
+      this.defaultLibraryImporter.import(libraryFilePath, "songbird", true);
   }
 }
 

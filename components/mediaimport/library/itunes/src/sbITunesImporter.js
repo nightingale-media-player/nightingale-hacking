@@ -101,7 +101,6 @@ var CompConfig =
     cid: Components.ID("{D6B36046-899A-4C1C-8A97-67ADC6CB675F}"),
     contractID: "@songbirdnest.com/Songbird/ITunesImporter;1",
     ifList: [ Components.interfaces.nsISupports,
-              Components.interfaces.nsIObserver,
               Components.interfaces.sbILibraryImporter ],
 
     dataFormatVersion: 2,
@@ -123,12 +122,6 @@ CompConfig.categoryList =
         category: "library-importer",
         entry:    CompConfig.className,
         value:    CompConfig.contractID
-    },
-
-    {
-        category: "app-startup",
-        entry:    CompConfig.className,
-        value:    "service," + CompConfig.contractID
     }
 ];
 
@@ -384,139 +377,16 @@ Component.prototype =
     },
 
 
-    /*
-     * \brief Initiate external library importing.
-     *
-     * \param aLibFilePath File path to external library to import.
-     * \param aGUID GUID of Songbird library into which to import.
-     * \param aCheckForChanges If true, check for changes in external library
-     * before importing.
+    /**
+     * \brief Initialize the library importer.
      */
 
-    import: function(aLibFilePath, aGUID, aCheckForChanges)
+    initialize: function()
     {
-        var                         req = {};
-
-        /* Log progress. */
-        Log(  "1: import \""
-            + aLibFilePath + "\" \""
-            + aGUID + "\" "
-            + aCheckForChanges + "\n");
-
-        /* Indicate that a first run scan has occurred. */
-        var scanCompletePref =
-                Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
-                          .createInstance(Components.interfaces.sbIDataRemote);
-        scanCompletePref.init("firstrun.scancomplete", null);
-        scanCompletePref.boolValue = true;
-
-        /* Issue an import request. */
-        req.func = this.mHandleImportReqFunc;
-        req.args = [ aLibFilePath, aGUID, aCheckForChanges ];
-        ITReq.issue(req);
-    },
-
-
-    /*
-     * \brief Set the listener for import events.
-     *
-     * \param aListener Import event listener.
-     */
-
-    setListener: function(aListener)
-    {
-        /* Set the listener. */
-        this.mListener = aListener;
-    },
-
-
-    /***************************************************************************
-     *
-     * Importer nsIObserver interface.
-     *
-     **************************************************************************/
-
-    /*
-     * observe
-     *
-     *   --> subject                Event subject.
-     *   --> topic                  Event topic.
-     *   --> data                   Event data.
-     *
-     *   This function observes the event specified by subject, topic, and data.
-     */
-
-    observe: function(subject, topic, data)
-    {
-        try { this.observe1(subject, topic, data); }
-        catch (err) { Compomnents.utils.reportError(err); }
-    },
-
-    observe1: function(subject, topic, data)
-    {
-        var                         req = {};
-
-        /* Handle application startup events as a request to process */
-        /* them outside of the application startup event handler.    */
-        if (topic == "app-startup")
-        {
-            /* Activate the first stage importer services. */
-            this.activate1();
-
-            /* Issue a handle application startup request. */
-            req.func = this.mHandleAppStartupReqFunc;
-            req.args = [];
-            ITReq.issue(req);
-        }
-    },
-
-
-    /***************************************************************************
-     *
-     * Importer nsISupports interface.
-     *
-     **************************************************************************/
-
-    QueryInterface: XPCOMUtils.generateQI(CompConfig.ifList),
-
-
-    /***************************************************************************
-     *
-     * Internal importer functions.
-     *
-     **************************************************************************/
-
-    /*
-     * activate1, activate2
-     *
-     *   These functions activate the importer services in multiple stages.  The
-     * first stage activates enough services to run the application startup
-     * request handler.  The second stage activates the remaining services and
-     * should not be called until all dependent services are active.
-     */
-
-    activate1: function()
-    {
-        /* Initialize the request services. */
+        /* Initialize and start the request services. */
         ITReq.initialize();
-
-        /* Manually start request processing even */
-        /* if an importer listener is not set.    */
         ITReq.start();
 
-        /* Create a handleAppStartupReq function with an object closure. */
-        {
-            var                     _this = this;
-
-            this.mHandleAppStartupReqFunc = function()
-            {
-                _this.handleAppStartupReq();
-            }
-        }
-    },
-
-    activate2: function()
-    {
         /* Get the OS type. */
         this.mOSType = this.getOSType();
 
@@ -599,95 +469,80 @@ Component.prototype =
     },
 
 
-    /*
-     * handleAppStartupReq
-     *
-     *   This function handles application startup events.
+    /**
+     * \brief Finalize the library importer.
      */
 
-    handleAppStartupReq: function()
+    finalize: function()
     {
-        var                         ctx;
-        var                         state;
-
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-            ctx.state = 1;
-
-        /* Get the function context. */
-        state = ctx.state;
-
-        /* Ensure the library manager services are active.       */
-        /* These are required by the importer database services. */
-        if (state == 1)
-        {
-            try
-            {
-                var libMgr =
-                    Components.
-                        classes["@songbirdnest.com/Songbird/library/Manager;1"].
-                        getService(Components.interfaces.sbILibraryManager);
-                if (libMgr.mainLibrary)
-                    state++;
-            } catch (ex) {}
-        }
-
-        /* Handle application startup. */
-        if (state == 2)
-        {
-            this.handleAppStartupReq1();
-            state++;
-        }
-
-        /* End state. */
-        if (state >= 3)
-            ITReq.completeFunction();
-
-        /* Update the function context. */
-        ctx.state = state;
-        ITReq.exitFunction();
     },
 
-    handleAppStartupReq1: function()
+
+    /*
+     * \brief Initiate external library importing.
+     *
+     * \param aLibFilePath File path to external library to import.
+     * \param aGUID GUID of Songbird library into which to import.
+     * \param aCheckForChanges If true, check for changes in external library
+     * before importing.
+     */
+
+    import: function(aLibFilePath, aGUID, aCheckForChanges)
     {
-        var                         file;
-        var                         modified = true;
+        var                         req = {};
 
-        /* Activate the second stage importer services. */
-        this.activate2();
+        /* Log progress. */
+        Log(  "1: import \""
+            + aLibFilePath + "\" \""
+            + aGUID + "\" "
+            + aCheckForChanges + "\n");
 
-        /* Initiate importing if auto-import is enabled   */
-        /* and the iTunes library file has been modified. */
-        if (   this.mAutoImportPref.boolValue
-            && this.mLibraryFilePathPref.stringValue)
+        /* Do nothing if just checking for changes and */
+        /* the library file has not been modified.     */
+        if (aCheckForChanges &&
+            (aLibFilePath == this.mLibPrevPathDR.stringValue))
         {
-            /* If importing the same library      */
-            /* file, check its modification time. */
-            if (   this.mLibraryFilePathPref.stringValue
-                == this.mLibPrevPathDR.stringValue)
-            {
-                file = Components.classes["@mozilla.org/file/local;1"].
-                          createInstance(Components.interfaces.nsILocalFile);
-                file.initWithPath(this.mLibraryFilePathPref.stringValue);
-                if (file.lastModifiedTime ==
-                    this.getPref("lib_prev_mod_time", ""))
-                {
-                    modified = false;
-                }
-            }
-
-            /* If the library file has been modified,    */
-            /* re-import, checking for relavent changes. */
-            if (modified)
-            {
-                this.import(this.mLibraryFilePathPref.stringValue,
-                            "songbird",
-                            true);
-            }
+            file = Cc["@mozilla.org/file/local;1"]
+                       .createInstance(Ci.nsILocalFile);
+            file.initWithPath(aLibFilePath);
+            if (file.lastModifiedTime == this.getPref("lib_prev_mod_time", ""))
+                return;
         }
+
+        /* Issue an import request. */
+        req.func = this.mHandleImportReqFunc;
+        req.args = [ aLibFilePath, aGUID, aCheckForChanges ];
+        ITReq.issue(req);
     },
 
+
+    /*
+     * \brief Set the listener for import events.
+     *
+     * \param aListener Import event listener.
+     */
+
+    setListener: function(aListener)
+    {
+        /* Set the listener. */
+        this.mListener = aListener;
+    },
+
+
+    /***************************************************************************
+     *
+     * Importer nsISupports interface.
+     *
+     **************************************************************************/
+
+    QueryInterface: XPCOMUtils.generateQI(CompConfig.ifList),
+
+
+    /***************************************************************************
+     *
+     * Internal importer functions.
+     *
+     **************************************************************************/
 
     /*
      * handleImportReq
@@ -751,15 +606,24 @@ Component.prototype =
         /* Get the function context. */
         state = ctx.state;
 
-        /* Wait until the importer is ready. */
+        /* Initialize status. */
         if (state == 1)
+        {
+            ITStatus.initialize();
+            ITStatus.reset();
+            ITStatus.bringToFront();
+            state++;
+        }
+
+        /* Wait until the importer is ready. */
+        if (state == 2)
         {
             if (this.isReady())
                 state++;
         }
 
         /* Initialize request processing. */
-        if (state == 2)
+        if (state == 3)
         {
             /* Initialize importer data format version. */
             if (!this.mVersionDR.intValue)
@@ -782,14 +646,11 @@ Component.prototype =
                 this.mImportPlaylists = false;
             }
 
-            /* Initialize status. */
-            ITStatus.initialize();
-            ITStatus.reset();
+            /* Update status. */
             if (checkForChanges)
                 ITStatus.mStageText = "Checking for changes in library";
             else
                 ITStatus.mStageText = "Importing library";
-            ITStatus.bringToFront();
 
             /* Create an xml parser. */
             this.mXMLParser = new ITXMLParser(libFilePath);
@@ -814,7 +675,7 @@ Component.prototype =
         }
 
         /* Find the iTunes library ID key. */
-        if (state == 3)
+        if (state == 4)
         {
             this.findKey("Library Persistent ID");
             if (!ITReq.isCallPending())
@@ -822,7 +683,7 @@ Component.prototype =
         }
 
         /* Get the iTunes library ID. */
-        if (state == 4)
+        if (state == 5)
         {
             /* Get the iTunes library ID. */
             this.mXMLParser.getNextTag(tag, tagPreText);
@@ -838,7 +699,7 @@ Component.prototype =
         }
 
         /* Process the library track list. */
-        if (state == 5)
+        if (state == 6)
         {
             this.processTrackList();
             if (!ITReq.isCallPending())
@@ -846,7 +707,7 @@ Component.prototype =
         }
 
         /* Process the library playlist list. */
-        if (state == 6)
+        if (state == 7)
         {
             this.processPlaylistList();
             if (!ITReq.isCallPending())
@@ -854,7 +715,7 @@ Component.prototype =
         }
 
         /* Complete request processing. */
-        if (state == 7)
+        if (state == 8)
         {
             var                         signature;
             var                         storedSignature;
@@ -877,7 +738,7 @@ Component.prototype =
             {
                 this.mLibPrevPathDR.stringValue = libFilePath;
                 this.setPref("lib_prev_mod_time",
-                             this.mXMLFile.lastModifiedTime);
+                             this.mXMLFile.lastModifiedTime.toString());
             }
 
             /* Update import data format version. */
@@ -934,14 +795,14 @@ Component.prototype =
         }
 
         /* Wait for the database services to synchronize. */
-        if (state == 8)
+        if (state == 9)
         {
             if (ITDB.sync())
                 state++;
         }
 
         /* End state. */
-        if (state >= 9)
+        if (state >= 10)
             ITReq.completeFunction();
 
         /* Update the function context. */
