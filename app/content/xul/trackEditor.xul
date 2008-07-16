@@ -313,8 +313,7 @@
                        tabindex="130"/>
 
             <label property-type="label"
-                   property="http://songbirdnest.com/data/1.0#primaryImageURL"
-                   value="&trackeditor.artwork.label;"/>
+                   property="http://songbirdnest.com/data/1.0#primaryImageURL"/>
             <image
               class="art"
               property="http://songbirdnest.com/data/1.0#primaryImageURL"

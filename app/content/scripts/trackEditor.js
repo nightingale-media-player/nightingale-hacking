@@ -1079,12 +1079,10 @@ function TrackEditorLabel(element) {
   if (element.hasAttribute("property-type") && 
       element.getAttribute("property-type") == "label") {
 
-    if (element.getAttribute("value") == "") {
-      var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                     .getService(Ci.sbIPropertyManager);
-      var propInfo = propMan.getPropertyInfo(element.getAttribute("property"));
-      element.setAttribute("value", propInfo.displayName);
-    }
+    var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                   .getService(Ci.sbIPropertyManager);
+    var propInfo = propMan.getPropertyInfo(element.getAttribute("property"));
+    element.setAttribute("value", propInfo.displayName);
 
   } else {
     // Otherwise, this label should show the value of the 
@@ -1654,15 +1652,19 @@ function TrackEditorArtwork(element) {
   this._replaceLabel = SBString("trackeditor.artwork.replace");
   this._addLabel = SBString("trackeditor.artwork.add");
   this._createButton();
+  this._createContextMenu();
 
   var self = this;
   element.addEventListener("click",
           function(evt) { self.onClick(evt); }, false);
+  element.addEventListener("keypress",
+          function(evt) { self.onKeyPress(evt); }, false);
 
 }
 TrackEditorArtwork.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
   _button: null,
+  _menuPopup: null,
   _replaceLabel: null,
   _addLabel: null,
   
@@ -1707,10 +1709,242 @@ TrackEditorArtwork.prototype = {
     vbox.appendChild(this._element);
     vbox.appendChild(this._button);
   },
+  
+  _createContextMenu: function TrackEditorArtwork__createContextMenu() {
+    this._menuPopup = document.createElement("menupopup");
+    var menuItemCut = document.createElement("menuitem");
+    var menuItemCopy = document.createElement("menuitem");
+    var menuItemPaste = document.createElement("menuitem");
+    var menuItemClear = document.createElement("menuitem");
+    
+    var self = this;
+    menuItemCut.setAttribute("label", SBString("trackeditor.artwork.menu.cut"));
+    menuItemCut.addEventListener("command",
+                                 function() { self.onCut();}, false);
+
+    menuItemCopy.setAttribute("label", SBString("trackeditor.artwork.menu.copy"));
+    menuItemCopy.addEventListener("command",
+                                  function() { self.onCopy();}, false);
+
+    menuItemPaste.setAttribute("label", SBString("trackeditor.artwork.menu.paste"));
+    menuItemPaste.addEventListener("command",
+                                   function() { self.onPaste();}, false);
+
+    menuItemClear.setAttribute("label", SBString("trackeditor.artwork.menu.clear"));
+    menuItemClear.addEventListener("command",
+                                   function() { self.onClear();}, false);
+    this._menuPopup.appendChild(menuItemCut);
+    this._menuPopup.appendChild(menuItemCopy);
+    this._menuPopup.appendChild(menuItemPaste);
+    this._menuPopup.appendChild(menuItemClear);
+
+    this._element.parentNode.appendChild(this._menuPopup);
+  },
+
+  /**
+   * \brief Converts a binary array to hex values with out the 0x for output
+   *        to the file system.
+   * \param aHashData - Array of bytes to convert to hex.
+   * \return string of hex values with out 0x
+   */
+  _convertBinaryToHexString: function(aHashData) {
+    var hexAry = new Array(aHashData.length);
+    for (var hashIndex = 0; hashIndex < aHashData.length; hashIndex++) {
+      var hashValue = aHashData.charCodeAt(hashIndex);
+      hexAry.push(("0" + hashValue.toString(16)).slice(-2));
+    }
+    return hexAry.join("");
+  },
+  
+  /**
+   * \brief Saves image data to a file.
+   * \param aImageData - Binary array of image data
+   * \param aImageDataSize - size of binary array
+   * \param aMimeType - mime type of image (image/png, image/jpg, etc)
+   * \return location of file created with "file://" pre-appended
+   */
+  _saveDataToFile: function(aImageData, aImageDataSize, aMimeType) {
+    // Generate a hash of the imageData for the filename
+    var cHash = Cc["@mozilla.org/security/hash;1"]
+                  .createInstance(Ci.nsICryptoHash);
+    cHash.init(Ci.nsICryptoHash.MD5);
+    cHash.update(aImageData, aImageDataSize);
+    var hash = cHash.finish(false);
+    var fileName = this._convertBinaryToHexString(hash);
+
+    // grab the extension from the mimetype
+    var ext = aMimeType.toLowerCase();
+    if (ext.indexOf("/") > 0) {
+      ext = ext.substr(ext.indexOf("/") + 1);
+    }
+
+    // Get the profile folder
+    var dir = Cc["@mozilla.org/file/directory_service;1"]
+                    .createInstance(Ci.nsIProperties);
+    var coverFile = dir.get("ProfD", Ci.nsIFile);
+    coverFile.append("artwork");
+    coverFile.append(fileName + "." + ext);
+
+    // see if we already have the file
+    var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                    .getService(Components.interfaces.nsIIOService);
+
+    if (!coverFile.exists()) {
+      coverFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0655);
+
+      var outputFileStream =  Cc["@mozilla.org/network/file-output-stream;1"]
+                                .createInstance(Ci.nsIFileOutputStream);
+      outputFileStream.init(coverFile, -1, -1, 0);
+
+      var BinaryOutput = Cc["@mozilla.org/binaryoutputstream;1"]
+                           .createInstance(Ci.nsIBinaryOutputStream);
+      BinaryOutput.setOutputStream(outputFileStream);
+      BinaryOutput.writeByteArray(aImageData, aImageDataSize);
+    }
+
+    return ios.newFileURI(coverFile).spec;
+  },
+  
 
 
+  /**
+   * \brief Handles clicks from user on the album artwork widget
+   */
   onClick: function TrackEditorArtwork_onClick(aEvent) {
     this._element.focus();
+    
+    // right-click
+    if (aEvent.button == 2) {
+      this._menuPopup.openPopup(null,           // do not anchor the menu
+                                "",             // position not needed
+                                aEvent.clientX, // x position of mouse
+                                aEvent.clientY, // y position of mouse
+                                true,           // context menu
+                                false);         // no attributes override
+    }
+  },
+
+  /**
+   * \brief Handles keypress from user when album artwork widget is focused.
+   *        We have to handle each OS natively.
+   */
+  onKeyPress: function TrackEditorArtwork_onKeyPress(aEvent) {
+    var validMetaKeys = false;
+    
+    if (aEvent.keyCode == 46 || aEvent.keyCode == 8) {
+      this.onClear();
+    }
+    
+    if (getPlatformString() == "Darwin") {
+      // Mac (Uses cmd)
+      validMetaKeys = (aEvent.metaKey && !aEvent.ctrlKey && !aEvent.altKey);
+    } else {
+     // Windows, Linux (Use ctrl)
+      validMetaKeys = (!aEvent.metaKey && aEvent.ctrlKey && !aEvent.altKey);
+    }
+    
+    if (validMetaKeys) {
+      switch (aEvent.charCode) {
+        case 120: // CUT
+          // Relies on copy
+          this.onCut();
+        break;
+        case 99:  // COPY
+          this.onCopy();
+        break;
+        case 118: // PASTE
+          this.onPaste();
+        break;
+      }
+    }
+  },
+
+  /**
+   * \brief handle the paste command (invoked either from the keyboard or
+   *        context menu)
+   */
+  onPaste: function TrackEditorArtwork_onPaste() {
+    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+                        .createInstance(Ci.sbIClipboardHelper);
+    var mimeType = {};
+    var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
+    if (imageData.length > 0) {
+      var newFile = this._saveDataToFile(imageData,
+                                         imageData.length,
+                                         mimeType.value);
+      this._imageSrcChange(newFile);
+    }
+  },
+  
+  /**
+   * \brief handle the copy command (invoked either from the keyboard or
+   *        context menu)
+   */
+  onCopy: function TrackEditorArtwork_onCopy() {
+    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+                        .createInstance(Ci.sbIClipboardHelper);
+
+    // Load up the file
+    var imageFilePath = TrackEditor.state.getPropertyValue(this.property);
+    var ioService = Cc["@mozilla.org/network/io-service;1"]
+                      .getService(Ci.nsIIOService);
+    var normalPath = decodeURI(ioService.newURI(imageFilePath, null, null).path);
+    var imageFile = Cc["@mozilla.org/file/local;1"]
+                      .createInstance(Ci.nsILocalFile);
+    try {
+      imageFile.initWithPath(normalPath);
+    } catch(err) {
+      return false;
+    }
+    
+    // Get the mimeType from the file.
+    var mimeType = Cc["@mozilla.org/mime;1"]
+                     .getService(Ci.nsIMIMEService)
+                     .getTypeFromFile(imageFile);
+                     
+    // Create an input stream to read the data
+    var inputStream = Cc["@mozilla.org/network/file-input-stream;1"]
+                        .createInstance(Ci.nsIFileInputStream);
+    inputStream.init(imageFile, 0x01, 0600, 0);
+    var stream = Cc["@mozilla.org/binaryinputstream;1"]
+                   .createInstance(Ci.nsIBinaryInputStream);
+    stream.setInputStream(inputStream);
+    
+    // Get the size of the image data
+    var imageDataSize = inputStream.available();
+    
+    // use a binary input stream to grab the bytes.
+    var bis = Cc["@mozilla.org/binaryinputstream;1"].
+              createInstance(Ci.nsIBinaryInputStream);
+    bis.setInputStream(inputStream);
+    var imageData= bis.readByteArray(imageDataSize);
+
+    var copyOk = true;
+    try {
+      sbClipboard.pasteImageToClipboard(mimeType, imageData, imageDataSize);
+    } catch(err) {
+      copyOk = false;
+    }
+    
+    return copyOk;
+  },
+  
+  /**
+   * \brief handle the cut command (invoked either from the keyboard or
+   *        context menu)
+   */
+  onCut: function TrackEditorArtwork_onCut() {
+    if (this.onCopy()) {
+      this.onClear();
+    }
+  },
+
+  /**
+   * \brief handle the cut command (invoked either from the keyboard or
+   *        context menu)
+   */
+  onClear: function TrackEditorArtwork_onClear() {
+    this._imageSrcChange("");
   },
 
   /**
@@ -1748,7 +1982,6 @@ TrackEditorArtwork.prototype = {
 
     // Lets check if this item is missing a cover
     if( (!value || value == "") && allMatch ) {
-      this._imageSrcChange(ARTWORK_NO_COVER);
       value = ARTWORK_NO_COVER;
     }
 
