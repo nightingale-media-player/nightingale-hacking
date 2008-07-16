@@ -112,9 +112,9 @@
           <menuitem id="smart_selected_list_least_added" label="&smart.least_added;" value="least_added" />
         </menupopup>
       </menulist>
+      <!-- XXXlone> uncomment when we have 3 update modes 
       <spacer width="8"/>
       <label   value="&smart.autoupdate;" control="smart_autoupdate_list"/>
-      <!-- XXXlone> uncomment when we have 3 update modes 
       <menulist id="smart_autoupdate_list" value="whendisplayed">
         <menupopup id="smart_autoupdate_list_popup" >
           <menuitem id="smart_autoupdate_list_never" label="&smart.autoupdate.never;" value="never" />
