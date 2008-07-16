@@ -136,7 +136,7 @@
     if (typeof(Cu) == "undefined")
       var Cu = Components.utils;
 
-    Cu.import("resource://app/components/sbProperties.jsm");
+    Cu.import("resource://app/jsmodules/sbProperties.jsm");
 
     //
     // Unsupported media dialog services object.

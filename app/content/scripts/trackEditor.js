@@ -42,8 +42,8 @@ if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
 Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
-Components.utils.import("resource://app/components/sbProperties.jsm");
-Components.utils.import("resource://app/components/StringUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 const ARTWORK_NO_COVER    = "chrome://global/skin/no-cover.png";
 

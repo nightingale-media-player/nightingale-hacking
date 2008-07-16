@@ -30,7 +30,7 @@
  * \sa sbICoreWrapper.idl coreBase.js
  */
 
-Components.utils.import("resource://app/components/StringUtils.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 // Helper function to get a platform string.
 function getPlatformString() 

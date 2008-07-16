@@ -55,8 +55,8 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
-Cu.import("resource://app/components/sbProperties.jsm");
-Cu.import("resource://app/components/WindowUtils.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 
 /**
  * \brief Constants for the completed states.
