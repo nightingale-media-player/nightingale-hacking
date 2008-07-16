@@ -28,6 +28,7 @@
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 
 // Open functions
@@ -645,6 +646,81 @@ function makeNewPlaylist(mediaListType) {
   return mediaList;
 }
 
+/**
+ * Delete a medialist, with user confirmation. If no medialist is specified,
+ * the currently visible medialist will be used.
+ */
+function SBDeleteMediaList(aMediaList)
+{
+  var mediaList = aMediaList;
+  if (!mediaList) {
+    var browser;
+    if (typeof SBGetBrowser == 'function') 
+      browser = SBGetBrowser();
+    if (!browser) {
+      Components.utils.reportError("SBDeleteMediaList - Cannot delete active medialist without a browser");
+      return;
+    }
+    var mediaPage = browser.currentMediaPage;
+    if (!mediaPage) {
+      Components.utils.reportError("SBDeleteMediaList - Cannot delete active medialist without a mediaPage");
+      return;
+    }
+    var view = mediaPage.mediaListView;
+    if (!view) {
+      Components.utils.reportError("SBDeleteMediaList - Cannot delete active medialist without a mediaListView");
+      return;
+    }
+    mediaList = view.mediaList;
+  }
+  // if this list is the storage for an outer list, the outer list is the one
+  // that should be deleted
+  var outerListGuid = 
+    mediaList.getProperty(SBProperties.outerGUID);
+  if (outerListGuid)
+    mediaList = mediaList.library.getMediaItem(outerListGuid);
+  // smart playlists are never user editable, determine whether we can delete
+  // them based on their parent library user-editable flag
+  if (mediaList.userEditable ||
+      (mediaList instanceof Ci.sbILocalDatabaseSmartMediaList &&
+       mediaList.library.userEditable)) {
+    const BYPASSKEY = "playlist.deletewarning.bypass";
+    const STRINGROOT = "playlist.deletewarning.";
+    if (!SBDataGetBoolValue(BYPASSKEY)) {
+      var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Ci.nsIPromptService);
+      var check = { value: false };
+      
+      var sbs = Cc["@mozilla.org/intl/stringbundle;1"]
+                  .getService(Ci.nsIStringBundleService);
+      var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
+      var strTitle = SBString(STRINGROOT + "title");
+      var strMsg = SBFormattedString(STRINGROOT + "message", [mediaList.name]);
+      var strCheck = SBString(STRINGROOT + "check");
+      
+      var r = promptService.confirmEx(window, 
+                              strTitle, 
+                              strMsg, 
+                              Ci.nsIPromptService.STD_YES_NO_BUTTONS, 
+                              null, 
+                              null, 
+                              null, 
+                              strCheck, 
+                              check);
+      if (check.value == true) {
+        SBDataSetBoolValue(BYPASSKEY, true);
+      }
+      if (r == 1) { // 0 = yes, 1 = no
+        return;
+      }
+    }
+    // delete the medialist. if the medialist is visible in the browser, the
+    // browser will automatically switch to the main library
+    mediaList.library.remove(mediaList);
+  } else {
+    Components.utils.reportError("SBDeleteMediaList - Medialist is not user editable");
+  }
+}
 
 function SBExtensionsManagerOpen( parentWindow )
 {

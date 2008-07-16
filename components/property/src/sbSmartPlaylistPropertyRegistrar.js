@@ -33,7 +33,6 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 function SmartPlaylistPropertyRegistrar() {
-  Components.utils.reportError("LOADED");
   this._maps = {};
 
   var context = "default";

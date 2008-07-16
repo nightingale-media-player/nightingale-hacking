@@ -35,6 +35,7 @@ const Cr = Components.results;
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
 const ROOTNODE = "SB:Bookmarks";
@@ -145,7 +146,7 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
     // Add menu items for a smart media list
     if (list instanceof Ci.sbILocalDatabaseSmartMediaList) {
-      this._appendMenuItem(aContextMenu, "Properties", function(event) { //XXX todo: localize
+      this._appendMenuItem(aContextMenu, SBString("command.smartpl.properties"), function(event) {
         var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
                         .getService(Ci.nsIWindowWatcher);
         watcher.openWindow(aParentWindow,
@@ -158,7 +159,7 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
     // Add menu items for a dynamic media list
     if (list.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") {
-      this._appendMenuItem(aContextMenu, "Properties", function(event) { //XXX todo: localize
+      this._appendMenuItem(aContextMenu, SBString("command.subscription.properties"), function(event) {
 
         var params = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
         params.appendElement(list, false);

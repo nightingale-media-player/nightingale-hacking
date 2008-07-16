@@ -1566,6 +1566,19 @@
          ]]>
         </body>
       </method>
+      
+      <method name="_getOuterList">
+        <body>
+          <![CDATA[
+            var outerListGuid = 
+              this.mediaList.getProperty(SBProperties.outerGUID);
+            if (outerListGuid) {
+              return this.mediaList.library.getMediaItem(outerListGuid);
+            }
+            return this.mediaList;
+          ]]>
+        </body>
+      </method>
 
       <field name="_commandController"><![CDATA[
         ({
@@ -1599,6 +1612,11 @@
                 listView.selection.selectAll();
                 break;
               case "cmd_delete":
+                var outerList = this._self._getOuterList();
+                if (outerList instanceof Ci.sbILocalDatabaseSmartMediaList) {
+                  SBDeleteMediaList(this._self.mediaList);
+                  return;
+                }
                 if (this._self.mediaList.userEditable) {
                   this._self.removeSelectedTracks();
                 }
@@ -1633,6 +1651,10 @@
               case "cmd_find":
                 return true;
               case "cmd_delete":
+                var outerList = this._self._getOuterList();
+                if (outerList instanceof Ci.sbILocalDatabaseSmartMediaList) {
+                  return outerList.library.userEditable;
+                }
                 if (!this._self.mediaList.userEditable) {
                   return false;
                 }

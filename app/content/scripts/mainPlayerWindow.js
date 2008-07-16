@@ -67,6 +67,8 @@ var gSongbirdWindowController =
       SBTrackEditorOpen("edit"); // open to the 'edit' tab
     else if (aCommand == "cmd_viewmetadata")
       SBTrackEditorOpen("summary"); // open to the 'summary' tab
+    else if (aCommand == "cmd_delete")
+      SBDeleteMediaList(this._getVisiblePlaylist());
   },
   
   supportsCommand: function(aCommand)
@@ -77,6 +79,9 @@ var gSongbirdWindowController =
         aCommand == "cmd_editmetadata" ||
         aCommand == "cmd_viewmetadata")
       return true;
+    if (aCommand == "cmd_delete") {
+      return this._getVisiblePlaylist() != null;
+    }
       
     return false;
   },
@@ -101,8 +106,27 @@ var gSongbirdWindowController =
         }
       }
     }
+    if (aCommand == "cmd_delete") {
+      return this._getVisiblePlaylist() != null;
+    }
     
     return false;
+  },
+  
+  _getVisiblePlaylist: function() 
+  {
+    var browser;
+    if (typeof SBGetBrowser == 'function') 
+      browser = SBGetBrowser();
+    if (browser) {
+      if (browser.currentMediaPage) {
+        var view = browser.currentMediaPage.mediaListView;
+        if (view) {
+          return view.mediaList;
+        }
+      }
+    }
+    return null;
   }
 };
 
