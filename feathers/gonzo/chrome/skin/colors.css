@@ -43,6 +43,9 @@ html|input {
   font-family: Lucida Grande, Trebuchet MS, Bitstream Vera Sans, FreeSans, Verdana, Arial, Sans-serif !important;
 }
 
+window {
+  padding:0px !important;
+}
 
 wizard,
 dialog,
@@ -540,12 +543,17 @@ tabs {
 
 }
 
-.tabbrowser-tabs
-{
+#tabstrip-container {
   background-color: rgb(80,80,80);
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png);
   background-repeat:repeat-x;
   background-position:center bottom;
+  padding:0px;
+  margin:0px;
+}
+
+.tabbrowser-tabs
+{
 
   padding:0px 0px 0px 0px;
 }
@@ -841,7 +849,7 @@ border-left:1px solid rgb(140,140,140);
 button:focus,
 checkbox:focus,
 radio[focused="true"] {
-  outline:2px solid lime;
+/*  outline:2px solid lime;*/
     outline-offset:0px !important;
   -moz-outline-radius:5px !important;
 }
@@ -1146,12 +1154,18 @@ These let the user resize the frames in your box model.
   background-color:gray;
 }
 
-#servicepane_splitter[state="collapsed"],
+
 #displaypane_right_sidebar_splitter[state="collapsed"],
 #displaypane_contentpane_bottom_splitter[state="collapsed"],
 #displaypane_servicepane_bottom_splitter[state="collapsed"]
 {
-  background-color: red;
+background-color:red;
+}
+
+
+#servicepane_splitter[state="collapsed"] {
+  width:0px;
+  min-width:0px;
 }
 
 #servicepane_splitter[state="collapsed"]:hover,
@@ -2098,7 +2112,7 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 
 tab[first-tab="true"],
 .tabs-container > hbox > tab {
-	margin-left:1px !important;
+  margin-left:0px !important;
 }
 
 
@@ -2114,11 +2128,11 @@ prefwindow * {
   background: transparent;
   width: 200px;
   height: 500px;
-padding-top:2px;
 background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png);
 background-repeat:repeat-x;
 background-position:center -24px;
 background-color: rgb(220,220,220) !important;
+padding:0px;
 }
 #service_pane_spring_load_panel > .service-pane-spring-load-tree {
   -moz-binding: url(chrome://songbird/content/bindings/servicePane.xml#proxyTreePane);
@@ -2142,17 +2156,19 @@ background-color: rgb(220,220,220) !important;
 
 
 
-
 #servicepane_spring_button {
   -moz-border-radius:0px;
   -moz-image-region:auto;
-    margin:0 0 0 1px;
-    background-image: url('chrome://songbird/skin/browser-tab-bar/bg-scroll.png');
-    background-position:center 0px;
-    background-repeat:no-repeat;
-    min-width:16px;
-    max-width:16px;
-    list-style-image: url(chrome://songbird/skin/browser-tab-bar/button-service-pane-spring.png) ;
+    margin:0 0 0 0;
+border:none;
+min-width:20px;
+background-color:transparent;
+background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png) !important;
+background-repeat:no-repeat;
+background-position:right 0px;
+}
+#servicepane_spring_button:hover {
+  background-position:right -30px !important;
 }
 #servicepane_spring_button > .button-box {
   padding:0;
@@ -2160,7 +2176,9 @@ background-color: rgb(220,220,220) !important;
 #servicepane_spring_button > .button-box > .button-text {
   display:none;
 }
-
+#servicepane_spring_button[disabled="true"] {
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
+}
 
 
 
