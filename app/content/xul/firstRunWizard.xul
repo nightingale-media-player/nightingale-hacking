@@ -50,8 +50,9 @@
   id="first_run_wizard"
   title="&first_run.title;"
   hidechrome="true"
+  onload="firstRunWizard.doLoad();"
   onunload="firstRunWizard.doUnload();"
-  onwizardfinish="firstRunWizard.doFinish();"
+  onwizardfinish="return firstRunWizard.doFinish();"
   onwizardcancel="firstRunWizard.doCancel();"
   onkeypress="firstRunWizard.doKeyPress(event);"
 >
@@ -64,6 +65,8 @@
 
   <!-- EULA page. -->
   <wizardpage id="first_run_eula_page"
+              pageid="first_run_eula_page"
+              next="first_run_locale_page"
               label="&first_run.title;"
               hideback="true"
               hidecancel="true"
@@ -75,6 +78,8 @@
 
   <!-- Locale page. -->
   <wizardpage id="first_run_locale_page"
+              pageid="first_run_locale_page"
+              next="first_run_welcome_page"
               label="&first_run.title;"
               hideback="true"
               onpageshow="firstRunWizard.doPageShow();">
@@ -88,6 +93,8 @@
 
   <!-- Welcome page. -->
   <wizardpage id="first_run_welcome_page"
+              pageid="first_run_welcome_page"
+              next="first_run_import_media_page"
               label="&first_run.title;"
               hideback="true"
               onpageshow="firstRunWizard.doPageShow();">
@@ -98,6 +105,8 @@
 
   <!-- Import media page. -->
   <wizardpage id="first_run_import_media_page"
+              pageid="first_run_import_media_page"
+              next="first_run_add_ons_page"
               label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-import-media id="first_run_import_media"
@@ -107,6 +116,8 @@
 
   <!-- Add-ons page. -->
   <wizardpage id="first_run_add_ons_page"
+              pageid="first_run_add_ons_page"
+              next="first_run_feedback_page"
               label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-add-ons id="first_run_add_ons"
@@ -116,11 +127,32 @@
 
   <!-- Feedback page. -->
   <wizardpage id="first_run_feedback_page"
+              pageid="first_run_feedback_page"
+              postfinish="first_run_install_add_ons_page"
               label="&first_run.title;"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-feedback id="first_run_feedback"
                            class="first-run-wizard-page"
                            firstrunwizardpage="true"/>
+  </wizardpage>
+
+
+  <!--
+   * Post-finish pages.
+   *
+   *   The following pages are presented after the wizard configuration is
+   * finished.  None of these pages should be able to navigate back to the
+   * wizard configuration pages.
+   -->
+
+  <!-- Install add-ons page. -->
+  <wizardpage id="first_run_install_add_ons_page"
+              pageid="first_run_install_add_ons_page"
+              label="&first_run.title;"
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-install-add-ons id="first_run_install_add_ons"
+                                  class="first-run-wizard-page"
+                                  firstrunwizardpage="true"/>
   </wizardpage>
 
 

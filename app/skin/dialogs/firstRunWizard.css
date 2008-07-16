@@ -99,6 +99,11 @@ Additional styles imported directly by the first run dialog.
   list-style-image: url(chrome://songbird-branding/skin/first-run-welcome.png);
 }
 
+/* Wizard button styles. */
+button[hidewizardbutton="true"] {
+  display: none;
+}
+
 
 /* *****************************************************************************
  *
@@ -197,6 +202,10 @@ sb-first-run-feedback {
 
 sb-first-run-import-media {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunImportMedia.xml#sb-first-run-import-media");
+}
+
+sb-first-run-install-add-ons {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunInstallAddOns.xml#sb-first-run-install-add-ons");
 }
 
 sb-first-run-locale {

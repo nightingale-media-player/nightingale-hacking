@@ -66,10 +66,18 @@ var firstRunWizard = {
   //
   // First-run wizard fields.
   //
+  //   _initialized             True if these services have been initialized.
+  //   _wizardElem              Wizard element.
   //   _restartWizard           True if the wizard needs to be restarted.
+  //   _savedSettings           True if settings have been saved.
+  //   _postFinish              True if wizard is in the post-finish pages.
   //
 
+  _initialized: false,
+  _wizardElem: null,
   _restartWizard: false,
+  _savedSettings: false,
+  _postFinish: false,
 
 
   //----------------------------------------------------------------------------
@@ -77,6 +85,16 @@ var firstRunWizard = {
   // Event handling services.
   //
   //----------------------------------------------------------------------------
+
+  /**
+   * Handle a load event.
+   */
+
+  doLoad: function firstRunWizard_doLoad() {
+    // Initialize the services.
+    this._initialize();
+  },
+
 
   /**
    * Handle an unload event.
@@ -98,6 +116,21 @@ var firstRunWizard = {
   doFinish: function firstRunWizard_doFinish() {
     // Save wizard settings.
     this._saveSettings();
+
+    // Advance to post-finish pages if specified.  Return false to prevent
+    // finish.
+    var currentPage = this._wizardElem.currentPage;
+    if (currentPage.hasAttribute("postfinish")) {
+      // Indicate post-finish state before switching pages.
+      this._postFinish = true;
+
+      // Switch to post-finish pages.
+      var postFinishPageID = currentPage.getAttribute("postfinish");
+      this._wizardElem.goTo(postFinishPageID);
+
+      // Cancel finish.
+      return false;
+    }
   },
 
 
@@ -115,6 +148,9 @@ var firstRunWizard = {
    */
 
   doPageShow: function firstRunWizard_doPageShow() {
+    // Initialize the services.  Page show can occur before load.
+    this._initialize();
+
     // Update the UI.
     this._update();
   },
@@ -131,8 +167,7 @@ var firstRunWizard = {
     var keyCode = aEvent.keyCode;
 
     // Get the current page.
-    var wizardElem = document.getElementById("first_run_wizard");
-    var currentPage = wizardElem.currentPage;
+    var currentPage = this._wizardElem.currentPage;
 
     // If the current page is the EULA page, don't allow the wizard to process
     // navigation key presses.
@@ -185,9 +220,8 @@ var firstRunWizard = {
         document.defaultView.close();
       }
     } else {
-      var wizardElem = document.getElementById("first_run_wizard");
-      wizardElem.canAdvance = true;
-      wizardElem.advance();
+      this._wizardElem.canAdvance = true;
+      this._wizardElem.advance();
     }
   },
 
@@ -198,28 +232,33 @@ var firstRunWizard = {
   //
   //----------------------------------------------------------------------------
 
-  /*
+  /**
+   * Initialize the first-run wizard dialog services.
+   */
+
+  _initialize: function firstRunWizard__initialize() {
+    // Do nothing if already initialized.
+    if (this._initialized)
+      return;
+
+    // Get the wizard element.
+    this._wizardElem = document.getElementById("first_run_wizard");
+
+    // Services are now initialized.
+    this._initialized = true;
+  },
+
+
+  /**
    * Update the UI.
    */
 
   _update: function firstRunWizard__update() {
     // Get the current wizard page.
-    var wizardElem = document.getElementById("first_run_wizard");
-    var currentPage = wizardElem.currentPage;
+    var currentPage = this._wizardElem.currentPage;
 
-    // Hide or show the back button.
-    var backButton = wizardElem.getButton("back");
-    if (currentPage.getAttribute("hideback") == "true")
-      backButton.hidden = true;
-    else
-      backButton.hidden = false;
-
-    // Hide or show the cancel button.
-    var cancelButton = wizardElem.getButton("cancel");
-    if (currentPage.getAttribute("hidecancel") == "true")
-      cancelButton.hidden = true;
-    else
-      cancelButton.hidden = false;
+    // Update the buttons.
+    this._updateButtons();
 
     // If showing the first-run locale page and a locale switch is required,
     // switch the locale.  Otherwise, skip the first-run locale page.
@@ -227,11 +266,11 @@ var firstRunWizard = {
       var firstRunLocaleElem = document.getElementById("first_run_locale");
       if (firstRunLocaleElem.localeSwitchRequired) {
         // Switch the locale, but don't allow advancing.
-        wizardElem.canAdvance = false;
+        this._wizardElem.canAdvance = false;
         firstRunLocaleElem.switchLocale();
       } else {
-        wizardElem.canAdvance = true;
-        wizardElem.advance();
+        this._wizardElem.canAdvance = true;
+        this._wizardElem.advance();
       }
     }
 
@@ -239,8 +278,8 @@ var firstRunWizard = {
     if (currentPage.id != "first_run_eula_page") {
       // Focus the finish button if it's not hidden.  Otherwise, focus the next
       // button.
-      var finishButton = wizardElem.getButton("finish");
-      var nextButton = wizardElem.getButton("next");
+      var finishButton = this._wizardElem.getButton("finish");
+      var nextButton = this._wizardElem.getButton("next");
       if (!finishButton.hidden)
         finishButton.focus();
       else if (!nextButton.hidden)
@@ -250,14 +289,70 @@ var firstRunWizard = {
 
 
   /**
+   * Update the wizard buttons.
+   */
+
+  _updateButtons: function firstRunWizard__updateButtons() {
+    // Get the current wizard page.
+    var currentPage = this._wizardElem.currentPage;
+
+    // Get the button hide settings.
+    var hideBackButton = currentPage.getAttribute("hideback") == "true";
+    var hideCancelButton = currentPage.getAttribute("hidecancel") == "true";
+    var hideNextButton = currentPage.getAttribute("hidenext") == "true";
+    var hideFinishButton = currentPage.getAttribute("hidefinish") == "true";
+
+    // Always hide navigation buttons on post-finish pages.
+    if (this._postFinish) {
+      hideBackButton = true;
+      hideNextButton = true;
+      hideFinishButton = true;
+    }
+
+    // Update the buttons.
+    this._setHideButton("back", hideBackButton);
+    this._setHideButton("cancel", hideCancelButton);
+    this._setHideButton("next", hideNextButton);
+    this._setHideButton("finish", hideFinishButton);
+
+  },
+
+
+  /**
+   * Set the wizard button specified by aButtonID to be hidden as specified by
+   * aHide.
+   *
+   * \param aButtonID           ID of button to set hidden.
+   * \param aHide               If true, button should be hidden.
+   */
+
+  _setHideButton: function firstRunWizard__setHideButton(aButtonID, aHide) {
+    // Get the current wizard page.
+    var currentPage = this._wizardElem.currentPage;
+
+    // Hide the button if specified to do so.  Use a "hidewizardbutton"
+    // attribute with CSS to avoid conflicts with the wizard widget's use of the
+    // button "hidden" attribute.
+    var button = this._wizardElem.getButton(aButtonID);
+    if (aHide)
+      button.setAttribute("hidewizardbutton", "true");
+    else
+      button.removeAttribute("hidewizardbutton");
+  },
+
+
+  /**
    * Save settings from all wizard pages.
    */
 
   _saveSettings: function firstRunWizard__saveSettings() {
+    // Do nothing if settings already saved.
+    if (this._savedSettings)
+      return;
+
     // Get all first-run wizard page elements.
-    var wizardElem = document.getElementById("first_run_wizard");
     var firstRunWizardPageElemList =
-          DOMUtils.getElementsByAttribute(wizardElem,
+          DOMUtils.getElementsByAttribute(this._wizardElem,
                                           "firstrunwizardpage",
                                           "true");
 
@@ -268,6 +363,9 @@ var firstRunWizard = {
       if (typeof(firstRunWizardPageElem.saveSettings) == "function")
         firstRunWizardPageElem.saveSettings();
     }
+
+    // Settings have now been saved.
+    this._savedSettings = true;
   }
 };
 
