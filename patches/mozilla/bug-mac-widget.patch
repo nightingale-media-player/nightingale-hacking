@@ -4,7 +4,7 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.h,v
 retrieving revision 1.93.4.1
 diff -u -8 -r1.93.4.1 nsChildView.h
 --- widget/src/cocoa/nsChildView.h	30 May 2008 14:53:46 -0000	1.93.4.1
-+++ widget/src/cocoa/nsChildView.h	25 Jun 2008 22:49:33 -0000
++++ widget/src/cocoa/nsChildView.h	16 Jul 2008 00:31:29 -0000
 @@ -118,16 +118,21 @@
    
    // rects that were invalidated during a draw, so have pending drawing
@@ -52,7 +52,7 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsChildView.mm,v
 retrieving revision 1.357.2.1
 diff -u -8 -r1.357.2.1 nsChildView.mm
 --- widget/src/cocoa/nsChildView.mm	30 May 2008 14:53:46 -0000	1.357.2.1
-+++ widget/src/cocoa/nsChildView.mm	25 Jun 2008 22:49:33 -0000
++++ widget/src/cocoa/nsChildView.mm	16 Jul 2008 00:31:29 -0000
 @@ -2938,19 +2938,75 @@
    }
  
@@ -135,8 +135,32 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.h,v
 retrieving revision 1.50
 diff -u -8 -r1.50 nsCocoaWindow.h
 --- widget/src/cocoa/nsCocoaWindow.h	2 May 2008 11:32:52 -0000	1.50
-+++ widget/src/cocoa/nsCocoaWindow.h	25 Jun 2008 22:49:33 -0000
-@@ -89,17 +89,21 @@
++++ widget/src/cocoa/nsCocoaWindow.h	16 Jul 2008 00:31:29 -0000
+@@ -69,16 +69,23 @@
+ // If we set the window's stylemask to be textured, the corners on the bottom of
+ // the window are rounded by default. We use this private method to make
+ // the corners square again, a la Safari.
+ - (void)setBottomCornerRounded:(BOOL)rounded;
+ 
+ @end
+ 
+ 
++@interface NSWindow (Resizer)
++
++- (BOOL)usesNativeResizer;
++
++@end
++
++
+ @interface PopupWindow : NSWindow
+ {
+ @private
+   BOOL mIsContextMenu;
+ }
+ 
+ - (id)initWithContentRect:(NSRect)contentRect styleMask:(unsigned int)styleMask
+       backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation;
+@@ -89,17 +96,21 @@
  
  
  @interface BorderlessWindow : NSWindow
@@ -146,8 +170,8 @@ diff -u -8 -r1.50 nsCocoaWindow.h
  - (BOOL)canBecomeKeyWindow;
  - (BOOL)canBecomeMainWindow;
 +@end
-+
  
++
 +@interface SongbirdWindow : BorderlessWindow 
 +{}
  @end
@@ -158,7 +182,7 @@ diff -u -8 -r1.50 nsCocoaWindow.h
    nsCocoaWindow* mGeckoWindow; // [WEAK] (we are owned by the window)
    // Used to avoid duplication when we send NS_ACTIVATE/NS_GOTFOCUS and
    // NS_DEACTIVATE/NS_LOSTFOCUS to Gecko for toplevel widgets.  Starts out
-@@ -243,16 +247,18 @@
+@@ -243,16 +254,18 @@
      NS_IMETHOD GetPreferredSize(PRInt32& aWidth, PRInt32& aHeight) { return NS_OK; }
      NS_IMETHOD SetPreferredSize(PRInt32 aWidth, PRInt32 aHeight) { return NS_OK; }
      NS_IMETHOD DispatchEvent(nsGUIEvent* event, nsEventStatus & aStatus) ;
@@ -183,7 +207,7 @@ RCS file: /cvsroot/mozilla/widget/src/cocoa/nsCocoaWindow.mm,v
 retrieving revision 1.148
 diff -u -8 -r1.148 nsCocoaWindow.mm
 --- widget/src/cocoa/nsCocoaWindow.mm	7 May 2008 21:15:57 -0000	1.148
-+++ widget/src/cocoa/nsCocoaWindow.mm	25 Jun 2008 22:49:34 -0000
++++ widget/src/cocoa/nsCocoaWindow.mm	16 Jul 2008 00:31:29 -0000
 @@ -248,17 +248,30 @@
              case eBorderStyle_all:
                features |= NSClosableWindowMask;
@@ -355,7 +379,7 @@ diff -u -8 -r1.148 nsCocoaWindow.mm
  
  // Hide or show this window
  NS_IMETHODIMP nsCocoaWindow::Show(PRBool bState)
-@@ -1352,16 +1394,39 @@
+@@ -1352,16 +1394,44 @@
                                forActiveWindow:(BOOL)aActive];
    }
    return NS_OK;
@@ -371,9 +395,14 @@ diff -u -8 -r1.148 nsCocoaWindow.mm
 +  [[aWindow standardWindowButton:NSWindowMiniaturizeButton] setEnabled:!aShouldLock];
 +  [[aWindow standardWindowButton:NSWindowZoomButton] setEnabled:!aShouldLock];
 +  
-+  // Even though the resize indicator is hidden, we need a good way to disable
-+  // the resizer button since it is still clickable... (and re-focuses the window)
-+  [aWindow setShowsResizeIndicator:!aShouldLock];
++  // If the window isn't already using the native resizer, it should be hidden
++  // to try and prevent the user from clicking on it to rearrange windows.
++  BOOL hideResizer = YES;
++  if ([aWindow respondsToSelector:@selector(usesNativeResizer)]) 
++    hideResizer = [aWindow usesNativeResizer];
++  
++  if (hideResizer)
++    [aWindow setShowsResizeIndicator:!aShouldLock];
 +
 +  NSEnumerator *subviewsEnum = [[[aWindow contentView] subviews] objectEnumerator];
 +  id curSubview = nil;
@@ -395,7 +424,7 @@ diff -u -8 -r1.148 nsCocoaWindow.mm
  }
  
  
-@@ -1665,16 +1730,17 @@
+@@ -1665,16 +1735,17 @@
  // 3) We set the background color to a custom NSColor subclass that knows how tall the window is.
  //    When -set is called on it, it sets a pattern (with a draw callback) as the fill. In that callback,
  //    it paints the the titlebar and background colrs in the correct areas of the context its given,
@@ -413,7 +442,7 @@ diff -u -8 -r1.148 nsCocoaWindow.mm
    if ((self = [super initWithContentRect:aContentRect styleMask:aStyle backing:aBufferingType defer:aFlag])) {
      mColor = [[TitlebarAndBackgroundColor alloc] initWithActiveTitlebarColor:nil
                                                         inactiveTitlebarColor:nil
-@@ -1800,19 +1866,23 @@
+@@ -1800,19 +1871,23 @@
    NS_OBJC_END_TRY_ABORT_BLOCK_RETURN(NO);
  }
  
@@ -438,7 +467,7 @@ diff -u -8 -r1.148 nsCocoaWindow.mm
      case NSLeftMouseDragged:
      case NSRightMouseDragged:
      case NSOtherMouseDragged:
-@@ -1834,16 +1904,17 @@
+@@ -1834,16 +1909,22 @@
      }
      default:
        break;
@@ -447,6 +476,11 @@ diff -u -8 -r1.148 nsCocoaWindow.mm
    [super sendEvent:anEvent];
  }
  
++- (BOOL)usesNativeResizer
++{
++  return YES;
++}
++
 +
  @end
  
@@ -456,7 +490,7 @@ diff -u -8 -r1.148 nsCocoaWindow.mm
  @implementation TitlebarAndBackgroundColor
  
  - (id)initWithActiveTitlebarColor:(NSColor*)aActiveTitlebarColor
-@@ -2364,19 +2435,20 @@
+@@ -2364,19 +2445,20 @@
  }
  
  
@@ -478,7 +512,7 @@ diff -u -8 -r1.148 nsCocoaWindow.mm
      case NSLeftMouseDragged:
      case NSRightMouseDragged:
      case NSOtherMouseDragged:
-@@ -2431,8 +2503,236 @@
+@@ -2431,8 +2513,241 @@
    BOOL retval = [super performKeyEquivalent:theEvent];
    [nativeWindow release];
    return retval;
@@ -671,6 +705,11 @@ diff -u -8 -r1.148 nsCocoaWindow.mm
 +                                                  name:NSWindowDidResignMainNotification
 +                                                object:self];
 +  [super dealloc];
++}
++
++- (BOOL)usesNativeResizer
++{
++  return NO;
 +}
 +
 +- (void)windowDidMove:(NSNotification *)notification
