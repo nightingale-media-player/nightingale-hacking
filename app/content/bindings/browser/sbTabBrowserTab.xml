@@ -111,7 +111,6 @@
             return;  // Nothing to do.
           }
           try {
-            this.closeBalloonTip();
               
             // Stop async scanner and hide outerplaylist
             this.clearOuterPlaylist();
@@ -338,14 +337,6 @@
           if (!this._playlist) return;
           this._playlist.setAttribute("hidden", !val);
           this._splitter.setAttribute("hidden", !val);
-
-          if (!val) {
-            // if the balloontip for the webplaylist is shown, close it
-            this.closeBalloonTip();
-          } else {
-            // open the balloontip if needed
-            this.openBalloonTip();
-          }
 
           if (this == this.parentNode.selectedItem) {
             // if in the foreground then we should set the state of the
@@ -924,33 +915,6 @@
           viewMap.setView(browser, entry, this.mediaPage.mediaListView);
         ]]>
         </body>
-      </method>
-
-      <method name="openBalloonTip">
-        <body><![CDATA[
-          if (!SBDataGetBoolValue("balloontip.firstwebplaylist.shown")) {
-            this.balloontip = new BalloonTip;
-            var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-            var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-            var title = "Found media."
-            var text = "Songbird has found the following playable tracks."
-            try {
-              title = songbirdStrings.GetStringFromName("balloontip.firstwebplaylist.title");
-              text = songbirdStrings.GetStringFromName("balloontip.firstwebplaylist.text");
-            } catch (e) { }
-            this.balloontip.showText(text, this._playlist, title, 'balloon-icon-songbird', null, -1);
-            SBDataSetBoolValue("balloontip.firstwebplaylist.shown", true);
-          }
-        ]]></body>
-      </method>
-
-      <method name="closeBalloonTip">
-        <body><![CDATA[
-          if (this.balloontip) {
-            this.balloontip.closeTip();
-            this.balloontip = null;
-          }
-        ]]></body>
       </method>
 
       <!-- tab dnd helpers -->

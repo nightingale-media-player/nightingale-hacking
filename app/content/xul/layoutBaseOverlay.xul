@@ -434,10 +434,6 @@
   <script type="application/x-javascript" 
   src="chrome://songbird/content/scripts/jumpToFile.js" />
 
-  <!-- Balloon tips -->
-  <script type="application/x-javascript" 
-  src="chrome://songbird/content/scripts/balloonTip.js" />
-
   <!-- Sanitizer Support (moz) -->
   <script type="application/x-javascript" 
   src="chrome://browser/content/sanitize.js" />
