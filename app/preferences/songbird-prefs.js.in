@@ -383,3 +383,9 @@ pref("feedback.disabled", true);
 
 // Default the player controls to the bottom
 pref("songbird.playercontrol.location", "bottom");
+
+//
+// Library importer prefs
+//
+pref("songbird.library_importer.unsupported_media_alert.enabled", true);
+

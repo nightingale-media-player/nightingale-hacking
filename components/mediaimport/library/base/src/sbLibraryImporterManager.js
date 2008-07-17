@@ -481,6 +481,21 @@ sbLibraryImporterManager.prototype = {
     // Add all library importers.
     this._addAllLibraryImporters();
 
+    // If the library file path preference is not set, set a default one.
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+    var hasLibraryFilePath =
+          Application.prefs.has("songbird.library_importer.library_file_path");
+    if (!hasLibraryFilePath && this.defaultLibraryImporter) {
+      var libraryDefaultFilePath =
+            this.defaultLibraryImporter.libraryDefaultFilePath;
+      if (libraryDefaultFilePath) {
+        Application.prefs.setValue
+                            ("songbird.library_importer.library_file_path",
+                             libraryDefaultFilePath);
+      }
+    }
+
     // Initialization is now complete.
     this._isInitialized = true;
 
