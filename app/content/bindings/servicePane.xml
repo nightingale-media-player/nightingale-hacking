@@ -1044,9 +1044,10 @@
       <!-- For now just hijacking the file menu implementation.. -->
       <!-- TODO: over state, up arrow, remove periods from all IDs -->
       <xul:hbox id="servicepane_toolbar_box" class="servicepane-toolbar-box">
-        <xul:sb-clickhold-button class="servicepane-toolbar-newitem-button" anonid="clickhold" flex="1">
+        <xul:button class="servicepane-toolbar-newitem-button"
+                    anonid="clickhold" flex="1" type="sb-clickhold">
           <xul:menupopup anonid="popup" popupanchor="topleft" popupalign="bottomleft"/>
-        </xul:sb-clickhold-button>
+        </xul:button>
       </xul:hbox>
     </content>
     <implementation>

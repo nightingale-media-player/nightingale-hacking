@@ -240,13 +240,27 @@ sb-smart-splitter {
   -moz-binding: url("chrome://songbird/content/bindings/smartSplitter.xml#smart-splitter") !important;
 }
 
-sb-clickhold-button {
+/* CLICK-HOLD BUTTONS */
+
+/* the <sb-clickhold-button/> and <sb-clickhold-toolbarbutton/> tag names are deprecated,
+ * use <button type="sb-clickhold"> and <toolbarbutton type="sb-clickhold"/> instead.
+ * This matches <button type="menu"/> better.  See songbird bug 10802.
+ */
+sb-clickhold-button,
+button[type="sb-clickhold"] {
   -moz-binding: url('chrome://songbird/content/bindings/clickHoldButton.xml#clickhold-button')
 }
 
-sb-clickhold-toolbarbutton {
+sb-clickhold-toolbarbutton,
+toolbarbutton[type="sb-clickhold"]  {
    -moz-binding: url('chrome://songbird/content/bindings/clickHoldButton.xml#clickhold-toolbarbutton')
 }
+
+/* SPRING LOADED BUTTON */
+button[type="sb-spring"] {
+  -moz-binding: url("chrome://songbird/content/bindings/springLoadButton.xml#springload-button") !important;
+}
+
 
 sb-feathers-menuitems {
   -moz-binding: url("chrome://songbird/content/bindings/feathers.xml#feathers-menuitems") !important;
@@ -397,11 +411,6 @@ sb-browser-spinner {
 /* COMBINED STOP/RELOAD BUTTON */
 sb-browser-stopreload-button {
   -moz-binding: url("chrome://songbird/content/bindings/browser/browserControls.xml#sb-browser-stopreload-button") !important;
-}
-
-/* SPRING LOADED BUTTON */
-button[type="sb-spring"] {
-  -moz-binding: url("chrome://songbird/content/bindings/springLoadButton.xml#springload-button") !important;
 }
 
 /* DRAGGABLE */
