@@ -62,20 +62,21 @@
                     orient="horizontal">
 
         <!-- Device operation progress box. -->
-        <xul:vbox pack="center"
-                  sbid="progress_information_box"
-                  class="device-progress-information-box">
+        <xul:vbox sbid="progress_information_box"
+                  class="device-progress-information-box"
+                  flex="1">
 
           <!-- Progress text 1 label. -->
           <xul:label sbid="progress_text1_label"
                      observestarget="true"
                      observeskey="text1"
                      observesattribute="value"
-                     crop="none"
+                     crop="end"
                      error="false"
                      action="show_errors"
                      onclick="DPW.onAction(event);"
-                     class="dev-progress-text1-label"/>
+                     class="dev-progress-text1-label"
+                     flex="1" />
 
           <!-- Operation progress meter. -->
           <xul:progressmeter sbid="progress_meter" 
@@ -90,30 +91,27 @@
                      observeskey="text2"
                      observesattribute="value"
                      crop="end"
-                     class="dev-progress-text2-label"/>
+                     class="dev-progress-text2-label"
+                     flex="1" />
 
         </xul:vbox>
 
+        <xul:vbox pack="center" class="dev-progress-button-box">
         <!-- Sync device operation button. -->
-        <xul:vbox pack="center">
           <xul:button sbid="sync_operation_button"
                       class="device-progress-button"
                       label="&device.progress.sync;"
                       action="sync"
                       oncommand="DPW.onAction(event);"/>
-        </xul:vbox>
 
         <!-- Cancel device operation button. -->
-        <xul:vbox pack="center">
           <xul:button sbid="cancel_operation_button"
                       class="device-progress-button"
                       label="&window.cancel;"
                       action="cancel"
                       oncommand="DPW.onAction(event);"/>
-        </xul:vbox>
 
         <!-- Finish progress button. -->
-        <xul:vbox pack="center">
           <xul:button sbid="finish_progress_button"
                       class="device-progress-button"
                       label="&window.ok;"

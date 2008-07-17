@@ -88,6 +88,12 @@
             <xul:hbox flex="1"/>
           </xul:hbox>
 
+          <xul:hbox class="device-capacity-bar-caps hook" flex="1">
+            <xul:hbox class="left" />
+            <xul:spacer class="middle" flex="1" />
+            <xul:hbox class="right" />
+          </xul:hbox>
+
         </xul:stack>
 
         <!-- Capacity legend. -->

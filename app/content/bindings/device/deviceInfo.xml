@@ -79,7 +79,7 @@
 
     <content>
 
-      <xul:hbox align="center">
+      <xul:hbox align="center" flex="1">
 
         <!-- Device image. -->
         <xul:image sbid="device_image"
@@ -98,21 +98,6 @@
                        showid="name"
                        crop="end"
                        hidden="true"/>
-
-            <xul:button sbid="more_info_button"
-                        class="more-info-button"
-                        showid="moreinfo"
-                        hidden="true"/>
-            <xul:sb-device-get-info-command bindelem="prev"
-                                            xbl:inherits="device-id"/>
-
-            <xul:button sbid="eject_button"
-                        class="eject-button"
-                        showid="eject"
-                        hidden="true"/>
-            <xul:sb-device-eject-command bindelem="prev"
-                                         xbl:inherits="device-id"/>
-
           </xul:hbox>
 
           <!-- Device specs. -->
@@ -219,6 +204,23 @@
 
       </xul:hbox>
 
+
+      <xul:groupbox orient="horizontal" pack="center" align="center">
+        <xul:button sbid="more_info_button"
+                    class="more-info-button"
+                    showid="moreinfo"
+                    hidden="true"/>
+        <xul:sb-device-get-info-command bindelem="prev"
+                                        xbl:inherits="device-id"/>
+
+        <xul:button sbid="eject_button"
+                    class="eject-button"
+                    showid="eject"
+                    hidden="true"/>
+        <xul:sb-device-eject-command bindelem="prev"
+                                     xbl:inherits="device-id"/>
+      </xul:groupbox>
+      
     </content>
 
 

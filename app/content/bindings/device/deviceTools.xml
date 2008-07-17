@@ -54,51 +54,25 @@
 
     <content>
 
-      <!-- Position groupbox in center and let it grow -->
-      <!-- but don't extend its boundary to edges.     -->
-      <xul:hbox flex="1">
+      <xul:vbox class="device-tab-content">
 
-        <!-- Spacer to position groupbox in center. -->
-        <xul:spacer flex="1"/>
+        <xul:hbox class="device-tab-header-box">
+          <!-- Header label and info. -->
+          <xul:label class="device-tab-header-label"
+                     value="&device.management.tabs.tools.label;"/>
+          <xul:label sbid="content_management_header_info_label"
+                     class="device-tab-header-info"/>
+        </xul:hbox>
 
-        <!-- Position elements at top. -->
-        <xul:vbox flex="1">
-          <!-- panel header -->
-          <xul:hbox class="device-tab-header-box" align="baseline">
-  
-            <!-- Header label and info. -->
-            <xul:label class="device-tab-header-label"
-                       value="&device.management.tabs.tools.label;"/>
-            <xul:label sbid="content_management_header_info_label"
-                       class="device-tab-header-info"/>
-  
-            <!-- Spacer to position buttons to the right. -->
-            <xul:spacer flex="1"/>
-  
-          </xul:hbox>
+        <!-- Button groupbox. -->
+        <xul:groupbox pack="center" orient="vertical">
+              <xul:button label="&device.tools.button.reset_warnings.label;"
+                          oncommand="resetWarnings();"/>
+              <xul:button label="&device.tools.button.restore_settings.label;"
+                          oncommand="restoreToFactoryDefaults();"/>
+        </xul:groupbox>
 
-          <!-- Button groupbox. -->
-          <xul:groupbox flex="1">
-
-            <!-- Center buttons inside groupbox but don't let them grow. -->
-            <xul:hbox pack="center">
-              <xul:vbox>
-                <xul:button label="&device.tools.button.reset_warnings.label;"
-                            oncommand="resetWarnings();"/>
-                <xul:button label="&device.tools.button.restore_settings.label;"
-                            oncommand="restoreToFactoryDefaults();"/>
-              </xul:vbox>
-            </xul:hbox>
-
-          </xul:groupbox>
-
-          <xul:spacer flex="1"/>
-
-        </xul:vbox>
-
-        <xul:spacer flex="1"/>
-
-      </xul:hbox>
+      </xul:vbox>
 
     </content>
 
