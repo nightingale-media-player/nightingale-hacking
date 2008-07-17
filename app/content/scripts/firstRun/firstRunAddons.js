@@ -106,12 +106,20 @@ firstRunAddOnsSvc.prototype = {
   constructor: firstRunAddOnsSvc,
 
   //
-  // Widget services fields.
+  // Public widget services fields.
+  //
+  //   addOnsBundle             Add-ons bundle object.
+  //
+
+  addOnsBundle: null,
+
+
+  //
+  // Internal widget services fields.
   //
   //   _cfg                     Widget services configuration.
   //   _widget                  First-run wizard add-ons widget.
   //   _domEventListenerSet     Set of DOM event listeners.
-  //   _addOnsBundle            Add-ons bundle object.
   //   _addOnsBundleLoading     True if an add-ons bundle is being loaded.
   //   _addOnsBundleDataLoadComplete
   //                            True if loading of add-ons bundle data is
@@ -125,7 +133,6 @@ firstRunAddOnsSvc.prototype = {
   _cfg: firstRunAddOnsSvcCfg,
   _widget: null,
   _domEventListenerSet: null,
-  _addOnsBundle: null,
   _addOnsBundleLoading: false,
   _addOnsBundleDataLoadComplete: false,
   _addOnsBundleDataLoadSucceeded: false,
@@ -176,8 +183,26 @@ firstRunAddOnsSvc.prototype = {
 
     // Clear object fields.
     this._widget = null;
-    this._addOnsBundle = null;
+    this.addOnsBundle = null;
     this._addOnsTable = null;
+  },
+
+
+  /**
+   * Save the user settings in the first run wizard page.
+   */
+
+  saveSettings: function firstRunAddOnsSvc_saveSettings() {
+    // Set install flag for each add-on.
+    for (var addOnID in this._addOnsTable) {
+      // Get the add-on info.
+      var addOnInfo = this._addOnsTable[addOnID];
+      var index = addOnInfo.index;
+      var addOnItemElem = addOnInfo.addOnItemElem;
+
+      // Set the install flag according to the add-on item element setting.
+      this.addOnsBundle.setExtensionInstallFlag(index, addOnItemElem.install);
+    }
   },
 
 
@@ -282,18 +307,18 @@ firstRunAddOnsSvc.prototype = {
     // Start loading the add-ons bundle data.
     if (!this._addOnsBundleDataLoadComplete && !this._addOnsBundleLoading) {
       // Set up the add-ons bundle for loading.
-      this._addOnsBundle = Cc["@songbirdnest.com/Songbird/Bundle;1"]
-                             .createInstance(Ci.sbIBundle);
-      this._addOnsBundle.bundleId = "firstrun";
-      this._addOnsBundle.bundleURL = Application.prefs.getValue
-                                       (this._cfg.addOnsBundleURLPref,
-                                        "default");
-      this._addOnsBundle.addBundleDataListener(this);
+      this.addOnsBundle = Cc["@songbirdnest.com/Songbird/Bundle;1"]
+                            .createInstance(Ci.sbIBundle);
+      this.addOnsBundle.bundleId = "firstrun";
+      this.addOnsBundle.bundleURL = Application.prefs.getValue
+                                      (this._cfg.addOnsBundleURLPref,
+                                       "default");
+      this.addOnsBundle.addBundleDataListener(this);
 
       // Start loading the add-ons bundle data.
       try {
-        this._addOnsBundle.retrieveBundleData
-                             (this._cfg.addOnsBundleDataLoadTimeout);
+        this.addOnsBundle.retrieveBundleData
+                            (this._cfg.addOnsBundleDataLoadTimeout);
         this._addOnsBundleLoading = true;
       } catch (ex) {
         // Report the exception as an error.
@@ -309,7 +334,7 @@ firstRunAddOnsSvc.prototype = {
     // Add loaded add-ons.
     if (this._addOnsBundleDataLoadComplete &&
         this._addOnsBundleDataLoadSucceeded) {
-      var extensionCount = this._addOnsBundle.bundleExtensionCount;
+      var extensionCount = this.addOnsBundle.bundleExtensionCount;
       for (var i = 0; i < extensionCount; i++) {
         this._addAddOn(i);
       }
@@ -329,9 +354,9 @@ firstRunAddOnsSvc.prototype = {
 
   _addAddOn: function firstRunAddOnsSvc__addAddOn(aIndex) {
     // Get the add-on ID.  Use the name as an ID if the ID is not available.
-    var addOnID = this._addOnsBundle.getExtensionAttribute(aIndex, "id");
+    var addOnID = this.addOnsBundle.getExtensionAttribute(aIndex, "id");
     if (!addOnID)
-      addOnID = this._addOnsBundle.getExtensionAttribute(aIndex, "name");
+      addOnID = this.addOnsBundle.getExtensionAttribute(aIndex, "name");
 
     // Do nothing if add-on already added.
     if (this._addOnsTable[addOnID])
@@ -339,15 +364,15 @@ firstRunAddOnsSvc.prototype = {
 
     // Get the add-on info.
     var addOnInfo = {};
-    addOnInfo.installFlag = this._addOnsBundle.getExtensionInstallFlag(aIndex);
-    addOnInfo.addOnID = this._addOnsBundle.getExtensionAttribute(aIndex, "id");
-    addOnInfo.addOnURL = this._addOnsBundle.getExtensionAttribute(aIndex,
+    addOnInfo.index = aIndex;
+    addOnInfo.installFlag = this.addOnsBundle.getExtensionInstallFlag(aIndex);
+    addOnInfo.addOnID = this.addOnsBundle.getExtensionAttribute(aIndex, "id");
+    addOnInfo.addOnURL = this.addOnsBundle.getExtensionAttribute(aIndex,
                                                                   "url");
-    addOnInfo.name = this._addOnsBundle.getExtensionAttribute(aIndex, "name");
+    addOnInfo.name = this.addOnsBundle.getExtensionAttribute(aIndex, "name");
     addOnInfo.description =
-          this._addOnsBundle.getExtensionAttribute(aIndex, "description");
-    addOnInfo.iconURL = this._addOnsBundle.getExtensionAttribute(aIndex,
-                                                                 "icon");
+          this.addOnsBundle.getExtensionAttribute(aIndex, "description");
+    addOnInfo.iconURL = this.addOnsBundle.getExtensionAttribute(aIndex, "icon");
 
     // Add the add-on element to the add-on list element.
     addOnInfo.addOnItemElem = this._addAddOnElement(addOnInfo);
@@ -391,6 +416,12 @@ firstRunAddOnsSvc.prototype = {
     // Add the add-on list item to the add-on list.
     var itemListElem = this._getElement("add_ons_list");
     itemListElem.appendChild(listItemElem);
+
+    // Get the add-on item element after it's been appended to get a fully
+    // functional element object.
+    itemElem = DOMUtils.getElementsByAttribute(listItemElem,
+                                               "templateid",
+                                               "item")[0];
 
     return itemElem;
   },

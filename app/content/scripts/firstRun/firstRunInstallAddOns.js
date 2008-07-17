@@ -96,11 +96,15 @@ firstRunInstallAddOnsSvc.prototype = {
   //   _widget                  First-run wizard install add-ons widget.
   //   _domEventListenerSet     Set of DOM event listeners.
   //   _wizardElem              First-run wizard element.
+  //   _addOnsBundle            Add-ons bundle object.
+  //   _addOnsInstallIndexList  List of add-ons to install.
   //
 
   _widget: null,
   _domEventListenerSet: null,
   _wizardElem: null,
+  _addOnsBundle: null,
+  _addOnsInstallIndexList: null,
 
 
   //----------------------------------------------------------------------------
@@ -116,6 +120,9 @@ firstRunInstallAddOnsSvc.prototype = {
   initialize: function firstRunInstallAddOnsSvc_initialize() {
     var _this = this;
     var func;
+
+    // Initialize the list of add-ons to install.
+    this._addOnsInstallIndexList = [];
 
     // Create a DOM event listener set.
     this._domEventListenerSet = new DOMEventListenerSet();
@@ -152,6 +159,8 @@ firstRunInstallAddOnsSvc.prototype = {
     // Clear object fields.
     this._widget = null;
     this._wizardElem = null;
+    this._addOnsBundle = null;
+    this._addOnsInstallIndexList = null;
   },
 
 
@@ -166,6 +175,20 @@ firstRunInstallAddOnsSvc.prototype = {
    */
 
   _doPageShow: function firstRunInstallAddOnsSvc__doPageShow() {
+    // Get the add-ons bundle object.
+    var addOnsID = this._widget.getAttribute("addonsid");
+    var addOnsBundleProperty =
+          this._widget.getAttribute("addonsbundleproperty");
+    var addOnsElem = document.getElementById(addOnsID);
+    this._addOnsBundle = addOnsElem[addOnsBundleProperty];
+
+    // Get the list of add-ons to install.
+    var extensionCount = this._addOnsBundle.bundleExtensionCount;
+    for (var i = 0; i < extensionCount; i++) {
+      if (this._addOnsBundle.getExtensionInstallFlag(i))
+        this._addOnsInstallIndexList.push(i);
+    }
+
     // Update the UI.
     this._update();
   },
@@ -192,9 +215,10 @@ firstRunInstallAddOnsSvc.prototype = {
 
   _update: function firstRunInstallAddOnsSvc__update() {
     // Advance wizard when add-ons installation is complete.
-    //XXXeps just stub installation and advance immediately
-    this._wizardElem.canAdvance = true;
-    this._wizardElem.advance();
+    if (this._addOnsInstallIndexList.length == 0) {
+      this._wizardElem.canAdvance = true;
+      this._wizardElem.advance();
+    }
   },
 
 

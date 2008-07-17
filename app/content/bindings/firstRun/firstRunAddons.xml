@@ -44,9 +44,18 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
-   * First run add-ons widget.
+   * First-run add-ons widget.
    *
-   *   This widget provides first run add-ons UI.
+   *   This widget provides first-run add-ons UI.
+   *
+   * Properties:
+   *
+   *   addOnsBundle             First-run add-ons bundle object.
+   *
+   * Methods:
+   *
+   *   saveSettings             Save the user settings in the first-run wizard
+   *                            page.
    *
    *****************************************************************************
    ************************************************************************* -->
@@ -116,6 +125,18 @@
     <implementation>
 
       <!--
+       * Widget properties.
+       -->
+
+      <!-- addOnsBundle -->
+      <property name="addOnsBundle" readonly="true">
+        <getter>
+          return this._widgetSvc.addOnsBundle;
+        </getter>
+      </property>
+
+
+      <!--
        * Private fields.
        *
        *   _widgetSvc           First-run add-ons widget services object.
@@ -156,6 +177,15 @@
 
 
       <!--
+       * Save the user settings in the first-run-wizard page.
+       -->
+
+      <method name="saveSettings"><body><![CDATA[
+        this._widgetSvc.saveSettings();
+      ]]></body></method>
+
+
+      <!--
        * Import external services.
        -->
 
@@ -180,9 +210,9 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
-   * First run add-ons item widget.
+   * First-run add-ons item widget.
    *
-   *   This widget implements an item within a first run add-ons item list.
+   *   This widget implements an item within a first-run add-ons item list.
    *
    * Attributes:
    *
@@ -193,17 +223,28 @@
    *   description              Add-on description.
    *   icon                     URL of add-on icon.
    *
+   * Properties:
+   *
+   *   install                  If true, add-on is marked for installation.
+   *
    *****************************************************************************
    ************************************************************************* -->
 
   <binding id="sb-first-run-add-ons-item">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
 
     <content>
 
       <xul:hbox anonid="container_box" class="sb-first-run-add-ons-item-box">
 
         <!-- Add-on installation checkbox. -->
-        <xul:checkbox xbl:inherits="checked=defaultinstall"/>
+        <xul:checkbox anonid="install_checkbox"
+                      xbl:inherits="checked=defaultinstall"/>
 
         <!-- Add-on image.  Use a box to constrain image size. -->
         <xul:box class="sb-first-run-add-ons-item-image-box">
@@ -222,6 +263,32 @@
       </xul:hbox> <!-- container_box -->
 
     </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Widget properties.
+       -->
+
+      <!-- install -->
+      <property name="install" readonly="true">
+        <getter>
+          var installCheckboxElem =
+                document.getAnonymousElementByAttribute(this,
+                                                        "anonid",
+                                                        "install_checkbox");
+          return installCheckboxElem.checked;
+        </getter>
+      </property>
+
+    </implementation>
 
   </binding> <!-- sb-first-run-add-ons-item -->
 

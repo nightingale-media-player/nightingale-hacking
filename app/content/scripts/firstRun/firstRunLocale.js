@@ -101,6 +101,7 @@ firstRunLocaleSvc.prototype = {
   //   _widget                  First-run wizard locale widget.
   //   _targetLocale            Target first-run locale.
   //   _targetLocaleInstalled   True if target first-run locale is installed.
+  //   _localesBundle           Locales bundle object.
   //   _localesBundleDataLoadComplete
   //                            True if loading of locales bundle data is
   //                            complete.
@@ -113,6 +114,7 @@ firstRunLocaleSvc.prototype = {
   _widget: null,
   _targetLocale: null,
   _targetLocaleInstalled: false,
+  _localesBundle: null,
   _localesBundleDataLoadComplete: false,
   _localesBundleDataLoadSucceeded: false,
 

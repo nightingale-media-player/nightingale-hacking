@@ -46,7 +46,16 @@
    * First-run install add-ons widget.
    *
    *   This widget installs the set of selected first-run add-ons, providing an
-   * installation status UI.
+   * installation status UI.  This widget reads the first-run add-ons bundle
+   * from the element specified by the "addonsid" attribute.  The add-ons bundle
+   * is read from the property with the name specified by the
+   * "addonsbundleproperty" attribute.
+   *
+   * Attributes:
+   *
+   *   addonsid                 ID of element with add-ons bundle.
+   *   addonsbundleproperty     Name of add-ons bundle property of add-ons
+   *                            element.
    *
    *****************************************************************************
    ************************************************************************* -->
