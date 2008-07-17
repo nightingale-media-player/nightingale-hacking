@@ -126,7 +126,7 @@ AC_SUBST(SB_ENABLE_TESTS)
 #  Check for --enable-jemalloc
 #
 
-SB_USE_JEMALLOC=1
+SB_USE_JEMALLOC=
 
 AC_ARG_ENABLE(jemalloc,
               [  --enable-jemalloc       whether or not to use the jemalloc memory allocator (enabled by default)])
