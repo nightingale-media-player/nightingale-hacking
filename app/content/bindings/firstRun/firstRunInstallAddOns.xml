@@ -70,6 +70,9 @@
 
     <content>
 
+      <xul:label
+        value="Add-ons installation not yet implemented.  Click Cancel."/>
+
     </content>
 
 
