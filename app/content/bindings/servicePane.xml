@@ -1034,19 +1034,6 @@
         this._dragService.endDragSession(true);
         // we handle the drop, do not let the default dnd handler get the event
         event.stopPropagation();
-        
-        // tell the parent to deal with the drop
-        var parent = this.parentNode;
-        if (parent instanceof Element) {
-          var newEvent = document.createEvent("MouseEvent");
-          newEvent.initMouseEvent("dragdrop", true, false, event.view,
-                                  event.detail, event.screenX, event.screenY,
-                                  event.clientX, event.clientY,
-                                  event.ctrlKey, event.altKey,
-                                  event.shiftKey, event.metaKey, 
-                                  event.button, event.relatedTarget);
-          parent.dispatchEvent(newEvent);
-        }
       ]]></handler>
     </handlers>
   </binding>
