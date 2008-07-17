@@ -91,7 +91,7 @@
         <body><![CDATA[
           setTimeout(function(){
             var tree = document.getAnonymousElementByAttribute(
-                         aPanel.firstChild,
+                         aPanel.lastChild,
                          "anonid", "proxytree");
             if (tree.view)
               tree.view.selection.clearSelection();

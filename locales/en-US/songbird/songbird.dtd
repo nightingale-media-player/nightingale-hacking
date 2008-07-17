@@ -100,6 +100,8 @@
 <!ENTITY displaypane.browser.label      "Show Content Pane Bottom">
 <!ENTITY displaypane.sidebar.label      "Show Right Sidebar">
 
+<!ENTITY servicepane.title.label        "Service Pane">
+
 <!ENTITY menu.services        "Services" >
 <!ENTITY menu.services.browse "Browse Add-ons..." >
 

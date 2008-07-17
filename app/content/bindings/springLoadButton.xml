@@ -108,6 +108,9 @@
           if (this.hasAttribute("dragdelay")) {
             this._dragdelay = parseFloat(this.getAttribute("dragdelay"), 10);
           }
+          if (this.hasAttribute("closedelay")) {
+            this._closedelay = parseFloat(this.getAttribute("closedelay"), 10);
+          }
         ]]>
       </constructor>
       
@@ -139,7 +142,7 @@
           if (doDefault && self.hasAttribute("popupelement")) {
             var elem = document.getElementById(self.getAttribute("popupelement"));
             if (elem && ("openPopup" in elem) && (elem.openPopup instanceof Function)) {
-              elem.openPopup(self, "after_start", 0, 0, false, true);
+              elem.openPopup(self, self._popupPosition, 0, 0, false, false);
               
               // hook into the element's mouseover / mouseout events, so that
               // we can keep it open when we go into it
@@ -208,6 +211,15 @@
       
       <field name="_closeTimer">null</field>
       <field name="_closedelay">1000</field>
+      
+      <property name="_popupPosition">
+        <getter>
+          if (this.hasAttribute("position")) {
+            return this.getAttribute("position");
+          }
+          return ""; // default value
+        </getter>
+      </property>
     </implementation>
   </binding>
 </bindings>

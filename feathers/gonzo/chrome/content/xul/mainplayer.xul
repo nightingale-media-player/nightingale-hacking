@@ -109,7 +109,7 @@
 
         <hbox id="tabstrip-container">
           <button type="sb-spring" id="servicepane_spring_button" label="I10N"
-                  dragdelay="500" delay="2000"
+                  dragdelay="500" delay="2000" position="overlap"
                   oncommand="gServicePane.open = !gServicePane.open; this.cancel();"
                   popupelement="service_pane_spring_load_panel">
             <observes type="dataremote" key="browser.in_media_page" boolean="true"
