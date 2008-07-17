@@ -45,6 +45,7 @@
 #include <prprf.h>
 #include <sbLocalDatabaseLibrary.h>
 #include <sbStandardProperties.h>
+#include <prtime.h>
 
 static void AppendInt(nsAString &str, PRInt64 val)
 {
@@ -475,6 +476,22 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aID,
 
     rv = mPropertyBag->SetProperty(aID, aValue);
     NS_ENSURE_SUCCESS(rv, rv);
+    
+    // if this is not the "last updated on" property, set that to 'now'
+    if (!aID.EqualsLiteral(SB_PROPERTY_UPDATED)) {
+      
+      rv = mPropertyBag->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), oldValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), oldValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsAutoString now;
+      AppendInt(now, PR_Now()/PR_MSEC_PER_SEC);
+
+      rv = mPropertyBag->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), now);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   if (!mSuppressNotifications) {
