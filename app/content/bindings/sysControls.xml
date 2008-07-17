@@ -437,10 +437,6 @@
               <xul:image sbid="c8" class="sb-sys-outer-frame-chrome sb-sys-outer-frame-chrome-bottomright"/>
           </xul:hbox>
         </xul:vbox>
-    
-        <xul:vbox sbid="mac_resize_image_box" flex="1" align="end" pack="end" hidden="true" >
-              <xul:image sbid="mac_resize_image" class="sb-sys-outer-frame-resizer-image" />
-        </xul:vbox>
         
         <xul:vbox flex="1">
           <xul:hbox>
@@ -482,6 +478,10 @@
             <xul:resizer hidden="true" sbid="r12" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottomright" dir="bottomright" />
             <xul:spacer hidden="true" sbid="x12" class="sb-sys-outer-frame-resizer sb-sys-outer-frame-resizer-bottomright"/>
           </xul:hbox>
+        </xul:vbox>
+
+        <xul:vbox sbid="mac_resize_image_box" flex="1" align="end" pack="end" hidden="true" mousethrough="always" >
+              <xul:image sbid="mac_resize_image" class="sb-sys-outer-frame-resizer-image" />
         </xul:vbox>
 
       </xul:stack>
