@@ -241,6 +241,10 @@ GST_PLUGINS_GOOD_NAMES = gstalaw \
                          gstwavparse \
                          $(NULL)
 
+GST_PLUGINS_UGLY_NAMES = gstmpegaudioparse \
+                         gstasf \
+                         $(NULL)
+
 GST_PLUGINS_BAD_NAMES = gstreplaygain \
                         $(NULL)
 
@@ -304,6 +308,9 @@ GST_PLUGINS_BASE = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/
 GST_PLUGINS_GOOD = $(addprefix $(DEPS_DIR)/gst-plugins-good/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
                      $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_GOOD_NAMES)))
 
+GST_PLUGINS_UGLY = $(addprefix $(DEPS_DIR)/gst-plugins-ugly/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
+                    $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_UGLY_NAMES)))
+
 GST_PLUGINS_BAD = $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
                     $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_BAD_NAMES)))
 
@@ -322,6 +329,7 @@ SONGBIRD_LIB += $(GLIB) \
 SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
                         $(GST_PLUGINS_BASE) \
                         $(GST_PLUGINS_GOOD) \
+                        $(GST_PLUGINS_UGLY) \
                         $(GST_PLUGINS_BAD) \
                         $(NULL)
 
@@ -373,6 +381,9 @@ GST_PLUGINS_BASE = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/
 GST_PLUGINS_GOOD = $(addprefix $(DEPS_DIR)/gst-plugins-good/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
                      $(addsuffix .so, $(GST_PLUGINS_GOOD_NAMES)))
 
+GST_PLUGINS_UGLY = $(addprefix $(DEPS_DIR)/gst-plugins-ugly/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+                     $(addsuffix .so, $(GST_PLUGINS_UGLY_NAMES)))
+
 GST_PLUGINS_BAD = $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
                     $(addsuffix .so, $(GST_PLUGINS_BAD_NAMES)))
 
@@ -390,6 +401,7 @@ SONGBIRD_LIB += $(GLIB) \
 SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
                         $(GST_PLUGINS_BASE) \
                         $(GST_PLUGINS_GOOD) \
+                        $(GST_PLUGINS_UGLY) \
                         $(GST_PLUGINS_BAD) \
                         $(NULL)
 
@@ -433,6 +445,9 @@ GST_PLUGINS_BASE = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/
 GST_PLUGINS_GOOD = $(addprefix $(DEPS_DIR)/gst-plugins-good/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
                      $(addsuffix .so, $(GST_PLUGINS_GOOD_NAMES)))
 
+GST_PLUGINS_UGLY = $(addprefix $(DEPS_DIR)/gst-plugins-ugly/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+                     $(addsuffix .so, $(GST_PLUGINS_UGLY_NAMES)))
+
 GST_PLUGINS_BAD = $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
                     $(addsuffix .so, $(GST_PLUGINS_BAD_NAMES)))
 
@@ -447,6 +462,7 @@ SONGBIRD_LIB += $(GSTREAMER) \
 SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
                         $(GST_PLUGINS_BASE) \
                         $(GST_PLUGINS_GOOD) \
+                        $(GST_PLUGINS_UGLY) \
                         $(GST_PLUGINS_BAD) \
                         $(NULL)
 
