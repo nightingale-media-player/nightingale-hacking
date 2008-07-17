@@ -151,8 +151,8 @@ var SBSessionStore = {
       }
   
       // Otherwise, just restore whatever was there, previously.
-      var location = "_top";
-      var tab;              
+      var isFirstTab = true;
+      var tab, location;
       for (var i=0; i<tabs.length; i++) {
         tab = tabs[i];
         // If the tab had a media page, restore it by reloading
@@ -174,9 +174,11 @@ var SBSessionStore = {
             url += "&bypassXULCache="+ Math.random();
           }
           
-          if (location == "_top") {
+          if (isFirstTab) {
             // restore the first tab into the media tab, if available
             location = "_media";
+          } else {
+            location = "_blank";
           }
           
           var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
@@ -190,18 +192,24 @@ var SBSessionStore = {
             continue;
           }
           
-          // let the first run URL load in the media tab (again).
-          var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, null);
-          if (firstrunURL == tab && location == "_top") {
-            location = "_media";
+          if (isFirstTab) {
+            // let the first run URL load in the media tab (again).
+            var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, null);
+            if ((firstrunURL == tab) ||
+                (gServicePane && gServicePane.mTreePane.isMediaTabURL(tab))) {
+              location = "_media";
+            } else {
+              location = "_top";
+            }
+          } else {
+            location = "_blank";
           }
-
           aTabBrowser.loadURI(tab, null, null, null, location);
         }
 
         // Load the first url into the current tab and subsequent 
         // urls into new tabs 
-        location = "_blank";
+        isFirstTab = false;
       }
     }
     this.tabStateRestored = true;
