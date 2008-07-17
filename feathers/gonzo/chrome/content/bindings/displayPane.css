@@ -56,7 +56,6 @@ menuitem[target="displaypane_right_sidebar"] {
 sb-displaypane .favicon {
   max-width: 16px;
   max-height: 16px;
-  background-color:pink !important;
   padding:0;
   margin:0 0 1px 0;
 }
@@ -132,7 +131,7 @@ menuitem.displaypane-menuitem[recommended] {
   border-left:none;
 }
 #displaypane_servicepane_bottom {
-  
+  border-bottom:1px solid gray;
 }
 #displaypane_contentpane_bottom {
   border-bottom:1px solid gray;

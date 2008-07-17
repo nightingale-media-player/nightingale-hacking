@@ -25,7 +25,9 @@
 }
 
 
+.scrollbutton-down-stack {
 
+}
 
 
 
@@ -39,11 +41,13 @@
   -moz-border-radius:0px;
   list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-left.png") !important;
   -moz-image-region:auto;
-  margin:0 1px 0 1px;
+  margin:0;
     background-image: url('chrome://songbird/skin/browser-tab-bar/bg-scroll.png');
-    background-position:center 2px;
+    background-position:left top;
     background-repeat:no-repeat;
-    min-width:16px;
+    min-width:17px;
+    
+    background-color:transparent !important;
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up[disabled="true"] {
@@ -51,12 +55,12 @@
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up:hover,
 .tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:hover {
-  background-position:center -28px;
+  background-position:center -30px;
 }
  
 .tabbrowser-arrowscrollbox > .scrollbutton-up:active,
 .tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:active {
-  background-position:center -58px !important;
+  background-position:center -60px !important;
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up > .toolbarbutton-icon {
@@ -66,7 +70,6 @@
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
-   margin:0 0 0 1px;
   list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-right.png") !important;
 
 }
@@ -114,12 +117,12 @@ tab[first-tab="true"] > .tab-close-button,
  */
 
 .tabs-alltabs-button {
+
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png);
   background-repeat:no-repeat;
-  background-position:-1px 0px;
+  background-position:0px 0px;
 
   -moz-border-radius:0px !important;
-  margin:0 0 0 1px;
   padding: 0;
   border: none;
 }
@@ -167,7 +170,7 @@ tab[first-tab="true"] > .tab-close-button,
 }
 
 
-
+.close-button,
 .tab-close-button {
  background-color:transparent !important;
  -moz-border-radius:0px !important;
@@ -183,15 +186,27 @@ tab[first-tab="true"] > .tab-close-button,
 .tab-close-button > .toolbarbutton-icon {
  padding:0;
 }
-
+.close-button:hover,
 .tab-close-button:hover {
  -moz-image-region: rect(12px 12px 24px 0px);
 }
+.close-button:active,
 .tab-close-button:hover:active {
  -moz-image-region: rect(24px 12px 36px 0px);
 }
-.tab-close-button:hover[disabled="true"] {
+.close-button[disabled="true"],
+.tab-close-button[disabled="true"] {
  -moz-image-region: rect(36px 12px 48px 0px) !important;
 }
 
 
+
+
+/*
+weak!
+*/
+#tabstrip .scrollbox-innerbox {
+  background-image:url(chrome://songbird/skin/browser-tab-bar/bg-tab-delimiter.png);
+  background-position:right top;
+  background-repeat:no-repeat;
+}

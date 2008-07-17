@@ -148,11 +148,7 @@ tab[selected="true"] > .tab-middle > .tab-text {
 .tabbrowser-tab:hover,
 .tabbrowser-tab[selected="true"] {
   background-color:transparent;
-  -moz-border-radius:0px;
   border:none !important;
-  padding-top:0 !important;
-  padding-right:0 !important;
-  padding-left:0 !important;
 }
 .tabbrowser-tab > .tab-image-middle > .tab-text {
   padding: 0px !important;

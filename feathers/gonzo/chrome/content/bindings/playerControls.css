@@ -54,6 +54,8 @@ Imported by bindings.css or directly into feathers.
   padding: 0px;
   min-width: 0px !important;
   min-height: 0px !important;
+  background-image:none !important;
+  background-color:transparent;
 }
 
 .sb-player-button > button > .button-box > .button-text,

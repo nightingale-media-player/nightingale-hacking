@@ -34,6 +34,11 @@
 	                <songbird:showChrome>false</songbird:showChrome>
 	                <songbird:onTop>false</songbird:onTop>
 	              </Description>
+	              <Description>
+	                <songbird:layoutURL>chrome://gonzo/content/xul/miniplayer.xul</songbird:layoutURL>
+	                <songbird:showChrome>false</songbird:showChrome>
+	                <songbird:onTop>true</songbird:onTop>
+	              </Description>
 	            </songbird:compatibleLayout>
 	          </Description>
 	        </songbird:skin>
@@ -41,6 +46,10 @@
 	          <Description>
 	            <songbird:name>mainplayer.xul</songbird:name>
 	            <songbird:url>chrome://gonzo/content/xul/mainplayer.xul</songbird:url>
+	          </Description>
+	          <Description>
+	            <songbird:name>miniplayer.xul</songbird:name>
+	            <songbird:url>chrome://gonzo/content/xul/miniplayer.xul</songbird:url>
 	          </Description>
 	        </songbird:layout>
 	      </Description>

@@ -266,10 +266,12 @@
              onpopupshowing="gServicePane.initSpringLoadPanel(this);"
              ondragdrop="this.hidePopup()"
              position="after_start">
-        <hbox>
+        <hbox class="service-pane-spring-load-header">
           <button class="service-pane-spring-load-button"
                   oncommand="gServicePane.open = true; this.parentNode.parentNode.hidePopup();"/>
-          <label flex="1" value="&servicepane.title.label;"/>
+          <hbox flex="1">
+            <label flex="1" value="&servicepane.title.label;"/>
+          </hbox>
           <toolbarbutton class="close-button"
                          oncommand="this.parentNode.parentNode.hidePopup();"/>
         </hbox>

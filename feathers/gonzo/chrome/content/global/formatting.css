@@ -27,16 +27,22 @@ tree {
   
 /** separator rules **/
 separator, separator[orient="horizontal"] {
-  height:10px;
-  background-color:blue;
+  height:11px;
+
+background-image: url('chrome://songbird/skin/base-elements/bg-separator.png');
+background-position:center center;
+background-repeat:repeat-x;
 }
 separator[orient="vertical"] {
-  width:10px;
+  width:11px;
   background-color:blue;
 }
 separator.thin, separator.thin[orient="horizontal"] {
-  height:4px;
-  background-color:blue;
+  height:5px;
+  background-image: url('chrome://songbird/skin/base-elements/bg-separator.png');
+  background-position:center center;
+  background-repeat:repeat-x;
+
 }
 separator.thin[orient="vertical"] {
   width:4px;

@@ -83,7 +83,9 @@ scrollbar > slider > thumb {
   background-color:rgb(240,240,240);
   -moz-border-radius:2px;
 } 
-
+scrollbar > slider > thumb {   
+  background-color:rgb(200,200,200);
+}
 
 scrollbar[orient="vertical"] > scrollbarbutton[sbattr="scrollbar-up-top"] {
   margin-bottom:0px;

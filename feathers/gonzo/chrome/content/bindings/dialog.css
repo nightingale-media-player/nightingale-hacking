@@ -63,11 +63,8 @@ margin:0;}
   background-repeat:repeat-x;
   background-position:center top;
   background-color:rgb(225,225,225);
-}
-
-
-.dialog-button-box {
   -moz-box-pack:end;
+  padding:0 8px;
 }
 
 #dialog-titlebar .left-box > .left,

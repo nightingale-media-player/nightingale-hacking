@@ -39,19 +39,19 @@ See app/content/xul/trackEditor.xul
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 /* Structure */
+#info-tab {
+  padding:10px 6px 0 6px!important;
+}
 #info_right_column {
   margin-left: 10px;
 }
 
-.dialog-content-box {
-  padding:5px !important;
-}
-
-
 /* Labels */
-label {
+#infotab_trackname_label,
+#info_left_column > label,
+#info_right_column > label {
   padding:0;
-  margin:5px 5px 0 !important;
+  margin:5px 0 0 4px !important;
 }
 
 /* Slash between two numeric boxes */
@@ -59,7 +59,6 @@ label {
   margin: 0px !important;
   padding: 0px !important;
 }
-
 
 /* Checkboxes */
 checkbox {
@@ -70,21 +69,19 @@ checkbox .checkbox-label-box {
   display:none;
 }
 
-
 /* Inputs */
-textbox,
 sb-rating {
-  -moz-border-radius:5px;
-  min-height: 22px;
-}
-
-textbox {
-  padding:3px;
-}
-
-sb-rating {
- margin: 5px;
- padding: 1px 5px 1px 5px;
+  min-height:20px;
+  margin:4px;
+  -moz-box-flex: 1;
+  border-top:1px solid rgb(120,120,120);
+  border-right:1px solid rgb(140,140,140);
+  border-bottom:1px solid rgb(200,200,200);
+  border-left:1px solid rgb(140,140,140);
+  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  background-color:white;
 }
 
 textbox[disabled],
@@ -108,11 +105,9 @@ textbox.short-number-input {
   margin-top: 8px;
 }
 
-
 /* Notification */
 .dialog-notification {
-  -moz-border-radius:3px;
-  margin:0px 10px 5px 10px;
+  margin:0;
 }
 
 /* genre */
@@ -121,10 +116,10 @@ textbox.short-number-input {
   display: inline;
 
   padding:0 !important;
-  margin:0 !important;
+  margin:0 0 0 2px !important;
   border:none !important;
   max-height:14px !important;
-  max-width:14px !important;
+  max-width:7px !important;
 
   background-image:url('chrome://songbird/skin/menu/dropmarker.png');
   background-position:center center;
@@ -140,7 +135,7 @@ textbox.short-number-input {
   display: none;
 }
 
-/* Buttons */
+/* Buttons 
 button.goto-url label {
   display: none;
 }
@@ -153,77 +148,90 @@ button.goto-url {
   min-height:12px !important;
   padding:2px;
 }
-
 button.goto-url {
   -moz-image-region: rect(0px 12px 12px 0px);
 }
-
 button.goto-url:hover {
   -moz-image-region: rect(12px 12px 24px 0px);
 }
+*/
 
-button {
-  font-size:12px;
-}
-button label {
-  font-size:12px;
-  padding:0;
-  margin:0 0 1px !important;
-}
-
+/* prev/next buttons */
 #prev_button,
 #next_button {
-  width:28px !important;
-  min-width:0px !important;
-
-  min-height:26px !important;
   padding:0;
 }
+
+#prev_button {
+  margin-right:0;
+  -moz-border-radius-topright:0px;
+  -moz-border-radius-bottomright:0px;
+  border-right:none !important;
+}
+#next_button {
+  margin-left:0;
+  -moz-border-radius-topleft:0px;
+  -moz-border-radius-bottomleft:0px;
+}
+
 #prev_button label,
 #next_button label {
   display:none;
 }
-#prev_button {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
-  -moz-image-region: rect(0px 16px 16px 0px);
-}
-#prev_button:hover {
-  -moz-image-region: rect(16px 16px 32px 0px);
-}
-#prev_button[disabled="true"] {
-  -moz-image-region: rect(48px 16px 64px 0px);
-}
-#prev_button[active="true"] {
-  -moz-image-region: rect(32px 16px 48px 0px);
-}
-#next_button {
-  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
-  -moz-image-region: rect(0px 32px 16px 16px);
-}
-#next_button:hover {
-  -moz-image-region: rect(16px 32px 32px 16px);
-}
-#next_button[disabled="true"] {
-  -moz-image-region: rect(48px 32px 64px 16px);
-}
-#next_button[active="true"] {
-  -moz-image-region: rect(32px 32px 48px 16px);
+
+#prev_button > .button-box,
+#next_button > .button-box {
+  padding:3px;
 }
 
+#prev_button {
+    list-style-image: url(chrome://songbird/skin/nav-bar/button-back.png);
+}
+#next_button {
+  list-style-image: url(chrome://songbird/skin/nav-bar/button-forward.png);
+}
+
+#prev_button,
+#next_button {
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+#prev_button:hover,
+#next_button:hover {
+  -moz-image-region: rect(16px 16px 32px 0px);
+}
+#prev_button:active,
+#next_button:active {
+  -moz-image-region: rect(32px 16px 48px 0px);
+}
+#prev_button[disabled="true"],
+#next_button[disabled="true"] {
+  -moz-image-region: rect(48px 16px 64px 0px) !important;
+}
+
+/* album art */
 .art {
-  border: 1px inset #000000;
-  margin: 5px;
-  -moz-border-radius: 5px;
-  max-width: 81px;
-  max-height: 81px;
-  height: 81px;
-  width: 81px;
+  border: 1px solid black;
+  margin: 4px;
+  max-width: 80px;
+  max-height: 80px;
+  height: 80px;
+  width: 80px;
+  background-color:gray;
 }
 .art[edited="true"] {
-  border: 2px solid #FFFFA0;
+  border: 1px solid orange;
 }
 .art:focus {
-  border: 2px solid #FFFFFF;
+  border: 1px solid blue;
+}
+image.art+button {
+  margin:0 4px;
+}
+image.art+button > .button-box {
+  padding:2px 4px;
+}
+image.art+button > .button-box > .button-text {
+  font-size:10px;
 }
 
 /**
@@ -249,3 +257,4 @@ The following are for the advanced pane
 }
 
 **/
+

@@ -15,6 +15,7 @@ findbar {
   -moz-box-align: center;
   
   padding:0 0 1px 0;
+  background-color:rgb(220,220,220);
 }
 
 findbar label,
@@ -62,7 +63,7 @@ findbar .checkbox-check {
   padding:0;
 }
 .find-field-container > textbox.findbar-textbox[status="notfound"] {
-  color: red !important;
+  color: red;
 }
 
 /* close button */
@@ -73,6 +74,8 @@ toolbarbutton.findbar-closebutton {
   list-style-image:url('chrome://songbird/skin/find-bar/button-close.png') !important;
   max-height:12px;
   max-width:12px;
+  background-color:transparent;
+  background-image:none;
 }
 toolbarbutton.findbar-closebutton {
   -moz-image-region: rect(0px 12px 12px 0px);
@@ -88,7 +91,8 @@ toolbarbutton.findbar-closebutton[disabled="true"] {
 }
 
 
-/* find-next button */
+/* find-next button 
+TODO
 .find-buttons-container > toolbarbutton.findbar-find-next {
   list-style-image:url('chrome://songbird/skin/find-bar/button-next.png');
 }
@@ -98,12 +102,14 @@ toolbarbutton.findbar-closebutton[disabled="true"] {
 toolbarbutton.findbar-highlight {
   list-style-image:url('chrome://songbird/skin/find-bar/button-highlight.png');
 }
+*/
 findbar checkbox {
   margin:0;
 }
 findbar .toolbarbutton-text,
 findbar .checkbox-label {
-  padding:2px 8px 0 2px !important;
+  padding:2px 8px 0 0px !important;
+  padding:2px 8px 0 8px !important;
   margin:0;
 }
 
@@ -111,12 +117,13 @@ findbar .checkbox-label {
 toolbarbutton.findbar-find-next,
 toolbarbutton.findbar-find-previous,
 toolbarbutton.findbar-highlight {
-  -moz-image-region: rect(0px 16px 16px 0px) !important;
+/*  -moz-image-region: rect(0px 16px 16px 0px) !important;*/
   padding:0;
-  margin:0;
+  margin:0 8px 0 0;
   -moz-box-pack: center;
   -moz-box-align: center;
 }
+/*
 toolbarbutton.findbar-find-next:hover,
 toolbarbutton.findbar-find-previous:hover,
 toolbarbutton.findbar-highlight:hover {
@@ -134,7 +141,12 @@ toolbarbutton.findbar-find-previous[disabled="true"],
 toolbarbutton.findbar-highlight[disabled="true"] {
   -moz-image-region: rect(48px 16px 64px 0px) !important;
 }
-
+*/
+toolbarbutton.findbar-find-next[disabled="true"] > .toolbarbutton-icon,
+toolbarbutton.findbar-find-previous[disabled="true"] > .toolbarbutton-icon,
+toolbarbutton.findbar-highlight[disabled="true"] > .toolbarbutton-icon {
+  opacity:0.5;
+}
 
 
 
@@ -147,5 +159,6 @@ image.find-status-icon {
 }
 
 .findbar-find-status {
-  color:red;
+  color:rgb(80,80,80);
+  text-decoration:italic;
 }

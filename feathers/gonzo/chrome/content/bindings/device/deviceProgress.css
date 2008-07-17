@@ -39,22 +39,22 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */
 
+.device-progress-groupbox {
+  
+}
+.device-progress-button {
+/*  -moz-box-flex: 1;*/
+}
 
-.device-progress-groupbox,
-.device-progressmeter,
-.dev-progress-text1-label,
-.dev-progress-text2-label {
+/*
+.device-progress-information-box {
+  min-width: 240px;
+}
+*/
+.dev-progress-text1-label {
+  font-size:10px;
   margin:0;
   padding:0;
-}
-
-.device-progress-information-box {
-  width: 240px;
-}
-
-.dev-progress-text1-label {
-  font-size:110%;
-  min-height:16px;
 }
 
 .dev-progress-text1-label[error="true"] {
@@ -66,15 +66,26 @@ Imported by bindings.css or directly into feathers.
 }
 
 .dev-progress-text2-label {
-  font-size:90%;
-  margin-bottom:3px;
+  font-size:10px;
+  margin:0;
+  padding:0;
 }
 
 .device-progressmeter {
-  margin:4px 4px 3px 0;
+  min-width: 200px;
 }
 
 .device-progress-button {
-  font-size:110%;
 }
 
+
+.dev-progress-button-box {
+  min-width:60px;
+}
+
+
+.content-controls > radiogroup {
+  border:none;
+  padding:0;
+  margin:0;
+}

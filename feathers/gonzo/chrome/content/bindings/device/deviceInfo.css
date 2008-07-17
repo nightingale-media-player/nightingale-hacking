@@ -39,49 +39,47 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */
 
+
 .device-name-label {
-  font-size:160%;
+  font-size:100%;
 }
 
 .device-specs-grid-label
 {
-  font-size:110%;
-  max-width:200px;
+  font-size:100%;
 }
 
 .device-model-icon
 {
-  width:64px;
 }
 
 .device-image
 {
-  height:64px;
-  width:64px;
+  min-height:36px;
+  min-width:36px;
   list-style-image:url("chrome://songbird/skin/device/icon-device-64x64.png");
+  background-color:transparent;
+  padding:0px !important;
 }
 
 .eject-button {
-  min-width:20px;
-  height:20px;
-  margin:0 0 0 4px;
-  padding:0;
-  list-style-image:url("chrome://songbird/skin/buttons/eject-button.png");
-  -moz-image-region: rect(0px, 18px, 18px, 0px);
+  list-style-image:url("chrome://songbird/skin/device/button-eject.png");
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 
 .more-info-button {
-  min-width:20px;
-  height:20px;
-  margin:0 0 0 4px;
-  padding:0;
-  list-style-image:url("chrome://songbird/skin/buttons/info-button.png");
-  -moz-image-region: rect(0px, 18px, 18px, 0px);
+  list-style-image:url("chrome://songbird/skin/device/button-info.png");
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+
+.eject-button .button-box,
+.more-info-button .button-box {
+  padding:2px;
 }
 
 .eject-button:not([disabled]):hover,
 .more-info-button:not([disabled]):hover {
-  -moz-image-region: rect(18px, 18px, 36px, 0px);
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
 }
 
 .eject-button > .button-box > label,
@@ -90,8 +88,6 @@ Imported by bindings.css or directly into feathers.
 }
 
 .device-specs-grid-label {
-  margin-top:0;
-  margin-bottom:4px;
 }
 
 .device-battery-box {
@@ -129,11 +125,61 @@ Imported by bindings.css or directly into feathers.
 
 #overall_device_info_box,
 #device_management_tabs {
-  background-color:rgb(135,135,135);
+  background-color: rgb(160,160,160) !important;
+  background-color: rgb(220,220,220) !important;
+}
+#overall_device_info_box {
+  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-repeat:repeat-x;
+  background-position:center top;
 }
 #device_management_tabpanels {
-  background-color:rgb(245,245,245);
 }
 #main_box {
   margin:0 !important;
+
+}
+
+tabpanels {
+
+}
+
+/*
+.pane-button-box,
+.device-tab-header-box {
+  background-image: url(chrome://songbird/skin/window/bg-button-box.png);
+  background-repeat:repeat-x;
+  background-position:center top;
+  background-color:rgb(225,225,225);
+}
+*/
+
+#device_info_dialog groupbox {
+  display: none !important;
+}
+
+
+#info_progress_box {
+  
+}
+
+
+
+.device-tab-content {
+  min-width:320px;
+  max-width:320px;
+}
+tabpanel > *{
+  -moz-box-pack:center;
+  -moz-box-align:top;
+  -moz-box-orient:horizontal !important;
+}
+.device-tab-button-box {
+  margin:0 4px;
+  -moz-border-radius:3px;
+  background-color:pink;
+  border:1px solid gray;
+}
+#info_progress_box {
+  min-height:64px;
 }

@@ -108,8 +108,8 @@
         </stack>
 
         <hbox id="tabstrip-container">
-          <button type="sb-spring" id="servicepane_spring_button" label="I10N"
-                  dragdelay="500" delay="2000" position="overlap"
+          <button type="sb-spring" id="servicepane_spring_button" label="I10N" class="service-pane-spring-load-button"
+                  dragdelay="500" delay="100" closedelay="100" position="overlap"
                   oncommand="gServicePane.open = !gServicePane.open; this.cancel();"
                   popupelement="service_pane_spring_load_panel">
             <observes type="dataremote" key="browser.in_media_page" boolean="true"
@@ -151,7 +151,6 @@
                   <statusbar id="servicepane-status-bar" mousethrough="never">
       <!-- TODO remove -->
                     <statusbarpanel>
-                      <button label="Restart" onclick="var createDataRemote =  new Components.Constructor('@songbirdnest.com/Songbird/DataRemote;1',Components.interfaces.sbIDataRemote, 'init'); var restartSignal = createDataRemote('restart.restartnow', null); restartSignal.boolValue = true;" style="max-height:16px; max-width:16px; overflow:hidden; padding:0; margin:0; min-width:16px; width:16px;"/>
                       <sb-servicepane-toolbar id="servicepane_toolbar" />
                     </statusbarpanel>
       <!-- /TODO -->

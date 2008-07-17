@@ -80,7 +80,7 @@ sb-playlist > stack > vbox,
 
 treechildren::-moz-tree-drop-feedback
 {
-  background-image: url(chrome://songbird/skin/tmp/sample-album-art.png) !important;
+  background-image: url('chrome://songbird/skin/base-elements/bg-tree-drop-feedback.png') !important;
   margin: 0;
   width: 63360in;
 }
@@ -334,7 +334,6 @@ treecol[bind="http://songbirdnest.com/data/1.0#duration"] > label,
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-duration ),
 treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"] > label,
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-trackNumber ) {
-  padding-right:4px;
 }
 
 
