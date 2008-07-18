@@ -181,7 +181,7 @@
 <!ENTITY tooltip.browser.mediapages "Switch Media Views..." >
 <!ENTITY tooltip.browser.bookmarksubscribe "Add this page" >
 
-<!ENTITY smart.window             "Smart Playlist Builder" >
+<!ENTITY smart.window             "Smart Playlist" >
 <!ENTITY smart.library            "Select Library:" >
 <!ENTITY smart.limit              "Limit to" >
 <!ENTITY smart.match              "Match" >
