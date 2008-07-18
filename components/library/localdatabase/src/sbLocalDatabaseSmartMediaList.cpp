@@ -354,12 +354,14 @@ NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseSmartMediaList,
 sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
 : mInnerLock(nsnull)
 , mConditionsLock(nsnull)
+, mListenersLock(nsnull)
 , mMatchType(sbILocalDatabaseSmartMediaList::MATCH_TYPE_ANY)
 , mLimitType(sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE)
 , mLimit(0)
 , mSelectDirection(PR_TRUE)
 , mRandomSelection(PR_FALSE)
 , mAutoUpdateMode(sbILocalDatabaseSmartMediaList::AUTOUPDATE_NEVER)
+, mNotExistsMode(sbILocalDatabaseSmartMediaList::NOTEXISTS_ASZERO)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseSmartMediaListLog) {
@@ -377,6 +379,9 @@ sbLocalDatabaseSmartMediaList::~sbLocalDatabaseSmartMediaList()
   if(mConditionsLock) {
     nsAutoLock::DestroyLock(mConditionsLock);
   }
+  if (mListenersLock) {
+    nsAutoLock::DestroyLock(mListenersLock);
+  }
 }
 
 nsresult
@@ -389,6 +394,9 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
 
   mConditionsLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mConditionsLock");
   NS_ENSURE_TRUE(mConditionsLock, NS_ERROR_OUT_OF_MEMORY);
+
+  mListenersLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mListenersLock");
+  NS_ENSURE_TRUE(mListenersLock, NS_ERROR_OUT_OF_MEMORY);
 
   mItem = aItem;
 
@@ -626,6 +634,28 @@ sbLocalDatabaseSmartMediaList::SetAutoUpdateMode(PRUint32 aAutoUpdateMode)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::GetNotExistsMode(PRUint32* aNotExistsMode)
+{
+  NS_ENSURE_ARG_POINTER(aNotExistsMode);
+
+  nsAutoLock lock(mConditionsLock);
+  *aNotExistsMode = mNotExistsMode;
+
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::SetNotExistsMode(PRUint32 aNotExistsMode)
+{
+  nsAutoLock lock(mConditionsLock);
+  mNotExistsMode = aNotExistsMode;
+
+  nsresult rv = WriteConfiguration();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
                                                sbIPropertyOperator* aOperator,
                                                const nsAString& aLeftValue,
@@ -759,6 +789,9 @@ sbLocalDatabaseSmartMediaList::Rebuild()
 
   rv = ldsml->NotifyContentChanged();
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  for (PRUint32 i=0;i<mListeners.Count();i++)
+    mListeners.ObjectAt(i)->OnRebuild(this);
 
   return NS_OK;
 }
@@ -779,7 +812,7 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeAnyAll()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // The contents of the smart media list will be inserted using a single
-  // insert statement with a compound select statemet made up of select
+  // insert statement with a compound select statement made up of select
   // statements for each condition.
 
   // The sql builder does not know how to create compound select statements so
@@ -1322,18 +1355,55 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
     baseAlias.Assign(kMediaItemsAlias);
     rv = builder->SetBaseTableAlias(baseAlias);
     NS_ENSURE_SUCCESS(rv, rv);
+    
+    builder->SetDistinct(PR_TRUE);
 
     rv = builder->AddColumn(baseAlias, kMediaItemId);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = builder->AddJoin(sbISQLBuilder::JOIN_INNER,
-                          kResourceProperties,
-                          kConditionAlias,
-                          kMediaItemId,
-                          baseAlias,
-                          kMediaItemId);
+    
+    // Create a left outer join on two condition: media_item_id matching
+    // the left table, and property_id matching the rule property id, so that
+    // non-existing properties end up in the result set as null values
+    
+    // media_item_id match with left table media_item_id
+    nsCOMPtr<sbISQLBuilderCriterion> criterion_media_item;
+    rv = builder->CreateMatchCriterionTable(baseAlias,
+                                            kMediaItemId,
+                                            sbISQLBuilder::MATCH_EQUALS,
+                                            kConditionAlias,
+                                            kMediaItemId,
+                                            getter_AddRefs(criterion_media_item));
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // get property db id for rule property
+    PRUint32 propertyId;
+    rv = mPropertyCache->GetPropertyDBID(aCondition->mPropertyID, &propertyId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // property_id match with property db id
+    nsCOMPtr<sbISQLBuilderCriterion> criterion_property_id;
+    rv = builder->CreateMatchCriterionLong(kConditionAlias,
+                                           kPropertyId,
+                                           sbISQLBuilder::MATCH_EQUALS,
+                                           propertyId,
+                                           getter_AddRefs(criterion_property_id));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // combine the two conditions with AND
+    nsCOMPtr<sbISQLBuilderCriterion> join_criterion;
+    rv = builder->CreateAndCriterion(criterion_media_item, 
+                                     criterion_property_id, 
+                                     getter_AddRefs(join_criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // create a left outer join with these conditions
+    rv = builder->AddJoinWithCriterion(sbISQLBuilder::JOIN_LEFT_OUTER,
+                                       kResourceProperties,
+                                       kConditionAlias,
+                                       join_criterion);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // add conditions for this rule
     rv = AddCriterionForCondition(builder, aCondition, info);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1392,9 +1462,11 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
 
   // Get some stuff about the property
   PRBool isTopLevelProperty = SB_IsTopLevelProperty(aCondition->mPropertyID);
-  PRUint32 propertyId;
   nsAutoString columnName;
-  nsCOMPtr<sbISQLBuilderCriterion> propertyCriterion;
+
+  PRBool bNeedOrIsNull;
+  rv = GetConditionNeedsNull(aCondition, aInfo, bNeedOrIsNull);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if (isTopLevelProperty) {
     rv = SB_GetTopLevelPropertyColumn(aCondition->mPropertyID, columnName);
@@ -1402,15 +1474,6 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   }
   else {
     columnName.Assign(kObjSortable);
-    rv = mPropertyCache->GetPropertyDBID(aCondition->mPropertyID, &propertyId);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = aBuilder->CreateMatchCriterionLong(kConditionAlias,
-                                            kPropertyId,
-                                            sbISQLBuilder::MATCH_EQUALS,
-                                            propertyId,
-                                            getter_AddRefs(propertyCriterion));
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   nsAutoString op;
@@ -1474,14 +1537,20 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     rv = aBuilder->CreateAndCriterion(left, right, getter_AddRefs(criterion));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // If this isn't a top level propery, constraint by property
-    if (!isTopLevelProperty) {
-      nsCOMPtr<sbISQLBuilderCriterion> temp;
-      rv = aBuilder->CreateAndCriterion(propertyCriterion,
-                                        criterion,
-                                        getter_AddRefs(temp));
+    if (bNeedOrIsNull) {
+      nsCOMPtr<sbISQLBuilderCriterion> orIsNull;
+      rv = aBuilder->CreateMatchCriterionNull(kConditionAlias,
+                                              columnName,
+                                              sbISQLBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(orIsNull));
       NS_ENSURE_SUCCESS(rv, rv);
-      criterion = temp;
+
+      nsCOMPtr<sbISQLBuilderCriterion> criterionOrIsNull;
+      rv = aBuilder->CreateOrCriterion(criterion, 
+                                       orIsNull, 
+                                       getter_AddRefs(criterionOrIsNull));
+      NS_ENSURE_SUCCESS(rv, rv);
+      criterion = criterionOrIsNull;
     }
 
     rv = aBuilder->AddCriterion(criterion);
@@ -1531,14 +1600,21 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
                                               value,
                                               getter_AddRefs(criterion));
     NS_ENSURE_SUCCESS(rv, rv);
-
-    if (!isTopLevelProperty) {
-      nsCOMPtr<sbISQLBuilderCriterion> temp;
-      rv = aBuilder->CreateAndCriterion(propertyCriterion,
-                                        criterion,
-                                        getter_AddRefs(temp));
+    
+    if (bNeedOrIsNull) {
+      nsCOMPtr<sbISQLBuilderCriterion> orIsNull;
+      rv = aBuilder->CreateMatchCriterionNull(kConditionAlias,
+                                              columnName,
+                                              sbISQLBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(orIsNull));
       NS_ENSURE_SUCCESS(rv, rv);
-      criterion = temp;
+
+      nsCOMPtr<sbISQLBuilderCriterion> criterionOrIsNull;
+      rv = aBuilder->CreateOrCriterion(criterion, 
+                                       orIsNull, 
+                                       getter_AddRefs(criterionOrIsNull));
+      NS_ENSURE_SUCCESS(rv, rv);
+      criterion = criterionOrIsNull;
     }
 
     rv = aBuilder->AddCriterion(criterion);
@@ -1589,13 +1665,20 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
                                               getter_AddRefs(criterion));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (!isTopLevelProperty) {
-      nsCOMPtr<sbISQLBuilderCriterion> temp;
-      rv = aBuilder->CreateAndCriterion(propertyCriterion,
-                                        criterion,
-                                        getter_AddRefs(temp));
+    if (bNeedOrIsNull) {
+      nsCOMPtr<sbISQLBuilderCriterion> orIsNull;
+      rv = aBuilder->CreateMatchCriterionNull(kConditionAlias,
+                                              columnName,
+                                              sbISQLBuilder::MATCH_EQUALS,
+                                              getter_AddRefs(orIsNull));
       NS_ENSURE_SUCCESS(rv, rv);
-      criterion = temp;
+
+      nsCOMPtr<sbISQLBuilderCriterion> criterionOrIsNull;
+      rv = aBuilder->CreateOrCriterion(criterion, 
+                                       orIsNull, 
+                                       getter_AddRefs(criterionOrIsNull));
+      NS_ENSURE_SUCCESS(rv, rv);
+      criterion = criterionOrIsNull;
     }
 
     rv = aBuilder->AddCriterion(criterion);
@@ -1606,6 +1689,110 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
 
   // If we get here, we don't know how to handle the supplied operator
   return NS_ERROR_UNEXPECTED;
+}
+
+nsresult
+sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aCondition,
+                                                     sbIPropertyInfo* aInfo,
+                                                     PRBool &bNeedIsNull)
+{
+  nsresult rv;
+  
+  if (mNotExistsMode == sbILocalDatabaseSmartMediaList::NOTEXISTS_ASNULL) {
+    bNeedIsNull = PR_FALSE;
+    return NS_OK;
+  }
+  
+  nsAutoString op;
+  rv = aCondition->mOperator->GetOperator(op);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (op.EqualsLiteral(SB_OPERATOR_ISFALSE)) {
+    bNeedIsNull = PR_TRUE;
+    return NS_OK;
+  }
+  if (op.EqualsLiteral(SB_OPERATOR_ISTRUE)){
+    bNeedIsNull = PR_FALSE;
+    return NS_OK;
+  }
+
+  nsAutoString leftValue, value;
+  leftValue = aCondition->mLeftValue;
+  rv = aInfo->MakeSortable(leftValue, value);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  #define ZERO "+0000000000000000000"
+
+  if (op.EqualsLiteral(SB_OPERATOR_EQUALS)) {
+    if (value.EqualsLiteral(ZERO)) {
+      bNeedIsNull = PR_TRUE;
+      return NS_OK;
+    }
+  }
+  
+  if (op.EqualsLiteral(SB_OPERATOR_NOTEQUALS)) {
+    if (!value.EqualsLiteral(ZERO)) {
+      bNeedIsNull = PR_TRUE;
+      return NS_OK;
+    }
+  }
+
+  if (op.EqualsLiteral(SB_OPERATOR_GREATER)) {
+    if (value.First() == '-') {
+      bNeedIsNull = PR_TRUE;
+      return NS_OK;
+    }
+  }
+
+  if (op.EqualsLiteral(SB_OPERATOR_GREATEREQUAL) ||
+      op.EqualsLiteral(SB_OPERATOR_BETWEEN)) {
+    if (value.First() == '-' ||
+        value.EqualsLiteral(ZERO)) {
+      bNeedIsNull = PR_TRUE;
+      return NS_OK;
+    }
+  }
+
+  if (op.EqualsLiteral(SB_OPERATOR_LESS)) {
+    if (value.First() == '+' &&
+        !value.EqualsLiteral(ZERO)) {
+      bNeedIsNull = PR_TRUE;
+      return NS_OK;
+    }
+  }
+
+  if (op.EqualsLiteral(SB_OPERATOR_LESSEQUAL)) {
+    if (value.First() == '+') {
+      bNeedIsNull = PR_TRUE;
+      return NS_OK;
+    }
+  }
+  
+  if (op.EqualsLiteral(SB_OPERATOR_NOTCONTAINS) ||
+      op.EqualsLiteral(SB_OPERATOR_NOTBEGINSWITH) ||
+      op.EqualsLiteral(SB_OPERATOR_NOTENDSWITH) ||
+      op.EqualsLiteral(SB_OPERATOR_NOTINTHELAST)) {
+    if (!value.IsEmpty()) {
+      bNeedIsNull = PR_TRUE;
+      return NS_OK;
+    }
+  }
+  
+  // the following is waiting for the patch to bug #10744 to land
+  
+/*
+  if (op.EqualsLiteral(SB_OPERATOR_NOTONDATE) ||
+      op.EqualsLiteral(SB_OPERATOR_BEFOREDATE) ||
+      op.EqualsLiteral(SB_OPERATOR_ONORBEFOREDATE) ||
+      op.EqualsLiteral(SB_OPERATOR_BETWEENDATES)) {
+    if (!value.IsEmpty()) {
+      bNeedIsNull = PR_TRUE;
+      return NS_OK;
+    }
+  }
+*/
+  bNeedIsNull = PR_FALSE;
+  return NS_OK;
 }
 
 nsresult
@@ -2513,4 +2700,24 @@ NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
 {
   return NS_ERROR_NOT_AVAILABLE;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::AddSmartMediaListListener(sbILocalDatabaseSmartMediaListListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  nsAutoLock lock(mListenersLock);
+  mListeners.AppendObject(aListener);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::RemoveSmartMediaListListener(sbILocalDatabaseSmartMediaListListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  nsAutoLock lock(mListenersLock);
+  mListeners.RemoveObject(aListener);
+  return NS_OK;
 }

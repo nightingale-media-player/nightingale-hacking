@@ -203,6 +203,9 @@ sbSQLSelectBuilder::ToString(nsAString& _retval)
       case sbISQLBuilder::JOIN_LEFT:
         buff.AppendLiteral(" left");
         break;
+      case sbISQLBuilder::JOIN_LEFT_OUTER:
+        buff.AppendLiteral(" left outer");
+        break;
       default:
         NS_NOTREACHED("Unknown Join Type");
     }

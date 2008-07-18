@@ -33,6 +33,7 @@
 #include <nsTArray.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
+#include <nsCOMArray.h>
 #include <nsDataHashtable.h>
 #include <nsStringGlue.h>
 #include <prlock.h>
@@ -205,6 +206,10 @@ private:
                        PRUint32* _retval);
 
   void ShuffleArray(sbMediaItemIdArray& aArray);
+  
+  nsresult GetConditionNeedsNull(sbRefPtrCondition& aCondition, 
+                                 sbIPropertyInfo* aInfo, 
+                                 PRBool &bNeedIsNull);
 
   nsresult ReadConfiguration();
 
@@ -225,10 +230,14 @@ private:
   PRBool   mSelectDirection;
   PRBool   mRandomSelection;
   PRUint32 mAutoUpdateMode;
+  PRUint32 mNotExistsMode;
 
   nsCOMPtr<sbIPropertyManager> mPropMan;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
   nsCOMPtr<sbILocalDatabaseLibrary> mLocalDatabaseLibrary;
+
+  PRLock* mListenersLock;
+  nsCOMArray<sbILocalDatabaseSmartMediaListListener> mListeners;
 
   nsString mClearListQuery;
 };

@@ -233,29 +233,80 @@ function testOperators(library) {
   }
 
   var value = "1166399962000";
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
   setConditions(lastPlayTimeProp, "=", value);
   assertEqual(list.length, 4);
   assertUnique(list);
 
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  setConditions(lastPlayTimeProp, "=", value);
+  assertEqual(list.length, 4);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+  
   setConditions(lastPlayTimeProp, "!=", value);
   assertEqual(list.length, 45);
   assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+  
+  setConditions(lastPlayTimeProp, "!=", value);
+  assertEqual(list.length, 96);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+  
+  setConditions(lastPlayTimeProp, ">", value);
+  assertEqual(list.length, 29);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
 
   setConditions(lastPlayTimeProp, ">", value);
   assertEqual(list.length, 29);
   assertUnique(list);
 
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
   setConditions(lastPlayTimeProp, ">=", value);
   assertEqual(list.length, 33);
   assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  setConditions(lastPlayTimeProp, ">=", value);
+  assertEqual(list.length, 33);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
 
   setConditions(lastPlayTimeProp, "<", value);
   assertEqual(list.length, 16);
   assertUnique(list);
 
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  setConditions(lastPlayTimeProp, "<", value);
+  assertEqual(list.length, 67);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
   setConditions(lastPlayTimeProp, "<=", value);
   assertEqual(list.length, 20);
   assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  setConditions(lastPlayTimeProp, "<=", value);
+  assertEqual(list.length, 71);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
 
   list.clearConditions();
   list.appendCondition(lastPlayTimeProp,
@@ -267,6 +318,20 @@ function testOperators(library) {
   assertEqual(list.length, 49);
   assertUnique(list);
 
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  list.clearConditions();
+  list.appendCondition(lastPlayTimeProp,
+                       getOperatorForProperty(lastPlayTimeProp, "^"),
+                       "1164844762000",
+                       "1169855962000",
+                       false);
+  list.rebuild();
+  assertEqual(list.length, 49);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
   list.clearConditions();
   list.appendCondition(albumProp,
                        getOperatorForProperty(albumProp, "?%"),
@@ -276,6 +341,20 @@ function testOperators(library) {
   list.rebuild();
   assertEqual(list.length, 12);
   assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  list.clearConditions();
+  list.appendCondition(albumProp,
+                       getOperatorForProperty(albumProp, "?%"),
+                       "On",
+                       null,
+                       false);
+  list.rebuild();
+  assertEqual(list.length, 12);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
 
   list.clearConditions();
   list.appendCondition(albumProp,
@@ -287,6 +366,20 @@ function testOperators(library) {
   assertEqual(list.length, 22);
   assertUnique(list);
 
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  list.clearConditions();
+  list.appendCondition(albumProp,
+                       getOperatorForProperty(albumProp, "%?"),
+                       "Black",
+                       null,
+                       false);
+  list.rebuild();
+  assertEqual(list.length, 22);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
   list.clearConditions();
   list.appendCondition(albumProp,
                        getOperatorForProperty(albumProp, "%?%"),
@@ -296,6 +389,19 @@ function testOperators(library) {
   list.rebuild();
   assertEqual(list.length, 12);
   assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  list.clearConditions();
+  list.appendCondition(albumProp,
+                       getOperatorForProperty(albumProp, "%?%"),
+                       "fat",
+                       null,
+                       false);
+  list.rebuild();
+  assertEqual(list.length, 12);
+  assertUnique(list);
+
 }
 
 function testItemLimit(library) {

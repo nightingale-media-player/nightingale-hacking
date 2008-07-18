@@ -34,12 +34,13 @@
 #include "sbIMediaList.idl"
 
 interface sbIPropertyOperator;
+interface sbILocalDatabaseSmartMediaList;
 
 /**
  * \interface sbILocalDatabaseSmartMediaListCondition
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(4812112e-137c-411f-8631-7dac41ba4b70)]
+[scriptable, uuid(39b60b98-1b65-4e6e-866c-25b88127f8ad)]
 interface sbILocalDatabaseSmartMediaListCondition : nsISupports
 {
   /**
@@ -77,6 +78,13 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
   readonly attribute AString displayUnit;
 };
 
+[scriptable, function, uuid(7b5eb768-84b9-468b-8aac-f37b1f6706f4)]
+interface sbILocalDatabaseSmartMediaListListener : nsISupports
+{
+  void onRebuild(in sbILocalDatabaseSmartMediaList aSmartMediaList);
+};
+
+
 /**
  * \interface sbILocalDatabaseSmartMediaList
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
@@ -86,7 +94,7 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
  *
  * \sa sbIMediaList
  */
-[scriptable, uuid(1ab7f628-7ff8-4a1f-8840-239310f34ea9)]
+[scriptable, uuid(66fa49fd-0e57-4222-b408-072ff7d7b1c8)]
 interface sbILocalDatabaseSmartMediaList : sbIMediaList
 {
   const unsigned long MATCH_TYPE_ANY  = 0;
@@ -101,6 +109,9 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
   const unsigned long AUTOUPDATE_NEVER         = 0;
   const unsigned long AUTOUPDATE_WHENDISPLAYED = 1;
   const unsigned long AUTOUPDATE_LIVE          = 2;
+
+  const unsigned long NOTEXISTS_ASZERO = 0;
+  const unsigned long NOTEXISTS_ASNULL = 1;
 
   /**
    * \brief Match any or all conditions.
@@ -146,6 +157,17 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
    * AUTOUPDATE_LIVE          : the list is updated whenever the library changes
    */
   attribute unsigned long autoUpdateMode;
+  
+  /**
+   * \brief How to handle non-existent properties:
+   *
+   * NOTEXISTS_ASZERO : Properties that do not exist will equal 0 for numeric
+   *                    fields, "" for text fields, FALSE for booleans, and
+   *                    'infinitely far in the past' for dates (default).
+   * NOTEXISTS_ASNULL : Properties that do not exist will not match any numeric,
+   *                    text, boolean or date rule.
+   */
+   attribute unsigned long notExistsMode;
 
   /**
    * \brief Add a condition or limiting condition.
@@ -179,4 +201,7 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
    *        You should call this after you add/modify/remove any conditions.
    */
   void rebuild();
+  
+  void addSmartMediaListListener(in sbILocalDatabaseSmartMediaListListener aListener);
+  void removeSmartMediaListListener(in sbILocalDatabaseSmartMediaListListener aListener);
 };
