@@ -385,6 +385,9 @@ pref("feedback.disabled", true);
 // Default the player controls to the bottom
 pref("songbird.playercontrol.location", "bottom");
 
+// Default the service pane location for hovering.
+pref("songbird.splitter.servicepane_splitter.before.width", "160");
+
 //
 // Library importer prefs
 //
