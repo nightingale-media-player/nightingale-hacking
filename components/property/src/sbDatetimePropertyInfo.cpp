@@ -25,6 +25,7 @@
 */
 
 #include "sbDatetimePropertyInfo.h"
+#include "sbStandardOperators.h"
 
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
@@ -100,39 +101,67 @@ void sbDatetimePropertyInfo::InitializeOperators()
   nsRefPtr<sbPropertyOperator> propOp;
 
   sbPropertyInfo::GetOPERATOR_EQUALS(op);
-  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.on"));
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.equal"));
+  mOperators.AppendObject(propOp);
+
+  GetOPERATOR_ONDATE(op);
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.ondate"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
-  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.noton"));
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.notequal"));
+  mOperators.AppendObject(propOp);
+
+  GetOPERATOR_NOTONDATE(op);
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.notondate"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_GREATER(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.after"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.greater"));
+  mOperators.AppendObject(propOp);
+
+  GetOPERATOR_AFTERDATE(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.afterdate"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onafter"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.greaterequal"));
+  mOperators.AppendObject(propOp);
+
+  GetOPERATOR_AFTERORONDATE(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onafterdate"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_LESS(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.before"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.less"));
+  mOperators.AppendObject(propOp);
+
+  GetOPERATOR_BEFOREDATE(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.beforedate"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onbefore"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.lessequal"));
   mOperators.AppendObject(propOp);
 
-  sbPropertyInfo::GetOPERATOR_INTHELAST(op);
+  GetOPERATOR_BEFOREORONDATE(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onbeforedate"));
+  mOperators.AppendObject(propOp);
+
+  GetOPERATOR_INTHELAST(op);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.inthelast"));
   mOperators.AppendObject(propOp);
 
-  sbPropertyInfo::GetOPERATOR_NOTINTHELAST(op);
+  GetOPERATOR_NOTINTHELAST(op);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.notinthelast"));
   mOperators.AppendObject(propOp);
 
   sbPropertyInfo::GetOPERATOR_BETWEEN(op);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.between"));
+  mOperators.AppendObject(propOp);
+
+  GetOPERATOR_BETWEENDATES(op);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.betweendates"));
   mOperators.AppendObject(propOp);
 
   return;
@@ -350,3 +379,56 @@ NS_IMETHODIMP sbDatetimePropertyInfo::SetMaxDateTime(PRInt64 aMaxDateTime)
   return NS_OK;
 }
 
+NS_IMETHODIMP sbDatetimePropertyInfo::GetOPERATOR_INTHELAST(nsAString & aOPERATOR_INTHELAST)
+{
+  aOPERATOR_INTHELAST = NS_LITERAL_STRING(SB_OPERATOR_INTHELAST);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDatetimePropertyInfo::GetOPERATOR_NOTINTHELAST(nsAString & aOPERATOR_NOTINTHELAST)
+{
+  aOPERATOR_NOTINTHELAST = NS_LITERAL_STRING(SB_OPERATOR_NOTINTHELAST);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDatetimePropertyInfo::GetOPERATOR_ONDATE(nsAString & aOPERATOR_ONDATE)
+{
+  aOPERATOR_ONDATE = NS_LITERAL_STRING(SB_OPERATOR_ONDATE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDatetimePropertyInfo::GetOPERATOR_NOTONDATE(nsAString & aOPERATOR_NOTONDATE)
+{
+  aOPERATOR_NOTONDATE = NS_LITERAL_STRING(SB_OPERATOR_NOTONDATE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDatetimePropertyInfo::GetOPERATOR_BEFOREDATE(nsAString & aOPERATOR_BEFOREDATE)
+{
+  aOPERATOR_BEFOREDATE = NS_LITERAL_STRING(SB_OPERATOR_BEFOREDATE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDatetimePropertyInfo::GetOPERATOR_BEFOREORONDATE(nsAString & aOPERATOR_BEFOREORONDATE)
+{
+  aOPERATOR_BEFOREORONDATE = NS_LITERAL_STRING(SB_OPERATOR_BEFOREORONDATE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDatetimePropertyInfo::GetOPERATOR_AFTERDATE(nsAString & aOPERATOR_AFTERDATE)
+{
+  aOPERATOR_AFTERDATE = NS_LITERAL_STRING(SB_OPERATOR_AFTERDATE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDatetimePropertyInfo::GetOPERATOR_AFTERORONDATE(nsAString & aOPERATOR_AFTERORONDATE)
+{
+  aOPERATOR_AFTERORONDATE = NS_LITERAL_STRING(SB_OPERATOR_AFTERORONDATE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDatetimePropertyInfo::GetOPERATOR_BETWEENDATES(nsAString & aOPERATOR_BETWEENDATES)
+{
+  aOPERATOR_BETWEENDATES = NS_LITERAL_STRING(SB_OPERATOR_BETWEENDATES);
+  return NS_OK;
+}

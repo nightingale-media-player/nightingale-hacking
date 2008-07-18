@@ -211,6 +211,13 @@ private:
                                  sbIPropertyInfo* aInfo, 
                                  PRBool &bNeedIsNull);
 
+  PRInt64 ParseDateTime(nsAString &aDateTime);
+
+  PRInt64 StripTime(PRInt64 aDateTime);
+  
+  void SPrintfInt64(nsAString &aString, PRInt64 aValue);
+  PRInt64 ScanfInt64(nsAString &aString);
+
   nsresult ReadConfiguration();
 
   nsresult WriteConfiguration();

@@ -65,6 +65,9 @@
 #define RANDOM_ADD_CHUNK_SIZE 1000;
 #define SQL_IN_LIMIT 1000
 
+#define ONEDAY (1000*60*60*24)
+#define ONE_MS 1
+
 static const char *gsFmtRadix10 = "%lld";
 
 /*
@@ -674,7 +677,9 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // XXXsteve IsEmpty should really be IsVoid
-  if (!op.EqualsLiteral(SB_OPERATOR_BETWEEN) && !aRightValue.IsEmpty()) {
+  if (!op.EqualsLiteral(SB_OPERATOR_BETWEEN) &&
+      !op.EqualsLiteral(SB_OPERATOR_BETWEENDATES) &&
+      !aRightValue.IsEmpty()) {
     return NS_ERROR_ILLEGAL_VALUE;
   };
 
@@ -1286,7 +1291,7 @@ sbLocalDatabaseSmartMediaList::GetRollingLimit(const nsAString& aSql,
 
   return NS_OK;
 }
-
+#include <stdio.h>
 nsresult
 sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aCondition,
                                                      nsAString& _retval)
@@ -1445,6 +1450,33 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
   return NS_OK;
 }
 
+PRInt64
+sbLocalDatabaseSmartMediaList::ScanfInt64(nsAString &aString) {
+  PRTime value = 0;
+  NS_ConvertUTF16toUTF8 narrow(aString);
+
+  if (PR_sscanf(narrow.get(), gsFmtRadix10, &value) != 1) {
+    return 0;
+  }
+  return value;
+}
+
+void
+sbLocalDatabaseSmartMediaList::SPrintfInt64(nsAString &aString, 
+                                            PRInt64 aValue) {
+  char out[32] = {0};
+  if (PR_snprintf(out, 32, gsFmtRadix10, aValue) == -1) {
+    aString = NS_LITERAL_STRING("0");
+  }
+  NS_ConvertUTF8toUTF16 wide(out);
+  aString = wide;
+}
+
+PRInt64
+sbLocalDatabaseSmartMediaList::StripTime(PRInt64 aDateTime) {
+  return aDateTime - (aDateTime % ONEDAY);
+}
+
 nsresult
 sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBuilder,
                                                         sbRefPtrCondition& aCondition,
@@ -1482,6 +1514,8 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
 
   nsAutoString value;
   nsAutoString leftValue;
+  nsAutoString rightValue;
+  
   if (op.EqualsLiteral(SB_OPERATOR_ISTRUE) ||
       op.EqualsLiteral(SB_OPERATOR_ISFALSE)) {
     leftValue = NS_LITERAL_STRING("1");
@@ -1508,6 +1542,54 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     leftValue = aCondition->mLeftValue;
   }
 
+  PRBool invertRange = PR_FALSE;
+  
+  rightValue = aCondition->mRightValue;
+  
+  if (op.EqualsLiteral(SB_OPERATOR_BETWEENDATES)) {
+    // if we are matching date only (and not time), both values for the range
+    // needs to be parsed, and stripped of time, then the right value should be
+    // added 23:59:59.9999.
+    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue)));
+    SPrintfInt64(rightValue, StripTime(ScanfInt64(rightValue))+(ONEDAY-ONE_MS));
+    op = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);
+  } else if (op.EqualsLiteral(SB_OPERATOR_ONDATE)) {
+    // If we are matching date only (and not time), the date must be stripped of
+    // its time component, then we need to turn the condition into a range
+    // of [date,date+23:59:59.9999]
+    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue)));
+    SPrintfInt64(rightValue, StripTime(ScanfInt64(leftValue))+(ONEDAY-ONE_MS));
+    op = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);
+  } else if (op.EqualsLiteral(SB_OPERATOR_NOTONDATE)) {
+    // If we are matching date only (and not time), the date must be stripped of
+    // its time component, then we need to turn the condition into an inverted
+    // range of [date, date+23:59:59.9999]
+    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue)));
+    SPrintfInt64(rightValue, StripTime(ScanfInt64(leftValue))+(ONEDAY-ONE_MS));
+    op = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);
+    invertRange = PR_TRUE;
+  } else if (op.EqualsLiteral(SB_OPERATOR_BEFOREDATE)) {
+    // If we are matching date only (and not time), the date must be stripped of
+    // its time component.
+    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue)));
+    op = NS_LITERAL_STRING(SB_OPERATOR_LESS);
+  } else if (op.EqualsLiteral(SB_OPERATOR_BEFOREORONDATE)) {
+    // If we are matching date only (and not time), the date must be stripped of
+    // its time component, and then added 23:59:59.9999.
+    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue))+(ONEDAY-ONE_MS));
+    op = NS_LITERAL_STRING(SB_OPERATOR_LESSEQUAL);
+  } else if (op.EqualsLiteral(SB_OPERATOR_AFTERDATE)) {
+    // If we are matching date only (and not time), the date must be stripped of
+    // its time component, and then added 23:59:59.9999.
+    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue))+(ONEDAY-ONE_MS));
+    op = NS_LITERAL_STRING(SB_OPERATOR_GREATER);
+  } else if (op.EqualsLiteral(SB_OPERATOR_AFTERORONDATE)) {
+    // If we are matching date only (and not time), the date must be stripped of
+    // its time component.
+    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue)));
+    op = NS_LITERAL_STRING(SB_OPERATOR_GREATEREQUAL);
+  }
+  
   rv = aInfo->MakeSortable(leftValue, value);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1516,25 +1598,32 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     nsCOMPtr<sbISQLBuilderCriterion> left;
     rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
                                               columnName,
-                                              sbISQLBuilder::MATCH_GREATEREQUAL,
+                                              invertRange ?
+                                                sbISQLBuilder::MATCH_LESS :
+                                                sbISQLBuilder::MATCH_GREATEREQUAL,
                                               value,
                                               getter_AddRefs(left));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoString rightValue;
-    rv = aInfo->MakeSortable(aCondition->mRightValue, rightValue);
+    nsAutoString rvalue;
+    rv = aInfo->MakeSortable(rightValue, rvalue);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbISQLBuilderCriterion> right;
     rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
                                               columnName,
-                                              sbISQLBuilder::MATCH_LESSEQUAL,
-                                              rightValue,
+                                              invertRange ?
+                                                sbISQLBuilder::MATCH_GREATER :
+                                                sbISQLBuilder::MATCH_LESSEQUAL,
+                                              rvalue,
                                               getter_AddRefs(right));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
-    rv = aBuilder->CreateAndCriterion(left, right, getter_AddRefs(criterion));
+    if (invertRange)
+      rv = aBuilder->CreateOrCriterion(left, right, getter_AddRefs(criterion));
+    else
+      rv = aBuilder->CreateAndCriterion(left, right, getter_AddRefs(criterion));
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (bNeedOrIsNull) {
@@ -1778,19 +1867,16 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
     }
   }
   
-  // the following is waiting for the patch to bug #10744 to land
-  
-/*
   if (op.EqualsLiteral(SB_OPERATOR_NOTONDATE) ||
       op.EqualsLiteral(SB_OPERATOR_BEFOREDATE) ||
-      op.EqualsLiteral(SB_OPERATOR_ONORBEFOREDATE) ||
+      op.EqualsLiteral(SB_OPERATOR_BEFOREORONDATE) ||
       op.EqualsLiteral(SB_OPERATOR_BETWEENDATES)) {
     if (!value.IsEmpty()) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
   }
-*/
+
   bNeedIsNull = PR_FALSE;
   return NS_OK;
 }

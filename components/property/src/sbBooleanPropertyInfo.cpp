@@ -25,6 +25,7 @@
 */
 
 #include "sbBooleanPropertyInfo.h"
+#include "sbStandardOperators.h"
 #include <nsAutoPtr.h>
 
 NS_IMPL_ISUPPORTS_INHERITED1(sbBooleanPropertyInfo, sbPropertyInfo,
@@ -73,14 +74,14 @@ nsresult sbBooleanPropertyInfo::InitializeOperators()
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sbPropertyInfo::GetOPERATOR_ISTRUE(op);
+  rv = GetOPERATOR_ISTRUE(op);
   NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.bool.istrue"));
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sbPropertyInfo::GetOPERATOR_ISFALSE(op);
+  rv = GetOPERATOR_ISFALSE(op);
   NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.bool.isfalse"));
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
@@ -145,4 +146,16 @@ NS_IMETHODIMP sbBooleanPropertyInfo::MakeSortable(const nsAString & aValue, nsAS
   }
 
   return rv;
+}
+
+NS_IMETHODIMP sbBooleanPropertyInfo::GetOPERATOR_ISTRUE(nsAString & aOPERATOR_ISTRUE)
+{
+  aOPERATOR_ISTRUE = NS_LITERAL_STRING(SB_OPERATOR_ISTRUE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbBooleanPropertyInfo::GetOPERATOR_ISFALSE(nsAString & aOPERATOR_ISFALSE)
+{
+  aOPERATOR_ISFALSE = NS_LITERAL_STRING(SB_OPERATOR_ISFALSE);
+  return NS_OK;
 }

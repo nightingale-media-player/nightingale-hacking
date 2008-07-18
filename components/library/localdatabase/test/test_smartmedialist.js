@@ -130,7 +130,7 @@ function testAll(library) {
                        getOperatorForProperty(albumProp, "="),
                        "Back In Black",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
 
   assertEqual(list.length, 10);
@@ -142,7 +142,7 @@ function testAll(library) {
                        getOperatorForProperty(artistProp, "="),
                        "AC/DC",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
   assertEqual(list.length, 10);
   assertUnique(list);
@@ -152,7 +152,7 @@ function testAll(library) {
                        getOperatorForProperty(artistProp, "="),
                        "a-ha",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
 
   assertEqual(list.length, 0);
@@ -167,7 +167,7 @@ function testAll(library) {
                        getOperatorForProperty(contentLengthProp, "<"),
                        "1000",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
   assertEqual(list.length, 6);
   assertUnique(list);
@@ -186,7 +186,7 @@ function testAny(library) {
                        getOperatorForProperty(albumProp, "="),
                        "Back In Black",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
 
   assertEqual(list.length, 10);
@@ -198,7 +198,7 @@ function testAny(library) {
                        getOperatorForProperty(artistProp, "="),
                        "AC/DC",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
 
   assertEqual(list.length, 10);
@@ -209,7 +209,7 @@ function testAny(library) {
                        getOperatorForProperty(artistProp, "="),
                        "a-ha",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
 
   assertEqual(list.length, 20);
@@ -228,7 +228,7 @@ function testOperators(library) {
                          getOperatorForProperty(prop, op),
                          value,
                          null,
-                         false);
+                         "unit");
     list.rebuild();
   }
 
@@ -308,12 +308,86 @@ function testOperators(library) {
 
   list.notExistsMode = list.NOTEXISTS_ASNULL;
 
+  var value = "1166399960000";
+  setConditions(lastPlayTimeProp, "#=", value);
+  assertEqual(list.length, 4);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  setConditions(lastPlayTimeProp, "#=", value);
+  assertEqual(list.length, 4);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
+  setConditions(lastPlayTimeProp, "#!=", value);
+  assertEqual(list.length, 45);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  setConditions(lastPlayTimeProp, "#!=", value);
+  assertEqual(list.length, 96);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
+  setConditions(lastPlayTimeProp, "#>", value);
+  assertEqual(list.length, 29);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  setConditions(lastPlayTimeProp, "#>", value);
+  assertEqual(list.length, 29);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
+  setConditions(lastPlayTimeProp, "#>=", value);
+  assertEqual(list.length, 33);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  setConditions(lastPlayTimeProp, "#>=", value);
+  assertEqual(list.length, 33);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
+  setConditions(lastPlayTimeProp, "#<", value);
+  assertEqual(list.length, 16);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  setConditions(lastPlayTimeProp, "#<", value);
+  assertEqual(list.length, 67);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
+  setConditions(lastPlayTimeProp, "#<=", value);
+  assertEqual(list.length, 20);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASZERO;
+
+  setConditions(lastPlayTimeProp, "#<=", value);
+  assertEqual(list.length, 71);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
+
   list.clearConditions();
   list.appendCondition(lastPlayTimeProp,
                        getOperatorForProperty(lastPlayTimeProp, "^"),
                        "1164844762000",
                        "1169855962000",
-                       false);
+                       "unit");
   list.rebuild();
   assertEqual(list.length, 49);
   assertUnique(list);
@@ -323,9 +397,21 @@ function testOperators(library) {
   list.clearConditions();
   list.appendCondition(lastPlayTimeProp,
                        getOperatorForProperty(lastPlayTimeProp, "^"),
-                       "1164844762000",
-                       "1169855962000",
-                       false);
+                       "1164844764000",
+                       "1169855960000",
+                       "unit");
+  list.rebuild();
+  assertEqual(list.length, 45);
+  assertUnique(list);
+
+  list.notExistsMode = list.NOTEXISTS_ASNULL;
+
+  list.clearConditions();
+  list.appendCondition(lastPlayTimeProp,
+                       getOperatorForProperty(lastPlayTimeProp, "#^"),
+                       "1164844764000",
+                       "1169855960000",
+                       "unit");
   list.rebuild();
   assertEqual(list.length, 49);
   assertUnique(list);
@@ -337,7 +423,7 @@ function testOperators(library) {
                        getOperatorForProperty(albumProp, "?%"),
                        "On",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
   assertEqual(list.length, 12);
   assertUnique(list);
@@ -349,7 +435,7 @@ function testOperators(library) {
                        getOperatorForProperty(albumProp, "?%"),
                        "On",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
   assertEqual(list.length, 12);
   assertUnique(list);
@@ -361,7 +447,7 @@ function testOperators(library) {
                        getOperatorForProperty(albumProp, "%?"),
                        "Black",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
   assertEqual(list.length, 22);
   assertUnique(list);
@@ -385,7 +471,7 @@ function testOperators(library) {
                        getOperatorForProperty(albumProp, "%?%"),
                        "fat",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
   assertEqual(list.length, 12);
   assertUnique(list);
@@ -415,7 +501,7 @@ function testItemLimit(library) {
                        getOperatorForProperty(albumProp, "="),
                        "Back In Black",
                        null,
-                       false);
+                       "unit");
   list.rebuild();
   assertEqual(list.length, 10);
   assertUnique(list);
@@ -453,7 +539,7 @@ function testUsecsLimit(library) {
                        getOperatorForProperty(albumProp, "="),
                        "Back In Black",
                        null,
-                       false);
+                       "unit");
 
   list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_USECS;
   list.limit = 30 * 60 * 1000 * 1000;
@@ -486,7 +572,7 @@ function testBytesLimit(library) {
                        getOperatorForProperty(albumProp, "="),
                        "Back In Black",
                        null,
-                       false);
+                       "unit");
 
   list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
   list.limit = 1500;
@@ -602,7 +688,7 @@ function testRandom(library) {
                        getOperatorForProperty(albumProp, "="),
                        "Back In Black",
                        null,
-                       false);
+                       "unit");
 
   list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
   list.limit = 5;
@@ -698,12 +784,12 @@ function testSerialize(library) {
                        getOperatorForProperty(albumProp, "%?%"),
                        "fat",
                        "",
-                       false);
+                       "unit");
   list.appendCondition(lastPlayTimeProp,
                        getOperatorForProperty(lastPlayTimeProp, ">"),
                        "1164844762000",
                        "",
-                       false);
+                       "unit");
   library.flush();
 
   // Create a second instance of the library and get the same list and see

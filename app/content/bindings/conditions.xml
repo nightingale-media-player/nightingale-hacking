@@ -499,20 +499,41 @@
           while (ops.hasMoreElements()) {
             var op = ops.getNext()
                         .QueryInterface(this._Ci.sbIPropertyOperator);
-            if (info.type == "boolean") {
-              // these two never make sense to present to the user along with
-              // the istrue/isfalse operators, though they are still exposed
-              // for completion and so someone could use them programatically
-              if (op.operator == info.OPERATOR_EQUALS ||
-                  op.operator == info.OPERATOR_NOTEQUALS) {
-                continue;
+            switch (info.type) {
+              case "boolean":
+                // these two never make sense to present to the user along with
+                // the istrue/isfalse operators, though they are still exposed
+                // for completion and so someone could use them programatically
+                if (op.operator == info.OPERATOR_EQUALS ||
+                    op.operator == info.OPERATOR_NOTEQUALS) {
+                  continue;
+                }
+                break;
+              case "datetime": {
+                // these don't make sense either given that we strip the time
+                // part of the datetime value in the interface, we only want to
+                // keep the date-only operators. the full datetime operators
+                // are exposed for completion and programmatic usage.
+                if (op.operator == info.OPERATOR_EQUALS ||
+                    op.operator == info.OPERATOR_NOTEQUALS ||
+                    op.operator == info.OPERATOR_GREATER ||
+                    op.operator == info.OPERATOR_GREATEREQUAL ||
+                    op.operator == info.OPERATOR_LESS ||
+                    op.operator == info.OPERATOR_LESSEQUAL ||
+                    op.operator == info.OPERATOR_BETWEEN)
+                  continue;
+                break;
               }
             }
             if (!enableAll) {
+              if (info.type == "datetime")
+                info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
               if (op.operator == info.OPERATOR_LESSEQUAL ||
                   op.operator == info.OPERATOR_GREATEREQUAL ||
                   op.operator == info.OPERATOR_NOTBEGINSWITH ||
-                  op.operator == info.OPERATOR_NOTENDSWITH) {
+                  op.operator == info.OPERATOR_NOTENDSWITH ||
+                  op.operator == info.OPERATOR_AFTERORONDATE ||
+                  op.operator == info.OPERATOR_BEFOREORONDATE) {
                 continue;
               }
             }
@@ -756,16 +777,20 @@
             var info = this._pm.getPropertyInfo(property);
             switch (info.type) {
               case "boolean": 
+                info.QueryInterface(this._Ci.sbIBooleanPropertyInfo);
                 def = info.OPERATOR_ISTRUE; 
                 break;
               case "uri": 
               case "text": 
                 def = info.OPERATOR_CONTAINS; 
                 break;
+              case "datetime":
+                info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
+                def = info.OPERATOR_ONDATE;
+                break;
               case "duration":
               case "number":
               case "rating":
-              case "datetime":
               default:
                 def = info.OPERATOR_EQUALS;
                 break;
@@ -847,20 +872,29 @@
             switch (info.type) {
               case "datetime":
                 // default prefill on date depends on operator
+                info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
                 switch (operator) {
-                  case info.OPERATOR_EQUALS:
-                  case info.OPERATOR_NOTEQUALS:
-                  case info.OPERATOR_GREATER:
-                  case info.OPERATOR_GREATEREQUAL:
-                  case info.OPERATOR_LESS:
-                  case info.OPERATOR_LESSEQUAL:
-                  case info.OPERATOR_BETWEEN:
+                  case info.OPERATOR_ONDATE:
+                  case info.OPERATOR_NOTONDATE:
+                  case info.OPERATOR_AFTERDATE:
+                  case info.OPERATOR_AFTERORONDATE:
+                  case info.OPERATOR_BEFOREDATE:
+                  case info.OPERATOR_BEFOREORONDATE:
+                  case info.OPERATOR_BETWEENDATES:
                     var d = new Date();
+                    d.setMilliseconds(0);
+                    d.setSeconds(0);
+                    d.setMinutes(0);
+                    d.setHours(0);
                     prefillValue = d.getTime();
                     break;
                   case info.OPERATOR_INTHELAST:
                   case info.OPERATOR_NOTINTHELAST:
                     prefillValue = 1000*60*60*24; // one day
+                    break;
+                  default:
+                    var d = new Date();
+                    prefillValue = d.getTime();
                     break;
                 }
                 break;
@@ -1100,12 +1134,18 @@
         <body>
           <![CDATA[
             var info = this._pm.getPropertyInfo(state.metadata);
-            state.interval = (state.condition == info.OPERATOR_BETWEEN);
+
+            if (info.type == "datetime")
+              info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
+              
+            state.interval = (state.condition == info.OPERATOR_BETWEEN ||
+                              state.condition == info.OPERATOR_BETWEENDATES);
 
             switch (info.type) {
               case "boolean": 
                 // if current operator is istrue or isfalse, hide the input
                 // object.
+                info.QueryInterface(this._Ci.sbIBooleanPropertyInfo);
                 if (state.condition == info.OPERATOR_ISTRUE ||
                     state.condition == info.OPERATOR_ISFALSE) {
                   state.textfield = false;
@@ -1160,6 +1200,7 @@
                   // units, so we can compare the date value to the last
                   // x weeks/months/years/etc
                   case "datetime":
+                    info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
                     if (state.condition == info.OPERATOR_INTHELAST ||
                         state.condition == info.OPERATOR_NOTINTHELAST) {
                       state.useunits = true;
@@ -1479,6 +1520,14 @@
             try {
               // and format the field
               value = info.format(value);
+              if (info.type == "datetime") {
+                // if this is a datetime, strip the time component. ideally,
+                // format() would take a parameter that would allow us to
+                // specify how to format the value.
+                var space = value.indexOf(" ");
+                if (space >= 0)
+                  value = value.slice(0, space);
+              }
             } catch (e) {
             }
             return value;

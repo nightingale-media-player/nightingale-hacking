@@ -153,34 +153,6 @@ sbImmutablePropertyInfo::GetOPERATOR_BETWEEN(nsAString& aOPERATOR_BETWEEN)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::GetOPERATOR_ISTRUE(nsAString& aOPERATOR_ISTRUE)
-{
-  aOPERATOR_ISTRUE.AssignLiteral(SB_OPERATOR_ISTRUE);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbImmutablePropertyInfo::GetOPERATOR_ISFALSE(nsAString& aOPERATOR_ISFALSE)
-{
-  aOPERATOR_ISFALSE.AssignLiteral(SB_OPERATOR_ISFALSE);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbImmutablePropertyInfo::GetOPERATOR_INTHELAST(nsAString& aOPERATOR_INTHELAST)
-{
-  aOPERATOR_INTHELAST.AssignLiteral(SB_OPERATOR_INTHELAST);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbImmutablePropertyInfo::GetOPERATOR_NOTINTHELAST(nsAString& aOPERATOR_NOTINTHELAST)
-{
-  aOPERATOR_NOTINTHELAST.AssignLiteral(SB_OPERATOR_NOTINTHELAST);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbImmutablePropertyInfo::SetNullSort(PRUint32 aNullSort)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
