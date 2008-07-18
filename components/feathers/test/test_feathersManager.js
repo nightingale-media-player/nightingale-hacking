@@ -37,6 +37,7 @@ const DEFAULT_MAIN_LAYOUT_URL         = "chrome://songbird/content/feathers/basi
 const DEFAULT_SECONDARY_LAYOUT_URL    = "chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul";
 const DEFAULT_SKIN_NAME               = "rubberducky/0.2";
 const ALTERNATE_MAIN_LAYOUT_URL       = "chrome://gonzo/content/xul/mainplayer.xul";
+const ALTERNATE_MINI_LAYOUT_URL       = "chrome://gonzo/content/xul/miniplayer.xul";
 const ALTERNATE_SKIN_NAME             = "gonzo";
 
 
@@ -205,7 +206,7 @@ function testAddonMetadataReader()
   
   // Verify all layouts added properly
   var layoutURLs = [ DEFAULT_MAIN_LAYOUT_URL, DEFAULT_SECONDARY_LAYOUT_URL,
-                     ALTERNATE_MAIN_LAYOUT_URL ];
+                     ALTERNATE_MAIN_LAYOUT_URL, ALTERNATE_MINI_LAYOUT_URL ];
   assertEqual(feathersManager.layoutCount, layoutURLs.length);
   enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
                      Components.interfaces.sbILayoutDescription);
