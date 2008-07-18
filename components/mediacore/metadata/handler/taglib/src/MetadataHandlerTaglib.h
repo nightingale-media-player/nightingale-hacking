@@ -88,6 +88,7 @@
 
 /* TagLib imports. */
 #include <fileref.h>
+#include <mpegfile.h>
 #include <id3v2tag.h>
 #include <mp4itunestag.h>
 #include <apetag.h>
@@ -215,6 +216,12 @@ private:
         const nsACString            &aMimeType,
         const PRUint8               *aData,
         PRUint32                    aDataLen);
+
+    nsresult WriteSetImageDataInternal(
+        TagLib::MPEG::File*         aFile,
+        PRInt32                     aType,
+        const nsAString             &imageSpec
+    );
 
     /*
      * Private taglib metadata handler ID3v2 services.
