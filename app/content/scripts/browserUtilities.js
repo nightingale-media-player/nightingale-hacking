@@ -842,3 +842,21 @@ function onShutdownBrowserUtilities() {
 
 window.addEventListener("load", onInitBrowserUtilities, false);
 
+// Function from Mozilla's browser.js. Accel + #1 through 8 will send it to
+// that tab. Accel + 9 always sends it to the last tab.
+function BrowserNumberTabSelection(event, index) {
+  if (index == 8) {
+    index = gBrowser.tabContainer.childNodes.length - 1;
+  } else if (index >= gBrowser.tabContainer.childNodes.length) {
+    return;
+  }
+ 
+  var oldTab = gBrowser.selectedTab;
+  var newTab = gBrowser.tabContainer.childNodes[index];
+  if (newTab != oldTab) {
+    gBrowser.selectedTab = newTab;
+  }
+ 
+  event.preventDefault();
+  event.stopPropagation();
+}
