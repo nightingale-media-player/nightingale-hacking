@@ -110,6 +110,14 @@
             // and force a rebuild
             tree.builder.rebuild();
           }, 0);
+          
+          // Set the height and width of the floating servicepane panel:
+          var panel = document.getElementById("service_pane_spring_load_panel");
+          
+          var height = gBrowser.boxObject.height + gBrowser.tabStrip.boxObject.height;
+          var width = SBDataGetStringValue("splitter.servicepane_splitter.before.width");
+          panel.style.height = height + "px";
+          panel.style.width = width + "px";
         ]]></body>
       </method>
       

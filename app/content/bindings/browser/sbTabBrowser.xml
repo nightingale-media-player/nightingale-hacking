@@ -210,6 +210,10 @@
       <field name="_sessionStore">null</field>
       <field name="_servicePaneService">null</field>
       
+      <property name="tabStrip" readonly="true">
+        <getter>return this.mStrip;</getter>
+      </property>
+      
       <!-- Override tabBrowser.setTabTitle in order to support
            service pane icons and titles for chrome URLs -->
       <method name="setTabTitle">
@@ -555,9 +559,6 @@
            May come from the web playlist or media page. -->
       <property name="currentMediaListView" readonly="true"
                 onget="return this.mCurrentTab.mediaListView" />
-
-
-
 
       <field name="_loading">SB_NewDataRemote("faceplate.loading", null)</field>
       <property name="loading"
