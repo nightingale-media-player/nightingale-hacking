@@ -23,9 +23,9 @@
 // END SONGBIRD GPL
 //
 */
-
 #include "sbGStreamerService.h"
 #include <gst/pbutils/descriptions.h>
+#include <glib/gutils.h>
 
 #include <nsIEnvironment.h>
 #include <nsIProperties.h>
@@ -35,14 +35,8 @@
 #include <nsServiceManagerUtils.h>
 #include <nsDirectoryServiceDefs.h>
 #include <nsAppDirectoryServiceDefs.h>
-
-#if XP_WIN
-  #define PATH_LIST_SEPARATOR ';'
-#elif XP_UNIX
-  #define PATH_LIST_SEPARATOR ':'
-#else
-  #error unknown platform
-#endif
+#include <nsXULAppAPI.h>
+#include <nsISimpleEnumerator.h>
 
 #if defined( PR_LOGGING )
 extern PRLogModuleInfo* gGStreamerLog;
@@ -87,7 +81,14 @@ sbGStreamerService::Init()
   nsresult rv;
   NS_NAMED_LITERAL_STRING(kGstPluginSystemPath, "GST_PLUGIN_SYSTEM_PATH");
   NS_NAMED_LITERAL_STRING(kGstRegistry, "GST_REGISTRY");
+  NS_NAMED_LITERAL_STRING(kGstPluginPath, "GST_PLUGIN_PATH");
   PRBool bundledGst;
+  PRBool pluginPathExists;
+  PRBool hasMore;
+  PRBool first = PR_TRUE;
+  nsString pluginPaths;
+
+  nsCOMPtr<nsISimpleEnumerator> dirList;
 
   nsCOMPtr<nsIEnvironment> envSvc =
     do_GetService("@mozilla.org/process/environment;1", &rv);
@@ -127,7 +128,9 @@ sbGStreamerService::Init()
     rv = envSvc->Set(kGstPluginSystemPath, pluginDirStr);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = envSvc->Set(NS_LITERAL_STRING("GST_PLUGIN_PATH"), EmptyString());
+    // Clear GST_PLUGIN_PATH: we're using the bundled gstreamer, and don't
+    // want external plugins to get used.
+    rv = envSvc->Set(kGstPluginPath, EmptyString());
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Set registry path
@@ -152,6 +155,52 @@ sbGStreamerService::Init()
     rv = envSvc->Set(kGstRegistry, registryPathStr);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Now, we append plugin directories from extensions to GST_PLUGIN_PATH
+  rv = directorySvc->Get(XRE_EXTENSIONS_DIR_LIST,
+                         NS_GET_IID(nsISimpleEnumerator),
+                         getter_AddRefs(dirList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = envSvc->Exists(kGstPluginPath, &pluginPathExists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (pluginPathExists) {
+    rv = envSvc->Get(kGstPluginPath, pluginPaths);
+    NS_ENSURE_SUCCESS(rv, rv);
+    first = PR_FALSE;
+  }
+  else
+    pluginPaths = EmptyString();
+
+  while (NS_SUCCEEDED(dirList->HasMoreElements(&hasMore)) && hasMore) {
+    PRBool dirExists;
+    nsCOMPtr<nsISupports> supports;
+    rv = dirList->GetNext(getter_AddRefs(supports));
+    if (NS_FAILED(rv))
+      continue;
+    nsCOMPtr<nsIFile> extensionDir(do_QueryInterface(supports, &rv));
+    if (NS_FAILED(rv))
+        continue;
+
+    rv = extensionDir->Append(NS_LITERAL_STRING("gst-plugins"));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = extensionDir->Exists(&dirExists);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (dirExists) {
+      nsString dirPath;
+      rv = extensionDir->GetPath(dirPath);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (!first)
+        pluginPaths.Append(NS_LITERAL_STRING(G_SEARCHPATH_SEPARATOR_S));
+      pluginPaths.Append(dirPath);
+      first = PR_FALSE;
+    }
+  }
+
+  rv = envSvc->Set(kGstPluginPath, pluginPaths);
+  NS_ENSURE_SUCCESS(rv, rv);
 
 #ifdef XP_MACOSX
   // XXX This is very bad according to edward!  But we need it until
