@@ -36,6 +36,7 @@
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsDateTimeFormatCID.h>
+#include <nsILocalFile.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCID.h>
@@ -177,6 +178,25 @@ sbTimingService::RegisterSelf(nsIComponentManager* aCompMgr,
   return NS_OK;
 }
 
+static nsresult 
+CheckEnvironmentVariable(nsIFile ** aFile)
+{
+  nsresult rv;
+
+  char const * const fileName = getenv("SB_TIMING_SERVICE_LOG");
+  if (!fileName)
+    return NS_OK;
+  
+  nsCOMPtr<nsILocalFile> file =
+      do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = file->InitWithNativePath(nsDependentCString(fileName));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return CallQueryInterface(file, aFile);
+}
+
 NS_METHOD
 sbTimingService::Init() {
   mLoggingLock = nsAutoLock::NewLock("sbTimingService::mLoggingLock");
@@ -194,7 +214,9 @@ sbTimingService::Init() {
   success = mResults.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsresult rv = CheckEnvironmentVariable(getter_AddRefs(mLogFile));
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "CheckEnvironmentVariable failed");  
+
   nsCOMPtr<nsIObserverService> observerService = 
     do_GetService("@mozilla.org/observer-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -409,7 +431,9 @@ nsresult sbTimingService::FormatResultsToString(nsACString &aOutput)
     NS_ENSURE_SUCCESS(rv, rv);
 
     output.Append(out);
-    output.AppendLiteral("\t");
+    output.AppendLiteral(" ");
+    output.AppendInt((startTime % PR_USEC_PER_SEC) / PR_USEC_PER_MSEC );
+    output.AppendLiteral("ms\t");
 
     PR_ExplodeTime(stopTime, PR_LocalTimeParameters, &explodedTime);
 
@@ -421,7 +445,9 @@ nsresult sbTimingService::FormatResultsToString(nsACString &aOutput)
     NS_ENSURE_SUCCESS(rv, rv);
 
     output.Append(out);
-    output.AppendLiteral("\t");
+    output.AppendLiteral(" ");
+    output.AppendInt((stopTime % PR_USEC_PER_SEC) / PR_USEC_PER_MSEC );
+    output.AppendLiteral("ms\t");
 
     AppendInt(output, totalTime / PR_USEC_PER_MSEC);
     output.AppendLiteral("ms\n");

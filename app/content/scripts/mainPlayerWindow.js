@@ -169,7 +169,22 @@ var gSongbirdPlayerWindow = {
     var playerControlsLocation = 
       Application.prefs.getValue(PREF_PLAYER_CONTROL_LOCATION, false);
     movePlayerControls((playerControlsLocation == "top"));
-  },
+    try
+    {
+      var timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
+                          .getService(Ci.sbITimingService);
+      // NOTE: Must be in this order, CSPerfEndEULA doesn't always exist and
+      // will throw an error. CSPerfLibrary is just a timestamp for non-first 
+      // runs.
+      timingService.startPerfTimer("CSPerfLibrary");
+      timingService.stopPerfTimer("CSPerfLibrary");
+      timingService.stopPerfTimer("CSPerfEndEULA");
+    }
+    catch (e)
+    {
+      // Ignore errors
+    }
+ },
 
 
   /**
