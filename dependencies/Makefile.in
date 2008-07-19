@@ -49,19 +49,36 @@ endif
 
 SONGBIRD_DIST = $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
                 $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/bin/*$(DLL_SUFFIX) \
-                $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) \
                 $(NULL)
 
-# have to put the dlls here too because updater can't copy yet
-SONGBIRD_XULRUNNER = $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) 
+# Kinda hacky (mostly because there *could* be other useful things on win32
+# in the runtime dir, OTHER than the MSVCRTs... there *aren't*, but there 
+# could be); this is:
+# if we're windows, but not using jemalloc (so we need the MSVCRT)
+#   ... add it ...
+# else if we're not windows
+#   ... add whatever is in the runtime dir for that platform ...
 
-# MSVC 8 needs the manifest files
-ifeq ($(_MSC_VER), 1400)
-SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
-# have to put the manifest here too because updater can't copy yet
-SONGBIRD_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
-endif # _MSC_VER==1400
+ifeq ($(SB_PLATFORM)_$(SB_USE_JEMALLOC),windows_)
+  SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX)
 
+  # have to put the dlls here too because updater can't copy yet
+  SONGBIRD_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) 
+
+  # MSVC 8 needs the manifest files, but only if we're not jemalloc!
+  ifeq ($(_MSC_VER), 1400)
+    SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
+    # have to put the manifest here too because updater can't copy yet
+    SONGBIRD_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
+  endif # _MSC_VER==1400
+
+else ifneq ($(SB_PLATFORM),windows)
+  SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX)
+  SONGBIRD_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) 
+endif
+
+# Copy these immaterial of whether --disable-jemalloc is specified for 
+# Songbird proper, because XR needs it.
 ifdef DEBUG
 MOZ_WIN32_CUSTOM_CRT = $(SONGBIRD_XULRUNNERDIR)/mozcrt19d.dll
 else
@@ -491,15 +508,15 @@ ADD_MANIFEST_EXES = crashreporter.exe \
                     $(NULL)
 
 addmsvcrtmanifest::
-ifdef MSMANIFEST_TOOL
+ifeq ($(SB_USE_JEMALLOC)_$(MSMANIFEST_TOOL),_1)
 	for f in $(ADD_MANIFEST_EXES); do \
    echo $(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(SONGBIRD_XULRUNNERDIR)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(SONGBIRD_XULRUNNERDIR))/$$f\;1 ; \
    $(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(SONGBIRD_XULRUNNERDIR)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(SONGBIRD_XULRUNNERDIR))/$$f\;1 ; \
    done
-endif # MSVC with manifest tool
+endif # NOT SB_USE_JEMALLOC and MSVC with manifest tool
 
 
-.PHONY : copy-extensions
+.PHONY : copy-extensions addmsvcrtmanifest
 copy-extensions : gunzip_file
 	@echo $(xulrunner_extensions)
 ifneq (,$(xulrunner_extensions))

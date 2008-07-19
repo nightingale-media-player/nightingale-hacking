@@ -232,8 +232,10 @@ Section "-Application" Section1
   ; List of files to install
   File ${ApplicationIni}
   File ${FileMainEXE}
-  File ${CRuntime}
-  File ${CPPRuntime}
+!ifndef UsingJemalloc
+    File ${CRuntime}
+    File ${CPPRuntime}
+!endif
   File ${MozCRuntime}
   File ${PreferredIcon}
   File ${VistaIcon}
@@ -266,6 +268,8 @@ Section "-Application" Section1
     File /r gst-plugins
 !endif
 
+# We only need to do this if we're not using jemalloc...
+!ifndef UsingJemalloc
   ; The XULRunner stub loader also fails to find certain symbols when launched
   ; without a profile (yes, it's confusing). The quick work around is to 
   ; leave a copy of msvcr71.dll in xulrunner/ as well.
@@ -277,7 +281,7 @@ Section "-Application" Section1
   ${Else}
     StrCpy $LinkIconFile ${PreferredIcon}
   ${EndIf}
-  
+ 
   ; With VC8, we need the CRT and the manifests all over the place due to SxS
   ; until BMO 350616 gets fixed
   !ifdef CRuntimeManifest
@@ -290,6 +294,15 @@ Section "-Application" Section1
     File ${CPPRuntime}
     File ${CRuntimeManifest}
   !endif
+!endif
+
+  ${If} ${AtLeastWinVista}
+    StrCpy $LinkIconFile ${VistaIcon}
+  ${Else}
+    StrCpy $LinkIconFile ${PreferredIcon}
+  ${EndIf}
+ 
+  ; With VC8, we need the CRT and the manifests all over the place due to SxS
 
   ; Now that we're done installing files, we have to move the backed up version into the new directory tree.
   ${If} $HasBeenBackedUp == "True"
@@ -448,10 +461,12 @@ Section "Uninstall"
   ; List of files to uninstall
   Delete $INSTDIR\${ApplicationIni}
   Delete $INSTDIR\${FileMainEXE}
+!ifndef UsingJemalloc
   Delete $INSTDIR\${CRuntime}
   Delete $INSTDIR\${CPPRuntime}
-  Delete $INSTDIR\${MozCRuntime}
   Delete $INSTDIR\${CRuntimeManifest}
+!endif
+  Delete $INSTDIR\${MozCRuntime}
   Delete $INSTDIR\${PreferredIcon}
   Delete $INSTDIR\${VistaIcon}
   

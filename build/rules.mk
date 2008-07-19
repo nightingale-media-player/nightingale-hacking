@@ -1472,10 +1472,11 @@ endif
 move_sb_stub_executable: $(SONGBIRD_MAIN_APP)
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(sb_executable_dir)
 	$(CYGWIN_WRAPPER) $(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable_dir)
-ifdef MSMANIFEST_TOOL
+# If we're not using jemalloc, add the manifest...
+ifeq ($(MSMANIFEST_TOOL)_$(SB_USE_JEMALLOC),1_)
 	$(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
     -OUTPUTRESOURCE:$(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))\;1
-endif # MSVC with manifest tool
+endif # Not-jemalloc and MSVC with manifest tool
 	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
 ifeq (windows,$(SB_PLATFORM))
 	# On Win32, the stub requires the custom CRT in the same directory now,

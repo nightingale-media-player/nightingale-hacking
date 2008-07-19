@@ -69,7 +69,7 @@ if "%4"=="prepare" goto end
 
 :package
 cd %DIST_DIR%
-%DIST_DEPTH%\tools\win32\nsis\makensis /NOCD /DBUILD_ID="%BUILD_ID%" /DARCH="%ARCH%" /O"%DIST_DEPTH%\Songbird_%BUILD_ID%.log" /V4 ../installer/windows/songbird.nsi
+%DIST_DEPTH%\tools\win32\nsis\makensis /NOCD /DBUILD_ID="%BUILD_ID%" /DARCH="%ARCH%" /V4 ../installer/windows/songbird.nsi
 cd %DIST_DEPTH%\installer\windows
 
 if exist "%DIST_DIR%\Songbird_*_%ARCH%.exe" goto success
@@ -92,8 +92,7 @@ goto end
 :failure
 @echo.
 @echo ==================================================================
-@echo Failed to build the Songbird installer. Please check the 
-@echo log for further information. Log created: Songbird_%BUILD_ID%.log.
+@echo Failed to build the Songbird installer. Errors are above.
 @echo ==================================================================
 
 goto end

@@ -23,6 +23,10 @@
 !define XULRunnerEXE          "xulrunner.exe"
 !define XULRunnerDir          "xulrunner"
 
+#if SB_USE_JEMALLOC==1
+!define UsingJemalloc         "@SB_USE_JEMALLOC@"
+#endif
+
 #ifdef DEBUG
 !define DebugBuild            "Debug Build"
 !define MozCRuntime           "mozcrt19d.dll"
