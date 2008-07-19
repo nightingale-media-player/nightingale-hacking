@@ -185,11 +185,11 @@ button[hidewizardbutton="true"] {
  ******************************************************************************/
 
 sb-first-run-add-ons {
-  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAddons.xml#sb-first-run-add-ons");
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAddOns.xml#sb-first-run-add-ons");
 }
 
 sb-first-run-add-ons-item {
-  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAddons.xml#sb-first-run-add-ons-item");
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAddOns.xml#sb-first-run-add-ons-item");
 }
 
 sb-first-run-eula {
