@@ -47,6 +47,7 @@ CPP_INCLUDES = \
       $(MOZSDK_INCLUDE_DIR)/appshell \
       $(MOZSDK_INCLUDE_DIR)/intl \
       $(MOZSDK_INCLUDE_DIR)/pref \
+      $(MOZSDK_INCLUDE_DIR)/xulapp \
       $(MOZSDK_IDL_DIR) \
       $(NULL)
 
