@@ -197,19 +197,6 @@ we should nix the painting of the selection.*/
 }
 
 
-/**
- * The spring-loaded service pane panel
- */
-#service_pane_spring_load_panel {
-  background: rgba(255, 0, 255, 0.6);
-  width: 300px;
-  height: 500px;
-}
-#service_pane_spring_load_panel > .service-pane-spring-load-tree {
-  -moz-binding: url(chrome://songbird/content/bindings/servicePane.xml#proxyTreePane);
-}
-
-
 /** 
 *******************************************************************************
 THE PLAYLIST
@@ -333,13 +320,16 @@ treechildren::-moz-tree-cell-text( selected ) {
 }
 treechildren::-moz-tree-row( selected, focus, odd ) {
   background-color: rgb(186,218,255);
+  background-color: rgb(255,244,127);
+  background-color: rgb(252,231,127);
 
   
   
 }
 treechildren::-moz-tree-row( selected, focus, even ) {
   background-color: rgb(181,213,255);
-
+  background-color: rgb(250,239,122);
+  background-color: rgb(247,226,122);
 }
 
 
@@ -614,6 +604,10 @@ tab[selected="true"],
   background-position:center 0px;
 }
 
+.tabbrowser-tab.sb-media-tab {
+  max-width:120px !important;
+}
+
 .tabbrowser-tab.sb-media-tab > .tab-image-middle,
 .tabbrowser-tab.sb-media-tab > .tab-image-left,
 .tabbrowser-tab.sb-media-tab > .tab-image-right,
@@ -625,6 +619,14 @@ tab[selected="true"],
 .tabbrowser-tab[selected="true"] > .tab-close-button {
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
 }
+.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-image-middle,
+.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-image-left,
+.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-image-right,
+.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-close-button {
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-media-tab.png) !important;
+
+}
+
 .tabbrowser-tab:hover > .tab-image-middle,
 .tabbrowser-tab:hover > .tab-close-button {
   background-position:center -30px !important;
@@ -755,14 +757,16 @@ background-position:center 0px;
 
 
 #nav-bar toolbarbutton[disabled="true"] {
-  background-image:none !important;
-  background-color:rgb(151,202,98) !important;
-  background-color:rgb(100,100,100) !important;
+  background-position:center -60px !important;
 }
 #nav-bar toolbarbutton:active > .toolbarbutton-icon,
 #nav-bar toolbarbutton:active > .toolbarbutton-menu-dropmarker,
 #nav-bar toolbarbutton:active > .toolbarbutton-menulist-dropmarker,
-#nav-bar toolbarbutton:active > .toolbarbutton-menubutton-dropmarker {
+#nav-bar toolbarbutton:active > .toolbarbutton-menubutton-dropmarker,
+#nav-bar toolbarbutton[open="true"] > .toolbarbutton-icon,
+#nav-bar toolbarbutton[open="true"] > .toolbarbutton-menu-dropmarker,
+#nav-bar toolbarbutton[open="true"] > .toolbarbutton-menulist-dropmarker,
+#nav-bar toolbarbutton[open="true"] > .toolbarbutton-menubutton-dropmarker {
   opacity:0.5 !important;
 }
 
@@ -868,8 +872,7 @@ radio[focused="true"] {
 
 button[disabled="true"],
 findbar toolbarbutton[disabled="true"] {
-  background-image:none;
-  background-color:rgb(180,180,180);
+  background-position:left -900px !important;
 }
 button[disabled="true"] .button-text {
   color:gray;
@@ -2144,27 +2147,36 @@ prefwindow * {
 /**
  * The spring-loaded service pane panel
  */
-#service_pane_spring_load_panel {
-  background: transparent;
-  width: 180px;
-  height: 500px;
-background-color: rgb(220,220,220) !important;
-padding:0px;
+window:not([platform=Darwin]) #service_pane_spring_load_panel {
+  opacity:1.0;
 }
 #service_pane_spring_load_panel > .service-pane-spring-load-tree {
   -moz-binding: url(chrome://songbird/content/bindings/servicePane.xml#proxyTreePane);
 }
+
+#service_pane_spring_load_panel {
+	padding:0px;
+}
+
 #service_pane_spring_load_panel > .service-pane-spring-load-tree {
+
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png);
   background-repeat:repeat-x;
   background-position:center -22px;
-  padding-top:2px;
+  padding-top:2px !important
 }
 #service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree {
-  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-color: rgb(247,243,223) !important;
+  background-image: url(chrome://songbird/skin/service-pane/bg-spring-service-pane.png) !important;
   background-repeat:repeat-x;
   background-position:center top;
 }
+#service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree > treechildren::-moz-tree-cell( servicesource-bookmarks ),
+#service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree > treechildren::-moz-tree-cell( servicesource-playlists ),
+#service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree > treechildren::-moz-tree-cell( folder ) {
+  background-color: rgb(247,243,223) !important;
+}
+
 
 #service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree > treecols {
   min-height:0px !important;
@@ -2175,28 +2187,28 @@ padding:0px;
 #service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree > treechildren::-moz-tree-cell-text {
 }
 
-/*
-+        <hbox>
-+          <button class="service-pane-spring-load-button"
-+                  oncommand="gServicePane.open = true; this.parentNode.parentNode.hidePopup();"/>
-+          <label flex="1" value="&servicepane.title.label;"/>
-+          <toolbarbutton class="close-button"
-+                         oncommand="this.parentNode.parentNode.hidePopup();"/>
-+        </hbox>
-*/
-
 #service_pane_spring_load_panel > hbox {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png) !important;
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-spring-service-pane-header.png) !important;
   background-repeat:no-repeat;
   background-position:right 0px;
   -moz-box-align: center;
   -moz-box-pack: center;  
-  
+  min-height:22px;
+  max-height:22px;
 }
 #service_pane_spring_load_panel > hbox > hbox {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png) !important;
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-spring-service-pane-header.png) !important;
   background-repeat:no-repeat;
   background-position:left 0px;
+  -moz-box-align: center;
+  -moz-box-pack: center;  
+  min-height:22px;
+  max-height:22px;
+  padding-bottom:2px;
+}
+#service_pane_spring_load_panel > hbox > hbox > label {
+	margin:0px;
+	padding:2px 0px 0px 4px;
 }
 #service_pane_spring_load_panel > hbox > .service-pane-spring-load-button {
   min-height:22px;
@@ -2209,6 +2221,7 @@ padding:0px;
   padding:0;
 }
 
+
 .service-pane-spring-load-button {
   -moz-border-radius:0px;
   -moz-image-region:auto;
@@ -2219,16 +2232,25 @@ background-color:transparent;
 background-image: url(chrome://songbird/skin/browser-tab-bar/bg-button-tab-delimiter.png) !important;
 background-repeat:no-repeat !important;
 background-position:right 0px !important;
-min-width:22px;
+min-width:23px;
 
 }
 
 .service-pane-spring-load-button > .button-box {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png) !important;
+  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-service-pane-button.png) !important;
   background-repeat:no-repeat !important;
   background-position:right 0px !important;
   padding:0;
 }
+#tabstrip-container[servicepane_pinned="true"] {
+}
+#tabstrip-container[servicepane_pinned="true"] .service-pane-spring-load-button > .button-box {
+	background-image: url(chrome://songbird/skin/browser-tab-bar/bg-unpin-service-pane-button.png) !important;
+}
+#service_pane_spring_load_panel > hbox > .service-pane-spring-load-button > .button-box {
+	background-image: url(chrome://songbird/skin/browser-tab-bar/bg-pin-service-pane-button.png) !important;
+}
+
 .service-pane-spring-load-button:hover > .button-box {
 background-position:right -30px !important;
 }
@@ -2240,7 +2262,7 @@ background-position:right -30px !important;
   background-position:right -24px !important;
 }
 .service-pane-spring-load-button[disabled="true"] > .button-box {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
+  background-image: url('chrome://songbird/skin/browser-tab-bar/bg-selected-media-tab.png') !important;
   background-position:right 0px !important;
 }
 .service-pane-spring-load-button > .button-box > .button-icon {

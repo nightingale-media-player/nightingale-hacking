@@ -387,3 +387,12 @@ window[platform=Darwin] .sb-sys-outer-frame-resizer {
 }
 
 **/
+
+
+#mac_resize_image_box {
+  background-color:red;
+}
+#sb-sys-titlebar-osx-title-title-shadow label {
+  color:rgb(235,235,235) !important;
+  padding-top:1px !important;
+}

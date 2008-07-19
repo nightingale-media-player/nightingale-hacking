@@ -108,10 +108,15 @@
         </stack>
 
         <hbox id="tabstrip-container">
+          <observes type="dataremote"
+                    key="splitter.servicepane_splitter.collapsed"
+                    boolean="true" 
+                    attribute="servicepane_pinned"
+                    inverted="true"/>
           <button type="sb-spring" id="servicepane_spring_button" label="I10N" class="service-pane-spring-load-button"
                   dragdelay="500" delay="100" closedelay="100" position="overlap"
                   oncommand="gServicePane.open = !gServicePane.open; this.cancel();"
-                  popupelement="service_pane_spring_load_panel">
+                  popupelement="service_pane_spring_load_panel" >
             <observes type="dataremote" key="browser.in_media_page" boolean="true"
                       attribute="disabled" onchange="
                         const key = 'splitter.servicepane_splitter.was_collapsed';

@@ -231,9 +231,11 @@ sb-player-seek-slider[buffering="true"] > #sb-player-seek-slider
 }
 
 #faceplate_seekbar_box > .notches > hbox+hbox {
+/*
   background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar-notch.png);
   background-repeat:no-repeat;
   background-position:left center;
+*/
 }
 
 

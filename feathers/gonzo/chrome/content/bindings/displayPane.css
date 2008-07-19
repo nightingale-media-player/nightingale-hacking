@@ -129,6 +129,7 @@ menuitem.displaypane-menuitem[recommended] {
   border:1px solid gray;
   border-top:none;
   border-left:none;
+  border-right:none;
 }
 #displaypane_servicepane_bottom {
   border-bottom:1px solid gray;

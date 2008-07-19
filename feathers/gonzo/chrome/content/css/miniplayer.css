@@ -1,7 +1,9 @@
 
+
+
 #miniplayer {
-  min-width:320px !important;
-  width:320px !important;
+  min-width:480px !important;
+  width:480px !important;
   overflow:hidden !important;
   padding:0;
 }
@@ -31,7 +33,7 @@
 #miniplayer .faceplate-text,
 sb-player-timeelapsed-label label,
 sb-player-totaltime-label label {
-  font-size:8px !important;
+  font-size:10px !important;
 }
 
 
@@ -112,16 +114,16 @@ sb-player-totaltime-label label {
 .sb-player-playpause-button-play > button {
   -moz-image-region: rect(0px 30px 22px 0px);
 }
-.sb-player-play-button-play > button:hover,
-.sb-player-playpause-button-play > button:hover {
+.sb-player-play-button-play:hover > button,
+.sb-player-playpause-button-play:hover > button {
   -moz-image-region: rect(22px 30px 44px 0px);
 }
-.sb-player-play-button-play > button:active,
-.sb-player-playpause-button-play > button:active {
+.sb-player-play-button-play:active > button,
+.sb-player-playpause-button-play:active > button {
   -moz-image-region: rect(44px 30px 66px 0px);
 }
-.sb-player-play-button-play > button[disabled="true"],
-.sb-player-playpause-button-play > button[disabled="true"] {
+.sb-player-play-button-play[disabled="true"] > button,
+.sb-player-playpause-button-play[disabled="true"] > button {
   -moz-image-region: rect(66px 30px 88px 0px);
 }
 /*pause*/
@@ -129,16 +131,16 @@ sb-player-totaltime-label label {
 .sb-player-playpause-button-pause > button {  
   -moz-image-region: rect(0px 60px 22px 30px);
 }
-.sb-player-pause-button-pause > button:hover,
-.sb-player-playpause-button-pause > button:hover { 
+.sb-player-pause-button-pause:hover > button,
+.sb-player-playpause-button-pause:hover > button { 
   -moz-image-region: rect(22px 60px 44px 30px);
 }
-.sb-player-pause-button-pause > button:active,
-.sb-player-playpause-button-pause > button:active {
+.sb-player-pause-button-pause:active > button,
+.sb-player-playpause-button-pause:active > button {
   -moz-image-region: rect(44px 60px 66px 30px);
 }
-.sb-player-pause-button-pause > button[disabled="true"],
-.sb-player-playpause-button-pause > button[disabled="true"] { 
+.sb-player-pause-button-pause[disabled="true"] > button,
+.sb-player-playpause-button-pause[disabled="true"] > button { 
   -moz-image-region: rect(66px 60px 88px 30px);
 }
 

@@ -66,8 +66,8 @@ background-color:rgb(220,220,220);
   border: none;
   border-right:1px solid gray;
   -moz-border-radius:0 !important;
-  -moz-border-radius-topleft:3px !important;
-  -moz-border-radius-bottomleft:3px !important;
+  -moz-border-radius-topleft:2px !important;
+  -moz-border-radius-bottomleft:2px !important;
 
   background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
   background-repeat:repeat-x;

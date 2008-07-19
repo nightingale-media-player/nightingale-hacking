@@ -99,16 +99,16 @@ Imported by bindings.css or directly into feathers.
   .sb-player-playpause-button-play > button {
     -moz-image-region: rect(0px 40px 40px 0px);
   }
-  .sb-player-play-button-play > button:hover,
-  .sb-player-playpause-button-play > button:hover {
+  .sb-player-play-button-play:hover > button,
+  .sb-player-playpause-button-play:hover > button {
     -moz-image-region: rect(40px 40px 80px 0px);
   }
-  .sb-player-play-button-play > button:active,
-  .sb-player-playpause-button-play > button:active {
+  .sb-player-play-button-play:active > button,
+  .sb-player-playpause-button-play:active > button {
     -moz-image-region: rect(80px 40px 120px 0px);
   }
-  .sb-player-play-button-play > button[disabled="true"],
-  .sb-player-playpause-button-play > button[disabled="true"] {
+  .sb-player-play-button-play[disabled="true"] > button,
+  .sb-player-playpause-button-play[disabled="true"] > button {
     -moz-image-region: rect(120px 40px 160px 0px);
   }
   /*pause*/
@@ -116,16 +116,16 @@ Imported by bindings.css or directly into feathers.
   .sb-player-playpause-button-pause > button {  
     -moz-image-region: rect(0px 80px 40px 40px);
   }
-  .sb-player-pause-button-pause > button:hover,
-  .sb-player-playpause-button-pause > button:hover { 
+  .sb-player-pause-button-pause:hover > button,
+  .sb-player-playpause-button-pause:hover > button { 
     -moz-image-region: rect(40px 80px 80px 40px);
   }
-  .sb-player-pause-button-pause > button:active,
-  .sb-player-playpause-button-pause > button:active {
+  .sb-player-pause-button-pause:active > button,
+  .sb-player-playpause-button-pause:active > button{
     -moz-image-region: rect(80px 80px 120px 40px);
   }
-  .sb-player-pause-button-pause > button[disabled="true"],
-  .sb-player-playpause-button-pause > button[disabled="true"] { 
+  .sb-player-pause-button-pause[disabled="true"] > button,
+  .sb-player-playpause-button-pause[disabled="true"] > button { 
     -moz-image-region: rect(120px 80px 160px 40px);
   }
 
