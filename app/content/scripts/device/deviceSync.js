@@ -502,6 +502,11 @@ var DeviceSyncWidget = {
       {
           /* Get the media list info. */
           mediaList = mediaListList[i];
+          
+          // Skip if it's a hidden playlist
+          if (mediaList.getProperty(SBProperties.hidden) == "1")
+            continue;
+            
           var mCustomType = mediaList.getProperty(SBProperties.customType);
           if (mCustomType != "download") {
             guid = mediaList.guid;
