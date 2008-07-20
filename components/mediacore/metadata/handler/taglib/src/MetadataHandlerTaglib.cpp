@@ -611,7 +611,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         if (NS_SUCCEEDED(result)) {
           PRInt32 imageType = METADATA_IMAGE_TYPE_OTHER;
           WriteSetImageDataInternal(
-              dynamic_cast<TagLib::MPEG::File*>(f.file()),
+              static_cast<TagLib::MPEG::File*>(f.file()),
               imageType,
               imageSpec);
         }
