@@ -71,7 +71,7 @@ function DirectoryImportJob(aDirectoryArray,
 
   // TODO these strings probably need updating
   this._titleText = SBString("media_scan.scanning");
-  this._statusText = "";
+  this._statusText =  SBString("media_scan.adding");
   
   // Initially cancelable
   this._canCancel = true;
@@ -296,8 +296,11 @@ DirectoryImportJob.prototype = {
 
     // If the file scan query is still running just update the UI
     } else {
-      // TODO clean up
-      this._statusText = this._fileScanQuery.getLastFileFound();
+      var text = this._fileScanQuery.getLastFileFound();
+      if (text.length > 60) {
+        text = text.substring(0, 20) + "..." + text.substring(text.length - 20);
+      }
+      this._statusText = text;
       this.notifyJobProgressListeners();
     }
   },
@@ -459,6 +462,14 @@ DirectoryImportJob.prototype = {
     } else if (this._jobProgressDelegate) {
       // Cancelling the sub-job will trigger onJobDelegateCompleted
       this._jobProgressDelegate.cancel();
+    }
+    
+    // Remove anything that we've added.
+    if (this._newMediaItems && this._newMediaItems.length > 0) {
+      this.targetMediaList.library.removeSome(this._newMediaItems.enumerate());
+      this.totalAddedToMediaList = 0;
+      this.totalAddedToLibrary = 0;
+      this.totalDuplicates = 0;
     }
   },
   
