@@ -68,12 +68,14 @@
               pageid="first_run_eula_page"
               next="first_run_locale_page"
               label="&first_run.title;"
+              showquit="true"
               hideback="true"
               hidecancel="true"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-eula id="first_run_eula"
                        class="first-run-wizard-page"
-                       firstrunwizardpage="true"/>
+                       firstrunwizardpage="true"
+                       oncommand="firstRunWizard.update();"/>
   </wizardpage>
 
   <!-- Locale page. -->
