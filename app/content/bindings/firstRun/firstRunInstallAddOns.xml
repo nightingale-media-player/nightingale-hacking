@@ -70,8 +70,24 @@
 
     <content>
 
-      <xul:label
-        value="Add-ons installation not yet implemented.  Click Cancel."/>
+      <xul:vbox anonid="widget_box"
+                class="sb-first-run-install-add-ons-box"
+                flex="1">
+
+        <!-- Current add-on box. -->
+        <xul:hbox anonid="current_add_on_box"
+                  class="sb-first-run-install-add-ons-current-add-on-box">
+          <xul:label anonid="current_add_on_label"
+                     class="sb-first-run-install-add-ons-current-add-on-label"/>
+          <xul:label anonid="total_progress_label"
+                     class="sb-first-run-install-add-ons-total-progress-label"/>
+        </xul:hbox>
+
+        <!-- Current add-on progress meter. -->
+        <xul:progressmeter anonid="progressmeter"
+                           class="sb-first-run-install-add-ons-progressmeter"/>
+
+      </xul:vbox>
 
     </content>
 

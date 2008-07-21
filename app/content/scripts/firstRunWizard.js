@@ -104,6 +104,10 @@ var firstRunWizard = {
     // Indicate that the first-run checks have been made.
     Application.prefs.setValue("songbird.firstrun.check.0.3", true);
 
+    // Restart application as specified.
+    if (this._wizardElem.getAttribute("restartapp") == "true")
+      restartApp();
+
     // Indicate that the wizard is complete and whether it should be restarted.
     window.arguments[0].onComplete(this._restartWizard);
   },
@@ -212,6 +216,7 @@ var firstRunWizard = {
 
     // If the locale switch succeeded, restart.  Otherwise, advance through the
     // wizard without switching locales.
+    //XXXeps should restart like the first-run add-ons installation does
     if (firstRunLocaleElem.localeSwitchSucceeded) {
       if (firstRunLocaleElem.appRestartRequired) {
         restartApp();

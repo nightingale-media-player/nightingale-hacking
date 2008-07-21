@@ -49,6 +49,7 @@
 // Songbird imports.
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 
 //------------------------------------------------------------------------------
@@ -98,6 +99,9 @@ firstRunInstallAddOnsSvc.prototype = {
   //   _wizardElem              First-run wizard element.
   //   _addOnsBundle            Add-ons bundle object.
   //   _addOnsInstallIndexList  List of add-ons to install.
+  //   _nextAddOnToInstall      Index within _addOnsInstallIndexList of next
+  //                            add-on to install.
+  //   _addOnFileDownloader     File downloader for add-on.
   //
 
   _widget: null,
@@ -105,6 +109,8 @@ firstRunInstallAddOnsSvc.prototype = {
   _wizardElem: null,
   _addOnsBundle: null,
   _addOnsInstallIndexList: null,
+  _nextAddOnToInstall: 0,
+  _addOnFileDownloader: null,
 
 
   //----------------------------------------------------------------------------
@@ -156,6 +162,9 @@ firstRunInstallAddOnsSvc.prototype = {
     }
     this._domEventListenerSet = null;
 
+    // Cancel any add-on download in progress.
+    this._cancelAddOnDownload();
+
     // Clear object fields.
     this._widget = null;
     this._wizardElem = null;
@@ -189,8 +198,8 @@ firstRunInstallAddOnsSvc.prototype = {
         this._addOnsInstallIndexList.push(i);
     }
 
-    // Update the UI.
-    this._update();
+    // Start installing the add-ons.
+    this._installNextAddOnStart();
   },
 
 
@@ -199,7 +208,34 @@ firstRunInstallAddOnsSvc.prototype = {
    */
 
   _doPageHide: function firstRunInstallAddOnsSvc__doPageHide() {
-    //XXXeps cancel installation if not complete.
+    // Cancel any add-on download in progress.
+    this._cancelAddOnDownload();
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Widget nsIFileDownloaderListener services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * \brief Called when progress is made on file download.
+   */
+
+  onProgress: function firstRunInstallAddOnsSvc_onProgress() {
+    // Update the UI.
+    this._update();
+  },
+
+
+  /**
+   * \brief Called when download has completed.
+   */
+
+  onComplete: function firstRunInstallAddOnsSvc_onComplete() {
+    // Complete installation of next add-on.
+    this._installNextAddOnComplete();
   },
 
 
@@ -214,10 +250,120 @@ firstRunInstallAddOnsSvc.prototype = {
    */
 
   _update: function firstRunInstallAddOnsSvc__update() {
-    // Advance wizard when add-ons installation is complete.
-    if (this._addOnsInstallIndexList.length == 0) {
+    // Get the current add-on index.
+    var currentAddOnIndex =
+          this._addOnsInstallIndexList[this._nextAddOnToInstall];
+
+    // Set the current add-on name.
+    var currentAddOnLabelElem = this._getElement("current_add_on_label");
+    currentAddOnLabelElem.value =
+      this._addOnsBundle.getExtensionAttribute(currentAddOnIndex, "name");
+
+    // Set the total progress label.
+    var totalProgressLabelElem = this._getElement("total_progress_label");
+    totalProgressLabelElem.value =
+      SBFormattedString("first_run.install_add_ons.progress_all",
+                        [ this._nextAddOnToInstall + 1,
+                          this._addOnsInstallIndexList.length ]);
+
+    // Set the current add-on download progress meter.
+    var progressMeterElem = this._getElement("progressmeter");
+    if (this._addOnFileDownloader)
+      progressMeterElem.value = this._addOnFileDownloader.percentComplete;
+    else
+      progressMeterElem.value = 0;
+  },
+
+
+  /**
+   * Start installation of the next addon.
+   */
+
+  _installNextAddOnStart:
+    function firstRunInstallAddOnsSvc__installNextAddOnStart() {
+    // Advance wizard when all add-on installations are complete.
+    if (this._nextAddOnToInstall == this._addOnsInstallIndexList.length) {
       this._wizardElem.canAdvance = true;
       this._wizardElem.advance();
+      return;
+    }
+
+    // Get the index of the next add-on to install.
+    var nextAddOnIndex =
+          this._addOnsInstallIndexList[this._nextAddOnToInstall];
+
+    // Create an add-on file downloader.
+    this._addOnFileDownloader =
+           Cc["@songbirdnest.com/Songbird/FileDownloader;1"]
+             .createInstance(Ci.sbIFileDownloader);
+    this._addOnFileDownloader.listener = this;
+    this._addOnFileDownloader.sourceURISpec =
+      this._addOnsBundle.getExtensionAttribute(nextAddOnIndex, "url");
+    this._addOnFileDownloader.destinationFileExtension = "xpi";
+
+    // Start downloading add-on.
+    this._addOnFileDownloader.start();
+
+    // Update the UI.
+    this._update();
+  },
+
+
+  /**
+   * Complete installation of the next addon.
+   */
+
+  _installNextAddOnComplete:
+    function firstRunInstallAddOnSvc__installNextAddOnComplete() {
+    // Get the add-on file.
+    var addOnFile = null;
+    if (this._addOnFileDownloader.succeeded)
+      addOnFile = this._addOnFileDownloader.destinationFile;
+
+    // Install the add-on.
+    var addOnInstalled = false;
+    if (addOnFile) {
+      // Get the extension manager.
+      var extensionManager = Cc["@mozilla.org/extensions/manager;1"]
+                               .getService(Ci.nsIExtensionManager);
+
+      // Install the add-on.
+      try {
+        extensionManager.installItemFromFile(addOnFile, "app-profile");
+        addOnInstalled = true;
+      } catch (ex) {
+        Cu.reportError("Error installing add-on: " + ex);
+      }
+    } else {
+      Cu.reportError("Failed to download add-on file.");
+    }
+
+    // Mark first-run wizard for application restart.
+    if (addOnInstalled)
+      this._wizardElem.setAttribute("restartapp", "true");
+
+    // Remove the add-on file and release the add-on file downloader.
+    if (addOnFile)
+      addOnFile.remove(false);
+    this._addOnFileDownloader.listener = null;
+    this._addOnFileDownloader = null;
+
+    // Start installation of the next add-on.
+    this._nextAddOnToInstall++;
+    this._installNextAddOnStart();
+  },
+
+
+  /**
+   * Cancel any add-on download in progress.
+   */
+
+  _cancelAddOnDownload:
+    function firstRunInstallAddOnsSvc__cancelAddOnDownload() {
+    if (this._addOnFileDownloader) {
+      this._addOnFileDownloader.listener = null;
+      this._addOnFileDownloader.cancel();
+      this._addOnFileDownloader = null;
     }
   },
 

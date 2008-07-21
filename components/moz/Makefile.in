@@ -32,8 +32,10 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = strings \
           clipboard \
           domevents \
+          filedownloader \
           prompter \
           proxy \
+          temporaryfileservice \
           threads \
           urlformatter \
           variant \

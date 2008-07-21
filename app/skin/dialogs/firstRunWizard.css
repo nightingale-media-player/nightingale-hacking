@@ -180,6 +180,24 @@ button[hidewizardbutton="true"] {
 
 /* *****************************************************************************
  *
+ * First run wizard install add-ons page styles.
+ *
+ ******************************************************************************/
+
+/* Current add-on label style. */
+.sb-first-run-install-add-ons-current-add-on-label {
+  -moz-box-flex: 1;
+}
+
+/* Total progress label style. */
+.sb-first-run-install-add-ons-total-progress-label {
+  -moz-box-flex: 1;
+  text-align: right;
+}
+
+
+/* *****************************************************************************
+ *
  * XBL bindings.
  *
  ******************************************************************************/
