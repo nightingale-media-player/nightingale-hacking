@@ -365,6 +365,11 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                        stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Is Content Read Only (internal use)
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISCONTENTREADONLY), EmptyString(),
+                       stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Only Custom Media Pages (internal use only)
   rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ONLY_CUSTOM_MEDIAPAGES), 
                        EmptyString(), stringBundle, PR_FALSE, PR_FALSE, 

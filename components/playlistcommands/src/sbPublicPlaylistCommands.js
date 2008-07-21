@@ -227,7 +227,7 @@ PublicPlaylistCommands.prototype = {
                                                   "library_cmd_remove",
                                                   plCmd_AND(
                                                     plCmd_IsAnyTrackSelected,
-                                                    plCmd_CanModifyPlaylist));
+                                                    plCmd_CanModifyPlaylistContent));
 
       // The second item, only created by the keyboard shortcuts instantiator,
       // and only for the mac.
@@ -251,7 +251,7 @@ PublicPlaylistCommands.prototype = {
                                                     "library_cmd_remove2",
                                                     plCmd_AND(
                                                       plCmd_IsAnyTrackSelected,
-                                                      plCmd_CanModifyPlaylist));
+                                                      plCmd_CanModifyPlaylistContent));
 
         this.m_cmd_Remove.setCommandVisibleCallback(null,
                                                     "library_cmd_remove2",
@@ -497,9 +497,7 @@ PublicPlaylistCommands.prototype = {
       this.m_cmd_list_Remove.setCommandEnabledCallback
                                                 (null,
                                                  "playlist_cmd_remove",
-                                                 plCmd_OR(
-                                                   plCmd_CanModifyPlaylist,
-                                                   plCmd_isReadWriteSmartPlaylist));
+                                                 plCmd_CanModifyPlaylist);
 
       // --------------------------------------------------------------------------
       // The Rename Playlist action
@@ -523,12 +521,9 @@ PublicPlaylistCommands.prototype = {
       // disable the command for readonly playlists. smart playlists are always
       // readonly, so we only disable the command for them if they are in a
       // readonly library
-      this.m_cmd_list_Rename.setCommandEnabledCallback
-                                                (null,
-                                                 "playlist_cmd_rename",
-                                                 plCmd_OR(
-                                                   plCmd_CanModifyPlaylist,
-                                                   plCmd_isReadWriteSmartPlaylist));
+      this.m_cmd_list_Rename.setCommandEnabledCallback(null,
+                                                       "playlist_cmd_rename",
+                                                       plCmd_CanModifyPlaylist);
 
       // --------------------------------------------------------------------------
 
@@ -615,6 +610,9 @@ PublicPlaylistCommands.prototype = {
                                    "&command.shortcut.modifiers.smartpl.properties",
                                    true);
 
+      this.m_cmd_EditSmartPlaylist.setCommandVisibleCallback(null, 
+                                                             "smartpl_cmd_properties",
+                                                             plCmd_CanModifyPlaylist);
 
       this.m_smartPlaylistsCommands = new PlaylistCommandsBuilder();
       
@@ -800,10 +798,19 @@ PublicPlaylistCommands.prototype = {
       this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
                                               "servicetree_cmdobj_remove",
                                               this.m_cmd_list_Remove);
+
+      this.m_serviceTreeDefaultCommands.setCommandEnabledCallback(null,
+                                              "servicetree_cmdobj_remove",
+                                              plCmd_CanModifyPlaylist);
+                                              
       this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
                                               "servicetree_cmdobj_rename",
                                               this.m_cmd_list_Rename);
 
+      this.m_serviceTreeDefaultCommands.setCommandEnabledCallback(null,
+                                              "servicetree_cmdobj_rename",
+                                              plCmd_CanModifyPlaylist);
+      
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
 
       // Register these commands to simple and smart playlists
@@ -1238,22 +1245,44 @@ function plCmd_CanModifyPlaylist(aContext, aSubMenuId, aCommandId, aHost) {
            plCmd_isReadOnlyPlaylist(aContext, aSubMenuId, aCommandId, aHost));
 }
 
+// Returns true if the playlist content can be modified (is not read-only)
+function plCmd_CanModifyPlaylistContent(aContext, aSubMenuId, aCommandId, aHost) {
+  return !(plCmd_isReadOnlyLibraryContent(aContext, aSubMenuId, aCommandId, aHost) ||
+           plCmd_isReadOnlyPlaylistContent(aContext, aSubMenuId, aCommandId, aHost));
+}
+
 // Returns true if the library the playlist is in is read-only
 function plCmd_isReadOnlyLibrary(aContext, aSubMenuId, aCommandId, aHost) {
   var medialist = unwrap(aContext.medialist);
-  return parseInt(medialist.library.getProperty(SBProperties.isReadOnly));
+  return !medialist.library.userEditable;
 }
 
 // Returns true if the playlist is read-only
 function plCmd_isReadOnlyPlaylist(aContext, aSubMenuId, aCommandId, aHost) {
   var medialist = unwrap(aContext.medialist);
-  return parseInt(medialist.getProperty(SBProperties.isReadOnly));
+  return !medialist.userEditable;
+}
+
+// Returns true if the library the playlist is in is read-only
+function plCmd_isReadOnlyLibraryContent(aContext, aSubMenuId, aCommandId, aHost) {
+  if (plCmd_isReadOnlyLibrary(aContext, aSubMenuId, aCommandId, aHost))
+    return true;
+  var medialist = unwrap(aContext.medialist);
+  return !medialist.library.userEditableContent;
+}
+
+// Returns true if the playlist is read-only
+function plCmd_isReadOnlyPlaylistContent(aContext, aSubMenuId, aCommandId, aHost) {
+  if (plCmd_isReadOnlyPlaylist(aContext, aSubMenuId, aCommandId, aHost))
+    return true;
+  var medialist = unwrap(aContext.medialist);
+  return !medialist.userEditableContent;
 }
 
 // Returns true if the conditions are ok for adding tracks to the library
 function plCmd_CanAddToLibrary(aContext, aSubMenuId, aCommandId, aHost) {
   return plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) &&
-         plCmd_CanModifyPlaylist(aContext, aSubMenuId, aCommandId, aHost) &&
+         plCmd_CanModifyPlaylistContent(aContext, aSubMenuId, aCommandId, aHost) &&
          plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost);
 }
 
@@ -1310,12 +1339,6 @@ function plCmd_ContextHasBrowser(aContext, aSubMenuId, aCommandId, aHost) {
 function plCmd_isSmartPlaylist(aContext, aSubMenuId, aCommandId, aHost) {
   var medialist = unwrap(aContext.medialist);
   return (medialist.type == "smart");
-}
-
-// returns true if the playlist is a smart playlist in a readwrite library
-function plCmd_isReadWriteSmartPlaylist(aContext, aSubMenuId, aCommandId, aHost) {
-  return plCmd_isSmartPlaylist(aContext, aSubMenuId, aCommandId, aHost) &&
-         !plCmd_isReadOnlyLibrary(aContext, aSubMenuId, aCommandId, aHost);
 }
 
 // Returns a function that will return the conjunction of the result of the inputs

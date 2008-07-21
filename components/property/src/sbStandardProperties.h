@@ -80,6 +80,7 @@
 #define SB_PROPERTY_HIDDEN                    "http://songbirdnest.com/data/1.0#hidden"
 #define SB_PROPERTY_ISLIST                    "http://songbirdnest.com/data/1.0#isList"
 #define SB_PROPERTY_ISREADONLY                "http://songbirdnest.com/data/1.0#isReadOnly"
+#define SB_PROPERTY_ISCONTENTREADONLY         "http://songbirdnest.com/data/1.0#isContentReadOnly"
 #define SB_PROPERTY_ORDINAL                   "http://songbirdnest.com/data/1.0#ordinal"
 #define SB_PROPERTY_MEDIALISTNAME             "http://songbirdnest.com/data/1.0#mediaListName"
 #define SB_PROPERTY_COLUMNSPEC                "http://songbirdnest.com/data/1.0#columnSpec"

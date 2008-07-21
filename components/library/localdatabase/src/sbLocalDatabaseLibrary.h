@@ -116,6 +116,7 @@ typedef nsDataHashtable<nsStringHashKey, PRUint32> sbListItemIndexMap;
   NS_IMETHOD SetName(const nsAString & aName) { return _to SetName(aName); } \
   NS_IMETHOD GetLength(PRUint32 *aLength) { return _to GetLength(aLength); } \
   NS_IMETHOD GetIsEmpty(PRBool *aIsEmpty) { return _to GetIsEmpty(aIsEmpty); } \
+  NS_IMETHOD GetUserEditableContent(PRBool *aUserEditableContent) { return _to GetUserEditableContent(aUserEditableContent); } \
   NS_IMETHOD GetItemByIndex(PRUint32 aIndex, sbIMediaItem **_retval) { return _to GetItemByIndex(aIndex, _retval); } \
   NS_IMETHOD EnumerateAllItems(sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return _to EnumerateAllItems(aEnumerationListener, aEnumerationType); } \
   NS_IMETHOD EnumerateItemsByProperty(const nsAString & aPropertyID, const nsAString & aPropertyValue, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return _to EnumerateItemsByProperty(aPropertyID, aPropertyValue, aEnumerationListener, aEnumerationType); } \

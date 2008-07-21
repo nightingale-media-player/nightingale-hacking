@@ -146,15 +146,17 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
     // Add menu items for a smart media list
     if (list instanceof Ci.sbILocalDatabaseSmartMediaList) {
-      this._appendMenuItem(aContextMenu, SBString("command.smartpl.properties"), function(event) {
-        var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
-                        .getService(Ci.nsIWindowWatcher);
-        watcher.openWindow(aParentWindow,
-                          "chrome://songbird/content/xul/smartPlaylist.xul",
-                          "_blank",
-                          "chrome,dialog=yes,centerscreen,modal,titlebar=no",
-                          list);
-      });
+      if (list.userEditable) {
+        this._appendMenuItem(aContextMenu, SBString("command.smartpl.properties"), function(event) {
+          var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                          .getService(Ci.nsIWindowWatcher);
+          watcher.openWindow(aParentWindow,
+                            "chrome://songbird/content/xul/smartPlaylist.xul",
+                            "_blank",
+                            "chrome,dialog=yes,centerscreen,modal,titlebar=no",
+                            list);
+        });
+      }
     }
 
     // Add menu items for a dynamic media list
@@ -454,14 +456,16 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow
   if (list) {
     
     // check if the list is in a readonly library
-    if (!list.library.userEditable) {
+    if (!list.library.userEditable ||
+        !list.library.userEditableContent) {
       // this is a list for a readonly library, can't drop
       return false;
     }
     
     // check if the list is itself readonly
-    if (list.getProperty(SBProperties.isReadOnly)) {
-      // this list is readonly, can't drop
+    if (!list.userEditable ||
+        !list.userEditableContent) {
+      // this list content is readonly, can't drop
       return false;
     }
     
@@ -1215,8 +1219,8 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     // set the weight of the downloads list
     node.setAttributeNS(SP, 'Weight', -3);
   } else {
-    // the rest are
-    node.editable = true;
+    // the rest are, but only if the items themselves are not readonly
+    node.editable = aMediaList.userEditable;
   }
   // Set properties for styling purposes
   if (aMediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") {

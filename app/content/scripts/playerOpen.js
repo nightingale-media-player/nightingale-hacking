@@ -602,7 +602,8 @@ function makeNewPlaylist(mediaListType) {
   
   // Make sure the library is user editable, if it is not, use the main
   // library instead of the currently selected library.
-  if (library.userEditable == false) {
+  if (!library.userEditable ||
+      !library.userEditableContent) {
     var libraryManager = 
       Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
                 .getService(Components.interfaces.sbILibraryManager);
@@ -681,9 +682,7 @@ function SBDeleteMediaList(aMediaList)
     mediaList = mediaList.library.getMediaItem(outerListGuid);
   // smart playlists are never user editable, determine whether we can delete
   // them based on their parent library user-editable flag
-  if (mediaList.userEditable ||
-      (mediaList instanceof Ci.sbILocalDatabaseSmartMediaList &&
-       mediaList.library.userEditable)) {
+  if (mediaList.userEditable) {
     const BYPASSKEY = "playlist.deletewarning.bypass";
     const STRINGROOT = "playlist.deletewarning.";
     if (!SBDataGetBoolValue(BYPASSKEY)) {

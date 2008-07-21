@@ -107,7 +107,12 @@ var gSongbirdWindowController =
       }
     }
     if (aCommand == "cmd_delete") {
-      return this._getVisiblePlaylist() != null;
+      var list = this._getVisiblePlaylist();
+      if (!list ||
+           !list.userEditable) {
+        return false;
+      }
+      return true;
     }
     
     return false;
@@ -122,7 +127,13 @@ var gSongbirdWindowController =
       if (browser.currentMediaPage) {
         var view = browser.currentMediaPage.mediaListView;
         if (view) {
-          return view.mediaList;
+          var list = view.mediaList;
+          var outerListGuid = 
+            list.getProperty(SBProperties.outerGUID);
+          if (outerListGuid) {
+            return list.library.getMediaItem(outerListGuid);
+          }
+          return list;
         }
       }
     }

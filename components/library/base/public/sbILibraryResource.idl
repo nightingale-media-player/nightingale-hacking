@@ -110,7 +110,8 @@ interface sbILibraryResource : nsISupports
   readonly attribute nsIStringEnumerator propertyIDs;
   
   /**
-   * \brief True if users should be allowed to modify the resource
+   * \brief True if users should be allowed to modify the resource.
+   * \sa sbIMediaList.userEditableContent
    */
   readonly attribute boolean userEditable;
 

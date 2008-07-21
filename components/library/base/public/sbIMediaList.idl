@@ -54,7 +54,7 @@ interface sbIPropertyArray;
  *
  * \sa List of "see also" interfaces
  */
-[scriptable, uuid(f18b311a-5a30-4ee4-a406-9b794438f4e8)]
+[scriptable, uuid(7007a3dd-e298-4fbf-aee1-263a0a42b8ba)]
 interface sbIMediaList : sbIMediaItem
 {
   /*
@@ -267,6 +267,51 @@ interface sbIMediaList : sbIMediaItem
     (end)
   */
   readonly attribute boolean isEmpty;
+  
+  /**
+   * \brief True if the user should be allowed to edit the content of this
+   * media list.
+   */
+
+  /*
+  Prop: userEditableContent
+
+  Is the <MediaList>'s content user-editable?
+
+  Type:
+    Boolean
+
+  Returns:
+    true - <MediaList> content can be modified by user.
+    false - <MediaList> content should not be modified by user.
+    
+  userEditableContent lists have content that may be changed by the user. This
+  is the default behavior.
+  
+  This attribute is different from sbILibraryResource.userEditable in that
+  non-userEditable resources cannot be renamed or removed, while non-
+  userEditableContent lists can.
+  
+  For instance, a medialist residing on a device that has been physically made
+  readonly should not be deleted or renamed, and should not be added media items
+  by the user (either via drag and drop, "send to" menus, or any other
+  interactive method), its userEditable attribute will be set to false.
+  
+  On the other hand, a smart playlist is an instance of a list whose content is
+  always read-only (its userEditableContent attribute is always false), but that
+  may itself be read-write (if its userEditable attribute is true, the default):
+  in this case, like in the previous one, media items should still not be added
+  or removed from the list by the user (either via drag and drop, "send to"
+  menu, or any other interactive method), but the list itself may still be
+  removed from its parent library, renamed, as well as have its rule set
+  modified by the user (which will yield content that may be different but will
+  still be read-only). On the other hand, a smart playlist whose userEditable
+  attribute is false cannot be renamed, removed, added tracks to, nor have its
+  rule set modified by the user.
+  
+  */
+  
+  readonly attribute boolean userEditableContent;
 
   /*
   Group: MediaList Methods

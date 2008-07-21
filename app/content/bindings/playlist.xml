@@ -1612,13 +1612,13 @@
                 listView.selection.selectAll();
                 break;
               case "cmd_delete":
-                var outerList = this._self._getOuterList();
-                if (outerList instanceof Ci.sbILocalDatabaseSmartMediaList) {
-                  SBDeleteMediaList(this._self.mediaList);
-                  return;
-                }
-                if (this._self.mediaList.userEditable) {
-                  this._self.removeSelectedTracks();
+                var list = this._self._getOuterList();
+                if (list.userEditable) {
+                  if (!list.userEditableContent) {
+                    SBDeleteMediaList(this._self.mediaList);
+                  } else {
+                    this._self.removeSelectedTracks();
+                  }
                 }
                 break;
               case "cmd_find":
@@ -1651,14 +1651,18 @@
               case "cmd_find":
                 return true;
               case "cmd_delete":
-                var outerList = this._self._getOuterList();
-                if (outerList instanceof Ci.sbILocalDatabaseSmartMediaList) {
-                  return outerList.library.userEditable;
-                }
-                if (!this._self.mediaList.userEditable) {
+                var list = this._self._getOuterList();
+                // if list is not user editable, that takes precedence over
+                // content
+                if (!list.userEditable)
                   return false;
-                }
-                // fall through to have selection
+                // if content is not editable, allow the item if the list item
+                // itself is editable (command will delete list)
+                if (!list.userEditableContent)
+                  return list.userEditable;
+                // if list and content are editable, we only allow the command
+                // if there are selected items in the list, so fall through to
+                // have selection
               case "cmd_copy":
                 return (this._self._mediaListView.selection.count > 0);
             }
@@ -2480,7 +2484,8 @@
         // whether we can accept the drop or not
         canDrop: function(event, session) {
           // this is a playlist for a readonly library, can't drop
-          if (!this._self.mediaList.userEditable) {
+          if (!this._self.mediaList.userEditable ||
+              !this._self.mediaList.userEditableContent) {
             return false;
           }
           return (InternalDropHandler.isSupported(session) ||
@@ -2867,7 +2872,8 @@
     this._dragSession = session.QueryInterface(this._Ci.nsIDragSession);
   
   // this is a playlist for a readonly library, can't drop
-  if (!this.mediaList.userEditable) {
+  if (!this.mediaList.userEditable ||
+      !this.mediaList.userEditableContent) {
     return false;
   }
 

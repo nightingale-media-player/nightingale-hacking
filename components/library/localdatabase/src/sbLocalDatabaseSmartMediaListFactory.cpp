@@ -120,6 +120,10 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
     rv = dataList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
                                NS_LITERAL_STRING("1"));
     NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = dataList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISCONTENTREADONLY),
+                               NS_LITERAL_STRING("1"));
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   nsRefPtr<sbLocalDatabaseSmartMediaList> newSmartList(
@@ -139,7 +143,7 @@ sbLocalDatabaseSmartMediaListFactory::CreateMediaList(sbIMediaItem* aInner,
                                    NS_LITERAL_STRING(SB_SMART_MEDIALIST_METRICS_TYPE));
   }
   
-  rv = newSmartList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
+  rv = newSmartList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISCONTENTREADONLY),
                                  NS_LITERAL_STRING("1"));
   NS_ENSURE_SUCCESS(rv, rv);
 

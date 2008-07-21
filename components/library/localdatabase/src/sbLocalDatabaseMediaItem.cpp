@@ -352,10 +352,12 @@ sbLocalDatabaseMediaItem::GetUserEditable(PRBool* aUserEditable)
   // that we are able to write to the file
   if (*aUserEditable) {
 
-    nsCOMPtr<sbIMediaList> list = 
-      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaItem*,this));
+    nsAutoString isList;
+    nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST), isList);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    if (!list) {
+    if (isList.IsEmpty() ||
+        isList.EqualsLiteral("0")) {
       
       // If not a list, assume we can't write unless proven otherwise.
       // Don't NS_ENSURE_SUCCESS, since failure == not editable.

@@ -997,6 +997,22 @@ sbLocalDatabaseMediaListBase::GetIsEmpty(PRBool* aIsEmpty)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetUserEditableContent(PRBool* aUserEditableContent)
+{
+  NS_ENSURE_ARG_POINTER(aUserEditableContent);
+
+  // Item is readonly if it contains a "1" in the corresponding property.
+  
+  nsAutoString str;
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISCONTENTREADONLY), str);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aUserEditableContent = !str.EqualsLiteral("1");
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Add(sbIMediaItem* aMediaItem)
 {
   NS_NOTREACHED("Not meant to be implemented in this base class");
