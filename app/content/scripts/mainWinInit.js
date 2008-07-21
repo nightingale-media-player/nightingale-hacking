@@ -284,6 +284,8 @@ function createDefaultSmartPlaylists() {
     
   const sbILDSML = Components.interfaces.sbILocalDatabaseSmartMediaList;
   
+  datePI.QueryInterface(Components.interfaces.sbIDatetimePropertyInfo);
+  
   // XXXlone> waiting for a patch to land before autoUpdateMode fields
   // can be enabled
 
