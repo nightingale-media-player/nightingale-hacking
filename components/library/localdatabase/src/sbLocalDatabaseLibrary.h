@@ -180,6 +180,17 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
     nsCOMPtr<sbIMediaItem> sourceItem;
     nsCOMPtr<sbIMediaItem> destinationItem;
   };
+  
+  struct sbMediaItemUpdatedInfo {
+    sbMediaItemUpdatedInfo(sbIMediaItem     *aItem,
+                           sbIPropertyArray *aProperties)
+    : item(aItem)
+    , newProperties(aProperties)
+    { }
+
+    nsCOMPtr<sbIMediaItem> item;
+    nsCOMPtr<sbIPropertyArray> newProperties;
+  };
 
   typedef nsClassHashtable<nsStringHashKey, sbMediaListFactoryInfo>
           sbMediaListFactoryInfoTable;
@@ -253,11 +264,11 @@ private:
     NotifyCopyListeners(nsISupportsHashKey::KeyType aKey,
                         sbILocalDatabaseLibraryCopyListener *aCopyListener,
                         void* aUserData);
-                        
+
   static PLDHashOperator PR_CALLBACK
-    NotifyListsItemUpdated(nsISupportsHashKey::KeyType aKey,
-                           sbMediaItemArray* aEntry,
-                           void* aUserData);
+    NotifyListItemUpdated(nsStringHashKey::KeyType aKey,
+                          nsCOMPtr<nsIWeakReference>& aEntry,
+                          void* aUserData);
 
   static PLDHashOperator PR_CALLBACK
     NotifyListsBeforeItemRemoved(nsISupportsHashKey::KeyType aKey,
@@ -370,6 +381,12 @@ private:
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
 
   sbMediaItemInfoTable mMediaItemTable;
+
+  // Weak references to media lists that have been instantiated
+  // (via CreateMediaList and GetMediaItem)
+  // Used for fast list update notifications.
+  nsInterfaceHashtableMT<nsStringHashKey, 
+                         nsIWeakReference> mMediaListTable;
 
   nsCOMArray<nsITimer> mBatchCreateTimers;
 

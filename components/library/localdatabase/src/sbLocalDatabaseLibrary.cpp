@@ -101,6 +101,9 @@
 #define DEFAULT_ANALYZE_COUNT_LIMIT 1000
 #define ANALYZE_COUNT_PREF "songbird.library.localdatabase.analyzeCountLimit"
 
+#define DEFAULT_MEDIAITEM_CACHE_SIZE 2500
+#define DEFAULT_MEDIALIST_CACHE_SIZE 25
+
 #define SB_MEDIALIST_FACTORY_DEFAULT_TYPE 1
 #define SB_MEDIALIST_FACTORY_URI_PREFIX   "medialist('"
 #define SB_MEDIALIST_FACTORY_URI_SUFFIX   "')"
@@ -605,9 +608,13 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize the media item table.
-  success = mMediaItemTable.Init();
+  success = mMediaItemTable.Init(DEFAULT_MEDIAITEM_CACHE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
+  // Initialize the list of instantiated medialists
+  success = mMediaListTable.Init(DEFAULT_MEDIALIST_CACHE_SIZE);
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+  
   success = mHashHelpers.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
@@ -2623,28 +2630,17 @@ sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem,
 {
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(aProperties);
+  nsresult rv;
 
 #ifdef PR_LOGGING
   PRTime timer = PR_Now();
 #endif
 
-  // First we notify any simple media lists that contain this item
-  sbMediaItemArray singleItem;
-  PRBool success = singleItem.AppendObject(aItem);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  sbMediaItemToListsMap map;
-  success = map.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-  sbMediaListArray lists;
-  nsresult rv = GetContainingLists(&singleItem, &lists, &map);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  map.EnumerateRead(sbLocalDatabaseLibrary::NotifyListsItemUpdated,
-                    aProperties);
-
-
+  // Check all instantiated media lists and notify them if
+  // they contain the item
+  sbMediaItemUpdatedInfo info(aItem, aProperties);
+  mMediaListTable.Enumerate(sbLocalDatabaseLibrary::NotifyListItemUpdated,
+                            &info);
 
   // Also notify explicity registered listeners
   sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(SB_IMEDIALIST_CAST(this),
@@ -2695,29 +2691,42 @@ sbLocalDatabaseLibrary::NotifyCopyListeners(nsISupportsHashKey::KeyType aKey,
 }
 
 /* static */ PLDHashOperator PR_CALLBACK
-sbLocalDatabaseLibrary::NotifyListsItemUpdated(nsISupportsHashKey::KeyType aKey,
-                                               sbMediaItemArray* aEntry,
-                                               void* aUserData)
+sbLocalDatabaseLibrary::NotifyListItemUpdated(nsStringHashKey::KeyType aKey,
+                                              nsCOMPtr<nsIWeakReference>& aEntry,
+                                              void* aUserData)
 {
   NS_ASSERTION(aEntry, "Null entry in the hash?!");
   NS_ASSERTION(aUserData, "Null userData!");
-
-  nsCOMPtr<sbIPropertyArray> properties =
-    static_cast<sbIPropertyArray*>(aUserData);
-  NS_ENSURE_TRUE(properties, PL_DHASH_STOP);
-
   nsresult rv;
-  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
-  PRUint32 count = aEntry->Count();
-  for (PRUint32 i = 0; i < count; i++) {
-    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
-      do_QueryInterface(aEntry->ObjectAt(i), &rv);
-    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+  sbMediaItemUpdatedInfo* info = 
+    static_cast<sbMediaItemUpdatedInfo*>(aUserData);
+  NS_ENSURE_TRUE(info, PL_DHASH_STOP);  
 
-    rv = simple->NotifyListenersItemUpdated(item, 0, properties);
+  nsCOMPtr<sbILocalDatabaseSimpleMediaList> simpleList;
+  simpleList = do_QueryReferent(aEntry, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    // If we can get a strong reference that means someone is
+    // actively holding on to this list, and may care for
+    // item updated notifications.
+              
+    // Find out if the list contains the item that has been updated.
+    PRBool containsItem = PR_FALSE;
+    nsCOMPtr<sbIMediaList> list = do_QueryInterface(simpleList, &rv);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+    rv = list->Contains(info->item, &containsItem);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+    
+    // If so, announce update
+    if (containsItem) {
+      rv = simpleList->NotifyListenersItemUpdated(
+                        info->item, 0, info->newProperties);
+      NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+    }
+  } else {
+    // If no weak ref, then this list has gone away and we
+    // can forget about it
+    return PL_DHASH_REMOVE;
   }
 
   return PL_DHASH_NEXT;
@@ -3189,6 +3198,14 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   PRBool success = mMediaItemTable.Put(guid, newItemInfo);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
+  // Remember that this GUID maps to a MediaList, and that the 
+  // list may be instantiated.  We'll use this information
+  // for fast notification.
+  if (!mMediaListTable.Get(guid, nsnull)) {
+    success = mMediaListTable.Put(guid, newItemInfo->weakRef);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+  }
+  
   newItemInfo.forget();
 
   nsCOMPtr<sbIMediaItem> mediaItem;
@@ -3205,7 +3222,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
 
   nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   NS_ADDREF(*_retval = mediaList);
   return NS_OK;
 }
@@ -3357,6 +3374,16 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
 
   itemInfo->weakRef = do_GetWeakReference(strongMediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Remember that this GUID maps to a MediaList, and that it 
+  // may be instantiated.  We'll use this information for fast
+  // notification.  
+  if (!itemInfo->listType.IsEmpty()) {
+    if (!mMediaListTable.Get(aGUID, nsnull)) {
+      PRBool success = mMediaListTable.Put(aGUID, itemInfo->weakRef);
+      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+    }
+  }
   
   nsCOMPtr<sbILocalDatabaseMediaItem> strongLocalItem =
     do_QueryInterface(strongMediaItem, &rv);
@@ -4465,8 +4492,9 @@ sbLocalDatabaseLibrary::Clear()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Clear our cache
+  // Clear our caches
   mMediaItemTable.Clear();
+  mMediaListTable.Clear();
 
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = MakeStandardQuery(getter_AddRefs(query));

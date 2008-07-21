@@ -609,6 +609,15 @@ sbLocalDatabaseAsyncGUIDArray::GetIndexByRowid(PRUint64 aRowid,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::ContainsGuid(const nsAString& aGuid,
+                                            PRBool* _retval)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->ContainsGuid(aGuid, _retval);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::RemoveByIndex(PRUint32 aIndex)
 {
   nsAutoMonitor monitor(mSyncMonitor);

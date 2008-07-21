@@ -726,37 +726,18 @@ sbLocalDatabaseSimpleMediaList::Contains(sbIMediaItem* aMediaItem,
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
-
   nsresult rv;
-  PRInt32 dbOk;
+  
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(mGetMediaItemIdForGuidQuery);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoString guid;
+  nsString guid;
   rv = aMediaItem->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->BindStringParameter(0, guid);
+  
+  // Leverage the guid array cache
+  rv = mFullArray->ContainsGuid(guid, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  nsCOMPtr<sbIDatabaseResult> result;
-  rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 rowCount;
-  rv = result->GetRowCount(&rowCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  *_retval = rowCount > 0;
+  
   return NS_OK;
 }
 

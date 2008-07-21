@@ -828,6 +828,66 @@ sbLocalDatabaseGUIDArray::GetIndexByRowid(PRUint64 aRowid,
   return NS_ERROR_NOT_AVAILABLE;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
+                                       PRBool* _retval)
+{
+  TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - ContainsGuid", this));
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+
+  if (mValid == PR_FALSE) {
+    rv = Initialize();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Since we don't actually care where in the array the GUID appears,
+  // we can take advantage of mGuidToFirstIndexMap even when this 
+  // is NOT a distinct array.
+
+  // First check to see if the guid is cached. 
+  PRUint32 index;
+  if (mGuidToFirstIndexMap.Get(aGuid, &index)) {
+    *_retval = PR_TRUE;
+    return NS_OK;
+  }
+
+  // If we are fully cached and the guid was not found, then we know that
+  // it does not exist in this array
+  if (mCache.Length() == mLength) {
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+
+  // If it wasn't found, we need to find the first uncached row
+  PRBool found = PR_FALSE;
+  PRUint32 firstUncached = 0;
+  for (PRUint32 i = 0; !found && i < mCache.Length(); i++) {
+    if (!mCache[i]) {
+      firstUncached = i;
+      found = PR_TRUE;
+    }
+  }
+
+  // If we didn't find any uncached rows and the cache size is the same as
+  // the array length, we know the guid isn't in this array
+  if (!found && mCache.Length() == mLength) {
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+
+  // So the guid we are looking for is not cached.  Cache the rest of the
+  // array and search it
+  rv = FetchRows(firstUncached, mLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ASSERTION(mLength == mCache.Length(), "Full read didn't work");
+
+  // Either the guid is in the map or it is just not in our array
+  *_retval = mGuidToFirstIndexMap.Get(aGuid, &index);
+  return NS_OK;
+}
+
 nsresult
 sbLocalDatabaseGUIDArray::Initialize()
 {

@@ -50,7 +50,7 @@ interface sbILocalDatabaseGUIDArrayListener : nsISupports
  * \interface sbILocalDatabaseGUIDArray
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(4499865f-b4f3-4e6d-90ed-0004ff38a49f)]
+[scriptable, uuid(7ecb8720-5499-11dd-ae16-0800200c9a66)]
 interface sbILocalDatabaseGUIDArray : nsISupports
 {
   attribute AString databaseGUID;
@@ -141,5 +141,11 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   unsigned long getFirstIndexByGuid(in AString aGuid);
 
   unsigned long getIndexByRowid(in unsigned long long aRowid);
+
+  /**
+   * \brief Return true if the array contains the given GUID.
+   * May be forced to fetch and cache all items.
+   */
+  boolean containsGuid(in AString aGuid);
 };
 
