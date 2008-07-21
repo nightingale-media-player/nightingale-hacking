@@ -1356,12 +1356,16 @@ endif
 #            If you use the preprocessor you may want to also set the
 #            following variables:
 #
-#              EXTENSION_UUID - uuid of the extension
-#                               (e.g. "coolthing@songbirdnest.com")
-#              EXTENSION_ARCH - arch string describing the build machine
-#                               (e.g. "WINNT_x86-msvc" or "Darwin_x86-gcc4")
-#              EXTENSION_VER  - extension version
-#                               (e.g. "1.2.3")
+#              EXTENSION_UUID    - uuid of the extension
+#                                  (e.g. "coolthing@songbirdnest.com")
+#              EXTENSION_ARCH    - arch string describing the build machine
+#                                  (e.g. "WINNT_x86-msvc" or "Darwin_x86-gcc4")
+#              EXTENSION_VER     - extension version
+#                                  (e.g. "1.2.3")
+#              EXTENSION_MIN_VER - minimum version of application needed for 
+#                                  extension (e.g. "0.7pre")
+#              EXTENSION_MAX_VER - maximum version of application needed for 
+#                                  extension (e.g. "0.7.*")
 #
 #            If you want to also install the contents of the XPI to the
 #            extensions directory then you may set the following variable:
@@ -1431,6 +1435,8 @@ $(install_rdf_file): $(srcdir)/$(INSTALL_RDF)
           -DEXTENSION_ARCH=$(EXTENSION_ARCH)               \
           -DEXTENSION_UUID=$(EXTENSION_UUID)               \
           -DEXTENSION_VER=$(EXTENSION_VER)                 \
+          -DEXTENSION_MIN_VER=$(EXTENSION_MIN_VER)         \
+          -DEXTENSION_MAX_VER=$(EXTENSION_MAX_VER)         \
           -DEXTENSION_NAME=$(EXTENSION_NAME) --            \
           $(srcdir)/$(INSTALL_RDF) > $(install_rdf_file)
 
