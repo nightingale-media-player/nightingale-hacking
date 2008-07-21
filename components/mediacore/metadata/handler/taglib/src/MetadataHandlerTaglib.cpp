@@ -701,7 +701,7 @@ nsresult sbMetadataHandlerTaglib::WriteSetImageDataInternal(TagLib::MPEG::File* 
            frameIndex < frameList.size();
            frameIndex++) {
         TagLib::ID3v2::AttachedPictureFrame *p =
-          dynamic_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList[frameIndex]);
+          static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList[frameIndex]);
         if (p && p->type() == imageType){
           // Remove and free the memory for this frame
           aMPEGFile->ID3v2Tag()->removeFrame(p, true);
