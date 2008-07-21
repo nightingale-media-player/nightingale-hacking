@@ -3198,14 +3198,6 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   PRBool success = mMediaItemTable.Put(guid, newItemInfo);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
-  // Remember that this GUID maps to a MediaList, and that the 
-  // list may be instantiated.  We'll use this information
-  // for fast notification.
-  if (!mMediaListTable.Get(guid, nsnull)) {
-    success = mMediaListTable.Put(guid, newItemInfo->weakRef);
-    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-  }
-  
   newItemInfo.forget();
 
   nsCOMPtr<sbIMediaItem> mediaItem;
@@ -3379,10 +3371,8 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
   // may be instantiated.  We'll use this information for fast
   // notification.  
   if (!itemInfo->listType.IsEmpty()) {
-    if (!mMediaListTable.Get(aGUID, nsnull)) {
-      PRBool success = mMediaListTable.Put(aGUID, itemInfo->weakRef);
-      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-    }
+    PRBool success = mMediaListTable.Put(aGUID, itemInfo->weakRef);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   }
   
   nsCOMPtr<sbILocalDatabaseMediaItem> strongLocalItem =
