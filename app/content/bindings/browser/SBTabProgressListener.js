@@ -47,6 +47,8 @@ function SBTabProgressListener(aTabBrowser ) {
 // create an object which implements as much of nsIWebProgressListener as we're using
 SBTabProgressListener.prototype = {
   _tabBrowser: null,
+  _bookmarkService: Components.classes['@songbirdnest.com/servicepane/bookmarks;1']
+                         .getService(Components.interfaces.sbIBookmarks),
 
   onLocationChange: function SBTabProgressListener_onLocationChange(aWebProgress, aRequest, aLocation) {
     try {
@@ -85,7 +87,13 @@ SBTabProgressListener.prototype = {
       else {
         //XXXAus: Enable bookmarking for all other URI schemes.
         //See bug #4009.
-        SBDataSetBoolValue('browser.canbookmark', true);
+        // also check if bookmark already exists
+        if (this._bookmarkService.bookmarkExists(aLocation.spec)){
+          SBDataSetBoolValue('browser.canbookmark', false);
+        }
+        else {
+          SBDataSetBoolValue('browser.canbookmark', true);
+        }
 
         this._tabBrowser.selectedBrowser.contextMenu =
           this._tabBrowser.getAttribute('contentcontextmenu');

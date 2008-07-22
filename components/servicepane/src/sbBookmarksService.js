@@ -48,6 +48,8 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 
+Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
+
 const CONTRACTID = "@songbirdnest.com/servicepane/bookmarks;1"
 const ROOTNODE = "SB:Bookmarks"
 const BOOKMARK_DRAG_TYPE = 'text/x-sb-bookmark';
@@ -355,6 +357,8 @@ function sbBookmarks_addBookmarkAt(aURL, aTitle, aIconURL, aParent, aBefore) {
     return bnode;
   }
   
+  SBDataSetBoolValue('browser.canbookmark', false);
+  
   bnode.url = aURL;
   bnode.name = aTitle;
   if (aBefore) {
@@ -512,6 +516,10 @@ function sbBookmarks_fillContextMenu(aNode, aContextMenu, aParentWindow) {
     dump ('delete: '+aNode.name+'\n');
     // FIXME: confirmation dialog, eh??
     service._servicePane.removeNode(aNode);
+    
+    // handle case where the currently viewed page is being removed
+    if(event.view.gBrowser.currentURI.spec == aNode.id)
+      SBDataSetBoolValue('browser.canbookmark', true);
   }, false);
   aContextMenu.appendChild(item);
 }
