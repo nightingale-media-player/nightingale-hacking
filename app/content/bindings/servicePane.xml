@@ -596,6 +596,7 @@
             var target = null;
             if (this.isMediaTabURL(node.url)) {
               target = "_media";
+              this.browser.selectedTab = this.browser.mediaTab;
             }
             this.browser.loadURI(node.url, null, null, event, target);
             
@@ -647,6 +648,10 @@
         <body><![CDATA[
           if (!aURL) {
             return Components.results.NS_ERROR_INVALID_ARG;
+          }
+          if (!this.browser.mediaTab) {
+            // no media tab, can't be a media tab url
+            return false;
           }
           var url = aURL;
           if (aURL instanceof Components.interfaces.nsIURI) {
