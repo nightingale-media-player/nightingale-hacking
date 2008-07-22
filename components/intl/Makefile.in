@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#ifeq (,$(filter windows,$(SB_PLATFORM)))
-#  $(error The Songbird Internationalization module can only be built on windows, linux or macosx)
-#endif
-
-ifeq (windows, $(SB_PLATFORM))
+ifneq (,$(filter windows linux,$(SB_PLATFORM)))
 
 SUBDIRS = public \
           src \

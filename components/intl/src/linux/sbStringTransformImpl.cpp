@@ -31,6 +31,8 @@
 
 #include <prmem.h>
 
+#include <glib.h>
+
 sbStringTransformImpl::sbStringTransformImpl()
 {
 }
@@ -50,7 +52,81 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
                                        const nsAString & aInput, 
                                        nsAString & _retval)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCString str;
+  CopyUTF16toUTF8(aInput, str);
+
+  if(aTransformFlags & sbIStringTransform::TRANSFORM_LOWERCASE) {
+    gchar* lowercaseStr = g_utf8_strdown(str.BeginReading(), str.Length());
+    NS_ENSURE_TRUE(lowercaseStr, NS_ERROR_OUT_OF_MEMORY);
+    str.Assign(lowercaseStr);
+    g_free(lowercaseStr);
+  }
+
+  if(aTransformFlags & sbIStringTransform::TRANSFORM_UPPERCASE) {
+    gchar* uppercaseStr = g_utf8_strup(str.BeginReading(), str.Length());
+    NS_ENSURE_TRUE(uppercaseStr, NS_ERROR_OUT_OF_MEMORY);
+    str.Assign(uppercaseStr);
+    g_free(uppercaseStr);
+  }
+
+  if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONSPACE) {
+    nsString workingStr;
+
+    gchar* nonspaceStr = g_utf8_normalize(str.BeginReading(), 
+                                          str.Length(), 
+                                          G_NORMALIZE_ALL);
+    NS_ENSURE_TRUE(nonspaceStr, NS_ERROR_OUT_OF_MEMORY);
+
+    glong strLen = g_utf8_strlen(nonspaceStr, -1);
+    
+    for(glong currentChar = 0; currentChar < strLen; ++currentChar) {
+
+      gchar* offset = g_utf8_offset_to_pointer(nonspaceStr, currentChar);
+      gunichar unichar = g_utf8_get_char(offset);
+      GUnicodeType unicharType = g_unichar_type(unichar);
+
+      if(unicharType != G_UNICODE_NON_SPACING_MARK && 
+         unicharType != G_UNICODE_COMBINING_MARK &&
+         unicharType != G_UNICODE_ENCLOSING_MARK) {
+        workingStr += unichar;
+      }
+    }
+
+    g_free(nonspaceStr);
+    CopyUTF16toUTF8(workingStr, str);
+  }
+
+  if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS) {
+    nsString workingStr;
+
+    gchar* nosymbolsStr = g_utf8_normalize(str.BeginReading(), 
+                                           str.Length(), 
+                                           G_NORMALIZE_ALL);
+    NS_ENSURE_TRUE(nosymbolsStr, NS_ERROR_OUT_OF_MEMORY);
+
+    glong strLen = g_utf8_strlen(nosymbolsStr, -1);
+    
+    for(glong currentChar = 0; currentChar < strLen; ++currentChar) {
+
+      gchar* offset = g_utf8_offset_to_pointer(nosymbolsStr, currentChar);
+      gunichar unichar = g_utf8_get_char(offset);
+      GUnicodeType unicharType = g_unichar_type(unichar);
+
+      if(unicharType != G_UNICODE_CURRENCY_SYMBOL &&
+         unicharType != G_UNICODE_MODIFIER_SYMBOL &&
+         unicharType != G_UNICODE_MATH_SYMBOL &&
+         unicharType != G_UNICODE_OTHER_SYMBOL) {
+        workingStr += unichar;
+      }
+    }
+
+    g_free(nosymbolsStr);
+    CopyUTF16toUTF8(workingStr, str);
+  }
+
+  CopyUTF8toUTF16(str, _retval);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 

@@ -60,6 +60,17 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
+ifeq (linux,$(SB_PLATFORM))
+    CPP_EXTRA_FLAGS += $(shell pkg-config --cflags glib-2.0) \
+                       $(NULL)
+
+    DYNAMIC_LIB_EXTRA_FLAGS += $(shell pkg-config --libs glib-2.0) \
+                               $(NULL)
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+endif
+
 LIBSONGBIRD_COMPONENT = sbIntl
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
 
