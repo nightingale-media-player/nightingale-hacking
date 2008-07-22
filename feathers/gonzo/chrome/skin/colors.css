@@ -58,12 +58,9 @@ panel
 }
 
 window {
-  background-color:rgb(135,135,135);
   background-color: rgb(245,245,245);
 }
 
-window#mainplayer {
-}
 window[platform=Darwin] {
   border:none !important;
 }
@@ -77,8 +74,6 @@ dialog[platform=Darwin] #sb-sys-title-title {
   font-size: 13px !important;
   padding-top:3px !important;
   font-weight:normal !important;
-
-/*  opacity:0.9999;*/
 }
 
 sb-sys-close-button,
@@ -97,37 +92,25 @@ sb-sys-hide-button
 
 toolbar {
   border-bottom:1px solid gray;
-  max-height:29px;
 }
 
 
 
 
-
-/** 
-*******************************************************************************
-SERVICE PANE - a.k.a the Left Pane
-The Service Pane is the primary area for navigating through services and content. 
-It serves as the primary GUI entry point to content and services.
-*******************************************************************************
-*/ 
 
 
 #servicepane {
   background-color: rgb(220,220,220) !important;
-  
-  
   background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
   background-repeat:repeat-x;
-  background-position:center top;
+  background-position:left top;
 }
-
-
 #servicepane-status-bar {
   background-image:url('chrome://songbird/skin/service-pane/bg-status-bar.png');
   background-repeat:repeat-x;
-  background-position:center top;
+  background-position:left top;
 }
+
 
 .servicepane-tree {
   background-image:none !important;
@@ -136,15 +119,13 @@ It serves as the primary GUI entry point to content and services.
   border:none !important;
 }
 
-.servicepane-tree > treechildren::-moz-tree-row
-{
-  border:none;
+.servicepane-tree > treechildren::-moz-tree-row {
   background-color:transparent;
   min-height:20px;
+  border-top:1px solid transparent;
+  border-bottom:1px solid transparent;
 }
-
-.servicepane-tree > treechildren::-moz-tree-cell
-{
+.servicepane-tree > treechildren::-moz-tree-cell {
   border-right: none !important;
   padding-left:4px;
 }
@@ -153,29 +134,18 @@ It serves as the primary GUI entry point to content and services.
   font-weight:bold;
 }
 
-/** Since it will be a difficult task to keep 
-the service pane and the browser in sync, 
-we should nix the painting of the selection.*/
-
 .servicepane-tree > treechildren::-moz-tree-row( selected ),
-.servicepane-tree > treechildren::-moz-tree-row( selected current focus )
-{
+.servicepane-tree > treechildren::-moz-tree-row( selected current focus ) {
   background-color:rgb(255,255,255);
-
   background-image: url('chrome://songbird/skin/service-pane/bg-selected-node.png');
   background-repeat:repeat-x;
   background-position:left top;
-
-
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( servicesource-bookmarks ),
 .servicepane-tree > treechildren::-moz-tree-image( servicesource-playlists ),
 .servicepane-tree > treechildren::-moz-tree-image( folder ) {
   list-style-image:none;
-  display:none;
-  min-width:0px;
-  min-height:0px;
   width:0px;
   height:0px;
 }
@@ -183,7 +153,7 @@ we should nix the painting of the selection.*/
 .servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-bookmarks ),
 .servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-playlists ),
 .servicepane-tree > treechildren::-moz-tree-cell-text( folder ) {
-  color:rgb(120,120,120);
+  color:rgb(100,100,100);
   font-weight:normal !important;
 }
 
@@ -197,56 +167,26 @@ we should nix the painting of the selection.*/
 }
 
 
-/** 
-*******************************************************************************
-THE PLAYLIST
-*******************************************************************************
-*/ 
-
-
-
-
-
-
 .sb-commands-toolbar {
   border-top:1px solid gray;
-  background-color:rgb(135,135,135);
   background-color: rgb(220,220,220) !important;
-  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');
   background-repeat:repeat-x;
-  background-position:center top;
+  background-position:left top;
 }
-
-
-
-notification > button:hover > .button-box > .button-text
-{
-}
-
-notification > button:active > .button-box > .button-text
-{
-}
-
-notification > button:active
-{
-}
-
-
 .sb-commands-toolbar toolbarbutton,
 notification > button {
-    padding:2px 6px;
   border:1px solid rgb(80,80,80);
-    -moz-border-radius:3px;
+  -moz-border-radius:3px;
   background-color:rgb(180,180,180);
-    
-  -moz-background-clip:padding;
+  -moz-background-clip:border;
   background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
   background-repeat:repeat-x;
-  background-position:center top;
-  
+  background-position:left top;
   margin:4px;
   min-width:0px;
   min-height:0px;
+  padding:2px 4px !important;
 }
 notification > button > .button-box {
   padding:0 !important;
@@ -255,15 +195,10 @@ notification > button > .button-box {
 notification > button > .button-box > .button-text {
   color:rgb(40,40,40);
   font-size:9px;
-  padding:0px;
+  padding:0;
   margin:0;
 }
 
-
-
-
-.sb-commands-toolbar-bkg {
-}
 
 
 
@@ -283,27 +218,24 @@ treechildren::-moz-tree-cell {
   border-left:1px solid transparent;
   border-right:1px solid transparent;
 }
-
 treecol[insertafter="true"],
 treechildren::-moz-tree-cell( insertafter ) {
   border-right: 1px solid gray !important;
 }
-
 treecol[insertbefore="true"],
 treechildren::-moz-tree-cell( insertbefore ) {
   border-left: 1px solid gray !important;
 }
 
 treechildren::-moz-tree-cell-text {
-  color:rgb(40,40,40);
 }
+
 treechildren::-moz-tree-row( odd ) {
   background-color: rgb(255,255,255);
 }
 treechildren::-moz-tree-row( even ) {
   background-color: rgb(250,250,250);
 }
-
 
 treechildren::-moz-tree-cell-text( selected ) {
   color:rgb(40,40,40);
@@ -320,49 +252,10 @@ treechildren::-moz-tree-cell-text( selected ) {
 }
 treechildren::-moz-tree-row( selected, focus, odd ) {
   background-color: rgb(186,218,255);
-  background-color: rgb(255,244,127);
-  background-color: rgb(252,231,127);
-
-  
-  
 }
 treechildren::-moz-tree-row( selected, focus, even ) {
   background-color: rgb(181,213,255);
-  background-color: rgb(250,239,122);
-  background-color: rgb(247,226,122);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/** 
-*******************************************************************************
-TREE
-*******************************************************************************
-*/
-
-treechildren::-moz-tree-cell-text {
-  color:rgb(40,40,40);
-}
-
-treechildren::-moz-tree-cell-text( selected ) {
-  color:rgb(0,0,0);
-}
-
-
-
 
 
 
@@ -370,7 +263,7 @@ treechildren::-moz-tree-cell-text( selected ) {
 
 treechildren::-moz-tree-progressmeter {
   background-image: url(chrome://songbird/skin/playlist/bg-progress.png) !important;
-  background-position:center center;
+  background-position:left center;
   margin:0 !important;
   padding-top:5px !important;
   padding-bottom:5px !important;
@@ -379,23 +272,8 @@ treechildren::-moz-tree-progressmeter {
 }
 
 
-
-
-
-
-
-listheader,
-tree treecol {
-  background-color: rgb(225,225,225);
-/*  border-bottom:1px solid brown;*/
-}
-
-
-
-
-
 treecol > label {
-  color: rgb(120,120,120);
+  color: rgb(100,100,100);
 }
 
 
@@ -403,6 +281,7 @@ listheader,
 treecol,
 .tree-scrollable-columns,
 treecolpicker {
+  background-color: rgb(225,225,225);
   background-image: url('chrome://songbird/skin/base-elements/bg-table-header.png');
   background-position:center 0px;
   background-repeat:repeat-x;
@@ -413,16 +292,14 @@ treecol[sortDirection="descending"] {
 }
 
 treecol:hover {
-  background-color:rgb(200,200,200);
   background-position:center -16px;
 }
 treecol[insertbefore="true"],
 treecol[insertafter="true"] {
-  background-position:center -0px;
+  background-position:center 0px;
 }
 
 treecol:active {
-  background-color:rgb(100,100,100);
   background-position:center -32px;
 }
 treecol[dragging="true"] {
@@ -431,7 +308,6 @@ treecol[dragging="true"] {
 
 treecol[dragging="true"] > label,
 treecol[dragging="true"]:hover:active > label {
-  font-style:italic;
   color:gray;
 }
 
@@ -472,25 +348,9 @@ treecolpicker {
 
 
 
-/** 
-*******************************************************************************
-DISPLAY PANE
-*******************************************************************************
-*/
 
 
 
-
-/** 
-*******************************************************************************
-AUTOCOMPLETE POPUPS
-*******************************************************************************
-*/
-
-
-sb-locationbar-textbox .autocomplete-textbox {
-  padding-left:100px !important;
-}
 
 .autocomplete-treebody::-moz-tree-cell {
   border-right: 0px !important; 
@@ -500,16 +360,14 @@ sb-locationbar-textbox .autocomplete-textbox {
   color:rgb(40,40,40) !important;
 }
 .autocomplete-treebody::-moz-tree-row(selected) {
-background-color: rgb(186,218,255);
+  background-color:red;
 }
 
 .autocomplete-treebody::-moz-tree-image(favicon) {
   max-width:16px !important;
   max-height:16px !important;
-  width:16px !important;
-  height:16px !important;
-  min-width:0 !important;
-  min-height:0 !important;
+  min-width:16px !important;
+  min-height:16px !important;
 }
 
 .autocomplete-treebody::-moz-tree-cell-text(treecolAutoCompleteComment) {
@@ -523,15 +381,6 @@ background-color: rgb(186,218,255);
 
 
 
-/** 
-*******************************************************************************
-TABBED BROWSER
-*******************************************************************************
-*/ 
-
-tabs {
-
-}
 
 #tabstrip-container {
   background-color: rgb(80,80,80);
@@ -540,49 +389,29 @@ tabs {
   background-position:center bottom;
   padding:0px;
   margin:0px;
-/*  min-height:1px;*/
 }
 
-.tabbrowser-tabs
-{
-
-  padding:0px 0px 0px 0px;
+.tabbrowser-tabs {
+  padding:0px;
 }
 
 
-
-/** Top tabs **/
 tab,
 .tabbrowser-tab {
   max-width:180px;
   min-width:80px;
 }
-
 .tabbrowser-tab:not([selected="true"]) > .tab-image-middle > .tab-icon > .tab-icon-image {
-  opacity:0.5;
-}
-
-tab:not([selected="true"]),
-.tabbrowser-tab:not([selected="true"]) {
-
-}
-tab:hover:not([selected="true"]),
-.tabbrowser-tab:hover:not([selected="true"]) {
-}
-tab[selected="true"],
-.tabbrowser-tab[selected="true"] {
-
+  opacity:0.66;
 }
 .tabbrowser-tab {
   -moz-box-align: stretch;
   -moz-box-pack: center;  
   margin: 0px;
   padding: 0px 1px 3px 0px !important;
-
   text-align: center;
-  -moz-border-radius-topleft: 0 !important;
-  -moz-border-radius-topright: 0 !important;
-  
+  -moz-border-radius: 0 !important;
+
   background-image: url('chrome://songbird/skin/browser-tab-bar/bg-tab-delimiter.png') !important;
   background-repeat:no-repeat;
   background-position:right 0px;
@@ -604,9 +433,6 @@ tab[selected="true"],
   background-position:center 0px;
 }
 
-.tabbrowser-tab.sb-media-tab {
-  max-width:120px !important;
-}
 
 .tabbrowser-tab.sb-media-tab > .tab-image-middle,
 .tabbrowser-tab.sb-media-tab > .tab-image-left,
@@ -616,6 +442,8 @@ tab[selected="true"],
 }
 
 .tabbrowser-tab[selected="true"] > .tab-image-middle,
+.tabbrowser-tab[selected="true"] > .tab-image-left,
+.tabbrowser-tab[selected="true"] > .tab-image-right,
 .tabbrowser-tab[selected="true"] > .tab-close-button {
   background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
 }
@@ -682,22 +510,6 @@ tab[selected="true"],
 
 
 
-/** Bottom tabs **/
-.tab-bottom {
-}
-.tab-bottom:not([selected="true"]) {
-}
-.tab-bottom:hover:not([selected="true"]) {
-}
-.tab-bottom[selected="true"] {
-}
-
-/** General tab styles **/
-
-label.tab-text
-{
-  color:rgb(40,40,40);
-}
 
 .tabbrowser-tab > hbox > label.tab-text {
   text-align:left !important;
@@ -706,24 +518,6 @@ label.tab-text
 tabpanels {
   background-color : transparent;
 }
-
-.tabs-bottom-spacer
-{
-
-}
-
-/** The bar between the tabs and the tab panels. **/
-.tabs-bottom {
-
-}
-
-/**
- * Tab Scrollbox Arrow Buttons
- */
-
-
-
-
 
 
 /** 
@@ -735,16 +529,12 @@ BUTTONS
 /** TODO COMPRESS */
 
 #nav-bar toolbarbutton
-{
-  border:1px solid rgb(28,67,0);
+{  
+  border:1px solid rgb(80,80,80);
 
-  border:1px solid rgb(53,95,19);
-  
-  border:1px solid rgb(40,40,40);
-
-background-image:url('chrome://songbird/skin/nav-bar/bg-button.png');
-background-repeat:repeat-x;
-background-position:center 0px;
+  background-image:url('chrome://songbird/skin/nav-bar/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
 
   background-color:white;
   -moz-border-radius:2px;
@@ -786,36 +576,8 @@ background-position:center 0px;
 
 
 
-toolbarbutton:hover
-{
-}
-
-toolbarbutton:active
-{
-}
-
-
-
-
-
-menulist[disabled="true"]
-{
-  cursor: default;
-
-  background-color: transparent;
-}
-
-menulist[disabled="true"] > .menulist-label-box > .menulist-label
-{
-}
-
-menulist:focus,
-menulist[focused="true"] 
-{
-}
-
 menulist {
-  border:1px solid rgb(80,80,80);
+  border:1px solid gray;
   background-color:rgb(180,180,180);
   padding:0;
   -moz-border-radius:3px;
@@ -827,10 +589,12 @@ menulist:hover {
   background-position:center -300px;
 }
 menulist:active, 
-menulist[open] {
+menulist[open="true"] {
   background-position:center -600px;
 }
-
+menulist[disabled="true"] {
+  background-position:center -900px;
+}
 .menulist-label {
   padding:3px 8px;
   margin:0;
@@ -848,7 +612,6 @@ border-left:1px solid rgb(140,140,140);
   background-repeat:repeat-x;
   background-position:center top;
   background-color:white;
-
   
   margin:2px 0px 1px 2px;
   padding:0px 4px 1px 4px;
@@ -859,42 +622,25 @@ border-left:1px solid rgb(140,140,140);
 
 .button-box {
   padding:3px 8px;
-/*  border:1px solid green;*/
 }
 
 button:focus,
 checkbox:focus,
 radio[focused="true"] {
-/*  outline:2px solid lime;*/
-    outline-offset:0px !important;
-  -moz-outline-radius:5px !important;
+/*  outline:1px dotted brown !important;
+  outline-offset:0px !important;
+  -moz-outline-radius:5px !important;*/
 }
 
-button[disabled="true"],
-findbar toolbarbutton[disabled="true"] {
-  background-position:left -900px !important;
-}
-button[disabled="true"] .button-text {
-  color:gray;
-}
 
 
 button,
-findbar toolbarbutton {
+findbar toolbarbutton,
+.sb-commands-toolbar toolbarbutton,
+.clickhold-button {
   border:1px solid rgb(80,80,80);
-
   
-    -moz-border-radius:3px;
-/*
-  -moz-border-bottom-colors: rgba(255,255,255,0.25) black !important;
-
-  -moz-border-radius-topleft:1px;
-  -moz-border-radius-topright:1px;
-
-  -moz-border-radius-bottomleft:2px;
-  -moz-border-radius-bottomright:2px;
-*/
-  
+  -moz-border-radius:3px;
   background-color:rgb(180,180,180);
   
   -moz-background-clip:padding;
@@ -904,6 +650,7 @@ findbar toolbarbutton {
   
   padding:0px;
   margin:4px;
+
   min-width:0px;
   min-height:0px;
 }
@@ -918,25 +665,29 @@ findbar toolbarbutton {
 
 button:hover,
 .sb-commands-toolbar toolbarbutton:hover,
-notification > button:hover,
 findbar toolbarbutton:hover {
   background-position:center -300px;
 }
 button:active,
 button[open],
 .sb-commands-toolbar toolbarbutton:active,
-notification > button:active,
 findbar toolbarbutton:active,
 findbar toolbarbutton[checked="true"] {
   background-position:center -600px;
 }
 
-button[disabled="true"] {
+button[disabled="true"],
+findbar toolbarbutton[disabled="true"] {
+  background-position:left -900px !important;
+  border:1px solid gray;
 }
-
-button:focus {
+button[disabled="true"] .button-text,
+findbar toolbarbutton[disabled="true"] .toolbarbutton-text {
+  color:gray !important;
 }
-button:focus > .button-box > label {
+button[disabled="true"] .button-icon,
+indbar toolbarbutton[disabled="true"] .toolbarbutton-icon {
+  opacity:0.5 !important;
 }
 
 
@@ -1056,8 +807,10 @@ DATEPICKER see the RICHLISTBOX for box styles
 *******************************************************************************
 */
 .datepicker-gridlabel[selected="true"] {
-  background-color: #8A8F84;
-  color: #0f100f; /** Groove */
+  outline:2px solid magenta;
+  outline-offset:1px;
+  -moz-outline-radius:3px;
+  background-color:transparent;
 }
 
 
@@ -1091,36 +844,14 @@ popup
   background-color:rgb(255,255,255);
 }
 
-menuseparator
-{
-  border-top-color: red;
-}
-
 menuitem > label,
 menupopup > menu > label,
 popup > menu > label
 {
-  color: rgb(40,40,40);
   padding:0;
   margin:0;
 }
 
-
-menuitem:hover,
-menuitem:hover > label,
-menupopup > menu:hover,
-menupopup > menu:hover > label,
-popup > menu:hover,
-popup > menu:hover > label
-{
-
-}
-
-.menu-accel,
-.menu-iconic-accel
-{
-
-}
 
 menupopup > menu[_moz-menuactive="true"],
 menupopup > menuitem[_moz-menuactive="true"],
@@ -1133,8 +864,8 @@ background-color: rgb(186,218,255);
 menupopup > menu[_moz-menuactive="true"] > label,
 menupopup > menuitem[_moz-menuactive="true"] > label,
 popup > menu[_moz-menuactive="true"] > label,
-popup > menuitem[_moz-menuactive="true"] > label
-{
+popup > menuitem[_moz-menuactive="true"] > label {
+  color:rgb(0,0,0);
 }
 
 menuitem[disabled="true"],
@@ -1144,8 +875,7 @@ menuitem[disabled="true"]:hover > label
 menu[disabled="true"],
 menu[disabled="true"]:hover,
 menu[disabled="true"] > label,
-menu[disabled="true"]:hover > label
-{
+menu[disabled="true"]:hover > label {
 
 }
 
@@ -1179,7 +909,7 @@ These let the user resize the frames in your box model.
 #displaypane_contentpane_bottom_splitter[state="collapsed"],
 #displaypane_servicepane_bottom_splitter[state="collapsed"]
 {
-background-color:red;
+  background-color:red;
 }
 
 
@@ -1275,8 +1005,9 @@ TEXTBOX
 */
 
 textbox,
-textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
-{
+textbox.padded,
+.datetimepicker-input-subbox,
+.datetimepicker-year  {
   -moz-border-radius:0;
 
 border-top:1px solid rgb(120,120,120);
@@ -1669,40 +1400,19 @@ MOZILLA DOWNLOAD WINDOW
 */
 
 #downloadManager {
-  background-color: #313131 !important; /* color of the Main Window **/
+  background-color: rgb(245,245,245) !important;
 }
 
 #downloadManager > #information {
-  background-color: black;
 }
 
 #downloadManager > #downloadView {
-
   border: none;
 }
 
 #downloadManager > #search {
-  border-top-width: 1px;
-  border-top-color: #202220;
-  border-top-style: solid;
+  border-top:1px solid red;
 }
-
-
-/** 
-*******************************************************************************
-FINDBAR
-*******************************************************************************
-*/
-findbar {
-}
-
-
-.findbar-container > toolbarbutton[checked="true"] {
-  background-color:red;
-}
-
-
-
 
 
 
@@ -2115,7 +1825,10 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
 
 
 .drawer-box {
-  border:1px dashed red;
+  border:1px solid gray;
+  -moz-border-radius:3px;
+  background-color:rgb(245,245,245);
+  
 }
 
 
@@ -2222,33 +1935,27 @@ window:not([platform=Darwin]) #service_pane_spring_load_panel {
 }
 
 
-.service-pane-spring-load-button {
-  -moz-border-radius:0px;
-  -moz-image-region:auto;
-    margin:0 0 0 0;
-    padding-right:1px !important;
-border:none;
-background-color:transparent;
-background-image: url(chrome://songbird/skin/browser-tab-bar/bg-button-tab-delimiter.png) !important;
-background-repeat:no-repeat !important;
-background-position:right 0px !important;
-min-width:23px;
 
+#servicepane-status-bar > statusbarpanel > .service-pane-spring-load-button {
+  list-style-image:  url("chrome://songbird/skin/service-pane/button-hide-service-pane.png") !important;
+}
+#status-bar > statusbarpanel > .service-pane-spring-load-button {
+  list-style-image:  url("chrome://songbird/skin/service-pane/button-show-service-pane.png") !important;
+}
+
+.service-pane-spring-load-button {
+  margin:0px;
 }
 
 .service-pane-spring-load-button > .button-box {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-service-pane-button.png) !important;
-  background-repeat:no-repeat !important;
-  background-position:right 0px !important;
   padding:0;
 }
+
 #tabstrip-container[servicepane_pinned="true"] {
 }
 #tabstrip-container[servicepane_pinned="true"] .service-pane-spring-load-button > .button-box {
-	background-image: url(chrome://songbird/skin/browser-tab-bar/bg-unpin-service-pane-button.png) !important;
 }
 #service_pane_spring_load_panel > hbox > .service-pane-spring-load-button > .button-box {
-	background-image: url(chrome://songbird/skin/browser-tab-bar/bg-pin-service-pane-button.png) !important;
 }
 
 .service-pane-spring-load-button:hover > .button-box {
@@ -2262,7 +1969,6 @@ background-position:right -30px !important;
   background-position:right -24px !important;
 }
 .service-pane-spring-load-button[disabled="true"] > .button-box {
-  background-image: url('chrome://songbird/skin/browser-tab-bar/bg-selected-media-tab.png') !important;
   background-position:right 0px !important;
 }
 .service-pane-spring-load-button > .button-box > .button-icon {
@@ -2346,4 +2052,460 @@ notification[type="critical"] {
   list-style-image:  url("chrome://songbird/skin/service-pane/button-new-node.png") !important;
   min-height:14px;
   min-width:14px;
+}
+.clickhold-button {
+  background-image:none;
+  background-color:transparent;
+}
+
+
+
+
+window:not([active="true"]) .inactive-box {
+  background-color:rgba(255,255,255,0.33);
+}
+
+#statusbar-progresspanel {
+  display:none;
+}
+
+
+
+#updateMode {
+  -moz-box-orient:vertical !important;
+}
+
+
+textbox[type="number"],
+datepicker,
+timepicker {
+  padding:0;
+}
+textbox[type="number"] > .textbox-input-box,
+.datetimepicker-input-subbox,
+.datetimepicker-year {
+  padding:2px 3px 2px 2px;
+}
+textbox[type="number"] > spinbuttons > .spinbuttons-box > button,
+datepicker > spinbuttons > .spinbuttons-box > button,
+timepicker > spinbuttons > .spinbuttons-box > button {
+  margin:0;
+  border:none !important;
+}
+textbox[type="number"] > spinbuttons > .spinbuttons-box > button > .button-box,
+datepicker > spinbuttons > .spinbuttons-box > button > .button-box,
+timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
+  padding:0px;
+}
+
+
+#advancedPrefs {
+  margin:0 !important;
+}
+
+
+
+.smart-condition-minus > .button-box,
+.smart-condition-plus > .button-box {
+  padding:0;
+}
+.smart-condition-minus > .button-box > .button-text,
+.smart-condition-plus > .button-box > .button-text {
+  display:none;
+}
+.smart-condition-minus > .button-box > .button-icon {
+  list-style-image:  url("chrome://songbird/skin/smart-playlist/button-remove.png");
+}
+.smart-condition-plus > .button-box > .button-icon {
+  list-style-image:  url("chrome://songbird/skin/smart-playlist/button-add.png");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#extensionsManager:not([active="true"]) > #topStackBar > #viewGroup {
+  background-image: none;
+  background-color: red;
+  border-bottom: 1px solid blue;
+}
+
+#extensionsManager:not([active="true"]) > #topStackBar > #viewGroup > .radiogroupWrapper {
+  opacity: 0.7;
+}
+
+#extensionsBox {
+  margin: 0px;
+}
+
+#resizerBox {
+/*  margin-top: -12px;
+  visibility: hidden;*/
+  border:2px solid red !important;
+}
+
+#resizerBox > resizer {
+  height: 10px;
+  max-height: 10px;
+  visibility: visible;
+}
+
+/* Command Bar */
+#commandBarBottom {
+  margin: 0px;
+  border:2px solid cyan !important;
+}
+
+#commandBarBottom button {
+  margin: 0;
+  list-style-image: url("chrome://mozapps/skin/extensions/actionbuttons.png");
+}
+
+#commandBarBottom button .button-icon {
+}
+
+/*
+#installFileButton, #installUpdatesAllButton {
+  -moz-image-region: rect(0px, 84px, 21px, 63px);
+}
+
+#installFileButton[disabled="true"],
+#installUpdatesAllButton[disabled="true"] {
+  -moz-image-region: rect(21px, 84px, 42px, 63px);
+}
+
+#checkUpdatesAllButton, #showUpdateInfoButton, #hideUpdateInfoButton {
+  -moz-image-region: rect(0px, 63px, 21px, 42px);
+}
+#checkUpdatesAllButton[disabled="true"] {
+  -moz-image-region: rect(21px, 63px, 42px, 42px);
+}
+
+#restartAppButton {
+  -moz-image-region: rect(0px, 42px, 21px, 21px);
+}
+
+#restartAppButton[disabled="true"] {
+  -moz-image-region: rect(21px, 42px, 42px, 21px);
+}
+
+#skipDialogButton {
+  -moz-image-region: rect(0px, 42px, 21px, 21px);
+}
+
+#skipDialogButton[disabled="true"] {
+  -moz-image-region: rect(21px, 42px, 42px, 21px);
+}
+
+#continueDialogButton {
+  -moz-image-region: rect(0px, 42px, 21px, 21px);
+}
+
+#continueDialogButton[disabled="true"] {
+  -moz-image-region: rect(21px, 42px, 42px, 21px);
+}
+*/
+
+/* List Items */
+richlistitem {
+  padding-top: 10px;
+  min-height: 24px;
+  border-bottom: 1px dotted green !important;
+}
+
+richlistitem[isDisabled="true"] .addonIcon {
+  opacity: 0.25;
+}
+
+richlistitem[isDisabled="true"] {
+  color: red;
+}
+
+#extensionsView:focus > richlistitem[selected="true"][isDisabled="true"] {
+  background-image: url("chrome://mozapps/skin/extensions/itemDisabledFader.png");
+}
+
+.descriptionWrap {
+}
+
+richlistitem[selected="true"]:not([opType]) {
+  background-color:pink !important;
+}
+
+richlistitem[selected="true"]:not([opType]) .descriptionCrop {
+/*  display: none;*/
+}
+
+.addonName {
+  font-weight: bold;
+}
+
+.previewText {
+  font-size: 10px;
+  font-weight: bold;
+  color: blue;
+  text-align: center;
+}
+/*
+#themePreviewArea {
+  -moz-appearance: listbox;
+  border: 2px solid;
+  -moz-border-top-colors: ThreeDShadow ThreeDDarkShadow;
+  -moz-border-right-colors: ThreeDHighlight ThreeDLightShadow;
+  -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
+  -moz-border-left-colors: ThreeDShadow ThreeDDarkShadow;
+  background-color: -moz-Field;
+  color: -moz-FieldText;
+  overflow: auto;
+  width: 0px;
+}
+
+#themeSplitter {
+ border-width: 0;
+}
+*/
+.addonIcon {
+  width: 32px;
+  max-width: 32px;
+  height: 32px;
+  max-height: 32px;
+}
+/*
+.updateBadge,
+.notifyBadge {
+  width: 16px;
+  height: 16px;
+  list-style-image: url("chrome://mozapps/skin/extensions/notifyBadges.png");
+}
+
+.updateBadge {
+  -moz-margin-end: -2px;
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+.notifyBadge {
+  -moz-margin-start: -2px;
+  -moz-image-region: rect(0px 48px 16px 32px);
+}
+
+.updateBadge,
+.updateAvailableBox,
+.notifyBadge {
+  display: none;
+}
+*/
+richlistitem[availableUpdateURL][updateable="true"] .updateBadge,
+richlistitem[availableUpdateURL][updateable="true"] .updateAvailableBox,
+richlistitem[compatible="false"] .notifyBadge,
+richlistitem[providesUpdatesSecurely="false"] .notifyBadge,
+richlistitem[blocklisted="true"] .notifyBadge,
+richlistitem[satisfiesDependencies="false"] .notifyBadge {
+  display: -moz-box;
+}
+
+/* Selected Add-on buttons
+   See content/extensions.css to hide / display buttons */
+.selectedButtons {
+}
+
+.selectedButtons > button {
+}
+
+.enableButton,
+.disableButton,
+.optionsButton,
+.useThemeButton {
+}
+
+.enableButton, .disableButton,
+.uninstallButton, .cancelUninstallButton {
+}
+
+/* Selected Add-on status messages and images */
+richlistitem[compatible="true"] .incompatibleBox,
+richlistitem[providesUpdatesSecurely="true"] .insecureUpdateBox,
+richlistitem[satisfiesDependencies="true"] .needsDependenciesBox,
+richlistitem[blocklisted="false"] .blocklistedBox,
+richlistitem[opType="needs-uninstall"] .blocklistedBox,
+richlistitem[opType="needs-uninstall"] .incompatibleBox,
+richlistitem[opType="needs-uninstall"] .needsDependenciesBox,
+richlistitem[opType="needs-uninstall"] .blocklistedBox {
+  display: none;
+}
+
+richlistitem[loading="true"] .updateBadge {
+  display: -moz-box;
+  width: 16px;
+  height: 16px;
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-loading.png") !important;
+}
+
+.addonThrobber {
+  width: 16px;
+  height: 16px;
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-loading.png") !important;
+}
+
+.selectedStatusMsgs > hbox {
+}
+
+.selectedStatusMsgs label {
+  font-weight: bold;
+}
+
+.selectedStatusMsgs label.text-link {
+  font-weight: normal;
+  border: none;
+}
+
+richlistitem[opType="needs-uninstall"] .notifyBadge {
+  display: none;
+}
+
+#progressBox {
+  padding: 4px;
+}
+
+#progressBox > hbox {
+  -moz-box-align: center;
+}
+
+/* View buttons */
+.viewSelector {
+  border-bottom: 1px dashed red;
+  margin: 0px;
+  background-color: pink;
+  color: black;
+}
+
+#viewGroup radio {
+  -moz-appearance: none;
+  margin: 0px;
+  padding: 0px;
+  list-style-image: none;
+}
+
+#viewGroup radio:hover {
+  background-color: pink;
+  color: black;
+}
+
+#viewGroup radio[selected="true"] {
+  background-color: green !important;
+  color: black;
+}
+
+.viewButtonIcon {
+  display:none;
+}
+
+
+/*
+
+.viewButtonIcon {
+  width: 0px;
+  height: 0px;
+}
+
+radio#extensions-view {
+  -moz-image-region: rect(0px, 32px,  32px, 0px)
+}
+radio#extensions-view:hover, radio#extensions-view[selected="true"]  {
+  -moz-image-region: rect(32px, 32px,  64px, 0px)
+}
+
+radio#themes-view {
+  -moz-image-region: rect(0px, 64px,  32px, 32px)
+}
+radio#themes-view:hover, radio#themes-view[selected="true"]  {
+  -moz-image-region: rect(32px, 64px,  64px, 32px)
+}
+
+radio#locales-view {
+  -moz-image-region: rect(0px, 96px,  32px, 64px)
+}
+radio#locales-view:hover, radio#locales-view[selected="true"]  {
+  -moz-image-region: rect(32px, 96px,  64px, 64px)
+}
+
+radio#plugins-view {
+  -moz-image-region: rect(0px, 128px, 32px, 96px)
+}
+radio#plugins-view:hover, radio#plugins-view[selected="true"] {
+  -moz-image-region: rect(32px, 128px, 64px, 96px)
+}
+
+radio#updates-view {
+  -moz-image-region: rect(0px, 160px, 32px, 128px)
+}
+radio#updates-view:hover, radio#updates-view[selected="true"] {
+  -moz-image-region: rect(32px, 160px, 64px, 128px)
+}
+
+radio#installs-view {
+  -moz-image-region: rect(0px, 192px, 32px, 160px)
+}
+radio#installs-view:hover, radio#installs-view[selected="true"] {
+  -moz-image-region: rect(32px, 192px, 64px, 160px)
+}
+
+*/
+
+/* Update view checkbox */
+.includeUpdate {
+  -moz-user-focus: none;
+}
+
+richlistitem[selected="true"] .includeUpdate {
+  -moz-user-focus: normal;
+}
+
+#infoDisplay {
+  overflow-y: auto;
+}
+
+#infoDisplay body {
+  padding: 5px;
+}
+
+#infoDisplay h1,
+#infoDisplay h2,
+#infoDisplay h3 {
+  text-align: left;
+  font-weight: bold;
+  margin: 0 0 0.7em 0;
+}
+
+#infoDisplay h1 {
+  font-size: 150%;
+}
+
+#infoDisplay h2 {
+  font-size: 125%;
+}
+
+#infoDisplay h3 {
+  font-size: 100%;
+}
+
+#infoDisplay ol,
+#infoDisplay ul {
+  margin: 0 0 0.7em 0;
+}
+
+#infoDisplay li {
+  text-align: left;
+}
+
+#infoDisplay p {
+  text-align: justify;
+  margin: 0 0 0.7em 0;
 }
