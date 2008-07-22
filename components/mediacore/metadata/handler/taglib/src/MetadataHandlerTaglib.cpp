@@ -634,10 +634,10 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         // if we have an origin page
         if (NS_SUCCEEDED(result)) {
           if (MPEGFile->ID3v2Tag()) {
-            TagLib::String taglibTitle = TagLib::String(
+            /*TagLib::String taglibTitle = TagLib::String(
               NS_ConvertUTF16toUTF8(title).BeginReading(),
               TagLib::String::UTF8
-            );
+            );*/
             
             TagLib::String taglibURL = TagLib::String(
               NS_ConvertUTF16toUTF8(url).BeginReading(),
