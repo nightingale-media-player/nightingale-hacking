@@ -48,8 +48,6 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
 
-Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
-
 const CONTRACTID = "@songbirdnest.com/servicepane/bookmarks;1"
 const ROOTNODE = "SB:Bookmarks"
 const BOOKMARK_DRAG_TYPE = 'text/x-sb-bookmark';
@@ -85,6 +83,8 @@ sbBookmarks.prototype.servicePaneInit =
 function sbBookmarks_servicePaneInit(sps) {
   this._servicePane = sps;
   
+  Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
+
   // if we don't have a bookmarks node, lets create one
   this._bookmarkNode = this._servicePane.getNode(ROOTNODE);
   if (!this._bookmarkNode) {
