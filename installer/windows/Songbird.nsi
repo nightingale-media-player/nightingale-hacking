@@ -270,18 +270,6 @@ Section "-Application" Section1
 
 # We only need to do this if we're not using jemalloc...
 !ifndef UsingJemalloc
-  ; The XULRunner stub loader also fails to find certain symbols when launched
-  ; without a profile (yes, it's confusing). The quick work around is to 
-  ; leave a copy of msvcr71.dll in xulrunner/ as well.
-  ${If} ${AtLeastWinVista}
-    SetOutPath $INSTDIR\${XULRunnerDir}
-    File ${CRuntime}
-    File ${CPPRuntime}
-    StrCpy $LinkIconFile ${VistaIcon}
-  ${Else}
-    StrCpy $LinkIconFile ${PreferredIcon}
-  ${EndIf}
- 
   ; With VC8, we need the CRT and the manifests all over the place due to SxS
   ; until BMO 350616 gets fixed
   !ifdef CRuntimeManifest
