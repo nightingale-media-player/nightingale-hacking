@@ -78,6 +78,7 @@
 #include <flacfile.h>
 #include <mpcfile.h>
 #include <mpegfile.h>
+#include <urllinkframe.h>
 #include <mp4file.h>
 #include <vorbisfile.h>
 
@@ -595,14 +596,16 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_BPM, Bpm);
       // todo: isCompilation! + Tests!
 
-      /* Write MP3 image data. */
+      /* Write MP3 specific properties. */
       // TODO: write other files' metadata.
       nsCString                   fileExt;
       result = mpURL->GetFileExtension(fileExt);
       NS_ENSURE_SUCCESS(result, result);
       ToLowerCase(fileExt);
       if (fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
-        // Look up the file-name.
+        TagLib::MPEG::File* MPEGFile = static_cast<TagLib::MPEG::File*>(f.file());
+        
+        // Write Image Data
         nsAutoString imageSpec;
         result = mpMetadataPropertyArray->GetPropertyValue(
           NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
@@ -611,9 +614,55 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         if (NS_SUCCEEDED(result)) {
           PRInt32 imageType = METADATA_IMAGE_TYPE_OTHER;
           WriteSetImageDataInternal(
-              static_cast<TagLib::MPEG::File*>(f.file()),
+              MPEGFile,
               imageType,
               imageSpec);
+        }
+        
+        // Look up the origins of this file.
+        /* bug 10933: description of a URL is not currently implemented in taglib
+        nsAutoString title;
+        result = mpMetadataPropertyArray->GetPropertyValue(
+          NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGETITLE),
+          title
+        );*/
+        nsAutoString url;
+        result = mpMetadataPropertyArray->GetPropertyValue(
+          NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE),
+          url
+        );
+        // if we have an origin page
+        if (NS_SUCCEEDED(result)) {
+          if (MPEGFile->ID3v2Tag()) {
+            TagLib::String taglibTitle = TagLib::String(
+              NS_ConvertUTF16toUTF8(title).BeginReading(),
+              TagLib::String::UTF8
+            );
+            
+            TagLib::String taglibURL = TagLib::String(
+              NS_ConvertUTF16toUTF8(url).BeginReading(),
+              TagLib::String::UTF8
+            );
+            
+            // TODO: bug 10932 -- fix WCOP to be like this in TL
+            TagLib::ID3v2::Tag* tag = MPEGFile->ID3v2Tag();
+            if(taglibURL.isEmpty()) {
+              tag->removeFrames("WOAF");
+            }
+            else if(!tag->frameList("WOAF").isEmpty()) {
+              TagLib::ID3v2::UrlLinkFrame* frame =
+                static_cast<TagLib::ID3v2::UrlLinkFrame*>(
+                  tag->frameList("WOAF").front());
+              frame->setUrl(taglibURL);
+              //bug 10933: frame->setText(taglibTitle);
+            }
+            else {
+              TagLib::ID3v2::UrlLinkFrame* frame = new TagLib::ID3v2::UrlLinkFrame("WOAF");
+              tag->addFrame(frame);
+              frame->setUrl(taglibURL);
+              //bug 10933: frame->setText(taglibURL);
+            }
+          }
         }
       }
       
@@ -1293,6 +1342,22 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
     PRInt32 length;
     PR_sscanf(frameList.front()->toString().toCString(true), "%d", &length);
     AddMetadataValue(ID3v2Map[i][1], length * 1000);
+  }
+  
+  // TODO: bug 10932 -- make WCOP like this in taglib
+  frameList = frameListMap["WOAF"];
+  if (!frameList.isEmpty())
+  {
+    TagLib::ID3v2::UrlLinkFrame* woaf =
+      static_cast<TagLib::ID3v2::UrlLinkFrame*>(frameList.front());
+    TagLib::String taglibURL = woaf->url();
+    
+    AddMetadataValue(SB_PROPERTY_ORIGINPAGE,
+                     ConvertCharset(taglibURL, aCharset));
+    /* bug 10933 -- UrlLinkFrame does not support setText appropriately
+    TagLib::String taglibTitle = woaf->text();
+    AddMetadataValue(SB_PROPERTY_ORIGINPAGETITLE,
+                     ConvertCharset(taglibTitle, aCharset));*/
   }
   return;
 }
