@@ -44,6 +44,12 @@
  */
 
 function runTest() {
+  // Get the file protocol handler.
+  var ioService = Cc["@mozilla.org/network/io-service;1"]
+                    .getService(Ci.nsIIOService);
+  var fileProtocolHandler = ioService.getProtocolHandler("file")
+                              .QueryInterface(Ci.nsIFileProtocolHandler);
+
   // Test that the temporary file service component is available.
   var temporaryFileService;
   try {
@@ -72,10 +78,13 @@ function runTest() {
   assertTrue(!tmpFile2.equals(tmpFile1), "Temporary file is not unique.");
 
   // Create and validate a temporary file with a specified base name.
+  var fileBaseName = "test";
   tmpFile1 = temporaryFileService.createFile(Ci.nsIFile.NORMAL_FILE_TYPE,
-                                             "test");
+                                             fileBaseName);
   assertTrue(tmpFile1, "Could not create temporary file.");
-  assertTrue(tmpFile1.path.match(/\/test$/), "File base name incorrect.");
+  var fileURL = fileProtocolHandler.newFileURI(tmpFile1);
+  fileURL = fileURL.QueryInterface(Ci.nsIURL);
+  assertEqual(fileURL.fileBaseName, fileBaseName);
 
   // Create and validate a temporary file with a specified extension.
   tmpFile1 = temporaryFileService.createFile(Ci.nsIFile.NORMAL_FILE_TYPE,

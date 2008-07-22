@@ -173,11 +173,14 @@ sbTemporaryFileService.prototype = {
     var file = this.rootTemporaryDirectory.clone();
     var permissions = this.rootTemporaryDirectory.permissions;
 
-    // If a base name is specified, create a unique directory for the file.
-    if (aBaseName) {
-      file.append(this._cfg.temporaryFileBaseName);
-      file.createUnique(Ci.nsIFile.DIRECTORY_TYPE, permissions);
-    }
+    // Create a unique diretory for each file.  This is required because on
+    // Windows, createUnique for a file will fail if it encounters a directory
+    // with a matching name while searching for a unique file name.  Thus, the
+    // temporary root directory will be filled with only temporary directories,
+    // each of which will have a single temporary file, avoiding the Windows
+    // issue.
+    file.append(this._cfg.temporaryFileBaseName);
+    file.createUnique(Ci.nsIFile.DIRECTORY_TYPE, permissions);
 
     // Append base file name with extension.
     var baseName = aBaseName ? aBaseName : this._cfg.temporaryFileBaseName;
