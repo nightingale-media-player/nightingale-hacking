@@ -484,6 +484,8 @@
               <xul:image sbid="mac_resize_image" class="sb-sys-outer-frame-resizer-image" />
         </xul:vbox>
 
+        <xul:vbox flex="1" mousethrough="always" class="inactive-box" />
+
       </xul:stack>
     </content>
               
