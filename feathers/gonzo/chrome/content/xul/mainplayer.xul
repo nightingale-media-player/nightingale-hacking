@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
-<?xml-stylesheet href="chrome://gonzo/content/css/mainplayer.css" type="text/css"?>
+<?xml-stylesheet href="chrome://gonzo-dev/content/css/mainplayer.css" type="text/css"?>
 
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
@@ -113,26 +113,6 @@
                     boolean="true" 
                     attribute="servicepane_pinned"
                     inverted="true"/>
-          <button type="sb-spring" id="servicepane_spring_button" label="I10N" class="service-pane-spring-load-button"
-                  dragdelay="500" delay="100" closedelay="100" position="overlap"
-                  oncommand="gServicePane.open = !gServicePane.open; this.cancel();"
-                  popupelement="service_pane_spring_load_panel" >
-            <observes type="dataremote" key="browser.in_media_page" boolean="true"
-                      attribute="disabled" onchange="
-                        const key = 'splitter.servicepane_splitter.was_collapsed';
-                        if (value) {
-                          /* going into media page mode */
-                          SBDataSetBoolValue(key, gServicePane.open);
-                          gServicePane.open = true;
-                        } else {
-                          /* going out of media page */
-                          gServicePane.open = SBDataGetBoolValue(key);
-                        }
-                        return value;
-                      "/>
-            <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
-                      attribute="springdisabled" inverted="true"/>
-          </button>
           <tabs id="tabstrip" class="tabbrowser-tabs sb-tabbrowser-tabs"
                 setfocus="false" flex="1"
                 onclick="gBrowser.onTabClick(event);"
@@ -154,11 +134,31 @@
               <vbox id="servicepane_box">
                 <sb-servicepane id="servicepane" flex="1" browser="content">
                   <statusbar id="servicepane-status-bar" mousethrough="never">
-      <!-- TODO remove -->
+                      <statusbarpanel>
+                      <button class="service-pane-spring-load-button"
+                              oncommand="gServicePane.open = !gServicePane.open; this.cancel();"
+                              style="min-height:16px; min-width:16px;" >
+                        <observes type="dataremote" key="browser.in_media_page" boolean="true"
+                                  attribute="disabled" onchange="
+                                    const key = 'splitter.servicepane_splitter.was_collapsed';
+                                    if (value) {
+                                      /* going into media page mode */
+                                      SBDataSetBoolValue(key, gServicePane.open);
+                                      gServicePane.open = true;
+                                    } else {
+                                      /* going out of media page */
+                                      gServicePane.open = SBDataGetBoolValue(key);
+                                    }
+                                    return value;
+                                  "/>
+                        <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
+                                  attribute="hidden" inverted="false"/>
+                      </button>
+                    </statusbarpanel>
+<spacer flex="1" />
                     <statusbarpanel>
                       <sb-servicepane-toolbar id="servicepane_toolbar" />
                     </statusbarpanel>
-      <!-- /TODO -->
                   </statusbar>
                 </sb-servicepane>
               </vbox>
@@ -179,7 +179,16 @@
                        Note: this item must have id="status-bar" for Firefox 
                        extension compatibility.
                   -->
-                  <statusbar id="status-bar" mousethrough="never"/>
+                  <statusbar id="status-bar" mousethrough="never">
+                      <statusbarpanel>
+                        <button class="service-pane-spring-load-button"
+                                oncommand="gServicePane.open = !gServicePane.open; this.cancel();"
+                                style="min-height:16px; min-width:16px;" >
+                        <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
+                                  attribute="hidden" inverted="true"/>
+                      </button>
+                    </statusbarpanel>
+                  </statusbar>
                 </vbox>
               </vbox>
 
