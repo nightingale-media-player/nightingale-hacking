@@ -63,7 +63,7 @@ else
 
 CPP_SRCS = sbStringTransform.cpp \
            sbIntlModule.cpp \
-					 $(NULL)
+           $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/intl/public \
 							 $(topsrcdir)/components/intl/src/$(SB_PLATFORM) \
