@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifneq (,$(filter windows linux,$(SB_PLATFORM)))
+ifneq (,$(filter windows linux macosx,$(SB_PLATFORM)))
 
 SUBDIRS = public \
           src \

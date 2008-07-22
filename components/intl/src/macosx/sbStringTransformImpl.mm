@@ -32,6 +32,7 @@
 #include <prmem.h>
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <Foundation/Foundation.h>
 
 sbStringTransformImpl::sbStringTransformImpl()
 {
@@ -52,34 +53,50 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
                                        const nsAString & aInput, 
                                        nsAString & _retval)
 {
-	CFMutableStringRef str = CFStringCreateMutable(kCFAllocatorDefault, 0);
-	NS_ENSURE_TRUE(str, NS_ERROR_OUT_OF_MEMORY);
+	NSMutableString *str = [[NSMutableString alloc] initWithCharacters:aInput.BeginReading() 
+																								  length:aInput.Length()];
 	
-	CFStringAppendCharacters(str, aInput.BeginReading(), aInput.Length());
-	CFShow(str);
-		
+	NSLog(@"original string: %@", str);
+	
   if(aTransformFlags & sbIStringTransform::TRANSFORM_LOWERCASE) {
-		CFStringLowercase(str, NULL);
-  }
+		NSString *lcaseStr = [str lowercaseString];
+		str = [NSString stringWithString:lcaseStr];
+	}
 	
   if(aTransformFlags & sbIStringTransform::TRANSFORM_UPPERCASE) {
-		CFStringUppercase(str, NULL);
+		NSString *ucaseStr = [str uppercaseString];
+		str = [NSString stringWithString:ucaseStr];
   }
 	
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONSPACE) {
-		CFStringTransform(str, NULL, kCFStringTransformStripCombiningMarks, false);
+		CFStringTransform( (CFMutableStringRef)str, 
+											 NULL, 
+											 kCFStringTransformStripCombiningMarks, 
+											 false);
   }
 	
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS) {
-    //Not supported at this time. Does nothing.
+	  NSCharacterSet *symbols = [NSCharacterSet symbolCharacterSet];
+		
+		for(unsigned int current = 0; current < [str length]; ++current) {
+			unichar c = [str characterAtIndex:current];
+			if([symbols characterIsMember:c]) {
+				NSRange r = NSMakeRange(current, 1);
+				[str replaceCharactersInRange:r withString:@" "];
+			}
+		}
   }
 	
-	CFShow(str);
-	const UniChar *transformedStr = CFStringGetCharactersPtr(str);
-	NS_ENSURE_TRUE(transformedStr, NS_ERROR_UNEXPECTED);
+	NSLog(@"transformed string: %@", str);
 	
-	_retval.Assign(transformedStr);
-  
+	unichar *buf = (unichar *) malloc(sizeof(unichar) * [str length]);
+	NS_ENSURE_TRUE(buf, NS_ERROR_OUT_OF_MEMORY);
+	
+	[str getCharacters:buf];
+	 
+  _retval.Assign(buf, [str length]);
+	free(buf);
+		
 	return NS_OK;
 }
 
