@@ -2208,7 +2208,12 @@ PlaylistPlayback.prototype = {
   // returns an array representing the active filters for a view
   _getViewFilters: function sbPlaylistPlayback_getViewFilters(view) {
     var filters = [];
-    var filter = view.filterConstraint;
+    var filter = null;
+    try {
+        filter = view.filterConstraint;
+    } catch (e) {
+        return filters;
+    }
     if (!filter) {
       return filters;
     }
