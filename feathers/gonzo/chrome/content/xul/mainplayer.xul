@@ -206,7 +206,7 @@
           </vbox>
         </vbox>
       </vbox>
-      <vbox id="player_wrapper" context="playerControlsPopupMenu">
+      <vbox id="player_wrapper">
         <stack id="control_pane_box" pack="center" >
           <!-- TODO Move corner xul into an sb-themed-frame-stack -->
           <hbox flex="1" align="left" class="left-box">
@@ -217,8 +217,10 @@
           </hbox>
           <hbox flex="1" class="middle" />
           <!-- /TODO -->
+          
+          <hbox flex="1" id="control_pane_context_box" context="playerControlsPopupMenu" />
 
-          <hbox id="control_pane" flex="1">
+          <hbox id="control_pane" flex="1" mousethrough="always">
             <hbox id="control_buttons_box" pack="center" align="center">
               <sb-player-back-button id="play_back_button" class="sb-player-button"/>
               <sb-player-playpause-button id="play_pause_button" popupanchor="topleft" popupalign="bottomleft" class="sb-player-button"/>
