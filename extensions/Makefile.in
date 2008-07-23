@@ -29,12 +29,8 @@ VPATH     = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
-# Extensions to add for bundling
-SUBDIRS = AlbumArtManager \
-          $(NULL)
-
-# Other extensions not added for bundling
 SUBDIRS = xpcom_helloworld \
+          AlbumArtManager \
           $(NULL)
 
 ifneq (default, $(SB_EXTENSIONS))
