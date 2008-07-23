@@ -1456,9 +1456,7 @@
             if (!this._blockDblClick && aEvent.button == 0 &&
                 aEvent.originalTarget.localName == "box") {
               // xxx this needs to check that we're in the empty area of the tabstrip
-              var e = document.createEvent("Events");
-              e.initEvent("NewTab", true, true);
-              this.dispatchEvent(e);
+              this.loadURI(this.homePage, null, null, null, '_blank');
             }
           ]]>
         </body>
