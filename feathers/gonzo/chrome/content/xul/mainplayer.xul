@@ -136,14 +136,15 @@
                   <statusbar id="servicepane-status-bar" mousethrough="never">
                       <statusbarpanel>
                       <button class="service-pane-spring-load-button"
-                              oncommand="gServicePane.open = !gServicePane.open; this.cancel();"
+                              oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
+                                         gServicePane.open = !gServicePane.open;
+                                         SBDataSetBoolValue(key, gServicePane.open);"
                               style="min-height:16px; min-width:16px;" >
                         <observes type="dataremote" key="browser.in_media_page" boolean="true"
                                   attribute="disabled" onchange="
                                     const key = 'splitter.servicepane_splitter.was_collapsed';
                                     if (value) {
                                       /* going into media page mode */
-                                      SBDataSetBoolValue(key, gServicePane.open);
                                       gServicePane.open = true;
                                     } else {
                                       /* going out of media page */
@@ -182,7 +183,9 @@
                   <statusbar id="status-bar" mousethrough="never">
                       <statusbarpanel>
                         <button class="service-pane-spring-load-button"
-                                oncommand="gServicePane.open = !gServicePane.open; this.cancel();"
+                                oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
+                                           gServicePane.open = !gServicePane.open;
+                                           SBDataSetBoolValue(key, gServicePane.open);"
                                 style="min-height:16px; min-width:16px;" >
                         <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
                                   attribute="hidden" inverted="true"/>
