@@ -39,23 +39,21 @@ See app/content/xul/smartPlaylist.xul
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 .dialog-content-box {
-  padding:5px !important;
+
 }
 
 #smartpl_select_library
 {
-  margin: 10px 0px 0px 0px !important;
+
 }
 
 #smart_playlist_name_label
 {
-  margin-top: 7px !important; /* lines this label with it's textbox counterpart in the smart playlist builder */
 }
 
 #smart_songs_check,
 #smart_match_check
 {
-  margin-top: 0px !important; /* the align="center" of the parent needs this to have no top margin. */
 }
 
 #smart_songs_count
@@ -92,17 +90,12 @@ sb-rating {
 .smart-condition-minus,
 .smart-condition-plus
 {
-  width:28px !important;
-  min-width:0px !important;
-  padding:0;
 }
 
 .smart_condition_rangeseparator
 {
-  padding-top: 3px;
 }
 
 .smart_condition_singleunit
 {
-  padding-top: 3px;
 }

@@ -38,7 +38,7 @@ Additional styles imported directly by the first run dialog.
 /* Dialog styles. */
 #first_run_wizard {
   height: 420px;
-  width: 380px;
+  width: 420px;
 }
 
 /* Wizard page styles. */
@@ -47,7 +47,6 @@ Additional styles imported directly by the first run dialog.
 }
 
 .sb-first-run-header {
-  font-size: large;
 }
 
 .sb-first-run-checkbox-description {
@@ -56,6 +55,11 @@ Additional styles imported directly by the first run dialog.
 }
 
 /* EULA page styles. */
+.sb-first-run-eula-browser+checkbox {
+  padding-top:8px;
+  padding-bottom:8px;
+}
+
 .sb-first-run-eula-box {
   -moz-box-flex: 1;
 }
@@ -70,6 +74,9 @@ Additional styles imported directly by the first run dialog.
 }
 
 /* Import media page styles. */
+radiogroup {
+  margin-top:8px;
+}
 .sb-first-run-import-media-box {
   -moz-box-flex: 1;
 }
@@ -105,10 +112,6 @@ Additional styles imported directly by the first run dialog.
  ******************************************************************************/
 
 /* Wizard header style. */
-.wizard-header {
-  height: 30px;
-}
-
 .wizard-header-box-text {
   padding: 0;
   -moz-box-align: center;
@@ -117,13 +120,12 @@ Additional styles imported directly by the first run dialog.
 
 /* Wizard page box style. */
 .wizard-page-box {
-  padding: 10px 10px 0px 10px;
+  padding: 4px;
   margin: 0;
 }
 
 /* Wizard button styles. */
 .wizard-buttons {
-  height: 45px;
 }
 
 .wizard-buttons-btm {
@@ -167,7 +169,7 @@ button[hidewizardbutton="true"] {
 
 /* Add-ons page loading image style. */
 .sb-first-run-add-ons-loading-image {
-  list-style-image: url(chrome://songbird/skin/icons/spinner-spin.png);
+  list-style-image: url(chrome://songbird/skin/base-elements/icon-loading.png);
 }
 
 
@@ -184,7 +186,7 @@ button[hidewizardbutton="true"] {
   /* Set max-width so that item description will properly wrap. */
   /*XXXeps is there some way that wrap will work by just setting the first */
   /*XXXeps run dialog width? */
-  max-width: 343px;
+  max-width: 396px;
 }
 
 /* Add-ons page item image style. */
