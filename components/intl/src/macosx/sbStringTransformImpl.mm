@@ -82,7 +82,7 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
 			unichar c = [str characterAtIndex:current];
 			if([symbols characterIsMember:c]) {
 				NSRange r = NSMakeRange(current, 1);
-				[str replaceCharactersInRange:r withString:@" "];
+				[str replaceCharactersInRange:r withString:@""];
 			}
 		}
   }
