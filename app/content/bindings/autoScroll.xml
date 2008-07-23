@@ -332,13 +332,17 @@
         <![CDATA[
           // set the cursor according to whether the user can scroll or not
           if (this.canmousemove) {
+            var cursor = "";
             if (this.needScroll()) {
-              var cursor;
-              if (this.isVertical()) cursor = "n-resize"; else cursor = "w-resize";
-              this.overlay.setAttribute("style", "overflow: hidden; cursor: " + cursor + ";");
-            } else {
-              this.overlay.setAttribute("style", "overflow: hidden;");
-            }
+              if (this.isVertical()) {
+                cursor = "n-resize"; 
+              }
+              else { 
+                cursor = "w-resize";
+              }
+            } 
+            this.overlay.style.cursor = cursor;
+            this.overlay.style.overflow = "hidden";
           }
         ]]>
       </body>
