@@ -166,6 +166,8 @@ function sbMetadataCoverFetcher__convertBinaryToHexString(aHashData) {
 }
 
 /**
+ * TODO: Since Songbird does this same thing we should pull it out to a common
+ *       place.
  * \brief Saves image data to a file.
  * \param aImageData - Binary array of image data
  * \param aImageDataSize - size of binary array
