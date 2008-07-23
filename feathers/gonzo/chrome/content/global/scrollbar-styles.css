@@ -52,12 +52,12 @@ scrollbar {
 /*  background: url("chrome://global/skin/scrollbar/slider.gif") scrollbar;*/
 }
 scrollbar[orient="vertical"] {
-  width:12px;  
+  width:14px;  
   background-image: url("chrome://songbird/skin/base-elements/bg-scroll-vertical.png");
   background-repeat:repeat-y;
 }
 scrollbar[orient="horizontal"] {
-  height:12px;  
+  height:14px;  
   background-image: url("chrome://songbird/skin/base-elements/bg-scroll-horizontal.png");
   background-repeat:repeat-x;
 }
@@ -68,8 +68,8 @@ thumb {
   
 }
 scrollbarbutton {
-  min-width:10px !important;
-  min-height:10px !important;
+  min-width:12px !important;
+  min-height:12px !important;
   margin:1px;
   background-repeat:no-repeat;
 }
@@ -77,14 +77,19 @@ scrollbar > slider {
   padding:1px;
 } 
 
-scrollbarbutton,
+scrollbarbutton {
+  
+}
 scrollbar > slider > thumb {   
-  border:1px solid rgb(160,160,160);
+  border:1px solid gray;
   background-color:rgb(240,240,240);
   -moz-border-radius:2px;
 } 
-scrollbar > slider > thumb {   
-  background-color:rgb(200,200,200);
+scrollbar[orient="vertical"] > slider > thumb {
+  background-image: url("chrome://songbird/skin/base-elements/bg-scroll-thumb-vertical.png");
+}
+scrollbar[orient="horizontal"] > slider > thumb {
+  background-image: url("chrome://songbird/skin/base-elements/bg-scroll-thumb-horizontal.png");
 }
 
 scrollbar[orient="vertical"] > scrollbarbutton[sbattr="scrollbar-up-top"] {
@@ -110,11 +115,11 @@ scrollbar[orient="horizontal"] > scrollbarbutton[sbattr="scrollbar-down-bottom"]
 /* ::::: thumb (horizontal) ::::: */
 
 thumb[orient="vertical"] {
-  min-height: 12px;
+  min-height: 14px;
 }
 
 thumb[orient="horizontal"] {
-  min-width: 12px;
+  min-width: 14px;
 }
 
 
@@ -127,8 +132,8 @@ scrollbarbutton {
 
 scrollcorner { 
   -moz-binding: url("chrome://global/content/bindings/scrollbar.xml#scrollbar-base");
-  width: 12px;
-  height:12px;
+  width: 14px;
+  height:14px;
   cursor: default;
   background-image: url("chrome://songbird/skin/base-elements/bg-scroll-corner.png");
   background-repeat:no-repeat;
@@ -156,11 +161,11 @@ scrollbarbutton {
   background-position:center 0px;
 }
 scrollbarbutton:hover {
-  background-position:center -8px;
+  background-position:center -12px;
 }
 scrollbarbutton:active {
-  background-position:center -16px;
+  background-position:center -24px;
 }
 scrollbarbutton[disabled="true"] {
-  background-position:center -24px;
+  background-position:center -36px;
 }

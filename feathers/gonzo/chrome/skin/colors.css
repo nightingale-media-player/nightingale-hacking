@@ -162,8 +162,8 @@ toolbar {
 .servicepane-tree > treechildren::-moz-tree-cell( folder ) {
 /*  background-image: url('chrome://songbird/skin/service-pane/bg-container-node.png');
   background-repeat:repeat-x;
-  background-position:left top;*/
-  background-color:rgb(220,220,220) !important;
+  background-position:left top;
+  background-color:rgb(220,220,220) !important;*/
 }
 
 
@@ -624,14 +624,13 @@ border-left:1px solid rgb(140,140,140);
   padding:3px 8px;
 }
 
-button:focus,
-checkbox:focus,
-radio[focused="true"] {
-/*  outline:1px dotted brown !important;
-  outline-offset:0px !important;
-  -moz-outline-radius:5px !important;*/
+button:focus > .button-box,
+checkbox:focus > .checkbox-check,
+radio[focused="true"] > .radio-check{
+  outline:2px solid brown !important;
+  outline-offset:1px !important;
+  -moz-outline-radius:5px !important;
 }
-
 
 
 button,
@@ -1309,9 +1308,15 @@ label.descriptionWrap,
 
 /* Pane Selector */
 
-prefwindow > .paneSelector,
-#viewGroup
-{
+prefwindow > .paneSelector {
+  -moz-box-pack:top;
+  -moz-box-align:top;
+  border-right:1px solid gray !important;
+  background-color:rgb(220,220,220) !important;
+  -moz-border-radius:0px !important;
+}
+
+#viewGroup {
 
 }
 prefwindow > .paneSelector > radio,
@@ -1336,21 +1341,18 @@ prefwindow > .paneSelector > radio[selected="true"] > .paneButtonLabel,
 }
 
 prefwindow > .paneSelector {
-  padding:4px;
-  -moz-box-pack:center;
-  border-bottom:1px solid red !important;
+  padding:0;
 }
 
 prefwindow > .paneSelector > radio {
   list-style-image:none !important;
-  -moz-border-radius:6px;
-border:1px solid red !important;
-  background-color:pink;
   padding:2px 8px;
   margin:0;
+  -moz-box-align:left !important;
+  -moz-box-pack:left !important;
+  -moz-box-orient:horizontal !important;
 }
 prefwindow > .paneSelector > radio+radio {
-  margin-left:4px;
 }
 prefwindow > .paneSelector > radio > image {
   display:none !important;
@@ -1359,6 +1361,9 @@ prefwindow > .paneSelector > radio > label {
   padding:0;
   margin:0;
   font-size:12px;
+}
+prefwindow > .paneSelector > radio[selected="true"] {
+  background-color:white;
 }
 
 
@@ -2134,8 +2139,7 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 
 #extensionsManager:not([active="true"]) > #topStackBar > #viewGroup {
   background-image: none;
-  background-color: red;
-  border-bottom: 1px solid blue;
+  border-bottom: 1px solid gray;
 }
 
 #extensionsManager:not([active="true"]) > #topStackBar > #viewGroup > .radiogroupWrapper {
@@ -2161,12 +2165,10 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 /* Command Bar */
 #commandBarBottom {
   margin: 0px;
-  border:2px solid cyan !important;
 }
 
-#commandBarBottom button {
-  margin: 0;
-  list-style-image: url("chrome://mozapps/skin/extensions/actionbuttons.png");
+#commandBarBottom > button {
+  list-style-image: none !important;
 }
 
 #commandBarBottom button .button-icon {
@@ -2216,9 +2218,9 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 
 /* List Items */
 richlistitem {
-  padding-top: 10px;
+  padding:4px;
   min-height: 24px;
-  border-bottom: 1px dotted green !important;
+  border-top: 1px solid gray !important;
 }
 
 richlistitem[isDisabled="true"] .addonIcon {
@@ -2241,7 +2243,7 @@ richlistitem[selected="true"]:not([opType]) {
 }
 
 richlistitem[selected="true"]:not([opType]) .descriptionCrop {
-/*  display: none;*/
+  display: none;
 }
 
 .addonName {
@@ -2302,13 +2304,11 @@ richlistitem[selected="true"]:not([opType]) .descriptionCrop {
   display: none;
 }
 */
-richlistitem[availableUpdateURL][updateable="true"] .updateBadge,
-richlistitem[availableUpdateURL][updateable="true"] .updateAvailableBox,
-richlistitem[compatible="false"] .notifyBadge,
-richlistitem[providesUpdatesSecurely="false"] .notifyBadge,
-richlistitem[blocklisted="true"] .notifyBadge,
-richlistitem[satisfiesDependencies="false"] .notifyBadge {
-  display: -moz-box;
+
+.updateBadge,
+.updateAvailableBox,
+.notifyBadge {
+  display: none;
 }
 
 /* Selected Add-on buttons
@@ -2330,29 +2330,6 @@ richlistitem[satisfiesDependencies="false"] .notifyBadge {
 }
 
 /* Selected Add-on status messages and images */
-richlistitem[compatible="true"] .incompatibleBox,
-richlistitem[providesUpdatesSecurely="true"] .insecureUpdateBox,
-richlistitem[satisfiesDependencies="true"] .needsDependenciesBox,
-richlistitem[blocklisted="false"] .blocklistedBox,
-richlistitem[opType="needs-uninstall"] .blocklistedBox,
-richlistitem[opType="needs-uninstall"] .incompatibleBox,
-richlistitem[opType="needs-uninstall"] .needsDependenciesBox,
-richlistitem[opType="needs-uninstall"] .blocklistedBox {
-  display: none;
-}
-
-richlistitem[loading="true"] .updateBadge {
-  display: -moz-box;
-  width: 16px;
-  height: 16px;
-  list-style-image: url("chrome://songbird/skin/base-elements/icon-loading.png") !important;
-}
-
-.addonThrobber {
-  width: 16px;
-  height: 16px;
-  list-style-image: url("chrome://songbird/skin/base-elements/icon-loading.png") !important;
-}
 
 .selectedStatusMsgs > hbox {
 }
@@ -2399,65 +2376,13 @@ richlistitem[opType="needs-uninstall"] .notifyBadge {
 }
 
 #viewGroup radio[selected="true"] {
-  background-color: green !important;
-  color: black;
+
 }
 
 .viewButtonIcon {
   display:none;
 }
 
-
-/*
-
-.viewButtonIcon {
-  width: 0px;
-  height: 0px;
-}
-
-radio#extensions-view {
-  -moz-image-region: rect(0px, 32px,  32px, 0px)
-}
-radio#extensions-view:hover, radio#extensions-view[selected="true"]  {
-  -moz-image-region: rect(32px, 32px,  64px, 0px)
-}
-
-radio#themes-view {
-  -moz-image-region: rect(0px, 64px,  32px, 32px)
-}
-radio#themes-view:hover, radio#themes-view[selected="true"]  {
-  -moz-image-region: rect(32px, 64px,  64px, 32px)
-}
-
-radio#locales-view {
-  -moz-image-region: rect(0px, 96px,  32px, 64px)
-}
-radio#locales-view:hover, radio#locales-view[selected="true"]  {
-  -moz-image-region: rect(32px, 96px,  64px, 64px)
-}
-
-radio#plugins-view {
-  -moz-image-region: rect(0px, 128px, 32px, 96px)
-}
-radio#plugins-view:hover, radio#plugins-view[selected="true"] {
-  -moz-image-region: rect(32px, 128px, 64px, 96px)
-}
-
-radio#updates-view {
-  -moz-image-region: rect(0px, 160px, 32px, 128px)
-}
-radio#updates-view:hover, radio#updates-view[selected="true"] {
-  -moz-image-region: rect(32px, 160px, 64px, 128px)
-}
-
-radio#installs-view {
-  -moz-image-region: rect(0px, 192px, 32px, 160px)
-}
-radio#installs-view:hover, radio#installs-view[selected="true"] {
-  -moz-image-region: rect(32px, 192px, 64px, 160px)
-}
-
-*/
 
 /* Update view checkbox */
 .includeUpdate {
@@ -2508,4 +2433,146 @@ richlistitem[selected="true"] .includeUpdate {
 #infoDisplay p {
   text-align: justify;
   margin: 0 0 0.7em 0;
+}
+
+
+
+#filterRow {
+  background-color: rgb(220,220,220) !important;
+  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+ min-height:29px;
+ border-bottom:1px solid gray;
+}
+
+#filterRow,
+#configTree {
+  margin-top:0px !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+richlistbox {
+  border:1px solid gray;
+}
+
+#extensions-view,
+#locales-view,
+#updates-view,
+#installs-view {
+/*  display:block !important;*/
+}
+#addonsMsg+vbox {
+  background-image: url(chrome://songbird/skin/window/bg-button-box.png);
+  background-repeat:repeat-x;
+  background-position:center top;
+  background-color:rgb(225,225,225);
+  padding:0 4px;
+}
+#viewGroup {
+  -moz-box-pack:center;
+  border:none;
+  -moz-border-radius:0px !important;
+    background-color:rgb(225,225,225);
+  padding:6px 6px 0px 6px;
+  
+}
+#extensionsView {
+  margin:0px;
+  border:none !important;
+}
+#viewGroup > radio {
+  border:1px solid gray !important;
+  background-color:rgb(200,200,200) !important;
+  -moz-border-radius-topleft:3px;
+  -moz-border-radius-topright:3px;
+  padding:2px 8px;
+  margin:0 0 -1px 0;
+}
+#viewGroup > radio:hover {
+  background-color:pink !important;
+  border:1px solid gray !important;
+}
+#viewGroup > radio[selected="true"] {
+  background-color:white !important;
+  border:1px solid gray !important;
+  border-bottom:1px solid rgb(200,200,200) !important;
+}
+#viewGroup > radio+radio {
+  margin-left:1px !important;
+}
+
+#viewGroup > radio > .viewButtonLabel {
+  padding:0px;
+  margin:0px 4px !important;
+}
+
+.selectedButtons > button {
+}
+.selectedButtons > button > .button-box > .button-text {
+  color:rgb(40,40,40);
+  font-size:9px;
+  padding:0;
+  margin:0;
+}
+richlistitem:first-child,
+template+richlistitem {
+  border-top:none !important;
+}
+#paneAddons {
+  background-color:rgb(225,225,225);
+}
+.prefWindow-dlgbuttons {
+  margin:0px !important;
+} 
+#BrowserPreferences {
+-moz-box-orient:horizontal !important;
+}
+
+.insecureUpdateBox {
+  background-color:blue;
+}
+richlistitem[providesUpdatesSecurely="true"] {
+}
+
+richlistitem[loading="true"] .updateBadge {
+  display: -moz-box;
+  width: 16px;
+  height: 16px;
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-loading.png") !important;
+}
+
+.addonThrobber {
+  width: 16px;
+  height: 16px;
+  list-style-image: url("chrome://songbird/skin/base-elements/icon-loading.png") !important;
+}
+
+
+
+
+
+/*  first run dialog  */
+.sb-first-run-eula-browser {
+  border:1px solid gray;
+}
+.wizard-header {
+  background-color: rgb(220,220,220);
+  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  border-bottom:1px solid gray;
+}
+.sb-first-run-add-ons-listbox {
+  background-color:white;
 }

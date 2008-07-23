@@ -64,10 +64,12 @@ sb-status-progressmeter {
   -moz-box-align: center;
 }
 
+/*
 statusbarpanel,
 sb-player-numplaylistitems-label,
-sb-player-scanning-label {
-  margin:0 4px;
+sb-player-scanning-label {*/
+statusbar > * {
+  margin:0 4px !important;
 }
 
 statusbarpanel {

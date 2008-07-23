@@ -125,6 +125,7 @@ tab[first-tab="true"] > .tab-close-button,
   -moz-border-radius:0px !important;
   padding: 0;
   border: none;
+  min-width:14px;
 }
 
 .tabs-alltabs-button:hover {

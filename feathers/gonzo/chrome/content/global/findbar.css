@@ -16,6 +16,7 @@ findbar {
   
   padding:0 0 1px 0;
   background-color:rgb(220,220,220);
+  border-bottom:1px solid gray;
 }
 
 findbar label,

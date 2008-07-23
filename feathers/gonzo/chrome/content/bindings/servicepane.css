@@ -147,7 +147,6 @@ Imported by bindings.css or directly into feathers.
 .servicepane-tree > treechildren::-moz-tree-image( folder closed ) {
   list-style-image: url(chrome://songbird/skin/service-pane/icon-folder-closed.png) ;
 }
-*/
 
 
 
@@ -158,3 +157,4 @@ Imported by bindings.css or directly into feathers.
 .servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
   border-bottom:1px solid green !important;
 }
+*/

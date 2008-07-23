@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
-<?xml-stylesheet href="chrome://gonzo-dev/content/css/mainplayer.css" type="text/css"?>
+<?xml-stylesheet href="chrome://gonzo/content/css/mainplayer.css" type="text/css"?>
 
 <!DOCTYPE window [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">

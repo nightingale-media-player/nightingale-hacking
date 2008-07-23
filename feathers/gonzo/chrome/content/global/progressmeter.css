@@ -49,6 +49,7 @@ sb-status-progressmeter {
   min-width: 100px;
   min-height:12px;
   border:1px solid gray;
+  margin:4px;
 }
 .progress-bar {
   background-image: url(chrome://songbird/skin/base-elements/bg-progressbar-progress.png);

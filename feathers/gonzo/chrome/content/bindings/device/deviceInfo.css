@@ -169,7 +169,7 @@ tabpanels {
   min-width:320px;
   max-width:320px;
 }
-tabpanel > *{
+.device-tab-content tabpanel > *{
   -moz-box-pack:center;
   -moz-box-align:top;
   -moz-box-orient:horizontal !important;
