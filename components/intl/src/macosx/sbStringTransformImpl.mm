@@ -56,8 +56,6 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
 	NSMutableString *str = [[NSMutableString alloc] initWithCharacters:aInput.BeginReading() 
 																								  length:aInput.Length()];
 	
-	NSLog(@"original string: %@", str);
-	
   if(aTransformFlags & sbIStringTransform::TRANSFORM_LOWERCASE) {
 		NSString *lcaseStr = [str lowercaseString];
 		str = [NSString stringWithString:lcaseStr];
@@ -87,8 +85,6 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
 		}
   }
 	
-	NSLog(@"transformed string: %@", str);
-	
 	unichar *buf = (unichar *) malloc(sizeof(unichar) * [str length]);
 	NS_ENSURE_TRUE(buf, NS_ERROR_OUT_OF_MEMORY);
 	
@@ -96,6 +92,7 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
 	 
   _retval.Assign(buf, [str length]);
 	free(buf);
+	[str release];
 		
 	return NS_OK;
 }
