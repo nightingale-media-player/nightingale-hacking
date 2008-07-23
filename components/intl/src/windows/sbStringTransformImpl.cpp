@@ -78,6 +78,13 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
 {
   DWORD dwFlags = MakeFlags(aTransformFlags);
 
+  if(!(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS)) {
+
+  }
+  else {
+
+  }
+
   LPWSTR wszJunk = {0};
   int requiredBufferSize = ::LCMapStringW(LOCALE_USER_DEFAULT,
                                           dwFlags,
