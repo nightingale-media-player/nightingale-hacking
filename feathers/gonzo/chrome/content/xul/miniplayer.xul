@@ -108,7 +108,7 @@
               <sb-player-seek-slider class="faceplate-seekbar" flex="1" orient="horizontal"  maxpos="100" />
             </stack>
             <hbox id="track_info" flex="1" class="mini" mousethrough="always">
-              <sb-autoscroll id="sb-faceplate-autoscroll-box" class="faceplate-autoscroll-box" fitalign="left" flex="1" mousethrough="always">
+              <sb-autoscroll id="sb-faceplate-autoscroll-box" class="faceplate-autoscroll-box" fitalign="left" flex="1" canmousemove="false" mousethrough="always">
                 <sb-player-title-label class="faceplate-text" autotip="1" mousethrough="always"/>
                 <sb-player-artist-label class="faceplate-text" autotip="1" mousethrough="always"/>
                 <sb-player-album-label class="faceplate-text" autotip="1" mousethrough="always" />

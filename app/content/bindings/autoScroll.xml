@@ -80,6 +80,35 @@
          this.removeMutationListeners();
        ]]>
      </destructor>
+    
+     <property name="canmousemove">
+       <getter>
+         <![CDATA[
+           var canMove = true;
+           var attrValue = this.getAttribute("canmousemove");
+           if (attrValue) {
+             canMove = (attrValue == "true");
+           }
+         
+           return canMove;
+         ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this.setAttribute("canmousemove", val);
+            
+            // If the view is currently animiating, reset the mousethrough values.
+            if (this.m_scrollingInterval) {
+              if (!val) {
+                this.removeAttribute("mousethrough");
+              }
+              else {
+                this.setAttribute("mousethrough", "false");
+              }
+            }
+          ]]>
+        </setter>
+     </property>
      
      <method name="reset">
        <body>
@@ -252,7 +281,10 @@
          this.setAlignment();
          this.setCursor();
          this.startAnimationTimer();
-         this.setAttribute("mousethrough", "never");
+         
+         if (this.canmousemove) {
+           this.setAttribute("mousethrough", "never");
+         }
         ]]>
        </body>
      </method>
@@ -267,7 +299,10 @@
          this.setAlignment();
          this.setCursor();
          this.stopAnimationTimer();
-         this.removeAttribute("mousethrough");
+         
+         if (this.canmousemove) {
+           this.removeAttribute("mousethrough");
+         }
         ]]>
        </body>
      </method>
@@ -296,12 +331,14 @@
       <body>
         <![CDATA[
           // set the cursor according to whether the user can scroll or not
-          if (this.needScroll()) {
-            var cursor;
-            if (this.isVertical()) cursor = "n-resize"; else cursor = "w-resize";
-            this.overlay.setAttribute("style", "overflow: hidden; cursor: " + cursor + ";");
-          } else {
-            this.overlay.setAttribute("style", "overflow: hidden;");
+          if (this.canmousemove) {
+            if (this.needScroll()) {
+              var cursor;
+              if (this.isVertical()) cursor = "n-resize"; else cursor = "w-resize";
+              this.overlay.setAttribute("style", "overflow: hidden; cursor: " + cursor + ";");
+            } else {
+              this.overlay.setAttribute("style", "overflow: hidden;");
+            }
           }
         ]]>
       </body>
@@ -499,7 +536,8 @@
    <handlers>
      <handler event="mousedown" phase="capturing">
       <![CDATA[
-       this.beginManualMove(event);
+       if (this.canmousemove)
+         this.beginManualMove(event);
       ]]>
      </handler>
    </handlers>
