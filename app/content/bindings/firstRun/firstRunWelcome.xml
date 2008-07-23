@@ -57,8 +57,14 @@
 
       <xul:vbox anonid="container_box" class="sb-first-run-welcome-box">
 
+        <!-- Header. -->
+        <xul:label class="sb-first-run-header"
+                   value="&first_run.welcome.header.label;"/>
+
         <!-- First-run welcome image. -->
-        <xul:image class="sb-first-run-welcome-image"/>
+        <xul:vbox anonid="image_box" class="sb-first-run-welcome-image-box">
+          <xul:image class="sb-first-run-welcome-image"/>
+        </xul:vbox>
 
         <!-- First-run welcome text. -->
         <xul:description>
@@ -68,7 +74,7 @@
           &first_run.welcome.description.line2;
         </xul:description>
 
-      </xul:vbox>
+      </xul:vbox> <!-- container_box -->
 
     </content>
 

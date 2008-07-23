@@ -530,36 +530,36 @@
 
 <!-- First-run add-ons entities. -->
 <!ENTITY first_run.add_ons.header.label      "Recommended Add-ons">
-<!ENTITY first_run.add_ons.description.line1 "Add-ons extend &brandShortName;'s functionality, allowing you to customize your media player experience.">
-<!ENTITY first_run.add_ons.description.line2 "They can integrate with other applications and services, support connecting to external devices, change the appearance and more!">
+<!ENTITY first_run.add_ons.description.line1 "Add-ons extend &brandShortName;'s functionality, allowing you to customize your media player experience. The options below are strongly recommended.">
+<!ENTITY first_run.add_ons.description.line2 "Add-ons can integrate with other applications and services, support connecting to external devices, change the application's appearance and more! You can download additional ones at the &brandShortName; Add-ons site.">
 <!ENTITY first_run.add_ons.loading.label     "Retrieving recommended add-ons.">
 <!ENTITY first_run.add_ons.load_failed.label "Unable to retrieve recommended add-ons.">
 
 <!-- First-run eula entities. -->
+<!ENTITY first_run.eula.header.label          "License Agreement">
 <!ENTITY first_run.eula.accept_checkbox.label "I have read and accepted the terms of this license.">
 
 <!-- First-run feedback entities. -->
 <!ENTITY first_run.feedback.header.label        "Help Make Songbird Better">
-<!ENTITY first_run.feedback.description         "Would you help us make &brandShortName; better by sending us feedback in the form of metrics and surveys on how you use the application?">
-<!ENTITY first_run.feedback.metrics.label       "Collect and send &brandShortName; usage metrics">
+<!ENTITY first_run.feedback.description         "Would you help us make &brandShortName; better by sending us feedback in the form of anonymous metrics on how you use the application?">
+<!ENTITY first_run.feedback.metrics.label       "Collect and send my metrics to the &brandShortName; team">
 <!ENTITY first_run.feedback.metrics.description "Metrics are completely anonymous and no personal information is collected.">
-<!ENTITY first_run.feedback.survey.label        "Contact me for short surveys">
-<!ENTITY first_run.feedback.survey.description  "We will contact you from time to time with simple, anonymous surveys on how we&apos;re doing through the application.">
 
 <!-- First-run import media entities. -->
 <!ENTITY first_run.import_media.header.label                 "Import Media">
-<!ENTITY first_run.import_media.description                  "This page will walk you through importing media files into &brandShortName; by attempting to detect your local media. Once Songbird launches you can add additional media in a variety of ways.">
-<!ENTITY first_run.import_media.radio.itunes.label           "Migrate my iTunes Library">
+<!ENTITY first_run.import_media.description                  "Select what media you'd like to import into &brandShortName;. Once &brandShortName; launches you can add additional media in a variety of ways.">
+<!ENTITY first_run.import_media.radio.itunes.label           "Import my iTunes Library">
 <!ENTITY first_run.import_media.radio.scan_directories.label "Scan directories on my computer">
-<!ENTITY first_run.import_media.radio.dont_import.label      "Don't import media now">
+<!ENTITY first_run.import_media.radio.dont_import.label      "Do not import media">
 <!ENTITY first_run.import_media.itunes.description           "It appears you have iTunes installed. Would you like to import your library into &brandShortName;?">
-<!ENTITY first_run.import_media.itunes.keep_in_sync.label    "Keep &brandShortName; in sync with iTunes">
+<!ENTITY first_run.import_media.itunes.keep_in_sync.label    "Keep &brandShortName; up-to-date with changes to my iTunes library">
 <!ENTITY first_run.import_media.scan_directories.description "Would you like &brandShortName; to attempt to import media by scanning specific directories on your computer?">
 <!ENTITY first_run.import_media.scan_directories.watch.label "Watch this folder for changes">
 
 <!-- First-run welcome entities. -->
-<!ENTITY first_run.welcome.description.line1 "&brandShortName; is a desktop media player mashed-up with the Web.">
-<!ENTITY first_run.welcome.description.line2 "This assistant handles the initial configuration of &brandShortName; and provides a basic introduction to the application&apos;s functionality.">
+<!ENTITY first_run.welcome.header.label      "Welcome to &brandShortName;">
+<!ENTITY first_run.welcome.description.line1 "&brandShortName; is a highly customizable alternative to traditional desktop media players.">
+<!ENTITY first_run.welcome.description.line2 "This assistant provides a quick and efficient way to get &brandShortName; up and running.">
 
 <!-- Import library dialog and preference pane entities. -->
 <!ENTITY import_library.dialog.title                      "Import a library">

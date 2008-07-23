@@ -58,21 +58,27 @@
      *
      *********************************************************************** -->
 
-    <xbl:content
-      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <content>
 
-      <vbox anonid="container_box" class="sb-first-run-eula-box">
+      <xul:vbox anonid="container_box" class="sb-first-run-eula-box">
 
-        <browser anonid="eula_browser"
-                 class="sb-first-run-eula-browser"
-                 src="chrome://songbird/content/html/eula.html"/>
-        <checkbox anonid="accept_checkbox"
-                  label="&first_run.eula.accept_checkbox.label;"
-                  oncommand="_widgetSvc.doAcceptChanged();"/>
+        <!-- Header. -->
+        <xul:label class="sb-first-run-header"
+                   value="&first_run.eula.header.label;"/>
 
-      </vbox>
+        <!-- EULA browser. -->
+        <xul:browser anonid="eula_browser"
+                     class="sb-first-run-eula-browser"
+                     src="chrome://songbird/content/html/eula.html"/>
 
-    </xbl:content>
+        <!-- Accept EULA checkbox. -->
+        <xul:checkbox anonid="accept_checkbox"
+                      label="&first_run.eula.accept_checkbox.label;"
+                      oncommand="_widgetSvc.doAcceptChanged();"/>
+
+      </xul:vbox> <!-- container_box -->
+
+    </content>
 
 
     <!-- ***********************************************************************

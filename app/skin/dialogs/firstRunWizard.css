@@ -50,11 +50,6 @@ Additional styles imported directly by the first run dialog.
   font-size: large;
 }
 
-.wizard-page-box {
-  padding: 10px;
-  margin: 0;
-}
-
 .sb-first-run-checkbox-description {
   font-size: smaller;
   margin-top: 0;
@@ -91,6 +86,9 @@ Additional styles imported directly by the first run dialog.
 /* Welcome page styles. */
 .sb-first-run-welcome-box {
   -moz-box-flex: 1;
+}
+
+.sb-first-run-welcome-image-box {
   -moz-box-align: center;
   -moz-box-pack: center;
 }
@@ -99,7 +97,42 @@ Additional styles imported directly by the first run dialog.
   list-style-image: url(chrome://songbird-branding/skin/first-run-welcome.png);
 }
 
+
+/* *****************************************************************************
+ *
+ * General first run wizard styles.
+ *
+ ******************************************************************************/
+
+/* Wizard header style. */
+.wizard-header {
+  height: 30px;
+}
+
+.wizard-header-box-text {
+  padding: 0;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+/* Wizard page box style. */
+.wizard-page-box {
+  padding: 10px 10px 0px 10px;
+  margin: 0;
+}
+
 /* Wizard button styles. */
+.wizard-buttons {
+  height: 45px;
+}
+
+.wizard-buttons-btm {
+  padding: 0;
+  margin: 0;
+  -moz-box-align: center;
+  -moz-box-flex: 1;
+}
+
 button[hidewizardbutton="true"] {
   display: none;
 }
