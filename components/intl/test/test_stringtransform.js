@@ -40,7 +40,7 @@ function runTest() {
   assertEqual(normalizeTestOut, normalizeTestExpectedOut);
 	
 	var symbolsTestIn = "I have $5";
-	var symbolsTestExpectedOut = "I have  5";
+	var symbolsTestExpectedOut = "I have 5";
 	
 	var symbolsTestOut = stringTransform.normalizeString("",
 																	Ci.sbIStringTransform.TRANSFORM_IGNORE_SYMBOLS,
