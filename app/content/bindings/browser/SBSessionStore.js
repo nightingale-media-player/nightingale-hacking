@@ -103,18 +103,23 @@ var SBSessionStore = {
     var tabs = _tabState;
     
     if ( !tabs ) {
-      // either first run, or pref missing/corrupt.
-      // let's just go to the main library
-      var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                     .getService(Ci.sbILibraryManager);
-      var mainLib = libMgr.mainLibrary;
-      aTabBrowser.loadMediaList(mainLib);
-      
       if (!Application.prefs.getValue(PREF_FIRSTRUN, false)) {
-        // Also load the first-run page in the background.
+        // First run, load the dummy page in the first tab, and the welcome
+        // page in the second.  The dummy page will get replaced in mainWinInit.js
+        // when media scan is done / skipped.
+        const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
+        aTabBrowser.loadURI(placeholderURL, null, null, null, '_media');
+        
         var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, "about:blank");
         aTabBrowser.loadOneTab(firstrunURL, null, null, null, true);
         Application.prefs.setValue(PREF_FIRSTRUN, true);
+      } else {
+        // tab state pref missing/corrupt.
+        // let's just go to the main library
+        var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                       .getService(Ci.sbILibraryManager);
+        var mainLib = libMgr.mainLibrary;
+        aTabBrowser.loadMediaList(mainLib);
       }
     } else {
   

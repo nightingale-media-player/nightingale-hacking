@@ -215,12 +215,21 @@ function SBPostOverlayLoad()
 
 function SBFirstRunScanDirectories()
 {
+  var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                 .getService(Ci.sbILibraryManager);
+
   // Do nothing if not set to scan directories.
   var firstRunDoScanDirectory =
         Application.prefs.getValue("songbird.firstrun.do_scan_directory",
                                    false);
-  if (!firstRunDoScanDirectory)
+  if (!firstRunDoScanDirectory) {
+    const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
+    if (gBrowser.selectedTab.linkedBrowser.currentURI.spec == placeholderURL) {
+      // assume this means this is first run :)
+      gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
+    }
     return;
+  }
 
   // Don't do a first-run directory scan again.
   Application.prefs.setValue("songbird.firstrun.do_scan_directory", false);
@@ -236,17 +245,10 @@ function SBFirstRunScanDirectories()
     firstRunScanDirectory = null;
   }
   
+
   // Start scanning.  Report error if scan directory does not exist.
   if (firstRunScanDirectory && firstRunScanDirectory.exists()) {
-    // hide the media page while doing the metadata scan
-    const kOverlayPage = "chrome://songbird/content/mediapages/firstrun.xul";
-    var scanJob = null;
-    
-    if (gBrowser.selectedTab.mediaListView) {
-      gBrowser.loadURI(kOverlayPage, null, null, null, gBrowser.selectedTab);
-    }
-
-    scanJob = SBScanMedia(null, firstRunScanDirectory);
+    var scanJob = SBScanMedia(null, firstRunScanDirectory);
     if (scanJob) {
       scanJob.addJobProgressListener(function firstRunLibraryHider(){
         // only do anything on complete
@@ -254,14 +256,17 @@ function SBFirstRunScanDirectories()
           return;
         }
         
-        // unhook the listener, and load the old page again
+        // unhook the listener
         scanJob.removeJobProgressListener(arguments.callee);
-        gBrowser.selectedTab.linkedBrowser.goBack();
+        // load the main library in the media tab / first tab
+        gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
       });
     }
   } else {
     Cu.reportError("Scan directory does not exist: \"" +
                    firstRunScanDirectoryPath + "\"\n");
+    // load the main library in the media tab / first tab
+    gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
   }
 }
 
