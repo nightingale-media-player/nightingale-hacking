@@ -203,9 +203,12 @@ firstRunImportMediaSvc.prototype = {
     // Get the currently selected scan directory.
     var scanDirectoryTextBox = this._getElement("scan_directory_textbox");
     var scanPath = scanDirectoryTextBox.value;
-    var scanDir = Cc["@mozilla.org/file/local;1"]
-                    .createInstance(Ci.nsILocalFile);
-    scanDir.initWithPath(scanPath);
+    var scanDir = null;
+    if (scanPath) {
+      scanDir = Cc["@mozilla.org/file/local;1"]
+                  .createInstance(Ci.nsILocalFile);
+      scanDir.initWithPath(scanPath);
+    }
 
     // Set up a file picker for browsing.
     var filePicker = Cc["@mozilla.org/filepicker;1"]

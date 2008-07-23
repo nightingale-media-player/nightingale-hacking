@@ -519,7 +519,7 @@ function SBScanMedia( aParentWindow, aScanDirectory )
     }
     var res = fp.show();
     if ( res != nsIFilePicker.returnOK )
-      return;
+      return null; /* no job */
     scanDirectory = fp.file;
   }
 
@@ -536,7 +536,9 @@ function SBScanMedia( aParentWindow, aScanDirectory )
     var directoryArray = ArrayConverter.nsIArray([scanDirectory]);
     var job = importer.import(directoryArray);
     SBJobUtils.showProgressDialog(job, window);
+    return job;
   }
+  return null; /* no job - but unreachable */
 }
 
 /** Legacy function **/

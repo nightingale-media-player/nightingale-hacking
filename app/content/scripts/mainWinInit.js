@@ -235,10 +235,30 @@ function SBFirstRunScanDirectories()
   } catch (ex) {
     firstRunScanDirectory = null;
   }
-
+  
   // Start scanning.  Report error if scan directory does not exist.
   if (firstRunScanDirectory && firstRunScanDirectory.exists()) {
-    SBScanMedia(null, firstRunScanDirectory);
+    // hide the media page while doing the metadata scan
+    const kOverlayPage = "chrome://songbird/content/mediapages/firstrun.xul";
+    var scanJob = null;
+    
+    if (gBrowser.selectedTab.mediaListView) {
+      gBrowser.loadURI(kOverlayPage, null, null, null, gBrowser.selectedTab);
+    }
+
+    scanJob = SBScanMedia(null, firstRunScanDirectory);
+    if (scanJob) {
+      scanJob.addJobProgressListener(function firstRunLibraryHider(){
+        // only do anything on complete
+        if (scanJob.status == Ci.sbIJobProgress.STATUS_RUNNING) {
+          return;
+        }
+        
+        // unhook the listener, and load the old page again
+        scanJob.removeJobProgressListener(arguments.callee);
+        gBrowser.selectedTab.linkedBrowser.goBack();
+      });
+    }
   } else {
     Cu.reportError("Scan directory does not exist: \"" +
                    firstRunScanDirectoryPath + "\"\n");

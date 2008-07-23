@@ -103,17 +103,18 @@ var SBSessionStore = {
     var tabs = _tabState;
     
     if ( !tabs ) {
+      // either first run, or pref missing/corrupt.
+      // let's just go to the main library
+      var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                     .getService(Ci.sbILibraryManager);
+      var mainLib = libMgr.mainLibrary;
+      aTabBrowser.loadMediaList(mainLib);
+      
       if (!Application.prefs.getValue(PREF_FIRSTRUN, false)) {
-        // If we have never run the app before, load this keen stuff!@
+        // Also load the first-run page in the background.
         var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, "about:blank");
-        aTabBrowser.loadURI(firstrunURL, null, null, null, '_media');
+        aTabBrowser.loadOneTab(firstrunURL, null, null, null, true);
         Application.prefs.setValue(PREF_FIRSTRUN, true);
-      } else {
-        // let's just go to the main library
-        var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                       .getService(Ci.sbILibraryManager);
-        var mainLib = libMgr.mainLibrary;
-        aTabBrowser.loadMediaList(mainLib);
       }
     } else {
   
@@ -217,7 +218,7 @@ var SBSessionStore = {
     // tell the tab browser we switched tabs so it can update state correctly
     var selectEvent = document.createEvent("Events");
     selectEvent.initEvent("select", true, true);
-    aTabBrowser.dispatchEvent(selectEvent);
+    aTabBrowser.tabStrip.dispatchEvent(selectEvent);
   },
   
   tabStateRestored: false

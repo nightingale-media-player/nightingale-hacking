@@ -295,7 +295,10 @@ SBJobUtils.JobBase.prototype = {
    */  
   notifyJobProgressListeners: function Job_notifyJobProgressListeners() {
     var thisJob = this;
-    this._listeners.forEach( function (listener) {
+    // need to clone the array, otherwise removing one in the middle gets
+    // things confused
+    var listeners = [].concat(this._listeners);
+    listeners.forEach( function (listener) {
       try {
         listener.onJobProgress(thisJob);
       } catch (e) {
