@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay [
+<!ENTITY % albumartmanagerDTD SYSTEM "chrome://albumartmanager/locale/albumartmanager.dtd">
+%albumartmanagerDTD;
+]>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         id="songbird_menu_overlay"
+         xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript"
+          src="chrome://albumartmanager/content/scripts/overlayMenu.js"/>
+
+  <menupopup id="menu_ToolsPopup">
+    <menuseparator insertbefore="devToolsSeparator" />
+    <menuitem 
+      label="&albumartmanager.menu.label;" 
+      insertbefore="devToolsSeparator"
+      oncommand="openAlbumArtManager()"/>
+  </menupopup>
+
+</overlay>

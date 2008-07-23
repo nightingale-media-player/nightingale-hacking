@@ -1,0 +1,34 @@
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.songbirdnest.com
+# 
+# For information about the licensing and copyright of this Add-On please
+# contact POTI, Inc. at customer@songbirdnest.com.
+#
+
+DEPTH     = ../../../..
+topsrcdir = @top_srcdir@
+srcdir    = @srcdir@
+VPATH     = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sbAlbumArtService.js \
+                          $(srcdir)/sbLibraryScanner.js \
+                          $(srcdir)/sbCoverDownloader.js \
+                          $(srcdir)/sbCoverScanner.js \
+                          $(srcdir)/sbFileCoverFetcher.js \
+                          $(srcdir)/sbAmazonCoverFetcher.js \
+                          $(srcdir)/sbMetadataCoverFetcher.js \
+                          $(NULL)
+
+TARGET_COMPONENTS_DIR = ../.xpistage/components
+
+include $(topsrcdir)/build/rules.mk
+
+all:: extinstall
+
+extinstall:
+	$(MKDIR) -p $(TARGET_COMPONENTS_DIR)
+	$(CP) -f $(EXTRA_SCRIPT_COMPONENTS) $(TARGET_COMPONENTS_DIR)
+

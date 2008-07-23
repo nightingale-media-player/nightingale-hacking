@@ -1,0 +1,40 @@
+#
+# Copyright(c) 2005-2008 POTI, Inc.
+# http://www.songbirdnest.com
+#
+# For information about the licensing and copyright of this Add-On please
+# contact POTI, Inc. at customer@songbirdnest.com.
+#
+
+DEPTH     = ../../..
+topsrcdir = @top_srcdir@
+srcdir    = @srcdir@
+VPATH     = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+SUBDIRS = public \
+          src \
+          defaults \
+          $(NULL)
+
+# Note any changes here need to be done in the install.rdf.in
+# the substitution sucks for the EXTENSION_VER keeps making it
+# maj.min.0+dev instead of the maj.min.min I want.
+EXTENSION_NAME = albumartmanager
+EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
+EXTENSION_STAGE_DIR = ./.xpistage
+EXTENSION_BUILD_ID = $(EXTENSION_NAME)-$(EXTENSION_VER)
+EXTENSION_VER := 1.5.0
+
+XPI_NAME = $(EXTENSION_BUILD_ID)
+
+JAR_MANIFEST = jar.mn
+JAR_TARGET_DIR = $(EXTENSION_STAGE_DIR)/chrome
+
+# Set this to 1 to install the extension
+ifdef DEBUG
+INSTALL_EXTENSION = 1
+endif
+
+include $(topsrcdir)/build/rules.mk

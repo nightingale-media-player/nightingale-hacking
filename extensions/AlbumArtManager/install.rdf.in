@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<!-- ***************************************************************************
+ *******************************************************************************
+ *
+ * Copyright(c) 2005-2008 POTI, Inc.
+ * http://songbirdnest.com
+ *
+ * For information about the licensing and copyright of this Add-On please
+ * contact POTI, Inc. at customer@songbirdnest.com.
+ *
+ *******************************************************************************
+ *
+ * Install file for the AlbumArtManager extension.
+ *
+ *******************************************************************************
+ *************************************************************************** -->
+
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+
+    <!-- Songbird target application. -->
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>0.6pre</em:minVersion>
+        <em:maxVersion>0.7pre</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:id>albumartmanager@songbirdnest.com</em:id>
+    <em:name>Album Art Manager</em:name>
+    <em:description>Album Art Manager for Songbird.</em:description>
+    <em:creator>Steven Bengtson</em:creator>
+    <em:version>1.5.0</em:version>
+    <em:iconURL>chrome://albumartmanager/skin/PrefsIcon.png</em:iconURL>
+    <em:optionsURL>chrome://albumartmanager/content/xul/openPrefs.xul</em:optionsURL>
+
+    <em:type>2</em:type>
+  </Description>
+</RDF>
+

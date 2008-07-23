@@ -1,0 +1,46 @@
+<!ENTITY albumartmanager.title  "Album Art Manager" >
+<!ENTITY albumartmanager.menu.label "Album Art Manager" >
+
+<!ENTITY albumartmanager.menu.covers.label "Covers" >
+<!ENTITY albumartmanager.menu.clear  "Clear artwork" >
+<!ENTITY albumartmanager.menu.preferences "Open Preferences" >
+<!ENTITY albumartmanager.menu.covers.close "Close" >
+
+<!ENTITY albumartmanager.status.loading "Loading albums..." >
+
+<!ENTITY albumartmanager.nowplaying.label "Current Album Cover" >
+<!ENTITY albumartmanager.selected.label "Selected Album Cover" >
+
+
+<!ENTITY albumartmanager.prefpane.label "Album Art" >
+<!ENTITY albumartmanager.notification.groupbox.label "Track Change Notification">
+<!ENTITY albumartmanager.notification.label "Display notification on track changes." >
+<!ENTITY albumartmanager.scan.groupbox.label "Background cover scanner" >
+<!ENTITY albumartmanager.scan.label "Enable the background cover scanner" >
+<!ENTITY albumartmanager.scan.prioritybutton.label "Fetcher Priorities">
+<!ENTITY albumartmanager.country.label "Country">
+<!ENTITY albumartmanager.country.name.usa "United States of America">
+<!ENTITY albumartmanager.country.name.canada "Canada">
+<!ENTITY albumartmanager.country.name.austria "Austria">
+<!ENTITY albumartmanager.country.name.britain "Britain">
+<!ENTITY albumartmanager.country.name.france "France">
+<!ENTITY albumartmanager.country.name.germany "Germany">
+<!ENTITY albumartmanager.country.name.japan "Japan">
+
+<!ENTITY albumartmanager.search.groupbox.label "Album Cover Search Options">
+<!ENTITY albumartmanager.search.includeArtist "Include artist name in searches">
+
+<!ENTITY albumartmanager.cover.groupbox.label "Where to save the album covers">
+<!ENTITY albumartmanager.search.includeArtist "Include artist name in searches">
+<!ENTITY albumartmanager.cover.saveTo.label "Save Covers To...">
+<!ENTITY albumartmanager.cover.saveTo.accesskey "S">
+<!ENTITY albumartmanager.cover.useAlbumLocation.label "Use album location">
+<!ENTITY albumartmanager.cover.useAlbumLocation.accesskey "U">
+<!ENTITY albumartmanager.cover.chooseFolder.label "Choose Folder">
+<!ENTITY albumartmanager.cover.chooseFolder.accesskey "C">
+
+<!ENTITY albumartmanager.preview.title "Preview Album Cover">
+
+<!ENTITY albumartmanager.fetchcovers.label "Fetch Missing Covers">
+<!ENTITY albumartmanager.cancel.label "Cancel Fetching">
+<!ENTITY albumartmanager.preferences.label "Preferences">

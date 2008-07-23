@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://albumartmanager/skin/albumart.css" type="text/css"?>
+
+<!DOCTYPE window [
+<!ENTITY % albumartDTD SYSTEM "chrome://albumartmanager/locale/albumartmanager.dtd">
+%albumartDTD;
+]>
+<page title="&albumartmanager.nowplaying.label;"
+       xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+       xmlns:html="http://www.w3.org/1999/xhtml"
+       xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+       xmlns:xbl="http://www.mozilla.org/xbl">
+       
+  <albumart flex="1"
+            id="nowPlayingAlbumArt"
+            label="&albumartmanager.nowplaying.label;"
+            hideSelector="false"/>
+</page>

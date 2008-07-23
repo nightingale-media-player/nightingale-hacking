@@ -1,0 +1,384 @@
+<?xml version="1.0"?>
+<!DOCTYPE window SYSTEM "chrome://albumartmanager/locale/albumartmanager.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!--
+    \brief albumplace is a place holder for an albums cover, it contains
+           an image of the cover, the name of the album, a popup menu so the
+           user can change the cover image, and a spinner that indicates when
+           a cover request is being made.
+           This is dependent on AlbumArtManager.
+  -->
+  <binding id="albumplace">
+    <resources>
+      <stylesheet src="chrome://albumartmanager/skin/albumart.css" />
+    </resources>
+    <content>
+      <xul:menupopup sid="albumMenu"
+                     onpopupshowing="this.parentNode.createMenu(this);"
+                     onpopuphiding="this.parentNode.cleanMenu(this);">
+        <xul:menuseparator />
+        <xul:menuitem label="&albumartmanager.menu.clear;"
+                      oncommand="this.parentNode.parentNode.clearCover();"/>
+      </xul:menupopup>
+
+      <xul:vbox class="albumBox"
+                xbl:inherits="tooltiptext=value">
+        <xul:stack>
+          <!-- Album Cover -->
+          <xul:image sid="sb-album-artcover"
+                     xbl:inherits="src"
+                     class="albumArt" />
+
+          <!-- Searching Spinner -->
+          <xul:vbox class="spinnerBox"
+                    sid="sb-album-spinner"
+                    top="82" left="82"
+                    xbl:inherits="searching">
+            <xul:image class="spinnerImage"
+                       src="chrome://songbird/skin/icons/spinner-spin.png"/>
+          </xul:vbox>
+
+        </xul:stack>
+        <xul:hbox align="center" flex="1">
+          <xul:label sid="sb-album-name"
+                     xbl:inherits="value"
+                     class="albumName"
+                     crop="end" />
+        </xul:hbox>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <method name="clearCover">
+        <body><![CDATA[
+          var mGuid = this.getAttribute("mediaItemGuid");
+          var mMediaItem = LibraryUtils.mainLibrary.getMediaItem(mGuid);
+          if (!mMediaItem) {
+            return;
+          }
+          
+          AlbumArtManager.clearAlbumArt(mMediaItem);
+        ]]></body>
+      </method>
+
+      <method name="getCover">
+        <parameter name="aService" />
+        <body><![CDATA[
+          var mGuid = this.getAttribute("mediaItemGuid");
+          var mMediaItem = LibraryUtils.mainLibrary.getMediaItem(mGuid);
+          if (!mMediaItem) {
+            return;
+          }
+          
+          AlbumArtManager.getAlbumArt(mMediaItem, aService);
+        ]]></body>
+      </method>
+      
+      <method name="createMenu">
+        <parameter name="aMenu" />
+        <body><![CDATA[
+          this._menuOpen = true;
+          AlbumArtManager.createMenuPopup(aMenu);
+        ]]></body>
+      </method>
+
+      <method name="cleanMenu">
+        <parameter name="aMenu" />
+        <body><![CDATA[
+          // Remove the fetcher menu entries
+          this._menuOpen = false;
+          var fChild = aMenu.firstChild;
+          while (fChild) {
+            var nChild = fChild.nextSibling;
+            var sbid = fChild.getAttribute("sbid");
+            if (sbid != null && sbid != "") {
+              aMenu.removeChild(fChild);
+            }
+            fChild = nChild;
+          }
+          
+        ]]></body>
+      </method>
+
+    </implementation>
+
+    <handlers>
+      <!-- button="1" == middle button -->
+      <handler event="click"
+               button="0"
+               clickcount="2">
+        <![CDATA[
+          // XXX Hack fix this!
+          // When you open the menu and click an entry it will pass that back
+          // and also open the preview :P
+          if (this._menuOpen) {
+            return;
+          }
+
+          // We either show the album cover or play the album
+          if (this.getAttribute("doPlay")) {
+            alert("We should play something :)");
+          } else {
+            // Show full size album cover
+            var albumImage =  document.getAnonymousElementByAttribute(
+                                                          this,
+                                                          'sid',
+                                                          'sb-album-artcover');
+            var coverUrl = albumImage.getAttribute("src");
+            window.openDialog("chrome://albumartmanager/content/xul/coverPreview.xul",
+                         "coverPreview",
+                         "all",
+                         coverUrl);
+          }
+        ]]>
+      </handler>
+      
+      <handler event="click"
+               button="2"
+               clickcount="1">
+        <![CDATA[
+          // XXX Hack fix this!
+          // When you open the menu and click an entry it will pass that back
+          // and also open the preview :P
+          if (this._menuOpen) {
+            return;
+          }
+        
+          // Show popup menu
+          var albumMenu = document.getAnonymousElementByAttribute(this, "sid", "albumMenu");
+          albumMenu.openPopup(null, "", event.clientX, event.clientY, false, false);
+        ]]>
+      </handler>
+    </handlers>
+  </binding>
+
+
+<!-- Album art cover binding, used for Now Playing information -->
+  <binding id="albumart">
+    <resources>
+      <stylesheet src="chrome://albumartmanager/skin/albumart.css" />
+    </resources>
+      <content>
+        <xul:vbox flex="1">
+          <xul:vbox id="albumart-imageSelector"
+                    xbl:inherits="hidden=hideSelector">
+            <xul:hbox class="albumart-label-box"
+                      flex="1"
+                      anonid="sb-album-playing-label">
+              <xul:label value="&albumartmanager.nowplaying.label;"
+                         crop="end"
+                         onclick="this.parentNode.parentNode.parentNode.parentNode.selectPanel(1);"
+                         class="albumart-selectview-label"
+                         flex="1"/>
+            </xul:hbox>
+      
+            <xul:hbox class="albumart-label-box"
+                      flex="1"
+                      anonid="sb-album-selected-label"
+                      hidden="true">
+              <xul:label value="&albumartmanager.selected.label;"
+                         crop="end"
+                         onclick="this.parentNode.parentNode.parentNode.parentNode.selectPanel(0);"
+                         class="albumart-selectview-label"
+                         flex="1"/>
+            </xul:hbox>
+          </xul:vbox>
+          
+          <xul:deck class="albumart-stack"
+                    flex="1"
+                    selectedIndex="0"
+                    anonid="sb-album-deck">
+            <xul:vbox class="albumart-outter" flex="1">
+              <xul:hbox class="albumart-image-box" flex="1">
+                <xul:image anonid="sb-album-playing-artcover"
+                           flex="1"
+                           class="albumart-image"/>
+              </xul:hbox>
+            </xul:vbox>
+    
+            <xul:vbox class="albumart-outter" flex="1">
+              <xul:hbox class="albumart-image-box" flex="1">
+                <xul:image anonid="sb-album-selected-artcover"
+                           flex="1"
+                           class="albumart-image"/>
+              </xul:hbox>
+            </xul:vbox>
+          </xul:deck>
+        </xul:vbox>
+      </content>
+
+    <implementation type="application/x-javascript"
+                    name="albumart_cover">
+
+      <constructor>
+        <![CDATA[
+          var hideSelector = this.getAttribute("hideSelector");
+          
+          var albumArtPlayingImage = document.getAnonymousElementByAttribute(
+                                                  this,
+                                                  'anonid',
+                                                  'sb-album-playing-artcover');
+
+          var albumArtSelectedImage = document.getAnonymousElementByAttribute(
+                                                  this,
+                                                  'anonid',
+                                                  'sb-album-selected-artcover');
+
+          try {
+            this._albumArtService = Components.classes["@songbirdnest.com/songbird-album-art-service;1"]
+                                    .getService(Components.interfaces.sbIAlbumArtService);
+            if (this._albumArtService.currentAlbumCoverUrl) {
+              albumArtPlayingImage.setAttribute("src", this._albumArtService.currentAlbumCoverUrl);
+            } else {
+              albumArtPlayingImage.setAttribute("src", this._albumArtService.defaultCover);
+            }
+            albumArtSelectedImage.setAttribute("src", this._albumArtService.defaultCover);
+          } catch (err) { }
+
+          var createDataRemote =  new Components.Constructor(
+                                        "@songbirdnest.com/Songbird/DataRemote;1",
+                                        Components.interfaces.sbIDataRemote, "init");
+          this._coverBind = createDataRemote("albumartmanager.currentCoverUrl", null);
+          this._coverBind.bindAttribute(albumArtPlayingImage,
+                                        "src",
+                                        false,
+                                        false,
+                                        null);
+
+          if (hideSelector) {
+            var self = this;
+            this._selectionListener = {
+              onSelectionChanged: function() {
+                var selection = self.mediaListView.selection;
+                var curImageUrl = null;
+                if (selection.count > 1) {
+                  var itemEnum = selection.selectedIndexedMediaItems;
+                  while (itemEnum.hasMoreElements()) {
+                    var item = itemEnum.getNext().mediaItem;
+                    var itemCover = self._albumArtService.getAlbumArtWork(item, true);
+                    if ( curImageUrl != null && itemCover != curImageUrl) {
+                      curImageUrl = self._albumArtService.defaultCover;
+                      break;
+                    }
+                    curImageUrl = itemCover;
+                  }
+                } else if (selection.count == 1) {
+                  // Only one item pretty simple
+                  var curMediaItem = selection.currentMediaItem;
+                  curImageUrl = self._albumArtService.getAlbumArtWork(curMediaItem, true);
+                } else {
+                  curImageUrl = self._albumArtService.defaultCover;
+                }
+  
+                if (curImageUrl != null) {
+                  var albumArtSelectedImage = document.getAnonymousElementByAttribute(
+                                                          self,
+                                                          'anonid',
+                                                          'sb-album-selected-artcover');
+                  albumArtSelectedImage.setAttribute("src", curImageUrl);
+                }
+              },
+              
+              onCurrentIndexChanged: function() {
+              },
+              
+              QueryInterface: function(iid) {
+                if (iid.equals(Components.interfaces.sbIMediaListViewSelectionListener) || 
+                    iid.equals(Components.interfaces.nsISupports))
+                  return this;
+                throw Components.results.NS_ERROR_NO_INTERFACE;
+              }
+            };
+  
+            this.onTabContentChange = function() {
+              if(self.mediaListView) {
+                self.mediaListView.selection.removeListener(self._selectionListener);
+              }
+  
+              if (!self._browser) {
+                // Get the main window.
+                var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                      .getService(Components.interfaces.nsIWindowMediator);
+            
+                var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main"); 
+                self._browser = songbirdWindow.gBrowser;
+              }
+              self.mediaListView = self._browser.currentMediaListView;
+  
+              if (self.mediaListView) {
+                self.mediaListView.selection.addListener(self._selectionListener); 
+                self._selectionListener.onSelectionChanged();
+              }
+           
+            }
+  
+            // Get the main window.
+            var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                                  .getService(Components.interfaces.nsIWindowMediator);
+        
+            var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main"); 
+            this._browser = songbirdWindow.gBrowser;
+            if (this._browser) {
+              this.onTabContentChange();
+              this._browser.addEventListener("TabContentChange", this.onTabContentChange, false);
+            }
+          }
+        ]]>
+      </constructor>
+      
+      <destructor>
+        <![CDATA[
+          if (this._coverBind) {
+            this._coverBind.unbind();
+          }
+          
+          var hideSelector = this.getAttribute("hideSelector");
+          if (hideSelector) {
+            if(this.mediaListView) {
+              this.mediaListView.selection.removeListener(this._selectionListener);
+            }
+          }
+          
+          if (this._browser) {
+            this._browser.removeEventListener("TabContentChange", this.onTabContentChange, false);
+          }
+        ]]>
+      </destructor>
+
+      <method name="selectPanel">
+        <parameter name="aPanelIndex" />
+        <body><![CDATA[
+          var nowPlaying = document.getAnonymousElementByAttribute(
+                                                  this,
+                                                  'anonid',
+                                                  'sb-album-playing-label');
+          var nowSelected = document.getAnonymousElementByAttribute(
+                                                  this,
+                                                  'anonid',
+                                                  'sb-album-selected-label');
+          var nowDeck = document.getAnonymousElementByAttribute(
+                                                  this,
+                                                  'anonid',
+                                                  'sb-album-deck');
+          
+          if (aPanelIndex == 0) {
+            nowPlaying.removeAttribute("hidden");
+            nowSelected.setAttribute("hidden", true);
+          } else {
+            nowSelected.removeAttribute("hidden");
+            nowPlaying.setAttribute("hidden", true);
+          }
+          nowDeck.setAttribute("selectedIndex", aPanelIndex);
+          
+        ]]></body>
+      </method>
+
+
+    </implementation>
+  </binding>
+
+</bindings>

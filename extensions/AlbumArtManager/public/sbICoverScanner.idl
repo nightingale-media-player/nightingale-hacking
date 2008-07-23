@@ -1,0 +1,202 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+
+#include "nsISupports.idl"
+
+interface nsIDOMWindow;
+interface nsILocalFile;
+interface sbIMediaItem;
+interface sbIPropertyArray;
+interface nsISimpleEnumerator;
+interface sbIMutablePropertyArray;
+interface sbILibrary;
+
+/**
+ * \interface sbICoverListener
+ * \brief A component which is interested in the result of a cover fetch request
+ * \sa sbICoverFetcher
+ */
+[scriptable, uuid(f257e030-f27b-4baf-bf64-68b9bf92799a)]
+interface sbICoverListener : nsISupports
+{
+  /* \brief the fetch succeeded
+   * \param aMediaItem the item that cover art was fetched for
+   * \param aScope null, or a set of properties and values describing all 
+   *        the media items for which the result are valid.
+   * \param aURI the URL of the cover art
+   */
+  void coverFetchSucceeded(in sbIMediaItem aMediaItem,
+                           in sbIPropertyArray aScope,
+                           in string aURI);
+
+  /* \brief the fetch failed
+   * \param aMediaItem the item that cover art was fetched for
+   * \param aScope null, or a set of properties and values describing all 
+   *        the media items for which the result are valid.
+   */
+  void coverFetchFailed(in sbIMediaItem aMediaItem,
+                        in sbIPropertyArray aScope);
+};
+
+/**
+ * \brief sbICoverDownloader - Component to download an image to the proper
+ *        location for a media item.
+ */
+[scriptable, uuid(1a5f4f10-5578-464b-abfd-6c1bf7973ea1)]
+interface sbICoverDownloader : nsISupports
+{
+  /**
+   * \brief Given a string url this function will attempt to download a cover
+   *        and store it to the recommended download location.
+   * \param aURI string version of the uri of the file to download
+   * \param aMediaItem media item this will belong to
+   * \param aListener for call backs
+   * \param aScope used for updates (keeps track of the mediaInformation)
+   *
+   * \sa sbICoverListener, sbIMediaItem
+   * TODO: Do we really need the aScope?
+   */
+  void downloadCover( in AString aURI,
+                      in sbIMediaitem aMediaItem,
+                      in sbICoverListener aListener,
+                      in sbIMutablePropertyArray aScope);
+
+  /**
+   * \brief call this to terminate the download properly.
+   */
+  void shutdown();
+};
+
+/**
+ * \interface sbICoverFetcher
+ * \brief A components that knows how to fetch cover art.
+ * \sa sbICoverListener
+ */
+[scriptable, uuid(c862efe9-d39d-4994-b195-3c132e6333a1)]
+interface sbICoverFetcher : nsISupports
+{
+  /**
+   * \brief Short name of CoverFetcher.
+   */
+  readonly attribute AString shortName;
+
+  /**
+   * \brief Name of CoverFetcher to display to the user on things like
+   *        menus.
+   */
+  readonly attribute AString name;
+  
+  /**
+   * \brief Description of the CoverFetcher to display to the user.
+   */
+  readonly attribute AString description;
+  
+  /**
+   * \brief Flag to indicate if this Fetcher can be used as a fetcher from a
+   *        user menu.
+   */
+  readonly attribute boolean userFetcher;
+  
+  /**
+   * \brief Flag to indicate if this Fetcher is enabled or not
+   */
+  attribute boolean isEnabled;
+  
+  /* \brief try to fetch cover art for the given media item
+   * \param aMediaItem the media item that we're looking for a cover for
+   * \param aListener the listener to inform of success or failure
+   * \param aWindow the window this was called from, can be null
+   */
+  void fetchCoverForMediaItem(in sbIMediaItem aMediaItem, 
+                              in sbICoverListener aListener,
+                              in nsIDOMWindow aWindow);
+
+  /* \brief shut down the fetcher
+   */
+  void shutdown();
+};
+
+/**
+ * \interface sbICoverScanner
+ * \brief A components that will search for a cover using all the fetchers in
+ *        priority order until it can find a valid image.
+ * \sa sbICoverFetcher
+ */
+[scriptable, uuid(4ea34ad3-fefa-497f-9394-2cf988f63ebb)]
+interface sbICoverScanner : nsISupports
+{
+  /* \brief Search for a cover with all the cover fetchers in priority order
+   * \param aMediaItem the media item that we're looking for a cover for
+   * \param aListener the listener to inform of success or failure
+   */
+  void fetchCover(in sbIMediaItem aMediaItem,
+                  in sbICoverListener aListener);
+  
+  /**
+   * \brief call this to terminate the scanner properly.
+   */
+  void shutdown();
+};
+
+/**
+ * \interface sbILibraryScanner
+ * \brief A component that will scan through a library searching for a cover for
+ *        each media item.
+ * \sa sbICoverScanner
+ * \sa sbICoverFetcher
+ */
+[scriptable, uuid(6e29093f-5bd0-4006-9016-57a5581d9979)]
+interface sbILibraryScanner : nsISupports
+{
+  /**
+   * \brief True if the scanner is done scanning all the albums in the library
+   */
+  readonly attribute boolean isScanComplete;
+
+  /**
+   * \brief The current item in the library we are scanning for covers
+   */
+  readonly attribute sbIMediaItem currentItemScanning;
+
+  /* \brief Search for covers for each album in the library
+   * \param aLibrary the library we are scanning for
+   * \param aListener the listener to inform of success or failure on each album
+   */
+  void scanLibrary(in sbILibrary aLibrary,
+                   in sbICoverListener aListener);
+  
+  /* \brief Restarts the scanner, this will cancel the current scan and then
+   *        get all the empty albums again. This will happen on the next
+   *        interval (which could be the long interval)
+   */
+  void restartScanner();
+
+  /**
+   * \brief call this to terminate the scanning properly.
+   */
+  void shutdown();
+};

@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay [
+<!ENTITY % albumartmanagerDTD SYSTEM "chrome://albumartmanager/locale/albumartmanager.dtd">
+%albumartmanagerDTD;
+]>
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <prefwindow id="BrowserPreferences">
+    <prefpane
+      id="library_albumartmanager_pref_pane"
+      label="&albumartmanager.prefpane.label;"
+      image="chrome://albumartmanager/skin/PrefsIcon.png">
+
+      <stringbundleset id="albumartmanagerbundles">
+        <stringbundle id="albumartmanagerbundle" src="chrome://albumartmanager/locale/albumartmanager.properties"/>
+      </stringbundleset>
+
+      <preferences id="albumartmanagerPreferences">
+        <preference id="songbird.albumartmanager.country"
+                    name="songbird.albumartmanager.country"
+                    type="string"/>
+        <preference id="songbird.albumartmanager.display_track_notification"
+                    name="songbird.albumartmanager.display_track_notification"
+                    type="bool"/>
+        <preference id="songbird.albumartmanager.scan"
+                    name="songbird.albumartmanager.scan"
+                    type="bool"/>
+
+        <!-- Downloads -->
+        <preference id="songbird.albumartmanager.cover.usealbumlocation"
+                    name="songbird.albumartmanager.cover.usealbumlocation"
+                    type="bool"/>
+        <preference id="songbird.albumartmanager.search.includeArtist"
+                    name="songbird.albumartmanager.search.includeArtist"
+                    type="bool"/>
+        <preference id="songbird.albumartmanager.cover.folder"
+                    name="songbird.albumartmanager.cover.folder"
+                    type="file"/>
+        <preference id="songbird.albumartmanager.cover.format"
+                    name="songbird.albumartmanager.cover.format"
+                    type="string"/>
+      </preferences>
+
+      <script type="application/x-javascript" src="chrome://albumartmanager/content/scripts/prefPane.js"/>
+
+      <vbox>
+        
+        <grid id="albumartmaanagerGrid">
+          <columns>
+            <column flex="1"/>
+            <column/>
+          </columns>
+          <rows id="albumartmanager-rows">
+            <row id="albumartmanager-country">
+              <label value="&albumartmanager.country.label;"/>
+              <menulist id="albumartartmanager-country-menu"
+                        preference="songbird.albumartmanager.country">
+               <menupopup>
+                  <menuitem label="&albumartmanager.country.name.usa;" value="com"/>
+                  <menuitem label="&albumartmanager.country.name.canada;" value="ca"/>
+                  <menuseparator/>
+                  <menuitem label="&albumartmanager.country.name.austria;" value="de"/>
+                  <menuitem label="&albumartmanager.country.name.britain;" value="co.uk"/>
+                  <menuitem label="&albumartmanager.country.name.france;" value="fr"/>
+                  <menuitem label="&albumartmanager.country.name.germany;" value="de"/>
+                  <menuitem label="&albumartmanager.country.name.japan;" value="co.jp"/>
+                </menupopup>
+               </menulist>
+            </row>
+            <row id="albumartmanager-notifications">
+              <vbox align="start">
+                <checkbox id="display_notification_checkbox"
+                          label="&albumartmanager.notification.label;"
+                          preference="songbird.albumartmanager.display_track_notification"/>
+              </vbox>
+            </row>
+            <row id="albumartmanager-scanner">
+              <vbox align="start">
+                <checkbox id="scan_checkbox"
+                          label="&albumartmanager.scan.label;"
+                          preference="songbird.albumartmanager.scan"
+                          onsynctopreference="return gAlbumArtManagerPane.toggleScanner();"/>
+              </vbox>
+              <button label="&albumartmanager.scan.prioritybutton.label;"
+                      onclick="gAlbumArtManagerPane.openPriorityManager();"/>
+            </row>
+            <row id="albumartmanager-search">
+              <vbox align="start">
+                <checkbox preference="songbird.albumartmanager.search.includeArtist"
+                          label="&albumartmanager.search.includeArtist;"/>
+              </vbox>
+            </row>
+            
+            
+            
+          </rows>
+        </grid>
+
+        <groupbox>
+          <caption label="&albumartmanager.cover.groupbox.label;"/>
+          <radiogroup id="saveWhere"
+                      preference="songbird.albumartmanager.cover.usealbumlocation"
+                      onsyncfrompreference="return gAlbumArtManagerPane.readUseDownloadDir();">
+            <hbox id="aamSaveToRow">
+              <radio id="aamSaveTo" value="false"
+                     label="&albumartmanager.cover.saveTo.label;"
+                     accesskey="&albumartmanager.cover.saveTo.accesskey;"
+                     xmlns:aaa="http://www.w3.org/2005/07/aaa"
+                     aaa:labelledby="saveTo downloadFolder"/>
+              <filefield id="aamDownloadFolder" flex="1"
+                         preference="songbird.albumartmanager.cover.folder"
+                         preference-editable="true"
+                         onsyncfrompreference="return gAlbumArtManagerPane.displayDownloadDirPref();"/>
+              <button id="aamChooseFolder" oncommand="gAlbumArtManagerPane.chooseFolder();"
+                      accesskey="&albumartmanager.cover.chooseFolder.accesskey;"
+                      label="&albumartmanager.cover.chooseFolder.label;"/>
+            </hbox>
+            <radio id="alwaysAsk" value="true"
+                   label="&albumartmanager.cover.useAlbumLocation.label;"
+                   accesskey="&albumartmanager.cover.useAlbumLocation.accesskey;"/>
+
+            <hbox>
+              <label control="aamCoverFileFormat" value="Cover File Format:"/>
+              <textbox flex="1" id="aamCoverFileFormat"
+                       preference="songbird.albumartmanager.cover.format"
+                       onchange="return gAlbumArtManagerPane.checkDefaultCoverFile(this);"/>
+            </hbox>
+            <description style="white-space: -moz-pre-wrap;">File format fields:
+%album% - Album name
+%artist% - Artist name
+%track% - Track name
+%guid% - Guid of one of the items in the album.
+You can use / for folders, example:
+ %artist%/%album% will create an artist folder and the cover file will be the album name.
+The default will be %artist% - %album%.
+            </description>
+          </radiogroup>
+        </groupbox>
+      </vbox>
+    </prefpane>
+  </prefwindow>
+</overlay>

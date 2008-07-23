@@ -1,0 +1,137 @@
+/*
+ * Album Art Manager
+ */
+ 
+.albumViewOutter {
+  -moz-box-flex: 1;
+}
+ 
+.albumView {
+  display: block;
+  overflow: auto;
+  -moz-box-flex: 1;
+}
+ 
+#AlbumArtManager_ArtistList {
+  min-width: 150px;
+}
+
+.albumArtFilter {
+  cursor: pointer;
+}
+
+/*
+ * AlbumPlace
+ */
+albumplace {
+  -moz-binding: url("chrome://albumartmanager/content/bindings/albumart.xml#albumplace");
+}
+ 
+.albumBox {
+  margin: 5px;
+  padding: 4px;
+  border: 1px solid #111111;
+  -moz-border-radius: 5px;
+  -moz-box-pack: center;
+  max-width: 110px;
+}
+ 
+.albumArt {
+  width: 100px;
+  height: 100px;
+  max-height: 100px;
+  max-width: 100px;
+}
+ 
+.spinnerBox {
+  display: none;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  border: 1px solid #111111;
+  -moz-border-radius: 5px;
+  background-color: #54A050;
+  -moz-opacity: .85;
+}
+.spinnerBox[searching="true"] {
+  display: block;
+}
+ 
+.spinnerImage {
+  margin: 0 auto;
+  width: 16px;
+  height: 16px;
+  max-height: 16px;
+  max-width: 16px;
+}
+
+.playingBox {
+  display: none;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  border: 1px solid #111111;
+  -moz-border-radius: 5px;
+  background-color: #54A050;
+  -moz-opacity: .85;
+  width: 32px;
+  height: 32px;
+  max-height: 32px;
+  max-width: 32px;
+}
+.playingBox[playing="true"] {
+  display: block;
+}
+.playingImage {
+  margin: 0 auto;
+  width: 32px;
+  height: 32px;
+  max-height: 32px;
+  max-width: 32px;
+}
+
+.menuBox {
+  border: 1px solid #111111;
+  -moz-border-radius: 5px;
+  background-color: #54A050;
+  -moz-opacity: .85;
+}
+
+.albumName {
+  width: 90px;
+  max-width: 90px;
+}
+
+/*
+ * Now Playing / Current Selection
+ */
+albumart {
+ -moz-binding: url("chrome://albumartmanager/content/bindings/albumart.xml#albumart");
+}
+
+.albumart-outter {
+  -moz-box-pack: start;
+  background-color: #CCCCCC;
+}
+
+.albumart-label-box {
+  -moz-box-pack: start;
+  border: 1px solid #797F76;
+  background-color: #313131;
+}
+
+.albumart-selectview-label {
+  color: #B3BAAC;
+  font-size: smaller;
+  background-image:url('chrome://songbird-branding/skin/logo_16.png');
+  background-position:left center;
+  background-repeat:no-repeat;
+  padding-left:18px;
+  cursor: pointer;
+}
+
+.albumart-image-box {
+  background-color: #CCCCCC;
+  -moz-box-pack: center;
+}
+.albumart-image {
+  border: 1px solid #111111;
+}
