@@ -41,7 +41,7 @@ function runTest() {
 
   // Sadly, the implementation of IGNORE SYMBOLS on Windows is not consistent
   // with Linux and Mac OS X :(	
-	if(getPlatform() != "Windows") {
+	if(getPlatform() != "Windows_NT") {
     var symbolsTestIn = "I have $5";
     var symbolsTestExpectedOut = "I have 5";
 
