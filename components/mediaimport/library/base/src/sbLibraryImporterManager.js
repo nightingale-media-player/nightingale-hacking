@@ -47,6 +47,7 @@
 
 // Songbird services.
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -199,12 +200,37 @@ sbLibraryImporterManager.prototype = {
       doImport = (doImport.value == "true");
     }
 
-    // Initiate import.
+    // Initiate import.  Show progress dialog if importing from a new library.
     if (doImport) {
+      // Get library file path from which to import and previously imported
+      // library file path.
+      var importer = this.defaultLibraryImporter;
       var libraryFilePath = Application.prefs.getValue
                               ("songbird.library_importer.library_file_path",
                                "");
-      this.defaultLibraryImporter.import(libraryFilePath, "songbird", false);
+      var libraryPreviousImportPath = importer.libraryPreviousImportPath;
+
+      // Initiate import.
+      var job = importer.import(libraryFilePath, "songbird", false);
+
+      // Get the library file from which to import.  Set to null for bad paths.
+      var libraryFile = Cc["@mozilla.org/file/local;1"]
+                          .createInstance(Ci.nsILocalFile);
+      try { libraryFile.initWithPath(libraryFilePath); }
+      catch (ex) { libaryFile = null; }
+
+      // Get the previously imported library file.  Set to null for bad paths.
+      var previousLibraryFile = Cc["@mozilla.org/file/local;1"]
+                                  .createInstance(Ci.nsILocalFile);
+      try { previousLibraryFile.initWithPath(libraryPreviousImportPath); }
+      catch (ex) { previousLibraryFile = null; }
+
+      // Show progress dialog if importing from a new library file.
+      if (!libraryFile ||
+          !previousLibraryFile ||
+          !libraryFile.equals(previousLibraryFile)) {
+        SBJobUtils.showProgressDialog(job, null);
+      }
     }
   },
 

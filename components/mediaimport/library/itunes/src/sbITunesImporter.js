@@ -376,6 +376,11 @@ Component.prototype =
         return true;
     },
 
+    get libraryPreviousImportPath()
+    {
+        return this.mLibPrevPathDR.stringValue;
+    },
+
 
     /**
      * \brief Initialize the library importer.

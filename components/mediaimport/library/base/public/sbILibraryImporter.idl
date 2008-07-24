@@ -120,7 +120,7 @@ interface sbILibraryImporterListener : nsISupports
 
 interface sbIJobProgress;
 
-[scriptable, uuid(3437F833-8E36-4035-8017-60CC3CFB91A2)]
+[scriptable, uuid(04E3F8E9-70F4-4129-9A74-CEC88A8AEE93)]
 interface sbILibraryImporter : nsISupports
 {
     /*
@@ -133,6 +133,8 @@ interface sbILibraryImporter : nsISupports
      * libraryFileExtensionList Comma separated list of library file extensions.
      * libraryPreviouslyImported
      *                          True if a library has previously been imported.
+     * libraryPreviousImportPath
+     *                          File path of previously imported library.
      */
 
     readonly attribute AString  libraryType;
@@ -141,6 +143,7 @@ interface sbILibraryImporter : nsISupports
     readonly attribute AString  libraryDefaultFilePath;
     readonly attribute AString  libraryFileExtensionList;
     readonly attribute boolean  libraryPreviouslyImported;
+    readonly attribute AString  libraryPreviousImportPath;
 
 
     /**
