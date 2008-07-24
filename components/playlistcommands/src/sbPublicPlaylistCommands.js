@@ -491,9 +491,7 @@ PublicPlaylistCommands.prototype = {
                                                "&command.playlist.shortcut.modifiers.remove",
                                                true);
 
-      // disable the command for readonly playlists. smart playlists are always
-      // readonly, so we only disable the command for them if they are in a
-      // readonly library
+      // disable the command for readonly playlists. 
       this.m_cmd_list_Remove.setCommandEnabledCallback
                                                 (null,
                                                  "playlist_cmd_remove",
@@ -518,9 +516,7 @@ PublicPlaylistCommands.prototype = {
                                                "&command.playlist.shortcut.modifiers.rename",
                                                true);
 
-      // disable the command for readonly playlists. smart playlists are always
-      // readonly, so we only disable the command for them if they are in a
-      // readonly library
+      // disable the command for readonly playlists.
       this.m_cmd_list_Rename.setCommandEnabledCallback(null,
                                                        "playlist_cmd_rename",
                                                        plCmd_CanModifyPlaylist);
@@ -1159,7 +1155,7 @@ function plCmd_CopyToDevice_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
 
 // Called when the "remove playlist" action is triggered
 function plCmd_RemoveList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
-  unwrap(aContext.medialist).library.remove(aContext.medialist);
+  unwrap(aContext.window).SBDeleteMediaList(aContext.medialist);
 }
 
 // Called when the "rename playlist" action is triggered
@@ -1169,8 +1165,6 @@ function plCmd_RenameList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
   var servicePane = window.gServicePane;
   // If we have a servicetree, tell it to make the new playlist node editable
   if (servicePane) {
-    // Ask the library service pane provider to suggest where
-    // a new playlist should be created
     var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
                        .getService(Ci.sbILibraryServicePaneService);
     // Find the servicepane node for our new medialist
