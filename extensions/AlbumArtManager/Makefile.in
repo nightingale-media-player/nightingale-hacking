@@ -34,6 +34,7 @@ SUBDIRS = public \
           defaults \
           $(NULL)
 
+CURRENT_DATE := $(shell date +%Y%m%d)
 EXTENSION_NAME = albumartmanager
 EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
 EXTENSION_STAGE_DIR = ./.xpistage
