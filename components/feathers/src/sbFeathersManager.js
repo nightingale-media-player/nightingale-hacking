@@ -50,9 +50,9 @@ const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-
 // Fallback layouts/skin, used by previousSkinName and previousLayoutURL
 // Changes to the shipped feathers must be reflected here
 // and in test_feathersManager.js
-const DEFAULT_MAIN_LAYOUT_URL         = "chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul";
-const DEFAULT_SECONDARY_LAYOUT_URL    = "chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul";
-const DEFAULT_SKIN_NAME               = "rubberducky/0.2";
+const DEFAULT_MAIN_LAYOUT_URL         = "chrome://gonzo/content/xul/mainplayer.xul";
+const DEFAULT_SECONDARY_LAYOUT_URL    = "chrome://gonzo/content/xul/miniplayer.xul";
+const DEFAULT_SKIN_NAME               = "gonzo";
 
 const WINDOWTYPE_SONGBIRD_PLAYER      = "Songbird:Main";
 const WINDOWTYPE_SONGBIRD_CORE        = "Songbird:Core";
