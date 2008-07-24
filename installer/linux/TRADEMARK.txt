@@ -1,5 +1,5 @@
 
 The Songbird binary contains trademarks of POTI, Inc. 
-including, but not limited to, the name “Songbird”, logos, and page layout files 
-(“skins”). POTI, Inc. does not express or imply any 
+including, but not limited to, the name â€œSongbirdâ€, logos, and page layout files 
+(â€œskinsâ€). POTI, Inc. does not express or imply any 
 permission to use or distribute these trademarks.
