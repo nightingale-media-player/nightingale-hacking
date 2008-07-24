@@ -28,7 +28,7 @@
  * \brief Test file
  */
 
-var gTestMetadataJobManager;
+var gFileMetadataService;
 var count = 0;
 var gServer;
 
@@ -58,8 +58,8 @@ function runTest () {
     prefix + "FLAC.flac"
   ];
 
-  gTestMetadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                                .getService(Components.interfaces.sbIMetadataJobManager);
+  gFileMetadataService = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                                   .getService(Components.interfaces.sbIFileMetadataService);
 
   for (var i = 0; i < NUM_JOBS; i++) {
     var a = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
@@ -70,7 +70,7 @@ function runTest () {
       }
     }
 
-    var job = gTestMetadataJobManager.newJob(a, 5);
+    var job = gFileMetadataService.read(a);
 
     // Set an observer to know when we complete
     job.addJobProgressListener( onComplete );

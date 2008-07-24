@@ -111,6 +111,15 @@ public:
     return AddListener(aListener, aOwnsWeak, aFlags, nsnull);
   }
 
+  // These aren't meant to be called directly. Use sbAutoBatchHelper
+  // to avoid the risk of leaving a batch in progress
+  void BeginUpdateBatch() {
+    sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(this);
+  }
+  void EndUpdateBatch() {
+    sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(this);
+  }
+
 protected:
   NS_IMETHOD GetDefaultSortProperty(nsAString& aProperty) = 0;
 
@@ -120,13 +129,6 @@ protected:
                                            sbIPropertyArray** _retval);
 
 private:
-  // These aren't meant to be called directly, use sbAutoBatchHelper.
-  void BeginUpdateBatch() {
-    sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(this);
-  }
-  void EndUpdateBatch() {
-    sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(this);
-  }
 
   // This callback is meant to be used with an sbStringArrayHash.
   // aUserData should be a sbILocalDatabaseGUIDArray pointer.

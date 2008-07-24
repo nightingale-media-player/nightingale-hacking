@@ -71,11 +71,12 @@ var gLocalMediaItems = [];
 var gRemoteMediaItems = [];
 var gFileList = [];
 
-var gTestMetadataJobManager = null;
+var gFileMetadataService = null;
 
 var gServer;
 
 function runTest () {
+   
   var gTestLibrary = createNewLibrary( "test_metadatajob" );
   var gTestMediaItems = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                                   .createInstance(Components.interfaces.nsIMutableArray);
@@ -125,9 +126,9 @@ function runTest () {
   }
   
   // Request metadata for both local and remote urls at the same time.  Woo!
-  gTestMetadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                                .getService(Components.interfaces.sbIMetadataJobManager);
-  var job = gTestMetadataJobManager.newJob( gTestMediaItems, 5 );
+  gFileMetadataService = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                                .getService(Components.interfaces.sbIFileMetadataService);
+  var job = gFileMetadataService.read( gTestMediaItems);
   
   // Set an observer to know when we complete
   job.addJobProgressListener(onComplete);
@@ -181,7 +182,7 @@ function onComplete(job) {
     
 
     // So testing is complete
-    gTestMetadataJobManager = null;
+    gFileMetadataService = null;
     
     gServer.stop();
     

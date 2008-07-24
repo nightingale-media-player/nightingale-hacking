@@ -4115,6 +4115,18 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
   return NS_OK;
 }
 
+NS_IMETHODIMP 
+sbLocalDatabaseLibrary::ForceBeginUpdateBatch() { 
+  sbLocalDatabaseMediaListBase::BeginUpdateBatch();
+  return NS_OK;
+};
+
+NS_IMETHODIMP 
+sbLocalDatabaseLibrary::ForceEndUpdateBatch() { 
+  sbLocalDatabaseMediaListBase::EndUpdateBatch();
+  return NS_OK;
+};
+
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetNativeLibrary(sbLocalDatabaseLibrary** aLocalDatabaseLibrary)
 {

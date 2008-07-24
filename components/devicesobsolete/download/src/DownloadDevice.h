@@ -89,7 +89,7 @@
 #include <sbDownloadButtonPropertyInfo.h>
 #include <sbIDataRemote.h>
 #include <sbILibrary.h>
-#include <sbIMetadataJobManager.h>
+
 
 
 nsCString GetContentDispositionFilename(const nsACString &contentDisposition);

@@ -647,12 +647,11 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
     }
     array.appendElement(item, false);
   }
-
-  var metadataJobManager =
-    Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-      .getService(Ci.sbIMetadataJobManager);
-  var metadataJob = metadataJobManager.newJob(array, 5);
-
+  
+  var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                          .getService(Ci.sbIFileMetadataService);
+  var metadataJob = metadataService.read(array);
+  
   // Download the new items
   var ddh =
     Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]

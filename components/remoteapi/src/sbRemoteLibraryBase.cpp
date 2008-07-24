@@ -50,7 +50,7 @@
 #include <sbIFilterableMediaListView.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
-#include <sbIMetadataJobManager.h>
+#include <sbIFileMetadataService.h>
 #include <sbIPlaylistReader.h>
 #include <sbIPropertyArray.h>
 #include <sbIWrappedMediaItem.h>
@@ -127,9 +127,6 @@ public:
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (mShouldScan && length) {
-      nsCOMPtr<sbIMetadataJobManager> metaJobManager =
-        do_GetService( "@songbirdnest.com/Songbird/MetadataJobManager;1", &rv );
-      NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIMutableArray> mediaItems =
         do_CreateInstance( "@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv );
@@ -145,38 +142,13 @@ public:
         NS_ENSURE_SUCCESS(rv, rv);
       }
 
-      // We will most likely have to create a new job.
-      PRBool createJob = PR_TRUE;
+      nsCOMPtr<sbIFileMetadataService> metadataService =
+        do_GetService( "@songbirdnest.com/Songbird/FileMetadataService;1", &rv );
+      NS_ENSURE_SUCCESS(rv, rv);
+      nsCOMPtr<sbIJobProgress> job;
 
-      // Already have a job, check completion status.
-      if (mMetadataJob) {
-        nsCOMPtr<sbIJobProgress> jobProgress(do_QueryInterface(mMetadataJob, &rv));
-        NS_ENSURE_SUCCESS(rv, rv);
-        
-        PRUint16 status;
-        rv = jobProgress->GetStatus(&status);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // Job hasn't completed yet, attempt to append to it.
-        if (status == sbIJobProgress::STATUS_RUNNING) {
-          rv = mMetadataJob->Append( mediaItems );
-
-          // If the append succeeds, there is no need to create a new job.
-          if(NS_SUCCEEDED(rv)) {
-            createJob = PR_FALSE;
-          }
-        }
-      }
-
-      // Create a new metadata job if required.
-      if (createJob) {
-        nsCOMPtr<sbIMetadataJob> job;
-
-        rv = metaJobManager->NewJob( mediaItems, 150, sbIMetadataJob::JOBTYPE_READ, getter_AddRefs(job) );
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        mMetadataJob = job;
-      }
+      rv = metadataService->Read( mediaItems, getter_AddRefs(job) );
+      NS_ENSURE_SUCCESS(rv, rv);
     }
 
     if (mCallback) {
@@ -196,8 +168,6 @@ private:
   nsRefPtr<sbRemotePlayer> mRemotePlayer;
   nsCOMPtr<sbICreateMediaListCallback> mCallback;
   PRBool mShouldScan;
-
-  nsCOMPtr<sbIMetadataJob> mMetadataJob;
 };
 NS_IMPL_ISUPPORTS1( sbPlaylistReaderObserver, nsIObserver )
 
@@ -459,9 +429,11 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mShouldScan) {
-    nsCOMPtr<sbIMetadataJobManager> metaJobManager =
-      do_GetService("@songbirdnest.com/Songbird/MetadataJobManager;1", &rv);
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get MetadataJobManager!");
+
+
+    nsCOMPtr<sbIFileMetadataService> metadataService =
+      do_GetService( "@songbirdnest.com/Songbird/FileMetadataService;1", &rv );
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get FileMetadataService!");
 
     if(NS_SUCCEEDED(rv)) {
       nsCOMPtr<nsIMutableArray> mediaItems = 
@@ -471,38 +443,9 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
       rv = mediaItems->AppendElement(mediaItem, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // We will most likely have to create a new job.
-      PRBool createJob = PR_TRUE;
-
-      // Already have a job, check completion status.
-      if (mMetadataJob) {
-        nsCOMPtr<sbIJobProgress> jobProgress(do_QueryInterface(mMetadataJob, &rv));
-        NS_ENSURE_SUCCESS(rv, rv);
-        
-        PRUint16 status;
-        rv = jobProgress->GetStatus(&status);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // Job hasn't completed yet, attempt to append to it.
-        if (status == sbIJobProgress::STATUS_RUNNING) {
-          rv = mMetadataJob->Append( mediaItems );
-
-          // If the append succeeds, there is no need to create a new job.
-          if(NS_SUCCEEDED(rv)) {
-            createJob = PR_FALSE;
-          }
-        }
-      }
-
-      // Create a new metadata job if required.
-      if (createJob) {
-        nsCOMPtr<sbIMetadataJob> job;
-
-        rv = metaJobManager->NewJob( mediaItems, 150, sbIMetadataJob::JOBTYPE_READ, getter_AddRefs(job) );
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        mMetadataJob = job;
-      }
+      nsCOMPtr<sbIJobProgress> job;
+      rv = metadataService->Read( mediaItems, getter_AddRefs(job) );
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 

@@ -1070,10 +1070,10 @@ var ExternalDropHandler = {
         // if we created any mediaitem
         if (this._scanList && 
             this._scanList.length > 0) {
-          var metadataJobMgr = 
-            this._Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                .getService(this._Ci.sbIMetadataJobManager);
-          metadataJobMgr.newJob(this._scanList, 5);
+          var metadataService = 
+            this._Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                .getService(this._Ci.sbIFileMetadataService);
+          metadataService.read(this._scanList);
           this._scanList = null;
         }
         

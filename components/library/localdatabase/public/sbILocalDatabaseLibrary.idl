@@ -90,6 +90,13 @@ interface sbILocalDatabaseLibrary : nsISupports
   sbIDatabaseQuery createQuery();
 
   /**
+   * These aren't meant to be called directly. Use sbAutoBatchHelper
+   * to avoid the risk of leaving a batch in progress
+   */
+  [noscript] void ForceBeginUpdateBatch();
+  [noscript] void ForceEndUpdateBatch();
+
+  /**
    * Oh My.  We need this here to avoid a static cast in
    * sbLocalDatabaseSimpleMediaListFactory where we need a
    * sbLocalDatabaseLibrary class pointer to construct the simple media list.

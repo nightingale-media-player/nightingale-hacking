@@ -37,7 +37,7 @@ var gTestMediaItems = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
 // so that our changes don't interfere with other tests
 var testFolder = getCopyOfFolder(newAppRelativeFile(gFileLocation), "_temp_artwork_files");
 
-var metadataManager = Cc["@songbirdnest.com/Songbird/MetadataManager;1"]
+var gFileMetadataService = Cc["@songbirdnest.com/Songbird/MetadataManager;1"]
                         .getService(Ci.sbIMetadataManager);
 
 
@@ -92,7 +92,7 @@ function testWrite(testFileName, shouldPass) {
   
   // Save the image data to the test file
   var localPathURI = newFileURI( writeFile );
-  var handler = metadataManager.getHandlerForMediaURL(localPathURI.spec);
+  var handler = gFileMetadataService.getHandlerForMediaURL(localPathURI.spec);
 
   try {
     handler.setImageData(Ci.sbIMetadataHandler.METADATA_IMAGE_TYPE_OTHER,
@@ -146,7 +146,7 @@ function testRead() {
     var readFile = testFolder.clone();
     readFile.append(artFiles[index]);
     var localPathURI = newFileURI( readFile );
-    var handler = metadataManager.getHandlerForMediaURL(localPathURI.spec);
+    var handler = gFileMetadataService.getHandlerForMediaURL(localPathURI.spec);
     // The art for these are stored in OTHER, normally they should be stored in
     // FRONTCOVER
     try {
@@ -182,7 +182,7 @@ function testRead() {
     var readFile = testFolder.clone();
     readFile.append(noArtFiles[index]);
     var localPathURI = newFileURI( readFile );
-    var handler = metadataManager.getHandlerForMediaURL(localPathURI.spec);
+    var handler = gFileMetadataService.getHandlerForMediaURL(localPathURI.spec);
 
     try {
       var mimeTypeOutparam = {};

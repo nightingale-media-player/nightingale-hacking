@@ -47,6 +47,7 @@ CPP_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
                $(DEPTH)/components/devicesobsolete/base/public \
                $(DEPTH)/components/devicesobsolete/download/public \
                $(DEPTH)/components/dataremote/public \
+               $(DEPTH)/components/job/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/mediacore/metadata/manager/public \

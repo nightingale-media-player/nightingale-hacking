@@ -87,14 +87,11 @@ try
   function AsyncWebDocument(aDocument, aMediaListView, old_href_loop, context, aTitle)
   {
     const CONTRACTID_ARRAY = "@songbirdnest.com/moz/xpcom/threadsafe-array;1";
-    const CONTRACTID_METADATAJOBMANAGER =
-      "@songbirdnest.com/Songbird/MetadataJobManager;1";
     const CONTRACTID_FAVICONSERVICE = "@mozilla.org/browser/favicon-service;1";
     
     const nsIFaviconService = Components.interfaces.nsIFaviconService;
     const nsIMutableArray = Components.interfaces.nsIMutableArray;
     const sbIMediaList = Components.interfaces.sbIMediaList;
-    const sbIMetadataJobManager = Components.interfaces.sbIMetadataJobManager;
 
     CancelAsyncWebDocument(old_href_loop, aMediaListView);
 
@@ -307,10 +304,11 @@ try
           // Create a metadata task if there's anything to scan.
           if (mediaItemsToScan && mediaItemsToScan.length) {
             // Then submit the job
-            var metadataJobManager =
-              Components.classes[CONTRACTID_METADATAJOBMANAGER]
-                        .getService(sbIMetadataJobManager);
-            var metadataJob = metadataJobManager.newJob(mediaItemsToScan, 5);
+            
+            var metadataService = 
+               Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
+                         .getService(Components.interfaces.sbIFileMetadataService);
+            metadataService.read(mediaItemsToScan);
           }
         }
         else if ( this.child == false ) {

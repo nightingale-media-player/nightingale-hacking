@@ -73,6 +73,7 @@ sbFileScanQuery::sbFileScanQuery()
   NS_ASSERTION(m_pExtensionsLock, "FileScanQuery.m_pExtensionsLock failed");
   NS_ASSERTION(m_pScanningLock, "FileScanQuery.m_pScanningLock failed");
   NS_ASSERTION(m_pCancelLock, "FileScanQuery.m_pCancelLock failed");
+  MOZ_COUNT_CTOR(sbFileScanQuery);
 } //ctor
 
 //-----------------------------------------------------------------------------

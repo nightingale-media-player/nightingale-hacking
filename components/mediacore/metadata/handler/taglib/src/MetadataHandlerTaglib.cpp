@@ -147,9 +147,10 @@ PRBool sbMetadataHandlerTaglib::sBusyFlag = PR_FALSE;
  *
  ******************************************************************************/
 
-NS_IMPL_ISUPPORTS3(sbMetadataHandlerTaglib, sbIMetadataHandler,
-                                            sbISeekableChannelListener,
-                                            nsICharsetDetectionObserver)
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbMetadataHandlerTaglib, 
+                              sbIMetadataHandler,
+                              sbISeekableChannelListener,
+                              nsICharsetDetectionObserver)
 
 
 /*******************************************************************************
@@ -239,6 +240,29 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
     return (NS_OK);
 }
 
+NS_IMETHODIMP
+sbMetadataHandlerTaglib::GetRequiresMainThread(PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_STATE(mpChannel);
+  nsresult rv;
+  
+  nsCOMPtr<nsIURI> uri;
+  rv = mpChannel->GetURI(getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRBool isFileURI = PR_FALSE;
+  rv = uri->SchemeIs( "file" , &isFileURI );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Taglib uses the nsIChannel for all protocols
+  // other than file:// and cannot be run off
+  // of the main thread in these cases.
+
+  *_retval = !isFileURI;
+  return NS_OK;
+}
+
 
 /**
 * \brief Start the read operation
@@ -253,12 +277,19 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
 NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     PRInt32                     *pReadCount)
 {
-  nsresult rv;
+  nsresult rv = NS_ERROR_FAILURE;
+
   AcquireTaglibLock();
-  rv = ReadInternal(pReadCount); 
+  // Attempt to avoid crashes.  This may only work on windows.
+  try { 
+    rv = ReadInternal(pReadCount); 
+  } catch(...) { 
+    NS_ERROR("sbMetadataHandlerTaglib::Read caught an exception!");
+  }
   ReleaseTaglibLock(); 
+  
   // note that although ReleaseTaglibLock() has a return value, it always succeeds
-  // so we're really we're most interested in the return value from ReadInternal();
+  // so we're most interested in the return value from ReadInternal();
   
   return rv;
 }
@@ -328,6 +359,9 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
     PRUint32                    unsignedReadCount = 0;
     PRInt32                     readCount = 0;
     nsresult                    result = NS_OK;
+    
+    // Starting a new operation, so clear the completion flag
+    mCompleted = PR_FALSE;
 
     /* Get the TagLib sbISeekableChannel file IO manager. */
     mpTagLibChannelFileIOManager =
@@ -346,23 +380,9 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
     }
 
     /* Get the channel URL info. */
-    if (NS_SUCCEEDED(result))
-        result = mpChannel->GetURI(getter_AddRefs(pURI));
-    if (NS_SUCCEEDED(result))
-    {
-        pStandardURL = do_CreateInstance("@mozilla.org/network/standard-url;1",
-                                         &result);
+    if (!mpURL) {
+      result = NS_ERROR_NOT_INITIALIZED;
     }
-    if (NS_SUCCEEDED(result))
-    {
-        result = pStandardURL->Init(pStandardURL->URLTYPE_STANDARD,
-                                    0,
-                                    NS_LITERAL_CSTRING(""),
-                                    nsnull,
-                                    pURI);
-    }
-    if (NS_SUCCEEDED(result))
-        mpURL = do_QueryInterface(pStandardURL, &result);
     if (NS_SUCCEEDED(result))
         result = mpURL->GetSpec(urlSpec);
     if (NS_SUCCEEDED(result))
@@ -407,8 +427,13 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
           result = pFile->GetPath(mMetadataPath);
 
         /* Read the metadata. */
-        if (NS_SUCCEEDED(result))
+        if (NS_SUCCEEDED(result)) {
             result = ReadMetadata();
+            // If the read fails, that's it, nothing else to do
+            if (NS_FAILED(result)) {
+              CompleteRead();
+            }
+        }
     }
 
     /* If metadata reading is not complete, start an */
@@ -484,9 +509,14 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
 NS_IMETHODIMP sbMetadataHandlerTaglib::Write(
     PRInt32                     *pWriteCount)
 {
-  nsresult rv;
+  nsresult rv = NS_ERROR_FAILURE;
   AcquireTaglibLock();
-  rv = WriteInternal(pWriteCount);
+  // Attempt to avoid crashes.  This may only work on windows.
+  try { 
+    rv = WriteInternal(pWriteCount);
+  } catch(...) { 
+    NS_ERROR("sbMetadataHandlerTaglib::Write caught an exception!");
+  }
   ReleaseTaglibLock();
 
   return rv;
@@ -503,7 +533,10 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
     nsAutoString                filePath;
     nsresult                    result = NS_OK;
   
-    // TODO must ensure metadata is set before writing
+    // Starting a new operation, so clear the completion flag
+    mCompleted = PR_FALSE;
+  
+    // Must ensure metadata is set before writing
     NS_ENSURE_TRUE(mpMetadataPropertyArray, NS_ERROR_NOT_INITIALIZED);
 
     /* Get the TagLib sbISeekableChannel file IO manager. */
@@ -513,23 +546,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
                  &result);
 
     /* Get the channel URL info. */
-    if (NS_SUCCEEDED(result))
-        result = mpChannel->GetURI(getter_AddRefs(pURI));
-    if (NS_SUCCEEDED(result))
-    {
-        pStandardURL = do_CreateInstance("@mozilla.org/network/standard-url;1",
-                                         &result);
-    }
-    if (NS_SUCCEEDED(result))
-    {
-        result = pStandardURL->Init(pStandardURL->URLTYPE_STANDARD,
-                                    0,
-                                    NS_LITERAL_CSTRING(""),
-                                    nsnull,
-                                    pURI);
-    }
-    if (NS_SUCCEEDED(result))
-        mpURL = do_QueryInterface(pStandardURL, &result);
+    NS_ENSURE_STATE(mpURL);
     if (NS_SUCCEEDED(result))
         result = mpURL->GetSpec(urlSpec);
     if (NS_SUCCEEDED(result))
@@ -675,6 +692,9 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
     }
     
     // TODO need to set pWriteCount
+
+    // Indicate that the operation is complete
+    mCompleted = PR_TRUE;
   
     return result;
 }
@@ -802,8 +822,6 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
     PRUint32      *aDataLen,
     PRUint8       **aData)
 {
-  nsCOMPtr<nsIStandardURL>    pStandardURL;
-  nsCOMPtr<nsIURI>            pURI;
   nsCOMPtr<nsIFile>           pFile;
   nsCString                   urlSpec;
   nsCString                   urlScheme;
@@ -813,19 +831,7 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
   NS_ENSURE_ARG_POINTER(aData);
 
   /* Get the channel URL info. */
-  result = mpChannel->GetURI(getter_AddRefs(pURI));
-  NS_ENSURE_SUCCESS(result, result);
-  pStandardURL = do_CreateInstance("@mozilla.org/network/standard-url;1",
-                                       &result);
-  NS_ENSURE_SUCCESS(result, result);
-  result = pStandardURL->Init(pStandardURL->URLTYPE_STANDARD,
-                              0,
-                              NS_LITERAL_CSTRING(""),
-                              nsnull,
-                              pURI);
-  NS_ENSURE_SUCCESS(result, result);
-  mpURL = do_QueryInterface(pStandardURL, &result);
-  NS_ENSURE_SUCCESS(result, result);
+  NS_ENSURE_STATE(mpURL);
   result = mpURL->GetSpec(urlSpec);
   NS_ENSURE_SUCCESS(result, result);
   result = mpURL->GetScheme(urlScheme);
@@ -918,8 +924,6 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
     const PRUint8       *aData,
     PRUint32            aDataLen)
 {
-  nsCOMPtr<nsIStandardURL>    pStandardURL;
-  nsCOMPtr<nsIURI>            pURI;
   nsCOMPtr<nsIFile>           pFile;
   nsCString                   urlSpec;
   nsCString                   urlScheme;
@@ -930,19 +934,7 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
   NS_ENSURE_TRUE(aDataLen > 0, NS_ERROR_ILLEGAL_VALUE);
 
   /* Get the channel URL info. */
-  result = mpChannel->GetURI(getter_AddRefs(pURI));
-  NS_ENSURE_SUCCESS(result, result);
-  pStandardURL = do_CreateInstance("@mozilla.org/network/standard-url;1",
-                                       &result);
-  NS_ENSURE_SUCCESS(result, result);
-  result = pStandardURL->Init(pStandardURL->URLTYPE_STANDARD,
-                              0,
-                              NS_LITERAL_CSTRING(""),
-                              nsnull,
-                              pURI);
-  NS_ENSURE_SUCCESS(result, result);
-  mpURL = do_QueryInterface(pStandardURL, &result);
-  NS_ENSURE_SUCCESS(result, result);
+  NS_ENSURE_STATE(mpURL);
   result = mpURL->GetSpec(urlSpec);
   NS_ENSURE_SUCCESS(result, result);
   result = mpURL->GetScheme(urlScheme);
@@ -1079,7 +1071,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetProps(
     sbIMutablePropertyArray     **ppPropertyArray)
 {
     NS_ENSURE_ARG_POINTER(ppPropertyArray);
-    NS_ENSURE_STATE(ppPropertyArray);
+    NS_ENSURE_STATE(mpMetadataPropertyArray);
     NS_ADDREF(*ppPropertyArray = mpMetadataPropertyArray);
     return (NS_OK);
 }
@@ -1111,6 +1103,18 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::SetChannel(
     nsIChannel                  *pChannel)
 {
     mpChannel = pChannel;
+    if (!mpChannel) {
+      mpURL = nsnull;
+    } else {
+      /* Get the channel URL info. */
+      nsCOMPtr<nsIURI>            pURI;
+      nsresult                    result = NS_OK;
+      result = mpChannel->GetURI(getter_AddRefs(pURI));
+      NS_ENSURE_SUCCESS(result, result);
+      mpURL = do_QueryInterface(pURI, &result);
+      NS_ENSURE_SUCCESS(result, result);
+    }
+    
     return (NS_OK);
 }
 
@@ -1184,6 +1188,12 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::OnChannelDataAvailable(
 
 sbMetadataHandlerTaglib::sbMetadataHandlerTaglib()
 :
+    mpTagLibChannelFileIOManager(nsnull),
+    mpFileProtocolHandler(nsnull),
+    mpMetadataPropertyArray(nsnull),
+    mpChannel(nsnull),
+    mpSeekableChannel(nsnull),
+    mpURL(nsnull),
     mMetadataChannelRestart(PR_FALSE),
     mCompleted(PR_FALSE)
 {
@@ -1334,18 +1344,9 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
       AddMetadataValue(ID3v2Map[i][1], value);
     }
   }
-  
-  // Specialcase for TLEN which we keep in microseconds and ID3v2 stores in ms
-  TagLib::ID3v2::FrameList frameList = frameListMap["TLEN"];
-  if (!frameList.isEmpty())
-  {
-    PRInt32 length;
-    PR_sscanf(frameList.front()->toString().toCString(true), "%d", &length);
-    AddMetadataValue(ID3v2Map[i][1], length * 1000);
-  }
-  
+
   // TODO: bug 10932 -- make WCOP like this in taglib
-  frameList = frameListMap["WOAF"];
+  TagLib::ID3v2::FrameList frameList = frameListMap["WOAF"];
   if (!frameList.isEmpty())
   {
     TagLib::ID3v2::UrlLinkFrame* woaf =
@@ -1511,6 +1512,11 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
     /* Complete metadata reading upon error. */
     if (!NS_SUCCEEDED(result))
         CompleteRead();
+
+    /* If we weren't able to read, make sure we return a failure code */
+    if (!isValid) {
+      result = NS_ERROR_FAILURE;
+    }
 
     return (result);
 }

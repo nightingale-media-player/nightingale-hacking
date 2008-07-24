@@ -317,6 +317,16 @@ sbMetadataHandlerWMA::SetProps(sbIMutablePropertyArray *props)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+NS_IMETHODIMP
+sbMetadataHandlerWMA::GetRequiresMainThread(PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  // This handler does not use the channel implementation, 
+  // and is threadsafe.
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
 NS_METHOD
 sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
                                          PRInt32* _retval)

@@ -28,7 +28,7 @@
  * \brief Test file
  */
 
-var gTestMetadataJobManager;
+var gFileMetadataService;
 var count = 0;
 var t = null;
 
@@ -38,8 +38,8 @@ function runTest () {
 
   var library = createNewLibrary("test_metadatajob_performance");
 
-  gTestMetadataJobManager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                                .getService(Components.interfaces.sbIMetadataJobManager);
+  gFileMetadataService = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                                .getService(Components.interfaces.sbIFileMetadataService);
 
   var scan = Cc["@songbirdnest.com/Songbird/FileScan;1"]
                .createInstance(Ci.sbIFileScan);
@@ -78,7 +78,7 @@ function runTest () {
       index++;
     }
 
-    var job = gTestMetadataJobManager.newJob(a, 5);
+    var job = gFileMetadataService.read(a);
     job.addJobProgressListener(onComplete);
     count++;
     log("length = " + a.length + " count = " + count);

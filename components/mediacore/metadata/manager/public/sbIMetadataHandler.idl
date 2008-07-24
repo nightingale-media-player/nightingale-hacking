@@ -41,7 +41,7 @@
  *
  * \sa sbIMetadataManager
  */
-[scriptable, uuid(62f2be31-54cf-4728-84e8-923f5215b92a)]
+[scriptable, uuid(4a858410-52e7-11dd-ae16-0800200c9a66)]
 interface sbIMetadataHandler : nsISupports
 {
   /**
@@ -90,6 +90,14 @@ interface sbIMetadataHandler : nsISupports
    * to get the sbIPropertyArray object before the operation is completed.
    */
   readonly attribute PRBool completed;
+  
+  /**
+   * \brief Whether or not this handler MUST be run on the main thread.
+   *
+   * Since nsIChannel and other dependencies are not thread safe, some 
+   * sbIMetadataHandler implementations can not be run on background threads.
+   */
+  readonly attribute PRBool requiresMainThread;
 
   /**
    * \brief The object's nsIChannel

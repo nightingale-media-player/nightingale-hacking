@@ -81,7 +81,7 @@ function runTest() {
   var items = importFilesToLibrary(urls, library);
   assertEqual(items.length, urls.length);
   
-  var job = startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_READ);
+  var job = startMetadataJob(items, "read");
   
   // Wait for reading to complete before continuing
   job.addJobProgressListener(function onReadComplete(job) {
@@ -166,7 +166,7 @@ function runTest() {
       }
     }
 
-    job = startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_WRITE);
+    job = startMetadataJob(items, "write");
 
     // Wait for writing to complete before continuing
     job.addJobProgressListener(function onWriteComplete(job) {
@@ -190,7 +190,7 @@ function runTest() {
       library.clear();
       items = importFilesToLibrary(urls, library);
       assertEqual(items.length, urls.length);
-      job = startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_READ);
+      job = startMetadataJob(items, "read");
 
       // Wait for reading to complete before continuing
       job.addJobProgressListener(function onSecondReadComplete(job) {
@@ -297,8 +297,15 @@ function startMetadataJob(items, type) {
   for each (var item in items) {
     array.appendElement(item, false);
   }                     
-  manager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                      .getService(Components.interfaces.sbIMetadataJobManager);
-  return manager.newJob(array, 5, type);
+  manager = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                      .getService(Components.interfaces.sbIFileMetadataService);
+                      
+  var job;
+  if (type == "write") {
+    job = manager.write(array);
+  } else {
+    job = manager.read(array);
+  }
+  return job;
 }
 

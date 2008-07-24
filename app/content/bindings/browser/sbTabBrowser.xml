@@ -826,10 +826,10 @@
                     }
 
                     // Send the items in the new media list to the metadata scanner
-                    var metadataJobManager =
-                      Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                                .getService(Components.interfaces.sbIMetadataJobManager);
-                    var metadataJob = metadataJobManager.newJob(array, 5);
+                    var metadataService = 
+                      Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
+                                .getService(Components.interfaces.sbIFileMetadataService);
+                    metadataService.read(array);
 
                     // Start playback
                     var view = mediaList.createView();

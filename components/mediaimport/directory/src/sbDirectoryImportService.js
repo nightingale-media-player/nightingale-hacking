@@ -36,9 +36,8 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
-// TODO hookup to drag + drop
-// TODO remove old code
-// TODO clean up the miniplayer drop code
+// used to identify directory import profiling runs
+var gCounter = 0;
 
 /******************************************************************************
  * Object implementing sbIDirectoryImportJob, responsible for finding media
@@ -75,6 +74,12 @@ function DirectoryImportJob(aDirectoryArray,
   
   // Initially cancelable
   this._canCancel = true;
+  
+  if ("@songbirdnest.com/Songbird/TimingService;1" in Cc) {
+    this._timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
+                            .getService(Ci.sbITimingService);
+    this._timingIdentifier = "DirImport" + gCounter++;
+  }
 }
 DirectoryImportJob.prototype = {
   __proto__: SBJobUtils.JobBase.prototype,
@@ -127,6 +132,10 @@ DirectoryImportJob.prototype = {
   // this job. This is a cache created by enumerateAllItems(),
   // and should not be used directly.
   _allMediaItems            : null,
+  
+  // Used to track performance
+  _timingService            : null,
+  _timingIdentifier         : null,
   
   /**
    * Get an enumerator over the previously unknown media items that were
@@ -197,6 +206,9 @@ DirectoryImportJob.prototype = {
    * Begin the import job
    */
   begin: function DirectoryImportJob_begin() {
+    if (this._timingService) {
+      this._timingService.startPerfTimer(this._timingIdentifier); 
+    }
     
     // Start by finding all the files in the given directories
     
@@ -354,6 +366,10 @@ DirectoryImportJob.prototype = {
       }
     }
     
+    if (this._timingService) {
+      this._timingService.startPerfTimer(this._timingIdentifier + "-ItemCreation");
+    }
+    
     // Bug 10228 -  batch item creation is not cancelable!
     // BatchCreateMediaItems needs to return an sbIJobProgress
     this.targetMediaList.library.batchCreateMediaItemsAsync(
@@ -383,6 +399,10 @@ DirectoryImportJob.prototype = {
     
     // Handle inserting into a media list at a specific index
     this._insertFoundItemsIntoTarget();
+    
+    if (this._timingService) {
+      this._timingService.stopPerfTimer(this._timingIdentifier + "-ItemCreation");
+    }
     
     // Make sure we have metadata for all the added items
     this._startMetadataScan();
@@ -421,15 +441,17 @@ DirectoryImportJob.prototype = {
    */
   _startMetadataScan: function DirectoryImportJob__startMetadataScan() {
     if (this._newMediaItems && this._newMediaItems.length > 0) {
-      var metadataJobManager =
-        Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-          .getService(Ci.sbIMetadataJobManager);
-      var metadataJob = metadataJobManager.newJob(this._newMediaItems, 
-          /* Obsolete timeout value, to be removed in bug 10217: */ 5);
+      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                              .getService(Ci.sbIFileMetadataService);
+      var metadataJob = metadataService.read(this._newMediaItems);
     
       // Metadata job is cancelable
       this._canCancel = true;
     
+      if (this._timingService) {
+        this._timingService.startPerfTimer(this._timingIdentifier + "-Metadata");
+      }
+      
       // Pump metadata job progress to the UI
       this.delegateJobProgress(metadataJob);
     } else {
@@ -444,6 +466,10 @@ DirectoryImportJob.prototype = {
   onJobDelegateCompleted: function DirectoryImportJob_onJobDelegateCompleted() {
     // Stop delegating
     this.delegateJobProgress(null);
+    
+    if (this._timingService) {
+      this._timingService.stopPerfTimer(this._timingIdentifier + "-Metadata");
+    }
     
     // For now the only job we delegate to is metadata... so when 
     // it completes, we're done
@@ -483,6 +509,10 @@ DirectoryImportJob.prototype = {
     this.notifyJobProgressListeners();
     
     this._importService.onJobComplete();
+    
+    if (this._timingService) {
+      this._timingService.stopPerfTimer(this._timingIdentifier);
+    }
   },
   
   /**

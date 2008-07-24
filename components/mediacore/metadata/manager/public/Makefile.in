@@ -32,20 +32,17 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbIMetadataHandler.idl \
              sbIMetadataManager.idl \
              sbIMetadataChannel.idl \
-             sbIMetadataJob.idl \
-             sbPIMetadataJob.idl \
-             sbIMetadataJobManager.idl \
-             sbIMetadataUtils.idl \
+             sbIFileMetadataService.idl \
              $(NULL)
 
 XPIDL_INCLUDES = $(topsrcdir)/components/property/public \
                  $(topsrcdir)/components/job/public \
                  $(NULL)
 
-XPIDL_MODULE = sbMetadataManager.xpt
+XPIDL_MODULE = sbMetadataModule.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
-LIBSONGBIRD_COMPONENT = sbMetadataManager
+LIBSONGBIRD_COMPONENT = sbMetadataModule
 SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

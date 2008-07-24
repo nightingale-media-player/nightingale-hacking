@@ -45,6 +45,7 @@ function runTest() {
   // Set up test files //
   ///////////////////////
   // A file that doesnt exist
+
   var file = newAppRelativeFile("testharness/metadatamanager/errorcases/file_that_doesnt_exist.mp3");
   assertEqual(file.exists(), false);
   files.push(file);
@@ -100,7 +101,7 @@ function runTest() {
   assertEqual(items1.length, files.length);
   assertEqual(items2.length, files.length);
 
-  var job = startMetadataJob(items1, Components.interfaces.sbIMetadataJob.JOBTYPE_READ);
+  var job = startMetadataJob(items1, "read");
   
   
   /////////////////////////////////////
@@ -129,7 +130,7 @@ function runTest() {
         item.setProperty(SBProperties.trackName, SBProperties.trackName);
       }
       
-      job = startMetadataJob(items2, Components.interfaces.sbIMetadataJob.JOBTYPE_WRITE);
+      job = startMetadataJob(items2, "write");
       
       // Wait for reading to complete before continuing
       job.addJobProgressListener(onWriteComplete); 
@@ -169,7 +170,7 @@ function runTest() {
       assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
       
 
-      job = startMetadataJob(items2, Components.interfaces.sbIMetadataJob.JOBTYPE_READ);
+      job = startMetadataJob(items2, "read");
 
       // Wait for reading to complete before continuing
       job.addJobProgressListener(onLib2ReadComplete); 
@@ -300,9 +301,14 @@ function startMetadataJob(items, type) {
   for each (var item in items) {
     array.appendElement(item, false);
   }                     
-  manager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                      .getService(Components.interfaces.sbIMetadataJobManager);
-  var job = manager.newJob(array, 5, type);
+  manager = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                      .getService(Components.interfaces.sbIFileMetadataService);
+  var job;
+  if (type == "write") {
+    job = manager.write(array);
+  } else {
+    job = manager.read(array);
+  }
   prefSvc.setBoolPref("songbird.metadata.enableWriting", oldWritingEnabledPref); 
   
   return job;

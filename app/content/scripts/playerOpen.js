@@ -314,12 +314,12 @@ try
       for (var i = 0; i < mediaList.length; i++) {
         array.appendElement(mediaList.getItemByIndex(i), false);
       }
-
-      // Send the items in the new media list to the metadata scanner
-      var metadataJobManager =
-        Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                  .getService(Components.interfaces.sbIMetadataJobManager);
-      var metadataJob = metadataJobManager.newJob(array, 5);
+      
+      var metadataService = 
+         Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
+                   .getService(Components.interfaces.sbIFileMetadataService);
+      var metadataJob = metadataService.read(array);
+      
 
       // Give the new media list focus
       if (typeof gBrowser != 'undefined') {
@@ -1025,14 +1025,15 @@ function SBImportURLIntoMainLibrary(url) {
     return null;
   }
 
-  var metadataJobMgr = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-    .getService(Components.interfaces.sbIMetadataJobManager);
-
   var items = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
     .createInstance(Components.interfaces.nsIMutableArray);
 
   items.appendElement(mediaItem, false);
-  metadataJobMgr.newJob(items, 5);
+
+  var metadataService = 
+     Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
+               .getService(Components.interfaces.sbIFileMetadataService);
+  var metadataJob = metadataService.read(items);
 
   return mediaItem;
 }
@@ -1073,14 +1074,15 @@ function SBImportURLIntoWebLibrary(url) {
     return null;
   }
 
-  var metadataJobMgr = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-    .getService(Components.interfaces.sbIMetadataJobManager);
-
   var items = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
     .createInstance(Components.interfaces.nsIMutableArray);
 
   items.appendElement(mediaItem, false);
-  metadataJobMgr.newJob(items, 5);
+
+  var metadataService = 
+     Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
+               .getService(Components.interfaces.sbIFileMetadataService);
+  var metadataJob = metadataService.read(items);
 
   return mediaItem;
 }

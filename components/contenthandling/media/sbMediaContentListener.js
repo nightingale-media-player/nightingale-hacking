@@ -37,7 +37,6 @@ const CONTRACTID  = "@songbirdnest.com/contentlistener/media;1";
 
 const CONTRACTID_ARRAY              = "@songbirdnest.com/moz/xpcom/threadsafe-array;1";
 const CONTRACTID_LIBRARYMANAGER     = "@songbirdnest.com/Songbird/library/Manager;1";
-const CONTRACTID_METADATAJOBMANAGER = "@songbirdnest.com/Songbird/MetadataJobManager;1";
 const CONTRACTID_OBSERVERSERVICE    = "@mozilla.org/observer-service;1";
 const CONTRACTID_PLAYLISTPLAYBACK   = "@songbirdnest.com/Songbird/PlaylistPlayback;1";
 const CONTRACTID_PREFSERVICE        = "@mozilla.org/preferences-service;1";
@@ -119,10 +118,10 @@ sbMediaContentListener.prototype = {
       // Get metadata going.
       var scanArray = Cc[CONTRACTID_ARRAY].createInstance(Ci.nsIMutableArray);
       scanArray.appendElement(mediaItem, false);
-
-      var metadataJobManager = Cc[CONTRACTID_METADATAJOBMANAGER].
-                               getService(Ci.sbIMetadataJobManager);
-      var metadataJob = metadataJobManager.newJob(scanArray, 5);
+      
+      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                              .getService(Ci.sbIFileMetadataService);
+      var job = metadataService.read(scanArray);
     }
 
     var view = library.createView();

@@ -358,13 +358,11 @@
                           .createInstance(Components.interfaces.nsIMutableArray);
                         
               mediaItemArray.appendElement(self._curMediaItem, false);
-            
-              var manager = 
-                Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                          .getService(Components.interfaces.sbIMetadataJobManager);
-            
-              var job = manager.newJob(mediaItemArray, 5,  // Sleep time on thread
-                                       Components.interfaces.sbIMetadataJob.JOBTYPE_WRITE);          
+
+              var metadataService = 
+                 Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
+                           .getService(Components.interfaces.sbIFileMetadataService);
+              var job = metadataService.write(mediaItemArray);       
             
               SBJobUtils.showProgressDialog(job, null);
             }

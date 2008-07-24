@@ -28,16 +28,16 @@
  * \brief Test reading and writing with an sbIMetadataHandler
  */
 
-var gMetadataManager;
+var gFileMetadataService;
 
 function runTest () {
-  gMetadataManager = Components.classes["@songbirdnest.com/Songbird/MetadataManager;1"]
+  gFileMetadataService = Components.classes["@songbirdnest.com/Songbird/MetadataManager;1"]
                                 .getService(Components.interfaces.sbIMetadataManager);
                               
   var file = newAppRelativeFile("testharness/metadatamanager/files/MP3_ID3v23.mp3");
   file = getCopyOfFile(file, "handler_test.mp3");
   var fileURL = newFileURI(file).spec;
-  var handler = gMetadataManager.getHandlerForMediaURL(fileURL);
+  var handler = gFileMetadataService.getHandlerForMediaURL(fileURL);
   
   assertNotEqual(handler, null);
   
@@ -71,7 +71,7 @@ function runTest () {
   
   // Get a new handler just to make sure it isn't cheating somehow
   handler.close();
-  handler = gMetadataManager.getHandlerForMediaURL(fileURL);
+  handler = gFileMetadataService.getHandlerForMediaURL(fileURL);
   handler.read();
   
   // Confirm that writing succeeded.

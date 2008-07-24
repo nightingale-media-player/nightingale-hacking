@@ -77,11 +77,12 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbSeekableChannel");
  *
  ******************************************************************************/
 
-NS_IMPL_ISUPPORTS5(sbSeekableChannel, sbISeekableChannel,
-                                      nsIStreamListener,
-                                      nsIRequestObserver,
-                                      nsIChannelEventSink,
-                                      nsIInterfaceRequestor)
+NS_IMPL_THREADSAFE_ISUPPORTS5(sbSeekableChannel, 
+                              sbISeekableChannel,
+                              nsIStreamListener,
+                              nsIRequestObserver,
+                              nsIChannelEventSink,
+                              nsIInterfaceRequestor)
 
 
 /*******************************************************************************

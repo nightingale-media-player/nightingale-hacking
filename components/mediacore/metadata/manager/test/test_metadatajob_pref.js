@@ -60,8 +60,8 @@ function runTest() {
   // While we're at it, confirm that metadata can only be written when allowed via prefs
   prefSvc.setBoolPref("songbird.metadata.enableWriting", false);
   try {
-    startMetadataJob(items, Components.interfaces.sbIMetadataJob.JOBTYPE_WRITE);
-    // This line should not be reached, as startMetadataJob should throw NS_ERROR_NOT_AVAILABLE
+    startMetadataWriteJob(items);
+    // This line should not be reached, as startMetadataWriteJob should throw NS_ERROR_NOT_AVAILABLE
     throw new Error("MetadataJobManager does not respect enableWriting pref!");
   } catch (e) {
     if (Components.lastResult != Components.results.NS_ERROR_NOT_AVAILABLE) {
@@ -124,14 +124,14 @@ function importFilesToLibrary(files, library) {
 /**
  * Get a metadata job for the given items
  */
-function startMetadataJob(items, type) {
+function startMetadataWriteJob(items) {
   var array = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Components.interfaces.nsIMutableArray);
   for each (var item in items) {
     array.appendElement(item, false);
   }                     
-  manager = Components.classes["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                      .getService(Components.interfaces.sbIMetadataJobManager);
-  return manager.newJob(array, 5, type);
+  manager = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                      .getService(Components.interfaces.sbIFileMetadataService);
+  return manager.write(array);
 }
 

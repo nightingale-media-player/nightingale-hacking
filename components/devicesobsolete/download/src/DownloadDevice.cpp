@@ -73,7 +73,8 @@
 #include <sbILibraryManager.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILocalDatabaseLibrary.h>
-#include <sbIMetadataJob.h>
+#include <sbIFileMetadataService.h>
+#include <sbIJobProgress.h>
 #include <sbIPropertyManager.h>
 #include <sbStandardProperties.h>
 
@@ -4045,21 +4046,19 @@ NS_IMETHODIMP sbDownloadSession::LibraryMetadataUpdater::OnEnumerationEnd(
     sbIMediaList                *aMediaList,
     nsresult                    aStatusCode)
 {
-    nsCOMPtr<sbIMetadataJobManager>
-                                pMetadataJobManager;
-    nsCOMPtr<sbIMetadataJob>    pMetadataJob;
+    nsCOMPtr<sbIFileMetadataService>
+                                pMetadataService;
+    nsCOMPtr<sbIJobProgress>    pMetadataJob;
     nsresult                    result = NS_OK;
 
     /* Start a metadata scanning job. */
-    pMetadataJobManager = do_GetService
-                            ("@songbirdnest.com/Songbird/MetadataJobManager;1",
+    pMetadataService = do_GetService
+                            ("@songbirdnest.com/Songbird/FileMetadataService;1",
                              &result);
     if (NS_SUCCEEDED(result))
     {
-        result = pMetadataJobManager->NewJob(mpMediaItemArray,
-                                             5,
-                                             sbIMetadataJob::JOBTYPE_READ,
-                                             getter_AddRefs(pMetadataJob));
+        result = pMetadataService->Read(mpMediaItemArray,
+                                        getter_AddRefs(pMetadataJob));
     }
 
     return (result);
@@ -4192,8 +4191,8 @@ NS_IMETHODIMP sbDownloadSessionMoveHandler::Run() {
   rv = mSourceFile->MoveTo(mDestinationPath, mDestinationFileName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMetadataJobManager> metadataJobManager;
-  nsCOMPtr<sbIMetadataJob>        metadataJob;
+  nsCOMPtr<sbIFileMetadataService> metadataService;
+  nsCOMPtr<sbIJobProgress>         metadataJob;
 
   /* Create an array to contain the media items to scan. */
   nsCOMPtr<nsIMutableArray> itemArray = 
@@ -4203,12 +4202,10 @@ NS_IMETHODIMP sbDownloadSessionMoveHandler::Run() {
   NS_ENSURE_SUCCESS(rv, rv);
 
   /* Start a metadata scanning job. */
-  metadataJobManager = 
-    do_GetService("@songbirdnest.com/Songbird/MetadataJobManager;1", &rv);
+  metadataService = 
+    do_GetService("@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return metadataJobManager->NewJob(itemArray,
-                                    5,
-                                    sbIMetadataJob::JOBTYPE_READ,
-                                    getter_AddRefs(metadataJob));
+  return metadataService->Read(itemArray,
+                               getter_AddRefs(metadataJob));
 }

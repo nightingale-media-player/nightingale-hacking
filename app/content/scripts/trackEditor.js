@@ -990,11 +990,10 @@ var TrackEditor = {
       }
     }
     if (mediaItemArray.length > 0) {
-      var manager = Cc["@songbirdnest.com/Songbird/MetadataJobManager;1"]
-                        .getService(Ci.sbIMetadataJobManager);
-      
+      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                              .getService(Ci.sbIFileMetadataService);      
       try {
-        var job = manager.newJob(mediaItemArray, 5, Ci.sbIMetadataJob.JOBTYPE_WRITE);
+        var job = metadataService.write(mediaItemArray);
       
         SBJobUtils.showProgressDialog(job, window);
       } catch (e) {
