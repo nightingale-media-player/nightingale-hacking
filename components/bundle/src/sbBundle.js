@@ -114,7 +114,9 @@ Bundle.prototype = {
       handleEvent: function( event ) { this._that.onError(); } 
     }; this._onerror._that = this;
     
-    this._req = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest); 
+    this._req = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
+                          .createInstance(Components.interfaces.nsIXMLHttpRequest);
+    this._req.mozBackgroundRequest = true;
     var httpReq = this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest);
     httpReq.addEventListener("load", this._onload, false);
     httpReq.addEventListener("error", this._onerror, false);
