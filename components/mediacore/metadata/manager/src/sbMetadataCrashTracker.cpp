@@ -186,7 +186,7 @@ nsresult sbMetadataCrashTracker::ResetLog()
   if (mOutputStream) {
     mOutputStream->Close();
     mOutputStream = nsnull;
-    mLogFile->Remove(PR_TRUE);
+    mLogFile->Remove(PR_FALSE);
   }
   
   mURLToIndexMap.Clear();
@@ -515,7 +515,7 @@ sbMetadataCrashTracker::GetProfileFile(const nsAString& aName, nsIFile** aFile)
     do_GetService(NS_DIRECTORY_SERVICE_CONTRACTID, &rv));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the users profile directory
+  // Get the user's profile directory
   nsCOMPtr<nsIFile> file;
   rv = directoryService->Get("ProfD", NS_GET_IID(nsIFile),
                              getter_AddRefs(file));

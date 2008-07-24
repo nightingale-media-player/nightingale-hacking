@@ -120,7 +120,17 @@ var JobProgressDialog = {
       this._progressMeter.mode = "undetermined";
     } else {
       this._progressMeter.mode = "determined";
-      this._progressMeter.value = Math.round((this._job.progress / this._job.total) * 100);
+      
+      // Songbird has a special modified progress meter.
+      // We allow max > 100, but there  are some crazy bugs 
+      // if max goes too high.
+      if (this._job.total < 10000) {
+        this._progressMeter.max = this._job.total;
+        this._progressMeter.value = this._job.progress;
+      } else {
+        this._progressMeter.max = 10000;
+        this._progressMeter.value = Math.round((this._job.progress / this._job.total) * 10000);
+      }
     }
     
     // If the content is too big for the window (or the window has just loaded)

@@ -26,7 +26,7 @@
 
 /**
 * \file sbIFileMetadataService.idl
-* \brief The manager from which to request a metadata handler
+* \brief Manages reading and writing metadata from media files.
 * \sa sbIMetadataHandler.idl
 */
 #include "nsISupports.idl"

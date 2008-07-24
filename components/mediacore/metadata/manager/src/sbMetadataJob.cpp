@@ -80,10 +80,9 @@
 
 // DEFINES ====================================================================
 
-// Queue up 3000 job items in mProcessedBackgroundThreadItems
+// Queue up 50 job items in mProcessedBackgroundThreadItems
 // before calling BatchCompleteItems on the main thread
-// TODO tweak
-const PRUint32 NUM_BACKGROUND_ITEMS_BEFORE_FLUSH = 3000;
+const PRUint32 NUM_BACKGROUND_ITEMS_BEFORE_FLUSH = 50;
 
 #include "prlog.h"
 #ifdef PR_LOGGING
@@ -782,7 +781,15 @@ nsresult sbMetadataJob::BatchCompleteItems()
     nsCOMPtr<sbIMediaListBatchCallback> batchCallback =
       new sbMediaListBatchCallback(&sbMetadataJob::RunLibraryBatch);
     NS_ENSURE_TRUE(batchCallback, NS_ERROR_OUT_OF_MEMORY);
-    rv = mLibrary->RunInBatchMode(batchCallback, static_cast<sbIJobProgress*>(this));
+    
+    // If we are inside one mega-batch, just call complete directly.
+    if (mInLibraryBatch) {
+      rv = BatchCompleteItemsCallback();
+    } else {
+      // Otherwise run a small library batch
+      rv = mLibrary->RunInBatchMode(batchCallback, static_cast<sbIJobProgress*>(this)); 
+    }    
+    
     NS_ENSURE_SUCCESS(rv, rv);  
   }
   return rv;

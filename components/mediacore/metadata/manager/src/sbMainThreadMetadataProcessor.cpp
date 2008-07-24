@@ -103,6 +103,11 @@ nsresult sbMainThreadMetadataProcessor::Start()
     NS_ENSURE_SUCCESS(rv, rv);
   
     mRunning = PR_TRUE;
+    
+    // Run the timer method right away so we don't waste any time
+    // before starting the handlers (would otherwise wait
+    // TIMER_PERIOD before even starting)
+    Notify(nsnull);
   }
   
   return NS_OK;
