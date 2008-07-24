@@ -174,9 +174,6 @@
       <method name="updateIcon">
         <body>
           <![CDATA[
-            if (!this.mTabBrowser) {
-              Components.utils.reportError((new Error).stack);
-            }
             var browser = this.mTabBrowser.getBrowserForTab(this);
             if (!this.hasAttribute("busy") && browser && browser.mIconURL)
               this.setAttribute("image", browser.mIconURL);

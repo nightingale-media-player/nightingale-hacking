@@ -482,6 +482,27 @@
 
           ]]></body>
       </method>
+      
+      <!-- override base tab binding to allow setting icons from the service pane-->
+      <method name="updateIcon">
+        <body>
+          <![CDATA[
+            var image = null;
+            var servicePaneNode = this._findServicePaneNode();
+            var browser = this.mTabBrowser.getBrowserForTab(this);
+            
+            if (browser && browser.mIconURL) {
+              image = browser.mIconURL;
+            } else if (servicePaneNode && servicePaneNode.image) {
+              image = servicePaneNode.image;
+            }
+            if (!this.hasAttribute("busy") && image)
+              this.setAttribute("image", image);
+            else
+              this.removeAttribute("image");
+          ]]>
+        </body>
+      </method>
 
       <method name="scanWebPage">
         <body><![CDATA[
