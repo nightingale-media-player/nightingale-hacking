@@ -363,7 +363,8 @@ try
       var libraryFilePath = Application.prefs.getValue
                               ("songbird.library_importer.library_file_path",
                                "");
-      libraryImporter.import(libraryFilePath, "songbird", false);
+      var job = libraryImporter.import(libraryFilePath, "songbird", false);
+      SBJobUtils.showProgressDialog(job, window);
     }
   }
 

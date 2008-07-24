@@ -485,6 +485,8 @@ Component.prototype =
      * \param aGUID GUID of Songbird library into which to import.
      * \param aCheckForChanges If true, check for changes in external library
      * before importing.
+     *
+     * \return Import job object.
      */
 
     import: function(aLibFilePath, aGUID, aCheckForChanges)
@@ -509,10 +511,15 @@ Component.prototype =
                 return;
         }
 
+        /* Create an importer job object. */
+        this.mJob = new sbITunesImporterJob();
+
         /* Issue an import request. */
         req.func = this.mHandleImportReqFunc;
         req.args = [ aLibFilePath, aGUID, aCheckForChanges ];
         ITReq.issue(req);
+
+        return this.mJob;
     },
 
 
@@ -609,6 +616,7 @@ Component.prototype =
         /* Initialize status. */
         if (state == 1)
         {
+            ITStatus.mJob = this.mJob;
             ITStatus.initialize();
             ITStatus.reset();
             ITStatus.bringToFront();
@@ -3944,6 +3952,7 @@ var ITStatus =
      **************************************************************************/
 
     /*
+     * mJob                         Importer job object.
      * mStatusDataRemote            Data remote for displaying status.
      * mStageText                   Stage status text.
      * mProgressText                Progress within stage text.
@@ -3951,6 +3960,7 @@ var ITStatus =
      * mDone                        Done status.
      */
 
+    mJob: null,
     mStatusDataRemote: null,
     mStageText: "",
     mProgressText: "",
@@ -3981,6 +3991,15 @@ var ITStatus =
 
         /* Reset the status. */
         this.reset();
+
+        /* Initialize the job object. */
+        if (this.mJob)
+        {
+            var titleText = SBFormattedString("import_library.job.title_text",
+                                              [ "iTunes" ]);
+            this.mJob.setTitleText(titleText);
+            this.mJob.setStatusText(SBString("import_library.job.status_text"));
+        }
     },
 
 
@@ -4042,6 +4061,15 @@ var ITStatus =
         if (!this.mDone)
             statusText += " " + this.mProgressText + " " + this.mProgress + "%";
         this.mStatusDataRemote.stringValue = statusText;
+
+        /* Update job object. */
+        if (this.mJob)
+        {
+            this.mJob.setProgress(this.mProgress);
+            this.mJob.setTotal(100);
+            if (this.mDone)
+                this.mJob.setStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
+        }
 
         /* Log status. */
         Log("Status: " + statusText + "\n");
@@ -4337,6 +4365,151 @@ var LogSvc =
         /* Log message. */
         dump(msg);
     }
+};
+
+
+//------------------------------------------------------------------------------
+//
+// iTunes importer job object.
+//
+//------------------------------------------------------------------------------
+
+// Songbird imports.
+Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
+
+/**
+ * Construct an iTunes importer job object.
+ */
+
+function sbITunesImporterJob() {
+  // Call super-class constructor.
+  SBJobUtils.JobBase.call(this);
+}
+
+// Define the object.
+sbITunesImporterJob.prototype = {
+  // Inherit prototype.
+  __proto__: SBJobUtils.JobBase.prototype,
+
+  //
+  // iTunes importer job configuration.
+  //
+  //   _updateProgressDelay     Time in milliseconds to delay job progress
+  //                            updates.
+  //
+
+  _updateProgressDelay: 50,
+
+
+  //
+  // iTunes importer job fields.
+  //
+  //   _updateProgressTimer     Timer used to delay job progress updates to
+  //                            limit update rate.
+  //
+
+  _updateProgressTimer: null,
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Public importer job services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Set the job status to the sbIJobProgress status value specified by aStatus.
+   *
+   * \param aStatus             Job status.
+   */
+
+  setStatus: function sbITunesImporterJob_setStatus(aStatus) {
+    this._status = aStatus;
+    this._updateProgress();
+  },
+
+
+  /**
+   * Set the job status text to the value specified by aStatusText.
+   *
+   * \param aStatusText         Job status text.
+   */
+
+  setStatusText: function sbITunesImporterJob_setStatusText(aStatusText) {
+    this._statusText = aStatusText;
+    this._updateProgress();
+  },
+
+
+  /**
+   * Set the job title text to the value specified by aTitleText.
+   *
+   * \param aTitleText          Job title text.
+   */
+
+  setTitleText: function sbITunesImporterJob_setTitleText(aTitleText) {
+    this._titleText = aTitleText;
+    this._updateProgress();
+  },
+
+
+  /**
+   * Set the job work units completed progress value to the value specified by
+   * aProgress.
+   *
+   * \param aProgress           Job work units completed progress.
+   */
+
+  setProgress: function sbITunesImporterJob_setProgress(aProgress) {
+    this._progress = aProgress;
+    this._updateProgress();
+  },
+
+
+  /**
+   * Set the job total work units to complete value to the value specified by
+   * aTotal.
+   *
+   * \param aTotal              Total job work units to complete.
+   */
+
+  setTotal: function sbITunesImporterJob_setTotal(aTotal) {
+    this._total = aTotal;
+    this._updateProgress();
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal importer job services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Update the job progress.  This function delays a bit before updating to
+   * limit the update rate.
+   */
+
+  _updateProgress: function sbITunesImporterJob__updateProgress() {
+    // Do nothing if update progress timer is already running.
+    if (this._updateProgressTimer)
+      return;
+
+    // Delay before updating progress to limit progress update rate.
+    var _this = this;
+    var func = function() { _this._updateProgressDelayed(); };
+    this._updateProgressTimer =
+           Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
+    this._updateProgressTimer.initWithCallback(func,
+                                               this._updateProgressDelay,
+                                               Ci.nsITimer.TYPE_ONE_SHOT);
+  },
+
+  _updateProgressDelayed:
+    function sbITunesImporterJob__updateProgressDelayed() {
+    this._updateProgressTimer = null;
+    this.notifyJobProgressListeners();
+  }
 };
 
 

@@ -118,7 +118,9 @@ interface sbILibraryImporterListener : nsISupports
 * This interface is used for importing external libraries into Songbird.
 */
 
-[scriptable, uuid(C5F37696-AA3D-42F4-9F87-1761BEF78622)]
+interface sbIJobProgress;
+
+[scriptable, uuid(3437F833-8E36-4035-8017-60CC3CFB91A2)]
 interface sbILibraryImporter : nsISupports
 {
     /*
@@ -162,9 +164,11 @@ interface sbILibraryImporter : nsISupports
      * \param aGUID GUID of Songbird library into which to import.
      * \param aCheckForChanges If true, check for changes in external library
      * before importing.
+     *
+     * \return Import job object.
      */
 
-    void import(
+    sbIJobProgress import(
         in AString                  aLibFilePath,
         in AString                  aGUID,
         in boolean                  aCheckForChanges);
