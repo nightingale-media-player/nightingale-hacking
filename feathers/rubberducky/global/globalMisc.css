@@ -234,3 +234,7 @@ filefield[disabled="true"] > .fileFieldContentBox
 {
   opacity:1.0 !important;
 }
+
+prefwindow > .paneSelector > radio > .paneButtonIcon {
+  display:none !important;
+}

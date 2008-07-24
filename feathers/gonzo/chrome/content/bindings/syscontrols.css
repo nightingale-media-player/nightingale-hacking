@@ -369,8 +369,6 @@ window[platform=Darwin] .sb-sys-outer-frame-resizer {
 }
 .sb-sys-outer-frame-resizer-image {
   list-style-image: url(chrome://songbird/skin/window/button-resizer.png);
-  -moz-image-region: rect(0px 12px 12px 0px);
-  background-color:cyan;
   min-width:12px;
   min-height:12px;
 }

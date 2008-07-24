@@ -261,17 +261,16 @@ config.css
 */
 #warningScreen
 {
-  background-color: pink;
+  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
 }
 
 #warningBox
 {
-  background-color: -moz-Field;
-  color: -moz-FieldText;
-  border: 1px solid ThreeDShadow;
+  background-color: white;
+  color: rgb(40,40,40);
+  border: 1px solid gray;
   -moz-border-radius: 10px;
-  padding: 3em;
-  -moz-padding-start: 30px;
+  padding: 1em;
   margin-left: 1em;
   margin-right: 1em;
 }
@@ -285,7 +284,6 @@ config.css
 {
   margin: 0 0 .6em 0;
   font-size: 160%;
-  border-bottom: 1px solid ThreeDLightShadow
 }
 
 #warningText

@@ -41,6 +41,7 @@ menu,
 treechildren::-moz-tree-cell-text,
 html|input {
   font-family: Lucida Grande, Trebuchet MS, Bitstream Vera Sans, FreeSans, Verdana, Arial, Sans-serif !important;
+  font-size:11px;
 }
 
 window {
@@ -194,7 +195,7 @@ notification > button > .button-box {
 .sb-commands-toolbar toolbarbutton .toolbarbutton-text,
 notification > button > .button-box > .button-text {
   color:rgb(40,40,40);
-  font-size:9px;
+  font-size:9px !important;
   padding:0;
   margin:0;
 }
@@ -230,6 +231,7 @@ treechildren::-moz-tree-cell( insertbefore ) {
 treechildren::-moz-tree-cell-text {
 }
 
+listitem,
 treechildren::-moz-tree-row( odd ) {
   background-color: rgb(255,255,255);
 }
@@ -338,11 +340,14 @@ treecolpicker,
 }
 
 listheader,
-tree treecol,
+treecol,
 treecolpicker {
   min-height:0px !important;
   height:16px !important;
   max-height:16px !important;
+}
+listheader > label,
+treecol > label {
   font-size:9px !important;
 }
 
@@ -624,14 +629,23 @@ border-left:1px solid rgb(140,140,140);
   padding:3px 8px;
 }
 
-button:focus > .button-box,
+button:focus,
+toolbarbutton:focus,
 checkbox:focus > .checkbox-check,
-radio[focused="true"] > .radio-check{
-  outline:2px solid brown !important;
-  outline-offset:1px !important;
+radio[focused="true"] > .radio-check,
+menulist:focus {
+  outline:2px solid rgba(0,0,0,0.33) !important;
+  outline-offset:0px !important;
   -moz-outline-radius:5px !important;
 }
-
+radio[focused="true"] > .radio-check {
+  -moz-outline-radius:8px !important;
+}
+button.button-menubutton-button:focus {
+  outline-offset:1px !important;
+  -moz-outline-radius-topright:0px !important;
+  -moz-outline-radius-bottomright:0px !important;
+}
 
 button,
 findbar toolbarbutton,
@@ -1360,7 +1374,7 @@ prefwindow > .paneSelector > radio > image {
 prefwindow > .paneSelector > radio > label {
   padding:0;
   margin:0;
-  font-size:12px;
+  font-size:11px;
 }
 prefwindow > .paneSelector > radio[selected="true"] {
   background-color:white;
@@ -1857,9 +1871,7 @@ tab[first-tab="true"],
 }
 
 
-prefwindow * {
-  font-size:11px !important;
-}
+
 
 
 /**
@@ -2575,4 +2587,47 @@ richlistitem[loading="true"] .updateBadge {
 }
 .sb-first-run-add-ons-listbox {
   background-color:white;
+}
+
+
+
+#defaultFontSize {
+  min-width:5em;
+}
+
+#paneMain description,
+#paneContent description,
+#paneAdvanced description,
+#paneSecurity description {
+  font-family: Lucida Grande, Trebuchet MS, Bitstream Vera Sans, FreeSans, Verdana, Arial, Sans-serif !important;
+  font-size:11px !important;
+}
+prefwindow .textbox-input,
+prefwindow html|input {
+  font-size:11px !important;
+}
+
+
+wizard {
+  background-color: rgb(245,245,245) !important;
+}
+.wizard-buttons-separator,
+.wizard-header-description[value=""] {
+  display:none !important;
+}
+.wizard-buttons-box-2 {
+  margin:0px;
+}
+
+*[disabled="true"] {
+  opacity:0.5 !important;
+}
+
+prefwindow > .prefWindow-dlgbuttons {
+  -moz-box-orient:vertical !important;
+}
+textbox[focused="true"] {
+  outline:2px solid rgba(0,0,0,0.33) !important;
+  outline-offset:2px !important;
+  -moz-outline-radius:5px !important;
 }

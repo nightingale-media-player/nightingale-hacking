@@ -25,6 +25,5 @@
  */
 
 page {
-  background-color: magenta;
-  color: cyan;
+  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
 }

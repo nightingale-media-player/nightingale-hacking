@@ -54,7 +54,7 @@
                   src="chrome://songbird/locale/songbird.properties"/>
   </stringbundleset>
 
- <prefWindow id="BrowserPreferences">
+ <prefWindow id="BrowserPreferences" orient="horizontal">
 
   <!-- Hide the Applications panel for the moment -->
   <prefpane id="paneApplications"
@@ -82,5 +82,7 @@
     insertafter="paneRemoteAPI"
     src="chrome://songbird/content/xul/preferences/importLibraryPrefs.xul"/>
  </prefWindow>
+
+  
 
 </overlay>

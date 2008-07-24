@@ -7,4 +7,6 @@
 #skin  songbird gonzo chrome/skin/
 # Include the Songbird global in order to suppress the
 # standard OS look and feel.
-#skin  global gonzo  chrome://songbird-global/skin/
+skin  global gonzo  chrome://songbird-global/skin/
+
+skin  mozapps  gonzo  chrome://songbird-mozapps/skin/
