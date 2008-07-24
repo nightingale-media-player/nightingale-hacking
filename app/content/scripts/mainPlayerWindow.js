@@ -169,6 +169,8 @@ var gSongbirdPlayerWindow = {
     this._onPlayCallback = function(e) { gSongbirdPlayerWindow.onPlay(e); };    
     window.addEventListener("Play", 
         this._onPlayCallback, true);
+
+    window.addEventListener("keypress", this.onMainWindowKeyPress, false);
     
     window.focus();
     windowPlacementSanityChecks();
@@ -208,6 +210,8 @@ var gSongbirdPlayerWindow = {
    
     window.removeEventListener("Play",  this._onPlayCallback, true);
     this._onPlayCallback = null;
+
+    window.removeEventListener("keypress", this.onMainWindowKeyPress, false);
   },
 
   
@@ -248,7 +252,28 @@ var gSongbirdPlayerWindow = {
   },
 
 
+  onMainWindowKeyPress: function onMainWindowKeyPress( event )
+  {
+    // the key press handler for pressing spacebar to play, at the top level
+    if (document.commandDispatcher.focusedWindow != window ||
+        document.commandDispatcher.focusedElement)
+    {
+      // somebody else has focus
+      return true;
+    }
 
+    // note that we accept shift key being pressed.
+    if (event.charCode != KeyboardEvent.DOM_VK_SPACE ||
+        event.ctrlKey || event.altKey || event.metaKey || event.altGraphKey)
+    {
+      return true;
+    }
+    
+    doMenu("menuitem_control_play");
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  },
 
 
 
