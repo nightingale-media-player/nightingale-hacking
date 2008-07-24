@@ -88,7 +88,7 @@ var gSongbirdWindowController =
   
   isCommandEnabled: function(aCommand)
   {
-    if (!gTabBrowser.isSelectedTabMediaPage() &&
+    if (!gTabBrowser.shouldDisableFindForSelectedTab() &&
         (aCommand == "cmd_find" || aCommand == "cmd_findAgain"))
       return true;
     if (aCommand == "cmd_metadata" ||

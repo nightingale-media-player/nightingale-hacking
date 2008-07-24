@@ -615,15 +615,19 @@
         <body>
           <![CDATA[
             // If we are about to show a media page, let's supress the findbar. 
-            // Calling |closeFindbar()| simply hides the findbar from
-            // the content view and saves the contents of the search.
-            if (this.isSelectedTabMediaPage() && !this.isFindbarHidden) {
+            if (this.shouldDisableFindForSelectedTab() &&
+                !this.isFindbarHidden)
+            {
+              // Calling |closeFindbar()| simply hides the findbar from
+              // the content view and saves the contents of the search.
               this.closeFindbar();
               this._mFindbarIsSuppressed = true;
             }
-            // Now the tab content that we are switching to is not a media page
-            // and we have suppressed the findbar - it's time to show it now.
-            else if (!this.isSelectedTabMediaPage() && this._mFindbarIsSuppressed) {
+            else if (!this.shouldDisableFindForSelectedTab() &&
+                     this._mFindbarIsSuppressed)
+            {
+              // Now the tab content that we are switching to is not a media page
+              // and we have suppressed the findbar - it's time to show it now.
               this.showFindbar();
               this._mFindbarIsSuppressed = false;
             }
@@ -631,9 +635,12 @@
         </body>
       </method>
       
-      <method name="isSelectedTabMediaPage">
+      <method name="shouldDisableFindForSelectedTab">
         <body>
           <![CDATA[
+            if (this.mediaTab && this.selectedTab == this.mediaTab) {
+              return true;
+            }
             return this.selectedTab &&
                    this.selectedTab.mediaPage != null;
           ]]>
