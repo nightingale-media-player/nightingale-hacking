@@ -387,6 +387,49 @@ sbLocalDatabaseSmartMediaList::~sbLocalDatabaseSmartMediaList()
   }
 }
 
+/**
+ * Utility class to suppress and automatically unsuppress notifications
+ */
+class sbAutoSuppressor
+{
+public:
+  /**
+   * Initialize and suppress
+   */
+  sbAutoSuppressor(sbIMediaItem * aItem) : mItem(do_QueryInterface(aItem)) 
+  {
+    Suppress();
+  }
+  /**
+   * Allow notifications to occur
+   */
+  ~sbAutoSuppressor() 
+  {
+    Unsuppress();    
+  }
+  /**
+   * Suppresses notifications
+   */
+  void Suppress()
+  {
+    if (mItem)
+      mItem->SetSuppressNotifications(PR_TRUE);
+  }
+  /**
+   * Allow notificatiosn
+   */
+  void Unsuppress()
+  {
+    if (mItem)
+      mItem->SetSuppressNotifications(PR_FALSE);
+  }
+private:
+  nsCOMPtr<sbILocalDatabaseMediaItem> mItem;
+  // Disallow copying and assignment
+  sbAutoSuppressor(sbAutoSuppressor const &);
+  sbAutoSuppressor & operator =(sbAutoSuppressor const *&);
+};
+
 nsresult
 sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
 {
@@ -419,6 +462,9 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
   mList = do_QueryInterface(mediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Supress notifications until we're intialized
+  sbAutoSuppressor suppressor(mediaItem);
+  
   // let the inner list know about us
   nsAutoString guid;
   rv = GetGuid(guid);
