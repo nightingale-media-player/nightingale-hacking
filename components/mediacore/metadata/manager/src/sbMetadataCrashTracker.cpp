@@ -318,7 +318,7 @@ sbMetadataCrashTracker::ProcessExistingLog()
     if (NS_SUCCEEDED(rv) && line.Length() >= 2) {
       switch (line.First()) {
         // Handle Begin records
-        case 'B': 
+        case 'B': { 
           PRInt32 separatorIndex = line.FindChar(' ', 1);
           if (separatorIndex > 0 && separatorIndex < line.Length() - 1) {
             // Get the URL
@@ -335,9 +335,10 @@ sbMetadataCrashTracker::ProcessExistingLog()
             NS_ERROR("Found Begin record without URL");
           }          
           break;
+        }
           
         // Handle End records
-        case 'E':
+        case 'E': {
           // Chop off the E. Rest is the index.
           line.Cut(0,1);
           
@@ -352,6 +353,7 @@ sbMetadataCrashTracker::ProcessExistingLog()
             NS_ERROR("Found End record without matching Begin");
           }
           break;
+        }
           
         default:
           NS_ERROR("Invalid sbMetadataCrashTracker log file");
