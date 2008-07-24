@@ -34,14 +34,14 @@ SUBDIRS = public \
           defaults \
           $(NULL)
 
-# Note any changes here need to be done in the install.rdf.in
-# the substitution sucks for the EXTENSION_VER keeps making it
-# maj.min.0+dev instead of the maj.min.min I want.
 EXTENSION_NAME = albumartmanager
 EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
 EXTENSION_STAGE_DIR = ./.xpistage
 EXTENSION_BUILD_ID = $(EXTENSION_NAME)-$(EXTENSION_VER)
-EXTENSION_VER := 1.5.0
+
+EXTENSION_VER := 1.5.1pre
+EXTENSION_MIN_VER := 0.6pre
+EXTENSION_MAX_VER := 0.7pre
 
 XPI_NAME = $(EXTENSION_BUILD_ID)
 

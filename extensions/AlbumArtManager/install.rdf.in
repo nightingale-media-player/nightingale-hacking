@@ -15,7 +15,7 @@
  *
  *******************************************************************************
  *************************************************************************** -->
-
+#filter substitution
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#"
      xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
@@ -26,8 +26,8 @@
     <em:targetApplication>
       <Description>
         <em:id>songbird@songbirdnest.com</em:id>
-        <em:minVersion>0.6pre</em:minVersion>
-        <em:maxVersion>0.7pre</em:maxVersion>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
       </Description>
     </em:targetApplication>
 
@@ -35,7 +35,7 @@
     <em:name>Album Art Manager</em:name>
     <em:description>Album Art Manager for Songbird.</em:description>
     <em:creator>Steven Bengtson</em:creator>
-    <em:version>1.5.0</em:version>
+    <em:version>@EXTENSION_VER@</em:version>
     <em:iconURL>chrome://albumartmanager/skin/PrefsIcon.png</em:iconURL>
     <em:optionsURL>chrome://albumartmanager/content/xul/openPrefs.xul</em:optionsURL>
 
