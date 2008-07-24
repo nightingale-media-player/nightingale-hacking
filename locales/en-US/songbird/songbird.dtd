@@ -527,6 +527,12 @@
 
 <!-- First-run wizard entities. -->
 <!ENTITY first_run.title                  "&brandShortName; Setup">
+<!ENTITY first_run.button.back.label      "Go Back">
+<!ENTITY first_run.button.back.accesskey  "B">
+<!ENTITY first_run.button.cancel.label    "Cancel">
+<!ENTITY first_run.button.next.label      "Continue">
+<!ENTITY first_run.button.next.accesskey  "C">
+<!ENTITY first_run.button.finish.label    "Finish">
 
 <!-- First-run add-ons entities. -->
 <!ENTITY first_run.add_ons.header.label      "Recommended Add-ons">

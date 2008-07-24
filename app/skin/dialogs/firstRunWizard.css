@@ -125,7 +125,8 @@ radiogroup {
 }
 
 /* Wizard button styles. */
-.wizard-buttons {
+#first_run_wizard > .wizard-buttons {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunWizard.xml#sb-first-run-wizard-buttons");
 }
 
 .wizard-buttons-btm {
@@ -136,6 +137,10 @@ radiogroup {
 }
 
 button[hidewizardbutton="true"] {
+  display: none;
+}
+
+.wizard-label-box {
   display: none;
 }
 
