@@ -197,7 +197,7 @@ nsresult sbMetadataJob::Init(nsIArray *aMediaItemsArray,
 }
 
 
-NS_IMETHODIMP sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
+nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
 {
   NS_ENSURE_ARG_POINTER(aMediaItemsArray);
   NS_ENSURE_STATE(mLibrary);
