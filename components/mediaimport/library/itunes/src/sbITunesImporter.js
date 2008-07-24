@@ -519,6 +519,9 @@ Component.prototype =
         req.args = [ aLibFilePath, aGUID, aCheckForChanges ];
         ITReq.issue(req);
 
+        /* Set the importer job object request.*/
+        this.mJob.setJobRequest(req);
+
         return this.mJob;
     },
 
@@ -3739,6 +3742,31 @@ var ITReq =
 
 
     /*
+     * cancel
+     *
+     *   --> req                    Request to cancel.
+     *
+     *   This function cancels the request specified by req.
+     */
+
+    cancel: function(req)
+    {
+        /* Remove the request from the request queue. */
+        var reqIndex = this.mQueue.indexOf(req);
+        if (reqIndex >= 0)
+            this.mQueue.splice(reqIndex, 1);
+
+        /* If the request is the current request, cancel it. */
+        if (this.mCurrentReq == req)
+        {
+            this.mCurrentReq = null;
+            this.mNextCtxIndex = 0;
+            this.mCtxStack = [];
+        }
+    },
+
+
+    /*
      * enterFunction
      *
      *   <--                        Function request context.
@@ -4404,10 +4432,12 @@ sbITunesImporterJob.prototype = {
   //
   // iTunes importer job fields.
   //
+  //   _jobRequest              Importer job request object.
   //   _updateProgressTimer     Timer used to delay job progress updates to
   //                            limit update rate.
   //
 
+  _jobRequest: null,
   _updateProgressTimer: null,
 
 
@@ -4476,6 +4506,42 @@ sbITunesImporterJob.prototype = {
   setTotal: function sbITunesImporterJob_setTotal(aTotal) {
     this._total = aTotal;
     this._updateProgress();
+  },
+
+
+  /**
+   * Set the importer job request object.
+   *
+   * \param aJobRequest         Importer job request object.
+   */
+
+  setJobRequest: function sbITunesImporterJob_setJobRequest(aJobRequest) {
+    this._jobRequest = aJobRequest;
+    this._canCancel = true;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Importer job sbIJobCancelable services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * \brief Attempt to cancel the job
+   * Throws NS_ERROR_FAILURE if canceling fails
+   */
+
+  cancel: function sbITunesImporterJob_cancel() {
+    // Cancel the job request.
+    if (this._jobRequest)
+      ITReq.cancel(this._jobRequest);
+    this._jobRequest = null;
+
+    // Update import status.
+    ITStatus.mStageText = SBString("import_library.job.status.cancelled");
+    ITStatus.mDone = true;
+    ITStatus.update();
   },
 
 
