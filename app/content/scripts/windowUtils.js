@@ -462,86 +462,133 @@ function windowPlacementSanityChecks()
   setTimeout(deferredWindowPlacementSanityChecks, 500);
 }
 function deferredWindowPlacementSanityChecks() {
+
+  /**
+   * \brief Get a style property from an element in the window in the current context.
+   * \param el The element.
+   * \param styleProp The style property.
+   * \param defaultValue [optional] the default value to return; 0 if not supplied
+   * \return The computed style value.
+   */
+  function getStyle(el, styleProp, defaultValue)
+  {
+    if (!defaultValue)
+      defaultValue = 0;
+    var v = defaultValue;
+    if (el) {
+      var s = document.defaultView.getComputedStyle(el,null);
+      v = s.getPropertyValue(styleProp);
+    }
+    return parseInt(v, 10) || defaultValue;
+  }
+
   delayedActivate();
   
   // Grab all the values we'll need.
-  var x; var oldx;
-  var y; var oldy;
-  oldx = x = parseInt(document.documentElement.boxObject.screenX);
-  oldy = y = parseInt(document.documentElement.boxObject.screenY);
+  var x, oldx = x = parseInt(document.documentElement.boxObject.screenX, 10);
+  var y, oldy = y = parseInt(document.documentElement.boxObject.screenY, 10);
   
+  /*
+   * actual: the current dimensions as found via the box object
+   * xul:    the property as set on XUL, or via persist=
+   * css:    the property as computed by CSS
+   * min:    the property minimum as computed by CSS.  Has a fallback minimum.
+   * max:    the property maximum as computed by CSS.
+   */
   var width = {
-    actual: document.documentElement.boxObject.width,
-    xul: document.documentElement.getAttribute("width"), // the property as set on XUL or by persist
+    actual: parseInt(document.documentElement.boxObject.width, 10),
+    xul: parseInt(document.documentElement.getAttribute("width"), 10),
     css: getStyle(document.documentElement, "width"),
-    min: getStyle(document.documentElement, "min-width") || 16, // ensure windows aren't crushed unsizably w/fallback value
-    max: getStyle(document.documentElement, "max-width")
+    min: Math.max(getStyle(document.documentElement, "min-width"), 16),
+    max: getStyle(document.documentElement, "max-width", Number.POSITIVE_INFINITY)
   };
   var height = {
-    actual: document.documentElement.boxObject.height,
-    xul: document.documentElement.getAttribute("height"), // the property as set on XUL or by persist
+    actual: parseInt(document.documentElement.boxObject.height, 10),
+    xul: parseInt(document.documentElement.getAttribute("height"), 10),
     css: getStyle(document.documentElement, "height"),
-    min: getStyle(document.documentElement, "min-height") || 16, // ensure windows aren't crushed unsizably w/fallback value
-    max: getStyle(document.documentElement, "max-height")
+    min: Math.max(getStyle(document.documentElement, "min-height"), 16),
+    max: getStyle(document.documentElement, "max-height", Number.POSITIVE_INFINITY)
   };
-  for (var i in width ) { width[i]  = parseInt(width[i])  }
-  for (var i in height) { height[i] = parseInt(height[i]) }
-  
-  // move offscreen windows back onto the center of the screen
-  var screenRect = getCurMaxScreenRect();
-  if ((x - screenRect.x > screenRect.width )  || // offscreen right
-      (x - screenRect.x + width.actual  < 0)  || // offscreen left
-      (y - screenRect.y > screenRect.height ) || // offscreen bottom
-      (y - screenRect.y + height.actual  < 0)    // offscreen top
-  ) { 
-    x = (screenRect.width / 2) - (window.outerWidth / 2); 
-    x = (x < 0) ? 0 : x; // don't move window left of zero. 
-    y = (screenRect.height / 2) - (window.outerHeight / 2); 
-    y = (y < 0) ? 0 : y; // don't move window above zero. 
-  }
   
   /// correct width
   var newWidth = width.actual;
-  if (!width.xul) { // if we have a xul/persist do not override CSS
+  if (!width.xul) { // if we have a xul/persist do not override from CSS
     // first try the css
-    if (width.css) { newWidth = width.css; }
-    
-    // then make sure we aren't poking off the screen (we allow the user to save a partially offscreen position)
-    var pokeyOutie = x + newWidth - screen.availWidth;
-    if (pokeyOutie > 0) { newWidth -= pokeyOutie; }
+    if (width.css) {
+      newWidth = width.css;
+    }
   }
-  if (width.min && newWidth < width.min) { newWidth = width.min; }   // now correct for minsize
+  // correct for maximum and minimum sizes (including not larger than the screen)
+  newWidth = Math.min(newWidth, width.max);
+  newWidth = Math.min(newWidth, screen.availWidth);
+  newWidth = Math.max(newWidth, width.min);
 
   /// correct height
   var newHeight = height.actual;
-  if (!height.xul) { // if we have a xul/persist do not override CSS
+  if (!height.xul) { // if we have a xul/persist do not override from CSS
     // first try the css
-    if (height.css) { newHeight = height.css; }
-
-    // then make sure we aren't poking off the screen (we allow the user to save a partially offscreen position)
-    var pokeyOutie = y + newHeight - screen.availHeight;
-    if (pokeyOutie > 0) { newHeight -= pokeyOutie; }
+    if (height.css) {
+      newHeight = height.css;
+    }
   }
-  if (height.min && newHeight < height.min) { newHeight = height.min; }  // now correct for minsize
+  // correct for maximum and minimum sizes (including not larger than the screen)
+  newHeight = Math.min(newHeight, height.max);
+  newHeight = Math.min(newHeight, screen.availHeight);
+  newHeight = Math.max(newHeight, height.min);
 
-  // Now update the values on the actual window itself.
-  if (x != oldx || y != oldy) { window.moveTo(x, y); }
-  if (newHeight != height.actual || newWidth != width.actual) { window.resizeTo(newWidth, newHeight); }
-}
-/**
- * \brief Get a style property from an element in the window in the current context.
- * \param el The element.
- * \param styleProp The style property.
- * \return The computed style value.
- */
-function getStyle(el,styleProp)
-{
-  var v;
-  if (el) {
-    var s = document.defaultView.getComputedStyle(el,null);
-    v = s.getPropertyValue(styleProp);
+  // resize the window if necessary
+  if (newHeight != height.actual || newWidth != width.actual) {
+    window.resizeTo(newWidth, newHeight);
   }
-  return v;
+  
+  // check if we need to move the window, and
+  // move fully offscreen windows back onto the center of the screen
+  var screenRect = getCurMaxScreenRect();
+  if ((x - screenRect.x > screenRect.width)   ||  // offscreen right
+      (x - screenRect.x + newWidth  < 0)      ||  // offscreen left
+      (y - screenRect.y > screenRect.height)  ||  // offscreen bottom
+      (y - screenRect.y + newHeight  < 0))        // offscreen top
+  {
+    x = (screenRect.width / 2) - (window.outerWidth / 2);
+    x = Math.max(x, 0); // don't move window left of zero.
+    y = (screenRect.height / 2) - (window.outerHeight / 2);
+    y = Math.max(y, 0); // don't move window above zero.
+  }
+
+  if (!document.documentElement.hasAttribute("screenX")) {
+    // no persisted x, move the window back into the screen
+    // (we allow the user to persist having the window be partially off screen)
+    x = Math.max(x, 0);
+    x = Math.min(x, screen.availWidth - newWidth);
+  }
+  if (!document.documentElement.hasAttribute("screenY")) {
+    // no persisted y, move the window back into the screen
+    // (we allow the user to persist having the window be partially off screen)
+    y = Math.max(y, 0);
+    y = Math.min(y, screen.availHeight - newHeight);
+  }
+
+  // Move the window if necessary
+  if (x != oldx || y != oldy) {
+    window.moveTo(x, y);
+  }
+
+/*
+  // debugging dumps
+  Components.utils.reportError(<>
+    {arguments.callee.name}:
+    location: {location.href}
+    persisted position: ({document.documentElement.getAttribute("screenX")}, {document.documentElement.getAttribute("screenY")})
+    previous position: ({oldx}, {oldy})
+    computed position: ({x}, {y})
+    
+    new dimensions: {newWidth} x {newHeight}
+    current dimensions: {width.actual} x {height.actual}
+    min dimensions: {width.min} x {height.min}
+    max dimensions: {width.max} x {height.max}
+</>);
+/* */
+
 }
 
 /**
@@ -990,4 +1037,4 @@ function toggleNextFeatherLayout()
 
   gFeathersManager.switchToNextLayout();
 }
-                                                                                                                                                                                                        
+
