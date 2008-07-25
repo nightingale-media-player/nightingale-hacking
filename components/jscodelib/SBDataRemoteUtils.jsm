@@ -54,6 +54,23 @@ EXPORTED_SYMBOLS =
 
 //------------------------------------------------------------------------------
 //
+// Songbird data remote utility defs.
+//
+//------------------------------------------------------------------------------
+
+// Component manager defs.
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
+
+
+//------------------------------------------------------------------------------
+//
 // sbIDataRemote wrapper
 //
 //  This object provides the ability to set key-value pairs
@@ -85,10 +102,22 @@ EXPORTED_SYMBOLS =
 //
 //------------------------------------------------------------------------------
 
-const SB_NewDataRemote = new Components.Constructor
-                               ("@songbirdnest.com/Songbird/DataRemote;1",
-                                "sbIDataRemote",
-                                "init");
+/**
+ * \brief Create a new data remote object.
+ *
+ * \param aKey - The string identifier for the data to watch
+ * \param aRoot - OPTIONAL - If present this defines a prefix to the key
+ *
+ * \return - A data remote object.
+ */
+
+function SB_NewDataRemote( aKey, aRoot )
+{
+  var dataRemote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+                     .createInstance(Ci.sbIDataRemote);
+  dataRemote.init( aKey, aRoot );
+  return dataRemote;
+}
 
 /**
  * \brief Get the value of the data in string format.
