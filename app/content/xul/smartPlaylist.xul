@@ -53,7 +53,7 @@
  ondialogcancel="doCancel();"
  buttons="accept,cancel"
  hidechrome="true"
- height="210"
+ height="200"
  width="700"
 >
 
@@ -71,7 +71,7 @@
         <spacer flex="1"/>
       </hbox>
       <spacer height="2"/>
-      <sb-smart-conditions-drawer id="smart_conditions" flex="1" maxvisibleitems="6"/>
+      <sb-smart-conditions-drawer id="smart_conditions" flex="1" maxvisibleitems="10"/>
     </vbox>
 
     <spacer height="5"/>
@@ -131,8 +131,6 @@
     </hbox>
     <!-- XXXlone> to here -->
   </groupbox>
-
-  <spacer height="5"/>
 
   <!-- SCRIPTS -->
   <script type="application/x-javascript"

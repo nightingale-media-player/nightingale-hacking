@@ -58,7 +58,7 @@ See app/content/xul/smartPlaylist.xul
 
 #smart_songs_count
 {
-  width: 40px;
+/*  width: 40px;*/
 }
 
 sb-smart-conditions-drawer > sb-multi-drawer > .drawer-box > .drawer-content-item
@@ -66,19 +66,21 @@ sb-smart-conditions-drawer > sb-multi-drawer > .drawer-box > .drawer-content-ite
   height: 28px;
 }
 
-#propertypopup
-{
-  width: 140px;
+#propertypopup,
+#propertypopup > menupopup {
+/*  width: 140px;*/
+  width:12em;
 }
 
-#operatorpopup
-{
-  width: 140px;
+#operatorpopup,
+#operatorpopup > menupopup {
+/*  width: 140px;*/
+  width:12em;
 }
 
-#unitspopup
-{
-  width: 60px;
+#unitspopup,
+#unitspopup > menupopup {
+  width:8em;
 }
 
 sb-rating {
@@ -98,4 +100,19 @@ sb-rating {
 
 .smart_condition_singleunit
 {
+}
+
+#smart_any_list {
+  width:6em;
+}
+#smart_any_list[hidden="true"] {
+  visibility:hidden !important;
+  display:-moz-box !important;
+}
+
+#smart_songs_list {
+  width:8em;
+}
+#smart_selected_list {
+  width:16em;
 }
