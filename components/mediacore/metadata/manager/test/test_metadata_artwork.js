@@ -85,23 +85,26 @@ function testWrite(testFileName, shouldPass) {
   writeFile.append(testFileName);
 
   // Load the image data to save to the test file
+  var imageFileName = "test.png"
   var imageMimeType;
   var imageData;
-  [imageMimeType, imageData] = getImageData("test.png");
+  [imageMimeType, imageData] = getImageData(imageFileName);
   assertNotEqual(imageData.length, 0);
-  
+
+  var imageFile = testFolder.clone();
+  imageFile.append(imageFileName);
+
   // Save the image data to the test file
   var localPathURI = newFileURI( writeFile );
   var handler = gFileMetadataService.getHandlerForMediaURL(localPathURI.spec);
 
   try {
+    var newImageFile = newFileURI( imageFile );
     handler.setImageData(Ci.sbIMetadataHandler.METADATA_IMAGE_TYPE_OTHER,
-                         imageMimeType,
-                         imageData,
-                         imageData.length);
+                         newImageFile.spec);
   } catch (err) {
     if (shouldPass) {
-      assertEqual(true, false, err);
+      assertEqual(true, false, "Test write:" + err);
     }
   }
   
@@ -115,15 +118,23 @@ function testWrite(testFileName, shouldPass) {
                                           testDataSize);
     
     if (shouldPass) {
-      assertEqual(testMimeType.value, imageMimeType);
-      assertEqual(compareArray(imageData, testImageData), true);
+      assertEqual(testMimeType.value,
+                  imageMimeType,
+                  "Mimetype not equal");
+      assertEqual(compareArray(imageData, testImageData),
+                  true,
+                  "Image data not equal");
     } else {
-      assertNotEqual(testMimeType.value, imageMimeType);
-      assertNotEqual(compareArray(imageData, testImageData), true);
+      assertNotEqual(testMimeType.value,
+                     imageMimeType,
+                     "Mimetype is equal when it should not be");
+      assertNotEqual(compareArray(imageData, testImageData),
+                     true,
+                     "Image data is equal and should not be");
     }
   } catch(err) {
     if (shouldPass) {
-      assertEqual(true, false, err);
+      assertEqual(true, false, "Test read: " + err);
     }
   }
 }

@@ -213,11 +213,9 @@ private:
 
     nsresult SetImageDataInternal(
         PRInt32                     aType,
-        const nsACString            &aMimeType,
-        const PRUint8               *aData,
-        PRUint32                    aDataLen);
+        const nsAString             &aURL);
 
-    nsresult WriteSetImageDataInternal(
+    nsresult WriteImage(
         TagLib::MPEG::File*         aFile,
         PRInt32                     aType,
         const nsAString             &imageSpec

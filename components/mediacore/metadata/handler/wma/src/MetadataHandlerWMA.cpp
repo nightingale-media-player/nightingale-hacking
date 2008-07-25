@@ -294,9 +294,7 @@ sbMetadataHandlerWMA::GetImageData(
 NS_IMETHODIMP
 sbMetadataHandlerWMA::SetImageData(
     PRInt32             aType,
-    const nsACString    &aMimeType,
-    const PRUint8       *aData,
-    PRUint32            aDataLen)
+    const nsAString     &aURL)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
