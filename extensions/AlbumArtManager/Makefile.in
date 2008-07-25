@@ -49,9 +49,4 @@ XPI_NAME = $(EXTENSION_BUILD_ID)
 JAR_MANIFEST = jar.mn
 JAR_TARGET_DIR = $(EXTENSION_STAGE_DIR)/chrome
 
-# Set this to 1 to install the extension
-ifdef DEBUG
-INSTALL_EXTENSION = 1
-endif
-
 include $(topsrcdir)/build/rules.mk
