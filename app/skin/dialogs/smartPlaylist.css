@@ -67,20 +67,16 @@ sb-smart-conditions-drawer > sb-multi-drawer > .drawer-box > .drawer-content-ite
 }
 
 #propertypopup,
-#propertypopup > menupopup {
-/*  width: 140px;*/
-  width:12em;
-}
-
+#propertypopup > menupopup,
 #operatorpopup,
 #operatorpopup > menupopup {
 /*  width: 140px;*/
-  width:12em;
+  width:13.5em;
 }
 
 #unitspopup,
 #unitspopup > menupopup {
-  width:8em;
+  width:6.5em;
 }
 
 sb-rating {
@@ -115,4 +111,14 @@ sb-rating {
 }
 #smart_selected_list {
   width:16em;
+}
+#smart_songs_count {
+  width:4em;
+}
+
+
+
+
+.drawer-box {
+  overflow-y:scroll !important;
 }

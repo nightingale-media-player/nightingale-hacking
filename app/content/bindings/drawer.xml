@@ -270,7 +270,7 @@
                 
                 if (this.maxheight != -1) {
                   if (this.accumsize >= this.maxheight) {
-                    this.parent.setAttribute("style", "height: " + this.maxheight + "px; overflow: auto;");
+                    this.parent.setAttribute("style", "height: " + this.maxheight + "px;");
                   } else {
                     this.parent.removeAttribute("style");
                   }
@@ -430,7 +430,7 @@
                 if (eclass) eclass += " "; else eclass = "";
                 eclass += "drawer-content";
                 this.drawercontent.setAttribute("class", eclass);
-                this.drawercontent.setAttribute("style", "height: " + this.getContentSize() + "px; overflow: hidden;");
+                this.drawercontent.setAttribute("style", "height: " + this.getContentSize() + "px;");
               }
               this.state = "open";
               this.growDrawer(now, replacedheight, this.contentsize);

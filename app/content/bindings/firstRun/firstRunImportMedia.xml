@@ -75,7 +75,6 @@
 
         <!-- Radio group. -->
         <radiogroup anonid="import_radiogroup"
-                    class="indent"
                     oncommand="_doCommand(event);">
 
           <!-- Import from iTunes radio button. -->
