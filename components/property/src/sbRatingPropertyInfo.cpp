@@ -53,44 +53,65 @@ sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyID,
   mRemoteReadable = aRemoteReadable;
   mRemoteWritable = aRemoteWritable;
   mType.AssignLiteral("rating");
-
-  InitializeOperators();
 }
 
-void sbRatingPropertyInfo::InitializeOperators()
+nsresult
+sbRatingPropertyInfo::InitializeOperators()
 {
+  nsresult rv;
   nsAutoString op;
   nsRefPtr<sbPropertyOperator> propOp;
 
-  sbImmutablePropertyInfo::GetOPERATOR_EQUALS(op);
+  rv = sbImmutablePropertyInfo::GetOPERATOR_EQUALS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.equal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbImmutablePropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  rv = sbImmutablePropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.notequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbImmutablePropertyInfo::GetOPERATOR_GREATER(op);
+  rv = sbImmutablePropertyInfo::GetOPERATOR_GREATER(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.greater"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbImmutablePropertyInfo::GetOPERATOR_GREATEREQUAL(op);
+  rv = sbImmutablePropertyInfo::GetOPERATOR_GREATEREQUAL(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.greaterequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbImmutablePropertyInfo::GetOPERATOR_LESS(op);
+  rv = sbImmutablePropertyInfo::GetOPERATOR_LESS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.less"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbImmutablePropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  rv = sbImmutablePropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.lessequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbImmutablePropertyInfo::GetOPERATOR_BETWEEN(op);
+  rv = sbImmutablePropertyInfo::GetOPERATOR_BETWEEN(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.rating.between"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return;
+  return NS_OK;
 }
 
 nsresult
@@ -99,6 +120,9 @@ sbRatingPropertyInfo::Init()
   nsresult rv;
 
   rv = sbImmutablePropertyInfo::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = InitializeOperators();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

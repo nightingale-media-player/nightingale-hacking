@@ -51,7 +51,7 @@ public:
   sbDurationPropertyInfo();
   virtual ~sbDurationPropertyInfo();
 
-  void InitializeOperators();
+  nsresult Init();
 
   NS_IMETHOD Validate(const nsAString & aValue, PRBool *_retval);
   NS_IMETHOD Sanitize(const nsAString & aValue, nsAString & _retval);
@@ -59,6 +59,8 @@ public:
   NS_IMETHOD MakeSortable(const nsAString & aValue, nsAString & _retval);
   
 protected:
+  nsresult InitializeOperators();
+
   PRBool  mDurationInversed;
   PRBool  mDurationDisplayMillisec;
 

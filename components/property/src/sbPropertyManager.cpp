@@ -164,6 +164,10 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aID,
 
     textProperty = new sbTextPropertyInfo();
     NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
+    
+    rv = textProperty->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+    
     rv = textProperty->SetId(aID);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -995,8 +999,11 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
 
   nsRefPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
+  
+  nsresult rv = textProperty->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  nsresult rv = textProperty->SetId(aPropertyID);
+  rv = textProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!aDisplayKey.IsEmpty()) {
@@ -1057,8 +1064,11 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyID,
   nsRefPtr<sbDatetimePropertyInfo>
     datetimeProperty(new sbDatetimePropertyInfo());
   NS_ENSURE_TRUE(datetimeProperty, NS_ERROR_OUT_OF_MEMORY);
+  
+  nsresult rv = datetimeProperty->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  nsresult rv = datetimeProperty->SetId(aPropertyID);
+  rv = datetimeProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = datetimeProperty->SetTimeType(aType);
@@ -1106,8 +1116,11 @@ sbPropertyManager::RegisterDuration(const nsAString& aPropertyID,
   nsRefPtr<sbDurationPropertyInfo>
     durationProperty(new sbDurationPropertyInfo());
   NS_ENSURE_TRUE(durationProperty, NS_ERROR_OUT_OF_MEMORY);
+  
+  nsresult rv = durationProperty->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  nsresult rv = durationProperty->SetId(aPropertyID);
+  rv = durationProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!aDisplayKey.IsEmpty()) {
@@ -1155,8 +1168,11 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyID,
 
   nsRefPtr<sbURIPropertyInfo> uriProperty(new sbURIPropertyInfo());
   NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
+  
+  nsresult rv = uriProperty->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  nsresult rv = uriProperty->SetId(aPropertyID);
+  rv = uriProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!aDisplayKey.IsEmpty()) {
@@ -1236,8 +1252,11 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
 
   nsRefPtr<sbNumberPropertyInfo> numberProperty(new sbNumberPropertyInfo());
   NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
+  
+  nsresult rv = numberProperty->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  nsresult rv = numberProperty->SetId(aPropertyID);
+  rv = numberProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (aHasMinValue) {
@@ -1294,8 +1313,11 @@ sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
 
   nsRefPtr<sbBooleanPropertyInfo> booleanProperty(new sbBooleanPropertyInfo());
   NS_ENSURE_TRUE(booleanProperty, NS_ERROR_OUT_OF_MEMORY);
+  
+  nsresult rv = booleanProperty->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  nsresult rv = booleanProperty->SetId(aPropertyID);
+  rv = booleanProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!aDisplayKey.IsEmpty()) {

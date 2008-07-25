@@ -127,7 +127,7 @@ interface sbIPropertyOperator : nsISupports
 * \brief An interface used to describe a metadata property for use by the UI and other sbILibrary interfaces (smartplaylists, etc)
 * \sa sbIPropertyManager
 */
-[scriptable, uuid(3079e442-362f-415b-bf78-60b3a4f737e0)]
+[scriptable, uuid(fdf0a24e-a672-4fb7-b73c-5538030b22f8)]
 interface sbIPropertyInfo : nsISupports
 {
   readonly attribute AString OPERATOR_EQUALS;
@@ -143,6 +143,8 @@ interface sbIPropertyInfo : nsISupports
   readonly attribute AString OPERATOR_ENDSWITH;
   readonly attribute AString OPERATOR_NOTENDSWITH;
   readonly attribute AString OPERATOR_BETWEEN;
+  readonly attribute AString OPERATOR_ISSET;
+  readonly attribute AString OPERATOR_ISNOTSET;
 
   /* NOTE: if you change this list of null sort values, please update the
    * documentation in sbIRemoteWebPlaylist.idl as well, thanks!

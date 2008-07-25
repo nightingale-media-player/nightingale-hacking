@@ -40,6 +40,8 @@
 #define SB_OPERATOR_ENDSWITH       "%?"
 #define SB_OPERATOR_NOTENDSWITH    "!%?"
 #define SB_OPERATOR_BETWEEN        "^"
+#define SB_OPERATOR_ISSET          "$"
+#define SB_OPERATOR_ISNOTSET       "!$"
 #define SB_OPERATOR_ISTRUE         "1"
 #define SB_OPERATOR_ISFALSE        "0"
 #define SB_OPERATOR_INTHELAST      "|>"

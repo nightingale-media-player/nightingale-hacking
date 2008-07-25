@@ -26,6 +26,8 @@
 
 #include "sbImmutablePropertyInfo.h"
 #include "sbStandardOperators.h"
+#include "sbPropertyOperator.h"
+#include <nsAutoPtr.h>
 
 #include <nsIStringBundle.h>
 
@@ -44,6 +46,9 @@ sbImmutablePropertyInfo::sbImmutablePropertyInfo() :
   mOperatorsLock(nsnull),
   mUnitConverter(nsnull)
 {
+  nsAutoString op;
+  nsRefPtr<sbPropertyOperator> propOp;
+
   mOperatorsLock = PR_NewLock();
   NS_ASSERTION(mOperatorsLock,
     "sbImmutablePropertyInfo::mOperatorsLock failed to create lock!");
@@ -58,6 +63,24 @@ sbImmutablePropertyInfo::~sbImmutablePropertyInfo() {
 nsresult
 sbImmutablePropertyInfo::Init()
 {
+  nsresult rv;
+  nsAutoString op;
+  nsRefPtr<sbPropertyOperator> propOp;
+
+  rv = sbImmutablePropertyInfo::GetOPERATOR_ISSET(op);
+  NS_ENSURE_SUCCESS(rv, rv);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isset"));
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbImmutablePropertyInfo::GetOPERATOR_ISNOTSET(op);
+  NS_ENSURE_SUCCESS(rv, rv);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isnotset"));
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -151,6 +174,21 @@ sbImmutablePropertyInfo::GetOPERATOR_BETWEEN(nsAString& aOPERATOR_BETWEEN)
   aOPERATOR_BETWEEN.AssignLiteral(SB_OPERATOR_BETWEEN);
   return NS_OK;
 }
+
+NS_IMETHODIMP 
+sbImmutablePropertyInfo::GetOPERATOR_ISSET(nsAString & aOPERATOR_ISSET)
+{
+  aOPERATOR_ISSET = NS_LITERAL_STRING(SB_OPERATOR_ISSET);
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbImmutablePropertyInfo::GetOPERATOR_ISNOTSET(nsAString & aOPERATOR_ISNOTSET)
+{
+  aOPERATOR_ISNOTSET = NS_LITERAL_STRING(SB_OPERATOR_ISNOTSET);
+  return NS_OK;
+}
+
 
 NS_IMETHODIMP
 sbImmutablePropertyInfo::SetNullSort(PRUint32 aNullSort)

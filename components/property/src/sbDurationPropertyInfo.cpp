@@ -70,8 +70,6 @@ sbDurationPropertyInfo::sbDurationPropertyInfo()
   mDateTimeFormatLock = PR_NewLock();
   NS_ASSERTION(mDateTimeFormatLock,
     "sbDurationPropertyInfo::mDateTimeFormatLock failed to create lock!");
-
-  InitializeOperators();
 }
 
 sbDurationPropertyInfo::~sbDurationPropertyInfo()
@@ -87,40 +85,76 @@ sbDurationPropertyInfo::~sbDurationPropertyInfo()
   }
 }
 
-void sbDurationPropertyInfo::InitializeOperators()
+nsresult sbDurationPropertyInfo::Init()
 {
+  nsresult rv;
+
+  rv = sbPropertyInfo::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = InitializeOperators();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbDurationPropertyInfo::InitializeOperators()
+{
+  nsresult rv;
   nsAutoString op;
   nsRefPtr<sbPropertyOperator> propOp;
 
-  sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  rv = sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.equal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  rv = sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.notequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_GREATER(op);
+  rv = sbPropertyInfo::GetOPERATOR_GREATER(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.greater"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
+  rv = sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.greaterequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_LESS(op);
+  rv = sbPropertyInfo::GetOPERATOR_LESS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.less"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  rv = sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.lessequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_BETWEEN(op);
+  rv = sbPropertyInfo::GetOPERATOR_BETWEEN(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.duration.between"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbDurationPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)

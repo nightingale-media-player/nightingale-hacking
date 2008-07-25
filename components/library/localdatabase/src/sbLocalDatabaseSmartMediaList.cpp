@@ -717,7 +717,8 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
   NS_ENSURE_ARG(aPropertyID.Length() > 1);
 
   // Make sure the right value is void if the operator is anything else but
-  // between, and that both are void if the operator is istrue or isfalse
+  // between, and that both are void if the operator is istrue, isfalse,
+  // isset, or isnotset
   nsAutoString op;
   nsresult rv = aOperator->GetOperator(op);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -730,7 +731,9 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
   };
 
   if ((op.EqualsLiteral(SB_OPERATOR_ISTRUE) ||
-       op.EqualsLiteral(SB_OPERATOR_ISFALSE)) &&
+       op.EqualsLiteral(SB_OPERATOR_ISFALSE) ||
+       op.EqualsLiteral(SB_OPERATOR_ISSET) ||
+       op.EqualsLiteral(SB_OPERATOR_ISNOTSET)) &&
       !aLeftValue.IsEmpty()) {
     return NS_ERROR_ILLEGAL_VALUE;
   };
@@ -1565,6 +1568,9 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   if (op.EqualsLiteral(SB_OPERATOR_ISTRUE) ||
       op.EqualsLiteral(SB_OPERATOR_ISFALSE)) {
     leftValue = NS_LITERAL_STRING("1");
+  } else if (op.EqualsLiteral(SB_OPERATOR_ISSET) ||
+             op.EqualsLiteral(SB_OPERATOR_ISNOTSET)) {
+    leftValue = NS_LITERAL_STRING("");
   } else if (op.EqualsLiteral(SB_OPERATOR_INTHELAST) ||
              op.EqualsLiteral(SB_OPERATOR_NOTINTHELAST)) {
 
@@ -1726,7 +1732,13 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   else if (op.EqualsLiteral(SB_OPERATOR_NOTINTHELAST)) {
     matchType = sbISQLBuilder::MATCH_LESS;
   }
-
+  else if (op.EqualsLiteral(SB_OPERATOR_ISSET)) {
+    matchType = sbISQLBuilder::MATCH_NOTEQUALS;
+  }
+  else if (op.EqualsLiteral(SB_OPERATOR_ISNOTSET)) {
+    matchType = sbISQLBuilder::MATCH_EQUALS;
+  }
+  
   if (matchType >= 0) {
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
     rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
@@ -1848,6 +1860,14 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
   }
   if (op.EqualsLiteral(SB_OPERATOR_ISTRUE)){
     bNeedIsNull = PR_FALSE;
+    return NS_OK;
+  }
+  if (op.EqualsLiteral(SB_OPERATOR_ISSET)) {
+    bNeedIsNull = PR_FALSE;
+    return NS_OK;
+  }
+  if (op.EqualsLiteral(SB_OPERATOR_ISNOTSET)){
+    bNeedIsNull = PR_TRUE;
     return NS_OK;
   }
 

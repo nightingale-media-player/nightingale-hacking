@@ -56,8 +56,6 @@ sbURIPropertyInfo::sbURIPropertyInfo()
   mIOServiceLock = PR_NewLock();
   NS_ASSERTION(mIOServiceLock,
     "sbURIPropertyInfo::mIOServiceLock failed to create lock!");
-
-  InitializeOperators();
 }
 
 sbURIPropertyInfo::~sbURIPropertyInfo()
@@ -67,44 +65,84 @@ sbURIPropertyInfo::~sbURIPropertyInfo()
   }
 }
 
-void sbURIPropertyInfo::InitializeOperators()
+nsresult
+sbURIPropertyInfo::Init()
 {
+  nsresult rv;
+
+  rv = sbPropertyInfo::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = InitializeOperators();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbURIPropertyInfo::InitializeOperators()
+{
+  nsresult rv;
   nsAutoString op;
   nsRefPtr<sbPropertyOperator> propOp;
 
-  sbPropertyInfo::GetOPERATOR_CONTAINS(op);
+  rv = sbPropertyInfo::GetOPERATOR_CONTAINS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.contains"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_NOTCONTAINS(op);
+  rv = sbPropertyInfo::GetOPERATOR_NOTCONTAINS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_contain"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  rv = sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.is"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  rv = sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.is_not"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_BEGINSWITH(op);
+  rv = sbPropertyInfo::GetOPERATOR_BEGINSWITH(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.starts"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_NOTBEGINSWITH(op);
+  rv = sbPropertyInfo::GetOPERATOR_NOTBEGINSWITH(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_start"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_ENDSWITH(op);
+  rv = sbPropertyInfo::GetOPERATOR_ENDSWITH(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.ends"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_NOTENDSWITH(op);
+  rv = sbPropertyInfo::GetOPERATOR_NOTENDSWITH(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_end"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbURIPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)

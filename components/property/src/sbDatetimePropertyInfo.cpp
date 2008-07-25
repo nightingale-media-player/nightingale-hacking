@@ -75,8 +75,6 @@ sbDatetimePropertyInfo::sbDatetimePropertyInfo()
   mDateTimeFormatLock = PR_NewLock();
   NS_ASSERTION(mDateTimeFormatLock,
     "sbDatetimePropertyInfo::mDateTimeFormatLock failed to create lock!");
-
-  InitializeOperators();
 }
 
 sbDatetimePropertyInfo::~sbDatetimePropertyInfo()
@@ -95,76 +93,139 @@ sbDatetimePropertyInfo::~sbDatetimePropertyInfo()
   }
 }
 
-void sbDatetimePropertyInfo::InitializeOperators()
+nsresult
+sbDatetimePropertyInfo::Init() {
+  nsresult rv;
+  
+  rv = sbPropertyInfo::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = InitializeOperators();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
+nsresult 
+sbDatetimePropertyInfo::InitializeOperators()
 {
+  nsresult rv;
   nsAutoString op;
   nsRefPtr<sbPropertyOperator> propOp;
 
-  sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  rv = sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.equal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  GetOPERATOR_ONDATE(op);
+  rv = GetOPERATOR_ONDATE(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.ondate"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  rv = sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.notequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  GetOPERATOR_NOTONDATE(op);
+  rv = GetOPERATOR_NOTONDATE(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.notondate"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_GREATER(op);
+  rv = sbPropertyInfo::GetOPERATOR_GREATER(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.greater"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  GetOPERATOR_AFTERDATE(op);
+  rv = GetOPERATOR_AFTERDATE(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.afterdate"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
+  rv = sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.greaterequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  GetOPERATOR_AFTERORONDATE(op);
+  rv = GetOPERATOR_AFTERORONDATE(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onafterdate"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_LESS(op);
+  rv = sbPropertyInfo::GetOPERATOR_LESS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.less"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  GetOPERATOR_BEFOREDATE(op);
+  rv = GetOPERATOR_BEFOREDATE(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.beforedate"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  rv = sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.lessequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  GetOPERATOR_BEFOREORONDATE(op);
+  rv = GetOPERATOR_BEFOREORONDATE(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.onbeforedate"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  GetOPERATOR_INTHELAST(op);
+  rv = GetOPERATOR_INTHELAST(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.inthelast"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  GetOPERATOR_NOTINTHELAST(op);
+  rv = GetOPERATOR_NOTINTHELAST(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.notinthelast"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_BETWEEN(op);
+  rv = sbPropertyInfo::GetOPERATOR_BETWEEN(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.between"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  GetOPERATOR_BETWEENDATES(op);
+  rv = GetOPERATOR_BETWEENDATES(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.date.betweendates"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbDatetimePropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)

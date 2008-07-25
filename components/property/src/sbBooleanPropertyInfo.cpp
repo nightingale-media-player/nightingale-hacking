@@ -35,8 +35,6 @@ sbBooleanPropertyInfo::sbBooleanPropertyInfo()
 {
   MOZ_COUNT_CTOR(sbBooleanPropertyInfo);
   mType = NS_LITERAL_STRING("boolean");
-
-  Init();
 }
 
 sbBooleanPropertyInfo::~sbBooleanPropertyInfo()
@@ -47,6 +45,9 @@ sbBooleanPropertyInfo::~sbBooleanPropertyInfo()
 nsresult sbBooleanPropertyInfo::Init()
 {
   nsresult rv;
+
+  rv = sbPropertyInfo::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = InitializeOperators();
   NS_ENSURE_SUCCESS(rv, rv);

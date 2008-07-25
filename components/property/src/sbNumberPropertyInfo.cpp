@@ -139,8 +139,6 @@ sbNumberPropertyInfo::sbNumberPropertyInfo()
   mRadixLock = PR_NewLock();
   NS_ASSERTION(mRadixLock,
     "sbNumberPropertyInfo::mRadixLock failed to create lock!");
-
-  InitializeOperators();
 }
 
 sbNumberPropertyInfo::~sbNumberPropertyInfo()
@@ -153,40 +151,76 @@ sbNumberPropertyInfo::~sbNumberPropertyInfo()
   }
 }
 
-void sbNumberPropertyInfo::InitializeOperators()
+nsresult
+sbNumberPropertyInfo::Init() {
+  nsresult rv;
+
+  rv = sbPropertyInfo::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = InitializeOperators();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbNumberPropertyInfo::InitializeOperators()
 {
+  nsresult rv;
   nsAutoString op;
   nsRefPtr<sbPropertyOperator> propOp;
 
-  sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  rv = sbPropertyInfo::GetOPERATOR_EQUALS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.equal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  rv = sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.notequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_GREATER(op);
+  rv = sbPropertyInfo::GetOPERATOR_GREATER(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.greater"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
+  rv = sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.greaterequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_LESS(op);
+  rv = sbPropertyInfo::GetOPERATOR_LESS(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.less"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  rv = sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.lessequal"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  sbPropertyInfo::GetOPERATOR_BETWEEN(op);
+  rv = sbPropertyInfo::GetOPERATOR_BETWEEN(op);
+  NS_ENSURE_SUCCESS(rv, rv);
   propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.between"));
-  mOperators.AppendObject(propOp);
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbNumberPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)

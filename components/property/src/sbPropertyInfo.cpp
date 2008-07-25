@@ -26,6 +26,7 @@
 
 #include "sbPropertyInfo.h"
 #include "sbStandardOperators.h"
+#include <nsAutoPtr.h>
 
 #include <nsISimpleEnumerator.h>
 
@@ -109,6 +110,7 @@ sbPropertyInfo::sbPropertyInfo()
 , mUnitConverterLock(nsnull)
 {
   mSortProfileLock = PR_NewLock();
+
   NS_ASSERTION(mSortProfileLock,
     "sbPropertyInfo::mSortProfileLock failed to create lock!");
 
@@ -192,6 +194,30 @@ sbPropertyInfo::~sbPropertyInfo()
   }
 }
 
+nsresult
+sbPropertyInfo::Init()
+{
+  nsresult rv;
+  nsAutoString op;
+  nsRefPtr<sbPropertyOperator> propOp;
+
+  rv = sbPropertyInfo::GetOPERATOR_ISSET(op);
+  NS_ENSURE_SUCCESS(rv, rv);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isset"));
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbPropertyInfo::GetOPERATOR_ISNOTSET(op);
+  NS_ENSURE_SUCCESS(rv, rv);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isnotset"));
+  NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
+  rv = mOperators.AppendObject(propOp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_EQUALS(nsAString & aOPERATOR_EQUALS)
 {
   aOPERATOR_EQUALS = NS_LITERAL_STRING(SB_OPERATOR_EQUALS);
@@ -267,6 +293,18 @@ NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_NOTENDSWITH(nsAString & aOPERATOR_NOTE
 NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_BETWEEN(nsAString & aOPERATOR_BETWEEN)
 {
   aOPERATOR_BETWEEN = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_ISSET(nsAString & aOPERATOR_ISSET)
+{
+  aOPERATOR_ISSET = NS_LITERAL_STRING(SB_OPERATOR_ISSET);
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::GetOPERATOR_ISNOTSET(nsAString & aOPERATOR_ISNOTSET)
+{
+  aOPERATOR_ISNOTSET = NS_LITERAL_STRING(SB_OPERATOR_ISNOTSET);
   return NS_OK;
 }
 

@@ -358,9 +358,6 @@
               // the list
               if (!info.userViewable) 
                 continue;
-              // if the property is of an unsupported type, discard it
-              if (!that._isSupportedType(info.type))
-                continue;
               // item name and id
               var entry = { name: info.displayName, value: info.id };
               // insert in the appropriate list
@@ -489,6 +486,7 @@
       <method name="_getOperators">
         <parameter name="metadata"/>
         <body>
+          <![CDATA[
           var info = this._pm.getPropertyInfo(metadata);
           var ops = info.operators;
           var list = [];
@@ -537,10 +535,27 @@
                 continue;
               }
             }
+            var knownType = this._isKnownType(info.type);
+            // if the operator is isset or isnotset, only keep it if the
+            // property type is an explicitely known type.
+            if ((op.operator == info.OPERATOR_ISSET ||
+                 op.operator == info.OPERATOR_ISNOTSET) &&
+                knownType) {
+              continue;
+            }
+            // if the property type is not explicitely known, only keep
+            // isset/isnotset
+            if (!knownType &&
+                op.operator != info.OPERATOR_ISSET &&
+                op.operator != info.OPERATOR_ISNOTSET) {
+              continue;
+            }
+            // add the operator to the list
             list.push({ name: op.operatorReadable, value: op.operator });
           }
 
           return list;
+          ]]>
         </body>
       </method>
       
@@ -791,8 +806,12 @@
               case "duration":
               case "number":
               case "rating":
-              default:
                 def = info.OPERATOR_EQUALS;
+                break;
+              default:
+                // properties that aren't explicitely supported only have 
+                // isset/isnotset. use that, it is guaranteed to be there.
+                def = info.OPERATOR_ISSET;
                 break;
             }
           }
@@ -1176,13 +1195,9 @@
                 state.ratingfield = true;
                 break;
               default:
-                // Don't know what to show, use text input field i guess, and 
-                // write a debug message, since this is not supposed to happen.
-                Components.utils.
-                  reportError("Don't know the " + 
-                              info.type + 
-                              " property type, using default text field");
-                state.textfield = true;
+                // property types that are not explicitely supported only expose
+                // isset/isnotset, which require no input
+                state.textfield = false;
                 state.ratingfield = false;
                 break;
             }
@@ -1806,7 +1821,7 @@
         </body>
       </method>
       
-      <method name="_isSupportedType">
+      <method name="_isKnownType">
         <parameter name="type"/>
         <body>
           <![CDATA[

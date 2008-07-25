@@ -36,6 +36,8 @@
 #include <nsStringGlue.h>
 #include <nsCOMArray.h>
 
+#include "sbPropertyOperator.h"
+
 #define NS_FORWARD_SBIPROPERTYINFO_NOVALIDATE_NOFORMAT(_to) \
 NS_IMETHOD GetOPERATOR_EQUALS(nsAString & aOPERATOR_EQUALS) { return _to GetOPERATOR_EQUALS(aOPERATOR_EQUALS); } \
 NS_IMETHOD GetOPERATOR_NOTEQUALS(nsAString & aOPERATOR_NOTEQUALS) { return _to GetOPERATOR_NOTEQUALS(aOPERATOR_NOTEQUALS); } \
@@ -50,6 +52,8 @@ NS_IMETHOD GetOPERATOR_NOTBEGINSWITH(nsAString & aOPERATOR_NOTBEGINSWITH) { retu
 NS_IMETHOD GetOPERATOR_ENDSWITH(nsAString & aOPERATOR_ENDSWITH) { return _to GetOPERATOR_ENDSWITH(aOPERATOR_ENDSWITH); } \
 NS_IMETHOD GetOPERATOR_NOTENDSWITH(nsAString & aOPERATOR_NOTENDSWITH) { return _to GetOPERATOR_NOTENDSWITH(aOPERATOR_NOTENDSWITH); } \
 NS_IMETHOD GetOPERATOR_BETWEEN(nsAString & aOPERATOR_BETWEEN) { return _to GetOPERATOR_BETWEEN(aOPERATOR_BETWEEN); } \
+NS_IMETHOD GetOPERATOR_ISSET(nsAString & aOPERATOR_ISSET) { return _to GetOPERATOR_ISSET(aOPERATOR_ISSET); } \
+NS_IMETHOD GetOPERATOR_ISNOTSET(nsAString & aOPERATOR_ISNOTSET) { return _to GetOPERATOR_ISNOTSET(aOPERATOR_ISNOTSET); } \
 NS_IMETHOD GetNullSort(PRUint32 *aNullSort) { return _to GetNullSort(aNullSort); } \
 NS_IMETHOD SetNullSort(PRUint32 aNullSort) { return _to SetNullSort(aNullSort); } \
 NS_IMETHOD GetSortProfile(sbIPropertyArray * *aSortProfile) { return _to GetSortProfile(aSortProfile); } \
@@ -77,26 +81,6 @@ NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetU
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
   static_cast<sbIPropertyInfo*>(static_cast<__unambiguousBase>(__expr))
 
-class sbPropertyOperator : public sbIPropertyOperator
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBIPROPERTYOPERATOR
-
-  sbPropertyOperator();
-  sbPropertyOperator(const nsAString& aOperator,
-                     const nsAString& aOperatorReadable);
-  ~sbPropertyOperator();
-
-protected:
-  PRLock*  mLock;
-  PRBool   mInitialized;
- 
-  nsString mOperator;
-  nsString mOperatorReadable;
-
-};
-
 class sbPropertyInfo : public sbIPropertyInfo
 {
 public:
@@ -109,6 +93,8 @@ public:
   NS_IMETHOD SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter);
 
 protected:
+  nsresult Init();
+
   PRUint32  mNullSort;
 
   PRLock*   mSortProfileLock;

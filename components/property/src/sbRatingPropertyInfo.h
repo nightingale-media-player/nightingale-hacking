@@ -60,7 +60,7 @@ public:
 
   nsresult Init();
 
-  void InitializeOperators();
+  nsresult InitializeOperators();
 };
 
 #endif /* __SBRATINGPROPERTYINFO_H__ */

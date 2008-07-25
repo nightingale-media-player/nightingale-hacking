@@ -46,7 +46,7 @@ public:
   sbURIPropertyInfo();
   virtual ~sbURIPropertyInfo();
 
-  void InitializeOperators();
+  nsresult Init();
 
   NS_IMETHOD Validate(const nsAString & aValue, PRBool *_retval);
   NS_IMETHOD Sanitize(const nsAString & aValue, nsAString & _retval);
@@ -56,6 +56,8 @@ public:
   NS_IMETHOD EnsureIOService();
 
 private:
+  nsresult InitializeOperators();
+
   PRLock*   mURISchemeConstraintLock;
   nsString  mURISchemeConstraint;
 
