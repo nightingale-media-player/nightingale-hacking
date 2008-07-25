@@ -98,6 +98,10 @@ const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_number_property_info.html#a43620591a1237627556fe8bdedb0e7f">RADIX_16</a> = 16</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Unsigned hex representation (eg. 0x0E, or 14 decimal). <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="df90e3a3d8a1f8075272864dd20fc014"></a><!-- doxytag: member="sbINumberPropertyInfo::FLOAT" ref="df90e3a3d8a1f8075272864dd20fc014" args="" -->
+const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_number_property_info.html#df90e3a3d8a1f8075272864dd20fc014">FLOAT</a> = 0</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Signed floating point representation (eg. 14.89). <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="91688eb3d9da61506cf46b836ac19a46"></a><!-- doxytag: member="sbINumberPropertyInfo::minValue" ref="91688eb3d9da61506cf46b836ac19a46" args="" -->
 attribute long long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_number_property_info.html#91688eb3d9da61506cf46b836ac19a46">minValue</a></td></tr>
 
@@ -106,10 +110,18 @@ attribute long long&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 attribute long long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_number_property_info.html#24229475be75971fe164124f6ce07faa">maxValue</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Minimum value allowed. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c5c1bf8679a3a2a482b0275821a8408e"></a><!-- doxytag: member="sbINumberPropertyInfo::minFloatValue" ref="c5c1bf8679a3a2a482b0275821a8408e" args="" -->
+attribute double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_number_property_info.html#c5c1bf8679a3a2a482b0275821a8408e">minFloatValue</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Minimum floating point value allowed if number property is a float. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="effa936e99fc686315506d0611a6a58d"></a><!-- doxytag: member="sbINumberPropertyInfo::maxFloatValue" ref="effa936e99fc686315506d0611a6a58d" args="" -->
+attribute double&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_number_property_info.html#effa936e99fc686315506d0611a6a58d">maxFloatValue</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Maximum float point value allowed if a number property is a float. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5bfa08e88f2f0005d00fa71931a3e30a"></a><!-- doxytag: member="sbINumberPropertyInfo::radix" ref="5bfa08e88f2f0005d00fa71931a3e30a" args="" -->
 attribute unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_number_property_info.html#5bfa08e88f2f0005d00fa71931a3e30a">radix</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Radix (must be 8, 10 or 16). <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Radix (must be RADIX_8, RADIX_10, RADIX_16 or FLOAT). <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The property information specific to numeric fields. 
@@ -119,9 +131,9 @@ The property information specific to numeric fields.
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_property_manager_8idl-source.html#l00308">308</a> of file <a class="el" href="sb_i_property_manager_8idl-source.html">sbIPropertyManager.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_property_manager_8idl-source.html#l00313">313</a> of file <a class="el" href="sb_i_property_manager_8idl-source.html">sbIPropertyManager.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/property/public/<a class="el" href="sb_i_property_manager_8idl-source.html">sbIPropertyManager.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:26 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:38 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -4,13 +4,13 @@
     <compoundname>sbIMediaPage.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="412">
+      <node id="428">
         <label>components/mediapages/public/sbIMediaPage.idl</label>
         <link refid="sbIMediaPage.idl"/>
-        <childnode refid="413" relation="include">
+        <childnode refid="429" relation="include">
         </childnode>
       </node>
-      <node id="413">
+      <node id="429">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

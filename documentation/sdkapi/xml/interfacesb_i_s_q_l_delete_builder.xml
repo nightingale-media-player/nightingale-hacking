@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="441" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="441" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="443" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="443" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -24,42 +24,42 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="890">
+      <node id="923">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="891" relation="public-inheritance">
+        <childnode refid="924" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="889">
+      <node id="922">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="890" relation="public-inheritance">
+        <childnode refid="923" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="891">
+      <node id="924">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="893">
+      <node id="926">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="894" relation="public-inheritance">
+        <childnode refid="927" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="892">
+      <node id="925">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="893" relation="public-inheritance">
+        <childnode refid="926" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="894">
+      <node id="927">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="437" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="436" bodyend="442"/>
+    <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="439" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="438" bodyend="444"/>
     <listofallmembers>
       <member refid="interfacesb_i_s_q_l_where_builder_1b04abab3d5a117e55e242a0cffce12ec" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>addCriterion</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1c043dcca0a024504bdfba272a183b165" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>addJoin</name></member>
@@ -79,6 +79,7 @@
       <member refid="interfacesb_i_s_q_l_where_builder_1608f8c174fc98a44c694fbfd7bc67199" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>createOrCriterion</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1fa1fa3b8ea1cb475f9ccc10ac519d484" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>JOIN_INNER</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1ad6e58931a0e11662c919c0846503b8c" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>JOIN_LEFT</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_14154721c8e7540ab9a5abc6f3f6b267b" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>JOIN_LEFT_OUTER</name></member>
       <member refid="interfacesb_i_s_q_l_builder_13c7ea9b5a93d06b5651b2930d8b9b472" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>limit</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1cd361a2636559e9627c09784d0099f82" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>limitIsParameter</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1b9f806fd09b240a2adf0f76b92c2fdc3" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>MATCH_EQUALS</name></member>
@@ -89,6 +90,7 @@
       <member refid="interfacesb_i_s_q_l_builder_1e08c6f669a944b7046f55c6484e0c7d3" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>MATCH_LIKE</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1e12d33fbbd1e6f912b69055b3e7b8713" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>MATCH_MATCH</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1e6f88f4330f1ae6e32ab6244e4292491" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>MATCH_NOTEQUALS</name></member>
+      <member refid="interfacesb_i_s_q_l_builder_1fe9fccbabe0eef2773df9610f4dc94ca" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>MATCH_NOTLIKE</name></member>
       <member refid="interfacesb_i_s_q_l_builder_11998b6528f7f722b5f24ec83cf7a15dc" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>offset</name></member>
       <member refid="interfacesb_i_s_q_l_builder_159f35b321060198bf39a288bdd0df5a2" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>offsetIsParameter</name></member>
       <member refid="interfacesb_i_s_q_l_where_builder_1600c4a25d61c5a3794811b53d8b362e3" prot="public" virt="non-virtual"><scope>sbISQLDeleteBuilder</scope><name>removeCriterion</name></member>

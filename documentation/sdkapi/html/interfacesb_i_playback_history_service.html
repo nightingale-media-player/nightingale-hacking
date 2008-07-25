@@ -84,9 +84,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_service.html#072c3cc456167eeb622784f70fdc7b0b">addEntry</a> (in <a class="el" href="interfacesb_i_playback_history_entry.html">sbIPlaybackHistoryEntry</a> aEntry)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add an entry to the playback history service.  <a href="#072c3cc456167eeb622784f70fdc7b0b"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_service.html#682d21a85b559af7919d9611d16a508a">addEntries</a> (in nsIArray aEntries)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_service.html#1ff600e1b6f7f949c9082371d6269bed">addEntries</a> (in nsIArray aEntries)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add entries to the playback history service.  <a href="#682d21a85b559af7919d9611d16a508a"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add entries to the playback history service.  <a href="#1ff600e1b6f7f949c9082371d6269bed"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_playback_history_entry.html">sbIPlaybackHistoryEntry</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_service.html#8a3e513dfeeb524ee1dc3c5ec553d1bd">getEntryByIndex</a> (in long long aIndex)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get an entry by index. Negative indexes wrap from the last entry.  <a href="#8a3e513dfeeb524ee1dc3c5ec553d1bd"></a><br></td></tr>
@@ -108,10 +108,21 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_service.html#f8ac8ff305c2381f592477f1974daba0">removeEntries</a> (in nsIArray aEntries)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove entries from the playback history service.  <a href="#f8ac8ff305c2381f592477f1974daba0"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_service.html#63430404d007fed3cfbe9fd975877698">getEntriesByAnnotation</a> (in AString aAnnotationId, in AString aAnnotationValue,[optional] in unsigned long aCount)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get entries by their annotation value.  <a href="#63430404d007fed3cfbe9fd975877698"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e8779952fef0d2303803842a563ee6e9"></a><!-- doxytag: member="sbIPlaybackHistoryService::clear" ref="e8779952fef0d2303803842a563ee6e9" args="()" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_service.html#e8779952fef0d2303803842a563ee6e9">clear</a> ()</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Clear all entries from the playback history service. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5460eba009778c4e27cffffd74e95d00"></a><!-- doxytag: member="sbIPlaybackHistoryService::addListener" ref="5460eba009778c4e27cffffd74e95d00" args="(in sbIPlaybackHistoryListener aListener)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_service.html#5460eba009778c4e27cffffd74e95d00">addListener</a> (in <a class="el" href="interfacesb_i_playback_history_listener.html">sbIPlaybackHistoryListener</a> aListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a listener. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="464486d0a002fae181aaae1090af9aa7"></a><!-- doxytag: member="sbIPlaybackHistoryService::removeListener" ref="464486d0a002fae181aaae1090af9aa7" args="(in sbIPlaybackHistoryListener aListener)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_service.html#464486d0a002fae181aaae1090af9aa7">removeListener</a> (in <a class="el" href="interfacesb_i_playback_history_listener.html">sbIPlaybackHistoryListener</a> aListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a listener. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_service.html#1a6da1d9dc4e14a6c98d2f080f01a530">entries</a></td></tr>
 
@@ -128,7 +139,7 @@ Getter methods assume that index 0 is the most recent entry.
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_playback_history_service_8idl-source.html#l00046">46</a> of file <a class="el" href="sb_i_playback_history_service_8idl-source.html">sbIPlaybackHistoryService.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_playback_history_service_8idl-source.html#l00047">47</a> of file <a class="el" href="sb_i_playback_history_service_8idl-source.html">sbIPlaybackHistoryService.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="44c768602b3f79cdfdefcd1d72740a71"></a><!-- doxytag: member="sbIPlaybackHistoryService::createEntry" ref="44c768602b3f79cdfdefcd1d72740a71" args="(in sbIMediaItem aItem, in long long aTimestamp, in long long aDuration, in sbIPropertyArray aAnnotations)" -->
 <div class="memitem">
 <div class="memproto">
@@ -207,12 +218,12 @@ Add an entry to the playback history service.
 
 </div>
 </div><p>
-<a class="anchor" name="682d21a85b559af7919d9611d16a508a"></a><!-- doxytag: member="sbIPlaybackHistoryService::addEntries" ref="682d21a85b559af7919d9611d16a508a" args="(in nsIArray aEntries)" -->
+<a class="anchor" name="1ff600e1b6f7f949c9082371d6269bed"></a><!-- doxytag: member="sbIPlaybackHistoryService::addEntries" ref="1ff600e1b6f7f949c9082371d6269bed" args="(in nsIArray aEntries)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">nsIArray sbIPlaybackHistoryService::addEntries           </td>
+          <td class="memname">void sbIPlaybackHistoryService::addEntries           </td>
           <td>(</td>
           <td class="paramtype">in nsIArray&nbsp;</td>
           <td class="paramname"> <em>aEntries</em>          </td>
@@ -231,7 +242,11 @@ Add entries to the playback history service.
     <tr><td valign="top"></td><td valign="top"><em>aEntries</em>&nbsp;</td><td>An array of <a class="el" href="interfacesb_i_playback_history_entry.html">sbIPlaybackHistoryEntry</a> objects. </td></tr>
   </table>
 </dl>
-<dl class="note" compact><dt><b>Note:</b></dt><dd>The array will contain <a class="el" href="interfacesb_i_playback_history_entry.html">sbIPlaybackHistoryEntry</a> objects. </dd></dl>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_INVALID_ARG</em>&nbsp;</td><td>when the array does not contain <a class="el" href="interfacesb_i_playback_history_entry.html">sbIPlaybackHistoryEntry</a> objects. </td></tr>
+  </table>
+</dl>
 
 </div>
 </div><p>
@@ -457,6 +472,51 @@ Remove entries from the playback history service.
 
 </div>
 </div><p>
+<a class="anchor" name="63430404d007fed3cfbe9fd975877698"></a><!-- doxytag: member="sbIPlaybackHistoryService::getEntriesByAnnotation" ref="63430404d007fed3cfbe9fd975877698" args="(in AString aAnnotationId, in AString aAnnotationValue,[optional] in unsigned long aCount)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nsIArray sbIPlaybackHistoryService::getEntriesByAnnotation           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aAnnotationId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aAnnotationValue</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>aCount</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get entries by their annotation value. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aAnnotationId</em>&nbsp;</td><td>The annotation id. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aAnnotationValue</em>&nbsp;</td><td>The annotation value. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>[optional]</em>&nbsp;</td><td>aCount The maximum number of entries to return. </td></tr>
+  </table>
+</dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>Results are ordered from newest to oldest. </dd></dl>
+
+</div>
+</div><p>
 <hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="1a6da1d9dc4e14a6c98d2f080f01a530"></a><!-- doxytag: member="sbIPlaybackHistoryService::entries" ref="1a6da1d9dc4e14a6c98d2f080f01a530" args="" -->
 <div class="memitem">
@@ -475,12 +535,12 @@ Enumerator of all entries in the playback history service.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>The enumerator will contain <a class="el" href="interfacesb_i_playback_history_entry.html">sbIPlaybackHistoryEntry</a> objects. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playback_history_service_8idl-source.html#l00052">52</a> of file <a class="el" href="sb_i_playback_history_service_8idl-source.html">sbIPlaybackHistoryService.idl</a>.
+Definition at line <a class="el" href="sb_i_playback_history_service_8idl-source.html#l00053">53</a> of file <a class="el" href="sb_i_playback_history_service_8idl-source.html">sbIPlaybackHistoryService.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/mediacore/playback/history/public/<a class="el" href="sb_i_playback_history_service_8idl-source.html">sbIPlaybackHistoryService.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:26 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:38 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

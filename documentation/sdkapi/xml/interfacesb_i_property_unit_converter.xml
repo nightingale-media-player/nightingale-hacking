@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_property_unit_converter" kind="interface" prot="public">
+    <compoundname>sbIPropertyUnitConverter</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_property_unit_converter_1e291b2752a00bb8847c9121ac2b03e34" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbIPropertyUnitConverter::units</definition>
+        <argsstring></argsstring>
+        <name>units</name>
+        <briefdescription>
+<para>The list of available units for this property. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="81" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_unit_converter_16dac6e360bfc5cf509877fadb3f98a98" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyUnitConverter::nativeUnitId</definition>
+        <argsstring></argsstring>
+        <name>nativeUnitId</name>
+        <briefdescription>
+<para>The native unit for this property. This is the unit used for storage in the database, and that is implied when getting and setting the property. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="88" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_unit_converter_176826e982091ac253fba36fd5dba49e3" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIPropertyUnitConverter::stringBundle</definition>
+        <argsstring></argsstring>
+        <name>stringBundle</name>
+        <briefdescription>
+<para>The url to the string bundle used to localize partial entities. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="93" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_property_unit_converter_1425c0e156ab117a69c4f009548a365c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPropertyUnitConverter::convert</definition>
+        <argsstring>(in AString aValue, in AString aFromUnitID, in AString aToUnitID)</argsstring>
+        <name>convert</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aFromUnitID</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aToUnitID</declname>
+        </param>
+        <briefdescription>
+<para>Convert a value to a different unit. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="76"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Property unit converter interface This is an interface songbird property converter, used to convert a property value between its various units representations. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="70" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="69" bodyend="94"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_property_unit_converter_1425c0e156ab117a69c4f009548a365c0" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>convert</name></member>
+      <member refid="interfacesb_i_property_unit_converter_16dac6e360bfc5cf509877fadb3f98a98" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>nativeUnitId</name></member>
+      <member refid="interfacesb_i_property_unit_converter_176826e982091ac253fba36fd5dba49e3" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>stringBundle</name></member>
+      <member refid="interfacesb_i_property_unit_converter_1e291b2752a00bb8847c9121ac2b03e34" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>units</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

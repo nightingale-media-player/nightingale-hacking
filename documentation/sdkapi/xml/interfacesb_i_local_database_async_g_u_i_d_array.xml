@@ -122,47 +122,47 @@
     <detaileddescription>
 <para>An asynchronous wrapper around an existing GUID array. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="369">
+      <node id="406">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
       </node>
-      <node id="368">
+      <node id="405">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="369" relation="public-inheritance">
+        <childnode refid="406" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="371">
+      <node id="408">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
-        <childnode refid="372" relation="usage">
+        <childnode refid="409" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
-        <childnode refid="373" relation="usage">
+        <childnode refid="410" relation="usage">
           <edgelabel>listener</edgelabel>
         </childnode>
-        <childnode refid="374" relation="usage">
+        <childnode refid="411" relation="usage">
           <edgelabel>currentSort</edgelabel>
         </childnode>
       </node>
-      <node id="374">
+      <node id="411">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="373">
+      <node id="410">
         <label>sbILocalDatabaseGUIDArrayListener</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array_listener"/>
       </node>
-      <node id="372">
+      <node id="409">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>
-      <node id="370">
+      <node id="407">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="371" relation="public-inheritance">
+        <childnode refid="408" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
@@ -179,6 +179,7 @@
       <member refid="interfacesb_i_local_database_g_u_i_d_array_17bf478c43bca49c37dcde3a22a5c7286" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>clone</name></member>
       <member refid="interfacesb_i_local_database_async_g_u_i_d_array_1519d4329aeee0e715b489936195306eb" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>cloneAsyncArray</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_11cadd21bcac93d4e65a2f8385857cada" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>cloneInto</name></member>
+      <member refid="interfacesb_i_local_database_g_u_i_d_array_1449683a98be9c44e1c9fcb64218726b9" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>containsGuid</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_129a9562b17ef691daa5dccd01aec23bd" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>currentSort</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1a1b3275e4f100ac58569ae09201e0c47" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>databaseGUID</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1bdacc34062adbb85068599a45a440d0b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>databaseLocation</name></member>

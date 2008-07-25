@@ -62,7 +62,7 @@
 <codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>aDestItem);</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="60"><highlight class="normal">[scriptable,<sp/>uuid(72c5d04f-6c75-4155-adb8-b2e5755714d1)]</highlight></codeline>
+<codeline lineno="60"><highlight class="normal">[scriptable,<sp/>uuid(a9045766-28a3-455f-a5fc-2a2eb7c863a3)]</highlight></codeline>
 <codeline lineno="61" refid="interfacesb_i_local_database_simple_media_list" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_simple_media_list" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSimpleMediaList</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="62"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="63" refid="interfacesb_i_local_database_simple_media_list_19ab4500c07ac7424d962babcdf3a8364" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_local_database_media_list_copy_listener" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseMediaListCopyListener</ref><sp/>copyListener;</highlight></codeline>
@@ -88,8 +88,10 @@
 <codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>notifyListenersBatchBegin(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aList);</highlight></codeline>
 <codeline lineno="110"><highlight class="normal"></highlight></codeline>
 <codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>notifyListenersBatchEnd(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aList);</highlight></codeline>
-<codeline lineno="115"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>notifyContentChanged();</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl"/>
   </compounddef>

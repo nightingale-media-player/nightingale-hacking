@@ -4,13 +4,13 @@
     <compoundname>sbIFileSystemObserverService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="198">
+      <node id="195">
         <label>components/integration/public/sbIFileSystemObserverService.idl</label>
         <link refid="sbIFileSystemObserverService.idl"/>
-        <childnode refid="199" relation="include">
+        <childnode refid="196" relation="include">
         </childnode>
       </node>
-      <node id="199">
+      <node id="196">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

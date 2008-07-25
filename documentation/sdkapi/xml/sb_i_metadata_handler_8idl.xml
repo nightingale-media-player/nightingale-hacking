@@ -93,7 +93,7 @@
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIChannel.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_property_array_8idl" kindref="compound" tooltip="Definition of the sbIPropertyArray interface.">sbIPropertyArray.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(58c271fb-336e-476d-96f6-bdba0e5f54e6)]</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(4a858410-52e7-11dd-ae16-0800200c9a66)]</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_metadata_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_handler" kindref="compound" tooltip="An object capable of manipulating the metadata tags for a media file.">sbIMetadataHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="51" refid="interfacesb_i_metadata_handler_11a1be28d93bd9e9dcf125ea81f8d3b6e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_OTHER<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00;</highlight></codeline>
@@ -121,24 +121,31 @@
 <codeline lineno="81" refid="interfacesb_i_metadata_handler_1a2a140a5970440aac460137619d1c673" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_mutable_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances Note that implementations...">sbIMutablePropertyArray</ref><sp/>props;</highlight></codeline>
 <codeline lineno="82"><highlight class="normal"></highlight></codeline>
 <codeline lineno="92" refid="interfacesb_i_metadata_handler_1978827eef884f62ce9da10d1344632a1" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRBool<sp/>completed;</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"></highlight></codeline>
-<codeline lineno="107" refid="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIChannel<sp/>channel;</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"></highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/>PRInt32<sp/>vote(<sp/>in<sp/>AString<sp/>aUrl<sp/>);</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"></highlight></codeline>
-<codeline lineno="136"><highlight class="normal"><sp/><sp/>PRInt32<sp/>read();</highlight></codeline>
-<codeline lineno="137"><highlight class="normal"></highlight></codeline>
-<codeline lineno="152"><highlight class="normal"><sp/><sp/>PRInt32<sp/>write();</highlight></codeline>
-<codeline lineno="153"><highlight class="normal"></highlight></codeline>
-<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getImageData(in<sp/>PRInt32<sp/>aType,</highlight></codeline>
-<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>AUTF8String<sp/>aMimeType,</highlight></codeline>
-<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDataLen,</highlight></codeline>
-<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,retval,size_is(aDataLen)]<sp/>out<sp/>octet<sp/>aData);</highlight></codeline>
-<codeline lineno="175"><highlight class="normal"></highlight></codeline>
-<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onChannelData(<sp/>in<sp/>nsISupports<sp/>aChannel<sp/>);</highlight></codeline>
-<codeline lineno="188"><highlight class="normal"></highlight></codeline>
-<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>close();</highlight></codeline>
-<codeline lineno="193"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="100" refid="interfacesb_i_metadata_handler_1f5d32370ea0ee06b351d1d8db98939e4" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRBool<sp/>requiresMainThread;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIChannel<sp/>channel;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>PRInt32<sp/>vote(<sp/>in<sp/>AString<sp/>aUrl<sp/>);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/>PRInt32<sp/>read();</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/>PRInt32<sp/>write();</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getImageData(in<sp/>PRInt32<sp/>aType,</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>AUTF8String<sp/>aMimeType,</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDataLen,</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,retval,size_is(aDataLen)]<sp/>out<sp/>octet<sp/>aData);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setImageData(in<sp/>PRInt32<sp/>aType,</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AUTF8String<sp/>aMimeType,</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[</highlight><highlight class="keyword">const</highlight><highlight class="normal">,array,size_is(aDataLen)]<sp/>in<sp/>octet<sp/>aData,</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDataLen);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onChannelData(<sp/>in<sp/>nsISupports<sp/>aChannel<sp/>);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>close();</highlight></codeline>
+<codeline lineno="221"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl"/>
   </compounddef>

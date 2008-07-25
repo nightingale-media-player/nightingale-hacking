@@ -106,27 +106,23 @@
 <a name="l00056"></a><a class="code" href="interfacesb_i_library_transfer_context.html#3ba7b2274e30a6feeec766f190649be8">00056</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> count;
 <a name="l00057"></a>00057 };
 <a name="l00058"></a>00058 
-<a name="l00070"></a>00070 [scriptable, uuid(4295e550-8222-43bb-a735-dc6ba7116ab6)]
-<a name="l00071"></a><a class="code" href="interfacesb_i_single_item_transfer_context.html">00071</a> interface <a class="code" href="interfacesb_i_single_item_transfer_context.html" title="This interface represents a transfer of a single media item.">sbISingleItemTransferContext</a> : <a class="code" href="interfacesb_i_library_transfer_context.html" title="A base interface for the various library transfer contexts.">sbILibraryTransferContext</a>
-<a name="l00072"></a>00072 {
-<a name="l00076"></a><a class="code" href="interfacesb_i_single_item_transfer_context.html#e60254bf00ad6d2062561296f147963c">00076</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> item;
-<a name="l00077"></a>00077 };
-<a name="l00078"></a>00078 
-<a name="l00086"></a>00086 [scriptable, uuid(91cb2cf8-f769-4793-a8e7-3b3e91696863)]
-<a name="l00087"></a><a class="code" href="interfacesb_i_single_list_transfer_context.html">00087</a> interface <a class="code" href="interfacesb_i_single_list_transfer_context.html" title="This interface represents a transfer of a single media list.">sbISingleListTransferContext</a> : <a class="code" href="interfacesb_i_library_transfer_context.html" title="A base interface for the various library transfer contexts.">sbILibraryTransferContext</a>
-<a name="l00088"></a>00088 {
-<a name="l00092"></a><a class="code" href="interfacesb_i_single_list_transfer_context.html#a94cd19e291a40d19a76e0845dae2d41">00092</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> list;
-<a name="l00093"></a>00093 };
-<a name="l00094"></a>00094 
-<a name="l00110"></a>00110 [scriptable, uuid(13af0d9a-9dc6-447f-916d-55e10d42e573)]
-<a name="l00111"></a><a class="code" href="interfacesb_i_multiple_item_transfer_context.html">00111</a> interface <a class="code" href="interfacesb_i_multiple_item_transfer_context.html" title="This interface represents a transfer of a collection of media items and/or media...">sbIMultipleItemTransferContext</a> : <a class="code" href="interfacesb_i_library_transfer_context.html" title="A base interface for the various library transfer contexts.">sbILibraryTransferContext</a>
-<a name="l00112"></a>00112 {
-<a name="l00117"></a><a class="code" href="interfacesb_i_multiple_item_transfer_context.html#c62397ab39e4531e7a3c80c0193819d2">00117</a>   readonly attribute nsISimpleEnumerator items;
-<a name="l00118"></a>00118   
-<a name="l00123"></a>00123   <span class="keywordtype">void</span> reset();
-<a name="l00124"></a>00124 };
-<a name="l00125"></a>00125 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:21 2008 for Songbird by&nbsp;
+<a name="l00066"></a>00066 [scriptable, uuid(b2f94ac7-de15-4c63-8ea0-0cd58e512512)]
+<a name="l00067"></a><a class="code" href="interfacesb_i_media_list_transfer_context.html">00067</a> interface <a class="code" href="interfacesb_i_media_list_transfer_context.html" title="This interface represents a transfer of a single media list.">sbIMediaListTransferContext</a> : <a class="code" href="interfacesb_i_library_transfer_context.html" title="A base interface for the various library transfer contexts.">sbILibraryTransferContext</a>
+<a name="l00068"></a>00068 {
+<a name="l00072"></a><a class="code" href="interfacesb_i_media_list_transfer_context.html#e3856721d4e3e3fc00ffef4636467f06">00072</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> list;
+<a name="l00073"></a>00073 };
+<a name="l00074"></a>00074 
+<a name="l00091"></a>00091 [scriptable, uuid(dcb5d9ea-df04-44fa-9163-b28f80a83a69)]
+<a name="l00092"></a><a class="code" href="interfacesb_i_media_items_transfer_context.html">00092</a> interface <a class="code" href="interfacesb_i_media_items_transfer_context.html" title="This interface represents a transfer of a collection of media items and/or media...">sbIMediaItemsTransferContext</a> : <a class="code" href="interfacesb_i_library_transfer_context.html" title="A base interface for the various library transfer contexts.">sbILibraryTransferContext</a>
+<a name="l00093"></a>00093 {
+<a name="l00098"></a><a class="code" href="interfacesb_i_media_items_transfer_context.html#220d459bfbf3c1724895b9658927d730">00098</a>   readonly attribute nsISimpleEnumerator items;
+<a name="l00099"></a>00099   
+<a name="l00106"></a><a class="code" href="interfacesb_i_media_items_transfer_context.html#31f95cc3578723b5e84ea88030ef8d9c">00106</a>   readonly attribute nsISimpleEnumerator indexedItems;
+<a name="l00107"></a>00107   
+<a name="l00112"></a>00112   <span class="keywordtype">void</span> reset();
+<a name="l00113"></a>00113 };
+<a name="l00114"></a>00114 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:34 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

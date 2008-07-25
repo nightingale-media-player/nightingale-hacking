@@ -124,6 +124,8 @@
 : <a class="el" href="interfacesb_i_playback_history_service.html#1a6da1d9dc4e14a6c98d2f080f01a530">sbIPlaybackHistoryService</a>
 <li>entryCount
 : <a class="el" href="interfacesb_i_playback_history_service.html#af845430f8cb073f00004c7154d8ad6f">sbIPlaybackHistoryService</a>
+<li>entryId
+: <a class="el" href="interfacesb_i_playback_history_entry.html#fb1b7223914bc43104d748969cf61711">sbIPlaybackHistoryEntry</a>
 <li>ENUMERATIONTYPE_LOCKING
 : <a class="el" href="interfacesb_i_media_list.html#c06c5fe198ada5d24ee62f7930038e1c">sbIMediaList</a>
 <li>ENUMERATIONTYPE_SNAPSHOT
@@ -190,12 +192,118 @@
 : <a class="el" href="interfacesb_i_device_event.html#313ec805e9d68801766f057fe0e60505">sbIDeviceEvent</a>
 <li>EVENT_DEVICE_TRANSFER_START
 : <a class="el" href="interfacesb_i_device_event.html#d034a9cd728478b211d1fefe2299d0b1">sbIDeviceEvent</a>
+<li>EVENT_ERROR_CORE_BASE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#f971444e587edeaba9167836f10d0bde">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_CAPS
+: <a class="el" href="interfacesb_i_g_streamer_event.html#23be1c8a5109d82c7221b3eae6161330">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_CLOCK
+: <a class="el" href="interfacesb_i_g_streamer_event.html#bf22fd5cab845a81e933453564bfe367">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_DISABLED
+: <a class="el" href="interfacesb_i_g_streamer_event.html#4c0a7df03900980fd6d74da16bc18cf1">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_EVENT
+: <a class="el" href="interfacesb_i_g_streamer_event.html#62025fd5038c065f39fcd6f14aec14c7">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_FAILED
+: <a class="el" href="interfacesb_i_g_streamer_event.html#261e62cdeb7c1bccd99d76426427ec38">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_MISSING_PLUGIN
+: <a class="el" href="interfacesb_i_g_streamer_event.html#e6e82db2eb1f4dc16dadaa55458121d6">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_NEGOTIATION
+: <a class="el" href="interfacesb_i_g_streamer_event.html#686e6687f2b32194f2dcccca205f8a1e">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_NOT_IMPLEMENTED
+: <a class="el" href="interfacesb_i_g_streamer_event.html#88955fc917a52997557b96b72cd3ca69">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_PAD
+: <a class="el" href="interfacesb_i_g_streamer_event.html#bac8f4ac62f3d7faf89f1c2339df81d2">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_SEEK
+: <a class="el" href="interfacesb_i_g_streamer_event.html#c2766d97751cf192b5aef9e4f8564c86">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_STATE_CHANGE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#bd75b6b7a6a7e037755cc0c2a7ee32c2">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_TAG
+: <a class="el" href="interfacesb_i_g_streamer_event.html#9f81660d884c08d070926a28125068ab">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_THREAD
+: <a class="el" href="interfacesb_i_g_streamer_event.html#8e4cf22abba3618491d54db3555a9d8e">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_CORE_TOO_LAZY
+: <a class="el" href="interfacesb_i_g_streamer_event.html#3a85d16cf61e3ffe29f9cad3b924f22c">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_FIRST
+: <a class="el" href="interfacesb_i_g_streamer_event.html#ce199457bd7d56205946f5f3e481e3e3">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_LAST
+: <a class="el" href="interfacesb_i_g_streamer_event.html#e27ec094400f53402745db2c4fd86e5c">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_LIBRARY_BASE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#bd01605abb23947307adc27fb87a8189">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_LIBRARY_ENCODE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#fbd924b61f6bdb5f86ade29ad0b19772">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_LIBRARY_FAILED
+: <a class="el" href="interfacesb_i_g_streamer_event.html#e122c64b644d264f15f6915554fba747">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_LIBRARY_INIT
+: <a class="el" href="interfacesb_i_g_streamer_event.html#fcb9c6b98de29c3e5869631c86f92bfe">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_LIBRARY_SETTINGS
+: <a class="el" href="interfacesb_i_g_streamer_event.html#f0d07b46cd50731f46fa6006461fb518">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_LIBRARY_SHUTDOWN
+: <a class="el" href="interfacesb_i_g_streamer_event.html#e484543ae6b1ecbcd07126a0d3a81534">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_LIBRARY_TOO_LAZY
+: <a class="el" href="interfacesb_i_g_streamer_event.html#cfe1b8c55a658686d3cdbb9e44e7cbcd">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_BASE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#e6228cd55c8a38e66b68d2870465297e">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_BUSY
+: <a class="el" href="interfacesb_i_g_streamer_event.html#7eeb4d71a007685dc1cdd6ae9f6a4f8c">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_CLOSE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#2d7dc37c9b633171105eadb46112d9aa">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_FAILED
+: <a class="el" href="interfacesb_i_g_streamer_event.html#dbfd0283ed0b0512f1b3d8023387686e">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_NO_SPACE_LEFT
+: <a class="el" href="interfacesb_i_g_streamer_event.html#e7f628d1b6144fba57ef82fd853d7d78">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_NOT_FOUND
+: <a class="el" href="interfacesb_i_g_streamer_event.html#149d7d5eadd3cdcff80143361a21c39f">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_OPEN_READ
+: <a class="el" href="interfacesb_i_g_streamer_event.html#a088bfc23d46c0dff0723fa4abac2895">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_OPEN_READ_WRITE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#898dc10487d4df00c0d2a462abfb0e39">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_OPEN_WRITE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#3baea6abe8a358ecf3bf8ba0d6ae3281">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_READ
+: <a class="el" href="interfacesb_i_g_streamer_event.html#07908cadd5b6595595f3821006bd982f">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_SEEK
+: <a class="el" href="interfacesb_i_g_streamer_event.html#26bf821c3b0940e582f289b367914ffc">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_SETTINGS
+: <a class="el" href="interfacesb_i_g_streamer_event.html#15a1bea6f70f8d541a40a5d288717914">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_SYNC
+: <a class="el" href="interfacesb_i_g_streamer_event.html#8ffd272bb3bb1ab8e873fcd7adc0da9e">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_TOO_LAZY
+: <a class="el" href="interfacesb_i_g_streamer_event.html#2da1e135b41af89c4bc68406d11cb90c">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_RESOURCE_WRITE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#160f0ffc69c947910dce9bb0b3df080f">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_BASE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#25509d60e373e0a0b07ab8c473f450ac">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_CODEC_NOT_FOUND
+: <a class="el" href="interfacesb_i_g_streamer_event.html#3e685c0e523eb0e69badaed3c1798ae6">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_DECODE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#05da53f6f2e5ca3217140f9583a56236">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_DECRYPT
+: <a class="el" href="interfacesb_i_g_streamer_event.html#eedb84bad872890dca077d385469dc78">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_DECRYPT_NOKEY
+: <a class="el" href="interfacesb_i_g_streamer_event.html#d9cb49ecc7ef690930524abcc5180065">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_DEMUX
+: <a class="el" href="interfacesb_i_g_streamer_event.html#262152cd2500519649eaba492d33ec37">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_ENCODE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#1f497293de4d516652a245326a6f685d">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_FAILED
+: <a class="el" href="interfacesb_i_g_streamer_event.html#11807b992e0da9828993f1867d72288c">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_FORMAT
+: <a class="el" href="interfacesb_i_g_streamer_event.html#10ed0280ed0490f03f3892eb712d6890">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_MUX
+: <a class="el" href="interfacesb_i_g_streamer_event.html#1191b265cc928002991d938b76c9fd71">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_NOT_IMPLEMENTED
+: <a class="el" href="interfacesb_i_g_streamer_event.html#bf4592ef14b8e61ffbf59fb77e8fff8a">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_TOO_LAZY
+: <a class="el" href="interfacesb_i_g_streamer_event.html#2eda2a4d4024c7ac3fed66f508e0bce5">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_TYPE_NOT_FOUND
+: <a class="el" href="interfacesb_i_g_streamer_event.html#6930f07d54acf8ac16b9eee577412ab7">sbIGStreamerEvent</a>
+<li>EVENT_ERROR_STREAM_WRONG_TYPE
+: <a class="el" href="interfacesb_i_g_streamer_event.html#fe656e3bbd5a383d729a0f9d51bbdb35">sbIGStreamerEvent</a>
 <li>EVENT_MANAGER_BASE
 : <a class="el" href="interfacesb_i_device_event.html#beb207b4c5548d656dc09351b4f9010c">sbIDeviceEvent</a>
 <li>EVENT_MARSHALL_BASE
 : <a class="el" href="interfacesb_i_device_event.html#d0cb2fa10c2fbd9a903280b281d34713">sbIDeviceEvent</a>
 </ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:23 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:35 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

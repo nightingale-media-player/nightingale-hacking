@@ -76,10 +76,27 @@
 <h1>sbIPlaybackHistoryEntry Interface Reference</h1><!-- doxytag: class="sbIPlaybackHistoryEntry" --><a href="interfacesb_i_playback_history_entry-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_entry.html#0e2108e8726b16f4051eec127e18171d">getAnnotation</a> (in AString aAnnotationId)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get an annotation by id.  <a href="#0e2108e8726b16f4051eec127e18171d"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_entry.html#91116caf6a531a7b04ca5a5daf2862fa">hasAnnotation</a> (in AString aAnnotationId)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Verify the presence of an annotation.  <a href="#91116caf6a531a7b04ca5a5daf2862fa"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_entry.html#c4a0ba3e2ed9cfe19cc98c56ed4cc960">setAnnotation</a> (in AString aAnnotationId, in AString aAnnotationValue)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set an annotation on the entry.  <a href="#c4a0ba3e2ed9cfe19cc98c56ed4cc960"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_entry.html#52c07f5554d7d47c9d40d6a18c0a2cf4">removeAnnotation</a> (in AString aAnnotationId)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove an annotation from the entry.  <a href="#52c07f5554d7d47c9d40d6a18c0a2cf4"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_entry.html#b426a4748f05c313c11fba7205485395">init</a> (in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> aItem, in long long aTimestamp, in long long aDuration, in <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> aAnnotations)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initialize a playback history entry.  <a href="#b426a4748f05c313c11fba7205485395"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_entry.html#9ec4d3fecfe0ad0c8c0981372005185e">setEntryId</a> (in long long aEntryId)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the entry id.  <a href="#9ec4d3fecfe0ad0c8c0981372005185e"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute long long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_entry.html#fb1b7223914bc43104d748969cf61711">entryId</a></td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="9d6777cabfd1d48873680033be34018d"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::item" ref="9d6777cabfd1d48873680033be34018d" args="" -->
 readonly attribute <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playback_history_entry.html#9d6777cabfd1d48873680033be34018d">item</a></td></tr>
 
@@ -100,6 +117,136 @@ readonly attribute <a class="el" href="interfacesb_i_media_item.html">sbIMediaIt
 
 <p>
 Definition at line <a class="el" href="sb_i_playback_history_entry_8idl-source.html#l00036">36</a> of file <a class="el" href="sb_i_playback_history_entry_8idl-source.html">sbIPlaybackHistoryEntry.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="0e2108e8726b16f4051eec127e18171d"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::getAnnotation" ref="0e2108e8726b16f4051eec127e18171d" args="(in AString aAnnotationId)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AString sbIPlaybackHistoryEntry::getAnnotation           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aAnnotationId</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get an annotation by id. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aAnnotationId</em>&nbsp;</td><td>The annotation id. </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The annotation value. </dd></dl>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_AVAILABLE</em>&nbsp;</td><td>when the annotation is not available. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="91116caf6a531a7b04ca5a5daf2862fa"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::hasAnnotation" ref="91116caf6a531a7b04ca5a5daf2862fa" args="(in AString aAnnotationId)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIPlaybackHistoryEntry::hasAnnotation           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aAnnotationId</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Verify the presence of an annotation. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aAnnotationId</em>&nbsp;</td><td>The annotation id. </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Return values:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>true</em>&nbsp;</td><td>The annotation is present. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>false</em>&nbsp;</td><td>The annotation is not available. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="c4a0ba3e2ed9cfe19cc98c56ed4cc960"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::setAnnotation" ref="c4a0ba3e2ed9cfe19cc98c56ed4cc960" args="(in AString aAnnotationId, in AString aAnnotationValue)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaybackHistoryEntry::setAnnotation           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aAnnotationId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aAnnotationValue</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Set an annotation on the entry. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aAnnotationId</em>&nbsp;</td><td>The annotation id. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aAnnotationValue</em>&nbsp;</td><td>The annotation value. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="52c07f5554d7d47c9d40d6a18c0a2cf4"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::removeAnnotation" ref="52c07f5554d7d47c9d40d6a18c0a2cf4" args="(in AString aAnnotationId)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaybackHistoryEntry::removeAnnotation           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aAnnotationId</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Remove an annotation from the entry. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aAnnotationId</em>&nbsp;</td><td>The annotation id. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <a class="anchor" name="b426a4748f05c313c11fba7205485395"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::init" ref="b426a4748f05c313c11fba7205485395" args="(in sbIMediaItem aItem, in long long aTimestamp, in long long aDuration, in sbIPropertyArray aAnnotations)" -->
 <div class="memitem">
 <div class="memproto">
@@ -152,7 +299,48 @@ Initialize a playback history entry.
 
 </div>
 </div><p>
+<a class="anchor" name="9ec4d3fecfe0ad0c8c0981372005185e"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::setEntryId" ref="9ec4d3fecfe0ad0c8c0981372005185e" args="(in long long aEntryId)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIPlaybackHistoryEntry::setEntryId           </td>
+          <td>(</td>
+          <td class="paramtype">in long long&nbsp;</td>
+          <td class="paramname"> <em>aEntryId</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Set the entry id. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>This method is for internal use only. </dd></dl>
+
+</div>
+</div><p>
 <hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="fb1b7223914bc43104d748969cf61711"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::entryId" ref="fb1b7223914bc43104d748969cf61711" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute long long <a class="el" href="interfacesb_i_playback_history_entry.html#fb1b7223914bc43104d748969cf61711">sbIPlaybackHistoryEntry::entryId</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>This is not the _index_ of the entry. </dd></dl>
+
+<p>
+Definition at line <a class="el" href="sb_i_playback_history_entry_8idl-source.html#l00042">42</a> of file <a class="el" href="sb_i_playback_history_entry_8idl-source.html">sbIPlaybackHistoryEntry.idl</a>.
+</div>
+</div><p>
 <a class="anchor" name="8510fee5c4ce41c53a51726945dc386a"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::timestamp" ref="8510fee5c4ce41c53a51726945dc386a" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -170,7 +358,7 @@ Timestamp indicating at which time the item started playing.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>The timestamp is a standard UNIX style timestamp. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playback_history_entry_8idl-source.html#l00047">47</a> of file <a class="el" href="sb_i_playback_history_entry_8idl-source.html">sbIPlaybackHistoryEntry.idl</a>.
+Definition at line <a class="el" href="sb_i_playback_history_entry_8idl-source.html#l00053">53</a> of file <a class="el" href="sb_i_playback_history_entry_8idl-source.html">sbIPlaybackHistoryEntry.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="64dd426f1b3a8fcc44286055317fd7ba"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::duration" ref="64dd426f1b3a8fcc44286055317fd7ba" args="" -->
@@ -190,7 +378,7 @@ Duration of playback in microseconds.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>This is optional. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playback_history_entry_8idl-source.html#l00053">53</a> of file <a class="el" href="sb_i_playback_history_entry_8idl-source.html">sbIPlaybackHistoryEntry.idl</a>.
+Definition at line <a class="el" href="sb_i_playback_history_entry_8idl-source.html#l00059">59</a> of file <a class="el" href="sb_i_playback_history_entry_8idl-source.html">sbIPlaybackHistoryEntry.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="a9c69b186aff24b0d2a4b77fe99266fb"></a><!-- doxytag: member="sbIPlaybackHistoryEntry::annotations" ref="a9c69b186aff24b0d2a4b77fe99266fb" args="" -->
@@ -210,12 +398,12 @@ Annotations to the entry. Annotations are properties.
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_property.html">sbIProperty</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_playback_history_entry_8idl-source.html#l00059">59</a> of file <a class="el" href="sb_i_playback_history_entry_8idl-source.html">sbIPlaybackHistoryEntry.idl</a>.
+Definition at line <a class="el" href="sb_i_playback_history_entry_8idl-source.html#l00065">65</a> of file <a class="el" href="sb_i_playback_history_entry_8idl-source.html">sbIPlaybackHistoryEntry.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/mediacore/playback/history/public/<a class="el" href="sb_i_playback_history_entry_8idl-source.html">sbIPlaybackHistoryEntry.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:26 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:38 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

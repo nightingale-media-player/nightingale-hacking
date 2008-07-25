@@ -96,7 +96,7 @@
 <a name="l00032"></a>00032 <span class="preprocessor">#include "nsIChannel.idl"</span>
 <a name="l00033"></a>00033 <span class="preprocessor">#include "<a class="code" href="sb_i_property_array_8idl.html" title="Definition of the sbIPropertyArray interface.">sbIPropertyArray.idl</a>"</span>
 <a name="l00034"></a>00034 
-<a name="l00044"></a>00044 [scriptable, uuid(58c271fb-336e-476d-96f6-bdba0e5f54e6)]
+<a name="l00044"></a>00044 [scriptable, uuid(4a858410-52e7-11dd-ae16-0800200c9a66)]
 <a name="l00045"></a><a class="code" href="interfacesb_i_metadata_handler.html">00045</a> interface <a class="code" href="interfacesb_i_metadata_handler.html" title="An object capable of manipulating the metadata tags for a media file.">sbIMetadataHandler</a> : nsISupports
 <a name="l00046"></a>00046 {
 <a name="l00051"></a><a class="code" href="interfacesb_i_metadata_handler.html#1a1be28d93bd9e9dcf125ea81f8d3b6e">00051</a>   <span class="keyword">const</span> PRUint32 METADATA_IMAGE_TYPE_OTHER              = 0x00;
@@ -124,25 +124,32 @@
 <a name="l00081"></a><a class="code" href="interfacesb_i_metadata_handler.html#a2a140a5970440aac460137619d1c673">00081</a>   attribute <a class="code" href="interfacesb_i_mutable_property_array.html" title="An interface to carry around arrays of nsIProperty instances Note that implementations...">sbIMutablePropertyArray</a> props;
 <a name="l00082"></a>00082 
 <a name="l00092"></a><a class="code" href="interfacesb_i_metadata_handler.html#978827eef884f62ce9da10d1344632a1">00092</a>   readonly attribute PRBool completed;
-<a name="l00093"></a>00093 
-<a name="l00107"></a><a class="code" href="interfacesb_i_metadata_handler.html#8311aa7b7bc4102d02465b47ded3e7f3">00107</a>   attribute nsIChannel channel;
-<a name="l00108"></a>00108 
-<a name="l00125"></a>00125   PRInt32 vote( in AString aUrl );
-<a name="l00126"></a>00126 
-<a name="l00136"></a>00136   PRInt32 read();
-<a name="l00137"></a>00137 
-<a name="l00152"></a>00152   PRInt32 write();
-<a name="l00153"></a>00153 
-<a name="l00171"></a>00171   <span class="keywordtype">void</span> getImageData(in PRInt32 aType,
-<a name="l00172"></a>00172                     out AUTF8String aMimeType,
-<a name="l00173"></a>00173                     out <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aDataLen,
-<a name="l00174"></a>00174                     [array,retval,size_is(aDataLen)] out octet aData);
-<a name="l00175"></a>00175 
-<a name="l00187"></a>00187   <span class="keywordtype">void</span> onChannelData( in nsISupports aChannel );
-<a name="l00188"></a>00188 
-<a name="l00192"></a>00192   <span class="keywordtype">void</span> close();
-<a name="l00193"></a>00193 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:22 2008 for Songbird by&nbsp;
+<a name="l00093"></a>00093   
+<a name="l00100"></a><a class="code" href="interfacesb_i_metadata_handler.html#f5d32370ea0ee06b351d1d8db98939e4">00100</a>   readonly attribute PRBool requiresMainThread;
+<a name="l00101"></a>00101 
+<a name="l00115"></a><a class="code" href="interfacesb_i_metadata_handler.html#8311aa7b7bc4102d02465b47ded3e7f3">00115</a>   attribute nsIChannel channel;
+<a name="l00116"></a>00116 
+<a name="l00133"></a>00133   PRInt32 vote( in AString aUrl );
+<a name="l00134"></a>00134 
+<a name="l00144"></a>00144   PRInt32 read();
+<a name="l00145"></a>00145 
+<a name="l00160"></a>00160   PRInt32 write();
+<a name="l00161"></a>00161 
+<a name="l00179"></a>00179   <span class="keywordtype">void</span> getImageData(in PRInt32 aType,
+<a name="l00180"></a>00180                     out AUTF8String aMimeType,
+<a name="l00181"></a>00181                     out <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aDataLen,
+<a name="l00182"></a>00182                     [array,retval,size_is(aDataLen)] out octet aData);
+<a name="l00183"></a>00183 
+<a name="l00199"></a>00199   <span class="keywordtype">void</span> setImageData(in PRInt32 aType,
+<a name="l00200"></a>00200                     in AUTF8String aMimeType,
+<a name="l00201"></a>00201                     [<span class="keyword">const</span>,array,size_is(aDataLen)] in octet aData,
+<a name="l00202"></a>00202                      in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aDataLen);
+<a name="l00203"></a>00203 
+<a name="l00215"></a>00215   <span class="keywordtype">void</span> onChannelData( in nsISupports aChannel );
+<a name="l00216"></a>00216 
+<a name="l00220"></a>00220   <span class="keywordtype">void</span> close();
+<a name="l00221"></a>00221 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:34 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -81,7 +81,15 @@
 <a href="interfacesb_i_library_importer-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_library_importer.html#eaa60eadd56028428745b9a86688966f">void</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library_importer.html#7d111172f7acfe5f6e04fdeae95f8546">setListener</a> (in <a class="el" href="interfacesb_i_library_importer_listener.html">sbILibraryImporterListener</a> aListener)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="3eabf8b04d6ff049d1573974d7f3502a"></a><!-- doxytag: member="sbILibraryImporter::initialize" ref="3eabf8b04d6ff049d1573974d7f3502a" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library_importer.html#3eabf8b04d6ff049d1573974d7f3502a">initialize</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initialize the library importer. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7f3f19de16574bd52c0236b36bbcdfe4"></a><!-- doxytag: member="sbILibraryImporter::finalize" ref="7f3f19de16574bd52c0236b36bbcdfe4" args="()" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library_importer.html#7f3f19de16574bd52c0236b36bbcdfe4">finalize</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Finalize the library importer. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library_importer.html#7d111172f7acfe5f6e04fdeae95f8546">setListener</a> (in <a class="el" href="interfacesb_i_library_importer_listener.html">sbILibraryImporterListener</a> aListener)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the listener for import events.  <a href="#7d111172f7acfe5f6e04fdeae95f8546"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
@@ -100,9 +108,15 @@ readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8a0f27bb74429044dfacc376dfe41039"></a><!-- doxytag: member="sbILibraryImporter::libraryFileExtensionList" ref="8a0f27bb74429044dfacc376dfe41039" args="" -->
 readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library_importer.html#8a0f27bb74429044dfacc376dfe41039">libraryFileExtensionList</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library_importer.html#eaa60eadd56028428745b9a86688966f">void</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e83500f4a2b412dc74621b59b4c073a3"></a><!-- doxytag: member="sbILibraryImporter::libraryPreviouslyImported" ref="e83500f4a2b412dc74621b59b4c073a3" args="" -->
+readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library_importer.html#e83500f4a2b412dc74621b59b4c073a3">libraryPreviouslyImported</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initiate external library importing.  <a href="#eaa60eadd56028428745b9a86688966f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="c9271f4d242746e5a727dce4509c43b1"></a><!-- doxytag: member="sbILibraryImporter::libraryPreviousImportPath" ref="c9271f4d242746e5a727dce4509c43b1" args="" -->
+readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library_importer.html#c9271f4d242746e5a727dce4509c43b1">libraryPreviousImportPath</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library_importer.html#0df6412ae951df9824a986af41e2a741">sbIJobProgress</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initiate external library importing.  <a href="#0df6412ae951df9824a986af41e2a741"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Interface for importing external libraries. 
@@ -111,13 +125,13 @@ This interface is used for importing external libraries into Songbird.
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_library_importer_8idl-source.html#l00130">130</a> of file <a class="el" href="sb_i_library_importer_8idl-source.html">sbILibraryImporter.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_library_importer_8idl-source.html#l00124">124</a> of file <a class="el" href="sb_i_library_importer_8idl-source.html">sbILibraryImporter.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="7d111172f7acfe5f6e04fdeae95f8546"></a><!-- doxytag: member="sbILibraryImporter::setListener" ref="7d111172f7acfe5f6e04fdeae95f8546" args="(in sbILibraryImporterListener aListener)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="interfacesb_i_library_importer.html#eaa60eadd56028428745b9a86688966f">void</a> sbILibraryImporter::setListener           </td>
+          <td class="memname">void sbILibraryImporter::setListener           </td>
           <td>(</td>
           <td class="paramtype">in <a class="el" href="interfacesb_i_library_importer_listener.html">sbILibraryImporterListener</a>&nbsp;</td>
           <td class="paramname"> <em>aListener</em>          </td>
@@ -140,12 +154,12 @@ Set the listener for import events.
 </div>
 </div><p>
 <hr><h2>Member Data Documentation</h2>
-<a class="anchor" name="eaa60eadd56028428745b9a86688966f"></a><!-- doxytag: member="sbILibraryImporter::void" ref="eaa60eadd56028428745b9a86688966f" args="" -->
+<a class="anchor" name="0df6412ae951df9824a986af41e2a741"></a><!-- doxytag: member="sbILibraryImporter::sbIJobProgress" ref="0df6412ae951df9824a986af41e2a741" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="interfacesb_i_library_importer.html#eaa60eadd56028428745b9a86688966f">sbILibraryImporter::void</a>          </td>
+          <td class="memname"><a class="el" href="interfacesb_i_library_importer.html#0df6412ae951df9824a986af41e2a741">sbILibraryImporter::sbIJobProgress</a>          </td>
         </tr>
       </table>
 </div>
@@ -158,17 +172,18 @@ Initiate external library importing.
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aLibFilePath</em>&nbsp;</td><td>File path to external library to import. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aGUID</em>&nbsp;</td><td>GUID of Songbird library into which to import. </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>aCheckForChanges</em>&nbsp;</td><td>If true, check for changes in external library before importing. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aCheckForChanges</em>&nbsp;</td><td>If true, check for changes in external library before importing.</td></tr>
   </table>
 </dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>Import job object. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_library_importer_8idl-source.html#l00161">161</a> of file <a class="el" href="sb_i_library_importer_8idl-source.html">sbILibraryImporter.idl</a>.
+Definition at line <a class="el" href="sb_i_library_importer_8idl-source.html#l00177">177</a> of file <a class="el" href="sb_i_library_importer_8idl-source.html">sbILibraryImporter.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
-<li>components/libraryimporter/base/public/<a class="el" href="sb_i_library_importer_8idl-source.html">sbILibraryImporter.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:25 2008 for Songbird by&nbsp;
+<li>components/mediaimport/library/base/public/<a class="el" href="sb_i_library_importer_8idl-source.html">sbILibraryImporter.idl</a></ul>
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:37 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

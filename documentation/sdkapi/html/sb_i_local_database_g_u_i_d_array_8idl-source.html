@@ -105,7 +105,7 @@
 <a name="l00046"></a>00046   <span class="keywordtype">void</span> onBeforeInvalidate();
 <a name="l00047"></a>00047 };
 <a name="l00048"></a>00048 
-<a name="l00053"></a>00053 [scriptable, uuid(4499865f-b4f3-4e6d-90ed-0004ff38a49f)]
+<a name="l00053"></a>00053 [scriptable, uuid(7ecb8720-5499-11dd-ae16-0800200c9a66)]
 <a name="l00054"></a><a class="code" href="interfacesb_i_local_database_g_u_i_d_array.html">00054</a> interface <a class="code" href="interfacesb_i_local_database_g_u_i_d_array.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseGUIDArray</a> : nsISupports
 <a name="l00055"></a>00055 {
 <a name="l00056"></a><a class="code" href="interfacesb_i_local_database_g_u_i_d_array.html#a1b3275e4f100ac58569ae09201e0c47">00056</a>   attribute AString databaseGUID;
@@ -166,9 +166,11 @@
 <a name="l00141"></a>00141   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getFirstIndexByGuid(in AString aGuid);
 <a name="l00142"></a>00142 
 <a name="l00143"></a>00143   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getIndexByRowid(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> aRowid);
-<a name="l00144"></a>00144 };
-<a name="l00145"></a>00145 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:21 2008 for Songbird by&nbsp;
+<a name="l00144"></a>00144 
+<a name="l00149"></a>00149   <span class="keywordtype">boolean</span> containsGuid(in AString aGuid);
+<a name="l00150"></a>00150 };
+<a name="l00151"></a>00151 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:34 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

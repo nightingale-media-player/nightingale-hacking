@@ -323,6 +323,19 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="92" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="92" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_handler_1f5d32370ea0ee06b351d1d8db98939e4" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRBool</type>
+        <definition>readonly attribute PRBool sbIMetadataHandler::requiresMainThread</definition>
+        <argsstring></argsstring>
+        <name>requiresMainThread</name>
+        <briefdescription>
+<para>Whether or not this handler MUST be run on the main thread. </para>        </briefdescription>
+        <detaileddescription>
+<para>Since nsIChannel and other dependencies are not thread safe, some <ref refid="interfacesb_i_metadata_handler" kindref="compound">sbIMetadataHandler</ref> implementations can not be run on background threads. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="100" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="100" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" prot="public" static="no" mutable="no">
         <type>attribute nsIChannel</type>
         <definition>attribute nsIChannel sbIMetadataHandler::channel</definition>
@@ -334,7 +347,7 @@
 <para>The object is assigned an nsIChannel from the <ref refid="interfacesb_i_metadata_manager" kindref="compound">sbIMetadataManager</ref> after it has successfully voted for an url. In the Read call, the implementor may choose to pull the url from the channel and use that directly, or open the channel (either itself or using an <ref refid="interfacesb_i_metadata_channel" kindref="compound">sbIMetadataChannel</ref> as a helper) and stream the data to be parsed.</para><para>In general, for local files, it is faster to pull the url and handle the metadata read immediately rather than open the channel. For remote files, it&apos;s far easier to just use the channel infrastructure already setup. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="107" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="107" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="115" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="115" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -363,7 +376,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="125"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="133"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -377,7 +390,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="136"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="144"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_15ebeaf138cfa866b44ad8aceccd4174c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRInt32</type>
@@ -391,7 +404,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="152"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="160"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1b8d9bf349540dc64bf2e3f819e843328" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -421,7 +434,37 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="174"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="182"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_handler_170e11b959558b9ff87ebf62f4db06c5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataHandler::setImageData</definition>
+        <argsstring>(in PRInt32 aType, in AUTF8String aMimeType,[const, array, size_is(aDataLen)] in octet aData, in unsigned long aDataLen)</argsstring>
+        <name>setImageData</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>aType</declname>
+        </param>
+        <param>
+          <type>in AUTF8String</type>
+          <declname>aMimeType</declname>
+        </param>
+        <param>
+          <attributes>[const, array, size_is(aDataLen)]</attributes>
+          <type>in octet</type>
+          <declname>aData</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aDataLen</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="202"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -446,7 +489,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="187"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="215"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -459,7 +502,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="192"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="220"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -468,25 +511,25 @@
 <para>User code requests a handler by calling <ref refid="interfacesb_i_metadata_manager_1ae19d169e02736347d183bf89ae8ffa6" kindref="member">sbIMetadataManager::getHandlerForMediaURL</ref> that then returns one of these.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_metadata_manager" kindref="compound">sbIMetadataManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="544">
+      <node id="611">
         <label>sbIMetadataHandler</label>
         <link refid="interfacesb_i_metadata_handler"/>
-        <childnode refid="545" relation="usage">
+        <childnode refid="612" relation="usage">
           <edgelabel>props</edgelabel>
         </childnode>
       </node>
-      <node id="546">
+      <node id="613">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="545">
+      <node id="612">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="546" relation="public-inheritance">
+        <childnode refid="613" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="45" bodyend="193"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="45" bodyend="221"/>
     <listofallmembers>
       <member refid="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>channel</name></member>
       <member refid="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>close</name></member>
@@ -516,6 +559,8 @@
       <member refid="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>onChannelData</name></member>
       <member refid="interfacesb_i_metadata_handler_1a2a140a5970440aac460137619d1c673" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>props</name></member>
       <member refid="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>read</name></member>
+      <member refid="interfacesb_i_metadata_handler_1f5d32370ea0ee06b351d1d8db98939e4" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>requiresMainThread</name></member>
+      <member refid="interfacesb_i_metadata_handler_170e11b959558b9ff87ebf62f4db06c5d" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>setImageData</name></member>
       <member refid="interfacesb_i_metadata_handler_1e458a8ab0d74624ad43d7592c9fb548d" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>vote</name></member>
       <member refid="interfacesb_i_metadata_handler_15ebeaf138cfa866b44ad8aceccd4174c" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>write</name></member>
     </listofallmembers>

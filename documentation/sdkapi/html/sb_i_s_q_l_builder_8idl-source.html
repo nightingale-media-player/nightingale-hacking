@@ -98,7 +98,7 @@
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html" title="Interface for "in" SQL critera.">sbISQLBuilderCriterionIn</a>;
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a>;
 <a name="l00037"></a>00037 
-<a name="l00046"></a>00046 [scriptable, uuid(0e07f2fe-98e7-4790-b23c-f7d06ada138f)]
+<a name="l00046"></a>00046 [scriptable, uuid(996cc0c9-c7c0-4a11-adbc-3f3fb2d0698b)]
 <a name="l00047"></a><a class="code" href="interfacesb_i_s_q_l_builder.html">00047</a> interface <a class="code" href="interfacesb_i_s_q_l_builder.html" title="Base interface for SQL building components.">sbISQLBuilder</a> : nsISupports
 <a name="l00048"></a>00048 {
 <a name="l00049"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#b9f806fd09b240a2adf0f76b92c2fdc3">00049</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MATCH_EQUALS       = 0;
@@ -108,187 +108,189 @@
 <a name="l00053"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#805277f380a5e4a4a260bb28d38ce731">00053</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MATCH_LESS         = 4;
 <a name="l00054"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#a65091061732a05911da854ea8f35ba8">00054</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MATCH_LESSEQUAL    = 5;
 <a name="l00055"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#e08c6f669a944b7046f55c6484e0c7d3">00055</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MATCH_LIKE         = 6;
-<a name="l00056"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#e12d33fbbd1e6f912b69055b3e7b8713">00056</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MATCH_MATCH        = 7;
-<a name="l00057"></a>00057 
-<a name="l00061"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#3c7ea9b5a93d06b5651b2930d8b9b472">00061</a>   attribute <span class="keywordtype">long</span> limit;
-<a name="l00062"></a>00062 
-<a name="l00066"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#cd361a2636559e9627c09784d0099f82">00066</a>   attribute <span class="keywordtype">boolean</span> limitIsParameter;
-<a name="l00067"></a>00067 
-<a name="l00071"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#1998b6528f7f722b5f24ec83cf7a15dc">00071</a>   attribute <span class="keywordtype">long</span> offset;
-<a name="l00072"></a>00072 
-<a name="l00076"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#59f35b321060198bf39a288bdd0df5a2">00076</a>   attribute <span class="keywordtype">boolean</span> offsetIsParameter;
-<a name="l00077"></a>00077 
-<a name="l00078"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#fa1fa3b8ea1cb475f9ccc10ac519d484">00078</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> JOIN_INNER = 0;
-<a name="l00079"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#ad6e58931a0e11662c919c0846503b8c">00079</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> JOIN_LEFT  = 1;
-<a name="l00080"></a>00080 
-<a name="l00092"></a>00092   <span class="keywordtype">void</span> addJoin(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aJoinType,
-<a name="l00093"></a>00093                in AString aJoinedTableName,
-<a name="l00094"></a>00094                in AString aJoinedTableAlias,
-<a name="l00095"></a>00095                in AString aJoinedColumnName,
-<a name="l00096"></a>00096                in AString aJoinToTableName,
-<a name="l00097"></a>00097                in AString aJoinToColumnName);
-<a name="l00098"></a>00098 
-<a name="l00117"></a>00117   <span class="keywordtype">void</span> addJoinWithIndexHint(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aJoinType,
-<a name="l00118"></a>00118                             in AString aJoinedTableName,
-<a name="l00119"></a>00119                             in AString aJoinedTableAlias,
-<a name="l00120"></a>00120                             in AString aJoinedColumnName,
-<a name="l00121"></a>00121                             in AString aJoinToTableName,
-<a name="l00122"></a>00122                             in AString aJoinToColumnName,
-<a name="l00123"></a>00123                             in <span class="keywordtype">boolean</span> aRequiresFromTableIndexHint,
-<a name="l00124"></a>00124                             in <span class="keywordtype">boolean</span> aRequiresToTableIndexHint);
-<a name="l00125"></a>00125 
-<a name="l00137"></a>00137   <span class="keywordtype">void</span> addSubqueryJoin(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aJoinType,
-<a name="l00138"></a>00138                        in <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> aJoinedSubquery,
-<a name="l00139"></a>00139                        in AString aJoinedTableAlias,
-<a name="l00140"></a>00140                        in AString aJoinedColumnName,
-<a name="l00141"></a>00141                        in AString aJoinToTableName,
-<a name="l00142"></a>00142                        in AString aJoinToColumnName);
-<a name="l00143"></a>00143 
-<a name="l00152"></a>00152   <span class="keywordtype">void</span> addJoinWithCriterion(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aJoinType,
-<a name="l00153"></a>00153                             in AString aJoinedTableName,
-<a name="l00154"></a>00154                             in AString aJoinedTableAlias,
-<a name="l00155"></a>00155                             in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aCriterion);
-<a name="l00156"></a>00156 
-<a name="l00162"></a>00162   <span class="keywordtype">void</span> addSubquery(in <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> aSubquery,
-<a name="l00163"></a>00163                    in AString aAlias);
-<a name="l00164"></a>00164 
-<a name="l00168"></a>00168   <span class="keywordtype">void</span> reset();
-<a name="l00169"></a>00169 
-<a name="l00174"></a>00174   AString toString();
-<a name="l00175"></a>00175 };
-<a name="l00176"></a>00176 
-<a name="l00181"></a>00181 [scriptable, uuid(7a35ea83-e75f-4299-935c-9a678e74c13f)]
-<a name="l00182"></a><a class="code" href="interfacesb_i_s_q_l_where_builder.html">00182</a> interface <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_builder.html" title="Base interface for SQL building components.">sbISQLBuilder</a>
-<a name="l00183"></a>00183 {
-<a name="l00188"></a>00188   <span class="keywordtype">void</span> addCriterion(in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aCriterion);
-<a name="l00189"></a>00189 
-<a name="l00194"></a>00194   <span class="keywordtype">void</span> removeCriterion(in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aCriterion);
-<a name="l00195"></a>00195 
-<a name="l00204"></a>00204   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionString(in AString aTableName,
-<a name="l00205"></a>00205                                                     in AString aSrcColumnName,
-<a name="l00206"></a>00206                                                     in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aMatchType,
-<a name="l00207"></a>00207                                                     in AString aValue);
-<a name="l00208"></a>00208 
-<a name="l00209"></a>00209   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionBetweenString(in AString aTableName,
-<a name="l00210"></a>00210                                                            in AString aSrcColumnName,
-<a name="l00211"></a>00211                                                            in AString aLeftValue,
-<a name="l00212"></a>00212                                                            in AString aRightValue);
-<a name="l00213"></a>00213 
-<a name="l00214"></a>00214   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionNotBetweenString(in AString aTableName,
-<a name="l00215"></a>00215                                                               in AString aSrcColumnName,
-<a name="l00216"></a>00216                                                               in AString aLeftValue,
-<a name="l00217"></a>00217                                                               in AString aRightValue);
-<a name="l00218"></a>00218 
-<a name="l00227"></a>00227   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionLong(in AString aTableName,
-<a name="l00228"></a>00228                                                   in AString aSrcColumnName,
-<a name="l00229"></a>00229                                                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aMatchType,
-<a name="l00230"></a>00230                                                   in <span class="keywordtype">long</span> aValue);
-<a name="l00231"></a>00231 
-<a name="l00239"></a>00239   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionNull(in AString aTableName,
-<a name="l00240"></a>00240                                                   in AString aSrcColumnName,
-<a name="l00241"></a>00241                                                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aMatchType);
-<a name="l00242"></a>00242 
-<a name="l00251"></a>00251   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionTable(in AString aLeftTableName,
-<a name="l00252"></a>00252                                                    in AString aLeftColumnName,
-<a name="l00253"></a>00253                                                    in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aMatchType,
-<a name="l00254"></a>00254                                                    in AString aRightTableName,
-<a name="l00255"></a>00255                                                    in AString aRightColumnName);
-<a name="l00256"></a>00256 
-<a name="l00262"></a>00262   <a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html" title="Interface for "in" SQL critera.">sbISQLBuilderCriterionIn</a> createMatchCriterionIn(in AString aTableName,
-<a name="l00263"></a>00263                                                   in AString aSrcColumnName);
-<a name="l00264"></a>00264 
-<a name="l00271"></a>00271   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionParameter(in AString aTableName,
-<a name="l00272"></a>00272                                                        in AString aSrcColumnName,
-<a name="l00273"></a>00273                                                        in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aMatchType);
-<a name="l00279"></a>00279   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createAndCriterion(in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aLeft,
-<a name="l00280"></a>00280                                             in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aRight);
-<a name="l00281"></a>00281 
-<a name="l00287"></a>00287   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createOrCriterion(in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aLeft,
-<a name="l00288"></a>00288                                            in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aRight);
-<a name="l00289"></a>00289 
-<a name="l00290"></a>00290 
-<a name="l00291"></a>00291 };
+<a name="l00056"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#fe9fccbabe0eef2773df9610f4dc94ca">00056</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MATCH_NOTLIKE      = 7;
+<a name="l00057"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#e12d33fbbd1e6f912b69055b3e7b8713">00057</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MATCH_MATCH        = 8;
+<a name="l00058"></a>00058 
+<a name="l00062"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#3c7ea9b5a93d06b5651b2930d8b9b472">00062</a>   attribute <span class="keywordtype">long</span> limit;
+<a name="l00063"></a>00063 
+<a name="l00067"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#cd361a2636559e9627c09784d0099f82">00067</a>   attribute <span class="keywordtype">boolean</span> limitIsParameter;
+<a name="l00068"></a>00068 
+<a name="l00072"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#1998b6528f7f722b5f24ec83cf7a15dc">00072</a>   attribute <span class="keywordtype">long</span> offset;
+<a name="l00073"></a>00073 
+<a name="l00077"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#59f35b321060198bf39a288bdd0df5a2">00077</a>   attribute <span class="keywordtype">boolean</span> offsetIsParameter;
+<a name="l00078"></a>00078 
+<a name="l00079"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#fa1fa3b8ea1cb475f9ccc10ac519d484">00079</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> JOIN_INNER      = 0;
+<a name="l00080"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#ad6e58931a0e11662c919c0846503b8c">00080</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> JOIN_LEFT       = 1;
+<a name="l00081"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#4154721c8e7540ab9a5abc6f3f6b267b">00081</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> JOIN_LEFT_OUTER = 2;
+<a name="l00082"></a>00082 
+<a name="l00094"></a>00094   <span class="keywordtype">void</span> addJoin(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aJoinType,
+<a name="l00095"></a>00095                in AString aJoinedTableName,
+<a name="l00096"></a>00096                in AString aJoinedTableAlias,
+<a name="l00097"></a>00097                in AString aJoinedColumnName,
+<a name="l00098"></a>00098                in AString aJoinToTableName,
+<a name="l00099"></a>00099                in AString aJoinToColumnName);
+<a name="l00100"></a>00100 
+<a name="l00119"></a>00119   <span class="keywordtype">void</span> addJoinWithIndexHint(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aJoinType,
+<a name="l00120"></a>00120                             in AString aJoinedTableName,
+<a name="l00121"></a>00121                             in AString aJoinedTableAlias,
+<a name="l00122"></a>00122                             in AString aJoinedColumnName,
+<a name="l00123"></a>00123                             in AString aJoinToTableName,
+<a name="l00124"></a>00124                             in AString aJoinToColumnName,
+<a name="l00125"></a>00125                             in <span class="keywordtype">boolean</span> aRequiresFromTableIndexHint,
+<a name="l00126"></a>00126                             in <span class="keywordtype">boolean</span> aRequiresToTableIndexHint);
+<a name="l00127"></a>00127 
+<a name="l00139"></a>00139   <span class="keywordtype">void</span> addSubqueryJoin(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aJoinType,
+<a name="l00140"></a>00140                        in <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> aJoinedSubquery,
+<a name="l00141"></a>00141                        in AString aJoinedTableAlias,
+<a name="l00142"></a>00142                        in AString aJoinedColumnName,
+<a name="l00143"></a>00143                        in AString aJoinToTableName,
+<a name="l00144"></a>00144                        in AString aJoinToColumnName);
+<a name="l00145"></a>00145 
+<a name="l00154"></a>00154   <span class="keywordtype">void</span> addJoinWithCriterion(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aJoinType,
+<a name="l00155"></a>00155                             in AString aJoinedTableName,
+<a name="l00156"></a>00156                             in AString aJoinedTableAlias,
+<a name="l00157"></a>00157                             in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aCriterion);
+<a name="l00158"></a>00158 
+<a name="l00164"></a>00164   <span class="keywordtype">void</span> addSubquery(in <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> aSubquery,
+<a name="l00165"></a>00165                    in AString aAlias);
+<a name="l00166"></a>00166 
+<a name="l00170"></a>00170   <span class="keywordtype">void</span> reset();
+<a name="l00171"></a>00171 
+<a name="l00176"></a>00176   AString toString();
+<a name="l00177"></a>00177 };
+<a name="l00178"></a>00178 
+<a name="l00183"></a>00183 [scriptable, uuid(7a35ea83-e75f-4299-935c-9a678e74c13f)]
+<a name="l00184"></a><a class="code" href="interfacesb_i_s_q_l_where_builder.html">00184</a> interface <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_builder.html" title="Base interface for SQL building components.">sbISQLBuilder</a>
+<a name="l00185"></a>00185 {
+<a name="l00190"></a>00190   <span class="keywordtype">void</span> addCriterion(in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aCriterion);
+<a name="l00191"></a>00191 
+<a name="l00196"></a>00196   <span class="keywordtype">void</span> removeCriterion(in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aCriterion);
+<a name="l00197"></a>00197 
+<a name="l00206"></a>00206   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionString(in AString aTableName,
+<a name="l00207"></a>00207                                                     in AString aSrcColumnName,
+<a name="l00208"></a>00208                                                     in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aMatchType,
+<a name="l00209"></a>00209                                                     in AString aValue);
+<a name="l00210"></a>00210 
+<a name="l00211"></a>00211   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionBetweenString(in AString aTableName,
+<a name="l00212"></a>00212                                                            in AString aSrcColumnName,
+<a name="l00213"></a>00213                                                            in AString aLeftValue,
+<a name="l00214"></a>00214                                                            in AString aRightValue);
+<a name="l00215"></a>00215 
+<a name="l00216"></a>00216   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionNotBetweenString(in AString aTableName,
+<a name="l00217"></a>00217                                                               in AString aSrcColumnName,
+<a name="l00218"></a>00218                                                               in AString aLeftValue,
+<a name="l00219"></a>00219                                                               in AString aRightValue);
+<a name="l00220"></a>00220 
+<a name="l00229"></a>00229   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionLong(in AString aTableName,
+<a name="l00230"></a>00230                                                   in AString aSrcColumnName,
+<a name="l00231"></a>00231                                                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aMatchType,
+<a name="l00232"></a>00232                                                   in <span class="keywordtype">long</span> aValue);
+<a name="l00233"></a>00233 
+<a name="l00241"></a>00241   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionNull(in AString aTableName,
+<a name="l00242"></a>00242                                                   in AString aSrcColumnName,
+<a name="l00243"></a>00243                                                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aMatchType);
+<a name="l00244"></a>00244 
+<a name="l00253"></a>00253   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionTable(in AString aLeftTableName,
+<a name="l00254"></a>00254                                                    in AString aLeftColumnName,
+<a name="l00255"></a>00255                                                    in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aMatchType,
+<a name="l00256"></a>00256                                                    in AString aRightTableName,
+<a name="l00257"></a>00257                                                    in AString aRightColumnName);
+<a name="l00258"></a>00258 
+<a name="l00264"></a>00264   <a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html" title="Interface for "in" SQL critera.">sbISQLBuilderCriterionIn</a> createMatchCriterionIn(in AString aTableName,
+<a name="l00265"></a>00265                                                   in AString aSrcColumnName);
+<a name="l00266"></a>00266 
+<a name="l00273"></a>00273   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createMatchCriterionParameter(in AString aTableName,
+<a name="l00274"></a>00274                                                        in AString aSrcColumnName,
+<a name="l00275"></a>00275                                                        in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aMatchType);
+<a name="l00281"></a>00281   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createAndCriterion(in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aLeft,
+<a name="l00282"></a>00282                                             in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aRight);
+<a name="l00283"></a>00283 
+<a name="l00289"></a>00289   <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> createOrCriterion(in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aLeft,
+<a name="l00290"></a>00290                                            in <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> aRight);
+<a name="l00291"></a>00291 
 <a name="l00292"></a>00292 
-<a name="l00297"></a>00297 [scriptable, uuid(b91ae93b-9c1e-427c-a751-5c0c19fcdbc3)]
-<a name="l00298"></a><a class="code" href="interfacesb_i_s_q_l_select_builder.html">00298</a> interface <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a>
-<a name="l00299"></a>00299 {
-<a name="l00303"></a><a class="code" href="interfacesb_i_s_q_l_select_builder.html#c3412bd4f7d179714eb5cb4627048296">00303</a>   attribute AString baseTableName;
-<a name="l00304"></a>00304 
-<a name="l00308"></a><a class="code" href="interfacesb_i_s_q_l_select_builder.html#e2e668f714e9050ce7d57e84be81251a">00308</a>   attribute AString baseTableAlias;
-<a name="l00309"></a>00309 
-<a name="l00313"></a><a class="code" href="interfacesb_i_s_q_l_select_builder.html#3be1fd147505b029c87895df83519b63">00313</a>   attribute <span class="keywordtype">boolean</span> distinct;
-<a name="l00314"></a>00314 
-<a name="l00321"></a>00321   <span class="keywordtype">void</span> addColumn(in AString aTableName,
-<a name="l00322"></a>00322                  in AString aColumnName);
-<a name="l00323"></a>00323 
-<a name="l00327"></a>00327   <span class="keywordtype">void</span> clearColumns();
-<a name="l00328"></a>00328 
-<a name="l00335"></a>00335   <span class="keywordtype">void</span> addOrder(in AString aTableName,
-<a name="l00336"></a>00336                 in AString aColumnName,
-<a name="l00337"></a>00337                 in <span class="keywordtype">boolean</span> aAscending);
-<a name="l00338"></a>00338 
-<a name="l00339"></a>00339 
-<a name="l00345"></a>00345   <span class="keywordtype">void</span> addGroupBy(in AString aTableName,
-<a name="l00346"></a>00346                   in AString aColumnName);
-<a name="l00347"></a>00347 
-<a name="l00348"></a>00348 };
+<a name="l00293"></a>00293 };
+<a name="l00294"></a>00294 
+<a name="l00299"></a>00299 [scriptable, uuid(b91ae93b-9c1e-427c-a751-5c0c19fcdbc3)]
+<a name="l00300"></a><a class="code" href="interfacesb_i_s_q_l_select_builder.html">00300</a> interface <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a>
+<a name="l00301"></a>00301 {
+<a name="l00305"></a><a class="code" href="interfacesb_i_s_q_l_select_builder.html#c3412bd4f7d179714eb5cb4627048296">00305</a>   attribute AString baseTableName;
+<a name="l00306"></a>00306 
+<a name="l00310"></a><a class="code" href="interfacesb_i_s_q_l_select_builder.html#e2e668f714e9050ce7d57e84be81251a">00310</a>   attribute AString baseTableAlias;
+<a name="l00311"></a>00311 
+<a name="l00315"></a><a class="code" href="interfacesb_i_s_q_l_select_builder.html#3be1fd147505b029c87895df83519b63">00315</a>   attribute <span class="keywordtype">boolean</span> distinct;
+<a name="l00316"></a>00316 
+<a name="l00323"></a>00323   <span class="keywordtype">void</span> addColumn(in AString aTableName,
+<a name="l00324"></a>00324                  in AString aColumnName);
+<a name="l00325"></a>00325 
+<a name="l00329"></a>00329   <span class="keywordtype">void</span> clearColumns();
+<a name="l00330"></a>00330 
+<a name="l00337"></a>00337   <span class="keywordtype">void</span> addOrder(in AString aTableName,
+<a name="l00338"></a>00338                 in AString aColumnName,
+<a name="l00339"></a>00339                 in <span class="keywordtype">boolean</span> aAscending);
+<a name="l00340"></a>00340 
+<a name="l00341"></a>00341 
+<a name="l00347"></a>00347   <span class="keywordtype">void</span> addGroupBy(in AString aTableName,
+<a name="l00348"></a>00348                   in AString aColumnName);
 <a name="l00349"></a>00349 
-<a name="l00354"></a>00354 [scriptable, uuid(8c584d54-2fa1-4965-8345-f1eda5a1e304)]
-<a name="l00355"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html">00355</a> interface <a class="code" href="interfacesb_i_s_q_l_insert_builder.html" title="Interface for building INSERT statements.">sbISQLInsertBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_builder.html" title="Base interface for SQL building components.">sbISQLBuilder</a>
-<a name="l00356"></a>00356 {
-<a name="l00361"></a>00361   <span class="keywordtype">void</span> addColumn(in AString aColumnName);
-<a name="l00362"></a>00362 
-<a name="l00367"></a>00367   <span class="keywordtype">void</span> addValueString(in AString aValue);
-<a name="l00368"></a>00368 
-<a name="l00373"></a>00373   <span class="keywordtype">void</span> addValueLong(in <span class="keywordtype">long</span> aValue);
-<a name="l00374"></a>00374 
-<a name="l00378"></a>00378   <span class="keywordtype">void</span> addValueNull();
-<a name="l00379"></a>00379 
-<a name="l00383"></a>00383   <span class="keywordtype">void</span> addValueParameter();
-<a name="l00384"></a>00384 
-<a name="l00390"></a>00390   <span class="keywordtype">void</span> addValueRaw(in AString aValue);
-<a name="l00391"></a>00391 
-<a name="l00395"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html#b07be1042574f810a2991a29d05ac726">00395</a>   attribute AString intoTableName;
-<a name="l00396"></a>00396 
-<a name="l00401"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html#21f6434973942d2464964bb0c9a0a708">00401</a>   attribute <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> select;
-<a name="l00402"></a>00402 };
-<a name="l00403"></a>00403 
-<a name="l00408"></a>00408 [scriptable, uuid(68991dbd-83f0-4df9-b3f6-89d0982ed491)]
-<a name="l00409"></a><a class="code" href="interfacesb_i_s_q_l_update_builder.html">00409</a> interface <a class="code" href="interfacesb_i_s_q_l_update_builder.html" title="Interface for building UPDATE statements.">sbISQLUpdateBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a>
-<a name="l00410"></a>00410 {
-<a name="l00414"></a><a class="code" href="interfacesb_i_s_q_l_update_builder.html#abf442311b40980eb698e57f99eec68c">00414</a>   attribute AString tableName;
-<a name="l00415"></a>00415 
-<a name="l00421"></a>00421   <span class="keywordtype">void</span> addAssignmentString(in AString aColumnName,
-<a name="l00422"></a>00422                            in AString aValue);
-<a name="l00423"></a>00423 
-<a name="l00428"></a>00428   <span class="keywordtype">void</span> addAssignmentParameter(in AString aColumnName);
-<a name="l00429"></a>00429 };
-<a name="l00430"></a>00430 
-<a name="l00435"></a>00435 [scriptable, uuid(73a18b36-2eee-429e-9cda-1f4428c3afb5)]
-<a name="l00436"></a><a class="code" href="interfacesb_i_s_q_l_delete_builder.html">00436</a> interface <a class="code" href="interfacesb_i_s_q_l_delete_builder.html" title="Interface for building DELETE statements.">sbISQLDeleteBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a>
-<a name="l00437"></a>00437 {
-<a name="l00441"></a><a class="code" href="interfacesb_i_s_q_l_delete_builder.html#c5092e95160f65d0056657c90ef92daf">00441</a>   attribute AString tableName;
-<a name="l00442"></a>00442 };
-<a name="l00443"></a>00443 
-<a name="l00449"></a>00449 [scriptable, uuid(442c1d9d-4e8e-4aa1-9124-2f700b625a45)]
-<a name="l00450"></a><a class="code" href="interfacesb_i_s_q_l_builder_criterion.html">00450</a> interface <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> : nsISupports
-<a name="l00451"></a>00451 {
-<a name="l00452"></a>00452   [noscript] AString toString();
-<a name="l00453"></a>00453 };
-<a name="l00454"></a>00454 
-<a name="l00459"></a>00459 [scriptable, uuid(51992f09-7b9a-4a91-b708-b4551c25acf9)]
-<a name="l00460"></a><a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html">00460</a> interface <a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html" title="Interface for "in" SQL critera.">sbISQLBuilderCriterionIn</a> : <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a>
-<a name="l00461"></a>00461 {
-<a name="l00466"></a>00466   <span class="keywordtype">void</span> addString(in AString aValue);
-<a name="l00467"></a>00467 
-<a name="l00472"></a>00472   <span class="keywordtype">void</span> addLong(in <span class="keywordtype">long</span> aValue);
-<a name="l00473"></a>00473 
-<a name="l00478"></a>00478   <span class="keywordtype">void</span> addSubquery(in <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> aSubquery);
-<a name="l00479"></a>00479 
-<a name="l00483"></a>00483   <span class="keywordtype">void</span> clear();
-<a name="l00484"></a>00484 };
-<a name="l00485"></a>00485 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:22 2008 for Songbird by&nbsp;
+<a name="l00350"></a>00350 };
+<a name="l00351"></a>00351 
+<a name="l00356"></a>00356 [scriptable, uuid(8c584d54-2fa1-4965-8345-f1eda5a1e304)]
+<a name="l00357"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html">00357</a> interface <a class="code" href="interfacesb_i_s_q_l_insert_builder.html" title="Interface for building INSERT statements.">sbISQLInsertBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_builder.html" title="Base interface for SQL building components.">sbISQLBuilder</a>
+<a name="l00358"></a>00358 {
+<a name="l00363"></a>00363   <span class="keywordtype">void</span> addColumn(in AString aColumnName);
+<a name="l00364"></a>00364 
+<a name="l00369"></a>00369   <span class="keywordtype">void</span> addValueString(in AString aValue);
+<a name="l00370"></a>00370 
+<a name="l00375"></a>00375   <span class="keywordtype">void</span> addValueLong(in <span class="keywordtype">long</span> aValue);
+<a name="l00376"></a>00376 
+<a name="l00380"></a>00380   <span class="keywordtype">void</span> addValueNull();
+<a name="l00381"></a>00381 
+<a name="l00385"></a>00385   <span class="keywordtype">void</span> addValueParameter();
+<a name="l00386"></a>00386 
+<a name="l00392"></a>00392   <span class="keywordtype">void</span> addValueRaw(in AString aValue);
+<a name="l00393"></a>00393 
+<a name="l00397"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html#b07be1042574f810a2991a29d05ac726">00397</a>   attribute AString intoTableName;
+<a name="l00398"></a>00398 
+<a name="l00403"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html#21f6434973942d2464964bb0c9a0a708">00403</a>   attribute <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> select;
+<a name="l00404"></a>00404 };
+<a name="l00405"></a>00405 
+<a name="l00410"></a>00410 [scriptable, uuid(68991dbd-83f0-4df9-b3f6-89d0982ed491)]
+<a name="l00411"></a><a class="code" href="interfacesb_i_s_q_l_update_builder.html">00411</a> interface <a class="code" href="interfacesb_i_s_q_l_update_builder.html" title="Interface for building UPDATE statements.">sbISQLUpdateBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a>
+<a name="l00412"></a>00412 {
+<a name="l00416"></a><a class="code" href="interfacesb_i_s_q_l_update_builder.html#abf442311b40980eb698e57f99eec68c">00416</a>   attribute AString tableName;
+<a name="l00417"></a>00417 
+<a name="l00423"></a>00423   <span class="keywordtype">void</span> addAssignmentString(in AString aColumnName,
+<a name="l00424"></a>00424                            in AString aValue);
+<a name="l00425"></a>00425 
+<a name="l00430"></a>00430   <span class="keywordtype">void</span> addAssignmentParameter(in AString aColumnName);
+<a name="l00431"></a>00431 };
+<a name="l00432"></a>00432 
+<a name="l00437"></a>00437 [scriptable, uuid(73a18b36-2eee-429e-9cda-1f4428c3afb5)]
+<a name="l00438"></a><a class="code" href="interfacesb_i_s_q_l_delete_builder.html">00438</a> interface <a class="code" href="interfacesb_i_s_q_l_delete_builder.html" title="Interface for building DELETE statements.">sbISQLDeleteBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a>
+<a name="l00439"></a>00439 {
+<a name="l00443"></a><a class="code" href="interfacesb_i_s_q_l_delete_builder.html#c5092e95160f65d0056657c90ef92daf">00443</a>   attribute AString tableName;
+<a name="l00444"></a>00444 };
+<a name="l00445"></a>00445 
+<a name="l00451"></a>00451 [scriptable, uuid(442c1d9d-4e8e-4aa1-9124-2f700b625a45)]
+<a name="l00452"></a><a class="code" href="interfacesb_i_s_q_l_builder_criterion.html">00452</a> interface <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> : nsISupports
+<a name="l00453"></a>00453 {
+<a name="l00454"></a>00454   [noscript] AString toString();
+<a name="l00455"></a>00455 };
+<a name="l00456"></a>00456 
+<a name="l00461"></a>00461 [scriptable, uuid(51992f09-7b9a-4a91-b708-b4551c25acf9)]
+<a name="l00462"></a><a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html">00462</a> interface <a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html" title="Interface for "in" SQL critera.">sbISQLBuilderCriterionIn</a> : <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a>
+<a name="l00463"></a>00463 {
+<a name="l00468"></a>00468   <span class="keywordtype">void</span> addString(in AString aValue);
+<a name="l00469"></a>00469 
+<a name="l00474"></a>00474   <span class="keywordtype">void</span> addLong(in <span class="keywordtype">long</span> aValue);
+<a name="l00475"></a>00475 
+<a name="l00480"></a>00480   <span class="keywordtype">void</span> addSubquery(in <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> aSubquery);
+<a name="l00481"></a>00481 
+<a name="l00485"></a>00485   <span class="keywordtype">void</span> clear();
+<a name="l00486"></a>00486 };
+<a name="l00487"></a>00487 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:35 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

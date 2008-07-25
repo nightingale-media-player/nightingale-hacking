@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_smart_playlist_property_registrar" kind="interface" prot="public">
+    <compoundname>sbISmartPlaylistPropertyRegistrar</compoundname>
+    <includes refid="sb_i_smart_playlist_property_registrar_8idl" local="no">sbISmartPlaylistPropertyRegistrar.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_property_registrar_17ce7d5c844cd7483f93dc4f5ff79714d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIStringEnumerator</type>
+        <definition>nsIStringEnumerator sbISmartPlaylistPropertyRegistrar::getPropertiesForContext</definition>
+        <argsstring>(in AString aContextID)</argsstring>
+        <name>getPropertiesForContext</name>
+        <param>
+          <type>in AString</type>
+          <declname>aContextID</declname>
+        </param>
+        <briefdescription>
+<para>Returns an enumerator for all the properties that have been registered to a particular smart playlist context. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aContextID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of the context </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Property string enumerator </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbISmartPlaylistPropertyRegistrar.idl" line="52"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_smart_playlist_property_registrar_189f2b4ff95287f375f60fa352942a495" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISmartPlaylistPropertyRegistrar::registerPropertyToContext</definition>
+        <argsstring>(in AString aContextID, in AString aProperty)</argsstring>
+        <name>registerPropertyToContext</name>
+        <param>
+          <type>in AString</type>
+          <declname>aContextID</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aProperty</declname>
+        </param>
+        <briefdescription>
+<para>Register a property to the smart playlist editor for a particular context. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aContextID</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ID of the context </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aProperty</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the property to register </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbISmartPlaylistPropertyRegistrar.idl" line="60"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Registrar for smart playlists properties. </para>    </briefdescription>
+    <detaileddescription>
+<para>Components should register the properties they wish to expose to the smart playlist editor via this service at startup. </para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbISmartPlaylistPropertyRegistrar.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/property/public/sbISmartPlaylistPropertyRegistrar.idl" bodystart="44" bodyend="61"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_smart_playlist_property_registrar_17ce7d5c844cd7483f93dc4f5ff79714d" prot="public" virt="non-virtual"><scope>sbISmartPlaylistPropertyRegistrar</scope><name>getPropertiesForContext</name></member>
+      <member refid="interfacesb_i_smart_playlist_property_registrar_189f2b4ff95287f375f60fa352942a495" prot="public" virt="non-virtual"><scope>sbISmartPlaylistPropertyRegistrar</scope><name>registerPropertyToContext</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

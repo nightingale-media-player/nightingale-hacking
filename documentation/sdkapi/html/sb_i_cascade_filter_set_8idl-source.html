@@ -96,55 +96,58 @@
 <a name="l00033"></a>00033 
 <a name="l00034"></a>00034 interface nsIStringEnumerator;
 <a name="l00035"></a>00035 interface nsITreeView;
-<a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
-<a name="l00037"></a>00037 
-<a name="l00044"></a>00044 [scriptable, uuid(6b0f6a50-07c9-40e1-9392-2714b9bf2fa3)]
-<a name="l00045"></a><a class="code" href="interfacesb_i_cascade_filter_set_listener.html">00045</a> interface <a class="code" href="interfacesb_i_cascade_filter_set_listener.html" title="Listener interface for sbICascadeFilterSet.">sbICascadeFilterSetListener</a> : nsISupports
-<a name="l00046"></a>00046 {
-<a name="l00047"></a>00047   <span class="keywordtype">void</span> onChange();
-<a name="l00048"></a>00048 
-<a name="l00049"></a>00049   <span class="keywordtype">void</span> onValuesChanged(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
-<a name="l00050"></a>00050 };
-<a name="l00051"></a>00051 
-<a name="l00058"></a>00058 [scriptable, uuid(3ef6dd65-aa7f-4e05-b6db-f355dfeff7f3)]
-<a name="l00059"></a><a class="code" href="interfacesb_i_cascade_filter_set.html">00059</a> interface <a class="code" href="interfacesb_i_cascade_filter_set.html" title="Cascade filter management for a media list.">sbICascadeFilterSet</a> : nsISupports
-<a name="l00060"></a>00060 {
-<a name="l00064"></a><a class="code" href="interfacesb_i_cascade_filter_set.html#5c6a7e2239bf4aab77d400eb8771cc70">00064</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> length;
-<a name="l00065"></a>00065 
-<a name="l00071"></a>00071   <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> appendFilter(in AString aProperty);
-<a name="l00072"></a>00072 
-<a name="l00081"></a>00081   <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> appendSearch([array, size_is(aPropertyArrayCount)] in wstring aPropertyArray,
-<a name="l00082"></a>00082                               in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aPropertyArrayCount);
-<a name="l00083"></a>00083 
-<a name="l00088"></a>00088   <span class="keywordtype">void</span> <span class="keyword">remove</span>(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
-<a name="l00089"></a>00089 
-<a name="l00095"></a>00095    <span class="keywordtype">void</span> changeFilter(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex, in AString aProperty);
-<a name="l00096"></a>00096 
-<a name="l00106"></a>00106   <span class="keywordtype">void</span> <span class="keyword">set</span>(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex,
-<a name="l00107"></a>00107            [array, size_is(aValueArrayCount)] in wstring aValueArray,
-<a name="l00108"></a>00108            in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aValueArrayCount);
-<a name="l00109"></a>00109 
-<a name="l00113"></a>00113   <span class="keywordtype">void</span> clearAll();
-<a name="l00114"></a>00114 
-<a name="l00120"></a>00120   nsIStringEnumerator getValues(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
-<a name="l00121"></a>00121 
-<a name="l00128"></a>00128   AString getValueAt(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex, in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aValueIndex);
+<a name="l00036"></a>00036 interface nsIArray;
+<a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
+<a name="l00038"></a>00038 
+<a name="l00045"></a>00045 [scriptable, uuid(6b0f6a50-07c9-40e1-9392-2714b9bf2fa3)]
+<a name="l00046"></a><a class="code" href="interfacesb_i_cascade_filter_set_listener.html">00046</a> interface <a class="code" href="interfacesb_i_cascade_filter_set_listener.html" title="Listener interface for sbICascadeFilterSet.">sbICascadeFilterSetListener</a> : nsISupports
+<a name="l00047"></a>00047 {
+<a name="l00048"></a>00048   <span class="keywordtype">void</span> onChange();
+<a name="l00049"></a>00049 
+<a name="l00050"></a>00050   <span class="keywordtype">void</span> onValuesChanged(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
+<a name="l00051"></a>00051 };
+<a name="l00052"></a>00052 
+<a name="l00059"></a>00059 [scriptable, uuid(3ef6dd65-aa7f-4e05-b6db-f355dfeff7f3)]
+<a name="l00060"></a><a class="code" href="interfacesb_i_cascade_filter_set.html">00060</a> interface <a class="code" href="interfacesb_i_cascade_filter_set.html" title="Cascade filter management for a media list.">sbICascadeFilterSet</a> : nsISupports
+<a name="l00061"></a>00061 {
+<a name="l00065"></a><a class="code" href="interfacesb_i_cascade_filter_set.html#5c6a7e2239bf4aab77d400eb8771cc70">00065</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> length;
+<a name="l00066"></a>00066 
+<a name="l00072"></a>00072   <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> appendFilter(in AString aProperty);
+<a name="l00073"></a>00073 
+<a name="l00082"></a>00082   <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> appendSearch([array, size_is(aPropertyArrayCount)] in wstring aPropertyArray,
+<a name="l00083"></a>00083                               in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aPropertyArrayCount);
+<a name="l00084"></a>00084 
+<a name="l00089"></a>00089   <span class="keywordtype">void</span> <span class="keyword">remove</span>(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
+<a name="l00090"></a>00090 
+<a name="l00096"></a>00096    <span class="keywordtype">void</span> changeFilter(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex, in AString aProperty);
+<a name="l00097"></a>00097 
+<a name="l00107"></a>00107   <span class="keywordtype">void</span> <span class="keyword">set</span>(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex,
+<a name="l00108"></a>00108            [array, size_is(aValueArrayCount)] in wstring aValueArray,
+<a name="l00109"></a>00109            in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aValueArrayCount);
+<a name="l00110"></a>00110 
+<a name="l00116"></a>00116   nsIArray <span class="keyword">get</span>(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
+<a name="l00117"></a>00117 
+<a name="l00121"></a>00121   <span class="keywordtype">void</span> clearAll();
+<a name="l00122"></a>00122 
+<a name="l00128"></a>00128   nsIStringEnumerator getValues(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
 <a name="l00129"></a>00129 
-<a name="l00135"></a>00135   nsITreeView getTreeView(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
-<a name="l00136"></a>00136 
-<a name="l00146"></a>00146   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getValueCount(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex,
-<a name="l00147"></a>00147                               [optional] in <span class="keywordtype">boolean</span> aUseCache);
-<a name="l00148"></a>00148   
-<a name="l00154"></a>00154   AString getProperty(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
-<a name="l00155"></a>00155 
-<a name="l00161"></a>00161   <span class="keywordtype">boolean</span> isSearch(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
-<a name="l00162"></a>00162 
-<a name="l00167"></a>00167   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_cascade_filter_set_listener.html" title="Listener interface for sbICascadeFilterSet.">sbICascadeFilterSetListener</a> aListener);
-<a name="l00168"></a>00168 
-<a name="l00173"></a>00173   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_cascade_filter_set_listener.html" title="Listener interface for sbICascadeFilterSet.">sbICascadeFilterSetListener</a> aListener);
-<a name="l00174"></a>00174 };
-<a name="l00175"></a>00175 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:21 2008 for Songbird by&nbsp;
+<a name="l00136"></a>00136   AString getValueAt(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex, in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aValueIndex);
+<a name="l00137"></a>00137 
+<a name="l00143"></a>00143   nsITreeView getTreeView(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
+<a name="l00144"></a>00144 
+<a name="l00154"></a>00154   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getValueCount(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex,
+<a name="l00155"></a>00155                               [optional] in <span class="keywordtype">boolean</span> aUseCache);
+<a name="l00156"></a>00156   
+<a name="l00162"></a>00162   AString getProperty(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
+<a name="l00163"></a>00163 
+<a name="l00169"></a>00169   <span class="keywordtype">boolean</span> isSearch(in <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> aIndex);
+<a name="l00170"></a>00170 
+<a name="l00175"></a>00175   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_cascade_filter_set_listener.html" title="Listener interface for sbICascadeFilterSet.">sbICascadeFilterSetListener</a> aListener);
+<a name="l00176"></a>00176 
+<a name="l00181"></a>00181   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_cascade_filter_set_listener.html" title="Listener interface for sbICascadeFilterSet.">sbICascadeFilterSetListener</a> aListener);
+<a name="l00182"></a>00182 };
+<a name="l00183"></a>00183 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:34 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

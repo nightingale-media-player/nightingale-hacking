@@ -520,51 +520,68 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="143"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_g_u_i_d_array_1449683a98be9c44e1c9fcb64218726b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbILocalDatabaseGUIDArray::containsGuid</definition>
+        <argsstring>(in AString aGuid)</argsstring>
+        <name>containsGuid</name>
+        <param>
+          <type>in AString</type>
+          <declname>aGuid</declname>
+        </param>
+        <briefdescription>
+<para>Return true if the array contains the given GUID. May be forced to fetch and cache all items. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="149"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="379">
+      <node id="416">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
       </node>
-      <node id="380">
+      <node id="417">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="379" relation="public-inheritance">
+        <childnode refid="416" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="381">
+      <node id="418">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
-        <childnode refid="382" relation="usage">
+        <childnode refid="419" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
-        <childnode refid="383" relation="usage">
+        <childnode refid="420" relation="usage">
           <edgelabel>listener</edgelabel>
         </childnode>
-        <childnode refid="384" relation="usage">
+        <childnode refid="421" relation="usage">
           <edgelabel>currentSort</edgelabel>
         </childnode>
       </node>
-      <node id="384">
+      <node id="421">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="383">
+      <node id="420">
         <label>sbILocalDatabaseGUIDArrayListener</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array_listener"/>
       </node>
-      <node id="382">
+      <node id="419">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="54" bodyend="144"/>
+    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl" bodystart="54" bodyend="150"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1ed00f10128aa5e5c312e414abb7f9c8a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>addFilter</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1bfb91fa9a24952b3d1b0ff58427cb747" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>addSort</name></member>
@@ -575,6 +592,7 @@
       <member refid="interfacesb_i_local_database_g_u_i_d_array_10f910885c76bb8aa1a490fd99058c465" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>clearSorts</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_17bf478c43bca49c37dcde3a22a5c7286" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>clone</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_11cadd21bcac93d4e65a2f8385857cada" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>cloneInto</name></member>
+      <member refid="interfacesb_i_local_database_g_u_i_d_array_1449683a98be9c44e1c9fcb64218726b9" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>containsGuid</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_129a9562b17ef691daa5dccd01aec23bd" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>currentSort</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1a1b3275e4f100ac58569ae09201e0c47" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>databaseGUID</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1bdacc34062adbb85068599a45a440d0b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseGUIDArray</scope><name>databaseLocation</name></member>

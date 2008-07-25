@@ -166,6 +166,9 @@ const PRUint32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_handler.html#978827eef884f62ce9da10d1344632a1">completed</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Whether or not the object has completed its read/write operation.  <a href="#978827eef884f62ce9da10d1344632a1"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_handler.html#f5d32370ea0ee06b351d1d8db98939e4">requiresMainThread</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Whether or not this handler MUST be run on the main thread.  <a href="#f5d32370ea0ee06b351d1d8db98939e4"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">attribute nsIChannel&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_metadata_handler.html#8311aa7b7bc4102d02465b47ded3e7f3">channel</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The object's nsIChannel.  <a href="#8311aa7b7bc4102d02465b47ded3e7f3"></a><br></td></tr>
@@ -329,6 +332,25 @@ It is up to the implementor to determine if read/write calls should operate asyn
 Definition at line <a class="el" href="sb_i_metadata_handler_8idl-source.html#l00092">92</a> of file <a class="el" href="sb_i_metadata_handler_8idl-source.html">sbIMetadataHandler.idl</a>.
 </div>
 </div><p>
+<a class="anchor" name="f5d32370ea0ee06b351d1d8db98939e4"></a><!-- doxytag: member="sbIMetadataHandler::requiresMainThread" ref="f5d32370ea0ee06b351d1d8db98939e4" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute PRBool <a class="el" href="interfacesb_i_metadata_handler.html#f5d32370ea0ee06b351d1d8db98939e4">sbIMetadataHandler::requiresMainThread</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Whether or not this handler MUST be run on the main thread. 
+<p>
+Since nsIChannel and other dependencies are not thread safe, some <a class="el" href="interfacesb_i_metadata_handler.html" title="An object capable of manipulating the metadata tags for a media file.">sbIMetadataHandler</a> implementations can not be run on background threads. 
+<p>
+Definition at line <a class="el" href="sb_i_metadata_handler_8idl-source.html#l00100">100</a> of file <a class="el" href="sb_i_metadata_handler_8idl-source.html">sbIMetadataHandler.idl</a>.
+</div>
+</div><p>
 <a class="anchor" name="8311aa7b7bc4102d02465b47ded3e7f3"></a><!-- doxytag: member="sbIMetadataHandler::channel" ref="8311aa7b7bc4102d02465b47ded3e7f3" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -346,12 +368,12 @@ The object's nsIChannel.
 The object is assigned an nsIChannel from the <a class="el" href="interfacesb_i_metadata_manager.html" title="The manager from which to request a metadata handler.">sbIMetadataManager</a> after it has successfully voted for an url. In the Read call, the implementor may choose to pull the url from the channel and use that directly, or open the channel (either itself or using an <a class="el" href="interfacesb_i_metadata_channel.html" title="A wrapper for an nsIChannel that buffers the incoming data.">sbIMetadataChannel</a> as a helper) and stream the data to be parsed.<p>
 In general, for local files, it is faster to pull the url and handle the metadata read immediately rather than open the channel. For remote files, it's far easier to just use the channel infrastructure already setup. 
 <p>
-Definition at line <a class="el" href="sb_i_metadata_handler_8idl-source.html#l00107">107</a> of file <a class="el" href="sb_i_metadata_handler_8idl-source.html">sbIMetadataHandler.idl</a>.
+Definition at line <a class="el" href="sb_i_metadata_handler_8idl-source.html#l00115">115</a> of file <a class="el" href="sb_i_metadata_handler_8idl-source.html">sbIMetadataHandler.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/mediacore/metadata/manager/public/<a class="el" href="sb_i_metadata_handler_8idl-source.html">sbIMetadataHandler.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:26 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:38 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

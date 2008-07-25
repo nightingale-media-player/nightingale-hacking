@@ -96,30 +96,34 @@
 <a name="l00034"></a>00034 
 <a name="l00035"></a>00035 interface nsISimpleEnumerator;
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
-<a name="l00037"></a>00037 
-<a name="l00043"></a>00043 [scriptable, uuid(a4736e01-789d-43d8-890f-17cc328a1cce)]
-<a name="l00044"></a><a class="code" href="interfacesb_i_orderable_media_list.html">00044</a> interface <a class="code" href="interfacesb_i_orderable_media_list.html" title="Media lists that implement this interface support custom ordering.">sbIOrderableMediaList</a> : nsISupports
-<a name="l00045"></a>00045 {
-<a name="l00051"></a>00051   <span class="keywordtype">void</span> insertBefore(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex,
-<a name="l00052"></a>00052                     in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
-<a name="l00053"></a>00053 
-<a name="l00059"></a>00059   <span class="keywordtype">void</span> moveBefore(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFromIndex,
-<a name="l00060"></a>00060                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aToIndex);
-<a name="l00061"></a>00061 
-<a name="l00066"></a>00066   <span class="keywordtype">void</span> moveLast(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
-<a name="l00067"></a>00067 
-<a name="l00073"></a>00073   <span class="keywordtype">void</span> insertSomeBefore(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex,
-<a name="l00074"></a>00074                         in nsISimpleEnumerator aMediaItems);
-<a name="l00075"></a>00075 
-<a name="l00081"></a>00081   <span class="keywordtype">void</span> moveSomeBefore([array, size_is(aFromIndexArrayCount)] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFromIndexArray,
-<a name="l00082"></a>00082                       in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFromIndexArrayCount,
-<a name="l00083"></a>00083                       in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aToIndex);
+<a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
+<a name="l00038"></a>00038 
+<a name="l00044"></a>00044 [scriptable, uuid(d14dd760-3e10-4114-be30-6f4887279214)]
+<a name="l00045"></a><a class="code" href="interfacesb_i_orderable_media_list.html">00045</a> interface <a class="code" href="interfacesb_i_orderable_media_list.html" title="Media lists that implement this interface support custom ordering.">sbIOrderableMediaList</a> : nsISupports
+<a name="l00046"></a>00046 {
+<a name="l00052"></a>00052   <span class="keywordtype">void</span> insertBefore(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex,
+<a name="l00053"></a>00053                     in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
+<a name="l00054"></a>00054 
+<a name="l00060"></a>00060   <span class="keywordtype">void</span> insertAllBefore(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex,
+<a name="l00061"></a>00061                        in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
+<a name="l00062"></a>00062 
+<a name="l00068"></a>00068   <span class="keywordtype">void</span> moveBefore(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFromIndex,
+<a name="l00069"></a>00069                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aToIndex);
+<a name="l00070"></a>00070 
+<a name="l00075"></a>00075   <span class="keywordtype">void</span> moveLast(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00076"></a>00076 
+<a name="l00082"></a>00082   <span class="keywordtype">void</span> insertSomeBefore(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex,
+<a name="l00083"></a>00083                         in nsISimpleEnumerator aMediaItems);
 <a name="l00084"></a>00084 
-<a name="l00089"></a>00089   <span class="keywordtype">void</span> moveSomeLast([array, size_is(aIndexArrayCount)] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndexArray,
-<a name="l00090"></a>00090                     in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndexArrayCount);
-<a name="l00091"></a>00091 };
-<a name="l00092"></a>00092 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:21 2008 for Songbird by&nbsp;
+<a name="l00090"></a>00090   <span class="keywordtype">void</span> moveSomeBefore([array, size_is(aFromIndexArrayCount)] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFromIndexArray,
+<a name="l00091"></a>00091                       in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFromIndexArrayCount,
+<a name="l00092"></a>00092                       in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aToIndex);
+<a name="l00093"></a>00093 
+<a name="l00098"></a>00098   <span class="keywordtype">void</span> moveSomeLast([array, size_is(aIndexArrayCount)] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndexArray,
+<a name="l00099"></a>00099                     in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndexArrayCount);
+<a name="l00100"></a>00100 };
+<a name="l00101"></a>00101 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:34 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

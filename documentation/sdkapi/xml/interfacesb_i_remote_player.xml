@@ -862,43 +862,43 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="791">
+      <node id="850">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
-      <node id="790">
+      <node id="849">
         <label>sbIRemoteCommands</label>
         <link refid="interfacesb_i_remote_commands"/>
-        <childnode refid="789" relation="usage">
+        <childnode refid="848" relation="usage">
           <edgelabel>owner</edgelabel>
         </childnode>
       </node>
-      <node id="793">
+      <node id="852">
         <label>sbIRemoteMediaList</label>
         <link refid="interfacesb_i_remote_media_list"/>
       </node>
-      <node id="789">
+      <node id="848">
         <label>sbIRemotePlayer</label>
         <link refid="interfacesb_i_remote_player"/>
-        <childnode refid="790" relation="usage">
+        <childnode refid="849" relation="usage">
           <edgelabel>commands</edgelabel>
         </childnode>
-        <childnode refid="791" relation="usage">
+        <childnode refid="850" relation="usage">
           <edgelabel>webLibrary
 mainLibrary
 siteLibrary</edgelabel>
         </childnode>
-        <childnode refid="792" relation="usage">
+        <childnode refid="851" relation="usage">
           <edgelabel>webPlaylist</edgelabel>
         </childnode>
-        <childnode refid="793" relation="usage">
+        <childnode refid="852" relation="usage">
           <edgelabel>downloadMediaList</edgelabel>
         </childnode>
       </node>
-      <node id="792">
+      <node id="851">
         <label>sbIRemoteWebPlaylist</label>
         <link refid="interfacesb_i_remote_web_playlist"/>
-        <childnode refid="793" relation="usage">
+        <childnode refid="852" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>

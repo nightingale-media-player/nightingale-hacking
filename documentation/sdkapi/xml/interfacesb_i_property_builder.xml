@@ -121,32 +121,32 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="744">
+      <node id="797">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="747">
+      <node id="800">
         <label>sbIRatingPropertyBuilder</label>
         <link refid="interfacesb_i_rating_property_builder"/>
-        <childnode refid="744" relation="public-inheritance">
+        <childnode refid="797" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="748">
+      <node id="801">
         <label>sbISimpleButtonPropertyBuilder</label>
         <link refid="interfacesb_i_simple_button_property_builder"/>
-        <childnode refid="744" relation="public-inheritance">
+        <childnode refid="797" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="745">
+      <node id="798">
         <label>sbIDownloadButtonPropertyBuilder</label>
         <link refid="interfacesb_i_download_button_property_builder"/>
-        <childnode refid="744" relation="public-inheritance">
+        <childnode refid="797" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="746">
+      <node id="799">
         <label>sbIImagePropertyBuilder</label>
         <link refid="interfacesb_i_image_property_builder"/>
-        <childnode refid="744" relation="public-inheritance">
+        <childnode refid="797" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

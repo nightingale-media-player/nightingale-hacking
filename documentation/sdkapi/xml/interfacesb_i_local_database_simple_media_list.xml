@@ -184,6 +184,19 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="114"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_simple_media_list_19924f3507f247adeef5e439280d22ccb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSimpleMediaList::notifyContentChanged</definition>
+        <argsstring>()</argsstring>
+        <name>notifyContentChanged</name>
+        <briefdescription>
+<para>Notify the simple media list that its content was changed via an operation that bypassed listeners (ie, direct write to db). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="120"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
@@ -191,23 +204,24 @@
 <para>Methods and attributes that are specific to the simple media list are implemented here.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="407">
+      <node id="444">
         <label>sbILocalDatabaseMediaListCopyListener</label>
         <link refid="interfacesb_i_local_database_media_list_copy_listener"/>
       </node>
-      <node id="406">
+      <node id="443">
         <label>sbILocalDatabaseSimpleMediaList</label>
         <link refid="interfacesb_i_local_database_simple_media_list"/>
-        <childnode refid="407" relation="usage">
+        <childnode refid="444" relation="usage">
           <edgelabel>copyListener</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="62" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="61" bodyend="115"/>
+    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" line="62" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl" bodystart="61" bodyend="121"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_simple_media_list_19ab4500c07ac7424d962babcdf3a8364" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>copyListener</name></member>
       <member refid="interfacesb_i_local_database_simple_media_list_1018bb1f9eca511b23dcda5a1081863f3" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>getIndexByOrdinal</name></member>
       <member refid="interfacesb_i_local_database_simple_media_list_10d5e606226d2e8e935257b50edb9fdb0" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>invalidate</name></member>
+      <member refid="interfacesb_i_local_database_simple_media_list_19924f3507f247adeef5e439280d22ccb" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>notifyContentChanged</name></member>
       <member refid="interfacesb_i_local_database_simple_media_list_14402aad4d7c861dc14bb5f0919136227" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>notifyListenersAfterItemRemoved</name></member>
       <member refid="interfacesb_i_local_database_simple_media_list_10d722dac772c9960eade1c51a769b571" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>notifyListenersBatchBegin</name></member>
       <member refid="interfacesb_i_local_database_simple_media_list_10e7193fba06eca8b337efcbd276b9591" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSimpleMediaList</scope><name>notifyListenersBatchEnd</name></member>

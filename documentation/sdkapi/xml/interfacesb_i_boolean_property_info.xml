@@ -4,6 +4,34 @@
     <compoundname>sbIBooleanPropertyInfo</compoundname>
     <basecompoundref refid="interfacesb_i_property_info" prot="public" virt="non-virtual">sbIPropertyInfo</basecompoundref>
     <includes refid="sb_i_property_manager_8idl" local="no">sbIPropertyManager.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_boolean_property_info_15b7f5a786c642b38279256743c7eb9b4" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIBooleanPropertyInfo::OPERATOR_ISTRUE</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_ISTRUE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="522" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="522" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_boolean_property_info_187ad1c5fd6207a585c71cc86ec801fd3" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIBooleanPropertyInfo::OPERATOR_ISFALSE</definition>
+        <argsstring></argsstring>
+        <name>OPERATOR_ISFALSE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="523" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="523" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
 <para>The property information specific to boolean properties. </para>    </briefdescription>
     <detaileddescription>
@@ -34,13 +62,20 @@
         <childnode refid="16" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
+        <childnode refid="17" relation="usage">
+          <edgelabel>unitConverter</edgelabel>
+        </childnode>
+      </node>
+      <node id="17">
+        <label>sbIPropertyUnitConverter</label>
+        <link refid="interfacesb_i_property_unit_converter"/>
       </node>
       <node id="16">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="469" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="468" bodyend="470"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="521" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="520" bodyend="524"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>format</name></member>
@@ -55,8 +90,15 @@
       <member refid="interfacesb_i_property_info_1afe9f89f31df1de16ca3b9ab5b7682de" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_EQUALS</name></member>
       <member refid="interfacesb_i_property_info_18638a084c59f3033542093b691267704" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_GREATER</name></member>
       <member refid="interfacesb_i_property_info_10f788ca30e7f58af5d5fab302fa3e00e" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_GREATEREQUAL</name></member>
+      <member refid="interfacesb_i_boolean_property_info_187ad1c5fd6207a585c71cc86ec801fd3" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_ISFALSE</name></member>
+      <member refid="interfacesb_i_property_info_1032cf60dd03ea20c2e3c5af23c8f2036" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_ISNOTSET</name></member>
+      <member refid="interfacesb_i_property_info_19d3a3d80f800286f3b174f345ea3a9f1" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_ISSET</name></member>
+      <member refid="interfacesb_i_boolean_property_info_15b7f5a786c642b38279256743c7eb9b4" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_ISTRUE</name></member>
       <member refid="interfacesb_i_property_info_1b0c9ffabb30224122bf1bba5bea890be" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_LESS</name></member>
       <member refid="interfacesb_i_property_info_13cdfd09f8658c992b1fe589ced72da7a" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_LESSEQUAL</name></member>
+      <member refid="interfacesb_i_property_info_14bd7c3c7fdedb2b00ab0129566193687" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_NOTBEGINSWITH</name></member>
+      <member refid="interfacesb_i_property_info_14c174c95eeb75e6a85aaa9fc1ede4e80" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_NOTCONTAINS</name></member>
+      <member refid="interfacesb_i_property_info_1b3c55dfd5251f7b3445e91b4fdc64059" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_NOTENDSWITH</name></member>
       <member refid="interfacesb_i_property_info_107b29f9866c056a61de6f605e56614ba" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>OPERATOR_NOTEQUALS</name></member>
       <member refid="interfacesb_i_property_info_1f2757f5dbc58e2fa111b918cc83e2c5e" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>operators</name></member>
       <member refid="interfacesb_i_property_info_1f7b23f6f5b5c360f74359799880180b8" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>remoteReadable</name></member>
@@ -68,7 +110,7 @@
       <member refid="interfacesb_i_property_info_1a59ffdf127b704755dd744beca75e22c" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>SORT_NULL_SMALL</name></member>
       <member refid="interfacesb_i_property_info_15928b8ba0b6b86690f8805159f42321b" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>sortProfile</name></member>
       <member refid="interfacesb_i_property_info_137e83ba1df687703b9006504d58239fe" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>type</name></member>
-      <member refid="interfacesb_i_property_info_124dc15ce31329fb21a05962f84a15c9e" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>units</name></member>
+      <member refid="interfacesb_i_property_info_175fc3a0afd3bb9de78b9d07954fcbfcb" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>unitConverter</name></member>
       <member refid="interfacesb_i_property_info_10933e00d6494945c02b977671da28bea" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>userEditable</name></member>
       <member refid="interfacesb_i_property_info_10fa3d1fb01bd4fd2ab06eaa63465ed7d" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>userViewable</name></member>
       <member refid="interfacesb_i_property_info_11814ea167521382aae1196689bc22887" prot="public" virt="non-virtual"><scope>sbIBooleanPropertyInfo</scope><name>validate</name></member>

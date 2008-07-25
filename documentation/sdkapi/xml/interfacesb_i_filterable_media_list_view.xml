@@ -24,14 +24,14 @@
 <para>Media lists that implement this interface declare themselves as filterable. The filter is applied as an additional constraint to the list.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="226">
+      <node id="257">
         <label>sbIFilterableMediaListView</label>
         <link refid="interfacesb_i_filterable_media_list_view"/>
-        <childnode refid="227" relation="usage">
+        <childnode refid="258" relation="usage">
           <edgelabel>filterConstraint</edgelabel>
         </childnode>
       </node>
-      <node id="227">
+      <node id="258">
         <label>sbILibraryConstraint</label>
         <link refid="interfacesb_i_library_constraint"/>
       </node>

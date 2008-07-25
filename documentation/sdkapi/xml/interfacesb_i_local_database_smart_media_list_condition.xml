@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="48" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="48" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="49" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_condition_11469d0ef5822557ad66ccae1123d6a85" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_property_operator" kindref="compound">sbIPropertyOperator</ref></type>
@@ -29,7 +29,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="54" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_condition_1ce7ccaecdc9de5b312dbca24b7f3dc2b" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="60" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="60" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="61" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="61" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_condition_14175ccab9312eaf27de77d4ef479c1f2" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -55,20 +55,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="68" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="68" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="69" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="69" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_condition_10aed3cad7c89ebf0474f98b85ba6f28a" prot="public" static="no" mutable="no">
-        <type>readonly attribute boolean</type>
-        <definition>readonly attribute boolean sbILocalDatabaseSmartMediaListCondition::limit</definition>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_condition_190fc35b1680598e7c305af47d4fa489b" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbILocalDatabaseSmartMediaListCondition::displayUnit</definition>
         <argsstring></argsstring>
-        <name>limit</name>
+        <name>displayUnit</name>
         <briefdescription>
-<para>This condition is a global limit. For example, if you were to use the contentSize property, you can limit the total size of the smart media list in bytes. </para>        </briefdescription>
+<para>The unit used to display the left and right values for this condition. This is purely for display purposes, as the values are always internally using the property&apos;s native unit. For instance, the contentLengh property is recorded in bytes, but kB, MB, or GB may be used as a display unit. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="75" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="75" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="78" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="78" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -76,22 +76,22 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="425">
+      <node id="462">
         <label>sbIPropertyOperator</label>
         <link refid="interfacesb_i_property_operator"/>
       </node>
-      <node id="424">
+      <node id="461">
         <label>sbILocalDatabaseSmartMediaListCondition</label>
         <link refid="interfacesb_i_local_database_smart_media_list_condition"/>
-        <childnode refid="425" relation="usage">
+        <childnode refid="462" relation="usage">
           <edgelabel>operator</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="44" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="43" bodyend="76"/>
+    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="44" bodyend="79"/>
     <listofallmembers>
+      <member refid="interfacesb_i_local_database_smart_media_list_condition_190fc35b1680598e7c305af47d4fa489b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>displayUnit</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_condition_1ce7ccaecdc9de5b312dbca24b7f3dc2b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>leftValue</name></member>
-      <member refid="interfacesb_i_local_database_smart_media_list_condition_10aed3cad7c89ebf0474f98b85ba6f28a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>limit</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_condition_11469d0ef5822557ad66ccae1123d6a85" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>operator</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_condition_183e0f6a31085373aa20c37dd99e6b0bd" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>propertyID</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_condition_14175ccab9312eaf27de77d4ef479c1f2" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaListCondition</scope><name>rightValue</name></member>

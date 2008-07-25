@@ -6,30 +6,30 @@
     <includedby refid="sb_i_remote_library_8idl" local="yes">components/remoteapi/public/sbIRemoteLibrary.idl</includedby>
     <includedby refid="sb_i_scriptable_filter_result_8idl" local="yes">components/remoteapi/public/sbIScriptableFilterResult.idl</includedby>
     <incdepgraph>
-      <node id="497">
+      <node id="519">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="498" relation="include">
+        <childnode refid="520" relation="include">
         </childnode>
       </node>
-      <node id="498">
+      <node id="520">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="499">
+      <node id="521">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="500" relation="include">
+        <childnode refid="522" relation="include">
         </childnode>
-        <childnode refid="501" relation="include">
+        <childnode refid="523" relation="include">
         </childnode>
       </node>
-      <node id="501">
+      <node id="523">
         <label>components/remoteapi/public/sbIScriptableFilterResult.idl</label>
         <link refid="sb_i_scriptable_filter_result_8idl"/>
       </node>
-      <node id="500">
+      <node id="522">
         <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
         <link refid="sb_i_remote_library_8idl-source"/>
       </node>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="76"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl" line="77"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -110,14 +110,15 @@
 <codeline lineno="67"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>GetItemsByProperty(const<sp/>nsAString<sp/>&amp;<sp/>aPropertyID,<sp/>const<sp/>nsAString<sp/>&amp;<sp/>aPropertyValue,<sp/>nsIArray<sp/>**_retval)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;GetItemsByProperty(aPropertyID,<sp/>aPropertyValue,<sp/>_retval);<sp/>}<sp/>\</highlight></codeline>
 <codeline lineno="68"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>GetItemsByProperties(sbIPropertyArray<sp/>*aProperties,<sp/>nsIArray<sp/>**_retval)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;GetItemsByProperties(aProperties,<sp/>_retval);<sp/>}<sp/>\</highlight></codeline>
 <codeline lineno="69"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>GetIsEmpty(PRBool<sp/>*aIsEmpty)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;GetIsEmpty(aIsEmpty);<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="70"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>RemoveByIndex(PRUint32<sp/>aIndex)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;RemoveByIndex(aIndex);<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="71"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>RemoveSome(nsISimpleEnumerator<sp/>*aMediaItems)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;RemoveSome(aMediaItems);<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="72"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>Clear(void)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;Clear();<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="73"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>AddListener(sbIMediaListListener<sp/>*aListener,<sp/>PRBool<sp/>aOwnsWeak,<sp/>PRUint32<sp/>aFlags,<sp/>sbIPropertyArray<sp/>*aPropertyFilter)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;AddListener(aListener,<sp/>aOwnsWeak,<sp/>aFlags,<sp/>aPropertyFilter);<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="74"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>RemoveListener(sbIMediaListListener<sp/>*aListener)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;RemoveListener(aListener);<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="75"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>CreateView(sbIMediaListViewState<sp/>*aState,<sp/>sbIMediaListView<sp/>**_retval)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;CreateView(aState,<sp/>_retval);<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="76"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>RunInBatchMode(sbIMediaListBatchCallback<sp/>*aCallback,<sp/>nsISupports<sp/>*aUserData)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;RunInBatchMode(aCallback,<sp/>aUserData);<sp/>}</highlight></codeline>
-<codeline lineno="77"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="70"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>GetUserEditableContent(PRBool<sp/>*aUserEditableContent)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;GetUserEditableContent(aUserEditableContent);<sp/>}<sp/>\</highlight></codeline>
+<codeline lineno="71"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>RemoveByIndex(PRUint32<sp/>aIndex)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;RemoveByIndex(aIndex);<sp/>}<sp/>\</highlight></codeline>
+<codeline lineno="72"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>RemoveSome(nsISimpleEnumerator<sp/>*aMediaItems)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;RemoveSome(aMediaItems);<sp/>}<sp/>\</highlight></codeline>
+<codeline lineno="73"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>Clear(void)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;Clear();<sp/>}<sp/>\</highlight></codeline>
+<codeline lineno="74"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>AddListener(sbIMediaListListener<sp/>*aListener,<sp/>PRBool<sp/>aOwnsWeak,<sp/>PRUint32<sp/>aFlags,<sp/>sbIPropertyArray<sp/>*aPropertyFilter)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;AddListener(aListener,<sp/>aOwnsWeak,<sp/>aFlags,<sp/>aPropertyFilter);<sp/>}<sp/>\</highlight></codeline>
+<codeline lineno="75"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>RemoveListener(sbIMediaListListener<sp/>*aListener)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;RemoveListener(aListener);<sp/>}<sp/>\</highlight></codeline>
+<codeline lineno="76"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>CreateView(sbIMediaListViewState<sp/>*aState,<sp/>sbIMediaListView<sp/>**_retval)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;CreateView(aState,<sp/>_retval);<sp/>}<sp/>\</highlight></codeline>
+<codeline lineno="77"><highlight class="preprocessor"><sp/><sp/>NS_IMETHOD<sp/>RunInBatchMode(sbIMediaListBatchCallback<sp/>*aCallback,<sp/>nsISupports<sp/>*aUserData)<sp/>{<sp/>return<sp/>!_to<sp/>?<sp/>NS_ERROR_NULL_POINTER<sp/>:<sp/>_to-&gt;RunInBatchMode(aCallback,<sp/>aUserData);<sp/>}</highlight></codeline>
+<codeline lineno="78"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteMediaList.idl"/>
   </compounddef>

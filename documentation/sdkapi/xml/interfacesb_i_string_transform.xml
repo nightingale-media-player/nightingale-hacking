@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_string_transform" kind="interface" prot="public">
+    <compoundname>sbIStringTransform</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_string_transform_1c11f6d3dbcf06e6b6b0d5082a282bc8b" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_MAP_HIRAGANA</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_MAP_HIRAGANA</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+<para>Unsupported at this time. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>Not implemented </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="39" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_string_transform_134a7dedf5461ec784d6bda7ddef5eb51" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_MAP_KATAKANA</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_MAP_KATAKANA</name>
+        <initializer> 1 &lt;&lt; 1</initializer>
+        <briefdescription>
+<para>Unsupported at this time. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>Not implemented </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="44" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_string_transform_109a96b7b8d16d6a2ebc9fc9484580be1" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_LOWERCASE</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_LOWERCASE</name>
+        <initializer> 1 &lt;&lt; 4</initializer>
+        <briefdescription>
+<para>Transform to lowercase. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_string_transform_1d89ae39658e450039fb35eae25719257" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_UPPERCASE</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_UPPERCASE</name>
+        <initializer> 1 &lt;&lt; 5</initializer>
+        <briefdescription>
+<para>Transform to uppercase. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="53" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_string_transform_196bf948289c8cc096a5a1695e6256f25" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_SIMPLIFIED_CHINESE</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_SIMPLIFIED_CHINESE</name>
+        <initializer> 1 &lt;&lt; 6</initializer>
+        <briefdescription>
+<para>Unsupported at this time. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>Not implemented </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="59" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_string_transform_146a64279d4966c39f12fa09719b8cf4b" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_TRADITIONAL_CHINESE</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_TRADITIONAL_CHINESE</name>
+        <initializer> 1 &lt;&lt; 7</initializer>
+        <briefdescription>
+<para>Unsupported at this time. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="warning"><para>Not implemented </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="64" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_string_transform_1ac2bb070671e1b513205ce7973335c28" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_IGNORE_SYMBOLS</name>
+        <initializer> 1 &lt;&lt; 8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="66" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_string_transform_172da2cb3d96fd3a9e8ef511c93db07b8" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_IGNORE_NONSPACE</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_IGNORE_NONSPACE</name>
+        <initializer> 1 &lt;&lt; 9</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="67" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_string_transform_151009a08d1b398406d25fe8436326d38" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_REVERSE_BYTES</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_REVERSE_BYTES</name>
+        <initializer> 1 &lt;&lt; 11</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="69" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_string_transform_1250033da92893ce36fc430a8f115d963" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIStringTransform::normalizeString</definition>
+        <argsstring>(in AString aCharset, in unsigned long aTransformFlags, in AString aInput)</argsstring>
+        <name>normalizeString</name>
+        <param>
+          <type>in AString</type>
+          <declname>aCharset</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aTransformFlags</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aInput</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="73"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_string_transform_126415c94cf8057d896d75c4cdbeec666" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIStringTransform::convertToCharset</definition>
+        <argsstring>(in AString aDestCharset, in AString aInput)</argsstring>
+        <name>convertToCharset</name>
+        <param>
+          <type>in AString</type>
+          <declname>aDestCharset</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aInput</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="76"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_string_transform_19c157820ff2206fb3c16dac5564e65c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIStringTransform::guessCharset</definition>
+        <argsstring>(in AString aInput)</argsstring>
+        <name>guessCharset</name>
+        <param>
+          <type>in AString</type>
+          <declname>aInput</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="78"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="34" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="33" bodyend="79"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_string_transform_126415c94cf8057d896d75c4cdbeec666" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>convertToCharset</name></member>
+      <member refid="interfacesb_i_string_transform_19c157820ff2206fb3c16dac5564e65c0" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>guessCharset</name></member>
+      <member refid="interfacesb_i_string_transform_1250033da92893ce36fc430a8f115d963" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>normalizeString</name></member>
+      <member refid="interfacesb_i_string_transform_172da2cb3d96fd3a9e8ef511c93db07b8" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_IGNORE_NONSPACE</name></member>
+      <member refid="interfacesb_i_string_transform_1ac2bb070671e1b513205ce7973335c28" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_IGNORE_SYMBOLS</name></member>
+      <member refid="interfacesb_i_string_transform_109a96b7b8d16d6a2ebc9fc9484580be1" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_LOWERCASE</name></member>
+      <member refid="interfacesb_i_string_transform_1c11f6d3dbcf06e6b6b0d5082a282bc8b" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_MAP_HIRAGANA</name></member>
+      <member refid="interfacesb_i_string_transform_134a7dedf5461ec784d6bda7ddef5eb51" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_MAP_KATAKANA</name></member>
+      <member refid="interfacesb_i_string_transform_151009a08d1b398406d25fe8436326d38" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_REVERSE_BYTES</name></member>
+      <member refid="interfacesb_i_string_transform_196bf948289c8cc096a5a1695e6256f25" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_SIMPLIFIED_CHINESE</name></member>
+      <member refid="interfacesb_i_string_transform_146a64279d4966c39f12fa09719b8cf4b" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_TRADITIONAL_CHINESE</name></member>
+      <member refid="interfacesb_i_string_transform_1d89ae39658e450039fb35eae25719257" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_UPPERCASE</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

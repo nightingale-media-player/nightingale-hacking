@@ -87,6 +87,19 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="269" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="269" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_1d79e1478f69e0d8ba8bed29364d5fb13" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIMediaList::userEditableContent</definition>
+        <argsstring></argsstring>
+        <name>userEditableContent</name>
+        <briefdescription>
+<para>True if the user should be allowed to edit the content of this media list. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="314" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="314" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_1b34ff623969f79f3dab95304e42f34b3" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
         <definition>const unsigned long sbIMediaList::LISTENER_FLAGS_ITEMADDED</definition>
@@ -99,7 +112,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="877" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="877" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="922" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="922" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_1ebd887a26980780de64ddf4af9cf430a" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -113,7 +126,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="878" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="878" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="923" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="923" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_1cdecf4b09dd4e75a52e9be77d378e6f3" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -127,7 +140,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="879" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="879" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="924" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="924" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_134e744de3ce3931f387c6ab405c3a968" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -141,7 +154,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="880" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="880" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="925" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="925" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_110cf8a4549906ace13097775e484c2b3" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -155,7 +168,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="881" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="881" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="926" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="926" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_1c038790117b70fcca91a4a6f6c5a3f4b" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -169,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="882" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="882" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="927" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="927" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_1536109c8e3dc6da8d732ad92a226337b" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -183,7 +196,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="883" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="883" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="928" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="928" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_19900bddb359408a49158687dfcb6f20d" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -197,7 +210,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="884" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="884" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="929" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="929" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_16e0542725b8ace2f19f7556d3192ed5f" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -211,7 +224,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="885" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="885" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="930" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="930" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -239,7 +252,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="323"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="368"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_12fd1e5e5bf2a9691bfde77a5a0eddd6a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -265,7 +278,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="374"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="419"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_1ff2200a96847fd47d61dc63572cd48ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -302,7 +315,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="413"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="458"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_11cc23df33dcd0af42d8aea4922c7aa78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -361,7 +374,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="457"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="502"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_1bb70c99d074eeaa0d17b2042824bf202" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -409,7 +422,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="469"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="514"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_14937729ad5c31e326b306c3b9d28811a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIArray</type>
@@ -454,7 +467,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="480"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="525"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_1b9d616412cdb0df6c7e1c793f8bd6e78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIArray</type>
@@ -488,7 +501,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="490"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="535"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_13cc0eed8d4c3ac71ba2d805438c4adf6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -526,7 +539,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="544"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="589"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_19edde98509df43db6a983d4937781d56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>unsigned long</type>
@@ -563,7 +576,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="598"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="643"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_1cb4bbfe64589e3bd1d973632b39b3116" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -589,7 +602,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="645"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="690"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_16fe6be51b869ba4b97dc5274ab68813d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -614,7 +627,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="704"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="749"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_1647f0790225f9e23f83db83da1718cb4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -639,7 +652,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="731"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="776"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_13437b5aa10efd05b309d9f71868057b7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -664,7 +677,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="737"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="782"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_163e7e739718bd6d35016500933e5fc58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -689,7 +702,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="781"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="826"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_148c9653c3324dfe0a1dedb4b6307ea29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -714,7 +727,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="827"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="872"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_122c907e9dbc8abb40bd4f8e63e9b935d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -739,7 +752,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="833"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="878"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_15b727b02e89e57a15b7f78778722c4a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -752,7 +765,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="875"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="920"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_1f8515c51ec7849141b2682696ebfb5de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -813,7 +826,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="906"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="951"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_137a3275d1ea302a95b706a31413e3084" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -838,7 +851,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="912"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="957"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_194596861a47fd029591cb920bdd1d1d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
@@ -865,7 +878,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="919"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="964"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_154a8cc70b3884a1fe8c8b5f38437b9c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -888,7 +901,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="927"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="972"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_197a6fb8331dbd27cf9f53dbcd97681d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIStringEnumerator</type>
@@ -905,7 +918,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="961"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="1006"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -914,120 +927,120 @@
 <para>A detailed description of this interface</para><para><simplesect kind="see"><para>List of &quot;see also&quot; interfaces </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="456">
+      <node id="509">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="457" relation="public-inheritance">
+        <childnode refid="510" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="459">
+      <node id="512">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="456" relation="public-inheritance">
+        <childnode refid="509" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="458">
+      <node id="511">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="457">
+      <node id="510">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="458" relation="public-inheritance">
+        <childnode refid="511" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="461">
+      <node id="514">
         <label>sbILocalDatabaseSmartMediaList</label>
         <link refid="interfacesb_i_local_database_smart_media_list"/>
-        <childnode refid="456" relation="public-inheritance">
+        <childnode refid="509" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="460">
+      <node id="513">
         <label>sbIDeviceLibrary</label>
         <link refid="interfacesb_i_device_library"/>
-        <childnode refid="459" relation="public-inheritance">
+        <childnode refid="512" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="462">
+      <node id="515">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="463" relation="public-inheritance">
+        <childnode refid="516" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="469">
+      <node id="522">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="463" relation="usage">
+        <childnode refid="516" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="462" relation="usage">
+        <childnode refid="515" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="470">
+      <node id="523">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="466">
+      <node id="519">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="467" relation="usage">
+        <childnode refid="520" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="469" relation="usage">
+        <childnode refid="522" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="470" relation="usage">
+        <childnode refid="523" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="471" relation="usage">
+        <childnode refid="524" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="465">
+      <node id="518">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="462" relation="public-inheritance">
+        <childnode refid="515" relation="public-inheritance">
         </childnode>
-        <childnode refid="466" relation="usage">
+        <childnode refid="519" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="468" relation="usage">
+        <childnode refid="521" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="464">
+      <node id="517">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="463">
+      <node id="516">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="464" relation="public-inheritance">
+        <childnode refid="517" relation="public-inheritance">
         </childnode>
-        <childnode refid="465" relation="usage">
+        <childnode refid="518" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="467">
+      <node id="520">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="468" relation="usage">
+        <childnode refid="521" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="468">
+      <node id="521">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="471">
+      <node id="524">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="59" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="58" bodyend="962"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="59" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="58" bodyend="1007"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_16fe6be51b869ba4b97dc5274ab68813d" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>add</name></member>
       <member refid="interfacesb_i_media_list_1647f0790225f9e23f83db83da1718cb4" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>addAll</name></member>
@@ -1088,6 +1101,7 @@
       <member refid="interfacesb_i_media_list_1687bc602daf1ac786a7a0049b939c736" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>type</name></member>
       <member refid="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>updated</name></member>
       <member refid="interfacesb_i_library_resource_1faa01b7805181fabba68fd9a721e7d3d" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>userEditable</name></member>
+      <member refid="interfacesb_i_media_list_1d79e1478f69e0d8ba8bed29364d5fb13" prot="public" virt="non-virtual"><scope>sbIMediaList</scope><name>userEditableContent</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

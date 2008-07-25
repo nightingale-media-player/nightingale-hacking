@@ -235,115 +235,115 @@
 <para><simplesect kind="note"><para>Implementations of this interface must be threadsafe. </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="131">
+      <node id="135">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="132" relation="public-inheritance">
+        <childnode refid="136" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="130">
+      <node id="134">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="131" relation="public-inheritance">
+        <childnode refid="135" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="133">
+      <node id="137">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="132">
+      <node id="136">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="133" relation="public-inheritance">
+        <childnode refid="137" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="129">
+      <node id="133">
         <label>sbIDeviceLibrary</label>
         <link refid="interfacesb_i_device_library"/>
-        <childnode refid="130" relation="public-inheritance">
+        <childnode refid="134" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="136">
+      <node id="140">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="137" relation="public-inheritance">
+        <childnode refid="141" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="142">
+      <node id="146">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="137" relation="usage">
+        <childnode refid="141" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="136" relation="usage">
+        <childnode refid="140" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="143">
+      <node id="147">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="139">
+      <node id="143">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="140" relation="usage">
+        <childnode refid="144" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="142" relation="usage">
+        <childnode refid="146" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="143" relation="usage">
+        <childnode refid="147" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="144" relation="usage">
+        <childnode refid="148" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="135">
+      <node id="139">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="136" relation="public-inheritance">
+        <childnode refid="140" relation="public-inheritance">
         </childnode>
-        <childnode refid="139" relation="usage">
+        <childnode refid="143" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="141" relation="usage">
+        <childnode refid="145" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="138">
+      <node id="142">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="137">
+      <node id="141">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="138" relation="public-inheritance">
+        <childnode refid="142" relation="public-inheritance">
         </childnode>
-        <childnode refid="135" relation="usage">
+        <childnode refid="139" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="140">
+      <node id="144">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="141" relation="usage">
+        <childnode refid="145" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="141">
+      <node id="145">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="134">
+      <node id="138">
         <label>sbIDeviceLibrary</label>
         <link refid="interfacesb_i_device_library"/>
-        <childnode refid="135" relation="public-inheritance">
+        <childnode refid="139" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="144">
+      <node id="148">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
@@ -437,6 +437,7 @@
       <member refid="interfacesb_i_media_list_1687bc602daf1ac786a7a0049b939c736" prot="public" virt="non-virtual"><scope>sbIDeviceLibrary</scope><name>type</name></member>
       <member refid="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" virt="non-virtual"><scope>sbIDeviceLibrary</scope><name>updated</name></member>
       <member refid="interfacesb_i_library_resource_1faa01b7805181fabba68fd9a721e7d3d" prot="public" virt="non-virtual"><scope>sbIDeviceLibrary</scope><name>userEditable</name></member>
+      <member refid="interfacesb_i_media_list_1d79e1478f69e0d8ba8bed29364d5fb13" prot="public" virt="non-virtual"><scope>sbIDeviceLibrary</scope><name>userEditableContent</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

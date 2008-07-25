@@ -95,7 +95,10 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Change the property used on a filter.  <a href="#aedc21c8d4ae9515dd6e8c5bfefc2342"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_cascade_filter_set.html#7c5f6c345297156eae8a0bb10c9e4dcf">set</a> (in unsigned short aIndex,[array, size_is(aValueArrayCount)] in wstring aValueArray, in unsigned long aValueArrayCount)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the configuration of a filter. Note that chaging a filter will clear the configuration of all downstream filters.  <a href="#7c5f6c345297156eae8a0bb10c9e4dcf"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the configuration of a filter. Note that changing a filter will clear the configuration of all downstream filters.  <a href="#7c5f6c345297156eae8a0bb10c9e4dcf"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_cascade_filter_set.html#42523b0f3c9f2a18ed0a9552ae232343">get</a> (in unsigned short aIndex)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the configuration of a filter.  <a href="#42523b0f3c9f2a18ed0a9552ae232343"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="50ee89f372646f684770cf63e9ec4f4e"></a><!-- doxytag: member="sbICascadeFilterSet::clearAll" ref="50ee89f372646f684770cf63e9ec4f4e" args="()" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_cascade_filter_set.html#50ee89f372646f684770cf63e9ec4f4e">clearAll</a> ()</td></tr>
 
@@ -137,7 +140,7 @@ Cascade filter management for a media list.
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_cascade_filter_set_8idl-source.html#l00059">59</a> of file <a class="el" href="sb_i_cascade_filter_set_8idl-source.html">sbICascadeFilterSet.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_cascade_filter_set_8idl-source.html#l00060">60</a> of file <a class="el" href="sb_i_cascade_filter_set_8idl-source.html">sbICascadeFilterSet.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="1d80acdcc0567057e9fcdf53e909a609"></a><!-- doxytag: member="sbICascadeFilterSet::appendFilter" ref="1d80acdcc0567057e9fcdf53e909a609" args="(in AString aProperty)" -->
 <div class="memitem">
 <div class="memproto">
@@ -300,7 +303,7 @@ Change the property used on a filter.
 <div class="memdoc">
 
 <p>
-Set the configuration of a filter. Note that chaging a filter will clear the configuration of all downstream filters. 
+Set the configuration of a filter. Note that changing a filter will clear the configuration of all downstream filters. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -309,6 +312,34 @@ Set the configuration of a filter. Note that chaging a filter will clear the con
     <tr><td valign="top"></td><td valign="top"><em>aValueArrayCount</em>&nbsp;</td><td>length of the aValueArray array </td></tr>
   </table>
 </dl>
+
+</div>
+</div><p>
+<a class="anchor" name="42523b0f3c9f2a18ed0a9552ae232343"></a><!-- doxytag: member="sbICascadeFilterSet::get" ref="42523b0f3c9f2a18ed0a9552ae232343" args="(in unsigned short aIndex)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nsIArray sbICascadeFilterSet::get           </td>
+          <td>(</td>
+          <td class="paramtype">in unsigned short&nbsp;</td>
+          <td class="paramname"> <em>aIndex</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the configuration of a filter. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aIndex</em>&nbsp;</td><td>Index of the filter to retrieve the configuration from </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>An array of values that the filter is currently configured for </dd></dl>
 
 </div>
 </div><p>
@@ -569,12 +600,12 @@ Remove listener from notification list.
 <p>
 Number of filters in the set 
 <p>
-Definition at line <a class="el" href="sb_i_cascade_filter_set_8idl-source.html#l00064">64</a> of file <a class="el" href="sb_i_cascade_filter_set_8idl-source.html">sbICascadeFilterSet.idl</a>.
+Definition at line <a class="el" href="sb_i_cascade_filter_set_8idl-source.html#l00065">65</a> of file <a class="el" href="sb_i_cascade_filter_set_8idl-source.html">sbICascadeFilterSet.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_cascade_filter_set_8idl-source.html">sbICascadeFilterSet.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:23 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:36 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

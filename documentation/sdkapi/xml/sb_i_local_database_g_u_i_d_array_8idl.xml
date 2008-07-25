@@ -73,7 +73,7 @@
 <codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onBeforeInvalidate();</highlight></codeline>
 <codeline lineno="47"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="48"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(4499865f-b4f3-4e6d-90ed-0004ff38a49f)]</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(7ecb8720-5499-11dd-ae16-0800200c9a66)]</highlight></codeline>
 <codeline lineno="54" refid="interfacesb_i_local_database_g_u_i_d_array" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_g_u_i_d_array" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseGUIDArray</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="55"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="56" refid="interfacesb_i_local_database_g_u_i_d_array_1a1b3275e4f100ac58569ae09201e0c47" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>databaseGUID;</highlight></codeline>
@@ -134,8 +134,10 @@
 <codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getFirstIndexByGuid(in<sp/>AString<sp/>aGuid);</highlight></codeline>
 <codeline lineno="142"><highlight class="normal"></highlight></codeline>
 <codeline lineno="143"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getIndexByRowid(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aRowid);</highlight></codeline>
-<codeline lineno="144"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>containsGuid(in<sp/>AString<sp/>aGuid);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl"/>
   </compounddef>

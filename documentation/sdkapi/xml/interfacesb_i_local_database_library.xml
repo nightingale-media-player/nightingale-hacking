@@ -54,7 +54,7 @@
 <para>Oh My. We need this here to avoid a static cast in sbLocalDatabaseSimpleMediaListFactory where we need a sbLocalDatabaseLibrary class pointer to construct the simple media list. This is better than the static cast since it explicitly requires the implementing class to be able to return a sbLocalDatabaseLibrary pointer. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="99" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="99" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="106" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="106" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -181,30 +181,58 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="90"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_library_113cd2a1a02598a8b0d0a97a9c0b4911e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseLibrary::ForceBeginUpdateBatch</definition>
+        <argsstring>()</argsstring>
+        <name>ForceBeginUpdateBatch</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>These aren&apos;t meant to be called directly. Use sbAutoBatchHelper to avoid the risk of leaving a batch in progress </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="96"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_library_116717016f72091fb36174216cd234d95" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseLibrary::ForceEndUpdateBatch</definition>
+        <argsstring>()</argsstring>
+        <name>ForceEndUpdateBatch</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="97"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="389">
+      <node id="426">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>
-      <node id="388">
+      <node id="425">
         <label>sbILocalDatabaseLibrary</label>
         <link refid="interfacesb_i_local_database_library"/>
-        <childnode refid="389" relation="usage">
+        <childnode refid="426" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="58" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="57" bodyend="100"/>
+    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="58" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" bodystart="57" bodyend="107"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_library_1ed04cb65d1c79ca47a9df4d0383644df" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>addCopyListener</name></member>
       <member refid="interfacesb_i_local_database_library_1a8e250f784fbbfdaff880b7ac91dcd44" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>createQuery</name></member>
       <member refid="interfacesb_i_local_database_library_127b7e647416d05c9c7cedd830ac78836" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>databaseGuid</name></member>
       <member refid="interfacesb_i_local_database_library_1de539f77d028fb1d3f41c2c16118e7b2" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>databaseLocation</name></member>
+      <member refid="interfacesb_i_local_database_library_113cd2a1a02598a8b0d0a97a9c0b4911e" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>ForceBeginUpdateBatch</name></member>
+      <member refid="interfacesb_i_local_database_library_116717016f72091fb36174216cd234d95" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>ForceEndUpdateBatch</name></member>
       <member refid="interfacesb_i_local_database_library_171540590671cf01db64e6f25f3393095" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>getContractIdForGuid</name></member>
       <member refid="interfacesb_i_local_database_library_1742d1b96a1a6483c46ba25163a7d683c" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>getMediaItemIdForGuid</name></member>
       <member refid="interfacesb_i_local_database_library_151048be46119bcc652d4cfd1f06191a9" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>nativeLibrary</name></member>

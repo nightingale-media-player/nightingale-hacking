@@ -309,93 +309,93 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="716">
+      <node id="768">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="713" relation="public-inheritance">
+        <childnode refid="765" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="720">
+      <node id="772">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="713" relation="usage">
+        <childnode refid="765" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="716" relation="usage">
+        <childnode refid="768" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="721">
+      <node id="773">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="717">
+      <node id="769">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="718" relation="usage">
+        <childnode refid="770" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="720" relation="usage">
+        <childnode refid="772" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="721" relation="usage">
+        <childnode refid="773" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="722" relation="usage">
+        <childnode refid="774" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="715">
+      <node id="767">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="716" relation="public-inheritance">
+        <childnode refid="768" relation="public-inheritance">
         </childnode>
-        <childnode refid="717" relation="usage">
+        <childnode refid="769" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="719" relation="usage">
+        <childnode refid="771" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="714">
+      <node id="766">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="713">
+      <node id="765">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="714" relation="public-inheritance">
+        <childnode refid="766" relation="public-inheritance">
         </childnode>
-        <childnode refid="715" relation="usage">
+        <childnode refid="767" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="718">
+      <node id="770">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="719" relation="usage">
+        <childnode refid="771" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="719">
+      <node id="771">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="712">
+      <node id="764">
         <label>sbIPlaylistClickEvent</label>
         <link refid="interfacesb_i_playlist_click_event"/>
-        <childnode refid="713" relation="usage">
+        <childnode refid="765" relation="usage">
           <edgelabel>item</edgelabel>
         </childnode>
       </node>
-      <node id="722">
+      <node id="774">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
-      <node id="711">
+      <node id="763">
         <label>sbIPlaylistWidget</label>
         <link refid="interfacesb_i_playlist_widget"/>
-        <childnode refid="712" relation="usage">
+        <childnode refid="764" relation="usage">
           <edgelabel>lastClickEvent</edgelabel>
         </childnode>
       </node>

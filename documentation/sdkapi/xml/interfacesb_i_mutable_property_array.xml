@@ -70,26 +70,26 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="583">
+      <node id="632">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="582">
+      <node id="631">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="583" relation="public-inheritance">
+        <childnode refid="632" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="585">
+      <node id="634">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="584">
+      <node id="633">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="585" relation="public-inheritance">
+        <childnode refid="634" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

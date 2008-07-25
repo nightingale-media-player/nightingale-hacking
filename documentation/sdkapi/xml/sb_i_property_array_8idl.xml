@@ -6,42 +6,42 @@
     <includes local="yes">nsIMutableArray.idl</includes>
     <includedby refid="sb_i_metadata_handler_8idl" local="yes">components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</includedby>
     <incdepgraph>
-      <node id="469">
+      <node id="485">
         <label>nsIArray.idl</label>
       </node>
-      <node id="470">
+      <node id="486">
         <label>nsIMutableArray.idl</label>
       </node>
-      <node id="468">
+      <node id="484">
         <label>components/property/public/sbIPropertyArray.idl</label>
         <link refid="sbIPropertyArray.idl"/>
-        <childnode refid="469" relation="include">
+        <childnode refid="485" relation="include">
         </childnode>
-        <childnode refid="470" relation="include">
+        <childnode refid="486" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="473">
+      <node id="489">
         <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
         <link refid="sb_i_metadata_channel_8idl"/>
       </node>
-      <node id="474">
+      <node id="490">
         <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
         <link refid="sb_i_metadata_manager_8idl"/>
       </node>
-      <node id="471">
+      <node id="487">
         <label>components/property/public/sbIPropertyArray.idl</label>
         <link refid="sbIPropertyArray.idl"/>
-        <childnode refid="472" relation="include">
+        <childnode refid="488" relation="include">
         </childnode>
       </node>
-      <node id="472">
+      <node id="488">
         <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
         <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="473" relation="include">
+        <childnode refid="489" relation="include">
         </childnode>
-        <childnode refid="474" relation="include">
+        <childnode refid="490" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

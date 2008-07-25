@@ -4,18 +4,19 @@
     <compoundname>sbILibraryImporter.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="354">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="353">
-        <label>components/libraryimporter/base/public/sbILibraryImporter.idl</label>
+      <node id="415">
+        <label>components/mediaimport/library/base/public/sbILibraryImporter.idl</label>
         <link refid="sbILibraryImporter.idl"/>
-        <childnode refid="354" relation="include">
+        <childnode refid="416" relation="include">
         </childnode>
+      </node>
+      <node id="416">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_library_importer_listener" prot="public">sbILibraryImporterListener</innerclass>
     <innerclass refid="interfacesb_i_library_importer" prot="public">sbILibraryImporter</innerclass>
+    <innerclass refid="interfacesb_i_library_importer_manager" prot="public">sbILibraryImporterManager</innerclass>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -60,66 +61,84 @@
 <codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(7B6B4403-3FF7-4919-BAB5-F3821BA63F95)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(D2CC37F4-A5DB-4226-966F-C51A9AE5686F)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_library_importer_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_importer_listener" kindref="compound" tooltip="Interface for listening to library importer events.">sbILibraryImporterListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFirstRun();</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryChanged(</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aLibFilePath,</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aGUID);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryChanged(</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aLibFilePath,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aGUID);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onImportError();</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"></highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onImportError();</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight></codeline>
-<codeline lineno="79"><highlight class="normal"></highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onNonExistentMedia(</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aNonExistentMediaCount,</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aTrackCount);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onNonExistentMedia(</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aNonExistentMediaCount,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aTrackCount);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onUnsupportedMedia();</highlight></codeline>
 <codeline lineno="92"><highlight class="normal"></highlight></codeline>
 <codeline lineno="93"><highlight class="normal"></highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onUnsupportedMedia();</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight></codeline>
-<codeline lineno="101"><highlight class="normal"></highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>AString<sp/>onDirtyPlaylist(</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aPlaylistName,</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aApplyAll);</highlight></codeline>
-<codeline lineno="119"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"></highlight></codeline>
-<codeline lineno="121"><highlight class="normal"></highlight></codeline>
-<codeline lineno="129"><highlight class="normal">[scriptable,<sp/>uuid(DBB06C29-EA16-4D9E-9E1E-0E83737DF26F)]</highlight></codeline>
-<codeline lineno="130" refid="interfacesb_i_library_importer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_importer" kindref="compound" tooltip="Interface for importing external libraries.">sbILibraryImporter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="131"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="133"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>Attributes.</highlight></codeline>
-<codeline lineno="134"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
-<codeline lineno="135"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryType<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Library<sp/>type.</highlight></codeline>
-<codeline lineno="136"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryReadableType<sp/><sp/><sp/><sp/><sp/><sp/>Readable<sp/>library<sp/>type.</highlight></codeline>
-<codeline lineno="137"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryDefaultFileName<sp/><sp/><sp/>Default<sp/>library<sp/>file<sp/>name.</highlight></codeline>
-<codeline lineno="138"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryDefaultFilePath<sp/><sp/><sp/>Default<sp/>library<sp/>file<sp/>path.</highlight></codeline>
-<codeline lineno="139"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryFileExtensionList<sp/>Comma<sp/>separated<sp/>list<sp/>of<sp/>library<sp/>file<sp/>extensions.</highlight></codeline>
-<codeline lineno="140"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="141"><highlight class="normal"></highlight></codeline>
-<codeline lineno="142" refid="interfacesb_i_library_importer_10d4853fa1579c2118bfa7234260936fd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryType;</highlight></codeline>
-<codeline lineno="143" refid="interfacesb_i_library_importer_137b3a2657a3c91ec13187396b18ea3f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryReadableType;</highlight></codeline>
-<codeline lineno="144" refid="interfacesb_i_library_importer_1e00ff2029f3d7cbe902338d31fd6b617" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryDefaultFileName;</highlight></codeline>
-<codeline lineno="145" refid="interfacesb_i_library_importer_12faee2e60507b60ca1603d9814a7a5b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryDefaultFilePath;</highlight></codeline>
-<codeline lineno="146" refid="interfacesb_i_library_importer_18a0f27bb74429044dfacc376dfe41039" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryFileExtensionList;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>AString<sp/>onDirtyPlaylist(</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aPlaylistName,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aApplyAll);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref>;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal">[scriptable,<sp/>uuid(04E3F8E9-70F4-4129-9A74-CEC88A8AEE93)]</highlight></codeline>
+<codeline lineno="124" refid="interfacesb_i_library_importer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_importer" kindref="compound" tooltip="Interface for importing external libraries.">sbILibraryImporter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="125"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="127"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>Attributes.</highlight></codeline>
+<codeline lineno="128"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="129"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryType<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Library<sp/>type.</highlight></codeline>
+<codeline lineno="130"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryReadableType<sp/><sp/><sp/><sp/><sp/><sp/>Readable<sp/>library<sp/>type.</highlight></codeline>
+<codeline lineno="131"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryDefaultFileName<sp/><sp/><sp/>Default<sp/>library<sp/>file<sp/>name.</highlight></codeline>
+<codeline lineno="132"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryDefaultFilePath<sp/><sp/><sp/>Default<sp/>library<sp/>file<sp/>path.</highlight></codeline>
+<codeline lineno="133"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryFileExtensionList<sp/>Comma<sp/>separated<sp/>list<sp/>of<sp/>library<sp/>file<sp/>extensions.</highlight></codeline>
+<codeline lineno="134"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryPreviouslyImported</highlight></codeline>
+<codeline lineno="135"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>True<sp/>if<sp/>a<sp/>library<sp/>has<sp/>previously<sp/>been<sp/>imported.</highlight></codeline>
+<codeline lineno="136"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/>libraryPreviousImportPath</highlight></codeline>
+<codeline lineno="137"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>File<sp/>path<sp/>of<sp/>previously<sp/>imported<sp/>library.</highlight></codeline>
+<codeline lineno="138"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="interfacesb_i_library_importer_10d4853fa1579c2118bfa7234260936fd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryType;</highlight></codeline>
+<codeline lineno="141" refid="interfacesb_i_library_importer_137b3a2657a3c91ec13187396b18ea3f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryReadableType;</highlight></codeline>
+<codeline lineno="142" refid="interfacesb_i_library_importer_1e00ff2029f3d7cbe902338d31fd6b617" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryDefaultFileName;</highlight></codeline>
+<codeline lineno="143" refid="interfacesb_i_library_importer_12faee2e60507b60ca1603d9814a7a5b0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryDefaultFilePath;</highlight></codeline>
+<codeline lineno="144" refid="interfacesb_i_library_importer_18a0f27bb74429044dfacc376dfe41039" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryFileExtensionList;</highlight></codeline>
+<codeline lineno="145" refid="interfacesb_i_library_importer_1e83500f4a2b412dc74621b59b4c073a3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/><sp/>libraryPreviouslyImported;</highlight></codeline>
+<codeline lineno="146" refid="interfacesb_i_library_importer_1c9271f4d242746e5a727dce4509c43b1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/>libraryPreviousImportPath;</highlight></codeline>
 <codeline lineno="147"><highlight class="normal"></highlight></codeline>
 <codeline lineno="148"><highlight class="normal"></highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal">(</highlight></codeline>
-<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aLibFilePath,</highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aGUID,</highlight></codeline>
-<codeline lineno="161" refid="interfacesb_i_library_importer_1eaa60eadd56028428745b9a86688966f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aCheckForChanges);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initialize();</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>finalize();</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
 <codeline lineno="162"><highlight class="normal"></highlight></codeline>
-<codeline lineno="163"><highlight class="normal"></highlight></codeline>
-<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setListener(</highlight></codeline>
-<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_library_importer_listener" kindref="compound" tooltip="Interface for listening to library importer events.">sbILibraryImporterListener</ref><sp/><sp/><sp/>aListener);</highlight></codeline>
-<codeline lineno="172"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="173"><highlight class="normal"></highlight></codeline>
-<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref><sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal">(</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aLibFilePath,</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aGUID,</highlight></codeline>
+<codeline lineno="177" refid="interfacesb_i_library_importer_10df6412ae951df9824a986af41e2a741" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aCheckForChanges);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setListener(</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_library_importer_listener" kindref="compound" tooltip="Interface for listening to library importer events.">sbILibraryImporterListener</ref><sp/><sp/><sp/>aListener);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal">[scriptable,<sp/>uuid(81c027cd-1c4d-42d7-8b70-134cba5175a1)]</highlight></codeline>
+<codeline lineno="204" refid="interfacesb_i_library_importer_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_importer_manager" kindref="compound">sbILibraryImporterManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="205"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="210" refid="interfacesb_i_library_importer_manager_125a6d07e15cf09b528c5bebbf21e0232" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_library_importer" kindref="compound" tooltip="Interface for importing external libraries.">sbILibraryImporter</ref><sp/>defaultLibraryImporter;</highlight></codeline>
+<codeline lineno="211"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/builds/songbird/trunk/components/libraryimporter/base/public/sbILibraryImporter.idl"/>
+    <location file="c:/builds/songbird/trunk/components/mediaimport/library/base/public/sbILibraryImporter.idl"/>
   </compounddef>
 </doxygen>

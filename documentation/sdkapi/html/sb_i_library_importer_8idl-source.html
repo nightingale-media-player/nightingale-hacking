@@ -66,7 +66,7 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
-<h1>components/libraryimporter/base/public/sbILibraryImporter.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */</span>
+<h1>components/mediaimport/library/base/public/sbILibraryImporter.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */</span>
 <a name="l00002"></a>00002 <span class="comment">/* vim: set sw=2 :miv */</span>
 <a name="l00003"></a>00003 <span class="comment">/*</span>
 <a name="l00004"></a>00004 <span class="comment">//</span>
@@ -105,66 +105,84 @@
 <a name="l00037"></a>00037 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00038"></a>00038 
 <a name="l00039"></a>00039 
-<a name="l00047"></a>00047 [scriptable, uuid(7B6B4403-3FF7-4919-BAB5-F3821BA63F95)]
+<a name="l00047"></a>00047 [scriptable, uuid(D2CC37F4-A5DB-4226-966F-C51A9AE5686F)]
 <a name="l00048"></a><a class="code" href="interfacesb_i_library_importer_listener.html">00048</a> interface <a class="code" href="interfacesb_i_library_importer_listener.html" title="Interface for listening to library importer events.">sbILibraryImporterListener</a> : nsISupports
 <a name="l00049"></a>00049 {
-<a name="l00055"></a>00055     <span class="keywordtype">void</span> onFirstRun();
-<a name="l00056"></a>00056 
-<a name="l00057"></a>00057 
-<a name="l00067"></a>00067     <span class="keywordtype">void</span> onLibraryChanged(
-<a name="l00068"></a>00068         in AString                  aLibFilePath,
-<a name="l00069"></a>00069         in AString                  aGUID);
+<a name="l00059"></a>00059     <span class="keywordtype">void</span> onLibraryChanged(
+<a name="l00060"></a>00060         in AString                  aLibFilePath,
+<a name="l00061"></a>00061         in AString                  aGUID);
+<a name="l00062"></a>00062 
+<a name="l00063"></a>00063 
+<a name="l00069"></a>00069     <span class="keywordtype">void</span> onImportError();
 <a name="l00070"></a>00070 
 <a name="l00071"></a>00071 
-<a name="l00077"></a>00077     <span class="keywordtype">void</span> onImportError();
-<a name="l00078"></a>00078 
-<a name="l00079"></a>00079 
-<a name="l00089"></a>00089     <span class="keywordtype">void</span> onNonExistentMedia(
-<a name="l00090"></a>00090         in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>            aNonExistentMediaCount,
-<a name="l00091"></a>00091         in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>            aTrackCount);
+<a name="l00081"></a>00081     <span class="keywordtype">void</span> onNonExistentMedia(
+<a name="l00082"></a>00082         in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>            aNonExistentMediaCount,
+<a name="l00083"></a>00083         in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>            aTrackCount);
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085 
+<a name="l00091"></a>00091     <span class="keywordtype">void</span> onUnsupportedMedia();
 <a name="l00092"></a>00092 
 <a name="l00093"></a>00093 
-<a name="l00099"></a>00099     <span class="keywordtype">void</span> onUnsupportedMedia();
-<a name="l00100"></a>00100 
-<a name="l00101"></a>00101 
-<a name="l00116"></a>00116     AString onDirtyPlaylist(
-<a name="l00117"></a>00117         in AString                  aPlaylistName,
-<a name="l00118"></a>00118         out <span class="keywordtype">boolean</span>                 aApplyAll);
-<a name="l00119"></a>00119 };
-<a name="l00120"></a>00120 
-<a name="l00121"></a>00121 
-<a name="l00129"></a>00129 [scriptable, uuid(DBB06C29-EA16-4D9E-9E1E-0E83737DF26F)]
-<a name="l00130"></a><a class="code" href="interfacesb_i_library_importer.html">00130</a> interface <a class="code" href="interfacesb_i_library_importer.html" title="Interface for importing external libraries.">sbILibraryImporter</a> : nsISupports
-<a name="l00131"></a>00131 {
-<a name="l00132"></a>00132     <span class="comment">/*</span>
-<a name="l00133"></a>00133 <span class="comment">     * Attributes.</span>
-<a name="l00134"></a>00134 <span class="comment">     *</span>
-<a name="l00135"></a>00135 <span class="comment">     * libraryType              Library type.</span>
-<a name="l00136"></a>00136 <span class="comment">     * libraryReadableType      Readable library type.</span>
-<a name="l00137"></a>00137 <span class="comment">     * libraryDefaultFileName   Default library file name.</span>
-<a name="l00138"></a>00138 <span class="comment">     * libraryDefaultFilePath   Default library file path.</span>
-<a name="l00139"></a>00139 <span class="comment">     * libraryFileExtensionList Comma separated list of library file extensions.</span>
-<a name="l00140"></a>00140 <span class="comment">     */</span>
-<a name="l00141"></a>00141 
-<a name="l00142"></a><a class="code" href="interfacesb_i_library_importer.html#0d4853fa1579c2118bfa7234260936fd">00142</a>     readonly attribute AString  libraryType;
-<a name="l00143"></a><a class="code" href="interfacesb_i_library_importer.html#37b3a2657a3c91ec13187396b18ea3f5">00143</a>     readonly attribute AString  libraryReadableType;
-<a name="l00144"></a><a class="code" href="interfacesb_i_library_importer.html#e00ff2029f3d7cbe902338d31fd6b617">00144</a>     readonly attribute AString  libraryDefaultFileName;
-<a name="l00145"></a><a class="code" href="interfacesb_i_library_importer.html#2faee2e60507b60ca1603d9814a7a5b0">00145</a>     readonly attribute AString  libraryDefaultFilePath;
-<a name="l00146"></a><a class="code" href="interfacesb_i_library_importer.html#8a0f27bb74429044dfacc376dfe41039">00146</a>     readonly attribute AString  libraryFileExtensionList;
+<a name="l00108"></a>00108     AString onDirtyPlaylist(
+<a name="l00109"></a>00109         in AString                  aPlaylistName,
+<a name="l00110"></a>00110         out <span class="keywordtype">boolean</span>                 aApplyAll);
+<a name="l00111"></a>00111 };
+<a name="l00112"></a>00112 
+<a name="l00113"></a>00113 
+<a name="l00121"></a>00121 interface <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a>;
+<a name="l00122"></a>00122 
+<a name="l00123"></a>00123 [scriptable, uuid(04E3F8E9-70F4-4129-9A74-CEC88A8AEE93)]
+<a name="l00124"></a><a class="code" href="interfacesb_i_library_importer.html">00124</a> interface <a class="code" href="interfacesb_i_library_importer.html" title="Interface for importing external libraries.">sbILibraryImporter</a> : nsISupports
+<a name="l00125"></a>00125 {
+<a name="l00126"></a>00126     <span class="comment">/*</span>
+<a name="l00127"></a>00127 <span class="comment">     * Attributes.</span>
+<a name="l00128"></a>00128 <span class="comment">     *</span>
+<a name="l00129"></a>00129 <span class="comment">     * libraryType              Library type.</span>
+<a name="l00130"></a>00130 <span class="comment">     * libraryReadableType      Readable library type.</span>
+<a name="l00131"></a>00131 <span class="comment">     * libraryDefaultFileName   Default library file name.</span>
+<a name="l00132"></a>00132 <span class="comment">     * libraryDefaultFilePath   Default library file path.</span>
+<a name="l00133"></a>00133 <span class="comment">     * libraryFileExtensionList Comma separated list of library file extensions.</span>
+<a name="l00134"></a>00134 <span class="comment">     * libraryPreviouslyImported</span>
+<a name="l00135"></a>00135 <span class="comment">     *                          True if a library has previously been imported.</span>
+<a name="l00136"></a>00136 <span class="comment">     * libraryPreviousImportPath</span>
+<a name="l00137"></a>00137 <span class="comment">     *                          File path of previously imported library.</span>
+<a name="l00138"></a>00138 <span class="comment">     */</span>
+<a name="l00139"></a>00139 
+<a name="l00140"></a><a class="code" href="interfacesb_i_library_importer.html#0d4853fa1579c2118bfa7234260936fd">00140</a>     readonly attribute AString  libraryType;
+<a name="l00141"></a><a class="code" href="interfacesb_i_library_importer.html#37b3a2657a3c91ec13187396b18ea3f5">00141</a>     readonly attribute AString  libraryReadableType;
+<a name="l00142"></a><a class="code" href="interfacesb_i_library_importer.html#e00ff2029f3d7cbe902338d31fd6b617">00142</a>     readonly attribute AString  libraryDefaultFileName;
+<a name="l00143"></a><a class="code" href="interfacesb_i_library_importer.html#2faee2e60507b60ca1603d9814a7a5b0">00143</a>     readonly attribute AString  libraryDefaultFilePath;
+<a name="l00144"></a><a class="code" href="interfacesb_i_library_importer.html#8a0f27bb74429044dfacc376dfe41039">00144</a>     readonly attribute AString  libraryFileExtensionList;
+<a name="l00145"></a><a class="code" href="interfacesb_i_library_importer.html#e83500f4a2b412dc74621b59b4c073a3">00145</a>     readonly attribute <span class="keywordtype">boolean</span>  libraryPreviouslyImported;
+<a name="l00146"></a><a class="code" href="interfacesb_i_library_importer.html#c9271f4d242746e5a727dce4509c43b1">00146</a>     readonly attribute AString  libraryPreviousImportPath;
 <a name="l00147"></a>00147 
 <a name="l00148"></a>00148 
-<a name="l00158"></a>00158     <span class="keywordtype">void</span> <span class="keyword">import</span>(
-<a name="l00159"></a>00159         in AString                  aLibFilePath,
-<a name="l00160"></a>00160         in AString                  aGUID,
-<a name="l00161"></a><a class="code" href="interfacesb_i_library_importer.html#eaa60eadd56028428745b9a86688966f">00161</a>         in <span class="keywordtype">boolean</span>                  aCheckForChanges);
+<a name="l00153"></a>00153     <span class="keywordtype">void</span> initialize();
+<a name="l00154"></a>00154 
+<a name="l00155"></a>00155 
+<a name="l00160"></a>00160     <span class="keywordtype">void</span> finalize();
+<a name="l00161"></a>00161 
 <a name="l00162"></a>00162 
-<a name="l00163"></a>00163 
-<a name="l00170"></a>00170     <span class="keywordtype">void</span> setListener(
-<a name="l00171"></a>00171         in <a class="code" href="interfacesb_i_library_importer_listener.html" title="Interface for listening to library importer events.">sbILibraryImporterListener</a>   aListener);
-<a name="l00172"></a>00172 };
-<a name="l00173"></a>00173 
-<a name="l00174"></a>00174 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Tue Jun 24 13:28:22 2008 for Songbird by&nbsp;
+<a name="l00174"></a>00174     <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> <span class="keyword">import</span>(
+<a name="l00175"></a>00175         in AString                  aLibFilePath,
+<a name="l00176"></a>00176         in AString                  aGUID,
+<a name="l00177"></a><a class="code" href="interfacesb_i_library_importer.html#0df6412ae951df9824a986af41e2a741">00177</a>         in <span class="keywordtype">boolean</span>                  aCheckForChanges);
+<a name="l00178"></a>00178 
+<a name="l00179"></a>00179 
+<a name="l00186"></a>00186     <span class="keywordtype">void</span> setListener(
+<a name="l00187"></a>00187         in <a class="code" href="interfacesb_i_library_importer_listener.html" title="Interface for listening to library importer events.">sbILibraryImporterListener</a>   aListener);
+<a name="l00188"></a>00188 };
+<a name="l00189"></a>00189 
+<a name="l00190"></a>00190 
+<a name="l00203"></a>00203 [scriptable, uuid(81c027cd-1c4d-42d7-8b70-134cba5175a1)]
+<a name="l00204"></a><a class="code" href="interfacesb_i_library_importer_manager.html">00204</a> interface <a class="code" href="interfacesb_i_library_importer_manager.html">sbILibraryImporterManager</a> : nsISupports
+<a name="l00205"></a>00205 {
+<a name="l00210"></a><a class="code" href="interfacesb_i_library_importer_manager.html#25a6d07e15cf09b528c5bebbf21e0232">00210</a>   attribute <a class="code" href="interfacesb_i_library_importer.html" title="Interface for importing external libraries.">sbILibraryImporter</a> defaultLibraryImporter;
+<a name="l00211"></a>00211 };
+<a name="l00212"></a>00212 
+<a name="l00213"></a>00213 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:35 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

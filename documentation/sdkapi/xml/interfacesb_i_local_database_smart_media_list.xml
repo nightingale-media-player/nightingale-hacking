@@ -17,7 +17,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="90" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="90" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="100" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="100" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_182b5d711c021b3667bc0b6be7d096822" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="91" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="91" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="101" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="101" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1d69946f75d1f567f996301856f47fb84" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="92" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="92" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="102" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="102" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_187b262401dcad723e879a54451dc86bc" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="94" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="94" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="104" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="104" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1a67dba2c3f6a10142a4c977b16f81b9b" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -73,7 +73,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="95" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="95" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="105" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="105" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_14b4d700fd0135fb019f75ec85c27a026" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -87,7 +87,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="96" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="96" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="106" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="106" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_16aafe218f6db5dad2fd6808c954e2638" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -101,7 +101,77 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="97" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="97" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="107" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1b8c76a0d81640a468fe373aa98f4e834" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::AUTOUPDATE_NEVER</definition>
+        <argsstring></argsstring>
+        <name>AUTOUPDATE_NEVER</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="109" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_15bb18b826c4f5f068457d84b64fa1532" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::AUTOUPDATE_WHENDISPLAYED</definition>
+        <argsstring></argsstring>
+        <name>AUTOUPDATE_WHENDISPLAYED</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="110" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_15eb06151c6c4070144920170db557683" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::AUTOUPDATE_LIVE</definition>
+        <argsstring></argsstring>
+        <name>AUTOUPDATE_LIVE</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="111" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1b5f4a7b835d9788afa4924652ddd2c97" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::NOTEXISTS_ASZERO</definition>
+        <argsstring></argsstring>
+        <name>NOTEXISTS_ASZERO</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="113" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1389d27f6c2c947ecc78e9922340b5062" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbILocalDatabaseSmartMediaList::NOTEXISTS_ASNULL</definition>
+        <argsstring></argsstring>
+        <name>NOTEXISTS_ASNULL</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="114" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="114" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1a987b5747c8a203a3dff25799d87c15b" prot="public" static="no" mutable="no">
         <type>attribute unsigned long</type>
@@ -114,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="102" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="102" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="119" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="119" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1dd6a19a6dffe7291f38a78eee7d31e22" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -127,7 +197,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="107" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="107" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="124" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="124" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_10231d65eee24412bde1d76f43d3884fa" prot="public" static="no" mutable="no">
         <type>attribute unsigned long</type>
@@ -140,7 +210,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="112" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="112" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="129" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="129" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_17fd3a362c93b122e43ab9dc5c50f5ec0" prot="public" static="no" mutable="no">
         <type>attribute unsigned long long</type>
@@ -153,7 +223,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="117" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="117" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="134" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="134" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_18e8866dc60505cc649e8dc1b4fe037f2" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -166,7 +236,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="122" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="122" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="139" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="139" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_17cda6d768041f7abd8899ba75d9c1f0c" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -179,7 +249,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="128" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="128" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="145" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="145" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1e6d90ed82182954e774c1e47caba96e7" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -192,27 +262,40 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="133" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="133" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="150" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="150" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1b66c68e1a43f61ef6f50936409d45002" prot="public" static="no" mutable="no">
-        <type>attribute boolean</type>
-        <definition>attribute boolean sbILocalDatabaseSmartMediaList::liveUpdate</definition>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1b23fec9c81476796d6cd0e6d8d21ef15" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long</type>
+        <definition>attribute unsigned long sbILocalDatabaseSmartMediaList::autoUpdateMode</definition>
         <argsstring></argsstring>
-        <name>liveUpdate</name>
+        <name>autoUpdateMode</name>
         <briefdescription>
-<para>Should this smart media list automatically update itself when the library changes? </para>        </briefdescription>
+<para>The update mode for this smart media list. Possible values are:. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>AUTOUPDATE_NEVER : the list is never updated automatically AUTOUPDATE_WHENDISPLAYED : the list is updated whenever it is displayed AUTOUPDATE_LIVE : the list is updated whenever the library changes </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="139" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="139" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="159" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_local_database_smart_media_list_1d16dab69ad505d0548b41e3fc45f57f6" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long</type>
+        <definition>attribute unsigned long sbILocalDatabaseSmartMediaList::notExistsMode</definition>
+        <argsstring></argsstring>
+        <name>notExistsMode</name>
+        <briefdescription>
+<para>How to handle non-existent properties:. </para>        </briefdescription>
+        <detaileddescription>
+<para>NOTEXISTS_ASZERO : Properties that do not exist will equal 0 for numeric fields, &quot;&quot; for text fields, FALSE for booleans, and &apos;infinitely far in the past&apos; for dates (default). NOTEXISTS_ASNULL : Properties that do not exist will not match any numeric, text, boolean or date rule. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="170" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="170" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_15acf1843072c2b5dfcff43351bcf840e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_14f1dde81cc405fe5be47891e1562221d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound">sbILocalDatabaseSmartMediaListCondition</ref></type>
         <definition>sbILocalDatabaseSmartMediaListCondition sbILocalDatabaseSmartMediaList::appendCondition</definition>
-        <argsstring>(in AString aPropertyID, in sbIPropertyOperator aOperator, in AString aLeftValue, in AString aRightValue, in boolean limit)</argsstring>
+        <argsstring>(in AString aPropertyID, in sbIPropertyOperator aOperator, in AString aLeftValue, in AString aRightValue, in AString aDisplayUnit)</argsstring>
         <name>appendCondition</name>
         <param>
           <type>in AString</type>
@@ -231,8 +314,8 @@
           <declname>aRightValue</declname>
         </param>
         <param>
-          <type>in boolean</type>
-          <declname>limit</declname>
+          <type>in AString</type>
+          <declname>aDisplayUnit</declname>
         </param>
         <briefdescription>
 <para>Add a condition or limiting condition. </para>        </briefdescription>
@@ -240,7 +323,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="149"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="180"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_134cde1d28060618df773e932866d5bd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -257,7 +340,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="154"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="185"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_1819671c482fec20afa039fc7d8fb1aa1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound">sbILocalDatabaseSmartMediaListCondition</ref></type>
@@ -274,7 +357,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="161"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="192"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_12a7e2fc1e2b261d2dd697fefd696071a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -287,7 +370,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="166"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="197"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_18edbb59cea610161c7241c2095be51f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -300,7 +383,41 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="172"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="203"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_165752cef9cc0c9c0eb8303195e4a5829" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSmartMediaList::addSmartMediaListListener</definition>
+        <argsstring>(in sbILocalDatabaseSmartMediaListListener aListener)</argsstring>
+        <name>addSmartMediaListListener</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_local_database_smart_media_list_listener" kindref="compound">sbILocalDatabaseSmartMediaListListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="205"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_smart_media_list_1de60112a2c4b52138a8a1de5821c2293" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbILocalDatabaseSmartMediaList::removeSmartMediaListListener</definition>
+        <argsstring>(in sbILocalDatabaseSmartMediaListListener aListener)</argsstring>
+        <name>removeSmartMediaListListener</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_local_database_smart_media_list_listener" kindref="compound">sbILocalDatabaseSmartMediaListListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="206"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -309,120 +426,125 @@
 <para>Methods and attributes that are specific to the smart media list are implemented here.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="409">
+      <node id="446">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="410" relation="public-inheritance">
+        <childnode refid="447" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="411">
+      <node id="448">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="410">
+      <node id="447">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="411" relation="public-inheritance">
+        <childnode refid="448" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="408">
+      <node id="445">
         <label>sbILocalDatabaseSmartMediaList</label>
         <link refid="interfacesb_i_local_database_smart_media_list"/>
-        <childnode refid="409" relation="public-inheritance">
+        <childnode refid="446" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="413">
+      <node id="450">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="414" relation="public-inheritance">
+        <childnode refid="451" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="420">
+      <node id="457">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="414" relation="usage">
+        <childnode refid="451" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="413" relation="usage">
+        <childnode refid="450" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="421">
+      <node id="458">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="417">
+      <node id="454">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="418" relation="usage">
+        <childnode refid="455" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="420" relation="usage">
+        <childnode refid="457" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="421" relation="usage">
+        <childnode refid="458" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="422" relation="usage">
+        <childnode refid="459" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="416">
+      <node id="453">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="413" relation="public-inheritance">
+        <childnode refid="450" relation="public-inheritance">
         </childnode>
-        <childnode refid="417" relation="usage">
+        <childnode refid="454" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="419" relation="usage">
+        <childnode refid="456" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="415">
+      <node id="452">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="414">
+      <node id="451">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="415" relation="public-inheritance">
+        <childnode refid="452" relation="public-inheritance">
         </childnode>
-        <childnode refid="416" relation="usage">
+        <childnode refid="453" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="412">
+      <node id="449">
         <label>sbILocalDatabaseSmartMediaList</label>
         <link refid="interfacesb_i_local_database_smart_media_list"/>
-        <childnode refid="413" relation="public-inheritance">
+        <childnode refid="450" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="418">
+      <node id="455">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="419" relation="usage">
+        <childnode refid="456" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="419">
+      <node id="456">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="422">
+      <node id="459">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="89" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="88" bodyend="173"/>
+    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" line="99" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl" bodystart="98" bodyend="207"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_16fe6be51b869ba4b97dc5274ab68813d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>add</name></member>
       <member refid="interfacesb_i_media_list_1647f0790225f9e23f83db83da1718cb4" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>addAll</name></member>
       <member refid="interfacesb_i_media_list_1f8515c51ec7849141b2682696ebfb5de" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>addListener</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_165752cef9cc0c9c0eb8303195e4a5829" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>addSmartMediaListListener</name></member>
       <member refid="interfacesb_i_media_list_13437b5aa10efd05b309d9f71868057b7" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>addSome</name></member>
-      <member refid="interfacesb_i_local_database_smart_media_list_15acf1843072c2b5dfcff43351bcf840e" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>appendCondition</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_14f1dde81cc405fe5be47891e1562221d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>appendCondition</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_15eb06151c6c4070144920170db557683" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>AUTOUPDATE_LIVE</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1b8c76a0d81640a468fe373aa98f4e834" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>AUTOUPDATE_NEVER</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_15bb18b826c4f5f068457d84b64fa1532" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>AUTOUPDATE_WHENDISPLAYED</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1b23fec9c81476796d6cd0e6d8d21ef15" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>autoUpdateMode</name></member>
       <member refid="interfacesb_i_media_list_15b727b02e89e57a15b7f78778722c4a6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>clear</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_12a7e2fc1e2b261d2dd697fefd696071a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>clearConditions</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_1dd6a19a6dffe7291f38a78eee7d31e22" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>conditionCount</name></member>
@@ -468,7 +590,6 @@
       <member refid="interfacesb_i_media_list_19900bddb359408a49158687dfcb6f20d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>LISTENER_FLAGS_ITEMMOVED</name></member>
       <member refid="interfacesb_i_media_list_134e744de3ce3931f387c6ab405c3a968" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>LISTENER_FLAGS_ITEMUPDATED</name></member>
       <member refid="interfacesb_i_media_list_110cf8a4549906ace13097775e484c2b3" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>LISTENER_FLAGS_LISTCLEARED</name></member>
-      <member refid="interfacesb_i_local_database_smart_media_list_1b66c68e1a43f61ef6f50936409d45002" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>liveUpdate</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_182b5d711c021b3667bc0b6be7d096822" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>MATCH_TYPE_ALL</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_15bbe1321375bf1a864036fb4cb0c18f6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>MATCH_TYPE_ANY</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_1d69946f75d1f567f996301856f47fb84" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>MATCH_TYPE_NONE</name></member>
@@ -476,6 +597,9 @@
       <member refid="interfacesb_i_media_item_109426f490e2fde8aecf02c2bfada0a7a" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>mediaCreated</name></member>
       <member refid="interfacesb_i_media_item_1d8fc55899ebe6d777619b12e2ccec9e2" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>mediaUpdated</name></member>
       <member refid="interfacesb_i_media_list_1eb0a00c26bfd525c8b3543da57c516d1" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>name</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1389d27f6c2c947ecc78e9922340b5062" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>NOTEXISTS_ASNULL</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1b5f4a7b835d9788afa4924652ddd2c97" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>NOTEXISTS_ASZERO</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1d16dab69ad505d0548b41e3fc45f57f6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>notExistsMode</name></member>
       <member refid="interfacesb_i_media_item_144f6159371d8779fea4a05ee75a54c8f" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>openInputStream</name></member>
       <member refid="interfacesb_i_media_item_1f9e5e1ec817d1cf04696332c2ee55f95" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>openInputStreamAsync</name></member>
       <member refid="interfacesb_i_media_item_15894f5aedd040fa0ed26cc578544d7d6" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>openOutputStream</name></member>
@@ -486,6 +610,7 @@
       <member refid="interfacesb_i_media_list_148c9653c3324dfe0a1dedb4b6307ea29" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>removeByIndex</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_134cde1d28060618df773e932866d5bd0" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>removeConditionAt</name></member>
       <member refid="interfacesb_i_media_list_137a3275d1ea302a95b706a31413e3084" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>removeListener</name></member>
+      <member refid="interfacesb_i_local_database_smart_media_list_1de60112a2c4b52138a8a1de5821c2293" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>removeSmartMediaListListener</name></member>
       <member refid="interfacesb_i_media_list_122c907e9dbc8abb40bd4f8e63e9b935d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>removeSome</name></member>
       <member refid="interfacesb_i_media_list_154a8cc70b3884a1fe8c8b5f38437b9c3" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>runInBatchMode</name></member>
       <member refid="interfacesb_i_local_database_smart_media_list_17cda6d768041f7abd8899ba75d9c1f0c" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>selectDirection</name></member>
@@ -497,6 +622,7 @@
       <member refid="interfacesb_i_media_list_1687bc602daf1ac786a7a0049b939c736" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>type</name></member>
       <member refid="interfacesb_i_library_resource_1377285cd148468c9550954df62ecad13" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>updated</name></member>
       <member refid="interfacesb_i_library_resource_1faa01b7805181fabba68fd9a721e7d3d" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>userEditable</name></member>
+      <member refid="interfacesb_i_media_list_1d79e1478f69e0d8ba8bed29364d5fb13" prot="public" virt="non-virtual"><scope>sbILocalDatabaseSmartMediaList</scope><name>userEditableContent</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

@@ -4,13 +4,13 @@
     <compoundname>sbIServicePaneService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="535">
+      <node id="557">
         <label>components/servicepane/public/sbIServicePaneService.idl</label>
         <link refid="sbIServicePaneService.idl"/>
-        <childnode refid="536" relation="include">
+        <childnode refid="558" relation="include">
         </childnode>
       </node>
-      <node id="536">
+      <node id="558">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

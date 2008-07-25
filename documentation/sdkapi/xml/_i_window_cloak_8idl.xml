@@ -4,13 +4,13 @@
     <compoundname>IWindowCloak.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="180">
+      <node id="177">
         <label>components/integration/public/IWindowCloak.idl</label>
         <link refid="IWindowCloak.idl"/>
-        <childnode refid="181" relation="include">
+        <childnode refid="178" relation="include">
         </childnode>
       </node>
-      <node id="181">
+      <node id="178">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

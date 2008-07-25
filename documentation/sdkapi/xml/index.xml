@@ -40,6 +40,8 @@
     <member refid="interfacesb_i_bookmarks_12afc193a92025c64461f14e56cd6677c" kind="function"><name>bookmarkExists</name></member>
   </compound>
   <compound refid="interfacesb_i_boolean_property_info" kind="interface"><name>sbIBooleanPropertyInfo</name>
+    <member refid="interfacesb_i_boolean_property_info_15b7f5a786c642b38279256743c7eb9b4" kind="variable"><name>OPERATOR_ISTRUE</name></member>
+    <member refid="interfacesb_i_boolean_property_info_187ad1c5fd6207a585c71cc86ec801fd3" kind="variable"><name>OPERATOR_ISFALSE</name></member>
   </compound>
   <compound refid="interfacesb_i_bundle" kind="interface"><name>sbIBundle</name>
     <member refid="interfacesb_i_bundle_1ab230f95877fef905b7f4d4122056e76" kind="variable"><name>bundleId</name></member>
@@ -90,6 +92,7 @@
     <member refid="interfacesb_i_cascade_filter_set_1b8c664b0441fb66e9d67bbcc4d22cc76" kind="function"><name>remove</name></member>
     <member refid="interfacesb_i_cascade_filter_set_1aedc21c8d4ae9515dd6e8c5bfefc2342" kind="function"><name>changeFilter</name></member>
     <member refid="interfacesb_i_cascade_filter_set_17c5f6c345297156eae8a0bb10c9e4dcf" kind="function"><name>set</name></member>
+    <member refid="interfacesb_i_cascade_filter_set_142523b0f3c9f2a18ed0a9552ae232343" kind="function"><name>get</name></member>
     <member refid="interfacesb_i_cascade_filter_set_150ee89f372646f684770cf63e9ec4f4e" kind="function"><name>clearAll</name></member>
     <member refid="interfacesb_i_cascade_filter_set_177fef30be97b844909e6616440561d96" kind="function"><name>getValues</name></member>
     <member refid="interfacesb_i_cascade_filter_set_1aa9b6b3bb42777d92aae27e7ac6e5ca3" kind="function"><name>getValueAt</name></member>
@@ -122,6 +125,10 @@
     <member refid="interfacesb_i_clickable_property_info_1fb8ff701c95bc01aca7a1d56975d5b8f" kind="function"><name>isDisabled</name></member>
     <member refid="interfacesb_i_clickable_property_info_1c017715d79b8755c70194a37be9bf1a7" kind="function"><name>hitTest</name></member>
     <member refid="interfacesb_i_clickable_property_info_14661b9394d57a3f3d91b4dc1373da5a1" kind="function"><name>getValueForClick</name></member>
+  </compound>
+  <compound refid="interfacesb_i_clipboard_helper" kind="interface"><name>sbIClipboardHelper</name>
+    <member refid="interfacesb_i_clipboard_helper_10f7bb45862c04e942e5369f09f7cdce3" kind="function"><name>copyImageFromClipboard</name></member>
+    <member refid="interfacesb_i_clipboard_helper_11f229b3cb4249875ad7fbad902d83b4b" kind="function"><name>pasteImageToClipboard</name></member>
   </compound>
   <compound refid="interfacesb_i_command_line_flag_handler" kind="interface"><name>sbICommandLineFlagHandler</name>
     <member refid="interfacesb_i_command_line_flag_handler_1edcd16eed0f54c24fe72b3bb7641a57e" kind="function"><name>handleFlag</name></member>
@@ -156,8 +163,8 @@
     <member refid="interfacesb_i_core_wrapper_14251e6473e082d92bd6dff79555e6a6b" kind="function"><name>goFullscreen</name></member>
     <member refid="interfacesb_i_core_wrapper_156719bd6b89638ac0a0ac04e193e38ca" kind="function"><name>getId</name></member>
     <member refid="interfacesb_i_core_wrapper_1a1898e1ee3622191574c97f5c4ae62bc" kind="function"><name>setId</name></member>
-    <member refid="interfacesb_i_core_wrapper_11656e0ab0d6b0b556f372aa55952ab90" kind="function"><name>getObject</name></member>
-    <member refid="interfacesb_i_core_wrapper_14aa009b8e9732542335fcc96dd11c2b4" kind="function"><name>setObject</name></member>
+    <member refid="interfacesb_i_core_wrapper_1e3ae897fe7cc4c63d5156485dcb83edd" kind="function"><name>getObject</name></member>
+    <member refid="interfacesb_i_core_wrapper_1dfb86a64c45d5996d5559cafa5a2158a" kind="function"><name>setObject</name></member>
     <member refid="interfacesb_i_core_wrapper_1b0b4d7d8d1ea9aae9d91d0afe367e7c3" kind="function"><name>playURL</name></member>
     <member refid="interfacesb_i_core_wrapper_1fd29002a7bf70f65a8fa367e456ed2f3" kind="function"><name>play</name></member>
     <member refid="interfacesb_i_core_wrapper_1210849d716d88fe169e5360fae51ddd4" kind="function"><name>stop</name></member>
@@ -250,17 +257,23 @@
     <member refid="interfacesb_i_data_remote_1dd8c1462647c5694b3d59aed441af7e0" kind="function"><name>bindAttribute</name></member>
   </compound>
   <compound refid="interfacesb_i_datetime_property_info" kind="interface"><name>sbIDatetimePropertyInfo</name>
+    <member refid="interfacesb_i_datetime_property_info_14b8ef6b701605db4c6caea25e1d6ed65" kind="variable"><name>OPERATOR_INTHELAST</name></member>
+    <member refid="interfacesb_i_datetime_property_info_16c91319aedfb36d2ecc3345fe9fd1e85" kind="variable"><name>OPERATOR_NOTINTHELAST</name></member>
+    <member refid="interfacesb_i_datetime_property_info_1db6dbb32d4859fb6038322d939ecc01f" kind="variable"><name>OPERATOR_ONDATE</name></member>
+    <member refid="interfacesb_i_datetime_property_info_18ecb68c207bb57d2b3306923c3325cd2" kind="variable"><name>OPERATOR_NOTONDATE</name></member>
+    <member refid="interfacesb_i_datetime_property_info_1ad0115a154726a2e1bbf689ac99e23df" kind="variable"><name>OPERATOR_BEFOREDATE</name></member>
+    <member refid="interfacesb_i_datetime_property_info_11cf92f73ac101b8c0131385e9103da5b" kind="variable"><name>OPERATOR_BEFOREORONDATE</name></member>
+    <member refid="interfacesb_i_datetime_property_info_1e19482386df6e9da9ed0ec44d134fbd4" kind="variable"><name>OPERATOR_AFTERDATE</name></member>
+    <member refid="interfacesb_i_datetime_property_info_1c14c18b557c4174a773760045b007830" kind="variable"><name>OPERATOR_AFTERORONDATE</name></member>
+    <member refid="interfacesb_i_datetime_property_info_15135f608959c9781dd95a134ae7958d9" kind="variable"><name>OPERATOR_BETWEENDATES</name></member>
     <member refid="interfacesb_i_datetime_property_info_13c03cfc66ea09935fc4441d335ebfb74" kind="variable"><name>TIMETYPE_UNINITIALIZED</name></member>
     <member refid="interfacesb_i_datetime_property_info_1be95a145b9f78009b7986037cc8ab6b1" kind="variable"><name>TIMETYPE_DATE</name></member>
     <member refid="interfacesb_i_datetime_property_info_1f27102ee8ddab1ebbb67dd517d76746e" kind="variable"><name>TIMETYPE_TIME</name></member>
     <member refid="interfacesb_i_datetime_property_info_1f8448b6e7e8f735e03c0278c7bd7ef64" kind="variable"><name>TIMETYPE_DATETIME</name></member>
-    <member refid="interfacesb_i_datetime_property_info_1532581492499bc56f497c458cfdb3a4f" kind="variable"><name>TIMETYPE_DURATION</name></member>
     <member refid="interfacesb_i_datetime_property_info_18d6827a42cbb766b64d300cef7e455a3" kind="variable"><name>TIMETYPE_TIMESTAMP</name></member>
     <member refid="interfacesb_i_datetime_property_info_1a700e6a6b9df6f102c6716f2b7338300" kind="variable"><name>timeType</name></member>
-    <member refid="interfacesb_i_datetime_property_info_1659d08db75de0c036002f0eaf2b32c28" kind="variable"><name>minTime</name></member>
-    <member refid="interfacesb_i_datetime_property_info_1df244c8fba02d2d3decfc708895409f9" kind="variable"><name>maxTime</name></member>
-    <member refid="interfacesb_i_datetime_property_info_16e5f1bcef1d1ce389d9320c5bede28e2" kind="variable"><name>durationInverse</name></member>
-    <member refid="interfacesb_i_datetime_property_info_1c75a17f3cb2148dd5fe46a1d00545a63" kind="variable"><name>durationWithMilliseconds</name></member>
+    <member refid="interfacesb_i_datetime_property_info_16d65de03334baf409972f915fcd902b7" kind="variable"><name>minDateTime</name></member>
+    <member refid="interfacesb_i_datetime_property_info_11a49e68d1f8e910be2f62d304b2ed660" kind="variable"><name>maxDateTime</name></member>
   </compound>
   <compound refid="interfacesb_i_device" kind="interface"><name>sbIDevice</name>
     <member refid="interfacesb_i_device_10ec1721b04be6d0dff919299f9928a7d" kind="variable"><name>name</name></member>
@@ -609,6 +622,18 @@
     <member refid="interfacesb_i_device_status_112228779b15826100b39dacf3bd7a51e" kind="variable"><name>mediaList</name></member>
     <member refid="interfacesb_i_device_status_117a06c156ff0f52d366f9d89b919e9da" kind="function"><name>init</name></member>
   </compound>
+  <compound refid="interfacesb_i_directory_import_job" kind="interface"><name>sbIDirectoryImportJob</name>
+    <member refid="interfacesb_i_directory_import_job_124d3dac3243f040987693f124a935f50" kind="variable"><name>totalAddedToMediaList</name></member>
+    <member refid="interfacesb_i_directory_import_job_189f555885cea47f2080f884eb0cf55bb" kind="variable"><name>totalAddedToLibrary</name></member>
+    <member refid="interfacesb_i_directory_import_job_12c0cbb951b0434c07aa11e311627284f" kind="variable"><name>totalDuplicates</name></member>
+    <member refid="interfacesb_i_directory_import_job_1a344ab7c03dacf39e04b3a2c87530b83" kind="variable"><name>targetMediaList</name></member>
+    <member refid="interfacesb_i_directory_import_job_18e0338ccb56be9461ef9665e305bfa02" kind="variable"><name>targetIndex</name></member>
+    <member refid="interfacesb_i_directory_import_job_1b78abac9831986428643e1bc7c8d7a23" kind="function"><name>enumerateNewItemsOnly</name></member>
+    <member refid="interfacesb_i_directory_import_job_17fe4ebc788b183ec48e47b6393eeb8c9" kind="function"><name>enumerateAllItems</name></member>
+  </compound>
+  <compound refid="interfacesb_i_directory_import_service" kind="interface"><name>sbIDirectoryImportService</name>
+    <member refid="interfacesb_i_directory_import_service_18f8fa3aa3bedee13900754c4cdce49fa" kind="variable"><name>sbIDirectoryImportJob</name></member>
+  </compound>
   <compound refid="interfacesb_i_display_pane_content_info" kind="interface"><name>sbIDisplayPaneContentInfo</name>
     <member refid="interfacesb_i_display_pane_content_info_102b9a18bc67263a7060ae83070405d95" kind="variable"><name>contentUrl</name></member>
     <member refid="interfacesb_i_display_pane_content_info_1136cd514433e497dc3b501718f88201e" kind="variable"><name>contentTitle</name></member>
@@ -676,6 +701,12 @@
     <member refid="interfacesb_i_download_device_helper_16518dcc046d6cd45dc6d07bb39b9c0f6" kind="function"><name>downloadSome</name></member>
     <member refid="interfacesb_i_download_device_helper_1deccc18dc7e00f4189393a698e1e652e" kind="function"><name>downloadAll</name></member>
   </compound>
+  <compound refid="interfacesb_i_duration_property_info" kind="interface"><name>sbIDurationPropertyInfo</name>
+    <member refid="interfacesb_i_duration_property_info_11c1a23ad545e271f4ddf31cea0c0b3b8" kind="variable"><name>minDuration</name></member>
+    <member refid="interfacesb_i_duration_property_info_13c6a2993ad4229c4982996d30fb14c7c" kind="variable"><name>maxDuration</name></member>
+    <member refid="interfacesb_i_duration_property_info_15519a4049a4b780c68a1223d7a70cbcf" kind="variable"><name>durationInverse</name></member>
+    <member refid="interfacesb_i_duration_property_info_1e2da45fda8285ec5738b81612fa3603e" kind="variable"><name>durationWithMilliseconds</name></member>
+  </compound>
   <compound refid="interfacesb_i_faceplate_manager" kind="interface"><name>sbIFaceplateManager</name>
     <member refid="interfacesb_i_faceplate_manager_105e4bc17ebe97cf1476ccc0c91e0727a" kind="variable"><name>paneCount</name></member>
     <member refid="interfacesb_i_faceplate_manager_1545cf70bbb71ce151fd93679f93b6316" kind="function"><name>showPane</name></member>
@@ -736,6 +767,28 @@
     <member refid="interfacesb_i_feathers_manager_listener_129c526c7d75a44a89bc0ecdf1865afcc" kind="function"><name>onFeathersSelectRequest</name></member>
     <member refid="interfacesb_i_feathers_manager_listener_1c75aa023f570a6424b6b9378cbba4905" kind="function"><name>onFeathersSelectComplete</name></member>
   </compound>
+  <compound refid="interfacesb_i_file_downloader" kind="interface"><name>sbIFileDownloader</name>
+    <member refid="interfacesb_i_file_downloader_1655f80c155079001dfa89dfc32482a11" kind="variable"><name>bytesToDownload</name></member>
+    <member refid="interfacesb_i_file_downloader_12d2f167e4d23d6b83f7548006a3333f7" kind="variable"><name>bytesDownloaded</name></member>
+    <member refid="interfacesb_i_file_downloader_110dbbd6bb0c58c9e4cec05028501943a" kind="variable"><name>percentComplete</name></member>
+    <member refid="interfacesb_i_file_downloader_1deafee61a84f903a94ecaf7c020a271e" kind="variable"><name>complete</name></member>
+    <member refid="interfacesb_i_file_downloader_1ee7c32fb9c8436dd5a9ecb1d5f5830fc" kind="variable"><name>succeeded</name></member>
+    <member refid="interfacesb_i_file_downloader_1d05981c53c659411b385113d7c2dcf20" kind="variable"><name>listener</name></member>
+    <member refid="interfacesb_i_file_downloader_1c3518e8c99aec00d4f69cd2cdcf5e836" kind="variable"><name>sourceURI</name></member>
+    <member refid="interfacesb_i_file_downloader_1f30acde6d5f1063dd7cfe4395d4e3b19" kind="variable"><name>sourceURISpec</name></member>
+    <member refid="interfacesb_i_file_downloader_1a93c1ddcf18e7bef56929be88d76c41f" kind="variable"><name>destinationFile</name></member>
+    <member refid="interfacesb_i_file_downloader_1c143f08256d355bb31c00a623d839a1d" kind="variable"><name>destinationFileExtension</name></member>
+    <member refid="interfacesb_i_file_downloader_14d6925a0bec57ab2350df4ca051c03e2" kind="function"><name>start</name></member>
+    <member refid="interfacesb_i_file_downloader_14e94676cc15b713e932f6d42c055a316" kind="function"><name>cancel</name></member>
+  </compound>
+  <compound refid="interfacesb_i_file_downloader_listener" kind="interface"><name>sbIFileDownloaderListener</name>
+    <member refid="interfacesb_i_file_downloader_listener_161cb27784214789bc4bf762c032d34d0" kind="function"><name>onProgress</name></member>
+    <member refid="interfacesb_i_file_downloader_listener_13bc1d9a6d7233d80119f47cb77d024e0" kind="function"><name>onComplete</name></member>
+  </compound>
+  <compound refid="interfacesb_i_file_metadata_service" kind="interface"><name>sbIFileMetadataService</name>
+    <member refid="interfacesb_i_file_metadata_service_1233d09ea939b1d88be9b9955e20df728" kind="function"><name>read</name></member>
+    <member refid="interfacesb_i_file_metadata_service_1e098ef2b0c00c7f8775fdbd82cacce83" kind="function"><name>write</name></member>
+  </compound>
   <compound refid="interfacesb_i_file_observer" kind="interface"><name>sbIFileObserver</name>
   </compound>
   <compound refid="interfacesb_i_file_scan" kind="interface"><name>sbIFileScan</name>
@@ -788,6 +841,66 @@
     <member refid="interfacesb_i_global_hotkeys_16ac24c884fd8596d954f12a9ab9f9d70" kind="function"><name>removeHotkey</name></member>
     <member refid="interfacesb_i_global_hotkeys_11035102519c33b5dcfcbd60be299feef" kind="function"><name>removeAllHotkeys</name></member>
   </compound>
+  <compound refid="interfacesb_i_g_streamer_event" kind="interface"><name>sbIGStreamerEvent</name>
+    <member refid="interfacesb_i_g_streamer_event_1ce199457bd7d56205946f5f3e481e3e3" kind="variable"><name>EVENT_ERROR_FIRST</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1f971444e587edeaba9167836f10d0bde" kind="variable"><name>EVENT_ERROR_CORE_BASE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1261e62cdeb7c1bccd99d76426427ec38" kind="variable"><name>EVENT_ERROR_CORE_FAILED</name></member>
+    <member refid="interfacesb_i_g_streamer_event_13a85d16cf61e3ffe29f9cad3b924f22c" kind="variable"><name>EVENT_ERROR_CORE_TOO_LAZY</name></member>
+    <member refid="interfacesb_i_g_streamer_event_188955fc917a52997557b96b72cd3ca69" kind="variable"><name>EVENT_ERROR_CORE_NOT_IMPLEMENTED</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1bd75b6b7a6a7e037755cc0c2a7ee32c2" kind="variable"><name>EVENT_ERROR_CORE_STATE_CHANGE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1bac8f4ac62f3d7faf89f1c2339df81d2" kind="variable"><name>EVENT_ERROR_CORE_PAD</name></member>
+    <member refid="interfacesb_i_g_streamer_event_18e4cf22abba3618491d54db3555a9d8e" kind="variable"><name>EVENT_ERROR_CORE_THREAD</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1686e6687f2b32194f2dcccca205f8a1e" kind="variable"><name>EVENT_ERROR_CORE_NEGOTIATION</name></member>
+    <member refid="interfacesb_i_g_streamer_event_162025fd5038c065f39fcd6f14aec14c7" kind="variable"><name>EVENT_ERROR_CORE_EVENT</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1c2766d97751cf192b5aef9e4f8564c86" kind="variable"><name>EVENT_ERROR_CORE_SEEK</name></member>
+    <member refid="interfacesb_i_g_streamer_event_123be1c8a5109d82c7221b3eae6161330" kind="variable"><name>EVENT_ERROR_CORE_CAPS</name></member>
+    <member refid="interfacesb_i_g_streamer_event_19f81660d884c08d070926a28125068ab" kind="variable"><name>EVENT_ERROR_CORE_TAG</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1e6e82db2eb1f4dc16dadaa55458121d6" kind="variable"><name>EVENT_ERROR_CORE_MISSING_PLUGIN</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1bf22fd5cab845a81e933453564bfe367" kind="variable"><name>EVENT_ERROR_CORE_CLOCK</name></member>
+    <member refid="interfacesb_i_g_streamer_event_14c0a7df03900980fd6d74da16bc18cf1" kind="variable"><name>EVENT_ERROR_CORE_DISABLED</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1bd01605abb23947307adc27fb87a8189" kind="variable"><name>EVENT_ERROR_LIBRARY_BASE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1e122c64b644d264f15f6915554fba747" kind="variable"><name>EVENT_ERROR_LIBRARY_FAILED</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1cfe1b8c55a658686d3cdbb9e44e7cbcd" kind="variable"><name>EVENT_ERROR_LIBRARY_TOO_LAZY</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1fcb9c6b98de29c3e5869631c86f92bfe" kind="variable"><name>EVENT_ERROR_LIBRARY_INIT</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1e484543ae6b1ecbcd07126a0d3a81534" kind="variable"><name>EVENT_ERROR_LIBRARY_SHUTDOWN</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1f0d07b46cd50731f46fa6006461fb518" kind="variable"><name>EVENT_ERROR_LIBRARY_SETTINGS</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1fbd924b61f6bdb5f86ade29ad0b19772" kind="variable"><name>EVENT_ERROR_LIBRARY_ENCODE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1e6228cd55c8a38e66b68d2870465297e" kind="variable"><name>EVENT_ERROR_RESOURCE_BASE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1dbfd0283ed0b0512f1b3d8023387686e" kind="variable"><name>EVENT_ERROR_RESOURCE_FAILED</name></member>
+    <member refid="interfacesb_i_g_streamer_event_12da1e135b41af89c4bc68406d11cb90c" kind="variable"><name>EVENT_ERROR_RESOURCE_TOO_LAZY</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1149d7d5eadd3cdcff80143361a21c39f" kind="variable"><name>EVENT_ERROR_RESOURCE_NOT_FOUND</name></member>
+    <member refid="interfacesb_i_g_streamer_event_17eeb4d71a007685dc1cdd6ae9f6a4f8c" kind="variable"><name>EVENT_ERROR_RESOURCE_BUSY</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1a088bfc23d46c0dff0723fa4abac2895" kind="variable"><name>EVENT_ERROR_RESOURCE_OPEN_READ</name></member>
+    <member refid="interfacesb_i_g_streamer_event_13baea6abe8a358ecf3bf8ba0d6ae3281" kind="variable"><name>EVENT_ERROR_RESOURCE_OPEN_WRITE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1898dc10487d4df00c0d2a462abfb0e39" kind="variable"><name>EVENT_ERROR_RESOURCE_OPEN_READ_WRITE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_12d7dc37c9b633171105eadb46112d9aa" kind="variable"><name>EVENT_ERROR_RESOURCE_CLOSE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_107908cadd5b6595595f3821006bd982f" kind="variable"><name>EVENT_ERROR_RESOURCE_READ</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1160f0ffc69c947910dce9bb0b3df080f" kind="variable"><name>EVENT_ERROR_RESOURCE_WRITE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_126bf821c3b0940e582f289b367914ffc" kind="variable"><name>EVENT_ERROR_RESOURCE_SEEK</name></member>
+    <member refid="interfacesb_i_g_streamer_event_18ffd272bb3bb1ab8e873fcd7adc0da9e" kind="variable"><name>EVENT_ERROR_RESOURCE_SYNC</name></member>
+    <member refid="interfacesb_i_g_streamer_event_115a1bea6f70f8d541a40a5d288717914" kind="variable"><name>EVENT_ERROR_RESOURCE_SETTINGS</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1e7f628d1b6144fba57ef82fd853d7d78" kind="variable"><name>EVENT_ERROR_RESOURCE_NO_SPACE_LEFT</name></member>
+    <member refid="interfacesb_i_g_streamer_event_125509d60e373e0a0b07ab8c473f450ac" kind="variable"><name>EVENT_ERROR_STREAM_BASE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_111807b992e0da9828993f1867d72288c" kind="variable"><name>EVENT_ERROR_STREAM_FAILED</name></member>
+    <member refid="interfacesb_i_g_streamer_event_12eda2a4d4024c7ac3fed66f508e0bce5" kind="variable"><name>EVENT_ERROR_STREAM_TOO_LAZY</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1bf4592ef14b8e61ffbf59fb77e8fff8a" kind="variable"><name>EVENT_ERROR_STREAM_NOT_IMPLEMENTED</name></member>
+    <member refid="interfacesb_i_g_streamer_event_16930f07d54acf8ac16b9eee577412ab7" kind="variable"><name>EVENT_ERROR_STREAM_TYPE_NOT_FOUND</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1fe656e3bbd5a383d729a0f9d51bbdb35" kind="variable"><name>EVENT_ERROR_STREAM_WRONG_TYPE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_13e685c0e523eb0e69badaed3c1798ae6" kind="variable"><name>EVENT_ERROR_STREAM_CODEC_NOT_FOUND</name></member>
+    <member refid="interfacesb_i_g_streamer_event_105da53f6f2e5ca3217140f9583a56236" kind="variable"><name>EVENT_ERROR_STREAM_DECODE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_11f497293de4d516652a245326a6f685d" kind="variable"><name>EVENT_ERROR_STREAM_ENCODE</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1262152cd2500519649eaba492d33ec37" kind="variable"><name>EVENT_ERROR_STREAM_DEMUX</name></member>
+    <member refid="interfacesb_i_g_streamer_event_11191b265cc928002991d938b76c9fd71" kind="variable"><name>EVENT_ERROR_STREAM_MUX</name></member>
+    <member refid="interfacesb_i_g_streamer_event_110ed0280ed0490f03f3892eb712d6890" kind="variable"><name>EVENT_ERROR_STREAM_FORMAT</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1eedb84bad872890dca077d385469dc78" kind="variable"><name>EVENT_ERROR_STREAM_DECRYPT</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1d9cb49ecc7ef690930524abcc5180065" kind="variable"><name>EVENT_ERROR_STREAM_DECRYPT_NOKEY</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1e27ec094400f53402745db2c4fd86e5c" kind="variable"><name>EVENT_ERROR_LAST</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1fa9fc50925104b94070d0932773892a5" kind="variable"><name>type</name></member>
+    <member refid="interfacesb_i_g_streamer_event_1ab34fc2a49c9350e8219700971e5800a" kind="variable"><name>message</name></member>
+  </compound>
+  <compound refid="interfacesb_i_g_streamer_event_listener" kind="interface"><name>sbIGStreamerEventListener</name>
+    <member refid="interfacesb_i_g_streamer_event_listener_1fc2317420411b151c602401beb0a4360" kind="function"><name>onGStreamerEvent</name></member>
+  </compound>
   <compound refid="interfacesb_i_g_streamer_inspect_handler" kind="interface"><name>sbIGStreamerInspectHandler</name>
     <member refid="interfacesb_i_g_streamer_inspect_handler_1869417f3bd69f74a22403bde92e8ddc5" kind="function"><name>beginInspect</name></member>
     <member refid="interfacesb_i_g_streamer_inspect_handler_18bd3b24ad62ea1b0dc0b9070112ff3ea" kind="function"><name>endInspect</name></member>
@@ -828,6 +941,8 @@
     <member refid="interfacesb_i_g_streamer_simple_1155cbf91dcc53844b305f83b1c00bab4" kind="function"><name>pause</name></member>
     <member refid="interfacesb_i_g_streamer_simple_181338c11b8b7b72e4676d967aa5b8a44" kind="function"><name>stop</name></member>
     <member refid="interfacesb_i_g_streamer_simple_1ad7586306e1330ffc06246ecf499d3f5" kind="function"><name>seek</name></member>
+    <member refid="interfacesb_i_g_streamer_simple_1509f8272cd29a38858df12d6df74c6bd" kind="function"><name>addEventListener</name></member>
+    <member refid="interfacesb_i_g_streamer_simple_1813a213f24c2748b7faf113a710492b0" kind="function"><name>removeEventListener</name></member>
   </compound>
   <compound refid="interfacesb_i_hotkey_action_bundle" kind="interface"><name>sbIHotkeyActionBundle</name>
     <member refid="interfacesb_i_hotkey_action_bundle_1ae0e85d107a34c751a11cac1e457a6a9" kind="variable"><name>actionCount</name></member>
@@ -943,16 +1058,22 @@
     <member refid="interfacesb_i_library_importer_1e00ff2029f3d7cbe902338d31fd6b617" kind="variable"><name>libraryDefaultFileName</name></member>
     <member refid="interfacesb_i_library_importer_12faee2e60507b60ca1603d9814a7a5b0" kind="variable"><name>libraryDefaultFilePath</name></member>
     <member refid="interfacesb_i_library_importer_18a0f27bb74429044dfacc376dfe41039" kind="variable"><name>libraryFileExtensionList</name></member>
-    <member refid="interfacesb_i_library_importer_1eaa60eadd56028428745b9a86688966f" kind="variable"><name>void</name></member>
+    <member refid="interfacesb_i_library_importer_1e83500f4a2b412dc74621b59b4c073a3" kind="variable"><name>libraryPreviouslyImported</name></member>
+    <member refid="interfacesb_i_library_importer_1c9271f4d242746e5a727dce4509c43b1" kind="variable"><name>libraryPreviousImportPath</name></member>
+    <member refid="interfacesb_i_library_importer_10df6412ae951df9824a986af41e2a741" kind="variable"><name>sbIJobProgress</name></member>
+    <member refid="interfacesb_i_library_importer_13eabf8b04d6ff049d1573974d7f3502a" kind="function"><name>initialize</name></member>
+    <member refid="interfacesb_i_library_importer_17f3f19de16574bd52c0236b36bbcdfe4" kind="function"><name>finalize</name></member>
     <member refid="interfacesb_i_library_importer_17d111172f7acfe5f6e04fdeae95f8546" kind="function"><name>setListener</name></member>
   </compound>
   <compound refid="interfacesb_i_library_importer_listener" kind="interface"><name>sbILibraryImporterListener</name>
-    <member refid="interfacesb_i_library_importer_listener_19b3dfb8dfc613a6f8ce1e7644bb8119b" kind="function"><name>onFirstRun</name></member>
     <member refid="interfacesb_i_library_importer_listener_1297c4a8756ad4009b3a8940970e1c3f8" kind="function"><name>onLibraryChanged</name></member>
     <member refid="interfacesb_i_library_importer_listener_1ad53c8d805e27eac8111fa3fd1c73a24" kind="function"><name>onImportError</name></member>
     <member refid="interfacesb_i_library_importer_listener_1611be507822b138e7c8e7f6ccfc4234a" kind="function"><name>onNonExistentMedia</name></member>
     <member refid="interfacesb_i_library_importer_listener_1845d08a10e6de7067c0ebb33f71c8efc" kind="function"><name>onUnsupportedMedia</name></member>
     <member refid="interfacesb_i_library_importer_listener_16c3c7308cb3033d39d51d2a49f641d07" kind="function"><name>onDirtyPlaylist</name></member>
+  </compound>
+  <compound refid="interfacesb_i_library_importer_manager" kind="interface"><name>sbILibraryImporterManager</name>
+    <member refid="interfacesb_i_library_importer_manager_125a6d07e15cf09b528c5bebbf21e0232" kind="variable"><name>defaultLibraryImporter</name></member>
   </compound>
   <compound refid="interfacesb_i_library_loader" kind="interface"><name>sbILibraryLoader</name>
     <member refid="interfacesb_i_library_loader_1594e5109eef93f87be0ac85bf67b4372" kind="function"><name>onRegisterStartupLibraries</name></member>
@@ -1065,6 +1186,7 @@
     <member refid="interfacesb_i_local_database_g_u_i_d_array_1939ca7e8368ef220828919ad35715cf8" kind="function"><name>getFirstIndexByPrefix</name></member>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_1bba3b93d54588f2a440627a56c0ee0e3" kind="function"><name>getFirstIndexByGuid</name></member>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_1b6a85aaafc2e675216f7dbb8255ce235" kind="function"><name>getIndexByRowid</name></member>
+    <member refid="interfacesb_i_local_database_g_u_i_d_array_1449683a98be9c44e1c9fcb64218726b9" kind="function"><name>containsGuid</name></member>
   </compound>
   <compound refid="interfacesb_i_local_database_g_u_i_d_array_listener" kind="interface"><name>sbILocalDatabaseGUIDArrayListener</name>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_listener_172e1f575e0c89993fc73e9b529e6ce71" kind="function"><name>onBeforeInvalidate</name></member>
@@ -1081,6 +1203,8 @@
     <member refid="interfacesb_i_local_database_library_1e7ba3baf8a067bc3d93de479e189a53a" kind="function"><name>NotifyListenersItemUpdated</name></member>
     <member refid="interfacesb_i_local_database_library_1145f1e62cc1c728867137baa8d3a5f2c" kind="function"><name>notifyCopyListenersItemCopied</name></member>
     <member refid="interfacesb_i_local_database_library_1a8e250f784fbbfdaff880b7ac91dcd44" kind="function"><name>createQuery</name></member>
+    <member refid="interfacesb_i_local_database_library_113cd2a1a02598a8b0d0a97a9c0b4911e" kind="function"><name>ForceBeginUpdateBatch</name></member>
+    <member refid="interfacesb_i_local_database_library_116717016f72091fb36174216cd234d95" kind="function"><name>ForceEndUpdateBatch</name></member>
   </compound>
   <compound refid="interfacesb_i_local_database_library_copy_listener" kind="interface"><name>sbILocalDatabaseLibraryCopyListener</name>
     <member refid="interfacesb_i_local_database_library_copy_listener_1794158ed80633d1617c17d3ba6126ca2" kind="function"><name>onItemCopied</name></member>
@@ -1126,6 +1250,7 @@
     <member refid="interfacesb_i_local_database_simple_media_list_1703c262b9951487bca0308d2de2c20c7" kind="function"><name>notifyListenersListCleared</name></member>
     <member refid="interfacesb_i_local_database_simple_media_list_10d722dac772c9960eade1c51a769b571" kind="function"><name>notifyListenersBatchBegin</name></member>
     <member refid="interfacesb_i_local_database_simple_media_list_10e7193fba06eca8b337efcbd276b9591" kind="function"><name>notifyListenersBatchEnd</name></member>
+    <member refid="interfacesb_i_local_database_simple_media_list_19924f3507f247adeef5e439280d22ccb" kind="function"><name>notifyContentChanged</name></member>
   </compound>
   <compound refid="interfacesb_i_local_database_smart_media_list" kind="interface"><name>sbILocalDatabaseSmartMediaList</name>
     <member refid="interfacesb_i_local_database_smart_media_list_15bbe1321375bf1a864036fb4cb0c18f6" kind="variable"><name>MATCH_TYPE_ANY</name></member>
@@ -1135,6 +1260,11 @@
     <member refid="interfacesb_i_local_database_smart_media_list_1a67dba2c3f6a10142a4c977b16f81b9b" kind="variable"><name>LIMIT_TYPE_ITEMS</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_14b4d700fd0135fb019f75ec85c27a026" kind="variable"><name>LIMIT_TYPE_USECS</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_16aafe218f6db5dad2fd6808c954e2638" kind="variable"><name>LIMIT_TYPE_BYTES</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_1b8c76a0d81640a468fe373aa98f4e834" kind="variable"><name>AUTOUPDATE_NEVER</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_15bb18b826c4f5f068457d84b64fa1532" kind="variable"><name>AUTOUPDATE_WHENDISPLAYED</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_15eb06151c6c4070144920170db557683" kind="variable"><name>AUTOUPDATE_LIVE</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_1b5f4a7b835d9788afa4924652ddd2c97" kind="variable"><name>NOTEXISTS_ASZERO</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_1389d27f6c2c947ecc78e9922340b5062" kind="variable"><name>NOTEXISTS_ASNULL</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_1a987b5747c8a203a3dff25799d87c15b" kind="variable"><name>matchType</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_1dd6a19a6dffe7291f38a78eee7d31e22" kind="variable"><name>conditionCount</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_10231d65eee24412bde1d76f43d3884fa" kind="variable"><name>limitType</name></member>
@@ -1142,19 +1272,25 @@
     <member refid="interfacesb_i_local_database_smart_media_list_18e8866dc60505cc649e8dc1b4fe037f2" kind="variable"><name>selectPropertyID</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_17cda6d768041f7abd8899ba75d9c1f0c" kind="variable"><name>selectDirection</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_1e6d90ed82182954e774c1e47caba96e7" kind="variable"><name>randomSelection</name></member>
-    <member refid="interfacesb_i_local_database_smart_media_list_1b66c68e1a43f61ef6f50936409d45002" kind="variable"><name>liveUpdate</name></member>
-    <member refid="interfacesb_i_local_database_smart_media_list_15acf1843072c2b5dfcff43351bcf840e" kind="function"><name>appendCondition</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_1b23fec9c81476796d6cd0e6d8d21ef15" kind="variable"><name>autoUpdateMode</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_1d16dab69ad505d0548b41e3fc45f57f6" kind="variable"><name>notExistsMode</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_14f1dde81cc405fe5be47891e1562221d" kind="function"><name>appendCondition</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_134cde1d28060618df773e932866d5bd0" kind="function"><name>removeConditionAt</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_1819671c482fec20afa039fc7d8fb1aa1" kind="function"><name>getConditionAt</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_12a7e2fc1e2b261d2dd697fefd696071a" kind="function"><name>clearConditions</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_18edbb59cea610161c7241c2095be51f7" kind="function"><name>rebuild</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_165752cef9cc0c9c0eb8303195e4a5829" kind="function"><name>addSmartMediaListListener</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_1de60112a2c4b52138a8a1de5821c2293" kind="function"><name>removeSmartMediaListListener</name></member>
   </compound>
   <compound refid="interfacesb_i_local_database_smart_media_list_condition" kind="interface"><name>sbILocalDatabaseSmartMediaListCondition</name>
     <member refid="interfacesb_i_local_database_smart_media_list_condition_183e0f6a31085373aa20c37dd99e6b0bd" kind="variable"><name>propertyID</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_condition_11469d0ef5822557ad66ccae1123d6a85" kind="variable"><name>operator</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_condition_1ce7ccaecdc9de5b312dbca24b7f3dc2b" kind="variable"><name>leftValue</name></member>
     <member refid="interfacesb_i_local_database_smart_media_list_condition_14175ccab9312eaf27de77d4ef479c1f2" kind="variable"><name>rightValue</name></member>
-    <member refid="interfacesb_i_local_database_smart_media_list_condition_10aed3cad7c89ebf0474f98b85ba6f28a" kind="variable"><name>limit</name></member>
+    <member refid="interfacesb_i_local_database_smart_media_list_condition_190fc35b1680598e7c305af47d4fa489b" kind="variable"><name>displayUnit</name></member>
+  </compound>
+  <compound refid="interfacesb_i_local_database_smart_media_list_listener" kind="interface"><name>sbILocalDatabaseSmartMediaListListener</name>
+    <member refid="interfacesb_i_local_database_smart_media_list_listener_10b186b79e4f30a31dbcb27bfaa478ffe" kind="function"><name>onRebuild</name></member>
   </compound>
   <compound refid="interfacesb_i_local_database_tree_view" kind="interface"><name>sbILocalDatabaseTreeView</name>
     <member refid="interfacesb_i_local_database_tree_view_1a4c891555bff25005b7fbeb8b9db6746" kind="variable"><name>MOUSE_STATE_NONE</name></member>
@@ -1184,6 +1320,11 @@
     <member refid="interfacesb_i_media_item_status_event_1cd0598b779cb5e1cb8f0f2c88b081a7c" kind="variable"><name>item</name></member>
     <member refid="interfacesb_i_media_item_status_event_1a9e3a1f4ceb3e435d8274ce8761c2bb7" kind="variable"><name>status</name></member>
   </compound>
+  <compound refid="interfacesb_i_media_items_transfer_context" kind="interface"><name>sbIMediaItemsTransferContext</name>
+    <member refid="interfacesb_i_media_items_transfer_context_1220d459bfbf3c1724895b9658927d730" kind="variable"><name>items</name></member>
+    <member refid="interfacesb_i_media_items_transfer_context_131f95cc3578723b5e84ea88030ef8d9c" kind="variable"><name>indexedItems</name></member>
+    <member refid="interfacesb_i_media_items_transfer_context_19847fbd5006cc1bb56c18ec5a22169c1" kind="function"><name>reset</name></member>
+  </compound>
   <compound refid="interfacesb_i_media_list" kind="interface"><name>sbIMediaList</name>
     <member refid="interfacesb_i_media_list_1ac5c344da31a52fc85cf7ed797cf1111" kind="variable"><name>ENUMERATIONTYPE_SNAPSHOT</name></member>
     <member refid="interfacesb_i_media_list_1c06c5fe198ada5d24ee62f7930038e1c" kind="variable"><name>ENUMERATIONTYPE_LOCKING</name></member>
@@ -1191,6 +1332,7 @@
     <member refid="interfacesb_i_media_list_1687bc602daf1ac786a7a0049b939c736" kind="variable"><name>type</name></member>
     <member refid="interfacesb_i_media_list_150ecebf0fc3f329dab91244321638a0e" kind="variable"><name>length</name></member>
     <member refid="interfacesb_i_media_list_1d022caf363793628e7ef1b96ccf67ea1" kind="variable"><name>isEmpty</name></member>
+    <member refid="interfacesb_i_media_list_1d79e1478f69e0d8ba8bed29364d5fb13" kind="variable"><name>userEditableContent</name></member>
     <member refid="interfacesb_i_media_list_1b34ff623969f79f3dab95304e42f34b3" kind="variable"><name>LISTENER_FLAGS_ITEMADDED</name></member>
     <member refid="interfacesb_i_media_list_1ebd887a26980780de64ddf4af9cf430a" kind="variable"><name>LISTENER_FLAGS_BEFOREITEMREMOVED</name></member>
     <member refid="interfacesb_i_media_list_1cdecf4b09dd4e75a52e9be77d378e6f3" kind="variable"><name>LISTENER_FLAGS_AFTERITEMREMOVED</name></member>
@@ -1250,6 +1392,9 @@
   </compound>
   <compound refid="interfacesb_i_media_list_match" kind="interface"><name>sbIMediaListMatch</name>
     <member refid="interfacesb_i_media_list_match_104cee51c63318c2c094dc71aa0b48fd3" kind="function"><name>match</name></member>
+  </compound>
+  <compound refid="interfacesb_i_media_list_transfer_context" kind="interface"><name>sbIMediaListTransferContext</name>
+    <member refid="interfacesb_i_media_list_transfer_context_1e3856721d4e3e3fc00ffef4636467f06" kind="variable"><name>list</name></member>
   </compound>
   <compound refid="interfacesb_i_media_list_view" kind="interface"><name>sbIMediaListView</name>
     <member refid="interfacesb_i_media_list_view_10c728825b5bc85265d000a68d22d56a9" kind="variable"><name>mediaList</name></member>
@@ -1373,22 +1518,15 @@
     <member refid="interfacesb_i_metadata_handler_1e8c41bfa0d481d8defed080250275c7c" kind="variable"><name>METADATA_IMAGE_TYPE_PUBLISHERLOGO</name></member>
     <member refid="interfacesb_i_metadata_handler_1a2a140a5970440aac460137619d1c673" kind="variable"><name>props</name></member>
     <member refid="interfacesb_i_metadata_handler_1978827eef884f62ce9da10d1344632a1" kind="variable"><name>completed</name></member>
+    <member refid="interfacesb_i_metadata_handler_1f5d32370ea0ee06b351d1d8db98939e4" kind="variable"><name>requiresMainThread</name></member>
     <member refid="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" kind="variable"><name>channel</name></member>
     <member refid="interfacesb_i_metadata_handler_1e458a8ab0d74624ad43d7592c9fb548d" kind="function"><name>vote</name></member>
     <member refid="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" kind="function"><name>read</name></member>
     <member refid="interfacesb_i_metadata_handler_15ebeaf138cfa866b44ad8aceccd4174c" kind="function"><name>write</name></member>
     <member refid="interfacesb_i_metadata_handler_1b8d9bf349540dc64bf2e3f819e843328" kind="function"><name>getImageData</name></member>
+    <member refid="interfacesb_i_metadata_handler_170e11b959558b9ff87ebf62f4db06c5d" kind="function"><name>setImageData</name></member>
     <member refid="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" kind="function"><name>onChannelData</name></member>
     <member refid="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" kind="function"><name>close</name></member>
-  </compound>
-  <compound refid="interfacesb_i_metadata_job" kind="interface"><name>sbIMetadataJob</name>
-    <member refid="interfacesb_i_metadata_job_156029ad63489ec9ed96a7fffa6194ae0" kind="variable"><name>JOBTYPE_READ</name></member>
-    <member refid="interfacesb_i_metadata_job_1b3491c19711d1a2849bdeecec95909e6" kind="variable"><name>JOBTYPE_WRITE</name></member>
-    <member refid="interfacesb_i_metadata_job_1304db6d7f95066ff8c8e5c7b2c47a0d6" kind="variable"><name>type</name></member>
-    <member refid="interfacesb_i_metadata_job_132e0e57e1a8e1bfc0c389a382b363e6a" kind="function"><name>append</name></member>
-  </compound>
-  <compound refid="interfacesb_i_metadata_job_manager" kind="interface"><name>sbIMetadataJobManager</name>
-    <member refid="interfacesb_i_metadata_job_manager_19f265fad62cd8cc309f4a86c89d410d1" kind="function"><name>newJob</name></member>
   </compound>
   <compound refid="interfacesb_i_metadata_manager" kind="interface"><name>sbIMetadataManager</name>
     <member refid="interfacesb_i_metadata_manager_1ae19d169e02736347d183bf89ae8ffa6" kind="function"><name>getHandlerForMediaURL</name></member>
@@ -1401,10 +1539,6 @@
   <compound refid="interfacesb_i_mock_device" kind="interface"><name>sbIMockDevice</name>
     <member refid="interfacesb_i_mock_device_10be29f002c9b1be9298cda3ceefef73f" kind="function"><name>popRequest</name></member>
     <member refid="interfacesb_i_mock_device_1756b9b3979efd7449b280db1a548d2de" kind="function"><name>peekRequest</name></member>
-  </compound>
-  <compound refid="interfacesb_i_multiple_item_transfer_context" kind="interface"><name>sbIMultipleItemTransferContext</name>
-    <member refid="interfacesb_i_multiple_item_transfer_context_1c62397ab39e4531e7a3c80c0193819d2" kind="variable"><name>items</name></member>
-    <member refid="interfacesb_i_multiple_item_transfer_context_1bbae1ea3135367d092779617091d5a36" kind="function"><name>reset</name></member>
   </compound>
   <compound refid="interfacesb_i_mutable_property_array" kind="interface"><name>sbIMutablePropertyArray</name>
     <member refid="interfacesb_i_mutable_property_array_1e13867716c7fa3d64006f8b9ff10a615" kind="variable"><name>strict</name></member>
@@ -1433,12 +1567,16 @@
     <member refid="interfacesb_i_number_property_info_1e7ace5e86b1a21e70f5fc2b0d68c77f8" kind="variable"><name>RADIX_8</name></member>
     <member refid="interfacesb_i_number_property_info_14aa688166e0c18771ec7197d373e15f3" kind="variable"><name>RADIX_10</name></member>
     <member refid="interfacesb_i_number_property_info_1a43620591a1237627556fe8bdedb0e7f" kind="variable"><name>RADIX_16</name></member>
+    <member refid="interfacesb_i_number_property_info_1df90e3a3d8a1f8075272864dd20fc014" kind="variable"><name>FLOAT</name></member>
     <member refid="interfacesb_i_number_property_info_191688eb3d9da61506cf46b836ac19a46" kind="variable"><name>minValue</name></member>
     <member refid="interfacesb_i_number_property_info_124229475be75971fe164124f6ce07faa" kind="variable"><name>maxValue</name></member>
+    <member refid="interfacesb_i_number_property_info_1c5c1bf8679a3a2a482b0275821a8408e" kind="variable"><name>minFloatValue</name></member>
+    <member refid="interfacesb_i_number_property_info_1effa936e99fc686315506d0611a6a58d" kind="variable"><name>maxFloatValue</name></member>
     <member refid="interfacesb_i_number_property_info_15bfa08e88f2f0005d00fa71931a3e30a" kind="variable"><name>radix</name></member>
   </compound>
   <compound refid="interfacesb_i_orderable_media_list" kind="interface"><name>sbIOrderableMediaList</name>
     <member refid="interfacesb_i_orderable_media_list_1eaa73fb344244fd8a307e1d660bace65" kind="function"><name>insertBefore</name></member>
+    <member refid="interfacesb_i_orderable_media_list_1d8ce896f20eee07967d699788529cfc3" kind="function"><name>insertAllBefore</name></member>
     <member refid="interfacesb_i_orderable_media_list_14eb562dfa30c119feaf9f0b8617eb010" kind="function"><name>moveBefore</name></member>
     <member refid="interfacesb_i_orderable_media_list_147d79a513540df547f301495f136b823" kind="function"><name>moveLast</name></member>
     <member refid="interfacesb_i_orderable_media_list_10c0aac6ef9babcbd8034476d6266087f" kind="function"><name>insertSomeBefore</name></member>
@@ -1446,18 +1584,30 @@
     <member refid="interfacesb_i_orderable_media_list_12617d02dd25f317ea1a3751f2caf075b" kind="function"><name>moveSomeLast</name></member>
   </compound>
   <compound refid="interfacesb_i_playback_history_entry" kind="interface"><name>sbIPlaybackHistoryEntry</name>
+    <member refid="interfacesb_i_playback_history_entry_1fb1b7223914bc43104d748969cf61711" kind="variable"><name>entryId</name></member>
     <member refid="interfacesb_i_playback_history_entry_19d6777cabfd1d48873680033be34018d" kind="variable"><name>item</name></member>
     <member refid="interfacesb_i_playback_history_entry_18510fee5c4ce41c53a51726945dc386a" kind="variable"><name>timestamp</name></member>
     <member refid="interfacesb_i_playback_history_entry_164dd426f1b3a8fcc44286055317fd7ba" kind="variable"><name>duration</name></member>
     <member refid="interfacesb_i_playback_history_entry_1a9c69b186aff24b0d2a4b77fe99266fb" kind="variable"><name>annotations</name></member>
+    <member refid="interfacesb_i_playback_history_entry_10e2108e8726b16f4051eec127e18171d" kind="function"><name>getAnnotation</name></member>
+    <member refid="interfacesb_i_playback_history_entry_191116caf6a531a7b04ca5a5daf2862fa" kind="function"><name>hasAnnotation</name></member>
+    <member refid="interfacesb_i_playback_history_entry_1c4a0ba3e2ed9cfe19cc98c56ed4cc960" kind="function"><name>setAnnotation</name></member>
+    <member refid="interfacesb_i_playback_history_entry_152c07f5554d7d47c9d40d6a18c0a2cf4" kind="function"><name>removeAnnotation</name></member>
     <member refid="interfacesb_i_playback_history_entry_1b426a4748f05c313c11fba7205485395" kind="function"><name>init</name></member>
+    <member refid="interfacesb_i_playback_history_entry_19ec4d3fecfe0ad0c8c0981372005185e" kind="function"><name>setEntryId</name></member>
+  </compound>
+  <compound refid="interfacesb_i_playback_history_listener" kind="interface"><name>sbIPlaybackHistoryListener</name>
+    <member refid="interfacesb_i_playback_history_listener_1635cdc4d0d67b267b411f84aea220975" kind="function"><name>onEntriesAdded</name></member>
+    <member refid="interfacesb_i_playback_history_listener_15b1d32a462b341cbfd1bb1270779d2ac" kind="function"><name>onEntriesUpdated</name></member>
+    <member refid="interfacesb_i_playback_history_listener_17439b9eed9ea03c5ffa4b3721e1f3a52" kind="function"><name>onEntriesRemoved</name></member>
+    <member refid="interfacesb_i_playback_history_listener_1431600a2a892b5c857505a208d298c33" kind="function"><name>onEntriesCleared</name></member>
   </compound>
   <compound refid="interfacesb_i_playback_history_service" kind="interface"><name>sbIPlaybackHistoryService</name>
     <member refid="interfacesb_i_playback_history_service_11a6da1d9dc4e14a6c98d2f080f01a530" kind="variable"><name>entries</name></member>
     <member refid="interfacesb_i_playback_history_service_1af845430f8cb073f00004c7154d8ad6f" kind="variable"><name>entryCount</name></member>
     <member refid="interfacesb_i_playback_history_service_144c768602b3f79cdfdefcd1d72740a71" kind="function"><name>createEntry</name></member>
     <member refid="interfacesb_i_playback_history_service_1072c3cc456167eeb622784f70fdc7b0b" kind="function"><name>addEntry</name></member>
-    <member refid="interfacesb_i_playback_history_service_1682d21a85b559af7919d9611d16a508a" kind="function"><name>addEntries</name></member>
+    <member refid="interfacesb_i_playback_history_service_11ff600e1b6f7f949c9082371d6269bed" kind="function"><name>addEntries</name></member>
     <member refid="interfacesb_i_playback_history_service_18a3e513dfeeb524ee1dc3c5ec553d1bd" kind="function"><name>getEntryByIndex</name></member>
     <member refid="interfacesb_i_playback_history_service_1fc0f0af932aca881e15e578440650838" kind="function"><name>getEntriesByIndex</name></member>
     <member refid="interfacesb_i_playback_history_service_1967ce779cd7348355da6f59bb3fc3dad" kind="function"><name>getEntriesByTimestamp</name></member>
@@ -1465,7 +1615,13 @@
     <member refid="interfacesb_i_playback_history_service_1c947317ad38083e9d6707e7a00fe5913" kind="function"><name>removeEntryByIndex</name></member>
     <member refid="interfacesb_i_playback_history_service_11c003d06563e0dce3224176efa33e914" kind="function"><name>removeEntriesByIndex</name></member>
     <member refid="interfacesb_i_playback_history_service_1f8ac8ff305c2381f592477f1974daba0" kind="function"><name>removeEntries</name></member>
+    <member refid="interfacesb_i_playback_history_service_163430404d007fed3cfbe9fd975877698" kind="function"><name>getEntriesByAnnotation</name></member>
+    <member refid="interfacesb_i_playback_history_service_1b8a4da3a343b582c75290768b4c7cdf3" kind="function"><name>getEntriesByAnnotations</name></member>
     <member refid="interfacesb_i_playback_history_service_1e8779952fef0d2303803842a563ee6e9" kind="function"><name>clear</name></member>
+    <member refid="interfacesb_i_playback_history_service_15460eba009778c4e27cffffd74e95d00" kind="function"><name>addListener</name></member>
+    <member refid="interfacesb_i_playback_history_service_1464486d0a002fae181aaae1090af9aa7" kind="function"><name>removeListener</name></member>
+    <member refid="interfacesb_i_playback_history_service_17f5d652f841185a4712fc17b46b05c26" kind="function"><name>addOrUpdateAnnotation</name></member>
+    <member refid="interfacesb_i_playback_history_service_15150845f997fe0b0ef3ec42d7c8a3442" kind="function"><name>removeAnnotation</name></member>
   </compound>
   <compound refid="interfacesb_i_playlist_click_event" kind="interface"><name>sbIPlaylistClickEvent</name>
     <member refid="interfacesb_i_playlist_click_event_1d1f910416b81b277102dd8026413816b" kind="variable"><name>property</name></member>
@@ -1727,9 +1883,14 @@
     <member refid="interfacesb_i_property_info_1b0c9ffabb30224122bf1bba5bea890be" kind="variable"><name>OPERATOR_LESS</name></member>
     <member refid="interfacesb_i_property_info_13cdfd09f8658c992b1fe589ced72da7a" kind="variable"><name>OPERATOR_LESSEQUAL</name></member>
     <member refid="interfacesb_i_property_info_14b6d078b39a35c61911b42ca24a3f2b7" kind="variable"><name>OPERATOR_CONTAINS</name></member>
+    <member refid="interfacesb_i_property_info_14c174c95eeb75e6a85aaa9fc1ede4e80" kind="variable"><name>OPERATOR_NOTCONTAINS</name></member>
     <member refid="interfacesb_i_property_info_123dae3923453285d8471be2a045c125d" kind="variable"><name>OPERATOR_BEGINSWITH</name></member>
+    <member refid="interfacesb_i_property_info_14bd7c3c7fdedb2b00ab0129566193687" kind="variable"><name>OPERATOR_NOTBEGINSWITH</name></member>
     <member refid="interfacesb_i_property_info_112123f0254cc60b5323bccbeb6485bd0" kind="variable"><name>OPERATOR_ENDSWITH</name></member>
+    <member refid="interfacesb_i_property_info_1b3c55dfd5251f7b3445e91b4fdc64059" kind="variable"><name>OPERATOR_NOTENDSWITH</name></member>
     <member refid="interfacesb_i_property_info_1e510a1cfef38ced282dbb4fec4211ee5" kind="variable"><name>OPERATOR_BETWEEN</name></member>
+    <member refid="interfacesb_i_property_info_19d3a3d80f800286f3b174f345ea3a9f1" kind="variable"><name>OPERATOR_ISSET</name></member>
+    <member refid="interfacesb_i_property_info_1032cf60dd03ea20c2e3c5af23c8f2036" kind="variable"><name>OPERATOR_ISNOTSET</name></member>
     <member refid="interfacesb_i_property_info_1a59ffdf127b704755dd744beca75e22c" kind="variable"><name>SORT_NULL_SMALL</name></member>
     <member refid="interfacesb_i_property_info_1b3fa49104aef3d82537d89ca6fc4631a" kind="variable"><name>SORT_NULL_BIG</name></member>
     <member refid="interfacesb_i_property_info_1691b6cd3f66d0b53d9a97e271cab4dee" kind="variable"><name>SORT_NULL_FIRST</name></member>
@@ -1743,8 +1904,8 @@
     <member refid="interfacesb_i_property_info_10933e00d6494945c02b977671da28bea" kind="variable"><name>userEditable</name></member>
     <member refid="interfacesb_i_property_info_1f7b23f6f5b5c360f74359799880180b8" kind="variable"><name>remoteReadable</name></member>
     <member refid="interfacesb_i_property_info_18fd3cfd54a2405456c6ce4730ca206f6" kind="variable"><name>remoteWritable</name></member>
-    <member refid="interfacesb_i_property_info_124dc15ce31329fb21a05962f84a15c9e" kind="variable"><name>units</name></member>
     <member refid="interfacesb_i_property_info_1f2757f5dbc58e2fa111b918cc83e2c5e" kind="variable"><name>operators</name></member>
+    <member refid="interfacesb_i_property_info_175fc3a0afd3bb9de78b9d07954fcbfcb" kind="variable"><name>unitConverter</name></member>
     <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" kind="function"><name>getOperator</name></member>
     <member refid="interfacesb_i_property_info_11814ea167521382aae1196689bc22887" kind="function"><name>validate</name></member>
     <member refid="interfacesb_i_property_info_1f34bc688867a4ebb7b3b0a8dc4cf655a" kind="function"><name>sanitize</name></member>
@@ -1764,6 +1925,17 @@
     <member refid="interfacesb_i_property_operator_1655cf614c5ada820482e2286943267ff" kind="variable"><name>operator</name></member>
     <member refid="interfacesb_i_property_operator_1ff61810d7bc89c81dcc005b14c711647" kind="variable"><name>operatorReadable</name></member>
     <member refid="interfacesb_i_property_operator_19a1618c4ce32a4618d22b811f124d75f" kind="function"><name>Init</name></member>
+  </compound>
+  <compound refid="interfacesb_i_property_unit" kind="interface"><name>sbIPropertyUnit</name>
+    <member refid="interfacesb_i_property_unit_1fd23e900cff34cd62a997db5df25ac99" kind="variable"><name>id</name></member>
+    <member refid="interfacesb_i_property_unit_157e2953642c7488fd8fc874b51313e97" kind="variable"><name>name</name></member>
+    <member refid="interfacesb_i_property_unit_16cdbb3bf55b92f02c8fcf25744633891" kind="variable"><name>shortName</name></member>
+  </compound>
+  <compound refid="interfacesb_i_property_unit_converter" kind="interface"><name>sbIPropertyUnitConverter</name>
+    <member refid="interfacesb_i_property_unit_converter_1e291b2752a00bb8847c9121ac2b03e34" kind="variable"><name>units</name></member>
+    <member refid="interfacesb_i_property_unit_converter_16dac6e360bfc5cf509877fadb3f98a98" kind="variable"><name>nativeUnitId</name></member>
+    <member refid="interfacesb_i_property_unit_converter_176826e982091ac253fba36fd5dba49e3" kind="variable"><name>stringBundle</name></member>
+    <member refid="interfacesb_i_property_unit_converter_1425c0e156ab117a69c4f009548a365c0" kind="function"><name>convert</name></member>
   </compound>
   <compound refid="interfacesb_i_proxied_services" kind="interface"><name>sbIProxiedServices</name>
     <member refid="interfacesb_i_proxied_services_1918813b5112b1d83e4f86cd4c7c8b2de" kind="variable"><name>utf8ConverterService</name></member>
@@ -1967,15 +2139,13 @@
     <member refid="interfacesb_i_simple_button_property_builder_164f1d4142a5d1ce718903f3febcb978c" kind="variable"><name>label</name></member>
     <member refid="interfacesb_i_simple_button_property_builder_111df9b29a667e52891a2fb76f7417222" kind="variable"><name>labelKey</name></member>
   </compound>
-  <compound refid="interfacesb_i_single_item_transfer_context" kind="interface"><name>sbISingleItemTransferContext</name>
-    <member refid="interfacesb_i_single_item_transfer_context_1e60254bf00ad6d2062561296f147963c" kind="variable"><name>item</name></member>
-  </compound>
-  <compound refid="interfacesb_i_single_list_transfer_context" kind="interface"><name>sbISingleListTransferContext</name>
-    <member refid="interfacesb_i_single_list_transfer_context_1a94cd19e291a40d19a76e0845dae2d41" kind="variable"><name>list</name></member>
-  </compound>
   <compound refid="interfacesb_i_skin_description" kind="interface"><name>sbISkinDescription</name>
     <member refid="interfacesb_i_skin_description_1f99fa913f81579db6da6584d2c545e57" kind="variable"><name>internalName</name></member>
     <member refid="interfacesb_i_skin_description_1342a6bdb4302958ae43c43bb708b3f16" kind="variable"><name>name</name></member>
+  </compound>
+  <compound refid="interfacesb_i_smart_playlist_property_registrar" kind="interface"><name>sbISmartPlaylistPropertyRegistrar</name>
+    <member refid="interfacesb_i_smart_playlist_property_registrar_17ce7d5c844cd7483f93dc4f5ff79714d" kind="function"><name>getPropertiesForContext</name></member>
+    <member refid="interfacesb_i_smart_playlist_property_registrar_189f2b4ff95287f375f60fa352942a495" kind="function"><name>registerPropertyToContext</name></member>
   </compound>
   <compound refid="interfacesb_i_sortable_media_list_view" kind="interface"><name>sbISortableMediaListView</name>
     <member refid="interfacesb_i_sortable_media_list_view_14781515f679eecec2fcccf746a0df488" kind="variable"><name>sortableProperties</name></member>
@@ -1991,6 +2161,7 @@
     <member refid="interfacesb_i_s_q_l_builder_1805277f380a5e4a4a260bb28d38ce731" kind="variable"><name>MATCH_LESS</name></member>
     <member refid="interfacesb_i_s_q_l_builder_1a65091061732a05911da854ea8f35ba8" kind="variable"><name>MATCH_LESSEQUAL</name></member>
     <member refid="interfacesb_i_s_q_l_builder_1e08c6f669a944b7046f55c6484e0c7d3" kind="variable"><name>MATCH_LIKE</name></member>
+    <member refid="interfacesb_i_s_q_l_builder_1fe9fccbabe0eef2773df9610f4dc94ca" kind="variable"><name>MATCH_NOTLIKE</name></member>
     <member refid="interfacesb_i_s_q_l_builder_1e12d33fbbd1e6f912b69055b3e7b8713" kind="variable"><name>MATCH_MATCH</name></member>
     <member refid="interfacesb_i_s_q_l_builder_13c7ea9b5a93d06b5651b2930d8b9b472" kind="variable"><name>limit</name></member>
     <member refid="interfacesb_i_s_q_l_builder_1cd361a2636559e9627c09784d0099f82" kind="variable"><name>limitIsParameter</name></member>
@@ -1998,6 +2169,7 @@
     <member refid="interfacesb_i_s_q_l_builder_159f35b321060198bf39a288bdd0df5a2" kind="variable"><name>offsetIsParameter</name></member>
     <member refid="interfacesb_i_s_q_l_builder_1fa1fa3b8ea1cb475f9ccc10ac519d484" kind="variable"><name>JOIN_INNER</name></member>
     <member refid="interfacesb_i_s_q_l_builder_1ad6e58931a0e11662c919c0846503b8c" kind="variable"><name>JOIN_LEFT</name></member>
+    <member refid="interfacesb_i_s_q_l_builder_14154721c8e7540ab9a5abc6f3f6b267b" kind="variable"><name>JOIN_LEFT_OUTER</name></member>
     <member refid="interfacesb_i_s_q_l_builder_1c043dcca0a024504bdfba272a183b165" kind="function"><name>addJoin</name></member>
     <member refid="interfacesb_i_s_q_l_builder_1d50570763487a6f4e0146400f1b1b3d1" kind="function"><name>addJoinWithIndexHint</name></member>
     <member refid="interfacesb_i_s_q_l_builder_100fa6e88ce37c3ddd278c4420f375367" kind="function"><name>addSubqueryJoin</name></member>
@@ -2056,6 +2228,20 @@
     <member refid="interfacesb_i_s_q_l_where_builder_1f443ed1a70948a0f897aa029ce29ebc8" kind="function"><name>createAndCriterion</name></member>
     <member refid="interfacesb_i_s_q_l_where_builder_1608f8c174fc98a44c694fbfd7bc67199" kind="function"><name>createOrCriterion</name></member>
   </compound>
+  <compound refid="interfacesb_i_string_transform" kind="interface"><name>sbIStringTransform</name>
+    <member refid="interfacesb_i_string_transform_1c11f6d3dbcf06e6b6b0d5082a282bc8b" kind="variable"><name>TRANSFORM_MAP_HIRAGANA</name></member>
+    <member refid="interfacesb_i_string_transform_134a7dedf5461ec784d6bda7ddef5eb51" kind="variable"><name>TRANSFORM_MAP_KATAKANA</name></member>
+    <member refid="interfacesb_i_string_transform_109a96b7b8d16d6a2ebc9fc9484580be1" kind="variable"><name>TRANSFORM_LOWERCASE</name></member>
+    <member refid="interfacesb_i_string_transform_1d89ae39658e450039fb35eae25719257" kind="variable"><name>TRANSFORM_UPPERCASE</name></member>
+    <member refid="interfacesb_i_string_transform_196bf948289c8cc096a5a1695e6256f25" kind="variable"><name>TRANSFORM_SIMPLIFIED_CHINESE</name></member>
+    <member refid="interfacesb_i_string_transform_146a64279d4966c39f12fa09719b8cf4b" kind="variable"><name>TRANSFORM_TRADITIONAL_CHINESE</name></member>
+    <member refid="interfacesb_i_string_transform_1ac2bb070671e1b513205ce7973335c28" kind="variable"><name>TRANSFORM_IGNORE_SYMBOLS</name></member>
+    <member refid="interfacesb_i_string_transform_172da2cb3d96fd3a9e8ef511c93db07b8" kind="variable"><name>TRANSFORM_IGNORE_NONSPACE</name></member>
+    <member refid="interfacesb_i_string_transform_151009a08d1b398406d25fe8436326d38" kind="variable"><name>TRANSFORM_REVERSE_BYTES</name></member>
+    <member refid="interfacesb_i_string_transform_1250033da92893ce36fc430a8f115d963" kind="function"><name>normalizeString</name></member>
+    <member refid="interfacesb_i_string_transform_126415c94cf8057d896d75c4cdbeec666" kind="function"><name>convertToCharset</name></member>
+    <member refid="interfacesb_i_string_transform_19c157820ff2206fb3c16dac5564e65c0" kind="function"><name>guessCharset</name></member>
+  </compound>
   <compound refid="interfacesb_i_tab_browser" kind="interface"><name>sbITabBrowser</name>
     <member refid="interfacesb_i_tab_browser_1529953145ae3991eb77d5f8a7c025b38" kind="function"><name>getTabForDocument</name></member>
     <member refid="interfacesb_i_tab_browser_1e4bc7766f57c5721b9898def679fcbc8" kind="function"><name>getBrowserForDocument</name></member>
@@ -2078,6 +2264,10 @@
     <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_111378195a2460873ae1c28105222cccf" kind="function"><name>getChannelSize</name></member>
     <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_1dc7e5f26fc96e9fe104295892ba07ad0" kind="function"><name>getChannelRestart</name></member>
     <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_15dbcfa59c87ae92ff50095e2ada713bf" kind="function"><name>setChannelRestart</name></member>
+  </compound>
+  <compound refid="interfacesb_i_temporary_file_service" kind="interface"><name>sbITemporaryFileService</name>
+    <member refid="interfacesb_i_temporary_file_service_16cb7ca25187aed8da7af50d43be41bda" kind="variable"><name>rootTemporaryDirectory</name></member>
+    <member refid="interfacesb_i_temporary_file_service_10ecca78021fc406f8fc2c769d7da8885" kind="function"><name>createFile</name></member>
   </compound>
   <compound refid="interfacesb_i_test_harness" kind="interface"><name>sbITestHarness</name>
     <member refid="interfacesb_i_test_harness_193a2926d8d589777366f6bc7bf420c0f" kind="function"><name>init</name></member>
@@ -2109,9 +2299,6 @@
     <member refid="interfacesb_i_tree_view_property_info_121a13ba52c4c5c54a4f869f5c0ceed77" kind="function"><name>getColumnProperties</name></member>
     <member refid="interfacesb_i_tree_view_property_info_1ada7f3dabbc31f6913bc62d219f78f67" kind="function"><name>getRowProperties</name></member>
     <member refid="interfacesb_i_tree_view_property_info_10b33407322a62ae9256bbc86ace095cf" kind="function"><name>getCellProperties</name></member>
-  </compound>
-  <compound refid="interfacesb_i_u_r_i_metadata_helper" kind="interface"><name>sbIURIMetadataHelper</name>
-    <member refid="interfacesb_i_u_r_i_metadata_helper_16336650f02edbda93a00bd0f2c636035" kind="function"><name>getFileSize</name></member>
   </compound>
   <compound refid="interfacesb_i_u_r_i_property_info" kind="interface"><name>sbIURIPropertyInfo</name>
     <member refid="interfacesb_i_u_r_i_property_info_14e7ac4d5f2b7ee28410ed44ffda4b0b1" kind="variable"><name>constrainScheme</name></member>
@@ -2169,9 +2356,6 @@
     <member refid="interfacesb_p_i_bundle_1fbee8edc61942983cc3dda2e79aa4cc7" kind="function"><name>setInstallResult</name></member>
     <member refid="interfacesb_p_i_bundle_189d03f201e6e91a61c8c0072695a23dc" kind="function"><name>setNeedRestart</name></member>
     <member refid="interfacesb_p_i_bundle_1996bf5edbddbeb5f4d9c8cef308ec51d" kind="function"><name>getInstallListener</name></member>
-  </compound>
-  <compound refid="interfacesb_p_i_metadata_job" kind="interface"><name>sbPIMetadataJob</name>
-    <member refid="interfacesb_p_i_metadata_job_13aef8526ed82a19414bc471e86d2110f" kind="function"><name>init</name></member>
   </compound>
   <compound refid="sb_i_media_item_status_event_8idl" kind="file"><name>sbIMediaItemStatusEvent.idl</name>
   </compound>
@@ -2291,8 +2475,6 @@
   </compound>
   <compound refid="sb_i_skin_description_8idl" kind="file"><name>sbISkinDescription.idl</name>
   </compound>
-  <compound refid="sb_i_file_scan_8idl" kind="file"><name>sbIFileScan.idl</name>
-  </compound>
   <compound refid="_i_global_hotkeys_8idl" kind="file"><name>IGlobalHotkeys.idl</name>
   </compound>
   <compound refid="_i_window_cloak_8idl" kind="file"><name>IWindowCloak.idl</name>
@@ -2312,6 +2494,12 @@
   <compound refid="sb_i_hotkey_actions_8idl" kind="file"><name>sbIHotkeyActions.idl</name>
   </compound>
   <compound refid="sb_i_native_window_manager_8idl" kind="file"><name>sbINativeWindowManager.idl</name>
+  </compound>
+  <compound refid="sb_i_string_transform_8idl" kind="file"><name>sbIStringTransform.idl</name>
+    <member refid="sb_i_string_transform_8idl_1a0ce99049f887b24cee33656d8ca2ab0" kind="define"><name>SB_STRINGTRANSFORM_DESCRIPTION</name></member>
+    <member refid="sb_i_string_transform_8idl_1daf40ae33eedb4d78943db59b67c6e92" kind="define"><name>SB_STRINGTRANSFORM_CONTRACTID</name></member>
+    <member refid="sb_i_string_transform_8idl_19283a93020f643ea1cb5e1e7c17e8797" kind="define"><name>SB_STRINGTRANSFORM_CLASSNAME</name></member>
+    <member refid="sb_i_string_transform_8idl_1576aa14ae8e523acc71ef0df2e153619" kind="define"><name>SB_STRINGTRANSFORM_CID</name></member>
   </compound>
   <compound refid="sb_i_job_cancelable_8idl" kind="file"><name>sbIJobCancelable.idl</name>
   </compound>
@@ -2394,25 +2582,21 @@
   </compound>
   <compound refid="sb_i_local_database_tree_view_8idl" kind="file"><name>sbILocalDatabaseTreeView.idl</name>
   </compound>
-  <compound refid="sb_i_library_importer_8idl" kind="file"><name>sbILibraryImporter.idl</name>
-  </compound>
   <compound refid="sb_i_seekable_channel_8idl" kind="file"><name>sbISeekableChannel.idl</name>
   </compound>
   <compound refid="sb_i_tag_lib_channel_file_i_o_manager_8idl" kind="file"><name>sbITagLibChannelFileIOManager.idl</name>
+  </compound>
+  <compound refid="sb_i_file_metadata_service_8idl" kind="file"><name>sbIFileMetadataService.idl</name>
   </compound>
   <compound refid="sb_i_metadata_channel_8idl" kind="file"><name>sbIMetadataChannel.idl</name>
   </compound>
   <compound refid="sb_i_metadata_handler_8idl" kind="file"><name>sbIMetadataHandler.idl</name>
   </compound>
-  <compound refid="sb_i_metadata_job_8idl" kind="file"><name>sbIMetadataJob.idl</name>
-  </compound>
-  <compound refid="sb_i_metadata_job_manager_8idl" kind="file"><name>sbIMetadataJobManager.idl</name>
-  </compound>
   <compound refid="sb_i_metadata_manager_8idl" kind="file"><name>sbIMetadataManager.idl</name>
   </compound>
-  <compound refid="sb_i_metadata_utils_8idl" kind="file"><name>sbIMetadataUtils.idl</name>
+  <compound refid="sb_i_g_streamer_event_8idl" kind="file"><name>sbIGStreamerEvent.idl</name>
   </compound>
-  <compound refid="sb_p_i_metadata_job_8idl" kind="file"><name>sbPIMetadataJob.idl</name>
+  <compound refid="sb_i_g_streamer_event_listener_8idl" kind="file"><name>sbIGStreamerEventListener.idl</name>
   </compound>
   <compound refid="sb_i_g_streamer_service_8idl" kind="file"><name>sbIGStreamerService.idl</name>
     <member refid="sb_i_g_streamer_service_8idl_118bbde7b8c871ab291be3462307d1733" kind="define"><name>SBGSTREAMERSERVICE_CID</name></member>
@@ -2425,8 +2609,28 @@
     <member refid="sb_i_g_streamer_simple_8idl_1e2c7988e42fbcd7bd14caf2d5373888a" kind="define"><name>SBGSTREAMERSIMPLE_CLASSNAME</name></member>
   </compound>
   <compound refid="sb_i_playback_history_entry_8idl" kind="file"><name>sbIPlaybackHistoryEntry.idl</name>
+    <member refid="sb_i_playback_history_entry_8idl_1073095f1212c59253b5f592e4a01295a" kind="define"><name>SB_PLAYBACKHISTORYENTRY_DESCRIPTION</name></member>
+    <member refid="sb_i_playback_history_entry_8idl_10df12a38a827ea078000a7ce0e05c77c" kind="define"><name>SB_PLAYBACKHISTORYENTRY_CONTRACTID</name></member>
+    <member refid="sb_i_playback_history_entry_8idl_1435aea70535e97b83a47beaed0ee94d6" kind="define"><name>SB_PLAYBACKHISTORYENTRY_CLASSNAME</name></member>
+    <member refid="sb_i_playback_history_entry_8idl_174ce669806c692c161a634ad580551cb" kind="define"><name>SB_PLAYBACKHISTORYENTRY_CID</name></member>
+  </compound>
+  <compound refid="sb_i_playback_history_listener_8idl" kind="file"><name>sbIPlaybackHistoryListener.idl</name>
   </compound>
   <compound refid="sb_i_playback_history_service_8idl" kind="file"><name>sbIPlaybackHistoryService.idl</name>
+    <member refid="sb_i_playback_history_service_8idl_135cf6cea72aa2db9281817812f10df57" kind="define"><name>SB_PLAYBACKHISTORYSERVICE_DESCRIPTION</name></member>
+    <member refid="sb_i_playback_history_service_8idl_1c7cc2a21e7eb39b50a7341a59aa13528" kind="define"><name>SB_PLAYBACKHISTORYSERVICE_CONTRACTID</name></member>
+    <member refid="sb_i_playback_history_service_8idl_19993d899c347780ea94f07420db70f95" kind="define"><name>SB_PLAYBACKHISTORYSERVICE_CLASSNAME</name></member>
+    <member refid="sb_i_playback_history_service_8idl_1aaa871ec0952c909d53940250f23d5c8" kind="define"><name>SB_PLAYBACKHISTORYSERVICE_CID</name></member>
+  </compound>
+  <compound refid="sb_i_directory_import_service_8idl" kind="file"><name>sbIDirectoryImportService.idl</name>
+  </compound>
+  <compound refid="sb_i_file_scan_8idl" kind="file"><name>sbIFileScan.idl</name>
+  </compound>
+  <compound refid="sb_i_library_importer_8idl" kind="file"><name>sbILibraryImporter.idl</name>
+  </compound>
+  <compound refid="sb_i_playlist_reader_8idl" kind="file"><name>sbIPlaylistReader.idl</name>
+  </compound>
+  <compound refid="sb_i_playlist_writer_8idl" kind="file"><name>sbIPlaylistWriter.idl</name>
   </compound>
   <compound refid="sb_i_media_page_8idl" kind="file"><name>sbIMediaPage.idl</name>
   </compound>
@@ -2434,12 +2638,20 @@
   </compound>
   <compound refid="sb_i_metrics_8idl" kind="file"><name>sbIMetrics.idl</name>
   </compound>
+  <compound refid="sb_i_clipboard_helper_8idl" kind="file"><name>sbIClipboardHelper.idl</name>
+  </compound>
   <compound refid="sb_i_d_o_m_event_wrapper_8idl" kind="file"><name>sbIDOMEventWrapper.idl</name>
+  </compound>
+  <compound refid="sb_i_file_downloader_8idl" kind="file"><name>sbIFileDownloader.idl</name>
+    <member refid="sb_i_file_downloader_8idl_146bd0b0cbedae434a68239fc505a696f" kind="define"><name>SB_FILEDOWNLOADER_CONTRACTID</name></member>
   </compound>
   <compound refid="sb_i_prompter_8idl" kind="file"><name>sbIPrompter.idl</name>
     <member refid="sb_i_prompter_8idl_188ac2e25a2d29e31b961a6e96d7d9e14" kind="define"><name>SONGBIRD_PROMPTER_CONTRACTID</name></member>
   </compound>
   <compound refid="sb_i_proxied_services_8idl" kind="file"><name>sbIProxiedServices.idl</name>
+  </compound>
+  <compound refid="sb_i_temporary_file_service_8idl" kind="file"><name>sbITemporaryFileService.idl</name>
+    <member refid="sb_i_temporary_file_service_8idl_1aad03187fc1a36cebea69ae644f375a0" kind="define"><name>SB_TEMPORARYFILESERVICE_CONTRACTID</name></member>
   </compound>
   <compound refid="sb_i_u_r_l_formatter_8idl" kind="file"><name>sbIURLFormatter.idl</name>
     <member refid="sb_i_u_r_l_formatter_8idl_14021467c8645ec56f54566c540c1220b" kind="define"><name>SB_URLFORMATTER_CONTRACTID</name></member>
@@ -2455,10 +2667,6 @@
   </compound>
   <compound refid="sb_i_playlist_playback_8idl" kind="file"><name>sbIPlaylistPlayback.idl</name>
   </compound>
-  <compound refid="sb_i_playlist_reader_8idl" kind="file"><name>sbIPlaylistReader.idl</name>
-  </compound>
-  <compound refid="sb_i_playlist_writer_8idl" kind="file"><name>sbIPlaylistWriter.idl</name>
-  </compound>
   <compound refid="sb_i_clickable_property_info_8idl" kind="file"><name>sbIClickablePropertyInfo.idl</name>
   </compound>
   <compound refid="sb_i_property_array_8idl" kind="file"><name>sbIPropertyArray.idl</name>
@@ -2468,6 +2676,10 @@
   <compound refid="sb_i_property_factory_8idl" kind="file"><name>sbIPropertyFactory.idl</name>
   </compound>
   <compound refid="sb_i_property_manager_8idl" kind="file"><name>sbIPropertyManager.idl</name>
+  </compound>
+  <compound refid="sb_i_property_unit_converter_8idl" kind="file"><name>sbIPropertyUnitConverter.idl</name>
+  </compound>
+  <compound refid="sb_i_smart_playlist_property_registrar_8idl" kind="file"><name>sbISmartPlaylistPropertyRegistrar.idl</name>
   </compound>
   <compound refid="sb_i_tree_view_property_info_8idl" kind="file"><name>sbITreeViewPropertyInfo.idl</name>
   </compound>
@@ -2516,7 +2728,7 @@
   </compound>
   <compound refid="todo" kind="page"><name>todo</name>
   </compound>
-  <compound refid="dir_fb4666e9a81f4726878a449390b1ab9c" kind="dir"><name>components/libraryimporter/base/</name>
+  <compound refid="dir_3eff1d8b7c0167e6834a1ac45733f055" kind="dir"><name>components/mediaimport/library/base/</name>
   </compound>
   <compound refid="dir_2f3b306a9771210b1da1fa8b68511525" kind="dir"><name>components/library/base/</name>
   </compound>
@@ -2529,6 +2741,8 @@
   <compound refid="dir_702e6a3ef746f1a3ba0716782de44c7e" kind="dir"><name>components/bundle/</name>
   </compound>
   <compound refid="dir_c76d0940be8654b69ac9abe7f9ce16bd" kind="dir"><name>components/devicesobsolete/cd/</name>
+  </compound>
+  <compound refid="dir_b3c24fabdaf7b1d0f198b2e7be8bd4f6" kind="dir"><name>components/moz/clipboard/</name>
   </compound>
   <compound refid="dir_aacc5503578f785419650b77974ef50c" kind="dir"><name>components/commandline/</name>
   </compound>
@@ -2546,6 +2760,8 @@
   </compound>
   <compound refid="dir_5dada0294b017c2aa4f088f2892002e2" kind="dir"><name>components/devicesobsolete/</name>
   </compound>
+  <compound refid="dir_0b7f7b183ced0de7208d8f2271d12a83" kind="dir"><name>components/mediaimport/directory/</name>
+  </compound>
   <compound refid="dir_b167a01e5ef454f28eb0933040a5fcc9" kind="dir"><name>components/displaypanes/</name>
   </compound>
   <compound refid="dir_14bcd6d94218561f9e42dbf3e1025315" kind="dir"><name>components/moz/domevents/</name>
@@ -2558,7 +2774,9 @@
   </compound>
   <compound refid="dir_e3922891dda9981d83209455f715eb70" kind="dir"><name>components/feathers/</name>
   </compound>
-  <compound refid="dir_f6cf1e89b14e38e325923cb71d1fac39" kind="dir"><name>components/filescan/</name>
+  <compound refid="dir_726d830b5c93c6e6158bed8c45ed885d" kind="dir"><name>components/moz/filedownloader/</name>
+  </compound>
+  <compound refid="dir_91bef6fc88f71058258b1c18269a9e8e" kind="dir"><name>components/mediaimport/filescan/</name>
   </compound>
   <compound refid="dir_38ad5fb33f68aecaeecef93cbd5c3858" kind="dir"><name>components/mediacore/playback/gstreamer/</name>
   </compound>
@@ -2568,11 +2786,13 @@
   </compound>
   <compound refid="dir_ae4688a8fd9da3c810d39499bdeacdbe" kind="dir"><name>components/integration/</name>
   </compound>
+  <compound refid="dir_9aeceb26a370faa5031e4d3a76b5d105" kind="dir"><name>components/intl/</name>
+  </compound>
   <compound refid="dir_e0ea701694015a3cbb95943fe4ed8b4d" kind="dir"><name>components/job/</name>
   </compound>
-  <compound refid="dir_93fbe674aa5974b89ef733c5a31a65fe" kind="dir"><name>components/library/</name>
+  <compound refid="dir_aecc59208e8c1151ac807c6e07bebb36" kind="dir"><name>components/mediaimport/library/</name>
   </compound>
-  <compound refid="dir_793a7a6147ec351e7d73086386bc7d5a" kind="dir"><name>components/libraryimporter/</name>
+  <compound refid="dir_93fbe674aa5974b89ef733c5a31a65fe" kind="dir"><name>components/library/</name>
   </compound>
   <compound refid="dir_42d93664abe1958db3d8b14aaabe108b" kind="dir"><name>components/library/localdatabase/</name>
   </compound>
@@ -2584,6 +2804,8 @@
   </compound>
   <compound refid="dir_d1fe40f6e3c5f33b19b450ac06b6b55e" kind="dir"><name>components/mediacore/</name>
   </compound>
+  <compound refid="dir_63c524d31d46ea92f417bb2678194971" kind="dir"><name>components/mediaimport/</name>
+  </compound>
   <compound refid="dir_f02c69372313485c1f8832da12f6c9d0" kind="dir"><name>components/mediapages/</name>
   </compound>
   <compound refid="dir_7ecbedc50fd24ac5fb2685e35c970ea3" kind="dir"><name>components/mediacore/metadata/</name>
@@ -2594,11 +2816,11 @@
   </compound>
   <compound refid="dir_5dba2bf3c1c5c17ae0243a4a0fcf6014" kind="dir"><name>components/mediacore/playback/</name>
   </compound>
+  <compound refid="dir_99777cd7b4a922aafd27b2ddc63cb7b1" kind="dir"><name>components/mediaimport/playlist/</name>
+  </compound>
   <compound refid="dir_46386344f0956e805e3072caae07e668" kind="dir"><name>components/playlistcommands/</name>
   </compound>
   <compound refid="dir_b044a7c690d6ced5205f010e43a431b8" kind="dir"><name>components/playlistplayback/</name>
-  </compound>
-  <compound refid="dir_c7bd9b0d62e5683a7e67c43f93e72cfc" kind="dir"><name>components/playlistreader/</name>
   </compound>
   <compound refid="dir_afa0553e249f1003f41041718c7c84aa" kind="dir"><name>components/moz/prompter/</name>
   </compound>
@@ -2616,8 +2838,6 @@
   </compound>
   <compound refid="dir_a9ad0c2cd8c0af1b2fed82c5e38b72dd" kind="dir"><name>components/property/public/</name>
   </compound>
-  <compound refid="dir_a962e423a986d2b31e9c54bc388ea5dc" kind="dir"><name>components/playlistreader/public/</name>
-  </compound>
   <compound refid="dir_bf0689bf145a0d75829a798e2938bc83" kind="dir"><name>components/playlistplayback/public/</name>
   </compound>
   <compound refid="dir_1ce7c1665cb49adb8240e1bf0555bab1" kind="dir"><name>components/playlistcommands/public/</name>
@@ -2626,15 +2846,29 @@
   </compound>
   <compound refid="dir_a36deaebd78780d8b236c5ea1b18263b" kind="dir"><name>components/moz/urlformatter/public/</name>
   </compound>
+  <compound refid="dir_03f2c9b3989e30d445fb1fdcd40e2186" kind="dir"><name>components/moz/temporaryfileservice/public/</name>
+  </compound>
   <compound refid="dir_fbdbbbe5f7b00e50e33aa2493da5f22c" kind="dir"><name>components/moz/proxy/public/</name>
   </compound>
   <compound refid="dir_92a93fda99303836edbb4a149c903026" kind="dir"><name>components/moz/prompter/public/</name>
   </compound>
+  <compound refid="dir_4a9eb62fe73998546bb9efc57981a3f3" kind="dir"><name>components/moz/filedownloader/public/</name>
+  </compound>
   <compound refid="dir_6d956775e9d53cd319eb3e77df01a088" kind="dir"><name>components/moz/domevents/public/</name>
+  </compound>
+  <compound refid="dir_8662de23201b8b100502f897f95f3477" kind="dir"><name>components/moz/clipboard/public/</name>
   </compound>
   <compound refid="dir_df28df5f907edce7e8e352678987f3aa" kind="dir"><name>components/metrics/public/</name>
   </compound>
   <compound refid="dir_180f5d5a9c89cfe2bd9f2a8a4a7370de" kind="dir"><name>components/mediapages/public/</name>
+  </compound>
+  <compound refid="dir_690481971b2bf573a885055e1c673354" kind="dir"><name>components/mediaimport/playlist/public/</name>
+  </compound>
+  <compound refid="dir_c0f2479e4d607b10953aae8e3ca337a4" kind="dir"><name>components/mediaimport/library/base/public/</name>
+  </compound>
+  <compound refid="dir_9bd3bb7bfd29dfa00c0b7d24eb1a53d4" kind="dir"><name>components/mediaimport/filescan/public/</name>
+  </compound>
+  <compound refid="dir_ad02eb1fe7e8896955c2fbbb1c3fe88c" kind="dir"><name>components/mediaimport/directory/public/</name>
   </compound>
   <compound refid="dir_a249c13b9b5f78e6a5d8f41eb6ca0d0f" kind="dir"><name>components/mediacore/playback/history/public/</name>
   </compound>
@@ -2644,17 +2878,15 @@
   </compound>
   <compound refid="dir_3ce5567149aace006234715b00720419" kind="dir"><name>components/mediacore/metadata/handler/taglib/public/</name>
   </compound>
-  <compound refid="dir_6dff57480f2f1a51fc60c68639c92512" kind="dir"><name>components/libraryimporter/base/public/</name>
-  </compound>
   <compound refid="dir_c9c704d6f47504c41289539ffb282f53" kind="dir"><name>components/library/localdatabase/public/</name>
   </compound>
   <compound refid="dir_e3ea658a48b873bd8490a10b103c3cdd" kind="dir"><name>components/library/base/public/</name>
   </compound>
   <compound refid="dir_689fd154ad3ad9b79f9f5af3ae315061" kind="dir"><name>components/job/public/</name>
   </compound>
-  <compound refid="dir_51d726d3292722ccc89e5521793cdb5b" kind="dir"><name>components/integration/public/</name>
+  <compound refid="dir_15df0848cac3d30328e76d631d69b0cc" kind="dir"><name>components/intl/public/</name>
   </compound>
-  <compound refid="dir_fe0b272263d973060e0fd450349ca9d3" kind="dir"><name>components/filescan/public/</name>
+  <compound refid="dir_51d726d3292722ccc89e5521793cdb5b" kind="dir"><name>components/integration/public/</name>
   </compound>
   <compound refid="dir_eecb51539508432d76058ec0e473f64f" kind="dir"><name>components/feathers/public/</name>
   </compound>
@@ -2700,6 +2932,8 @@
   </compound>
   <compound refid="dir_80f6c3dd8eeafa8cdb86be2defe21e6f" kind="dir"><name>components/mediacore/metadata/handler/taglib/</name>
   </compound>
+  <compound refid="dir_580f410a134451007402e9a8802aa88e" kind="dir"><name>components/moz/temporaryfileservice/</name>
+  </compound>
   <compound refid="dir_c92c8ea946da2aa25c1860fb9492a68e" kind="dir"><name>components/devices/device/test/</name>
   </compound>
   <compound refid="dir_f1e1eba70f57fcab25403769937a8ff8" kind="dir"><name>components/testharness/</name>
@@ -2709,6 +2943,8 @@
   <compound refid="dir_85a3718fe84534b357883159d476c7d0" kind="dir"><name>components/moz/windowwatcher/</name>
   </compound>
   <compound refid="dir_ada4e7442f94af0d207f45276cb7eb65" kind="dir"><name>components/devicesobsolete/wm/</name>
+  </compound>
+  <compound refid="c_1_2builds_2songbird_2trunk_2components_2mediacore_2metadata_2manager_2public_2sb_i_file_metadata_service_8idl-example" kind="example"><name>c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIFileMetadataService.idl</name>
   </compound>
   <compound refid="c_1_2builds_2songbird_2trunk_2components_2mediacore_2metadata_2manager_2public_2sb_i_metadata_handler_8idl-example" kind="example"><name>c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</name>
   </compound>
