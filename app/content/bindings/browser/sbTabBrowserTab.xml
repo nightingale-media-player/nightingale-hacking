@@ -207,6 +207,13 @@
             // no linked browser (e.g. fake media tab)
             return;
           }
+          
+          if (this._playlist) {
+            // this tab had been re-created for some reason - quite possibly,
+            // somebody dragged it and XBL is being stupid.
+            return;
+          }
+          
           // get the notification box around the browser
           var nbox = this.linkedBrowser.parentNode;
 
