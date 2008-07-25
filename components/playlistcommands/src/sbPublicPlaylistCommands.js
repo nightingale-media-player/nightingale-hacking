@@ -539,8 +539,6 @@ PublicPlaylistCommands.prototype = {
 
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
-      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_UPDATESMARTMEDIALIST, this.m_cmd_UpdateSmartPlaylist);
-      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_EDITSMARTMEDIALIST, this.m_cmd_EditSmartPlaylist);
 
       // --------------------------------------------------------------------------
       // Construct and publish the main library commands
@@ -634,6 +632,9 @@ PublicPlaylistCommands.prototype = {
                                                            "smartpl_cmdobj_properties",
                                                            this.m_cmd_EditSmartPlaylist);
       
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_UPDATESMARTMEDIALIST, this.m_cmd_UpdateSmartPlaylist);
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_EDITSMARTMEDIALIST, this.m_cmd_EditSmartPlaylist);
+
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SMARTPLAYLIST, this.m_smartPlaylistsCommands);
       this.m_mgr.registerPlaylistCommandsMediaItem("", "smart", this.m_smartPlaylistsCommands);
 

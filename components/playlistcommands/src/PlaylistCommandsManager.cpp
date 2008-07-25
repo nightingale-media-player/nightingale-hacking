@@ -255,6 +255,7 @@ NS_IMETHODIMP
 CPlaylistCommandsManager::Publish(const nsAString     &aCommandsGUID,
                                   sbIPlaylistCommands *aCommandObj)
 {
+  NS_ENSURE_ARG_POINTER(aCommandObj);
   nsString guid(aCommandsGUID);
   if (m_publishedCommands[guid]) return NS_ERROR_FAILURE;
   m_publishedCommands[guid] = aCommandObj;
@@ -266,6 +267,7 @@ NS_IMETHODIMP
 CPlaylistCommandsManager::Withdraw(const nsAString     &aCommandsGUID,
                                    sbIPlaylistCommands *aCommandObj)
 {
+  NS_ENSURE_ARG_POINTER(aCommandObj);
   nsString guid(aCommandsGUID);
   if (m_publishedCommands[guid] != aCommandObj) return NS_ERROR_FAILURE;
   m_publishedCommands.erase(guid);
