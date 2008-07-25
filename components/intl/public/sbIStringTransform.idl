@@ -63,7 +63,16 @@ interface sbIStringTransform : nsISupports
    */
   const unsigned long TRANSFORM_TRADITIONAL_CHINESE = 1 << 7;
 
+  /**
+   * \brief Ignore symbol characters. This includes but is not limited to
+   *        #, $, +, -.
+   */
   const unsigned long TRANSFORM_IGNORE_SYMBOLS = 1 << 8;
+
+  /**
+   * \brief Ignore non-spacing characters. This includes but is not limited to
+   *        diacritics.
+   */
   const unsigned long TRANSFORM_IGNORE_NONSPACE = 1 << 9;
 
   const unsigned long TRANSFORM_REVERSE_BYTES = 1 << 11; 
