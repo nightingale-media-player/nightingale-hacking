@@ -581,7 +581,6 @@
         <parameter name="event"/>
         <body>
           <![CDATA[
-            Components.utils.reportError('creating tooltip');
             event.stopPropagation();
             var tn = document.tooltipNode;
             if (tn.localName != "tab")

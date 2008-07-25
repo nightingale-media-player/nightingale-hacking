@@ -958,7 +958,16 @@
           return canDrop;
         ]]></body>
       </method>
-      <field name="_dragTimeout">350</field>
+      <property name="_dragTimeout" readonly="true">
+        <getter><![CDATA[
+          // default to a constant value, but can be overridden via the parent
+          if (this.hasAttribute("dragoverdelay"))
+            return parseInt(this.getAttribute("dragoverdelay"), 10);
+          if (this.parentNode.hasAttribute("dragoverdelay"))
+            return parseInt(this.parentNode.getAttribute("dragoverdelay"), 10);
+          return 350;
+        ]]></getter>
+      </property>
       <field name="_dragTimer">null</field>
 
       <method name="backWithDefault">
