@@ -61,7 +61,6 @@
 #include <prlog.h>
 #include <prprf.h>
 
-#define STATE_PROPERTY "http://songbirdnest.com/data/1.0#smartMediaListState"
 #define RANDOM_ADD_CHUNK_SIZE 1000;
 #define SQL_IN_LIMIT 1000
 
@@ -2396,7 +2395,8 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
   mConditions.Clear();
 
   nsAutoString state;
-  rv = mItem->GetProperty(NS_LITERAL_STRING(STATE_PROPERTY), state);
+  rv = mItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_SMARTMEDIALIST_STATE), 
+                          state);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If no saved state is available, just return
@@ -2616,7 +2616,8 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
   rv = JoinStringMapIntoQueryString(map, state);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mItem->SetProperty(NS_LITERAL_STRING(STATE_PROPERTY), state);
+  rv = mItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_SMARTMEDIALIST_STATE), 
+                          state);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

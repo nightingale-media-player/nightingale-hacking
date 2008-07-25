@@ -106,4 +106,7 @@
 #define SB_PROPERTY_LAST_SYNC_PLAYCOUNT       "http://songbirdnest.com/data/1.0#playCount_AtLastSync"
 #define SB_PROPERTY_LAST_SYNC_SKIPCOUNT       "http://songbirdnest.com/data/1.0#skipCount_AtLastSync"
 
+// Smart media list specific properties
+#define SB_PROPERTY_SMARTMEDIALIST_STATE      "http://songbirdnest.com/data/1.0#smartMediaListState"
+
 #endif /* __SB_STANDARD_PROPERTIES_H__ */
