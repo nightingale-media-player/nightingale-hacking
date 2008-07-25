@@ -1164,18 +1164,21 @@ PlaylistPlayback.prototype = {
     
     // Even if it fails here, it should be okay on the next loop around the block
     this._stopNextLoop = true;
-    if (this.playing)
+    if (this.playing) {
       dump("sbPlaylistPlayback::stop() - WHOA.  Playback core didn't actually stop when we asked it!\n");
-/*
-// Something in the _onPlayerLoop() kills us here.
-// It looks like this is okay to ignore and just use the _stopNextLoop flag.
-    else {
+    } else {
+      
+      // lone> This had been disabled for bug 4204 (data corruption), but was
+      // never re-enabled after the actual bug got fixed. This is actually
+      // necessary, we can't just rely on stopNextLoop, because if we are
+      // stopping due to a shutdown of the app, there will be no next loop.
+      
       // Call the loop immediately, here, so we clean out and shut the loop down.
       this._onPlayerLoop();
       this._stopPlayerLoop();
       this._stopNextLoop = false; // If we make it here, we don't need this
     }
-*/    
+
     this._playingVideo.boolValue = false;
     this._controlTriggered.stringValue = Date.now();
     
@@ -1287,7 +1290,7 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
     return;
   },
-
+  
   isMediaURL: function(aURL) {
     var coreCount = this._cores.length;
     
@@ -1522,18 +1525,52 @@ PlaylistPlayback.prototype = {
     this._stopNextLoop = false;
     this._lookForPlayingCount = 0;
     this._beenPlayingCount = 0;
-    this._hasIncPlayCount = false;
+    this._incPlayCountItem = null;
     this._timer = Components.classes[ "@mozilla.org/timer;1" ]
                   .createInstance( Components.interfaces.nsITimer );
     this._timer.initWithCallback( this, LOOP_DURATION, 1 ) // TYPE_REPEATING_SLACK
   },
   
   _stopPlayerLoop: function () {
+    if (this._started)
+      this._onPlayerLoopStop();
     if (this._timer) {
       this._timer.cancel();
       this._timer = null;
     }
     this._started = false;
+  },
+  
+  _onPlayerLoopStop: function() {
+    if (this._incPlayCountItem) {
+      // increment playCount and record lastPlayTime
+      var count = this._incPlayCountItem.getProperty(SBProperties.playCount);
+      this._incPlayCountItem.setProperties(
+        SBProperties.createArray([
+          [SBProperties.playCount, ++count],
+          [SBProperties.lastPlayTime, this._historyPlayStartTime]
+        ])
+      );
+
+      // record item in playback history
+      const prefs = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication)
+                        .prefs;
+
+      if (prefs.has(PREF_PLAYBACK_HISTORY_ENABLED) &&
+          prefs.get(PREF_PLAYBACK_HISTORY_ENABLED).value) {
+        var playDuration = Date.now() - this._historyPlayStartTime;
+        var entry = this._playbackHistory.createEntry(this._incPlayCountItem,
+                                                      this._historyPlayStartTime,
+                                                      playDuration, 
+                                                      null);
+        this._playbackHistory.addEntry(entry);
+      }
+      // reset
+      this._historyPlayStartTime = 0;
+      this._beenPlayingCount = 0;
+      this._incPlayCountItem = null;
+    }
   },
   
   // Poll function
@@ -1572,17 +1609,10 @@ PlaylistPlayback.prototype = {
       // This also catches when a track reaches the end. The fetching
       // of length has been getting us 0 all the time on the last loop
       // so we enter this scope and set the playcount.
-      if ( !this._hasIncPlayCount &&
+      if ( !this._incPlayCountItem &&
            ( (this._beenPlayingCount * LOOP_DURATION) > (240 * 1000) || 
              (this._beenPlayingCount * LOOP_DURATION) > (len/2) ) ) {
-        var count = this._playingItem.getProperty(SBProperties.playCount);
-        this._playingItem.setProperties(
-          SBProperties.createArray([
-            [SBProperties.playCount, ++count],
-            [SBProperties.lastPlayTime, Date.now()]
-          ])
-        );
-        this._hasIncPlayCount = true;
+        this._incPlayCountItem = this._playingItem;
       }
       
       // Ignore metadata when paused.
@@ -1764,7 +1794,7 @@ PlaylistPlayback.prototype = {
     
     LOG("_onPollCompleted - isPlaying? " + isPlaying);
     LOG("_onPollCompleted - stop next loop? " + this._stopNextLoop);
-    LOG("_onPollCompleted - incremented play count? " + this._hasIncPlayCount);
+    LOG("_onPollCompleted - flagged for play count increment? " + (this._incPlayCountItem != null));
     LOG("_onPollCompleted - lookForPlayingCount: " + this._lookForPlayingCount);
     LOG("_onPollCompleted - beenPlayingCount: " + this._beenPlayingCount);
     
@@ -1782,7 +1812,7 @@ PlaylistPlayback.prototype = {
         this._lookForPlayingCount = 0;
         this._beenPlayingCount = 0;
         this._stopNextLoop = false;
-        this._hasIncPlayCount = false;
+        this._incPlayCountItem = null;
       }
       // OH OH!  If our position isn't moving, go to the next track!
       else if ( pos == this._lastPos && pos > 0.0 && ! this._isFLAC() && ! this.paused ) {
@@ -1807,6 +1837,8 @@ PlaylistPlayback.prototype = {
       this._seenPlaying.boolValue = true;
       // keep track of number of times through the playing loop
       this._beenPlayingCount++;
+      
+      this._historyPlayStartTime = this._playStartTime;
     }
     // If we haven't seen ourselves playing, yet, we couldn't have stopped.
     else if ( (this._seenPlaying.boolValue || ( len < 0.0 )) &&
@@ -1890,7 +1922,7 @@ PlaylistPlayback.prototype = {
     //   3) playing for more than 2 seconds
     //   4) playing for less than 20 seconds
     if ( parseInt(incr) > -1 &&
-         !this._hasIncPlayCount &&
+         !this._incPlayCountItem &&
          (this._beenPlayingCount * LOOP_DURATION) > (2 * 1000) &&
          (this._beenPlayingCount * LOOP_DURATION) < (20 * 1000) ) {
       var count = this._playingItem.getProperty(SBProperties.skipCount);
@@ -1901,26 +1933,6 @@ PlaylistPlayback.prototype = {
         ])
       );
     }
-    else if (this._hasIncPlayCount) {
-      this._playingItem.setProperty(SBProperties.lastPlayTime, Date.now());
-
-      const prefs = Cc["@mozilla.org/fuel/application;1"]
-                        .getService(Ci.fuelIApplication)
-                        .prefs;
-
-      if(prefs.has(PREF_PLAYBACK_HISTORY_ENABLED) &&
-         prefs.get(PREF_PLAYBACK_HISTORY_ENABLED).value) {
-        var playDuration = Date.now() - this._historyPlayStartTime;
-        var entry = this._playbackHistory.createEntry(this._playingItem,
-                                                      this._historyPlayStartTime,
-                                                      playDuration, 
-                                                      null);
-        this._playbackHistory.addEntry(entry);
-      }
-      
-      this._historyPlayStartTime = 0;
-    }
-
     // Get the index of the item that just finished from the view using the
     // stored view item UID.  This is so we can determine the "next" track
     // based on the previous track's current position in the view, not its
@@ -2210,9 +2222,9 @@ PlaylistPlayback.prototype = {
     var filters = [];
     var filter = null;
     try {
-        filter = view.filterConstraint;
+      filter = view.filterConstraint;
     } catch (e) {
-        return filters;
+      return filters;
     }
     if (!filter) {
       return filters;
@@ -2378,7 +2390,6 @@ PlaylistPlayback.prototype = {
   _metricsStartPlaying: function PPS_metricsStartPlaying() {
     if (this._playStartTime == 0) {
       this._playStartTime = new Date().getTime();
-      this._historyPlayStartTime = this._playStartTime;
     }
   },
 

@@ -30,7 +30,26 @@
  */
 
 #include "nsISupports.idl"
-interface nsIStringEnumerator;
+interface nsISimpleEnumerator;
+
+[scriptable, uuid(3813e226-4465-4a4a-90e3-b890e2271e2c)]
+interface sbISmartPlaylistProperty : nsISupports
+{
+  /**
+   * The id of the property
+   */
+  readonly attribute AString propertyID;
+  
+  /**
+   * The default column width in the playlist view
+   */
+  readonly attribute long defaultColumnWidth;
+  
+  /**
+   * The default sort direction for the property column in the playlist view
+   */
+  readonly attribute AString defaultSortDirection; 
+};
 
 /**
 * \interface sbISmartPlaylistPropertyRegistrar
@@ -40,16 +59,16 @@ interface nsIStringEnumerator;
 * smart playlist editor via this service at startup.
 *
 */
-[scriptable, uuid(755c8f44-28e3-4971-9d38-241c721b90e0)]
+[scriptable, uuid(177dff4d-c845-4d7d-b1e8-533591908526)]
 interface sbISmartPlaylistPropertyRegistrar : nsISupports
 {
   /**
    * \brief Returns an enumerator for all the properties that have been
    * registered to a particular smart playlist context.
    * \param aContextID ID of the context
-   * \return Property string enumerator
+   * \return Enumerator of sbISmartPlaylistProperty items
    */
-  nsIStringEnumerator getPropertiesForContext(in AString aContextID);
+  nsISimpleEnumerator getPropertiesForContext(in AString aContextID);
 
   /**
    * \brief Register a property to the smart playlist editor for a particular
@@ -57,6 +76,9 @@ interface sbISmartPlaylistPropertyRegistrar : nsISupports
    * \param aContextID ID of the context
    * \param aProperty the property to register
    */
-  void registerPropertyToContext(in AString aContextID, in AString aProperty);
+  void registerPropertyToContext(in AString aContextID, 
+                                 in AString aProperty,
+                                 in long aDefaultColWidth,
+                                 in AString aDefaultSortDirection);
 };
 

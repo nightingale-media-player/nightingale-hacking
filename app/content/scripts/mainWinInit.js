@@ -41,6 +41,8 @@
 
 var gServicePane = null;
 
+Components.utils.import("resource://app/jsmodules/sbSmartMediaListColumnSpecUpdater.jsm");
+
 //
 // Module specific auto-init/deinit support
 //
@@ -332,7 +334,7 @@ function createDefaultSmartPlaylists() {
       selectPropertyID : SBProperties.rating,
       selectDirection  : false,
       randomSelection  : false,
-      autoUpdateMode   : sbILDSML.AUTOUPDATE_WHENDISPLAYED
+      autoUpdate       : true
     },
     {
       name: "&smart.defaultlist.mostplayed",
@@ -351,7 +353,7 @@ function createDefaultSmartPlaylists() {
       selectPropertyID : SBProperties.playCount,
       selectDirection  : false,
       randomSelection  : false,
-      autoUpdateMode   : sbILDSML.AUTOUPDATE_WHENDISPLAYED
+      autoUpdate       : true
     },
     {
       name: "&smart.defaultlist.recentlyadded",
@@ -370,7 +372,7 @@ function createDefaultSmartPlaylists() {
       selectPropertyID : SBProperties.created,
       selectDirection  : false,
       randomSelection  : false,
-      autoUpdateMode   : sbILDSML.AUTOUPDATE_WHENDISPLAYED
+      autoUpdate       : true
     },
     {
       name: "&smart.defaultlist.recentlyplayed",
@@ -389,7 +391,7 @@ function createDefaultSmartPlaylists() {
       selectPropertyID : SBProperties.lastPlayTime,
       selectDirection  : false,
       randomSelection  : false,
-      autoUpdateMode   : sbILDSML.AUTOUPDATE_WHENDISPLAYED
+      autoUpdate       : true
     }
   ];
   
@@ -418,4 +420,5 @@ function addSmartPlaylist(aItem) {
       mediaList[prop] = aItem[prop];
     }
   }
+  SmartMediaListColumnSpecUpdater.update(mediaList);
 }

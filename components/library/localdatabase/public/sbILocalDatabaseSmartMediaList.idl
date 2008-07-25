@@ -78,7 +78,7 @@ interface sbILocalDatabaseSmartMediaListCondition : nsISupports
   readonly attribute AString displayUnit;
 };
 
-[scriptable, function, uuid(7b5eb768-84b9-468b-8aac-f37b1f6706f4)]
+[scriptable, function, uuid(4b3f9a5b-44d5-4384-8f4d-6f953013f877)]
 interface sbILocalDatabaseSmartMediaListListener : nsISupports
 {
   void onRebuild(in sbILocalDatabaseSmartMediaList aSmartMediaList);
@@ -105,10 +105,6 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
   const unsigned long LIMIT_TYPE_ITEMS = 1;
   const unsigned long LIMIT_TYPE_USECS = 2;
   const unsigned long LIMIT_TYPE_BYTES = 3;
-
-  const unsigned long AUTOUPDATE_NEVER         = 0;
-  const unsigned long AUTOUPDATE_WHENDISPLAYED = 1;
-  const unsigned long AUTOUPDATE_LIVE          = 2;
 
   const unsigned long NOTEXISTS_ASZERO = 0;
   const unsigned long NOTEXISTS_ASNULL = 1;
@@ -150,13 +146,10 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
   attribute boolean randomSelection;
 
   /**
-   * \brief The update mode for this smart media list. Possible values are:
-   *
-   * AUTOUPDATE_NEVER         : the list is never updated automatically
-   * AUTOUPDATE_WHENDISPLAYED : the list is updated whenever it is displayed
-   * AUTOUPDATE_LIVE          : the list is updated whenever the library changes
+   * \brief Whether this smart media list updates automatically upon changes to
+   * its source library.
    */
-  attribute unsigned long autoUpdateMode;
+  attribute boolean autoUpdate;
   
   /**
    * \brief How to handle non-existent properties:

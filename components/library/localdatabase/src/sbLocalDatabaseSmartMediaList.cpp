@@ -362,7 +362,8 @@ sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
 , mLimit(0)
 , mSelectDirection(PR_TRUE)
 , mRandomSelection(PR_FALSE)
-, mAutoUpdateMode(sbILocalDatabaseSmartMediaList::AUTOUPDATE_NEVER)
+, mAutoUpdateLock(nsnull)
+, mAutoUpdate(false)
 , mNotExistsMode(sbILocalDatabaseSmartMediaList::NOTEXISTS_ASZERO)
 {
 #ifdef PR_LOGGING
@@ -380,6 +381,9 @@ sbLocalDatabaseSmartMediaList::~sbLocalDatabaseSmartMediaList()
   }
   if(mConditionsLock) {
     nsAutoLock::DestroyLock(mConditionsLock);
+  }
+  if(mAutoUpdateLock) {
+    nsAutoLock::DestroyLock(mAutoUpdateLock);
   }
   if (mListenersLock) {
     nsAutoLock::DestroyLock(mListenersLock);
@@ -439,6 +443,9 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
 
   mConditionsLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mConditionsLock");
   NS_ENSURE_TRUE(mConditionsLock, NS_ERROR_OUT_OF_MEMORY);
+
+  mAutoUpdateLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mAutoUpdateLock");
+  NS_ENSURE_TRUE(mAutoUpdateLock, NS_ERROR_OUT_OF_MEMORY);
 
   mListenersLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mListenersLock");
   NS_ENSURE_TRUE(mListenersLock, NS_ERROR_OUT_OF_MEMORY);
@@ -660,20 +667,20 @@ sbLocalDatabaseSmartMediaList::SetRandomSelection(PRBool aRandomSelection)
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::GetAutoUpdateMode(PRUint32* aAutoUpdateMode)
+sbLocalDatabaseSmartMediaList::GetAutoUpdate(PRBool* aAutoUpdate)
 {
-  NS_ENSURE_ARG_POINTER(aAutoUpdateMode);
+  NS_ENSURE_ARG_POINTER(aAutoUpdate);
 
-  nsAutoLock lock(mConditionsLock);
-  *aAutoUpdateMode = mAutoUpdateMode;
+  nsAutoLock lock(mAutoUpdateLock);
+  *aAutoUpdate = mAutoUpdate;
 
   return NS_OK;
 }
 NS_IMETHODIMP
-sbLocalDatabaseSmartMediaList::SetAutoUpdateMode(PRUint32 aAutoUpdateMode)
+sbLocalDatabaseSmartMediaList::SetAutoUpdate(PRBool aAutoUpdate)
 {
-  nsAutoLock lock(mConditionsLock);
-  mAutoUpdateMode = aAutoUpdateMode;
+  nsAutoLock lock(mAutoUpdateLock);
+  mAutoUpdate = aAutoUpdate;
 
   nsresult rv = WriteConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -834,7 +841,7 @@ sbLocalDatabaseSmartMediaList::Rebuild()
     rv = RebuildMatchTypeAnyAll();
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
+  
   // Notify our inner list that its content changed
   nsCOMPtr<sbILocalDatabaseSimpleMediaList> ldsml =
     do_QueryInterface(mList, &rv);
@@ -972,7 +979,8 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneNotRandom()
   NS_NAMED_LITERAL_STRING(kMediaItemId,     "media_item_id");
   NS_NAMED_LITERAL_STRING(kMediaItemsAlias, "_mi");
   NS_NAMED_LITERAL_STRING(kLimitAlias,      "_limit");
-
+  NS_NAMED_LITERAL_STRING(kMediaListTypeId, "media_list_type_id");
+  
   nsresult rv;
 
   // For match type none, the strategy is to do a rolling limit query on a
@@ -1033,7 +1041,18 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneNotRandom()
   rv = builder->AddColumn(kMediaItemsAlias, kMediaItemId);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("'0'"));
+  rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("0"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Only get media items
+  nsCOMPtr<sbISQLBuilderCriterion> nullCriterion;
+  rv = builder->CreateMatchCriterionNull(kMediaItemsAlias,
+                                         kMediaListTypeId,
+                                         sbISQLBuilder::MATCH_EQUALS,
+                                         getter_AddRefs(nullCriterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(nullCriterion);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddSelectColumnAndJoin(builder, kMediaItemsAlias, PR_TRUE);
@@ -1164,13 +1183,26 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneRandom()
 
   PRUint32 rowLimit = 0;
   PRUint32 pos = 0;
+  PRUint32 chunkSize = RANDOM_ADD_CHUNK_SIZE;
+
+  // if the chunk size is >= the number of items in the source library, all
+  // the items will match an id in AddMediaItemsTempTable's query, and they
+  // will all end up in their normal order in the result set, then we'll start
+  // taking items from the beginning of that set, and those will always be the
+  // same ones: it will definitely not be random. In general, the closer the
+  // chunkSize is to the total number of items, the greater the chance that
+  // items at the top will end up in the result set. To avoid this, make
+  // chunkSize at most length/2.
+  if (chunkSize > length / 2)
+    chunkSize = length / 2;
+   
   while (pos < length) {
-    PRUint32 chunkSize = RANDOM_ADD_CHUNK_SIZE;
-    if (pos + chunkSize > length) {
-      chunkSize = length - pos;
+    PRUint32 thisChunkSize = chunkSize;
+    if (pos + thisChunkSize > length) {
+      thisChunkSize = length - pos; 
     }
 
-    rv = AddMediaItemsTempTable(tempTableName, mediaItemIds, pos, chunkSize);
+    rv = AddMediaItemsTempTable(tempTableName, mediaItemIds, pos, thisChunkSize); 
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (mLimitType == sbLocalDatabaseSmartMediaList::LIMIT_TYPE_ITEMS) {
@@ -1193,7 +1225,7 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneRandom()
         break;
       }
     }
-    pos += chunkSize;
+    pos += thisChunkSize; 
   }
 
   // Finally clear out the old list and copy the items out of the temp table to
@@ -1449,7 +1481,8 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
                                      getter_AddRefs(join_criterion));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // create a left outer join with these conditions
+    // create a left outer join with these conditions, so we get null values
+    // for items that do not have the property we're looking for.
     rv = builder->AddJoinWithCriterion(sbISQLBuilder::JOIN_LEFT_OUTER,
                                        kResourceProperties,
                                        kConditionAlias,
@@ -1476,14 +1509,21 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
   rv = AddLimitColumnAndJoin(builder, baseAlias);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If there is a select property id, pull it into the result of the query
-  if (!mSelectPropertyID.IsEmpty()) {
-    rv = AddSelectColumnAndJoin(builder, baseAlias, PR_FALSE);
+  // If there is a limit on a select property id, pull it into the result of
+  // the query, and sort the results by that property
+  if (mLimit != sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE &&
+      !mSelectPropertyID.IsEmpty()) {
+    rv = AddSelectColumnAndJoin(builder, baseAlias, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     // Just add a blank placeholder column
     rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
+    // If there is a limit but the selection is random, add a random sort order
+    if (mLimit != sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE &&
+        mRandomSelection) {
+      builder->AddRandomOrder();
+    }
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -2019,25 +2059,44 @@ sbLocalDatabaseSmartMediaList::AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuil
     rv = aBuilder->AddColumn(kSelectAlias, kObjSortable);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = aBuilder->AddJoin(sbISQLBuilder::JOIN_INNER,
-                           kResourceProperties,
-                           kSelectAlias,
-                           kMediaItemId,
-                           aBaseTableAlias,
-                           kMediaItemId);
-    NS_ENSURE_SUCCESS(rv, rv);
-
+    // get property db id for rule property 
     PRUint32 propertyDBID;
     rv = mPropertyCache->GetPropertyDBID(mSelectPropertyID, &propertyDBID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbISQLBuilderCriterion> criterion;
-    rv = aBuilder->CreateMatchCriterionLong(kSelectAlias,
-                                            kPropertyId,
+    // media_item_id match with left table media_item_id
+    nsCOMPtr<sbISQLBuilderCriterion> criterion_media_item;
+    rv = aBuilder->CreateMatchCriterionTable(aBaseTableAlias,
+                                            kMediaItemId,
                                             sbISQLBuilder::MATCH_EQUALS,
-                                            propertyDBID,
-                                            getter_AddRefs(criterion));
-    rv = aBuilder->AddCriterion(criterion);
+                                            kSelectAlias,
+                                            kMediaItemId,
+                                            getter_AddRefs(criterion_media_item)); 
+    NS_ENSURE_SUCCESS(rv, rv);
+
+ 
+    // select.property_id match with select property db id
+    nsCOMPtr<sbISQLBuilderCriterion> criterion_property_id;
+    rv = aBuilder->CreateMatchCriterionLong(kSelectAlias,
+                                           kPropertyId,
+                                           sbISQLBuilder::MATCH_EQUALS,
+                                           propertyDBID,
+                                           getter_AddRefs(criterion_property_id));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // combine the two conditions with AND
+    nsCOMPtr<sbISQLBuilderCriterion> join_criterion;
+    rv = aBuilder->CreateAndCriterion(criterion_media_item, 
+                                     criterion_property_id, 
+                                     getter_AddRefs(join_criterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // create a left outer join with these conditions, so we get null values
+    // for items that do not have the property we're looking for.
+    rv = aBuilder->AddJoinWithCriterion(sbISQLBuilder::JOIN_LEFT_OUTER,
+                                       kResourceProperties,
+                                       kSelectAlias,
+                                       join_criterion);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (aAddOrderBy) {
@@ -2391,7 +2450,7 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
   mSelectPropertyID.Truncate();
   mSelectDirection = PR_TRUE;
   mRandomSelection = PR_FALSE;
-  mAutoUpdateMode = sbILocalDatabaseSmartMediaList::AUTOUPDATE_NEVER;
+  mAutoUpdate = false;
   mConditions.Clear();
 
   nsAutoString state;
@@ -2444,8 +2503,8 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
     mRandomSelection = value.EqualsLiteral("1");
   }
 
-  if (map.Get(NS_LITERAL_STRING("autoUpdateMode"), &value)) {
-    PR_sscanf(NS_LossyConvertUTF16toASCII(value).get(), "%d", &mAutoUpdateMode);
+  if (map.Get(NS_LITERAL_STRING("autoUpdate"), &value)) {
+    PR_sscanf(NS_LossyConvertUTF16toASCII(value).get(), "%d", &mAutoUpdate);
   }
 
   if (map.Get(NS_LITERAL_STRING("conditionCount"), &value)) {
@@ -2589,9 +2648,9 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
   success = map.Put(NS_LITERAL_STRING("randomSelection"), randomSelection);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  nsAutoString autoUpdateMode;
-  autoUpdateMode.AppendInt(mAutoUpdateMode);
-  success = map.Put(NS_LITERAL_STRING("autoUpdateMode"), autoUpdateMode);
+  nsAutoString autoUpdate;
+  autoUpdate.AppendInt(mAutoUpdate);
+  success = map.Put(NS_LITERAL_STRING("autoUpdate"), autoUpdate);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsAutoString conditionCount;
@@ -2874,3 +2933,4 @@ sbLocalDatabaseSmartMediaList::RemoveSmartMediaListListener(sbILocalDatabaseSmar
   mListeners.RemoveObject(aListener);
   return NS_OK;
 }
+

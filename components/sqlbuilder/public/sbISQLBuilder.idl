@@ -43,7 +43,7 @@ interface sbISQLSelectBuilder;
 * The interface is inspired by Squiggle:
 * http://joe.truemesh.com/squiggle/javadoc/index.html
 */
-[scriptable, uuid(996cc0c9-c7c0-4a11-adbc-3f3fb2d0698b)]
+[scriptable, uuid(c214b05b-0aa8-4bf9-aa0f-a1b1ff646539)]
 interface sbISQLBuilder : nsISupports
 {
   const unsigned long MATCH_EQUALS       = 0;
@@ -338,6 +338,11 @@ interface sbISQLSelectBuilder : sbISQLWhereBuilder
                 in AString aColumnName,
                 in boolean aAscending);
 
+  /**
+   * \brief Add a random order clause to the query
+   * \param aTableName Table name the column belongs to
+   */
+  void addRandomOrder();
 
   /**
    * \brief Add an group by clause to the query

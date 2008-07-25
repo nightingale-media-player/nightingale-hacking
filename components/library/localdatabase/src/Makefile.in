@@ -130,6 +130,7 @@ endif
 LIBSONGBIRD_COMPONENT = SongbirdLocalDatabaseLibraryModule
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbLocalDatabaseDynamicPlaylist.js \
+                      $(srcdir)/sbSmartMediaListsUpdater.js \
                       $(srcdir)/sbLocalDatabaseMigrationHelper.js \
                       $(DYNAMIC_LIB) \
                       $(NULL)

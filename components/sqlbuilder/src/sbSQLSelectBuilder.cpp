@@ -114,6 +114,19 @@ sbSQLSelectBuilder::AddOrder(const nsAString& aTableName,
   oi->tableName  = aTableName;
   oi->columnName = aColumnName;
   oi->ascending  = aAscending;
+  oi->random     = PR_FALSE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSQLSelectBuilder::AddRandomOrder()
+{
+  sbOrderInfo* oi = mOrders.AppendElement();
+  NS_ENSURE_TRUE(oi, NS_ERROR_OUT_OF_MEMORY);
+
+  oi->random    = PR_TRUE;
+  oi->ascending = PR_FALSE; // unused, but don't leave it uninitialized
 
   return NS_OK;
 }
@@ -281,16 +294,20 @@ sbSQLSelectBuilder::ToString(nsAString& _retval)
     buff.AppendLiteral(" order by ");
     for (PRUint32 i = 0; i < len; i++) {
       const sbOrderInfo& oi = mOrders[i];
-      if (!oi.tableName.IsEmpty()) {
-        buff.Append(oi.tableName);
-        buff.AppendLiteral(".");
-      }
-      buff.Append(oi.columnName);
-      if (oi.ascending) {
-        buff.AppendLiteral(" asc");
-      }
-      else {
-        buff.AppendLiteral(" desc");
+      if (oi.random) {
+        buff.AppendLiteral("random()");
+      } else {
+        if (!oi.tableName.IsEmpty()) {
+          buff.Append(oi.tableName);
+          buff.AppendLiteral(".");
+        }
+        buff.Append(oi.columnName);
+        if (oi.ascending) {
+          buff.AppendLiteral(" asc");
+        }
+        else {
+          buff.AppendLiteral(" desc");
+        }
       }
       if (i + 1 < len) {
         buff.AppendLiteral(", ");

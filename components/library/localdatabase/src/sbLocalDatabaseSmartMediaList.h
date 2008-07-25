@@ -218,7 +218,7 @@ private:
   
   void SPrintfInt64(nsAString &aString, PRInt64 aValue);
   PRInt64 ScanfInt64(nsAString &aString);
-
+  
   nsresult ReadConfiguration();
 
   nsresult WriteConfiguration();
@@ -237,7 +237,8 @@ private:
   nsString mSelectPropertyID;
   PRBool   mSelectDirection;
   PRBool   mRandomSelection;
-  PRUint32 mAutoUpdateMode;
+  PRLock*  mAutoUpdateLock;
+  PRUint32 mAutoUpdate;
   PRUint32 mNotExistsMode;
 
   nsCOMPtr<sbIPropertyManager> mPropMan;

@@ -345,8 +345,15 @@
           // add properties from a string enumerator 
           var that = this;
           function addProperties(enumerator, toplist, bottomlist) {
-            while (enumerator.hasMore()) {
+            var more;
+            if (enumerator.hasMore)
+              more = enumerator.hasMore;
+            else
+              more = enumerator.hasMoreElements;
+            while (more()) {
               var prop = enumerator.getNext();
+              if (prop instanceof Ci.sbISmartPlaylistProperty)
+                prop = prop.propertyID;
               // if we already have it, skip it
               if (prop in seen)
                 continue;

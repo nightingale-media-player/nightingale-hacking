@@ -435,8 +435,8 @@
       <field name="_down">0</field>
       <field name="_lastpos">0</field>
       
-      <!-- Indicates that the column metadata should be saved -->
-      <field name="_columnSpecIsDirty">false</field>
+      <!-- A timeout to save the column metadata -->
+      <field name="_saveColumnSpecTimeout">null</field>
 
       <!-- Indicates that the column metadata should not
            be used as the default -->      
@@ -506,9 +506,62 @@
         <body>
 <![CDATA[
 
+  // clear previous columnspec watcher
+  if (this.columnSpecWatcher) {
+    this.columnSpecWatcher.
+         medialist.library.removeListener(this.columnSpecWatcher);
+  }
+  
+  // columnspec watcher: update the columns when the columnspec property changes
+  this.columnSpecWatcher = {
+    playlist: this,
+    medialist: mediaListView.mediaList,
+    onItemAdded: function(list, item, index) {},
+    onBeforeItemRemoved: function(list, item, index) {},
+    onAfterItemRemoved: function(list, item, index) {},
+    onItemMoved: function(list, item, index) {},
+    onListCleared: function(list) {},
+    onBatchBegin: function(list) {},
+    onBatchEnd: function(list) {},
+    onItemUpdated: 
+      function columnSpecWatcher_onItemUpdated(aMediaList, 
+                                               aMediaItem, 
+                                               aProperties) {
+      // ignore notifications that are not about our medialist
+      if (aMediaItem != this.medialist)
+        return false;
+      // ignore notifications that we caused
+      if (this.playlist.ignoreColumnSpecUpdate)
+        return true;
+      // if the udpate is on the columnspec, reload columns
+      for (var i=0; i<aProperties.length; i++) {
+        var property = aProperties.getPropertyAt(i);
+        if (property.id == SBProperties.columnSpec) {
+          this.playlist._setupColumns();
+        }
+      }
+      return false;
+    },    
+    QueryInterface: function columnSpecWatcher_QI(aIID) {
+      if (aIID.equals(Components.interfaces.sbIMediaListListener) ||
+          aIID.equals(Components.interfaces.nsISupports)) {
+        return this;
+      }
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+  }
+  // begin watching changes to column specs
+  mediaListView.mediaList
+               .library
+               .addListener(this.columnSpecWatcher, 
+                            false,
+                            this._Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED);
+
   // Make sure we save the column spec
   // for the existing view
-  if (this._columnSpecIsDirty) {
+  if (this._saveColumnSpecTimeout) {
+    clearTimeout(this._saveColumnSpecTimeout);
+    this._saveColumnSpecTimeout = null;
     this._saveColumnSpec();
   }
 
@@ -570,8 +623,15 @@
         <body>
 <![CDATA[
   if (!this._destroyed) {
-  
-    if (this._columnSpecIsDirty) {
+
+    if (this.columnSpecWatcher) {
+      this.columnSpecWatcher.
+           medialist.library.removeListener(this.columnSpecWatcher);
+    }
+
+    if (this._saveColumnSpecTimeout) {
+      clearTimeout(this._saveColumnSpecTimeout);
+      this._saveColumnSpecTimeout = null;
       this._saveColumnSpec();
     }
 
@@ -831,7 +891,7 @@
 <![CDATA[
   if((event.attrName == "dragging" && event.newValue == "") ||
      event.attrName == "width" || event.attrName == "hidden") {
-    this._columnSpecIsDirty = true;
+    this._setColumnSpecDirty();
   }
 ]]>
         </body>
@@ -857,7 +917,7 @@
     // Make sure we save the spec for this playlist.
     // If we don't, then this playlist will change if the default
     // changes, and the user will be confused.
-    this._columnSpecIsDirty = true;
+    this._setColumnSpecDirty();
     
     // If this is a playlist inited from defaults, we may need
     // to tweak the column spec a little
@@ -970,7 +1030,10 @@
   }
     
   // Then rebuild the columns
-  this._columnSpecIsDirty = false;
+  if (this._saveColumnSpecTimeout) {
+    clearTimeout(this._saveColumnSpecTimeout);
+    this._saveColumnSpecTimeout = null;
+  }
   this._suppressSaveAsDefaultColumnSpec = false;  
   this._setupColumns();
 ]]>
@@ -995,7 +1058,7 @@
   this._getVisibleColumnArray().forEach(function(column) {
     column.element.setAttribute("hidden", "true");
   });
-  this._columnSpecIsDirty = true;
+  this._setColumnSpecDirty();
   this._suppressSaveAsDefaultColumnSpec = true;
 ]]>
         </body>
@@ -1008,7 +1071,7 @@
         <body>
 <![CDATA[
   this.insertColumnBefore(aPropertyID, "", aWidth);
-  this._columnSpecIsDirty = true;
+  this._setColumnSpecDirty();
   this._suppressSaveAsDefaultColumnSpec = true;
 ]]>
         </body>
@@ -1097,7 +1160,7 @@
   if ( aWidth && width == "" ) {
     mover.element.setAttribute("width", aWidth);
   }
-  this._columnSpecIsDirty = true;
+  this._setColumnSpecDirty();
   this._suppressSaveAsDefaultColumnSpec = true;
 ]]>
         </body>
@@ -1173,7 +1236,7 @@
     mover = this._moveColumnBefore(columns, columnIndex, firstHiddenIndex);
   }
   mover.element.setAttribute("hidden", "true");
-  this._columnSpecIsDirty = true;
+  this._setColumnSpecDirty();
   this._suppressSaveAsDefaultColumnSpec = true;
 ]]>
         </body>
@@ -1201,7 +1264,7 @@
 <![CDATA[
   var ldtv = this.tree.view.QueryInterface(this._Ci.sbILocalDatabaseTreeView);
   ldtv.setSort(aPropertyID, aIsAscending);
-  this._columnSpecIsDirty = true;
+  this._setColumnSpecDirty();
   this._suppressSaveAsDefaultColumnSpec = true;
 ]]>
         </body>
@@ -1302,10 +1365,21 @@
 ]]>
         </body>
       </method>
+      
+      <method name="_setColumnSpecDirty">
+        <body>
+          if (this._saveColumnSpecTimeout) {
+            clearTimeout(this._saveColumnSpecTimeout);
+          }
+          this._saveColumnSpecTimeout = 
+            setTimeout(function(o) { o._saveColumnSpec(); }, 100, this);
+        </body>
+      </method>
 
       <method name="_saveColumnSpec">
         <body>
 <![CDATA[
+  this._saveColumnSpecTimeout = null;
   var columns = [];
 
   var treecolList = this._treecols.getElementsByTagNameNS(this._XUL_NS,
@@ -1381,7 +1455,9 @@
   }
 
   var mediaList = this.mediaListView.mediaList;
+  this.ignoreColumnSpecUpdate = true;
   mediaList.setProperty(SBProperties.columnSpec, columnSpec);
+  this.ignoreColumnSpecUpdate = false;
 
   // Consider saving this spec as a default
   if (!this._suppressSaveAsDefaultColumnSpec) {
@@ -1393,8 +1469,6 @@
       Application.prefs.setValue(pref, columnSpec);
     }
   }
-         
-  this._columnSpecIsDirty = false;
 ]]>
         </body>
       </method>
@@ -2941,7 +3015,7 @@
         <parameter name="aCol"/>
         <body>
 <![CDATA[
-  this._columnSpecIsDirty = true;
+  this._setColumnSpecDirty();
 ]]>
         </body>
       </method>

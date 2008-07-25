@@ -1,3 +1,30 @@
+/**
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+Components.utils.import("resource://app/jsmodules/sbSmartMediaListColumnSpecUpdater.jsm");
 
 var sbILocalDatabaseSmartMediaList =
   Components.interfaces.sbILocalDatabaseSmartMediaList;
@@ -276,27 +303,9 @@ function loadConditions()
 
 
   // Set autoupdate
-  const sbiLDSML = Components.interfaces.sbILocalDatabaseSmartMediaList;
-  // XXXlone> uncomment when we have 3 autoupdate modes
-  /* var autoUpdate = document.getElementById("smart_autoupdate_list");
-  switch (list.autoUpdateMode) {
-    case sbiLDSML.AUTOUPDATE_NEVER:
-      autoUpdate.value = "never";
-      break;
-    case sbiLDSML.AUTOUPDATE_WHENDISPLAYED:
-      autoUpdate.value = "whendisplayed";
-      break;
-    case sbiLDSML.AUTOUPDATE_LIVE:
-      autoUpdate.value = "live";
-      break;
-  }*/
-  // ---
-  
-  //XXXlone> remove when we have 3 autoupdate modes, from here
   var autoUpdate = document.getElementById("smart_autoupdate_check");
   autoUpdate.checked = 
-    list.autoUpdateMode == sbiLDSML.AUTOUPDATE_WHENDISPLAYED;
-  //XXXlone> to here
+    list.autoUpdate == true;
 
   // immediately update the match controls, so we don't have to wait for the drawer items
   updateMatchControls();
@@ -403,28 +412,10 @@ function doOK()
       setSelectBy(list, selectBy.value);
     }
 
-    // Save auto update
-    const sbiLDSML = Components.interfaces.sbILocalDatabaseSmartMediaList;
-    // XXXlone> uncomment when we have 3 autoupdate modes
-    /*var autoUpdate = document.getElementById("smart_autoupdate_list");
-    switch (autoUpdate.value) {
-      case "never":
-        list.autoUpdateMode = sbiLDSML.AUTOUPDATE_NEVER;
-        break;
-      case "whendisplayed":
-        list.autoUpdateMode = sbiLDSML.AUTOUPDATE_WHENDISPLAYED;
-        break;
-      case "live":
-        list.autoUpdateMode = sbiLDSML.AUTOUPDATE_LIVE;
-        break;
-    }*/
-    // ---
-    //XXXlone> remove when we have 3 autoupdate modes, from here
     var autoUpdate = document.getElementById("smart_autoupdate_check");
-    list.autoUpdateMode = autoUpdate.checked ? 
-                          sbiLDSML.AUTOUPDATE_WHENDISPLAYED :
-                          sbiLDSML.AUTOUPDATE_NEVER;
-    //XXXlone> to here
+    list.autoUpdate = autoUpdate.checked;
+    
+    SmartMediaListColumnSpecUpdater.update(list);
 
     list.rebuild();
   }
@@ -461,3 +452,26 @@ function setSelectBy(list, value) {
   });
 
 }
+
+// we're not using radio controls because both checkboxes can be checked
+// at the same time, but we have to keep at least one of them checked at
+// all times
+
+function onCheckMatch(evt) {
+  var check_match = document.getElementById("smart_match_check");
+  var check_limit = document.getElementById("smart_songs_check");
+  
+  if (!check_match.checked) {
+    check_limit.checked = true;
+  }
+}
+
+function onCheckLimit(evt) {
+  var check_match = document.getElementById("smart_match_check");
+  var check_limit = document.getElementById("smart_songs_check");
+  
+  if (!check_limit.checked) {
+    check_match.checked = true;
+  }
+}
+

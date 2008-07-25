@@ -37,14 +37,42 @@ function SmartPlaylistPropertyRegistrar() {
 
   var context = "default";
   
-  for each (var prop in 
-    ["albumName", "albumArtistName", "artistName", "bitRate", "bpm",
-     "comment", "composerName", "created", "updated", "discNumber",
-     "contentURL", "genre", "lastPlayTime", "lastSkipTime", "playCount",
-     "rating", "sampleRate", "contentLength", "skipCount", "originURL",
-     "originPage", "originPageTitle", "duration", "trackName", "trackNumber",
-     "year"]) {
-    this.registerPropertyToContext(context, SBProperties[prop]);
+  for each (var item in 
+    [
+     ["albumName",       220, "a"],
+     ["albumArtistName", 220, "a"],
+     ["artistName",      220, "a"],
+     ["bitRate",          40, "d"],
+     ["bpm",              40, "d"],
+     ["comment",         120, "a"],
+     ["composerName",    150, "a"],
+     ["created",         100, "d"],
+     ["updated",         100, "d"],
+     ["discNumber",       40, "d"],
+     ["contentURL",      220, "a"],
+     ["genre",            70, "a"],
+     ["lastPlayTime",    100, "d"],
+     ["lastSkipTime",    100, "d"],
+     ["playCount",        40, "d"],
+     ["rating",           85, "d"],
+     ["sampleRate",       75, "d"],
+     ["contentLength",    50, "d"],
+     ["skipCount",        40, "d"],
+     ["originURL",       220, "a"],
+     ["originPage",      220, "a"],
+     ["originPageTitle", 150, "a"],
+     ["duration",         55, "d"],
+     ["trackName",       220, "a"],
+     ["trackNumber",      40, "d"],
+     ["year",             50, "d"]
+    ]) {
+    var propertyID = item[0];
+    var defaultColumnWidth = item[1];
+    var defaultSortDirection = item[2];
+    this.registerPropertyToContext(context, 
+                                   SBProperties[propertyID],
+                                   defaultColumnWidth,
+                                   defaultSortDirection);
   }
 }
 
@@ -60,7 +88,7 @@ SmartPlaylistPropertyRegistrar.prototype = {
    */
   getPropertiesForContext: function 
     SmartPlaylistPropertyRegistrar_getPropertyForContext(aContextID) {
-    return ArrayConverter.stringEnumerator(this._maps[aContextID]);
+    return ArrayConverter.enumerator(this._maps[aContextID]);
   },
 
   /**
@@ -68,11 +96,19 @@ SmartPlaylistPropertyRegistrar.prototype = {
    */  
   registerPropertyToContext: function
     SmartPlaylistPropertyRegistrar_registerPropertyToContext(aContextID, 
-                                                             aProperty) {
+                                                             aPropertyID,
+                                                             aColWidth,
+                                                             aSortDir) {
     if (!(aContextID in this._maps)) {
       this._maps[aContextID] = [];
     }
-    this._maps[aContextID].push(aProperty);
+    var smartPlaylistProperty = {
+      propertyID           : aPropertyID,
+      defaultColumnWidth   : aColWidth,
+      defaultSortDirection : aSortDir,
+      QueryInterface       : XPCOMUtils.generateQI([Ci.sbISmartPlaylistProperty])
+    };
+    this._maps[aContextID].push(smartPlaylistProperty);
   },
 
   /**

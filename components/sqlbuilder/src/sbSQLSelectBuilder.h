@@ -58,6 +58,7 @@ private:
     nsString tableName;
     nsString columnName;
     PRBool ascending;
+    PRBool random;
   };
 
   struct sbGroupInfo

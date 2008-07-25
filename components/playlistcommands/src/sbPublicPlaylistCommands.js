@@ -587,6 +587,10 @@ PublicPlaylistCommands.prototype = {
                                    "&command.shortcut.modifiers.smartpl.update",
                                    true);
 
+     this.m_cmd_UpdateSmartPlaylist.setCommandVisibleCallback(null, 
+                                                              "smartpl_cmd_update",
+                                                              plCmd_NOT(plCmd_isLiveUpdateSmartPlaylist));
+
       this.m_cmd_EditSmartPlaylist = new PlaylistCommandsBuilder();
 
       this.m_cmd_EditSmartPlaylist.appendAction
@@ -1210,6 +1214,7 @@ function plCmd_EditSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandI
                       "_blank",
                       "chrome,dialog=yes,centerscreen,modal,titlebar=no",
                       medialist);
+    unwrap(aContext.playlist).refreshCommands();
   }
 }
 
@@ -1336,6 +1341,13 @@ function plCmd_isSmartPlaylist(aContext, aSubMenuId, aCommandId, aHost) {
   return (medialist.type == "smart");
 }
 
+function plCmd_isLiveUpdateSmartPlaylist(aContext, aSubMenuId, aCommandId, aHost) {
+  var medialist = unwrap(aContext.medialist);
+  if (medialist instanceof Ci.sbILocalDatabaseSmartMediaList)
+    return medialist.autoUpdate;
+  return false;
+} 
+ 
 // Returns a function that will return the conjunction of the result of the inputs
 function plCmd_AND( /* comma separated list (not array) of functions */ ) {
   var methods = Array.prototype.concat.apply([], arguments);

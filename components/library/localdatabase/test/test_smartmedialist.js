@@ -78,9 +78,9 @@ function testProperties(library) {
   list.randomSelection = true;
   assertEqual(list.randomSelection, true);
 
-  assertEqual(list.autoUpdateMode, Ci.sbILocalDatabaseSmartMediaList.AUTOUPDATE_NEVER);
-  list.autoUpdateMode = Ci.sbILocalDatabaseSmartMediaList.AUTOUPDATE_WHENDISPLAYED;
-  assertEqual(list.autoUpdateMode, Ci.sbILocalDatabaseSmartMediaList.AUTOUPDATE_WHENDISPLAYED);
+  assertEqual(list.autoUpdate, false);
+  list.autoUpdate = true;
+  assertEqual(list.autoUpdate, true);
 }
 
 function testConditions(library) {
@@ -779,7 +779,7 @@ function testSerialize(library) {
   list.selectDirection = false;
   list.limit = 123;
   list.randomSelection = true;
-  list.autoUpdateMode = Ci.sbILocalDatabaseSmartMediaList.AUTOUPDATE_WHENSHOWN;
+  list.autoUpdate = true;
   list.appendCondition(albumProp,
                        getOperatorForProperty(albumProp, "%?%"),
                        "fat",
@@ -804,7 +804,7 @@ function testSerialize(library) {
   assertEqual(list.selectDirection, restoredList.selectDirection);
   assertEqual(list.limit, restoredList.limit);
   assertEqual(list.randomSelection, restoredList.randomSelection);
-  assertEqual(list.autoUpdateMode, restoredList.autoUpdateMode);
+  assertEqual(list.autoUpdate, restoredList.autoUpdate);
   assertEqual(list.conditionCount, restoredList.conditionCount);
 
   for (var i = 0; i < list.conditionCount; i++) {

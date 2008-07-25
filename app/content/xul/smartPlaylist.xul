@@ -60,7 +60,7 @@
   <groupbox>
     <vbox flex="1">
       <hbox align="center">
-        <checkbox id="smart_match_check" label="&smart.matchsingle;" labelmultiple="&smart.match;" labelsingle="&smart.matchsingle;" checked="false"/>
+        <checkbox id="smart_match_check" label="&smart.matchsingle;" labelmultiple="&smart.match;" labelsingle="&smart.matchsingle;" checked="false" oncommand="onCheckMatch(event);"/>
         <menulist id="smart_any_list" value="any" hidden="true">
           <menupopup id="smart_any_list_popup" >
             <menuitem id="smart_any_list_any" label="&smart.any;" value="any" />
@@ -77,7 +77,7 @@
     <spacer height="5"/>
 
     <hbox  align="center">
-      <checkbox id="smart_songs_check" label="&smart.limit;" checked="false"/>
+      <checkbox id="smart_songs_check" label="&smart.limit;" checked="false" oncommand="onCheckLimit(event);"/>
       <textbox  id="smart_songs_count" value="20"/>
       <menulist id="smart_songs_list" value="songs">
         <menupopup id="smart_songs_list_popup">
@@ -112,24 +112,11 @@
           <menuitem id="smart_selected_list_least_added" label="&smart.least_added;" value="least_added" />
         </menupopup>
       </menulist>
-      <!-- XXXlone> uncomment when we have 3 update modes 
-      <spacer width="8"/>
-      <label   value="&smart.autoupdate;" control="smart_autoupdate_list"/>
-      <menulist id="smart_autoupdate_list" value="whendisplayed">
-        <menupopup id="smart_autoupdate_list_popup" >
-          <menuitem id="smart_autoupdate_list_never" label="&smart.autoupdate.never;" value="never" />
-          <menuitem id="smart_autoupdate_list_whendisplayed" label="&smart.autoupdate.whendisplayed;" value="whendisplayed" />
-        </menupopup>
-      </menulist>
-      <spacer flex="1" height="25"/>
-      -->
     </hbox>
-    <!-- XXXlone> remove this when we have 3 update modes, from here -->
     <hbox>
       <checkbox id="smart_autoupdate_check" label="&smart.autoupdate;"/>
       <spacer flex="1" height="25"/>
     </hbox>
-    <!-- XXXlone> to here -->
   </groupbox>
 
   <!-- SCRIPTS -->
