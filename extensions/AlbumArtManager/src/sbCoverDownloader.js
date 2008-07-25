@@ -142,7 +142,7 @@ function sbCoverDownloader_onStateChange(aWebProgress,
       this._debug("Download finished");
       var ioService = Cc["@mozilla.org/network/io-service;1"]
                         .getService(Ci.nsIIOService);
-      var outFile = this._ioService.newFileURI(this._outputFile).spec;
+      var outFile = ioService.newFileURI(this._outputFile).spec;
       this._listener.coverFetchSucceeded(this._mediaItem,
                                          this._scope,
                                          outFile);
@@ -188,7 +188,7 @@ function sbCoverDownloader__getPlatform() {
  * \param aFileName - file name to make safe
  * \return valid version of aFileName.
  */
-sbCoverDownloader.prototype.__makeFileNameSafe =
+sbCoverDownloader.prototype._makeFileNameSafe =
 function sbCoverDownloader__makeFileNameSafe(aFileName) {
   var newFileName;
   var platform = this._getPlatform();
@@ -275,7 +275,9 @@ function sbCoverDownloader__getCoverDownloadLocation(aMediaItem,
   if (toAlbumLocation) {
     var uri;
     try {
-      var fph = this._ioService.getProtocolHandler("file")
+      var ioService =  Cc['@mozilla.org/network/io-service;1']
+                       .getService(Ci.nsIIOService);
+      var fph = ioService.getProtocolHandler("file")
                     .QueryInterface(Ci.nsIFileProtocolHandler);
       var file = fph.getFileFromURLSpec(contentURL);
       if (file.parent) {
@@ -384,7 +386,7 @@ function sbCoverDownloader_downloadCover( aURI,
   }
 
   // work out where we'll save this
-  var file = this._getCoverDownloadLocation(aMediaItem. extension)
+  var file = this._getCoverDownloadLocation(aMediaItem, extension)
   if (file) {
     if (!file.exists()) {
       // Make sure we can create the file
