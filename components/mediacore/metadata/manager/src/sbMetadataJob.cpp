@@ -565,7 +565,13 @@ nsresult sbMetadataJob::HandleProcessedItem(sbMetadataJobItem *aJobItem)
     }
   }
 
-  return NS_OK;
+  // Close the handler
+  nsCOMPtr<sbIMetadataHandler> handler;
+  rv = aJobItem->GetHandler(getter_AddRefs(handler));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = handler->Close();
+  NS_ENSURE_SUCCESS(rv, rv);
+  return rv;
 }
 
 
@@ -638,6 +644,7 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem)
   // If we found properties, check to see if
   // we got a track name
   if (NS_SUCCEEDED(rv)) {
+    NS_ENSURE_TRUE(props, NS_ERROR_UNEXPECTED);
     rv = props->GetLength(&propsLength);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = props->GetPropertyValue( trackNameKey, trackName );

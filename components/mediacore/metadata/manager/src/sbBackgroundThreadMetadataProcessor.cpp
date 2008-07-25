@@ -234,7 +234,6 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
 
       TRACE(("sbBackgroundThreadMetadataProcessor - item processed"));
     }
-    handler->Close();
     
     // And finally give back the item
     mJobManager->PutProcessedJobItem(item);

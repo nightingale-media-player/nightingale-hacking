@@ -144,11 +144,6 @@ sbMetadataHandlerWMA::sbMetadataHandlerWMA() :
   NS_ASSERTION(SUCCEEDED(hr), "CoInitialize failed!");
   if (SUCCEEDED(hr))
     m_COMInitialized = PR_TRUE;
-
-  // Get a new values object.
-  nsresult rv;
-  m_PropertyArray = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to create MetadataValues");
 }
 
 sbMetadataHandlerWMA::~sbMetadataHandlerWMA()
@@ -168,7 +163,28 @@ sbMetadataHandlerWMA::GetChannel(nsIChannel** _retval)
 NS_IMETHODIMP
 sbMetadataHandlerWMA::SetChannel(nsIChannel* aURLChannel)
 {
+  nsresult rv;
   m_Channel = aURLChannel;
+  NS_ENSURE_STATE(m_Channel);
+
+  nsCOMPtr<nsIURI> pURI;
+  rv = m_Channel->GetURI(getter_AddRefs(pURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(pURI, &rv);
+  if (NS_FAILED(rv)) {
+    NS_WARNING("WMA METADATA: Remote files not currently supported");
+    return NS_OK;
+  }
+
+  // Let's have a look at the file...
+  nsCOMPtr<nsIFile> file;
+  rv = fileURL->GetFile(getter_AddRefs(file));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // How about we start with the cooked path?
+  rv = file->GetPath(m_FilePath);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -194,9 +210,10 @@ sbMetadataHandlerWMA::Close()
   if (m_ChannelHandler) 
     m_ChannelHandler->Close();
 
-  m_PropertyArray = nsnull;
   m_Channel = nsnull;
   m_ChannelHandler = nsnull;
+  m_PropertyArray = nsnull;
+  m_FilePath = EmptyString();
 
   return NS_OK;
 }
@@ -233,42 +250,23 @@ sbMetadataHandlerWMA::Read(PRInt32* _retval)
   *_retval = 0;
 
   NS_ENSURE_TRUE(m_Channel, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(!m_FilePath.IsEmpty(), NS_ERROR_UNEXPECTED);
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
-  nsresult rv;
-  nsCOMPtr<nsIURI> pURI;
-  rv = m_Channel->GetURI(getter_AddRefs(pURI));
+  m_PropertyArray = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(pURI, &rv);
-  if (NS_FAILED(rv)) {
-    NS_WARNING("WMA METADATA: Remote files not currently supported");
-    return NS_OK;
-  }
-
-  // Let's have a look at the file...
-  nsCOMPtr<nsIFile> file;
-  rv = fileURL->GetFile(getter_AddRefs(file));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // How about we start with the cooked path?
-  nsAutoString filePathUTF16;
-  rv = file->GetPath(filePathUTF16);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // If we have something, try it.
-  if ( filePathUTF16.Length() ) {
-    // Try to use the WMFSDK for this data because it's probably faster than
-    // initializing the Windows Media Player ActiveX control.
-    rv = ReadMetadataWMFSDK(filePathUTF16, _retval);
-    if (NS_SUCCEEDED(rv))
-      return rv;
+  // Try to use the WMFSDK for this data because it's probably faster than
+  // initializing the Windows Media Player ActiveX control.
+  rv = ReadMetadataWMFSDK(m_FilePath, _retval);
+  if (NS_SUCCEEDED(rv))
+    return rv;
     
-    // The WMF SDK failed on the file (probably because it is protected), so let
-    // the ActiveX control take a crack at it.
-    rv = ReadMetadataWMP(filePathUTF16, _retval);
-    if (NS_SUCCEEDED(rv))
-      return rv;
-  }
+  // The WMF SDK failed on the file (probably because it is protected), so let
+  // the ActiveX control take a crack at it.
+  rv = ReadMetadataWMP(m_FilePath, _retval);
+  if (NS_SUCCEEDED(rv))
+    return rv;
 
   return NS_ERROR_INVALID_ARG; // This will cause a useful warning in the metadata job.
 }
@@ -303,6 +301,7 @@ NS_IMETHODIMP
 sbMetadataHandlerWMA::GetProps(sbIMutablePropertyArray **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_STATE(m_PropertyArray);
   NS_IF_ADDREF(*_retval = m_PropertyArray);
   return NS_OK;
 }

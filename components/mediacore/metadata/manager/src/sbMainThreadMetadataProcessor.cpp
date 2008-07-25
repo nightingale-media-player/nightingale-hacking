@@ -176,7 +176,6 @@ NS_IMETHODIMP sbMainThreadMetadataProcessor::Notify(nsITimer* aTimer)
       if (handlerCompleted) {
         // NULL the array entry
         mCurrentJobItems[i] = nsnull;
-        handler->Close();
         
         // Indicate that we processed this item
         item->SetProcessed(PR_TRUE);
