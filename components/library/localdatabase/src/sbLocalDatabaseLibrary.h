@@ -330,6 +330,13 @@ private:
                                          nsIArray** _retval);
   nsresult CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper);
 
+  /* Migration related methods */
+  nsresult NeedsMigration(PRBool *aNeedsMigration, 
+                          PRUint32 *aFromVersion, 
+                          PRUint32 *aToVersion);
+
+  nsresult MigrateLibrary(PRUint32 aFromVersion, PRUint32 aToVersion);
+
 private:
   // This is the GUID used by the DBEngine to uniquely identify the sqlite
   // database file we'll be using. Don't confuse it with mGuid (inherited from

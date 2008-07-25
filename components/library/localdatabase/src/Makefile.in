@@ -61,6 +61,7 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
+               $(DEPTH)/components/job/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/metrics/public \
@@ -129,6 +130,7 @@ endif
 LIBSONGBIRD_COMPONENT = SongbirdLocalDatabaseLibraryModule
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbLocalDatabaseDynamicPlaylist.js \
+                      $(srcdir)/sbLocalDatabaseMigrationHelper.js \
                       $(DYNAMIC_LIB) \
                       $(NULL)
 

@@ -54,6 +54,7 @@
 #include <sbILibraryResource.h>
 #include <sbILocalDatabaseLibraryCopyListener.h>
 #include <sbILocalDatabaseGUIDArray.h>
+#include <sbILocalDatabaseMigrationHelper.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaItem.h>
@@ -484,17 +485,26 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   NS_ENSURE_ARG_POINTER(aCreationParameters);
   NS_ENSURE_ARG_POINTER(aFactory);
 
-  nsresult rv;
-
-  // Maybe check to this that this db is valid, etc?
-  // Check version and migrate if needed?
-
   mDatabaseGuid = aDatabaseGuid;
   mCreationParameters = aCreationParameters;
   mFactory = aFactory;
 
   // This may be null.
   mDatabaseLocation = aDatabaseLocation;
+
+  // Check version and migrate if needed.
+  PRBool needsMigration = PR_FALSE;
+  
+  PRUint32 fromVersion = 0;
+  PRUint32 toVersion = 0;
+
+  nsresult rv = NeedsMigration(&needsMigration, &fromVersion, &toVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(needsMigration) {
+    rv = MigrateLibrary(fromVersion, toVersion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRBool success = mCopyListeners.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -534,7 +544,7 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   rv = query->AddQuery(sql);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 dbOk;
+  PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
@@ -543,7 +553,7 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 rowCount;
+  PRUint32 rowCount = 0;
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2630,7 +2640,6 @@ sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem,
 {
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(aProperties);
-  nsresult rv;
 
 #ifdef PR_LOGGING
   PRTime timer = PR_Now();
@@ -3814,6 +3823,108 @@ sbLocalDatabaseLibrary::CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper)
   }
 
   mHashHelpers.Remove(NS_ISUPPORTS_CAST(nsISupports *, aHashHelper));
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseLibrary::NeedsMigration(PRBool *aNeedsMigration,
+                                       PRUint32 *aFromVersion,
+                                       PRUint32 *aToVersion) 
+{
+  NS_ENSURE_ARG_POINTER(aNeedsMigration);
+  NS_ENSURE_ARG_POINTER(aFromVersion);
+  NS_ENSURE_ARG_POINTER(aToVersion);
+
+  *aNeedsMigration = PR_FALSE;
+  *aFromVersion = 0;
+  *aToVersion = 0;
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsCOMPtr<sbISQLSelectBuilder> builder =
+    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->SetBaseTableName(NS_LITERAL_STRING("library_metadata"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddColumn(EmptyString(),
+    NS_LITERAL_STRING("value"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISQLBuilderCriterion> criterion;
+  rv = builder->CreateMatchCriterionString(EmptyString(),
+    NS_LITERAL_STRING("name"),
+    sbISQLSelectBuilder::MATCH_EQUALS,
+    NS_LITERAL_STRING("version"),
+    getter_AddRefs(criterion));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = builder->AddCriterion(criterion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString sql;
+  rv = builder->ToString(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, dbOk);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(rowCount > 0) {
+    NS_ENSURE_TRUE(rowCount == 1, NS_ERROR_UNEXPECTED);
+
+    nsAutoString strCurrentVersion;
+    rv = result->GetRowCell(0, 0, strCurrentVersion);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 currentVersion = strCurrentVersion.ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILocalDatabaseMigrationHelper> migration = 
+      do_CreateInstance("@songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 latestVersion = 0;
+    rv = migration->GetLatestSchemaVersion(&latestVersion);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    *aFromVersion = currentVersion;
+    *aToVersion = latestVersion;
+
+    *aNeedsMigration = currentVersion < latestVersion;
+
+    LOG(("++++----++++\nlatest version: %i\ncurrent schema version: %i\nneeds migration: %i\n\n", 
+           latestVersion, 
+           currentVersion, 
+           *aNeedsMigration));
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbLocalDatabaseLibrary::MigrateLibrary(PRUint32 aFromVersion, 
+                                       PRUint32 aToVersion)
+{
+  //XXXAus: PLACE HOLDER
 
   return NS_OK;
 }
