@@ -283,6 +283,9 @@
             onTrackChange: function(aItem, aView, aIndex) {
               this._callback.onTrackChange(aItem, aView.mediaList);
             },
+            
+            onTrackIndexChange: function(aItem, aView, aIndex) {
+            },
           
             QueryInterface: this.XPCOMUtils.generateQI([Components.interfaces.sbIPlaylistPlaybackListener])
           };
