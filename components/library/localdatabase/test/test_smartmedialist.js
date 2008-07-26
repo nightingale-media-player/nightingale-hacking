@@ -521,7 +521,7 @@ function testItemLimit(library) {
   list.rebuild();
 
   // Should have tracks 6 to 10
-  assertTrackNumbers(list, [6, 7, 8, 9, 10]);
+  assertTrackNumbers(list, [10, 9, 8, 7, 6]);
 
   list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_NONE;
   list.rebuild();
@@ -558,7 +558,7 @@ function testUsecsLimit(library) {
   assertEqual(list.length, 3);
 
   // Should have tracks 8 to 10
-  assertTrackNumbers(list, [8, 9, 10]);
+  assertTrackNumbers(list, [10, 9, 8]);
 }
 
 function testBytesLimit(library) {
@@ -591,7 +591,7 @@ function testBytesLimit(library) {
   assertEqual(list.length, 3);
 
   // Should have tracks 8 to 10
-  assertTrackNumbers(list, [8, 9, 10]);
+  assertTrackNumbers(list, [10, 9, 8]);
 }
 
 function testMatchTypeNoneItemLimit(library) {
@@ -846,14 +846,19 @@ function assertPropertyRange(list, start, length, prop, value) {
   }
 }
 
-function dumpList(list) {
-
+function dumpList(list, sumprop) {
+  var sum = 0;
   for (var i = 0; i < list.length; i++) {
     var item = list.getItemByIndex(i);
     var artist = item.getProperty(SB_NS + "artistName");
     var album = item.getProperty(SB_NS + "albumName");
     var track = item.getProperty(SB_NS + "trackNumber");
-    log(artist + " " + album + " " + track);
+    var size = item.getProperty(SB_NS + "contentLength");
+    if (sumprop) {
+      var v = parseInt(item.getProperty(sumprop));
+      sum += v;
+    }
+    log("" + i + ": " + artist + " " + album + " " + track + " " + size + (sumprop ? (" -> " + sum ) : "" ));
   }
 }
 
