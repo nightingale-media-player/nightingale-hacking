@@ -76,7 +76,7 @@
 
     <spacer height="5"/>
 
-    <hbox  align="center">
+    <hbox align="center">
       <checkbox id="smart_songs_check" label="&smart.limit;" checked="false" oncommand="onCheckLimit(event);"/>
       <textbox  id="smart_songs_count" value="20"/>
       <menulist id="smart_songs_list" value="songs">
@@ -89,8 +89,8 @@
         </menupopup>
       </menulist>
       <spacer width="8"/>
-      <label   value="&smart.selectedby;" control="smart_selected_list"/>
-      <menulist id="smart_selected_list" value="random">
+      <label value="&smart.selectedby;" control="smart_selected_list"/>
+      <menulist id="smart_selected_list" value="artist" onselect="onSelectSelectedBy(event);">
         <menupopup id="smart_selected_list_popup" >
           <menuitem id="smart_selected_list_random" label="&smart.random;" value="random" />
           <menuseparator/>

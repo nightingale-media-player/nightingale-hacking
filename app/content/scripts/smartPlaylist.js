@@ -278,7 +278,15 @@ function loadConditions()
       selectBy.value = value;
     }
 
+    // Set autoupdate
+    var autoUpdate = document.getElementById("smart_autoupdate_check");
+    autoUpdate.checked = 
+      list.autoUpdate == true;
+
   } else { // if (list instanceof smart)
+    
+    // defaults for new lists
+    
     var smartConditions = document.getElementById("smart_conditions");
 
     smartConditions.newCondition();
@@ -298,14 +306,11 @@ function loadConditions()
     limitType.value = "songs";
 
     var selectBy = document.getElementById("smart_selected_list");
-    selectBy.value = "random";
+    selectBy.value = "artist";
+    
+    var autoUpdate = document.getElementById("smart_autoupdate_check");
+    autoUpdate.checked = true;
   }
-
-
-  // Set autoupdate
-  var autoUpdate = document.getElementById("smart_autoupdate_check");
-  autoUpdate.checked = 
-    list.autoUpdate == true;
 
   // immediately update the match controls, so we don't have to wait for the drawer items
   updateMatchControls();
@@ -472,6 +477,24 @@ function onCheckLimit(evt) {
   
   if (!check_limit.checked) {
     check_match.checked = true;
+  } else {
+    checkIfCanAutoUpdate();
   }
 }
 
+function onSelectSelectedBy(evt) {
+  checkIfCanAutoUpdate();
+}
+
+function checkIfCanAutoUpdate() {
+  var selectBy = document.getElementById("smart_selected_list");
+  var limit = document.getElementById("smart_songs_check");
+  var autoUpdate = document.getElementById("smart_autoupdate_check");
+  if (limit.checked && 
+      selectBy.value == "random") {
+    autoUpdate.checked = false;
+    autoUpdate.disabled = true;
+  } else {
+    autoUpdate.removeAttribute("disabled");
+  }
+}
