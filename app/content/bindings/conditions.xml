@@ -1036,6 +1036,43 @@
           ]]>
         </body>
       </method>
+      
+      <method name="_checkForceValid">
+        <parameter name="v"/>
+        <parameter name="info"/>
+        <parameter name="operator"/>
+        <body>
+          <![CDATA[
+            var forcevalid = false;
+            // force validation to succeed when doing a substring match, because
+            // otherwise URI substring will fail to validate (since they are not
+            // valid URIs). This will not interfere with non-text matches, because
+            // these do not implement the CONTAINS operator.
+            if (v && v != "" && operator.value == info.OPERATOR_CONTAINS) {
+              forcevalid = true;
+            }
+            // also force valid for empty value with operators equal/notequal,
+            // since we want to let the user match empty strings. unknown
+            // properties will have isset/isnotset operators instead.
+            if (v == null || v == "") {
+              if (operator.value == info.OPERATOR_EQUALS ||
+                  operator.value == info.OPERATOR_NOTEQUALS) {
+                forcevalid = true;
+              }
+              // equivalent for date operators
+              if (info.type == "datetime") {
+                info.QueryInterface(this._Ci.sbIDatetimePropertyInfo);
+                if (operator.value == info.OPERATOR_ONDATE ||
+                    operator.value == info.OPERATOR_NOTONDATE) {
+                  forcevalid = true;
+                }
+              }
+            }
+            // same for datetime, but on date-specific equal operator
+            return forcevalid;
+          ]]>
+        </body>
+      </method>
 
       <!-- Perform user input validation -->
       <method name="_doValidation">
@@ -1075,26 +1112,20 @@
           // get property info for this metadata
           var info = this._pm.getPropertyInfo(property.value);
 
-          // force validation to succeed when doing a substring match, because
-          // otherwise URI substring will fail to validate (since they are not
-          // valid URIs). This will not interfere with non-text matches, because
-          // these do not implement the CONTAINS operator.
-          var forcevalid = false;
-          if (v && v != "" && operator.value == info.OPERATOR_CONTAINS) {
-            forcevalid = true;
-          }
-          
           // it is valid for no value to be visible (boolean)
           if (value1) {
             // Before validating value1, first convert it from UI units/format
             // into native units/format
             var v = value1.value;
             v = this._convertFromUI(property.value, operator.value, v, units);
+
+            // check whether we should force this value to validate
+            var forcevalid = this._checkForceValid(v, info, operator);
             
             // Then validate and set the invalid attribute accordingly
-            if (!v || 
-                v == "" || 
-                (!forcevalid && 
+            if (!forcevalid && 
+                (!v || 
+                 v == "" || 
                  !info.validate(v))) {
               value1.setAttribute("invalid", "true");
             } else {
@@ -1105,22 +1136,18 @@
           // If the second user input widget is visible, validate it too
           if (value2 && !value2.hidden) {
 
-            // same check for whether we need to force validation to true as
-            // with value1
-            forcevalid = false;
-            if (v && v != "" && operator.value == info.OPERATOR_CONTAINS) {
-              forcevalid = true;
-            }
-            
             // Before validating value2, first convert it from UI units/format
             // into native units/format
             v = value2.value;
             v = this._convertFromUI(property.value, operator.value, v, units);
+
+            // check whether we should force this value to validate
+            var forcevalid = this._checkForceValid(v, info, operator);
           
             // Then validate and set the invalid attribute accordingly
-            if (!v || 
-                v == "" || 
-                (!forcevalid && 
+            if (!forcevalid && 
+                (!v || 
+                 v == "" || 
                  !info.validate(v))) {
               value2.setAttribute("invalid", "true");
             } else {
@@ -1305,16 +1332,16 @@
             // var inputValue = value; // for debug
 
             // parse as number, because conversion requires one. if parsing
-            // fails, return null, which will cause the field to be invalid.
+            // fails, return NaN, which will cause the field to be invalid.
             value = value.replace(/\s/g, "");
             // match a number, from n to +n.nE+n
             if (value.match(/^([+-]?\d+(?:\.\d+)?(?:e[+-]?\d+)?)/i)) {
               var leftover = RegExp.rightContext;
               if (leftover && leftover != "") 
-                return null;
+                return NaN;
               value = RegExp.$1;
             } else {
-              return null;
+              return NaN;
             }
 
             // get property info for this metadata
@@ -1504,7 +1531,7 @@
                   
                   // if there was anything left over, cause parsing to fail
                   if (leftover && leftover != "") {
-                    value = null;
+                    value = NaN;
                   } else {
                     // otherwise, compute a datetime value for this duration
                     var d = new Date(0);
@@ -1518,7 +1545,7 @@
                     value = d.getTime() * 1000;
                   }
                 } else {
-                  value = null;
+                  value = NaN;
                 }
                 break;
             }

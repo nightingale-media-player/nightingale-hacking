@@ -739,7 +739,11 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
   if ((op.EqualsLiteral(SB_OPERATOR_ISTRUE) ||
        op.EqualsLiteral(SB_OPERATOR_ISFALSE) ||
        op.EqualsLiteral(SB_OPERATOR_ISSET) ||
-       op.EqualsLiteral(SB_OPERATOR_ISNOTSET)) &&
+       op.EqualsLiteral(SB_OPERATOR_ISNOTSET) ||
+       op.EqualsLiteral(SB_OPERATOR_EQUALS) ||
+       op.EqualsLiteral(SB_OPERATOR_NOTEQUALS) ||
+       op.EqualsLiteral(SB_OPERATOR_ONDATE) ||
+       op.EqualsLiteral(SB_OPERATOR_NOTONDATE)) &&
       !aLeftValue.IsEmpty()) {
     return NS_ERROR_ILLEGAL_VALUE;
   };
@@ -1183,26 +1187,14 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneRandom()
 
   PRUint32 rowLimit = 0;
   PRUint32 pos = 0;
-  PRUint32 chunkSize = RANDOM_ADD_CHUNK_SIZE;
 
-  // if the chunk size is >= the number of items in the source library, all
-  // the items will match an id in AddMediaItemsTempTable's query, and they
-  // will all end up in their normal order in the result set, then we'll start
-  // taking items from the beginning of that set, and those will always be the
-  // same ones: it will definitely not be random. In general, the closer the
-  // chunkSize is to the total number of items, the greater the chance that
-  // items at the top will end up in the result set. To avoid this, make
-  // chunkSize at most length/2.
-  if (chunkSize > length / 2)
-    chunkSize = length / 2;
-   
   while (pos < length) {
-    PRUint32 thisChunkSize = chunkSize;
-    if (pos + thisChunkSize > length) {
-      thisChunkSize = length - pos; 
+    PRUint32 chunkSize = RANDOM_ADD_CHUNK_SIZE;
+    if (pos + chunkSize > length) {
+      chunkSize = length - pos; 
     }
 
-    rv = AddMediaItemsTempTable(tempTableName, mediaItemIds, pos, thisChunkSize); 
+    rv = AddMediaItemsTempTable(tempTableName, mediaItemIds, pos, chunkSize); 
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (mLimitType == sbLocalDatabaseSmartMediaList::LIMIT_TYPE_ITEMS) {
@@ -1225,7 +1217,7 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneRandom()
         break;
       }
     }
-    pos += thisChunkSize; 
+    pos += chunkSize; 
   }
 
   // Finally clear out the old list and copy the items out of the temp table to
@@ -1319,10 +1311,15 @@ sbLocalDatabaseSmartMediaList::AddMediaItemsTempTable(const nsAutoString& tempTa
 
     if (inNum > SQL_IN_LIMIT || i + 1 == aLength) {
 
+      // we need the results in random order, otherwise a limit will always
+      // pick items from the top
+      rv = builder->AddRandomOrder();
+      NS_ENSURE_SUCCESS(rv, rv);
+
       nsAutoString sql;
       rv = builder->ToString(sql);
       NS_ENSURE_SUCCESS(rv, rv);
-
+      
       nsAutoString insert(insertStart);
       insert.Append(sql);
 
@@ -1681,8 +1678,10 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     op = NS_LITERAL_STRING(SB_OPERATOR_GREATEREQUAL);
   }
   
-  rv = aInfo->MakeSortable(leftValue, value);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!leftValue.IsEmpty()) {
+    rv = aInfo->MakeSortable(leftValue, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // If this is a between operator, construct two conditions for it
   if (op.EqualsLiteral(SB_OPERATOR_BETWEEN)) {
@@ -1912,20 +1911,26 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
 
   nsAutoString leftValue, value;
   leftValue = aCondition->mLeftValue;
-  rv = aInfo->MakeSortable(leftValue, value);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!leftValue.IsEmpty()) {
+    rv = aInfo->MakeSortable(leftValue, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   
   #define ZERO "+0000000000000000000"
 
-  if (op.EqualsLiteral(SB_OPERATOR_EQUALS)) {
-    if (value.EqualsLiteral(ZERO)) {
+  if (op.EqualsLiteral(SB_OPERATOR_EQUALS) ||
+      op.EqualsLiteral(SB_OPERATOR_ONDATE)) {
+    if (value.EqualsLiteral(ZERO) ||
+        value.IsEmpty()) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
   }
   
-  if (op.EqualsLiteral(SB_OPERATOR_NOTEQUALS)) {
-    if (!value.EqualsLiteral(ZERO)) {
+  if (op.EqualsLiteral(SB_OPERATOR_NOTEQUALS) ||
+      op.EqualsLiteral(SB_OPERATOR_NOTONDATE)) {
+    if (!value.EqualsLiteral(ZERO) &&
+        !value.IsEmpty()) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }

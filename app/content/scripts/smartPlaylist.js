@@ -101,10 +101,9 @@ var selectByList = [
 ];
 
 function updateOkButton() {
-  var smartConditions = document.getElementById("smart_conditions");
   var dialog = document.documentElement;
   var ok = dialog.getButton("accept");
-  ok.disabled = !smartConditions.isValid;
+  ok.disabled = !isConfigurationValid();
 }
 
 function updateMatchControls() {
@@ -318,10 +317,19 @@ function loadConditions()
   updateOkButton();
 }
 
+function isConfigurationValid() {
+  var smartConditions = document.getElementById("smart_conditions");
+  var check = document.getElementById("smart_match_check");
+  var check_limit = document.getElementById("smart_songs_check");
+  var count = document.getElementById("smart_songs_count");
+  return ((smartConditions.isValid || !check.checked) &&
+         (!check_limit.checked || parseInt(count.value) > 0));
+}
+
 function doOK()
 {
   var smart_conditions = document.getElementById("smart_conditions");
-  if (smart_conditions.isValid) {
+  if (isConfigurationValid()) {
     var list = window.arguments[0];
     
     if (!(list instanceof sbILocalDatabaseSmartMediaList)) {
@@ -335,26 +343,29 @@ function doOK()
     // Save conditions
     var conditions = smart_conditions.conditions;
     list.clearConditions();
-    conditions.forEach(function(condition) {
-      var info = pm.getPropertyInfo(condition.metadata);
-      var op = info.getOperator(condition.condition);
-      var unit;
-      var leftValue;
-      var rightValue;
-      if (op.operator != info.OPERATOR_ISTRUE &&
-          op.operator != info.OPERATOR_ISFALSE)
-        leftValue = condition.value;
-      if (op.operator == info.OPERATOR_BETWEEN)
-        rightValue = condition.value2;
-      if (condition.useunits)
-        unit = condition.unit;
-      list.appendCondition(condition.metadata,
-                           op,
-                           leftValue,
-                           rightValue,
-                           unit);
-    });
-
+    var check = document.getElementById("smart_match_check");
+    if (check.checked) {
+      conditions.forEach(function(condition) {
+        var info = pm.getPropertyInfo(condition.metadata);
+        var op = info.getOperator(condition.condition);
+        var unit;
+        var leftValue;
+        var rightValue;
+        if (op.operator != info.OPERATOR_ISTRUE &&
+            op.operator != info.OPERATOR_ISFALSE)
+          leftValue = condition.value;
+        if (op.operator == info.OPERATOR_BETWEEN)
+          rightValue = condition.value2;
+        if (condition.useunits)
+          unit = condition.unit;
+        list.appendCondition(condition.metadata,
+                             op,
+                             leftValue,
+                             rightValue,
+                             unit);
+      });
+    }
+    
     // Save match
     var matchSomething = document.getElementById("smart_match_check");
     var matchAnyAll = document.getElementById("smart_any_list");
@@ -469,6 +480,7 @@ function onCheckMatch(evt) {
   if (!check_match.checked) {
     check_limit.checked = true;
   }
+  updateOkButton();
 }
 
 function onCheckLimit(evt) {
