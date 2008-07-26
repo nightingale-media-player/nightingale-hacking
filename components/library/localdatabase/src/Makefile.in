@@ -134,5 +134,10 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbLocalDatabaseDynamicPlaylist.js \
                       $(srcdir)/sbLocalDatabaseMigrationHelper.js \
                       $(DYNAMIC_LIB) \
                       $(NULL)
+                      
+SONGBIRD_JSMODULES = $(srcdir)/sbLocalDatabaseMigrationUtils.jsm
+
+SUBDIRS = migrationhandlers \
+          $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -28,7 +28,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbJobUtils.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -85,7 +85,8 @@ sbLocalDatabaseMigrationHelper.prototype = {
                        Ci.nsIClassInfo,
                        Ci.nsISecurityCheckedComponent,
                        Ci.sbILocalDatabaseMigrationHelper,
-                       Ci.sbIJobProgress ],
+                       Ci.sbIJobProgress,
+                       Ci.sbIJobCancelable ],
   
   _latestSchemaVersion: 5,
   _lowestFromSchemaVersion: Number.MAX_VALUE,
@@ -156,6 +157,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
   QueryInterface: XPCOMUtils.generateQI([
     Ci.sbILocalDatabaseMigrationHelper,
     Ci.sbIJobProgress,
+    Ci.sbIJobCancelable,
     Ci.nsIClassInfo,
     Ci.nsISecurityCheckedComponent,
     Ci.sbISecurityAggregator
@@ -170,6 +172,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
     var interfaces = [Ci.sbILocalDatabaseMigrationHelper, 
                       Ci.nsIClassInfo,
                       Ci.sbIJobProgress,
+                      Ci.sbIJobCancelable,
                       Ci.nsISecurityCheckedComponent,
                       Ci.sbISecurityAggregator,
                       Ci.nsISupports];
