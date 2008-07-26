@@ -86,6 +86,7 @@ var SmartMediaListColumnSpecUpdater = {
     // the extended property list, which is not restricted to the registered
     // properties, so make something up.
     if (!registeredProp) {
+      registeredProp = {};
       registeredProp.propertyID = sort;
       registeredProp.defaultColumnWidth = 80;
       registeredProp.defaultSortDirection = this._getDefaultSortDirection(sort);
@@ -212,6 +213,8 @@ var SmartMediaListColumnSpecUpdater = {
   },
 
   _getDefaultSortDirection: function(prop) {
+    var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                               .getService(Components.interfaces.sbIPropertyManager);
     var info = pm.getPropertyInfo(prop);
     switch (info.type) {
       case "datetime":

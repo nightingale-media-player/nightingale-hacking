@@ -1618,6 +1618,7 @@ PlaylistPlayback.prototype = {
       // of length has been getting us 0 all the time on the last loop
       // so we enter this scope and set the playcount.
       if ( !this._incPlayCountItem &&
+           len > 0 &&
            ( (this._beenPlayingCount * LOOP_DURATION) > (240 * 1000) || 
              (this._beenPlayingCount * LOOP_DURATION) > (len/2) ) ) {
         this._incPlayCountItem = this._playingItem;
@@ -2435,7 +2436,7 @@ PlaylistPlayback.prototype = {
   //    removed from its library, we need to stop playback.
   // 3) if a smart playlist is rebuilt, we want to try to find the currently
   //    playing item in the new playlist content and act like nothing happened
-  //    unless the item is not longer there, in which case we want to stop
+  //    unless the item is no longer there, in which case we want to stop
   //    playback.
   _beginWatchPlayItem: function PPS_beginWatchPlayItem() {
     var watcher = {
