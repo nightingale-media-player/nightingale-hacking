@@ -1226,17 +1226,19 @@ sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Start a batch for both the LISTCLEARED and all the ITEMADDED notifications,
+  // so that if a listener needs to differentiate between ContentChanged and
+  // a real LISTCLEAR + N*ITEMADDED, the fact that the whole thing happened in
+  // one single batch will be its clue.
+  sbAutoBatchHelper batchHelper(*this);
+
   // First, notify listeners that the list has been cleared
   sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList);
 
-  // Then, start a batch and send an ITEMADDED notification for each item that
-  // we now have in the list
-
+  // Then send an ITEMADDED notification for each item that we now have in the list
   PRUint32 length;
   rv = mFullArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  sbAutoBatchHelper batchHelper(*this);
 
   for (PRUint32 index=0; index<length; index++) {
     nsCOMPtr<sbIMediaItem> item;

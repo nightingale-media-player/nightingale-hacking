@@ -2276,6 +2276,26 @@ sbLocalDatabaseTreeView::OnTrackChange(sbIMediaItem* aItem,
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnTrackIndexChange(sbIMediaItem* aItem,
+                                            sbIMediaListView* aView,
+                                            PRUint32 aIndex) {
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aView);
+
+  // The index of the playing track has changed. This is either due to the
+  // user moving the track around (in which case the UID of the item has not
+  // changed) or to the whole content of the list being replaced (eg, a smart
+  // playlist being rebuilt), in which case the currently playing item (if it
+  // is still there) has a brand new UID. In both cases it is safe to just
+  // forward the arguments to OnTrackChange in order to use the currently
+  // playing item's UID.
+  nsresult rv = OnTrackChange(aItem, aView, aIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 // sbIMediaListViewSelectionListener
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::OnSelectionChanged()

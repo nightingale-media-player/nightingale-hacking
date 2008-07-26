@@ -205,6 +205,7 @@ const static char* sPublicCategoryConversions[][2] =
 #define RAPI_EVENT_TYPE_DOWNLOADCOMPLETE  NS_LITERAL_STRING("downloadcomplete")
 #define RAPI_EVENT_TYPE_BEFORETRACKCHANGE NS_LITERAL_STRING("beforetrackchange")
 #define RAPI_EVENT_TYPE_TRACKCHANGE       NS_LITERAL_STRING("trackchange")
+#define RAPI_EVENT_TYPE_TRACKINDEXCHANGE  NS_LITERAL_STRING("trackindexchange")
 #define RAPI_EVENT_TYPE_STOP              NS_LITERAL_STRING("playbackstopped")
 #define SB_PREFS_ROOT                     NS_LITERAL_STRING("songbird.")
 #define SB_EVENT_CMNDS_UP                 NS_LITERAL_STRING("playlist-commands-updated")
@@ -1478,6 +1479,24 @@ sbRemotePlayer::OnTrackChange(sbIMediaItem* aItem,
 
   rv = FireMediaItemStatusEventToContent( RAPI_EVENT_CLASS,
                                           RAPI_EVENT_TYPE_TRACKCHANGE,
+                                          aItem,
+                                          NS_OK );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::OnTrackIndexChange(sbIMediaItem* aItem,
+                                   sbIMediaListView* aView,
+                                   PRUint32 aIndex) {
+  LOG(("sbRemotePlayer::OnTrackIndexChange()"));
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aView);
+  nsresult rv;
+
+  rv = FireMediaItemStatusEventToContent( RAPI_EVENT_CLASS,
+                                          RAPI_EVENT_TYPE_TRACKINDEXCHANGE,
                                           aItem,
                                           NS_OK );
   NS_ENSURE_SUCCESS(rv, rv);

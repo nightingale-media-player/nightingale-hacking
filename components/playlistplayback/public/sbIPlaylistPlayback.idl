@@ -45,7 +45,7 @@ interface sbIMediaItem;
  * \interface sbIPlaylistPlaybackListener
  * \brief Interface that handles the tracking of playback changes
  */
-[scriptable, uuid(d74160e7-c798-48ed-9b9a-9248e779a25d)]
+[scriptable, uuid(bd18d4e1-3105-4057-90e2-134372b95cf3)]
 interface sbIPlaylistPlaybackListener : nsISupports
 {
   /**
@@ -74,6 +74,19 @@ interface sbIPlaylistPlaybackListener : nsISupports
                      in sbIMediaListView aView,
                      in unsigned long aIndex);
 
+
+  /**
+   * \brief Called when the index of the playing track (or its UID returned
+   *        by a call to sbIMediaListView.getViewItemUIDForIndex) has changed.
+   *
+   * \param aItem Media item of the track that was already playing
+   * \param aView the view that was already playing
+   * \param aIndex the new index of the playing track
+   */
+  void onTrackIndexChange(in sbIMediaItem aItem,
+                          in sbIMediaListView aView,
+                          in unsigned long aIndex);
+                    
 };
 
 /**

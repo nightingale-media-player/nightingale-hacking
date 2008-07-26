@@ -496,6 +496,9 @@ PlaylistPlayback.prototype = {
     this._playlistIndex         = createDataRemote("playlist.index", null);
     this._playingView           = null;
     this._playingViewItemUID    = null;
+    // used for noticing changes, use currentIndex property instead.
+    this._playingItemIndex      = -1;
+
     this._repeat                = createDataRemote("playlist.repeat", null);
     this._shuffle               = createDataRemote("playlist.shuffle", null);
     this._showRemaining         = createDataRemote("faceplate.showremainingtime", null);
@@ -1019,6 +1022,9 @@ PlaylistPlayback.prototype = {
 
     // Remember this item's view UID so we can find it if the view changes
     this._playingViewItemUID = aView.getViewItemUIDForIndex(aIndex);
+    
+    // Remember this item's index so we can know that it changed.
+    this._playingItemIndex = aIndex;
 
     // Ensure we have already stopped playback.
     this.stop();
@@ -1529,9 +1535,11 @@ PlaylistPlayback.prototype = {
     this._timer = Components.classes[ "@mozilla.org/timer;1" ]
                   .createInstance( Components.interfaces.nsITimer );
     this._timer.initWithCallback( this, LOOP_DURATION, 1 ) // TYPE_REPEATING_SLACK
+    this._beginWatchPlayItem();
   },
   
   _stopPlayerLoop: function () {
+    this._endWatchPlayItem();
     if (this._started)
       this._onPlayerLoopStop();
     if (this._timer) {
@@ -1625,6 +1633,7 @@ PlaylistPlayback.prototype = {
       this._onPollMute( core );
       this._onPollTimeText( len, pos );
       this._onPollStates( len, pos, core );
+      this._onPollIndex();
       this._onPollCompleted( len, pos, core );
       this._onPollVideo( core );
     }       
@@ -1677,6 +1686,24 @@ PlaylistPlayback.prototype = {
                              !this._paused.boolValue;
     
     this._metricsPlayStateCheck(wasActuallyPlaying, nowActuallyPlaying);
+  },
+  
+  _onPollIndex: function() {
+      var cur_index = this.currentIndex;
+      if (this._playingItemIndex != cur_index) {
+        this._playingItemIndex = cur_index;
+        this._listeners.forEach(function(aListener) {
+          var pps = this;
+          try {
+            aListener.onTrackIndexChange(pps._playingItem, 
+                                         pps._playingView, 
+                                         pps._playingItemIndex);
+          }
+          catch(e) {
+            Components.utils.reportError(e);
+          }
+        }, this);
+      }
   },
 
   // Routes metadata (and their possible updates) to the metadata ui data remotes
@@ -2399,6 +2426,240 @@ PlaylistPlayback.prototype = {
       var seconds = ( (timeNow - this._playStartTime) / 1000 );
       gMetrics.metricsAdd("mediacore", "playtime", null, seconds);
       this._playStartTime = 0;
+    }
+  },
+  
+  // we watch the medialist that contains the playing item and its parent
+  // library for two reasons:
+  // 1) if the item is removed from the playing list, or the playing list is
+  //    removed from its library, we need to stop playback.
+  // 3) if a smart playlist is rebuilt, we want to try to find the currently
+  //    playing item in the new playlist content and act like nothing happened
+  //    unless the item is not longer there, in which case we want to stop
+  //    playback.
+  _beginWatchPlayItem: function PPS_beginWatchPlayItem() {
+    var watcher = {
+      pps: this,
+      timer: null,
+      mediaList: this._playingView.mediaList,
+      batchListCount: 0,
+      batchLibraryCount: 0,
+      needCheck: false,
+      isLibrary: false,
+      smartRebuildDetectBatchCount: 0,
+      needSearchPlayingItem: false,
+      // init
+      init: function() {
+        this.isLibrary = this.mediaList == this.mediaList.library;
+        this.mediaList
+          .addListener(this, 
+                       false, 
+                       Ci.sbIMediaList.LISTENER_FLAGS_ITEMADDED |
+                       Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
+                       Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
+                       Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND |
+                       Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED);
+        if (!this.isLibrary) {
+          this.mediaList.library
+            .addListener(this, 
+                         false, 
+                         Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
+                         Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
+                         Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND |
+                         Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED);
+        }
+        this.pps._playItemWatcher = this;
+      },
+      // cleanup
+      shutdown: function() {
+        if (this.timer) {
+          this.notify(this.timer);
+          this.timer = null;
+        }
+        this.mediaList.removeListener(this);
+        if (!this.isLibrary)
+          this.mediaList.library.removeListener(this);
+        this.pps._playItemWatcher = null;
+      },
+      // batch
+      onBatchBegin: function playItemWatcher_onBatchBegin(aMediaList) {
+        if (aMediaList == this.mediaList)
+          this.batchListCount++;
+        else
+          this.batchLibraryCount++;
+      },
+      onBatchEnd: function playItemWatcher_onBatchEnd(aMediaList) {
+        if (aMediaList == this.mediaList) {
+          this.batchListCount--;
+          // reset smart playlist rebuild detection
+          smartRebuildDetectBatchCount = -1;
+        } else {
+          this.batchLibraryCount--;
+        }
+        if (this.batchListCount == 0 &&
+            this.batchLibraryCount == 0) {
+          if (this.needCheck) {
+            this.delayedCheck();
+            this.needCheck = false;
+          }
+          if (this.needSearchPlayingItem) {
+            this.pps._updatePlayItemUIDIndex();
+            this.needSearchPlayingItem = false;
+          }
+        }
+      },
+      // list or library cleared, playing item must have gone away, however
+      // the item might be coming back immediately, in which case we want to
+      // keep playing it, so delay the check.
+      onListCleared: function playItemWatcher_onListCleared(aMediaList) {
+        this.delayedCheck();
+        // 1st part of smart playlist rebuild detection: is the event
+        // occurring on our list and inside a batch ? if 2nd part never
+        // happens, it could be a smart playlist rebuild that now has no
+        // content, we don't care about that, the item will simply not be
+        // found, and playback will correctly stop.
+        if (this.batchListCount > 0 &&
+            aMediaList == this.mediaList) {
+          this.smartRebuildDetectBatchCount = this.batchListCount;
+        }
+      },
+      onItemAdded: function playItemWatcher_onItemAdded(aMediaList, 
+                                                        aMediaItem) {
+        // 2nd part of smart playlist rebuild detection: are we adding
+        // items in the same batch as we cleared the list in ?
+        if (aMediaList == this.mediaList &&
+            this.smartRebuildDetectBatchCount == this.batchListCount) {
+          // Our playing list is a smart playlist, and it is being rebuilt,
+          // so make a note that we need to try to find the old playitem in
+          // the new list (this will update the now playing icon in 
+          // tree views, and ensure that currentIndex returns the new index).
+          // The 1st part of the detection has already scheduled a check, but
+          // our search will occur before the check happens, so if the old
+          // playing item no longer exists, playback will correctly stop.
+          this.needSearchPlayingItem = true;
+        }
+      },
+      // item removed, schedule a check if needed
+      onAfterItemRemoved: function 
+          playItemWatcher_onAfterItemRemoved(aMediaList, aMediaItem) {
+        var listEvent = aMediaList == this.mediaList;
+        var libraryEvent = !this.isLibrary && 
+                            aMediaList == this.mediaList.library;
+        // if this is an event on the library...
+        if (libraryEvent) {
+          // and the item is not our list, get more events if in a batch, or
+          // just discard event if not in a batch.
+          if (aMediaItem != this.mediaList) {
+            return false;
+          } else {
+            // if the item is our list, stop playback now and shutdown watcher
+            this.pps.stop();
+            this.shutdown();
+            // return value does not actually matter since shutdown removes our
+            // listener
+            return false;
+          }
+        }
+        // if this is a track being removed from our list, and we're in a batch,
+        // don't get anymore events for this batch, we'll do the check when it
+        // ends
+        if (listEvent && this.batchListCount > 0) {
+          // remember that we need to do a check when batch ends
+          this.needCheck = true;
+          return true;
+        }
+        // we have to delay the check for currentIndex, because its invalidation
+        // relies on a medialistlistener (in the view) which may occur after
+        // ours has been issued, in which case it will still be valid now.
+        this.delayedCheck();
+        // return value doesn't actually matter since we're not in a batch
+        return false;
+      },
+      onBeforeItemRemoved: function 
+          playItemWatcher_onBeforeItemRemoved(aMediaList, aMediaItem) {
+      },
+      onItemUpdated: function 
+          playItemWatcher_onItemUpdated(aMediaList, aMediaItem, aProps) {
+      },
+      onItemMoved: function 
+          playItemWatcher_onItemUpdated(aMediaList, aFrom, aTo) {
+      },
+      // schedule a check
+      delayedCheck: function playItemWatcher_delayedCheck() {
+        if (!this.timer) {
+          this.timer = Components.classes[ "@mozilla.org/timer;1" ]
+                       .createInstance(Ci.nsITimer);
+        } else {
+          this.timer.cancel();
+        }
+        this.timer.initWithCallback(this, 
+                                    100, 
+                                    Ci.nsITimerTYPE_ONE_SHOT);
+      },
+      // check if playing item is gone
+      notify: function playItemWatcher_notify( timer ) { // nsITimerCallback
+        this.timer = null;
+        if (this.pps.currentIndex == -1) {
+          this.pps.stop();
+          this.shutdown();
+        }
+      },
+      // QI
+      QueryInterface: function playItemWatcher_QI(aIID) {
+        if (aIID.equals(Components.interfaces.sbIMediaListListener) ||
+            aIID.equals(Components.interfaces.nsITimerCallback) || 
+            aIID.equals(Components.interfaces.nsISupports)) {
+          return this;
+        }
+        throw Components.results.NS_ERROR_NO_INTERFACE;
+      }
+    } 
+    
+    watcher.init();
+  },
+  
+  _endWatchPlayItem: function PPS_endWatchPlayItem() {
+    if (this._playItemWatcher) {
+      this._playItemWatcher.shutdown();
+    }
+  },
+  
+  // updates the UID and Index of the currently playing item with those of 
+  // the first instance of the playing mediaitem in the list. This should only
+  // be used on lists that are guaranteed not to have duplicates (eg, smart
+  // playlists), and is meant to find the item in a list whose content has
+  // been entirely replaced: if the playing item is still here, it will have
+  // a new UID (and may have a new index), but we want to act like it's the
+  // same item, and not stop playback because the old UID is not found (or
+  // continue playback because a new item has the old item's UID)
+  _updatePlayItemUIDIndex: function PPS_updatePlayItemUIDIndex() {
+      var oldIndex = this._playingItemIndex;
+      var oldUID = this._playingViewItemUID;
+      try {
+        this._playingItemIndex = 
+          this._playingView.getIndexForItem(this._playingItem);
+      } catch (e if e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
+        this._playingItemIndex = -1;
+      }
+      if (this._playingItemIndex == -1) {
+        this._playingViewItemUID = -1;
+      } else {
+        this._playingViewItemUID = 
+          this._playingView.getViewItemUIDForIndex(this._playingItemIndex);
+      }
+    if (this._playingItemIndex != oldIndex ||
+        this._playingViewItemUID != oldUID) {
+      var pps = this;
+      this._listeners.forEach(function(aListener) {
+        try {
+          aListener.onTrackIndexChange(pps._playingItem, 
+                                       pps._playingView, 
+                                       pps._playingItemIndex);
+        }
+        catch (e) {
+          Components.utils.reportError(e);
+        }
+      });
     }
   },
   
