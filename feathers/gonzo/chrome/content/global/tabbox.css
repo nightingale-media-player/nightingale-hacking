@@ -114,7 +114,7 @@ tab {
   padding:2px 8px;
 }
 tab:hover {
-  background-color:pink;
+  background-color: rgb(186,218,255);
   border:1px solid gray;
 }
 tab[selected="true"] {

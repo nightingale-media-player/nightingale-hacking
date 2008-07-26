@@ -132,9 +132,17 @@ Imported by bindings.css or directly into feathers.
 .locationbar-image[properties~="device"][properties~="busy"],
 .alltabs-item.menuitem-iconic[properties~="device"][properties~="busy"],
 .tabbrowser-tab[properties~="device"][properties~="busy"] > .tab-image-middle > .tab-icon > .tab-icon-image {
-  list-style-image: url(chrome://songbird/skin/service-pane/icon-busy.png) ;
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-busy.png);
 }
 
+/*
+.servicepane-tree > treechildren::-moz-tree-cell( device busy ) {
+  padding-right:20px;
+  background-image: url(chrome://songbird/skin/service-pane/icon-busy.png);
+  background-position:right center;
+  background-repeat:no-repeat;
+}
+*/
 .servicepane-tree > treechildren::-moz-tree-image( bookmark ) {
   list-style-image: url(chrome://songbird/skin/service-pane/icon-bookmark.png) ;
 }

@@ -58,6 +58,7 @@ spinbuttons {
   border:none;
   -moz-image-region: rect(0px 9px 9px 0px);
   background-image:none;
+  background-color:transparent;
 }
 
 .spinbuttons-up {

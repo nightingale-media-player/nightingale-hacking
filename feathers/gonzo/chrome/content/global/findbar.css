@@ -61,7 +61,7 @@ findbar .checkbox-check {
   min-height: 18px !important;
   width: 150px !important;
   margin:0 8px 0 2px !important;
-  padding:0;
+  padding:2px !important;
 }
 .find-field-container > textbox.findbar-textbox[status="notfound"] {
   color: red;

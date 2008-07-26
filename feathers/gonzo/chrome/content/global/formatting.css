@@ -35,7 +35,6 @@ background-repeat:repeat-x;
 }
 separator[orient="vertical"] {
   width:11px;
-  background-color:blue;
 }
 separator.thin, separator.thin[orient="horizontal"] {
   height:5px;
@@ -46,7 +45,6 @@ separator.thin, separator.thin[orient="horizontal"] {
 }
 separator.thin[orient="vertical"] {
   width:4px;
-  background-color:blue;
 }
 
 /* groove separators (50% size) */

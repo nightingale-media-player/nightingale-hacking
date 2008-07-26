@@ -185,16 +185,17 @@ button.goto-url:hover {
 }
 
 #prev_button {
-    list-style-image: url(chrome://songbird/skin/nav-bar/button-back.png);
+    list-style-image: url(chrome://songbird/skin/metadata-editor/button-back.png);
 }
 #next_button {
-  list-style-image: url(chrome://songbird/skin/nav-bar/button-forward.png);
+  list-style-image: url(chrome://songbird/skin/metadata-editor/button-forward.png);
 }
 
 #prev_button,
 #next_button {
   -moz-image-region: rect(0px 16px 16px 0px);
 }
+/*
 #prev_button:hover,
 #next_button:hover {
   -moz-image-region: rect(16px 16px 32px 0px);
@@ -207,6 +208,7 @@ button.goto-url:hover {
 #next_button[disabled="true"] {
   -moz-image-region: rect(48px 16px 64px 0px) !important;
 }
+*/
 
 /* album art */
 .art {

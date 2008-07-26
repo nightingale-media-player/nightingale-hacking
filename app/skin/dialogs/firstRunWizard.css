@@ -47,6 +47,8 @@ Additional styles imported directly by the first run dialog.
 }
 
 .sb-first-run-header {
+  font-weight:bold;
+  font-size:120%;
 }
 
 .sb-first-run-checkbox-description {

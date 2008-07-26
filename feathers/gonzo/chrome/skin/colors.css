@@ -364,8 +364,9 @@ treecol > label {
 .autocomplete-treebody::-moz-tree-cell-text(selected) {
   color:rgb(40,40,40) !important;
 }
+/*  TODO: consilidate  */
 .autocomplete-treebody::-moz-tree-row(selected) {
-  background-color:red;
+  background-color: rgb(186,218,255);
 }
 
 .autocomplete-treebody::-moz-tree-image(favicon) {
@@ -549,7 +550,9 @@ BUTTONS
   padding:0;
   margin:0;
 }
-
+#nav-bar toolbarbutton > .toolbarbutton-menu-dropmarker > .dropmarker-icon {
+  list-style-image: url("chrome://songbird/skin/nav-bar/dropmarker.png");
+}
 
 #nav-bar toolbarbutton[disabled="true"] {
   background-position:center -60px !important;
@@ -634,7 +637,7 @@ toolbarbutton:focus,
 checkbox:focus > .checkbox-check,
 radio[focused="true"] > .radio-check,
 menulist:focus {
-  outline:2px solid rgba(0,0,0,0.33) !important;
+  outline:2px solid rgba(186,218,255,1); !important;
   outline-offset:0px !important;
   -moz-outline-radius:5px !important;
 }
@@ -820,7 +823,7 @@ DATEPICKER see the RICHLISTBOX for box styles
 *******************************************************************************
 */
 .datepicker-gridlabel[selected="true"] {
-  outline:2px solid magenta;
+  outline:2px solid black;
   outline-offset:1px;
   -moz-outline-radius:3px;
   background-color:transparent;
@@ -922,7 +925,6 @@ These let the user resize the frames in your box model.
 #displaypane_contentpane_bottom_splitter[state="collapsed"],
 #displaypane_servicepane_bottom_splitter[state="collapsed"]
 {
-  background-color:red;
 }
 
 
@@ -1003,11 +1005,10 @@ tooltip
 
 
 textbox[invalid="true"] {
-  background-color:red !important;
-  color:white !important;
+  background-color:rgb(255,200,200) !important;
 } 
 textbox[edited="true"] {
-  background-color:yellow;
+  background-color:rgb(255,255,235);
 }
 
 
@@ -1236,7 +1237,7 @@ dialog:not([platform=Darwin])
 }
 
 dialog[platform] {
-  border:3px solid red;
+  border:3px solid black;
   border-top:1px solid gray;
   -moz-border-right-colors:gray transparent gray;
   -moz-border-bottom-colors:gray transparent gray;
@@ -1296,9 +1297,8 @@ PREFERENCES
   border: none !important;
 }
 
-#extensionsBox > richlistbox > richlistitem[selected="true"]
-{
-background-color:red;
+#extensionsBox > richlistbox > richlistitem[selected="true"] {
+  background-color: rgb(186,218,255);
 }
 
 #extensionsView:focus > richlistitem[selected="true"]
@@ -1396,7 +1396,7 @@ groupbox.error-box > .groupbox-body
 html|*.error-text,
 .error-text
 {
-  color: #F00;
+  color: red;
   font-weight: bold;
 }
 
@@ -1430,7 +1430,7 @@ MOZILLA DOWNLOAD WINDOW
 }
 
 #downloadManager > #search {
-  border-top:1px solid red;
+  border-top:1px solid gray;
 }
 
 
@@ -1685,11 +1685,12 @@ treechildren::-moz-tree-twisty( open ),
 treechildren::-moz-tree-twisty( closed ) {
   -moz-image-region: rect(0px, 9px, 9px, 0px);
 }
+/*
 treechildren::-moz-tree-twisty( open selected ),
 treechildren::-moz-tree-twisty( closed selected ) {
   -moz-image-region: rect(9px, 9px, 18px, 0px);
 }
-
+*/
 
 
 
@@ -1727,9 +1728,7 @@ treecol:last-child {
 
 
 
-treechildren#trDOMTreeBody::-moz-tree-row( selected )
-{
-  background-color:yellow;
+treechildren#trDOMTreeBody::-moz-tree-row( selected ) {
 }
 
 treechildren#trDOMTreeBody::-moz-tree-cell-text(ELEMENT_NODE)
@@ -2240,7 +2239,7 @@ richlistitem[isDisabled="true"] .addonIcon {
 }
 
 richlistitem[isDisabled="true"] {
-  color: red;
+  opacity:0.33;
 }
 
 #extensionsView:focus > richlistitem[selected="true"][isDisabled="true"] {
@@ -2251,7 +2250,7 @@ richlistitem[isDisabled="true"] {
 }
 
 richlistitem[selected="true"]:not([opType]) {
-  background-color:pink !important;
+  background-color: rgb(186,218,255) !important;
 }
 
 richlistitem[selected="true"]:not([opType]) .descriptionCrop {
@@ -2369,9 +2368,9 @@ richlistitem[opType="needs-uninstall"] .notifyBadge {
 
 /* View buttons */
 .viewSelector {
-  border-bottom: 1px dashed red;
+  border-bottom: 1px dashed black;
   margin: 0px;
-  background-color: pink;
+  background-color: white;
   color: black;
 }
 
@@ -2383,7 +2382,7 @@ richlistitem[opType="needs-uninstall"] .notifyBadge {
 }
 
 #viewGroup radio:hover {
-  background-color: pink;
+  background-color: rgb(186,218,255);
   color: black;
 }
 
@@ -2512,7 +2511,7 @@ richlistbox {
   margin:0 0 -1px 0;
 }
 #viewGroup > radio:hover {
-  background-color:pink !important;
+  background-color: rgb(186,218,255) !important;
   border:1px solid gray !important;
 }
 #viewGroup > radio[selected="true"] {
@@ -2552,7 +2551,6 @@ template+richlistitem {
 }
 
 .insecureUpdateBox {
-  background-color:blue;
 }
 richlistitem[providesUpdatesSecurely="true"] {
 }
@@ -2625,9 +2623,4 @@ wizard {
 
 prefwindow > .prefWindow-dlgbuttons {
   -moz-box-orient:vertical !important;
-}
-textbox[focused="true"] {
-  outline:2px solid rgba(0,0,0,0.33) !important;
-  outline-offset:2px !important;
-  -moz-outline-radius:5px !important;
 }

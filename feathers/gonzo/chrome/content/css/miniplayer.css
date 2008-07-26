@@ -331,7 +331,6 @@ stack.sb-player-volume-slider {
 }
 #miniplayer-box > .hook > .left,
 #miniplayer-box > .hook > .right {
-  background-color:lime;
   min-width:8px;
   min-height:22px;
 }
@@ -371,4 +370,8 @@ resizer {
   min-width:3px;
   background-color:white;
   border:1px solid black;
+}
+
+window[platform=Darwin] resizer {
+  display:none !important;
 }

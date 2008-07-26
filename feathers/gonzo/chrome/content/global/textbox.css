@@ -52,7 +52,7 @@ textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -
 {
   cursor: text;
   margin: 4px 4px;
-  padding: 2px 2px 2px 3px;
+  padding: 2px;
   border: 1px solid;
 }
     
@@ -60,7 +60,7 @@ html|*.textbox-input,
 html|*.textbox-textarea {
   margin: 0px !important;
   border: none !important;
-  padding: 0px !important;
+  padding: 0px!important;
   background-color: inherit;
   font: inherit;
   color: inherit;

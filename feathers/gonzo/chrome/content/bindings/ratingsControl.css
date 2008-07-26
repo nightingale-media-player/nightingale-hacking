@@ -46,7 +46,6 @@ RATINGS CONTROL
   background-position:0px -18px;
 }
 sb-rating[edited] .rating-stars[value="0"] {
-  background-position:0px -36px;
 }
 .rating-stars[value="0"]:hover,
 sb-rating[edited] .rating-stars[value="0"]:hover {
@@ -54,57 +53,57 @@ sb-rating[edited] .rating-stars[value="0"]:hover {
 }
 
 .rating-stars[value="1"] {
-  background-position:0px -72px;
+  background-position:0px -54px;
 }
 sb-rating[edited] .rating-stars[value="1"] {
-  background-position:0px -90px;
 }
 .rating-stars[value="1"]:hover,
 sb-rating[edited] .rating-stars[value="1"]:hover {
-  background-position:0px -54px;
+  background-position:0px -36px;
 }
 
 .rating-stars[value="2"] {
-  background-position:0px -126px;
+  background-position:0px -90px;
 }
 sb-rating[edited] .rating-stars[value="2"] {
-  background-position:0px -144px;
 }
 .rating-stars[value="2"]:hover,
 sb-rating[edited] .rating-stars[value="2"]:hover {
-  background-position:0px -108px;
+  background-position:0px -72px;
 }
 
 
 .rating-stars[value="3"] {
-  background-position:0px -180px;
+  background-position:0px -126px;
 }
 sb-rating[edited] .rating-stars[value="3"] {
-  background-position:0px -198px;
 }
 .rating-stars[value="3"]:hover,
 sb-rating[edited] .rating-stars[value="3"]:hover {
-   background-position:0px -162px;
+   background-position:0px -108px;
  }
 
 .rating-stars[value="4"] {
-  background-position:0px -234px;
+  background-position:0px -162px;
 }
 sb-rating[edited] .rating-stars[value="4"] {
-  background-position:0px -252px;
 }
 .rating-stars[value="4"]:hover,
 sb-rating[edited] .rating-stars[value="4"]:hover {
-  background-position:0px -216px;
+  background-position:0px -144px;
 }
 
 .rating-stars[value="5"] {
-  background-position:0px -288px;
+  background-position:0px -198px;
 }
 sb-rating[edited] .rating-stars[value="5"] {
-  background-position:0px -306px;
 }
 .rating-stars[value="5"]:hover,
 sb-rating[edited] .rating-stars[value="5"]:hover {
-  background-position:0px -270px;
+  background-position:0px -180px;
+}
+
+
+sb-rating[edited] {
+  background-color:rgb(255,255,235);
 }
