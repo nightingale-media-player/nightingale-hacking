@@ -27,16 +27,16 @@
 EXPORTED_SYMBOLS = ["SBLocalDatabaseMigrationUtils"];
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://app/jsmodules/sbJobUtils.jsm");
+Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
-const Ce = Components.Exception;
 const Cu = Components.utils;
 
 var SBLocalDatabaseMigrationUtils = {
-};
+  baseHandlerContractID: "@songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/"
+}
 
 /**
  *
@@ -91,4 +91,4 @@ SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype = {
   migrate     : function BaseMigrationHandler_migrate(aLibrary) {
     throw Cr.NS_ERROR_NOT_IMPLEMENTED;
   },
-};
+}

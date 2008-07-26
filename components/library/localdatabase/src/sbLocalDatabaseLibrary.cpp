@@ -3924,7 +3924,14 @@ nsresult
 sbLocalDatabaseLibrary::MigrateLibrary(PRUint32 aFromVersion, 
                                        PRUint32 aToVersion)
 {
-  //XXXAus: PLACE HOLDER
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsCOMPtr<sbILocalDatabaseMigrationHelper> migration = 
+    do_CreateInstance("@songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = migration->Migrate(aFromVersion, aToVersion, this);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

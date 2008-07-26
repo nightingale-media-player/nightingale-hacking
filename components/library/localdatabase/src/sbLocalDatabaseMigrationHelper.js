@@ -37,7 +37,7 @@ const Cr = Components.results;
 const SBLDBCOMP = "@songbirdnest.com/Songbird/Library/LocalDatabase/";
 
 function d(s) {
-  //dump("------------------> sbLocalDatabaseMigration " + s + "\n");
+  dump("------------------> sbLocalDatabaseMigration " + s + "\n");
 }
 
 function TRACE(s) {
@@ -107,6 +107,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
     
     for(let contractID in Cc) {
       if(contractID.indexOf(SBLDBCOMP + "Migration/Handler") == 0) {
+
         let migrationHandler = 
           Cc[contractID].createInstance(Ci.sbILocalDatabaseMigrationHandler);
         let migrationHandlerKey = migrationHandler.fromVersion + 
@@ -134,9 +135,21 @@ sbLocalDatabaseMigrationHelper.prototype = {
       this._init();
     }
     
-    //XXXAus: PLACE HOLDER
+    var oldVersion = aFromVersion;
+    var newVersion = oldVersion + 1;
     
-    return false;
+    for(let i = 0; i < aToVersion - aFromVersion; ++i) {
+      let key = oldVersion + "," + newVersion;
+      
+      if(!(key in this._migrationHandlers)) {
+        return false;
+      }
+      
+      oldVersion = newVersion;
+      newVersion += 1;
+    }
+    
+    return true;
   },
 
   migrate: function sbLDBM_migrate(aFromVersion, aToVersion, aLibrary) {
@@ -144,7 +157,21 @@ sbLocalDatabaseMigrationHelper.prototype = {
       this._init();
     }
     
-    //XXXAus: PLACE HOLDER
+    var oldVersion = aFromVersion;
+    var newVersion = oldVersion + 1;
+    
+    for(let i = 0; i < aToVersion - aFromVersion; ++i) {
+      let key = oldVersion + "," + newVersion;
+      
+      if(!(key in this._migrationHandlers)) {
+        throw Cr.NS_ERROR_UNEXPECTED;
+      }
+      
+      this._migrationHandlers[key].migrate(aLibrary);
+      
+      oldVersion = newVersion;
+      newVersion += 1;
+    }
     
     return;
   },

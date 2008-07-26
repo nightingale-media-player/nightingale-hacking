@@ -32,8 +32,6 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
-const SBLDBCOMP = "@songbirdnest.com/Songbird/Library/LocalDatabase/";
-
 function LOG(s) {
   dump("----++++----++++\nsbLocalDatabaseMigrate061to070 ---> " + 
        s + 
@@ -42,10 +40,10 @@ function LOG(s) {
 
 function sbLocalDatabaseMigrate061to070()
 {
-  sbLocalDatabaseMigrationUtils.BaseMigrationHandler.call(this);
+  SBLocalDatabaseMigrationUtils.BaseMigrationHandler.call(this);
   
-  this._fromVersion = 5;
-  this._toVersion   = 6;
+  this.fromVersion = 5;
+  this.toVersion   = 6;
 }
 
 //-----------------------------------------------------------------------------
@@ -53,9 +51,25 @@ function sbLocalDatabaseMigrate061to070()
 //-----------------------------------------------------------------------------
 
 sbLocalDatabaseMigrate061to070.prototype = {
-  __proto__: sbLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
+  __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
+
+  classDescription: 'Songbird Migration Handler for 0.6.1 to 0.7.0',
+  classID: Components.ID("{54A1D507-D085-4bfe-B729-1FFA13291C24}"),
+  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "0.6.1 to 0.7.0",
+  
+  constructor : sbLocalDatabaseMigrate061to070,
   
   migrate: function sbLocalDatabaseMigrate061to070_migrate(aLibrary) {
-    return;
   }
+}
+
+
+//
+// Module
+// 
+
+function NSGetModule(compMgr, fileSpec) {
+  return XPCOMUtils.generateModule([
+    sbLocalDatabaseMigrate061to070
+  ]);
 }
