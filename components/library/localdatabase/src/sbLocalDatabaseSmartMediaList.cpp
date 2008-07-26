@@ -596,7 +596,7 @@ sbLocalDatabaseSmartMediaList::SetLimit(PRUint64 aLimit)
 {
   nsAutoLock lock(mConditionsLock);
   mLimit = aLimit;
-
+  
   nsresult rv = WriteConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -739,11 +739,7 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
   if ((op.EqualsLiteral(SB_OPERATOR_ISTRUE) ||
        op.EqualsLiteral(SB_OPERATOR_ISFALSE) ||
        op.EqualsLiteral(SB_OPERATOR_ISSET) ||
-       op.EqualsLiteral(SB_OPERATOR_ISNOTSET) ||
-       op.EqualsLiteral(SB_OPERATOR_EQUALS) ||
-       op.EqualsLiteral(SB_OPERATOR_NOTEQUALS) ||
-       op.EqualsLiteral(SB_OPERATOR_ONDATE) ||
-       op.EqualsLiteral(SB_OPERATOR_NOTONDATE)) &&
+       op.EqualsLiteral(SB_OPERATOR_ISNOTSET)) &&
       !aLeftValue.IsEmpty()) {
     return NS_ERROR_ILLEGAL_VALUE;
   };
@@ -1011,6 +1007,17 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneNotRandom()
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = AddLimitColumnAndJoin(builder, kMediaItemsAlias);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Only get media items
+    nsCOMPtr<sbISQLBuilderCriterion> nullCriterion;
+    rv = builder->CreateMatchCriterionNull(kMediaItemsAlias,
+                                           kMediaListTypeId,
+                                           sbISQLBuilder::MATCH_EQUALS,
+                                           getter_AddRefs(nullCriterion));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = builder->AddCriterion(nullCriterion);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString sql;
