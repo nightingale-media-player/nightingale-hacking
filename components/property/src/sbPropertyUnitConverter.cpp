@@ -34,7 +34,7 @@
 #include <prprf.h>
 
 static const char *gsFmtFloatOut = "%f";
-static const char *gsFmtFloatIn = "%Lg";
+static const char *gsFmtFloatIn = "%lf";
 
 // ---------------------------------------------------------------------------
 // sbPropertyUnit class - describes a unit exposed by sbIPropertyUnitConverter
