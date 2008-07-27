@@ -32,9 +32,9 @@
 #include "nsISupports.idl"
 #include "sbIJobProgress.idl"
 
-interface sbILibrary;
+interface sbILocalDatabaseLibrary;
 
-[scriptable, uuid(bd00ef81-320f-4381-8dce-d60ff15a7d39)]
+[scriptable, uuid(0b42f045-604e-4f7f-8db4-5bcdec0af4e7)]
 interface sbILocalDatabaseMigrationHelper : nsISupports
 {
   /**
@@ -54,5 +54,5 @@ interface sbILocalDatabaseMigrationHelper : nsISupports
    */
   void migrate(in unsigned long aFromVersion, 
                in unsigned long aToVersion, 
-               in sbILibrary aLibrary);
+               in sbILocalDatabaseLibrary aLibrary);
 };

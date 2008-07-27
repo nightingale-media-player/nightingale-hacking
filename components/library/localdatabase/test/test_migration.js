@@ -43,4 +43,6 @@ function runTest() {
   
   assertEqual(migrationHelper.canMigrate(1, 1000), false);
   assertEqual(migrationHelper.canMigrate(5, 6), true);
+  
+  migrationHelper.migrate(5, 6, library);
 }

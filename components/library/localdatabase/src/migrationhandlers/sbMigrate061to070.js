@@ -35,7 +35,7 @@ const Cr = Components.results;
 function LOG(s) {
   dump("----++++----++++\nsbLocalDatabaseMigrate061to070 ---> " + 
        s + 
-       "\n----++++----++++");
+       "\n----++++----++++\n");
 }
 
 function sbLocalDatabaseMigrate061to070()
@@ -44,6 +44,8 @@ function sbLocalDatabaseMigrate061to070()
   
   this.fromVersion = 5;
   this.toVersion   = 6;
+  
+  this._propertyNames = {};
 }
 
 //-----------------------------------------------------------------------------
@@ -59,7 +61,47 @@ sbLocalDatabaseMigrate061to070.prototype = {
   
   constructor : sbLocalDatabaseMigrate061to070,
   
-  migrate: function sbLocalDatabaseMigrate061to070_migrate(aLibrary) {
+  _databaseLocation: null,
+  _databaseGUID: null,
+  
+  _propertyNames: null,
+  
+  migrate: function sbLDBM061to070_migrate(aLibrary) {
+    this._databaseGUID = aLibrary.databaseGuid;
+    this._databaseLocation = aLibrary.databaseLocation;
+    
+    this._getPropertyNames();
+    LOG(this._propertyNames);
+    
+    var query = this._createQuery();
+
+    var getDataSQL = "";
+  },
+  
+  _createQuery: function sbLDBM061to070_createQuery() {
+    var query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+                  .createInstance(Ci.sbIDatabaseQuery);
+    query.databaseLocation = this._databaseLocation;
+    query.setDatabaseGUID(this._databaseGUID);
+    
+    return query;
+  },  
+  
+  _getPropertyNames: function sbLDBM061to070_getPropertyNames() {
+    var query = this._createQuery();
+    var str = "select property_id, property_name from properties";
+    query.addQuery(str);
+    
+    var retval;
+    query.execute(retval);
+    
+    var resultSet = query.getResultObject();
+    
+    var rowCount = resultSet.getRowCount();
+    for(let currentRow = 0; currentRow < rowCount; ++currentRow) {
+      let propertyId = resultSet.getRowCell(currentRow, 0);
+      this._propertyNames[propertyId] = resultSet.getRowCell(currentRow, 1);
+    }
   }
 }
 

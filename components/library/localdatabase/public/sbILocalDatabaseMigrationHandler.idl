@@ -32,14 +32,14 @@
 #include "nsISupports.idl"
 #include "sbIJobProgress.idl"
 
-interface sbILibrary;
+interface sbILocalDatabaseLibrary;
 
 /**
  * \note For your migration handler to be picked up by the LocalDatabaseMigration
  *       Component, it must have a contract id that begins with the following:
  *       "@songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/"
  */
-[scriptable, uuid(9b3485d7-0e88-4fef-9ebd-4f3dc8e295a0)]
+[scriptable, uuid(f88bff10-0dfc-416e-9dcb-630a9d27b8c7)]
 interface sbILocalDatabaseMigrationHandler : sbIJobProgress
 {
   /**
@@ -55,5 +55,5 @@ interface sbILocalDatabaseMigrationHandler : sbIJobProgress
   /**
    * \brief Run the migration handler on a library.
    */
-  void migrate(in sbILibrary aLibrary);
+  void migrate(in sbILocalDatabaseLibrary aLibrary);
 };
