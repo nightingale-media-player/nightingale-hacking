@@ -65,8 +65,6 @@ sbLocalDatabaseMigrationHelper.prototype = {
   // needs to be DOM_OBJECT to allow remoteAPI to access it.
   flags: Ci.nsIClassInfo.DOM_OBJECT,
 
-  constructor:      sbLocalDatabaseMigrationHelper,
-  
   _initialized: false,
   
   _securityMixin: null,
@@ -88,7 +86,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
                        Ci.sbIJobProgress,
                        Ci.sbIJobCancelable ],
   
-  _latestSchemaVersion: 5,
+  _latestSchemaVersion: 6,
   _lowestFromSchemaVersion: Number.MAX_VALUE,
   
   _migrationHandlers:   null,
@@ -115,8 +113,8 @@ sbLocalDatabaseMigrationHelper.prototype = {
                                   migrationHandler.toVersion;
         this._migrationHandlers[migrationHandlerKey] = migrationHandler;
         
-        if(this._lowestSchemaVersion > migrationHandler.fromVersion) {
-          this._lowestSchemaVersion = migrationHandler.fromVersion;
+        if(this._lowestFromSchemaVersion > migrationHandler.fromVersion) {
+          this._lowestFromSchemaVersion = migrationHandler.fromVersion;
         }
       }
     }

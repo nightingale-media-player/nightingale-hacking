@@ -26,13 +26,14 @@
 
 EXPORTED_SYMBOLS = ["SBLocalDatabaseMigrationUtils"];
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
-
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
+
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
+Cu.import("resource://app/jsmodules/SBTimer.jsm");
 
 var SBLocalDatabaseMigrationUtils = {
   baseHandlerContractID: "@songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/"
@@ -69,6 +70,93 @@ SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype = {
                      ];
     count.value = interfaces.length;
     return interfaces;
+  },
+  
+  migrationQuery: null,
+
+  //
+  // Helpers to pump progress
+  //
+  _notifyJobsTimer: null,
+  
+  startNotificationTimer: function BaseMigrationHandler_startNotificationTimer(aTimeout) {
+    if(this._notifyJobsTimer) {
+      this._notifyJobsTimer.cancel();
+      this._notifyJobsTimer = null;
+    }
+    
+    if(aTimeout == null) {
+      aTimeout = 66;
+    }
+    
+    var self = this;
+    function notifyListeners() {
+      self.notifyJobProgressListeners();
+    }
+    
+    this._notifyJobsTimer = new SBTimer(notifyListeners,
+                                        aTimeout, 
+                                        Ci.nsITimer.TYPE_REPEATING_SLACK);
+  },
+  
+  stopNotificationTimer: function BaseMigrationHandler_stopNotificationTimer() {
+    if(this._notifyJobsTimer) {
+      this._notifyJobsTimer.cancel();
+      this._notifyJobsTimer = null;
+    }
+  },
+  
+  //
+  // sbIJobProgress overrides
+  //
+  get status() {
+    if(this.migrationQuery) {
+      var executing = this.migrationQuery.isExecuting();
+      if(executing) {
+        return Ci.sbIJobProgress.STATUS_RUNNING;
+      }
+      
+      var complete = (this.migrationQuery.currentQuery() == 
+                      this.migrationQuery.getQueryCount() - 1);
+                      
+      if(complete && !executing) {
+        return Ci.sbIJobProgress.STATUS_SUCCEEDED;
+      }
+    }
+    
+    return this._status;
+  },
+  
+  get progress() {
+    if(this.migrationQuery) {
+      return this.migrationQuery.currentQuery();
+    }
+    
+    return this._progress;    
+  },
+  
+  get total() {
+    if(this.migrationQuery) {
+      return this.migrationQuery.getQueryCount();
+    }
+    
+    return this._total;
+  },
+  
+  get canCancel() {
+    if(this.migrationQuery) {
+      return true;
+    }
+    
+    return this._canCancel;
+  },
+  
+  cancel: function BaseMigrationHandler_cancel() {
+    if(this.migrationQuery) {
+      this.migrationQuery.abort();
+    }
+    
+    return;
   },
   
   //
