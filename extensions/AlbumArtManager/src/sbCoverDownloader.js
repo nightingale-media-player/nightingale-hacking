@@ -54,8 +54,7 @@ function sbCoverDownloader() {
     this._prefService = Cc['@mozilla.org/preferences-service;1']
                           .getService(Ci.nsIPrefBranch);
     this.DEBUG = this._prefService.getBoolPref(
-                                            "songbird.albumartmanager.debug." +
-                                             this.className);
+                                            "songbird.albumartmanager.debug");
   } catch (err) {
     // Don't need this anymore since we will not output debug statements
     this._consoleService = null;
@@ -70,7 +69,9 @@ sbCoverDownloader.prototype = {
   _consoleService: null,      // We use this in the debug calls
   _prefService   : null,
   
-  _outputFile    : ""         // String of the file we are saving to.
+  _outputFile    : "",        // String of the file we are saving to.
+  _mediaItem     : null,      // Media Item we are downloding for
+  _scope         : null,      // Scope of search
 }
 
 /**
@@ -139,87 +140,48 @@ function sbCoverDownloader_onStateChange(aWebProgress,
   // when the transfer is complete...
   if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP) {
     if (aStatus == 0) {
-      this._debug("Download finished");
-      var ioService = Cc["@mozilla.org/network/io-service;1"]
-                        .getService(Ci.nsIIOService);
-      var outFile = ioService.newFileURI(this._outputFile).spec;
-      this._listener.coverFetchSucceeded(this._mediaItem,
-                                         this._scope,
-                                         outFile);
+      try {
+        this._debug("Download finished for : " + this._outputFile);
+        var ioService = Cc["@mozilla.org/network/io-service;1"]
+                          .getService(Ci.nsIIOService);
+        var localFile = Cc["@mozilla.org/file/local;1"]
+                          .createInstance(Ci.nsILocalFile);
+        localFile.initWithPath(this._outputFile);
+        var outFile = ioService.newFileURI(localFile).spec;
+        this._listener.coverFetchSucceeded(this._mediaItem,
+                                           this._scope,
+                                           outFile);
+      } catch (err) {
+        this._logError("Unable to get location of dowloaded file : " +
+                       this._outputFile);
+        this._listener.coverFetchFailed(this._mediaItem, this._scope);
+      }
     } else {
-      this._debug("Download failed");
+      this._debug("Download failed for : " + this._outputFile);
       this._listener.coverFetchFailed(this._mediaItem, this._scope);
     }
   }
 }
 
 /**
- * \brief Gets th platform we are on, we need a better way of doing this.
- * \returns String version of platform (Windows_NT, Darwin, Linux, SunOS)
- */
-sbCoverDownloader.prototype._getPlatform =
-function sbCoverDownloader__getPlatform() {
-  var platform = "";
-  try {
-    var sysInfo =
-      Components.classes["@mozilla.org/system-info;1"]
-                .getService(Components.interfaces.nsIPropertyBag2);
-    platform = sysInfo.getProperty("name");
-  }
-  catch (e) {
-    dump("System-info not available, trying the user agent string.\n");
-    var user_agent = navigator.userAgent;
-    if (user_agent.indexOf("Windows") != -1)
-      platform = "Windows_NT";
-    else if (user_agent.indexOf("Mac OS X") != -1)
-      platform = "Darwin";
-    else if (user_agent.indexOf("Linux") != -1)
-      platform = "Linux";
-    else if (user_agent.indexOf("SunOS") != -1)
-      platform = "SunOS";
-  }
-  return platform;
-}
-
-/**
  * \brief MakeFileNameSafe takes a file name and changes any invalid characters
  *        into valid ones.
  *        TODO: Check if the ioService will do this for use with newFileURI
+ *        NOTE: We can not use the platform since each platform can use many
+ *              file systems, so we just account for all :P
  * \param aFileName - file name to make safe
  * \return valid version of aFileName.
  */
 sbCoverDownloader.prototype._makeFileNameSafe =
 function sbCoverDownloader__makeFileNameSafe(aFileName) {
   var newFileName;
-  var platform = this._getPlatform();
-  
-  // Convert invalid chars into good ones
-  switch (platform) {
-    case 'Windows_NT':
-      // Windows has so many bad characters
-      // * " / \ : | ? < >
-      newFileName = aFileName.replace(/[*|\"|\/|\\|\||:|\?|<|>]/g, "_");
-    break;
-  
-    case 'Darwin':
-      // :
-      newFileName = aFileName.replace(/[:]/g, "_");
-      // Dot can not be the first character
-      if (newFileName.indexOf(".") == 0) {
-        newFileName = newFileName.slice(1);
-      }
-    break;
-    
-    case 'Linux':
-      // / \
-      newFileName = aFileName.replace(/[\/|\\]/g, "_");
-    break;
-    
-    default:
-      newFileName = aFileName;
-    break;
+  // Windows file systems has so many bad characters
+  // * " / \ : | ? < >
+  newFileName = aFileName.replace(/[*|\"|\/|\\|\||:|\?|<|>]/g, "_");
+  // OS X file systems only have : but also can not start with .
+  if (newFileName.indexOf(".") == 0) {
+    newFileName = newFileName.slice(1);
   }
-  
   return newFileName;
 }
 
@@ -308,10 +270,14 @@ function sbCoverDownloader__getCoverDownloadLocation(aMediaItem,
       coverFormat = "%artist% - %album%";
     }
     
-    coverFormat = coverFormat.replace(/%album%/gi, this._makeFileNameSafe(albumName));
-    coverFormat = coverFormat.replace(/%artist%/gi, this._makeFileNameSafe(albumArtist));
-    coverFormat = coverFormat.replace(/%track%/gi, this._makeFileNameSafe(trackName));
-    coverFormat = coverFormat.replace(/%guid%/gi, this._makeFileNameSafe(itemGuid));
+    coverFormat = coverFormat.replace(/%album%/gi,
+                                      this._makeFileNameSafe(albumName));
+    coverFormat = coverFormat.replace(/%artist%/gi,
+                                      this._makeFileNameSafe(albumArtist));
+    coverFormat = coverFormat.replace(/%track%/gi,
+                                      this._makeFileNameSafe(trackName));
+    coverFormat = coverFormat.replace(/%guid%/gi,
+                                      this._makeFileNameSafe(itemGuid));
 
     if (aExtension) {
       coverFormat = coverFormat + aExtension;
@@ -322,26 +288,15 @@ function sbCoverDownloader__getCoverDownloadLocation(aMediaItem,
     try {
       if ( (coverFormat.indexOf("/") > 0) ||
            (coverFormat.indexOf("\\") > 0) ) {
+        coverFormat = coverFormat.replace("\\", "/");
         this._debug("Splitting " + coverFormat);
         var sections = coverFormat.split("/");
-        if (sections.length == 1) {
-          this._debug("/ didn't work so trying \\");
-          sections = coverFormat.split("\\");
-        }
+        
         this._debug("Split into " + sections.length + " sections");
         for (var i = 0; i < sections.length; i++) {
-          if (sections[i].indexOf("\\")) {
-            var subSections = sections.split("\\");
-            for (var iSub = 0; iSub < subSections.length; iSub++) {
-              var appendFolder = this._makeFileNameSafe(subSections[iSub]);
-              this._debug("Appending " + appendFolder);
-              downloadLocation.append(appendFolder);
-            }
-          } else {
-            var appendFolder = this._makeFileNameSafe(sections[i]);
-            this._debug("Appending " + appendFolder);
-            downloadLocation.append(appendFolder);
-          }
+          var appendFolder = this._makeFileNameSafe(sections[i]);
+          this._debug("Appending " + appendFolder);
+          downloadLocation.append(appendFolder);
         }
       } else {
         this._debug("No need to split " + coverFormat);
