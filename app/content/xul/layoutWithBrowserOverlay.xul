@@ -409,6 +409,7 @@
       <key id="findagain-key" modifiers="accel" key="&menu.edit.findagain.key;" oncommand="goDoCommand('cmd_findAgain');" />
       
       <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
+      <key id="locationbar-key2" modifiers="alt" key="&locationbar.key2;" oncommand="document.getElementById('location_bar').focus();"/>
       <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>
 
       <key id="key_fullZoomReduce"  key="&fullZoomReduceCmd.commandkey;"   command="cmd_fullZoomReduce"  modifiers="accel"/>
@@ -422,16 +423,16 @@
       <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
       <key id="key_stop" keycode="VK_ESCAPE" oncommand="gBrowser.stop();"/>
       <key id="metadata-key" modifiers="accel" key="&menu.tools.metadata.accesskey;" command="cmd_metadata"/>
-	  
-	  <key id="key_selectTab1" oncommand="BrowserNumberTabSelection(event, 0);" key="1" modifiers="accel"/>
-	  <key id="key_selectTab2" oncommand="BrowserNumberTabSelection(event, 1);" key="2" modifiers="accel"/>
-	  <key id="key_selectTab3" oncommand="BrowserNumberTabSelection(event, 2);" key="3" modifiers="accel"/>
-	  <key id="key_selectTab4" oncommand="BrowserNumberTabSelection(event, 3);" key="4" modifiers="accel"/>
-	  <key id="key_selectTab5" oncommand="BrowserNumberTabSelection(event, 4);" key="5" modifiers="accel"/>
-	  <key id="key_selectTab6" oncommand="BrowserNumberTabSelection(event, 5);" key="6" modifiers="accel"/>
-	  <key id="key_selectTab7" oncommand="BrowserNumberTabSelection(event, 6);" key="7" modifiers="accel"/>
-	  <key id="key_selectTab8" oncommand="BrowserNumberTabSelection(event, 7);" key="8" modifiers="accel"/>
-	  <key id="key_selectTab9" oncommand="BrowserNumberTabSelection(event, 8);" key="9" modifiers="accel"/>
+	
+      <key id="key_selectTab1" oncommand="BrowserNumberTabSelection(event, 0);" key="1" modifiers="accel"/>
+      <key id="key_selectTab2" oncommand="BrowserNumberTabSelection(event, 1);" key="2" modifiers="accel"/>
+      <key id="key_selectTab3" oncommand="BrowserNumberTabSelection(event, 2);" key="3" modifiers="accel"/>
+      <key id="key_selectTab4" oncommand="BrowserNumberTabSelection(event, 3);" key="4" modifiers="accel"/>
+      <key id="key_selectTab5" oncommand="BrowserNumberTabSelection(event, 4);" key="5" modifiers="accel"/>
+      <key id="key_selectTab6" oncommand="BrowserNumberTabSelection(event, 5);" key="6" modifiers="accel"/>
+      <key id="key_selectTab7" oncommand="BrowserNumberTabSelection(event, 6);" key="7" modifiers="accel"/>
+      <key id="key_selectTab8" oncommand="BrowserNumberTabSelection(event, 7);" key="8" modifiers="accel"/>
+      <key id="key_selectTab9" oncommand="BrowserNumberTabSelection(event, 8);" key="9" modifiers="accel"/>
 
 #ifndef XP_MACOSX
       <key id="goBackKb"  keycode="VK_LEFT" command="Browser:Back" modifiers="alt"/>

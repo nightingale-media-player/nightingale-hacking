@@ -422,6 +422,7 @@
 <!ENTITY switchfeathers.key            "M" >
 <!ENTITY search.key                    "F" >
 <!ENTITY locationbar.key               "L" >
+<!ENTITY locationbar.key2              "D" >
 <!ENTITY trackeditor.key               "E" >
 <!ENTITY sanitize.key                  "Del" >
 <!ENTITY menu.viewpagesource.key       "U" >
