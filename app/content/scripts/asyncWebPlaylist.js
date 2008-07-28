@@ -1,3 +1,4 @@
+// vim: set sw=2 tabstop=2 expandtab :miv
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -104,6 +105,7 @@ try
 
       function webPlaylist_whileEval() {
         var retval = (this.i < this.a_array.length) ||
+                     (this.i < this.area_array.length) ||
                      (this.i < this.embed_array.length) ||
                      (this.i < this.object_array.length) ||
                      (this.i < this.frame_array.length) ||
@@ -132,14 +134,23 @@ try
           // "A" tags
           if (
               ( this.i < this.a_array.length ) &&
-              ( this.a_array[ this.i ].href ) &&
-              ( this.a_array[ this.i ].addEventListener )
+              ( this.a_array[ this.i ].href )
             )
           {
             var url = this.a_array[ this.i ].href;
             if ( url )
               loop_break = this.handleURL( url );
           }
+          // "AREA" tags
+          if (
+              ( this.i < this.area_array.length ) &&
+              ( this.area_array[ this.i ].href )
+            )
+          {
+            var url = this.area_array[ this.i ].href;
+            if ( url )
+              loop_break |= this.handleURL( url );
+          }          
           // "Embed" tags
           if (
               ( this.i < this.embed_array.length )
@@ -335,6 +346,7 @@ try
 
     // Attach a whole bunch of stuff to it so it can do its job in one pass.
     href_loop.a_array = aDocument.getElementsByTagName("A");
+    href_loop.area_array = aDocument.getElementsByTagName("AREA");
     href_loop.embed_array = aDocument.getElementsByTagName("EMBED");
     href_loop.object_array = aDocument.getElementsByTagName("OBJECT");
     href_loop.frame_array = aDocument.getElementsByTagName("FRAME");
@@ -619,6 +631,7 @@ try
 
     if (context) {
       context.progressTotal += href_loop.a_array.length +
+                               href_loop.area_array.length +
                                href_loop.embed_array.length +
                                href_loop.object_array.length;
     }
