@@ -1476,7 +1476,14 @@
             // do the parsing according to type
             switch (info.type) {
               case "datetime":
+                // parse date
                 value = Date.parse(value);
+                // js assumes that short year format are for the 20th century,
+                // but since the base date is 01/01/1970, a better rule is to
+                // use < 70 = 21st century, >= 70 = 20th century. We do this
+                // by adding 36525 days (one century) to the date if the parser
+                // returned a negative value. Yay Y2K hacks.
+                if (value < 0) value += 36525*24*60*60*1000;
                 break;
               case "duration":
                 var years=0,months=0,days=0,hours=0,
