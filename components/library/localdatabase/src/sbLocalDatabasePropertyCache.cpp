@@ -53,6 +53,7 @@
 #include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabaseSchemaInfo.h"
 #include <sbTArrayStringEnumerator.h>
+#include <sbStringUtils.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -1840,13 +1841,34 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 
   rv = mCache->AddDirtyGUID(mGuid);
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   PR_Lock(mDirtyLock);
   mDirty.PutEntry(propertyDBID);
   PR_Unlock(mDirtyLock);
+  
+  // If this property is user editable we need to 
+  // set the updated timestamp.  We only
+  // track updates to user editable properties
+  // since that's all the user cares about.
+  PRBool userEditable = PR_FALSE;
+  rv = propertyInfo->GetUserEditable(&userEditable);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (userEditable) {    
+#ifdef DEBUG
+    // #updated is NOT user editable, so we won't die a firey 
+    // recursive death here, but lets assert just in case.
+    NS_ENSURE_TRUE(!aPropertyID.EqualsLiteral(SB_PROPERTY_UPDATED), 
+                   NS_ERROR_UNEXPECTED);
+    
+#endif
+    sbAutoString now((PRUint64)(PR_Now()/PR_MSEC_PER_SEC));
+    rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UPDATED), now);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   if(++mWritePendingCount > SB_LOCALDATABASE_MAX_PENDING_CHANGES) {
     rv = Write();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
