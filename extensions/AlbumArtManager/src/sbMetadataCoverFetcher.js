@@ -287,11 +287,12 @@ function sbMetadataCoverFetcher_fetchCoverForMediaItem(aMediaItem, aListener, aW
         aListener.coverFetchFailed(aMediaItem, scope);
       }
     } else {
-      this._logError("Unable to find metadata: [" + fileURL.spec + "]");
+      this._debug("Unable to find metadata: [" + fileURL.spec + "]");
       aListener.coverFetchFailed(aMediaItem, scope);
     }
   } catch (err) {
-    this._logError("Unable to get image from metadata - for image: " + fileURL.spec + " err: " + err );
+    this._debug("Unable to get image from metadata - for image: " +
+                fileURL.spec + " err: " + err );
     aListener.coverFetchFailed(aMediaItem, scope);
   }
 }
