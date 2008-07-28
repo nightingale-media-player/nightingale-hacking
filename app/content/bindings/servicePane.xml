@@ -860,6 +860,10 @@
 
       <!-- drag and drop handling -->
       <handler event="draggesture"><![CDATA[
+        // don't allow drag gestures with the popup menu open.
+        if(this.mPopup.state != "closed") {
+          return;
+        }
         var row = { }
         var col = { }
         var child = { }
