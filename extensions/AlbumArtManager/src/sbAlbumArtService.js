@@ -181,6 +181,7 @@ sbAlbumArtService.prototype = {
                                   192,             // Random height
                                   "servicepane",   // which pane we are attaching to
                                   true);           // Auto show panel
+    this._paneMgr.showPane(DISPLAY_PANE);
 
     this.loadFetcherList();
 
