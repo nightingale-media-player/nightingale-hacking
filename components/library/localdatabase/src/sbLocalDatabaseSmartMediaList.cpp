@@ -1977,17 +1977,8 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
   if (op.EqualsLiteral(SB_OPERATOR_NOTCONTAINS) ||
       op.EqualsLiteral(SB_OPERATOR_NOTBEGINSWITH) ||
       op.EqualsLiteral(SB_OPERATOR_NOTENDSWITH) ||
-      op.EqualsLiteral(SB_OPERATOR_NOTINTHELAST)) {
-    if (!value.IsEmpty()) {
-      bNeedIsNull = PR_TRUE;
-      return NS_OK;
-    }
-  }
-  
-  if (op.EqualsLiteral(SB_OPERATOR_NOTONDATE) ||
-      op.EqualsLiteral(SB_OPERATOR_BEFOREDATE) ||
-      op.EqualsLiteral(SB_OPERATOR_BEFOREORONDATE) ||
-      op.EqualsLiteral(SB_OPERATOR_BETWEENDATES)) {
+      op.EqualsLiteral(SB_OPERATOR_NOTINTHELAST) ||
+      op.EqualsLiteral(SB_OPERATOR_NOTONDATE)) {
     if (!value.IsEmpty()) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
