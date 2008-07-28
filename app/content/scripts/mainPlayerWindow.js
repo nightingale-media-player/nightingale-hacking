@@ -57,64 +57,88 @@ var gSongbirdWindowController =
 {
   doCommand: function(aCommand)
   {
-    if (aCommand == "cmd_find")
+    if (aCommand == "cmd_find") {
       gTabBrowser.onFindCommand();
-    else if (aCommand == "cmd_findAgain")
+    } else if (aCommand == "cmd_findAgain") {
       gTabBrowser.onFindAgainCommand();
-    else if (aCommand == "cmd_metadata")
+    } else if (aCommand == "cmd_metadata") {
       SBTrackEditorOpen(); // open to the last selected tab
-    else if (aCommand == "cmd_editmetadata")
+    } else if (aCommand == "cmd_editmetadata") {
       SBTrackEditorOpen("edit"); // open to the 'edit' tab
-    else if (aCommand == "cmd_viewmetadata")
+    } else if (aCommand == "cmd_viewmetadata") {
       SBTrackEditorOpen("summary"); // open to the 'summary' tab
-    else if (aCommand == "cmd_delete")
+    } else if (aCommand == "cmd_control_playpause") {
+      var pps = gPPS ||
+                Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                          .getService(Components.interfaces.sbIPlaylistPlayback);
+      // If we are already playing something just pause/unpause playback
+      if (pps.playing) {
+        // if we're playing already then play / pause
+        if (pps.paused) {
+          pps.play();
+        } else {
+          pps.pause();
+        }
+      // Otherwise dispatch a play event.  Someone should catch this
+      // and intelligently initiate playback.  If not, just have
+      // the playback service play the default.
+      } else {
+        var event = document.createEvent("Events");
+        event.initEvent("Play", true, true);
+        var notHandled = window.dispatchEvent(event);
+        if (notHandled) {
+          pps.play();
+        }
+      }
+   } else if (aCommand == "cmd_delete")
       SBDeleteMediaList(this._getVisiblePlaylist());
   },
   
   supportsCommand: function(aCommand)
   {
-    if (aCommand == "cmd_find" || aCommand == "cmd_findAgain")
-      return true;
-    if (aCommand == "cmd_metadata" ||
-        aCommand == "cmd_editmetadata" ||
-        aCommand == "cmd_viewmetadata")
-      return true;
-    if (aCommand == "cmd_delete") {
-      return this._getVisiblePlaylist() != null;
+    switch(aCommand) {
+      case "cmd_find":
+      case "cmd_fingAgain":
+        return true;
+      case "cmd_metadata":
+      case "cmd_editmetadata":
+      case "cmd_viewmetadata":
+        return true;
+      case "cmd_control_playpause":
+        return true;
+      case "cmd_delete":
+        return (this._getVisiblePlaylist() != null);
     }
-      
     return false;
   },
   
   isCommandEnabled: function(aCommand)
   {
-    if (!gTabBrowser.shouldDisableFindForSelectedTab() &&
-        (aCommand == "cmd_find" || aCommand == "cmd_findAgain"))
-      return true;
-    if (aCommand == "cmd_metadata" ||
-        aCommand == "cmd_editmetadata" ||
-        aCommand == "cmd_viewmetadata") {
-      var browser;
-      if (typeof SBGetBrowser == 'function') 
-        browser = SBGetBrowser();
-      if (browser) {
-        if (browser.currentMediaPage) {
+    switch(aCommand) {
+      case "cmd_find":
+      case "cmd_findAgain":
+        return (!gTabBrowser.shouldDisableFindForSelectedTab());
+      case "cmd_metadata":
+      case "cmd_editmetadata":
+      case "cmd_viewmetadata": {
+        var browser = null;
+        if (typeof SBGetBrowser == 'function') 
+          browser = SBGetBrowser();
+        if (browser && browser.currentMediaPage) {
           var view = browser.currentMediaPage.mediaListView;
           if (view) {
             return view.selection.count > 0;
           }
         }
-      }
-    }
-    if (aCommand == "cmd_delete") {
-      var list = this._getVisiblePlaylist();
-      if (!list ||
-           !list.userEditable) {
         return false;
       }
-      return true;
+      case "cmd_control_playpause":
+        return true;
+      case "cmd_delete": {
+        var list = this._getVisiblePlaylist();
+        return (list && list.userEditable);
+      }
     }
-    
     return false;
   },
   
