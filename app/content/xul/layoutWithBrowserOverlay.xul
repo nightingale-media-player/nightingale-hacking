@@ -433,6 +433,7 @@
       <key id="key_selectTab7" oncommand="BrowserNumberTabSelection(event, 6);" key="7" modifiers="accel"/>
       <key id="key_selectTab8" oncommand="BrowserNumberTabSelection(event, 7);" key="8" modifiers="accel"/>
       <key id="key_selectTab9" oncommand="BrowserNumberTabSelection(event, 8);" key="9" modifiers="accel"/>
+      <key id="key_search" key="&searchFocus.key;" oncommand="BrowserSearch.webSearch();" modifiers="accel"/>
 
 #ifndef XP_MACOSX
       <key id="goBackKb"  keycode="VK_LEFT" command="Browser:Back" modifiers="alt"/>
@@ -440,7 +441,10 @@
 #else
       <key id="goBackKb" keycode="VK_LEFT" command="Browser:Back" modifiers="accel" />
       <key id="goForwardKb" keycode="VK_RIGHT" command="Browser:Forward" modifiers="accel" />
+      <!-- Taken from Firefox's browser-sets.inc this matches the key_search2 found there -->
+      <key id="key_search2" key="&search.key;" oncommand="BrowserSearch.webSearch();" modifiers="accel,alt"/>
 #endif
+
 #ifdef XP_UNIX
       <key id="goBackKb2" key="&goBackCmd.commandKey;" command="Browser:Back" modifiers="accel"/>
       <key id="goForwardKb2" key="&goForwardCmd.commandKey;" command="Browser:Forward" modifiers="accel"/>

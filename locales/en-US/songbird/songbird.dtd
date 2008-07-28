@@ -421,6 +421,7 @@
 <!ENTITY jumpto.key                    "J" >
 <!ENTITY switchfeathers.key            "M" >
 <!ENTITY search.key                    "F" >
+<!ENTITY searchFocus.key               "K" >
 <!ENTITY locationbar.key               "L" >
 <!ENTITY locationbar.key2              "D" >
 <!ENTITY trackeditor.key               "E" >
