@@ -94,20 +94,24 @@
               }
               return true;
               break;
-              
+
             case "feathers.item":
               var skinName = item.getAttribute("skinName");              
               var layoutURL = item.getAttribute("layoutURL");
-              
+
               // Only get the default layout if we are switching to a different skin.
               if (skinName != this._currentSkin) {
                 layoutURL = this._feathersManager.getDefaultLayout(skinName);
               }
 
-              this._feathersManager.switchFeathers(layoutURL, skinName);              
+              // Make sure something changed before we reload the GUI.
+              if (layoutURL != this._currentLayout || skinName != this._currentSkin) {
+                this._feathersManager.switchFeathers(layoutURL, skinName);
+              }
+
               return true;
               break;
-              
+
             default:
               return false;
               break;
