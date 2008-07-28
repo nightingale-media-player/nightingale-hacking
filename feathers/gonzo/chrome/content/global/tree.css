@@ -375,3 +375,17 @@ treechildren::-moz-tree-cell-text(selected, editing) {
   margin: 0px 2px 0px -2px !important;
   padding: 2px 1px;
 }
+
+treechildren::-moz-tree-checkbox {
+  list-style-image: url('chrome://songbird/skin/base-elements/button-checkbox.png') !important;
+  -moz-image-region: rect(0px 14px 14px 0px);
+}
+treechildren::-moz-tree-checkbox(checked) {
+  -moz-image-region: rect(0px 28px 14px 14px);
+}
+treechildren::-moz-tree-checkbox(disabled) {
+  -moz-image-region: rect(42px 14px 56px 0px);
+}
+treechildren::-moz-tree-checkbox(checked disabled) {
+  -moz-image-region: rect(42px 28px 56px 14px);
+}
