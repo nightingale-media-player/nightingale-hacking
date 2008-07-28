@@ -835,7 +835,10 @@ var TrackEditor = {
     // break the cycles
     //this._browser.removeEventListener("TabContentChange", this, false);
     this.mediaListView.selection.removeListener(this);
-    this.mediaListView.mediaList.removeListener(this);
+
+    //this.mediaListView.mediaList.removeListener(this);
+    //we're assuming a modal dialog for now, so don't reflect changes.
+    
     this.mediaListView = null;
   },
 
