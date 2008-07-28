@@ -125,7 +125,6 @@ ShowUninstDetails hide
 !insertmacro MUI_PAGE_DIRECTORY
 
 ; Start Menu Folder Page Configuration
-!define MUI_STARTMENUPAGE_NODISABLE
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
 !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\\${BrandFullNameInternal}\\${AppVersion} (${BUILD_ID})"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
