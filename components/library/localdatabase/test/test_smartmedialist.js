@@ -364,7 +364,7 @@ function testOperators(library) {
   list.notExistsMode = list.NOTEXISTS_ASZERO;
 
   setConditions(lastPlayTimeProp, "#<", value);
-  assertEqual(list.length, 67);
+  assertEqual(list.length, 16);
   assertUnique(list);
 
   list.notExistsMode = list.NOTEXISTS_ASNULL;
@@ -376,7 +376,7 @@ function testOperators(library) {
   list.notExistsMode = list.NOTEXISTS_ASZERO;
 
   setConditions(lastPlayTimeProp, "#<=", value);
-  assertEqual(list.length, 71);
+  assertEqual(list.length, 20);
   assertUnique(list);
 
   list.notExistsMode = list.NOTEXISTS_ASNULL;
