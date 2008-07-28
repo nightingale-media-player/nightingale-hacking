@@ -36,6 +36,7 @@ SONGBIRD_COMPONENTS = $(srcdir)/ArrayConverter.jsm \
                       $(srcdir)/SBDataRemoteUtils.jsm \
                       $(srcdir)/SBTimer.jsm \
                       $(srcdir)/StringUtils.jsm \
+                      $(srcdir)/URLUtils.jsm \
                       $(srcdir)/WindowUtils.jsm \
                       $(srcdir)/XPCOMUtils.jsm \
                       $(NULL)
@@ -48,6 +49,7 @@ SONGBIRD_JSMODULES = $(srcdir)/ArrayConverter.jsm \
                      $(srcdir)/SBDataRemoteUtils.jsm \
                      $(srcdir)/SBTimer.jsm \
                      $(srcdir)/StringUtils.jsm \
+                     $(srcdir)/URLUtils.jsm \
                      $(srcdir)/WindowUtils.jsm \
                      $(srcdir)/XPCOMUtils.jsm \
                      $(NULL)

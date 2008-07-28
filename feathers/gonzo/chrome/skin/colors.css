@@ -1062,6 +1062,12 @@ html|*.numberbox-input[disabled="true"]
 
 /* ..... invalid state ..... */
 
+/* ..... empty state ..... */
+textbox[empty="true"] {
+  font-style:italic;
+  color:gray;
+}
+
 
 
 

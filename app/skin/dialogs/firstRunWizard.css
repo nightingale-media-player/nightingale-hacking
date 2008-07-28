@@ -75,6 +75,12 @@ Additional styles imported directly by the first run dialog.
   -moz-box-flex: 1;
 }
 
+.sb-first-run-feedback-email-box {
+  border-top: 1px solid;
+  margin-top: 5px;
+  padding-top: 10px;
+}
+
 /* Import media page styles. */
 radiogroup {
   margin-top:8px;

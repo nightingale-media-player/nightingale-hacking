@@ -85,7 +85,25 @@
             &first_run.feedback.metrics.description;
           </xul:description>
 
-       </xul:vbox> <!-- options_box -->
+        </xul:vbox> <!-- options_box -->
+
+        <!-- E-mail box. -->
+        <xul:vbox anonid="email_box" class="sb-first-run-feedback-email-box">
+
+          <!-- E-mail header. -->
+          <xul:label class="sb-first-run-header"
+                     value="&first_run.feedback.email.header.label;"/>
+
+          <!-- E-mail textbox. -->
+          <xul:description>
+            &first_run.feedback.email.description;
+          </xul:description>
+          <xul:textbox
+            anonid="email_textbox"
+            class="sb-first-run-feedback-email-textbox"
+            emptytext="&first_run.feedback.email.textbox.emptytext;"/>
+
+        </xul:vbox>
 
       </xul:vbox> <!-- container_box -->
 
@@ -112,11 +130,46 @@
                                                       "metrics_checkbox");
         var metricsEnabled = metricsCheckbox.checked ? "1" : "0";
         Application.prefs.setValue("app.metrics.enabled", metricsEnabled);
+
+        // Register the subscription e-mail.
+        var eMailTextBox =
+              document.getAnonymousElementByAttribute(this,
+                                                      "anonid",
+                                                      "email_textbox");
+        var eMail = eMailTextBox.value;
+        if (eMail && (eMail.length > 0)) {
+          // Get the subscribe URL.
+          var subscribeURL =
+                Application.prefs.getValue("songbird.url.subscribe", "");
+
+          // Register the subscription e-mail.
+          if (subscribeURL && (subscribeURL.length > 0)) {
+            // Component manager defs.
+            var Cc = Components.classes;
+            var Ci = Components.interfaces;
+            var Cu = Components.utils;
+
+            // Produce the subscription URL query string.
+            Cu.import("resource://app/jsmodules/URLUtils.jsm");
+            var reqParams = { id:     "c8c47a06ad",
+                              MERGE0: eMail };
+            var reqBody = URLUtils.produceQuery(reqParams);
+
+            // Send the subscription request.
+            var httpReq = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
+                            .createInstance(Ci.nsIXMLHttpRequest);
+            httpReq.mozBackgroundRequest = true;
+            httpReq.open("POST", subscribeURL, false);
+            httpReq.setRequestHeader("Content-Type",
+                                     "application/x-www-form-urlencoded");
+            httpReq.send(reqBody);
+          }
+        }
       ]]></body></method>
 
     </implementation>
 
-  </binding>
+  </binding> <!-- sb-first-run-feedback -->
 
 </bindings>
 

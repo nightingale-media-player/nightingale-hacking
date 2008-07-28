@@ -245,6 +245,7 @@ pref("browser.startup.homepage", "http://birdhouse.songbirdnest.com/");
 pref("songbird.url.firstrunpage", "http://birdhouse.songbirdnest.com/firstrun");
 pref("songbird.url.bugzilla", "http://bugzilla.songbirdnest.com/");
 pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
+pref("songbird.url.subscribe", "http://list-manage.com/subscribe.phtml");
 pref("songbird.url.support", "http://songbirdnest.com/support/");
 pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
 pref("songbird.url.support.corefailure", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Core_Wrapper_Failure");

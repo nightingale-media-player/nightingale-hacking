@@ -548,10 +548,13 @@
 <!ENTITY first_run.eula.accept_checkbox.label "I have read and accepted the terms of this license.">
 
 <!-- First-run feedback entities. -->
-<!ENTITY first_run.feedback.header.label        "Help Make Songbird Better">
-<!ENTITY first_run.feedback.description         "Would you help us make &brandShortName; better by sending us feedback in the form of anonymous metrics on how you use the application?">
-<!ENTITY first_run.feedback.metrics.label       "Collect and send my metrics to the &brandShortName; team">
-<!ENTITY first_run.feedback.metrics.description "Metrics are completely anonymous and no personal information is collected.">
+<!ENTITY first_run.feedback.header.label            "Help Make Songbird Better">
+<!ENTITY first_run.feedback.description             "Would you help us make &brandShortName; better by sending us feedback in the form of anonymous metrics on how you use the application?">
+<!ENTITY first_run.feedback.metrics.label           "Collect and send my metrics to the &brandShortName; team">
+<!ENTITY first_run.feedback.metrics.description     "Metrics are completely anonymous and no personal information is collected.">
+<!ENTITY first_run.feedback.email.header.label      "Keep Me Posted">
+<!ENTITY first_run.feedback.email.description       "Subscribe to our newsletter to hear about new releases and important updates.">
+<!ENTITY first_run.feedback.email.textbox.emptytext "enter your email to stay up-to-date">
 
 <!-- First-run import media entities. -->
 <!ENTITY first_run.import_media.header.label                 "Import Media">
