@@ -34,12 +34,10 @@ var Cu = Components.utils;
 function makeFile(path) {
   var file = Cc["@mozilla.org/file/local;1"].
              createInstance(Ci.nsILocalFile);
-  dump("*** STEVO: Making file with [" + path + "]\n");
   try {
     file.initWithPath(path);
   }
   catch (e) {
-    dump("*** STEVO: ugh failed with:\n" + e + "\n");
     return null;
   }
   return file;
@@ -181,7 +179,7 @@ var gAlbumArtManagerPane = {
     var folderPicker = Cc["@mozilla.org/filepicker;1"]
                        .createInstance(Ci.nsIFilePicker);
     folderPicker.init(window, title, Ci.nsIFilePicker.modeGetFolder);
-    folderPicker.displayDirectory = self.folder;
+    folderPicker.displayDirectory = this.folder;
 
     if (folderPicker.show() == Ci.nsIFilePicker.returnOK) {
       var selectedFolder = folderPicker.file;
