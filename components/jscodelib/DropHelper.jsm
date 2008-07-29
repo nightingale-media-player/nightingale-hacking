@@ -624,26 +624,44 @@ var InternalDropHandler = {
                          metrics_totype, 
                          context.count);
 
-      targetList.runInBatchMode(function() {
-        var first = true;
-        var position = aDropPosition;
-        while (items.hasMoreElements()) {
-          var item = items.getNext();
-          if (first) {
-            first = false;
+      // Create an enumerator that wraps the enumerator we were handed.
+      // We use this to set downloadStatusTarget and to notify the onFirstMediaItem
+      // listener.
+      var unwrapper = {
+        enumerator: items,
+        first: true,
+
+        hasMoreElements : function() {
+          return this.enumerator.hasMoreElements();
+        },
+        getNext : function() {
+          var item = this.enumerator.getNext();
+          
+          if (this.first) {
+            this.first = false;
             if (aListener)
               aListener.onFirstMediaItem(item);
           }
+          
           item.setProperty(SBProperties.downloadStatusTarget,
                            item.library.guid + "," + item.guid);
-          if (aDropPosition != -1 &&
-              targetList instanceof this._Ci.sbIOrderableMediaList) {
-            targetList.insertBefore(item, position++);
-          } else {
-            targetList.add(item);
-          }
+          return item;
+        },
+        QueryInterface : function(iid) {
+          if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
+              iid.equals(Components.interfaces.nsISupports))
+            return this;
+          throw Components.results.NS_NOINTERFACE;
         }
-      });
+      }
+
+      if (aDropPosition != -1 &&
+              targetList instanceof this._Ci.sbIOrderableMediaList) {
+        targetList.insertSomeBefore(unwrapper, aDropPosition);
+      } else {
+        targetList.addSome(items);
+      }
+      
       this._dropComplete(aListener, targetList, context.count, 0, context.count, 0);
     }
   },
