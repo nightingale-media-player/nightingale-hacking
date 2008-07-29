@@ -129,9 +129,8 @@ description, label {
 
 /* class for text with a 'link' appearance */
 .text-link {
-  color:blue;
+  color:blue !important;
   text-decoration:underline;
-  border:1px solid transparent;
 }
 
 .text-link:focus {
