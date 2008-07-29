@@ -1,0 +1,76 @@
+toolbar,
+toolbarpalette {
+}
+
+menubar {
+}
+
+.toolbar-holder {
+}  
+
+toolbar[mode="icons"] .toolbarbutton-text,
+toolbar[mode="text"] .toolbarbutton-icon {
+  display: none;
+}
+
+toolbar[mode="text"] .toolbarbutton-1 > .toolbarbutton-text, toolbar[mode="text"] .toolbarbutton-1 > stack > toolbarbutton > .toolbarbutton-text {
+/*  margin: 4px;*/
+}
+
+
+toolbarseparator {
+  min-width:1px !important;
+  min-height:16px !important;
+  -moz-appearance:none;
+  background-color:gray;
+}
+
+
+/* ::::: toolbarpaletteitem ::::: */
+
+toolbarpaletteitem {
+  cursor: -moz-grab;
+}
+
+toolbar[iconsize="small"] toolbarpaletteitem[type="spacer"] {
+
+}
+
+toolbarpaletteitem[type="spacer"] {
+
+}
+
+.toolbarpaletteitem-box[type="spacer"] {
+}
+
+.toolbarpaletteitem-box[type="spring"] {
+}
+
+.toolbarpaletteitem-box[type="spring"][place="toolbar"] {
+}
+
+.toolbarpaletteitem-box[type="spacer"][place="toolbar"],
+.toolbarpaletteitem-box[type="spring"][place="toolbar"] {
+}
+
+.toolbarpaletteitem-box[type="separator"][place="palette"] {
+}
+
+.toolbarpaletteitem-box[type="spacer"][place="palette"],
+.toolbarpaletteitem-box[type="spring"][place="palette"] {
+}
+
+/* ..... drag and drop feedback ..... */
+
+toolbarpaletteitem[dragover="left"] {
+}
+
+toolbarpaletteitem[dragover="right"] {
+}
+
+toolbar[iconsize="small"] toolbarspacer {
+}
+
+toolbarspacer {
+}
+
