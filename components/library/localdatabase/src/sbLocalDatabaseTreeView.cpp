@@ -2217,7 +2217,7 @@ sbLocalDatabaseTreeView::OnStop()
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::OnBeforeTrackChange(sbIMediaItem* aItem,
                                              sbIMediaListView* aView,
-                                             PRUint32 aIndex)
+                                             PRInt32 aIndex)
 {
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(aView);
@@ -2228,7 +2228,7 @@ sbLocalDatabaseTreeView::OnBeforeTrackChange(sbIMediaItem* aItem,
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::OnTrackChange(sbIMediaItem* aItem,
                                        sbIMediaListView* aView,
-                                       PRUint32 aIndex)
+                                       PRInt32 aIndex)
 {
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(aView);
@@ -2248,7 +2248,7 @@ sbLocalDatabaseTreeView::OnTrackChange(sbIMediaItem* aItem,
     rv = viewList->Equals(playingList, &equals);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (equals) {
+    if (equals && aIndex > -1) {
       nsString uid;
       rv = aView->GetViewItemUIDForIndex(aIndex, uid);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -2279,7 +2279,7 @@ sbLocalDatabaseTreeView::OnTrackChange(sbIMediaItem* aItem,
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::OnTrackIndexChange(sbIMediaItem* aItem,
                                             sbIMediaListView* aView,
-                                            PRUint32 aIndex) {
+                                            PRInt32 aIndex) {
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(aView);
 

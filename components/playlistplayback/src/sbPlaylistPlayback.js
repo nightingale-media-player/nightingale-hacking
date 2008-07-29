@@ -1693,8 +1693,8 @@ PlaylistPlayback.prototype = {
       var cur_index = this.currentIndex;
       if (this._playingItemIndex != cur_index) {
         this._playingItemIndex = cur_index;
+        var pps = this;
         this._listeners.forEach(function(aListener) {
-          var pps = this;
           try {
             aListener.onTrackIndexChange(pps._playingItem, 
                                          pps._playingView, 

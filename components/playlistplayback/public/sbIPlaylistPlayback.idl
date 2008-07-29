@@ -60,7 +60,7 @@ interface sbIPlaylistPlaybackListener : nsISupports
    */
   void onBeforeTrackChange(in sbIMediaItem aItem,
                            in sbIMediaListView aView,
-                           in unsigned long aIndex);
+                           in long aIndex);
 
   /**
    * \brief Called when a new track starts playing.  Note that this gets called
@@ -72,7 +72,7 @@ interface sbIPlaylistPlaybackListener : nsISupports
    */
   void onTrackChange(in sbIMediaItem aItem,
                      in sbIMediaListView aView,
-                     in unsigned long aIndex);
+                     in long aIndex);
 
 
   /**
@@ -85,7 +85,7 @@ interface sbIPlaylistPlaybackListener : nsISupports
    */
   void onTrackIndexChange(in sbIMediaItem aItem,
                           in sbIMediaListView aView,
-                          in unsigned long aIndex);
+                          in long aIndex);
                     
 };
 

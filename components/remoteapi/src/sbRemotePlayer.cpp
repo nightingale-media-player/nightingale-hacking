@@ -1470,7 +1470,7 @@ sbRemotePlayer::OnStop()
 NS_IMETHODIMP
 sbRemotePlayer::OnTrackChange(sbIMediaItem* aItem,
                               sbIMediaListView* aView,
-                              PRUint32 aIndex)
+                              PRInt32 aIndex)
 {
   LOG(("sbRemotePlayer::OnTrackChange()"));
   NS_ENSURE_ARG_POINTER(aItem);
@@ -1489,7 +1489,7 @@ sbRemotePlayer::OnTrackChange(sbIMediaItem* aItem,
 NS_IMETHODIMP
 sbRemotePlayer::OnTrackIndexChange(sbIMediaItem* aItem,
                                    sbIMediaListView* aView,
-                                   PRUint32 aIndex) {
+                                   PRInt32 aIndex) {
   LOG(("sbRemotePlayer::OnTrackIndexChange()"));
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(aView);
@@ -1507,7 +1507,7 @@ sbRemotePlayer::OnTrackIndexChange(sbIMediaItem* aItem,
 NS_IMETHODIMP
 sbRemotePlayer::OnBeforeTrackChange(sbIMediaItem* aItem,
                                     sbIMediaListView* aView,
-                                    PRUint32 aIndex)
+                                    PRInt32 aIndex)
 {
   LOG(("sbRemotePlayer::OnBeforeTrackChange()"));
   NS_ENSURE_ARG_POINTER(aItem);

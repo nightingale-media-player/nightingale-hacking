@@ -228,6 +228,7 @@
         <![CDATA[
           Components.utils.import("resource://app/jsmodules/sbProperties.jsm", this);
           Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm", this);
+          Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm", this);
         
           var self = this;
           this._ratingschange = function(evt) {
@@ -353,6 +354,15 @@
             // Set the new rating value to be written in the metadata job
             var newRating = this._ratingBinding.value;
             this._curMediaItem.setProperty(SBProperties.rating, newRating);
+
+            // Don't bother writing the rating if the item is readonly, or 
+            // if ratings are disabled
+            // Note that it is OK to rate items that cannot be written to
+            if (!this._curMediaItem.userEditable ||
+                !Application.prefs.getValue("songbird.metadata.ratings.enableWriting", false)) 
+            {
+              return;
+            }
           
             var self = this;
             this._callback = function() {
@@ -367,7 +377,7 @@
                            .getService(Components.interfaces.sbIFileMetadataService);
               var job = metadataService.write(mediaItemArray);       
             
-              SBJobUtils.showProgressDialog(job, null);
+              this.SBJobUtils.showProgressDialog(job, null);
             }
           
             setTimeout(this._callback, 0);  
