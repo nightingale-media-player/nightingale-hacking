@@ -28,6 +28,7 @@
 shoutcast.jar:
 % content shoutcast-radio %content/
 % skin shoutcast-radio classic/1.0 %skin/
+% skin shoutcast-radio rubberducky/0.2 %skin/rubberducky/
 % locale shoutcast-radio en-US %locale/en-US/
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://shoutcast-radio/content/scripts-overlay.xul
 % overlay chrome://browser/content/preferences/preferences.xul chrome://shoutcast-radio/content/prefsOverlay.xul

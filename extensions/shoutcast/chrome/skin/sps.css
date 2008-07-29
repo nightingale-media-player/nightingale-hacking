@@ -1,0 +1,7 @@
+/* SERVICEPANE */
+.servicepane-tree > treechildren::-moz-tree-image( medialist-favorites ),
+.locationbar-image[properties~="medialist-favorites"],
+.alltabs-item.menuitem-iconic[properties~="medialist-favorites"],
+.tabbrowser-tab[properties~="medialist-favorites"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+	list-style-image: url(chrome://songbird/skin/service-pane/icon-favoritesplaylist.png);
+}

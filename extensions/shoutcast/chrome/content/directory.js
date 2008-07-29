@@ -506,8 +506,7 @@ function createFavouritesNode() {
 
 	// Append the node
 	radioNode.appendChild(favouritesNode);
-	favouritesNode.image =
-		"chrome://shoutcast-radio/skin/favourites-servicepane.png";
+	favouritesNode.properties = "medialist-favorites";
 	favouritesNode.editable = false;
 	favouritesNode.hidden = false;
 	SPS.save();
