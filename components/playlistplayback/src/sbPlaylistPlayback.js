@@ -1760,6 +1760,7 @@ PlaylistPlayback.prototype = {
 
       // If the current title is the default title string (filename), 
       // it is okay to overwrite the title.
+      // We also overwrite the title for streams that update it
       var defaultTitle = unescape(this._playURL.stringValue);
       var lastSlash = defaultTitle.lastIndexOf("/");
       if (lastSlash >= 0)
@@ -1767,7 +1768,8 @@ PlaylistPlayback.prototype = {
       if (( title.length > 0 ) && 
           ( this._metadataTitle.stringValue != title ) &&
           ( ( this._metadataTitle.stringValue == "" ) ||
-            ( this._metadataTitle.stringValue == defaultTitle )
+            ( this._metadataTitle.stringValue == defaultTitle ) ||
+            ( this._playURL.stringValue.toLowerCase().indexOf("http:") == 0 )
           ))
         this._set_metadata = true; 
       else
