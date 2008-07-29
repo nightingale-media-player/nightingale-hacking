@@ -12,7 +12,8 @@
 
 <!ENTITY copyright             "Certain files in this binary application are Copyright &copy; 2005-2008">
 
+<!ENTITY window.main.title     "Songbird">
+<!ENTITY window.dev.title      "Songbird">
+
 <!-- Update the following prior to every release -->
 <!ENTITY releaseNotesURL       "http://www.songbirdnest.com/releasenotes">
-<!ENTITY window.main.title     "Songbird 0.7pre">
-<!ENTITY window.dev.title      "Songbird 0.7pre">
