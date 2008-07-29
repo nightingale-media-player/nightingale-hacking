@@ -37,7 +37,7 @@
     <content>
       <xul:stack mousethrough="always" flex="1">
         <xul:titlebar sbid="draggable-titlebar" flex="1" 
-          xbl:inherits="context"
+          xbl:inherits="context,ondblclick"
           onmousedown="onMouseDown();"
           onmouseup="onMouseUp();"
           onmousemove="onMouseMove();"

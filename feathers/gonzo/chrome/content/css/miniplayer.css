@@ -321,6 +321,9 @@ stack.sb-player-volume-slider {
 }
 
 
+#window_controls_box {
+  visibility: collapse;
+}
 
 
 #miniplayer-box > .hook {

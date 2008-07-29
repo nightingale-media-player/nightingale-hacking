@@ -69,7 +69,7 @@
   <!-- standard overlays insertion point for popups, commands, broadcasters, keys and stringbundles -->
   <sb-support id="mainSupportSet"/>
 
-  <sb-draggable flex="1" context="feathersPopupMenu">
+  <sb-draggable flex="1" context="feathersPopupMenu" ondblclick="gMiniplayer.onDblClick(event);">
 
     <hbox flex="1">
 
@@ -127,6 +127,14 @@
               </hbox>
   <!-- /TODO -->
             </stack>
+          </hbox>
+          
+          <!-- window controls (collapsed) -->
+          <hbox id="window_controls_box" pack="end" align="end" class="mini">
+            <sb-player-jumpto-button id="miniplayer_jumpto_button" class="miniplayer"/>
+            <sb-feathers-toggle-button id="miniplayer_feathers_button" popupanchor="bottomleft"
+                                       popupalign="topleft" class="miniplayer sb-player-button"/>
+            <sb-sys-close-button id="miniplayer_close_button" class="miniplayer"/>
           </hbox>
         </hbox>
 
