@@ -33,15 +33,14 @@
 	<script type="application/javascript" src="directory.js"/>
 
 	<hbox align="center" id="shoutcast-box">
-		<vbox flex="1" id="search-box">
+		<vbox flex="1" id="search-box" class="generic-bar">
 			<hbox>
-				
-	<label class="text-link"
-		onclick="Components.classes['@mozilla.org/appshell/window-mediator;1']
-		.getService(Components.interfaces.nsIWindowMediator)
-		.getMostRecentWindow('Songbird:Main').gBrowser
-		.loadOneTab('http://shoutcast.com');"><image
-		src="chrome://shoutcast-radio/skin/shoutcast_wordmark.png" /></label>
+				<label class="text-link"
+	onclick="Components.classes['@mozilla.org/appshell/window-mediator;1']
+	.getService(Components.interfaces.nsIWindowMediator)
+	.getMostRecentWindow('Songbird:Main').gBrowser
+	.loadOneTab('http://shoutcast.com');"><image
+	src="chrome://shoutcast-radio/skin/shoutcast_wordmark.png" /></label>
 			</hbox>
 			<hbox class="header-actions">
 				<label>&shoutcast-radio.genre;</label>

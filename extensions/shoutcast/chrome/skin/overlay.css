@@ -40,38 +40,7 @@ treecol[bind="http://songbirdnest.com/data/1.0#listenerCount"] > label,
 	background-repeat: no-repeat;
 }
 
-#search-box {
-	/* background-color: #202020; */
-	/*
-	background-image:url('chrome://shoutcast-radio/skin/radio-header-bg.png');
-	background-repeat:repeat-x;
-	background-position:center top;
-	*/
-	background-color: rgb(220,220,220) !important;
-	background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
-	background-repeat:repeat-x;
-	background-position:center top;
-	border-bottom: 1px solid grey;
-
-	padding-bottom: 4px;
-}
-
-#search-box label.header-title {
-	font-size: 24px;
-}
-
-.header-actions>label {
-	padding-top: 3px;
-}
-
-.header-actions menulist,
-.header-actions textbox {
-	border-top-color: #202220; 
-	border-left-color: #202220; 
-	border-bottom-color: #797f76;
-	border-right-color: #202220;
-	/*background-color: #000; 
-	color: #feffff; 
-	*/
+.header-actions {
+	-moz-box-align: center;
 }
 
