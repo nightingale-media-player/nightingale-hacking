@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://lastfm/skin/overlay.css" ?>
+<!DOCTYPE window [
+<!ENTITY % lastfmDTD SYSTEM "chrome://lastfm/locale/overlay.dtd">
+%lastfmDTD;
+]>
+<overlay id="lastfm-overlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  >
+
+  <script src="main.js"/>
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="lastfmStrings" src="chrome://lastfm/locale/overlay.properties"/>
+  </stringbundleset>
+
+  <menupopup id="menu_ToolsPopup">
+    <menuseparator id="lastfmMenuSeparator" insertbefore="devToolsSeparator"/>
+    <menuitem id="lastfmMenuLogout" label="&lastfm.menu.logout;"
+              insertbefore="devToolsSeparator"/>
+    <menuitem id="lastfmMenuLogin" label="&lastfm.menu.login;"
+              insertbefore="devToolsSeparator"/>
+    <menuitem id="lastfmMenuEnableScrobbling" label="&lastfm.menu.enable;"
+              type="checkbox" insertbefore="devToolsSeparator"/>
+  </menupopup>
+
+
+  <popupset id="mainPopupSet">
+    <panel id="lastfmPanel" position="before_end">
+      <deck id="lastfmDeck">
+        <vbox id="lastfmLogin">
+          <grid>
+            <columns>
+              <column/>
+              <column flex="1"/>
+            </columns>
+            <rows>
+              <row>
+                <label value="Username:"/>
+                <textbox id="lastfmUsername"/>
+              </row>
+              <row>
+                <label value="Password:"/>
+                <textbox id="lastfmPassword" type="password"/>
+              </row>
+            </rows>
+          </grid>
+          <description id="lastfmLoginError"/>
+          <spacer flex="1"/>
+          <hbox>
+            <description><html:span id="lastfmSignup">Sign up for Last.fm</html:span></description>
+            <spacer flex="1"/>
+            <button id="lastfmLoginButton">Log in</button>
+          </hbox>
+        </vbox>
+        <vbox id="lastfmLoggingIn">
+          <spacer flex="1"/>
+          <label value="Logging in..."/>
+          <progressmeter mode="undetermined"/>
+          <spacer flex="1"/>
+          <hbox>
+            <spacer flex="1"/>
+            <button id="lastfmCancelButton">Cancel</button>
+          </hbox>
+        </vbox>
+        <vbox id="lastfmProfile">
+          <hbox>
+            <image id="lastfmImage" src="" />
+            <vbox>
+              <description>Logged in as:
+                <html:span id="lastfmRealname" class="lastfmClickable"/>
+              </description>
+              <description >Total scrobbled:
+                <html:span id="lastfmTracks" class="lastfmClickable"/>
+              </description>
+            </vbox>
+          </hbox>
+          <spacer flex="1"/>
+          <hbox>
+            <checkbox id="lastfmScrobble" label="Scrobble my tracks" checked="true" />
+            <spacer flex="1"/>
+            <button id="lastfmLogoutButton">Log out</button>
+          </hbox>
+        </vbox>
+      </deck>
+    </panel>
+  </popupset>
+
+  <statusbar id="status-bar">
+    <statusbarpanel id="lastfmStatusIcon"
+      class="statusbarpanel-iconic"
+      src="chrome://lastfm/skin/disabled.png"
+      tooltiptext=""
+    />
+  </statusbar>
+</overlay>

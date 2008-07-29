@@ -1,0 +1,42 @@
+#lastfmDeck {
+  padding: 5px;
+}
+
+#lastfmDeck button {
+  min-height: 2em;
+}
+
+#lastfmSignup {
+  text-decoration: underline;
+}
+#lastfmSignup:hover {
+  color: blue;
+}
+
+#lastfmLoginError {
+  color: red;
+}
+
+/* the avatar image */
+#lastfmImage {
+  width: 64px;
+  height: 64px;
+  border: 2px solid white;
+}
+#lastfmImage:hover {
+  border-color: blue;
+}
+
+/* clickable fields */
+.lastfmClickable {
+  font-weight: bold;
+  text-decoration: underline;
+}
+.lastfmClickable:hover {
+  color: blue;
+}
+
+/* the next scrobbling line */
+#lastfmNextTrack, #lastfmNextTime {
+  font-style: italic;
+}
