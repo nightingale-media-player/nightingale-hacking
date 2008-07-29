@@ -15,7 +15,6 @@
 @lib\gstbase-0.10-0.dll
 @lib\gstdataprotocol-0.10-0.dll
 @lib\gstcontroller-0.10-0.dll
-@lib\gstnet-0.10-0.dll
 @lib\gstinterfaces-0.10-0.dll
 @lib\gstaudio-0.10-0.dll
 @lib\gsttag-0.10-0.dll
@@ -28,4 +27,3 @@
 @lib\gstrtsp-0.10-0.dll
 @lib\gstsdp-0.10-0.dll
 @lib\gstvideo-0.10-0.dll
-@lib\libgstdshow-0.10.dll
