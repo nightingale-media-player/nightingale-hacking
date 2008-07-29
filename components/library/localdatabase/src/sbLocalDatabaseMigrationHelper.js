@@ -37,7 +37,7 @@ const Cr = Components.results;
 const SBLDBCOMP = "@songbirdnest.com/Songbird/Library/LocalDatabase/";
 
 function d(s) {
-  dump("------------------> sbLocalDatabaseMigration " + s + "\n");
+  //dump("------------------> sbLocalDatabaseMigration " + s + "\n");
 }
 
 function TRACE(s) {
