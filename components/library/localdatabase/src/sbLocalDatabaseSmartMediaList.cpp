@@ -885,12 +885,12 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeAnyAll()
   PRUint32 count = mConditions.Length();
   for (PRUint32 i = 0; i < count; i++) {
     nsAutoString conditionSql;
-    rv = CreateSQLForCondition(mConditions[i], conditionSql);
+    rv = CreateSQLForCondition(mConditions[i], i == count-1, conditionSql);
     NS_ENSURE_SUCCESS(rv, rv);
 
     sql.Append(conditionSql);
     if (i + 1 < count) {
-      // Join the select statements with "intersect" if we are doing an a
+      // Join the select statements with "intersect" if we are doing an ALL
       // match, otherwise use "union"
       if (mMatchType == sbILocalDatabaseSmartMediaList::MATCH_TYPE_ALL) {
         sql.AppendLiteral(" intersect ");
@@ -927,7 +927,7 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeAnyAll()
   // copy query
   if (mLimitType != sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE) {
 
-    // If this is not an item limit, figure out our row limit should be
+    // If this is not an item limit, figure out what our row limit should be
     PRUint32 rowLimit;
     if (mLimitType == sbILocalDatabaseSmartMediaList::LIMIT_TYPE_ITEMS) {
       rowLimit = mLimit;
@@ -1378,6 +1378,7 @@ sbLocalDatabaseSmartMediaList::GetRollingLimit(const nsAString& aSql,
 #include <stdio.h>
 nsresult
 sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aCondition,
+                                                     PRBool aIsLastCondition,
                                                      nsAString& _retval)
 {
   nsresult rv;
@@ -1517,7 +1518,9 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
   // the query, and sort the results by that property
   if (mLimit != sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE &&
       !mSelectPropertyID.IsEmpty()) {
-    rv = AddSelectColumnAndJoin(builder, baseAlias, PR_TRUE);
+    // only add the sort to the last condition, because it is invalid (and
+    // would be quite unnecessary anyway) to sort before an intersect/union
+    rv = AddSelectColumnAndJoin(builder, baseAlias, aIsLastCondition);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {

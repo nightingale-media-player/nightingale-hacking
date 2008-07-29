@@ -174,6 +174,7 @@ private:
                            PRUint32* aRow);
 
   nsresult CreateSQLForCondition(sbRefPtrCondition& aCondition,
+                                 PRBool aIsLastCondition,
                                  nsAString& _retval);
 
   nsresult AddCriterionForCondition(sbISQLSelectBuilder* aBuilder,
