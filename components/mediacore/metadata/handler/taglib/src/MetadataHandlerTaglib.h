@@ -109,6 +109,8 @@
  * sbMetadataHandlerTaglib class
  */
 
+class nsICharsetDetector;
+
 class sbMetadataHandlerTaglib : public sbIMetadataHandler,
                                 public sbISeekableChannelListener,
                                 public nsICharsetDetectionObserver
@@ -275,6 +277,10 @@ private:
     void GuessCharset(
         TagLib::Tag                 *pTag,
         nsACString&                 _retval);
+
+    nsresult RunCharsetDetector(
+        nsICharsetDetector          *aDetector,
+        TagLib::String              &aContent);
 
     TagLib::String ConvertCharset(
         TagLib::String              aString,

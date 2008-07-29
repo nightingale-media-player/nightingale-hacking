@@ -1662,37 +1662,29 @@ void sbMetadataHandlerTaglib::GuessCharset(
     }
 
     // the metadata is in some 8-bit encoding; try to guess
-    mLastConfidence = eNoAnswerYet;
     nsCOMPtr<nsICharsetDetector> detector = do_CreateInstance(
         NS_CHARSET_DETECTOR_CONTRACTID_BASE "universal_charset_detector");
-    if (detector) {
-        nsCOMPtr<nsICharsetDetectionObserver> observer =
-            do_QueryInterface( NS_ISUPPORTS_CAST(nsICharsetDetectionObserver*, this) );
-        NS_ASSERTION(observer, "Um! We're supposed to be implementing this...");
+    rv = RunCharsetDetector(detector, tagString);
+    if (NS_SUCCEEDED(rv)) {
+        if (eSureAnswer == mLastConfidence || eBestAnswer == mLastConfidence) {
+            _retval.Assign(mLastCharset);
 
-        rv = detector->Init(observer);
-        if (NS_SUCCEEDED(rv)) {
-            PRBool isDone;
-            // artificially inflate the buffer by repeating it a lot; this does
-            // in fact help with the detection
-            const PRUint32 chunkSize = tagString.size();
-            PRUint32 currentSize = 0;
-            while (currentSize < GUESS_CHARSET_MIN_CHAR_COUNT) {
-                rv = detector->DoIt(raw.c_str(), chunkSize, &isDone);
-                if (NS_FAILED(rv) || isDone) {
-                    break;
-                }
-                currentSize += chunkSize;
-            }
-            if (NS_SUCCEEDED(rv)) {
-                rv = detector->Done();
-            }
-            if (NS_SUCCEEDED(rv)) {
-                if (eSureAnswer == mLastConfidence || eBestAnswer == mLastConfidence) {
-                    _retval.Assign(mLastCharset);
-                    return;
+            // Bug 8394 - The universal charset detector likes to treat cp1251
+            // as MacUkranian, so in this case run the specific Ukranian 
+            // detector since it does a better job.
+            if (mLastCharset.EqualsLiteral("x-mac-cyrillic")) {
+                detector = do_CreateInstance(
+                    NS_CHARSET_DETECTOR_CONTRACTID_BASE "ukprob");
+                rv = RunCharsetDetector(detector, tagString);
+                if (NS_SUCCEEDED(rv)) {
+                    if (eSureAnswer == mLastConfidence || 
+                        eBestAnswer == mLastConfidence) 
+                    {
+                        _retval.Assign(mLastCharset);
+                    }
                 }
             }
+            return;
         }
     }
 
@@ -1716,6 +1708,48 @@ void sbMetadataHandlerTaglib::GuessCharset(
 
     // we truely know nothing
     _retval.Truncate();
+}
+
+/*
+ * RunCharsetDetector
+ *
+ *   Run the given nsICharsetDetector.  Results will be available in 
+ *   mLastConfidence and mLastCharset.
+ */
+
+nsresult sbMetadataHandlerTaglib::RunCharsetDetector(
+    nsICharsetDetector*             aDetector,
+    TagLib::String&                 aContent)
+{
+    NS_ENSURE_ARG_POINTER(aDetector);
+    nsresult rv = NS_OK;
+    
+    mLastConfidence = eNoAnswerYet;
+
+    nsCOMPtr<nsICharsetDetectionObserver> observer =
+        do_QueryInterface( NS_ISUPPORTS_CAST(nsICharsetDetectionObserver*, this) );
+    NS_ASSERTION(observer, "Um! We're supposed to be implementing this...");
+
+    rv = aDetector->Init(observer);
+    if (NS_SUCCEEDED(rv)) {
+        PRBool isDone;
+        // artificially inflate the buffer by repeating it a lot; this does
+        // in fact help with the detection
+        const PRUint32 chunkSize = aContent.size();
+        std::string raw = aContent.toCString();
+        PRUint32 currentSize = 0;
+        while (currentSize < GUESS_CHARSET_MIN_CHAR_COUNT) {
+            rv = aDetector->DoIt(raw.c_str(), chunkSize, &isDone);
+            if (NS_FAILED(rv) || isDone) {
+                break;
+            }
+            currentSize += chunkSize;
+        }
+        if (NS_SUCCEEDED(rv)) {
+            rv = aDetector->Done();
+        }
+    }
+    return rv;
 }
 
 /* nsICharsetDetectionObserver */
