@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://shoutcast-radio/locale/options.dtd">
+
+<overlay id="radio-prefs-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <prefWindow id="BrowserPreferences">
+    <prefpane id="radioPrefsPane"
+              label="&prefpane.label;"
+              image="chrome://shoutcast-radio/skin/shoutcast_icon-32x32.png"
+              src="chrome://shoutcast-radio/content/prefsPane.xul" />
+ </prefWindow>
+
+</overlay>
+

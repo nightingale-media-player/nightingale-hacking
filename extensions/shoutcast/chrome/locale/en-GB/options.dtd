@@ -1,0 +1,17 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Stream Filters">
+<!ENTITY prefwindow.title "SHOUTcast Radio preferences">
+<!ENTITY bit-rate.limit.label "Only show SHOUTcast streams with a bit rate of at least">
+<!ENTITY listeners.limit.label "Only show SHOUTcast streams with at least">
+<!ENTITY listeners.limit.label.2 " people listening">
+<!ENTITY bit-rate.label "Bit rate (kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Number of Listeners">
+<!ENTITY listeners.accesskey "L">
+
+<!ENTITY prefs.customGenres "Custom Genres">
+<!ENTITY custom-genres.help.label "If you have custom genres you want displayed within the SHOUTcast directory, enter a comma-separated list of genre strings here">
+
+<!ENTITY prefs.tosCaption "Terms of Use">
+<!ENTITY prefs.tosBegin "Use of the SHOUTcast directory is bound by their Terms of Use">
+<!ENTITY prefs.tosLinkText "View Terms of Use">
