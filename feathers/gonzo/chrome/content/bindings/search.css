@@ -120,7 +120,7 @@ searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {
 .search-go-button {
   background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png') !important;
   background-repeat:repeat-x;
-  background-position:center top;
+  background-position:center top !important;
   list-style-image: url("chrome://songbird/skin/nav-bar/button-search.png");
 
   padding: 0px 0px 0px 0px !important;

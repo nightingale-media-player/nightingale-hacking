@@ -48,16 +48,12 @@
 
 toolbar,
 toolbarpalette {
-  min-width: 1px;
-  min-height: 20px;
 }
 
 menubar {
-  min-width: 1px;
 }
 
 .toolbar-holder {
- min-width: 1px;
 }  
 
 toolbar[mode="icons"] .toolbarbutton-text {
@@ -76,8 +72,6 @@ toolbar[mode="text"] .toolbarbutton-1 > .toolbarbutton-text, toolbar[mode="text"
 
 toolbarseparator {
   -moz-appearance:none;
-  width: 1px !important;
-  background-color:cyan;
 }
 
 
@@ -102,7 +96,6 @@ toolbarpaletteitem[type="spacer"] {
 }
 
 .toolbarpaletteitem-box[type="spring"][place="toolbar"] {
-  border: 1px solid cyan;
 }
 
 .toolbarpaletteitem-box[type="spacer"][place="toolbar"],

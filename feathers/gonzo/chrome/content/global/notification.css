@@ -36,6 +36,12 @@ notification > .notification-inner {
   list-style-image: url("chrome://songbird/skin/notification-bar/button-close.png") !important;
   -moz-image-region: rect(0px 12px 12px 0px);
   max-height:12px;
+  max-width:12px;
+  padding:0px !important;
+  border:none;
+  background-image:none;
+  background-color:transparent;
+  margin:0px !important;
 }
 .messageCloseButton:hover {
   -moz-image-region: rect(12px 12px 24px 0px);

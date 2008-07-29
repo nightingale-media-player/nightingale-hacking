@@ -46,6 +46,7 @@
 /* ::::: listbox ::::: */
 
 listbox {
+  background-color:white;
 }
 
 .listcell-label {

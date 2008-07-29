@@ -123,7 +123,8 @@ tab[first-tab="true"] > .tab-close-button,
   background-position:0px 0px;
 
   -moz-border-radius:0px !important;
-  padding: 0;
+  padding: 0px !important;
+  margin:0px 0px 2px 0px !important;
   border: none;
   min-width:14px;
 }

@@ -38,17 +38,21 @@ Imported by bindings.css or directly into feathers.
 
 
 #status-bar {
-  background-image:url('chrome://songbird/skin/browser/bg-status-bar.png');
-  background-repeat:repeat-x;
-  background-position:center top;
+  border-bottom:1px solid gray;
 }
 
 statusbar {
   padding:0;
   overflow: hidden;
-/*  border-top:1px solid brown;*/
-  min-height:20px; /* 20+1 */
-  max-height:20px; /* 20+1 */
+  -moz-box-pack: center;
+  -moz-box-align: center;
+  padding:1px 0px !important;
+}
+
+statusbar > progressmeter {
+  max-height:14px;
+  margin-top:1px !important;
+  margin-bottom:1px !important;
 }
 
 sb-status-progressmeter {
@@ -73,9 +77,6 @@ statusbar > * {
 }
 
 statusbarpanel {
-  -moz-box-pack: center;
-  -moz-box-align: center;
-  min-height:20px;
 }
 
 .statusbarpanel-icon {
