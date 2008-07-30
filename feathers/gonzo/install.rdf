@@ -44,11 +44,11 @@
 	        </songbird:skin>
 	        <songbird:layout>
 	          <Description>
-	            <songbird:name>mainplayer.xul</songbird:name>
+	            <songbird:name>Main Player</songbird:name>
 	            <songbird:url>chrome://gonzo/content/xul/mainplayer.xul</songbird:url>
 	          </Description>
 	          <Description>
-	            <songbird:name>miniplayer.xul</songbird:name>
+	            <songbird:name>Mini Player</songbird:name>
 	            <songbird:url>chrome://gonzo/content/xul/miniplayer.xul</songbird:url>
 	          </Description>
 	        </songbird:layout>

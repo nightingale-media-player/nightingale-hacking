@@ -40,7 +40,7 @@ label,
 menu,
 treechildren::-moz-tree-cell-text,
 html|input {
-  font-family: Lucida Grande, Trebuchet MS, Bitstream Vera Sans, FreeSans, Verdana, Arial, Sans-serif !important;
+  font-family: Lucida Grande, Tahoma, Trebuchet MS, Bitstream Vera Sans, FreeSans, Verdana, Arial, Sans-serif !important;
   font-size:11px;
 }
 
@@ -66,7 +66,7 @@ window[platform=Darwin] {
   border:none !important;
 }
 #sb-sys-title-title {
-  padding:0 5px 0 5px !important;
+  padding:1px 5px 2px 5px !important;
   font-weight:bold;
 }
 window[platform=Darwin] #sb-sys-title-title,
@@ -303,9 +303,18 @@ treecolpicker {
   background-position:center 0px;
   background-repeat:repeat-x;
 }
-treecol[sortDirection="ascending"],
-treecol[sortDirection="descending"] {
+treecol[sortDirection] {
   background-position:center -80px;
+}
+
+.sb-filterlist-tree treecol[sortDirection] {
+  background-position:center 0px;
+}
+.sb-filterlist-tree treecol[sortDirection]:hover {
+  background-position:center -16px;
+}
+.sb-filterlist-tree treecol[sortDirection]:active {
+  background-position:center -32px;
 }
 
 treecol:hover {
@@ -313,7 +322,6 @@ treecol:hover {
 }
 treecol[insertbefore="true"],
 treecol[insertafter="true"] {
-  background-position:center 0px;
 }
 
 treecol:active {
@@ -1408,9 +1416,13 @@ MOZILLA DOWNLOAD WINDOW
   min-height:22px !important;
   height:22px !important;
   max-height:22px !important;
+  border-bottom:1px solid gray;
 }
 sb-sys-titlebar {
   overflow:hidden;
+}
+#sb-sys-titlebar-primary-content {
+  -moz-box-align:center !important;
 }
 
 #faceplate-tool-bar {
@@ -1504,6 +1516,7 @@ sb-sys-titlebar {
 #nav_bar_box[protocol='chrome'] .web-only {
   display:none;
 }
+
 #nav-bar {
   border:none;
   padding:3px 4px !important;
@@ -1514,6 +1527,9 @@ sb-sys-titlebar {
 }
 #nav-bar > * {
   margin:0 2px !important;
+}
+#nav-bar > observes {
+  margin:0 !important;
 }
 #nav_bar_box[protocol='chrome'] .web-only-special {
   visibility:hidden;
@@ -1986,9 +2002,13 @@ notification[type="critical"] {
   padding: 2px 8px;
   border-bottom:1px solid gray;
 }
-.dialog-notification.notification-warning {
+.dialog-notification.notification-critical {
     background-color: rgb(251,161,165);
     background-image:url('chrome://songbird/skin/notification-bar/bg-critical.png');
+}
+.dialog-notification.notification-warning {
+    background-color: rgb(251,247,197);
+    background-image:url('chrome://songbird/skin/notification-bar/bg-warning.png');
 }
 .dialog-notification.notification-info {
   background-color: rgb(214,241,250);
@@ -2561,7 +2581,7 @@ richlistitem[loading="true"] .updateBadge {
 #paneContent description,
 #paneAdvanced description,
 #paneSecurity description {
-  font-family: Lucida Grande, Trebuchet MS, Bitstream Vera Sans, FreeSans, Verdana, Arial, Sans-serif !important;
+  font-family: Lucida Grande, Tahoma, Trebuchet MS, Bitstream Vera Sans, FreeSans, Verdana, Arial, Sans-serif !important;
   font-size:11px !important;
 }
 prefwindow .textbox-input,
@@ -2595,4 +2615,9 @@ wizard {
   list-style-image: none;
   margin: 0px !important;
 
+}
+
+.tabs-alltabs-button > dropmarker {
+  width:7px !important;
+  padding-right:2px;
 }

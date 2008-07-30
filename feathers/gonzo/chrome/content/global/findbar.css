@@ -26,7 +26,7 @@ findbar checkbox > .checkbox-label-box,
 .find-field-container > textbox.findbar-textbox,
 description.findbar-find-status {
   font-size:10px;
-  font-family: Lucida Grande, Arial, Helvetica, FreeSans, Sans-serif !important;
+  font-family: Lucida Grande, Tahoma, Trebuchet MS, Arial, Helvetica, FreeSans, Sans-serif !important;
   padding:0;
   margin:0;
 }

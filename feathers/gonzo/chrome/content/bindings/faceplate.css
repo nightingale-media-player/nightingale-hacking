@@ -43,7 +43,7 @@ Imported by bindings.css or directly into feathers.
 /** Text **/
 .faceplate-text
 {
-  font-family: Lucida Grande, Trebuchet MS, Arial, Helvetica, FreeSans, Sans-serif !important;
+  font-family: Lucida Grande, Tahoma, Trebuchet MS, Arial, Helvetica, FreeSans, Sans-serif !important;
   margin: 0;
   color:rgb(250,250,250);
   
@@ -108,7 +108,7 @@ Imported by bindings.css or directly into feathers.
 
 sb-player-timeelapsed-label label,
 sb-player-totaltime-label label {
-  font-size:8px !important;
+  font-size:9px !important;
   color:rgb(140,140,140) !important;
 }
 sb-player-timeelapsed-label ,
