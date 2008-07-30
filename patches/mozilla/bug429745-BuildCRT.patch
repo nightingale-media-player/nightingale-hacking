@@ -178,7 +178,7 @@ diff -u -8 -r3.389 config.mk
 +  # jemalloc; otherwise, we get conflicts between libcmtd in crashreporter's
 +  # (shared) library (which we statically compile crashreporter.exe against)
 +  # and the final xul.dll link; in release mode, this is the default.
-+  MOZ_MEMORY_LDFLAGS += -DEFAULTLIB:mozcrt19d -OPT:REF
++  MOZ_MEMORY_LDFLAGS += -DEFAULTLIB:mozcrt19d
 +else
 +  MOZ_MEMORY_LDFLAGS += -DEFAULTLIB:mozcrt19
 +endif # MOZ_DEBUG
