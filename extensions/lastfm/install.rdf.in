@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+
+    <!-- Songbird target application. -->
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <em:id>audioscrobbler@songbirdnest.com</em:id>
+    <em:name>Last.fm</em:name>
+    <em:description>Publish your playback history to Last.fm</em:description>
+    <em:creator>Ian McKellar</em:creator>
+    <em:version>@EXTENSION_VER@</em:version>
+    <em:type>2</em:type>
+    <em:iconURL>chrome://lastfm/content/extensionicon.png</em:iconURL>
+  </Description>
+</RDF>
+
