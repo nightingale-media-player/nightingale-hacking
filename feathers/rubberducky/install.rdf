@@ -24,7 +24,7 @@
 
     <songbird:skin>
       <Description>
-        <songbird:name>Rubberducky (default)</songbird:name>
+        <songbird:name>Rubberducky</songbird:name>
         <songbird:internalName>rubberducky/0.2</songbird:internalName>
         <songbird:compatibleLayout>
           <Description>
