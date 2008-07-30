@@ -108,6 +108,7 @@ try
                      (this.i < this.area_array.length) ||
                      (this.i < this.embed_array.length) ||
                      (this.i < this.object_array.length) ||
+                     (this.i < this.param_array.length) ||
                      (this.i < this.frame_array.length) ||
                      (this.i < this.iframe_array.length);
 
@@ -169,6 +170,15 @@ try
             if ( url )
               loop_break |= this.handleEmbedURL( url );
           }
+          // "param" tags (possibly inside object tag)
+          if (
+              ( this.i < this.param_array.length )
+            )
+          {
+            var url = this.param_array[ this.i ].getAttribute("value");
+            if ( url )
+              loop_break |= this.handleEmbedURL( url );
+          }          
           // "Frame" tags
           if (
               ( this.i < this.frame_array.length )
@@ -345,12 +355,14 @@ try
     // End of class construction for sbIAsyncPlaylist
 
     // Attach a whole bunch of stuff to it so it can do its job in one pass.
-    href_loop.a_array = aDocument.getElementsByTagName("A");
-    href_loop.area_array = aDocument.getElementsByTagName("AREA");
-    href_loop.embed_array = aDocument.getElementsByTagName("EMBED");
-    href_loop.object_array = aDocument.getElementsByTagName("OBJECT");
-    href_loop.frame_array = aDocument.getElementsByTagName("FRAME");
-    href_loop.iframe_array = aDocument.getElementsByTagName("IFRAME");
+    // XXX DanielM: tags name changed to lowercase (xhtml compatible)
+    href_loop.a_array = aDocument.getElementsByTagName("a");
+    href_loop.area_array = aDocument.getElementsByTagName("area");
+    href_loop.embed_array = aDocument.getElementsByTagName("embed");
+    href_loop.object_array = aDocument.getElementsByTagName("object");
+    href_loop.param_array = aDocument.getElementsByTagName("param");
+    href_loop.frame_array = aDocument.getElementsByTagName("frame");
+    href_loop.iframe_array = aDocument.getElementsByTagName("iframe");
     href_loop.currentURL = aDocument.location;
     href_loop.currentTitle = aTitle;
     href_loop.items = [];
@@ -378,13 +390,24 @@ try
         context.progressCurrent = context.progressCurrent + 1;
 
       if (!force) {
+        var uri = null;
         // Make sure this is a well-formed url.
         try {
-          url = newURI(url).spec;
+          uri = newURI(url).spec;
         }
         catch (e) {
-          return false;
+          // If doesn't works as a full URL try to resolve it 
+          // as a relative one
+          var currentURI = newURI(this.currentURL);
+          try {
+              uri = currentURI.resolve(url);
+          }
+          catch (e) {
+            return false; 
+          }          
         }
+
+        url = uri;
 
         if (gPPS.isPlaylistURL(url)) {
           // Keep the loop going.
@@ -633,7 +656,8 @@ try
       context.progressTotal += href_loop.a_array.length +
                                href_loop.area_array.length +
                                href_loop.embed_array.length +
-                               href_loop.object_array.length;
+                               href_loop.object_array.length +
+                               href_loop.param_array.length;
     }
     return href_loop;
   }
