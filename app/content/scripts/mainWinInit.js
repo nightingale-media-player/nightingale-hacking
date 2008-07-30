@@ -209,7 +209,9 @@ function SBPostOverlayLoad()
   SBFirstRunSmartPlaylists();
 
   // Run first-run directory scan.
-  SBFirstRunScanDirectories();
+  // delay this until later, to give the session restore code time to load the
+  // placeholder page if we are not importing anything
+  setTimeout(SBFirstRunScanDirectories, 0);
 
   // Run first-run library import.
   SBFirstRunImportLibrary();
@@ -226,7 +228,8 @@ function SBFirstRunScanDirectories()
                                    false);
   if (!firstRunDoScanDirectory) {
     const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
-    if (gBrowser.selectedTab.linkedBrowser.currentURI.spec == placeholderURL) {
+    var currentURI = gBrowser.selectedBrowser.currentURI.spec;
+    if (currentURI == placeholderURL || currentURI == "about:blank") {
       // assume this means this is first run :)
       gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
     }
