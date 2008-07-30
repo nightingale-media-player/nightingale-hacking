@@ -78,7 +78,9 @@ scrollbar > slider {
 } 
 
 scrollbarbutton {
-  
+  border:1px solid gray;
+  -moz-border-radius:2px;
+  background-color:white;
 }
 scrollbar > slider > thumb {   
   border:1px solid gray;
@@ -159,13 +161,14 @@ scrollbar[orient="vertical"] > scrollbarbutton[type="decrement"] {
 
 scrollbarbutton {
   background-position:center 0px;
+  -moz-background-clip:border;
 }
 scrollbarbutton:hover {
-  background-position:center -12px;
+  background-position:center -10px;
 }
 scrollbarbutton:active {
-  background-position:center -24px;
+  background-position:center -20px;
 }
 scrollbarbutton[disabled="true"] {
-  background-position:center -36px;
+  background-position:center -30px;
 }

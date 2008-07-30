@@ -1,8 +1,10 @@
-toolbar,
+
 toolbarpalette {
 }
 
+toolbar,
 menubar {
+  -moz-box-align:center;
 }
 
 .toolbar-holder {
@@ -21,6 +23,8 @@ toolbar[mode="text"] .toolbarbutton-1 > .toolbarbutton-text, toolbar[mode="text"
 toolbarseparator {
   min-width:1px !important;
   min-height:16px !important;
+  padding:0px;
+  margin:0px;
   -moz-appearance:none;
   background-color:gray;
 }
