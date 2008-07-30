@@ -108,6 +108,8 @@ DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMo
 
 LIBSONGBIRD_COMPONENT = SongbirdMetadataComponent
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
+                      $(srcdir)/sbMetadataImageScanner.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
