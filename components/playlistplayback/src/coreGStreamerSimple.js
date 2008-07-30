@@ -564,19 +564,27 @@ CoreGStreamerSimple.prototype.onStopRequest = function(request, context, status)
     return;
   }
 
+  var uriChecker = this._uriChecker
+  // Clear immediately so we can't try to cancel it anymore
+  this._uriChecker = null;
+
+  var url;
   if (status == NS_BINDING_SUCCEEDED) {
-    // Clear immediately so we can't try to cancel it anymore
-    this._uriChecker = null;
-
-    var uriChecker =
-      request.QueryInterface(Components.interfaces.nsIURIChecker);
-    var url = uriChecker.baseChannel.URI.spec;
-
-    this._url = url;
-    this._object.uri = url;
-    this._object.play();
-    this._lastPlayStart = new Date();
+    url = uriChecker.baseChannel.URI.spec;
   }
+  else {
+    // One common reason for this to fail is if we are redirected to a 
+    // shoutcast server (they don't actually implement HTTP - just something
+    // that looks superficially similar). So, if this happens, try to just play
+    // the original URL, it's probably the actual shoutcast server URL and will
+    // work fine - and if not, we'll just error out a bit later.
+    url = uriChecker.baseChannel.originalURI.spec;
+  }
+
+  this._url = url;
+  this._object.uri = url;
+  this._object.play();
+  this._lastPlayStart = new Date();
 };
 
 CoreGStreamerSimple.prototype.promptUserForHelp = function (dialogTitle, 
