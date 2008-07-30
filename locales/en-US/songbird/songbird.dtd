@@ -29,7 +29,7 @@
 <!ENTITY menu.mac.showall               "Show All">
 
 <!ENTITY menu.file              "File" >
-<!ENTITY menu.file.new          "New Playlist..." >
+<!ENTITY menu.file.new          "New Playlist" >
 <!ENTITY menu.file.smart        "New Smart Playlist..." >
 <!ENTITY menu.file.remote       "New Subscription..." >
 <!ENTITY menu.file.folder       "New Folder..." >
