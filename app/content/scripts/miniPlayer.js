@@ -194,17 +194,20 @@ var gMiniplayer = {
 
     GetMinHeight: function()
     {
-      return -1;
+      var minHeight = getComputedStyle(document.documentElement, "").minHeight;
+      return (minHeight == "none") ? -1 : parseInt(minHeight);
     },
 
     GetMaxWidth: function()
     {
-      return -1;
+      var maxWidth = getComputedStyle(document.documentElement, "").maxWidth;
+      return (maxWidth == "none") ? -1 : parseInt(maxWidth);
     },
 
     GetMaxHeight: function()
     {
-      return -1;
+      var maxHeight = getComputedStyle(document.documentElement, "").maxHeight;
+      return (maxHeight == "none") ? -1 : parseInt(maxHeight);
     },
 
     OnWindowClose: function()
