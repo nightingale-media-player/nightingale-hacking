@@ -115,6 +115,9 @@
       <method name="generateMenuItems">
         <body>
         <![CDATA[
+          var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                .getService(Components.interfaces.sbIMediaPageManager);
+
           var mediaPagesLabel = "mediapages.label";
           try {
             mediaPagesLabel =
@@ -122,9 +125,20 @@
           } catch (e) { 
           }
 
-          // bail out if we don't have a mediaPage, but still create
-          // a disabled menu item
-          if (!gBrowser.currentMediaPage) {
+          // enable switching if we have a valid media page
+          // or are on a valid media page URL
+          // this prevents broken media pages from being inescapable
+          var pages = mgr.getAvailablePages();
+          var mediaPageURL = false;
+          var currentSpec = gBrowser.selectedBrowser.currentURI.spec;
+          for (var i = 0; i < pages.length; i++) {
+            if (currentSpec == pages[i].contentUrl) {
+              mediaPageURL = true;
+              break;
+            }
+          };
+          
+          if (!gBrowser.currentMediaPage && !mediaPageURL) {
             var mediaPagesMenu = document.createElement("menu");
             mediaPagesMenu.setAttribute("label", mediaPagesLabel);
             mediaPagesMenu.setAttribute("disabled", "true");
@@ -156,8 +170,6 @@
             this._addToMenu(mediaPagesMenu);
           }
 
-          var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
-                        .getService(Components.interfaces.sbIMediaPageManager);
           var pages = mgr.getAvailablePages(ml);
           
           // Trim the media list GUID from the querystring so that we can
@@ -259,7 +271,23 @@
       <constructor><![CDATA[
         var button = document.getAnonymousElementByAttribute(this, "anonid", "mediapages-button");
         this.disabler = function() {
-          if(gBrowser.currentMediaPage) {
+          
+          // enable switching if we have a valid media page
+          // or are on a valid media page URL
+          // this prevents broken media pages from being inescapable
+          var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                                  .getService(Components.interfaces.sbIMediaPageManager);
+          var pages = mgr.getAvailablePages();
+          var mediaPageURL = false;
+          var currentSpec = gBrowser.selectedBrowser.currentURI.spec;
+          for (var i = 0; i < pages.length; i++) {
+            if (currentSpec == pages[i].contentUrl) {
+              mediaPageURL = true;
+              break;
+            }
+          };
+          
+          if (gBrowser.currentMediaPage || mediaPageURL) {
             button.setAttribute("disabled", "false");
           }
           else {
