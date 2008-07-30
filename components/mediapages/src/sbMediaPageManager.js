@@ -235,14 +235,14 @@ MediaPageManager.prototype = {
     // Register the playlist with filters
     this._defaultFilteredPlaylistPage =
         this.registerPage( filteredPlaylistString,
-        "chrome://songbird/content/mediapages/playlistPage.xul?useFilters=true", 
-        matchAll);    
+        "chrome://songbird/content/mediapages/filtersPage.xul", 
+        matchAll);
 
     // And the playlist without filters
     this._defaultPlaylistPage = 
         this.registerPage( playlistString,
         "chrome://songbird/content/mediapages/playlistPage.xul",
-        matchAll);                       
+        matchAll);
   },
   
 } // MediaPageManager.prototype

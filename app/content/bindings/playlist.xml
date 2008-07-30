@@ -53,42 +53,7 @@
                          left="0"/>
           </stack>
         </box>
-        <vbox sbid="loading_box" pack="end" align="right" flex="1" >
-          <vbox id="loading_box"  flex="1">
-            <label id="loading_text" flex="1" value=""/>
-          </vbox>
-        </vbox>
         <vbox id="sb-playlist" flex="1"  style="margin: 0px;padding: 0px;">
-          <!-- Playlist Filters -->
-          <hbox
-            id="sb-playlist-filters"
-            sbid="filter_parent"
-            class="sb-playlist-filters"
-            style="min-height: 60px;"
-            flex="1"
-            hidden="false">
-          </hbox>
-
-          <sb-smart-splitter
-            id="sb-playlist-splitter"
-            sbid="filter_splitter"
-            class="playlist-splitter"
-            state="open"
-            orient="vertical"
-            collapse="before"
-            resizebefore="closest"
-            resizeafter="closest"
-            hidden="true"
-            metricscategory="app"
-            metricsid="collapse.library"
-            applydefault="true"
-          >
-            <grippy/>
-          </sb-smart-splitter>
-
-          <!--
-            onscroll="onPlaylistScroll( event );"
-            -->
           <!-- Playlist Tree -->
           <tree
             xbl:inherits="enableColumnDrag=enableColumnDrag,hidecolumnpicker=hidecolumnpicker"
@@ -398,9 +363,6 @@
       <field name="_context_popup" readonly="true">
         document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-popup");
       </field>
-      <field name="_loading_box" readonly="true">
-        document.getAnonymousElementByAttribute(this, "sbid", "loading_box");
-      </field>
       <field name="_treecols" readonly="true">
         document.getAnonymousElementByAttribute(this, "sbid", "treecols");
       </field>
@@ -428,13 +390,6 @@
       <field name="_context_x">-1</field>
       <field name="_context_y">-1</field>
 
-      <!-- Array of the splitters between each filter list -->
-      <field name="_splitters">new Array();</field>
-
-      <!-- Used to implement draggable smart splitters -->
-      <field name="_down">0</field>
-      <field name="_lastpos">0</field>
-      
       <!-- A timeout to save the column metadata -->
       <field name="_saveColumnSpecTimeout">null</field>
 
@@ -581,9 +536,6 @@
 
   mediaListViewTreeView.observer = this;
 
-  // Create whatever filters we think we need.
-  this._generateFilters();
-
   if (this._toolbar) this._toolbar.outerWindow = this.outerWindow;
   if (this._commandmenuitems) this._commandmenuitems.outerWindow = this.outerWindow;
   if (this._shortcuts) this._shortcuts.outerWindow = this.outerWindow;
@@ -655,12 +607,6 @@
                             this._onCommandClosure,
                             true);
 
-    for (var s = 0; s < this._splitters.length; s++) {
-      this._splitters[s].removeEventListener("mousemove", this._onFilterSplitterMove, true);
-      this._splitters[s].removeEventListener("mousedown", this._onFilterSplitterDown, true);
-      this._splitters[s].removeEventListener("mouseup", this._onFilterSplitterUp, true);
-    }
-
     // Break the cycle between ourselves and the tree view
     if (this.treeView) {
       var mediaListViewTreeView =
@@ -678,95 +624,6 @@
 ]]>
         </body>
       </method>
-
-    <method name="_generateFilters">
-      <body>
-<![CDATA[
-  // Hide the playlist splitter
-  var psplitter =
-    document.getAnonymousElementByAttribute(this, "sbid", "filter_splitter");
-  psplitter.setAttribute("hidden","true");
-
-  // Get and empty the parent
-  var parent =
-    document.getAnonymousElementByAttribute(this, "sbid", "filter_parent");
-  this._removeAllChildren(parent);
-  this._splitters = [];
-
-  if (this.getAttribute("hidefilters") != "true") {
-    // Create the filters based upon the cascadeFilterSet data.
-    var cfs = this.mediaListView.cascadeFilterSet;
-    var length = cfs.length;
-    var filters = [];
-    for (var i = 0; i < length; i++) {
-      // If this is a search then keep going.
-      if (cfs.isSearch(i)) {
-        continue;
-      }
-
-      // And start creating the filter
-      var filterlist = document.createElementNS(this._XUL_NS, "sb-filterlist");
-      filterlist.setAttribute("enableColumnDrag", "false");
-      //filterlist.setAttribute("hidecolumnpicker", "true");
-      filterlist.setAttribute("flex", "1");
-
-      parent.appendChild(filterlist);
-      filterlist.bind(this.mediaListView, i);
-      filters.push(filterlist);
-
-      // If this filter has a search-term set, then pre-select it in the
-      // widget
-      var filterValues = cfs.get(i).enumerate();
-      while (filterValues.hasMoreElements()) {
-        var filterValue = filterValues.getNext()
-          .QueryInterface(Ci.nsISupportsString);
-        // Now loop through our tree view and select this value
-        for (var j = 0; j < filterlist.tree.view.rowCount; j++) {
-          var col = filterlist.tree.columns.getColumnAt(0);
-          if (filterlist.tree.view.getCellText(j, col) == filterValue)
-            filterlist.tree.view.selection.select(j);
-        }
-      }
-
-      if (i < length - 1) {
-        var splitter = document.createElement("sb-smart-splitter");
-        splitter.setAttribute("id", "filter_splitter" );
-        splitter.setAttribute("stateid", "filter_splitter_" + cfs.getProperty(i) + this.mediaListView.mediaList.guid );
-        splitter.setAttribute("state", "open");
-        splitter.setAttribute("resizebefore", "closest");
-        splitter.setAttribute("resizeafter", "closest");
-        splitter.setAttribute("collapse", "before");
-
-        var grippy = document.createElement( "grippy" );
-        splitter.appendChild(grippy);
-        // do not appendChild now, wait until all filterlists have been created (see below)
-        this._splitters.push(splitter);
-      }
-    }
-    // once the filterlists have been created, insert the splitters are their appropriate spot.
-    // we do this now rather than during the filter creation loop because the splitters
-    // need to be able to find their before/after targets on construction (so as to be able
-    // to reload their positions correctly), so if we did do appendChild in the previous loop,
-    // the after target would never be found, and the positions would be wrong
-    for (var s=0;s<this._splitters.length;s++) {
-      var splitter = this._splitters[s];
-      parent.insertBefore(splitter, filters[s+1]);
-      splitter.addEventListener("mousemove", this._onFilterSplitterMove, true);
-      splitter.addEventListener("mousedown", this._onFilterSplitterDown, true);
-      splitter.addEventListener("mouseup", this._onFilterSplitterUp, true);
-    }
-  }
-
-  // If we didn't actually add any filters then hide the filter box.
-  if (!parent.firstChild) {
-    parent.setAttribute("hidden", "true");
-  } else {
-    // Once we know we have at least one filter, show the playlist splitter.
-    psplitter.removeAttribute("hidden");
-  }
-]]>
-      </body>
-    </method>
 
     <method name="removeSelectedTracks">
       <body>
@@ -1512,37 +1369,6 @@
   this._toolbar.removeCommands();
   this._commandmenuitems.removeCommands();
   this._shortcuts.removeCommands();
-]]>
-        </body>
-      </method>
-
-      <method name="_onFilterSplitterMove">
-        <parameter name="event"/>
-        <body>
-<![CDATA[
-  var state = this.getAttribute( "state" );
-  if (state != "collapsed" && this._down && this._lastPos) {
-    if (event.screenX > this._lastPos) { this.setAttribute("collapse", "after"); }
-    if (event.screenX < this._lastPos) { this.setAttribute("collapse", "before"); }
-  }
-  this._lastPos = event.screenX;
-]]>
-        </body>
-      </method>
-
-      <method name="_onFilterSplitterUp">
-        <body>
-<![CDATA[
-  this._down = 0;
-  this._lastPos = null;
-]]>
-        </body>
-      </method>
-
-      <method name="_onFilterSplitterDown">
-        <body>
-<![CDATA[
-  this._down = 1;
 ]]>
         </body>
       </method>

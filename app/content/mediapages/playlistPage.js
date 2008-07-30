@@ -102,8 +102,8 @@ window.mediaPage = {
     
     this._playlist = document.getElementById("playlist");
     
-    // Configure the playlist filters based on the querystring
-    this._updateFilterLists();
+    // Clear the playlist filters. This is a filter-free view.
+    this._clearFilterLists();
     
     // Get playlist commands (context menu, keyboard shortcuts, toolbar)
     // Note: playlist commands currently depend on the playlist widget.
@@ -176,52 +176,18 @@ window.mediaPage = {
   /**
    * Configure the playlist filter lists
    */
-  _updateFilterLists: function() {
-    
-    // This URL is registered as two different media pages. 
-    // One with filters, one without. 
-    // Use the querystring to determine what to show.
-    var queryString = this._parseQueryString();
-    var useFilters = queryString["useFilters"] == "true";
-    
+  _clearFilterLists: function() {
+    // Don't use filters for this version. We'll clear them out.
     var filters = this._mediaListView.cascadeFilterSet;
     
-    // If filters are requested, make sure we have
-    // some to show
-    if (useFilters) {
-      this._playlist.setAttribute("hidefilters", false);
-      
-      // Set up standard filters if not already present.
-      // Note that the first filter should be search.
-      if (filters.length <= 1) {
-        
-        // Restore the last library filterset or set our default
-        var filterSet = SBDataGetStringValue( "library.filterset" );
-        if ( filterSet.length > 0 ) {
-          filterSet = filterSet.split(";");
-        } else {
-          filterSet = [
-                       SBProperties.genre,
-                       SBProperties.artistName,
-                       SBProperties.albumName
-                       ];
-        }
-        for each (var filter in filterSet) {
-          filters.appendFilter(filter);
-        }
+    for (var i = filters.length - 1; i > 0; i--) {
+     filters.remove(i);
+    }
+    if (filters.length == 0 || !filters.isSearch(0)) {
+      if (filters.length == 1) {
+        filters.remove(0);
       }
-    
-    // For a plain list all we can handle is a search filter
-    } else {
-      for (var i = filters.length - 1; i > 0; i--) {
-       filters.remove(i);
-      }
-      if (filters.length == 0 || !filters.isSearch(0)) {
-        if (filters.length == 1) {
-          filters.remove(0);
-        }
-        filters.appendSearch(["*"], 1);
-      }
+      filters.appendSearch(["*"], 1);
     }
   }
   
