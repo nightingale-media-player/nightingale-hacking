@@ -1173,14 +1173,7 @@ PlaylistPlayback.prototype = {
     if (this.playing) {
       dump("sbPlaylistPlayback::stop() - WHOA.  Playback core didn't actually stop when we asked it!\n");
     } else {
-      
-      // lone> This had been disabled for bug 4204 (data corruption), but was
-      // never re-enabled after the actual bug got fixed. This is actually
-      // necessary, we can't just rely on stopNextLoop, because if we are
-      // stopping due to a shutdown of the app, there will be no next loop.
-      
-      // Call the loop immediately, here, so we clean out and shut the loop down.
-      this._onPlayerLoop();
+      // Stop the loop to ensure that we increment play counts.
       this._stopPlayerLoop();
       this._stopNextLoop = false; // If we make it here, we don't need this
     }
