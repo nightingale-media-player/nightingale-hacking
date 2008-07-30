@@ -71,9 +71,6 @@
 /* Mozilla imports. */
 #include <nsCOMPtr.h>
 #include <nsIChannel.h>
-#ifdef MOZ_CRASHREPORTER
-#include <nsICrashReporter.h>
-#endif
 #include <nsICharsetDetectionObserver.h>
 #include <nsIFileProtocolHandler.h>
 #include <nsIURL.h>
@@ -159,9 +156,6 @@ private:
     PRBool                      mMetadataChannelRestart;
     PRBool                      mCompleted;
     nsString                    mMetadataPath;
-#ifdef MOZ_CRASHREPORTER
-    nsCOMPtr<nsICrashReporter>  mpCrashReporter;
-#endif
 
     // Statics to help manage the single threading of taglib
     static PRLock* sBusyLock;

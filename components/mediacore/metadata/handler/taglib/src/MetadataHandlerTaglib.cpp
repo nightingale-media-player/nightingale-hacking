@@ -391,25 +391,6 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
     LOG(("sbMetadataHandlerTaglib::ReadInternal - spec is %s\n",
          urlSpec.BeginReading()));
 
-#ifdef MOZ_CRASHREPORTER
-    /* Add crash reporter annotation. */
-    if (NS_SUCCEEDED(result))
-    {
-        mpCrashReporter = do_GetService("@mozilla.org/xre/app-info;1", &result);
-        if (NS_FAILED(result))
-        {
-            mpCrashReporter = nsnull;
-            result = NS_OK;
-        }
-        if (mpCrashReporter)
-        {
-            mpCrashReporter->AnnotateCrashReport
-                                        (NS_LITERAL_CSTRING("TaglibReadSpec"),
-                                         urlSpec);
-        }
-    }
-#endif
-
     /* If the channel URL scheme is for a local file, try reading  */
     /* synchronously.  If successful, metadata read operation will */
     /* be completed.                                               */
@@ -1495,16 +1476,6 @@ void sbMetadataHandlerTaglib::CompleteRead()
 {
     /* Indicate that the metadata read operation has completed. */
     mCompleted = PR_TRUE;
-
-#ifdef MOZ_CRASHREPORTER
-    /* Remove crash reporter annotation. */
-    if (mpCrashReporter)
-    {
-        mpCrashReporter->AnnotateCrashReport
-                                        (NS_LITERAL_CSTRING("TaglibReadSpec"),
-                                         NS_LITERAL_CSTRING(""));
-    }
-#endif
 }
 
 
