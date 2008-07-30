@@ -90,8 +90,11 @@ var RadioDirectory = {
 		var customGenres = Application.prefs.getValue(
 				"extensions.shoutcast-radio.custom-genres", "").split(",");
 		for (i in customGenres) {
-			if (customGenres[i].length > 0)
-				genres.push({value:customGenres[i], label:customGenres[i]});
+			if (customGenres[i].length > 0) {
+				var custom = customGenres[i];
+				custom = custom.replace(/^\s*/,'').replace(/\s*$/,'');
+				genres.push({value:custom, label:custom});
+			}
 		}
 
 		// Sort our genres
