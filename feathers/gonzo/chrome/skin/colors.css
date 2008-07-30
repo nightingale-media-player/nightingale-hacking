@@ -1343,67 +1343,6 @@ label.descriptionWrap,
 {
 }
 
-/* Pane Selector */
-
-prefwindow > .paneSelector {
-  -moz-box-pack:top;
-  -moz-box-align:top;
-  border-right:1px solid gray !important;
-  background-color:rgb(220,220,220) !important;
-  -moz-border-radius:0px !important;
-}
-
-#viewGroup {
-
-}
-prefwindow > .paneSelector > radio,
-#viewGroup > radio
-{
-
-}
-prefwindow > .paneSelector > radio[selected="true"],
-#viewGroup > radio[selected="true"]
-{
-
-}
-prefwindow > .paneSelector > radio > .paneButtonLabel,
-#viewGroup > radio > .viewButtonLabel
-{
-
-}
-prefwindow > .paneSelector > radio[selected="true"] > .paneButtonLabel,
-#viewGroup > radio[selected="true"] > .viewButtonLabel
-{
-
-}
-
-prefwindow > .paneSelector {
-  padding:0;
-}
-
-prefwindow > .paneSelector > radio {
-  list-style-image:none !important;
-  padding:2px 8px;
-  margin:0;
-  -moz-box-align:left !important;
-  -moz-box-pack:left !important;
-  -moz-box-orient:horizontal !important;
-}
-prefwindow > .paneSelector > radio+radio {
-}
-prefwindow > .paneSelector > radio > image {
-  display:none !important;
-}
-prefwindow > .paneSelector > radio > label {
-  padding:0;
-  margin:0;
-  font-size:11px;
-}
-prefwindow > .paneSelector > radio[selected="true"] {
-  background-color:white;
-}
-
-
 /** 
 *******************************************************************************
 ERRORS
@@ -2574,9 +2513,6 @@ template+richlistitem {
 .prefWindow-dlgbuttons {
   margin:0px !important;
 } 
-#BrowserPreferences {
--moz-box-orient:horizontal !important;
-}
 
 .insecureUpdateBox {
 }
@@ -2649,14 +2585,6 @@ wizard {
   opacity:0.5 !important;
 }
 
-prefwindow > .prefWindow-dlgbuttons {
-  -moz-box-orient:vertical !important;
-}
-
-
-
-
-
 
 .message-icon,
 .alert-icon,
@@ -2668,4 +2596,3 @@ prefwindow > .prefWindow-dlgbuttons {
   margin: 0px !important;
 
 }
-

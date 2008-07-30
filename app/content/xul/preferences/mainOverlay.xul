@@ -28,6 +28,7 @@
 -->
 
 <?xml-stylesheet href="chrome://songbird-dialogs/skin/preferences.css"?>
+<?xml-stylesheet href="chrome://songbird/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
@@ -54,7 +55,7 @@
                   src="chrome://songbird/locale/songbird.properties"/>
   </stringbundleset>
 
- <prefWindow id="BrowserPreferences" orient="horizontal">
+ <prefWindow id="BrowserPreferences">
 
   <!-- Hide the Applications panel for the moment -->
   <prefpane id="paneApplications"

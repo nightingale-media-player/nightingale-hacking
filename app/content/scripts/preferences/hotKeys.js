@@ -82,8 +82,10 @@ var gHotkeysPane = {
       // cause the style element on the content box to be recalculated and reset
       document.documentElement._selectPane(pane);
       
-      // and resize the window so it fits our new height
+      // and resize the window so it fits our new height... but not the width :/
+      var width = document.documentElement.boxObject.width;
       window.sizeToContent();
+      window.resizeBy(width - document.documentElement.boxObject.width, 0);
     }, 0);
   },
   
