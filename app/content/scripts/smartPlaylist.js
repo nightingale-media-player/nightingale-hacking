@@ -27,7 +27,7 @@
 Components.utils.import("resource://app/jsmodules/sbSmartMediaListColumnSpecUpdater.jsm");
 
 var sbILocalDatabaseSmartMediaList =
-  Components.interfaces.sbILocalDatabaseSmartMediaList;
+  Ci.sbILocalDatabaseSmartMediaList;
 
 var SB_NS = "http://songbirdnest.com/data/1.0#";
 var SB_PROPERTY_UILIMITTYPE = SB_NS + "uiLimitType";
@@ -338,7 +338,7 @@ function doOK()
       paramObject.newSmartPlaylist = list;
     }
     var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                               .getService(Components.interfaces.sbIPropertyManager);
+                               .getService(Ci.sbIPropertyManager);
 
     // Save conditions
     var conditions = smart_conditions.conditions;
@@ -347,14 +347,26 @@ function doOK()
     if (check.checked) {
       conditions.forEach(function(condition) {
         var info = pm.getPropertyInfo(condition.metadata);
+        // access specialized operators
+        switch (info.type) {
+          case "datetime":
+            info.QueryInterface(Ci.sbIDatetimePropertyInfo);
+            break;
+          case "boolean":
+            info.QueryInterface(Ci.sbIBooleanPropertyInfo);
+            break;
+        }
         var op = info.getOperator(condition.condition);
         var unit;
         var leftValue;
         var rightValue;
         if (op.operator != info.OPERATOR_ISTRUE &&
-            op.operator != info.OPERATOR_ISFALSE)
+            op.operator != info.OPERATOR_ISFALSE &&
+            op.operator != info.OPERATOR_ISSET &&
+            op.operator != info.OPERATOR_ISNOTSET)
           leftValue = condition.value;
-        if (op.operator == info.OPERATOR_BETWEEN)
+        if (op.operator == info.OPERATOR_BETWEEN ||
+            op.operator == info.OPERATOR_BETWEENDATES)
           rightValue = condition.value2;
         if (condition.useunits)
           unit = condition.unit;

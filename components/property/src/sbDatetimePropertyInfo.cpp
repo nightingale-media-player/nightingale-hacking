@@ -299,7 +299,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
       case sbIDatetimePropertyInfo::TIMETYPE_TIME:
       {
         PRExplodedTime explodedTime = {0};
-        PR_ExplodeTime((PRTime) (value * 1000), PR_LocalTimeParameters, &explodedTime);
+        PR_ExplodeTime((PRTime) (value * PR_USEC_PER_MSEC), PR_LocalTimeParameters, &explodedTime);
         rv = mDateTimeFormat->FormatPRExplodedTime(mAppLocale,
           kDateFormatNone,
           kTimeFormatSeconds,
@@ -312,7 +312,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
       case sbIDatetimePropertyInfo::TIMETYPE_DATE:
       {
         PRExplodedTime explodedTime = {0};
-        PR_ExplodeTime((PRTime) (value * 1000), PR_LocalTimeParameters, &explodedTime);
+        PR_ExplodeTime((PRTime) (value * PR_USEC_PER_MSEC), PR_LocalTimeParameters, &explodedTime);
         rv = mDateTimeFormat->FormatPRExplodedTime(mAppLocale,
           kDateFormatLong,
           kTimeFormatNone,
@@ -325,7 +325,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
       case sbIDatetimePropertyInfo::TIMETYPE_DATETIME:
       {
         PRExplodedTime explodedTime = {0};
-        PR_ExplodeTime((PRTime) (value * 1000), PR_LocalTimeParameters, &explodedTime);
+        PR_ExplodeTime((PRTime) (value * PR_USEC_PER_MSEC), PR_LocalTimeParameters, &explodedTime);
         rv = mDateTimeFormat->FormatPRExplodedTime(mAppLocale,
           kDateFormatShort,
           kTimeFormatNoSeconds,

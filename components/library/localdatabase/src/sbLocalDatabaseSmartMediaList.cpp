@@ -60,6 +60,7 @@
 #include <nsVoidArray.h>
 #include <prlog.h>
 #include <prprf.h>
+#include <prtime.h>
 
 #define RANDOM_ADD_CHUNK_SIZE 1000;
 #define SQL_IN_LIMIT 1000
@@ -731,10 +732,13 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
 
   // XXXsteve IsEmpty should really be IsVoid
   if (!op.EqualsLiteral(SB_OPERATOR_BETWEEN) &&
-      !op.EqualsLiteral(SB_OPERATOR_BETWEENDATES) &&
-      !aRightValue.IsEmpty()) {
-    return NS_ERROR_ILLEGAL_VALUE;
-  };
+      !op.EqualsLiteral(SB_OPERATOR_BETWEENDATES)) {
+    if (!aRightValue.IsEmpty())
+      return NS_ERROR_ILLEGAL_VALUE;
+  } else {
+    if (aRightValue.IsEmpty())
+      return NS_ERROR_ILLEGAL_VALUE;
+  }
 
   if ((op.EqualsLiteral(SB_OPERATOR_ISTRUE) ||
        op.EqualsLiteral(SB_OPERATOR_ISFALSE) ||
@@ -1569,7 +1573,13 @@ sbLocalDatabaseSmartMediaList::SPrintfInt64(nsAString &aString,
 
 PRInt64
 sbLocalDatabaseSmartMediaList::StripTime(PRInt64 aDateTime) {
-  return aDateTime - (aDateTime % ONEDAY);
+  PRExplodedTime explodedTime = {0};
+  PR_ExplodeTime(aDateTime * PR_USEC_PER_MSEC, PR_LocalTimeParameters, &explodedTime);
+  explodedTime.tm_usec = 0;
+  explodedTime.tm_sec = 0;
+  explodedTime.tm_min = 0;
+  explodedTime.tm_hour = 0;
+  return PR_ImplodeTime(&explodedTime) / PR_USEC_PER_MSEC;
 }
 
 nsresult
@@ -1629,7 +1639,7 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
 
     char out[32] = {0};
     
-    PRTime now = PR_Now()/1000;
+    PRTime now = PR_Now()/PR_USEC_PER_MSEC;
     PRTime when = now - timeValue;
     if(PR_snprintf(out, 32, gsFmtRadix10, when) == -1) {
       return NS_ERROR_FAILURE;
