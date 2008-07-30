@@ -29,8 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = basic-layouts \
-          gonzo \
+SUBDIRS = gonzo \
           rubberducky \
           $(NULL)
 

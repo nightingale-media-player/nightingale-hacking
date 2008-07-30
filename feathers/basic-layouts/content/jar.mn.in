@@ -1,8 +1,0 @@
-songbird.jar:
-% content  songbird  %content/songbird/
-@include_all_to content/songbird/feathers/basic-layouts/
-
-
-# Because these layouts are essential to the app they are packaged in 
-# songbird.jar.  The URL for mainplayer.xul will be:
-#    chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul
