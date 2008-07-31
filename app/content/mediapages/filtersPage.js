@@ -195,6 +195,9 @@ window.mediaPage = {
       if ( filterSet.length > 0 ) {
         filterSet = filterSet.split(";");
       }
+      else {
+        filterSet = [];
+      }
       
       // if we have fewer than the default number of filters, append some extra
       var defaultFilterSet = [
