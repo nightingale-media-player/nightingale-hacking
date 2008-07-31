@@ -297,7 +297,7 @@ sbMetadataImageScanner.prototype = {
       // Check if we are ready to rescan this item
       var lastCoverScan = parseInt(aMediaItem.getProperty(PROP_LAST_COVER_SCAN));
       if (isNaN(lastCoverScan)) { lastCoverScan = 0; }
-      var timeNow = Date().now();
+      var timeNow = Date.now();
       this._debug("Next item has lastCoverScan of [" + lastCoverScan + "] " +
                   "Now = " + timeNow);
       if ( (lastCoverScan + this._rescanInterval) < timeNow ) {
