@@ -194,13 +194,18 @@ window.mediaPage = {
       var filterSet = SBDataGetStringValue( "library.filterset" );
       if ( filterSet.length > 0 ) {
         filterSet = filterSet.split(";");
-      } else {
-        filterSet = [
-                     SBProperties.genre,
-                     SBProperties.artistName,
-                     SBProperties.albumName
-                     ];
       }
+      
+      // if we have fewer than the default number of filters, append some extra
+      var defaultFilterSet = [
+        SBProperties.genre,
+        SBProperties.artistName,
+        SBProperties.albumName
+      ];
+      for (var i = filterSet.length; i < defaultFilterSet.length; i++) {
+        filterSet.push(defaultFilterSet[i]);
+      }
+      
       for each (var filter in filterSet) {
         filters.appendFilter(filter);
       }
