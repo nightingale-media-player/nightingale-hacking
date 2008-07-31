@@ -127,7 +127,8 @@
                   key="paste-key"
                   accesskey="&menu.edit.paste.accesskey;"
                   command="cmd_paste"/>
-        <menuitem label="&menu.edit.delete;"
+        <menuitem id="menu_EditDeleteMenuItem"
+                  label="&menu.edit.delete;"
                   key="delete-key"
                   accesskey="&menu.edit.delete.accesskey;"
                   command="cmd_delete"/>

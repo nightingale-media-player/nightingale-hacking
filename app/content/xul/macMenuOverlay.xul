@@ -68,7 +68,10 @@
   <!-- Replace quit/prefs menu items with mac-specific ones. -->
   <menuitem id="menu_FileQuitItem" label="&menu.mac.exit;" key="exit-mac-key"/>
   <menuitem id="menu_preferences" label="&menu.mac.preferences;" key="preferences-mac-key"/>
-
+  
+  <!-- Replace the delete key with the mac specific one. -->
+  <menuitem id="menu_EditDeleteMenuItem" label="&menu.edit.delete;" key="mac-delete-key" command="cmd_delete"/>
+  
   <!--===========================================================================-->
 
   <keyset id="mainKeyset">
@@ -76,5 +79,6 @@
     <key id="preferences-mac-key" modifiers="&menu.mac.preferences.modifiers;" key="&menu.mac.preferences.key;"/>
     <key id="hide-mac-key" modifiers="&menu.mac.hide.modifiers;" key="&menu.mac.hide.key;"/>
     <key id="hideothers-mac-key" modifiers="&menu.mac.hideothers.modifiers;" key="&menu.mac.hideothers.key;"/>
+    <key id="mac-delete-key" modifiers="" keycode="VK_BACK" command="cmd_delete" />
   </keyset>
 </overlay>
