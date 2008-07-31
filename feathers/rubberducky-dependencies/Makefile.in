@@ -32,7 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = chrome
 
 # the name of the extension - used to name the XPI file.
-EXTENSION_NAME = rubberducky
+EXTENSION_NAME = rubberducky-dependencies
 # the uuid of the extension - used internally by songbird to identify the
 # extension.
 EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
@@ -42,7 +42,11 @@ EXTENSION_DIR  = .
 EXTENSION_STAGE_DIR = ./.xpistage
 XPI_NAME = $(EXTENSION_NAME)
 
-# For now we are going to continue shipping Rubberducky.
+EXTENSION_VER := 2.0
+EXTENSION_MIN_VER := 0.7pre
+EXTENSION_MAX_VER := 1.0pre
+
+# For now we are going to continue supporting Rubberducky.
 # This probably won't be the case for 1.0
 INSTALL_EXTENSION = 1
 

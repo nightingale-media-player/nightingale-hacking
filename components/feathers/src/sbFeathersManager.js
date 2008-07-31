@@ -888,7 +888,7 @@ FeathersManager.prototype = {
       return prefBranch.getBoolPref('on_top');
     }
     
-    return true;
+    return false;
   },
 
 

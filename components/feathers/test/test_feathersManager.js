@@ -38,7 +38,6 @@ const DEFAULT_SECONDARY_LAYOUT_URL  = "chrome://gonzo/content/xul/miniplayer.xul
 const DEFAULT_SKIN_NAME             = "gonzo";
 const ALTERNATE_MAIN_LAYOUT_URL     = "chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul";
 const ALTERNATE_MINI_LAYOUT_URL     = "chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul";
-const ALTERNATE_SKIN_NAME           = "rubberducky/0.2";
 
 var feathersManager =  Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
                                  .getService(Components.interfaces.sbIFeathersManager);
@@ -195,9 +194,7 @@ function assertEnumeratorMatchesFieldArray(enumerator, field, list) {
 function testAddonMetadataReader()
 {
   // Verify all skins added properly
-  // Bug 4588: Removed plucked and dove, add them back in to this test
-  // when they are updated and shipping again.
-  var skinNames = [DEFAULT_SKIN_NAME, ALTERNATE_SKIN_NAME];
+  var skinNames = [DEFAULT_SKIN_NAME];
   assertEqual(feathersManager.skinCount, skinNames.length);
   var enumerator = wrapEnumerator(feathersManager.getSkinDescriptions(),
                      Components.interfaces.sbISkinDescription);
@@ -218,9 +215,6 @@ function testAddonMetadataReader()
   enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[1]), 
                               Components.interfaces.sbISkinDescription);
   assertEnumeratorMatchesFieldArray(enumerator, "internalName", [DEFAULT_SKIN_NAME]);
-  enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[2]), 
-                              Components.interfaces.sbISkinDescription);
-  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [ALTERNATE_SKIN_NAME]);
   
   // Verify showChrome
   assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[0]), false);
@@ -417,7 +411,7 @@ function runTest () {
 
   // ------------------------
   // Verify onTop
-  assertEqual( feathersManager.isOnTop(layouts[1].url, skins[0].internalName), true);
+  assertEqual( feathersManager.isOnTop(layouts[1].url, skins[0].internalName), false);
   assertEqual( feathersManager.isOnTop(layouts[1].url, skins[1].internalName), false);
   assertEqual( feathersManager.isOnTop(layouts[0].url, skins[2].internalName), false);
 

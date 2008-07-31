@@ -1,9 +1,4 @@
-rubberducky.jar:
-% skin  songbird  rubberducky/0.2  %skin/
-% skin  rubberducky  rubberducky/0.2  %skin/
-% skin  global  rubberducky/0.2  chrome://rubberducky-global/skin/
-% skin  mozapps  rubberducky/0.2  chrome://songbird-mozapps/skin/
-#
+rubberducky-dependencies.jar:
 # -------------------------------------------------------------------------------
 # The basic-layouts package has been deprecated, and is now bundled
 # with rubberducky.  To keep things working as they used to we

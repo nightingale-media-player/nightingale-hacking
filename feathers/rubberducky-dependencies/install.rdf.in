@@ -1,44 +1,29 @@
 <?xml version="1.0"?>
-
+#filter substitution
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#"
      xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
-    <em:id>rubberducky@songbirdnest.com</em:id>
-    <em:version>2.0</em:version>
+    <em:id>@EXTENSION_UUID@</em:id>
+    <em:version>@EXTENSION_VER@</em:version>
 
     <!-- Songbird -->
     <em:targetApplication>
       <Description>
         <em:id>songbird@songbirdnest.com</em:id>
-        <em:minVersion>0.7pre</em:minVersion>
-        <em:maxVersion>1.0</em:maxVersion>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
       </Description>
     </em:targetApplication>
 
-    <em:name>Rubberducky</em:name>
-    <em:description>A dark rubbery look from Songbird 0.6.1</em:description>
-    <em:locked>true</em:locked>
+    <em:name>Rubberducky Dependencies</em:name>
+    <em:description>Support file needed by Rubberducky and other Songbird 0.6.1 feathers</em:description>
     <em:creator>Pioneers of the Inevitable</em:creator>
 
     <!-- ================================================================= -->
     <!-- NOTE: Rubberducky is deprecated, and is unlikely to be maintained -->
     <!-- ================================================================= -->
-
-    <!-- Register the CSS -->
-    <songbird:skin>
-      <Description>
-        <songbird:name>Rubberducky</songbird:name>
-        <songbird:internalName>rubberducky/0.2</songbird:internalName>
-        <songbird:compatibleLayout>
-          <Description>
-            <songbird:layoutURL>chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul</songbird:layoutURL>
-            <songbird:showChrome>false</songbird:showChrome>
-          </Description>
-        </songbird:compatibleLayout>
-      </Description>
-    </songbird:skin>
 
     <!-- Register the large layout -->
     <songbird:layout>
@@ -64,7 +49,7 @@
           <Description>
             <songbird:internalName>rubberducky/0.2</songbird:internalName>
             <songbird:showChrome>false</songbird:showChrome>
-            <songbird:onTop>false</songbird:onTop>
+            <songbird:onTop>true</songbird:onTop>
           </Description>
         </songbird:compatibleSkin>
       </Description>
@@ -72,7 +57,7 @@
 
     <!-- No need to show the user -->
     <em:hidden>true</em:hidden>
-
+    <em:locked>true</em:locked>
     <!-- Not app managed, so updating from the add-on site is possible -->
     <em:appManaged>false</em:appManaged>
   </Description>

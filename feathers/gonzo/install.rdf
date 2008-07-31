@@ -37,7 +37,7 @@
 	              <Description>
 	                <songbird:layoutURL>chrome://gonzo/content/xul/miniplayer.xul</songbird:layoutURL>
 	                <songbird:showChrome>false</songbird:showChrome>
-	                <songbird:onTop>false</songbird:onTop>
+	                <songbird:onTop>true</songbird:onTop>
 	              </Description>
 	            </songbird:compatibleLayout>
 	          </Description>

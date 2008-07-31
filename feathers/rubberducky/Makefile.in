@@ -42,8 +42,11 @@ EXTENSION_DIR  = .
 EXTENSION_STAGE_DIR = ./.xpistage
 XPI_NAME = $(EXTENSION_NAME)
 
-# For now we are going to continue shipping Rubberducky.
-# This probably won't be the case for 1.0
-INSTALL_EXTENSION = 1
+EXTENSION_VER := 2.0
+EXTENSION_MIN_VER := 0.7pre
+EXTENSION_MAX_VER := 1.0pre
+
+# We build rubberducky but do not install it.
+# It will be available on the addon site
 
 include $(topsrcdir)/build/rules.mk
