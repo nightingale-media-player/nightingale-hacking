@@ -35,8 +35,16 @@ Cu.import('resource://app/jsmodules/sbProperties.jsm');
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
-var Application = Cc["@mozilla.org/fuel/application;1"]
-                    .getService(Ci.fuelIApplication);
+
+/**
+ * Since we can't use the FUEL components until after all other components have
+ * been loaded we define a lazy getter here for when we need it.
+ */
+__defineGetter__("Application", function() {
+  delete this.Application;
+  return this.Application = Cc["@mozilla.org/fuel/application;1"]
+                              .getService(Ci.fuelIApplication);
+});
 
 // Constanst for convinence
 const PROP_LAST_COVER_SCAN = SBProperties.base + 'lastCoverScan';
