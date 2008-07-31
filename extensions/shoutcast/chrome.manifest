@@ -1,0 +1,8 @@
+content shoutcast-radio chrome/content/
+locale shoutcast-radio en-US chrome/locale/en-US/
+skin shoutcast-radio classic/1.0 chrome/skin/
+skin shoutcast-radio rubberducky/0.2 chrome/skin/rubberducky/
+
+overlay chrome://browser/content/preferences/preferences.xul chrome://shoutcast-radio/content/prefsOverlay.xul
+overlay windowtype:Songbird:MediaPage chrome://shoutcast-radio/content/playlist.xul
+overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://shoutcast-radio/content/scripts-overlay.xul
