@@ -226,7 +226,7 @@ function testAddonMetadataReader()
   assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[0]), false);
   // Verify onTop
   assertEqual( feathersManager.isOnTop(layoutURLs[0], skinNames[0]), false);
-  assertEqual( feathersManager.isOnTop(layoutURLs[1], skinNames[0]), true);
+  assertEqual( feathersManager.isOnTop(layoutURLs[1], skinNames[0]), false);
 }
 
 

@@ -37,7 +37,7 @@
 	              <Description>
 	                <songbird:layoutURL>chrome://gonzo/content/xul/miniplayer.xul</songbird:layoutURL>
 	                <songbird:showChrome>false</songbird:showChrome>
-	                <songbird:onTop>true</songbird:onTop>
+	                <songbird:onTop>false</songbird:onTop>
 	              </Description>
 	            </songbird:compatibleLayout>
 	          </Description>
@@ -55,6 +55,11 @@
 	      </Description>
 	    </songbird:feathers>
 
+
+	    <!-- No need to show the user -->
+	    <em:hidden>true</em:hidden>
+	    <em:locked>true</em:locked>
+	    <em:appManaged>true</em:appManaged>
 
   </Description>
 </RDF>

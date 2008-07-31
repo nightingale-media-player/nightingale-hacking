@@ -1,7 +1,0 @@
-plucked.jar:
-% skin  songbird  plucked/0.1  %feathers/plucked/songbird/skin/
-% skin  plucked  plucked/0.1  %feathers/plucked/songbird/skin/
-% content  plucked  %feathers/plucked/songbird/content/
-@include_all_to feathers/plucked/songbird/
-
-

@@ -508,12 +508,10 @@ FeathersManager.prototype = {
       return;
     }
 
-
     // If the safe-mode dialog was requested to disable all addons, our
     // basic layouts and default skin have been disabled too. We need to 
     // check if that's the case, and reenable them if needed
-    this._ensureAddOnEnabled("basic-layouts@songbirdnest.com");
-    this._ensureAddOnEnabled("rubberducky@songbirdnest.com");
+    this._ensureAddOnEnabled("gonzo@songbirdnest.com");
     
     // Make dataremotes to persist feathers settings
     var createDataRemote =  new Components.Constructor(

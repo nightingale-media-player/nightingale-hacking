@@ -76,7 +76,11 @@ var JobProgressDialog = {
    * Called when the dialog is closed
    */
   onUnLoad: function JobProgressDialog_onUnLoad() {
-    this._job.removeJobProgressListener(this);
+    try { 
+      this._job.removeJobProgressListener(this);
+    } catch (e) {  
+      //  Failing to remove is fine, as the job may have cleared listeners 
+    }
     this._job = null;
   },
 

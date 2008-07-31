@@ -22,28 +22,16 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = chrome
+EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/feathers/rubberducky/.xpistage
 
-# the name of the extension - used to name the XPI file.
-EXTENSION_NAME = rubberducky
-# the uuid of the extension - used internally by songbird to identify the
-# extension.
-EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
-# where is the extension we're building (right here)
-EXTENSION_DIR  = .
-# where do we want to build it into (over there)
-EXTENSION_STAGE_DIR = ./.xpistage
-XPI_NAME = $(EXTENSION_NAME)
-
-# For now we are going to continue shipping Rubberducky.
-# This probably won't be the case for 1.0
-INSTALL_EXTENSION = 1
+JAR_MANIFEST = jar.mn
+JAR_TARGET_DIR = $(EXTENSION_STAGE_DIR)/chrome
 
 include $(topsrcdir)/build/rules.mk
