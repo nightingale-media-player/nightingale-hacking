@@ -90,8 +90,9 @@ var gSongbirdWindowController =
           pps.play();
         }
       }
-   } else if (aCommand == "cmd_delete")
+    } else if (aCommand == "cmd_delete") {
       SBDeleteMediaList(this._getVisiblePlaylist());
+    }
   },
   
   supportsCommand: function(aCommand)
