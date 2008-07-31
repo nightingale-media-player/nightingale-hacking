@@ -156,9 +156,19 @@
         </getter>
         <setter>
           if (this.mSplitter) {
-            this.mSplitter.setAttribute("state", val ? "open" : "collapsed");
+          this.mSplitter.setAttribute("state", val ? "open" : "collapsed");
           } else {
-            this.collapsed = val;
+          this.collapsed = val;
+          }
+
+          // If we are opening the service pane, make sure we highlight the
+          // appropriate node.
+          if(val) {
+            // Is there a servicepane node for the current tab?
+            var node = this.mTreePane.browser.selectedTab.servicePaneNode;
+            if (node) {
+              this.mTreePane.highlightNode(node);
+            }
           }
         </setter>
       </property>
@@ -460,7 +470,9 @@
         <parameter name="aNode" />
         <body><![CDATA[
           // we only want to allow highlighting if we aren't currently editing
-          if (this.mTree.hasAttribute("editing")) {
+          // and the tree is showing.
+          if (this.mTree.hasAttribute("editing") ||
+              !this.mTree.view) {
             return;
           }
 
