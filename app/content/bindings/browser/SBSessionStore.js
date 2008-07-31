@@ -49,6 +49,9 @@ const JSON = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
 const PREF_TAB_STATE = "songbird.browser.tab_state";
 const PREF_FIRSTRUN = "songbird.firstrun.tabs.restore";
 const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
+// this pref marks the current session as being firstrun.  Used to cooperate
+// with things like file scan.
+const PREF_FIRSTRUN_SESSION = "songbird.firstrun.is_session";
 
 __defineGetter__("_tabState", function() {
   var state = Application.prefs.getValue(PREF_TAB_STATE, null);
@@ -101,6 +104,9 @@ var SBSessionStore = {
   restoreTabState: function restoreTabState(aTabBrowser)
   {
     var tabs = _tabState;
+
+    if (Application.prefs.has(PREF_FIRSTRUN_SESSION))
+      Application.prefs.get(PREF_FIRSTRUN_SESSION).reset();
     
     if ( !tabs ) {
       if (!Application.prefs.getValue(PREF_FIRSTRUN, false)) {
@@ -112,7 +118,9 @@ var SBSessionStore = {
         
         var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, "about:blank");
         aTabBrowser.loadOneTab(firstrunURL, null, null, null, true);
+
         Application.prefs.setValue(PREF_FIRSTRUN, true);
+        Application.prefs.setValue(PREF_FIRSTRUN_SESSION, true);
       } else {
         // tab state pref missing/corrupt.
         // let's just go to the main library

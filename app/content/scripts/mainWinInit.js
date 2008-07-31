@@ -226,12 +226,15 @@ function SBFirstRunScanDirectories()
   var firstRunDoScanDirectory =
         Application.prefs.getValue("songbird.firstrun.do_scan_directory",
                                    false);
+  var isFirstRun =
+        Application.prefs.getValue("songbird.firstrun.is_session", false);
   if (!firstRunDoScanDirectory) {
-    const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
-    var currentURI = gBrowser.selectedBrowser.currentURI.spec;
-    if (currentURI == placeholderURL || currentURI == "about:blank") {
-      // assume this means this is first run :)
-      gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
+    if (isFirstRun) {
+      const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
+      var currentURI = gBrowser.selectedBrowser.currentURI.spec;
+      if (currentURI == placeholderURL || currentURI == "about:blank") {
+        gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
+      }
     }
     return;
   }
