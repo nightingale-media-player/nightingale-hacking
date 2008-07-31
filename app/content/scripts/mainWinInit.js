@@ -236,8 +236,11 @@ function SBFirstRunScanDirectories()
     return;
   }
 
-  // Don't do a first-run directory scan again.
+  // Don't do a first-run directory scan again.  Flush to disk to be sure.
   Application.prefs.setValue("songbird.firstrun.do_scan_directory", false);
+  var prefService = Cc["@mozilla.org/preferences-service;1"]
+                      .getService(Ci.nsIPrefService);
+  prefService.savePrefFile(null);
 
   // Get the first-run scan directory.
   var firstRunScanDirectoryPath =
@@ -284,8 +287,11 @@ function SBFirstRunImportLibrary()
   if (!firstRunDoImportLibrary)
     return;
 
-  // Don't do a first-run library import again.
+  // Don't do a first-run library import again.  Flush to disk to be sure.
   Application.prefs.setValue("songbird.firstrun.do_import_library", false);
+  var prefService = Cc["@mozilla.org/preferences-service;1"]
+                      .getService(Ci.nsIPrefService);
+  prefService.savePrefFile(null);
 
   // Import library.
   SBLibraryOpen(null, true);
@@ -295,6 +301,9 @@ function SBFirstRunSmartPlaylists() {
   var defaultSmartPlaylists = SBDataGetIntValue("firstrun.smartplaylist");
   if (defaultSmartPlaylists != 1) {
     SBDataSetIntValue("firstrun.smartplaylist", 1)
+    var prefService = Cc["@mozilla.org/preferences-service;1"]
+                        .getService(Ci.nsIPrefService);
+    prefService.savePrefFile(null);
     createDefaultSmartPlaylists();
   }
 }

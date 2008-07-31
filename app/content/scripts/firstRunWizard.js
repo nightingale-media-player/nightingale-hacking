@@ -117,8 +117,13 @@ var firstRunWizard = {
 
   doUnload: function firstRunWizard_doUnload() {
     // Indicate that the first-run checks have been made.
-    if (this._markFirstRunComplete)
+    if (this._markFirstRunComplete) {
+      // Set the first-run check preference and flush to disk.
       Application.prefs.setValue("songbird.firstrun.check.0.3", true);
+      var prefService = Cc["@mozilla.org/preferences-service;1"]
+                          .getService(Ci.nsIPrefService);
+      prefService.savePrefFile(null);
+    }
 
     // Restart application as specified.
     if (this._wizardElem.getAttribute("restartapp") == "true")

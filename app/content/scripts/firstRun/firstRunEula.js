@@ -224,8 +224,12 @@ firstRunEULASvc.prototype = {
     if (!acceptCheckboxElem.checked)
       return false;
 
-    // Set the EULA accepted preference.
+    // Set the EULA accepted preference and flush to disk.
     Application.prefs.setValue("songbird.eulacheck", true);
+    var prefService = Cc["@mozilla.org/preferences-service;1"]
+                        .getService(Ci.nsIPrefService);
+    prefService.savePrefFile(null);
+
 
     // Allow advancement.
     return true;
