@@ -1,42 +1,26 @@
 #downloadManager {
-  background-color: ThreeDFace;
+
 }
 
 /* Download View */
 #downloadView {
-  -moz-appearance: none !important;
-  margin: 0;
-  border-bottom: 2px solid;
-  -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
 }
 
 /* Download View Items */
 richlistitem[type="download"] {
-  padding: 4px 8px 4px 4px;
-  min-height: 46px;
 }
 
 richlistitem[type="download"][alternate="true"]:not([selected="true"]) {
-  background-color: ThreeDLightShadow;
 }
 
 richlistitem[type="download"] .name {
-  font-size: larger;
 }
 
 richlistitem[type="download"] .dateTime {
-  font-size: smaller;
 }
 
 .mini-button {
-  -moz-appearance: none;
   list-style-image: url(chrome://mozapps/skin/downloads/buttons.png);
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  min-width: 0;
-  min-height: 0;
 }
 
 .mini-button > .button-box {
@@ -67,5 +51,5 @@ richlistitem[type="download"] .dateTime {
 }
 
 #searchbox[empty] {
-  color: GrayText;
+
 }

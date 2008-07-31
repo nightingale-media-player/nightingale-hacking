@@ -1,26 +1,15 @@
 #itemList {
   -moz-appearance: listbox;
-  margin: 10px 4px 10px 4px;
-  border: 2px solid;
-  -moz-border-top-colors: ThreeDShadow ThreeDDarkShadow;
-  -moz-border-right-colors: ThreeDHighlight ThreeDLightShadow;
-  -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
-  -moz-border-left-colors: ThreeDShadow ThreeDDarkShadow;
-  background-color: -moz-Field;
-  color: -moz-FieldText;
+  border: 1px solid gray;
+  -moz-border-radius:3px;
+  background-color:white;
+  margin:4px;
 }
 
 #dialogContentBox {
-  padding: 5px;
 }
 
 installitem {
-  padding-top: 5px;
-  padding-bottom: 5px;
-  -moz-padding-start: 5px;
-  -moz-padding-end: 0px;
-  border-bottom: 1px dotted #C0C0C0;
-  margin-bottom: 5px;
 }
 
 .warning {
@@ -32,7 +21,7 @@ installitem {
   height: 32px;
   max-width: 32px !important;
   max-height: 32px !important;
-  -moz-margin-end: 5px;
+  list-style-image: url("chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png");
 }
 
 .xpinstallItemName {
@@ -50,18 +39,12 @@ installitem {
 }
 
 .xpinstallItemNameRow {
-  padding-bottom: 3px;
 }
 
 .xpinstallItemURL {
-  -moz-appearance: none;
-  border: none;
-  background-color: -moz-Field;
-  color: -moz-FieldText;
 }
 
 .xpinstallItemIcon {
-  list-style-image: url("chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png");
 }
 
 /* Hide the un-signed author string */

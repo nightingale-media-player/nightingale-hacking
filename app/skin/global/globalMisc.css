@@ -101,35 +101,30 @@ page,
 dialog,
 wizard,
 prefwindow { 
+/*
   -moz-appearance: dialog;
   background-color: #FFFFFF;
   color: -moz-DialogText;
   font: message-box;
+*/
+  -moz-appearance: dialog;
+  font: message-box;
 }
 
 prefwindow {
-  font: -moz-dialog;
 }
 
 prefwindow .paneSelector {
-  font: message-box;
-  background-image:none;
-  border:none !important;
 }
 prefwindow[type="child"] {
-  padding: 18px 20px 15px 18px !important;
 }
 #viewGroup,
 #progressBox
 {
-  background-image:none;
 }
 prefwindow > .paneSelector > radio,
 #viewGroup > radio
 {
-  background-color:transparent;
-  border:none !important;
-  margin:0;
 }
 
 /* deprecated */
@@ -143,6 +138,7 @@ window.dialog {
 
 /* ::::: alert icons :::::*/
 
+/*
 .message-icon,
 .alert-icon,
 .error-icon,
@@ -152,6 +148,7 @@ window.dialog {
   list-style-image: url("chrome://branding/content/icon64.png");
   margin: 6px 20px 6px 6px !important;
 }
+*/
 
 /* ::::: iframe ::::: */
 
