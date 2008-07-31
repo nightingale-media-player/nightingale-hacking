@@ -44,7 +44,7 @@
 							preference="prefLimitBitRate" />
 						<label value="&bit-rate.limit.label;"/>
 						<menulist preference="prefBitRate" id="bitRateMenu"
-							style="min-width:6.5em;">
+							style="min-width:7.5em;">
 							<menupopup flex="1">
 								<menuitem label="256 kbps" value="256"/>
 								<menuitem label="192 kbps" value="192"/>
