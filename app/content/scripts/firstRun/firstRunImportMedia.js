@@ -48,6 +48,7 @@
 
 // Songbird imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/FolderUtils.jsm");
 
 
 //------------------------------------------------------------------------------
@@ -197,7 +198,6 @@ firstRunImportMediaSvc.prototype = {
   /**
    * Browse for the scan directory.
    */
-
   _doBrowseScanDirectory: function
                             firstRunImportMediaSvc__browseScanDirectory() {
     // Get the currently selected scan directory.
@@ -313,32 +313,9 @@ firstRunImportMediaSvc.prototype = {
 
   _selectDefaultScanDirectory:
     function firstRunImportMediaSvc__selectDefaultScanDirectory() {
-    // Get the user home directory.
-    var directorySvc = Cc["@mozilla.org/file/directory_service;1"]
-                         .getService(Ci.nsIProperties);
-    var homeDir = directorySvc.get("Home", Ci.nsIFile);
-
-    // Get the default scan directory path.
-    //XXXeps The original first run scanner only looked for a default path on
-    //XXXeps Mac.  Support for other platforms should be added.
-    var defaultScanPath = null;
-    switch (getPlatformString()) {
-      case "Darwin" :
-        var defaultScanDir = homeDir.clone();
-        defaultScanDir.append(SBString("folder_paths.music.darwin", "Music"));
-        if (defaultScanDir.exists())
-          defaultScanPath = defaultScanDir.path;
-        break;
-
-      default :
-        break;
-    }
-
     // Set the scan directory textbox value.
-    if (defaultScanPath) {
-      var scanDirectoryTextBox = this._getElement("scan_directory_textbox");
-      scanDirectoryTextBox.value = defaultScanPath;
-    }
+    var scanDirectoryTextBox = this._getElement("scan_directory_textbox");
+    scanDirectoryTextBox.value = FolderUtils.musicFolder.path;
   },
 
 

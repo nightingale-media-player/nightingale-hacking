@@ -27,6 +27,7 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/FolderUtils.jsm");
 
 const Ci = Components.interfaces;
 const Cc = Components.classes;
@@ -262,36 +263,8 @@ function sbDownloadDeviceHelper_getDownloadMediaList()
 sbDownloadDeviceHelper.prototype.getDefaultMusicFolder =
 function sbDownloadDeviceHelper_getDefaultMusicFolder()
 {
-  const dirService = Cc["@mozilla.org/file/directory_service;1"].
-                     getService(Ci.nsIDirectoryServiceProvider);
-  const platform = Cc["@mozilla.org/xre/app-info;1"].
-                   getService(Ci.nsIXULRuntime).
-                   OS;
-
-  var musicDir;
-  switch (platform) {
-    case "WINNT":
-    case "Darwin":
-      musicDir = dirService.getFile("Music", {});
-    break;
-
-    case "Linux":
-    case "SunOS":
-      musicDir = dirService.getFile("Home", {});
-      musicDir.append("Music");
-
-      if (!folderIsValid(musicDir)) {
-        musicDir = musicDir.parent;
-        musicDir.append("music");
-      }
-    break;
-
-    default:
-      // Fall through and use the Desktop below.
-    break;
-  }
-
-  // Make sure that the directory exists and is writable.
+  var musicDir = FolderUtils.downloadFolder;
+  
   if (!folderIsValid(musicDir)) {
     // Great, default to the Desktop... This should work on all OS's.
     musicDir = dirService.getFile("Desk", {});
