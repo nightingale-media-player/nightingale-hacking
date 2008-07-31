@@ -178,6 +178,7 @@ Lastfm.onLoad = function() {
     this._faceplateLove.setAttribute('tooltiptext',
         this._strings.getString('lastfm.faceplate.love.tooltip'));
     this._faceplateLove.addEventListener('click', function(event) {
+          Lastfm.metrics.metricsInc('lastfm', 'faceplate', 'love');
           if (Lastfm._service.loveTrack && Lastfm._service.love) {
             /* if we have a loved track, then unlove */
             Lastfm._service.loveBan(null, false);
@@ -193,6 +194,7 @@ Lastfm.onLoad = function() {
     this._faceplateBan.setAttribute('tooltiptext',
         this._strings.getString('lastfm.faceplate.ban.tooltip'));
     this._faceplateBan.addEventListener('click', function(event) {
+          Lastfm.metrics.metricsInc('lastfm', 'faceplate', 'ban');
           if (Lastfm._service.loveTrack && !Lastfm._service.love) {
             /* if we have a banned track, then unban */
             Lastfm._service.loveBan(null, false);
