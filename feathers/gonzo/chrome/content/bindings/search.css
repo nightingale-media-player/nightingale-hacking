@@ -73,7 +73,7 @@ background-color:rgb(220,220,220);
   background-repeat:repeat-x;
   background-position:center 0px;
     
-  border:1px solid rgb(40,40,40);
+  border:1px solid rgb(80,80,80);
 }
 .searchbar-engine-button:hover {
   background-position:center -300px;
@@ -87,7 +87,7 @@ background-color:rgb(220,220,220);
 .searchbar-textbox {
   margin:0;
   min-height:22px;
-  border-top:1px solid rgb(40,40,40);
+  border-top:1px solid rgb(80,80,80);
   border-bottom:1px solid rgb(120,120,120);
 }
 

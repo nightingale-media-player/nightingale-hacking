@@ -78,6 +78,9 @@ sb-player-totaltime-label label {
 {
   margin: 0px !important;
   padding: 0px !important;
+  
+  min-height:none;
+  max-height:none;
 
   background-image:url('chrome://songbird/skin/mini-player/done.png');
   background-repeat:repeat-x;
@@ -377,4 +380,22 @@ resizer {
 
 window[platform=Darwin] resizer {
   display:none !important;
+}
+
+
+#control_buttons_box > .sb-player-button {
+  margin:0px !important;
+}
+
+sb-nowplaying-rating {
+  background-image:none;
+  margin-top:-1px;
+}
+
+#faceplate-tool-bar {
+  padding:3px 8px 3px 0px;
+}
+
+#faceplate-tool {
+  margin-left:2px;
 }

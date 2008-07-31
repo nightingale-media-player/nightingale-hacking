@@ -20,13 +20,11 @@ findbar {
 }
 
 findbar label,
-findbar toolbarbutton > .toolbarbutton-text,
-findbar .find-buttons-container > toolbarbutton > .toolbarbutton-text,
+findbar toolbarbutton .toolbarbutton-text,
 findbar checkbox > .checkbox-label-box,
-.find-field-container > textbox.findbar-textbox,
+.find-field-container > textbox.findbar-textbox html|input,
 description.findbar-find-status {
-  font-size:10px;
-  font-family: Lucida Grande, Tahoma, Trebuchet MS, Arial, Helvetica, FreeSans, Sans-serif !important;
+  font-size:10px !important;
   padding:0;
   margin:0;
 }
@@ -45,7 +43,6 @@ findbar toolbarbutton > .toolbarbutton-icon,
 findbar toolbarbutton > .toolbarbutton-text,
 .find-buttons-container > toolbarbutton > .toolbarbutton-text,
 findbar checkbox > .checkbox-label-box {
-  height: 16px !important;
   padding:0;
   margin:0;
 }
@@ -109,8 +106,7 @@ findbar checkbox {
 }
 findbar .toolbarbutton-text,
 findbar .checkbox-label {
-  padding:2px 8px 0 0px !important;
-  padding:2px 8px 0 8px !important;
+  padding:0px 8px 0 8px !important;
   margin:0;
 }
 
@@ -142,12 +138,12 @@ toolbarbutton.findbar-find-previous[disabled="true"],
 toolbarbutton.findbar-highlight[disabled="true"] {
   -moz-image-region: rect(48px 16px 64px 0px) !important;
 }
-*/
 toolbarbutton.findbar-find-next[disabled="true"] > .toolbarbutton-icon,
 toolbarbutton.findbar-find-previous[disabled="true"] > .toolbarbutton-icon,
 toolbarbutton.findbar-highlight[disabled="true"] > .toolbarbutton-icon {
   opacity:0.5;
 }
+*/
 
 
 

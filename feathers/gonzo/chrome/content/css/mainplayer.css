@@ -44,8 +44,10 @@ Love the box.
 
 window#mainplayer
 {
-  min-width:800px;
-  min-height:600px;
+  min-width:640px;
+  min-height:480px;
+  width:980px;
+  height:720px;
 }
 
 /* hide the overflow here so that as the window shrinks below a certain size

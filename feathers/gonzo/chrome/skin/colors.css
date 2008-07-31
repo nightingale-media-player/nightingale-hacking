@@ -40,8 +40,10 @@ label,
 menu,
 treechildren::-moz-tree-cell-text,
 html|input {
-  font-family: Lucida Grande, Tahoma, Trebuchet MS, Bitstream Vera Sans, FreeSans, Verdana, Arial, Sans-serif !important;
   font-size:11px;
+}
+html|input {
+  font-size:11px !important;
 }
 
 window {
@@ -424,8 +426,6 @@ treecol > label {
   padding:0px;
 }
 
-
-tab,
 .tabbrowser-tab {
   max-width:180px;
   min-width:80px;
@@ -1039,7 +1039,10 @@ textbox[invalid="true"],
 textbox[focused="true"][invalid="true"] {
   background-color:rgb(255,200,200) !important;
   } 
-
+  textbox[empty="true"] {
+    color:gray;
+    font-style:italic;
+  }
 
 /** 
 *******************************************************************************
@@ -1142,7 +1145,6 @@ listbox
 /* ..... disabled state ..... */
 
 listbox[disabled="true"] {
-  opacity: 0.5;
 }
 
 listitem[selected="true"] > listcell > .listcell-label {
@@ -1175,59 +1177,6 @@ progressmeter {
   background-color:transparent !important;
 }
 
-
-
-/** 
-*******************************************************************************
-RICHLISTBOX
-*******************************************************************************
-*/
-.datepicker-mainbox,
-.datetimepicker-input,
-.datetimepicker-input-box ,
-richlistbox {
-
-}
-richlistitem
-{
-
-}
-
-richlistitem[selected="true"]
-{
-
-}
-
-richlistbox:focus > richlistitem[selected="true"] 
-{
-
-}
-
-/** This is bad bad bad, but fixing it requires making
-    labels inherit color, which will have side effects.
-    We will have to wait until 0.4 **/
-richlistitem[selected="true"] > label,
-richlistitem[selected="true"] > description {
-
-}
-
-
-richlistbox[seltype="multiple"]:focus > richlistitem[current="true"][selected="true"] {
-
-}
-
-
-
-/** 
-*******************************************************************************
-SMART PLAYLIST BUILDER
-*******************************************************************************
-*/
-
-.drawer-box
-{
-  border: 1px solid #202220;
-}
 
 
 
@@ -1328,10 +1277,12 @@ PREFERENCES
   border: none !important;
 }
 
-#extensionsBox > richlistbox > richlistitem[selected="true"] {
-  background-color: rgb(186,218,255);
+#extensionsBox > richlistbox richlistitem {
+  border-bottom:none !important;
 }
-
+#extensionsBox > richlistbox richlistitem+richlistitem {
+  border-top:1px solid gray !important;
+}
 #extensionsView:focus > richlistitem[selected="true"]
 {
   background-image: none !important;
@@ -1396,11 +1347,15 @@ MOZILLA DOWNLOAD WINDOW
 }
 
 #downloadManager > #downloadView {
-  border: none;
+  background-color:white;
 }
 
 #downloadManager > #search {
   border-top:1px solid gray;
+  background-color: rgb(220,220,220) !important;
+  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
 }
 
 
@@ -1634,18 +1589,19 @@ treecol {
 
 treecol[bind="http://songbirdnest.com/data/1.0#rating"] {
   min-width: 78px;
-  max-width: 78px;
+  width: 78px;
 }
 treecol[bind="http://songbirdnest.com/data/1.0#originPageImage"] {
   min-width: 20px;
-  max-width: 20px;
+  width: 20px;
 }
 treecol[bind="http://songbirdnest.com/data/1.0#ordinal"] {
   min-width: 42px;
-  max-width: 42px;
+  width: 42px;
 }
 treecol[bind="http://songbirdnest.com/data/1.0#downloadButton"] {
   min-width: 86px;
+  width: 86px;
 }
 
 
@@ -1856,75 +1812,7 @@ tab[first-tab="true"],
 
 
 
-/**
- * The spring-loaded service pane panel
- */
-window:not([platform=Darwin]) #service_pane_spring_load_panel {
-  opacity:1.0;
-}
-#service_pane_spring_load_panel > .service-pane-spring-load-tree {
-  -moz-binding: url(chrome://songbird/content/bindings/servicePane.xml#proxyTreePane);
-}
 
-#service_pane_spring_load_panel {
-	padding:0px;
-}
-
-#service_pane_spring_load_panel > .service-pane-spring-load-tree {
-
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png);
-  background-repeat:repeat-x;
-  background-position:center -22px;
-  padding-top:2px !important
-}
-#service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree {
-  background-color: rgb(247,243,223) !important;
-  background-image: url(chrome://songbird/skin/service-pane/bg-spring-service-pane.png) !important;
-  background-repeat:repeat-x;
-  background-position:center top;
-}
-#service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree > treechildren::-moz-tree-cell( servicesource-bookmarks ),
-#service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree > treechildren::-moz-tree-cell( servicesource-playlists ),
-#service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree > treechildren::-moz-tree-cell( folder ) {
-  background-color: rgb(247,243,223) !important;
-}
-
-
-#service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree > treecols {
-  min-height:0px !important;
-  max-height:0px !important;
-}
-
-
-#service_pane_spring_load_panel > .service-pane-spring-load-tree > .servicepane-tree > treechildren::-moz-tree-cell-text {
-}
-
-#service_pane_spring_load_panel > hbox {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-spring-service-pane-header.png) !important;
-  background-repeat:no-repeat;
-  background-position:right 0px;
-  -moz-box-align: center;
-  -moz-box-pack: center;  
-  min-height:22px;
-  max-height:22px;
-}
-#service_pane_spring_load_panel > hbox > hbox {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-spring-service-pane-header.png) !important;
-  background-repeat:no-repeat;
-  background-position:left 0px;
-  -moz-box-align: center;
-  -moz-box-pack: center;  
-  min-height:22px;
-  max-height:22px;
-  padding-bottom:2px;
-}
-#service_pane_spring_load_panel > hbox > hbox > label {
-	margin:0px;
-	padding:2px 0px 0px 4px;
-}
-#service_pane_spring_load_panel > hbox > .service-pane-spring-load-button {
-  min-height:22px;
-}
 .close-button {
   background-image:none;
   margin:5px !important;
@@ -2150,8 +2038,8 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 
 #resizerBox {
 /*  margin-top: -12px;
-  visibility: hidden;*/
-  border:2px solid red !important;
+  visibility: hidden;
+  border:2px solid red !important;*/
 }
 
 #resizerBox > resizer {
@@ -2218,15 +2106,15 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 richlistitem {
   padding:4px;
   min-height: 24px;
-  border-top: 1px solid gray !important;
+  border-bottom: 1px solid gray !important;
 }
 
 richlistitem[isDisabled="true"] .addonIcon {
-  opacity: 0.25;
+
 }
 
 richlistitem[isDisabled="true"] {
-  opacity:0.33;
+  background-color:rgb(200,200,200);
 }
 
 #extensionsView:focus > richlistitem[selected="true"][isDisabled="true"] {
@@ -2581,14 +2469,9 @@ richlistitem[loading="true"] .updateBadge {
 #paneContent description,
 #paneAdvanced description,
 #paneSecurity description {
-  font-family: Lucida Grande, Tahoma, Trebuchet MS, Bitstream Vera Sans, FreeSans, Verdana, Arial, Sans-serif !important;
-  font-size:11px !important;
-}
-prefwindow .textbox-input,
-prefwindow html|input {
-  font-size:11px !important;
-}
 
+  font-size:11px !important;
+}
 
 wizard {
   background-color: rgb(245,245,245) !important;
@@ -2602,7 +2485,7 @@ wizard {
 }
 
 *[disabled="true"] {
-  opacity:0.5 !important;
+  opacity:0.5;
 }
 
 
@@ -2621,3 +2504,5 @@ wizard {
   width:7px !important;
   padding-right:2px;
 }
+
+

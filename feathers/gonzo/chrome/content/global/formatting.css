@@ -71,10 +71,12 @@ separator[orient="vertical"].groove-thin {
 }
 
 .plain {
+/*
   margin:0px;
   padding:0px;
   border:none;
   background-color:transparent;
+*/
 }
 
 description, label {

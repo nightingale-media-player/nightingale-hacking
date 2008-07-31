@@ -32,12 +32,29 @@
 /* Pane Selector */
 
 .paneSelector {
-  -moz-box-pack: start;
-  -moz-box-align: start;
+  -moz-box-align: stretch;
+  border:none;
   border-right:1px solid gray !important;
-  background-color:rgb(220,220,220) !important;
   -moz-border-radius:0px !important;
+  background-color: rgb(220,220,220) !important;
+  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  padding:0px;
 }
+.paneSelector > radio {
+  background-color:transparent;
+  border:none !important;
+  list-style-image:none !important;
+  padding:2px 8px;
+  margin:0;
+  -moz-box-align: start !important;
+  -moz-box-pack: start !important;
+}
+.paneSelector > radio[selected="true"] {
+  background-color:white;
+}
+
 
 #viewGroup {
 
@@ -63,19 +80,7 @@
 
 }
 
-.paneSelector {
-  padding:0;
-  -moz-box-orient: vertical;
-}
 
-.paneSelector > radio {
-  list-style-image:none !important;
-  padding:2px 8px;
-  margin:0;
-  -moz-box-align: start !important;
-  -moz-box-pack: start !important;
-  -moz-box-orient:horizontal !important;
-}
 .paneSelector > radio+radio {
 }
 .paneSelector > radio > image {
@@ -85,7 +90,4 @@
   padding:0;
   margin:0;
   font-size:11px;
-}
-.paneSelector > radio[selected="true"] {
-  background-color:white;
 }

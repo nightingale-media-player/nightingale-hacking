@@ -109,10 +109,12 @@ Imported by bindings.css or directly into feathers.
   min-width:12px !important;
   max-width:12px !important;
   width:12px !important;
+  opacity:1.0 !important;
 }
 #bookmark-subscribe-button > .clickhold-button {
   -moz-image-region: rect(0px 8px 8px 0px);
   margin:0  !important; 
+  opacity:1.0 !important;
 }
 /*
 #back-button:hover,
@@ -224,7 +226,7 @@ background-color:rgb(230,230,230);
 .locationbar-textbox {
   
   
-  border-top:1px solid rgb(40,40,40);
+  border-top:1px solid rgb(80,80,80);
   border-right:1px solid rgb(80,80,80);
   border-bottom:1px solid rgb(140,140,140);
   border-left:1px solid rgb(80,80,80);

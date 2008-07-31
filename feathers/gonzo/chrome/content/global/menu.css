@@ -119,7 +119,9 @@ margin:0px;
 
 popup,
 menupopup {
-  border:1px solid gray;
+  /*  
+TODO window/linux only
+border:1px solid gray;*/
 }
 
 window[platform="Darwin"] popup,

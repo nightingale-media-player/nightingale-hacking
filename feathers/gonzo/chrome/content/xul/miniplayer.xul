@@ -129,6 +129,17 @@
             </stack>
           </hbox>
           
+          <stack  id="faceplate-tool"  class="mini">
+            <hbox flex="1" class="hook">
+              <hbox class="left"/>
+              <spacer flex="1"/>
+              <hbox class="right"/>
+            </hbox>
+            <hbox id="faceplate-tool-bar">
+              <sb-nowplaying-rating />
+            </hbox>
+          </stack>
+
           <!-- window controls (collapsed) -->
           <hbox id="window_controls_box" pack="end" align="end" class="mini">
             <sb-player-jumpto-button id="miniplayer_jumpto_button" class="miniplayer"/>

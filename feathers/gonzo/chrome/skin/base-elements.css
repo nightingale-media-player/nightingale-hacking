@@ -33,6 +33,12 @@ groupbox caption {
   padding:0 !important;
   margin:0 !important;
   background-color:rgb(235,235,235) !important;
+
+  background-color: rgb(225,225,225);
+  background-image: url('chrome://songbird/skin/base-elements/bg-table-header.png');
+  background-position:center 0px;
+  background-repeat:repeat-x;
+
   border:1px solid gray !important;
   -moz-border-radius-topleft:3px;
   -moz-border-radius-topright:3px;

@@ -149,6 +149,8 @@ panel[type="autocomplete"] > tree > treecols > hbox
 
 .autocomplete-tree {
   -moz-appearance: none !important;
+  margin:0 !important;
+  border:none;
 }
 
 .autocomplete-treecol {
@@ -220,8 +222,10 @@ button > dropmarker.button-menubutton-dropmarker
 }
 
 button.plain {
+/*
   margin: 0px !important;
   padding: 0px !important;
+*/
 }
 
 
@@ -445,4 +449,12 @@ html|*.numberbox-input {
   -moz-appearance: none;
   cursor: text;
   border: none;
+}
+
+
+
+
+
+#about_browser {
+  border-top:1px solid gray;
 }
