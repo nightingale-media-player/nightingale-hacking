@@ -122,3 +122,8 @@ sb-rating {
 .drawer-box {
   overflow-y:scroll !important;
 }
+
+.smart-condition-item-box > hbox,
+#textconditionbox {
+  -moz-box-align:center !important;
+}
