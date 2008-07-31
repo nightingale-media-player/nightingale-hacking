@@ -127,8 +127,13 @@
  ******************************************************************************/
 
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerTaglib");
-#define LOG(args) if (gLog) PR_LOG(gLog, PR_LOG_DEBUG, args)
+static PRLogModuleInfo* gLog = nsnull;
+#define LOG(args) PR_BEGIN_MACRO \
+  if (!gLog) { \
+    gLog = PR_NewLogModule("sbMetadataHandlerTaglib"); \
+  } \
+  PR_LOG(gLog, PR_LOG_DEBUG, args); \
+  PR_END_MACRO
 #else
 #define LOG(args)   /* nothing */
 #endif
@@ -399,9 +404,32 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
         /* Get the metadata local file path. */
         if (NS_SUCCEEDED(result))
         {
-            result = mpFileProtocolHandler->GetFileFromURLSpec
-                                                        (urlSpec,
-                                                         getter_AddRefs(pFile));
+            PRBool useSpec = PR_TRUE;
+            #if XP_UNIX && !XP_MACOSX
+            if (StringBeginsWith(urlSpec, NS_LITERAL_CSTRING("file://"))) {
+                nsCString path(Substring(urlSpec, NS_ARRAY_LENGTH("file://") - 1));
+                do { /* allow breaking out gracefully */
+                    nsCOMPtr<nsILocalFile> localFile =
+                        do_CreateInstance("@mozilla.org/file/local;1", &result);
+                    if (NS_FAILED(result) || !localFile)
+                        break;
+                    result = localFile->InitWithNativePath(path);
+                    if (NS_FAILED(result))
+                        break;
+                    PRBool fileExists = PR_FALSE;
+                    result = localFile->Exists(&fileExists);
+                    if (NS_FAILED(result) || !fileExists)
+                        break;
+                    pFile = do_QueryInterface(localFile, &result);
+                    if (NS_SUCCEEDED(result) && pFile)
+                        useSpec = PR_FALSE;
+                } while (0);
+            }
+            #endif /* XP_UNIX && !XP_MACOSX */
+            if (useSpec)
+                result = mpFileProtocolHandler->GetFileFromURLSpec
+                                                            (urlSpec,
+                                                             getter_AddRefs(pFile));
         }
 
         if (NS_SUCCEEDED(result))
