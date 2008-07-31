@@ -52,7 +52,6 @@
   <!-- Astounding complexity! -->
   <sb-draggable flex="1">
     <textbox value="&about.version;" id="version_number" class="plain" clickSelectsAll="true" readonly="true" tabindex="2" />
-    <separator/>
     <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false" disablehistory="true" flex="2" tabindex="1"/>
   </sb-draggable>
 
