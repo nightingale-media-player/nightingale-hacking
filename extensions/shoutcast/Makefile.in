@@ -39,6 +39,10 @@ EXTENSION_NAME = shoutcast-radio
 EXTENSION_STAGE_DIR = ./.xpistage
 XPI_NAME = $(EXTENSION_NAME)
 
+EXTENSION_VER := 0.5.5pre
+EXTENSION_MIN_VER := 0.7pre
+EXTENSION_MAX_VER := 0.8pre
+
 SONGBIRD_PREFS = defaults/preferences/prefs.js
 
 include $(topsrcdir)/build/rules.mk
