@@ -71,21 +71,27 @@
   <menubar id="main-menubar">
     <menu id="file-menu" label="&menu.file;"  accesskey="&menu.file.accesskey;">
       <menupopup id="menu_FilePopup">
-        <menuitem id="menuitem_file_file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;" />
-        <menuitem id="menuitem_file_url" key="openurl-key" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;" />
-        <menuitem id="menuitem_file_playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;" />
-        <menuitem id="menuitem_file_library" class="menuitem-iconic" label="&menu.file.library;" accesskey="&menu.file.library.accesskey;" />
-        <menuseparator />
         <menuitem id="menuitem_file_new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
         <menuitem id="menuitem_file_smart" key="newsmartplaylist-key" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;" />
         <menuitem id="menuitem_file_remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;" />
         <!-- XXX lone: disabled; see bug 4387
         <menuitem id="menuitem_file_folder" class="menuitem-iconic" label="&menu.file.folder;" accesskey="&menu.file.folder.accesskey;" />
         -->
+        <menuseparator id="menu_ImportSeparator"/>
 
-        <menuseparator id="menu_FileScanSeparator"/>
         <menuitem id="menuitem_file_scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
-        <menuseparator/>
+        <menuitem id="menuitem_file_playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;" />
+        <!-- XXX komi: disable; see bug 11230
+        <menuitem id="menuitem_file_library" class="menuitem-iconic" label="&menu.file.library;" accesskey="&menu.file.library.accesskey;" />
+        -->
+
+        <menuseparator id="menu_OpenSeparator"/>
+        
+        <menuitem id="menuitem_file_url" key="openurl-key" class="menuitem-iconic" label="&menu.file.url;" accesskey="&menu.file.url.accesskey;" />
+        <menuitem id="menuitem_file_file" key="openfile-key" class="menuitem-iconic" label="&menu.file.open;" accesskey="&menu.file.open.accesskey;" />
+
+        <menuseparator id="menu_LocaleSeparator"/>
+
         <menu id="songbird_menu_locale" label="&locale.language;" class="menuitem-iconic" accesskey="&locale.language.accesskey;">
           <menupopup id="locale-popup" onpopupshowing="fillLocaleList(this);" />
         </menu>

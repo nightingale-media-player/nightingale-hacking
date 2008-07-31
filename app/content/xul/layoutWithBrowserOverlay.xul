@@ -72,9 +72,9 @@
       <!-- Note that wherever possible IDs have been set up to match the FireFox menus -->
 
       <menupopup id="menu_FilePopup">
-        <menuseparator insertbefore="menu_FileScanSeparator"/>
-        <menuitem id="menuitem_file_newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;" insertbefore="menu_FileScanSeparator"/>
-        <menuitem id="menuitem_file_closetab" key="closetab-key" class="menuitem-iconic" label="&menu.file.closetab;" accesskey="&menu.file.closetab.accesskey;" insertbefore="menu_FileScanSeparator"/>
+        <menuseparator insertbefore="menu_LocaleSeparator"/>
+        <menuitem id="menuitem_file_newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;" insertbefore="menu_LocaleSeparator"/>
+        <menuitem id="menuitem_file_closetab" key="closetab-key" class="menuitem-iconic" label="&menu.file.closetab;" accesskey="&menu.file.closetab.accesskey;" insertbefore="menu_LocaleSeparator"/>
       </menupopup>
 
 

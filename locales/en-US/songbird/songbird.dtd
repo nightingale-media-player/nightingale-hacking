@@ -33,13 +33,13 @@
 <!ENTITY menu.file.smart        "New Smart Playlist..." >
 <!ENTITY menu.file.remote       "New Subscription..." >
 <!ENTITY menu.file.folder       "New Folder..." >
-<!ENTITY menu.file.open         "Open a File..." >
-<!ENTITY menu.file.url          "Open from URL..." >
+<!ENTITY menu.file.open         "Open File..." >
+<!ENTITY menu.file.url          "Open Location..." >
 <!ENTITY menu.file.playlist     "Import a Playlist..." >
 <!ENTITY menu.file.library      "Import a Library..." >
 <!ENTITY menu.file.newtab       "New Tab" >
 <!ENTITY menu.file.closetab     "Close Tab" >
-<!ENTITY menu.file.scan         "Scan for Media..." >
+<!ENTITY menu.file.scan         "Import Media..." >
 <!ENTITY menu.file.viewmetadata "View Metadata..."> <!-- obsolete -->
 <!ENTITY menu.file.dlfolder     "Set Download Folder..." >
 <!ENTITY menu.file.watch        "Set Watched Folders..." >
@@ -574,7 +574,7 @@
 
 <!-- Import library dialog and preference pane entities. -->
 <!ENTITY import_library.dialog.title                      "Import a library">
-<!ENTITY import_library.prefs.title                       "Import">
+<!ENTITY import_library.prefs.title                       "iTunes Importer">
 <!ENTITY import_library.library_file_label                "Library File:">
 <!ENTITY import_library.auto_import_checkbox              "Check for changes to iTunes library when Songbird launches">
 <!ENTITY import_library.auto_import_no_query_checkbox     "Initiate import without notification">
