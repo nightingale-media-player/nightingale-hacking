@@ -35,15 +35,16 @@ const PREF_FIRST_OPENED_DATE = "feedback.first_opened_date";
 const PREF_TOTAL_RUNTIME = "feedback.total_runtime";
 const PREF_SURVEY_DATE = "feedback.survey_date";
 const PREF_DISABLE_FEEDBACK = "feedback.disabled"
+const PREF_DENIED_FEEDBACK = "feedback.denied"
 
 /**
  * Misc. constants:
  */
-const LAST_FEEDBACK_DATE = "Mon, 30 Jun 2008 00:00:00 GMT";
-const SURVEY_URL = "http://www.surveymonkey.com/s.aspx?sm=29bC_2bCt4FtbeKVqBU11jkA_3d_3d";
+const SURVEY_URL = "http://www.songbirdnest.com/survey";
 const MIN_APP_SESSIONS  = 3;
-const MIN_TOTAL_RUNTIME = 30000;  // 30 minutes
+const MIN_TOTAL_RUNTIME = 1800000;  // 30 minutes
 const STARTUP_DELAY     = 5000;   // 5 seconds
+const NEXT_FEEDBACK_MONTH_LAG = 6;
 
 /**
  * Global vars:
@@ -77,16 +78,41 @@ FeedbackDelegate.prototype =
       return;
     }
     
+    // Don't show the feedback dialog again if the user turned down feedback.
+    if (gAppPrefs.has(PREF_DENIED_FEEDBACK)) {
+      return; 
+    }
+    
     var curDate = new Date();
     this._mAppStartTimespec = curDate.getTime();
     var hasDateRequirements = true;
     
-    var lastSurveyDate = new Date(LAST_FEEDBACK_DATE);
-    
-    // If we are passed the last date to show the survey, or the feedback
-    // dialog has been shown already - just return.
-    if (curDate > lastSurveyDate || gAppPrefs.has(PREF_SURVEY_DATE)) {
-      return;
+    // If the user has already taken the survey, only procede showing it again
+    // after six months.
+    if (gAppPrefs.has(PREF_SURVEY_DATE)) {
+      var surveyTakenTime = 
+        parseInt(gAppPrefs.get(PREF_SURVEY_DATE).value);
+      
+      var surveyTakenDate = new Date();
+      surveyTakenDate.setTime(surveyTakenTime);
+      
+      var futureDate = new Date();
+      futureDate = new Date();
+      futureDate.setTime(surveyTakenTime);
+      
+      // JS Date range is 0-11
+      var futureMonthLag = surveyTakenDate.getUTCMonth() + NEXT_FEEDBACK_MONTH_LAG;
+      if (futureMonthLag >= 12) {
+        futureMonthLag -= 12;
+        // Since this is roll over, bump the year
+        futureDate.setUTCFullYear(futureDate.getUTCFullYear() + 1);
+      }
+      futureDate.setUTCMonth(futureMonthLag);
+      
+      // If the timeframe has not passed the 6 month mark, bail.
+      if (curDate.getTime() <= futureDate.getTime()) {
+        return;
+      }
     }
     
     // Check to see if we are not on the same day we first opened the app.
@@ -157,6 +183,9 @@ FeedbackDelegate.prototype =
       if (retVal.shouldLoadSurvey) {
         mainWin.window.gBrowser.loadURI(SURVEY_URL, null, null, null, "_blank");
         mainWin.focus();
+      }
+      else {
+        gAppPrefs.setValue(PREF_DENIED_FEEDBACK, true);
       }
     }
   },
