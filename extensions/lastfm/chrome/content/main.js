@@ -78,7 +78,6 @@ Lastfm.onLoad = function() {
   // the currently playing element
   this._currently = document.getElementById('lastfmCurrently');
 
-
   // listen to events from our Last.fm service
   this._service.listeners.add(this);
 
@@ -167,12 +166,52 @@ Lastfm.onLoad = function() {
   this._username.value = this._service.username;
   this._password.value = this._service.password;
 
+  // create elements for the faceplate
+  var faceplateParent = document.getElementById('faceplate-tool-bar');
+  if (faceplateParent) {
+    this._faceplate = document.createElement('hbox');
+    this._faceplate.setAttribute('id', 'lastfmFaceplate');
+    faceplateParent.insertBefore(this._faceplate, faceplateParent.firstChild);
+    this._faceplateLove = document.createElement('image');
+    this._faceplateLove.setAttribute('id', 'lastfmFaceplateLove');
+    this._faceplateLove.setAttribute('mousethrough', 'never');
+    this._faceplateLove.setAttribute('tooltiptext',
+        this._strings.getString('lastfm.faceplate.love.tooltip'));
+    this._faceplateLove.addEventListener('click', function(event) {
+          if (Lastfm._service.loveTrack && Lastfm._service.love) {
+            /* if we have a loved track, then unlove */
+            Lastfm._service.loveBan(null, false);
+          } else {
+            /* otherwise, love */
+            Lastfm._service.loveBan(gPPS.currentGUID, true);
+          }
+        }, false);
+    this._faceplate.appendChild(this._faceplateLove);
+    this._faceplateBan = document.createElement('image');
+    this._faceplateBan.setAttribute('id', 'lastfmFaceplateBan');
+    this._faceplateBan.setAttribute('mousethrough', 'never');
+    this._faceplateBan.setAttribute('tooltiptext',
+        this._strings.getString('lastfm.faceplate.ban.tooltip'));
+    this._faceplateBan.addEventListener('click', function(event) {
+          if (Lastfm._service.loveTrack && !Lastfm._service.love) {
+            /* if we have a banned track, then unban */
+            Lastfm._service.loveBan(null, false);
+          } else {
+            /* otherwise, ban */
+            Lastfm._service.loveBan(gPPS.currentGUID, false);
+          }
+        }, false);
+    this._faceplate.appendChild(this._faceplateBan);
+  }
+
   // clear the login error message
   this.setLoginError(null);
   // update the ui with the should-scrobble state
   this.onShouldScrobbleChanged(this._service.shouldScrobble);
   // update the ui with the logged-in state
   this.onLoggedInStateChanged();
+  // update the ui with the love/ban state
+  this.onLoveBan();
 
   // if we have a username & password and we're scrobbling, try to log in
   if (this._service.username && this._service.password) {
@@ -350,6 +389,13 @@ Lastfm.updateStatus = function Lastfm_updateStatus() {
   }
   this.setStatusIcon(Icons[stateName]);
   this.setStatusTextId('lastfm.state.'+stateName);
+
+  if (stateName == 'logged_in') {
+    this._faceplate.removeAttribute('hidden');
+  } else {
+    this._faceplate.setAttribute('hidden', 'true');
+  }
+  dump('faceplate hidden: '+this._faceplate.getAttribute('hidden')+'\n');
 }
 
 // update the status icon's text
@@ -382,6 +428,16 @@ Lastfm.onErrorChanged = function Lastfm_onErrorChanged(aError) {
   dump('onErrorChanged('+aError+')\n');
   this.setLoginError(aError);
   this.updateStatus();
+}
+
+// Love & Ban support
+Lastfm.onLoveBan = function Lastfm_onLoveBan() {
+  if (this._service.loveTrack) {
+    // the current track is loved or banned
+    this._faceplate.setAttribute('loveban', this._service.love?'love':'ban');
+  } else {
+    this._faceplate.removeAttribute('loveban');
+  }
 }
 
 window.addEventListener("load", function(e) { Lastfm.onLoad(e); }, false);

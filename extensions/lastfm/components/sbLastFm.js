@@ -8,6 +8,8 @@ const Cu = Components.utils;
 // our annotations
 const ANNOTATION_SCROBBLED = 'http://www.songbirdnest.com/lastfm#scrobbled';
 const ANNOTATION_HIDDEN = 'http://www.songbirdnest.com/lastfm#hidden';
+const ANNOTATION_LOVE = 'http://www.songbirdnest.com/lastfm#love';
+const ANNOTATION_BAN = 'http://www.songbirdnest.com/lastfm#ban';
 
 // Last.fm API key, secret and URL
 const API_KEY = '4d5bce1e977549f10623b51dd0e10c5a';
@@ -211,6 +213,12 @@ function sbLastFm() {
   this.session = null;
   this.nowplaying_url = null;
   this.submission_url = null;
+
+  // love/ban state
+  // the mediaitem guid that is being loved or banned
+  this.loveTrack = null;
+  // loved (true) or banned (false)
+  this.love = false;
 
   // hard failure count
   this.hardFailures = 0;
@@ -595,7 +603,7 @@ function sbLastFm_apiCall(method, params, success, failure) {
   // sort them
   sorted_params.sort();
   // join them into a string
-  sorted_params.join('');
+  sorted_params = sorted_params.join('');
   // hash them with the "secret" to get the API signature
   post_params.api_sig = md5(sorted_params+API_SECRET);
 
@@ -648,16 +656,35 @@ function sbLastFm_scrobble() {
     // collect the playlist history entries into objects that can be sent
     // to last.fm's audioscrobbler api
     for (var i=entry_list.length-1; i>=0; i--) {
+      var rating = '';
+      if (entry_list[i].hasAnnotation(ANNOTATION_LOVE)) {
+        rating = 'L';
+      } else {
+        // this isn't allowed except for radio
+        // rating = 'B';
+      }
       scrobble_list.push(
           new PlayedTrack(entry_list[i].item,
-                          Math.round(entry_list[i].timestamp/1000)));
+                          Math.round(entry_list[i].timestamp/1000), rating));
     }
     // submit to the last.fm audioscrobbler api
     this.submit(scrobble_list,
       function success() {
-        // on success mark all these as scrobbled
+        // on success mark all these as scrobbled, love & ban as appropriate
         for (i=0; i<entry_list.length; i++) {
-          entry_list[i].setAnnotation(ANNOTATION_SCROBBLED, 'true');
+          let entry = entry_list[i];
+          entry.setAnnotation(ANNOTATION_SCROBBLED, 'true');
+          if (entry.hasAnnotation(ANNOTATION_LOVE)) {
+            self.apiCall('track.love', {
+                track: entry.item.getProperty(SBProperties.trackName),
+                artist: entry.item.getProperty(SBProperties.artistName)
+              }, function success(xml) { }, function failure(xhr) { });
+          } else if (entry.hasAnnotation(ANNOTATION_BAN)) {
+            self.apiCall('track.ban', {
+                track: entry.item.getProperty(SBProperties.trackName),
+                artist: entry.item.getProperty(SBProperties.artistName)
+              }, function success(xml) { }, function failure(xhr) { });
+          }
         }
         self.playcount += entry_list.length;
         self.listeners.each(function(l) { l.onProfileUpdated(); });
@@ -672,10 +699,32 @@ function sbLastFm_scrobble() {
 }
 
 
+// love and ban
+sbLastFm.prototype.loveBan =
+function sbLastFm_loveBan(aMediaItem, aLove) {
+  this.loveTrack = aMediaItem;
+  this.love = aLove;
+  this.listeners.each(function(l) { l.onLoveBan(); });
+}
+
 // sbIPlaybackHistoryListener
 sbLastFm.prototype.onEntriesAdded =
 function sbLastFm_onEntriesAdded(aEntries) {
   if (this.shouldScrobble) {
+    if (this.loveTrack) {
+      // if the track was loved or banned, mark that in the playback history
+      var self = this;
+      enumerate(aEntries.enumerate(),
+                function(item) {
+                  item.QueryInterface(Ci.sbIPlaybackHistoryEntry);
+                  if (item.item.guid == self.loveTrack) {
+                    // love or ban the track
+                    item.setAnnotation(self.love?ANNOTATION_LOVE:ANNOTATION_BAN,
+                      'true');
+                  }
+                });
+    }
+    // let's try to scrobble all the unscrobbled playback history entries
     this.scrobble();
   } else {
     // scrobbling is disabled, let's mark the added entries as not
@@ -708,12 +757,19 @@ function sbLastFm_observe(subject, topic, data) {
 // sbIPlaylistPlaybackListener
 sbLastFm.prototype.onTrackChange =
 function sbLastFm_onTrackChange(aItem, aView, aIndex) {
+  // reset the love/ban state
+  this.loveBan(null, false);
+
+  // send now playing info if appropriate
   if (this.shouldScrobble && this.loggedIn) {
     this.nowPlaying(new PlayedTrack(aItem));
   }
 }
 
-sbLastFm.prototype.onStop = function sbLastFm_onStop() { }
+sbLastFm.prototype.onStop = function sbLastFm_onStop() { 
+  // reset the love/ban state
+  this.loveBan(null, false);
+}
 sbLastFm.prototype.onBeforeTrackChange =
 function sbLastFm_onBeforeTrackChange(aItem, aView, aIndex) { }
 sbLastFm.prototype.onTrackIndexChange =

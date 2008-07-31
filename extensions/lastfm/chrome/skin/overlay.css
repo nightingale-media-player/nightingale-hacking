@@ -40,3 +40,24 @@
 #lastfmNextTrack, #lastfmNextTime {
   font-style: italic;
 }
+
+/* the faceplate */
+#lastfmFaceplate {
+  padding: 1px 0px 1px 0px;
+}
+#lastfmFaceplateLove {
+  list-style-image: url(love0.png);
+  width: 16px;
+  height: 16px;
+}
+#lastfmFaceplate[loveban=love] #lastfmFaceplateLove {
+  list-style-image: url(love1.png);
+}
+#lastfmFaceplateBan {
+  list-style-image: url(ban0.png);
+  width: 16px;
+  height: 16px;
+}
+#lastfmFaceplate[loveban=ban] #lastfmFaceplateBan {
+  list-style-image: url(ban1.png);
+}
