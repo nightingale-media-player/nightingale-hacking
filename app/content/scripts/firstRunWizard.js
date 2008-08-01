@@ -74,10 +74,18 @@ if (typeof(Cu) == "undefined")
 
 var firstRunWizard = {
   //
-  // First-run wizard fields.
+  // Public first-run wizard fields.
+  //
+  //   wizardElem               Wizard element.
+  //
+
+  wizardElem: null,
+
+
+  //
+  // Internal first-run wizard fields.
   //
   //   _initialized             True if these services have been initialized.
-  //   _wizardElem              Wizard element.
   //   _domEventListenerSet     Set of DOM event listeners.
   //   _restartWizard           True if the wizard needs to be restarted.
   //   _savedSettings           True if settings have been saved.
@@ -88,7 +96,6 @@ var firstRunWizard = {
   //
 
   _initialized: false,
-  _wizardElem: null,
   _domEventListenerSet: null,
   _restartWizard: false,
   _savedSettings: false,
@@ -128,7 +135,7 @@ var firstRunWizard = {
     }
 
     // Restart application as specified.
-    if (this._wizardElem.getAttribute("restartapp") == "true")
+    if (this.wizardElem.getAttribute("restartapp") == "true")
       restartApp();
 
     // Indicate that the wizard is complete and whether it should be restarted.
@@ -149,14 +156,14 @@ var firstRunWizard = {
 
     // Advance to post-finish pages if specified.  Return false to prevent
     // finish.
-    var currentPage = this._wizardElem.currentPage;
+    var currentPage = this.wizardElem.currentPage;
     if (currentPage.hasAttribute("postfinish")) {
       // Indicate post-finish state before switching pages.
       this._postFinish = true;
 
       // Switch to post-finish pages.
       var postFinishPageID = currentPage.getAttribute("postfinish");
-      this._wizardElem.goTo(postFinishPageID);
+      this.wizardElem.goTo(postFinishPageID);
 
       // Cancel finish.
       return false;
@@ -206,11 +213,11 @@ var firstRunWizard = {
     var keyCode = aEvent.keyCode;
 
     // Get the current page.
-    var currentPage = this._wizardElem.currentPage;
+    var currentPage = this.wizardElem.currentPage;
 
     // If the cancel button is disabled or hidden, block the escape key.
     if (keyCode == Ci.nsIDOMKeyEvent.DOM_VK_ESCAPE) {
-      var cancelButton = this._wizardElem.getButton("cancel");
+      var cancelButton = this.wizardElem.getButton("cancel");
       var hideWizardButton =
             cancelButton.getAttribute("hidewizardbutton") == "true";
       if (cancelButton.disabled || cancelButton.hidden || hideWizardButton) {
@@ -223,10 +230,10 @@ var firstRunWizard = {
     // and return keys.
     if ((keyCode == Ci.nsIDOMKeyEvent.DOM_VK_ENTER) ||
         (keyCode == Ci.nsIDOMKeyEvent.DOM_VK_RETURN)) {
-      var nextButton = this._wizardElem.getButton("next");
+      var nextButton = this.wizardElem.getButton("next");
       var hideNextButton =
             nextButton.getAttribute("hidewizardbutton") == "true";
-      var finishButton = this._wizardElem.getButton("finish");
+      var finishButton = this.wizardElem.getButton("finish");
       var hideFinishButton =
             finishButton.getAttribute("hidewizardbutton") == "true";
       if ((nextButton.disabled || nextButton.hidden || hideNextButton) &&
@@ -278,8 +285,8 @@ var firstRunWizard = {
         document.defaultView.close();
       }
     } else {
-      this._wizardElem.canAdvance = true;
-      this._wizardElem.advance();
+      this.wizardElem.canAdvance = true;
+      this.wizardElem.advance();
     }
   },
 
@@ -293,15 +300,8 @@ var firstRunWizard = {
     if (this._connectionErrorHandled)
       return;
 
-    // Set up the first-run connection wizard page to return to the current
-    // wizard page on continue.
-    var currentPageID = this._wizardElem.currentPage.getAttribute("pageid");
-    var firstRunConnectionPageElem =
-          document.getElementById("first_run_connection_page");
-    firstRunConnectionPageElem.setAttribute("next", currentPageID);
-
     // Go to the first-run wizard connection page.
-    this._wizardElem.goTo("first_run_connection_page");
+    this.wizardElem.goTo("first_run_connection_page");
 
     // A connection error has been handled.
     this._connectionErrorHandled = true;
@@ -320,7 +320,7 @@ var firstRunWizard = {
 
   update: function firstRunWizard_update() {
     // Get the current wizard page.
-    var currentPage = this._wizardElem.currentPage;
+    var currentPage = this.wizardElem.currentPage;
 
     // Set to mark first-run complete if showing welcome page.
     if (currentPage.id == "first_run_welcome_page")
@@ -335,19 +335,19 @@ var firstRunWizard = {
       var firstRunLocaleElem = document.getElementById("first_run_locale");
       if (firstRunLocaleElem.localeSwitchRequired) {
         // Switch the locale, but don't allow advancing.
-        this._wizardElem.canAdvance = false;
+        this.wizardElem.canAdvance = false;
         firstRunLocaleElem.switchLocale();
       } else {
-        this._wizardElem.canAdvance = true;
-        this._wizardElem.advance();
+        this.wizardElem.canAdvance = true;
+        this.wizardElem.advance();
       }
     }
 
     // Focus the next or finish buttons unless they're disabled or hidden.
-    var finishButton = this._wizardElem.getButton("finish");
+    var finishButton = this.wizardElem.getButton("finish");
     var hideFinishButton =
           finishButton.getAttribute("hidewizardbutton") == "true";
-    var nextButton = this._wizardElem.getButton("next");
+    var nextButton = this.wizardElem.getButton("next");
     var hideNextButton =
           nextButton.getAttribute("hidewizardbutton") == "true";
     if (!finishButton.hidden && !finishButton.disabled && !hideFinishButton)
@@ -373,7 +373,7 @@ var firstRunWizard = {
       return;
 
     // Get the wizard element.
-    this._wizardElem = document.getElementById("first_run_wizard");
+    this.wizardElem = document.getElementById("first_run_wizard");
 
     // Create a DOM event listener set.
     this._domEventListenerSet = new DOMEventListenerSet();
@@ -382,7 +382,7 @@ var firstRunWizard = {
     // handlers.
     var _this = this;
     var func = function(aEvent) { return _this.doQuit(aEvent); }
-    this._domEventListenerSet.add(this._wizardElem, "extra1", func, false);
+    this._domEventListenerSet.add(this.wizardElem, "extra1", func, false);
 
     // Services are now initialized.
     this._initialized = true;
@@ -407,7 +407,7 @@ var firstRunWizard = {
 
   _updateButtons: function firstRunWizard__updateButtons() {
     // Get the current wizard page.
-    var currentPage = this._wizardElem.currentPage;
+    var currentPage = this.wizardElem.currentPage;
 
     // Get the button hide and show settings.
     var hideBackButton = currentPage.getAttribute("hideback") == "true";
@@ -431,7 +431,7 @@ var firstRunWizard = {
     this._setShowButton("extra1", showQuitButton);
 
     // Set the quit button label.
-    var quitButton = this._wizardElem.getButton("extra1");
+    var quitButton = this.wizardElem.getButton("extra1");
     quitButton.label = SBString("first_run.quit");
   },
 
@@ -448,7 +448,7 @@ var firstRunWizard = {
     // Hide the button if specified to do so.  Use a "hidewizardbutton"
     // attribute with CSS to avoid conflicts with the wizard widget's use of the
     // button "hidden" attribute.
-    var button = this._wizardElem.getButton(aButtonID);
+    var button = this.wizardElem.getButton(aButtonID);
     if (aHide)
       button.setAttribute("hidewizardbutton", "true");
     else
@@ -466,7 +466,7 @@ var firstRunWizard = {
 
   _setShowButton: function firstRunWizard__setShowButton(aButtonID, aShow) {
     // Show button if specified to do so.
-    var button = this._wizardElem.getButton(aButtonID);
+    var button = this.wizardElem.getButton(aButtonID);
     button.hidden = !aShow;
   },
 
@@ -482,7 +482,7 @@ var firstRunWizard = {
 
     // Get all first-run wizard page elements.
     var firstRunWizardPageElemList =
-          DOMUtils.getElementsByAttribute(this._wizardElem,
+          DOMUtils.getElementsByAttribute(this.wizardElem,
                                           "firstrunwizardpage",
                                           "true");
 

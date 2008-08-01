@@ -146,9 +146,12 @@
    * to the wizard configuration pages.
    -->
 
-  <!-- Connection page. -->
+  <!-- Connection page.  Set next back to connection page to enable the next -->
+  <!-- button.  The widget implementation will go back to previous page when -->
+  <!-- the next button is pressed.                                           -->
   <wizardpage id="first_run_connection_page"
               pageid="first_run_connection_page"
+              next="first_run_connection_page"
               label="&first_run.title;"
               hideback="true"
               onpageshow="firstRunWizard.doPageShow();">

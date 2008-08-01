@@ -41,6 +41,16 @@
 
 //------------------------------------------------------------------------------
 //
+// First-run wizard EULA widget imported services.
+//
+//------------------------------------------------------------------------------
+
+// Songbird imports.
+Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+
+
+//------------------------------------------------------------------------------
+//
 // First-run wizard connection widget services.
 //
 //------------------------------------------------------------------------------
@@ -65,9 +75,13 @@ firstRunConnectionSvc.prototype = {
   // Widget services fields.
   //
   //   _widget                  First-run wizard connection widget.
+  //   _domEventListenerSet     Set of DOM event listeners.
+  //   _wizardPageElem          First-run wizard EULA widget wizard page element.
   //
 
   _widget: null,
+  _domEventListenerSet: null,
+  _wizardPageElem: null,
 
 
   //----------------------------------------------------------------------------
@@ -81,6 +95,17 @@ firstRunConnectionSvc.prototype = {
    */
 
   initialize: function firstRunConnectionSvc_initialize() {
+    // Get the first-run wizard page element.
+    this._wizardPageElem = this._widget.parentNode;
+
+    // Listen for page advanced events.
+    this._domEventListenerSet = new DOMEventListenerSet();
+    var _this = this;
+    var func = function() { _this._doPageAdvanced(); };
+    this._domEventListenerSet.add(this._wizardPageElem,
+                                  "pageadvanced",
+                                  func,
+                                  false);
   },
 
 
@@ -89,8 +114,35 @@ firstRunConnectionSvc.prototype = {
    */
 
   finalize: function firstRunConnectionSvc_finalize() {
+    // Remove DOM event listeners.
+    if (this._domEventListenerSet) {
+      this._domEventListenerSet.removeAll();
+    }
+    this._domEventListenerSet = null;
+
     // Clear object fields.
     this._widget = null;
+    this._wizardPageElem = null;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Widget event handling services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Handle a wizard page advanced event.
+   */
+
+  _doPageAdvanced: function firstRunConnectionSvc__doPageAdvanced() {
+    // Rewind back to the wizard page that encountered a connection error.
+    // Advance is enabled so that the wizard next button is displayed, but
+    // rewind is used so that the wizard connection page isn't in the wizard
+    // page history.
+    firstRunWizard.wizardElem.rewind();
+    return false;
   }
 }
 
