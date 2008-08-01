@@ -55,7 +55,7 @@
     <!-- menubar on osx -->
     <menubar id="main-menubar" hidden="true" oncommand="onMenu(event.target)" mousethrough="never"/>
     
-    <hbox align="center">
+    <hbox align="center" class="generic-bar">
       <menulist id="playable_list" 
         value="1" 
         x_editable="false" 
@@ -70,7 +70,7 @@
         </menupopup>
       </menulist>
     </hbox>
-    <hbox align="center">
+    <hbox align="center" class="generic-bar">
       <label id="jumpto_search_label"  value="&jumptofile.search;" />
       <textbox  id="jumpto.textbox" flex="1" onkeypress="onSearchKeypress(event);" />
     </hbox>
