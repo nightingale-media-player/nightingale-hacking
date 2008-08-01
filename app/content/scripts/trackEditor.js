@@ -42,6 +42,7 @@ if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
 Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
@@ -137,7 +138,7 @@ TrackEditorState.prototype = {
         
         // TODO do we want to handle 200,000 selected tracks?
         for each (var item in this._selectedItems) {
-          if (item.userEditable) {
+          if (LibraryUtils.canEditMetadata(item)) {
             this._writableItemCount++;
           }
         }
@@ -988,7 +989,7 @@ var TrackEditor = {
     var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Ci.nsIMutableArray);
     for (var i = 0; i < items.length; i++) {
-      if (needsWriting[i] && items[i].userEditable) {
+      if (needsWriting[i] && LibraryUtils.canEditMetadata(items[i])) {
         mediaItemArray.appendElement(items[i], false);
       }
     }

@@ -552,3 +552,26 @@ LibraryUtils.MediaListEnumeratorToArray.prototype = {
   }
 }
 
+/**
+ * This function is a big ugly hack until we get x-mtp channel working
+ * We're punting for now and making mtp item editable, but they aren't
+ * as far as the track editor is concerned.
+ * presence of the device ID property means we're dealing with an MTP
+ * device
+ * TODO: XXX Remove this function when x-mtp channel lands and replace
+ * it's calls with item.userEditable
+ */
+LibraryUtils.canEditMetadata = function (aItem) {
+  var editable = aItem.userEditable;
+  if (editable) { 
+    try {
+      var contentSrc = aItem.contentSrc;
+      if (contentSrc.scheme == "x-mtp")
+        editable = false;
+    } catch (e) {
+      // Errors means it's not x-mtp and edtible
+    }
+  }
+  return editable;
+}
+ 

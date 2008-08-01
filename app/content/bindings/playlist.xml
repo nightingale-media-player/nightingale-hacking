@@ -130,10 +130,11 @@
   }
   if (typeof(SBJobUtils) == "undefined") {
     Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
-    if (!ColumnSpecParser)
+    if (!SBJobUtils)
       throw new Error("Import of SBJobUtils module failed");
   }
-
+  Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+  
   // Attach event handler closures
   var self = this;
 
@@ -731,7 +732,7 @@
     col = this.edit_col;
     
   var item = this.mediaListView.getItemByIndex(row);
-  if (!item.userEditable) {
+  if (!LibraryUtils.canEditMetadata(item)) {
     // read only mode, don't start
     return;
   }
