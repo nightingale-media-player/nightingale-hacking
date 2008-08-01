@@ -418,6 +418,9 @@
       <key id="key_fullZoomReset"   key="&fullZoomResetCmd.commandkey;"    command="cmd_fullZoomReset"   modifiers="accel"/>
 
       <key id="key_viewSource" key="&menu.viewpagesource.key;" command="View:PageSource" modifiers="accel,shift"/>
+	  
+      <key id="key_bookmark" key="&bookmarkPage.key;" command="cmd_bm_newbookmark" modifiers="accel"/>
+      <key id="key_subscribe" key="&bookmarkPage.key;" command="cmd_bm_newsubscription" modifiers="accel,shift"/>
 
       <key id="key_reload" key="&reloadCmd.commandkey;" command="Browser:Reload" modifiers="accel" />
       <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
