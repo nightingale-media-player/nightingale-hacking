@@ -172,7 +172,7 @@ sbMetadataImageScanner.prototype = {
     var mimeService = Cc["@mozilla.org/mime;1"]
                         .getService(Ci.nsIMIMEService);
     var mimeInfo = mimeService.getFromTypeAndExtension(aMimeType, "");
-    if (!mimeInfo.getFileExtensions.hasMore()) {
+    if (!mimeInfo.getFileExtensions().hasMore()) {
       this._logError("Unable to get extension for image data.");
       return null;
     }
@@ -221,6 +221,7 @@ sbMetadataImageScanner.prototype = {
    *        it saves it to a file and sets the primaryImageURL property to that
    *        file.
    * \param aMediaItem - Item to search for an image in
+   * \return True if an image was found, False if the item has no image.
    */
   _findImageForItem: function (aMediaItem) {
     // First check if this is a valid local file.
@@ -231,25 +232,25 @@ sbMetadataImageScanner.prototype = {
       // if the URL isn't valid, fail
       if (!contentURI) {
         this._logError("Unable to find image for bad file: " + contentURL);
-        return;
+        return false;
       }
 
       // if the URL isn't local, fail
       if ( !(contentURI instanceof Ci.nsIFileURL) ) {
         this._logError("Unable to get image from non-local file: " +
                        contentURL);
-        return;
+        return false;
       }
     } catch (err) {
       this._logError("Unable to find image for: " + contentURL + " - " + err);
-      return;
+      return false;
     }
    
     this._debug("Getting handler for mediaItem: " + contentURI.spec);
     var handler = this._metadataManager.getHandlerForMediaURL(contentURI.spec);
     if (!handler) {
       this._debug("Unable to get handler for: " + contentURI.spec);
-      return;
+      return false;
     }
 
     try {
@@ -278,6 +279,7 @@ sbMetadataImageScanner.prototype = {
           this._debug("Saved data to file: " + outFileLocation);
           aMediaItem.setProperty(SBProperties.primaryImageURL,
                                  outFileLocation);
+          return true;
         } else {
           this._logError("Unable to save file: [" + outFileLocation + "]");
         }
@@ -288,6 +290,8 @@ sbMetadataImageScanner.prototype = {
       this._debug("Unable to get image from metadata - for item at: " +
                   contentURI.spec + " - " + err );
     }
+    
+    return false;
   },
   
   /**
@@ -295,6 +299,7 @@ sbMetadataImageScanner.prototype = {
    *        finds one it saves it to a file and sets the primaryImageURL
    *        property to that file.
    * \param aMediaItem - Item to search for an image in
+   * \return True if an image was found, False if the item has no image.
    */
   _getCoverForItem: function (aMediaItem) {
     // Check if there is no current cover
@@ -314,10 +319,10 @@ sbMetadataImageScanner.prototype = {
         var albumName = aMediaItem.getProperty(SBProperties.albumName);
         var artistName = aMediaItem.getProperty(SBProperties.artistName);
         this._debug("Next item has Artist=" + artistName +
-                    ", Album " + albumName);
+                    ", Album=" + albumName);
         if ( artistName && albumName ) {
           aMediaItem.setProperty(PROP_LAST_COVER_SCAN, timeNow);
-          this._findImageForItem(aMediaItem);
+          return this._findImageForItem(aMediaItem);
         } else {
           this._debug("Missing Artist or Album from item");
         }
@@ -325,8 +330,13 @@ sbMetadataImageScanner.prototype = {
         this._debug("Not ready to rescan this item for images.");
       }
     } else {
-      this._debug("This item already has album art!");
+      // Since we are sorting by primaryImageURL (artwork) if we encounter an
+      // item with artwork then we are done.
+      this._debug("This item already has album art, this means we are done.");
+      this._turnOffTimer();
     }
+    
+    return false;
   },
   /*********************************
    * End of metadata specific functions
@@ -349,10 +359,16 @@ sbMetadataImageScanner.prototype = {
       return;
     }
 
-    var nextItem = this._mediaListView.getItemByIndex(this._itemViewIndex++);
+    // Since we are sorting by the primaryImageURL (artwork) the items will be
+    // reordered every time an items pirmaryImageURL property changes. So here
+    // we take the next top item that we have not already scanned.
+    var nextItem = this._mediaListView.getItemByIndex(this._itemViewIndex);
     if (nextItem) {
       this._debug("Getting next items cover");
-      this._getCoverForItem(nextItem);
+      if (!this._getCoverForItem(nextItem)) {
+        // Only increment the index if the item does not have an image
+        this._itemViewIndex++;
+      }
     }
   },
 
@@ -368,7 +384,6 @@ sbMetadataImageScanner.prototype = {
     var propArray =
         Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
           .createInstance(Ci.sbIMutablePropertyArray);
-    propArray.strict = false;
     propArray.appendProperty(SBProperties.primaryImageURL, "a");
     this._mediaListView.setSort(propArray);
 
