@@ -38,5 +38,11 @@ SONGBIRD_TESTS = $(srcdir)/head_songbird.js \
                  $(srcdir)/test_timingservice.js \
                  $(NULL)
 
+manual_copy_step : 
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_TESTSDIR)/$(SONGBIRD_TEST_COMPONENT)
+	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_TESTS) $(SONGBIRD_TESTSDIR)
+
+.PHONY : manual_copy_step
+
 include $(topsrcdir)/build/rules.mk
 

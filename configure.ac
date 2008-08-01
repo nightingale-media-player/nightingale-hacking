@@ -40,6 +40,13 @@ OBJDIRNAME="compiled"
 DISTDIRNAME="dist"
 SDKDIRNAME="sdk"
 
+#
+# Defaults, we should probably add more as time permits.
+#
+
+SB_ENABLE_TEST_HARNESS=
+
+
 AC_SUBST(OBJDIRNAME)
 AC_SUBST(DISTDIRNAME)
 AC_SUBST(SDKDIRNAME)
@@ -108,6 +115,7 @@ AC_ARG_ENABLE(nightly,
               [  --enable-nightly        whether or not to create an nightly build (disabled by default)])
 if test "$enable_nightly" == "yes"; then
   SONGBIRD_NIGHTLY=1
+  SB_ENABLE_TEST_HARNESS=1
 fi
 AC_SUBST(SONGBIRD_NIGHTLY)
 
@@ -119,8 +127,25 @@ AC_ARG_ENABLE(tests,
               [  --enable-tests          whether or not to build tests (defaults: debug:enabled rel:disabled)])
 if test "$enable_tests" == "yes"; then
   SB_ENABLE_TESTS=1
+  SB_ENABLE_TEST_HARNESS=1
 fi
 AC_SUBST(SB_ENABLE_TESTS)
+
+#
+# Check for --enable-test-harness
+#
+
+AC_ARG_ENABLE(test-harness,
+              [  --enable-test-harness   whether or not to build the test harness (defaults to on when tests are enabled)])
+if test "$enable_test_harness" == "yes"; then
+  SB_ENABLE_TEST_HARNESS=1
+fi
+
+if test "$enable_test_harness" == "no"; then
+  SB_ENABLE_TEST_HARNESS=
+fi
+
+AC_SUBST(SB_ENABLE_TEST_HARNESS)
 
 #
 #  Check for --enable-jemalloc

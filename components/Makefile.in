@@ -61,8 +61,7 @@ SUBDIRS = addonmetadata \
           mediapages \
           $(NULL)
 
-# XXX make me a configure option
-ifdef SB_ENABLE_TESTS
+ifeq (1,$(SB_ENABLE_TEST_HARNESS))
 SUBDIRS += testharness
 endif
 
