@@ -56,6 +56,7 @@
  
  onload="gMiniplayer.onLoad();"
  onunload="gMiniplayer.onUnload();"
+ onclose="quitApp();"
  onkeypress="gMiniplayer.onKeypress(event);"
  ondragover="nsDragAndDrop.dragOver( event, gMiniplayer );"
  ondragdrop="nsDragAndDrop.drop( event, gMiniplayer );"
