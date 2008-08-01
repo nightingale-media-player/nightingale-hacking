@@ -35,7 +35,7 @@
 
           
   <binding id="sb-rating">
-    <content>
+    <content value="0">
         <xul:hbox class="rating-box" flex="1">
         <xul:spacer flex="1"/>
           <xul:stack mousethrough="never">
@@ -50,7 +50,6 @@
       <constructor>
         <![CDATA[
           // assign a default value
-          this.value = 0;
           this.oldValue = 0;
           this.lastStar = -1;
         ]]>
@@ -294,6 +293,15 @@
           var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                               .getService(Components.interfaces.sbIPlaylistPlayback);
           pps.addListener(this._playbackListener);
+          
+          if (pps.playing) {
+            // read data from the currently playing item
+            var view = pps.playingView;
+            var item = view.getItemByIndex(pps.currentIndex);
+            if (item) {
+              this.onTrackChange(item, view.mediaList);
+            }
+          }
         ]]>
       </constructor>
       <destructor>
