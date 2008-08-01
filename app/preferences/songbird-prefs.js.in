@@ -375,9 +375,6 @@ pref("browser.urlbar.search.timeout", 50);
 
 pref("browser.dictionaries.download.url", "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/firefox/%VERSION%/dictionaries/");
 
-// Disable feedback for the 0.7pre trunk builds:
-pref("feedback.disabled", true);
-
 // Default the player controls to the bottom
 pref("songbird.playercontrol.location", "bottom");
 
