@@ -505,18 +505,15 @@ function SBScanMedia( aParentWindow, aScanDirectory )
     const nsIFilePicker = Components.interfaces.nsIFilePicker;
     const CONTRACTID_FILE_PICKER = "@mozilla.org/filepicker;1";
     var fp = Components.classes[CONTRACTID_FILE_PICKER].createInstance(nsIFilePicker);
-    var welcome = SBString("faceplate.welcome", "Welcome", theSongbirdStrings);
     var scan = SBString("faceplate.scan", "Scan", theSongbirdStrings);
+    fp.init( window, scan, nsIFilePicker.modeGetFolder );
     if (getPlatformString() == "Darwin") {
-      fp.init( window, scan, nsIFilePicker.modeGetFolder );
       var defaultDirectory =
       Components.classes["@mozilla.org/file/directory_service;1"]
                 .getService(Components.interfaces.nsIProperties)
                 .get("Home", Components.interfaces.nsIFile);
       defaultDirectory.append("Music");
       fp.displayDirectory = defaultDirectory;
-    } else {
-      fp.init( window, welcome + "\n\n" + scan, nsIFilePicker.modeGetFolder );
     }
     var res = fp.show();
     if ( res != nsIFilePicker.returnOK )
