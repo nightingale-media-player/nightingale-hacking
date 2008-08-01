@@ -19,10 +19,6 @@ pref("accessibility.typeaheadfind.timeout", 5000);
 pref("accessibility.typeaheadfind.flashBar", 1);
 pref("accessibility.typeaheadfind.linksonly", false);
 
-// TEMP: While RubberDucky is still being build, prevent it from being shown.
-pref("songbird.feather.rubberducky/0.2.chrome_3A__2F__2F_songbird_2F_content_2F_feathers_2F_basic_2D_layouts_2F_xul_2F_mainplayer_2E_xul.seen", true);
-pref("songbird.feather.rubberducky/0.2.chrome_3A__2F__2F_songbird_2F_content_2F_feathers_2F_basic_2D_layouts_2F_xul_2F_miniplayer_2E_xul.seen", true);
-
 // Dump the current ram footprint when minimized.
 pref("config.trim_on_minimize", true);
 
