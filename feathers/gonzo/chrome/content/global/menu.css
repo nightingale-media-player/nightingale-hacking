@@ -16,14 +16,13 @@ menu[disabled="true"],
 menuitem[disabled="true"],
 menu[_moz-menuactive="true"][disabled="true"],
 menuitem[_moz-menuactive="true"][disabled="true"] {
-  font-style:italic;
+/*  font-style:italic;*/
   background-color:transparent !important;
 }
 menu[disabled="true"] > label,
 menuitem[disabled="true"] > label,
 menu[_moz-menuactive="true"][disabled="true"] > label,
 menuitem[_moz-menuactive="true"][disabled="true"] > label {
-  color:gray !important;
 }
 
 .menu-text,
@@ -33,7 +32,7 @@ menuitem[_moz-menuactive="true"][disabled="true"] > label {
 }
 
 .menu-description {
-  font-style: italic;
+/*  font-style: italic;*/
   -moz-margin-start: 1ex !important;
 }
 
@@ -101,8 +100,7 @@ menuitem[type="radio"] > .menu-iconic-left {
   margin:0 0 0 0 !important;
 }
 #main-menubar > menu > .menubar-text:hover {
-  background-color:rgb(200,200,200) !important;
-  color:red;
+  /*no work*/
 }
 
 #main-menubar > menu[_moz-menuactive="true"][open="true"] {
@@ -117,12 +115,6 @@ padding:0px;
 margin:0px;
 }
 
-popup,
-menupopup {
-  /*  
-TODO window/linux only
-border:1px solid gray;*/
-}
 
 window[platform="Darwin"] popup,
 window[platform="Darwin"] menupopup {

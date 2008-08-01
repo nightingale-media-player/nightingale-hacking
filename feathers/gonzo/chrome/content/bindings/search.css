@@ -81,7 +81,6 @@ background-color:rgb(220,220,220);
 .searchbar-engine-button:active,
 .searchbar-engine-button[open="true"] {
   background-position:center -600px;
-  border:2px solid red !important;
 }
 
 .searchbar-textbox {

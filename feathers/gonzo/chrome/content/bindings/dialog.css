@@ -59,7 +59,8 @@ margin:0;}
   max-height:22px !important;
 }
 .dialog-button-box,
-.wizard-buttons {
+.wizard-buttons,
+.paneDeckContainer+hbox{
   background-image: url(chrome://songbird/skin/window/bg-button-box.png);
   background-repeat:repeat-x;
   background-position:center top;

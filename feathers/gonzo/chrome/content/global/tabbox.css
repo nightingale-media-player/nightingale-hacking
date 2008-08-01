@@ -143,7 +143,9 @@ tab:hover {
 }
 tab[selected="true"] {
   background-position:center 100px;
-  background-color:white;
+  background-image: url('chrome://songbird/skin/base-elements/bg-generic-header.png');
+  background-position:center 0px;
+  background-repeat:repeat-x;
   border:1px solid gray;
 }
 

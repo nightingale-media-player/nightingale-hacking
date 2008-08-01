@@ -67,6 +67,12 @@ window {
 window[platform=Darwin] {
   border:none !important;
 }
+window:not([platform=Darwin]) menupopup,
+window:not([platform=Darwin]) popup {
+  border:1px solid gray;
+}
+
+
 #sb-sys-title-title {
   padding:1px 5px 2px 5px !important;
   font-weight:bold;
@@ -304,6 +310,9 @@ treecolpicker {
   background-image: url('chrome://songbird/skin/base-elements/bg-table-header.png');
   background-position:center 0px;
   background-repeat:repeat-x;
+/** TODO
+  border-bottom:1px solid gray;
+**/
 }
 treecol[sortDirection] {
   background-position:center -80px;
@@ -1211,10 +1220,10 @@ DIALOGS
   see: bug 6399
  */
 #mainplayer:not([platform=Darwin]),
-dialog:not([platform=Darwin])
-{
+dialog:not([platform=Darwin]) {
 
 }
+
 
 dialog[platform] {
   border:3px solid black;
@@ -1222,14 +1231,13 @@ dialog[platform] {
   -moz-border-right-colors:gray transparent gray;
   -moz-border-bottom-colors:gray transparent gray;
   -moz-border-left-colors:gray transparent gray;
-  background-image: url(chrome://songbird/skin/window/bg-title-bar-resizer.png);
+/*  background-image: url(chrome://songbird/skin/window/bg-title-bar-resizer.png);*/
   background-repeat:repeat-x;
   background-position:center 1px;
-  background-color:rgb(200,200,200);
 }
 dialog[platform='Darwin'] {
   border:none !important;
-song}
+}
 
 /*prefwindow*/
 .windowDialog
@@ -1240,7 +1248,6 @@ song}
 .dialog-content-box {
   margin: 0px !important;
   padding: 0px !important;
-  background-color:rgb(250,250,250);
 }
 
 dialog:root[platform=Darwin] .dialog-content-box
@@ -1261,31 +1268,21 @@ PREFERENCES
 {
 }
 
-#viewGroup,
-#progressBox
-{
-}
-
 #viewGroup radio:hover {
   background:transparent !important;
 }
 
 /* Extensions */
 
-#extensionsBox > richlistbox
-{
-  border: none !important;
-}
 
-#extensionsBox > richlistbox richlistitem {
-  border-bottom:none !important;
+#extensionsBox {
+  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
 }
-#extensionsBox > richlistbox richlistitem+richlistitem {
-  border-top:1px solid gray !important;
+#extensionsBox richlistitem {
+  background-color:white;
 }
-#extensionsView:focus > richlistitem[selected="true"]
-{
-  background-image: none !important;
+#extensionsBox richlistitem[hidden="false"]:last-child {
+  margin-bottom:16px;
 }
 
 label.addonName,
@@ -1311,7 +1308,6 @@ ERRORS
 html|*.error-box,
 groupbox.error-box > .groupbox-body
 {
-  border: 1px solid red;
 }
 
 html|*.error-text,
@@ -1670,16 +1666,14 @@ treecol:last-child {
 treechildren#trDOMTreeBody::-moz-tree-row( selected ) {
 }
 
-treechildren#trDOMTreeBody::-moz-tree-cell-text(ELEMENT_NODE)
-{
-  color:rgb(40,40,40) !important;
+treechildren#trDOMTreeBody::-moz-tree-cell-text(ELEMENT_NODE),
+treechildren#trDOMTreeBody::-moz-tree-cell-text(ELEMENT_NODE selected) {
+  color:rgb(40,40,40);
 }
-treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous)
+treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous),
+treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous selected)
 {
   color: red !important;
-}
-treechildren#trDOMTreeBody::-moz-tree-cell-text( selected )
-{
 }
 
 
@@ -2369,9 +2363,11 @@ richlistbox {
   -moz-box-pack:center;
   border:none;
   -moz-border-radius:0px !important;
-    background-color:rgb(225,225,225);
   padding:6px 6px 0px 6px;
-  
+  background-color: rgb(220,220,220);
+  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png') !important;
+  background-repeat:repeat-x;
+  background-position:left top;
 }
 #extensionsView {
   margin:0px;
@@ -2391,6 +2387,9 @@ richlistbox {
 }
 #viewGroup > radio[selected="true"] {
   background-color:white !important;
+  background-image: url('chrome://songbird/skin/base-elements/bg-generic-header.png') !important;
+  background-position:center 0px;
+  background-repeat:repeat-x;
   border:1px solid gray !important;
   border-bottom:1px solid rgb(200,200,200) !important;
 }
@@ -2504,5 +2503,8 @@ wizard {
   width:7px !important;
   padding-right:2px;
 }
+
+
+
 
 

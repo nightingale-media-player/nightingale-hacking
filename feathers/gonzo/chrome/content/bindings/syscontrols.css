@@ -328,10 +328,12 @@ border-right:1px solid gray;
 .sb-sys-outer-frame-resizer-righttop,
 .sb-sys-outer-frame-resizer-lefttop {
     min-height:22px;
+  background-color:rgb(200,200,200);
+  /*
   background-image: url(chrome://songbird/skin/window/bg-title-bar-resizer.png);
   background-repeat:no-repeat;
   background-position:center top;
-  
+  */
     
 }
 .sb-sys-outer-frame-resizer-bottomleft {
@@ -347,7 +349,7 @@ border-bottom:1px solid gray;
 border-right:1px solid gray;
 border-bottom:1px solid gray;
   background-image: url(chrome://songbird/skin/window/bg-resizer-bottom-corner.png);
-    background-repeat:no-repeat;
+  background-repeat:no-repeat;
   background-position:right top;
 }
 

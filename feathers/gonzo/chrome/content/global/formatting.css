@@ -131,21 +131,15 @@ description, label {
 
 /* class for text with a 'link' appearance */
 .text-link {
-  color:blue !important;
-  text-decoration:underline;
-}
-
-.text-link:focus {
-}
-
-.text-link:hover {
+  color:#1694d9;
+  outline:0;
   cursor:pointer;
+  text-decoration:none;
+}
+.text-link:hover {
+  text-decoration:underline;
 } 
-
 .text-link:hover:active {
-  color:red;
 } 
-
 .text-link[visited="true"] {
-  color:purple;
 }

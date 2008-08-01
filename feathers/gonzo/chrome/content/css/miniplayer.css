@@ -374,14 +374,20 @@ stack.sb-player-volume-slider {
 
 resizer {
   min-width:3px;
-  background-color:white;
-  border:1px solid black;
+  background-color:rgb(200,200,200);
+  border:1px solid gray;
 }
 
 window[platform=Darwin] resizer {
   display:none !important;
 }
 
+#miniplayer_resizer_left {
+  cursor: w-resize;
+}
+#miniplayer_resizer_right {
+  cursor: e-resize;
+}
 
 #control_buttons_box > .sb-player-button {
   margin:0px !important;
@@ -398,4 +404,22 @@ sb-nowplaying-rating {
 
 #faceplate-tool {
   margin-left:2px;
+}
+
+
+
+
+
+sb-sys-close-button.mini {
+  list-style-image: url('chrome://songbird/skin/mini-player/button-close.png');
+  -moz-image-region: rect(0px 12px 12px 0px);
+}
+sb-sys-close-button:hover {
+  -moz-image-region: rect(12px 12px 24px 0px);
+}
+sb-sys-close-button:active {
+  -moz-image-region: rect(24px 12px 36px 0px);
+}
+sb-sys-close-button[disabled="true"] {
+  -moz-image-region: rect(36px 12px 48px 0px) !important;
 }
