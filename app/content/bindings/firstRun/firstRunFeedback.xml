@@ -88,7 +88,7 @@
         </xul:vbox> <!-- options_box -->
 
         <!-- E-mail box. -->
-        <xul:vbox anonid="email_box" class="sb-first-run-feedback-email-box">
+        <xul:groupbox anonid="email_box" class="sb-first-run-feedback-email-box">
 
           <!-- E-mail header. -->
           <xul:label class="sb-first-run-header"
@@ -103,7 +103,7 @@
             class="sb-first-run-feedback-email-textbox"
             emptytext="&first_run.feedback.email.textbox.emptytext;"/>
 
-        </xul:vbox>
+        </xul:groupbox>
 
       </xul:vbox> <!-- container_box -->
 
