@@ -544,12 +544,18 @@
 <!ENTITY first_run.add_ons.loading.label     "Retrieving recommended add-ons.">
 <!ENTITY first_run.add_ons.load_failed.label "Unable to retrieve recommended add-ons.">
 
+<!-- First-run connection entities. -->
+<!ENTITY first_run.connection.header.label         "&brandShortName; Cannot Connect to the Internet">
+<!ENTITY first_run.connection.description          "Check your Connection Settings or Continue with the Setup assistant.">
+<!ENTITY first_run.connection.settings.button      "Connection Settings...">
+<!ENTITY first_run.connection.settings.description "Is your computer or network protected by a firewall or proxy? Fixing incorrect Connection Settings can help solve common network problems.">
+
 <!-- First-run eula entities. -->
 <!ENTITY first_run.eula.header.label          "License Agreement">
 <!ENTITY first_run.eula.accept_checkbox.label "I have read and accepted the terms of this license.">
 
 <!-- First-run feedback entities. -->
-<!ENTITY first_run.feedback.header.label            "Help Make Songbird Better">
+<!ENTITY first_run.feedback.header.label            "Help Make &brandShortName; Better">
 <!ENTITY first_run.feedback.description             "Would you help us make &brandShortName; better by sending us feedback in the form of anonymous metrics on how you use the application?">
 <!ENTITY first_run.feedback.metrics.label           "Collect and send my metrics to the &brandShortName; team">
 <!ENTITY first_run.feedback.metrics.description     "Metrics are completely anonymous and no personal information is collected.">

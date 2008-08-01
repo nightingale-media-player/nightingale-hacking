@@ -140,6 +140,26 @@
 
 
   <!--
+   * Non-sequential pages.
+   *
+   *   The following pages are presented out of sequence but can navigate back
+   * to the wizard configuration pages.
+   -->
+
+  <!-- Connection page. -->
+  <wizardpage id="first_run_connection_page"
+              pageid="first_run_connection_page"
+              label="&first_run.title;"
+              hideback="true"
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-connection
+      id="first_run_connection"
+      class="first-run-wizard-page"
+      firstrunwizardpage="true"/>
+  </wizardpage>
+
+
+  <!--
    * Post-finish pages.
    *
    *   The following pages are presented after the wizard configuration is

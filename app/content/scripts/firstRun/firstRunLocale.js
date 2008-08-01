@@ -298,8 +298,16 @@ firstRunLocaleSvc.prototype = {
     // If the locales bundle data load failed, send an event and do nothing
     // more.
     if (!this._localesBundleDataLoadSucceeded) {
+      // Send an event.
       this._widget._localeSwitchSucceeded = false;
       this._dispatchEvent(this._widget, "localeswitchcomplete");
+
+      // Handle connection errors.
+      //XXXeps ideally, we wouldn't handle non-connection errors as connection
+      //XXXeps errors.
+      firstRunWizard.handleConnectionError();
+
+      // Do nothing more.
       return;
     }
 

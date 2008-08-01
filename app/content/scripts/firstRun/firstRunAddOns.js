@@ -296,6 +296,14 @@ firstRunAddOnsSvc.prototype = {
     // Select the panel.
     var statusDeckElem = this._getElement("status_deck");
     statusDeckElem.selectedPanel = selectedPanel;
+
+    // Handle any connection errors.
+    //XXXeps ideally, we wouldn't handle non-connection errors as connection
+    //XXXeps errors.
+    if (this._addOnsBundleDataLoadComplete &&
+        !this._addOnsBundleDataLoadSucceeded) {
+      firstRunWizard.handleConnectionError();
+    }
   },
 
 

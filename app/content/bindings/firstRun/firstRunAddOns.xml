@@ -95,19 +95,19 @@
 
           <xul:box anonid="no_status"/>
 
-          <xul:hbox anonid="add_ons_loading_status"
-                    class="sb-first-run-add-ons-status-text-box">
+          <xul:groupbox anonid="add_ons_loading_status"
+                        class="sb-first-run-add-ons-status-text-box">
             <xul:image class="sb-first-run-add-ons-loading-image"/>
             <xul:label value="&first_run.add_ons.loading.label;"/>
-          </xul:hbox>
+          </xul:groupbox>
 
           <xul:richlistbox anonid="add_ons_list"
                            class="sb-first-run-add-ons-listbox"/>
 
-          <xul:hbox anonid="add_ons_load_failed_status"
-                    class="sb-first-run-add-ons-status-text-box">
+          <xul:groupbox anonid="add_ons_load_failed_status"
+                        class="sb-first-run-add-ons-status-text-box">
             <xul:label value="&first_run.add_ons.load_failed.label;"/>
-          </xul:hbox>
+          </xul:groupbox>
 
         </xul:deck>
 

@@ -84,6 +84,7 @@ var firstRunWizard = {
   //   _postFinish              True if wizard is in the post-finish pages.
   //   _markFirstRunComplete    True if first-run should be marked as complete
   //                            when wizard exits.
+  //   _connectionErrorHandled  True if a connection error has been handled.
   //
 
   _initialized: false,
@@ -93,6 +94,7 @@ var firstRunWizard = {
   _savedSettings: false,
   _postFinish: false,
   _markFirstRunComplete: false,
+  _connectionErrorHandled: false,
 
 
   //----------------------------------------------------------------------------
@@ -279,6 +281,30 @@ var firstRunWizard = {
       this._wizardElem.canAdvance = true;
       this._wizardElem.advance();
     }
+  },
+
+
+  /**
+   * Handle internet connection errors.
+   */
+
+  handleConnectionError: function firstRunWizard_handleConnectionError() {
+    // Only handle connection errors once.
+    if (this._connectionErrorHandled)
+      return;
+
+    // Set up the first-run connection wizard page to return to the current
+    // wizard page on continue.
+    var currentPageID = this._wizardElem.currentPage.getAttribute("pageid");
+    var firstRunConnectionPageElem =
+          document.getElementById("first_run_connection_page");
+    firstRunConnectionPageElem.setAttribute("next", currentPageID);
+
+    // Go to the first-run wizard connection page.
+    this._wizardElem.goTo("first_run_connection_page");
+
+    // A connection error has been handled.
+    this._connectionErrorHandled = true;
   },
 
 

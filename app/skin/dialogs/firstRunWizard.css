@@ -56,6 +56,11 @@ Additional styles imported directly by the first run dialog.
   margin-top: 0;
 }
 
+/* Connection page styles. */
+.sb-first-run-connection-settings-box {
+  -moz-box-align: center;
+}
+
 /* EULA page styles. */
 .sb-first-run-eula-browser+checkbox {
   padding-top:8px;
@@ -256,6 +261,10 @@ sb-first-run-add-ons {
 
 sb-first-run-add-ons-item {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAddOns.xml#sb-first-run-add-ons-item");
+}
+
+sb-first-run-connection {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunConnection.xml#sb-first-run-connection");
 }
 
 sb-first-run-eula {
