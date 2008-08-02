@@ -174,14 +174,15 @@ sbAlbumArtService.prototype = {
     var panelLabel = SBString("albumartmanager.panel.label",
                               null,
                               this._bundle);
-    this._paneMgr.registerContent(DISPLAY_PANE, 
-                                  panelLabel,      // Label of panel
-                                  "",              // TODO: Icon of panel
-                                  175,             // Random width
-                                  192,             // Random height
-                                  "servicepane",   // which pane we are attaching to
-                                  true);           // Auto show panel
-    this._paneMgr.showPane(DISPLAY_PANE);
+    if (!this._paneMgr.getPaneInfo(DISPLAY_PANE)) {
+      this._paneMgr.registerContent(DISPLAY_PANE, 
+                                    panelLabel,     // Label of panel
+                                    "",             // TODO: Icon of panel
+                                    175,            // Random width
+                                    192,            // Random height
+                                    "servicepane",  // which pane we are attaching to
+                                    true);          // Auto show panel
+    }
 
     this.loadFetcherList();
 
@@ -200,7 +201,6 @@ sbAlbumArtService.prototype = {
       this._libraryScanner.shutdown();
     }
     this._playListPlaybackService.removeListener(this);
-    this._paneMgr.unregisterContent(DISPLAY_PANE);
   },
 
   _addFetcher: function(aContractID) {
