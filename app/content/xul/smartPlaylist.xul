@@ -78,7 +78,7 @@
 
     <hbox align="center">
       <checkbox id="smart_songs_check" label="&smart.limit;" checked="false" oncommand="onCheckLimit(event);"/>
-      <textbox  id="smart_songs_count" value="20"/>
+      <textbox  id="smart_songs_count" value="20" oninput="updateOkButton();"/>
       <menulist id="smart_songs_list" value="songs">
         <menupopup id="smart_songs_list_popup">
           <menuitem id="smart_selected_list_minutes" label="&smart.minutes;" value="minutes" />

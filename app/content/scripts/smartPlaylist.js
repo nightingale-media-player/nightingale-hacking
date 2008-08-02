@@ -322,8 +322,10 @@ function isConfigurationValid() {
   var check = document.getElementById("smart_match_check");
   var check_limit = document.getElementById("smart_songs_check");
   var count = document.getElementById("smart_songs_count");
+  var check_match = document.getElementById("smart_match_check");
   return ((smartConditions.isValid || !check.checked) &&
-         (!check_limit.checked || parseInt(count.value) > 0));
+         (!check_limit.checked || parseInt(count.value) > 0) &&
+         (check_limit.checked || check_match.checked));
 }
 
 function doOK()
@@ -494,24 +496,15 @@ function setSelectBy(list, value) {
 // all times
 
 function onCheckMatch(evt) {
-  var check_match = document.getElementById("smart_match_check");
-  var check_limit = document.getElementById("smart_songs_check");
-  
-  if (!check_match.checked) {
-    check_limit.checked = true;
-  }
   updateOkButton();
 }
 
 function onCheckLimit(evt) {
-  var check_match = document.getElementById("smart_match_check");
   var check_limit = document.getElementById("smart_songs_check");
-  
-  if (!check_limit.checked) {
-    check_match.checked = true;
-  } else {
+  if (check_limit.checked) {
     checkIfCanAutoUpdate();
   }
+  updateOkButton();
 }
 
 function onSelectSelectedBy(evt) {
