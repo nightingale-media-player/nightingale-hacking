@@ -345,16 +345,15 @@ function doOK()
     // Save conditions
     var conditions = smart_conditions.conditions;
     
-    // the rules themselves are valid, but some values do not make sense to
-    // make playlists for (eg. contains "" ?), so we take care of this here,
-    // by showing those fields as invalid after the user clicks ok.
-    if (!testAdditionalRestrictions(conditions, smart_conditions)) {
-      return false;
-    }
-    
     list.clearConditions();
     var check = document.getElementById("smart_match_check");
     if (check.checked) {
+      // the rules themselves are valid, but some values do not make sense to
+      // make playlists for (eg. contains "" ?), so we take care of this here,
+      // by showing those fields as invalid after the user clicks ok.
+      if (!testAdditionalRestrictions(conditions, smart_conditions)) {
+        return false;
+      }
       conditions.forEach(function(condition) {
         var info = pm.getPropertyInfo(condition.metadata);
         // access specialized operators
