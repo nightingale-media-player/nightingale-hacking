@@ -16,6 +16,10 @@ const API_KEY = '4d5bce1e977549f10623b51dd0e10c5a';
 const API_SECRET = '3ebb03d4561260686b98388037931f11'; // obviously not secret
 const API_URL = 'http://ws.audioscrobbler.com/2.0/';
 
+// handshake failure types
+const HANDSHAKE_FAILURE_AUTH = true;
+const HANDSHARE_FAILURE_OTHER = false;
+
 // how often should we try to scrobble again?
 const TIMER_INTERVAL = (5*60*1000); // every five minutes sounds lovely
 
@@ -254,14 +258,6 @@ function sbLastFm() {
     this.listeners.each(function(l) { l.onLoggedInStateChanged(); });
   });
 
-  // the online state
-  this._online = false;
-  this.__defineGetter__('online', function() { return this._online; });
-  this.__defineSetter__('online', function(aOnline) {
-    this._online = aOnline;
-    this.listeners.each(function(l) { aOnline ? l.onOnline() : l.onOffline() });
-  });
-
   // get the playback history service
   this._playbackHistory =
       Cc['@songbirdnest.com/Songbird/PlaybackHistoryService;1']
@@ -281,6 +277,10 @@ function sbLastFm() {
   // track metrics
   this._metrics = Cc['@songbirdnest.com/Songbird/Metrics;1']
     .getService(Ci.sbIMetrics);
+
+  // report errors using the console service
+  this._console = Cc["@mozilla.org/consoleservice;1"]
+    .getService(Ci.nsIConsoleService);
 }
 // XPCOM Magic
 sbLastFm.prototype.classDescription = 'Songbird Last.fm Service'
@@ -291,6 +291,11 @@ sbLastFm.prototype.QueryInterface =
     XPCOMUtils.generateQI([Ci.sbIPlaybackHistoryListener, Ci.nsIObserver,
         Ci.sbIPlaylistPlaybackListener]);
 
+// Error reporting
+sbLastFm.prototype.log = function sbLastFm_log(message) {
+  this._console.logStringMessage('[last-fm] '+message);
+}
+
 // failure handling
 sbLastFm.prototype.hardFailure =
 function sbLastFm_hardFailure(message) {
@@ -300,24 +305,22 @@ function sbLastFm_hardFailure(message) {
 
   if (this.hardFailures >= 3) {
     // after three hard failures, try to re-handshake
-    Cu.reportError('Last.fm hard failure: ' + message +
-                   '\nFalling back to handshake');
+    this.log('Last.fm hard failure: '+message+'\nFalling back to handshake');
     this.hardFailures = 0;
     this.session = null;
-    this.handshake(function () { }, function() { });
+    this.handshake();
   } else {
     // just count and log this
-    Cu.reportError('Last.fm hard failure: ' + message);
+    this.log('Last.fm hard failure: ' + message);
   }
 }
 
 sbLastFm.prototype.badSession =
 function sbLastFm_badSession() {
-  dump('badSession\n');
   // the server rejected the current session.
   // we need to re-handshake, but we don't care about the result
   this.session = null;
-  this.handshake(function () { }, function() { });
+  this.handshake();
 }
 
 // login functionality
@@ -337,17 +340,10 @@ function sbLastFm_login() {
     // authenticate against the new Last.fm "rest" API
     self.apiAuth();
 
-
   }, function failure(aAuthFailed) {
     self.loggedIn = false;
     self.error = 'Login failed';
     self.listeners.each(function(l) { l.onLoginFailed(); });
-    self.online = false;
-  }, function auth_failure() {
-    self.loggedIn = false;
-    self.error = 'Login failed';
-    self.listeners.each(function(l) { l.onLoginFailed(); });
-    self.online = false;
   });
 }
 sbLastFm.prototype.cancelLogin =
@@ -371,6 +367,10 @@ function sbLastFm_logout() {
 // do the handshake
 sbLastFm.prototype.handshake =
 function sbLastFm_handshake(success, failure) {
+  // have default callbacks
+  if (!success) success = function() { }
+  if (!failure) failure = function(x) { }
+
   // make the url
   var timestamp = Math.round(Date.now()/1000).toString();
   var hs_url = 'http://post.audioscrobbler.com/?hs=true&p=1.2&c=sbd&v=0.1' +
@@ -386,28 +386,31 @@ function sbLastFm_handshake(success, failure) {
   this._handshake_xhr.mozBackgroundRequest = true;
   var self = this;
   this._handshake_xhr.onload = function(event) {
-    /* loaded */
+    // loaded - check the HTTP status
     if (self._handshake_xhr.status != 200) {
-      Cu.reportError('status: '+self._handshake_xhr.status);
-      failureOccurred(false);
+      self.log('handshake got HTTP status: ' + self._handshake_xhr.status);
+      failureOccurred(HANDSHAKE_FAILURE_OTHER);
       return;
     }
+
+    // split the response text into lines and parse it
     var response_lines = self._handshake_xhr.responseText.split('\n');
     if (response_lines.length < 4) {
-      Cu.reportError('not enough lines: '+response_lines.toSource());
-      failureOccurred(false);
+      self.log('handshake got not enough lines: ' + response_lines.toSource());
+      failureOccurred(HANDSHAKE_FAILURE_OTHER);
       return;
     }
     if (response_lines[0] == 'BADAUTH') {
-      Cu.reportError('auth failed');
-      failureOccurred(true);
+      self.log('handshake got authentication failure');
+      failureOccurred(HANDSHAKE_FAILURE_AUTH);
       return;
     }
     if (response_lines[0] != 'OK') {
-      Cu.reportError('handshake failure: '+response_lines[0]);
-      failureOccurred(false);
+      self.log('handshake got unexpected status: '+response_lines[0]);
+      failureOccurred(HANDSHAKE_FAILURE_OTHER);
       return;
     }
+    // save the results of parsing out
     self.session = response_lines[1];
     self.nowplaying_url = response_lines[2];
     self.submission_url = response_lines[3];
@@ -417,7 +420,6 @@ function sbLastFm_handshake(success, failure) {
       self.loggedIn = true;
       self.error = null;
       self.listeners.each(function(l) { l.onLoginSucceeded(); });
-      self.online = true;
 
       // we should try to scrobble
       self.scrobble();
@@ -425,15 +427,15 @@ function sbLastFm_handshake(success, failure) {
       self.loggedIn = false;
       self.error = null;
       self.listeners.each(function(l) { l.onLoginFailed(); });
-      self.online = false;
     });
 
+    // we've sucessfully handshook
     success();
   };
   this._handshake_xhr.onerror = function(event) {
-    /* faileded */
-    Cu.reportError('handshake error');
-    failureOccurred(false);
+    // faileded
+    self.log('handshake got XMLHttpRequest error');
+    failureOccurred(HANDSHAKE_FAILURE_OTHER);
   };
   this._handshake_xhr.open('GET', hs_url, true);
   this._handshake_xhr.send(null);
@@ -444,7 +446,7 @@ sbLastFm.prototype.updateProfile =
 function sbLastFm_updateProfile(succeeded, failed) {
   var url = 'http://ws.audioscrobbler.com/1.0/user/' +
     encodeURIComponent(this.username) + '/profile.xml';
-  self = this;
+  var self = this;
   this.getXML(url, function success(xml) {
     function text(tag) {
       var tags = xml.getElementsByTagName(tag);
@@ -488,10 +490,11 @@ function sbLastFm_nowPlaying(submission) {
 // a=artist, t=track, i=start-time, l=track-length, b=album, n=track-number
 // the PlayedTrack object implements this
 sbLastFm.prototype.submit =
-function sbLastFm_submit(submissions, success, failure) {
+function sbLastFm_submit(submissions, success) {
   // if we don't have a session, we need to handshake first
   if (!this.session) {
-    this.handshake(success, failure);
+    this.handshake();
+    return;
   }
 
   // build the submission
@@ -539,6 +542,7 @@ function sbLastFm_getXML(url, success, failure) {
 // post to audioscrobbler (the old api)
 sbLastFm.prototype.asPost =
 function sbLastFm_asPost(url, params, success, hardfailure, badsession) {
+  var self = this;
   POST(url, params, function(xhr) {
     /* loaded */
     if (xhr.status != 200) {
@@ -546,7 +550,7 @@ function sbLastFm_asPost(url, params, success, hardfailure, badsession) {
     } else if (xhr.responseText.match(/^OK\n/)) {
       success();
     } else if (xhr.responseText.match(/^BADSESSION\n/)) {
-      Cu.reportError('Bad Session when posting to last.fm');
+      self.log('Bad Session when posting to last.fm');
       badsession();
     } else {
       hardfailure(xhr.responseText);
@@ -559,19 +563,20 @@ function sbLastFm_asPost(url, params, success, hardfailure, badsession) {
 
 // authenticate against the new Last.fm "rest" web service APIs
 sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth() {
+  // clear our old session
+  this.sk = null;
+
   // get a lastfm mobile session
   var self = this;
   this.apiCall('auth.getMobileSession', {
     username: this.username,
     authToken: md5(this.username + md5(this.password))
   }, function success(xml) {
-    dump('apiAuth success FTW!!!\n');
     var keys = xml.getElementsByTagName('key');
     if (keys.length == 1) {
       self.sk = keys[0].textContent;
     }
   }, function failure(xhr) {
-    dump('apiAuth failuring\n');
   });
 }
 
@@ -608,9 +613,8 @@ function sbLastFm_apiCall(method, params, success, failure) {
   post_params.api_sig = md5(sorted_params+API_SECRET);
 
   // post the request
+  var self = this;
   POST(API_URL, post_params, function (xhr) {
-    dump('apiCall POST success\n');
-    dump(xhr.responseText+'\n');
     if (!xhr.responseXML) {
       // we expect all API responses to have XML
       failure(xhr);
@@ -624,14 +628,13 @@ function sbLastFm_apiCall(method, params, success, failure) {
     }
     if (xhr.responseXML.documentElement.getAttribute('status' == 'failed')) {
       // the server reported an error
-      Cu.reportError('Last.fm Web Services Error: '+xhr.responseXML);
+      self.log('Last.fm Web Services Error: '+xhr.responseText);
       failure(xhr);
       return;
     }
     // all should be good!
     success(xhr.responseXML);
   }, function (xhr) {
-    dump('apiCall POST failure\n');
     failure(xhr);
   });
 }
@@ -668,6 +671,7 @@ function sbLastFm_scrobble() {
                           Math.round(entry_list[i].timestamp/1000), rating));
     }
     // submit to the last.fm audioscrobbler api
+    var self = this;
     this.submit(scrobble_list,
       function success() {
         // on success mark all these as scrobbled, love & ban as appropriate
@@ -691,9 +695,6 @@ function sbLastFm_scrobble() {
         self.error = null;
         // increment metrics
         self._metrics.metricsAdd('lastfm', 'scrobble', null, entry_list.length);
-      },
-      function failure() {
-        // failure happens - we'll try again later anyway
       });
   }
 }
@@ -757,6 +758,9 @@ function sbLastFm_observe(subject, topic, data) {
 // sbIPlaylistPlaybackListener
 sbLastFm.prototype.onTrackChange =
 function sbLastFm_onTrackChange(aItem, aView, aIndex) {
+  // NOTE: This depends on the current assumption that onTrackChange will
+  // be run before onEntriesAdded. Otherwise love/ban won't work.
+
   // reset the love/ban state
   this.loveBan(null, false);
 
