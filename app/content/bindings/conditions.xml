@@ -1068,6 +1068,18 @@
                   forcevalid = true;
                 }
               }
+              // also force valid for text operators for which an empty value
+              // does not actually make sense: we'll mark the field as invalid
+              // only after the user tries to validate the rule (ie, clicks ok
+              // in the host dialog).
+              if (operator.value == info.OPERATOR_CONTAINS ||
+                  operator.value == info.OPERATOR_NOTCONTAINS ||
+                  operator.value == info.OPERATOR_BEGINSWITH ||
+                  operator.value == info.OPERATOR_NOTBEGINSWITH ||
+                  operator.value == info.OPERATOR_ENDSWITH ||
+                  operator.value == info.OPERATOR_NOTENDSWITH) {
+                forcevalid = true;
+              }
             }
             // same for datetime, but on date-specific equal operator
             return forcevalid;
@@ -1937,6 +1949,52 @@
             // focus it if it is there
             if (value)
               value.focus();
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Make a condition visually invalid, by index. The value will be
+           changed when the user edits it and it is validated -->
+      <method name="makeInvalid">
+        <parameter name="aConditionIndex"/>
+        <body>
+          <![CDATA[
+            // get the item
+            var item = this.drawer.items[aConditionIndex];
+           
+            // bypass widget input events
+            this._refreshingUI++;
+            
+            try {
+              if (item) {
+                // get the item state
+                var state = {};
+                this.drawer.getItemState(item, state);
+                
+                // change it
+                state.invalid = true;
+                
+                // set it back
+                this.drawer.setItemState(item, state);
+              }
+            } catch(e) {
+              Components.utils.reportError(e);
+            }
+            this._refreshingUI--;
+          ]]>
+        </body>
+      </method>
+
+      <!-- focus the edit field in a condition, by index -->
+      <method name="focusInput">
+        <parameter name="aConditionIndex"/>
+        <body>
+          <![CDATA[
+            // get the item
+            var item = this.drawer.items[aConditionIndex];
+            
+            // focus it
+            this._focusDefault(item);
           ]]>
         </body>
       </method>

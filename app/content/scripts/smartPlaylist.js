@@ -342,6 +342,14 @@ function doOK()
 
     // Save conditions
     var conditions = smart_conditions.conditions;
+    
+    // the rules themselves are valid, but some values do not make sense to
+    // make playlists for (eg. contains "" ?), so we take care of this here,
+    // by showing those fields as invalid after the user clicks ok.
+    if (!testAdditionalRestrictions(conditions, smart_conditions)) {
+      return false;
+    }
+    
     list.clearConditions();
     var check = document.getElementById("smart_match_check");
     if (check.checked) {
@@ -521,4 +529,31 @@ function checkIfCanAutoUpdate() {
   } else {
     autoUpdate.removeAttribute("disabled");
   }
+}
+
+function testAdditionalRestrictions(aConditions, aConditionsDrawer) {
+  var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                             .getService(Ci.sbIPropertyManager);
+  var firstFailure = -1;
+  for (var i=0; i<aConditions.length; i++) {
+    var condition = aConditions[i];
+    var info = pm.getPropertyInfo(condition.metadata)
+    if (condition.condition == info.OPERATOR_CONTAINS ||
+        condition.condition == info.OPERATOR_NOTCONTAINS ||
+        condition.condition == info.OPERATOR_BEGINSWITH ||
+        condition.condition == info.OPERATOR_NOTBEGINSWITH ||
+        condition.condition == info.OPERATOR_ENDSWITH ||
+        condition.condition == info.OPERATOR_NOTENDSWITH) {
+      if (!condition.value) {
+        aConditionsDrawer.makeInvalid(i);
+        if (firstFailure == -1)
+          firstFailure = i;
+      }
+    }
+  }
+  if (firstFailure != -1) {
+    aConditionsDrawer.focusInput(firstFailure);
+    return false;
+  }
+  return true;
 }
