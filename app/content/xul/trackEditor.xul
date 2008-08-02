@@ -243,8 +243,7 @@
                      type="autocomplete"
                      flex="1"
                      tabindex="120"
-                     autocompletesearch="library-distinct-properties"
-                     defaultdistinctproperties="Alternative,Blues/R&amp;B,Books&amp;Spoken,Children's Music,Classical,Comedy,Country,Dance,Easy Listening,Electronic,Folk,Hip Hop/Rap,Holiday,House,Industrial,Jazz,New Age,Nerdcore,Podcast,Pop,Reggae,Religious,Rock,Science,Soundtrack,Techno,Trance,Unclassifiable,World"/>  
+                     autocompletesearch="library-distinct-properties"/>
 
             <label property-type="label" property="http://songbirdnest.com/data/1.0#comment"/>
             <!-- Wrap the multiline textbox in a container to that we can

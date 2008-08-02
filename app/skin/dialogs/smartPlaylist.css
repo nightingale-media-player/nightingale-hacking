@@ -70,8 +70,7 @@ sb-smart-conditions-drawer > sb-multi-drawer > .drawer-box > .drawer-content-ite
 #propertypopup > menupopup,
 #operatorpopup,
 #operatorpopup > menupopup {
-/*  width: 140px;*/
-  width:13.5em;
+  width: 145px;
 }
 
 #unitspopup,
@@ -81,8 +80,8 @@ sb-smart-conditions-drawer > sb-multi-drawer > .drawer-box > .drawer-content-ite
 
 sb-rating {
   -moz-border-radius:5px;
-  margin: 5px;
-  padding: 0px 5px 1px 5px;
+  margin: 5px 3px 5px 3px;
+  padding: 0px;
 }
 
 .smart-condition-minus,
@@ -116,14 +115,32 @@ sb-rating {
   width:4em;
 }
 
-
-
-
 .drawer-box {
   overflow-y:scroll !important;
 }
 
 .smart-condition-item-box > hbox,
+.rating-condition-box,
 #textconditionbox {
-  -moz-box-align:center !important;
+  -moz-box-align:center;
+}
+
+/* Force the autcomplete dropdown arrow on for genre textboxes */
+.smart-condition-value[autocompletesearch][autocompletesearchparam*="genre"] > .autocomplete-history-dropmarker 
+{
+  -moz-binding: url("chrome://global/content/bindings/autocomplete.xml#history-dropmarker");
+  display: inline;
+
+  padding:0 !important;
+  margin:0 0 0 2px !important;
+  border:none !important;
+  max-height:14px !important;
+  max-width:7px !important;
+
+  background-image:url('chrome://songbird/skin/menu/dropmarker.png');
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+.smart-condition-value[autocompletesearch][autocompletesearchparam*="genre"] > .autocomplete-history-dropmarker image
+  display:none;
 }

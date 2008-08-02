@@ -1641,12 +1641,12 @@ PlaylistPlayback.prototype = {
   // Elapsed / Total display
  
   _onPollTimeText: function ( len, pos ) {
-    this._metadataPosText.stringValue = this.emitSecondsToTimeString( pos / 1000.0 ) + " ";
+    this._metadataPosText.stringValue = this.emitSecondsToTimeString( pos / 1000.0 );
 
     if ( len > 0 && this._showRemaining.boolValue )
       this._metadataLenText.stringValue = "-" + this.emitSecondsToTimeString( ( len - pos ) / 1000.0 );
     else
-      this._metadataLenText.stringValue = " " + this.emitSecondsToTimeString( len / 1000.0 );
+      this._metadataLenText.stringValue = this.emitSecondsToTimeString( len / 1000.0 );
   },
 
 

@@ -110,6 +110,7 @@
               />
             </xul:hbox>
             <xul:hbox 
+                class="rating-condition-box"
                 drawer-prop-map-set="hidden=!ratingfield" 
                 hidden="true" 
                 flex="1">

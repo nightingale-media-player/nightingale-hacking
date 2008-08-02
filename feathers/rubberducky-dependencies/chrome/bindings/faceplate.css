@@ -94,10 +94,12 @@ Imported by bindings.css or directly into feathers.
 .sb-player-timeelapsed-label.faceplate-text {
   min-width: 31px;
   text-align: right;
+  margin-right:2px;
 }
 sb-player-totaltime-label > .faceplate-text {
   min-width: 31px;
   text-align: left;
+  margin-left:3px;
 }
 
 /* 

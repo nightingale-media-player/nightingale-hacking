@@ -45,6 +45,7 @@
  */ 
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -55,6 +56,20 @@ const DESCRIPTION = "Songbird Library Search Suggestions";
 const CID = Components.ID("{1ed101bc-a11c-4e03-83af-514672bd3a70}");
 
 const XPCOM_SHUTDOWN_TOPIC              = "xpcom-shutdown";
+
+
+/**
+ * Map of properties to hard-coded default values
+ */
+var gDefaultValues= {};
+gDefaultValues[SBProperties.genre] = [
+  "Alternative", "Blues/R&B", "Books&Spoken", "Children's Music",
+  "Classical", "Comedy", "Country", "Dance", "Easy Listening", "World",
+  "Electronic", "Folk", "Hip Hop/Rap", "Holiday", "House", "Industrial",
+  "Jazz", "New Age", "Nerdcore", "Podcast", "Pop", "Reggae", "Religious",
+  "Rock", "Science", "Soundtrack", "Techno", "Trance", "Unclassifiable"
+];
+
 
 /**
  * AutoCompleteResult contains the results returned by the Suggest
@@ -354,6 +369,9 @@ LibrarySearchSuggester.prototype = {
         }
       }
       
+      // Add hardcoded values, if any
+      this._addDefaultDistinctValues();
+      
       // set this cache to expire in 5s
 
       if (!this._timer)
@@ -428,6 +446,17 @@ LibrarySearchSuggester.prototype = {
     // Nothing to do since we return our searches immediately.
   },
 
+  /**
+   * Add hardcoded default values for the current property
+   */
+  _addDefaultDistinctValues: function() {
+    var defaults = gDefaultValues[this._prop];
+    if (defaults) {
+      for each (var value in defaults) {
+        this._distinctValues[value] = true;
+      }
+    }
+  },
 
   /**
    * nsIObserver
