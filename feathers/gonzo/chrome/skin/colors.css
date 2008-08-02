@@ -362,16 +362,20 @@ treecol[sortDirection="descending"] > .treecol-sortdirection,
 
 
 
-/* komi: rm later*/
-treecolpicker {
 
+treecolpicker > .tree-columnpicker-icon {
+  list-style-image:url('chrome://songbird/skin/base-elements/button-column-picker.png');
+  -moz-image-region: rect(0px, 12px, 12px, 0px);
 }
-treecolpicker > .tree-columnpicker-icon{
-  list-style-image:url('chrome://songbird/skin/display-pane/button-addon-picker.png');
+treecolpicker:hover > .tree-columnpicker-icon {
+  -moz-image-region: rect(12px, 12px, 24px, 0px);
 }
-treecolpicker,
-.sb-displaypane-menubutton {
+treecolpicker:active > .tree-columnpicker-icon,
+treecolpicker[open="true"] > .tree-columnpicker-icon {
+  -moz-image-region: rect(24px, 12px, 36px, 0px);
 }
+
+
 
 listheader,
 treecol,
@@ -700,8 +704,6 @@ toolbarbutton,
   background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
   background-repeat:repeat-x;
   background-position:center 0px;
-  
-  margin:4px;
 
   min-width:0px;
   min-height:0px;
@@ -2376,13 +2378,16 @@ richlistbox {
 #viewGroup > radio {
   border:1px solid gray !important;
   background-color:rgb(200,200,200) !important;
+  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
+  background-repeat:repeat-x;
+  background-position:center 0px;
   -moz-border-radius-topleft:3px;
   -moz-border-radius-topright:3px;
   padding:2px 8px;
   margin:0 0 -1px 0;
 }
 #viewGroup > radio:hover {
-  background-color: rgb(186,218,255) !important;
+  background-position:center -300px;
   border:1px solid gray !important;
 }
 #viewGroup > radio[selected="true"] {
@@ -2393,9 +2398,11 @@ richlistbox {
   border:1px solid gray !important;
   border-bottom:1px solid rgb(200,200,200) !important;
 }
+
 #viewGroup > radio+radio {
   margin-left:1px !important;
 }
+
 
 #viewGroup > radio > .viewButtonLabel {
   padding:0px;
@@ -2503,6 +2510,7 @@ wizard {
   width:7px !important;
   padding-right:2px;
 }
+
 
 
 

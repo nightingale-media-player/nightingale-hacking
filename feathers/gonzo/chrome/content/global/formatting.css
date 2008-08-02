@@ -5,9 +5,12 @@ button,
 description,
 groupbox,
 label,
+listbox,
 menulist,
+progressmeter,
 richlistbox,
 textbox,
+toolbarbutton,
 tree {
   margin:4px;
 }

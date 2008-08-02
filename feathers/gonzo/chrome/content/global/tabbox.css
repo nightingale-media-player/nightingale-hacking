@@ -37,11 +37,7 @@
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-tabpanels {
-  padding:0px;
-  margin:0px;
-}
-
+tabpanels,
 tabbox {
   padding:0px;
   margin:0px;
