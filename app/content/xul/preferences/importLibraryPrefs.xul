@@ -57,7 +57,8 @@
         id="library_file_path_pref"
         prefid="library_file_path_pref"
         name="songbird.library_importer.library_file_path"
-        type="unichar"/>
+        type="unichar"
+        onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
 
       <!-- Startup auto-import preference. -->
       <preference
@@ -98,6 +99,9 @@
       <command id="browse_command"
                label="&window.browse;"
                oncommand="importLibraryPrefsUI.doBrowseCommand(event);"/>
+      <command id="import_command"
+               label="&import_library.import_command;"
+               oncommand="importLibraryPrefsUI.doImportCommand(event);"/>
     </commandset>
 
     <!-- Library path preference controls. -->
@@ -116,6 +120,7 @@
 
         <!-- Browse button. -->
         <button id="import_library_browse_button" command="browse_command"/>
+        <button id="import_library_button" command="import_command"/>
 
       </hbox>
 

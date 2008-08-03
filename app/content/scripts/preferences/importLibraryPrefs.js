@@ -47,6 +47,7 @@
 
 // Songbird imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 
@@ -233,6 +234,27 @@ var importLibraryPrefsUI = {
       importLibraryPathPrefElem.value = filePicker.file.path;
   },
 
+  /**
+   * Handle the import command event specified by aEvent.
+   * Manually import a library into Songbird.
+   *
+   * \param aEvent              Import Library command event.
+   */
+  doImportCommand: function importLibraryPrefsUI_doIMportCommand(aEvent) {
+    // TODO: disable the button when the command is not happy
+
+    // Get the default library importer.  Do nothing if none available.
+    var libraryImporterManager =
+          Cc["@songbirdnest.com/Songbird/LibraryImporterManager;1"]
+            .getService(Ci.sbILibraryImporterManager);
+    var libraryImporter = libraryImporterManager.defaultLibraryImporter;
+    
+    // Import the library as user directs.
+    var libraryFilePath = this._getPrefElem("library_file_path_pref").value;
+    
+    var job = libraryImporter.import(libraryFilePath, "songbird", false);
+    SBJobUtils.showProgressDialog(job, window);
+  },
 
   /**
    * Handle the import options change event specified aEvent.
@@ -266,6 +288,12 @@ var importLibraryPrefsUI = {
     var autoImportNoQueryPrefElem = this._getPrefElem
                                            ("auto_import_no_query_pref");
     autoImportNoQueryPrefElem.disabled = !autoImportPrefValue;
+    
+    // Disable the library import command when there is no file selected.
+    var importCommand = document.getElementById("import_command");
+    var libraryPath = this._getPrefElem("library_file_path_pref").value;
+    var choseLibrary = (libraryPath != "");
+    importCommand.setAttribute("disabled", choseLibrary ? "false" : "true");
   },
 
 

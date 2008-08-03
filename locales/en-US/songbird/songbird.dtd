@@ -590,6 +590,7 @@
 <!ENTITY import_library.unsupported_media_alert           "Some tracks were in an unsupported format.  These were not imported.">
 <!ENTITY import_library.prefs.path_group_caption          "Library Path">
 <!ENTITY import_library.prefs.options_group_caption       "Import Options">
+<!ENTITY import_library.import_command                    "Import Library">
 
 <!-- Import library dirty playlist dialog entities. -->
 <!ENTITY import_library.dirty_playlist_dialog.title        "Playlist changed">
