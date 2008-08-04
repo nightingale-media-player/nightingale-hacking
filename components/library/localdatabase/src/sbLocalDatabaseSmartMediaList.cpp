@@ -1382,7 +1382,7 @@ sbLocalDatabaseSmartMediaList::GetRollingLimit(const nsAString& aSql,
 #include <stdio.h>
 nsresult
 sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aCondition,
-                                                     PRBool aIsLastCondition,
+                                                     PRBool aAddOrderBy,
                                                      nsAString& _retval)
 {
   nsresult rv;
@@ -1524,17 +1524,12 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
       !mSelectPropertyID.IsEmpty()) {
     // only add the sort to the last condition, because it is invalid (and
     // would be quite unnecessary anyway) to sort before an intersect/union
-    rv = AddSelectColumnAndJoin(builder, baseAlias, aIsLastCondition);
+    rv = AddSelectColumnAndJoin(builder, baseAlias, aAddOrderBy);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     // Just add a blank placeholder column
     rv = builder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
-    // If there is a limit but the selection is random, add a random sort order
-    if (mLimit != sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE &&
-        mRandomSelection) {
-      builder->AddRandomOrder();
-    }
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -2949,4 +2944,5 @@ sbLocalDatabaseSmartMediaList::RemoveSmartMediaListListener(sbILocalDatabaseSmar
   mListeners.RemoveObject(aListener);
   return NS_OK;
 }
+
 
