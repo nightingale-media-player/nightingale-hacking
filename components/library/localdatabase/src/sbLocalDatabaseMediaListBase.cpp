@@ -69,18 +69,23 @@
 
 #define DEFAULT_PROPERTIES_URL "chrome://songbird/locale/songbird.properties"
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseMediaListBase,
                              sbLocalDatabaseMediaItem,
+                             sbILocalDatabaseGUIDArrayListener,
                              sbIMediaList)
 
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
 : mFullArrayMonitor(nsnull),
-  mLockedEnumerationActive(PR_FALSE)
+  mLockedEnumerationActive(PR_FALSE),
+  mPreviousListener(PR_FALSE)
 {
 }
 
 sbLocalDatabaseMediaListBase::~sbLocalDatabaseMediaListBase()
 {
+  if (mPreviousListener && mFullArray) {
+    mFullArray->SetListener(nsnull);
+  }
   if (mFullArrayMonitor) {
     nsAutoMonitor::DestroyMonitor(mFullArrayMonitor);
   }
@@ -132,13 +137,15 @@ sbLocalDatabaseMediaListBase::GetNativeLibrary()
   return result;
 }
 
-already_AddRefed<sbILocalDatabaseGUIDArray>
-sbLocalDatabaseMediaListBase::GetArray()
+void sbLocalDatabaseMediaListBase::SetArray(sbILocalDatabaseGUIDArray * aArray)
 {
-  NS_ASSERTION(mFullArray, "mArray is null!");
-  sbILocalDatabaseGUIDArray* result = mFullArray;
-  NS_ADDREF(result);
-  return result;
+  if (mFullArray) {
+    mFullArray->SetListener(nsnull);
+    mPreviousListener = PR_FALSE;
+    ClearCachedPartialArray();
+  }
+  
+  mFullArray = aArray;
 }
 
 /**
@@ -211,6 +218,13 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& 
   // Set the filter.
   rv = guidArray->AddFilter(aID, aValueEnum, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // We need to listen for invalidates so our partial cached array can be 
+  // invalidated
+  if (!mPreviousListener) {
+    mPreviousListener = PR_TRUE;
+    mFullArray->SetListener(this);
+  }
 
   // Save off the guid array in case we need it.
   mCachedPartialArray = guidArray;
@@ -1133,6 +1147,14 @@ void sbLocalDatabaseMediaListBase::ClearCachedPartialArray()
   mCachedPartialArray= nsnull;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::OnBeforeInvalidate()
+{
+  if (mCachedPartialArray) {
+    mCachedPartialArray->Invalidate();
+  }
+  return NS_OK;
+}
 NS_IMPL_ISUPPORTS1(sbGUIDArrayValueEnumerator, nsIStringEnumerator)
 
 sbGUIDArrayValueEnumerator::sbGUIDArrayValueEnumerator(sbILocalDatabaseGUIDArray* aArray) :

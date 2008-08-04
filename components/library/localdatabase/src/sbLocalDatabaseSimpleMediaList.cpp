@@ -99,7 +99,7 @@ static PRLogModuleInfo* gLocalDatabaseSimpleMediaListLog = nsnull;
   PR_BEGIN_MACRO                          \
     nsresult rv;                          \
     PRUint32 length;                      \
-    rv = mFullArray->GetLength(&length);  \
+    rv = GetArray()->GetLength(&length);  \
     NS_ENSURE_SUCCESS(rv, rv);
 
 #define SB_ENSURE_INDEX_END \
@@ -453,7 +453,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
   NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
 
   // Invalidate the cached list
-  rv = mFriendList->mFullArray->Invalidate();
+  rv = mFriendList->GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our listeners if we have any
@@ -582,7 +582,7 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
   }
 
   // Invalidate the cached list
-  rv = mFriendList->mFullArray->Invalidate();
+  rv = mFriendList->GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our listeners after removal if we have any
@@ -634,8 +634,8 @@ sbLocalDatabaseSimpleMediaList::Init(sbLocalDatabaseLibrary* aLibrary,
   nsresult rv = sbLocalDatabaseMediaListBase::Init(aLibrary, aGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mFullArray = new sbLocalDatabaseGUIDArray();
-  NS_ENSURE_TRUE(mFullArray, NS_ERROR_OUT_OF_MEMORY);
+  SetArray(new sbLocalDatabaseGUIDArray());
+  NS_ENSURE_TRUE(GetArray(), NS_ERROR_OUT_OF_MEMORY);
 
   PRUint32 mediaItemId;
   rv = GetMediaItemId(&mediaItemId);
@@ -645,7 +645,7 @@ sbLocalDatabaseSimpleMediaList::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = mLibrary->GetDatabaseGuid(databaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->SetDatabaseGUID(databaseGuid);
+  rv = GetArray()->SetDatabaseGUID(databaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIURI> databaseLocation;
@@ -653,30 +653,30 @@ sbLocalDatabaseSimpleMediaList::Init(sbLocalDatabaseLibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (databaseLocation) {
-    rv = mFullArray->SetDatabaseLocation(databaseLocation);
+    rv = GetArray()->SetDatabaseLocation(databaseLocation);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = mFullArray->SetBaseTable(NS_LITERAL_STRING("simple_media_lists"));
+  rv = GetArray()->SetBaseTable(NS_LITERAL_STRING("simple_media_lists"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->SetBaseConstraintColumn(NS_LITERAL_STRING("media_item_id"));
+  rv = GetArray()->SetBaseConstraintColumn(NS_LITERAL_STRING("media_item_id"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->SetBaseConstraintValue(mediaItemId);
+  rv = GetArray()->SetBaseConstraintValue(mediaItemId);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->AddSort(DEFAULT_SORT_PROPERTY, PR_TRUE);
+  rv = GetArray()->AddSort(DEFAULT_SORT_PROPERTY, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
+  rv = GetArray()->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILocalDatabasePropertyCache> propertyCache;
   rv = aLibrary->GetPropertyCache(getter_AddRefs(propertyCache));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->SetPropertyCache(propertyCache);
+  rv = GetArray()->SetPropertyCache(propertyCache);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();
@@ -735,7 +735,7 @@ sbLocalDatabaseSimpleMediaList::Contains(sbIMediaItem* aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Leverage the guid array cache
-  rv = mFullArray->ContainsGuid(guid, _retval);
+  rv = GetArray()->ContainsGuid(guid, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
@@ -926,7 +926,7 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate the cached list
-  rv = mFullArray->Invalidate();
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =
@@ -964,11 +964,11 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
 
   // Grab the length before the invalidation since it won't be changing
   PRUint32 length;
-  rv = mFullArray->GetLength(&length);
+  rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate the cached list
-  rv = mFullArray->Invalidate();
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =
@@ -1066,7 +1066,7 @@ sbLocalDatabaseSimpleMediaList::MoveSomeLast(PRUint32* aIndexArray,
   ordinal.AppendLiteral(".");
 
   PRUint32 length;
-  rv = mFullArray->GetLength(&length);
+  rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = MoveSomeInternal(aIndexArray, aIndexArrayCount, length, ordinal);
@@ -1107,7 +1107,7 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
   nsresult rv;
 
   nsAutoString ordinal;
-  rv = mFullArray->GetSortPropertyValueByIndex(aIndex, ordinal);
+  rv = GetArray()->GetSortPropertyValueByIndex(aIndex, ordinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> item;
@@ -1129,7 +1129,7 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
 
-  rv = mFullArray->RemoveByIndex(aIndex);
+  rv = GetArray()->RemoveByIndex(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> mediaList =
@@ -1194,7 +1194,7 @@ sbLocalDatabaseSimpleMediaList::Clear()
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   // Invalidate the cached list
-  rv = mFullArray->Invalidate();
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> mediaList =
@@ -1219,7 +1219,7 @@ NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
 {
   // Invalidate the cached list
-  nsresult rv = mFullArray->Invalidate();
+  nsresult rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> mediaList =
@@ -1237,7 +1237,7 @@ sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
 
   // Then send an ITEMADDED notification for each item that we now have in the list
   PRUint32 length;
-  rv = mFullArray->GetLength(&length);
+  rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 index=0; index<length; index++) {
@@ -1314,17 +1314,17 @@ sbLocalDatabaseSimpleMediaList::GetIndexByOrdinal(const nsAString& aOrdinal,
 
   // First, search the cache for this ordinal
   PRUint32 length;
-  rv = mFullArray->GetLength(&length);
+  rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < length; i++) {
     PRBool isCached;
-    rv = mFullArray->IsIndexCached(i, &isCached);
+    rv = GetArray()->IsIndexCached(i, &isCached);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (isCached) {
       nsAutoString ordinal;
-      rv = mFullArray->GetOrdinalByIndex(i, ordinal);
+      rv = GetArray()->GetOrdinalByIndex(i, ordinal);
       NS_ENSURE_SUCCESS(rv, rv);
 
       if (ordinal.Equals(aOrdinal)) {
@@ -1336,7 +1336,7 @@ sbLocalDatabaseSimpleMediaList::GetIndexByOrdinal(const nsAString& aOrdinal,
 
   // Not cached, search the database
   PRUint32 index;
-  rv = mFullArray->GetFirstIndexByPrefix(aOrdinal, &index);
+  rv = GetArray()->GetFirstIndexByPrefix(aOrdinal, &index);
   if (NS_SUCCEEDED(rv)) {
     *_retval = index;
     return NS_OK;
@@ -1348,7 +1348,7 @@ sbLocalDatabaseSimpleMediaList::GetIndexByOrdinal(const nsAString& aOrdinal,
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::Invalidate()
 {
-  nsresult rv = mFullArray->Invalidate();
+  nsresult rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =
@@ -1488,12 +1488,12 @@ sbLocalDatabaseSimpleMediaList::UpdateOrdinalByIndex(PRUint32 aIndex,
 
   // Get the media item id of the item we are moving
   PRUint32 mediaItemId;
-  rv = mFullArray->GetMediaItemIdByIndex(aIndex, &mediaItemId);
+  rv = GetArray()->GetMediaItemIdByIndex(aIndex, &mediaItemId);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the old ordinal
   nsString oldOrdinal;
-  rv = mFullArray->GetOrdinalByIndex(aIndex, oldOrdinal);
+  rv = GetArray()->GetOrdinalByIndex(aIndex, oldOrdinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Update the item at the from index with the new ordinal
@@ -1529,7 +1529,7 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
   NS_ASSERTION(aFromIndexArray, "aFromIndexArray is null");
 
   PRUint32 length;
-  nsresult rv = mFullArray->GetLength(&length);
+  nsresult rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Make sure all the from array indexes are legal
@@ -1551,11 +1551,11 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
     ordinal.AppendInt(i);
 
     PRUint32 mediaItemId;
-    rv = mFullArray->GetMediaItemIdByIndex(aFromIndexArray[i], &mediaItemId);
+    rv = GetArray()->GetMediaItemIdByIndex(aFromIndexArray[i], &mediaItemId);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString oldOrdinal;
-    rv = mFullArray->GetOrdinalByIndex(aFromIndexArray[i], oldOrdinal);
+    rv = GetArray()->GetOrdinalByIndex(aFromIndexArray[i], oldOrdinal);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = query->AddQuery(mUpdateListItemOrdinalQuery);
@@ -1580,7 +1580,7 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   // Invalidate the cached list
-  rv = mFullArray->Invalidate();
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =
@@ -1662,7 +1662,7 @@ sbLocalDatabaseSimpleMediaList::GetNextOrdinal(nsAString& aValue)
   nsresult rv;
 
   PRUint32 length;
-  rv = mFullArray->GetLength(&length);
+  rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (length == 0) {
@@ -1671,11 +1671,11 @@ sbLocalDatabaseSimpleMediaList::GetNextOrdinal(nsAString& aValue)
   }
 
   PRBool cached;
-  rv = mFullArray->IsIndexCached(length - 1, &cached);
+  rv = GetArray()->IsIndexCached(length - 1, &cached);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (cached) {
-    rv = mFullArray->GetSortPropertyValueByIndex(length - 1, aValue);
+    rv = GetArray()->GetSortPropertyValueByIndex(length - 1, aValue);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
@@ -1699,12 +1699,12 @@ sbLocalDatabaseSimpleMediaList::GetBeforeOrdinal(PRUint32 aIndex,
   // first index and trim off everything but the first path and subtract 1
   if (aIndex == 0) {
     PRBool cached;
-    rv = mFullArray->IsIndexCached(0, &cached);
+    rv = GetArray()->IsIndexCached(0, &cached);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString ordinal;
     if (cached) {
-      rv = mFullArray->GetSortPropertyValueByIndex(0, ordinal);
+      rv = GetArray()->GetSortPropertyValueByIndex(0, ordinal);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
@@ -1732,10 +1732,10 @@ sbLocalDatabaseSimpleMediaList::GetBeforeOrdinal(PRUint32 aIndex,
   nsAutoString aboveOrdinal;
   nsAutoString belowOrdinal;
 
-  rv = mFullArray->GetSortPropertyValueByIndex(aIndex - 1, aboveOrdinal);
+  rv = GetArray()->GetSortPropertyValueByIndex(aIndex - 1, aboveOrdinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->GetSortPropertyValueByIndex(aIndex, belowOrdinal);
+  rv = GetArray()->GetSortPropertyValueByIndex(aIndex, belowOrdinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 aboveLevels = CountLevels(aboveOrdinal);

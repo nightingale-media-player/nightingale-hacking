@@ -233,9 +233,9 @@ sbLibraryInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList
   nsresult rv;
 
   if (mShouldInvalidate) {
-    NS_ASSERTION(mFriendLibrary->mFullArray, "Uh, no full array?!");
+    NS_ASSERTION(mFriendLibrary->GetArray(), "Uh, no full array?!");
 
-    rv = mFriendLibrary->mFullArray->Invalidate();
+    rv = mFriendLibrary->GetArray()->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -408,7 +408,7 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
 
   // Invalidate our guid array
-  rv = mFriendLibrary->mFullArray->Invalidate();
+  rv = mFriendLibrary->GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate all of the simple media lists we notified
@@ -573,27 +573,27 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
 
   mPropertyCache = propCache;
 
-  mFullArray = new sbLocalDatabaseGUIDArray();
-  NS_ENSURE_TRUE(mFullArray, NS_ERROR_OUT_OF_MEMORY);
+  SetArray(new sbLocalDatabaseGUIDArray());
+  NS_ENSURE_TRUE(GetArray(), NS_ERROR_OUT_OF_MEMORY);
 
-  rv = mFullArray->SetDatabaseGUID(aDatabaseGuid);
+  rv = GetArray()->SetDatabaseGUID(aDatabaseGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mDatabaseLocation) {
-    rv = mFullArray->SetDatabaseLocation(aDatabaseLocation);
+    rv = GetArray()->SetDatabaseLocation(aDatabaseLocation);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = mFullArray->SetBaseTable(NS_LITERAL_STRING("media_items"));
+  rv = GetArray()->SetBaseTable(NS_LITERAL_STRING("media_items"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->AddSort(NS_LITERAL_STRING(DEFAULT_SORT_PROPERTY), PR_TRUE);
+  rv = GetArray()->AddSort(NS_LITERAL_STRING(DEFAULT_SORT_PROPERTY), PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->SetFetchSize(DEFAULT_FETCH_SIZE);
+  rv = GetArray()->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFullArray->SetPropertyCache(mPropertyCache);
+  rv = GetArray()->SetPropertyCache(mPropertyCache);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CreateQueries();
@@ -3058,7 +3058,7 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
 
   // Remember the length so we can use it in the notification
   PRUint32 length;
-  rv = mFullArray->GetLength(&length);
+  rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDatabaseQuery> query;
@@ -3136,7 +3136,7 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate our array
-  rv = mFullArray->Invalidate();
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Don't do this while we're receiving items through the Insertinglistener.
@@ -3186,7 +3186,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
 
   // Remember the length for notification
   PRUint32 length;
-  rv = mFullArray->GetLength(&length);
+  rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 dbOk;
@@ -3214,7 +3214,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate our array
-  rv = mFullArray->Invalidate();
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!mPreventAddedNotification) {
@@ -4150,7 +4150,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_SUCCESS(dbSuccess, NS_ERROR_FAILURE);
 
-    rv = mFullArray->Invalidate();
+    rv = GetArray()->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Invalidate all of the simple media lists we notified
@@ -4402,7 +4402,7 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
 
   // Remember length for notification
   PRUint32 length;
-  rv = mFullArray->GetLength(&length);
+  rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> newMediaItem;
@@ -4412,7 +4412,7 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate the cached list
-  rv = mFullArray->Invalidate();
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // And let everyone know about it.
@@ -4533,7 +4533,7 @@ sbLocalDatabaseLibrary::RemoveByIndex(PRUint32 aIndex)
   // Hrm, we actually have to instantiate an item to notify the listeners here.
   // Hopefully it's cached.
   nsAutoString guid;
-  nsresult rv = mFullArray->GetGuidByIndex(aIndex, guid);
+  nsresult rv = GetArray()->GetGuidByIndex(aIndex, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> mediaItem;
@@ -4629,7 +4629,7 @@ sbLocalDatabaseLibrary::Clear()
   NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   // Invalidate the cached list
-  rv = mFullArray->Invalidate();
+  rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate all simple media lists
@@ -5415,7 +5415,7 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
     }
 
-    rv = mLibrary->mFullArray->Invalidate();
+    rv = mLibrary->GetArray()->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRUint32 listLength;
