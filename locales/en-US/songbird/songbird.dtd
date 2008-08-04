@@ -191,7 +191,7 @@
 <!ENTITY smart.matchsingle        "Match the following condition:" >
 <!ENTITY smart.any                "any" >
 <!ENTITY smart.all                "all" >
-<!ENTITY smart.following          "of the following condition(s):" >   
+<!ENTITY smart.following          "of the following conditions:" >   
 <!ENTITY smart.random             "random" >
 <!ENTITY smart.album              "album" >
 <!ENTITY smart.artist             "artist" >
