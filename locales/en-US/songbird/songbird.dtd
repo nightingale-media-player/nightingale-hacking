@@ -182,7 +182,7 @@
 <!ENTITY tooltip.browser.bookmarksubscribe "Add this page" >
 <!ENTITY tooltip.servicepane.show    "Show Service Pane" >
 <!ENTITY tooltip.servicepane.hide    "Hide Service Pane" >
-<!ENTITY tooltip.servicepane.newnode "New Node" >
+<!ENTITY tooltip.servicepane.newnode "New Playlist" >
 
 <!ENTITY smart.window             "Smart Playlist" >
 <!ENTITY smart.library            "Select Library:" >
