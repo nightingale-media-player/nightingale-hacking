@@ -586,12 +586,12 @@
 <!ENTITY import_library.dialog.title                      "Import a library">
 <!ENTITY import_library.prefs.title                       "iTunes Importer">
 <!ENTITY import_library.library_file_label                "Library File:">
-<!ENTITY import_library.auto_import_checkbox              "Check for changes to iTunes library when Songbird launches">
+<!ENTITY import_library.auto_import_checkbox              "Automatically import changes in my iTunes library when Songbird launches">
 <!ENTITY import_library.auto_import_no_query_checkbox     "Initiate import without notification">
-<!ENTITY import_library.dont_import_playlists_checkbox    "Do not update playlists (Update songs only)">
+<!ENTITY import_library.dont_import_playlists_checkbox    "Do not update playlists (only update songs)">
 <!ENTITY import_library.unsupported_media_alert_checkbox  "Alert me when unsupported tracks or playlists are not imported">
 <!ENTITY import_library.unsupported_media_alert           "Some tracks were in an unsupported format.  These were not imported.">
-<!ENTITY import_library.prefs.path_group_caption          "Library Path">
+<!ENTITY import_library.prefs.path_group_caption          "iTunes Music Library Location">
 <!ENTITY import_library.prefs.options_group_caption       "Import Options">
 <!ENTITY import_library.import_command                    "Import Library">
 
