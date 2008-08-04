@@ -1045,11 +1045,19 @@
         <body>
           <![CDATA[
             var forcevalid = false;
-            // force validation to succeed when doing a substring match, because
-            // otherwise URI substring will fail to validate (since they are not
-            // valid URIs). This will not interfere with non-text matches, because
-            // these do not implement the CONTAINS operator.
-            if (v && v != "" && operator.value == info.OPERATOR_CONTAINS) {
+            // force validation to succeed when doing a string/substring
+            // matches, all values are valid to search in any text-based field.
+            // Note that the caller (smartPlaylist.js) will still mark some of
+            // these cases as invalid when the user clicks OK (for instance,
+            // empty values with CONTAINS operator). Also, this test will not
+            // interfere with non-text matches, because these do not implement
+            // any of those text-specific operators.
+            if (operator.value == info.OPERATOR_CONTAINS ||
+                operator.value == info.OPERATOR_NOTCONTAINS ||
+                operator.value == info.OPERATOR_BEGINSWITH ||
+                operator.value == info.OPERATOR_NOTBEGINSWITH ||
+                operator.value == info.OPERATOR_ENDSWITH ||
+                operator.value == info.OPERATOR_NOTENDSWITH) {
               forcevalid = true;
             }
             // also force valid for empty value with operators equal/notequal,
@@ -1067,18 +1075,6 @@
                     operator.value == info.OPERATOR_NOTONDATE) {
                   forcevalid = true;
                 }
-              }
-              // also force valid for text operators for which an empty value
-              // does not actually make sense: we'll mark the field as invalid
-              // only after the user tries to validate the rule (ie, clicks ok
-              // in the host dialog).
-              if (operator.value == info.OPERATOR_CONTAINS ||
-                  operator.value == info.OPERATOR_NOTCONTAINS ||
-                  operator.value == info.OPERATOR_BEGINSWITH ||
-                  operator.value == info.OPERATOR_NOTBEGINSWITH ||
-                  operator.value == info.OPERATOR_ENDSWITH ||
-                  operator.value == info.OPERATOR_NOTENDSWITH) {
-                forcevalid = true;
               }
             }
             // same for datetime, but on date-specific equal operator
@@ -2004,4 +2000,5 @@
   </binding>
 
 </bindings>
+
 
