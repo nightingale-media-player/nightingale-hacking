@@ -136,6 +136,7 @@
                   <statusbar id="servicepane-status-bar" mousethrough="never">
                       <statusbarpanel>
                       <button class="service-pane-spring-load-button"
+                              tooltiptext="&tooltip.servicepane.hide;"
                               oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
                                          gServicePane.open = !gServicePane.open;
                                          SBDataSetBoolValue(key, gServicePane.open);"
@@ -183,6 +184,7 @@
                   <statusbar id="status-bar" mousethrough="never">
                       <statusbarpanel>
                         <button class="service-pane-spring-load-button"
+                                tooltiptext="&tooltip.servicepane.show;"
                                 oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
                                            gServicePane.open = !gServicePane.open;
                                            SBDataSetBoolValue(key, gServicePane.open);"

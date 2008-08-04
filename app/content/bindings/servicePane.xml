@@ -1074,6 +1074,7 @@
       <!-- TODO: over state, up arrow, remove periods from all IDs -->
       <xul:hbox id="servicepane_toolbar_box" class="servicepane-toolbar-box">
         <xul:button class="servicepane-toolbar-newitem-button"
+                    tooltiptext="&tooltip.servicepane.newnode;"
                     anonid="clickhold" flex="1" type="sb-clickhold">
           <xul:menupopup anonid="popup" popupanchor="topleft" popupalign="bottomleft"/>
         </xul:button>

@@ -180,6 +180,9 @@
 <!ENTITY tooltip.browser.download "View Current Downloads" >
 <!ENTITY tooltip.browser.mediapages "Switch Media Views..." >
 <!ENTITY tooltip.browser.bookmarksubscribe "Add this page" >
+<!ENTITY tooltip.servicepane.show    "Show Service Pane" >
+<!ENTITY tooltip.servicepane.hide    "Hide Service Pane" >
+<!ENTITY tooltip.servicepane.newnode "New Node" >
 
 <!ENTITY smart.window             "Smart Playlist" >
 <!ENTITY smart.library            "Select Library:" >
