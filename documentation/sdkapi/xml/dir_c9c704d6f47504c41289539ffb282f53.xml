@@ -8,6 +8,8 @@
     <innerfile refid="sb_i_local_database_library_8idl">sbILocalDatabaseLibrary.idl</innerfile>
     <innerfile refid="sb_i_local_database_library_copy_listener_8idl">sbILocalDatabaseLibraryCopyListener.idl</innerfile>
     <innerfile refid="sb_i_local_database_media_item_8idl">sbILocalDatabaseMediaItem.idl</innerfile>
+    <innerfile refid="sb_i_local_database_migration_handler_8idl">sbILocalDatabaseMigrationHandler.idl</innerfile>
+    <innerfile refid="sb_i_local_database_migration_helper_8idl">sbILocalDatabaseMigrationHelper.idl</innerfile>
     <innerfile refid="sb_i_local_database_property_cache_8idl">sbILocalDatabasePropertyCache.idl</innerfile>
     <innerfile refid="sb_i_local_database_resource_property_8idl">sbILocalDatabaseResourceProperty.idl</innerfile>
     <innerfile refid="sb_i_local_database_simple_media_list_8idl">sbILocalDatabaseSimpleMediaList.idl</innerfile>

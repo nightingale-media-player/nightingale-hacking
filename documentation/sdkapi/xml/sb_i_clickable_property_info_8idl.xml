@@ -4,13 +4,13 @@
     <compoundname>sbIClickablePropertyInfo.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="481">
+      <node id="494">
         <label>components/property/public/sbIClickablePropertyInfo.idl</label>
         <link refid="sbIClickablePropertyInfo.idl"/>
-        <childnode refid="482" relation="include">
+        <childnode refid="495" relation="include">
         </childnode>
       </node>
-      <node id="482">
+      <node id="495">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

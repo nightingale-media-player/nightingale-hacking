@@ -52,46 +52,46 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="980">
+      <node id="991">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="981">
+      <node id="992">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="979" relation="public-inheritance">
+        <childnode refid="990" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="979">
+      <node id="990">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="980" relation="public-inheritance">
+        <childnode refid="991" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="983">
+      <node id="994">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="984" relation="usage">
+        <childnode refid="995" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
-        <childnode refid="985" relation="usage">
+        <childnode refid="996" relation="usage">
           <edgelabel>unitConverter</edgelabel>
         </childnode>
       </node>
-      <node id="985">
+      <node id="996">
         <label>sbIPropertyUnitConverter</label>
         <link refid="interfacesb_i_property_unit_converter"/>
       </node>
-      <node id="984">
+      <node id="995">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="982">
+      <node id="993">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="983" relation="public-inheritance">
+        <childnode refid="994" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

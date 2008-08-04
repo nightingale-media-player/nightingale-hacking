@@ -17,10 +17,10 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="54"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_16ff71da7d1aa1376aa76513b1580b740" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_18b27daff3afbcd2a8b196231d245e787" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistPlaybackListener::onBeforeTrackChange</definition>
-        <argsstring>(in sbIMediaItem aItem, in sbIMediaListView aView, in unsigned long aIndex)</argsstring>
+        <argsstring>(in sbIMediaItem aItem, in sbIMediaListView aView, in long aIndex)</argsstring>
         <name>onBeforeTrackChange</name>
         <param>
           <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -31,7 +31,7 @@
           <declname>aView</declname>
         </param>
         <param>
-          <type>in unsigned long</type>
+          <type>in long</type>
           <declname>aIndex</declname>
         </param>
         <briefdescription>
@@ -42,10 +42,10 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="63"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_10cb6feb91748886c00fd7cdd0ebedd9e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_109423f8f83c52be6a7a01e5dfcc16caf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIPlaylistPlaybackListener::onTrackChange</definition>
-        <argsstring>(in sbIMediaItem aItem, in sbIMediaListView aView, in unsigned long aIndex)</argsstring>
+        <argsstring>(in sbIMediaItem aItem, in sbIMediaListView aView, in long aIndex)</argsstring>
         <name>onTrackChange</name>
         <param>
           <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -56,7 +56,7 @@
           <declname>aView</declname>
         </param>
         <param>
-          <type>in unsigned long</type>
+          <type>in long</type>
           <declname>aIndex</declname>
         </param>
         <briefdescription>
@@ -89,16 +89,64 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="75"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_16a7e42b56d8ee13806b6e6a38700317c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlaybackListener::onTrackIndexChange</definition>
+        <argsstring>(in sbIMediaItem aItem, in sbIMediaListView aView, in long aIndex)</argsstring>
+        <name>onTrackIndexChange</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aItem</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+          <declname>aView</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aIndex</declname>
+        </param>
+        <briefdescription>
+<para>Called when the index of the playing track (or its UID returned by a call to <ref refid="interfacesb_i_media_list_view_1ef081e769938e55da2a7d7651922d9f1" kindref="member">sbIMediaListView.getViewItemUIDForIndex</ref>) has changed. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Media item of the track that was already playing </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aView</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the view that was already playing </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the new index of the playing track </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="88"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Interface that handles the tracking of playback changes. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="49" bodyend="77"/>
+    <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="49" bodyend="90"/>
     <listofallmembers>
-      <member refid="interfacesb_i_playlist_playback_listener_16ff71da7d1aa1376aa76513b1580b740" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onBeforeTrackChange</name></member>
+      <member refid="interfacesb_i_playlist_playback_listener_18b27daff3afbcd2a8b196231d245e787" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onBeforeTrackChange</name></member>
       <member refid="interfacesb_i_playlist_playback_listener_1e80492fbe57ece2ca318ecc7a7494d3e" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onStop</name></member>
-      <member refid="interfacesb_i_playlist_playback_listener_10cb6feb91748886c00fd7cdd0ebedd9e" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onTrackChange</name></member>
+      <member refid="interfacesb_i_playlist_playback_listener_109423f8f83c52be6a7a01e5dfcc16caf" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onTrackChange</name></member>
+      <member refid="interfacesb_i_playlist_playback_listener_16a7e42b56d8ee13806b6e6a38700317c" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onTrackIndexChange</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

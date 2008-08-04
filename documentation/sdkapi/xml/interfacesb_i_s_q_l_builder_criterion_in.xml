@@ -28,7 +28,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="468"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="473"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_criterion_in_14bfe51e3c5d48b0fb1bcdb465fbbdd20" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -53,7 +53,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="474"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="479"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_criterion_in_1c83bc22308b5740a9bef5f6cdf099e1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -78,7 +78,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="480"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="485"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_builder_criterion_in_168d509b82bbaec1dc93805d2e5f1aedf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -91,7 +91,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="485"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="490"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -99,30 +99,30 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="919">
+      <node id="930">
         <label>sbISQLBuilderCriterion</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion"/>
       </node>
-      <node id="918">
+      <node id="929">
         <label>sbISQLBuilderCriterionIn</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion_in"/>
-        <childnode refid="919" relation="public-inheritance">
+        <childnode refid="930" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="921">
+      <node id="932">
         <label>sbISQLBuilderCriterion</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion"/>
       </node>
-      <node id="920">
+      <node id="931">
         <label>sbISQLBuilderCriterionIn</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion_in"/>
-        <childnode refid="921" relation="public-inheritance">
+        <childnode refid="932" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="463" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="462" bodyend="486"/>
+    <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="468" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="467" bodyend="491"/>
     <listofallmembers>
       <member refid="interfacesb_i_s_q_l_builder_criterion_in_14bfe51e3c5d48b0fb1bcdb465fbbdd20" prot="public" virt="non-virtual"><scope>sbISQLBuilderCriterionIn</scope><name>addLong</name></member>
       <member refid="interfacesb_i_s_q_l_builder_criterion_in_1b651081e6a3b2777fb75755d8ef0e798" prot="public" virt="non-virtual"><scope>sbISQLBuilderCriterionIn</scope><name>addString</name></member>

@@ -24,50 +24,50 @@
 <para><simplesect kind="see"><para>nsISecurityCheckedComponent </para><para><ref refid="interfacesb_i_security_mixin" kindref="compound">sbISecurityMixin</ref> </para><para>sbRemotePlayer </para><para>sbSecurityMixin </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="874">
+      <node id="883">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
-      <node id="873">
+      <node id="882">
         <label>sbIRemoteCommands</label>
         <link refid="interfacesb_i_remote_commands"/>
-        <childnode refid="872" relation="usage">
+        <childnode refid="881" relation="usage">
           <edgelabel>owner</edgelabel>
         </childnode>
       </node>
-      <node id="876">
+      <node id="885">
         <label>sbIRemoteMediaList</label>
         <link refid="interfacesb_i_remote_media_list"/>
       </node>
-      <node id="872">
+      <node id="881">
         <label>sbIRemotePlayer</label>
         <link refid="interfacesb_i_remote_player"/>
-        <childnode refid="873" relation="usage">
+        <childnode refid="882" relation="usage">
           <edgelabel>commands</edgelabel>
         </childnode>
-        <childnode refid="874" relation="usage">
+        <childnode refid="883" relation="usage">
           <edgelabel>webLibrary
 mainLibrary
 siteLibrary</edgelabel>
         </childnode>
-        <childnode refid="875" relation="usage">
+        <childnode refid="884" relation="usage">
           <edgelabel>webPlaylist</edgelabel>
         </childnode>
-        <childnode refid="876" relation="usage">
+        <childnode refid="885" relation="usage">
           <edgelabel>downloadMediaList</edgelabel>
         </childnode>
       </node>
-      <node id="871">
+      <node id="880">
         <label>sbISecurityAggregator</label>
         <link refid="interfacesb_i_security_aggregator"/>
-        <childnode refid="872" relation="usage">
+        <childnode refid="881" relation="usage">
           <edgelabel>remotePlayer</edgelabel>
         </childnode>
       </node>
-      <node id="875">
+      <node id="884">
         <label>sbIRemoteWebPlaylist</label>
         <link refid="interfacesb_i_remote_web_playlist"/>
-        <childnode refid="876" relation="usage">
+        <childnode refid="885" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>

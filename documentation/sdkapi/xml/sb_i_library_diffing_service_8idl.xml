@@ -4,13 +4,13 @@
     <compoundname>sbILibraryDiffingService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="233">
+      <node id="235">
         <label>components/library/base/public/sbILibraryDiffingService.idl</label>
         <link refid="sbILibraryDiffingService.idl"/>
-        <childnode refid="234" relation="include">
+        <childnode refid="236" relation="include">
         </childnode>
       </node>
-      <node id="234">
+      <node id="236">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

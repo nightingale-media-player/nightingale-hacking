@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIPromptService.idl</includes>
     <incdepgraph>
-      <node id="449">
+      <node id="462">
         <label>components/moz/prompter/public/sbIPrompter.idl</label>
         <link refid="sbIPrompter.idl"/>
-        <childnode refid="450" relation="include">
+        <childnode refid="463" relation="include">
         </childnode>
-        <childnode refid="451" relation="include">
+        <childnode refid="464" relation="include">
         </childnode>
       </node>
-      <node id="451">
+      <node id="464">
         <label>nsIPromptService.idl</label>
       </node>
-      <node id="450">
+      <node id="463">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

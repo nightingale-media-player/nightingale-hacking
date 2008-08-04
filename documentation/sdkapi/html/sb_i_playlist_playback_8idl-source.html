@@ -75,159 +75,164 @@
 <a name="l00041"></a>00041 interface <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a>;
 <a name="l00042"></a>00042 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00043"></a>00043 
-<a name="l00048"></a>00048 [scriptable, uuid(d74160e7-c798-48ed-9b9a-9248e779a25d)]
+<a name="l00048"></a>00048 [scriptable, uuid(bd18d4e1-3105-4057-90e2-134372b95cf3)]
 <a name="l00049"></a><a class="code" href="interfacesb_i_playlist_playback_listener.html">00049</a> interface <a class="code" href="interfacesb_i_playlist_playback_listener.html" title="Interface that handles the tracking of playback changes.">sbIPlaylistPlaybackListener</a> : nsISupports
 <a name="l00050"></a>00050 {
 <a name="l00054"></a>00054   <span class="keywordtype">void</span> onStop();
 <a name="l00055"></a>00055 
 <a name="l00061"></a>00061   <span class="keywordtype">void</span> onBeforeTrackChange(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aItem,
 <a name="l00062"></a>00062                            in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aView,
-<a name="l00063"></a>00063                            in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00063"></a>00063                            in <span class="keywordtype">long</span> aIndex);
 <a name="l00064"></a>00064 
 <a name="l00073"></a>00073   <span class="keywordtype">void</span> onTrackChange(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aItem,
 <a name="l00074"></a>00074                      in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aView,
-<a name="l00075"></a>00075                      in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
+<a name="l00075"></a>00075                      in <span class="keywordtype">long</span> aIndex);
 <a name="l00076"></a>00076 
-<a name="l00077"></a>00077 };
-<a name="l00078"></a>00078 
-<a name="l00091"></a>00091 [scriptable, uuid(9a7c48a8-b02f-41bb-a4e7-02f472d7954c)]
-<a name="l00092"></a><a class="code" href="interfacesb_i_playlist_playback.html">00092</a> interface <a class="code" href="interfacesb_i_playlist_playback.html" title="Defines standard media player playback functionality. This interface defines the...">sbIPlaylistPlayback</a> : nsIObserver
-<a name="l00093"></a>00093 {
-<a name="l00094"></a>00094   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00095"></a>00095   <span class="comment">// Constants for repeat state - this must match the implementation's</span>
-<a name="l00096"></a>00096   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00097"></a>00097 
-<a name="l00100"></a><a class="code" href="interfacesb_i_playlist_playback.html#8aa8650c33a135d9e88737139593df16">00100</a>   <span class="keyword">const</span> <span class="keywordtype">short</span> REPEAT_MODE_OFF = 0;
-<a name="l00101"></a>00101 
-<a name="l00104"></a><a class="code" href="interfacesb_i_playlist_playback.html#23faa5a2cbbb59e2a049be8bdf546875">00104</a>   <span class="keyword">const</span> <span class="keywordtype">short</span> REPEAT_MODE_ONE = 1;
-<a name="l00105"></a>00105 
-<a name="l00108"></a><a class="code" href="interfacesb_i_playlist_playback.html#f3a1c0c8e1e2b2e34985ef0950261b8b">00108</a>   <span class="keyword">const</span> <span class="keywordtype">short</span> REPEAT_MODE_ALL = 2;
-<a name="l00109"></a>00109 
+<a name="l00077"></a>00077 
+<a name="l00086"></a>00086   <span class="keywordtype">void</span> onTrackIndexChange(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aItem,
+<a name="l00087"></a>00087                           in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aView,
+<a name="l00088"></a>00088                           in <span class="keywordtype">long</span> aIndex);
+<a name="l00089"></a>00089                     
+<a name="l00090"></a>00090 };
+<a name="l00091"></a>00091 
+<a name="l00104"></a>00104 [scriptable, uuid(9a7c48a8-b02f-41bb-a4e7-02f472d7954c)]
+<a name="l00105"></a><a class="code" href="interfacesb_i_playlist_playback.html">00105</a> interface <a class="code" href="interfacesb_i_playlist_playback.html" title="Defines standard media player playback functionality. This interface defines the...">sbIPlaylistPlayback</a> : nsIObserver
+<a name="l00106"></a>00106 {
+<a name="l00107"></a>00107   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00108"></a>00108   <span class="comment">// Constants for repeat state - this must match the implementation's</span>
+<a name="l00109"></a>00109   <span class="comment">// --------------------------------------------------------------------------</span>
 <a name="l00110"></a>00110 
-<a name="l00111"></a>00111   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00112"></a>00112   <span class="comment">// Attributes reflecting state of the playback core:</span>
-<a name="l00113"></a>00113   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00113"></a><a class="code" href="interfacesb_i_playlist_playback.html#8aa8650c33a135d9e88737139593df16">00113</a>   <span class="keyword">const</span> <span class="keywordtype">short</span> REPEAT_MODE_OFF = 0;
 <a name="l00114"></a>00114 
-<a name="l00122"></a><a class="code" href="interfacesb_i_playlist_playback.html#dbe1ce37c7027bb61b79948da98acb17">00122</a>   attribute <a class="code" href="interfacesb_i_core_wrapper.html" title="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</a> core;
+<a name="l00117"></a><a class="code" href="interfacesb_i_playlist_playback.html#23faa5a2cbbb59e2a049be8bdf546875">00117</a>   <span class="keyword">const</span> <span class="keywordtype">short</span> REPEAT_MODE_ONE = 1;
+<a name="l00118"></a>00118 
+<a name="l00121"></a><a class="code" href="interfacesb_i_playlist_playback.html#f3a1c0c8e1e2b2e34985ef0950261b8b">00121</a>   <span class="keyword">const</span> <span class="keywordtype">short</span> REPEAT_MODE_ALL = 2;
+<a name="l00122"></a>00122 
 <a name="l00123"></a>00123 
-<a name="l00128"></a><a class="code" href="interfacesb_i_playlist_playback.html#98953fa2afb7e2fd9cf9703cd7e7a7e3">00128</a>   attribute <span class="keywordtype">short</span> volume;
-<a name="l00129"></a>00129 
-<a name="l00134"></a><a class="code" href="interfacesb_i_playlist_playback.html#2c6e186d951b95f40cc64952208af941">00134</a>   attribute <span class="keywordtype">boolean</span> mute;
-<a name="l00135"></a>00135 
-<a name="l00141"></a><a class="code" href="interfacesb_i_playlist_playback.html#9a22d879a7f83ff18c9ba572ad19d961">00141</a>   attribute PRInt64 position;
+<a name="l00124"></a>00124   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00125"></a>00125   <span class="comment">// Attributes reflecting state of the playback core:</span>
+<a name="l00126"></a>00126   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00127"></a>00127 
+<a name="l00135"></a><a class="code" href="interfacesb_i_playlist_playback.html#dbe1ce37c7027bb61b79948da98acb17">00135</a>   attribute <a class="code" href="interfacesb_i_core_wrapper.html" title="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</a> core;
+<a name="l00136"></a>00136 
+<a name="l00141"></a><a class="code" href="interfacesb_i_playlist_playback.html#98953fa2afb7e2fd9cf9703cd7e7a7e3">00141</a>   attribute <span class="keywordtype">short</span> volume;
 <a name="l00142"></a>00142 
-<a name="l00147"></a><a class="code" href="interfacesb_i_playlist_playback.html#4d5f003c140083313523b461a11e3372">00147</a>   readonly attribute PRInt64 length;
+<a name="l00147"></a><a class="code" href="interfacesb_i_playlist_playback.html#2c6e186d951b95f40cc64952208af941">00147</a>   attribute <span class="keywordtype">boolean</span> mute;
 <a name="l00148"></a>00148 
-<a name="l00154"></a><a class="code" href="interfacesb_i_playlist_playback.html#9c1b43840438ca39cf5dc7126d3b89f7">00154</a>   readonly attribute <span class="keywordtype">boolean</span> paused;
+<a name="l00154"></a><a class="code" href="interfacesb_i_playlist_playback.html#9a22d879a7f83ff18c9ba572ad19d961">00154</a>   attribute PRInt64 position;
 <a name="l00155"></a>00155 
-<a name="l00162"></a><a class="code" href="interfacesb_i_playlist_playback.html#a9d8868c0c6ba509a9dd0b9974f7da0a">00162</a>   readonly attribute <span class="keywordtype">boolean</span> playing;
-<a name="l00163"></a>00163 
-<a name="l00164"></a>00164 
-<a name="l00165"></a>00165   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00166"></a>00166   <span class="comment">// Attributes reflecting Songbird playback state:</span>
-<a name="l00167"></a>00167   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00160"></a><a class="code" href="interfacesb_i_playlist_playback.html#4d5f003c140083313523b461a11e3372">00160</a>   readonly attribute PRInt64 length;
+<a name="l00161"></a>00161 
+<a name="l00167"></a><a class="code" href="interfacesb_i_playlist_playback.html#9c1b43840438ca39cf5dc7126d3b89f7">00167</a>   readonly attribute <span class="keywordtype">boolean</span> paused;
 <a name="l00168"></a>00168 
-<a name="l00176"></a><a class="code" href="interfacesb_i_playlist_playback.html#e00d5a1f97614cb4c473767f38878d9a">00176</a>   attribute <span class="keywordtype">short</span> repeat;
+<a name="l00175"></a><a class="code" href="interfacesb_i_playlist_playback.html#a9d8868c0c6ba509a9dd0b9974f7da0a">00175</a>   readonly attribute <span class="keywordtype">boolean</span> playing;
+<a name="l00176"></a>00176 
 <a name="l00177"></a>00177 
-<a name="l00181"></a><a class="code" href="interfacesb_i_playlist_playback.html#1d02000aa3ee3049da3db4e5f6825299">00181</a>   attribute <span class="keywordtype">boolean</span> shuffle;
-<a name="l00182"></a>00182 
-<a name="l00187"></a><a class="code" href="interfacesb_i_playlist_playback.html#ecf91b316f3ba1d3b01476617ed025ef">00187</a>   readonly attribute PRInt32 itemCount;
-<a name="l00188"></a>00188 
-<a name="l00193"></a><a class="code" href="interfacesb_i_playlist_playback.html#73a46bee358df63419e7f3ddf8840afe">00193</a>   readonly attribute PRInt32 currentIndex;
-<a name="l00194"></a>00194 
-<a name="l00199"></a><a class="code" href="interfacesb_i_playlist_playback.html#99fc99e76b4b271e219ce90131775750">00199</a>   readonly attribute AString currentGUID;
-<a name="l00200"></a>00200 
-<a name="l00205"></a><a class="code" href="interfacesb_i_playlist_playback.html#244bf5af2fe05920bb2b05aec2729749">00205</a>   readonly attribute AString currentURL;
-<a name="l00206"></a>00206 
-<a name="l00213"></a><a class="code" href="interfacesb_i_playlist_playback.html#b474c491f7e8e4633843372338f65b98">00213</a>   readonly attribute <span class="keywordtype">boolean</span> started;
-<a name="l00214"></a>00214   
-<a name="l00218"></a><a class="code" href="interfacesb_i_playlist_playback.html#af7e06e34078f49a755cf2305ce46f76">00218</a>   readonly attribute <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> playingView;
+<a name="l00178"></a>00178   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00179"></a>00179   <span class="comment">// Attributes reflecting Songbird playback state:</span>
+<a name="l00180"></a>00180   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00181"></a>00181 
+<a name="l00189"></a><a class="code" href="interfacesb_i_playlist_playback.html#e00d5a1f97614cb4c473767f38878d9a">00189</a>   attribute <span class="keywordtype">short</span> repeat;
+<a name="l00190"></a>00190 
+<a name="l00194"></a><a class="code" href="interfacesb_i_playlist_playback.html#1d02000aa3ee3049da3db4e5f6825299">00194</a>   attribute <span class="keywordtype">boolean</span> shuffle;
+<a name="l00195"></a>00195 
+<a name="l00200"></a><a class="code" href="interfacesb_i_playlist_playback.html#ecf91b316f3ba1d3b01476617ed025ef">00200</a>   readonly attribute PRInt32 itemCount;
+<a name="l00201"></a>00201 
+<a name="l00206"></a><a class="code" href="interfacesb_i_playlist_playback.html#73a46bee358df63419e7f3ddf8840afe">00206</a>   readonly attribute PRInt32 currentIndex;
+<a name="l00207"></a>00207 
+<a name="l00212"></a><a class="code" href="interfacesb_i_playlist_playback.html#99fc99e76b4b271e219ce90131775750">00212</a>   readonly attribute AString currentGUID;
+<a name="l00213"></a>00213 
+<a name="l00218"></a><a class="code" href="interfacesb_i_playlist_playback.html#244bf5af2fe05920bb2b05aec2729749">00218</a>   readonly attribute AString currentURL;
 <a name="l00219"></a>00219 
-<a name="l00220"></a>00220   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00221"></a>00221   <span class="comment">// Methods for Mutli-core manipulation</span>
-<a name="l00222"></a>00222   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00223"></a>00223 
-<a name="l00235"></a>00235   <span class="keywordtype">void</span> addCore(in <a class="code" href="interfacesb_i_core_wrapper.html" title="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</a> aCore, in <span class="keywordtype">boolean</span> aSelect);
+<a name="l00226"></a><a class="code" href="interfacesb_i_playlist_playback.html#b474c491f7e8e4633843372338f65b98">00226</a>   readonly attribute <span class="keywordtype">boolean</span> started;
+<a name="l00227"></a>00227   
+<a name="l00231"></a><a class="code" href="interfacesb_i_playlist_playback.html#af7e06e34078f49a755cf2305ce46f76">00231</a>   readonly attribute <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> playingView;
+<a name="l00232"></a>00232 
+<a name="l00233"></a>00233   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00234"></a>00234   <span class="comment">// Methods for Mutli-core manipulation</span>
+<a name="l00235"></a>00235   <span class="comment">// --------------------------------------------------------------------------</span>
 <a name="l00236"></a>00236 
-<a name="l00243"></a>00243   <span class="keywordtype">void</span> removeCore(in <a class="code" href="interfacesb_i_core_wrapper.html" title="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</a> aCore);
-<a name="l00244"></a>00244 
-<a name="l00253"></a>00253   <span class="keywordtype">void</span> selectCore(in <a class="code" href="interfacesb_i_core_wrapper.html" title="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</a> aCore);
-<a name="l00254"></a>00254 
-<a name="l00255"></a>00255 
-<a name="l00256"></a>00256   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00257"></a>00257   <span class="comment">// "Standard" player controls</span>
-<a name="l00258"></a>00258   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00259"></a>00259 
-<a name="l00269"></a>00269   <span class="keywordtype">boolean</span> play();
-<a name="l00270"></a>00270 
-<a name="l00278"></a>00278   <span class="keywordtype">boolean</span> pause();
-<a name="l00279"></a>00279 
-<a name="l00288"></a>00288   <span class="keywordtype">boolean</span> stop();
-<a name="l00289"></a>00289 
-<a name="l00296"></a>00296   PRInt32 next();
-<a name="l00297"></a>00297 
-<a name="l00304"></a>00304   PRInt32 previous();
-<a name="l00305"></a>00305 
-<a name="l00312"></a>00312   PRInt32 current();
-<a name="l00313"></a>00313 
-<a name="l00321"></a>00321   <span class="keywordtype">void</span> goFullscreen();
-<a name="l00322"></a>00322 
-<a name="l00331"></a>00331   <span class="keywordtype">boolean</span> playURL(in AString aURL);
-<a name="l00332"></a>00332 
-<a name="l00342"></a>00342   <span class="keywordtype">boolean</span> playView(in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aView, in PRInt32 aIndex);
-<a name="l00343"></a>00343 
-<a name="l00344"></a>00344   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00345"></a>00345   <span class="comment">// Metadata methods</span>
-<a name="l00346"></a>00346   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00347"></a>00347  
-<a name="l00358"></a>00358   <span class="keywordtype">void</span> getMetadataFields(out PRUint32 aFieldCount,
-<a name="l00359"></a>00359                          [array, size_is(aFieldCount), retval] out wstring aMetaFields);
+<a name="l00248"></a>00248   <span class="keywordtype">void</span> addCore(in <a class="code" href="interfacesb_i_core_wrapper.html" title="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</a> aCore, in <span class="keywordtype">boolean</span> aSelect);
+<a name="l00249"></a>00249 
+<a name="l00256"></a>00256   <span class="keywordtype">void</span> removeCore(in <a class="code" href="interfacesb_i_core_wrapper.html" title="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</a> aCore);
+<a name="l00257"></a>00257 
+<a name="l00266"></a>00266   <span class="keywordtype">void</span> selectCore(in <a class="code" href="interfacesb_i_core_wrapper.html" title="A wrapper for various media cores Defines the inteface for objects that will provide...">sbICoreWrapper</a> aCore);
+<a name="l00267"></a>00267 
+<a name="l00268"></a>00268 
+<a name="l00269"></a>00269   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00270"></a>00270   <span class="comment">// "Standard" player controls</span>
+<a name="l00271"></a>00271   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00272"></a>00272 
+<a name="l00282"></a>00282   <span class="keywordtype">boolean</span> play();
+<a name="l00283"></a>00283 
+<a name="l00291"></a>00291   <span class="keywordtype">boolean</span> pause();
+<a name="l00292"></a>00292 
+<a name="l00301"></a>00301   <span class="keywordtype">boolean</span> stop();
+<a name="l00302"></a>00302 
+<a name="l00309"></a>00309   PRInt32 next();
+<a name="l00310"></a>00310 
+<a name="l00317"></a>00317   PRInt32 previous();
+<a name="l00318"></a>00318 
+<a name="l00325"></a>00325   PRInt32 current();
+<a name="l00326"></a>00326 
+<a name="l00334"></a>00334   <span class="keywordtype">void</span> goFullscreen();
+<a name="l00335"></a>00335 
+<a name="l00344"></a>00344   <span class="keywordtype">boolean</span> playURL(in AString aURL);
+<a name="l00345"></a>00345 
+<a name="l00355"></a>00355   <span class="keywordtype">boolean</span> playView(in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aView, in PRInt32 aIndex);
+<a name="l00356"></a>00356 
+<a name="l00357"></a>00357   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00358"></a>00358   <span class="comment">// Metadata methods</span>
+<a name="l00359"></a>00359   <span class="comment">// --------------------------------------------------------------------------</span>
 <a name="l00360"></a>00360  
-<a name="l00368"></a>00368   AString getCurrentValue(in AString aField);
-<a name="l00369"></a>00369  
-<a name="l00378"></a>00378   <span class="keywordtype">void</span> setCurrentValue(in AString aField, in AString aValue);
-<a name="l00379"></a>00379  
-<a name="l00390"></a>00390   <span class="keywordtype">void</span> getCurrentValues(in PRUint32 aFieldCount,
-<a name="l00391"></a>00391                         [array, size_is(aFieldCount)] in wstring aMetaFields,
-<a name="l00392"></a>00392                         out PRUint32 aValueCount,
-<a name="l00393"></a>00393                         [array, size_is(aValueCount), retval] out wstring aMetaValues);
-<a name="l00394"></a>00394  
-<a name="l00406"></a>00406   <span class="keywordtype">void</span> setCurrentValues(in PRUint32 aFieldCount,
-<a name="l00407"></a>00407                         [array, size_is(aFieldCount)] in wstring aMetaFields, 
-<a name="l00408"></a>00408                         in PRUint32 aValueCount,
-<a name="l00409"></a>00409                         [array, size_is(aValueCount)] in wstring aMetaValues);
-<a name="l00410"></a>00410 
-<a name="l00411"></a>00411 
-<a name="l00412"></a>00412   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00413"></a>00413   <span class="comment">// URL checking</span>
-<a name="l00414"></a>00414   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00415"></a>00415  
-<a name="l00425"></a>00425   <span class="keywordtype">boolean</span> isMediaURL(in AString aURL);
-<a name="l00426"></a>00426  
-<a name="l00436"></a>00436   <span class="keywordtype">boolean</span> isVideoURL(in AString aURL);
-<a name="l00437"></a>00437  
-<a name="l00447"></a>00447   <span class="keywordtype">boolean</span> isPlaylistURL(in AString aURL);
-<a name="l00448"></a>00448 
-<a name="l00455"></a>00455   nsIStringEnumerator getSupportedFileExtensions();
-<a name="l00456"></a>00456 
-<a name="l00457"></a>00457   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00458"></a>00458   <span class="comment">// String twiddling</span>
-<a name="l00459"></a>00459   <span class="comment">// --------------------------------------------------------------------------</span>
-<a name="l00460"></a>00460  
-<a name="l00467"></a>00467   AString stripHoursFromTimeString(in AString aTimeString);
-<a name="l00468"></a>00468  
-<a name="l00476"></a>00476   AString emitSecondsToTimeString(in AString aSeconds);
-<a name="l00477"></a>00477  
-<a name="l00485"></a>00485   AString convertURLToDisplayName(in AString aURL);
-<a name="l00486"></a>00486  
-<a name="l00494"></a>00494   AString convertURLToFolder(in AString aURL);
-<a name="l00495"></a>00495 
-<a name="l00501"></a>00501    <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_playlist_playback_listener.html" title="Interface that handles the tracking of playback changes.">sbIPlaylistPlaybackListener</a> aListener);
-<a name="l00502"></a>00502 
-<a name="l00508"></a>00508    <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_playlist_playback_listener.html" title="Interface that handles the tracking of playback changes.">sbIPlaylistPlaybackListener</a> aListener);
-<a name="l00509"></a>00509 };
-<a name="l00510"></a>00510 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:35 2008 for Songbird by&nbsp;
+<a name="l00371"></a>00371   <span class="keywordtype">void</span> getMetadataFields(out PRUint32 aFieldCount,
+<a name="l00372"></a>00372                          [array, size_is(aFieldCount), retval] out wstring aMetaFields);
+<a name="l00373"></a>00373  
+<a name="l00381"></a>00381   AString getCurrentValue(in AString aField);
+<a name="l00382"></a>00382  
+<a name="l00391"></a>00391   <span class="keywordtype">void</span> setCurrentValue(in AString aField, in AString aValue);
+<a name="l00392"></a>00392  
+<a name="l00403"></a>00403   <span class="keywordtype">void</span> getCurrentValues(in PRUint32 aFieldCount,
+<a name="l00404"></a>00404                         [array, size_is(aFieldCount)] in wstring aMetaFields,
+<a name="l00405"></a>00405                         out PRUint32 aValueCount,
+<a name="l00406"></a>00406                         [array, size_is(aValueCount), retval] out wstring aMetaValues);
+<a name="l00407"></a>00407  
+<a name="l00419"></a>00419   <span class="keywordtype">void</span> setCurrentValues(in PRUint32 aFieldCount,
+<a name="l00420"></a>00420                         [array, size_is(aFieldCount)] in wstring aMetaFields, 
+<a name="l00421"></a>00421                         in PRUint32 aValueCount,
+<a name="l00422"></a>00422                         [array, size_is(aValueCount)] in wstring aMetaValues);
+<a name="l00423"></a>00423 
+<a name="l00424"></a>00424 
+<a name="l00425"></a>00425   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00426"></a>00426   <span class="comment">// URL checking</span>
+<a name="l00427"></a>00427   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00428"></a>00428  
+<a name="l00438"></a>00438   <span class="keywordtype">boolean</span> isMediaURL(in AString aURL);
+<a name="l00439"></a>00439  
+<a name="l00449"></a>00449   <span class="keywordtype">boolean</span> isVideoURL(in AString aURL);
+<a name="l00450"></a>00450  
+<a name="l00460"></a>00460   <span class="keywordtype">boolean</span> isPlaylistURL(in AString aURL);
+<a name="l00461"></a>00461 
+<a name="l00468"></a>00468   nsIStringEnumerator getSupportedFileExtensions();
+<a name="l00469"></a>00469 
+<a name="l00470"></a>00470   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00471"></a>00471   <span class="comment">// String twiddling</span>
+<a name="l00472"></a>00472   <span class="comment">// --------------------------------------------------------------------------</span>
+<a name="l00473"></a>00473  
+<a name="l00480"></a>00480   AString stripHoursFromTimeString(in AString aTimeString);
+<a name="l00481"></a>00481  
+<a name="l00489"></a>00489   AString emitSecondsToTimeString(in AString aSeconds);
+<a name="l00490"></a>00490  
+<a name="l00498"></a>00498   AString convertURLToDisplayName(in AString aURL);
+<a name="l00499"></a>00499  
+<a name="l00507"></a>00507   AString convertURLToFolder(in AString aURL);
+<a name="l00508"></a>00508 
+<a name="l00514"></a>00514    <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_playlist_playback_listener.html" title="Interface that handles the tracking of playback changes.">sbIPlaylistPlaybackListener</a> aListener);
+<a name="l00515"></a>00515 
+<a name="l00521"></a>00521    <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_playlist_playback_listener.html" title="Interface that handles the tracking of playback changes.">sbIPlaylistPlaybackListener</a> aListener);
+<a name="l00522"></a>00522 };
+<a name="l00523"></a>00523 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Mon Aug 4 11:05:04 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -2,6 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_job_progress" kind="interface" prot="public">
     <compoundname>sbIJobProgress</compoundname>
+    <derivedcompoundref refid="interfacesb_i_local_database_migration_handler" prot="public" virt="non-virtual">sbILocalDatabaseMigrationHandler</derivedcompoundref>
     <includes refid="sb_i_job_progress_8idl" local="no">sbIJobProgress.idl</includes>
       <sectiondef kind="public-attrib">
       <memberdef kind="variable" id="interfacesb_i_job_progress_1b4cebecf25f9537638b93f613a08a399" prot="public" static="no" mutable="no">
@@ -198,6 +199,18 @@
     <detaileddescription>
 <para>This is a first-stab at a generic way to expose job progress to the UI. This interface should be used for things like file importing, copying to devices and metadata syncing.</para><para><simplesect kind="note"><para>This interface is likely to change before 1.0 </para></simplesect>
 </para>    </detaileddescription>
+    <inheritancegraph>
+      <node id="296">
+        <label>sbILocalDatabaseMigrationHandler</label>
+        <link refid="interfacesb_i_local_database_migration_handler"/>
+        <childnode refid="295" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="295">
+        <label>sbIJobProgress</label>
+        <link refid="interfacesb_i_job_progress"/>
+      </node>
+    </inheritancegraph>
     <location file="c:/builds/songbird/trunk/components/job/public/sbIJobProgress.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/job/public/sbIJobProgress.idl" bodystart="45" bodyend="116"/>
     <listofallmembers>
       <member refid="interfacesb_i_job_progress_16a80a1a34775105f108f6bd88c756dfb" prot="public" virt="non-virtual"><scope>sbIJobProgress</scope><name>addJobProgressListener</name></member>

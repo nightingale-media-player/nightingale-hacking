@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseDynamicPlaylistService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="318">
+      <node id="320">
         <label>components/library/localdatabase/public/sbILocalDatabaseDynamicPlaylistService.idl</label>
         <link refid="sbILocalDatabaseDynamicPlaylistService.idl"/>
-        <childnode refid="319" relation="include">
+        <childnode refid="321" relation="include">
         </childnode>
       </node>
-      <node id="319">
+      <node id="321">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

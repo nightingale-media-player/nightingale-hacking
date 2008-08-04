@@ -4,13 +4,13 @@
     <compoundname>sbIPlaybackHistoryService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="406">
+      <node id="419">
         <label>components/mediacore/playback/history/public/sbIPlaybackHistoryService.idl</label>
         <link refid="sbIPlaybackHistoryService.idl"/>
-        <childnode refid="407" relation="include">
+        <childnode refid="420" relation="include">
         </childnode>
       </node>
-      <node id="407">
+      <node id="420">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

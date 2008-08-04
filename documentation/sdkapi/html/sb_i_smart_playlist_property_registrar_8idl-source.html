@@ -93,17 +93,30 @@
 <a name="l00025"></a>00025 <span class="comment">*/</span>
 <a name="l00026"></a>00026 
 <a name="l00032"></a>00032 <span class="preprocessor">#include "nsISupports.idl"</span>
-<a name="l00033"></a>00033 interface nsIStringEnumerator;
+<a name="l00033"></a>00033 interface nsISimpleEnumerator;
 <a name="l00034"></a>00034 
-<a name="l00043"></a>00043 [scriptable, uuid(755c8f44-28e3-4971-9d38-241c721b90e0)]
-<a name="l00044"></a><a class="code" href="interfacesb_i_smart_playlist_property_registrar.html">00044</a> interface <a class="code" href="interfacesb_i_smart_playlist_property_registrar.html" title="Registrar for smart playlists properties.">sbISmartPlaylistPropertyRegistrar</a> : nsISupports
-<a name="l00045"></a>00045 {
-<a name="l00052"></a>00052   nsIStringEnumerator getPropertiesForContext(in AString aContextID);
+<a name="l00035"></a>00035 [scriptable, uuid(3813e226-4465-4a4a-90e3-b890e2271e2c)]
+<a name="l00036"></a><a class="code" href="interfacesb_i_smart_playlist_property.html">00036</a> interface <a class="code" href="interfacesb_i_smart_playlist_property.html">sbISmartPlaylistProperty</a> : nsISupports
+<a name="l00037"></a>00037 {
+<a name="l00041"></a><a class="code" href="interfacesb_i_smart_playlist_property.html#97ef2e3039767b3ac9a5c5c513f1699c">00041</a>   readonly attribute AString propertyID;
+<a name="l00042"></a>00042   
+<a name="l00046"></a><a class="code" href="interfacesb_i_smart_playlist_property.html#1dd0297776f947caa0e4b84b81feff9c">00046</a>   readonly attribute <span class="keywordtype">long</span> defaultColumnWidth;
+<a name="l00047"></a>00047   
+<a name="l00051"></a><a class="code" href="interfacesb_i_smart_playlist_property.html#dc3b1e00d38f9d6bb4cc2669040c4225">00051</a>   readonly attribute AString defaultSortDirection; 
+<a name="l00052"></a>00052 };
 <a name="l00053"></a>00053 
-<a name="l00060"></a>00060   <span class="keywordtype">void</span> registerPropertyToContext(in AString aContextID, in AString aProperty);
-<a name="l00061"></a>00061 };
-<a name="l00062"></a>00062 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:35 2008 for Songbird by&nbsp;
+<a name="l00062"></a>00062 [scriptable, uuid(177dff4d-c845-4d7d-b1e8-533591908526)]
+<a name="l00063"></a><a class="code" href="interfacesb_i_smart_playlist_property_registrar.html">00063</a> interface <a class="code" href="interfacesb_i_smart_playlist_property_registrar.html" title="Registrar for smart playlists properties.">sbISmartPlaylistPropertyRegistrar</a> : nsISupports
+<a name="l00064"></a>00064 {
+<a name="l00071"></a>00071   nsISimpleEnumerator getPropertiesForContext(in AString aContextID);
+<a name="l00072"></a>00072 
+<a name="l00079"></a>00079   <span class="keywordtype">void</span> registerPropertyToContext(in AString aContextID, 
+<a name="l00080"></a>00080                                  in AString aProperty,
+<a name="l00081"></a>00081                                  in <span class="keywordtype">long</span> aDefaultColWidth,
+<a name="l00082"></a>00082                                  in AString aDefaultSortDirection);
+<a name="l00083"></a>00083 };
+<a name="l00084"></a>00084 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Mon Aug 4 11:05:04 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

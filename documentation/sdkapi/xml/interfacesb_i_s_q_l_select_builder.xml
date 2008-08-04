@@ -142,6 +142,27 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="339"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_s_q_l_select_builder_178f4ba88fabaafa8a38859da7ee19263" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbISQLSelectBuilder::addRandomOrder</definition>
+        <argsstring>()</argsstring>
+        <name>addRandomOrder</name>
+        <briefdescription>
+<para>Add a random order clause to the query. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aTableName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Table name the column belongs to </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="345"/>
+      </memberdef>
       <memberdef kind="function" id="interfacesb_i_s_q_l_select_builder_17a1bd5ab609d0cdc4e60dbf265a7f5ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbISQLSelectBuilder::addGroupBy</definition>
@@ -176,7 +197,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="348"/>
+        <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="353"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -184,42 +205,42 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="935">
+      <node id="946">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="936" relation="public-inheritance">
+        <childnode refid="947" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="936">
+      <node id="947">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
-      <node id="934">
+      <node id="945">
         <label>sbISQLSelectBuilder</label>
         <link refid="interfacesb_i_s_q_l_select_builder"/>
-        <childnode refid="935" relation="public-inheritance">
+        <childnode refid="946" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="938">
+      <node id="949">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="939" relation="public-inheritance">
+        <childnode refid="950" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="939">
+      <node id="950">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
-      <node id="937">
+      <node id="948">
         <label>sbISQLSelectBuilder</label>
         <link refid="interfacesb_i_s_q_l_select_builder"/>
-        <childnode refid="938" relation="public-inheritance">
+        <childnode refid="949" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="301" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="300" bodyend="350"/>
+    <location file="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" line="301" bodyfile="c:/builds/songbird/trunk/components/sqlbuilder/public/sbISQLBuilder.idl" bodystart="300" bodyend="355"/>
     <listofallmembers>
       <member refid="interfacesb_i_s_q_l_select_builder_1f77e44132cf743d2747439f66b213255" prot="public" virt="non-virtual"><scope>sbISQLSelectBuilder</scope><name>addColumn</name></member>
       <member refid="interfacesb_i_s_q_l_where_builder_1b04abab3d5a117e55e242a0cffce12ec" prot="public" virt="non-virtual"><scope>sbISQLSelectBuilder</scope><name>addCriterion</name></member>
@@ -228,6 +249,7 @@
       <member refid="interfacesb_i_s_q_l_builder_1c63876ce6d2eb2972a2d0c4eda3c2c44" prot="public" virt="non-virtual"><scope>sbISQLSelectBuilder</scope><name>addJoinWithCriterion</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1d50570763487a6f4e0146400f1b1b3d1" prot="public" virt="non-virtual"><scope>sbISQLSelectBuilder</scope><name>addJoinWithIndexHint</name></member>
       <member refid="interfacesb_i_s_q_l_select_builder_1848ae6029bfd0a7a3c2898de9725d4ad" prot="public" virt="non-virtual"><scope>sbISQLSelectBuilder</scope><name>addOrder</name></member>
+      <member refid="interfacesb_i_s_q_l_select_builder_178f4ba88fabaafa8a38859da7ee19263" prot="public" virt="non-virtual"><scope>sbISQLSelectBuilder</scope><name>addRandomOrder</name></member>
       <member refid="interfacesb_i_s_q_l_builder_1942a3fc5adb7eea5a1a23cdd0a6be15c" prot="public" virt="non-virtual"><scope>sbISQLSelectBuilder</scope><name>addSubquery</name></member>
       <member refid="interfacesb_i_s_q_l_builder_100fa6e88ce37c3ddd278c4420f375367" prot="public" virt="non-virtual"><scope>sbISQLSelectBuilder</scope><name>addSubqueryJoin</name></member>
       <member refid="interfacesb_i_s_q_l_select_builder_1e2e668f714e9050ce7d57e84be81251a" prot="public" virt="non-virtual"><scope>sbISQLSelectBuilder</scope><name>baseTableAlias</name></member>

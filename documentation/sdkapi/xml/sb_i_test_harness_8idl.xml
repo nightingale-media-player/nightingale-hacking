@@ -4,13 +4,13 @@
     <compoundname>sbITestHarness.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="570">
+      <node id="583">
         <label>components/testharness/public/sbITestHarness.idl</label>
         <link refid="sbITestHarness.idl"/>
-        <childnode refid="571" relation="include">
+        <childnode refid="584" relation="include">
         </childnode>
       </node>
-      <node id="571">
+      <node id="584">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

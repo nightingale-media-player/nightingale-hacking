@@ -98,7 +98,7 @@
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html" title="Interface for "in" SQL critera.">sbISQLBuilderCriterionIn</a>;
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a>;
 <a name="l00037"></a>00037 
-<a name="l00046"></a>00046 [scriptable, uuid(996cc0c9-c7c0-4a11-adbc-3f3fb2d0698b)]
+<a name="l00046"></a>00046 [scriptable, uuid(c214b05b-0aa8-4bf9-aa0f-a1b1ff646539)]
 <a name="l00047"></a><a class="code" href="interfacesb_i_s_q_l_builder.html">00047</a> interface <a class="code" href="interfacesb_i_s_q_l_builder.html" title="Base interface for SQL building components.">sbISQLBuilder</a> : nsISupports
 <a name="l00048"></a>00048 {
 <a name="l00049"></a><a class="code" href="interfacesb_i_s_q_l_builder.html#b9f806fd09b240a2adf0f76b92c2fdc3">00049</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> MATCH_EQUALS       = 0;
@@ -229,68 +229,69 @@
 <a name="l00338"></a>00338                 in AString aColumnName,
 <a name="l00339"></a>00339                 in <span class="keywordtype">boolean</span> aAscending);
 <a name="l00340"></a>00340 
-<a name="l00341"></a>00341 
-<a name="l00347"></a>00347   <span class="keywordtype">void</span> addGroupBy(in AString aTableName,
-<a name="l00348"></a>00348                   in AString aColumnName);
-<a name="l00349"></a>00349 
-<a name="l00350"></a>00350 };
-<a name="l00351"></a>00351 
-<a name="l00356"></a>00356 [scriptable, uuid(8c584d54-2fa1-4965-8345-f1eda5a1e304)]
-<a name="l00357"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html">00357</a> interface <a class="code" href="interfacesb_i_s_q_l_insert_builder.html" title="Interface for building INSERT statements.">sbISQLInsertBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_builder.html" title="Base interface for SQL building components.">sbISQLBuilder</a>
-<a name="l00358"></a>00358 {
-<a name="l00363"></a>00363   <span class="keywordtype">void</span> addColumn(in AString aColumnName);
-<a name="l00364"></a>00364 
-<a name="l00369"></a>00369   <span class="keywordtype">void</span> addValueString(in AString aValue);
-<a name="l00370"></a>00370 
-<a name="l00375"></a>00375   <span class="keywordtype">void</span> addValueLong(in <span class="keywordtype">long</span> aValue);
-<a name="l00376"></a>00376 
-<a name="l00380"></a>00380   <span class="keywordtype">void</span> addValueNull();
+<a name="l00345"></a>00345   <span class="keywordtype">void</span> addRandomOrder();
+<a name="l00346"></a>00346 
+<a name="l00352"></a>00352   <span class="keywordtype">void</span> addGroupBy(in AString aTableName,
+<a name="l00353"></a>00353                   in AString aColumnName);
+<a name="l00354"></a>00354 
+<a name="l00355"></a>00355 };
+<a name="l00356"></a>00356 
+<a name="l00361"></a>00361 [scriptable, uuid(8c584d54-2fa1-4965-8345-f1eda5a1e304)]
+<a name="l00362"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html">00362</a> interface <a class="code" href="interfacesb_i_s_q_l_insert_builder.html" title="Interface for building INSERT statements.">sbISQLInsertBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_builder.html" title="Base interface for SQL building components.">sbISQLBuilder</a>
+<a name="l00363"></a>00363 {
+<a name="l00368"></a>00368   <span class="keywordtype">void</span> addColumn(in AString aColumnName);
+<a name="l00369"></a>00369 
+<a name="l00374"></a>00374   <span class="keywordtype">void</span> addValueString(in AString aValue);
+<a name="l00375"></a>00375 
+<a name="l00380"></a>00380   <span class="keywordtype">void</span> addValueLong(in <span class="keywordtype">long</span> aValue);
 <a name="l00381"></a>00381 
-<a name="l00385"></a>00385   <span class="keywordtype">void</span> addValueParameter();
+<a name="l00385"></a>00385   <span class="keywordtype">void</span> addValueNull();
 <a name="l00386"></a>00386 
-<a name="l00392"></a>00392   <span class="keywordtype">void</span> addValueRaw(in AString aValue);
-<a name="l00393"></a>00393 
-<a name="l00397"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html#b07be1042574f810a2991a29d05ac726">00397</a>   attribute AString intoTableName;
+<a name="l00390"></a>00390   <span class="keywordtype">void</span> addValueParameter();
+<a name="l00391"></a>00391 
+<a name="l00397"></a>00397   <span class="keywordtype">void</span> addValueRaw(in AString aValue);
 <a name="l00398"></a>00398 
-<a name="l00403"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html#21f6434973942d2464964bb0c9a0a708">00403</a>   attribute <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> select;
-<a name="l00404"></a>00404 };
-<a name="l00405"></a>00405 
-<a name="l00410"></a>00410 [scriptable, uuid(68991dbd-83f0-4df9-b3f6-89d0982ed491)]
-<a name="l00411"></a><a class="code" href="interfacesb_i_s_q_l_update_builder.html">00411</a> interface <a class="code" href="interfacesb_i_s_q_l_update_builder.html" title="Interface for building UPDATE statements.">sbISQLUpdateBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a>
-<a name="l00412"></a>00412 {
-<a name="l00416"></a><a class="code" href="interfacesb_i_s_q_l_update_builder.html#abf442311b40980eb698e57f99eec68c">00416</a>   attribute AString tableName;
-<a name="l00417"></a>00417 
-<a name="l00423"></a>00423   <span class="keywordtype">void</span> addAssignmentString(in AString aColumnName,
-<a name="l00424"></a>00424                            in AString aValue);
-<a name="l00425"></a>00425 
-<a name="l00430"></a>00430   <span class="keywordtype">void</span> addAssignmentParameter(in AString aColumnName);
-<a name="l00431"></a>00431 };
-<a name="l00432"></a>00432 
-<a name="l00437"></a>00437 [scriptable, uuid(73a18b36-2eee-429e-9cda-1f4428c3afb5)]
-<a name="l00438"></a><a class="code" href="interfacesb_i_s_q_l_delete_builder.html">00438</a> interface <a class="code" href="interfacesb_i_s_q_l_delete_builder.html" title="Interface for building DELETE statements.">sbISQLDeleteBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a>
-<a name="l00439"></a>00439 {
-<a name="l00443"></a><a class="code" href="interfacesb_i_s_q_l_delete_builder.html#c5092e95160f65d0056657c90ef92daf">00443</a>   attribute AString tableName;
-<a name="l00444"></a>00444 };
-<a name="l00445"></a>00445 
-<a name="l00451"></a>00451 [scriptable, uuid(442c1d9d-4e8e-4aa1-9124-2f700b625a45)]
-<a name="l00452"></a><a class="code" href="interfacesb_i_s_q_l_builder_criterion.html">00452</a> interface <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> : nsISupports
-<a name="l00453"></a>00453 {
-<a name="l00454"></a>00454   [noscript] AString toString();
-<a name="l00455"></a>00455 };
-<a name="l00456"></a>00456 
-<a name="l00461"></a>00461 [scriptable, uuid(51992f09-7b9a-4a91-b708-b4551c25acf9)]
-<a name="l00462"></a><a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html">00462</a> interface <a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html" title="Interface for "in" SQL critera.">sbISQLBuilderCriterionIn</a> : <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a>
-<a name="l00463"></a>00463 {
-<a name="l00468"></a>00468   <span class="keywordtype">void</span> addString(in AString aValue);
-<a name="l00469"></a>00469 
-<a name="l00474"></a>00474   <span class="keywordtype">void</span> addLong(in <span class="keywordtype">long</span> aValue);
-<a name="l00475"></a>00475 
-<a name="l00480"></a>00480   <span class="keywordtype">void</span> addSubquery(in <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> aSubquery);
-<a name="l00481"></a>00481 
-<a name="l00485"></a>00485   <span class="keywordtype">void</span> clear();
-<a name="l00486"></a>00486 };
-<a name="l00487"></a>00487 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 25 11:25:35 2008 for Songbird by&nbsp;
+<a name="l00402"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html#b07be1042574f810a2991a29d05ac726">00402</a>   attribute AString intoTableName;
+<a name="l00403"></a>00403 
+<a name="l00408"></a><a class="code" href="interfacesb_i_s_q_l_insert_builder.html#21f6434973942d2464964bb0c9a0a708">00408</a>   attribute <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> select;
+<a name="l00409"></a>00409 };
+<a name="l00410"></a>00410 
+<a name="l00415"></a>00415 [scriptable, uuid(68991dbd-83f0-4df9-b3f6-89d0982ed491)]
+<a name="l00416"></a><a class="code" href="interfacesb_i_s_q_l_update_builder.html">00416</a> interface <a class="code" href="interfacesb_i_s_q_l_update_builder.html" title="Interface for building UPDATE statements.">sbISQLUpdateBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a>
+<a name="l00417"></a>00417 {
+<a name="l00421"></a><a class="code" href="interfacesb_i_s_q_l_update_builder.html#abf442311b40980eb698e57f99eec68c">00421</a>   attribute AString tableName;
+<a name="l00422"></a>00422 
+<a name="l00428"></a>00428   <span class="keywordtype">void</span> addAssignmentString(in AString aColumnName,
+<a name="l00429"></a>00429                            in AString aValue);
+<a name="l00430"></a>00430 
+<a name="l00435"></a>00435   <span class="keywordtype">void</span> addAssignmentParameter(in AString aColumnName);
+<a name="l00436"></a>00436 };
+<a name="l00437"></a>00437 
+<a name="l00442"></a>00442 [scriptable, uuid(73a18b36-2eee-429e-9cda-1f4428c3afb5)]
+<a name="l00443"></a><a class="code" href="interfacesb_i_s_q_l_delete_builder.html">00443</a> interface <a class="code" href="interfacesb_i_s_q_l_delete_builder.html" title="Interface for building DELETE statements.">sbISQLDeleteBuilder</a> : <a class="code" href="interfacesb_i_s_q_l_where_builder.html" title="Interface for building WHERE expressions.">sbISQLWhereBuilder</a>
+<a name="l00444"></a>00444 {
+<a name="l00448"></a><a class="code" href="interfacesb_i_s_q_l_delete_builder.html#c5092e95160f65d0056657c90ef92daf">00448</a>   attribute AString tableName;
+<a name="l00449"></a>00449 };
+<a name="l00450"></a>00450 
+<a name="l00456"></a>00456 [scriptable, uuid(442c1d9d-4e8e-4aa1-9124-2f700b625a45)]
+<a name="l00457"></a><a class="code" href="interfacesb_i_s_q_l_builder_criterion.html">00457</a> interface <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a> : nsISupports
+<a name="l00458"></a>00458 {
+<a name="l00459"></a>00459   [noscript] AString toString();
+<a name="l00460"></a>00460 };
+<a name="l00461"></a>00461 
+<a name="l00466"></a>00466 [scriptable, uuid(51992f09-7b9a-4a91-b708-b4551c25acf9)]
+<a name="l00467"></a><a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html">00467</a> interface <a class="code" href="interfacesb_i_s_q_l_builder_criterion_in.html" title="Interface for "in" SQL critera.">sbISQLBuilderCriterionIn</a> : <a class="code" href="interfacesb_i_s_q_l_builder_criterion.html" title="Interface for SQL critera. This interface has no public methods as it is used only...">sbISQLBuilderCriterion</a>
+<a name="l00468"></a>00468 {
+<a name="l00473"></a>00473   <span class="keywordtype">void</span> addString(in AString aValue);
+<a name="l00474"></a>00474 
+<a name="l00479"></a>00479   <span class="keywordtype">void</span> addLong(in <span class="keywordtype">long</span> aValue);
+<a name="l00480"></a>00480 
+<a name="l00485"></a>00485   <span class="keywordtype">void</span> addSubquery(in <a class="code" href="interfacesb_i_s_q_l_select_builder.html" title="Interface for building SELECT statements.">sbISQLSelectBuilder</a> aSubquery);
+<a name="l00486"></a>00486 
+<a name="l00490"></a>00490   <span class="keywordtype">void</span> clear();
+<a name="l00491"></a>00491 };
+<a name="l00492"></a>00492 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Mon Aug 4 11:05:04 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -32,6 +32,6 @@
 <para>Output parameter for binary data of image</para></parameterdescription>
 </parameteritem>
 </parameterlist>
-var handler = metadataManager.getHandlerForMediaURL(localPathURI.spec); var mimeTypeOutparam = {}; var outSize = {}; var imageData = handler.getImageData(Ci.sbIMetadataHandler .METADATA_IMAGE_TYPE_OTHER, mimeTypeOutparam, outSize); <programlisting></programlisting> </para>    </detaileddescription>
+var handler = metadataManager.getHandlerForMediaURL(localPathURI.spec); var mimeTypeOutparam = {}; var outSize = {}; var imageData = handler.getImageData(Ci.sbIMetadataHandler .METADATA_IMAGE_TYPE_FRONTCOVER, mimeTypeOutparam, outSize); <programlisting></programlisting> </para>    </detaileddescription>
   </compounddef>
 </doxygen>

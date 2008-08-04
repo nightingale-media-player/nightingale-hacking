@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_mediacore_manager" kind="interface" prot="public">
+    <compoundname>sbIMediacoreManager</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_mediacore_manager_163fa5da7ffdfa66f9f0e3ea5610bffab" prot="public" static="no" mutable="no">
+        <type>readonly sbIMediacoreBalanceControl</type>
+        <definition>readonly sbIMediacoreBalanceControl sbIMediacoreManager::balanceControl</definition>
+        <argsstring></argsstring>
+        <name>balanceControl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_manager_18eb6531d7c58868a53babf847aae19af" prot="public" static="no" mutable="no">
+        <type>readonly sbIMediacoreVolumeControl</type>
+        <definition>readonly sbIMediacoreVolumeControl sbIMediacoreManager::volumeControl</definition>
+        <argsstring></argsstring>
+        <name>volumeControl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" line="43" bodyfile="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_manager_19babe21fe1368459aeeda10d50428300" prot="public" static="no" mutable="no">
+        <type>readonly sbIMediacoreAudioEQ</type>
+        <definition>readonly sbIMediacoreAudioEQ sbIMediacoreManager::equalizer</definition>
+        <argsstring></argsstring>
+        <name>equalizer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_manager_1da20e938700de3dc191863822211eac7" prot="public" static="no" mutable="no">
+        <type>readonly sbIMediacorePlaybackControl</type>
+        <definition>readonly sbIMediacorePlaybackControl sbIMediacoreManager::playbackControl</definition>
+        <argsstring></argsstring>
+        <name>playbackControl</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_manager_152bf143ca8e0ae07ff4645c0ff813d9b" prot="public" static="no" mutable="no">
+        <type>readonly sbIMediacoreCapabilities</type>
+        <definition>readonly sbIMediacoreCapabilities sbIMediacoreManager::capabilities</definition>
+        <argsstring></argsstring>
+        <name>capabilities</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" line="48" bodyfile="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_manager_1ec4a59693da51ee2fb393581e9262749" prot="public" static="no" mutable="no">
+        <type>readonly nsIPropertyBag2</type>
+        <definition>readonly nsIPropertyBag2 sbIMediacoreManager::properties</definition>
+        <argsstring></argsstring>
+        <name>properties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" line="41" bodyfile="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" bodystart="40" bodyend="50"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_mediacore_manager_163fa5da7ffdfa66f9f0e3ea5610bffab" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>balanceControl</name></member>
+      <member refid="interfacesb_i_mediacore_manager_152bf143ca8e0ae07ff4645c0ff813d9b" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>capabilities</name></member>
+      <member refid="interfacesb_i_mediacore_manager_19babe21fe1368459aeeda10d50428300" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>equalizer</name></member>
+      <member refid="interfacesb_i_mediacore_manager_1da20e938700de3dc191863822211eac7" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>playbackControl</name></member>
+      <member refid="interfacesb_i_mediacore_manager_1ec4a59693da51ee2fb393581e9262749" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>properties</name></member>
+      <member refid="interfacesb_i_mediacore_manager_18eb6531d7c58868a53babf847aae19af" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>volumeControl</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

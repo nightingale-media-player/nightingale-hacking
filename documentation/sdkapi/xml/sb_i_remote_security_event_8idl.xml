@@ -4,13 +4,13 @@
     <compoundname>sbIRemoteSecurityEvent.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="530">
+      <node id="543">
         <label>components/remoteapi/public/sbIRemoteSecurityEvent.idl</label>
         <link refid="sbIRemoteSecurityEvent.idl"/>
-        <childnode refid="531" relation="include">
+        <childnode refid="544" relation="include">
         </childnode>
       </node>
-      <node id="531">
+      <node id="544">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

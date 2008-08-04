@@ -62,14 +62,14 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="584">
+      <node id="593">
         <label>sbIMediaListViewTreeView</label>
         <link refid="interfacesb_i_media_list_view_tree_view"/>
-        <childnode refid="585" relation="usage">
+        <childnode refid="594" relation="usage">
           <edgelabel>observer</edgelabel>
         </childnode>
       </node>
-      <node id="585">
+      <node id="594">
         <label>sbIMediaListViewTreeViewObserver</label>
         <link refid="interfacesb_i_media_list_view_tree_view_observer"/>
       </node>

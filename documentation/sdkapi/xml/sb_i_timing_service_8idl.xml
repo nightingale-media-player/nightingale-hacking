@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIStringEnumerator.idl</includes>
     <incdepgraph>
-      <node id="575">
+      <node id="588">
         <label>nsIStringEnumerator.idl</label>
       </node>
-      <node id="573">
+      <node id="586">
         <label>components/testharness/public/sbITimingService.idl</label>
         <link refid="sbITimingService.idl"/>
-        <childnode refid="574" relation="include">
+        <childnode refid="587" relation="include">
         </childnode>
-        <childnode refid="575" relation="include">
+        <childnode refid="588" relation="include">
         </childnode>
       </node>
-      <node id="574">
+      <node id="587">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

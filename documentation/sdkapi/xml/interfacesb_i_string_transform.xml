@@ -98,12 +98,12 @@
         <name>TRANSFORM_IGNORE_SYMBOLS</name>
         <initializer> 1 &lt;&lt; 8</initializer>
         <briefdescription>
-        </briefdescription>
+<para>Ignore symbol characters. This includes but is not limited to #, $, +, -. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="66" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="66" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="70" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="70" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_string_transform_172da2cb3d96fd3a9e8ef511c93db07b8" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -112,12 +112,12 @@
         <name>TRANSFORM_IGNORE_NONSPACE</name>
         <initializer> 1 &lt;&lt; 9</initializer>
         <briefdescription>
-        </briefdescription>
+<para>Ignore non-spacing characters. This includes but is not limited to diacritics. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="67" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="67" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="76" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="76" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_string_transform_151009a08d1b398406d25fe8436326d38" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -131,7 +131,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="69" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="69" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="78" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="78" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -158,7 +158,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="73"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="82"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_string_transform_126415c94cf8057d896d75c4cdbeec666" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -179,7 +179,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="76"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="85"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_string_transform_19c157820ff2206fb3c16dac5564e65c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -196,14 +196,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="78"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="87"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="34" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="33" bodyend="79"/>
+    <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="34" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="33" bodyend="88"/>
     <listofallmembers>
       <member refid="interfacesb_i_string_transform_126415c94cf8057d896d75c4cdbeec666" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>convertToCharset</name></member>
       <member refid="interfacesb_i_string_transform_19c157820ff2206fb3c16dac5564e65c0" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>guessCharset</name></member>

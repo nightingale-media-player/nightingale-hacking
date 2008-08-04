@@ -88,14 +88,14 @@
     <detaileddescription>
 <para>A scriptable filter result is the intermediate object that is returned from filtering on a library via predefined properties. This is the object returned from an expression such as songbird.mainLibrary.artists.Bob </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="865">
+      <node id="874">
         <label>sbIScriptableFilterResult</label>
         <link refid="interfacesb_i_scriptable_filter_result"/>
-        <childnode refid="866" relation="usage">
+        <childnode refid="875" relation="usage">
           <edgelabel>constraint</edgelabel>
         </childnode>
       </node>
-      <node id="866">
+      <node id="875">
         <label>sbILibraryConstraint</label>
         <link refid="interfacesb_i_library_constraint"/>
       </node>

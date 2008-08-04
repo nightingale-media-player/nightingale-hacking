@@ -4,13 +4,13 @@
     <compoundname>sbILibraryConstraints.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="230">
+      <node id="232">
         <label>components/library/base/public/sbILibraryConstraints.idl</label>
         <link refid="sbILibraryConstraints.idl"/>
-        <childnode refid="231" relation="include">
+        <childnode refid="233" relation="include">
         </childnode>
       </node>
-      <node id="231">
+      <node id="233">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

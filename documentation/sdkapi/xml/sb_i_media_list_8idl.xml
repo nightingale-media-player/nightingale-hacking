@@ -6,49 +6,49 @@
     <includedby refid="sb_i_library_8idl" local="yes">components/library/base/public/sbILibrary.idl</includedby>
     <includedby refid="sb_i_local_database_smart_media_list_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</includedby>
     <incdepgraph>
-      <node id="278">
+      <node id="280">
         <label>components/library/base/public/sbIMediaList.idl</label>
         <link refid="sbIMediaList.idl"/>
-        <childnode refid="279" relation="include">
-        </childnode>
-      </node>
-      <node id="279">
-        <label>sbIMediaItem.idl</label>
-        <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="280" relation="include">
+        <childnode refid="281" relation="include">
         </childnode>
       </node>
       <node id="281">
+        <label>sbIMediaItem.idl</label>
+        <link refid="sb_i_media_item_8idl"/>
+        <childnode refid="282" relation="include">
+        </childnode>
+      </node>
+      <node id="283">
         <label>nsISupports.idl</label>
       </node>
-      <node id="280">
+      <node id="282">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="281" relation="include">
+        <childnode refid="283" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="285">
+      <node id="287">
         <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
         <link refid="sb_i_local_database_smart_media_list_8idl"/>
       </node>
-      <node id="284">
+      <node id="286">
         <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
         <link refid="sb_i_device_library_8idl-source"/>
       </node>
-      <node id="282">
+      <node id="284">
         <label>components/library/base/public/sbIMediaList.idl</label>
         <link refid="sbIMediaList.idl"/>
-        <childnode refid="283" relation="include">
-        </childnode>
         <childnode refid="285" relation="include">
         </childnode>
+        <childnode refid="287" relation="include">
+        </childnode>
       </node>
-      <node id="283">
+      <node id="285">
         <label>components/library/base/public/sbILibrary.idl</label>
         <link refid="sb_i_library_8idl"/>
-        <childnode refid="284" relation="include">
+        <childnode refid="286" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

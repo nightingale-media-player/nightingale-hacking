@@ -436,27 +436,18 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="182"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_metadata_handler_170e11b959558b9ff87ebf62f4db06c5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_metadata_handler_1651c8ba1123f897c7e100b7b75969725" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIMetadataHandler::setImageData</definition>
-        <argsstring>(in PRInt32 aType, in AUTF8String aMimeType,[const, array, size_is(aDataLen)] in octet aData, in unsigned long aDataLen)</argsstring>
+        <argsstring>(in PRInt32 aType, in AString aUrl)</argsstring>
         <name>setImageData</name>
         <param>
           <type>in PRInt32</type>
           <declname>aType</declname>
         </param>
         <param>
-          <type>in AUTF8String</type>
-          <declname>aMimeType</declname>
-        </param>
-        <param>
-          <attributes>[const, array, size_is(aDataLen)]</attributes>
-          <type>in octet</type>
-          <declname>aData</declname>
-        </param>
-        <param>
-          <type>in unsigned long</type>
-          <declname>aDataLen</declname>
+          <type>in AString</type>
+          <declname>aUrl</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -464,7 +455,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="202"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="196"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -489,7 +480,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="215"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="209"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -502,7 +493,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="220"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="214"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -511,25 +502,25 @@
 <para>User code requests a handler by calling <ref refid="interfacesb_i_metadata_manager_1ae19d169e02736347d183bf89ae8ffa6" kindref="member">sbIMetadataManager::getHandlerForMediaURL</ref> that then returns one of these.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_metadata_manager" kindref="compound">sbIMetadataManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="611">
+      <node id="620">
         <label>sbIMetadataHandler</label>
         <link refid="interfacesb_i_metadata_handler"/>
-        <childnode refid="612" relation="usage">
+        <childnode refid="621" relation="usage">
           <edgelabel>props</edgelabel>
         </childnode>
       </node>
-      <node id="613">
+      <node id="622">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="612">
+      <node id="621">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="613" relation="public-inheritance">
+        <childnode refid="622" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="45" bodyend="221"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="45" bodyend="215"/>
     <listofallmembers>
       <member refid="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>channel</name></member>
       <member refid="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>close</name></member>
@@ -560,7 +551,7 @@
       <member refid="interfacesb_i_metadata_handler_1a2a140a5970440aac460137619d1c673" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>props</name></member>
       <member refid="interfacesb_i_metadata_handler_1089f9e2ab8e3494dc72dae7e937b0a56" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>read</name></member>
       <member refid="interfacesb_i_metadata_handler_1f5d32370ea0ee06b351d1d8db98939e4" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>requiresMainThread</name></member>
-      <member refid="interfacesb_i_metadata_handler_170e11b959558b9ff87ebf62f4db06c5d" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>setImageData</name></member>
+      <member refid="interfacesb_i_metadata_handler_1651c8ba1123f897c7e100b7b75969725" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>setImageData</name></member>
       <member refid="interfacesb_i_metadata_handler_1e458a8ab0d74624ad43d7592c9fb548d" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>vote</name></member>
       <member refid="interfacesb_i_metadata_handler_15ebeaf138cfa866b44ad8aceccd4174c" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>write</name></member>
     </listofallmembers>
