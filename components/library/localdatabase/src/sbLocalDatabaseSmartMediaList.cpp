@@ -1931,12 +1931,11 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
-  #define ZERO "+0000000000000000000"
+  PRFloat64 fValue = ScanfInt64(value);
 
   if (op.EqualsLiteral(SB_OPERATOR_EQUALS) ||
       op.EqualsLiteral(SB_OPERATOR_ONDATE)) {
-    if (value.EqualsLiteral(ZERO) ||
-        value.IsEmpty()) {
+    if (fValue == 0) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
@@ -1944,15 +1943,14 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
   
   if (op.EqualsLiteral(SB_OPERATOR_NOTEQUALS) ||
       op.EqualsLiteral(SB_OPERATOR_NOTONDATE)) {
-    if (!value.EqualsLiteral(ZERO) &&
-        !value.IsEmpty()) {
+    if (fValue != 0) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
   }
 
   if (op.EqualsLiteral(SB_OPERATOR_GREATER)) {
-    if (value.First() == '-') {
+    if (fValue < 0) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
@@ -1960,23 +1958,21 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
 
   if (op.EqualsLiteral(SB_OPERATOR_GREATEREQUAL) ||
       op.EqualsLiteral(SB_OPERATOR_BETWEEN)) {
-    if (value.First() == '-' ||
-        value.EqualsLiteral(ZERO)) {
+    if (fValue <= 0) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
   }
 
   if (op.EqualsLiteral(SB_OPERATOR_LESS)) {
-    if (value.First() == '+' &&
-        !value.EqualsLiteral(ZERO)) {
+    if (fValue > 0) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
   }
 
   if (op.EqualsLiteral(SB_OPERATOR_LESSEQUAL)) {
-    if (value.First() == '+') {
+    if (fValue >= 0) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
@@ -2944,5 +2940,6 @@ sbLocalDatabaseSmartMediaList::RemoveSmartMediaListListener(sbILocalDatabaseSmar
   mListeners.RemoveObject(aListener);
   return NS_OK;
 }
+
 
 
