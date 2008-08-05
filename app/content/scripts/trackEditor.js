@@ -46,7 +46,7 @@ Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
-const ARTWORK_NO_COVER    = "chrome://global/skin/no-cover.png";
+const ARTWORK_NO_COVER = "chrome://songbird/skin/album-art/default-cover.png";
 
 
 /******************************************************************************

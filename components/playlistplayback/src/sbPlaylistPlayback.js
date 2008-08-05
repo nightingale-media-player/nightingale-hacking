@@ -62,6 +62,9 @@ const DEBUG = false;
 // number of milliseconds for timer calling the playback loop
 const LOOP_DURATION = 250;
 
+// Default cover for missing album art on playing images
+const DEFAULT_COVER = "chrome://songbird/skin/album-art/default-cover.png";
+
 // Accessors for Components.*
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -364,6 +367,7 @@ PlaylistPlayback.prototype = {
   _metadataURL:        null,
   _metadataPos:        null,
   _metadataLen:        null,
+  _metadataImageURL:   null,
   _metadataPosText:    null,
   _metadataLenText:    null,
   _statusText:         null,
@@ -510,6 +514,7 @@ PlaylistPlayback.prototype = {
     this._metadataURL           = createDataRemote("metadata.url", null);
     this._metadataPos           = createDataRemote("metadata.position", null);
     this._metadataLen           = createDataRemote("metadata.length", null);
+    this._metadataImageURL      = createDataRemote("metadata.imageURL", null);
     this._metadataPosText       = createDataRemote("metadata.position.str", null);
     this._metadataLenText       = createDataRemote("metadata.length.str", null);
     this._restartOnPlaybackEnd  = createDataRemote("restart.onplaybackend", null);
@@ -542,6 +547,7 @@ PlaylistPlayback.prototype = {
     this._metadataArtist.stringValue = "";
     this._metadataAlbum.stringValue = "";
     this._metadataGenre.stringValue = "";
+    this._metadataImageURL.stringValue = "";
     this._statusText.stringValue = "";
     this._statusType.stringValue = "";
     this._playingRef.stringValue = "";
@@ -580,6 +586,7 @@ PlaylistPlayback.prototype = {
     this._metadataURL.unbind();
     this._metadataPos.unbind();
     this._metadataLen.unbind();
+    this._metadataImageURL.unbind();
     this._metadataPosText.unbind();
     this._metadataLenText.unbind();
     this._restartOnPlaybackEnd.unbind();
@@ -1162,7 +1169,7 @@ PlaylistPlayback.prototype = {
 
     // Ask the core very nicely to please stop.  Won't happen immediately.
     core.stop();
-    
+
     // Wait a second or two to see if we see ourselves stop.
     var start = new Date().getTime();
     while ( this.playing && ( new Date().getTime() - start < 2000 ) )
@@ -1540,6 +1547,7 @@ PlaylistPlayback.prototype = {
       this._timer = null;
     }
     this._started = false;
+    this._metadataImageURL.stringValue = "";
   },
   
   _onPlayerLoopStop: function() {
@@ -1806,6 +1814,9 @@ PlaylistPlayback.prototype = {
         this._metadataAlbum.stringValue = album;
       if (genre != "")
         this._metadataGenre.stringValue = genre;
+        
+      // Set the dataremote for the primaryImageURL for album art.
+      this._getPrimaryImage(cur_item);
     }
   },
 
@@ -2099,6 +2110,7 @@ PlaylistPlayback.prototype = {
     this._metadataAlbum.stringValue = "";
     this._metadataGenre.stringValue = "";
     this._metadataLen.intValue = 0;
+    this._metadataImageURL.stringValue = DEFAULT_COVER;
     
     // Set the data remotes to indicate what is about to play
     this._playURL.stringValue = url;
@@ -2108,6 +2120,7 @@ PlaylistPlayback.prototype = {
     this._metadataAlbum.stringValue = album;
     this._metadataGenre.stringValue = genre;
     this._metadataLen.intValue = parseInt(duration, 10) / 1000;
+    this._getPrimaryImage(item);
   },
 
   _shufflerGetPreviousTrack: function sbPlaylistPlayback_shufflerGetPreviousTrack(aIncrement) {
@@ -2238,6 +2251,38 @@ PlaylistPlayback.prototype = {
     if (playingViewSearch != this._shuffleData.shuffleSearch)
       return true;
     return false;
+  },
+  
+  // Figures out what the currently playing artwork should be and set it to the
+  // dataremote for the now playing image.
+  _getPrimaryImage: function sbPlaylistPlayback_getPrimaryImage(aMediaItem) {
+    // Set the dataremote for the primaryImageURL for album art.
+    var primaryImageURL = aMediaItem.getProperty(SBProperties.primaryImageURL);
+    if (primaryImageURL != this._metadataImageURL.stringValue) {
+      if (!primaryImageURL) {
+        primaryImageURL = DEFAULT_COVER;
+      } else {
+        // If this is a local file, check that it exists
+        try {
+          var ioService =  Cc['@mozilla.org/network/io-service;1']
+                             .getService(Ci.nsIIOService);
+
+          uri = ioService.newURI(primaryImageURL, null, null);
+          if (uri.scheme == 'file') {
+            var fph = ioService.getProtocolHandler("file")
+                               .QueryInterface(Ci.nsIFileProtocolHandler);
+            var file = fph.getFileFromURLSpec(primaryImageURL);
+            if (!file.exists()) {
+              primaryImageURL = DEFAULT_COVER;
+            }
+          }
+        } catch (err) {
+          primaryImageURL = DEFAULT_COVER;
+        }
+      }
+      
+      this._metadataImageURL.stringValue = primaryImageURL;
+    }
   },
   
   // returns an array representing the active filters for a view

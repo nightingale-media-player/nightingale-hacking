@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://albumart/skin/albumArt.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://albumart/locale/albumArt.dtd">
+
+<window onload="AlbumArtPaneController.onLoad();"
+        onunload="AlbumArtPaneController.onUnload();"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <stack flex="1">
+    <vbox id="sb-albumart-not-playing"
+          class="albumArtNotPlayingContainer">
+      <description class="albumArtNotPlayingMessage"
+                   value="&artwork.displaypane.not_playing_message;"/>
+    </vbox>
+    <vbox class="albumArtNowPlayingContainer"
+          align="center">
+      <image id="sb-albumart-playing"
+             class="albumArtNowPlayingImage"
+             ondblclick="AlbumArtPaneController.onImageDblClick(event);"/>
+    </vbox>
+  </stack>
+
+  <script type="application/x-javascript" 
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+  <script type="application/x-javascript"  
+          src="chrome://songbird/content/scripts/windowUtils.js" />
+  <script type="application/x-javascript"
+          src="chrome://albumart/content/albumArtPane.js" />
+
+</window>
