@@ -71,7 +71,23 @@ function testDisplayPanesService() {
               "chrome://songbird-test-display-pane/content/testDisplayPane.html", 
               "Display Pane Test", 
               "http://www.songbirdnest.com/favicon.ico", 180, 50, "test-content-group");
-  paneMgr.unregisterContent("chrome://songbird-test-display-pane/content/testDisplayPane.html");
+
+  // Be sure to remove any registered panes so we can start with a fresh list,
+  // then register them again when we are done so we don't affect other tests.
+  var installedList = paneMgr.contentList;
+  var paneList = []; // Keep a list of registered panes for after the test.
+  while (installedList.hasMoreElements()) {
+    var contentInfo = installedList.getNext();
+    paneList[contentInfo.contentUrl] = contentInfo;
+  }
+
+  // Unregister existing display panes
+  for (contentInfo in paneList) {
+    paneMgr.unregisterContent(contentInfo);
+  }
+  
+  installedList = paneMgr.contentList;
+  assertBool(!installedList.hasMoreElements(), "installedList should be empty");
 
   log("Testing pane registration");
 
@@ -195,6 +211,19 @@ function testDisplayPanesService() {
   paneMgr.unregisterInstantiator(h1);
   paneMgr.unregisterInstantiator(h2);
   paneMgr.unregisterInstantiator(h3);
+
+  // Register the original display panes
+  for (contentInfo in paneList) {
+    if (!paneMgr.getPaneInfo(contentInfo)) {
+      paneMgr.registerContent(paneList[contentInfo].contentUrl,
+                              paneList[contentInfo].contentTitle,
+                              paneList[contentInfo].contentIcon,
+                              paneList[contentInfo].defaultWidth,
+                              paneList[contentInfo].defaultHeight,
+                              paneList[contentInfo].suggestedContentGroups,
+                              false);
+    }
+  }
 
   paneMgr.removeListener(listener);
 }
