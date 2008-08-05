@@ -545,6 +545,10 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
     // Starting a new operation, so clear the completion flag
     mCompleted = PR_FALSE;
   
+    /* BUG 11436 HACK START*/
+    mBug11436Hack = nsnull;
+    /* BUG 11436 HACK END*/
+    
     // Must ensure metadata is set before writing
     NS_ENSURE_TRUE(mpMetadataPropertyArray, NS_ERROR_NOT_INITIALIZED);
 
@@ -694,7 +698,17 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         result = NS_OK;
       } else {
         result = NS_ERROR_FAILURE;      
-      } 
+      }
+      /* BUG 11436 HACK START*/
+      if (mBug11436Hack) {
+        // Delete the frame ourselves to prevent a horrible crash
+        // caused by a mismatched allocator.
+        static_cast<TagLib::MPEG::File*>(f.file())->ID3v2Tag()
+                  ->removeFrame(mBug11436Hack, false); // false -- don't delete
+        delete mBug11436Hack;
+        mBug11436Hack = nsnull;
+      }
+      /* BUG 11436 HACK END*/
     }
     
     // TODO need to set pWriteCount
@@ -844,6 +858,10 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
 
   NS_ENSURE_STATE(mpURL);
 
+  /* BUG 11436 HACK START*/
+  mBug11436Hack = nsnull;
+  /* BUG 11436 HACK END*/
+  
   // TODO: write other files' metadata.
   // First check if we support this file
   result = mpURL->GetFileExtension(fileExt);
@@ -892,6 +910,17 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
         result = NS_ERROR_FAILURE;
       } 
     }
+    
+    /* BUG 11436 HACK START*/
+    if (mBug11436Hack) {
+      // Delete the frame ourselves to prevent a horrible crash
+      // caused by a mismatched allocator.
+      static_cast<TagLib::MPEG::File*>(f.file())->ID3v2Tag()
+                  ->removeFrame(mBug11436Hack, false); // false -- don't delete
+      delete mBug11436Hack;
+      mBug11436Hack = nsnull;
+    }
+    /* BUG 11436 HACK END*/
   } else {
     result = NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -982,6 +1011,10 @@ nsresult sbMetadataHandlerTaglib::WriteImage(TagLib::MPEG::File* aMPEGFile,
     }
     // Add the frame to the file.
     aMPEGFile->ID3v2Tag()->addFrame(pic);
+    
+    /* BUG 11436 HACK START*/
+    mBug11436Hack = pic;
+    /* BUG 11436 HACK END*/
   }
   
   return rv;
