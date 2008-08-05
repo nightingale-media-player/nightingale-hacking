@@ -778,11 +778,10 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
     nsAString &filePath = mMetadataPath;
 #else
     nsCString filePath = NS_ConvertUTF16toUTF8(mMetadataPath);
-#endif
-    
 #if DEBUG
     // XXXkreeger -> TEMP LOGGING.
     printf("  TAGLIB CSTRING LOG == %s\n", filePath.get());
+#endif
 #endif
 
     /* Open and read the metadata file. */
