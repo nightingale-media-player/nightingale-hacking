@@ -231,18 +231,18 @@ sbMetadataImageScanner.prototype = {
       var contentURI = this._ioService.newURI(contentURL, null, null);
       // if the URL isn't valid, fail
       if (!contentURI) {
-        this._logError("Unable to find image for bad file: " + contentURL);
+        this._debug("Unable to find image for bad file: " + contentURL);
         return false;
       }
 
       // if the URL isn't local, fail
       if ( !(contentURI instanceof Ci.nsIFileURL) ) {
-        this._logError("Unable to get image from non-local file: " +
+        this._debug("Unable to get image from non-local file: " +
                        contentURL);
         return false;
       }
     } catch (err) {
-      this._logError("Unable to find image for: " + contentURL + " - " + err);
+      this._debug("Unable to find image for: " + contentURL + " - " + err);
       return false;
     }
    
