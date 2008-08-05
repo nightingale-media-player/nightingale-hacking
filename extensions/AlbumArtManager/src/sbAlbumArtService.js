@@ -152,8 +152,13 @@ sbAlbumArtService.prototype = {
     this._playListPlaybackService.addListener(this);
 
     this._debug("Loading alert service");
-    this._alertService = Cc["@mozilla.org/alerts-service;1"]
-                          .getService(Ci.nsIAlertsService);
+    try {
+      this._alertService = Cc["@mozilla.org/alerts-service;1"]
+                            .getService(Ci.nsIAlertsService);
+    } catch (ex) {
+      /* on OSX without growl installed, getService will fail (but the
+         contract id will be correctly registered, ugh) */
+    }
 
     this._debug("Creating dataremote for now playing cover");
     // Create a dataremote for the current album cover art
@@ -329,9 +334,11 @@ sbAlbumArtService.prototype = {
     // TODO: Make a libnotify version of the alertService for Linux?
     // TODO: Make a Snarl version of the alertService for Windows?
     try {
-      this._alertService.showAlertNotification(mAlbumArt,
-                                               textTitle,
-                                               textOutput);
+      if (this._alertService) {
+        this._alertService.showAlertNotification(mAlbumArt,
+                                                 textTitle,
+                                                 textOutput);
+      }
     } catch (err) {
       var alertError = SBString("albumartmanager.alertError",
                               "Unable to alert check settings.",
