@@ -63,7 +63,8 @@
 
       <xul:vbox anonid="widget_box"
                 class="sb-first-run-connection-box"
-                flex="1">
+                flex="1"
+                oncommand="_doCommand(event);">
 
         <!-- Header. -->
         <xul:label class="sb-first-run-header"
@@ -78,7 +79,7 @@
             &first_run.connection.settings.description;
           </xul:description>
           <xul:button label="&first_run.connection.settings.button;"
-                      action="openConnectionSettings"/>
+                      action="doConnectionSettings"/>
 
         </xul:groupbox>
 
@@ -133,6 +134,20 @@
         if (this._widgetSvc)
             this._widgetSvc.finalize();
       ]]></destructor>
+
+
+      <!--
+       * Handle the command event specified by aEvent.
+       *
+       * \param aEvent          Command event.
+       -->
+
+      <method name="_doCommand">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          this._widgetSvc.doCommand(aEvent);
+        ]]></body>
+      </method>
 
 
       <!--

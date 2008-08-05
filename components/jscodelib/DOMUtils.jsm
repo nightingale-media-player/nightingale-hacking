@@ -347,13 +347,15 @@ DOMEventListenerSet.prototype = {
 
   /**
    * Add an event listener for the element specified by aElement with the
-   * parameters specified by aType, aListener, and aUseCapture.  Return an ID
-   * that may be used to reference the added listener.
+   * parameters specified by aType, aListener, and aUseCapture.  If aOneShot is
+   * true, remove listener after it's called once.  Return an ID that may be
+   * used to reference the added listener.
    *
    * \param aElement            Element for which to add an event listener.
    * \param aType               Type of event for which to listen.
    * \param aListener           Listener function.
    * \param aUseCapture         True if event capture should be used.
+   * \param aOneShot            True if listener is a one-shot listener.
    *
    * \return                    Event listener ID.
    */
@@ -361,7 +363,8 @@ DOMEventListenerSet.prototype = {
   add: function DOMEventListenerSet_add(aElement,
                                         aType,
                                         aListener,
-                                        aUseCapture) {
+                                        aUseCapture,
+                                        aOneShot) {
     // Create the event listener object.
     var eventListener = {};
     eventListener.id = this._nextEventListenerID++;
@@ -369,10 +372,19 @@ DOMEventListenerSet.prototype = {
     eventListener.type = aType;
     eventListener.listener = aListener;
     eventListener.useCapture = aUseCapture;
+    eventListener.oneShot = aOneShot;
+
+    // Use one-shot function if listener is a one-shot listener.
+    var listenerFunc = eventListener.listener;
+    if (eventListener.oneShot) {
+      var _this = this;
+      listenerFunc =
+        function(aEvent) { return _this._doOneShot(aEvent, eventListener); };
+    }
 
     // Add the event listener.
     eventListener.element.addEventListener(eventListener.type,
-                                           eventListener.listener,
+                                           listenerFunc,
                                            eventListener.useCapture);
     this._eventListenerList[eventListener.id] = eventListener;
 
@@ -410,6 +422,30 @@ DOMEventListenerSet.prototype = {
       this.remove(id);
     }
     this._eventListenerList = {};
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal DOM event listener set services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Dispatch the event specified by aEvent to the one-shot listener specified
+   * by aEventListener and remove the listener.
+   *
+   * \param aEvent              Event to dispatch.
+   * \param aEventListener      Event listener to which to dispatch event.
+   */
+
+  _doOneShot: function DOMEventListenerSet__doOneShot(aEvent, aEventListener) {
+    // Remove event listener if one-shot.
+    if (aEventListener.oneShot)
+      this.remove(aEventListener.id);
+
+    // Dispatch event to listener.
+    return aEventListener.listener(aEvent);
   }
 };
 

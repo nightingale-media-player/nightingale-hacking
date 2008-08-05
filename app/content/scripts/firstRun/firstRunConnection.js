@@ -47,6 +47,7 @@
 
 // Songbird imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
 
 //------------------------------------------------------------------------------
@@ -133,6 +134,26 @@ firstRunConnectionSvc.prototype = {
   //----------------------------------------------------------------------------
 
   /**
+   * Handle the command event specified by aEvent.
+   *
+   * \param aEvent             Command event.
+   */
+
+  doCommand: function firstRunConnectionSvc_doCommand(aEvent) {
+    // Dispatch processing of the command.
+    var action = aEvent.target.getAttribute("action");
+    switch (action) {
+      case "doConnectionSettings" :
+        this._doConnectionSettings();
+        break;
+
+      default :
+        break;
+    }
+  },
+
+
+  /**
    * Handle a wizard page advanced event.
    */
 
@@ -143,6 +164,55 @@ firstRunConnectionSvc.prototype = {
     // page history.
     firstRunWizard.wizardElem.rewind();
     return false;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal widget services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Present the network connection settings dialog.  If it's accepted, advance
+   * out of the first-run connection page.
+   */
+
+  _doConnectionSettings:
+    function firstRunConnactionSvc__doConnectionSettings() {
+    // Get the preference services.
+    var prefService = Cc["@mozilla.org/preferences-service;1"]
+                        .getService(Ci.nsIPrefBranch);
+
+    // Switch instant apply to true.
+    // It doesnt actually make it apply the settings instantly unless you're on
+    // a Mac, but it makes clicking 'ok' apply the changes on all platforms
+    // (because the code for the prefwindow has no provision for child
+    // prefwindows running standalone when they are not instantApply).
+    var prevInstantApply =
+          prefService.getBoolPref("browser.preferences.instantApply");
+    prefService.setBoolPref("browser.preferences.instantApply", true);
+
+    // Open the connection settings dialog.
+    var accepted = WindowUtils.openModalDialog
+                     (window,
+                      "chrome://browser/content/preferences/connection.xul",
+                      "Connections",
+                      "chrome,modal=yes,centerscreen",
+                      null,
+                      null);
+
+    // Switch back to previous instant apply.
+    prefService.setBoolPref("browser.preferences.instantApply",
+                            prevInstantApply);
+
+    // Flush settings to disk.
+    prefService.savePrefFile(null);
+
+    // Advance out of first-run connection page if the connection settings were
+    // accepted.
+    if (accepted)
+      firstRunWizard.wizardElem.advance();
   }
 }
 

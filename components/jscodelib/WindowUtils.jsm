@@ -46,6 +46,7 @@ EXPORTED_SYMBOLS = ["WindowUtils"];
 //
 //------------------------------------------------------------------------------
 
+Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
@@ -84,6 +85,7 @@ var WindowUtils = {
    *        arguments returned by the dialog.
    *        A locale string bundle may be optionally specified by aLocale.  If
    *        one is not specified, the Songbird locale bundle is used.
+   *        Return true if the dialog was accepted.
    *
    * \param aParent             Dialog parent window.
    * \param aURL                URL of dialog chrome.
@@ -92,6 +94,8 @@ var WindowUtils = {
    * \param aInArgs             Array of arguments passed into dialog.
    * \param aOutArgs            Array of argments returned from dialog.
    * \param aLocale             Optional locale string bundle.
+   *
+   * \return                    True if dialog accepted.
    */
 
   openModalDialog: function WindowUtils_openModalDialog(aParent,
@@ -122,14 +126,23 @@ var WindowUtils = {
     // Convert options back to a string.
     options = options.join(",");
 
-    // Open the dialog.
+    // Create a dialog watcher.
+    var dialogWatcher = new sbDialogWatcher();
+
+    // Open the dialog and check for acceptance.
     var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
                      .createInstance(Ci.sbIPrompter);
-    prompter.openDialog(aParent, aURL, aName, options, dialogPB);
+    var window = prompter.openDialog(aParent, aURL, aName, options, dialogPB);
+    var accepted = dialogWatcher.getAccepted(window);
+
+    // Finalize the dialog watcher.
+    dialogWatcher.finalize();
 
     // Get the dialog arguments.
     if (aOutArgs)
       this._getArgs(dialogPB, aOutArgs);
+
+    return accepted;
   },
 
 
@@ -212,6 +225,273 @@ var WindowUtils = {
       else
         return aArg;
     }
+  }
+};
+
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//
+// Dialog watcher services.
+//
+//   These service provide support for watching dialog windows and determining
+// whether a dialog was accepted.
+//
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+/**
+ * Construct a dialog watcher object.
+ */
+
+function sbDialogWatcher() {
+  this.initialize();
+}
+
+// Define the object.
+sbDialogWatcher.prototype = {
+  // Set the constructor.
+  constructor: sbDialogWatcher,
+
+  //
+  // Dialog watcher fields.
+  //
+  //   _windowInfoList          List of information about windows being watched.
+  //   _windowWatcher           Window watcher services.
+  //
+
+  _windowInfoList: null,
+  _windowWatcher: null,
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Dialog watcher services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Initialize the dialog watcher services.  This is called automatically from
+   * the dialog watcher constructor.
+   */
+
+  initialize: function sbDialogWatcher_initialize() {
+    // Initialize the watched window info list.
+    this._windowInfoList = [];
+
+    // Register for window notifications.
+    this._windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                            .getService(Ci.nsIWindowWatcher);
+    this._windowWatcher.registerNotification(this);
+  },
+
+
+  /**
+   * Finalize the dialog watcher services.
+   */
+
+  finalize: function sbDialogWatcher_finalize() {
+    // Unregister for window notifications.
+    this._windowWatcher.unregisterNotification(this);
+
+    // Remove all windows.
+    this._removeAllWindows();
+
+    // Clear object fields.
+    this._windowWatcher = null;
+  },
+
+
+  /**
+   * Return true if the dialog with the window specified by aWindow was
+   * accepted.
+   *
+   * \param aWindow             Window for which to check for acceptance.
+   *
+   * \return                    True if the dialog was accepted.
+   */
+
+  getAccepted: function sbDialogWatcher_getAccepted(aWindow) {
+    // Get the window info.
+    var windowInfo = this._getWindowInfo(aWindow);
+
+    return windowInfo ? windowInfo.accepted : false;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Dialog watcher nsIObserver services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Handle the observed event specified by aSubject, aTopic, and aData.
+   *
+   * \param aSubject            Event subject.
+   * \param aTopic              Event topic.
+   * \param aData               Event data.
+   */
+
+  observe: function sbDialogWatcher_observe(aSubject, aTopic, aData) {
+    switch (aTopic) {
+      case "domwindowopened" :
+        this._addWindow(aSubject);
+        break;
+
+      case "domwindowclosed" :
+        this._doWindowClosed(aSubject);
+        break;
+
+      default :
+        break;
+    }
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Dialog watcher event services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Handle the load event for the window specified by aWindowInfo.
+   *
+   * \param aWindowInfo         Window info pertaining to the load event.
+   */
+
+  _doLoad: function sbDialogWatcher__doLoad(aWindowInfo) {
+    var _this = this;
+    var func;
+
+    // Listen for accept and cancel events.
+    var documentElement = aWindowInfo.window.document.documentElement;
+    func = function() { _this._doAccept(aWindowInfo); };
+    aWindowInfo.domEventListenerSet.add(documentElement,
+                                        "dialogaccept",
+                                        func,
+                                        false);
+    func = function() { _this._doCancel(aWindowInfo); };
+    aWindowInfo.domEventListenerSet.add(documentElement,
+                                        "dialogcancel",
+                                        func,
+                                        false);
+  },
+
+
+  /**
+   * Handle the window closed event for the window specified by aWindow.
+   *
+   * \param aWindow             Window pertaining to the closed event.
+   */
+
+  _doWindowClosed: function sbDialogWatcher__doWindowClosed(aWindow) {
+    // Get the window info.  Do nothing if no window info.
+    var windowInfo = this._getWindowInfo(aWindow);
+    if (!windowInfo)
+      return;
+
+    // Remove DOM event listeners.
+    windowInfo.domEventListenerSet.removeAll();
+    windowInfo.domEventListenerSet = null;
+  },
+
+
+  /**
+   * Handle the accept event for the window specified by aWindowInfo.
+   *
+   * \param aWindowInfo         Window info pertaining to the accept event.
+   */
+
+  _doAccept: function sbDialogWatcher__doAccept(aWindowInfo) {
+    // Set the window as accepted.
+    aWindowInfo.accepted = true;
+  },
+
+
+  /**
+   * Handle the cancel event for the window specified by aWindowInfo.
+   *
+   * \param aWindowInfo         Window info pertaining to the cancel event.
+   */
+
+  _doCancel: function sbDialogWatcher__doCancel(aWindowInfo) {
+    // Set the window as not accepted.
+    aWindowInfo.accepted = false;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal dialog watcher services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Add the window specified by aWindow to the list of windows being watched.
+   *
+   * \param aWindow             Window to add.
+   */
+
+  _addWindow: function sbDialogWatcher__addWindow(aWindow) {
+    // Do nothing if window has already been added.
+    if (this._getWindowInfo(aWindow))
+      return;
+
+    // Add window to window list.
+    var windowInfo = { window: aWindow, accepted: false };
+    this._windowInfoList.push(windowInfo);
+
+    // Create a window DOM event listener set.
+    windowInfo.domEventListenerSet = new DOMEventListenerSet();
+
+    // Listen once for window load events.
+    var _this = this;
+    var func = function() { _this._doLoad(windowInfo); };
+    windowInfo.domEventListenerSet.add(aWindow, "load", func, false, true);
+  },
+
+
+  /**
+   * Remove all windows from the list of windows being watched.
+   */
+
+  _removeAllWindows: function sbDialogWatcher__removeAllWindows() {
+    // Remove all windows.
+    for (var i = 0; i < this._windowInfoList.length; i++) {
+      // Get the window info.
+      var windowInfo = this._windowInfoList[i];
+
+      // Remove window DOM event listeners.
+      if (windowInfo.domEventListenerSet) {
+        windowInfo.domEventListenerSet.removeAll();
+        windowInfo.domEventListenerSet = null;
+      }
+    }
+    this._windowInfoList = null;
+  },
+
+
+  /**
+   * Return the window info for the window specified by aWindow.
+   *
+   * \param aWindow             Window for which to return information.
+   *
+   * \retrurn                   Window information object.
+   */
+
+  _getWindowInfo: function sbDialogWatcher__getWindowInfo(aWindow) {
+    // Find the window information.
+    var windowInfo = null;
+    for (var i = 0; i < this._windowInfoList.length; i++) {
+      if (this._windowInfoList[i].window == aWindow) {
+        windowInfo = this._windowInfoList[i];
+        break;
+      }
+    }
+
+    return windowInfo;
   }
 };
 
