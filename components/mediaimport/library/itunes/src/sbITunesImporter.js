@@ -79,6 +79,8 @@ if (typeof(Cu) == "undefined")
  * ifList                       List of external component interfaces.
  * categoryList                 List of component categories.
  *
+ * iTunesGUIDProperty           iTunes GUID property for media items.
+ *
  * dataFormatVersion            Data format version.
  *                                1: < extension version 2.0
  *                                2: extension version 2.0
@@ -102,6 +104,8 @@ var CompConfig =
     contractID: "@songbirdnest.com/Songbird/ITunesImporter;1",
     ifList: [ Components.interfaces.nsISupports,
               Components.interfaces.sbILibraryImporter ],
+
+    iTunesGUIDProperty: "http://songbirdnest.com/data/1.0#iTunesGUID",
 
     dataFormatVersion: 2,
     prefPrefix: "library_import.itunes",
@@ -178,32 +182,33 @@ Component.prototype =
 
     metaDataTable:
     [
-        { songbird: SBProperties.albumArtistName, iTunes: "Album Artist" },
-        { songbird: SBProperties.albumName,       iTunes: "Album" },
-        { songbird: SBProperties.artistName,      iTunes: "Artist" },
-        { songbird: SBProperties.bitRate,         iTunes: "Bit Rate" },
-        { songbird: SBProperties.bpm,             iTunes: "BPM" },
-        { songbird: SBProperties.comment,         iTunes: "Comments" },
-        { songbird: SBProperties.composerName,    iTunes: "Composer" },
-        { songbird: SBProperties.contentMimeType, iTunes: "Kind" },
-        { songbird: SBProperties.discNumber,      iTunes: "Disc Number" },
-        { songbird: SBProperties.duration,        iTunes: "Total Time",
+        { songbird: CompConfig.iTunesGUIDProperty, iTunes: "Persistent ID" },
+        { songbird: SBProperties.albumArtistName,  iTunes: "Album Artist" },
+        { songbird: SBProperties.albumName,        iTunes: "Album" },
+        { songbird: SBProperties.artistName,       iTunes: "Artist" },
+        { songbird: SBProperties.bitRate,          iTunes: "Bit Rate" },
+        { songbird: SBProperties.bpm,              iTunes: "BPM" },
+        { songbird: SBProperties.comment,          iTunes: "Comments" },
+        { songbird: SBProperties.composerName,     iTunes: "Composer" },
+        { songbird: SBProperties.contentMimeType,  iTunes: "Kind" },
+        { songbird: SBProperties.discNumber,       iTunes: "Disc Number" },
+        { songbird: SBProperties.duration,         iTunes: "Total Time",
           convertFunc: "convertDuration" },
-        { songbird: SBProperties.genre,           iTunes: "Genre" },
-        { songbird: SBProperties.lastPlayTime,    iTunes: "Play Date UTC",
+        { songbird: SBProperties.genre,            iTunes: "Genre" },
+        { songbird: SBProperties.lastPlayTime,     iTunes: "Play Date UTC",
           convertFunc: "convertDateTime" },
-        { songbird: SBProperties.lastSkipTime,    iTunes: "Skip Date",
+        { songbird: SBProperties.lastSkipTime,     iTunes: "Skip Date",
           convertFunc: "convertDateTime" },
-        { songbird: SBProperties.playCount,       iTunes: "Play Count" },
-        { songbird: SBProperties.rating,          iTunes: "Rating",
+        { songbird: SBProperties.playCount,        iTunes: "Play Count" },
+        { songbird: SBProperties.rating,           iTunes: "Rating",
           convertFunc: "convertRating" },
-        { songbird: SBProperties.sampleRate,      iTunes: "Sample Rate" },
-        { songbird: SBProperties.skipCount,       iTunes: "Skip Count" },
-        { songbird: SBProperties.totalDiscs,      iTunes: "Disc Count" },
-        { songbird: SBProperties.totalTracks,     iTunes: "Track Count" },
-        { songbird: SBProperties.trackName,       iTunes: "Name" },
-        { songbird: SBProperties.trackNumber,     iTunes: "Track Number" },
-        { songbird: SBProperties.year,            iTunes: "Year" }
+        { songbird: SBProperties.sampleRate,       iTunes: "Sample Rate" },
+        { songbird: SBProperties.skipCount,        iTunes: "Skip Count" },
+        { songbird: SBProperties.totalDiscs,       iTunes: "Disc Count" },
+        { songbird: SBProperties.totalTracks,      iTunes: "Track Count" },
+        { songbird: SBProperties.trackName,        iTunes: "Name" },
+        { songbird: SBProperties.trackNumber,      iTunes: "Track Number" },
+        { songbird: SBProperties.year,             iTunes: "Year" }
     ],
     dataFormatVersion: CompConfig.dataFormatVersion,
     localeBundlePath: CompConfig.localeBundlePath,
@@ -457,6 +462,19 @@ Component.prototype =
                             createInstance(Components.interfaces.sbIDataRemote);
         this.mVersionDR.init(this.prefPrefix + ".version", null);
 
+        /* Create the iTunes properties. */
+        var propertyMgr =
+            Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                .getService(Ci.sbIPropertyManager);
+        var propertyInfo =
+                Cc["@songbirdnest.com/Songbird/Properties/Info/Text;1"]
+                    .createInstance(Ci.sbITextPropertyInfo);
+        propertyInfo.id = CompConfig.iTunesGUIDProperty;
+        propertyInfo.displayName = "iTunes GUID";
+        propertyInfo.userViewable = false;
+        propertyInfo.userEditable = false;
+        propertyMgr.addPropertyInfo(propertyInfo);
+
         /* Activate the database services. */
         ITDB.activate();
 
@@ -591,6 +609,7 @@ Component.prototype =
         {
             /* Dump exception. */
             Components.utils.reportError(e);
+            LogException(e);
 
             /* Update status. */
             ITStatus.reset();
@@ -1724,16 +1743,15 @@ Component.prototype =
         var                         state;
         var                         createMediaItemsListener;
         var                         addTrackMediaItemList;
+        var                         uriList;
+        var                         propertyArrayArray;
 
         var                         addTrack;
         var                         mediaItemList = [];
         var                         mediaItem;
         var                         iTunesTrackIDList = [];
         var                         guidList = [];
-        var                         uriList;
         var                         trackURI;
-        var                         propertyArrayArray;
-        var                         propertyArray;
         var                         i, j;
 
         /* Initialize the function context. */
@@ -1745,18 +1763,18 @@ Component.prototype =
         state = ctx.state;
         createMediaItemsListener = ctx.createMediaItemsListener;
         addTrackMediaItemList = ctx.addTrackMediaItemList;
+        uriList = ctx.uriList;
+        propertyArrayArray = ctx.propertyArrayArray;
 
         /* Set up a list of track URIs and           */
         /* properties.  Do nothing if list is empty. */
         if (state == 1)
         {
-            uriList = Components.
-                        classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].
-                        createInstance(Components.interfaces.nsIMutableArray);
+            uriList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                          .createInstance(Ci.nsIMutableArray);
             propertyArrayArray =
-                    Components.
-                        classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].
-                        createInstance(Components.interfaces.nsIMutableArray);
+                Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                    .createInstance(Ci.nsIMutableArray);
             for (i = 0; i < this.mAddTrackList.length; i++)
             {
                 addTrack = this.mAddTrackList[i];
@@ -1822,13 +1840,63 @@ Component.prototype =
         /* Add the media items to the add track list. */
         if (state == 4)
         {
+            /* Get the list of media items added by the batch create. */
             mediaItemList = this.getJSArray(addTrackMediaItemList);
+
+            /* Create a hash table for the add track list. */
+            var addTrackMap = {};
             for (i = 0; i < this.mAddTrackList.length; i++)
             {
                 addTrack = this.mAddTrackList[i];
+                addTrackMap[addTrack.iTunesTrackID] = addTrack;
+            }
+
+            /* Add the added media items to the add track list. */
+            for (i = 0; i < mediaItemList.length; i++)
+            {
+                /* Get the next media item and its associated iTunes GUID. */
+                mediaItem = mediaItemList[i];
+                var iTunesGUID = mediaItem.getProperty
+                                                (CompConfig.iTunesGUIDProperty);
+
+                /* Find the matching track in the add track */
+                /* list and add the media item to it.       */
+                addTrack = addTrackMap[iTunesGUID];
+                if (addTrack)
+                {
+                    addTrack.mediaItem = mediaItem;
+                    addTrack.guid = mediaItem.guid;
+                    iTunesTrackIDList.push(addTrack.iTunesTrackID);
+                    guidList.push(addTrack.guid);
+                }
+            }
+
+            /* The batch create won't return a media item for any tracks that */
+            /* are duplicates.  For any track in the add track list that      */
+            /* doesn't have a media item, create a single media item and add  */
+            /* the returned media item to the add track list.  This shouldn't */
+            /* add a new media item; it should just return the matching,      */
+            /* duplicate media item.  Ideally, there would be a more direct   */
+            /* way to get a media item for a duplicate URL.                   */
+            for (i = 0; i < this.mAddTrackList.length; i++)
+            {
+                /* Add a media item for each track */
+                /* to add without a media item.    */
+                addTrack = this.mAddTrackList[i];
                 if (!addTrack.mediaItem)
                 {
-                    mediaItem = mediaItemList.shift();
+                    /* Get the add track URI and properties. */
+                    var uri = uriList.queryElementAt(i, Ci.nsIURI);
+                    var properties =
+                        propertyArrayArray.queryElementAt(i,
+                                                          Ci.sbIPropertyArray);
+
+                    /* Try creating a media item.  This should */
+                    /* return a duplicate for the add track.   */
+                    mediaItem = this.mLibrary.createMediaItem(uri,
+                                                              properties);
+
+                    /* Add the media item to the add track. */
                     if (mediaItem)
                     {
                         addTrack.mediaItem = mediaItem;
@@ -1842,6 +1910,8 @@ Component.prototype =
                     }
                 }
             }
+
+            /* Advance to the next state. */
             state++;
         }
 
@@ -1865,6 +1935,8 @@ Component.prototype =
         ctx.state = state;
         ctx.createMediaItemsListener = createMediaItemsListener;
         ctx.addTrackMediaItemList = addTrackMediaItemList;
+        ctx.uriList = uriList;
+        ctx.propertyArrayArray = propertyArrayArray;
         ITReq.exitFunction();
     },
 
@@ -1955,7 +2027,7 @@ Component.prototype =
             }
         }
 
-        /* If the track URI has an "http:" shceme, set the                   */
+        /* If the track URI has an "http:" scheme, set the                   */
         /* downloadStatusTarget property to prevent the auto-downloader from */
         /* trying to download it.                                            */
         if (trackURI.scheme.match(/^http/))
@@ -4292,6 +4364,22 @@ Timer.prototype =
 function Log(msg)
 {
     LogSvc.Log(msg);
+}
+
+
+/*
+ * LogException
+ *
+ *   --> aException             Exception to log.
+ *
+ *   This function logs the exception specified by aException.
+ */
+
+function LogException(aException)
+{
+    LogSvc.Log("Exception: " + aException +
+               " at " + aException.fileName +
+               ", line " + aException.lineNumber + "\n");
 }
 
 
