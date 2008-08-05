@@ -51,8 +51,9 @@ dialog:root #sb-sys-outer-frame-children > stack > vbox {
 dialog[platform="Darwin"] #sb-sys-title-title {
   font-family: Lucida Grande; 
   font-size: 13px;
-padding:0;
-margin:0;}
+  padding:0;
+  margin:0;
+}
 
 #dialog-titlebar {
   min-height:22px !important;
@@ -60,13 +61,13 @@ margin:0;}
 }
 .dialog-button-box,
 .wizard-buttons,
-.paneDeckContainer+hbox{
+.paneDeckContainer+hbox /** prefs **/ {
   background-image: url(chrome://songbird/skin/window/bg-button-box.png);
   background-repeat:repeat-x;
   background-position:center top;
   background-color:rgb(225,225,225);
   -moz-box-pack:end;
-  padding:0 4px;
+  padding:0 8px;
 }
 
 #dialog-titlebar .left-box > .left,
@@ -91,4 +92,15 @@ margin:0;}
 
 #sb-sys-dialog-titlebar-osx-buttons {
   visibility:hidden;
+}
+
+#sb-sys-dialog-titlebar-title {
+  min-height:22px;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+.dialog-content-box {
+  margin: 0px;
+  padding: 4px;
 }

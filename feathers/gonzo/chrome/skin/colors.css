@@ -55,12 +55,7 @@ dialog,
 window,
 prefwindow,
 page,
-panel
-{
-  background-color: rgb(245,245,245);
-}
-
-window {
+panel {
   background-color: rgb(245,245,245);
 }
 
@@ -231,7 +226,7 @@ listheader,
 treecol,
 treechildren::-moz-tree-cell {
   border-left:1px solid transparent;
-  border-right:1px solid gray;
+  border-right:1px solid rgb(161,161,161);
   padding:0px 4px;
 }
 treecolpicker {
@@ -986,6 +981,12 @@ These let the user resize the frames in your box model.
   max-width:3px;
   min-width:3px;
 }
+
+#filter_splitter {
+  border-right:1px solid rgb(161,161,161);
+  border-left:1px solid rgb(161,161,161);  
+}
+
 #servicepane_splitter,
 #displaypane_right_sidebar_splitter {
   border-bottom:1px solid gray;
@@ -1000,7 +1001,22 @@ These let the user resize the frames in your box model.
 
   background-image:url('chrome://songbird/skin/base-elements/bg-splitter-horizontal.png') !important;
   background-repeat:repeat-x !important;
-  background-position:center top !important;
+  background-position:center center !important;
+}
+
+#displaypane_contentpane_bottom_splitter,
+#displaypane_servicepane_bottom_splitter {
+  border-top:1px solid gray;
+  border-bottom:1px solid gray;
+}
+
+.playlist-splitter {
+  border-top:1px solid rgb(161,161,161);
+  border-bottom:1px solid rgb(161,161,161);  
+}
+.playlist-web-splitter {
+  border-top:1px solid gray;
+  border-bottom:1px solid rgb(161,161,161);  
 }
 
 #displaypane_servicepane_bottom_splitter,
@@ -1223,7 +1239,6 @@ DIALOGS
  */
 #mainplayer:not([platform=Darwin]),
 dialog:not([platform=Darwin]) {
-
 }
 
 
@@ -1244,17 +1259,6 @@ dialog[platform='Darwin'] {
 /*prefwindow*/
 .windowDialog
 {
-}
-
-/** Add a darker content box and appropriate padding **/
-.dialog-content-box {
-  margin: 0px !important;
-  padding: 0px !important;
-}
-
-dialog:root[platform=Darwin] .dialog-content-box
-{
-  border: none;
 }
 
 
@@ -1381,10 +1385,10 @@ sb-sys-titlebar {
 #faceplate-tool-bar {
 }
 #faceplate-tool-bar > * {
-  margin:1px 4px;
+  margin:2px 2px;
 }
 #faceplate-tool-bar > sb-nowplaying-rating {
-  margin:0 4px !important;
+  margin:0 2px !important;
 }
 #faceplate-tool-bar > sb-nowplaying-rating > sb-rating {
 }
@@ -1463,17 +1467,6 @@ sb-sys-titlebar {
 
 
 
-#nav_bar_box {
-}
-
-
-#nav_bar_box[protocol='http'] .media-only,
-#nav_bar_box[protocol='https'] .media-only,
-#nav_bar_box[protocol='ftp'] .media-only,
-#nav_bar_box[protocol='about'] .media-only,
-#nav_bar_box[protocol='chrome'] .web-only {
-  display:none;
-}
 
 #nav-bar {
   border:none;
@@ -1489,9 +1482,7 @@ sb-sys-titlebar {
 #nav-bar > observes {
   margin:0 !important;
 }
-#nav_bar_box[protocol='chrome'] .web-only-special {
-  visibility:hidden;
-}
+
 
 #nav_bar_box > .left-box > .left,
 #nav_bar_box > .right-box > .right {
@@ -1556,6 +1547,8 @@ sb-sys-titlebar {
 #bottom-bar {
   min-height:8px;
   max-height:8px;
+  
+  visibility: collapse !important; /** too many bugs **/
 }
 #bottom-bar > .left-box > .left,
 #bottom-bar > .right-box > .right {
@@ -1918,6 +1911,10 @@ notification[type="critical"] {
 
 #content_player_wrapper[playercontrols='bottom']+#bottom-bar {
   visibility: collapse;
+}
+#content_player_wrapper[playercontrols='top'] #status-bar,
+#content_player_wrapper[playercontrols='top'] #servicepane-status-bar {
+  border-bottom:none !important;
 }
 
 
@@ -2331,6 +2328,7 @@ richlistitem[selected="true"] .includeUpdate {
   background-position:left top;
  min-height:29px;
  border-bottom:1px solid gray;
+ margin-top:0px;
 }
 
 
@@ -2515,3 +2513,24 @@ wizard {
 
 
 
+
+
+
+/**
+TODO mv to /app/skin/dialogs/videoWin.css
+**/
+#video_window #box_gstreamer_simple, /** see bug 11423 **/
+#video_window #video-boxes+spacer+hbox,
+#video_window #sb-sys-title-title,
+#video_window spacer {
+  visibility:collapse;
+}
+#video_window #video-boxes {
+  padding:0px;
+}
+#video_window sb-sys-titlebar { /** add hook to xul at app/content/xul/songbird.xul **/
+  min-height:22px;
+  background-image: url('chrome://songbird/skin/window/bg-title-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}

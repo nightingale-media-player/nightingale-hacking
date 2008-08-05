@@ -78,12 +78,12 @@ scrollbar > slider {
 } 
 
 scrollbarbutton {
-  border:1px solid gray;
+  border:1px solid rgb(161,161,161);
   -moz-border-radius:2px;
   background-color:white;
 }
 scrollbar > slider > thumb {   
-  border:1px solid gray;
+  border:1px solid rgb(161,161,161);
   background-color:rgb(240,240,240);
   -moz-border-radius:2px;
 } 

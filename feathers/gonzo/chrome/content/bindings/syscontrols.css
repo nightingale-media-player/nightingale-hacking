@@ -50,7 +50,7 @@ WINDOWS TITLE BAR
 
 #sb-sys-titlebar-buttons {
   min-height:22px;
-    -moz-box-align: center;
+  -moz-box-align: center;
   -moz-box-pack: center;  
 }
 
@@ -105,32 +105,37 @@ sb-sys-maximize-button {
   max-height:16px;
 }
 
-sb-sys-close-button {
+sb-sys-close-button,
+sb-sys-hide-button {
   list-style-image: url(chrome://songbird/skin/window/button-close.png);
 }
 
 sb-sys-minimize-button,
 sb-sys-maximize-button,
-sb-sys-close-button {
+sb-sys-close-button,
+sb-sys-hide-button {
   -moz-image-region: rect(0px 16px 16px 0px);
   margin:0 1px 0 0 !important;
   background-position:left 0px;
 }
 sb-sys-minimize-button:hover,
 sb-sys-maximize-button:hover,
-sb-sys-close-button:hover {
+sb-sys-close-button:hover,
+sb-sys-hide-button:hover {
   -moz-image-region: rect(16px 16px 32px 0px);
   background-position:left -16px;
 }
 sb-sys-minimize-button:active,
 sb-sys-maximize-button:active,
-sb-sys-close-button:active {
+sb-sys-close-button:active,
+sb-sys-hide-button:active {
   -moz-image-region: rect(32px 16px 48px 0px);
   background-position:left -32px;
 }
 sb-sys-minimize-button[disabled="true"],
 sb-sys-maximize-button[disabled="true"],
-sb-sys-close-button[disabled="true"] {
+sb-sys-close-button[disabled="true"],
+sb-sys-hide-button[disabled="true"] {
   -moz-image-region: rect(48px 16px 64px 0px) !important;
   background-position:left -48px;
 }
@@ -157,16 +162,10 @@ sb-sys-maximize-button > .checkbox-check {
 
 
 
-/*  Hide (Video Window) */
-sb-sys-hide-button
-{
-  list-style-image: url(chrome://songbird/skin/buttons/sysbtns-win.png);
-  -moz-image-region: rect(0px 54px 9px 45px);
-}
-sb-sys-hide-button:hover
-{
-  -moz-image-region: rect(9px 54px 18px 45px);
-}
+
+
+
+
 
 /* Fullscreen (Video Window) */
 sb-player-fullscreen-button
@@ -197,11 +196,13 @@ MAC OSX TITLE BAR
 
 #sb-sys-osx-buttons > sb-sys-close-button,
 #sb-sys-osx-buttons > sb-sys-minimize-button,
-#sb-sys-osx-buttons > sb-sys-maximize-button {
+#sb-sys-osx-buttons > sb-sys-maximize-button,
+#sb-sys-osx-buttons > sb-sys-hide-button {
   margin:3px 5px 2px 0px !important;
 }
 
-#sb-sys-osx-buttons > sb-sys-close-button {
+#sb-sys-osx-buttons > sb-sys-close-button,
+#sb-sys-osx-buttons > sb-sys-hide-button {
   margin-left:7px !important;
   list-style-image: url(chrome://songbird/skin/window/button-close-macos.png);
 }
@@ -217,28 +218,32 @@ MAC OSX TITLE BAR
 
 #sb-sys-osx-buttons > sb-sys-close-button,
 #sb-sys-osx-buttons > sb-sys-minimize-button,
-#sb-sys-osx-buttons > sb-sys-maximize-button {
+#sb-sys-osx-buttons > sb-sys-maximize-button,
+#sb-sys-osx-buttons > sb-sys-hide-button {
   -moz-image-region: rect(0px 16px 16px 0px);
   background-position:center 0px;
 }
 
 #sb-sys-osx-buttons:hover > sb-sys-close-button,
 #sb-sys-osx-buttons:hover > sb-sys-minimize-button,
-#sb-sys-osx-buttons:hover > sb-sys-maximize-button {
+#sb-sys-osx-buttons:hover > sb-sys-maximize-button,
+#sb-sys-osx-buttons:hover > sb-sys-hide-button {
   -moz-image-region: rect(16px 16px 32px 0px);
   background-position:center -16px;
 }
 
 #sb-sys-osx-buttons > sb-sys-minimize-button:active,
 #sb-sys-osx-buttons > sb-sys-maximize-button:active,
-#sb-sys-osx-buttons > sb-sys-close-button:active {
+#sb-sys-osx-buttons > sb-sys-close-button:active,
+#sb-sys-osx-buttons > sb-sys-hide-button:active {
   -moz-image-region: rect(32px 16px 48px 0px);
   background-position:center -32px;
 }
 
 #sb-sys-osx-buttons > sb-sys-minimize-button[disabled="true"],
 #sb-sys-osx-buttons > sb-sys-maximize-button[disabled="true"],
-#sb-sys-osx-buttons > sb-sys-close-button[disabled="true"] {
+#sb-sys-osx-buttons > sb-sys-close-button[disabled="true"],
+#sb-sys-osx-buttons > sb-sys-hide-button[disabled="true"] {
   -moz-image-region: rect(48px 16px 64px 0px) !important;
   background-position:center -48px;
 }

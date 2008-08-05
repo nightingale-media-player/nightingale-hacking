@@ -9,7 +9,7 @@ label
 radiogroup {
   padding:4px;
   background-color:transparent;
-  border:1px solid gray;
+  border:1px solid rgb(161,161,161);
   -moz-border-radius:3px;
 }
 
@@ -18,7 +18,7 @@ radiogroup {
 
 groupbox {
   background-color:white;
-  border:1px solid gray;
+  border:1px solid rgb(161,161,161);
   -moz-border-radius:3px;
 }
 .groupbox-body {
@@ -38,7 +38,7 @@ groupbox caption {
   background-position:center 0px;
   background-repeat:repeat-x;
 
-  border:1px solid gray !important;
+  border:1px solid rgb(161,161,161) !important;
   -moz-border-radius-topleft:3px;
   -moz-border-radius-topright:3px;
   -moz-box-flex:1 !important;

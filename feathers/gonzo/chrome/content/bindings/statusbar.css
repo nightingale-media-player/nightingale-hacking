@@ -83,11 +83,6 @@ statusbarpanel {
   max-height:16px;
 }
 
-/*
-  description.sb-status-bar-status-label[type="normal"]
-  description.sb-status-bar-status-label[type="report"]
-*/
-
 description.sb-status-bar-status-label[type="playable"] {
   background-image:url('chrome://songbird/skin/browser/icon-link-playable.png');
   background-repeat:no-repeat;
