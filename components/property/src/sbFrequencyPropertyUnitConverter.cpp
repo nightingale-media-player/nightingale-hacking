@@ -27,6 +27,7 @@
 // Property Unit Converter for samplerate values, ie: Hz, kHz
 
 #include "sbFrequencyPropertyUnitConverter.h"
+#include <math.h>
 
 // ctor - register all units
 sbFrequencyPropertyUnitConverter::sbFrequencyPropertyUnitConverter() 
@@ -88,3 +89,13 @@ sbFrequencyPropertyUnitConverter::ConvertFromUnitToNative(PRFloat64 aValue,
   return NS_OK;
 }
 
+PRUint32 sbFrequencyPropertyUnitConverter::GetAutoUnit(const PRFloat64 aValue) {
+  // get number of digits
+  PRUint32 d;
+  if (aValue == 0) d = 1;
+  else d = (PRUint32)(log10(abs(aValue)) + 1);
+
+  // and pick most suitable unit
+  if (d < 4) return FREQUENCY_UNIT_HZ;
+  return FREQUENCY_UNIT_KHZ;
+}

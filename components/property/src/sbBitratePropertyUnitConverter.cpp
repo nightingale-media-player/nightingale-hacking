@@ -27,6 +27,7 @@
 // Property Unit Converter for bitrate values, ie: bps, kbps, Mbps
 
 #include "sbBitratePropertyUnitConverter.h"
+#include <math.h>
 
 // ctor - register all units
 sbBitratePropertyUnitConverter::sbBitratePropertyUnitConverter() 
@@ -94,3 +95,14 @@ sbBitratePropertyUnitConverter::ConvertFromUnitToNative(PRFloat64 aValue, PRUint
   return NS_OK;
 }
 
+PRUint32 sbBitratePropertyUnitConverter::GetAutoUnit(const PRFloat64 aValue) {
+  // get number of digits
+  PRUint32 d;
+  if (aValue == 0) d = 1;
+  else d = (PRUint32)(log10(abs(aValue)) + 1);
+
+  // and pick most suitable unit
+  if (d <= 1) return BITRATE_UNIT_BPS;
+  if (d < 4) return BITRATE_UNIT_KBPS;
+  return BITRATE_UNIT_MBPS;
+}

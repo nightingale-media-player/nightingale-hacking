@@ -39,6 +39,8 @@ public:
     FREQUENCY_UNIT_KHZ,
   };
 
+  virtual PRUint32 GetAutoUnit(PRFloat64 aValue);
+
 protected:
 
   NS_IMETHOD ConvertFromNativeToUnit(PRFloat64 aValue, 

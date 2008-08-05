@@ -40,6 +40,8 @@ public:
     BITRATE_UNIT_MBPS,
   };
 
+  virtual PRUint32 GetAutoUnit(PRFloat64 aValue);
+
 protected:
 
   NS_IMETHOD ConvertFromNativeToUnit(PRFloat64 aValue, PRUint32 aUnitID, PRFloat64 &_retVal);
