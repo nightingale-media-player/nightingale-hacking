@@ -213,7 +213,16 @@ CoreGStreamerSimple.prototype._resolveRedirectsAndPlay = function(aURI) {
   var uriChecker =
     Components.classes["@mozilla.org/network/urichecker;1"]
               .createInstance(Components.interfaces.nsIURIChecker);
-  uriChecker.init(aURI);
+
+  try {
+    uriChecker.init(aURI);
+  } catch (e) {
+    // Unknown protocols/schemes will cause this to throw an exception.
+    // Those are likely to be media protocols like MMS or RTSP; let the
+    // core try to handle them.
+    this.playFinalURI(aURI.spec);
+    return true;
+  }
 
   // Save it away so we can cancel if necessary. Can't do this until after the
   // init call.
@@ -581,8 +590,13 @@ CoreGStreamerSimple.prototype.onStopRequest = function(request, context, status)
     url = uriChecker.baseChannel.originalURI.spec;
   }
 
-  this._url = url;
-  this._object.uri = url;
+  this.playFinalURI(url);
+}
+
+CoreGStreamerSimple.prototype.playFinalURI = function(uri)
+{
+  this._url = uri;
+  this._object.uri = uri;
   this._object.play();
   this._lastPlayStart = new Date();
 };
