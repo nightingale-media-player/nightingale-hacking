@@ -75,13 +75,25 @@ sb-smart-conditions-drawer > sb-multi-drawer > .drawer-box > .drawer-content-ite
 
 #unitspopup,
 #unitspopup > menupopup {
-  width:6.5em;
+  width:75px;
 }
 
 sb-rating {
-  -moz-border-radius:5px;
+/*
   margin: 5px 3px 5px 3px;
-  padding: 0px;
+  padding: 0px;*/
+  min-height:20px;
+  margin:4px !important;
+  -moz-box-flex: 1;
+  border-top:1px solid rgb(120,120,120);
+  border-right:1px solid rgb(140,140,140);
+  border-bottom:1px solid rgb(200,200,200);
+  border-left:1px solid rgb(140,140,140);
+  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  background-color:white;
+  max-width:76px;
 }
 
 .smart-condition-minus,
@@ -143,4 +155,8 @@ sb-rating {
 }
 .smart-condition-value[autocompletesearch][autocompletesearchparam*="genre"] > .autocomplete-history-dropmarker image
   display:none;
+}
+#textrangeseparator {
+  margin-left:0px;
+  margin-right:0px;
 }

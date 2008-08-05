@@ -1381,7 +1381,12 @@ sb-sys-titlebar {
 #faceplate-tool-bar {
 }
 #faceplate-tool-bar > * {
-  margin-left:8px;
+  margin:1px 4px;
+}
+#faceplate-tool-bar > sb-nowplaying-rating {
+  margin:0 4px !important;
+}
+#faceplate-tool-bar > sb-nowplaying-rating > sb-rating {
 }
 
 
@@ -2327,12 +2332,6 @@ richlistitem[selected="true"] .includeUpdate {
  min-height:29px;
  border-bottom:1px solid gray;
 }
-
-#filterRow,
-#configTree {
-  margin-top:0px !important;
-}
-
 
 
 

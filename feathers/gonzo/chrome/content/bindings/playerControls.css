@@ -442,9 +442,12 @@ progressmeter.sb-player-volume-slider > .progress-remainder
 #faceplate-tool-bar .rating-stars {
   background-image: url('chrome://songbird/skin/media-control-pane/button-faceplate-ratings.png');
 }
-#faceplate-tool-bar .rating-box {
-  padding:0 4px;
+#faceplate-tool-bar sb-rating {
+  padding:0 4px !important;
+  margin:0px !important;
+  background-color:transparent;
+  border:none !important;
   background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-ratings.png');
-  background-position:center center;
+  background-position:center 1px;
   background-repeat:no-repeat;
 }
