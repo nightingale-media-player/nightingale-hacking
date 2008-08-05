@@ -241,7 +241,7 @@
         <xul:popup anonid="popup"  onpopupshown="onPopupShown(event);" />
       </xul:popupset>
     </content>
-    <implementation>
+    <implementation implements="nsIXULBuilderListener,nsIRDFObserver">
       <constructor>
             <![CDATA[
         // get the tree node
@@ -266,6 +266,11 @@
 
         // and force a rebuild
         this.mTree.builder.rebuild();
+        
+        // add a listener to set up the selected node when the tree rebuilds
+        // (see mozilla bug 331505)
+        this.mTree.builder.addListener(this);
+        this.mTree.builder.datasource.AddObserver(this);
 
         var sp = this;
         // this is evil. really. i feel guilty.
@@ -354,6 +359,10 @@
           this.browser.removeEventListener("TabContentChange",
             this._onBrowserTabChangeListener, false);
         }
+        
+        // remove the rebuild selection listener
+        this.mTree.builder.removeListener(this);
+        this.mTree.builder.datasource.removeObserver(this);
 
         this.mTree.stopEditing = this.mTree._stopEditing;
         this.mTree._stopEditing = null;
@@ -497,16 +506,7 @@
            both at load start and at load complete. -->
       <method name="onBrowserTabChange">
         <body><![CDATA[
-          try {
-            // Is there a servicepane node for the current tab?
-            var node = this._browser.selectedTab.servicePaneNode;
-          
-            if (node) {
-              this.highlightNode(node);
-            }
-          } catch (e) {
-            Components.utils.reportError(e); 
-          }
+          this._highlightSelectedNode();
         ]]></body>
       </method>
       
@@ -789,6 +789,58 @@
           // we handle the drop, do not let the default dnd handler get the event
           event.stopPropagation();
         ]]></body>
+      </method>
+      
+      
+      <!-- to trigger selection highlighting -->
+      <method name="_highlightSelectedNode">
+        <body><![CDATA[
+          try {
+            // Is there a servicepane node for the current tab?
+            var node = this._browser.selectedTab.servicePaneNode;
+          
+            if (node) {
+              this.highlightNode(node);
+            }
+          } catch (e) {
+            Components.utils.reportError(e); 
+          }
+        ]]></body>
+      </method>
+      
+      <!-- nsIXULBuilderListener -->
+      <method name="willRebuild"/>
+      <method name="didRebuild">
+        <parameter name="aBuidler"/>
+        <body><![CDATA[
+          this._highlightSelectedNode();
+        ]]></body>
+      </method>
+      
+      <!-- nsIRDFObserver -->
+      <method name="onAssert">
+        <body><![CDATA[
+          this._highlightSelectedNode();
+        ]]></body>
+      </method>
+      <method name="onUnassert">
+        <body><![CDATA[
+          this._highlightSelectedNode();
+        ]]></body>
+      </method>
+      <method name="onChange">
+        <body><![CDATA[
+          this._highlightSelectedNode();
+        ]]></body>
+      </method>
+      <method name="onMove">
+        <body/>
+      </method>
+      <method name="onBeginUpdateBatch">
+        <body/>
+      </method>
+      <method name="onEndUpdateBatch">
+        <body/>
       </method>
     </implementation>
     <handlers>
