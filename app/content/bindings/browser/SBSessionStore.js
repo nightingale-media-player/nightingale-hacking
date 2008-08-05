@@ -207,12 +207,25 @@ var SBSessionStore = {
           }
           
           if (isFirstTab) {
-            // let the first run URL load in the media tab (again).
-            var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, null);
-            if ((firstrunURL == tab) ||
-                (gServicePane && gServicePane.mTreePane.isMediaTabURL(tab))) {
-              location = "_media";
+            if (aTabBrowser.mediaTab) {
+              // let the first run URL load in the media tab (again).
+              var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, null);
+              if ((firstrunURL == tab) ||
+                  (gServicePane && gServicePane.mTreePane.isMediaTabURL(tab)))
+              {
+                // this is the first tab, and is a media-ish url
+                location = "_media";
+              } else {
+                // this is the first tab, but this is unsuitable for the media tab
+                location = "_top";
+                // load the library page to fill up the media tab
+                libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                           .getService(Ci.sbILibraryManager);
+                mainLib = libMgr.mainLibrary;
+                aTabBrowser.loadMediaList(mainLib);
+              }
             } else {
+              // no media tab, but this is the first tab
               location = "_top";
             }
           } else {
