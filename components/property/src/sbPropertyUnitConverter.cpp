@@ -27,6 +27,7 @@
 // Base class for property unit converters (sbIPropertyUnitConverter)
 
 #include "sbPropertyUnitConverter.h"
+#include <xpcom/nsServiceManagerUtils.h>
 #include <sbLockUtils.h>
 #include <nsCOMPtr.h>
 #include "nsEnumeratorUtils.h"
@@ -132,7 +133,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyUnitConverter, sbIPropertyUnitConverter)
 
 // ctor
 sbPropertyUnitConverter::sbPropertyUnitConverter()
-: mNative(0)
+: mNativeInternal(-1)
 , mLock(nsnull)
 {
   mLock = PR_NewLock();
@@ -157,7 +158,10 @@ void sbPropertyUnitConverter::RegisterUnit(PRUint32 aUnitInternalID,
                                            PRBool isNative)
 {
   sbSimpleAutoLock lock(mLock);
-  if (isNative) mNative = aUnitExternalID;
+  if (isNative) {
+    mNative = aUnitExternalID;
+    mNativeInternal = aUnitInternalID;
+  }
   sbPropertyUnit *unit = new sbPropertyUnit(aUnitName, 
                                             aUnitShortName, 
                                             aUnitExternalID);
@@ -165,6 +169,47 @@ void sbPropertyUnitConverter::RegisterUnit(PRUint32 aUnitInternalID,
   mUnits.push_back(u);
   nsString key(aUnitExternalID);
   mUnitsMap[key] = u;
+  mUnitsMapInternal[aUnitInternalID] = u;
+}
+
+nsresult
+  sbPropertyUnitConverter::SscanfFloat64(const nsAString &aValue, 
+                                         PRFloat64 &aOutValue) {
+  // parse the string as a double value
+  NS_ConvertUTF16toUTF8 narrow(aValue);
+  if(PR_sscanf(narrow.get(), gsFmtFloatIn, &aOutValue) != 1) {
+    // wrong format, or empty string
+    return NS_ERROR_INVALID_ARG;
+  }
+  return NS_OK;
+}
+
+nsresult
+  sbPropertyUnitConverter::SprintfFloat64(const PRFloat64 aValue, 
+                                          nsAString &aOutValue) {
+  // turn the double value into a string
+  char out[64] = {0};
+  if(PR_snprintf(out, 63, gsFmtFloatOut, aValue) == -1) {
+    aOutValue = EmptyString();
+    return NS_ERROR_FAILURE;
+  }
+  NS_ConvertUTF8toUTF16 wide(out);
+  aOutValue = wide;
+  return NS_OK;
+}
+
+nsresult sbPropertyUnitConverter::PerformConversion(PRFloat64 &aValue,
+                                                    PRUint32 aFromUnit,
+                                                    PRUint32 aToUnit) {
+  // convert into native unit
+  nsresult rv = ConvertFromUnitToNative(aValue, aFromUnit, aValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // convert into requested unit
+  rv = ConvertFromNativeToUnit(aValue, aToUnit, aValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
 }
 
 // Unit conversion function
@@ -172,6 +217,8 @@ NS_IMETHODIMP
 sbPropertyUnitConverter::Convert(const nsAString & aValue, 
                                  const nsAString & aFromUnitID, 
                                  const nsAString & aToUnitID,
+                                 PRInt32 aMinDecimals,
+                                 PRInt32 aMaxDecimals,
                                  nsAString & _retval) 
 {
   sbSimpleAutoLock lock(mLock);
@@ -200,53 +247,78 @@ sbPropertyUnitConverter::Convert(const nsAString & aValue,
   PRUint32 fromUnit = (*fromUnitIterator).second.mInternalId;
   PRUint32 toUnit = (*toUnitIterator).second.mInternalId;
   
-  PRFloat64 converted=0;
-
-  // parse the string as a double value
-  NS_ConvertUTF16toUTF8 narrow(aValue);
-  if(PR_sscanf(narrow.get(), gsFmtFloatIn, &converted) != 1) {
-    // wrong format, or empty string
-    return NS_ERROR_INVALID_ARG;
-  }
-  
-  nsresult rv;
-
-  // convert into native unit
-  rv = ConvertFromUnitToNative(converted, fromUnit, converted);
+  PRFloat64 floatValue;
+  nsresult rv = SscanfFloat64(aValue, floatValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // convert into requested unit
-  rv = ConvertFromNativeToUnit(converted, toUnit, converted);
+  PerformConversion(floatValue, fromUnit, toUnit);
+
+  nsAutoString out;
+  rv = SprintfFloat64(floatValue, out);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  // turn back into a string
-  char out[64] = {0};
-  if(PR_snprintf(out, 63, gsFmtFloatOut, converted) == -1) {
-    rv = NS_ERROR_FAILURE;
-    _retval = EmptyString();
-  }
-  if (rv != NS_ERROR_FAILURE) {
-    NS_ConvertUTF8toUTF16 wide(out);
-    rv = NS_OK;
+  ApplyDecimalLimits(out, aMinDecimals, aMaxDecimals);
 
-    // %f formats 1 as '1.000000', %g would format it as '1' but if the number
-    // is big enough, it'd use exponent format, which we don't want either,
-    // so use %f and strip trailing zeros if there is a decimal point, then
-    // strip the decimal point itself. (depending on the sprintf docs you read,
-    // the # flag could do the job, but moz doesn't support that flag because
-    // "The ANSI C spec. of the '#' flag is somewhat ambiguous and not ideal")
-    PRUint32 decimal = wide.FindChar('.');
-    if (decimal != -1) {
-      while (wide.CharAt(wide.Length()-1) == '0')
-        wide.Cut(wide.Length()-1, 1);
-      if (wide.Length() == decimal+1)
-        wide.Cut(decimal, 1);
-    }
-
-    _retval = wide;
-  }
+  _retval = out;
 
   return rv;
+}
+
+// iteratively remove all trailing zeroes, and the period if necessary
+void sbPropertyUnitConverter::RemoveTrailingZeroes(nsAString &aValue) {
+  PRUint32 decimal = aValue.FindChar('.');
+  if (decimal != -1) {
+    while (aValue.CharAt(aValue.Length()-1) == '0')
+      aValue.Cut(aValue.Length()-1, 1);
+    if (aValue.Length() == decimal+1)
+      aValue.Cut(decimal, 1);
+  }
+}
+
+// limit precision of a value to N decimals
+void sbPropertyUnitConverter::LimitToNDecimals(nsAString &aValue,
+                                               PRUint32 aDecimals) {
+  PRUint32 decimal = aValue.FindChar('.');
+  if (decimal != -1) {
+    PRUint32 p = decimal + aDecimals;
+    if (aValue.Length() > p+1) {
+      aValue.Cut(p+1, aValue.Length()-1-p);
+    }
+  }
+}
+
+// force at least N decimals
+void sbPropertyUnitConverter::ForceToNDecimals(nsAString &aValue,
+                                               PRUint32 aDecimals) {
+  PRUint32 decimal = aValue.FindChar('.');
+  if (decimal == -1) {
+    aValue += NS_LITERAL_STRING(".");
+    decimal = aValue.Length()-1;
+  }
+  PRUint32 n = aValue.Length() - decimal - 1;
+  for (;n<aDecimals;n++) {
+    aValue += NS_LITERAL_STRING("0");
+  }
+}
+
+// depending on the sprintf docs you read, the # flag could do the job of this
+// function, but moz doesn't support that flag because "The ANSI C spec. of the
+// '#' flag is somewhat ambiguous and not ideal".
+void sbPropertyUnitConverter::ApplyDecimalLimits(nsAString &aValue,
+                                                 PRInt32 aMinDecimals,
+                                                 PRInt32 aMaxDecimals) {
+  // strip to at most N decimals
+  if (aMaxDecimals != -1) {
+    LimitToNDecimals(aValue, aMaxDecimals);
+  }
+  
+  // remove trailing zeroes
+  RemoveTrailingZeroes(aValue);
+  
+  // ensure there are at least N decimals
+  if (aMinDecimals != -1) {
+    ForceToNDecimals(aValue, aMinDecimals);
+  }
 }
 
 // accessor for an nsISimpleEnumerator of all the exposed units for this
@@ -287,3 +359,115 @@ NS_IMETHODIMP sbPropertyUnitConverter::GetStringBundle(nsAString &aStringBundle)
 void sbPropertyUnitConverter::SetStringBundle(const nsAString &aStringBundle) {
   mStringBundle = aStringBundle;
 }
+
+// auto formats a value using the most suitable unit. this is the default
+// implementation, which simply calls the property info's format function
+NS_IMETHODIMP 
+sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
+                                    PRInt32 aMinDecimals,
+                                    PRInt32 aMaxDecimals,
+                                    nsAString &_retval) {
+  NS_ENSURE_STATE(mPropertyInfo);
+
+  sbSimpleAutoLock lock(mLock);
+
+  // parse as number
+  PRFloat64 v;
+  nsresult rv = SscanfFloat64(aValue, v);
+  
+  // request the most suited unit for this number, implemented by inheritor
+  PRUint32 autoUnit = GetAutoUnit(v);
+  
+  // if not implemented by inheritor, default implementation returns -1, 
+  // for 'not supported'.
+  if (autoUnit < 0) {
+    // in which case we just format using the property info native unit
+    nsresult rv = mPropertyInfo->Format(aValue, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // otherwise, format using that unit
+    PerformConversion(v, mNativeInternal, autoUnit);
+  }
+  
+  nsAutoString out;
+  SprintfFloat64(v, out);
+  
+  ApplyDecimalLimits(out, aMinDecimals, aMaxDecimals);
+
+  // if we formatted to a particular unit, append the unit locale
+  if (autoUnit >= 0) {
+    out += NS_LITERAL_STRING(" ");
+    
+    // get the string for this unit
+    propertyUnitMapInternal::iterator 
+      toUnitIterator = mUnitsMapInternal.find(autoUnit);
+
+    if (toUnitIterator == mUnitsMapInternal.end()) 
+      return NS_ERROR_FAILURE;
+
+    propertyUnit u = (*toUnitIterator).second;
+    nsCOMPtr<sbIPropertyUnit> unit = u.mUnit;
+    
+    nsString shortName;
+    nsresult rv = unit->GetShortName(shortName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    // if this is a partial entity, translate it
+    if (shortName.First() == '&' &&
+        shortName.CharAt(shortName.Length()-1) != ';') {
+       shortName.Cut(0, 1);
+
+      // get bundle if we haven't done so yet
+      if (!mStringBundleObject) {
+        nsCOMPtr<nsIStringBundleService> stringBundleService = 
+          do_GetService("@mozilla.org/intl/stringbundle;1", &rv);
+
+        NS_ConvertUTF16toUTF8 url(mStringBundle);
+        rv = stringBundleService->CreateBundle(url.get(),
+                                               getter_AddRefs(mStringBundleObject));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      // localize string
+      nsString str;
+      rv = mStringBundleObject->GetStringFromName(shortName.get(),
+                                                  getter_Copies(str));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // and append it
+      out += str;
+    } else {
+      // no localization needed, just append the shortName value
+      out += shortName;
+    }
+  }
+
+  _retval = out;
+  
+  return NS_OK;
+}
+
+// not exposed to the interface, this function allows the propertyinfo that
+// instantiates this converter to register itself into it
+NS_IMETHODIMP
+sbPropertyUnitConverter::SetPropertyInfo(sbIPropertyInfo *aPropInfo) {
+  sbSimpleAutoLock lock(mLock);
+
+  NS_ENSURE_STATE(mPropertyInfo);
+
+  mPropertyInfo = aPropInfo;
+  return NS_OK;
+}
+
+// returns the propertyinfo object that owns this converter
+NS_IMETHODIMP 
+sbPropertyUnitConverter::GetPropertyInfo(sbIPropertyInfo **_retval) {
+  NS_ENSURE_STATE(mPropertyInfo);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  sbSimpleAutoLock lock(mLock);
+  
+  *_retval = mPropertyInfo;  
+  return NS_OK;
+}
+

@@ -50,6 +50,7 @@
 #include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
+#include <sbIPropertyUnitConverter.h>
 #include <sbISortableMediaListView.h>
 #include <sbITreeViewPropertyInfo.h>
 
@@ -584,12 +585,29 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
   rv = bag->GetProperty(bind, value);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Format the value for display
+  // Get the property info
   nsCOMPtr<sbIPropertyInfo> info;
   rv = mPropMan->GetPropertyInfo(bind, getter_AddRefs(info));
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Get the unit converter
+  nsCOMPtr<sbIPropertyUnitConverter> converter;
+  rv = info->GetUnitConverter(getter_AddRefs(converter));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Format the value for display
+  if (converter) {
+    // unit converter present, ask it to format the value using the best unit,
+    // using at most 1 decimal digit
+    rv = converter->AutoFormat(value, 
+                               -1, // no min decimals
+                               1,  // 1 decimal max
+                               _retval);
+  } else {
+    // no unit converter, just use propertyinfo.format
+    rv = info->Format(value, _retval);
+  }
 
-  rv = info->Format(value, _retval);
   if (NS_FAILED(rv)) {
     _retval.Truncate();
   }

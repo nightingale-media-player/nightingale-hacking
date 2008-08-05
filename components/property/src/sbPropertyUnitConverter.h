@@ -28,6 +28,8 @@
 #define __SBPROPERTYUNITCONVERTER_H__
 
 #include "sbIPropertyUnitConverter.h"
+#include "sbIPropertyManager.h"
+#include <nsIStringBundle.h>
 #include <nsStringGlue.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
@@ -85,9 +87,24 @@ protected:
                                      PRUint32 aUnitID, 
                                      PRFloat64 &_retVal)=0;
 
+  virtual PRUint32 GetAutoUnit(PRFloat64 aValue) { return -1; }
+  nsresult PerformConversion(PRFloat64 &aValue,
+                             PRUint32 aFromUnit,
+                             PRUint32 aToUnit);
+  
+  void RemoveTrailingZeroes(nsAString &aValue);
+  void LimitToNDecimals(nsAString &aValue, PRUint32 aDecimals);
+  void ForceToNDecimals(nsAString &aValue, PRUint32 aDecimals);
+  void ApplyDecimalLimits(nsAString &aValue, 
+                          PRInt32 aMinDecimals, 
+                          PRInt32 aMaxDecimals);
+  
   PRLock* mLock;
   nsString mNative;
+  PRUint32 mNativeInternal;
   nsString mStringBundle;
+  nsCOMPtr<nsIStringBundleService> mStringBundleService;
+  nsCOMPtr<nsIStringBundle> mStringBundleObject;
 
   typedef struct {
     nsCOMPtr<sbIPropertyUnit> mUnit;
@@ -95,9 +112,15 @@ protected:
   } propertyUnit;
 
   class propertyUnitMap : public std::map<nsString, propertyUnit> {};
+  class propertyUnitMapInternal : public std::map<PRUint32, propertyUnit> {};
   class propertyUnitList : public std::list<propertyUnit> {};
   propertyUnitMap mUnitsMap;
+  propertyUnitMapInternal mUnitsMapInternal;
   propertyUnitList mUnits;
+  
+  nsCOMPtr<sbIPropertyInfo> mPropertyInfo;
+  nsresult SscanfFloat64(const nsAString &aValue, PRFloat64 &aOutValue);
+  nsresult SprintfFloat64(const PRFloat64 aValue, nsAString &aOutValue);
 };
 
 #endif // __SBPROPERTYUNITCONVERTER_H__

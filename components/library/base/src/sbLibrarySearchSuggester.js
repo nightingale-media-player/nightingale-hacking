@@ -417,7 +417,10 @@ LibrarySearchSuggester.prototype = {
 
       for (var value in this._distinctValues) {
         if (converter) {
-          value = converter.convert(value, converter.nativeUnitId, this._conversionUnit);
+          value = converter.convert(value, 
+                                    converter.nativeUnitId, 
+                                    this._conversionUnit, 
+                                    -1, -1 /* no min/max decimals */);
         }
         if (startsWith(value, search))
           results.push(value);

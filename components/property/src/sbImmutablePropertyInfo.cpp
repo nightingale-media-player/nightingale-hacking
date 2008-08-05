@@ -408,5 +408,7 @@ NS_IMETHODIMP
 sbImmutablePropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter)
 {
   mUnitConverter = aUnitConverter;
+  if (mUnitConverter)  
+    mUnitConverter->SetPropertyInfo(this);
   return NS_OK;
 }

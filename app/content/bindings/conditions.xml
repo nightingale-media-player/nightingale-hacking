@@ -1387,7 +1387,9 @@
                   // avoid the parseInt in this case.
                   value = parseInt(converter.convert(value, 
                                                      unit, 
-                                                     converter.nativeUnitId));
+                                                     converter.nativeUnitId,
+                                                     -1, // no min decimals
+                                                     -1  /* no max decimals*/));
                 }
               }
             } catch (e) {
@@ -1435,7 +1437,7 @@
                 this._pm.getPropertyInfo(SBProperties.duration)
                         .unitConverter;
               // durations are in microsecond, but date/times are in
-              // milleseconds so we'll need to multiply by 1000
+              // milleseconds so we will need to multiply by 1000
               factor = 1000;
             } else {
               converter = info.unitConverter;
@@ -1448,9 +1450,12 @@
             try {
               if (converter) {
                 if (unit != converter.nativeUnitId)
+                  // allow as many and as few decimals as needed
                   value = converter.convert(value, 
                                             converter.nativeUnitId, 
-                                            unit);
+                                            unit,
+                                            -1, // no min decimals
+                                            -1  /* no max decimals*/);
               }
             } catch (e) {
               // Write a debug message since this is not supposed to happen

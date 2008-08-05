@@ -28,6 +28,7 @@
 // ie: byte, kB, MB, GB
 
 #include "sbStoragePropertyUnitConverter.h"
+#include <math.h>
 
 // ctor - register all units
 sbStoragePropertyUnitConverter::sbStoragePropertyUnitConverter() 
@@ -107,4 +108,17 @@ sbStoragePropertyUnitConverter::ConvertFromUnitToNative(PRFloat64 aValue,
   }
   _retVal = aValue;
   return NS_OK;
+}
+
+PRUint32 sbStoragePropertyUnitConverter::GetAutoUnit(const PRFloat64 aValue) {
+  // get number of digits
+  PRUint32 d;
+  if (aValue == 0) d = 1;
+  else d = (PRUint32)(log10(abs(aValue)) + 1);
+
+  // and pick most suitable unit
+  if (d < 4) return STORAGE_UNIT_BYTE;
+  if (d < 7) return STORAGE_UNIT_KILOBYTE;
+  if (d < 10) return STORAGE_UNIT_MEGABYTE;
+  return STORAGE_UNIT_GIGABYTE;
 }

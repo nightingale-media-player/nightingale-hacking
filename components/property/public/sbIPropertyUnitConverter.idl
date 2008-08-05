@@ -27,6 +27,7 @@
 #include "nsISupports.idl"
 
 interface nsISimpleEnumerator;
+interface sbIPropertyInfo;
 
 /**
  * \interface sbIPropertyUnit sbIPropertyUnit.h
@@ -65,15 +66,19 @@ interface sbIPropertyUnit : nsISupports
  * This is an interface songbird property converter, used to convert a property
  * value between its various units representations.
  */
-[scriptable, uuid(89022e5e-ebaa-46bd-a3f6-be8c27f0c4f7)]
+[scriptable, uuid(16814f07-373a-404a-a31b-73ca83cb3c96)]
 interface sbIPropertyUnitConverter : nsISupports
 {
   /**
-   * \brief Convert a value to a different unit.
+   * \brief Convert a value to a different unit. Use -1 for aMinDecimals and
+   *        aMaxDecimals if you do not wish to set any limits on the number
+   *        of decimals in the returned value.
    */
   AString convert(in AString aValue, 
                   in AString aFromUnitID, 
-                  in AString aToUnitID);
+                  in AString aToUnitID,
+                  in long aMinDecimals,
+                  in long aMaxDecimals);
   
   /**
    * \brief The list of available units for this property.
@@ -91,4 +96,20 @@ interface sbIPropertyUnitConverter : nsISupports
    * \brief The url to the string bundle used to localize partial entities
    */
   readonly attribute AString stringBundle;
+  
+  /**
+   * \brief Formats a value using the most suitable unit. Use -1 for 
+   *        aMinDecimals and aMaxDecimals if you do not wish to set any limits
+   *        on the number of decimals in the returned value.
+   */
+  AString autoFormat(in AString aValue,
+                     in long aMinDecimals,
+                     in long aMaxDecimals);
+  
+  /**
+   * \brief The sbIPropertyInfo this converter is associated with. This
+   *        attribute will be set automatically by the propertyinfo object
+   *        when its converter is assigned.
+   */
+  attribute sbIPropertyInfo propertyInfo;
 };
