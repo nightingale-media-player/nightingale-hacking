@@ -1162,7 +1162,8 @@
       
       var mediaList = SBNewPlaylist();
       mediaList.addAll(context.list);
-      
+
+      event.stopPropagation();
       return;
     }
   
@@ -1175,6 +1176,7 @@
       var mediaList = SBNewPlaylist();
       mediaList.addSome(context.items);
 
+      event.stopPropagation();
       return;
     }
 
@@ -1191,12 +1193,14 @@
       onFirstMediaItem: function(aTargetList, aFirstMediaItem) {}
     };
 
+    var mediaList = SBNewPlaylist();
+    var position = 0;
     ExternalDropHandler.dropOnList(window, 
                                    session, 
-                                   this.mediaList, 
+                                   mediaList, 
                                    position, 
                                    dropHandlerListener);
-                                   
+    
     event.stopPropagation();
   } catch(e) { Components.utils.reportError(e); }
       ]]></handler>
