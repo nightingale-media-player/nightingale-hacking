@@ -519,6 +519,12 @@ Component.prototype =
         /* Create an importer job object. */
         this.mJob = new sbITunesImporterJob();
 
+        /* Initialize status. */
+        ITStatus.mJob = this.mJob;
+        ITStatus.initialize();
+        ITStatus.reset();
+        ITStatus.bringToFront();
+
         /* Issue an import request. */
         req.func = this.mHandleImportReqFunc;
         req.args = [ aLibFilePath, aGUID, aCheckForChanges ];
@@ -621,25 +627,15 @@ Component.prototype =
         /* Get the function context. */
         state = ctx.state;
 
-        /* Initialize status. */
-        if (state == 1)
-        {
-            ITStatus.mJob = this.mJob;
-            ITStatus.initialize();
-            ITStatus.reset();
-            ITStatus.bringToFront();
-            state++;
-        }
-
         /* Wait until the importer is ready. */
-        if (state == 2)
+        if (state == 1)
         {
             if (this.isReady())
                 state++;
         }
 
         /* Initialize request processing. */
-        if (state == 3)
+        if (state == 2)
         {
             /* Initialize importer data format version. */
             if (!this.mVersionDR.intValue)
@@ -691,7 +687,7 @@ Component.prototype =
         }
 
         /* Find the iTunes library ID key. */
-        if (state == 4)
+        if (state == 3)
         {
             this.findKey("Library Persistent ID");
             if (!ITReq.isCallPending())
@@ -699,7 +695,7 @@ Component.prototype =
         }
 
         /* Get the iTunes library ID. */
-        if (state == 5)
+        if (state == 4)
         {
             /* Get the iTunes library ID. */
             this.mXMLParser.getNextTag(tag, tagPreText);
@@ -715,7 +711,7 @@ Component.prototype =
         }
 
         /* Process the library track list. */
-        if (state == 6)
+        if (state == 5)
         {
             this.processTrackList();
             if (!ITReq.isCallPending())
@@ -723,7 +719,7 @@ Component.prototype =
         }
 
         /* Process the library playlist list. */
-        if (state == 7)
+        if (state == 6)
         {
             this.processPlaylistList();
             if (!ITReq.isCallPending())
@@ -731,7 +727,7 @@ Component.prototype =
         }
 
         /* Complete request processing. */
-        if (state == 8)
+        if (state == 7)
         {
             var                         signature;
             var                         storedSignature;
@@ -811,14 +807,14 @@ Component.prototype =
         }
 
         /* Wait for the database services to synchronize. */
-        if (state == 9)
+        if (state == 8)
         {
             if (ITDB.sync())
                 state++;
         }
 
         /* End state. */
-        if (state >= 10)
+        if (state >= 9)
             ITReq.completeFunction();
 
         /* Update the function context. */
