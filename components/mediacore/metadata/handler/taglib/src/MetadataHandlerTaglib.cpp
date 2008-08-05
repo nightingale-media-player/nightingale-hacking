@@ -958,28 +958,28 @@ nsresult sbMetadataHandlerTaglib::WriteImage(TagLib::MPEG::File* aMPEGFile,
   if (aMPEGFile->ID3v2Tag()) {
     // Create the picture frame, and set mimetype, image type (e.g. front cover)
     // and then fill in the data.
-    TagLib::ID3v2::AttachedPictureFrame *pic = new TagLib::ID3v2::AttachedPictureFrame;
-    pic->setMimeType(TagLib::String(imageMimeType.BeginReading(), TagLib::String::UTF8));
+    TagLib::ID3v2::AttachedPictureFrame *pic =
+                                        new TagLib::ID3v2::AttachedPictureFrame;
+    pic->setMimeType(TagLib::String(imageMimeType.BeginReading(),
+                                    TagLib::String::UTF8));
     pic->setType(TagLib::ID3v2::AttachedPictureFrame::Type(imageType));
     pic->setPicture(TagLib::ByteVector((const char *)imageData, imageDataSize));
 
     // First we have to remove any other existing frames of the same type
-    TagLib::ID3v2::FrameList frameList = aMPEGFile->ID3v2Tag()->frameList("APIC");
-    if (!frameList.isEmpty()) {
-      for (TagLib::uint frameIndex = 0;
-           frameIndex < frameList.size();
-           frameIndex++) {
-        TagLib::ID3v2::AttachedPictureFrame *p =
-          static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList[frameIndex]);
-        if (p && p->type() == imageType){
-          // Remove and free the memory for this frame
-          aMPEGFile->ID3v2Tag()->removeFrame(p, true);
-        }
+    TagLib::ID3v2::FrameList frameList =
+                                  aMPEGFile->ID3v2Tag()->frameListMap()["APIC"];
+    std::list<TagLib::ID3v2::Frame*>::const_iterator iter = frameList.begin();
+    while (iter != frameList.end()) {
+      TagLib::ID3v2::AttachedPictureFrame *frame =
+                    static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
+      std::list<TagLib::ID3v2::Frame*>::const_iterator nextIter = iter;
+      nextIter++;
+      if (frame && frame->type() == imageType){
+        // Remove and free the memory for this frame
+        aMPEGFile->ID3v2Tag()->removeFrame(*iter, true);
       }
-    } else {
-      return NS_ERROR_NOT_IMPLEMENTED;
+      iter = nextIter;
     }
-
     // Add the frame to the file.
     aMPEGFile->ID3v2Tag()->addFrame(pic);
   }
