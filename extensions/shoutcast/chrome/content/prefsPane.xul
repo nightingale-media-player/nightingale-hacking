@@ -38,7 +38,7 @@
 				<vbox flex="1">
 					<command id="updateStates"
 						oncommand="radioPrefs.updateStates();" />
-					<hbox>
+					<hbox align="center">
 						<checkbox id="checkBitRatePref"
 							command="updateStates"
 							preference="prefLimitBitRate" />
@@ -56,7 +56,7 @@
 							</menupopup>
 						</menulist>
 					</hbox>
-					<hbox>
+					<hbox align="center">
 						<checkbox id="checkListenersPref"
 							command="updateStates"
 							preference="prefLimitListeners" />
