@@ -1695,7 +1695,13 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   
   if (!leftValue.IsEmpty()) {
     rv = aInfo->MakeSortable(leftValue, value);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // MakeSortable may fail if the value fails to validate, but since a smart
+    // playlist may look for substrings instead of full valid values, it is not
+    // fatal to fail to make sortable, when that fails we just use the value
+    // that we were given as is.
+    if (NS_FAILED(rv)) {
+      value = leftValue;
+    }
   }
 
   // If this is a between operator, construct two conditions for it
@@ -1712,7 +1718,13 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
 
     nsAutoString rvalue;
     rv = aInfo->MakeSortable(rightValue, rvalue);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // MakeSortable may fail if the value fails to validate, but since a smart
+    // playlist may look for substrings instead of full valid values, it is not
+    // fatal to fail to make sortable, when that fails we just use the value
+    // that we were given as is.
+    if (NS_FAILED(rv)) {
+      rvalue = rightValue;
+    }
 
     nsCOMPtr<sbISQLBuilderCriterion> right;
     rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
@@ -1928,7 +1940,13 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
   leftValue = aCondition->mLeftValue;
   if (!leftValue.IsEmpty()) {
     rv = aInfo->MakeSortable(leftValue, value);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // MakeSortable may fail if the value fails to validate, but since a smart
+    // playlist may look for substrings instead of full valid values, it is not
+    // fatal to fail to make sortable, when that fails we just use the value
+    // that we were given as is.
+    if (NS_FAILED(rv)) {
+      value = leftValue;
+    }
   }
   
   PRFloat64 fValue = ScanfInt64(value);
@@ -2940,6 +2958,3 @@ sbLocalDatabaseSmartMediaList::RemoveSmartMediaListListener(sbILocalDatabaseSmar
   mListeners.RemoveObject(aListener);
   return NS_OK;
 }
-
-
-
