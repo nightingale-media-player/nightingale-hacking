@@ -35,22 +35,25 @@ Additional styles imported by the Cheesy Video Window
 *******************************************************************************
 */ 
 
-#video_window
-{
+#video_window {
   height: 600px;
   width: 800px;
   min-width: 320px;
   min-height: 240px;
 }
 
-iframe#video_controls
-{
-  height: 24px !important;
-  width: 700px !important;
+/** see bug 11423 #video_window #box_gstreamer_simple, **/
+#video-boxes+spacer+hbox,
+#sb-sys-title-title,
+spacer {
+  visibility:collapse;
 }
 
-/* left and right padding outside of the video part (previously two spacers) */
-#video-boxes {
-    padding-left: 10px;
-    padding-right: 10px;
+/** TODO add hook to xul at app/content/xul/songbird.xul **/
+/** TODO rm background image from this file **/
+#video_window sb-sys-titlebar {
+  min-height:22px;
+  background-image: url('chrome://songbird/skin/window/bg-title-bar.png');
+  background-repeat:repeat-x;
+  background-position:center top;
 }

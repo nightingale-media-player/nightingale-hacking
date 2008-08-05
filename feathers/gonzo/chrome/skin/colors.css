@@ -225,7 +225,6 @@ notification > button > .button-box > .button-text {
 listheader,
 treecol,
 treechildren::-moz-tree-cell {
-  border-left:1px solid transparent;
   border-right:1px solid rgb(161,161,161);
   padding:0px 4px;
 }
@@ -234,7 +233,6 @@ treecolpicker {
 
 
 treechildren::-moz-tree-cell {
-  border-left:1px solid transparent;
   border-right:1px solid transparent;
 }
 treecol[insertafter="true"],
@@ -243,7 +241,6 @@ treechildren::-moz-tree-cell( insertafter ) {
 }
 treecol[insertbefore="true"],
 treechildren::-moz-tree-cell( insertbefore ) {
-  border-left: 1px solid gray !important;
 }
 
 treechildren::-moz-tree-cell-text {
@@ -299,42 +296,38 @@ treecol > label {
 
 listheader,
 treecol,
-.tree-scrollable-columns,
+/**.tree-scrollable-columns,**/
 treecolpicker {
-  background-color: rgb(225,225,225);
   background-image: url('chrome://songbird/skin/base-elements/bg-table-header.png');
   background-position:center 0px;
   background-repeat:repeat-x;
-/** TODO
-  border-bottom:1px solid gray;
-**/
 }
 treecol[sortDirection] {
-  background-position:center -80px;
+  background-position:center -75px;
 }
 
 .sb-filterlist-tree treecol[sortDirection] {
   background-position:center 0px;
 }
 .sb-filterlist-tree treecol[sortDirection]:hover {
-  background-position:center -16px;
+  background-position:center -15px;
 }
 .sb-filterlist-tree treecol[sortDirection]:active {
-  background-position:center -32px;
+  background-position:center -30px;
 }
 
 treecol:hover {
-  background-position:center -16px;
+  background-position:center -15px;
 }
 treecol[insertbefore="true"],
 treecol[insertafter="true"] {
 }
 
 treecol:active {
-  background-position:center -32px;
+  background-position:center -30px;
 }
 treecol[dragging="true"] {
-  background-position:center -64px;
+  background-position:center -60px;
 }
 
 treecol[dragging="true"] > label,
@@ -360,14 +353,12 @@ treecol[sortDirection="descending"] > .treecol-sortdirection,
 
 treecolpicker > .tree-columnpicker-icon {
   list-style-image:url('chrome://songbird/skin/base-elements/button-column-picker.png');
-  -moz-image-region: rect(0px, 12px, 12px, 0px);
+  -moz-image-region: rect(0px, 14px, 14px, 0px);
 }
 treecolpicker:hover > .tree-columnpicker-icon {
-  -moz-image-region: rect(12px, 12px, 24px, 0px);
 }
 treecolpicker:active > .tree-columnpicker-icon,
 treecolpicker[open="true"] > .tree-columnpicker-icon {
-  -moz-image-region: rect(24px, 12px, 36px, 0px);
 }
 
 
@@ -378,6 +369,7 @@ treecolpicker {
   min-height:0px !important;
   height:16px !important;
   max-height:16px !important;
+  border-bottom:1px solid rgb(161,161,161);
 }
 listheader > label,
 treecol > label {
@@ -1001,13 +993,15 @@ These let the user resize the frames in your box model.
 
   background-image:url('chrome://songbird/skin/base-elements/bg-splitter-horizontal.png') !important;
   background-repeat:repeat-x !important;
-  background-position:center center !important;
+  background-position:center top !important;
+
 }
 
 #displaypane_contentpane_bottom_splitter,
 #displaypane_servicepane_bottom_splitter {
-  border-top:1px solid gray;
   border-bottom:1px solid gray;
+  min-height:3px;
+  max-height:3px;
 }
 
 .playlist-splitter {
@@ -1017,13 +1011,6 @@ These let the user resize the frames in your box model.
 .playlist-web-splitter {
   border-top:1px solid gray;
   border-bottom:1px solid rgb(161,161,161);  
-}
-
-#displaypane_servicepane_bottom_splitter,
-#displaypane_contentpane_bottom_splitter {
-  min-height:3px;
-  max-height:3px;
-  background-position:center -1px !important;
 }
 
 .playlist-splitter:active,
@@ -2506,31 +2493,4 @@ wizard {
 .tabs-alltabs-button > dropmarker {
   width:7px !important;
   padding-right:2px;
-}
-
-
-
-
-
-
-
-
-
-/**
-TODO mv to /app/skin/dialogs/videoWin.css
-**/
-#video_window #box_gstreamer_simple, /** see bug 11423 **/
-#video_window #video-boxes+spacer+hbox,
-#video_window #sb-sys-title-title,
-#video_window spacer {
-  visibility:collapse;
-}
-#video_window #video-boxes {
-  padding:0px;
-}
-#video_window sb-sys-titlebar { /** add hook to xul at app/content/xul/songbird.xul **/
-  min-height:22px;
-  background-image: url('chrome://songbird/skin/window/bg-title-bar.png');
-  background-repeat:repeat-x;
-  background-position:center top;
 }
