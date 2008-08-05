@@ -367,7 +367,8 @@ sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
                                     PRInt32 aMinDecimals,
                                     PRInt32 aMaxDecimals,
                                     nsAString &_retval) {
-  NS_ENSURE_STATE(mPropertyInfo);
+  if (!mPropertyInfo) 
+    return NS_ERROR_NOT_INITIALIZED;
 
   sbSimpleAutoLock lock(mLock);
 
@@ -453,7 +454,8 @@ NS_IMETHODIMP
 sbPropertyUnitConverter::SetPropertyInfo(sbIPropertyInfo *aPropInfo) {
   sbSimpleAutoLock lock(mLock);
 
-  NS_ENSURE_STATE(mPropertyInfo);
+  if (mPropertyInfo) 
+    return NS_ERROR_ALREADY_INITIALIZED;
 
   mPropertyInfo = aPropInfo;
   return NS_OK;
@@ -462,10 +464,12 @@ sbPropertyUnitConverter::SetPropertyInfo(sbIPropertyInfo *aPropInfo) {
 // returns the propertyinfo object that owns this converter
 NS_IMETHODIMP 
 sbPropertyUnitConverter::GetPropertyInfo(sbIPropertyInfo **_retval) {
-  NS_ENSURE_STATE(mPropertyInfo);
   NS_ENSURE_ARG_POINTER(_retval);
 
   sbSimpleAutoLock lock(mLock);
+  
+  if (!mPropertyInfo) 
+    return NS_ERROR_NOT_INITIALIZED;
   
   *_retval = mPropertyInfo;  
   return NS_OK;
