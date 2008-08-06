@@ -31,7 +31,7 @@ const shoutcastMinBitRate = "extensions.shoutcast-radio.min-bit-rate";
 const shoutcastMinListeners = "extensions.shoutcast-radio.min-listeners";
 const shoutcastCheckBitRate = "extensions.shoutcast-radio.limit-bit-rate";
 const shoutcastCheckListeners = "extensions.shoutcast-radio.limit-listeners";
-const defaultGenre = "Alternative";
+const defaultGenre = "sbITop";
 
 if (typeof(kPlaylistCommands) == "undefined") {
 	Cu.import("resource://app/components/kPlaylistCommands.jsm");
@@ -83,6 +83,8 @@ var RadioDirectory = {
 				.QueryInterface(Ci.nsIPropertyElement);
 			var genreValue = genreProp.key.substr(5);
 			var genreLabel = genreProp.value;
+			if (genreValue == "genreTOP")
+				continue;
 			genres.push({value:genreValue, label:genreLabel});
 		}
 
@@ -101,6 +103,12 @@ var RadioDirectory = {
 		genres.sort(function(a,b) {
 			return (a.label.toUpperCase() > b.label.toUpperCase());
 		});
+
+		// Add the "Top Stations" item first
+		menulist.appendItem(strings.GetStringFromName("genreTOP"), "sbITop");
+		menulist.menupopup.appendChild(document.createElementNS(
+				"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+				"menuseparator"));
 
 		// Build the menulist
 		var found = false;
@@ -130,11 +138,6 @@ var RadioDirectory = {
 		// normal columns and use the stream ones
 		if (!Application.prefs.getValue(shoutcastPlaylistInit, false)) {
 			Application.prefs.setValue(shoutcastPlaylistInit, true);
-			/*
-			var colSpec = SC_streamName + " 242 " + SC_bitRate + " 64 " +
-					SC_comment + " 206 " + SC_listenerCount + " 64 " +
-					SC_bookmark + " 64";
-					*/
 			var colSpec = SC_streamName + " 268 " + SC_bitRate + " 55 " +
 					SC_comment + " 175 " + SC_listenerCount + " 55 " +
 					SC_bookmark + " 55";
@@ -339,6 +342,12 @@ var RadioDirectory = {
 				var bitrate = parseInt(station.getAttribute("br"));
 				var currentTrack = station.getAttribute("ct");
 				var numListeners = station.getAttribute("lc");
+				var genres = station.getAttribute("genre").split(" ");
+				var thisgenre = genres.shift();
+				// Special case for 'top 40'
+				if (thisgenre == "Top" && genres.length > 0 
+						&& genres[0] == "40")
+					thisgenre += " 40";
 
 				// Arbitrarily restricting to MP3 for now to eliminate
 				// dependency on AAC decoder being installed
@@ -367,7 +376,7 @@ var RadioDirectory = {
 				var searchStr = name + " " + currentTrack;
 				props.appendProperty(SC_streamName, name);
 				props.appendProperty(SBProperties.bitRate, bitrate);
-				props.appendProperty(SBProperties.genre, genre);
+				props.appendProperty(SBProperties.genre, thisgenre);
 				props.appendProperty(SBProperties.comment, currentTrack);
 				props.appendProperty(SBProperties.contentMimeType, mimeType);
 				props.appendProperty(SC_listenerCount, numListeners);
@@ -544,7 +553,10 @@ function onPlaylistCellClick(e) {
 			// Add to favourites
 			var genreLabel =
 					document.getElementById('shoutcast-genre-menulist').label;
-			item.setProperty(SBProperties.genre, genreLabel);
+			var genreValue =
+					document.getElementById('shoutcast-genre-menulist').value;
+			if (genreValue != "sbITop")
+				item.setProperty(SBProperties.genre, genreLabel);
 			RadioDirectory.favouriteIDs.push(id);
 			item.setProperty(SC_bookmark,
 					"chrome://shoutcast-radio/skin/heart-active.png");

@@ -17,6 +17,8 @@ var ShoutcastRadio = {
 	// if you understand the crazy algorithms involved here.
 	getStationList : function(genre) {
 		var req = new XMLHttpRequest();
+		if (genre == "sbITop")
+			genre = "BigAll&limit=200";
 		req.open("GET",
 			"http://www.shoutcast.com/sbin/newxml.phtml?genre="+genre, false);
 		req.genre = genre;

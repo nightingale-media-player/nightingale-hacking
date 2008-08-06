@@ -7,7 +7,7 @@ pref("extensions.shoutcast-radio.filter", "");
 pref("extensions.shoutcast-radio.custom-genres", "");
 pref("extensions.shoutcast-radio.favourites.guid", "");
 pref("extensions.shoutcast-radio.favourites.id", "");
-pref("extensions.shoutcast-radio.genre", "Alternative");
+pref("extensions.shoutcast-radio.genre", "sbITop");
 pref("extensions.shoutcast-radio.library.guid", "");
 pref("extensions.shoutcast-radio.plsinit", false);
 pref("extensions.shoutcast-radio.stream.guid", "");
