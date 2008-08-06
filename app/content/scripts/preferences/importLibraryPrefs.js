@@ -83,7 +83,6 @@ if (typeof(Cu) == "undefined")
 //
 //   library_file_path_pref     Library import file path preference.
 //   auto_import_pref           Startup auto-import preference.
-//   auto_import_no_query_pref  Auto-import no query preference.
 //   dont_import_playlists_pref Don't import playlists preference.
 //   unsupported_media_alert_pref
 //                              Alert user on unsupported media preference.
@@ -248,10 +247,10 @@ var importLibraryPrefsUI = {
           Cc["@songbirdnest.com/Songbird/LibraryImporterManager;1"]
             .getService(Ci.sbILibraryImporterManager);
     var libraryImporter = libraryImporterManager.defaultLibraryImporter;
-    
+
     // Import the library as user directs.
     var libraryFilePath = this._getPrefElem("library_file_path_pref").value;
-    
+
     var job = libraryImporter.import(libraryFilePath, "songbird", false);
     SBJobUtils.showProgressDialog(job, window);
   },
@@ -284,11 +283,6 @@ var importLibraryPrefsUI = {
     var autoImportPrefElem = this._getPrefElem("auto_import_pref");
     var autoImportPrefValue = this._getPrefElemValue(autoImportPrefElem);
 
-    // Disable the auto-import query preference if auto-import is not enabled.
-    var autoImportNoQueryPrefElem = this._getPrefElem
-                                           ("auto_import_no_query_pref");
-    autoImportNoQueryPrefElem.disabled = !autoImportPrefValue;
-    
     // Disable the library import command when there is no file selected.
     var importCommand = document.getElementById("import_command");
     var libraryPath = this._getPrefElem("library_file_path_pref").value;

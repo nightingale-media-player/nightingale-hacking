@@ -112,14 +112,6 @@
               preftype="bool"
               label="&import_library.auto_import_checkbox;"/>
 
-    <!-- Checkbox for auto import query. -->
-    <checkbox id="import_library_auto_import_no_query_checkbox"
-              prefid="auto_import_no_query_pref"
-              prefname="songbird.library_importer.auto_import_no_query"
-              preftype="bool"
-              label="&import_library.auto_import_no_query_checkbox;"
-              class="indent"/>
-
     <!-- Checkbox for playlist import. -->
     <checkbox id="import_library_dont_import_playlist_checkbox"
               prefid="dont_import_playlists_pref"
