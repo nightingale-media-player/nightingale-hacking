@@ -352,6 +352,7 @@ function doOK()
       // make playlists for (eg. contains "" ?), so we take care of this here,
       // by showing those fields as invalid after the user clicks ok.
       if (!testAdditionalRestrictions(conditions, smart_conditions)) {
+        updateOkButton();
         return false;
       }
       conditions.forEach(function(condition) {
