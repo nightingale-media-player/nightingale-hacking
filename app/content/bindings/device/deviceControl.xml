@@ -265,14 +265,14 @@
 
   <binding id="sb-device-eject-command">
     <content>
-      <sb-device-control xbl:inherits="bindelem,device-id"
-                         bindforward="parent"
-                         label="&command.device.ejectdevice;"
-                         accesskey="&command.device.ejectdevice.accesskey;"
-                         action="eject"
-                         listentodevice="true"
-                         disabled_default="remove_attribute"
-                         disabled_busy="true"/>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id"
+                             bindforward="parent"
+                             label="&command.device.ejectdevice;"
+                             accesskey="&command.device.ejectdevice.accesskey;"
+                             action="eject"
+                             listentodevice="true"
+                             disabled_default="remove_attribute"
+                             disabled_busy="true"/>
     </content>
   </binding>
 
@@ -289,11 +289,11 @@
 
   <binding id="sb-device-get-info-command">
     <content>
-      <sb-device-control xbl:inherits="bindelem,device-id"
-                         bindforward="parent"
-                         label="&command.device.getdeviceinfo;"
-                         accesskey="&command.device.getdeviceinfo.accesskey;"
-                         action="get_info"/>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id"
+                             bindforward="parent"
+                             label="&command.device.getdeviceinfo;"
+                             accesskey="&command.device.getdeviceinfo.accesskey;"
+                             action="get_info"/>
     </content>
   </binding>
 
@@ -312,10 +312,10 @@
 
   <binding id="sb-device-model-capacity-command">
     <content>
-      <sb-device-control xbl:inherits="bindelem,device-id"
-                         bindforward="parent"
-                         disabled="true"
-                         label_default="device_model_cap"/>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id"
+                             bindforward="parent"
+                             disabled="true"
+                             label_default="device_model_cap"/>
     </content>
   </binding>
 
@@ -332,14 +332,14 @@
 
   <binding id="sb-device-new-playlist-command">
     <content>
-      <sb-device-control xbl:inherits="bindelem,device-id"
-                         bindforward="parent"
-                         label="&menu.file.new;"
-                         accesskey="&menu.file.new.accesskey;"
-                         action="new_playlist"
-                         listentodevice="true"
-                         disabled_default="remove_attribute"
-                         disabled_readonly="true"/>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id"
+                             bindforward="parent"
+                             label="&menu.file.new;"
+                             accesskey="&menu.file.new.accesskey;"
+                             action="new_playlist"
+                             listentodevice="true"
+                             disabled_default="remove_attribute"
+                             disabled_readonly="true"/>
     </content>
   </binding>
 
@@ -356,11 +356,11 @@
 
   <binding id="sb-device-rename-command">
     <content>
-      <sb-device-control xbl:inherits="bindelem,device-id"
-                         bindforward="parent"
-                         label="&command.device.renamedevice;"
-                         accesskey="&command.device.renamedevice.accesskey;"
-                         action="rename"/>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id"
+                             bindforward="parent"
+                             label="&command.device.renamedevice;"
+                             accesskey="&command.device.renamedevice.accesskey;"
+                             action="rename"/>
     </content>
   </binding>
 
@@ -379,7 +379,7 @@
 
   <binding id="sb-device-sync-cancel-command">
     <content>
-      <sb-device-control
+      <xul:sb-device-control
         xbl:inherits="bindelem,device-id"
         bindforward="parent"
         listentodevice="true"
