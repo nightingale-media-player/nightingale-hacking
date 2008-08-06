@@ -58,6 +58,10 @@ page,
 panel {
   background-color: rgb(245,245,245);
 }
+page {
+  background-color: rgb(220,220,220);
+}
+
 
 window[platform=Darwin] {
   border:none !important;
@@ -226,6 +230,9 @@ treechildren::-moz-tree-cell {
   border-left:1px solid transparent;
   padding:0px 4px;
 }
+listheader {
+  border-left:none !important;
+}
 treechildren::-moz-tree-cell {
   border-right:1px solid transparent;
   border-left:1px solid transparent;
@@ -292,7 +299,8 @@ treecolpicker,
 
 
 .tree-scrollable-columns,
-treecolpicker {
+treecolpicker,
+listheader {
   border-bottom:1px solid rgb(161,161,161);
 }
 
@@ -346,7 +354,7 @@ treecolpicker > .tree-columnpicker-icon {
   padding:0px 1px 1px 1px;
 }
 
-listheader,
+listhead,
 treecol,
 treecolpicker {
   min-height:16px !important;
@@ -355,6 +363,7 @@ treecolpicker {
 listheader > label,
 treecol > label {
   font-size:9px !important;
+  padding-bottom:1px;
 }
 
 
@@ -978,8 +987,7 @@ These let the user resize the frames in your box model.
 #displaypane_contentpane_bottom_splitter,
 #displaypane_servicepane_bottom_splitter {
   border-bottom:1px solid gray;
-  min-height:3px;
-  max-height:3px;
+  border-top:1px solid gray;
 }
 
 .playlist-splitter {
@@ -2462,4 +2470,8 @@ wizard {
 .tabs-alltabs-button > dropmarker {
   width:7px !important;
   padding-right:2px;
+}
+
+textbox[multiline="true"] > .textbox-input-box {
+  -moz-box-align:stretch;
 }

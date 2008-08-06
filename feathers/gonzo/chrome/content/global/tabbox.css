@@ -41,6 +41,9 @@
 tabpanels {
   background-color : transparent;
 }
+tabpanel {
+  background-color:rgb(255,255,255);
+}
 
 tabpanels,
 tabbox {
