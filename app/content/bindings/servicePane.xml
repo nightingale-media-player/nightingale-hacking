@@ -1180,17 +1180,17 @@
           ["application/x-sb-transfer-media-list",
            "application/x-sb-transfer-media-items"]);
         if (supported) {
-          var element = this._clickHold.parentNode;
+          var element = this._clickHold;
           this._dragService.canDrop = true;
-          element.setAttribute("dropOn", "true");
+          element.setAttribute("dropon", "true");
 
           // we handle the drop, do not let the default dnd handler get the event
           event.stopPropagation();
         }
       ]]></handler>
       <handler event="dragexit"><![CDATA[
-        var element = this._clickHold.parentNode;
-        element.removeAttribute("dropOn");
+        var element = this._clickHold;
+        element.removeAttribute("dropon");
 
         // we handle the drop, do not let the default dnd handler get the event
         event.stopPropagation();

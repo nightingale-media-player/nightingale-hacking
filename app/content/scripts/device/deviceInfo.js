@@ -71,7 +71,7 @@ var DIW = {
   // Default device image url
   //
   
-  _devImgURL:      "chrome://songbird/skin/icons/icon-device-64x64.png",
+  _devImgURL:      "chrome://songbird/skin/device/icon-generic-device.png",
   
   //
   // Device info configuration.

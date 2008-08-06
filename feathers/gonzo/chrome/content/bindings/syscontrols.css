@@ -47,6 +47,15 @@ Imported by bindings.css or directly into feathers.
 WINDOWS TITLE BAR
 *******************************************************************************
 */
+sb-sys-close-button,
+sb-sys-maximize-button,
+sb-sys-minimize-button,
+sb-sys-hide-button
+{
+  background-color: transparent;
+  border:none;
+}
+
 
 #sb-sys-titlebar-buttons {
   min-height:22px;

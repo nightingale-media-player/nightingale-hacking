@@ -40,24 +40,23 @@ Imported by bindings.css or directly into feathers.
 */
 
 
-.device-name-label {
+#device-tab-header-label {
+  font-size:120%;
+}
+
+.device-name-label,
+.device-specs-grid-label {
   font-size:100%;
 }
 
-.device-specs-grid-label
-{
-  font-size:100%;
-}
-
-.device-model-icon
-{
+.device-model-icon {
 }
 
 .device-image
 {
-  min-height:36px;
-  min-width:36px;
-  list-style-image:url("chrome://songbird/skin/device/icon-device-64x64.png");
+  min-height:64px;
+  min-width:64px;
+  list-style-image:url("chrome://songbird/skin/device/icon-generic-device.png");
   background-color:transparent;
   padding:0px !important;
 }
@@ -121,11 +120,14 @@ Imported by bindings.css or directly into feathers.
 
 #overall_device_info_box,
 #device_management_tabs {
-  background-color: rgb(160,160,160) !important;
-  background-color: rgb(220,220,220) !important;
+  background-color: rgb(220,220,220);
 }
+#device_management_tabs {
+  background-image:none;
+}
+
 #overall_device_info_box {
-  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:center top;
 }
@@ -133,7 +135,6 @@ Imported by bindings.css or directly into feathers.
 }
 #main_box {
   margin:0 !important;
-
 }
 
 tabpanels {
@@ -173,7 +174,7 @@ tabpanels {
 .device-tab-button-box {
   margin:0 4px;
   -moz-border-radius:3px;
-  background-image: url(chrome://songbird/skin/window/bg-button-box.png);
+  background-image: url('chrome://songbird/skin/window/bg-button-box.png');
   background-repeat:repeat-x;
   background-position:center -1px;
   background-color:rgb(225,225,225);
@@ -181,4 +182,9 @@ tabpanels {
 }
 #info_progress_box {
   min-height:64px;
+}
+
+
+radiogroup radiogroup {
+  margin:4px;
 }

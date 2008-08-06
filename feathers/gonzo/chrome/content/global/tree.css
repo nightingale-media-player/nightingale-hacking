@@ -45,11 +45,12 @@
 
 /* ::::: tree ::::: */
 
-tree { 
+tree,
+.sb-playlist-tree,
+.sb-filterlist-tree { 
   -moz-appearance: none;
-  background-image: none !important;
-  list-style-image: none !important;
   border:1px solid gray;
+  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
 }
 
 
@@ -143,7 +144,7 @@ treechildren::-moz-tree-line {
 /* ::::: tree separator ::::: */
 
 treechildren::-moz-tree-separator {
-  border-top: 1px dashed black;
+  border-top: 1px dotted gray;
   margin: 0 2px;
 }
 
@@ -224,7 +225,7 @@ treecolpicker {
 
 .treecol-text {
   margin:0;
-  padding:0 0 1px 0;
+  padding:0;
 }
 
 treecol[hideheader="true"] {

@@ -58,7 +58,7 @@ Imported by bindings.css or directly into feathers.
 {
   height:64px;
   width:64px;
-  list-style-image:url("chrome://songbird/skin/device/icon-device-64x64.png");
+  list-style-image:url("chrome://songbird/skin/device/icon-generic-device.png");
 }
 
 .eject-button {

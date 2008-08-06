@@ -156,11 +156,8 @@ searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {
   list-style-image: url("chrome://songbird/skin/nav-bar/button-add-search-service.png");
 } 
 .searchbar-engine-button[addengines="true"] {
-/**
-TODO: add yellow button bg img
-**/
   background-color:rgb(255,255,235) !important;
-  background-image:none !important;
+  background-image:url('chrome://songbird/skin/base-elements/bg-button-highlighted.png') !important;
 }
 
 

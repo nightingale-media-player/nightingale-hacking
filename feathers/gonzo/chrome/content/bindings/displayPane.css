@@ -101,15 +101,14 @@ menuitem.displaypane-menuitem[recommended] {
   padding:0;
   border:none;  
   list-style-image:url('chrome://songbird/skin/display-pane/button-addon-picker.png');
-  -moz-image-region: rect(0px, 12px, 12px, 0px);
+  -moz-image-region: rect(0px, 14px, 14px, 0px);
 }
 .sb-displaypane-menubutton:hover {
-  -moz-image-region: rect(12px, 12px, 24px, 0px);
 }
 .sb-displaypane-menubutton:active,
 .sb-displaypane-menubutton[open="true"] {
-  -moz-image-region: rect(24px, 12px, 36px, 0px);
 }
+
 
 .sb-displaypane-header {
   -moz-box-pack: center;

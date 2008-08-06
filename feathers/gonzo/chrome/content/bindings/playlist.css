@@ -37,16 +37,6 @@ Imported by bindings.css or directly into feathers.
 
 
 
-sb-playlist,
-sb-playlist > stack > vbox,
-.sb-playlist-tree,
-.sb-playlist-tree > treechildren::-moz-tree-row
-{
-  border: none !important;
-  margin: 0px !important;
-  padding: 0px !important;
-}
-
 
 .sb-playlist-tree > treechildren::-moz-tree-cell
 {
@@ -103,22 +93,17 @@ Tree Progress Meter
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( rating ),
-.sb-filterlist-tree > treechildren::-moz-tree-cell-text( rating )
-{
+.sb-filterlist-tree > treechildren::-moz-tree-cell-text( rating ) {
   color: transparent !important;
 }
 
 /** Show rating states by repositioning a large background image.
     This prevents flickering on state change **/
-.sb-playlist-tree > treechildren::-moz-tree-cell( rating )
-{
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating ) {
   background-repeat: no-repeat;
   background-image: url(chrome://songbird/skin/playlist/ratings.png);
 }
-
-
-.sb-filterlist-tree > treechildren::-moz-tree-cell( rating )
-{
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating ) {
   background-repeat: no-repeat;
   background-image: url(chrome://songbird/skin/playlist/ratings-readonly.png);
 }
@@ -126,42 +111,27 @@ Tree Progress Meter
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating ),
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating0 ),
 .sb-filterlist-tree > treechildren::-moz-tree-cell( rating ),
-.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating0 )
-{
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating0 ) {
   background-position:left 0px;
 }
-
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating1 ),
-.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating1 )
-{
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating1 ) {
   background-position:left -18px;
 }
-
-
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating2 ),
-.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating2 )
-{
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating2 ) {
   background-position:left -36px;
 }
-
-
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating3 ),
-.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating3 )
-{
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating3 ) {
   background-position:left -54px;
 }
-
-
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating4 ),
-.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating4 )
-{
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating4 ) {
   background-position:left -72px;
 }
-
-
 .sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating5 ),
-.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating5 )
-{
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating5 ) {
   background-position:left -90px;
 }
 

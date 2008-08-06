@@ -38,9 +38,13 @@ See app/content/xul/trackEditor.xul
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
+.dialog-content-box {
+  padding:0px !important;
+}
+
 /* Structure */
 #info-tab {
-  padding:10px 6px 0 6px!important;
+  padding:8px 8px 0 8px!important;
 }
 #info_right_column {
   margin-left: 10px;
@@ -71,17 +75,7 @@ checkbox .checkbox-label-box {
 
 /* Inputs */
 sb-rating {
-  min-height:20px;
-  margin:4px;
   -moz-box-flex: 1;
-  border-top:1px solid rgb(120,120,120);
-  border-right:1px solid rgb(140,140,140);
-  border-bottom:1px solid rgb(200,200,200);
-  border-left:1px solid rgb(140,140,140);
-  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');
-  background-repeat:repeat-x;
-  background-position:center top;
-  background-color:white;
 }
 
 textbox[disabled],
@@ -135,44 +129,37 @@ textbox.short-number-input {
   display: none;
 }
 
-/* Buttons 
-button.goto-url label {
-  display: none;
-}
-button.goto-url {
-  list-style-image: url(chrome://songbird/skin/buttons/goto-url-button.png);
-  
-  width:12px !important;
-  min-width:0px !important;
-
-  min-height:12px !important;
-  padding:2px;
-}
-button.goto-url {
-  -moz-image-region: rect(0px 12px 12px 0px);
-}
-button.goto-url:hover {
-  -moz-image-region: rect(12px 12px 24px 0px);
-}
-*/
-
 /* prev/next buttons */
 #prev_button,
 #next_button {
   padding:0;
+  outline:none !important;
 }
 
 #prev_button {
   margin-right:0;
   -moz-border-radius-topright:0px;
   -moz-border-radius-bottomright:0px;
-  border-right:none !important;
 }
 #next_button {
   margin-left:0;
   -moz-border-radius-topleft:0px;
   -moz-border-radius-bottomleft:0px;
 }
+
+
+#prev_button:not([disabled="true"])+#next_button:not([disabled="true"]),
+#prev_button:not([disabled="true"])+#next_button[disabled="true"] {  
+  border-left:none !important;
+}
+
+#prev_button[disabled="true"] {
+  border-right:none !important;
+}
+
+
+
+
 
 #prev_button label,
 #next_button label {
@@ -212,19 +199,23 @@ button.goto-url:hover {
 
 /* album art */
 .art {
-  border: 1px solid black;
+  border:1px solid rgb(140,140,140);
+  
   margin: 4px;
   max-width: 80px;
   max-height: 80px;
   height: 80px;
   width: 80px;
-  background-color:gray;
+  background-color:white;
+  padding:1px;
 }
 .art[edited="true"] {
-  border: 1px solid orange;
+  
 }
 .art:focus {
-  border: 1px solid blue;
+  background-color:rgb(255,255,235);
+  border:2px solid rgb(140,140,140);
+  padding:0px;
 }
 image.art+button {
   margin:0 4px;
