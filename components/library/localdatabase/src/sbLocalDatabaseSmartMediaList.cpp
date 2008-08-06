@@ -452,9 +452,13 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
   NS_ENSURE_TRUE(mListenersLock, NS_ERROR_OUT_OF_MEMORY);
 
   mItem = aItem;
-
+  
+  nsresult rv;
+  mLocalDBItem = do_QueryInterface(mItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   nsAutoString storageGuid;
-  nsresult rv = mItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),
+  rv = mItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),
                                    storageGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 

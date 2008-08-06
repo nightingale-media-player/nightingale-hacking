@@ -28,6 +28,7 @@
 #define __SBLOCALDATABASESMARTMEDIALIST_H__
 
 #include <sbILocalDatabaseSmartMediaList.h>
+#include <sbILocalDatabaseMediaItem.h>
 
 #include <nsWeakReference.h>
 #include <nsTArray.h>
@@ -100,6 +101,13 @@ JoinStringMapIntoQueryString(sbStringMap& aMap,
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString& aPropertyID, nsIStringEnumerator** _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyID, _retval); } \
   NS_IMETHOD RunInBatchMode(sbIMediaListBatchCallback *aCallback, nsISupports *aUserData) { return !_to ? NS_ERROR_NULL_POINTER : _to->RunInBatchMode(aCallback, aUserData); }
 
+/* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
+#define SB_FORWARD_SAFE_SBILOCALDATABASEMEDIAITEM(_to) \
+  NS_SCRIPTABLE NS_IMETHOD GetMediaItemId(PRUint32 *aMediaItemId) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaItemId(aMediaItemId); } \
+  NS_SCRIPTABLE NS_IMETHOD GetPropertyBag(sbILocalDatabaseResourcePropertyBag * *aPropertyBag) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPropertyBag(aPropertyBag); } \
+  NS_SCRIPTABLE NS_IMETHOD SetPropertyBag(sbILocalDatabaseResourcePropertyBag * aPropertyBag) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPropertyBag(aPropertyBag); } \
+  NS_IMETHOD_(void) SetSuppressNotifications(PRBool aSuppress) { if (_to) _to->SetSuppressNotifications(aSuppress); } 
+
 class sbLocalDatabaseSmartMediaListCondition : public sbILocalDatabaseSmartMediaListCondition
 {
 friend class sbLocalDatabaseSmartMediaList;
@@ -128,7 +136,8 @@ protected:
   nsString mDisplayUnit;
 };
 
-class sbLocalDatabaseSmartMediaList : public sbILocalDatabaseSmartMediaList,
+class sbLocalDatabaseSmartMediaList : public sbILocalDatabaseMediaItem,
+                                      public sbILocalDatabaseSmartMediaList,
                                       public sbIMediaListListener,
                                       public nsSupportsWeakReference,
                                       public nsIClassInfo
@@ -143,6 +152,7 @@ public:
 
   NS_FORWARD_SAFE_SBIMEDIAITEM(mItem)
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mItem)
+  SB_FORWARD_SAFE_SBILOCALDATABASEMEDIAITEM(mLocalDBItem)
 
   /* Forward all media list functions to mList except for the
      type getter */
@@ -227,6 +237,7 @@ private:
   PRLock* mInnerLock;
 
   nsCOMPtr<sbIMediaItem> mItem;
+  nsCOMPtr<sbILocalDatabaseMediaItem> mLocalDBItem;
   nsCOMPtr<sbIMediaList> mList;
 
   PRLock* mConditionsLock;
