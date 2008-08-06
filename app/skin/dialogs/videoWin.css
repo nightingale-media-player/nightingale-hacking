@@ -42,9 +42,8 @@ Additional styles imported by the Cheesy Video Window
   min-height: 240px;
 }
 
-/** see bug 11423 #video_window #box_gstreamer_simple, **/
-#video-boxes+spacer+hbox,
-#sb-sys-title-title,
+#controls,
+#sb-sys-title-title, /* the text label of the window caption */
 spacer {
   visibility:collapse;
 }

@@ -4,7 +4,10 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <hbox id="video-boxes">
-    <hbox id="box_gstreamer_simple" flex="1"/>
+    <hbox id="box_gstreamer_simple" flex="1" collapsed="true">
+      <!-- the video goes here.  It will be uncollapsed when the media core's
+           doActivate function gets called. -->
+    </hbox>
   </hbox>
   <script type="application/x-javascript"
    src="chrome://songbird/content/scripts/coreGStreamerSimple.js"/>

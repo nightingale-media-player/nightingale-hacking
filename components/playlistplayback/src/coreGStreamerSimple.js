@@ -763,6 +763,20 @@ CoreGStreamerSimple.prototype.doInitialize = function()
   return true;
 }
 
+CoreGStreamerSimple.prototype.doActivate = function GST_doActivate()
+{
+  var videoElement = document.getElementById( this._videoId );
+  if (videoElement)
+    videoElement.collapsed = false;
+}
+
+CoreGStreamerSimple.prototype.doDeactivate = function GST_doDeactivate()
+{
+  var videoElement = document.getElementById( this._videoId );
+  if (videoElement)
+    videoElement.collapsed = true;
+}
+
 
 /**
  * ----------------------------------------------------------------------------
