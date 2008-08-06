@@ -169,9 +169,15 @@
      <handler event="mouseup">
        <![CDATA[
        clearInterval(this.popupInterval);
-       if (event.button == 2)
-         this.delayPopup(0);
        ]]>
+     </handler>
+     <handler event="contextmenu">
+      <![CDATA[
+        if (this.popup) {
+          this.showPopup();
+          event.stopPropagation();
+        }
+      ]]>
      </handler>
      <handler event="mouseout">
        <![CDATA[
