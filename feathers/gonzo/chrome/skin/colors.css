@@ -119,6 +119,7 @@ statusbar {
   background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
   background-repeat:repeat-x;
   background-position:left top;
+  width:180px;
 }
 
 #servicepane .tree-scrollable-columns {
@@ -163,14 +164,24 @@ statusbar {
   color:rgb(100,100,100);
   font-weight:normal !important;
 }
-treecol > label {
-  color: rgb(100,100,100);
-}
 
 .servicepane-tree > treechildren::-moz-tree-cell( servicesource-bookmarks ),
 .servicepane-tree > treechildren::-moz-tree-cell( servicesource-playlists ),
 .servicepane-tree > treechildren::-moz-tree-cell( folder ) {
 }
+.servicepane-tree > treechildren::-moz-tree-row( dropBefore ) {
+  border-top:1px solid gray !important;
+}
+.servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
+  border-bottom:1px solid gray !important;
+}
+.servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
+  border:2px solid gray !important;
+  background-color:rgb(200,200,200);
+  -moz-border-radius:6px;
+}
+
+
 
 
 toolbar,
@@ -360,10 +371,13 @@ treecolpicker {
   min-height:16px !important;
   max-height:16px !important;
 }
+
+
 listheader > label,
 treecol > label {
   font-size:9px !important;
-  padding-bottom:1px;
+  padding-bottom:1px !important;
+  color: rgb(121,121,121);
 }
 
 
@@ -908,25 +922,14 @@ These let the user resize the frames in your box model.
 *******************************************************************************
 */ 
 
-#filter_splitter > grippy
-{
+#filter_splitter > grippy {
   margin: 0;
 }
 
-#filter_splitter:active {
-}
-
-#servicepane_splitter {
-}
-
-
 #displaypane_right_sidebar_splitter[state="collapsed"],
 #displaypane_contentpane_bottom_splitter[state="collapsed"],
-#displaypane_servicepane_bottom_splitter[state="collapsed"]
-{
+#displaypane_servicepane_bottom_splitter[state="collapsed"] {
 }
-
-
 #servicepane_splitter[state="collapsed"] {
   width:0px;
   min-width:0px;
@@ -1499,20 +1502,7 @@ sb-sys-titlebar {
 
 
 
-#servicepane_box {
-/*  border-top:1px solid brown;*/
-}
-#servicepane_box[tab_bar_showing="true"] {
-  padding-top:22px;
-}
-#servicepane_box[tab_bar_showing="true"] > #servicepane {
-  border-top:1px solid gray;
-}
 
-
-#content .plain {
-/*  border-top:1px solid brown !important;*/
-}
 
 
 
@@ -1710,16 +1700,6 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous selected)
 
 
 
-.servicepane-tree > treechildren::-moz-tree-row( dropBefore ) {
-  border-top:1px solid gray !important;
-}
-.servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
-  border-bottom:1px solid gray !important;
-}
-.servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
-  border:2px solid black !important;
-  -moz-border-radius:6px;
-}
 
 
 
@@ -1796,12 +1776,6 @@ tab[first-tab="true"],
   padding:0;
 }
 
-#tabstrip-container[servicepane_pinned="true"] {
-}
-#tabstrip-container[servicepane_pinned="true"] .service-pane-spring-load-button > .button-box {
-}
-#service_pane_spring_load_panel > hbox > .service-pane-spring-load-button > .button-box {
-}
 
 .service-pane-spring-load-button:hover > .button-box {
 background-position:right -30px !important;
@@ -2287,7 +2261,7 @@ richlistitem[selected="true"] .includeUpdate {
 
 #filterRow {
   background-color: rgb(220,220,220) !important;
-  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:left top;
   min-height:29px;
@@ -2417,7 +2391,7 @@ richlistitem[loading="true"] .updateBadge {
 }
 .wizard-header {
   background-color: rgb(220,220,220);
-  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:left top;
   border-bottom:1px solid gray;
@@ -2474,4 +2448,17 @@ wizard {
 
 textbox[multiline="true"] > .textbox-input-box {
   -moz-box-align:stretch;
+}
+
+
+/** TODO mv to correct file in /dialogs/ **/
+#jump_to_file .dialog-content-box {
+  padding:0px;
+}
+#jump_to_file sb-playlist {
+  margin:0px !important;
+}
+/** TODO mv to correct file in /dialogs/ **/
+#showUpdateInfoButton {
+  visibility:collapse;
 }

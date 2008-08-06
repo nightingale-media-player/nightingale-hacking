@@ -153,6 +153,11 @@ panel[type="autocomplete"] > tree > treecols > hbox
   border:none;
 }
 
+.autocomplete-tree .tree-scrollable-columns {
+  border:none;
+}
+
+
 .autocomplete-treecol {
   -moz-appearance: none !important;
 }

@@ -361,15 +361,6 @@ stack.sb-player-volume-slider {
 
 
 
-#faceplate-tool-bar .rating-box {
-  padding:0 4px;
-/*
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-ratings.png');
-  background-position:center center;
-  background-repeat:no-repeat;
-  */
-  background-image:none;
-}
 
 
 resizer {
@@ -409,10 +400,10 @@ sb-nowplaying-rating {
 
 
 
-
 sb-sys-close-button.mini {
   list-style-image: url('chrome://songbird/skin/mini-player/button-close.png');
   -moz-image-region: rect(0px 12px 12px 0px);
+  margin-left:4px;
 }
 sb-sys-close-button:hover {
   -moz-image-region: rect(12px 12px 24px 0px);
@@ -422,4 +413,34 @@ sb-sys-close-button:active {
 }
 sb-sys-close-button[disabled="true"] {
   -moz-image-region: rect(36px 12px 48px 0px) !important;
+}
+window[platform=Darwin] sb-sys-close-button {
+  visibility:collapse;
+}
+
+
+
+
+
+
+#faceplate-tool-bar > * {
+  margin-top:1px;
+  margin-bottom:1px;
+}
+#faceplate-tool-bar sb-rating {
+  padding:0px !important;
+  margin:0px !important;
+  background-image: none;
+}
+#faceplate-tool-bar > sb-nowplaying-rating {
+  margin-top:0px !important; 
+  margin-bottom:0px !important; 
+  padding:0px !important;
+  min-height:18px;
+  max-height:18px;
+}
+#faceplate-tool-bar {
+  padding:2px 0px 2px 0px;
+  margin-top:0px !important;
+  margin-bottom:0px !important;
 }

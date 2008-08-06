@@ -140,9 +140,9 @@
               <sb-nowplaying-rating />
             </hbox>
           </stack>
-<!--
+
           <sb-sys-close-button id="miniplayer_close_button" class="mini"/>
--->
+
           <!-- window controls (collapsed) -->
           <hbox id="window_controls_box" pack="end" align="end" class="mini">
             <sb-player-jumpto-button id="miniplayer_jumpto_button" class="miniplayer"/>
