@@ -377,7 +377,7 @@ sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
   nsresult rv = SscanfFloat64(aValue, v);
   
   // request the most suited unit for this number, implemented by inheritor
-  PRUint32 autoUnit = GetAutoUnit(v);
+  PRInt32 autoUnit = GetAutoUnit(v);
   
   // if not implemented by inheritor, default implementation returns -1, 
   // for 'not supported'.
@@ -385,10 +385,12 @@ sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
     // in which case we just format using the property info native unit
     nsresult rv = mPropertyInfo->Format(aValue, _retval);
     NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    // otherwise, format using that unit
-    PerformConversion(v, mNativeInternal, autoUnit);
+    
+    return NS_OK;
   }
+  
+  // otherwise, format using that unit
+  PerformConversion(v, mNativeInternal, autoUnit);
   
   nsAutoString out;
   SprintfFloat64(v, out);

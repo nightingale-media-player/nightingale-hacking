@@ -110,7 +110,7 @@ sbStoragePropertyUnitConverter::ConvertFromUnitToNative(PRFloat64 aValue,
   return NS_OK;
 }
 
-PRUint32 sbStoragePropertyUnitConverter::GetAutoUnit(const PRFloat64 aValue) {
+PRInt32 sbStoragePropertyUnitConverter::GetAutoUnit(const PRFloat64 aValue) {
   // get number of digits
   PRUint32 d;
   if (aValue == 0) d = 1;

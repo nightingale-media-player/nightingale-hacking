@@ -89,7 +89,7 @@ sbFrequencyPropertyUnitConverter::ConvertFromUnitToNative(PRFloat64 aValue,
   return NS_OK;
 }
 
-PRUint32 sbFrequencyPropertyUnitConverter::GetAutoUnit(const PRFloat64 aValue) {
+PRInt32 sbFrequencyPropertyUnitConverter::GetAutoUnit(const PRFloat64 aValue) {
   // get number of digits
   PRUint32 d;
   if (aValue == 0) d = 1;

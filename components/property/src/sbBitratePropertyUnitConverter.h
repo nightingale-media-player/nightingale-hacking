@@ -40,7 +40,7 @@ public:
     BITRATE_UNIT_MBPS,
   };
 
-  virtual PRUint32 GetAutoUnit(PRFloat64 aValue);
+  virtual PRInt32 GetAutoUnit(PRFloat64 aValue);
 
 protected:
 

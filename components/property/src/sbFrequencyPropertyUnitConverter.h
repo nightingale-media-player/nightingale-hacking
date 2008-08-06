@@ -39,7 +39,7 @@ public:
     FREQUENCY_UNIT_KHZ,
   };
 
-  virtual PRUint32 GetAutoUnit(PRFloat64 aValue);
+  virtual PRInt32 GetAutoUnit(PRFloat64 aValue);
 
 protected:
 

@@ -87,7 +87,7 @@ protected:
                                      PRUint32 aUnitID, 
                                      PRFloat64 &_retVal)=0;
 
-  virtual PRUint32 GetAutoUnit(PRFloat64 aValue) { return -1; }
+  virtual PRInt32 GetAutoUnit(PRFloat64 aValue) { return -1; }
   nsresult PerformConversion(PRFloat64 &aValue,
                              PRUint32 aFromUnit,
                              PRUint32 aToUnit);

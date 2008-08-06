@@ -41,7 +41,7 @@ public:
     STORAGE_UNIT_GIGABYTE,
   };
   
-  virtual PRUint32 GetAutoUnit(PRFloat64 aValue);
+  virtual PRInt32 GetAutoUnit(PRFloat64 aValue);
 
 protected:
 
