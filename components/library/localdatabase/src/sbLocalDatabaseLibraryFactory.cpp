@@ -542,6 +542,12 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
   rv = insert->AddValueLong(0);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = insert->AddColumn(NS_LITERAL_STRING("is_list"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = insert->AddValueLong(0);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = insert->ToString(sql);
   NS_ENSURE_SUCCESS(rv, rv);
 

@@ -79,6 +79,7 @@
 #define SB_PROPERTY_GUID                      "http://songbirdnest.com/data/1.0#GUID"
 #define SB_PROPERTY_HIDDEN                    "http://songbirdnest.com/data/1.0#hidden"
 #define SB_PROPERTY_ISLIST                    "http://songbirdnest.com/data/1.0#isList"
+#define SB_PROPERTY_LISTTYPE                  "http://songbirdnest.com/data/1.0#listType"
 #define SB_PROPERTY_ISREADONLY                "http://songbirdnest.com/data/1.0#isReadOnly"
 #define SB_PROPERTY_ISCONTENTREADONLY         "http://songbirdnest.com/data/1.0#isContentReadOnly"
 #define SB_PROPERTY_ORDINAL                   "http://songbirdnest.com/data/1.0#ordinal"

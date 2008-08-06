@@ -439,10 +439,13 @@ function loadMockDatabase() {
 
     for(var j = 0; j < sp.length; j++) {
       if (sp[j] == "http://songbirdnest.com/data/1.0#isList") {
-        if (!b[j + 1] || b[j + 1] == "0")
-          item[sp[j]] = "";
-        else
+        if (!b[j + 1] || b[j + 1] == "0") {
+          item[sp[j]] = "0";
+        }
+        else {
           item[sp[j]] = "1";
+          item["http://songbirdnest.com/data/1.0#listType"] = "1";
+        }
       }
       else {
         item[sp[j]] = b[j + 1];

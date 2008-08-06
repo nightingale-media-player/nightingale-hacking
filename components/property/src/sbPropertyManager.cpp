@@ -358,7 +358,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Is List (internal use only)
+  //List Type 
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_LISTTYPE), EmptyString(),
+                      stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, 
+                      0, PR_FALSE, PR_FALSE, PR_FALSE, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Is List 
   rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISLIST), EmptyString(),
                        stringBundle, PR_FALSE, PR_FALSE, PR_FALSE,
                        PR_FALSE);

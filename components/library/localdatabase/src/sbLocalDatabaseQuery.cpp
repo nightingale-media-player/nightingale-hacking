@@ -47,6 +47,7 @@
 #define ORDINAL_COLUMN        NS_LITERAL_STRING("ordinal")
 #define PROPERTYNAME_COLUMN   NS_LITERAL_STRING("property_name")
 #define MEDIALISTYPEID_COLUMN NS_LITERAL_STRING("media_list_type_id")
+#define ISLIST_COLUMN         NS_LITERAL_STRING("is_list")
 #define ROWID_COLUMN          NS_LITERAL_STRING("rowid")
 
 #define PROPERTIES_TABLE         NS_LITERAL_STRING("resource_properties")

@@ -738,26 +738,8 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
             // XXXben FIX ME
             sbLocalDatabaseResourcePropertyBag* bagClassPtr =
               static_cast<sbLocalDatabaseResourcePropertyBag*>(bag.get());
-            // If this is the isList property then we need to special case it
-            // isList is a boolean property and only allows 0 or 1. The media 
-            // list type db field is an integer field and may have values of 0
-            // or greater. So the isList property and media type ID property come
-            // from the same database field
-            // TODO: XXX DWB This isn't ideal. isList needs its own DB Field,
-            // Until tha happens we have to hack around it.
-            if (strcmp(sStaticProperties[i].mPropertyID, 
-                       "http://songbirdnest.com/data/1.0#isList") == 0) {
-              
-              PRBool const isList = !value.IsEmpty() && !value.EqualsLiteral("0");
-              nsAutoString isListValue;
-              isListValue.AssignLiteral(isList ? "1" : "0");
-              
-              rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, isListValue, isListValue);
-            }
-            else {
-              rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value, value);
-            }
 
+            rv = bagClassPtr->PutValue(sStaticProperties[i].mDBID, value, value);
             NS_ENSURE_SUCCESS(rv, rv);
           }
         }

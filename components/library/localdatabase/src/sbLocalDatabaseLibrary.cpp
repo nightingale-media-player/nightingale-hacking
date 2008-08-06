@@ -157,7 +157,8 @@ static char* kInsertQueryColumns[] = {
   "content_url",
   "content_hash",
   "hidden",
-  "media_list_type_id"
+  "media_list_type_id",
+  "is_list"
 };
 
 NS_IMPL_ISUPPORTS1(sbLibraryInsertingEnumerationListener,
@@ -1211,6 +1212,10 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
     // Media items don't have a media_list_type_id.
     rv = aQuery->BindNullParameter(6);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Media items aren't media lists. Set isList to 0.
+    rv = aQuery->BindInt32Parameter(7, 0);
+    NS_ENSURE_SUCCESS(rv, rv);
  }
   else {
     // This is a media list, create its url in the form
@@ -1233,6 +1238,10 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
 
     // Record the media list type.
     rv = aQuery->BindInt32Parameter(6, aMediaItemTypeID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set isList to 1.
+    rv = aQuery->BindInt32Parameter(7, 1);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
