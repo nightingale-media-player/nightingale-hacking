@@ -644,6 +644,12 @@ function makeNewPlaylist(mediaListType) {
       mediaList.name = input.value;
     }
   }
+
+  var metrics =
+    Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+              .createInstance(Components.interfaces.sbIMetrics);
+  metrics.metricsInc("medialist", "create", mediaListType);
+  
   return mediaList;
 }
 

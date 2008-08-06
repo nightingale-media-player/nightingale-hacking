@@ -45,7 +45,7 @@ interface sbIMediaItem;
  * \interface sbIPlaylistPlaybackListener
  * \brief Interface that handles the tracking of playback changes
  */
-[scriptable, uuid(bd18d4e1-3105-4057-90e2-134372b95cf3)]
+[scriptable, uuid(f208a3c0-200a-4ae2-9e1d-cef51ae99bed)]
 interface sbIPlaylistPlaybackListener : nsISupports
 {
   /**
@@ -87,6 +87,22 @@ interface sbIPlaylistPlaybackListener : nsISupports
                           in sbIMediaListView aView,
                           in long aIndex);
                     
+
+  /**
+   * \brief Called when the user starts playback on a particular view, before the
+   *        view becomes the playing view. Note that this does not get called when
+   *        playback continues to the next track in the same view, but does get
+   *        called if the user restarts playback on the currently playing view.
+   */
+  void onBeforeViewChange(in sbIMediaListView aView); 
+
+  /**
+   * \brief Called when the user starts playback on a particular view, after the
+   *        view has become the playing view. Note that this does not get called
+   *        when playback continues to the next track in the same view, but does
+   *        get called if the user restarts playback on the currently playing view.
+   */
+  void onViewChange(in sbIMediaListView aView); 
 };
 
 /**
@@ -520,4 +536,5 @@ interface sbIPlaylistPlayback : nsIObserver
    */
    void removeListener(in sbIPlaylistPlaybackListener aListener);
 };
+
 

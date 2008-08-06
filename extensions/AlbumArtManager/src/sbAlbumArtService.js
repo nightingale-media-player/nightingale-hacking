@@ -675,6 +675,8 @@ sbAlbumArtService.prototype = {
   onStop: function() { },
   onBeforeTrackChange: function(aItem, aView, aIndex) { },
   onTrackIndexChange: function(aItem, aView, aIndex) { },
+  onBeforeViewChange: function(aView) { },
+  onViewChange: function(aView) { },
 
   /**
    * \brief Called when a track starts playing, this could be the same track

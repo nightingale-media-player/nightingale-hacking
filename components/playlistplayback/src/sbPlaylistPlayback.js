@@ -995,8 +995,17 @@ PlaylistPlayback.prototype = {
 
     return true;
   },
-  
+
+  // exposed version  
   playView: function(aView, aIndex) {
+    return this._doPlayView(aView, aIndex, false);
+  },
+  
+  /* same as playView, but this internal version has a parameter that
+     specifies whether this is an automatic playView (aAuto=true, ie,
+     playback is continuing to the next track), or a user initiated
+     one (aAuto=false) */
+  _doPlayView: function(aView, aIndex, aAuto) {
     LOG("playView");
     // XXXnewlib
     if (!aView)
@@ -1007,6 +1016,20 @@ PlaylistPlayback.prototype = {
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
 
     var noPreviousView = !this._playingView;
+
+    // if this is not an auto next track
+    if (!aAuto) {
+      // Notify listeners before a view change
+      this._listeners.forEach(function(aListener) {
+        try {
+          aListener.onBeforeViewChange(aView);
+        }
+        catch(e) {
+          Components.utils.reportError(e);
+        }
+      });
+    }
+
     this._playingView = aView;
 
     LOG("playView: noPreviousView? " + noPreviousView);
@@ -1035,6 +1058,20 @@ PlaylistPlayback.prototype = {
 
     // Ensure we have already stopped playback.
     this.stop();
+
+    // if this is not an auto next track
+    if (!aAuto) {
+      this._doViewMetrics(aView);
+      // Notify listeners of a view change
+      this._listeners.forEach(function(aListener) {
+        try {
+          aListener.onViewChange(aView);
+        }
+        catch(e) {
+          Components.utils.reportError(e);
+        }
+      });
+    }
 
     // Notify listeners before track change
     this._listeners.forEach(function(aListener) {
@@ -2030,7 +2067,7 @@ PlaylistPlayback.prototype = {
       // If we think we want to play a track, do so.
       LOG( "next index: " + next_index );
       if ( next_index != -1 && this._playingView) {
-        this.playView( this._playingView, next_index );
+        this._doPlayView( this._playingView, next_index, true );
       } else {
         this.stop();
       }        
@@ -2704,6 +2741,30 @@ PlaylistPlayback.prototype = {
     }
   },
   
+  _doViewMetrics: function(aView) {
+    debugger;
+    var mediaList = aView.mediaList;
+    var outerListGuid = mediaList.getProperty(SBProperties.outerGUID);
+    if (outerListGuid) {
+      var library = mediaList.library;
+      var outerList = library.getMediaItem(outerListGuid);
+      if (outerList) {
+        mediaList = outerList;
+      }
+    }
+    if (mediaList.library == mediaList) {
+      gMetrics.metricsInc("medialist", "play", "library");
+    } else if (mediaList.type == "simple") {
+      if (mediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") { 
+        gMetrics.metricsInc("medialist", "play", "subscription");
+      } else {
+        gMetrics.metricsInc("medialist", "play", "simple");
+      }
+    } else if (mediaList.type == "smart") {
+      gMetrics.metricsInc("medialist", "play", "smart");
+    }
+  },
+  
   /**
    * QueryInterface is always last, it has no trailing comma.
    */
@@ -2733,6 +2794,7 @@ function NSGetModule(compMgr, fileSpec) {
       true);
   });
 }
+
 
 
 

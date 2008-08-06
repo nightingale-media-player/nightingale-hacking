@@ -2314,6 +2314,18 @@ sbLocalDatabaseTreeView::OnTrackIndexChange(sbIMediaItem* aItem,
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnBeforeViewChange(sbIMediaListView* aView)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnViewChange(sbIMediaListView* aView)
+{
+  return NS_OK;
+}
+
 // sbIMediaListViewSelectionListener
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::OnSelectionChanged()

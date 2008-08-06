@@ -286,6 +286,12 @@
             
             onTrackIndexChange: function(aItem, aView, aIndex) {
             },
+            
+            onBeforeViewChange: function(aView) {
+            },
+
+            onViewChange: function(aView) {
+            },
           
             QueryInterface: this.XPCOMUtils.generateQI([Components.interfaces.sbIPlaylistPlaybackListener])
           };

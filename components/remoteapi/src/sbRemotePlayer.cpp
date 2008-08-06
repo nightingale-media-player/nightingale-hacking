@@ -206,6 +206,8 @@ const static char* sPublicCategoryConversions[][2] =
 #define RAPI_EVENT_TYPE_BEFORETRACKCHANGE NS_LITERAL_STRING("beforetrackchange")
 #define RAPI_EVENT_TYPE_TRACKCHANGE       NS_LITERAL_STRING("trackchange")
 #define RAPI_EVENT_TYPE_TRACKINDEXCHANGE  NS_LITERAL_STRING("trackindexchange")
+#define RAPI_EVENT_TYPE_BEFOREVIEW        NS_LITERAL_STRING("beforeviewchange")
+#define RAPI_EVENT_TYPE_VIEW              NS_LITERAL_STRING("viewchange")
 #define RAPI_EVENT_TYPE_STOP              NS_LITERAL_STRING("playbackstopped")
 #define SB_PREFS_ROOT                     NS_LITERAL_STRING("songbird.")
 #define SB_EVENT_CMNDS_UP                 NS_LITERAL_STRING("playlist-commands-updated")
@@ -1499,6 +1501,32 @@ sbRemotePlayer::OnTrackIndexChange(sbIMediaItem* aItem,
                                           RAPI_EVENT_TYPE_TRACKINDEXCHANGE,
                                           aItem,
                                           NS_OK );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::OnBeforeViewChange(sbIMediaListView* aView) {
+  LOG(("sbRemotePlayer::OnViewChange()"));
+  NS_ENSURE_ARG_POINTER(aView);
+  nsresult rv;
+
+  rv = FireEventToContent( RAPI_EVENT_CLASS, 
+                           RAPI_EVENT_TYPE_BEFOREVIEW );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::OnViewChange(sbIMediaListView* aView) {
+  LOG(("sbRemotePlayer::OnViewChange()"));
+  NS_ENSURE_ARG_POINTER(aView);
+  nsresult rv;
+
+  rv = FireEventToContent( RAPI_EVENT_CLASS, 
+                           RAPI_EVENT_TYPE_VIEW );
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
