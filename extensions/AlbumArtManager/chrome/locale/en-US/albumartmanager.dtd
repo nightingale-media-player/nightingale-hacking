@@ -13,22 +13,22 @@
 
 
 <!ENTITY albumartmanager.prefpane.label "Album Art" >
+<!ENTITY albumartmanager.general.groupbox.label "General" >
 <!ENTITY albumartmanager.notification.groupbox.label "Track Change Notification">
 <!ENTITY albumartmanager.notification.label "Display notification on track changes." >
-<!ENTITY albumartmanager.scan.groupbox.label "Background cover scanner" >
-<!ENTITY albumartmanager.scan.label "Enable the background cover scanner" >
-<!ENTITY albumartmanager.scan.prioritybutton.label "Fetcher Priorities">
-<!ENTITY albumartmanager.country.label "Country">
-<!ENTITY albumartmanager.country.name.usa "United States of America">
-<!ENTITY albumartmanager.country.name.canada "Canada">
-<!ENTITY albumartmanager.country.name.austria "Austria">
-<!ENTITY albumartmanager.country.name.britain "Britain">
-<!ENTITY albumartmanager.country.name.france "France">
-<!ENTITY albumartmanager.country.name.germany "Germany">
-<!ENTITY albumartmanager.country.name.japan "Japan">
 
 <!ENTITY albumartmanager.search.groupbox.label "Album Cover Search Options">
 <!ENTITY albumartmanager.search.includeArtist "Include artist name in searches">
+<!ENTITY albumartmanager.country.label "Country" >
+<!ENTITY albumartmanager.country.name.usa "United States of America" >
+<!ENTITY albumartmanager.country.name.canada "Canada" >
+<!ENTITY albumartmanager.country.name.austria "Austria" >
+<!ENTITY albumartmanager.country.name.britain "Britain" >
+<!ENTITY albumartmanager.country.name.france "France" >
+<!ENTITY albumartmanager.country.name.germany "Germany" >
+<!ENTITY albumartmanager.country.name.japan "Japan" >
+<!ENTITY albumartmanager.fetchers.label "Fetchers" >
+<!ENTITY albumartmanager.fetchers.priority.label "Priorities" >
 
 <!ENTITY albumartmanager.cover.groupbox.label "Where to save the album covers">
 <!ENTITY albumartmanager.search.includeArtist "Include artist name in searches">

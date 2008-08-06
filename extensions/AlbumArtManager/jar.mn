@@ -43,7 +43,6 @@ albumartmanager.jar:
   content/albumartmanager/xul/alert.xul                     (chrome/content/xul/alert.xul)
   content/albumartmanager/xul/openPrefs.xul                 (chrome/content/xul/openPrefs.xul)
   content/albumartmanager/xul/fetcherPriorities.xul         (chrome/content/xul/fetcherPriorities.xul)
-  content/albumartmanager/xul/servicePane.xul               (chrome/content/xul/servicePane.xul)
   locale/albumartmanager/en-US/albumartmanager.dtd          (chrome/locale/en-US/albumartmanager.dtd)
   locale/albumartmanager/en-US/albumartmanager.properties   (chrome/locale/en-US/albumartmanager.properties)
   skin/albumartmanager/albumart.css                         (chrome/skin/albumart.css)

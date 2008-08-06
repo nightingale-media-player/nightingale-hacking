@@ -30,7 +30,6 @@ VPATH     = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sbAlbumArtService.js \
-                          $(srcdir)/sbLibraryScanner.js \
                           $(srcdir)/sbCoverDownloader.js \
                           $(srcdir)/sbCoverScanner.js \
                           $(srcdir)/sbFileCoverFetcher.js \

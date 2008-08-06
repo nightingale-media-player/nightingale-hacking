@@ -93,7 +93,6 @@ sbAlbumArtService.prototype = {
   _alertService: null,                // Alert notification Service
   _playListPlaybackService: null,     // PlaylistPlayback Service
   _bundle: null,                      // String bundle
-  _paneMgr: null,                     // Display pane manager
   
   /**
    * Internal debugging functions
@@ -160,40 +159,12 @@ sbAlbumArtService.prototype = {
          contract id will be correctly registered, ugh) */
     }
 
-    this._debug("Creating dataremote for now playing cover");
-    // Create a dataremote for the current album cover art
-    this._currentArtDataRemote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
-                                   .createInstance(Ci.sbIDataRemote);
-    this._currentArtDataRemote.init("albumartmanager.currentCoverUrl", null);
-    this._currentArtDataRemote.stringValue = DEFAULT_COVER;
-
     this._debug("Loading ioService");
     // Used for converting string urls to nsIURIs
     this._ioService =  Cc['@mozilla.org/network/io-service;1']
                          .getService(Ci.nsIIOService);
 
-    this._debug("Registering now playing service display pane");
-    // Add a pane to the service pane for current album art
-    this._paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                   .getService(Ci.sbIDisplayPaneManager);
-    var panelLabel = SBString("albumartmanager.panel.label",
-                              null,
-                              this._bundle);
-    if (!this._paneMgr.getPaneInfo(DISPLAY_PANE)) {
-      this._paneMgr.registerContent(DISPLAY_PANE, 
-                                    panelLabel,     // Label of panel
-                                    "",             // TODO: Icon of panel
-                                    175,            // Random width
-                                    192,            // Random height
-                                    "servicepane",  // which pane we are attaching to
-                                    true);          // Auto show panel
-    }
-
     this.loadFetcherList();
-
-    if (this._prefService.getBoolPref("songbird.albumartmanager.scan")) {
-      this.toggleScanner(true);
-    }
   },
 
   /**
@@ -292,12 +263,6 @@ sbAlbumArtService.prototype = {
 
     var mAlbumArt = this.getAlbumArtWork(aMediaItem, true);
 
-    if (this._playListPlaybackService.currentGUID == aMediaItem.guid) {
-      // Only update the dataRemote if this is the current track playing
-      this._debug("Setting dataremote from notify to " + mAlbumArt);
-      this._currentArtDataRemote.stringValue = mAlbumArt;
-    }
-
     if ( !this._playListPlaybackService.playing ||
          this._playListPlaybackService.paused ||
          (this._playListPlaybackService.currentGUID != aMediaItem.guid) ) {
@@ -365,10 +330,9 @@ sbAlbumArtService.prototype = {
     // again if we need to search for covers, see _notify)
     var mAlbumArt = this.getAlbumArtWork(aMediaItem, true);
     this._debug("Got album art of [" + mAlbumArt + "] on trackChanged");
-    this._currentArtDataRemote.stringValue = mAlbumArt;
     
     // Fire off the scanners to find album art if needed
-    if (mAlbumArt == DEFAULT_COVER) {
+    if (mAlbumArt == "") {
       this._debug("Starting search of covers for guid: " + aMediaItem.guid);
       var coverScanner = Cc["@songbirdnest.com/Songbird/cover/cover-scanner;1"]
                            .createInstance(Ci.sbICoverScanner);
@@ -643,32 +607,6 @@ sbAlbumArtService.prototype = {
     return this._fetchers;
   },
   
-  /**
-   * \brief turns on or off the library scanner for the main library
-   * \param aTurnOn to turn on pass true, to turn off pass false
-   */
-  toggleScanner: function(aTurnOn) {
-    // Make sure we have a library scanner
-    if (!this._libraryScanner) {
-      this._libraryScanner = Cc["@songbirdnest.com/Songbird/cover/library-scanner;1"]
-                               .createInstance(Ci.sbILibraryScanner);
-    }
-
-    if (aTurnOn) {
-      this._debug("Setting up the Library scanner for main library");
-      // Setup the library scanner to do an automatic scan of all the items in the
-      // main library.
-      this._libraryScanner.scanLibrary(LibraryUtils.mainLibrary, this);
-    } else {
-      if (this._libraryScanner) {
-        this._debug("Shutting down the Library scanner for main library");
-        this._libraryScanner.shutdown();
-        this._libraryScanner = null;
-      }
-    }
-
-  },
-
   /*********************************
    * sbIPlaylistPlaybackListener
    ********************************/
@@ -738,8 +676,7 @@ sbAlbumArtService.prototype = {
   /*********************************
    * nsISupports
    ********************************/
-  QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports,
-                                         Ci.sbIAlbumArtService,
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIAlbumArtService,
                                          Ci.sbIPlaylistPlaybackListener,
                                          Ci.nsITimerCallback,
                                          Ci.nsIObserver,

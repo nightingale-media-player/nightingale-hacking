@@ -45,6 +45,5 @@ pref("songbird.albumartmanager.cover.usealbumlocation", true);
 pref("songbird.albumartmanager.search.includeArtist", true);
 pref("songbird.albumartmanager.cover.format", "%artist% - %album%");
 pref("songbird.albumartmanager.country", "com");
-pref("songbird.albumartmanager.scan", true);
 
 pref("songbird.albumartmanager.debug", false);

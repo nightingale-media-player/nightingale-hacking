@@ -21,9 +21,6 @@
         <preference id="songbird.albumartmanager.display_track_notification"
                     name="songbird.albumartmanager.display_track_notification"
                     type="bool"/>
-        <preference id="songbird.albumartmanager.scan"
-                    name="songbird.albumartmanager.scan"
-                    type="bool"/>
 
         <!-- Downloads -->
         <preference id="songbird.albumartmanager.cover.usealbumlocation"
@@ -44,56 +41,64 @@
 
       <vbox>
         
-        <grid id="albumartmaanagerGrid">
-          <columns>
-            <column flex="1"/>
-            <column/>
-          </columns>
-          <rows id="albumartmanager-rows">
-            <row id="albumartmanager-country">
-              <label value="&albumartmanager.country.label;"/>
-              <menulist id="albumartartmanager-country-menu"
-                        preference="songbird.albumartmanager.country">
-               <menupopup>
-                  <menuitem label="&albumartmanager.country.name.usa;" value="com"/>
-                  <menuitem label="&albumartmanager.country.name.canada;" value="ca"/>
-                  <menuseparator/>
-                  <menuitem label="&albumartmanager.country.name.austria;" value="de"/>
-                  <menuitem label="&albumartmanager.country.name.britain;" value="co.uk"/>
-                  <menuitem label="&albumartmanager.country.name.france;" value="fr"/>
-                  <menuitem label="&albumartmanager.country.name.germany;" value="de"/>
-                  <menuitem label="&albumartmanager.country.name.japan;" value="co.jp"/>
-                </menupopup>
-               </menulist>
-            </row>
-            <row id="albumartmanager-notifications">
-              <vbox align="start">
-                <checkbox id="display_notification_checkbox"
-                          label="&albumartmanager.notification.label;"
-                          preference="songbird.albumartmanager.display_track_notification"/>
-              </vbox>
-            </row>
-            <row id="albumartmanager-scanner">
-              <vbox align="start">
-                <checkbox id="scan_checkbox"
-                          label="&albumartmanager.scan.label;"
-                          preference="songbird.albumartmanager.scan"
-                          onsynctopreference="return gAlbumArtManagerPane.toggleScanner();"/>
-              </vbox>
-              <button label="&albumartmanager.scan.prioritybutton.label;"
-                      onclick="gAlbumArtManagerPane.openPriorityManager();"/>
-            </row>
-            <row id="albumartmanager-search">
-              <vbox align="start">
-                <checkbox preference="songbird.albumartmanager.search.includeArtist"
-                          label="&albumartmanager.search.includeArtist;"/>
-              </vbox>
-            </row>
-            
-            
-            
-          </rows>
-        </grid>
+        <groupbox>
+          <caption label="&albumartmanager.general.groupbox.label;"/>
+          
+          <grid id="albumartmaanagerGeneralGrid">
+            <columns>
+              <column flex="1"/>
+              <column/>
+            </columns>
+            <rows id="albumartmanager-general-rows">
+              <row id="albumartmanager-notifications">
+                <vbox align="start">
+                  <checkbox id="display_notification_checkbox"
+                            label="&albumartmanager.notification.label;"
+                            preference="songbird.albumartmanager.display_track_notification"/>
+                </vbox>
+              </row>
+              <row id="albumartmanager-scanner">
+                <label value="&albumartmanager.fetchers.label;"/>
+                <button label="&albumartmanager.fetchers.priority.label;"
+                        onclick="gAlbumArtManagerPane.openPriorityManager();"/>
+              </row>
+            </rows>
+          </grid>
+        </groupbox>
+
+        <groupbox>
+          <caption label="&albumartmanager.search.groupbox.label;"/>
+          <grid id="albumartmaanagerSearchGrid">
+            <columns>
+              <column flex="1"/>
+              <column/>
+            </columns>
+            <rows id="albumartmanager-search-rows">
+              <row id="albumartmanager-search">
+                <vbox align="start">
+                  <checkbox preference="songbird.albumartmanager.search.includeArtist"
+                            label="&albumartmanager.search.includeArtist;"/>
+                </vbox>
+              </row>
+              <row id="albumartmanager-country">
+                <label value="&albumartmanager.country.label;"/>
+                <menulist id="albumartartmanager-country-menu"
+                          preference="songbird.albumartmanager.country">
+                 <menupopup>
+                    <menuitem label="&albumartmanager.country.name.usa;" value="com"/>
+                    <menuitem label="&albumartmanager.country.name.canada;" value="ca"/>
+                    <menuseparator/>
+                    <menuitem label="&albumartmanager.country.name.austria;" value="de"/>
+                    <menuitem label="&albumartmanager.country.name.britain;" value="co.uk"/>
+                    <menuitem label="&albumartmanager.country.name.france;" value="fr"/>
+                    <menuitem label="&albumartmanager.country.name.germany;" value="de"/>
+                    <menuitem label="&albumartmanager.country.name.japan;" value="co.jp"/>
+                  </menupopup>
+                 </menulist>
+              </row>
+            </rows>
+          </grid>
+        </groupbox>
 
         <groupbox>
           <caption label="&albumartmanager.cover.groupbox.label;"/>

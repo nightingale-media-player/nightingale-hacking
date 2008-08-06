@@ -84,11 +84,5 @@ interface sbIAlbumArtService : nsISupports
    *        Use loadFetcherList to reload the list.
    * \returns nsIArray array of nsISupportsString
    */
-  nsIArray getFetcherList();
-  
-  /**
-   * \brief Turns on or off the album art scanner for the main library.
-   * \param aTurnOn, if true turns on the scanner, false turns off.
-   */
-  void toggleScanner(in boolean aTurnOn);
+  nsIArray getFetcherList();  
 };

@@ -99,15 +99,6 @@ var gAlbumArtManagerPane = {
     return true;
   },
 
-  toggleScanner: function() {
-    var scanCheckbox = document.getElementById("scan_checkbox");
-    var albumArtService = Cc["@songbirdnest.com/songbird-album-art-service;1"]
-                            .getService(Ci.sbIAlbumArtService);
-                        
-    albumArtService.toggleScanner(scanCheckbox.checked);
-    return undefined;
-  },
-
   /**
    * Enables/disables the folder field and Browse button based on whether a
    * default download directory is being used.
