@@ -774,12 +774,22 @@ function getPlatformString()
  * \brief Verify if a key event is an ALT-F4 key event.
  * \param evt Key event.
  */
-function checkAltF4(evt)
+function checkQuitKey(evt)
 {
+  // handle alt-F4 on all platforms
   if (evt.keyCode == 0x73 && evt.altKey)
   {
     evt.preventDefault();
     quitApp();
+  }
+
+  // handle ctrl-Q on UNIX
+  let platform = getPlatformString();
+  if (platform == 'Linux' || platform == 'SunOS') {
+    if (evt.keyCode == 'Q'.charCodeAt(0) && evt.ctrlKey) {
+      evt.preventDefault();
+      quitApp();
+    }
   }
 }
 

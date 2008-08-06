@@ -91,7 +91,7 @@ function SBInitialize()
     initJumpToFileHotkey();
 
     if (window.addEventListener)
-      window.addEventListener("keydown", checkAltF4, true);
+      window.addEventListener("keydown", checkQuitKey, true);
   }
   catch(err)
   {
@@ -106,7 +106,7 @@ function SBInitialize()
  */
 function SBUninitialize()
 {
-  window.removeEventListener("keydown", checkAltF4, true);
+  window.removeEventListener("keydown", checkQuitKey, true);
 
   window.gServicePane = null;
   window.gBrowser = null;
