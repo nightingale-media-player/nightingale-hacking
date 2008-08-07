@@ -46,3 +46,9 @@
 dialog[type="songbird"] {
   -moz-binding: url("chrome://songbird/content/bindings/dialog.xml#dialog") !important;
 }
+
+/* wizard dialogs */
+wizard[type="songbird"] {
+  -moz-binding: url("chrome://songbird/content/bindings/wizard.xml#wizard") !important;
+}
+

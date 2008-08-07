@@ -48,6 +48,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   id="first_run_wizard"
+  type="songbird"
   title="&first_run.title;"
   hidechrome="true"
   onload="firstRunWizard.doLoad();"

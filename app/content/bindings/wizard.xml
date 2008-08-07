@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE bindings [
+  <!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+  %globalDTD;
+  <!ENTITY % wizardDTD SYSTEM "chrome://global/locale/wizard.dtd">
+  %wizardDTD;
+]>
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Wizard dialog.
+   *
+   *XXXeps Should use sb-sys-outer-frame and sb-sys-wizard-titlebar but don't
+   *XXXeps have time to do the wizard specific work this late into Fugazi.
+   *XXXeps wizards have a header instead of a titlebar and the wizard header
+   *XXXeps has a few differences that should be accounted for.
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="wizard"
+           extends="chrome://global/content/bindings/wizard.xml#wizard">
+
+    <content>
+
+      <!-- Wizard header. -->
+      <xul:sb-draggable>
+        <xul:hbox class="wizard-header"
+                  chromedir="&locale.dir;"
+                  anonid="Header"/>
+      </xul:sb-draggable>
+
+      <!-- Wizard pages. -->
+      <xul:deck class="wizard-page-box" flex="1" anonid="Deck">
+        <children includes="wizardpage"/>
+      </xul:deck>
+      <children/>
+
+      <!-- Wizard buttons. -->
+      <xul:hbox class="wizard-buttons"
+                anonid="Buttons"
+                xbl:inherits="pagestep,firstpage,lastpage"/>
+
+    </content>
+
+  </binding> <!-- wizard -->
+
+</bindings>
+
