@@ -144,15 +144,6 @@ tree[enableColumnDrag="true"] > treecols > treecol:hover:active {
   -moz-appearance: none;
   list-style-image: none;
 }
-/*
-.treecol-sortdirection[sortDirection="ascending"] {
-  list-style-image: url("chrome://global/skin/tree/sort-asc.gif");
-}
-
-.treecol-sortdirection[sortDirection="descending"] {
-  list-style-image: url("chrome://global/skin/tree/sort-dsc.gif");
-}
-*/
 
 /* ::::: twisty :::::  */
 

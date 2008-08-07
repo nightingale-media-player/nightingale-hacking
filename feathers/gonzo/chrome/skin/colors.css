@@ -317,38 +317,48 @@ treecol:active,
 treecolpicker:active {
   background-position:center -30px;
 }
+/*
 treecol[dragging="true"] {
-  background-position:center -60px;
+  background-position:center -90px;
 }
+*/
 treecol[dragging="true"] > label,
 treecol[dragging="true"]:hover:active > label {
   color: rgb(101,101,101);
 }
 
-treecol[sortDirection] {
-  background-position:center -75px !important;
+
+treecol[sortActive="true"] {
+  background-position:center -45px;
 }
-treecol[sortDirection="ascending"] > .treecol-sortdirection,
+treecol[sortActive="true"]:hover {
+  background-position:center -60px;
+}
+treecol[sortActive="true"]:active {
+  background-position:center -75px;
+}
+
+
+.treecol-sortdirection[sortDirection="ascending"],
 .listheader-sortdirection[sortDirection="ascending"] {
-  list-style-image:  url("chrome://songbird/skin/base-elements/icon-sort-ascending.png") !important;
+  list-style-image:url("chrome://songbird/skin/base-elements/icon-sort-ascending.png") !important;
 }
-treecol[sortDirection="descending"] > .treecol-sortdirection,
+.treecol-sortdirection[sortDirection="descending"],
 .listheader-sortdirection[sortDirection="descending"] {
-  list-style-image:  url("chrome://songbird/skin/base-elements/icon-sort-descending.png") !important;
+  list-style-image:url("chrome://songbird/skin/base-elements/icon-sort-descending.png") !important;
 }
 
-/*
 
-.sb-filterlist-tree treecol[sortDirection] {
+
+.sb-filterlist-tree treecol[sortActive="true"] {
   background-position:center 0px;
 }
-.sb-filterlist-tree treecol[sortDirection]:hover {
+.sb-filterlist-tree treecol[sortActive="true"]:hover {
   background-position:center -15px;
 }
-.sb-filterlist-tree treecol[sortDirection]:active {
+.sb-filterlist-tree treecol[sortActive="true"]:active {
   background-position:center -30px;
 }
-*/
 
 
 

@@ -98,8 +98,9 @@ Tree Progress Meter
   background-position:left -90px;
 }
 
-
-
+treechildren::-moz-tree-cell-text( rating ) {
+  color:transparent !important;
+}
 
 /** 
 *******************************************************************************

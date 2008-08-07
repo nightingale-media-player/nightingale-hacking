@@ -336,19 +336,6 @@ stack.sb-player-volume-slider {
   padding:2px 0;
 }
 
-sb-player-volume-slider {
-
-}
-
-sb-player-volume-slider,
-thumb.sb-player-volume-slider > gripper,
-thumb.sb-player-volume-slider,
-progressmeter.sb-player-volume-slider,
-progressmeter.sb-player-volume-slider > .progress-bar,
-progressmeter.sb-player-volume-slider > .progress-remainder
-{
-
-}
 
 
 

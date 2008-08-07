@@ -379,7 +379,7 @@ pref("browser.dictionaries.download.url", "https://%LOCALE%.add-ons.mozilla.com/
 pref("songbird.playercontrol.location", "bottom");
 
 // Default the service pane location for hovering.
-pref("songbird.splitter.servicepane_splitter.before.width", "179");
+pref("songbird.splitter.servicepane_splitter.before.width", "178");
 pref("songbird.splitter.sb-playlist-splitter.after.height", "390");
 
 //
