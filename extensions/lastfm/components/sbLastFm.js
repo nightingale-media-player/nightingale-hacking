@@ -778,7 +778,7 @@ sbLastFm.prototype.onBeforeTrackChange =
 function sbLastFm_onBeforeTrackChange(aItem, aView, aIndex) { }
 sbLastFm.prototype.onTrackIndexChange =
 function sbLastFm_onTrackIndexChange(aItem, aView, aIndex) { }
-sbLastFm.prototype.sbLastFm.prototype. = 
+sbLastFm.prototype.onBeforeViewChange = 
 function sbLastFm_onBeforeViewChange(aView) { }
 sbLastFm.prototype.onViewChange = 
 function sbLastFm_onViewChange(aView) { }
