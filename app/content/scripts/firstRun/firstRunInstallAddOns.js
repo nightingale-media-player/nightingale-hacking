@@ -340,7 +340,7 @@ firstRunInstallAddOnsSvc.prototype = {
 
     // Mark first-run wizard for application restart.
     if (addOnInstalled)
-      this._wizardElem.setAttribute("restartapp", "true");
+      firstRunWizard.restartApp = true;
 
     // Remove the add-on file and release the add-on file downloader.
     if (addOnFile)

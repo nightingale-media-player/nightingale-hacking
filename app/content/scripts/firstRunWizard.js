@@ -77,9 +77,12 @@ var firstRunWizard = {
   // Public first-run wizard fields.
   //
   //   wizardElem               Wizard element.
+  //   restartApp               Restart application on wizard close.
+  //   restartWizard            Restart wizard on wizard close.
   //
 
-  wizardElem: null,
+  restartApp: false,
+  restartWizard: false,
 
 
   //
@@ -87,7 +90,6 @@ var firstRunWizard = {
   //
   //   _initialized             True if these services have been initialized.
   //   _domEventListenerSet     Set of DOM event listeners.
-  //   _restartWizard           True if the wizard needs to be restarted.
   //   _savedSettings           True if settings have been saved.
   //   _postFinish              True if wizard is in the post-finish pages.
   //   _markFirstRunComplete    True if first-run should be marked as complete
@@ -97,11 +99,29 @@ var firstRunWizard = {
 
   _initialized: false,
   _domEventListenerSet: null,
-  _restartWizard: false,
   _savedSettings: false,
   _postFinish: false,
   _markFirstRunComplete: false,
   _connectionErrorHandled: false,
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Public first-run wizard field getters/setters.
+  //
+  //----------------------------------------------------------------------------
+
+  //
+  // wizardElem
+  //
+
+  _wizardElem: null,
+
+  get wizardElem() {
+    if (!this._wizardElem)
+      this._wizardElem = document.getElementById("first_run_wizard");
+    return this._wizardElem;
+  },
 
 
   //----------------------------------------------------------------------------
@@ -133,14 +153,15 @@ var firstRunWizard = {
                           .getService(Ci.nsIPrefService);
       prefService.savePrefFile(null);
     }
+
     // Indicate that the wizard is complete and whether it should be restarted.
-    window.arguments[0].onComplete(this._restartWizard);
+    window.arguments[0].onComplete(this.restartWizard);
 
     // Finalize the services.
     this._finalize();
-    
+
     // Restart application as specified. (AFTER we're done finalizing)
-    if (this.wizardElem.getAttribute("restartapp") == "true")
+    if (this.restartApp)
       restartApp();
   },
 
@@ -256,65 +277,24 @@ var firstRunWizard = {
 
 
   /**
-   * Handle the page hide event specified by aEvent.
-   *
-   * \param aEvent              Page hide event.
-   */
-
-  doPageHide: function firstRunWizard_doPageHide(aEvent) {
-    hiddenPage = aEvent.target;
-    switch (hiddenPage.id) {
-      case "first_run_locale" :
-        // Cancel any locale switch in progress.
-        hiddenPage.cancelSwitchLocale();
-        break;
-
-      default :
-        break;
-    }
-  },
-
-
-  /**
-   * Handle the locale switch complete event.
-   */
-
-  doLocaleSwitchComplete:
-    function firstRunWizard_doLocaleSwitchComplete() {
-    // Get the first run locale element.
-    var firstRunLocaleElem = document.getElementById("first_run_locale");
-
-    // If the locale switch succeeded, restart.  Otherwise, advance through the
-    // wizard without switching locales.
-    //XXXeps should restart like the first-run add-ons installation does
-    if (firstRunLocaleElem.localeSwitchSucceeded) {
-      if (firstRunLocaleElem.appRestartRequired) {
-        restartApp();
-      } else {
-        this._restartWizard = true;
-        document.defaultView.close();
-      }
-    } else {
-      this.wizardElem.canAdvance = true;
-      this.wizardElem.advance();
-    }
-  },
-
-
-  /**
    * Handle internet connection errors.
+   *
+   * \return                    True if error was handled.
    */
 
   handleConnectionError: function firstRunWizard_handleConnectionError() {
     // Only handle connection errors once.
     if (this._connectionErrorHandled)
-      return;
+      return false;
 
     // Go to the first-run wizard connection page.
-    this.wizardElem.goTo("first_run_connection_page");
+    this.wizardElem.canAdvance = true;
+    this.wizardElem.advance("first_run_connection_page");
 
     // A connection error has been handled.
     this._connectionErrorHandled = true;
+
+    return true;
   },
 
 
@@ -338,20 +318,6 @@ var firstRunWizard = {
 
     // Update the buttons.
     this._updateButtons();
-
-    // If showing the first-run locale page and a locale switch is required,
-    // switch the locale.  Otherwise, skip the first-run locale page.
-    if (currentPage.id == "first_run_locale_page") {
-      var firstRunLocaleElem = document.getElementById("first_run_locale");
-      if (firstRunLocaleElem.localeSwitchRequired) {
-        // Switch the locale, but don't allow advancing.
-        this.wizardElem.canAdvance = false;
-        firstRunLocaleElem.switchLocale();
-      } else {
-        this.wizardElem.canAdvance = true;
-        this.wizardElem.advance();
-      }
-    }
 
     // Focus the next or finish buttons unless they're disabled or hidden.
     var finishButton = this.wizardElem.getButton("finish");

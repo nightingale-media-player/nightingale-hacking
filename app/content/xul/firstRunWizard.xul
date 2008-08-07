@@ -88,9 +88,7 @@
     <sb-first-run-locale
       id="first_run_locale"
       class="first-run-wizard-page"
-      firstrunwizardpage="true"
-      onpagehide="firstRunWizard.doPageHide(event);"
-      onlocaleswitchcomplete="firstRunWizard.doLocaleSwitchComplete();"/>
+      firstrunwizardpage="true"/>
   </wizardpage>
 
   <!-- Welcome page. -->

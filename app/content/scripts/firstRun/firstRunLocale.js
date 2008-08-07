@@ -41,6 +41,16 @@
 
 //------------------------------------------------------------------------------
 //
+// First-run wizard locale widget imported services.
+//
+//------------------------------------------------------------------------------
+
+// Songbird imports.
+Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+
+
+//------------------------------------------------------------------------------
+//
 // First-run wizard locale widget services defs.
 //
 //------------------------------------------------------------------------------
@@ -63,7 +73,7 @@ if (typeof(Cu) == "undefined")
 //------------------------------------------------------------------------------
 
 /*
- * localeBundleDataLoadTimeout  Timeout in milliseconds for loading the locales
+ * localeBundleDataLoadTimeout  Timeout in milliseconds for loading the locale
  *                              bundle data.
  */
 
@@ -99,24 +109,41 @@ firstRunLocaleSvc.prototype = {
   //
   //   _cfg                     Widget services configuration.
   //   _widget                  First-run wizard locale widget.
+  //   _wizardPageElem          First-run wizard locale widget wizard page
+  //                            element.
+  //   _domEventListenerSet     Set of DOM event listeners.
   //   _targetLocale            Target first-run locale.
   //   _targetLocaleInstalled   True if target first-run locale is installed.
-  //   _localesBundle           Locales bundle object.
-  //   _localesBundleDataLoadComplete
-  //                            True if loading of locales bundle data is
+  //   _targetLocaleInstallFailed
+  //                            True if target locale installation failed.
+  //   _localeSwitchRequired    True if a locale switch is required.
+  //   _localeSwitchSucceeded   True if a locale switch completed successfully.
+  //   _appRestartRequired      True if an application restart is required for
+  //                            a locale switch.
+  //   _localeBundleRunning     True if the locale bundle services are running.
+  //   _localeBundle            Locale bundle object.
+  //   _localeBundleDataLoadComplete
+  //                            True if loading of locale bundle data is
   //                            complete.
-  //   _localesBundleDataLoadSucceeded
-  //                            True if loading of locales bundle data
+  //   _localeBundleDataLoadSucceeded
+  //                            True if loading of locale bundle data
   //                            succeeded.
   //
 
   _cfg: firstRunLocaleSvcCfg,
   _widget: null,
+  _wizardPageElem: null,
+  _domEventListenerSet: null,
   _targetLocale: null,
   _targetLocaleInstalled: false,
-  _localesBundle: null,
-  _localesBundleDataLoadComplete: false,
-  _localesBundleDataLoadSucceeded: false,
+  _targetLocaleInstallFailed: false,
+  _localeSwitchRequired: false,
+  _localeSwitchSucceeded: false,
+  _appRestartRequired: false,
+  _localeBundleRunning: false,
+  _localeBundle: null,
+  _localeBundleDataLoadComplete: false,
+  _localeBundleDataLoadSucceeded: false,
 
 
   //----------------------------------------------------------------------------
@@ -130,6 +157,37 @@ firstRunLocaleSvc.prototype = {
    */
 
   initialize: function firstRunLocaleSvc_initialize() {
+    var _this = this;
+    var func;
+
+    // Get the first-run wizard page element.
+    this._wizardPageElem = this._widget.parentNode;
+
+    // Create a DOM event listener set.
+    this._domEventListenerSet = new DOMEventListenerSet();
+
+    // Initialize the locale bundle services.
+    this._localeBundleInitialize();
+
+    // Listen for page show and hide events.
+    var func = function() { return _this._doPageShow(); };
+    this._domEventListenerSet.add(this._wizardPageElem,
+                                  "pageshow",
+                                  func,
+                                  false);
+    var func = function() { return _this._doPageHide(); };
+    this._domEventListenerSet.add(this._wizardPageElem,
+                                  "pagehide",
+                                  func,
+                                  false);
+
+    // Listen for first-run wizard connection reset events.
+    func = function() { return _this._doConnectionReset(); };
+    this._domEventListenerSet.add(firstRunWizard.wizardElem,
+                                  "firstRunConnectionReset",
+                                  func,
+                                  false);
+
     // Check the locale.
     this._checkLocale();
   },
@@ -140,47 +198,17 @@ firstRunLocaleSvc.prototype = {
    */
 
   finalize: function firstRunLocaleSvc_finalize() {
-    // Cancel locale switch.
-    this.cancelSwitchLocale();
+    // Remove DOM event listeners.
+    if (this._domEventListenerSet) {
+      this._domEventListenerSet.removeAll();
+    }
+    this._domEventListenerSet = null;
+
+    // Finalize the locale bundle services.
+    this._localeBundleFinalize();
 
     // Clear object fields.
     this._widget = null;
-    this._localesBundle = null;
-  },
-
-
-  /**
-   * Switch to the target locale.
-   */
-
-  switchLocale: function firstRunLocaleSvc_switchLocale() {
-    // Switch to the target locale if it's installed.  Otherwise, install the
-    // target locale first.
-    if (this._targetLocaleInstalled) {
-      // Switch locale.
-      switchLocale(this._targetLocale);
-
-      // Send a locale switch complete event.
-      this._widget._localeSwitchSucceeded = true;
-      this._dispatchEvent(this._widget, "localeswitchcomplete");
-    } else {
-      this._installTargetLocale();
-    }
-  },
-
-
-  /**
-   * Cancel locale switch.
-   */
-
-  cancelSwitchLocale: function firstRunLocaleSvc_cancelSwitchLocale() {
-    // Remove the locales bundle data listener.
-    if (this._localesBundle)
-      this._localesBundle.removeBundleDataListener(this);
-
-    // Clear locales bundle.
-    //XXXeps no way to cancel loading or installation.
-    this._localesBundle = null;
   },
 
 
@@ -198,9 +226,9 @@ firstRunLocaleSvc.prototype = {
    */
 
   onDownloadComplete: function firstRunLocaleSvc__onDownloadComplete(aBundle) {
-    this._localesBundleDataLoadComplete = true;
-    this._localesBundleDataLoadSucceeded = true;
-    this._installTargetLocale();
+    this._localeBundleDataLoadComplete = true;
+    this._localeBundleDataLoadSucceeded = true;
+    this._update();
   },
 
 
@@ -212,9 +240,156 @@ firstRunLocaleSvc.prototype = {
    */
 
   onError: function firstRunLocaleSvc__onError(aBundle) {
-    this._localesBundleDataLoadComplete = true;
-    this._localesBundleDataLoadSucceeded = false;
-    this._installTargetLocale();
+    this._localeBundleDataLoadComplete = true;
+    this._localeBundleDataLoadSucceeded = false;
+    this._update();
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Widget locale bundle services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Initialize the locale bundle services.
+   */
+
+  _localeBundleInitialize:
+    function firstRunLocaleSvc__localeBundleInitialize() {
+    // Initialize the locale bundle fields.
+    this._localeBundle = null;
+    this._localeBundleDataLoadComplete = false;
+    this._localeBundleDataLoadSucceeded = false;
+  },
+
+
+  /**
+   * Finalize the locale bundle services.
+   */
+
+  _localeBundleFinalize:
+    function firstRunLocaleSvc__localeBundleFinalize() {
+    // Finalize locale bundle.
+    //XXXeps need way to cancel it.
+    if (this._localeBundle)
+      this._localeBundle.removeBundleDataListener(this);
+
+    // Reset the locale bundle fields.
+    this._localeBundleDataLoadComplete = false;
+    this._localeBundleDataLoadSucceeded = false;
+
+    // Clear locale bundle object fields.
+    this._localeBundle = null;
+  },
+
+
+  /**
+   * Start running the locale bundle services.
+   */
+
+  _localeBundleStart: function firstRunLocaleSvc__localeBundleStart() {
+    // Mark the locale bundle services running and load the locale bundle.
+    this._localeBundleRunning = true;
+    this._localeBundleLoad();
+  },
+
+
+  /**
+   * Load the locale bundle.
+   */
+
+  _localeBundleLoad: function firstRunLocaleSvc__localeBundleLoad() {
+    // Do nothing if not running.
+    if (!this._localeBundleRunning)
+      return;
+
+    // Start loading the locale bundle data.
+    if (!this._localeBundle) {
+      // Set up the locale bundle for loading.
+      this._localeBundle = Cc["@songbirdnest.com/Songbird/Bundle;1"]
+                             .createInstance(Ci.sbIBundle);
+      this._localeBundle.bundleId = "locales";
+      this._localeBundle.bundleURL =
+        Application.prefs.getValue("songbird.url.locales", "default");
+      this._localeBundle.addBundleDataListener(this);
+
+      // Start loading the locale bundle data.
+      try {
+        this._localeBundle.retrieveBundleData
+                             (this._cfg.localeBundleDataLoadTimeout);
+      } catch (ex) {
+        // Report the exception as an error.
+        Components.utils.reportError(ex);
+
+        // Indicate that the locale bundle loading failed.
+        this._localeBundleDataLoadComplete = true;
+        this._localeBundleDataLoadSucceeded = false;
+      }
+    }
+
+    // Update the UI.
+    this._update();
+  },
+
+
+  /**
+   * Cancel loading of the locale bundle.
+   */
+
+  _localeBundleLoadCancel:
+    function firstRunLocaleSvc__localeBundleLoadCancel() {
+    // Finalize locale bundle.
+    //XXXeps need way to cancel it.
+    if (this._localeBundle)
+      this._localeBundle.removeBundleDataListener(this);
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Widget event handling services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Handle a wizard page show event.
+   */
+
+  _doPageShow: function firstRunLocaleSvc__doPageShow() {
+    // Start the locale bundle services.
+    this._localeBundleStart();
+
+    // Update the UI.
+    this._update();
+  },
+
+
+  /**
+   * Handle a wizard page hide event.
+   */
+
+  _doPageHide: function firstRunLocaleSvc__doPageHide() {
+    // Cancel locale bundle load.
+    this._localeBundleLoadCancel();
+
+    return true;
+  },
+
+
+  /**
+   * Handle a wizard connection reset event.
+   */
+
+  _doConnectionReset: function firstRunLocaleSvc__doConnectionReset() {
+    // Re-initialize the locale bundle services.
+    this._localeBundleFinalize();
+    this._localeBundleInitialize();
+
+    // Load the locale bundle.  The loading shouldn't start until after the
+    // first time the first-run locale page is shown.
+    this._localeBundleLoad();
   },
 
 
@@ -223,6 +398,80 @@ firstRunLocaleSvc.prototype = {
   // Internal widget services.
   //
   //----------------------------------------------------------------------------
+
+  /**
+   * Update the UI.
+   */
+
+  _update: function firstRunLocaleSvc__update() {
+    // If first-run locale wizard page is not showing, do nothing more.
+    if (firstRunWizard.wizardElem.currentPage != this._wizardPageElem)
+      return;
+
+    // If no locale switch is required, advance to the next page and do nothing
+    // more.
+    if (!this._localeSwitchRequired) {
+      firstRunWizard.wizardElem.canAdvance = true;
+      firstRunWizard.wizardElem.advance();
+      return;
+    }
+
+    // Handle any connection errors and do nothing more.
+    //XXXeps ideally, we wouldn't handle non-connection errors as connection
+    //XXXeps errors.
+    if (this._localeBundleDataLoadComplete &&
+        !this._localeBundleDataLoadSucceeded) {
+      // Handle the connection error.  If it's not handled, advance to the next
+      // page.
+      if (!firstRunWizard.handleConnectionError()) {
+        firstRunWizard.wizardElem.canAdvance = true;
+        firstRunWizard.wizardElem.advance();
+      }
+      return;
+    }
+
+    // Install the target locale when the locale bundle has been loaded.
+    if (!this._targetLocaleInstalled && this._localeBundleDataLoadComplete)
+      this._installTargetLocale();
+
+    // If the locale installation failed, advance to the next page and do
+    // nothing more.
+    if (this._targetLocaleInstallFailed) {
+      firstRunWizard.wizardElem.canAdvance = true;
+      firstRunWizard.wizardElem.advance();
+      return;
+    }
+
+    // If the target locale is installed, switch to it and do nothing more.
+    if (this._targetLocaleInstalled) {
+      this._switchLocale();
+      return;
+    }
+
+    // Prevent page advancement if loading locale bundle.
+    if (this._localeBundle && !this._localeBundleDataLoadComplete)
+      firstRunWizard.wizardElem.canAdvance = false;
+  },
+
+
+  /**
+   * Switch to the target locale.
+   */
+
+  _switchLocale: function firstRunLocaleSvc__switchLocale() {
+    // Switch locale.
+    switchLocale(this._targetLocale);
+
+    // Determine whether to restart app or just the wizard.
+    if (this._appRestartRequired)
+      firstRunWizard.restartApp = true;
+    else
+      firstRunWizard.restartWizard = true;
+
+    // Close the wizard.
+    document.defaultView.close();
+  },
+
 
   /**
    * Check if the locale needs to be switched and, if so, if the target locale
@@ -245,10 +494,10 @@ firstRunLocaleSvc.prototype = {
     // should use, then no locale switch is required.  Otherwise, a locale
     // switch is required.
     if (selectedLocale == this._targetLocale) {
-      this._widget._localeSwitchRequired = false;
+      this._localeSwitchRequired = false;
       return;
     }
-    this._widget._localeSwitchRequired = true;
+    this._localeSwitchRequired = true;
 
     // Get the list of installed locales.
     var chromeRegistry = Cc["@mozilla.org/chrome/chrome-registry;1"]
@@ -271,115 +520,41 @@ firstRunLocaleSvc.prototype = {
    */
 
   _installTargetLocale: function firstRunLocaleService__installTargetLocale() {
-    // Load the locales bundle data if it's not loaded.
-    if (!this._localesBundle) {
-      // Set up the locales bundle for loading.
-      this._localesBundle = Cc["@songbirdnest.com/Songbird/Bundle;1"]
-                              .createInstance(Ci.sbIBundle);
-      this._localesBundle.bundleId = "locales";
-      this._localesBundle.bundleURL =
-        Application.prefs.getValue("songbird.url.locales", "default");
-      this._localesBundle.addBundleDataListener(this);
-
-      // Load the locales bundle data.
-      try {
-        this._localesBundle.retrieveBundleData
-                              (this._cfg.localeBundleDataLoadTimeout);
-      } catch (ex) {
-        this._localesBundleDataLoadComplete = true;
-        this._localesBundleDataLoadSucceeded = false;
-      }
-    }
-
-    // Wait until the locale bundle data loading has completed.
-    if (!this._localesBundleDataLoadComplete)
-      return;
-
-    // If the locales bundle data load failed, send an event and do nothing
-    // more.
-    if (!this._localesBundleDataLoadSucceeded) {
-      // Send an event.
-      this._widget._localeSwitchSucceeded = false;
-      this._dispatchEvent(this._widget, "localeswitchcomplete");
-
-      // Handle connection errors.
-      //XXXeps ideally, we wouldn't handle non-connection errors as connection
-      //XXXeps errors.
-      firstRunWizard.handleConnectionError();
-
-      // Do nothing more.
-      return;
-    }
-
     // Set up to install the target locale.
-    var bundleExtensionCount = this._localesBundle.bundleExtensionCount;
+    var bundleExtensionCount = this._localeBundle.bundleExtensionCount;
     var isTargetLocaleAvailable = false;
     for (var i = 0; i < bundleExtensionCount; i++) {
       // Get the next locale in the bundle.
-      var localeName = this._localesBundle.getExtensionAttribute(i, "name");
+      var localeName = this._localeBundle.getExtensionAttribute(i, "name");
       localeName = localeName.split(" ")[0];
 
       // If the locale is the target locale, mark it to be installed.
       // Otherwise, mark it to not be installed.
       if (localeName == this._targetLocale) {
-        this._localesBundle.setExtensionInstallFlag(i, true);
+        this._localeBundle.setExtensionInstallFlag(i, true);
         isTargetLocaleAvailable = true;
       } else {
-        this._localesBundle.setExtensionInstallFlag(i, false);
+        this._localeBundle.setExtensionInstallFlag(i, false);
       }
     }
 
-    // If the target locale is not available, send an event and do nothing more.
+    // If the target locale is not available, mark failure and do nothing more.
     if (!isTargetLocaleAvailable) {
-      this._widget._localeSwitchSucceeded = false;
-      this._dispatchEvent(this._widget, "localeswitchcomplete");
+      this._targetLocaleInstallFailed = true;
       return;
     }
 
     // Install the target locale.
-    var result = this._localesBundle.installFlaggedExtensions(window);
-    if (result == this._localesBundle.BUNDLE_INSTALL_ERROR) {
-      this._widget._localeSwitchSucceeded = false;
-      this._dispatchEvent(this._widget, "localeswitchcomplete");
+    var result = this._localeBundle.installFlaggedExtensions(window);
+    if (result == this._localeBundle.BUNDLE_INSTALL_ERROR) {
+      this._targetLocaleInstallFailed = true;
       return;
     }
     this._targetLocaleInstalled = true;
 
     // Check if an application restart is required.
-    if (this._localesBundle.restartRequired)
-      this._widget._appRestartRequired = true;
-
-    // Switch to the target locale.
-    this.switchLocale();
-  },
-
-
-  /**
-   * Dispatch the event of type specified by aType with the target specified by
-   * aTarget.
-   *
-   * \param aTarget             Target of the event.
-   * \param aType               Type of event.
-   */
-
-  _dispatchEvent: function firstRunLocaleSvc__dispatchEvent(aTarget, aType) {
-    // Create the event.
-    var event = document.createEvent("Events");
-    event.initEvent(aType, true, true);
-
-    // Dispatch to DOM event handlers.
-    var noCancel = aTarget.dispatchEvent(event);
-
-    // Dispatch to XML attribute event handlers.
-    var handler = aTarget.getAttribute("on" + aType);
-    if (handler != "") {
-      var func = new Function("event", handler);
-      var returned = func.apply(aTarget, [event]);
-      if (returned == false)
-        noCancel = false;
-    }
-
-    return noCancel;
+    if (this._localeBundle.restartRequired)
+      this._appRestartRequired = true;
   }
 };
 

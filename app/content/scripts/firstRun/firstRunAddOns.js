@@ -120,6 +120,7 @@ firstRunAddOnsSvc.prototype = {
   //   _cfg                     Widget services configuration.
   //   _widget                  First-run wizard add-ons widget.
   //   _domEventListenerSet     Set of DOM event listeners.
+  //   _addOnsBundleRunning     True if the add-ons bundle services are running.
   //   _addOnsBundleLoading     True if an add-ons bundle is being loaded.
   //   _addOnsBundleDataLoadComplete
   //                            True if loading of add-ons bundle data is
@@ -133,6 +134,7 @@ firstRunAddOnsSvc.prototype = {
   _cfg: firstRunAddOnsSvcCfg,
   _widget: null,
   _domEventListenerSet: null,
+  _addOnsBundleRunning: false,
   _addOnsBundleLoading: false,
   _addOnsBundleDataLoadComplete: false,
   _addOnsBundleDataLoadSucceeded: false,
@@ -150,18 +152,29 @@ firstRunAddOnsSvc.prototype = {
    */
 
   initialize: function firstRunAddOnsSvc_initialize() {
-    // Initialize the add-ons table.
-    this._addOnsTable = {};
+    var _this = this;
+    var func;
 
     // Get the first-run wizard page element.
     var wizardPageElem = this._widget.parentNode;
 
-    // Listen for page show and advanced events.
+    // Create a DOM event listener set.
     this._domEventListenerSet = new DOMEventListenerSet();
-    var _this = this;
-    var func = function() { _this._doPageShow(); };
+
+    // Initialize the add-ons bundle services.
+    this._addOnsBundleInitialize();
+
+    // Listen for page show events.
+    func = function() { return _this._doPageShow(); };
     this._domEventListenerSet.add(wizardPageElem,
                                   "pageshow",
+                                  func,
+                                  false);
+
+    // Listen for first-run wizard connection reset events.
+    func = function() { return _this._doConnectionReset(); };
+    this._domEventListenerSet.add(firstRunWizard.wizardElem,
+                                  "firstRunConnectionReset",
                                   func,
                                   false);
 
@@ -180,6 +193,9 @@ firstRunAddOnsSvc.prototype = {
       this._domEventListenerSet.removeAll();
     }
     this._domEventListenerSet = null;
+
+    // Finalize the add-ons bundle services.
+    this._addOnsBundleFinalize();
 
     // Clear object fields.
     this._widget = null;
@@ -217,11 +233,26 @@ firstRunAddOnsSvc.prototype = {
    */
 
   _doPageShow: function firstRunAddOnsSvc__doPageShow() {
-    // Get the list of first-run add-ons.
-    this._getAddOns();
+    // Start the add-ons bundle services.
+    this._addOnsBundleStart();
 
     // Update the UI.
     this._update();
+  },
+
+
+  /**
+   * Handle a wizard connection reset event.
+   */
+
+  _doConnectionReset: function firstRunAddOnsSvc__doConnectionReset() {
+    // Re-initialize the add-ons bundle services.
+    this._addOnsBundleFinalize();
+    this._addOnsBundleInitialize();
+
+    // Continue the add-ons bundle services.  They shouldn't start running until
+    // after the first time the first-run add-ons page is shown.
+    this._addOnsBundleContinue();
   },
 
 
@@ -263,47 +294,69 @@ firstRunAddOnsSvc.prototype = {
 
   //----------------------------------------------------------------------------
   //
-  // Internal widget services.
+  // Widget add-ons bundle services.
   //
   //----------------------------------------------------------------------------
 
   /**
-   * Update the UI.
+   * Initialize the add-ons bundle services.
    */
 
-  _update: function firstRunAddOnsSvc__update() {
-    // Determine the panel to select in the status deck.  Default to the no
-    // status panel.
-    var selectedPanel = this._getElement("no_status");
+  _addOnsBundleInitialize:
+    function firstRunAddOnsSvc__addOnsBundleInitialize() {
+    // Initialize the add-ons bundle fields.
+    this.addOnsBundle = null;
+    this._addOnsTable = {};
+    this._addOnsBundleLoading = false;
+    this._addOnsBundleDataLoadComplete = false;
+    this._addOnsBundleDataLoadSucceeded = false;
+  },
 
-    // If loading the add-ons bundle, select the loading status panel.
-    if (this._addOnsBundleLoading) {
-      selectedPanel = this._getElement("add_ons_loading_status");
-    }
-    // Otherwise, if the add-ons bundle loading completed with success, select
-    // the add-ons list panel.
-    else if (this._addOnsBundleDataLoadComplete &&
-             this._addOnsBundleDataLoadSucceeded) {
-      selectedPanel = this._getElement("add_ons_list");
-    }
-    // Otherwise, if the add-ons bundle loading completed with failure, select
-    // the load failed status panel.
-    else if (this._addOnsBundleDataLoadComplete &&
-             !this._addOnsBundleDataLoadSucceeded) {
-      selectedPanel = this._getElement("add_ons_load_failed_status");
-    }
 
-    // Select the panel.
-    var statusDeckElem = this._getElement("status_deck");
-    statusDeckElem.selectedPanel = selectedPanel;
+  /**
+   * Finalize the add-ons bundle services.
+   */
 
-    // Handle any connection errors.
-    //XXXeps ideally, we wouldn't handle non-connection errors as connection
-    //XXXeps errors.
-    if (this._addOnsBundleDataLoadComplete &&
-        !this._addOnsBundleDataLoadSucceeded) {
-      firstRunWizard.handleConnectionError();
-    }
+  _addOnsBundleFinalize:
+    function firstRunAddOnsSvc__addOnsBundleFinalize() {
+    // Finalize add-ons bundle.
+    //XXXeps need way to cancel it
+    if (this.addOnsBundle)
+      this.addOnsBundle.removeBundleDataListener(this);
+
+    // Reset the add-ons bundle fields.
+    this._addOnsBundleLoading = false;
+    this._addOnsBundleDataLoadComplete = false;
+    this._addOnsBundleDataLoadSucceeded = false;
+
+    // Clear add-ons bundle object fields.
+    this.addOnsBundle = null;
+    this._addOnsTable = null;
+  },
+
+
+  /**
+   * Start running the add-ons bundle services.
+   */
+
+  _addOnsBundleStart: function firstRunAddOnsSvc__addOnsBundleStart() {
+    // Mark the add-ons bundle services running and continue.
+    this._addOnsBundleRunning = true;
+    this._addOnsBundleContinue();
+  },
+
+
+  /**
+   * Continue running the add-ons bundle services.
+   */
+
+  _addOnsBundleContinue: function firstRunAddOnsSvc__addOnsBundleContinue() {
+    // Do nothing if not running.
+    if (!this._addOnsBundleRunning)
+      return;
+
+    // Get the add-ons.
+    this._getAddOns();
   },
 
 
@@ -432,6 +485,52 @@ firstRunAddOnsSvc.prototype = {
                                                "item")[0];
 
     return itemElem;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal widget services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Update the UI.
+   */
+
+  _update: function firstRunAddOnsSvc__update() {
+    // Determine the panel to select in the status deck.  Default to the no
+    // status panel.
+    var selectedPanel = this._getElement("no_status");
+
+    // If loading the add-ons bundle, select the loading status panel.
+    if (this._addOnsBundleLoading) {
+      selectedPanel = this._getElement("add_ons_loading_status");
+    }
+    // Otherwise, if the add-ons bundle loading completed with success, select
+    // the add-ons list panel.
+    else if (this._addOnsBundleDataLoadComplete &&
+             this._addOnsBundleDataLoadSucceeded) {
+      selectedPanel = this._getElement("add_ons_list");
+    }
+    // Otherwise, if the add-ons bundle loading completed with failure, select
+    // the load failed status panel.
+    else if (this._addOnsBundleDataLoadComplete &&
+             !this._addOnsBundleDataLoadSucceeded) {
+      selectedPanel = this._getElement("add_ons_load_failed_status");
+    }
+
+    // Select the panel.
+    var statusDeckElem = this._getElement("status_deck");
+    statusDeckElem.selectedPanel = selectedPanel;
+
+    // Handle any connection errors.
+    //XXXeps ideally, we wouldn't handle non-connection errors as connection
+    //XXXeps errors.
+    if (this._addOnsBundleDataLoadComplete &&
+        !this._addOnsBundleDataLoadSucceeded) {
+      firstRunWizard.handleConnectionError();
+    }
   },
 
 

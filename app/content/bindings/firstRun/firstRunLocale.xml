@@ -44,24 +44,6 @@
    * neccessary.  In addition, this widget will load and install the locale.
    *   The target locale for first run is the user application locale.
    *
-   * Properties:
-   *
-   *   localeSwitchRequired     True if a locale switch is required.
-   *   localeSwitchSucceeded    True if a locale switch completed successfully.
-   *   appRestartRequired       True if an application restart is required for
-   *                            a locale switch.
-   *
-   * Methods:
-   *
-   *   switchLocale             Switch to the target locale.
-   *   cancelSwitchLocale       Cancel any locale switch in progress.
-   *
-   * Events:
-   *
-   *   localeswitchcomplete     A locale switch has completed.  Check the
-   *                            localeSwitchSucceeded property to determine if
-   *                            the locale switch was successful.
-   *
    *****************************************************************************
    ************************************************************************* -->
 
@@ -73,17 +55,18 @@
      *
      *********************************************************************** -->
 
-    <xbl:content
-      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <content>
 
-      <vbox anonid="container_box" class="sb-first-run-eula-box">
+      <xul:vbox anonid="container_box" class="sb-first-run-eula-box">
 
-        <!-- XXXeps Placeholder label until UI design is provided. -->
-        <label value="Installing locale..."/>
+        <!-- Locale page description. -->
+        <xul:description>
+          Installing locale...
+        </xul:description>
 
-      </vbox>
+      </xul:vbox>
 
-    </xbl:content>
+    </content>
 
 
     <!-- ***********************************************************************
@@ -93,35 +76,6 @@
      *********************************************************************** -->
 
     <implementation>
-
-      <!--
-       * Widget properties.
-       -->
-
-      <!-- localeSwitchRequired -->
-      <field name="_localeSwitchRequired">false</field>
-      <property name="localeSwitchRequired" readonly="true">
-        <getter>
-          return this._localeSwitchRequired;
-        </getter>
-      </property>
-
-      <!-- localeSwitchSucceeded -->
-      <field name="_localeSwitchSucceeded">false</field>
-      <property name="localeSwitchSucceeded" readonly="true">
-        <getter>
-          return this._localeSwitchSucceeded;
-        </getter>
-      </property>
-
-      <!-- appRestartRequired -->
-      <field name="_appRestartRequired">false</field>
-      <property name="appRestartRequired" readonly="true">
-        <getter>
-          return this._appRestartRequired;
-        </getter>
-      </property>
-
 
       <!--
        * Private fields.
@@ -161,24 +115,6 @@
         if (this._widgetSvc)
             this._widgetSvc.finalize();
       ]]></destructor>
-
-
-      <!--
-       * Switch to the target locale.
-       -->
-
-      <method name="switchLocale"><body><![CDATA[
-        this._widgetSvc.switchLocale();
-      ]]></body></method>
-
-
-      <!--
-       * Cancel switch to the target locale.
-       -->
-
-      <method name="cancelSwitchLocale"><body><![CDATA[
-        this._widgetSvc.cancelSwitchLocale();
-      ]]></body></method>
 
 
       <!--

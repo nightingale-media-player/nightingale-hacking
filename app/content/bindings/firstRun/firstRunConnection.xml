@@ -48,6 +48,10 @@
    *   This widget provides a first-run internet connection UI.  It is presented
    * when an internet connection error is encountered.
    *
+   * Events
+   *
+   *   firstRunConnectionReset  Sent when the connection settings are reset.
+   *
    *****************************************************************************
    ************************************************************************* -->
 

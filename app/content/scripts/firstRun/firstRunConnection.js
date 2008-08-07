@@ -102,7 +102,7 @@ firstRunConnectionSvc.prototype = {
     // Listen for page advanced events.
     this._domEventListenerSet = new DOMEventListenerSet();
     var _this = this;
-    var func = function() { _this._doPageAdvanced(); };
+    var func = function(aEvent) { return _this._doPageAdvanced(aEvent); };
     this._domEventListenerSet.add(this._wizardPageElem,
                                   "pageadvanced",
                                   func,
@@ -154,15 +154,20 @@ firstRunConnectionSvc.prototype = {
 
 
   /**
-   * Handle a wizard page advanced event.
+   * Handle the wizard page advanced event specified by aEvent.
+   *
+   * \param aEvent              Page advanced event.
    */
 
-  _doPageAdvanced: function firstRunConnectionSvc__doPageAdvanced() {
+  _doPageAdvanced: function firstRunConnectionSvc__doPageAdvanced(aEvent) {
     // Rewind back to the wizard page that encountered a connection error.
     // Advance is enabled so that the wizard next button is displayed, but
     // rewind is used so that the wizard connection page isn't in the wizard
     // page history.
     firstRunWizard.wizardElem.rewind();
+
+    // Prevent advancing.
+    aEvent.preventDefault();
     return false;
   },
 
@@ -182,7 +187,8 @@ firstRunConnectionSvc.prototype = {
     function firstRunConnactionSvc__doConnectionSettings() {
     // Get the preference services.
     var prefService = Cc["@mozilla.org/preferences-service;1"]
-                        .getService(Ci.nsIPrefBranch);
+                        .getService(Ci.nsIPrefService);
+    prefService = prefService.QueryInterface(Ci.nsIPrefBranch);
 
     // Switch instant apply to true.
     // It doesnt actually make it apply the settings instantly unless you're on
@@ -209,10 +215,17 @@ firstRunConnectionSvc.prototype = {
     // Flush settings to disk.
     prefService.savePrefFile(null);
 
-    // Advance out of first-run connection page if the connection settings were
-    // accepted.
-    if (accepted)
+    // Send connection reset event and advance out of first-run connection page
+    // if the connection settings were accepted.
+    if (accepted) {
+      // Send a connection reset event.
+      var event = document.createEvent("Events");
+      event.initEvent("firstRunConnectionReset", true, true);
+      this._widget.dispatchEvent(event);
+
+      // Advance out of first-run connection page.
       firstRunWizard.wizardElem.advance();
+    }
   }
 }
 
