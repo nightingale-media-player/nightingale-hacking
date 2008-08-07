@@ -133,16 +133,15 @@ var firstRunWizard = {
                           .getService(Ci.nsIPrefService);
       prefService.savePrefFile(null);
     }
-
-    // Restart application as specified.
-    if (this.wizardElem.getAttribute("restartapp") == "true")
-      restartApp();
-
     // Indicate that the wizard is complete and whether it should be restarted.
     window.arguments[0].onComplete(this._restartWizard);
 
     // Finalize the services.
     this._finalize();
+    
+    // Restart application as specified. (AFTER we're done finalizing)
+    if (this.wizardElem.getAttribute("restartapp") == "true")
+      restartApp();
   },
 
 
@@ -151,6 +150,17 @@ var firstRunWizard = {
    */
 
   doFinish: function firstRunWizard_doFinish() {
+    // Record our time startup pref
+    try {
+        var timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
+                              .getService(Ci.sbITimingService);
+        timingService.startPerfTimer("CSPerfEndEULA");
+        timingService.stopPerfTimer("CSPerfEndEULA");
+    } catch (e) {
+        dump("Timing service exception: " + e);
+        // Ignore errors
+    }
+
     // Save wizard settings.
     this._saveSettings();
 

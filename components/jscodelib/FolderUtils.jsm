@@ -67,7 +67,10 @@ var FolderUtils = {
     var directorySvc = Cc["@mozilla.org/file/directory_service;1"]
                          .getService(Ci.nsIProperties);
     
-    var homeDir = directorySvc.get("Home", Ci.nsIFile);
+    var homeDir = null;
+    if (directorySvc.has("Home")) {
+      directorySvc.get("Home", Ci.nsIFile);
+    }
     var musicDir = null;
     
     // Get the default scan directory path.
@@ -97,7 +100,7 @@ var FolderUtils = {
           if(folder.exists() && folder.isReadable()) {
             defaultScanPath = folder;
           }
-          else {
+          else if (homeDir) {
             //Second, check for "X:\<Path To User Home>\Music".
             
             folder = homeDir.clone();
@@ -122,7 +125,7 @@ var FolderUtils = {
           // Excellent!
           defaultScanPath = musicDir;
         }
-        else {
+        else if (homeDir) {
           // Also, somewhat crappy fallback
           let defaultScanDir = homeDir.clone();
           defaultScanDir.append(SBString("folder_paths.music.darwin", "Music"));
@@ -147,7 +150,7 @@ var FolderUtils = {
           // Excellent!
           defaultScanPath = musicDir;
         }
-        else {
+        else if (homeDir) {
           let folder = homeDir.clone();
           let folderName = SBString("folder_paths.music.linux", "Music");
           folder.append(folderName);

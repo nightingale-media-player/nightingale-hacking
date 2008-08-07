@@ -81,15 +81,6 @@ if (typeof(Cu) == "undefined")
 
 function firstRunEULASvc(aWidget) {
   this._widget = aWidget;
-  try
-  {
-    this._timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
-                          .getService(Ci.sbITimingService);
-  }
-  catch (e)
-  {
-    // Ignore errors
-  }
 }
 
 // Define the object.
@@ -144,6 +135,22 @@ firstRunEULASvc.prototype = {
                                   "pageadvanced",
                                   func,
                                   false);
+    try
+    {
+      /**
+       * 
+       * Start and stop so we get a timestamp for when the EULA is displayed
+       * We only care about the start time to calc from app start to EULA
+       */
+      var timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
+                          .getService(Ci.sbITimingService);
+      timingService.startPerfTimer("CSPerfEULA");
+      timingService.stopPerfTimer("CSPerfEULA");
+    }
+    catch (e)
+    {
+      // Ignore errors
+    }
   },
 
 
@@ -163,14 +170,6 @@ firstRunEULASvc.prototype = {
     this._wizardElem = null;
     this._wizardPageElem = null;
     
-    try
-    {
-      this._timingService.startPerfTimer("CSPerfEndEULA");
-    }
-    catch (e)
-    {
-      // Ignore errors
-    }  
   },
 
 
@@ -197,20 +196,6 @@ firstRunEULASvc.prototype = {
   _doPageShow: function firstRunEULASvc__doPageShow() {
     // Update the UI.
     this._update();
-    try
-    {
-      /**
-       * 
-       * Start and stop so we get a timestamp for when the EULA is displayed
-       * We only care about the start time to calc from app start to EULA
-       */
-      this._timingService.startPerfTimer("CSPerfEULA");
-      this._timingService.stopPerfTimer("CSPerfEULA");
-    }
-    catch (e)
-    {
-      // Ignore errors
-    }
   },
 
 
