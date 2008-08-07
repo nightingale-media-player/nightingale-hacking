@@ -97,56 +97,56 @@ sbTextPropertyInfo::InitializeOperators()
 
   rv = sbPropertyInfo::GetOPERATOR_CONTAINS(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.contains"));
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.contains"), PR_FALSE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_NOTCONTAINS(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_contain"));
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_contain"), PR_FALSE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_EQUALS(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.is"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.is"), PR_FALSE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.is_not"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.is_not"), PR_FALSE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_BEGINSWITH(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.starts"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.starts"), PR_FALSE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_NOTBEGINSWITH(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_start"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_start"), PR_FALSE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_ENDSWITH(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.ends"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.ends"), PR_FALSE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_NOTENDSWITH(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_end"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.text.not_end"), PR_FALSE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);

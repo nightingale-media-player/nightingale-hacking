@@ -63,28 +63,28 @@ nsresult sbBooleanPropertyInfo::InitializeOperators()
   
   rv = sbPropertyInfo::GetOPERATOR_EQUALS(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.equal"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.equal"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.notequal"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.notequal"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = GetOPERATOR_ISTRUE(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.bool.istrue"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.bool.istrue"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = GetOPERATOR_ISFALSE(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.bool.isfalse"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.bool.isfalse"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);

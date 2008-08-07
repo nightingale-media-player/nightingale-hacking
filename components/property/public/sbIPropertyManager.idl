@@ -101,7 +101,7 @@ interface sbIPropertyManager : nsISupports
  * \interface sbIPropertyOperator
  * \brief An interface to represent an operator that may act upon a property
  */
-[scriptable, uuid(2C334049-EFCD-40ed-99F8-A96D541569E5)]
+[scriptable, uuid(de9d8d09-1dac-4a4d-a0cf-0cb57c0f310b)]
 interface sbIPropertyOperator : nsISupports
 {
   /**
@@ -119,7 +119,19 @@ interface sbIPropertyOperator : nsISupports
    * \brief Initialize the operator.
    * \note This method may not be called more than once.
    */
-  void Init(in AString aOperator, in aString aOperatorReadable);
+  void Init(in AString aOperator, 
+            in aString aOperatorReadable, 
+            in boolean aMakeSortable);
+
+  /**
+   * \brief Whether the value associated with a smart playlist 
+   * rule will be 'made sortable': if this attribute is false, the 
+   * matching rule act as a fulltext search. If this attribute is
+   * true, a rule's value will be made sortable before being 
+   * applied the rule's operator (for instance, a numeric date
+   * value might become '+000000032165698546').
+   */
+  readonly attribute boolean makeSortable;
 };
 
 /**

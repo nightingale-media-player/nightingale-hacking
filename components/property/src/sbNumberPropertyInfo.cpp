@@ -173,49 +173,49 @@ sbNumberPropertyInfo::InitializeOperators()
 
   rv = sbPropertyInfo::GetOPERATOR_EQUALS(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.equal"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.equal"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_NOTEQUALS(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.notequal"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.notequal"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_GREATER(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.greater"));
+  propOp =  new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.greater"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_GREATEREQUAL(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.greaterequal"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.greaterequal"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_LESS(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.less"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.less"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_LESSEQUAL(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.lessequal"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.lessequal"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_BETWEEN(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.between"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.int.between"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);

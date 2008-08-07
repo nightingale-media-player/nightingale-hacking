@@ -221,6 +221,7 @@ private:
   
   nsresult GetConditionNeedsNull(sbRefPtrCondition& aCondition, 
                                  sbIPropertyInfo* aInfo, 
+                                 PRBool aMakeSortable,
                                  PRBool &bNeedIsNull);
 
   PRInt64 ParseDateTime(nsAString &aDateTime);

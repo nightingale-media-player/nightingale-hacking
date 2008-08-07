@@ -69,14 +69,14 @@ sbImmutablePropertyInfo::Init()
 
   rv = sbImmutablePropertyInfo::GetOPERATOR_ISSET(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isset"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isset"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbImmutablePropertyInfo::GetOPERATOR_ISNOTSET(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isnotset"));
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isnotset"), PR_TRUE);
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);

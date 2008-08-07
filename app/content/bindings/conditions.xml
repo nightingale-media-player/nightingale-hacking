@@ -1319,7 +1319,7 @@
         <body>
           <![CDATA[
             if (!unit || unit == "") {
-              return this._convertToUIFormat(metadata, value);
+              return this._convertToUIFormat(metadata, value, operator);
             } else {
               return this._convertToUIUnit(metadata, value, unit);
             }
@@ -1579,6 +1579,7 @@
       <method name="_convertToUIFormat">
         <parameter name="metadata"/>
         <parameter name="value"/>
+        <parameter name="operator"/>
         <body>
           <![CDATA[
             // if there is no value to convert, bail out
@@ -1588,16 +1589,19 @@
             // get property info for this metadata
             var info = this._pm.getPropertyInfo(metadata);
             try {
-              // and format the field
-              value = info.format(value);
-              if (info.type == "datetime") {
-                // if this is a datetime, strip the time component. ideally,
-                // format() would take a parameter that would allow us to
-                // specify how to format the value.
-                var space = value.indexOf(" ");
-                if (space >= 0)
-                  value = value.slice(0, space);
-              }
+              // and format the field if necessary
+              var op = info.getOperator(operator);
+              if (op.makeSortable) {
+                value = info.format(value);
+                if (info.type == "datetime") {
+                  // if this is a datetime, strip the time component. ideally,
+                  // format() would take a parameter that would allow us to
+                  // specify how to format the value.
+                  var space = value.indexOf(" ");
+                  if (space >= 0)
+                    value = value.slice(0, space);
+                }
+              } 
             } catch (e) {
             }
             return value;
