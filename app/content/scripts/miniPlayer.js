@@ -98,13 +98,9 @@ var gMiniplayer = {
   {
     dump("\nMiniplayer." + arguments.callee.name + "\n");
 
-    // Did the user press Alt-F4?
-    if (evt.keyCode == 0x73 && evt.altKey)
-    {
-      evt.preventDefault();
-      quitApp();
-      return;
-    }
+    dump("\nChecking for quit key\n");
+    // Check if the user wishes to quit.
+    checkQuitKey(evt);
 
     // TODO Does this not interfere with global hotkeys?
     // Should this be a consistent thing that anyone can use?

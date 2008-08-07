@@ -786,7 +786,8 @@ function checkQuitKey(evt)
   // handle ctrl-Q on UNIX
   let platform = getPlatformString();
   if (platform == 'Linux' || platform == 'SunOS') {
-    if (evt.keyCode == 'Q'.charCodeAt(0) && evt.ctrlKey) {
+    let keyCode = String.fromCharCode(evt.which).toUpperCase();
+    if ( keyCode == 'Q' && evt.ctrlKey) {
       evt.preventDefault();
       quitApp();
     }

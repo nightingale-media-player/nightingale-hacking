@@ -66,6 +66,7 @@
 >
   <!-- Load the Mozilla helpers -->
   <script type="application/x-javascript" src="chrome://global/content/dialogOverlay.js" /> 
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/windowUtils.js" /> 
 
   <!-- standard overlays insertion point for popups, commands, broadcasters, keys and stringbundles -->
   <sb-support id="mainSupportSet"/>
