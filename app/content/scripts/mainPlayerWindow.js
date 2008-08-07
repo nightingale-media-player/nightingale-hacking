@@ -35,6 +35,14 @@ function movePlayerControls(aIsOnTop)
   var locationVal = aIsOnTop ? "top" : "bottom";
   var contentPlayerWrapper = document.getElementById("content_player_wrapper");
   if (contentPlayerWrapper) {
+    if (Application.prefs.getValue(PREF_PLAYER_CONTROL_LOCATION, "") != locationVal) {
+      // the location changed, send a metrics ping
+      // see http://bugzilla.songbirdnest.com/show_bug.cgi?id=11509
+      Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
+                .createInstance(Components.interfaces.sbIMetrics)
+                .metricsInc("mainplayer.playercontrols", "location", locationVal);
+    }
+    
     contentPlayerWrapper.setAttribute("playercontrols", locationVal);
     Application.prefs.setValue(PREF_PLAYER_CONTROL_LOCATION, locationVal);
     
