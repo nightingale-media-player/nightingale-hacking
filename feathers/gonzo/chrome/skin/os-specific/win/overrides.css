@@ -41,7 +41,7 @@ menupopup {
   border:1px solid gray;
 }
 
-dialog,
+dialog[hidechrome="true"],
 wizard {
   border:3px solid black;
   border-top:1px solid gray;

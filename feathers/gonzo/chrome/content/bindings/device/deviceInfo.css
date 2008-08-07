@@ -82,20 +82,31 @@ Imported by bindings.css or directly into feathers.
   
 }
 
-
+sb-device-battery {
+  margin:0 4px;
+}
 .device-battery-box {
   width:25px;
+  height:12px;
+  padding:0 3px 0 1px;
+  background-image:url("chrome://songbird/skin/device/battery-empty.png");
+  background-repeat:no-repeat;
+  background-position:left top;
 }
-.device-battery-left {
-  list-style-image:url("chrome://songbird/skin/device/battery-left.png");
-}
+.device-battery-left,
 .device-battery-right {
-  list-style-image:url("chrome://songbird/skin/device/battery-right.png");
+  visibility:collapse;
+}
+.device-battery-left,
+.device-battery-right,
+.device-battery-status,
+.device-battery-empty {
+  height:12px;
 }
 .device-battery-status {
   background-image:url("chrome://songbird/skin/device/battery-draining.png");
-  background-repeat:repeat-x;
-  background-position:center;
+  background-repeat:no-repeat;
+  background-position:-1px top;
 }
 .device-battery-status[status="charged"] {
   background-image:url("chrome://songbird/skin/device/battery-charged.png");
@@ -104,9 +115,6 @@ Imported by bindings.css or directly into feathers.
   background-image:url("chrome://songbird/skin/device/battery-charging.png");
 }
 .device-battery-empty {
-  background-image:url("chrome://songbird/skin/device/battery-empty.png");
-  background-repeat:repeat-x;
-  background-position:center;
 }
 
 
