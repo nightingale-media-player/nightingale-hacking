@@ -1319,7 +1319,7 @@
         <body>
           <![CDATA[
             if (!unit || unit == "") {
-              return this._convertToUIFormat(metadata, value, operator);
+              return this._convertToUIFormat(metadata, value);
             } else {
               return this._convertToUIUnit(metadata, value, unit);
             }
@@ -1579,7 +1579,6 @@
       <method name="_convertToUIFormat">
         <parameter name="metadata"/>
         <parameter name="value"/>
-        <parameter name="operator"/>
         <body>
           <![CDATA[
             // if there is no value to convert, bail out
@@ -1590,8 +1589,7 @@
             var info = this._pm.getPropertyInfo(metadata);
             try {
               // and format the field if necessary
-              var op = info.getOperator(operator);
-              if (op.makeSortable) {
+              if (!info.fulltext) {
                 value = info.format(value);
                 if (info.type == "datetime") {
                   // if this is a datetime, strip the time component. ideally,

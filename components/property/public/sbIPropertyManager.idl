@@ -101,7 +101,7 @@ interface sbIPropertyManager : nsISupports
  * \interface sbIPropertyOperator
  * \brief An interface to represent an operator that may act upon a property
  */
-[scriptable, uuid(de9d8d09-1dac-4a4d-a0cf-0cb57c0f310b)]
+[scriptable, uuid(2C334049-EFCD-40ed-99F8-A96D541569E5)]
 interface sbIPropertyOperator : nsISupports
 {
   /**
@@ -119,19 +119,7 @@ interface sbIPropertyOperator : nsISupports
    * \brief Initialize the operator.
    * \note This method may not be called more than once.
    */
-  void Init(in AString aOperator, 
-            in aString aOperatorReadable, 
-            in boolean aMakeSortable);
-
-  /**
-   * \brief Whether the value associated with a smart playlist 
-   * rule will be 'made sortable': if this attribute is false, the 
-   * matching rule act as a fulltext search. If this attribute is
-   * true, a rule's value will be made sortable before being 
-   * applied the rule's operator (for instance, a numeric date
-   * value might become '+000000032165698546').
-   */
-  readonly attribute boolean makeSortable;
+  void Init(in AString aOperator, in aString aOperatorReadable);
 };
 
 /**
@@ -139,7 +127,7 @@ interface sbIPropertyOperator : nsISupports
 * \brief An interface used to describe a metadata property for use by the UI and other sbILibrary interfaces (smartplaylists, etc)
 * \sa sbIPropertyManager
 */
-[scriptable, uuid(fdf0a24e-a672-4fb7-b73c-5538030b22f8)]
+[scriptable, uuid(452576df-1230-45f0-840c-5848efabf2b2)]
 interface sbIPropertyInfo : nsISupports
 {
   readonly attribute AString OPERATOR_EQUALS;

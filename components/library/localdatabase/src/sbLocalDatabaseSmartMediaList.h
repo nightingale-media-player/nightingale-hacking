@@ -221,7 +221,6 @@ private:
   
   nsresult GetConditionNeedsNull(sbRefPtrCondition& aCondition, 
                                  sbIPropertyInfo* aInfo, 
-                                 PRBool aMakeSortable,
                                  PRBool &bNeedIsNull);
 
   PRInt64 ParseDateTime(nsAString &aDateTime);
@@ -229,7 +228,8 @@ private:
   PRInt64 StripTime(PRInt64 aDateTime);
   
   void SPrintfInt64(nsAString &aString, PRInt64 aValue);
-  PRInt64 ScanfInt64(nsAString &aString);
+  PRInt64 ScanfInt64d(nsAString &aString);
+  nsresult ScanfInt64(nsAString &aString, PRInt64 *aRetVal);
   
   nsresult ReadConfiguration();
 

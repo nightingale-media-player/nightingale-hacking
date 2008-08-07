@@ -38,7 +38,6 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyOperator, sbIPropertyOperator)
 
 sbPropertyOperator::sbPropertyOperator()
 : mLock(nsnull)
-, mMakeSortable(PR_TRUE)
 , mInitialized(PR_FALSE)
 {
   mLock = PR_NewLock();
@@ -46,13 +45,11 @@ sbPropertyOperator::sbPropertyOperator()
 }
 
 sbPropertyOperator::sbPropertyOperator(const nsAString& aOperator,
-                                       const nsAString& aOperatorReadable,
-                                       const PRBool aMakeSortable)
+                                       const nsAString& aOperatorReadable)
 : mLock(nsnull)
 , mInitialized(PR_TRUE)
 , mOperator(aOperator)
 , mOperatorReadable(aOperatorReadable)
-, mMakeSortable(aMakeSortable)
 {
   mLock = PR_NewLock();
   NS_ASSERTION(mLock, "sbPropertyOperator::mLock failed to create lock!");
@@ -81,26 +78,16 @@ NS_IMETHODIMP sbPropertyOperator::GetOperatorReadable(nsAString & aOperatorReada
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyOperator::Init(const nsAString & aOperator, 
-                                       const nsAString & aOperatorReadable, 
-                                       PRBool aMakeSortable)
+NS_IMETHODIMP sbPropertyOperator::Init(const nsAString & aOperator, const nsAString & aOperatorReadable)
 {
   sbSimpleAutoLock lock(mLock);
   NS_ENSURE_TRUE(mInitialized == PR_FALSE, NS_ERROR_ALREADY_INITIALIZED);
 
   mOperator = aOperator;
   mOperatorReadable = aOperatorReadable;
-  mMakeSortable = aMakeSortable;
 
   mInitialized = PR_TRUE;
 
-  return NS_OK;
-}
-
-NS_IMETHODIMP sbPropertyOperator::GetMakeSortable(PRBool *aMakeSortable)
-{
-  NS_ENSURE_ARG_POINTER(aMakeSortable);
-  *aMakeSortable = mMakeSortable;
   return NS_OK;
 }
 
@@ -216,14 +203,14 @@ sbPropertyInfo::Init()
 
   rv = sbPropertyInfo::GetOPERATOR_ISSET(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isset"), PR_TRUE);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isset"));
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbPropertyInfo::GetOPERATOR_ISNOTSET(op);
   NS_ENSURE_SUCCESS(rv, rv);
-  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isnotset"), PR_TRUE);
+  propOp = new sbPropertyOperator(op, NS_LITERAL_STRING("&smart.isnotset"));
   NS_ENSURE_TRUE(propOp, NS_ERROR_OUT_OF_MEMORY);
   rv = mOperators.AppendObject(propOp);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -582,4 +569,3 @@ NS_IMETHODIMP sbPropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitCo
 
   return NS_OK;
 }
-

@@ -37,8 +37,7 @@ public:
 
   sbPropertyOperator();
   sbPropertyOperator(const nsAString& aOperator,
-                     const nsAString& aOperatorReadable,
-                     const PRBool aMakeSortable);
+                     const nsAString& aOperatorReadable);
   ~sbPropertyOperator();
 
 protected:
@@ -47,8 +46,6 @@ protected:
  
   nsString mOperator;
   nsString mOperatorReadable;
-  
-  PRBool   mMakeSortable;
 };
 
 #endif // __SBPROPERTYOPERATOR_H__

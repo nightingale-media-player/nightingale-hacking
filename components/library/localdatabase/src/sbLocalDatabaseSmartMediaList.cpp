@@ -1548,8 +1548,20 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
   return NS_OK;
 }
 
+nsresult 
+sbLocalDatabaseSmartMediaList::ScanfInt64(nsAString &aString, PRInt64 *aRetVal) {
+  PRTime value = 0;
+  NS_ConvertUTF16toUTF8 narrow(aString);
+
+  if (PR_sscanf(narrow.get(), gsFmtRadix10, &value) != 1) {
+    return NS_ERROR_INVALID_ARG;
+  }
+  *aRetVal = value;
+  return NS_OK;
+}
+
 PRInt64
-sbLocalDatabaseSmartMediaList::ScanfInt64(nsAString &aString) {
+sbLocalDatabaseSmartMediaList::ScanfInt64d(nsAString &aString) {
   PRTime value = 0;
   NS_ConvertUTF16toUTF8 narrow(aString);
 
@@ -1600,12 +1612,8 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   PRBool isTopLevelProperty = SB_IsTopLevelProperty(aCondition->mPropertyID);
   nsAutoString columnName;
 
-  PRBool bMakeSortable;
-  rv = aCondition->mOperator->GetMakeSortable(&bMakeSortable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRBool bNeedOrIsNull;
-  rv = GetConditionNeedsNull(aCondition, aInfo, bMakeSortable, bNeedOrIsNull);
+  rv = GetConditionNeedsNull(aCondition, aInfo, bNeedOrIsNull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (isTopLevelProperty) {
@@ -1661,57 +1669,53 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     // if we are matching date only (and not time), both values for the range
     // needs to be parsed, and stripped of time, then the right value should be
     // added 23:59:59.9999.
-    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue)));
-    SPrintfInt64(rightValue, StripTime(ScanfInt64(rightValue))+(ONEDAY-ONE_MS));
+    SPrintfInt64(leftValue, StripTime(ScanfInt64d(leftValue)));
+    SPrintfInt64(rightValue, StripTime(ScanfInt64d(rightValue))+(ONEDAY-ONE_MS));
     op = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);
   } else if (op.EqualsLiteral(SB_OPERATOR_ONDATE)) {
     // If we are matching date only (and not time), the date must be stripped of
     // its time component, then we need to turn the condition into a range
     // of [date,date+23:59:59.9999]
-    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue)));
-    SPrintfInt64(rightValue, StripTime(ScanfInt64(leftValue))+(ONEDAY-ONE_MS));
+    SPrintfInt64(leftValue, StripTime(ScanfInt64d(leftValue)));
+    SPrintfInt64(rightValue, StripTime(ScanfInt64d(leftValue))+(ONEDAY-ONE_MS));
     op = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);
   } else if (op.EqualsLiteral(SB_OPERATOR_NOTONDATE)) {
     // If we are matching date only (and not time), the date must be stripped of
     // its time component, then we need to turn the condition into an inverted
     // range of [date, date+23:59:59.9999]
-    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue)));
-    SPrintfInt64(rightValue, StripTime(ScanfInt64(leftValue))+(ONEDAY-ONE_MS));
+    SPrintfInt64(leftValue, StripTime(ScanfInt64d(leftValue)));
+    SPrintfInt64(rightValue, StripTime(ScanfInt64d(leftValue))+(ONEDAY-ONE_MS));
     op = NS_LITERAL_STRING(SB_OPERATOR_BETWEEN);
     invertRange = PR_TRUE;
   } else if (op.EqualsLiteral(SB_OPERATOR_BEFOREDATE)) {
     // If we are matching date only (and not time), the date must be stripped of
     // its time component.
-    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue)));
+    SPrintfInt64(leftValue, StripTime(ScanfInt64d(leftValue)));
     op = NS_LITERAL_STRING(SB_OPERATOR_LESS);
   } else if (op.EqualsLiteral(SB_OPERATOR_BEFOREORONDATE)) {
     // If we are matching date only (and not time), the date must be stripped of
     // its time component, and then added 23:59:59.9999.
-    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue))+(ONEDAY-ONE_MS));
+    SPrintfInt64(leftValue, StripTime(ScanfInt64d(leftValue))+(ONEDAY-ONE_MS));
     op = NS_LITERAL_STRING(SB_OPERATOR_LESSEQUAL);
   } else if (op.EqualsLiteral(SB_OPERATOR_AFTERDATE)) {
     // If we are matching date only (and not time), the date must be stripped of
     // its time component, and then added 23:59:59.9999.
-    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue))+(ONEDAY-ONE_MS));
+    SPrintfInt64(leftValue, StripTime(ScanfInt64d(leftValue))+(ONEDAY-ONE_MS));
     op = NS_LITERAL_STRING(SB_OPERATOR_GREATER);
   } else if (op.EqualsLiteral(SB_OPERATOR_AFTERORONDATE)) {
     // If we are matching date only (and not time), the date must be stripped of
     // its time component.
-    SPrintfInt64(leftValue, StripTime(ScanfInt64(leftValue)));
+    SPrintfInt64(leftValue, StripTime(ScanfInt64d(leftValue)));
     op = NS_LITERAL_STRING(SB_OPERATOR_GREATEREQUAL);
   }
   
   if (!leftValue.IsEmpty()) {
-    if (bMakeSortable) {
-      rv = aInfo->MakeSortable(leftValue, value);
-      // MakeSortable may fail if the value fails to validate, but since a smart
-      // playlist may look for substrings instead of full valid values, it is not
-      // fatal to fail to make sortable, when that fails we just use the value
-      // that we were given as is.
-      if (NS_FAILED(rv)) {
-        value = leftValue;
-      }
-    } else {
+    rv = aInfo->MakeSortable(leftValue, value);
+    // MakeSortable may fail if the value fails to validate, but since a smart
+    // playlist may look for substrings instead of full valid values, it is not
+    // fatal to fail to make sortable, when that fails we just use the value
+    // that we were given as is.
+    if (NS_FAILED(rv)) {
       value = leftValue;
     }
   }
@@ -1729,16 +1733,12 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString rvalue;
-    if (bMakeSortable) {
-      rv = aInfo->MakeSortable(rightValue, rvalue);
-      // MakeSortable may fail if the value fails to validate, but since a smart
-      // playlist may look for substrings instead of full valid values, it is not
-      // fatal to fail to make sortable, when that fails we just use the value
-      // that we were given as is.
-      if (NS_FAILED(rv)) {
-        rvalue = rightValue;
-      }
-    } else {
+    rv = aInfo->MakeSortable(rightValue, rvalue);
+    // MakeSortable may fail if the value fails to validate, but since a smart
+    // playlist may look for substrings instead of full valid values, it is not
+    // fatal to fail to make sortable, when that fails we just use the value
+    // that we were given as is.
+    if (NS_FAILED(rv)) {
       rvalue = rightValue;
     }
 
@@ -1922,7 +1922,6 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
 nsresult
 sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aCondition,
                                                      sbIPropertyInfo* aInfo,
-                                                     PRBool aMakeSortable,
                                                      PRBool &bNeedIsNull)
 {
   nsresult rv;
@@ -1956,25 +1955,30 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
   nsAutoString leftValue, value;
   leftValue = aCondition->mLeftValue;
   if (!leftValue.IsEmpty()) {
-    if (aMakeSortable) {
-      rv = aInfo->MakeSortable(leftValue, value);
-      // MakeSortable may fail if the value fails to validate, but since a smart
-      // playlist may look for substrings instead of full valid values, it is not
-      // fatal to fail to make sortable, when that fails we just use the value
-      // that we were given as is.
-      if (NS_FAILED(rv)) {
-        value = leftValue;
-      }
-    } else {
+    rv = aInfo->MakeSortable(leftValue, value);
+    // MakeSortable may fail if the value fails to validate, but since a smart
+    // playlist may look for substrings instead of full valid values, it is not
+    // fatal to fail to make sortable, when that fails we just use the value
+    // that we were given as is.
+    if (NS_FAILED(rv)) {
       value = leftValue;
     }
   }
   
-  PRFloat64 fValue = ScanfInt64(value);
+  PRBool bIsEmpty = value.IsEmpty();
+
+  PRInt64 fValue;
+  PRBool bIsNumber = PR_TRUE;
+  rv = ScanfInt64(value, &fValue);
+  if (rv != NS_OK) {
+    fValue = 0;
+    bIsNumber = PR_FALSE;
+  }
 
   if (op.EqualsLiteral(SB_OPERATOR_EQUALS) ||
       op.EqualsLiteral(SB_OPERATOR_ONDATE)) {
-    if (fValue == 0) {
+    if ((bIsNumber && fValue == 0) || 
+        (!bIsNumber && bIsEmpty)) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
@@ -1982,7 +1986,8 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
   
   if (op.EqualsLiteral(SB_OPERATOR_NOTEQUALS) ||
       op.EqualsLiteral(SB_OPERATOR_NOTONDATE)) {
-    if (fValue != 0) {
+    if ((bIsNumber && fValue != 0) || 
+        (!bIsNumber && !bIsEmpty)) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
@@ -2022,7 +2027,7 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
       op.EqualsLiteral(SB_OPERATOR_NOTENDSWITH) ||
       op.EqualsLiteral(SB_OPERATOR_NOTINTHELAST) ||
       op.EqualsLiteral(SB_OPERATOR_NOTONDATE)) {
-    if (!value.IsEmpty()) {
+    if (!bIsEmpty) {
       bNeedIsNull = PR_TRUE;
       return NS_OK;
     }
