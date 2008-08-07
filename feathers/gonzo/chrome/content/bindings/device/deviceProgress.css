@@ -54,9 +54,22 @@ Imported by bindings.css or directly into feathers.
 .dev-progress-text1-label {
   font-size:10px;
   font-weight:bold;
-  margin:0;
-  padding:0;
+/**TODO: fix hack to center the text**/
+  padding-top:1px;
+  padding-bottom:3px;
 }
+.dev-progress-text2-label {
+  font-size:10px;
+  /**TODO: fix hack to center the text**/
+  padding-top:4px;
+}
+.dev-progress-text1-label,
+.dev-progress-text2-label {
+  max-width:200px;
+  margin:0px;
+}
+
+
 
 .dev-progress-text1-label[error="true"] {
  background-image:url('chrome://songbird/skin/device/device-progress-error.png');
@@ -66,11 +79,6 @@ Imported by bindings.css or directly into feathers.
  cursor: pointer;
 }
 
-.dev-progress-text2-label {
-  font-size:10px;
-  margin:0;
-  padding:0;
-}
 
 .device-progressmeter {
   min-width: 200px;

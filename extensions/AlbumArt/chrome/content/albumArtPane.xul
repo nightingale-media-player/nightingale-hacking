@@ -38,16 +38,16 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <stack flex="1">
-    <vbox id="sb-albumart-not-playing"
-          class="albumArtNotPlayingContainer">
-      <description class="albumArtNotPlayingMessage"
-                   value="&artwork.displaypane.not_playing_message;"/>
-    </vbox>
     <vbox class="albumArtNowPlayingContainer"
           align="center">
       <image id="sb-albumart-playing"
              class="albumArtNowPlayingImage"
              ondblclick="AlbumArtPaneController.onImageDblClick(event);"/>
+    </vbox>
+    <vbox id="sb-albumart-not-playing"
+          class="albumArtNotPlayingContainer">
+      <label class="albumArtNotPlayingMessage"
+                   value="&artwork.displaypane.not_playing_message;"/>
     </vbox>
   </stack>
 

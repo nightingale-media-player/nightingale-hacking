@@ -50,6 +50,7 @@ Imported by bindings.css or directly into feathers.
 
 .capacity_value_label {
   font-size:80%;
+  color:gray;
 }
 
 .device-capacity-legend-box {
@@ -100,15 +101,20 @@ Imported by bindings.css or directly into feathers.
   background-color: rgb(235,235,235);
 }
 
+.device-capacity-legend-box > * {
+  margin-right:8px;
+}
+
 .device-capacity-legend-color-box {
-  width: 32px;
+  width: 18px;
   height: 20px;
-  max-width: 32px;
+  max-width: 18px;
   max-height: 20px;
   background-image:url('chrome://songbird/skin/device/bg-legend.png');
   background-repeat:no-repeat;
   background-position:center center;
   
+  margin-right:2px;
 }
 
 .device-capacity-bar-notches,

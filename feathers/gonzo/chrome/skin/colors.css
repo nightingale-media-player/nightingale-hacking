@@ -119,7 +119,6 @@ statusbar {
   background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
   background-repeat:repeat-x;
   background-position:left top;
-  width:180px;
 }
 
 #servicepane .tree-scrollable-columns {
@@ -2461,4 +2460,11 @@ textbox[multiline="true"] > .textbox-input-box {
 /** TODO mv to correct file in /dialogs/ **/
 #showUpdateInfoButton {
   visibility:collapse;
+}
+
+
+
+#sb-playlist-filters {
+  height:200px;
+  min-height:60px;
 }

@@ -33,31 +33,23 @@
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
 <window title="Default Display Pane"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        xmlns:html="http://www.w3.org/1999/xhtml">
 
-  <vbox flex="1">
-    <vbox flex="1" align="right">
-      <vbox class="arrow"></vbox>
-      <vbox flex="1" class="line vertical"></vbox>
-    </vbox>
-    <vbox>
-      <hbox flex="1" pack="center" align="center">
-        <hbox class="corner none"></hbox>
-        <spacer flex="1" />
-        <hbox class="corner bottomToRight"></hbox>
-        <spacer flex="1" class="line horizontal" />
-        <hbox class="corner leftToTop"></hbox>
-      </hbox>
-    </vbox>
-    <vbox flex="1" class="vertical line"></vbox>
+<box pack="center" align="center" flex="1">
+
+  <vbox class="instructions" flex="1" pack="center" align="center">
+    <description flex="0">
+      <html:div>
+        Select an add-on from the menu (<image src="chrome://songbird/skin/display-pane/button-addon-picker.png" alt="Add-on Picker Icon" />)
+        <html:br />
+        or
+        <html:br />
+        Visit the <label class="text-link" href="http://addons.songbirdnest.com/tag/displaypane" value="Add-on Site"/> to browse add-ons
+      </html:div>
+    </description>
   </vbox>
 
-  <vbox pack="center" align="center" class="instructions">
-    <label class="instruction">Select an add-on from the menu</label>
-    <label>or</label>
-    <label class="instruction">Visit the<label class="text-link" href="http://addons.songbirdnest.com/tag/displaypane" value="Add-on Site"/>to browse add-ons</label>
-  </vbox>
-
-<spacer flex="1" />
+</box>
 
 </window>

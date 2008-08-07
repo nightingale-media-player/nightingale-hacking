@@ -134,7 +134,7 @@ description, label {
 
 /* class for text with a 'link' appearance */
 .text-link {
-  color:#1694d9;
+  color:#1694d9 !important;
   outline:0;
   cursor:pointer;
   text-decoration:none;

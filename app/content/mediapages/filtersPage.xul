@@ -73,11 +73,10 @@
          * Drag and drop support
     -->
   <!-- Playlist Filters -->
-  <vbox id="sb-playlist" flex="1" style="margin:0px; padding:0px">
+  <vbox id="sb-playlist" flex="1">
   <hbox
     id="sb-playlist-filters"
     class="sb-playlist-filters"
-    style="min-height: 60px;"
     flex="1"
     hidden="false"/>
 
@@ -86,7 +85,7 @@
     class="playlist-splitter"
     state="open"
     orient="vertical"
-    collapse="before"
+    collapse="never"
     resizebefore="closest"
     resizeafter="closest"
     hidden="true"

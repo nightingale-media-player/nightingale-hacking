@@ -29,21 +29,29 @@
  */
 .albumArtNotPlayingContainer {
   -moz-box-flex: 1;
-  -mox-box-align: center;
-  -mox-box-pack: center;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  background-color:rgb(220,220,220);
+  background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');
 }
 
 .albumArtNotPlayingMessage {
-  color: #000000;
-  opacity: 0.5;
+  -moz-border-radius:8px;
+  background-color:rgb(235,235,235);
+  padding:10px;
+  color:gray;
+  border:1px solid rgb(200,200,200);
 }
 
 /**
  * Now Playing part of the stack
  */
 .albumArtNowPlayingContainer{
-  -mox-box-align: center;
-  -mox-box-pack: center;  
+  -moz-box-flex: 1;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  background-color:rgb(255,255,255);
+  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
 }
 
 .albumArtNowPlayingImage {

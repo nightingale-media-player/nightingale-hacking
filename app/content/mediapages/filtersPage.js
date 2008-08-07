@@ -274,7 +274,7 @@ window.mediaPage = {
         splitter.setAttribute("state", "open");
         splitter.setAttribute("resizebefore", "closest");
         splitter.setAttribute("resizeafter", "closest");
-        splitter.setAttribute("collapse", "before");
+        splitter.setAttribute("collapse", "never");
 
         var grippy = document.createElement( "grippy" );
         splitter.appendChild(grippy);
