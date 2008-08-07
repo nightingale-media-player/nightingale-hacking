@@ -96,6 +96,8 @@ function CoreGStreamerSimple()
   // Enable for only a minimal set of formats. If both are false, this core
   // is never used.
   this._gstEnableMinimal = false;
+  // Has enabling all been set explicitly, or (based on platform) automatically?
+  this._gstEnableAllExplicit = false;
 
   var platform = getPlatformString()
   if ((platform.indexOf("Windows_NT") < 0) && 
@@ -107,8 +109,10 @@ function CoreGStreamerSimple()
   else {
     if (environment.exists("SB_GST_ENABLE")) {
       var enable = environment.get("SB_GST_ENABLE");
-      if (enable == "all")
+      if (enable == "all") {
         this._gstEnableAll = true;
+        this._gstEnableAllExplicit = true;
+      }
       else {
         // Otherwise disable completely.
         this._gstEnableAll = false;
@@ -531,6 +535,13 @@ CoreGStreamerSimple.prototype.getSupportedFileExtensions = function ()
     return new StringArrayEnumerator([]);
 }
 
+const GST_EXTENSION_SUPPORTED = 1;           /* A recognised/supported format */
+const GST_EXTENSION_EXPLICITLY_SELECTED = 5; /* Recognised/supported and the user has explicitly
+                                                enabled gstreamer. */
+const GST_EXTENSION_UNSUPPORTED = -1;        /* We know we must not handle this */
+const GST_EXTENSION_UNKNOWN = 0;             /* We don't recognise this, but let gstreamer try
+                                                if there's nothing else available */
+
 CoreGStreamerSimple.prototype.getSupportForURI = function(aURI)
 {
   var extension = this.getFileExtensionFromURI(aURI);
@@ -541,23 +552,27 @@ CoreGStreamerSimple.prototype.getSupportForURI = function(aURI)
 
   // TODO: do something smarter here
   if (this._gstEnableAll) {
-    if (this._mediaUrlExtensions.indexOf(extension) > -1)
-      return 1;
+    if (this._mediaUrlExtensions.indexOf(extension) > -1) {
+      if (this._gstEnableAllExplicit)
+        return GST_EXTENSION_EXPLICITLY_SELECTED;
+      else
+        return GST_EXTENSION_SUPPORTED;
+    }
     else if (this._unsupportedExtensions.indexOf(extension) > -1)
-      return -1;
+      return GST_EXTENSION_UNSUPPORTED;
     else 
-      return 0; // We are the default handler for whomever.
+      return GST_EXTENSION_UNKNOWN; // We are the default handler for whomever.
   }
   // In minimal mode, we support a small set of formats.
   else if (this._gstEnableMinimal && 
            this._mediaUrlMinimalExtensions.indexOf(extension) > -1)
   {
-    return 1;
+    return GST_EXTENSION_SUPPORTED;
   }
   else {
     // In minimal or 'off' mode, we don't want to ever be used, even as a 
     // default.
-    return -1;
+    return GST_EXTENSION_UNSUPPORTED;
   }
   
 };
