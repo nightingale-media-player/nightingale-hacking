@@ -819,8 +819,9 @@ function CoreGStreamerSimpleDocumentInit( id )
                          .getService(Components.interfaces.sbIPlaylistPlayback);
     gGStreamerSimpleCore.setId("GStreamerSimple1");
     gGStreamerSimpleCore.setVideoElementId(id);
-    gPPS.addCore(gGStreamerSimpleCore, true);
+    
     registeredCores.push(gGStreamerSimpleCore);
+    gPPS.addCore(gGStreamerSimpleCore, true);
   }
   catch ( err )
   {

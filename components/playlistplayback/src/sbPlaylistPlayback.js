@@ -1198,6 +1198,7 @@ PlaylistPlayback.prototype = {
   stop: function() {
     LOG("stop");
     var core = this.core;
+    
     if (!core)
       throw Components.results.NS_ERROR_NOT_INITIALIZED;
       
@@ -1205,7 +1206,12 @@ PlaylistPlayback.prototype = {
 //      return;
 
     // Ask the core very nicely to please stop.  Won't happen immediately.
-    core.stop();
+    try {
+      core.stop();
+    }
+    catch(e) {
+      Components.utils.reportError(e);
+    }
 
     // Wait a second or two to see if we see ourselves stop.
     var start = new Date().getTime();
