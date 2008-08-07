@@ -330,7 +330,7 @@
 <!ENTITY trackeditor.tab.summary.title            "Summary" >
 <!ENTITY trackeditor.tab.edit.title               "Properties" >
 <!ENTITY trackeditor.tab.lyrics.title             "Lyrics" >
-<!ENTITY trackeditor.artwork.label                "Artwork" >
+<!ENTITY trackeditor.artwork.label                "Album Art" >
 
 <!-- The following strings are from the old track editor, and can be remove one day -->
 <!ENTITY trackeditor.trackdata        "Track Data" >
