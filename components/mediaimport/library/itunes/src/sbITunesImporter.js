@@ -103,21 +103,22 @@ var CompConfig =
     cid: Components.ID("{D6B36046-899A-4C1C-8A97-67ADC6CB675F}"),
     contractID: "@songbirdnest.com/Songbird/ITunesImporter;1",
     ifList: [ Components.interfaces.nsISupports,
-              Components.interfaces.sbILibraryImporter ],
+              Components.interfaces.sbILibraryImporter,
+              Components.interfaces.sbIJobProgressListener ],
 
     iTunesGUIDProperty: "http://songbirdnest.com/data/1.0#iTunesGUID",
 
     dataFormatVersion: 2,
     prefPrefix: "library_import.itunes",
 
-    addTrackBatchSize: 100,
+    addTrackBatchSize: 300,
 
     sigHashType: "MD5",
     sigDBGUID: "songbird",
     sigDBTable: "itunes_signatures",
 
-    reqPeriod: 50,
-    reqPctCPU: 50
+    reqPeriod: 33,
+    reqPctCPU: 60
 };
 
 CompConfig.categoryList =
@@ -258,6 +259,9 @@ Component.prototype =
      * mDontImportPlaylistsPref     Don't import playlists preference.
      * mLibPrevPathDR               Saved path of previously imported library.
      * mVersionDR                   Importer data format version.
+     * mInLibraryBatch              True if beginLibraryBatch has been called
+     * mTimingService               sbITimingService, if enabled
+     * mTimingIdentifier            Identifier used with the timing service
      */
 
     mOSType: null,
@@ -287,6 +291,9 @@ Component.prototype =
     mDontImportPlaylistsPref: null,
     mLibPrevPathDR: null,
     mVersionDR: null,
+    mInLibraryBatch: false,
+    mTimingService: null,
+    mTimingIdentifier: null,
 
 
     /***************************************************************************
@@ -462,6 +469,12 @@ Component.prototype =
                             createInstance(Components.interfaces.sbIDataRemote);
         this.mVersionDR.init(this.prefPrefix + ".version", null);
 
+        /* Set up timing if enabled */
+        if ("@songbirdnest.com/Songbird/TimingService;1" in Cc) {
+          this.mTimingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
+                                  .getService(Ci.sbITimingService);
+        }
+
         /* Create the iTunes properties. */
         var propertyMgr =
             Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
@@ -479,15 +492,13 @@ Component.prototype =
         ITDB.activate();
 
         /* Create a handleImportReq function with an object closure. */
-        {
-            var                     _this = this;
+        var                     _this = this;
 
-            this.mHandleImportReqFunc = function(libFilePath,
-                                                 dbGUID,
-                                                 checkForChanges)
-            {
-                _this.handleImportReq(libFilePath, dbGUID, checkForChanges)
-            }
+        this.mHandleImportReqFunc = function(libFilePath,
+                                             dbGUID,
+                                             checkForChanges)
+        {
+            _this.handleImportReq(libFilePath, dbGUID, checkForChanges)
         }
     },
 
@@ -498,6 +509,8 @@ Component.prototype =
 
     finalize: function()
     {
+        /* Make extra sure we aren't still in a library batch */
+        this.endLibraryBatch();
     },
 
 
@@ -543,6 +556,12 @@ Component.prototype =
         ITStatus.reset();
         ITStatus.bringToFront();
 
+        /* Start timing, if enabled */
+        if (this.mTimingService) {
+            this.mTimingIdentifier = "ITunesImport-" + Date.now();
+            this.mTimingService.startPerfTimer(this.mTimingIdentifier); 
+        }
+
         /* Issue an import request. */
         req.func = this.mHandleImportReqFunc;
         req.args = [ aLibFilePath, aGUID, aCheckForChanges ];
@@ -550,6 +569,10 @@ Component.prototype =
 
         /* Set the importer job object request.*/
         this.mJob.setJobRequest(req);
+        
+        /* Monitor job completion to make sure we don't leave the library
+           in a batch state. */
+        this.mJob.addJobProgressListener(this);
 
         return this.mJob;
     },
@@ -560,11 +583,33 @@ Component.prototype =
      *
      * \param aListener Import event listener.
      */
-
+     
     setListener: function(aListener)
     {
         /* Set the listener. */
         this.mListener = aListener;
+    },
+    
+    
+    /*
+     * \brief Called by mJob, used to determine when the job completes.
+     *
+     * \param aJob an sbIJobProgress object
+     */
+     
+    onJobProgress: function(aJob) {
+        // All we care about is completion
+        if (aJob.status != Ci.sbIJobProgress.STATUS_RUNNING) {
+            this.mJob.removeJobProgressListener(this);
+            
+            /* Make extra sure we aren't still in a library batch */
+            this.endLibraryBatch();
+            
+            /* Stop timing */
+            if (this.mTimingService) {
+                this.mTimingService.stopPerfTimer(this.mTimingIdentifier); 
+            }
+        }
     },
 
 
@@ -582,6 +627,39 @@ Component.prototype =
      * Internal importer functions.
      *
      **************************************************************************/
+
+    /*
+     * beginLibraryBatch
+     * 
+     *   Attempt to force the library into an update batch
+     * in order to avoid the performance hit of completing many
+     * small batches.  This is dangerous, as failing to call
+     * endLibraryBatch will prevent the library from updating.
+     */
+    beginLibraryBatch: function() {
+        if (this.mInLibraryBatch) {
+            return;
+        }
+        if (this.mLibrary instanceof Ci.sbILocalDatabaseLibrary) {
+            this.mLibrary.forceBeginUpdateBatch();
+            this.mInLibraryBatch = true;
+        }
+    },
+
+    /*
+     * endLibraryBatch
+     * 
+     *   Attempt to undo a forced library batch if one is in progress
+     */
+    endLibraryBatch: function() {
+        if (!this.mInLibraryBatch) {
+            return;
+        }
+        if (this.mLibrary instanceof Ci.sbILocalDatabaseLibrary) {
+            this.mLibrary.forceEndUpdateBatch();
+            this.mInLibraryBatch = false;
+        }
+    },
 
     /*
      * handleImportReq
@@ -615,6 +693,9 @@ Component.prototype =
             ITStatus.reset();
             ITStatus.mStageText = "Library import error";
             ITStatus.mDone = true;
+
+            /* Make extra sure we aren't still in a library batch */
+            this.endLibraryBatch();
 
             /* Send an import error event. */
             this.mListener.onImportError();
@@ -701,6 +782,10 @@ Component.prototype =
             /* Initialize dirty playlist action. */
             this.mDirtyPlaylistAction = null;
 
+            /* We are about to do a lot of work, so 
+               force the library into a batch state */
+            this.beginLibraryBatch();
+            
             /* Transition to next state. */
             state++;
         }
@@ -748,6 +833,9 @@ Component.prototype =
         /* Complete request processing. */
         if (state == 7)
         {
+            /* End the library batch, if one is in progress */
+            this.endLibraryBatch();
+          
             var                         signature;
             var                         storedSignature;
             var                         foundChanges;
@@ -1812,7 +1900,7 @@ Component.prototype =
             addTrackMediaItemList = {};
             this.mLibrary.batchCreateMediaItemsAsync(createMediaItemsListener,
                                                      uriList,
-                                                     propertyArrayArray);
+                                                     propertyArrayArray, false);
             state++;
         }
 
@@ -2980,7 +3068,7 @@ ITXMLParser.prototype =
      *                              buffer.
      */
 
-    readSize: 10000,
+    readSize: 16384,
 
 
     /***************************************************************************
@@ -4168,6 +4256,7 @@ var ITStatus =
         {
             this.mJob.setProgress(this.mProgress);
             this.mJob.setTotal(100);
+
             if (this.mDone)
                 this.mJob.setStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
         }

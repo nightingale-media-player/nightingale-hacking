@@ -205,38 +205,68 @@ function resetMinMaxCallback()
 
 function SBPostOverlayLoad()
 {
-  // Run first-run default smart playlist creation
-  SBFirstRunSmartPlaylists();
-
-  // Run first-run directory scan.
-  // delay this until later, to give the session restore code time to load the
+  // Handle first run media import.
+  // Delay this until later, to give the session restore code time to load the
   // placeholder page if we are not importing anything
-  setTimeout(SBFirstRunScanDirectories, 0);
-
-  // Run first-run library import.
-  SBFirstRunImportLibrary();
+  setTimeout(SBDoFirstRun, 500);
+  
 }
 
-function SBFirstRunScanDirectories()
-{
+// Find media on first run
+function SBDoFirstRun() {
+
+  // Run first-run library import.
+  var job = SBFirstRunImportLibrary();
+
+  // Run first-run directory scan.
+  job = SBFirstRunScanDirectories() || job;
+  
   var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                  .getService(Ci.sbILibraryManager);
 
-  // Do nothing if not set to scan directories.
-  var firstRunDoScanDirectory =
-        Application.prefs.getValue("songbird.firstrun.do_scan_directory",
-                                   false);
-  var isFirstRun =
-        Application.prefs.getValue("songbird.firstrun.is_session", false);
-  if (!firstRunDoScanDirectory) {
-    if (isFirstRun) {
+  // If we are scanning directories or importing a library, 
+  // track the progress and show the library on completion.
+  // This is done to simplify the display, avoid some bugs,
+  // and improve performance.
+  if (job) {
+    job.addJobProgressListener(function firstRunLibraryHider(){
+      // only do anything on complete
+      if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
+        return;
+      }
+      // unhook the listener
+      job.removeJobProgressListener(arguments.callee);
+      // load the main library in the media tab / first tab
+      gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
+      
+      // Set up the smart playlists after import is complete
+      // (improves performance slightly)
+      SBFirstRunSmartPlaylists();
+    });
+  } else {
+    // Make sure we have the default smart playlists
+    SBFirstRunSmartPlaylists();
+    
+    var isFirstRun =
+          Application.prefs.getValue("songbird.firstrun.is_session", false);
+    if (isFirstRun) {    
       const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
       var currentURI = gBrowser.selectedBrowser.currentURI.spec;
       if (currentURI == placeholderURL || currentURI == "about:blank") {
         gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
       }
     }
-    return;
+  }
+}
+
+function SBFirstRunScanDirectories()
+{
+  // Do nothing if not set to scan directories.
+  var firstRunDoScanDirectory =
+        Application.prefs.getValue("songbird.firstrun.do_scan_directory",
+                                   false);
+  if (!firstRunDoScanDirectory) {
+    return null;
   }
 
   // Don't do a first-run directory scan again.  Flush to disk to be sure.
@@ -256,29 +286,16 @@ function SBFirstRunScanDirectories()
     firstRunScanDirectory = null;
   }
   
+  var job = null;
 
   // Start scanning.  Report error if scan directory does not exist.
   if (firstRunScanDirectory && firstRunScanDirectory.exists()) {
-    var scanJob = SBScanMedia(null, firstRunScanDirectory);
-    if (scanJob) {
-      scanJob.addJobProgressListener(function firstRunLibraryHider(){
-        // only do anything on complete
-        if (scanJob.status == Ci.sbIJobProgress.STATUS_RUNNING) {
-          return;
-        }
-        
-        // unhook the listener
-        scanJob.removeJobProgressListener(arguments.callee);
-        // load the main library in the media tab / first tab
-        gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
-      });
-    }
+    job = SBScanMedia(null, firstRunScanDirectory);
   } else {
     Cu.reportError("Scan directory does not exist: \"" +
                    firstRunScanDirectoryPath + "\"\n");
-    // load the main library in the media tab / first tab
-    gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
   }
+  return job;
 }
 
 function SBFirstRunImportLibrary()
@@ -297,7 +314,7 @@ function SBFirstRunImportLibrary()
   prefService.savePrefFile(null);
 
   // Import library.
-  SBLibraryOpen(null, true);
+  return SBLibraryOpen(null, true);
 }
 
 function SBFirstRunSmartPlaylists() {

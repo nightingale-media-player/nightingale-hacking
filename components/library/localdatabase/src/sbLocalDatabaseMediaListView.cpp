@@ -1352,7 +1352,7 @@ sbLocalDatabaseMediaListView::OnBeforeItemRemoved(sbIMediaList* aMediaList,
 
   // Don't care
 
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 
@@ -1494,7 +1494,7 @@ sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
 {
   mBatchHelper.End();
 
-  if (mInvalidatePending) {
+  if (mInvalidatePending && !mBatchHelper.IsActive()) {
     // Invalidate the view array
     nsresult rv = Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);

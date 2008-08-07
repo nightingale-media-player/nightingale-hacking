@@ -1307,12 +1307,14 @@ sbLocalDatabaseCascadeFilterSet::OnBatchEnd(sbIMediaList* aMediaList)
 {
   mBatchHelper.End();
 
-  // Do all pending invalidations
-  for (PRUint32 i = 0; i < mFilters.Length(); i++) {
-    sbFilterSpec& fs = mFilters[i];
-    if (fs.invalidationPending) {
-      nsresult rv = InvalidateFilter(fs);
-      NS_ENSURE_SUCCESS(rv, rv);
+  if (!mBatchHelper.IsActive()) {
+    // Do all pending invalidations
+    for (PRUint32 i = 0; i < mFilters.Length(); i++) {
+      sbFilterSpec& fs = mFilters[i];
+      if (fs.invalidationPending) {
+        nsresult rv = InvalidateFilter(fs);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 

@@ -93,8 +93,8 @@ interface sbILocalDatabaseLibrary : nsISupports
    * These aren't meant to be called directly. Use sbAutoBatchHelper
    * to avoid the risk of leaving a batch in progress
    */
-  [noscript] void ForceBeginUpdateBatch();
-  [noscript] void ForceEndUpdateBatch();
+  void forceBeginUpdateBatch();
+  void forceEndUpdateBatch();
 
   /**
    * Oh My.  We need this here to avoid a static cast in

@@ -340,7 +340,7 @@ try
             .getService(Ci.sbILibraryImporterManager);
     var libraryImporter = libraryImporterManager.defaultLibraryImporter;
     if (!libraryImporter)
-      return;
+      return null;
 
     // Present the import library dialog.
     var doImport;
@@ -359,13 +359,15 @@ try
     }
 
     // Import the library as user directs.
+    var job = null;
     if (doImport) {
       var libraryFilePath = Application.prefs.getValue
                               ("songbird.library_importer.library_file_path",
                                "");
-      var job = libraryImporter.import(libraryFilePath, "songbird", false);
+      job = libraryImporter.import(libraryFilePath, "songbird", false);
       SBJobUtils.showProgressDialog(job, window);
     }
+    return job;
   }
 
   function log(str)

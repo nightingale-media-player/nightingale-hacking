@@ -627,9 +627,12 @@ sbLibraryImporterManager.prototype = {
     var autoImport =
           Application.prefs.getValue("songbird.library_importer.auto_import",
                                      false);
+    var firstRunDoImportLibrary =
+          Application.prefs.getValue("songbird.firstrun.do_import_library",
+                                     false);
 
-    // Do nothing if not auto-importing.
-    if (!autoImport || !this.defaultLibraryImporter)
+    // Do nothing if not auto-importing, or if this is first run.
+    if (!autoImport || !this.defaultLibraryImporter || firstRunDoImportLibrary)
       return;
 
     // Wait until the main Songbird window is ready before initiating
