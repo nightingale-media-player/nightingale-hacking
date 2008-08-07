@@ -2,6 +2,10 @@
 about.css
 */
 
+dialog#about .dialog-content-box {
+  padding:0px;
+}
+
 #aboutPageContainer {
   position: relative;
   min-width: 330px;
@@ -153,7 +157,7 @@ panel[type="autocomplete"] > tree > treecols > hbox
   border:none;
 }
 
-.autocomplete-tree .tree-scrollable-columns {
+.autocomplete-tree treecols {
   border:none;
 }
 

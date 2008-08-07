@@ -91,3 +91,10 @@
   margin:0;
   font-size:11px;
 }
+#paneMain description,
+#paneContent description,
+#paneAdvanced description,
+#paneSecurity description {
+
+  font-size:11px !important;
+}

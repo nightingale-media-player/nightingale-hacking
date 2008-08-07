@@ -71,65 +71,7 @@ tree,
 }
 
 
-/* ::::: tree rows ::::: */
 
-treechildren::-moz-tree-row {
-}
-
-tree:not([hidecolumnpicker="true"]) treechildren::-moz-tree-row(odd) {
-}
-
-treechildren::-moz-tree-row(selected),
-treechildren::-moz-tree-row(odd, selected),
-tree:not([hidecolumnpicker="true"]) treechildren::-moz-tree-row(odd, selected) {
-}
-
-treechildren::-moz-tree-row(selected, focus), 
-treechildren::-moz-tree-row(odd, selected, focus),
-tree:not([hidecolumnpicker="true"]) treechildren::-moz-tree-row(odd, selected, focus) {
-}
-
-tree[seltype="cell"] > treechildren::-moz-tree-row,
-tree[seltype="text"] > treechildren::-moz-tree-row {
-}
-
-/* ::::: tree cells ::::: */
-
-treechildren::-moz-tree-cell {
-}
-
-tree[seltype="cell"] > treechildren::-moz-tree-cell-text,
-tree[seltype="text"] > treechildren::-moz-tree-cell-text,
-treechildren::-moz-tree-cell-text {
-}
-
-tree[seltype="cell"] > treechildren::-moz-tree-cell {
-}
-
-tree[seltype="text"] > treechildren::-moz-tree-cell-text {
-}
-
-treechildren::-moz-tree-cell-text(selected) {
-}
-
-tree[seltype="cell"] > treechildren::-moz-tree-cell(active, selected) {
-}
-tree[seltype="cell"] > treechildren::-moz-tree-cell-text(active, selected) {
-}
-
-tree[seltype="text"] > treechildren::-moz-tree-cell-text(active, selected) {
-}
-
-treechildren::-moz-tree-cell-text(selected, focus) {
-}
-
-tree[seltype="cell"] > treechildren::-moz-tree-cell(active, selected, focus) {
-}
-tree[seltype="cell"] > treechildren::-moz-tree-cell-text(active, selected, focus) {
-}
-
-tree[seltype="text"] > treechildren::-moz-tree-cell-text(active, selected, focus) {
-}
 
 /* ::::: lines connecting cells ::::: */
 
@@ -149,51 +91,7 @@ treechildren::-moz-tree-separator {
 }
 
 
-/* ::::: drop feedback ::::: */
-/*
-tree[seltype="cell"] > treechildren::-moz-tree-cell(primary, dropOn),
-tree[seltype="text"] > treechildren::-moz-tree-cell(primary, dropOn),
-treechildren::-moz-tree-cell(primary, dropOn) {
-  background-color: #A1A1A1 !important;
-  color: #FFF !important;
-  background-image: none;
-}
-tree[seltype="cell"] > treechildren::-moz-tree-cell-text(primary, dropOn),
-tree[seltype="text"] > treechildren::-moz-tree-cell-text(primary, dropOn),
-treechildren::-moz-tree-cell-text(primary, dropOn) {
-  color: #FFF !important;
-}
 
-treechildren::-moz-tree-drop-feedback {
-  background-color: #A1A1A1;
-  width: 50px;
-  height: 2px;
-  margin-left: 5px;
-}
-*/
-/* ::::: tree progress checkboxes ::::: */
-
-
-/* Commented out until we have real images...
-treechildren::-moz-tree-checkbox
-{
-  list-style-image: url(chrome://global/skin/tree/checkbox-unchecked.png);
-}
-*/
-
-/* Commented out until we have real images...
-treechildren::-moz-tree-checkbox(checked)
-{
-  list-style-image: url(chrome://global/skin/tree/checkbox-checked.png);
-}
-*/
-
-/* Commented out until we have real images...
-treechildren::-moz-tree-checkbox(disabled)
-{
-  list-style-image: url(chrome://global/skin/tree/checkbox-disabled.png);
-}
-*/
 
 /* ::::: tree progress meter ::::: */
 
@@ -240,23 +138,6 @@ treecol[hideheader="true"] {
 tree[enableColumnDrag="true"] > treecols > treecol:hover:active {
 }
 
-/* ::::: column drag and drop styles ::::: */
-
-treecol[dragging="true"] {
-}
-
-treecol[after="true"] {
-}
-
-treecol[insertbefore="true"] {
-}
-
-treechildren::-moz-tree-column(insertbefore) {
-}
-
-treechildren::-moz-tree-column(insertafter) {
-}
-
 /* ::::: sort direction indicator :::::  */
 
 .treecol-sortdirection {
@@ -272,12 +153,7 @@ treechildren::-moz-tree-column(insertafter) {
   list-style-image: url("chrome://global/skin/tree/sort-dsc.gif");
 }
 */
-/* ::::: column picker :::::  */
-/*
-.tree-columnpicker-icon {
-  list-style-image: url("chrome://global/skin/tree/columnpicker.gif");
-}
-*/
+
 /* ::::: twisty :::::  */
 
 treechildren::-moz-tree-twisty {
@@ -340,23 +216,7 @@ treechildren::-moz-tree-cell-text(Name, separator, selected, focus) {
   color: #FFF;
 }
 
-/* ::::: alternating background ::::: */
 
-treechildren[alternatingbackground="true"]::-moz-tree-row(odd) {
-}
-
-treechildren[alternatingbackground="true"]::-moz-tree-row(odd, selected) {
-}
-
-treechildren[alternatingbackground="true"]::-moz-tree-cell-text(odd, selected) {
-}
-
-treechildren[alternatingbackground="true"]::-moz-tree-row(odd, selected, focus) {
-}
-
-treechildren[alternatingbackground="true"]::-moz-tree-cell-text(odd, selected, focus) {
-
-}
 
 /* ::::: editable tree ::::: */
 

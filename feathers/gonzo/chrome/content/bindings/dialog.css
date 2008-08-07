@@ -48,12 +48,6 @@ dialog:root #sb-sys-outer-frame-children > stack > vbox {
   padding: 0;
   margin: 0;
 }
-dialog[platform="Darwin"] #sb-sys-title-title {
-  font-family: Lucida Grande; 
-  font-size: 13px;
-  padding:0;
-  margin:0;
-}
 
 #dialog-titlebar {
   min-height:22px !important;

@@ -38,36 +38,6 @@ Imported by bindings.css or directly into feathers.
 
 
 
-.sb-playlist-tree > treechildren::-moz-tree-cell
-{
-  margin: 0px;
-  padding:0px 4px;
-}
-
-
-.sb-playlist-tree > treechildren::-moz-tree-cell-text
-{
-}
-
-.sb-playlist-tree > treechildren::-moz-tree-row( selected, focus )
-{
-  border: none !important;
-}
-
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( selected )
-{
-  font-weight: normal;
-}
-  /*
-.sb-playlist-tree > treechildren::-moz-tree-drop-feedback
-{
-  background-image: url(chrome://songbird/skin/tmp/sample-album-art.png);
-  margin: 0;
- the width must use absolute number of units here, no percentages 
-  width: 63360in;
-}
-*/
-
 treechildren::-moz-tree-drop-feedback
 {
   background-image: url('chrome://songbird/skin/base-elements/bg-tree-drop-feedback.png') !important;
@@ -82,19 +52,12 @@ Tree Progress Meter
 *******************************************************************************
 */
 
-.sb-playlist-tree > treechildren::-moz-tree-progressmeter
-{
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter {
 
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected, focus )
-{
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected, focus ) {
 
-}
-
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( rating ),
-.sb-filterlist-tree > treechildren::-moz-tree-cell-text( rating ) {
-  color: transparent !important;
 }
 
 /** Show rating states by repositioning a large background image.
@@ -145,53 +108,45 @@ In-cell Buttons
 */
 
 /* button default state and baseline */
-.sb-playlist-tree > treechildren::-moz-tree-cell( button )
-{
-       background-image: url(chrome://songbird/skin/playlist/button-left.png);
-       background-position:0px 0px;
-       background-repeat:no-repeat;
-       padding:0px !important;
-       margin:0px !important;
-
+.sb-playlist-tree > treechildren::-moz-tree-cell( button ) {
+  background-image: url(chrome://songbird/skin/playlist/button-left.png);
+  background-position:0px 0px;
+  background-repeat:no-repeat;
+  padding:0px !important;
+  margin:0px !important;
 }
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( button )
-{
-      background-image: url(chrome://songbird/skin/playlist/button-right.png);
-       background-position:100% -2px;
-       background-repeat:no-repeat;
-       margin:0 0 0 7px !important;
-       padding:1px 8px 2px 0 !important;
-       font-size:9px;
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button ) {
+  background-image: url(chrome://songbird/skin/playlist/button-right.png);
+  background-position:100% -2px;
+  background-repeat:no-repeat;
+  margin:0 0 0 7px !important;
+  padding:1px 8px 2px 0 !important;
+  font-size:9px;
+  color:rgb(40,40,40) !important;
 }
 
 /* button hover state */
-.sb-playlist-tree > treechildren::-moz-tree-cell( button cell-hover )
-{
+.sb-playlist-tree > treechildren::-moz-tree-cell( button cell-hover ) {
        background-position:0px -18px !important;
 }
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-hover )
-{
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-hover ) {
        background-position:100% -20px;
 }
 
 /* button active state */
-.sb-playlist-tree > treechildren::-moz-tree-cell( button cell-active )
-{
+.sb-playlist-tree > treechildren::-moz-tree-cell( button cell-active ) {
        background-position:0px -36px !important;
 }
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-active )
-{
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-active ) {
        background-position:100% -38px;
        padding:1px 8px 2px 0 !important;
 }
 
 /* button disabled state */
-.sb-playlist-tree > treechildren::-moz-tree-cell( button disabled )
-{
+.sb-playlist-tree > treechildren::-moz-tree-cell( button disabled ) {
        background-position:0px -54px;
 }
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( button disabled )
-{
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button disabled ) {
        background-position:100% -56px;
 }
 
@@ -203,23 +158,18 @@ In-cell Clickable Images
 */
 
 /* clickable image */
-.sb-playlist-tree > treechildren::-moz-tree-cell( image )
-{
-  
-       padding:0px ! important;
-       margin:0px ! important;
+.sb-playlist-tree > treechildren::-moz-tree-cell( image ) {
+  padding:0px ! important;
+  margin:0px ! important;
 }
-.sb-playlist-tree > treechildren::-moz-tree-image( image )
-{
-/*      list-style-image: url("chrome://songbird/skin/base-elements/icon-default-favicon.png");*/
-       padding:1px 1px 1px 1px ! important;
-       margin:0 ! important;
-       /* ALWAYS resize the image to 16px high because max-height wont work */
-       height:16px;
+.sb-playlist-tree > treechildren::-moz-tree-image( image ) {
+  padding:1px 1px 1px 1px ! important;
+  margin:0 ! important;
+  height:16px;
 }
 .sb-playlist-tree > treechildren::-moz-tree-image( image cell-active )
 {
-       padding:2px 1px 0 1px ! important;
+  padding:2px 1px 0 1px ! important;
 }
 
 

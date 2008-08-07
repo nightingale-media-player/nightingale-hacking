@@ -116,10 +116,6 @@ margin:0px;
 }
 
 
-window[platform="Darwin"] popup,
-window[platform="Darwin"] menupopup {
-  border:0px solid transparent !important;
-}
 
 
 /* ::::: menu/menuitems in popups ::::: */

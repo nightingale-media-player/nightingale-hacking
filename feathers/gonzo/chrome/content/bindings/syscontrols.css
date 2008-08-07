@@ -380,9 +380,6 @@ border-top:1px solid gray;
 
 /** Mac bottom right resizer **/
 
-window[platform=Darwin] .sb-sys-outer-frame-resizer {
-  display:none;
-}
 .sb-sys-outer-frame-resizer-image {
   list-style-image: url(chrome://songbird/skin/window/button-resizer.png);
   min-width:12px;

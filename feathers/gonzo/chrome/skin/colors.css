@@ -63,25 +63,10 @@ page {
 }
 
 
-window[platform=Darwin] {
-  border:none !important;
-}
-window:not([platform=Darwin]) menupopup,
-window:not([platform=Darwin]) popup {
-  border:1px solid gray;
-}
-
 
 #sb-sys-title-title {
   padding:1px 5px 2px 5px !important;
   font-weight:bold;
-}
-window[platform=Darwin] #sb-sys-title-title,
-dialog[platform=Darwin] #sb-sys-title-title {
-  font-family: Lucida Grande !important;
-  font-size: 13px !important;
-  padding-top:3px !important;
-  font-weight:normal !important;
 }
 
 
@@ -121,7 +106,7 @@ statusbar {
   background-position:left top;
 }
 
-#servicepane .tree-scrollable-columns {
+#servicepane treecols {
   border:none;
 }
 
@@ -156,6 +141,11 @@ statusbar {
   list-style-image:none;
   width:0px;
   height:0px;
+}
+.servicepane-tree > treechildren::-moz-tree-cell-text,
+.servicepane-tree > treechildren::-moz-tree-cell-text( selected ),
+.servicepane-tree > treechildren::-moz-tree-cell-text( selected focus ) {
+  color:rgb(40,40,40) !important;
 }
 .servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-bookmarks ),
 .servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-playlists ),
@@ -257,30 +247,36 @@ treechildren::-moz-tree-cell( insertbefore ) {
 }
 
 
-listitem,
+
 treechildren::-moz-tree-row( odd ) {
-  background-color: rgb(255,255,255);
+  background-color: rgb(247,247,247);
 }
+listitem,
 treechildren::-moz-tree-row( even ) {
-  background-color: rgb(250,250,250);
-}
-
-
-treechildren::-moz-tree-row( selected, odd ) {
-  background-color: rgb(235,235,235);
-}
-treechildren::-moz-tree-row( selected, even ) {
-  background-color: rgb(230,230,230);
+  background-color: rgb(255,255,255);
 }
 
 treechildren::-moz-tree-cell-text( selected ) {
   color:rgb(0,0,0);
 }
+treechildren::-moz-tree-row( selected, odd ) {
+  background-color: rgb(217,217,217);
+}
+treechildren::-moz-tree-row( selected, even ) {
+  background-color: rgb(225,225,225);
+}
+
+treechildren::-moz-tree-cell-text( selected, focus ) {
+  color:rgb(255,255,255);
+  color:rgb(0,0,0);
+}
 treechildren::-moz-tree-row( selected, focus, odd ) {
   background-color: rgb(186,218,255);
+/*  background-color:rgb(110,130,160);*/
 }
 treechildren::-moz-tree-row( selected, focus, even ) {
-  background-color: rgb(181,213,255);
+  background-color: rgb(176,208,245);
+/*  background-color:rgb(100,120,150);*/
 }
 
 
@@ -300,17 +296,16 @@ treechildren::-moz-tree-progressmeter {
 
 listheader,
 treecol,
-treecolpicker,
-.tree-scrollable-columns {
+treecols,
+treecolpicker {
   background-image: url('chrome://songbird/skin/base-elements/bg-table-header.png');
   background-position:center 0px;
   background-repeat:repeat-x;
 }
 
 
-.tree-scrollable-columns,
-treecolpicker,
-listheader {
+listheader,
+treecols {
   border-bottom:1px solid rgb(161,161,161);
 }
 
@@ -327,11 +322,11 @@ treecol[dragging="true"] {
 }
 treecol[dragging="true"] > label,
 treecol[dragging="true"]:hover:active > label {
-  color:gray;
+  color: rgb(101,101,101);
 }
 
 treecol[sortDirection] {
-  background-position:center -75px;
+  background-position:center -75px !important;
 }
 treecol[sortDirection="ascending"] > .treecol-sortdirection,
 .listheader-sortdirection[sortDirection="ascending"] {
@@ -342,6 +337,8 @@ treecol[sortDirection="descending"] > .treecol-sortdirection,
   list-style-image:  url("chrome://songbird/skin/base-elements/icon-sort-descending.png") !important;
 }
 
+/*
+
 .sb-filterlist-tree treecol[sortDirection] {
   background-position:center 0px;
 }
@@ -351,7 +348,7 @@ treecol[sortDirection="descending"] > .treecol-sortdirection,
 .sb-filterlist-tree treecol[sortDirection]:active {
   background-position:center -30px;
 }
-
+*/
 
 
 
@@ -364,13 +361,13 @@ treecolpicker > .tree-columnpicker-icon {
   padding:0px 1px 1px 1px;
 }
 
+
 listhead,
 treecol,
 treecolpicker {
-  min-height:16px !important;
-  max-height:16px !important;
+  min-height:15px !important;
+  max-height:15px !important;
 }
-
 
 listheader > label,
 treecol > label {
@@ -666,7 +663,7 @@ toolbarbutton:focus,
 checkbox:focus > .checkbox-check,
 radio[focused="true"] > .radio-check,
 menulist:focus {
-  outline:2px solid rgba(186,218,255,1); !important;
+  outline:2px solid rgba(40,40,40,0.33); !important;
   outline-offset:0px !important;
   -moz-outline-radius:5px !important;
 }
@@ -682,7 +679,7 @@ button.button-menubutton-button:focus {
 button,
 toolbarbutton,
 .clickhold-button {
-  border:1px solid rgb(80,80,80);
+  border:1px solid rgb(120,120,120);
   
   -moz-border-radius:3px;
   background-color:rgb(180,180,180);
@@ -1212,24 +1209,9 @@ DIALOGS
   so this border is considered undesirable.
   see: bug 6399
  */
-#mainplayer:not([platform=Darwin]),
-dialog:not([platform=Darwin]) {
-}
 
 
-dialog[platform] {
-  border:3px solid black;
-  border-top:1px solid gray;
-  -moz-border-right-colors:gray transparent gray;
-  -moz-border-bottom-colors:gray transparent gray;
-  -moz-border-left-colors:gray transparent gray;
-/*  background-image: url(chrome://songbird/skin/window/bg-title-bar-resizer.png);*/
-  background-repeat:repeat-x;
-  background-position:center 1px;
-}
-dialog[platform='Darwin'] {
-  border:none !important;
-}
+
 
 /*prefwindow*/
 .windowDialog
@@ -2077,24 +2059,8 @@ richlistitem[selected="true"]:not([opType]) .descriptionCrop {
   color: blue;
   text-align: center;
 }
-/*
-#themePreviewArea {
-  -moz-appearance: listbox;
-  border: 2px solid;
-  -moz-border-top-colors: ThreeDShadow ThreeDDarkShadow;
-  -moz-border-right-colors: ThreeDHighlight ThreeDLightShadow;
-  -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
-  -moz-border-left-colors: ThreeDShadow ThreeDDarkShadow;
-  background-color: -moz-Field;
-  color: -moz-FieldText;
-  overflow: auto;
-  width: 0px;
-}
 
-#themeSplitter {
- border-width: 0;
-}
-*/
+
 .addonIcon {
   width: 32px;
   max-width: 32px;
@@ -2405,13 +2371,6 @@ richlistitem[loading="true"] .updateBadge {
   min-width:5em;
 }
 
-#paneMain description,
-#paneContent description,
-#paneAdvanced description,
-#paneSecurity description {
-
-  font-size:11px !important;
-}
 
 wizard {
   background-color: rgb(245,245,245) !important;
@@ -2445,9 +2404,7 @@ wizard {
   padding-right:2px;
 }
 
-textbox[multiline="true"] > .textbox-input-box {
-  -moz-box-align:stretch;
-}
+
 
 
 /** TODO mv to correct file in /dialogs/ **/
@@ -2465,6 +2422,5 @@ textbox[multiline="true"] > .textbox-input-box {
 
 
 #sb-playlist-filters {
-  height:200px;
   min-height:60px;
 }

@@ -97,9 +97,3 @@ window#mainplayer
 #nav-bar:not([isAtMediaPage="true"]) > *[hideAtWebPage] {
   visibility: collapse;
 }
-
-
-
-#sb-playlist-filters {
-  height:200px;
-}

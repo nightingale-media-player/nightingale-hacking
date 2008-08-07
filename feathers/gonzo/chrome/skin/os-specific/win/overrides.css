@@ -36,10 +36,20 @@ This css file provides additional rules that are only loaded on Windows.
 *******************************************************************************
 */
 
-/*
-window,
-dialog
-{
-  background-color: green !important;
+popup,
+menupopup {
+  border:1px solid gray;
 }
-*/
+
+dialog,
+wizard {
+  border:3px solid black;
+  border-top:1px solid gray;
+  -moz-border-right-colors:gray rgb(161,161,161) gray;
+  -moz-border-bottom-colors:gray rgb(161,161,161) gray;
+  -moz-border-left-colors:gray rgb(161,161,161) gray;
+}
+
+.faceplate-text {
+  fonzt-size:11px;
+}

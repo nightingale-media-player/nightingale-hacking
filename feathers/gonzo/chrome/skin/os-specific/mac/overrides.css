@@ -36,10 +36,23 @@ This css file provides additional rules that are only loaded on Mac OSX.
 *******************************************************************************
 */
 
-/*
-#mainplayer,
-dialog
-{
-  background-color: red !important;
+window[windowtype*="Songbird"] {
+  border:none !important;
 }
-*/
+wizard,
+dialog {
+  border:none !important;
+}
+
+#sb-sys-title-title {
+  font-family: Lucida Grande !important;
+  font-size: 13px;
+  margin:0;
+  padding:3px 0px 0px 0px !important;
+  font-weight:normal;
+}
+
+.sb-sys-outer-frame-resizer {
+  display:none;
+}
+
