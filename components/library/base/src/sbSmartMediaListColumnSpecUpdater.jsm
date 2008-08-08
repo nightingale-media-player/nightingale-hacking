@@ -103,12 +103,19 @@ var SmartMediaListColumnSpecUpdater = {
     // make the new default column specs based on the library specs
     var columnMap = this._getColumnSpec(LibraryUtils.mainLibrary);
 
+    var currentUserSpec = storageList.getProperty(SBProperties.columnSpec);
+    var currentDefaultSpec = storageList.getProperty(SBProperties.defaultColumnSpec);
+    
+    // Has the user deviated from the default?  
+    // If so, we shouldn't undo their changes.
+    var userModifiedColumns = currentUserSpec != currentDefaultSpec;
+
     // playlists have an ordinal column by default, make sure it's in both
     // default and user spec
 
     var ordinal = {
       property: SBProperties.ordinal,
-      sort: "ascending",
+      sort: "a",
     }
     if (!this._getColumn(columnMap, SBProperties.ordinal)) {
       columnMap.unshift(ordinal);
@@ -126,7 +133,7 @@ var SmartMediaListColumnSpecUpdater = {
     // the other columns to make room for it, and add it
     var newSort = {
       property: sort, 
-      sort: sortDirection, 
+      sort: null, 
       width: columnWidth
     };
     
@@ -152,7 +159,11 @@ var SmartMediaListColumnSpecUpdater = {
       }
     }
     resetObsoleteSorts(defaultCols);
-    resetObsoleteSorts(cols);
+    if (!userModifiedColumns) {
+      // Only reset the current sort if the user hasn't 
+      // manually set it
+      resetObsoleteSorts(cols);
+    }
 
     // rebuild the column spec strings
     function makeSpecString(aArray) {
@@ -166,6 +177,12 @@ var SmartMediaListColumnSpecUpdater = {
           spec += col.width;
         }
         if (col.sort) {
+           if (col.sort == "ascending") {
+             col.sort = "a";
+           }
+           else if (col.sort == "descending") {
+             col.sort = "d";
+           }
           spec += " ";
           spec += col.sort;
         }
@@ -174,7 +191,7 @@ var SmartMediaListColumnSpecUpdater = {
     }
     var defaultSpec = makeSpecString(defaultCols);
     var userSpec = makeSpecString(cols);
-    
+
     // set the new column spec to the storage list.
     storageList.setProperty(SBProperties.defaultColumnSpec, defaultSpec);
     storageList.setProperty(SBProperties.columnSpec, userSpec);

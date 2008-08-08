@@ -777,9 +777,12 @@
     // changes, and the user will be confused.
     this._setColumnSpecDirty();
     
-    // If this is a playlist inited from defaults, we may need
+    // If this is a playlist inited from library defaults, we may need
     // to tweak the column spec a little
-    if ( !(medialist instanceof Components.interfaces.sbILibrary)) {
+    
+    if ( !(medialist instanceof Components.interfaces.sbILibrary) && 
+         (this._columnSpecOrigin != parser.ORIGIN_MEDIALISTDEFAULT)) 
+    {
 
       // All playlists should have an ordinal column
       var hasOrdinal = columnMap.some(function(columnInfo) {
