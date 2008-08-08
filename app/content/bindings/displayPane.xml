@@ -87,7 +87,7 @@
                                   .createInstance(Components.interfaces.sbIDataRemote);
         this._lastHiddenState = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
                                   .createInstance(Components.interfaces.sbIDataRemote);
-                                  
+        
       	// if the stateid attribute doesn't exist, fall back to id.
       	// (and if that fails too, use contentGroup)
       	var stateid = this.getAttribute("stateid") || this.id || this.contentGroup;
@@ -111,10 +111,15 @@
             if (paneinfo.contentUrl == "about:blank") {
               this._hidden = true;
             }
-            setTimeout(function(self){
-              // need to give the <browser> time to initialize
+            
+            // Load the URL once the browser has had time to initialize.
+            var self = this;
+            var browserElement = this._getElem("content");
+            browserElement.addEventListener("load", function paneInitListener() {
+              browserElement.removeEventListener("load", paneInitListener, true);
               self._internalLoadURL(paneinfo);
-            }, 0, this);
+            }, true);
+            
             paneLoaded = true;
           }
         } else {
