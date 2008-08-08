@@ -1595,6 +1595,8 @@ PlaylistPlayback.prototype = {
   
   _onPlayerLoopStop: function() {
     if (this._incPlayCountItem) {
+      if (this._historyPlayStartTime == 0)
+        this._historyPlayStartTime = new Date().getTime();
       // increment playCount and record lastPlayTime
       var count = this._incPlayCountItem.getProperty(SBProperties.playCount);
       this._incPlayCountItem.setProperties(
@@ -1915,7 +1917,8 @@ PlaylistPlayback.prototype = {
       // keep track of number of times through the playing loop
       this._beenPlayingCount++;
       
-      this._historyPlayStartTime = this._playStartTime;
+      if (this._historyPlayStartTime == 0)
+        this._historyPlayStartTime = new Date().getTime();
     }
     // If we haven't seen ourselves playing, yet, we couldn't have stopped.
     else if ( (this._seenPlaying.boolValue || ( len < 0.0 )) &&
