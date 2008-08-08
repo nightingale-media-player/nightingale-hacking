@@ -158,7 +158,9 @@
                 id="unitlabel"
                 class="smart-condition-label smart_condition_singleunit"
                 hidden="true"
-                drawer-prop-map-set="value=unitlocale,hidden=!singleunit"/>
+                drawer-prop-map-set="value=unitlocale,hidden=!singleunit"
+                drawer-prop-map="useunits=useunits" 
+                drawer-attr-map="unit=unit"/>
           </xul:hbox>
           <xul:button label="-" 
               class="smart-condition-minus" 
@@ -236,7 +238,10 @@
           
           // Set the drawer item state, objects are showing/hiding automatically
           this.drawer.setState(val);
-
+          
+          // Update all autocomplete boxes
+          this._updateAllAutocompletes();
+          
           // Record the unit for the metadata in each condition item
           this._setMetadataMaps(val);
 
@@ -665,6 +670,10 @@
               this.drawer.getItemElementByAttribute(condition, 
                                                     "id", 
                                                     "unitspopup");
+            unitstxt = 
+              this.drawer.getItemElementByAttribute(condition, 
+                                                    "id", 
+                                                    "unitlabel");
           var property = 
             this.drawer.getItemElementByAttribute(condition, 
                                                   "id", 
@@ -675,9 +684,11 @@
           if (!unit || unit == "") {
             // no default ? use the first available unit
             unitspopup.selectedIndex = 0;
+            unitstxt.setAttribute("unit", unitspopup.value);
           } else {
             // select appropriate unit
             unitspopup.value = unit;
+            unitstxt.setAttribute("unit", unit);
           }
         </body>
       </method>
@@ -707,6 +718,22 @@
             }
             // Default unit does not apply
             return null;
+          ]]>
+        </body>
+      </method>
+
+      <method name="_updateAllAutocompletes">
+        <body>
+          <![CDATA[
+            var items = this.drawer.items;
+            for (var i=0;i<items.length;i++) {
+              var condition = items[i];
+              var propertypopup = 
+                this.drawer.getItemElementByAttribute(condition, 
+                                                      "id", 
+                                                      "propertypopup");
+              this._setAutoComplete(condition, propertypopup.value);
+            }
           ]]>
         </body>
       </method>
@@ -872,6 +899,8 @@
                                                   "id", 
                                                   "unitspopup");
           
+          // setAutoComplete and prefill only after the rest of the ui has been updated
+          this._setAutoComplete(condition, propertypopup.value);
           this._doPrefill(condition, 
                           propertypopup, 
                           propertypopup.value, 
