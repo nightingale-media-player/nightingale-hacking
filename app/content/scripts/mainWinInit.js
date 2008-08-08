@@ -453,4 +453,5 @@ function addSmartPlaylist(aItem) {
     }
   }
   SmartMediaListColumnSpecUpdater.update(mediaList);
+  mediaList.rebuild();
 }
