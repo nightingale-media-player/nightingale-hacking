@@ -44,6 +44,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/moz/prompter/public \
+               $(DEPTH)/components/property/public \
                $(topsrcdir)/components/devices/base/src \
                $(topsrcdir)/components/devices/device/src \
                $(MOZSDK_INCLUDE_DIR) \

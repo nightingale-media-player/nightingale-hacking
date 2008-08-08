@@ -2530,10 +2530,12 @@ sbBaseDevice::SyncGetSyncItemSizes
     if (aSyncItemSizeMap.Get(mediaItem, nsnull))
       continue;
 
-    // Get the item size adding in the per track overhead.
+    // Get the item size adding in the per track overhead.  Assume a length of
+    // 0 on error.
     PRInt64 contentLength;
     rv = sbLibraryUtils::GetContentLength(mediaItem, &contentLength);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_FAILED(rv))
+      contentLength = 0;
     contentLength += mPerTrackOverhead;
 
     // Add item.

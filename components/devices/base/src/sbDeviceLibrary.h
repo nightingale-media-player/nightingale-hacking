@@ -37,6 +37,7 @@
 #include <sbILibrary.h>
 #include <sbIMediaListListener.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
+#include <sbIPropertyArray.h>
 
 #include <pref/nsIPrefBranch.h>
 #include <prlock.h>
@@ -209,6 +210,11 @@ private:
    * \brief the main library updating listener
    */
   nsRefPtr<sbLibraryUpdateListener> mMainLibraryListener;
+
+  /**
+   * \brief the main library updating listener property filter
+   */
+  nsCOMPtr<sbIMutablePropertyArray> mMainLibraryListenerFilter;
 
   /**
    * \brief A list of listeners.

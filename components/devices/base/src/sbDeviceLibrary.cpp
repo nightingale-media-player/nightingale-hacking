@@ -70,9 +70,51 @@
 #include <sbLibraryUtils.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
+#include <sbPropertiesCID.h>
 #include <sbProxyUtils.h>
 #include <sbStandardProperties.h>
 
+
+/* List of properties for which to sync updates. */
+const static char* sbDeviceLibrarySyncUpdatePropertyTable[] =
+{
+  SB_PROPERTY_CONTENTMIMETYPE,
+  SB_PROPERTY_CONTENTLENGTH,
+  SB_PROPERTY_TRACKNAME,
+  SB_PROPERTY_ALBUMNAME,
+  SB_PROPERTY_ARTISTNAME,
+  SB_PROPERTY_DURATION,
+  SB_PROPERTY_GENRE,
+  SB_PROPERTY_TRACKNUMBER,
+  SB_PROPERTY_YEAR,
+  SB_PROPERTY_DISCNUMBER,
+  SB_PROPERTY_TOTALDISCS,
+  SB_PROPERTY_TOTALTRACKS,
+  SB_PROPERTY_ISPARTOFCOMPILATION,
+  SB_PROPERTY_PRODUCERNAME,
+  SB_PROPERTY_COMPOSERNAME,
+  SB_PROPERTY_CONDUCTORNAME,
+  SB_PROPERTY_LYRICISTNAME,
+  SB_PROPERTY_LYRICS,
+  SB_PROPERTY_RECORDLABELNAME,
+  SB_PROPERTY_LASTPLAYTIME,
+  SB_PROPERTY_PLAYCOUNT,
+  SB_PROPERTY_LASTSKIPTIME,
+  SB_PROPERTY_SKIPCOUNT,
+  SB_PROPERTY_RATING,
+  SB_PROPERTY_BITRATE,
+  SB_PROPERTY_SAMPLERATE,
+  SB_PROPERTY_BPM,
+  SB_PROPERTY_KEY,
+  SB_PROPERTY_LANGUAGE,
+  SB_PROPERTY_COMMENT,
+  SB_PROPERTY_COPYRIGHT,
+  SB_PROPERTY_COPYRIGHTURL,
+  SB_PROPERTY_SUBTITLE,
+  SB_PROPERTY_SOFTWAREVENDOR,
+  SB_PROPERTY_MEDIALISTNAME,
+  SB_PROPERTY_ALBUMARTISTNAME
+};
 
 NS_IMPL_THREADSAFE_ADDREF(sbDeviceLibrary)
 NS_IMPL_THREADSAFE_RELEASE(sbDeviceLibrary)
@@ -342,14 +384,28 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   mMainLibraryListener =
     new sbLibraryUpdateListener(mDeviceLibrary, mgmtType, syncPlaylists);
   NS_ENSURE_TRUE(mMainLibraryListener, NS_ERROR_OUT_OF_MEMORY);
-    
+
+  mMainLibraryListenerFilter = do_CreateInstance
+                                 (SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoString voidString;
+  voidString.SetIsVoid(PR_TRUE);
+  nsAutoString propertyID;
+  PRUint32 propertyCount =
+             NS_ARRAY_LENGTH(sbDeviceLibrarySyncUpdatePropertyTable);
+  for (PRUint32 i = 0; i < propertyCount; i++) {
+    propertyID.AssignLiteral(sbDeviceLibrarySyncUpdatePropertyTable[i]);
+    rv = mMainLibraryListenerFilter->AppendProperty(propertyID, voidString);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
     rv = mainLib->AddListener(mMainLibraryListener,
                               PR_FALSE,
                               sbIMediaList::LISTENER_FLAGS_ITEMADDED |
                               sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
                               sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
-                              nsnull);
+                              mMainLibraryListenerFilter);
     NS_ENSURE_SUCCESS(rv, rv);
     if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
       // hook up the media list listeners to the existing lists
@@ -577,7 +633,7 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
                                 sbIMediaList::LISTENER_FLAGS_ITEMADDED |
                                 sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
                                 sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
-                                nsnull);
+                                mMainLibraryListenerFilter);
       NS_ENSURE_SUCCESS(rv, rv);
 
       if (aMgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
