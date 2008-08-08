@@ -91,7 +91,7 @@ NS_IMETHODIMP sbPropertyOperator::Init(const nsAString & aOperator, const nsAStr
   return NS_OK;
 }
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyInfo, sbIPropertyInfo)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbPropertyInfo, sbIPropertyInfo, nsISupportsWeakReference)
 
 sbPropertyInfo::sbPropertyInfo()
 : mNullSort(sbIPropertyInfo::SORT_NULL_SMALL)

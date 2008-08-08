@@ -31,6 +31,7 @@
 #include "sbIPropertyManager.h"
 #include <nsIStringBundle.h>
 #include <nsStringGlue.h>
+#include <nsIWeakReference.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <map>
@@ -118,7 +119,7 @@ protected:
   propertyUnitMapInternal mUnitsMapInternal;
   propertyUnitList mUnits;
   
-  nsCOMPtr<sbIPropertyInfo> mPropertyInfo;
+  nsCOMPtr<nsIWeakReference> mPropertyInfo;
   nsresult SscanfFloat64(const nsAString &aValue, PRFloat64 &aOutValue);
   nsresult SprintfFloat64(const PRFloat64 aValue, nsAString &aOutValue);
 };

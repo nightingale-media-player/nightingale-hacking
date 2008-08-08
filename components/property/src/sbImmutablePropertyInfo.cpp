@@ -35,7 +35,7 @@
 #include <sbIPropertyManager.h>
 #include <sbLockUtils.h>
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbImmutablePropertyInfo, sbIPropertyInfo)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbImmutablePropertyInfo, sbIPropertyInfo, nsISupportsWeakReference)
 
 sbImmutablePropertyInfo::sbImmutablePropertyInfo() :
   mNullSort(sbIPropertyInfo::SORT_NULL_SMALL),

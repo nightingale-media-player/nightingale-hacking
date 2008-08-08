@@ -36,7 +36,7 @@
 #include <nsCOMArray.h>
 #include "sbPropertyUnitConverter.h"
 
-class sbImmutablePropertyInfo : public sbIPropertyInfo
+class sbImmutablePropertyInfo : public sbIPropertyInfo, public nsSupportsWeakReference
 {
 public:
 

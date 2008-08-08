@@ -81,7 +81,7 @@ NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetU
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
   static_cast<sbIPropertyInfo*>(static_cast<__unambiguousBase>(__expr))
 
-class sbPropertyInfo : public sbIPropertyInfo
+class sbPropertyInfo : public sbIPropertyInfo, public nsSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS

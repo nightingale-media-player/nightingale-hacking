@@ -383,7 +383,10 @@ sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
   // for 'not supported'.
   if (autoUnit < 0) {
     // in which case we just format using the property info native unit
-    nsresult rv = mPropertyInfo->Format(aValue, _retval);
+    nsCOMPtr<sbIPropertyInfo> propInfo = do_QueryReferent(mPropertyInfo, &rv);
+    NS_ENSURE_TRUE(propInfo, NS_ERROR_FAILURE);
+    
+    nsresult rv = propInfo->Format(aValue, _retval);
     NS_ENSURE_SUCCESS(rv, rv);
     
     return NS_OK;
@@ -459,7 +462,10 @@ sbPropertyUnitConverter::SetPropertyInfo(sbIPropertyInfo *aPropInfo) {
   if (mPropertyInfo) 
     return NS_ERROR_ALREADY_INITIALIZED;
 
-  mPropertyInfo = aPropInfo;
+  nsresult rv;
+  mPropertyInfo = do_GetWeakReference(aPropInfo, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }
 
@@ -473,7 +479,12 @@ sbPropertyUnitConverter::GetPropertyInfo(sbIPropertyInfo **_retval) {
   if (!mPropertyInfo) 
     return NS_ERROR_NOT_INITIALIZED;
   
-  *_retval = mPropertyInfo;  
+  nsresult rv;
+  nsCOMPtr<sbIPropertyInfo> propInfo = do_QueryReferent(mPropertyInfo, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = propInfo;
+  
   return NS_OK;
 }
 
