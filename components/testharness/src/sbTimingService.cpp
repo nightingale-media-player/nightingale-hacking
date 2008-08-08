@@ -357,15 +357,24 @@ sbTimingService::Observe(nsISupports* aSubject,
       if(mLogFile) {
         nsCOMPtr<nsIOutputStream> outputStream;
         rv = NS_NewLocalFileOutputStream(getter_AddRefs(outputStream),
-                                         mLogFile);
+                                         mLogFile,
+                                         PR_APPEND | PR_CREATE_FILE | PR_WRONLY);
         NS_ENSURE_SUCCESS(rv, rv);
 
         PRUint32 bytesOut = 0;
         rv = outputStream->Write(output.BeginReading(), 
                                  output.Length(), 
                                  &bytesOut);
+        
+        // Close it off regardless of the error
+        nsresult rvclose = outputStream->Close();
+        
+        // Handle write errors before the close error
         NS_ENSURE_SUCCESS(rv, rv);
         NS_ENSURE_TRUE(bytesOut == output.Length(), NS_ERROR_UNEXPECTED);
+        
+        // Now handle any error from close
+        NS_ENSURE_SUCCESS(rvclose, rvclose);
       }
     }
   }
