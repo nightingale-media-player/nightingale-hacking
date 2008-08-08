@@ -1,0 +1,61 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+*/
+
+/**
+* \file sbIMetadataImageScanner.idl
+* \brief A service which scans for album art in files in the background
+*        and provides utility functions for other code to do so as well.
+*/
+#include "nsISupports.idl"
+interface sbIMediaItem;
+ 
+/**
+* \interface sbIMetadataImageScanner sbIMetadataImageScanner.h
+* \brief The service which scans files for images in the background,
+*        and provides utlity functions to manually scan or save album art.
+*/
+[scriptable, uuid(dc119d8e-f92f-44f1-8cb2-18663720489c)]
+interface sbIMetadataImageScanner : nsISupports
+{
+  /**
+   * \brief Saves image data to a file (removing dupes), returning the location.
+   * \param aImageData - Binary array of image data
+   * \param aImageDataSize - size of binary array
+   * \param aMimeType - mime type of image (image/png, image/jpg, etc)
+   * \return location of file as a fileURI spec
+   */
+  AString saveImageDataToFile([array,size_is(aImageDataSize)] in octet aImageData,
+                              in unsigned long aImageDataSize,
+                              in AString aMimeType);
+  
+  /**
+   * \brief Searches for an image in the metadata of a file and if it finds one
+   *        it saves it to a file, returning the file location.
+   * \param aMediaItem - Item to search for an image in
+   * \return location of the image.
+   */
+  AString fetchCoverForMediaItem(in sbIMediaItem aMediaItem);
+};
