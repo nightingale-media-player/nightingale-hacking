@@ -153,9 +153,9 @@ sbMetadataImageScanner.prototype = {
    * \param aImageData - Binary array of image data
    * \param aImageDataSize - size of binary array
    * \param aMimeType - mime type of image (image/png, image/jpg, etc)
-   * \return location of file as a fileURI
+   * \return location of file as a fileURI spec
    */
-  _saveDataToFile: function (aImageData, aImageDataSize, aMimeType) {
+  saveImageDataToFile: function(aImageData, aImageDataSize, aMimeType) {
     // Generate a hash of the imageData for the filename
     var cHash = Cc["@mozilla.org/security/hash;1"]
                   .createInstance(Ci.nsICryptoHash);
@@ -218,12 +218,11 @@ sbMetadataImageScanner.prototype = {
 
   /**
    * \brief Searches for an image in the metadata of a file and if it finds one
-   *        it saves it to a file and sets the primaryImageURL property to that
-   *        file.
+   *        it saves it to a file, returning the file location.
    * \param aMediaItem - Item to search for an image in
-   * \return True if an image was found, False if the item has no image.
+   * \return location of the image.
    */
-  _findImageForItem: function (aMediaItem) {
+  fetchCoverForMediaItem: function (aMediaItem) {
     // First check if this is a valid local file.
     var fileURL = null;
     var contentURL = aMediaItem.getProperty(SBProperties.contentURL);
@@ -272,14 +271,12 @@ sbMetadataImageScanner.prototype = {
       
       if (outSize.value > 0) {
         this._debug("Found an image in the metadata.");
-        var outFileLocation = this._saveDataToFile(imageData,
-                                                   imageData.length,
-                                                   mimeTypeOutparam.value);
+        var outFileLocation = this.saveImageDataToFile(imageData,
+                                                       imageData.length,
+                                                       mimeTypeOutparam.value);
         if (outFileLocation) {
           this._debug("Saved data to file: " + outFileLocation);
-          aMediaItem.setProperty(SBProperties.primaryImageURL,
-                                 outFileLocation);
-          return true;
+          return outFileLocation;
         } else {
           this._logError("Unable to save file: [" + outFileLocation + "]");
         }
@@ -322,7 +319,19 @@ sbMetadataImageScanner.prototype = {
                     ", Album=" + albumName);
         if ( artistName && albumName ) {
           aMediaItem.setProperty(PROP_LAST_COVER_SCAN, timeNow);
-          return this._findImageForItem(aMediaItem);
+          var outFileLocation = this.fetchCoverForMediaItem(aMediaItem);
+          if (outFileLocation) {
+            aMediaItem.setProperty(SBProperties.primaryImageURL,
+                                    outFileLocation);
+          }
+          else {
+            // explicitly set it to null so that other users can see that we
+            // have already checked the contents and explicitly noted that 
+            // there are none.
+            aMediaItem.setProperty(SBProperties.primaryImageURL, "");
+          }
+          // convert the result back to a bool
+          return !!outFileLocation;
         } else {
           this._debug("Missing Artist or Album from item");
         }
@@ -540,7 +549,8 @@ sbMetadataImageScanner.prototype = {
   /*********************************
    * nsISupports
    ********************************/
-  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListListener,
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMetadataImageScanner,
+                                         Ci.sbIMediaListListener,
                                          Ci.nsISupportsWeakReference,
                                          Ci.nsITimerCallback])
 }

@@ -2304,6 +2304,18 @@ PlaylistPlayback.prototype = {
   _getPrimaryImage: function sbPlaylistPlayback_getPrimaryImage(aMediaItem) {
     // Set the dataremote for the primaryImageURL for album art.
     var primaryImageURL = aMediaItem.getProperty(SBProperties.primaryImageURL);
+    
+    // Look up any missing cover images in the file.
+    // null => unchecked, "" => no image available
+    if (primaryImageURL == null) {
+      var metadataImageScannerService =
+              Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
+                .getService(Ci.sbIMetadataImageScanner);
+      primaryImageURL = metadataImageScannerService.fetchCoverForMediaItem(aMediaItem);
+      aMediaItem.setProperty(SBProperties.primaryImageURL, primaryImageURL);
+      // this will be "" if none was available.
+    }
+    
     if (primaryImageURL != this._metadataImageURL.stringValue) {
       if (!primaryImageURL) {
         primaryImageURL = DEFAULT_COVER;

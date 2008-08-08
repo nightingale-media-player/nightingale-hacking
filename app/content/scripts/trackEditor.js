@@ -1652,6 +1652,10 @@ function TrackEditorArtwork(element) {
   
   TrackEditorInputWidget.call(this, element);
   
+  this._metadataImageScannerService =
+              Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
+                .getService(Ci.sbIMetadataImageScanner);
+  
   this._replaceLabel = SBString("trackeditor.artwork.replace");
   this._addLabel = SBString("trackeditor.artwork.add");
   this._createButton();
@@ -1743,73 +1747,7 @@ TrackEditorArtwork.prototype = {
 
     this._element.parentNode.appendChild(this._menuPopup);
   },
-
-  /**
-   * \brief Converts a binary array to hex values with out the 0x for output
-   *        to the file system.
-   * \param aHashData - Array of bytes to convert to hex.
-   * \return string of hex values with out 0x
-   */
-  _convertBinaryToHexString: function(aHashData) {
-    var hexAry = new Array(aHashData.length);
-    for (var hashIndex = 0; hashIndex < aHashData.length; hashIndex++) {
-      var hashValue = aHashData.charCodeAt(hashIndex);
-      hexAry.push(("0" + hashValue.toString(16)).slice(-2));
-    }
-    return hexAry.join("");
-  },
   
-  /**
-   * \brief Saves image data to a file.
-   * \param aImageData - Binary array of image data
-   * \param aImageDataSize - size of binary array
-   * \param aMimeType - mime type of image (image/png, image/jpg, etc)
-   * \return location of file created with "file://" pre-appended
-   */
-  _saveDataToFile: function(aImageData, aImageDataSize, aMimeType) {
-    // Generate a hash of the imageData for the filename
-    var cHash = Cc["@mozilla.org/security/hash;1"]
-                  .createInstance(Ci.nsICryptoHash);
-    cHash.init(Ci.nsICryptoHash.MD5);
-    cHash.update(aImageData, aImageDataSize);
-    var hash = cHash.finish(false);
-    var fileName = this._convertBinaryToHexString(hash);
-
-    // grab the extension from the mimetype
-    var ext = aMimeType.toLowerCase();
-    if (ext.indexOf("/") > 0) {
-      ext = ext.substr(ext.indexOf("/") + 1);
-    }
-
-    // Get the profile folder
-    var dir = Cc["@mozilla.org/file/directory_service;1"]
-                    .createInstance(Ci.nsIProperties);
-    var coverFile = dir.get("ProfD", Ci.nsIFile);
-    coverFile.append("artwork");
-    coverFile.append(fileName + "." + ext);
-
-    // see if we already have the file
-    var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                    .getService(Components.interfaces.nsIIOService);
-
-    if (!coverFile.exists()) {
-      coverFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0655);
-
-      var outputFileStream =  Cc["@mozilla.org/network/file-output-stream;1"]
-                                .createInstance(Ci.nsIFileOutputStream);
-      outputFileStream.init(coverFile, -1, -1, 0);
-
-      var BinaryOutput = Cc["@mozilla.org/binaryoutputstream;1"]
-                           .createInstance(Ci.nsIBinaryOutputStream);
-      BinaryOutput.setOutputStream(outputFileStream);
-      BinaryOutput.writeByteArray(aImageData, aImageDataSize);
-    }
-
-    return ios.newFileURI(coverFile).spec;
-  },
-  
-
-
   /**
    * \brief Handles clicks from user on the album artwork widget
    */
@@ -1872,7 +1810,8 @@ TrackEditorArtwork.prototype = {
     var mimeType = {};
     var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
     if (imageData.length > 0) {
-      var newFile = this._saveDataToFile(imageData,
+      var newFile = this._metadataImageScannerService.saveImageDataToFile(
+                                         imageData,
                                          imageData.length,
                                          mimeType.value);
       this._imageSrcChange(newFile);
@@ -1979,10 +1918,44 @@ TrackEditorArtwork.prototype = {
     
     // Check if we have multiple values for this property
     var allMatch = true;
-    if (TrackEditor.state.selectedItems.length > 1) {
+    
+    // See if we can manually load extra track image data.
+    var MAX_ITEMS_TO_CHECK = 30; // keep this from taking forever.
+    var selectedItems = TrackEditor.state.selectedItems;
+    var numToCheck = Math.min(MAX_ITEMS_TO_CHECK, selectedItems.length);
+    var itemValues = new Array(selectedItems.length);
+    
+    for (var i = 0; i < numToCheck; i++) {
+      var value = selectedItems[i].getProperty(this.property);
+      // Note: "" indicates we (or somebody else) have scanned and found nothing.
+      if (value != null) { 
+        itemValues[i] = value;
+      }
+      else {
+        itemValues[i] = this._metadataImageScannerService
+                            .fetchCoverForMediaItem(selectedItems[i]);
+        selectedItems[i].setProperty(this.property, itemValues[i]);
+      }
+      // Break out early if we determine we don't need to scan any further items.
+      if (i > 0 && itemValues[i] != itemValues[i-1]) {
+        // we don't need to load any more values, because
+        // we'll be showing the "multiple values" state.
+        allMatch = false;
+        value = "";
+        break;
+      }
+    }
+    
+    if (allMatch && TrackEditor.state.selectedItems.length > MAX_ITEMS_TO_CHECK) {
       allMatch = !TrackEditor.state.hasMultipleValuesForProperty(this.property);
     }
-
+    
+    if (allMatch) {
+      value = itemValues[0];
+      //TODO: set the value through the internal interface so that other listeners
+      //      can be notified of this
+    }
+    
     // Lets check if this item is missing a cover
     if( (!value || value == "") && allMatch ) {
       value = ARTWORK_NO_COVER;
