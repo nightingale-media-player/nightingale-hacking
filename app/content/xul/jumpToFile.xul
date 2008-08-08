@@ -41,7 +41,7 @@
  id="jump_to_file"
  title="&jumptofile.title;"
  hidechrome="true"
- buttons="none"
+ buttons="cancel"
  resizers="both"
  onload="onLoadJumpToFile();"
  onunload="onUnloadJumpToFile();"
