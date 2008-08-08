@@ -18,7 +18,7 @@ const API_URL = 'http://ws.audioscrobbler.com/2.0/';
 
 // handshake failure types
 const HANDSHAKE_FAILURE_AUTH = true;
-const HANDSHARE_FAILURE_OTHER = false;
+const HANDSHAKE_FAILURE_OTHER = false;
 
 // how often should we try to scrobble again?
 const TIMER_INTERVAL = (5*60*1000); // every five minutes sounds lovely
@@ -239,6 +239,15 @@ function sbLastFm() {
   this.__defineSetter__('shouldScrobble', function(val) {
     prefsService.setBoolPref('extensions.lastfm.scrobble', val);
     this.listeners.each(function(l) { l.onShouldScrobbleChanged(val); });
+  });
+
+  // user-logged-out pref
+  this.__defineGetter__('userLoggedOut', function() {
+    return prefsService.getBoolPref('extensions.lastfm.loggedOut');
+  });
+  this.__defineSetter__('userLoggedOut', function(val) {
+    prefsService.setBoolPref('extensions.lastfm.loggedOut', val);
+    this.listeners.each(function(l) { l.onUserLoggedOutChanged(val); });
   });
 
   // the error state
@@ -726,7 +735,9 @@ function sbLastFm_onEntriesAdded(aEntries) {
                 });
     }
     // let's try to scrobble all the unscrobbled playback history entries
-    this.scrobble();
+    if (!this.userLoggedOut) {
+      this.scrobble();
+    }
   } else {
     // scrobbling is disabled, let's mark the added entries as not
     // scrobbleable
@@ -748,7 +759,8 @@ function sbLastFm_onEntriesCleared() { }
 // nsIObserver - just used for a timer callback
 sbLastFm.prototype.observe =
 function sbLastFm_observe(subject, topic, data) {
-  if (topic == 'timer-callback' && subject == this._timer) {
+  if (topic == 'timer-callback' && subject == this._timer &&
+      this.shouldScrobble && !this.userLoggedOut) {
     // try to scrobble when the timer ticks
     this.scrobble();
   }

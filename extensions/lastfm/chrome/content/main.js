@@ -236,6 +236,7 @@ LastFm.showPanel = function LastFm_showPanel() {
 
 // button event handlers
 LastFm.onLoginClick = function(event) {
+  this._service.userLoggedOut = false;
   this._service.username = this._username.value;
   this._service.password = this._password.value;
   this._service.login();
@@ -244,6 +245,7 @@ LastFm.onCancelClick = function(event) {
   this._service.cancelLogin();
 }
 LastFm.onLogoutClick = function(event) {
+  this._service.userLoggedOut = true;
   this._service.logout();
   this._deck.selectedPanel = this._login;
   this.setLoginError(null);
