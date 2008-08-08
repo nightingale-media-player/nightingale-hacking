@@ -64,10 +64,18 @@ SmartMediaListsUpdater.prototype = {
   _updating              : false,
   
   // Delay between the last db update and the first smart playlist rebuild
-  _updateInitialDelay    : 5000,
+  _updateInitialDelay    : 1000,
+  
+  // Maximum delay between first db update and the delayed check (the actual time
+  // may still be more if a batch has not finished, ie, we never check inside batches)
+  _maxInitialDelay       : 5000,
+  
+  // Timestamp of the first time we try to run the delayed batch, reset every time
+  // the check happens, but stays the same when it is further delayed)
+  _timerInitTime         : null,
   
   // Delay between each smart playlist rebuild
-  _updateSubsequentDelay : 1000,
+  _updateSubsequentDelay : 500,
 
   // Query object for db access
   _dbQuery               : null,
@@ -346,11 +354,21 @@ SmartMediaListsUpdater.prototype = {
     // again. this has the effect of delaying further the updates as more
     // medialistlistener notifications are received and until none has been
     // received for a delay long enough for the timer notification to be issued.
+    // Note that we also check if 'a long time' has passed since we started
+    // delaying the update check, and force it if that's the case, so as to avoid
+    // being indefinitly blocked by something constantly updating properties.
+    var now = new Date().getTime();
+    if (!this._timerInitTime) this._timerInitTime = now;
     this._timer.cancel();
-    // start the timer
-    this._timer.initWithCallback(this,
-                                 this._updateInitialDelay,
-                                  Ci.nsITimer.TYPE_ONE_SHOT);
+    if (this.batchCount == 0 && 
+        now - this._timerInitTime > this._maxInitialDelay) {
+      this.notify(this._timer);
+    } else {
+      // start the timer
+      this._timer.initWithCallback(this,
+                                   this._updateInitialDelay,
+                                   Ci.nsITimer.TYPE_ONE_SHOT);
+    }      
   },
   
   // --------------------------------------------------------------------------
@@ -358,6 +376,8 @@ SmartMediaListsUpdater.prototype = {
   // --------------------------------------------------------------------------
   notify: function(aTimer) {
     if (aTimer == this._timer) {
+      // reset first delayed update check time
+      this._timerInitTime = null;
       // properties have been changed some time ago, we need to go through the
       // list of smart playlists, and schedule an update for the ones whose
       // content has potentially changed
