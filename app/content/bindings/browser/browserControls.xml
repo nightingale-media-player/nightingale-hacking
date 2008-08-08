@@ -49,6 +49,7 @@
                      tabscrolling="true"
                      showcommentcolumn="true"
                      showimagecolumn="true"
+                     ontextentered="this._saveFocus == ''; this.uri = this.value; window.gBrowser.loadURI(this.value);"
                      timeout="100"
                      maxrows="10"
                      newlines="stripsurroundingwhitespace"
