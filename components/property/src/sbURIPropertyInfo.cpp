@@ -181,6 +181,22 @@ NS_IMETHODIMP sbURIPropertyInfo::Sanitize(const nsAString & aValue, nsAString & 
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+PRBool sbURIPropertyInfo::IsInvalidEmpty(const nsAString &aValue) {
+  // search for ":", ":/" and "://" with no trailing chars
+  if (aValue.IsEmpty()) 
+    return PR_FALSE;
+  
+  PRUint32 pos = aValue.FindChar(':');
+  if (pos < 0) 
+    return PR_FALSE;
+  if (pos == aValue.Length()-1 ||
+      (pos == aValue.Length()-2 && aValue.CharAt(pos + 1) == '/') ||
+      (pos == aValue.Length()-3 && aValue.CharAt(pos + 1) == '/' && aValue.CharAt(pos + 2) == '/')) {
+    return PR_TRUE;
+  }
+  return PR_FALSE;
+}
+
 NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
 {
   if (aValue.IsVoid()) {
@@ -188,66 +204,63 @@ NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _r
     return NS_OK;
   }
 
-  nsresult rv = EnsureIOService();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIURI> uri;
-  rv = NS_NewURI(getter_AddRefs(uri), aValue, nsnull, nsnull, mIOService);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbSimpleAutoLock lock(mURISchemeConstraintLock);
-  if(!mURISchemeConstraint.IsEmpty()) {
-    NS_ConvertUTF16toUTF8 narrow(mURISchemeConstraint);
-    PRBool valid = PR_FALSE;
-
-    rv = uri->SchemeIs(narrow.get(), &valid);
+  nsresult rv;
+  
+  if (!IsInvalidEmpty(aValue)) {
+    rv = EnsureIOService();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if(!valid) {
-      return NS_ERROR_FAILURE;
-    }
+    nsCOMPtr<nsIURI> uri;
+    rv = NS_NewURI(getter_AddRefs(uri), aValue, nsnull, nsnull, mIOService);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    sbSimpleAutoLock lock(mURISchemeConstraintLock);
+    if(!mURISchemeConstraint.IsEmpty()) {
+      NS_ConvertUTF16toUTF8 narrow(mURISchemeConstraint);
+      PRBool valid = PR_FALSE;
+
+      rv = uri->SchemeIs(narrow.get(), &valid);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (!valid) {
+        return NS_ERROR_FAILURE;
+      } 
+    } 
+    nsCAutoString spec;
+    rv = uri->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ConvertUTF8toUTF16 wide(spec);
+    _retval = wide;
+  } else {
+    _retval = aValue;
   }
 
-  nsCAutoString spec;
-  rv = uri->GetSpec(spec);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ConvertUTF8toUTF16 wide(spec);
-  _retval = wide;
-
-  return rv;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbURIPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
 {
-  nsresult rv = EnsureIOService();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIURI> uri;
-  rv = NS_NewURI(getter_AddRefs(uri), aValue, nsnull, nsnull, mIOService);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbSimpleAutoLock lock(mURISchemeConstraintLock);
-  if(!mURISchemeConstraint.IsEmpty()) {
-    NS_ConvertUTF16toUTF8 narrow(mURISchemeConstraint);
-    PRBool valid = PR_FALSE;
-
-    rv = uri->SchemeIs(narrow.get(), &valid);
+  PRBool bFailed = PR_FALSE;
+  nsresult rv;
+  
+  if (!IsInvalidEmpty(aValue)) {
+    rv = EnsureIOService();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if(!valid) {
-      return NS_ERROR_FAILURE;
-    }
+    nsCOMPtr<nsIURI> uri;
+    rv = NS_NewURI(getter_AddRefs(uri), aValue, nsnull, nsnull, mIOService);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCAutoString spec;
+    rv = uri->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ConvertUTF8toUTF16 wide(spec);
+    _retval = wide;
+  } else {
+    _retval = aValue;
   }
 
-  nsCAutoString spec;
-  rv = uri->GetSpec(spec);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_ConvertUTF8toUTF16 wide(spec);
-  _retval = wide;
-
-  return rv;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbURIPropertyInfo::GetConstrainScheme(nsAString & aConstrainScheme)

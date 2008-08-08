@@ -55,6 +55,8 @@ public:
 
   NS_IMETHOD EnsureIOService();
 
+  PRBool    IsInvalidEmpty(const nsAString &aValue);
+
 private:
   nsresult InitializeOperators();
 
