@@ -1019,7 +1019,8 @@ FeathersManager.prototype = {
     this._init();
 
     // First, check if we should auto switch to a new skin/layout
-    if (this._autoswitch) {
+    // (but only if we're not already in the middle of a switch)
+    if (this._autoswitch && !this._switching) {
       this._layoutDataRemote.stringValue = this._autoswitch.layoutURL;
       this._skinDataRemote.stringValue = this._autoswitch.skin;
       this._autoswitch = null;
