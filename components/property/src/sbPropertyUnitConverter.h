@@ -32,6 +32,7 @@
 #include <nsIStringBundle.h>
 #include <nsStringGlue.h>
 #include <nsIWeakReference.h>
+#include <nsIWeakReferenceUtils.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <map>

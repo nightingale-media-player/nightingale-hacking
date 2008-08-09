@@ -35,7 +35,7 @@
 #include <nsIURI.h>
 #include <nsStringGlue.h>
 #include <nsCOMArray.h>
-
+#include <nsWeakReference.h>
 #include "sbPropertyOperator.h"
 
 #define NS_FORWARD_SBIPROPERTYINFO_NOVALIDATE_NOFORMAT(_to) \
