@@ -72,6 +72,10 @@ TrackEditorState.prototype = {
   _propertyManager: Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                       .getService(Ci.sbIPropertyManager),
 
+  _metadataImageScannerService:
+                        Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
+                          .getService(Ci.sbIMetadataImageScanner),
+  
   
   // Array of media items that the track editor is operating on
   _selectedItems: null,
@@ -376,6 +380,35 @@ TrackEditorState.prototype = {
     // Populate the structure
     if (this._selectedItems && this._selectedItems.length > 0) {      
       var value = this._selectedItems[0].getProperty(property);
+
+      if (property == SBProperties.primaryImageURL) {
+        // See if we need to manually load extra track image data.
+        var MAX_ITEMS_TO_CHECK = 30; // keep this from taking forever.
+        var selectedItems = TrackEditor.state.selectedItems;
+        var numToCheck = Math.min(MAX_ITEMS_TO_CHECK, selectedItems.length);
+        
+        var seedValue;
+        for (var i = 0; i < numToCheck; i++) {
+          value = selectedItems[i].getProperty(property);
+          // Note: "" implies the file was scanned and found empty.
+          //       null implies that the file has not been checked for data.
+          //       Both are false, so if you don't care, just use if(!value).
+          if (value == null) { 
+            value = this._metadataImageScannerService
+                        .fetchCoverForMediaItem(selectedItems[i]);
+            selectedItems[i].setProperty(property, value);
+          }
+          
+          // Break out early if we determine we don't need to scan any further items.
+          if (i == 0) {
+            seedValue = value;
+          }
+          if (seedValue != value) {
+            value = "";
+            break;
+          }
+        }
+      }
 
       if (this._selectedItems.length > 1) {
         // Look through the selection to see if all items have the same value
@@ -941,7 +974,13 @@ var TrackEditor = {
         var item = items[i];
         if (value != item.getProperty(property)) {
           // Completely remove empty properties
-          if (value == "") {
+          // HACK for 0.7: primaryImageURL likes to be set to ""
+          //               this says "i am scanned and empty"
+          //               setting it to null says "rescan me"
+          //               and at the moment, there's no way to take image
+          //               out of the file, so the next time you look
+          //               it will pop back in again
+          if (value == "" && property != SBProperties.primaryImageURL) {
             value = null;
           }
           
@@ -1666,7 +1705,6 @@ function TrackEditorArtwork(element) {
           function(evt) { self.onClick(evt); }, false);
   element.addEventListener("keypress",
           function(evt) { self.onKeyPress(evt); }, false);
-
 }
 TrackEditorArtwork.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
@@ -1810,10 +1848,14 @@ TrackEditorArtwork.prototype = {
     var mimeType = {};
     var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
     if (imageData.length > 0) {
-      var newFile = this._metadataImageScannerService.saveImageDataToFile(
-                                         imageData,
-                                         imageData.length,
-                                         mimeType.value);
+      var metadataImageScannerService =
+                        Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
+                          .getService(Ci.sbIMetadataImageScanner);
+
+      var newFile = metadataImageScannerService
+                      .saveImageDataToFile(imageData,
+                                           imageData.length,
+                                           mimeType.value);
       this._imageSrcChange(newFile);
     }
   },
@@ -1918,42 +1960,8 @@ TrackEditorArtwork.prototype = {
     
     // Check if we have multiple values for this property
     var allMatch = true;
-    
-    // See if we can manually load extra track image data.
-    var MAX_ITEMS_TO_CHECK = 30; // keep this from taking forever.
-    var selectedItems = TrackEditor.state.selectedItems;
-    var numToCheck = Math.min(MAX_ITEMS_TO_CHECK, selectedItems.length);
-    var itemValues = new Array(selectedItems.length);
-    
-    for (var i = 0; i < numToCheck; i++) {
-      var value = selectedItems[i].getProperty(this.property);
-      // Note: "" indicates we (or somebody else) have scanned and found nothing.
-      if (value != null) { 
-        itemValues[i] = value;
-      }
-      else {
-        itemValues[i] = this._metadataImageScannerService
-                            .fetchCoverForMediaItem(selectedItems[i]);
-        selectedItems[i].setProperty(this.property, itemValues[i]);
-      }
-      // Break out early if we determine we don't need to scan any further items.
-      if (i > 0 && itemValues[i] != itemValues[i-1]) {
-        // we don't need to load any more values, because
-        // we'll be showing the "multiple values" state.
-        allMatch = false;
-        value = "";
-        break;
-      }
-    }
-    
-    if (allMatch && TrackEditor.state.selectedItems.length > MAX_ITEMS_TO_CHECK) {
+    if (TrackEditor.state.selectedItems.length > 1) {
       allMatch = !TrackEditor.state.hasMultipleValuesForProperty(this.property);
-    }
-    
-    if (allMatch) {
-      value = itemValues[0];
-      //TODO: set the value through the internal interface so that other listeners
-      //      can be notified of this
     }
     
     // Lets check if this item is missing a cover

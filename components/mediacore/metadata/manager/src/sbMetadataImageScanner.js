@@ -220,7 +220,7 @@ sbMetadataImageScanner.prototype = {
    * \brief Searches for an image in the metadata of a file and if it finds one
    *        it saves it to a file, returning the file location.
    * \param aMediaItem - Item to search for an image in
-   * \return location of the image.
+   * \return location of the image. null for fail, "" for a file with no art.
    */
   fetchCoverForMediaItem: function (aMediaItem) {
     // First check if this is a valid local file.
@@ -231,25 +231,25 @@ sbMetadataImageScanner.prototype = {
       // if the URL isn't valid, fail
       if (!contentURI) {
         this._debug("Unable to find image for bad file: " + contentURL);
-        return false;
+        return null;
       }
 
       // if the URL isn't local, fail
       if ( !(contentURI instanceof Ci.nsIFileURL) ) {
         this._debug("Unable to get image from non-local file: " +
                        contentURL);
-        return false;
+        return null;
       }
     } catch (err) {
       this._debug("Unable to find image for: " + contentURL + " - " + err);
-      return false;
+      return null;
     }
    
     this._debug("Getting handler for mediaItem: " + contentURI.spec);
     var handler = this._metadataManager.getHandlerForMediaURL(contentURI.spec);
     if (!handler) {
       this._debug("Unable to get handler for: " + contentURI.spec);
-      return false;
+      return null;
     }
 
     try {
@@ -288,7 +288,7 @@ sbMetadataImageScanner.prototype = {
                   contentURI.spec + " - " + err );
     }
     
-    return false;
+    return "";
   },
   
   /**
@@ -320,15 +320,12 @@ sbMetadataImageScanner.prototype = {
         if ( artistName && albumName ) {
           aMediaItem.setProperty(PROP_LAST_COVER_SCAN, timeNow);
           var outFileLocation = this.fetchCoverForMediaItem(aMediaItem);
-          if (outFileLocation) {
+          if (outFileLocation != null) {
+            // a successful scan of an empty file returns "",
+            // which will prevent us from scanning this file again as we
+            // set it into the media item here.
             aMediaItem.setProperty(SBProperties.primaryImageURL,
                                     outFileLocation);
-          }
-          else {
-            // explicitly set it to null so that other users can see that we
-            // have already checked the contents and explicitly noted that 
-            // there are none.
-            aMediaItem.setProperty(SBProperties.primaryImageURL, "");
           }
           // convert the result back to a bool
           return !!outFileLocation;
