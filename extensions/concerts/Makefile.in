@@ -1,0 +1,63 @@
+#
+# Copyright (c) 2008, Pioneers of the Inevitable, Inc.
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# 	* Redistributions of source code must retain the above copyright notice,
+# 	  this list of conditions and the following disclaimer.
+# 	* Redistributions in binary form must reproduce the above copyright notice,
+# 	  this list of conditions and the following disclaimer in the documentation 
+# 	  and/or other materials provided with the distribution.
+# 	* Neither the name of Pioneers of the Inevitable, Songbird, nor the names
+# 	  of its contributors may be used to endorse or promote products derived
+# 	  from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# 
+
+DEPTH     = ../..
+topsrcdir = @top_srcdir@
+srcdir    = @srcdir@
+VPATH     = @srcdir@
+
+include $(DEPTH)/build/autodefs.mk
+
+SUBDIRS = $(NULL)
+
+EXTENSION_NAME = concerts
+EXTENSION_STAGE_DIR = ./.xpistage
+
+EXTENSION_VER := 0.0.8
+EXTENSION_MIN_VER := 0.7.0pre
+EXTENSION_MAX_VER := 0.8.0rc1
+
+XPI_NAME = $(EXTENSION_NAME)-$(EXTENSION_VER)
+
+SONGBIRD_PREFS = defaults/preferences/prefs.js
+
+include $(topsrcdir)/build/rules.mk
+
+make_xpi: extinstall
+
+# hacky hacky ugly workaround for the fact that whatever script generates
+# chrome.manifest from my original jar.mn.in was non-deterministically
+# screwing up the order of the skin lines, and a particular order is required
+extinstall :
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(EXTENSION_STAGE_DIR)
+	$(CYGWIN_WRAPPER) $(CP) -rf $(srcdir)/chrome $(EXTENSION_STAGE_DIR)
+	$(CYGWIN_WRAPPER) $(CP) -rf $(srcdir)/components $(EXTENSION_STAGE_DIR)
+	$(CYGWIN_WRAPPER) find $(EXTENSION_STAGE_DIR) -depth -name .svn -exec rm -rf {} \;
+	$(CYGWIN_WRAPPER) $(CP) -f $(srcdir)/chrome.manifest $(EXTENSION_STAGE_DIR)
+
+.PHONY : extinstall

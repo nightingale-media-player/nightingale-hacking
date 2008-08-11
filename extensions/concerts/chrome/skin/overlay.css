@@ -1,0 +1,117 @@
+/* FIRST RUN/EDIT LOCATION PAGE */
+.concerts-location-box {
+	max-width: 85%;
+	width: 85%;
+}
+
+description#about-text {
+	margin-bottom: 2em;
+}
+
+/* the LIBRARY, ABOUT, and LOCATION label headers */
+label.prefs-header {
+	font-size: 185%;
+}
+
+/* the country, state, and city labels */
+label.pref-label {
+	font-size: 85%;
+	margin-bottom: -2px;
+}
+
+hbox.library-ontour-image-box {
+	padding-left: 5px;
+}
+
+description#library-text {
+	width: 5px;
+}
+
+#concerts-firstrun-page menulist {
+	font-size: 130%;
+}
+
+button#pref-cancel-button {
+	visibility: hidden;
+}
+
+/* the "Concert listings powered by Songkick" label at the bottom right of the
+ * first run/location page */
+.powered-by {
+	padding-right: 1em;
+	padding-top: 1em;
+}
+.powered-by image,
+image.clickable {
+	cursor: pointer;
+}
+
+/* LOADING RESULTS/PROGRESS BAR PAGE */
+#concerts-loading-page {
+	font-size: 175%;
+}
+
+/* BROWSE CONCERT LISTINGS (in artist or date view) PAGE */
+.concerts-top-header {
+	-moz-box-pack: center;
+	-moz-box-align: center;
+	padding-right: 3px;
+}
+
+/* the city/state/country label at the top right */
+label.region {
+	font-weight: bold;
+}
+.image-edit-location {
+	cursor: pointer;
+}
+
+/* the group by (artist/date) label at the top left */
+label.groupby {
+	margin-right: 3px;
+}
+
+#index-deck {
+	padding:0.25em 0;
+}
+#box-index-letter > label,
+#box-index-date > label {
+	border: none;
+	font-size: 135%;
+}
+#box-index-letter > label:not(.text-link),
+#box-index-date > label:not(.text-link) {
+	color: #AAA;
+}
+
+#box-index-letter>label {
+	margin: 0 0.25em;
+}
+#box-index-date>label {
+	margin: 0 0.5em;
+}
+
+/* NO RESULTS PAGE */
+#no-results-deck label {
+}
+#no-results-deck image#noresults-concert-icon {
+	list-style-image: url(chrome://songbird/skin/service-pane/icon-concert.png);
+}
+
+.fail-noresults label {
+	color: black;
+	font-weight: bold;
+}
+
+label#epic-fail{
+	font-size: 800%;
+}
+
+/* TIMEOUT ERROR PAGE */
+vbox#timeout-vbox description {
+}
+vbox#timeout-vbox {
+	max-width: 85%;
+	width: 85%;
+}
+

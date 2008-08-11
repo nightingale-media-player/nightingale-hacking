@@ -1,0 +1,7 @@
+content concerts  chrome/content/	contentaccessible=yes
+locale  concerts  en-US  chrome/locale/en-US/
+skin    concerts  classic/1.0 chrome/skin/
+skin    concerts  rubberducky/0.2 chrome/skin/rubberducky/
+
+overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://concerts/content/scripts-overlay.xul
+

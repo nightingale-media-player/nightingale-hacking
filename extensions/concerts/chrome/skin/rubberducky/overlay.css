@@ -1,0 +1,129 @@
+/* FIRST RUN/EDIT LOCATION PAGE */
+.concerts-location-box {
+	max-width: 85%;
+	width: 85%;
+}
+
+description#about-text {
+	margin-bottom: 2em;
+}
+
+/* the LIBRARY, ABOUT, and LOCATION label headers */
+label.prefs-header {
+	font-size: 185%;
+}
+
+/* the country, state, and city labels */
+label.pref-label {
+	font-size: 85%;
+	margin-bottom: -2px;
+}
+
+hbox.library-ontour-image-box {
+	padding-left: 5px;
+}
+
+description#library-text {
+	width: 5px;
+}
+
+#concerts-firstrun-page menulist {
+	font-size: 130%;
+}
+
+button#pref-cancel-button {
+	visibility: hidden;
+}
+
+/* the "Concert listings powered by Songkick" label at the bottom right of the
+ * first run/location page */
+.powered-by {
+	padding-right: 1em;
+	padding-bottom: 1em;
+}
+.powered-by image {
+	cursor: pointer;
+}
+
+
+
+/* LOADING RESULTS/PROGRESS BAR PAGE */
+#concerts-loading-page {
+	font-size: 175%;
+}
+
+/* BROWSE CONCERT LISTINGS (in artist or date view) PAGE */
+.concerts-top-header {
+	-moz-box-pack: center;
+	-moz-box-align: center;
+	padding-right: 3px;
+	padding-bottom: 4px;
+}
+.generic-bar {
+	background-color: #202020;
+	background-image:url('chrome://concerts/skin/header-bg.png');
+	background-repeat:repeat-x;
+	background-position:center top;
+	padding-bottom: 4px;
+	border-bottom: solid 1px gray;
+}
+
+/* the city/state/country label at the top right */
+label.region {
+	font-weight: bold;
+}
+.image-edit-location {
+	cursor: pointer;
+}
+
+/* the group by (artist/date) label at the top left */
+label.groupby {
+	margin-right: 3px;
+	height: 1em;
+}
+
+#box-index-letter .index-letter,
+#box-index-date .index-date {
+	font-size: 135%;
+}
+
+#box-index-date .index-date {
+	margin: 0 1em 0 1em;
+}
+
+.index-letter {
+	color: #444;
+}
+
+.text-link {
+	text-decoration: none;
+	color: #1694d9;
+	outline:0;
+}
+.text-link:hover {
+	text-decoration:underline;
+}
+
+/* NO RESULTS PAGE */
+#no-results-deck label {
+}
+#no-results-deck image#noresults-concert-icon {
+	list-style-image: url(chrome://concerts/skin/node-concert-on.png);
+}
+
+.fail-noresults label {
+	color: black;
+	font-weight: bold;
+}
+
+label#epic-fail{
+	font-size: 800%;
+}
+
+/* TIMEOUT ERROR PAGE */
+vbox#timeout-vbox {
+	max-width: 85%;
+	width: 85%;
+	font-size: 135%;
+}
+

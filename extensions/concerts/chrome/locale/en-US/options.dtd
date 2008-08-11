@@ -1,0 +1,19 @@
+<!ENTITY prefs.about "About">
+<!ENTITY prefs.about.text "If you live in the US or UK, you can find out when artists in your library are playing in your town.  Enter your location to get started.">
+<!ENTITY prefs.location.text "Choose the nearest city to see concerts in the surrounding area">
+<!ENTITY prefs.library "Library">
+<!ENTITY prefs.library.text "Songbird can add a column to your music library that will indicate when any of your artists are on tour in your town.">
+<!ENTITY prefs.library.checklabel "Add the on tour column to my library">
+<!ENTITY prefs.location "Location">
+
+<!ENTITY prefs.country "Country">
+<!ENTITY prefs.country.us "United States">
+<!ENTITY prefs.country.uk "United Kingdom">
+
+<!ENTITY prefs.state "State">
+<!ENTITY prefs.city "City">
+<!ENTITY prefs.radius "Radius">
+
+<!ENTITY prefs.findShows "Find shows">
+
+<!ENTITY concerts.poweredby "Concert listings are provided by ">

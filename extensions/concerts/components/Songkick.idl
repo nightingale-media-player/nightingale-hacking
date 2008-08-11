@@ -1,0 +1,57 @@
+#include "nsISupports.idl"
+
+interface sbISongkickDisplayCallback;
+interface nsIArray;
+interface nsISimpleEnumerator;
+
+[scriptable, uuid(33268520-4d39-11dd-ae16-0800200c9a66)]
+interface sbISongkick : nsISupports
+{
+	attribute boolean concertRefreshRunning;
+	attribute boolean drawingLock;
+
+	readonly attribute string onTourImgProperty;
+	readonly attribute string onTourUrlProperty;
+	readonly attribute string progressString;
+	readonly attribute long progressPercentage;
+
+	void startRefreshThread();
+	boolean refreshConcerts(in boolean async, in long cityID);
+	void processConcerts(in boolean async, in long cityID, in string xmlData);
+
+	void refreshLocations();
+	void processLocations(in string xmlData);
+	boolean gotLocationInfo();
+
+	// Callback registration and unregistration
+	boolean hasDisplayCallback();
+	boolean registerDisplayCallback(in sbISongkickDisplayCallback callback);
+	void unregisterDisplayCallback();
+	boolean registerSPSUpdater(in sbISongkickDisplayCallback callback);
+	void unregisterSPSUpdater();
+
+	// These are JSON encoding of the actual objects and should be JSON
+	// decoded before using
+	string getLocationCountries();
+	string getLocationStates(in long countryID);
+	string getLocationCities(in long stateID);
+
+	string getCityString(in long cityID);
+	string getLocationString(in long countryID, in long stateID,
+					in long cityID);
+
+	long getConcertCount(in boolean filterLibraryArtists);
+	boolean getTourStatus(in string artistName);
+	string providerURL();
+
+	nsISimpleEnumerator concertEnumerator(in string sort,
+					in boolean filterLibraryArtists);
+	nsISimpleEnumerator artistConcertEnumerator(
+					in boolean filterLibraryArtists);
+}; 
+
+[scriptable, function, uuid(c1b63620-4d41-11dd-ae16-0800200c9a66)]
+interface sbISongkickDisplayCallback : nsISupports
+{
+	void uiCallback();
+};

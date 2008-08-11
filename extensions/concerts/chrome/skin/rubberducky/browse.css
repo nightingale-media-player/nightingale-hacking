@@ -1,0 +1,169 @@
+body{
+	font-family:Arial,Helvetica,FreeSans,sans-serif;
+	font-size:62.5%;
+	line-height:1.25;
+	color:#777;
+	background:#fff;
+	margin:10px;
+}
+a{
+	color:#1694d9;
+	text-decoration:none;
+	outline:0;
+}
+a:hover{
+	text-decoration:underline;
+}
+img{
+	border:0;
+}
+
+.indexDiv{
+	clear:both;
+}
+
+/* ALPHA/DATE HEADERS */
+.letterIndexContainer{
+	width:48px;
+	font-size:3.6em;
+	text-align:center;
+	color:#bbb;
+	background:#f3f3f3;
+	border:1px solid #ddd;
+	float:left;
+}
+.dateIndexContainer{
+	width:50px;
+	text-align:center;
+	float:left;
+}
+.dateIndex-box{
+	width:48px;
+	color:#aaa;
+	background:#f3f3f3;
+	padding:2px 0 3px;
+	border:1px solid #ddd;
+	margin-bottom:2px;
+	cursor:pointer;
+}
+.dateIndex-box:hover{
+	color:#fff;
+	background:#ccc;
+	border-color:#ccc;
+}
+.dateIndex-month{
+	font-size:1.1em;
+	line-height:1.27;
+}
+.dateIndex-date{
+	font-size:3em;
+	line-height:1;
+}
+.dateIndex-day{
+	font-size:1.1em;
+	line-height:1.27;
+	color:#aaa;
+	margin-bottom:20px;
+}
+
+/* LISTINGS */
+.concertListing{
+	padding-left:20px;
+	border-left:1px solid #eee;
+	margin-left:60px;
+}
+.concertListingDate{
+}
+.concertListing .artistBlock{
+	margin-bottom:20px;
+}
+.concertListing .artistBlock .mainArtistName{
+	font-size:2.4em;
+	line-height:1.5;
+}
+.concertListing .artistBlock .mainArtistName a{
+	color:#183b52;
+}
+.concertListing .artistBlock .mainArtistName a:hover{
+}
+.concertListing .playLink{
+	margin-left:.5em;
+	cursor:pointer;
+}
+.concertListing table{
+	width:100%;
+	margin:0;
+	border-collapse:collapse;
+}
+.concertListing th{
+	font-size:1.1em;
+	font-weight:normal;
+	line-height:1.27;
+	text-align:left;
+	color:#777;
+	padding:0 3px 3px;
+	border-bottom:1px solid #e3e3e3;
+}
+.concertListing td{
+	font-size:1.3em;
+	line-height:1.31;
+	vertical-align:top;
+	padding:3px 3px 4px;
+	border-bottom:1px solid #eee;
+}
+td.tickets, td.gcal {
+	width:7em;
+	text-align:center;
+}
+.get-tickets{
+	font-size:.85em;
+	line-height:1;
+	color:#fff;
+	background:#50afe3 url(chrome://concerts/skin/icon-ticket.png) no-repeat 5px center;
+	padding:2px 8px 2px 23px;
+	-moz-border-radius:10px;
+}
+.get-tickets:hover{
+	text-decoration:none;
+	background-color:#1694d9;
+}
+td.date{
+	width:10em;
+}
+th.gcal, td.gcal {
+	width:1.5em;
+	text-align: center;
+}
+td.venue{
+	width:15em;
+}
+
+/* FOOTER */
+#ft{
+	font-size:1.1em;
+	line-height:1.27;
+	color:#aaa;
+	padding:4px 5px;
+	border-top:1px solid #eee;
+	margin-top:40px;
+	clear:both;
+}
+#ft a{
+	color:#45A9E1;
+}
+#ft:after{
+	height:0;
+	clear:both;
+	display:block;
+	visibility:hidden;
+	content:".";
+}
+.poweredBy{
+	width:45%;
+	float:left;
+}
+.lastUpdated{
+	width:45%;
+	text-align:right;
+	float:right;
+}
