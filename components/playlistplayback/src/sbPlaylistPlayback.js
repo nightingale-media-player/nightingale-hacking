@@ -1590,7 +1590,6 @@ PlaylistPlayback.prototype = {
       this._timer = null;
     }
     this._started = false;
-    this._metadataImageURL.stringValue = "";
   },
   
   _onPlayerLoopStop: function() {
@@ -1625,6 +1624,9 @@ PlaylistPlayback.prototype = {
       this._beenPlayingCount = 0;
       this._incPlayCountItem = null;
     }
+
+    // Clear the imageUrl so we can remove the now playing image.
+    this._metadataImageURL.stringValue = "";
   },
   
   // Poll function
@@ -1765,20 +1767,20 @@ PlaylistPlayback.prototype = {
     // the first time the metadata needs to be updated, it's done as soon as possible. as is, it always does it the first time
     // the loop is hit, and that suits us, but it's really not clear)
 
+    // Sometimes the core is a little slower than we are and it returns
+    // metadata for the previous song after we are already playing the next.
+    // Make sure we're in sync and bail if not.
+    if (core.getMetadata("url") != this._playURL.stringValue)
+      return;
+
+    //Get current item using current index and current playing view.
+    var cur_index = this.currentIndex;
+    var cur_item = this._playingView.getItemByIndex(cur_index);
+
     // Wait a bit, and then only ask infrequently
     if ( ( pos_ms > 250 ) && // If we've gone more than a quarter of a second, AND
          ( this._metadataPollCount++ % 20 ) == 0 ) {
 
-      // Sometimes the core is a little slower than we are and it returns
-      // metadata for the previous song after we are already playing the next.
-      // Make sure we're in sync and bail if not.
-      if (core.getMetadata("url") != this._playURL.stringValue)
-        return;
-
-      //Get current item using current index and current playing view.
-      var cur_index = this.currentIndex;
-      var cur_item = this._playingView.getItemByIndex(cur_index);
-      
       // If the item is set read-only, do not attempt to overwrite any metadata.
       // See bug #9045.
       if (parseInt(cur_item.getProperty(SBProperties.isReadOnly))) {
@@ -1862,6 +1864,12 @@ PlaylistPlayback.prototype = {
         
       // Set the dataremote for the primaryImageURL for album art.
       this._getPrimaryImage(cur_item);
+    } else {
+      if (this._metadataImageURL.stringValue == "") {
+        // Since we are playing and the image is "" we should check it and set
+        // it to the DEFAULT_COVER if there is no image.
+        this._getPrimaryImage(cur_item);
+      }
     }
   },
 
@@ -2304,6 +2312,10 @@ PlaylistPlayback.prototype = {
   _getPrimaryImage: function sbPlaylistPlayback_getPrimaryImage(aMediaItem) {
     // Set the dataremote for the primaryImageURL for album art.
     var primaryImageURL = aMediaItem.getProperty(SBProperties.primaryImageURL);
+    if (primaryImageURL == "") {
+      // Change "" to DEFAULT_COVER since "" means there is no cover available
+      primaryImageURL = DEFAULT_COVER;
+    }
     
     // Look up any missing cover images in the file.
     // null => unchecked, "" => no image available
@@ -2339,7 +2351,11 @@ PlaylistPlayback.prototype = {
         }
       }
       
-      this._metadataImageURL.stringValue = primaryImageURL;
+      // We check here again since we may have loaded the same value into
+      // primaryImageURL.
+      if (primaryImageURL != this._metadataImageURL.stringValue) {
+        this._metadataImageURL.stringValue = primaryImageURL;
+      }
     }
   },
   

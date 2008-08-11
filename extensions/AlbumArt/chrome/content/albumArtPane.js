@@ -45,10 +45,10 @@ const DISPLAY_PANE_ICON = "http://songbirdnest.com/favicon.ico";
  *
  *****************************************************************************/
 var AlbumArtPaneController = {
-  _coverBind: null,       // Data remote for the now playing.
+  _coverBind: null,               // Data remote for the now playing image.
 
   // Cache some things so we don't have to keep loading the same image
-  _lastImageSrc: "",      // keep track of what the last image src was
+  _lastImageSrc: "",       // keep track of what the last image src was
   _imageWidth: 0,          // hold this for resizing
   _imageHeight: 0,         // and this.
 
@@ -81,14 +81,14 @@ var AlbumArtPaneController = {
       this._imageWidth = newImg.width;
     }
 
-    // Window is our displaypane, so grab the size
-    var windowWidth = window.innerWidth;
-    var windowHeight = window.innerHeight;
-
     // Do not do anything with invalid images.
     if (this._imageWidth <= 0 || this._imageHeight <= 0) {
       return;
     }
+    
+    // Window is our displaypane, so grab the size
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight;
     
     // Default to the size of the image
     var newWidth = this._imageWidth;
@@ -121,29 +121,36 @@ var AlbumArtPaneController = {
 
   onImageLoad: function () {
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
+    if (albumArtPlayingImage.getAttribute("src")) {
+      // Resize the image to keep the aspect ratio.
+      AlbumArtPaneController.onResize();
+    }
+  },
+  
+  observe: function ( aSubject, aTopic/*key*/, aData/*value*/ ) {
+    var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     var albumArtNotPlayingBox = document.getElementById('sb-albumart-not-playing');
-    
-    if (albumArtPlayingImage.getAttribute("src") == "") {
+
+    if (!aData || aData == "") {
       // Show the not playing message.
       albumArtNotPlayingBox.removeAttribute("hidden");
     } else {
       // Hide the not playing message.
       albumArtNotPlayingBox.setAttribute("hidden", true);
-      // Resize the image to keep aspect ratio.
-      AlbumArtPaneController.onResize();
     }
+    albumArtPlayingImage.setAttribute("src", aData);
   },
   
   onLoad: function () {
     // Set the title correctly, localize since we can not from the install.rdf.
-    paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                .getService(Ci.sbIDisplayPaneManager);
+    var paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                    .getService(Ci.sbIDisplayPaneManager);
     paneMgr.updateContentInfo(DISPLAY_PANE_CONTENTURL,
                               SBString("albumart.displaypane.title",
                                        "Album Art"),
                               DISPLAY_PANE_ICON);
 
-    // When an image loads we hide the not playing message.
+    // When an image resize to keep the aspect ratio.
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     albumArtPlayingImage.addEventListener("load",
                                           AlbumArtPaneController.onImageLoad,
@@ -155,12 +162,8 @@ var AlbumArtPaneController = {
                                   Components.interfaces.sbIDataRemote,
                                   "init");
     this._coverBind = createDataRemote("metadata.imageURL", null);
-    this._coverBind.bindAttribute(albumArtPlayingImage,
-                                  "src",
-                                  false,
-                                  false,
-                                  null);
-    
+    this._coverBind.bindObserver(AlbumArtPaneController, false);
+
     // Listen for resizes of the display pane so that we can keep the aspect
     // ratio of the image.
     window.addEventListener("resize",
@@ -170,6 +173,10 @@ var AlbumArtPaneController = {
   
   onUnload: function () {
     this._coverBind.unbind();
+    var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
+    albumArtPlayingImage.removeEventListener("load",
+                                             AlbumArtPaneController.onImageLoad,
+                                             false);
     window.removeEventListener("resize",
                                AlbumArtPaneController.onResize,
                                false);

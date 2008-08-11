@@ -47,7 +47,7 @@
     <vbox id="sb-albumart-not-playing"
           class="albumArtNotPlayingContainer">
       <label class="albumArtNotPlayingMessage"
-                   value="&artwork.displaypane.not_playing_message;"/>
+             value="&artwork.displaypane.not_playing_message;"/>
     </vbox>
   </stack>
 
