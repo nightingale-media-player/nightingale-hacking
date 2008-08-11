@@ -7,3 +7,13 @@
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontCMEX10.properties
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontSymbol.properties
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontMath4.properties
+./Contents/Resources/chrome/rubberducky.jar
+./Contents/Resources/chrome/rubberducky.manifest
+./Contents/Resources/components/sbMetadataManager.dylib
+./Contents/Resources/components/sbMetadataManager.xpt
+./Contents/Resources/components/sbProperties.jsm
+./Contents/Resources/extensions/basic-layouts@songbirdnest.com/chrome.manifest
+./Contents/Resources/extensions/basic-layouts@songbirdnest.com/install.rdf
+./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
+./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome.manifest
+./Contents/Resources/extensions/rubberducky@songbirdnest.com/install.rdf

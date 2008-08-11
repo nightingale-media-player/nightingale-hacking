@@ -9,3 +9,13 @@
 ./xulrunner/Microsoft.VC80.CRT.manifest
 ./xulrunner/msvcp80.dll
 ./xulrunner/msvcr80.dll
+./chrome/rubberducky.jar
+./chrome/rubberducky.manifest
+./components/sbMetadataManager.dll
+./components/sbMetadataManager.xpt
+./components/sbProperties.jsm
+./extensions/basic-layouts@songbirdnest.com/chrome.manifest
+./extensions/basic-layouts@songbirdnest.com/install.rdf
+./extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
+./extensions/rubberducky@songbirdnest.com/chrome.manifest
+./extensions/rubberducky@songbirdnest.com/install.rdf

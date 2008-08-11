@@ -7,3 +7,13 @@
 ./xulrunner/res/fonts/mathfontMTExtra.properties
 ./xulrunner/res/fonts/mathfontMath2.properties
 ./components/sbGStreamer.so
+./chrome/rubberducky.jar
+./chrome/rubberducky.manifest
+./components/sbMetadataManager.so
+./components/sbMetadataManager.xpt
+./components/sbProperties.jsm
+./extensions/basic-layouts@songbirdnest.com/chrome.manifest
+./extensions/basic-layouts@songbirdnest.com/install.rdf
+./extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
+./extensions/rubberducky@songbirdnest.com/chrome.manifest
+./extensions/rubberducky@songbirdnest.com/install.rdf
