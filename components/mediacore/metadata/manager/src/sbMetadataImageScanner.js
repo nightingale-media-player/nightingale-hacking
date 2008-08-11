@@ -48,7 +48,7 @@ __defineGetter__("Application", function() {
 
 // Constanst for convinence
 const PROP_LAST_COVER_SCAN = SBProperties.base + 'lastCoverScan';
-const RESCAN_INTERVAL = (60*60*24*7);      // Rescan for missing art every week
+const RESCAN_INTERVAL = (60*60*24*7*1000); // Rescan for missing art every week
 const TIMER_INTERVAL = (5 * 1000);         // perform a task every Xs
 
 // Constants for topics to observe
@@ -301,7 +301,6 @@ sbMetadataImageScanner.prototype = {
   _getCoverForItem: function (aMediaItem) {
     // Check if there is no current cover
     var primaryImageURL = aMediaItem.getProperty(SBProperties.primaryImageURL);
-    this._debug("Next item has primaryImageURL of [" + primaryImageURL + "]");
     if (!primaryImageURL) {    
 
       // Check if we are ready to rescan this item
@@ -309,31 +308,30 @@ sbMetadataImageScanner.prototype = {
       if (isNaN(lastCoverScan)) { lastCoverScan = 0; }
       var timeNow = Date.now();
       this._debug("Next item has lastCoverScan of [" + lastCoverScan + "] " +
+                   "Rescan Time = " + (lastCoverScan + this._rescanInterval) + " " +
                   "Now = " + timeNow);
       if ( (lastCoverScan + this._rescanInterval) < timeNow ) {
-
-        // Check if we have artist and album
-        var albumName = aMediaItem.getProperty(SBProperties.albumName);
-        var artistName = aMediaItem.getProperty(SBProperties.artistName);
-        this._debug("Next item has Artist=" + artistName +
-                    ", Album=" + albumName);
-        if ( artistName && albumName ) {
-          aMediaItem.setProperty(PROP_LAST_COVER_SCAN, timeNow);
-          var outFileLocation = this.fetchCoverForMediaItem(aMediaItem);
-          if (outFileLocation != null) {
-            // a successful scan of an empty file returns "",
-            // which will prevent us from scanning this file again as we
-            // set it into the media item here.
-            aMediaItem.setProperty(SBProperties.primaryImageURL,
-                                    outFileLocation);
-          }
-          // convert the result back to a bool
-          return !!outFileLocation;
+        aMediaItem.setProperty(PROP_LAST_COVER_SCAN, timeNow);
+        var outFileLocation = this.fetchCoverForMediaItem(aMediaItem);
+        if (outFileLocation != null) {
+          // a successful scan of an empty file returns "",
+          // which will prevent us from scanning this file again as we
+          // set it into the media item here.
+          aMediaItem.setProperty(SBProperties.primaryImageURL,
+                                  outFileLocation);
         } else {
-          this._debug("Missing Artist or Album from item");
+          // explicitly set it to null so that other users can see that we
+          // have already checked the contents and explicitly noted that 
+          // there are none.
+          aMediaItem.setProperty(SBProperties.primaryImageURL, "");
         }
+        // convert the result back to a bool
+        return !!outFileLocation;
       } else {
+        // Since we are doing a second sort by lastCoverScan if we encounter
+        // one that is not ready to scan then we are done.
         this._debug("Not ready to rescan this item for images.");
+        this._turnOffTimer();
       }
     } else {
       // Since we are sorting by primaryImageURL (artwork) if we encounter an
@@ -391,6 +389,7 @@ sbMetadataImageScanner.prototype = {
         Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
           .createInstance(Ci.sbIMutablePropertyArray);
     propArray.appendProperty(SBProperties.primaryImageURL, "a");
+    propArray.appendProperty(PROP_LAST_COVER_SCAN, "a");
     this._mediaListView.setSort(propArray);
 
     // Remove the hidden or list items
