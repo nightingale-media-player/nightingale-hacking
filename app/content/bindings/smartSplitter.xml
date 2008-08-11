@@ -289,24 +289,24 @@
               var hideonopen = this.getAttribute("hideonopen");
               if (hideonopen != "") {
                 var element = document.getElementById(hideonopen);
-                if (element) element.hidden = true;
+                if (element) element.collapsed = true;
               }
               var showonopen = this.getAttribute("showonopen");
               if (showonopen != "") {
                 var element = document.getElementById(showonopen);
-                if (element) element.hidden = false;
+                if (element) element.collapsed = false;
               }
               break;
             case "collapsed":
               var hideoncollapse = this.getAttribute("hideoncollapse");
               if (hideoncollapse != "") {
                 var element = document.getElementById(hideoncollapse);
-                if (element) element.hidden = true;
+                if (element) element.collapsed = true;
               }
               var showoncollapse = this.getAttribute("showoncollapse");
               if (showoncollapse != "") {
                 var element = document.getElementById(showoncollapse);
-                if (element) element.hidden = false;
+                if (element) element.collapsed = false;
               }
               break;
           }
