@@ -62,9 +62,11 @@
         // adjust orientation
         if (this.isVertical()) {
           this.setAttribute("style", "-moz-box-orient: horizontal"); 
+          this.setAttribute("scrolldir", "EW");
         }
         else {
           this.setAttribute("style", "-moz-box-orient: vertical");
+          this.setAttribute("scrolldir", "NS");
         }
         
         // deferred initialization

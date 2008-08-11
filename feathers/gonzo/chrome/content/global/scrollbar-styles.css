@@ -172,3 +172,23 @@ scrollbarbutton:active {
 scrollbarbutton[disabled="true"] {
   background-position:center -30px;
 }
+
+/* ::::: auto scroll popup ::::: */
+#autoscroller {
+  height: 28px;
+  width: 28px;
+  border: none;
+  margin: -14px;
+  padding: 0;
+  background-image: url("chrome://songbird/skin/browser/icon-autoscroll.png");
+  background-color: transparent;
+  background-position: right top;
+}
+
+#autoscroller[scrolldir="NS"] {
+  background-position: right center;
+}
+ 
+#autoscroller[scrolldir="EW"] {
+  background-position: right bottom;
+}

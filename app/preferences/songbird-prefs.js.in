@@ -98,7 +98,7 @@ pref("extensions.dss.enabled", false);
 // Non-dynamic switch pending after next restart
 pref("extensions.dss.switchPending", false);
 
-pref("general.autoScroll", false);
+pref("general.autoScroll", true);
 pref("general.smoothScroll", false);
 
 // this will automatically enable inline spellchecking (if it is available) for
