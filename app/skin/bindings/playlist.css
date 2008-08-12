@@ -355,32 +355,26 @@ Playing track indicator
   background-position: 0% -18px;
 }
 
-/** 
-*******************************************************************************
-Time/Duration Column
-*******************************************************************************
-*/
-treecol[bind="http://songbirdnest.com/data/1.0#duration"]
-{
-  text-align:right;
-}
-treecol[bind="http://songbirdnest.com/data/1.0#duration"] > label,
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-duration )
-{
-  padding-right:5px;
-}
-
 /**
 *******************************************************************************
-Track No Column
+Right align Track No, Time/Duration, Size, and Sample Rate
 *******************************************************************************
 */
-treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"]
+treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"],
+treecol[bind="http://songbirdnest.com/data/1.0#duration"],
+treecol[bind="http://songbirdnest.com/data/1.0#sampleRate"],
+treecol[bind="http://songbirdnest.com/data/1.0#contentLength"]
 {
   text-align:right;
 }
 treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"] > label,
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-trackNumber )
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-trackNumber ),
+treecol[bind="http://songbirdnest.com/data/1.0#duration"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-duration ),
+treecol[bind="http://songbirdnest.com/data/1.0#sampleRate"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-sampleRate ),
+treecol[bind="http://songbirdnest.com/data/1.0#contentLength"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-contentLength )
 {
   padding-right:5px;
 }

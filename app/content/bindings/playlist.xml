@@ -790,9 +790,12 @@
          });
       
       if (!hasOrdinal) {
+        ColumnSpecParser.reduceWidthsProportionally(columnMap, 
+                     /* arbitrary size for # col */ 42);
         columnMap.unshift({
             property: SBProperties.ordinal,
-            sort: "ascending"
+            sort: "ascending",
+            width: 42
           });
       }
       
@@ -1319,6 +1322,8 @@
   this.ignoreColumnSpecUpdate = true;
   mediaList.setProperty(SBProperties.columnSpec, columnSpec);
   this.ignoreColumnSpecUpdate = false;
+  
+  dump("\n\nplaylist.xml saving column spec: " + columnSpec + "\n\n");
 
   // Consider saving this spec as a default
   if (!this._suppressSaveAsDefaultColumnSpec) {

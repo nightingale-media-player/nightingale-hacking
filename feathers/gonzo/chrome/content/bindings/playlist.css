@@ -247,7 +247,10 @@ In-cell Download Buttons
 
 
 treecol[bind="http://songbirdnest.com/data/1.0#duration"],
-treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"] {
+treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"],
+treecol[bind="http://songbirdnest.com/data/1.0#sampleRate"],
+treecol[bind="http://songbirdnest.com/data/1.0#contentLength"]
+{
   text-align:right;
 }
 

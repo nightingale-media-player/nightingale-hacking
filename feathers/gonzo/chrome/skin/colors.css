@@ -295,28 +295,10 @@ treechildren::-moz-tree-progressmeter {
 
 
 listheader,
-treecol,
-treecols,
-treecolpicker {
-  background-image: url('chrome://songbird/skin/base-elements/bg-table-header.png');
-  background-position:center 0px;
-  background-repeat:repeat-x;
-}
-
-
-listheader,
 treecols {
   border-bottom:1px solid rgb(161,161,161);
 }
 
-treecol:hover,
-treecolpicker:hover {
-  background-position:center -15px;
-}
-treecol:active,
-treecolpicker:active {
-  background-position:center -30px;
-}
 /*
 treecol[dragging="true"] {
   background-position:center -90px;
@@ -326,43 +308,6 @@ treecol[dragging="true"] > label,
 treecol[dragging="true"]:hover:active > label {
   color: rgb(101,101,101);
 }
-
-
-treecol[sortActive="true"] {
-  background-position:center -45px;
-}
-treecol[sortActive="true"]:hover {
-  background-position:center -60px;
-}
-treecol[sortActive="true"]:active {
-  background-position:center -75px;
-}
-
-
-.treecol-sortdirection[sortDirection="ascending"],
-.listheader-sortdirection[sortDirection="ascending"] {
-  list-style-image:url("chrome://songbird/skin/base-elements/icon-sort-ascending.png") !important;
-}
-.treecol-sortdirection[sortDirection="descending"],
-.listheader-sortdirection[sortDirection="descending"] {
-  list-style-image:url("chrome://songbird/skin/base-elements/icon-sort-descending.png") !important;
-}
-
-
-
-.sb-filterlist-tree treecol[sortActive="true"] {
-  background-position:center 0px;
-}
-.sb-filterlist-tree treecol[sortActive="true"]:hover {
-  background-position:center -15px;
-}
-.sb-filterlist-tree treecol[sortActive="true"]:active {
-  background-position:center -30px;
-}
-
-
-
-
 
 
 treecolpicker > .tree-columnpicker-icon {
@@ -1534,7 +1479,7 @@ sb-sys-titlebar {
 
 
 treecol {
-  min-width: 64px;
+  min-width: 45px;
 }
 
 treecol[bind="http://songbirdnest.com/data/1.0#rating"] {

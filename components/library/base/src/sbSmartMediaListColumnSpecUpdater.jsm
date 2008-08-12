@@ -116,11 +116,14 @@ var SmartMediaListColumnSpecUpdater = {
     var ordinal = {
       property: SBProperties.ordinal,
       sort: "a",
+      width: 42
     }
     if (!this._getColumn(columnMap, SBProperties.ordinal)) {
+      ColumnSpecParser.reduceWidthsProportionally(columnMap, ordinal.width);
       columnMap.unshift(ordinal);
     }
     if (!this._getColumn(userSpecs, SBProperties.ordinal)) {
+      ColumnSpecParser.reduceWidthsProportionally(userSpecs, ordinal.width);
       userSpecs.unshift(ordinal);
     }
 
@@ -138,12 +141,12 @@ var SmartMediaListColumnSpecUpdater = {
     };
     
     if (!this._getColumn(defaultCols, sort)) {
-      this._reduceWidthsProportionally(defaultCols, columnWidth);
+      ColumnSpecParser.reduceWidthsProportionally(defaultCols, columnWidth);
       defaultCols.push(newSort);
     }
     
     if (!this._getColumn(cols, sort)) {
-      this._reduceWidthsProportionally(cols, columnWidth);
+      ColumnSpecParser.reduceWidthsProportionally(cols, columnWidth);
       cols.push(newSort);
     }
     
@@ -208,24 +211,6 @@ var SmartMediaListColumnSpecUpdater = {
   _getColumnSpec: function(aMediaList) {
     var parser = new ColumnSpecParser(aMediaList, null);
     return parser.columnMap;
-  },
-
-  _reduceWidthsProportionally: function(aColumnsArray, 
-                                        aTotalWidth, 
-                                        aExcludedPropertyID) {
-    var fullWidth = 0;
-    for each (var col in aColumnsArray) {
-      if (col.property == aExcludedPropertyID) continue;
-      if (!col.width) continue;
-      fullWidth += parseInt(col.width);
-    }
-    for each (var col in aColumnsArray) {
-      if (!col.width) continue;
-      if (col.property == aExcludedPropertyID) continue;
-      var fraction = parseInt(col.width)/fullWidth;
-      var subtract = fraction * aTotalWidth;
-      col.width = parseInt(parseInt(col.width) - subtract);
-    }  
   },
 
   _getDefaultSortDirection: function(prop) {

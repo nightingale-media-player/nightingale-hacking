@@ -101,12 +101,12 @@ function ColumnSpecParser(aMediaList, aPlaylist) {
 
   if (!columns.columnMap.length) {
     columns =
-      ColumnSpecParser.parseColumnSpec(SBProperties.trackName + " 265 " +
-                                       SBProperties.duration + " 43 " +
-                                       SBProperties.artistName + " 177 a " +
-                                       SBProperties.albumName + " 159 " +
-                                       SBProperties.genre + " 53 " +
-                                       SBProperties.rating + " 80");
+      ColumnSpecParser.parseColumnSpec(SBProperties.trackName + " 229 " +
+                                       SBProperties.duration + " 45 " +
+                                       SBProperties.artistName + " 137 a " +
+                                       SBProperties.albumName + " 215 " +
+                                       SBProperties.genre + " 101 " +
+                                       SBProperties.rating + " 78");
     this._columnSpecOrigin = this.ORIGIN_DEFAULT;
   }
 
@@ -227,4 +227,29 @@ ColumnSpecParser.parseColumnSpec = function(spec) {
   }
 
   return result;
+}
+
+/**
+ * The playlist columns are no longer locked to 100% of the screen width,
+ * so we often need to resize all columns when appending new ones.
+ * 
+ * \param aColumnsArray Array of column objects produced by parseColumnSpec
+ * \param aNeededWidth Amount of room to free up in the column array
+ */
+ColumnSpecParser.reduceWidthsProportionally = function(aColumnsArray, 
+                                                       aNeededWidth) 
+{
+  var fullWidth = 0;
+  for each (var col in aColumnsArray) {
+    if (!col.width || col.width < 80) continue;
+    fullWidth += parseInt(col.width);
+  }
+  for each (var col in aColumnsArray) {
+    if (!col.width || col.width < 80) continue;
+    var fraction = parseInt(col.width)/fullWidth;
+    var subtract = fraction * aNeededWidth;
+    // Round down, since it is better to be too small than to overflow
+    // and require a scroll bar
+    col.width = Math.floor(parseInt(col.width) - subtract);
+  }
 }
