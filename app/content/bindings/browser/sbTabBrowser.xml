@@ -53,6 +53,20 @@
         if (!window.XPCOMUtils) 
           Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
 
+        // we moved the strip container to the tabs binding
+        // this must happen before the addProgressListener call below to properly
+        // trigger showing the tabstrip when the always show pref is set and
+        // there is only one tab at startup
+        var strip = document.getAnonymousElementByAttribute(this, "anonid", "strip");
+        if (strip && strip.collapsed) {
+          // don't collapse the outer box, collapse the inner <tabs> element instead
+          strip.collapsed = false;
+          this.mStrip.collapsed = true;
+        }
+        if (this.hasAttribute("tabstrip")) {
+          this.mStrip = document.getElementById(this.getAttribute("tabstrip"));
+        }
+        
         /* load the tab progress listener object
          * this is used to trigger notifyTabContentChange() / saveTabState()
          * and to set various data remotes on location change, such as toolbar
@@ -68,17 +82,6 @@
             Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
 
         this.loading = false;
-        
-        // we moved the strip container to the tabs binding
-        var strip = document.getAnonymousElementByAttribute(this, "anonid", "strip");
-        if (strip && strip.collapsed) {
-          // don't collapse the outer box, collapse the inner <tabs> element instead
-          strip.collapsed = false;
-          this.mStrip.collapsed = true;
-        }
-        if (this.hasAttribute("tabstrip")) {
-          this.mStrip = document.getElementById(this.getAttribute("tabstrip"));
-        }
         
         scope = {};
         subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBSessionStore.js", scope);
