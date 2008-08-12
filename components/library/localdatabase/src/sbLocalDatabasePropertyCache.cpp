@@ -946,9 +946,13 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
       NS_Alloc(sizeof(sbILocalDatabaseResourcePropertyBag*) * aGUIDArrayCount)));
   NS_ENSURE_TRUE(propertyBagArray, NS_ERROR_OUT_OF_MEMORY);
 
+  PRBool found = PR_FALSE;
   for (PRUint32 i = 0; i < aGUIDArrayCount; i++) {
     // This will either set and addref or set to null.
-    mCache.Get(nsDependentString(aGUIDArray[i]), &propertyBagArray[i]);
+    found = mCache.Get(nsDependentString(aGUIDArray[i]), &propertyBagArray[i]);
+    if (!found) {
+      return NS_ERROR_NOT_AVAILABLE;
+    }
   }
 
   *aPropertyArrayCount = aGUIDArrayCount;
