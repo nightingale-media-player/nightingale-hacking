@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $# < 3 ]]; then
+if [ $# -lt 3 ]; then
   echo usage: make-installer architecture version readme
   exit 1
 fi
