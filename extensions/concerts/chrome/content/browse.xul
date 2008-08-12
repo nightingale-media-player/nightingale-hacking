@@ -235,6 +235,14 @@
 							value="&concerts.easteregg.fail;"/>
 						<label id="epic-city"
 							value="&concerts.easteregg.fail.2;"/>
+						<hbox pack="start">
+							<button class="noresults-button"
+								onclick="ConcertTicketing.editLocation()"
+								label="&concerts.changelocation;" />
+							<button class="noresults-button"
+								onclick="ConcertTicketing.changeFilter(true)"
+								id="noresults-seeallconcerts-city-e"/>
+						</hbox>
 					</vbox>
 				</stack>
 			</deck>

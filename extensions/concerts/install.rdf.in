@@ -56,16 +56,26 @@
     <em:version>@EXTENSION_VER@</em:version>
 	<em:creator>Stephen Lau (stevel@songbirdnest.com)</em:creator>
 	<em:contributor>Mark James (FAMFAMFAM)</em:contributor>
+	<em:contributor>Antoine Turmel (geekshadow@gmail.com) - fr-FR translation</em:contributor>
+
 	<em:iconURL>chrome://concerts/content/ticket_icon.png</em:iconURL>
 	<em:homepageURL>http://addons.songbirdnest.com/addon/1281</em:homepageURL>
 	
-	<em:description>See when your library's artists are touring in your city.  Concert and ticketing information powered by Songkick.com.</em:description>
 	<em:localized>
-		<em:locale>en-US</em:locale>
-		<em:name>Concerts</em:name>
-		<em:description>See when your library's artists are touring in your city.  Concert and ticketing information powered by Songkick.com.</em:description>
+		<Description>
+			<em:locale>en-US</em:locale>
+			<em:name>Concerts</em:name>
+			<em:description>See when your library's artists are touring in your city.  Concert and ticketing information powered by Songkick.com.</em:description>
+		</Description>
 	</em:localized>
 
+	<em:localized>
+		<Description>
+			<em:locale>fr-FR</em:locale>
+			<em:name>Concerts</em:name>
+			<em:description>Affiche les artistes de votre bibliothèque qui sont en tournée dans votre ville. Informations des concerts et tickets fournies par Songkick.com.</em:description>
+		</Description>
+	</em:localized>
 
   </Description>
 </RDF>

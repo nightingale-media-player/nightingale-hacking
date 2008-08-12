@@ -250,6 +250,11 @@ ConcertTicketing.showNoConcerts = function() {
 		var label = document.getElementById("epic-city");
 		label.value += this.skSvc.getLocationString(this.pCountry, this.pState,
 				this.pCity);
+		
+		// Set the actual button text
+		var button = document.getElementById("noresults-seeallconcerts-city-e");
+		button.label = this._strings.getString("seeAllConcerts") + " " +
+			this.skSvc.getCityString(this.pCity);
 	} else {
 		var count = this.skSvc.getConcertCount(false);
 		var label;
@@ -405,12 +410,6 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 	flushDisplay();
 
 	var easterEgg = Application.prefs.getValue("extensions.concerts.epic", 0);
-	if (easterEgg == "9x6" || (easterEgg == "42" && this.filterLibraryArtists)
-			|| (easterEgg == "54"))
-	{
-		ConcertTicketing.showNoConcerts();
-		return;
-	}
 	if (easterEgg == "doctorwho") {
 		ConcertTicketing.showTimeoutError();
 		return;
