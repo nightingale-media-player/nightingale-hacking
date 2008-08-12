@@ -56,7 +56,7 @@
               <image anonid="icon" class="favicon"/>
             </vbox>
             <label anonid="header" xbl:inherits="default=label"
-                   class="sb-displaypane-label" flex="1"/>
+                   class="sb-displaypane-label" flex="1" crop="end"/>
           </hbox>
           <button type="menu" mousethrough="never" class="sb-displaypane-menubutton">
             <menupopup onpopupshowing="return document.getBindingParent(this).buildMenu(event)"
