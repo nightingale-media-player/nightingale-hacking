@@ -468,6 +468,9 @@ Section "Uninstall"
   
   ; These files are created by the application
   Delete $INSTDIR\*.chk
+
+  ; This file will exist after any Mozilla-based update
+  Delete $INSTDIR\removed-files
   
   ; List of directories to remove recursively.
   RMDir /r $INSTDIR\chrome
