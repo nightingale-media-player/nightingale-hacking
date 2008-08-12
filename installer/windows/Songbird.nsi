@@ -66,6 +66,9 @@ Var StartMenuDir
 !include defines.nsi
 !include common.nsh
 
+!insertmacro GetParameters
+!insertmacro GetOptions
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Product version information. 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -165,6 +168,7 @@ var LinkIconFile
 var HasBeenBackedUp
 var BackupLocation
 var HasValidInstallDirectory
+var SilentModeRunRegistration
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Install Sections
@@ -733,6 +737,17 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
+  StrCpy $SilentModeRunRegistration "1"
+  ${GetParameters} $R0
+  ClearErrors
+
+  ${GetOptions} $R0 "/NOREG" "$0"
+  IfErrors +2 0
+    StrCpy $SilentModeRunRegistration "0"
+
+  ;MessageBox MB_OK "INSTALL DIR IS $INSTDIR"
+  ;MessageBox MB_OK "Register is $SilentModeRunRegistration"
+
   StrCpy $HasBeenBackedUp "False"
 FunctionEnd
 
