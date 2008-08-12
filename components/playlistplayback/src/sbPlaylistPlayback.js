@@ -2607,7 +2607,7 @@ PlaylistPlayback.prototype = {
         if (aMediaList == this.mediaList) {
           this.batchListCount--;
           // reset smart playlist rebuild detection
-          smartRebuildDetectBatchCount = -1;
+          this.smartRebuildDetectBatchCount = -1;
         } else {
           this.batchLibraryCount--;
         }
