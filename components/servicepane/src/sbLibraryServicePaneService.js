@@ -36,6 +36,7 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
 const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
 const ROOTNODE = "SB:Bookmarks";
@@ -162,17 +163,15 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
     // Add menu items for a dynamic media list
     if (list.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") {
       this._appendMenuItem(aContextMenu, SBString("command.subscription.properties"), function(event) {
-
         var params = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
         params.appendElement(list, false);
 
-        var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
-                        .getService(Ci.nsIWindowWatcher);
-        watcher.openWindow(null,
-                           "chrome://songbird/content/xul/subscribe.xul",
-                           "_blank",
-                           "chrome,dialog=yes",
-                           params);
+        WindowUtils.openModalDialog(null,
+                                    "chrome://songbird/content/xul/subscribe.xul",
+                                    "",
+                                    "chrome,modal=yes,centerscreen",
+                                    params,
+                                    null);
       });
       this._appendMenuItem(aContextMenu, "Update", function(event) { //XXX todo: localize
         var dps = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicPlaylistService;1"]

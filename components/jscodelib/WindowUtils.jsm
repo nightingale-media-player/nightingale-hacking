@@ -157,6 +157,11 @@ var WindowUtils = {
    */
 
   _setArgs: function WindowUtils__setArgs(aArgs, aLocale) {
+    // If |aArgs| is already a |nsIArray|, just use it instead.
+    if (aArgs instanceof Ci.nsIArray) {
+      return aArgs;
+    }
+    
     // Get a dialog param block.
     var dialogPB = Cc["@mozilla.org/embedcomp/dialogparam;1"]
                      .createInstance(Ci.nsIDialogParamBlock);
