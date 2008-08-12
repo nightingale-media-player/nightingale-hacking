@@ -2779,7 +2779,6 @@ PlaylistPlayback.prototype = {
   },
   
   _doViewMetrics: function(aView) {
-    debugger;
     var mediaList = aView.mediaList;
     var outerListGuid = mediaList.getProperty(SBProperties.outerGUID);
     if (outerListGuid) {
