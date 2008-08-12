@@ -98,15 +98,29 @@ var SBSessionStore = {
       tab = tab.nextSibling;
     }
     
-    _tabState = urls;
+    _tabState = {
+                  selectedTabIndex: aTabBrowser.tabContainer.selectedIndex,
+                  urlList: urls
+                };
   },
   
   restoreTabState: function restoreTabState(aTabBrowser)
   {
-    var tabs = _tabState;
-
+    var tabObject = _tabState;
+    var tabs = [];
+    var selectedIndex = 0, selectedTab;
+    
     if (Application.prefs.has(PREF_FIRSTRUN_SESSION))
       Application.prefs.get(PREF_FIRSTRUN_SESSION).reset();
+    
+    if (tabObject && "urlList" in tabObject) {
+      // v2 of the tab state object (with selectedTabIndex)
+      tabs = tabObject.urlList;
+      selectedIndex = tabObject.selectedTabIndex || 0;
+    } else {
+      // v1 of the tab state object (no selected tab index, only urls)
+      tabs = tabObject;
+    }
     
     if ( !tabs ) {
       if (!Application.prefs.getValue(PREF_FIRSTRUN, false)) {
@@ -132,10 +146,10 @@ var SBSessionStore = {
     } else {
   
       // check if this is an invalid chrome url
-      var cr = Cc['@mozilla.org/chrome/chrome-registry;1']
-          .getService(Ci.nsIChromeRegistry);
+      var chromeReg = Cc['@mozilla.org/chrome/chrome-registry;1']
+                        .getService(Ci.nsIChromeRegistry);
       var ios = Cc["@mozilla.org/network/io-service;1"]
-          .getService(Ci.nsIIOService);
+                  .getService(Ci.nsIIOService);
       function isInvalidChromeURL(url) {
         var uri;
         // parse the URL
@@ -151,12 +165,13 @@ var SBSessionStore = {
         }
         // resolve the chrome url with the registry
         try {
-          uri = cr.convertChromeURL(uri);
+          uri = chromeReg.convertChromeURL(uri);
         } catch (e) {
           // an exception here means that this chrome URL isn't valid
           return true;
         }
         // if the scheme *is* chrome, then something's wrong
+        // (recursive chrome mapping)
         if (uri.scheme == 'chrome') {
           return true;
         }
@@ -167,8 +182,16 @@ var SBSessionStore = {
       // Otherwise, just restore whatever was there, previously.
       var isFirstTab = true;
       var tab, location;
-      for (var i=0; i<tabs.length; i++) {
+      for (var i = 0; i < tabs.length; i++) {
         tab = tabs[i];
+        var newTab = null;
+
+        var url = (tab.pageURL ? tab.pageURL : tab);
+        if (isInvalidChromeURL(url)) {
+          // we don't want to restore invalid chrome URLs
+          continue;
+        }
+
         // If the tab had a media page, restore it by reloading
         // the media list
         if (tab.listGUID) {
@@ -179,11 +202,6 @@ var SBSessionStore = {
           // Bug 7896   - Media pages do not initialize when loaded from tab restore
           // BMO 420815 - XUL Cache interferes with onload when loading multiple 
           //              instances of the same XUL file
-          var url = tab.pageURL;
-          if (isInvalidChromeURL(url)) {
-            // we don't want to restore invalid chrome URLs
-            continue;
-          }
           if (url.indexOf("&bypassXULCache") == -1) {
             url += "&bypassXULCache="+ Math.random();
           }
@@ -197,21 +215,17 @@ var SBSessionStore = {
           
           var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
                                                      tab.listGUID);
-          aTabBrowser.loadMediaList(list, null, location, null, url);
+          newTab = aTabBrowser.loadMediaList(list, null, location, null, url);
           
         // Otherwise just reload the URL
         } else {
-          if (isInvalidChromeURL(tab)) {
-            // we don't want to restore invalid chrome URLs
-            continue;
-          }
           
           if (isFirstTab) {
             if (aTabBrowser.mediaTab) {
               // let the first run URL load in the media tab (again).
               var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, null);
-              if ((firstrunURL == tab) ||
-                  (gServicePane && gServicePane.mTreePane.isMediaTabURL(tab)))
+              if ((firstrunURL == url) ||
+                  (gServicePane && gServicePane.mTreePane.isMediaTabURL(url)))
               {
                 // this is the first tab, and is a media-ish url
                 location = "_media";
@@ -222,7 +236,7 @@ var SBSessionStore = {
                 libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                            .getService(Ci.sbILibraryManager);
                 mainLib = libMgr.mainLibrary;
-                aTabBrowser.loadMediaList(mainLib);
+                newTab = aTabBrowser.loadMediaList(mainLib);
               }
             } else {
               // no media tab, but this is the first tab
@@ -231,14 +245,33 @@ var SBSessionStore = {
           } else {
             location = "_blank";
           }
-          aTabBrowser.loadURI(tab, null, null, null, location);
+          newTab = aTabBrowser.loadURI(url, null, null, null, location);
         }
 
         // Load the first url into the current tab and subsequent 
         // urls into new tabs 
         isFirstTab = false;
+        
+        if (i == selectedIndex) {
+          // note that this might not match the actual tab index, if there are
+          // any saved tabs that are now at an invalid chrome URL.  That's fine,
+          // because we just want to selected the same content, not the index.
+          selectedTab = newTab;
+        }
       }
     }
+
+    // Select the selected tab from the previous session (or the first one if
+    // we don't know which one that is)
+    // in a setTimeout due to sbTabBrowser::loadURI not letting us force load
+    // in background.  To be fixed better on trunk.
+    setTimeout(function(){
+      if (!selectedTab && aTabBrowser.mediaTab) {
+        selectedTab = aTabBrowser.mediaTab;
+      }
+      aTabBrowser.selectedTab = selectedTab;
+    }, 0);
+
     this.tabStateRestored = true;
     
     // tell the tab browser we switched tabs so it can update state correctly

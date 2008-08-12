@@ -170,6 +170,9 @@
       ]]></constructor>
       <destructor><![CDATA[
 
+        // Save the tabState on shutdown
+        this._sessionStore.saveTabState(this);
+        
         // remove service pane listener        
         this._servicePaneService.removeListener(this._servicePaneListener);
         this._servicePaneService = null;
