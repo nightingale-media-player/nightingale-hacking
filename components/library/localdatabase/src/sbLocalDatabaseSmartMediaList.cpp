@@ -336,11 +336,12 @@ sbLocalDatabaseSmartMediaListCondition::ToString(nsAString& _retval)
 //==============================================================================
 
 
-NS_IMPL_THREADSAFE_ISUPPORTS7(sbLocalDatabaseSmartMediaList,
+NS_IMPL_THREADSAFE_ISUPPORTS8(sbLocalDatabaseSmartMediaList,
                               nsIClassInfo,
                               nsISupportsWeakReference,
                               sbILibraryResource,
                               sbILocalDatabaseSmartMediaList,
+                              sbILocalDatabaseMediaItem,
                               sbIMediaItem,
                               sbIMediaList,
                               sbIMediaListListener);
