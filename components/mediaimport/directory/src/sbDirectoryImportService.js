@@ -371,6 +371,8 @@ DirectoryImportJob.prototype = {
     }
     
     // Bug 10228 -  batch item creation is not cancelable!
+    this._canCancel = false;
+    
     // BatchCreateMediaItems needs to return an sbIJobProgress
     this.targetMediaList.library.batchCreateMediaItemsAsync(
         batchCreateListener, this._itemURIs, this._itemInitialProperties);
@@ -441,6 +443,8 @@ DirectoryImportJob.prototype = {
    */
   _startMetadataScan: function DirectoryImportJob__startMetadataScan() {
     if (this._newMediaItems && this._newMediaItems.length > 0) {
+      this._canCancel = true;
+      
       var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
                               .getService(Ci.sbIFileMetadataService);
       var metadataJob = metadataService.read(this._newMediaItems);

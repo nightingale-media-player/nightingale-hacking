@@ -160,9 +160,14 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
       
       rv = mJobManager->GetQueuedJobItem(PR_FALSE, getter_AddRefs(item));
       
-      // If there are no more job items available we may need to shut down
-      // soon. Wait to be woken up.
-      if (rv == NS_ERROR_NOT_AVAILABLE) {
+      // If there are no more job items available or an error has occurred, 
+      // just go to sleep.
+      if (!NS_SUCCEEDED(rv)) {
+        if (rv != NS_ERROR_NOT_AVAILABLE) {
+          NS_ERROR("sbBackgroundThreadMetadataProcessor::Run encountered "
+                   " an error while getting a job item.");
+        }
+        
         TRACE(("sbBackgroundThreadMetadataProcessor[0x%.8x] - Thread waiting", 
               this));
         rv = monitor.Wait();
@@ -177,11 +182,20 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
     // Start the metadata handler for this job item.
     nsCOMPtr<sbIMetadataHandler> handler;
     rv = item->GetHandler(getter_AddRefs(handler));
-    NS_ENSURE_SUCCESS(rv, rv);
+    // On error just wait, rather than killing the thread
+    if (!NS_SUCCEEDED(rv)) {
+      NS_ERROR("sbBackgroundThreadMetadataProcessor::Run unable "
+               " to get an sbIMetadataHandler.");
+      continue; 
+    }
     
     sbMetadataJob::JobType jobType;
     rv = item->GetJobType(&jobType);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (!NS_SUCCEEDED(rv)) {
+      NS_ERROR("sbBackgroundThreadMetadataProcessor::Run unable "
+               " to determine job type.");
+      continue; 
+    }
   
     PRBool async = PR_FALSE; 
     if (jobType == sbMetadataJob::TYPE_WRITE) {
@@ -193,9 +207,12 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
     // If we were able to start the handler, 
     // make sure it completes.
     if (NS_SUCCEEDED(rv)) {
-      PRBool handlerCompleted;
+      PRBool handlerCompleted = PR_FALSE;
       rv = handler->GetCompleted(&handlerCompleted);
-      NS_ENSURE_SUCCESS(rv, rv);
+      if (!NS_SUCCEEDED(rv)) {
+        NS_ERROR("sbBackgroundThreadMetadataProcessor::Run unable "
+                 " to determine check handler completed.");
+      }
 
       // All handler implementations should complete
       // syncronously at the moment when running

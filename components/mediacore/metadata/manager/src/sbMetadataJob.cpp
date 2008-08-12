@@ -421,6 +421,12 @@ nsresult sbMetadataJob::GetQueuedItem(PRBool aMainThreadOnly,
   // list of properties that are to be written
   if (mJobType == TYPE_WRITE) {
     rv = PrepareWriteItem(item);
+    
+    if (!NS_SUCCEEDED(rv)) {
+      NS_ERROR("sbMetadataJob::GetQueuedItem failed to prepare a "
+               "job item for writing.");
+      PutProcessedItem(item);
+    }
     NS_ENSURE_SUCCESS(rv, rv);
   }
   

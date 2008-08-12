@@ -41,6 +41,7 @@ var JobProgressDialog = {
   _progressMeter: null,
   _errorContainer: null,
   _errorList: null,
+  _cancelButton: null,
 
 
   /**
@@ -66,6 +67,7 @@ var JobProgressDialog = {
     // Show cancel if allowed
     if (this._job instanceof Ci.sbIJobCancelable) {
       document.documentElement.buttons = "cancel";
+      this._cancelButton = document.documentElement.getButton("cancel");
     }
     
     // Initialize the UI
@@ -119,6 +121,13 @@ var JobProgressDialog = {
   _updateProgressUI: function JobProgressDialog__updateUI() {
     this._formatDescription(this._description, this._job.statusText);
     this._setTitle(this._job.titleText);
+    
+    if (this._cancelButton) {
+      var cancelable = this._job.canCancel;
+      if (this._cancelButton.disabled == cancelable) {
+        this._cancelButton.disabled = !cancelable;
+      }
+    }
     
     if (this._job.total <= 0) {
       this._progressMeter.mode = "undetermined";
