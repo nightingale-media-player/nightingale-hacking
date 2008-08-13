@@ -215,11 +215,14 @@ private:
         PRInt32                     aType,
         const nsAString             &aURL);
 
+    nsresult RemoveAllImages(
+        TagLib::MPEG::File          *aMPEGFile,
+        PRInt32                     imageType);
+
     nsresult WriteImage(
-        TagLib::MPEG::File*         aFile,
+        TagLib::MPEG::File          *aFile,
         PRInt32                     aType,
-        const nsAString             &imageSpec
-    );
+        const nsAString             &imageSpec);
 
     /*
      * Private taglib metadata handler ID3v2 services.

@@ -929,62 +929,99 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
 }
 
 /**
+ * \brief RemoveAllImages - Removes all of the <MPEGFile>'s images of type
+ *                    <imageType>.
+ * \param aMPEGFile - the TagLib::MPEG::File pointer
+ * \param imageType - an enum from determining the type of image like
+ *                    sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER
+ */
+nsresult sbMetadataHandlerTaglib::RemoveAllImages(TagLib::MPEG::File* aMPEGFile,
+                                                  PRInt32 imageType)
+{
+  if (aMPEGFile->ID3v2Tag()) {
+    TagLib::ID3v2::FrameList frameList= aMPEGFile->ID3v2Tag()->frameList("APIC");
+    if (!frameList.isEmpty()){
+      std::list<TagLib::ID3v2::Frame*>::const_iterator iter = frameList.begin();
+      while (iter != frameList.end()) {
+        TagLib::ID3v2::AttachedPictureFrame *frame =
+                    static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
+        std::list<TagLib::ID3v2::Frame*>::const_iterator nextIter = iter;
+        nextIter++;
+        if (frame && frame->type() == imageType){
+          // Remove and free the memory for this frame
+          aMPEGFile->ID3v2Tag()->removeFrame(*iter, true);
+        }
+        iter = nextIter;
+      }
+    }
+  }
+  
+  return NS_OK;
+}
+
+/**
  * \brief WriteImage - set the <MPEGFile>'s image of type
  *                    <imageType> to the contents of the file at <imageSpec>.
  * \param aMPEGFile - the TagLib::MPEG::File pointer
- * \param imageType - an enum from determining the type of image (e.g. front cover)
- * \param imageSpec - the string with the URL of the file
+ * \param imageType - an enum from determining the type of image like
+ *                    sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER
+ * \param imageSpec - the string with the URL of the file, use "" if you wish
+ *                    to remove all images of <imageType> from the metadata.
  */
 nsresult sbMetadataHandlerTaglib::WriteImage(TagLib::MPEG::File* aMPEGFile,
-                                                            PRInt32 imageType,
-                                                            const nsAString &imageSpec)
+                                             PRInt32 imageType,
+                                             const nsAString &imageSpec)
 {
   nsresult rv;
   
-  nsCOMPtr<nsIFile> imageFile;
-  nsCString imageMimeType;
-  PRUint8*  imageData;
-  PRUint32  imageDataSize;
+  if (!aMPEGFile->ID3v2Tag()) {
+    // Not ID3v2 tag then abort
+    return NS_ERROR_FAILURE;
+  }
   
-  // open the image file
-  rv = mpFileProtocolHandler->GetFileFromURLSpec(
-          NS_LossyConvertUTF16toASCII(imageSpec), 
-          getter_AddRefs(imageFile)
-  );
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (imageSpec.Length() > 0) {
+    nsCOMPtr<nsIFile> imageFile;
+    nsCString imageMimeType;
+    PRUint8*  imageData;
+    PRUint32  imageDataSize;
+    
+    // open the image file
+    rv = mpFileProtocolHandler->GetFileFromURLSpec(
+            NS_LossyConvertUTF16toASCII(imageSpec), 
+            getter_AddRefs(imageFile)
+    );
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    // Get the mime type.
+    nsCOMPtr<nsIMIMEService> mimeService =
+                                do_GetService("@mozilla.org/mime;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mimeService->GetTypeFromFile(imageFile, imageMimeType);
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    // Load the actual data.
+    nsCOMPtr<nsIFileInputStream> inputStream =
+       do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = inputStream->Init(imageFile, 0x01, 0600, 0);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<nsIBinaryInputStream> stream =
+               do_CreateInstance("@mozilla.org/binaryinputstream;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = stream->SetInputStream(inputStream);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    // First length,
+    rv = inputStream->Available(&imageDataSize);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    // then the data itself
+    rv = stream->ReadByteArray(imageDataSize, &imageData);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the mime type.
-  nsCOMPtr<nsIMIMEService> mimeService =
-                              do_GetService("@mozilla.org/mime;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mimeService->GetTypeFromFile(imageFile, imageMimeType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Load the actual data.
-  nsCOMPtr<nsIFileInputStream> inputStream =
-     do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = inputStream->Init(imageFile, 0x01, 0600, 0);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<nsIBinaryInputStream> stream =
-             do_CreateInstance("@mozilla.org/binaryinputstream;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = stream->SetInputStream(inputStream);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  // First length,
-  rv = inputStream->Available(&imageDataSize);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  // then the data itself
-  rv = stream->ReadByteArray(imageDataSize, &imageData);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Now assign this all to the file.
-  if (aMPEGFile->ID3v2Tag()) {
     // Create the picture frame, and set mimetype, image type (e.g. front cover)
     // and then fill in the data.
     TagLib::ID3v2::AttachedPictureFrame *pic =
@@ -995,26 +1032,18 @@ nsresult sbMetadataHandlerTaglib::WriteImage(TagLib::MPEG::File* aMPEGFile,
     pic->setPicture(TagLib::ByteVector((const char *)imageData, imageDataSize));
 
     // First we have to remove any other existing frames of the same type
-    TagLib::ID3v2::FrameList frameList =
-                                  aMPEGFile->ID3v2Tag()->frameListMap()["APIC"];
-    std::list<TagLib::ID3v2::Frame*>::const_iterator iter = frameList.begin();
-    while (iter != frameList.end()) {
-      TagLib::ID3v2::AttachedPictureFrame *frame =
-                    static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
-      std::list<TagLib::ID3v2::Frame*>::const_iterator nextIter = iter;
-      nextIter++;
-      if (frame && frame->type() == imageType){
-        // Remove and free the memory for this frame
-        aMPEGFile->ID3v2Tag()->removeFrame(*iter, true);
-      }
-      iter = nextIter;
-    }
+    rv = RemoveAllImages(aMPEGFile, imageType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     // Add the frame to the file.
     aMPEGFile->ID3v2Tag()->addFrame(pic);
     
     /* BUG 11436 HACK START*/
     mBug11436Hack = pic;
     /* BUG 11436 HACK END*/
+  } else {
+    // No image provided so just remove existing ones.
+    rv = RemoveAllImages(aMPEGFile, imageType);
   }
   
   return rv;

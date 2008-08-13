@@ -185,7 +185,8 @@ interface sbIMetadataHandler : nsISupports
    * \brief Writes an image to the metadata
    *
    * \param aType const type for the image to write (see METADATA_IMAGE_TYPE*)
-   * \param aUrl is the file spec of the image to save to the metadata
+   * \param aUrl is the file spec of the image to save to the metadata, use ""
+   *             if you wish to remove all images of imageType from the metadata.
    *
    * \example
    *   var myNewImageFile = "file://home/user/test.png";
