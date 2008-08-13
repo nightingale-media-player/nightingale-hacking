@@ -28,6 +28,7 @@ lib_files="*js3250.*
 
 # symbol_files are relative to $objdir
 symbol_files="intl/unicharutil/util/nsunicharutils.pdb
+              intl/unicharutil/util/unicharutil_external_s.pdb
               js/src/js3250.pdb
               toolkit/library/xul.pdb
               xpcom/glue/nsarrayenumerator.pdb
@@ -52,6 +53,7 @@ symbol_files="intl/unicharutil/util/nsunicharutils.pdb
               xpcom/glue/nsvoidarray.pdb
               xpcom/glue/nsweakreference.pdb
               xpcom/glue/pldhash.pdb
+              xpcom/glue/xpcomglue_s.pdb
               xpcom/stub/xpcom.pdb
               xulrunner/app/xulrunner.pdb
               xulrunner/stub/xulrunner-stub.pdb
