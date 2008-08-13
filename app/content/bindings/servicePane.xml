@@ -362,7 +362,7 @@
         
         // remove the rebuild selection listener
         this.mTree.builder.removeListener(this);
-        this.mTree.builder.datasource.removeObserver(this);
+        this.mTree.builder.datasource.RemoveObserver(this);
 
         this.mTree.stopEditing = this.mTree._stopEditing;
         this.mTree._stopEditing = null;

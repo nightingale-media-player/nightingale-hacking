@@ -145,12 +145,14 @@
                       <observes type="dataremote" key="browser.in_media_page" boolean="true"
                                 attribute="disabled" onchange="
                                   const key = 'splitter.servicepane_splitter.was_collapsed';
-                                  if (value) {
-                                    /* going into media page mode */
-                                    gServicePane.open = true;
-                                  } else {
-                                    /* going out of media page */
-                                    gServicePane.open = SBDataGetBoolValue(key);
+                                  if (gServicePane) {
+                                    if (value) {
+                                      /* going into media page mode */
+                                      gServicePane.open = true;
+                                    } else {
+                                      /* going out of media page */
+                                      gServicePane.open = SBDataGetBoolValue(key);
+                                    }
                                   }
                                   return value;
                                 "/>
