@@ -384,7 +384,7 @@ sbMetadataImageScanner.prototype = {
     try {
       nextItem = this._mediaListView.getItemByIndex(this._itemViewIndex);
     } catch (err) {
-      this._logError("Unable to get item, trying again at next interval:" + err);
+      this._debug("Unable to get item, trying again at next interval:" + err);
     }
     
     if (nextItem) {
@@ -408,6 +408,8 @@ sbMetadataImageScanner.prototype = {
     var propArray =
         Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
           .createInstance(Ci.sbIMutablePropertyArray);
+    // Set strict to false so we do not need to validate PROP_LAST_COVER_SCAN
+    propArray.strict = false;
     propArray.appendProperty(SBProperties.primaryImageURL, "a");
     propArray.appendProperty(PROP_LAST_COVER_SCAN, "a");
     this._mediaListView.setSort(propArray);
@@ -477,6 +479,21 @@ sbMetadataImageScanner.prototype = {
     this._timerInterval = Application.prefs.getValue(
                                                   PREF_METADATA_TIMER_INTERVAL,
                                                   TIMER_INTERVAL);
+
+    // Create our lastCoverScan property if it does not exist
+    var pMgr = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                .getService(Ci.sbIPropertyManager);
+    if (!pMgr.hasProperty(PROP_LAST_COVER_SCAN)) {
+      var pI = Cc["@songbirdnest.com/Songbird/Properties/Info/Datetime;1"]
+                 .createInstance(Ci.sbIDatetimePropertyInfo);
+      pI.id = PROP_LAST_COVER_SCAN;
+      pI.displayName = "";
+      pI.userEditable = false;    // Hide this from the user completely.
+      pI.userViewable = false;
+      pI.remoteReadable = false;
+      pI.remoteWritable = false;
+      pMgr.addPropertyInfo(pI);
+    }
 
     // Load some services and such
     this._metadataManager = Cc["@songbirdnest.com/Songbird/MetadataManager;1"]
