@@ -128,9 +128,11 @@ radiogroup {
   -moz-box-pack: center;
 }
 
-/* Wizard page box style. */
+/* Wizard page box style.  Add enough padding to align with the wizard     */
+/* buttons.  The wizard button box has 8 pixels of padding and the buttons */
+/* have 4 pixels of margin.                                                */
 .wizard-page-box {
-  padding: 4px;
+  padding: 4px 12px 4px 12px;
   margin: 0;
 }
 
@@ -202,7 +204,7 @@ button[hidewizardbutton="true"] {
   /* Set max-width so that item description will properly wrap. */
   /*XXXeps is there some way that wrap will work by just setting the first */
   /*XXXeps run dialog width? */
-  max-width: 375px;
+  max-width: 365px;
 }
 
 /* Add-ons page item image style. */
