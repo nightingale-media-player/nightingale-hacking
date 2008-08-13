@@ -102,7 +102,6 @@ sbMetadataImageScanner.prototype = {
   _restartScanning: false,  // Set to true to restart the scanning
   _rescanInterval: RESCAN_INTERVAL, // Time to pass for rescan of art
   _timerInterval: TIMER_INTERVAL,   // Time to pass before next item scan
-
   
   // Services
   _consoleService: null,    // For output of debug messages to error console
@@ -173,7 +172,8 @@ sbMetadataImageScanner.prototype = {
                         .getService(Ci.nsIMIMEService);
     var mimeInfo = mimeService.getFromTypeAndExtension(aMimeType, "");
     if (!mimeInfo.getFileExtensions().hasMore()) {
-      this._logError("Unable to get extension for image data.");
+      this._debug("Unable to get extension for image data from [" +
+                  aMimeType + "]");
       return null;
     }
     ext = mimeInfo.primaryExtension;
@@ -197,7 +197,7 @@ sbMetadataImageScanner.prototype = {
     try {
       coverFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0655);
     } catch (err) {
-      this._logError("Unable to create file: " + err);
+      this._debug("Unable to create file: " + err);
       return null;
     }
   
@@ -278,7 +278,7 @@ sbMetadataImageScanner.prototype = {
           this._debug("Saved data to file: " + outFileLocation);
           return outFileLocation;
         } else {
-          this._logError("Unable to save file: [" + outFileLocation + "]");
+          this._debug("Unable to save file: [" + outFileLocation + "]");
         }
       } else {
         this._debug("Unable to find metadata: [" + contentURI.spec + "]");
@@ -310,7 +310,15 @@ sbMetadataImageScanner.prototype = {
       this._debug("Next item has lastCoverScan of [" + lastCoverScan + "] " +
                    "Rescan Time = " + (lastCoverScan + this._rescanInterval) + " " +
                   "Now = " + timeNow);
+      /**
+       * For now we only want to scan items once, so remove the rescan check
+       * and if we come to an item that has a lastCoverScan value we stop the
+       * scanner. The scanner will only restart when items have been added
+       * or removed. See Bug 11514
+       *
       if ( (lastCoverScan + this._rescanInterval) < timeNow ) {
+       */
+      if (lastCoverScan <= 0) {
         aMediaItem.setProperty(PROP_LAST_COVER_SCAN, timeNow);
         var outFileLocation = this.fetchCoverForMediaItem(aMediaItem);
         if (outFileLocation != null) {
@@ -320,13 +328,12 @@ sbMetadataImageScanner.prototype = {
           aMediaItem.setProperty(SBProperties.primaryImageURL,
                                   outFileLocation);
         } else {
-          // explicitly set it to null so that other users can see that we
+          // explicitly set it to "" so that other users can see that we
           // have already checked the contents and explicitly noted that 
           // there are none.
           aMediaItem.setProperty(SBProperties.primaryImageURL, "");
         }
-        // convert the result back to a bool
-        return !!outFileLocation;
+        return true;
       } else {
         // Since we are doing a second sort by lastCoverScan if we encounter
         // one that is not ready to scan then we are done.
@@ -355,6 +362,10 @@ sbMetadataImageScanner.prototype = {
       this._debug("Scanning is currently paused due to a batch running");
       return;
     }
+
+    this._debug("Scanning for next item " +
+                 this._itemViewIndex + " of " +
+                 this._mediaListView.length);
     
     // if there are no items left to scan, then we are done.
     if (this._itemViewIndex >= this._mediaListView.length) {
@@ -366,7 +377,16 @@ sbMetadataImageScanner.prototype = {
     // Since we are sorting by the primaryImageURL (artwork) the items will be
     // reordered every time an items pirmaryImageURL property changes. So here
     // we take the next top item that we have not already scanned.
-    var nextItem = this._mediaListView.getItemByIndex(this._itemViewIndex);
+    // We need a try/catch here because sometimes the next item is not ready,
+    // due to resort or something. We will just try the same item again on the
+    // next interval.
+    var nextItem = null;
+    try {
+      nextItem = this._mediaListView.getItemByIndex(this._itemViewIndex);
+    } catch (err) {
+      this._logError("Unable to get item, trying again at next interval:" + err);
+    }
+    
     if (nextItem) {
       this._debug("Getting next items cover");
       if (!this._getCoverForItem(nextItem)) {
@@ -499,8 +519,6 @@ sbMetadataImageScanner.prototype = {
    ********************************/
   notify: function (aTimer) {
     // Scan the next item for images
-    this._debug("Scanning for next item " + this._itemViewIndex +
-                " of " + this._mediaListView.length);
     this._getNextItem();
   },
 
