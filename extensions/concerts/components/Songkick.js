@@ -274,8 +274,7 @@ Songkick.prototype = {
 			return;
 		var artist = item.getProperty(SBProperties.artistName);
 		var url = this.getArtistUrl(artist);
-		// debugLog("onItemUpdated", "artist:" + artist + " // url:" + url);
-		if (url != null) {
+		if (this.getTourStatus(artist) && (url != null)) {
 			debugLog("onItemUpdated", "New on tour item, artist: " + artist);
 			// Set the touring properties for this track
 			item.setProperty(this.onTourImgProperty, onTourIconSrc);
@@ -883,9 +882,11 @@ Songkick.prototype = {
 	 *********************************************************************/
 	getTourStatus : function(artist) {
 		this._db.resetQuery();
-		this._db.addQuery("SELECT count(*) FROM playing_at " +
-				"JOIN artists on artistid=artists.ROWID " +
-				'where artists.name = "' + artist + '"');
+		this._db.addQuery('SELECT count(*) FROM playing_at ' +
+				'JOIN artists on artistid=artists.ROWID ' +
+				'JOIN concerts on concertid=concerts.id ' +
+				'WHERE artists.name = "' + artist + '"' +
+				'AND concerts.timestamp > ' + parseInt(Date.now()/1000));
 		var ret = this._db.execute();
 		var result = this._db.getResultObject();
 		var count = result.getRowCell(0, 0);
