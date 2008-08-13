@@ -611,10 +611,11 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Primary image url
+  //Primary image url, see bug #11618 for an explanation as to why this 
+  //property is not user viewable.
   rv = RegisterImage(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
                      NS_LITERAL_STRING("property.primary_image_url"),
-                     stringBundle, PR_TRUE, PR_FALSE, PR_TRUE, PR_TRUE);
+                     stringBundle, PR_FALSE, PR_FALSE, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Last played time
