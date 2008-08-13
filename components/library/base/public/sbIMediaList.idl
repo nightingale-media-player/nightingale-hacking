@@ -424,6 +424,11 @@ interface sbIMediaList : sbIMediaItem
    * Do not use ENUMERATIONTYPE_LOCKING unless you fit a usage scenario described in the
    * ENUMERATIONTYPE_LOCKING constant documentation.
    *
+   * Do not remove items during enumeration, regardless of enumeration type! 
+   * This will cause functional issues during enumeration because the property
+   * cache will no longer contain associated data for items even though the item
+   * instance is still valid!
+   *
    * \param aEnumerationListener - The enumeration listener.
    * \param aEnumerationType - One of the ENUMERATIONTYPE values above. Default is ENUMERATIONTYPE_SNAPSHOT.
    */
@@ -460,6 +465,11 @@ interface sbIMediaList : sbIMediaItem
   /**
    * \brief Enumerate the media items in the list that match a given property
    *        ID and value.
+   *
+   * Do not remove items during enumeration, regardless of enumeration type! 
+   * This will cause functional issues during enumeration because the property
+   * cache will no longer contain associated data for items even though the item
+   * instance is still valid!
    *
    * \param aPropertyID - Property ID to search.
    * \param aPropertyValue - Property value to search.
