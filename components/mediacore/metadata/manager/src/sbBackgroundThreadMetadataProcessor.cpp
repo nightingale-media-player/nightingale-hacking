@@ -160,20 +160,21 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
       
       rv = mJobManager->GetQueuedJobItem(PR_FALSE, getter_AddRefs(item));
       
-      // If there are no more job items available or an error has occurred, 
-      // just go to sleep.
-      if (!NS_SUCCEEDED(rv)) {
-        if (rv != NS_ERROR_NOT_AVAILABLE) {
+      // On error, skip the item and try again
+      if (NS_FAILED(rv)) {
+        // If there are no more job items available just go to sleep.
+        if (rv == NS_ERROR_NOT_AVAILABLE) {
+          TRACE(("sbBackgroundThreadMetadataProcessor[0x%.8x] - Thread waiting", 
+                this));
+          rv = monitor.Wait();
+          NS_ASSERTION(NS_SUCCEEDED(rv), 
+            "sbBackgroundThreadMetadataProcessor::Run monitor wait failed");
+
+        } else {
           NS_ERROR("sbBackgroundThreadMetadataProcessor::Run encountered "
-                   " an error while getting a job item.");
+                   " an error while getting a job item.");          
         }
-        
-        TRACE(("sbBackgroundThreadMetadataProcessor[0x%.8x] - Thread waiting", 
-              this));
-        rv = monitor.Wait();
-        NS_ASSERTION(NS_SUCCEEDED(rv), 
-          "sbBackgroundThreadMetadataProcessor::Run monitor wait failed");
-      
+              
         continue;
       } 
     }
