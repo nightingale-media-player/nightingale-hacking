@@ -83,8 +83,9 @@ var RadioDirectory = {
 				.QueryInterface(Ci.nsIPropertyElement);
 			var genreValue = genreProp.key.substr(5);
 			var genreLabel = genreProp.value;
-			if (genreValue == "genreTOP")
+			if (genreValue == "TOP")
 				continue;
+			dump(genreValue + "/" + genreLabel + "\n");
 			genres.push({value:genreValue, label:genreLabel});
 		}
 
