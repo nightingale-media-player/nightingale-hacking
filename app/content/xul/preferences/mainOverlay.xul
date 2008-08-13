@@ -77,13 +77,6 @@
             insertafter="paneAddons"
             image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
             src="chrome://songbird/content/xul/preferences/remoteAPI.xul" />
-  <prefpane
-    id="import_library_prefpane"
-    label="&import_library.prefs.title;"
-    insertafter="paneRemoteAPI"
-    src="chrome://songbird/content/xul/preferences/importLibraryPrefs.xul"/>
  </prefWindow>
-
-  
 
 </overlay>

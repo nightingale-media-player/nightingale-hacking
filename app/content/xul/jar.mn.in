@@ -24,3 +24,5 @@ songbird.jar:
 #ifdef MEDIA_CORE_GST_SYSTEM
 % overlay chrome://songbird/content/xul/songbird.xul                         chrome://songbird/content/xul/coreGStreamerOverlay.xul
 #endif
+% overlay chrome://browser/content/preferences/preferences.xul               chrome://songbird/content/xul/preferences/importLibraryPrefs.xul os=WINNT
+% overlay chrome://browser/content/preferences/preferences.xul               chrome://songbird/content/xul/preferences/importLibraryPrefs.xul os=Darwin
