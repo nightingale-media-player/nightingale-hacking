@@ -34,9 +34,15 @@ if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
+// Display pane constants
 const DISPLAY_PANE_CONTENTURL = "chrome://albumart/content/albumArtPane.xul";
-const DISPLAY_PANE_ICON = "http://songbirdnest.com/favicon.ico";
+const DISPLAY_PANE_ICON       = "http://songbirdnest.com/favicon.ico";
+
+// Default cover for items missing the cover
+const DEFAULT_COVER = "chrome://songbird/skin/album-art/default-cover.png";
 
 /******************************************************************************
  *
@@ -45,16 +51,24 @@ const DISPLAY_PANE_ICON = "http://songbirdnest.com/favicon.ico";
  *
  *****************************************************************************/
 var AlbumArtPaneController = {
-  _coverBind: null,               // Data remote for the now playing image.
+  _coverBind: null,                 // Data remote for the now playing image.
+  _playListPlaybackService: null,   // Get notifications of track changes
 
   // Cache some things so we don't have to keep loading the same image
   _lastImageSrc: "",       // keep track of what the last image src was
   _imageWidth: 0,          // hold this for resizing
   _imageHeight: 0,         // and this.
 
+  /**
+   * \brief onImageDblClick - This function is called when the user double
+   *        clicks the image.
+   * \param aEvent event object of the current event.
+   */
   onImageDblClick: function (aEvent) {
     // Only respond to primary button double clicks.
     if (aEvent.button == 0) {
+      // This will load the songbird.metadata.imageURL preference to
+      // determine which image to load.
       SBOpenModalDialog("chrome://albumart/content/coverPreview.xul",
                    "coverPreview",
                    "all,chrome,resizable=no,centerscreen",
@@ -63,6 +77,10 @@ var AlbumArtPaneController = {
     }
   },
 
+  /**
+   * \brief onResize - This function is called when either an image loads or
+   *        the display pane is resized.
+   */
   onResize: function () {
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     var currentSrc = albumArtPlayingImage.getAttribute("src");
@@ -75,6 +93,10 @@ var AlbumArtPaneController = {
 
     // See if we have already cached this information
     if (currentSrc != this._lastImageSrc) {
+      // We do this to get the proper height and width, since it will not be
+      // resized when loaded with the Image() object. The <image> elements
+      // change the height and width when the image is resized to fit the
+      // content.
       var newImg = new Image();
       newImg.src = currentSrc;
       this._imageHeight = newImg.height;
@@ -119,6 +141,11 @@ var AlbumArtPaneController = {
     albumArtPlayingImage.style.height = newHeight + "px";
   },
 
+  /**
+   * \brief onImageLoad - This is called when the image is done loading, we
+   *        watch this so that we do not call the resize until we have a full
+   *        image to resize.
+   */
   onImageLoad: function () {
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     if (albumArtPlayingImage.getAttribute("src")) {
@@ -127,10 +154,30 @@ var AlbumArtPaneController = {
     }
   },
   
-  observe: function ( aSubject, aTopic/*key*/, aData/*value*/ ) {
+  /**
+   * \brief observe - This is called when the dataremote value changes. We watch
+   *        this so that we can respond to when the image is updated for an
+   *        item even when already playing.
+   * \param aSubject - not used.
+   * \param aTopic   - key of data remote that changed.
+   * \param aData    - new value of the data remote.
+   */
+  observe: function ( aSubject, aTopic, aData ) {
+    // Ignore any other topics (we should not normally get anything else)
+    if (aTopic != "metadata.imageURL") {
+      return;
+    }
+    
+    // Load up our elements
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     var albumArtNotPlayingBox = document.getElementById('sb-albumart-not-playing');
+    
+    // This function can be called several times so check that we changed.
+    if (albumArtPlayingImage.getAttribute("src") == aData) {
+      return;
+    }
 
+    // Configure the display pane
     if (!aData || aData == "") {
       // Show the not playing message.
       albumArtNotPlayingBox.removeAttribute("hidden");
@@ -139,10 +186,17 @@ var AlbumArtPaneController = {
       albumArtNotPlayingBox.setAttribute("hidden", true);
     }
     albumArtPlayingImage.setAttribute("src", aData);
+    AlbumArtPaneController.onResize();
   },
   
+  /**
+   * \brief onLoad - Called when the display pane loads, here we make sure that
+   *        we have the correct image loaded or we display the Nothing Playing
+   *        message.
+   */
   onLoad: function () {
-    // Set the title correctly, localize since we can not from the install.rdf.
+    // Set the title correctly, localize since we can not localize from the
+    // install.rdf.
     var paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
                     .getService(Ci.sbIDisplayPaneManager);
     paneMgr.updateContentInfo(DISPLAY_PANE_CONTENTURL,
@@ -150,11 +204,21 @@ var AlbumArtPaneController = {
                                        "Album Art"),
                               DISPLAY_PANE_ICON);
 
-    // When an image resize to keep the aspect ratio.
+    // Listen to when an image resizes so we can keep the aspect ratio.
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     albumArtPlayingImage.addEventListener("load",
                                           AlbumArtPaneController.onImageLoad,
                                           false);
+    
+    // Do an initial load of the default cover since it is a big image, and then
+    // set the width and height of the image to the width and height of the
+    // window so the image does not stretch out of bounds on the first load.
+    var newImg = new Image();
+    newImg.src = DEFAULT_COVER;
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight;
+    albumArtPlayingImage.style.width = windowWidth + "px";
+    albumArtPlayingImage.style.height = windowHeight + "px";
 
     // Setup the dataremote for the now playing image.
     var createDataRemote =  new Components.Constructor(
@@ -164,6 +228,13 @@ var AlbumArtPaneController = {
     this._coverBind = createDataRemote("metadata.imageURL", null);
     this._coverBind.bindObserver(AlbumArtPaneController, false);
 
+    // Load the playListPlaybackService so we can monitor track changes for
+    // faster image changing.
+    this._playListPlaybackService = 
+                          Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                            .getService(Ci.sbIPlaylistPlayback);
+    this._playListPlaybackService.addListener(AlbumArtPaneController);
+
     // Listen for resizes of the display pane so that we can keep the aspect
     // ratio of the image.
     window.addEventListener("resize",
@@ -171,14 +242,44 @@ var AlbumArtPaneController = {
                             false);
   },
   
+  /**
+   * \brief onUnload - This is called when the display pane is closed. Here we
+   *        can shut every thing down.
+   */
   onUnload: function () {
+    this._playListPlaybackService.removeListener(AlbumArtPaneController);
+    this._playListPlaybackService = null;
+    
     this._coverBind.unbind();
+    this._coverBind = null;
+    
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     albumArtPlayingImage.removeEventListener("load",
                                              AlbumArtPaneController.onImageLoad,
                                              false);
+    
     window.removeEventListener("resize",
                                AlbumArtPaneController.onResize,
                                false);
-  }
+  },
+
+  /*********************************
+   * sbIPlaylistPlaybackListener
+   ********************************/
+  onStop: function() {
+    AlbumArtPaneController.observe("", "metadata.imageURL", "");
+  },
+  onBeforeTrackChange: function(aItem, aView, aIndex) {
+    var newImageURL = aItem.getProperty(SBProperties.primaryImageURL);
+    if (!newImageURL || newImageURL == "") {
+      newImageURL = DEFAULT_COVER;
+    }
+    AlbumArtPaneController.observe("", "metadata.imageURL", newImageURL);
+  },
+  onTrackIndexChange: function(aItem, aView, aIndex) { },
+  onBeforeViewChange: function(aView) { },
+  onViewChange: function(aView) { },
+  onTrackChange: function(aItem, aView, aIndex) { },
+
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIPlaylistPlaybackListener])
 };
