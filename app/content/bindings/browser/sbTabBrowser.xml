@@ -580,6 +580,9 @@
           this.loading = this.mIsBusy;
           
           document.commandDispatcher.updateCommands("tabchange");
+          
+          // Update the edit menu since the content has changed in the tab:
+          updateCommands("focus");
         ]]></body>
       </method>
       
