@@ -577,6 +577,9 @@
 <!ENTITY first_run.import_media.scan_directories.description "Would you like &brandShortName; to attempt to import media by scanning specific directories on your computer?">
 <!ENTITY first_run.import_media.scan_directories.watch.label "Watch this folder for changes">
 
+<!-- First-run install add-ons entities. -->
+<!ENTITY first_run.install_add_ons.title "Downloading Add-ons">
+
 <!-- First-run welcome entities. -->
 <!ENTITY first_run.welcome.header.label      "Welcome to &brandShortName;">
 <!ENTITY first_run.welcome.description.line1 "&brandShortName; is a highly customizable alternative to traditional desktop media players.">
