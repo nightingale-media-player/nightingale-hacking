@@ -582,7 +582,7 @@
           document.commandDispatcher.updateCommands("tabchange");
           
           // Update the edit menu since the content has changed in the tab:
-          updateCommands("focus");
+          document.commandDispatcher.updateCommands("focus");
         ]]></body>
       </method>
       
