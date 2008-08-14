@@ -70,8 +70,9 @@ sbClipboardHelper::CopyImageFromClipboard(nsAString  &aMimeType,
   nsCOMPtr<nsITransferable> xferable = do_CreateInstance("@mozilla.org/widget/transferable;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  const int imageTypesLen = 2;
-  const char *imageTypes[2] = { "image/png",
+  const int imageTypesLen = 3;
+  const char *imageTypes[3] = { "image/png",
+                                "image/jpg",
                                 "image/jpeg" };
 
   for (int iIndex = 0; iIndex < imageTypesLen; iIndex++) {
@@ -91,15 +92,21 @@ sbClipboardHelper::CopyImageFromClipboard(nsAString  &aMimeType,
     NS_ENSURE_SUCCESS(rv, rv);
     
     nsCOMPtr<nsISupports> clipboardData;
-    char* clipoardDataFlavor = 0;
+    char* clipboardDataFlavor = 0;
     PRUint32 clipboardDataLen = 0;
 
-    rv = xferable->GetAnyTransferData(&clipoardDataFlavor,
+    rv = xferable->GetAnyTransferData(&clipboardDataFlavor,
                                       getter_AddRefs(clipboardData),
                                       &clipboardDataLen);
     NS_ENSURE_SUCCESS(rv, rv);
     
-    aMimeType.AssignLiteral(clipoardDataFlavor);
+    if(strcmp(clipboardDataFlavor, "image/jpg")) {
+      aMimeType.AssignLiteral(clipboardDataFlavor);
+    }
+    else {
+      aMimeType.AssignLiteral("image/jpeg");
+    }
+    
     
     nsCOMPtr<nsIInputStream> clipboardDataStream = do_QueryInterface(clipboardData,
                                                                      &rv);
