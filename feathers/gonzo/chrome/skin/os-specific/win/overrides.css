@@ -38,12 +38,13 @@ This css file provides additional rules that are only loaded on Windows.
 
 popup,
 menupopup,
-tooltip {
+tooltip,
+panel {
   border:1px solid rgb(131,131,131);
 }
 
 dialog[hidechrome="true"],
-wizard {
+wizard[hidechrome="true"] {
   border:3px solid black;
   border-top:1px solid rgb(131,131,131);
   -moz-border-right-colors:rgb(131,131,131) rgb(161,161,161) rgb(131,131,131);
