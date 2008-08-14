@@ -180,7 +180,7 @@ class sbTagLibChannelFileIOManager : public sbITagLibChannelFileIOManager
      */
 
     nsresult GetChannel(
-        const nsAString             &aChannelID,
+        const nsACString            &aChannelID,
         sbTagLibChannelFileIOManager::Channel
                                     **appChannel);
 
@@ -193,7 +193,7 @@ class sbTagLibChannelFileIOManager : public sbITagLibChannelFileIOManager
      */
 
 private:
-    nsClassHashtableMT<nsStringHashKey,
+    nsClassHashtableMT<nsCStringHashKey,
                        sbTagLibChannelFileIOManager::Channel> mChannelMap;
     TagLibChannelFileIOTypeResolver *mpResolver;
 };

@@ -79,7 +79,7 @@ class TagLibChannelFileIO : public TagLib::FileIO
 
 public:
     TagLibChannelFileIO(
-        nsString                        channelID,
+        nsCString                       channelID,
         sbISeekableChannel*             pSeekableChannel);
 
     virtual ~TagLibChannelFileIO();
@@ -99,7 +99,7 @@ public:
      */
 
 private:
-    nsString                    mChannelID;
+    nsCString                   mChannelID;
     nsCOMPtr<sbISeekableChannel>
                                 mpSeekableChannel;
     nsCOMPtr<sbITagLibChannelFileIOManager>

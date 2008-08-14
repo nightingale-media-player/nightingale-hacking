@@ -408,18 +408,41 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
             #if XP_UNIX && !XP_MACOSX
             if (StringBeginsWith(urlSpec, NS_LITERAL_CSTRING("file://"))) {
                 nsCString path(Substring(urlSpec, NS_ARRAY_LENGTH("file://") - 1));
+                LOG(("looking at path %s\n", path.get()));
                 do { /* allow breaking out gracefully */
                     nsCOMPtr<nsILocalFile> localFile =
                         do_CreateInstance("@mozilla.org/file/local;1", &result);
                     if (NS_FAILED(result) || !localFile)
                         break;
-                    result = localFile->InitWithNativePath(path);
-                    if (NS_FAILED(result))
+                    nsCOMPtr<nsINetUtil> netUtil =
+                        do_CreateInstance("@mozilla.org/network/util;1", &result);
+                    if (NS_FAILED(result)) {
+                        LOG(("failed to get netutil\n"));
                         break;
+                    }
+                    nsCString unescapedPath;
+                    result = netUtil->UnescapeString(path, 0, unescapedPath);
+                    if (NS_FAILED(result)) {
+                        LOG(("failed to unescape path\n"));
+                        break;
+                    }
+                    result = localFile->SetPersistentDescriptor(unescapedPath);
+                    if (NS_FAILED(result)) {
+                        LOG(("failed to set persistent descriptor %s\n", unescapedPath.get()));
+                        break;
+                    }
+                    #if PR_LOGGING
+                      result = localFile->GetPersistentDescriptor(path);
+                      if (NS_SUCCEEDED(result)) {
+                        LOG(("file path is %s\n", path.get()));
+                      }
+                    #endif
                     PRBool fileExists = PR_FALSE;
                     result = localFile->Exists(&fileExists);
-                    if (NS_FAILED(result) || !fileExists)
+                    if (NS_FAILED(result) || !fileExists) {
+                        LOG(("file does not exist, falling back"));
                         break;
+                    }
                     pFile = do_QueryInterface(localFile, &result);
                     if (NS_SUCCEEDED(result) && pFile)
                         useSpec = PR_FALSE;
@@ -432,8 +455,18 @@ nsresult sbMetadataHandlerTaglib::ReadInternal(
                                                              getter_AddRefs(pFile));
         }
 
-        if (NS_SUCCEEDED(result))
-          result = pFile->GetPath(mMetadataPath);
+        if (NS_SUCCEEDED(result)) {
+          #if XP_UNIX && !XP_MACOSX
+            result = pFile->GetNativePath(mMetadataPath);
+          #else
+            nsString metadataPathU16;
+            result = pFile->GetPath(metadataPathU16);
+            if (NS_SUCCEEDED(result)) {
+              CopyUTF16toUTF8(metadataPathU16, mMetadataPath);
+            }
+          #endif
+        }
+        LOG(("using metadata path %s", mMetadataPath.get()));
 
         /* Read the metadata. */
         if (NS_SUCCEEDED(result)) {
@@ -579,8 +612,17 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       );
     }
 
-    if (NS_SUCCEEDED(result))
-      result = pFile->GetPath(mMetadataPath);
+    if (NS_SUCCEEDED(result)) {
+      #if XP_UNIX && !XP_MACOSX
+        result = pFile->GetNativePath(mMetadataPath);
+      #else
+        nsString metadataPathU16;
+        result = pFile->GetPath(metadataPathU16);
+        if (NS_SUCCEEDED(result)) {
+          CopyUTF16toUTF8(metadataPathU16, mMetadataPath);
+        }
+      #endif
+    }
 
     /* WRITE the metadata. */
     if (NS_SUCCEEDED(result)) {
@@ -588,9 +630,9 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       // beginreading doesn't promise to return a null terminated string
       // this is RFB
 #if XP_WIN
-      nsAString &filePath = mMetadataPath;
+      NS_ConvertUTF8toUTF16 filePath(mMetadataPath);
 #else
-      nsCAutoString filePath = NS_ConvertUTF16toUTF8(mMetadataPath);
+      nsACString &filePath = mMetadataPath;
 #endif
 
       TagLib::FileRef f(filePath.BeginReading());
@@ -786,12 +828,15 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
                                                  getter_AddRefs(pFile));
     NS_ENSURE_SUCCESS(result, result);
   
-    result = pFile->GetPath(mMetadataPath);
-    NS_ENSURE_SUCCESS(result, result);
 #if XP_WIN
-    nsAString &filePath = mMetadataPath;
+    nsString filePath;
+    result = pFile->GetPath(filePath);
+    NS_ENSURE_SUCCESS(result, result);
+    CopyUTF16toUTF8(filePath, mMetadataPath);
 #else
-    nsCString filePath = NS_ConvertUTF16toUTF8(mMetadataPath);
+    result = pFile->GetNativePath(mMetadataPath);
+    NS_ENSURE_SUCCESS(result, result);
+    nsCString filePath = mMetadataPath;
 #endif
 
     /* Open and read the metadata file. */
@@ -885,12 +930,15 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
                                                  getter_AddRefs(pFile));
     NS_ENSURE_SUCCESS(result, result);
   
-    result = pFile->GetPath(mMetadataPath);
-    NS_ENSURE_SUCCESS(result, result);
 #if XP_WIN
-    nsAString &filePath = mMetadataPath;
+    nsString filePath;
+    result = pFile->GetPath(filePath);
+    NS_ENSURE_SUCCESS(result, result);
+    CopyUTF16toUTF8(filePath, mMetadataPath);
 #else
-    nsCAutoString filePath = NS_ConvertUTF16toUTF8(mMetadataPath);
+    result = pFile->GetNativePath(mMetadataPath);
+    NS_ENSURE_SUCCESS(result, result);
+    nsCString filePath = mMetadataPath;
 #endif
 
     /* Open and read the metadata file. */
@@ -1500,6 +1548,16 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
     if (NS_SUCCEEDED(result))
         ToLowerCase(fileExt);
 
+    #if PR_LOGGING
+    {
+      nsCString spec;
+      result = mpURL->GetSpec(spec);
+      if (NS_SUCCEEDED(result)) {
+        LOG(("sbMetadataHandlerTaglib:: Reading metadata from %s\n", spec.get()));
+      }
+    }
+    #endif /* PR_LOGGING */
+
     /* Read the metadata using the file extension */
     /* to determine the metadata format.          */
     if (NS_SUCCEEDED(result))
@@ -1904,7 +1962,7 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
  */
 
 PRBool sbMetadataHandlerTaglib::ReadFLACFile(
-    nsAString                   &aFilePath)
+    nsACString                  &aFilePath)
 {
     nsAutoPtr<TagLib::FLAC::File>   pTagFile;
     PRBool                          restart;
@@ -1913,9 +1971,9 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
 
     /* Get the file path in the proper format for the platform. */
 #if XP_WIN
-    nsAString &filePath = aFilePath;
+    NS_ConvertUTF8toUTF16 filePath(aFilePath);
 #else
-    nsCAutoString filePath = NS_ConvertUTF16toUTF8(aFilePath);
+    nsACString &filePath = aFilePath;
 #endif
 
     /* Open and read the metadata file. */
@@ -1971,7 +2029,7 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
  */
 
 PRBool sbMetadataHandlerTaglib::ReadMPCFile(
-    nsAString                   &aFilePath)
+    nsACString                  &aFilePath)
 {
     nsAutoPtr<TagLib::MPC::File>    pTagFile;
     PRBool                          restart;
@@ -1980,9 +2038,9 @@ PRBool sbMetadataHandlerTaglib::ReadMPCFile(
 
     /* Get the file path in the proper format for the platform. */
 #if XP_WIN
-    nsAString &filePath = aFilePath;
+    NS_ConvertUTF8toUTF16 filePath(aFilePath);
 #else
-    nsCAutoString filePath = NS_ConvertUTF16toUTF8(aFilePath);
+    nsACString &filePath = aFilePath;
 #endif
 
     /* Open and read the metadata file. */
@@ -2038,7 +2096,7 @@ PRBool sbMetadataHandlerTaglib::ReadMPCFile(
  */
 
 PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
-    nsAString                   &aFilePath)
+    nsACString                  &aFilePath)
 {
     nsAutoPtr<TagLib::MPEG::File>   pTagFile;
     PRBool                          restart;
@@ -2047,9 +2105,9 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
 
     /* Get the file path in the proper format for the platform. */
 #if XP_WIN
-    nsAString &filePath = aFilePath;
+    NS_ConvertUTF8toUTF16 filePath(aFilePath);
 #else
-    nsCAutoString filePath = NS_ConvertUTF16toUTF8(aFilePath);
+    nsACString &filePath = aFilePath;
 #endif
 
     /* Open and read the metadata file. */
@@ -2060,8 +2118,11 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
         pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
     if (NS_SUCCEEDED(result))
         pTagFile->open(filePath.BeginReading());
-    if (NS_SUCCEEDED(result))
+    if (NS_SUCCEEDED(result)) {
         pTagFile->read();
+    } else {
+        LOG(("ReadMPEGFile: failed to open file %s\n", filePath.BeginReading()));
+    }
 
     /* Check for channel restart. */
     if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
@@ -2113,7 +2174,7 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
  */
 
 PRBool sbMetadataHandlerTaglib::ReadMP4File(
-    nsAString                   &aFilePath)
+    nsACString                  &aFilePath)
 {
     nsAutoPtr<TagLib::MP4::File>    pTagFile;
     PRBool                          restart;
@@ -2122,9 +2183,9 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File(
 
     /* Get the file path in the proper format for the platform. */
 #if XP_WIN
-    nsAString &filePath = aFilePath;
+    NS_ConvertUTF8toUTF16 filePath(aFilePath);
 #else
-    nsCAutoString filePath = NS_ConvertUTF16toUTF8(aFilePath);
+    nsACString &filePath = aFilePath;
 #endif
 
     /* Open and read the metadata file. */
@@ -2176,7 +2237,7 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File(
  */
 
 PRBool sbMetadataHandlerTaglib::ReadOGGFile(
-    nsAString                   &aFilePath)
+    nsACString                  &aFilePath)
 {
     nsAutoPtr<TagLib::Vorbis::File> pTagFile;
     PRBool                          restart;
@@ -2185,9 +2246,9 @@ PRBool sbMetadataHandlerTaglib::ReadOGGFile(
 
     /* Get the file path in the proper format for the platform. */
 #if XP_WIN
-    nsAString &filePath = aFilePath;
+    NS_ConvertUTF8toUTF16 filePath(aFilePath);
 #else
-    nsCAutoString filePath = NS_ConvertUTF16toUTF8(aFilePath);
+    nsACString &filePath = aFilePath;
 #endif
 
     /* Open and read the metadata file. */

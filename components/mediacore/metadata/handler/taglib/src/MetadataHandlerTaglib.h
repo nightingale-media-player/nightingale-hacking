@@ -138,8 +138,8 @@ class sbMetadataHandlerTaglib : public sbIMetadataHandler,
      * mMetadataChannelID       Metadata channel ID.
      * mMetadataChannelRestart  True when metadata channel must be restarted.
      * mCompleted               True when metadata reading is complete.
-     * mMetadataPath            Path used to access metadata.
-     * mpCrashReporter          Crash reporter service.
+     * mMetadataPath            Path used to access metadata.  Always UTF-8.
+     *                          (This is atypical for Windows)
      */
 
 private:
@@ -152,10 +152,10 @@ private:
     nsCOMPtr<sbISeekableChannel>
                                 mpSeekableChannel;
     nsCOMPtr<nsIURL>            mpURL;
-    nsString                    mMetadataChannelID;
+    nsCString                   mMetadataChannelID;
     PRBool                      mMetadataChannelRestart;
     PRBool                      mCompleted;
-    nsString                    mMetadataPath;
+    nsCString                   mMetadataPath;
 
     /* BUG 11436 HACK START*/
     TagLib::ID3v2::AttachedPictureFrame *mBug11436Hack;
@@ -294,19 +294,19 @@ private:
         const char                  *aCharset = 0);
 
     PRBool ReadMPEGFile(
-        nsAString                   &aFilePath);
+        nsACString                  &aFilePath);
 
     PRBool ReadMP4File(
-        nsAString                   &aFilePath);
+        nsACString                  &aFilePath);
 
     PRBool ReadOGGFile(
-        nsAString                   &aFilePath);
+        nsACString                  &aFilePath);
 
     PRBool ReadFLACFile(
-        nsAString                   &aFilePath);
+        nsACString                  &aFilePath);
 
     PRBool ReadMPCFile(
-        nsAString                   &aFilePath);
+        nsACString                  &aFilePath);
 
     nsresult AddMetadataValue(
         const char                  *name,

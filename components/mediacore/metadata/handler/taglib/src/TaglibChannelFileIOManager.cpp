@@ -92,7 +92,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbTagLibChannelFileIOManager,
 */
 
 NS_IMETHODIMP sbTagLibChannelFileIOManager::AddChannel(
-    const nsAString             &aChannelID,
+    const nsACString            &aChannelID,
     sbISeekableChannel          *aChannel)
 {
     nsAutoPtr<sbTagLibChannelFileIOManager::Channel> pChannel;
@@ -122,7 +122,7 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::AddChannel(
 */
 
 NS_IMETHODIMP sbTagLibChannelFileIOManager::RemoveChannel(
-    const nsAString             &aChannelID)
+    const nsACString            &aChannelID)
 {
     /* Validate parameters. */
     NS_ENSURE_FALSE(aChannelID.IsEmpty(), NS_ERROR_INVALID_ARG);
@@ -142,7 +142,7 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::RemoveChannel(
 */
 
 NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannel(
-    const nsAString             &aChannelID,
+    const nsACString            &aChannelID,
     sbISeekableChannel          **_retval)
 {
     sbTagLibChannelFileIOManager::Channel   *pChannel;
@@ -176,7 +176,7 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannel(
 */
 
 NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannelSize(
-    const nsAString             &aChannelID,
+    const nsACString            &aChannelID,
     PRUint64                    *_retval)
 {
     sbTagLibChannelFileIOManager::Channel   *pChannel;
@@ -208,7 +208,7 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannelSize(
 */
 
 NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannelRestart(
-    const nsAString             &aChannelID,
+    const nsACString            &aChannelID,
     PRBool                      *_retval)
 {
     sbTagLibChannelFileIOManager::Channel   *pChannel;
@@ -239,7 +239,7 @@ NS_IMETHODIMP sbTagLibChannelFileIOManager::GetChannelRestart(
 */
 
 NS_IMETHODIMP sbTagLibChannelFileIOManager::SetChannelRestart(
-    const nsAString             &aChannelID,
+    const nsACString            &aChannelID,
     PRBool                      aRestart)
 {
     sbTagLibChannelFileIOManager::Channel   *pChannel;
@@ -372,7 +372,7 @@ sbTagLibChannelFileIOManager::Channel::~Channel()
  */
 
 nsresult sbTagLibChannelFileIOManager::GetChannel(
-    const nsAString             &aChannelID,
+    const nsACString            &aChannelID,
     sbTagLibChannelFileIOManager::Channel
                                 **appChannel)
 {
@@ -446,18 +446,18 @@ FileIO *TagLibChannelFileIOTypeResolver::createFileIO(
     nsCOMPtr<sbITagLibChannelFileIOManager>
                                    pTagLibChannelFileIOManager;
     nsCOMPtr<sbISeekableChannel>   pSeekableChannel;
-    nsString                       channelID;
+    nsCString                      channelID;
     nsAutoPtr<TagLibChannelFileIO> pTagLibChannelFileIO;
     nsresult                       result = NS_OK;
 
     /* Assume the file name is a channel ID. */
 #if XP_WIN
     if(wcslen((const wchar_t *) fileName) > 0)
-        channelID.Assign((const wchar_t *) fileName);
+        CopyUTF16toUTF8(nsDependentString((const wchar_t *) fileName), channelID);
     else
-        channelID = NS_ConvertUTF8toUTF16((const char *) fileName);
+        channelID.Assign(nsDependentCString((const char *) fileName));
 #else
-    channelID = NS_ConvertUTF8toUTF16(fileName);
+    channelID.Assign(nsDependentCString((const char *) fileName));
 #endif
 
     /* Get the TagLib sbISeekableChannel file IO manager. */

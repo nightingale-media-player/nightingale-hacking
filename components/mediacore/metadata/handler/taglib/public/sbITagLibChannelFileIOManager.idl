@@ -50,14 +50,14 @@ interface sbITagLibChannelFileIOManager : nsISupports
     * \param aChannelID Channel identifier.
     * \param aChannel Metadata channel.
     */
-    void addChannel( in AString aChannelID, in sbISeekableChannel aChannel );
+    void addChannel( in ACString aChannelID, in sbISeekableChannel aChannel );
 
     /**
     * \brief Remove an sbISeekableChannel used for TagLib file IO.
     *
     * \param aChannelID Identifier for channel to be removed.
     */
-    void removeChannel( in AString aChannelID );
+    void removeChannel( in ACString aChannelID );
 
     /**
     * \brief Get an sbISeekableChannel used for TagLib file IO.
@@ -65,7 +65,7 @@ interface sbITagLibChannelFileIOManager : nsISupports
     * \param aChannelID Identifier for channel to get.
     * \return The sbISeekableChannel for the specified identifier.
     */
-    sbISeekableChannel getChannel( in AString aChannelID );
+    sbISeekableChannel getChannel( in ACString aChannelID );
 
     /**
     * \brief Get the size of the channel media.
@@ -73,7 +73,7 @@ interface sbITagLibChannelFileIOManager : nsISupports
     * \param aChannelID Identifier for channel for which to get size.
     * \return The channel media size.
     */
-    unsigned long long getChannelSize( in AString aChannelID );
+    unsigned long long getChannelSize( in ACString aChannelID );
 
     /**
     * \brief Get the restart flag for the channel.
@@ -81,7 +81,7 @@ interface sbITagLibChannelFileIOManager : nsISupports
     * \param aChannelID Identifier for channel for which to get restart flag.
     * \return Restart flag value.
     */
-    boolean getChannelRestart( in AString aChannelID );
+    boolean getChannelRestart( in ACString aChannelID );
 
     /**
     * \brief Set the restart flag for the channel.
@@ -89,5 +89,5 @@ interface sbITagLibChannelFileIOManager : nsISupports
     * \param aChannelID Identifier for channel for which to set restart flag.
     * \param aRestart Restart flag value.
     */
-    void setChannelRestart( in AString aChannelID, in PRBool aRestart );
+    void setChannelRestart( in ACString aChannelID, in PRBool aRestart );
 };

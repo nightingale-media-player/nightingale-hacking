@@ -535,14 +535,18 @@ DirectoryImportJob.prototype = {
                     .getService(Ci.nsINetUtil);
 
     var s = netutil.unescapeString(aURI.spec,
-                                   Ci.nsINetUtil.ESCAPE_XPALPHAS);
+                                   Ci.nsINetUtil.ESCAPE_URL_SKIP_CONTROL);
 
     var unicodeConverter = 
       Cc["@mozilla.org/intl/scriptableunicodeconverter"]
         .createInstance(Ci.nsIScriptableUnicodeConverter);
     unicodeConverter.charset = "UTF-8";
 
-    s = unicodeConverter.ConvertToUnicode(s);
+    try {
+      s = unicodeConverter.ConvertToUnicode(s);
+    } catch (ex) {
+      // conversion failed, use encoded string
+    }
     return s.split("/").pop();
   }
 }

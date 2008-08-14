@@ -32,6 +32,7 @@
 // INCLUDES ===================================================================
 #include "sbFileScan.h"
 #include "nspr.h"
+#include "prlog.h"
 
 #include <nspr/prmem.h>
 #include <xpcom/nsMemory.h>
@@ -44,6 +45,30 @@
 #include <nsIMutableArray.h>
 #include <nsNetUtil.h>
 #include <sbLockUtils.h>
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbMediaImportFileScan:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gMediaImportFileScanLog = nsnull;
+#define TRACE(args) \
+  PR_BEGIN_MACRO \
+  if (!gMediaImportFileScanLog) \
+    gMediaImportFileScanLog = PR_NewLogModule("sbMediaImportFileScan"); \
+  PR_LOG(gMediaImportFileScanLog, PR_LOG_DEBUG, args); \
+  PR_END_MACRO
+#define LOG(args) \
+  PR_BEGIN_MACRO \
+  if (!gMediaImportFileScanLog) \
+    gMediaImportFileScanLog = PR_NewLogModule("sbMediaImportFileScan"); \
+  PR_LOG(gMediaImportFileScanLog, PR_LOG_WARN, args); \
+  PR_END_MACRO
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
+
 
 // CLASSES ====================================================================
 //*****************************************************************************
@@ -222,6 +247,7 @@ NS_IMETHODIMP sbFileScanQuery::GetFileCount(PRUint32 *_retval)
   NS_ENSURE_ARG_POINTER(_retval);
   size_t nSize = m_FileStack.size();
   *_retval = (PRUint32) nSize;
+  LOG(("sbFileScanQuery: reporting %d files\n", *_retval));
   return NS_OK;
 } //GetFileCount
 
@@ -234,6 +260,7 @@ NS_IMETHODIMP sbFileScanQuery::AddFilePath(const nsAString &strFilePath)
     PR_Lock(m_pFileStackLock);
     m_FileStack.push_back(PromiseFlatString(strFilePath));
     PR_Unlock(m_pFileStackLock);
+    LOG(("sbFileScanQuery::AddFilePath(%s)\n", NS_LossyConvertUTF16toASCII(strFilePath).get()));
   }
   return NS_OK;
 } //AddFilePath
@@ -344,7 +371,11 @@ NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIs(PRUint32 aStartIndex,
     NS_ENSURE_SUCCESS(rv, rv);
     rv = array->AppendElement(uri, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
+    #if PR_LOGGING
+    LOG(("sbFileScanQuery:: fetched URI %s\n", NS_LossyConvertUTF16toASCII(m_FileStack[i]).get()));
+    #endif /* PR_LOGGING */
   }
+  LOG(("sbFileScanQuery:: fetched URIs %d through %d\n", aStartIndex, aEndIndex));
 
   NS_ADDREF(*_retval = array);
   return NS_OK;
@@ -584,6 +615,7 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
                     rv = pURI->GetSpec(u8spec);
                     if (NS_SUCCEEDED(rv))
                     {
+                      LOG(("sbFileScan::ScanDirectory (idl) found spec: %s\n", u8spec.get()));
                       *_retval += 1;
 
                       if(pCallback)
@@ -789,18 +821,20 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
                         nsCString escapedSpec;
                         rv2 = mNetUtil->EscapeString(spec,
-                                                     nsINetUtil::ESCAPE_XPALPHAS,
+                                                     nsINetUtil::ESCAPE_URL_PATH,
                                                      escapedSpec);
                         NS_ENSURE_SUCCESS(rv2, rv2);
 
                         nsCOMPtr<nsIURI> pNewURI;
+                        LOG(("sbFileScan: escaped spec: %s\n", escapedSpec.get()));
 
-                        spec.Insert("file://", 0);
+                        escapedSpec.Insert("file://", 0);
                         rv2 = pIOService->NewURI(escapedSpec,
                                                  nsnull,
                                                  nsnull,
                                                  getter_AddRefs(pNewURI));
                         if (NS_SUCCEEDED(rv2)) {
+                          LOG(("replacing URI!\n"));
                           pURI = pNewURI;
                         }
                       }
@@ -814,6 +848,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 #if defined(XP_WIN)
                   ToLowerCase(strPath);
 #endif
+                  LOG(("sbFileScan::ScanDirectory (C++) found spec: %s\n", u8spec.get()));
                   pQuery->AddFilePath(strPath);
                   nFoundCount += 1;
 

@@ -358,7 +358,7 @@ void TagLibChannelFileIO::truncate(
  */
 
 TagLibChannelFileIO::TagLibChannelFileIO(
-    nsString                        channelID,
+    nsCString                       channelID,
     sbISeekableChannel*             pSeekableChannel)
 :
     mChannelID(channelID),

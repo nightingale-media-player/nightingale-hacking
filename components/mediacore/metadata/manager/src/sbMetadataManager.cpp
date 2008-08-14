@@ -59,7 +59,14 @@
 #include "prlog.h"
 #ifdef PR_LOGGING
 extern PRLogModuleInfo* gMetadataLog;
+#define LOG(args) \
+  PR_BEGIN_MACRO \
+  if (!gMetadataLog) \
+    gMetadataLog = PR_NewLogModule("metadata"); \
+  PR_LOG(gMetadataLog, PR_LOG_DEBUG, args); \
+  PR_END_MACRO
 #endif
+
 
 #include <sbLockUtils.h>
 
@@ -155,6 +162,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ConvertUTF16toUTF8 cstrURL(strURL);
+  LOG(("sbMetadataManager:: found new URI %s\n", cstrURL.get()));
 
   nsCOMPtr<nsIURI> pURI;
   rv = pIOService->NewURI(cstrURL, nsnull, nsnull, getter_AddRefs(pURI));
@@ -200,11 +208,18 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
       if (localFile) {
         nsCString spec;
         nsresult rv2 = localFile->GetPersistentDescriptor(spec);
+        nsCOMPtr<nsINetUtil> netUtil =
+          do_CreateInstance("@mozilla.org/network/util;1", &rv2);
+        nsCString escapedSpec;
+        rv2 = netUtil->EscapeString(spec,
+                                    nsINetUtil::ESCAPE_URL_PATH,
+                                    escapedSpec);
         nsCOMPtr<nsIURI> pNewURI;
         if (NS_SUCCEEDED(rv2)) {
-          spec.Insert("file://", 0);
-          rv2 = pIOService->NewURI(spec, nsnull, nsnull, getter_AddRefs(pNewURI));
+          escapedSpec.Insert("file://", 0);
+          rv2 = pIOService->NewURI(escapedSpec, nsnull, nsnull, getter_AddRefs(pNewURI));
           if (NS_SUCCEEDED(rv2)) {
+            LOG(("using persistentDescriptor instead: %s\n", escapedSpec.BeginReading()));
             pURI = pNewURI;
           }
         }
