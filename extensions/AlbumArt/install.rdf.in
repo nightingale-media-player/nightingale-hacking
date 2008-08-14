@@ -46,7 +46,7 @@
             <songbird:contentTitle>Album Art</songbird:contentTitle>
             <songbird:contentIcon>http://songbirdnest.com/favicon.ico</songbird:contentIcon>
             <songbird:defaultWidth>178</songbird:defaultWidth>
-            <songbird:defaultHeight>198</songbird:defaultHeight>
+            <songbird:defaultHeight>197</songbird:defaultHeight>
             <songbird:suggestedContentGroups>servicepane</songbird:suggestedContentGroups>
             <songbird:showOnInstall>true</songbird:showOnInstall>
         </Description>
