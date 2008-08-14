@@ -33,7 +33,6 @@ SUBDIRS = components \
           defaults \
           $(NULL)
 
-CURRENT_DATE := $(shell date +%Y%m%d)
 EXTENSION_NAME = audioscrobbler
 EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
 EXTENSION_STAGE_DIR = ./.xpistage

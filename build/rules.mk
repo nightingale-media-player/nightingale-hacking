@@ -1403,6 +1403,7 @@ EXTENSION_VER := $(EXTENSION_VER)+dev
 else
 # the minus makes it alpha in the comparator and less than an official
 # build of the same base version.
+CURRENT_DATE := $(shell date +%Y%m%d)
 EXTENSION_VER := $(EXTENSION_VER)-$(CURRENT_DATE)
 endif
 endif

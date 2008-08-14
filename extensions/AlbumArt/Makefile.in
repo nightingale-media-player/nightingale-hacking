@@ -29,7 +29,6 @@ VPATH     = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
-CURRENT_DATE := $(shell date +%Y%m%d)
 EXTENSION_NAME = albumart
 EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
 EXTENSION_STAGE_DIR = ./.xpistage
