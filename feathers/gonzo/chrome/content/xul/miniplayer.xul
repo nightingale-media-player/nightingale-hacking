@@ -80,7 +80,7 @@
 
       <resizer oncommand="onWindowResizeComplete()" id="miniplayer_resizer_left" dir="left"/>
 
-      <stack flex="1" id="miniplayer-box">
+      <stack flex="1" id="miniplayer_box">
 
   <!-- TODO Move corner xul into an sb-themed-frame-stack -->
         <hbox flex="1" class="hook">

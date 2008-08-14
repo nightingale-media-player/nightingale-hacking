@@ -333,14 +333,14 @@ sb-player-totaltime-label {
 }
 
 
-#miniplayer-box > .hook {
+#miniplayer_box > .hook {
   background-image:url('chrome://songbird/skin/mini-player/bg.png');
   background-repeat:repeat-x;
   background-position:center 0px;
   min-height:22px;
 }
-#miniplayer-box > .hook > .left,
-#miniplayer-box > .hook > .right {
+#miniplayer_box > .hook > .left,
+#miniplayer_box > .hook > .right {
   min-width:8px;
   min-height:22px;
 }
@@ -351,12 +351,12 @@ sb-player-totaltime-label {
 #miniplayer-content {
   padding:0px 12px !important;
 }
-#miniplayer-box > .hook > .left {
+#miniplayer_box > .hook > .left {
   background-image:url('chrome://songbird/skin/mini-player/l.png');
   background-repeat:no-repeat;
   background-position:center center;
 }
-#miniplayer-box > .hook > .right {
+#miniplayer_box > .hook > .right {
   background-image:url('chrome://songbird/skin/mini-player/r.png');
   background-repeat:no-repeat;
   background-position:center center;
