@@ -712,17 +712,22 @@ interface sbIMediaList : sbIMediaItem
   Prototype:
     add(<MediaItem> mediaItem);
 
-    // additional forms
+    // additional forms ( Webpage API only )
 
-    add(String urlToMedia);
+    add(<MediaItem> mediaItem [, boolean shouldDownload]);
 
-    add(Array mediaItemURLArray);
+    add(String urlToMedia [, boolean shouldDownload]);
+
+    add(Array mediaItemURLArray [, boolean shouldDownload]);
 
   Parameters:
     mediaItem - The <MediaItem> to add.
     urlToMediaItem - The address of the <MediaItem>(s) to add.
     mediaItemURLArray - An array containing the address(es)
       of the <MediaItem>(s) to add.
+    shouldDownload - a boolean indicating whether to download or not. It is
+      optional and if absent defaults to FALSE. (only exposed on WebpageAPI
+      calls currently).
 
     In the additional forms urls to the <MediaItem>s can be passed directly
     to the <MediaList> for addition. The <MediaItems> will be created and
@@ -744,10 +749,15 @@ interface sbIMediaList : sbIMediaItem
     mediaList.add(mediaItem);
 
     //Alternate forms
-    mediaList.add("http://path/to/another/item.mp3");
+    mediaList.add(mediaItem, false);                         // no download
+    mediaList.add(mediaItem, true);                          // download
+    mediaList.add("http://path/to/a/cool/item.mp3");         // no download
+    mediaList.add("http://path/to/a/great/item.mp3", false); // no download
+    mediaList.add("http://path/to/a/rockin/item.mp3", true); // download
+
     mediaList.add(["http://path/to/another/cool/item.mp3",
                    "http://path/to/another/great/item.mp3",
-                   "http://path/to/another/rockin/item.mp3"]);
+                   "http://path/to/another/rockin/item.mp3"], true);
     (end)
 
   See Also:
