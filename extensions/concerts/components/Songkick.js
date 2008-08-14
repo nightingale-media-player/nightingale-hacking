@@ -28,6 +28,38 @@ function debugLog(funcName, str) {
 		dump("*** Songkick.js::" + funcName + " // " + str + "\n");
 }
 
+// Helper to memoize a function on an object.  
+// Caches return values in this._cache using the
+// name of the function.
+function memoize(func) {
+	var funcName = func.name;
+	if (!funcName) {
+		throw new Error("memoize requires a named function to work correctly");
+	}
+	return function(key) {
+		if (!this._cache) {
+			this._cache = {};
+		}
+		if (!this._cache[funcName]) {
+			this._cache[funcName] = {};
+		}
+		var value = this._cache[funcName][key];
+		if (value !== undefined) {
+			//debugLog("memoized " + funcName, " returning '" +
+			//		value + "' from cache for key " + key);
+			return value;
+		}
+		
+		value = func.apply(this, arguments);
+		this._cache[funcName][key] = value;
+		//debugLog("memoized " + funcName, " adding '" +
+		//		value + "' to cache for key " + key);
+		return value;
+	}
+}
+
+
+
 function skStreamListener(async, callback, skObj, city) {
 	this._data = [];
 	this._async = async;
@@ -168,6 +200,7 @@ function Songkick() {
 	this._db.setDatabaseGUID("concerts");
 	this._db.setAsyncQuery(false);
 	this._db.resetQuery();
+	this._cache = {};
 
 	// Get our prefBranch
 	var prefService = Cc["@mozilla.org/preferences-service;1"]
@@ -198,6 +231,8 @@ Songkick.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.sbISongkick]),
 
 	_db : null,
+	_cache: null,
+	_batch: null,
 	concertRefreshRunning : false,
 	locationRefreshRunning : false,
 	drawingLock : false,
@@ -235,6 +270,7 @@ Songkick.prototype = {
 		this.initialTimer.init(this, 5000, Ci.nsITimer.TYPE_ONE_SHOT);
 
 		// Add a media list listener to the main library
+		this._batch = new LibraryUtils.BatchHelper();
 		var mainLib = Cc['@songbirdnest.com/Songbird/library/Manager;1']
 				.getService(Ci.sbILibraryManager).mainLibrary;
 		var artistPropArray =
@@ -246,7 +282,7 @@ Songkick.prototype = {
 				mainLib.LISTENER_FLAGS_ITEMADDED |
 				mainLib.LISTENER_FLAGS_BATCHBEGIN |
 				mainLib.LISTENER_FLAGS_BATCHEND |
-				mainLib.LISTENER_FLAGS_AFTERITEMREMOVED,
+				mainLib.LISTENER_FLAGS_BEFOREITEMREMOVED,
 				artistPropArray);
 		debugLog("startRefreshThread", "Attached ITEM UPDATED listener");
 	},
@@ -271,10 +307,10 @@ Songkick.prototype = {
 	onItemUpdated : function(list, item, index) {
 		var firstrun = this.prefs.getBoolPref("firstrun");
 		if (firstrun)
-			return;
+			return true;
 		var artist = item.getProperty(SBProperties.artistName);
-		var url = this.getArtistUrl(artist);
-		if (this.getTourStatus(artist) && (url != null)) {
+		var url = this.getArtistUrlIfOnTour(artist);
+		if (url != null) {
 			debugLog("onItemUpdated", "New on tour item, artist: " + artist);
 			// Set the touring properties for this track
 			item.setProperty(this.onTourImgProperty, onTourIconSrc);
@@ -283,10 +319,10 @@ Songkick.prototype = {
 
 			// Set the concerts this artist is playing at to be flagged
 			// as "library artists"
-			if (this.batchOperation == list.guid) {
+			if (this._batch.isActive()) {
 				// We're in batch mode!
 				debugLog("onItemUpdated", "Adding " + artist + " to the batch");
-				this.batchArtists[artist] = 1;
+				this._batchArtistsAdded[artist] = 1;
 			} else {
 				// Running on a single item:
 				this._db.resetQuery();
@@ -301,6 +337,9 @@ Songkick.prototype = {
 		}
 	},
 	onItemAdded : function(list, item, index) {
+		var firstrun = this.prefs.getBoolPref("firstrun");
+		if (firstrun)
+			return true;
 		var artist = item.getProperty(SBProperties.artistName);
 		if (artist != null) {
 			//debugLog("onItemAdded", "New media item, artist: " + artist);
@@ -310,25 +349,33 @@ Songkick.prototype = {
 	
 	onBatchBegin : function(list) {
 		debugLog("onBatchBegin", "Running in batch mode...");
-		this.batchOperation = list.guid;
-		this.batchArtists = new Array();
+		if (!this._batch.isActive()) {
+			this._batchArtistsAdded = {};
+		}
+		this._batch.begin();
 	},
 
 	onBatchEnd : function(list) {
-		this._db.resetQuery();
-		for (artist in this.batchArtists) {
-			this._db.addQuery("UPDATE playing_at " +
-					"SET libraryArtist=1,anyLibraryArtist=1 " +
-					"WHERE artistid = " +
-						"(SELECT ROWID FROM artists " +
-						"WHERE name='" + artist + "')");
-			debugLog("onBatchEnd", "Adding update query for " + artist);
+		this._batch.end();
+		if (!this._batch.isActive()) {
+			this._db.resetQuery();
+			var artistsAdded = false;
+			for (artist in this._batchArtistsAdded) {
+				this._db.addQuery("UPDATE playing_at " +
+						"SET libraryArtist=1,anyLibraryArtist=1 " +
+						"WHERE artistid = " +
+							"(SELECT ROWID FROM artists " +
+							"WHERE name='" + artist + "')");
+				debugLog("onBatchEnd", "Adding update query for " + artist);
+				artistsAdded = true;
+			}
+			delete this._batchArtistsAdded;
+			if (artistsAdded) {
+				this._db.execute();
+				this.spsUpdater();
+			}
+			debugLog("onBatchEnd", "Done");
 		}
-		this._db.execute();
-		this.spsUpdater();
-		this.batchOperation = null;
-		delete this.batchArtists;
-		debugLog("onBatchEnd", "Done");
 	},
 	
 	/*********************************************************************
@@ -336,23 +383,26 @@ Songkick.prototype = {
 	 * to do this so we can update its on tour status (if we already have
 	 * concert data)
 	 *********************************************************************/
-	onAfterItemRemoved : function(list, item, index) {
+	onBeforeItemRemoved : function(list, item, index) {
 		// If this artist wasn't on tour, then we can quit now
 		if (item.getProperty(this.onTourImgProperty) == noTourIconSrc)
 			return false;
 
 		var artist = item.getProperty(SBProperties.artistName);
 		if (artist == null)
-			return;
+			return false;
 
-		debugLog("onAfterItemRemoved", "in removal hook, artist:" + artist);
+		debugLog("onBeforeItemRemoved", "in removal hook, artist:" + artist);
+		
 		// Need to see if there are any other tracks by this artist in the
 		// library.  If so, then we bail out.  If not, then this was the last
 		// track - and we should update the database accordingly
 		// We do this by running an enumeration, and bailing out immediately
 		// so we only need to hit the first track
+		this.removedItemGUID = item.guid;
 		list.enumerateItemsByProperty(SBProperties.artistName, artist, this);
-		debugLog("onAfterItemRemoved", "other tracks by this artist: " +
+		delete this.removedItemGUID;
+		debugLog("onBeforeItemRemoved", "other tracks by this artist: " +
 				this.otherTracksByThisArtist);
 		if (!this.otherTracksByThisArtist) {
 			// There were no other tracks, so update the SQLite DB
@@ -399,8 +449,11 @@ Songkick.prototype = {
 		this.otherTracksByThisArtist = false;
 	},
 	onEnumeratedItem : function(list, item) {
+		if (this.removedItemGUID == item.guid) {
+			return Ci.sbIMediaListEnumerationListener.CONTINUE;
+		}
 		this.otherTracksByThisArtist = true;
-		return 0;
+		return Ci.sbIMediaListEnumerationListener.CANCEL;
 	},
 	onEnumerationEnd : function(list) { },
 
@@ -433,6 +486,8 @@ Songkick.prototype = {
 		this.concertRefreshRunning = true;
 		debugLog("refreshConcerts", "CONCERT REFRESH RUNNING:" +
 				this.concertRefreshRunning);
+
+		this._cache = {}; // Flush any cached data, since it will be invalid
 
 		// Set our URL to load
 		//var city = this.prefs.getIntPref("city");
@@ -510,6 +565,8 @@ Songkick.prototype = {
 		dbq.setDatabaseGUID("concerts");
 		dbq.setAsyncQuery(false);
 		dbq.resetQuery();
+
+		this._cache = {}; // Flush any cached data, since it will be invalid
 
 		dbq.addQuery("drop table concerts");
 		dbq.addQuery("drop table playing_at");
@@ -880,7 +937,7 @@ Songkick.prototype = {
 	/*********************************************************************
 	 * For a given artist name, return whether the artist is on tour or not
 	 *********************************************************************/
-	getTourStatus : function(artist) {
+	getTourStatus : memoize(function getTourStatus(artist) {
 		this._db.resetQuery();
 		this._db.addQuery('SELECT count(*) FROM playing_at ' +
 				'JOIN artists on artistid=artists.ROWID ' +
@@ -891,9 +948,12 @@ Songkick.prototype = {
 		var result = this._db.getResultObject();
 		var count = result.getRowCell(0, 0);
 		return (count > 0);
-	},
+	}),
 	
-	getArtistUrl : function(artist) {
+	/*********************************************************************
+	 * For a given artist name, return their Songkick tour URL
+	 *********************************************************************/
+	getArtistUrl : memoize(function getArtistUrl(artist) {
 		this._db.resetQuery();
 		this._db.addQuery("SELECT artistURL FROM artists " +
 				'where name = "' + artist + '"');
@@ -906,7 +966,29 @@ Songkick.prototype = {
 		} else {
 			return null;
 		}
-	},
+	}),
+	
+	/*********************************************************************
+	 * For a given artist name, return the tour URL if they are on tour
+	 *********************************************************************/
+	getArtistUrlIfOnTour : memoize(function getArtistUrlIfOnTour(artist) {
+		//debugLog("getArtistUrlIfOnTour", "New media item, artist: " + artist);
+		this._db.resetQuery();
+		this._db.addQuery("SELECT artistURL FROM artists " +
+			'JOIN playing_at on playing_at.artistid = artists.ROWID ' +
+			'JOIN concerts on playing_at.concertid=concerts.id ' +
+			'WHERE artists.name = "' + artist + '"' +
+			'AND concerts.timestamp > ' + parseInt(Date.now()/1000));
+		var ret = this._db.execute();
+		var result = this._db.getResultObject();
+		if (result.getRowCount() > 0) {
+			debugLog("getArtistUrlIfOnTour", "Artist URL found");
+			var url = result.getRowCellByColumn(0, "artistURL");
+			return (url);
+		} else {
+			return null;
+		}
+	}),
 
 	/*********************************************************************
 	 * Returns the URL for the provider's homepage
@@ -986,6 +1068,7 @@ Songkick.prototype = {
 
 	processLocations: function(xmlData) {
 		debugLog("processLocations", "Processing location XML data");
+
 		// Translate location XML data to store it in our DB
 		this._db.resetQuery();
 		this._db.addQuery("drop table cities");
