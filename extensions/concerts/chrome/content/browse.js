@@ -373,6 +373,7 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 	if (this.skSvc.drawingLock)
 		return;
 	this.skSvc.drawingLock = true;
+	this.abortDrawing = false;
 
 	// Switch to the listing view
 	var deck = document.getElementById("concerts-deck");
@@ -517,6 +518,8 @@ ConcertTicketing.browseDates = function() {
 
 	gMetrics.metricsInc("concerts", "browse.view.date", "");
 	while (concerts.hasMoreElements()) {
+		if (this.abortDrawing)
+			return;
 		var concert = concerts.getNext().wrappedJSObject;
 
 		var thisDateObj = new Date(concert.ts * 1000);
@@ -679,6 +682,8 @@ ConcertTicketing.browseArtists = function() {
 
 	gMetrics.metricsInc("concerts", "browse.view.artist", "");
 	while (concerts.hasMoreElements()) {
+		if (this.abortDrawing)
+			return;
 		var concert = concerts.getNext().wrappedJSObject;
 
 		var thisDateObj = new Date(concert.ts * 1000);
@@ -1182,9 +1187,6 @@ ConcertTicketing.createBlock = function(blockname, makeSpan) {
 
 /* Methods connected to the groupby menulist & filter checkbox on the chrome */
 ConcertTicketing.changeFilter = function(updateCheckbox) {
-	//var deck = document.getElementById("concerts-deck");
-	//deck.setAttribute("selectedIndex", 2);
-	
 	this.filterLibraryArtists = !this.filterLibraryArtists;
 	Application.prefs.setValue("extensions.concerts.filterLibraryArtists",
 			this.filterLibraryArtists);
@@ -1202,12 +1204,38 @@ ConcertTicketing.changeFilter = function(updateCheckbox) {
 	}
 	songbirdMainWindow.Concerts.updateConcertCount();
 	flushDisplay();
-	this.browseConcerts(this);
+	if (this.skSvc.drawingLock) {
+		// trigger browseArtists|browseDates to abort
+		this.abortDrawing = true;
+
+		// block for release of the lock, and then redraw
+		this.blockAndBrowseConcerts(this);
+	} else {
+		this.browseConcerts(this);
+	}
 }
 
 ConcertTicketing.groupBy = function(group) {
 	Application.prefs.setValue("extensions.concerts.groupby", group);
 	
-	this.browseConcerts(this);
+	if (this.skSvc.drawingLock) {
+		// trigger browseArtists|browseDates to abort
+		this.abortDrawing = true;
+
+		// block for release of the lock, and then redraw
+		this.blockAndBrowseConcerts(this);
+	} else {
+		this.browseConcerts(this);
+	}
 }
 
+/* Spins until drawingLock is released, and then triggers a browseConcerts() */
+ConcertTicketing.blockAndBrowseConcerts = function blockAndBrowseConcerts(ct) {
+	if (Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
+		.getService(Ci.sbISongkick).drawingLock)
+	{
+		setTimeout(function() { blockAndBrowseConcerts(ct);}, 100);
+	} else {
+		ct.browseConcerts(ct);
+	}
+}
