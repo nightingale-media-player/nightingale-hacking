@@ -197,10 +197,11 @@ sbDeviceLibrary::Initialize(const nsAString& aLibraryId)
 NS_IMETHODIMP
 sbDeviceLibrary::Finalize()
 {
+  nsresult rv;
+
   // unhook the main library listener
   if (mMainLibraryListener) {
     nsCOMPtr<sbILibrary> mainLib;
-    nsresult rv;
     rv = GetMainLibrary(getter_AddRefs(mainLib));
     NS_ASSERTION(NS_SUCCEEDED(rv), "WTF this should never fail");
     // if we fail, meh, too bad, we still need to get on with the releasing
@@ -210,6 +211,13 @@ sbDeviceLibrary::Finalize()
     }
     mMainLibraryListener = nsnull;
   }
+
+  // remove the device event listener
+  nsCOMPtr<sbIDeviceEventTarget>
+    deviceEventTarget = do_QueryInterface(mDevice, &rv);
+  if (NS_SUCCEEDED(rv))
+    deviceEventTarget->RemoveEventListener(this);
+
   // Get and clear the device library.
   nsCOMPtr<sbILibrary> deviceLibrary;
   {
@@ -371,6 +379,18 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   rv = GetMainLibrary(getter_AddRefs(mainLib));
   NS_ENSURE_SUCCESS(rv, rv);
   
+  // get the current is synced locally state
+  rv = GetIsSyncedLocally(&mLastIsSyncedLocally);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // add a device event listener to listen for changes to the is synced locally
+  // state
+  nsCOMPtr<sbIDeviceEventTarget>
+    deviceEventTarget = do_QueryInterface(mDevice, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceEventTarget->AddEventListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // hook up the listener now if we need to
   PRUint32 mgmtType;
   rv = GetMgmtType(&mgmtType);
@@ -399,44 +419,9 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
-    rv = mainLib->AddListener(mMainLibraryListener,
-                              PR_FALSE,
-                              sbIMediaList::LISTENER_FLAGS_ITEMADDED |
-                              sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
-                              sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
-                              mMainLibraryListenerFilter);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
-      // hook up the media list listeners to the existing lists
-      nsRefPtr<sbPlaylistAttachListenerEnumerator> enumerator =
-        new sbPlaylistAttachListenerEnumerator(mMainLibraryListener);
-      NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
-      
-      rv = mainLib->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                                             NS_LITERAL_STRING("1"),
-                                             enumerator,
-                                             sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
-      NS_ENSURE_SUCCESS(rv, rv);      
-    }
-    else {
-      nsCOMPtr<nsIArray> playlists;
-      rv = GetSyncPlaylistList(getter_AddRefs(playlists));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Listen to all the playlists specified for synchronization
-      PRUint32 length;
-      rv = playlists->GetLength(&length);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      for (PRUint32 index = 0; index < length; ++index) {
-        nsCOMPtr<sbIMediaList> list = do_QueryElementAt(playlists, index, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-        
-        rv = mMainLibraryListener->ListenToPlaylist(list);
-      }
-    }
-  }
+  // update the main library listeners
+  rv = UpdateMainLibraryListeners();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILocalDatabaseSimpleMediaList> simpleList;
   simpleList = do_QueryInterface(list, &rv);
@@ -482,6 +467,115 @@ sbDeviceLibrary::UnregisterDeviceLibrary(sbILibrary* aDeviceLibrary)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return libraryManager->UnregisterLibrary(aDeviceLibrary);
+}
+
+nsresult
+sbDeviceLibrary::GetIsSyncedLocally(PRBool* aIsSyncedLocally)
+{
+  NS_ASSERTION(aIsSyncedLocally, "aIsSyncedLocally is null");
+
+  PRBool   isSyncedLocally = PR_FALSE;
+  nsresult rv;
+
+  nsAutoString localSyncPartnerID;
+  rv = GetMainLibraryId(localSyncPartnerID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> deviceSyncPartnerIDVariant;
+  nsAutoString         deviceSyncPartnerID;
+  rv = mDevice->GetPreference(NS_LITERAL_STRING("SyncPartner"),
+                              getter_AddRefs(deviceSyncPartnerIDVariant));
+  if (NS_SUCCEEDED(rv)) {
+    rv = deviceSyncPartnerIDVariant->GetAsAString(deviceSyncPartnerID);
+    if (NS_SUCCEEDED(rv))
+      isSyncedLocally = deviceSyncPartnerID.Equals(localSyncPartnerID);
+  }
+
+  *aIsSyncedLocally = isSyncedLocally;
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceLibrary::UpdateMainLibraryListeners()
+{
+  NS_ENSURE_STATE(mDevice);
+
+  nsresult rv;
+
+  nsCOMPtr<sbILibrary> mainLib;
+  rv = GetMainLibrary(getter_AddRefs(mainLib));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 mgmtType;
+  rv = GetMgmtType(&mgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isSyncedLocally = PR_FALSE;
+  rv = GetIsSyncedLocally(&isSyncedLocally);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if ((mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) && isSyncedLocally) {
+    // hook up the metadata updating listener
+    rv = mainLib->AddListener(mMainLibraryListener,
+                              PR_FALSE,
+                              sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                              sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
+                              sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
+                              mMainLibraryListenerFilter);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
+      mMainLibraryListener->SetSyncMode(mgmtType, nsnull);
+
+      // hook up the media list listeners to the existing lists
+      nsRefPtr<sbPlaylistAttachListenerEnumerator> enumerator =
+        new sbPlaylistAttachListenerEnumerator(mMainLibraryListener);
+      NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+      rv = mainLib->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                             NS_LITERAL_STRING("1"),
+                                             enumerator,
+                                             sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
+    } else {
+      nsCOMPtr<nsIArray> playlists;
+      rv = GetSyncPlaylistList(getter_AddRefs(playlists));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mMainLibraryListener->SetSyncMode(mgmtType, playlists);
+
+      // Listen to all the playlists specified for synchronization
+      PRUint32 length;
+      rv = playlists->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Need to stop listening to all the playlists so we can listen to just
+      // the selected ones
+      mMainLibraryListener->StopListeningToPlaylists();
+
+      for (PRUint32 index = 0; index < length; ++index) {
+        nsCOMPtr<sbIMediaList> list = do_QueryElementAt(playlists, index, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mMainLibraryListener->ListenToPlaylist(list);
+      }
+
+      // remove the metadata updating listener
+      rv = mainLib->RemoveListener(mMainLibraryListener);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  } else {
+    mMainLibraryListener->SetSyncMode(mgmtType, nsnull);
+
+    // remove the metadata updating listener
+    rv = mainLib->RemoveListener(mMainLibraryListener);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mMainLibraryListener->StopListeningToPlaylists();
+  }
+
+  return NS_OK;
 }
 
 nsresult
@@ -613,85 +707,26 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (origMgmtType != aMgmtType) {
-
-    nsCOMPtr<sbILibrary> mainLib;
-    rv = GetMainLibrary(getter_AddRefs(mainLib));
-    NS_ENSURE_SUCCESS(rv, rv);
-
     if (aMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
       // sync
       rv = mDevice->SyncLibraries();
       NS_ENSURE_SUCCESS(rv, rv);
+
       // mark this as read-only
       rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
                              NS_LITERAL_STRING("1"));
       NS_ENSURE_SUCCESS(rv, rv);
-
-      // hook up the metadata updating listener
-      rv = mainLib->AddListener(mMainLibraryListener,
-                                PR_FALSE,
-                                sbIMediaList::LISTENER_FLAGS_ITEMADDED |
-                                sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
-                                sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
-                                mMainLibraryListenerFilter);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if (aMgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
-        mMainLibraryListener->SetSyncMode(aMgmtType, nsnull);
-        
-        // hook up the media list listeners to the existing lists
-        nsRefPtr<sbPlaylistAttachListenerEnumerator> enumerator =
-          new sbPlaylistAttachListenerEnumerator(mMainLibraryListener);
-        NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
-        
-        rv = mainLib->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                                               NS_LITERAL_STRING("1"),
-                                               enumerator,
-                                               sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
-        NS_ENSURE_SUCCESS(rv, rv);     
-      } else {
-        nsCOMPtr<nsIArray> playlists;
-        rv = GetSyncPlaylistList(getter_AddRefs(playlists));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        mMainLibraryListener->SetSyncMode(aMgmtType, playlists);
-        
-        // Listen to all the playlists specified for synchronization
-        PRUint32 length;
-        rv = playlists->GetLength(&length);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // Need to stop listening to all the playlists so we can listen to just
-        // the selected ones
-        mMainLibraryListener->StopListeningToPlaylists();
-
-        for (PRUint32 index = 0; index < length; ++index) {
-          nsCOMPtr<sbIMediaList> list = do_QueryElementAt(playlists, index, &rv);
-          NS_ENSURE_SUCCESS(rv, rv);
-          
-          rv = mMainLibraryListener->ListenToPlaylist(list);
-        }
-        
-        // remove the metadata updating listener
-        rv = mainLib->RemoveListener(mMainLibraryListener);
-        NS_ENSURE_SUCCESS(rv, rv);        
-      }
     } else {
-      
-      mMainLibraryListener->SetSyncMode(aMgmtType, nsnull);
-      
       // mark this as read-write
       nsString str;
       str.SetIsVoid(PR_TRUE);
       rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY), str);
       NS_ENSURE_SUCCESS(rv, rv);
-      
-      // remove the metadata updating listener
-      rv = mainLib->RemoveListener(mMainLibraryListener);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      mMainLibraryListener->StopListeningToPlaylists();
     }
+
+    // update the main library listeners
+    rv = UpdateMainLibraryListeners();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -1115,6 +1150,33 @@ sbDeviceLibrary::OnItemCopied(sbIMediaItem *aSourceItem,
   TRACE(("sbDeviceLibrary[0x%x] - OnItemCopied", this));
 
   SB_NOTIFY_LISTENERS(OnItemCopied(aSourceItem, aDestItem));
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDeviceLibrary::OnDeviceEvent(sbIDeviceEvent* aEvent)
+{
+  nsresult rv;
+
+  // get the event type.
+  PRUint32 type;
+  rv = aEvent->GetType(&type);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // handle changes to the sync parnter preference
+  if (type == sbIDeviceEvent::EVENT_DEVICE_PREFS_CHANGED) {
+    // get the synced locally state
+    PRBool isSyncedLocally = PR_FALSE;
+    rv = GetIsSyncedLocally(&isSyncedLocally);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // update the main library listeners if the synced locally state changed
+    if (isSyncedLocally != mLastIsSyncedLocally) {
+      rv = UpdateMainLibraryListeners();
+      NS_ENSURE_SUCCESS(rv, rv);
+      mLastIsSyncedLocally = isSyncedLocally;
+    }
+  }
 
   return NS_OK;
 }

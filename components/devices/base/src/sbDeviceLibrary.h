@@ -33,6 +33,7 @@
 #include <nsInterfaceHashtable.h>
 #include <nsIClassInfo.h>
 
+#include <sbIDeviceEventListener.h>
 #include <sbIDeviceLibrary.h>
 #include <sbILibrary.h>
 #include <sbIMediaListListener.h>
@@ -104,7 +105,8 @@
 
 class sbDeviceLibrary : public sbIDeviceLibrary,
                         public sbIMediaListListener,
-                        public sbILocalDatabaseMediaListCopyListener
+                        public sbILocalDatabaseMediaListCopyListener,
+                        public sbIDeviceEventListener
 {
 public:
   NS_DECL_ISUPPORTS
@@ -113,6 +115,7 @@ public:
   NS_DECL_SBIDEVICELIBRARY
   NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_SBILOCALDATABASEMEDIALISTCOPYLISTENER
+  NS_DECL_SBIDEVICEEVENTLISTENER
 
   sbDeviceLibrary(sbIDevice* aDevice);
   virtual ~sbDeviceLibrary();
@@ -195,6 +198,21 @@ private:
   nsresult UnregisterDeviceLibrary(sbILibrary* aDeviceLibrary);
 
   /**
+   * \brief Update the listeners for the main library to account for changes to
+   *        the sync settings.
+   */
+  nsresult UpdateMainLibraryListeners();
+
+  /**
+   * \brief Return true in aIsSyncedLocally if the device is configured to sync
+   *        to the local library.
+   *
+   * \param aIsSyncedLocally Set to true if the device is configured to sync to
+   *                         the local library.
+   */
+  nsresult GetIsSyncedLocally(PRBool* aIsSyncedLocally);
+
+  /**
    * \brief library for this device, location is specified by the
    *        aDeviceDatabaseURI param for CreateDeviceLibrary or the default
    *        location under the users profile.
@@ -220,6 +238,11 @@ private:
    * \brief A list of listeners.
    */
   nsInterfaceHashtable<nsISupportsHashKey, sbIDeviceLibraryListener> mListeners;
+
+  /**
+   * \brief Last is synced locally state.  Used to detect changes to the state.
+   */
+  PRBool mLastIsSyncedLocally;
 
   PRLock* mLock;
 };
