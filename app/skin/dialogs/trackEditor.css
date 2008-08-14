@@ -199,22 +199,17 @@ textbox.short-number-input {
 
 /* album art */
 .art {
-  border:1px solid rgb(140,140,140);
-  
   margin: 4px;
   max-width: 80px;
   max-height: 80px;
   height: 80px;
   width: 80px;
-  background-color:white;
   padding:1px;
 }
 .art[edited="true"] {
   
 }
 .art:focus {
-  background-color:rgb(255,255,235);
-  border:2px solid rgb(140,140,140);
   padding:0px;
 }
 image.art+button {

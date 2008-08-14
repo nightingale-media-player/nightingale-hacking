@@ -85,14 +85,6 @@ sb-rating {
   min-height:20px;
   margin:4px !important;
   -moz-box-flex: 1;
-  border-top:1px solid rgb(120,120,120);
-  border-right:1px solid rgb(140,140,140);
-  border-bottom:1px solid rgb(200,200,200);
-  border-left:1px solid rgb(140,140,140);
-  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');
-  background-repeat:repeat-x;
-  background-position:center top;
-  background-color:white;
   max-width:76px;
 }
 
@@ -153,7 +145,7 @@ sb-rating {
   background-position:center center;
   background-repeat:no-repeat;
 }
-.smart-condition-value[autocompletesearch][autocompletesearchparam*="genre"] > .autocomplete-history-dropmarker image
+.smart-condition-value[autocompletesearch][autocompletesearchparam*="genre"] > .autocomplete-history-dropmarker image {
   display:none;
 }
 #textrangeseparator {

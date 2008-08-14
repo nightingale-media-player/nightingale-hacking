@@ -46,7 +46,9 @@ This file is used by the Jump To dialog (accel-J)
   min-height: 150px;
 }
 
-#jumpto\.playlist {
-  margin: 5px !important;
-  -moz-margin-start: 0 !important;
+#jump_to_file .dialog-content-box {
+  padding:0px;
+}
+#jump_to_file sb-playlist {
+  margin:0px !important;
 }

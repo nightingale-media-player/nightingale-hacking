@@ -294,13 +294,11 @@
     <content>
       <xul:sb-draggable sbid="children" class="sb-sys-dialog-titlebar-draggable" flex="1">
         <xul:stack>
-          <xul:hbox flex="1" align="left" class="left-box">
+          <xul:hbox flex="1" class="hook">
             <xul:hbox class="left"/>
-          </xul:hbox>
-          <xul:hbox flex="1" align="right" class="right-box">
+            <xul:hbox class="middle" flex="1"/>
             <xul:hbox class="right"/>
           </xul:hbox>
-          <xul:hbox flex="1" class="middle" />
           <xul:hbox id="sb-sys-dialog-titlebar-osx-title" sbid="show_mac" pack="center" flex="1">
             <xul:sb-sys-title id="sb-sys-dialog-titlebar-osx-title-title" xbl:inherits="value"/> 
           </xul:hbox>

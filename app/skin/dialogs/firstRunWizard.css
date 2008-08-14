@@ -87,8 +87,16 @@ Additional styles imported directly by the first run dialog.
 radiogroup {
   margin-top:8px;
 }
+
 .sb-first-run-import-media-box {
   -moz-box-flex: 1;
+}
+
+.sb-first-run-import-media-box > radiogroup > radio {
+  margin-top:8px;
+}
+.sb-first-run-import-media-box > radiogroup > radio:first-child {
+  margin-top:0px;
 }
 
 .sb-first-run-import-media-sub-radio {
