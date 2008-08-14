@@ -460,9 +460,9 @@ treechildren::-moz-tree-twisty(open) {
   -moz-image-region: rect(9px, 9px, 18px, 0px) !important;
 }
 
-.servicepane-tree > treechildren::-moz-tree-twisty(closed),
-.servicepane-tree > treechildren::-moz-tree-twisty(open) {
+.servicepane-tree > treechildren::-moz-tree-twisty {
   list-style-image: url('chrome://songbird/skin/service-pane/twisty.png');
+  -moz-image-region: rect(0px, 9px, 9px, 0px);
 }
 .servicepane-tree > treechildren::-moz-tree-twisty(closed) {
   -moz-image-region: rect(0px, 9px, 9px, 0px);

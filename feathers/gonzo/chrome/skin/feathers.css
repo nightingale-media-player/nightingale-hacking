@@ -556,12 +556,6 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
   font-weight:normal !important;
 }
 
-.servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
-  background-color:rgb(200,200,200);
-  border:2px solid rgb(131,131,131); !important;
-  -moz-border-radius:6px;
-}
-
 /* rm bottom border for treecols */
 #servicepane treecols {
   border:none;
@@ -584,6 +578,13 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 }
 .servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
   border-bottom:1px solid rgb(131,131,131); !important;
+}
+
+/* this is th style used when items are dragged over applicable rows */
+.servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
+  background-color:rgb(200,200,200);
+  border:2px solid rgb(131,131,131); !important;
+  -moz-border-radius:6px;
 }
 
 
