@@ -30,6 +30,10 @@ findbar toolbarbutton > .toolbarbutton-icon,
   margin:0;
 }
 
+findbar toolbarbutton {
+  padding:0px !important;
+}
+
 findbar toolbarbutton > .toolbarbutton-text,
 .find-buttons-container > toolbarbutton > .toolbarbutton-text,
 findbar checkbox > .checkbox-label-box {
@@ -57,7 +61,7 @@ findbar .checkbox-check {
 /* close button */
 toolbarbutton.findbar-closebutton {
   border:none !important;
-  padding:0;
+  padding:0 !important;
   margin:0 8px;
   list-style-image:url('chrome://songbird/skin/find-bar/button-close.png') !important;
   max-height:12px;

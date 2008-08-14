@@ -1,5 +1,5 @@
 /* CSS DIRECTORY
-  1) BASE
+  > BASE
 	2) =PRIMARY
 	3) =HEADER
 	4) =SIDEBAR
@@ -9,9 +9,9 @@
 
 
 /******************************************************************************
-BASE
+> BASE
 
-Mostly vanilla elements that act as the startping point for rules to follow.
+  Mostly vanilla elements that act as the startping point for rules to follow.
 ******************************************************************************/
 wizard,
 dialog,
@@ -28,8 +28,10 @@ popup {
   background-color:rgb(255,255,255);
 }
 
+tree,
 groupbox,
 radiogroup,
+listbox,
 richlistbox {
   background-color:rgb(255,255,255);
   border:1px solid rgb(161,161,161);
@@ -96,10 +98,25 @@ treechildren::-moz-tree-row( odd ) {
 
 /* progress meters in trees do not support background images well
    we'll fall back on a translucent solid color
-   note: rgba(0~255, 0~255, 0~255, 0.0~1.0)*/
+   note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
 treechildren::-moz-tree-progressmeter {
   color:rgba(0,0,0,0.50);
 }
+
+treechildren::-moz-tree-separator {
+  border-top: 1px dotted rgb(161,161,161);
+}
+
+toolbar,
+menubar,
+.generic-bar {
+  background-color: rgb(220,220,220);
+  border-bottom:1px solid rgb(131,131,131);
+}
+toolbarseparator {
+  background-color:rgb(131,131,131);
+}
+
 
 .menu-accel,
 .menu-iconic-accel {
@@ -111,16 +128,79 @@ treechildren::-moz-tree-progressmeter {
 tooltip {  
   background-color: rgb(255,255,200);
 }
+progressmeter,
+sb-status-progressmeter {
+  border:1px solid rgb(131,131,131);
+}
+
+.dialog-button-box,
+.wizard-buttons,
+.device-tab-button-box,
+/** prefs **/
+.paneDeckContainer+hbox,
+#addonsMsg+vbox {
+  background-color:rgb(225,225,225);
+  border-top:1px solid rgb(131,131,131);
+}
 
 
 
+/******************************************************************************
+> TEXTBOXES
+  
+  Styles for textboxes and elements that we want to look like textboxes
+******************************************************************************/
+textbox,
+.datetimepicker-input-subbox,
+.datetimepicker-year,
+sb-rating,
+.menulist-editable-box {
+  background-color:rgb(255,255,255);
+
+  border-top:1px solid rgb(120,120,120);
+  border-right:1px solid rgb(140,140,140);
+  border-bottom:1px solid rgb(200,200,200);
+  border-left:1px solid rgb(140,140,140);
+}
+
+/*
+  Edited state - mainly used for the track editor
+*/
+textbox[edited="true"],
+sb-rating[edited],
+searchbar:not([empty="true"])[livesearchmode="true"] .search-go-button,
+searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {
+  background-color:rgb(255,255,215) !important;
+}
+
+/*
+  Focused state
+*/
+textbox[focused="true"],
+searchbar[focused="true"] .search-go-button,
+searchbar[focused="true"] .searchbar-textbox {
+  background-color: rgb(255,255,235) !important;
+}
+
+/*
+  Invalid state 
+*/
+textbox[invalid="true"],
+textbox[focused="true"][invalid="true"] {
+  background-color:rgb(255,200,200) !important;
+  color:rgb(235,40,40);
+} 
+textbox[empty="true"],
+searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
+  color:rgb(131,131,131);
+}
 
 
 
 
 
 /******************************************************************************
-  SELECTION
+> SELECTION
   
   See skin/formsImport.css for text selection color.
   (it would be better if it is here but it has to be there)
@@ -173,9 +253,9 @@ treechildren::-moz-tree-cell-text( selected, focus ) {
 
 
 /******************************************************************************
-BUTTONS
+> BUTTONS
 
-Normal buttons, buttons in toolbars, menu buttons, and menubutton buttons.
+  Normal buttons, buttons in toolbars, menu buttons, and menubutton buttons.
 ******************************************************************************/
 
 button,
@@ -206,10 +286,11 @@ button.button-menubutton-button:focus {
 }
 
 
-/******************************************************************************
-TABS
 
-Vanilla tabs - they can be on top, at the bottom, left or right.
+/******************************************************************************
+> TABS
+
+  Vanilla tabs - they can be on top, at the bottom, left or right.
 ******************************************************************************/
 /**
   Base
@@ -293,12 +374,10 @@ tabs[orient="vertical"].tabs-left tab[selected="true"] {
 
 
 
-
-
 /******************************************************************************
-NOTIFICATION
+> NOTIFICATION
 
-Used for displaying notification hats in the browser and metadata editor.
+  Used for displaying notification hats in the browser and metadata editor.
 ******************************************************************************/
 notification,
 .dialog-notification {
@@ -322,12 +401,10 @@ notification[type="critical"],
 
 
 
-
-
 /******************************************************************************
-STATUS BAR
+> STATUS BAR
 
-Used for displaying notification hats in the browser and metadata editor.
+  Used for displaying notification hats in the browser and metadata editor.
 ******************************************************************************/
 statusbar {
   border-top:1px solid rgb(131,131,131);
@@ -346,10 +423,13 @@ statusbar {
 
 
 /******************************************************************************
-  Service Pane
+> SERVICE PANE
 ******************************************************************************/
 #servicepane {
   background-color: rgb(220,220,220);
+}
+.servicepane-tree > treechildren::-moz-tree-cell-text(selected) {
+  font-weight:bold;
 }
 /* container nodes get special treatment so they look unclickable */
 .servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-bookmarks ),
@@ -357,9 +437,6 @@ statusbar {
 .servicepane-tree > treechildren::-moz-tree-cell-text( folder ) {
   color:rgb(101,101,101) !important;
   font-weight:normal !important;
-}
-.servicepane-tree > treechildren::-moz-tree-cell-text(selected) {
-  font-weight:bold;
 }
 
 .servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
@@ -394,35 +471,41 @@ statusbar {
 
 
 
+/******************************************************************************
+> FILE MENU
 
-/**
-  File Menu
-  
   This is sued only for Linux and Windows - the file menu that is displayed in the title bar
-**/
+******************************************************************************/
 #main-menubar > menu[_moz-menuactive="true"][open="true"] {
   background-color:rgb(180,180,180);
 }
 
 
 
+/******************************************************************************
+> DRAG BADGE
+
+  Appears when dragging media items - it's a combination of an image and a badge with a count
+******************************************************************************/
 .sb-playlist-drag-badge:not([value="1"]) {
   color:rgb(255,255,255);
   font-weight: bold;
-
   background-color: rgb(0,0,0);
-
   -moz-border-radius: 4px;
 }
 
 
 
+/******************************************************************************
+> FACEPLATE
+
+  Appears when dragging media items - it's a combination of an image and a badge with a count
+******************************************************************************/
 .faceplate-text {
   color:rgb(250,250,250);
 }
 #sb-player-title-label-label {
   font-weight:bold;
-  color:rgb(250,250,250);
 }
 #sb-player-artist-label-label,
 #sb-player-album-label-label {
@@ -436,100 +519,38 @@ statusbar {
 
 
 
+/******************************************************************************
+> PLAYLIST COMMAND BAR
 
-
-
-toolbar,
-menubar,
-.generic-bar {
-  background-color: rgb(220,220,220);
-
-/*  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');*/
-
-  border-bottom:1px solid rgb(131,131,131);
-}
-
+  A bar used to hold buttons for media lists - eg: downloads, smart playlists
+******************************************************************************/
 .sb-commands-toolbar {
   background-color: rgb(220,220,220);
-
-/*  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');*/
-
   border-top:1px solid rgb(131,131,131);
 }
 
 
 
-
-
-textbox,
-.datetimepicker-input-subbox,
-.datetimepicker-year,
-sb-rating,
-.menulist-editable-box {
-  background-color:white;
-
-/*  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');*/
-
-  border-top:1px solid rgb(120,120,120);
-  border-right:1px solid rgb(140,140,140);
-  border-bottom:1px solid rgb(200,200,200);
-  border-left:1px solid rgb(140,140,140);
-}
-textbox,
-html|*.numberbox-input {
-  color: rgb(40,40,40);
-}
-
-
-
-textbox[edited="true"],
-sb-rating[edited],
-searchbar:not([empty="true"])[livesearchmode="true"] .search-go-button,
-searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {
-  background-color:rgb(255,255,215) !important;
-}
-textbox[focused="true"],
-searchbar[focused="true"] .search-go-button,
-searchbar[focused="true"] .searchbar-textbox {
-  background-color: rgb(255,255,235) !important;
-}
-textbox[invalid="true"],
-textbox[focused="true"][invalid="true"] {
-  background-color:rgb(255,200,200) !important;
-  color:rgb(235,40,40);
-} 
-textbox[empty="true"],
-searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
-  color:rgb(131,131,131);
-}
-
-
-
-
+/******************************************************************************
+> NAV BAR
+******************************************************************************/
 
 #nav-bar toolbarbutton {  
-  background-color:white;
-
-  -moz-border-radius:2px;
+  background-color:rgb(255,255,255);
   border:1px solid rgb(80,80,80);
+  -moz-border-radius:2px;
 }
-
 #nav-bar toolbarbutton button {
   -moz-border-radius:2px;
 }
-
 #nav-bar toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
-  border:none;
-  border-right:1px solid rgba(0,0,0,0.33);
+  border-right:1px solid rgb(80,80,80);
 }
 
 
-
-
-
-
-
-
+/**
+  Location bar and search bar in the nav bar
+**/
 .locationbar-textbox,
 .searchbar-textbox,
 #searchbar .search-go-button {
@@ -540,14 +561,6 @@ searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
   border-bottom:1px solid rgb(140,140,140);
   border-left:1px solid rgb(80,80,80);
 }
-.locationbar-textbox {
-  border-right:none;
-}
-.searchbar-textbox {
-  border-right:none;
-  border-left:none;
-}
-
 .searchbar-engine-button {  
   background-color:rgb(180,180,180);
     
@@ -556,10 +569,7 @@ searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
   -moz-border-radius-bottomleft:2px !important;
   border:1px solid rgb(80,80,80);
 }
-.searchbar-engine-button:active > .searchbar-engine-button-stack > .searchbar-engine-image-container > image,
-.searchbar-engine-button[open="true"] > .searchbar-engine-button-stack > .searchbar-engine-image-container > image {
-  opacity:0.5;
-}
+/* highlight the menu item when it's available */
 .addengine-item {
   background-color:rgb(255,255,215);
 }
@@ -567,37 +577,9 @@ searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
 
 
 
-
-#overall_device_info_box,
-#device_management_tabs {
-  background-color: rgb(220,220,220);
-}
-.capacity_value_label {
-  color:rgb(131,131,131);
-}
-
-.dialog-button-box,
-.wizard-buttons,
-.device-tab-button-box,
-/** prefs **/
-.paneDeckContainer+hbox,
-#addonsMsg+vbox {
-  background-color:rgb(225,225,225);
-
-/*  background-image: url('chrome://songbird/skin/base-elements/bg-button-box.png');*/
-
-  border-top:1px solid rgb(131,131,131);
-}
-.device-tab-button-box {
-  -moz-border-radius:3px;
-  border:1px solid rgb(131,131,131);
-}
-
-
-
-
-
-
+/******************************************************************************
+> DISPLAY PANES
+******************************************************************************/
 .sb-displaypane-menubutton,
 .sb-displaypane-header {
   border-bottom:1px solid rgb(131,131,131);
@@ -605,17 +587,13 @@ searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
 
 
 
-
-/**
-  Splitters
-**/
+/******************************************************************************
+> SPLITTERS
+******************************************************************************/
 #servicepane_splitter,
 #filter_splitter,
 #displaypane_right_sidebar_splitter {
   background-color:rgb(220,220,220);
-
-/*  background-image:url('chrome://songbird/skin/base-elements/bg-splitter-vertical.png');*/
-
   border-right:1px solid rgb(131,131,131);
   border-left:1px solid rgb(131,131,131);
 }
@@ -632,7 +610,6 @@ searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
 #displaypane_servicepane_bottom_splitter,
 .playlist-splitter,
 .playlist-web-splitter {
-/*  background-image:url('chrome://songbird/skin/base-elements/bg-splitter-horizontal.png');*/
   border-bottom:1px solid rgb(131,131,131);
   border-top:1px solid rgb(131,131,131);
 }
@@ -646,10 +623,20 @@ searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
 
 
 
+/******************************************************************************
+> DEVICE SUMMARY PAGE
 
-/**
-  Device Summary Page (iPod, MTP devices)
-**/
+  The page that is displayed when the device node is clicked on - iPod, MTP
+******************************************************************************/
+/* the top half of the summary page + background for tabs (ipod only) */
+#overall_device_info_box,
+#device_management_tabs {
+  background-color: rgb(220,220,220);
+}
+/* label for the legend that shows total file size */
+.capacity_value_label {
+  color:rgb(131,131,131);
+}
 .device-capacity-music,
 .device-capacity-legend-color-box[type="music"] {
   background-color: rgb(0,105,245);
@@ -666,61 +653,52 @@ searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
 .device-capacity-legend-color-box[type="free"] {
   background-color: rgb(235,235,235);
 }
+/* the device capacity bar has 9 notches (10 sections)
+   note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
 .device-capacity-bar-notches hbox+hbox {
   border-left: 1px solid rgba(0,0,0,0.1);
 }
+/* box that holds all the buttons for sync settings */
+.device-tab-button-box {
+  -moz-border-radius:3px;
+  border:1px solid rgb(131,131,131);
+}
 
 
 
-
-/**
-  Findbar
-**/
+/******************************************************************************
+> FIND BAR
+******************************************************************************/
 findbar {
   background-color:rgb(220,220,220);
-
-/*  background-image:url('chrome://songbird/skin/find-bar/bg-find-bar.png');*/
-
-  border:none;
   border-bottom:1px solid rgb(131,131,131);
 }
+/* text that shows the status of the search - eg: "Phrase now found" */
 findbar > .findbar-container > .findbar-find-status {
   color:rgb(131,131,131);
 }
 
-/**
-  Scrollbar
-**/
-scrollbar[orient="vertical"] {
-/*  background-image: url("chrome://songbird/skin/base-elements/bg-scroll-vertical.png");*/
-  background-repeat:repeat-y;
-  background-position:center top;
-  background-color:rgb(230,230,230);
-}
-scrollbar[orient="horizontal"] {
-/*  background-image: url("chrome://songbird/skin/base-elements/bg-scroll-horizontal.png");*/
-  background-repeat:repeat-x;
-  background-position:center top;
-  background-color:rgb(230,230,230);
-}
 
-scrollbarbutton {
-  border:1px solid rgb(161,161,161);
-  -moz-border-radius:2px;
-  background-color:white;
-}
+
+/******************************************************************************
+> SCROLLBAR
+
+  These styles are used for scrollbars and scroll buttons in the chrome AND in the browser window
+******************************************************************************/
+scrollbarbutton,
 scrollbar > slider > thumb {   
   border:1px solid rgb(161,161,161);
-  background-color:rgb(240,240,240);
   -moz-border-radius:2px;
-} 
+}
 
 
-/**
-  Window Resizers
+
+/******************************************************************************
+> WINDOW RESIZERS
   
-  Only used for Linux and Windows
-**/
+  Draw a border around windows that are resizable - Linux and Windows only
+  Make sure to update skin/window/bg-resizer-bottom-corner.png to match changes made here
+******************************************************************************/
 .sb-sys-outer-frame-resizer {
   background-color:rgb(161,161,161);
 }
@@ -758,33 +736,30 @@ scrollbar > slider > thumb {
 
 
 
-
-
-/**
-  First Run Wizard
-**/
+/******************************************************************************
+> FIRST RUN WIZARD
+******************************************************************************/
 .sb-first-run-eula-browser {
   border:1px solid rgb(131,131,131);
 }
 .wizard-header {
   background-color: rgb(220,220,220);
-/*  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');*/
   border-bottom:1px solid rgb(131,131,131);
 }
-.sb-first-run-add-ons-listbox {
-  background-color:white;
-}
 
 
-/**
-  Track Editor
-**/
+
+/******************************************************************************
+> TRACK EDITOR
+******************************************************************************/
+/* the track editor has tabs and tabpanels but are hidden for the time being
+   this rule makes the tabpanels have the same background color as a dialog window */
 #track_editor tabpanels {
   background-color: rgb(245,245,245);
 }
 .art {
+  background-color:rgb(255,255,255);
   border:1px solid rgb(140,140,140);
-  background-color:white;
 }
 .art:focus {
   background-color:rgb(255,255,235);
@@ -793,105 +768,9 @@ scrollbar > slider > thumb {
 
 
 
-
-/**
-  File Download Manager (mozapp)
-**/
-
-#downloadManager > #downloadView {
-  background-color:white;
-}
-
-#downloadManager > #search {
-  border-top:1px solid rgb(131,131,131);
-  background-color: rgb(220,220,220);
-/*  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');*/
-}
-
-
-/**
-  About Config (mozapp)
-**/
-#filterRow {
-  background-color: rgb(220,220,220);
-  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-
-  border-bottom:1px solid rgb(131,131,131);
-}
-
-
-/**
-  Preferences (mozapp)
-**/
-
-/* this dude is really a radiogroup... */
-.paneSelector {
-  background-color: rgb(220,220,220) !important;
-/*  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');*/
-
-  border:none;
-  border-right:1px solid rgb(131,131,131); !important;
-  -moz-border-radius:0px !important;
-}
-.paneSelector > radio {
-  background-color:transparent;
-  border:none !important;
-}
-.paneSelector > radio[selected="true"] {
-  background-color:white !important;
-}
-
-/* REVISIT:
-   rm background color for tab panels in the advanced pane so that the bottom border of the tabs will show */
-#advancedPrefs > tabpanels {
-  background-color:transparent !important;
-}
-
-/* this dude is really a radiogroup... */
-#viewGroup {
-  background-color: rgb(220,220,220);
-/*  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png') !important;*/
-
-  border:none;
-  -moz-border-radius:0px !important;
-}
-/* make the radio button look like a tab */
-#viewGroup > radio {
-  background-color:rgb(200,200,200) !important;
-/*  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');*/
-
-  border:1px solid rgb(131,131,131); !important;
-  -moz-border-radius-topleft:3px;
-  -moz-border-radius-topright:3px;
-}
-#viewGroup > radio[selected="true"] {
-  background-color:white !important;
-/*  background-image: url('chrome://songbird/skin/base-elements/bg-generic-header.png') !important;*/
-
-  border:1px solid rgb(131,131,131); !important;
-  border-bottom:1px solid rgb(200,200,200) !important;
-}
-
-#paneAddons {
-  /* adding a background color as to fake making the add-on window look like a normal pref pane */
-  background-color:rgb(225,225,225);
-}
-
-
-html|*.error-text,
-.error-text {
-  color: rgb(255,0,0);
-}
-
-
-
-
-
-/**
-  Disabled States
-**/
+/******************************************************************************
+> DISABLED STATES
+******************************************************************************/
 *[disabled="true"] {
   opacity:0.5;
 }
@@ -908,13 +787,98 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 }
 
 
-/******************************************************************************
-SMART PLAYLIST EDITOR
 
-Dialog for editing properties of smart playlists.
+/******************************************************************************
+> FILE DOWNLOAD MANAGER (MOZAPP)
 ******************************************************************************/
+#downloadManager > #downloadView {
+  background-color:rgb(255,255,255);
+}
+#downloadManager > #search {
+  background-color: rgb(220,220,220);
+  border-top:1px solid rgb(131,131,131);
+}
+
+
+
+/******************************************************************************
+> ABOUT CONFIG (MOZAPP)
+******************************************************************************/
+#filterRow {
+  background-color: rgb(220,220,220);
+  border-bottom:1px solid rgb(131,131,131);
+}
+
+
+
+/******************************************************************************
+> PREFERENCES (MOZAPP)
+******************************************************************************/
+/* this dude is really a radiogroup... */
+.paneSelector {
+  background-color: rgb(220,220,220) !important;
+  border-right:1px solid rgb(131,131,131) !important;
+}
+.paneSelector > radio[selected="true"] {
+  background-color:rgb(255,255,255) !important;
+}
+
+/* this dude is really a radiogroup... */
+#viewGroup {
+  background-color: rgb(220,220,220);
+  border-bottom: 1px solid rgb(131,131,131) !important;
+}
+/* make the radio button look like a tab */
+#viewGroup > radio {
+  background-color:rgb(200,200,200) !important;
+  border:1px solid rgb(131,131,131); !important;
+  -moz-border-radius-topleft:3px;
+  -moz-border-radius-topright:3px;
+}
+#viewGroup > radio[selected="true"] {
+  background-color:rgb(255,255,255) !important;
+  border:1px solid rgb(131,131,131) !important;
+  border-bottom:1px solid rgb(200,200,200) !important;
+}
+
+#paneAddons {
+  /* adding a background color to fake making the add-on window look like a normal pref pane */
+  background-color:rgb(225,225,225);
+}
+
+
+
+/******************************************************************************
+> FIREFOX API
+
+  Songbird does not use the following rules but add-ons ported from Firefox might.
+******************************************************************************/
+html|*.error-text,
+.error-text {
+  color: rgb(255,0,0);
+}
+
+
+
+/******************************************************************************
+  SMART PLAYLIST EDITOR
+
+  Dialog for editing properties of smart playlists.
+******************************************************************************/
+/* the box that contains n number of rules */
 .drawer-box {
   background-color:rgb(245,245,245);
   border:1px solid rgb(131,131,131);
   -moz-border-radius:3px;
 }
+
+
+
+/******************************************************************************
+  ABOUT DIALOG
+******************************************************************************/
+#about_browser {
+  border-top:1px solid rgb(131,131,131);
+}
+
+

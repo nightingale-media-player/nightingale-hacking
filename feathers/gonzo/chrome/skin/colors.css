@@ -36,16 +36,18 @@ menu,
 treechildren::-moz-tree-cell-text {
   font-size:11px;
 }
+textbox html|textarea,
 textbox html|input {
   font-size:11px !important;
 }
 
 
 
+
+
 window {
   padding:0px;
 }
-
 listhead,
 treecol,
 treecolpicker {
@@ -58,14 +60,12 @@ treecol > label {
   /* :-( need this for aligning the text */
   padding-bottom:1px !important;
 }
-
 listheader,
 treecol,
 treechildren::-moz-tree-cell {
   /** used for reordering columns **/
   border-left:1px solid transparent;
   /** /used for reordering columns **/
-  
   padding:0px 4px;
 }
 treechildren::-moz-tree-cell {
@@ -74,7 +74,6 @@ treechildren::-moz-tree-cell {
   border-left:1px solid transparent;
   /** /used for reordering columns **/
 }
-
 listheader {
   border-left:none !important;
 }
@@ -97,11 +96,12 @@ treecol:last-child {
 }
 
 
-
-
-
 .servicepane-tree > treechildren::-moz-tree-row {
-  min-height:20px;
+  min-height:20px !important;
+}
+
+.servicepane-tree {
+  background-color:transparent;
 }
 
 /* rm icons for container nodes */
@@ -112,9 +112,6 @@ treecol:last-child {
   width:0px;
   height:0px;
 }
-
-
-
 
 
 .autocomplete-treebody::-moz-tree-image( favicon ) {
@@ -129,13 +126,6 @@ treecol:last-child {
   padding:0 2px;
   margin:0;
 }
-
-
-
-
-
-
-
 
 
 #tabstrip-container {
@@ -186,9 +176,6 @@ treecol:last-child {
 }
 
 
-
-
-
 #nav-bar toolbarbutton {  
   -moz-background-clip:border;
 
@@ -203,11 +190,9 @@ treecol:last-child {
 
 
 
-
-
 menubar > menu {
   background-color:transparent;
-  padding:0 4px !important;
+  padding:4px 8px !important;
 }
 
 menulist {
@@ -219,7 +204,6 @@ menulist {
   padding:3px 8px;
   margin:0;
 }
-
 
 
 .menulist-editable-box {
@@ -263,7 +247,6 @@ notification > button > .button-box > .button-text {
 }
 
 
-
 toolbarbutton[type="menu"] > .toolbarbutton-icon {
   margin-left:2px;
 }
@@ -290,8 +273,6 @@ toolbarbutton[type="menu-button"] {
 }
 
 
-
-
 button > dropmarker.button-menubutton-dropmarker,
 button > .button-box > dropmarker.button-menu-dropmarker,
 toolbarbutton > dropmarker.toolbarbutton-menubutton-dropmarker {
@@ -306,14 +287,9 @@ dropmarker {
 }
 
 
-
 dropmarker:hover:active {
 /*  padding: 2px 0 0 2px !important;*/
 }
-
-
-
-
 
 
 .button-menubutton-button,
@@ -334,28 +310,12 @@ button[type="menu-button"] {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 /** 
 *******************************************************************************
 DATEPICKER see the RICHLISTBOX for box styles
 *******************************************************************************
 */
 .datepicker-gridlabel[selected="true"] {
-  outline:2px solid black;
-  outline-offset:1px;
-  -moz-outline-radius:3px;
-  background-color:transparent;
 }
 
 
@@ -364,9 +324,6 @@ DATEPICKER see the RICHLISTBOX for box styles
 MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
 *******************************************************************************
 */
-
-
-/* The Basic Menu Styles **/
 
 
 menuitem > label,
@@ -402,8 +359,7 @@ These let the user resize the frames in your box model.
 #servicepane_splitter[state="collapsed"]:hover,
 #displaypane_right_sidebar_splitter[state="collapsed"]:hover,
 #displaypane_contentpane_bottom_splitter[state="collapsed"]:hover,
-#displaypane_servicepane_bottom_splitter[state="collapsed"]:hover
-{
+#displaypane_servicepane_bottom_splitter[state="collapsed"]:hover {
 }
 
 #servicepane_splitter[state="collapsed"]:active,
@@ -434,16 +390,6 @@ These let the user resize the frames in your box model.
 .playlist-splitter[state="collapsed"],
 .playlist-web-splitter[state="collapsed"] {
 }
-
-
-
-
-
-/** 
-*******************************************************************************
-TOOLTIPS
-*******************************************************************************
-*/
 
 
 /** 
@@ -477,21 +423,11 @@ LISTBOX
 *******************************************************************************
 */
 
-listbox {
-  border: 1px solid rgb(131,131,131);
-}
-
 #working-list {
   border-top:none;
   border-bottom:none;
   border-left:none;
 }
-
-/* ..... disabled state ..... 
-listitem[selected="true"] > listcell > .listcell-label {
-}
-*/
-
 
 /** 
 *******************************************************************************
@@ -500,8 +436,7 @@ PREFERENCES
 */
 
 /* View buttons */
-.viewSelector 
-{
+.viewSelector  {
 }
 
 #viewGroup radio:hover {
@@ -518,12 +453,6 @@ PREFERENCES
 #extensionsBox richlistitem[hidden="false"]:last-child {
 }
 
-
-/** 
-*******************************************************************************
-ERRORS
-*******************************************************************************
-*/
 
 
 
@@ -545,8 +474,6 @@ sb-sys-titlebar {
 #sb-sys-titlebar-primary-content {
   -moz-box-align:center !important;
 }
-
-
 #faceplate-tool-bar > * {
   margin:2px 0px 2px 4px;
 }
@@ -845,7 +772,11 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
   padding:0px;
 }
 
-
+/* REVISIT:
+   rm background color for tab panels in the advanced pane so that the bottom border of the tabs will show */
+#advancedPrefs > tabpanels {
+  background-color:transparent !important;
+}
 #advancedPrefs {
   margin-right:0 !important;
   margin-left:0 !important;
@@ -876,7 +807,6 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 
 #extensionsManager:not([active="true"]) > #topStackBar > #viewGroup {
   background-image: none;
-  border-bottom: 1px solid rgb(131,131,131);
 }
 
 #extensionsManager:not([active="true"]) > #topStackBar > #viewGroup > .radiogroupWrapper {
@@ -928,14 +858,14 @@ richlistitem[selected="true"]:not([opType]) .descriptionCrop {
 .addonName {
   font-weight: bold;
 }
-
+/*
 .previewText {
   font-size: 10px;
   font-weight: bold;
   color: blue;
   text-align: center;
 }
-
+*/
 
 .addonIcon {
   width: 32px;
@@ -1096,6 +1026,10 @@ richlistitem[selected="true"] .includeUpdate {
 #filterRow {
   min-height:29px;
   margin:0px !important;
+  
+  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
 }
 
 
@@ -1283,3 +1217,29 @@ toolbarbutton[open="true"] > .toolbarbutton-menubutton-dropmarker {
 
 
 
+
+#nav-bar toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
+  border:none;
+}
+
+findbar {
+  border:none;
+}
+
+#viewGroup {
+  border:none !important;
+  -moz-border-radius:0px !important;
+}
+
+
+.locationbar-textbox {
+  border-right:none !important;
+}
+.searchbar-textbox {
+  border-right:none !important;
+  border-left:none !important;
+}
+.searchbar-engine-button:active > .searchbar-engine-button-stack > .searchbar-engine-image-container > image,
+.searchbar-engine-button[open="true"] > .searchbar-engine-button-stack > .searchbar-engine-image-container > image {
+  opacity:0.5;
+}

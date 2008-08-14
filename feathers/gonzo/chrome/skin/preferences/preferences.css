@@ -34,6 +34,9 @@
 .paneSelector {
   -moz-box-align: stretch;
   padding:0px;
+  border:none;
+  /* HIDDEN */
+  -moz-border-radius:0px !important;
 }
 .paneSelector > radio {
   list-style-image:none !important;
@@ -41,14 +44,14 @@
   margin:0;
   -moz-box-align: start !important;
   -moz-box-pack: start !important;
+  
+  background-color:transparent;
+  border:none !important;
 }
 .paneSelector > radio[selected="true"] {
 }
 
 
-#viewGroup {
-
-}
 .paneSelector > radio,
 #viewGroup > radio
 {

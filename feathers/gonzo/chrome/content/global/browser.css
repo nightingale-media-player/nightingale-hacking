@@ -36,7 +36,6 @@
   margin:0;
 
   background-image: url('chrome://songbird/skin/browser-tab-bar/bg-scroll.png');
-  background-position:left 0px;
   background-repeat:no-repeat;
   min-width:17px;
 
@@ -46,6 +45,7 @@
 }
 .tabbrowser-arrowscrollbox > .scrollbutton-up {
   list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-left.png") !important;  
+  background-position:-1px 0px;
 }
 .tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
   list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-right.png") !important;
@@ -55,12 +55,17 @@
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up:hover {
   -moz-image-region:auto !important;
-  background-position:left -30px;
+  background-position:-1px -30px;
 }
 .tabbrowser-arrowscrollbox > .scrollbutton-up:active {
   -moz-image-region:auto !important;
-  background-position:left -60px !important; 
+  background-position:-1px -60px; 
 }
+.tabbrowser-arrowscrollbox > .scrollbutton-up[disabled="true"] {
+  -moz-image-region:auto !important;
+  background-position:-1px 0px !important;  
+}
+
 
 .tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:hover {
   -moz-image-region:auto !important;
@@ -68,14 +73,12 @@
 }
 .tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:active {
   -moz-image-region:auto !important;
-  background-position:right -60px !important; 
+  background-position:right -60px; 
 }
 
-.tabbrowser-arrowscrollbox > .scrollbutton-up[disabled="true"] {
-  -moz-image-region:auto !important;
-  background-position:left 0px !important;  
-}
-.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down[disabled="true"] {
+.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down[disabled="true"],
+.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down[disabled="true"]:hover,
+.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down[disabled="true"]:active {
   -moz-image-region:auto !important;
   background-position:right 0px !important;
 }

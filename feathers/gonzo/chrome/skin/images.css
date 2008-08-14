@@ -630,9 +630,13 @@ findbar {
 
 scrollbar[orient="vertical"] {
   background-image: url("chrome://songbird/skin/base-elements/bg-scroll-vertical.png");
+  background-repeat:repeat-y;
+  background-position:center top;
 }
 scrollbar[orient="horizontal"] {
   background-image: url("chrome://songbird/skin/base-elements/bg-scroll-horizontal.png");
+  background-repeat:repeat-x;
+  background-position:center top;
 }
 scrollbar[orient="vertical"] > slider > thumb {
   background-image: url("chrome://songbird/skin/base-elements/bg-scroll-thumb-vertical.png");
