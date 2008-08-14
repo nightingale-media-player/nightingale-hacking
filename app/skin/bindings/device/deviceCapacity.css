@@ -39,10 +39,6 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */
 
-* {
-  border:2px solid red;
-}
-
 .device-capacity-legend-label {
   margin:0;
   padding:0;
