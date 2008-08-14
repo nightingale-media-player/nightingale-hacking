@@ -136,7 +136,7 @@ sbLocalDatabaseMigrate070RC1to070.prototype = {
     for(let currentRow = 0; currentRow < rowCount; ++currentRow) {
       let _mediaItemId = resultSet.getRowCell(currentRow, 0);
       let _listType = resultSet.getRowCell(currentRow, 1);
-      let _isList = _listType > 0;
+      let _isList = parseInt(_listType) > 0;
       
       var entry = {itemId: _mediaItemId, isList: _isList};
       this._mediaItems.push(entry);
