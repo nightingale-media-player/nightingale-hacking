@@ -1974,10 +1974,8 @@ Component.prototype =
                 if (!addTrack.mediaItem)
                 {
                     /* Get the add track URI and properties. */
-                    var uri = uriList.queryElementAt(i, Ci.nsIURI);
-                    var properties =
-                        propertyArrayArray.queryElementAt(i,
-                                                          Ci.sbIPropertyArray);
+                    var uri = addTrack.trackURI;
+                    var properties = addTrack.propertyArray;
 
                     /* Try creating a media item.  This should */
                     /* return a duplicate for the add track.   */
@@ -2126,6 +2124,10 @@ Component.prototype =
 
         /* Add the track properties to the property array array. */
         aPropertyArrayArray.appendElement(propertyArray, false);
+
+        /* Add the track URI and track properties to the add track object. */
+        aAddTrack.trackURI = trackURI;
+        aAddTrack.propertyArray = propertyArray;
     },
 
 
