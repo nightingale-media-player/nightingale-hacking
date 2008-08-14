@@ -67,9 +67,16 @@ SB_MILESTONE := $(shell $(CMD) Milestone)
 SB_MILESTONE_WINDOWS := $(shell $(CMD) MilestoneWindows)
 SB_PROFILE_VERSION := $(shell $(CMD) ProfileVersion)
 
+ifeq ($(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY),_)
+  SB_BUILD_NUMBER := 0
+else
+  SB_BUILD_NUMBER := $(shell $(CMD) BuildNumber)
+endif
+
 PPDEFINES += -DSB_APPNAME="$(SB_APPNAME)" \
              -DSB_BRANCHNAME="$(SB_BRANCHNAME)" \
              -DSB_BUILD_ID="$(SB_BUILD_ID)" \
+             -DSB_BUILD_NUMBER="$(SB_BUILD_NUMBER)" \
              -DSB_MILESTONE="$(SB_MILESTONE)" \
              -DSB_MILESTONE_WINDOWS="$(SB_MILESTONE_WINDOWS)" \
              -DSB_PROFILE_VERSION="$(SB_PROFILE_VERSION)" \
