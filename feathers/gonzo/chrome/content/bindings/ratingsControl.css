@@ -38,14 +38,6 @@ RATINGS CONTROL
 sb-rating {
   min-height:20px;
   margin:4px;
-  border-top:1px solid rgb(120,120,120);
-  border-right:1px solid rgb(140,140,140);
-  border-bottom:1px solid rgb(200,200,200);
-  border-left:1px solid rgb(140,140,140);
-  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');
-  background-repeat:repeat-x;
-  background-position:center top;
-  background-color:white;
 }
 
 .rating-stars {
@@ -114,9 +106,4 @@ sb-rating[edited] .rating-stars[value="5"] {
 .rating-stars[value="5"]:hover,
 sb-rating[edited] .rating-stars[value="5"]:hover {
   background-position:0px -180px;
-}
-
-
-sb-rating[edited] {
-  background-color:rgb(255,255,235);
 }

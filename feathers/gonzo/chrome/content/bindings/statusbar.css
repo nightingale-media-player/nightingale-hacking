@@ -37,16 +37,12 @@ Imported by bindings.css or directly into feathers.
 */ 
 
 
-#status-bar {
-  border-bottom:1px solid gray;
-}
 
 statusbar {
   padding:0;
   overflow: hidden;
   -moz-box-pack: center;
   -moz-box-align: center;
-  padding:1px 0px !important;
 }
 
 statusbar > progressmeter {

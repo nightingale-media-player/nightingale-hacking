@@ -1,0 +1,924 @@
+/* CSS DIRECTORY
+  1) BASE
+	2) =PRIMARY
+	3) =HEADER
+	4) =SIDEBAR
+	5) =FOOTER
+*/
+
+
+
+/******************************************************************************
+BASE
+
+Mostly vanilla elements that act as the startping point for rules to follow.
+******************************************************************************/
+wizard,
+dialog,
+window,
+prefwindow,
+panel {
+  background-color: rgb(245,245,245);
+}
+page {
+  background-color: rgb(220,220,220);
+}
+menupopup, 
+popup {
+  background-color:rgb(255,255,255);
+}
+
+groupbox,
+radiogroup,
+richlistbox {
+  background-color:rgb(255,255,255);
+  border:1px solid rgb(161,161,161);
+}
+groupbox,
+radiogroup {
+  -moz-border-radius:3px;
+}
+groupbox caption {
+  background-color:rgb(255,255,255);
+  border:1px solid rgb(161,161,161);  
+  /* rounded corners to match that of the groupbox element */
+  -moz-border-radius-topleft:3px;
+  -moz-border-radius-topright:3px;
+}
+
+description,
+caption,
+label,
+treechildren::-moz-tree-cell-text {
+  color: rgb(40,40,40);
+}
+
+listheader,
+treecols {
+  border-bottom:1px solid rgb(161,161,161);
+}
+listheader,
+treecol {
+  border-right:1px solid rgb(161,161,161);
+}
+listheader > label,
+treecol > label {
+  color: rgb(101,101,101);
+}
+
+treecol[insertafter="true"],
+treechildren::-moz-tree-cell( insertafter ) {
+  border-right: 1px solid rgb(131,131,131); !important;
+}
+treecol[insertbefore="true"],
+treechildren::-moz-tree-cell( insertbefore ) {
+  border-left: 1px solid rgb(131,131,131); !important;
+}
+richlistitem {
+  border-bottom: 1px solid rgb(131,131,131);
+}
+
+menu,
+menuitem,
+listitem,
+treechildren::-moz-tree-row( even ) {
+  background-color: rgb(255,255,255);
+}
+/* alternating rows for trees - remember that the count starts at 0 (even) */
+treechildren::-moz-tree-row( odd ) {
+  background-color: rgb(247,247,247);
+}
+
+/* treecolAutoCompleteComment is document.title in the case of the location bar */
+.autocomplete-treebody::-moz-tree-cell-text( treecolAutoCompleteComment ) {
+  color: rgb(131,131,131);
+}
+
+/* progress meters in trees do not support background images well
+   we'll fall back on a translucent solid color
+   note: rgba(0~255, 0~255, 0~255, 0.0~1.0)*/
+treechildren::-moz-tree-progressmeter {
+  color:rgba(0,0,0,0.50);
+}
+
+
+
+
+
+
+
+
+tooltip {  
+  background-color: rgb(255,255,200);
+}
+
+
+
+
+
+
+
+
+/******************************************************************************
+  SELECTION
+  
+  See skin/formsImport.css for text selection color.
+  (it would be better if it is here but it has to be there)
+******************************************************************************/
+
+/**
+  Unfocused
+**/
+listitem[selected="true"],
+richlistitem[selected="true"],
+treechildren::-moz-tree-row( selected, even ) {
+  background-color: rgb(225,225,225);
+}
+/* alternating rows for trees */
+treechildren::-moz-tree-row( selected, odd ) {
+  background-color: rgb(220,220,220);
+}
+
+/**
+  Focused
+**/
+listbox:focus listitem[selected="true"],
+richlistbox:focus richlistitem[selected="true"],
+menu[_moz-menuactive="true"],
+menuitem[_moz-menuactive="true"],
+treechildren.autocomplete-treebody::-moz-tree-row( selected even ),
+treechildren::-moz-tree-row( selected focus even ) {
+  background-color: rgb(169,212,255);
+}
+/* alternating rows for trees */
+treechildren.autocomplete-treebody::-moz-tree-row( selected odd ),
+treechildren::-moz-tree-row( selected focus odd ) {
+  background-color: rgb(164,207,250);
+}
+
+/**
+  Text
+**/
+listitem[selected="true"] label,
+richlistitem[selected="true"] label,
+richlistitem[selected="true"] description,
+menu[_moz-menuactive="true"] > label,
+menuitem[_moz-menuactive="true"] > label,
+.autocomplete-treebody::-moz-tree-cell-text(selected),
+treechildren::-moz-tree-cell-text( selected ),
+treechildren::-moz-tree-cell-text( selected, focus ) {
+  color:rgb(0,0,0);
+}
+
+
+
+/******************************************************************************
+BUTTONS
+
+Normal buttons, buttons in toolbars, menu buttons, and menubutton buttons.
+******************************************************************************/
+
+button,
+toolbarbutton,
+menulist {
+  -moz-border-radius:3px;
+  border:1px solid rgb(120,120,120);
+}
+
+button:focus,
+toolbarbutton:focus,
+checkbox:focus > .checkbox-check,
+radio[focused="true"] > .radio-check,
+menulist:focus {
+  outline:2px solid rgba(40,40,40,0.33);
+  outline-offset:0px;
+  -moz-outline-radius:5px;
+}
+radio[focused="true"] > .radio-check {
+  /* this makes the outline look like a circle which matches the radio button well */
+  -moz-outline-radius:8px;
+}
+button.button-menubutton-button:focus {
+  /* this is the best we can do - the right outline is 1px offset too much */
+  outline-offset:1px;
+  -moz-outline-radius-topright:0px;
+  -moz-outline-radius-bottomright:0px;
+}
+
+
+/******************************************************************************
+TABS
+
+Vanilla tabs - they can be on top, at the bottom, left or right.
+******************************************************************************/
+/**
+  Base
+**/
+tabbox {
+  background-color:rgb(245,245,245);
+}
+tabpanels {
+  background-color:rgb(255,255,255);
+}
+tabs {
+  background-color: rgb(220,220,220);
+}
+tab {
+  border:1px solid rgb(131,131,131);
+}
+
+/**
+  Top
+**/
+tabs[orient="horizontal"] {
+  border-bottom:1px solid rgb(131,131,131);
+}
+tabs[orient="horizontal"] tab {
+  -moz-border-radius:0px;
+  -moz-border-radius-topleft:3px;
+  -moz-border-radius-topright:3px;
+}
+tabs[orient="horizontal"] tab[selected="true"] {
+  border:1px solid rgb(131,131,131);
+  border-bottom:1px solid rgb(200,200,200);
+}
+
+/**
+  Bottom
+**/
+tabs[orient="horizontal"].tabs-bottom {
+  border-top:1px solid rgb(131,131,131);
+}
+tabs[orient="horizontal"].tabs-bottom tab {
+  -moz-border-radius:0px;
+  -moz-border-radius-bottomleft:3px;
+  -moz-border-radius-bottomright:3px;
+}
+tabs[orient="horizontal"].tabs-bottom tab[selected="true"] {
+  border:1px solid rgb(131,131,131);
+  border-top:1px solid rgb(200,200,200);
+}
+
+/**
+  Right
+**/
+tabs[orient="vertical"] {
+  border-left:1px solid rgb(131,131,131);
+}
+tabs[orient="vertical"] tab {
+  -moz-border-radius:0px;
+  -moz-border-radius-topright:3px;
+  -moz-border-radius-bottomright:3px;
+}
+tabs[orient="vertical"] tab[selected="true"] {
+  border:1px solid rgb(131,131,131);
+  border-left:1px solid rgb(200,200,200);
+}
+
+/**
+  Left
+**/
+tabs[orient="vertical"].tabs-left {
+  border-right:1px solid rgb(131,131,131);
+}
+tabs[orient="vertical"].tabs-left tab {
+  -moz-border-radius:0px;
+  -moz-border-radius-topleft:3px;
+  -moz-border-radius-bottomleft:3px;
+}
+tabs[orient="vertical"].tabs-left tab[selected="true"] {
+  border:1px solid rgb(131,131,131);
+  border-right:1px solid rgb(200,200,200);
+}
+
+
+
+
+
+/******************************************************************************
+NOTIFICATION
+
+Used for displaying notification hats in the browser and metadata editor.
+******************************************************************************/
+notification,
+.dialog-notification {
+  border-bottom:1px solid rgb(131,131,131);
+}
+notification[type="info"],
+.dialog-notification.notification-info {
+  /* blue */
+  background-color: rgb(214,241,250);
+}
+notification[type="warning"],
+.dialog-notification.notification-warning {
+  /* yellow */
+  background-color: rgb(249,249,202);
+}
+notification[type="critical"],
+.dialog-notification.notification-critical {
+  /* red */
+  background-color: rgb(251,161,165);
+}
+
+
+
+
+
+/******************************************************************************
+STATUS BAR
+
+Used for displaying notification hats in the browser and metadata editor.
+******************************************************************************/
+statusbar {
+  border-top:1px solid rgb(131,131,131);
+/*  background-image:url('chrome://songbird/skin/service-pane/bg-status-bar.png'); */
+}
+#status-bar,
+#servicepane-status-bar {
+  border-bottom:1px solid rgb(131,131,131);
+}
+
+
+#titlebar_box {
+  border-bottom:1px solid rgb(131,131,131);
+}
+
+#sb-sys-title-title {
+  font-weight:bold;
+}
+
+
+
+/**
+  Service Pane
+**/
+#servicepane {
+  background-color: rgb(220,220,220);
+/*  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');*/
+}
+.servicepane-tree > treechildren::-moz-tree-row( selected ),
+.servicepane-tree > treechildren::-moz-tree-row( selected focus ) {
+  background-color:rgb(255,255,255);
+/*  background-image: url('chrome://songbird/skin/service-pane/bg-selected-node.png');*/
+}
+.servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-bookmarks ),
+.servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-playlists ),
+.servicepane-tree > treechildren::-moz-tree-cell-text( folder ) {
+  color:rgb(101,101,101) !important;
+  font-weight:normal !important;
+}
+.servicepane-tree > treechildren::-moz-tree-row( dropBefore ) {
+  border-top:1px solid rgb(131,131,131); !important;
+}
+.servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
+  border-bottom:1px solid rgb(131,131,131); !important;
+}
+.servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
+  background-color:rgb(200,200,200);
+
+  border:2px solid rgb(131,131,131); !important;
+  -moz-border-radius:6px;
+}
+.servicepane-tree > treechildren::-moz-tree-cell-text(selected) {
+  font-weight:bold;
+}
+
+#servicepane treecols {
+  /* rm bottom border for treecols */
+  border:none;
+}
+.servicepane-tree {
+  /* rm empty.png */
+  background-image:none;
+}
+.servicepane-tree > treechildren::-moz-tree-row {
+  /* rm alternating row colors */
+  background-color:transparent;
+
+  /* borders for reordering rows */
+  border-top:1px solid transparent;
+  border-bottom:1px solid transparent;
+}
+
+
+
+
+/**
+  File Menu
+  
+  This is sued only for Linux and Windows - the file menu that is displayed in the title bar
+**/
+#main-menubar > menu[_moz-menuactive="true"][open="true"] {
+  background-color:rgb(180,180,180);
+}
+
+
+
+.sb-playlist-drag-badge:not([value="1"]) {
+  color:rgb(255,255,255);
+  font-weight: bold;
+
+  background-color: rgb(0,0,0);
+
+  -moz-border-radius: 4px;
+}
+
+
+
+.faceplate-text {
+  color:rgb(250,250,250);
+}
+#sb-player-title-label-label {
+  font-weight:bold;
+  color:rgb(250,250,250);
+}
+#sb-player-artist-label-label,
+#sb-player-album-label-label {
+  color:rgb(215,215,215);
+}
+#sb-player-timeelapsed-label > label,
+#sb-player-totaltime-label > label {
+  color:rgb(140,140,140);
+  font-size:9px !important;
+}
+
+
+
+
+
+
+toolbar,
+menubar,
+.generic-bar {
+  background-color: rgb(220,220,220);
+
+/*  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');*/
+
+  border-bottom:1px solid rgb(131,131,131);
+}
+
+.sb-commands-toolbar {
+  background-color: rgb(220,220,220);
+
+/*  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');*/
+
+  border-top:1px solid rgb(131,131,131);
+}
+
+
+
+
+
+textbox,
+.datetimepicker-input-subbox,
+.datetimepicker-year,
+sb-rating,
+.menulist-editable-box {
+  background-color:white;
+
+/*  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');*/
+
+  border-top:1px solid rgb(120,120,120);
+  border-right:1px solid rgb(140,140,140);
+  border-bottom:1px solid rgb(200,200,200);
+  border-left:1px solid rgb(140,140,140);
+}
+textbox,
+html|*.numberbox-input {
+  color: rgb(40,40,40);
+}
+
+
+
+textbox[edited="true"],
+sb-rating[edited],
+searchbar:not([empty="true"])[livesearchmode="true"] .search-go-button,
+searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {
+  background-color:rgb(255,255,215) !important;
+}
+textbox[focused="true"],
+searchbar[focused="true"] .search-go-button,
+searchbar[focused="true"] .searchbar-textbox {
+  background-color: rgb(255,255,235) !important;
+}
+textbox[invalid="true"],
+textbox[focused="true"][invalid="true"] {
+  background-color:rgb(255,200,200) !important;
+  color:rgb(235,40,40);
+} 
+textbox[empty="true"],
+searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
+  color:rgb(131,131,131);
+}
+
+
+
+
+
+#nav-bar toolbarbutton {  
+  background-color:white;
+
+  -moz-border-radius:2px;
+  border:1px solid rgb(80,80,80);
+}
+
+#nav-bar toolbarbutton button {
+  -moz-border-radius:2px;
+}
+
+#nav-bar toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
+  border:none;
+  border-right:1px solid rgba(0,0,0,0.33);
+}
+
+
+
+
+
+
+
+
+.locationbar-textbox,
+.searchbar-textbox,
+#searchbar .search-go-button {
+  background-color:rgb(230,230,230);
+
+  border-top:1px solid rgb(80,80,80);
+  border-right:1px solid rgb(80,80,80);
+  border-bottom:1px solid rgb(140,140,140);
+  border-left:1px solid rgb(80,80,80);
+}
+.locationbar-textbox {
+  border-right:none;
+}
+.searchbar-textbox {
+  border-right:none;
+  border-left:none;
+}
+
+.searchbar-engine-button {  
+  background-color:rgb(180,180,180);
+    
+  -moz-border-radius:0 !important;
+  -moz-border-radius-topleft:2px !important;
+  -moz-border-radius-bottomleft:2px !important;
+  border:1px solid rgb(80,80,80);
+}
+.searchbar-engine-button:active > .searchbar-engine-button-stack > .searchbar-engine-image-container > image,
+.searchbar-engine-button[open="true"] > .searchbar-engine-button-stack > .searchbar-engine-image-container > image {
+  opacity:0.5;
+}
+.addengine-item {
+  background-color:rgb(255,255,215);
+}
+
+
+
+
+
+#overall_device_info_box,
+#device_management_tabs {
+  background-color: rgb(220,220,220);
+}
+.capacity_value_label {
+  color:rgb(131,131,131);
+}
+
+.dialog-button-box,
+.wizard-buttons,
+.device-tab-button-box,
+/** prefs **/
+.paneDeckContainer+hbox,
+#addonsMsg+vbox {
+  background-color:rgb(225,225,225);
+
+/*  background-image: url('chrome://songbird/skin/base-elements/bg-button-box.png');*/
+
+  border-top:1px solid rgb(131,131,131);
+}
+.device-tab-button-box {
+  -moz-border-radius:3px;
+  border:1px solid rgb(131,131,131);
+}
+
+
+
+
+
+
+
+
+
+
+/**
+  Splitters
+**/
+#servicepane_splitter,
+#filter_splitter,
+#displaypane_right_sidebar_splitter {
+  background-color:rgb(220,220,220);
+
+/*  background-image:url('chrome://songbird/skin/base-elements/bg-splitter-vertical.png');*/
+
+  border-right:1px solid rgb(131,131,131);
+  border-left:1px solid rgb(131,131,131);
+}
+#servicepane_splitter,
+#displaypane_right_sidebar_splitter {
+  border-bottom:1px solid rgb(131,131,131);
+}
+#filter_splitter {
+  border-right:1px solid rgb(161,161,161);
+  border-left:1px solid rgb(161,161,161);  
+}
+
+#displaypane_contentpane_bottom_splitter,
+#displaypane_servicepane_bottom_splitter,
+.playlist-splitter,
+.playlist-web-splitter {
+/*  background-image:url('chrome://songbird/skin/base-elements/bg-splitter-horizontal.png');*/
+  border-bottom:1px solid rgb(131,131,131);
+  border-top:1px solid rgb(131,131,131);
+}
+.playlist-splitter {
+  border-top:1px solid rgb(161,161,161);
+  border-bottom:1px solid rgb(161,161,161);  
+}
+.playlist-web-splitter {
+  border-bottom:1px solid rgb(161,161,161);  
+}
+
+
+
+
+/**
+  Device Summary Page (iPod, MTP devices)
+**/
+.device-capacity-music,
+.device-capacity-legend-color-box[type="music"] {
+  background-color: rgb(0,105,245);
+}
+.device-capacity-video,
+.device-capacity-legend-color-box[type="video"] {
+  background-color: rgb(70,200,0);
+}
+.device-capacity-other,
+.device-capacity-legend-color-box[type="other"] {
+  background-color: rgb(255,210,0);
+}
+.device-capacity-free,
+.device-capacity-legend-color-box[type="free"] {
+  background-color: rgb(235,235,235);
+}
+.device-capacity-bar-notches hbox+hbox {
+  border-left: 1px solid rgba(0,0,0,0.1);
+}
+
+
+
+
+/**
+  Findbar
+**/
+findbar {
+  background-color:rgb(220,220,220);
+
+/*  background-image:url('chrome://songbird/skin/find-bar/bg-find-bar.png');*/
+
+  border:none;
+  border-bottom:1px solid rgb(131,131,131);
+}
+findbar > .findbar-container > .findbar-find-status {
+  color:rgb(131,131,131);
+}
+
+/**
+  Scrollbar
+**/
+scrollbar[orient="vertical"] {
+/*  background-image: url("chrome://songbird/skin/base-elements/bg-scroll-vertical.png");*/
+  background-repeat:repeat-y;
+  background-position:center top;
+  background-color:rgb(230,230,230);
+}
+scrollbar[orient="horizontal"] {
+/*  background-image: url("chrome://songbird/skin/base-elements/bg-scroll-horizontal.png");*/
+  background-repeat:repeat-x;
+  background-position:center top;
+  background-color:rgb(230,230,230);
+}
+
+scrollbarbutton {
+  border:1px solid rgb(161,161,161);
+  -moz-border-radius:2px;
+  background-color:white;
+}
+scrollbar > slider > thumb {   
+  border:1px solid rgb(161,161,161);
+  background-color:rgb(240,240,240);
+  -moz-border-radius:2px;
+} 
+
+
+/**
+  Window Resizers
+  
+  Only used for Linux and Windows
+**/
+.sb-sys-outer-frame-resizer {
+  background-color:rgb(200,200,200);
+}
+.sb-sys-outer-frame-resizer[dir="top"],
+.sb-sys-outer-frame-resizer[dir="bottom"],
+.sb-sys-outer-frame-resizer-topleft,
+.sb-sys-outer-frame-resizer-topright {
+  border-top:1px solid rgb(131,131,131);
+}
+.sb-sys-outer-frame-resizer-bottomleft,
+.sb-sys-outer-frame-resizer-bottomright,
+.sb-sys-outer-frame-resizer[dir="bottom"] {
+  border-bottom:1px solid rgb(131,131,131);
+}
+.sb-sys-outer-frame-resizer[dir="left"],
+.sb-sys-outer-frame-resizer[dir="right"],
+.sb-sys-outer-frame-resizer-rightbottom,
+.sb-sys-outer-frame-resizer-leftbottom,
+.sb-sys-outer-frame-resizer-righttop,
+.sb-sys-outer-frame-resizer-lefttop,
+.sb-sys-outer-frame-resizer-topright,
+.sb-sys-outer-frame-resizer-bottomright {
+  border-right:1px solid rgb(131,131,131);
+}
+.sb-sys-outer-frame-resizer[dir="left"],
+.sb-sys-outer-frame-resizer[dir="right"],
+.sb-sys-outer-frame-resizer-rightbottom,
+.sb-sys-outer-frame-resizer-leftbottom,
+.sb-sys-outer-frame-resizer-righttop,
+.sb-sys-outer-frame-resizer-lefttop,
+.sb-sys-outer-frame-resizer-topleft,
+.sb-sys-outer-frame-resizer-bottomleft {
+  border-left:1px solid rgb(131,131,131);
+}
+
+
+
+
+
+/**
+  First Run Wizard
+**/
+.sb-first-run-eula-browser {
+  border:1px solid rgb(131,131,131);
+}
+.wizard-header {
+  background-color: rgb(220,220,220);
+/*  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');*/
+  border-bottom:1px solid rgb(131,131,131);
+}
+.sb-first-run-add-ons-listbox {
+  background-color:white;
+}
+
+
+/**
+  Track Editor
+**/
+#track_editor tabpanels {
+  background-color: rgb(245,245,245);
+}
+.art {
+  border:1px solid rgb(140,140,140);
+  background-color:white;
+}
+.art:focus {
+  background-color:rgb(255,255,235);
+  border:2px solid rgb(140,140,140);
+}
+
+
+
+
+/**
+  File Download Manager (mozapp)
+**/
+
+#downloadManager > #downloadView {
+  background-color:white;
+}
+
+#downloadManager > #search {
+  border-top:1px solid rgb(131,131,131);
+  background-color: rgb(220,220,220);
+/*  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');*/
+}
+
+
+/**
+  About Config (mozapp)
+**/
+#filterRow {
+  background-color: rgb(220,220,220);
+  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+
+  border-bottom:1px solid rgb(131,131,131);
+}
+
+
+/**
+  Preferences (mozapp)
+**/
+
+/* this dude is really a radiogroup... */
+.paneSelector {
+  background-color: rgb(220,220,220) !important;
+/*  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');*/
+
+  border:none;
+  border-right:1px solid rgb(131,131,131); !important;
+  -moz-border-radius:0px !important;
+}
+.paneSelector > radio {
+  background-color:transparent;
+  border:none !important;
+}
+.paneSelector > radio[selected="true"] {
+  background-color:white !important;
+}
+
+/* REVISIT:
+   rm background color for tab panels in the advanced pane so that the bottom border of the tabs will show */
+#advancedPrefs > tabpanels {
+  background-color:transparent !important;
+}
+
+/* this dude is really a radiogroup... */
+#viewGroup {
+  background-color: rgb(220,220,220);
+/*  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png') !important;*/
+
+  border:none;
+  -moz-border-radius:0px !important;
+}
+/* make the radio button look like a tab */
+#viewGroup > radio {
+  background-color:rgb(200,200,200) !important;
+/*  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');*/
+
+  border:1px solid rgb(131,131,131); !important;
+  -moz-border-radius-topleft:3px;
+  -moz-border-radius-topright:3px;
+}
+#viewGroup > radio[selected="true"] {
+  background-color:white !important;
+/*  background-image: url('chrome://songbird/skin/base-elements/bg-generic-header.png') !important;*/
+
+  border:1px solid rgb(131,131,131); !important;
+  border-bottom:1px solid rgb(200,200,200) !important;
+}
+
+#paneAddons {
+  /* adding a background color as to fake making the add-on window look like a normal pref pane */
+  background-color:rgb(225,225,225);
+}
+
+
+html|*.error-text,
+.error-text {
+  color: rgb(255,0,0);
+}
+
+
+
+
+
+/**
+  Disabled States
+**/
+*[disabled="true"] {
+  opacity:0.5;
+}
+richlistitem[isDisabled="true"] > * {
+  opacity:0.5;
+}
+dropmarker[disabled="true"] > .dropmarker-icon {
+  opacity:0.5;
+}
+toolbarbutton[disabled="true"] > .toolbarbutton-icon,
+toolbarbutton[disabled="true"] > .toolbarbutton-menu-dropmarker,
+toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
+  opacity:0.25;
+}
+
+
+/******************************************************************************
+SMART PLAYLIST EDITOR
+
+Dialog for editing properties of smart playlists.
+******************************************************************************/
+.drawer-box {
+  background-color:rgb(245,245,245);
+  border:1px solid rgb(131,131,131);
+  -moz-border-radius:3px;
+}

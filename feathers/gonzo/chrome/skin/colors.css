@@ -28,12 +28,7 @@
 
 
 
-/** 
-*******************************************************************************
-WINDOW CHROME
-These rules paint the resizeable window for Songbird.
-*******************************************************************************
-*/ 
+
 
 description,
 label,
@@ -42,280 +37,12 @@ treechildren::-moz-tree-cell-text,
 html|input {
   font-size:11px;
 }
-html|input {
-  font-size:11px !important;
-}
+
+
 
 window {
-  padding:0px !important;
+  padding:0px;
 }
-
-wizard,
-dialog,
-window,
-prefwindow,
-page,
-panel {
-  background-color: rgb(245,245,245);
-}
-page {
-  background-color: rgb(220,220,220);
-}
-
-
-
-#sb-sys-title-title {
-  padding:1px 5px 2px 5px !important;
-  font-weight:bold;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-statusbar {
-  background-image:url('chrome://songbird/skin/service-pane/bg-status-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-  border-top:1px solid gray;
-
-  min-height:20px;
-  max-height:20px;
-}
-
-#status-bar,
-#servicepane-status-bar {
-  border-bottom:1px solid gray;
-}
-
-
-
-
-#servicepane {
-  background-color: rgb(220,220,220);
-  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-}
-
-#servicepane treecols {
-  border:none;
-}
-
-.servicepane-tree {
-  background-image:none;
-}
-.servicepane-tree > treechildren::-moz-tree-row {
-  background-color:transparent;
-  min-height:20px;
-  border-top:1px solid transparent;
-  border-bottom:1px solid transparent;
-}
-.servicepane-tree > treechildren::-moz-tree-cell {
-  border-right: none !important;
-  padding-left:4px;
-}
-.servicepane-tree > treechildren::-moz-tree-row( selected ),
-.servicepane-tree > treechildren::-moz-tree-row( selected current focus ) {
-  background-color:rgb(255,255,255);
-  background-image: url('chrome://songbird/skin/service-pane/bg-selected-node.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-}
-.servicepane-tree > treechildren::-moz-tree-cell-text(selected) {
-  font-weight:bold;
-}
-
-
-.servicepane-tree > treechildren::-moz-tree-image( servicesource-bookmarks ),
-.servicepane-tree > treechildren::-moz-tree-image( servicesource-playlists ),
-.servicepane-tree > treechildren::-moz-tree-image( folder ) {
-  list-style-image:none;
-  width:0px;
-  height:0px;
-}
-.servicepane-tree > treechildren::-moz-tree-cell-text,
-.servicepane-tree > treechildren::-moz-tree-cell-text( selected ),
-.servicepane-tree > treechildren::-moz-tree-cell-text( selected focus ) {
-  color:rgb(40,40,40) !important;
-}
-.servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-bookmarks ),
-.servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-playlists ),
-.servicepane-tree > treechildren::-moz-tree-cell-text( folder ) {
-  color:rgb(100,100,100);
-  font-weight:normal !important;
-}
-
-.servicepane-tree > treechildren::-moz-tree-cell( servicesource-bookmarks ),
-.servicepane-tree > treechildren::-moz-tree-cell( servicesource-playlists ),
-.servicepane-tree > treechildren::-moz-tree-cell( folder ) {
-}
-.servicepane-tree > treechildren::-moz-tree-row( dropBefore ) {
-  border-top:1px solid gray !important;
-}
-.servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
-  border-bottom:1px solid gray !important;
-}
-.servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
-  border:2px solid gray !important;
-  background-color:rgb(200,200,200);
-  -moz-border-radius:6px;
-}
-
-
-
-
-toolbar,
-menubar,
-.generic-bar {
-  background-color: rgb(220,220,220);
-  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-  border-bottom:1px solid gray;
-}
-.sb-commands-toolbar {
-  background-color: rgb(220,220,220);
-  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-  border-top:1px solid gray;
-}
-
-toolbarbutton,
-notification > button {
-  border:1px solid rgb(80,80,80);
-  -moz-border-radius:3px;
-  background-color:rgb(180,180,180);
-  -moz-background-clip:border;
-  
-  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-  margin:4px;
-  min-width:0px;
-  min-height:0px;
-  padding:2px 4px;
-}
-notification > button {
-  padding:2px 4px !important;
-}
-notification > button > .button-box {
-  padding:0 !important;
-}
-.sb-commands-toolbar toolbarbutton .toolbarbutton-text,
-notification > button > .button-box > .button-text {
-  color:rgb(40,40,40);
-  font-size:9px !important;
-  padding:0;
-  margin:0;
-}
-
-
-
-
-
-listheader,
-treecol,
-treechildren::-moz-tree-cell {
-  border-right:1px solid rgb(161,161,161);
-  border-left:1px solid transparent;
-  padding:0px 4px;
-}
-listheader {
-  border-left:none !important;
-}
-treechildren::-moz-tree-cell {
-  border-right:1px solid transparent;
-  border-left:1px solid transparent;
-}
-treecol[insertafter="true"],
-treechildren::-moz-tree-cell( insertafter ) {
-  border-right: 1px solid gray !important;
-}
-treecol[insertbefore="true"],
-treechildren::-moz-tree-cell( insertbefore ) {
-  border-left: 1px solid gray !important;
-}
-
-
-
-treechildren::-moz-tree-row( odd ) {
-  background-color: rgb(247,247,247);
-}
-listitem,
-treechildren::-moz-tree-row( even ) {
-  background-color: rgb(255,255,255);
-}
-
-treechildren::-moz-tree-cell-text( selected ) {
-  color:rgb(0,0,0);
-}
-treechildren::-moz-tree-row( selected, odd ) {
-  background-color: rgb(217,217,217);
-}
-treechildren::-moz-tree-row( selected, even ) {
-  background-color: rgb(225,225,225);
-}
-
-treechildren::-moz-tree-cell-text( selected, focus ) {
-  color:rgb(255,255,255);
-  color:rgb(0,0,0);
-}
-treechildren::-moz-tree-row( selected, focus, odd ) {
-  background-color: rgb(186,218,255);
-/*  background-color:rgb(110,130,160);*/
-}
-treechildren::-moz-tree-row( selected, focus, even ) {
-  background-color: rgb(176,208,245);
-/*  background-color:rgb(100,120,150);*/
-}
-
-
-
-
-
-treechildren::-moz-tree-progressmeter {
-  background-image: url(chrome://songbird/skin/playlist/bg-progress.png) !important;
-  background-position:left center;
-  margin:0 !important;
-  padding-top:5px !important;
-  padding-bottom:5px !important;
-  min-height:18px;
-  color:rgba(0,0,0,0.50);
-}
-
-
-listheader,
-treecols {
-  border-bottom:1px solid rgb(161,161,161);
-}
-
-/*
-treecol[dragging="true"] {
-  background-position:center -90px;
-}
-*/
-treecol[dragging="true"] > label,
-treecol[dragging="true"]:hover:active > label {
-  color: rgb(101,101,101);
-}
-
-
-treecolpicker > .tree-columnpicker-icon {
-  list-style-image:url('chrome://songbird/skin/base-elements/button-column-picker.png');
-  -moz-image-region: rect(0px, 14px, 14px, 0px);
-  padding:0px 1px 1px 1px;
-}
-
 
 listhead,
 treecol,
@@ -323,43 +50,77 @@ treecolpicker {
   min-height:15px !important;
   max-height:15px !important;
 }
-
 listheader > label,
 treecol > label {
   font-size:9px !important;
+  /* :-( need this for aligning the text */
   padding-bottom:1px !important;
-  color: rgb(121,121,121);
+}
+
+listheader,
+treecol,
+treechildren::-moz-tree-cell {
+  /** used for reordering columns **/
+  border-left:1px solid transparent;
+  /** /used for reordering columns **/
+  
+  padding:0px 4px;
+}
+treechildren::-moz-tree-cell {
+   /** used for reordering columns **/
+  border-right:1px solid transparent;
+  border-left:1px solid transparent;
+  /** /used for reordering columns **/
+}
+
+listheader {
+  border-left:none !important;
+}
+
+
+treechildren::-moz-tree-progressmeter {
+  margin:0;
+  padding-top:5px;
+  padding-bottom:5px;
+  min-height:18px;
+}
+
+treecolpicker > .tree-columnpicker-icon {
+  /* :-( need this for aligning the button */
+  padding:0px 1px 1px 1px;
+}
+
+treecol:last-child {
+  border-right:none;
 }
 
 
 
-#menuitem_file_new[dropon] {
-  background-image:url('chrome://songbird/skin/base-elements/bg-button-highlighted.png') !important;
+
+
+.servicepane-tree > treechildren::-moz-tree-row {
+  min-height:20px;
+}
+
+/* rm icons for container nodes */
+.servicepane-tree > treechildren::-moz-tree-image( servicesource-bookmarks ),
+.servicepane-tree > treechildren::-moz-tree-image( servicesource-playlists ),
+.servicepane-tree > treechildren::-moz-tree-image( folder ) {
+  list-style-image:none;
+  width:0px;
+  height:0px;
 }
 
 
 
-.autocomplete-treebody::-moz-tree-cell {
-  border-right: 0px !important; 
-}
-/*komi find out who is doing this*/
-.autocomplete-treebody::-moz-tree-cell-text(selected) {
-  color:rgb(0,0,0) !important;
-}
-/*  TODO: consilidate  */
-.autocomplete-treebody::-moz-tree-row(selected) {
-  background-color: rgb(186,218,255);
-}
 
-.autocomplete-treebody::-moz-tree-image(favicon) {
+
+.autocomplete-treebody::-moz-tree-image( favicon ) {
+  /* :-( need this for making sure the favicon is never bigger than 16x16 */
   max-width:16px !important;
   max-height:16px !important;
   min-width:16px !important;
   min-height:16px !important;
-}
-
-.autocomplete-treebody::-moz-tree-cell-text(treecolAutoCompleteComment) {
-  color: gray;
 }
 .autocomplete-treebody::-moz-tree-cell,
 .autocomplete-treebody::-moz-tree-cell-text {
@@ -376,10 +137,6 @@ treecol > label {
 
 
 #tabstrip-container {
-  background-color: rgb(80,80,80);
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png);
-  background-repeat:repeat-x;
-  background-position:center bottom;
   padding:0px;
   margin:0px;
 }
@@ -387,23 +144,24 @@ treecol > label {
 .tabbrowser-tabs {
   padding:0px;
 }
-.tabbrowser-tab:not([selected="true"]) > .tab-image-middle > .tab-icon > .tab-icon-image {
-  opacity:0.66;
-}
+
 .tabbrowser-tab {
   -moz-box-align: stretch;
   -moz-box-pack: center;  
-
+  /* HIDDEN */
+  -moz-border-radius: 0;
+  
   margin: 0px;
-  padding: 0px 1px 3px 0px !important; /** 1px right for the delimiter, 3px bottom for the tab bar separator **/
-  text-align: center;
-  -moz-border-radius: 0 !important;
+  /** 1px right for the delimiter, 3px bottom for the tab bar separator **/
+  padding: 0px 1px 3px 0px !important;
+}
 
-  background-image: url('chrome://songbird/skin/browser-tab-bar/bg-tab-delimiter.png') !important;
-  background-repeat:no-repeat;
-  background-position:right 0px !important;
+/* HIDDEN */
+.tabbrowser-tab:not([selected="true"]) > .tab-image-middle > .tab-icon > .tab-icon-image {
+  opacity:0.66;
 }
 .tabbrowser-tab + .tabbrowser-tab {
+  /* rm 1px margin between vanilla tabs */
   margin-left: 0px !important;
 }
 
@@ -414,110 +172,22 @@ treecol > label {
   margin: 0px;
   padding: 0px;
   min-height: 22px !important;
-  
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png) !important;
-  background-repeat:no-repeat;
-  background-position:center 0px;
 }
 
-
-.tabbrowser-tab.sb-media-tab > .tab-image-middle,
-.tabbrowser-tab.sb-media-tab > .tab-image-left,
-.tabbrowser-tab.sb-media-tab > .tab-image-right,
-.tabbrowser-tab.sb-media-tab > .tab-close-button {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-media-tab.png) !important;
-}
-
-.tabbrowser-tab[selected="true"] > .tab-image-middle,
-.tabbrowser-tab[selected="true"] > .tab-image-left,
-.tabbrowser-tab[selected="true"] > .tab-image-right,
-.tabbrowser-tab[selected="true"] > .tab-close-button {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
-}
-.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-image-middle,
-.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-image-left,
-.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-image-right,
-.tabbrowser-tab.sb-media-tab[selected="true"] > .tab-close-button {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-media-tab.png) !important;
-
-}
-
-.tabbrowser-tab:hover > .tab-image-middle,
-.tabbrowser-tab:hover > .tab-close-button {
-  background-position:center -30px !important;
-}
-.tabbrowser-tab:active > .tab-image-middle,
-.tabbrowser-tab:active > .tab-close-button {
-  background-position:center -60px !important;
-}
-.tabbrowser-tab[disabled="true"] > .tab-image-middle,
-.tabbrowser-tab[disabled="true"] > .tab-close-button {
-  background-position:center -90px !important ;
-}
 .tabbrowser-tab > .tab-image-left,
 .tabbrowser-tab > .tab-image-right {
   width:4px;
-  background-repeat:no-repeat;
-}
-.tabbrowser-tab[selected="true"] > .tab-image-left,
-.tabbrowser-tab[selected="true"] > .tab-image-right {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
-}
-
-.tabbrowser-tab > .tab-image-left {
-  background-position:left 0px;
-}
-.tabbrowser-tab:hover > .tab-image-left {
-  background-position:left -30px;
-}
-.tabbrowser-tab:active > .tab-image-left {
-  background-position:left -60px;
-}
-.tabbrowser-tab[disabled="true"] > .tab-image-left {
-  background-position:left -90px;
-}
-
-.tabbrowser-tab > .tab-image-right {
-  background-position:right 0px;
-}
-.tabbrowser-tab:hover > .tab-image-right {
-  background-position:right -30px;
-}
-.tabbrowser-tab:active > .tab-image-right {
-  background-position:right -60px;
-}
-.tabbrowser-tab[disabled="true"] > .tab-image-right {
-  background-position:right -90px;
 }
 
 .tabbrowser-tab > hbox > label.tab-text {
-  text-align:left !important;
+  text-align:left;
 }
 
 
 
-/** 
-*******************************************************************************
-BUTTONS
-*******************************************************************************
-*/ 
 
 
-
-
-
-
-
-#nav-bar toolbarbutton
-{  
-  border:1px solid rgb(80,80,80);
-
-  background-image:url('chrome://songbird/skin/nav-bar/bg-button.png');
-  background-repeat:repeat-x;
-  background-position:center 0px;
-
-  background-color:white;
-  -moz-border-radius:2px;
+#nav-bar toolbarbutton {  
   -moz-background-clip:border;
 
   min-width:22px;
@@ -527,62 +197,20 @@ BUTTONS
   padding:0 !important;
   margin:0;
 }
-#nav-bar toolbarbutton button {
-  -moz-border-radius:2px;
-}
-
-#nav-bar toolbarbutton > .toolbarbutton-menu-dropmarker > .dropmarker-icon {
-  list-style-image: url("chrome://songbird/skin/nav-bar/dropmarker.png");
-}
-
-#nav-bar toolbarbutton[disabled="true"] {
-  background-position:center -60px !important;
-}
-#nav-bar toolbarbutton:active > .toolbarbutton-icon,
-#nav-bar toolbarbutton:active > .toolbarbutton-menu-dropmarker,
-#nav-bar toolbarbutton:active > .toolbarbutton-menulist-dropmarker,
-#nav-bar toolbarbutton:active > .toolbarbutton-menubutton-dropmarker,
-#nav-bar toolbarbutton[open="true"] > .toolbarbutton-icon,
-#nav-bar toolbarbutton[open="true"] > .toolbarbutton-menu-dropmarker,
-#nav-bar toolbarbutton[open="true"] > .toolbarbutton-menulist-dropmarker,
-#nav-bar toolbarbutton[open="true"] > .toolbarbutton-menubutton-dropmarker {
-  opacity:0.5 !important;
-}
-
-#nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-icon,
-#nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-menu-dropmarker,
-#nav-bar toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
-  opacity:0.25 !important;
-}
-
-#nav-bar toolbarbutton:hover {
-  background-position:center -20px;  
-}
-#nav-bar toolbarbutton:active,
-#nav-bar toolbarbutton[open="true"] {
-  background-position:center -40px;  
-}
 
 
+
+
+
+
+menubar > menu {
+  background-color:transparent;
+}
 
 menulist {
-  border:1px solid gray;
-  background-color:rgb(180,180,180);
-  padding:0;
-  -moz-border-radius:3px;
-  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
-  background-repeat:repeat-x;
-  background-position:center 0px;
-}
-menulist:hover {
-  background-position:center -300px;
-}
-menulist:active, 
-menulist[open="true"] {
-  background-position:center -600px;
-}
-menulist[disabled="true"] {
-  background-position:center -900px;
+  min-width:0px;
+  min-height:0px;
+  padding:0px;
 }
 .menulist-label {
   padding:3px 8px;
@@ -590,135 +218,76 @@ menulist[disabled="true"] {
 }
 
 
+
 .menulist-editable-box {
-
-border-top:1px solid rgb(120,120,120);
-border-right:1px solid rgb(140,140,140);
-border-bottom:1px solid rgb(200,200,200);
-border-left:1px solid rgb(140,140,140);
-
-  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');
-  background-repeat:repeat-x;
-  background-position:center top;
-  background-color:white;
-  
   margin:2px 0px 1px 2px;
   padding:0px 4px 1px 4px;
 }
 
 
-/* button button */
-
-.button-box {
-  padding:3px 8px;
-}
-
-button:focus,
-toolbarbutton:focus,
-checkbox:focus > .checkbox-check,
-radio[focused="true"] > .radio-check,
-menulist:focus {
-  outline:2px solid rgba(40,40,40,0.33); !important;
-  outline-offset:0px !important;
-  -moz-outline-radius:5px !important;
-}
-radio[focused="true"] > .radio-check {
-  -moz-outline-radius:8px !important;
-}
-button.button-menubutton-button:focus {
-  outline-offset:1px !important;
-  -moz-outline-radius-topright:0px !important;
-  -moz-outline-radius-bottomright:0px !important;
-}
-
 button,
 toolbarbutton,
 .clickhold-button {
-  border:1px solid rgb(120,120,120);
-  
-  -moz-border-radius:3px;
-  background-color:rgb(180,180,180);
-  
-  -moz-background-clip:padding;
-  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
-  background-repeat:repeat-x;
-  background-position:center 0px;
-
-  min-width:0px;
-  min-height:0px;
-}
-button {
   padding:0px;
+}
+
+/* add padding here because buttons come in a few flavors
+   ie: image only, text only, image and text */
+.button-box {
+  padding:3px 8px;
 }
 .button-text {
-  color:rgb(40,40,40);
-  font-size:11px;
   padding:0px;
+  margin:0px;
+}
+
+
+toolbarbutton {
+  min-width:0px;
+  min-height:0px;
+  padding:2px 4px !important;
+}
+notification > button {
+}
+notification > button > .button-box {
+  padding:2px 4px !important;
+}
+.sb-commands-toolbar toolbarbutton .toolbarbutton-text,
+notification > button > .button-box > .button-text {
+  font-size:9px !important;
+  padding:0;
   margin:0;
 }
 
 
 
-button:hover,
-toolbarbutton:hover {
-  background-position:center -300px;
-}
-button:active,
-button[open],
-toolbarbutton:active,
-toolbarbutton[open],
-toolbarbutton[checked="true"] {
-  background-position:center -600px;
+toolbarbutton[type="menu"] > .toolbarbutton-icon {
+  margin-left:2px;
 }
 
-button[disabled="true"],
-toolbarbutton[disabled="true"] {
-  background-position:left -900px !important;
-  border:1px solid gray;
-}
-button[disabled="true"] .button-text,
-toolbarbutton[disabled="true"] .toolbarbutton-text {
-  color:gray !important;
-}
-button[disabled="true"] .button-icon,
-toolbarbutton[disabled="true"] .toolbarbutton-icon {
-  opacity:0.5 !important;
+toolbarbutton[type="menu"],
+toolbarbutton[type="menu-button"] {
+  padding:2px !important;
 }
 
+#nav-bar toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
+  /* HIDDEN */
+  /* rm rounded corners because the menubutton is displayed to the right of the button */
+  -moz-border-radius-topright:0px !important;
+  -moz-border-radius-bottomright:0px !important;
 
+  min-height:20px;
+  max-height:20px;
+}
 .toolbarbutton-menubutton-button > .toolbarbutton-icon {
-  padding:0 !important;
-  margin:0 !important;
   min-height:16px !important;
   min-width:16px !important;
   max-height:16px !important;
   max-width:16px !important;
 }
 
-toolbarbutton[type="menu"] > .toolbarbutton-icon {
-  margin-left:2px;
-}
-
-.toolbarbutton-menubutton-button {
-  padding:2px !important;
-  border:none !important;
-  margin:0 !important;
-  min-height:0 !important;
-  min-width:0 !important;
-}
-toolbarbutton[type="menu-button"] > .toolbarbutton-menubutton-button {
-  border-right:1px solid rgb(53,95,19) !important;
-  -moz-border-radius-topright:0px!important;
-  -moz-border-radius-bottomright:0px!important;
-  
-}
 
 
-
-toolbarbutton[type="menu"],
-toolbarbutton[type="menu-button"] {
-  padding:0 !important;
-}
 
 button > dropmarker.button-menubutton-dropmarker,
 button > .button-box > dropmarker.button-menu-dropmarker,
@@ -729,14 +298,10 @@ dropmarker {
   width: 11px;
   -moz-box-align: center;
   -moz-box-pack: center;
-  border: none;
-  background-color: transparent;
   -moz-image-region: auto;
   margin:0;
 }
-.button-menubutton-button > .button-box {
-  border-right: 1px solid gray;
-}
+
 
 
 dropmarker:hover:active {
@@ -744,19 +309,15 @@ dropmarker:hover:active {
 }
 
 
-.dropmarker-icon {
-  list-style-image: url("chrome://songbird/skin/menu/dropmarker.png");
 
-}
 
-dropmarker[disabled="true"] > .dropmarker-icon {
-}
 
 
 .button-menubutton-button,
 button[type="menu"] > .button-box {
   margin:0 !important;
   padding:0px;
+  
   background-image:none;
   background-color:transparent;
 }
@@ -801,70 +362,17 @@ MENUS, CONTEXTUAL MENUS, and MENUPOP-UPS
 *******************************************************************************
 */
 
-/* The Top Menu (File, Edit, Etc...) **/
-menu > label
-{
-
-}
-
-menu:hover,
-menu:hover > label,
-menu[open],
-menu[open] > label,
-menu[_moz-menuactive="true"],
-menu[_moz-menuactive="true"] > label
-{
-
-}
 
 /* The Basic Menu Styles **/
 
-menupopup, 
-popup
-{
-  background-color:rgb(255,255,255);
-}
 
 menuitem > label,
 menupopup > menu > label,
-popup > menu > label
-{
+popup > menu > label {
   padding:0;
   margin:0;
 }
 
-
-menupopup > menu[_moz-menuactive="true"],
-menupopup > menuitem[_moz-menuactive="true"],
-popup > menu[_moz-menuactive="true"],
-popup > menuitem[_moz-menuactive="true"]
-{
-background-color: rgb(186,218,255);
-}
-
-menupopup > menu[_moz-menuactive="true"] > label,
-menupopup > menuitem[_moz-menuactive="true"] > label,
-popup > menu[_moz-menuactive="true"] > label,
-popup > menuitem[_moz-menuactive="true"] > label {
-  color:rgb(0,0,0);
-}
-
-menuitem[disabled="true"],
-menuitem[disabled="true"]:hover,
-menuitem[disabled="true"] > label,
-menuitem[disabled="true"]:hover > label
-menu[disabled="true"],
-menu[disabled="true"]:hover,
-menu[disabled="true"] > label,
-menu[disabled="true"]:hover > label {
-
-}
-
-/* Tooltip **/
-
-.tooltip-label {
-  color: rgb(40,40,40)
-}
 
 /** 
 *******************************************************************************
@@ -874,7 +382,7 @@ These let the user resize the frames in your box model.
 */ 
 
 #filter_splitter > grippy {
-  margin: 0;
+  visibility:collapse;
 }
 
 #displaypane_right_sidebar_splitter[state="collapsed"],
@@ -898,31 +406,14 @@ These let the user resize the frames in your box model.
 #servicepane_splitter[state="collapsed"]:active,
 #displaypane_right_sidebar_splitter[state="collapsed"]:active,
 #displaypane_contentpane_bottom_splitter[state="collapsed"]:active,
-#displaypane_servicepane_bottom_splitter[state="collapsed"]:active
-{
+#displaypane_servicepane_bottom_splitter[state="collapsed"]:active {
 }
 
 #servicepane_splitter,
 #filter_splitter,
 #displaypane_right_sidebar_splitter {
-  background-color:white;
-  background-image:url('chrome://songbird/skin/base-elements/bg-splitter-vertical.png') !important;
-  background-repeat:repeat-y !important;
-  background-position:center top !important;
-  border-right:1px solid gray;
-  border-left:1px solid gray;
   max-width:3px;
   min-width:3px;
-}
-
-#filter_splitter {
-  border-right:1px solid rgb(161,161,161);
-  border-left:1px solid rgb(161,161,161);  
-}
-
-#servicepane_splitter,
-#displaypane_right_sidebar_splitter {
-  border-bottom:1px solid gray;
 }
 
 #displaypane_contentpane_bottom_splitter,
@@ -931,38 +422,14 @@ These let the user resize the frames in your box model.
 .playlist-web-splitter {
   min-height:4px;
   max-height:4px;
-
-  background-image:url('chrome://songbird/skin/base-elements/bg-splitter-horizontal.png') !important;
-  background-repeat:repeat-x !important;
-  background-position:center top !important;
-
-}
-
-#displaypane_contentpane_bottom_splitter,
-#displaypane_servicepane_bottom_splitter {
-  border-bottom:1px solid gray;
-  border-top:1px solid gray;
-}
-
-.playlist-splitter {
-  border-top:1px solid rgb(161,161,161);
-  border-bottom:1px solid rgb(161,161,161);  
-}
-.playlist-web-splitter {
-  border-top:1px solid gray;
-  border-bottom:1px solid rgb(161,161,161);  
 }
 
 .playlist-splitter:active,
-.playlist-web-splitter:active
-{
-
+.playlist-web-splitter:active {
 }
 
 .playlist-splitter[state="collapsed"],
-.playlist-web-splitter[state="collapsed"]
-{
-  background-color: red !important;
+.playlist-web-splitter[state="collapsed"] {
 }
 
 
@@ -975,28 +442,6 @@ TOOLTIPS
 *******************************************************************************
 */
 
-tooltip
-{  
-  background-color: rgb(255,255,200) !important;
-  color: rgb(40,40,40) !important;
-}
-
-
-
-textbox[edited="true"] {
-  background-color:rgb(255,255,235);
-}
-textbox[focused="true"] {
-  background-color: rgb(255,255,235) !important;
-}
-textbox[invalid="true"],
-textbox[focused="true"][invalid="true"] {
-  background-color:rgb(255,200,200) !important;
-  } 
-  textbox[empty="true"] {
-    color:gray;
-    font-style:italic;
-  }
 
 /** 
 *******************************************************************************
@@ -1004,47 +449,10 @@ TEXTBOX
 *******************************************************************************
 */
 
-textbox,
-textbox.padded,
-.datetimepicker-input-subbox,
-.datetimepicker-year  {
-  -moz-border-radius:0;
-
-border-top:1px solid rgb(120,120,120);
-border-right:1px solid rgb(140,140,140);
-border-bottom:1px solid rgb(200,200,200);
-border-left:1px solid rgb(140,140,140);
-
-  background-image:url('chrome://songbird/skin/base-elements/bg-text-input.png');
-  background-repeat:repeat-x;
-  background-position:center top;
-  background-color:white;
-}
-
-textbox,
-textbox.padded, /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
-html|*.numberbox-input {
-  color: rgb(40,40,40);
-}
-
-/* ..... focused state ..... */
-
-/* ..... readonly state ..... textbox[readonly="true"]  */
-
-/* ..... disabled state ..... */
-textbox[disabled="true"]
-{
+textbox[disabled="true"],
+html|*.numberbox-input[disabled="true"] {
   cursor: default;
 }
-
-textbox[disabled="true"],
-html|*.numberbox-input[disabled="true"]
-{
-}
-
-/* ..... invalid state ..... */
-
-
 
 
 /**
@@ -1054,29 +462,11 @@ MISC
 */
 
 button.button-menubutton-button,
-button.button-menubutton-button:active
-{
+button.button-menubutton-button:active {
   border: none !important;
   padding: 0;
   margin: 0;
 }
-
-
-
-
-
-/** 
-*******************************************************************************
-MENULIST
-*******************************************************************************
-*/
-
-.menulist-label
-{
-
-}
-
-
 
 /** 
 *******************************************************************************
@@ -1084,10 +474,8 @@ LISTBOX
 *******************************************************************************
 */
 
-listbox
-{
-  border: 1px solid gray;
-  -moz-border-radius:0px;
+listbox {
+  border: 1px solid rgb(131,131,131);;
 }
 
 #working-list {
@@ -1096,83 +484,10 @@ listbox
   border-left:none;
 }
 
-/* ..... disabled state ..... */
-
-listbox[disabled="true"] {
-}
-
+/* ..... disabled state ..... 
 listitem[selected="true"] > listcell > .listcell-label {
 }
-
-listbox:focus > listitem[selected="true"][current="true"] {
-}
-
-listitem[selected="true"] {
-}
-
-listbox:focus,
-listbox:focus > listitem[selected="true"] {  
-}
-
-/* ::::: checkmark image ::::: */
-
-.listcell-check {
-}
-
-
-
-/** 
-*******************************************************************************
-PROGRESSMETER
-*******************************************************************************
 */
-
-progressmeter {
-  background-color:transparent !important;
-}
-
-
-
-
-/** 
-*******************************************************************************
-WIZARDS
-*******************************************************************************
-*/
-.wizard-header {
-
-}
-
-/** Software Installer Dialog */
-installitem
-{
-
-}
-#itemList
-{
-
-}
-
-
-/** 
-*******************************************************************************
-DIALOGS
-*******************************************************************************
-*/
-
-/* on OS X there is a shadow on the window
-  so this border is considered undesirable.
-  see: bug 6399
- */
-
-
-
-
-/*prefwindow*/
-.windowDialog
-{
-}
-
 
 
 /** 
@@ -1194,28 +509,12 @@ PREFERENCES
 
 
 #extensionsBox {
-  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
 }
 #extensionsBox richlistitem {
-  background-color:white;
 }
 #extensionsBox richlistitem[hidden="false"]:last-child {
-  margin-bottom:16px;
 }
 
-label.addonName,
-label.addonVersion,
-label.descriptionWrap,
-#error_noupdate_header
-{
-}
-
-#extensionsBox > richlistbox > richlistitem[selected="true"] label.addonName,
-#extensionsBox > richlistbox > richlistitem[selected="true"] label.addonVersion,
-#extensionsBox > richlistbox > richlistitem[selected="true"] label.descriptionWrap,
-#extensionsBox > richlistbox > richlistitem[selected="true"] #error_noupdate_header
-{
-}
 
 /** 
 *******************************************************************************
@@ -1223,69 +522,19 @@ ERRORS
 *******************************************************************************
 */
 
-html|*.error-box,
-groupbox.error-box > .groupbox-body
-{
+
+
+
+
+
+#sb-sys-title-title {
+  padding:1px 5px 2px 5px !important;
 }
-
-html|*.error-text,
-.error-text
-{
-  color: red;
-  font-weight: bold;
-}
-
-
-
-/** 
-*******************************************************************************
-DOM INSPECTOR
-*******************************************************************************
-*/
-
-
-
-
-
-/** 
-*******************************************************************************
-MOZILLA DOWNLOAD WINDOW
-*******************************************************************************
-*/
-
-#downloadManager {
-  background-color: rgb(245,245,245) !important;
-}
-
-#downloadManager > #information {
-}
-
-#downloadManager > #downloadView {
-  background-color:white;
-}
-
-#downloadManager > #search {
-  border-top:1px solid gray;
-  background-color: rgb(220,220,220) !important;
-  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-}
-
-
-
-
-
-
-
-
-
 
 #titlebar_box {
   min-height:22px !important;
   height:22px !important;
   max-height:22px !important;
-  border-bottom:1px solid gray;
 }
 sb-sys-titlebar {
   overflow:hidden;
@@ -1294,16 +543,16 @@ sb-sys-titlebar {
   -moz-box-align:center !important;
 }
 
-#faceplate-tool-bar {
-}
+
 #faceplate-tool-bar > * {
-  margin:2px 2px;
+  margin:2px 0px 2px 4px;
 }
 #faceplate-tool-bar > sb-nowplaying-rating {
-  margin:0 2px !important;
+  margin:0px 0px 0px 4px !important;
 }
 #faceplate-tool-bar > sb-nowplaying-rating > sb-rating {
 }
+
 
 
 #control_pane_box {
@@ -1331,47 +580,21 @@ sb-sys-titlebar {
   padding:0 5px;
 }
 
-#control_pane_box > .left-box > .left,
-#control_pane_box > .right-box > .right {
+#control_pane_box > .hook > .left,
+#control_pane_box > .hook > .right,
+#control_pane_box > .hook > .middle {
   min-width:16px;
   min-height:52px;
-  background-position:center top;
-  background-repeat:no-repeat;
-}
-#control_pane_box > .left-box > .left {
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-media-control-pane-left.png);
-}
-#control_pane_box > .right-box > .right {
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-media-control-pane-right.png);
-}
-
-#control_pane_box > .middle {
-  min-height:52px;
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-media-control-pane.png);
-  background-repeat:repeat-x;
-  background-position:center top;
-  margin:0 16px;
 }
 
 
-#titlebar_box > .left-box > .left,
-#titlebar_box > .right-box > .right {
+#titlebar_box > .hook > .left,
+#titlebar_box > .hook > .right {
   min-width:16px;
   min-height:22px;
-  background-position:center top;
-  background-repeat:no-repeat;
 }
-#titlebar_box > .left-box > .left {
-  background-image: url(chrome://songbird/skin/window/bg-title-bar-left.png);
-}
-#titlebar_box > .right-box > .right {
-  background-image: url(chrome://songbird/skin/window/bg-title-bar-right.png);
-}
-#titlebar_box > .middle {
-  background-image: url(chrome://songbird/skin/window/bg-title-bar.png);
-  background-repeat:repeat-x;
-  background-position:center top;
-  margin:0 16px;
+#titlebar_box > .hook > .middle {
+  min-height:22px;
 }
 
 
@@ -1381,12 +604,9 @@ sb-sys-titlebar {
 
 
 #nav-bar {
-  border:none;
   padding:3px 4px !important;
   min-height:28px;
   max-height:28px;
-  background-image:none !important;
-  background-color:transparent !important;
 }
 #nav-bar > * {
   margin:0 2px !important;
@@ -1396,24 +616,13 @@ sb-sys-titlebar {
 }
 
 
-#nav_bar_box > .left-box > .left,
-#nav_bar_box > .right-box > .right {
+#nav_bar_box > .hook > .left,
+#nav_bar_box > .hook > .right {
   min-width:16px;
   min-height:28px;
-  background-position:center top;
-  background-repeat:no-repeat;
 }
-#nav_bar_box > .left-box > .left {
-  background-image: url(chrome://songbird/skin/nav-bar/bg-nav-bar-left.png);
-}
-#nav_bar_box > .right-box > .right {
-  background-image: url(chrome://songbird/skin/nav-bar/bg-nav-bar-right.png);
-}
-#nav_bar_box > .middle {
-  background-image: url(chrome://songbird/skin/nav-bar/bg-nav-bar.png);
-  background-repeat:repeat-x;
-  background-position:center top;
-  margin:0 16px;
+#nav_bar_box > .hook > .middle {
+  min-height:28px;
 }
 
 
@@ -1421,110 +630,17 @@ sb-sys-titlebar {
 
 
 
-
-
-
-#inner_player_box {
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#bottom-bar {
-  min-height:8px;
-  max-height:8px;
-  
-  visibility: collapse !important; /** too many bugs **/
-}
-#bottom-bar > .left-box > .left,
-#bottom-bar > .right-box > .right {
-  min-width:16px;
-  min-height:8px;
-  max-height:8px;
-  background-repeat:no-repeat;
-  background-position:center top;
-}
-#bottom-bar > .left-box > .left {
-  background-image:url('chrome://songbird/skin/window/bg-bottom-bar-left.png');
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-media-control-pane-left.png);
-}
-#bottom-bar > .right-box > .right {
-  background-image:url('chrome://songbird/skin/window/bg-bottom-bar-right.png');
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-media-control-pane-right.png);
-}
-#bottom-bar > .middle {
-  margin:0 16px;
-  min-height:8px;
-  max-height:8px;
-  background-image:url('chrome://songbird/skin/window/bg-bottom-bar.png');
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-media-control-pane.png);
-  background-repeat:repeat-x;
-  background-position:center top;
-}
-
-
-
-
-treecol {
-  min-width: 45px;
-}
-
-treecol[bind="http://songbirdnest.com/data/1.0#rating"] {
-  min-width: 78px;
-  width: 78px;
-}
-treecol[bind="http://songbirdnest.com/data/1.0#originPageImage"] {
-  min-width: 20px;
-  width: 20px;
-}
-treecol[bind="http://songbirdnest.com/data/1.0#ordinal"] {
-  min-width: 42px;
-  width: 42px;
-}
-treecol[bind="http://songbirdnest.com/data/1.0#downloadButton"] {
-  min-width: 86px;
-  width: 86px;
-}
 
 
 
 
 
 .closable-box-image,
-treechildren::-moz-tree-twisty(closed) {
-  width: 9px;
-  list-style-image: url("chrome://songbird/skin/base-elements/button-twisty-closed.png");
-}
-treechildren::-moz-tree-twisty(open),
-.closable-box-image[open="true"] {
-  width: 9px; /* The image's width is 10 pixels */
-  list-style-image: url("chrome://songbird/skin/base-elements/button-twisty-open.png");
-}
-.closable-box-image,
+treechildren::-moz-tree-twisty(closed),
 .closable-box-image[open="true"],
-treechildren::-moz-tree-twisty( open ),
-treechildren::-moz-tree-twisty( closed ) {
-  -moz-image-region: rect(0px, 9px, 9px, 0px);
+treechildren::-moz-tree-twisty(open) {
+  width: 9px;
 }
-/*
-treechildren::-moz-tree-twisty( open selected ),
-treechildren::-moz-tree-twisty( closed selected ) {
-  -moz-image-region: rect(9px, 9px, 18px, 0px);
-}
-*/
 
 
 
@@ -1541,81 +657,38 @@ treechildren::-moz-tree-twisty( closed selected ) {
 
 
 
-
-
-
-
-.sb-playlist-tree > treecol:last-child,
-treecol:last-child {
-  border-right:none !important;
-}
 
 
 
 
 treechildren#trDOMTreeBody::-moz-tree-row( selected ) {
-}
-
-treechildren#trDOMTreeBody::-moz-tree-cell-text(ELEMENT_NODE),
-treechildren#trDOMTreeBody::-moz-tree-cell-text(ELEMENT_NODE selected) {
-  color:rgb(40,40,40);
-}
-treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous),
-treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous selected)
-{
-  color: red !important;
+  background-color:;
 }
 
 
 
 #faceplate_box {
-  padding:0 8px;
+  padding:2px 8px;
   min-height:52px;
 }
-#faceplate > .left-box > .left,
-#faceplate > .right-box > .right,
-#faceplate_inactive > .left-box > .left,
-#faceplate_inactive > .right-box > .right {
+#faceplate > .hook > .left,
+#faceplate > .hook > .middle,
+#faceplate > .hook > .right,
+#faceplate_inactive > .hook > .left,
+#faceplate_inactive > .hook > .middle,
+#faceplate_inactive > .hook > .right {
   min-width:8px;
   min-height:44px;
-  background-repeat:no-repeat;
-  background-position:center bottom;
+  max-height:44px;
 }
-#faceplate > .left-box > .left {
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-left.png');
-}
-#faceplate > .right-box > .right {
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-right.png');  
-}
-#faceplate > .middle,
-#faceplate_inactive > .middle {
-  min-height:44px;
-  padding:2px 0;
-  margin:0 8px;
-  background-repeat:repeat-x;
-  background-position:center bottom;
+#faceplate > .hook ,
+#faceplate_inactive > .hook {
+  margin:2px 0 !important;
 }
 
-
-#faceplate > .middle {
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate.png');
-}
-#faceplate_inactive > .middle {
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive.png');
-}
-
-#faceplate_inactive > .left-box > .left {
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive-left.png');
-}
-#faceplate_inactive > .right-box > .right {
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive-right.png');
-}
 
 #faceplate-inactive-splash {
   min-height:44px;
-  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-inactive-splash.png');
-  background-repeat:no-repeat;
-  background-position:center center;
 }
 
 #faceplate-album-art {
@@ -1623,15 +696,13 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous selected)
   min-height:40px;
   max-width:40px;
   max-height:40px;
-  
-  background-image: url(chrome://songbird/skin/tmp/sample-album-art.png);
-  background-repeat:no-repeat;
-  background-position:center center;
 }
+
 #faceplate_content {
   min-height:44px;
-  padding:2px 2px;
+  padding:4px 2px;
 }
+
 
 
 
@@ -1645,36 +716,8 @@ treechildren#trDOMTreeBody::-moz-tree-cell-text(anonymous selected)
   max-height: 16px;
   min-width: 16px;
   min-height: 16px;
-  list-style-image: url("chrome://songbird/skin/base-elements/icon-default-favicon.png");
   margin-right:2px;
 }
-
-.tabbrowser-tab[busy] > .tab-icon-image,
-.tabbrowser-tab[busy] > .tab-image-middle > .tab-icon > .tab-icon-image {
-  list-style-image: url('chrome://songbird/skin/base-elements/icon-loading.png') !important;
-}
-
-
-.drawer-box {
-  border:1px solid gray;
-  -moz-border-radius:3px;
-  background-color:rgb(245,245,245);
-  
-}
-
-
-
-.closable-box-image {
-  list-style-image:url("chrome://songbird/skin/base-elements/button-twisty-closed.png");
-}
-
-.closable-box-image[open="true"] {
-  list-style-image:url("chrome://songbird/skin/base-elements/button-twisty-open.png");
-}
-
-
-
-
 
 
 tab[first-tab="true"],
@@ -1697,82 +740,27 @@ tab[first-tab="true"],
 
 
 
-#servicepane-status-bar > statusbarpanel > .service-pane-spring-load-button {
-  list-style-image:  url("chrome://songbird/skin/service-pane/button-hide-service-pane.png") !important;
-}
-#status-bar > statusbarpanel > .service-pane-spring-load-button {
-  list-style-image:  url("chrome://songbird/skin/service-pane/button-show-service-pane.png") !important;
-}
 
 .service-pane-spring-load-button {
-  margin:0px;
+  max-height:16px;
+  min-height:16px;
+  margin:1px 0px;
 }
-
 .service-pane-spring-load-button > .button-box {
   padding:0;
-}
-
-
-.service-pane-spring-load-button:hover > .button-box {
-background-position:right -30px !important;
 }
 .service-pane-spring-load-button> .button-box > .button-text {
   display:none;
 }
-.service-pane-spring-load-button[disabled="true"] {
-  background-color:transparent !important;
-  background-position:right -24px !important;
-}
-.service-pane-spring-load-button[disabled="true"] > .button-box {
-  background-position:right 0px !important;
-}
-.service-pane-spring-load-button > .button-box > .button-icon {
-/*
-  list-style-image:  url("chrome://songbird/skin/service-pane/button-spring.png") !important;
-  -moz-image-region: rect(0px 16px 16px 0px);
-*/
-}
 
 
 
 
 
-notification[type="info"] {
-  background-color: rgb(214,241,250);
-  background-image:url('chrome://songbird/skin/notification-bar/bg-info.png');
-}
 
-notification[type="warning"] {
-  background-color: rgb(249,249,202);
-  background-image:url('chrome://songbird/skin/notification-bar/bg-warning.png');
-}
-
-notification[type="critical"] {
-  background-color: rgb(251,161,165);
-  background-image:url('chrome://songbird/skin/notification-bar/bg-critical.png');
-}
-
+notification,
 .dialog-notification {
-  background-position:center top;
-  background-repeat:repeat-x;
   padding: 2px 8px;
-  border-bottom:1px solid gray;
-}
-.dialog-notification.notification-critical {
-    background-color: rgb(251,161,165);
-    background-image:url('chrome://songbird/skin/notification-bar/bg-critical.png');
-}
-.dialog-notification.notification-warning {
-    background-color: rgb(251,247,197);
-    background-image:url('chrome://songbird/skin/notification-bar/bg-warning.png');
-}
-.dialog-notification.notification-info {
-  background-color: rgb(214,241,250);
-  background-image:url('chrome://songbird/skin/notification-bar/bg-info.png');
-}
-.dialog-notification.notification-warning > .dialog-notification-text,
-.dialog-notification-text {
-  color:rgb(40,40,40) !important;
 }
 
 
@@ -1780,11 +768,12 @@ notification[type="critical"] {
 #content_player_wrapper[playercontrols='top'] {
   -moz-box-direction: reverse;
 }
-#content_player_wrapper[playercontrols='top'] #control_pane_box {
-}
-
-#content_player_wrapper[playercontrols='bottom']+#bottom-bar {
-  visibility: collapse;
+#content_player_wrapper[playercontrols='top'] #control_pane_box,
+#content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .left,
+#content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .right,
+#content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .middle {
+  min-height: 53px;
+  max-height: 53px;
 }
 #content_player_wrapper[playercontrols='top'] #status-bar,
 #content_player_wrapper[playercontrols='top'] #servicepane-status-bar {
@@ -1793,12 +782,10 @@ notification[type="critical"] {
 
 
 
-
-
 .servicepane-toolbar-newitem-button {
   max-width:16px;
   max-height:16px;
-  margin:0px;
+  margin:1px 0px;
 }
 .servicepane-toolbar-newitem-button > .clickhold-button {
   border:none;
@@ -1812,7 +799,6 @@ notification[type="critical"] {
   display:none;
 }
 .servicepane-toolbar-newitem-button > .clickhold-button > .button-box > .button-icon {
-  list-style-image:  url("chrome://songbird/skin/service-pane/button-new-node.png") !important;
   min-height:14px;
   min-width:14px;
 }
@@ -1824,19 +810,14 @@ notification[type="critical"] {
 
 
 
-window:not([active="true"]) .inactive-box {
-  background-color:rgba(255,255,255,0.33);
-}
-
+/* rm progress meter in the status bar because it is not hooked up */
 #statusbar-progresspanel {
   display:none;
 }
 
 
 
-#updateMode {
-  -moz-box-orient:vertical !important;
-}
+
 
 
 textbox[type="number"],
@@ -1863,7 +844,8 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 
 
 #advancedPrefs {
-  margin:0 !important;
+  margin-right:0 !important;
+  margin-left:0 !important;
 }
 
 
@@ -1875,12 +857,6 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 .smart-condition-minus > .button-box > .button-text,
 .smart-condition-plus > .button-box > .button-text {
   display:none;
-}
-.smart-condition-minus > .button-box > .button-icon {
-  list-style-image:  url("chrome://songbird/skin/smart-playlist/button-remove.png");
-}
-.smart-condition-plus > .button-box > .button-icon {
-  list-style-image:  url("chrome://songbird/skin/smart-playlist/button-add.png");
 }
 
 
@@ -1897,7 +873,7 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 
 #extensionsManager:not([active="true"]) > #topStackBar > #viewGroup {
   background-image: none;
-  border-bottom: 1px solid gray;
+  border-bottom: 1px solid rgb(131,131,131);;
 }
 
 #extensionsManager:not([active="true"]) > #topStackBar > #viewGroup > .radiogroupWrapper {
@@ -1932,72 +908,14 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 #commandBarBottom button .button-icon {
 }
 
-/*
-#installFileButton, #installUpdatesAllButton {
-  -moz-image-region: rect(0px, 84px, 21px, 63px);
-}
 
-#installFileButton[disabled="true"],
-#installUpdatesAllButton[disabled="true"] {
-  -moz-image-region: rect(21px, 84px, 42px, 63px);
-}
-
-#checkUpdatesAllButton, #showUpdateInfoButton, #hideUpdateInfoButton {
-  -moz-image-region: rect(0px, 63px, 21px, 42px);
-}
-#checkUpdatesAllButton[disabled="true"] {
-  -moz-image-region: rect(21px, 63px, 42px, 42px);
-}
-
-#restartAppButton {
-  -moz-image-region: rect(0px, 42px, 21px, 21px);
-}
-
-#restartAppButton[disabled="true"] {
-  -moz-image-region: rect(21px, 42px, 42px, 21px);
-}
-
-#skipDialogButton {
-  -moz-image-region: rect(0px, 42px, 21px, 21px);
-}
-
-#skipDialogButton[disabled="true"] {
-  -moz-image-region: rect(21px, 42px, 42px, 21px);
-}
-
-#continueDialogButton {
-  -moz-image-region: rect(0px, 42px, 21px, 21px);
-}
-
-#continueDialogButton[disabled="true"] {
-  -moz-image-region: rect(21px, 42px, 42px, 21px);
-}
-*/
 
 /* List Items */
+
+
 richlistitem {
   padding:4px;
   min-height: 24px;
-  border-bottom: 1px solid gray !important;
-}
-
-richlistitem[isDisabled="true"] .addonIcon {
-
-}
-
-richlistitem[isDisabled="true"] {
-  background-color:rgb(200,200,200);
-}
-
-#extensionsView:focus > richlistitem[selected="true"][isDisabled="true"] {
-  background-image: url("chrome://mozapps/skin/extensions/itemDisabledFader.png");
-}
-
-.descriptionWrap {
-}
-
-richlistitem[selected="true"]:not([opType]) {
-  background-color: rgb(186,218,255) !important;
 }
 
 richlistitem[selected="true"]:not([opType]) .descriptionCrop {
@@ -2099,12 +1017,8 @@ richlistitem[opType="needs-uninstall"] .notifyBadge {
 
 /* View buttons */
 .viewSelector {
-  border-bottom: 1px dashed black;
   margin: 0px;
-  background-color: white;
-  color: black;
 }
-
 #viewGroup radio {
   -moz-appearance: none;
   margin: 0px;
@@ -2112,10 +1026,6 @@ richlistitem[opType="needs-uninstall"] .notifyBadge {
   list-style-image: none;
 }
 
-#viewGroup radio:hover {
-  background-color: rgb(186,218,255);
-  color: black;
-}
 
 #viewGroup radio[selected="true"] {
 
@@ -2179,13 +1089,9 @@ richlistitem[selected="true"] .includeUpdate {
 
 
 
+/** about config **/
 #filterRow {
-  background-color: rgb(220,220,220) !important;
-  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
   min-height:29px;
-  border-bottom:1px solid gray;
   margin:0px !important;
 }
 
@@ -2199,61 +1105,25 @@ richlistitem[selected="true"] .includeUpdate {
 
 
 
-richlistbox {
-  border:1px solid gray;
-}
 
-#extensions-view,
-#locales-view,
-#updates-view,
-#installs-view {
-/*  display:block !important;*/
-}
+
+
 #addonsMsg+vbox {
-  background-image: url(chrome://songbird/skin/window/bg-button-box.png);
-  background-repeat:repeat-x;
-  background-position:center top;
-  background-color:rgb(225,225,225);
-  padding:0 4px;
+  padding:0 8px;
 }
 #viewGroup {
   -moz-box-pack:center;
-  border:none;
-  -moz-border-radius:0px !important;
   padding:6px 6px 0px 6px;
-  background-color: rgb(220,220,220);
-  background-image:url('chrome://songbird/skin/playlist/bg-command-bar.png') !important;
-  background-repeat:repeat-x;
-  background-position:left top;
 }
 #extensionsView {
   margin:0px;
+  /* HIDDEN */
   border:none !important;
 }
 #viewGroup > radio {
-  border:1px solid gray !important;
-  background-color:rgb(200,200,200) !important;
-  background-image:url('chrome://songbird/skin/base-elements/bg-button.png');
-  background-repeat:repeat-x;
-  background-position:center 0px;
-  -moz-border-radius-topleft:3px;
-  -moz-border-radius-topright:3px;
   padding:2px 8px;
   margin:0 0 -1px 0;
 }
-#viewGroup > radio:hover {
-  background-position:center -300px;
-  border:1px solid gray !important;
-}
-#viewGroup > radio[selected="true"] {
-  background-color:white !important;
-  background-image: url('chrome://songbird/skin/base-elements/bg-generic-header.png') !important;
-  background-position:center 0px;
-  background-repeat:repeat-x;
-  border:1px solid gray !important;
-  border-bottom:1px solid rgb(200,200,200) !important;
-}
-
 #viewGroup > radio+radio {
   margin-left:1px !important;
 }
@@ -2267,7 +1137,6 @@ richlistbox {
 .selectedButtons > button {
 }
 .selectedButtons > button > .button-box > .button-text {
-  color:rgb(40,40,40);
   font-size:9px;
   padding:0;
   margin:0;
@@ -2275,9 +1144,6 @@ richlistbox {
 richlistitem:first-child,
 template+richlistitem {
   border-top:none !important;
-}
-#paneAddons {
-  background-color:rgb(225,225,225);
 }
 .prefWindow-dlgbuttons {
   margin:0px !important;
@@ -2288,48 +1154,31 @@ template+richlistitem {
 richlistitem[providesUpdatesSecurely="true"] {
 }
 
+.addonThrobber,
 richlistitem[loading="true"] .updateBadge {
   display: -moz-box;
   width: 16px;
   height: 16px;
-  list-style-image: url("chrome://songbird/skin/base-elements/icon-loading.png") !important;
-}
-
-.addonThrobber {
-  width: 16px;
-  height: 16px;
-  list-style-image: url("chrome://songbird/skin/base-elements/icon-loading.png") !important;
 }
 
 
 
 
 
-/*  first run dialog  */
-.sb-first-run-eula-browser {
-  border:1px solid gray;
-}
-.wizard-header {
-  background-color: rgb(220,220,220);
-  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-  border-bottom:1px solid gray;
-}
-.sb-first-run-add-ons-listbox {
-  background-color:white;
-}
 
 
-
+/* pref */
 #defaultFontSize {
   min-width:5em;
 }
-
-
-wizard {
-  background-color: rgb(245,245,245) !important;
+#showUpdateInfoButton {
+  visibility:collapse;
 }
+
+
+
+
+
 .wizard-buttons-separator,
 .wizard-header-description[value=""] {
   display:none !important;
@@ -2338,9 +1187,6 @@ wizard {
   margin:0px;
 }
 
-*[disabled="true"] {
-  opacity:0.5;
-}
 
 
 .message-icon,
@@ -2362,18 +1208,6 @@ wizard {
 
 
 
-/** TODO mv to correct file in /dialogs/ **/
-#jump_to_file .dialog-content-box {
-  padding:0px;
-}
-#jump_to_file sb-playlist {
-  margin:0px !important;
-}
-/** TODO mv to correct file in /dialogs/ **/
-#showUpdateInfoButton {
-  visibility:collapse;
-}
-
 
 
 #sb-playlist-filters {
@@ -2381,6 +1215,68 @@ wizard {
 }
 
 
-.addengine-item {
-  background-color:rgb(255,255,215);
+
+treecol {
+  min-width: 45px;
 }
+
+treecol[bind="http://songbirdnest.com/data/1.0#rating"] {
+  min-width: 78px;
+  width: 78px;
+}
+treecol[bind="http://songbirdnest.com/data/1.0#originPageImage"] {
+  min-width: 20px;
+  width: 20px;
+}
+treecol[bind="http://songbirdnest.com/data/1.0#ordinal"] {
+  min-width: 42px;
+  width: 42px;
+}
+treecol[bind="http://songbirdnest.com/data/1.0#downloadButton"] {
+  min-width: 86px;
+  width: 86px;
+}
+
+
+radiogroup {
+  padding:4px;
+}
+.groupbox-body {
+  padding: 8px !important;
+  margin: 0;
+}
+.groupbox-title {
+  padding:0 !important;
+  margin:0 !important;
+}
+groupbox caption {
+  padding:0 !important;
+  margin:0 !important;
+  -moz-box-flex:1 !important;
+}
+.caption-text {
+  font-size:9px !important;
+}
+
+
+separator {
+  padding:4px 0;
+}
+
+
+
+
+toolbarbutton:active > .toolbarbutton-icon,
+toolbarbutton:active > .toolbarbutton-menu-dropmarker,
+toolbarbutton:active > .toolbarbutton-menulist-dropmarker,
+toolbarbutton:active > .toolbarbutton-menubutton-dropmarker,
+toolbarbutton[open="true"] > .toolbarbutton-icon,
+toolbarbutton[open="true"] > .toolbarbutton-menu-dropmarker,
+toolbarbutton[open="true"] > .toolbarbutton-menulist-dropmarker,
+toolbarbutton[open="true"] > .toolbarbutton-menubutton-dropmarker {
+  opacity:0.5;
+}
+
+
+
+

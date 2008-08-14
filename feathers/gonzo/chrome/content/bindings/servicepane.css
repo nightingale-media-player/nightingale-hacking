@@ -40,22 +40,6 @@ Imported by bindings.css or directly into feathers.
 
 
 
-/* Twisty and Shouty **/
-.servicepane-tree > treechildren::-moz-tree-twisty(open) {
-  list-style-image: url(chrome://songbird/skin/service-pane/twisty-open.png);
-}
-.servicepane-tree > treechildren::-moz-tree-twisty(closed) {
-  list-style-image: url(chrome://songbird/skin/service-pane/twisty-closed.png);
-}
-.servicepane-tree > treechildren::-moz-tree-twisty(open),
-.servicepane-tree > treechildren::-moz-tree-twisty(closed) {
-  -moz-image-region: rect(0px, 9px, 9px, 0px);
-}
-.servicepane-tree > treechildren::-moz-tree-twisty(open selected),
-.servicepane-tree > treechildren::-moz-tree-twisty(closed selected) {
-  -moz-image-region: rect(9px, 9px, 18px, 0px);
-}
-
 
 
 /* Service Pane Icons **/

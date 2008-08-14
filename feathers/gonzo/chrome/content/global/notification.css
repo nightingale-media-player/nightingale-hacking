@@ -2,10 +2,6 @@
 
 notification {
   min-height: 30px;
-  background-position:center top;
-  background-repeat:repeat-x;
-  padding: 0px 8px 1px 8px;
-  border-bottom:1px solid gray;
 }
 
 notification,

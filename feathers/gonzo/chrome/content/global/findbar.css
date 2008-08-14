@@ -3,20 +3,10 @@
 findbar {
   min-height: 25px;
   max-height: 25px;
-  padding:0;
-
-  background-image:url('chrome://songbird/skin/find-bar/bg-find-bar.png');
-  background-repeat:repeat-x;
-  background-position:center top;
-  
-  border:none;
+  padding:0 0 1px 0;
   
   -moz-box-pack: center;
   -moz-box-align: center;
-  
-  padding:0 0 1px 0;
-  background-color:rgb(220,220,220);
-  border-bottom:1px solid gray;
 }
 
 findbar label,
@@ -153,9 +143,4 @@ findbar .checkbox-icon,
 toolbarbutton.findbar-closebutton > .toolbarbutton-text,
 image.find-status-icon {
   display: none;
-}
-
-.findbar-find-status {
-  color:rgb(80,80,80);
-/*  text-decoration:italic;*/
 }

@@ -47,13 +47,10 @@
 
 /* ::::: textbox ::::: */
 
-textbox,
-textbox.padded /* Used by autocomplete widgets that don't have an icon. Gross. -dwh */
-{
+textbox {
   cursor: text;
   margin: 4px 4px;
   padding: 2px;
-  border: 1px solid;
 }
     
 html|*.textbox-input, 

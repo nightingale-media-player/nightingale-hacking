@@ -56,32 +56,27 @@ dialog:root #sb-sys-outer-frame-children > stack > vbox {
 .dialog-button-box,
 .wizard-buttons,
 .paneDeckContainer+hbox /** prefs **/ {
-  background-image: url(chrome://songbird/skin/window/bg-button-box.png);
-  background-repeat:repeat-x;
-  background-position:center top;
-  background-color:rgb(225,225,225);
   -moz-box-pack:end;
   padding:0 8px;
 }
 
-#dialog-titlebar .left-box > .left,
-#dialog-titlebar .right-box > .right {
+#dialog-titlebar .hook > .left,
+#dialog-titlebar .hook > .right {
   min-width:16px;
   min-height:22px;
   background-position:center top;
   background-repeat:no-repeat;
 }
-#dialog-titlebar .left-box > .left {
-  background-image: url(chrome://songbird/skin/window/bg-title-bar-left.png);
+#dialog-titlebar .hook > .left {
+  background-image: url('chrome://songbird/skin/window/bg-title-bar-left.png');
 }
-#dialog-titlebar .right-box > .right {
-  background-image: url(chrome://songbird/skin/window/bg-title-bar-right.png);
+#dialog-titlebar .hook > .right {
+  background-image: url('chrome://songbird/skin/window/bg-title-bar-right.png');
 }
-#dialog-titlebar .middle {
-  background-image: url(chrome://songbird/skin/window/bg-title-bar.png);
+#dialog-titlebar .hook > .middle {
+  background-image: url('chrome://songbird/skin/window/bg-title-bar.png');
   background-repeat:repeat-x;
   background-position:center top;
-  margin:0 16px;
 }
 
 #sb-sys-dialog-titlebar-osx-buttons {

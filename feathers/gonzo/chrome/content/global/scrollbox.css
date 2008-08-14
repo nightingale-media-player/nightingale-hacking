@@ -38,53 +38,62 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 
-.autorepeatbutton-up[orient="horizontal"],
+/*.autorepeatbutton-up[orient="horizontal"],*/
 .scrollbutton-up[orient="horizontal"] {
   list-style-image:url("chrome://songbird/skin/base-elements/button-scroll-left.png");
 }
-.autorepeatbutton-down[orient="horizontal"],
+/*.autorepeatbutton-down[orient="horizontal"],*/
 .scrollbutton-down[orient="horizontal"] {
   list-style-image:url("chrome://songbird/skin/base-elements/button-scroll-right.png");
 }
-.autorepeatbutton-up,
 .scrollbutton-up {
   list-style-image:url("chrome://songbird/skin/base-elements/button-scroll-up.png");
 }
-.autorepeatbutton-down,
 .scrollbutton-down {
   list-style-image:url("chrome://songbird/skin/base-elements/button-scroll-down.png");
 }
 
 
-.autorepeatbutton-up[orient="horizontal"],
-.scrollbutton-up[orient="horizontal"],
-.autorepeatbutton-down[orient="horizontal"],
-.scrollbutton-down[orient="horizontal"],
+.autorepeatbutton-up {
+  list-style-image: url("chrome://songbird/skin/base-elements/button-spin-up.png");
+}
+.autorepeatbutton-down {
+  list-style-image:  url("chrome://songbird/skin/base-elements/button-spin-down.png");
+}
+
 .autorepeatbutton-up,
+.autorepeatbutton-down {
+  -moz-image-region:rect(0px 9px 9px 0px);
+}
+
+.scrollbutton-up[orient="horizontal"],
+.scrollbutton-down[orient="horizontal"],
 .scrollbutton-up,
-.autorepeatbutton-down,
 .scrollbutton-down {
   -moz-image-region:rect(0px 8px 8px 0px);
 }
-
-
-.autorepeatbutton-up[orient="horizontal"][disabled="true"],
 .scrollbutton-up[orient="horizontal"][disabled="true"],
-.autorepeatbutton-down[orient="horizontal"][disabled="true"],
 .scrollbutton-down[orient="horizontal"][disabled="true"],
-.autorepeatbutton-up[disabled="true"],
-.autorepeatbutton-down[disabled="true"],
 .scrollbutton-up[disabled="true"],
 .scrollbutton-down[disabled="true"] {
   -moz-image-region:rect(24px 8px 32px 0px);
 }
 
 
+.autorepeatbutton-up[orient="horizontal"][disabled="true"],
+.autorepeatbutton-down[orient="horizontal"][disabled="true"],
+.autorepeatbutton-up[disabled="true"],
+.autorepeatbutton-down[disabled="true"] {
+  opacity:0.5;
+}
+
+
+
 .autorepeatbutton-up {
-  padding-bottom:5px;
+  padding-bottom:2px;
 }
 .autorepeatbutton-down {
-  padding-top:5px;
+  padding-top:2px;
 }
 
 
@@ -92,7 +101,6 @@
 .scrollbutton-down > .toolbarbutton-text {
   display:none;
 }
-
 
 autorepeatbutton {
   -moz-box-align:center;

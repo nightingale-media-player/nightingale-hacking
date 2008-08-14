@@ -41,205 +41,101 @@ Imported by bindings.css or directly into feathers.
 
 
 /** Text **/
-.faceplate-text
-{
+.faceplate-text {
   margin: 0;
-  color:rgb(250,250,250);
-  
-  font-size: 10px; 
 }
-
-.sb-player-artist-label,
-.sb-player-title-label {
-}
-
 
 .faceplate-album-box,
-.faceplate-artist-box
-{
+.faceplate-artist-box {
   height: 14px;
   padding: 0px;
   margin: 0px;
 }
-
 .faceplate-curtrack-box:hover,
-.faceplate-curtrack-box:hover .faceplate-text
-{
+.faceplate-curtrack-box:hover .faceplate-text {
   text-decoration: underline;
   cursor: pointer;
 }
 
-/* the seekbar slider */
-
-/** 
-  NOTE:
-  In order to keep the progress meter exactly in sync with  
-  the slider we make the slider thumb invisible, and paint
-  a fake thumb as a background image on the right edge
-  of the progress bar.
- **/
-  
 
 #track_info {
   min-height:20px;
-  padding:0 8px;
-  margin-top:2px;
+  padding:3px 8px 1px 8px;
 }
 .faceplate-seekinfo-box {
-  height:16px;
-  padding:0 8px;
-  margin-bottom:2px;
+  min-height:16px;
+  padding:0px 8px 4px 8px;
 }
-
-
-
-sb-player-timeelapsed-label label,
-sb-player-totaltime-label label {
-  font-size:9px !important;
-  color:rgb(140,140,140) !important;
-}
-sb-player-timeelapsed-label ,
+sb-player-timeelapsed-label,
 sb-player-totaltime-label {
-/*  min-width:42px;*/
   padding:0;
   margin:0;
+  min-height:16px;
 }
-
-
-
-
 
 .faceplate-progressmeter,
-.faceplate-seekbar
-{
-  height: 12px;
-}
-
+.faceplate-seekbar,
 slider.sb-player-seek-slider,
-progressmeter.sb-player-seek-slider
-{
+progressmeter.sb-player-seek-slider {
   height: 12px;
 }
 
-thumb.sb-player-seek-slider 
-{
+thumb.sb-player-seek-slider  {
   width: 12px;
   height: 12px;
-  background-image: url(chrome://songbird/skin/media-control-pane/button-seek-thumb.png);
-  background-repeat: no-repeat;
-  background-position: center 0px;
-  border:none;
 }
-thumb.sb-player-seek-slider:hover {
-  background-position: center -12px;
-}
-thumb.sb-player-seek-slider:active {
-  background-position: center -24px;
-}
-thumb.sb-player-seek-slider[disabled="true"] {
-  background-position: center -36px;
-}
+
 
 progressmeter.sb-player-seek-slider > .progress-bar {
   background-image:none;
 }
 
 
-thumb.sb-player-seek-slider  > gripper
-{
+thumb.sb-player-seek-slider  > gripper {
   height: 12px;
 }
-progressmeter.sb-player-seek-slider
-{
+progressmeter.sb-player-seek-slider {
   height: 12px;
   margin: 0px;
   padding: 0px;
-  border: 0px !important;
 }
 progressmeter.sb-player-seek-slider > .progress-remainder
 {
   height: 12px;
   background-image: none;
 }
-progressmeter.sb-player-seek-slider > .progress-bar
-{
+progressmeter.sb-player-seek-slider > .progress-bar {
   min-width:12px;
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar-progress.png);
-  background-repeat:no-repeat;
-  background-position:8px 0;
-
 }
 
 
 
 /**
- * The following rules are there to allow showing the seek buffering animation
- * when faceplate.buffering is true.
- */
-sb-player-seek-slider[buffering="true"]
-{
+TODO
+sb-player-seek-slider[buffering="true"] {
   background-image: url('chrome://songbird/skin/faceplate/seek-buffering-animation.png');
   background-repeat: repeat-x;
   background-position: center center;
 }
-sb-player-seek-slider[buffering="true"] > #sb-player-seek-slider
-{
+sb-player-seek-slider[buffering="true"] > #sb-player-seek-slider {
   display: none;
 }
+*/
 
 
 
 
-
-
-
-#faceplate_seekbar_box {
-  
-}
-#faceplate_seekbar_box > .left-box > .left,
-#faceplate_seekbar_box > .right-box > .right {
+#faceplate_seekbar_box > .hook > .left,
+#faceplate_seekbar_box > .hook > .middle,
+#faceplate_seekbar_box > .hook > .right {
   min-width:8px;
   min-height:12px;
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar-left-right.png);
-  background-repeat:no-repeat;
-}
-#faceplate_seekbar_box > .left-box > .left {
-  background-position:left center;
-}
-#faceplate_seekbar_box > .right-box > .right {
-  background-position:right center;
-}
-#faceplate_seekbar_box > .middle {
-  margin:0 8px;
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar.png);
-  background-repeat:repeat-x;
-  background-position:left center;
-}
-
-#faceplate_seekbar_box > .notches > hbox+hbox {
-/*
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar-notch.png);
-  background-repeat:no-repeat;
-  background-position:left center;
-*/
 }
 
 
-#sb-player-title-label-label {
-  font-weight:bold;
-}
-#sb-player-artist-label-label,
-#sb-player-album-label-label {
-  color:rgb(215,215,215);
-}
 
-/* title will always be something /
-/*#sb-player-title-label-label:not([value=""]),*/
+
 #sb-player-artist-label-label:not([value=""]),
 #sb-player-album-label-label:not([value=""]) {
   padding-left:12px;
-  
-  background-image: url(chrome://songbird/skin/media-control-pane/icon-text-delimiter.png);
-  background-repeat:no-repeat;
-  background-position:left center;
 }

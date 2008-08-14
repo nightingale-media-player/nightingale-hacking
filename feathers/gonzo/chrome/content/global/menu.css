@@ -103,8 +103,8 @@ menuitem[type="radio"] > .menu-iconic-left {
   /*no work*/
 }
 
-#main-menubar > menu[_moz-menuactive="true"][open="true"] {
-  background-color:rgb(180,180,180);
+#main-menubar > menu {
+  background-color:transparent;
 }
 
 /* ..... internal content .... */

@@ -73,13 +73,13 @@
 
 
     <stack id="titlebar_box" flex="1">
-      <hbox flex="1" align="left" class="left-box">
+
+      <hbox flex="1" class="hook">
         <hbox class="left"/>
-      </hbox>
-      <hbox flex="1" align="right" class="right-box">
+        <hbox class="middle" flex="1"/>
         <hbox class="right"/>
       </hbox>
-      <hbox flex="1" class="middle" />
+      
       <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
       <sb-sys-titlebar context="feathersPopupMenu">
         <!-- Note: This menu must have the id "main-menubar", as it is the overlay
@@ -94,13 +94,11 @@
     <vbox flex="1" id="content_player_wrapper" playercontrols="bottom">
       <vbox id="content_wrapper" flex="1">
         <stack id="nav_bar_box">
-          <hbox flex="1" align="left" class="left-box">
+          <hbox flex="1" class="hook">
             <hbox class="left"/>
-          </hbox>
-          <hbox flex="1" align="right" class="right-box">
+            <hbox class="middle" flex="1"/>
             <hbox class="right"/>
           </hbox>
-          <hbox flex="1" class="middle" />
           <!-- BROWSER TOOLBAR.  Filled via overlay by layoutWithBrowserOverlay.xul and others. 
                Note: this item must have id="navigator-toolbox" for Firefox extension compatibility.
           -->
@@ -232,13 +230,11 @@
       <vbox id="player_wrapper">
         <stack id="control_pane_box" pack="center" >
           <!-- TODO Move corner xul into an sb-themed-frame-stack -->
-          <hbox flex="1" align="left" class="left-box">
-          <hbox class="left"/>
+          <hbox flex="1" class="hook">
+            <hbox class="left"/>
+            <hbox class="middle" flex="1"/>
+            <hbox class="right"/>
           </hbox>
-          <hbox flex="1" align="right" class="right-box">
-          <hbox class="right"/>
-          </hbox>
-          <hbox flex="1" class="middle" />
           <!-- /TODO -->
           
           <hbox flex="1" id="control_pane_context_box" context="playerControlsPopupMenu" />
@@ -265,13 +261,11 @@
                           inverted="true" />
 
                 <!-- TODO Move corner xul into an sb-themed-frame-stack -->
-                <hbox flex="1" align="left" class="left-box">
+                <hbox flex="1" class="hook">
                   <hbox class="left"/>
-                </hbox>
-                <hbox flex="1" align="right" class="right-box">
+                  <hbox class="middle" flex="1"/>
                   <hbox class="right"/>
                 </hbox>
-                <hbox flex="1" class="middle" />
                 <!-- /TODO -->
 
                 <hbox id="faceplate_content" flex="1">
@@ -291,13 +285,11 @@
                     <hbox class="faceplate-seekinfo-box" align="center" pack="center">
                       <sb-player-timeelapsed-label   class="faceplate-text" align="right"/>
                       <stack id="faceplate_seekbar_box" flex="1">
-                        <hbox flex="1" align="left" class="left-box">
+                        <hbox flex="1" class="hook">
                           <hbox class="left"/>
-                        </hbox>
-                        <hbox flex="1" align="right" class="right-box">
+                          <hbox class="middle" flex="1"/>
                           <hbox class="right"/>
                         </hbox>
-                        <hbox flex="1" class="middle" />
                         <hbox flex="1" class="notches">
                           <hbox flex="1"/>
                           <hbox flex="1"/>
@@ -322,13 +314,11 @@
                           boolean="true"
                           inverted="false" />
 
-                <hbox flex="1" align="left" class="left-box">
+                <hbox flex="1" class="hook">
                   <hbox class="left"/>
-                </hbox>
-                <hbox flex="1" align="right" class="right-box">
+                  <hbox class="middle" flex="1"/>
                   <hbox class="right"/>
                 </hbox>
-                <hbox flex="1" class="middle" />
                 <hbox flex="1" id="faceplate-inactive-splash" />
               </stack>
             </hbox>
@@ -344,18 +334,6 @@
         </stack>
       </vbox>
     </vbox>
-
-    <stack id="bottom-bar" flex="1">
-<!-- TODO Move corner xul into an sb-themed-frame-stack -->
-      <hbox flex="1" align="left" class="left-box">
-        <hbox class="left"/>
-      </hbox>
-      <hbox flex="1" align="right" class="right-box">
-        <hbox class="right"/>
-      </hbox>
-      <hbox flex="1" class="middle" />
-<!-- /TODO -->
-    </stack>
 
   </sb-sys-outer-frame>
 

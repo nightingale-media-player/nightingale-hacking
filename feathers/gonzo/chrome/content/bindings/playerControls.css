@@ -130,40 +130,19 @@ Imported by bindings.css or directly into feathers.
   }
 
 
-/* the resume button (this is just the "active" down state of the pause button) 
-
-.sb-player-pause-button-resume > button
-{
-  list-style-image: url(chrome://songbird/skin/buttons/player-controls.png); 
-  -moz-image-region: rect(0px 89px 52px 39px);
-}
-.sb-player-pause-button-resume > button:hover
-{ 
-  -moz-image-region: rect(0px 89px 52px 39px);
-}
-.sb-player-pause-button-resume > button:active
-{
-  -moz-image-region: rect(0px 89px 52px 39px);
-}
-.sb-player-pause-button-resume > button[disabled="true"]
-{ 
-  -moz-image-region: rect(162px 89px 214px 39px);
-}
-*/
-
 /* the stop button */
 
 .sb-player-stop-button-stop > button {
   list-style-image: url(chrome://songbird/skin/media-control-pane/button-stop.png); 
   -moz-image-region: rect(0px 40px 40px 0px);
 }
-.sb-player-stop-button-stop > button:hover { 
+.sb-player-stop-button-stop:hover > button { 
   -moz-image-region: rect(40px 40px 80px 0px);
 }
-.sb-player-stop-button-stop > button:active {
+.sb-player-stop-button-stop:active > button {
   -moz-image-region: rect(80px 40px 120px 0px);
 }
-.sb-player-stop-button-stop > button[disabled="true"] { 
+.sb-player-stop-button-stop[disabled="true"] > button { 
   -moz-image-region: rect(120px 40px 160px 0px);
 }
 
@@ -274,8 +253,8 @@ sb-player-mute-button {
 
 
 progressmeter.sb-player-volume-slider {
-  min-width: 78px;
-  max-width: 78px;
+  min-width: 74px;
+  max-width: 74px;
   margin: 0px;
 }
 

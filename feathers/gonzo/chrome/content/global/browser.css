@@ -25,43 +25,61 @@
 }
 
 
-.scrollbutton-down-stack {
-
-}
-
-
-
 /**
  * Tab Scrollbox Arrow Buttons
  */
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up,
 .tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
-
   -moz-border-radius:0px;
-  list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-left.png") !important;
-  -moz-image-region:auto;
+  -moz-image-region:auto !important;
   margin:0;
-    background-image: url('chrome://songbird/skin/browser-tab-bar/bg-scroll.png');
-    background-position:left top;
-    background-repeat:no-repeat;
-    min-width:17px;
-    
-    background-color:transparent !important;
+
+  background-image: url('chrome://songbird/skin/browser-tab-bar/bg-scroll.png');
+  background-position:left 0px;
+  background-repeat:no-repeat;
+  min-width:17px;
+
+  background-color:transparent !important;
+  
+  border:none !important;
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-up {
+  list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-left.png") !important;  
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
+  list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-right.png") !important;
+  background-position:right 0px;
+}
+
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up:hover {
+  -moz-image-region:auto !important;
+  background-position:left -30px;
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-up:active {
+  -moz-image-region:auto !important;
+  background-position:left -60px !important; 
+}
+
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:hover {
+  -moz-image-region:auto !important;
+  background-position:right -30px;
+}
+.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:active {
+  -moz-image-region:auto !important;
+  background-position:right -60px !important; 
 }
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up[disabled="true"] {
+  -moz-image-region:auto !important;
+  background-position:left 0px !important;  
+}
+.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down[disabled="true"] {
+  -moz-image-region:auto !important;
+  background-position:right 0px !important;
 }
 
-.tabbrowser-arrowscrollbox > .scrollbutton-up:hover,
-.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:hover {
-  background-position:center -30px;
-}
- 
-.tabbrowser-arrowscrollbox > .scrollbutton-up:active,
-.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down:active {
-  background-position:center -60px !important;
-}
 
 .tabbrowser-arrowscrollbox > .scrollbutton-up > .toolbarbutton-icon {
 }
@@ -69,18 +87,11 @@
 .scrollbutton-rel-box > .scrollbutton-down-box {
 }
 
-.tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down {
-  list-style-image: url("chrome://songbird/skin/browser-tab-bar/icon-scroll-right.png") !important;
-
-}
 .tabbrowser-arrowscrollbox > .scrollbutton-down-stack > .scrollbutton-down[collapsed="true"] {
    margin:0px !important;
 }
 
 
-
-.tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down[disabled="true"] {
-}
 
 .tabbrowser-arrowscrollbox > .scrollbuton-down-stack > .scrollbutton-down:not([disabled="true"]):hover:active {
 }
@@ -118,7 +129,7 @@ tab[first-tab="true"] > .tab-close-button,
 
 .tabs-alltabs-button {
 
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-tab.png);
+  background-image: url('chrome://songbird/skin/browser-tab-bar/bg-tab.png');
   background-repeat:no-repeat;
   background-position:0px 0px;
 
@@ -126,7 +137,7 @@ tab[first-tab="true"] > .tab-close-button,
   padding: 0px !important;
   margin:0px 0px 2px 0px !important;
   border: none;
-  min-width:14px;
+  min-width:15px;
 }
 
 .tabs-alltabs-button:hover {
@@ -135,21 +146,9 @@ tab[first-tab="true"] > .tab-close-button,
 .tabs-alltabs-button:active {
   background-position:-1px -60px;
 }
-.tabs-alltabs-button[disabled="true"] {
-  background-position:-1px -90px !important;
-}
 .tabs-alltabs-button[open="true"] {
-  background-image: url(chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png) !important;
+  background-image: url('chrome://songbird/skin/browser-tab-bar/bg-selected-tab.png') !important;
   background-position:-1px -60px !important;
-}
-
-.scrollbutton-rel-box > .scrollbutton-down {
-}
-
-.scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover {
-}
-
-.scrollbutton-rel-box > .scrollbutton-down:not([disabled="true"]):hover:active {
 }
 
 /**

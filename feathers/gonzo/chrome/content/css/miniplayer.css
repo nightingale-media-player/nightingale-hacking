@@ -104,79 +104,79 @@ sb-player-totaltime-label label {
 
 
 /*play&pause*/
-.sb-player-play-button-play > button,
-.sb-player-playpause-button-play > button,
-.sb-player-pause-button-pause > button,
-.sb-player-playpause-button-pause > button {  
+#miniplayer .sb-player-play-button-play > button,
+#miniplayer .sb-player-playpause-button-play > button,
+#miniplayer .sb-player-pause-button-pause > button,
+#miniplayer .sb-player-playpause-button-pause > button {  
   list-style-image: url(chrome://songbird/skin/mini-player/play-pause.png); 
   background-image:none !important;
   background-color:transparent !important;
 }
 /*play*/
-.sb-player-play-button-play > button,
-.sb-player-playpause-button-play > button {
+#miniplayer .sb-player-play-button-play > button,
+#miniplayer .sb-player-playpause-button-play > button {
   -moz-image-region: rect(0px 30px 22px 0px);
 }
-.sb-player-play-button-play:hover > button,
-.sb-player-playpause-button-play:hover > button {
+#miniplayer .sb-player-play-button-play:hover > button,
+#miniplayer .sb-player-playpause-button-play:hover > button {
   -moz-image-region: rect(22px 30px 44px 0px);
 }
-.sb-player-play-button-play:active > button,
-.sb-player-playpause-button-play:active > button {
+#miniplayer .sb-player-play-button-play:active > button,
+#miniplayer .sb-player-playpause-button-play:active > button {
   -moz-image-region: rect(44px 30px 66px 0px);
 }
-.sb-player-play-button-play[disabled="true"] > button,
-.sb-player-playpause-button-play[disabled="true"] > button {
+#miniplayer .sb-player-play-button-play[disabled="true"] > button,
+#miniplayer .sb-player-playpause-button-play[disabled="true"] > button {
   -moz-image-region: rect(66px 30px 88px 0px);
 }
 /*pause*/
-.sb-player-pause-button-pause > button,
-.sb-player-playpause-button-pause > button {  
+#miniplayer .sb-player-pause-button-pause > button,
+#miniplayer .sb-player-playpause-button-pause > button {  
   -moz-image-region: rect(0px 60px 22px 30px);
 }
-.sb-player-pause-button-pause:hover > button,
-.sb-player-playpause-button-pause:hover > button { 
+#miniplayer .sb-player-pause-button-pause:hover > button,
+#miniplayer .sb-player-playpause-button-pause:hover > button { 
   -moz-image-region: rect(22px 60px 44px 30px);
 }
-.sb-player-pause-button-pause:active > button,
-.sb-player-playpause-button-pause:active > button {
+#miniplayer .sb-player-pause-button-pause:active > button,
+#miniplayer .sb-player-playpause-button-pause:active > button {
   -moz-image-region: rect(44px 60px 66px 30px);
 }
-.sb-player-pause-button-pause[disabled="true"] > button,
-.sb-player-playpause-button-pause[disabled="true"] > button { 
+#miniplayer .sb-player-pause-button-pause[disabled="true"] > button,
+#miniplayer .sb-player-playpause-button-pause[disabled="true"] > button { 
   -moz-image-region: rect(66px 60px 88px 30px);
 }
 
-sb-player-back-button {
+#miniplayer sb-player-back-button {
   list-style-image: url(chrome://songbird/skin/mini-player/previous.png); 
   padding:0px !important;
   margin:0px !important;
 }
-sb-player-forward-button {
+#miniplayer sb-player-forward-button {
   list-style-image: url(chrome://songbird/skin/mini-player/next.png); 
   padding:0px !important;
   margin:0px !important;
 }
-sb-player-back-button,
-sb-player-forward-button {
+#miniplayer sb-player-back-button,
+#miniplayer sb-player-forward-button {
   -moz-image-region: rect(0px 26px 22px 0px);
 }
-sb-player-back-button:hover,
-sb-player-forward-button:hover { 
+#miniplayer sb-player-back-button:hover,
+#miniplayer sb-player-forward-button:hover { 
   -moz-image-region: rect(22px 26px 44px 0px);
 }
-sb-player-back-button:active,
-sb-player-forward-button:active { 
+#miniplayer sb-player-back-button:active,
+#miniplayer sb-player-forward-button:active { 
   -moz-image-region: rect(44px 26px 66px 0px);
 }
-sb-player-back-button[disabled="true"],
-sb-player-forward-button[disabled="true"] { 
+#miniplayer sb-player-back-button[disabled="true"],
+#miniplayer sb-player-forward-button[disabled="true"] { 
   -moz-image-region: rect(66px 26px 88px 0px);
 }
 
 
 
-#control_buttons_box {
+#miniplayer #control_buttons_box {
   padding:0px !important;
   margin:0px !important;
   min-width:82px;
@@ -184,82 +184,82 @@ sb-player-forward-button[disabled="true"] {
 
 
 
-.sb-player-volume-slider[sbid="sb-progress-slider-min"],
-.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"],
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"] {
   min-width:12px;
   min-height:12px;
   max-width:12px;
   max-height:12px;
 }
 
-.sb-player-volume-slider[sbid="sb-progress-slider-min"] {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"] {
   list-style-image: url(chrome://songbird/skin/mini-player/min-vol.png);
 }
-.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"] {
   list-style-image: url(chrome://songbird/skin/mini-player/max-vol.png);
 }
 
 
 
-.sb-player-volume-slider[sbid="sb-progress-slider-min"],
-.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"],
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"] {
   -moz-image-region: rect(0px 12px 12px 0px);
 }
-.sb-player-volume-slider[sbid="sb-progress-slider-min"]:hover,
-.sb-player-volume-slider[sbid="sb-progress-slider-max"]:hover {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"]:hover,
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"]:hover {
   -moz-image-region: rect(12px 12px 24px 0px);
 }
-.sb-player-volume-slider[sbid="sb-progress-slider-min"]:active,
-.sb-player-volume-slider[sbid="sb-progress-slider-max"]:active {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"]:active,
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"]:active {
   -moz-image-region: rect(24px 12px 36px 0px);
 }
-.sb-player-volume-slider[sbid="sb-progress-slider-min"][disabled="true"],
-.sb-player-volume-slider[sbid="sb-progress-slider-max"][disabled="true"] {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"][disabled="true"],
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"][disabled="true"] {
   -moz-image-region: rect(36px 12px 48px 0px);
 }
 
-.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked],
-.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked] {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"][checked],
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"][checked] {
   -moz-image-region: rect(0px 24px 12px 12px);
 }
-.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked]:hover,
-.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked]:hover {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"][checked]:hover,
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"][checked]:hover {
   -moz-image-region: rect(12px 24px 24px 12px);
 }
-.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked]:active,
-.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked]:active {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"][checked]:active,
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"][checked]:active {
   -moz-image-region: rect(24px 24px 36px 12px);
 }
-.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked][disabled="true"],
-.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked][disabled="true"] {
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-min"][checked][disabled="true"],
+#miniplayer .sb-player-volume-slider[sbid="sb-progress-slider-max"][checked][disabled="true"] {
   -moz-image-region: rect(36px 24px 48px 12px);
 }
 
 
 
-progressmeter.sb-player-volume-slider {
+#miniplayer progressmeter.sb-player-volume-slider {
   min-width: 48px;
   max-width: 48px;
   margin: 0px;
 }
 
 
-sb-player-volume-slider {
+#miniplayer sb-player-volume-slider {
   margin:0;
   padding:0;
 }
 
-thumb.sb-player-volume-slider {
+#miniplayer thumb.sb-player-volume-slider {
   /* no change needed */
 }
 
 
 
-progressmeter.sb-player-volume-slider > .progress-bar,
-progressmeter.sb-player-volume-slider > .progress-remainder {
+#miniplayer progressmeter.sb-player-volume-slider > .progress-bar,
+#miniplayer progressmeter.sb-player-volume-slider > .progress-remainder {
   background-image: url(chrome://songbird/skin/mini-player/vol.png); 
 }
-stack.sb-player-volume-slider {
+#miniplayer stack.sb-player-volume-slider {
   padding:0;
 }
 
@@ -269,7 +269,7 @@ stack.sb-player-volume-slider {
 
 
 
-#faceplate_seekbar_box > .hook {
+#miniplayer #faceplate_seekbar_box > .hook {
   margin:0 8px;
   background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar.png2);
   background-repeat:repeat-x;

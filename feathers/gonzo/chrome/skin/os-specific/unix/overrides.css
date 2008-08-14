@@ -39,7 +39,8 @@ This css file provides additional rules that are only loaded on Unix systems.
 */
 
 popup,
-menupopup {
+menupopup,
+tooltip {
   border:1px solid gray;
 }
 

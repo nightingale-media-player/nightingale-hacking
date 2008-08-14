@@ -266,143 +266,74 @@ WINDOW FRAME
 *******************************************************************************
 */ 
 
-sb-sys-outer-frame
-{
+sb-sys-outer-frame {
   -moz-box-orient: vertical;
 }
 
-.sb-sys-outer-frame-resizer
-{
+.sb-sys-outer-frame-resizer {
   height: 3px;
   width: 3px;
 }
 .sb-sys-outer-frame-resizer-top,
 .sb-sys-outer-frame-resizer-topleft,
-.sb-sys-outer-frame-resizer-topright
-{
+.sb-sys-outer-frame-resizer-topright {
   height: 1px;
   width: 1px;
 }
 
 .sb-sys-outer-frame-chrome-background,
 .sb-sys-outer-frame-chrome,
-.sb-sys-outer-frame-resizer
-{  
+.sb-sys-outer-frame-resizer {  
   background-color: transparent;
 }
 
 /** Set resizer mouse cursors (why doesn't XULRunner provide this?) **/
 .sb-sys-outer-frame-resizer[dir="topleft"] {
   cursor: nw-resize;
-
 }
 .sb-sys-outer-frame-resizer[dir="top"] {
   cursor: n-resize;
-  border-top:1px solid gray;
-  background-color:rgb(200,200,200);
 }
 .sb-sys-outer-frame-resizer[dir="topright"] {
   cursor: ne-resize;
 }
 .sb-sys-outer-frame-resizer[dir="left"] {
   cursor: w-resize;
-  border-right:1px solid gray;
-  border-left:1px solid gray;
-  background-color:rgb(200,200,200);
 }
 .sb-sys-outer-frame-resizer[dir="right"] {
   cursor: e-resize;
-  border-right:1px solid gray;
-  border-left:1px solid gray;
-  background-color:rgb(200,200,200);
 }
 .sb-sys-outer-frame-resizer[dir="bottomleft"] {
   cursor: sw-resize;
-  background-color:rgb(200,200,200);
 }
 .sb-sys-outer-frame-resizer[dir="bottom"] {
   cursor: s-resize;
-  border-bottom:1px solid gray;
-  border-top:1px solid gray;
-  background-color:rgb(200,200,200);
 }
 .sb-sys-outer-frame-resizer[dir="bottomright"] {
   cursor: se-resize;
-  background-color:rgb(200,200,200);
- }
-
+}
 .sb-sys-outer-frame-resizer-rightbottom,
 .sb-sys-outer-frame-resizer-leftbottom,
 .sb-sys-outer-frame-resizer-righttop,
 .sb-sys-outer-frame-resizer-lefttop {
   min-height:9px;
-border-left:1px solid gray;
-border-right:1px solid gray;
 }
-.sb-sys-outer-frame-resizer-righttop,
-.sb-sys-outer-frame-resizer-lefttop {
-    min-height:22px;
-  background-color:rgb(200,200,200);
-  /*
-  background-image: url(chrome://songbird/skin/window/bg-title-bar-resizer.png);
-  background-repeat:no-repeat;
-  background-position:center top;
-  */
-    
-}
-.sb-sys-outer-frame-resizer-bottomleft {
-  min-width:12px;
-border-left:1px solid gray;
-border-bottom:1px solid gray;
-  background-image: url(chrome://songbird/skin/window/bg-resizer-bottom-corner.png);
-  background-repeat:no-repeat;
-  background-position:left top;
-}
+.sb-sys-outer-frame-resizer-topleft,
+.sb-sys-outer-frame-resizer-topright,
+.sb-sys-outer-frame-resizer-bottomleft,
 .sb-sys-outer-frame-resizer-bottomright {
   min-width:12px;
-border-right:1px solid gray;
-border-bottom:1px solid gray;
-  background-image: url(chrome://songbird/skin/window/bg-resizer-bottom-corner.png);
-  background-repeat:no-repeat;
-  background-position:right top;
 }
 
-.sb-sys-outer-frame-resizer-topleft {
-  min-width:12px;
-border-left:1px solid gray;
-border-top:1px solid gray;
-}
-.sb-sys-outer-frame-resizer-topright {
-  min-width:12px;
-border-right:1px solid gray;
-border-top:1px solid gray;
-}
+
+
+
+
+
 
 /** Mac bottom right resizer **/
-
 .sb-sys-outer-frame-resizer-image {
   list-style-image: url(chrome://songbird/skin/window/button-resizer.png);
   min-width:12px;
   min-height:12px;
-}
-
-/** komi:no work :-( 
-.sb-sys-outer-frame-resizer-image:hover {
-  -moz-image-region: rect(12px 12px 24px 0px);
-}
-.sb-sys-outer-frame-resizer-image:active {
-  -moz-image-region: rect(24px 12px 36px 0px);
-}
-.sb-sys-outer-frame-resizer-image[disabled="true"] {
-  -moz-image-region: rect(36px 12px 48px 0px);
-}
-
-**/
-
-
-#mac_resize_image_box {
-}
-#sb-sys-titlebar-osx-title-title-shadow label {
-  color:rgb(235,235,235) !important;
-  padding-top:1px !important;
 }

@@ -119,10 +119,6 @@ sb-device-battery {
 
 
 
-#overall_device_info_box,
-#device_management_tabs {
-  background-color: rgb(220,220,220);
-}
 #device_management_tabs {
   background-image:none;
 }
@@ -152,12 +148,7 @@ sb-device-battery {
 }
 .device-tab-button-box {
   margin:0 4px;
-  -moz-border-radius:3px;
-  background-image: url('chrome://songbird/skin/window/bg-button-box.png');
-  background-repeat:repeat-x;
-  background-position:center -1px;
-  background-color:rgb(225,225,225);
-  border:1px solid gray;
+  padding:0px 6px;
 }
 
 sb-device-info > groupbox,

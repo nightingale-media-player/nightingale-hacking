@@ -166,15 +166,6 @@ panel[type="autocomplete"] > tree > treecols > hbox
   -moz-appearance: none !important;
 }
 
-.autocomplete-treebody::-moz-tree-cell-text {
-}
-
-treechildren.autocomplete-treebody::-moz-tree-row(selected) {
-}
-
-treechildren.autocomplete-treebody::-moz-tree-cell-text(selected) {
-}
-
 /* ::::: textboxes inside toolbarpaletteitems ::::: */
 
 toolbarpaletteitem > toolbaritem > textbox > hbox > hbox > html|*.textbox-input {
@@ -254,74 +245,6 @@ colorpicker[type="button"] {
 
 
 
-/*
-config.css
-*/
-#warningScreen
-{
-  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
-}
-
-#warningBox
-{
-  background-color: white;
-  color: rgb(40,40,40);
-  border: 1px solid gray;
-  -moz-border-radius: 10px;
-  padding: 1em;
-  margin-left: 1em;
-  margin-right: 1em;
-}
-
-#warningInnerBox
-{
- max-width: 50em;
-}
-
-#warningTitle
-{
-  margin: 0 0 .6em 0;
-  font-size: 160%;
-}
-
-#warningText
-{
-  font-size: 110%;
-  margin-left: 0;
-}
-
-#warningButton
-{
-  margin-top: 0.6em;
-}
-
-#showWarningNextTime
-{
-  margin-top: 0.6em;
-}
-
-#exclam
-{
-  list-style-image: url("chrome://global/skin/icons/warning-large.png");
-  -moz-margin-end: 3em;
-}
-
-#configTreeBody::-moz-tree-cell-text(user)
-{
-  font-weight: bold;
-}
-
-#configTreeBody::-moz-tree-cell-text(locked)
-{
-  font-style: italic;
-}
-
-#configTree 
-{  
-  margin-top: 5px !important;
-  margin-bottom: 5px !important;
-}
-
 
 
 
@@ -390,7 +313,7 @@ toolbarbutton[type="menu-button"][open="true"],
 toolbarbutton[type="menu-button"][disabled="true"],
 toolbarbutton[type="menu-button"][disabled="true"]:hover,
 toolbarbutton[type="menu-button"][disabled="true"]:hover:active {
-  background-color: transparent;
+/*  background-color: transparent;*/
 }
 
 .toolbarbutton-menubutton-button {

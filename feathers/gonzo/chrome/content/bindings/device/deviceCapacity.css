@@ -50,7 +50,6 @@ Imported by bindings.css or directly into feathers.
 
 .capacity_value_label {
   font-size:80%;
-  color:gray;
 }
 
 .device-capacity-legend-box {
@@ -64,41 +63,6 @@ Imported by bindings.css or directly into feathers.
 
 .device-capacity-bar-box {
   height: 20px;
-}
-
-.device-capacity-music,
-.device-capacity-legend-color-box[type="music"] {
-  background-color: rgb(0,105,245);
-}
-
-.device-capacity-video,
-.device-capacity-legend-color-box[type="video"] {
-  background-color: rgb(69,200,0);
-}
-
-.device-capacity-other,
-.device-capacity-legend-color-box[type="other"] {
-  background-color: rgb(255,210,0);
-}
-
-.device-capacity-other2,
-.device-capacity-legend-color-box[type="other2"] {
-  background-color: rgb(200,40,200);
-}
-
-.device-capacity-other3,
-.device-capacity-legend-color-box[type="other3"] {
-  background-color: rgb(200,200,40);
-}
-
-.device-capacity-other4,
-.device-capacity-legend-color-box[type="other4"] {
-  background-color: rgb(40,200,200);
-}
-
-.device-capacity-free,
-.device-capacity-legend-color-box[type="free"] {
-  background-color: rgb(235,235,235);
 }
 
 .device-capacity-legend-box > * {
@@ -130,9 +94,6 @@ Imported by bindings.css or directly into feathers.
 .device-capacity-bar-notches {
 }
 
-.device-capacity-bar-notches hbox+hbox {
-  border-left: 1px solid rgba(0,0,0,0.1);
-}
 
 .device-capacity-legend-label-box {
 

@@ -53,10 +53,9 @@ window#mainplayer
 /* hide the overflow here so that as the window shrinks below a certain size
    the scrollbars on the browser window don't disappear.
  */  
-#control_pane_box
-{
-  min-height: 52px; /* 52+1 */
-  max-height: 52px; /* 52+1 */
+#control_pane_box {
+  min-height: 52px;
+  max-height: 52px;
   overflow-x: hidden;
 }
 
@@ -75,6 +74,10 @@ window#mainplayer
 
 
 
+statusbar {
+  min-height:20px;
+  max-height:20px;
+}
 
 
 #search-splitter{

@@ -49,7 +49,7 @@ tree,
 .sb-playlist-tree,
 .sb-filterlist-tree { 
   -moz-appearance: none;
-  border:1px solid gray;
+  border:1px solid rgb(131,131,131);;
   background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
 }
 
@@ -86,7 +86,7 @@ treechildren::-moz-tree-line {
 /* ::::: tree separator ::::: */
 
 treechildren::-moz-tree-separator {
-  border-top: 1px dotted gray;
+  border-top: 1px dotted rgb(131,131,131);;
   margin: 0 2px;
 }
 
@@ -150,12 +150,10 @@ tree[enableColumnDrag="true"] > treecols > treecol:hover:active {
 treechildren::-moz-tree-twisty {
   padding-right: 4px;
   width: 10px; /* The image's width is 10 pixels */
-  list-style-image: url("chrome://songbird/skin/tree/twisty-closed.png");
 }
 
 treechildren::-moz-tree-twisty(open) {
   width: 10px; /* The image's width is 10 pixels */
-  list-style-image: url("chrome://songbird/skin/tree/twisty-open.png");
 }
 
 treechildren::-moz-tree-twisty(Name, separator) {

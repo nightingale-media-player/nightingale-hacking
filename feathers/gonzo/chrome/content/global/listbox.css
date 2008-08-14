@@ -66,9 +66,6 @@ listbox:focus > listitem[selected="true"][current="true"] {
 
 }
 
-listitem[selected="true"] {
-background-color: rgb(186,218,255);
-}
 listitem[disabled="true"][selected="true"] {
   background-color:transparent !important;
 }
