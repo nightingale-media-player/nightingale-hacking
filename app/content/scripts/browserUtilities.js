@@ -860,3 +860,19 @@ function BrowserNumberTabSelection(event, index) {
   event.preventDefault();
   event.stopPropagation();
 }
+
+function FullScreen() {
+  var isMediaPage = SBDataGetBoolValue('browser.in_media_page');
+  var servicepaneState =
+    SBDataGetBoolValue('splitter.servicepane_splitter.was_collapsed');
+  if(!isMediaPage) {
+    playerControls_open =
+	  !(document.getElementById('control_pane_box').getAttribute('hidden'));
+    document.getElementById('control_pane_box').hidden = playerControls_open;
+    SBDataSetBoolValue('player_controls.was_collapsed', playerControls_open);
+    if (playerControls_open)
+      gServicePane.open = false;
+    else
+      gServicePane.open = servicepaneState;
+  }
+}

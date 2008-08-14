@@ -147,9 +147,11 @@
                                     if (value) {
                                       /* going into media page mode */
                                       gServicePane.open = true;
+                                      document.getElementById('control_pane_box').hidden = false;
                                     } else {
                                       /* going out of media page */
                                       gServicePane.open = SBDataGetBoolValue(key);
+                                      document.getElementById('control_pane_box').hidden = SBDataGetBoolValue('player_controls.was_collapsed')
                                     }
                                   }
                                   return value;
