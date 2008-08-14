@@ -206,7 +206,8 @@ tab[first-tab="true"] > .tab-close-button,
 /*
 weak!
 */
-#tabstrip .scrollbox-innerbox {
+
+#tabstrip .tabbrowser-arrowscrollbox .scrollbox-innerbox {
   background-image:url(chrome://songbird/skin/browser-tab-bar/bg-tab-delimiter.png);
   background-position:right top;
   background-repeat:no-repeat;

@@ -35,6 +35,10 @@ sb-player-timeelapsed-label label,
 sb-player-totaltime-label label {
   font-size:10px !important;
 }
+sb-player-timeelapsed-label,
+sb-player-totaltime-label {
+  min-height:0px;
+}
 
 
 
@@ -366,7 +370,7 @@ sb-player-totaltime-label label {
 resizer {
   min-width:3px;
   background-color:rgb(200,200,200);
-  border:1px solid gray;
+  border:1px solid rgb(131,131,131);
 }
 
 window[platform=Darwin] resizer {

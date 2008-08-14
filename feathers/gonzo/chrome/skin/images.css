@@ -649,12 +649,12 @@ scrollcorner {
 .sb-sys-outer-frame-resizer-bottomleft {
   background-image: url('chrome://songbird/skin/window/bg-resizer-bottom-corner.png');
   background-repeat:no-repeat;
-  background-position:left bottom;
+  background-position:left top;
 }
 .sb-sys-outer-frame-resizer-bottomright {
   background-image: url('chrome://songbird/skin/window/bg-resizer-bottom-corner.png');
   background-repeat:no-repeat;
-  background-position:right bottom;
+  background-position:right top;
 }
 
 

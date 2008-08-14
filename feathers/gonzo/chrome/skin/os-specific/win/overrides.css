@@ -39,16 +39,16 @@ This css file provides additional rules that are only loaded on Windows.
 popup,
 menupopup,
 tooltip {
-  border:1px solid gray;
+  border:1px solid rgb(131,131,131);
 }
 
 dialog[hidechrome="true"],
 wizard {
   border:3px solid black;
-  border-top:1px solid gray;
-  -moz-border-right-colors:gray rgb(161,161,161) gray;
-  -moz-border-bottom-colors:gray rgb(161,161,161) gray;
-  -moz-border-left-colors:gray rgb(161,161,161) gray;
+  border-top:1px solid rgb(131,131,131);
+  -moz-border-right-colors:rgb(131,131,131) rgb(161,161,161) rgb(131,131,131);
+  -moz-border-bottom-colors:rgb(131,131,131) rgb(161,161,161) rgb(131,131,131);
+  -moz-border-left-colors:rgb(131,131,131) rgb(161,161,161) rgb(131,131,131);
 }
 
 .faceplate-text {

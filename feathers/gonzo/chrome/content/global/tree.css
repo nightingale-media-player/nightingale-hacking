@@ -49,7 +49,7 @@ tree,
 .sb-playlist-tree,
 .sb-filterlist-tree { 
   -moz-appearance: none;
-  border:1px solid rgb(131,131,131);;
+  border:1px solid rgb(131,131,131);
   background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
 }
 
@@ -86,7 +86,7 @@ treechildren::-moz-tree-line {
 /* ::::: tree separator ::::: */
 
 treechildren::-moz-tree-separator {
-  border-top: 1px dotted rgb(131,131,131);;
+  border-top: 1px dotted rgb(131,131,131);
   margin: 0 2px;
 }
 

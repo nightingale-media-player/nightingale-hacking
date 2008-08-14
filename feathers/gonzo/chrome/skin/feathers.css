@@ -101,10 +101,10 @@ treechildren::-moz-tree-progressmeter {
   color:rgba(0,0,0,0.50);
 }
 
-
-
-
-
+.menu-accel,
+.menu-iconic-accel {
+  color:rgb(131,131,131);
+}
 
 
 
@@ -331,64 +331,49 @@ Used for displaying notification hats in the browser and metadata editor.
 ******************************************************************************/
 statusbar {
   border-top:1px solid rgb(131,131,131);
-/*  background-image:url('chrome://songbird/skin/service-pane/bg-status-bar.png'); */
 }
 #status-bar,
 #servicepane-status-bar {
   border-bottom:1px solid rgb(131,131,131);
 }
-
-
 #titlebar_box {
   border-bottom:1px solid rgb(131,131,131);
 }
-
 #sb-sys-title-title {
   font-weight:bold;
 }
 
 
 
-/**
+/******************************************************************************
   Service Pane
-**/
+******************************************************************************/
 #servicepane {
   background-color: rgb(220,220,220);
-/*  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');*/
 }
-.servicepane-tree > treechildren::-moz-tree-row( selected ),
-.servicepane-tree > treechildren::-moz-tree-row( selected focus ) {
-  background-color:rgb(255,255,255);
-/*  background-image: url('chrome://songbird/skin/service-pane/bg-selected-node.png');*/
-}
+/* container nodes get special treatment so they look unclickable */
 .servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-bookmarks ),
 .servicepane-tree > treechildren::-moz-tree-cell-text( servicesource-playlists ),
 .servicepane-tree > treechildren::-moz-tree-cell-text( folder ) {
   color:rgb(101,101,101) !important;
   font-weight:normal !important;
 }
-.servicepane-tree > treechildren::-moz-tree-row( dropBefore ) {
-  border-top:1px solid rgb(131,131,131); !important;
-}
-.servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
-  border-bottom:1px solid rgb(131,131,131); !important;
-}
-.servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
-  background-color:rgb(200,200,200);
-
-  border:2px solid rgb(131,131,131); !important;
-  -moz-border-radius:6px;
-}
 .servicepane-tree > treechildren::-moz-tree-cell-text(selected) {
   font-weight:bold;
 }
 
+.servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
+  background-color:rgb(200,200,200);
+  border:2px solid rgb(131,131,131); !important;
+  -moz-border-radius:6px;
+}
+
+/* rm bottom border for treecols */
 #servicepane treecols {
-  /* rm bottom border for treecols */
   border:none;
 }
+/* rm empty.png */
 .servicepane-tree {
-  /* rm empty.png */
   background-image:none;
 }
 .servicepane-tree > treechildren::-moz-tree-row {
@@ -398,6 +383,13 @@ statusbar {
   /* borders for reordering rows */
   border-top:1px solid transparent;
   border-bottom:1px solid transparent;
+}
+
+.servicepane-tree > treechildren::-moz-tree-row( dropBefore ) {
+  border-top:1px solid rgb(131,131,131); !important;
+}
+.servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
+  border-bottom:1px solid rgb(131,131,131); !important;
 }
 
 
@@ -606,6 +598,10 @@ searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
 
 
 
+.sb-displaypane-menubutton,
+.sb-displaypane-header {
+  border-bottom:1px solid rgb(131,131,131);
+}
 
 
 
@@ -726,7 +722,7 @@ scrollbar > slider > thumb {
   Only used for Linux and Windows
 **/
 .sb-sys-outer-frame-resizer {
-  background-color:rgb(200,200,200);
+  background-color:rgb(161,161,161);
 }
 .sb-sys-outer-frame-resizer[dir="top"],
 .sb-sys-outer-frame-resizer[dir="bottom"],

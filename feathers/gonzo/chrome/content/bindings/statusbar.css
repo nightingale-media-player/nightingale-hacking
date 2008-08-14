@@ -69,7 +69,7 @@ statusbarpanel,
 sb-player-numplaylistitems-label,
 sb-player-scanning-label {*/
 statusbar > * {
-  margin:0 4px !important;
+  margin:1px 4px !important;
 }
 
 statusbarpanel {
@@ -79,13 +79,14 @@ statusbarpanel {
   max-height:16px;
 }
 
+/*
 description.sb-status-bar-status-label[type="playable"] {
   background-image:url('chrome://songbird/skin/browser/icon-link-playable.png');
   background-repeat:no-repeat;
   background-position:left center;
   padding-left:14px;
 }
-
+*/
 
 /*
   hiding the resizer statusbar panel (instead of removing the item) because 

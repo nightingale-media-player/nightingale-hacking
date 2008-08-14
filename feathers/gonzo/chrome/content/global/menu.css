@@ -41,8 +41,8 @@ menuitem[_moz-menuactive="true"][disabled="true"] > label {
 .menu-iconic-accel {
   margin: 0px 0px 0px 0px !important;
   padding-right: 8px;
-  color:gray;
   font-style:normal !important;
+  font-weight:normal !important;
 }
 
 

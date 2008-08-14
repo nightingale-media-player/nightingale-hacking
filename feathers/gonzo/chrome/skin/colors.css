@@ -33,9 +33,11 @@
 description,
 label,
 menu,
-treechildren::-moz-tree-cell-text,
-html|input {
+treechildren::-moz-tree-cell-text {
   font-size:11px;
+}
+textbox html|input {
+  font-size:11px !important;
 }
 
 
@@ -205,6 +207,7 @@ treecol:last-child {
 
 menubar > menu {
   background-color:transparent;
+  padding:0 4px !important;
 }
 
 menulist {
@@ -475,7 +478,7 @@ LISTBOX
 */
 
 listbox {
-  border: 1px solid rgb(131,131,131);;
+  border: 1px solid rgb(131,131,131);
 }
 
 #working-list {
@@ -744,7 +747,7 @@ tab[first-tab="true"],
 .service-pane-spring-load-button {
   max-height:16px;
   min-height:16px;
-  margin:1px 0px;
+  margin:0px;
 }
 .service-pane-spring-load-button > .button-box {
   padding:0;
@@ -785,7 +788,7 @@ notification,
 .servicepane-toolbar-newitem-button {
   max-width:16px;
   max-height:16px;
-  margin:1px 0px;
+  margin:0px;
 }
 .servicepane-toolbar-newitem-button > .clickhold-button {
   border:none;
@@ -873,7 +876,7 @@ timepicker > spinbuttons > .spinbuttons-box > button > .button-box {
 
 #extensionsManager:not([active="true"]) > #topStackBar > #viewGroup {
   background-image: none;
-  border-bottom: 1px solid rgb(131,131,131);;
+  border-bottom: 1px solid rgb(131,131,131);
 }
 
 #extensionsManager:not([active="true"]) > #topStackBar > #viewGroup > .radiogroupWrapper {

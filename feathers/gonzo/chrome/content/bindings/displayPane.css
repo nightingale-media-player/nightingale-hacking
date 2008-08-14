@@ -121,7 +121,6 @@ menuitem.displaypane-menuitem[recommended] {
   min-height:19px;
   max-height:19px;
   background-image:url('chrome://songbird/skin/display-pane/bg-header.png');
-  border-bottom:1px solid gray;
   background-repeat:repeat-x;
   background-position:center top !important;
 }

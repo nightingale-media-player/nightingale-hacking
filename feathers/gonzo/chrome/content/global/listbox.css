@@ -127,8 +127,6 @@ listitem > label {
 }
 
 .listcell-label[disabled="true"] {
-  color:gray;
-  font-style:italic;
 }
 
 /* ::::: listcell checkbox ::::: */
