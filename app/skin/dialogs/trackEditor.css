@@ -92,11 +92,16 @@ textbox.short-number-input {
 }
 
 /* Align checkbox with the top left of multiline textboxes */
-.multiline-textbox-container > hbox {
+.multiline-container > hbox {
   -moz-box-align: start;
 }
-.multiline-textbox-container > hbox > checkbox {
+.multiline-container > hbox > checkbox {
   margin-top: 8px;
+}
+
+/* Force the height of the comment field to match the album art display */
+#comment_textbox {
+  min-height:103px;
 }
 
 /* Notification */
@@ -221,6 +226,7 @@ image.art+button > .button-box {
 image.art+button > .button-box > .button-text {
   font-size:10px;
 }
+
 
 /**
 
