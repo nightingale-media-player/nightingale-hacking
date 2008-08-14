@@ -456,7 +456,8 @@ treechildren::-moz-tree-twisty(closed) {
 }
 .closable-box-image[open="true"],
 treechildren::-moz-tree-twisty(open) {
-  -moz-image-region: rect(9px, 9px, 18px, 0px);
+  list-style-image: url("chrome://songbird/skin/base-elements/button-twisty.png") !important;
+  -moz-image-region: rect(9px, 9px, 18px, 0px) !important;
 }
 
 .servicepane-tree > treechildren::-moz-tree-twisty(closed),

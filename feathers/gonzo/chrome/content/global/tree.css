@@ -136,11 +136,9 @@ tree[enableColumnDrag="true"] > treecols > treecol:hover:active {
 
 treechildren::-moz-tree-twisty {
   padding-right: 4px;
-  width: 10px; /* The image's width is 10 pixels */
 }
 
 treechildren::-moz-tree-twisty(open) {
-  width: 10px; /* The image's width is 10 pixels */
 }
 
 treechildren::-moz-tree-twisty(Name, separator) {

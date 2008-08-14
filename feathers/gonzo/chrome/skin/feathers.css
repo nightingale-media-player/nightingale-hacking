@@ -1,10 +1,106 @@
-/* CSS DIRECTORY
-  > BASE
-	2) =PRIMARY
-	3) =HEADER
-	4) =SIDEBAR
-	5) =FOOTER
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
 */
+
+/******************************************************************************
+> FEATHERS.CSS
+*******************************************************************************
+
+TABLE OF CONTENTS
+> BASE
+> TEXTBOXES
+> BUTTONS
+> TABS
+> NOTIFICATION
+> STATUS BAR
+> SELECTED STATES
+> DISABLED STATES
+> TITLE BAR
+> SERVICE PANE
+> DRAG BADGE
+> FACEPLATE
+> PLAYLIST COMMAND BAR
+> NAV BAR
+> DISPLAY PANES
+> SPLITTERS
+> DEVICE SUMMARY PAGE
+> FIRST RUN WIZARD
+> TRACK EDITOR
+> SMART PLAYLIST EDITOR
+> ABOUT DIALOG
+> FIND BAR
+> SCROLLBAR
+> WINDOW RESIZERS
+> FILE DOWNLOAD MANAGER (MOZAPP)
+> ABOUT CONFIG (MOZAPP)
+> PREFERENCES (MOZAPP)
+> FIREFOX API
+
+******************************************************************************
+
+This feather focuses on images more than styles defined though CSS. Often 
+times you'll update colors in this file but wont see any change in the final 
+appearance because there is a background-image that is drawn over it. There 
+are a few colors defined in this file that might be of interest:
+
+Often used by boxes that contain elements that update what is displayed in the 
+content pane. eg: service pane, find bar, top half of the device summary 
+page, command bar.
+> rgb(220,220,220);
+
+The following is used by all/most borders in the content area. eg: borders for 
+filer pane splitters, border for treecols and list headers.
+> rgb(161,161,161);
+
+The following is used by all/most borders in the chrome area. eg: splitter for 
+service pane, splitters for display panes, borders for windows/dialogs/wizards.
+> rgb(131,131,131)
+
+This file contains most but not all colors used in the feather. The styles in 
+the following files need to be there for technical reasons.
+> formsImport.css for text selection color
+> os-specific/max/overrides.css for Mac-specific styles
+> os-specific/unix/overrides.css for Linux-specific styles
+> os-specific/win/overrides.css for Windows-specific styles
+
+All the other CSS files in the feather and elsewhere in the app need major 
+clean up. Don't go there if you can help it, for now.
+
+******************************************************************************
+
+We are eager to hear your feedback - please drop by and say hi:
+
+songbird-dev Google Group:
+http://groups.google.com/group/songbird-dev
+
+IRC:
+irc.mozilla.org #songbird
+
+******************************************************************************/
+
+
 
 
 
@@ -41,7 +137,6 @@ radiogroup {
   -moz-border-radius:3px;
 }
 groupbox caption {
-  background-color:rgb(255,255,255);
   border:1px solid rgb(161,161,161);  
   /* rounded corners to match that of the groupbox element */
   -moz-border-radius-topleft:3px;
@@ -96,7 +191,7 @@ treechildren::-moz-tree-row( odd ) {
   color: rgb(131,131,131);
 }
 
-/* progress meters in trees do not support background images well
+/* progress meters in trees do not support background-images or list-style-images
    we'll fall back on a translucent solid color
    note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
 treechildren::-moz-tree-progressmeter {
@@ -117,16 +212,14 @@ toolbarseparator {
   background-color:rgb(131,131,131);
 }
 
-
+/* shortcut keys displayed in menus */
 .menu-accel,
 .menu-iconic-accel {
   color:rgb(131,131,131);
 }
 
-
-
 tooltip {  
-  background-color: rgb(255,255,200);
+  background-color: rgb(255,255,215);
 }
 progressmeter,
 sb-status-progressmeter {
@@ -136,10 +229,9 @@ sb-status-progressmeter {
 .dialog-button-box,
 .wizard-buttons,
 .device-tab-button-box,
-/** prefs **/
 .paneDeckContainer+hbox,
 #addonsMsg+vbox {
-  background-color:rgb(225,225,225);
+  background-color:rgb(220,220,220);
   border-top:1px solid rgb(131,131,131);
 }
 
@@ -193,61 +285,6 @@ textbox[focused="true"][invalid="true"] {
 textbox[empty="true"],
 searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
   color:rgb(131,131,131);
-}
-
-
-
-
-
-/******************************************************************************
-> SELECTION
-  
-  See skin/formsImport.css for text selection color.
-  (it would be better if it is here but it has to be there)
-******************************************************************************/
-
-/**
-  Unfocused
-**/
-listitem[selected="true"],
-richlistitem[selected="true"],
-treechildren::-moz-tree-row( selected, even ) {
-  background-color: rgb(225,225,225);
-}
-/* alternating rows for trees */
-treechildren::-moz-tree-row( selected, odd ) {
-  background-color: rgb(220,220,220);
-}
-
-/**
-  Focused
-**/
-listbox:focus listitem[selected="true"],
-richlistbox:focus richlistitem[selected="true"],
-menu[_moz-menuactive="true"],
-menuitem[_moz-menuactive="true"],
-treechildren.autocomplete-treebody::-moz-tree-row( selected even ),
-treechildren::-moz-tree-row( selected focus even ) {
-  background-color: rgb(169,212,255);
-}
-/* alternating rows for trees */
-treechildren.autocomplete-treebody::-moz-tree-row( selected odd ),
-treechildren::-moz-tree-row( selected focus odd ) {
-  background-color: rgb(164,207,250);
-}
-
-/**
-  Text
-**/
-listitem[selected="true"] label,
-richlistitem[selected="true"] label,
-richlistitem[selected="true"] description,
-menu[_moz-menuactive="true"] > label,
-menuitem[_moz-menuactive="true"] > label,
-.autocomplete-treebody::-moz-tree-cell-text(selected),
-treechildren::-moz-tree-cell-text( selected ),
-treechildren::-moz-tree-cell-text( selected, focus ) {
-  color:rgb(0,0,0);
 }
 
 
@@ -404,7 +441,7 @@ notification[type="critical"],
 /******************************************************************************
 > STATUS BAR
 
-  Used for displaying notification hats in the browser and metadata editor.
+  One for the browser and another for the service pane
 ******************************************************************************/
 statusbar {
   border-top:1px solid rgb(131,131,131);
@@ -413,11 +450,91 @@ statusbar {
 #servicepane-status-bar {
   border-bottom:1px solid rgb(131,131,131);
 }
+
+
+
+/******************************************************************************
+> SELECTED STATES
+******************************************************************************/
+
+/**
+  Unfocused
+**/
+listitem[selected="true"],
+richlistitem[selected="true"],
+treechildren::-moz-tree-row( selected, even ) {
+  background-color: rgb(225,225,225);
+}
+/* alternating rows for trees */
+treechildren::-moz-tree-row( selected, odd ) {
+  background-color: rgb(220,220,220);
+}
+
+/**
+  Focused
+**/
+listbox:focus listitem[selected="true"],
+richlistbox:focus richlistitem[selected="true"],
+menu[_moz-menuactive="true"],
+menuitem[_moz-menuactive="true"],
+treechildren.autocomplete-treebody::-moz-tree-row( selected even ),
+treechildren::-moz-tree-row( selected focus even ) {
+  background-color: rgb(169,212,255);
+}
+/* alternating rows for trees */
+treechildren.autocomplete-treebody::-moz-tree-row( selected odd ),
+treechildren::-moz-tree-row( selected focus odd ) {
+  background-color: rgb(164,207,250);
+}
+
+/**
+  Text
+**/
+listitem[selected="true"] label,
+richlistitem[selected="true"] label,
+richlistitem[selected="true"] description,
+menu[_moz-menuactive="true"] > label,
+menuitem[_moz-menuactive="true"] > label,
+.autocomplete-treebody::-moz-tree-cell-text(selected),
+treechildren::-moz-tree-cell-text( selected ),
+treechildren::-moz-tree-cell-text( selected, focus ) {
+  color:rgb(0,0,0);
+}
+
+
+
+/******************************************************************************
+> DISABLED STATES
+******************************************************************************/
+*[disabled="true"] {
+  opacity:0.5;
+}
+richlistitem[isDisabled="true"] > * {
+  opacity:0.5;
+}
+dropmarker[disabled="true"] > .dropmarker-icon {
+  opacity:0.5;
+}
+toolbarbutton[disabled="true"] > .toolbarbutton-icon,
+toolbarbutton[disabled="true"] > .toolbarbutton-menu-dropmarker,
+toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
+  opacity:0.25;
+}
+
+
+
+/******************************************************************************
+> TITLE BAR
+******************************************************************************/
+#sb-sys-title-title {
+  font-weight:bold;
+}
 #titlebar_box {
   border-bottom:1px solid rgb(131,131,131);
 }
-#sb-sys-title-title {
-  font-weight:bold;
+/* used for Linux and Windows only - this is the file menu displayed in the title bar*/
+#main-menubar > menu[_moz-menuactive="true"][open="true"] {
+  background-color:rgb(180,180,180);
 }
 
 
@@ -467,17 +584,6 @@ statusbar {
 }
 .servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
   border-bottom:1px solid rgb(131,131,131); !important;
-}
-
-
-
-/******************************************************************************
-> FILE MENU
-
-  This is sued only for Linux and Windows - the file menu that is displayed in the title bar
-******************************************************************************/
-#main-menubar > menu[_moz-menuactive="true"][open="true"] {
-  background-color:rgb(180,180,180);
 }
 
 
@@ -667,6 +773,61 @@ statusbar {
 
 
 /******************************************************************************
+> FIRST RUN WIZARD
+******************************************************************************/
+.sb-first-run-eula-browser {
+  border:1px solid rgb(131,131,131);
+}
+.wizard-header {
+  background-color: rgb(220,220,220);
+  border-bottom:1px solid rgb(131,131,131);
+}
+
+
+
+/******************************************************************************
+> TRACK EDITOR
+******************************************************************************/
+/* the track editor has tabs and tabpanels but are hidden for the time being
+   this rule makes the tabpanels have the same background color as a dialog window */
+#track_editor tabpanels {
+  background-color: rgb(245,245,245);
+}
+.art {
+  background-color:rgb(255,255,255);
+  border:1px solid rgb(140,140,140);
+}
+.art:focus {
+  background-color:rgb(255,255,235);
+  border:2px solid rgb(140,140,140);
+}
+
+
+
+/******************************************************************************
+> SMART PLAYLIST EDITOR
+
+  Dialog for editing properties of smart playlists.
+******************************************************************************/
+/* the box that contains n number of rules */
+.drawer-box {
+  background-color:rgb(245,245,245);
+  border:1px solid rgb(131,131,131);
+  -moz-border-radius:3px;
+}
+
+
+
+/******************************************************************************
+> ABOUT DIALOG
+******************************************************************************/
+#about_browser {
+  border-top:1px solid rgb(131,131,131);
+}
+
+
+
+/******************************************************************************
 > FIND BAR
 ******************************************************************************/
 findbar {
@@ -737,58 +898,6 @@ scrollbar > slider > thumb {
 
 
 /******************************************************************************
-> FIRST RUN WIZARD
-******************************************************************************/
-.sb-first-run-eula-browser {
-  border:1px solid rgb(131,131,131);
-}
-.wizard-header {
-  background-color: rgb(220,220,220);
-  border-bottom:1px solid rgb(131,131,131);
-}
-
-
-
-/******************************************************************************
-> TRACK EDITOR
-******************************************************************************/
-/* the track editor has tabs and tabpanels but are hidden for the time being
-   this rule makes the tabpanels have the same background color as a dialog window */
-#track_editor tabpanels {
-  background-color: rgb(245,245,245);
-}
-.art {
-  background-color:rgb(255,255,255);
-  border:1px solid rgb(140,140,140);
-}
-.art:focus {
-  background-color:rgb(255,255,235);
-  border:2px solid rgb(140,140,140);
-}
-
-
-
-/******************************************************************************
-> DISABLED STATES
-******************************************************************************/
-*[disabled="true"] {
-  opacity:0.5;
-}
-richlistitem[isDisabled="true"] > * {
-  opacity:0.5;
-}
-dropmarker[disabled="true"] > .dropmarker-icon {
-  opacity:0.5;
-}
-toolbarbutton[disabled="true"] > .toolbarbutton-icon,
-toolbarbutton[disabled="true"] > .toolbarbutton-menu-dropmarker,
-toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
-  opacity:0.25;
-}
-
-
-
-/******************************************************************************
 > FILE DOWNLOAD MANAGER (MOZAPP)
 ******************************************************************************/
 #downloadManager > #downloadView {
@@ -843,7 +952,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 
 #paneAddons {
   /* adding a background color to fake making the add-on window look like a normal pref pane */
-  background-color:rgb(225,225,225);
+  background-color:rgb(220,220,220);
 }
 
 
@@ -857,28 +966,3 @@ html|*.error-text,
 .error-text {
   color: rgb(255,0,0);
 }
-
-
-
-/******************************************************************************
-  SMART PLAYLIST EDITOR
-
-  Dialog for editing properties of smart playlists.
-******************************************************************************/
-/* the box that contains n number of rules */
-.drawer-box {
-  background-color:rgb(245,245,245);
-  border:1px solid rgb(131,131,131);
-  -moz-border-radius:3px;
-}
-
-
-
-/******************************************************************************
-  ABOUT DIALOG
-******************************************************************************/
-#about_browser {
-  border-top:1px solid rgb(131,131,131);
-}
-
-
