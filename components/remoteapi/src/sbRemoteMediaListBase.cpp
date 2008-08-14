@@ -250,6 +250,33 @@ sbRemoteMediaListBase::ThrowJSException( JSContext *cx,
   return NS_OK;
 }
 
+/*
+ * This method is a general helper for the add functionality. Through this
+ *   method we support the following types of adding:
+ *
+ *   add( item, (opt) boolean );
+ *   add( string, (opt) boolean );
+ *   add( [ string... ], (opt) boolean );
+ *
+ * We are argc agnostic here, so if you pass in more than 2 args
+ *   we ignore them and if the second arg isn't a media item (QI-able to
+ *   sbIMediaItem) then we convert it to it's boolean representation and use
+ *   it as an arg to determine if we should download. We only hard fail in the
+ *   case of:
+ *
+ *   add( item, item )
+ *   add( string, item )
+ *   add( [string...], item )
+ *   add( [item...], item )
+ *   add( [item...] ) - we don't allow arrays of items yet.
+ *
+ * We silently do nothing for these cases:
+ *
+ *   add( [] ) - empty array
+ *   add( "" ) - empty string
+ *   add( number )
+ *
+ */
 // static
 JSBool JS_DLL_CALLBACK
 sbRemoteMediaListBase::AddHelper( JSContext *cx,
@@ -262,10 +289,12 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
   // cause XPConnect to hang. Either call ThrowJSExcpeption first, or
   // return JS_TRUE if you want to fail silently.
 
-  LOG_LIST(("sbRemoteMediaListBase::AddHelper()"));
+  LOG_LIST(( "sbRemoteMediaListBase::AddHelper() - argc is %d", argc ));
   nsresult rv;
 
-  if ( argc != 1 ) {
+  // we expect one or two arguments, less then one is a hard error, for
+  // extra arguments we just ignore them.
+  if ( argc < 1 ) {
     ThrowJSException( cx, NS_LITERAL_CSTRING("Wrong number of arguments.") );
     return JS_FALSE;
   }
@@ -315,9 +344,42 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
   // the additions by hand from the array of strings passed in
   //
 
+  // Find out if we should download the tracking after adding.
+  PRBool shouldDownload = PR_FALSE;
+  if ( 1 < argc ) {
+    LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[1] exists, make sure it's not an item"));
+    if ( JSVAL_IS_OBJECT( argv[1] ) ) {
+
+      // see if we can get the wrapped native
+      nsCOMPtr<nsIXPConnectWrappedNative> wn;
+      rv = xpc->GetWrappedNativeOfJSObject(cx, JSVAL_TO_OBJECT( argv[1] ), getter_AddRefs(wn) );
+      if ( NS_SUCCEEDED(rv) && wn ) {
+        // There is a wrapped native, find out if it's a media item
+        nsCOMPtr<sbIMediaItem> tempItem;
+        tempItem = do_QueryWrappedNative( wn, &rv );
+        if ( NS_SUCCEEDED(rv) ) {
+          ThrowJSException( cx, NS_LITERAL_CSTRING("Second arg should NOT be a media item.")  );
+          return JS_FALSE;
+        }
+      }
+    }
+
+    LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[1] exists, is not a mediaitem"));
+    shouldDownload = JSVAL_TO_BOOLEAN( argv[1] );
+  }
+
   JSAutoRequest ar(cx);
 
+  nsCOMPtr<sbIMediaItem> item;
+  nsCOMPtr<sbIRemotePlayer> remotePlayer;
+
+  // Handle the args passed in. If we are passed an array, recurse over the
+  // contents, otherwise set |item| to be the item to add to this list.
   if ( JSVAL_IS_STRING(argv[0]) ) {
+
+    // If we have a string arg it should be a URI, use our library to create
+    // an item.
+
     LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] exists, is a string"));
     LOG_LIST(("          length: %d", ::JS_GetStringLength( JSVAL_TO_STRING(argv[0]) ) ) );
 
@@ -326,49 +388,51 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
       return JS_TRUE;
     }
 
+    // Convert the JS string into an XPCOM string.
     nsDependentString url( (PRUnichar *)
                            ::JS_GetStringChars( JSVAL_TO_STRING(argv[0]) ),
                            ::JS_GetStringLength( JSVAL_TO_STRING(argv[0]) ) );
 
+    LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] exists, is a string"));
+    LOG_LIST(( "   str %s", NS_LossyConvertUTF16toASCII(url).get() ));
+
+    // Create a URI object to pass into the library for item creation.
+    nsCOMPtr<nsIURI> uri;
+    rv = NS_NewURI(getter_AddRefs(uri), url);
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not create new URI object.")
+
+    // Need to QI ourself to get to our library.
     nsCOMPtr<sbIMediaItem> selfItem( do_QueryWrappedNative( wrapper, &rv ) );
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Not a valid MediaItem.")
 
+    // We'll use our library to create the item, get it here.
     nsCOMPtr<sbILibrary> library;
     rv = selfItem->GetLibrary( getter_AddRefs(library) );
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get library for MediaItem.")
-   
-    nsCOMPtr<nsIURI> uri;
-    rv = NS_NewURI(getter_AddRefs(uri), url);
-    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get create new URI object.")
-
-    nsCOMPtr<sbIMediaItem> item;
+ 
+    // Create the item. 
+    nsCOMPtr<sbIMediaItem> newItem;
     nsCOMPtr<sbIPropertyArray> dummyProps;
-    rv = library->CreateMediaItem( uri , dummyProps, PR_FALSE,  getter_AddRefs(item) );
-    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get create new Media Item.")
+    rv = library->CreateMediaItem( uri , dummyProps, PR_FALSE,  getter_AddRefs(newItem) );
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not create new Media Item.")
 
+    // Need the Aggregator interface to get to the remotePlayer
     nsCOMPtr<sbISecurityAggregator> secAgg( do_QueryWrappedNative( wrapper, &rv ) );
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid security aggregator.")
 
-    nsCOMPtr<sbIRemotePlayer> remotePlayer;
+    // Get the remote player
     rv = secAgg->GetRemotePlayer( getter_AddRefs(remotePlayer) );
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get RemotePlayer.")
 
-    nsCOMPtr<sbIMediaItem> wrappedItem;
+    // Wrap the mediaItem (needs the remotePlayer) so we have the correct
+    // type to pass in to the add method.
     rv = SB_WrapMediaItem( (sbRemotePlayer*)remotePlayer.get(),
-                           item,
-                           getter_AddRefs(wrappedItem) );
+                           newItem,
+                           getter_AddRefs(item) );
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get wrap MediaItem.")
 
-    nsCOMPtr<sbIMediaList> self( do_QueryWrappedNative( wrapper, &rv ) );
-    SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid MediaList.")
-
-    rv = self->Add(wrappedItem);
-    if ( NS_FAILED(rv) ) {
-      NS_WARNING(("sbRemoteMediaListBase::AddHelper() - Failed to add the item."));
-    }
   } else if ( JSVAL_IS_OBJECT(argv[0]) ) {
-    JSObject* jsobj;
-    jsobj = JSVAL_TO_OBJECT(argv[0]);
+    JSObject* jsobj = JSVAL_TO_OBJECT(argv[0]);
     if (!jsobj) {
       ThrowJSException( cx, NS_LITERAL_CSTRING("Failed to convert object.")  );
       return JS_FALSE;
@@ -390,10 +454,23 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
             // got the element
             if ( JSVAL_IS_STRING(val) ) {
               LOG_LIST(("sbRemoteMediaListBase::AddHelper() - found a val in the array, recursing"));
-              if ( !AddHelper( cx, obj, 1, &val, rval ) ) {
+
+              // We're going to recurse, keep args to a set we support
+              uintN length = (shouldDownload ? 2 : 1);
+              jsval *newval = (jsval*) JS_malloc( cx, sizeof(jsval) * length );
+              newval[0] = val;
+              if (shouldDownload) {
+                LOG_LIST(("sbRemoteMediaListBase::AddHelper() - should download, setting value"));
+                newval[1] = BOOLEAN_TO_JSVAL(shouldDownload);
+              }
+              if ( !AddHelper( cx, obj, length, newval, rval ) ) {
+                LOG_LIST(("sbRemoteMediaListBase::AddHelper() - failed return from recursing"));
                 // AddHelper will already have set the exception for us.
+                JS_free( cx, newval );
                 return JS_FALSE;
               }
+              LOG_LIST(("sbRemoteMediaListBase::AddHelper() - successful return from recursing"));
+              JS_free( cx, newval );
             } else {
               ThrowJSException( cx, NS_LITERAL_CSTRING("Arrays should only contain strings.") );
               return JS_FALSE;
@@ -402,27 +479,51 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
         }
       }
     } else {
-
       LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] exists, is an object, not an array"));
-      // check to make sure it's an sbIRemoteMediaItem and if so pass it to the
-      // add() method directly
+
+      // check to make sure it's an sbIRemoteMediaItem
       nsCOMPtr<nsIXPConnectWrappedNative> wn;
       rv = xpc->GetWrappedNativeOfJSObject(cx, JSVAL_TO_OBJECT( argv[0] ), getter_AddRefs(wn) );
       SB_ENSURE_WITH_JSTHROW( cx, rv, "Failed to get wrapper for argument." )
 
-      nsCOMPtr<sbIMediaItem> item( do_QueryWrappedNative( wn, &rv ) );
-      SB_ENSURE_WITH_JSTHROW( cx, rv, "Argument not a proper MediaItem." )
+      item = do_QueryWrappedNative( wn, &rv );
+      SB_ENSURE_WITH_JSTHROW( cx, rv, "Argument not a proper MediaItem." );
 
-      nsCOMPtr<sbIMediaList> self( do_QueryWrappedNative( wrapper, &rv ) );
-      SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not a proper MediaList.")
-
-      rv = self->Add(item);
-      if ( NS_FAILED(rv) ) {
-        NS_WARNING(("sbRemoteMediaListBase::AddHelper() - Failed to add the item."));
-      }
     }
-  } else if ( argv[0] ) {
-    LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] exists, not a string, or object"));
+  } else {
+    LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[0] not a string, or object, fail silently"));
+    return JS_TRUE;
+  }
+
+  // If we have an item here, add it to the ourself
+  if ( item ) {
+    nsCOMPtr<sbIMediaList> selfList( do_QueryWrappedNative( wrapper, &rv ) );
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid MediaList.")
+
+    rv = selfList->Add(item);
+    if ( NS_FAILED(rv) ) {
+      NS_WARNING(("sbRemoteMediaListBase::AddHelper() - Failed to add the item."));
+    }
+
+    if (shouldDownload) { 
+      LOG_LIST(("sbRemoteMediaListBase::AddHelper() - adding to download list."));
+      if (!remotePlayer) {
+        nsCOMPtr<sbISecurityAggregator> secAgg( do_QueryWrappedNative( wrapper, &rv ) );
+        SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid security aggregator.")
+
+        rv = secAgg->GetRemotePlayer( getter_AddRefs(remotePlayer) );
+        SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get RemotePlayer.")
+      }
+
+      rv = remotePlayer->DownloadItem(item);
+      if (NS_FAILED(rv)) {
+        LOG_LIST(("sbRemoteMediaListBase::AddHelper() - Failed to download item."));
+        ThrowJSException( cx, NS_LITERAL_CSTRING("Failed to download item.")  );
+        return JS_FALSE;
+      }
+    } else {
+      LOG_LIST(("sbRemoteMediaListBase::AddHelper() - NOT adding to download list."));
+    }
   }
 
   LOG_LIST(("sbRemoteMediaListBase::AddHelper() - returning JS_TRUE"));
