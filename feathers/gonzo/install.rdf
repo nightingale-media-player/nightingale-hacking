@@ -22,44 +22,40 @@
 
     <!-- Register an skin for the built in layouts. 
          See http://developer.songbirdnest.com/feathers/ -->
-	    <songbird:feathers>
-	      <Description>
-	        <songbird:skin>
-	          <Description>
-	            <songbird:name>Gonzo (default)</songbird:name>
-	            <songbird:internalName>gonzo</songbird:internalName>
-	            <songbird:compatibleLayout>
-	              <Description>
-	                <songbird:layoutURL>chrome://gonzo/content/xul/mainplayer.xul</songbird:layoutURL>
-	                <songbird:showChrome>false</songbird:showChrome>
-	                <songbird:onTop>false</songbird:onTop>
-	              </Description>
-	              <Description>
-	                <songbird:layoutURL>chrome://gonzo/content/xul/miniplayer.xul</songbird:layoutURL>
-	                <songbird:showChrome>false</songbird:showChrome>
-	                <songbird:onTop>true</songbird:onTop>
-	              </Description>
-	            </songbird:compatibleLayout>
-	          </Description>
-	        </songbird:skin>
-	        <songbird:layout>
-	          <Description>
-	            <songbird:name>Main Player</songbird:name>
-	            <songbird:url>chrome://gonzo/content/xul/mainplayer.xul</songbird:url>
-	          </Description>
-	          <Description>
-	            <songbird:name>Mini Player</songbird:name>
-	            <songbird:url>chrome://gonzo/content/xul/miniplayer.xul</songbird:url>
-	          </Description>
-	        </songbird:layout>
-	      </Description>
-	    </songbird:feathers>
+    <songbird:skin>
+      <Description>
+        <songbird:name>Gonzo (default)</songbird:name>
+        <songbird:internalName>gonzo</songbird:internalName>
+        <songbird:compatibleLayout>
+          <Description>
+            <songbird:layoutURL>chrome://gonzo/content/xul/mainplayer.xul</songbird:layoutURL>
+            <songbird:showChrome>false</songbird:showChrome>
+            <songbird:onTop>false</songbird:onTop>
+          </Description>
+          <Description>
+            <songbird:layoutURL>chrome://gonzo/content/xul/miniplayer.xul</songbird:layoutURL>
+            <songbird:showChrome>false</songbird:showChrome>
+            <songbird:onTop>true</songbird:onTop>
+          </Description>
+        </songbird:compatibleLayout>
+      </Description>
+    </songbird:skin>
+    <songbird:layout>
+      <Description>
+        <songbird:name>Main Player</songbird:name>
+        <songbird:url>chrome://gonzo/content/xul/mainplayer.xul</songbird:url>
+      </Description>
+      <Description>
+        <songbird:name>Mini Player</songbird:name>
+        <songbird:url>chrome://gonzo/content/xul/miniplayer.xul</songbird:url>
+      </Description>
+    </songbird:layout>
 
 
-	    <!-- No need to show the user -->
-	    <em:hidden>true</em:hidden>
-	    <em:locked>true</em:locked>
-	    <em:appManaged>true</em:appManaged>
+    <!-- No need to show the user -->
+    <em:hidden>true</em:hidden>
+    <em:locked>true</em:locked>
+    <em:appManaged>true</em:appManaged>
 
   </Description>
 </RDF>
