@@ -1089,6 +1089,11 @@
                 operator.value == info.OPERATOR_NOTENDSWITH) {
               forcevalid = true;
             }
+            // allow 0 for durations
+            if (v == "0" &&
+                info.type == "duration") {
+              forcevalid = true;
+            }
             // also force valid for empty value with operators equal/notequal,
             // since we want to let the user match empty strings. unknown
             // properties will have isset/isnotset operators instead.
@@ -1611,7 +1616,7 @@
         <body>
           <![CDATA[
             // if there is no value to convert, bail out
-            if (!value || value == "") 
+            if (typeof(value) == "undefined" || value === "") 
               return value;
 
             // get property info for this metadata

@@ -193,6 +193,15 @@ NS_IMETHODIMP sbDurationPropertyInfo::Format(const nsAString & aValue, nsAString
     return NS_ERROR_INVALID_ARG;
   }
 
+/*
+  XXXlone> There is fundamentally no reason for Format to validate the range of its input. it
+  does make sense to validate that the value is a number, but we want to let people format
+  values that are lower than MinDuration and longer than MaxDuration. Ultimately, we should
+  review both Format and MakeSortable in all sbIPropertyInfo classes, and go through the steps
+  needed to make them all 'permissive', ie, accepting any value that can be interpreted as
+  the right type, but regardless of what the value is and whether or not it matches the
+  constraints on the property (eg, min/max).
+  
   {
     sbSimpleAutoLock lock(mMinMaxDurationLock);
     if(value < mMinDuration ||
@@ -200,6 +209,7 @@ NS_IMETHODIMP sbDurationPropertyInfo::Format(const nsAString & aValue, nsAString
       return NS_ERROR_INVALID_ARG;
     }
   }
+*/
 
   nsAutoString out;
   sbSimpleAutoLock lockLocale(mAppLocaleLock);
