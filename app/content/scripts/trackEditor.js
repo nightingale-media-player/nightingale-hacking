@@ -1705,6 +1705,8 @@ function TrackEditorArtwork(element) {
           function(evt) { self.onClick(evt); }, false);
   element.addEventListener("keypress",
           function(evt) { self.onKeyPress(evt); }, false);
+  element.addEventListener("contextmenu",
+          function(evt) { self.onContextMenu(evt); }, false);
 }
 TrackEditorArtwork.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
@@ -1787,20 +1789,41 @@ TrackEditorArtwork.prototype = {
   },
   
   /**
+   * \brief Handles context menu actions.
+   */
+  onContextMenu: function TrackEditorArtwork_onContextMenu(aEvent) {
+    // Make sure we are focused (could be a right-click that fired this)
+    this._element.focus();
+    
+    // Default to assuming we are invoked by alternative methods to right-click
+    var xPos = 0;                       // No position needed
+    var yPos = 0;
+    var anchor = "after_start";         // Anchor to the bottom left
+    var anchor_element = this._element; // Anchor to the element
+    
+    // Check if it was a right-click
+    if (aEvent.button == 2) {
+      // Since we were invoked by mouse we do not anchor the menu
+      anchor_element = null;
+      anchor = "";
+      xPos = aEvent.clientX;
+      yPos = aEvent.clientY;
+    }
+    
+    this._menuPopup.openPopup(anchor_element, // Anchor to the art work box
+                              anchor,         // position it on the bottom
+                              xPos,           // x position/offset of menu
+                              yPos,           // y position/offset of menu
+                              true,           // context menu
+                              false);         // no attributes override
+  },
+  
+  /**
    * \brief Handles clicks from user on the album artwork widget
    */
   onClick: function TrackEditorArtwork_onClick(aEvent) {
+    // Focus the element so we can respond to context menus and commands
     this._element.focus();
-    
-    // right-click
-    if (aEvent.button == 2) {
-      this._menuPopup.openPopup(null,           // do not anchor the menu
-                                "",             // position not needed
-                                aEvent.clientX, // x position of mouse
-                                aEvent.clientY, // y position of mouse
-                                true,           // context menu
-                                false);         // no attributes override
-    }
   },
 
   /**
