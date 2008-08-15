@@ -78,10 +78,39 @@ var AlbumArtPaneController = {
   },
 
   /**
+   * \brief isPaneSquare - This function ensures that the height of the
+   *        display pane is equal to the width. This will resize the pane if
+   *        it is not square.
+   * \return False if the pane is not square, True if it is. 
+   */
+  isPaneSquare: function () {
+    // Window is our displaypane, so grab the size
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight;
+
+    if (windowHeight != windowWidth) {
+      var displayPane = window.top.document.getElementById('displaypane_servicepane_bottom');
+      if (displayPane) {
+        var displayPaneHeaderSize = displayPane.height - windowHeight;
+        displayPane.height = windowWidth + displayPaneHeaderSize;
+        
+        // Indicate that we have resized the pane.
+        return false;
+      }
+    }
+    return true;
+  },
+  
+  /**
    * \brief onResize - This function is called when either an image loads or
    *        the display pane is resized.
    */
   onResize: function () {
+    if (!AlbumArtPaneController.isPaneSquare()) {
+      // Abort because this function will be called again.
+      return;
+    }
+
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     var currentSrc = albumArtPlayingImage.getAttribute("src");
 
@@ -213,6 +242,7 @@ var AlbumArtPaneController = {
     // Do an initial load of the default cover since it is a big image, and then
     // set the width and height of the image to the width and height of the
     // window so the image does not stretch out of bounds on the first load.
+    this.isPaneSquare(); // Make sure we are square (this will resize)
     var newImg = new Image();
     newImg.src = DEFAULT_COVER;
     var windowWidth = window.innerWidth;
@@ -247,11 +277,11 @@ var AlbumArtPaneController = {
    *        can shut every thing down.
    */
   onUnload: function () {
-    this._playListPlaybackService.removeListener(AlbumArtPaneController);
-    this._playListPlaybackService = null;
+    AlbumArtPaneController._playListPlaybackService.removeListener(AlbumArtPaneController);
+    AlbumArtPaneController._playListPlaybackService = null;
     
-    this._coverBind.unbind();
-    this._coverBind = null;
+    AlbumArtPaneController._coverBind.unbind();
+    AlbumArtPaneController._coverBind = null;
     
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     albumArtPlayingImage.removeEventListener("load",
