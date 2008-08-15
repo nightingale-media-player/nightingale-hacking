@@ -78,6 +78,7 @@ char FirstDriveFromMask (ULONG unitmask)
 //-----------------------------------------------------------------------------
 static LRESULT CALLBACK WindowMinMaxSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+  if (!IsWindow(hWnd)) return 0;
   CWindowMinMaxSubclass *_this = reinterpret_cast<CWindowMinMaxSubclass *>(GetWindowLong(hWnd, GWL_USERDATA));
   return _this->WndProc(hWnd, uMsg, wParam, lParam);
 } // WindowMinMaxSubclassProc
@@ -107,6 +108,8 @@ CWindowMinMaxSubclass::~CWindowMinMaxSubclass()
 //-----------------------------------------------------------------------------
 LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+  if (!IsWindow(hWnd)) 
+    return 0;
   switch (uMsg)
   {
     case WM_SETCURSOR:
@@ -159,12 +162,18 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
         if (_r && _b && _l && _t) break;
         
         // ask the script callback for current min/max values         
+        // since technically, any of the callbacks could have caused our window to be destroyed,
+        // check that the window is still valid after any callback returns
         int _minwidth = -1, _minheight = -1, _maxwidth = -1, _maxheight = -1;
         m_callback->GetMaxWidth(&_maxwidth);
+        if (!IsWindow(hWnd)) return 0;
         m_callback->GetMaxHeight(&_maxheight);
+        if (!IsWindow(hWnd)) return 0;
         m_callback->GetMinWidth(&_minwidth);
+        if (!IsWindow(hWnd)) return 0;
         m_callback->GetMinHeight(&_minheight);
-        
+        if (!IsWindow(hWnd)) return 0;
+
         // fill default resize values from mozilla's resizer object
         LRESULT ret = CallWindowProc(m_prevWndProc, hWnd, uMsg, wParam, lParam);
 
@@ -348,6 +357,8 @@ LRESULT CWindowMinMaxSubclass::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
     }
     break;
  }
+  if (!IsWindow(hWnd)) 
+    return 0;
   return CallWindowProc(m_prevWndProc, hWnd, uMsg, wParam, lParam);
 } // WndProc
 #endif
