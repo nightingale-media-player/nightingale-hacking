@@ -200,13 +200,13 @@
 <para>This is a first-stab at a generic way to expose job progress to the UI. This interface should be used for things like file importing, copying to devices and metadata syncing.</para><para><simplesect kind="note"><para>This interface is likely to change before 1.0 </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="296">
+      <node id="290">
         <label>sbILocalDatabaseMigrationHandler</label>
         <link refid="interfacesb_i_local_database_migration_handler"/>
-        <childnode refid="295" relation="public-inheritance">
+        <childnode refid="289" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="295">
+      <node id="289">
         <label>sbIJobProgress</label>
         <link refid="interfacesb_i_job_progress"/>
       </node>

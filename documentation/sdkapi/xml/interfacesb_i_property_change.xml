@@ -51,25 +51,25 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_change_operation" kindref="compound">sbIChangeOperation</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="812">
+      <node id="815">
         <label>sbIPropertyChange</label>
         <link refid="interfacesb_i_property_change"/>
-        <childnode refid="813" relation="public-inheritance">
+        <childnode refid="816" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="813">
+      <node id="816">
         <label>sbIChangeOperation</label>
         <link refid="interfacesb_i_change_operation"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="814">
+      <node id="817">
         <label>sbIPropertyChange</label>
         <link refid="interfacesb_i_property_change"/>
-        <childnode refid="815" relation="public-inheritance">
+        <childnode refid="818" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="815">
+      <node id="818">
         <label>sbIChangeOperation</label>
         <link refid="interfacesb_i_change_operation"/>
       </node>

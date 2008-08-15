@@ -4,13 +4,13 @@
     <compoundname>sbIURLFormatter.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="472">
+      <node id="497">
         <label>components/moz/urlformatter/public/sbIURLFormatter.idl</label>
         <link refid="sbIURLFormatter.idl"/>
-        <childnode refid="473" relation="include">
+        <childnode refid="498" relation="include">
         </childnode>
       </node>
-      <node id="473">
+      <node id="498">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

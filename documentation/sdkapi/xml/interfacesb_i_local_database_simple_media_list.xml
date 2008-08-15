@@ -204,14 +204,14 @@
 <para>Methods and attributes that are specific to the simple media list are implemented here.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="451">
+      <node id="445">
         <label>sbILocalDatabaseMediaListCopyListener</label>
         <link refid="interfacesb_i_local_database_media_list_copy_listener"/>
       </node>
-      <node id="450">
+      <node id="444">
         <label>sbILocalDatabaseSimpleMediaList</label>
         <link refid="interfacesb_i_local_database_simple_media_list"/>
-        <childnode refid="451" relation="usage">
+        <childnode refid="445" relation="usage">
           <edgelabel>copyListener</edgelabel>
         </childnode>
       </node>

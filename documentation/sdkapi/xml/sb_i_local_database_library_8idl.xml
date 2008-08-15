@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseLibrary.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="327">
+      <node id="326">
         <label>components/library/localdatabase/public/sbILocalDatabaseLibrary.idl</label>
         <link refid="sbILocalDatabaseLibrary.idl"/>
-        <childnode refid="328" relation="include">
+        <childnode refid="327" relation="include">
         </childnode>
       </node>
-      <node id="328">
+      <node id="327">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -91,8 +91,8 @@
 <codeline lineno="89"><highlight class="normal"></highlight></codeline>
 <codeline lineno="90"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_database_query" kindref="compound" tooltip="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</ref><sp/>createQuery();</highlight></codeline>
 <codeline lineno="91"><highlight class="normal"></highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ForceBeginUpdateBatch();</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>ForceEndUpdateBatch();</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>forceBeginUpdateBatch();</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>forceEndUpdateBatch();</highlight></codeline>
 <codeline lineno="98"><highlight class="normal"></highlight></codeline>
 <codeline lineno="106" refid="interfacesb_i_local_database_library_151048be46119bcc652d4cfd1f06191a9" refkind="member"><highlight class="normal"><sp/><sp/>[noscript]<sp/>readonly<sp/>attribute<sp/>sbLocalDatabaseLibrary<sp/>nativeLibrary;</highlight></codeline>
 <codeline lineno="107"><highlight class="normal">};</highlight></codeline>

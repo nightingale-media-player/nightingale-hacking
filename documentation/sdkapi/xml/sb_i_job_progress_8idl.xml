@@ -6,30 +6,30 @@
     <includedby refid="sb_i_local_database_migration_handler_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseMigrationHandler.idl</includedby>
     <includedby refid="sb_i_local_database_migration_helper_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseMigrationHelper.idl</includedby>
     <incdepgraph>
-      <node id="211">
+      <node id="210">
         <label>components/job/public/sbIJobProgress.idl</label>
         <link refid="sbIJobProgress.idl"/>
-        <childnode refid="212" relation="include">
+        <childnode refid="211" relation="include">
         </childnode>
       </node>
-      <node id="212">
+      <node id="211">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="215">
+      <node id="214">
         <label>components/library/localdatabase/public/sbILocalDatabaseMigrationHelper.idl</label>
         <link refid="sb_i_local_database_migration_helper_8idl-source"/>
       </node>
-      <node id="213">
+      <node id="212">
         <label>components/job/public/sbIJobProgress.idl</label>
         <link refid="sbIJobProgress.idl"/>
+        <childnode refid="213" relation="include">
+        </childnode>
         <childnode refid="214" relation="include">
         </childnode>
-        <childnode refid="215" relation="include">
-        </childnode>
       </node>
-      <node id="214">
+      <node id="213">
         <label>components/library/localdatabase/public/sbILocalDatabaseMigrationHandler.idl</label>
         <link refid="sb_i_local_database_migration_handler_8idl-source"/>
       </node>

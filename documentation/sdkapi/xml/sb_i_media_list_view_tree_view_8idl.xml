@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsITreeView.idl</includes>
     <incdepgraph>
-      <node id="305">
+      <node id="304">
         <label>nsITreeView.idl</label>
       </node>
-      <node id="303">
+      <node id="302">
         <label>components/library/base/public/sbIMediaListViewTreeView.idl</label>
         <link refid="sbIMediaListViewTreeView.idl"/>
+        <childnode refid="303" relation="include">
+        </childnode>
         <childnode refid="304" relation="include">
         </childnode>
-        <childnode refid="305" relation="include">
-        </childnode>
       </node>
-      <node id="304">
+      <node id="303">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

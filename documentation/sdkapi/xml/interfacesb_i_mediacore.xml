@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_mediacore" kind="interface" prot="public">
+    <compoundname>sbIMediacore</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_mediacore_1460c0a4b2c903b57fa3418ffd54a1a26" prot="public" static="no" mutable="no">
+        <type>readonly AString</type>
+        <definition>readonly AString sbIMediacore::instanceName</definition>
+        <argsstring></argsstring>
+        <name>instanceName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacore.idl" line="34" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacore.idl" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_1621b7311e25d32c6706cad18b4ca4b29" prot="public" static="no" mutable="no">
+        <type>readonly sbIMediacoreCapabilities</type>
+        <definition>readonly sbIMediacoreCapabilities sbIMediacore::capabilities</definition>
+        <argsstring></argsstring>
+        <name>capabilities</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacore.idl" line="35" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacore.idl" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_1cc13508b26ba6a9dfde737a605017ec3" prot="public" static="no" mutable="no">
+        <type>readonly nsIPropertyBag2</type>
+        <definition>readonly nsIPropertyBag2 sbIMediacore::properties</definition>
+        <argsstring></argsstring>
+        <name>properties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacore.idl" line="36" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacore.idl" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacore.idl" line="33" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacore.idl" bodystart="32" bodyend="37"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_mediacore_1621b7311e25d32c6706cad18b4ca4b29" prot="public" virt="non-virtual"><scope>sbIMediacore</scope><name>capabilities</name></member>
+      <member refid="interfacesb_i_mediacore_1460c0a4b2c903b57fa3418ffd54a1a26" prot="public" virt="non-virtual"><scope>sbIMediacore</scope><name>instanceName</name></member>
+      <member refid="interfacesb_i_mediacore_1cc13508b26ba6a9dfde737a605017ec3" prot="public" virt="non-virtual"><scope>sbIMediacore</scope><name>properties</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="81" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="81" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="86" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="86" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_unit_converter_16dac6e360bfc5cf509877fadb3f98a98" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="88" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="88" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="93" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="93" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_property_unit_converter_176826e982091ac253fba36fd5dba49e3" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -40,14 +40,27 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="93" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="93" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="98" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_property_unit_converter_1b1b0bc7b339445174067a8b8dfdbfe4d" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref></type>
+        <definition>attribute sbIPropertyInfo sbIPropertyUnitConverter::propertyInfo</definition>
+        <argsstring></argsstring>
+        <name>propertyInfo</name>
+        <briefdescription>
+<para>The <ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> this converter is associated with. This attribute will be set automatically by the propertyinfo object when its converter is assigned. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="114" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="114" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_property_unit_converter_1425c0e156ab117a69c4f009548a365c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_property_unit_converter_148d74e10c45297b514aadb789ef412bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
         <definition>AString sbIPropertyUnitConverter::convert</definition>
-        <argsstring>(in AString aValue, in AString aFromUnitID, in AString aToUnitID)</argsstring>
+        <argsstring>(in AString aValue, in AString aFromUnitID, in AString aToUnitID, in long aMinDecimals, in long aMaxDecimals)</argsstring>
         <name>convert</name>
         <param>
           <type>in AString</type>
@@ -61,23 +74,81 @@
           <type>in AString</type>
           <declname>aToUnitID</declname>
         </param>
+        <param>
+          <type>in long</type>
+          <declname>aMinDecimals</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aMaxDecimals</declname>
+        </param>
         <briefdescription>
-<para>Convert a value to a different unit. </para>        </briefdescription>
+<para>Convert a value to a different unit. Use -1 for aMinDecimals and aMaxDecimals if you do not wish to set any limits on the number of decimals in the returned value. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="76"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="81"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_property_unit_converter_185d688a378c54196ff47d1819bd13a38" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbIPropertyUnitConverter::autoFormat</definition>
+        <argsstring>(in AString aValue, in long aMinDecimals, in long aMaxDecimals)</argsstring>
+        <name>autoFormat</name>
+        <param>
+          <type>in AString</type>
+          <declname>aValue</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aMinDecimals</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aMaxDecimals</declname>
+        </param>
+        <briefdescription>
+<para>Formats a value using the most suitable unit. Use -1 for aMinDecimals and aMaxDecimals if you do not wish to set any limits on the number of decimals in the returned value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="107"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Property unit converter interface This is an interface songbird property converter, used to convert a property value between its various units representations. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="70" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="69" bodyend="94"/>
+    <collaborationgraph>
+      <node id="840">
+        <label>sbIPropertyInfo</label>
+        <link refid="interfacesb_i_property_info"/>
+        <childnode refid="841" relation="usage">
+          <edgelabel>sortProfile</edgelabel>
+        </childnode>
+        <childnode refid="839" relation="usage">
+          <edgelabel>unitConverter</edgelabel>
+        </childnode>
+      </node>
+      <node id="839">
+        <label>sbIPropertyUnitConverter</label>
+        <link refid="interfacesb_i_property_unit_converter"/>
+        <childnode refid="840" relation="usage">
+          <edgelabel>propertyInfo</edgelabel>
+        </childnode>
+      </node>
+      <node id="841">
+        <label>sbIPropertyArray</label>
+        <link refid="interfacesb_i_property_array"/>
+      </node>
+    </collaborationgraph>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" line="71" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl" bodystart="70" bodyend="115"/>
     <listofallmembers>
-      <member refid="interfacesb_i_property_unit_converter_1425c0e156ab117a69c4f009548a365c0" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>convert</name></member>
+      <member refid="interfacesb_i_property_unit_converter_185d688a378c54196ff47d1819bd13a38" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>autoFormat</name></member>
+      <member refid="interfacesb_i_property_unit_converter_148d74e10c45297b514aadb789ef412bc" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>convert</name></member>
       <member refid="interfacesb_i_property_unit_converter_16dac6e360bfc5cf509877fadb3f98a98" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>nativeUnitId</name></member>
+      <member refid="interfacesb_i_property_unit_converter_1b1b0bc7b339445174067a8b8dfdbfe4d" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>propertyInfo</name></member>
       <member refid="interfacesb_i_property_unit_converter_176826e982091ac253fba36fd5dba49e3" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>stringBundle</name></member>
       <member refid="interfacesb_i_property_unit_converter_1e291b2752a00bb8847c9121ac2b03e34" prot="public" virt="non-virtual"><scope>sbIPropertyUnitConverter</scope><name>units</name></member>
     </listofallmembers>

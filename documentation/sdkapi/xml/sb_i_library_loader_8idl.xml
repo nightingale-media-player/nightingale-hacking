@@ -11,18 +11,20 @@
     <includes local="no">nsStringGlue.h</includes>
     <includes local="no">nsXPCOMCID.h</includes>
     <incdepgraph>
-      <node id="247">
+      <node id="246">
         <label>nsServiceManagerUtils.h</label>
       </node>
-      <node id="248">
+      <node id="247">
         <label>nsStringGlue.h</label>
       </node>
-      <node id="243">
+      <node id="242">
         <label>nsICategoryManager.h</label>
       </node>
-      <node id="241">
+      <node id="240">
         <label>components/library/base/public/sbILibraryLoader.idl</label>
         <link refid="sbILibraryLoader.idl"/>
+        <childnode refid="241" relation="include">
+        </childnode>
         <childnode refid="242" relation="include">
         </childnode>
         <childnode refid="243" relation="include">
@@ -37,22 +39,20 @@
         </childnode>
         <childnode refid="248" relation="include">
         </childnode>
-        <childnode refid="249" relation="include">
-        </childnode>
-      </node>
-      <node id="245">
-        <label>nsIFile.h</label>
-      </node>
-      <node id="246">
-        <label>nsCOMPtr.h</label>
       </node>
       <node id="244">
+        <label>nsIFile.h</label>
+      </node>
+      <node id="245">
+        <label>nsCOMPtr.h</label>
+      </node>
+      <node id="243">
         <label>nsIComponentManager.h</label>
       </node>
-      <node id="242">
+      <node id="241">
         <label>nsISupports.idl</label>
       </node>
-      <node id="249">
+      <node id="248">
         <label>nsXPCOMCID.h</label>
       </node>
     </incdepgraph>

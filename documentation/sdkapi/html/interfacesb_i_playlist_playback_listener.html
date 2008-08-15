@@ -95,6 +95,14 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback_listener.html#6a7e42b56d8ee13806b6e6a38700317c">onTrackIndexChange</a> (in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> aItem, in <a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a> aView, in long aIndex)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the index of the playing track (or its UID returned by a call to <a class="el" href="interfacesb_i_media_list_view.html#ef081e769938e55da2a7d7651922d9f1" title="Returns an opaque identifier that uniquely identifies the media item at a given position...">sbIMediaListView.getViewItemUIDForIndex</a>) has changed.  <a href="#6a7e42b56d8ee13806b6e6a38700317c"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="265b8317c6a88f48a4a93cc264524101"></a><!-- doxytag: member="sbIPlaylistPlaybackListener::onBeforeViewChange" ref="265b8317c6a88f48a4a93cc264524101" args="(in sbIMediaListView aView)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback_listener.html#265b8317c6a88f48a4a93cc264524101">onBeforeViewChange</a> (in <a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a> aView)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the user starts playback on a particular view, before the view becomes the playing view. Note that this does not get called when playback continues to the next track in the same view, but does get called if the user restarts playback on the currently playing view. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d04f7dadc8cb33bad50f465b7acce727"></a><!-- doxytag: member="sbIPlaylistPlaybackListener::onViewChange" ref="d04f7dadc8cb33bad50f465b7acce727" args="(in sbIMediaListView aView)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_playback_listener.html#d04f7dadc8cb33bad50f465b7acce727">onViewChange</a> (in <a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a> aView)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when the user starts playback on a particular view, after the view has become the playing view. Note that this does not get called when playback continues to the next track in the same view, but does get called if the user restarts playback on the currently playing view. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Interface that handles the tracking of playback changes. 
@@ -192,7 +200,7 @@ Called when the index of the playing track (or its UID returned by a call to <a 
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/playlistplayback/public/<a class="el" href="sb_i_playlist_playback_8idl-source.html">sbIPlaylistPlayback.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Aug 4 11:05:10 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:40 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

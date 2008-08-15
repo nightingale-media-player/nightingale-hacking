@@ -4,13 +4,13 @@
     <compoundname>sbIGStreamerService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="407">
+      <node id="432">
         <label>components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl</label>
         <link refid="sbIGStreamerService.idl"/>
-        <childnode refid="408" relation="include">
+        <childnode refid="433" relation="include">
         </childnode>
       </node>
-      <node id="408">
+      <node id="433">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="1016"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="1036"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -28,7 +28,7 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="1015" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="1014" bodyend="1017"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" line="1035" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl" bodystart="1034" bodyend="1037"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_batch_callback_1d8997a80c62a3214c94f9005962cfde0" prot="public" virt="non-virtual"><scope>sbIMediaListBatchCallback</scope><name>runBatched</name></member>
     </listofallmembers>

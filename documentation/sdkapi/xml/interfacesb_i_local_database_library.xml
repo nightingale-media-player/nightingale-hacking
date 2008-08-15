@@ -181,11 +181,11 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="90"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_local_database_library_113cd2a1a02598a8b0d0a97a9c0b4911e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_local_database_library_1de41f879ea02962872727acb6726c823" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void sbILocalDatabaseLibrary::ForceBeginUpdateBatch</definition>
+        <definition>void sbILocalDatabaseLibrary::forceBeginUpdateBatch</definition>
         <argsstring>()</argsstring>
-        <name>ForceBeginUpdateBatch</name>
+        <name>forceBeginUpdateBatch</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -194,11 +194,11 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseLibrary.idl" line="96"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_local_database_library_116717016f72091fb36174216cd234d95" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_local_database_library_12f4c4b7148ecfc5eefc1952c550c7d9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void sbILocalDatabaseLibrary::ForceEndUpdateBatch</definition>
+        <definition>void sbILocalDatabaseLibrary::forceEndUpdateBatch</definition>
         <argsstring>()</argsstring>
-        <name>ForceEndUpdateBatch</name>
+        <name>forceEndUpdateBatch</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -213,14 +213,14 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="427">
+      <node id="421">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>
-      <node id="426">
+      <node id="420">
         <label>sbILocalDatabaseLibrary</label>
         <link refid="interfacesb_i_local_database_library"/>
-        <childnode refid="427" relation="usage">
+        <childnode refid="421" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
       </node>
@@ -231,8 +231,8 @@
       <member refid="interfacesb_i_local_database_library_1a8e250f784fbbfdaff880b7ac91dcd44" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>createQuery</name></member>
       <member refid="interfacesb_i_local_database_library_127b7e647416d05c9c7cedd830ac78836" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>databaseGuid</name></member>
       <member refid="interfacesb_i_local_database_library_1de539f77d028fb1d3f41c2c16118e7b2" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>databaseLocation</name></member>
-      <member refid="interfacesb_i_local_database_library_113cd2a1a02598a8b0d0a97a9c0b4911e" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>ForceBeginUpdateBatch</name></member>
-      <member refid="interfacesb_i_local_database_library_116717016f72091fb36174216cd234d95" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>ForceEndUpdateBatch</name></member>
+      <member refid="interfacesb_i_local_database_library_1de41f879ea02962872727acb6726c823" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>forceBeginUpdateBatch</name></member>
+      <member refid="interfacesb_i_local_database_library_12f4c4b7148ecfc5eefc1952c550c7d9f" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>forceEndUpdateBatch</name></member>
       <member refid="interfacesb_i_local_database_library_171540590671cf01db64e6f25f3393095" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>getContractIdForGuid</name></member>
       <member refid="interfacesb_i_local_database_library_1742d1b96a1a6483c46ba25163a7d683c" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>getMediaItemIdForGuid</name></member>
       <member refid="interfacesb_i_local_database_library_151048be46119bcc652d4cfd1f06191a9" prot="public" virt="non-virtual"><scope>sbILocalDatabaseLibrary</scope><name>nativeLibrary</name></member>

@@ -4,13 +4,13 @@
     <compoundname>sbIStringTransform.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="206">
+      <node id="205">
         <label>nsISupports.idl</label>
       </node>
-      <node id="205">
+      <node id="204">
         <label>components/intl/public/sbIStringTransform.idl</label>
         <link refid="sbIStringTransform.idl"/>
-        <childnode refid="206" relation="include">
+        <childnode refid="205" relation="include">
         </childnode>
       </node>
     </incdepgraph>

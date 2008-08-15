@@ -303,6 +303,7 @@ Get a media item in the list by index.
 Enumerate all items in the list. 
 <p>
 Do not use ENUMERATIONTYPE_LOCKING unless you fit a usage scenario described in the ENUMERATIONTYPE_LOCKING constant documentation.<p>
+Do not remove items during enumeration, regardless of enumeration type! This will cause functional issues during enumeration because the property cache will no longer contain associated data for items even though the item instance is still valid!<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aEnumerationListener</em>&nbsp;</td><td>- The enumeration listener. </td></tr>
@@ -352,6 +353,7 @@ Do not use ENUMERATIONTYPE_LOCKING unless you fit a usage scenario described in 
 <p>
 Enumerate the media items in the list that match a given property ID and value. 
 <p>
+Do not remove items during enumeration, regardless of enumeration type! This will cause functional issues during enumeration because the property cache will no longer contain associated data for items even though the item instance is still valid!<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aPropertyID</em>&nbsp;</td><td>- Property ID to search. </td></tr>
@@ -926,7 +928,7 @@ Definition at line <a class="el" href="sb_i_media_list_8idl-source.html#l00139">
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_media_list_8idl-source.html">sbIMediaList.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Aug 4 11:05:09 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:39 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

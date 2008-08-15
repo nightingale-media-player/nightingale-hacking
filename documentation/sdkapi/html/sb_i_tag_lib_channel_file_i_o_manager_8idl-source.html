@@ -100,19 +100,19 @@
 <a name="l00044"></a>00044 
 <a name="l00045"></a><a class="code" href="interfacesb_i_tag_lib_channel_file_i_o_manager.html">00045</a> interface <a class="code" href="interfacesb_i_tag_lib_channel_file_i_o_manager.html" title="A service for providing sbISeekableChannel file IO support in TagLib.">sbITagLibChannelFileIOManager</a> : nsISupports
 <a name="l00046"></a>00046 {
-<a name="l00053"></a>00053     <span class="keywordtype">void</span> addChannel( in AString aChannelID, in <a class="code" href="interfacesb_i_seekable_channel.html" title="A seekable wrapper for an nsIChannel.">sbISeekableChannel</a> aChannel );
+<a name="l00053"></a>00053     <span class="keywordtype">void</span> addChannel( in ACString aChannelID, in <a class="code" href="interfacesb_i_seekable_channel.html" title="A seekable wrapper for an nsIChannel.">sbISeekableChannel</a> aChannel );
 <a name="l00054"></a>00054 
-<a name="l00060"></a>00060     <span class="keywordtype">void</span> removeChannel( in AString aChannelID );
+<a name="l00060"></a>00060     <span class="keywordtype">void</span> removeChannel( in ACString aChannelID );
 <a name="l00061"></a>00061 
-<a name="l00068"></a>00068     <a class="code" href="interfacesb_i_seekable_channel.html" title="A seekable wrapper for an nsIChannel.">sbISeekableChannel</a> getChannel( in AString aChannelID );
+<a name="l00068"></a>00068     <a class="code" href="interfacesb_i_seekable_channel.html" title="A seekable wrapper for an nsIChannel.">sbISeekableChannel</a> getChannel( in ACString aChannelID );
 <a name="l00069"></a>00069 
-<a name="l00076"></a>00076     <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> getChannelSize( in AString aChannelID );
+<a name="l00076"></a>00076     <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> getChannelSize( in ACString aChannelID );
 <a name="l00077"></a>00077 
-<a name="l00084"></a>00084     <span class="keywordtype">boolean</span> getChannelRestart( in AString aChannelID );
+<a name="l00084"></a>00084     <span class="keywordtype">boolean</span> getChannelRestart( in ACString aChannelID );
 <a name="l00085"></a>00085 
-<a name="l00092"></a>00092     <span class="keywordtype">void</span> setChannelRestart( in AString aChannelID, in PRBool aRestart );
+<a name="l00092"></a>00092     <span class="keywordtype">void</span> setChannelRestart( in ACString aChannelID, in PRBool aRestart );
 <a name="l00093"></a>00093 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Mon Aug 4 11:05:04 2008 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

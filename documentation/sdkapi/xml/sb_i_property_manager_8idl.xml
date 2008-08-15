@@ -4,13 +4,13 @@
     <compoundname>sbIPropertyManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="510">
+      <node id="535">
         <label>components/property/public/sbIPropertyManager.idl</label>
         <link refid="sbIPropertyManager.idl"/>
-        <childnode refid="511" relation="include">
+        <childnode refid="536" relation="include">
         </childnode>
       </node>
-      <node id="511">
+      <node id="536">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -94,7 +94,7 @@
 <codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Init(in<sp/>AString<sp/>aOperator,<sp/>in<sp/>aString<sp/>aOperatorReadable);</highlight></codeline>
 <codeline lineno="123"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="124"><highlight class="normal"></highlight></codeline>
-<codeline lineno="130"><highlight class="normal">[scriptable,<sp/>uuid(fdf0a24e-a672-4fb7-b73c-5538030b22f8)]</highlight></codeline>
+<codeline lineno="130"><highlight class="normal">[scriptable,<sp/>uuid(452576df-1230-45f0-840c-5848efabf2b2)]</highlight></codeline>
 <codeline lineno="131" refid="interfacesb_i_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="132"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="133" refid="interfacesb_i_property_info_1afe9f89f31df1de16ca3b9ab5b7682de" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>OPERATOR_EQUALS;</highlight></codeline>

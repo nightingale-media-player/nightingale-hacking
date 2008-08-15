@@ -59,14 +59,14 @@
     <detaileddescription>
 <para>TODO: Write this documentation </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="872">
+      <node id="877">
         <label>sbIRemoteMediaList</label>
         <link refid="interfacesb_i_remote_media_list"/>
       </node>
-      <node id="871">
+      <node id="876">
         <label>sbIRemoteWebPlaylist</label>
         <link refid="interfacesb_i_remote_web_playlist"/>
-        <childnode refid="872" relation="usage">
+        <childnode refid="877" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>

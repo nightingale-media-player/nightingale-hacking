@@ -52,46 +52,49 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="991">
+      <node id="996">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="992">
+      <node id="997">
         <label>sbIProgressPropertyInfo</label>
         <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="990" relation="public-inheritance">
+        <childnode refid="995" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="990">
+      <node id="995">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="991" relation="public-inheritance">
+        <childnode refid="996" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="994">
+      <node id="999">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="995" relation="usage">
+        <childnode refid="1000" relation="usage">
           <edgelabel>sortProfile</edgelabel>
         </childnode>
-        <childnode refid="996" relation="usage">
+        <childnode refid="1001" relation="usage">
           <edgelabel>unitConverter</edgelabel>
         </childnode>
       </node>
-      <node id="996">
+      <node id="1001">
         <label>sbIPropertyUnitConverter</label>
         <link refid="interfacesb_i_property_unit_converter"/>
+        <childnode refid="999" relation="usage">
+          <edgelabel>propertyInfo</edgelabel>
+        </childnode>
       </node>
-      <node id="995">
+      <node id="1000">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="993">
+      <node id="998">
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="994" relation="public-inheritance">
+        <childnode refid="999" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

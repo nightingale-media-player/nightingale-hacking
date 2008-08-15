@@ -4,13 +4,13 @@
     <compoundname>sbIFileMetadataService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="372">
+      <node id="394">
         <label>components/mediacore/metadata/manager/public/sbIFileMetadataService.idl</label>
         <link refid="sbIFileMetadataService.idl"/>
-        <childnode refid="373" relation="include">
+        <childnode refid="395" relation="include">
         </childnode>
       </node>
-      <node id="373">
+      <node id="395">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

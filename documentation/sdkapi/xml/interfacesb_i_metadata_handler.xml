@@ -455,7 +455,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="196"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="197"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -480,7 +480,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="209"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="210"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -493,7 +493,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="214"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="215"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -502,25 +502,25 @@
 <para>User code requests a handler by calling <ref refid="interfacesb_i_metadata_manager_1ae19d169e02736347d183bf89ae8ffa6" kindref="member">sbIMetadataManager::getHandlerForMediaURL</ref> that then returns one of these.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_metadata_manager" kindref="compound">sbIMetadataManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="620">
+      <node id="621">
         <label>sbIMetadataHandler</label>
         <link refid="interfacesb_i_metadata_handler"/>
-        <childnode refid="621" relation="usage">
+        <childnode refid="622" relation="usage">
           <edgelabel>props</edgelabel>
         </childnode>
       </node>
-      <node id="622">
+      <node id="623">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="621">
+      <node id="622">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="622" relation="public-inheritance">
+        <childnode refid="623" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="45" bodyend="215"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIMetadataHandler.idl" bodystart="45" bodyend="216"/>
     <listofallmembers>
       <member refid="interfacesb_i_metadata_handler_18311aa7b7bc4102d02465b47ded3e7f3" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>channel</name></member>
       <member refid="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" prot="public" virt="non-virtual"><scope>sbIMetadataHandler</scope><name>close</name></member>

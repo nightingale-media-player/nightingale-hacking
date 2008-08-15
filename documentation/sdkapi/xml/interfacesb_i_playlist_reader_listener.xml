@@ -143,86 +143,86 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_reader_manager" kindref="compound">sbIPlaylistReaderManager</ref>, <ref refid="interfacesb_i_playlist_reader" kindref="compound">sbIPlaylistReader</ref>, <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="759">
+      <node id="762">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="760" relation="public-inheritance">
+        <childnode refid="763" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="766">
+      <node id="769">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="760" relation="usage">
+        <childnode refid="763" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="759" relation="usage">
+        <childnode refid="762" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="767">
+      <node id="770">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="758">
+      <node id="761">
         <label>sbIPlaylistReaderListener</label>
         <link refid="interfacesb_i_playlist_reader_listener"/>
-        <childnode refid="759" relation="usage">
+        <childnode refid="762" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="763">
+      <node id="766">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="764" relation="usage">
+        <childnode refid="767" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="766" relation="usage">
+        <childnode refid="769" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="767" relation="usage">
+        <childnode refid="770" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="768" relation="usage">
+        <childnode refid="771" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="762">
+      <node id="765">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="759" relation="public-inheritance">
+        <childnode refid="762" relation="public-inheritance">
         </childnode>
-        <childnode refid="763" relation="usage">
+        <childnode refid="766" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="765" relation="usage">
+        <childnode refid="768" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="761">
+      <node id="764">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="760">
+      <node id="763">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="761" relation="public-inheritance">
+        <childnode refid="764" relation="public-inheritance">
         </childnode>
-        <childnode refid="762" relation="usage">
+        <childnode refid="765" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="764">
+      <node id="767">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="765" relation="usage">
+        <childnode refid="768" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="765">
+      <node id="768">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="768">
+      <node id="771">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>

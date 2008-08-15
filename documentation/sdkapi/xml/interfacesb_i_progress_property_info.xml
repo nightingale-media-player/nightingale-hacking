@@ -25,41 +25,9 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="793">
-        <label>sbIPropertyInfo</label>
-        <link refid="interfacesb_i_property_info"/>
-      </node>
-      <node id="791">
-        <label>sbIProgressPropertyInfo</label>
-        <link refid="interfacesb_i_progress_property_info"/>
-        <childnode refid="792" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="792">
-        <label>sbITextPropertyInfo</label>
-        <link refid="interfacesb_i_text_property_info"/>
-        <childnode refid="793" relation="public-inheritance">
-        </childnode>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
       <node id="796">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="797" relation="usage">
-          <edgelabel>sortProfile</edgelabel>
-        </childnode>
-        <childnode refid="798" relation="usage">
-          <edgelabel>unitConverter</edgelabel>
-        </childnode>
-      </node>
-      <node id="798">
-        <label>sbIPropertyUnitConverter</label>
-        <link refid="interfacesb_i_property_unit_converter"/>
-      </node>
-      <node id="797">
-        <label>sbIPropertyArray</label>
-        <link refid="interfacesb_i_property_array"/>
       </node>
       <node id="794">
         <label>sbIProgressPropertyInfo</label>
@@ -71,6 +39,41 @@
         <label>sbITextPropertyInfo</label>
         <link refid="interfacesb_i_text_property_info"/>
         <childnode refid="796" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="799">
+        <label>sbIPropertyInfo</label>
+        <link refid="interfacesb_i_property_info"/>
+        <childnode refid="800" relation="usage">
+          <edgelabel>sortProfile</edgelabel>
+        </childnode>
+        <childnode refid="801" relation="usage">
+          <edgelabel>unitConverter</edgelabel>
+        </childnode>
+      </node>
+      <node id="801">
+        <label>sbIPropertyUnitConverter</label>
+        <link refid="interfacesb_i_property_unit_converter"/>
+        <childnode refid="799" relation="usage">
+          <edgelabel>propertyInfo</edgelabel>
+        </childnode>
+      </node>
+      <node id="800">
+        <label>sbIPropertyArray</label>
+        <link refid="interfacesb_i_property_array"/>
+      </node>
+      <node id="797">
+        <label>sbIProgressPropertyInfo</label>
+        <link refid="interfacesb_i_progress_property_info"/>
+        <childnode refid="798" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="798">
+        <label>sbITextPropertyInfo</label>
+        <link refid="interfacesb_i_text_property_info"/>
+        <childnode refid="799" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

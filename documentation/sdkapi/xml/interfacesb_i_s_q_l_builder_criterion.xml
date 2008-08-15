@@ -24,14 +24,14 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="926">
+      <node id="931">
         <label>sbISQLBuilderCriterion</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion"/>
       </node>
-      <node id="927">
+      <node id="932">
         <label>sbISQLBuilderCriterionIn</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion_in"/>
-        <childnode refid="926" relation="public-inheritance">
+        <childnode refid="931" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

@@ -4,13 +4,13 @@
     <compoundname>sbIDirectoryImportService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="422">
+      <node id="447">
         <label>components/mediaimport/directory/public/sbIDirectoryImportService.idl</label>
         <link refid="sbIDirectoryImportService.idl"/>
-        <childnode refid="423" relation="include">
+        <childnode refid="448" relation="include">
         </childnode>
       </node>
-      <node id="423">
+      <node id="448">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -789,8 +789,6 @@
     <member refid="interfacesb_i_file_metadata_service_1233d09ea939b1d88be9b9955e20df728" kind="function"><name>read</name></member>
     <member refid="interfacesb_i_file_metadata_service_1e098ef2b0c00c7f8775fdbd82cacce83" kind="function"><name>write</name></member>
   </compound>
-  <compound refid="interfacesb_i_file_observer" kind="interface"><name>sbIFileObserver</name>
-  </compound>
   <compound refid="interfacesb_i_file_scan" kind="interface"><name>sbIFileScan</name>
     <member refid="interfacesb_i_file_scan_1d749e2c0ee0fff195512b52ab6f48b1a" kind="function"><name>submitQuery</name></member>
     <member refid="interfacesb_i_file_scan_19072c5bad6c983f3337f82c873d31150" kind="function"><name>scanDirectory</name></member>
@@ -820,15 +818,6 @@
     <member refid="interfacesb_i_file_scan_query_17e29f6f6d4b4087039781af8710edcdf" kind="function"><name>cancel</name></member>
     <member refid="interfacesb_i_file_scan_query_1fbb61d763fac766339eca3b9b7ceff2a" kind="function"><name>getResultRangeAsURIs</name></member>
     <member refid="interfacesb_i_file_scan_query_1435818abd81b45e710d869a6c2190904" kind="function"><name>isCancelled</name></member>
-  </compound>
-  <compound refid="interfacesb_i_file_system_observer" kind="interface"><name>sbIFileSystemObserver</name>
-    <member refid="interfacesb_i_file_system_observer_17fa13fb80d483262a6d7c34d12d96ade" kind="function"><name>onFileSystemChanged</name></member>
-    <member refid="interfacesb_i_file_system_observer_1b0d7c6f767e90c61f875ba5b7f69656a" kind="function"><name>onFileSystemRenamed</name></member>
-    <member refid="interfacesb_i_file_system_observer_1f83078b407c807152c5b27fe8b0d5e70" kind="function"><name>onFileSystemRemoved</name></member>
-  </compound>
-  <compound refid="interfacesb_i_file_system_observer_service" kind="interface"><name>sbIFileSystemObserverService</name>
-    <member refid="interfacesb_i_file_system_observer_service_136ca90c1b757470ed5dffb461ab93fde" kind="function"><name>addResourceObserver</name></member>
-    <member refid="interfacesb_i_file_system_observer_service_11d5e744b436f025e8dde222b6b6ced1c" kind="function"><name>removeResourceObserver</name></member>
   </compound>
   <compound refid="interfacesb_i_filterable_media_list_view" kind="interface"><name>sbIFilterableMediaListView</name>
     <member refid="interfacesb_i_filterable_media_list_view_1fd564c7b97bd95b32357a673859fc655" kind="variable"><name>filterConstraint</name></member>
@@ -1203,8 +1192,8 @@
     <member refid="interfacesb_i_local_database_library_1e7ba3baf8a067bc3d93de479e189a53a" kind="function"><name>NotifyListenersItemUpdated</name></member>
     <member refid="interfacesb_i_local_database_library_1145f1e62cc1c728867137baa8d3a5f2c" kind="function"><name>notifyCopyListenersItemCopied</name></member>
     <member refid="interfacesb_i_local_database_library_1a8e250f784fbbfdaff880b7ac91dcd44" kind="function"><name>createQuery</name></member>
-    <member refid="interfacesb_i_local_database_library_113cd2a1a02598a8b0d0a97a9c0b4911e" kind="function"><name>ForceBeginUpdateBatch</name></member>
-    <member refid="interfacesb_i_local_database_library_116717016f72091fb36174216cd234d95" kind="function"><name>ForceEndUpdateBatch</name></member>
+    <member refid="interfacesb_i_local_database_library_1de41f879ea02962872727acb6726c823" kind="function"><name>forceBeginUpdateBatch</name></member>
+    <member refid="interfacesb_i_local_database_library_12f4c4b7148ecfc5eefc1952c550c7d9f" kind="function"><name>forceEndUpdateBatch</name></member>
   </compound>
   <compound refid="interfacesb_i_local_database_library_copy_listener" kind="interface"><name>sbILocalDatabaseLibraryCopyListener</name>
     <member refid="interfacesb_i_local_database_library_copy_listener_1794158ed80633d1617c17d3ba6126ca2" kind="function"><name>onItemCopied</name></member>
@@ -1309,6 +1298,11 @@
     <member refid="interfacesb_i_local_database_tree_view_1401db04b3c311a8d39c3bd06713b488e" kind="function"><name>setMouseState</name></member>
     <member refid="interfacesb_i_local_database_tree_view_1fd81bf4aed111685c0a33861d83ba887" kind="function"><name>getSelectedValues</name></member>
   </compound>
+  <compound refid="interfacesb_i_mediacore" kind="interface"><name>sbIMediacore</name>
+    <member refid="interfacesb_i_mediacore_1460c0a4b2c903b57fa3418ffd54a1a26" kind="variable"><name>instanceName</name></member>
+    <member refid="interfacesb_i_mediacore_1621b7311e25d32c6706cad18b4ca4b29" kind="variable"><name>capabilities</name></member>
+    <member refid="interfacesb_i_mediacore_1cc13508b26ba6a9dfde737a605017ec3" kind="variable"><name>properties</name></member>
+  </compound>
   <compound refid="interfacesb_i_mediacore_manager" kind="interface"><name>sbIMediacoreManager</name>
     <member refid="interfacesb_i_mediacore_manager_163fa5da7ffdfa66f9f0e3ea5610bffab" kind="variable"><name>balanceControl</name></member>
     <member refid="interfacesb_i_mediacore_manager_18eb6531d7c58868a53babf847aae19af" kind="variable"><name>volumeControl</name></member>
@@ -1316,6 +1310,10 @@
     <member refid="interfacesb_i_mediacore_manager_1da20e938700de3dc191863822211eac7" kind="variable"><name>playbackControl</name></member>
     <member refid="interfacesb_i_mediacore_manager_152bf143ca8e0ae07ff4645c0ff813d9b" kind="variable"><name>capabilities</name></member>
     <member refid="interfacesb_i_mediacore_manager_1ec4a59693da51ee2fb393581e9262749" kind="variable"><name>properties</name></member>
+  </compound>
+  <compound refid="interfacesb_i_mediacore_playback_control" kind="interface"><name>sbIMediacorePlaybackControl</name>
+  </compound>
+  <compound refid="interfacesb_i_mediacore_voting_chain" kind="interface"><name>sbIMediacoreVotingChain</name>
   </compound>
   <compound refid="interfacesb_i_media_item" kind="interface"><name>sbIMediaItem</name>
     <member refid="interfacesb_i_media_item_119762d6d72170ace737a639575712ff1" kind="variable"><name>library</name></member>
@@ -1542,6 +1540,10 @@
     <member refid="interfacesb_i_metadata_handler_1651c8ba1123f897c7e100b7b75969725" kind="function"><name>setImageData</name></member>
     <member refid="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" kind="function"><name>onChannelData</name></member>
     <member refid="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" kind="function"><name>close</name></member>
+  </compound>
+  <compound refid="interfacesb_i_metadata_image_scanner" kind="interface"><name>sbIMetadataImageScanner</name>
+    <member refid="interfacesb_i_metadata_image_scanner_1e517df7735bc9a8943c0076719898e27" kind="function"><name>saveImageDataToFile</name></member>
+    <member refid="interfacesb_i_metadata_image_scanner_1f62971100f9a1f2b4c45ce05a11ca6c2" kind="function"><name>fetchCoverForMediaItem</name></member>
   </compound>
   <compound refid="interfacesb_i_metadata_manager" kind="interface"><name>sbIMetadataManager</name>
     <member refid="interfacesb_i_metadata_manager_1ae19d169e02736347d183bf89ae8ffa6" kind="function"><name>getHandlerForMediaURL</name></member>
@@ -1799,6 +1801,8 @@
     <member refid="interfacesb_i_playlist_playback_listener_18b27daff3afbcd2a8b196231d245e787" kind="function"><name>onBeforeTrackChange</name></member>
     <member refid="interfacesb_i_playlist_playback_listener_109423f8f83c52be6a7a01e5dfcc16caf" kind="function"><name>onTrackChange</name></member>
     <member refid="interfacesb_i_playlist_playback_listener_16a7e42b56d8ee13806b6e6a38700317c" kind="function"><name>onTrackIndexChange</name></member>
+    <member refid="interfacesb_i_playlist_playback_listener_1265b8317c6a88f48a4a93cc264524101" kind="function"><name>onBeforeViewChange</name></member>
+    <member refid="interfacesb_i_playlist_playback_listener_1d04f7dadc8cb33bad50f465b7acce727" kind="function"><name>onViewChange</name></member>
   </compound>
   <compound refid="interfacesb_i_playlist_reader" kind="interface"><name>sbIPlaylistReader</name>
     <member refid="interfacesb_i_playlist_reader_12f503eec9feb86fd94eab42be4e6aaf2" kind="variable"><name>originalURI</name></member>
@@ -1951,7 +1955,9 @@
     <member refid="interfacesb_i_property_unit_converter_1e291b2752a00bb8847c9121ac2b03e34" kind="variable"><name>units</name></member>
     <member refid="interfacesb_i_property_unit_converter_16dac6e360bfc5cf509877fadb3f98a98" kind="variable"><name>nativeUnitId</name></member>
     <member refid="interfacesb_i_property_unit_converter_176826e982091ac253fba36fd5dba49e3" kind="variable"><name>stringBundle</name></member>
-    <member refid="interfacesb_i_property_unit_converter_1425c0e156ab117a69c4f009548a365c0" kind="function"><name>convert</name></member>
+    <member refid="interfacesb_i_property_unit_converter_1b1b0bc7b339445174067a8b8dfdbfe4d" kind="variable"><name>propertyInfo</name></member>
+    <member refid="interfacesb_i_property_unit_converter_148d74e10c45297b514aadb789ef412bc" kind="function"><name>convert</name></member>
+    <member refid="interfacesb_i_property_unit_converter_185d688a378c54196ff47d1819bd13a38" kind="function"><name>autoFormat</name></member>
   </compound>
   <compound refid="interfacesb_i_proxied_services" kind="interface"><name>sbIProxiedServices</name>
     <member refid="interfacesb_i_proxied_services_1918813b5112b1d83e4f86cd4c7c8b2de" kind="variable"><name>utf8ConverterService</name></member>
@@ -2280,12 +2286,12 @@
     <member refid="interfacesb_i_tab_browser_tab_117fa6fc2e89dc73ae801a1b1b6cad898" kind="function"><name>showOuterPlaylist</name></member>
   </compound>
   <compound refid="interfacesb_i_tag_lib_channel_file_i_o_manager" kind="interface"><name>sbITagLibChannelFileIOManager</name>
-    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_12c1554d196d3da1f19636a15abdce78d" kind="function"><name>addChannel</name></member>
-    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_1a800b1e105df870b408efa0a23aa64cb" kind="function"><name>removeChannel</name></member>
-    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_1240222b9a3113a14340b13ef1ab0c023" kind="function"><name>getChannel</name></member>
-    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_111378195a2460873ae1c28105222cccf" kind="function"><name>getChannelSize</name></member>
-    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_1dc7e5f26fc96e9fe104295892ba07ad0" kind="function"><name>getChannelRestart</name></member>
-    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_15dbcfa59c87ae92ff50095e2ada713bf" kind="function"><name>setChannelRestart</name></member>
+    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_121eb73f7749093a0715513a218298a60" kind="function"><name>addChannel</name></member>
+    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_1a9475454caf0d9a5ab776b41aa339c09" kind="function"><name>removeChannel</name></member>
+    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_16e8eefa3bb8f14536ca045d0b38eba30" kind="function"><name>getChannel</name></member>
+    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_10cfda6120c473016632f9b63a0c0c28c" kind="function"><name>getChannelSize</name></member>
+    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_1378f4b95c7e7693c3de878bb7b6416b0" kind="function"><name>getChannelRestart</name></member>
+    <member refid="interfacesb_i_tag_lib_channel_file_i_o_manager_1ccafc2ebabaf59cd09e9af3fe6e733f0" kind="function"><name>setChannelRestart</name></member>
   </compound>
   <compound refid="interfacesb_i_temporary_file_service" kind="interface"><name>sbITemporaryFileService</name>
     <member refid="interfacesb_i_temporary_file_service_16cb7ca25187aed8da7af50d43be41bda" kind="variable"><name>rootTemporaryDirectory</name></member>
@@ -2608,6 +2614,26 @@
   </compound>
   <compound refid="sb_i_local_database_tree_view_8idl" kind="file"><name>sbILocalDatabaseTreeView.idl</name>
   </compound>
+  <compound refid="sb_i_mediacore_8idl" kind="file"><name>sbIMediacore.idl</name>
+  </compound>
+  <compound refid="sb_i_mediacore_balance_control_8idl" kind="file"><name>sbIMediacoreBalanceControl.idl</name>
+  </compound>
+  <compound refid="sb_i_mediacore_capabilities_8idl" kind="file"><name>sbIMediacoreCapabilities.idl</name>
+  </compound>
+  <compound refid="sb_i_mediacore_factory_8idl" kind="file"><name>sbIMediacoreFactory.idl</name>
+  </compound>
+  <compound refid="sb_i_mediacore_factory_registrar_8idl" kind="file"><name>sbIMediacoreFactoryRegistrar.idl</name>
+  </compound>
+  <compound refid="sb_i_mediacore_playback_control_8idl" kind="file"><name>sbIMediacorePlaybackControl.idl</name>
+  </compound>
+  <compound refid="sb_i_mediacore_transcode_control_8idl" kind="file"><name>sbIMediacoreTranscodeControl.idl</name>
+  </compound>
+  <compound refid="sb_i_mediacore_volume_control_8idl" kind="file"><name>sbIMediacoreVolumeControl.idl</name>
+  </compound>
+  <compound refid="sb_i_mediacore_voting_8idl" kind="file"><name>sbIMediacoreVoting.idl</name>
+  </compound>
+  <compound refid="sb_i_mediacore_voting_chain_8idl" kind="file"><name>sbIMediacoreVotingChain.idl</name>
+  </compound>
   <compound refid="sb_i_mediacore_manager_8idl" kind="file"><name>sbIMediacoreManager.idl</name>
   </compound>
   <compound refid="sb_i_seekable_channel_8idl" kind="file"><name>sbISeekableChannel.idl</name>
@@ -2619,6 +2645,8 @@
   <compound refid="sb_i_metadata_channel_8idl" kind="file"><name>sbIMetadataChannel.idl</name>
   </compound>
   <compound refid="sb_i_metadata_handler_8idl" kind="file"><name>sbIMetadataHandler.idl</name>
+  </compound>
+  <compound refid="sb_i_metadata_image_scanner_8idl" kind="file"><name>sbIMetadataImageScanner.idl</name>
   </compound>
   <compound refid="sb_i_metadata_manager_8idl" kind="file"><name>sbIMetadataManager.idl</name>
   </compound>
@@ -2757,6 +2785,8 @@
   <compound refid="todo" kind="page"><name>todo</name>
   </compound>
   <compound refid="dir_3eff1d8b7c0167e6834a1ac45733f055" kind="dir"><name>components/mediaimport/library/base/</name>
+  </compound>
+  <compound refid="dir_75e735169dbf03ff621e75edc4aada6a" kind="dir"><name>components/mediacore/base/</name>
   </compound>
   <compound refid="dir_2f3b306a9771210b1da1fa8b68511525" kind="dir"><name>components/library/base/</name>
   </compound>
@@ -2909,6 +2939,8 @@
   <compound refid="dir_3ce5567149aace006234715b00720419" kind="dir"><name>components/mediacore/metadata/handler/taglib/public/</name>
   </compound>
   <compound refid="dir_ebce047629bb5bdb4f3e8858b886835c" kind="dir"><name>components/mediacore/manager/public/</name>
+  </compound>
+  <compound refid="dir_965b3c1cd7e546ec268509c88e114335" kind="dir"><name>components/mediacore/base/public/</name>
   </compound>
   <compound refid="dir_c9c704d6f47504c41289539ffb282f53" kind="dir"><name>components/library/localdatabase/public/</name>
   </compound>

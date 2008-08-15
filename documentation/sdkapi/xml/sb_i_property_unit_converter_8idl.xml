@@ -4,13 +4,13 @@
     <compoundname>sbIPropertyUnitConverter.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="513">
+      <node id="538">
         <label>components/property/public/sbIPropertyUnitConverter.idl</label>
         <link refid="sbIPropertyUnitConverter.idl"/>
-        <childnode refid="514" relation="include">
+        <childnode refid="539" relation="include">
         </childnode>
       </node>
-      <node id="514">
+      <node id="539">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,30 +50,39 @@
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal">[scriptable,<sp/>uuid(7b86a6fc-a9d4-4ef9-90e3-3334e58cc3d6)]</highlight></codeline>
-<codeline lineno="37" refid="interfacesb_i_property_unit" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_unit" kindref="compound" tooltip="Property unit interface This interface describes a property unit.">sbIPropertyUnit</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="38"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_property_unit_1fd23e900cff34cd62a997db5df25ac99" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>id;</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="52" refid="interfacesb_i_property_unit_157e2953642c7488fd8fc874b51313e97" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"></highlight></codeline>
-<codeline lineno="59" refid="interfacesb_i_property_unit_16cdbb3bf55b92f02c8fcf25744633891" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>shortName;</highlight></codeline>
-<codeline lineno="60"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"></highlight></codeline>
-<codeline lineno="68"><highlight class="normal">[scriptable,<sp/>uuid(89022e5e-ebaa-46bd-a3f6-be8c27f0c4f7)]</highlight></codeline>
-<codeline lineno="69" refid="interfacesb_i_property_unit_converter" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_unit_converter" kindref="compound" tooltip="Property unit converter interface This is an interface songbird property converter...">sbIPropertyUnitConverter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="70"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/>AString<sp/>convert(in<sp/>AString<sp/>aValue,<sp/></highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aFromUnitID,<sp/></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aToUnitID);</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="81" refid="interfacesb_i_property_unit_converter_1e291b2752a00bb8847c9121ac2b03e34" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>units;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(7b86a6fc-a9d4-4ef9-90e3-3334e58cc3d6)]</highlight></codeline>
+<codeline lineno="38" refid="interfacesb_i_property_unit" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_unit" kindref="compound" tooltip="Property unit interface This interface describes a property unit.">sbIPropertyUnit</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="46" refid="interfacesb_i_property_unit_1fd23e900cff34cd62a997db5df25ac99" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>id;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="53" refid="interfacesb_i_property_unit_157e2953642c7488fd8fc874b51313e97" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60" refid="interfacesb_i_property_unit_16cdbb3bf55b92f02c8fcf25744633891" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>shortName;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal">[scriptable,<sp/>uuid(16814f07-373a-404a-a31b-73ca83cb3c96)]</highlight></codeline>
+<codeline lineno="70" refid="interfacesb_i_property_unit_converter" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_unit_converter" kindref="compound" tooltip="Property unit converter interface This is an interface songbird property converter...">sbIPropertyUnitConverter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="71"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/>AString<sp/>convert(in<sp/>AString<sp/>aValue,<sp/></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aFromUnitID,<sp/></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aToUnitID,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMinDecimals,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMaxDecimals);</highlight></codeline>
 <codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="88" refid="interfacesb_i_property_unit_converter_16dac6e360bfc5cf509877fadb3f98a98" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>nativeUnitId;</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="93" refid="interfacesb_i_property_unit_converter_176826e982091ac253fba36fd5dba49e3" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>stringBundle;</highlight></codeline>
-<codeline lineno="94"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="86" refid="interfacesb_i_property_unit_converter_1e291b2752a00bb8847c9121ac2b03e34" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>units;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="93" refid="interfacesb_i_property_unit_converter_16dac6e360bfc5cf509877fadb3f98a98" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>nativeUnitId;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="98" refid="interfacesb_i_property_unit_converter_176826e982091ac253fba36fd5dba49e3" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>stringBundle;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/>AString<sp/>autoFormat(in<sp/>AString<sp/>aValue,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMinDecimals,</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMaxDecimals);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="114" refid="interfacesb_i_property_unit_converter_1b1b0bc7b339445174067a8b8dfdbfe4d" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref><sp/>propertyInfo;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyUnitConverter.idl"/>
   </compounddef>

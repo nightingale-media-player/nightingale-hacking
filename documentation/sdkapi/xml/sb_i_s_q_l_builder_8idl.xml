@@ -4,13 +4,13 @@
     <compoundname>sbISQLBuilder.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="573">
+      <node id="598">
         <label>components/sqlbuilder/public/sbISQLBuilder.idl</label>
         <link refid="sbISQLBuilder.idl"/>
-        <childnode refid="574" relation="include">
+        <childnode refid="599" relation="include">
         </childnode>
       </node>
-      <node id="574">
+      <node id="599">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

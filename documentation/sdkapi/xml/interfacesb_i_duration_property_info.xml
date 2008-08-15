@@ -89,6 +89,9 @@
       <node id="226">
         <label>sbIPropertyUnitConverter</label>
         <link refid="interfacesb_i_property_unit_converter"/>
+        <childnode refid="224" relation="usage">
+          <edgelabel>propertyInfo</edgelabel>
+        </childnode>
       </node>
       <node id="225">
         <label>sbIPropertyArray</label>

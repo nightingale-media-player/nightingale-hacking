@@ -136,17 +136,53 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="88"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_1265b8317c6a88f48a4a93cc264524101" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlaybackListener::onBeforeViewChange</definition>
+        <argsstring>(in sbIMediaListView aView)</argsstring>
+        <name>onBeforeViewChange</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+          <declname>aView</declname>
+        </param>
+        <briefdescription>
+<para>Called when the user starts playback on a particular view, before the view becomes the playing view. Note that this does not get called when playback continues to the next track in the same view, but does get called if the user restarts playback on the currently playing view. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="97"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_playlist_playback_listener_1d04f7dadc8cb33bad50f465b7acce727" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIPlaylistPlaybackListener::onViewChange</definition>
+        <argsstring>(in sbIMediaListView aView)</argsstring>
+        <name>onViewChange</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+          <declname>aView</declname>
+        </param>
+        <briefdescription>
+<para>Called when the user starts playback on a particular view, after the view has become the playing view. Note that this does not get called when playback continues to the next track in the same view, but does get called if the user restarts playback on the currently playing view. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="105"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Interface that handles the tracking of playback changes. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="49" bodyend="90"/>
+    <location file="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/playlistplayback/public/sbIPlaylistPlayback.idl" bodystart="49" bodyend="106"/>
     <listofallmembers>
       <member refid="interfacesb_i_playlist_playback_listener_18b27daff3afbcd2a8b196231d245e787" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onBeforeTrackChange</name></member>
+      <member refid="interfacesb_i_playlist_playback_listener_1265b8317c6a88f48a4a93cc264524101" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onBeforeViewChange</name></member>
       <member refid="interfacesb_i_playlist_playback_listener_1e80492fbe57ece2ca318ecc7a7494d3e" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onStop</name></member>
       <member refid="interfacesb_i_playlist_playback_listener_109423f8f83c52be6a7a01e5dfcc16caf" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onTrackChange</name></member>
       <member refid="interfacesb_i_playlist_playback_listener_16a7e42b56d8ee13806b6e6a38700317c" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onTrackIndexChange</name></member>
+      <member refid="interfacesb_i_playlist_playback_listener_1d04f7dadc8cb33bad50f465b7acce727" prot="public" virt="non-virtual"><scope>sbIPlaylistPlaybackListener</scope><name>onViewChange</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

@@ -79,10 +79,14 @@
 <a href="interfacesb_i_property_unit_converter-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="425c0e156ab117a69c4f009548a365c0"></a><!-- doxytag: member="sbIPropertyUnitConverter::convert" ref="425c0e156ab117a69c4f009548a365c0" args="(in AString aValue, in AString aFromUnitID, in AString aToUnitID)" -->
-AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_unit_converter.html#425c0e156ab117a69c4f009548a365c0">convert</a> (in AString aValue, in AString aFromUnitID, in AString aToUnitID)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="48d74e10c45297b514aadb789ef412bc"></a><!-- doxytag: member="sbIPropertyUnitConverter::convert" ref="48d74e10c45297b514aadb789ef412bc" args="(in AString aValue, in AString aFromUnitID, in AString aToUnitID, in long aMinDecimals, in long aMaxDecimals)" -->
+AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_unit_converter.html#48d74e10c45297b514aadb789ef412bc">convert</a> (in AString aValue, in AString aFromUnitID, in AString aToUnitID, in long aMinDecimals, in long aMaxDecimals)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Convert a value to a different unit. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Convert a value to a different unit. Use -1 for aMinDecimals and aMaxDecimals if you do not wish to set any limits on the number of decimals in the returned value. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="85d688a378c54196ff47d1819bd13a38"></a><!-- doxytag: member="sbIPropertyUnitConverter::autoFormat" ref="85d688a378c54196ff47d1819bd13a38" args="(in AString aValue, in long aMinDecimals, in long aMaxDecimals)" -->
+AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_unit_converter.html#85d688a378c54196ff47d1819bd13a38">autoFormat</a> (in AString aValue, in long aMinDecimals, in long aMaxDecimals)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Formats a value using the most suitable unit. Use -1 for aMinDecimals and aMaxDecimals if you do not wish to set any limits on the number of decimals in the returned value. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e291b2752a00bb8847c9121ac2b03e34"></a><!-- doxytag: member="sbIPropertyUnitConverter::units" ref="e291b2752a00bb8847c9121ac2b03e34" args="" -->
 readonly attribute nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_unit_converter.html#e291b2752a00bb8847c9121ac2b03e34">units</a></td></tr>
@@ -96,15 +100,19 @@ readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a
 readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_unit_converter.html#76826e982091ac253fba36fd5dba49e3">stringBundle</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The url to the string bundle used to localize partial entities. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="b1b0bc7b339445174067a8b8dfdbfe4d"></a><!-- doxytag: member="sbIPropertyUnitConverter::propertyInfo" ref="b1b0bc7b339445174067a8b8dfdbfe4d" args="" -->
+attribute <a class="el" href="interfacesb_i_property_info.html">sbIPropertyInfo</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_unit_converter.html#b1b0bc7b339445174067a8b8dfdbfe4d">propertyInfo</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The <a class="el" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> this converter is associated with. This attribute will be set automatically by the propertyinfo object when its converter is assigned. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Property unit converter interface This is an interface songbird property converter, used to convert a property value between its various units representations. 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_property_unit_converter_8idl-source.html#l00069">69</a> of file <a class="el" href="sb_i_property_unit_converter_8idl-source.html">sbIPropertyUnitConverter.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_property_unit_converter_8idl-source.html#l00070">70</a> of file <a class="el" href="sb_i_property_unit_converter_8idl-source.html">sbIPropertyUnitConverter.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/property/public/<a class="el" href="sb_i_property_unit_converter_8idl-source.html">sbIPropertyUnitConverter.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Aug 4 11:05:10 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:41 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

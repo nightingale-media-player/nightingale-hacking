@@ -43,7 +43,7 @@
         <location file="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_manager_1da20e938700de3dc191863822211eac7" prot="public" static="no" mutable="no">
-        <type>readonly sbIMediacorePlaybackControl</type>
+        <type>readonly <ref refid="interfacesb_i_mediacore_playback_control" kindref="compound">sbIMediacorePlaybackControl</ref></type>
         <definition>readonly sbIMediacorePlaybackControl sbIMediacoreManager::playbackControl</definition>
         <argsstring></argsstring>
         <name>playbackControl</name>
@@ -86,6 +86,19 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
+    <collaborationgraph>
+      <node id="472">
+        <label>sbIMediacorePlaybackControl</label>
+        <link refid="interfacesb_i_mediacore_playback_control"/>
+      </node>
+      <node id="471">
+        <label>sbIMediacoreManager</label>
+        <link refid="interfacesb_i_mediacore_manager"/>
+        <childnode refid="472" relation="usage">
+          <edgelabel>playbackControl</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
     <location file="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" line="41" bodyfile="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl" bodystart="40" bodyend="50"/>
     <listofallmembers>
       <member refid="interfacesb_i_mediacore_manager_163fa5da7ffdfa66f9f0e3ea5610bffab" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>balanceControl</name></member>

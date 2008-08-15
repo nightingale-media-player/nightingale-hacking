@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="363">
+      <node id="385">
         <label>components/mediacore/manager/public/sbIMediacoreManager.idl</label>
         <link refid="sbIMediacoreManager.idl"/>
-        <childnode refid="364" relation="include">
+        <childnode refid="386" relation="include">
         </childnode>
       </node>
-      <node id="364">
+      <node id="386">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -53,7 +53,7 @@
 <codeline lineno="31"><highlight class="normal">interface<sp/>sbIMediacoreAudioEQ;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal">interface<sp/>sbIMediacoreBalanceControl;</highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">interface<sp/>sbIMediacorePlaybackControl;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_playback_control" kindref="compound">sbIMediacorePlaybackControl</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>sbIMediacoreVolumeControl;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal">interface<sp/>sbIMediacoreCapabilities;</highlight></codeline>
@@ -65,7 +65,7 @@
 <codeline lineno="43" refid="interfacesb_i_mediacore_manager_18eb6531d7c58868a53babf847aae19af" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>sbIMediacoreVolumeControl<sp/><sp/><sp/>volumeControl;</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_mediacore_manager_19babe21fe1368459aeeda10d50428300" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>sbIMediacoreAudioEQ<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>equalizer;</highlight></codeline>
-<codeline lineno="46" refid="interfacesb_i_mediacore_manager_1da20e938700de3dc191863822211eac7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>sbIMediacorePlaybackControl<sp/>playbackControl;</highlight></codeline>
+<codeline lineno="46" refid="interfacesb_i_mediacore_manager_1da20e938700de3dc191863822211eac7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/><ref refid="interfacesb_i_mediacore_playback_control" kindref="compound">sbIMediacorePlaybackControl</ref><sp/>playbackControl;</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"></highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_mediacore_manager_152bf143ca8e0ae07ff4645c0ff813d9b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>sbIMediacoreCapabilities<sp/><sp/><sp/><sp/>capabilities;</highlight></codeline>
 <codeline lineno="49" refid="interfacesb_i_mediacore_manager_1ec4a59693da51ee2fb393581e9262749" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>nsIPropertyBag2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>properties;</highlight></codeline>

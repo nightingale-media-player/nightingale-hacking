@@ -95,31 +95,40 @@
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
 <a name="l00029"></a>00029 interface nsISimpleEnumerator;
-<a name="l00030"></a>00030 
-<a name="l00036"></a>00036 [scriptable, uuid(7b86a6fc-a9d4-4ef9-90e3-3334e58cc3d6)]
-<a name="l00037"></a><a class="code" href="interfacesb_i_property_unit.html">00037</a> interface <a class="code" href="interfacesb_i_property_unit.html" title="Property unit interface This interface describes a property unit.">sbIPropertyUnit</a> : nsISupports
-<a name="l00038"></a>00038 {
-<a name="l00045"></a><a class="code" href="interfacesb_i_property_unit.html#fd23e900cff34cd62a997db5df25ac99">00045</a>   readonly attribute AString id;
-<a name="l00046"></a>00046   
-<a name="l00052"></a><a class="code" href="interfacesb_i_property_unit.html#57e2953642c7488fd8fc874b51313e97">00052</a>   readonly attribute AString name;
-<a name="l00053"></a>00053 
-<a name="l00059"></a><a class="code" href="interfacesb_i_property_unit.html#6cdbb3bf55b92f02c8fcf25744633891">00059</a>   readonly attribute AString shortName;
-<a name="l00060"></a>00060 };
-<a name="l00061"></a>00061 
-<a name="l00068"></a>00068 [scriptable, uuid(89022e5e-ebaa-46bd-a3f6-be8c27f0c4f7)]
-<a name="l00069"></a><a class="code" href="interfacesb_i_property_unit_converter.html">00069</a> interface <a class="code" href="interfacesb_i_property_unit_converter.html" title="Property unit converter interface This is an interface songbird property converter...">sbIPropertyUnitConverter</a> : nsISupports
-<a name="l00070"></a>00070 {
-<a name="l00074"></a>00074   AString convert(in AString aValue, 
-<a name="l00075"></a>00075                   in AString aFromUnitID, 
-<a name="l00076"></a>00076                   in AString aToUnitID);
-<a name="l00077"></a>00077   
-<a name="l00081"></a><a class="code" href="interfacesb_i_property_unit_converter.html#e291b2752a00bb8847c9121ac2b03e34">00081</a>   readonly attribute nsISimpleEnumerator units;
+<a name="l00030"></a>00030 interface <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a>;
+<a name="l00031"></a>00031 
+<a name="l00037"></a>00037 [scriptable, uuid(7b86a6fc-a9d4-4ef9-90e3-3334e58cc3d6)]
+<a name="l00038"></a><a class="code" href="interfacesb_i_property_unit.html">00038</a> interface <a class="code" href="interfacesb_i_property_unit.html" title="Property unit interface This interface describes a property unit.">sbIPropertyUnit</a> : nsISupports
+<a name="l00039"></a>00039 {
+<a name="l00046"></a><a class="code" href="interfacesb_i_property_unit.html#fd23e900cff34cd62a997db5df25ac99">00046</a>   readonly attribute AString id;
+<a name="l00047"></a>00047   
+<a name="l00053"></a><a class="code" href="interfacesb_i_property_unit.html#57e2953642c7488fd8fc874b51313e97">00053</a>   readonly attribute AString name;
+<a name="l00054"></a>00054 
+<a name="l00060"></a><a class="code" href="interfacesb_i_property_unit.html#6cdbb3bf55b92f02c8fcf25744633891">00060</a>   readonly attribute AString shortName;
+<a name="l00061"></a>00061 };
+<a name="l00062"></a>00062 
+<a name="l00069"></a>00069 [scriptable, uuid(16814f07-373a-404a-a31b-73ca83cb3c96)]
+<a name="l00070"></a><a class="code" href="interfacesb_i_property_unit_converter.html">00070</a> interface <a class="code" href="interfacesb_i_property_unit_converter.html" title="Property unit converter interface This is an interface songbird property converter...">sbIPropertyUnitConverter</a> : nsISupports
+<a name="l00071"></a>00071 {
+<a name="l00077"></a>00077   AString convert(in AString aValue, 
+<a name="l00078"></a>00078                   in AString aFromUnitID, 
+<a name="l00079"></a>00079                   in AString aToUnitID,
+<a name="l00080"></a>00080                   in <span class="keywordtype">long</span> aMinDecimals,
+<a name="l00081"></a>00081                   in <span class="keywordtype">long</span> aMaxDecimals);
 <a name="l00082"></a>00082   
-<a name="l00088"></a><a class="code" href="interfacesb_i_property_unit_converter.html#6dac6e360bfc5cf509877fadb3f98a98">00088</a>   readonly attribute AString nativeUnitId;
-<a name="l00089"></a>00089   
-<a name="l00093"></a><a class="code" href="interfacesb_i_property_unit_converter.html#76826e982091ac253fba36fd5dba49e3">00093</a>   readonly attribute AString stringBundle;
-<a name="l00094"></a>00094 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Mon Aug 4 11:05:04 2008 for Songbird by&nbsp;
+<a name="l00086"></a><a class="code" href="interfacesb_i_property_unit_converter.html#e291b2752a00bb8847c9121ac2b03e34">00086</a>   readonly attribute nsISimpleEnumerator units;
+<a name="l00087"></a>00087   
+<a name="l00093"></a><a class="code" href="interfacesb_i_property_unit_converter.html#6dac6e360bfc5cf509877fadb3f98a98">00093</a>   readonly attribute AString nativeUnitId;
+<a name="l00094"></a>00094   
+<a name="l00098"></a><a class="code" href="interfacesb_i_property_unit_converter.html#76826e982091ac253fba36fd5dba49e3">00098</a>   readonly attribute AString stringBundle;
+<a name="l00099"></a>00099   
+<a name="l00105"></a>00105   AString autoFormat(in AString aValue,
+<a name="l00106"></a>00106                      in <span class="keywordtype">long</span> aMinDecimals,
+<a name="l00107"></a>00107                      in <span class="keywordtype">long</span> aMaxDecimals);
+<a name="l00108"></a>00108   
+<a name="l00114"></a><a class="code" href="interfacesb_i_property_unit_converter.html#b1b0bc7b339445174067a8b8dfdbfe4d">00114</a>   attribute <a class="code" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> propertyInfo;
+<a name="l00115"></a>00115 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>
