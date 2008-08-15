@@ -35,12 +35,10 @@
 #include "WindowCloak.h"
 
 #include "sbNativeWindowManagerCID.h"
-#include "sbFileSystemObserverServiceCID.h"
 
 #ifdef XP_UNIX
 #ifdef XP_MACOSX
 #include "macosx/sbNativeWindowManager.h"
-#include "macosx/sbMacFSObserverService.h"
 #else
 #include "linux/sbNativeWindowManager.h"
 #endif
@@ -72,10 +70,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowLayer)
 #endif
 
 
-#ifdef XP_MACOSX
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMacFileSystemObserverService)
-#endif
-
 static nsModuleComponentInfo sbIntegration[] =
 {  
   {
@@ -91,14 +85,6 @@ static nsModuleComponentInfo sbIntegration[] =
     SONGBIRD_NATIVEWINDOWMANAGER_CONTRACTID,
     sbNativeWindowManagerConstructor
   },
-#ifdef XP_MACOSX
-  {
-    SONGBIRD_FILESYSTEMOBSERVERSERVICE_CLASSNAME,
-    SONGBIRD_FILESYSTEMOBSERVERSERVICE_CID,
-    SONGBIRD_FILESYSTEMOBSERVERSERVICE_CONTRACTID,
-    sbMacFileSystemObserverServiceConstructor
-  },
-#endif
 #ifdef XP_WIN
   {
     SONGBIRD_WINDOWDRAGGER_CLASSNAME,
