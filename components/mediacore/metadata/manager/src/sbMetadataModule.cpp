@@ -76,5 +76,14 @@ InitMetadata(nsIModule *self)
 #define InitMetadata nsnull
 #endif
 
-NS_IMPL_NSGETMODULE_WITH_CTOR(SongbirdMetadataComponent, components, InitMetadata)
+PR_STATIC_CALLBACK(void)
+DestroyModule(nsIModule* self)
+{
+  sbMetadataManager::DestroySingleton();
+}
+
+NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdMetadataComponent,
+                                   components,
+                                   InitMetadata,
+                                   DestroyModule)
 

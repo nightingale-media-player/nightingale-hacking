@@ -146,6 +146,13 @@ sbMetadataManager *sbMetadataManager::GetSingleton()
 }
 
 //-----------------------------------------------------------------------------
+void sbMetadataManager::DestroySingleton()
+{
+  nsRefPtr<sbMetadataManager> dummy;
+  dummy.swap(gMetadataManager);
+}
+
+//-----------------------------------------------------------------------------
 /* sbIMetadataHandler GetHandlerForMediaURL (in wstring strURL); */
 NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, sbIMetadataHandler **_retval)
 {

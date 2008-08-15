@@ -67,6 +67,7 @@ class sbMetadataManager : public sbIMetadataManager
   virtual ~sbMetadataManager();
 
   static sbMetadataManager *GetSingleton();
+  static void DestroySingleton();
 
   struct sbMetadataHandlerItem
   {
