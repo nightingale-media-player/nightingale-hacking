@@ -66,7 +66,7 @@ extern PRLogModuleInfo* gMetadataLog;
   PR_LOG(gMetadataLog, PR_LOG_DEBUG, args); \
   PR_END_MACRO
 #else
-#define LOG(args) PR_BEGIN_MARCO /* nothing */ PR_END_MACRO
+#define LOG(args) PR_BEGIN_MACRO /* nothing */ PR_END_MACRO
 #endif
 
 
