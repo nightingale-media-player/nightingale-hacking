@@ -38,6 +38,7 @@ Cu.import("resource://app/jsmodules/sbAddToPlaylist.jsm");
 Cu.import("resource://app/jsmodules/sbAddToDevice.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/DropHelper.jsm");
+Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 
 const WEB_PLAYLIST_CONTEXT      = "webplaylist";
 const WEB_PLAYLIST_TABLE        = "webplaylist";
@@ -107,6 +108,7 @@ PublicPlaylistCommands.prototype = {
   m_cmd_Remove                    : null, // remove the selected track(s)
   m_cmd_Edit                      : null, // edit the selected track(s)
   m_cmd_Download                  : null, // download the selected track(s)
+  m_cmd_Rescan                    : null, // rescan the selected track(s)
   m_cmd_CopyTrackLocation         : null, // copy the select track(s) location(s)
   m_cmd_ShowDownloadPlaylist      : null, // switch the browser to show the download playlist
   m_cmd_PauseResumeDownload       : null, // auto-switching pause/resume track download
@@ -331,6 +333,30 @@ PublicPlaylistCommands.prototype = {
                                                     plCmd_IsAnyTrackSelected);
 
       // --------------------------------------------------------------------------
+      // The RESCAN button
+      // --------------------------------------------------------------------------
+
+
+      this.m_cmd_Rescan = new PlaylistCommandsBuilder();
+
+      this.m_cmd_Rescan.appendAction(null,
+                                     "library_cmd_rescan",
+                                     "&command.rescan",
+                                     "&command.tooltip.rescan",
+                                     plCmd_Rescan_TriggerCallback);
+
+      this.m_cmd_Rescan.setCommandShortcut(null,
+                                           "library_cmd_rescan",
+                                           "&command.shortcut.key.rescan",
+                                           "&command.shortcut.keycode.rescan",
+                                           "&command.shortcut.modifiers.rescan",
+                                           true);
+
+      this.m_cmd_Rescan.setCommandEnabledCallback(null,
+                                                  "library_cmd_rescan",
+                                                  plCmd_IsAnyTrackSelected);
+
+      // --------------------------------------------------------------------------
       // The COPY TRACK LOCATION button
       // --------------------------------------------------------------------------
 
@@ -529,6 +555,7 @@ PublicPlaylistCommands.prototype = {
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_REMOVE, this.m_cmd_Remove);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
+      this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_RESCAN, this.m_cmd_Rescan);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTODEVICE, SBPlaylistCommand_AddToDevice);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
@@ -555,6 +582,9 @@ PublicPlaylistCommands.prototype = {
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_edit",
                                                     this.m_cmd_Edit);
+      this.m_defaultCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_rescan",
+                                                    this.m_cmd_Rescan);
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_addtoplaylist",
                                                     SBPlaylistCommand_AddToPlaylist);
@@ -846,6 +876,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_REMOVE, this.m_cmd_Remove);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_RESCAN, this.m_cmd_Rescan);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTODEVICE, SBPlaylistCommand_AddToDevice);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
@@ -937,6 +968,7 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_Remove.shutdown();
     this.m_cmd_Edit.shutdown();
     this.m_cmd_Download.shutdown();
+    this.m_cmd_Rescan.shutdown();
     this.m_cmd_CopyTrackLocation.shutdown();
     this.m_cmd_ShowDownloadPlaylist.shutdown();
     this.m_cmd_PauseResumeDownload.shutdown();
@@ -1045,6 +1077,36 @@ function plCmd_Download_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost)
     Cu.reportError(err);
   }
 }
+
+function plCmd_Rescan_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  try
+  {
+    var playlist = unwrap(aContext.playlist);
+    var window = unwrap(aContext.window);
+
+    if(playlist.mediaListView.selection.count) {
+      var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                             .createInstance(Ci.nsIMutableArray);
+            
+      var selection = playlist.mediaListView.selection.selectedIndexedMediaItems;
+      while(selection.hasMoreElements()) {
+        let item = selection.getNext()
+                            .QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
+        mediaItemArray.appendElement(item, false);
+      }
+      
+      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                              .getService(Ci.sbIFileMetadataService);
+      var job = metadataService.read(mediaItemArray);
+      SBJobUtils.showProgressDialog(job, null);
+    }
+  }
+  catch( err )
+  {
+    Cu.reportError(err);
+  }
+}
+
 
 /*
 
