@@ -32,7 +32,7 @@ if (typeof LastFm == 'undefined') {
 }
 
 LastFm.Icons = {
-  busy: 'chrome://lastfm/skin/busy.gif',
+  busy: 'chrome://lastfm/skin/busy.png',
   disabled: 'chrome://lastfm/skin/disabled.png',
   logged_in: 'chrome://lastfm/skin/as.png',
   logged_out: 'chrome://lastfm/skin/disabled.png',
@@ -416,10 +416,10 @@ LastFm.setStatusTextId = function LastFm_setStatusTextId(aId) {
 LastFm.setLoginError = function LastFm_setLoginError(aText) {
   if (aText) {
     this._loginError.textContent = aText;
-    this._loginError.style.display = '-moz-box';
+    this._loginError.style.visibility = 'visible';
   } else {
     this._loginError.textContent = '';
-    this._loginError.style.display = 'none';
+    this._loginError.style.visibility = 'collapse';
   }
 }
 

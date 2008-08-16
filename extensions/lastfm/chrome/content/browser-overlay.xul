@@ -57,34 +57,41 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <panel id="lastfmPanel" position="before_end">
       <deck id="lastfmDeck">
         <vbox id="lastfmLogin">
-          <grid>
-            <columns>
-              <column/>
-              <column flex="1"/>
-            </columns>
-            <rows>
-              <row>
-                <label value="Username:"/>
-                <textbox id="lastfmUsername"/>
-              </row>
-              <row>
-                <label value="Password:"/>
-                <textbox id="lastfmPassword" type="password"/>
-              </row>
-            </rows>
-          </grid>
-          <description id="lastfmLoginError"/>
+          <groupbox>
+            <caption label="Login" />
+            <grid>
+              <columns>
+                <column/>
+                <column flex="1"/>
+              </columns>
+              <rows>
+                <row align="center">
+                  <label value="Username:"/>
+                  <textbox id="lastfmUsername"/>
+                </row>
+                <row align="center">
+                  <label value="Password:"/>
+                  <textbox id="lastfmPassword" type="password"/>
+                </row>
+              </rows>
+            </grid>
+            <description id="lastfmLoginError"/>
+          </groupbox>
+
           <spacer flex="1"/>
-          <hbox>
-            <description><html:span id="lastfmSignup">Sign up for Last.fm</html:span></description>
+
+          <hbox align="center">
+            <description class="text-link"><html:span id="lastfmSignup">Sign up for Last.fm</html:span></description>
             <spacer flex="1"/>
             <button id="lastfmLoginButton">Log in</button>
           </hbox>
         </vbox>
         <vbox id="lastfmLoggingIn">
           <spacer flex="1"/>
-          <label value="Logging in..."/>
-          <progressmeter mode="undetermined"/>
+          <groupbox>
+            <label value="Logging in..."/>
+            <progressmeter mode="undetermined"/>
+          </groupbox>
           <spacer flex="1"/>
           <hbox>
             <spacer flex="1"/>
@@ -92,17 +99,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           </hbox>
         </vbox>
         <vbox id="lastfmProfile">
-          <hbox>
+
+          <groupbox orient="horizontal" pack="top" align="top">
+            <caption label="Profile" />
             <image id="lastfmImage" src="" />
             <vbox>
-              <description>Logged in as:
-                <html:span id="lastfmRealname" class="lastfmClickable"/>
+              <description>
+                <html:span id="lastfmRealname" class="lastfmClickable" style="font-weight:bold; font-size:120%;"/>
               </description>
-              <description >Total scrobbled:
-                <html:span id="lastfmTracks" class="lastfmClickable"/>
+              <description >
+                <html:span id="lastfmTracks" class="lastfmClickable"/> tracks scrobbled
               </description>
             </vbox>
-          </hbox>
+          </groupbox>
+
           <spacer flex="1"/>
           <hbox>
             <checkbox id="lastfmScrobble" label="Scrobble my tracks" checked="true" />

@@ -6,34 +6,24 @@
   min-height: 2em;
 }
 
-#lastfmSignup {
-  text-decoration: underline;
-}
-#lastfmSignup:hover {
-  color: blue;
-}
-
 #lastfmLoginError {
   color: red;
+  visibility:collapse;
 }
 
 /* the avatar image */
 #lastfmImage {
   width: 64px;
   height: 64px;
-  border: 2px solid white;
+  border: 2px solid rgb(80,80,80);
+  margin-right:4px;
+  background-image:url('default-avatar.png');
+  background-repeat:no-repeat;
+  background-position:center center;
 }
 #lastfmImage:hover {
-  border-color: blue;
-}
-
-/* clickable fields */
-.lastfmClickable {
-  font-weight: bold;
-  text-decoration: underline;
-}
-.lastfmClickable:hover {
-  color: blue;
+  border-color: #1694d9;
+  cursor:pointer;
 }
 
 /* the next scrobbling line */
@@ -43,21 +33,47 @@
 
 /* the faceplate */
 #lastfmFaceplate {
-  padding: 1px 0px 1px 0px;
+  margin: 0px !important;
+  padding: 1px 4px !important;
+  max-height: 18px !important;
+  
+  background-image:url('bg-faceplate-buttons.png');
+  background-repeat:no-repeat;
+  background-position:left center;
 }
+
 #lastfmFaceplateLove {
-  list-style-image: url(love0.png);
+  list-style-image: url('button-love.png');
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
   width: 16px;
   height: 16px;
+}
+#lastfmFaceplateLove:hover {
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+#lastfmFaceplateLove:active {
 }
 #lastfmFaceplate[loveban=love] #lastfmFaceplateLove {
-  list-style-image: url(love1.png);
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
 }
+#lastfmFaceplate[loveban=love] #lastfmFaceplateLove:hover {
+  -moz-image-region: rect(16px, 32px, 32px, 16px);
+}
+
 #lastfmFaceplateBan {
-  list-style-image: url(ban0.png);
+  list-style-image: url('button-ban.png');
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
   width: 16px;
   height: 16px;
 }
+#lastfmFaceplateBan:hover {
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+#lastfmFaceplateBan:active {
+}
 #lastfmFaceplate[loveban=ban] #lastfmFaceplateBan {
-  list-style-image: url(ban1.png);
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+#lastfmFaceplate[loveban=ban] #lastfmFaceplateBan:hover {
+  -moz-image-region: rect(16px, 32px, 32px, 16px);
 }
