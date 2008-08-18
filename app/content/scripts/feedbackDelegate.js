@@ -153,8 +153,13 @@ FeedbackDelegate.prototype =
     {
       // Only show the survey if we met the date requirments. If not, we'll
       // have to wait until the next day the app is started.
+      // 
+      // To work around a scenario where the only window in th window registry
+      // is the hidden window, wait 10 seconds to show the dialog.
+      // @see bug 9887
       if (hasDateRequirements) {
-        this._showSurvey();
+        var self = this;
+        setTimeout(function() { self._showSurvey(); }, 10000);
       }
     }
     else {
