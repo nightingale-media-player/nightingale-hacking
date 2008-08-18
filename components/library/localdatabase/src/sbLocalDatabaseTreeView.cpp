@@ -683,6 +683,7 @@ sbLocalDatabaseTreeView::RestoreSelection()
       }
     }
   }
+  return NS_OK;
 }
 
 nsresult
