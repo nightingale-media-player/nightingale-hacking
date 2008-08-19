@@ -219,10 +219,24 @@ NS_IMETHODIMP sbNativeWindowManager::SetMinimumWindowSize(nsISupports *aWindow, 
 }
 
 
+NS_IMETHODIMP sbNativeWindowManager::SetMaximumWindowSize(nsISupports *aWindow, PRInt32 aMaximumWidth, PRInt32 aMaximumHeight)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+
 NS_IMETHODIMP sbNativeWindowManager::GetSupportsMinimumWindowSize(PRBool *aSupportsMinimumWindowSize)
 {
   NS_ENSURE_ARG_POINTER(aSupportsMinimumWindowSize);
   *aSupportsMinimumWindowSize = PR_TRUE;
+  return NS_OK;
+}
+
+
+NS_IMETHODIMP sbNativeWindowManager::GetSupportsMaximumWindowSize(PRBool *aSupportsMaximumWindowSize)
+{
+  NS_ENSURE_ARG_POINTER(aSupportsMaximumWindowSize);
+  *aSupportsMaximumWindowSize = PR_FALSE;
   return NS_OK;
 }
 

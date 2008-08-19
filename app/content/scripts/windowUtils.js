@@ -900,6 +900,12 @@ function onLayoutLoad(event) {
         if (minWidth > 0 && minHeight > 0) {
           nativeWinMgr.setMinimumWindowSize(window, minWidth, minHeight);
         }
+        
+        var maxWidth = parseInt(cstyle.maxWidth);
+        var maxHeight = parseInt(cstyle.maxHeight);
+        if (maxWidth > 0 && maxHeight > 0) {
+          nativeWinMgr.setMaximumWindowSize(window, maxWidth, maxHeight);
+        }
       }
     }
   }

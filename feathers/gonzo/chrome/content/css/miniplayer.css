@@ -5,6 +5,8 @@
   min-width:480px !important;
   width:480px !important;
   overflow:hidden !important;
+  max-height: 22px;
+  max-width: 1280px;
   padding:0;
 }
 

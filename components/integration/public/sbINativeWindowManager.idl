@@ -40,7 +40,7 @@
  * operating system window manager in a somewhat cross-platform way.
  * This interface is inspired by some of the GtkWindow interface.
  */
-[scriptable, uuid(77746f92-dfe5-4915-a3ae-ff2619c4b167)]
+[scriptable, uuid(9646A45E-8E0C-49F9-901B-5FC6E4E522DB)]
 interface sbINativeWindowManager : nsISupports
 {
   /* constants representing resize directions */
@@ -66,9 +66,17 @@ interface sbINativeWindowManager : nsISupports
    *        @aMinimumWidth x @aMinimumHeight 
    */
   void setMinimumWindowSize(in nsISupports aWindow, in PRInt32 aMinimumWidth, in PRInt32 aMinimumHeight);
+  
+  /* \brief set's the maximum size of @aWindow in the window manager to 
+   *        @aMaximumWidth x @aMaximumHeight 
+   */
+  void setMaximumWindowSize(in nsISupports aWindow, in PRInt32 aMaximumWidth, in PRInt32 aMaximumHeight);
 
   /* \brief is setMinimumWindowSize() supported by this implementation? */
   readonly attribute boolean supportsMinimumWindowSize;
+  
+  /* \brief is setMaximumWindowSize() supported by this implementation? */
+  readonly attribute boolean supportsMaximumWindowSize;
 
   /* \brief asks the window manager to keep @aWindow above all other windows */
   void setOnTop(in nsISupports aWindow, in boolean aOnTop);
