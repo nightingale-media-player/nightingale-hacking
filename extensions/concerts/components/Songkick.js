@@ -551,7 +551,7 @@ Songkick.prototype = {
 				SBProperties.artistName);
 		var libraryArtists = new Array();
 		while (enumerator.hasMore()) {
-			var artistName = enumerator.getNext();
+			var artistName = enumerator.getNext().toUpperCase();
 			libraryArtists[artistName] = true;
 			if (async)
 				yield true;
@@ -568,16 +568,16 @@ Songkick.prototype = {
 
 		this._cache = {}; // Flush any cached data, since it will be invalid
 
-		dbq.addQuery("drop table concerts");
-		dbq.addQuery("drop table playing_at");
-		dbq.addQuery("create table concerts (id integer, " +
-				"timestamp integer, venue text, city text, title text, " +
-				"concertURL text, venueURL text, tickets integer)");
-		dbq.addQuery("create table if not exists artists (" +
-				"name text, artistURL text)");
-		dbq.addQuery("create table if not exists playing_at (" +
-				"concertid integer, artistid integer, " + 
-				"anyLibraryArtist integer, libraryArtist integer)");
+		dbq.addQuery("DROP TABLE concerts");
+		dbq.addQuery("DROP TABLE playing_at");
+		dbq.addQuery("CREATE TABLE concerts (id INTEGER, " +
+				"timestamp INTEGER, venue TEXT, city TEXT, title TEXT, " +
+				"concertURL TEXT, venueURL TEXT, tickets INTEGER)");
+		dbq.addQuery("CREATE TABLE IF NOT EXISTS artists (" +
+				"name TEXT COLLATE NOCASE, artistURL TEXT)");
+		dbq.addQuery("CREATE TABLE IF NOT EXISTS playing_at (" +
+				"concertid INTEGER, artistid INTEGER, " + 
+				"anyLibraryArtist INTEGER, libraryArtist INTEGER)");
 		
 		dbq.addQuery("create unique index if not exists artistID on " +
 				"artists (artistURL)");
@@ -646,10 +646,10 @@ Songkick.prototype = {
 			var artists = concert.Artists.Artist;
 			for (j in artists) {
 				artistDbq.resetQuery();
-				var artistName = artists[j].Name;
+				var artist = artists[j].Name;
 				var artistURL = artists[j].SkArtistPage;
 				var query = "insert or ignore into artists values (" +
-						'"' + artistName + '", "' + artistURL + '")';
+						'"' + artist + '", "' + artistURL + '")';
 				artistDbq.addQuery(query);
 				artistDbq.addQuery("select ROWID from artists where artistURL="
 						+ '"' + artistURL + '"');
@@ -659,6 +659,7 @@ Songkick.prototype = {
 				if (async)
 					yield true;
 				var thisLibArtist = 0;
+				var artistName = artist.toUpperCase();
 				if (typeof(libraryArtists[artistName]) != "undefined") {
 					libraryArtistFound = 1;
 					thisLibArtist = 1;
@@ -762,15 +763,22 @@ Songkick.prototype = {
 		// on tour status flag for all tracks in the library that match
 		// the artist
 		debugLog("processConcerts", "setting new library on tour properties");
-		for (artist in artistsOnTour) {
+		for (artistName in artistsOnTour) {
 			try {
 				var itemEnum = mainLib.getItemsByProperty(
-						SBProperties.artistName, artist).enumerate();
+						SBProperties.artistName, artistName).enumerate();
 				while (itemEnum.hasMoreElements()) {
 					var item = itemEnum.getNext();
+					/*
+					// Handy to have, but commenting out to avoid unnecessary
+					// getProperty() calls
+					debugLog("processConcerts", "Track: " +
+							item.getProperty(SBProperties.trackName) +
+							" by " + artistName + " is on tour");
+					*/
 					item.setProperty(this.onTourImgProperty, onTourIconSrc);
 					item.setProperty(this.onTourUrlProperty,
-							artistsOnTour[artist]);
+							artistsOnTour[artistName]);
 					yield true;
 				}
 			} catch (e if e.result == Cr.NS_ERROR_NOT_AVAILABLE) {
