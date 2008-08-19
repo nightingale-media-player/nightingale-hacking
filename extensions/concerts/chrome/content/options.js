@@ -57,7 +57,7 @@ var ConcertOptions = {
 		var countryDropdown = document.getElementById("menulist-country");
 		countryDropdown.removeAllItems();
 		var idx = 0;
-		for (i=0; i<countries.length; i++) {
+		for (var i=0; i<countries.length; i++) {
 			countryDropdown.appendItem(countries[i].name, countries[i].id);
 			if (countries[i].id == selectedCountry)
 				idx = i;
@@ -168,9 +168,12 @@ var ConcertOptions = {
 				var colSpec = LibraryUtils.mainLibrary.getProperty(
 							SBProperties.columnSpec);
 				if (colSpec != null) {
-					colSpec += " " + this.skSvc.onTourImgProperty + " 10";
-					LibraryUtils.mainLibrary.setProperty(
-							SBProperties.columnSpec, colSpec);
+					// Make sure we don't already have the column visible
+					if (colSpec.indexOf(this.skSvc.onTourImgProperty) == -1) {
+						colSpec += " " + this.skSvc.onTourImgProperty + " 10";
+						LibraryUtils.mainLibrary.setProperty(
+								SBProperties.columnSpec, colSpec);
+					}
 				} else {
 					// If it was null, then look for the default colspec
 					colSpec = LibraryUtils.mainLibrary.getProperty(
