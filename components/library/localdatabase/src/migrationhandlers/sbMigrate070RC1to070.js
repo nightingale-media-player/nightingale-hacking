@@ -83,8 +83,8 @@ sbLocalDatabaseMigrate070RC1to070.prototype = {
       let str = "update media_items set is_list = ? where media_item_id = ?";
       query.addQuery(str);
       
-      query.bindInt32Parameter(0, this._mediaItems[i].itemId);
-      query.bindInt32Parameter(1, this._mediaItems[i].isList);
+      query.bindInt32Parameter(0, this._mediaItems[i].isList);
+      query.bindInt32Parameter(1, this._mediaItems[i].itemId);
     }
     
     // Finally, we updated the schema version to the destination version.
@@ -136,8 +136,8 @@ sbLocalDatabaseMigrate070RC1to070.prototype = {
     for(let currentRow = 0; currentRow < rowCount; ++currentRow) {
       let _mediaItemId = resultSet.getRowCell(currentRow, 0);
       let _listType = resultSet.getRowCell(currentRow, 1);
-      let _isList = parseInt(_listType) > 0;
-      
+      let _isList = Number(parseInt(_listType) > 0);
+
       var entry = {itemId: _mediaItemId, isList: _isList};
       this._mediaItems.push(entry);
     }
