@@ -38,7 +38,7 @@ function runTest() {
       .createInstance(Ci.sbILocalDatabaseMigrationHelper);
       
   assertEqual(migrationHelper.latestSchemaVersion , 
-              7, 
+              8, 
               "Error: Schema Version incorrect. Please ensure that the schema version in schema.sql matches the version we're testing for!");
   
   assertEqual(migrationHelper.canMigrate(1, 1000), false);
