@@ -62,59 +62,75 @@ Concerts = {
 		this._initialized = true;
 		this._strings = document.getElementById("concerts-strings");
     
-		// Add the service pane node
-		this._setupServicePaneNode();
-
 		// Instantiate the Songkick XPCOM service
 		this.skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
 			.getService(Ci.sbISongkick);
-		
-		// Register the concert count updater with the service
-		this.updateConcertCount.wrappedJSObject = this.updateConcertCount;
-		this.skSvc.registerSPSUpdater(this.updateConcertCount);
+	
+		// Wait until the On Tour properties are registered
+		this._blockAndFinishLoad();
+	},
 
-		// Save our property strings
-		this.onTourImgProperty = this.skSvc.onTourImgProperty;
-		this.onTourUrlProperty = this.skSvc.onTourUrlProperty;
+	_blockAndFinishLoad: function _blockAndFinishLoad() {
+		if (!Components.classes
+				["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+				.getService(Ci.sbIPropertyManager)
+				.hasProperty(this.skSvc.onTourUrlProperty))
+		{
+			debugLog("_blockAndFinishLoad", "Waiting for property init..");
+			setTimeout(_blockAndFinishLoad, 100);
+		} else {
+			debugLog("_blockAndFinishLoad", "On Tour properties exist!");
+			// Add the service pane node
+			this._setupServicePaneNode();
 
-		// Add the artist dataremote listener
-		// This is what handles the OnTour status icon in the faceplate
-		this._setupArtistDataRemote();
+			// Register the concert count updater with the service
+			this.updateConcertCount.wrappedJSObject = this.updateConcertCount;
+			this.skSvc.registerSPSUpdater(this.updateConcertCount);
 
-		// Startup a thread to refresh concert data
-		this.skSvc.startRefreshThread();
+			// Save our property strings
+			this.onTourImgProperty = this.skSvc.onTourImgProperty;
+			this.onTourUrlProperty = this.skSvc.onTourUrlProperty;
 
-		// Load location information
-		this.skSvc.refreshLocations();
-		
-		// Add the Artists on Tour playlist
-		this._getOnTourPlaylist();
-		this.rebuildOnTourPlaylist();
+			// Add the artist dataremote listener
+			// This is what handles the OnTour status icon in the faceplate
+			this._setupArtistDataRemote();
 
-		// Add our gPPS listener to listen for Artists on Tour playlist plays
-		this._setupSmartPlaylistListener();
- 
-		// Add the listener for playlist "On Tour" clicks
-		if (typeof(gBrowser) != "undefined")
-			gBrowser.addEventListener("PlaylistCellClick", function(e) {
-				var prop = e.getData("property");
-				var item = e.getData("item");
-				if (prop == gSkSvc.onTourImgProperty) {
-					if (item.getProperty(prop) != "") {
-						var url = item.getProperty(gSkSvc.onTourUrlProperty);
-						var city = Application.prefs
-								.getValue("extensions.concerts.city", 0);
-						url += "?user_location=" + city;
-						gMetrics.metricsInc("concerts", "library.link", "");
-						gBrowser.loadOneTab(url);
+			// Startup a thread to refresh concert data
+			this.skSvc.startRefreshThread();
+
+			// Load location information
+			this.skSvc.refreshLocations();
+			
+			// Add the Artists on Tour playlist
+			this._getOnTourPlaylist();
+			this.rebuildOnTourPlaylist();
+
+			// Add our gPPS listener to listen for Artists on Tour pls plays
+			this._setupSmartPlaylistListener();
+	 
+			// Add the listener for playlist "On Tour" clicks
+			if (typeof(gBrowser) != "undefined")
+				gBrowser.addEventListener("PlaylistCellClick", function(e) {
+					var prop = e.getData("property");
+					var item = e.getData("item");
+					if (prop == gSkSvc.onTourImgProperty) {
+						if (item.getProperty(prop) != "") {
+							var url =
+								item.getProperty(gSkSvc.onTourUrlProperty);
+							var city = Application.prefs
+									.getValue("extensions.concerts.city", 0);
+							url += "?user_location=" + city;
+							gMetrics.metricsInc("concerts", "library.link", "");
+							gBrowser.loadOneTab(url);
+						}
 					}
-				}
-			}, false);
+				}, false);
 
-		// Register our uninstall handler
-		this.uninstallObserver.register();
-		if (this.touringPlaylist != null)
-			this.uninstallObserver.list = this.touringPlaylist;
+			// Register our uninstall handler
+			this.uninstallObserver.register();
+			if (this.touringPlaylist != null)
+				this.uninstallObserver.list = this.touringPlaylist;
+		}
 	},
   
 	onUnLoad: function() {
