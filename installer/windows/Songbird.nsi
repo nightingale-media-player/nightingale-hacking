@@ -185,7 +185,7 @@ Section "-Application" Section1
   
   ; If old version present, ask user if they want to back it up.
   ${If} $0 == "1"
-    MessageBox MB_YESNO|MB_USERICON "${BackupMessage}" IDYES 0 IDNO +1
+    MessageBox MB_YESNO|MB_USERICON "${BackupMessage}" /SD IDNO IDYES 0 IDNO +2
     Call BackupOldVersion
   ${EndIf}
 
@@ -202,7 +202,7 @@ Section "-Application" Section1
   ${If} $HasBeenBackedUp == "False"
     ${If} $R1 != ""
       ClearErrors
-      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessage}" IDYES 0 IDNO +1
+      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessage}" /SD IDYES IDYES +1 IDNO +3
       ExecWait '$R1 /S _?=$INSTDIR'
       Delete '$R1'
     ${EndIf}
@@ -314,6 +314,10 @@ Section "-Application" Section1
     
   ${EndIf}
 
+  ${If} SilentModeRunRegistration == "1"
+    Goto EndRegistryMunging
+  ${EndIf}
+
   ; Register DLLs
   ; XXXrstrong - AccessibleMarshal.dll can be used by multiple applications but
   ; is only registered for the last application installed. When the last
@@ -374,13 +378,19 @@ Section "-Application" Section1
   CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullNameInternal}.lnk" "$INSTDIR\${FileUninstallEXE}" "" "$INSTDIR\$LinkIconFile" 0
 
   !insertmacro MUI_STARTMENU_WRITE_END
-  
+
+EndRegistryMunging:
+ 
   ; Refresh desktop icons
   System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
   
 SectionEnd
 
 Section "Desktop Icon"
+  ${If} SilentModeRunRegistration == "1"
+    Goto End
+  ${EndIf}
+
 
   ; Put the desktop icon in All Users\Desktop
   SetShellVarContext all
@@ -388,10 +398,14 @@ Section "Desktop Icon"
 
   ; Remember that we installed a desktop shortcut.
   WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Desktop Shortcut Location" "$DESKTOP\${BrandFullNameInternal}.lnk"
-  
+ 
+  End: 
 SectionEnd
 
 Section "QuickLaunch Icon"
+  ${If} SilentModeRunRegistration == "1"
+    Goto End
+  ${EndIf}
   
   ; Put the quicklaunch icon in the current users quicklaunch.
   SetShellVarContext current
@@ -399,7 +413,7 @@ Section "QuickLaunch Icon"
 
   ; Remember that we installed a quicklaunch shortcut.
   WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Quicklaunch Shortcut Location" "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
-  
+  End:
 SectionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
