@@ -55,7 +55,14 @@ function doMenu( command ) {
       SBLibraryOpen(null, false);
     break;
     case "menuitem_file_newtab":
-      gBrowser.loadURI(gBrowser.homePage, null, null, null, '_blank');
+      gBrowser.loadOneTab("about:blank", null, null, null, false, null);
+      // |setTimeout| here to ensure we set the location bar focus after
+      //   gBrowser.loadOneTab brought the new tab to the front
+      window.setTimeout(function _locationbarFocus() {
+          var locationbar = document.getElementById("location_bar");
+          locationbar.value = "";
+          locationbar.focus();
+        }, 0);
     break;
     case "menuitem_file_closetab":
       gBrowser.removeTab(gBrowser.selectedTab);
