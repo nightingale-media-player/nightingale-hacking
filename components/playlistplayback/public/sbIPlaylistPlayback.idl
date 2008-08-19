@@ -117,7 +117,7 @@ interface sbIPlaylistPlaybackListener : nsISupports
  * \sa sbICoreWrapper
  * An interface that describes the PlaylistPlayback Service
  */
-[scriptable, uuid(9a7c48a8-b02f-41bb-a4e7-02f472d7954c)]
+[scriptable, uuid(7a4147d0-6d76-11dd-ad8b-0800200c9a66)]
 interface sbIPlaylistPlayback : nsIObserver
 {
   // --------------------------------------------------------------------------
@@ -281,6 +281,15 @@ interface sbIPlaylistPlayback : nsIObserver
    */
   void selectCore(in sbICoreWrapper aCore);
 
+
+  /**
+   * \brief Return the core wrapper best suited to play the given URI.
+   * 
+   * \param aURI - The URI for which to choose a suitable core.
+   * \throw NS_ERROR_NOT_IMPLEMENTED if no core is appropriate.
+   * \return the core wrapper
+   */
+   sbICoreWrapper getCoreForURI(in AString aURI);
 
   // --------------------------------------------------------------------------
   // "Standard" player controls

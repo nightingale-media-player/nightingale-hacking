@@ -857,6 +857,24 @@ PlaylistPlayback.prototype = {
     }
     return success;
   },
+
+  getCoreForURI: function getCoreForURI(aURI) {
+    var coreSupport =
+      this._callMethodOnAllCores("getSupportForURI", [newURI(aURI)]);
+    var newCoreIndex = -1;
+    var highVal = -1;
+
+    for ( var i = 0; i < coreSupport.length; i++ ) {
+      if ( typeof( coreSupport[ i ] ) != 'undefined' && highVal < coreSupport[ i ] ) {
+        highVal = coreSupport[ i ];
+        newCoreIndex = i;
+      }
+    }
+
+    if(newCoreIndex > -1) return this._cores[i];
+    else return null;
+  },
+
   /**
    * Tries to find a core that can handle the given extension. Selects and
    * returns the core and sets the optional aCoreFound argument to true. If no
