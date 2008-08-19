@@ -21,4 +21,6 @@ lastfm.jar:
   skin/share1.png                 (chrome/skin/share1.png)
   skin/add0.png                   (chrome/skin/add0.png)
   skin/add1.png                   (chrome/skin/add1.png)
+  skin/bg-faceplate-buttons.png   (chrome/skin/bg-faceplate-buttons.png)
+  skin/default-avatar.png         (chrome/skin/default-avatar.png)
   skin/overlay.css                (chrome/skin/overlay.css)
