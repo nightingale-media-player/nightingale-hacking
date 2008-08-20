@@ -228,6 +228,28 @@
   this.treecol = treecol;
 
   this._updateColumnLabel(this.index);
+
+  // If this filter has a search-term set, then pre-select it in the widget
+  var filterValues = this.cfs.get(index).enumerate();
+  var hasSelection = false;
+  while (filterValues.hasMoreElements()) {
+    var filterValue = filterValues.getNext()
+                                  .QueryInterface(this._Ci.nsISupportsString);
+    // Now loop through our tree view and select this value
+    for (var j = 0; j < this.tree.view.rowCount; j++) {
+      var col = this.tree.columns.getColumnAt(0);
+      if (this.tree.view.getCellText(j, col) == filterValue) {
+        if (hasSelection) {
+          this.tree.view.selection.toggleSelect(j);
+        } else {
+          this.tree.view.selection.select(j);
+          hasSelection = true;
+          break;
+        }
+      }
+    }
+  }
+
   
   // Remove our selection if we are updated
   this.cfs.addListener(this);
