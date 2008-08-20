@@ -61,19 +61,21 @@
             sbid="sb-playlist-tree"
             class="sb-playlist-tree"
             flex="3"
-            onselect="_onPlaylistSelectClick(event);"
-            onclick="_onPlaylistClick(event);"
-            oncontextmenu="_onPlaylistContextClick(event);"
-            ondraggesture="_onDragGesture(event);"
-            ondragover="_onDragOver(event);"
-            ondragdrop="_onDragDrop(event);"
-            onmousemove="_onMouseMove(event);"
-            onmouseout="_onMouseMove(event);"
-            onmouseup="_onMouseUp(event);"
             editable="true"
           >
             <treecols sbid="treecols"/>
-            <treechildren/>
+            <treechildren
+              sbid="sb-playlist-treechildren"
+              onselect="_onPlaylistSelectClick(event);"
+              onclick="_onPlaylistClick(event);"
+              oncontextmenu="_onPlaylistContextClick(event);"
+              ondraggesture="_onDragGesture(event);"
+              ondragover="_onDragOver(event);"
+              ondragdrop="_onDragDrop(event);"
+              onmousemove="_onMouseMove(event);"
+              onmouseout="_onMouseMove(event);"
+              onmouseup="_onMouseUp(event);"
+            />
           </tree>
 
           <!-- Playlist Toolbar -->
@@ -366,6 +368,9 @@
       </field>
       <field name="_treecols" readonly="true">
         document.getAnonymousElementByAttribute(this, "sbid", "treecols");
+      </field>
+      <field name="_treechildren" readonly="true">
+        document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-treechildren");
       </field>
       <field name="_toolbar">
         document.getAnonymousElementByAttribute(this, 'sbid', 'playlist_toolbar');
@@ -1458,10 +1463,6 @@
         <parameter name="evt"/>
         <body>
          <![CDATA[
-          // Don't process this event if it is for the scrollbar.
-          if (this._isScrollbarEvent(evt))
-            return;
-         
           // Check to see that the user double clicked on a row
           var row = {};
           var col = {};
@@ -1709,10 +1710,6 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
-  // Don't process this event if it is for the scrollbar.
-  if (this._isScrollbarEvent(evt))
-    return;
-    
   var bo = this.tree.treeBoxObject;
   try
   {
@@ -1852,27 +1849,11 @@
 ]]>
       </body>
     </method>
-    
-    <method name="_isScrollbarEvent">
-      <parameter name="aEvt"/>
-      <body>
-<![CDATA[
-  var targetLocalName = aEvt.originalTarget.localName;
-  return targetLocalName == "slider" || 
-         targetLocalName == "thumb"  ||
-         targetLocalName == "scrollbarbutton";
-]]>
-      </body>
-    </method>
 
     <method name="_onMouseMove">
       <parameter name="evt"/>
       <body>
 <![CDATA[
-  // Don't process this event if it is for the scrollbar.
-  if (this._isScrollbarEvent(evt))
-    return;
- 
   var obj = {}, row = {}, col = {};
   var bo = this.tree.treeBoxObject;
   bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
@@ -1986,10 +1967,6 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
-  // Don't process this event if it is for the scrollbar.
-  if (this._isScrollbarEvent(evt))
-    return;
-
   var obj = {}, row = {}, col = {};
   var bo = this.tree.treeBoxObject;
   bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
@@ -2044,10 +2021,6 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
-  // Don't process this event if it is for the scrollbar.
-  if (this._isScrollbarEvent(evt))
-    return;
-
   var obj = {}, row = {}, col = {};
   var bo = this.tree.treeBoxObject;
   bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
@@ -2093,9 +2066,8 @@
                           cellWidth,
                           cellHeight);
 
-  var bodyBox = this.tree.getElementsByTagName("treechildren")[0];
-  var x = evt.screenX - bodyBox.boxObject.screenX - cellX.value;
-  var y = evt.screenY - bodyBox.boxObject.screenY - cellY.value;
+  var x = evt.screenX - this._treechildren.boxObject.screenX - cellX.value;
+  var y = evt.screenY - this._treechildren.boxObject.screenY - cellY.value;
   return {x: x, y: y, cellWidth: cellWidth, cellHeight: cellHeight};
 ]]>
       </body>
@@ -2411,11 +2383,6 @@
         <parameter name="event"/>
         <body>
 <![CDATA[
-    // We only want to consider drag sessions initiated on the tree children.
-    if (event.target.localName != "treechildren") {
-      return;
-    }
-
     var view = this._mediaListView;
     var numRows = view.selection.count;
     if (numRows == 0) {
@@ -2522,11 +2489,7 @@
         <parameter name="event"/>
         <body>
 <![CDATA[
-  // eventually calls this.nsDragAndDropObserver.canDrop to see if the
-  // drop is allowed
-  if (event.target.localName == "treechildren") {
     nsDragAndDrop.dragOver(event, this.nsDragAndDropObserver);
-  }
 ]]>
         </body>
       </method>
@@ -2899,11 +2862,13 @@
     </implementation>
 
     <handlers>
-      <handler event="click" clickcount="2" phase="capturing">
+      <handler event="click" clickcount="2" phase="bubbling">
         <![CDATA[
-          this._onPlaylistDblClick(event);
-          event.stopPropagation();
-          event.preventDefault();
+          if (event.originalTarget == this._treechildren) {
+            this._onPlaylistDblClick(event);
+            event.stopPropagation();
+            event.preventDefault();
+          }
         ]]>
       </handler>
 
