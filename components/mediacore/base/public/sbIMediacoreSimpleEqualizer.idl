@@ -26,9 +26,12 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid(afb4d9dd-f215-4190-9cec-59387204992c)]
-interface sbIMediacoreVolumeControl : public nsISupports
+[scriptable, uuid(31e3c3e3-3b9f-4c5c-b6fe-0f18f209282c)]
+interface sbIMediacoreSimpleEqualizer : public nsISupports
 {
-  // between 0 and 1 typically.
-  attribute double volume;
+  // in dB.
+  attribute double bass;
+  
+  // in dB.
+  attribute double treble;
 };

@@ -27,11 +27,13 @@
 #include "nsISupports.idl"
 
 interface sbIMediacoreCapabilities;
+interface sbIMediacoreSequencer;
 
 [scriptable, uuid(927cc189-0dc6-4b3d-8881-1d0e80fcc854)]
 interface sbIMediacore : public nsISupports
 {
-  readonly AString instanceName;
-  readonly sbIMediacoreCapabilities capabilities;
-  readonly nsIPropertyBag2 properties;
+  readonly attribute AString instanceName;
+  readonly attribute sbIMediacoreCapabilities capabilities;
+  
+  attribute sbIMediacoreSequencer sequencer;
 };

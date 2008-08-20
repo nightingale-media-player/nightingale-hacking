@@ -26,9 +26,8 @@
 
 #include "nsISupports.idl"
 
-interface nsIPropertyBag2; 
-
-interface sbIMediacoreAudioEQ;
+interface sbIMediacore;
+interface sbIMediacoreSimpleEqualizer;
 interface sbIMediacoreBalanceControl;
 
 interface sbIMediacorePlaybackControl;
@@ -39,12 +38,31 @@ interface sbIMediacoreCapabilities;
 [scriptable, uuid(c9eb7de1-87fc-4eea-886e-6202cae826bc)]
 interface sbIMediacoreManager : public nsISupports
 {
-  readonly sbIMediacoreBalanceControl  balanceControl;
-  readonly sbIMediacoreVolumeControl   volumeControl;
+  attribute sbIMediacore primaryCore;
 
-  readonly sbIMediacoreAudioEQ         equalizer;
-  readonly sbIMediacorePlaybackControl playbackControl;
+  readonly attribute sbIMediacoreBalanceControl  balanceControl;
+  readonly attribute sbIMediacoreVolumeControl   volumeControl;
 
-  readonly sbIMediacoreCapabilities    capabilities;
-  readonly nsIPropertyBag2             properties;
+  readonly attribute sbIMediacoreSimpleEqualizer equalizer;
+  readonly attribute sbIMediacorePlaybackControl playbackControl;
+
+  readonly attribute sbIMediacoreCapabilities    capabilities;
 };
+
+%{C++
+
+#define SB_MEDIACOREMANAGER_DESCRIPTION    \
+  "Songbird Mediacore Manager"
+#define SB_MEDIACOREMANAGER_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/Manager;1"
+#define SB_MEDIACOREMANAGER_CLASSNAME      \
+  "sbMediacoreManager"
+#define SB_MEDIACOREMANAGER_CID               \
+{ /*{47bb93c8-dba7-464b-8f93-8d71659ab127}*/  \
+  0x47bb93c8,                                 \
+  0xdba7,                                     \
+  0x464b,                                     \
+  { 0x8f, 0x93, 0x8d, 0x71, 0x65, 0x9a, 0xb1, 0x27 } \
+}
+
+%}

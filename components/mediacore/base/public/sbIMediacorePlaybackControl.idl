@@ -26,8 +26,17 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid()]
+interface nsIURI;
+interface sbIMediacoreStatus;
+
+[scriptable, uuid(5ac88a1d-83a1-4b62-b440-ac656c61c010)]
 interface sbIMediacorePlaybackControl : public nsISupports
 {
+  attribute nsIURI uri;
+  attribute unsigned long long position;
+  readonly attribute sbIMediacoreStatus status;
 
-}
+  void play();
+  void pause();
+  void stop();
+};

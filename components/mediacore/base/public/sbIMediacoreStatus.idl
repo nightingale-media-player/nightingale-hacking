@@ -26,9 +26,9 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid(afb4d9dd-f215-4190-9cec-59387204992c)]
-interface sbIMediacoreVolumeControl : public nsISupports
+[scriptable, uuid(5ea73c8d-1336-45b2-9d5b-50406d6ac9b1)]
+interface sbIMediacoreStatus : public nsISupports
 {
-  // between 0 and 1 typically.
-  attribute double volume;
+  //const unsigned long 
+  readonly attribute state;
 };
