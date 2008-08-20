@@ -191,6 +191,17 @@ FeedbackDelegate.prototype =
       }
       else {
         gAppPrefs.setValue(PREF_DENIED_FEEDBACK, true);
+        
+        // Flush to disk to make sure the dialog won't be shown again in the
+        // event of a crash. See bug 11857.
+        var prefService = 
+          Components.classes["@mozilla.org/preferences-service;1"]
+                    .getService(Components.interfaces.nsIPrefService);
+        if (prefService) {
+          // Passing null uses the currently loaded pref file.
+          // (usually 'prefs.js')
+          prefService.savePrefFile(null); 
+        }
       }
     }
   },
