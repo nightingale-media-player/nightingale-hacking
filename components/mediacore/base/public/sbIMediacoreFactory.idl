@@ -34,5 +34,7 @@ interface sbIMediacoreFactory : public nsISupports
   readonly attribute AString contractID;
   readonly attribute AString name;
 
+  readonly attribute sbIMediacoreCapabilities capabilities;
+
   sbIMediacore create(in AString aInstanceName);
 }

@@ -26,14 +26,7 @@
 
 #include "nsISupports.idl"
 
-interface sbIMediacoreCapabilities;
-interface sbIMediacoreSequence;
-
-[scriptable, uuid(927cc189-0dc6-4b3d-8881-1d0e80fcc854)]
-interface sbIMediacore : public nsISupports
+[scriptable, uuid(edf5e894-5265-4599-a970-39c536dfa182)]
+interface sbIMediacoreEvent : public nsISupports
 {
-  readonly attribute AString instanceName;
-  readonly attribute sbIMediacoreCapabilities capabilities;
-  
-  attribute sbIMediacoreSequence sequence;
 };

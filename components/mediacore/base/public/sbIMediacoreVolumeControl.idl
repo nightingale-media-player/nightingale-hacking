@@ -29,6 +29,9 @@
 [scriptable, uuid(afb4d9dd-f215-4190-9cec-59387204992c)]
 interface sbIMediacoreVolumeControl : public nsISupports
 {
+  // true = muted
+  attribute boolean mute;
+
   // between 0 and 1 typically.
   attribute double volume;
 };

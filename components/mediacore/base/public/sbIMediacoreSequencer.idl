@@ -44,32 +44,10 @@ interface sbIMediacoreSequencer : public nsISupports
 
   attribute unsigned long mode;
 
-  attribute unsigned long previousIndex;
-
-  attribute unsigned long currentIndex;
-
-  attribute unsigned long nextIndex;
-
   attribute sbIMediaListView view;
 
-  // Items already used by the sequencer.
-  attribute nsIArray completed;
-  
-  // I'm not sold on this name. This is the array of items yet to be used.
-  attribute nsIArray pool;
+  readonly attribute sbIMediacoreSequence sequence;
 
-  // The entire sequence.
-  attribute nsIArray sequence;
-
-  // The previous item in the sequence.
-  attribute sbIMediaItem previousItem;
-
-  // 
-  attribute sbIMediaItem currentItem;
-
-  // The next item in the sequence.
-  attribute sbIMediaItem nextItem;
-  
   // When in custom mode, this generator is used to generate the sequence.
   attribute sbIMediacoreSequenceGenerator customGenerator;
 };
