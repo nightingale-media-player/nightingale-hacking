@@ -62,11 +62,11 @@
             class="sb-playlist-tree"
             flex="3"
             editable="true"
+            onselect="_onPlaylistSelectClick(event);"
           >
             <treecols sbid="treecols"/>
             <treechildren
               sbid="sb-playlist-treechildren"
-              onselect="_onPlaylistSelectClick(event);"
               onclick="_onPlaylistClick(event);"
               oncontextmenu="_onPlaylistContextClick(event);"
               ondraggesture="_onDragGesture(event);"
