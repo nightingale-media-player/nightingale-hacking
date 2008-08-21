@@ -27,8 +27,14 @@
 #include "nsISupports.idl"
 
 interface sbIMediacoreEvent;
+interface sbIMediacoreEventListener;
 
 [scriptable, uuid(35f8debd-1a55-4df2-8e53-65949941e22f)]
 interface sbIMediacoreEventTarget : public nsISupports
 {
+  void addListener(in sbIMediacoreEventListener aListener);
+  void removeListener(in sbIMediacoreEventListener aListener);
+
+  boolean dispatchEvent(in sbIMediacoreEvent aEvent, 
+                        [optional] in boolean aAsync);
 };

@@ -26,7 +26,90 @@
 
 #include "nsISupports.idl"
 
+interface sbIMediacore;
+interface sbIMediacoreError;
+
 [scriptable, uuid(edf5e894-5265-4599-a970-39c536dfa182)]
 interface sbIMediacoreEvent : public nsISupports
 {
+  /**
+   * \brief Metadata describing current item has changed
+   */
+  const unsigned long METADATA_CHANGE = 0;
+  /**
+   * \brief URI used for operation has changed
+   */
+  const unsigned long URI_CHANGE      = 0;
+  /**
+   * \brief Current duration has changed
+   */
+  const unsigned long DURATION_CHANGE = 0;
+  /**
+   * \brief Volume has changed
+   */
+  const unsigned long VOLUME_CHANGE   = 0;
+  /**
+   * \brief Mute status has changed
+   */
+  const unsigned long MUTE_CHANGE     = 0;
+
+  /**
+   * \brief Stream found.
+   */
+  const unsigned long STREAM_FOUND    = 0;
+  
+  /**
+   * \brief Buffering.
+   */
+  const unsigned long BUFFERING       = 0;
+  /**
+   * \brief Buffer underrun, operation is likely to halt.
+   */
+  const unsigned long BUFFER_UNDERRUN = 0;
+  
+  /**
+   * \brief Stream has started.
+   */
+  const unsigned long STREAM_START    = 0;
+  /**
+   * \brief Stream is now paused.
+   */
+  const unsigned long STREAM_PAUSE    = 0;
+  /**
+   * \brief End of stream.
+   */
+  const unsigned long STREAM_END      = 0;
+
+  /**
+   * \brief Plugin missing for requested format.
+   */
+  const unsigned long PLUGIN_MISSING  = 0;
+
+  /**
+   * \brief Custom event base value.
+   */
+  const unsigned long CUSTOM_EVENT_BASE = 0x40000000;
+
+  /**
+   * \brief Indicates the event is an error and will have it's error member set.
+   */
+  const unsigned long ERROR           = 0;
+
+  /**
+   * \brief The event type.
+   */
+  readonly unsigned long type;
+  /**
+   * \brief Error member is only set when type of event is set to ERROR.
+   */
+  readonly sbIMediacoreError error;
+
+  /**
+   * \brief Mediacore that generated the event.
+   */
+  readonly attribute sbIMediacore origin;
+  /**
+   * \brief Event Target that dispatched the event.
+   */
+  readonly attribute sbIMediacoreEventTarget target;
 };

@@ -35,8 +35,7 @@ interface sbIMediacorePlaybackControl : public nsISupports
   attribute nsIURI uri;
   attribute unsigned long long position;
   attribute unsigned long long duration;
-  readonly attribute sbIMediacoreStatus status;
-
+  
   void play();
   void pause();
   void stop();

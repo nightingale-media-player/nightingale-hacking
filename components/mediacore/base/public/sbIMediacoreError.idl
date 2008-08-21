@@ -26,9 +26,16 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid(5ea73c8d-1336-45b2-9d5b-50406d6ac9b1)]
-interface sbIMediacoreStatus : public nsISupports
+[scriptable, uuid(ef15b3dd-bccc-4e1b-8c4d-3ef8d63bfd0d)]
+interface sbIMediacoreError : public nsISupports
 {
-  //const unsigned long 
-  readonly attribute state;
+  /**
+   * \brief Error code.
+   */
+  readonly attribute unsigned long code;
+
+  /**
+   * \brief Error message (human readable string, localized, preferrably).
+   */
+  readonly attribute AString message;
 };
