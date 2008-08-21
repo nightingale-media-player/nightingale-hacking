@@ -6,6 +6,16 @@ Milestone=0.8.0pre
 MilestoneWindows=0.8.0.0
 Branch=trunk
 ProfileVersion=2
-RepoRevisionClient=10713
+<<<<<<< .mine
+# Why is there no RepoRevisionClient, you ask? We have to treat client-pull
+# revisions slightly differently, because we modify the repo itself whenever
+# we do a build (bookend-build.py). The svn revision given below is done via
+# keyword substitution, so in the common case (svn up to HEAD, in the daily
+# case), it should be correct.
+# BUT, it's provided merely as a convenience; the build system/buildbots rely on
+# master-build-info.txt, which is sitting in the root of this repository...
+# and if you want to be 100% sure/correct, so should you..
+#
+# RepoRevisionClient=$Rev$
 RepoRevisionVendor=9897
 RepoRevisionVendorBinaries=9946
