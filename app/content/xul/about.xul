@@ -56,6 +56,8 @@
   </sb-draggable>
 
   <!-- And intrepid instructions! -->
+  <script type="application/x-javascript" 
+   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script>
   <![CDATA[
     function doInit() {
@@ -64,6 +66,8 @@
 
       // Figure out a string to use from the user agent.
       var user_agent = navigator.userAgent;
+      var build_number = SBDataGetStringValue("buildNumber");
+
       var sb_idx = user_agent.indexOf("Songbird");
       if ( sb_idx != -1 )
       {
@@ -77,6 +81,9 @@
       // include the XULRunner buildid for easy reference
       var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
       version.value += " (" + appInfo.platformBuildID + ") ";
+
+      // Add the build number
+      version.value += "Build " + build_number;
     }
     function doOK() {
       if ( typeof( window.arguments[0] ) != 'undefined' )

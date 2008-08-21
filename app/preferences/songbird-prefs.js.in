@@ -12,6 +12,7 @@ pref("browser.chromeURL", "chrome://songbird/content/xul/macCmdLineFwd.xul");
 pref("toolkit.singletonWindowType", "Songbird:Main");
 
 pref("general.useragent.extra.songbird", "Songbird/@SB_MILESTONE@ (@SB_BUILD_ID@)");
+pref("songbird.buildNumber", "@SB_BUILD_NUMBER@");
 
 pref("general.skins.selectedSkin", "gonzo");
 pref("accessibility.typeaheadfind", false);
