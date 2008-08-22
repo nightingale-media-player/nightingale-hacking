@@ -61,6 +61,12 @@ const PREF_METADATA_DEFAULT_COVER      = "songbird.metadataimagescanner.defaultC
 const PREF_METADATA_RESCAN_INTERVAL    = "songbird.metadataimagescanner.rescan";
 const PREF_METADATA_TIMER_INTERVAL     = "songbird.metadataimagescanner.interval";
 
+// List of valid extensions 
+const VALID_EXTENSIONS = ["jpg",
+                          "jpeg",
+                          "gif",
+                          "png"];
+
 /**
  * sbMetadataImageScanner
  * \brief A service that will scan through the main library searching the
@@ -172,11 +178,27 @@ sbMetadataImageScanner.prototype = {
                         .getService(Ci.nsIMIMEService);
     var mimeInfo = mimeService.getFromTypeAndExtension(aMimeType, "");
     if (!mimeInfo.getFileExtensions().hasMore()) {
-      this._debug("Unable to get extension for image data from [" +
-                  aMimeType + "]");
-      return null;
+      // If we could not get the extension from the mime service then try and
+      // parse it out.
+      
+      // Most mime types for images are image/png format. So extract anything
+      // after the last / in the aMimeType string.
+      if (aMimeType.indexOf("/") >= 0) {
+        ext = aMimeType.split("/").pop();
+      }
+
+      // Make sure it is lower case for our test
+      ext = ext.toLowerCase();
+      // Check if this is a valid extension (do not want exe etc :))
+      if ( ext == "" || (VALID_EXTENSIONS.indexOf(ext) == -1) ) {
+        this._debug("Unable to get extension for image data from [" +
+                    aMimeType + "]");
+        return null;
+      }
+    } else {
+      // get the primary extension for this mime type
+      ext = mimeInfo.primaryExtension;
     }
-    ext = mimeInfo.primaryExtension;
     this._debug("Got extension of :" + ext);
     
     // Get the profile folder and append "artwork" as destination folder
