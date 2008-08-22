@@ -182,12 +182,11 @@ DisplayPaneMetadataReader.prototype = {
 function DisplayPaneManager() {
 }
 
-DisplayPaneManager.prototype.constructor = DisplayPaneManager;
-
 DisplayPaneManager.prototype = {
   classDescription: "Songbird Display Pane Manager Service Interface",
   classID:          Components.ID("{6aef120f-d7ad-414d-a93d-3ac945e64301}"),
   contractID:       "@songbirdnest.com/Songbird/DisplayPane/Manager;1",
+  constructor:      DisplayPaneManager,
 
   LOG: function(str) {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
@@ -220,6 +219,17 @@ DisplayPaneManager.prototype = {
   },
   
   _defaultPaneInfo: null,
+  
+  _cleanupInstantiatorsList: function DPM_cleanupInstantiatorsList() {
+    for (var i = this._instantiatorsList.length - 1; i >= 0; --i) {
+      if (!(this._instantiatorsList[i] instanceof
+            Components.interfaces.sbIDisplayPaneInstantiator)) {
+        Components.utils.reportError("Warning: found bad instantiator; "+
+                                     "possibly via removal from DOM");
+        this._instantiatorsList.splice(i, 1);
+      }
+    }
+  },
   
   get defaultPaneInfo() {
     if (!this._defaultPaneInfo) {
@@ -285,6 +295,20 @@ DisplayPaneManager.prototype = {
     }
     return null;
   },
+  
+  /**
+   * \see sbIDisplayPaneManager
+   */
+  getInstantiatorForWindow:
+  function sbDisplayPaneMgr_getInstantiatorForWindow(aWindow) {
+    this._cleanupInstantiatorsList();
+    for each (var instantiator in this._instantiatorsList) {
+      if (instantiator.contentWindow === aWindow) {
+        return instantiator;
+      }
+    }
+    return null;
+  },
 
   /**
    * \see sbIDisplayPaneManager
@@ -298,14 +322,7 @@ DisplayPaneManager.prototype = {
    * \see sbIDisplayPaneManager
    */
   get instantiatorsList() {
-    for (var i = this._instantiatorsList.length - 1; i >= 0; --i) {
-      if (!(this._instantiatorsList[i] instanceof
-            Components.interfaces.sbIDisplayPaneInstantiator)) {
-        Components.utils.reportError("Warning: found bad instantiator; "+
-                                     "possibly via removal from DOM");
-        this._instantiatorsList.splice(i, 1);
-      }
-    }
+    this._cleanupInstantiatorsList();
     return ArrayConverter.enumerator(this._instantiatorsList);
   },
   

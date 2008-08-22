@@ -196,6 +196,11 @@
           return elem.src = val;
         ]]></xbl:setter>
       </xbl:property>
+      <xbl:property name="contentWindow" readonly="true">
+        <xbl:getter><![CDATA[
+          return document.getAnonymousElementByAttribute(this, "anonid", "content");
+        ]]></xbl:getter>
+      </xbl:property>
       <xbl:property name="popup" readonly="true">
         <xbl:getter><![CDATA[
           this.buildMenu();

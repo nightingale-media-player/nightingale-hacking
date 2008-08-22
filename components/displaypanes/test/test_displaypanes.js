@@ -27,7 +27,14 @@
 /**
  * \brief AddOn Panes Unit Test File
  */
- 
+
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+if (typeof(Cc) == "undefined")
+  this.Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  this.Ci = Components.interfaces;
+
+
 var loaded = null;
 var group = null;
 var paneMgr = null;
@@ -36,8 +43,8 @@ function runTest () {
 
   log("Testing DisplayPanes Service:");
 
-  paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                      .getService(Components.interfaces.sbIDisplayPaneManager);
+  paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+              .getService(Ci.sbIDisplayPaneManager);
 
   testDisplayPanesService();
 
@@ -54,12 +61,7 @@ function testDisplayPanesService() {
     onRegisterInstantiator: function(aInstantiator) { cbparam = aInstantiator; },
     onUnregisterInstantiator: function(aInstantiator) { cbparam = aInstantiator; },
 
-    QueryInterface : function(iid) {
-      if (iid.equals(Components.interfaces.sbIDisplayPaneListener) ||
-          iid.equals(Components.interfaces.nsISupports))
-        return this;
-      throw Components.results.NS_NOINTERFACE;
-    }
+    QueryInterface: XPCOMUtils.generateQI([Ci.sbIDisplayPaneListener])
   }
   
   paneMgr.addListener(listener);
@@ -208,9 +210,12 @@ function testDisplayPanesService() {
   paneMgr.showPane("url2");
   testInfo(loaded, "url2", "title2", "icon2", 30, 40, "group2");
   assertEquals(group, "group2", "group");
+  assertEquals(h2, paneMgr.getInstantiatorForWindow(h2.contentWindow), "instantiator");
   paneMgr.unregisterInstantiator(h1);
   paneMgr.unregisterInstantiator(h2);
   paneMgr.unregisterInstantiator(h3);
+  
+  log("Tests completed, cleaning up");
 
   // Register the original display panes
   for (contentInfo in paneList) {
@@ -270,13 +275,17 @@ function makeInstantiator(groupid) {
     set collapsed(val) {},
     loadContent: function(aPane) { loaded = aPane; group = groupid; },
     hide: function() { },
-    QueryInterface : function(iid) {
-      if (iid.equals(Components.interfaces.sbIDisplayPaneInstantiator) ||
-          iid.equals(Components.interfaces.nsISupports))
-        return this;
-      throw Components.results.NS_NOINTERFACE;
-    }
+    contentWindow: {
+      QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMWindow])
+    },
+    QueryInterface: XPCOMUtils.generateQI([Ci.sbIDisplayPaneInstantiator])
   }
-  return instantiator;
+
+  // use a supports-interface-pointer to make sure we get the XPConnect wrapped objects
+  var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
+              .createInstance(Ci.nsISupportsInterfacePointer);
+  sip.dataIID = Ci.sbIDisplayPaneInstantiator;
+  sip.data = instantiator;
+  return sip.data;
 }
 

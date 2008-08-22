@@ -25,6 +25,7 @@
 */
 
 #include "nsISupports.idl"
+interface nsIDOMWindow;
 interface nsISimpleEnumerator;
 
 /**       
@@ -100,6 +101,10 @@ interface sbIDisplayPaneInstantiator : nsISupports
    * the icon of the currently displayed content
    */
   readonly attribute AString contentIcon; 
+  /**
+   * the currently displayed contents; may be null
+   */
+  readonly attribute nsIDOMWindow contentWindow;
 
   /**
    * load the given content in the instantiator
@@ -200,6 +205,11 @@ interface sbIDisplayPaneManager : nsISupports
    * get the previously registed content information given its url
    */
   sbIDisplayPaneContentInfo getPaneInfo(in AString aContentUrl);
+  
+  /**
+   * get the instantiator the given window belongs to
+   */
+  sbIDisplayPaneInstantiator getInstantiatorForWindow(in nsIDOMWindow aWindow);
   
   void addListener(in sbIDisplayPaneListener aListener);
   void removeListener(in sbIDisplayPaneListener aListener);
