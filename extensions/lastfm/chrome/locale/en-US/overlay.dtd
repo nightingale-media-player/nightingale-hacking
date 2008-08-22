@@ -1,3 +1,10 @@
 <!ENTITY lastfm.menu.login  "Log in to Last.fm...">
 <!ENTITY lastfm.menu.logout "Log out of Last.fm">
 <!ENTITY lastfm.menu.enable "Enable scrobbling">
+<!ENTITY lastfm.signup.label "Sign up for Last.fm">
+<!ENTITY lastfm.login.button "Log in">
+<!ENTITY lastfm.loggingin.label "Logging in...">
+<!ENTITY lastfm.cancel.button "Cancel">
+<!ENTITY lastfm.profile.numtracks "tracks scrobbled">
+<!ENTITY lastfm.profile.scrobble "Scrobble my tracks">
+<!ENTITY lastfm.profile.logout "Log out">

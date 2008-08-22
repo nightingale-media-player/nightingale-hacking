@@ -81,21 +81,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           <spacer flex="1"/>
 
           <hbox align="center">
-            <description class="text-link"><html:span id="lastfmSignup">Sign up for Last.fm</html:span></description>
+            <description class="text-link"><html:span id="lastfmSignup">&lastfm.signup.label;</html:span></description>
             <spacer flex="1"/>
-            <button id="lastfmLoginButton">Log in</button>
+            <button id="lastfmLoginButton">&lastfm.login.button;</button>
           </hbox>
         </vbox>
         <vbox id="lastfmLoggingIn">
           <spacer flex="1"/>
           <groupbox>
-            <label value="Logging in..."/>
+            <label value="&lastfm.loggingin.label;"/>
             <progressmeter mode="undetermined"/>
           </groupbox>
           <spacer flex="1"/>
           <hbox>
             <spacer flex="1"/>
-            <button id="lastfmCancelButton">Cancel</button>
+            <button id="lastfmCancelButton">&lastfm.cancel.button;</button>
           </hbox>
         </vbox>
         <vbox id="lastfmProfile">
@@ -108,16 +108,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <html:span id="lastfmRealname" class="lastfmClickable" style="font-weight:bold; font-size:120%;"/>
               </description>
               <description >
-                <html:span id="lastfmTracks" class="lastfmClickable"/> tracks scrobbled
+                <html:span id="lastfmTracks" class="lastfmClickable"/> &lastfm.profile.numtracks;
               </description>
             </vbox>
           </groupbox>
 
           <spacer flex="1"/>
           <hbox>
-            <checkbox id="lastfmScrobble" label="Scrobble my tracks" checked="true" />
+            <checkbox id="lastfmScrobble" label="&lastfm.profile.scrobble;"
+                      checked="true" />
             <spacer flex="1"/>
-            <button id="lastfmLogoutButton">Log out</button>
+            <button id="lastfmLogoutButton">&lastfm.profile.logout;</button>
           </hbox>
         </vbox>
       </deck>
