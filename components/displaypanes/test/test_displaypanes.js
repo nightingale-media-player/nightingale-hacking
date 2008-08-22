@@ -286,6 +286,8 @@ function makeInstantiator(groupid) {
               .createInstance(Ci.nsISupportsInterfacePointer);
   sip.dataIID = Ci.sbIDisplayPaneInstantiator;
   sip.data = instantiator;
-  return sip.data;
+  instantiator = sip.data;
+  sip.data = null; // prevent leaks
+  return instantiator;
 }
 
