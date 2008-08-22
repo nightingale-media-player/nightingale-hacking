@@ -46,22 +46,22 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
   <menubar id="main-menubar">
-    <!-- For Mac, nsMenuBarX hides these and uses them to build the
-         Application menu.  These specific IDs are necessary.
-         See http://developer.mozilla.org/en/docs/XUL:PopupGuide:PlatformMenus
+    
+    <!-- 
+      For Mac, nsMenuBarX hides these and uses them to build the
+      Application menu.  These specific IDs are necessary.
+      See http://developer.mozilla.org/en/docs/XUL:PopupGuide:PlatformMenus
 
-         mac-menu and menu_MacApplicationPopup themselves don't ever appear
-         in the UI, but there's code in FeathersManager._closePlayerWindow
-         that relies on a menu/menupop/menuitem structure for all menus. -gse
+      The 'mac-menu' and 'menu_MacApplicationPopup themselves don't ever appear
+      in the UI.
     -->
-    <menu id="mac-menu">
-      <menupopup id="menu_MacApplicationPopup">
-        <menuitem id="menu_mac_services" label="&menu.mac.services;"/>
-        <menuitem id="menu_mac_hide_app" label="&menu.mac.hide;" key="hide-mac-key"/>
-        <menuitem id="menu_mac_hide_others" label="&menu.mac.hideothers;" key="hideothers-mac-key"/>
-        <menuitem id="menu_mac_show_all" label="&menu.mac.showall;"/>
-      </menupopup>
-    </menu>
+    <menupopup id="menu_MacApplicationPopup">
+      <menuitem id="menu_mac_services" label="&menu.mac.services;"/>
+      <menuitem id="menu_mac_hide_app" label="&menu.mac.hide;" key="hide-mac-key"/>
+      <menuitem id="menu_mac_hide_others" label="&menu.mac.hideothers;" key="hideothers-mac-key"/>
+      <menuitem id="menu_mac_show_all" label="&menu.mac.showall;"/>
+    </menupopup>
+  
   </menubar>
 
 
@@ -81,4 +81,5 @@
     <key id="hideothers-mac-key" modifiers="&menu.mac.hideothers.modifiers;" key="&menu.mac.hideothers.key;"/>
     <key id="mac-delete-key" modifiers="" keycode="VK_BACK" command="cmd_delete" />
   </keyset>
+
 </overlay>
