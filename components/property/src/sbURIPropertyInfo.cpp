@@ -205,6 +205,7 @@ NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _r
   }
 
   nsresult rv;
+  nsCString escapedSpec;
   
   if (!IsInvalidEmpty(aValue)) {
     rv = EnsureIOService();
@@ -227,13 +228,52 @@ NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _r
       } 
     } 
     nsCAutoString spec;
-    rv = uri->GetSpec(spec);
+    rv = uri->GetSpec(escapedSpec);
     NS_ENSURE_SUCCESS(rv, rv);
-    NS_ConvertUTF8toUTF16 wide(spec);
-    _retval = wide;
   } else {
-    _retval = aValue;
+    CopyUTF16toUTF8(aValue, escapedSpec);
   }
+  
+  nsCOMPtr<nsINetUtil> netUtil =
+    do_GetService("@mozilla.org/network/util;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // don't unescape any ASCII; this covers all of the reserved characters
+  // (RFC 3987 section 3.2)
+  nsCString unescapedSpec;
+  rv = netUtil->UnescapeString(escapedSpec,
+                               nsINetUtil::ESCAPE_URL_ONLY_NONASCII,
+                               unescapedSpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Encode bidirectional formatting characters.
+  // (RFC 3987 sections 3.2 and 4.1 paragraph 6)
+  
+  PRInt32 offset = 0;
+  char buffer[] = {'%','E','2','%','8','0','%','x','x'}; //escaped string
+  while ((offset = unescapedSpec.Find(NS_LITERAL_CSTRING("\xE2\x80"), offset)) != -1) {
+    switch (unescapedSpec[offset + 2]) {
+      case 0x8E:  // U+200E
+      case 0x8F:  // U+200F
+        buffer[7] = '8';
+        buffer[8] = unescapedSpec[offset + 2] - 0x48;
+        break;
+      case 0xAA:  // U+202A
+      case 0xAB:  // U+202B
+      case 0xAC:  // U+202C
+      case 0xAD:  // U+202D
+      case 0xAE:  // U+202E
+        buffer[7] = 'A';
+        buffer[8] = unescapedSpec[offset + 2] - 0x5F;
+        break;
+      default:
+        offset += 2;  // skip over this occurrence, not a character we want
+        continue;
+    }
+    unescapedSpec.Replace(offset, 3, buffer, sizeof(buffer));
+  }
+  
+  CopyUTF8toUTF16(unescapedSpec, _retval);
 
   return NS_OK;
 }
