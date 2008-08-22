@@ -529,6 +529,7 @@ sbMetadataImageScanner.prototype = {
   _shutdown: function () {
     this._debug("Shutting down");
     this._turnOffTimer();
+    this._mainLibrary.removeListener(this);
   },
   
   /*********************************
@@ -565,13 +566,11 @@ sbMetadataImageScanner.prototype = {
   observe: function (aSubject, aTopic, aData) {
     switch (aTopic) {
       case SB_LIBRARY_MANAGER_READY_TOPIC:
-        this._obsService.removeObserver(this,
-                                       SB_LIBRARY_MANAGER_READY_TOPIC);
+        this._obsService.removeObserver(this, aTopic);
         this._startup();
         break;
       case SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC:
-        this._obsService.removeObserver(this,
-                                       SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
+        this._obsService.removeObserver(this, aTopic);
         this._shutdown();
         break;
     }
