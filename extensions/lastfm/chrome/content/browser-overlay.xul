@@ -108,7 +108,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <html:span id="lastfmRealname" class="lastfmClickable" style="font-weight:bold; font-size:120%;"/>
               </description>
               <description >
-                <html:span id="lastfmTracks" class="lastfmClickable"/> &lastfm.profile.numtracks;
+                &lastfm.profile.numtracks.before;
+                <html:span id="lastfmTracks" class="lastfmClickable"/>
+                &lastfm.profile.numtracks.after;
               </description>
             </vbox>
           </groupbox>
