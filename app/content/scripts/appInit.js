@@ -224,12 +224,22 @@ function doMainwinStart()
 //   main window on exit.
 function doFirstRun()
 {
+  var perfTest = false;
   // Skip first-run if allowed (debug mode) and set to skip
   if (Application.prefs.getValue("songbird.first_run.allow_skip", false)) {
     var environment = Cc["@mozilla.org/process/environment;1"]
                         .getService(Ci.nsIEnvironment);
-    if (environment.exists("SONGBIRD_SKIP_FIRST_RUN"))
-      return true;
+                        
+    // If we're skipping the first run
+    if (environment.exists("SONGBIRD_SKIP_FIRST_RUN")) {
+      // Check to see if we're skipping all or just part
+      var skipFirstRun = environment.get("SONGBIRD_SKIP_FIRST_RUN");
+      perfTest = (skipFirstRun == "CSPerf");
+      
+      // Skip the first run wizard unless we're in a perf run
+      if (skipFirstRun && !perfTest)
+        return true;
+    }
   }
 
   try {
@@ -243,7 +253,8 @@ function doFirstRun()
       
       data.onComplete = firstRunComplete;
       data.document = document;
-
+      data.perfTest = perfTest;
+      
       // This cannot be modal it will block the download of extensions
       window.openDialog
                ( "chrome://songbird/content/xul/firstRunWizard.xul",

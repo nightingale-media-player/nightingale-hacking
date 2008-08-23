@@ -95,13 +95,14 @@ firstRunEULASvc.prototype = {
   //   _domEventListenerSet     Set of DOM event listeners.
   //   _wizardElem              First-run wizard element.
   //   _wizardPageElem          First-run wizard EULA widget wizard page element.
+  //   _perfTest                We're doing perf testing so don't stop for user input
   //
 
   _widget: null,
   _domEventListenerSet: null,
   _wizardElem: null,
   _wizardPageElem: null,
-
+  _perfTest : false,
 
   //----------------------------------------------------------------------------
   //
@@ -116,7 +117,9 @@ firstRunEULASvc.prototype = {
   initialize: function firstRunEULASvc_initialize() {
     var _this = this;
     var func;
-
+    
+    this._perfTest = window.arguments[0].perfTest;
+    
     // Create a DOM event listener set.
     this._domEventListenerSet = new DOMEventListenerSet();
 
@@ -150,6 +153,11 @@ firstRunEULASvc.prototype = {
     catch (e)
     {
       // Ignore errors
+    }
+    if (this._perfTest) {
+      var acceptCheckboxElem = this._getElement("accept_checkbox");
+      acceptCheckboxElem.checked = true;
+      this._update();
     }
   },
 
@@ -236,10 +244,10 @@ firstRunEULASvc.prototype = {
     if (this._wizardElem.currentPage != this._wizardPageElem)
       return;
 
-    // If the EULA has already been accepted, skip the first-run wizard EULA
-    // page.
+    // If the EULA has already been accepted or we're perf testing, skip the
+    // first-run wizard EULA page.
     var eulaAccepted = Application.prefs.getValue("songbird.eulacheck", false);
-    if (eulaAccepted) {
+    if (eulaAccepted || this._perfTest) {
       this._wizardElem.canAdvance = true;
       this._wizardElem.advance();
       return;

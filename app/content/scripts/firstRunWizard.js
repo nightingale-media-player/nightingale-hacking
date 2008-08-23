@@ -330,6 +330,11 @@ var firstRunWizard = {
       finishButton.focus();
     else if (!nextButton.hidden && !nextButton.disbled && !hideNextButton)
       nextButton.focus();
+    // If we're perf testing then we want to just after the EULA is done
+    if (window.arguments[0].perfTest && this._markFirstRunComplete) {
+        finishButton.click();
+    }
+    
   },
 
 
