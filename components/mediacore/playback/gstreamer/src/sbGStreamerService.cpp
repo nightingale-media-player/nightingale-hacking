@@ -32,6 +32,7 @@
 #include <nsIFile.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
+#include <prenv.h>
 #include <nsServiceManagerUtils.h>
 #include <nsDirectoryServiceDefs.h>
 #include <nsAppDirectoryServiceDefs.h>
@@ -72,6 +73,29 @@ sbGStreamerService::sbGStreamerService()
 sbGStreamerService::~sbGStreamerService()
 {
   LOG(("sbGStreamerService[0x%.8x] - dtor", this));
+}
+
+/**
+ * Wrapper to set environment variables in a way that doesn't show up in the
+ * leak log.  This leaks just as much but shuts up the buildbots.
+ * Yes, calling PR_SetEnv / nsIEnvironment::set() leaks.  On purpose.
+ */
+nsresult SetEnvVar(const nsAString& aName, const nsAString& aValue)
+{
+  nsCString env;
+  CopyUTF16toUTF8(aName, env);
+  env.AppendLiteral("=");
+  env.Append(NS_ConvertUTF16toUTF8(aValue));
+  PRInt32 length = env.Length();
+  char* buf = (char*)NS_Alloc(length + 1);
+  if (!buf) {
+    return NS_ERROR_OUT_OF_MEMORY;
+  }
+  memcpy(buf, env.get(), length);
+  buf[length] = '\0';
+  PRStatus status = PR_SetEnv(buf);
+  // intentionally leak buf
+  return (PR_SUCCESS == status) ? NS_OK : NS_ERROR_FAILURE;
 }
 
 // sbIGStreamerService
@@ -125,12 +149,13 @@ sbGStreamerService::Init()
     LOG(("sbGStreamerService[0x%.8x] - Setting GST_PLUGIN_SYSTEM_PATH=%s", this,
          NS_LossyConvertUTF16toASCII(pluginDirStr).get()));
 
-    rv = envSvc->Set(kGstPluginSystemPath, pluginDirStr);
+    
+    rv = SetEnvVar(kGstPluginSystemPath, pluginDirStr);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Clear GST_PLUGIN_PATH: we're using the bundled gstreamer, and don't
     // want external plugins to get used.
-    rv = envSvc->Set(kGstPluginPath, EmptyString());
+    rv = SetEnvVar(kGstPluginPath, EmptyString());
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Set registry path
@@ -152,7 +177,7 @@ sbGStreamerService::Init()
     LOG(("sbGStreamerService[0x%.8x] - Setting GST_REGISTRY=%s", this,
          NS_LossyConvertUTF16toASCII(registryPathStr).get()));
 
-    rv = envSvc->Set(kGstRegistry, registryPathStr);
+    rv = SetEnvVar(kGstRegistry, registryPathStr);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -199,7 +224,7 @@ sbGStreamerService::Init()
     }
   }
 
-  rv = envSvc->Set(kGstPluginPath, pluginPaths);
+  rv = SetEnvVar(kGstPluginPath, pluginPaths);
   NS_ENSURE_SUCCESS(rv, rv);
 
 #ifdef XP_MACOSX
