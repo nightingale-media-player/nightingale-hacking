@@ -1245,6 +1245,14 @@ PlaylistPlayback.prototype = {
       this._stopPlayerLoop();
       this._stopNextLoop = false; // If we make it here, we don't need this
     }
+    
+    // fix for bug #11780
+    this._playing.boolValue = false;
+    this._paused.boolValue = false;
+    this._metadataPos.intValue = 0;
+    this._metadataLen.intValue = 0;
+    this._metadataPosText.stringValue = "0:00";
+    this._metadataLenText.stringValue = "0:00";
 
     this._playingVideo.boolValue = false;
     this._controlTriggered.stringValue = Date.now();
