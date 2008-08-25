@@ -193,6 +193,21 @@ LastFm.onLoad = function() {
   this._username.value = this._service.username;
   this._password.value = this._service.password;
 
+  // react to changes in the login form
+  function usernamePasswordChanged(event) {
+    if (LastFm._username.value.length &&
+        LastFm._password.value.length) {
+      // we have a username & password, make sure 'login' button is enabled
+      LastFm._loginButton.disabled = false;
+    } else {
+      // we're missing username or password, disable the 'login' button
+      LastFm._loginButton.disabled = true;
+    }
+  }
+  this._username.addEventListener('input', usernamePasswordChanged, false);
+  this._password.addEventListener('input', usernamePasswordChanged, false);
+  usernamePasswordChanged();
+
   // create elements for the faceplate
   var faceplateParent = document.getElementById('faceplate-tool-bar');
   if (faceplateParent) {
