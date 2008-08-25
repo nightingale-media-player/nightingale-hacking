@@ -59,11 +59,13 @@ CPP_INCLUDES += $(topsrcdir)/components/intl/src/$(SB_PLATFORM) \
 
 DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
 
+endif
+
 #
 # Mac OS X
 #
 
-else ifeq (macosx,$(SB_PLATFORM))
+ifeq (macosx,$(SB_PLATFORM))
 
 CPP_INCLUDES += $(topsrcdir)/components/intl/src/$(SB_PLATFORM) \
                 $(NULL)
@@ -84,12 +86,13 @@ CMM_INCLUDES = $(DEPTH)/components/intl/public \
 DYNAMIC_LIB_OBJS = $(notdir $(CMM_SRCS:.mm=$(OBJ_SUFFIX))) \
                    $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))) \
 									 $(NULL)
+endif
 
 #
 # Linux, Solaris and others
 #
 
-else
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
 
 CPP_SRCS += linux/sbStringTransformImpl.cpp \
            $(NULL)
