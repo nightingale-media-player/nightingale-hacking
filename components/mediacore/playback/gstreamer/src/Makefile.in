@@ -97,6 +97,9 @@ DYNAMIC_LIB_IMPORT_PATHS = \
 
 # Use system headers for MEDIA_CORE_GST_SYSTEM only
 ifdef MEDIA_CORE_GST_SYSTEM
+  CPP_EXTRA_FLAGS += $(GSTREAMER_CFLAGS) \
+                     $(NULL)
+
   DYNAMIC_LIB_EXTRA_FLAGS = $(GSTREAMER_LIBS) \
                             $(GTK_LIBS) \
                             -lX11 \

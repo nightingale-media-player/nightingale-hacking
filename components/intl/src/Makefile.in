@@ -31,20 +31,12 @@ include $(DEPTH)/build/autodefs.mk
 
 target_name = sbIntl$(DEBUG:%=_d)
 
-#
-# Windows, Linux
-#
-
-ifneq (macosx,$(SB_PLATFORM))
-
-CPP_SRCS = $(SB_PLATFORM)/sbStringTransformImpl.cpp \
-           sbStringTransform.cpp \
+CPP_SRCS = sbStringTransform.cpp \
            sbIntlModule.cpp \
            $(NULL)
 
 CPP_INCLUDES = \
       $(DEPTH)/components/intl/public \
-      $(topsrcdir)/components/intl/src/$(SB_PLATFORM) \
       $(MOZSDK_INCLUDE_DIR) \
       $(MOZSDK_INCLUDE_DIR)/nspr \
       $(MOZSDK_INCLUDE_DIR)/xpcom \
@@ -53,27 +45,29 @@ CPP_INCLUDES = \
       $(MOZSDK_IDL_DIR) \
       $(NULL)
 
-DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
+#
+# Windows
+#
 
-else
+ifeq (windows,$(SB_PLATFORM))
+
+CPP_SRCS += $(SB_PLATFORM)/sbStringTransformImpl.cpp \
+            $(NULL)
+
+CPP_INCLUDES += $(topsrcdir)/components/intl/src/$(SB_PLATFORM) \
+                $(NULL)
+
+DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
 
 #
 # Mac OS X
 #
 
-CPP_SRCS = sbStringTransform.cpp \
-           sbIntlModule.cpp \
-           $(NULL)
+else ifeq (macosx,$(SB_PLATFORM))
 
-CPP_INCLUDES = $(DEPTH)/components/intl/public \
-							 $(topsrcdir)/components/intl/src/$(SB_PLATFORM) \
-							 $(MOZSDK_INCLUDE_DIR) \
-							 $(MOZSDK_INCLUDE_DIR)/nspr \
-							 $(MOZSDK_INCLUDE_DIR)/xpcom \
-							 $(MOZSDK_INCLUDE_DIR)/string \
-							 $(MOZSDK_INCLUDE_DIR)/necko \
-							 $(MOZSDK_IDL_DIR) \
-							 $(NULL) 
+CPP_INCLUDES += $(topsrcdir)/components/intl/src/$(SB_PLATFORM) \
+                $(NULL)
+
 CMM_SRCS = $(SB_PLATFORM)/sbStringTransformImpl.mm \
            $(NULL)
 					 
@@ -91,6 +85,20 @@ DYNAMIC_LIB_OBJS = $(notdir $(CMM_SRCS:.mm=$(OBJ_SUFFIX))) \
                    $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))) \
 									 $(NULL)
 
+#
+# Linux, Solaris and others
+#
+
+else
+
+CPP_SRCS += linux/sbStringTransformImpl.cpp \
+           $(NULL)
+
+CPP_INCLUDES += $(topsrcdir)/components/intl/src/linux \
+                $(NULL)
+
+DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
+
 endif
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
@@ -104,7 +112,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
-ifeq (linux,$(SB_PLATFORM))
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
     CPP_EXTRA_FLAGS += $(shell pkg-config --cflags glib-2.0) \
                        $(NULL)
 
