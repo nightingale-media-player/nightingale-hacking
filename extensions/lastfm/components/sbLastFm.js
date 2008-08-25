@@ -360,6 +360,12 @@ function sbLastFm_badSession() {
   this.handshake();
 }
 
+// should the user be automatically logged in?
+sbLastFm.prototype.shouldAutoLogin =
+function sbLastFm_shouldAutoLogin() {
+  return this.username && this.password && !this.userLoggedOut;
+}
+
 // login functionality
 sbLastFm.prototype.login =
 function sbLastFm_login() {
@@ -810,7 +816,7 @@ function sbLastFm_onTrackChange(aItem, aView, aIndex) {
   }
 }
 
-sbLastFm.prototype.onStop = function sbLastFm_onStop() { 
+sbLastFm.prototype.onStop = function sbLastFm_onStop() {
   // reset the love/ban state
   this.loveBan(null, false);
 }
@@ -818,9 +824,9 @@ sbLastFm.prototype.onBeforeTrackChange =
 function sbLastFm_onBeforeTrackChange(aItem, aView, aIndex) { }
 sbLastFm.prototype.onTrackIndexChange =
 function sbLastFm_onTrackIndexChange(aItem, aView, aIndex) { }
-sbLastFm.prototype.onBeforeViewChange = 
+sbLastFm.prototype.onBeforeViewChange =
 function sbLastFm_onBeforeViewChange(aView) { }
-sbLastFm.prototype.onViewChange = 
+sbLastFm.prototype.onViewChange =
 function sbLastFm_onViewChange(aView) { }
 
 
