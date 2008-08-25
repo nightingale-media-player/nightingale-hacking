@@ -110,19 +110,19 @@ LastFm.onLoad = function() {
 
   // wire up UI events for the menu items
   this._menuLogin.addEventListener('command',
-      function(event) { 
+      function(event) {
         LastFm.metrics.metricsInc('lastfm', 'menu', 'login');
-        LastFm.showPanel(); 
+        LastFm.showPanel();
       }, false);
   this._menuLogout.addEventListener('command',
-      function(event) { 
+      function(event) {
         LastFm.metrics.metricsInc('lastfm', 'menu', 'logout');
-        LastFm.onLogoutClick(event); 
+        LastFm.onLogoutClick(event);
       }, false);
   this._menuEnableScrobbling.addEventListener('command',
-      function(event) { 
+      function(event) {
         LastFm.metrics.metricsInc('lastfm', 'menu', 'scrobble');
-        LastFm.toggleShouldScrobble(); 
+        LastFm.toggleShouldScrobble();
       }, false);
 
   // wire up click event for the status icon
@@ -144,9 +144,9 @@ LastFm.onLoad = function() {
       }, false);
   // and the contextmenu event
   this._statusIcon.addEventListener('contextmenu',
-      function(event) { 
+      function(event) {
         LastFm.metrics.metricsInc('lastfm', 'icon', 'context');
-        LastFm.showPanel(); 
+        LastFm.showPanel();
       }, false);
 
   // wire up UI events for the buttons
@@ -319,7 +319,7 @@ LastFm.onLoggedInStateChanged = function LastFm_onLoggedInStateChanged() {
     // switch back to the login panel
     this._deck.selectedPanel = this._login;
   }
-  
+
   this.updateStatus();
 }
 LastFm.onLoginBegins = function LastFm_onLoginBegins() {
@@ -397,8 +397,14 @@ LastFm.updateStatus = function LastFm_updateStatus() {
 
   if (stateName == 'logged_in') {
     this._faceplate.removeAttribute('hidden');
+    // switch to profile panel
+    this._deck.selectedPanel = this._profile;
   } else {
     this._faceplate.setAttribute('hidden', 'true');
+    if (stateName == 'error' || stateName == 'login_error') {
+      // switch back to the login panel
+      this._deck.selectedPanel = this._login;
+    }
   }
 }
 
@@ -425,6 +431,7 @@ LastFm.setLoginError = function LastFm_setLoginError(aText) {
 
 LastFm.onErrorChanged = function LastFm_onErrorChanged(aError) {
   this.setLoginError(aError);
+
   this.updateStatus();
 }
 

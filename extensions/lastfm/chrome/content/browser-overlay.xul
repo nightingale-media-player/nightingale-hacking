@@ -86,6 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <button id="lastfmLoginButton">&lastfm.login.button;</button>
           </hbox>
         </vbox>
+
         <vbox id="lastfmLoggingIn">
           <spacer flex="1"/>
           <groupbox>
@@ -98,8 +99,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <button id="lastfmCancelButton">&lastfm.cancel.button;</button>
           </hbox>
         </vbox>
-        <vbox id="lastfmProfile">
 
+        <vbox id="lastfmProfile">
           <groupbox orient="horizontal" pack="top" align="top">
             <caption label="Profile" />
             <image id="lastfmImage" src="" />
@@ -114,7 +115,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               </description>
             </vbox>
           </groupbox>
-
           <spacer flex="1"/>
           <hbox>
             <checkbox id="lastfmScrobble" label="&lastfm.profile.scrobble;"
