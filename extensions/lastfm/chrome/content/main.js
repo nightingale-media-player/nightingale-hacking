@@ -260,7 +260,8 @@ LastFm.onLoad = function() {
   this.updateStatus();
 
   // if we have a username & password then try to log in
-  if (this._service.username && this._service.password) {
+  if (this._service.username && this._service.password &&
+      !this._service.userLoggedOut) {
     this._service.login();
   }
 }
