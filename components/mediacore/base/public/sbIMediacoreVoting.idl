@@ -26,11 +26,14 @@
 
 #include "nsISupports.idl"
 
+interface nsIURI;
+interface nsIChannel;
+
 interface sbIMediacoreChain;
 
 [scriptable, uuid(4655b396-21d8-42be-b86c-aac411983e9c)]
-interface sbIMediacoreVoting : public nsISupports
+interface sbIMediacoreVoting : nsISupports
 {
-  sbIMediacoreChain vote(nsIURI *aURI);
-  sbIMediacoreChain voteWithChannel(nsIChannel *aChannel);
+  sbIMediacoreChain voteWithURI(in nsIURI aURI);
+  sbIMediacoreChain voteWithChannel(in nsIChannel aChannel);
 };

@@ -27,9 +27,10 @@
 #include "nsISupports.idl"
 
 interface sbIMediacore;
+interface sbIMediacoreCapabilities;
 
 [scriptable, uuid(20a5b0ee-1869-4717-bbe4-c5d9db37c6fa)]
-interface sbIMediacoreFactory : public nsISupports
+interface sbIMediacoreFactory : nsISupports
 {
   readonly attribute AString contractID;
   readonly attribute AString name;
@@ -37,4 +38,4 @@ interface sbIMediacoreFactory : public nsISupports
   readonly attribute sbIMediacoreCapabilities capabilities;
 
   sbIMediacore create(in AString aInstanceName);
-}
+};

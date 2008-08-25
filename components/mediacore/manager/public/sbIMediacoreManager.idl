@@ -35,6 +35,8 @@ interface sbIMediacoreVolumeControl;
 
 interface sbIMediacoreCapabilities;
 
+interface sbIMediacoreSequencer;
+
 [scriptable, uuid(c9eb7de1-87fc-4eea-886e-6202cae826bc)]
 interface sbIMediacoreManager : public nsISupports
 {
@@ -47,6 +49,8 @@ interface sbIMediacoreManager : public nsISupports
   readonly attribute sbIMediacorePlaybackControl playbackControl;
 
   readonly attribute sbIMediacoreCapabilities    capabilities;
+
+  attribute sbIMediacoreSequencer sequencer;
 };
 
 %{C++

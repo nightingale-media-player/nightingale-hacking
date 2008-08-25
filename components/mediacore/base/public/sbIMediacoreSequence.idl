@@ -29,7 +29,7 @@
 interface sbIMediaItem;
 
 [scriptable, uuid(4fc48ad1-20a1-446c-9860-c140a57f855e)]
-interface sbIMediacoreSequence : public nsISupports
+interface sbIMediacoreSequence : nsISupports
 {
   readonly attribute sbIMediaItem currentItem;
   

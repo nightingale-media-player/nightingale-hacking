@@ -26,10 +26,12 @@
 
 #include "nsISupports.idl"
 
-interface sbIMediacoreEvent;
+interface nsIDOMXULElement;
+interface sbIMediacoreChain;
 
-[scriptable, uuid(46298bab-7f82-408d-929c-981ed2e8ce5b)]
-interface sbIMediacoreEventListener : nsISupports
+[scriptable, uuid(970e737c-fc22-4fb4-be64-42ac2db36d30)]
+interface sbIMediacoreVideoWindow : nsISupports
 {
-  void onMediacoreEvent(in sbIMediacoreEvent aEvent);
+  attribute boolean fullscreen;
+  attribute nsIDOMXULElement videoWindow;
 };

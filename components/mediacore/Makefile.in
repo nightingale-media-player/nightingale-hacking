@@ -29,8 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = metadata \
+SUBDIRS = base \
+          metadata \
           playback \
           $(NULL)
+
+SUBDIRDEPS = playback metadata : base
 
 include $(topsrcdir)/build/rules.mk

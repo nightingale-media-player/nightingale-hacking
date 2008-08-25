@@ -28,11 +28,12 @@
 
 interface nsIArray;
 
+interface sbIMediacoreSequence;
 interface sbIMediacoreSequenceGenerator;
 interface sbIMediaListView;
 
 [scriptable, uuid(91e8edfc-17a8-47af-8d75-1bbe9ab5fa5f)]
-interface sbIMediacoreSequencer : public nsISupports
+interface sbIMediacoreSequencer : nsISupports
 {
   const unsigned long MODE_FORWARD    = 0;
   const unsigned long MODE_REVERSE    = 1;

@@ -32,7 +32,7 @@ interface sbIMediacore;
 interface sbIMediacoreFactory;
 
 [scriptable, uuid(da09f47f-8307-4af4-8b8d-9e3ae81d6aae)]
-interface sbIMediacoreFactoryRegistrar : public nsISupports
+interface sbIMediacoreFactoryRegistrar : nsISupports
 {
   readonly attribute nsIArray factories;
   readonly attribute nsIArray instances;

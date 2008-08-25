@@ -27,7 +27,7 @@
 #include "nsISupports.idl"
 
 [scriptable, uuid(afb4d9dd-f215-4190-9cec-59387204992c)]
-interface sbIMediacoreVolumeControl : public nsISupports
+interface sbIMediacoreVolumeControl : nsISupports
 {
   // true = muted
   attribute boolean mute;

@@ -28,9 +28,11 @@
 
 interface nsIArray;
 
+interface sbIMediacore;
+
 [scriptable, uuid(4cf9bef7-6131-4681-b905-f7cdc48805d1)]
-interface sbIMediacoreVotingChain : public nsISupports
+interface sbIMediacoreVotingChain : nsISupports
 {
-  nsIArray mediacoreChain;
+  readonly attribute nsIArray mediacoreChain;
   unsigned long getVote(in sbIMediacore aMediacore);
 };

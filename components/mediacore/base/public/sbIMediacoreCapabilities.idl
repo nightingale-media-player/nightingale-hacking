@@ -27,7 +27,7 @@
 #include "nsISupports.idl"
 
 [scriptable, uuid(937f3e19-f9ef-4d7c-9afa-7e388338954e)]
-interface sbIMediacoreCapabilities : public nsISupports
+interface sbIMediacoreCapabilities : nsISupports
 {
   //Formats supported FourCC? MIME Type? I have no idea.
 

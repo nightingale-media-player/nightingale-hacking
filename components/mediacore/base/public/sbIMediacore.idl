@@ -22,20 +22,21 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 #include "nsISupports.idl"
 
 interface sbIMediacoreCapabilities;
+interface sbIMediacoreEvent;
 interface sbIMediacoreSequence;
 
 [scriptable, uuid(927cc189-0dc6-4b3d-8881-1d0e80fcc854)]
-interface sbIMediacore : public nsISupports
+interface sbIMediacore : nsISupports
 {
   readonly attribute AString instanceName;
   readonly attribute sbIMediacoreCapabilities capabilities;
 
   readonly attribute sbIMediacoreEvent lastStatusEvent;
 
-  attribute sbIMediacoreSequence sequence;
+  attribute sbIMediacoreSequence currentSequence;
 };

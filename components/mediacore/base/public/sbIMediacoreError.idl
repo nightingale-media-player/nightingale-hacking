@@ -27,7 +27,7 @@
 #include "nsISupports.idl"
 
 [scriptable, uuid(ef15b3dd-bccc-4e1b-8c4d-3ef8d63bfd0d)]
-interface sbIMediacoreError : public nsISupports
+interface sbIMediacoreError : nsISupports
 {
   /**
    * \brief Error code.

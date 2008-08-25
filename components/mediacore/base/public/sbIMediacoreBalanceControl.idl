@@ -26,8 +26,8 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid(afb4d9dd-f215-4190-9cec-59387204992c)]
-interface sbIMediacoreBalanceControl : public nsISupports
+[scriptable, uuid(12f5db9c-1834-457d-90f7-1512d8da9eb2)]
+interface sbIMediacoreBalanceControl : nsISupports
 {
   //Between -1 and 1. 0 is centered.
   attribute double balance;

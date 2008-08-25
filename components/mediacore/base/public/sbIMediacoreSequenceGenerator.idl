@@ -26,10 +26,11 @@
 
 #include "nsISupports.idl"
 
-interface sbIMediacoreEvent;
+interface nsIArray;
+interface sbIMediaListView;
 
-[scriptable, uuid(46298bab-7f82-408d-929c-981ed2e8ce5b)]
-interface sbIMediacoreEventListener : nsISupports
+[scriptable, uuid(be20d7ef-9795-4609-a126-bfe142206aca)]
+interface sbIMediacoreSequenceGenerator : nsISupports
 {
-  void onMediacoreEvent(in sbIMediacoreEvent aEvent);
+  nsIArray onGenerateSequence(in sbIMediaListView aView);
 };

@@ -27,7 +27,7 @@
 #include "nsISupports.idl"
 
 [scriptable, uuid(e06108ed-e300-41b5-9550-9012f0301b47)]
-interface sbIMediacoreTranscodeControl : public nsISupports
+interface sbIMediacoreTranscodeControl : nsISupports
 {
 
 };
