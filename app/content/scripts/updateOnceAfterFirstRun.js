@@ -31,7 +31,8 @@ function updateOnceAfterFirstRun() {
   // only once
   window.removeEventListener('load', updateOnceAfterFirstRun, false);
 
-  // make sure first-run has already run
+  // make sure first-run has already run - gets set by first run wizard
+  // after the EULA is accepted and the welcome screen is shown.
   var ranFirstRun = Application.prefs.get('songbird.firstrun.check.0.3');
   if (!ranFirstRun || !ranFirstRun.value) {
     return;
@@ -44,14 +45,6 @@ function updateOnceAfterFirstRun() {
     return;
   }
 
-  // set the update url override
-  var PREF_APP_UPDATE_URL = 'app.update.url';
-  var PREF_APP_UPDATE_URL_OVERRIDE = 'app.update.url.override';
-  // add "?firstrun=1" to the end of the update url temporarilly
-  var appUpdateUrl = Application.prefs.get(PREF_APP_UPDATE_URL);
-  Application.prefs.setValue(PREF_APP_UPDATE_URL_OVERRIDE, 
-      appUpdateUrl.value + "?firstrun=1");
-  
   // request an update check
   var updateSvc = Components.classes['@mozilla.org/updates/update-service;1']
     .getService(Components.interfaces.nsIApplicationUpdateService);
@@ -63,9 +56,6 @@ function updateOnceAfterFirstRun() {
     onProgress: function (request, position, totalSize) { }
   };
   updateChecker.checkForUpdates(updateCheckListener, true);
-
-  // reset the override url
-  Application.prefs.get(PREF_APP_UPDATE_URL_OVERRIDE).reset();
 
   // set a pref so we don't run again
   Application.prefs.setValue(PREF_SONGBIRD_FIRSTRUN_UPDATEONCE, true);
