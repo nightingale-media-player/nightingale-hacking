@@ -1,5 +1,5 @@
 /*
- //
+//
 // BEGIN SONGBIRD GPL
 // 
 // This file is part of the Songbird web player.
@@ -22,22 +22,39 @@
 // 
 // END SONGBIRD GPL
 //
+*/
+
+/** 
+ * \file  sbMediacoreError.h
+ * \brief Songbird Mediacore Error Definition.
  */
 
-#include "nsISupports.idl"
+#ifndef __SB_MEDIACOREERROR_H__
+#define __SB_MEDIACOREERROR_H__
 
-[scriptable, uuid(ef15b3dd-bccc-4e1b-8c4d-3ef8d63bfd0d)]
-interface sbIMediacoreError : nsISupports
+#include <sbIMediacoreError.h>
+
+#include <nsAutoLock.h>
+#include <nsStringGlue.h>
+
+class sbMediacoreError : public sbIMediacoreError
 {
-  const unsigned long UNINITIALIZED = 0;
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIACOREERROR
 
-  /**
-   * \brief Error code.
-   */
-  readonly attribute unsigned long code;
+  sbMediacoreError();
 
-  /**
-   * \brief Error message (human readable string, localized, preferrably).
-   */
-  readonly attribute AString message;
+  nsresult Init(PRUint32 aCode, 
+                const nsAString &aMessage);
+
+protected:
+  virtual ~sbMediacoreError();
+
+  PRLock *mLock;
+  
+  PRUint32 mCode;
+  nsString mMessage;
 };
+
+#endif /* __SB_MEDIACOREERROR_H__ */

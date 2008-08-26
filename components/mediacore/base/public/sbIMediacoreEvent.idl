@@ -35,53 +35,55 @@ interface sbIMediacoreEventTarget;
 [scriptable, uuid(edf5e894-5265-4599-a970-39c536dfa182)]
 interface sbIMediacoreEvent : nsISupports
 {
+  const unsigned long UNINTIALIZED    = 0x00000000;
+
   /**
    * \brief Metadata describing current item has changed
    */
-  const unsigned long METADATA_CHANGE = 0;
+  const unsigned long METADATA_CHANGE = 0x00001000;
   /**
    * \brief URI used for operation has changed
    */
-  const unsigned long URI_CHANGE      = 0;
+  const unsigned long URI_CHANGE      = 0x00001001;
   /**
    * \brief Current duration has changed
    */
-  const unsigned long DURATION_CHANGE = 0;
+  const unsigned long DURATION_CHANGE = 0x00001002;
   /**
    * \brief Volume has changed
    */
-  const unsigned long VOLUME_CHANGE   = 0;
+  const unsigned long VOLUME_CHANGE   = 0x00001003;
   /**
    * \brief Mute status has changed
    */
-  const unsigned long MUTE_CHANGE     = 0;
+  const unsigned long MUTE_CHANGE     = 0x00001004;
 
   /**
    * \brief Stream found.
    */
-  const unsigned long STREAM_FOUND    = 0;
+  const unsigned long STREAM_FOUND    = 0x00002000;
   
   /**
    * \brief Buffering.
    */
-  const unsigned long BUFFERING       = 0;
+  const unsigned long BUFFERING       = 0x00003000;
   /**
    * \brief Buffer underrun, operation is likely to halt.
    */
-  const unsigned long BUFFER_UNDERRUN = 0;
+  const unsigned long BUFFER_UNDERRUN = 0x00003001;
   
   /**
    * \brief Stream has started.
    */
-  const unsigned long STREAM_START    = 0;
+  const unsigned long STREAM_START    = 0x00004000;
   /**
    * \brief Stream is now paused.
    */
-  const unsigned long STREAM_PAUSE    = 0;
+  const unsigned long STREAM_PAUSE    = 0x00004001;
   /**
    * \brief End of stream.
    */
-  const unsigned long STREAM_END      = 0;
+  const unsigned long STREAM_END      = 0x00004002;
 
   /**
    * \brief Plugin missing for requested format.

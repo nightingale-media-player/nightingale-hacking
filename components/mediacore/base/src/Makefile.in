@@ -34,7 +34,9 @@ ifdef DEBUG
 target := $(addsuffix _d,$(target))
 endif
 
-CPP_SRCS = $(NULL)
+CPP_SRCS = sbMediacoreError.cpp \
+           sbMediacoreEvent.cpp \
+           $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/base/public \
                $(topsrcdir)/components/include \
