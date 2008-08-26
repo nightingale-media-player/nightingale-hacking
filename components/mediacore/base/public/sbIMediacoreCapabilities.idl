@@ -26,15 +26,52 @@
 
 #include "nsISupports.idl"
 
+interface nsIStringEnumerator;
+
 [scriptable, uuid(937f3e19-f9ef-4d7c-9afa-7e388338954e)]
 interface sbIMediacoreCapabilities : nsISupports
 {
-  //Formats supported FourCC? MIME Type? I have no idea.
+  /**
+   * \brief Audio file extensions (eg. mp3, aac, m4a, ...)
+   */
+  readonly attribute nsIStringEnumerator audioExtensions;
+  /**
+   * \brief Video file extensions (eg. avi, mpg, mov, ...)
+   */
+  readonly attribute nsIStringEnumerator videoExtensions;
+  /**
+   * \brief Image file extensions (eg. jpg, tiff, png, ...)
+   */
+  readonly attribute nsIStringEnumerator imageExtensions;
 
-  //High level support? I'm not sure how useful this is.
-  attribute boolean supportsAudioPlayback;
-  attribute boolean supportsVideoPlayback;
+  // XXXAus: Encoders? Formats supported FourCC? MIME Type? I have no idea.
+  //         We'll figure out what to do for that stuff when we get to 
+  //         encoding/transcoding
 
-  attribute boolean supportsAudioTranscode;
-  attribute boolean supportsVideoTranscode;
+  /**
+   * \brief Supports audio playback?
+   */
+  readonly attribute boolean supportsAudioPlayback;
+  /**
+   * \brief Supports video playback?
+   */
+  readonly attribute boolean supportsVideoPlayback;
+  /**
+   * \brief Supports image playback?
+   */
+  readonly attribute boolean supportsImagePlayback;
+
+  /**
+   * \brief Supports transcoding audio?
+   */
+  readonly attribute boolean supportsAudioTranscode;
+  /**
+   * \brief Supports transcoding video?
+   */
+  readonly attribute boolean supportsVideoTranscode;
+  /**
+   * \brief Supports transcoding images?
+   */
+  readonly attribute boolean supportsImageTranscode;
+
 };
