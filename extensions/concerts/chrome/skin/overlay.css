@@ -27,6 +27,9 @@ description#library-text {
 	width: 5px;
 }
 
+#concerts-firstrun-page {
+	overflow: auto;
+}
 #concerts-firstrun-page menulist {
 	font-size: 130%;
 }

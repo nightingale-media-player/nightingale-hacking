@@ -127,7 +127,7 @@
 					<columns>
 						<column flex="1" />
 						<column flex="1" />
-						<column flex="1" />
+						<column flex="2" />
 					</columns>
 
 					<command id="changeCountry"
@@ -144,15 +144,15 @@
 						</row>
 						<row>
 							<menulist id="menulist-country"
-								command="changeCountry" style="width:6em;">
+								command="changeCountry" >
 							</menulist>
 
 							<menulist id="menulist-state"
-								command="changeState" style="width:6em;">
+								command="changeState" >
 							</menulist>
 
 							<menulist id="menulist-city"
-								command="changeCity" style="width: 20em;">
+								command="changeCity" >
 							</menulist>
 						</row>
 					</rows>
@@ -249,7 +249,7 @@
 		</hbox>
 		<hbox id="concerts-timeout-error-page" flex="1">
 			<spacer flex="1" />
-			<vbox id="timeout-vbox" flex="0" pack="center">
+			<vbox id="timeout-vbox" flex="1" pack="center">
 				<description>&concerts.timeout.error;</description>
 				<label class="text-link" value="&concerts.timeoutreport.error;"
 					href="http://getsatisfaction.com/songbird" />
