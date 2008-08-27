@@ -553,6 +553,181 @@ LibraryUtils.MediaListEnumeratorToArray.prototype = {
 }
 
 /**
+ * \class LibraryUtils.GlobalMediaListListener
+ * \brief Attaches a listener to all currently existing libraries
+ *        and lists in the system, and monitors the new playlists 
+ *        and libraries in order to automatically attach the
+ *        listener whenever they are created.
+ */
+LibraryUtils.GlobalMediaListListener = function(aListener, aOwnsWeak, aFlags, aPropFilter) {
+  if (aFlags === undefined) {
+    aFlags = Components.interfaces.sbIMediaList.LISTENER_FLAGS_ALL;
+  }
+  
+  this.listener = aListener;
+  this.ownsWeak = aOwnsWeak;
+  this.propFilter = aPropFilter;
+  this.listenerFlags = aFlags;
+  
+  this.libraryManager =
+    Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+      .getService(Ci.sbILibraryManager);
+
+  this.listListener = {
+    cb: this,
+    onitemadded_skipbatch : false,
+    onitemadded_stack     : [],
+    onafteritemremoved_skipbatch : false,
+    onafteritemremoved_stack     : [],
+    batchcount : 0,
+    onItemAdded: function(aMediaList, aMediaItem, aIndex) { 
+      if (aMediaItem instanceof Ci.sbIMediaList)
+        this.cb.addMediaListListener(aMediaItem);  
+      if (this.onitemadded_skipbatch)
+        return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      if (this.cb.listener.onItemAdded(aMediaList, aMediaItem, aIndex) !=
+          Ci.sbIMediaListEnumerationListener.CONTINUE) {
+        this.onitemadded_skipbatch = true;
+      }
+      return Ci.sbIMediaListEnumerationListener.CONTINUE; 
+    },
+    onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) { 
+      return this.cb.listener.onBeforeItemRemoved(aMediaList, aMediaItem, aIndex);
+    },
+    onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) { 
+      if (aMediaItem instanceof Ci.sbIMediaList)
+        this.cb.removeMediaListListener(aMediaItem);
+      if (this.onafteritemremoved_skipbatch)
+        return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      if (this.cb.listener.onAfterItemRemoved(aMediaList, aMediaItem, aIndex) !=
+        Ci.sbIMediaListEnumerationListener.CONTINUE) {
+        this.onafteritemremoved_skipbatch = true;
+      }
+      return Ci.sbIMediaListEnumerationListener.CONTINUE; 
+    },
+    onItemUpdated: function(aMediaList, aMediaItem, aProperties) { 
+      return this.cb.listener.onItemUpdated(aMediaList, aMediaItem, aProperties); 
+    },
+    onItemMoved: function(aMediaList, aFromIndex, aToIndex) { 
+      return this.cb.listener.onItemMoved(aMediaList, aFromIndex, aToIndex); 
+    },
+    onListCleared: function(aMediaList) { 
+      return this.cb.listener.onListCleared(aMediaList); 
+    },
+    onBatchBegin: function(aMediaList) {
+      this.onitemadded_stack.push(this.onitemadded_skipbatch);
+      this.onitemadded_skipbatch = false;
+      this.onafteritemremoved_stack.push(this.onafteritemremoved_skipbatch);
+      this.onafteritemremoved_skipbatch = false;
+      return this.cb.listener.onBatchBegin(aMediaList); 
+    },
+    onBatchEnd: function(aMediaList) {
+      this.onitemadded_skipbatch = this.onitemadded_stack.pop();
+      this.onafteritemremoved_skipbatch = this.onafteritemremoved_stack.pop();
+      return this.cb.listener.onBatchEnd(aMediaList); 
+    },
+    QueryInterface: function(iid) {
+      if (iid.equals(Components.interfaces.sbIMediaListListener) || 
+          iid.equals(Components.interfaces.nsISupports))
+        return this;
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+  };
+
+
+  var enumListener = {
+    cb: this,
+    onEnumerationBegin: function(aMediaList) { },
+    onEnumerationEnd: function(aMediaList) { },
+    onEnumeratedItem: function(aMediaList, aMediaItem) {
+      this.cb.addMediaListListener(aMediaItem);
+      return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+    },
+    QueryInterface: function(iid) {
+      if (iid.equals(Components.interfaces.sbIMediaListEnumerationListener) || 
+          iid.equals(Components.interfaces.nsISupports))
+        return this;
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+  };
+
+  var libs = this.libraryManager.getLibraries();
+  while (libs.hasMoreElements()) {
+    var library = libs.getNext();
+    enumListener.onEnumeratedItem(library, library);
+    library.
+      enumerateItemsByProperty(
+        SBProperties.isList, 
+        "1",
+        enumListener, 
+        Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+  }
+
+  this.managerListener = {
+    cb: this,
+    onLibraryRegistered: function(aLibrary) {
+      this.cb.addMediaListListener(aLibrary);
+      this.cb.listener.onItemAdded(null, aLibrary, 0);
+    },
+    onLibraryUnregistered: function(aLibrary) {
+      this.cb.listener.onBeforeItemRemoved(null, aLibrary, 0);
+      this.cb.removeMediaListListener(aLibrary);
+      this.cb.listener.onAfterItemRemoved(null, aLibrary, 0);
+    },
+    QueryInterface: function(iid) {
+      if (iid.equals(Components.interfaces.sbILibraryManagerListener) || 
+          iid.equals(Components.interfaces.nsISupports))
+        return this;
+      throw Components.results.NS_ERROR_NO_INTERFACE;
+    }
+  };
+  
+  this.libraryManager.addListener(this.managerListener);
+}
+
+LibraryUtils.GlobalMediaListListener.prototype = {
+  listener        : null,
+  listento        : [],
+  managerListener : null,
+  listListener    : null,
+  ownsWeak        : null,
+  propFilter      : null,
+  listenerFlags   : 0,
+  
+  shutdown: function() {
+    for (var i=0;i<this.listento.length;i++) 
+      this.listento[i].removeListener(this.listListener);
+
+    this.listento = [];
+    this.listListener = null;
+
+    this.listener = null;
+    this.propFilter = null;
+
+    this.libraryManager.removeListener(this.managerListener);
+    this.managerListener = null;
+    
+    this.libraryManager = null;
+  },
+  
+  addMediaListListener: function(aList) {
+    if (this.listento.indexOf(aList) >= 0) 
+      return;
+    aList.addListener(this.listListener, 
+                      this.ownsWeak, 
+                      this.listenerFlags,
+                      this.propFilter);
+    this.listento.push(aList);
+  },
+  
+  removeMediaListListener: function(aList) {
+    aList.removeListener(this.listListener);
+    var p = this.listento.indexOf(aList);
+    if (p >= 0) this.listento.splice(p, 1);
+  }
+}
+
+/**
  * This function is a big ugly hack until we get x-mtp channel working
  * We're punting for now and making mtp item editable, but they aren't
  * as far as the track editor is concerned.

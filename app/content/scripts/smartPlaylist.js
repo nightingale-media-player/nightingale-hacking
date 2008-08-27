@@ -176,7 +176,9 @@ function loadConditions()
           condition: condition.operator.operator,
           value: condition.leftValue,
           value2: condition.rightValue,
-          unit: condition.displayUnit
+          unit: condition.displayUnit,
+          listguid: list.guid,
+          source: list.sourceLibraryGuid
         });
       }
       smartConditions.conditions = conditions;

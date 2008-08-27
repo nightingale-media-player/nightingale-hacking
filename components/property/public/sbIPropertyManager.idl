@@ -523,3 +523,12 @@ interface sbIBooleanPropertyInfo : sbIPropertyInfo
   readonly attribute AString OPERATOR_ISFALSE;
 };
 
+/**
+* \interface sbIDummyPropertyInfo
+* \brief An interface used to recognize a dummy metadata property.
+* \sa sbIPropertyManager
+*/
+[scriptable, uuid(ecd56b59-906a-44c9-ac24-3345f1b70b10)]
+interface sbIDummyPropertyInfo : sbIPropertyInfo
+{
+};

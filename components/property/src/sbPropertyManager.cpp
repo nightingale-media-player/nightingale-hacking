@@ -41,9 +41,11 @@
 #include "sbDurationPropertyInfo.h"
 #include "sbNumberPropertyInfo.h"
 #include "sbStandardProperties.h"
+#include "sbDummyProperties.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
 #include "sbImagePropertyInfo.h"
+#include "sbDummyPlaylistPropertyInfo.h"
 #include "sbDownloadButtonPropertyBuilder.h"
 #include "sbSimpleButtonPropertyBuilder.h"
 #include "sbRatingPropertyBuilder.h"
@@ -971,6 +973,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Playlist dummy property for smart medialists internal use
+  rv = RegisterDummy(new sbDummyPlaylistPropertyInfo(), 
+                     NS_LITERAL_STRING(SB_DUMMYPROPERTY_SMARTMEDIALIST_PLAYLIST),
+                     NS_LITERAL_STRING("property.dummy.playlist"),
+                     stringBundle);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -1354,6 +1363,35 @@ sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
 
   rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterDummy(sbDummyPropertyInfo *dummyProperty,
+                                 const nsAString &aPropertyID,
+                                 const nsAString &aDisplayKey,
+                                 nsIStringBundle* aStringBundle)
+{
+  nsresult rv = dummyProperty->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = dummyProperty->SetId(aPropertyID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aDisplayKey.IsEmpty()) {
+    nsAutoString displayValue;
+    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = dummyProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  nsCOMPtr<sbIPropertyInfo> propInfo = SB_IPROPERTYINFO_CAST(sbIDummyPropertyInfo *, dummyProperty);
 
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);

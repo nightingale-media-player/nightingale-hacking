@@ -40,6 +40,7 @@ class nsModuleComponentInfo;
 class nsIComponentManager;
 class nsIFile;
 class sbIPropertyUnitConverter;
+class sbDummyPropertyInfo;
 
 class sbPropertyManager : public sbIPropertyManager
 {
@@ -130,6 +131,11 @@ private:
                            PRBool aUserEditable,
                            PRBool aRemoteReadable,
                            PRBool aRemoteWritable);
+
+  nsresult RegisterDummy(sbDummyPropertyInfo *aDummyProperty,
+                         const nsAString &aPropertyID,
+                         const nsAString &aDisplayKey,
+                         nsIStringBundle* aStringBundle);
 
   nsresult SetRemoteAccess(sbIPropertyInfo* aProperty,
                            PRBool aRemoteReadable,

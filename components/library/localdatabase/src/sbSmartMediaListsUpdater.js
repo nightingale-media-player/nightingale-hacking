@@ -74,6 +74,9 @@ SmartMediaListsUpdater.prototype = {
   // the check happens, but stays the same when it is further delayed)
   _timerInitTime         : null,
   
+  // Cause one more checkForUpdate at the end of the current update
+  _causeMoreChecks       : false,
+  
   // Delay between each smart playlist rebuild
   _updateSubsequentDelay : 500,
 
@@ -105,16 +108,18 @@ SmartMediaListsUpdater.prototype = {
   // Initialization
   // --------------------------------------------------------------------------
   initialize: function() {
-    // listen for changes to main library items
-    LibraryUtils.mainLibrary.
-      addListener(this, 
-                  false,
-                  Ci.sbIMediaList.LISTENER_FLAGS_ITEMADDED |
-                  Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
-                  Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED |
-                  Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
-                  Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND);
-    
+    // listen for everything
+    this.monitor = 
+      new LibraryUtils.GlobalMediaListListener(this, 
+                                               false,
+                                               Ci.sbIMediaList.LISTENER_FLAGS_ITEMADDED |
+                                               Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
+                                               Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED |
+                                               Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
+                                               Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND |
+                                               Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED,
+                                               null);
+
     // Init the dirty properties db and tables
     this._dbQuery = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
                       .createInstance(Ci.sbIDatabaseQuery);
@@ -186,6 +191,8 @@ SmartMediaListsUpdater.prototype = {
     LibraryUtils.mainLibrary.removeListener(this);
     this._timer = null;
     this._secondaryTimer = null;
+    this._monitor.shutdown();
+    this._monitor = null;
   },
 
   // --------------------------------------------------------------------------
@@ -220,11 +227,18 @@ SmartMediaListsUpdater.prototype = {
   // playlists to eventually update  
   // --------------------------------------------------------------------------
   onItemAdded: function(aMediaList, aMediaItem, aIndex) {
-    // We don't care about property changes on lists
-    if (aMediaItem instanceof Ci.sbIMediaList)
-      return true;
-    // record the '*' property in the update table
-    this.recordUpdateProperty('*');
+    if (!aMediaList ||
+        aMediaList instanceof Ci.sbILibrary) {
+      if (aMediaItem instanceof Ci.sbIMediaList) {
+        return true;
+      }
+      // new item imported in library,
+      // record the '*' property in the update table
+      this.recordUpdateProperty('*');
+    } else {
+      // record the fact that this playlist changed
+      this.recordUpdateProperty(aMediaList.guid);
+    }
     // if we are in a batch, return true so we're not told about item
     // additions in this batch anymore
     if (this._batchCount > 0) 
@@ -238,11 +252,18 @@ SmartMediaListsUpdater.prototype = {
   // smart playlists to eventually update
   // --------------------------------------------------------------------------
   onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) {
-    // We don't care about property changes on lists
-    if (aMediaItem instanceof Ci.sbIMediaList)
-      return true;
-    // record the '*' property in the update table
-    this.recordUpdateProperty('*');
+    if (!aMediaList ||
+        aMediaList instanceof Ci.sbILibrary) {
+      if (aMediaItem instanceof Ci.sbIMediaList) {
+        return true;
+      }
+      // item removed from library,
+      // record the '*' property in the update table
+      this.recordUpdateProperty('*');
+    } else {
+      // record the fact that this playlist changed
+      this.recordUpdateProperty(aMediaList.guid);
+    }
     // if we are in a batch, return true so we're not told about item
     // additions in this batch anymore
     if (this._batchCount > 0) 
@@ -274,13 +295,26 @@ SmartMediaListsUpdater.prototype = {
     // if we are not in a batch, schedule an update check
     this.delayedUpdateCheck();
   },
+
+  // --------------------------------------------------------------------------
+  // list was cleared, add the list to the playlist update table
+  // then cause the corresponding smart playlists to update
+  // --------------------------------------------------------------------------
+  onListCleared: function(list) {
+    // record the fact that this playlist changed
+    this.recordUpdateProperty(list.guid);
+    if (this._batchCount > 0) 
+      return false;
+    // if we are not in a batch, schedule an update check
+    this.delayedUpdateCheck();
+  },
+
   // --------------------------------------------------------------------------
   // These do not get called since we don't ask for them, but still implement
   // the complete interface
   // --------------------------------------------------------------------------
   onBeforeItemRemoved: function(list, item, index) {},
   onItemMoved: function(list, item, index) {},
-  onListCleared: function(list) {},
   
   // --------------------------------------------------------------------------
   // Add a property to the updated properties table
@@ -343,7 +377,7 @@ SmartMediaListsUpdater.prototype = {
     // so that the lists that need updating will be processed at the end of
     // the current queue
     if (this._updating) {
-      this.checkForUpdates();
+      this._causeMoreChecks = true;
       return;
     }
     // if timer has not been created, create it now
@@ -432,7 +466,8 @@ SmartMediaListsUpdater.prototype = {
             // if the condition property is in the table, or "*" is in the table,
             // add the list to the update queue and to the dirty lists table
             if ("*" in this._updatedProperties ||
-                condition.propertyID in this._updatedProperties) {
+                condition.propertyID in this._updatedProperties ||
+                this.isPlaylistConditionMatch(condition.propertyID, condition.leftValue, this._updatedProperties)) {
               this._updateQueue[list.guid] = list;
               this.addListToDirtyTable(list);
               // and continue on with the next list
@@ -461,6 +496,15 @@ SmartMediaListsUpdater.prototype = {
       // next one.
       this.performUpdates();
     }
+  },
+  
+  // --------------------------------------------------------------------------
+  // Test whether a condition uses a rule on a dirty playlist
+  // --------------------------------------------------------------------------
+  isPlaylistConditionMatch: function(prop, value, dirtyprops) {
+    if (prop != "http://songbirdnest.com/dummy/smartmedialists/1.0#playlist")
+      return false;
+    return (value in dirtyprops);
   },
   
   // --------------------------------------------------------------------------
@@ -497,7 +541,7 @@ SmartMediaListsUpdater.prototype = {
 
     // we are now updating a whole bunch of playlists, one at a time
     this._updating = true;
-    
+
     // get a notification when the playlist is done rebuilding. The rebuild
     // is actually synchronous for now, but going via a callback means that this
     // code will not need any change if/when we use asynchronous updates instead
@@ -535,7 +579,13 @@ SmartMediaListsUpdater.prototype = {
       // the dirty lists table should be empty by now, but it doesn't hurt
       // to make sure
       this.resetDirtyListsTable();
+      // if we got more changes during the update, check them now
+      if (this._causeMoreChecks) {
+        this._causeMoreChecks = false;
+        this.delayedUpdateCheck();
+      }
     }
+    this._currentListUpdate = null;
   },
 
   // --------------------------------------------------------------------------

@@ -78,6 +78,10 @@ sb-smart-conditions-drawer > sb-multi-drawer > .drawer-box > .drawer-content-ite
   width:75px;
 }
 
+#conditionplaylist {
+  width:165px;
+}
+
 sb-rating {
 /*
   margin: 5px 3px 5px 3px;
@@ -151,4 +155,24 @@ sb-rating {
 #textrangeseparator {
   margin-left:0px;
   margin-right:0px;
+}
+
+#conditionplaylist > menupopup > menuitem[properties~="library"]
+{
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-library.png) ;
+}
+
+#conditionplaylist > menupopup > menuitem[properties~="medialist"]
+{
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-playlist.png) ;
+}
+
+#conditionplaylist > menupopup > menuitem[properties~="medialisttype-smart"]
+{
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-smartplaylist.png) ;
+}
+
+#conditionplaylist > menupopup > menuitem[properties~="medialisttype-dynamic"]
+{
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-subscription.png) ;
 }

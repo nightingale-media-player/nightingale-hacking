@@ -593,7 +593,7 @@
     back into the state object, which is then returned.
     
     Properties and attributes may also be mapped unidirectionally, for either the
-    setState or the setState phase. For setState, use drawer-prop-map-set and
+    setState or the getState phase. For setState, use drawer-prop-map-set and
     drawer-attr-map-set. For getState, use drawer-prop-map-get and drawer-attr-map-get.
     
     Note that state properties are set to the elements' properties and attributes regardless

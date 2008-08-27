@@ -143,6 +143,21 @@
                   range="true"
               />
             </xul:hbox>
+            <xul:hbox
+                drawer-prop-map-set="hidden=!playlistfield"
+                hidden="true">
+              <xul:menulist id="conditionplaylist"
+                sbid="conditionvalue1"
+                drawer-prop-map="value=value"
+                drawer-attr-map="invalid=invalid"
+                onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();">
+                <xul:menupopup>
+                  <xul:sb-playlist-menuitems 
+                      nolibraries="true" 
+                      drawer-prop-map-set="library=source,exclude=listguid"/>
+                </xul:menupopup>
+              </xul:menulist>
+            </xul:hbox>
             <!-- List of available units -->
             <xul:menulist 
                 id="unitspopup" 
@@ -232,24 +247,35 @@
           this._refreshingUI++;
           // Read the state and determine widgets visibility
           this._updateUIStates(val);
-          
+
           // Convert the units from native to UI
           this._applyStateConversionsToUI(val);
+
+          // Create a default state with source and listguid props
+          var defaultState = {
+            source: val[0].source,
+            listguid: val[0].listguid
+          }
           
           // Set the drawer item state, objects are showing/hiding automatically
-          this.drawer.setState(val);
-          
+          this.drawer.setState(val, defaultState);
+
           // Update all autocomplete boxes
           this._updateAllAutocompletes();
-          
+
           // Record the unit for the metadata in each condition item
           this._setMetadataMaps(val);
 
+          // Playlist menulist got its value from drawer attribute mapping,
+          // but that is not enough to cause a checkmark to appear in front
+          // of the corresponding element. fix this here if necessary.
+          this._setPlaylistConditionCheckmarks();
+
           this._refreshingUI--;
-          
+
           // Validate the values
           this._doAllValidations();
-          
+
           // focus the first edit field of the first condition
           this._focusDefault();
         </setter>
@@ -350,7 +376,7 @@
           
           // add properties from a string enumerator 
           var that = this;
-          function addProperties(enumerator, toplist, bottomlist) {
+          function addProperties(enumerator, toplist, bottomlist, allownonviewable) {
             var more;
             if (enumerator.hasMore)
               more = enumerator.hasMore;
@@ -369,7 +395,7 @@
               var info = that._pm.getPropertyInfo(prop);
               // if the user can't see the property, it shouldn't be in
               // the list
-              if (!info.userViewable) 
+              if (!allownonviewable && !info.userViewable) 
                 continue;
               // item name and id
               var entry = { name: info.displayName, value: info.id };
@@ -396,7 +422,7 @@
           // add the properties registered for this context, use either top or
           // bottom array depending on whether the property is internal or
           // third party
-          addProperties(props, top_metadata, bottom_metadata);
+          addProperties(props, top_metadata, bottom_metadata, true);
 
           // see if the user has asked to see all the properties
           var enableAll = Application.prefs.getValue(
@@ -406,7 +432,7 @@
             // and if he has, insert all the remaining props here, use the
             // bottom array no matter what
             var ids = this._pm.propertyIDs;
-            addProperties(ids, null, bottom_metadata);
+            addProperties(ids, null, bottom_metadata, false);
           }
           
           // sort function
@@ -444,12 +470,20 @@
         <parameter name="event"/>
         <body>
         <![CDATA[
-          if (event.originalTarget.getAttribute("id") == "propertypopup")
-            this.onSelectProperty(event.originalTarget);
-          else if (event.originalTarget.getAttribute("id") == "operatorpopup")
-            this.onSelectOperator(event.originalTarget);
-          else if (event.originalTarget.getAttribute("id") == "unitspopup")
-            this.onSelectUnit(event.originalTarget);
+          switch (event.originalTarget.getAttribute("id")) {
+            case "propertypopup":
+              this.onSelectProperty(event.originalTarget);
+              break;
+            case "operatorpopup":
+              this.onSelectOperator(event.originalTarget);
+              break;
+            case "unitspopup":
+              this.onSelectUnit(event.originalTarget);
+              break;
+            case "conditionplaylist":
+              this.onSelectPlaylist(event.originalTarget);
+              break;
+          }
         ]]>
         </body>
       </method>
@@ -843,6 +877,9 @@
               case "rating":
                 def = info.OPERATOR_EQUALS;
                 break;
+              case "smartmedialist_playlist":
+                def = info.OPERATOR_EQUALS;
+                break;
               default:
                 // properties that aren't explicitely supported only have 
                 // isset/isnotset. use that, it is guaranteed to be there.
@@ -1030,7 +1067,7 @@
       <method name="_updateUI">
         <parameter name="condition"/>
         <body>
-          if (this._refreshingUI) 
+          if (this._refreshingUI)
             return;
           var state = {};
           // read the drawer item state
@@ -1098,9 +1135,12 @@
             // since we want to let the user match empty strings. unknown
             // properties will have isset/isnotset operators instead.
             if (v == null || v == "") {
-              if (operator.value == info.OPERATOR_EQUALS ||
-                  operator.value == info.OPERATOR_NOTEQUALS) {
-                forcevalid = true;
+              // playlist rules don't support value=""
+              if (info.type != "smartmedialist_playlist") {
+                if (operator.value == info.OPERATOR_EQUALS ||
+                    operator.value == info.OPERATOR_NOTEQUALS) {
+                  forcevalid = true;
+                }
               }
               // equivalent for date operators
               if (info.type == "datetime") {
@@ -1237,23 +1277,24 @@
             state.interval = (state.condition == info.OPERATOR_BETWEEN ||
                               state.condition == info.OPERATOR_BETWEENDATES);
 
+            // hide all fields by default
+            state.ratingfield = false;
+            state.playlistfield = false;
+            state.textfield = false;
+
             switch (info.type) {
               case "boolean": 
                 // if current operator is istrue or isfalse, hide the input
                 // object.
                 info.QueryInterface(this._Ci.sbIBooleanPropertyInfo);
-                if (state.condition == info.OPERATOR_ISTRUE ||
-                    state.condition == info.OPERATOR_ISFALSE) {
-                  state.textfield = false;
-                } else {
+                if (state.condition != info.OPERATOR_ISTRUE &&
+                    state.condition != info.OPERATOR_ISFALSE) {
                   // We actually disable the other operators, but it doesn't
                   // hurt to be thorough, in case they got reenabled somehow,
                   // enable the input field so the user may compare the boolean
                   // value to something
                   state.textfield = true;
                 }
-                // hide the ratings input fields
-                state.ratingfield = false;
                 break;
               case "number":
               case "uri": 
@@ -1262,20 +1303,17 @@
               case "duration":
                 // Show the text input fields
                 state.textfield = true;
-                // Hide the ratings input fields
-                state.ratingfield = false;
                 break;
               case "rating":
-                // Hide the text input fields
-                state.textfield = false;
                 // Show the ratings input fields
                 state.ratingfield = true;
+                break;
+              case "smartmedialist_playlist":
+                state.playlistfield = true;
                 break;
               default:
                 // property types that are not explicitely supported only expose
                 // isset/isnotset, which require no input
-                state.textfield = false;
-                state.ratingfield = false;
                 break;
             }
             switch (state.metadata) {
@@ -1924,6 +1962,7 @@
               case "text":
               case "uri":
               case "rating":
+              case "smartmedialist_playlist":
                 break;
               default:
                 return false;
@@ -1939,6 +1978,8 @@
           <![CDATA[
             for each (var prop in SBProperties) {
               if (metadata == prop) return true;
+              if (metadata == "http://songbirdnest.com/dummy/smartmedialists/1.0#playlist")
+                return true;
             }
             return false;
           ]]>
@@ -2036,7 +2077,54 @@
         </body>
       </method>
 
-      </implementation>
+      <!-- called when the user changes the selected playlist in the 
+           conditionplaylist menulist control -->
+      <method name="onSelectPlaylist">
+        <parameter name="menu"/>
+        <body>
+          <![CDATA[
+            if (this._refreshingUI)
+              return;
+            var condition = this.drawer.getItem(menu);
+            this._doValidation(condition);
+          ]]>
+        </body>
+      </method>
+
+      <method name="_setPlaylistConditionCheckmarks">
+        <body>
+          <![CDATA[
+            var items = this.drawer.items;
+            for (var i=0;i<items.length;i++) {
+              var condition = items[i];
+              var playlistpopup = 
+                this.drawer.getItemElementByAttribute(condition, 
+                                                      "id", 
+                                                      "conditionplaylist");
+              this._setCheckmark(playlistpopup);
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="_setCheckmark">
+        <parameter name="playlistpopup"/>
+        <body>
+          <![CDATA[
+            var menupopup = playlistpopup.menupopup;
+            var value = playlistpopup.value;
+            for ( var i = 0, item = menupopup.firstChild; item; item = item.nextSibling, i++ ) {
+              var itemvalue = item.getAttribute("value");
+              if (itemvalue == value) {
+                playlistpopup.selectedItem = item;
+                break;
+              }
+            }
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
       
   </binding>
 

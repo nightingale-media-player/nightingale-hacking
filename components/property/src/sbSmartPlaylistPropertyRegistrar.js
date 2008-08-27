@@ -74,6 +74,11 @@ function SmartPlaylistPropertyRegistrar() {
                                    defaultColumnWidth,
                                    defaultSortDirection);
   }
+  
+  this.registerPropertyToContext(context,
+                                 "http://songbirdnest.com/dummy/smartmedialists/1.0#playlist",
+                                 0,
+                                 "");
 }
 
 SmartPlaylistPropertyRegistrar.prototype = {

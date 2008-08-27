@@ -37,7 +37,7 @@
 #include <nsCOMArray.h>
 #include <nsDataHashtable.h>
 #include <nsStringGlue.h>
-#include <prlock.h>
+#include <nsAutoLock.h>
 
 #include <nsIClassInfo.h>
 #include <nsIArray.h>
@@ -222,6 +222,8 @@ private:
   nsresult GetConditionNeedsNull(sbRefPtrCondition& aCondition, 
                                  sbIPropertyInfo* aInfo, 
                                  PRBool &bNeedIsNull);
+  
+  nsresult MediaListGuidToDB(nsAString &val, PRUint32 &v);
 
   PRInt64 ParseDateTime(nsAString &aDateTime);
 
@@ -235,33 +237,36 @@ private:
 
   nsresult WriteConfiguration();
 
-  PRLock* mInnerLock;
+  PRMonitor* mInnerMonitor;
 
   nsCOMPtr<sbIMediaItem> mItem;
   nsCOMPtr<sbILocalDatabaseMediaItem> mLocalDBItem;
   nsCOMPtr<sbIMediaList> mList;
 
-  PRLock* mConditionsLock;
+  PRMonitor* mConditionsMonitor;
   nsTArray<sbRefPtrCondition> mConditions;
 
-  PRUint32 mMatchType;
-  PRUint32 mLimitType;
-  PRUint64 mLimit;
-  nsString mSelectPropertyID;
-  PRBool   mSelectDirection;
-  PRBool   mRandomSelection;
-  PRLock*  mAutoUpdateLock;
-  PRUint32 mAutoUpdate;
-  PRUint32 mNotExistsMode;
+  PRUint32    mMatchType;
+  PRUint32    mLimitType;
+  PRUint64    mLimit;
+  nsString    mSelectPropertyID;
+  PRBool      mSelectDirection;
+  PRBool      mRandomSelection;
+  PRMonitor * mAutoUpdateMonitor;
+  PRUint32    mAutoUpdate;
+  PRUint32    mNotExistsMode;
 
   nsCOMPtr<sbIPropertyManager> mPropMan;
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
   nsCOMPtr<sbILocalDatabaseLibrary> mLocalDatabaseLibrary;
 
-  PRLock* mListenersLock;
+  PRMonitor * mListenersMonitor;
   nsCOMArray<sbILocalDatabaseSmartMediaListListener> mListeners;
 
   nsString mClearListQuery;
+  
+  PRMonitor * mSourceMonitor;
+  nsString mSourceLibraryGuid;
 };
 
 #endif /* __SBLOCALDATABASESMARTMEDIALIST_H__ */

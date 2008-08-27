@@ -44,8 +44,8 @@
 #include <sbSQLBuilderCID.h>
 #include <sbStandardOperators.h>
 #include <sbStandardProperties.h>
-
-#include <nsAutoLock.h>
+#include <sbILibraryManager.h>
+#include <sbDummyProperties.h>
 #include <nsAutoPtr.h>
 #include <nsTArray.h>
 #include <nsCOMPtr.h>
@@ -57,6 +57,7 @@
 #include <nsMemory.h>
 #include <nsNetCID.h>
 #include <nsServiceManagerUtils.h>
+#include <nsIInterfaceRequestorUtils.h>
 #include <nsVoidArray.h>
 #include <prlog.h>
 #include <prprf.h>
@@ -356,15 +357,16 @@ NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseSmartMediaList,
                              sbIMediaListListener);
 
 sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
-: mInnerLock(nsnull)
-, mConditionsLock(nsnull)
-, mListenersLock(nsnull)
+: mInnerMonitor(nsnull)
+, mConditionsMonitor(nsnull)
+, mListenersMonitor(nsnull)
+, mSourceMonitor(nsnull)
 , mMatchType(sbILocalDatabaseSmartMediaList::MATCH_TYPE_ANY)
 , mLimitType(sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE)
 , mLimit(0)
 , mSelectDirection(PR_TRUE)
 , mRandomSelection(PR_FALSE)
-, mAutoUpdateLock(nsnull)
+, mAutoUpdateMonitor(nsnull)
 , mAutoUpdate(false)
 , mNotExistsMode(sbILocalDatabaseSmartMediaList::NOTEXISTS_ASZERO)
 {
@@ -378,17 +380,20 @@ sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
 
 sbLocalDatabaseSmartMediaList::~sbLocalDatabaseSmartMediaList()
 {
-  if(mInnerLock) {
-    nsAutoLock::DestroyLock(mInnerLock);
+  if(mInnerMonitor) {
+    nsAutoMonitor::DestroyMonitor(mInnerMonitor);
   }
-  if(mConditionsLock) {
-    nsAutoLock::DestroyLock(mConditionsLock);
+  if(mConditionsMonitor) {
+    nsAutoMonitor::DestroyMonitor(mConditionsMonitor);
   }
-  if(mAutoUpdateLock) {
-    nsAutoLock::DestroyLock(mAutoUpdateLock);
+  if(mAutoUpdateMonitor) {
+    nsAutoMonitor::DestroyMonitor(mAutoUpdateMonitor);
   }
-  if (mListenersLock) {
-    nsAutoLock::DestroyLock(mListenersLock);
+  if (mListenersMonitor) {
+    nsAutoMonitor::DestroyMonitor(mListenersMonitor);
+  }
+  if (mSourceMonitor) {
+    nsAutoMonitor::DestroyMonitor(mSourceMonitor);
   }
 }
 
@@ -440,17 +445,20 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
 {
   NS_ENSURE_ARG_POINTER(aItem);
 
-  mInnerLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mInnerLock");
-  NS_ENSURE_TRUE(mInnerLock, NS_ERROR_OUT_OF_MEMORY);
+  mInnerMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseSmartMediaList::mInnerMonitor");
+  NS_ENSURE_TRUE(mInnerMonitor, NS_ERROR_OUT_OF_MEMORY);
 
-  mConditionsLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mConditionsLock");
-  NS_ENSURE_TRUE(mConditionsLock, NS_ERROR_OUT_OF_MEMORY);
+  mConditionsMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseSmartMediaList::mConditionsMonitor");
+  NS_ENSURE_TRUE(mConditionsMonitor, NS_ERROR_OUT_OF_MEMORY);
 
-  mAutoUpdateLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mAutoUpdateLock");
-  NS_ENSURE_TRUE(mAutoUpdateLock, NS_ERROR_OUT_OF_MEMORY);
+  mAutoUpdateMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseSmartMediaList::mAutoUpdateMonitor");
+  NS_ENSURE_TRUE(mAutoUpdateMonitor, NS_ERROR_OUT_OF_MEMORY);
 
-  mListenersLock = nsAutoLock::NewLock("sbLocalDatabaseSmartMediaList::mListenersLock");
-  NS_ENSURE_TRUE(mListenersLock, NS_ERROR_OUT_OF_MEMORY);
+  mListenersMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseSmartMediaList::mListenersMonitor");
+  NS_ENSURE_TRUE(mListenersMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  mSourceMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabaseSmartMediaList::mSourceMonitor");
+  NS_ENSURE_TRUE(mSourceMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   mItem = aItem;
   
@@ -532,7 +540,7 @@ NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::GetMatchType(PRUint32* aMatchType)
 {
   NS_ENSURE_ARG_POINTER(aMatchType);
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
 
   *aMatchType = mMatchType;
 
@@ -545,7 +553,7 @@ sbLocalDatabaseSmartMediaList::SetMatchType(PRUint32 aMatchType)
     sbILocalDatabaseSmartMediaList::MATCH_TYPE_ANY,
     sbILocalDatabaseSmartMediaList::MATCH_TYPE_NONE);
 
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   mMatchType = aMatchType;
 
   nsresult rv = WriteConfiguration();
@@ -559,7 +567,7 @@ sbLocalDatabaseSmartMediaList::GetConditionCount(PRUint32* aConditionCount)
 {
   NS_ENSURE_ARG_POINTER(aConditionCount);
 
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   *aConditionCount = mConditions.Length();
 
   return NS_OK;
@@ -580,7 +588,7 @@ sbLocalDatabaseSmartMediaList::SetLimitType(PRUint32 aLimitType)
     sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE,
     sbILocalDatabaseSmartMediaList::LIMIT_TYPE_BYTES);
 
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   mLimitType = aLimitType;
 
   nsresult rv = WriteConfiguration();
@@ -600,7 +608,7 @@ sbLocalDatabaseSmartMediaList::GetLimit(PRUint64* aLimit)
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::SetLimit(PRUint64 aLimit)
 {
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   mLimit = aLimit;
   
   nsresult rv = WriteConfiguration();
@@ -619,7 +627,7 @@ sbLocalDatabaseSmartMediaList::GetSelectPropertyID(nsAString& aSelectPropertyID)
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::SetSelectPropertyID(const nsAString& aSelectPropertyID)
 {
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   mSelectPropertyID = aSelectPropertyID;
 
   nsresult rv = WriteConfiguration();
@@ -633,7 +641,7 @@ sbLocalDatabaseSmartMediaList::GetSelectDirection(PRBool* aSelectDirection)
 {
   NS_ENSURE_ARG_POINTER(aSelectDirection);
 
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   *aSelectDirection = mSelectDirection;
 
   return NS_OK;
@@ -641,7 +649,7 @@ sbLocalDatabaseSmartMediaList::GetSelectDirection(PRBool* aSelectDirection)
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::SetSelectDirection(PRBool aSelectDirection)
 {
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   mSelectDirection = aSelectDirection;
 
   nsresult rv = WriteConfiguration();
@@ -655,7 +663,7 @@ sbLocalDatabaseSmartMediaList::GetRandomSelection(PRBool* aRandomSelection)
 {
   NS_ENSURE_ARG_POINTER(aRandomSelection);
 
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   *aRandomSelection = mRandomSelection;
 
   return NS_OK;
@@ -663,7 +671,7 @@ sbLocalDatabaseSmartMediaList::GetRandomSelection(PRBool* aRandomSelection)
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::SetRandomSelection(PRBool aRandomSelection)
 {
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   mRandomSelection = aRandomSelection;
 
   nsresult rv = WriteConfiguration();
@@ -677,7 +685,7 @@ sbLocalDatabaseSmartMediaList::GetAutoUpdate(PRBool* aAutoUpdate)
 {
   NS_ENSURE_ARG_POINTER(aAutoUpdate);
 
-  nsAutoLock lock(mAutoUpdateLock);
+  nsAutoMonitor monitor(mAutoUpdateMonitor);
   *aAutoUpdate = mAutoUpdate;
 
   return NS_OK;
@@ -685,7 +693,7 @@ sbLocalDatabaseSmartMediaList::GetAutoUpdate(PRBool* aAutoUpdate)
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::SetAutoUpdate(PRBool aAutoUpdate)
 {
-  nsAutoLock lock(mAutoUpdateLock);
+  nsAutoMonitor monitor(mAutoUpdateMonitor);
   mAutoUpdate = aAutoUpdate;
 
   nsresult rv = WriteConfiguration();
@@ -699,7 +707,7 @@ sbLocalDatabaseSmartMediaList::GetNotExistsMode(PRUint32* aNotExistsMode)
 {
   NS_ENSURE_ARG_POINTER(aNotExistsMode);
 
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   *aNotExistsMode = mNotExistsMode;
 
   return NS_OK;
@@ -707,7 +715,7 @@ sbLocalDatabaseSmartMediaList::GetNotExistsMode(PRUint32* aNotExistsMode)
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::SetNotExistsMode(PRUint32 aNotExistsMode)
 {
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   mNotExistsMode = aNotExistsMode;
 
   nsresult rv = WriteConfiguration();
@@ -775,7 +783,7 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::RemoveConditionAt(PRUint32 aConditionIndex)
 {
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   PRUint32 count = mConditions.Length();
 
   NS_ENSURE_ARG(aConditionIndex < count);
@@ -793,7 +801,7 @@ sbLocalDatabaseSmartMediaList::GetConditionAt(PRUint32 aConditionIndex,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
   PRUint32 count = mConditions.Length();
 
   NS_ENSURE_ARG(aConditionIndex < count);
@@ -807,7 +815,7 @@ sbLocalDatabaseSmartMediaList::GetConditionAt(PRUint32 aConditionIndex,
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::ClearConditions()
 {
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
 
   mConditions.Clear();
 
@@ -822,7 +830,8 @@ sbLocalDatabaseSmartMediaList::Rebuild()
 {
   TRACE(("sbLocalDatabaseSmartMediaList[0x%.8x] - Rebuild()", this));
 
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
+  nsAutoMonitor monitor2(mSourceMonitor);
 
   nsresult rv;
 
@@ -1393,9 +1402,10 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
   nsresult rv;
 
   NS_NAMED_LITERAL_STRING(kConditionAlias,     "_c");
-  NS_NAMED_LITERAL_STRING(kGuid,               "guid");
   NS_NAMED_LITERAL_STRING(kMediaItemId,        "media_item_id");
+  NS_NAMED_LITERAL_STRING(kMemberMediaItemId,  "member_media_item_id");
   NS_NAMED_LITERAL_STRING(kMediaItems,         "media_items");
+  NS_NAMED_LITERAL_STRING(kMediaLists,         "simple_media_lists");
   NS_NAMED_LITERAL_STRING(kMediaItemsAlias,    "_mi");
   NS_NAMED_LITERAL_STRING(kMediaListTypeId,    "media_list_type_id");
   NS_NAMED_LITERAL_STRING(kObjSortable,        "obj_sortable");
@@ -1424,6 +1434,19 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
 
   rv = builder->SetBaseTableName(kMediaItems);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString mediaColumn;
+  nsAutoString joinTable;
+  PRBool bIsMediaListMatch;
+  if (aCondition->mPropertyID.EqualsLiteral(SB_DUMMYPROPERTY_SMARTMEDIALIST_PLAYLIST)) {
+    mediaColumn = kMemberMediaItemId;
+    joinTable = kMediaLists;
+    bIsMediaListMatch = PR_TRUE;
+  } else {
+    mediaColumn = kMediaItemId;
+    joinTable = kResourceProperties;
+    bIsMediaListMatch = PR_FALSE;
+  }
 
   nsAutoString baseAlias;
 
@@ -1470,26 +1493,40 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
                                             kMediaItemId,
                                             sbISQLBuilder::MATCH_EQUALS,
                                             kConditionAlias,
-                                            kMediaItemId,
+                                            mediaColumn,
                                             getter_AddRefs(criterion_media_item));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // get property db id for rule property
-    PRUint32 propertyId;
-    rv = mPropertyCache->GetPropertyDBID(aCondition->mPropertyID, &propertyId);
-    NS_ENSURE_SUCCESS(rv, rv);
+    PRUint32 longVal;
+    nsAutoString colId;
+    if (bIsMediaListMatch) {
+      rv = MediaListGuidToDB(aCondition->mLeftValue, longVal);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      if (longVal == -1) 
+        return NS_ERROR_UNEXPECTED;
+      
+      colId = kMediaItemId;
+    } else {
+      // get property db id for rule property
+      rv = mPropertyCache->GetPropertyDBID(aCondition->mPropertyID, &longVal);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      colId = kPropertyId;
+    }
 
+    nsCOMPtr<sbISQLBuilderCriterion> join_criterion;
+    
     // property_id match with property db id
     nsCOMPtr<sbISQLBuilderCriterion> criterion_property_id;
     rv = builder->CreateMatchCriterionLong(kConditionAlias,
-                                           kPropertyId,
+                                           colId,
                                            sbISQLBuilder::MATCH_EQUALS,
-                                           propertyId,
+                                           longVal,
                                            getter_AddRefs(criterion_property_id));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // combine the two conditions with AND
-    nsCOMPtr<sbISQLBuilderCriterion> join_criterion;
     rv = builder->CreateAndCriterion(criterion_media_item, 
                                      criterion_property_id, 
                                      getter_AddRefs(join_criterion));
@@ -1498,7 +1535,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
     // create a left outer join with these conditions, so we get null values
     // for items that do not have the property we're looking for.
     rv = builder->AddJoinWithCriterion(sbISQLBuilder::JOIN_LEFT_OUTER,
-                                       kResourceProperties,
+                                       joinTable,
                                        kConditionAlias,
                                        join_criterion);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1603,9 +1640,8 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   NS_ENSURE_ARG_POINTER(aInfo);
 
   NS_NAMED_LITERAL_STRING(kConditionAlias, "_c");
-  NS_NAMED_LITERAL_STRING(kGuid,           "guid");
   NS_NAMED_LITERAL_STRING(kObjSortable,    "obj_sortable");
-  NS_NAMED_LITERAL_STRING(kPropertyId,     "property_id");
+  NS_NAMED_LITERAL_STRING(kMediaItem,      "media_item_id");
 
   nsresult rv;
 
@@ -1660,6 +1696,20 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     leftValue = wide;
   } else {
     leftValue = aCondition->mLeftValue;
+  }
+
+  PRBool bNumericCondition = PR_FALSE;
+  if (aCondition->mPropertyID.EqualsLiteral(SB_DUMMYPROPERTY_SMARTMEDIALIST_PLAYLIST)) {
+    columnName.Assign(kMediaItem);
+    
+    PRUint32 id;
+    rv = MediaListGuidToDB(leftValue, id);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    leftValue.Truncate();
+    leftValue.AppendInt(id);
+    
+    bNumericCondition = PR_TRUE;
   }
 
   PRBool invertRange = PR_FALSE;
@@ -1823,11 +1873,22 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   
   if (matchType >= 0) {
     nsCOMPtr<sbISQLBuilderCriterion> criterion;
-    rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
+    if (bNumericCondition) {
+      PRInt64 numericValue;
+      rv = ScanfInt64(value, &numericValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = aBuilder->CreateMatchCriterionLong(kConditionAlias,
                                               columnName,
                                               matchType,
-                                              value,
+                                              numericValue,
                                               getter_AddRefs(criterion));
+    } else {
+      rv = aBuilder->CreateMatchCriterionString(kConditionAlias,
+                                                columnName,
+                                                matchType,
+                                                value,
+                                                getter_AddRefs(criterion));
+    }
     NS_ENSURE_SUCCESS(rv, rv);
     
     if (bNeedOrIsNull) {
@@ -1918,6 +1979,60 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
 
   // If we get here, we don't know how to handle the supplied operator
   return NS_ERROR_UNEXPECTED;
+}
+
+nsresult sbLocalDatabaseSmartMediaList::MediaListGuidToDB(nsAString &val, PRUint32 &v) 
+{
+  nsCOMPtr<sbILibraryManager> libraryManager;
+  nsresult rv;
+  
+  nsAutoString guid;
+  guid = val;
+  
+  libraryManager = 
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbILibrary> library;
+  if (!mSourceLibraryGuid.IsEmpty()) {
+    rv = libraryManager->GetLibrary(mSourceLibraryGuid, getter_AddRefs(library));
+  } else {
+    rv = libraryManager->GetMainLibrary(getter_AddRefs(library));
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = library->GetMediaItem(val, getter_AddRefs(item));
+  if (rv != NS_OK) {
+    v = -1;
+  } else {
+    nsAutoString storageGuid;
+    rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),
+                           storageGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!storageGuid.IsEmpty()) {
+      nsCOMPtr<sbIMediaItem> storageItem;
+      rv = library->GetMediaItem(storageGuid, getter_AddRefs(storageItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = storageItem->GetGuid(guid);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    PRUint32 id;
+
+    nsCOMPtr<sbILocalDatabaseLibrary> locallibrary =
+      do_QueryInterface(library, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = locallibrary->GetMediaItemIdForGuid(guid, &id);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    v = id;
+  }
+      
+  return NS_OK;
 }
 
 nsresult
@@ -2489,7 +2604,7 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
 
   nsresult rv;
 
-  nsAutoLock lock(mConditionsLock);
+  nsAutoMonitor monitor(mConditionsMonitor);
 
   sbStringMap map;
   PRBool success = map.Init();
@@ -2558,6 +2673,8 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
   if (map.Get(NS_LITERAL_STRING("autoUpdate"), &value)) {
     PR_sscanf(NS_LossyConvertUTF16toASCII(value).get(), "%d", &mAutoUpdate);
   }
+
+  map.Get(NS_LITERAL_STRING("sourceLibraryGuid"), &mSourceLibraryGuid);
 
   if (map.Get(NS_LITERAL_STRING("conditionCount"), &value)) {
     PRUint32 count = value.ToInteger(&rv);
@@ -2722,6 +2839,9 @@ sbLocalDatabaseSmartMediaList::WriteConfiguration()
     success = map.Put(key, value);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
+
+  success = map.Put(NS_LITERAL_STRING("sourceLibraryGuid"), mSourceLibraryGuid);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsAutoString state;
   rv = JoinStringMapIntoQueryString(map, state);
@@ -2971,7 +3091,7 @@ sbLocalDatabaseSmartMediaList::AddSmartMediaListListener(sbILocalDatabaseSmartMe
 {
   NS_ENSURE_ARG_POINTER(aListener);
 
-  nsAutoLock lock(mListenersLock);
+  nsAutoMonitor monitor(mListenersMonitor);
   mListeners.AppendObject(aListener);
   return NS_OK;
 }
@@ -2981,7 +3101,49 @@ sbLocalDatabaseSmartMediaList::RemoveSmartMediaListListener(sbILocalDatabaseSmar
 {
   NS_ENSURE_ARG_POINTER(aListener);
 
-  nsAutoLock lock(mListenersLock);
+  nsAutoMonitor monitor(mListenersMonitor);
   mListeners.RemoveObject(aListener);
   return NS_OK;
 }
+
+NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::SetSourceLibraryGuid(const nsAString& aGUID) {
+
+  nsAutoMonitor monitor(mSourceMonitor);
+
+  mSourceLibraryGuid = aGUID;
+  
+  nsresult rv = WriteConfiguration();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::GetSourceLibraryGuid(nsAString &retVal) {
+
+  nsAutoMonitor monitor(mSourceMonitor);
+
+  nsString libraryguid = mSourceLibraryGuid;
+
+  if (libraryguid.IsEmpty()) {
+    nsCOMPtr<sbILibraryManager> libraryManager;
+    nsresult rv;
+    
+    libraryManager = 
+      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<sbILibrary> mainLib;
+    rv = libraryManager->GetMainLibrary(getter_AddRefs(mainLib));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = mainLib->GetGuid(libraryguid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  retVal = libraryguid;
+  
+  return NS_OK;
+}
+

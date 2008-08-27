@@ -60,7 +60,11 @@ var SmartMediaListColumnSpecUpdater = {
       // default (artistname)
       if (list.conditionCount == 1) {
         var condition = list.getConditionAt(0);
-        sort = condition.propertyID;
+        if (!this._isDummyProperty(condition.propertyID)) {
+          sort = condition.propertyID;
+        } else {
+          sort = SBProperties.artistName;
+        }
       } else {
         sort = SBProperties.artistName;
       }
@@ -229,5 +233,12 @@ var SmartMediaListColumnSpecUpdater = {
         return "a";
     }
     return "d";
+  },
+  
+  _isDummyProperty: function(aProperty) {
+    var pm = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+               .getService(Components.interfaces.sbIPropertyManager);
+    var info = pm.getPropertyInfo(aProperty);
+    return (info instanceof Ci.sbIDummyPropertyInfo);
   }
 }

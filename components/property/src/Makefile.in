@@ -69,6 +69,8 @@ CPP_SRCS = sbPropertyManager.cpp \
            sbStoragePropertyUnitConverter.cpp \
            sbFrequencyPropertyUnitConverter.cpp \
            sbBitratePropertyUnitConverter.cpp \
+           sbDummyPropertyInfo.cpp \
+           sbDummyPlaylistPropertyInfo.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/property/public \

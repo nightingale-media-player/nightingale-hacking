@@ -118,7 +118,31 @@
           this.libraryManager.removeListener(this.managerListener);
         ]]>
       </destructor>
-      
+
+      <field name="items">this._items;</field>
+
+      <property name="library">
+        <getter>
+          return this.getAttribute("library");
+        </getter>
+        <setter>
+          this.setAttribute("library", val);
+          this.rebuildItems();
+          return val;
+        </setter>
+      </property>
+
+      <property name="exclude">
+        <getter>
+          return this.getAttribute("exclude");
+        </getter>
+        <setter>
+          this.setAttribute("exclude", val);
+          this.rebuildItems();
+          return val;
+        </setter>
+      </property>
+
       <method name="addLibraryListener">
         <parameter name="aLibrary"/>
         <body>
@@ -130,7 +154,7 @@
           ]]>
         </body>
       </method>
-      
+
       <method name="removeLibraryListener">
         <parameter name="aLibrary"/>
         <body>
@@ -139,7 +163,7 @@
           ]]>
         </body>
       </method>
-      
+
       <method name="rebuildItems">
         <body>
           <![CDATA[
@@ -147,6 +171,7 @@
             while (items.length > 0) {
               this.parentNode.removeChild(items[items.length-1]);
             }
+            this._items = [];
             
             var stringBundleService =
                 Components.classes["@mozilla.org/intl/stringbundle;1"]
@@ -163,6 +188,14 @@
 
             var mainLibraryGuid = this.libraryManager.mainLibrary.guid;
             
+            var skippedtypes = {};
+            for each (var i in this.getAttribute("excludetype").split(",")) {
+              skippedtypes[i] = true;
+            }
+            var storage = this.getAttribute("storage") == "true";
+            var nolibraries = this.getAttribute("nolibraries") == "true";
+            var onlylibrary = this.getAttribute("library");
+            var exclude = this.getAttribute("exclude").split(",");
             var enumListener = {
               sbs: stringBundleService,
               downloadguid: downloadListGUID,
@@ -171,19 +204,47 @@
               onEnumerationEnd: function(aMediaList) { },
               onEnumeratedItem: function(aMediaList, aMediaItem) {
                 var listguid = aMediaItem.guid;
+                if (nolibraries && aMediaItem.library == aMediaItem) 
+                  return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                if (aMediaItem instanceof Components.interfaces.sbIMediaList) {
+                  if (aMediaItem.type in skippedtypes)
+                    return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                } 
                 // skip the download playlist
                 if (listguid == this.downloadguid) {
                   return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
                 }
-                var libraryguid = aMediaList.guid;
+                if (exclude.indexOf(listguid) >= 0) 
+                  return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                var type = aMediaItem.type;
+                if (aMediaItem.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1")
+                  type = "dynamic";
+                var smart = (aMediaItem instanceof Components.interfaces.sbILocalDatabaseSmartMediaList);
+                var storageGuid = aMediaItem.getProperty(SBProperties.storageGUID);
+                if (storageGuid) {
+                  aMediaList = aMediaList.library.getMediaItem(storageGuid);
+                  listguid = storageGuid;
+                  if (exclude.indexOf(listguid) >= 0) 
+                    return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                }
+                var libraryguid = aMediaList.library.guid;
                 aMediaItem.QueryInterface(Components.interfaces.sbIMediaList);
                 var item = document.createElement("menuitem");
                 var name = aMediaItem.name;
                 item.setAttribute("label", name);
                 item.setAttribute("sbtype", "playlist-menuitem");
+                item.setAttribute("value", listguid);
                 item.setAttribute("guid", listguid);
                 item.setAttribute("library", libraryguid);
-                item.setAttribute("listtype", aMediaItem.type);
+                item.setAttribute("listtype", type);
+                var props = "medialist";
+                if (aMediaItem.library == aMediaItem)
+                  props += " library";
+                props += " medialisttype-" + type;
+                props += " " + type;
+                item.setAttribute("properties", props);
+                item.setAttribute("class", "menuitem-iconic");
+                
                 this.items.push(item);
                 return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
               },
@@ -202,12 +263,15 @@
             pa.appendProperty(SBProperties.hidden, "0");
             while (libs.hasMoreElements()) {
               var library = libs.getNext();
-              enumListener.onEnumeratedItem(library, library);
-              library.
-                enumerateItemsByProperties(
-                  pa, 
-                  enumListener, 
-                  Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+              if (!onlylibrary ||
+                  onlylibrary == library.guid) {
+                enumListener.onEnumeratedItem(library, library);
+                library.
+                  enumerateItemsByProperties(
+                    pa, 
+                    enumListener, 
+                    Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+              }
             }
             var sortItems = function(a, b) {
               // Give the highest priority to the main library items
@@ -244,6 +308,7 @@
               var item = enumListener.items[i];
               this.parentNode.appendChild(item);
             }
+            this._items = enumListener.items;
             var e = document.createEvent("Events");
             e.initEvent("playlist-menuitems-changed", false, true);
             this.dispatchEvent(e);

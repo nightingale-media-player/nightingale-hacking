@@ -92,8 +92,9 @@ public:
 
   NS_IMETHOD SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter);
 
-protected:
   nsresult Init();
+
+protected:
 
   PRUint32  mNullSort;
 

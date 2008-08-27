@@ -94,7 +94,7 @@ interface sbILocalDatabaseSmartMediaListListener : nsISupports
  *
  * \sa sbIMediaList
  */
-[scriptable, uuid(66fa49fd-0e57-4222-b408-072ff7d7b1c8)]
+[scriptable, uuid(908211a1-2466-4642-bab9-75b228ff1532)]
 interface sbILocalDatabaseSmartMediaList : sbIMediaList
 {
   const unsigned long MATCH_TYPE_ANY  = 0;
@@ -197,4 +197,10 @@ interface sbILocalDatabaseSmartMediaList : sbIMediaList
   
   void addSmartMediaListListener(in sbILocalDatabaseSmartMediaListListener aListener);
   void removeSmartMediaListListener(in sbILocalDatabaseSmartMediaListListener aListener);
+  
+  /**
+   * \brief The guid of the source library (by default, the main library). Change this
+   *        to select a different source library.
+   */
+  attribute AString sourceLibraryGuid;
 };
