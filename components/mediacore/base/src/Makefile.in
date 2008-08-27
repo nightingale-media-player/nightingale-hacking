@@ -34,7 +34,8 @@ ifdef DEBUG
 target := $(addsuffix _d,$(target))
 endif
 
-CPP_SRCS = sbMediacoreCapabilities.cpp \
+CPP_SRCS = sbBaseMediacoreFactory.cpp \
+           sbMediacoreCapabilities.cpp \
            sbMediacoreError.cpp \
            sbMediacoreEvent.cpp \
            $(NULL)
