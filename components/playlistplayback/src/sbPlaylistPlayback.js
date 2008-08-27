@@ -871,7 +871,7 @@ PlaylistPlayback.prototype = {
       }
     }
 
-    if(newCoreIndex > -1) return this._cores[i];
+    if(newCoreIndex > -1) return this._cores[newCoreIndex];
     else return null;
   },
 
