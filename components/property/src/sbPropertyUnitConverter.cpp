@@ -375,6 +375,7 @@ sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
   // parse as number
   PRFloat64 v;
   nsresult rv = SscanfFloat64(aValue, v);
+  NS_ENSURE_SUCCESS(rv, rv);
   
   // request the most suited unit for this number, implemented by inheritor
   PRInt32 autoUnit = GetAutoUnit(v);
