@@ -375,7 +375,14 @@ sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
   // parse as number
   PRFloat64 v;
   nsresult rv = SscanfFloat64(aValue, v);
-  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // It is okay to fail parsing, just default to propertyinfo.Format
+  if (rv != NS_OK) {
+    nsCOMPtr<sbIPropertyInfo> propInfo = do_QueryReferent(mPropertyInfo, &rv);
+    if (NS_FAILED(rv) || !propInfo)
+      return NS_ERROR_FAILURE;
+    return propInfo->Format(aValue, _retval);
+  }
   
   // request the most suited unit for this number, implemented by inheritor
   PRInt32 autoUnit = GetAutoUnit(v);
@@ -385,7 +392,8 @@ sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
   if (autoUnit < 0) {
     // in which case we just format using the property info native unit
     nsCOMPtr<sbIPropertyInfo> propInfo = do_QueryReferent(mPropertyInfo, &rv);
-    NS_ENSURE_TRUE(propInfo, NS_ERROR_FAILURE);
+    if (NS_FAILED(rv) || !propInfo)
+      return NS_ERROR_FAILURE;
     
     nsresult rv = propInfo->Format(aValue, _retval);
     NS_ENSURE_SUCCESS(rv, rv);
