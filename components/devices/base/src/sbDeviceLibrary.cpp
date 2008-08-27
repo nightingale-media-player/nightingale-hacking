@@ -73,6 +73,7 @@
 #include <sbPropertiesCID.h>
 #include <sbProxyUtils.h>
 #include <sbStandardProperties.h>
+#include <sbVariantUtils.h>
 
 
 /* List of properties for which to sync updates. */
@@ -145,7 +146,7 @@ NS_IMPL_THREADSAFE_CI(sbDeviceLibrary)
 #define PREF_SYNC_PREFIX    "library."
 #define PREF_SYNC_BRANCH    ".sync."
 #define PREF_SYNC_MGMTTYPE  "mgmtType"
-#define PREF_SYNC_LISTS     "playlist."
+#define PREF_SYNC_LISTS     "playlists"
 
 /**
  * To log this module, set the following environment variable:
@@ -579,49 +580,62 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
 }
 
 nsresult
-sbDeviceLibrary::GetSyncPrefBranch(nsIPrefBranch** _retval)
+sbDeviceLibrary::RemoveFromSyncPlaylistList(nsAString& aGUID)
 {
   nsresult rv;
-  
-  // Get the branch for this library
-  nsCOMPtr<nsIPrefService> prefService =
-    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+
+  // Get the preference key
+  nsString prefKey;
+  rv = GetSyncListsPrefKey(prefKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If we're not on the main thread proxy the service
-  PRBool const isMainThread = NS_IsMainThread();
-  if (!isMainThread) {
-    nsCOMPtr<nsIPrefService> proxy;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(nsIPrefService),
-                              prefService,
-                              nsIProxyObjectManager::INVOKE_SYNC |
-                              nsIProxyObjectManager::FORCE_PROXY_CREATION,
-                              getter_AddRefs(proxy));
-    if (NS_FAILED(rv))
-      return rv;
-    prefService.swap(proxy);
-  }
-
-  nsCString prefKey("songbird.device.");
-  nsID* id;
-  rv = mDevice->GetId(&id);
+  // Get the preference variant
+  nsCOMPtr<nsIVariant> var;
+  rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
   NS_ENSURE_SUCCESS(rv, rv);
-  char idString[NSID_LENGTH];
-  id->ToProvidedString(idString);
-  NS_Free(id);
-  prefKey.Append(idString);
-  prefKey.AppendLiteral(".preferences.");
 
-  prefKey.AppendLiteral(PREF_SYNC_PREFIX);
+  // Get the preference string
+  nsAutoString listGuidsCSV;
+  rv = var->GetAsAString(listGuidsCSV);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Find the start and end of the GUID to remove
+  PRInt32 start = listGuidsCSV.Find(aGUID);
+  if (start < 0)
+    return NS_OK;
+  PRInt32 end = start + aGUID.Length();
+
+  // Include a comma before or after GUID
+  if (end < ((PRInt32) listGuidsCSV.Length()))
+    end++;
+  else if (start > 0)
+    start--;
+
+  // Cut out GUID with comma
+  listGuidsCSV.Cut(start, end - start);
+
+  // Write the preference
+  rv = mDevice->SetPreference(prefKey, sbNewVariant(listGuidsCSV));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceLibrary::GetSyncListsPrefKey(nsAString& aPrefKey)
+{
+  // Get the device library GUID
   nsString guid;
-  rv = mDeviceLibrary->GetGuid(guid);
+  nsresult rv = mDeviceLibrary->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
-  prefKey.Append(NS_ConvertUTF16toUTF8(guid).get());
-  prefKey.Append(".sync.");
-  
-  nsCOMPtr<nsIPrefBranch> syncListsBranch;
-  return prefService->GetBranch(prefKey.get(), _retval);
+
+  // Get the preference key
+  aPrefKey.Assign(NS_LITERAL_STRING(PREF_SYNC_PREFIX));
+  aPrefKey.Append(guid);
+  aPrefKey.AppendLiteral(PREF_SYNC_BRANCH);
+  aPrefKey.AppendLiteral(PREF_SYNC_LISTS);
+
+  return NS_OK;
 }
 
 /**
@@ -750,46 +764,51 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray **_retval)
   rv = libManager->GetMainLibrary(getter_AddRefs(mainLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 listLength;
-  char** listGuids;
-
-  nsCOMPtr<nsIPrefBranch> syncListsBranch;
-  rv = GetSyncPrefBranch(getter_AddRefs(syncListsBranch));
+  // Get the preference key
+  nsString prefKey;
+  rv = GetSyncListsPrefKey(prefKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = syncListsBranch->GetChildList(PREF_SYNC_LISTS, &listLength, &listGuids);
+  nsCOMPtr<nsIVariant> var;
+  rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  sbAutoFreeXPCOMArray<char**> autoFree(listLength, listGuids);
-  
-  for ( PRUint32 index = 0; index < listLength; index++ ) {
-    nsCAutoString guidPref(listGuids[index]);
-    NS_ASSERTION(StringBeginsWith(guidPref, NS_LITERAL_CSTRING(PREF_SYNC_LISTS)),
-                 "Bad guid string!");
 
-    // We want to extract the guid from the pref name, if it starts with the
-    // PREF_SYNC_LISTS text
-    nsCAutoString guidString(guidPref);
-    if (StringBeginsWith(guidPref, NS_LITERAL_CSTRING(PREF_SYNC_LISTS))) {
-      guidString = Substring(guidPref, NS_ARRAY_LENGTH(PREF_SYNC_LISTS) - 1);
-    }
-  
+  nsAutoString listGuidsCSV;
+  rv = var->GetAsAString(listGuidsCSV);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 start = 0;
+  PRInt32 end = listGuidsCSV.FindChar(',', start);
+  if (end < 0)
+    end = listGuidsCSV.Length();
+  while (end > start) {
+    // Extract the list GUID
+    nsDependentSubstring listGUID = Substring(listGuidsCSV, start, end - start);
+
+    // Find the playlist item in the main Songbird library
     nsCOMPtr<sbIMediaItem> syncPlaylistItem;
-    rv = mainLibrary->GetItemByGuid(NS_ConvertUTF8toUTF16(guidString),
-                                    getter_AddRefs(syncPlaylistItem));
-    if ( rv == NS_ERROR_NOT_AVAILABLE ) {
-        // Remove it from the preferences
-        rv = syncListsBranch->ClearUserPref( guidPref.get() );
-        NS_ENSURE_SUCCESS(rv, rv);
-    } else if( NS_SUCCEEDED(rv) ) {
-        nsCOMPtr<sbIMediaList> syncPlaylist;
-        rv = syncPlaylistItem->QueryInterface(NS_GET_IID( sbIMediaList),
-                                              getter_AddRefs(syncPlaylist));
-         NS_ENSURE_SUCCESS(rv, rv);
-         
-        rv = array->AppendElement(syncPlaylist, PR_FALSE);
-        NS_ENSURE_SUCCESS(rv, rv);
+    rv = mainLibrary->GetItemByGuid(listGUID, getter_AddRefs(syncPlaylistItem));
+    if (NS_FAILED(rv)) {
+      if (rv == NS_ERROR_NOT_AVAILABLE) {
+        RemoveFromSyncPlaylistList(listGUID);
+      }
+      syncPlaylistItem = nsnull;
     }
+
+    // Add the playlist media list to the sync playlist list array
+    if (syncPlaylistItem) {
+      nsCOMPtr<sbIMediaList> syncPlaylist = do_QueryInterface(syncPlaylistItem,
+                                                              &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = array->AppendElement(syncPlaylist, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // Scan for the next playlist GUID
+    start = end + 1;
+    end = listGuidsCSV.FindChar(',', start);
+    if (end < 0)
+      end = listGuidsCSV.Length();
   }
 
   NS_ADDREF(*_retval = array);
@@ -801,25 +820,42 @@ sbDeviceLibrary::SetSyncPlaylistList(nsIArray *aPlaylistList)
 {
   NS_ENSURE_ARG_POINTER( aPlaylistList );
   nsresult rv;
-  
-  nsCOMPtr<nsIPrefBranch> syncListsBranch;
-  rv = GetSyncPrefBranch(getter_AddRefs(syncListsBranch));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = syncListsBranch->DeleteBranch(PREF_SYNC_LISTS);
-  NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the number of sync playlists
   PRUint32 length;
   rv = aPlaylistList->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Produce the sync playlist guid list CSV
+  nsAutoString listGuidsCSV;
   for (PRUint32 i = 0; i < length; i++) {
+    // Get the next sync playlist media list
     nsCOMPtr<sbIMediaList> mediaList = do_QueryElementAt(aPlaylistList, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    
-    rv = AddToSyncPlaylistList(mediaList);
+
+    // Get the guid of the list
+    nsAutoString guid;
+    rv = mediaList->GetGuid(guid);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Skip the list if it's already present
+    if (listGuidsCSV.Find(guid) >= 0)
+      continue;
+
+    // Add the guid to the list of sync playlist guids
+    if (i > 0)
+      listGuidsCSV.AppendLiteral(",");
+    listGuidsCSV.Append(guid);
   }
+
+  // Get the preference key
+  nsString prefKey;
+  rv = GetSyncListsPrefKey(prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Write the preference
+  rv = mDevice->SetPreference(prefKey, sbNewVariant(listGuidsCSV));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -829,27 +865,35 @@ sbDeviceLibrary::AddToSyncPlaylistList(sbIMediaList *aPlaylist)
 {
   NS_ENSURE_ARG_POINTER(aPlaylist);
   nsresult rv;
-  
-  nsString prefKey(NS_LITERAL_STRING(PREF_SYNC_PREFIX)), guid;
-  rv = mDeviceLibrary->GetGuid(guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-  prefKey.Append(guid);
-  prefKey.AppendLiteral(PREF_SYNC_BRANCH);
 
-  // Get the guid of the list
+  // Get the preference key
+  nsString prefKey;
+  rv = GetSyncListsPrefKey(prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the preference variant
+  nsCOMPtr<nsIVariant> var;
+  rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the preference string
+  nsAutoString listGuidsCSV;
+  rv = var->GetAsAString(listGuidsCSV);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the guid of the list to add
+  nsString guid;
   rv = aPlaylist->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
-  prefKey.AppendLiteral(PREF_SYNC_LISTS);
-  prefKey.Append(guid);
 
-  nsCOMPtr<nsIWritableVariant> var =
-    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = var->SetAsBool(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = mDevice->SetPreference(prefKey, var);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Add the sync playlist if it's not already present
+  if (listGuidsCSV.Find(guid) < 0) {
+    if (listGuidsCSV.Length() > 0)
+      listGuidsCSV.AppendLiteral(",");
+    listGuidsCSV.Append(guid);
+    rv = mDevice->SetPreference(prefKey, sbNewVariant(listGuidsCSV));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

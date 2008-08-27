@@ -146,9 +146,21 @@ private:
                                    void* aUserData);
 
   /**
-   * \breif Gets the pref branch for the library sync preferences.
+   * \brief Remove the playlist with the GUID specified by aGUID from the list
+   *        of sync playlists.
+   *
+   * \param aGUID - GUID of playlist to remove.
    */
-  nsresult GetSyncPrefBranch(nsIPrefBranch** _retval);
+  nsresult RemoveFromSyncPlaylistList(nsAString& aGUID);
+
+  /**
+   * \brief Return in aPrefKey the device preference key for the list of sync
+   *        playlists.
+   *
+   * \param aPrefKey - Returned device preference key for the list of sync
+   *                   playlists.
+   */
+  nsresult GetSyncListsPrefKey(nsAString& aPrefKey);
 
   /**
    * \brief Create a library for a device instance.
