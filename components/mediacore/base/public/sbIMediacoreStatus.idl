@@ -22,22 +22,11 @@
 // 
 // END SONGBIRD GPL
 //
- */
+*/
 
 #include "nsISupports.idl"
 
-interface nsIURI;
-interface sbIMediacoreStatus;
-
-[scriptable, uuid(5ac88a1d-83a1-4b62-b440-ac656c61c010)]
-interface sbIMediacorePlaybackControl : nsISupports
+[scriptable, uuid(dc7358ac-36f5-4de5-a71b-d8c803f0f670)]
+interface sbIMediacoreStatus : nsISupports
 {
-  attribute nsIURI uri;
-  attribute unsigned long long position;
-  
-  readonly attribute unsigned long long duration;
-  
-  void play();
-  void pause();
-  void stop();
 };

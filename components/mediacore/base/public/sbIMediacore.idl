@@ -27,8 +27,8 @@
 #include "nsISupports.idl"
 
 interface sbIMediacoreCapabilities;
-interface sbIMediacoreEvent;
 interface sbIMediacoreSequence;
+interface sbIMediacoreStatus;
 
 [scriptable, uuid(927cc189-0dc6-4b3d-8881-1d0e80fcc854)]
 interface sbIMediacore : nsISupports
@@ -36,7 +36,7 @@ interface sbIMediacore : nsISupports
   readonly attribute AString instanceName;
   readonly attribute sbIMediacoreCapabilities capabilities;
 
-  readonly attribute sbIMediacoreEvent lastStatusEvent;
+  readonly attribute sbIMediacoreStatus status;
 
   attribute sbIMediacoreSequence currentSequence;
 };

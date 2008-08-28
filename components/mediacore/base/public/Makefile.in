@@ -42,6 +42,7 @@ XPIDL_SRCS = sbIMediacore.idl \
              sbIMediacoreSequence.idl \
              sbIMediacoreSequenceGenerator.idl \
              sbIMediacoreSimpleEqualizer.idl \
+             sbIMediacoreStatus.idl \
              sbIMediacoreTranscodeControl.idl \
              sbIMediacoreVideoWindow.idl \
              sbIMediacoreVolumeControl.idl \
