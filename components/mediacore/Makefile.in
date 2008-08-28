@@ -31,9 +31,11 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = base \
           metadata \
+          manager \
           playback \
           $(NULL)
 
-SUBDIRDEPS = playback metadata : base
+SUBDIRDEPS = metadata manager : base
+SUBDIRDEPS2 = playback : manager 
 
 include $(topsrcdir)/build/rules.mk
