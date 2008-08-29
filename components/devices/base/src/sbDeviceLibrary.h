@@ -128,6 +128,25 @@ public:
   SB_DECL_SBILIBRARY_OVERRIDES
   SB_DECL_SBIMEDIALIST_OVERRIDES
 
+protected:
+
+  /**
+   * \brief Set the management type device preference to the value specified by
+   *        aMgmtType.  Do not initiate any library actions.
+   *
+   * \param aMgmtType - Device management type preference.
+   */
+  nsresult SetMgmtTypePref(PRUint32 aMgmtType);
+
+  /**
+   * \brief Set the list of sync playlists device preference to the value
+   *        specified by aPlaylistList.  Do not initiate any library actions.
+   *
+   * \param aPlaylistList - List of sync playlists preference.
+   */
+
+  nsresult SetSyncPlaylistListPref(nsIArray *aPlaylistList);
+
 private:
 
   /**
@@ -152,6 +171,15 @@ private:
    * \param aGUID - GUID of playlist to remove.
    */
   nsresult RemoveFromSyncPlaylistList(nsAString& aGUID);
+
+  /**
+   * \brief Return in aPrefKey the device preference key for the management type
+   *        preference.
+   *
+   * \param aPrefKey - Returned device preference key for the management type
+   *                   preference.
+   */
+  nsresult GetMgmtTypePrefKey(nsAString& aPrefKey);
 
   /**
    * \brief Return in aPrefKey the device preference key for the list of sync
@@ -214,6 +242,12 @@ private:
    *        the sync settings.
    */
   nsresult UpdateMainLibraryListeners();
+
+  /**
+   * \brief Update the library is read-only property based upon the device
+   *        management type preference.
+   */
+  nsresult UpdateIsReadOnly();
 
   /**
    * \brief Return true in aIsSyncedLocally if the device is configured to sync
