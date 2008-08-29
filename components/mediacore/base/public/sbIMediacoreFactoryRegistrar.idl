@@ -38,12 +38,13 @@ interface sbIMediacoreFactoryRegistrar : nsISupports
   readonly attribute nsIArray instances;
 
   sbIMediacore createMediacore(in AString aContractID, in AString aUniqueName);
-  sbIMediacore createMediacoreWithFactory(in sbIMediacoreFactory aFactory);
+  sbIMediacore createMediacoreWithFactory(in sbIMediacoreFactory aFactory,
+                                          in AString aUniqueName);
 
   sbIMediacore getMediacore(in AString aInstanceName);
 
   void destroyMediacore(in AString aInstanceName);
 
-  sbIMediacore registerFactory(in sbIMediacoreFactory aFactory);
-  sbIMediacore unregisterFactory(in sbIMediacoreFactory aFactory);
+  void registerFactory(in sbIMediacoreFactory aFactory);
+  void unregisterFactory(in sbIMediacoreFactory aFactory);
 };

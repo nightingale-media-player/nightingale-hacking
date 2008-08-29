@@ -187,6 +187,15 @@ sbBaseMediacore::SetCurrentSequence(sbIMediacoreSequence * aCurrentSequence)
   return NS_OK;
 }
 
+NS_IMETHODIMP 
+sbBaseMediacore::Shutdown()
+{
+  TRACE(("sbBaseMediacore[0x%x] - Shutdown", this));
+  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+
+  return OnShutdown();
+}
+
 /*virtual*/ nsresult 
 sbBaseMediacore::OnInitBaseMediacore()
 {
@@ -227,6 +236,21 @@ sbBaseMediacore::OnSetCurrentSequence(sbIMediacoreSequence *aCurrentSequence)
    *
    *  Please note that when you are called in this method, mLock is already 
    *  acquired. Do not attempt to acquire it!
+   */
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult 
+sbBaseMediacore::OnShutdown()
+{
+  /**
+   *  This is where you get asked to shutdown all operations.
+   *
+   *  You should try _REALLY_ hard to make this method always succeed at
+   *  whatever cleanup it has to do. Failing to do so would likely cause memory
+   *  leaks over time as your core may fail to shutdown multiple times and 
+   *  remain alive in the instance cache of the mediacore manager.
    */
 
   return NS_ERROR_NOT_IMPLEMENTED;

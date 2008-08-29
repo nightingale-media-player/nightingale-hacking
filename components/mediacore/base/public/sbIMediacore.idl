@@ -39,4 +39,6 @@ interface sbIMediacore : nsISupports
   readonly attribute sbIMediacoreStatus status;
 
   attribute sbIMediacoreSequence currentSequence;
+
+  void shutdown();
 };

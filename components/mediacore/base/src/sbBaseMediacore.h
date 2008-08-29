@@ -66,6 +66,9 @@ public:
   //Override me, see cpp file for implementation notes.
   virtual nsresult OnSetCurrentSequence(sbIMediacoreSequence *aCurrentSequence);
 
+  //Override me, see cpp file for implementation notes.
+  virtual nsresult OnShutdown();
+
 protected:
   virtual ~sbBaseMediacore();
 
