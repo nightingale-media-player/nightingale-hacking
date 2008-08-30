@@ -1443,20 +1443,28 @@ $(install_rdf_file): $(srcdir)/$(INSTALL_RDF)
 
 endif
 
+# Check for an extension license; default file name is "LICENSE" in the root
+# directory of the extension. You can override this by setting EXTENSION_LICENSE
+# in the extension's Makefile
+EXTENSION_LICENSE ?= $(shell test -e $(srcdir)/LICENSE && echo $(srcdir)/LICENSE)
+
 .PHONY: make_xpi
 make_xpi: make_ext_stage $(install_rdf_file) $(SUBDIRS) $(JAR_MANIFEST)
 	@echo packaging $(EXTENSION_DIR)/$(XPI_NAME).xpi
 	$(RM) -f $(EXTENSION_DIR)/$(XPI_NAME).xpi
 	$(CP) -f $(install_rdf_file) $(EXTENSION_STAGE_DIR)/install.rdf
+ ifneq (,$(EXTENSION_LICENSE))
+	$(CP) -f $(EXTENSION_LICENSE) $(EXTENSION_STAGE_DIR)
+ endif
 	cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(XPI_NAME).xpi.tmp *
 	$(MKDIR) -p $(EXTENSION_DIR)
 	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(XPI_NAME).xpi.tmp \
         $(EXTENSION_DIR)/$(XPI_NAME).xpi
-  ifdef INSTALL_EXTENSION
+ ifdef INSTALL_EXTENSION
 	$(MKDIR) -p $(SONGBIRD_EXTENSIONSDIR)
 	$(RM) -rf $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
 	$(CP) -rf $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
-  endif
+ endif
 
 .PHONY: clean_xpi
 clean_xpi:
