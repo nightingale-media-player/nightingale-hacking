@@ -56,7 +56,7 @@ AC_SUBST(SDKDIRNAME)
 #
 
 AC_ARG_ENABLE(debug,
-              [  --enable-debug          whether or not to compile a debug version (disabled by default)])
+              [  --enable-debug          compile a debug version (default=no)])
 if test "$enable_debug" = "yes"; then
   DEBUG=1
   SB_CONFIGURATION="debug"
@@ -75,7 +75,7 @@ AC_SUBST(SB_CONFIGURATION)
 #
 
 AC_ARG_ENABLE(jars,
-              [  --enable-jars           whether or not to create jar files (enabled by default)])
+              [  --enable-jars           create jar files (default=yes)])
 if test "$enable_jars" == "yes"; then
   FORCE_JARS=1
 fi
@@ -90,7 +90,7 @@ AC_SUBST(PREVENT_JARS)
 #
 
 AC_ARG_ENABLE(installer,
-              [  --enable-installer      whether or not to create installer (disabled by default)])
+              [  --enable-installer      create installer (default=no)])
 if test "$enable_installer" == "yes"; then
   MAKE_INSTALLER=1
 fi
@@ -101,7 +101,7 @@ AC_SUBST(MAKE_INSTALLER)
 #
 
 AC_ARG_ENABLE(official,
-              [  --enable-official       whether or not to create an official build (disabled by default)])
+              [  --enable-official       create an official build (default=no)])
 if test "$enable_official" == "yes"; then
   SONGBIRD_OFFICIAL=1
 fi
@@ -112,7 +112,7 @@ AC_SUBST(SONGBIRD_OFFICIAL)
 #
 
 AC_ARG_ENABLE(nightly,
-              [  --enable-nightly        whether or not to create an nightly build (disabled by default)])
+              [  --enable-nightly        create a nightly build (default=no)])
 if test "$enable_nightly" == "yes"; then
   SONGBIRD_NIGHTLY=1
   SB_ENABLE_TEST_HARNESS=1
@@ -124,7 +124,7 @@ AC_SUBST(SONGBIRD_NIGHTLY)
 #
 
 AC_ARG_ENABLE(tests,
-              [  --enable-tests          whether or not to build tests (defaults: debug:enabled rel:disabled)])
+              [  --enable-tests          build tests (defaults: debug=yes release=no)])
 if test "$enable_tests" == "yes"; then
   SB_ENABLE_TESTS=1
   SB_ENABLE_TEST_HARNESS=1
@@ -136,7 +136,7 @@ AC_SUBST(SB_ENABLE_TESTS)
 #
 
 AC_ARG_ENABLE(test-harness,
-              [  --enable-test-harness   whether or not to build the test harness (defaults to on when tests are enabled)])
+              [  --enable-test-harness   build the test harness (default=when tests enabled)])
 if test "$enable_test_harness" == "yes"; then
   SB_ENABLE_TEST_HARNESS=1
 fi
@@ -154,7 +154,7 @@ AC_SUBST(SB_ENABLE_TEST_HARNESS)
 SB_USE_JEMALLOC=1
 
 AC_ARG_ENABLE(jemalloc,
-              [  --enable-jemalloc       whether or not to use the jemalloc memory allocator (enabled by default)])
+              [  --enable-jemalloc       use the jemalloc memory allocator (default=yes)])
 if test "$enable_jemalloc" == "no"; then
   SB_USE_JEMALLOC=
 fi
@@ -179,7 +179,7 @@ AC_SUBST(SB_UPDATE_CHANNEL)
 SB_BIRD_EXTENSIONS=default
 
 AC_ARG_WITH(songbird-extensions,
-            [  --with-songbird-extensions=<list of songbird extensions>,list of songbird extensions to build (default: platform dependent)],
+            [  --with-songbird-extensions=<list of songbird extensions>,list of songbird extensions to build (default=platform dependent)],
             [ SB_BIRD_EXTENSIONS=$withval ],
             [ SB_BIRD_EXTENSIONS=default])
 AC_SUBST(SB_BIRD_EXTENSIONS)
@@ -290,7 +290,7 @@ AC_SUBST(_REQUIRES_CYGWIN_WRAPPER)
 #
 
 AC_ARG_ENABLE(breakpad,
-              [  --enable-breakpad       whether or not to enable breakpad (disabled by default in non-official builds)])
+              [  --enable-breakpad       enable breakpad (default=yes in official builds)])
 # off by default in non-official builds
 if test -n "$SONGBIRD_OFFICIAL"; then
   SB_ENABLE_BREAKPAD=1
@@ -315,14 +315,27 @@ AC_SUBST(SB_ENABLE_BREAKPAD)
 #
 
 AC_ARG_ENABLE(static,
-              [  --enable-static         experimental single-component static build support (disabled by default)])
-if test "$enable_static" == "yes" ; then
+              [  --enable-static         experimental single-component static build support (default=no)])
+if test "$enable_static" == "yes"; then
   SB_ENABLE_STATIC=1
 else
   SB_ENABLE_STATIC=
 fi
 
 AC_SUBST(SB_ENABLE_STATIC)
+
+#
+# Compiler environment checks
+#
+
+AC_ARG_ENABLE(compiler-environment-checks,
+              [  --enable-compiler-environment-checks       check the compiler environment (default=yes)])
+if test "$enable_compiler_environment_checks" == "no"; then
+  SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS=
+  AC_MSG_WARN([Compiler environment checks disabled.])
+else
+  SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS=1
+fi
 
 
 #
@@ -467,7 +480,8 @@ AC_SUBST(DLL_SUFFIX)
 
 case "$SB_PLATFORM" in
   windows)
-    # We use MSVC on Windows
+    # We use MSVC8 on Windows
+    _CC_SUPPORTED_MAJOR_VERSION=14
 
     changequote(,)
     _MSVC_VER_FILTER='s|.* \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
@@ -483,13 +497,27 @@ case "$SB_PLATFORM" in
     _CXX_MAJOR_VERSION=`echo ${CXX_VERSION} | $AWK -F\. '{ print $1 }'`
 
     if test "$_CC_MAJOR_VERSION" != "$_CXX_MAJOR_VERSION"; then
-        AC_MSG_ERROR([The major versions of \$CC and \$CXX do not match.])
+        if test -z "$SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS"; then
+            AC_MSG_WARN([The major versions of \$CC and \$CXX do not match. Songbird Bugzilla reports should not be filed against builds produced using them.])
+        else
+            AC_MSG_ERROR([The major versions of \$CC and \$CXX do not match.])
+        fi
     fi
-    if test "$_CC_MAJOR_VERSION" = "14"; then
-        _CC_SUITE=8
-        SB_ARCH=$SB_ARCH-msvc8
-    else
-        AC_MSG_ERROR([This version of the MSVC compiler, $CC_VERSION , is unsupported.])
+    case "$_CC_MAJOR_VERSION" in
+        14)
+            _CC_SUITE=8
+            SB_ARCH=$SB_ARCH-msvc8
+            ;;
+        15)
+            _CC_SUITE=9
+            ;;
+    esac
+    if test "$_CC_MAJOR_VERSION" -ne "$_CC_SUPPORTED_MAJOR_VERSION"; then
+        if test -z "$SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS"; then
+            AC_MSG_WARN([This version of the MSVC compiler, $CC_VERSION, is unsupported. Songbird Bugzilla reports should not be filed against builds produced using it.])
+        else
+            AC_MSG_ERROR([This version of the MSVC compiler, $CC_VERSION, is unsupported.])
+        fi
     fi
 
     # mozilla bug #249782
@@ -521,18 +549,18 @@ case "$SB_PLATFORM" in
       fi
       CYGDRIVE_MOUNT=`mount -p | awk '{ if (/^\//) { print $1; exit } }'`
     fi
-    
+
 
     # Check linker version
     _LD_FULL_VERSION=`"${LD}" -v 2>&1 | sed -ne "$_MSVC_VER_FILTER"`
     _LD_MAJOR_VERSION=`echo ${_LD_FULL_VERSION} | $AWK -F\. '{ print $1 }'`
     if test "$_LD_MAJOR_VERSION" != "$_CC_SUITE"; then
-        AC_MSG_ERROR([The linker major version, $_LD_FULL_VERSION,  does not match the compiler suite version, $_CC_SUITE.])
+        AC_MSG_ERROR([The linker major version, $_LD_FULL_VERSION, does not match the compiler suite version, $_CC_SUITE.])
     fi
 
-    MSVC_COMPILER_FLAGS="-nologo -W3 -WL -GS -Wp64 -EHsc -Zi -c"
+    MSVC_COMPILER_FLAGS="-nologo -W3 -WL -GS -EHsc -Zi -c"
 
-    if test "$_CC_SUITE" = "8"; then
+    if test "$_CC_SUITE" -ge "8"; then
       # MSVC 8+ use native wchar_t, but Mozilla builds without it
       MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -Zc:wchar_t-"
     fi

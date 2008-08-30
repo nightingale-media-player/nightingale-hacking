@@ -140,6 +140,11 @@ CONFIGURE_ARGS += --with-media-core=qt \
                   $(NULL)
 endif #SB_FORCE_MEDIA_CORE_QT
 
+# compiler environment checks
+ifdef SB_DISABLE_COMPILER_ENVIRONMENT_CHECKS
+CONFIGURE_ARGS += --disable-compiler-environment-checks
+endif
+
 #
 # Set some needed commands
 #
