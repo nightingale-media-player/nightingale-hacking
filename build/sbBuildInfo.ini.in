@@ -1,7 +1,7 @@
 [Build]
 AppName=Songbird
 BuildID=00000000000000
-BuildNumber=736
+BuildNumber=737
 Milestone=0.8.0pre
 MilestoneWindows=0.8.0.0
 Branch=trunk
