@@ -59,3 +59,8 @@ dialog {
 window:not([active="true"]) .inactive-box {
   background-color:rgba(255,255,255,0.33);
 }
+
+#content_player_wrapper[playercontrols='top'] > #content_wrapper statusbar
+{
+  padding-right: 12px;
+}
