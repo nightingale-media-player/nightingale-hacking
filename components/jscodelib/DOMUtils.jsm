@@ -381,10 +381,11 @@ DOMEventListenerSet.prototype = {
       listenerFunc =
         function(aEvent) { return _this._doOneShot(aEvent, eventListener); };
     }
+    eventListener.addedListener = listenerFunc;
 
     // Add the event listener.
     eventListener.element.addEventListener(eventListener.type,
-                                           listenerFunc,
+                                           eventListener.addedListener,
                                            eventListener.useCapture);
     this._eventListenerList[eventListener.id] = eventListener;
 
@@ -406,7 +407,7 @@ DOMEventListenerSet.prototype = {
 
     // Remove the event listener.
     eventListener.element.removeEventListener(eventListener.type,
-                                              eventListener.listener,
+                                              eventListener.addedListener,
                                               eventListener.useCapture);
     delete this._eventListenerList[aEventListenerID];
   },
