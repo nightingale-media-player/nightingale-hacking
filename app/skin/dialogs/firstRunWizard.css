@@ -207,7 +207,7 @@ button[hidewizardbutton="true"] {
 /* Add-ons page item box style. */
 .sb-first-run-add-ons-item-box {
   -moz-box-flex: 1;
-  -moz-box-align:top;
+  -moz-box-align: start;
 
   /* Set max-width so that item description will properly wrap. */
   /*XXXeps is there some way that wrap will work by just setting the first */
