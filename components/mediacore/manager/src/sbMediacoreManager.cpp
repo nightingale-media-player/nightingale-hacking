@@ -34,6 +34,7 @@
 #include <nsIProgrammingLanguage.h>
 #include <nsISupportsPrimitives.h>
 
+#include <nsArrayUtils.h>
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
@@ -41,7 +42,16 @@
 #include <nsServiceManagerUtils.h>
 
 #include <sbIMediacore.h>
+#include <sbIMediacoreBalanceControl.h>
+#include <sbIMediacoreCapabilities.h>
 #include <sbIMediacoreFactory.h>
+#include <sbIMediacorePlaybackControl.h>
+#include <sbIMediacoreSequencer.h>
+#include <sbIMediacoreSimpleEqualizer.h>
+#include <sbIMediacoreVolumeControl.h>
+
+#include <sbMediacoreVotingChain.h>
+#include <sbIMediacoreVotingParticipant.h>
 
 /* observer topics */
 #define NS_PROFILE_STARTUP_OBSERVER_ID          "profile-after-change"
@@ -51,6 +61,10 @@
 /* default size of hashtable for active core instances */
 #define SB_CORE_HASHTABLE_SIZE    (4)
 #define SB_FACTORY_HASHTABLE_SIZE (4)
+
+/* default base instance name */
+#define SB_CORE_BASE_NAME   "mediacore"
+#define SB_CORE_NAME_SUFFIX "@core.songbirdnest.com"
 
 /**
  * To log this module, set the following environment variable:
@@ -67,15 +81,17 @@ static PRLogModuleInfo* gMediacoreManager = nsnull;
 
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreManager)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreManager)
-NS_IMPL_QUERY_INTERFACE5_CI(sbMediacoreManager,
+NS_IMPL_QUERY_INTERFACE6_CI(sbMediacoreManager,
                             sbIMediacoreManager,
                             sbIMediacoreFactoryRegistrar,
+                            sbIMediacoreVoting,
                             nsISupportsWeakReference,
                             nsIClassInfo,
                             nsIObserver)
-NS_IMPL_CI_INTERFACE_GETTER3(sbMediacoreManager,
+NS_IMPL_CI_INTERFACE_GETTER4(sbMediacoreManager,
                              sbIMediacoreManager,
                              sbIMediacoreFactoryRegistrar,
+                             sbIMediacoreVoting,
                              nsISupportsWeakReference)
 
 NS_DECL_CLASSINFO(sbMediacoreManager)
@@ -83,7 +99,10 @@ NS_IMPL_THREADSAFE_CI(sbMediacoreManager)
 
 sbMediacoreManager::sbMediacoreManager()
 : mMonitor(nsnull)
+, mLastCore(0)
 {
+  MOZ_COUNT_CTOR(sbMediacoreManager);
+
 #ifdef PR_LOGGING
   if (!gMediacoreManager)
     gMediacoreManager = PR_NewLogModule("sbMediacoreManager");
@@ -95,6 +114,7 @@ sbMediacoreManager::sbMediacoreManager()
 sbMediacoreManager::~sbMediacoreManager()
 {
   TRACE(("sbMediacoreManager[0x%x] - Destroyed", this));
+  MOZ_COUNT_DTOR(sbMediacoreManager);
 
   if(mMonitor) {
     nsAutoMonitor::DestroyMonitor(mMonitor);
@@ -153,6 +173,141 @@ sbMediacoreManager::Init()
   success = mFactories.Init(SB_FACTORY_HASHTABLE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
+  // XXXAus: Find available factories registered in mediacore factory category
+  //         (when we have some mediacores implemented).
+
+  // XXXAus: Initialize default sequencer (when it's implemented).
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreManager::GenerateInstanceName(nsAString &aInstanceName)
+{
+  TRACE(("sbMediacoreManager[0x%x] - GenerateInstanceName", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
+  aInstanceName.AssignLiteral(SB_CORE_BASE_NAME);
+  
+  aInstanceName.AppendInt(mLastCore);
+  ++mLastCore;
+  
+  aInstanceName.AppendLiteral(SB_CORE_NAME_SUFFIX);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI, 
+                                         nsIChannel *aChannel, 
+                                         sbIMediacoreVotingChain **_retval)
+{
+  TRACE(("sbMediacoreManager[0x%x] - VoteWithURIOrChannel", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(aURI || aChannel, NS_ERROR_INVALID_ARG);
+
+  nsRefPtr<sbMediacoreVotingChain> votingChain;
+  NS_NEWXPCOM(votingChain, sbMediacoreVotingChain);
+  NS_ENSURE_TRUE(votingChain, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = votingChain->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoMonitor mon(mMonitor);
+
+  // First go through the active instances to see if one of them
+  // can handle what we wish to play.
+  nsCOMPtr<nsIArray> instances;
+  rv = GetInstances(getter_AddRefs(instances));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length = 0;
+  rv = instances->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 found = 0;
+  for(PRUint32 current = 0; current < length; ++current) {
+    nsCOMPtr<sbIMediacoreVotingParticipant> votingParticipant = 
+      do_QueryElementAt(instances, current, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 result = 0;
+
+    if(aURI) {
+      rv = votingParticipant->VoteWithURI(aURI, &result);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = votingParticipant->VoteWithChannel(aChannel, &result);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if(result > 0) {
+      nsCOMPtr<sbIMediacore> mediacore = 
+        do_QueryInterface(votingParticipant, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = votingChain->AddVoteResult(result, mediacore);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      ++found;
+    }
+  }
+
+  // Always prefer already instantiated objects, even if they may potentially
+  // have a lower rank than registered factories.
+  if(found) {
+    NS_ADDREF(*_retval = votingChain);
+    return NS_OK;
+  }
+
+  // If we haven't seen anything that can play this yet, try going through
+  // all the factories, create a core and have it vote.
+  nsCOMPtr<nsIArray> factories;
+  rv = GetFactories(getter_AddRefs(factories));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  length = 0;
+  rv = factories->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 current = 0; current < length; ++current) {
+    nsCOMPtr<sbIMediacoreFactory> factory = 
+      do_QueryElementAt(factories, current, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString mediacoreInstanceName;
+    GenerateInstanceName(mediacoreInstanceName);
+
+    nsCOMPtr<sbIMediacore> mediacore;
+    rv = factory->Create(mediacoreInstanceName, getter_AddRefs(mediacore));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediacoreVotingParticipant> votingParticipant = 
+      do_QueryInterface(mediacore, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 result = 0;
+
+    if(aURI) {
+      rv = votingParticipant->VoteWithURI(aURI, &result);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = votingParticipant->VoteWithChannel(aChannel, &result);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if(result > 0) {
+      rv = votingChain->AddVoteResult(result, mediacore);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  NS_ADDREF(*_retval = votingChain);
+
   return NS_OK;
 }
 
@@ -165,8 +320,12 @@ sbMediacoreManager::GetPrimaryCore(sbIMediacore * *aPrimaryCore)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetPrimaryCore", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aPrimaryCore);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoMonitor mon(mMonitor);
+  NS_IF_ADDREF(*aPrimaryCore = mPrimaryCore);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -174,6 +333,10 @@ sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
 {
   TRACE(("sbMediacoreManager[0x%x] - SetPrimaryCore", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aPrimaryCore);
+
+  nsAutoMonitor mon(mMonitor);
+
 
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -184,8 +347,18 @@ sbMediacoreManager::GetBalanceControl(
 {
   TRACE(("sbMediacoreManager[0x%x] - GetBalanceControl", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aBalanceControl);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMediacoreBalanceControl> balanceControl = 
+    do_QueryInterface(mPrimaryCore, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  balanceControl.forget(aBalanceControl);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -194,8 +367,18 @@ sbMediacoreManager::GetVolumeControl(
 {
   TRACE(("sbMediacoreManager[0x%x] - GetVolumeControl", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aVolumeControl);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMediacoreVolumeControl> volumeControl = 
+    do_QueryInterface(mPrimaryCore, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  volumeControl.forget(aVolumeControl);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -204,8 +387,18 @@ sbMediacoreManager::GetEqualizer(
 {
   TRACE(("sbMediacoreManager[0x%x] - GetEqualizer", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aEqualizer);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMediacoreSimpleEqualizer> eq = 
+    do_QueryInterface(mPrimaryCore, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  eq.forget(aEqualizer);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -214,8 +407,18 @@ sbMediacoreManager::GetPlaybackControl(
 {
   TRACE(("sbMediacoreManager[0x%x] - GetPlaybackControl", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aPlaybackControl);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = 
+    do_QueryInterface(mPrimaryCore, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  playbackControl.forget(aPlaybackControl);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -224,8 +427,18 @@ sbMediacoreManager::GetCapabilities(
 {
   TRACE(("sbMediacoreManager[0x%x] - GetCapabilities", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aCapabilities);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMediacoreCapabilities> volumeControl = 
+    do_QueryInterface(mPrimaryCore, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  volumeControl.forget(aCapabilities);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -234,8 +447,12 @@ sbMediacoreManager::GetSequencer(
 {
   TRACE(("sbMediacoreManager[0x%x] - GetSequencer", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aSequencer);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoMonitor mon(mMonitor);
+  NS_IF_ADDREF(*aSequencer = mSequencer);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -447,6 +664,45 @@ sbMediacoreManager::UnregisterFactory(sbIMediacoreFactory *aFactory)
 
   return NS_OK;
 }
+
+// ----------------------------------------------------------------------------
+// sbIMediacoreVoting Interface 
+// ----------------------------------------------------------------------------
+
+NS_IMETHODIMP 
+sbMediacoreManager::VoteWithURI(nsIURI *aURI, 
+                                sbIMediacoreVotingChain **_retval)
+{
+  TRACE(("sbMediacoreManager[0x%x] - VoteWithURI", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aURI);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = VoteWithURIOrChannel(aURI, nsnull, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreManager::VoteWithChannel(nsIChannel *aChannel, 
+                                    sbIMediacoreVotingChain **_retval)
+{
+  TRACE(("sbMediacoreManager[0x%x] - VoteWithChannel", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aChannel);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoMonitor mon(mMonitor);
+  
+  nsresult rv = VoteWithURIOrChannel(nsnull, aChannel, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 
 // ----------------------------------------------------------------------------
 // nsIObserver Interface 

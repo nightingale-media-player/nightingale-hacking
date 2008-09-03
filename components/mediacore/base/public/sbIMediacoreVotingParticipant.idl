@@ -29,11 +29,9 @@
 interface nsIURI;
 interface nsIChannel;
 
-interface sbIMediacoreVotingChain;
-
-[scriptable, uuid(4655b396-21d8-42be-b86c-aac411983e9c)]
-interface sbIMediacoreVoting : nsISupports
+[scriptable, uuid(c3cd5272-7664-4b95-ba56-a62003f37ad1)]
+interface sbIMediacoreVotingParticipant : nsISupports
 {
-  sbIMediacoreVotingChain voteWithURI(in nsIURI aURI);
-  sbIMediacoreVotingChain voteWithChannel(in nsIChannel aChannel);
+  unsigned long voteWithURI(in nsIURI aURI);
+  unsigned long voteWithChannel(in nsIChannel aChannel);
 };

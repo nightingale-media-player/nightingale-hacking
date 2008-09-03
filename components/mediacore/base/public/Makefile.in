@@ -40,6 +40,7 @@ XPIDL_SRCS = sbIMediacore.idl \
              sbIMediacoreFactoryRegistrar.idl \
              sbIMediacorePlaybackControl.idl \
              sbIMediacoreSequence.idl \
+             sbIMediacoreSequencer.idl \
              sbIMediacoreSequenceGenerator.idl \
              sbIMediacoreSimpleEqualizer.idl \
              sbIMediacoreStatus.idl \
@@ -48,6 +49,7 @@ XPIDL_SRCS = sbIMediacore.idl \
              sbIMediacoreVolumeControl.idl \
              sbIMediacoreVoting.idl \
              sbIMediacoreVotingChain.idl \
+             sbIMediacoreVotingParticipant.idl \
              $(NULL)
 
 XPIDL_MODULE = sbMediacoreBase.xpt

@@ -41,6 +41,7 @@ interface sbIMediacoreFactory : nsISupports
 };
 
 %{C++
+
 #include "nsCOMPtr.h"
 #include "nsIComponentManager.h"
 #include "nsICategoryManager.h"

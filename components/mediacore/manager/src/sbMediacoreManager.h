@@ -36,9 +36,11 @@
 #include <prmon.h>
 
 #include <sbIMediacoreFactoryRegistrar.h>
+#include <sbIMediacoreVoting.h>
 
 class sbMediacoreManager : public sbIMediacoreManager,
                            public sbIMediacoreFactoryRegistrar,
+                           public sbIMediacoreVoting,
                            public nsIClassInfo,
                            public nsIObserver,
                            public nsSupportsWeakReference
@@ -47,6 +49,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIACOREMANAGER
   NS_DECL_SBIMEDIACOREFACTORYREGISTRAR
+  NS_DECL_SBIMEDIACOREVOTING
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
 
@@ -70,8 +73,18 @@ protected:
                                    T* aData,
                                    void* aArray);
 
+  nsresult GenerateInstanceName(nsAString &aInstanceName);
+
+  nsresult VoteWithURIOrChannel(nsIURI *aURI, 
+                                nsIChannel *aChannel, 
+                                sbIMediacoreVotingChain **_retval);
+
   PRMonitor* mMonitor;
+  PRUint32   mLastCore;
 
   nsInterfaceHashtableMT<nsStringHashKey, sbIMediacore> mCores;
   nsInterfaceHashtableMT<nsISupportsHashKey, sbIMediacoreFactory> mFactories;
+
+  nsCOMPtr<sbIMediacore>          mPrimaryCore;
+  nsCOMPtr<sbIMediacoreSequencer> mSequencer;
 };

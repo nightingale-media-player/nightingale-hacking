@@ -40,6 +40,18 @@ interface sbIMediacoreSequencer;
 [scriptable, uuid(c9eb7de1-87fc-4eea-886e-6202cae826bc)]
 interface sbIMediacoreManager : nsISupports
 {
+  /**
+   * The primary core is always used to play user content. 
+   * 
+   * If you need a mediacore for background tasks of any kind, it is 
+   * preferable to create a new instance.
+   *
+   * Setting the primaryCore will have the following effect:
+   *
+   * 1. Playback will be stopped for the current sequence.
+   * 2. A new sequence will be generated for the new primary core.
+   * 3. The new sequence is set on the new primary core.
+   */
   attribute sbIMediacore primaryCore;
 
   readonly attribute sbIMediacoreBalanceControl  balanceControl;
@@ -50,7 +62,19 @@ interface sbIMediacoreManager : nsISupports
 
   readonly attribute sbIMediacoreCapabilities    capabilities;
 
+  /**
+   * The current sequencer used to generate and manage playback sequences.
+   *
+   * Setting the sequencer will have the following effect:
+   *
+   * 1. Current sequences remain unaffected.
+   * 2. When playback of current sequences is complete, the new sequencer
+   *    is used to 
+   */
   attribute sbIMediacoreSequencer sequencer;
+
+  //void playURI(in nsIURI aUri);
+  //void playMediaListView(in sbIMediaListView aView, in unsigned long aIndex);
 };
 
 %{C++

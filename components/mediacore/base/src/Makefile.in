@@ -41,6 +41,7 @@ CPP_SRCS = sbBaseMediacore.cpp \
            sbMediacoreCapabilities.cpp \
            sbMediacoreError.cpp \
            sbMediacoreEvent.cpp \
+           sbMediacoreVotingChain.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/base/public \

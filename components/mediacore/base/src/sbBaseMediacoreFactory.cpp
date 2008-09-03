@@ -30,6 +30,8 @@
 */
 #include "sbBaseMediacoreFactory.h"
 
+#include <sbIMediacore.h>
+
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbBaseMediacoreFactory:5
@@ -149,7 +151,14 @@ sbBaseMediacoreFactory::Create(const nsAString & aInstanceName,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsAutoLock lock(mLock);
-  return OnCreate(aInstanceName, _retval);
+
+  nsresult rv = OnCreate(aInstanceName, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(*_retval, NS_ERROR_UNEXPECTED);
+
+  NS_ADDREF(*_retval);
+  
+  return NS_OK;
 }
 
 /*virtual*/ nsresult 
@@ -192,7 +201,8 @@ sbBaseMediacoreFactory::OnCreate(const nsAString &aInstanceName,
 {
   /**
    *  You should now create a new core with the requested instance
-   *  name and return it in _retval.
+   *  name and return it in *_retval. Do _not_ add a reference to the object.
+   *  The reference will be added for you!
    */
   
   return NS_ERROR_NOT_IMPLEMENTED;

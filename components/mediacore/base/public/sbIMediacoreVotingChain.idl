@@ -33,6 +33,20 @@ interface sbIMediacore;
 [scriptable, uuid(4cf9bef7-6131-4681-b905-f7cdc48805d1)]
 interface sbIMediacoreVotingChain : nsISupports
 {
+  /**
+   * \brief Indicates whether the mediacoreChain has any
+   *        cores.
+   */
+  readonly attribute boolean valid;
+  
+  /**
+   * \brief The chain of mediacores that believe they can 
+   *        perform the operation.
+   *
+   *  \note It is possible for this chain to be empty. You can verify this
+   *        quickly by looking at sbIMedicoreVotingChain::valid.
+   */
   readonly attribute nsIArray mediacoreChain;
+
   unsigned long getVote(in sbIMediacore aMediacore);
 };
