@@ -357,10 +357,9 @@
         </getter>
       </property>
 
-      <!-- Last click time and row index.  This is used to time the slow click
-           to inline edit -->
+      <!-- Last click row index.  This is used to activate
+           inline edit -->
       <field name="_lastClickIndex">0</field>
-      <field name="_lastClickTimestamp">0</field>
 
       <!-- Sortcuts for various anonymous elements -->
       <field name="_context_popup" readonly="true">
@@ -1823,13 +1822,9 @@
           this.edit_col = col.value;
           if ( this.tree.currentIndex == this._lastClickIndex  )
           {
-            var delay = evt.timeStamp - this._lastClickTimestamp;
-            if ( delay > 1000 && delay < 2000 )
-            {
-              // Oooh, don't do this in the middle of an event chain.  No, sir!
-              var params = { that: this, row: this.edit_row, col: this.edit_col };
-              setTimeout( function( p ) { p.that.startCellEditing( p.row, p.col ); }, 0, params );
-            }
+            // Oooh, don't do this in the middle of an event chain.  No, sir!
+            var params = { that: this, row: this.edit_row, col: this.edit_col };
+            setTimeout( function( p ) { p.that.startCellEditing( p.row, p.col ); }, 0, params );
           }
         }
 
@@ -1840,7 +1835,6 @@
     }
     
     this._lastClickIndex = this.tree.currentIndex;
-    this._lastClickTimestamp = evt.timeStamp;
   }
   catch( err )
   {
@@ -2862,7 +2856,9 @@
     </implementation>
 
     <handlers>
-      <handler event="click" clickcount="2" phase="bubbling">
+      <!-- Grab doubleclicks in the capturing phase, so we can prevent
+           the standard click function from being called (prevent inline editing, etc.) -->
+      <handler event="click" clickcount="2" phase="capturing">
         <![CDATA[
           if (event.originalTarget == this._treechildren) {
             this._onPlaylistDblClick(event);
