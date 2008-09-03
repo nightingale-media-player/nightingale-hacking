@@ -183,6 +183,7 @@ sbBaseMediacore::SetCurrentSequence(sbIMediacoreSequence * aCurrentSequence)
   mCurrentSequence = aCurrentSequence;
 
   nsresult rv = OnSetCurrentSequence(aCurrentSequence);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

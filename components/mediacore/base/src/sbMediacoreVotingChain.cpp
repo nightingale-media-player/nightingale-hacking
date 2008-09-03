@@ -128,7 +128,9 @@ sbMediacoreVotingChain::GetMediacoreChain(nsIArray * *aMediacoreChain)
   nsAutoLock lock(mLock);
 
   votingmap_t::const_reverse_iterator cit = mResults.rbegin();
-  for(; cit != mResults.rend(); ++cit) {
+  votingmap_t::const_reverse_iterator endCit = mResults.rend();
+
+  for(; cit != endCit; ++cit) {
     rv = mutableArray->AppendElement((*cit).second, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
