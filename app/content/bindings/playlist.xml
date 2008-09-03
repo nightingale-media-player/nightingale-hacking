@@ -360,7 +360,11 @@
       <!-- Last click row index.  This is used to activate
            inline edit -->
       <field name="_lastClickIndex">0</field>
-
+      
+      <!-- Interval used to defer in-cell editing, just incase we see a 
+           double-click and need to start playback instead -->
+      <field name="_startEditingTimer">null</field>
+      
       <!-- Sortcuts for various anonymous elements -->
       <field name="_context_popup" readonly="true">
         document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-popup");
@@ -599,6 +603,9 @@
     this._shortcuts.destroy();
     this._commandmenuitems.destroy();
 
+    // Make sure we aren't waiting for in-cell editing to start
+    this._cancelEditTimer();
+
     // Remove event listeners
     this._treecols.removeEventListener("DOMAttrModified",
                                       this._onColumnMutationClosure,
@@ -730,6 +737,8 @@
         <parameter name="col"/>
         <body>
 <![CDATA[
+  this._cancelEditTimer();
+
   if (row == null)
     row = this.edit_row;
   if (col == null)
@@ -1343,6 +1352,17 @@
         </body>
       </method>
 
+      <method name="_cancelEditTimer">
+        <body>
+<![CDATA[
+  if (this._startEditingTimer) {
+    clearTimeout(this._startEditingTimer);
+    this._startEditingTimer = null;
+  }
+]]>
+        </body>
+      </method>
+
       <method name="refreshCommands">
         <parameter name="stateonly"/>
         <body>
@@ -1462,6 +1482,12 @@
         <parameter name="evt"/>
         <body>
          <![CDATA[
+         
+         // A single click on an already selected row means start
+         // editing, but only if it isn't followed immediately by
+         // another click.
+         this._cancelEditTimer();
+         
           // Check to see that the user double clicked on a row
           var row = {};
           var col = {};
@@ -1712,6 +1738,9 @@
   var bo = this.tree.treeBoxObject;
   try
   {
+    // Any additional clicks mean stop waiting for in-cell editing to start.
+    this._cancelEditTimer();
+  
     if ( evt.button == 0 )
     {
       var obj = {}, row = {}, col = {};
@@ -1810,7 +1839,7 @@
             this.tree.view.setCellValue(row.value, col.value, value);
           }
           catch(e if e.result == this._Cr.NS_ERROR_NOT_IMPLEMENTED) {
-            // It is ok for this not to be implenented
+            // It is ok for this not to be implemented
           }
           evt.stopPropagation();
         }
@@ -1822,9 +1851,13 @@
           this.edit_col = col.value;
           if ( this.tree.currentIndex == this._lastClickIndex  )
           {
-            // Oooh, don't do this in the middle of an event chain.  No, sir!
+            // Don't start editing immediately since a) we can't do it in 
+            // the middle of the event chain anyway without crashing, and 
+            // b) since this click may be part of a doubleclick, in which 
+            // case we want to play rather than edit.
             var params = { that: this, row: this.edit_row, col: this.edit_col };
-            setTimeout( function( p ) { p.that.startCellEditing( p.row, p.col ); }, 0, params );
+            this._startEditingTimer = setTimeout( 
+              function() { params.that.startCellEditing( params.row, params.col ); }, 300);
           }
         }
 
