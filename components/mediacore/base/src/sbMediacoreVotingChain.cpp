@@ -153,7 +153,8 @@ sbMediacoreVotingChain::GetVote(sbIMediacore *aMediacore,
   nsAutoLock lock(mLock);
 
   votingmap_t::const_reverse_iterator cit = mResults.rbegin();
-  for(; cit != mResults.rend(); ++cit) {
+  votingmap_t::const_reverse_iterator endCit = mResults.rend();
+  for(; cit != endCit; ++cit) {
     if((*cit).second == aMediacore) {
       *_retval = (*cit).first;
       return NS_OK;
