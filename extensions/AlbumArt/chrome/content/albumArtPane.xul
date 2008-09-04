@@ -37,20 +37,36 @@
         xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <stack flex="1">
-    <vbox class="albumArtNowPlayingContainer"
-          align="center">
-      <image id="sb-albumart-playing"
-             class="albumArtNowPlayingImage"
-             ondblclick="AlbumArtPaneController.onImageDblClick(event);"/>
-    </vbox>
-    <vbox id="sb-albumart-not-playing"
-          class="albumArtNotPlayingContainer">
-      <label class="albumArtNotPlayingMessage"
-             value="&artwork.displaypane.not_playing_message;"/>
-    </vbox>
-  </stack>
+  <deck selectedIndex="1" id="sb-albumart-deck" flex="1">
+    <!-- Now Selected Deck -->
+    <stack flex="1">
+      <vbox class="albumArtNowSelectedContainer"
+            align="center">
+        <image id="sb-albumart-selected"
+               ondblclick="AlbumArt.onImageDblClick(event);"/>
+      </vbox>
+      <vbox id="sb-albumart-not-selected"
+            class="albumArtNotSelectedContainer">
+        <label class="albumArtNotSelectedMessage"
+               value="&artwork.displaypane.not_selected_message;"/>
+      </vbox>
+    </stack>
 
+    <!-- Now Playing Deck -->
+    <stack flex="1">
+      <vbox class="albumArtNowPlayingContainer"
+            align="center">
+        <image id="sb-albumart-playing"
+               ondblclick="AlbumArt.onImageDblClick(event);"/>
+      </vbox>
+      <vbox id="sb-albumart-not-playing"
+            class="albumArtNotPlayingContainer">
+        <label class="albumArtNotPlayingMessage"
+               value="&artwork.displaypane.not_playing_message;"/>
+      </vbox>
+    </stack>
+  </deck>
+  
   <script type="application/x-javascript" 
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"  
