@@ -326,7 +326,7 @@ sbLastFm.prototype.classID =
     Components.ID('13bc0c9e-5c37-4528-bcf0-5fe37fcdc37a');
 sbLastFm.prototype.QueryInterface =
     XPCOMUtils.generateQI([Ci.sbIPlaybackHistoryListener, Ci.nsIObserver,
-        Ci.sbIPlaylistPlaybackListener]);
+        Ci.sbIPlaylistPlaybackListener, Ci.sbILastFmWebServices]);
 
 // Error reporting
 sbLastFm.prototype.log = function sbLastFm_log(message) {
@@ -614,27 +614,43 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth() {
   this.apiCall('auth.getMobileSession', {
     username: this.username,
     authToken: md5(this.username + md5(this.password))
-  }, function success(xml) {
+  }, function response(success, xml) {
+    if (!success) return;
     var keys = xml.getElementsByTagName('key');
     if (keys.length == 1) {
       self.sk = keys[0].textContent;
     }
-  }, function failure(xhr) {
   });
 }
 
 
 sbLastFm.prototype.apiCall =
-function sbLastFm_apiCall(method, params, success, failure) {
+function sbLastFm_apiCall(method, params, responseCallback) {
   // make a new Last.fm Web Service API call
   // see: http://www.last.fm/api/rest
   // note: this isn't really REST.
 
+  function callback(success, xml) {
+    if (typeof(responseCallback) == 'function') {
+      responseCallback(success, xml);
+    } else {
+      responseCallback.responseReceived(success, xml);
+    }
+  }
+
   // create an object to hold the HTTP params
   var post_params = new Object();
 
-  // copy in our params
-  for (var k in params) { post_params[k] = params[k]; }
+  // load the params from the nsIPropertyBag
+  if (params instanceof Ci.nsIPropertyBag) {
+    enumerate(params.enumerator, function(item) {
+      item.QueryInterface(Ci.nsIProperty);
+      post_params[item.name] = item.value;
+    })
+  } else {
+    // or from the object
+    for (var k in params) { post_params[k] = params[k]; }
+  }
 
   // set the method and API key
   post_params.method = method;
@@ -660,25 +676,25 @@ function sbLastFm_apiCall(method, params, success, failure) {
   POST(API_URL, post_params, function (xhr) {
     if (!xhr.responseXML) {
       // we expect all API responses to have XML
-      failure(xhr);
+      callback(false, null);
       return;
     }
     if (xhr.responseXML.documentElement.tagName != 'lfm' ||
         !xhr.responseXML.documentElement.hasAttribute('status')) {
       // we expect the root (document) element to be <lfm status="...">
-      failure(xhr);
+      callback(false, xhr.responseXML);
       return;
     }
     if (xhr.responseXML.documentElement.getAttribute('status' == 'failed')) {
       // the server reported an error
       self.log('Last.fm Web Services Error: '+xhr.responseText);
-      failure(xhr);
+      callback(false, xhr.responseXML);
       return;
     }
     // all should be good!
-    success(xhr.responseXML);
+    callback(true, xhr.responseXML);
   }, function (xhr) {
-    failure(xhr);
+    callback(false, null);
   });
 }
 
@@ -725,12 +741,12 @@ function sbLastFm_scrobble() {
             self.apiCall('track.love', {
                 track: entry.item.getProperty(SBProperties.trackName),
                 artist: entry.item.getProperty(SBProperties.artistName)
-              }, function success(xml) { }, function failure(xhr) { });
+              }, function response(success, xml) { });
           } else if (entry.hasAnnotation(ANNOTATION_BAN)) {
             self.apiCall('track.ban', {
                 track: entry.item.getProperty(SBProperties.trackName),
                 artist: entry.item.getProperty(SBProperties.artistName)
-              }, function success(xml) { }, function failure(xhr) { });
+              }, function response(success, xml) { });
           }
         }
         self.playcount += entry_list.length;

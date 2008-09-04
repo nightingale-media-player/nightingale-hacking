@@ -29,7 +29,7 @@ VPATH     = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbILastFm.idl \
+XPIDL_SRCS = sbILastFmWebServices.idl \
              $(NULL)
 
 XPIDL_MODULE = sbLastFm.xpt
