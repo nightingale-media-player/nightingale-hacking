@@ -48,8 +48,10 @@ SUBDIRS = addonmetadata \
           jscodelib \
           mediacore \
           mediaimport \
+          mediapages \
           metrics \
           moz \
+          parsererror \
           playlistplayback \
           playlistcommands \
           property \
@@ -57,8 +59,7 @@ SUBDIRS = addonmetadata \
           search \
           servicepane \
           sqlbuilder \
-          parsererror \
-          mediapages \
+          update \
           $(NULL)
 
 ifeq (1,$(SB_ENABLE_TEST_HARNESS))
