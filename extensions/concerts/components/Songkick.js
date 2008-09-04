@@ -167,6 +167,9 @@ function Songkick() {
 		builder.userViewable = true;
 		var pI = builder.get();
 		pMgr.addPropertyInfo(pI);
+	} else {
+		debugLog("constructor", "BAD: PROPERTY MANAGER ALREADY HAS " +
+				"IMAGE PROPERTY REGISTERED\n");
 	}
 	if (!pMgr.hasProperty(this.onTourUrlProperty)) {
 		debugLog("constructor", "Creating on tour URL property:" +
@@ -186,7 +189,7 @@ function Songkick() {
 			.getService(Ci.sbISmartPlaylistPropertyRegistrar);
 	registrar.registerPropertyToContext("default", this.onTourImgProperty,
 			50, "d");
-	debugLog("constructor", "OnTourImgProperty registered");
+	debugLog("constructor", "OnTourImgProperty reg'd w/ smartpls registrar");
 
 	// Setup our database
 	this._db = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
@@ -351,6 +354,7 @@ Songkick.prototype = {
 		debugLog("onBatchBegin", "Running in batch mode...");
 		if (!this._batch.isActive()) {
 			this._batchArtistsAdded = {};
+			this._batchArtistsRemoved = {};
 		}
 		this._batch.begin();
 	},
@@ -358,6 +362,7 @@ Songkick.prototype = {
 	onBatchEnd : function(list) {
 		this._batch.end();
 		if (!this._batch.isActive()) {
+			// For batch addition
 			this._db.resetQuery();
 			var artistsAdded = false;
 			for (artist in this._batchArtistsAdded) {
@@ -374,45 +379,45 @@ Songkick.prototype = {
 				this._db.execute();
 				this.spsUpdater();
 			}
+
+			// For batch removal
+			for (artist in this._batchArtistsRemoved) {
+				debugLog("onBatchEnd", "Reseting for " + artist);
+				this.resetTourDataForArtist(list, artist);
+			}
+			delete this._batchArtistsRemoved;
+
 			debugLog("onBatchEnd", "Done");
 		}
 	},
 	
-	/*********************************************************************
-	 * Routine fired for when media is removed from the main library.  We need
-	 * to do this so we can update its on tour status (if we already have
-	 * concert data)
-	 *********************************************************************/
-	onBeforeItemRemoved : function(list, item, index) {
-		// If this artist wasn't on tour, then we can quit now
-		if (item.getProperty(this.onTourImgProperty) == noTourIconSrc)
-			return false;
-
-		var artist = item.getProperty(SBProperties.artistName);
-		if (artist == null)
-			return false;
-
-		debugLog("onBeforeItemRemoved", "in removal hook, artist:" + artist);
-		
-		// Need to see if there are any other tracks by this artist in the
-		// library.  If so, then we bail out.  If not, then this was the last
-		// track - and we should update the database accordingly
-		// We do this by running an enumeration, and bailing out immediately
-		// so we only need to hit the first track
-		this.removedItemGUID = item.guid;
-		list.enumerateItemsByProperty(SBProperties.artistName, artist, this);
-		delete this.removedItemGUID;
-		debugLog("onBeforeItemRemoved", "other tracks by this artist: " +
-				this.otherTracksByThisArtist);
-		if (!this.otherTracksByThisArtist) {
+	resetTourDataForArtist : function(list, artist) {
+		debugLog("resetTourDataForArtist", "init");
+		var otherTracks = true;
+		var arr;
+		try {
+			arr = list.getItemsByProperty(SBProperties.artistName, artist);
+		} catch (e) {
+		}
+		if (typeof(arr) == "undefined")
+			otherTracks = false;
+		debugLog("resetTourDataForArtist", "Artist: " + artist
+			//+ " -- track: " + item.getProperty(SBProperties.trackName)
+			//+ " -- tracks left: " + arr.length
+			//+ " -- Touring:" + item.getProperty(this.onTourImgProperty)
+		);
+		if (!otherTracks) {
+			debugLog("resetTourDataForArtist", "Clearing touring data for " +
+					artist);
 			// There were no other tracks, so update the SQLite DB
 			// This actually turns out to be really annoying, we have to
 			// first get all the concerts that this artist is playing in
 			// and set playing_at.libraryArtist = 0.  For each concert, we
-			// have to determine if this artist was the *only* library artist
-			// there.  If so, then we also need to set anyLibraryArtist = 0
-			// this is expensive, but fortunately should be rare (I hope)
-			
+			// have to determine if this artist was the *only* library
+			// artist there.  If so, then we also need to set
+			// anyLibraryArtist = 0. this is expensive, but fortunately
+			// should be rare (I hope) 
+			//
 			// First update all playing_at entries for this artist to be 0
 			this._db.resetQuery();
 			this._db.addQuery("UPDATE playing_at " +
@@ -424,10 +429,11 @@ Songkick.prototype = {
 			this.spsUpdater();
 
 			// Yay 3 level query.  The inner-most gets all concerts whose
-			// SUM(libraryArtist) is 0 (which means all concerts who don't have
-			// any libraryartists playing, but for which their anyLibraryArtist
-			// flag is still 1).  We then select the concertID from that
-			// result, and update those concerts so that anyLibraryArtist=0
+			// SUM(libraryArtist) is 0 (which means all concerts who don't
+			// have any libraryartists playing, but for which their
+			// anyLibraryArtist flag is still 1).  We then select the
+			// concertID from that result, and update those concerts so
+			// that anyLibraryArtist=0
 			this._db.resetQuery();
 			this._db.addQuery("UPDATE playing_at " +
 					"SET anyLibraryArtist=0 " +
@@ -441,21 +447,35 @@ Songkick.prototype = {
 							"HAVING stillvalid=0))");
 			this._db.execute();
 			this.spsUpdater();
+		}
+	},
 
+	/*********************************************************************
+	 * Routine fired for when media is removed from the main library.  We need
+	 * to do this so we can update its on tour status (if we already have
+	 * concert data)
+	 *********************************************************************/
+	onBeforeItemRemoved : function(list, item, index) {
+		// If this artist wasn't on tour, then we can quit now
+		var itemTouring = item.getProperty(this.onTourImgProperty);
+		if (itemTouring == null || itemTouring == noTourIconSrc)
+			return false;
+
+		var artist = item.getProperty(SBProperties.artistName);
+		if (artist == null)
+			return false;
+
+		// Need to see if there are any other tracks by this artist in the
+		// library.  If so, then we bail out.  If not, then this was the last
+		// track - and we should update the database accordingly
+		if (this._batch.isActive()) {
+			debugLog("onBeforeItemRemoved", "Track by " + artist + " removed");
+			this._batchArtistsRemoved[artist] = 1;
+		} else {
+			this.resetTourDataForArtist(list, artist);
 		}
 		return false;
 	},
-	onEnumerationBegin : function(list) {
-		this.otherTracksByThisArtist = false;
-	},
-	onEnumeratedItem : function(list, item) {
-		if (this.removedItemGUID == item.guid) {
-			return Ci.sbIMediaListEnumerationListener.CONTINUE;
-		}
-		this.otherTracksByThisArtist = true;
-		return Ci.sbIMediaListEnumerationListener.CANCEL;
-	},
-	onEnumerationEnd : function(list) { },
 
 	/*********************************************************************
 	 * Initiates a concert data refresh for a given city.  This handles
