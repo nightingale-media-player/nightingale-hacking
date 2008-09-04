@@ -42,6 +42,7 @@
 
 /* Songbird imports. */
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/GeneratorThread.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -92,9 +93,9 @@ if (typeof(Cu) == "undefined")
  * sigDBGUID                    GUID of signature storage database.
  * sigDBTable                   Signature storage database table name.
  *
- * reqPeriod                    Request processor execution period in
+ * reqPeriod                    Request thread scheduling period in
  *                              milliseconds.
- * reqPctCPU                    Request processor CPU execution percentage.
+ * reqMaxPctCPU                 Request maximum thread CPU execution percentage.
  */
 
 var CompConfig =
@@ -118,7 +119,7 @@ var CompConfig =
     sigDBTable: "itunes_signatures",
 
     reqPeriod: 33,
-    reqPctCPU: 60
+    reqMaxPctCPU: 60
 };
 
 CompConfig.categoryList =
@@ -215,6 +216,8 @@ Component.prototype =
     localeBundlePath: CompConfig.localeBundlePath,
     prefPrefix: CompConfig.prefPrefix,
     addTrackBatchSize: CompConfig.addTrackBatchSize,
+    reqPeriod: CompConfig.reqPeriod,
+    reqMaxPctCPU: CompConfig.reqMaxPctCPU,
 
 
     /***************************************************************************
@@ -400,10 +403,6 @@ Component.prototype =
 
     initialize: function()
     {
-        /* Initialize and start the request services. */
-        ITReq.initialize();
-        ITReq.start();
-
         /* Get the OS type. */
         this.mOSType = this.getOSType();
 
@@ -559,17 +558,18 @@ Component.prototype =
         /* Start timing, if enabled */
         if (this.mTimingService) {
             this.mTimingIdentifier = "ITunesImport-" + Date.now();
-            this.mTimingService.startPerfTimer(this.mTimingIdentifier); 
+            this.mTimingService.startPerfTimer(this.mTimingIdentifier);
         }
 
-        /* Issue an import request. */
-        req.func = this.mHandleImportReqFunc;
-        req.args = [ aLibFilePath, aGUID, aCheckForChanges ];
-        ITReq.issue(req);
+        /* Start an import thread. */
+        thread = new GeneratorThread(this.handleImportReq(aLibFilePath,
+                                                          aGUID,
+                                                          aCheckForChanges));
+        thread.period = this.reqPeriod;
+        thread.maxPctCPU = this.reqMaxPctCPU;
+        this.mJob.setJobThread(thread);
+        thread.start();
 
-        /* Set the importer job object request.*/
-        this.mJob.setJobRequest(req);
-        
         /* Monitor job completion to make sure we don't leave the library
            in a batch state. */
         this.mJob.addJobProgressListener(this);
@@ -583,31 +583,31 @@ Component.prototype =
      *
      * \param aListener Import event listener.
      */
-     
+
     setListener: function(aListener)
     {
         /* Set the listener. */
         this.mListener = aListener;
     },
-    
-    
+
+
     /*
      * \brief Called by mJob, used to determine when the job completes.
      *
      * \param aJob an sbIJobProgress object
      */
-     
+
     onJobProgress: function(aJob) {
         // All we care about is completion
         if (aJob.status != Ci.sbIJobProgress.STATUS_RUNNING) {
             this.mJob.removeJobProgressListener(this);
-            
+
             /* Make extra sure we aren't still in a library batch */
             this.endLibraryBatch();
-            
+
             /* Stop timing */
             if (this.mTimingService) {
-                this.mTimingService.stopPerfTimer(this.mTimingIdentifier); 
+                this.mTimingService.stopPerfTimer(this.mTimingIdentifier);
             }
         }
     },
@@ -630,7 +630,7 @@ Component.prototype =
 
     /*
      * beginLibraryBatch
-     * 
+     *
      *   Attempt to force the library into an update batch
      * in order to avoid the performance hit of completing many
      * small batches.  This is dangerous, as failing to call
@@ -648,7 +648,7 @@ Component.prototype =
 
     /*
      * endLibraryBatch
-     * 
+     *
      *   Attempt to undo a forced library batch if one is in progress
      */
     endLibraryBatch: function() {
@@ -681,7 +681,9 @@ Component.prototype =
         /* Terminate request on any exceptions. */
         try
         {
-            this.handleImportReq1(libFilePath, dbGUID, checkForChanges);
+            yield this.handleImportReq1(libFilePath,
+                                        dbGUID,
+                                        checkForChanges);
         }
         catch (e)
         {
@@ -693,243 +695,171 @@ Component.prototype =
             ITStatus.reset();
             ITStatus.mStageText = "Library import error";
             ITStatus.mDone = true;
+            ITStatus.update();
 
             /* Make extra sure we aren't still in a library batch */
             this.endLibraryBatch();
 
             /* Send an import error event. */
             this.mListener.onImportError();
-
-            /* Complete request on error. */
-            ITReq.completeFunction();
         }
-
-        /* Update status. */
-        ITStatus.update();
+        finally
+        {
+            /* Update status. */
+            ITStatus.update();
+        }
     },
 
     handleImportReq1: function(libFilePath, dbGUID, checkForChanges)
     {
-        var                         ctx;
-        var                         state;
         var                         tag = {};
         var                         tagPreText = {};
 
-        /* Do nothing until the database services are synchronized. */
-        if (!ITDB.sync())
-            return;
-
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-            ctx.state = 1;
-
-        /* Get the function context. */
-        state = ctx.state;
-
         /* Wait until the importer is ready. */
-        if (state == 1)
+        while (!this.isReady())
+            yield;
+
+        /* Initialize importer data format version. */
+        if (!this.mVersionDR.intValue)
+            this.mVersionDR.intValue = this.dataFormatVersion;
+
+        /* If checking for changes, don't import. */
+        if (checkForChanges)
+            this.mImport = false;
+        else
+            this.mImport = true;
+
+        /* Check if playlists should be imported. */
+        if (this.mImport)
         {
-            if (this.isReady())
-                state++;
+            this.mImportPlaylists = !this.mDontImportPlaylistsPref.boolValue;
+        }
+        else
+        {
+            this.mImportPlaylists = false;
         }
 
-        /* Initialize request processing. */
-        if (state == 2)
-        {
-            /* Initialize importer data format version. */
-            if (!this.mVersionDR.intValue)
-                this.mVersionDR.intValue = this.dataFormatVersion;
+        /* Update status. */
+        if (checkForChanges)
+            ITStatus.mStageText = "Checking for changes in library";
+        else
+            ITStatus.mStageText = "Importing library";
 
-            /* If checking for changes, don't import. */
-            if (checkForChanges)
-                this.mImport = false;
-            else
-                this.mImport = true;
+        /* Create an xml parser. */
+        this.mXMLParser = new ITXMLParser(libFilePath);
+        this.mXMLFile = this.mXMLParser.getFile();
 
-            /* Check if playlists should be imported. */
-            if (this.mImport)
-            {
-                this.mImportPlaylists =
-                                    !this.mDontImportPlaylistsPref.boolValue;
-            }
-            else
-            {
-                this.mImportPlaylists = false;
-            }
+        /* Initialize the iTunes library signature. */
+        this.mITunesLibSig = new ITSig();
 
-            /* Update status. */
-            if (checkForChanges)
-                ITStatus.mStageText = "Checking for changes in library";
-            else
-                ITStatus.mStageText = "Importing library";
+        /* Initialize the track ID map. */
+        this.mTrackIDMap = {};
 
-            /* Create an xml parser. */
-            this.mXMLParser = new ITXMLParser(libFilePath);
-            this.mXMLFile = this.mXMLParser.getFile();
+        /* Initialize import statistics. */
+        this.mTrackCount = 0;
+        this.mNonExistentMediaCount = 0;
+        this.mUnsupportedMediaCount = 0;
 
-            /* Initialize the iTunes library signature. */
-            this.mITunesLibSig = new ITSig();
+        /* Initialize dirty playlist action. */
+        this.mDirtyPlaylistAction = null;
 
-            /* Initialize the track ID map. */
-            this.mTrackIDMap = {};
-
-            /* Initialize import statistics. */
-            this.mTrackCount = 0;
-            this.mNonExistentMediaCount = 0;
-            this.mUnsupportedMediaCount = 0;
-
-            /* Initialize dirty playlist action. */
-            this.mDirtyPlaylistAction = null;
-
-            /* We are about to do a lot of work, so 
-               force the library into a batch state */
-            this.beginLibraryBatch();
-            
-            /* Transition to next state. */
-            state++;
-        }
+        /* We are about to do a lot of work, so
+           force the library into a batch state */
+        this.beginLibraryBatch();
 
         /* Find the iTunes library ID key. */
-        if (state == 3)
-        {
-            this.findKey("Library Persistent ID");
-            if (!ITReq.isCallPending())
-                state++;
-        }
+        yield this.findKey("Library Persistent ID");
 
         /* Get the iTunes library ID. */
-        if (state == 4)
-        {
-            /* Get the iTunes library ID. */
-            this.mXMLParser.getNextTag(tag, tagPreText);
-            this.mXMLParser.getNextTag(tag, tagPreText);
-            this.mITunesLibID = tagPreText.value;
+        this.mXMLParser.getNextTag(tag, tagPreText);
+        this.mXMLParser.getNextTag(tag, tagPreText);
+        this.mITunesLibID = tagPreText.value;
 
-            /* Add the iTunes library ID to the iTunes library signature. */
-            this.mITunesLibSig.update(  "Library Persistent ID"
-                                      + this.mITunesLibID);
-
-            /* Transition to next state. */
-            state++;
-        }
+        /* Add the iTunes library ID to the iTunes library signature. */
+        this.mITunesLibSig.update(  "Library Persistent ID"
+                                  + this.mITunesLibID);
 
         /* Process the library track list. */
-        if (state == 5)
-        {
-            this.processTrackList();
-            if (!ITReq.isCallPending())
-                state++;
-        }
+        yield this.processTrackList();
 
         /* Process the library playlist list. */
-        if (state == 6)
-        {
-            this.processPlaylistList();
-            if (!ITReq.isCallPending())
-                state++;
-        }
+        yield this.processPlaylistList();
 
-        /* Complete request processing. */
-        if (state == 7)
-        {
-            /* End the library batch, if one is in progress */
-            this.endLibraryBatch();
-          
-            var                         signature;
-            var                         storedSignature;
-            var                         foundChanges;
-            var                         completeMsg;
+        /* End the library batch, if one is in progress */
+        this.endLibraryBatch();
 
-            /* Get the iTunes library signature. */
-            signature = this.mITunesLibSig.getSignature();
+        var                         signature;
+        var                         storedSignature;
+        var                         foundChanges;
+        var                         completeMsg;
 
-            /* Get the stored iTunes library signature. */
-            storedSignature =
+        /* Get the iTunes library signature. */
+        signature = this.mITunesLibSig.getSignature();
+
+        /* Get the stored iTunes library signature. */
+        storedSignature =
                         this.mITunesLibSig.retrieveSignature(this.mITunesLibID);
 
-            /* If imported signature changed, store new signature. */
-            if (this.mImport && (signature != storedSignature))
-                this.mITunesLibSig.storeSignature(this.mITunesLibID, signature);
+        /* If imported signature changed, store new signature. */
+        if (this.mImport && (signature != storedSignature))
+            this.mITunesLibSig.storeSignature(this.mITunesLibID, signature);
 
-            /* Update previous imported library path and modification time. */
-            if (this.mImport || (signature == storedSignature))
-            {
-                this.mLibPrevPathDR.stringValue = libFilePath;
-                this.setPref("lib_prev_mod_time",
-                             this.mXMLFile.lastModifiedTime.toString());
-            }
-
-            /* Update import data format version. */
-            if (this.mImport)
-                this.mVersionDR.intValue = this.dataFormatVersion;
-
-            /* Dispose of the XML parser. */
-            /*zzz won't happen on exceptions. */
-            this.mXMLParser.close();
-            this.mXMLParser = null;
-
-            /* Check if changes were looked for and found. */
-            if ((checkForChanges) && (signature != storedSignature))
-                foundChanges = true;
-            else
-                foundChanges = false;
-
-            /* Determine completion message. */
-            if (checkForChanges)
-            {
-                if (foundChanges)
-                    completeMsg = "Found library changes";
-                else
-                    completeMsg = "No library changes found";
-            }
-            else
-            {
-                completeMsg = "Library import complete";
-            }
-
-            /* Update status. */
-            ITStatus.reset();
-            ITStatus.mStageText = completeMsg;
-            ITStatus.mDone = true;
-
-            /* If checking for changes and changes were */
-            /* found, send a library changed event.     */
-            if (foundChanges)
-                this.mListener.onLibraryChanged(libFilePath, dbGUID);
-
-            /* If non-existent media is encountered, send an event. */
-            if (this.mImport && (this.mNonExistentMediaCount > 0))
-            {
-                this.mListener.onNonExistentMedia(this.mNonExistentMediaCount,
-                                                  this.mTrackCount);
-            }
-
-            /* If unsupported media is encountered, send an event. */
-            if (this.mImport && (this.mUnsupportedMediaCount > 0))
-                this.mListener.onUnsupportedMedia();
-
-            /* Transition to next state. */
-            state++;
-        }
-
-        /* Wait for the database services to synchronize. */
-        if (state == 8)
+        /* Update previous imported library path and modification time. */
+        if (this.mImport || (signature == storedSignature))
         {
-            if (ITDB.sync())
-                state++;
+            this.mLibPrevPathDR.stringValue = libFilePath;
+            this.setPref("lib_prev_mod_time",
+                         this.mXMLFile.lastModifiedTime.toString());
         }
 
-        /* End state. */
-        if (state >= 9)
-            ITReq.completeFunction();
+        /* Update import data format version. */
+        if (this.mImport)
+            this.mVersionDR.intValue = this.dataFormatVersion;
 
-        /* Update the function context. */
-        ctx.state = state;
-        ITReq.exitFunction();
+        /* Dispose of the XML parser. */
+        /*zzz won't happen on exceptions. */
+        this.mXMLParser.close();
+        this.mXMLParser = null;
 
-        /* Synchronize the database services. */
-        ITDB.sync();
+        /* Check if changes were looked for and found. */
+        if ((checkForChanges) && (signature != storedSignature))
+            foundChanges = true;
+        else
+            foundChanges = false;
+
+        /* Determine completion message. */
+        if (checkForChanges)
+        {
+            if (foundChanges)
+                completeMsg = "Found library changes";
+            else
+                completeMsg = "No library changes found";
+        }
+        else
+        {
+            completeMsg = "Library import complete";
+        }
+
+        /* Update status. */
+        ITStatus.reset();
+        ITStatus.mStageText = completeMsg;
+        ITStatus.mDone = true;
+
+        /* If checking for changes and changes were */
+        /* found, send a library changed event.     */
+        if (foundChanges)
+            this.mListener.onLibraryChanged(libFilePath, dbGUID);
+
+        /* If non-existent media is encountered, send an event. */
+        if (this.mImport && (this.mNonExistentMediaCount > 0))
+        {
+            this.mListener.onNonExistentMedia(this.mNonExistentMediaCount,
+                                              this.mTrackCount);
+        }
+
+        /* If unsupported media is encountered, send an event. */
+        if (this.mImport && (this.mUnsupportedMediaCount > 0))
+            this.mListener.onUnsupportedMedia();
     },
 
 
@@ -966,21 +896,11 @@ Component.prototype =
 
     findKey: function(tgtKeyName, tag, tagPreText)
     {
-        var                         ctx;
-        var                         state;
         var                         tag = {};
         var                         tagPreText = {};
 
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-            ctx.state = 0;
-
-        /* Get the function context. */
-        state = ctx.state;
-
         /* Find the target key. */
-        while (state == 0)
+        while (true)
         {
             /* Get the next tag. */
             this.mXMLParser.getNextTag(tag, tagPreText);
@@ -988,27 +908,11 @@ Component.prototype =
             /* If the next key is the target or no more     */
             /* tags are left, transition to the next state. */
             if ((tagPreText.value == tgtKeyName) || (!tag.value))
-                state++;
-
-            /* Check if it's time to yield. */
-            if (ITReq.shouldYield())
-            {
-                /* Update status. */
-                ITStatus.mProgress =   (100 * this.mXMLParser.tell())
-                                     / this.mXMLFile.fileSize;
-
-                /* Yield. */
                 break;
-            }
+
+            /* Yield if thread should. */
+            yield this.yieldIfShouldWithStatusUpdate();
         }
-
-        /* End state. */
-        if (state >= 1)
-            ITReq.completeFunction();
-
-        /* Update the function context. */
-        ctx.state = state;
-        ITReq.exitFunction();
     },
 
 
@@ -1114,6 +1018,42 @@ Component.prototype =
     },
 
 
+    /*
+     * yieldWithStatusUpdate
+     *
+     *   This function updates the import status and yields.
+     */
+
+    yieldWithStatusUpdate: function()
+    {
+        /* Update status. */
+        if (this.mXMLParser)
+        {
+            ITStatus.mProgress =   (100 * this.mXMLParser.tell())
+                                 / this.mXMLFile.fileSize;
+        }
+        ITStatus.update();
+
+        /* Yield. */
+        yield;
+    },
+
+
+    /*
+     * yieldIfShouldWithStatusUpdate
+     *
+     *   This function checks if the thread should yield.  If it should, this
+     * function updates the import status and yields.
+     */
+
+    yieldIfShouldWithStatusUpdate: function()
+    {
+        /* Check if it's time to yield. */
+        if (GeneratorThread.shouldYield())
+            yield this.yieldWithStatusUpdate();
+    },
+
+
     /***************************************************************************
      *
      * Importer track functions.
@@ -1135,36 +1075,17 @@ Component.prototype =
 
     processTrackList: function()
     {
-        var                         ctx;
-        var                         state;
         var                         tag = {};
         var                         tagPreText = {};
 
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-            ctx.state = 0;
-
-        /* Get the function context. */
-        state = ctx.state;
-
         /* Find the track list. */
-        if (state == 0)
-        {
-            this.findKey("Tracks");
-            if (!ITReq.isCallPending())
-                state++;
-        }
+        yield this.findKey("Tracks");
 
         /* Skip the "dict" tag. */
-        if (state == 1)
-        {
-            this.mXMLParser.getNextTag(tag, tagPreText);
-            state++;
-        }
+        this.mXMLParser.getNextTag(tag, tagPreText);
 
         /* Process each track in list. */
-        while (state == 2)
+        while (true)
         {
             /* Process another track and add it to batch.  If */
             /* add track batch is full, process the batch.    */
@@ -1178,48 +1099,31 @@ Component.prototype =
                 if (tag.value == "/key")
                     this.processTrack(tag, tagPreText);
                 else if (tag.value == "/dict")
-                    state++;
+                    break;
             }
             else
             {
                 /* Process add track batch. */
-                this.addTrackBatchProcess();
-                if (ITReq.isCallPending())
-                    break;
+                yield this.addTrackBatchProcess();
 
-                /* Check if it's time to yield. */
-                if (ITReq.shouldYield())
-                    break;
+                /* Yield if thread should. */
+                yield this.yieldIfShouldWithStatusUpdate();
             }
         }
 
         /* Process the remaining add track batch. */
-        if (state == 3)
-        {
-            if (!this.addTrackBatchEmpty())
-                this.addTrackBatchProcess();
-            if (!ITReq.isCallPending())
-                state++;
-        }
+        if (!this.addTrackBatchEmpty())
+            yield this.addTrackBatchProcess();
 
         /* Wait for the database services to synchronize. */
-        if (state == 4)
+        while (!ITDB.sync())
         {
-            if (ITDB.sync())
-                state++;
+            yield;
         }
-
-        /* End state. */
-        if (state >= 5)
-            ITReq.completeFunction();
 
         /* Update status. */
         ITStatus.mProgress =   (100 * this.mXMLParser.tell())
                              / this.mXMLFile.fileSize;
-
-        /* Update the function context. */
-        ctx.state = state;
-        ITReq.exitFunction();
     },
 
 
@@ -1662,8 +1566,6 @@ Component.prototype =
 
     addTrackBatchProcess: function()
     {
-        var                         ctx;
-        var                         state;
         var                         addTrack;
         var                         guidList = [];
         var                         guid;
@@ -1673,67 +1575,28 @@ Component.prototype =
         var                         propertyName;
         var                         i, j;
 
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-            ctx.state = 1;
-
-        /* Get the function context. */
-        state = ctx.state;
-
         /* Get the list of Songbird track GUIDs */
         /* from the list of iTunes track IDs.   */
-        if (state == 1)
-        {
-            this.addTrackBatchGetGUIDs();
-            if (!ITReq.isCallPending())
-                state++;
-        }
+        this.addTrackBatchGetGUIDs();
 
         /* Get the list of existing track media items. */
-        if (state == 2)
-        {
-            this.addTrackBatchGetMediaItems();
-            if (!ITReq.isCallPending())
-                state++;
-        }
+        this.addTrackBatchGetMediaItems();
 
         /* Create track media items for non-existent tracks. */
-        if (state == 3)
-        {
-            this.addTrackBatchCreateMediaItems();
-            if (!ITReq.isCallPending())
-                state++;
-        }
+        yield this.addTrackBatchCreateMediaItems();
 
         /*XXXeps should sync any updated properties in existing tracks. */
 
         /* Add the tracks to the track ID map. */
-        if (state == 4)
+        for (i = 0; i < this.mAddTrackList.length; i++)
         {
-            for (i = 0; i < this.mAddTrackList.length; i++)
-            {
-                addTrack = this.mAddTrackList[i];
-                this.mTrackIDMap[addTrack.trackInfoTable["Track ID"]] =
+            addTrack = this.mAddTrackList[i];
+            this.mTrackIDMap[addTrack.trackInfoTable["Track ID"]] =
                                                                 addTrack.guid;
-            }
-            state++;
         }
 
         /* Clear add track list. */
-        if (state == 5)
-        {
-            this.mAddTrackList = [];
-            state++;
-        }
-
-        /* End state. */
-        if (state >= 6)
-            ITReq.completeFunction();
-
-        /* Update the function context. */
-        ctx.state = state;
-        ITReq.exitFunction();
+        this.mAddTrackList = [];
     },
 
 
@@ -1827,8 +1690,6 @@ Component.prototype =
 
     addTrackBatchCreateMediaItems: function()
     {
-        var                         ctx;
-        var                         state;
         var                         createMediaItemsListener;
         var                         addTrackMediaItemList;
         var                         uriList;
@@ -1842,188 +1703,138 @@ Component.prototype =
         var                         trackURI;
         var                         i, j;
 
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-            ctx.state = 1;
-
-        /* Get the function context. */
-        state = ctx.state;
-        createMediaItemsListener = ctx.createMediaItemsListener;
-        addTrackMediaItemList = ctx.addTrackMediaItemList;
-        uriList = ctx.uriList;
-        propertyArrayArray = ctx.propertyArrayArray;
-
         /* Set up a list of track URIs and           */
         /* properties.  Do nothing if list is empty. */
-        if (state == 1)
-        {
-            uriList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                          .createInstance(Ci.nsIMutableArray);
-            propertyArrayArray =
+        uriList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                      .createInstance(Ci.nsIMutableArray);
+        propertyArrayArray =
                 Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                     .createInstance(Ci.nsIMutableArray);
-            for (i = 0; i < this.mAddTrackList.length; i++)
+        for (i = 0; i < this.mAddTrackList.length; i++)
+        {
+            addTrack = this.mAddTrackList[i];
+            if (!addTrack.mediaItem)
             {
-                addTrack = this.mAddTrackList[i];
-                if (!addTrack.mediaItem)
-                {
-                    this.addTrackMediaItemInfo(this.mAddTrackList[i],
-                                               uriList,
-                                               propertyArrayArray);
-                }
+                this.addTrackMediaItemInfo(this.mAddTrackList[i],
+                                           uriList,
+                                           propertyArrayArray);
             }
-            if (uriList.length > 0)
-                state++;
-            else
-                state = 1000;
         }
+        if (!uriList.length)
+            return;
 
         /* Create the track media items. */
-        if (state == 2)
+        createMediaItemsListener =
         {
-            createMediaItemsListener =
+            complete: false,
+            mediaItems: null,
+            result: Components.results.NS_OK,
+
+            onProgress: function(aIndex) {},
+            onComplete: function(aMediaItems, aResult)
             {
-                complete: false,
-                mediaItems: null,
-                result: Components.results.NS_OK,
-
-                onProgress: function(aIndex) {},
-                onComplete: function(aMediaItems, aResult)
-                {
-                    this.mediaItems = aMediaItems;
-                    this.result = aResult;
-                    this.complete = true;
-                },
-            };
-
-            addTrackMediaItemList = {};
-            this.mLibrary.batchCreateMediaItemsAsync(createMediaItemsListener,
-                                                     uriList,
-                                                     propertyArrayArray, false);
-            state++;
-        }
+                this.mediaItems = aMediaItems;
+                this.result = aResult;
+                this.complete = true;
+            },
+        };
+        addTrackMediaItemList = {};
+        this.mLibrary.batchCreateMediaItemsAsync(createMediaItemsListener,
+                                                 uriList,
+                                                 propertyArrayArray, false);
 
         /* Wait for media item creation to complete. */
-        if (state == 3)
+        while (!createMediaItemsListener.complete)
+            yield this.yieldWithStatusUpdate();
+
+        /* If the creation completed successfully, get the list */
+        /* of created items.  Otherwise, skip to the end state. */
+        if (createMediaItemsListener.result == Components.results.NS_OK)
         {
-            if (createMediaItemsListener.complete)
+            addTrackMediaItemList = createMediaItemsListener.mediaItems;
+        }
+        else
+        {
+            Log("Error adding media items " +
+                createMediaItemsListener.result + "\n");
+            return;
+        }
+
+        /* Get the list of media items added by the batch create. */
+        mediaItemList = this.getJSArray(addTrackMediaItemList);
+
+        /* Create a hash table for the add track list. */
+        var addTrackMap = {};
+        for (i = 0; i < this.mAddTrackList.length; i++)
+        {
+            addTrack = this.mAddTrackList[i];
+            addTrackMap[addTrack.iTunesTrackID] = addTrack;
+        }
+
+        /* Add the added media items to the add track list. */
+        for (i = 0; i < mediaItemList.length; i++)
+        {
+            /* Get the next media item and its associated iTunes GUID. */
+            mediaItem = mediaItemList[i];
+            var iTunesGUID = mediaItem.getProperty
+                                                (CompConfig.iTunesGUIDProperty);
+
+            /* Find the matching track in the add track */
+            /* list and add the media item to it.       */
+            addTrack = addTrackMap[iTunesGUID];
+            if (addTrack)
             {
-                /* If the creation completed successfully, get the list */
-                /* of created items.  Otherwise, skip to the end state. */
-                if (createMediaItemsListener.result == Components.results.NS_OK)
-                {
-                    addTrackMediaItemList = createMediaItemsListener.mediaItems;
-                }
-                else
-                {
-                    Log("Error adding media items " +
-                        createMediaItemsListener.result + "\n");
-                    state = 9999;
-                }
-                state++;
+                addTrack.mediaItem = mediaItem;
+                addTrack.guid = mediaItem.guid;
+                iTunesTrackIDList.push(addTrack.iTunesTrackID);
+                guidList.push(addTrack.guid);
             }
         }
 
-        /* Add the media items to the add track list. */
-        if (state == 4)
+        /* The batch create won't return a media item for any tracks that */
+        /* are duplicates.  For any track in the add track list that      */
+        /* doesn't have a media item, create a single media item and add  */
+        /* the returned media item to the add track list.  This shouldn't */
+        /* add a new media item; it should just return the matching,      */
+        /* duplicate media item.  Ideally, there would be a more direct   */
+        /* way to get a media item for a duplicate URL.                   */
+        for (i = 0; i < this.mAddTrackList.length; i++)
         {
-            /* Get the list of media items added by the batch create. */
-            mediaItemList = this.getJSArray(addTrackMediaItemList);
-
-            /* Create a hash table for the add track list. */
-            var addTrackMap = {};
-            for (i = 0; i < this.mAddTrackList.length; i++)
+            /* Add a media item for each track */
+            /* to add without a media item.    */
+            addTrack = this.mAddTrackList[i];
+            if (!addTrack.mediaItem)
             {
-                addTrack = this.mAddTrackList[i];
-                addTrackMap[addTrack.iTunesTrackID] = addTrack;
-            }
+                /* Get the add track URI and properties. */
+                var uri = addTrack.trackURI;
+                var properties = addTrack.propertyArray;
 
-            /* Add the added media items to the add track list. */
-            for (i = 0; i < mediaItemList.length; i++)
-            {
-                /* Get the next media item and its associated iTunes GUID. */
-                mediaItem = mediaItemList[i];
-                var iTunesGUID = mediaItem.getProperty
-                                                (CompConfig.iTunesGUIDProperty);
+                /* Try creating a media item.  This should */
+                /* return a duplicate for the add track.   */
+                mediaItem = this.mLibrary.createMediaItem(uri, properties);
 
-                /* Find the matching track in the add track */
-                /* list and add the media item to it.       */
-                addTrack = addTrackMap[iTunesGUID];
-                if (addTrack)
+                /* Add the media item to the add track. */
+                if (mediaItem)
                 {
                     addTrack.mediaItem = mediaItem;
                     addTrack.guid = mediaItem.guid;
                     iTunesTrackIDList.push(addTrack.iTunesTrackID);
                     guidList.push(addTrack.guid);
                 }
-            }
-
-            /* The batch create won't return a media item for any tracks that */
-            /* are duplicates.  For any track in the add track list that      */
-            /* doesn't have a media item, create a single media item and add  */
-            /* the returned media item to the add track list.  This shouldn't */
-            /* add a new media item; it should just return the matching,      */
-            /* duplicate media item.  Ideally, there would be a more direct   */
-            /* way to get a media item for a duplicate URL.                   */
-            for (i = 0; i < this.mAddTrackList.length; i++)
-            {
-                /* Add a media item for each track */
-                /* to add without a media item.    */
-                addTrack = this.mAddTrackList[i];
-                if (!addTrack.mediaItem)
+                else
                 {
-                    /* Get the add track URI and properties. */
-                    var uri = addTrack.trackURI;
-                    var properties = addTrack.propertyArray;
-
-                    /* Try creating a media item.  This should */
-                    /* return a duplicate for the add track.   */
-                    mediaItem = this.mLibrary.createMediaItem(uri,
-                                                              properties);
-
-                    /* Add the media item to the add track. */
-                    if (mediaItem)
-                    {
-                        addTrack.mediaItem = mediaItem;
-                        addTrack.guid = mediaItem.guid;
-                        iTunesTrackIDList.push(addTrack.iTunesTrackID);
-                        guidList.push(addTrack.guid);
-                    }
-                    else
-                    {
-                        Log("Error creating track.\n");
-                    }
+                    Log("Error creating track.\n");
                 }
             }
-
-            /* Advance to the next state. */
-            state++;
         }
 
         /* Map the Songbird track GUIDs to iTunes track IDs. */
-        if (state == 5)
+        for (i = 0; i < iTunesTrackIDList.length; i++)
         {
-            for (i = 0; i < iTunesTrackIDList.length; i++)
-            {
-                ITDB.mapID(this.mITunesLibID,
-                           iTunesTrackIDList[i],
-                           guidList[i]);
-            }
-            state++;
+            ITDB.mapID(this.mITunesLibID,
+                       iTunesTrackIDList[i],
+                       guidList[i]);
         }
-
-        /* End state. */
-        if (state >= 6)
-            ITReq.completeFunction();
-
-        /* Update the function context. */
-        ctx.state = state;
-        ctx.createMediaItemsListener = createMediaItemsListener;
-        ctx.addTrackMediaItemList = addTrackMediaItemList;
-        ctx.uriList = uriList;
-        ctx.propertyArrayArray = propertyArrayArray;
-        ITReq.exitFunction();
     },
 
 
@@ -2154,87 +1965,32 @@ Component.prototype =
 
     processPlaylistList: function()
     {
-        var                         ctx;
-        var                         state;
         var                         tag = {};
         var                         tagPreText = {};
         var                         processPlaylist;
 
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-            ctx.state = 0;
-
-        /* Get the function context. */
-        state = ctx.state;
-        processPlaylist = ctx.processPlaylist;
-
         /* Find the playlists list. */
-        if (state == 0)
-        {
-            this.findKey("Playlists");
-            if (!ITReq.isCallPending())
-                state++;
-        }
+        yield this.findKey("Playlists");
 
         /* Skip the "array" tag. */
-        if (state == 1)
-        {
-            this.mXMLParser.getNextTag(tag, tagPreText);
-            state++;
-        }
+        this.mXMLParser.getNextTag(tag, tagPreText);
 
         /* Process each playlist in list. */
-        if (state == 2)
+        while (true)
         {
-            /* Initialize loop. */
-            processPlaylist = false;
-            state++;
-        }
-        while (state == 3)
-        {
-            /* Find a playlist to process. */
-            if (!processPlaylist)
-            {
-                /* Get the next tag. */
-                this.mXMLParser.getNextTag(tag, tagPreText);
+            /* Get the next tag. */
+            this.mXMLParser.getNextTag(tag, tagPreText);
 
-                /* If it's a "dict" tag, process the playlist.  If   */
-                /* it's a "/array" tag, there are no more playlists. */
-                if (tag.value == "dict")
-                    processPlaylist = true;
-                else if (tag.value == "/array")
-                    state++;
-            }
-
-            /* Process playlist if it's been reached. */
-            if (processPlaylist)
-            {
-                this.processPlaylist();
-                if (!ITReq.isCallPending())
-                    processPlaylist = false;
-            }
-
-            /* Check if it's time to yield. */
-            if (ITReq.shouldYield())
-            {
-                /* Update status. */
-                ITStatus.mProgress =   (100 * this.mXMLParser.tell())
-                                     / this.mXMLFile.fileSize;
-
-                /* Yield. */
+            /* If it's a "dict" tag, process the playlist.  If   */
+            /* it's a "/array" tag, there are no more playlists. */
+            if (tag.value == "dict")
+                yield this.processPlaylist();
+            else if (tag.value == "/array")
                 break;
-            }
+
+            /* Yield if thread should. */
+            yield this.yieldIfShouldWithStatusUpdate();
         }
-
-        /* End state. */
-        if (state >= 4)
-            ITReq.completeFunction();
-
-        /* Update the function context. */
-        ctx.state = state;
-        ctx.processPlaylist = processPlaylist;
-        ITReq.exitFunction();
     },
 
 
@@ -2246,9 +2002,7 @@ Component.prototype =
 
     processPlaylist: function()
     {
-        var                         ctx;
-        var                         state;
-        var                         playlistInfoTable;
+        var                         playlistInfoTable = {};
         var                         playlistName;
         var                         iTunesPlaylistID;
         var                         importPlaylist;
@@ -2260,310 +2014,197 @@ Component.prototype =
         var                         signature;
         var                         done;
 
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-        {
-            ctx.state = 1;
-            ctx.playlistInfoTable = {};
-        }
-
-        /* Get the function context. */
-        state = ctx.state;
-        playlistInfoTable = ctx.playlistInfoTable;
-        playlistName = ctx.playlistName;
-        iTunesPlaylistID = ctx.iTunesPlaylistID;
-        importPlaylist = ctx.importPlaylist;
-        action = ctx.action;
-        hasPlaylistItems = ctx.hasPlaylistItems;
-        dirtyPlaylist = ctx.dirtyPlaylist;
-
         /* Get the playlist info. */
-        if (state == 1)
+        hasPlaylistItems = this.getPlaylistInfo(playlistInfoTable);
+        playlistName = playlistInfoTable["Name"];
+        iTunesPlaylistID = playlistInfoTable["Playlist Persistent ID"];
+
+        /* Assume playlist should be imported. */
+        importPlaylist = true;
+
+        /* Don't import playlists with no items. */
+        if (!hasPlaylistItems)
+            importPlaylist = false;
+
+        /* Don't import master playlist. */
+        else if (playlistInfoTable["Master"] == "true")
+            importPlaylist = false;
+
+        /* Don't import smart playlists. */
+        else if (playlistInfoTable["Smart Info"])
+            importPlaylist = false;
+
+        /* Don't import excluded playlists. */
+        else if (   this.mExcludedPlaylists.indexOf(":" + playlistName + ":")
+                 != -1)
         {
-            hasPlaylistItems = this.getPlaylistInfo(playlistInfoTable);
-            playlistName = playlistInfoTable["Name"];
-            iTunesPlaylistID = playlistInfoTable["Playlist Persistent ID"];
-            state++;
+            importPlaylist = false;
         }
 
-        /* Check if playlist should be imported. */
-        if (state == 2)
+        /* If importing, add playlist info  */
+        /* to the iTunes library signature. */
+        if (importPlaylist)
         {
-            /* Assume playlist should be imported. */
-            importPlaylist = true;
-
-            /* Don't import playlists with no items. */
-            if (!hasPlaylistItems)
-                importPlaylist = false;
-
-            /* Don't import master playlist. */
-            else if (playlistInfoTable["Master"] == "true")
-                importPlaylist = false;
-
-            /* Don't import smart playlists. */
-            else if (playlistInfoTable["Smart Info"])
-                importPlaylist = false;
-
-            /* Don't import excluded playlists. */
-            else
-                if (   this.mExcludedPlaylists.indexOf(":" + playlistName + ":")
-                    != -1)
-            {
-                importPlaylist = false;
-            }
-
-            /* If importing, add playlist info  */
-            /* to the iTunes library signature. */
-            if (importPlaylist)
-            {
-                this.mITunesLibSig.update("Name" + playlistName);
-                this.mITunesLibSig.update(  "Playlist Persistent ID"
-                                          + iTunesPlaylistID);
-            }
-
-            /* Transition to next state. */
-            state++;
+            this.mITunesLibSig.update("Name" + playlistName);
+            this.mITunesLibSig.update(  "Playlist Persistent ID"
+                                      + iTunesPlaylistID);
         }
 
         /* Get the Songbird playlist. */
-        if (state == 3)
+        if ((importPlaylist) && (this.mImportPlaylists))
         {
-            if ((importPlaylist) && (this.mImportPlaylists))
+            /* Get the Songbird playlist ID. */
+            playlistID = ITDB.getSBIDFromITID(this.mITunesLibID,
+                                              iTunesPlaylistID);
+
+            /* If the importer data format version is less than 2, try   */
+            /* getting the Songbird playlist ID from the iTunes playlist */
+            /* name.                                                     */
+            if (!playlistID && (this.mVersionDR.intValue < 2))
             {
-                /* Get the Songbird playlist ID. */
-                playlistID = ITDB.getSBIDFromITID(this.mITunesLibID,
-                                                  iTunesPlaylistID);
-
-                /* If the importer data format version is less than 2, try   */
-                /* getting the Songbird playlist ID from the iTunes playlist */
-                /* name.                                                     */
-                if (!playlistID && (this.mVersionDR.intValue < 2))
-                {
-                    playlistID = ITDB.getSBPlaylistIDFromITName(playlistName);
-                    if (playlistID)
-                    {
-                        ITDB.mapID(this.mITunesLibID,
-                                   iTunesPlaylistID,
-                                   playlistID);
-                    }
-                }
-
-                /* Get the Songbird playlist. */
+                playlistID = ITDB.getSBPlaylistIDFromITName(playlistName);
                 if (playlistID)
                 {
-                    try
-                    {
-                        this.mPlaylist =
-                                        this.mLibrary.getItemByGuid(playlistID);
-                    }
-                    catch (e)
-                    {
-                        this.mPlaylist = null;
-                    }
+                    ITDB.mapID(this.mITunesLibID,
+                               iTunesPlaylistID,
+                               playlistID);
                 }
             }
 
-            /* Transition to next state. */
-            state++;
-        }
-
-        /* Check for dirty playlist. */
-        if (state == 4)
-        {
-            if (importPlaylist && this.mPlaylist)
-                dirtyPlaylist = this.isDirtyPlaylist();
-            if (!ITReq.isCallPending())
-                state++;
-        }
-
-        /* Determine what import action to take. */
-        if (state == 5)
-        {
-            /* If not importing playlists, keep current ones.   */
-            /* Otherwise, determine what import action to take. */
-            if (!this.mImportPlaylists)
+            /* Get the Songbird playlist. */
+            if (playlistID)
             {
-                action = "keep";
-            }
-            else if (importPlaylist)
-            {
-                /* Default to replacing playlist. */
-                action = "replace";
-
-                /* Check for a dirty Songbird playlist.  If it's dirty, */
-                /* query the user for the proper action to take.        */
-                if (this.mPlaylist && dirtyPlaylist)
-                    action = this.getDirtyPlaylistAction(playlistName);
-            }
-
-            /* Transition to next state. */
-            state++;
-        }
-
-        /* Get Songbird playlist. */
-        if (state == 6)
-        {
-            /* Create a fresh Songbird playlist if replacing. */
-            if (importPlaylist && (action == "replace"))
-            {
-                /* Delete Songbird playlist if present. */
-                if (this.mImport && this.mPlaylist)
-                    this.mLibrary.remove(this.mPlaylist);
-
-                /* Create the playlist. */
-                if (this.mImport)
+                try
                 {
-                    this.mPlaylist = this.mLibrary.createMediaList("simple");
-                    this.mPlaylist.name = playlistName;
-                    playlistID = this.mPlaylist.guid;
-                    ITDB.mapID(this.mITunesLibID, iTunesPlaylistID, playlistID);
+                    this.mPlaylist = this.mLibrary.getItemByGuid(playlistID);
                 }
-            }
-
-            /* Transition to next state. */
-            state++;
-        }
-
-        /* Process the playlist items. */
-        if (state == 7)
-        {
-            if (importPlaylist)
-                this.processPlaylistItems(action);
-            else if (hasPlaylistItems)
-                this.mXMLParser.skipNextElement();
-            if (!ITReq.isCallPending())
-                state++;
-        }
-
-        /* Delete playlist if it's empty. */
-        if (state == 8)
-        {
-            /* Delete playlist if it's empty. */
-            if (this.mImport && this.mPlaylist)
-            {
-                if (this.mPlaylist.isEmpty)
+                catch (e)
                 {
-                    this.mLibrary.remove(this.mPlaylist);
                     this.mPlaylist = null;
                 }
             }
-
-            /* Transition to next state. */
-            state++;
         }
 
-        /* Compute and store the Songbird playlist signature. */
-        if (state == 9)
+        /* Wait for the database services to synchronize. */
+        while (!ITDB.sync())
         {
-            if (this.mImport && this.mPlaylist && (action != "keep"))
-                sigGen = this.generateSBPlaylistSig(this.mPlaylist);
-            else
-                sigGen = null;
-            if (!ITReq.isCallPending())
+            yield;
+        }
+
+        /* Check for dirty playlist. */
+        if (importPlaylist && this.mPlaylist)
+        {
+            dirtyPlaylist = {};
+            yield this.isDirtyPlaylist(dirtyPlaylist);
+            dirtyPlaylist = dirtyPlaylist.value;
+        }
+
+        /* If not importing playlists, keep current ones.   */
+        /* Otherwise, determine what import action to take. */
+        if (!this.mImportPlaylists)
+        {
+            action = "keep";
+        }
+        else if (importPlaylist)
+        {
+            /* Default to replacing playlist. */
+            action = "replace";
+
+            /* Check for a dirty Songbird playlist.  If it's dirty, */
+            /* query the user for the proper action to take.        */
+            if (this.mPlaylist && dirtyPlaylist)
+                action = this.getDirtyPlaylistAction(playlistName);
+        }
+
+        /* Create a fresh Songbird playlist if replacing. */
+        if (importPlaylist && (action == "replace"))
+        {
+            /* Delete Songbird playlist if present. */
+            if (this.mImport && this.mPlaylist)
+                this.mLibrary.remove(this.mPlaylist);
+
+            /* Create the playlist. */
+            if (this.mImport)
             {
-                if (sigGen)
-                {
-                    signature = sigGen.getSignature();
-                    sigGen.storeSignature(playlistID, signature);
-                }
-                state++;
+                this.mPlaylist = this.mLibrary.createMediaList("simple");
+                this.mPlaylist.name = playlistName;
+                playlistID = this.mPlaylist.guid;
+                ITDB.mapID(this.mITunesLibID, iTunesPlaylistID, playlistID);
             }
         }
 
-        /* Complete playlist processing. */
-        if (state == 10)
+        /* Wait for the database services to synchronize. */
+        while (!ITDB.sync())
         {
-            /* Clear current playlist object. */
-            this.mPlaylist = null;
-
-            /* Transition to next state. */
-            state++;
+            yield;
         }
 
-        /* End state. */
-        if (state >= 11)
-            ITReq.completeFunction();
+        /* Process the playlist items. */
+        if (importPlaylist)
+            yield this.processPlaylistItems(action);
+        else if (hasPlaylistItems)
+            this.mXMLParser.skipNextElement();
 
-        /* Update the function context. */
-        ctx.state = state;
-        ctx.playlistInfoTable = playlistInfoTable;
-        ctx.playlistName = playlistName;
-        ctx.iTunesPlaylistID = iTunesPlaylistID;
-        ctx.importPlaylist = importPlaylist;
-        ctx.action = action;
-        ctx.hasPlaylistItems = hasPlaylistItems;
-        ctx.dirtyPlaylist = dirtyPlaylist;
-        ITReq.exitFunction();
+        /* Delete playlist if it's empty. */
+        if (this.mImport && this.mPlaylist)
+        {
+            if (this.mPlaylist.isEmpty)
+            {
+                this.mLibrary.remove(this.mPlaylist);
+                this.mPlaylist = null;
+            }
+        }
+
+        /* Compute and store the Songbird playlist signature. */
+        if (this.mImport && this.mPlaylist && (action != "keep"))
+        {
+            sigGen = {};
+            yield this.generateSBPlaylistSig(this.mPlaylist, sigGen);
+            sigGen = sigGen.value;
+            signature = sigGen.getSignature();
+            sigGen.storeSignature(playlistID, signature);
+        }
+
+        /* Clear current playlist object. */
+        this.mPlaylist = null;
     },
 
 
     /*
      * isDirtyPlaylist
      *
-     *   <--                        True if the current Songbird playlist is
+     *   <-- aIsDirty               True if the current Songbird playlist is
      *                              dirty.
      *
      *   This function checks if the current Songbird playlist has been changed
      * since the last time it was imported from iTunes.  If it has, this
-     * function returns true; otherwise, it returns false.
+     * function returns true in aIsDirty; otherwise, it returns false.
      */
 
-    isDirtyPlaylist: function()
+    isDirtyPlaylist: function(aIsDirty)
     {
-        var                         ctx;
-        var                         state;
-
         var                         sigGen;
         var                         signature;
         var                         storedSignature;
         var                         dirtyPlaylist;
 
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-            ctx.state = 1;
-
-        /* Get the function context. */
-        state = ctx.state;
-
         /* Compute the playlist signature. */
-        if (state == 1)
-        {
-            sigGen = this.generateSBPlaylistSig(this.mPlaylist);
-            if (!ITReq.isCallPending())
-            {
-                signature = sigGen.getSignature();
-                state++;
-            }
-        }
+        sigGen = {};
+        yield this.generateSBPlaylistSig(this.mPlaylist, sigGen);
+        sigGen = sigGen.value;
+        signature = sigGen.getSignature();
 
-        /* Check computed signature against stored signature. */
-        if (state == 2)
-        {
-            /* Get the stored signature. */
-            storedSignature = sigGen.retrieveSignature(this.mPlaylist.guid);
+        /* Get the stored signature. */
+        storedSignature = sigGen.retrieveSignature(this.mPlaylist.guid);
 
-            /* If the computed signature is not the same as */
-            /* the stored signature, the playlist is dirty. */
-            if (signature != storedSignature)
-                dirtyPlaylist = true;
-            else
-                dirtyPlaylist = false;
+        /* If the computed signature is not the same as */
+        /* the stored signature, the playlist is dirty. */
+        if (signature != storedSignature)
+            dirtyPlaylist = true;
+        else
+            dirtyPlaylist = false;
 
-            /* Transition to next state. */
-            state++;
-        }
-
-        /* End state. */
-        if (state >= 3)
-            ITReq.completeFunction();
-
-        /* Update the function context. */
-        ctx.state = state;
-        ITReq.exitFunction();
-
-        return (dirtyPlaylist);
+        aIsDirty.value = dirtyPlaylist;
     },
 
 
@@ -2693,8 +2334,6 @@ Component.prototype =
 
     processPlaylistItems: function(action)
     {
-        var                         ctx;
-        var                         state;
         var                         tag = {};
         var                         tagPreText = {};
         var                         track;
@@ -2703,14 +2342,6 @@ Component.prototype =
         var                         updateSBPlaylist;
         var                         done;
 
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-            ctx.state = 0;
-
-        /* Get the function context. */
-        state = ctx.state;
-
         /* Check if the Songbird playlist should be updated. */
         if (this.mImport && (action != "keep"))
             updateSBPlaylist = true;
@@ -2718,16 +2349,11 @@ Component.prototype =
             updateSBPlaylist = false;
 
         /* Process each playlist item. */
-        done = false;
-        while (state == 0)
+        while (true)
         {
             /* Process add playlist track batch if it's full. */
             if (this.addPlaylistTrackBatchFull())
-            {
                 this.addPlaylistTrackBatchProcess();
-                if (ITReq.isCallPending())
-                    break;
-            }
 
             /* Get the next tag. */
             this.mXMLParser.getNextTag(tag, tagPreText);
@@ -2768,41 +2394,16 @@ Component.prototype =
             }
             else if (tag.value == "/array")
             {
-                done = true;
-            }
-
-            /* Check if the playlist items are done. */
-            if (done)
-                state++;
-
-            /* Check if it's time to yield. */
-            if (ITReq.shouldYield())
-            {
-                /* Update status. */
-                ITStatus.mProgress =   (100 * this.mXMLParser.tell())
-                                     / this.mXMLFile.fileSize;
-
-                /* Yield. */
                 break;
             }
+
+            /* Yield if thread should. */
+            yield this.yieldIfShouldWithStatusUpdate();
         }
 
         /* Process the remaining add playlist track batch. */
-        if (state == 1)
-        {
-            if (!this.addPlaylistTrackBatchEmpty())
-                this.addPlaylistTrackBatchProcess();
-            if (!ITReq.isCallPending())
-                state++;
-        }
-
-        /* End state. */
-        if (state >= 2)
-            ITReq.completeFunction();
-
-        /* Update the function context. */
-        ctx.state = state;
-        ITReq.exitFunction();
+        if (!this.addPlaylistTrackBatchEmpty())
+            this.addPlaylistTrackBatchProcess();
     },
 
 
@@ -2909,86 +2510,35 @@ Component.prototype =
     /*
      * generateSBPlaylistSig
      *
-     *   --> playlist               Songbird playlist.
-     *
-     *   <--                        Signature generator.
+     *   --> aPlaylist              Songbird playlist.
+     *   <-- aSigGen                Signature generator.
      *
      *   This function generates a signature for the Songbird playlist specified
-     * by playlist and returns a signature generator object for it.
+     * by playlist and returns a signature generator object for it in aSigGen.
      */
 
-    generateSBPlaylistSig: function(playlist)
+    generateSBPlaylistSig: function(aPlaylist, aSigGen)
     {
-        var                         ctx;
-        var                         state;
         var                         sigGen;
         var                         signature = null;
+        var                         playlistLength;
         var                         i, j;
 
-        /* Initialize the function context. */
-        ctx = ITReq.enterFunction();
-        if (!ctx.state)
-            ctx.state = 1;
-
-        /* Get the function context. */
-        state = ctx.state;
-        sigGen = ctx.sigGen;
-        entries = ctx.entries;
-        rowCount = ctx.rowCount;
-        i = ctx.i;
-
         /* Create a signature generator. */
-        if (state == 1)
-        {
-            sigGen = new ITSig();
-            state++;
-        }
+        sigGen = new ITSig();
 
         /* Generate a signature over all entries. */
-        if (state == 2)
+        playlistLength = aPlaylist.length;
+        for (i = 0; i < playlistLength; i++)
         {
-            /* Initialize loop. */
-            i = 0;
-            state++;
-        }
-        while (state == 3)
-        {
-            /* Check look condition. */
-            if (!(i < playlist.length))
-            {
-                state++;
-                break;
-            }
-
             /* Update the signature with the media GUID. */
-            sigGen.update(playlist.getItemByIndex(i).guid);
+            sigGen.update(aPlaylist.getItemByIndex(i).guid);
 
-            /* Loop. */
-            i++;
-
-            /* Check if it's time to yield. */
-            if (ITReq.shouldYield())
-            {
-                /* Update status. */
-                ITStatus.mProgress =   (100 * this.mXMLParser.tell())
-                                     / this.mXMLFile.fileSize;
-
-                /* Yield. */
-                break;
-            }
+            /* Yield if thread should. */
+            yield this.yieldIfShouldWithStatusUpdate();
         }
 
-        /* End state. */
-        if (state >= 4)
-            ITReq.completeFunction();
-
-        /* Update the function context. */
-        ctx.state = state;
-        ctx.sigGen = sigGen;
-        ctx.i = i;
-        ITReq.exitFunction();
-
-        return (sigGen);
+        aSigGen.value = sigGen;
     }
 };
 
@@ -3778,357 +3328,6 @@ ITSig.prototype =
 /*******************************************************************************
  *******************************************************************************
  *
- * Request processing services.
- *
- *******************************************************************************
- ******************************************************************************/
-
-var ITReq =
-{
-    /***************************************************************************
-     *
-     * Request processing configuration.
-     *
-     **************************************************************************/
-
-    /*
-     * period                       Request processor execution period in
-     *                              milliseconds.
-     * pctCPU                       Request processor CPU execution percentage.
-     */
-
-    period: CompConfig.reqPeriod,
-    pctCPU: CompConfig.reqPctCPU,
-
-
-    /***************************************************************************
-     *
-     * Request processing fields.
-     *
-     **************************************************************************/
-
-    /*
-     * mQueue                       Request queue.
-     * mTimer                       Request processor timer.
-     * mCurrentReq                  Current request being processed.
-     * mCtxStack                    Request function context stack.
-     * mNextCtxIndex                Index of the next function context in stack.
-     * mStartTime                   Start time of request in milliseconds.
-     * mYieldThreshold              Execution time threshold in milliseconds
-     *                              after which request should yield.
-     */
-
-    mQueue: [],
-    mTimer: null,
-    mCurrentReq: null,
-    mCtxStack: [],
-    mNextCtxIndex: 0,
-    mStartTime: 0,
-    mYieldThreshold: 10,
-
-
-    /***************************************************************************
-     *
-     * Public request processing methods.
-     *
-     **************************************************************************/
-
-    /*
-     * initialize
-     *
-     *   This function initializes the request processing services.
-     */
-
-    initialize: function()
-    {
-        /* Create a request processing timer. */
-        this.mTimer = new Timer();
-
-        /* Compute the yield time threshold. */
-        this.mYieldThreshold = (this.period * this.pctCPU) / 100;
-    },
-
-
-    /*
-     * finalize
-     *
-     *   This function finalizes the request processing services.
-     */
-
-    finalize: function()
-    {
-        /* Dispose of the timer. */
-        this.mTimer.cancel();
-        this.mTimer = null;
-    },
-
-
-    /*
-     * start
-     *
-     *   This function starts the processing of requests.  If request processing
-     * was previously stopped, this function will resume processing.
-     */
-
-    start: function()
-    {
-        this.mTimer.cancel();
-        this.mTimer.init(this, "process", null, this.period, 1);
-    },
-
-
-    /*
-     * stop
-     *
-     *   This function stops processing of requests.  Processing may be later
-     * resumed by calling start.
-     */
-
-    stop: function()
-    {
-        this.mTimer.cancel();
-    },
-
-
-    /*
-     * issue
-     *
-     *   --> req                    Request to issue.
-     *
-     *   This function issues the request specified by req.
-     */
-
-    issue: function(req)
-    {
-        this.mQueue.push(req);
-    },
-
-
-    /*
-     * cancel
-     *
-     *   --> req                    Request to cancel.
-     *
-     *   This function cancels the request specified by req.
-     */
-
-    cancel: function(req)
-    {
-        /* Remove the request from the request queue. */
-        var reqIndex = this.mQueue.indexOf(req);
-        if (reqIndex >= 0)
-            this.mQueue.splice(reqIndex, 1);
-
-        /* If the request is the current request, cancel it. */
-        if (this.mCurrentReq == req)
-        {
-            this.mCurrentReq = null;
-            this.mNextCtxIndex = 0;
-            this.mCtxStack = [];
-        }
-    },
-
-
-    /*
-     * enterFunction
-     *
-     *   <--                        Function request context.
-     *
-     *   This function is called when a request function is entered.  This
-     * function returns the request context for the calling function.  If a
-     * context is not available, this function creates a new one and pushes it
-     * onto the request function context stack.
-     */
-
-    enterFunction: function()
-    {
-        var                         ctx = null;
-
-        /* Get the next request function context in the stack. */
-        if (this.mNextCtxIndex < this.mCtxStack.length)
-            ctx = this.mCtxStack[this.mNextCtxIndex];
-
-        /* If the context was not present in the stack, */
-        /* create a new one and push it onto the stack. */
-        if (!ctx)
-        {
-            ctx = {};
-            this.mCtxStack.push(ctx);
-        }
-
-        /* Move to the next context in the stack. */
-        this.mNextCtxIndex++;
-
-        return (ctx);
-    },
-
-
-    /*
-     * exitFunction
-     *
-     *   This function is called when a request function exits.
-     */
-
-    exitFunction: function()
-    {
-        this.mNextCtxIndex--;
-    },
-
-
-    /*
-     * completeFunction
-     *
-     *   This function is called when a request function completes.  It pops the
-     * request function context off of the stack.
-     */
-
-    completeFunction: function()
-    {
-        this.mCtxStack.pop();
-    },
-
-
-    /*
-     * isCallPending
-     *
-     *   <-- true                   A request function call is pending.
-     *       false                  A request function call is not pending.
-     *
-     *   If a request function call is pending from the caller of isCallPending,
-     * isCallPending returns true; otherwise, it returns false.
-     *
-     *   A request function call is pending if the current request function
-     * context is not the last one in the context stack.
-     */
-
-    isCallPending: function()
-    {
-        var pending;
-
-        /* If there is no next request function */
-        /* context, there are no calls pending. */
-        if (this.mNextCtxIndex >= this.mCtxStack.length)
-            pending = false;
-        else
-            pending = true;
-
-        return (pending);
-    },
-
-
-    /*
-     * shouldYield
-     *
-     *   <-- true                   Request function should yield.
-     *
-     *   This function determines whether the request should yield to let the
-     * system get some processing time.  If it should yield, this function
-     * returns true.
-     *
-     *   The request processing services monitor the amount of time spent by the
-     * request.  If this time exceeds a certain threshold, then the request
-     * should yield.
-     */
-
-    shouldYield: function()
-    {
-        var                         currentTime;
-
-        /* Get the current time. */
-        currentTime = (new Date()).getTime();
-
-        /* Determine whether request should yield. */
-        if ((currentTime - this.mStartTime) >= this.mYieldThreshold)
-            return (true);
-        else
-            return (false);
-    },
-
-
-    /***************************************************************************
-     *
-     * Private request processing methods.
-     *
-     **************************************************************************/
-
-    /*
-     * process
-     *
-     *   This function processes requests in the queue.
-     */
-
-    process: function()
-    {
-        try { this.process1(); }
-        catch (err) { Components.utils.reportError(err); }
-    },
-    process1: function()
-    {
-        var                         req;
-        var                         endTime;
-        var                         adjTime;
-
-        /* Get the current request. */
-        if (!this.mCurrentReq)
-        {
-            this.mCurrentReq = this.mQueue.pop();
-            this.mNextCtxIndex = 0;
-            this.mCtxStack = [];
-        }
-
-        /* Do nothing if no requests pending. */
-        if (!this.mCurrentReq)
-            return;
-
-        /* Get the request start time. */
-        this.mStartTime = (new Date()).getTime();
-
-        /* Call the request function, completing */
-        /* the request on any exceptions.        */
-        try
-        {
-            this.mCurrentCtxIndex = 0;
-            req = this.mCurrentReq;
-            req.func.apply(null, req.args);
-        }
-        catch (e)
-        {
-            /* Dump exception. */
-            Components.utils.reportError(e);
-
-            /* Complete request. */
-            this.mCurrentReq = null;
-        }
-
-        /* Determine the timer period adjustment. */
-        {
-            /* Get the end time. */
-            endTime = (new Date()).getTime();
-
-            /* Adjust the period by the amount of */
-            /* excess time over the threshold.    */
-            adjTime = endTime - this.mStartTime - this.mYieldThreshold;
-            if (adjTime < 0)
-                adjTime = 0;
-
-            /* Limit the adjustment. */
-            if (adjTime > 1000)
-                adjTime = 1000;
-        }
-
-        /* Set the timer period. */
-        this.mTimer.setDelay(this.period + adjTime);
-
-        /* If request function call is not pending, the request is complete. */
-        if (!this.isCallPending())
-            this.mCurrentReq = null;
-    }
-};
-
-
-/*******************************************************************************
- *******************************************************************************
- *
  * Status UI services.
  *
  *******************************************************************************
@@ -4161,7 +3360,7 @@ var ITStatus =
 
     /***************************************************************************
      *
-     * Public request processing methods.
+     * Public status UI methods.
      *
      **************************************************************************/
 
@@ -4265,173 +3464,6 @@ var ITStatus =
 
         /* Log status. */
         Log("Status: " + statusText + "\n");
-    }
-};
-
-
-/*******************************************************************************
- *******************************************************************************
- *
- * Timer services.
- *zzz too generic.  Confusing with nsITimer.
- *
- *******************************************************************************
- ******************************************************************************/
-
-/*
- * Timer
- *
- *   This function is the constructor for the timer class.
- */
-
-function Timer()
-{
-}
-
-/* Set the constructor. */
-Timer.prototype.constructor = Timer;
-
-/* Define the timer class. */
-Timer.prototype =
-{
-    /***************************************************************************
-     *
-     * Timer fields.
-     *
-     **************************************************************************/
-
-    /*
-     *   timer                      Timer component object.
-     *   handlerObj                 Timer handler object.
-     *   handlerName                Timer handler object function name.
-     *   handlerArg                 Timer handler object function argument.
-     */
-
-    timer: null,
-    handlerObj: null,
-    handlerName: null,
-    handlerArg: null,
-
-
-    /***************************************************************************
-     *
-     * Timer interface functions.
-     *
-     **************************************************************************/
-
-    /*
-     * init
-     *
-     *   --> handlerObj             Handler object.
-     *   --> handlerName            Handler function name.
-     *   --> handlerArg             Handler function argument.
-     *   --> delay                  Timer delay.
-     *   --> type                   Type of timer.
-     *
-     *   This function initializes the timer of type specified by type to expire
-     * after the delay specified in milliseconds by delay.  The values for type
-     * are the same as for the nsITimer interface.
-     *   The timer is handled by the object specified by handlerObj using the
-     * object function whose name is specified by handlerName.  The handler
-     * function is passed the argument specified by handlerArg.
-     */
-
-    init: function(handlerObj, handlerName, handlerArg, delay, type)
-    {
-        /* Create the timer component object. */
-        timer = Components.classes["@mozilla.org/timer;1"].
-                                createInstance(Components.interfaces.nsITimer);
-
-        /* Set up the timer object. */
-        this.timer = timer;
-        this.handlerObj = handlerObj;
-        this.handlerName = handlerName;
-        this.handlerArg = handlerArg;
-
-        /* Initialize the timer component object. */
-        timer.init(this, delay, type);
-    },
-
-
-    /*
-     * cancel
-     *
-     *   This function cancels the timer.
-     */
-
-    cancel: function()
-    {
-        if (this.timer)
-            this.timer.cancel();
-        this.timer = null;
-    },
-
-
-    /*
-     * setDelay
-     *
-     *   --> delay                  Delay in milliseconds.
-     *
-     *   This function sets the timer delay to the value specified by delay.
-     */
-
-    setDelay: function(delay)
-    {
-        this.timer.delay = delay;
-    },
-
-
-    /***************************************************************************
-     *
-     * Timer observer interface functions.
-     *
-     **************************************************************************/
-
-    /*
-     * observe
-     *
-     *   --> subject                Event subject.
-     *   --> topic                  Event topic.
-     *   --> data                   Event data.
-     *
-     *   This function observes the timer event specified by subject, topic, and
-     * data.
-     */
-
-    observe: function(subject, topic, data)
-    {
-        /* Handle the timer event. */
-        this.handlerObj[this.handlerName](this.handlerArg);
-    },
-
-
-    /***************************************************************************
-     *
-     * Timer supports interface functions.
-     *
-     **************************************************************************/
-
-    /*
-     * QueryInterface
-     *
-     *   --> interfaceID            Requested interface.
-     *
-     *   NS_ERROR_NO_INTERFACE      Requested interface is not supported.
-     *
-     *   This function returns a timer object implementing the interface
-     * specified by interfaceID.
-     */
-
-    QueryInterface: function(interfaceID)
-    {
-        /* Check for supported interfaces. */
-        if (   !interfaceID.equals(Components.interfaces.nsISupports)
-            && !interfaceID.equals(Components.interfaces.nsIObserver))
-        {
-            throw(Components.results.NS_ERROR_NO_INTERFACE);
-        }
-
-        return(this);
     }
 };
 
@@ -4612,12 +3644,12 @@ sbITunesImporterJob.prototype = {
   //
   // iTunes importer job fields.
   //
-  //   _jobRequest              Importer job request object.
+  //   _jobThread               Importer job thread object.
   //   _updateProgressTimer     Timer used to delay job progress updates to
   //                            limit update rate.
   //
 
-  _jobRequest: null,
+  _jobThread: null,
   _updateProgressTimer: null,
 
 
@@ -4690,13 +3722,13 @@ sbITunesImporterJob.prototype = {
 
 
   /**
-   * Set the importer job request object.
+   * Set the importer job thread object.
    *
-   * \param aJobRequest         Importer job request object.
+   * \param aJobThread          Importer job thread object.
    */
 
-  setJobRequest: function sbITunesImporterJob_setJobRequest(aJobRequest) {
-    this._jobRequest = aJobRequest;
+  setJobThread: function sbITunesImporterJob_setJobThread(aJobThread) {
+    this._jobThread = aJobThread;
     this._canCancel = true;
   },
 
@@ -4713,10 +3745,10 @@ sbITunesImporterJob.prototype = {
    */
 
   cancel: function sbITunesImporterJob_cancel() {
-    // Cancel the job request.
-    if (this._jobRequest)
-      ITReq.cancel(this._jobRequest);
-    this._jobRequest = null;
+    // Terminate the job thread.
+    if (this._jobThread)
+      this._jobThread.terminate();
+    this._jobThread = null;
 
     // Update import status.
     ITStatus.mStageText = SBString("import_library.job.status.cancelled");

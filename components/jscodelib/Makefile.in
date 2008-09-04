@@ -46,6 +46,7 @@ SONGBIRD_JSMODULES = $(srcdir)/ArrayConverter.jsm \
                      $(srcdir)/DropHelper.jsm \
                      $(srcdir)/DOMUtils.jsm \
                      $(srcdir)/FolderUtils.jsm \
+                     $(srcdir)/GeneratorThread.jsm \
                      $(srcdir)/PlatformUtils.jsm \
                      $(srcdir)/RDFHelper.jsm \
                      $(srcdir)/SBDataRemoteUtils.jsm \
