@@ -26,6 +26,7 @@
 
 #include "nsISupports.idl"
 interface nsIDOMWindow;
+interface nsIDOMXULElement;
 interface nsISimpleEnumerator;
 
 /**       
@@ -82,7 +83,7 @@ interface sbIDisplayPaneContentInfo : nsISupports
  * A display pane instantiator is a component that can render a display pane to
  * the user.  It is associated with a particular content group.
  */
-[scriptable, uuid(8ffc6211-967a-48ac-9d9f-2952d6bbc4de)]
+[scriptable, uuid(316ba9ab-5fda-4bc3-b4de-dbb8211a4785)]
 interface sbIDisplayPaneInstantiator : nsISupports
 {
   /**
@@ -106,6 +107,11 @@ interface sbIDisplayPaneInstantiator : nsISupports
    */
   readonly attribute nsIDOMWindow contentWindow;
 
+  /**
+   * the display pane this content is loaded into
+   */
+  readonly attribute nsIDOMXULElement displayPane;
+  
   /**
    * load the given content in the instantiator
    */

@@ -89,13 +89,22 @@ var AlbumArtPaneController = {
     var windowHeight = window.innerHeight;
 
     if (windowHeight != windowWidth) {
-      var displayPane = window.top.document.getElementById('displaypane_servicepane_bottom');
-      if (displayPane) {
-        var displayPaneHeaderSize = displayPane.height - windowHeight;
-        displayPane.height = windowWidth + displayPaneHeaderSize;
-        
-        // Indicate that we have resized the pane.
-        return false;
+      // First determine if we are in the service pane display pane
+      var displayPaneManager = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                                 .getService(Ci.sbIDisplayPaneManager);
+      var dpInstantiator = displayPaneManager.getInstantiatorForWindow(window);
+
+      if (dpInstantiator &&
+          dpInstantiator.contentGroup == "servicepane") {
+        var displayPane = dpInstantiator.displayPane;
+        if (displayPane) {
+          // Account for the displayPane header.
+          var displayPaneHeaderSize = displayPane.height - windowHeight;
+          displayPane.height = windowWidth + displayPaneHeaderSize;
+      
+          // Indicate that we have resized the pane.
+          return false;
+        }
       }
     }
     return true;

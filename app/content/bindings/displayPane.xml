@@ -198,7 +198,13 @@
       </xbl:property>
       <xbl:property name="contentWindow" readonly="true">
         <xbl:getter><![CDATA[
-          return document.getAnonymousElementByAttribute(this, "anonid", "content");
+          var elem = document.getAnonymousElementByAttribute(this, "anonid", "content");
+          return elem.contentWindow;
+        ]]></xbl:getter>
+      </xbl:property>
+      <xbl:property name="displayPane" readonly="true">
+        <xbl:getter><![CDATA[
+          return this;
         ]]></xbl:getter>
       </xbl:property>
       <xbl:property name="popup" readonly="true">
