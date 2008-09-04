@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbAddonBundleUpdateService.js \
+SONGBIRD_COMPONENTS = $(srcdir)/sbAddOnBundleUpdateService.js \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk
