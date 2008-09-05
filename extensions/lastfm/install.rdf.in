@@ -19,6 +19,7 @@
     <em:name>Last.fm</em:name>
     <em:description>Publish your playback history to Last.fm</em:description>
     <em:creator>Ian McKellar</em:creator>
+    <em:contributor>Antoine Turmel (French Translation)</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
     <em:type>2</em:type>
     <em:iconURL>chrome://lastfm/content/extensionicon.png</em:iconURL>

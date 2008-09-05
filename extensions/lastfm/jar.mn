@@ -1,6 +1,7 @@
 lastfm.jar:
 % content lastfm  %content/
 % locale  lastfm  en-US  %locale/en-US/
+% locale  lastfm  fr-FR  %locale/fr-FR/
 % skin    lastfm  classic/1.0 %skin/
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://lastfm/content/browser-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://lastfm/content/mini-overlay.xul
@@ -11,6 +12,8 @@ lastfm.jar:
   content/extensionicon.png       (chrome/content/extensionicon.png)
   locale/en-US/overlay.dtd        (chrome/locale/en-US/overlay.dtd)
   locale/en-US/overlay.properties (chrome/locale/en-US/overlay.properties)
+  locale/fr-FR/overlay.dtd        (chrome/locale/fr-FR/overlay.dtd)
+  locale/fr-FR/overlay.properties (chrome/locale/fr-FR/overlay.properties)
   skin/as.png                     (chrome/skin/as.png)
   skin/busy.png                   (chrome/skin/busy.png)
   skin/disabled.png               (chrome/skin/disabled.png)
