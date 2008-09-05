@@ -274,8 +274,9 @@ GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
                           gstdirectsoundsink \
                           $(NULL)
 
-GST_PLUGINS_BAD_NAMES += acmenc \
-                         $(NULL)
+# XXXAus: Re-enable this when the acm plugin is checked-in :)
+#GST_PLUGINS_BAD_NAMES += acmenc \
+#                         $(NULL)
 
 GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \
          $(addsuffix -$(GLIB_VERSION)-0$(DLL_SUFFIX), $(GLIB_NAMES)))
