@@ -287,7 +287,7 @@ GETTEXT = $(addprefix $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/bin/, \
             $(addsuffix $(DLL_SUFFIX), $(GETTEXT_NAMES)))
 
 GSTREAMER = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/bin/, \
-              $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX)))
+              $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX), $(GSTREAMER_NAMES)))
 
 GST_PLUGINS_BASE_LIBS = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/bin/, \
                           $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX), $(GST_PLUGINS_BASE_LIBS_NAMES)))
