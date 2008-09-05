@@ -33,6 +33,7 @@ var kPlaylistCommands = {
   MEDIAITEM_EDIT                 : "{07320d73-3582-4dd5-8751-a0140980c210}",
   MEDIAITEM_DOWNLOAD             : "{a131503b-067b-48f3-bd3e-08262a5fb87e}",
   MEDIAITEM_RESCAN               : "{5b735afd-e55e-4caa-a8c5-4979ba6b03bc}",
+  MEDIAITEM_REVEAL               : "{389d85d8-6387-4d9f-bac8-28ce3f4bc470}",
   MEDIAITEM_SUBSCRIBE            : "{5b7dbb49-6cef-4370-8d49-c3e131cdc49a}",
   MEDIAITEM_ADDTOLIBRARY         : "{63fd715b-f700-4bb5-945c-95a496197e83}",
   MEDIAITEM_ADDTOPLAYLIST        : "{5c6242bd-3f51-4b49-8978-6d1a4495ae77}",

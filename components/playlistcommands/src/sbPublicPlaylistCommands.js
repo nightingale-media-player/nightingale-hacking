@@ -109,6 +109,7 @@ PublicPlaylistCommands.prototype = {
   m_cmd_Edit                      : null, // edit the selected track(s)
   m_cmd_Download                  : null, // download the selected track(s)
   m_cmd_Rescan                    : null, // rescan the selected track(s)
+  m_cmd_Reveal                    : null, // reveal the selected track
   m_cmd_CopyTrackLocation         : null, // copy the select track(s) location(s)
   m_cmd_ShowDownloadPlaylist      : null, // switch the browser to show the download playlist
   m_cmd_PauseResumeDownload       : null, // auto-switching pause/resume track download
@@ -357,6 +358,37 @@ PublicPlaylistCommands.prototype = {
                                                   plCmd_IsAnyTrackSelected);
 
       // --------------------------------------------------------------------------
+      // The REVEAL button
+      // --------------------------------------------------------------------------
+
+
+      this.m_cmd_Reveal = new PlaylistCommandsBuilder();
+
+      this.m_cmd_Reveal.appendAction(null,
+                                     "library_cmd_reveal",
+                                     "&command.reveal",
+                                     "&command.tooltip.reveal",
+                                     plCmd_Reveal_TriggerCallback);
+
+      this.m_cmd_Reveal.setCommandShortcut(null,
+                                           "library_cmd_reveal",
+                                           "&command.shortcut.key.reveal",
+                                           "&command.shortcut.keycode.reveal",
+                                           "&command.shortcut.modifiers.reveal",
+                                           true);
+
+      function plCmd_isSelectionRevealable(aContext, aSubMenuId, aCommandId, aHost) {
+        var selection = unwrap(aContext.playlist).mediaListView.selection;
+        if (selection.count != 1) { return false; }
+        var items = selection.selectedIndexedMediaItems;
+        var item = items.getNext().QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
+        return (item.contentSrc.scheme == "file")
+      }
+      this.m_cmd_Reveal.setCommandEnabledCallback(null,
+                                                  "library_cmd_reveal",
+                                                  plCmd_isSelectionRevealable);
+
+      // --------------------------------------------------------------------------
       // The COPY TRACK LOCATION button
       // --------------------------------------------------------------------------
 
@@ -556,6 +588,7 @@ PublicPlaylistCommands.prototype = {
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_RESCAN, this.m_cmd_Rescan);
+      this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_REVEAL, this.m_cmd_Reveal);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTODEVICE, SBPlaylistCommand_AddToDevice);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
@@ -585,6 +618,9 @@ PublicPlaylistCommands.prototype = {
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_rescan",
                                                     this.m_cmd_Rescan);
+      this.m_defaultCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_reveal",
+                                                    this.m_cmd_Reveal);
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_addtoplaylist",
                                                     SBPlaylistCommand_AddToPlaylist);
@@ -877,6 +913,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_RESCAN, this.m_cmd_Rescan);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_REVEAL, this.m_cmd_Reveal);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTODEVICE, SBPlaylistCommand_AddToDevice);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
@@ -969,6 +1006,7 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_Edit.shutdown();
     this.m_cmd_Download.shutdown();
     this.m_cmd_Rescan.shutdown();
+    this.m_cmd_Reveal.shutdown();
     this.m_cmd_CopyTrackLocation.shutdown();
     this.m_cmd_ShowDownloadPlaylist.shutdown();
     this.m_cmd_PauseResumeDownload.shutdown();
@@ -1099,6 +1137,53 @@ function plCmd_Rescan_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
                               .getService(Ci.sbIFileMetadataService);
       var job = metadataService.read(mediaItemArray);
       SBJobUtils.showProgressDialog(job, null);
+    }
+  }
+  catch( err )
+  {
+    Cu.reportError(err);
+  }
+}
+
+function plCmd_Reveal_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  try
+  {
+    var playlist = unwrap(aContext.playlist);
+    var window = unwrap(aContext.window);
+
+    if (playlist.mediaListView.selection.count != 1) { return; }
+    
+    var selection = playlist.mediaListView.selection.selectedIndexedMediaItems;
+    var item = selection.getNext().QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
+    if (!item) {
+      Cu.reportError("No item selected in reveal playlist command.")
+    }
+    
+    var uri = item.contentSrc;
+    if (!uri || uri.scheme != "file") { return; }
+    
+    let f = uri.QueryInterface(Ci.nsIFileURL).file;
+    try {
+      // Show the directory containing the file and select the file
+      f.QueryInterface(Ci.nsILocalFile);
+      f.reveal();
+    } catch (e) {
+      // If reveal fails for some reason (e.g., it's not implemented on unix or
+      // the file doesn't exist), try using the parent if we have it.
+      let parent = f.parent.QueryInterface(Ci.nsILocalFile);
+      if (!parent)
+        return;
+  
+      try {
+        // "Double click" the parent directory to show where the file should be
+        parent.launch();
+      } catch (e) {
+        // If launch also fails (probably because it's not implemented), let the
+        // OS handler try to open the parent
+        var protocolSvc = Cc["@mozilla.org/uriloader/external-protocol-service;1"]
+                            .getService(Ci.nsIExternalProtocolService);
+        protocolSvc.loadUrl(parent);
+      }
     }
   }
   catch( err )

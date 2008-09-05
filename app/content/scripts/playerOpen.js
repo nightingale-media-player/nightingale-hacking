@@ -811,6 +811,55 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
   }
 }
 
+function SBRevealFile( initialTab, parentWindow ) {
+  if (!parentWindow) parentWindow = window;
+  var browser;
+  if (typeof SBGetBrowser == 'function') 
+    browser = SBGetBrowser();
+  if (!browser || !browser.currentMediaPage) { return; }
+  var view = browser.currentMediaPage.mediaListView;
+  if (!view) { return; }
+  
+  var numSelected = view.selection.count;
+  if (numSelected != 1) { return; }
+  
+  var item = null;
+  var selection = view.selection.selectedIndexedMediaItems;
+  item = selection.getNext().QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
+  
+  if (!item) {
+    Cu.reportError("Failed to get media item to reveal.")
+    return;
+  }
+  
+  var uri = item.contentSrc;
+  if (!uri || uri.scheme != "file") { return; }
+  
+  let f = uri.QueryInterface(Ci.nsIFileURL).file;
+  try {
+    // Show the directory containing the file and select the file
+    f.QueryInterface(Ci.nsILocalFile);
+    f.reveal();
+  } catch (e) {
+    // If reveal fails for some reason (e.g., it's not implemented on unix or
+    // the file doesn't exist), try using the parent if we have it.
+    let parent = f.parent.QueryInterface(Ci.nsILocalFile);
+    if (!parent)
+      return;
+  
+    try {
+      // "Double click" the parent directory to show where the file should be
+      parent.launch();
+    } catch (e) {
+      // If launch also fails (probably because it's not implemented), let the
+      // OS handler try to open the parent
+      var protocolSvc = Cc["@mozilla.org/uriloader/external-protocol-service;1"]
+                          .getService(Ci.nsIExternalProtocolService);
+      protocolSvc.loadUrl(parent);
+    }
+  }
+}
+
 function SBSubscribe(mediaList, defaultUrl, parentWindow)
 {
   // Make sure the argument is a dynamic media list

@@ -1725,6 +1725,7 @@
         <parameter name="evt"/>
         <body>
 <![CDATA[
+  window.updateCommands("tree-select");
   this.refreshCommands(true);
   this.sendSelChangeEvent();
 ]]>

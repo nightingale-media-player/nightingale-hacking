@@ -75,6 +75,8 @@ var gSongbirdWindowController =
       SBTrackEditorOpen("edit"); // open to the 'edit' tab
     } else if (aCommand == "cmd_viewmetadata") {
       SBTrackEditorOpen("summary"); // open to the 'summary' tab
+    } else if (aCommand == "cmd_reveal") {
+      SBRevealFile(); // reveal the selected file
     } else if (aCommand == "cmd_control_playpause") {
       var pps = gPPS ||
                 Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
@@ -107,11 +109,12 @@ var gSongbirdWindowController =
   {
     switch(aCommand) {
       case "cmd_find":
-      case "cmd_fingAgain":
+      case "cmd_findAgain":
         return true;
       case "cmd_metadata":
       case "cmd_editmetadata":
       case "cmd_viewmetadata":
+      case "cmd_reveal":
         return true;
       case "cmd_control_playpause":
         return true;
@@ -140,6 +143,25 @@ var gSongbirdWindowController =
           }
         }
         return false;
+      }
+      case "cmd_reveal": {
+        var browser = null;
+        if (typeof SBGetBrowser == 'function') 
+          browser = SBGetBrowser();
+        if (!browser || !browser.currentMediaPage) { return; }
+        
+        var view = browser.currentMediaPage.mediaListView;
+        if (!view || view.selection.count != 1) { return; }
+        
+        var selection = view.selection.selectedIndexedMediaItems;
+        var item = selection.getNext()
+                            .QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
+        if (!item) {
+          return false;
+        }
+    
+        var uri = item.contentSrc;
+        return (uri && uri.scheme == "file");
       }
       case "cmd_control_playpause":
         return true;
@@ -271,9 +293,7 @@ var gSongbirdPlayerWindow = {
           Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                     .getService(Components.interfaces.sbIPlaylistPlayback);
  
-        // XXX Tied to the treeView at the moment.  This needs to be made generic.
-        playbackService.playView(view, 
-            Math.max(view.treeView.selection.currentIndex, -1));
+        playbackService.playView(view, Math.max(view.selection.currentIndex, -1));
         
         // Since we've handled this play event, prevent any fallback action from
         // occurring.

@@ -1207,7 +1207,7 @@ TrackEditorURILabel.prototype = {
   
   revealURI: function(uri) {
     // Cribbed from mozilla/toolkit/mozapps/downloads/content/downloads.js 
-    f = uri.QueryInterface(Ci.nsIFileURL).file;
+    var f = uri.QueryInterface(Ci.nsIFileURL).file;
     
     try {
       // Show the directory containing the file and select the file

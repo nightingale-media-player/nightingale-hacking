@@ -1038,6 +1038,7 @@ function goUpdateGlobalMetadataMenuItems()
   goUpdateCommand("cmd_metadata");
   goUpdateCommand("cmd_editmetadata");
   goUpdateCommand("cmd_viewmetadata");
+  goUpdateCommand("cmd_reveal");
 }
 
 /**
