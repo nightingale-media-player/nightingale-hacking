@@ -232,6 +232,7 @@ GST_PLUGINS_GOOD_NAMES = gstalaw \
                          gstdebug \
                          gsteffectv \
                          gstequalizer \
+                         gstflac \
                          gstflxdec \
                          gstgamma \
                          gstgoom \
@@ -262,15 +263,19 @@ GST_PLUGINS_UGLY_NAMES = gstmpegaudioparse \
                          gstasf \
                          $(NULL)
 
-GST_PLUGINS_BAD_NAMES = gstreplaygain \
+GST_PLUGINS_BAD_NAMES = gstmozillasrc \
+                        gstaiffparse \
+                        gstreplaygain \
                         $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
 
 GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
                           gstdirectsoundsink \
-                          gstflac \
                           $(NULL)
+
+GST_PLUGINS_BAD_NAMES += acmenc \
+                         $(NULL)
 
 GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \
          $(addsuffix -$(GLIB_VERSION)-0$(DLL_SUFFIX), $(GLIB_NAMES)))
@@ -281,10 +286,8 @@ LIBICONV = $(addprefix $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/bin/, \
 GETTEXT = $(addprefix $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/bin/, \
             $(addsuffix $(DLL_SUFFIX), $(GETTEXT_NAMES)))
 
-# XXX remove the filter-out stuff when new gst lands
 GSTREAMER = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/bin/, \
-              $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX), \
-                $(filter-out gstnet, $(GSTREAMER_NAMES))))
+              $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX)))
 
 GST_PLUGINS_BASE_LIBS = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/bin/, \
                           $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX), $(GST_PLUGINS_BASE_LIBS_NAMES)))
@@ -346,7 +349,6 @@ ifeq (macosx,$(SB_PLATFORM))
 
 GST_PLUGINS_GOOD_NAMES += gstosxaudio \
                           gstosxvideosink \
-                          gstflac \
                           $(NULL)
 
 GST_PLUGINS_BAD_NAMES += gstqtwrapper \
@@ -422,7 +424,7 @@ GST_PLUGINS_BASE_NAMES += gstalsa \
                           gstxvimagesink \
                           $(NULL)
 
-GST_PLUGINS_GOOD_NAMES += gstflac \
+GST_PLUGINS_GOOD_NAMES += gstpulse \
                           $(NULL)
 
 GSTREAMER = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/lib, \
