@@ -382,6 +382,11 @@ LastFm.onShouldScrobbleChanged = function LastFm_onShouldScrobbleChanged(val) {
   this.updateStatus();
 }
 
+// userLoggedOut changed
+LastFm.onUserLoggedOutChanged = function LastFm_onUserLoggedOutChanged(val) {
+  // we don't care
+}
+
 // update the status icon's icon
 LastFm.setStatusIcon = function LastFm_setStatusIcon(aIcon) {
   this._statusIcon.setAttribute('src', aIcon);
