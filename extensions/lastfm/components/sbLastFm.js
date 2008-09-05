@@ -703,7 +703,20 @@ function sbLastFm_apiCall(method, params, responseCallback) {
 sbLastFm.prototype.scrobble =
 function sbLastFm_scrobble() {
   var entry_list = [];
-  enumerate(this._playbackHistory.entries,
+  var enumerator;
+  try {
+    enumerator = this._playbackHistory.entries;
+  } catch(e) {
+    // fetching the playback history enumerator failed.
+    // we need to clear the playback history
+    // see bug 12195
+    this._playbackHistory.clear();
+    Cu.reportError('Playback history enumeration failed, playback history has'+
+                   ' been cleared. ('+e+')');
+    // we've been forced to clear our history, not a lot to scrobble now
+    return;
+  }
+  enumerate(enumerator,
             function(e) {
               e.QueryInterface(Ci.sbIPlaybackHistoryEntry);
               if (!e.hasAnnotation(ANNOTATION_SCROBBLED) &&
