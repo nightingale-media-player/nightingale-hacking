@@ -32,8 +32,8 @@
 
 <!DOCTYPE window SYSTEM "chrome://albumart/locale/albumArt.dtd">
 
-<window onload="AlbumArtPaneController.onLoad();"
-        onunload="AlbumArtPaneController.onUnload();"
+<window onload="AlbumArt.onLoad();"
+        onunload="AlbumArt.onUnload();"
         xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 

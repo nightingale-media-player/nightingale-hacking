@@ -46,7 +46,7 @@
 /**
  * Now Playing part of the stack
  */
-.albumArtNowPlayingContainer{
+.albumArtNowPlayingContainer {
   -moz-box-flex: 1;
   -moz-box-align: center;
   -moz-box-pack: center;
@@ -77,7 +77,7 @@
 /**
  * Now Selected part of the stack
  */
-.albumArtNowSelectedContainer{
+.albumArtNowSelectedContainer {
   -moz-box-flex: 1;
   -moz-box-align: center;
   -moz-box-pack: center;

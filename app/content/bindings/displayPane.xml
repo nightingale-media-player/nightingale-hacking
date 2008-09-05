@@ -48,7 +48,7 @@
     <xbl:content>
       <vbox flex="1">
         <hbox>
-          <hbox class="sb-displaypane-header" flex="1">
+          <hbox anonid="titlebar" class="sb-displaypane-header" flex="1">
             <vbox pack="center">
               <!-- the extra vbox is to make sure the height of the image does not
                    affect the height of the other elements (in particular, the
@@ -438,6 +438,14 @@
           var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
                                   .getService(Components.interfaces.sbIDisplayPaneManager);
           paneMgr.unregisterInstantiator(this);
+        ]]></xbl:body>
+      </xbl:method>
+      <xbl:method name="makeClickableTitleBar">
+        <xbl:parameter name="aCallback"/>
+        <xbl:body><![CDATA[
+          var titleBar = this._getElem("titlebar");
+          titleBar.addEventListener("click", aCallback, false);
+          titleBar.setAttribute("button", true);
         ]]></xbl:body>
       </xbl:method>
     </xbl:implementation>

@@ -136,3 +136,10 @@ menuitem.displaypane-menuitem[recommended] {
 
 .sb-displaypane-header > vbox > .favicon {
 }
+
+.sb-displaypane-header[button="true"]:hover {
+  background-image:url('chrome://songbird/skin/display-pane/bg-header-highlight.png');
+}
+.sb-displaypane-header[button="true"]:active {
+  background-image:url('chrome://songbird/skin/display-pane/bg-header-active.png');
+}
