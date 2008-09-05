@@ -173,8 +173,50 @@ sbMediacoreManager::Init()
   success = mFactories.Init(SB_FACTORY_HASHTABLE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  // XXXAus: Find available factories registered in mediacore factory category
-  //         (when we have some mediacores implemented).
+  // Register all factories.
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsCOMPtr<nsISimpleEnumerator> categoryEnum;
+  
+  nsCOMPtr<nsICategoryManager> cm =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = cm->EnumerateCategory(SB_MEDIACORE_FACTORY_CATEGORY, 
+                             getter_AddRefs(categoryEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasMore = PR_FALSE;
+  while (NS_SUCCEEDED(categoryEnum->HasMoreElements(&hasMore)) && 
+         hasMore) {
+    
+    nsCOMPtr<nsISupports> ptr;
+    if (NS_SUCCEEDED(categoryEnum->GetNext(getter_AddRefs(ptr))) && 
+        ptr) {
+
+      nsCOMPtr<nsISupportsCString> stringValue(do_QueryInterface(ptr));
+      
+      nsCString factoryName;
+      nsresult rv = NS_ERROR_UNEXPECTED;
+
+      if (stringValue && 
+          NS_SUCCEEDED(stringValue->GetData(factoryName))) {
+        
+        char * contractId;
+        rv = cm->GetCategoryEntry(SB_MEDIACORE_FACTORY_CATEGORY, 
+                                  factoryName.get(), &contractId);
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        nsCOMPtr<sbIMediacoreFactory> factory =
+          do_CreateInstance(contractId , &rv);
+        NS_Free(contractId);
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        rv = RegisterFactory(factory);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
 
   // XXXAus: Initialize default sequencer (when it's implemented).
 
@@ -337,7 +379,7 @@ sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
 
   nsAutoMonitor mon(mMonitor);
 
-
+  // XXXAus: Implement this when implementing the default sequencer!
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 

@@ -30,6 +30,11 @@
 */
 #include "sbBaseMediacore.h"
 
+#include <nsIClassInfoImpl.h>
+#include <nsIProgrammingLanguage.h>
+
+#include <nsMemory.h>
+
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbBaseMediacore:5
@@ -43,8 +48,16 @@ static PRLogModuleInfo* gBaseMediacore = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacore, 
-                              sbIMediacore)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseMediacore, 
+                              sbIMediacore,
+                              nsIClassInfo)
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbBaseMediacore,
+                             sbIMediacore,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbBaseMediacore)
+NS_IMPL_THREADSAFE_CI(sbBaseMediacore)
 
 sbBaseMediacore::sbBaseMediacore()
 : mLock(nsnull)

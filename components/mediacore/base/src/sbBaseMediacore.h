@@ -34,6 +34,8 @@
 
 #include <sbIMediacore.h>
 
+#include <nsIClassInfo.h>
+
 #include <sbIMediacoreCapabilities.h>
 #include <sbIMediacoreSequence.h>
 #include <sbIMediacoreStatus.h>
@@ -42,10 +44,12 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
-class sbBaseMediacore : public sbIMediacore
+class sbBaseMediacore : public sbIMediacore,
+                        public nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_NSICLASSINFO
   NS_DECL_SBIMEDIACORE
 
   sbBaseMediacore();

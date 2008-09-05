@@ -42,12 +42,15 @@ interface sbIMediacoreFactory : nsISupports
 
 %{C++
 
-#include "nsCOMPtr.h"
-#include "nsIComponentManager.h"
-#include "nsICategoryManager.h"
-#include "nsIServiceManager.h"
-#include "nsStringGlue.h"
-#include "nsXPCOMCID.h"
+#include <nsIComponentManager.h>
+#include <nsICategoryManager.h>
+#include <nsIGenericFactory.h>
+#include <nsIServiceManager.h>
+
+#include <nsCOMPtr.h>
+#include <nsServiceManagerUtils.h>
+#include <nsStringGlue.h>
+#include <nsXPCOMCID.h>
 
 class nsIFile;
 struct nsModuleComponentInfo;

@@ -72,14 +72,14 @@ sbBaseMediacoreFactory::~sbBaseMediacoreFactory()
 }
 
 nsresult 
-sbBaseMediacoreFactory::Init()
+sbBaseMediacoreFactory::InitBaseMediacoreFactory()
 {
-  TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
+  TRACE(("sbBaseMediacoreFactory[0x%x] - InitBaseMediacoreFactory", this));
 
   mLock = nsAutoLock::NewLock("sbBaseMediacoreFactory::mLock");
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
-  return OnInit();
+  return OnInitBaseMediacoreFactory();
 }
 
 nsresult 
@@ -162,7 +162,7 @@ sbBaseMediacoreFactory::Create(const nsAString & aInstanceName,
 }
 
 /*virtual*/ nsresult 
-sbBaseMediacoreFactory::OnInit()
+sbBaseMediacoreFactory::OnInitBaseMediacoreFactory()
 {
   /**
    * You'll probably want to set the contract id and the name of the factory 

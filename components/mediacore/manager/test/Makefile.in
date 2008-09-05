@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_TEST_COMPONENT = mediacoremanager
 
-#SONGBIRD_TESTS = $(NULL)
+#SONGBIRD_TESTS = $(srcdir)/test_mediacoremanager.js \
+#                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk

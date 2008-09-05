@@ -45,13 +45,13 @@ public:
 
   sbBaseMediacoreFactory();
 
-  nsresult Init();
+  nsresult InitBaseMediacoreFactory();
 
   nsresult SetContractID(const nsAString &aContractID);
   nsresult SetName(const nsAString &aName);
 
   //Override me, see cpp file for implementation notes.
-  virtual nsresult OnInit();
+  virtual nsresult OnInitBaseMediacoreFactory();
 
   // Override me, see cpp file for implementation notes.
   virtual nsresult OnGetCapabilities(sbIMediacoreCapabilities **aCapabilities);
