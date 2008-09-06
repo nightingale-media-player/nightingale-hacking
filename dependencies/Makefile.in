@@ -425,8 +425,17 @@ GST_PLUGINS_BASE_NAMES += gstalsa \
                           gstxvimagesink \
                           $(NULL)
 
-GST_PLUGINS_GOOD_NAMES += gstpulse \
-                          $(NULL)
+# ###################################################################
+#
+#
+# XXXredfive - commented out only to fix builds over the weekend.
+#
+#
+#GST_PLUGINS_GOOD_NAMES += gstpulse \
+#                          $(NULL)
+#
+#
+# ###################################################################
 
 GSTREAMER = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/lib, \
               $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GSTREAMER_NAMES)))
