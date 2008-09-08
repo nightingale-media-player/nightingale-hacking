@@ -274,7 +274,7 @@ GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
                           gstdirectsoundsink \
                           $(NULL)
 
-GST_PLUGINS_BAD_NAMES += acmenc \
+GST_PLUGINS_BAD_NAMES += gstacmenc \
                          $(NULL)
 
 GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \
