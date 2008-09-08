@@ -31,6 +31,52 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_TEST_COMPONENT = mediacorebase
 
-#SONGBIRD_TESTS = $(NULL)
+XPIDL_SRCS = sbITestMediacoreEventCreator.idl \
+             $(NULL)
+
+XPIDL_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
+                 $(NULL)
+
+XPIDL_MODULE = sbTestMediacoreBase.xpt
+
+XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
+
+CPP_SRCS = sbTestMediacoreBaseModule.cpp \
+           sbTestMediacoreEventCreator.cpp \
+           sbTestDummyMediacore.cpp \
+           sbTestMediacoreStressThreads.cpp \
+           ../src/sbMediacoreEvent.cpp \
+           ../src/sbBaseMediacoreEventTarget.cpp \
+           $(NULL)
+
+CPP_INCLUDES = $(DEPTH)/components/mediacore/base/public \
+               $(DEPTH)/components/mediacore/base/test \
+               $(topsrcdir)/components/include \
+               $(topsrcdir)/components/mediacore/base/src \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(NULL)
+               
+DYNAMIC_LIB = sbTestMediacoreBase$(DEBUG:%=_d)$(DLL_SUFFIX)
+               
+DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            nspr4 \
+                            xpcom \
+                            xpcomglue_s \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(NULL)
+
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) $(XPIDL_MODULE)
+
+
+SONGBIRD_TESTS = $(srcdir)/test_BaseMediacoreEventTarget.js \
+                 $(srcdir)/test_BaseMediacoreEventTargetThreaded.js \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk

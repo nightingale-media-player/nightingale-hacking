@@ -35,6 +35,7 @@ target := $(addsuffix _d,$(target))
 endif
 
 CPP_SRCS = sbBaseMediacore.cpp \
+           sbBaseMediacoreEventTarget.cpp \
            sbBaseMediacoreFactory.cpp \
            sbBaseMediacorePlaybackControl.cpp \
            sbBaseMediacoreVolumeControl.cpp \
