@@ -77,7 +77,7 @@ var AlbumArt = {
                   imageHieght: 0
                 }
               ],
-  _currentState: STATE_PLAYING, // Default to now playing state (display)
+  _currentState: STATE_SELECTED, // Default to now selected state (display)
 
 
   /**
