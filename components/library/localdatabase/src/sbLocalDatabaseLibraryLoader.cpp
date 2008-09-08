@@ -248,11 +248,12 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
     nsCOMPtr<sbIMetrics> metrics =
       do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
-
-    nsString metricsCategory = NS_LITERAL_STRING("app");
-    nsString metricsId = NS_LITERAL_STRING("library.error");
-    rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
+    if (NS_SUCCEEDED(rv)) {
+      nsString metricsCategory = NS_LITERAL_STRING("app");
+      nsString metricsId = NS_LITERAL_STRING("library.error");
+      rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
+    }
   }
   
   return retval;
