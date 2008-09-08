@@ -63,6 +63,7 @@ var AlbumArt = {
   _playListPlaybackService: null,   // Get notifications of track changes.
   _mediaListView: null,             // Current active mediaListView.
   _browser: null,                   // Handle to browser for tab changes.
+  _displayPane: null,               // Display pane we are in.
 
   // Array of state information for each display (selected/playing/etc)
   _stateInfo: [ { imageID: "sb-albumart-selected",
@@ -88,16 +89,9 @@ var AlbumArt = {
    *        that it acts like a button to toggle between the different displays.
    */
   makeTitleBarButton: function() {
-    var displayPaneManager = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                               .getService(Ci.sbIDisplayPaneManager);
-    var dpInstantiator = displayPaneManager.getInstantiatorForWindow(window);
-
-    if (dpInstantiator) {
-      var displayPane = dpInstantiator.displayPane;
-      if (displayPane) {
-        // Make the title bar of the display pane act like a button
-        displayPane.makeClickableTitleBar(AlbumArt.titleClick);
-      }
+    if (AlbumArt._displayPane) {
+      // Make the title bar of the display pane act like a button
+      AlbumArt._displayPane.makeClickableTitleBar(AlbumArt.titleClick);
     }
   },
   
@@ -145,13 +139,11 @@ var AlbumArt = {
     var titleString = SBString("albumart.displaypane.title." + titleInfo.titleID,
                                titleInfo.defaultTitle);
     
-    // Set the title correctly, localize since we can not localize from the
-    // install.rdf.
-    var paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                    .getService(Ci.sbIDisplayPaneManager);
-    paneMgr.updateContentInfo(DISPLAY_PANE_CONTENTURL,
-                              titleString,
-                              DISPLAY_PANE_ICON);
+    // We set the title with contentTitle instead of using the paneMgr because
+    // we do not want to change the name for this display pane anywhere else.
+    if (AlbumArt._displayPane) {
+      AlbumArt._displayPane.contentTitle = titleString;
+    }
   },
 
   /**
@@ -249,21 +241,13 @@ var AlbumArt = {
 
     if (windowHeight != windowWidth) {
       // First determine if we are in the service pane display pane
-      var displayPaneManager = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                                 .getService(Ci.sbIDisplayPaneManager);
-      var dpInstantiator = displayPaneManager.getInstantiatorForWindow(window);
-
-      if (dpInstantiator &&
-          dpInstantiator.contentGroup == "servicepane") {
-        var displayPane = dpInstantiator.displayPane;
-        if (displayPane) {
-          // Account for the displayPane header.
-          var displayPaneHeaderSize = displayPane.height - windowHeight;
-          displayPane.height = windowWidth + displayPaneHeaderSize;
-      
-          // Indicate that we have resized the pane.
-          return false;
-        }
+      if (AlbumArt._displayPane &&
+          AlbumArt._displayPane.contentGroup == "servicepane") {
+        // Account for the displayPane header.
+        var displayPaneHeaderSize = AlbumArt._displayPane.height - windowHeight;
+        AlbumArt._displayPane.height = windowWidth + displayPaneHeaderSize;
+        // Indicate that we have resized the pane.
+        return false;
       }
     }
     return true;
@@ -367,6 +351,14 @@ var AlbumArt = {
    *        message.
    */
   onLoad: function () {
+     var displayPaneManager = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                                .getService(Ci.sbIDisplayPaneManager);
+     var dpInstantiator = displayPaneManager.getInstantiatorForWindow(window);
+ 
+     if (dpInstantiator) {
+       AlbumArt._displayPane = dpInstantiator.displayPane;
+     }
+ 
     // Load the previous selected display the user shutdown with
     AlbumArt._currentState = Application.prefs.getValue(PREF_STATE,
                                                         AlbumArt._currentState);
