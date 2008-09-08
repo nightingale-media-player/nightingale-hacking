@@ -49,6 +49,9 @@ const DEFAULT_COVER = "chrome://songbird/skin/album-art/default-cover.png";
 const STATE_SELECTED = 0;
 const STATE_PLAYING  = 1;
 
+// Preferences
+const PREF_STATE = "songbird.albumart.displaypane.view";
+
 /******************************************************************************
  *
  * \class AlbumArt 
@@ -364,6 +367,11 @@ var AlbumArt = {
    *        message.
    */
   onLoad: function () {
+    // Load the previous selected display the user shutdown with
+    AlbumArt._currentState = Application.prefs.getValue(PREF_STATE,
+                                                        AlbumArt._currentState);
+    
+
     // Ensure we have the correct title and deck displayed.
     AlbumArt.switchState(AlbumArt._currentState);
     
@@ -419,6 +427,9 @@ var AlbumArt = {
    *        can shut every thing down.
    */
   onUnload: function () {
+    // Save the current display state for when the user starts again
+    Application.prefs.setValue(PREF_STATE, AlbumArt._currentState);
+                               
     AlbumArt._playListPlaybackService.removeListener(AlbumArt);
     AlbumArt._playListPlaybackService = null;
     
