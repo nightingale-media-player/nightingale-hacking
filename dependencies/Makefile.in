@@ -274,9 +274,8 @@ GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
                           gstdirectsoundsink \
                           $(NULL)
 
-# XXXAus: Re-enable this when the acm plugin is checked-in :)
-#GST_PLUGINS_BAD_NAMES += acmenc \
-#                         $(NULL)
+GST_PLUGINS_BAD_NAMES += acmenc \
+                         $(NULL)
 
 GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \
          $(addsuffix -$(GLIB_VERSION)-0$(DLL_SUFFIX), $(GLIB_NAMES)))
@@ -425,17 +424,8 @@ GST_PLUGINS_BASE_NAMES += gstalsa \
                           gstxvimagesink \
                           $(NULL)
 
-# ###################################################################
-#
-#
-# XXXredfive - commented out only to fix builds over the weekend.
-#
-#
-#GST_PLUGINS_GOOD_NAMES += gstpulse \
-#                          $(NULL)
-#
-#
-# ###################################################################
+GST_PLUGINS_GOOD_NAMES += gstpulse \
+                          $(NULL)
 
 GSTREAMER = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/lib, \
               $(addsuffix -$(GST_VERSION)$(DLL_SUFFIX), $(GSTREAMER_NAMES)))
