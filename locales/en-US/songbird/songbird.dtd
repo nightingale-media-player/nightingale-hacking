@@ -610,3 +610,7 @@
 <!ENTITY import_library.dirty_playlist_dialog.note         "Note:  Merge and replace cannot be undone.">
 <!ENTITY import_library.dirty_playlist_dialog.apply_all    "Apply selection to all playlists">
 
+<!-- Advanced preference pane update tab entities. -->
+<!ENTITY enable_recommended_addons_update.label     "Recommended Add-ons">
+<!ENTITY enable_recommended_addons_update.accesskey "r">
+

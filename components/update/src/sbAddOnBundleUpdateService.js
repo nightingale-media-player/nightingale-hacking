@@ -82,8 +82,7 @@ if (typeof(Cu) == "undefined")
 // ifList                       List of external component interfaces.
 // categoryList                 List of component categories.
 //
-// defaultUpdateInterval        Default add-on bundle update interval in
-//                              seconds.
+// defaultUpdateEnabled         Default update enabled preference value.
 //
 
 var sbAddOnBundleUpdateServiceCfg = {
@@ -92,7 +91,7 @@ var sbAddOnBundleUpdateServiceCfg = {
   contractID: "@songbirdnest.com/AddOnBundleUpdateService;1",
   ifList: [ Ci.nsIObserver ],
 
-  defaultUpdateInterval: 86400
+  defaultUpdateEnabled: false
 };
 
 sbAddOnBundleUpdateServiceCfg.categoryList = [
@@ -234,17 +233,6 @@ sbAddOnBundleUpdateService.prototype = {
   },
 
 
-  /**
-   * Handle add-on update timer events.
-   */
-
-  _handleAddOnUpdateTimer:
-    function sbAddOnBundleUpdateService__handleAddOnUpdateTimer(aTimer) {
-    // Trace execution.
-    dump("1: handleAddOnUpdateTimer\n");
-  },
-
-
   //----------------------------------------------------------------------------
   //
   // Internal add-on bundle update services.
@@ -271,24 +259,17 @@ sbAddOnBundleUpdateService.prototype = {
     if (!this._prefsAvailable)
       return;
 
-    // Get the add-on bundle update period.
-    var Application = Cc["@mozilla.org/fuel/application;1"]
-                        .getService(Ci.fuelIApplication);
-    var updateInterval =
-          Application.prefs.getValue("songbird.addon.bundle.update.interval",
-                                     this._cfg.defaultUpdateInterval);
-
-    // Register an add-on bundle update timer.
-    var updateTimerMgr = Cc["@mozilla.org/updates/timer-manager;1"]
-                           .createInstance(Ci.nsIUpdateTimerManager);
-    var _this = this;
-    var func = function(aTimer) { _this._handleAddOnUpdateTimer(aTimer); };
-    updateTimerMgr.registerTimer("add-on-bundle-update-timer",
-                                 func,
-                                 updateInterval);
-
     // Initialization is now complete.
     this._isInitialized = true;
+
+    // Load and present new add-ons.
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+    var updateEnabled =
+          Application.prefs.getValue("recommended_addons.update.enabled",
+                                     this._cfg.defaultUpdateEnabled);
+    if (updateEnabled)
+      this._loadAndPresentNewAddOns();
   },
 
 
@@ -302,6 +283,17 @@ sbAddOnBundleUpdateService.prototype = {
       this._observerSet.removeAll();
       this._observerSet = null;
     }
+  },
+
+
+  /**
+   * Load and present the new add-ons.
+   */
+
+  _loadAndPresentNewAddOns:
+    function sbAddOnBundleUpdateService__loadAndPresentNewAddOns() {
+    // Trace execution.
+    dump("1: loadAndPresentNewAddOns\n");
   }
 };
 

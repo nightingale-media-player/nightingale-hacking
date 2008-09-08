@@ -39,6 +39,21 @@ var SongbirdAdvancedPaneOverlay = {
                                SongbirdAdvancedPaneOverlay.onPaneLoad,
                                false);
 
+    // Load advanced preference pane overlay.
+    var observer = {
+      observe: function() {
+        // Initialize recommended add-on update checkbox since it doesn't get
+        // properly initialized after the overlay loads.
+        //XXXeps not sure why
+        var pref = document.getElementById("recommended_addons.update.enabled");
+        var checkbox = document.getElementById("enableRecommendedAddonsUpdate");
+        checkbox.checked = pref.value;
+      }
+    }
+    window.document.loadOverlay
+      ("chrome://songbird/content/xul/preferences/advancedOverlay.xul",
+       observer);
+
     const startTypingCheck = document.getElementById("searchStartTyping");
     startTypingCheck.setAttribute("hidden", "true");
 

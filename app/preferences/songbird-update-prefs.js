@@ -89,7 +89,5 @@ pref("extensions.ignoreMTimeChanges", false);
 pref("xpinstall.whitelist.add", "addons.songbirdnest.com");
 pref("xpinstall.whitelist.add.103", "addons.songbirdnest.com");
 
-// Interval: Time in seconds between checks for a new add-on bundle.
-//           default=1 day
-pref("songbird.addon.bundle.update.interval", 86400);
+pref("recommended_addons.update.enabled", true);
 
