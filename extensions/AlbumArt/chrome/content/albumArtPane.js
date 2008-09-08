@@ -57,7 +57,9 @@ const STATE_PLAYING  = 1;
  *****************************************************************************/
 var AlbumArt = {
   _coverBind: null,                 // Data remote for the now playing image.
-  _playListPlaybackService: null,   // Get notifications of track changes
+  _playListPlaybackService: null,   // Get notifications of track changes.
+  _mediaListView: null,             // Current active mediaListView.
+  _browser: null,                   // Handle to browser for tab changes.
 
   // Array of state information for each display (selected/playing/etc)
   _stateInfo: [ { imageID: "sb-albumart-selected",
@@ -282,6 +284,33 @@ var AlbumArt = {
   },
 
   /**
+   * \brief changeNowSelected - This function changes the Now Selected display
+   *        to what is suppose to be displayed based on the image.
+   */
+  changeNowSelected: function(aNewURL) {
+    // Load up our elements
+    var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
+    var albumArtNotSelectedBox = document.getElementById('sb-albumart-not-selected');
+
+    if (aNewURL == albumArtSelectedImage.getAttribute("src")) {
+      // Nothing changed so leave as is.
+      return;
+    }
+
+    // Configure the display pane
+    if (!aNewURL) {
+      // Show the not playing message.
+      albumArtNotSelectedBox.removeAttribute("hidden");
+    } else {
+      // Hide the not playing message.
+      albumArtNotSelectedBox.setAttribute("hidden", true);
+    }
+    albumArtSelectedImage.setAttribute("src", aNewURL);
+    // Call the onResize so we display the image correctly.
+    AlbumArt.onResize();
+  },
+
+  /**
    * \brief observe - This is called when the dataremote value changes. We watch
    *        this so that we can respond to when the image is updated for an
    *        item even when already playing.
@@ -380,6 +409,9 @@ var AlbumArt = {
     // Make the title bar of the display pane act like a button so we can
     // toggle between Now Playing and Now Selected views.
     AlbumArt.makeTitleBarButton();
+
+    // Setup the Now Selected display
+    AlbumArt.onTabContentChange();
   },
   
   /**
@@ -403,6 +435,93 @@ var AlbumArt = {
     window.removeEventListener("resize",
                                AlbumArt.onResize,
                                false);
+
+    // Remove selection listeners
+    if(AlbumArt._mediaListView) {
+      AlbumArt._mediaListView.selection.removeListener(AlbumArt);
+    }
+    if (AlbumArt._browser) {
+      AlbumArt._browser.removeEventListener("TabContentChange", 
+                                            AlbumArt.onTabContentChange,
+                                            false);
+    }
+  },
+  
+  /**
+   * \brief getMainBrowser - This function sets up the listener on the brower
+   *        so we can be notified when the tab changes, then we can put another
+   *        listener to the media list in view so we can be notified of the
+   *        selection changes.
+   */
+  getMainBrowser: function() {
+    // Get the main window, we have to do this because we are in a display pane
+    // and our window is the content of the display pane.
+    var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                          .getService(Components.interfaces.nsIWindowMediator);
+
+    var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main"); 
+    // Store this so we don't have to get it every time.
+    AlbumArt._browser = songbirdWindow.gBrowser;
+    if (AlbumArt._browser) {
+      AlbumArt._browser.addEventListener("TabContentChange", 
+                                         AlbumArt.onTabContentChange,
+                                         false);
+    }
+  },
+
+  /**
+   * \brief onTabContentChange - When the tab changes in the browser we need to
+   *        grab the new mediaListView if there is one and attach a listener on
+   *        it for selection. We must also be sure to remove any existing
+   *        listeners so we do not leak.
+   */
+  onTabContentChange: function() {
+    // Remove any existing listeners
+    if(AlbumArt._mediaListView) {
+      AlbumArt._mediaListView.selection.removeListener(AlbumArt);
+    }
+
+    // Make sure we have the browser
+    if (!AlbumArt._browser) {
+      AlbumArt.getMainBrowser();
+    }
+    AlbumArt._mediaListView = AlbumArt._browser.currentMediaListView;
+
+    // Now attach a new listener for the selection changes
+    if (AlbumArt._mediaListView) {
+      AlbumArt._mediaListView.selection.addListener(AlbumArt);
+      // Make an initial call so we can change our image based on selection
+      AlbumArt.onSelectionChanged();
+    }
+  },
+
+  /*********************************
+   * sbIMediaListViewSelectionListener
+   ********************************/
+  onSelectionChanged: function() {
+    var selection = AlbumArt._mediaListView.selection;
+    var curImageUrl = null;
+    if (selection.count > 1) {
+      var itemEnum = selection.selectedIndexedMediaItems;
+      if (itemEnum.hasMoreElements()) {
+        var item = itemEnum.getNext().mediaItem;
+        curImageUrl = item.getProperty(SBProperties.primaryImageURL);
+      }
+    } else if (selection.count == 1) {
+      // Only one item pretty simple
+      var curMediaItem = selection.currentMediaItem;
+      curImageUrl = curMediaItem.getProperty(SBProperties.primaryImageURL);
+    }
+    
+    if (curImageUrl == "") {
+      // Change empty urls to the default cover
+      curImageUrl = DEFAULT_COVER;
+    }
+
+    AlbumArt.changeNowSelected(curImageUrl);
+  },
+
+  onCurrentIndexChanged: function() {
   },
 
   /*********************************
@@ -427,5 +546,6 @@ var AlbumArt = {
   /*********************************
    * nsISupports
    ********************************/
-  QueryInterface: XPCOMUtils.generateQI([Ci.sbIPlaylistPlaybackListener])
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIPlaylistPlaybackListener,
+                                         Ci.sbIMediaListViewSelectionListener])
 };
