@@ -99,7 +99,6 @@ build/Makefile
 
 MAKEFILES_dependencies="
 dependencies/Makefile
-dependencies/vendor/mp4/Makefile
 dependencies/vendor/mozilla/Makefile
 dependencies/vendor/mozilla/browser/components/preferences/Makefile
 dependencies/vendor/mozilla/browser/fuel/Makefile
