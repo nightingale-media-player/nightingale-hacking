@@ -69,5 +69,34 @@ function runTest () {
   log("Attempting to set volume to: " + vol);  
   mediacore.volume = vol;
   
-  sleep(500000);
+  sleep(25000);
+  
+  log("Attempting to pause.");
+  mediacore.pause();
+  
+  log("Attempting to stop.");
+  mediacore.stop();
+  
+  log("Using next core in mediacore chain to play a different file.");
+  mediacore = mediacoreVotingChain.mediacoreChain.queryElementAt(1, Ci.sbIMediacore);
+  
+  if(mediacore instanceof Ci.sbIQuickTimeMediacore) {
+    log("QuickTime version: " + mediacore.quickTimeVersion);
+  }
+  
+  var uri2 = newURI("file:///c:/Users/Aus/Desktop/My%20eMusic/Junior%20Boys/So%20This%20Is%20Goodbye/Junior%20Boys_02_The%20Equalizer.mp3");
+  
+  log("Attempting to play: " + uri2.spec);
+  mediacore.uri = uri2;
+  mediacore.play();
+  
+  log("Attempting to seek to: " + 1200 / 1000 + "s");
+  mediacore.position = 1200;
+  
+  var vol = 0.8;
+  log("Attempting to set volume to: " + vol);
+  mediacore.volume = vol;
+  
+  sleep(25000);
+  
 }
