@@ -16,4 +16,4 @@
 <!ENTITY window.dev.title      "Songbird">
 
 <!-- Update the following prior to every release -->
-<!ENTITY releaseNotesURL       "http://www.songbirdnest.com/releasenotes">
+<!ENTITY releaseNotesURL       "http://wiki.songbirdnest.com/Release_Notes">
