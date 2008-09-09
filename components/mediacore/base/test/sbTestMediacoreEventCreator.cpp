@@ -28,7 +28,7 @@
 #include "sbTestMediacoreEventCreator.h"
 #include "sbTestDummyMediacore.h"
 
-#include <sbITestMediaCoreEventCreator.h>
+#include <sbITestMediacoreEventCreator.h>
 #include <sbIMediacore.h>
 #include <sbBaseMediacoreEventTarget.h>
 
