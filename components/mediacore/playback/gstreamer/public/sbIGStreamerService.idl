@@ -47,7 +47,8 @@ interface sbIGStreamerInspectHandler : nsISupports
 
   void endPluginInfo();
 
-  void beginFactoryInfo(in ACString aLongName,
+  void beginFactoryInfo(in ACString aShortName,
+                        in ACString aLongName,
                         in ACString aClass,
                         in ACString aDescription,
                         in ACString aAuthor,

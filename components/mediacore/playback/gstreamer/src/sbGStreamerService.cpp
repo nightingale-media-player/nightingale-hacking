@@ -326,7 +326,8 @@ sbGStreamerService::InspectFactory(GstElementFactory* aFactory,
 
   gint rank = GST_PLUGIN_FEATURE(factory)->rank;
 
-  rv = aHandler->BeginFactoryInfo(nsDependentCString(factory->details.longname),
+  rv = aHandler->BeginFactoryInfo(nsDependentCString(GST_PLUGIN_FEATURE(factory)->name),
+                                  nsDependentCString(factory->details.longname),
                                   nsDependentCString(factory->details.klass),
                                   nsDependentCString(factory->details.description),
                                   nsDependentCString(factory->details.author),

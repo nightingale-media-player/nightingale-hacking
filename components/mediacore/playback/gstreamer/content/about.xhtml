@@ -48,9 +48,10 @@ function onLoad() {
     endPluginInfo: function() {
       this._currentPlugin = null;
     },
-    beginFactoryInfo: function(aLongName, aClass, aDescription, aAuthor, aRankName, aRank) {
-      this._currentFactoryName = aLongName;
+    beginFactoryInfo: function(aShortName, aLongName, aClass, aDescription, aAuthor, aRankName, aRank) {
+      this._currentFactoryName = aShortName;
       this._currentFactoryClass = aClass;
+      this._currentFactoryDescription = aDescription;
     },
     endFactoryInfo: function() {
       this._currentFactoryName = null;
@@ -58,10 +59,14 @@ function onLoad() {
     },
     beginPadTemplateInfo: function(aName, aDirection, aPresence, aCodecDescription) {
       if (aDirection == Ci.sbIGStreamerService.PAD_DIRECTION_SINK) {
+        var description = aCodecDescription;
+        if (!description)
+          description = this._currentFactoryDescription;
+
         var o = {
           plugin: this._currentPlugin,
           factory: this._currentFactoryName,
-          codecDescription: aCodecDescription
+          codecDescription: description
         }
 
         var c = parseClass(this._currentFactoryClass);
@@ -95,13 +100,19 @@ function onLoad() {
     body.appendChild(dl);
   }
 
-  function appendTableRow(table, a) {
+  function appendTableRow(table, textentries, elemententries) {
     var tr = document.createElement("tr");
-    a.forEach(function(e) {
+    textentries.forEach(function(t) {
       var td = document.createElement("td");
-      td.textContent = e;
+      td.textContent = t;
       tr.appendChild(td);
     });
+    elemententries.forEach(function(e) {
+      var td = document.createElement("td");
+      td.appendChild(e);
+      tr.appendChild(td);
+    });
+
     table.appendChild(tr);
   }
 
@@ -111,10 +122,21 @@ function onLoad() {
     body.appendChild(h1);
 
     var table = document.createElement("table");
-    appendTableRow(table, ["plugin", "factory", "codec description"]);
+    appendTableRow(table, ["Plugin", "Factory", "Codec Description", "Additional Information"], []);
 
     a.forEach(function(e) {
-      appendTableRow(table, [e.plugin, e.factory, e.codecDescription]);
+      var info = [];
+      if (e.factory == "flump3dec") {
+        var para = document.createElement("p");
+        para.appendChild(document.createTextNode("© Fluendo S.A.: "));
+        var link = document.createElement("a");
+        link.setAttribute("href", "https://shop.fluendo.com/");
+        link.textContent = "More plugins from Fluendo";
+        para.appendChild(link);
+        info = [para]
+      }
+
+      appendTableRow(table, [e.plugin, e.factory, e.codecDescription], info);
     });
 
     body.appendChild(table);
