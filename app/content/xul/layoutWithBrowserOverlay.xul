@@ -231,7 +231,10 @@
       </menupopup>
 
       <menupopup id="menu_ToolsPopup">
-        <menuitem id="menuitem_tools_metadata" key="metadata-key" class="menuitem-iconic" label="&menu.tools.metadata;" accesskey="&menu.tools.metadata.accesskey;" insertbefore="menu_downloadmgr" command="cmd_metadata"/>
+        <menuitem id="menuitem_tools_metadata" key="trackeditor-key"
+                  class="menuitem-iconic" label="&menu.tools.metadata;"
+                  accesskey="&menu.tools.metadata.accesskey;"
+                  insertbefore="menu_downloadmgr" command="cmd_metadata"/>
         <menuseparator insertbefore="menu_downloadmgr"/>
       </menupopup>
 
@@ -412,7 +415,8 @@
       
       <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
       <key id="locationbar-key2" modifiers="alt" key="&locationbar.key2;" oncommand="document.getElementById('location_bar').focus();"/>
-      <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" oncommand="SBTrackEditorOpen();"/>
+      <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" command="cmd_metadata"/>
+      <key id="trackeditor-key2" modifiers="accel" key="&trackeditor.key2;" command="cmd_metadata"/>
 
       <key id="key_fullZoomReduce"  key="&fullZoomReduceCmd.commandkey;"   command="cmd_fullZoomReduce"  modifiers="accel"/>
       <key id="key_fullZoomEnlarge" key="&fullZoomEnlargeCmd.commandkey;"  command="cmd_fullZoomEnlarge" modifiers="accel"/>
@@ -427,7 +431,6 @@
       <key id="key_reload" key="&reloadCmd.commandkey;" command="Browser:Reload" modifiers="accel" />
       <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
       <key id="key_stop" keycode="VK_ESCAPE" oncommand="gBrowser.stop();"/>
-      <key id="metadata-key" modifiers="accel" key="&menu.tools.metadata.accesskey;" command="cmd_metadata"/>
       <key id="reveal-key" modifiers="&menu.tools.reveal.modifiers;" key="&menu.tools.reveal.accesskey;" command="cmd_reveal"/>
       <key id="browser_view" keycode="VK_F11" oncommand="FullScreen();"/>
 	
