@@ -267,7 +267,15 @@ function sbDownloadDeviceHelper_getDefaultMusicFolder()
   
   if (!folderIsValid(musicDir)) {
     // Great, default to the Desktop... This should work on all OS's.
-    musicDir = dirService.getFile("Desk", {});
+    var dirService = Cc["@mozilla.org/file/directory_service;1"]
+                     .getService(Ci.nsIProperties);
+
+    try {
+      musicDir = dirService.getFile("Desk", {});
+    }
+    catch (e) {
+      musicDir = null;
+    }
 
     // We should never get something bad here, but just in case...
     if (!folderIsValid(musicDir)) {

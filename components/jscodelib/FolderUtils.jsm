@@ -184,7 +184,7 @@ var FolderUtils = {
       var directorySvc = Cc["@mozilla.org/file/directory_service;1"]
                            .getService(Ci.nsIProperties);
       try {
-        downloadFolder = dirService.getFile("Desk", {});
+        downloadFolder = directorySvc.getFile("Desk", {});
       }
       catch(e) {
         downloadFolder = null;
