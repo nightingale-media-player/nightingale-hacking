@@ -65,6 +65,9 @@ var gSongbirdWindowController =
 {
   doCommand: function(aCommand)
   {
+    var pps = gPPS ||
+              Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                        .getService(Components.interfaces.sbIPlaylistPlayback);
     if (aCommand == "cmd_find") {
       gTabBrowser.onFindCommand();
     } else if (aCommand == "cmd_findAgain") {
@@ -78,9 +81,6 @@ var gSongbirdWindowController =
     } else if (aCommand == "cmd_reveal") {
       SBRevealFile(); // reveal the selected file
     } else if (aCommand == "cmd_control_playpause") {
-      var pps = gPPS ||
-                Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                          .getService(Components.interfaces.sbIPlaylistPlayback);
       // If we are already playing something just pause/unpause playback
       if (pps.playing) {
         // if we're playing already then play / pause
@@ -100,6 +100,12 @@ var gSongbirdWindowController =
           pps.play();
         }
       }
+    } else if (aCommand == "cmd_volume_down") {
+      pps.volume = Math.max(0, pps.volume - 12.5);
+    } else if (aCommand == "cmd_volume_up") {
+      pps.volume = Math.min(255, pps.volume + 12.5);
+    } else if (aCommand == "cmd_volume_mute") {
+      pps.mute = !pps.mute;
     } else if (aCommand == "cmd_delete") {
       SBDeleteMediaList(this._getVisiblePlaylist());
     }
@@ -120,48 +126,50 @@ var gSongbirdWindowController =
         return true;
       case "cmd_delete":
         return (this._getVisiblePlaylist() != null);
+      case "cmd_volume_down":
+      case "cmd_volume_up":
+      case "cmd_volume_mute":
+        return true;
     }
     return false;
   },
   
   isCommandEnabled: function(aCommand)
   {
+    var browser = null;
+    if (typeof SBGetBrowser == 'function') {
+      browser = SBGetBrowser();
+    }
+    var view = null;
+    if (browser && browser.currentMediaPage) {
+      view = browser.currentMediaPage.mediaListView;
+    }
+
+    var pps = gPPS ||
+              Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                        .getService(Components.interfaces.sbIPlaylistPlayback);
+
     switch(aCommand) {
       case "cmd_find":
       case "cmd_findAgain":
-        return (!gTabBrowser.shouldDisableFindForSelectedTab());
+        return (!browser.shouldDisableFindForSelectedTab());
       case "cmd_metadata":
       case "cmd_editmetadata":
       case "cmd_viewmetadata": {
-        var browser = null;
-        if (typeof SBGetBrowser == 'function') 
-          browser = SBGetBrowser();
-        if (browser && browser.currentMediaPage) {
-          var view = browser.currentMediaPage.mediaListView;
-          if (view) {
-            return view.selection.count > 0;
-          }
+        if (view) {
+          return view.selection.count > 0;
         }
         return false;
       }
       case "cmd_reveal": {
-        var browser = null;
-        if (typeof SBGetBrowser == 'function') 
-          browser = SBGetBrowser();
-        if (!browser || !browser.currentMediaPage) { return; }
-        
-        var view = browser.currentMediaPage.mediaListView;
-        if (!view || view.selection.count != 1) { return; }
-        
-        var selection = view.selection.selectedIndexedMediaItems;
-        var item = selection.getNext()
-                            .QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
-        if (!item) {
-          return false;
+        if (view && view.selection.count == 1) {
+          var selection = view.selection.selectedIndexedMediaItems;
+          var item = selection.getNext()
+                              .QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
+          var uri = item.contentSrc;
+          return (uri && uri.scheme == "file");
         }
-    
-        var uri = item.contentSrc;
-        return (uri && uri.scheme == "file");
+        return false;
       }
       case "cmd_control_playpause":
         return true;
@@ -169,6 +177,12 @@ var gSongbirdWindowController =
         var list = this._getVisiblePlaylist();
         return (list && list.userEditable);
       }
+      case "cmd_volume_down":
+        return pps.volume > 0;
+      case "cmd_volume_up":
+        return pps.volume < 255;
+      case "cmd_volume_mute":
+        return true;
     }
     return false;
   },

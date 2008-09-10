@@ -286,6 +286,9 @@
       <command id="cmd_switchTextDirection" oncommand="goDoCommand('cmd_switchTextDirection');"/>
       <command id="cmd_find" oncommand="goDoCommand('cmd_find')"/>
       <command id="cmd_findAgain" oncommand="goDoCommand('cmd_findAgain')"/>
+      <command id="cmd_volume_up" oncommand="goDoCommand('cmd_volume_up')"/>
+      <command id="cmd_volume_down" oncommand="goDoCommand('cmd_volume_down')"/>
+      <command id="cmd_volume_mute" oncommand="goDoCommand('cmd_volume_mute')"/>
     </commandset>
     
     <!-- ********************************************************************* -->
@@ -354,6 +357,12 @@
       <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
       <key id="sanitize-key" modifiers="accel,shift" key="&sanitize.key;" oncommand="doMenu('menu.clearprivatedata');"/>
       <key id="downloadmgr-key" modifiers="accel,shift" key="&downloadmgr.key;" oncommand="doMenu('menu_downloadmgr');"/>
+      
+      <!-- volume -->
+      <key id="volume-down-key" modifiers="accel" keycode="VK_DOWN" command="cmd_volume_down"/>
+      <key id="volume-up-key" modifiers="accel" keycode="VK_UP" command="cmd_volume_up"/>
+      <key id="volume-mute-key" modifiers="accel,alt" keycode="VK_DOWN" command="cmd_volume_mute"/>
+      <key id="volume-mute-key2" modifiers="accel,alt" keycode="VK_UP" command="cmd_volume_mute"/>
     </keyset>
 
 
