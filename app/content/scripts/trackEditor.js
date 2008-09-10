@@ -40,11 +40,15 @@ if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
 if (typeof(Cr) == "undefined")
   var Cr = Components.results;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
 
-Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
-Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
-Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
+Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/StringUtils.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const ARTWORK_NO_COVER = "chrome://songbird/skin/album-art/default-cover.png";
 
@@ -1707,6 +1711,15 @@ function TrackEditorArtwork(element) {
           function(evt) { self.onKeyPress(evt); }, false);
   element.addEventListener("contextmenu",
           function(evt) { self.onContextMenu(evt); }, false);
+  // Drag and drop for the album art image
+  // We need to have over in order to get the getSupportedFlavours called when
+  // the user drags an item over us.
+  element.addEventListener("dragover",
+          function(evt) { nsDragAndDrop.dragOver(evt, self); }, false);
+  element.addEventListener("dragdrop",
+          function(evt) { nsDragAndDrop.drop(evt, self); }, false);
+  element.addEventListener("draggesture",
+          function(evt) { nsDragAndDrop.startDrag(evt, self); }, false);
 }
 TrackEditorArtwork.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
@@ -1904,32 +1917,14 @@ TrackEditorArtwork.prototype = {
       return false;
     }
     
-    // Get the mimeType from the file.
-    var mimeType = Cc["@mozilla.org/mime;1"]
-                     .getService(Ci.nsIMIMEService)
-                     .getTypeFromFile(imageFile);
-                     
-    // Create an input stream to read the data
-    var inputStream = Cc["@mozilla.org/network/file-input-stream;1"]
-                        .createInstance(Ci.nsIFileInputStream);
-    inputStream.init(imageFile, 0x01, 0600, 0);
-    var stream = Cc["@mozilla.org/binaryinputstream;1"]
-                   .createInstance(Ci.nsIBinaryInputStream);
-    stream.setInputStream(inputStream);
+    var imageData;
+    var mimetype;
+    [imageData, mimeType] = sbCoverHelper.readImageData(imageFile);
     
-    // Get the size of the image data
-    var imageDataSize = inputStream.available();
-    
-    // use a binary input stream to grab the bytes.
-    var bis = Cc["@mozilla.org/binaryinputstream;1"].
-              createInstance(Ci.nsIBinaryInputStream);
-    bis.setInputStream(inputStream);
-    var imageData= bis.readByteArray(imageDataSize);
-
     var copyOk = true;
     try {
-      sbClipboard.pasteImageToClipboard(mimeType, imageData, imageDataSize);
-    } catch(err) {
+      sbClipboard.pasteImageToClipboard(mimeType, imageData, imageData.length);
+    } catch (err) {
       copyOk = false;
     }
     
@@ -1953,6 +1948,37 @@ TrackEditorArtwork.prototype = {
   onClear: function TrackEditorArtwork_onClear() {
     this._imageSrcChange("");
   },
+
+  /**
+   * Drag and Drop functions
+   */
+  getSupportedFlavours : function TrackEditorArtwork_getSupportedFlavours() {
+    var flavours = new FlavourSet();
+    return sbCoverHelper.getFlavours(flavours);
+  },
+
+  onDragOver: function(event, flavour, session) {
+    // No need to do anything here, for UI we should set the
+    // .art:-moz-drag-over style.
+  },
+  
+  onDrop: function TrackEditorArtwork_onDrop(aEvent, aDropData, aSession) {
+    var self = this;
+    sbCoverHelper.handleDrop(function (newFile) {
+      if (newFile && newFile != "") {
+        self._imageSrcChange(newFile);
+      }
+    }, aDropData);
+  },
+
+  onDragStart: function TrackEditorArtwork_onDragStart(aEvent, 
+                                                       aTransferData,
+                                                       aAction) {
+    var imageURL = TrackEditor.state.getPropertyValue(this.property);
+    aTransferData.data = new TransferData();
+    sbCoverHelper.setupDragTransferData(aTransferData, imageURL);
+  },
+
 
   /**
    * \brief Called when the user clicks the button, we then pop up a file

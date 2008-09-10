@@ -363,5 +363,6 @@
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
   <script type="application/x-javascript" 
           src="chrome://songbird/content/scripts/windowUtils.js" />
+  <script src="chrome://global/content/nsDragAndDrop.js"/>
 
 </dialog>
