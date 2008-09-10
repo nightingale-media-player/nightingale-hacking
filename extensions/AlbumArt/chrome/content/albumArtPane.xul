@@ -32,9 +32,7 @@
 
 <!DOCTYPE window SYSTEM "chrome://albumart/locale/albumArt.dtd">
 
-<window onload="AlbumArt.onLoad();"
-        onunload="AlbumArt.onUnload();"
-        xmlns:html="http://www.w3.org/1999/xhtml"
+<window xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <deck selectedIndex="1" id="sb-albumart-deck" flex="1">
@@ -43,7 +41,10 @@
       <vbox class="albumArtNowSelectedContainer"
             align="center">
         <image id="sb-albumart-selected"
-               ondblclick="AlbumArt.onImageDblClick(event);"/>
+               ondblclick="AlbumArt.onImageDblClick(event);"
+               ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
+               ondraggesture="nsDragAndDrop.startDrag(event, AlbumArt);"
+               ondragover="nsDragAndDrop.dragOver(event, AlbumArt);"/>
       </vbox>
       <vbox id="sb-albumart-not-selected"
             class="albumArtNotSelectedContainer">
@@ -73,5 +74,6 @@
           src="chrome://songbird/content/scripts/windowUtils.js" />
   <script type="application/x-javascript"
           src="chrome://albumart/content/albumArtPane.js" />
+  <script src="chrome://global/content/nsDragAndDrop.js"/>
 
 </window>

@@ -33,6 +33,8 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
+Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
+Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -155,7 +157,7 @@ var AlbumArt = {
   switchState: function (aNewState) {
     AlbumArt._currentState = aNewState;
     var albumArtDeck = document.getElementById('sb-albumart-deck');
-    albumArtDeck.setAttribute("selectedIndex", this._currentState);
+    albumArtDeck.selectedIndex = AlbumArt._currentState;
     AlbumArt.setPaneTitle();
   },
 
@@ -345,25 +347,33 @@ var AlbumArt = {
     AlbumArt.switchState(newState);
   },
   
+  onTabSelect: function(aTabIndex) {
+    AlbumArt.switchState(aTabIndex);
+  },
+  
   /**
    * \brief onLoad - Called when the display pane loads, here we make sure that
    *        we have the correct image loaded or we display the Nothing Playing
    *        message.
    */
   onLoad: function () {
-     var displayPaneManager = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+    // Remove our loaded listener so we do not leak
+    window.removeEventListener("DOMContentLoaded", AlbumArt.onLoad, false);
+
+    // Get our displayPane
+    var displayPaneManager = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
                                 .getService(Ci.sbIDisplayPaneManager);
-     var dpInstantiator = displayPaneManager.getInstantiatorForWindow(window);
+    var dpInstantiator = displayPaneManager.getInstantiatorForWindow(window);
  
-     if (dpInstantiator) {
-       AlbumArt._displayPane = dpInstantiator.displayPane;
-     }
+    if (dpInstantiator) {
+      AlbumArt._displayPane = dpInstantiator.displayPane;
+    }
+
  
     // Load the previous selected display the user shutdown with
     AlbumArt._currentState = Application.prefs.getValue(PREF_STATE,
                                                         AlbumArt._currentState);
     
-
     // Ensure we have the correct title and deck displayed.
     AlbumArt.switchState(AlbumArt._currentState);
     
@@ -419,6 +429,9 @@ var AlbumArt = {
    *        can shut every thing down.
    */
   onUnload: function () {
+    // Remove our unload event listener so we do not leak
+    window.removeEventListener("unload", AlbumArt.onUnload, false);
+
     // Save the current display state for when the user starts again
     Application.prefs.setValue(PREF_STATE, AlbumArt._currentState);
                                
@@ -498,22 +511,83 @@ var AlbumArt = {
     }
   },
 
+  /**
+   * \brief This will set each items cover in the selection to the one supplied.
+   * \param aImageFile - new string url of file to set cover to on each item.
+   */
+  setSelectionsCover: function(aImageFile) {
+    var selection = AlbumArt._mediaListView.selection;
+    var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                        .createInstance(Ci.nsIMutableArray);
+    var itemEnum = selection.selectedIndexedMediaItems;
+    while (itemEnum.hasMoreElements()) {
+      var item = itemEnum.getNext().mediaItem;
+      var oldImage = item.getProperty(SBProperties.primaryImageURL);
+      if (oldImage != aImageFile) {
+        item.setProperty(SBProperties.primaryImageURL, aImageFile);
+        mediaItemArray.appendElement(item, false);
+      }
+    }
+    
+    // Write the images to metadata
+    if (mediaItemArray.length > 0) {
+      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                              .getService(Ci.sbIFileMetadataService);      
+      try {
+        var job = metadataService.write(mediaItemArray);
+      
+        SBJobUtils.showProgressDialog(job, window);
+      } catch (e) {
+        // Job will fail if writing is disabled by the pref
+        Components.utils.reportError(e);
+      }
+    }
+    
+    // Update the currently selected display.
+    AlbumArt.onSelectionChanged();
+  },
+
+  /*********************************
+   * Drag and Drop
+   ********************************/
+  getSupportedFlavours : function () {
+    var flavours = new FlavourSet();
+    return sbCoverHelper.getFlavours(flavours);
+  },
+  
+  onDrop: function (aEvent, aDropData, aSession) {
+    var self = this;
+    sbCoverHelper.handleDrop(function (newFile) {
+      if (newFile && newFile != "") {
+        self.setSelectionsCover(newFile);
+      }
+    }, aDropData);
+  },
+
+  onDragOver: function(event, flavour, session) {
+    // No need to do anything here, for UI we should set the
+    // #sb-albumart-selected:-moz-drag-over style.
+  },
+  
+  onDragStart: function TrackEditorArtwork_onDragStart(aEvent, 
+                                                       aTransferData,
+                                                       aAction) {
+    var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
+    var imageURL  = albumArtSelectedImage.getAttribute("src");
+    aTransferData.data = new TransferData();
+    sbCoverHelper.setupDragTransferData(aTransferData, imageURL);
+  },
+  
   /*********************************
    * sbIMediaListViewSelectionListener
    ********************************/
   onSelectionChanged: function() {
     var selection = AlbumArt._mediaListView.selection;
     var curImageUrl = null;
-    if (selection.count > 1) {
-      var itemEnum = selection.selectedIndexedMediaItems;
-      if (itemEnum.hasMoreElements()) {
-        var item = itemEnum.getNext().mediaItem;
-        curImageUrl = item.getProperty(SBProperties.primaryImageURL);
-      }
-    } else if (selection.count == 1) {
-      // Only one item pretty simple
-      var curMediaItem = selection.currentMediaItem;
-      curImageUrl = curMediaItem.getProperty(SBProperties.primaryImageURL);
+    var itemEnum = selection.selectedIndexedMediaItems;
+    if (itemEnum.hasMoreElements()) {
+      var item = itemEnum.getNext().mediaItem;
+      curImageUrl = item.getProperty(SBProperties.primaryImageURL);
     }
     
     if (curImageUrl == "") {
@@ -552,3 +626,8 @@ var AlbumArt = {
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIPlaylistPlaybackListener,
                                          Ci.sbIMediaListViewSelectionListener])
 };
+
+// We need to use DOMContentLoaded instead of load here because of the
+// Mozilla Bug #420815
+window.addEventListener("DOMContentLoaded", AlbumArt.onLoad, false);
+window.addEventListener("unload", AlbumArt.onUnload, false);
