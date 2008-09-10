@@ -49,15 +49,25 @@ function runTest () {
     log("Factory contract id: " + factory.contractID);
   }
   
-  var uri = newURI("file:///e:/Media/gnb_mix3.mp3");
+  var uri = newURI("file:///Volumes/Aus-DATA/Media/gnb_mix3.mp3");
   var mediacoreVotingChain = mediacoreManager.voteWithURI(uri);
   
   var mediacore = mediacoreVotingChain.mediacoreChain.queryElementAt(0, Ci.sbIMediacore);
 
-  if(mediacore instanceof Ci.sbIWindowsMediacore) {
-    log("Windows media player version: " + mediacore.windowsMediaVersion);
-  }
+  // The following may throw if the interface isn't present for instanceof
+  try {
+    
+    if(mediacore instanceof Ci.sbIWindowsMediacore) {
+      log("Windows media player version: " + mediacore.windowsMediaVersion);
+    }
 
+    if(mediacore instanceof Ci.sbIQuickTimeMediacore) {
+      log("QuickTime version: " + mediacore.quickTimeVersion);
+    }
+    
+  }
+  catch(e) { };
+  
   log("Attempting to play: " + uri.spec);
   mediacore.uri = uri;
   mediacore.play();
@@ -76,15 +86,28 @@ function runTest () {
   
   log("Attempting to stop.");
   mediacore.stop();
-  
-  log("Using next core in mediacore chain to play a different file.");
-  mediacore = mediacoreVotingChain.mediacoreChain.queryElementAt(1, Ci.sbIMediacore);
-  
-  if(mediacore instanceof Ci.sbIQuickTimeMediacore) {
-    log("QuickTime version: " + mediacore.quickTimeVersion);
+
+  var index = 0;
+  if(factories.length > 1) {
+    index = 1;
   }
   
-  var uri2 = newURI("file:///c:/Users/Aus/Desktop/My%20eMusic/Junior%20Boys/So%20This%20Is%20Goodbye/Junior%20Boys_02_The%20Equalizer.mp3");
+  log("Going to attempt to play another file, with another core if possible.");
+  mediacore = mediacoreVotingChain.mediacoreChain.queryElementAt(index, Ci.sbIMediacore);
+
+  try {
+    if(mediacore instanceof Ci.sbIWindowsMediacore) {
+      log("Windows media player version: " + mediacore.windowsMediaVersion);
+    }
+    
+    if(mediacore instanceof Ci.sbIQuickTimeMediacore) {
+      log("QuickTime version: " + mediacore.quickTimeVersion);
+    }
+  }
+  catch(e) { };
+ 
+  
+  var uri2 = newURI("file:///Users/aus/Music/fluxblog.org/fujiyamiyagi_knickerbocker.mp3");
   
   log("Attempting to play: " + uri2.spec);
   mediacore.uri = uri2;
