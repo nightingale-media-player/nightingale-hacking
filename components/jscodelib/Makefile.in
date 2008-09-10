@@ -42,7 +42,8 @@ SONGBIRD_COMPONENTS = $(srcdir)/ArrayConverter.jsm \
                       $(NULL)
 
 # TODO: Post 0.5 we need to remove js modules from the line above
-SONGBIRD_JSMODULES = $(srcdir)/ArrayConverter.jsm \
+SONGBIRD_JSMODULES = $(srcdir)/AddOnUtils.jsm \
+                     $(srcdir)/ArrayConverter.jsm \
                      $(srcdir)/DropHelper.jsm \
                      $(srcdir)/DOMUtils.jsm \
                      $(srcdir)/FolderUtils.jsm \
@@ -52,6 +53,7 @@ SONGBIRD_JSMODULES = $(srcdir)/ArrayConverter.jsm \
                      $(srcdir)/RDFHelper.jsm \
                      $(srcdir)/SBDataRemoteUtils.jsm \
                      $(srcdir)/SBTimer.jsm \
+                     $(srcdir)/SBUtils.jsm \
                      $(srcdir)/StringUtils.jsm \
                      $(srcdir)/URLUtils.jsm \
                      $(srcdir)/WindowUtils.jsm \

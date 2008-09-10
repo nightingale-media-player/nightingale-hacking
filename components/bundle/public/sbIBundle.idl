@@ -128,6 +128,12 @@ interface sbIBundle : nsISupports
   readonly attribute long bundleExtensionCount; 
 
   /**
+   * \brief Remove an extension from the bundle extension list.
+   * \param aIndex The index of the extension to remove
+   */
+  void removeExtension(in long aIndex);
+
+  /**
    * \brief Gets an extension's attribute from its xml document source
    * This method returns the corresponding attribute for a specified extension entry in the XML bundle document
    * \param aIndex The index of the extension within the bundle document (zero based)

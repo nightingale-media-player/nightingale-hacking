@@ -272,7 +272,15 @@ Bundle.prototype = {
     }
     return 0;
   },
-  
+
+  removeExtension: function(aIndex) {
+    if (!this._extlist) return;
+    if (this._extlist.length != 0 && this._simulate_lots_of_entries)
+      aIndex = aIndex % this._extlist.length;
+    if (this._status == SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS && aIndex < this.bundleExtensionCount)
+      this._extlist.splice(aIndex, 1);
+  },
+
   getExtensionAttribute: function(aIndex, aAttributeName) {
     if (!this._extlist) return "";
     if (this._extlist.length != 0 && this._simulate_lots_of_entries) 

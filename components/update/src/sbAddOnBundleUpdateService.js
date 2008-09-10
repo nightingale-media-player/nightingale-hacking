@@ -49,7 +49,9 @@
 //------------------------------------------------------------------------------
 
 // Songbird services.
+Components.utils.import("resource://app/jsmodules/AddOnUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ObserverUtils.jsm");
+Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 
@@ -134,6 +136,8 @@ sbAddOnBundleUpdateService.prototype = {
   //                            been initialized.
   //   _observerSet             Set of observers.
   //   _prefsAvailable          True if preferences are available.
+  //   _networkAvailable        True if the network is available.
+  //   _addOnBundleLoader       Add-on bundle loader object.
   //
 
   classDescription: sbAddOnBundleUpdateServiceCfg.className,
@@ -145,6 +149,8 @@ sbAddOnBundleUpdateService.prototype = {
   _isInitialized: false,
   _observerSet: null,
   _prefsAvailable: false,
+  _networkAvailable: false,
+  _addOnBundleLoader: null,
 
 
   //----------------------------------------------------------------------------
@@ -172,6 +178,10 @@ sbAddOnBundleUpdateService.prototype = {
 
       case "profile-after-change" :
         this._handleProfileAfterChange();
+        break;
+
+      case "final-ui-startup" :
+        this._handleFinalUIStartup();
         break;
 
       case "quit-application" :
@@ -224,6 +234,22 @@ sbAddOnBundleUpdateService.prototype = {
 
 
   /**
+   * Handle final UI startup events.
+   */
+
+  _handleFinalUIStartup:
+    function sbAddOnBundleUpdateService__handleFinalUIStartup() {
+    // The network is now available.
+    //XXXeps trying to load the add-on bundle too early will result in a hang
+    //XXXeps during EM restart.  Not sure how to fix this better.
+    this._networkAvailable = true;
+
+    // Initialize the services.
+    this._initialize();
+  },
+
+
+  /**
    * Handle application quit events.
    */
 
@@ -253,14 +279,23 @@ sbAddOnBundleUpdateService.prototype = {
       this._observerSet = new ObserverSet();
       this._observerSet.add(this, "quit-application", false, false);
       this._observerSet.add(this, "profile-after-change", false, true);
+      this._observerSet.add(this, "final-ui-startup", false, true);
     }
 
     // Wait until preferences are available.
     if (!this._prefsAvailable)
       return;
 
+    // Wait until the network is available.
+    if (!this._networkAvailable)
+      return;
+
     // Initialization is now complete.
     this._isInitialized = true;
+
+    // Do nothing more if first-run has not yet completed.
+    if (!SBUtils.hasFirstRunCompleted())
+      return;
 
     // Load and present new add-ons.
     var Application = Cc["@mozilla.org/fuel/application;1"]
@@ -278,6 +313,12 @@ sbAddOnBundleUpdateService.prototype = {
    */
 
   _finalize: function sbAddOnBundleUpdateService__finalize() {
+    // Cancel the add-on bundle loader.
+    if (this._addOnBundleLoader) {
+      this._addOnBundleLoader.cancel();
+      this._addOnBundleLoader = null;
+    }
+
     // Remove observers.
     if (this._observerSet) {
       this._observerSet.removeAll();
@@ -292,8 +333,53 @@ sbAddOnBundleUpdateService.prototype = {
 
   _loadAndPresentNewAddOns:
     function sbAddOnBundleUpdateService__loadAndPresentNewAddOns() {
+    // Start loading the add-on bundle.
+    this._loadNewAddOns();
+
+    // Present new add-ons.
+    this._presentNewAddOns();
+  },
+
+
+  /**
+   * Start loading the new add-on bundle.
+   */
+
+  _loadNewAddOns: function sbAddOnBundleUpdateService__loadNewAddOns() {
+    // Do nothing if add-on bundle loading was already started.
+    if (this._addOnBundleLoader)
+      return;
+
+    // Start loading the new add-on bundle.  Continue with add-on loading and
+    // presentation upon completion.
+    var _this = this;
+    var func = function() { _this._loadAndPresentNewAddOns(); }
+    this._addOnBundleLoader = new AddOnBundleLoader();
+    this._addOnBundleLoader.filterInstalledAddOns = true;
+    this._addOnBundleLoader.filterBlackListedAddOns = true;
+    this._addOnBundleLoader.start(func);
+  },
+
+
+  /**
+   * Present the new add-ons to the user.
+   */
+
+  _presentNewAddOns: function sbAddOnBundleUpdateService__presentNewAddOns() {
+    // Do nothing if add-on bundle loading has not successfully completed.
+    if (!this._addOnBundleLoader ||
+        !this._addOnBundleLoader.complete ||
+        (this._addOnBundleLoader.result != Cr.NS_OK)) {
+      return;
+    }
+
     // Trace execution.
-    dump("1: loadAndPresentNewAddOns\n");
+    var addOnBundle = this._addOnBundleLoader.addOnBundle;
+    var extensionCount = addOnBundle.bundleExtensionCount;
+    for (var i = 0; i < extensionCount; i++) {
+      dump("1: presentNewAddOns " +
+           addOnBundle.getExtensionAttribute(i, "id") + "\n");
+    }
   }
 };
 

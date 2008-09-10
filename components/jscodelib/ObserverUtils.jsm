@@ -115,7 +115,7 @@ ObserverSet.prototype = {
                                 aIsOneShot) {
     // Create the observer set entry object.
     var observerEntry = {};
-    observerEntry.id = this._nextEventListenerID++;
+    observerEntry.id = this._nextObserverID++;
     observerEntry.observer = aObserver;
     observerEntry.topic = aTopic;
     observerEntry.ownsWeak = aOwnsWeak;
