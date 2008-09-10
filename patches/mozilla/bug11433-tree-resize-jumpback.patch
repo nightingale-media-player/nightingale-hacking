@@ -25,7 +25,7 @@ diff -u -8 -r1.354 nsTreeBodyFrame.cpp
 -        EnsureRowIsVisibleInternal(parts, currentIndex);
 -    }
 +    // XXXkreeger: Removing logic for ensuring selection is focused:
-+    //             @see b.s.o 11433
++    //             @see b.s.c 11433
 +    //             @see b.m.o 454632
  
      if (!FullScrollbarsUpdate(PR_FALSE)) {
