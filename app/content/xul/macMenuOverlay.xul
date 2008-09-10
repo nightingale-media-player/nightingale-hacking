@@ -80,6 +80,7 @@
     <key id="hide-mac-key" modifiers="&menu.mac.hide.modifiers;" key="&menu.mac.hide.key;"/>
     <key id="hideothers-mac-key" modifiers="&menu.mac.hideothers.modifiers;" key="&menu.mac.hideothers.key;"/>
     <key id="mac-delete-key" modifiers="" keycode="VK_BACK" command="cmd_delete" />
+    <key id="help-mac-key" modifiers="accel" key="?" oncommand="onHelp();"/>
   </keyset>
 
 </overlay>
