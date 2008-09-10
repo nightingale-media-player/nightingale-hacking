@@ -63,12 +63,12 @@
             flex="3"
             editable="true"
             onselect="_onPlaylistSelectClick(event);"
+            oncontextmenu="_onPlaylistContextMenu(event);"
           >
             <treecols sbid="treecols"/>
             <treechildren
               sbid="sb-playlist-treechildren"
               onclick="_onPlaylistClick(event);"
-              oncontextmenu="_onPlaylistContextClick(event);"
               ondraggesture="_onDragGesture(event);"
               ondragover="_onDragOver(event);"
               ondragdrop="_onDragDrop(event);"
@@ -1598,7 +1598,7 @@
         })
       ]]></field>
 
-      <method name="_onPlaylistContextClick">
+      <method name="_onPlaylistContextMenu">
         <parameter name="evt"/>
         <body>
 <![CDATA[
@@ -1606,7 +1606,20 @@
   if (!this._commandmenuitems.hasCommands()) {
     return;
   }
-
+  
+  // we can get here in two ways:
+  var isMouseEvent;
+  if (evt.originalTarget == this._treechildren) {
+    // the user right clicked on the treechildren
+    isMouseEvent = true;
+  } else if (evt.originalTarget == this.tree) {
+    // the user pressed the context menu key (on the keyboard)
+    isMouseEvent = false;
+  } else {
+    // we got here from some other way (e.g. right click on scrollbar)
+    // ignore this event
+    return;
+  }
 
   const COLUMN_TITLE = "title";
   const CONTEXT_IDS = ["playlist_context_before",
@@ -1646,34 +1659,36 @@
   if (tree.currentIndex < 0)
     return;
 
-  // First, get the row and column clicked.
-  var childElement = {}, rowObject = {}, columnObject = {};
-  tree.treeBoxObject.getCellAt(evt.clientX, evt.clientY, rowObject,
-                               columnObject, childElement);
+  var cellText = null;
+  if (isMouseEvent) {
+    // First, get the row and column clicked.
+    var childElement = {}, rowObject = {}, columnObject = {};
+    tree.treeBoxObject.getCellAt(evt.clientX, evt.clientY, rowObject,
+                                 columnObject, childElement);
+  
+    // Bail if we got a bad result
+    if (rowObject.value == -1)
+      return;
+  
+    // Store the last clicked cell
+    this.edit_row = rowObject.value;
+    this.edit_col = columnObject.value;
 
-  // Bail if we got a bad result
-  if (rowObject.value == -1)
-    return;
-
-  // Store the last clicked cell
-  this.edit_row = rowObject.value;
-  this.edit_col = columnObject.value;
-
-  var cellText =
     tree.view.getCellText(rowObject.value, columnObject.value);
 
-  // XXX: What to do here?
-  if (!cellText) {
-    // If we couldn't get text from the cell then we'll try to pull it
-    // out another way
-    var titleColumn = tree.columns.getNamedColumn(COLUMN_TITLE);
-    if (titleColumn)
-      cellText = tree.view.getCellText(tree.currentIndex, titleColumn);
+    // XXX: What to do here?
+    if (!cellText) {
+      // If we couldn't get text from the cell then we'll try to pull it
+      // out another way
+      var titleColumn = tree.columns.getNamedColumn(COLUMN_TITLE);
+      if (titleColumn)
+        cellText = tree.view.getCellText(tree.currentIndex, titleColumn);
+    }
+  
+    // Make sure that everyone knows about our context
+    this.context_term = cellText;
+    SBDataSetStringValue("playlist.context.term", cellText);
   }
-
-  // Make sure that everyone knows about our context
-  this.context_term = cellText;
-  SBDataSetStringValue("playlist.context.term", cellText);
 
   if (cellText) {
 
@@ -1699,9 +1714,21 @@
     showContextItems(false);
   }
 
-  // HEY LOOK!  WE CAN TRUST THE EVENT DATA!!!  WOW!!!!!
-  this._context_x = evt.screenX;
-  this._context_y = evt.screenY;
+  if (isMouseEvent) {
+    // HEY LOOK!  WE CAN TRUST THE EVENT DATA!!!  WOW!!!!!
+    this._context_x = evt.screenX;
+    this._context_y = evt.screenY;
+  } else {
+    this._context_x = this._treechildren.boxObject.screenX;
+    var treeBoxObject = this.tree.boxObject;
+    var rowOffset = 0;
+    if (treeBoxObject instanceof Components.interfaces.nsITreeBoxObject) {
+      // find the offset within the tree; the +1 makes the popup appear below
+      // the focused row (so it doesn't obscure things)
+      rowOffset = treeBoxObject.rowHeight * (this.tree.currentIndex + 1);
+    }
+    this._context_y = this._treechildren.boxObject.screenY + rowOffset;
+  }
 
   // XXXlone -- there is still a bug when opening the context menu in webplaylists
   // inside tabs, when another tab has a playlist opened inside a browser (for instance,
