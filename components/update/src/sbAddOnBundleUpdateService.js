@@ -350,13 +350,19 @@ sbAddOnBundleUpdateService.prototype = {
     if (this._addOnBundleLoader)
       return;
 
+    // Create an add-on bundle loader.
+    this._addOnBundleLoader = new AddOnBundleLoader();
+
+    // Add all installed add-ons to the blacklist.  This prevents an add-on
+    // from being presented if it was previously installed and then uninstalled.
+    this._addOnBundleLoader.addInstalledAddOnsToBlacklist();
+
     // Start loading the new add-on bundle.  Continue with add-on loading and
     // presentation upon completion.
     var _this = this;
     var func = function() { _this._loadAndPresentNewAddOns(); }
-    this._addOnBundleLoader = new AddOnBundleLoader();
     this._addOnBundleLoader.filterInstalledAddOns = true;
-    this._addOnBundleLoader.filterBlackListedAddOns = true;
+    this._addOnBundleLoader.filterBlacklistedAddOns = true;
     this._addOnBundleLoader.start(func);
   },
 

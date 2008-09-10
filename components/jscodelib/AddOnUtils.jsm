@@ -99,7 +99,7 @@ AddOnBundleLoader.prototype = {
   //
   //   filterInstalledAddOns    Filter out from the add-on bundle the set of
   //                            already installed add-ons.
-  //   filterBlackListedAddOns  Filter out from the add-on bundle the set of
+  //   filterBlacklistedAddOns  Filter out from the add-on bundle the set of
   //                            blacklisted add-ons.
   //   addOnBundle              Loaded add-on bundle.
   //   complete                 True if add-on bundle loading is complete.
@@ -108,7 +108,7 @@ AddOnBundleLoader.prototype = {
   //
 
   filterInstalledAddOns: false,
-  filterBlackListedAddOns: false,
+  filterBlacklistedAddOns: false,
   addOnBundle: null,
   complete: false,
   result: Cr.NS_OK,
@@ -159,6 +159,59 @@ AddOnBundleLoader.prototype = {
     // Clear object references.
     this.addOnBundle = null;
     this._completionCallback = null;
+  },
+
+
+  /**
+   * Add all currently installed add-ons to the recommended add-on black list.
+   */
+
+  addInstalledAddOnsToBlacklist:
+    function AddOnBundleLoader_addInstalledAddOnsToBlacklist() {
+    // Get the list of installed add-ons.
+    var installedAddOnList = RDFHelper.help("rdf:addon-metadata",
+                                            "urn:songbird:addon:root",
+                                            RDFHelper.DEFAULT_RDF_NAMESPACES);
+
+    // Add each installed add-on to the blacklist.
+    for (var i = 0; i < installedAddOnList.length; i++) {
+      this.addAddOnToBlacklist(installedAddOnList[i].id);
+    }
+  },
+
+
+  /**
+   * Add the add-on specified by aAddOnID to the recommended add-on black list.
+   *
+   * \param aAddOnID            ID of add-on to add to black list.
+   */
+
+  addAddOnToBlacklist:
+    function AddOnBundleLoader_addAddOnToBlacklist(aAddOnID) {
+    // Do nothing if no ID.
+    if (!aAddOnID)
+      return;
+
+    // Get the add-on blacklist.
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+    var blacklist =
+          Application.prefs.getValue("recommended_addons.update.blacklist", "");
+    if (blacklist.length > 0)
+      blacklist = blacklist.split(",");
+    else
+      blacklist = [];
+
+    // Do nothing if add-on is already in the blacklist.
+    for (var i = 0; i < blacklist.length; i++) {
+      if (blacklist[i] == aAddOnID)
+        return;
+    }
+
+    // Add the add-on to the blacklist.
+    blacklist.push(aAddOnID);
+    Application.prefs.setValue("recommended_addons.update.blacklist",
+                               blacklist.join(","));
   },
 
 
@@ -241,6 +294,10 @@ AddOnBundleLoader.prototype = {
     if (!this.complete)
       return;
 
+    // If filtering out blacklisted add-ons, remove them.
+    if ((this.result == Cr.NS_OK) && this.filterBlacklistedAddOns)
+      this._removeBlacklistedAddOns();
+
     // If filtering out installed add-ons, remove them.
     if ((this.result == Cr.NS_OK) && this.filterInstalledAddOns)
       this._removeInstalledAddOns();
@@ -276,6 +333,42 @@ AddOnBundleLoader.prototype = {
 
       // Remove bundle add-on if it's already installed.
       if (installedAddOnTable[addOnID])
+        this.addOnBundle.removeExtension(i);
+    }
+  },
+
+
+  /**
+   * Remove add-ons from the loaded bundle that are blacklisted.
+   */
+
+  _removeBlacklistedAddOns:
+    function AddOnBundleLoader__removeBlacklistedAddOns() {
+    // Get the add-on blacklist.
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+    var blacklist =
+          Application.prefs.getValue("recommended_addons.update.blacklist", "");
+    if (blacklist.length > 0)
+      blacklist = blacklist.split(",");
+    else
+      blacklist = [];
+
+    // Create a table of blacklisted add-ons, indexed by add-on ID.
+    var blacklistedAddOnTable = {};
+    for (var i = 0; i < blacklist.length; i++) {
+      var blacklistedAddOnID = blacklist[i];
+      blacklistedAddOnTable[blacklistedAddOnID] = true;
+    }
+
+    // Remove bundle add-ons that are blacklisted.
+    var extensionCount = this.addOnBundle.bundleExtensionCount;
+    for (var i = extensionCount - 1; i >= 0; i--) {
+      // Get the bundle add-on ID.
+      var addOnID = this.addOnBundle.getExtensionAttribute(i, "id");
+
+      // Remove bundle add-on if it's blacklisted.
+      if (blacklistedAddOnTable[addOnID])
         this.addOnBundle.removeExtension(i);
     }
   }
