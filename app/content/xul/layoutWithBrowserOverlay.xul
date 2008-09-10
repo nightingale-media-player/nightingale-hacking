@@ -430,6 +430,7 @@
 
       <key id="key_reload" key="&reloadCmd.commandkey;" command="Browser:Reload" modifiers="accel" />
       <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
+      <key id="key_reload2" keycode="VK_F5" command="Browser:Reload"/>
       <key id="key_stop" keycode="VK_ESCAPE" oncommand="gBrowser.stop();"/>
       <key id="reveal-key" modifiers="&menu.tools.reveal.modifiers;" key="&menu.tools.reveal.accesskey;" command="cmd_reveal"/>
       <key id="browser_view" keycode="VK_F11" oncommand="FullScreen();"/>
