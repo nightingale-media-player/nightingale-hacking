@@ -56,15 +56,13 @@ function runTest () {
 
   // The following may throw if the interface isn't present for instanceof
   try {
-    
-    if(mediacore instanceof Ci.sbIWindowsMediacore) {
-      log("Windows media player version: " + mediacore.windowsMediaVersion);
-    }
-
     if(mediacore instanceof Ci.sbIQuickTimeMediacore) {
       log("QuickTime version: " + mediacore.quickTimeVersion);
     }
     
+    if(mediacore instanceof Ci.sbIWindowsMediacore) {
+      log("Windows media player version: " + mediacore.windowsMediaVersion);
+    }
   }
   catch(e) { };
   
@@ -95,13 +93,13 @@ function runTest () {
   log("Going to attempt to play another file, with another core if possible.");
   mediacore = mediacoreVotingChain.mediacoreChain.queryElementAt(index, Ci.sbIMediacore);
 
-  try {
-    if(mediacore instanceof Ci.sbIWindowsMediacore) {
-      log("Windows media player version: " + mediacore.windowsMediaVersion);
-    }
-    
+  try {    
     if(mediacore instanceof Ci.sbIQuickTimeMediacore) {
       log("QuickTime version: " + mediacore.quickTimeVersion);
+    }
+
+    if(mediacore instanceof Ci.sbIWindowsMediacore) {
+      log("Windows media player version: " + mediacore.windowsMediaVersion);
     }
   }
   catch(e) { };
