@@ -2901,6 +2901,19 @@
           }
         ]]>
       </handler>
+      
+      <handler event="keypress" key=" " phase="capturing">
+        <![CDATA[
+          var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                              .getService(Components.interfaces.sbIPlaylistPlayback);
+          if (pps.playing && !pps.paused) {
+            pps.pause();
+          } else {
+            pps.play();
+          }
+          event.stopPropagation();
+        ]]>
+      </handler>
 
       <handler event="PlaylistCellMouseOver">
         <![CDATA[
