@@ -1,0 +1,37 @@
+Index: layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp,v
+retrieving revision 1.354
+diff -u -8 -r1.354 nsTreeBodyFrame.cpp
+--- layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	10 Apr 2008 15:11:16 -0000	1.354
++++ layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	10 Sep 2008 19:01:38 -0000
+@@ -463,26 +463,19 @@
+     if (!mHasFixedRowCount) {
+       mPageLength = mInnerBox.height / mRowHeight;
+     }
+ 
+     PRInt32 lastPageTopRow = PR_MAX(0, mRowCount - mPageLength);
+     if (mTopRowIndex > lastPageTopRow)
+       ScrollToRowInternal(parts, lastPageTopRow);
+ 
+-    // make sure that the current selected item is still
+-    // visible after the tree changes size.
+-    nsCOMPtr<nsITreeSelection> sel;
+-    mView->GetSelection(getter_AddRefs(sel));
+-    if (sel) {
+-      PRInt32 currentIndex;
+-      sel->GetCurrentIndex(&currentIndex);
+-      if (currentIndex != -1)
+-        EnsureRowIsVisibleInternal(parts, currentIndex);
+-    }
++    // XXXkreeger: Removing logic for ensuring selection is focused:
++    //             @see b.s.o 11433
++    //             @see b.m.o 454632
+ 
+     if (!FullScrollbarsUpdate(PR_FALSE)) {
+       return PR_FALSE;
+     }
+   }
+ 
+   mReflowCallbackPosted = PR_FALSE;
+   return PR_FALSE;
