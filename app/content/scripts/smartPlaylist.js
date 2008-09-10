@@ -148,6 +148,9 @@ function doLoad()
   smartConditions.addEventListener("select", onUserInput, false);
   smartConditions.addEventListener("additem", onAddCondition, false);
   smartConditions.addEventListener("removeitem", onRemoveCondition, false);
+
+  var limit = document.getElementById("smart_songs_count");
+  limit.addEventListener("blur",  onLimitBlur, false);
 }
 
 function doUnLoad()
@@ -157,6 +160,9 @@ function doUnLoad()
   smartConditions.removeEventListener("select", onUserInput, false);
   smartConditions.removeEventListener("additem", onAddCondition, false);
   smartConditions.removeEventListener("removeitem", onRemoveCondition, false);
+
+  var limit = document.getElementById("smart_songs_count");
+  limit.removeEventListener("blur",  onLimitBlur, false);
 }
 
 function loadConditions()
@@ -332,6 +338,7 @@ function isConfigurationValid() {
 
 function doOK()
 {
+  checkLimit();
   var smart_conditions = document.getElementById("smart_conditions");
   if (isConfigurationValid()) {
     var list = window.arguments[0];
@@ -551,4 +558,30 @@ function testAdditionalRestrictions(aConditions, aConditionsDrawer) {
     return false;
   }
   return true;
+}
+
+function onLimitBlur(evt) {
+  checkLimit();
+}
+
+function checkLimit() {
+  var limit = document.getElementById("smart_songs_count");
+  // Constrain the value to avoid conversion problems between huge numbers and
+  // 64bits integers. Keep the value between 0 and 99,999,999,999,999, the
+  // largest integer made of only '9's that fits in 64 bits. We could constrain
+  // to 2^64 instead but that number (18446744073709551615) looks arbitrary to
+  // the user and does not suggest to him that he's reached the maximum value.
+  
+  // For each limit type, this means the maximums are:
+  
+  // - By minutes:       190,258,752 years
+  // - By hours:      11,415,525,114 years
+  // - By megabytes:      95,367,432 petabytes
+  // - By gigabytes:  97,656,250,000 petabytes
+  // - By items:  99,999,999,999,999 items
+  
+  // This "ought to be enough for anybody".
+  
+  limit.value = Math.min(limit.value, 99999999999999);
+  limit.value = Math.max(limit.value, 0);
 }

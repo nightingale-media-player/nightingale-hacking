@@ -948,7 +948,11 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeAnyAll()
     // If this is not an item limit, figure out what our row limit should be
     PRUint32 rowLimit;
     if (mLimitType == sbILocalDatabaseSmartMediaList::LIMIT_TYPE_ITEMS) {
-      rowLimit = mLimit;
+      // rolling limit value is 64 bits (since it accommodates for tiny units
+      // like bits), but rolling queries are limited to 2^32 rows of results.
+      // Since this is a limit by number of items, we have to cast mLimit down
+      // to 32 bits. Avoid a warning here by explicitly masking & casting.
+      rowLimit = (PRUint32)(mLimit & 0xFFFFFFFF);
     }
     else {
       nsAutoString rollingSql;
@@ -1048,7 +1052,11 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneNotRandom()
   }
   else {
     // Otherwise, the limit row is the limit
-    limitRow = mLimit;
+    // rolling limit value is 64 bits (since it accommodates for tiny units
+    // like bits), but rolling queries are limited to 2^32 rows of results.
+    // Since this is a limit by number of items, we have to cast mLimit down
+    // to 32 bits. Avoid a warning here by explicitly masking & casting.
+    limitRow = (PRUint32)(mLimit & 0xFFFFFFFF);
   }
 
   nsAutoString tempTableName;
@@ -1228,7 +1236,11 @@ sbLocalDatabaseSmartMediaList::RebuildMatchTypeNoneRandom()
       NS_ENSURE_SUCCESS(rv, rv);
 
       if (rowCount >= mLimit) {
-        rowLimit = mLimit;
+        // rolling limit value is 64 bits (since it accommodates for tiny units
+        // like bits), but rolling queries are limited to 2^32 rows of results.
+        // Since this is a limit by number of items, we have to cast mLimit down
+        // to 32 bits. Avoid a warning here by explicitly masking & casting.
+        rowLimit = (PRUint32)(mLimit & 0xFFFFFFFF);
         break;
       }
     }
