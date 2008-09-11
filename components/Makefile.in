@@ -66,7 +66,7 @@ ifeq (1,$(SB_ENABLE_TEST_HARNESS))
 SUBDIRS += testharness
 endif
 
-SUBDIRDEPS  = mediacore : library job moz
+SUBDIRDEPS  = mediacore : library job moz mediaimport
 SUBDIRDEPS2 = playlistreader : library
 SUBDIRDEPS3 = devicesobsolete : library mediacore
 SUBDIRDEPS4 = integration : devicesobsolete

@@ -37,8 +37,10 @@
 #include <nsIGenericFactory.h>
 
 #include "sbMediacoreManager.h"
+#include "sbMediacoreTypeSniffer.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreManager);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediacoreTypeSniffer, Init);
 
 // Registration functions for becoming a startup observer
 static NS_METHOD
@@ -88,6 +90,12 @@ static nsModuleComponentInfo sbMediacoreManagerComponents[] =
     sbMediacoreManagerConstructor,
     sbMediacoreManagerRegisterSelf,
     sbMediacoreManagerUnregisterSelf
+  },
+  {
+    SB_MEDIACORETYPESNIFFER_CLASSNAME,
+    SB_MEDIACORETYPESNIFFER_CID,
+    SB_MEDIACORETYPESNIFFER_CONTRACTID,
+    sbMediacoreTypeSnifferConstructor
   }
 };
 

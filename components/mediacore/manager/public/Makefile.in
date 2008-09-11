@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbIMediacoreManager.idl \
+             sbIMediacoreTypeSniffer.idl \
              $(NULL)
 
 XPIDL_MODULE = sbMediacoreManager.xpt
