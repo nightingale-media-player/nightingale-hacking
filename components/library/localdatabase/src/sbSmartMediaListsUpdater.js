@@ -109,7 +109,7 @@ SmartMediaListsUpdater.prototype = {
   // --------------------------------------------------------------------------
   initialize: function() {
     // listen for everything
-    this.monitor = 
+    this._monitor = 
       new LibraryUtils.GlobalMediaListListener(this, 
                                                false,
                                                Ci.sbIMediaList.LISTENER_FLAGS_ITEMADDED |
@@ -198,12 +198,14 @@ SmartMediaListsUpdater.prototype = {
   // --------------------------------------------------------------------------
   // print a debug message in the console
   // --------------------------------------------------------------------------
+  /*
   _log: function(str, isError) {
     if (debugLog || 
         isError) {
       Components.utils.reportError("smartMediaListsUpdater - " + str);
     }
   },
+  */
   
   // --------------------------------------------------------------------------
   // Entering batch notification, increment counter
@@ -280,6 +282,16 @@ SmartMediaListsUpdater.prototype = {
     // We don't care about property changes on lists
     if (aMediaItem instanceof Ci.sbIMediaList)
       return true;
+    
+    // If we are in a batch, and the "update all" flag has been 
+    // added to the property list, then there is no need
+    // to keep tracking which properties are dirty.
+    // This can save a huge amount of time when importing and
+    // scanning 10,000+ tracks.
+    if (this._batchCount > 0 && this._updatedProperties["*"]) {
+      return true;
+    }
+    
     // for all properties in the array...
     for (var i=0; i<aProperties.length; i++) {
       var property = aProperties.getPropertyAt(i);
@@ -322,7 +334,7 @@ SmartMediaListsUpdater.prototype = {
   recordUpdateProperty: function(aPropertyID) {
     // if the property is not yet in the table, add it
     if (!(aPropertyID in this._updatedProperties)) {
-      this._log("Property change : " + aPropertyID);
+      //this._log("Property change : " + aPropertyID);
       this._updatedProperties[aPropertyID] = true;
       // remember that this property is dirty, so that if we are shut down
       // before the lists are updated, we can still resume the update on the
@@ -409,16 +421,23 @@ SmartMediaListsUpdater.prototype = {
   // timer notification
   // --------------------------------------------------------------------------
   notify: function(aTimer) {
-    if (aTimer == this._timer) {
-      // reset first delayed update check time
-      this._timerInitTime = null;
-      // properties have been changed some time ago, we need to go through the
-      // list of smart playlists, and schedule an update for the ones whose
-      // content has potentially changed
-      this.checkForUpdates();
-    } else if (aTimer == this._secondaryTimer) {
-      // perform the update for the next smart playlist in the queue
-      this.performUpdates();
+    // The delayed update timer has expired... if there are no new batches in 
+    // progress, check to see if we need to update the smart playlists
+    if (this._batchCount == 0) {
+      if (aTimer == this._timer) {
+        // reset first delayed update check time
+        this._timerInitTime = null;
+        // properties have been changed some time ago, we need to go through the
+        // list of smart playlists, and schedule an update for the ones whose
+        // content has potentially changed
+        this.checkForUpdates();
+      } else if (aTimer == this._secondaryTimer) {
+        // perform the update for the next smart playlist in the queue
+        this.performUpdates();
+      }
+    } else {
+      // Otherwise, defer the check for a while longer
+      this.delayedUpdateCheck();
     }
   },
 
@@ -433,7 +452,7 @@ SmartMediaListsUpdater.prototype = {
   // run after the ones that were already scheduled.
   // --------------------------------------------------------------------------
   checkForUpdates: function() {
-    this._log("checkForUpdates");
+    //this._log("checkForUpdates");
     // if no properties have been modified, no list need to be added to
     // the queue (this does not mean that the queue is empty).
     if (!this.emptyOfProperties(this._updatedProperties)) {
@@ -526,7 +545,7 @@ SmartMediaListsUpdater.prototype = {
     // this should really not be happening, but test anyway
     if (!list) {
       // print a console message since this is not supposed to happen
-      this._log("list is null in sbSmartMediaListsUpdater.js", true);
+      //this._log("list is null in sbSmartMediaListsUpdater.js", true);
       // go back to idle mode
       this._updating = false;
       // make sure the dirty lists table is empty
@@ -534,10 +553,10 @@ SmartMediaListsUpdater.prototype = {
       return;
     }
 
-    this._log("Updating list " + 
-              list.name + " (" + 
-              list.type + ", " + 
-              list.guid + ")");
+    //this._log("Updating list " + 
+    //          list.name + " (" + 
+    //          list.type + ", " + 
+    //          list.guid + ")");
 
     // we are now updating a whole bunch of playlists, one at a time
     this._updating = true;

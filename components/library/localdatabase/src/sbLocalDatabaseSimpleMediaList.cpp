@@ -1226,24 +1226,27 @@ sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Start a batch for both the LISTCLEARED and all the ITEMADDED notifications,
-  // so that if a listener needs to differentiate between ContentChanged and
-  // a real LISTCLEAR + N*ITEMADDED, the fact that the whole thing happened in
-  // one single batch will be its clue.
-  sbAutoBatchHelper batchHelper(*this);
+  // If we have listeners, they will probably want to know about this
+  if (ListenerCount() > 0) {
+    // Start a batch for both the LISTCLEARED and all the ITEMADDED notifications,
+    // so that if a listener needs to differentiate between ContentChanged and
+    // a real LISTCLEAR + N*ITEMADDED, the fact that the whole thing happened in
+    // one single batch will be its clue.
+    sbAutoBatchHelper batchHelper(*this);
 
-  // First, notify listeners that the list has been cleared
-  sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList);
+    // First, notify listeners that the list has been cleared
+    sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList);
 
-  // Then send an ITEMADDED notification for each item that we now have in the list
-  PRUint32 length;
-  rv = GetArray()->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
+    // Then send an ITEMADDED notification for each item that we now have in the list
+    PRUint32 length;
+    rv = GetArray()->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  for (PRUint32 index=0; index<length; index++) {
-    nsCOMPtr<sbIMediaItem> item;
-    rv = GetItemByIndex(index, getter_AddRefs(item));
-    NotifyListenersItemAdded(this, item, index);
+    for (PRUint32 index=0; index<length; index++) {
+      nsCOMPtr<sbIMediaItem> item;
+      rv = GetItemByIndex(index, getter_AddRefs(item));
+      NotifyListenersItemAdded(this, item, index);
+    } 
   }
   
   return NS_OK;
