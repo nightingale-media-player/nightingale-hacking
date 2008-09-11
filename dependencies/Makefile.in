@@ -245,6 +245,7 @@ GST_PLUGINS_GOOD_NAMES = gstalaw \
                          gstmultipart \
                          gstnavigationtest \
                          gstqtdemux \
+                         gstreplaygain \
                          gstrtp \
                          gstrtsp \
                          gstsmpte \
@@ -259,13 +260,15 @@ GST_PLUGINS_GOOD_NAMES = gstalaw \
                          gstwavparse \
                          $(NULL)
 
-GST_PLUGINS_UGLY_NAMES = gstmpegaudioparse \
-                         gstasf \
+GST_PLUGINS_UGLY_NAMES = gstasf \
+                         gstmpegaudioparse \
                          $(NULL)
 
-GST_PLUGINS_BAD_NAMES = gstmozillasrc \
-                        gstaiffparse \
-                        gstreplaygain \
+GST_PLUGINS_BAD_NAMES = gstaiffparse \
+                        gstmozillasrc \
+                        gstrtpmanager \
+                        gstsdpelem \
+                        gstselector \
                         $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
