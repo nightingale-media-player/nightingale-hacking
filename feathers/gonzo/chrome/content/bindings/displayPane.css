@@ -116,6 +116,10 @@ menuitem.displaypane-menuitem[recommended] {
   padding:0px 4px 0px 4px;
 }
 
+.sb-displaypane-tabs {
+  -moz-box-flex: 1;
+}
+
 .sb-displaypane-menubutton,
 .sb-displaypane-header {
   min-height:19px;

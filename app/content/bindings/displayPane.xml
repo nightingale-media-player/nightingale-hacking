@@ -57,6 +57,11 @@
             </vbox>
             <label anonid="header" xbl:inherits="default=label"
                    class="sb-displaypane-label" flex="1" crop="end"/>
+            <spacer anonid="headerSpacer" flex="1"/>
+            <tabs anonid="dpTabBar"
+                  class="sb-displaypane-tabs"
+                  collapsed="true"
+                  onselect="document.getBindingParent(this).onTabSelect(event)"/>
           </hbox>
           <button type="menu" mousethrough="never" class="sb-displaypane-menubutton">
             <menupopup onpopupshowing="return document.getBindingParent(this).buildMenu(event)"
@@ -448,6 +453,88 @@
           titleBar.setAttribute("button", true);
         ]]></xbl:body>
       </xbl:method>
+
+      <!-- Tabs -->
+      <xbl:property name="tabBar" readonly="true">
+        <xbl:getter><![CDATA[
+          var tabBar = this._getElem("dpTabBar");
+          return tabBar;
+        ]]></xbl:getter>
+      </xbl:property>
+      
+      <xbl:field name="_tabPanelLink">null</xbl:field>
+      <xbl:field name="_tabObserver">null</xbl:field>
+      <xbl:method name="enableTabs">
+        <xbl:parameter name="aTabPanel"/>
+        <xbl:parameter name="aTabObserver"/>
+        <xbl:body><![CDATA[
+          this._tabPanelLink = aTabPanel;
+          this._tabObserver = aTabObserver;
+          this.tabsHidden = false;
+        ]]></xbl:body>
+      </xbl:method>
+      
+      <xbl:method name="onTabSelect">
+        <xbl:parameter name="aEvent" />
+        <xbl:body><![CDATA[
+          var tabBar = this.tabBar;
+
+          // If we are linked to a panel then set its selectedIndex
+          if (this._tabPanelLink) {
+            this._tabPanelLink.selectedIndex = tabBar.selectedIndex;
+          }
+          
+          // If there is a callback (aTabObserver) call it with the selectedIndex
+          if (this._tabObserver) {
+            this._tabObserver(tabBar.selectedIndex);
+          }
+        ]]></xbl:body>
+      </xbl:method>
+      
+      <xbl:method name="addTab">
+        <xbl:parameter name="aTabLabel"/>
+        <xbl:parameter name="aTabIcon"/>
+        <xbl:body><![CDATA[
+          var tabBar = this.tabBar;
+          var newTab = tabBar.appendItem(aTabLabel);
+          if (aTabIcon) {
+            newTab.setAttribute("image", aTabIcon);
+          }
+          return newTab;
+        ]]></xbl:body>
+      </xbl:method>
+
+      <xbl:property name="selectedIndex">
+        <xbl:getter><![CDATA[
+          return this.tabBar.selectedIndex;
+        ]]></xbl:getter>
+        <xbl:setter><![CDATA[
+          this.tabBar.selectedIndex = val;
+          if (this._tabPanelLink) {
+            this._tabPanelLink.selectedIndex = this.tabBar.selectedIndex;
+          }
+          return val;
+        ]]></xbl:setter>
+      </xbl:property>
+      
+      <xbl:property name="tabsHidden">
+        <xbl:getter><![CDATA[
+          return this.tabBar.getAttribute("collapsed");
+        ]]></xbl:getter>
+        <xbl:setter><![CDATA[
+          var tabBar = this.tabBar;
+          var spacer = this._getElem("headerSpacer");
+          if (val) {
+            tabBar.setAttribute("collapsed", true);
+            spacer.removeAttribute("collapsed");
+          } else {
+            tabBar.removeAttribute("collapsed");
+            spacer.setAttribute("collapsed", true);
+          }
+          return val;
+        ]]></xbl:setter>
+      </xbl:property>
+      
     </xbl:implementation>
     
     <xbl:handlers>
