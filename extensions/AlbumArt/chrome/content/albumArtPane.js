@@ -517,9 +517,70 @@ var AlbumArt = {
    */
   setSelectionsCover: function(aImageFile) {
     var selection = AlbumArt._mediaListView.selection;
+    var multipleItems = false;
+    
+    // First check through all the items to see if they are the same or not
+    // We determine that items are the same if they belong to the same album
+    // and have the same AlbumArtist or ArtistName.
+    var itemEnum = selection.selectedIndexedMediaItems;
+    var oldAlbumName = null;
+    var oldAlbumArtist = null;
+    while (itemEnum.hasMoreElements()) {
+      var item = itemEnum.getNext().mediaItem;
+      var albumName = item.getProperty(SBProperties.albumName);
+      var albumArtist = item.getProperty(SBProperties.albumArtist);
+      if (!albumArtist || albumArtist == "") {
+        albumArtist = item.getProperty(SBProperties.artistName);
+      }
+      
+      if (oldAlbumArtist == null &&
+          oldAlbumName == null) {
+        oldAlbumName = albumName;
+        oldAlbumArtist = albumArtist;
+      } else if (albumName != oldAlbumName ||
+                 albumArtist != oldAlbumArtist) {
+        // Not the same so flag and break
+        multipleItems = true;
+        break;
+      }
+    }
+    
+    if (multipleItems) {
+      // Ask the user if they are sure they want to change the items selected
+      // since they are different.
+      const BYPASSKEY = "albumart.multiplewarning.bypass";
+      const STRINGROOT = "albumart.multiplewarning.";
+      if (!Application.prefs.getValue(BYPASSKEY, false)) {
+        var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                              .getService(Ci.nsIPromptService);
+        var check = { value: false };
+        
+        var sbs = Cc["@mozilla.org/intl/stringbundle;1"]
+                    .getService(Ci.nsIStringBundleService);
+        var albumartStrings = sbs.createBundle("chrome://albumart/locale/albumart.properties");
+        
+        var strTitle = SBString(STRINGROOT + "title", null, albumartStrings);
+        var strMsg = SBString(STRINGROOT + "message", null, albumartStrings);
+        var strCheck = SBString(STRINGROOT + "check", null, albumartStrings);
+        
+        var confirmOk = promptService.confirmCheck(window, 
+                                                   strTitle, 
+                                                   strMsg, 
+                                                   strCheck, 
+                                                   check);
+        if (!confirmOk) {
+          return;
+        }
+        if (check.value == true) {
+          Application.prefs.setValue(BYPASSKEY, true);
+        }
+      }
+    }
+    
+    // Now actually set the properties
     var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Ci.nsIMutableArray);
-    var itemEnum = selection.selectedIndexedMediaItems;
+    itemEnum = selection.selectedIndexedMediaItems;
     while (itemEnum.hasMoreElements()) {
       var item = itemEnum.getNext().mediaItem;
       var oldImage = item.getProperty(SBProperties.primaryImageURL);
