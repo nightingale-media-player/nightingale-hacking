@@ -389,6 +389,7 @@ Concerts = {
 			onStop : function() { },
 			onBeforeTrackChange : function() { },
 			onTrackChange : function() { },
+			onTrackIndexChange : function() { },
 			onBeforeViewChange : function() { },
 			onViewChange : function(aView) {
 				debugLog("viewChangeListener", "on view change triggered");
