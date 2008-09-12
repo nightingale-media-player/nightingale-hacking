@@ -65,7 +65,7 @@
             onselect="_onPlaylistSelectClick(event);"
             oncontextmenu="_onPlaylistContextMenu(event);"
           >
-            <treecols sbid="treecols"/>
+            <treecols sbid="treecols" type="sb-contextpicker"/>
             <treechildren
               sbid="sb-playlist-treechildren"
               onclick="_onPlaylistClick(event);"

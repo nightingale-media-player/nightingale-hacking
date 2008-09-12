@@ -62,7 +62,9 @@
           enableColumnDrag="false"
           xbl:inherits="class,enableColumnDrag,hidecolumnpicker"
         >
-          <xul:treecols sbid="treeColumns" xbl:inherits="class"/>
+          <xul:treecols sbid="treeColumns" 
+                        type="sb-contextpicker" 
+                        xbl:inherits="class"/>
           <xul:treechildren/>
         </xul:tree>
       </xul:stack>
