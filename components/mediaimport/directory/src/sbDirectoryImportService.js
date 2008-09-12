@@ -166,6 +166,13 @@ DirectoryImportJob.prototype = {
       return this._itemURIs.enumerate();
     }
     
+    // If all the URIs resulted in new items, we can 
+    // cheat and just return that list
+    if (this._newMediaItems && 
+        this._itemURIs.length == this._newMediaItems.length) {
+      return this.enumerateNewItemsOnly();
+    }
+    
     // Computing the list of media items can be expensive, so keep
     // the results cached just in case the function is called 
     // multiple times
@@ -354,7 +361,7 @@ DirectoryImportJob.prototype = {
     this._canCancel = false;
     
     // Update status
-    this._statusText = SBString("media_scan.findingdupes");    
+    this._statusText = SBString("media_scan.adding");    
     this.notifyJobProgressListeners();
     
     // Bug 10228 - this needs to be replaced with an sbIJobProgress interface
