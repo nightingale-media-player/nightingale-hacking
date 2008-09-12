@@ -6,16 +6,16 @@
 #
 # Usage:
 #
-# First, enable the sbDatabaseEnginePerformanceLogger log and capture the
+# First, enable the sbDatabaseEnginePerformance log and capture the
 # output into a file
 #
-# $ export NSPR_LOG_MODULES=sbDatabaseEnginePerformanceLogger:5
+# $ export NSPR_LOG_MODULES=sbDatabaseEnginePerformance:5
 # $ export NSPR_LOG_FILE=nsprlog.txt
 #
 # Then run songbird to generate some output.  Once you've quit songbird, filter
 # the log file to throw away any extra stuff that was captured
 #
-# $ grep sbDatabaseEnginePerformanceLogger nsprlog.log > dbperf.log
+# $ grep sbDatabaseEnginePerformance nsprlog.log > dbperf.log
 #
 # Use this script to convert the log file to the postgresql style log file
 #
