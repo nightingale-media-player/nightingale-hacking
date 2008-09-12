@@ -3289,7 +3289,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   }
   else {
     rv = FilterExistingItems(aURIArray, 
-                             filteredPropertyArrayArray,
+                             aPropertyArrayArray,
                              getter_AddRefs(filteredArray), 
                              getter_AddRefs(filteredPropertyArrayArray));
     NS_ENSURE_SUCCESS(rv, rv);
