@@ -29,6 +29,7 @@
 
 #include "sbStoragePropertyUnitConverter.h"
 #include <math.h>
+#include <stdlib.h>
 
 // ctor - register all units
 sbStoragePropertyUnitConverter::sbStoragePropertyUnitConverter() 

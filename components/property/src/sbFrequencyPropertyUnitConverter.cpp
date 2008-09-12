@@ -28,6 +28,7 @@
 
 #include "sbFrequencyPropertyUnitConverter.h"
 #include <math.h>
+#include <stdlib.h>
 
 // ctor - register all units
 sbFrequencyPropertyUnitConverter::sbFrequencyPropertyUnitConverter() 
