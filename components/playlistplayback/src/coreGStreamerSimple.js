@@ -92,39 +92,12 @@ function CoreGStreamerSimple()
                               .getService(Components.interfaces.nsIEnvironment);
 
   // Enable for all supported formats.
-  this._gstEnableAll = false;
+  this._gstEnableAll = true;
   // Enable for only a minimal set of formats. If both are false, this core
   // is never used.
   this._gstEnableMinimal = false;
   // Has enabling all been set explicitly, or (based on platform) automatically?
   this._gstEnableAllExplicit = false;
-
-  var platform = getPlatformString()
-  if ((platform.indexOf("Windows_NT") < 0) && 
-      (platform.indexOf("Darwin") < 0))
-  {
-    // On linux/etc, we only have a gstreamer mediacore, so support everything.
-    this._gstEnableAll = true;
-  }
-  else {
-    if (environment.exists("SB_GST_ENABLE")) {
-      var enable = environment.get("SB_GST_ENABLE");
-      if (enable == "all") {
-        this._gstEnableAll = true;
-        this._gstEnableAllExplicit = true;
-      }
-      else {
-        // Otherwise disable completely.
-        this._gstEnableAll = false;
-        this._gstEnableMinimal = false;
-      }
-    }
-    else {
-      // If no environment variable is set, we default to just supporting
-      // the minimal set.
-      this._gstEnableMinimal = true;
-    }
-  }
 
   if (this._gstEnableAll) {
     this._mediaUrlMatcher = new ExtensionSchemeMatcher(this._mediaUrlExtensions,

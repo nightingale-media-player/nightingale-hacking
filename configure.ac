@@ -892,12 +892,10 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
          case "$SB_PLATFORM" in
             windows)
                 MEDIA_CORE_GST=1
-                MEDIA_CORE_VLC=1
                 MEDIA_CORE_WMP=1
                 MEDIA_CORE_QT=1
             ;;
             macosx)
-                MEDIA_CORE_VLC=1
                 # Enable GST only on x86 (we don't have PPC binaries)
                 case "$SB_ARCH" in
                     *86)

@@ -106,10 +106,10 @@ sbGStreamerService::Init()
   NS_NAMED_LITERAL_STRING(kGstPluginSystemPath, "GST_PLUGIN_SYSTEM_PATH");
   NS_NAMED_LITERAL_STRING(kGstRegistry, "GST_REGISTRY");
   NS_NAMED_LITERAL_STRING(kGstPluginPath, "GST_PLUGIN_PATH");
-  PRBool bundledGst;
   PRBool pluginPathExists;
   PRBool hasMore;
   PRBool first = PR_TRUE;
+  PRBool systemGst;
   nsString pluginPaths;
 
   nsCOMPtr<nsISimpleEnumerator> dirList;
@@ -123,15 +123,15 @@ sbGStreamerService::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
 #if defined(XP_MACOSX) || defined(XP_WIN)
-  bundledGst = PR_TRUE;
+  systemGst = PR_FALSE;
 #else
-  // On unix, default to using the system gstreamer; only use the bundled one
+  // On unix, default to using the bundled gstreamer; only use the system one
   // if this env var is set.
-  rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_BUNDLED"), &bundledGst);
+  rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_SYSTEM"), &systemGst);
   NS_ENSURE_SUCCESS(rv, rv);
 #endif
 
-  if (bundledGst) {
+  if (!systemGst) {
     // Set the plugin path.  This is gst-plugins in the dist directory
     nsCOMPtr<nsIFile> pluginDir;
     rv = directorySvc->Get("resource:app",
