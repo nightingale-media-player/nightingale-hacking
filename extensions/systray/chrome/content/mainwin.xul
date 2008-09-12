@@ -20,6 +20,8 @@
            yay songbird.  -->
       <menuitem label="&playpause.label;"
                 oncommand="doMenu('menuitem_control_play')"/>
+      <menuitem id="trayicon-mainwin-menuitem-stop" label="&stop.label;"
+                oncommand="doMenu('menuitem_control_stop')"/>
       <menuseparator/>
       <menuitem label="&previous.label;"
                 oncommand="doMenu('menuitem_control_prev')"/>

@@ -133,6 +133,9 @@ function doMenu( command ) {
     case "menuitem_control_jumpto":
       toggleJumpTo();
     break;
+    case "menuitem_control_stop":
+      gPPS.stop();
+    break;
     case "menu_extensions":
       SBOpenPreferences("paneAddons");
     break;

@@ -36,6 +36,9 @@
         window.addEventListener("activating", this._handleActivatingEvent,
                                 false);
         window.addEventListener("unload", this._handleUnload, false);
+        
+        var item = document.getElementById("trayicon-mainwin-menuitem-stop");
+        this._stopMenuItem = SBDataBindElementProperty("faceplate.playing", item, "disabled", true, true);
       ]]>
       </constructor>
 
@@ -49,6 +52,8 @@
 
         if (this.alwaysshow)
           this.hideIcon();
+        
+        this._stopMenuItem.unbind();
       ]]>
       </destructor>
 

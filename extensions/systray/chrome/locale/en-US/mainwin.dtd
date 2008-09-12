@@ -1,5 +1,6 @@
 <!-- TODO: split play/pause into two -->
 <!ENTITY playpause.label     "Play/Pause">
+<!ENTITY stop.label          "Stop">
 <!ENTITY previous.label      "Previous Track">
 <!ENTITY next.label          "Next Track">
 <!ENTITY restore.label       "Restore &brandShortName;">
