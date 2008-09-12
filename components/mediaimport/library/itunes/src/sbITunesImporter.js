@@ -2556,315 +2556,258 @@ function NSGetModule(compMgr, fileSpec) {
 }
 
 
-/*******************************************************************************
- *******************************************************************************
- *
- * XML parser services.
- *
- *******************************************************************************
- ******************************************************************************/
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//
+// XML parser services.
+//
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-/*
- * ITXMLParser
- *
- *   This function is the constructor for the XML parser.
+/**
+ * Construct an XML parser object.
  */
 
-function ITXMLParser(filePath)
-{
-    var                         fileInputStream;
+function ITXMLParser(filePath) {
+  // Initialize a file object.
+  this._file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+  this._file.initWithPath(filePath);
 
-    /* Initialize a file object. */
-    this.mFile = Components.classes["@mozilla.org/file/local;1"].
-                            createInstance(Components.interfaces.nsILocalFile);
-    this.mFile.initWithPath(filePath);
+  // Initialize a file input stream.
+  var fileInputStream = Cc["@mozilla.org/network/file-input-stream;1"]
+                          .createInstance(Ci.nsIFileInputStream);
+  fileInputStream.init(this._file, 1, 0, 0);
 
-    /* Initialize a file input stream. */
-    fileInputStream = Components.
-                    classes["@mozilla.org/network/file-input-stream;1"].
-                    createInstance(Components.interfaces.nsIFileInputStream);
-    fileInputStream.init(this.mFile, 1, 0, 0);
+  // Get a seekable input stream.
+  this._seekableStream = fileInputStream.QueryInterface(Ci.nsISeekableStream);
 
-    /* Get a seekable input stream. */
-    this.mSeekableStream = fileInputStream.QueryInterface
-                                    (Components.interfaces.nsISeekableStream);
-
-    /* Initialize a scriptable input stream. */
-    this.mInputStream =
-        Components
-            .classes["@mozilla.org/intl/converter-input-stream;1"]
-            .createInstance(Components.interfaces.nsIConverterInputStream);
-    this.mInputStream.init(fileInputStream,
-                           "UTF-8",
-                           this.readSize,
-                           Components.interfaces.nsIConverterInputStream
-                                               .DEFAULT_REPLACEMENT_CHARACTER);
+  // Initialize a scriptable input stream.
+  this._inputStream = Cc["@mozilla.org/intl/converter-input-stream;1"]
+                        .createInstance(Ci.nsIConverterInputStream);
+  this._inputStream.init
+    (fileInputStream,
+     "UTF-8",
+     this.readSize,
+     Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
 }
 
 
-/*
- * ITXMLParser prototype object.
- */
+//
+// ITXMLParser prototype object.
+///
 
-ITXMLParser.prototype.constructor = ITXMLParser;
-ITXMLParser.prototype =
-{
-    /***************************************************************************
-     *
-     * XML parser configuration.
-     *
-     **************************************************************************/
+ITXMLParser.prototype = {
+  // Set the constructor.
+  constructor: ITXMLParser,
 
-    /*
-     * readSize                     Number of bytes to read when filling stream
-     *                              buffer.
-     */
+  //----------------------------------------------------------------------------
+  //
+  // XML parser configuration.
+  //
+  //----------------------------------------------------------------------------
 
-    readSize: 16384,
+  //
+  // readSize                   Number of bytes to read when filling stream
+  //                            buffer.
+  //
 
-
-    /***************************************************************************
-     *
-     * XML parser fields.
-     *
-     **************************************************************************/
-
-    /*
-     * mFile                        File from which to read.
-     * mSeekableStream              Seekable stream from which to read.
-     * mInputStream                 Input stream from which to read.
-     * mBuffer                      Temporary buffer to hold data.
-     * mTagList                     List of available tags.
-     * mNextTagIndex                Index of next tag to get from tag list.
-     */
-
-    mFile: null,
-    mSeekableStream: null,
-    mInputStream: null,
-    mBuffer: "",
-    mTagList: [],
-    mNextTagIndex: 0,
+  readSize: 16384,
 
 
-    /***************************************************************************
-     *
-     * Public XML parser methods.
-     *
-     **************************************************************************/
+  //----------------------------------------------------------------------------
+  //
+  // XML parser fields.
+  //
+  //----------------------------------------------------------------------------
 
-    /*
-     * close
-     *
-     *   This function closes the XML parser.
-     */
+  //
+  // _file                      File from which to read.
+  // _seekableStream            Seekable stream from which to read.
+  // _inputStream               Input stream from which to read.
+  // _buffer                    Temporary buffer to hold data.
+  // _tagList                   List of available tags.
+  // _nextTagIndex              Index of next tag to get from tag list.
+  //
 
-    close: function()
-    {
-        /* Close the input stream. */
-        this.mInputStream.close();
-    },
-
-
-    /*
-     * getNextTag
-     *
-     *   <-- tag.value              Tag string.
-     *   <-- tagPreText.value       Text before tag.
-     *
-     *   This function gets the next tag and returns it in tag.value.  The text
-     * between the previous tag and the returned tag is returned in
-     * tagPreText.value.
-     */
-
-    getNextTag: function(tag, tagPreText)
-    {
-        var                         tagSplit;
-
-        /* If the end of the tag list is reached, read more tags. */
-        if (this.mNextTagIndex >= this.mTagList.length)
-        {
-            this.mTagList.length = 0;
-            this.mNextTagIndex = 0;
-            this.readTags();
-        }
-
-        /* Return the next tag. */
-        if (this.mTagList.length > 0)
-        {
-            tagSplit = this.mTagList[this.mNextTagIndex].split("<");
-            this.mNextTagIndex++;
-            tag.value = tagSplit[1];
-            tagPreText.value = this.decodeEntities(tagSplit[0]);
-        }
-        else
-        {
-            tag.value = null;
-            tagPreText.value = null;
-        }
-    },
+  _file: null,
+  _seekableStream: null,
+  _inputStream: null,
+  _buffer: "",
+  _tagList: [],
+  _nextTagIndex: 0,
 
 
-    /*
-     * skipNextElement
-     *
-     *   This function skips the next element and all its descendents.
-     */
+  //----------------------------------------------------------------------------
+  //
+  // Public XML parser methods.
+  //
+  //----------------------------------------------------------------------------
 
-    mSlashCharCode: "/".charCodeAt(0),
+  /**
+   * Close the XML parser.
+   */
 
-    skipNextElement: function()
-    {
-        var                         tag = {};
-        var                         tagPreText = {};
-        var                         depth = 0;
-
-        /* Loop down through the next element until its end. */
-        do
-        {
-            /* Get the next tag. */
-            this.getNextTag(tag, tagPreText);
-
-            /* If the tag starts with a "/", decrement the depth. */
-            if (tag.value.charCodeAt(0) == this.mSlashCharCode)
-            {
-                depth--;
-            }
-
-            /* Otherwise, if the tag does not end with a */
-            /* "/" (empty element), increment the depth. */
-            else if (tag.value.charCodeAt(tag.value.length - 1) !=
-                     this.mSlashCharCode)
-            {
-                depth++;
-            }
-        } while (depth > 0);
-    },
+  close: function ITXMLParser_close() {
+    // Close the input stream.
+    this._inputStream.close();
+  },
 
 
-    /*
-     * tell
-     *
-     *   <--                        Current offset within the input stream.
-     *
-     *   This function returns the current offset within the input stream.
-     */
+  /**
+   * Get the next tag and return it in aTag.  Return the text between the
+   * previous tag and the returned tag in aTagPreText.
+   *
+   * \param aTag                Tag string.
+   * \param aPreText            Text before tag.
+   */
 
-    tell: function()
-    {
-        var                         offset;
-
-        /* Get the current input stream offset   */
-        /* and subtract the current buffer size. */
-        offset = this.mSeekableStream.tell() - this.mBuffer.length;
-
-        return (offset);
-    },
-
-
-    /*
-     * getFile
-     *
-     *   <--                        Data file.
-     *
-     *   This function returns the nsIFile object being parsed.
-     */
-
-    getFile: function()
-    {
-        return (this.mFile.QueryInterface(Components.interfaces.nsIFile));
-    },
-
-
-    /***************************************************************************
-     *
-     * Private XML parser methods.
-     *
-     **************************************************************************/
-
-    /*
-     * readTags
-     *
-     *   This function reads data from the input stream and divides it into the
-     * tag list, mTagList.
-     */
-
-    readTags: function()
-    {
-        var                     readData;
-        var                     readCount;
-
-        /* Read more data into buffer. */
-        readData = {};
-        readCount = this.mInputStream.readString(this.readSize, readData);
-        if (readCount > 0)
-            this.mBuffer += readData.value;
-
-        /* Read from the stream until a tag is found. */
-        while ((this.mTagList.length == 0) && (this.mBuffer))
-        {
-            /* Split stream buffer at the tag ends. */
-            this.mTagList = this.mBuffer.split(">");
-
-            /* Pop off remaining data after last tag end.  If no */
-            /* tag was found, read more data into the buffer.    */
-            if (this.mTagList.length > 1)
-            {
-                this.mBuffer = this.mTagList.pop();
-            }
-            else
-            {
-                /* No tags were found. */
-                this.mTagList = [];
-
-                /* Read more data.  If no more data */
-                /* is available, empty buffer.      */
-                readData = {};
-                readCount = this.mInputStream.readString(this.readSize,
-                                                         readData);
-                if (readCount > 0)
-                    this.mBuffer += readData.value;
-                else
-                    this.mBuffer = "";
-            }
-        }
-    },
-
-
-    /*
-     * decodeEntitites
-     *
-     *   --> str                String to decode.
-     *
-     *   <--                    String with decoded entities.
-     *
-     *   This function searches for XML entities within the string specified by
-     * str, decodes and replaces them, and returns the resulting string.
-     */
-
-    decodeEntities: function(str)
-    {
-        return (str.replace(/&#([0-9]*);/g, this.replaceEntity));
-    },
-
-
-    /*
-     * replaceEntity
-     *
-     *   --> entityStr          Entity string.
-     *   --> entityVal          Entity value.
-     *
-     *   <--                    Decoded entity string.
-     *
-     *   This function is used as a replacement function for the string object
-     * replace method.  This function replaces XML entity strings.  The entity
-     * string is specified by entityStr, and the entity value is specified by
-     * entityVal.  This function returns the string represented by the entity.
-     */
-
-    replaceEntity: function(entityStr, entityVal)
-    {
-        return (String.fromCharCode(entityVal));
+  getNextTag: function ITXMLParser_getNextTag(aTag, aTagPreText) {
+    // If the end of the tag list is reached, read more tags.
+    if (this._nextTagIndex >= this._tagList.length) {
+      this._tagList.length = 0;
+      this._nextTagIndex = 0;
+      this._readTags();
     }
+
+    // Return the next tag.
+    if (this._tagList.length > 0) {
+      var tagSplit = this._tagList[this._nextTagIndex].split("<");
+      this._nextTagIndex++;
+      aTag.value = tagSplit[1];
+      aTagPreText.value = this._decodeEntities(tagSplit[0]);
+    } else {
+      aTag.value = null;
+      aTagPreText.value = null;
+    }
+  },
+
+
+  /**
+   * Skip the next element and all its descendents.
+   */
+
+  skipNextElement: function ITXMLParser_skipNextElement() {
+    // Loop down through the next element until its end.
+    var depth = 0;
+    do {
+      // Get the next tag.
+      var tag = {};
+      var tagPreText = {};
+      this.getNextTag(tag, tagPreText);
+      tag = tag.value;
+
+      // If the tag starts with a "/", decrement the depth.
+      if (tag.charCodeAt(0) == "/".charCodeAt(0)) {
+        depth--;
+      }
+
+      // Otherwise, if the tag does not end with a "/" (empty element),
+      // increment the depth.
+      else if (tag.charCodeAt(tag.length - 1) != "/".charCodeAt(0)) {
+        depth++;
+      }
+    } while (depth > 0);
+  },
+
+
+  /**
+   * Return the current offset within the input stream.
+   *
+   * \return                    Current offset within the input stream.
+   */
+
+  tell: function ITXMLParser_tell() {
+    // Get the current input stream offset and subtract the current buffer size.
+    var offset = this._seekableStream.tell() - this._buffer.length;
+
+    return offset;
+  },
+
+
+  /**
+   * Return the nsIFile object being parsed.
+   *
+   * \return                    Data file.
+   */
+
+  getFile: function ITXMLParser_getFile() {
+    return this._file.QueryInterface(Components.interfaces.nsIFile);
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Private XML parser methods.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Read data from the input stream and divide it into the tag list _tagList.
+   */
+
+  _readTags: function ITXMLParser__readTags() {
+    // Read more data into buffer.
+    var readData = {};
+    var readCount = this._inputStream.readString(this.readSize, readData);
+    readData = readData.value
+    if (readCount > 0)
+      this._buffer += readData;
+
+    // Read from the stream until a tag is found.
+    while ((this._tagList.length == 0) && (this._buffer)) {
+      // Split stream buffer at the tag ends.
+      this._tagList = this._buffer.split(">");
+
+      // Pop off remaining data after last tag end.  If no tag was found, read
+      // more data into the buffer.
+      if (this._tagList.length > 1) {
+        this._buffer = this._tagList.pop();
+      } else {
+        // No tags were found.
+        this._tagList = [];
+
+        // Read more data.  If no more data is available, empty buffer.
+        readData = {};
+        readCount = this._inputStream.readString(this.readSize, readData);
+        readData = readData.value;
+        if (readCount > 0)
+          this._buffer += readData;
+        else
+          this._buffer = "";
+      }
+    }
+  },
+
+
+  /**
+   * Search for XML entitites within the string specified by aStr, decode and
+   * replace them, and return the resulting string.
+   *
+   * \param aStr                String to decode.
+   *
+   * \return                    String with decoded entitites.
+   */
+
+  _decodeEntities: function ITXMLParser__decodeEntities(aStr) {
+    return aStr.replace(/&#([0-9]*);/g, this._replaceEntity);
+  },
+
+
+  /**
+   * Function to be used as a replacement function for the string object replace
+   * method.  Replace XML entity strings.  The entity string is specified by
+   * aEntityStr, and the entity value is specified by aEntityVal.  Return the
+   * string represented by the entity.
+   *
+   * \param aEntityStr          Entity string.
+   * \param aEntityVal          Entity value.
+   *
+   * \return                    Decoded entity string.
+   */
+
+  _replaceEntity: function ITXMLParser__replaceEntity(aEntityStr, aEntityVal) {
+    return String.fromCharCode(aEntityVal);
+  }
 }
 
 
