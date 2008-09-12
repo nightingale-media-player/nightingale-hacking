@@ -52,8 +52,8 @@ function runTest () {
   var isPlaylist = typeSniffer.isValidPlaylistURL(uri);
 
   log("uri is media? " + isMedia);
-  log("uri is video? " + isMedia);
-  log("uri is a playlist? " + isMedia);
+  log("uri is video? " + isVideo);
+  log("uri is a playlist? " + isPlaylist);
 
 //  assertTrue(isMedia, "URI should be media.");
 //  assertFalse(isVideo, "URI should _not_ be video.");
