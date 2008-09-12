@@ -233,8 +233,8 @@ sbMediacoreTypeSniffer::GetFileExtensionFromURI(nsIURI* aURI,
 }
 
 NS_IMETHODIMP 
-sbMediacoreTypeSniffer::IsMediaURL(nsIURI *aURL, 
-                                   PRBool *_retval)
+sbMediacoreTypeSniffer::IsValidMediaURL(nsIURI *aURL, 
+                                        PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURL);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -280,8 +280,8 @@ sbMediacoreTypeSniffer::IsMediaURL(nsIURI *aURL,
 }
 
 NS_IMETHODIMP 
-sbMediacoreTypeSniffer::IsVideoURL(nsIURI *aURL, 
-                                   PRBool *_retval)
+sbMediacoreTypeSniffer::IsValidVideoURL(nsIURI *aURL, 
+                                        PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURL);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -318,8 +318,8 @@ sbMediacoreTypeSniffer::IsVideoURL(nsIURI *aURL,
 }
 
 NS_IMETHODIMP 
-sbMediacoreTypeSniffer::IsPlaylistURL(nsIURI *aURL, 
-                                      PRBool *_retval)
+sbMediacoreTypeSniffer::IsValidPlaylistURL(nsIURI *aURL, 
+                                           PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURL);
   NS_ENSURE_ARG_POINTER(_retval);

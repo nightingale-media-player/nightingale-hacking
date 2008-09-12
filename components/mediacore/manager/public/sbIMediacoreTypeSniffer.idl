@@ -38,12 +38,12 @@ interface sbIMediacoreTypeSniffer : nsISupports
   readonly attribute nsIStringEnumerator audioFileExtensions;
 
   /**
-   * \brief Returns all audio file extensions.
+   * \brief Returns all video file extensions.
    */
   readonly attribute nsIStringEnumerator videoFileExtensions;
 
   /**
-   * \brief Returns all audio file extensions.
+   * \brief Returns all playlist file extensions.
    */
   readonly attribute nsIStringEnumerator playlistFileExtensions;
 
@@ -62,7 +62,7 @@ interface sbIMediacoreTypeSniffer : nsISupports
    * \return true if the URL points to media content
    * \return false if the URL does not point to media content
    */
-  boolean isMediaURL(in nsIURI aURL);
+  boolean isValidMediaURL(in nsIURI aURL);
  
   /**
    * \brief Check to see if an url points to video content
@@ -73,7 +73,7 @@ interface sbIMediacoreTypeSniffer : nsISupports
    * \return true if the URL points to video content
    * \return false if the URL does not point to video content
    */
-  boolean isVideoURL(in nsIURI aURL);
+  boolean isValidVideoURL(in nsIURI aURL);
  
   /**
    * \brief Check to see if an url points to a playlist
@@ -84,7 +84,7 @@ interface sbIMediacoreTypeSniffer : nsISupports
    * \return true if the URL points to a playlist
    * \return false if the URL does not point a playlist
    */
-  boolean isPlaylistURL(in nsIURI aURL);
+  boolean isValidPlaylistURL(in nsIURI aURL);
 };
 
 %{C++
