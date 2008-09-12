@@ -471,6 +471,8 @@
           this._tabPanelLink = aTabPanel;
           this._tabObserver = aTabObserver;
           this.tabsHidden = false;
+          this._getElem("header").setAttribute("flex", 0);
+          this._getElem("dpTabBar").setAttribute("flex", 1);
         ]]></xbl:body>
       </xbl:method>
       
@@ -512,6 +514,19 @@
           this.tabBar.selectedIndex = val;
           if (this._tabPanelLink) {
             this._tabPanelLink.selectedIndex = this.tabBar.selectedIndex;
+          }
+          return val;
+        ]]></xbl:setter>
+      </xbl:property>
+
+      <xbl:property name="selectedItem">
+        <xbl:getter><![CDATA[
+          return this.tabBar.selectedItem;
+        ]]></xbl:getter>
+        <xbl:setter><![CDATA[
+          this.tabBar.selectedItem = val;
+          if (this._tabPanelLink) {
+            this._tabPanelLink.selectedItem = this.tabBar.selectedItem;
           }
           return val;
         ]]></xbl:setter>
