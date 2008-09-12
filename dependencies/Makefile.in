@@ -478,6 +478,11 @@ SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
                         $(GST_PLUGINS_BAD) \
                         $(NULL)
 
+ifdef HAVE_FLUENDO_MP3
+FLUENDO_PLUGIN = $(DEPS_DIR)/fluendo-mp3/libgstflump3dec.so
+SONGBIRD_GST_PLUGINS += $(FLUENDO_PLUGIN)
+endif
+
 endif # not mac or windows
 
 endif # MEDIA_CORE_GST
