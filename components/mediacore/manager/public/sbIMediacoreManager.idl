@@ -26,7 +26,11 @@
 
 #include "nsISupports.idl"
 
+interface nsIVariant;
+
 interface sbIMediacore;
+interface sbIMediacoreError;
+interface sbIMediacoreEvent;
 interface sbIMediacoreSimpleEqualizer;
 interface sbIMediacoreBalanceControl;
 
@@ -72,6 +76,28 @@ interface sbIMediacoreManager : nsISupports
    *    is used to 
    */
   attribute sbIMediacoreSequencer sequencer;
+
+  /**
+   * Create a new event
+   * 
+   * @param aType The type of the event; should be one of the COMMAND_* or
+   *              EVENT_* constants on the sbIMediacoreEvent.
+   *
+   * @param aData (Optional) The data to pass to any listeners that would
+   *              receive this event.
+   *
+   * @param aOrigin (Optional) Some indication of the source of the event.
+   *
+   * @param aError (Optional) An error associated with the event
+   * 
+   * @see sbIMediacoreEvent
+   * @see sbIMediacoreEventTarget
+   * @see sbIMediacoreEventListener
+   */
+  sbIMediacoreEvent createEvent(in unsigned long aType,
+                                in sbIMediacore aOrigin,
+                                [optional] in nsIVariant aData,
+                                [optional] in sbIMediacoreError aError);
 
   //void playURI(in nsIURI aUri);
   //void playMediaListView(in sbIMediaListView aView, in unsigned long aIndex);

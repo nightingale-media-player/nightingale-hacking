@@ -38,7 +38,6 @@
 #include <sbIMediacoreEvent.h>
 #include <sbIMediacoreEventTarget.h>
 #include "sbTestMediacoreStressThreads.h"
-#include "sbTestMediacoreEventCreator.h"
 
 NS_IMPL_THREADSAFE_ISUPPORTS4(sbTestMediacoreStressThreads,
                               nsIRunnable,
@@ -76,7 +75,7 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
 
   // spin up a *ton* of threads...
   mCounter = 0;
-  for (int i = 0; i < 300; ++i) {
+  for (int i = 0; i < 100; ++i) {
     nsAutoMonitor mon(mMonitor);
     nsCOMPtr<nsIRunnable> event =
       NS_NEW_RUNNABLE_METHOD(sbTestMediacoreStressThreads, this, OnEvent);
@@ -107,7 +106,7 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
   return NS_OK;
 }
 
-/* void onDeviceEvent (in sbMediacoreEvent aEvent); */
+/* void onMediacoreEvent (in sbMediacoreEvent aEvent); */
 NS_IMETHODIMP sbTestMediacoreStressThreads::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 {
   nsAutoMonitor mon(mMonitor);
@@ -125,13 +124,15 @@ void sbTestMediacoreStressThreads::OnEvent()
 {
   nsresult rv;
 
-  nsRefPtr<sbMediacoreEvent> event;
   nsCOMPtr<sbIMediacore> core = do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediacore*, this), &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
-  rv = sbBaseMediacoreEventTarget::CreateEvent(sbIMediacoreEvent::URI_CHANGE,
-                                               nsnull,
-                                               core,
-                                               getter_AddRefs(event));
+
+  nsCOMPtr<sbIMediacoreEvent> event;
+  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::URI_CHANGE,
+                                     nsnull,
+                                     nsnull,
+                                     core,
+                                     getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   rv = mBaseEventTarget->DispatchEvent(event, PR_FALSE, nsnull);

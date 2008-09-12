@@ -80,34 +80,6 @@ public:
   nsresult DispatchEvent(sbIMediacoreEvent * aEvent,
                          PRBool aAsync, PRBool * aDispatched);
 
-  /**
-   * Used to create an instance of a mediacore event with an error
-   */
-  static nsresult CreateEvent(PRUint32 aType,
-                              sbIMediacoreError * aError,
-                              nsIVariant *aData,
-                              sbIMediacore *aOrigin,
-                              sbMediacoreEvent **retval) {
-    nsRefPtr<sbMediacoreEvent> event = new sbMediacoreEvent();
-    nsresult rv = event->Init(aType, aError, aData, aOrigin);
-    NS_ENSURE_SUCCESS(rv, rv);
-    event.forget(retval);
-    return NS_OK;
-  }
-  /**
-   * used to create an instance of mediacore event with no error
-   */
-  static nsresult CreateEvent(PRUint32 aType,
-                              nsIVariant *aData,
-                              sbIMediacore *aOrigin,
-                              sbMediacoreEvent **retval) {
-    nsRefPtr<sbMediacoreEvent> event = new sbMediacoreEvent();
-    nsresult rv = event->Init(aType, nsnull, aData, aOrigin);
-    NS_ENSURE_SUCCESS(rv, rv);
-    event.forget(retval);
-    return NS_OK;
-  }
-
 protected:
   nsresult DispatchEventInternal(sbIMediacoreEvent *aEvent, PRBool* _retval);
 

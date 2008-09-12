@@ -27,13 +27,14 @@
 #include "sbBaseMediacoreEventTarget.h"
 
 #include <nsAutoLock.h>
+#include <nsComponentManagerUtils.h>
 #include "sbProxyUtils.h"
 
 #include <sbIMediacore.h>
 #include <sbIMediacoreError.h>
-#include <sbIMediacoreEvent.h>
 #include <sbIMediacoreEventListener.h>
 
+#include <sbMediacoreEvent.h>
 /* boolean dispatchEvent (in sbIMediacoreEvent aEvent, [optional] PRBool aAsync); */
 nsresult
 sbBaseMediacoreEventTarget::DispatchEvent(sbIMediacoreEvent *aEvent,
@@ -105,7 +106,7 @@ sbBaseMediacoreEventTarget::DispatchEventInternal(sbIMediacoreEvent *aEvent,
     /* the return value is only checked on debug builds */
     #if DEBUG
       if (NS_FAILED(rv)) {
-        NS_WARNING("Device event listener returned error");
+        NS_WARNING("Mediacore event listener returned error");
       }
     #endif
     if (_retval)

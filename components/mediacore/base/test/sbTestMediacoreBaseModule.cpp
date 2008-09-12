@@ -35,23 +35,22 @@
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
 
-#include "sbTestDummyMediacore.h"
+#include "sbTestDummyMediacoreManager.h"
 #include "sbTestMediacoreEventCreator.h"
 #include "sbTestMediacoreStressThreads.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbTestDummyMediacore);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbTestDummyMediacoreManager);
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTestMediacoreEventCreator);
-
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTestMediacoreStressThreads);
 
 static nsModuleComponentInfo sbTestMediacoreBaseComponents[] =
 {
   {
-    SB_TEST_DUMMY_MEDIACORE_CLASSNAME,
-    SB_TEST_DUMMY_MEDIACORE_CID,
-    SB_TEST_DUMMY_MEDIACORE_CONTRACTID,
-    sbTestDummyMediacoreConstructor
+    SB_TEST_DUMMY_MEDIACORE_MANAGER_CLASSNAME,
+    SB_TEST_DUMMY_MEDIACORE_MANAGER_CID,
+    SB_TEST_DUMMY_MEDIACORE_MANAGER_CONTRACTID,
+    sbTestDummyMediacoreManagerConstructor
   },
   {
     SB_TEST_MEDIACORE_EVENT_CREATOR_CLASSNAME,

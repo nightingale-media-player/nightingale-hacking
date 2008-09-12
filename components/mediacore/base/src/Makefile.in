@@ -29,13 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbMediacoreBase
-ifdef DEBUG
-target := $(addsuffix _d,$(target))
-endif
+target := sbMediacoreBase$(DEBUG:%=_d)
 
 CPP_SRCS = sbBaseMediacore.cpp \
-           sbBaseMediacoreEventTarget.cpp \
            sbBaseMediacoreFactory.cpp \
            sbBaseMediacorePlaybackControl.cpp \
            sbBaseMediacoreVolumeControl.cpp \
@@ -69,11 +65,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
-ifdef DEBUG
-moz_utils = sbMozStringUtils_d
-else
-moz_utils = sbMozStringUtils
-endif
+moz_utils = sbMozStringUtils$(DEBUG:%=_d)
 
 DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_utils)
 

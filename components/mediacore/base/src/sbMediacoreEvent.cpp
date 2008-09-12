@@ -1,30 +1,30 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
 
-/** 
+/**
 * \file  sbMediacoreEvent.cpp
 * \brief Songbird Mediacore Event Implementation.
 */
@@ -35,15 +35,19 @@
  *   NSPR_LOG_MODULES=sbMediacoreEvent:5
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gMediacoreEvent = nsnull;
-#define TRACE(args) PR_LOG(gMediacoreEvent , PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gMediacoreEvent , PR_LOG_WARN, args)
+static PRLogModuleInfo * MediacoreEvent() {
+  static PRLogModuleInfo* gMediacoreEvent = PR_NewLogModule("sbMediacoreEvent");
+  return gMediacoreEvent;
+}
+
+#define TRACE(args) PR_LOG(MediacoreEvent() , PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(MediacoreEvent() , PR_LOG_WARN, args)
 #else
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreEvent, 
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreEvent,
                               sbIMediacoreEvent)
 
 sbMediacoreEvent::sbMediacoreEvent()
@@ -52,11 +56,6 @@ sbMediacoreEvent::sbMediacoreEvent()
 , mDispatched(PR_FALSE)
 {
   MOZ_COUNT_CTOR(sbMediacoreEvent);
-
-#ifdef PR_LOGGING
-  if (!gMediacoreEvent)
-    gMediacoreEvent= PR_NewLogModule("sbMediacoreEvent");
-#endif
 
   TRACE(("sbMediacoreEvent[0x%x] - Created", this));
 }
@@ -72,10 +71,10 @@ sbMediacoreEvent::~sbMediacoreEvent()
   }
 }
 
-nsresult 
-sbMediacoreEvent::Init(PRUint32 aType, 
-                       sbIMediacoreError *aError, 
-                       nsIVariant *aData, 
+nsresult
+sbMediacoreEvent::Init(PRUint32 aType,
+                       sbIMediacoreError *aError,
+                       nsIVariant *aData,
                        sbIMediacore *aOrigin)
 {
   TRACE(("sbMediacoreEvent[0x%x] - Init", this));
@@ -92,7 +91,7 @@ sbMediacoreEvent::Init(PRUint32 aType,
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreEvent::SetTarget(sbIMediacoreEventTarget *aTarget)
 {
   TRACE(("sbMediacoreEvent[0x%x] - SetTarget", this));
@@ -107,7 +106,7 @@ sbMediacoreEvent::SetTarget(sbIMediacoreEventTarget *aTarget)
 }
 
 void
-sbMediacoreEvent::Dispatch() 
+sbMediacoreEvent::Dispatch()
 {
   TRACE(("sbMediacoreEvent[0x%x] - Dispatch", this));
 
@@ -115,7 +114,7 @@ sbMediacoreEvent::Dispatch()
   mDispatched = PR_TRUE;
 }
 
-PRBool 
+PRBool
 sbMediacoreEvent::WasDispatched()
 {
   TRACE(("sbMediacoreEvent[0x%x] - WasDispatched", this));
@@ -124,7 +123,7 @@ sbMediacoreEvent::WasDispatched()
   return mDispatched;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreEvent::GetType(PRUint32 *aType)
 {
   TRACE(("sbMediacoreEvent[0x%x] - GetType", this));
@@ -137,7 +136,7 @@ sbMediacoreEvent::GetType(PRUint32 *aType)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreEvent::GetError(sbIMediacoreError * *aError)
 {
   TRACE(("sbMediacoreEvent[0x%x] - GetError", this));
@@ -150,7 +149,7 @@ sbMediacoreEvent::GetError(sbIMediacoreError * *aError)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreEvent::GetData(nsIVariant * *aData)
 {
   TRACE(("sbMediacoreEvent[0x%x] - GetData", this));
@@ -163,7 +162,7 @@ sbMediacoreEvent::GetData(nsIVariant * *aData)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreEvent::GetOrigin(sbIMediacore * *aOrigin)
 {
   TRACE(("sbMediacoreEvent[0x%x] - GetOrigin", this));
@@ -176,7 +175,7 @@ sbMediacoreEvent::GetOrigin(sbIMediacore * *aOrigin)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreEvent::GetTarget(sbIMediacoreEventTarget * *aTarget)
 {
   TRACE(("sbMediacoreEvent[0x%x] - GetTarget", this));
@@ -187,4 +186,22 @@ sbMediacoreEvent::GetTarget(sbIMediacoreEventTarget * *aTarget)
   NS_IF_ADDREF(*aTarget = mTarget);
 
   return NS_OK;
+}
+
+nsresult
+sbMediacoreEvent::CreateEvent(PRUint32 aType,
+                              sbIMediacoreError * aError,
+                              nsIVariant *aData,
+                              sbIMediacore *aOrigin,
+                              sbIMediacoreEvent **retval)
+{
+  nsresult rv;
+  nsCOMPtr<sbMediacoreEvent> event = new sbMediacoreEvent();
+
+  NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = event->Init(aType, aError, aData, aOrigin);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return CallQueryInterface(event, retval);
 }

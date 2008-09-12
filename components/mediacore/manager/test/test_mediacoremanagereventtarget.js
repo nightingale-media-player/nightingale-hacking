@@ -25,37 +25,38 @@
 */
 
 /**
- * \brief Test the media core listener
+ * \brief Tests the event target functionality of sbMediacoreManager class. 
+ * This just does the simple tests as the event target implementation has 
+ * more extensive tests
  */
-
+ 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+ 
+function runTest () {
 
+  var mediacoreManager = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                           .getService(Ci.sbIMediacoreManager);
+
+  log("Testing basic event target functionality\n");
+  testSimpleListener(mediacoreManager);
+}
+
+/**
+ * Event Target functionality testing
+ */
 function testListener() {
   this.wrappedJSObject = this;
   this.log = [];
-  this.onEnd = null;
 }
 
 testListener.prototype = {
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediacoreEventListener]),
   onMediacoreEvent: function(event) {
     this.log.push(event);
-    if (this.onEnd && event.type == Ci.sbIMediacoreEvent.STREAM_END) {
-      this.onEnd();
-      testFinished();
-    }
   }
-}
-
-function dummyCore() {
-  this.wrappedJSObject = this;
-}
-
-dummyCore.prototype = {
-  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediacore]),
 }
 
 var eventIDs = [Ci.sbIMediacoreEvent.METADATA_CHANGE,
@@ -70,48 +71,27 @@ var eventIDs = [Ci.sbIMediacoreEvent.METADATA_CHANGE,
                 Ci.sbIMediacoreEvent.STREAM_PAUSE,
                 Ci.sbIMediacoreEvent.STREAM_END];
   
-function createEventTarget() {
-  return Cc["@songbirdnest.com/mediacore/sbTestDummyMediacoreManager;1"]
-            .createInstance(Ci.sbIMediacoreEventTarget);
+
+function dummyMediacore() {
+  this.wrappedJSObject = this;
 }
 
-function createEvent(type, error, data, origin) {
-  var creator = Cc["@songbirdnest.com/mediacore/sbTestMediacoreEventCreator;1"]
-            .createInstance(Ci.sbITestMediacoreEventCreator);
-  return creator.create(type, error, data, new dummyCore());
+dummyMediacore.prototype = {
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediacore]),
 }
 
-/**
- * Tests single thread synchronous and asynchronous events
- */
-function runTest () {
-  log("Synchronous\n");
-  testSimpleListener(false);
-  log("Asynchronous\n");
-  testSimpleListener(true);
-  testPending();
-}
-
-function testSimpleListener(async) {
-  var eventTarget = createEventTarget();
+function testSimpleListener(mediaManager) {
   var listener = new testListener();
 
-  eventTarget.addListener(listener);
+  mediaManager.addListener(listener);
   for (index = 0; index < eventIDs.length; ++index) {
-    var event = createEvent(eventIDs[index], null, "", eventTarget);
-    eventTarget.dispatchEvent(event, async);
+    var event = mediaManager.createEvent(eventIDs[index], new dummyMediacore(), "", null);
+    mediaManager.dispatchEvent(event, false);
   }
-  var testValues = function() {
-    assertEqual(listener.log.length, eventIDs.length, "event received count not equal to events sent"); 
-    for (index = 0; index < eventIDs.length; ++index) {
-      assertEqual(listener.log[index].type, eventIDs[index], "Event type doesn't match event ID sent");
-    }
+  assertEqual(listener.log.length, eventIDs.length, "event received count not equal to events sent"); 
+  for (index = 0; index < eventIDs.length; ++index) {
+    assertEqual(listener.log[index].type, eventIDs[index], "Event type doesn't match event ID sent");
   }
-  if (async) {
-    listener.onEnd = testValues;
-  }
-  else {
-    testValues();
-  }
+  mediaManager.removeListener(listener);
 }
  

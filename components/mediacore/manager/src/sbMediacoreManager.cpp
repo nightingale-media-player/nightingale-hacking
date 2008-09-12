@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -50,6 +50,7 @@
 #include <sbIMediacoreSimpleEqualizer.h>
 #include <sbIMediacoreVolumeControl.h>
 
+#include <sbBaseMediacoreEventTarget.h>
 #include <sbMediacoreVotingChain.h>
 #include <sbIMediacoreVotingParticipant.h>
 
@@ -81,15 +82,17 @@ static PRLogModuleInfo* gMediacoreManager = nsnull;
 
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreManager)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreManager)
-NS_IMPL_QUERY_INTERFACE6_CI(sbMediacoreManager,
+NS_IMPL_QUERY_INTERFACE7_CI(sbMediacoreManager,
                             sbIMediacoreManager,
+                            sbIMediacoreEventTarget,
                             sbIMediacoreFactoryRegistrar,
                             sbIMediacoreVoting,
                             nsISupportsWeakReference,
                             nsIClassInfo,
                             nsIObserver)
-NS_IMPL_CI_INTERFACE_GETTER4(sbMediacoreManager,
+NS_IMPL_CI_INTERFACE_GETTER5(sbMediacoreManager,
                              sbIMediacoreManager,
+                             sbIMediacoreEventTarget,
                              sbIMediacoreFactoryRegistrar,
                              sbIMediacoreVoting,
                              nsISupportsWeakReference)
@@ -97,10 +100,18 @@ NS_IMPL_CI_INTERFACE_GETTER4(sbMediacoreManager,
 NS_DECL_CLASSINFO(sbMediacoreManager)
 NS_IMPL_THREADSAFE_CI(sbMediacoreManager)
 
+/**
+ * "this" is used to construct mBaseEventTarget but it's not accessed till
+ * after construction is complete so this is safe.
+ */
 sbMediacoreManager::sbMediacoreManager()
 : mMonitor(nsnull)
 , mLastCore(0)
+, mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
 {
+  // mBaseEventTarget being null is handled on access
+  NS_WARN_IF_FALSE(mBaseEventTarget, "mBaseEventTarget is null, may be out of memory");
+
   MOZ_COUNT_CTOR(sbMediacoreManager);
 
 #ifdef PR_LOGGING
@@ -160,7 +171,7 @@ PLDHashOperator sbMediacoreManager::EnumerateIntoArrayISupportsKey(
 }
 
 nsresult
-sbMediacoreManager::Init() 
+sbMediacoreManager::Init()
 {
   TRACE(("sbMediacoreManager[0x%x] - Init", this));
 
@@ -177,41 +188,41 @@ sbMediacoreManager::Init()
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<nsISimpleEnumerator> categoryEnum;
-  
+
   nsCOMPtr<nsICategoryManager> cm =
     do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = cm->EnumerateCategory(SB_MEDIACORE_FACTORY_CATEGORY, 
+
+  rv = cm->EnumerateCategory(SB_MEDIACORE_FACTORY_CATEGORY,
                              getter_AddRefs(categoryEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool hasMore = PR_FALSE;
-  while (NS_SUCCEEDED(categoryEnum->HasMoreElements(&hasMore)) && 
+  while (NS_SUCCEEDED(categoryEnum->HasMoreElements(&hasMore)) &&
          hasMore) {
-    
+
     nsCOMPtr<nsISupports> ptr;
-    if (NS_SUCCEEDED(categoryEnum->GetNext(getter_AddRefs(ptr))) && 
+    if (NS_SUCCEEDED(categoryEnum->GetNext(getter_AddRefs(ptr))) &&
         ptr) {
 
       nsCOMPtr<nsISupportsCString> stringValue(do_QueryInterface(ptr));
-      
+
       nsCString factoryName;
       nsresult rv = NS_ERROR_UNEXPECTED;
 
-      if (stringValue && 
+      if (stringValue &&
           NS_SUCCEEDED(stringValue->GetData(factoryName))) {
-        
+
         char * contractId;
-        rv = cm->GetCategoryEntry(SB_MEDIACORE_FACTORY_CATEGORY, 
+        rv = cm->GetCategoryEntry(SB_MEDIACORE_FACTORY_CATEGORY,
                                   factoryName.get(), &contractId);
         NS_ENSURE_SUCCESS(rv, rv);
-        
+
         nsCOMPtr<sbIMediacoreFactory> factory =
           do_CreateInstance(contractId , &rv);
         NS_Free(contractId);
         NS_ENSURE_SUCCESS(rv, rv);
-        
+
         rv = RegisterFactory(factory);
         NS_ENSURE_SUCCESS(rv, rv);
       }
@@ -223,7 +234,7 @@ sbMediacoreManager::Init()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreManager::GenerateInstanceName(nsAString &aInstanceName)
 {
   TRACE(("sbMediacoreManager[0x%x] - GenerateInstanceName", this));
@@ -232,18 +243,18 @@ sbMediacoreManager::GenerateInstanceName(nsAString &aInstanceName)
   nsAutoMonitor mon(mMonitor);
 
   aInstanceName.AssignLiteral(SB_CORE_BASE_NAME);
-  
+
   aInstanceName.AppendInt(mLastCore);
   ++mLastCore;
-  
+
   aInstanceName.AppendLiteral(SB_CORE_NAME_SUFFIX);
 
   return NS_OK;
 }
 
-nsresult 
-sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI, 
-                                         nsIChannel *aChannel, 
+nsresult
+sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
+                                         nsIChannel *aChannel,
                                          sbIMediacoreVotingChain **_retval)
 {
   TRACE(("sbMediacoreManager[0x%x] - VoteWithURIOrChannel", this));
@@ -271,7 +282,7 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
 
   PRUint32 found = 0;
   for(PRUint32 current = 0; current < length; ++current) {
-    nsCOMPtr<sbIMediacoreVotingParticipant> votingParticipant = 
+    nsCOMPtr<sbIMediacoreVotingParticipant> votingParticipant =
       do_QueryElementAt(instances, current, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -287,7 +298,7 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
     }
 
     if(result > 0) {
-      nsCOMPtr<sbIMediacore> mediacore = 
+      nsCOMPtr<sbIMediacore> mediacore =
         do_QueryInterface(votingParticipant, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -316,7 +327,7 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
   NS_ENSURE_SUCCESS(rv, rv);
 
   for(PRUint32 current = 0; current < length; ++current) {
-    nsCOMPtr<sbIMediacoreFactory> factory = 
+    nsCOMPtr<sbIMediacoreFactory> factory =
       do_QueryElementAt(factories, current, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -327,7 +338,7 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
     rv = factory->Create(mediacoreInstanceName, getter_AddRefs(mediacore));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIMediacoreVotingParticipant> votingParticipant = 
+    nsCOMPtr<sbIMediacoreVotingParticipant> votingParticipant =
       do_QueryInterface(mediacore, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -354,10 +365,10 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
 }
 
 // ----------------------------------------------------------------------------
-// sbIMediacoreManager Interface 
+// sbIMediacoreManager Interface
 // ----------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetPrimaryCore(sbIMediacore * *aPrimaryCore)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetPrimaryCore", this));
@@ -370,7 +381,7 @@ sbMediacoreManager::GetPrimaryCore(sbIMediacore * *aPrimaryCore)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
 {
   TRACE(("sbMediacoreManager[0x%x] - SetPrimaryCore", this));
@@ -383,7 +394,7 @@ sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetBalanceControl(
                       sbIMediacoreBalanceControl * *aBalanceControl)
 {
@@ -394,7 +405,7 @@ sbMediacoreManager::GetBalanceControl(
   nsAutoMonitor mon(mMonitor);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIMediacoreBalanceControl> balanceControl = 
+  nsCOMPtr<sbIMediacoreBalanceControl> balanceControl =
     do_QueryInterface(mPrimaryCore, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -403,7 +414,7 @@ sbMediacoreManager::GetBalanceControl(
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetVolumeControl(
                       sbIMediacoreVolumeControl * *aVolumeControl)
 {
@@ -414,7 +425,7 @@ sbMediacoreManager::GetVolumeControl(
   nsAutoMonitor mon(mMonitor);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIMediacoreVolumeControl> volumeControl = 
+  nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
     do_QueryInterface(mPrimaryCore, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -423,7 +434,7 @@ sbMediacoreManager::GetVolumeControl(
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetEqualizer(
                       sbIMediacoreSimpleEqualizer * *aEqualizer)
 {
@@ -434,7 +445,7 @@ sbMediacoreManager::GetEqualizer(
   nsAutoMonitor mon(mMonitor);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIMediacoreSimpleEqualizer> eq = 
+  nsCOMPtr<sbIMediacoreSimpleEqualizer> eq =
     do_QueryInterface(mPrimaryCore, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -443,7 +454,7 @@ sbMediacoreManager::GetEqualizer(
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetPlaybackControl(
                       sbIMediacorePlaybackControl * *aPlaybackControl)
 {
@@ -454,7 +465,7 @@ sbMediacoreManager::GetPlaybackControl(
   nsAutoMonitor mon(mMonitor);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = 
+  nsCOMPtr<sbIMediacorePlaybackControl> playbackControl =
     do_QueryInterface(mPrimaryCore, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -463,7 +474,7 @@ sbMediacoreManager::GetPlaybackControl(
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetCapabilities(
                       sbIMediacoreCapabilities * *aCapabilities)
 {
@@ -474,7 +485,7 @@ sbMediacoreManager::GetCapabilities(
   nsAutoMonitor mon(mMonitor);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIMediacoreCapabilities> volumeControl = 
+  nsCOMPtr<sbIMediacoreCapabilities> volumeControl =
     do_QueryInterface(mPrimaryCore, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -483,7 +494,7 @@ sbMediacoreManager::GetCapabilities(
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetSequencer(
                       sbIMediacoreSequencer * *aSequencer)
 {
@@ -497,7 +508,7 @@ sbMediacoreManager::GetSequencer(
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::SetSequencer(
                       sbIMediacoreSequencer * aSequencer)
 {
@@ -508,10 +519,10 @@ sbMediacoreManager::SetSequencer(
 }
 
 // ----------------------------------------------------------------------------
-// sbIMediacoreFactoryRegistrar Interface 
+// sbIMediacoreFactoryRegistrar Interface
 // ----------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetFactories(nsIArray * *aFactories)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetFactories", this));
@@ -520,12 +531,12 @@ sbMediacoreManager::GetFactories(nsIArray * *aFactories)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  nsCOMPtr<nsIMutableArray> mutableArray = 
+  nsCOMPtr<nsIMutableArray> mutableArray =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);
-  mFactories.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayISupportsKey, 
+  mFactories.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayISupportsKey,
                            mutableArray.get());
 
   PRUint32 length = 0;
@@ -542,7 +553,7 @@ sbMediacoreManager::GetFactories(nsIArray * *aFactories)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetInstances(nsIArray * *aInstances)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetInstances", this));
@@ -551,13 +562,13 @@ sbMediacoreManager::GetInstances(nsIArray * *aInstances)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  nsCOMPtr<nsIMutableArray> mutableArray = 
+  nsCOMPtr<nsIMutableArray> mutableArray =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);
-  
-  mCores.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayStringKey, 
+
+  mCores.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayStringKey,
                        mutableArray.get());
 
   PRUint32 length = 0;
@@ -574,9 +585,9 @@ sbMediacoreManager::GetInstances(nsIArray * *aInstances)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreManager::CreateMediacore(const nsAString & aContractID, 
-                                    const nsAString & aInstanceName, 
+NS_IMETHODIMP
+sbMediacoreManager::CreateMediacore(const nsAString & aContractID,
+                                    const nsAString & aInstanceName,
                                     sbIMediacore **_retval)
 {
   TRACE(("sbMediacoreManager[0x%x] - CreateMediacore", this));
@@ -586,13 +597,13 @@ sbMediacoreManager::CreateMediacore(const nsAString & aContractID,
   nsresult rv = NS_ERROR_UNEXPECTED;
   NS_ConvertUTF16toUTF8 contractId(aContractID);
 
-  nsCOMPtr<sbIMediacoreFactory> coreFactory = 
+  nsCOMPtr<sbIMediacoreFactory> coreFactory =
     do_CreateInstance(contractId.BeginReading(), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediacore> core;
   rv = GetMediacore(aInstanceName, getter_AddRefs(core));
-  
+
   if(NS_SUCCEEDED(rv)) {
     core.forget(_retval);
     return NS_OK;
@@ -609,9 +620,9 @@ sbMediacoreManager::CreateMediacore(const nsAString & aContractID,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreManager::CreateMediacoreWithFactory(sbIMediacoreFactory *aFactory, 
-                                               const nsAString & aInstanceName, 
+NS_IMETHODIMP
+sbMediacoreManager::CreateMediacoreWithFactory(sbIMediacoreFactory *aFactory,
+                                               const nsAString & aInstanceName,
                                                sbIMediacore **_retval)
 {
   TRACE(("sbMediacoreManager[0x%x] - CreateMediacoreWithFactory", this));
@@ -636,16 +647,16 @@ sbMediacoreManager::CreateMediacoreWithFactory(sbIMediacoreFactory *aFactory,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreManager::GetMediacore(const nsAString & aInstanceName, 
+NS_IMETHODIMP
+sbMediacoreManager::GetMediacore(const nsAString & aInstanceName,
                                  sbIMediacore **_retval)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetMediacore", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(_retval);
-  
+
   nsCOMPtr<sbIMediacore> core;
-  
+
   nsAutoMonitor mon(mMonitor);
 
   PRBool success = mCores.Get(aInstanceName, getter_AddRefs(core));
@@ -656,7 +667,7 @@ sbMediacoreManager::GetMediacore(const nsAString & aInstanceName,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::DestroyMediacore(const nsAString & aInstanceName)
 {
   TRACE(("sbMediacoreManager[0x%x] - DestroyMediacore", this));
@@ -669,16 +680,16 @@ sbMediacoreManager::DestroyMediacore(const nsAString & aInstanceName)
   PRBool success = mCores.Get(aInstanceName, getter_AddRefs(core));
   NS_ENSURE_TRUE(success, NS_ERROR_NOT_AVAILABLE);
   NS_ENSURE_TRUE(core, NS_ERROR_UNEXPECTED);
-  
+
   nsresult rv = core->Shutdown();
   NS_ENSURE_SUCCESS(rv, rv);
 
   mCores.Remove(aInstanceName);
-  
+
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::RegisterFactory(sbIMediacoreFactory *aFactory)
 {
   TRACE(("sbMediacoreManager[0x%x] - RegisterFactory", this));
@@ -693,7 +704,7 @@ sbMediacoreManager::RegisterFactory(sbIMediacoreFactory *aFactory)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::UnregisterFactory(sbIMediacoreFactory *aFactory)
 {
   TRACE(("sbMediacoreManager[0x%x] - UnregisterFactory", this));
@@ -708,11 +719,11 @@ sbMediacoreManager::UnregisterFactory(sbIMediacoreFactory *aFactory)
 }
 
 // ----------------------------------------------------------------------------
-// sbIMediacoreVoting Interface 
+// sbIMediacoreVoting Interface
 // ----------------------------------------------------------------------------
 
-NS_IMETHODIMP 
-sbMediacoreManager::VoteWithURI(nsIURI *aURI, 
+NS_IMETHODIMP
+sbMediacoreManager::VoteWithURI(nsIURI *aURI,
                                 sbIMediacoreVotingChain **_retval)
 {
   TRACE(("sbMediacoreManager[0x%x] - VoteWithURI", this));
@@ -728,8 +739,8 @@ sbMediacoreManager::VoteWithURI(nsIURI *aURI,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreManager::VoteWithChannel(nsIChannel *aChannel, 
+NS_IMETHODIMP
+sbMediacoreManager::VoteWithChannel(nsIChannel *aChannel,
                                     sbIMediacoreVotingChain **_retval)
 {
   TRACE(("sbMediacoreManager[0x%x] - VoteWithChannel", this));
@@ -738,7 +749,7 @@ sbMediacoreManager::VoteWithChannel(nsIChannel *aChannel,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsAutoMonitor mon(mMonitor);
-  
+
   nsresult rv = VoteWithURIOrChannel(nsnull, aChannel, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -747,7 +758,7 @@ sbMediacoreManager::VoteWithChannel(nsIChannel *aChannel,
 
 
 // ----------------------------------------------------------------------------
-// nsIObserver Interface 
+// nsIObserver Interface
 // ----------------------------------------------------------------------------
 
 NS_IMETHODIMP sbMediacoreManager::Observe(nsISupports *aSubject,
@@ -757,7 +768,7 @@ NS_IMETHODIMP sbMediacoreManager::Observe(nsISupports *aSubject,
   TRACE(("sbMediacoreManager[0x%x] - Observe", this));
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  
+
   if (!strcmp(aTopic, APPSTARTUP_CATEGORY)) {
     // listen for profile startup and profile shutdown messages
     nsCOMPtr<nsIObserverService> obsSvc =
@@ -777,16 +788,16 @@ NS_IMETHODIMP sbMediacoreManager::Observe(nsISupports *aSubject,
     rv = obsSvc->AddObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
-  } 
+  }
   else if (!strcmp(NS_PROFILE_STARTUP_OBSERVER_ID, aTopic)) {
 
     // Called after the profile has been loaded, so prefs and such are available
     rv = Init();
     NS_ENSURE_SUCCESS(rv, rv);
 
-  } 
+  }
   else if (!strcmp(NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID, aTopic)) {
-    
+
     // Called when the request to shutdown has been granted
     // We can't watch the -requested notification since it may not always be
     // fired :(
@@ -806,7 +817,7 @@ NS_IMETHODIMP sbMediacoreManager::Observe(nsISupports *aSubject,
     rv = obsSvc->RemoveObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-  } 
+  }
   else if (!strcmp(NS_PROFILE_SHUTDOWN_OBSERVER_ID, aTopic)) {
 
     // Final shutdown.
@@ -828,4 +839,39 @@ NS_IMETHODIMP sbMediacoreManager::Observe(nsISupports *aSubject,
   }
 
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMediacoreManager::CreateEvent(PRUint32 aType,
+                                sbIMediacore *aOrigin,
+                                nsIVariant *aData,
+                                sbIMediacoreError *aError,
+                                sbIMediacoreEvent **retval)
+{
+  NS_ENSURE_ARG_POINTER(aOrigin);
+  NS_ENSURE_ARG_POINTER(retval);
+
+  return sbMediacoreEvent::CreateEvent(aType, aError, aData, aOrigin, retval);
+}
+
+// Forwarding functions for sbIMediacoreEventTarget interface
+
+NS_IMETHODIMP
+sbMediacoreManager::DispatchEvent(sbIMediacoreEvent *aEvent,
+                                  PRBool aAsync,
+                                  PRBool* _retval)
+{
+  return mBaseEventTarget ? mBaseEventTarget->DispatchEvent(aEvent, aAsync, _retval) : NS_ERROR_NULL_POINTER;
+}
+
+NS_IMETHODIMP
+sbMediacoreManager::AddListener(sbIMediacoreEventListener *aListener)
+{
+  return mBaseEventTarget ? mBaseEventTarget->AddListener(aListener) : NS_ERROR_NULL_POINTER;
+}
+
+NS_IMETHODIMP
+sbMediacoreManager::RemoveListener(sbIMediacoreEventListener *aListener)
+{
+  return mBaseEventTarget ? mBaseEventTarget->RemoveListener(aListener) : NS_ERROR_NULL_POINTER;
 }

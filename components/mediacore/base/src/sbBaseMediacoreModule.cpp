@@ -25,20 +25,28 @@
 //
 */
 
-#include "sbTestMediacoreEventCreator.h"
+/**
+* \file  sbBaseMediacoreModule.cpp
+* \brief Songbird Mediacore Base Component Factory and Main Entry Point.
+*/
 
-#include <sbITestMediacoreEventCreator.h>
-#include <sbIMediacore.h>
-#include <sbBaseMediacoreEventTarget.h>
+#include <nsCOMPtr.h>
+#include <nsServiceManagerUtils.h>
+#include <nsICategoryManager.h>
+#include <nsIGenericFactory.h>
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbTestMediacoreEventCreator,
-                              sbITestMediacoreEventCreator)
+#include "sbMediacoreEvent.h"
 
-NS_IMETHODIMP
-sbTestMediacoreEventCreator::Create(PRUint32 aType,
-                                    sbIMediacoreError * aError,
-                                    nsIVariant *aData,
-                                    sbIMediacore *aOrigin,
-                                    sbIMediacoreEvent ** retval) {
-  return sbMediacoreEvent::CreateEvent(aType, aError, aData, aOrigin, retval);
-}
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreEvent);
+
+static nsModuleComponentInfo sbBaseMediacoreComponents[] =
+{
+  {
+    SB_MEDIACORE_EVENT_CLASSNAME,
+    SB_MEDIACORE_EVENT_CID,
+    SB_MEDIACORE_EVENT_CONTRACTID,
+    sbMediacoreEventConstructor
+  }
+};
+
+NS_IMPL_NSGETMODULE(SongbirdBaseMediacore, sbBaseMediacoreComponents)

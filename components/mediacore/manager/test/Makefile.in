@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = mediacoremanager
 
 SONGBIRD_TESTS = $(srcdir)/test_mediacoretypesniffer.js \
+                 $(srcdir)/test_mediacoremanagereventtarget.js \
                  $(NULL)
 
 # XXXAus: This test has to be turned manually to be used (for the time being).

@@ -29,15 +29,14 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbMediacoreManager
-ifdef DEBUG
-target := $(addsuffix _d,$(target))
-endif
+target := sbMediacoreManager$(DEBUG:%=_d)
 
 CPP_SRCS = sbMediacoreManager.cpp \
            sbMediacoreManagerModule.cpp \
            sbMediacoreTypeSniffer.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbMediacoreVotingChain.cpp \
+           $(topsrcdir)/components/mediacore/base/src/sbMediacoreEvent.cpp \
+           $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreEventTarget.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/base/public \
@@ -75,7 +74,8 @@ else
 moz_utils = sbMozStringUtils
 endif
 
-DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_utils)
+DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+                              $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdMediacoreManager
 
