@@ -30,7 +30,6 @@ create index idx_media_items_hidden on media_items (hidden);
 create index idx_media_items_created on media_items (created);
 create index idx_media_items_content_url on media_items (content_url);
 create index idx_media_items_content_hash on media_items (content_hash);
-create index idx_media_items_content_url_content_hash on media_items (content_url, content_hash);
 create index idx_media_items_media_list_type_id on media_items (media_list_type_id);
 create index idx_media_items_is_list on media_items (is_list);
 create index idx_media_items_hidden_media_list_type_id on media_items (hidden, media_list_type_id);
@@ -66,6 +65,7 @@ create table resource_properties (
   obj_sortable text,
   primary key (media_item_id, property_id)
 );
+
 create index idx_resource_properties_property_id_obj on resource_properties (property_id, obj);
 create index idx_resource_properties_obj_sortable on resource_properties (obj_sortable);
 create index idx_resource_properties_media_item_id_property_id_obj_sortable on resource_properties (media_item_id, property_id, obj_sortable);
@@ -120,4 +120,4 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
 
 /* XXXAus: !!!WARNING!!! When changing this value, you _MUST_ update sbLocalDatabaseMigration._latestSchemaVersion to match this value */
-insert into library_metadata (name, value) values ('version', '8');
+insert into library_metadata (name, value) values ('version', '9');

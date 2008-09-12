@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_COMPONENTS = $(srcdir)/sbMigrate061to070.js \
                       $(srcdir)/sbMigrate070RC1to070.js \
                       $(srcdir)/sbMigrate070RC2to070.js \
+                      $(srcdir)/sbMigrate070To08pre1.js \
                       $(NULL)
                       
 include $(topsrcdir)/build/rules.mk

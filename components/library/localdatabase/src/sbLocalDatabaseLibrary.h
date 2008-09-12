@@ -42,7 +42,6 @@
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
-#include <nsICryptoHash.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIRunnable.h>
 #include <nsIStreamListener.h>
@@ -53,12 +52,10 @@
 #include <nsStringGlue.h>
 #include <sbIMediaListFactory.h>
 
-class nsICryptoHash;
 class nsIPropertyBag2;
 class nsIWeakReference;
 class nsStringHashKey;
 class sbAutoBatchHelper;
-class sbHashHelper;
 class sbIBatchCreateMediaItemsListener;
 class sbILibraryFactory;
 class sbILocalDatabasePropertyCache;
@@ -139,9 +136,8 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
   friend class sbLibraryInsertingEnumerationListener;
   friend class sbLibraryRemovingEnumerationListener;
   friend class sbLocalDatabasePropertyCache;
-  friend class sbBatchCreateCallback;
+  friend class sbBatchCreateTimerCallback;
   friend class sbBatchCreateHelper;
-  friend class sbHashHelper;
 
   struct sbMediaListFactoryInfo {
     sbMediaListFactoryInfo()
@@ -243,7 +239,6 @@ private:
   nsresult AddNewItemQuery(sbIDatabaseQuery* aQuery,
                            const PRUint32 aMediaItemTypeID,
                            const nsAString& aURISpecOrPrefix,
-                           const nsAString& aHash,
                            nsAString& _retval);
 
   nsresult AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
@@ -302,16 +297,12 @@ private:
 
   nsresult GetAllListsByType(const nsAString& aType, sbMediaListArray* aArray);
 
-  nsresult FilterExistingURIs(nsIArray* aURIs, nsIArray** aFilteredURIs);
   nsresult FilterExistingItems(nsIArray* aURIs,
-                               const nsTArray<nsCString>& aHashes,
                                nsIArray* aPropertyArrayArray,
                                nsIArray** aFilteredURIs,
-                               nsTArray<nsCString>& aFilteredHashes,
                                nsIArray** aFilteredPropertyArrayArray);
 
   nsresult GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID);
-  nsresult GetGuidFromHash(const nsACString& aHash, nsAString &aGUID);
 
   nsresult Shutdown();
   
@@ -328,8 +319,7 @@ private:
                                          PRBool aAllowDuplicates,
                                          sbIBatchCreateMediaItemsListener* aListener,
                                          nsIArray** _retval);
-  nsresult CompleteBatchCreateMediaItems(sbHashHelper *aHashHelper);
-
+                                         
   /* Migration related methods */
   nsresult NeedsMigration(PRBool *aNeedsMigration, 
                           PRUint32 *aFromVersion, 
@@ -383,9 +373,6 @@ private:
   // Get media item IDs for a URL query
   nsString mGetGuidsFromContentUrl;
 
-  // Get media item GUID for a hash query.
-  nsString mGetGuidsForHash;
-
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
 
   sbMediaItemInfoTable mMediaItemTable;
@@ -414,12 +401,6 @@ private:
   nsInterfaceHashtableMT<nsISupportsHashKey, 
                          sbILocalDatabaseLibraryCopyListener> mCopyListeners;
 
-  // Hashtable that holds all the hash helpers.
-  nsDataHashtableMT<nsISupportsHashKey,
-                    nsRefPtr<sbHashHelper> > mHashHelpers;
-
-  // Thread pool for running the hashing.
-  nsCOMPtr<nsIThreadPool> mHashingThreadPool;
 };
 
 /**
@@ -477,126 +458,28 @@ private:
   PRPackedBool mItemEnumerated;
 };
 
-class sbBatchCreateContext : public nsISupports
-{
-friend class sbLocalDatabaseLibrary;
-friend class sbHashHelper;
-
-public:
-
-  NS_DECL_ISUPPORTS
-
-  sbBatchCreateContext()
-  : mFileSize(0),
-    mSeekByte(0),
-    mReadSize(0)
-  {
-    MOZ_COUNT_CTOR(sbBatchCreateContext);
-  };
-
-  ~sbBatchCreateContext()
-  {
-    MOZ_COUNT_DTOR(sbBatchCreateContext);
-  }
-
-private:
-  nsCString mHash;
-  nsCOMPtr<nsIURI> mURI;
-
-  PRInt64 mFileSize;
-  PRInt64 mSeekByte;
-  PRInt64 mReadSize;
-
-};
-
-class sbHashHelper : public nsIRunnable
-{
-friend class sbLocalDatabaseLibrary;
-
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSIRUNNABLE
-
-  sbHashHelper()
-  : mLibrary(nsnull),
-    mURIArray(nsnull),
-    mHashArray(nsnull),
-    mRetValArray(nsnull),
-    mAllowDuplicates(PR_FALSE),
-    mPropertyArrayArray(nsnull),
-    mListener(nsnull),
-    mHashingCompleteMonitor(nsnull),
-    mHashingComplete(PR_FALSE),
-    mStops(0)
-  {
-    MOZ_COUNT_CTOR(sbHashHelper);
-  }
-
-  ~sbHashHelper()
-  {
-    MOZ_COUNT_DTOR(sbHashHelper);
-    if(mHashingCompleteMonitor) {
-      nsAutoMonitor::DestroyMonitor(mHashingCompleteMonitor);
-    }
-    if(mHashArray) {
-      delete mHashArray;
-    }
-  }
-
-  nsresult Init()
-  {
-    mHashingCompleteMonitor = nsAutoMonitor::NewMonitor("sbHashHelper::mHashingCompleteMonitor");
-    NS_ENSURE_TRUE(mHashingCompleteMonitor, NS_ERROR_OUT_OF_MEMORY);
-    return NS_OK;
-  }
-
-  nsresult GetHashes();
-  nsresult GetHash(sbBatchCreateContext *aContext);
-  nsresult GetHash(nsIURI* aURI, nsACString& aHash);
-  nsresult ComputeHash(sbBatchCreateContext *aContext,
-                       nsIInputStream *aInput);
-  
-
-private:
-  nsresult AddHashInternal(nsACString& aHash);
-
-  sbLocalDatabaseLibrary *mLibrary;
-  nsCOMPtr<nsIArray> mURIArray;
-  nsTArray<nsCString> *mHashArray;
-  nsIArray **mRetValArray;
-
-  nsCOMPtr<nsICryptoHash> mCryptoHash;
-
-  PRBool mAllowDuplicates;
-  nsCOMPtr<nsIArray> mPropertyArrayArray;
-  nsCOMPtr<sbIBatchCreateMediaItemsListener> mListener;
-  nsCOMPtr<nsIThread> mReleaseTarget;
-
-  PRMonitor *mHashingCompleteMonitor;
-  PRBool mHashingComplete;
-  PRUint32 mStops;
-};
-
 // Forward declare
 class sbBatchCreateHelper;
 
-class sbBatchCreateCallback : public nsISupports
+class sbBatchCreateTimerCallback : public nsITimerCallback
 {
 friend class sbLocalDatabaseLibrary;
 
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_NSITIMERCALLBACK
 
-  sbBatchCreateCallback(sbLocalDatabaseLibrary* aLibrary,
-                        sbIBatchCreateMediaItemsListener* aListener,
-                        sbIDatabaseQuery* aQuery);
+  sbBatchCreateTimerCallback(sbLocalDatabaseLibrary* aLibrary,
+                             sbIBatchCreateMediaItemsListener* aListener,
+                             sbIDatabaseQuery* aQuery);
 
   nsresult Init();
 
   nsresult AddMapping(PRUint32 aQueryIndex,
                       PRUint32 aItemIndex);
 
-  nsresult Notify(PRBool* _retval);
+  nsresult NotifyInternal(nsITimer* aTimer,
+                          PRBool* _retval);
 
   sbBatchCreateHelper* BatchHelper();
   
@@ -606,7 +489,7 @@ private:
   nsRefPtr<sbBatchCreateHelper> mBatchHelper;
   nsCOMPtr<sbIDatabaseQuery> mQuery;
   nsDataHashtable<nsUint32HashKey, PRUint32> mQueryToIndexMap;
-
+  nsITimer* mTimer;
   PRUint32 mQueryCount;
 
 };
@@ -618,12 +501,12 @@ public:
   NS_IMETHOD_(nsrefcnt) Release(void);
 
   sbBatchCreateHelper(sbLocalDatabaseLibrary* aLibrary,
-                      sbBatchCreateCallback* aCallback = nsnull);
+                      sbBatchCreateTimerCallback* aCallback = nsnull);
 
   nsresult InitQuery(sbIDatabaseQuery* aQuery,
                      nsIArray* aURIArray,
-                     const nsTArray<nsCString>& aHashes,
                      nsIArray* aPropertyArrayArray);
+
   nsresult NotifyAndGetItems(nsIArray** _retval);
 
 protected:
@@ -634,10 +517,9 @@ private:
   // When this is used for an async batch, the helper will have an owning
   // reference to the callback
   sbLocalDatabaseLibrary*     mLibrary;
-  sbBatchCreateCallback*      mCallback;
+  sbBatchCreateTimerCallback*      mCallback;
   nsCOMPtr<nsIArray>  mURIArray;
   nsTArray<nsString>  mGuids;
-  nsTArray<nsCString> mHashes;
   PRUint32 mLength;
 };
 
