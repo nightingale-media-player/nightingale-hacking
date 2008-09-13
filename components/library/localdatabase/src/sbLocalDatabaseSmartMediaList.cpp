@@ -1450,14 +1450,62 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
   nsAutoString mediaColumn;
   nsAutoString joinTable;
   PRBool bIsMediaListMatch;
-  if (aCondition->mPropertyID.EqualsLiteral(SB_DUMMYPROPERTY_SMARTMEDIALIST_PLAYLIST)) {
-    mediaColumn = kMemberMediaItemId;
-    joinTable = kMediaLists;
-    bIsMediaListMatch = PR_TRUE;
+  
+  bIsMediaListMatch = aCondition->mPropertyID.EqualsLiteral(SB_DUMMYPROPERTY_SMARTMEDIALIST_PLAYLIST);
+  
+  // use a different refptr so we can reassign it without modifying the actual
+  // condition
+  sbRefPtrCondition ruleCondition = aCondition;
+
+  if (bIsMediaListMatch) {
+    if (ruleCondition->mLeftValue.IsEmpty()) {
+      // This condition is of the form "Playlist Is|IsNot Library". This is a
+      // very special case, because although we could tweak the query to match
+      // any track that is in no playlist at all (for "Is") or in at least one
+      // playlist (for "IsNot"), that is not actually what we want because
+      // every other update would add the tracks to the result list, and each
+      // subsequent one would empty the list. What we want is "Is Library" to
+      // match everything, and "IsNot Library" to match nothing at all. Yes it
+      // means that both rules are useless, but they're only valid so that the
+      // default state for a new playlist rule is a valid one (see bug 12046).
+      // To this end, we'll construct a dummy rule here, that either matches
+      // everything or nothing depending on the operator used, it will be of
+      // the form "guid Is|IsNot ''".
+
+      nsCOMPtr<sbIPropertyInfo> info;
+      rv = mPropMan->GetPropertyInfo(NS_LITERAL_STRING(SB_PROPERTY_GUID), getter_AddRefs(info));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString op;
+      rv = ruleCondition->mOperator->GetOperator(op);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsAutoString newOp;
+      if (op.EqualsLiteral(SB_OPERATOR_EQUALS))
+        newOp = NS_LITERAL_STRING(SB_OPERATOR_NOTEQUALS);
+      else
+        newOp = NS_LITERAL_STRING(SB_OPERATOR_EQUALS);
+
+      nsCOMPtr<sbIPropertyOperator> opObj;
+      rv = info->GetOperator(newOp, getter_AddRefs(opObj));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      ruleCondition = new 
+        sbLocalDatabaseSmartMediaListCondition(NS_LITERAL_STRING(SB_PROPERTY_GUID),
+                                               opObj,
+                                               NS_LITERAL_STRING(""),
+                                               NS_LITERAL_STRING(""),
+                                               NS_LITERAL_STRING(""));
+      bIsMediaListMatch = PR_FALSE;
+      isTopLevelProperty = PR_TRUE;
+    } else {
+      // Otherwise, use the playlist table to join
+      mediaColumn = kMemberMediaItemId;
+      joinTable = kMediaLists;
+    }
   } else {
     mediaColumn = kMediaItemId;
     joinTable = kResourceProperties;
-    bIsMediaListMatch = PR_FALSE;
   }
 
   nsAutoString baseAlias;
@@ -1471,7 +1519,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
     rv = builder->AddColumn(baseAlias, kMediaItemId);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = AddCriterionForCondition(builder, aCondition, info);
+    rv = AddCriterionForCondition(builder, ruleCondition, info);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Only show media items
@@ -1512,7 +1560,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
     PRUint32 longVal;
     nsAutoString colId;
     if (bIsMediaListMatch) {
-      rv = MediaListGuidToDB(aCondition->mLeftValue, longVal);
+      rv = MediaListGuidToDB(ruleCondition->mLeftValue, longVal);
       NS_ENSURE_SUCCESS(rv, rv);
       
       if (longVal == -1) 
@@ -1521,7 +1569,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
       colId = kMediaItemId;
     } else {
       // get property db id for rule property
-      rv = mPropertyCache->GetPropertyDBID(aCondition->mPropertyID, &longVal);
+      rv = mPropertyCache->GetPropertyDBID(ruleCondition->mPropertyID, &longVal);
       NS_ENSURE_SUCCESS(rv, rv);
       
       colId = kPropertyId;
@@ -1553,7 +1601,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
     NS_ENSURE_SUCCESS(rv, rv);
 
     // add conditions for this rule
-    rv = AddCriterionForCondition(builder, aCondition, info);
+    rv = AddCriterionForCondition(builder, ruleCondition, info);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Only show media items

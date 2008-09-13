@@ -69,8 +69,3 @@ sbDummyPlaylistPropertyInfo::Init()
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDummyPlaylistPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
-{
-  *_retval = !aValue.IsEmpty();
-  return NS_OK;
-}

@@ -531,3 +531,7 @@ sb-rating {
 sb-nowplaying-rating {
   -moz-binding: url("chrome://songbird/content/bindings/ratingsControl.xml#sb-nowplaying-rating");
 }
+
+treecols[type="sb-contextpicker"] {
+   -moz-binding: url('chrome://songbird/content/bindings/contextTreeCols.xml#treecols-context')
+}

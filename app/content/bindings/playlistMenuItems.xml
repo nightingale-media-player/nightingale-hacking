@@ -304,10 +304,26 @@
               return 0;
             }
             enumListener.items.sort(sortItems);
+            
+            if (enumListener.items.length > 0 &&
+                this.getAttribute("separator") == "before") {
+              var separator = document.createElement("menuseparator");
+              separator.setAttribute("sbtype", "playlist-menuitem");
+              this.parentNode.appendChild(separator);
+            }
+            
             for (var i in enumListener.items) {
               var item = enumListener.items[i];
               this.parentNode.appendChild(item);
             }
+
+            if (enumListener.items.length > 0 &&
+                this.getAttribute("separator") == "after") {
+              var separator = document.createElement("menuseparator");
+              separator.setAttribute("sbtype", "playlist-menuitem");
+              this.parentNode.appendChild(separator);
+            }
+
             this._items = enumListener.items;
             var e = document.createEvent("Events");
             e.initEvent("playlist-menuitems-changed", false, true);

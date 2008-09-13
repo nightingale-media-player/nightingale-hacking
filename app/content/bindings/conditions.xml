@@ -152,8 +152,12 @@
                 drawer-attr-map="invalid=invalid"
                 onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();">
                 <xul:menupopup>
+                  <xul:menuitem label="&smart.playlistcondition.library;" 
+                                value=""/>
                   <xul:sb-playlist-menuitems 
-                      nolibraries="true" 
+                      id="playlist-condition-listofplaylists"
+                      nolibraries="true"
+                      separator="before"
                       drawer-prop-map-set="library=source,exclude=listguid"/>
                 </xul:menupopup>
               </xul:menulist>
@@ -1135,12 +1139,9 @@
             // since we want to let the user match empty strings. unknown
             // properties will have isset/isnotset operators instead.
             if (v == null || v == "") {
-              // playlist rules don't support value=""
-              if (info.type != "smartmedialist_playlist") {
-                if (operator.value == info.OPERATOR_EQUALS ||
-                    operator.value == info.OPERATOR_NOTEQUALS) {
-                  forcevalid = true;
-                }
+              if (operator.value == info.OPERATOR_EQUALS ||
+                  operator.value == info.OPERATOR_NOTEQUALS) {
+                forcevalid = true;
               }
               // equivalent for date operators
               if (info.type == "datetime") {

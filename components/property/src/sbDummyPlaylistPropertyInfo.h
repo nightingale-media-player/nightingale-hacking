@@ -46,7 +46,6 @@ public:
   virtual ~sbDummyPlaylistPropertyInfo() {}
 
   virtual nsresult Init();
-  NS_IMETHOD Validate(const nsAString & aValue, PRBool *_retval);
 };
 
 #endif /* __SBDUMMYPLAYLISTPROPERTYINFO_H__ */

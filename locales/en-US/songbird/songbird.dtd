@@ -221,6 +221,7 @@
 <!ENTITY smart.autoupdate         "Auto update">
 <!ENTITY smart.autoupdate.never   "Manual">
 <!ENTITY smart.autoupdate.whendisplayed "Auto">
+<!ENTITY smart.playlistcondition.library "Library">
 
 <!ENTITY download.window          "Download" >
 <!ENTITY download.select          "Select destination folder:" >
