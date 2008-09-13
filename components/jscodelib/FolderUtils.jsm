@@ -183,8 +183,10 @@ var FolderUtils = {
     if(downloadFolder == null) {
       var directorySvc = Cc["@mozilla.org/file/directory_service;1"]
                            .getService(Ci.nsIProperties);
+      
+      // If the |musicFolder| is not available, default to the Desktop:
       try {
-        downloadFolder = directorySvc.getFile("Desk", {});
+        downloadFolder = directorySvc.get("Desk", Ci.nsIFile);
       }
       catch(e) {
         downloadFolder = null;
