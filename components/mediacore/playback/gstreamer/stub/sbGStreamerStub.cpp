@@ -45,7 +45,7 @@ NSGetModule(nsIComponentManager* aCompMgr,
             nsIModule* *aResult)
 {
   nsresult rv;
-  PRBool bundledGst;
+  PRBool systemGst;
 
   // aLocation starts off pointing to this component.
   nsCOMPtr<nsIFile> parent;
@@ -58,20 +58,20 @@ NSGetModule(nsIComponentManager* aCompMgr,
   rv = libDir->SetNativeLeafName(NS_LITERAL_CSTRING("lib"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Always bundled on OSX, Windows. Default to using the system version
-  // elsewhere, unless SB_GST_BUNDLED is set.
+  // Always bundled on OSX, Windows. Default to using the bundled version
+  // elsewhere, unless SB_GST_SYSTEM is set.
 #if defined(XP_MACOSX) || defined(XP_WIN)
-  bundledGst = PR_TRUE;
+  systemGst = PR_FALSE;
 #else
   nsCOMPtr<nsIEnvironment> envSvc =
     do_GetService("@mozilla.org/process/environment;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_BUNDLED"), &bundledGst);
+  rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_SYSTEM"), &systemGst);
   NS_ENSURE_SUCCESS(rv, rv);
 #endif
 
-  if (bundledGst) {
+  if (!systemGst) {
     // Load the libraries in this lib dir from the gst_libs.txt list,
     // when we're running against the bundled version of gstreamer.
     nsCOMPtr<nsIFile> manifest;
