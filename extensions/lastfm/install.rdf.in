@@ -23,6 +23,7 @@
     <em:contributor>Mobleman: Danish Translation</em:contributor>
     <em:contributor>Soham Chatterjee: Bengali Translation</em:contributor>
     <em:contributor>/usr/bin/tux: German Translation</em:contributor>
+    <em:contributor>drry: Japanese Translation</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
     <em:type>2</em:type>
     <em:iconURL>chrome://lastfm/content/extensionicon.png</em:iconURL>

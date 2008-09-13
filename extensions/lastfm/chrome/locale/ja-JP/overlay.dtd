@@ -1,0 +1,12 @@
+<!ENTITY lastfm.menu.login "Last.fm にログイン...">
+<!ENTITY lastfm.menu.logout "Last.fm からログアウト">
+<!ENTITY lastfm.menu.enable "Scrobbling を有効化">
+<!ENTITY lastfm.signup.label "Last.fm に入会する">
+<!ENTITY lastfm.login.button "ログイン">
+<!ENTITY lastfm.loggingin.label "ログイン中...">
+<!ENTITY lastfm.cancel.button "取り消す">
+<!ENTITY lastfm.profile.caption "プロフィール">
+<!ENTITY lastfm.profile.numtracks.before "">
+<!ENTITY lastfm.profile.numtracks.after "曲を Scrobble 済み">
+<!ENTITY lastfm.profile.scrobble "曲を Scrobble">
+<!ENTITY lastfm.profile.logout "ログアウト">
