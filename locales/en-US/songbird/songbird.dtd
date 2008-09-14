@@ -27,6 +27,7 @@
 <!ENTITY menu.mac.hideothers.key        "H">
 <!ENTITY menu.mac.hideothers.modifiers  "accel,alt">
 <!ENTITY menu.mac.showall               "Show All">
+<!ENTITY menu.mac.minimize.key          "M">
 
 <!ENTITY menu.file              "File" >
 <!ENTITY menu.file.new          "New Playlist" >
