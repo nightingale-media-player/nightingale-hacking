@@ -70,7 +70,7 @@
         // right after all the constructors run...
         var self = this;
         window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
-        this._hrefLoop = null;
+        this._scraper = null;
           
         this._metrics =
           Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
@@ -144,7 +144,7 @@
             this.linkedBrowser.removeEventListener("DOMContentLoaded",
                                                    this.browserDOMLoadedEventListener,
                                                    true);
-
+            
             // Clear the progress filter.
             if (this._progressFilter) {
               this._progressFilter.removeProgressListener(this);
@@ -276,16 +276,17 @@
                                       'songbird.webplaylist.columnspec');
 
           // Start the first scan as soon as the browser DOM has loaded
-          this.browserDOMLoadedEventListener = {
-            tabbrowser: this,
-            handleEvent: function(event) {
-              this.tabbrowser.setUpMediaPage();
-              this.tabbrowser.scanWebPage();
+          var self = this;
+          this.browserDOMLoadedEventListener = function(event) {
+            if (self.linkedBrowser.contentDocument == event.target) {
+              self.setUpMediaPage();
             }
+            // NB: This happens when document is loaded for all documents and
+            //     subdocuments, such as frames and iframes, visible or not.
+            self.scanWebPage(event.originalTarget);
           }
           this.linkedBrowser.addEventListener("DOMContentLoaded",
-                                              this.browserDOMLoadedEventListener,
-                                              true);
+                                              this.browserDOMLoadedEventListener, true);
 
           // wire up the browser progress filter
           if (!this._progressFilter) {
@@ -423,8 +424,10 @@
       <method name="clearOuterPlaylist">
         <body><![CDATA[
           // hide the outer playlist
-          CancelAsyncWebDocument(this._hrefLoop);
-          this._hrefLoop = null;
+          if (this._scraper) {
+            this._scraper.cancel();
+            this._scraper = null;
+          }
           this.outerPlaylistShowing = false;
           this.scanProgress = -1;
         ]]></body>
@@ -513,22 +516,20 @@
       </method>
 
       <method name="scanWebPage">
+        <parameter name="aDocument"/>
         <body><![CDATA[
-          if (!SBDataGetBoolValue('webplaylist.enabled')) {
+          if (!SBDataGetBoolValue('webplaylist.enabled') ||
+              !this._shouldScan) {
+            // !_shouldScan indicates that the webpage API has set a media list.
+            // (see sbTabBrowserTab::disableScan)
             return;
           }
-
-          // check to see if scanning has been disabled
-          if (!this._shouldScan)
-            return;
-
-          // Only scrape http(s) and file pages
           var scheme = this.linkedBrowser.currentURI.scheme;
-          if (scheme != 'http' && scheme != 'https' && scheme != 'file') {
+          if (!(scheme == "http" || scheme == "https" || scheme == "file")) {
             this.outerPlaylistShowing = false;
             return;
           }
-
+          
           // Use any view that was explicitly specified.  Since this consumes
           // the view, it is no longer a new load.
           var view = this._viewForPage;
@@ -582,41 +583,25 @@
             tree.treeBoxObject.ensureRowIsVisible(view.selection.currentIndex);
           }
 
+          // create a new scraper.
+          if(!this._scraper) {
+            this._scraper = new WebScraper(view.mediaList);
+            
+            var self = this;
+            this._scraper.job.addJobProgressListener( {
+              QueryInterface: XPCOMUtils.generateQI([Ci.sbIJobProgressListener]),
+              onJobProgress:  function(job) {
+                if (view.mediaList.length > 0) {
+                  self.outerPlaylistShowing = true;
+                }
+                self.scanProgress = job.progress/job.total;
+              }
+            });
+          }
+
           // scrape the document.
-          var context = {
-            tab: this,
-            pt: 0,
-            get progressTotal() {
-              return this.pt;
-            },
-            set progressTotal(p) {
-              this.pt = p;
-              this.setProgress();
-            },
-            pc: 0,
-            get progressCurrent() {
-              return this.pc;
-            },
-            set progressCurrent(p) {
-              this.pc = p;
-              this.setProgress();
-            },
-            setProgress: function setProgress() {
-              this.tab.scanProgress = (1.0*this.pc)/this.pt;
-            },
-            sp: false,
-            get showPlaylist() {
-              return this.sp;
-            },
-            set showPlaylist(s) {
-              this.tab.outerPlaylistShowing = s;
-              this.sp = s;
-            }
-          };
-          this.scanProgress = 0;
-          this._hrefLoop = AsyncWebDocument(this.linkedBrowser.contentDocument,
-                                            view, this._hrefLoop, context,
-                                            this.linkedBrowser.contentTitle);
+          this._scraper.start(aDocument);
+          
         ]]></body>
       </method>
 
@@ -881,7 +866,6 @@
             return;
           }
 
-            
           if (aState & nsIWebProgressListener.STATE_STOP) {
             if (!(this.linkedBrowser.contentDocument &&
                   this.linkedBrowser.contentDocument.documentURI == this._loadingURL)) {
@@ -908,7 +892,12 @@
 
             } else {
               this._metrics.metricsInc("app.browser", "pageViews", "");
-              this.scanWebPage();
+              // start slow-loading pages after 500ms.
+              // this works because of the dupechecker, which prevents problems
+              // from arising due to rescanning the same document when it finishes
+              // loading.
+              var self = this;
+              setTimeout(function() { self.scanWebPage(); }, 500);
             }
           }
         ]]></body>
