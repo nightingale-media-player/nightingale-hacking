@@ -107,7 +107,7 @@ irc.mozilla.org #songbird
 /******************************************************************************
 > BASE
 
-  Mostly vanilla elements that act as the startping point for rules to follow.
+  Mostly vanilla elements that act as the starting point for rules to follow.
 ******************************************************************************/
 wizard,
 dialog,
@@ -774,14 +774,26 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 
 
 /******************************************************************************
+> WIZARDS
+******************************************************************************/
+
+.wizard-header {
+  background-color: rgb(220,220,220);
+  border-bottom:1px solid rgb(131,131,131);
+}
+
+.sb-wizard-header {
+  font-weight:bold;
+  font-size:120%;
+}
+
+
+
+/******************************************************************************
 > FIRST RUN WIZARD
 ******************************************************************************/
 .sb-first-run-eula-browser {
   border:1px solid rgb(131,131,131);
-}
-.wizard-header {
-  background-color: rgb(220,220,220);
-  border-bottom:1px solid rgb(131,131,131);
 }
 
 

@@ -128,7 +128,6 @@ firstRunAddOnsSvc.prototype = {
   //   _addOnsBundleDataLoadSucceeded
   //                            True if loading of add-ons bundle data
   //                            succeeded.
-  //   _addOnsTable             Table of add-ons.
   //
 
   _cfg: firstRunAddOnsSvcCfg,
@@ -138,7 +137,6 @@ firstRunAddOnsSvc.prototype = {
   _addOnsBundleLoading: false,
   _addOnsBundleDataLoadComplete: false,
   _addOnsBundleDataLoadSucceeded: false,
-  _addOnsTable: null,
 
 
   //----------------------------------------------------------------------------
@@ -200,25 +198,6 @@ firstRunAddOnsSvc.prototype = {
     // Clear object fields.
     this._widget = null;
     this.addOnsBundle = null;
-    this._addOnsTable = null;
-  },
-
-
-  /**
-   * Save the user settings in the first run wizard page.
-   */
-
-  saveSettings: function firstRunAddOnsSvc_saveSettings() {
-    // Set install flag for each add-on.
-    for (var addOnID in this._addOnsTable) {
-      // Get the add-on info.
-      var addOnInfo = this._addOnsTable[addOnID];
-      var index = addOnInfo.index;
-      var addOnItemElem = addOnInfo.addOnItemElem;
-
-      // Set the install flag according to the add-on item element setting.
-      this.addOnsBundle.setExtensionInstallFlag(index, addOnItemElem.install);
-    }
   },
 
 
@@ -306,7 +285,6 @@ firstRunAddOnsSvc.prototype = {
     function firstRunAddOnsSvc__addOnsBundleInitialize() {
     // Initialize the add-ons bundle fields.
     this.addOnsBundle = null;
-    this._addOnsTable = {};
     this._addOnsBundleLoading = false;
     this._addOnsBundleDataLoadComplete = false;
     this._addOnsBundleDataLoadSucceeded = false;
@@ -331,7 +309,6 @@ firstRunAddOnsSvc.prototype = {
 
     // Clear add-ons bundle object fields.
     this.addOnsBundle = null;
-    this._addOnsTable = null;
   },
 
 
@@ -392,99 +369,15 @@ firstRunAddOnsSvc.prototype = {
       }
     }
 
-    // Add loaded add-ons.
+    // Set the add-on bundle object for the add-on bundle element.
     if (this._addOnsBundleDataLoadComplete &&
         this._addOnsBundleDataLoadSucceeded) {
-      var extensionCount = this.addOnsBundle.bundleExtensionCount;
-      for (var i = 0; i < extensionCount; i++) {
-        this._addAddOn(i);
-      }
+      var addOnBundleElem = this._getElement("add_on_bundle");
+      addOnBundleElem.addOnBundle = this.addOnsBundle;
     }
 
     // Update the UI.
     this._update();
-  },
-
-
-  /**
-   * Add the add-on from the add-ons bundle with the index specified by aIndex.
-   *
-   * \param aIndex              Index within the add-ons bundle of the add-on to
-   *                            add.
-   */
-
-  _addAddOn: function firstRunAddOnsSvc__addAddOn(aIndex) {
-    // Get the add-on ID.  Use the name as an ID if the ID is not available.
-    var addOnID = this.addOnsBundle.getExtensionAttribute(aIndex, "id");
-    if (!addOnID)
-      addOnID = this.addOnsBundle.getExtensionAttribute(aIndex, "name");
-
-    // Do nothing if add-on already added.
-    if (this._addOnsTable[addOnID])
-      return;
-
-    // Get the add-on info.
-    var addOnInfo = {};
-    addOnInfo.index = aIndex;
-    addOnInfo.installFlag = this.addOnsBundle.getExtensionInstallFlag(aIndex);
-    addOnInfo.addOnID = this.addOnsBundle.getExtensionAttribute(aIndex, "id");
-    addOnInfo.addOnURL = this.addOnsBundle.getExtensionAttribute(aIndex,
-                                                                  "url");
-    addOnInfo.name = this.addOnsBundle.getExtensionAttribute(aIndex, "name");
-    addOnInfo.description =
-          this.addOnsBundle.getExtensionAttribute(aIndex, "description");
-    addOnInfo.iconURL = this.addOnsBundle.getExtensionAttribute(aIndex, "icon");
-
-    // Add the add-on element to the add-on list element.
-    addOnInfo.addOnItemElem = this._addAddOnElement(addOnInfo);
-
-    // Add the add-on info to the add-ons table.
-    this._addOnsTable[addOnID] = addOnInfo;
-  },
-
-
-  /**
-   * Add the add-on element to the add-on list element for the add-on specified
-   * by aAddOnInfo.  Return the added add-on element.
-   *
-   * \param aAddOnInfo          Add-on information.
-   *
-   * \return                    Add-on item element.
-   */
-
-  _addAddOnElement: function firstRunAddOnsSvc__addAddOnElement(aAddOnInfo) {
-    // Get the add-on list item template.
-    var listItemTemplateElem = this._getElement("list_item_template");
-
-    // Create an add-on list item from the template.
-    var listItemElem = listItemTemplateElem.cloneNode(true);
-    listItemElem.hidden = false;
-
-    // Set up the add-on item element.
-    var itemElem = DOMUtils.getElementsByAttribute(listItemElem,
-                                                   "templateid",
-                                                   "item")[0];
-    itemElem.setAttribute("defaultinstall", aAddOnInfo.installFlag);
-    itemElem.setAttribute("addonid", aAddOnInfo.addOnID);
-    itemElem.setAttribute("addonurl", aAddOnInfo.addOnURL);
-    itemElem.setAttribute("name", aAddOnInfo.name);
-    itemElem.setAttribute("description", aAddOnInfo.description);
-    itemElem.setAttribute("icon", aAddOnInfo.iconURL);
-
-    // Reclone element to force construction with new settings.
-    listItemElem = listItemElem.cloneNode(true);
-
-    // Add the add-on list item to the add-on list.
-    var itemListElem = this._getElement("add_ons_list");
-    itemListElem.appendChild(listItemElem);
-
-    // Get the add-on item element after it's been appended to get a fully
-    // functional element object.
-    itemElem = DOMUtils.getElementsByAttribute(listItemElem,
-                                               "templateid",
-                                               "item")[0];
-
-    return itemElem;
   },
 
 
@@ -508,10 +401,10 @@ firstRunAddOnsSvc.prototype = {
       selectedPanel = this._getElement("add_ons_loading_status");
     }
     // Otherwise, if the add-ons bundle loading completed with success, select
-    // the add-ons list panel.
+    // the add-on bundle panel.
     else if (this._addOnsBundleDataLoadComplete &&
              this._addOnsBundleDataLoadSucceeded) {
-      selectedPanel = this._getElement("add_ons_list");
+      selectedPanel = this._getElement("add_on_bundle");
     }
     // Otherwise, if the add-ons bundle loading completed with failure, select
     // the load failed status panel.

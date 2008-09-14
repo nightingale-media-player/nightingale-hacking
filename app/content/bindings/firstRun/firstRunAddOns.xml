@@ -52,11 +52,6 @@
    *
    *   addOnsBundle             First-run add-ons bundle object.
    *
-   * Methods:
-   *
-   *   saveSettings             Save the user settings in the first-run wizard
-   *                            page.
-   *
    *****************************************************************************
    ************************************************************************* -->
 
@@ -84,12 +79,6 @@
           &first_run.add_ons.description.line2;
         </xul:description>
 
-        <!-- Template for add-on list item. -->
-        <xul:richlistitem anonid="list_item_template" hidden="true">
-          <xul:sb-first-run-add-ons-item templateid="item"
-                                         class="sb-first-run-add-ons-item"/>
-        </xul:richlistitem>
-
         <!-- Add-ons status deck.  Can't use comments inside of decks. -->
         <xul:deck anonid="status_deck" class="sb-first-run-add-ons-status-deck">
 
@@ -101,8 +90,8 @@
             <xul:label value="&first_run.add_ons.loading.label;"/>
           </xul:groupbox>
 
-          <xul:richlistbox anonid="add_ons_list"
-                           class="sb-first-run-add-ons-listbox"/>
+          <xul:sb-add-on-bundle anonid="add_on_bundle"
+                                class="sb-first-run-add-ons-add-on-bundle"/>
 
           <xul:groupbox anonid="add_ons_load_failed_status"
                         class="sb-first-run-add-ons-status-text-box">
@@ -177,15 +166,6 @@
 
 
       <!--
-       * Save the user settings in the first-run-wizard page.
-       -->
-
-      <method name="saveSettings"><body><![CDATA[
-        this._widgetSvc.saveSettings();
-      ]]></body></method>
-
-
-      <!--
        * Import external services.
        -->
 
@@ -205,92 +185,6 @@
     </implementation>
 
   </binding> <!-- sb-first-run-add-ons -->
-
-
-  <!-- *************************************************************************
-   *****************************************************************************
-   *
-   * First-run add-ons item widget.
-   *
-   *   This widget implements an item within a first-run add-ons item list.
-   *
-   * Attributes:
-   *
-   *   defaultinstall           If true, select add-on installation by default.
-   *   addonid                  Add-on ID.
-   *   addonurl                 URL to add-on file.
-   *   name                     Name of add-on.
-   *   description              Add-on description.
-   *   icon                     URL of add-on icon.
-   *
-   * Properties:
-   *
-   *   install                  If true, add-on is marked for installation.
-   *
-   *****************************************************************************
-   ************************************************************************* -->
-
-  <binding id="sb-first-run-add-ons-item">
-
-    <!-- ***********************************************************************
-     *
-     * Content.
-     *
-     *********************************************************************** -->
-
-    <content>
-
-      <xul:hbox anonid="container_box" class="sb-first-run-add-ons-item-box">
-
-        <!-- Add-on installation checkbox. -->
-        <xul:checkbox anonid="install_checkbox"
-                      xbl:inherits="checked=defaultinstall"/>
-
-        <!-- Add-on image.  Use a box to constrain image size. -->
-        <xul:box class="sb-first-run-add-ons-item-image-box">
-          <xul:image class="sb-first-run-add-ons-item-image"
-                     xbl:inherits="src=icon"/>
-        </xul:box>
-
-        <!-- Add-on name and description. -->
-        <xul:vbox class="sb-first-run-add-ons-item-desc-box">
-          <xul:label class="sb-first-run-add-ons-item-name"
-                     xbl:inherits="value=name"/>
-          <xul:label class="sb-first-run-add-ons-item-desc"
-                     xbl:inherits="xbl:text=description"/>
-        </xul:vbox>
-
-      </xul:hbox> <!-- container_box -->
-
-    </content>
-
-
-    <!-- ***********************************************************************
-     *
-     * Implementation.
-     *
-     *********************************************************************** -->
-
-    <implementation>
-
-      <!--
-       * Widget properties.
-       -->
-
-      <!-- install -->
-      <property name="install" readonly="true">
-        <getter>
-          var installCheckboxElem =
-                document.getAnonymousElementByAttribute(this,
-                                                        "anonid",
-                                                        "install_checkbox");
-          return installCheckboxElem.checked;
-        </getter>
-      </property>
-
-    </implementation>
-
-  </binding> <!-- sb-first-run-add-ons-item -->
 
 </bindings>
 

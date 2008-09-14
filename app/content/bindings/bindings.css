@@ -535,3 +535,15 @@ sb-nowplaying-rating {
 treecols[type="sb-contextpicker"] {
    -moz-binding: url('chrome://songbird/content/bindings/contextTreeCols.xml#treecols-context')
 }
+
+
+/* Add-on bundle bindings */
+
+sb-add-on-bundle {
+  -moz-binding: url("chrome://songbird/content/bindings/addOnBundle.xml#sb-add-on-bundle");
+}
+
+sb-add-on-bundle-item {
+  -moz-binding: url("chrome://songbird/content/bindings/addOnBundle.xml#sb-add-on-bundle-item");
+}
+

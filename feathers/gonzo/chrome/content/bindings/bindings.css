@@ -52,6 +52,7 @@ For more information, see:
 /** The global toolbar styles are not included by default **/
 @import url(chrome://global/skin/toolbar.css); 
 
+@import url(addOnBundle.css);
 @import url(browsertoolbar.css);
 @import url(closableBox.css);
 @import url(device/deviceCapacity.css);
@@ -73,6 +74,7 @@ For more information, see:
 @import url(syscontrols.css); 
 @import url(tabbrowser.css);
 @import url(ratingsControl.css);
+@import url(wizard.css);
 
 @import url(chrome://gonzo/content/global/tabbox.css);
 @import url(chrome://gonzo/content/global/browser.css);
