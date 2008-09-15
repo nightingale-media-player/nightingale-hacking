@@ -167,7 +167,7 @@ var WebScraperSteps = {
     var properties;
     while ((properties = yield properties)) {
       var url = newURI(properties[SBProperties.contentURL])
-      if (!url instanceof Ci.nsIURL) {
+      if (!(url instanceof Ci.nsIURL)) {
         continue;
       }
       
@@ -186,10 +186,7 @@ var WebScraperSteps = {
     var properties;
     while((properties = yield properties)) {
       var url = newURI(properties[SBProperties.contentURL])
-      if (url instanceof Ci.nsIURL) {
-        url.QueryInterface(Ci.nsIURL);
-      }
-      else {
+      if (!(url instanceof Ci.nsIURL)) {
         continue;
       }
       
@@ -255,8 +252,8 @@ var WebScraperSteps = {
     var properties;
     while ((properties = yield properties)) {
       var url = newURI(properties[SBProperties.contentURL]);
-      if (!url instanceof Ci.nsIURL) {
-        continue; // good uri, bad url. :(
+      if (!(url instanceof Ci.nsIURL)) {
+        continue;
       }
       
       // Next we convert the JS object into a property-array

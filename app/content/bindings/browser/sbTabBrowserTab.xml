@@ -897,7 +897,9 @@
               // from arising due to rescanning the same document when it finishes
               // loading.
               var self = this;
-              setTimeout(function() { self.scanWebPage(); }, 500);
+              setTimeout(function() {
+                self.scanWebPage(self.linkedBrowser.contentDocument);
+              }, 500);
             }
           }
         ]]></body>
