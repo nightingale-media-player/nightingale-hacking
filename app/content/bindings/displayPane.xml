@@ -47,23 +47,23 @@
     <!-- a single display pane (with associated title bar) -->
     <xbl:content>
       <vbox flex="1">
-        <hbox>
-          <hbox anonid="titlebar" class="sb-displaypane-header" flex="1">
-            <vbox pack="center">
-              <!-- the extra vbox is to make sure the height of the image does not
-                   affect the height of the other elements (in particular, the
-                   menu button) -->
-              <image anonid="icon" class="favicon"/>
-            </vbox>
-            <label anonid="header" xbl:inherits="default=label"
-                   class="sb-displaypane-label" flex="1" crop="end"/>
-            <spacer anonid="headerSpacer" flex="1"/>
-            <tabs anonid="dpTabBar"
-                  class="sb-displaypane-tabs"
-                  collapsed="true"
-                  onselect="document.getBindingParent(this).onTabSelect(event)"/>
-          </hbox>
-          <button type="menu" mousethrough="never" class="sb-displaypane-menubutton">
+        <hbox anonid="titlebar" class="sb-displaypane-header" flex="1">
+          <vbox pack="center">
+            <!-- the extra vbox is to make sure the height of the image does not
+                 affect the height of the other elements (in particular, the
+                 menu button) -->
+            <image anonid="icon" class="favicon"/>
+          </vbox>
+          <label anonid="header" xbl:inherits="default=label"
+                 class="sb-displaypane-label" flex="1" crop="end"/>
+          <spacer anonid="headerSpacer" flex="1"/>
+          <tabs anonid="dpTabBar"
+                class="sb-displaypane-tabs"
+                collapsed="true"
+                onclick="event.stopPropagation();"
+                onselect="document.getBindingParent(this).onTabSelect(event)"/>
+          <button type="menu" mousethrough="never" class="sb-displaypane-menubutton"
+                  onclick="event.stopPropagation();">
             <menupopup onpopupshowing="return document.getBindingParent(this).buildMenu(event)"
                        anonid="menu">
                        
