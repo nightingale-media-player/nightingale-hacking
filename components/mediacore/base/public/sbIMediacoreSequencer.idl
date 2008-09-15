@@ -47,8 +47,6 @@ interface sbIMediacoreSequencer : nsISupports
 
   attribute sbIMediaListView view;
 
-  readonly attribute sbIMediacoreSequence currentSequence;
-
   // When in custom mode, this generator is used to generate the sequence.
   attribute sbIMediacoreSequenceGenerator customGenerator;
 };

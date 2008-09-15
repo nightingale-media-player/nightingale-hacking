@@ -31,6 +31,33 @@ include $(DEPTH)/build/autodefs.mk
 
 target_name = sbLocalDatabaseLibrary
 
+#
+# XXXAus: Remove the following when we switch to new Mediacore API.
+#
+
+XPIDL_INCLUDES = $(topsrcdir)/components/playlistplayback/public \
+                 $(NULL)
+
+XPIDL_HEADER_SRCS = $(DEPTH)/components/playlistplayback/public/sbIPlaylistPlayback.idl \
+                    $(NULL)
+
+XPIDL_EXTRA_FLAGS = -o $(DEPTH)/components/playlistplayback/public/`basename $(@:.h=)` \
+                    $(NULL)                     
+
+#
+# XXXAus: Uncomment the following when we switch to new Mediacore API.
+#
+
+#XPIDL_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
+#                 $(NULL)
+
+#XPIDL_HEADER_SRCS = $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventTarget.idl \
+#                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventListener.idl \
+#                    $(NULL)
+
+#XPIDL_EXTRA_FLAGS = -o $(DEPTH)/components/mediacore/base/public/`basename $(@:.h=)` \
+#                    $(NULL)                     
+
 CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseGUIDArray.cpp \
            sbLocalDatabaseAsyncGUIDArray.cpp \

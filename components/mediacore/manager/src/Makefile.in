@@ -33,13 +33,15 @@ target := sbMediacoreManager$(DEBUG:%=_d)
 
 CPP_SRCS = sbMediacoreManager.cpp \
            sbMediacoreManagerModule.cpp \
+           sbMediacoreSequencer.cpp \
            sbMediacoreTypeSniffer.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbMediacoreVotingChain.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbMediacoreEvent.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreEventTarget.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/mediacore/base/public \
+CPP_INCLUDES = $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/mediacore/base/public \
                $(DEPTH)/components/mediacore/manager/public \
                $(DEPTH)/components/mediaimport/playlist/public \
                $(topsrcdir)/components/include \

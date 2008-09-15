@@ -69,7 +69,6 @@ public:
   // sbBaseMediacore overrides
   virtual nsresult OnInitBaseMediacore();
   virtual nsresult OnGetCapabilities();
-  virtual nsresult OnSetCurrentSequence(sbIMediacoreSequence *aCurrentSequence);
   virtual nsresult OnShutdown();
 
   // sbBaseMediacorePlaybackControl overrides

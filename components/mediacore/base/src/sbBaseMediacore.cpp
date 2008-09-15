@@ -173,35 +173,6 @@ sbBaseMediacore::GetStatus(sbIMediacoreStatus* *aStatus)
 }
 
 NS_IMETHODIMP 
-sbBaseMediacore::GetCurrentSequence(sbIMediacoreSequence * *aCurrentSequence)
-{
-  TRACE(("sbBaseMediacore[0x%x] - GetCurrentSequence", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_ARG_POINTER(aCurrentSequence);
-
-  nsAutoLock lock(mLock);
-  NS_IF_ADDREF(*aCurrentSequence = mCurrentSequence);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
-sbBaseMediacore::SetCurrentSequence(sbIMediacoreSequence * aCurrentSequence)
-{
-  TRACE(("sbBaseMediacore[0x%x] - SetCurrentSequence", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_ARG_POINTER(aCurrentSequence);
-
-  nsAutoLock lock(mLock);
-  mCurrentSequence = aCurrentSequence;
-
-  nsresult rv = OnSetCurrentSequence(aCurrentSequence);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
 sbBaseMediacore::Shutdown()
 {
   TRACE(("sbBaseMediacore[0x%x] - Shutdown", this));
@@ -240,22 +211,6 @@ sbBaseMediacore::OnGetCapabilities()
 }
 
 /*virtual*/ nsresult 
-sbBaseMediacore::OnSetCurrentSequence(sbIMediacoreSequence *aCurrentSequence)
-{
-  /**
-   *  If you get a new sequence you may want to do something about it. Like peek 
-   *  at the next item for gapless playback, set up buffering, or what not.
-   *
-   *  If you don't need to do anything, just return NS_OK;
-   *
-   *  Please note that when you are called in this method, mLock is already 
-   *  acquired. Do not attempt to acquire it!
-   */
-
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/*virtual*/ nsresult 
 sbBaseMediacore::OnShutdown()
 {
   /**
@@ -269,3 +224,4 @@ sbBaseMediacore::OnShutdown()
 
   return NS_ERROR_NOT_IMPLEMENTED;
 }
+

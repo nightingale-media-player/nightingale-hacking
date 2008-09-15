@@ -37,7 +37,6 @@
 #include <nsIClassInfo.h>
 
 #include <sbIMediacoreCapabilities.h>
-#include <sbIMediacoreSequence.h>
 #include <sbIMediacoreStatus.h>
 
 #include <nsAutoLock.h>
@@ -68,9 +67,6 @@ public:
   virtual nsresult OnGetCapabilities();
 
   //Override me, see cpp file for implementation notes.
-  virtual nsresult OnSetCurrentSequence(sbIMediacoreSequence *aCurrentSequence);
-
-  //Override me, see cpp file for implementation notes.
   virtual nsresult OnShutdown();
 
 protected:
@@ -81,7 +77,6 @@ protected:
   nsString mInstanceName;
 
   nsCOMPtr<sbIMediacoreCapabilities> mCapabilities;
-  nsCOMPtr<sbIMediacoreSequence>     mCurrentSequence;
   nsCOMPtr<sbIMediacoreStatus>       mStatus;
 };
 

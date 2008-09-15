@@ -269,13 +269,6 @@ sbGStreamerMediacore::OnGetCapabilities()
 }
 
 /*virtual*/ nsresult 
-sbGStreamerMediacore::OnSetCurrentSequence(sbIMediacoreSequence *aCurrentSequence)
-{
-  // XXXAus: Implement this when implementing the default sequencer!
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-/*virtual*/ nsresult 
 sbGStreamerMediacore::OnShutdown()
 {
   if (mPipeline) {
