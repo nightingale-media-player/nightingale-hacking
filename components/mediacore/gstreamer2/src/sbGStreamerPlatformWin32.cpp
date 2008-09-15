@@ -26,8 +26,6 @@
 
 #include "sbGStreamerPlatformWin32.h"
 
-#include "sbGStreamerSimple.h"
-
 #include <prlog.h>
 #include <nsDebug.h>
 
