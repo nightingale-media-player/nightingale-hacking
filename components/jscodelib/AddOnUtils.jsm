@@ -88,6 +88,60 @@ function AddOnBundleLoader()
 {
 }
 
+
+/**
+ * Add all currently installed add-ons to the recommended add-on black list.
+ */
+
+AddOnBundleLoader.addInstalledAddOnsToBlacklist =
+  function AddOnBundleLoader_addInstalledAddOnsToBlacklist() {
+  // Get the list of installed add-ons.
+  var installedAddOnList = RDFHelper.help("rdf:addon-metadata",
+                                          "urn:songbird:addon:root",
+                                          RDFHelper.DEFAULT_RDF_NAMESPACES);
+
+  // Add each installed add-on to the blacklist.
+  for (var i = 0; i < installedAddOnList.length; i++) {
+    this.addAddOnToBlacklist(installedAddOnList[i].id);
+  }
+}
+
+
+/**
+ * Add the add-on specified by aAddOnID to the recommended add-on black list.
+ *
+ * \param aAddOnID            ID of add-on to add to black list.
+ */
+
+AddOnBundleLoader.addAddOnToBlacklist =
+  function AddOnBundleLoader_addAddOnToBlacklist(aAddOnID) {
+  // Do nothing if no ID.
+  if (!aAddOnID)
+    return;
+
+  // Get the add-on blacklist.
+  var Application = Cc["@mozilla.org/fuel/application;1"]
+                      .getService(Ci.fuelIApplication);
+  var blacklist =
+        Application.prefs.getValue("recommended_addons.update.blacklist", "");
+  if (blacklist.length > 0)
+    blacklist = blacklist.split(",");
+  else
+    blacklist = [];
+
+  // Do nothing if add-on is already in the blacklist.
+  for (var i = 0; i < blacklist.length; i++) {
+    if (blacklist[i] == aAddOnID)
+      return;
+  }
+
+  // Add the add-on to the blacklist.
+  blacklist.push(aAddOnID);
+  Application.prefs.setValue("recommended_addons.update.blacklist",
+                             blacklist.join(","));
+}
+
+
 // Define the class.
 AddOnBundleLoader.prototype = {
   // Set the constructor.
@@ -159,59 +213,6 @@ AddOnBundleLoader.prototype = {
     // Clear object references.
     this.addOnBundle = null;
     this._completionCallback = null;
-  },
-
-
-  /**
-   * Add all currently installed add-ons to the recommended add-on black list.
-   */
-
-  addInstalledAddOnsToBlacklist:
-    function AddOnBundleLoader_addInstalledAddOnsToBlacklist() {
-    // Get the list of installed add-ons.
-    var installedAddOnList = RDFHelper.help("rdf:addon-metadata",
-                                            "urn:songbird:addon:root",
-                                            RDFHelper.DEFAULT_RDF_NAMESPACES);
-
-    // Add each installed add-on to the blacklist.
-    for (var i = 0; i < installedAddOnList.length; i++) {
-      this.addAddOnToBlacklist(installedAddOnList[i].id);
-    }
-  },
-
-
-  /**
-   * Add the add-on specified by aAddOnID to the recommended add-on black list.
-   *
-   * \param aAddOnID            ID of add-on to add to black list.
-   */
-
-  addAddOnToBlacklist:
-    function AddOnBundleLoader_addAddOnToBlacklist(aAddOnID) {
-    // Do nothing if no ID.
-    if (!aAddOnID)
-      return;
-
-    // Get the add-on blacklist.
-    var Application = Cc["@mozilla.org/fuel/application;1"]
-                        .getService(Ci.fuelIApplication);
-    var blacklist =
-          Application.prefs.getValue("recommended_addons.update.blacklist", "");
-    if (blacklist.length > 0)
-      blacklist = blacklist.split(",");
-    else
-      blacklist = [];
-
-    // Do nothing if add-on is already in the blacklist.
-    for (var i = 0; i < blacklist.length; i++) {
-      if (blacklist[i] == aAddOnID)
-        return;
-    }
-
-    // Add the add-on to the blacklist.
-    blacklist.push(aAddOnID);
-    Application.prefs.setValue("recommended_addons.update.blacklist",
-                               blacklist.join(","));
   },
 
 

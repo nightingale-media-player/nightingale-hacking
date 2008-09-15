@@ -68,7 +68,7 @@ interface sbIWindowWatcher : nsISupports
    *
    * \param aWindowType         Type of window with which to call.
    * \param aCallback           Callback to call with window.
-   * \param aWait               If true, wait until calback is called.
+   * \param aWait               If true, wait until callback is called.
    */
   /*XXXeps add cancel. */
 

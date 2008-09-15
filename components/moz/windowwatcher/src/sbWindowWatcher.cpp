@@ -438,7 +438,8 @@ sbWindowWatcher::OnQuitApplicationGranted()
  */
 
 sbWindowWatcher::sbWindowWatcher() :
-  mIsShuttingDown(PR_FALSE)
+  mIsShuttingDown(PR_FALSE),
+  mServicingCallWithWindowList(PR_FALSE)
 {
 }
 
@@ -785,6 +786,13 @@ sbWindowWatcher::InvokeCallWithWindowCallbacks(nsIDOMWindow* aWindow)
   // Operate within the monitor.
   nsAutoMonitor autoMonitor(mMonitor);
 
+  // Do nothing if the call with window list is already being serviced.
+  if (mServicingCallWithWindowList)
+    return NS_OK;
+
+  // Mark that the call with window list is being serviced
+  mServicingCallWithWindowList = PR_TRUE;
+
   // Call all of the matching callbacks.
   for (PRUint32 i = 0; i < mCallWithWindowList.Length();) {
     // Get the call with window info.
@@ -799,6 +807,9 @@ sbWindowWatcher::InvokeCallWithWindowCallbacks(nsIDOMWindow* aWindow)
       i++;
     }
   }
+
+  // Mark that the call with window list is no longer being serviced
+  mServicingCallWithWindowList = PR_FALSE;
 
   return NS_OK;
 }

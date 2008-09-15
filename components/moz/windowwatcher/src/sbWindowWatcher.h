@@ -121,13 +121,18 @@ private:
   // mWindowList                List of windows.
   // mWindowInfoTable           Table of window information.
   // mCallWithWindowList        List of call with window callbacks.
+  // mServicingCallWithWindowList
+  //                            True if the call with window list is being
+  //                            serviced.
   //
   // The following fields must only be accessed under the window watcher
-  // monitor.
+  // monitor:
+  //
+  //   mIsShuttingDown
   //   mWindowList
   //   mWindowInfoTable
   //   mCallWithWindowList
-  //   mIsShuttingDown
+  //   mServicingCallWithWindowList
   //
 
   nsCOMPtr<nsIWindowWatcher>    mWindowWatcher;
@@ -157,6 +162,7 @@ private:
     nsCOMPtr<sbICallWithWindowCallback> callback;
   } CallWithWindowInfo;
   nsTArray<CallWithWindowInfo>  mCallWithWindowList;
+  PRBool                        mServicingCallWithWindowList;
 
 
   //

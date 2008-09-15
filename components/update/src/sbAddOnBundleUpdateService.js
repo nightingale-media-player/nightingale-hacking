@@ -52,6 +52,7 @@
 Components.utils.import("resource://app/jsmodules/AddOnUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ObserverUtils.jsm");
 Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
+Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 
@@ -355,7 +356,7 @@ sbAddOnBundleUpdateService.prototype = {
 
     // Add all installed add-ons to the blacklist.  This prevents an add-on
     // from being presented if it was previously installed and then uninstalled.
-    this._addOnBundleLoader.addInstalledAddOnsToBlacklist();
+    AddOnBundleLoader.addInstalledAddOnsToBlacklist();
 
     // Start loading the new add-on bundle.  Continue with add-on loading and
     // presentation upon completion.
@@ -379,13 +380,28 @@ sbAddOnBundleUpdateService.prototype = {
       return;
     }
 
-    // Trace execution.
-    var addOnBundle = this._addOnBundleLoader.addOnBundle;
-    var extensionCount = addOnBundle.bundleExtensionCount;
-    for (var i = 0; i < extensionCount; i++) {
-      dump("1: presentNewAddOns " +
-           addOnBundle.getExtensionAttribute(i, "id") + "\n");
-    }
+    // Do nothing if no add-ons.
+    if (this._addOnBundleLoader.addOnBundle.bundleExtensionCount == 0)
+      return;
+
+    // Present the new add-ons with the main Songbird window.
+    var windowWatcher = Cc["@songbirdnest.com/Songbird/window-watcher;1"]
+                          .getService(Ci.sbIWindowWatcher);
+    var _this = this;
+    var func =
+          function(aWindow) { _this._presentNewAddOnsWithWindow(aWindow); };
+    windowWatcher.callWithWindow("Songbird:Main", func);
+  },
+
+  _presentNewAddOnsWithWindow:
+    function sbAddOnBundleUpdateService__presentNewAddOnsWithWindow(aWindow) {
+    WindowUtils.openModalDialog(aWindow,
+                                  "chrome://songbird/content/xul/" +
+                                  "recommendedAddOnsWizard.xul",
+                                "",
+                                "chrome,modal=yes,centerscreen",
+                                [ this._addOnBundleLoader.addOnBundle ],
+                                null);
   }
 };
 

@@ -617,3 +617,6 @@
 <!ENTITY enable_recommended_addons_update.label     "Recommended Add-ons">
 <!ENTITY enable_recommended_addons_update.accesskey "r">
 
+<!-- Recommended add-ons update dialog entities. -->
+<!ENTITY recommended_add_ons.title        "&brandShortName; Setup">
+
