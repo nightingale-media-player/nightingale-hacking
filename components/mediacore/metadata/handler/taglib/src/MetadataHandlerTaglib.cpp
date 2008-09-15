@@ -683,8 +683,8 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
           NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
           imageSpec
         );
-        if (NS_SUCCEEDED(result) && !imageSpec.IsEmpty()) {
-          PRInt32 imageType = METADATA_IMAGE_TYPE_OTHER;
+        if (NS_SUCCEEDED(result)) {
+          PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
           WriteImage(MPEGFile, imageType, imageSpec);
         }
         
