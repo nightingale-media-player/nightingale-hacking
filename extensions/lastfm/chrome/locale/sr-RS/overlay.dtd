@@ -1,0 +1,12 @@
+<!ENTITY lastfm.menu.login "Пријави се на Last.fm...">
+<!ENTITY lastfm.menu.logout "Одјави се са Last.fm-а">
+<!ENTITY lastfm.menu.enable "Омогући скробловање">
+<!ENTITY lastfm.signup.label "Отвори налог на Last.fm-у">
+<!ENTITY lastfm.login.button "Пријава">
+<!ENTITY lastfm.loggingin.label "Пријављујем се...">
+<!ENTITY lastfm.cancel.button "Поништи">
+<!ENTITY lastfm.profile.caption "Профил">
+<!ENTITY lastfm.profile.numtracks.before " ">
+<!ENTITY lastfm.profile.numtracks.after "песама скробловано">
+<!ENTITY lastfm.profile.scrobble "Скроблуј песме које слушам">
+<!ENTITY lastfm.profile.logout "Одјави се">

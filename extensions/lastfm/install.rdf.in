@@ -21,9 +21,11 @@
     <em:creator>Ian McKellar</em:creator>
     <em:contributor>Antoine Turmel: French Translation</em:contributor>
     <em:contributor>Mobleman: Danish Translation</em:contributor>
-    <em:contributor>Soham Chatterjee: Bengali Translation</em:contributor>
+    <em:contributor>Soham Chatterjee: Bengali (India) Translation</em:contributor>
     <em:contributor>/usr/bin/tux: German Translation</em:contributor>
     <em:contributor>drry: Japanese Translation</em:contributor>
+    <em:contributor>Ивана Петровић: Serbian (Cyrillic) Translation</em:contributor>
+    <em:contributor>Humberto Sartini (http://www.hss.blog.br): Portuguese (Brazilian) Translation</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
     <em:type>2</em:type>
     <em:iconURL>chrome://lastfm/content/extensionicon.png</em:iconURL>

@@ -1,7 +1,13 @@
 lastfm.jar:
 % content lastfm  %content/
+% locale  lastfm  bn-IN  %locale/bn-IN/
+% locale  lastfm  da-DK  %locale/da-DK/
+% locale  lastfm  de-DE  %locale/de-DE/
 % locale  lastfm  en-US  %locale/en-US/
 % locale  lastfm  fr-FR  %locale/fr-FR/
+% locale  lastfm  ja-JP  %locale/ja-JP/
+% locale  lastfm  pt-BR  %locale/pt-BR/
+% locale  lastfm  sr-RS  %locale/sr-RS/
 % skin    lastfm  classic/1.0 %skin/
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://lastfm/content/browser-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://lastfm/content/mini-overlay.xul
@@ -10,10 +16,22 @@ lastfm.jar:
   content/mini-overlay.xul        (chrome/content/mini-overlay.xul)
   content/mini.js                 (chrome/content/mini.js)
   content/extensionicon.png       (chrome/content/extensionicon.png)
+  locale/bn-IN/overlay.dtd        (chrome/locale/bn-IN/overlay.dtd)
+  locale/bn-IN/overlay.properties (chrome/locale/bn-IN/overlay.properties)
+  locale/da-DK/overlay.dtd        (chrome/locale/da-DK/overlay.dtd)
+  locale/da-DK/overlay.properties (chrome/locale/da-DK/overlay.properties)
+  locale/de-DE/overlay.dtd        (chrome/locale/de-DE/overlay.dtd)
+  locale/de-DE/overlay.properties (chrome/locale/de-DE/overlay.properties)
   locale/en-US/overlay.dtd        (chrome/locale/en-US/overlay.dtd)
   locale/en-US/overlay.properties (chrome/locale/en-US/overlay.properties)
   locale/fr-FR/overlay.dtd        (chrome/locale/fr-FR/overlay.dtd)
   locale/fr-FR/overlay.properties (chrome/locale/fr-FR/overlay.properties)
+  locale/ja-JP/overlay.dtd        (chrome/locale/ja-JP/overlay.dtd)
+  locale/ja-JP/overlay.properties (chrome/locale/ja-JP/overlay.properties)
+  locale/pt-BR/overlay.dtd        (chrome/locale/pt-BR/overlay.dtd)
+  locale/pt-BR/overlay.properties (chrome/locale/pt-BR/overlay.properties)
+  locale/sr-RS/overlay.dtd        (chrome/locale/sr-RS/overlay.dtd)
+  locale/sr-RS/overlay.properties (chrome/locale/sr-RS/overlay.properties)
   skin/as.png                     (chrome/skin/as.png)
   skin/busy.png                   (chrome/skin/busy.png)
   skin/disabled.png               (chrome/skin/disabled.png)
