@@ -1692,8 +1692,8 @@
 
   if (cellText) {
 
-    var searchHeader = this._getString("playlist_context_searchheader", "Search");
-    var lyricsHeader = this._getString("playlist_context_lyricsheader", "Lyrics");
+    var searchHeader = this._getString("playlist.context.searchheader", "Search");
+    var lyricsHeader = this._getString("playlist.context.lyricsheader", "Lyrics");
 
     var searchMenu =
       document.getAnonymousElementByAttribute(this, 'id', 'playlist_context_search_popup');
