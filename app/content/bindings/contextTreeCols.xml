@@ -71,7 +71,8 @@
           var treecol = event.originalTarget;
           if (!treecol ||
               !(treecol instanceof XULElement) ||
-              treecol.localName != "treecol")
+              (treecol.localName != "treecol" &&
+               treecol.className.split(/\s/).indexOf("tree-scrollable-columns") == -1))
           {
             // ignore clicks not on a treecol
             return;
