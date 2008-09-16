@@ -2986,4 +2986,65 @@
 
   </binding>
 
+
+  <!-- override the column picker object to change the order of the items 
+       (we want them all sorted by label, without having the checkmarked
+       items at the top) -->
+       
+  <binding id="columnpicker"
+           extends="chrome://global/content/bindings/tree.xml#columnpicker">
+    <implementation>
+      
+      <constructor>
+        // don't you wish there was a simpler way with bindings to make an
+        // overriding method that calls its ancestor ? grrr
+        this.prevBuildPopup = this.buildPopup;
+        this.buildPopup = function(aPopup) {
+          this.prevBuildPopup(aPopup);
+          this.sortContent(aPopup);
+        }
+      </constructor>
+      
+      <method name="sortContent">
+        <parameter name="aPopup"/>
+        <body>
+          <![CDATA[
+            var sortarray = [];
+            var sep = null;
+            var i;
+            // put everything that precedes the separator in a separate array
+            // (if no separator is there, use everything)
+            for (i = 0; i < aPopup.childNodes.length; i++) {
+              var item = aPopup.childNodes[i];
+              if (item.localName == "menuseparator") {
+                sep = item;
+                break;
+              }
+              sortarray.push(item);
+            }
+            // remove all these items from the dom
+            for (i = 0; i < sortarray.length; i++) {
+              aPopup.removeChild(sortarray[i]);
+            }
+            // sort them
+            sortarray.sort(function(a, b) {
+              var alabel = a.getAttribute("label").toLowerCase();
+              var blabel = b.getAttribute("label").toLowerCase();
+              if (alabel == blabel) return 0;
+              if (alabel < blabel) return -1;
+              return 1;
+            });
+            // and reinsert them in the dom
+            for (i = 0; i < sortarray.length; i++) {
+              aPopup.insertBefore(sortarray[i], sep);
+            }
+           ]]>
+        </body>
+      </method>
+      
+    </implementation>
+
+  </binding>
+
+
 </bindings>

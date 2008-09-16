@@ -75,7 +75,11 @@ sb-filterlist {
 }
 
 .sb-filterlist-tree > treecols > treecolpicker {
-  -moz-binding: url("chrome://songbird/content/bindings/filterList.xml#columnpicker") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/filterList.xml#columnpicker");
+}
+
+.sb-playlist-tree > treecols > treecolpicker {
+  -moz-binding: url("chrome://songbird/content/bindings/playlist.xml#columnpicker");
 }
 
 observes[type="dataremote"]
