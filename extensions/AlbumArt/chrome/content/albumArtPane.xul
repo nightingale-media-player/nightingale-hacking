@@ -35,12 +35,27 @@
 <window xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <popupset id="albumArtPopupSet">
+    <menupopup id="nowSelectedMenu">
+      <menuitem label="&artwork.displaypane.selected.menu.cut;"
+                oncommand="AlbumArt.onCut();"/>
+      <menuitem label="&artwork.displaypane.selected.menu.copy;"
+                oncommand="AlbumArt.onCopy();"/>
+      <menuitem label="&artwork.displaypane.selected.menu.paste;"
+                oncommand="AlbumArt.onPaste();"/>
+      <menuseparator />
+      <menuitem label="&artwork.displaypane.selected.menu.clear;"
+                oncommand="AlbumArt.onClear();"/>
+    </menupopup>
+  </popupset>
+  
   <deck selectedIndex="1" id="sb-albumart-deck" flex="1">
     <!-- Now Selected Deck -->
     <stack flex="1">
       <vbox class="albumArtNowSelectedContainer"
             align="center">
         <image id="sb-albumart-selected"
+               contextmenu="nowSelectedMenu"
                ondblclick="AlbumArt.onImageDblClick(event);"
                ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
                ondraggesture="nsDragAndDrop.startDrag(event, AlbumArt);"
@@ -58,7 +73,11 @@
       <vbox class="albumArtNowPlayingContainer"
             align="center">
         <image id="sb-albumart-playing"
-               ondblclick="AlbumArt.onImageDblClick(event);"/>
+               contextmenu="nowSelectedMenu"
+               ondblclick="AlbumArt.onImageDblClick(event);"
+               ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
+               ondraggesture="nsDragAndDrop.startDrag(event, AlbumArt);"
+               ondragover="nsDragAndDrop.dragOver(event, AlbumArt);"/>
       </vbox>
       <vbox id="sb-albumart-not-playing"
             class="albumArtNotPlayingContainer">

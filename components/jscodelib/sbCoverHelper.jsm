@@ -231,7 +231,7 @@ var sbCoverHelper = {
         
         switch (uri.scheme) {
           case 'file':
-            if (uri instanceof Ci.nsILocalFile) {
+            if (uri instanceof Ci.nsIFileURL) {
               aCallback(this.saveFileToArtworkFolder(uri));
             }
           break; 
@@ -282,7 +282,7 @@ var sbCoverHelper = {
     
     // If we have a local file then put it as a proper image mime type
     // and as a x-moz-file
-    if (imageURI instanceof Ci.nsILocalFile) {
+    if (imageURI instanceof Ci.nsIFileURL) {
       try {
         // Read the mime type for the flavour
         var mimetype = Cc["@mozilla.org/mime;1"]
@@ -294,14 +294,20 @@ var sbCoverHelper = {
                             .createInstance(Ci.nsIFileInputStream);
         inputStream.init(imageURI, FLAGS_DEFAULT, FLAGS_DEFAULT, 0);
         
-        aTransferData.data.addDataForFlavour(mimetype, inputStream);
+        aTransferData.data.addDataForFlavour(mimetype,
+                                             inputStream,
+                                             0,
+                                             Ci.nsIFileInputStream);
       } catch (err) {
         Cu.reportError("sbCoverHelper: Unable to add image from file: [" +
                        aImageURL + "] " + err);
       }
 
       // Add a file flavour
-      aTransferData.data.addDataForFlavour("application/x-moz-file", imageURI);
+      aTransferData.data.addDataForFlavour("application/x-moz-file",
+                                           imageURI,
+                                           0,
+                                           Ci.nsILocalFile);
     }
 
     // Add a url flavour

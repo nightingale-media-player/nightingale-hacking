@@ -90,7 +90,7 @@ var AlbumArt = {
    * \brief makeTitleBarButton - This modifies the display pane title bar so
    *        that it acts like a button to toggle between the different displays.
    */
-  makeTitleBarButton: function() {
+  makeTitleBarButton: function AlbumArt_makeTitleBarButton() {
     if (AlbumArt._displayPane) {
       // Make the title bar of the display pane act like a button
       AlbumArt._displayPane.makeClickableTitleBar(AlbumArt.titleClick);
@@ -98,12 +98,13 @@ var AlbumArt = {
   },
   
   /**
-   * \brief titleClick - The handles the event when the user clicks the title
+   * \brief titleClick - This handles the event when the user clicks the title
    *        bar of the display pane, for primary button clicks we toggle the
    *        view.
+   * \param aEvent - is the event of this click.
    */
-  titleClick: function(event) {
-    if (event.button == 0) {
+  titleClick: function AlbumArt_titleClick(aEvent) {
+    if (aEvent.button == 0) {
       AlbumArt.toggleView();
     }
   },
@@ -111,9 +112,9 @@ var AlbumArt = {
   /**
    * \brief onImageDblClick - This function is called when the user double
    *        clicks the image.
-   * \param aEvent event object of the current event.
+   * \param aEvent - event object of the current event.
    */
-  onImageDblClick: function (aEvent) {
+  onImageDblClick: function AlbumArt_onImageDblClick(aEvent) {
     // Only respond to primary button double clicks.
     if (aEvent.button == 0) {
       // This will load the songbird.metadata.imageURL preference to
@@ -127,10 +128,10 @@ var AlbumArt = {
   },
 
   /**
-   * \brief setPanetitle - This function updates the pane title depending on
+   * \brief setPaneTitle - This function updates the pane title depending on
    *        the current state.
    */
-  setPaneTitle: function() {
+  setPaneTitle: function AlbumArt_setPaneTitle() {
     // Sanity check
     if (AlbumArt._currentState >= AlbumArt._stateInfo.length ||
         AlbumArt._currentState < 0) {
@@ -152,9 +153,9 @@ var AlbumArt = {
    * \brief switchState - This function will switch the deck to the desired
    *        display, this allows us to easily switch between the "Selected" and
    *        "Playing" displays of the album art.
-   * \param aNewState is the index of the deck to make active.
+   * \param aNewState - is the index of the deck to make active.
    */
-  switchState: function (aNewState) {
+  switchState: function AlbumArt_switchState(aNewState) {
     AlbumArt._currentState = aNewState;
     var albumArtDeck = document.getElementById('sb-albumart-deck');
     albumArtDeck.selectedIndex = AlbumArt._currentState;
@@ -169,10 +170,10 @@ var AlbumArt = {
    * \param aCacheIndex - An index to which image to resize, this will generally
    *        be linked to the deck index, 0 = Selected for example.
    */
-  resizeImage: function (aCacheIndex) {
+  resizeImage: function AlbumArt_resizeImage(aCacheIndex) {
     var imageCache = AlbumArt._stateInfo[aCacheIndex];
     var mImage = document.getElementById(imageCache.imageID);
-    var currentSrc = mImage.getAttribute("src");
+    var currentSrc = mImage.src;
     
     // Do not do anything if we don't have an image to resize
     if (currentSrc == "") {
@@ -236,7 +237,7 @@ var AlbumArt = {
    *        it is not square.
    * \return False if the pane is not square, True if it is. 
    */
-  isPaneSquare: function () {
+  isPaneSquare: function AlbumArt_isPaneSquare() {
     // Window is our displaypane, so grab the size
     var windowWidth = window.innerWidth;
     var windowHeight = window.innerHeight;
@@ -259,7 +260,7 @@ var AlbumArt = {
    * \brief onResize - This function is called when either an image loads or
    *        the display pane is resized.
    */
-  onResize: function () {
+  onResize: function AlbumArt_onResize() {
     if (!AlbumArt.isPaneSquare()) {
       // Abort because this function will be called again.
       return;
@@ -276,15 +277,17 @@ var AlbumArt = {
    * \brief changeNowSelected - This function changes the Now Selected display
    *        to what is suppose to be displayed based on the image.
    */
-  changeNowSelected: function(aNewURL) {
+  changeNowSelected: function AlbumArt_changeNowSelected(aNewURL) {
     // Load up our elements
     var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
     var albumArtNotSelectedBox = document.getElementById('sb-albumart-not-selected');
 
-    if (aNewURL == albumArtSelectedImage.getAttribute("src")) {
+    if (aNewURL == albumArtSelectedImage.src) {
       // Nothing changed so leave as is.
       return;
     }
+
+    if (aNewURL == "") { aNewURL = DEFAULT_COVER; }
 
     // Configure the display pane
     if (!aNewURL) {
@@ -294,8 +297,36 @@ var AlbumArt = {
       // Hide the not playing message.
       albumArtNotSelectedBox.setAttribute("hidden", true);
     }
-    albumArtSelectedImage.setAttribute("src", aNewURL);
+    albumArtSelectedImage.src = aNewURL;
     // Call the onResize so we display the image correctly.
+    AlbumArt.onResize();
+  },
+  
+  /**
+   * \brief changeNowPlaying - This function changes the Now Playing display
+   *        to what is suppose to be displayed based on the image.
+   */
+  changeNowPlaying: function AlbumArt_changeNowPlaying(aNewURL) {
+    // Load up our elements
+    var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
+    var albumArtNotPlayingBox = document.getElementById('sb-albumart-not-playing');
+    
+    // This function can be called several times so check that we changed.
+    if (albumArtPlayingImage.src == aNewURL) {
+      return;
+    }
+
+    if (aNewURL == "") { aNewURL = DEFAULT_COVER; }
+
+    // Configure the display pane
+    if (!aNewURL) {
+      // Show the not playing message.
+      albumArtNotPlayingBox.removeAttribute("hidden");
+    } else {
+      // Hide the not playing message.
+      albumArtNotPlayingBox.setAttribute("hidden", true);
+    }
+    albumArtPlayingImage.src = aNewURL;
     AlbumArt.onResize();
   },
 
@@ -307,38 +338,19 @@ var AlbumArt = {
    * \param aTopic   - key of data remote that changed.
    * \param aData    - new value of the data remote.
    */
-  observe: function ( aSubject, aTopic, aData ) {
+  observe: function AlbumArt_observe(aSubject, aTopic, aData) {
     // Ignore any other topics (we should not normally get anything else)
     if (aTopic != "metadata.imageURL") {
       return;
     }
-    
-    // Load up our elements
-    var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
-    var albumArtNotPlayingBox = document.getElementById('sb-albumart-not-playing');
-    
-    // This function can be called several times so check that we changed.
-    if (albumArtPlayingImage.getAttribute("src") == aData) {
-      return;
-    }
-
-    // Configure the display pane
-    if (!aData || aData == "") {
-      // Show the not playing message.
-      albumArtNotPlayingBox.removeAttribute("hidden");
-    } else {
-      // Hide the not playing message.
-      albumArtNotPlayingBox.setAttribute("hidden", true);
-    }
-    albumArtPlayingImage.setAttribute("src", aData);
-    AlbumArt.onResize();
+    AlbumArt.changeNowPlaying(aData);
   },
   
   /**
    * \brief toggleView- This function will switch to the next deck, and if it is
    *        already at the last deck then it will switch to the first.
    */
-  toggleView: function () {
+  toggleView: function AlbumArt_toggleView() {
     var newState = (AlbumArt._currentState + 1);
     if (newState >= AlbumArt._stateInfo.length) {
       // Wrap around
@@ -347,16 +359,11 @@ var AlbumArt = {
     AlbumArt.switchState(newState);
   },
   
-  onTabSelect: function(aTabIndex) {
-    AlbumArt.switchState(aTabIndex);
-  },
-  
   /**
    * \brief onLoad - Called when the display pane loads, here we make sure that
-   *        we have the correct image loaded or we display the Nothing Playing
-   *        message.
+   *        we have the correct image loaded.
    */
-  onLoad: function () {
+  onLoad: function AlbumArt_onLoad() {
     // Remove our loaded listener so we do not leak
     window.removeEventListener("DOMContentLoaded", AlbumArt.onLoad, false);
 
@@ -369,7 +376,6 @@ var AlbumArt = {
       AlbumArt._displayPane = dpInstantiator.displayPane;
     }
 
- 
     // Load the previous selected display the user shutdown with
     AlbumArt._currentState = Application.prefs.getValue(PREF_STATE,
                                                         AlbumArt._currentState);
@@ -428,7 +434,7 @@ var AlbumArt = {
    * \brief onUnload - This is called when the display pane is closed. Here we
    *        can shut every thing down.
    */
-  onUnload: function () {
+  onUnload: function AlbumArt_onUnload() {
     // Remove our unload event listener so we do not leak
     window.removeEventListener("unload", AlbumArt.onUnload, false);
 
@@ -469,7 +475,7 @@ var AlbumArt = {
    *        listener to the media list in view so we can be notified of the
    *        selection changes.
    */
-  getMainBrowser: function() {
+  getMainBrowser: function AlbumArt_getMainBrowser() {
     // Get the main window, we have to do this because we are in a display pane
     // and our window is the content of the display pane.
     var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
@@ -491,7 +497,7 @@ var AlbumArt = {
    *        it for selection. We must also be sure to remove any existing
    *        listeners so we do not leak.
    */
-  onTabContentChange: function() {
+  onTabContentChange: function AlbumArt_onTabContentChange() {
     // Remove any existing listeners
     if(AlbumArt._mediaListView) {
       AlbumArt._mediaListView.selection.removeListener(AlbumArt);
@@ -512,10 +518,42 @@ var AlbumArt = {
   },
 
   /**
-   * \brief This will set each items cover in the selection to the one supplied.
-   * \param aImageFile - new string url of file to set cover to on each item.
+   * \brief This will set the currently playing items image.
+   * \param aNewImageUrl - new string url of file to set cover to on the item.
    */
-  setSelectionsCover: function(aImageFile) {
+  setNowPlayingCover: function AlbumArt_setNowPlayingCover(aNewImageUrl) {
+    var mediaView = AlbumArt._playListPlaybackService.playingView;
+    if (!mediaView) {
+      // No current view playing.
+      return;
+    }
+    var itemIndex = AlbumArt._playListPlaybackService.currentIndex;
+    if (itemIndex == -1) {
+      // PlayListPlaybackService says there is no item playing.
+      return;
+    }
+    var aMediaItem = mediaView.getItemByIndex(itemIndex)
+    
+    aMediaItem.setProperty(SBProperties.primaryImageURL, aNewImageUrl);
+    AlbumArt.changeNowPlaying(aNewImageUrl);
+    
+    var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                            .getService(Ci.sbIFileMetadataService);      
+    try {
+      var job = metadataService.write([aMediaItem]);
+    
+      SBJobUtils.showProgressDialog(job, window);
+    } catch (e) {
+      // Job will fail if writing is disabled by the pref
+      Components.utils.reportError(e);
+    }
+  },
+
+  /**
+   * \brief This will set each items cover in the selection to the one supplied.
+   * \param aNewImageUrl - new string url of file to set cover to on each item.
+   */
+  setSelectionsCover: function AlbumArt_setSelectionsCover(aNewImageUrl) {
     var selection = AlbumArt._mediaListView.selection;
     var multipleItems = false;
     
@@ -577,6 +615,9 @@ var AlbumArt = {
       }
     }
     
+    // Update the currently selected display.
+    AlbumArt.changeNowSelected(aNewImageUrl);
+    
     // Now actually set the properties
     var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Ci.nsIMutableArray);
@@ -584,8 +625,8 @@ var AlbumArt = {
     while (itemEnum.hasMoreElements()) {
       var item = itemEnum.getNext().mediaItem;
       var oldImage = item.getProperty(SBProperties.primaryImageURL);
-      if (oldImage != aImageFile) {
-        item.setProperty(SBProperties.primaryImageURL, aImageFile);
+      if (oldImage != aNewImageUrl) {
+        item.setProperty(SBProperties.primaryImageURL, aNewImageUrl);
         mediaItemArray.appendElement(item, false);
       }
     }
@@ -604,45 +645,169 @@ var AlbumArt = {
       }
     }
     
-    // Update the currently selected display.
-    AlbumArt.onSelectionChanged();
+  },
+
+  /**
+   * \brief This will set the appropriate items images to aNewImageUrl.
+   * \param aNewImageUrl - new string url of file to set cover to.
+   */
+  setCurrentStateItemImage:  function AlbumArt_setCurrentSateItemImage(aNewImageUrl) {
+    if (AlbumArt._currentState == STATE_SELECTED) {
+      AlbumArt.setSelectionsCover(aNewImageUrl);
+    } else {
+      AlbumArt.setNowPlayingCover(aNewImageUrl);
+    }
+  },
+
+  /**
+   * \brief This will get the appropriate image depending on current state.
+   * \returns imageURL for currently displayed image, or null if none.
+   */
+  getCurrentStateItemImage: function AlbumArt_getCurrentStateItemImage() {
+    if (AlbumArt._currentState == STATE_SELECTED) {
+      var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
+      return albumArtSelectedImage.src;
+    } else {
+      var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
+      return albumArtPlayingImage.src;
+    }
   },
 
   /*********************************
    * Drag and Drop
    ********************************/
-  getSupportedFlavours : function () {
+  /**
+   * \brief Gets the flavours we support for drag and drop. This is called from
+   *        the onDragOver to determine if we support what is being dragged.
+   * \returns FlavourSet of flavours supported.
+   */
+  getSupportedFlavours : function AlbumArt_getSupportedFlavours() {
     var flavours = new FlavourSet();
     return sbCoverHelper.getFlavours(flavours);
   },
   
-  onDrop: function (aEvent, aDropData, aSession) {
+  /**
+   * \brief handles something being dropped on our display pane.
+   * \param aEvent - Event of drag and drop session
+   * \param aDropata - Data of what has been dropped.
+   * \param aSesssion - Drag and drop session.
+   */
+  onDrop: function AlbumArt_onDrop(aEvent, aDropData, aSession) {
     var self = this;
     sbCoverHelper.handleDrop(function (newFile) {
       if (newFile && newFile != "") {
-        self.setSelectionsCover(newFile);
+        self.setCurrentStateItemImage(newFile);
       }
     }, aDropData);
   },
 
-  onDragOver: function(event, flavour, session) {
+  /**
+   * \brief this is here to satisfy the nsDragAndDrop.onDragOver function.
+   * \param aEvent    - Event of drag and drop session
+   * \param aFlavour  - Flavour of what is being dragged over us.
+   * \param aSesssion - Drag and drop session.
+   */
+  onDragOver: function AlbumArt_onDragOver(aEvent, aFlavour, aSesssion) {
     // No need to do anything here, for UI we should set the
     // #sb-albumart-selected:-moz-drag-over style.
   },
   
-  onDragStart: function TrackEditorArtwork_onDragStart(aEvent, 
-                                                       aTransferData,
-                                                       aAction) {
-    var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
-    var imageURL  = albumArtSelectedImage.getAttribute("src");
+  /**
+   * \brief Handles setting up the data for a drag session..
+   * \param aEvent        - Event of drag and drop session
+   * \param aTransferData - Our data to as a nsITransfer.
+   * \param aAction       - The type of drag action (Copy, Move or Link).
+   */
+  onDragStart: function AlbumArt_onDragStart(aEvent, aTransferData, aAction) {
+    var imageURL = AlbumArt.getCurrentStateItemImage();
     aTransferData.data = new TransferData();
     sbCoverHelper.setupDragTransferData(aTransferData, imageURL);
   },
+
+
+  /*********************************
+   * Copy, Cut, Paste, Clear menu
+   ********************************/
+  /**
+   * \brief Paste an image to the item that is either selected or playing.
+   */
+  onPaste: function AlbumArt_onPaste() {
+    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+                        .createInstance(Ci.sbIClipboardHelper);
+    var mimeType = {};
+    var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
+    if (imageData.length > 0) {
+      var metadataImageScannerService =
+                        Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
+                          .getService(Ci.sbIMetadataImageScanner);
+
+      var newFile = metadataImageScannerService
+                                        .saveImageDataToFile(imageData,
+                                                             imageData.length,
+                                                             mimeType.value);
+      AlbumArt.setCurrentStateItemImage(newFile);
+    }
+  },
   
+  /**
+   * \brief Copy the currently displayed image to the clipboard.
+   */
+  onCopy: function AlbumArt_onCopy() {
+    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+                        .createInstance(Ci.sbIClipboardHelper);
+    var aImageURL = AlbumArt.getCurrentStateItemImage();
+    var ioService = Cc["@mozilla.org/network/io-service;1"]
+                      .getService(Ci.nsIIOService);
+    try {
+      imageURI = ioService.newURI(aImageURL, null, null);
+    } catch (err) {
+      Cu.reportError("albumArtPane: Unable to convert to URI: [" + aImageURL +
+                     "] " + err);
+      return false;
+    }
+    
+    var copyOk = false;
+    if (imageURI instanceof Ci.nsIFileURL) {
+      var imageFile = imageURI.file.QueryInterface(Ci.nsILocalFile);
+      var imageData, mimetype;
+      [imageData, mimeType] = sbCoverHelper.readImageData(imageFile);
+    
+      try {
+        sbClipboard.pasteImageToClipboard(mimeType, imageData, imageData.length);
+        copyOk = true;
+      } catch (err) {
+        Cu.reportError("albumArtPane: Unable to paste to the clipboard " + err);
+      }
+    }
+    
+    return copyOk;
+  },
+  
+  /**
+   * \brief Copy the currently displayed image to the clipboard and if
+   *        sucessful then remove the image from the playing or selected items.
+   */
+  onCut: function AlbumArt_onCut() {
+    if (this.onCopy()) {
+      this.onClear();
+    }
+  },
+
+  /**
+   * \brief Clear the image from the playing or selected items.
+   */
+  onClear: function AlbumArt_onClear() {
+    AlbumArt.setCurrentStateItemImage("");
+  },
+
   /*********************************
    * sbIMediaListViewSelectionListener
    ********************************/
-  onSelectionChanged: function() {
+  /**
+   * \brief The current selection has changed so we need to update the now
+   *        selected image.
+   */
+  onSelectionChanged: function AlbumArt_onSelectionChanged() {
     var selection = AlbumArt._mediaListView.selection;
     var curImageUrl = null;
     var itemEnum = selection.selectedIndexedMediaItems;
@@ -650,36 +815,51 @@ var AlbumArt = {
       var item = itemEnum.getNext().mediaItem;
       curImageUrl = item.getProperty(SBProperties.primaryImageURL);
     }
-    
-    if (curImageUrl == "") {
-      // Change empty urls to the default cover
-      curImageUrl = DEFAULT_COVER;
-    }
 
     AlbumArt.changeNowSelected(curImageUrl);
   },
 
-  onCurrentIndexChanged: function() {
+  /**
+   * \brief The current index has changed in the selection, we do not do
+   *        anything with this.
+   */
+  onCurrentIndexChanged: function AlbumArt_onCurrentIndexChanged() {
   },
 
   /*********************************
    * sbIPlaylistPlaybackListener
    ********************************/
-  onStop: function() {
+  /**
+   * \brief The playback has stopped so clear the now playing.
+   */
+  onStop: function AlbumArt_onStop() {
     // Basicly clear the now playing image
-    AlbumArt.observe("", "metadata.imageURL", "");
+    AlbumArt.changeNowPlaying(null);
   },
-  onBeforeTrackChange: function(aItem, aView, aIndex) {
+  /**
+   * \brief A new track is going to play so update the now playing.
+   * \param aItem - Item that is going to play.
+   */
+  onBeforeTrackChange: function AlbumArt_onBeforeTrackChange(aItem, aView, aIndex) {
     var newImageURL = aItem.getProperty(SBProperties.primaryImageURL);
-    if (!newImageURL || newImageURL == "") {
-      newImageURL = DEFAULT_COVER;
-    }
-    AlbumArt.observe("", "metadata.imageURL", newImageURL);
+    AlbumArt.changeNowPlaying(newImageURL);
   },
-  onTrackIndexChange: function(aItem, aView, aIndex) { },
-  onBeforeViewChange: function(aView) { },
-  onViewChange: function(aView) { },
-  onTrackChange: function(aItem, aView, aIndex) { },
+  /**
+   * \brief The index of the playing track has changed.
+   */
+  onTrackIndexChange: function AlbumArt_onTrackIndexChange(aItem, aView, aIndex) { },
+  /**
+   * \brief We are changing to a new view.
+   */
+  onBeforeViewChange: function AlbumArt_onBeforeViewChange(aView) { },
+  /**
+   * \brief We have changed views.
+   */
+  onViewChange: function AlbumArt_onViewChange(aView) { },
+  /**
+   * \brief A track has started to play.
+   */
+  onTrackChange: function AlbumArt_onTrackChange(aItem, aView, aIndex) { },
 
   /*********************************
    * nsISupports
