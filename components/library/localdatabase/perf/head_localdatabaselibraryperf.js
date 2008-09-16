@@ -32,27 +32,33 @@ var SB_NS = "http://songbirdnest.com/data/1.0#";
 
 function runPerfTest(aName, aTestFunc) {
 
+  var environment = Cc["@mozilla.org/process/environment;1"]
+                      .getService(Ci.nsIEnvironment);
+  var resultFile =  environment.get("SB_PERF_RESULTS");
+  if (!resultFile) {
+    log("DBPERF: " + aName + " ignored, since SB_PERF_RESULTS is not set.");
+    return;
+  }
+
   var library = getLibrary();
   var timer = new Timer();
   aTestFunc.apply(this, [library, timer]);
 
-  log("***************** " + aName + " " + library.databaseGuid + " " + timer.elapsed() + "ms");
+  log("DBPERF: " + aName + " " + library.databaseGuid + " " +
+      library.length + " " + timer.elapsed() + "ms");
 
-  var environment = Cc["@mozilla.org/process/environment;1"]
-                      .getService(Ci.nsIEnvironment);
-  var resultFile =  environment.get("SB_PERF_RESULTS");
-  if (resultFile) {
-    var outputFile = Cc["@mozilla.org/file/local;1"]
-                       .createInstance(Ci.nsILocalFile);
-    outputFile.initWithPath(resultFile);
+  var outputFile = Cc["@mozilla.org/file/local;1"]
+                     .createInstance(Ci.nsILocalFile);
+  outputFile.initWithPath(resultFile);
 
-    var fos = Cc["@mozilla.org/network/file-output-stream;1"]
-                .createInstance(Ci.nsIFileOutputStream);
-    var s = aName + "\t" + library.databaseGuid + "\t" + timer.elapsed() + "\n";
-    fos.init(outputFile, 0x02 | 0x08 | 0x10, 0666, 0);
-    fos.write(s, s.length);
-    fos.close();
-  }
+  var fos = Cc["@mozilla.org/network/file-output-stream;1"]
+              .createInstance(Ci.nsIFileOutputStream);
+  var s = aName + "\t" + library.databaseGuid + "\t" + 
+          library.length + "\t" + timer.elapsed() + "\n";
+  // Open writeonly, createfile, append, with rw permissions for everyone
+  fos.init(outputFile, 0x02 | 0x08 | 0x10, 0666, 0);
+  fos.write(s, s.length);
+  fos.close();
 }
 
 function getLibrary() {
@@ -61,8 +67,11 @@ function getLibrary() {
 
   var libraryFile;
   if (!environment.exists("SB_PERF_LIBRARY")) {
-    fail("SB_PERF_LIBRARY must be set");
+    // If no library specified, just use the main library.
+    Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+    return LibraryUtils.mainLibrary;
   }
+  
   libraryFile = environment.get("SB_PERF_LIBRARY");
 
   var file = Components.classes["@mozilla.org/file/local;1"]

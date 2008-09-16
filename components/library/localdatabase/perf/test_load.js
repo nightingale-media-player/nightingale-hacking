@@ -25,19 +25,22 @@
 */
 
 /**
- * \brief Test file
+ * \brief Hack script to load a songbird library from a preformatted text file.
  */
 
 function runTest () {
 
   Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
+// Not part of the automated test suite.  Only useful for 
+// manual testing.
+
 //  makeLibrary(1000);
 //  makeLibrary(5000);
 //  makeLibrary(10000);
 //  makeLibrary(25000);
 //  makeLibrary(50000);
-  makeLibrary(100000);
+//  makeLibrary(100000);
 }
 
 function makeLibrary(aLength) {
@@ -47,7 +50,7 @@ function makeLibrary(aLength) {
 
   var file = Components.classes["@mozilla.org/file/local;1"]
                        .createInstance(Components.interfaces.nsILocalFile);
-  file.initWithPath("/home/steve/amg/big.txt");
+  file.initWithPath("/builds/songbird/trunk/big.txt");
 
   var data = "";
   var fstream = Cc["@mozilla.org/network/file-input-stream;1"]
@@ -117,7 +120,8 @@ function makeLibrary(aLength) {
       pa.appendProperty(SBProperties.duration, length);
     }
 
-    var uri = newURI("file:///foo/" + escape(track) + ".mp3");
+    var uri = newURI("file:///foo/" + escape(artist) + "-" +
+                     escape(album) + "-" + escape(track) + ".mp3");
     uris.appendElement(uri, false);
     properties.appendElement(pa, false);
 

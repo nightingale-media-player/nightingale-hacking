@@ -35,14 +35,15 @@ SONGBIRD_TESTS = $(srcdir)/head_localdatabaselibraryperf.js \
                  $(srcdir)/test_guidarray.js \
                  $(srcdir)/test_guidarray_multisort.js \
                  $(srcdir)/test_guidarray_distinct.js \
-                 $(srcdir)/test_guidarray_search_all.js \
-                 $(srcdir)/test_guidarray_search_property.js \
-                 $(srcdir)/test_guidarray_search_distinct.js \
                  $(srcdir)/test_guidarray_library_enumerate.js \
                  $(srcdir)/test_guidarray_default_view.js \
                  $(NULL)
+#                 $(srcdir)/test_guidarray_search_all.js \
+#                 $(srcdir)/test_guidarray_search_property.js \
+#                 $(srcdir)/test_guidarray_search_distinct.js \
 
-# test_load.js is the script that creates test databases.  It is not intended
+
+# test_load.js is a script that creates test databases.  It is not intended
 # to be run as part of a perf test
 SONGBIRD_TESTS += $(srcdir)/test_load.js \
                   $(NULL)
