@@ -51,6 +51,11 @@ sbDummyPropertyInfo::Init() {
 
   rv = sbPropertyInfo::Init();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  SetUserViewable(PR_FALSE);
+  SetUserEditable(PR_FALSE);
+  SetRemoteReadable(PR_FALSE);
+  SetRemoteWritable(PR_FALSE);
   
   return NS_OK;
 }
