@@ -98,6 +98,11 @@ C_EXTRA_DEFS += -DSQLITE_ALLOW_XTHREAD_CONNECT=1 \
                 -DSQLITE_ENABLE_FTS3 \
                 $(NULL)
 
+ifeq (macosx, $(SB_PLATFORM))
+  C_EXTRA_DEFS += -DSQLITE_ENABLE_LOCKING_STYLE=1 \
+                  $(NULL)
+endif
+
 # If this is gcc, suppress some warnings when we compile sqlite
 ifeq (gcc, $(CC))
   CFLAGS += -Wno-conversion \
