@@ -17,10 +17,12 @@ moz_utils = sbMozStringUtils
 endif
 
 CPP_SRCS = $(topsrcdir)/components/mediacore/base/src/sbBaseMediacore.cpp \
+           $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreEventTarget.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreFactory.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbBaseMediacorePlaybackControl.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreVolumeControl.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbMediacoreCapabilities.cpp \
+           $(topsrcdir)/components/mediacore/base/src/sbMediacoreEvent.cpp \
            sbGStreamerService.cpp \
            sbGStreamerMediacore.cpp \
            sbGStreamerMediacoreFactory.cpp \

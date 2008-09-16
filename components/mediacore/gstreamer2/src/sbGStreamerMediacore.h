@@ -29,16 +29,19 @@
 
 #include <sbIGStreamerMediacore.h>
 
+#include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 
 #include <sbIMediacore.h>
 #include <sbIMediacorePlaybackControl.h>
 #include <sbIMediacoreVolumeControl.h>
 #include <sbIMediacoreVotingParticipant.h>
+#include <sbIMediacoreEventTarget.h>
 
 #include <sbBaseMediacore.h>
 #include <sbBaseMediacorePlaybackControl.h>
 #include <sbBaseMediacoreVolumeControl.h>
+#include <sbBaseMediacoreEventTarget.h>
 
 #include <gst/gst.h>
 #include "sbIGstPlatformInterface.h"
@@ -49,11 +52,13 @@ class sbGStreamerMediacore : public sbBaseMediacore,
                              public sbBaseMediacorePlaybackControl,
                              public sbBaseMediacoreVolumeControl,
                              public sbIMediacoreVotingParticipant,
-                             public sbIGStreamerMediacore
+                             public sbIGStreamerMediacore,
+                             public sbIMediacoreEventTarget
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_NSICLASSINFO
+  NS_DECL_SBIMEDIACOREEVENTTARGET
   
   NS_FORWARD_SBIMEDIACORE(sbBaseMediacore::)
   NS_FORWARD_SBIMEDIACOREPLAYBACKCONTROL(sbBaseMediacorePlaybackControl::)
@@ -94,6 +99,8 @@ protected:
   virtual nsresult DestroyPipeline();
   virtual nsresult CreatePlaybackPipeline();
 
+  void DispatchSimpleEvent (unsigned long type);
+
 private:
   // Static helper for C callback
   static void syncHandler(GstBus *bus, GstMessage *message, gpointer data);
@@ -104,6 +111,8 @@ protected:
   GstElement *mPipeline;
 
   sbIGstPlatformInterface *mPlatformInterface;
+
+  nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */

@@ -40,6 +40,7 @@
 
 #include <sbClassInfoUtils.h>
 #include <sbTArrayStringEnumerator.h>
+#include <sbBaseMediacoreEventTarget.h>
 
 #include <sbIGStreamerService.h>
 
@@ -79,21 +80,23 @@ static PRLogModuleInfo* gGStreamerMediacore =
 
 #endif /* PR_LOGGING */
 
-NS_IMPL_ISUPPORTS_INHERITED6(sbGStreamerMediacore,
+NS_IMPL_ISUPPORTS_INHERITED7(sbGStreamerMediacore,
                              sbBaseMediacore,
                              sbIMediacore,
                              sbIMediacorePlaybackControl,
                              sbIMediacoreVolumeControl,
                              sbIMediacoreVotingParticipant,
+                             sbIMediacoreEventTarget,
                              sbIGStreamerMediacore,
                              nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER5(sbGStreamerMediacore,
+NS_IMPL_CI_INTERFACE_GETTER6(sbGStreamerMediacore,
                              sbIMediacore,
                              sbIMediacorePlaybackControl,
                              sbIMediacoreVolumeControl,
                              sbIMediacoreVotingParticipant,
-                             sbIGStreamerMediacore)
+                             sbIGStreamerMediacore,
+                             sbIMediacoreEventTarget)
 
 NS_DECL_CLASSINFO(sbGStreamerMediacore)
 NS_IMPL_THREADSAFE_CI(sbGStreamerMediacore)
@@ -101,8 +104,12 @@ NS_IMPL_THREADSAFE_CI(sbGStreamerMediacore)
 sbGStreamerMediacore::sbGStreamerMediacore() :
     mVideoEnabled(PR_FALSE),
     mPipeline(nsnull),
-    mPlatformInterface(nsnull)
+    mPlatformInterface(nsnull),
+    mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
 {
+  NS_WARN_IF_FALSE(mBaseEventTarget, 
+          "mBaseEventTarget is null, may be out of memory");
+
 }
 
 sbGStreamerMediacore::~sbGStreamerMediacore()
@@ -205,7 +212,10 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
 
   GstBus *bus = gst_element_get_bus (mPipeline);
 
-  gst_bus_add_signal_watch (bus);
+  // We want to receive state-changed messages when shutting down, so we
+  // need to turn off bus auto-flushing
+  g_object_set(mPipeline, "auto-flush-bus", FALSE, NULL);
+
   gst_bus_enable_sync_message_emission (bus);
 
   // Handle GStreamer messages synchronously, either directly or
@@ -226,16 +236,54 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
   return PR_FALSE;
 }
 
+void sbGStreamerMediacore::DispatchSimpleEvent (unsigned long type)
+{
+  nsresult rv;
+  nsCOMPtr<sbIMediacoreEvent> event;
+  rv = sbMediacoreEvent::CreateEvent(type,
+                                     nsnull,
+                                     nsnull,
+                                     this,
+                                     getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  rv = DispatchEvent(event, PR_FALSE, nsnull);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+}
+
 void sbGStreamerMediacore::HandleMessage (GstMessage *message)
 {
   GstMessageType msg_type;
   msg_type = GST_MESSAGE_TYPE(message);
 
   switch (msg_type) {
+    case GST_MESSAGE_STATE_CHANGED: {
+      // Only listen to state-changed messages from top-level pipelines
+      if (GST_IS_PIPELINE (message->src))
+      {
+        GstState oldstate, newstate, pendingstate;
+        gst_message_parse_state_changed (message, 
+                &oldstate, &newstate, &pendingstate);
+
+        // Dispatch START, PAUSE, END (but only if it's our target state)
+        if (pendingstate == GST_STATE_VOID_PENDING) {
+          if (newstate == GST_STATE_PLAYING)
+            DispatchSimpleEvent (sbIMediacoreEvent::STREAM_START);
+          else if (newstate == GST_STATE_PAUSED)
+            DispatchSimpleEvent (sbIMediacoreEvent::STREAM_PAUSE);
+          else if (newstate == GST_STATE_NULL)
+            DispatchSimpleEvent (sbIMediacoreEvent::STREAM_END);
+        }
+      }
+      break;
+    }
     case GST_MESSAGE_ERROR:
+      /* TODO: For errors, we should fire an error event, then fall through
+       * to stop the pipeline.
+       */
     case GST_MESSAGE_EOS:
-      /* TODO: Once we have events hooked up, this should just fire an event
-       * and we'll shut down only once told to */
+      // Shut down the pipeline. This will cause us to send a STREAM_END
+      // event when we get the state-changed message to GST_STATE_NULL
       gst_element_set_state (mPipeline, GST_STATE_NULL);
       break;
     default:
@@ -451,3 +499,32 @@ sbGStreamerMediacore::GetGstreamerVersion(nsAString& aGStreamerVersion)
 
   return NS_OK;
 }
+
+// Forwarding functions for sbIMediacoreEventTarget interface
+
+NS_IMETHODIMP
+sbGStreamerMediacore::DispatchEvent(sbIMediacoreEvent *aEvent,
+                                    PRBool aAsync,
+                                    PRBool* _retval)
+{
+  return mBaseEventTarget ? 
+         mBaseEventTarget->DispatchEvent(aEvent, aAsync, _retval) : 
+         NS_ERROR_NULL_POINTER;
+}
+
+NS_IMETHODIMP
+sbGStreamerMediacore::AddListener(sbIMediacoreEventListener *aListener)
+{
+  return mBaseEventTarget ? 
+         mBaseEventTarget->AddListener(aListener) : 
+         NS_ERROR_NULL_POINTER;
+}
+
+NS_IMETHODIMP
+sbGStreamerMediacore::RemoveListener(sbIMediacoreEventListener *aListener)
+{
+  return mBaseEventTarget ? 
+         mBaseEventTarget->RemoveListener(aListener) : 
+         NS_ERROR_NULL_POINTER;
+}
+
