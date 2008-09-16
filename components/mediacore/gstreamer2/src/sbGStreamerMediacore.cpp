@@ -54,6 +54,10 @@
 #include "sbGStreamerPlatformWin32.h"
 #endif
 
+#ifdef CreateEvent
+#undef CreateEvent
+#endif
+
 /**
  * To log this class, set the following environment variable in a debug build:
  *
