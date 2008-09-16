@@ -97,20 +97,14 @@ firstRunInstallAddOnsSvc.prototype = {
   //   _widget                  First-run wizard install add-ons widget.
   //   _domEventListenerSet     Set of DOM event listeners.
   //   _wizardElem              First-run wizard element.
-  //   _addOnsBundle            Add-ons bundle object.
-  //   _addOnsInstallIndexList  List of add-ons to install.
-  //   _nextAddOnToInstall      Index within _addOnsInstallIndexList of next
-  //                            add-on to install.
-  //   _addOnFileDownloader     File downloader for add-on.
+  //   _addOnBundleInstallerElem
+  //                            Add-on bundle installer element.
   //
 
   _widget: null,
   _domEventListenerSet: null,
   _wizardElem: null,
-  _addOnsBundle: null,
-  _addOnsInstallIndexList: null,
-  _nextAddOnToInstall: 0,
-  _addOnFileDownloader: null,
+  _addOnBundleInstallerElem: null,
 
 
   //----------------------------------------------------------------------------
@@ -127,9 +121,6 @@ firstRunInstallAddOnsSvc.prototype = {
     var _this = this;
     var func;
 
-    // Initialize the list of add-ons to install.
-    this._addOnsInstallIndexList = [];
-
     // Create a DOM event listener set.
     this._domEventListenerSet = new DOMEventListenerSet();
 
@@ -137,15 +128,26 @@ firstRunInstallAddOnsSvc.prototype = {
     var wizardPageElem = this._widget.parentNode;
     this._wizardElem = wizardPageElem.parentNode;
 
+    // Get the add-on bundle installer element.
+    this._addOnBundleInstallerElem =
+      this._getElement("add_on_bundle_installer");
+
     // Listen for page show and hide events.
-    var func = function() { _this._doPageShow(); };
+    func = function() { _this._doPageShow(); };
     this._domEventListenerSet.add(wizardPageElem,
                                   "pageshow",
                                   func,
                                   false);
-    var func = function() { _this._doPageHide(); };
+    func = function() { _this._doPageHide(); };
     this._domEventListenerSet.add(wizardPageElem,
                                   "pagehide",
+                                  func,
+                                  false);
+
+    // Listen for add-on bundle installer completion events.
+    func = function(aEvent) { return _this._doInstallComplete(aEvent); };
+    this._domEventListenerSet.add(this._addOnBundleInstallerElem,
+                                  "complete",
                                   func,
                                   false);
   },
@@ -163,13 +165,13 @@ firstRunInstallAddOnsSvc.prototype = {
     this._domEventListenerSet = null;
 
     // Cancel any add-on download in progress.
-    this._cancelAddOnDownload();
+    if (this._addOnBundleInstallerElem)
+      this._addOnBundleInstallerElem.cancel();
 
     // Clear object fields.
     this._widget = null;
     this._wizardElem = null;
-    this._addOnsBundle = null;
-    this._addOnsInstallIndexList = null;
+    this._addOnBundleInstallerElem = null;
   },
 
 
@@ -189,17 +191,10 @@ firstRunInstallAddOnsSvc.prototype = {
     var addOnsBundleProperty =
           this._widget.getAttribute("addonsbundleproperty");
     var addOnsElem = document.getElementById(addOnsID);
-    this._addOnsBundle = addOnsElem[addOnsBundleProperty];
+    var addOnBundle = addOnsElem[addOnsBundleProperty];
 
-    // Get the list of add-ons to install.
-    var extensionCount = this._addOnsBundle.bundleExtensionCount;
-    for (var i = 0; i < extensionCount; i++) {
-      if (this._addOnsBundle.getExtensionInstallFlag(i))
-        this._addOnsInstallIndexList.push(i);
-    }
-
-    // Start installing the add-ons.
-    this._installNextAddOnStart();
+    // Start add-on bundle installation.
+    this._addOnBundleInstallerElem.install(addOnBundle);
   },
 
 
@@ -208,34 +203,26 @@ firstRunInstallAddOnsSvc.prototype = {
    */
 
   _doPageHide: function firstRunInstallAddOnsSvc__doPageHide() {
-    // Cancel any add-on download in progress.
-    this._cancelAddOnDownload();
-  },
-
-
-  //----------------------------------------------------------------------------
-  //
-  // Widget nsIFileDownloaderListener services.
-  //
-  //----------------------------------------------------------------------------
-
-  /**
-   * \brief Called when progress is made on file download.
-   */
-
-  onProgress: function firstRunInstallAddOnsSvc_onProgress() {
-    // Update the UI.
-    this._update();
+    // Cancel any add-on installation in progress.
+    this._addOnBundleInstallerElem.cancel();
   },
 
 
   /**
-   * \brief Called when download has completed.
+   * Handle the add-on install complete event specified by aEvent.
+   *
+   * \param aEvent              Add-on install complete event.
    */
 
-  onComplete: function firstRunInstallAddOnsSvc_onComplete() {
-    // Complete installation of next add-on.
-    this._installNextAddOnComplete();
+  _doInstallComplete:
+    function firstRunInstallAddOnsSvc__doInstallComplete(aEvent) {
+    // Mark first-run wizard for application restart if required.
+    if (this._addOnBundleInstallerElem.restartRequired)
+      firstRunWizard.restartApp = true;
+
+    // Advance wizard.
+    this._wizardElem.canAdvance = true;
+    this._wizardElem.advance();
   },
 
 
@@ -244,129 +231,6 @@ firstRunInstallAddOnsSvc.prototype = {
   // Internal widget services.
   //
   //----------------------------------------------------------------------------
-
-  /**
-   * Update the UI.
-   */
-
-  _update: function firstRunInstallAddOnsSvc__update() {
-    // Get the current add-on index.
-    var currentAddOnIndex =
-          this._addOnsInstallIndexList[this._nextAddOnToInstall];
-
-    // Set the current add-on name.
-    var currentAddOnLabelElem = this._getElement("current_add_on_label");
-    currentAddOnLabelElem.value =
-      this._addOnsBundle.getExtensionAttribute(currentAddOnIndex, "name");
-
-    // Set the total progress label.
-    var totalProgressLabelElem = this._getElement("total_progress_label");
-    totalProgressLabelElem.value =
-      SBFormattedString("first_run.install_add_ons.progress_all",
-                        [ this._nextAddOnToInstall + 1,
-                          this._addOnsInstallIndexList.length ]);
-
-    // Set the current add-on download progress meter.
-    var progressMeterElem = this._getElement("progressmeter");
-    if (this._addOnFileDownloader)
-      progressMeterElem.value = this._addOnFileDownloader.percentComplete;
-    else
-      progressMeterElem.value = 0;
-  },
-
-
-  /**
-   * Start installation of the next addon.
-   */
-
-  _installNextAddOnStart:
-    function firstRunInstallAddOnsSvc__installNextAddOnStart() {
-    // Advance wizard when all add-on installations are complete.
-    if (this._nextAddOnToInstall == this._addOnsInstallIndexList.length) {
-      this._wizardElem.canAdvance = true;
-      this._wizardElem.advance();
-      return;
-    }
-
-    // Get the index of the next add-on to install.
-    var nextAddOnIndex =
-          this._addOnsInstallIndexList[this._nextAddOnToInstall];
-
-    // Create an add-on file downloader.
-    this._addOnFileDownloader =
-           Cc["@songbirdnest.com/Songbird/FileDownloader;1"]
-             .createInstance(Ci.sbIFileDownloader);
-    this._addOnFileDownloader.listener = this;
-    this._addOnFileDownloader.sourceURISpec =
-      this._addOnsBundle.getExtensionAttribute(nextAddOnIndex, "url");
-    this._addOnFileDownloader.destinationFileExtension = "xpi";
-
-    // Start downloading add-on.
-    this._addOnFileDownloader.start();
-
-    // Update the UI.
-    this._update();
-  },
-
-
-  /**
-   * Complete installation of the next addon.
-   */
-
-  _installNextAddOnComplete:
-    function firstRunInstallAddOnSvc__installNextAddOnComplete() {
-    // Get the add-on file.
-    var addOnFile = null;
-    if (this._addOnFileDownloader.succeeded)
-      addOnFile = this._addOnFileDownloader.destinationFile;
-
-    // Install the add-on.
-    var addOnInstalled = false;
-    if (addOnFile) {
-      // Get the extension manager.
-      var extensionManager = Cc["@mozilla.org/extensions/manager;1"]
-                               .getService(Ci.nsIExtensionManager);
-
-      // Install the add-on.
-      try {
-        extensionManager.installItemFromFile(addOnFile, "app-profile");
-        addOnInstalled = true;
-      } catch (ex) {
-        Cu.reportError("Error installing add-on: " + ex);
-      }
-    } else {
-      Cu.reportError("Failed to download add-on file.");
-    }
-
-    // Mark first-run wizard for application restart.
-    if (addOnInstalled)
-      firstRunWizard.restartApp = true;
-
-    // Remove the add-on file and release the add-on file downloader.
-    if (addOnFile)
-      addOnFile.remove(false);
-    this._addOnFileDownloader.listener = null;
-    this._addOnFileDownloader = null;
-
-    // Start installation of the next add-on.
-    this._nextAddOnToInstall++;
-    this._installNextAddOnStart();
-  },
-
-
-  /**
-   * Cancel any add-on download in progress.
-   */
-
-  _cancelAddOnDownload:
-    function firstRunInstallAddOnsSvc__cancelAddOnDownload() {
-    if (this._addOnFileDownloader) {
-      this._addOnFileDownloader.listener = null;
-      this._addOnFileDownloader.cancel();
-      this._addOnFileDownloader = null;
-    }
-  },
-
 
   /**
    * \brief Return the XUL element with the ID specified by aElementID.  Use the

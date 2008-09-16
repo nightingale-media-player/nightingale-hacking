@@ -53,6 +53,7 @@ For more information, see:
 @import url(chrome://global/skin/toolbar.css); 
 
 @import url(addOnBundle.css);
+@import url(addOnBundleInstaller.css);
 @import url(browsertoolbar.css);
 @import url(closableBox.css);
 @import url(device/deviceCapacity.css);

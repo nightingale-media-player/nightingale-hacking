@@ -551,3 +551,7 @@ sb-add-on-bundle-item {
   -moz-binding: url("chrome://songbird/content/bindings/addOnBundle.xml#sb-add-on-bundle-item");
 }
 
+sb-add-on-bundle-installer {
+  -moz-binding: url("chrome://songbird/content/bindings/addOnBundleInstaller.xml#sb-add-on-bundle-installer");
+}
+
