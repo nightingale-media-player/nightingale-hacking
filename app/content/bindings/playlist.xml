@@ -2941,6 +2941,24 @@
           event.stopPropagation();
         ]]>
       </handler>
+      
+      <handler event="keypress" keycode="VK_LEFT" phase="bubbling">
+        <![CDATA[
+          var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                              .getService(Components.interfaces.sbIPlaylistPlayback);
+          if (pps.playing)
+            pps.previous();
+        ]]>
+      </handler>
+
+      <handler event="keypress" keycode="VK_RIGHT" phase="bubbling">
+        <![CDATA[
+          var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
+                              .getService(Components.interfaces.sbIPlaylistPlayback);
+          if (pps.playing)
+            pps.next();
+        ]]>
+      </handler>
 
       <handler event="PlaylistCellMouseOver">
         <![CDATA[

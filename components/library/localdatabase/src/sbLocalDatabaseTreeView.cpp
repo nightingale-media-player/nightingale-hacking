@@ -1750,7 +1750,9 @@ sbLocalDatabaseTreeView::GetParentIndex(PRInt32 rowIndex, PRInt32* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  // we never have parent indices, return -1 as specified in the IDL
+  *_retval = -1;
+  return NS_OK;
 }
 
 NS_IMETHODIMP

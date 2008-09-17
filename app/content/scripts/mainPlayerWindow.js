@@ -102,6 +102,10 @@ var gSongbirdWindowController =
           pps.play();
         }
       }
+    } else if (aCommand == "cmd_control_next") {
+      pps.next();
+    } else if (aCommand == "cmd_control_previous") {
+      pps.previous();
     } else if (aCommand == "cmd_volume_down") {
       pps.volume = Math.max(0, pps.volume - 12.5);
     } else if (aCommand == "cmd_volume_up") {
@@ -126,6 +130,8 @@ var gSongbirdWindowController =
       case "cmd_reveal":
         return true;
       case "cmd_control_playpause":
+      case "cmd_control_next":
+      case "cmd_control_previous":
         return true;
       case "cmd_delete":
         return (this._getVisiblePlaylist() != null);
@@ -179,6 +185,9 @@ var gSongbirdWindowController =
       }
       case "cmd_control_playpause":
         return true;
+      case "cmd_control_next":
+      case "cmd_control_previous":
+        return pps.playing && document.commandDispatcher.focusedWindow == window;
       case "cmd_delete": {
         var list = this._getVisiblePlaylist();
         return (list && list.userEditable);
