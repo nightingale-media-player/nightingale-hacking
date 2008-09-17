@@ -23,6 +23,7 @@ CPP_SRCS = $(topsrcdir)/components/mediacore/base/src/sbBaseMediacore.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreVolumeControl.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbMediacoreCapabilities.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbMediacoreEvent.cpp \
+           $(topsrcdir)/components/mediacore/base/src/sbMediacoreError.cpp \
            sbGStreamerService.cpp \
            sbGStreamerMediacore.cpp \
            sbGStreamerMediacoreFactory.cpp \

@@ -40,7 +40,9 @@
 
 #include <sbClassInfoUtils.h>
 #include <sbTArrayStringEnumerator.h>
+#include <sbVariantUtils.h>
 #include <sbBaseMediacoreEventTarget.h>
+#include <sbMediacoreError.h>
 
 #include <sbIGStreamerService.h>
 
@@ -106,10 +108,13 @@ NS_DECL_CLASSINFO(sbGStreamerMediacore)
 NS_IMPL_THREADSAFE_CI(sbGStreamerMediacore)
 
 sbGStreamerMediacore::sbGStreamerMediacore() :
+    mMonitor(nsnull),
     mVideoEnabled(PR_FALSE),
     mPipeline(nsnull),
     mPlatformInterface(nsnull),
-    mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
+    mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
+    mTags(NULL),
+    mProperties(nsnull)
 {
   NS_WARN_IF_FALSE(mBaseEventTarget, 
           "mBaseEventTarget is null, may be out of memory");
@@ -118,12 +123,22 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
 
 sbGStreamerMediacore::~sbGStreamerMediacore()
 {
+  if (mTags)
+    gst_tag_list_free(mTags);
+
+  if (mMonitor)
+    nsAutoMonitor::DestroyMonitor(mMonitor);
 }
 
 nsresult
 sbGStreamerMediacore::Init() 
 {
-  nsresult rv = sbBaseMediacore::InitBaseMediacore();
+  nsresult rv;
+
+  mMonitor = nsAutoMonitor::NewMonitor("sbGStreamerMediacore::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = sbBaseMediacore::InitBaseMediacore();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbBaseMediacorePlaybackControl::InitBaseMediacorePlaybackControl();
@@ -183,9 +198,12 @@ sbGStreamerMediacore::syncHandler(GstBus* bus, GstMessage* message,
   }
 }
 
-/*virtual */ nsresult 
+/* Must be called with mMonitor held */
+nsresult 
 sbGStreamerMediacore::DestroyPipeline()
 {
+  nsAutoMonitor lock(mMonitor);
+
   if (mPipeline) {
     gst_element_set_state (mPipeline, GST_STATE_NULL);
     gst_object_unref (mPipeline);
@@ -196,10 +214,15 @@ sbGStreamerMediacore::DestroyPipeline()
   return NS_OK;
 }
 
-/*virtual */ nsresult 
+/* Must be called with mMonitor held */
+nsresult 
 sbGStreamerMediacore::CreatePlaybackPipeline()
 {
-  nsresult rv = DestroyPipeline();
+  nsresult rv;
+
+  nsAutoMonitor lock(mMonitor);
+
+  rv = DestroyPipeline();
   NS_ENSURE_SUCCESS (rv, rv);
 
   mPipeline = gst_element_factory_make ("playbin2", "player");
@@ -240,13 +263,14 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
   return PR_FALSE;
 }
 
-void sbGStreamerMediacore::DispatchSimpleEvent (unsigned long type)
+void sbGStreamerMediacore::DispatchMediacoreEvent (unsigned long type, 
+        nsIVariant *aData, sbIMediacoreError *aError)
 {
   nsresult rv;
   nsCOMPtr<sbIMediacoreEvent> event;
   rv = sbMediacoreEvent::CreateEvent(type,
-                                     nsnull,
-                                     nsnull,
+                                     aError,
+                                     aData,
                                      this,
                                      getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, /* void */);
@@ -255,6 +279,95 @@ void sbGStreamerMediacore::DispatchSimpleEvent (unsigned long type)
   NS_ENSURE_SUCCESS(rv, /* void */);
 }
 
+void sbGStreamerMediacore::HandleTagMessage(GstMessage *message)
+{
+  GstTagList *tag_list;
+  nsresult rv;
+
+  LOG(("Handling tag message"));
+  gst_message_parse_tag(message, &tag_list);
+
+  if (mTags) {
+    GstTagList *newTags = gst_tag_list_merge (mTags, tag_list,
+            GST_TAG_MERGE_REPLACE);
+    gst_tag_list_free (mTags);
+    mTags = newTags;
+  }
+  else
+    mTags = gst_tag_list_copy (tag_list);
+
+  rv = ConvertTagListToPropertyArray(mTags, getter_AddRefs(mProperties));
+  gst_tag_list_free(tag_list);
+
+  if (NS_SUCCEEDED (rv)) {
+    nsCOMPtr<nsISupports> properties = do_QueryInterface(mProperties, &rv);
+    NS_ENSURE_SUCCESS (rv, /* void */);
+    nsCOMPtr<nsIVariant> propVariant = sbNewVariant(properties).get();
+    DispatchMediacoreEvent (sbIMediacoreEvent::METADATA_CHANGE, propVariant);
+  }
+  else // Non-fatal, just log a message
+    LOG(("Failed to convert")); 
+}
+
+void sbGStreamerMediacore::HandleStateChangedMessage(GstMessage *message)
+{
+  // Only listen to state-changed messages from top-level pipelines
+  if (GST_IS_PIPELINE (message->src))
+  {
+    GstState oldstate, newstate, pendingstate;
+    gst_message_parse_state_changed (message, 
+            &oldstate, &newstate, &pendingstate);
+
+    // Dispatch START, PAUSE, END (but only if it's our target state)
+    if (pendingstate == GST_STATE_VOID_PENDING) {
+      if (newstate == GST_STATE_PLAYING)
+        DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_START);
+      else if (newstate == GST_STATE_PAUSED)
+        DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_PAUSE);
+      else if (newstate == GST_STATE_NULL)
+        DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_END);
+    }
+  }
+}
+
+void sbGStreamerMediacore::HandleEOSMessage(GstMessage *message)
+{
+  nsAutoMonitor lock(mMonitor);
+
+  // Shut down the pipeline. This will cause us to send a STREAM_END
+  // event when we get the state-changed message to GST_STATE_NULL
+  gst_element_set_state (mPipeline, GST_STATE_NULL);
+}
+
+void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
+{
+  GError *gerror = NULL;
+  nsString errormessage;
+  nsCOMPtr<sbMediacoreError> error;
+  nsCOMPtr<sbIMediacoreEvent> event;
+
+  nsAutoMonitor lock(mMonitor);
+
+  // Create and dispatch an error event. 
+  NS_NEWXPCOM(error, sbMediacoreError);
+  NS_ENSURE_TRUE(error, /* void */);
+
+  gst_message_parse_error(message, &gerror, NULL);
+  CopyUTF8toUTF16(nsDependentCString(gerror->message), errormessage);
+  error->Init(0, errormessage); // XXX: Use a proper error code once they exist
+  g_error_free (gerror);
+
+  DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);
+
+  // Then, shut down the pipeline, which will cause
+  // a STREAM_END event to be fired.
+  gst_element_set_state (mPipeline, GST_STATE_NULL);
+}
+
+/* Dispatch messages based on type.
+ * For ELEMENT messages, further introspect the exact meaning for
+ * dispatch
+ */
 void sbGStreamerMediacore::HandleMessage (GstMessage *message)
 {
   GstMessageType msg_type;
@@ -262,34 +375,19 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
 
   switch (msg_type) {
     case GST_MESSAGE_STATE_CHANGED: {
-      // Only listen to state-changed messages from top-level pipelines
-      if (GST_IS_PIPELINE (message->src))
-      {
-        GstState oldstate, newstate, pendingstate;
-        gst_message_parse_state_changed (message, 
-                &oldstate, &newstate, &pendingstate);
-
-        // Dispatch START, PAUSE, END (but only if it's our target state)
-        if (pendingstate == GST_STATE_VOID_PENDING) {
-          if (newstate == GST_STATE_PLAYING)
-            DispatchSimpleEvent (sbIMediacoreEvent::STREAM_START);
-          else if (newstate == GST_STATE_PAUSED)
-            DispatchSimpleEvent (sbIMediacoreEvent::STREAM_PAUSE);
-          else if (newstate == GST_STATE_NULL)
-            DispatchSimpleEvent (sbIMediacoreEvent::STREAM_END);
-        }
-      }
+      HandleStateChangedMessage(message);
       break;
     }
-    case GST_MESSAGE_ERROR:
-      /* TODO: For errors, we should fire an error event, then fall through
-       * to stop the pipeline.
-       */
-    case GST_MESSAGE_EOS:
-      // Shut down the pipeline. This will cause us to send a STREAM_END
-      // event when we get the state-changed message to GST_STATE_NULL
-      gst_element_set_state (mPipeline, GST_STATE_NULL);
+    case GST_MESSAGE_TAG:
+      HandleTagMessage(message);
       break;
+    case GST_MESSAGE_ERROR:
+      HandleErrorMessage(message);
+      break;
+    case GST_MESSAGE_EOS: {
+      HandleEOSMessage(message);
+      break;
+    }
     default:
       LOG(("Got message: %s", gst_message_type_get_name(msg_type)));
       break;
@@ -323,6 +421,8 @@ sbGStreamerMediacore::OnGetCapabilities()
 /*virtual*/ nsresult 
 sbGStreamerMediacore::OnShutdown()
 {
+  nsAutoMonitor lock(mMonitor);
+
   if (mPipeline) {
     LOG (("Destroying pipeline on shutdown"));
     DestroyPipeline();
@@ -348,6 +448,7 @@ sbGStreamerMediacore::OnSetUri(nsIURI *aURI)
 {
   nsCAutoString spec;
   nsresult rv;
+  nsAutoMonitor lock(mMonitor);
 
   rv = CreatePlaybackPipeline();
   NS_ENSURE_SUCCESS (rv,rv);
@@ -361,12 +462,42 @@ sbGStreamerMediacore::OnSetUri(nsIURI *aURI)
   return NS_OK;
 }
 
+/*virtual*/ nsresult
+sbGStreamerMediacore::GetPosition(PRUint64 *aPosition)
+{
+  GstQuery *query;
+  gboolean res;
+  nsresult rv;
+  nsAutoMonitor lock(mMonitor);
+
+  query = gst_query_new_position(GST_FORMAT_TIME);
+  res = gst_element_query(mPipeline, query);
+
+  if(res) {
+    gint64 position;
+    gst_query_parse_position(query, NULL, &position);
+    
+    /* Convert to milliseconds */
+    *aPosition = position / GST_MSECOND;
+    rv = NS_OK;
+  }
+  else
+    rv = NS_ERROR_NOT_AVAILABLE;
+
+  gst_query_unref (query);
+
+  return rv;
+}
+
 /*virtual*/ nsresult 
 sbGStreamerMediacore::OnSetPosition(PRUint64 aPosition)
 {
-  // Incoming position is in milliseconds, convert to GstClockTime (nanoseconds)
-  GstClockTime position = aPosition * GST_MSECOND;
+  GstClockTime position;
   gboolean ret;
+  nsAutoMonitor lock(mMonitor);
+
+  // Incoming position is in milliseconds, convert to GstClockTime (nanoseconds)
+  position = aPosition * GST_MSECOND;
 
   // Do a flushing keyframe seek to the requested position. This is the simplest
   // and fastest type of seek.
@@ -386,6 +517,8 @@ sbGStreamerMediacore::OnSetPosition(PRUint64 aPosition)
 /*virtual*/ nsresult 
 sbGStreamerMediacore::OnPlay()
 {
+  nsAutoMonitor lock(mMonitor);
+
   NS_ENSURE_STATE(mPipeline);
 
   GstStateChangeReturn ret;
@@ -401,6 +534,8 @@ sbGStreamerMediacore::OnPlay()
 /*virtual*/ nsresult 
 sbGStreamerMediacore::OnPause()
 {
+  nsAutoMonitor lock(mMonitor);
+
   NS_ENSURE_STATE(mPipeline);
 
   GstStateChangeReturn ret;
@@ -414,6 +549,8 @@ sbGStreamerMediacore::OnPause()
 /*virtual*/ nsresult 
 sbGStreamerMediacore::OnStop()
 {
+  nsAutoMonitor lock(mMonitor);
+
   NS_ENSURE_STATE(mPipeline);
 
   GstStateChangeReturn ret;
@@ -438,6 +575,8 @@ sbGStreamerMediacore::OnInitBaseMediacoreVolumeControl()
 /*virtual*/ nsresult 
 sbGStreamerMediacore::OnSetMute(PRBool aMute)
 {
+  nsAutoMonitor lock(mMonitor);
+
   NS_ENSURE_STATE(mPipeline);
 
   /* We have no explicit mute control, so just set the volume to zero, but
@@ -450,6 +589,8 @@ sbGStreamerMediacore::OnSetMute(PRBool aMute)
 /*virtual*/ nsresult 
 sbGStreamerMediacore::OnSetVolume(double aVolume)
 {
+  nsAutoMonitor lock(mMonitor);
+
   NS_ENSURE_STATE(mPipeline);
 
   /* Well, this is nice and easy! */

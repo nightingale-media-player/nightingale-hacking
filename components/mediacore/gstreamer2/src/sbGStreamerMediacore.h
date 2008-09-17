@@ -37,6 +37,9 @@
 #include <sbIMediacoreVolumeControl.h>
 #include <sbIMediacoreVotingParticipant.h>
 #include <sbIMediacoreEventTarget.h>
+#include <sbIMediacoreError.h>
+
+#include <sbIPropertyArray.h>
 
 #include <sbBaseMediacore.h>
 #include <sbBaseMediacorePlaybackControl.h>
@@ -59,11 +62,6 @@ public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_NSICLASSINFO
   NS_DECL_SBIMEDIACOREEVENTTARGET
-  
-  NS_FORWARD_SBIMEDIACORE(sbBaseMediacore::)
-  NS_FORWARD_SBIMEDIACOREPLAYBACKCONTROL(sbBaseMediacorePlaybackControl::)
-  NS_FORWARD_SBIMEDIACOREVOLUMECONTROL(sbBaseMediacoreVolumeControl::)
-
   NS_DECL_SBIMEDIACOREVOTINGPARTICIPANT
   NS_DECL_SBIGSTREAMERMEDIACORE
 
@@ -83,6 +81,7 @@ public:
   virtual nsresult OnPlay();
   virtual nsresult OnPause();
   virtual nsresult OnStop();
+  virtual nsresult GetPosition(PRUint64 *aPosition);
 
   // sbBaseMediacoreVolumeControl overrides
   virtual nsresult OnInitBaseMediacoreVolumeControl();
@@ -96,23 +95,36 @@ public:
 protected:
   virtual ~sbGStreamerMediacore();
 
-  virtual nsresult DestroyPipeline();
-  virtual nsresult CreatePlaybackPipeline();
+  nsresult DestroyPipeline();
+  nsresult CreatePlaybackPipeline();
 
-  void DispatchSimpleEvent (unsigned long type);
+  void DispatchMediacoreEvent (unsigned long type, 
+          nsIVariant *aData = NULL, sbIMediacoreError *aError = NULL);
+
+  void HandleTagMessage (GstMessage *message);
+  void HandleStateChangedMessage (GstMessage *message);
+  void HandleEOSMessage (GstMessage *message);
+  void HandleErrorMessage (GstMessage *message);
 
 private:
   // Static helper for C callback
   static void syncHandler(GstBus *bus, GstMessage *message, gpointer data);
 
 protected:
+  // Protects all access to mPipeline
+  PRMonitor*  mMonitor;
+
   PRBool mVideoEnabled;
 
   GstElement *mPipeline;
-
-  sbIGstPlatformInterface *mPlatformInterface;
+  nsAutoPtr<sbIGstPlatformInterface> mPlatformInterface;
 
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
+
+  // Metadata, both in original GstTagList form, and transformed into an
+  // sbIPropertyArray. Both may be NULL.
+  GstTagList *mTags;
+  nsCOMPtr<sbIPropertyArray> mProperties;
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */
