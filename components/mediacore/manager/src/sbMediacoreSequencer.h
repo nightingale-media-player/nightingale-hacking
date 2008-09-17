@@ -29,26 +29,44 @@
 
 #include <nsIMutableArray.h>
 #include <nsIStringEnumerator.h>
+#include <nsIURI.h>
+#include <nsIWeakReference.h>
 
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsTHashtable.h>
 #include <prmon.h>
 
+#include <sbIMediacoreEventListener.h>
+#include <sbIMediacoreManager.h>
 #include <sbIMediacoreSequenceGenerator.h>
+#include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
 
-class sbMediacoreSequencer : public sbIMediacoreSequencer
+#include <vector>
+
+class sbMediacoreSequencer : public sbIMediacoreSequencer,
+                             public sbIMediacoreEventListener
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIACORESEQUENCER
+  NS_DECL_SBIMEDIACOREEVENTLISTENER
 
   sbMediacoreSequencer();
 
+  typedef std::vector<PRUint32> sequence_t;
+
   nsresult Init();
-  
+
+  // Sequence management
   nsresult RecalculateSequence();
+  //nsresult RecalculatePartialSequence();
+
+  // Fetching of items, item manipulation.
+  nsresult GetItem(const sequence_t &aSequence,
+                   PRUint32 aPosition, 
+                   sbIMediaItem **aItem);
 
 private:
   virtual ~sbMediacoreSequencer();
@@ -56,10 +74,24 @@ private:
 protected:
   PRMonitor *mMonitor;
   
+  PRUint32                       mStatus;
+  PRBool                         mIsWaitingForPlayback;
+  
+  PRUint32                       mChainIndex;
+  nsCOMPtr<nsIArray>             mChain;
+  
+  nsCOMPtr<sbIMediacore>                mCore;
+  nsCOMPtr<sbIMediacorePlaybackControl> mPlaybackControl;
+
   PRUint32                       mMode;
+  PRUint32                       mRepeatMode;
+
   nsCOMPtr<sbIMediaListView>     mView;
-  nsCOMPtr<nsIMutableArray>      mSequence;
+  sequence_t                     mSequence;
+  PRUint32                       mPosition;
 
   nsCOMPtr<sbIMediacoreSequenceGenerator> mCustomGenerator;
   nsCOMPtr<sbIMediacoreSequenceGenerator> mShuffleGenerator;
+
+  nsCOMPtr<nsIWeakReference> mMediacoreManager;
 };

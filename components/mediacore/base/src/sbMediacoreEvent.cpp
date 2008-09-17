@@ -87,6 +87,7 @@ sbMediacoreEvent::Init(PRUint32 aType,
   mType = aType;
   mError = aError;
   mData = aData;
+  mOrigin = aOrigin;
 
   return NS_OK;
 }

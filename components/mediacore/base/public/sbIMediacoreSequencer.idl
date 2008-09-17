@@ -37,15 +37,26 @@ interface sbIMediacoreSequencer : nsISupports
 {
   const unsigned long MODE_FORWARD    = 0;
   const unsigned long MODE_REVERSE    = 1;
-  const unsigned long MODE_REPEAT_ONE = 1 << 1;
-  const unsigned long MODE_REPEAT_ALL = 1 << 2;
-  const unsigned long MODE_SHUFFLE    = 1 << 3;
+  const unsigned long MODE_SHUFFLE    = 1 << 1;
 
   const unsigned long MODE_CUSTOM     = 1 << 16;
 
   attribute unsigned long mode;
 
+  const unsigned long MODE_REPEAT_NONE = 0;
+  const unsigned long MODE_REPEAT_ONE = 1;
+  const unsigned long MODE_REPEAT_ALL = 1 << 1;
+
+  attribute unsigned long repeatMode;
+
   attribute sbIMediaListView view;
+
+  readonly attribute nsIArray currentSequence;
+  attribute unsigned long sequencePosition;
+
+  void play();
+  void next();
+  void previous();
 
   // When in custom mode, this generator is used to generate the sequence.
   attribute sbIMediacoreSequenceGenerator customGenerator;

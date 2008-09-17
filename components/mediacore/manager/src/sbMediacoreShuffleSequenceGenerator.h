@@ -1,5 +1,6 @@
+/* vim: set sw=2 :miv */
 /*
- //
+//
 // BEGIN SONGBIRD GPL
 // 
 // This file is part of the Songbird web player.
@@ -24,16 +25,31 @@
 //
 */
 
-#include "nsISupports.idl"
+#include <sbIMediacoreSequencer.h>
 
-[scriptable, uuid(dc7358ac-36f5-4de5-a71b-d8c803f0f670)]
-interface sbIMediacoreStatus : nsISupports
+#include <nsIMutableArray.h>
+#include <nsIStringEnumerator.h>
+
+#include <nsCOMPtr.h>
+#include <nsHashKeys.h>
+#include <nsTHashtable.h>
+#include <prmon.h>
+
+#include <sbIMediaListView.h>
+
+class sbMediacoreShuffleSequenceGenerator : public sbIMediacoreSequenceGenerator
 {
-  const unsigned long STATUS_UNKNOWN = 0;
-  
-  const unsigned long STATUS_PLAYING    = 1;
-  const unsigned long STATUS_PAUSED     = 1 << 1;
-  const unsigned long STATUS_STOPPED    = 1 << 2;
-  const unsigned long STATUS_BUFFERING  = 1 << 3;
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIACORESEQUENCEGENERATOR
 
+  sbMediacoreShuffleSequenceGenerator();
+
+  nsresult Init();
+  
+private:
+  virtual ~sbMediacoreShuffleSequenceGenerator();
+
+protected:
+  PRMonitor *mMonitor;
 };

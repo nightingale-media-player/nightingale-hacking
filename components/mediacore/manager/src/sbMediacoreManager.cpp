@@ -49,10 +49,12 @@
 #include <sbIMediacoreSequencer.h>
 #include <sbIMediacoreSimpleEqualizer.h>
 #include <sbIMediacoreVolumeControl.h>
+#include <sbIMediacoreVotingParticipant.h>
 
 #include <sbBaseMediacoreEventTarget.h>
 #include <sbMediacoreVotingChain.h>
-#include <sbIMediacoreVotingParticipant.h>
+
+#include "sbMediacoreSequencer.h"
 
 /* observer topics */
 #define NS_PROFILE_STARTUP_OBSERVER_ID          "profile-after-change"
@@ -229,8 +231,15 @@ sbMediacoreManager::Init()
     }
   }
 
-  // XXXAus: Initialize default sequencer (when it's implemented).
+  nsRefPtr<sbMediacoreSequencer> sequencer;
+  NS_NEWXPCOM(sequencer, sbMediacoreSequencer);
+  NS_ENSURE_TRUE(sequencer, NS_ERROR_OUT_OF_MEMORY);
 
+  rv = sequencer->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mSequencer = sequencer;
+  
   return NS_OK;
 }
 

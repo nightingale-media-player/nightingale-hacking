@@ -94,7 +94,7 @@ interface sbIMediacoreEvent : nsISupports
   /**
    * \brief Plugin missing for requested format.
    */
-  const unsigned long PLUGIN_MISSING  = 0;
+  const unsigned long PLUGIN_MISSING  = 0x00008000;
 
   /**
    * \brief Custom event base value.
