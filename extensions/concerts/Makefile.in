@@ -57,7 +57,7 @@ extinstall :
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(EXTENSION_STAGE_DIR)
 	$(CYGWIN_WRAPPER) $(CP) -rf $(srcdir)/chrome $(EXTENSION_STAGE_DIR)
 	$(CYGWIN_WRAPPER) $(CP) -rf $(srcdir)/components $(EXTENSION_STAGE_DIR)
-	$(CYGWIN_WRAPPER) find $(EXTENSION_STAGE_DIR) -depth -name .svn -exec rm -rf {} \;
+	$(CYGWIN_WRAPPER) find $(EXTENSION_STAGE_DIR) -type d -depth -name '.svn' | xargs rm -rf
 	$(CYGWIN_WRAPPER) $(CP) -f $(srcdir)/chrome.manifest $(EXTENSION_STAGE_DIR)
 
 .PHONY : extinstall
