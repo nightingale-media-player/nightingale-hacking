@@ -336,6 +336,13 @@
         ]]></body>
       </method>
 
+      <!-- sbITabBrowserTab -->
+      <method name="getOuterPlaylistShowing">
+        <body><![CDATA[
+          return this.outerPlaylistShowing;
+        ]]></body>
+      </method>
+
       <property name="outerPlaylistShowing">
         <getter><![CDATA[
           if (!this._playlist) return false;

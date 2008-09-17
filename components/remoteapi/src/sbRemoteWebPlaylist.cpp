@@ -56,7 +56,8 @@ static PRLogModuleInfo* gRemoteWebPlaylistLog = nsnull;
 
 const static char* sPublicWProperties[] =
 {
-  "site:mediaList"
+  "site:mediaList",
+  "site:hidden"
 };
 
 const static char* sPublicRProperties[] =
@@ -64,6 +65,7 @@ const static char* sPublicRProperties[] =
   // sbIRemoteWebPlaylist
   "site:selection",
   "site:mediaList",
+  "site:hidden",
 
   // nsIClassInfo
   "classinfo:classDescription",
@@ -294,4 +296,36 @@ sbRemoteWebPlaylist::GetPlaylistWidget( sbIPlaylistWidget **aWebPlaylist )
   NS_ENSURE_ARG_POINTER(aWebPlaylist);
   NS_IF_ADDREF( *aWebPlaylist = mPlaylistWidget );
   return NS_OK;
+}
+
+nsresult
+sbRemoteWebPlaylist::SetHidden(PRBool aHide)
+{
+  LOG(("sbRemoteWebPlaylist::SetHidden()"));
+  
+  nsresult rv = NS_OK;
+
+  if (aHide) {
+    rv = mOwnerTab->HideOuterPlaylist();
+  } else {
+    rv = mOwnerTab->ShowOuterPlaylist();
+  }
+
+  return rv;
+}
+
+nsresult
+sbRemoteWebPlaylist::GetHidden(PRBool* aHidden)
+{
+  NS_ENSURE_ARG_POINTER(aHidden);
+  LOG(("sbRemoteWebPlaylist::GetHidden()"));
+
+  nsresult rv = NS_OK;
+  PRBool showing;
+  rv = mOwnerTab->GetOuterPlaylistShowing(&showing);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aHidden = !showing;
+
+  return rv;
 }

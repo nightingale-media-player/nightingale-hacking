@@ -150,5 +150,30 @@ interface sbIRemoteWebPlaylist : nsISupports
   */
   void setSelectionByIndex(in unsigned long aIndex, in boolean aSelected);
 
+
+  /*
+  Prop: hidden
+
+  Is the <WebPlaylist> hidden?
+
+  Setting <mediaList> on the <WebPlaylist> will automatically make the 
+  <WebPlaylist> visible. <hidden> is intended for more advanced uses where a
+  web page might want to manipulate the visiblity of the <WebPlaylist> 
+  directly.
+
+  Type:
+    boolean
+
+  Example:
+    (start code)
+    // show the webplaylist
+    songbird.webPlaylist.hidden = false;
+    // hide the webplaylist
+    songbird.webPlaylist.hidden = true;
+    // is the webplaylist hidden?
+    alert(songbird.webPlaylist.hidden?"It's hidden":"It's shown");
+    (end)
+  */
+  attribute boolean hidden;
 };
 
