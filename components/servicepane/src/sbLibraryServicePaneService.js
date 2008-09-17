@@ -187,18 +187,21 @@ function sbLibraryServicePane_fillNewItemMenu(aNode, aContextMenu, aParentWindow
   var sbSvc = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService);
   var stringBundle = sbSvc.createBundle("chrome://songbird/locale/songbird.properties");
 
-  function add(id, label, accesskey, oncommand) {
+  function add(id, label, accesskey, oncommand, modifiers) {
     var menuitem = aContextMenu.ownerDocument.createElement('menuitem');
     menuitem.setAttribute('id', id);
     menuitem.setAttribute('class', 'menuitem-iconic');
     menuitem.setAttribute('label', stringBundle.GetStringFromName(label));
     menuitem.setAttribute('accesskey', stringBundle.GetStringFromName(accesskey));
     menuitem.setAttribute('oncommand', oncommand);
+    if (typeof(modifiers) != "undefined") {
+      menuitem.setAttribute('modifiers', modifiers);
+    }
     aContextMenu.appendChild(menuitem);
   }
 
   add('menuitem_file_new', 'menu.file.new', 'menu.file.new.accesskey', 'doMenu("menuitem_file_new")');
-  add('file.smart', 'menu.file.smart', 'menu.file.smart.accesskey', 'doMenu("menuitem_file_smart")');
+  add('file.smart', 'menu.file.smart', 'menu.file.smart.accesskey', 'doMenu("menuitem_file_smart")', "alt");
   add('menuitem_file_remote', 'menu.file.remote', 'menu.file.remote.accesskey', 'doMenu("menuitem_file_remote")');
 }
 

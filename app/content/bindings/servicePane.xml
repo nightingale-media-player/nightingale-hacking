@@ -1163,15 +1163,71 @@
     </implementation>
     <handlers>
       <handler event="command"><![CDATA[
-        for (var item = this._popup.firstChild;
-             item; item = item.nextSibling) {
-          if (event.originalTarget == item) {
-            // the event was heading for a menu item
-            return;
+        /**
+         * NOTE: _DO NOT_ copy this code.  If you find that this is useful
+         * elsewhere, _move_ this to some place generic and can be reused.
+         */
+
+        if (event.originalTarget.parentNode == this._popup) {
+          // the event was heading for a menu item
+          return;
+        }
+        // this wasn't heading to any of our children - let's find the best fit
+        // defined as the first menu item with all of the specified modifiers
+        // pressed with the greatest number of modifiers given
+        var modifiers = {"": true};
+        if (event.altKey)
+          modifiers["alt"] = true;
+        if (event.shiftKey)
+          modifiers["shift"] = true;
+        if (event.ctrlKey)
+          modifiers["ctrl"] = true;
+        if (event.metaKey)
+          modifiers["meta"] = true;
+
+        var kKeyCodeToName = {};
+        kKeyCodeToName[KeyEvent.DOM_VK_CONTROL] = "ctrl";
+        kKeyCodeToName[KeyEvent.DOM_VK_ALT] = "alt";
+        kKeyCodeToName[KeyEvent.DOM_VK_SHIFT] = "shift";
+        kKeyCodeToName[KeyEvent.DOM_VK_META] = "meta";
+
+        var accelKey = Application.prefs.getValue("ui.key.accelKey", -1);
+        if (kKeyCodeToName[accelKey] in modifiers) {
+          modifiers["accel"] = true;
+        }
+        var accessKey = Application.prefs.getValue("ui.key.chromeAccess", -1);
+        if (accessKey == -1) {
+          accessKey = Application.prefs.getValue("ui.key.generalAccessKey", -1);
+        }
+        if (kKeyCodeToName[accessKey] in modifiers) {
+          modifiers["access"] = true;
+        }
+        
+        // modifiers is now a set of modifiers that have been pressed.
+        // now keep an array of matched popups; the index is the number of matching
+        // modifier keys, and the value is the first menupopup to match
+        var matches = [];
+        
+        for (var popup = this._popup.firstChild; popup; popup = popup.nextSibling) {
+          var matchCount = 0;
+          for each (var modifier in popup.getAttribute("modifiers").split(/\s+/)) {
+            if (!(modifier in modifiers)) {
+              // this modifier is not pressed
+              matchCount = Number.NEGATIVE_INFINITY;
+              break;
+            } else if ("" != modifier) {
+              ++matchCount;
+            }
+          }
+          if (matchCount >= 0 && !(matchCount in matches)) {
+            matches[matchCount] = popup;
           }
         }
-        // this wasn't heading to any of our children - let's do the first one
-        this._popup.firstChild.doCommand();
+        
+        var selectedPopup = matches[matches.length - 1];
+        if (selectedPopup) {
+          selectedPopup.doCommand();
+        }
       ]]></handler>
       <handler event="dragenter"><![CDATA[
         var session = this._dragService.getCurrentSession();
