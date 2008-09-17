@@ -150,7 +150,7 @@ var LibraryUtils = {
     // Get the sort for this list by parsing the list's column spec.  Then hit
     // the property manager to see if there is a special sort profile for this
     // ID
-    var parser = new ColumnSpecParser(LibraryUtils.webLibrary, null);
+    var parser = new ColumnSpecParser(aMediaList, null);
     if (parser.sortID) {
       var pm =
         Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
