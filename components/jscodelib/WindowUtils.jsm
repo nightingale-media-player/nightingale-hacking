@@ -147,6 +147,29 @@ var WindowUtils = {
 
 
   /**
+   * \brief Attempt to restart the application.
+   */
+
+  restartApp: function WindowUtils_restartApp() {
+    // Notify all windows that an application quit has been requested.
+    var os = Cc["@mozilla.org/observer-service;1"]
+               .getService(Ci.nsIObserverService);
+    var cancelQuit = Cc["@mozilla.org/supports-PRBool;1"]
+                       .createInstance(Ci.nsISupportsPRBool);
+    os.notifyObservers(cancelQuit, "quit-application-requested", "restart");
+
+    // Something aborted the quit process.
+    if (cancelQuit.data)
+      return;
+
+    // attempt to restart
+    var as = Cc["@mozilla.org/toolkit/app-startup;1"]
+               .getService(Ci.nsIAppStartup);
+    as.quit(Ci.nsIAppStartup.eRestart | Ci.nsIAppStartup.eAttemptQuit);
+  },
+
+
+  /**
    * \brief Create and return a dialog parameter block set with the arguments
    *        contained in the array specified by aArgs.  Look up string arguments
    *        as keys in the locale string bundle specified by aLocale; use the

@@ -395,13 +395,21 @@ sbAddOnBundleUpdateService.prototype = {
 
   _presentNewAddOnsWithWindow:
     function sbAddOnBundleUpdateService__presentNewAddOnsWithWindow(aWindow) {
+    // Present the new add-ons window.
+    var restartRequired = {};
     WindowUtils.openModalDialog(aWindow,
                                   "chrome://songbird/content/xul/" +
                                   "recommendedAddOnsWizard.xul",
                                 "",
                                 "chrome,modal=yes,centerscreen",
                                 [ this._addOnBundleLoader.addOnBundle ],
-                                null);
+                                [ restartRequired ]);
+    restartRequired = (restartRequired.value == "true");
+
+    // Restart application if required.
+    if (restartRequired) {
+      WindowUtils.restartApp();
+    }
   }
 };
 

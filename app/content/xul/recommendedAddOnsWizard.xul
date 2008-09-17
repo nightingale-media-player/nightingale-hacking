@@ -54,6 +54,7 @@
   title="&recommended_add_ons.title;"
   hidechrome="true"
   onload="recommendedAddOnsWizard.doLoad();"
+  onunload="recommendedAddOnsWizard.doUnload();"
   onwizardfinish="return recommendedAddOnsWizard.doFinish();"
 >
 
@@ -63,7 +64,7 @@
    *
    ************************************************************************* -->
 
-  <!-- Recommended add-ons wizard page. -->
+  <!-- Recommended add-ons selection wizard page. -->
   <wizardpage label="&recommended_add_ons.title;">
 
     <!-- Main recommended add-ons box. -->
@@ -80,6 +81,15 @@
       <sb-add-on-bundle id="recommended_add_on_bundle"/>
 
     </vbox> <!-- recommended_add_ons_box -->
+
+  </wizardpage>
+
+  <!-- Recommended add-ons installation wizard page. -->
+  <wizardpage
+    label="&recommended_add_ons.title;"
+    onpageshow="recommendedAddOnsWizard.doShowAddOnBundleInstallPage();">
+
+    <sb-add-on-bundle-installer id="add_on_bundle_installer"/>
 
   </wizardpage>
 

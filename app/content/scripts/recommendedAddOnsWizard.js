@@ -76,10 +76,21 @@ var recommendedAddOnsWizard = {
   //
   // Internal recommended add-ons wizard fields.
   //
+  //   _dialogParameterBlock    Dialog parameter block.
   //   _addOnBundle             Recommended add-on bundle.
+  //   _domEventListenerSet     Set of DOM event listeners.
+  //   _wizardElem              First-run wizard element.
+  //   _addOnBundleInstallerElem
+  //                            Add-on bundle installer element.
+  //   _restartRequired         True if application needs to be restarted.
   //
 
+  _dialogParameterBlock: null,
   _addOnBundle: null,
+  _domEventListenerSet: null,
+  _wizardElem: null,
+  _addOnBundleInstallerElem: null,
+  _restartRequired: false,
 
 
   //----------------------------------------------------------------------------
@@ -95,6 +106,27 @@ var recommendedAddOnsWizard = {
   doLoad: function recommendedAddOnsWizard_doLoad() {
     // Initialize the services.
     this._initialize();
+  },
+
+
+  /**
+   * Handle an unload event.
+   */
+
+  doUnload: function recommendedAddOnsWizard_doUnload() {
+    // Indicate whether a restart is required.
+    //XXXeps apparently, restart can't be initiated from a modal dialog.
+    //XXXeps perhaps that's because the parent window can't close until the
+    //XXXeps dialog does.
+    if (this._dialogParameterBlock) {
+      if (this._restartRequired)
+        this._dialogParameterBlock.SetString(0, "true");
+      else
+        this._dialogParameterBlock.SetString(0, "false");
+    }
+
+    // Finalize the services.
+    this._finalize();
   },
 
 
@@ -117,6 +149,49 @@ var recommendedAddOnsWizard = {
   },
 
 
+  /**
+   * Handle a show add-on bundle install page event.
+   */
+
+  doShowAddOnBundleInstallPage:
+    function recommendedAddOnsWizard_doShowAddOnBundleInstallPage() {
+    // Check if add-on installation is required.
+    var installRequired = false;
+    var extensionCount = this._addOnBundle.bundleExtensionCount;
+    for (var i = 0; i < extensionCount; i++) {
+      if (this._addOnBundle.getExtensionInstallFlag(i)) {
+        installRequired = true;
+        break;
+      }
+    }
+
+    // Install add-ons if required.  Otherwise, advance the wizard.
+    if (installRequired) {
+      this._addOnBundleInstallerElem.install(this._addOnBundle);
+    } else {
+      this._wizardElem.canAdvance = true;
+      this._wizardElem.advance();
+    }
+  },
+
+
+  /**
+   * Handle the add-on install complete event specified by aEvent.
+   *
+   * \param aEvent              Add-on install complete event.
+   */
+
+  _doInstallComplete:
+    function recommendedAddOnsWizard__doInstallComplete(aEvent) {
+    // Set up for application restart if required.
+    this._restartRequired = this._addOnBundleInstallerElem.restartRequired;
+
+    // Advance wizard.
+    this._wizardElem.canAdvance = true;
+    this._wizardElem.advance();
+  },
+
+
   //----------------------------------------------------------------------------
   //
   // Internal services.
@@ -129,8 +204,17 @@ var recommendedAddOnsWizard = {
 
   _initialize: function recommendedAddOnsWizard__initialize() {
     // Get the dialog parameters.
-    var dialogPB = window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
-    this._addOnBundle = dialogPB.objects.queryElementAt(0, Ci.sbIBundle);
+    try {
+      this._dialogParameterBlock =
+             window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
+      this._addOnBundle =
+             this._dialogParameterBlock.objects.queryElementAt(0, Ci.sbIBundle);
+    } catch (ex) {
+      Cu.reportError
+           ("Recommended add-ons wizard opened with invalid parameters.");
+      onExit();
+      return;
+    }
 
     // Get the recommended add-on bundle info.
     var addOnCount = this._addOnBundle.bundleExtensionCount;
@@ -151,6 +235,41 @@ var recommendedAddOnsWizard = {
     var descriptionElem =
           document.getElementById("recommended_add_ons_description");
     descriptionElem.appendChild(descriptionTextNode);
+
+    // Get the wizard element.
+    this._wizardElem = document.getElementById
+                                  ("recommended_add_ons_update_wizard");
+
+    // Create a DOM event listener set.
+    this._domEventListenerSet = new DOMEventListenerSet();
+
+    // Listen for add-on bundle installer completion events.
+    var _this = this;
+    var func = function(aEvent) { return _this._doInstallComplete(aEvent); };
+    this._addOnBundleInstallerElem = document.getElementById
+                                                ("add_on_bundle_installer");
+    this._domEventListenerSet.add(this._addOnBundleInstallerElem,
+                                  "complete",
+                                  func,
+                                  false);
+  },
+
+
+  /**
+   * Finalize the recommended add-ons wizard services.
+   */
+
+  _finalize: function recommendedAddOnsWizard__finalize() {
+    // Remove DOM event listeners.
+    if (this._domEventListenerSet)
+      this._domEventListenerSet.removeAll();
+    this._domEventListenerSet = null;
+
+    // Clear object fields.
+    this._dialogParameterBlock = null;
+    this._addOnBundle = null;
+    this._wizardElem = null;
+    this._addOnBundleInstallerElem = null;
   }
 };
 
