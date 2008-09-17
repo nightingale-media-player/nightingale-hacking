@@ -2929,8 +2929,12 @@
         ]]>
       </handler>
       
-      <handler event="keypress" key=" " phase="capturing">
+      <handler event="keypress" key=" " phase="target">
         <![CDATA[
+          if (event.originalTarget != this.tree) {
+            // possibly an event from the inline metadata editing textbox
+            return;
+          }
           var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                               .getService(Components.interfaces.sbIPlaylistPlayback);
           if (pps.playing && !pps.paused) {
@@ -2942,8 +2946,12 @@
         ]]>
       </handler>
       
-      <handler event="keypress" keycode="VK_LEFT" phase="bubbling">
+      <handler event="keypress" keycode="VK_LEFT" phase="target">
         <![CDATA[
+          if (event.originalTarget != this.tree) {
+            // possibly an event from the inline metadata editing textbox
+            return;
+          }
           var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                               .getService(Components.interfaces.sbIPlaylistPlayback);
           if (pps.playing)
@@ -2951,8 +2959,12 @@
         ]]>
       </handler>
 
-      <handler event="keypress" keycode="VK_RIGHT" phase="bubbling">
+      <handler event="keypress" keycode="VK_RIGHT" phase="target">
         <![CDATA[
+          if (event.originalTarget != this.tree) {
+            // possibly an event from the inline metadata editing textbox
+            return;
+          }
           var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                               .getService(Components.interfaces.sbIPlaylistPlayback);
           if (pps.playing)
