@@ -76,6 +76,9 @@
         <menuitem id="menuitem_file_newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;" insertbefore="menu_LocaleSeparator"/>
         <menuitem id="menuitem_file_closetab" key="closetab-key" class="menuitem-iconic" label="&menu.file.closetab;" accesskey="&menu.file.closetab.accesskey;" insertbefore="menu_LocaleSeparator"/>
         <menuitem id="menuitem_tools_reveal" key="reveal-key" class="menuitem-iconic" label="&menu.tools.reveal;" accesskey="&menu.tools.reveal.accesskey;" insertbefore="menu_LocaleSeparator" command="cmd_reveal"/>
+        <menuseparator id="menuseparator_file_print"/>
+        <menuitem id="menuitem_file_print" key="printKb" command="cmd_print" 
+                  accesskey="&printCmd.accesskey;" label="&printCmd.label;"/>
       </menupopup>
 
 
@@ -327,6 +330,9 @@
     <!-- ********************************************************************* -->
 
     <commandset id="mainCommandSet" >
+      <commandset id="tabChangeCommandUpdater" commandupdater="true" events="focus, select, tabchange"
+                  oncommandupdate="goUpdateGlobalContentMenuItems()"/>
+
       <command id="Browser:Home"    oncommand="gBrowser.goHome();"/>
 
       <!-- Bound to legacy dataremotes for now.  This will have to change
@@ -354,6 +360,7 @@
                   inverted="true" />  
       </command>
       
+      <command id="cmd_print" oncommand="goDoCommand('cmd_print');"/>
       <command id="Browser:Reload"  oncommand="gBrowser.reload();" />
       <!-- TODO: Make ReloadSkipCache work correctly-->
       <command id="Browser:ReloadSkipCache"  oncommand="gBrowser.reload();" disabled="true"/>
@@ -404,6 +411,7 @@
       <key id="newsmartplaylist-key" modifiers="accel,alt" key="&menu.file.smart.key;" oncommand="doMenu('menuitem_file_smart');"/>
       <key id="newtab-key" modifiers="accel" key="&menu.file.newtab.key;" oncommand="doMenu('menuitem_file_newtab');"/>
       <key id="closetab-key" modifiers="accel" key="&menu.file.closetab.key;" oncommand="doMenu('menuitem_file_closetab');"/>
+      <key id="printKb" key="&printCmd.commandkey;" command="cmd_print" modifiers="accel"/>
       <!-- key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/ -->
       <!-- 
         Due to the mozilla bug 330458, loading the XUL key/command overlay information from |layoutBaseOverlay.xul|
@@ -496,6 +504,8 @@
   src="chrome://browser/content/browser-textZoom.js"/>
   <script type="application/x-javascript"
   src="chrome://global/content/viewZoomOverlay.js"/>
+  <script type="application/x-javascript"
+  src="chrome://global/content/printUtils.js"/>
 
   <!-- Web Scraper implementation -->
   <script type="application/x-javascript;version=1.8" 

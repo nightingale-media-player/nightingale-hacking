@@ -1016,14 +1016,14 @@ function updateEditUIVisibility()
 
 
 /**
- * This method assits with updating the global findbar information. This update
- * is used to help update the find/find again functionality depending on what
- * type of content is currently loaded into the content view (tab-browser).
+ * This method updates all commands that deal with the type of content that is
+ * currently in the selected browser tab such as find/find again.
  */
-function goUpdateGlobalFindMenuItems()
+function goUpdateGlobalContentMenuItems()
 {
   goUpdateCommand("cmd_find");
   goUpdateCommand("cmd_findAgain");
+  goUpdateCommand("cmd_print");
 }
 
 /**

@@ -72,6 +72,8 @@ var gSongbirdWindowController =
       gTabBrowser.onFindCommand();
     } else if (aCommand == "cmd_findAgain") {
       gTabBrowser.onFindAgainCommand();
+    } else if (aCommand == "cmd_print") {
+      PrintUtils.print(gTabBrowser.content);
     } else if (aCommand == "cmd_metadata") {
       SBTrackEditorOpen(); // open to the last selected tab
     } else if (aCommand == "cmd_editmetadata") {
@@ -116,6 +118,7 @@ var gSongbirdWindowController =
     switch(aCommand) {
       case "cmd_find":
       case "cmd_findAgain":
+      case "cmd_print":
         return true;
       case "cmd_metadata":
       case "cmd_editmetadata":
@@ -153,6 +156,9 @@ var gSongbirdWindowController =
       case "cmd_find":
       case "cmd_findAgain":
         return (!browser.shouldDisableFindForSelectedTab());
+      case "cmd_print":
+        // printing XUL is not supported, see NS_ERROR_GFX_PRINTER_NO_XUL
+        return !(browser.contentDocument instanceof XULDocument);
       case "cmd_metadata":
       case "cmd_editmetadata":
       case "cmd_viewmetadata": {
