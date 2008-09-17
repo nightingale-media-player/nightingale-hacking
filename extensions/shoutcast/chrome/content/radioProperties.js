@@ -6,6 +6,5 @@ const SC_mimeType = SC_NS + "contentMimeType";	// SBProperties.contentMimeType
 const SC_listenerCount = SC_NS + "listenerCount";
 const SC_id = SC_NS + "streamId";
 const SC_bookmark = SC_NS + "streamFave";
-const SC_unfave = SC_NS + "streamUnfave";
 
 const SC_nodeCreated = SC_NS + "favesSPSNodeCreated";

@@ -140,17 +140,6 @@ ShoutcastRadio.Controller = {
 			var pI = builder.get();
 			pMgr.addPropertyInfo(pI);
 		}
-		if (!pMgr.hasProperty(SC_unfave)) {
-			var builder = Cc[
-				"@songbirdnest.com/Songbird/Properties/Builder/Image;1"]
-				.createInstance(Ci.sbIImagePropertyBuilder);
-			builder.propertyID = SC_unfave;
-			builder.displayName = this._strings.getString("bookmark");
-			builder.userEditable = false;
-			builder.userViewable = true;
-			var pI = builder.get();
-			pMgr.addPropertyInfo(pI);
-		}
 		if (!pMgr.hasProperty(SC_id)) {
 			var pI = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
 					.createInstance(Ci.sbINumberPropertyInfo);

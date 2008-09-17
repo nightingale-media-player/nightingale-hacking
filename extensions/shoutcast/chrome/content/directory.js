@@ -85,7 +85,6 @@ var RadioDirectory = {
 			var genreLabel = genreProp.value;
 			if (genreValue == "TOP")
 				continue;
-			dump(genreValue + "/" + genreLabel + "\n");
 			genres.push({value:genreValue, label:genreLabel});
 		}
 
@@ -244,7 +243,7 @@ var RadioDirectory = {
 			this.favesList.name = this._strings.getString("favourites");
 			var colSpec = SC_streamName + " 260 " + SC_bitRate + " 55 " +
 					SC_comment + " 175 " + SBProperties.genre + " 55 " +
-					SC_unfave + " 55";
+					SC_bookmark + " 55";
 			this.favesList.setProperty(SBProperties.columnSpec, colSpec);
 			this.favesList.setProperty(SBProperties.defaultColumnSpec,colSpec);
 
@@ -368,7 +367,6 @@ var RadioDirectory = {
 					.createInstance(Ci.sbIMutablePropertyArray);
 
 				var heartSrc;
-				var breakSrc = "chrome://shoutcast-radio/skin/invis-16x16.png";
 				if (this.favouriteIDs.indexOf(id) != -1) {
 					heartSrc = "chrome://shoutcast-radio/skin/heart-active.png";
 				} else {
@@ -383,7 +381,6 @@ var RadioDirectory = {
 				props.appendProperty(SC_listenerCount, numListeners);
 				props.appendProperty(SC_id, parseInt(id));
 				props.appendProperty(SC_bookmark, heartSrc);
-				props.appendProperty(SC_unfave, breakSrc);
 				propertiesArray.appendElement(props, false);
 				
 				trackArray.appendElement(

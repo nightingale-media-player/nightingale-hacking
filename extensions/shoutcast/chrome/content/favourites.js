@@ -15,6 +15,8 @@ var FavouriteStreams = {
 			return Ci.sbIMediaListEnumerationListener.CONTINUE;
 		},
 		onEnumeratedItem: function(list, item) {
+			item.setProperty(SC_bookmark,
+					"chrome://shoutcast-radio/skin/invis-16x16.png");
 			var genre = item.getProperty(SBProperties.genre);
 			if (typeof(FavouriteStreams.genres[genre]) == "undefined") {
 				// pull genres and update this feed
@@ -66,7 +68,7 @@ var FavouriteStreams = {
 	myCellClick : function(e) {
 		var prop = e.getData("property");
 		var item = e.getData("item");
-		if (prop == SC_unfave) {
+		if (prop == SC_bookmark) {
 			var list =
 				document.getElementById("playlist").mediaListView.mediaList;
 			list.remove(item);

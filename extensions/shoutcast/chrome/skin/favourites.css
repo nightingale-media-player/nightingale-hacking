@@ -1,0 +1,32 @@
+treecol[bind="http://songbirdnest.com/data/1.0#bitRate"],
+treecol[bind="http://songbirdnest.com/data/1.0#listenerCount"]
+{
+	text-align:right;
+}
+
+treecol[bind="http://songbirdnest.com/data/1.0#bitRate"] > label,
+treecol[bind="http://songbirdnest.com/data/1.0#listenerCount"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-bitRate ),
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-listenerCount )
+{
+	padding-right:5px;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-streamFave image )
+{
+	background-image:url('chrome://shoutcast-radio/skin/broken-heart-button.png') !important;
+	background-position: 5px -36px;
+	background-repeat: no-repeat;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-streamFave image cell-active)
+{
+	background-image:url('chrome://shoutcast-radio/skin/broken-heart-button.png') !important;
+	background-position: 5px 1px;
+	background-repeat: no-repeat;
+}
+
+.header-actions {
+	-moz-box-align: center;
+}
+
