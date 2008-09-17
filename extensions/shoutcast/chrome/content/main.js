@@ -61,11 +61,12 @@ ShoutcastRadio.Controller = {
 		// Bookmark the SHOUTcast chrome
 		var bmNode = BMS.addBookmarkAt(
 				"chrome://shoutcast-radio/content/directory.xul",
-				"SHOUTcast", "http://shoutcast.com/favicon.ico",
+				//"SHOUTcast", "http://shoutcast.com/favicon.ico",
+				"SHOUTcast", "chrome://shoutcast-radio/skin/shoutcast_favicon.png",
 				radioFolder, null);
 		if (bmNode) {
 			bmNode.editable = false;
-			bmNode.image = "http://shoutcast.com/favicon.ico";
+			bmNode.image = "chrome://shoutcast-radio/skin/shoutcast_favicon.png";
 		}
 
 		SPS.save();
