@@ -683,11 +683,9 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 
 
 
-
 /******************************************************************************
 > DISPLAY PANES
 ******************************************************************************/
-.sb-displaypane-menubutton,
 .sb-displaypane-header {
   border-bottom:1px solid rgb(131,131,131);
 }
