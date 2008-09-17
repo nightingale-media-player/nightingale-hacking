@@ -385,6 +385,7 @@
       </command>
       
       <command id="View:PageSource" oncommand="BrowserViewSourceOfDocument(content.document);" observes="isImage"/>
+      <command id="cmd_mediapage_next" oncommand="goDoCommand(this.id);"/>
       <command id="cmd_metadata" oncommand="goDoCommand('cmd_metadata');"/>
       <command id="cmd_editmetadata" oncommand="goDoCommand('cmd_editmetadata');"/>
       <command id="cmd_viewmetadata" oncommand="goDoCommand('cmd_viewmetadata');"/>
@@ -425,6 +426,7 @@
       <key id="locationbar-key2" modifiers="alt" key="&locationbar.key2;" oncommand="document.getElementById('location_bar').focus();"/>
       <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" command="cmd_metadata"/>
       <key id="trackeditor-key2" modifiers="accel" key="&trackeditor.key2;" command="cmd_metadata"/>
+      <key id="mediapage-next-key" modifiers="accel shift" key="&mediapage.next.key;" command="cmd_mediapage_next"/>
 
       <key id="key_fullZoomReduce"  key="&fullZoomReduceCmd.commandkey;"   command="cmd_fullZoomReduce"  modifiers="accel"/>
       <key id="key_fullZoomEnlarge" key="&fullZoomEnlargeCmd.commandkey;"  command="cmd_fullZoomEnlarge" modifiers="accel"/>

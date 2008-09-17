@@ -28,6 +28,16 @@
 var gTabBrowser = null;
 var PREF_PLAYER_CONTROL_LOCATION = "songbird.playercontrol.location";
 
+if ("undefined" == typeof(Ci)) {
+  this.Ci = Components.interfaces;
+}
+if ("undefined" == typeof(Cc)) {
+  this.Cc = Components.classes;
+}
+if ("undefined" == typeof(Cr)) {
+  this.Cr = Components.results;
+}
+
 
 // Assist with moving player controls by setting an attribute on the layout.
 function movePlayerControls(aIsOnTop)
@@ -114,6 +124,8 @@ var gSongbirdWindowController =
       pps.mute = !pps.mute;
     } else if (aCommand == "cmd_delete") {
       SBDeleteMediaList(this._getVisiblePlaylist());
+    } else if (aCommand == "cmd_mediapage_next") {
+      gSongbirdPlayerWindow.nextMediaPage();
     }
   },
   
@@ -138,6 +150,8 @@ var gSongbirdWindowController =
       case "cmd_volume_down":
       case "cmd_volume_up":
       case "cmd_volume_mute":
+        return true;
+      case "cmd_mediapage_next":
         return true;
     }
     return false;
@@ -198,6 +212,8 @@ var gSongbirdWindowController =
         return pps.volume < 255;
       case "cmd_volume_mute":
         return true;
+      case "cmd_mediapage_next":
+        return (view != null);
     }
     return false;
   },
@@ -357,6 +373,51 @@ var gSongbirdPlayerWindow = {
     return false;
   },
 
+  nextMediaPage: function gSongbirdPlayerWindow_nextMediaPage() {
+    // no need to do this if we can't get the browser
+    if (typeof SBGetBrowser != 'function')
+      return;
+
+    var browser = SBGetBrowser();
+
+    var mediaListView = browser.currentMediaListView;
+    if (!mediaListView) {
+      // no media list view, can't switch anything
+      return;
+    }
+    
+    var mediaPageMgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                         .getService(Ci.sbIMediaPageManager);
+    var pages = mediaPageMgr.getAvailablePages(mediaListView.mediaList);
+    var current = mediaPageMgr.getPage(mediaListView.mediaList);
+    var page = null;
+    
+    while (pages.hasMoreElements()) {
+      page = pages.getNext().QueryInterface(Ci.sbIMediaPageInfo);
+      if (page.contentUrl == current.contentUrl) {
+        if (!pages.hasMoreElements()) {
+          // we're at the last page, restart enumeration and go to first
+          pages = mediaPageMgr.getAvailablePages(mediaListView.mediaList);
+        }
+        page = pages.getNext().QueryInterface(Ci.sbIMediaPageInfo);
+        break;
+      }
+    }
+    
+    if (!page) {
+      Components.reportError(new Components.Exception(
+        "Failed to find any pages from media list view",
+        Components.results.NS_ERROR_NOT_AVAILABLE));
+      return;
+    }
+
+    mediaPageMgr.setPage(mediaListView.mediaList, page);
+    browser.loadMediaList(mediaListView.mediaList,  
+                          null,
+                          null, 
+                          mediaListView, 
+                          null);
+  },
 
 
   //////////////////////
