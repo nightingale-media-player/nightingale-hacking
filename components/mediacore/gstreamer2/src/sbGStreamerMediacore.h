@@ -81,7 +81,7 @@ public:
   virtual nsresult OnPlay();
   virtual nsresult OnPause();
   virtual nsresult OnStop();
-  virtual nsresult GetPosition(PRUint64 *aPosition);
+  NS_IMETHOD GetPosition(PRUint64 *aPosition);
 
   // sbBaseMediacoreVolumeControl overrides
   virtual nsresult OnInitBaseMediacoreVolumeControl();

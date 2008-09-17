@@ -462,7 +462,7 @@ sbGStreamerMediacore::OnSetUri(nsIURI *aURI)
   return NS_OK;
 }
 
-/*virtual*/ nsresult
+NS_IMETHODIMP
 sbGStreamerMediacore::GetPosition(PRUint64 *aPosition)
 {
   GstQuery *query;
