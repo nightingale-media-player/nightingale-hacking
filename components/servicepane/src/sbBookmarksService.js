@@ -69,6 +69,7 @@ function sbBookmarks() {
 
   this._importAttempts = 5;
   this._importTimer = null;
+  this._importRequest = null;
 }
 sbBookmarks.prototype.QueryInterface = 
 function sbBookmarks_QueryInterface(iid) {
@@ -118,6 +119,11 @@ function sbBookmarks_servicePaneInit(sps) {
     
   // if the bookmark node doesn't have the Imported attribute set, lets do an import
   if (this._bookmarkNode.getAttributeNS(BSP, 'Imported') != 'true') {
+    // make sure we clean up correctly on shutdown
+    var obs = Cc["@mozilla.org/observer-service;1"]
+                .getService(Ci.nsIObserverService);
+    obs.addObserver(this, "quit-application-granted", false);
+
     // run the importer
     this.importBookmarks();
   }
@@ -142,6 +148,20 @@ function sbBookmarks_observe(subject, topic, data) {
       return;
     }
     this.importBookmarks();
+  } else if (topic == "quit-application-granted") {
+    if (this._importRequest) {
+      this._importRequest.abort();
+      this._importRequest = null;
+      // spin this (main) thread until we have no pending events, to prevent
+      // a deadlock due to NSS.  See bug 12055 for details.
+      var thread = Cc["@mozilla.org/thread-manager;1"]
+                     .getService(Ci.nsIThreadManager)
+                     .currentThread;
+      while(thread.processNextEvent(false));
+    }
+    var obs = Cc["@mozilla.org/observer-service;1"]
+                .getService(Ci.nsIObserverService);
+    obs.removeObserver(this, "quit-application-granted");
   }
 }
 
@@ -160,6 +180,7 @@ function sbBookmarks_importBookmarks() {
   var sps = this._servicePane;
   var service = this;
   function importError() {
+    service._importRequest = null;
     service._importAttempts--;
     if (service._importAttempts < 0) {
       // we tried, but it's time to give up till the next time the player starts
@@ -182,6 +203,7 @@ function sbBookmarks_importBookmarks() {
     service.scheduleImportBookmarks();
   }
   xhr.addEventListener('load', function(evt) {
+    service._importRequest = null;
     var root = null;
     try {
       // a non-XML page will cause an exception here.
@@ -273,6 +295,7 @@ function sbBookmarks_importBookmarks() {
 
   xhr.QueryInterface(Ci.nsIXMLHttpRequest);
   xhr.open('GET', bookmarksURL, true);
+  this._importRequest = xhr;
   xhr.send(null);
 }
 
