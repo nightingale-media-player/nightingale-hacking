@@ -193,4 +193,20 @@ private:
   PRBool mInitalized;
 };
 
+/**
+ * Helper class to convert from a nsISimpleEnumerator<sbIIndexedMediaItem>
+ * to a nsISimpleEnumerator<sbIMediaItem>
+ */
+class sbIndexedToUnindexedMediaItemEnumerator : public nsISimpleEnumerator
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISIMPLEENUMERATOR
+  
+  sbIndexedToUnindexedMediaItemEnumerator(nsISimpleEnumerator* aEnumerator);
+
+private:
+  nsCOMPtr<nsISimpleEnumerator> mIndexedEnumerator;
+};
+
 #endif /* __SB_LOCALDATABASEMEDIALISTVIEWSELECTION_H__ */

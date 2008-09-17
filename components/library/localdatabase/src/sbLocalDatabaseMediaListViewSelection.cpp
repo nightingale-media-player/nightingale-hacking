@@ -296,6 +296,25 @@ sbLocalDatabaseMediaListViewSelection::GetSelectedIndexedMediaItems(nsISimpleEnu
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseMediaListViewSelection::GetSelectedMediaItems(nsISimpleEnumerator * *aSelectedMediaItems)
+{
+  NS_ENSURE_ARG_POINTER(aSelectedMediaItems);
+  nsresult rv;
+  
+  // just create an indexed enumerator and wrap it; this makes sure we reuse
+  // the code and the two enumerator implementations are kept in sync.
+  nsCOMPtr<nsISimpleEnumerator> indexedEnumerator;
+  rv = GetSelectedIndexedMediaItems(getter_AddRefs(indexedEnumerator));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsRefPtr<sbIndexedToUnindexedMediaItemEnumerator> unwrapper =
+    new sbIndexedToUnindexedMediaItemEnumerator(indexedEnumerator);
+  NS_ENSURE_TRUE(unwrapper, NS_ERROR_OUT_OF_MEMORY);
+  
+  return CallQueryInterface(unwrapper.get(), aSelectedMediaItems);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseMediaListViewSelection::Select(PRInt32 aIndex)
 {
   NS_ENSURE_ARG_RANGE(aIndex, 0, (PRInt32) mLength - 1);
@@ -935,4 +954,44 @@ sbIndexedGUIDArrayEnumerator::GetNext(nsISupports **_retval)
 
   mNextIndex++;
   return NS_OK;
+}
+
+NS_IMPL_ISUPPORTS1(sbIndexedToUnindexedMediaItemEnumerator,
+                   nsISimpleEnumerator)
+
+/**
+ * \class sbIndexedToUnindexedMediaItemEnumerator
+ *
+ * \brief An unwrapper for sbGUIDArrayToIndexedMediaItemEnumerator to return
+ *        unwrapped sbIMediaItems with no indices instead
+ */
+sbIndexedToUnindexedMediaItemEnumerator::sbIndexedToUnindexedMediaItemEnumerator(nsISimpleEnumerator* aEnumerator) :
+  mIndexedEnumerator(aEnumerator)
+{
+}
+
+NS_IMETHODIMP
+sbIndexedToUnindexedMediaItemEnumerator::HasMoreElements(PRBool *_retval)
+{
+  NS_ENSURE_TRUE(mIndexedEnumerator, NS_ERROR_NOT_INITIALIZED);
+  return mIndexedEnumerator->HasMoreElements(_retval);
+}
+
+NS_IMETHODIMP
+sbIndexedToUnindexedMediaItemEnumerator::GetNext(nsISupports **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mIndexedEnumerator, NS_ERROR_NOT_INITIALIZED);
+  
+  nsresult rv;
+  
+  nsCOMPtr<sbIIndexedMediaItem> indexedItem;
+  rv = mIndexedEnumerator->GetNext(getter_AddRefs(indexedItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbIMediaItem> item;
+  rv = indexedItem->GetMediaItem(getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return CallQueryInterface(item, _retval);
 }

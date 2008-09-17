@@ -27,11 +27,23 @@
 
 // This is a temporary file to house methods that need to roll into
 // our new Menubar XBL object that we'll be building for 0.3
-function doMenu( command ) {
+function doMenu( command, event ) {
   switch ( command )
   {
     case "menuitem_file_new":
-      SBNewPlaylist();
+      var enumerator = null;
+      if (event && event.shiftKey) {
+        if (gBrowser &&
+            gBrowser.selectedTab &&
+            gBrowser.selectedTab.mediaListView)
+        {
+          enumerator = gBrowser.selectedTab
+                               .mediaListView
+                               .selection
+                               .selectedMediaItems;
+        }
+      }
+      SBNewPlaylist(enumerator);
     break;
     case "menuitem_file_smart":
       SBNewSmartPlaylist();
@@ -104,9 +116,9 @@ function doMenu( command ) {
       // and intelligently initiate playback.  If not, just have
       // the playback service play the default.
       } else {
-        var event = document.createEvent("Events");
-        event.initEvent("Play", true, true);
-        var notHandled = this.dispatchEvent(event);
+        var newEvent = document.createEvent("Events");
+        newEvent.initEvent("Play", true, true);
+        var notHandled = this.dispatchEvent(newEvent);
         if (notHandled) {
           gPPS.play();
         }

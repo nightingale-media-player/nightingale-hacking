@@ -57,7 +57,7 @@ interface sbIMediaListViewSelectionListener : nsISupports
  * \brief Manage the selection of items within a view.  This interface is a
  *        subset of nsITreeView.
  */
-[scriptable, uuid(3010571b-c11c-43fc-87a7-ba64f08895ac)]
+[scriptable, uuid(ea5d0e88-6b5b-4c22-a753-7274ab774d8a)]
 interface sbIMediaListViewSelection : nsISupports
 {
   /**
@@ -89,6 +89,13 @@ interface sbIMediaListViewSelection : nsISupports
    *        index of the item.
    */
   readonly attribute nsISimpleEnumerator selectedIndexedMediaItems;
+  
+  /**
+   * \brief Get an enumertaor of all the selected media items.  The elements
+   *        contained in the enumerator implement sbIMediaItem.  This differs
+   *        from selectedIndexedMediaItems in that there is no indices involved.
+   */
+  readonly attribute nsISimpleEnumerator selectedMediaItems;
 
   /**
    * \brief Select the item at the given index

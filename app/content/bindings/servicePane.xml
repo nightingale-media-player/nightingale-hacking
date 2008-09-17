@@ -1199,7 +1199,9 @@
         if (accessKey == -1) {
           accessKey = Application.prefs.getValue("ui.key.generalAccessKey", -1);
         }
-        if (kKeyCodeToName[accessKey] in modifiers) {
+        if (accessKey in kKeyCodeToName &&
+            kKeyCodeToName[accessKey] in modifiers)
+        {
           modifiers["access"] = true;
         }
         
@@ -1226,7 +1228,12 @@
         
         var selectedPopup = matches[matches.length - 1];
         if (selectedPopup) {
-          selectedPopup.doCommand();
+          var newEvent = document.createEvent("XULCommandEvent");
+          newEvent.initCommandEvent(event.type, event.bubbles, event.cancelable,
+                                    event.view, event.detail, event.ctrlKey,
+                                    event.altKey, event.shiftKey, event.metaKey,
+                                    (event.sourceEvent || event));
+          return selectedPopup.dispatchEvent(newEvent);
         }
       ]]></handler>
       <handler event="dragenter"><![CDATA[

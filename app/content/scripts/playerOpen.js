@@ -542,9 +542,14 @@ function SBScanMedia( aParentWindow, aScanDirectory )
 }
 
 /** Legacy function **/
-function SBNewPlaylist()
+function SBNewPlaylist(aEnumerator)
 {
-  return makeNewPlaylist("simple");
+  var playlist = makeNewPlaylist("simple");
+  if (aEnumerator) {
+    // make playlist from selected items
+    playlist.addSome(aEnumerator);
+  }
+  return playlist;
 }
 
 function SBNewSmartPlaylist()

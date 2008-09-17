@@ -200,7 +200,7 @@ function sbLibraryServicePane_fillNewItemMenu(aNode, aContextMenu, aParentWindow
     aContextMenu.appendChild(menuitem);
   }
 
-  add('menuitem_file_new', 'menu.file.new', 'menu.file.new.accesskey', 'doMenu("menuitem_file_new")');
+  add('menuitem_file_new', 'menu.file.new', 'menu.file.new.accesskey', 'doMenu("menuitem_file_new", event)');
   add('file.smart', 'menu.file.smart', 'menu.file.smart.accesskey', 'doMenu("menuitem_file_smart")', "alt");
   add('menuitem_file_remote', 'menu.file.remote', 'menu.file.remote.accesskey', 'doMenu("menuitem_file_remote")');
 }
