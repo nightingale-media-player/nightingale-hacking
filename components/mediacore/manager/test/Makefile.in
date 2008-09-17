@@ -36,7 +36,9 @@ SONGBIRD_TESTS = $(srcdir)/test_mediacoretypesniffer.js \
                  $(NULL)
 
 # XXXAus: This test has to be turned manually to be used (for the time being).
-#SONGBIRD_TESTS += $(srcdir)/test_mediacoremanager.js
+#SONGBIRD_TESTS += $(srcdir)/test_mediacoremanager.js \
+#                   $(srcdir)/test_mediacoresequencer.js \
+#                   $(NULL)
 
 
 include $(topsrcdir)/build/rules.mk
