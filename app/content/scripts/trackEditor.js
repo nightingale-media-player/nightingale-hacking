@@ -1883,7 +1883,7 @@ TrackEditorArtwork.prototype = {
                         .createInstance(Ci.sbIClipboardHelper);
     var mimeType = {};
     var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
-    if (imageData.length > 0) {
+    if (sbCoverHelper.isImageSizeValid(null, imageData.length)) {
       var metadataImageScannerService =
                         Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
                           .getService(Ci.sbIMetadataImageScanner);
@@ -1892,7 +1892,9 @@ TrackEditorArtwork.prototype = {
                       .saveImageDataToFile(imageData,
                                            imageData.length,
                                            mimeType.value);
-      this._imageSrcChange(newFile);
+      if (newFile) {
+        this._imageSrcChange(newFile);
+      }
     }
   },
   
@@ -1965,7 +1967,7 @@ TrackEditorArtwork.prototype = {
   onDrop: function TrackEditorArtwork_onDrop(aEvent, aDropData, aSession) {
     var self = this;
     sbCoverHelper.handleDrop(function (newFile) {
-      if (newFile && newFile != "") {
+      if (newFile) {
         self._imageSrcChange(newFile);
       }
     }, aDropData);
@@ -1995,7 +1997,12 @@ TrackEditorArtwork.prototype = {
     filePicker.appendFilters(Ci.nsIFilePicker.filterImages);
     var fileResult = filePicker.show();
     if (fileResult == Ci.nsIFilePicker.returnOK) {
-      this._imageSrcChange("file://" + filePicker.file.path);
+      var ioService = Cc["@mozilla.org/network/io-service;1"]
+                        .getService(Ci.nsIIOService);
+      var fileURL = ioService.newFileURI(filePicker.file).spec;
+      if (sbCoverHelper.isImageSizeValid(fileURL)) {
+        this._imageSrcChange(fileURL);
+      }
     }
   },
   

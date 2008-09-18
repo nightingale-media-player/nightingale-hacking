@@ -33,11 +33,78 @@ const Ce = Components.Exception;
 const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://app/jsmodules/StringUtils.jsm");
+Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 
 // File operation constants for init (-1 is default mode)
 const FLAGS_DEFAULT = -1;
 
+// Default maximum size of image files we allow.
+// This is defined as the maximum size of a FRAME in the id3v2 spec.
+// We are defaulting to this since we only read/write id3v2 tags for album art.
+const MAX_FILE_SIZE_BYTES = 16777216;
+
 var sbCoverHelper = {
+  
+  /**
+   * \brief Checks if the size of the image either provided by aImageSize or
+   *        loaded from aImageURL is under the MAX_FILE_SIZE in bytes for
+   *        storing into the meta data of a media file. The aImageURL should
+   *        be a valid local file. MAX_FILE_SIZE is defined as a preference
+   *        songbird.albumart.maxsize or defaults to 16Mb.
+   * \param aImageURL - URL of the image to check
+   * \param aImageSize - Size of the image in bytes
+   * \returns True if the image size is under the MAX_FILE_SIZE or false if not.
+   */
+  isImageSizeValid: function (aImageURL, aImageSize) {
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+    var maxFileSize = Application.prefs.getValue("songbird.albumart.maxsize",
+                                                 MAX_FILE_SIZE_BYTES);
+    
+    if ( (aImageURL == 'undefined') &&
+         (aImageSize == 'undefined') ) {
+      // We need something to compare so fail
+      return false;
+    }
+    
+    // Default to aImageSize unless aImageURL is defined.
+    var checkFileSize = aImageSize;
+    if (aImageURL) {
+      // Otherwise open the file and check the size
+      var ioService = Cc["@mozilla.org/network/io-service;1"]
+                        .getService(Ci.nsIIOService);
+      var uri = null;
+      try {
+        uri = ioService.newURI(aImageURL, null, null);
+      } catch (err) {
+        Cu.reportError("sbCoverHelper: Unable to convert to URI: [" +
+                       aImageURL + "] " + err);
+        return false;
+      }
+      
+      if (uri instanceof Ci.nsIFileURL) {
+        var imageFile = uri.file;
+        checkFileSize = imageFile.fileSize;
+      }
+    }
+
+    if (checkFileSize > maxFileSize) {
+      // Inform the user that this file is too big.
+      var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Ci.nsIPromptService);
+      
+      var strTitle = SBString("albumart.maxsize.title", null);
+      var strMsg = SBFormattedString("albumart.maxsize.message",
+                                     [ StorageFormatter.format(maxFileSize),
+                                       StorageFormatter.format(checkFileSize) ]);
+      
+      promptService.alert(null, strTitle, strMsg);
+      return false;
+    }
+    return true;
+  },
+  
   /**
    * \brief Reads the image data from a local file.
    * \param aInputFile the nsIFile to read the image data from.
@@ -81,12 +148,22 @@ var sbCoverHelper = {
   },
 
   /**
-   * \brief Reads a file and saves that to our ProfLD/artwork folder.
+   * \brief Reads a file and saves that to our ProfLD/artwork folder. This
+   *        checks the size of the image and will not save if it is too big.
    * \param aFromFile - File to read image data from.
    * \return String version of the filename to the new image saved to the
    *         artwork folder, or null if an error occurs.
    */
   saveFileToArtworkFolder: function (aFromFile) {
+    if ( !(aFromFile instanceof Ci.nsIFile)) {
+      return null;
+    }
+    
+    // First check that we do not exceed the maximum file size.
+    if (!this.isImageSizeValid(null, aFromFile.fileSize)) {
+      return null;
+    }
+
     try {
       var imageData;
       var mimeType;
@@ -134,10 +211,8 @@ var sbCoverHelper = {
         // when the transfer is complete...
         if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP) {
           if (aStatus == 0) {
-            try {
-              var fileName = self.saveFileToArtworkFolder(tempFile);
-              aCallback(fileName);
-            } catch (err) { }
+            var fileName = self.saveFileToArtworkFolder(tempFile);
+            aCallback(fileName);
           } else { }
         }
       }

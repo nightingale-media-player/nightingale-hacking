@@ -389,3 +389,7 @@ pref("songbird.splitter.sb-playlist-splitter.after.height", "411");
 //
 pref("songbird.library_importer.unsupported_media_alert.enabled", true);
 
+//
+// Album art preferences
+//
+pref("songbird.albumart.maxsize", 16777216);

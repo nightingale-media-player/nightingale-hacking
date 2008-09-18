@@ -688,14 +688,14 @@ var AlbumArt = {
   
   /**
    * \brief handles something being dropped on our display pane.
-   * \param aEvent - Event of drag and drop session
-   * \param aDropata - Data of what has been dropped.
+   * \param aEvent    - Event of drag and drop session
+   * \param aDropata  - Data of what has been dropped.
    * \param aSesssion - Drag and drop session.
    */
   onDrop: function AlbumArt_onDrop(aEvent, aDropData, aSession) {
     var self = this;
     sbCoverHelper.handleDrop(function (newFile) {
-      if (newFile && newFile != "") {
+      if (newFile) {
         self.setCurrentStateItemImage(newFile);
       }
     }, aDropData);
@@ -736,7 +736,7 @@ var AlbumArt = {
                         .createInstance(Ci.sbIClipboardHelper);
     var mimeType = {};
     var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
-    if (imageData.length > 0) {
+    if (sbCoverHelper.isImageSizeValid(null, imageData.length)) {
       var metadataImageScannerService =
                         Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
                           .getService(Ci.sbIMetadataImageScanner);
@@ -745,7 +745,9 @@ var AlbumArt = {
                                         .saveImageDataToFile(imageData,
                                                              imageData.length,
                                                              mimeType.value);
-      AlbumArt.setCurrentStateItemImage(newFile);
+      if (newFile) {
+        AlbumArt.setCurrentStateItemImage(newFile);
+      }
     }
   },
   
