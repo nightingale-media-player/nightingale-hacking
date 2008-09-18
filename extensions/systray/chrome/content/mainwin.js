@@ -47,14 +47,16 @@ var systray = {
         var title = SBDataGetStringValue("metadata.title");
         var artist = SBDataGetStringValue("metadata.artist");
         var album = SBDataGetStringValue("metadata.album");
-        if (title + artist + album == "") {
+        var position = SBDataGetStringValue("metadata.position.str");
+        var length = SBDataGetStringValue("metadata.length.str");
+        if (title + artist + album + position + length == "") {
           // bogus alert, nothing to show
           return;
         }
-        trayIcon.title = title + '\n' + artist + '\n' + album;
+        trayIcon.title = title + '\n' + artist + '\n' + album + '\n' + position + '/' + length;
         if (aSystray._doAlertNotification) {
           alsertsSvc.showAlertNotification("chrome://branding/content/icon64.png",
-                                          title, artist + " : " + album,
+                                          title, artist + " : " + album + " - " + position + '/' + length,
                                           false, "", null);
         }
       }
@@ -65,12 +67,18 @@ var systray = {
                         '\n' +
                         SBDataGetStringValue("metadata.artist") +
                         '\n' +
-                        SBDataGetStringValue("metadata.album");
+                        SBDataGetStringValue("metadata.album") + 
+                        '\n' +
+                        SBDataGetStringValue("metadata.position.str") +
+                        '/' +
+                        SBDataGetStringValue("metadata.length.str");
     },
 
   _urlRemote: null,
   _titleRemote: null,
   _artistRemote: null,
+  _positionRemote: null,
+  _lengthRemote: null,
 
   attachRemotes:
     function systray_attachRemotes() {
@@ -82,6 +90,10 @@ var systray = {
       systray._titleRemote.bindObserver(systray, true);
       systray._artistRemote = SB_NewDataRemote("metadata.artist", null);
       systray._artistRemote.bindObserver(systray, true);
+      systray._positionRemote = SB_NewDataRemote("metadata.position.str", null);
+      systray._positionRemote.bindObserver(systray, true);
+      systray._lengthRemote = SB_NewDataRemote("metadata.length.str", null);
+      systray._lengthRemote.bindObserver(systray, true);
   },
 
   detachRemotes:
@@ -90,6 +102,8 @@ var systray = {
       systray._urlRemote.unbind();
       systray._titleRemote.unbind();
       systray._artistRemote.unbind();
+      systray._positionRemote.unbind();
+      systray._lengthRemote.unbind();
   },
 
   destroy:

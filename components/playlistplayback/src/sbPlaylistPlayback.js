@@ -1252,7 +1252,6 @@ PlaylistPlayback.prototype = {
     this._metadataPos.intValue = 0;
     this._metadataLen.intValue = 0;
     this._metadataPosText.stringValue = "0:00";
-    this._metadataLenText.stringValue = "0:00";
 
     this._playingVideo.boolValue = false;
     this._controlTriggered.stringValue = Date.now();
