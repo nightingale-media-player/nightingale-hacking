@@ -225,13 +225,13 @@ NS_IMPL_ISUPPORTS1(sbLocalDatabaseSmartMediaListCondition,
                    sbILocalDatabaseSmartMediaListCondition)
 
 sbLocalDatabaseSmartMediaListCondition::sbLocalDatabaseSmartMediaListCondition(const nsAString& aPropertyID,
-                                                                               sbIPropertyOperator* aOperator,
+                                                                               const nsAString& aOperatorString,
                                                                                const nsAString& aLeftValue,
                                                                                const nsAString& aRightValue,
                                                                                const nsAString& aDisplayUnit)
 : mLock(nsnull)
 , mPropertyID(aPropertyID)
-, mOperator(aOperator)
+, mOperatorString(aOperatorString)
 , mLeftValue(aLeftValue)
 , mRightValue(aRightValue)
 , mDisplayUnit(aDisplayUnit)
@@ -263,6 +263,24 @@ sbLocalDatabaseSmartMediaListCondition::GetOperator(sbIPropertyOperator** aOpera
   NS_ENSURE_ARG_POINTER(aOperator);
 
   nsAutoLock lock(mLock);
+  
+  if (!mOperator) {
+    nsresult rv;
+    // Get the property manager
+    nsCOMPtr<sbIPropertyManager> propMan;
+    propMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    // Get the property info for this property. 
+    nsCOMPtr<sbIPropertyInfo> info;
+    rv = propMan->GetPropertyInfo(mPropertyID, getter_AddRefs(info));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the operator.
+    rv = info->GetOperator(mOperatorString, getter_AddRefs(mOperator));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   *aOperator = mOperator;
   NS_ADDREF(*aOperator);
 
@@ -310,11 +328,7 @@ sbLocalDatabaseSmartMediaListCondition::ToString(nsAString& _retval)
   success = map.Put(NS_LITERAL_STRING("property"), mPropertyID);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  nsAutoString op;
-  rv = mOperator->GetOperator(op);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  success = map.Put(NS_LITERAL_STRING("operator"), op);
+  success = map.Put(NS_LITERAL_STRING("operator"), mOperatorString);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = map.Put(NS_LITERAL_STRING("leftValue"), mLeftValue);
@@ -763,7 +777,7 @@ sbLocalDatabaseSmartMediaList::AppendCondition(const nsAString& aPropertyID,
 
   sbRefPtrCondition condition;
   condition = new sbLocalDatabaseSmartMediaListCondition(aPropertyID,
-                                                         aOperator,
+                                                         op,
                                                          aLeftValue,
                                                          aRightValue,
                                                          aDisplayUnit);
@@ -1472,12 +1486,12 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
       // everything or nothing depending on the operator used, it will be of
       // the form "guid Is|IsNot ''".
 
-      nsCOMPtr<sbIPropertyInfo> info;
-      rv = mPropMan->GetPropertyInfo(NS_LITERAL_STRING(SB_PROPERTY_GUID), getter_AddRefs(info));
+      nsCOMPtr<sbIPropertyOperator> opObj;
+      rv = ruleCondition->GetOperator(getter_AddRefs(opObj));
       NS_ENSURE_SUCCESS(rv, rv);
-
+      
       nsAutoString op;
-      rv = ruleCondition->mOperator->GetOperator(op);
+      rv = opObj->GetOperator(op);
       NS_ENSURE_SUCCESS(rv, rv);
       
       nsAutoString newOp;
@@ -1486,13 +1500,9 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
       else
         newOp = NS_LITERAL_STRING(SB_OPERATOR_EQUALS);
 
-      nsCOMPtr<sbIPropertyOperator> opObj;
-      rv = info->GetOperator(newOp, getter_AddRefs(opObj));
-      NS_ENSURE_SUCCESS(rv, rv);
-
       ruleCondition = new 
         sbLocalDatabaseSmartMediaListCondition(NS_LITERAL_STRING(SB_PROPERTY_GUID),
-                                               opObj,
+                                               newOp,
                                                NS_LITERAL_STRING(""),
                                                NS_LITERAL_STRING(""),
                                                NS_LITERAL_STRING(""));
@@ -1721,8 +1731,12 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     columnName.Assign(kObjSortable);
   }
 
+  nsCOMPtr<sbIPropertyOperator> opObj;
+  rv = aCondition->GetOperator(getter_AddRefs(opObj));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsAutoString op;
-  rv = aCondition->mOperator->GetOperator(op);
+  rv = opObj->GetOperator(op);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoString value;
@@ -2107,8 +2121,12 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
     return NS_OK;
   }
   
+  nsCOMPtr<sbIPropertyOperator> opObj;
+  rv = aCondition->GetOperator(getter_AddRefs(opObj));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsAutoString op;
-  rv = aCondition->mOperator->GetOperator(op);
+  rv = opObj->GetOperator(op);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (op.EqualsLiteral(SB_OPERATOR_ISFALSE)) {
@@ -2787,33 +2805,9 @@ sbLocalDatabaseSmartMediaList::ReadConfiguration()
 
         if (!property.IsEmpty() && !opString.IsEmpty()) {
 
-          // Get the property info for this property.  If the property does
-          // not exist, just skip this condition
-          nsCOMPtr<sbIPropertyInfo> info;
-          rv = mPropMan->GetPropertyInfo(property, getter_AddRefs(info));
-          if (NS_FAILED(rv)) {
-            if (rv == NS_ERROR_NOT_AVAILABLE) {
-              NS_WARNING("Stored property not found");
-              continue;
-            }
-            else {
-              NS_ENSURE_SUCCESS(rv, rv);
-            }
-          }
-
-          // Get the operator.  If this operator is not found, then skip this
-          // condition
-          nsCOMPtr<sbIPropertyOperator> op;
-          rv = info->GetOperator(opString, getter_AddRefs(op));
-          NS_ENSURE_SUCCESS(rv, rv);
-          if (!op) {
-            NS_WARNING("Stored operator not found");
-            continue;
-          }
-
           sbRefPtrCondition condition;
           condition = new sbLocalDatabaseSmartMediaListCondition(property,
-                                                                 op,
+                                                                 opString,
                                                                  leftValue,
                                                                  rightValue,
                                                                  displayUnit);

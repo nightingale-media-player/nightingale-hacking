@@ -116,7 +116,7 @@ public:
   NS_DECL_SBILOCALDATABASESMARTMEDIALISTCONDITION
 
   sbLocalDatabaseSmartMediaListCondition(const nsAString& aPropertyID,
-                                         sbIPropertyOperator* aOperator,
+                                         const nsAString& aOperatorString,
                                          const nsAString& aLeftValue,
                                          const nsAString& aRightValue,
                                          const nsAString& aDisplayUnit);
@@ -129,11 +129,14 @@ protected:
   PRLock* mLock;
 
   nsString mPropertyID;
-  nsCOMPtr<sbIPropertyOperator> mOperator;
+  nsString mOperatorString;
 
   nsString mLeftValue;
   nsString mRightValue;
   nsString mDisplayUnit;
+
+private:
+  nsCOMPtr<sbIPropertyOperator> mOperator;
 };
 
 class sbLocalDatabaseSmartMediaList : public sbILocalDatabaseMediaItem,
