@@ -268,7 +268,7 @@ searchbar:not([empty="true"])[livesearchmode="true"] .searchbar-textbox {
 /*
   Focused state
 */
-textbox[focused="true"],
+textbox[focused="true"]:not(.plain),
 searchbar[focused="true"] .search-go-button,
 searchbar[focused="true"] .searchbar-textbox {
   background-color: rgb(255,255,235) !important;

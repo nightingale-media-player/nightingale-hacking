@@ -70,13 +70,10 @@ textbox[multiline="true"] > .textbox-input-box {
 /* ::::: plain textbox ::::: */
 
 textbox.plain {
-/*
-  -moz-appearance: none !important;
-  padding: 0px !important;
-  margin: 0px !important;
-  border: none !important;
-*/
+  -moz-appearance: none;
+  padding: 0px;
+  border: none;
+  background: transparent;
 }
-
 
 

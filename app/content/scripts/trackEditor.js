@@ -669,7 +669,7 @@ var TrackEditor = {
     var elements = document.getElementsByAttribute("property", "*");
     for each (var element in elements) {
       var wrappedElement = null;
-      if (element.tagName == "label") {
+      if (element.tagName == "label" || element.tagName == "textbox") {
         var property = element.getAttribute("property")
         var propertyInfo = this._propertyManager.getPropertyInfo(property);
         
@@ -1184,8 +1184,8 @@ TrackEditorURILabel.prototype = {
       /* it's okay, we just leave formattedValue == value in this case */
     }
     
-    if (value != this._element.value) {
-      this._element.value = value;
+    if (formattedValue != this._element.value) {
+      this._element.value = formattedValue;
     }
   
     if (value != this._button.value) {
@@ -1211,7 +1211,7 @@ TrackEditorURILabel.prototype = {
   
   revealURI: function(uri) {
     // Cribbed from mozilla/toolkit/mozapps/downloads/content/downloads.js 
-    var f = uri.QueryInterface(Ci.nsIFileURL).file;
+    var f = uri.QueryInterface(Ci.nsIFileURL).file.QueryInterface(Ci.nsILocalFile);
     
     try {
       // Show the directory containing the file and select the file
@@ -2086,9 +2086,20 @@ TrackEditorAdvancedTab.prototype = {
                       "WARNING: Editing these values could ruin Christmas.");
     label.appendChild(labelText);
     
-    var advancedContainer = document.createElement("vbox");
-    advancedContainer.id = "advanced-contents";
-    advancedContainer.setAttribute("flex", "1");
+    var advancedGrid = document.createElement("grid");
+    advancedGrid.id = "advanced-contents";
+    advancedGrid.style.MozBoxFlex = 1;
+    var columns = document.createElement("columns");
+    var column = document.createElement("column");
+    column.setAttribute("id", "advanced-column-key");
+    columns.appendChild(column);
+    column = document.createElement("column");
+    column.setAttribute("id", "advanced-column-value");
+    column.style.MozBoxFlex = "1";
+    columns.appendChild(column);
+    advancedGrid.appendChild(columns);
+    var advancedRows = document.createElement("rows");
+    advancedGrid.appendChild(advancedRows);
 
     var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                    .getService(Ci.sbIPropertyManager);
@@ -2099,8 +2110,8 @@ TrackEditorAdvancedTab.prototype = {
       var propInfo = propMan.getPropertyInfo(property);
       
       if (propInfo.userViewable) {
-        var container = document.createElement("hbox");
-        advancedContainer.appendChild(container);
+        var container = document.createElement("row");
+        advancedRows.appendChild(container);
         
         var label = document.createElement("label");
         label.setAttribute("class", "advanced-label");
@@ -2114,15 +2125,16 @@ TrackEditorAdvancedTab.prototype = {
           container.appendChild(textbox);
         }
         else {
-          var label = document.createElement("label");
+          var label = document.createElement("textbox");
+          label.setAttribute("readonly", true);
+          label.className = "plain";
           label.setAttribute("property", property);
-          label.setAttribute("crop", "end");
           container.appendChild(label);
         }
       }
     }
     // we add this at the end so that there is just a single reflow
-    advancedTab.appendChild(advancedContainer);
+    advancedTab.appendChild(advancedGrid);
   }
 }
 
