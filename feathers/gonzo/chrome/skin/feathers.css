@@ -977,3 +977,16 @@ html|*.error-text,
 .error-text {
   color: rgb(255,0,0);
 }
+
+/* text that looks like a link */
+.text-link {
+  color:#1694d9;
+  text-decoration:none;
+}
+.text-link:hover {
+  text-decoration:underline;
+} 
+.text-link:hover:active {
+} 
+.text-link[visited="true"] {
+}

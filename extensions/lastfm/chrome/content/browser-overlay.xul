@@ -81,7 +81,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           <spacer flex="1"/>
 
           <hbox align="center">
-            <description class="text-link"><html:span id="lastfmSignup">&lastfm.signup.label;</html:span></description>
+            <description class="text-link"><html:span class="text-link" id="lastfmSignup">&lastfm.signup.label;</html:span></description>
             <spacer flex="1"/>
             <button id="lastfmLoginButton">&lastfm.login.button;</button>
           </hbox>
@@ -105,8 +105,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <caption label="&lastfm.profile.caption;" />
             <image id="lastfmImage" src="" />
             <vbox>
-              <description>
-                <html:span id="lastfmRealname" class="lastfmClickable" style="font-weight:bold; font-size:120%;"/>
+              <description class="text-link">
+                <html:span id="lastfmRealname" class="lastfmClickable text-link" style="font-weight:bold; font-size:120%;"/>
               </description>
               <description >
                 &lastfm.profile.numtracks.before;

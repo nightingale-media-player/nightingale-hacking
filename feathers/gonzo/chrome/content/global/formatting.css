@@ -132,17 +132,8 @@ description, label {
   font-weight:bold !important;
 }
 
-/* class for text with a 'link' appearance */
+/* text that looks like a link */
 .text-link {
-  color:#1694d9 !important;
   outline:0;
-  cursor:pointer;
-  text-decoration:none;
-}
-.text-link:hover {
-  text-decoration:underline;
-} 
-.text-link:hover:active {
-} 
-.text-link[visited="true"] {
+  cursor:pointer !important;
 }
