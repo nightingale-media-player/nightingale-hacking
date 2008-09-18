@@ -79,7 +79,7 @@
         -->
         <menuseparator id="menu_ImportSeparator"/>
 
-        <menuitem id="menuitem_file_scan" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
+        <menuitem id="menuitem_file_scan" key="file-scan-key" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>
         <menuitem id="menuitem_file_playlist" class="menuitem-iconic" label="&menu.file.playlist;" accesskey="&menu.file.playlist.accesskey;" />
         <!-- XXX komi: disable; see bug 11230
         <menuitem id="menuitem_file_library" class="menuitem-iconic" label="&menu.file.library;" accesskey="&menu.file.library.accesskey;" />

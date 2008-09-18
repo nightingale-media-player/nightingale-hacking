@@ -413,6 +413,7 @@
       <key id="newtab-key" modifiers="accel" key="&menu.file.newtab.key;" oncommand="doMenu('menuitem_file_newtab');"/>
       <key id="closetab-key" modifiers="accel" key="&menu.file.closetab.key;" oncommand="doMenu('menuitem_file_closetab');"/>
       <key id="printKb" key="&printCmd.commandkey;" command="cmd_print" modifiers="accel"/>
+      <key id="file-scan-key" modifiers="accel shift" key="&menu.file.filescan.key;" oncommand="doMenu('menuitem_file_scan');"/>
       <!-- key id="miniplayer-key" modifiers="accel,alt" key="&menu.file.mini.key;" oncommand="doMenu('file.window');"/ -->
       <!-- 
         Due to the mozilla bug 330458, loading the XUL key/command overlay information from |layoutBaseOverlay.xul|

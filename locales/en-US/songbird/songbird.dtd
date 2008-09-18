@@ -417,6 +417,7 @@
 <!ENTITY menu.file.newtab.key          "T" >
 <!ENTITY menu.file.closetab.key        "W" >
 <!ENTITY menu.file.mini.key            "M" >
+<!ENTITY menu.file.filescan.key        "O" >
 <!ENTITY menu.file.dominspector        "I" >
 <!ENTITY menu.edit.undo.key            "Z" >
 <!ENTITY menu.edit.redo.key            "Y" >
