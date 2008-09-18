@@ -44,7 +44,8 @@ sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyID,
                                            const PRBool aRemoteReadable,
                                            const PRBool aRemoteWritable,
                                            const PRBool aUserViewable,
-                                           const PRBool aUserEditable)
+                                           const PRBool aUserEditable,
+                                           const PRBool aIgnoreColumnPicker)
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
@@ -52,6 +53,7 @@ sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyID,
   mUserEditable = aUserEditable;
   mRemoteReadable = aRemoteReadable;
   mRemoteWritable = aRemoteWritable;
+  mIgnoreColumnPicker = aIgnoreColumnPicker;
   mType.AssignLiteral("rating");
 }
 

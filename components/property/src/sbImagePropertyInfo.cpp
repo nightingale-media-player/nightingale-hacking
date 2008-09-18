@@ -41,7 +41,8 @@ sbImagePropertyInfo::sbImagePropertyInfo(const nsAString& aPropertyID,
                                          const PRBool aRemoteReadable,
                                          const PRBool aRemoteWritable,
                                          const PRBool aUserViewable,
-                                         const PRBool aUserEditable)
+                                         const PRBool aUserEditable,
+                                         const PRBool aIgnoreColumnPicker)
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
@@ -49,6 +50,7 @@ sbImagePropertyInfo::sbImagePropertyInfo(const nsAString& aPropertyID,
   mUserEditable = aUserEditable;
   mRemoteReadable = aRemoteReadable;
   mRemoteWritable = aRemoteWritable;
+  mIgnoreColumnPicker = aIgnoreColumnPicker;
   mType.AssignLiteral("image");
 }
 

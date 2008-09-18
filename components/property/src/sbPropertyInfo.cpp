@@ -108,6 +108,7 @@ sbPropertyInfo::sbPropertyInfo()
 , mRemoteWritableLock(nsnull)
 , mUnitConverter(nsnull)
 , mUnitConverterLock(nsnull)
+, mIgnoreColumnPickerLock(nsnull)
 {
   mSortProfileLock = PR_NewLock();
 
@@ -149,6 +150,10 @@ sbPropertyInfo::sbPropertyInfo()
   mUnitConverterLock = PR_NewLock();
   NS_ASSERTION(mUnitConverterLock,
     "sbPropertyInfo::mUnitConverterLock failed to create lock!");
+
+  mIgnoreColumnPickerLock = PR_NewLock();
+  NS_ASSERTION(mIgnoreColumnPickerLock,
+    "sbPropertyInfo::mIgnoreColumnPickerLock failed to create lock!");
 }
 
 sbPropertyInfo::~sbPropertyInfo()
@@ -191,6 +196,10 @@ sbPropertyInfo::~sbPropertyInfo()
 
   if(mUnitConverterLock) {
     PR_DestroyLock(mUnitConverterLock);
+  }
+
+  if(mIgnoreColumnPickerLock) {
+    PR_DestroyLock(mIgnoreColumnPickerLock);
   }
 }
 
@@ -569,3 +578,22 @@ NS_IMETHODIMP sbPropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitCo
 
   return NS_OK;
 }
+
+NS_IMETHODIMP sbPropertyInfo::GetIgnoreColumnPicker(PRBool *aIgnoreColumnPicker)
+{
+  NS_ENSURE_ARG_POINTER(aIgnoreColumnPicker);
+
+  sbSimpleAutoLock lock(mIgnoreColumnPickerLock);
+  *aIgnoreColumnPicker = mIgnoreColumnPicker;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbPropertyInfo::SetIgnoreColumnPicker(PRBool aIgnoreColumnPicker)
+{
+  sbSimpleAutoLock lock(mIgnoreColumnPickerLock);
+  mIgnoreColumnPicker = aIgnoreColumnPicker;
+
+  return NS_OK;
+}
+

@@ -51,7 +51,8 @@ public:
                       const PRBool aRemoteReadable,
                       const PRBool aRemoteWritable,
                       const PRBool aUserViewable,
-                      const PRBool aUserEditable);
+                      const PRBool aUserEditable,
+                      const PRBool aIgnoreColumnPicker);
   virtual ~sbImagePropertyInfo() {}
 
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);

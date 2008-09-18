@@ -412,3 +412,20 @@ sbImmutablePropertyInfo::SetUnitConverter(sbIPropertyUnitConverter *aUnitConvert
     mUnitConverter->SetPropertyInfo(this);
   return NS_OK;
 }
+
+NS_IMETHODIMP sbImmutablePropertyInfo::GetIgnoreColumnPicker(PRBool *aIgnoreColumnPicker)
+{
+  NS_ENSURE_ARG_POINTER(aIgnoreColumnPicker);
+
+  *aIgnoreColumnPicker = mIgnoreColumnPicker;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbImmutablePropertyInfo::SetIgnoreColumnPicker(PRBool aIgnoreColumnPicker)
+{
+  mIgnoreColumnPicker = aIgnoreColumnPicker;
+
+  return NS_OK;
+}
+

@@ -52,7 +52,8 @@ sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropert
                                                        const PRBool aRemoteReadable,
                                                        const PRBool aRemoteWritable,
                                                        const PRBool aUserViewable,
-                                                       const PRBool aUserEditable)
+                                                       const PRBool aUserEditable,
+                                                       const PRBool aIgnoreColumnPicker)
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
@@ -62,6 +63,7 @@ sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropert
   mUserEditable = aUserEditable;
   mRemoteReadable = aRemoteReadable;
   mRemoteWritable = aRemoteWritable;
+  mIgnoreColumnPicker = aIgnoreColumnPicker;
   mType.AssignLiteral("button");
 }
 

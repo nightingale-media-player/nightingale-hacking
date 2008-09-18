@@ -46,7 +46,8 @@ sbOriginPageImagePropertyInfo::sbOriginPageImagePropertyInfo(const nsAString& aP
                                                              const PRBool aRemoteReadable,
                                                              const PRBool aRemoteWritable,
                                                              const PRBool aUserViewable,
-                                                             const PRBool aUserEditable)
+                                                             const PRBool aUserEditable,
+                                                             const PRBool aIgnoreColumnPicker)
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
@@ -54,6 +55,7 @@ sbOriginPageImagePropertyInfo::sbOriginPageImagePropertyInfo(const nsAString& aP
   mUserEditable = aUserEditable;
   mRemoteReadable = aRemoteReadable;
   mRemoteWritable = aRemoteWritable;
+  mIgnoreColumnPicker = aIgnoreColumnPicker;
   mType.AssignLiteral("image");
 }
 

@@ -64,7 +64,8 @@ private:
                             PRBool aUserViewable,
                             PRBool aUserEditable,
                             PRBool aRemoteReadable,
-                            PRBool aRemoteWritable);
+                            PRBool aRemoteWritable,
+                            PRBool aIgnoreColumnPicker = PR_FALSE);
 
   nsresult RegisterDuration(const nsAString& aPropertyID,
                             const nsAString& aDisplayKey,
@@ -72,7 +73,8 @@ private:
                             PRBool aUserViewable,
                             PRBool aUserEditable,
                             PRBool aRemoteReadable,
-                            PRBool aRemoteWritable);
+                            PRBool aRemoteWritable,
+                            PRBool aIgnoreColumnPicker = PR_FALSE);
 
   nsresult RegisterNumber(const nsAString& aPropertyID,
                           const nsAString& aDisplayKey,
@@ -85,7 +87,8 @@ private:
                           PRBool aHasMaxValue,
                           PRBool aRemoteReadable,
                           PRBool aRemoteWritable,
-                          sbIPropertyUnitConverter *aConverter);
+                          sbIPropertyUnitConverter *aConverter,
+                          PRBool aIgnoreColumnPicker = PR_FALSE);
 
   nsresult RegisterProgress(const nsAString& aValuePropertyID,
                             const nsAString& aValueDisplayKey,
@@ -95,7 +98,8 @@ private:
                             PRBool aUserViewable,
                             PRBool aUserEditable,
                             PRBool aRemoteReadable,
-                            PRBool aRemoteWritable);
+                            PRBool aRemoteWritable,
+                            PRBool aIgnoreColumnPicker = PR_FALSE);
 
   nsresult RegisterText(const nsAString& aPropertyID,
                         const nsAString& aDisplayKey,
@@ -106,7 +110,8 @@ private:
                         PRBool aHasNullSort,
                         PRBool aRemoteReadable,
                         PRBool aRemoteWritable,
-                        sbIPropertyArray* aSortProfile = nsnull);
+                        sbIPropertyArray* aSortProfile = nsnull,
+                        PRBool aIgnoreColumnPicker = PR_FALSE);
 
   nsresult RegisterURI(const nsAString& aPropertyID,
                        const nsAString& aDisplayKey,
@@ -114,7 +119,8 @@ private:
                        PRBool aUserViewable,
                        PRBool aUserEditable,
                        PRBool aRemoteReadable,
-                       PRBool aRemoteWritable);
+                       PRBool aRemoteWritable,
+                       PRBool aIgnoreColumnPicker = PR_FALSE);
 
   nsresult RegisterImage(const nsAString& aPropertyID,
                          const nsAString& aDisplayKey,
@@ -122,7 +128,8 @@ private:
                          PRBool aUserViewable,
                          PRBool aUserEditable,
                          PRBool aRemoteReadable,
-                         PRBool aRemoteWritable);
+                         PRBool aRemoteWritable,
+                         PRBool aIgnoreColumnPicker = PR_FALSE);
 
   nsresult RegisterBoolean(const nsAString &aPropertyID,
                            const nsAString &aDisplayKey,
@@ -130,7 +137,8 @@ private:
                            PRBool aUserViewable,
                            PRBool aUserEditable,
                            PRBool aRemoteReadable,
-                           PRBool aRemoteWritable);
+                           PRBool aRemoteWritable,
+                           PRBool aIgnoreColumnPicker = PR_FALSE);
 
   nsresult RegisterDummy(sbDummyPropertyInfo *aDummyProperty,
                          const nsAString &aPropertyID,

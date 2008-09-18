@@ -47,7 +47,9 @@
   NS_IMETHOD GetRemoteReadable(PRBool * aRemoteReadable) { return _to GetRemoteReadable(aRemoteReadable); } \
   NS_IMETHOD SetRemoteReadable(PRBool aRemoteReadable) { return _to SetRemoteReadable(aRemoteReadable); } \
   NS_IMETHOD GetRemoteWritable(PRBool * aRemoteWritable) { return _to GetRemoteWritable(aRemoteWritable); } \
-  NS_IMETHOD SetRemoteWritable(PRBool aRemoteWritable) { return _to SetRemoteWritable(aRemoteWritable); }
+  NS_IMETHOD SetRemoteWritable(PRBool aRemoteWritable) { return _to SetRemoteWritable(aRemoteWritable); } \
+  NS_IMETHOD GetIgnoreColumnPicker(PRBool * aIgnoreColumnPicker) { return _to GetIgnoreColumnPicker(aIgnoreColumnPicker); } \
+  NS_IMETHOD SetIgnoreColumnPicker(PRBool aIgnoreColumnPicker) { return _to SetIgnoreColumnPicker(aIgnoreColumnPicker); }
 
 class sbAbstractPropertyBuilder : public sbIPropertyBuilder
 {
@@ -80,7 +82,7 @@ protected:
   PRPackedBool mUserEditable;
   PRPackedBool mRemoteReadable;
   PRPackedBool mRemoteWritable;
-
+  PRPackedBool mIgnoreColumnPicker;
 };
 
 #endif /* __SBABSTRACTPROPERTYBUILDER_H__ */

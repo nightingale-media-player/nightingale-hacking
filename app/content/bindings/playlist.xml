@@ -1215,6 +1215,10 @@
   if (isHidden) {
     treecol.setAttribute("hidden", "true");
   }
+  
+  if (propertyInfo.ignoreColumnPicker) {
+    treecol.setAttribute("ignoreincolumnpicker", "true");
+  }
 
   treecol.setAttribute("ordinal", ordinal);
 
