@@ -83,16 +83,15 @@
 
           // find coordinates of click relative to treecol, then map to
           // tree content
-          var y = (event.screenY - treecol.boxObject.screenY) 
-                   - treecol.boxObject.height;
+          var y = (event.screenY - treecol.boxObject.screenY);
           var x = (event.screenX - treecol.boxObject.screenX);
           
           // show popup
-          this.popup.openPopup(treecol, 
-                               "after_start", 
-                               x, 
-                               y, 
-                               true, 
+          this.popup.openPopup(treecol,
+                               "overlap",
+                               x,
+                               y,
+                               true,
                                false);
         ]]>
       </handler>
