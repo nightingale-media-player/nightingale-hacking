@@ -343,15 +343,15 @@
   
   <hbox class="dialog-button-box">
     <button id="prev_button"
-            label="&lt;"
-            accesskey="p"
+            label="&trackeditor.prev.button.label;"
+            accesskey="&trackeditor.prev.accesskey;"
             tooltiptext="&tooltip.control.back;"
-            oncommand="TrackEditor.prev()"/>
+            command="trackeditor-prev-cmd"/>
     <button id="next_button"
-            label="&gt;"
-            accesskey="n"
+            label="&trackeditor.next.button.label;"
+            accesskey="&trackeditor.next.accesskey;"
             tooltiptext="&tooltip.control.fwd;"
-            oncommand="TrackEditor.next()"/>
+            command="trackeditor-next-cmd"/>
     <spacer flex="1"/>
     <button id="cancel_button" label="&window.cancel;" oncommand="window.close()"/>
     <button id="ok_button" label="&window.ok;" oncommand="TrackEditor.closeAndApply();"/>
@@ -364,5 +364,17 @@
   <script type="application/x-javascript" 
           src="chrome://songbird/content/scripts/windowUtils.js" />
   <script src="chrome://global/content/nsDragAndDrop.js"/>
+  
+  <keyset id="trackEditorKeys">
+    <key id="trackeditor-prev-key" key="&trackeditor.prev.key;"
+         modifiers="accel" command="trackeditor-prev-cmd"/>
+    <key id="trackeditor-next-key" key="&trackeditor.next.key;"
+         modifiers="accel" command="trackeditor-next-cmd"/>
+  </keyset>
+  
+  <commandset id="trackEditorCommands">
+    <command id="trackeditor-prev-cmd" oncommand="TrackEditor.prev();"/>
+    <command id="trackeditor-next-cmd" oncommand="TrackEditor.next();"/>
+  </commandset>
 
 </dialog>

@@ -331,12 +331,18 @@
 <!ENTITY bookmarks.edit.label  "Name:" >
 <!ENTITY bookmarks.edit.icon   "Icon:" >
 
-
+<!-- Track Editor (Metadata Editor) -->
 <!ENTITY trackeditor.title                        "Metadata Editor" >
 <!ENTITY trackeditor.tab.summary.title            "Summary" >
 <!ENTITY trackeditor.tab.edit.title               "Properties" >
 <!ENTITY trackeditor.tab.lyrics.title             "Lyrics" >
 <!ENTITY trackeditor.artwork.label                "Album Art" >
+<!ENTITY trackeditor.prev.button.label            "&lt;" >
+<!ENTITY trackeditor.next.button.label            "&gt;" >
+<!ENTITY trackeditor.prev.accesskey               "P" >
+<!ENTITY trackeditor.next.accesskey               "N" >
+<!ENTITY trackeditor.prev.key                     "P" >
+<!ENTITY trackeditor.next.key                     "N" >
 
 <!-- The following strings are from the old track editor, and can be remove one day -->
 <!ENTITY trackeditor.trackdata        "Track Data" >
