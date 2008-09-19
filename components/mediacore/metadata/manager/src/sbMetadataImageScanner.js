@@ -108,6 +108,7 @@ sbMetadataImageScanner.prototype = {
   _restartScanning: false,  // Set to true to restart the scanning
   _rescanInterval: RESCAN_INTERVAL, // Time to pass for rescan of art
   _timerInterval: TIMER_INTERVAL,   // Time to pass before next item scan
+  _unlinkImages: [],        // Array of images we may have to remove
   
   // Services
   _consoleService: null,    // For output of debug messages to error console
@@ -480,7 +481,63 @@ sbMetadataImageScanner.prototype = {
                                  this._timerInterval, 
                                  Ci.nsITimer.TYPE_REPEATING_SLACK);
   },
-  
+
+  /**
+   * \brief Checks to see if any images need to be remove after items have been
+   *        removed.
+   */
+  _removeUnlinkedImages: function () {
+    // No images to unlink
+    if (this._unlinkImages.length <= 0) {
+      return;
+    }
+    
+    // Get the profile folder and append "artwork" for our covers folder
+    var dir = Cc["@mozilla.org/file/directory_service;1"]
+                .createInstance(Ci.nsIProperties);
+    var coversFolder = dir.get("ProfLD", Ci.nsIFile);
+    coversFolder.append("artwork");
+
+    var ioService = Cc["@mozilla.org/network/io-service;1"]
+                      .getService(Ci.nsIIOService);
+    
+    while (this._unlinkImages.length > 0) {
+      // Remove the and check the first item
+      var checkImage = this._unlinkImages.shift();
+
+      // Make a nsIFile out of the image url
+      var oldImageFileURL = null;
+      try {
+        oldImageFileURL = ioService.newURI(checkImage, null, null);
+      } catch (err) {
+        this._logError("Unable to convert to URI: [" + checkImage + "] " + err);
+        break;
+      }
+      
+      if (oldImageFileURL instanceof Ci.nsIFileURL) {
+        var oldImageFile = oldImageFileURL.file;
+        if (oldImageFile.parent.path == coversFolder.path) {
+          // We are in the profile folder so search for any other items with
+          // this image as well.
+          var numItemsWithImage = 0;
+          try {
+            numItemsWithImage = this._mainLibrary.getItemsByProperty(
+                                                  SBProperties.primaryImageURL,
+                                                  checkImage).length;
+          } catch (err) {
+            // getItemsByProperty will throw NS_ERROR_NOT_AVAILABLE when there
+            // are no items that match.
+          }
+
+          if (numItemsWithImage <= 0) {
+            // No other items have this image so remove it.
+            oldImageFile.remove(false);
+          }
+        }
+      }
+    }
+  },
+
   /**
    * \brief Starts up the scanning of the main library for image in metadata.
    */
@@ -533,7 +590,8 @@ sbMetadataImageScanner.prototype = {
       this._mainLibrary.addListener(this,
                                     true,
                                     Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
-                                      Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND,
+                                      Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND |
+                                      Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED,
                                     null);
   
     } catch (err) {
@@ -565,6 +623,22 @@ sbMetadataImageScanner.prototype = {
   /*********************************
    * sbIMediaListListener (requires nsISupportsWeakReference)
    ********************************/
+  onAfterItemRemoved: function (aMediaList, aMediaItem, aIndex) {
+    // Store the image so that we can remove it later if we need to.
+    var imageUrl = aMediaItem.getProperty(SBProperties.primaryImageURL);
+    if (imageUrl &&
+        imageUrl != "" &&
+        (this._unlinkImages.indexOf(imageUrl) < 0)) {
+      this._unlinkImages.push(imageUrl);
+    }
+    
+    // If we are not in a batch then check if we need to remove images
+    if (!this._batch.isActive() &&
+        this._unlinkImages.length > 0) {
+      this._removeUnlinkedImages();
+    }
+  },
+
   onBatchBegin: function (aMediaList) {
     this._debug("Batch Begin Called");
     this._batch.begin();
@@ -577,6 +651,10 @@ sbMetadataImageScanner.prototype = {
     // If the batch has finished we need to restart the scanner in case any
     // Items have been added or removed.
     if (!this._batch.isActive()) {
+      // Check if we need to remove any images after items have been removed
+      this._removeUnlinkedImages();
+      
+      // Restart the scanning
       this._debug("Batch is no longer running so restart scanning");
       this._getItems();
     }
