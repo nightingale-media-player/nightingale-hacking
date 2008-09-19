@@ -85,15 +85,18 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask) {
   if (aMask & this.ORIGIN_MEDIALISTDEFAULT) {
     if (!columns || !columns.columnMap.length) {
       columns =
-        this._getColumnMap(aMediaList.getProperty(SBProperties.defaultColumnSpec),
-                           this.ORIGIN_MEDIALISTDEFAULT);
+        this._getColumnMap(aMediaList
+                             .getProperty(SBProperties.defaultColumnSpec),
+                             this.ORIGIN_MEDIALISTDEFAULT);
     }
   }
   
   if (aMask & this.ORIGIN_LIBRARYDEFAULT) {
     if (!columns || !columns.columnMap.length) {
       columns =
-        this._getColumnMap(aMediaList.library.getProperty(SBProperties.defaultColumnSpec),
+        this._getColumnMap(aMediaList
+                             .library
+                             .getProperty(SBProperties.defaultColumnSpec),
                            this.ORIGIN_LIBRARYDEFAULT);
     }
   }
@@ -101,7 +104,9 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask) {
   if (aMask & this.ORIGIN_LIBRARY) {
     if (!columns || !columns.columnMap.length) {
       columns =
-        this._getColumnMap(aMediaList.library.getProperty(SBProperties.columnSpec),
+        this._getColumnMap(aMediaList
+                             .library
+                             .getProperty(SBProperties.columnSpec),
                            this.ORIGIN_LIBRARY);
     }
   }
