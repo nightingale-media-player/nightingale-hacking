@@ -74,6 +74,6 @@ function runTest() {
 
 function assertContains(a, b) {
   for (var i = 0; i < b.length; i++) {
-    assertTrue(a.indexOf(b[i]) >= 0);
+    assertTrue(a.indexOf(b[i]) >= 0, "looking for " + b[i]);
   }
 }
