@@ -1702,23 +1702,24 @@ function TrackEditorArtwork(element) {
   this._replaceLabel = SBString("trackeditor.artwork.replace");
   this._addLabel = SBString("trackeditor.artwork.add");
   this._createButton();
+  this._createDragOverlay();
   this._createContextMenu();
 
   var self = this;
-  element.addEventListener("click",
+  this._elementStack.addEventListener("click",
           function(evt) { self.onClick(evt); }, false);
-  element.addEventListener("keypress",
+  this._elementStack.addEventListener("keypress",
           function(evt) { self.onKeyPress(evt); }, false);
-  element.addEventListener("contextmenu",
+  this._elementStack.addEventListener("contextmenu",
           function(evt) { self.onContextMenu(evt); }, false);
   // Drag and drop for the album art image
   // We need to have over in order to get the getSupportedFlavours called when
   // the user drags an item over us.
-  element.addEventListener("dragover",
+  this._elementStack.addEventListener("dragover",
           function(evt) { nsDragAndDrop.dragOver(evt, self); }, false);
-  element.addEventListener("dragdrop",
+  this._elementStack.addEventListener("dragdrop",
           function(evt) { nsDragAndDrop.drop(evt, self); }, false);
-  element.addEventListener("draggesture",
+  this._elementStack.addEventListener("draggesture",
           function(evt) { nsDragAndDrop.startDrag(evt, self); }, false);
 }
 TrackEditorArtwork.prototype = {
@@ -1727,6 +1728,8 @@ TrackEditorArtwork.prototype = {
   _menuPopup: null,
   _replaceLabel: null,
   _addLabel: null,
+  _dragoverlay: null,
+  _elementStack: null,
   
   /**
    * \brief Changes the value of the image property only if it different.
@@ -1736,6 +1739,7 @@ TrackEditorArtwork.prototype = {
     var oldValue = TrackEditor.state.getPropertyValue(this.property);
     
     if (newValue != oldValue) {
+      
       // This will call onTrackEditorPropertyChange
       TrackEditor.state.setPropertyValue(this.property, newValue);
 
@@ -1770,6 +1774,39 @@ TrackEditorArtwork.prototype = {
     vbox.appendChild(this._button);
   },
   
+  /**
+   * \brief Creates a stack so we can display a drag image here label over top
+   *        of the default image if the item does not have artwork.
+   */
+  _createDragOverlay: function TrackEditorArtwork__createDragOverlay() {
+    // Outter stack for overlaying the label on the image
+    this._elementStack = document.createElement("stack");
+    this._element.parentNode.replaceChild(this._elementStack, this._element);
+
+    // Label for Drag here text
+    var dragLabel = document.createElement("label");
+    dragLabel.setAttribute("class", "artDragLabel");
+    dragLabel.setAttribute("value", SBString("trackeditor.artwork.drag"));
+
+    // Create a wrapper box around the image for the stack
+    var imageVBox = document.createElement("vbox");
+    imageVBox.setAttribute("class", "artWrapperBox");
+    imageVBox.appendChild(this._element);
+    
+    // Create a wrapper box around the label for the stack
+    this._dragoverlay = document.createElement("vbox");
+    this._dragoverlay.setAttribute("class", "artWrapperBox");
+    this._dragoverlay.appendChild(dragLabel);
+    
+    // Append the two boxes
+    this._elementStack.appendChild(imageVBox);
+    this._elementStack.appendChild(this._dragoverlay)
+  },
+  
+  /**
+   * \brief Creates a context menu for the image that allows the user to copy,
+   *        paste, cut and clear the artwork for an item or items.
+   */
   _createContextMenu: function TrackEditorArtwork__createContextMenu() {
     this._menuPopup = document.createElement("menupopup");
     var menuItemCut = document.createElement("menuitem");
@@ -2018,6 +2055,14 @@ TrackEditorArtwork.prototype = {
     var allMatch = true;
     if (TrackEditor.state.selectedItems.length > 1) {
       allMatch = !TrackEditor.state.hasMultipleValuesForProperty(this.property);
+    }
+    
+    // check if we should hide the drag here label
+    if (value && value != "") {
+      // There is an image so hide the label
+      this._dragoverlay.setAttribute("hidden", true);
+    } else {
+      this._dragoverlay.removeAttribute("hidden");
     }
     
     // Lets check if this item is missing a cover

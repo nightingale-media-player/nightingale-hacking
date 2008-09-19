@@ -227,6 +227,21 @@ image.art+button > .button-box > .button-text {
   font-size:10px;
 }
 
+.artWrapperBox {
+  -moz-box-flex: 1;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+.artDragLabel {
+  -moz-border-radius:8px;
+  background-color:rgb(235,235,235);
+  padding:4px;
+  color:gray;
+  border:1px solid rgb(200,200,200);
+  font-size:8px;
+}
+
 
 /**
 
