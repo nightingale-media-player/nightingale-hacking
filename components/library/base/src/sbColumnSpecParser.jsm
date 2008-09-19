@@ -32,13 +32,15 @@ const Ci = Components.interfaces;
 
 var Application = null;
 
-function ColumnSpecParser(aMediaList, aPlaylist) {
+function ColumnSpecParser(aMediaList, aPlaylist, aMask) {
 
   if (!Application) {
     // XXXsteve FUEL is not available in jsm
     Application = Cc["@mozilla.org/fuel/application;1"]
                     .getService(Ci.fuelIApplication);
   }
+  
+  if (!aMask) aMask = 0xFFFFFFFF;
 
   // Our new "column spec" is a whitespace separated string that looks like
   // this:
@@ -58,45 +60,57 @@ function ColumnSpecParser(aMediaList, aPlaylist) {
 
   var columns;
 
-  columns =
-    this._getColumnMap(aMediaList.getProperty(SBProperties.columnSpec),
-                       this.ORIGIN_PROPERTY);
-
-  if (!columns.columnMap.length &&
-      aPlaylist &&
-      aPlaylist.hasAttribute("useColumnSpecPreference")) {
-    var pref = aPlaylist.getAttribute("useColumnSpecPreference");
-
-    try {
-      if (Application.prefs.has(pref)) {
-        columns =
-            this._getColumnMap(Application.prefs.get(pref).value,
-                               this.ORIGIN_PREFERENCES);
-      }
-    } catch (e) {}
-  }
-
-  if (!columns.columnMap.length) {
+  if (aMask & this.ORIGIN_PROPERTY) {
     columns =
-      this._getColumnMap(aMediaList.getProperty(SBProperties.defaultColumnSpec),
-                         this.ORIGIN_MEDIALISTDEFAULT);
+      this._getColumnMap(aMediaList.getProperty(SBProperties.columnSpec),
+                         this.ORIGIN_PROPERTY);
+  }
+  
+  if (aMask & this.ORIGIN_PREFERENCES) {
+    if ((!columns || !columns.columnMap.length) &&
+        aPlaylist &&
+        aPlaylist.hasAttribute("useColumnSpecPreference")) {
+      var pref = aPlaylist.getAttribute("useColumnSpecPreference");
+
+      try {
+        if (Application.prefs.has(pref)) {
+          columns =
+              this._getColumnMap(Application.prefs.get(pref).value,
+                                 this.ORIGIN_PREFERENCES);
+        }
+      } catch (e) {}
+    }
   }
 
-  if (!columns.columnMap.length) {
-    columns =
-      this._getColumnMap(aMediaList.library.getProperty(SBProperties.defaultColumnSpec),
-                         this.ORIGIN_LIBRARYDEFAULT);
+  if (aMask & this.ORIGIN_MEDIALISTDEFAULT) {
+    if (!columns || !columns.columnMap.length) {
+      columns =
+        this._getColumnMap(aMediaList.getProperty(SBProperties.defaultColumnSpec),
+                           this.ORIGIN_MEDIALISTDEFAULT);
+    }
+  }
+  
+  if (aMask & this.ORIGIN_LIBRARYDEFAULT) {
+    if (!columns || !columns.columnMap.length) {
+      columns =
+        this._getColumnMap(aMediaList.library.getProperty(SBProperties.defaultColumnSpec),
+                           this.ORIGIN_LIBRARYDEFAULT);
+    }
   }
 
-  if (!columns.columnMap.length) {
-    columns =
-      this._getColumnMap(aMediaList.library.getProperty(SBProperties.columnSpec),
-                         this.ORIGIN_LIBRARY);
+  if (aMask & this.ORIGIN_LIBRARY) {
+    if (!columns || !columns.columnMap.length) {
+      columns =
+        this._getColumnMap(aMediaList.library.getProperty(SBProperties.columnSpec),
+                           this.ORIGIN_LIBRARY);
+    }
   }
 
-  if (!columns.columnMap.length && aPlaylist) {
-    columns = this._getColumnMap(aPlaylist.getAttribute("columnSpec"),
-                                 this.ORIGIN_ATTRIBUTE);
+  if (aMask & this.ORIGIN_ATTRIBUTE) {
+    if ((!columns || !columns.columnMap.length) && aPlaylist) {
+      columns = this._getColumnMap(aPlaylist.getAttribute("columnSpec"),
+                                   this.ORIGIN_ATTRIBUTE);
+    }
   }
 
   if (!columns.columnMap.length) {
@@ -110,7 +124,7 @@ function ColumnSpecParser(aMediaList, aPlaylist) {
     this._columnSpecOrigin = this.ORIGIN_DEFAULT;
   }
 
-  if (!columns.columnMap.length) {
+  if (!columns || !columns.columnMap.length) {
     throw new Error("Couldn't get columnMap!");
   }
 
@@ -124,11 +138,11 @@ ColumnSpecParser.prototype = {
 
   ORIGIN_PROPERTY: 1,
   ORIGIN_PREFERENCES: 2,
-  ORIGIN_MEDIALISTDEFAULT: 3,
-  ORIGIN_LIBRARYDEFAULT: 4,
-  ORIGIN_LIBRARY: 5,
-  ORIGIN_ATTRIBUTE: 6,
-  ORIGIN_DEFAULT: 7,
+  ORIGIN_MEDIALISTDEFAULT: 4,
+  ORIGIN_LIBRARYDEFAULT: 8,
+  ORIGIN_LIBRARY: 16,
+  ORIGIN_ATTRIBUTE: 32,
+  ORIGIN_DEFAULT: 64,
 
   get columnMap() {
     return this._columns.columnMap;

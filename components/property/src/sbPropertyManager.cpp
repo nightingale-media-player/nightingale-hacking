@@ -809,7 +809,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = dbBuilder->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  dbBuilder->SetUserViewable(PR_TRUE);
+  dbBuilder->SetUserViewable(PR_FALSE);
   
   rv = dbBuilder->SetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -839,7 +839,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // Download details
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_DETAILS),
                     NS_LITERAL_STRING("property.download_details"),
-                    stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE,
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 

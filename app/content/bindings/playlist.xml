@@ -774,8 +774,23 @@
   var medialist = this.mediaListView.mediaList;
   var parser = new ColumnSpecParser(medialist, this);
 
+  // read the current column specs
   var columnMap = parser.columnMap;
   this._columnSpecOrigin = parser.origin;
+
+  // make a set of the properties in the default columns specs
+  var defaultSpecParser = 
+    new ColumnSpecParser(medialist, 
+                         this,
+                         parser.ORIGIN_MEDIALISTDEFAULT |
+                         parser.ORIGIN_LIBRARYDEFAULT |
+                         parser.ORIGIN_DEFAULT);
+
+  var defaultColumns = defaultSpecParser.columnMap;
+  var defaultColumnsMap = {};
+  for (var i = 0; i < defaultColumns.length; i++) {
+    defaultColumnsMap[defaultColumns[i].property] = true;
+  }
 
   this._removeAllChildren(this._treecols);
 
@@ -832,20 +847,18 @@
   columnMap.forEach(
     function(columnInfo) {
       var propertyInfo = this._pm.getPropertyInfo(columnInfo.property);
-      if(propertyInfo.userViewable) {
-        if (!sortProperty && columnInfo.sort) {
-          sortProperty = columnInfo.property;
-          sortDirection = columnInfo.sort;
-        }
-
-        this._appendColumn(propertyInfo,
-                           false,
-                           columnInfo.width,
-                           ordinal);
-        alreadyAdded[columnInfo.property] = true;
-        addedColumns++;
-        ordinal += 2;
+      if (!sortProperty && columnInfo.sort) {
+        sortProperty = columnInfo.property;
+        sortDirection = columnInfo.sort;
       }
+
+      this._appendColumn(propertyInfo,
+                         false,
+                         columnInfo.width,
+                         ordinal);
+      alreadyAdded[columnInfo.property] = true;
+      addedColumns++;
+      ordinal += 2;
     },
     this);
 
@@ -857,7 +870,8 @@
     var propertyID = propEnumerator.getNext();
     if (!alreadyAdded[propertyID]) {
       var propertyInfo = this._pm.getPropertyInfo(propertyID);
-      if(propertyInfo.userViewable) {
+      if (propertyInfo.userViewable ||
+          propertyID in defaultColumnsMap) {
 
         this._appendColumn(propertyInfo,
                            true,
