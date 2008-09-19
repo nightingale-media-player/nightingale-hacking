@@ -264,7 +264,6 @@
           this._playlist.setAttribute('editable', 'true');
           this._playlist.setAttribute('minheight', '0');
           this._playlist.setAttribute('hidefilters', 'true');
-          this._playlist.setAttribute('flex', '1');
           this._playlist.setAttribute('columnSpec',
               SBProperties.ordinal + ' 28 a ' +
               SBProperties.trackName + ' 300 ' +
