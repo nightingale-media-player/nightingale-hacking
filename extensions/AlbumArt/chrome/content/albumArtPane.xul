@@ -61,6 +61,11 @@
                ondraggesture="nsDragAndDrop.startDrag(event, AlbumArt);"
                ondragover="nsDragAndDrop.dragOver(event, AlbumArt);"/>
       </vbox>
+      <vbox id="sb-albumart-select-drag"
+            class="albumArtNowSelectedDragAndDrop">
+        <label class="albumArtNotSelectedDragAndDropMessage"
+               value="&artwork.displaypane.drag_and_drop;"/>
+      </vbox>    
       <vbox id="sb-albumart-not-selected"
             class="albumArtNotSelectedContainer">
         <label class="albumArtNotSelectedMessage"
@@ -79,6 +84,11 @@
                ondraggesture="nsDragAndDrop.startDrag(event, AlbumArt);"
                ondragover="nsDragAndDrop.dragOver(event, AlbumArt);"/>
       </vbox>
+      <vbox id="sb-albumart-playing-drag"
+            class="albumArtNowPlayingDragAndDrop">
+        <label class="albumArtNotPlayingDragAndDropMessage"
+               value="&artwork.displaypane.drag_and_drop;"/>
+      </vbox>    
       <vbox id="sb-albumart-not-playing"
             class="albumArtNotPlayingContainer">
         <label class="albumArtNotPlayingMessage"

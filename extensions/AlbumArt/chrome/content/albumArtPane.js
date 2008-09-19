@@ -281,21 +281,29 @@ var AlbumArt = {
     // Load up our elements
     var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
     var albumArtNotSelectedBox = document.getElementById('sb-albumart-not-selected');
+    var albumArtSelectedDragBox = document.getElementById('sb-albumart-select-drag');
 
-    if (aNewURL == albumArtSelectedImage.src) {
-      // Nothing changed so leave as is.
-      return;
-    }
-
-    if (aNewURL == "") { aNewURL = DEFAULT_COVER; }
 
     // Configure the display pane
-    if (!aNewURL) {
+    if (aNewURL == null) {
       // Show the not playing message.
       albumArtNotSelectedBox.removeAttribute("hidden");
-    } else {
-      // Hide the not playing message.
+      // Hide the Drag Here box
+      albumArtSelectedDragBox.setAttribute("hidden", true);
+      // Set the image to the default cover
+      aNewURL = DEFAULT_COVER;
+    } else if (aNewURL == "") {
+     // Show the Drag Here box
+      albumArtSelectedDragBox.removeAttribute("hidden");
+      // Hide the not selected message.
       albumArtNotSelectedBox.setAttribute("hidden", true);
+      // Set the image to the default cover
+      aNewURL = DEFAULT_COVER;
+    } else {
+      // Hide the not selected message.
+      albumArtNotSelectedBox.setAttribute("hidden", true);
+      // Hide the Drag Here box
+      albumArtSelectedDragBox.setAttribute("hidden", true);
     }
     albumArtSelectedImage.src = aNewURL;
     // Call the onResize so we display the image correctly.
@@ -310,21 +318,26 @@ var AlbumArt = {
     // Load up our elements
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     var albumArtNotPlayingBox = document.getElementById('sb-albumart-not-playing');
-    
-    // This function can be called several times so check that we changed.
-    if (albumArtPlayingImage.src == aNewURL) {
-      return;
-    }
-
-    if (aNewURL == "") { aNewURL = DEFAULT_COVER; }
+    var albumArtPlayingDragBox = document.getElementById('sb-albumart-playing-drag');
 
     // Configure the display pane
-    if (!aNewURL) {
+    if (aNewURL == null) {
       // Show the not playing message.
       albumArtNotPlayingBox.removeAttribute("hidden");
+      // Set the image to the default cover
+      aNewURL = DEFAULT_COVER;
+    } else if (aNewURL == "") {
+      // Show the Drag Here box
+      albumArtPlayingDragBox.removeAttribute("hidden");
+      // Hide the not playing message.
+      albumArtNotPlayingBox.setAttribute("hidden", true);
+      // Set the image to the default cover
+      aNewURL = DEFAULT_COVER;
     } else {
       // Hide the not playing message.
       albumArtNotPlayingBox.setAttribute("hidden", true);
+      // Hide the Drag Here box
+      albumArtPlayingDragBox.setAttribute("hidden", true);
     }
     albumArtPlayingImage.src = aNewURL;
     AlbumArt.onResize();
@@ -342,6 +355,10 @@ var AlbumArt = {
     // Ignore any other topics (we should not normally get anything else)
     if (aTopic != "metadata.imageURL") {
       return;
+    }
+    
+    if (aData == DEFAULT_COVER) {
+      aData = "";
     }
     AlbumArt.changeNowPlaying(aData);
   },
@@ -383,10 +400,12 @@ var AlbumArt = {
     // Ensure we have the correct title and deck displayed.
     AlbumArt.switchState(AlbumArt._currentState);
     
+    // Make sure we are square (this will resize)
+    AlbumArt.isPaneSquare();
+
     // Do an initial load of the default cover since it is a big image, and then
     // set the width and height of the images to the width and height of the
     // window so the image does not stretch out of bounds on the first load.
-    AlbumArt.isPaneSquare(); // Make sure we are square (this will resize)
     var newImg = new Image();
     newImg.src = DEFAULT_COVER;
     var windowWidth = window.innerWidth;
@@ -396,9 +415,11 @@ var AlbumArt = {
       
       // Listen to when an image loads so we can keep the aspect ratio.
       var mImage = document.getElementById(imageCache.imageID);
-      mImage.addEventListener("load", AlbumArt.onResize, false);
-      mImage.style.width = windowWidth + "px";
-      mImage.style.height = windowHeight + "px";
+      if (mImage) {
+        mImage.addEventListener("load", AlbumArt.onResize, false);
+        mImage.style.width = windowWidth + "px";
+        mImage.style.height = windowHeight + "px";
+      }
     }
 
     // Setup the dataremote for the now playing image.
@@ -415,6 +436,10 @@ var AlbumArt = {
                           Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                             .getService(Ci.sbIPlaylistPlayback);
     AlbumArt._playListPlaybackService.addListener(AlbumArt);
+
+    if (!AlbumArt._playListPlaybackService.playing) {
+      AlbumArt.changeNowPlaying(null);
+    }
 
     // Listen for resizes of the display pane so that we can keep the aspect
     // ratio of the image.
@@ -816,6 +841,12 @@ var AlbumArt = {
     if (itemEnum.hasMoreElements()) {
       var item = itemEnum.getNext().mediaItem;
       curImageUrl = item.getProperty(SBProperties.primaryImageURL);
+      if (curImageUrl == null) {
+        var metadataImageScannerService =
+                        Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
+                          .getService(Ci.sbIMetadataImageScanner);
+        curImageUrl = metadataImageScannerService.fetchCoverForMediaItem(item);
+      }
     }
 
     AlbumArt.changeNowSelected(curImageUrl);

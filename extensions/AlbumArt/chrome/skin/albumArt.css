@@ -84,3 +84,37 @@
   background-color:rgb(255,255,255);
   background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
 }
+
+/**
+ * Now Selected Drag here part of the stack
+ */
+.albumArtNowSelectedDragAndDrop {
+  -moz-box-flex: 1;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+.albumArtNotSelectedDragAndDropMessage {
+  -moz-border-radius:8px;
+  background-color:rgb(235,235,235);
+  padding:10px;
+  color:gray;
+  border:1px solid rgb(200,200,200);
+}
+
+/**
+ * Now Playing Drag here part of the stack
+ */
+.albumArtNowPlayingDragAndDrop {
+  -moz-box-flex: 1;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+.albumArtNotPlayingDragAndDropMessage {
+  -moz-border-radius:8px;
+  background-color:rgb(235,235,235);
+  padding:10px;
+  color:gray;
+  border:1px solid rgb(200,200,200);
+}
