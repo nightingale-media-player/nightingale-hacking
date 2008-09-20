@@ -27,7 +27,7 @@
 function runTest() {
 
   var gst = Cc["@songbirdnest.com/Songbird/Mediacore/GStreamer/Service;1"]
-              .getService(Ci.sbIGStreamerService);
+              .getService(Ci.sbIGStreamerService2);
 
   var list = [];
 
@@ -55,12 +55,15 @@ function runTest() {
 
   log(list.length + " plugins found");
 
+  var platform = getPlatform();
+
+  // XXX: will be there for all platforms - should have 'ogg' and 'vorbis' too
+  assertContains(list, ["staticelements"]);
+
   if (platform != "Linux") {
     // XXX: Re-enable this once we have working linux binaries
-    assertContains(list, ["staticelements", "ogg", "vorbis"]);
+    assertContains(list, ["ogg", "vorbis"]);
   }
-
-  var platform = getPlatform();
 
   if (platform == "Windows NT") {
     assertContains(list, ["directsound", "directdraw"]);
@@ -73,6 +76,9 @@ function runTest() {
   if (platform == "Linux") {
     // XXX: change back to assertContains once we have working linux binaries
     assertDoesNotContain(list, ["alsa", "ximagesink", "xvimagesink"]);
+
+    // XXX: should be available for all platforms
+    assertDoesNotContain(list, ["ogg", "vorbis"]);
   }
 }
 
