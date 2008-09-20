@@ -30,29 +30,28 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
 <!DOCTYPE window [
-<!ENTITY % albumartmanagerDTD SYSTEM "chrome://albumartmanager/locale/albumartmanager.dtd">
-%albumartmanagerDTD;
+<!ENTITY % albumartDTD SYSTEM "chrome://albumart/locale/albumArt.dtd">
+%albumartDTD;
 ]>
 
-<window title="Album Art"
+<window title="&artwork.coverpreview.title;"
         xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-        onload="coverPreviewLoad();">
+        xmlns:svg="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        onload="onLoad();"
+        width="500"
+        height="500"
+        persist="width height">
 
-  <image flex="1"
-         id="coverPreviewImage"
-         onclick="window.close();"/>
-  
-  <script type="application/x-javascript">
-    function coverPreviewLoad() {
-      var coverPreviewImage = document.getElementById("coverPreviewImage");
-      var defaultImage = "chrome://songbird/skin/album-art/default-cover.png";
-      var imagePref = "songbird.metadata.imageURL";
-      var metadataImage = Application.prefs.getValue(imagePref, defaultImage);
-      if (metadataImage == "") {
-        metadataImage = defaultImage;
-      }
-      coverPreviewImage.setAttribute("src", metadataImage);
-    }
-  </script>
+  <svg:svg flex="1">
+    <svg:image id="coverPreviewImage"
+               xlink:href="chrome://songbird/skin/album-art/default-cover.png"
+               width="100%"
+               height="100%"/>
+  </svg:svg>
+
+  <script type="application/x-javascript"
+          src="chrome://albumart/content/coverPreview.js" />
+
 </window>

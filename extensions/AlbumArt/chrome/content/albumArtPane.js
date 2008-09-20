@@ -116,13 +116,16 @@ var AlbumArt = {
    */
   onImageDblClick: function AlbumArt_onImageDblClick(aEvent) {
     // Only respond to primary button double clicks.
+    var passImageParam = null;
     if (aEvent.button == 0) {
-      // This will load the songbird.metadata.imageURL preference to
-      // determine which image to load.
+      if (aEvent.target.id == 'sb-albumart-selected') {
+        passImageParam = this.getCurrentStateItemImage();
+      }
+      
       SBOpenModalDialog("chrome://albumart/content/coverPreview.xul",
                    "coverPreview",
-                   "all,chrome,resizable=no,centerscreen",
-                   null,
+                   "all,chrome,centerscreen",
+                   passImageParam,
                    null);
     }
   },

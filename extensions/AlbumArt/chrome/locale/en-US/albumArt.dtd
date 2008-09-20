@@ -6,3 +6,5 @@
 <!ENTITY artwork.displaypane.selected.menu.copy "Copy">
 <!ENTITY artwork.displaypane.selected.menu.paste "Paste">
 <!ENTITY artwork.displaypane.selected.menu.clear "Clear">
+
+<!ENTITY artwork.coverpreview.title "Album Art">

@@ -28,6 +28,7 @@ albumart.jar:
   content/albumArtPane.js             (chrome/content/albumArtPane.js)
   content/albumArtPane.xul            (chrome/content/albumArtPane.xul)
   content/coverPreview.xul            (chrome/content/coverPreview.xul)
+  content/coverPreview.js             (chrome/content/coverPreview.js)
   locale/en-US/albumArt.dtd           (chrome/locale/en-US/albumArt.dtd)
   locale/en-US/albumArt.properties    (chrome/locale/en-US/albumArt.properties)
   skin/albumArt.css                   (chrome/skin/albumArt.css)
