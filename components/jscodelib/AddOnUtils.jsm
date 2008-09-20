@@ -43,11 +43,14 @@ EXPORTED_SYMBOLS = [ "AddOnBundleLoader" ];
 // addOnBundleURLPref           Preference with the add-on bundle URL.
 // addOnBundleDataLoadTimeout   Timeout in milliseconds for loading the add-on
 //                              bundle data.
+// addOnBundleCacheFileName     Add-on bundle cache file name.
 //
 
 var AddOnUtilsCfg = {
   addOnBundleURLPref: "songbird.url.firstrun",
-  addOnBundleDataLoadTimeout: 15000
+  addOnBundleBlacklistPref: "songbird.recommended_addons.update.blacklist",
+  addOnBundleDataLoadTimeout: 15000,
+  addOnBundleCacheFileName: "recommendedAddOnBundle.xml"
 };
 
 
@@ -70,6 +73,9 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
+
+const DEFAULT_IO_FLAGS = -1;
+const DEFAULT_PERMISSIONS = -1;
 
 
 //------------------------------------------------------------------------------
@@ -123,7 +129,7 @@ AddOnBundleLoader.addAddOnToBlacklist =
   var Application = Cc["@mozilla.org/fuel/application;1"]
                       .getService(Ci.fuelIApplication);
   var blacklist =
-        Application.prefs.getValue("recommended_addons.update.blacklist", "");
+        Application.prefs.getValue(AddOnUtilsCfg.addOnBundleBlacklistPref, "");
   if (blacklist.length > 0)
     blacklist = blacklist.split(",");
   else
@@ -137,7 +143,7 @@ AddOnBundleLoader.addAddOnToBlacklist =
 
   // Add the add-on to the blacklist.
   blacklist.push(aAddOnID);
-  Application.prefs.setValue("recommended_addons.update.blacklist",
+  Application.prefs.setValue(AddOnUtilsCfg.addOnBundleBlacklistPref,
                              blacklist.join(","));
 }
 
@@ -155,6 +161,7 @@ AddOnBundleLoader.prototype = {
   //                            already installed add-ons.
   //   filterBlacklistedAddOns  Filter out from the add-on bundle the set of
   //                            blacklisted add-ons.
+  //   readFromCache            If true, read add-on bundle from cache.
   //   addOnBundle              Loaded add-on bundle.
   //   complete                 True if add-on bundle loading is complete.
   //   result                   Result of add-on bundle loading.  A value of
@@ -163,6 +170,7 @@ AddOnBundleLoader.prototype = {
 
   filterInstalledAddOns: false,
   filterBlacklistedAddOns: false,
+  readFromCache: false,
   addOnBundle: null,
   complete: false,
   result: Cr.NS_OK,
@@ -267,45 +275,152 @@ AddOnBundleLoader.prototype = {
     // Start loading the add-on bundle data.
     if (!this.addOnBundle) {
       // Set up the add-on bundle for loading.
-      var Application = Cc["@mozilla.org/fuel/application;1"]
-                          .getService(Ci.fuelIApplication);
       this.addOnBundle = Cc["@songbirdnest.com/Songbird/Bundle;1"]
                            .createInstance(Ci.sbIBundle);
       this.addOnBundle.bundleId = "firstrun";
-      this.addOnBundle.bundleURL = Application.prefs.getValue
-                                     (this._cfg.addOnBundleURLPref,
-                                      "default");
-      this.addOnBundle.addBundleDataListener(this);
 
       // Start loading the add-on bundle data.
-      try {
-        this.addOnBundle.retrieveBundleData
-                           (this._cfg.addOnBundleDataLoadTimeout);
-      } catch (ex) {
-        // Report the exception as an error.
-        Components.utils.reportError(ex);
-
-        // Indicate that the add-on bundle loading failed.
-        this.result = Cr.NS_ERROR_FAILURE;
-        this.complete = true;
-      }
+      if (this.readFromCache)
+        this._readAddOnBundleFromCache();
+      else
+        this._readAddOnBundleFromServer();
     }
 
     // Do nothing more until bundle loading is complete.
     if (!this.complete)
       return;
 
-    // If filtering out blacklisted add-ons, remove them.
-    if ((this.result == Cr.NS_OK) && this.filterBlacklistedAddOns)
-      this._removeBlacklistedAddOns();
+    // Post-process the add-on bundle.
+    if (Components.isSuccessCode(this.result)) {
+      // Write the add-on bundle to the add-on bundle cache file.
+      if (!this.readFromCache)
+        this._writeAddOnBundleToCache();
 
-    // If filtering out installed add-ons, remove them.
-    if ((this.result == Cr.NS_OK) && this.filterInstalledAddOns)
-      this._removeInstalledAddOns();
+      // If filtering out blacklisted add-ons, remove them.
+      if (this.filterBlacklistedAddOns)
+        this._removeBlacklistedAddOns();
+
+      // If filtering out installed add-ons, remove them.
+      if (this.filterInstalledAddOns)
+        this._removeInstalledAddOns();
+    }
 
     // Call the completion callback function.
-    if (this.complete && this._completionCallback)
+    if (this._completionCallback)
       this._completionCallback(this);
+  },
+
+
+  /**
+   * Read the add-on bundle from the add-on bundle server.
+   */
+
+  _readAddOnBundleFromServer:
+    function AddOnBundleLoader__readAddOnBundleFromServer() {
+    // Set the add-on bundle URL.
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+    this.addOnBundle.bundleURL = Application.prefs.getValue
+                                   (this._cfg.addOnBundleURLPref,
+                                    "default");
+
+    // Start loading the add-on bundle data and listen for add-on bundle events.
+    try {
+      this.addOnBundle.addBundleDataListener(this);
+      this.addOnBundle.retrieveBundleData
+                         (this._cfg.addOnBundleDataLoadTimeout);
+    } catch (ex) {
+      // Report the exception as an error.
+      Cu.reportError(ex);
+
+      // Indicate that the add-on bundle loading failed.
+      this.result = Cr.NS_ERROR_FAILURE;
+      this.complete = true;
+    }
+  },
+
+
+  /**
+   * Read the add-on bundle from the add-on bundle cache file.
+   */
+
+  _readAddOnBundleFromCache:
+    function AddOnBundleLoader__readAddOnBundleFromCache() {
+    // Get the recommended add-on bundle cache file.
+    var recommendedAddOnBundleFile = this._getRecommendedAddOnCacheFile();
+
+    // Check if cache file exists.
+    if (!recommendedAddOnBundleFile.exists()) {
+      this.result = Cr.NS_ERROR_FAILURE;
+      this.complete = true;
+    }
+
+    // Set the add-on bundle URL.
+    var ioService = Cc["@mozilla.org/network/io-service;1"]
+                      .getService(Ci.nsIIOService);
+    var fileURI = ioService.newFileURI(recommendedAddOnBundleFile);
+    this.addOnBundle.bundleURL = fileURI.spec;
+
+    // Load the add-on bundle data.
+    try {
+      this.addOnBundle.retrieveLocalBundleData();
+      this.complete = true;
+    } catch (ex) {
+      // Report the exception as an error.
+      Cu.reportError(ex);
+
+      // Indicate that the add-on bundle loading failed.
+      this.result = Cr.NS_ERROR_FAILURE;
+      this.complete = true;
+    }
+  },
+
+
+  /**
+   * Write the add-on bundle to the add-on bundle cache file.
+   */
+
+  _writeAddOnBundleToCache:
+    function AddOnBundleLoader__writeAddOnBundleToCache() {
+    // Get the recommended add-on bundle cache file.
+    var recommendedAddOnBundleFile = this._getRecommendedAddOnCacheFile();
+
+    // Open an output stream to the file.
+    var outputStream = Cc["@mozilla.org/network/file-output-stream;1"]
+                         .createInstance(Ci.nsIFileOutputStream);
+    outputStream.init(recommendedAddOnBundleFile,
+                      DEFAULT_IO_FLAGS,
+                      DEFAULT_PERMISSIONS,
+                      0);
+
+    // Write the add-on bundle data to the file.
+    try {
+      outputStream.write(this.addOnBundle.bundleDataText,
+                         this.addOnBundle.bundleDataText.length);
+    } catch (ex) {
+      Cu.reportError(ex);
+    } finally {
+      outputStream.close();
+    }
+  },
+
+
+  /**
+   * Return the recommended add-on bundle cache file.
+   *
+   * \return                    Recommended add-on bundle cache file.
+   */
+
+  _getRecommendedAddOnCacheFile:
+    function AddOnBundleLoader__getRecommendedAddOnCacheFile() {
+    // Get the recommended add-on bundle cache file.
+    var recommendedAddOnBundleFile =
+          Cc["@mozilla.org/file/directory_service;1"]
+            .getService(Ci.nsIProperties)
+            .get("ProfD", Ci.nsIFile);
+    recommendedAddOnBundleFile.append(this._cfg.addOnBundleCacheFileName);
+
+    return recommendedAddOnBundleFile;
   },
 
 
@@ -349,7 +464,7 @@ AddOnBundleLoader.prototype = {
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
     var blacklist =
-          Application.prefs.getValue("recommended_addons.update.blacklist", "");
+          Application.prefs.getValue(this._cfg.addOnBundleBlacklistPref, "");
     if (blacklist.length > 0)
       blacklist = blacklist.split(",");
     else

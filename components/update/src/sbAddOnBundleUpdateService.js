@@ -86,15 +86,20 @@ if (typeof(Cu) == "undefined")
 // categoryList                 List of component categories.
 //
 // defaultUpdateEnabled         Default update enabled preference value.
+// defaultUpdateInterval        Default add-on bundle update interval in
+//                              seconds.
 //
 
 var sbAddOnBundleUpdateServiceCfg = {
   className: "Songbird Add-on Bundle Update Service",
   cid: Components.ID("{927d9849-8565-4bc4-805a-f3a6ad1b25ec}"),
   contractID: "@songbirdnest.com/AddOnBundleUpdateService;1",
-  ifList: [ Ci.nsIObserver ],
+  ifList: [ Ci.sbIAddOnBundleUpdateService, Ci.nsIObserver ],
 
-  defaultUpdateEnabled: false
+  updateEnabledPref: "songbird.recommended_addons.update.enabled",
+  updateIntervalPref: "songbird.recommended_addons.update.interval",
+  defaultUpdateEnabled: false,
+  defaultUpdateInterval: 86400
 };
 
 sbAddOnBundleUpdateServiceCfg.categoryList = [
@@ -138,6 +143,7 @@ sbAddOnBundleUpdateService.prototype = {
   //   _observerSet             Set of observers.
   //   _prefsAvailable          True if preferences are available.
   //   _networkAvailable        True if the network is available.
+  //   _updateEnabled           True if add-on bundle update is enabled.
   //   _addOnBundleLoader       Add-on bundle loader object.
   //
 
@@ -151,7 +157,29 @@ sbAddOnBundleUpdateService.prototype = {
   _observerSet: null,
   _prefsAvailable: false,
   _networkAvailable: false,
+  _updateEnabled: false,
   _addOnBundleLoader: null,
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Add-on bundle update service sbIAddOnBundleUpdateService services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * \brief Check for updates to the add-on bundle and present any to user.
+   *XXXeps, need to expand interface to allow forcing reload of add-on bundle.
+   */
+
+  checkForUpdates: function sbAddOnBundleUpdateService_checkForUpdates() {
+    // Ensure the services are initialized.
+    this._initialize();
+
+    // Present any new add-ons if update is enabled.
+    if (this._updateEnabled)
+      this._presentNewAddOns();
+  },
 
 
   //----------------------------------------------------------------------------
@@ -260,6 +288,17 @@ sbAddOnBundleUpdateService.prototype = {
   },
 
 
+  /**
+   * Handle add-on update timer events.
+   */
+
+  _handleAddOnUpdateTimer:
+    function sbAddOnBundleUpdateService__handleAddOnUpdateTimer(aTimer) {
+    // Update the add-on bundle cache.
+    this._updateAddOnBundleCache();
+  },
+
+
   //----------------------------------------------------------------------------
   //
   // Internal add-on bundle update services.
@@ -294,18 +333,31 @@ sbAddOnBundleUpdateService.prototype = {
     // Initialization is now complete.
     this._isInitialized = true;
 
-    // Do nothing more if first-run has not yet completed.
-    if (!SBUtils.hasFirstRunCompleted())
-      return;
-
-    // Load and present new add-ons.
+    // Get the application services.
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
-    var updateEnabled =
-          Application.prefs.getValue("recommended_addons.update.enabled",
-                                     this._cfg.defaultUpdateEnabled);
-    if (updateEnabled)
-      this._loadAndPresentNewAddOns();
+
+    // Check if add-on bundle update is enabled.  Do nothing more if not.
+    this._updateEnabled =
+           Application.prefs.getValue(this._cfg.updateEnabledPref,
+                                      this._cfg.defaultUpdateEnabled);
+    if (!this._updateEnabled)
+      return;
+
+    // Get the add-on bundle update period.
+    var updateInterval =
+          Application.prefs.getValue(this._cfg.updateIntervalPref,
+                                     this._cfg.defaultUpdateInterval);
+
+    // Register an add-on bundle update timer.
+    /*XXXeps no way to unregister. */
+    var updateTimerMgr = Cc["@mozilla.org/updates/timer-manager;1"]
+                           .createInstance(Ci.nsIUpdateTimerManager);
+    var _this = this;
+    var func = function(aTimer) { _this._handleAddOnUpdateTimer(aTimer); };
+    updateTimerMgr.registerTimer("add-on-bundle-update-timer",
+                                 func,
+                                 updateInterval);
   },
 
 
@@ -329,87 +381,78 @@ sbAddOnBundleUpdateService.prototype = {
 
 
   /**
-   * Load and present the new add-ons.
+   * Present the new add-ons to the user.
    */
 
-  _loadAndPresentNewAddOns:
-    function sbAddOnBundleUpdateService__loadAndPresentNewAddOns() {
-    // Start loading the add-on bundle.
-    this._loadNewAddOns();
+  _presentNewAddOns:
+    function sbAddOnBundleUpdateService__presentNewAddOns() {
+    // Load the add-on bundle.
+    var addOnBundle = this._loadNewAddOns();
 
-    // Present new add-ons.
-    this._presentNewAddOns();
+    // Do nothing if no add-ons.
+    if (!addOnBundle || (addOnBundle.bundleExtensionCount == 0))
+      return;
+
+    // Present the new add-ons.
+    WindowUtils.openModalDialog
+                  (null,
+                   "chrome://songbird/content/xul/recommendedAddOnsWizard.xul",
+                   "",
+                   "chrome,modal=yes,centerscreen",
+                   [ addOnBundle ],
+                   null);
   },
 
 
   /**
-   * Start loading the new add-on bundle.
+   * Load the new add-on bundle.
+   *
+   * \return                    New add-on bundle.
    */
 
   _loadNewAddOns: function sbAddOnBundleUpdateService__loadNewAddOns() {
-    // Do nothing if add-on bundle loading was already started.
-    if (this._addOnBundleLoader)
-      return;
-
     // Create an add-on bundle loader.
-    this._addOnBundleLoader = new AddOnBundleLoader();
+    var addOnBundleLoader = new AddOnBundleLoader();
 
     // Add all installed add-ons to the blacklist.  This prevents an add-on
     // from being presented if it was previously installed and then uninstalled.
     AddOnBundleLoader.addInstalledAddOnsToBlacklist();
 
-    // Start loading the new add-on bundle.  Continue with add-on loading and
-    // presentation upon completion.
-    var _this = this;
-    var func = function() { _this._loadAndPresentNewAddOns(); }
-    this._addOnBundleLoader.filterInstalledAddOns = true;
-    this._addOnBundleLoader.filterBlacklistedAddOns = true;
-    this._addOnBundleLoader.start(func);
+    // Load the add-on bundle from cache.
+    addOnBundleLoader.filterInstalledAddOns = true;
+    addOnBundleLoader.filterBlacklistedAddOns = true;
+    addOnBundleLoader.readFromCache = true;
+    addOnBundleLoader.start(null);
+
+    // Check for add-on bundle loading errors.
+    if (!addOnBundleLoader.complete ||
+        !Components.isSuccessCode(addOnBundleLoader.result))
+      return null;
+
+    return addOnBundleLoader.addOnBundle;
   },
 
 
   /**
-   * Present the new add-ons to the user.
+   * Update the add-on bundle cache.
    */
 
-  _presentNewAddOns: function sbAddOnBundleUpdateService__presentNewAddOns() {
-    // Do nothing if add-on bundle loading has not successfully completed.
-    if (!this._addOnBundleLoader ||
-        !this._addOnBundleLoader.complete ||
-        (this._addOnBundleLoader.result != Cr.NS_OK)) {
-      return;
+  _updateAddOnBundleCache:
+    function sbAddOnBundleUpdateService__updateAddOnBundleCache() {
+    // Start loading the add-on bundle into the cache.
+    if (!this._addOnBundleLoader) {
+      // Create an add-on bundle loader.
+      this._addOnBundleLoader = new AddOnBundleLoader();
+
+      // Start loading the add-on bundle into the cache.
+      var _this = this;
+      var func = function() { _this._updateAddOnBundleCache(); }
+      this._addOnBundleLoader.start(func);
     }
 
-    // Do nothing if no add-ons.
-    if (this._addOnBundleLoader.addOnBundle.bundleExtensionCount == 0)
-      return;
-
-    // Present the new add-ons with the main Songbird window.
-    var windowWatcher = Cc["@songbirdnest.com/Songbird/window-watcher;1"]
-                          .getService(Ci.sbIWindowWatcher);
-    var _this = this;
-    var func =
-          function(aWindow) { _this._presentNewAddOnsWithWindow(aWindow); };
-    windowWatcher.callWithWindow("Songbird:Main", func);
-  },
-
-  _presentNewAddOnsWithWindow:
-    function sbAddOnBundleUpdateService__presentNewAddOnsWithWindow(aWindow) {
-    // Present the new add-ons window.
-    var restartRequired = {};
-    WindowUtils.openModalDialog(aWindow,
-                                  "chrome://songbird/content/xul/" +
-                                  "recommendedAddOnsWizard.xul",
-                                "",
-                                "chrome,modal=yes,centerscreen",
-                                [ this._addOnBundleLoader.addOnBundle ],
-                                [ restartRequired ]);
-    restartRequired = (restartRequired.value == "true");
-
-    // Restart application if required.
-    if (restartRequired) {
-      WindowUtils.restartApp();
-    }
+    // Clear the add-on bundle loader upon completion.
+    if (this._addOnBundleLoader.complete)
+      this._addOnBundleLoader = null;
   }
 };
 

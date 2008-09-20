@@ -75,6 +75,11 @@ interface sbIBundle : nsISupports
   void retrieveBundleData(in long aTimeout);
 
   /**
+   * \brief Download the bundle data synchronously from a local file.
+   */
+  void retrieveLocalBundleData();
+
+  /**
    * \brief Add a bundle data listener
    * This method registers a bundle observer object associated with the download
    * of bundle data in order to get error and completion callbacks

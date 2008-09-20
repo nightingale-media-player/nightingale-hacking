@@ -27,6 +27,11 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const SONGBIRD_BUNDLE_IID = Components.interfaces.sbIBundle;
 
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cr = Components.results
+const Cu = Components.utils
+
 function Bundle() {
   this._datalisteners = new Array();
   this._installlisteners = new Array();
@@ -94,47 +99,12 @@ Bundle.prototype = {
   },
 
   retrieveBundleData: function(aTimeout) {
-  
-    if (this._init && this._req) {
-      this._req.abort();
-      var httpReq = this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest);
-      httpReq.removeEventListener("load", this._onload, false);
-      httpReq.removeEventListener("error", this._onerror, false);
-      this._req = null;
-      this._status = SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_DOWNLOADING;
-    }
-    
-    this._onload = { 
-      _that: null, 
-      handleEvent: function( event ) { this._that.onLoad(); } 
-    }; this._onload._that = this;
-    
-    this._onerror = { 
-      _that: null, 
-      handleEvent: function( event ) { this._that.onError(); } 
-    }; this._onerror._that = this;
-    
-    this._req = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
-                          .createInstance(Components.interfaces.nsIXMLHttpRequest);
-    this._req.mozBackgroundRequest = true;
-    var httpReq = this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest);
-    httpReq.addEventListener("load", this._onload, false);
-    httpReq.addEventListener("error", this._onerror, false);
-   
-    // XXXredfive - this will(may) change to the mozilla urlformatter when
-    //  bmo 430235 gets fixed.
-    // use the urlFormatter service to replace the %FOO% mumbo-jumbo
-    var urlFormatter = Components.classes["@songbirdnest.com/moz/sburlformatter;1"]
-                         .getService(Components.interfaces.sbIURLFormatter);
+    // Get the bundle URL.
+    var url = this.formatBundleURL();
+    url += this._getRandomParameter();
 
-    var pbag = Components.classes["@mozilla.org/hash-property-bag;1"]
-                 .createInstance(Components.interfaces.nsIWritablePropertyBag2);
-
-    var url = urlFormatter.formatURL(this._bundleURL, pbag);
-
-    this._req.open('GET', url + this._getRandomParameter(), true); 
-    this._req.send(null);
-    this._init = true;
+    // Retrieve the bundle.
+    this.retrieveBundleDataCommon(url, true);
 
     // If specified, set up a callback to enforce request timeout
     if (aTimeout > 0) {
@@ -143,6 +113,59 @@ Bundle.prototype = {
       this._timer.initWithCallback(this, aTimeout,
                                    Components.interfaces.nsITimer.TYPE_ONE_SHOT);
     }
+  },
+
+  retrieveLocalBundleData: function() {
+    this.retrieveBundleDataCommon(this._bundleURL, false);
+  },
+
+  retrieveBundleDataCommon: function(aBundleURL, aAsync) {
+    if (this._init && this._req) {
+      this._req.abort();
+      var httpReq = this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest);
+      httpReq.removeEventListener("load", this._onload, false);
+      httpReq.removeEventListener("error", this._onerror, false);
+      this._req = null;
+      this._status = SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_DOWNLOADING;
+    }
+
+    this._onload = {
+      _that: null,
+      handleEvent: function( event ) { this._that.onLoad(); }
+    }; this._onload._that = this;
+
+    this._onerror = {
+      _that: null,
+      handleEvent: function( event ) { this._that.onError(); }
+    }; this._onerror._that = this;
+
+    this._req = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"]
+                          .createInstance(Components.interfaces.nsIXMLHttpRequest);
+    if (aAsync)
+      this._req.mozBackgroundRequest = true;
+    var httpReq = this._req.QueryInterface(Components.interfaces.nsIJSXMLHttpRequest);
+    httpReq.addEventListener("load", this._onload, false);
+    httpReq.addEventListener("error", this._onerror, false);
+
+    // Get the bundle URL.
+    var url = this.formatBundleURL();
+
+    this._req.open('GET', aBundleURL, aAsync);
+    this._req.send(null);
+    this._init = true;
+  },
+
+  formatBundleURL: function() {
+    // XXXredfive - this will(may) change to the mozilla urlformatter when
+    //  bmo 430235 gets fixed.
+    // use the urlFormatter service to replace the %FOO% mumbo-jumbo
+    var urlFormatter = Cc["@songbirdnest.com/moz/sburlformatter;1"]
+                         .getService(Ci.sbIURLFormatter);
+    var pbag = Cc["@mozilla.org/hash-property-bag;1"]
+                 .createInstance(Ci.nsIWritablePropertyBag2);
+    var url = urlFormatter.formatURL(this._bundleURL, pbag);
+
+    return url;
   },
 
   get bundleDataDocument() {

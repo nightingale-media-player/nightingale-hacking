@@ -114,19 +114,12 @@ var recommendedAddOnsWizard = {
    */
 
   doUnload: function recommendedAddOnsWizard_doUnload() {
-    // Indicate whether a restart is required.
-    //XXXeps apparently, restart can't be initiated from a modal dialog.
-    //XXXeps perhaps that's because the parent window can't close until the
-    //XXXeps dialog does.
-    if (this._dialogParameterBlock) {
-      if (this._restartRequired)
-        this._dialogParameterBlock.SetString(0, "true");
-      else
-        this._dialogParameterBlock.SetString(0, "false");
-    }
-
     // Finalize the services.
     this._finalize();
+
+    // Restart the application if required.
+    if (this._restartRequired)
+      restartApp();
   },
 
 

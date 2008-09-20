@@ -203,6 +203,17 @@ function doMainwinStart()
     SB_LOG("App Init - Metrics - ", "" + err);
   }
 
+  // Check for recommended add-on bundle updates.  This may wait for recommended
+  // add-on bundle download or the recommended add-on wizard.
+  try {
+    var addOnBundleUpdateService =
+          Cc["@songbirdnest.com/AddOnBundleUpdateService;1"]
+            .getService(Ci.sbIAddOnBundleUpdateService);
+    addOnBundleUpdateService.checkForUpdates();
+  } catch (err) {
+    SB_LOG("App Init - Add-On Bundle Update - ", "" + err);
+  }
+
   // Make sure the web playlist is enabled.
   // This is to protect against cases where the app is shut down
   // while an extension has the web playlist disabled.

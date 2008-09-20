@@ -42,7 +42,7 @@
   <!-- Preferences overlay. -->
   <preferences id="advancedPreferences">
     <preference id="recommended_addons.update.enabled"
-                name="recommended_addons.update.enabled"
+                name="songbird.recommended_addons.update.enabled"
                 type="bool"/>
   </preferences>
 
