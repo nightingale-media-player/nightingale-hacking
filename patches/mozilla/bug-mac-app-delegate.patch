@@ -4,8 +4,8 @@ RCS file: /cvsroot/mozilla/toolkit/xre/MacApplicationDelegate.mm,v
 retrieving revision 1.8
 diff -u -8 -r1.8 MacApplicationDelegate.mm
 --- toolkit/xre/MacApplicationDelegate.mm	20 Feb 2008 17:34:22 -0000	1.8
-+++ toolkit/xre/MacApplicationDelegate.mm	5 Jul 2008 16:37:44 -0000
-@@ -54,19 +54,31 @@
++++ toolkit/xre/MacApplicationDelegate.mm	18 Sep 2008 20:52:00 -0000
+@@ -54,20 +54,36 @@
  #include "nsComponentManagerUtils.h"
  #include "nsCommandLineServiceMac.h"
  #include "nsServiceManagerUtils.h"
@@ -21,15 +21,19 @@ diff -u -8 -r1.8 MacApplicationDelegate.mm
  @interface MacApplicationDelegate : NSObject
  {
 +  BOOL mIsSimulatingModalSession;
++  id   mAppDelegateOverride;
  }
+ 
++- (void)setAppDelegateOverride:(id)aDelegateOverride;
++
 +@end
 +
 +@interface MacApplicationDelegate (Private)
 +
 +- (void)onBeginGeckoModalSession:(id)sender;
 +- (void)onEndGeckoModalSession:(id)sender;
-+- (void)configureAppMenu:(BOOL)inIsModal;  // better name?
- 
++- (void)configureAppMenu:(BOOL)inIsModal;
++
  @end
  
  // Something to call from non-objective code.
@@ -37,7 +41,8 @@ diff -u -8 -r1.8 MacApplicationDelegate.mm
  // This is needed, on relaunch, to force the OS to use the "Cocoa Dock API"
  // instead of the "Carbon Dock API".  For more info see bmo bug 377166.
  void
-@@ -94,16 +106,38 @@
+ EnsureUseCocoaDockAPI()
+@@ -94,26 +110,60 @@
    MacApplicationDelegate *delegate = [[MacApplicationDelegate alloc] init];
    [[NSApplication sharedApplication] setDelegate:delegate];
  
@@ -49,6 +54,7 @@ diff -u -8 -r1.8 MacApplicationDelegate.mm
 +- (id)init
 +{
 +  if ((self = [super init])) {
++    mAppDelegateOverride = nil;
 +    [[NSNotificationCenter defaultCenter] addObserver:self 
 +                                             selector:@selector(onBeginGeckoModalSession:) 
 +                                                 name:@"GeckoStartModal" 
@@ -68,6 +74,11 @@ diff -u -8 -r1.8 MacApplicationDelegate.mm
 +  [super dealloc];
 +}
 +
++- (void)setAppDelegateOverride:(id)aDelegateOverride
++{
++  mAppDelegateOverride = aDelegateOverride;
++}
++
  // Opening the application is handled specially elsewhere,
  // don't define applicationOpenUntitledFile: .
  
@@ -76,7 +87,46 @@ diff -u -8 -r1.8 MacApplicationDelegate.mm
  
  // A "visible" window may be miniaturized, so we can't skip
  // nsCocoaNativeReOpen() if 'flag' is 'true'.
-@@ -231,40 +265,57 @@
+ - (BOOL)applicationShouldHandleReopen:(NSApplication*)theApp hasVisibleWindows:(BOOL)flag
+ {
++  if (mAppDelegateOverride && 
++      [mAppDelegateOverride respondsToSelector:@selector(applicationShouldHandleReopen:hasVisibleWindows:)])
++  {
++    return [mAppDelegateOverride applicationShouldHandleReopen:theApp hasVisibleWindows:flag];
++  }
++
+   nsCOMPtr<nsINativeAppSupport> nas = do_CreateInstance(NS_NATIVEAPPSUPPORT_CONTRACTID);
+   NS_ENSURE_TRUE(nas, NO);
+ 
+   // Go to the common Carbon/Cocoa reopen method.
+   nsresult rv = nas->ReOpen();
+   NS_ENSURE_SUCCESS(rv, NO);
+ 
+   // NO says we don't want NSApplication to do anything else for us.
+@@ -199,16 +249,22 @@
+ }
+ 
+ // Create the menu that shows up in the Dock.
+ 
+ - (NSMenu*)applicationDockMenu:(NSApplication*)sender
+ {
+   NS_OBJC_BEGIN_TRY_ABORT_BLOCK_NIL;
+ 
++  if (mAppDelegateOverride &&
++      [mAppDelegateOverride respondsToSelector:@selector(applicationDockMenu:)]) 
++  {
++    return [mAppDelegateOverride applicationDockMenu:sender];
++  }
++
+   // Why we're not just using Cocoa to enumerate our windows:
+   // The Dock thinks we're a Carbon app, probably because we don't have a
+   // blessed Window menu, so we get none of the automatic handling for dock
+   // menus that Cocoa apps get. Add in Cocoa being a bit braindead when you hide
+   // the app, and we end up having to get our list of windows via XPCOM. Ugh.
+ 
+   // Get the window mediator to do all our lookups.
+   nsresult rv;
+@@ -231,40 +287,57 @@
    // by window creation date, instead of the z-ordered list because that's what
    // native apps do.
    nsCOMPtr<nsISimpleEnumerator> windowList;
@@ -135,7 +185,7 @@ diff -u -8 -r1.8 MacApplicationDelegate.mm
  // One of our dock menu items was selected
  - (void)dockMenuItemSelected:(id)sender
  {
-@@ -305,10 +356,31 @@
+@@ -305,10 +378,31 @@
    nsCOMPtr<nsIAppStartup> appService =
             do_GetService("@mozilla.org/toolkit/app-startup;1");
    if (appService)
@@ -167,3 +217,4 @@ diff -u -8 -r1.8 MacApplicationDelegate.mm
 +
  @end
  
+
