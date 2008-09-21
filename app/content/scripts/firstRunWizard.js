@@ -91,7 +91,6 @@ var firstRunWizard = {
   //   _initialized             True if these services have been initialized.
   //   _domEventListenerSet     Set of DOM event listeners.
   //   _savedSettings           True if settings have been saved.
-  //   _postFinish              True if wizard is in the post-finish pages.
   //   _markFirstRunComplete    True if first-run should be marked as complete
   //                            when wizard exits.
   //   _connectionErrorHandled  True if a connection error has been handled.
@@ -100,7 +99,6 @@ var firstRunWizard = {
   _initialized: false,
   _domEventListenerSet: null,
   _savedSettings: false,
-  _postFinish: false,
   _markFirstRunComplete: false,
   _connectionErrorHandled: false,
 
@@ -184,21 +182,6 @@ var firstRunWizard = {
 
     // Save wizard settings.
     this._saveSettings();
-
-    // Advance to post-finish pages if specified.  Return false to prevent
-    // finish.
-    var currentPage = this.wizardElem.currentPage;
-    if (currentPage.hasAttribute("postfinish")) {
-      // Indicate post-finish state before switching pages.
-      this._postFinish = true;
-
-      // Switch to post-finish pages.
-      var postFinishPageID = currentPage.getAttribute("postfinish");
-      this.wizardElem.goTo(postFinishPageID);
-
-      // Cancel finish.
-      return false;
-    }
   },
 
 
@@ -230,49 +213,6 @@ var firstRunWizard = {
 
     // Update the UI.
     this.update();
-  },
-
-
-  /**
-   * Handle the key press event specified by aEvent.
-   *
-   * \param aEvent              Key press event.
-   */
-
-  doKeyPress: function firstRunWizard_doKeyPress(aEvent) {
-    // Get the pressed key code.
-    var keyCode = aEvent.keyCode;
-
-    // Get the current page.
-    var currentPage = this.wizardElem.currentPage;
-
-    // If the cancel button is disabled or hidden, block the escape key.
-    if (keyCode == Ci.nsIDOMKeyEvent.DOM_VK_ESCAPE) {
-      var cancelButton = this.wizardElem.getButton("cancel");
-      var hideWizardButton =
-            cancelButton.getAttribute("hidewizardbutton") == "true";
-      if (cancelButton.disabled || cancelButton.hidden || hideWizardButton) {
-        aEvent.stopPropagation();
-        aEvent.preventDefault();
-      }
-    }
-
-    // If the next and finished buttons are disabled or hidden, block the enter
-    // and return keys.
-    if ((keyCode == Ci.nsIDOMKeyEvent.DOM_VK_ENTER) ||
-        (keyCode == Ci.nsIDOMKeyEvent.DOM_VK_RETURN)) {
-      var nextButton = this.wizardElem.getButton("next");
-      var hideNextButton =
-            nextButton.getAttribute("hidewizardbutton") == "true";
-      var finishButton = this.wizardElem.getButton("finish");
-      var hideFinishButton =
-            finishButton.getAttribute("hidewizardbutton") == "true";
-      if ((nextButton.disabled || nextButton.hidden || hideNextButton) &&
-          (finishButton.disabled || finishButton.hidden || hideFinishButton)) {
-        aEvent.stopPropagation();
-        aEvent.preventDefault();
-      }
-    }
   },
 
 
@@ -316,25 +256,10 @@ var firstRunWizard = {
     if (currentPage.id == "first_run_welcome_page")
       this._markFirstRunComplete = true;
 
-    // Update the buttons.
-    this._updateButtons();
-
-    // Focus the next or finish buttons unless they're disabled or hidden.
-    var finishButton = this.wizardElem.getButton("finish");
-    var hideFinishButton =
-          finishButton.getAttribute("hidewizardbutton") == "true";
-    var nextButton = this.wizardElem.getButton("next");
-    var hideNextButton =
-          nextButton.getAttribute("hidewizardbutton") == "true";
-    if (!finishButton.hidden && !finishButton.disabled && !hideFinishButton)
-      finishButton.focus();
-    else if (!nextButton.hidden && !nextButton.disbled && !hideNextButton)
-      nextButton.focus();
     // If we're perf testing then we want to just after the EULA is done
     if (window.arguments[0].perfTest && this._markFirstRunComplete) {
         finishButton.click();
     }
-    
   },
 
 
@@ -359,6 +284,10 @@ var firstRunWizard = {
     // Create a DOM event listener set.
     this._domEventListenerSet = new DOMEventListenerSet();
 
+    // Set the quit button label.
+    var quitButton = this.wizardElem.getButton("extra1");
+    quitButton.label = SBString("first_run.quit");
+
     // Listen for quit button events.  These don't bubble to attribute based
     // handlers.
     var _this = this;
@@ -379,76 +308,6 @@ var firstRunWizard = {
     if (this._domEventListenerSet)
       this._domEventListenerSet.removeAll();
     this._domEventListenerSet = null;
-  },
-
-
-  /**
-   * Update the wizard buttons.
-   */
-
-  _updateButtons: function firstRunWizard__updateButtons() {
-    // Get the current wizard page.
-    var currentPage = this.wizardElem.currentPage;
-
-    // Get the button hide and show settings.
-    var hideBackButton = currentPage.getAttribute("hideback") == "true";
-    var hideCancelButton = currentPage.getAttribute("hidecancel") == "true";
-    var hideNextButton = currentPage.getAttribute("hidenext") == "true";
-    var hideFinishButton = currentPage.getAttribute("hidefinish") == "true";
-    var showQuitButton = currentPage.getAttribute("showquit") == "true";
-
-    // Always hide navigation buttons on post-finish pages.
-    if (this._postFinish) {
-      hideBackButton = true;
-      hideNextButton = true;
-      hideFinishButton = true;
-    }
-
-    // Update the buttons.
-    this._setHideButton("back", hideBackButton);
-    this._setHideButton("cancel", hideCancelButton);
-    this._setHideButton("next", hideNextButton);
-    this._setHideButton("finish", hideFinishButton);
-    this._setShowButton("extra1", showQuitButton);
-
-    // Set the quit button label.
-    var quitButton = this.wizardElem.getButton("extra1");
-    quitButton.label = SBString("first_run.quit");
-  },
-
-
-  /**
-   * Set the wizard button specified by aButtonID to be hidden as specified by
-   * aHide.
-   *
-   * \param aButtonID           ID of button to set hidden.
-   * \param aHide               If true, button should be hidden.
-   */
-
-  _setHideButton: function firstRunWizard__setHideButton(aButtonID, aHide) {
-    // Hide the button if specified to do so.  Use a "hidewizardbutton"
-    // attribute with CSS to avoid conflicts with the wizard widget's use of the
-    // button "hidden" attribute.
-    var button = this.wizardElem.getButton(aButtonID);
-    if (aHide)
-      button.setAttribute("hidewizardbutton", "true");
-    else
-      button.removeAttribute("hidewizardbutton");
-  },
-
-
-  /**
-   * Set the wizard button specified by aButtonID to be shown as specified by
-   * aShow.
-   *
-   * \param aButtonID           ID of button to set show.
-   * \param aShow               If true, button should be shown.
-   */
-
-  _setShowButton: function firstRunWizard__setShowButton(aButtonID, aShow) {
-    // Show button if specified to do so.
-    var button = this.wizardElem.getButton(aButtonID);
-    button.hidden = !aShow;
   },
 
 

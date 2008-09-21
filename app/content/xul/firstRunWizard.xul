@@ -55,7 +55,6 @@
   onunload="firstRunWizard.doUnload();"
   onwizardfinish="return firstRunWizard.doFinish();"
   onwizardcancel="firstRunWizard.doCancel();"
-  onkeypress="firstRunWizard.doKeyPress(event);"
 >
 
   <!-- *************************************************************************
@@ -69,7 +68,7 @@
               pageid="first_run_eula_page"
               next="first_run_locale_page"
               label="&first_run.title;"
-              showquit="true"
+              showextra1="true"
               hideback="true"
               hidecancel="true"
               onpageshow="firstRunWizard.doPageShow();">

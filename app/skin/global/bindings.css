@@ -52,3 +52,7 @@ wizard[type="songbird"] {
   -moz-binding: url("chrome://songbird/content/bindings/wizard.xml#wizard") !important;
 }
 
+wizard[type="songbird"] > wizardpage {
+  -moz-binding: url("chrome://songbird/content/bindings/wizard.xml#sb-wizard-page") !important;
+}
+

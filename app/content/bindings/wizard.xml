@@ -43,7 +43,18 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
-   * Wizard dialog.
+   * Songbird wizard dialog.
+   *
+   *   Customized Songbird wizard dialog widget.
+   *   This Songbird wizard provides support for showing pages after the wizard
+   * has finished.  These may be used to show download or installation status
+   * after the wizard settings have been committed.  If the wizard is finished,
+   * the postFinish property will be true.
+   *
+   * Properties:
+   *
+   *   postFinish               True if showing a wizard page after the wizard
+   *                            finish.
    *
    *XXXeps Should use sb-sys-outer-frame and sb-sys-wizard-titlebar but don't
    *XXXeps have time to do the wizard specific work this late into Fugazi.
@@ -54,6 +65,12 @@
 
   <binding id="wizard"
            extends="chrome://global/content/bindings/wizard.xml#wizard">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
 
     <content>
 
@@ -77,7 +94,198 @@
 
     </content>
 
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Widget properties.
+       -->
+
+      <!-- postFinish -->
+      <field name="_postFinish">false</field>
+      <property name="postFinish" readonly="true">
+        <getter>
+          return this._postFinish;
+        </getter>
+      </property>
+
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           Songbird wizard widget services object.
+       -->
+
+      <field name="_widgetSvc"/>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal methods.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new sbWizardSvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the Songbird wizard page widget services.
+        if (typeof(sbWizardSvc) == "undefined") {
+          var Cc = Components.classes;
+          var Ci = Components.interfaces;
+          var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(Ci.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+                     ("chrome://songbird/content/scripts/wizardService.js",
+                      null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
   </binding> <!-- wizard -->
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Songbird wizard page.
+   *
+   *   Customized Songbird wizard page widget.
+   *   The Songbird wizard page allows wizard button display to be controlled by
+   * the various hide and show button attributes (e.g., "hideback").
+   *   Along with the Songbird wizard widget, the Songbird wizard page provides
+   * support for post-finish pages.  These may be used for post-finish
+   * downloading and installation.  The last regular wizard page (i.e., one with
+   * no "next" attribute) may navigate to a post-finish page by specifying a
+   * page ID in the postfinish attribute.
+   *
+   * Attributes:
+   *
+   *   hideback                 If true, hide the back button.
+   *   hidecancel               If true, hide the cancel button.
+   *   hidenext                 If true, hide the next button.
+   *   hidefinish               If true, hide the finish button.
+   *   showextra1               If true, show the extra1 button.
+   *   postfinish               ID of page to show after wizard is finished.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-wizard-page"
+           extends="chrome://global/content/bindings/wizard.xml#wizardpage">
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * Private fields.
+       *
+       *   _widgetSvc           Songbird wizard page widget services object.
+       -->
+
+      <field name="_widgetSvc"/>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal methods.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this._importExternalServices();
+
+        // Create a widget services object.
+        this._widgetSvc = new sbWizardPageSvc(this);
+
+        // Initialize the widget services.
+        this._widgetSvc.initialize();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        if (this._widgetSvc)
+            this._widgetSvc.finalize();
+      ]]></destructor>
+
+
+      <!--
+       * Import external services.
+       -->
+
+      <method name="_importExternalServices"><body><![CDATA[
+        // Import the Songbird wizard page widget services.
+        if (typeof(sbWizardPageSvc) == "undefined") {
+          var Cc = Components.classes;
+          var Ci = Components.interfaces;
+          var jsLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                           .getService(Ci.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+                     ("chrome://songbird/content/scripts/wizardService.js",
+                      null);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+  </binding> <!-- sb-wizard-page" -->
 
 </bindings>
 

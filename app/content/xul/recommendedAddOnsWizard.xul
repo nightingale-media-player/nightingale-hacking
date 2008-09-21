@@ -65,7 +65,11 @@
    ************************************************************************* -->
 
   <!-- Recommended add-ons selection wizard page. -->
-  <wizardpage label="&recommended_add_ons.title;">
+  <wizardpage id="recommended_add_ons_selection_page"
+              pageid="recommended_add_ons_selection_page"
+              postfinish="recommended_add_ons_installation_page"
+              hideback="true"
+              label="&recommended_add_ons.title;">
 
     <!-- Main recommended add-ons box. -->
     <vbox id="recommended_add_ons_box">
@@ -84,8 +88,14 @@
 
   </wizardpage>
 
+  <!-- Dummy page to force recommended add-ons  -->
+  <!-- selection page to be the finishing page. -->
+  <wizardpage id="dummy_page" pageid="dummy_page" next="dummy_page"/>
+
   <!-- Recommended add-ons installation wizard page. -->
   <wizardpage
+    id="recommended_add_ons_installation_page"
+    pageid="recommended_add_ons_installation_page"
     label="&recommended_add_ons.title;"
     onpageshow="recommendedAddOnsWizard.doShowAddOnBundleInstallPage();">
 
