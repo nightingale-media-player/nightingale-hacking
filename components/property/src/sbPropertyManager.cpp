@@ -456,7 +456,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     NS_LITERAL_STRING("property.track_name"),
                     stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE);
+                    PR_TRUE, PR_TRUE, NULL, PR_TRUE);
 
   //Album name
   nsCOMPtr<sbIMutablePropertyArray> albumSortProfile =
