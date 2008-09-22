@@ -1,0 +1,26 @@
+Index: toolkit/content/widgets/tree.xml
+===================================================================
+RCS file: /cvsroot/mozilla/toolkit/content/widgets/tree.xml,v
+retrieving revision 1.57
+diff -u -8 -p -r1.57 tree.xml
+--- toolkit/content/widgets/tree.xml	1 May 2008 21:12:52 -0000	1.57
++++ toolkit/content/widgets/tree.xml	22 Sep 2008 21:46:46 -0000
+@@ -624,17 +624,17 @@
+ 
+             this.treeBoxObject.ensureRowIsVisible(edge);
+           ]]>
+         </body>
+       </method>
+     </implementation>
+     
+     <handlers>
+-      <handler event="DOMMouseScroll" phase="capturing">
++      <handler event="DOMMouseScroll">
+         <![CDATA[
+           if (this._editingColumn)
+             return;
+ 
+           var rows = event.detail;
+           if (rows == NSUIEvent.SCROLL_PAGE_UP)
+             this.treeBoxObject.scrollByPages(-1);
+           else if (rows == NSUIEvent.SCROLL_PAGE_DOWN)
