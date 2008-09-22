@@ -258,6 +258,77 @@ private:
   PRPackedBool mIsListeningToPlayback;
 
   nsString mLocalizedAll;
+
+  static PRInt32 const NOT_SET = -1;
+
+  PRInt32 mPreviousFirstVisibleRow;
+  PRInt32 mPreviousLastVisibleRow;
+  /**
+   * Nested class used to hold guid strings so that we can efficiently pass it
+   * off to a function. This is used for the tree views and the number of items
+   * should be relatively small < 100. These are frequently accessed for rendering
+   * so this should be a win, reducing memory churn and fragmentation.
+   */
+  class GuidArray
+  {
+  public:
+    /**
+     * Initialize our item count to zero
+     */
+    GuidArray() : mItems(0) {}
+    /**
+     * Sets the capacity of our data arrays
+     */
+    void SetCapacity(PRUint32 aCapacity) {
+      mTempGuids.SetCapacity(aCapacity);
+      mTempGuidChars.SetCapacity(aCapacity);
+    }
+    /**
+     * Appends a guid string to our list.
+     * Append calls should never exceed the value passed to SetCapacity
+     */
+    nsresult Append(nsString const & aGuid) {
+      // If the array is not big enough append
+      if (mItems < mTempGuids.Length()) {
+        mTempGuids[mItems] = aGuid;
+        mTempGuidChars[mItems] = mTempGuids[mItems].get();
+      }
+      else {
+        // When appending, mItems should always equal the length of mTempGuids
+        NS_ASSERTION(mItems == mTempGuids.Length(),
+                     "sbLocalDatabaseTreeView::GuidArray's array is out of sync");
+        nsString * newGuid = mTempGuids.AppendElement(aGuid);
+        NS_ENSURE_TRUE(newGuid, NS_ERROR_OUT_OF_MEMORY);
+
+        mTempGuidChars.AppendElement(newGuid->get());
+      }
+      ++mItems;
+      return NS_OK;
+    }
+    /**
+     * Resets the number of items we hold without freeing anything
+     */
+    void Reset() {
+      mItems = 0;
+    }
+    /**
+     * Returns the actual number of items we hold
+     */
+    PRUint32 Length() const {
+      return mItems;
+    }
+    /**
+     * Return the guid strings as a PRUnichar * array
+     */
+    PRUnichar const * const * AsCharArray() const {
+      return mTempGuidChars.Elements();
+    }
+  private:
+    nsTArray<nsString> mTempGuids;
+    nsTArray<PRUnichar const *> mTempGuidChars;
+    PRUint32 mItems;
+  };
+  GuidArray mGuidWorkArray;
 };
 
 class sbLocalDatabaseTreeViewState : public nsISerializable

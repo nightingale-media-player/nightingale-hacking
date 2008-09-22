@@ -199,7 +199,9 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mMouseStateRow(-1),
  mSelectionIsAll(PR_FALSE),
  mFakeAllRow(PR_FALSE),
- mIsListeningToPlayback(PR_FALSE)
+ mIsListeningToPlayback(PR_FALSE),
+ mPreviousFirstVisibleRow(NOT_SET),
+ mPreviousLastVisibleRow(NOT_SET)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseTreeViewLog) {
@@ -521,6 +523,21 @@ sbLocalDatabaseTreeView::TokenizeProperties(const nsAString& aProperties,
   return NS_OK;
 }
 
+inline
+PRBool intersection(PRInt32 start1, PRInt32 end1, PRInt32 start2, PRInt32 end2, PRInt32 & intersectStart, PRInt32 & intersectEnd) {
+  PRBool const result = end1 >= start2 && start1 <= end2;
+  if (result) {
+    intersectStart = start2;
+    intersectEnd = end2;
+    if (start1 > start2)
+      intersectStart = start1;
+    if (end1 < end2)
+      intersectEnd = end1;
+
+  }
+  return result;
+}
+
 nsresult
 sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
                                               nsITreeColumn *aTreeColumn,
@@ -549,14 +566,32 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
     rv = mTreeBoxObject->GetLastVisibleRow(&last);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // If we have a valid first/last and they're different
     if (first >= 0 && last >= 0) {
-      nsTArray<nsString> guids(last - first + 1);
-      nsTArray<const PRUnichar*> guidArray(last - first + 1);
+
+      // Calculate the number of rows we're going process
+      PRInt32 length = last - first + 1;
+
+      PRInt32 intersectStart;
+      PRInt32 intersectEnd;
+      // Get the intersection between the current first and last and previous
+      PRBool const intersects = intersection(first, last,
+                                             mPreviousFirstVisibleRow, mPreviousLastVisibleRow,
+                                             intersectStart, intersectEnd);
+      // If they intersect then remove the intersecting rows from the length
+      if (intersects) {
+        length -= (intersectEnd - intersectStart + 1);
+      }
+      // Set the capacity
+      mGuidWorkArray.SetCapacity(length);
+      mGuidWorkArray.Reset();
       for (PRUint32 row = first;
-           row <= (PRUint32) last && row < mArrayLength;
+           row <= static_cast<PRUint32>(last) && row < mArrayLength;
            row++) {
 
-        if (mFakeAllRow && row == 0) {
+        // Skip the fake row and any row's we have already cached
+        if ((row >= mPreviousFirstVisibleRow && row <= mPreviousLastVisibleRow) ||
+            (mFakeAllRow && row == 0)) {
           continue;
         }
 
@@ -564,16 +599,17 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
         rv = mArray->GetGuidByIndex(TreeToArray(row), guid);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        nsString* addedGuid = guids.AppendElement(guid);
-        NS_ENSURE_TRUE(addedGuid, NS_ERROR_OUT_OF_MEMORY);
-
-        const PRUnichar** addedPtr = guidArray.AppendElement(addedGuid->get());
-        NS_ENSURE_TRUE(addedPtr, NS_ERROR_OUT_OF_MEMORY);
+        rv = mGuidWorkArray.Append(guid);
+        NS_ENSURE_SUCCESS(rv, rv);
       }
 
-      rv = mPropertyCache->CacheProperties(guidArray.Elements(),
-                                           guidArray.Length());
+      rv = mPropertyCache->CacheProperties(const_cast<PRUnichar const **>(
+                                             mGuidWorkArray.AsCharArray()),
+                                           mGuidWorkArray.Length());
       NS_ENSURE_SUCCESS(rv, rv);
+
+      mPreviousFirstVisibleRow = first;
+      mPreviousLastVisibleRow = last;
     }
   }
 
@@ -589,17 +625,17 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
   nsCOMPtr<sbIPropertyInfo> info;
   rv = mPropMan->GetPropertyInfo(bind, getter_AddRefs(info));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Get the unit converter
   nsCOMPtr<sbIPropertyUnitConverter> converter;
   rv = info->GetUnitConverter(getter_AddRefs(converter));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Format the value for display
   if (converter) {
     // unit converter present, ask it to format the value using the best unit,
     // using at most 1 decimal digit
-    rv = converter->AutoFormat(value, 
+    rv = converter->AutoFormat(value,
                                -1, // no min decimals
                                1,  // 1 decimal max
                                _retval);
@@ -1132,6 +1168,10 @@ sbLocalDatabaseTreeView::GetSelectedValues(nsIStringEnumerator** aValues)
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::OnBeforeInvalidate()
 {
+  // array modified so reset everything
+  mGuidWorkArray.Reset();
+  mPreviousLastVisibleRow = mPreviousFirstVisibleRow = NOT_SET;
+
   if (mManageSelection) {
     nsresult rv = SaveSelectionList();
     NS_ENSURE_SUCCESS(rv, rv);
