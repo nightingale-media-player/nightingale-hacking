@@ -4,8 +4,9 @@ RCS file: /cvsroot/mozilla/xpfe/appshell/src/nsAppShellService.cpp,v
 retrieving revision 1.236
 diff -u -8 -r1.236 nsAppShellService.cpp
 --- xpfe/appshell/src/nsAppShellService.cpp	23 Mar 2008 22:30:57 -0000	1.236
-+++ xpfe/appshell/src/nsAppShellService.cpp	13 May 2008 22:33:19 -0000
-@@ -305,30 +305,16 @@
++++ xpfe/appshell/src/nsAppShellService.cpp	25 Aug 2008 17:09:17 -0000
+@@ -304,30 +304,43 @@
+   if (aIsHiddenWindow)
      widgetInitData.mWindowType = eWindowType_invisible;
    else
      widgetInitData.mWindowType = aChromeMask & nsIWebBrowserChrome::CHROME_OPENAS_DIALOG ?
@@ -13,21 +14,40 @@ diff -u -8 -r1.236 nsAppShellService.cpp
  
    if (aChromeMask & nsIWebBrowserChrome::CHROME_WINDOW_POPUP)
      widgetInitData.mWindowType = eWindowType_popup;
- 
--#ifdef XP_MACOSX
--  // Mac OS X sheet support
--  // Adding CHROME_OPENAS_CHROME to sheetMask makes modal windows opened from
--  // nsGlobalWindow::ShowModalDialog() be dialogs (not sheets), while modal
--  // windows opened from nsPromptService::DoDialog() still are sheets.  This
--  // fixes bmo bug 395465 (see nsCocoaWindow::StandardCreate() and
--  // nsCocoaWindow::SetModal()).
+-
++  
+ #ifdef XP_MACOSX
+   // Mac OS X sheet support
+   // Adding CHROME_OPENAS_CHROME to sheetMask makes modal windows opened from
+   // nsGlobalWindow::ShowModalDialog() be dialogs (not sheets), while modal
+   // windows opened from nsPromptService::DoDialog() still are sheets.  This
+   // fixes bmo bug 395465 (see nsCocoaWindow::StandardCreate() and
+   // nsCocoaWindow::SetModal()).
 -  PRUint32 sheetMask = nsIWebBrowserChrome::CHROME_OPENAS_DIALOG |
 -                       nsIWebBrowserChrome::CHROME_MODAL |
 -                       nsIWebBrowserChrome::CHROME_OPENAS_CHROME;
 -  if (aParent && ((aChromeMask & sheetMask) == sheetMask))
 -    widgetInitData.mWindowType = eWindowType_sheet;
--#endif
--
++  // 
++  // @songbird -> Only use sheets when |showChrome == true|:
++  nsCOMPtr<nsIPrefBranch> prefs = do_GetService(NS_PREFSERVICE_CONTRACTID);
++  if (prefs) {
++    char *showChrome = nsnull;
++    prefs->GetCharPref("songbird.accessibility.enabled", &showChrome);
++    if (showChrome != nsnull) {
++      if (strcmp(showChrome, "0")) {
++        PRUint32 sheetMask = nsIWebBrowserChrome::CHROME_OPENAS_DIALOG |
++                             nsIWebBrowserChrome::CHROME_MODAL |
++                             nsIWebBrowserChrome::CHROME_OPENAS_CHROME;
++        if (aParent && ((aChromeMask & sheetMask) == sheetMask))
++          widgetInitData.mWindowType = eWindowType_sheet;
++      }
++      NS_Free(showChrome);
++    }
++  }
+ #endif
++  
+ 
    widgetInitData.mContentType = eContentTypeUI;                
  
    // note default chrome overrides other OS chrome settings, but
@@ -35,4 +55,3 @@ diff -u -8 -r1.236 nsAppShellService.cpp
    if (aChromeMask & nsIWebBrowserChrome::CHROME_DEFAULT)
      widgetInitData.mBorderStyle = eBorderStyle_default;
    else if ((aChromeMask & nsIWebBrowserChrome::CHROME_ALL) == nsIWebBrowserChrome::CHROME_ALL)
-     widgetInitData.mBorderStyle = eBorderStyle_all;
