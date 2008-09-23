@@ -875,7 +875,12 @@ sbPlaybackHistoryService::CreateEntriesFromResultSet(sbIDatabaseResult *aResult,
     nsCOMPtr<sbIPlaybackHistoryEntry> entry;
     
     rv = CreateEntryFromResultSet(aResult, currentRow, getter_AddRefs(entry));
-    NS_ENSURE_SUCCESS(rv, rv);
+    // failing to find the item is not fatal, it only means that it has been
+    // deleted from the library, so just skip it. Do not remove it from the
+    // history though, so that if the same item is added again, we'll still
+    // have its data.
+    if (rv == NS_ERROR_NOT_AVAILABLE) 
+      continue;
 
     rv = mutableArray->AppendElement(entry, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
