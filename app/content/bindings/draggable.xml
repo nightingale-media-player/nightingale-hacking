@@ -162,7 +162,7 @@
               onMinimize();
             else
               // Maximize elsewhere
-              onMaximize();
+              onMaximize(window.windowState != Components.interfaces.nsIDOMChromeWindow.STATE_MAXIMIZED);
           ]]>
         </body>
       </method>

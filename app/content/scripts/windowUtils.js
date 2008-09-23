@@ -294,7 +294,7 @@ function onMinimize()
  * \brief onMaximize handler, maximizes the window in the current context.
  * \internal
  */
-function onMaximize()
+function onMaximize(aMaximize)
 {
   if ( macZoomWindowController != null )
   {
@@ -302,17 +302,16 @@ function onMaximize()
   }
   else
   {
-    if ( isMaximized() )
-    {
-      document.defaultView.restore();
-    }
-    else
+    if ( aMaximize )
     {
       document.defaultView.maximize();
     }
+    else
+    {
+      document.defaultView.restore();
+    }
   }
   // TODO
-  //syncMaxButton();
   //syncResizers();
 }
 
@@ -335,15 +334,6 @@ function isMinimized() {
 }
 
 /* TODO: These broke circa 0.2.  The logic needs to be moved into sys-outer-frame
-function syncMaxButton()
-{
-  var maxButton = document.getElementById("sysbtn_maximize");
-  if (maxButton)
-  {
-    if (isMaximized()) maxButton.setAttribute("checked", "true");
-    else maxButton.removeAttribute("checked");
-  }
-}
 function syncResizers()
 {
   // TODO?

@@ -37,7 +37,7 @@
   <binding id="sb-sys-maximize-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-checkbox-base">
     <handlers>
       <!-- Grrr, apparently you use "CheckboxStateChange" instead of "command" from inside an XBL.  Of course.  Obviously. -->
-      <handler event="CheckboxStateChange" action="onMaximize();"/>
+      <handler event="CheckboxStateChange" action="onMaximize(this.checked);"/>
     </handlers>
     <implementation>
       <constructor>
@@ -45,6 +45,11 @@
         <![CDATA[
           if ( this.getAttribute("hidden") != "true" ) // not hidden already
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
+          var self = this;
+          window.addEventListener("resize", function(aEvent) {
+            const nsIDOMChromeWindow = Components.interfaces.nsIDOMChromeWindow;
+            self.checked = (window.windowState == nsIDOMChromeWindow.STATE_MAXIMIZED);
+          }, false);
         ]]>
       </constructor>
       <destructor>
