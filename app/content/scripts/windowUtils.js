@@ -141,12 +141,13 @@ sbMacWindowZoomController.prototype = {
     document.addEventListener("unload", this._documentunload, false);
   },
   
-  _onWindowResized: function() { 
+  _onWindowResized: function() {
     if (this._mIsZoomed) {
       if (this._mIsResizeEventFromZoom) {
         this._mIsResizeEventFromZoom = false;
       }
-      else {
+      // Only save window coordinates if the window is out of the 'zoomed' area..
+      else if (!this._isConsideredZoomed()) {
         this._mIsZoomed = false;
         this._saveWindowCoords();
       }
@@ -167,18 +168,7 @@ sbMacWindowZoomController.prototype = {
       }
     }
     else {
-      // If the window was moved into the "zoom" zone 
-      // (10 pixel square in top-left corner) then it should be considered 
-      // "zoomed" and be set as so.
-      var curWidth = parseInt(document.documentElement.boxObject.width);
-      var curHeight = parseInt(document.documentElement.boxObject.height);
-      if (curX < (maxScreenRect.x + 10) && 
-          curY < (maxScreenRect.y + 10) &&
-          curWidth > (maxScreenRect.width - 10) && 
-          curHeight > (maxScreenRect.height - 10))
-      {
-        this._mIsZoomed = true;
-      }
+      this._mIsZoomed = this._isConsideredZoomed();
     }
   },
   
@@ -214,6 +204,28 @@ sbMacWindowZoomController.prototype = {
     this._mSavedXPos = parseInt(document.documentElement.boxObject.screenX);
     this._mSavedWidth = parseInt(document.documentElement.boxObject.width);
     this._mSavedHeight = parseInt(document.documentElement.boxObject.height);
+  },
+
+  _isConsideredZoomed: function() {
+    // If the window was moved into the "zoom" zone 
+    // (10 pixel square in top-left corner) then it should be considered 
+    // "zoomed" and be set as so.
+    var isZoomed = false;
+    var maxScreenRect = getCurMaxScreenRect();
+    var curX = parseInt(document.documentElement.boxObject.screenX);
+    var curY = parseInt(document.documentElement.boxObject.screenY);
+    var curWidth = parseInt(document.documentElement.boxObject.width);
+    var curHeight = parseInt(document.documentElement.boxObject.height);
+
+    if (curX < (maxScreenRect.x + 10) && 
+        curY < (maxScreenRect.y + 10) &&
+        curWidth > (maxScreenRect.width - 10) && 
+        curHeight > (maxScreenRect.height - 10))
+    {
+      isZoomed = true;
+    }
+
+    return isZoomed;
   }
 };
 
