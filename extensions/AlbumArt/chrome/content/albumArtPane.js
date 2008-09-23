@@ -118,6 +118,9 @@ var AlbumArt = {
     // Only respond to primary button double clicks.
     var passImageParam = null;
     if (aEvent.button == 0) {
+      // If the user is clicking on the "Now Selected" image we are going to
+      // display that one, otherwise the window will display the currently
+      // playing image.
       if (aEvent.target.id == 'sb-albumart-selected') {
         passImageParam = this.getCurrentStateItemImage();
       }
