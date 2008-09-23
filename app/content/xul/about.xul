@@ -65,25 +65,14 @@
       setTimeout(function() { document.getElementById( "about_browser" ).focus(); } , 0);
 
       // Figure out a string to use from the user agent.
-      var user_agent = navigator.userAgent;
       var build_number = SBDataGetStringValue("buildNumber");
 
-      var sb_idx = user_agent.indexOf("Songbird");
-      if ( sb_idx != -1 )
-      {
-        // Try to get rid of the annoying mozilla crap at the beginning.
-        user_agent = user_agent.substr( sb_idx, user_agent.length );
-      }
+      var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
+
       // Paste it into the label
       var version = document.getElementById( "version_number" );
-      version.value += ": " + user_agent;
-
-      // include the XULRunner buildid for easy reference
-      var appInfo = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULAppInfo);
-      version.value += " (" + appInfo.platformBuildID + ") ";
-
-      // Add the build number
-      version.value += "Build " + build_number;
+      version.value += ": " + appInfo.name + " " + appInfo.version + 
+       ", Build " + build_number + " (" + appInfo.appBuildID + ")";
     }
     function doOK() {
       if ( typeof( window.arguments[0] ) != 'undefined' )
