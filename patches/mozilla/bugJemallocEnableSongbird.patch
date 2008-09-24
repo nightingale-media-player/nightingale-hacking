@@ -1,0 +1,35 @@
+Index: xulrunner/stub/Makefile.in
+===================================================================
+RCS file: /cvsroot/mozilla/xulrunner/stub/Makefile.in,v
+retrieving revision 1.12
+diff -u -8 -r1.12 Makefile.in
+--- xulrunner/stub/Makefile.in	11 Mar 2008 23:32:26 -0000	1.12
++++ xulrunner/stub/Makefile.in	17 Sep 2008 00:51:59 -0000
+@@ -57,17 +57,26 @@
+ # If this configure argument is not present then the default name is 'xulrunner'
+ # for Mac OS X and 'xulrunner-stub' for all other platforms.
+ PROGRAM   = $(XULRUNNER_STUB_NAME)$(BIN_SUFFIX)
+ 
+ LOCAL_INCLUDES = -I$(topsrcdir)/xpcom/build
+ 
+ DEFINES  += -DXPCOM_GLUE
+ 
+-LIBS = \
++# If we're using jemalloc and we're on Linux, link in jemalloc.so to
++# jemalloc-enable the entire XR app.
++ifeq ($(MOZ_MEMORY)_$(OS_ARCH),1_Linux)
++ifneq (,$(LIBS))
++$(warn Overwriting current LIBS: $(LIBS)...)
++endif
++LIBS = -ljemalloc
++endif
++
++LIBS += \
+   $(XPCOM_STANDALONE_GLUE_LDOPTS) \
+   $(NULL)
+ 
+ # Need to link with CoreFoundation on Mac
+ ifneq (,$(filter mac cocoa,$(MOZ_WIDGET_TOOLKIT)))
+ LIBS            += \
+ 		$(TK_LIBS) \
+ 		$(NULL)
