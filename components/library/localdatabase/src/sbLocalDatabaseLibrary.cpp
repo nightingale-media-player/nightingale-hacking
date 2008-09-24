@@ -1547,12 +1547,89 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     mPreventAddedNotification = PR_TRUE;
 
     // Don't return after this without resetting mPreventAddedNotification!
+    
+    // If the list is from a different library, we want to copy the list as
+    // type "simple", because other types can carry logic that points at some
+    // of its library's resources.
+    nsCOMPtr<sbILibrary> itemLibrary;
+    nsresult rv = aMediaItem->GetLibrary(getter_AddRefs(itemLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
 
+    PRBool equals;
+    rv = itemLibrary->Equals(SB_ILIBRESOURCE_CAST(this), &equals);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
     nsCOMPtr<sbIMediaList> newList;
-    rv = CreateMediaList(type, properties, getter_AddRefs(newList));
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't create media list!");
-    if (NS_FAILED(rv)) {
+    PRBool forceCreateAsSimple = !equals;
+    
+    if (!forceCreateAsSimple) {
+      rv = CreateMediaList(type, properties, getter_AddRefs(newList));
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't create media list!");
       // Hm, try to create a simple list if that failed.
+      if (NS_FAILED(rv))
+        forceCreateAsSimple = PR_TRUE;
+    }
+    
+    if (forceCreateAsSimple) {
+
+      // If we're forcing the new library to be of type "simple", we also need
+      // to strip some more properties in addition to those normally filtered
+      // out. 
+      PRUint32 length;
+      rv = properties->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIMutableArray> mutableArray;
+
+      PRUint32 index = 0;
+      while (index < length) {
+        nsCOMPtr<sbIProperty> property;
+        rv = properties->GetPropertyAt(index, getter_AddRefs(property));
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        nsString id;
+        rv = property->GetId(id);
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        // - storageGuid and outerGuid are stripped because a simple list stands
+        //   on its own
+        
+        // - listType is stripped because we're forcing the type to simple,
+        //   the new value for that property will be added to the array 
+        //   in CreateMediaList
+        
+        // - mediaListName is stripped because we're going to set it manually
+        //   using the value from list->GetName, so that the name is kept
+        //   even if it was stored as a property of a storage list
+        
+        if (id.EqualsLiteral(SB_PROPERTY_STORAGEGUID) ||
+            id.EqualsLiteral(SB_PROPERTY_OUTERGUID) ||
+            id.EqualsLiteral(SB_PROPERTY_LISTTYPE) ||
+            id.EqualsLiteral(SB_PROPERTY_MEDIALISTNAME)) {
+
+          if (!mutableArray) {
+            mutableArray = do_QueryInterface(mutableProperties, &rv);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+          
+          rv = mutableArray->RemoveElementAt(index);
+          NS_ENSURE_SUCCESS(rv, rv);
+          
+          length--;
+        } else {
+          index++;        
+        }
+      }
+      
+      nsString listName;
+      rv = itemAsList->GetName(listName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mutableProperties->
+        AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME), 
+                       listName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       rv = CreateMediaList(NS_LITERAL_STRING("simple"), properties,
                            getter_AddRefs(newList));
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't create simple media list!");
