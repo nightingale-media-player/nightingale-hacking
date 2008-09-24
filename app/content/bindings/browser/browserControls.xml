@@ -258,18 +258,9 @@
         this._textbox.selectionEnd = this._saveFocus.length;
       ]]></handler>
       
-      <handler event="keypress"><![CDATA[
-        switch (event.keyCode) {
-          case 27: // Esc
-            if (this._saveFocus != '') {
-              this.value = this._saveFocus;
-            }
-            break;
-            
-          case 13: // Enter
-            this._saveFocus == '';
-            this.uri = this.value;
-            window.gBrowser.loadURI(this.value);
+      <handler event="keypress" keycode="VK_ESCAPE"><![CDATA[
+        if (this._saveFocus != '') {
+          this.value = this._saveFocus;
         }
       ]]></handler>
     </handlers>
