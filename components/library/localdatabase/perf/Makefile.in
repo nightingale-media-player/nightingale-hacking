@@ -39,6 +39,8 @@ SONGBIRD_TESTS = $(srcdir)/head_localdatabaselibraryperf.js \
                  $(srcdir)/test_guidarray_default_view.js \
                  $(srcdir)/test_guidarray_search.js \
                  $(srcdir)/test_guidarray_search_distinct.js \
+                 $(srcdir)/test_propertycache.js \
+                 $(srcdir)/test_guidarray_filtering.js \
                  $(NULL)
 
 # test_load.js is a script that creates test databases.  It is not intended
