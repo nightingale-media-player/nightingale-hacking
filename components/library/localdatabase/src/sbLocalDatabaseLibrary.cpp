@@ -1572,7 +1572,7 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     
     if (forceCreateAsSimple) {
 
-      // If we're forcing the new library to be of type "simple", we also need
+      // If we're forcing the new playlist to be of type "simple", we also need
       // to strip some more properties in addition to those normally filtered
       // out. 
       PRUint32 length;
