@@ -32,7 +32,12 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = vendor/mozilla
 
 # XXXredfive -erhn?
-SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/songbird$(BIN_SUFFIX)
+
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+  SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/songbird-bin
+else
+  SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/songbird$(BIN_SUFFIX)
+endif
 
 GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
 GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
@@ -501,7 +506,7 @@ include $(topsrcdir)/build/rules.mk
 # Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
 xulrunner_extensions = $(notdir $(wildcard $(SONGBIRD_XULRUNNERDIR)/extensions/*))
 
-all:: copy-extensions addmsvcrtmanifest
+all:: copy-extensions copy-xr-shell-stub addmsvcrtmanifest
 
 # WE have to add manifest information to the few remaining .exes that actually
 # link against the MSVCRT; see bug 10022
@@ -519,7 +524,8 @@ ifeq ($(SB_USE_JEMALLOC)_$(MSMANIFEST_TOOL),_1)
 endif # NOT SB_USE_JEMALLOC and MSVC with manifest tool
 
 
-.PHONY : copy-extensions addmsvcrtmanifest
+.PHONY : copy-xr-shell-stub copy-extensions addmsvcrtmanifest
+
 copy-extensions : gunzip_file
 	@echo $(xulrunner_extensions)
 ifneq (,$(xulrunner_extensions))
@@ -529,4 +535,9 @@ ifneq (,$(xulrunner_extensions))
     $(MV) -f $(SONGBIRD_XULRUNNERDIR)/extensions/$$item $(SONGBIRD_EXTENSIONSDIR); \
   done
 	$(RM) -rf $(SONGBIRD_XULRUNNERDIR)/extensions
+endif
+
+copy-xr-shell-stub: gunzip_file
+ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
+	$(CP) -dfp $(SONGBIRD_XULRUNNERDIR)/run-mozilla.sh $(SONGBIRD_DISTDIR)/songbird
 endif
