@@ -198,7 +198,8 @@
                  property="http://songbirdnest.com/data/1.0#trackName"/>
           <!-- this one element gets an ID so we can look it up and disable it -->
           <textbox id="infotab_trackname_textbox"
-                   property="http://songbirdnest.com/data/1.0#trackName"/>
+                   property="http://songbirdnest.com/data/1.0#trackName"
+                   flex="1"/>
 
           <row>
             <label property-type="label" property="http://songbirdnest.com/data/1.0#artistName"/>

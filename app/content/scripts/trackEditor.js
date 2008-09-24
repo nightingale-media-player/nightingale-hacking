@@ -669,7 +669,9 @@ var TrackEditor = {
     var elements = document.getElementsByAttribute("property", "*");
     for each (var element in elements) {
       var wrappedElement = null;
-      if (element.tagName == "label" || element.tagName == "textbox") {
+      if (element.tagName == "label" ||
+          (element.tagName == "textbox" && /\bplain\b/(element.className)))
+      {
         var property = element.getAttribute("property")
         var propertyInfo = this._propertyManager.getPropertyInfo(property);
         
@@ -2174,6 +2176,7 @@ TrackEditorAdvancedTab.prototype = {
         if (propInfo.userEditable) {
           var textbox = document.createElement("textbox");
           textbox.setAttribute("property", property);
+          textbox.setAttribute("flex", "1");
           container.appendChild(textbox);
         }
         else {
