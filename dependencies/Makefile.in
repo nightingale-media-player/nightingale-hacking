@@ -95,6 +95,7 @@ endif # windows
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
 
 SONGBIRD_XULRUNNER += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/libtag.so*
+SONGBIRD_DIST += $(SONGBIRD_XULRUNNERDIR)/libjemalloc.so
 
 # non-existent variable, VLC no-worky on linux yet...
 ifdef (MEDIA_CORE_VLC)
@@ -539,5 +540,5 @@ endif
 
 copy-xr-shell-stub: gunzip_file
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-	$(CP) -dfp $(SONGBIRD_XULRUNNERDIR)/run-mozilla.sh $(SONGBIRD_DISTDIR)/songbird
+	$(CP) -dfp $(topsrcdir)/installer/linux/songbird.sh $(SONGBIRD_DISTDIR)/songbird
 endif
