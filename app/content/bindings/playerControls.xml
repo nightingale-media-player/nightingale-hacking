@@ -498,7 +498,7 @@
         <![CDATA[
           var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
           this.seen_skip = false;
-          var status = mm.status;
+          var status = this.mm.status;
           if ( status.state == sbIMediacoreStatus.STATUS_PLAYING)
           {
             this.skip = true;
