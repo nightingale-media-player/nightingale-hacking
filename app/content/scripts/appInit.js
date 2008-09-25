@@ -37,13 +37,21 @@
 var appInit = {};
 appInit.init_once = 0;
 appInit.deinit_once = 0;
+appInit.restartRequired = false;
 appInit.onLoad = function()
 {
   if (appInit.init_once++) { Components.utils.reportError("WARNING: appInit double init!!\n"); return; }
   // Application, initialize thyself.
   SBAppInitialize();
   SBRestarterInitialize();
-  
+
+  // Restart app if required.  Do this after initializing so that shutting down
+  // does not cause errors.
+  if (this.restartRequired) {
+    restartApp();
+    return;
+  }
+
   // Check to see if any version update migrations need to be performed
   appInit.migrator.doMigrations();
 }
@@ -199,10 +207,18 @@ function doMainwinStart()
   // Check for recommended add-on bundle updates.  This may wait for recommended
   // add-on bundle download or the recommended add-on wizard.
   try {
+    // Check for updates.
     var addOnBundleUpdateService =
           Cc["@songbirdnest.com/AddOnBundleUpdateService;1"]
             .getService(Ci.sbIAddOnBundleUpdateService);
     addOnBundleUpdateService.checkForUpdates();
+
+    // If restart is required, mark application for restart and return.  Don't
+    // restart here, because doing so will lead to errors in shutting down.
+    if (addOnBundleUpdateService.restartRequired) {
+      this.restartRequired = true;
+      return;
+    }
   } catch (err) {
     SB_LOG("App Init - Add-On Bundle Update - ", "" + err);
   }

@@ -45,12 +45,18 @@
  * Use get service with this component.
  */
 
-[scriptable, uuid(9986ED38-7315-4153-B509-B43BA1E8FE4D)]
+[scriptable, uuid(46EE669F-D6B5-409E-B4B2-CC6240237A54)]
 interface sbIAddOnBundleUpdateService : nsISupports
 {
   /**
+   * \brief True if a restart is required.
+   */
+
+  readonly attribute boolean restartRequired;
+
+
+  /**
    * \brief Check for updates to the add-on bundle and present any to user.
-   *XXXeps, need to expand interface to allow forcing reload of add-on bundle.
    */
 
   void checkForUpdates();

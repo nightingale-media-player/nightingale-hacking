@@ -114,12 +114,16 @@ var recommendedAddOnsWizard = {
    */
 
   doUnload: function recommendedAddOnsWizard_doUnload() {
+    // Indicate whether a restart is required.
+    if (this._dialogParameterBlock) {
+      if (this._restartRequired)
+        this._dialogParameterBlock.SetString(0, "true");
+      else
+        this._dialogParameterBlock.SetString(0, "false");
+    }
+
     // Finalize the services.
     this._finalize();
-
-    // Restart the application if required.
-    if (this._restartRequired)
-      restartApp();
   },
 
 

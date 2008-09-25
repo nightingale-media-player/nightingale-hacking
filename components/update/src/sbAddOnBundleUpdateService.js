@@ -85,6 +85,12 @@ if (typeof(Cu) == "undefined")
 // ifList                       List of external component interfaces.
 // categoryList                 List of component categories.
 //
+// updateEnabledPref            Preference for enabling add-on bundle updates.
+// updateIntervalPref           Preference for setting interval between add-on
+//                              bundle update checks.
+// updatePrevAppVersionPref     Preference containing the version of the
+//                              Application when the add-on bundle update
+//                              service previously checked for updates.
 // defaultUpdateEnabled         Default update enabled preference value.
 // defaultUpdateInterval        Default add-on bundle update interval in
 //                              seconds.
@@ -98,6 +104,8 @@ var sbAddOnBundleUpdateServiceCfg = {
 
   updateEnabledPref: "songbird.recommended_addons.update.enabled",
   updateIntervalPref: "songbird.recommended_addons.update.interval",
+  updatePrevAppVersionPref:
+    "songbird.recommended_addons.update.prev_app_version",
   defaultUpdateEnabled: false,
   defaultUpdateInterval: 86400
 };
@@ -144,6 +152,9 @@ sbAddOnBundleUpdateService.prototype = {
   //   _prefsAvailable          True if preferences are available.
   //   _networkAvailable        True if the network is available.
   //   _updateEnabled           True if add-on bundle update is enabled.
+  //   _checkedFirstRunHasCompleted
+  //                            True if a check has been made for first-run
+  //                            completion.
   //   _addOnBundleLoader       Add-on bundle loader object.
   //
 
@@ -158,6 +169,7 @@ sbAddOnBundleUpdateService.prototype = {
   _prefsAvailable: false,
   _networkAvailable: false,
   _updateEnabled: false,
+  _checkedFirstRunHasCompleted: false,
   _addOnBundleLoader: null,
 
 
@@ -168,8 +180,14 @@ sbAddOnBundleUpdateService.prototype = {
   //----------------------------------------------------------------------------
 
   /**
+   * \brief True if a restart is required.
+   */
+
+  restartRequired: false,
+
+
+  /**
    * \brief Check for updates to the add-on bundle and present any to user.
-   *XXXeps, need to expand interface to allow forcing reload of add-on bundle.
    */
 
   checkForUpdates: function sbAddOnBundleUpdateService_checkForUpdates() {
@@ -177,8 +195,15 @@ sbAddOnBundleUpdateService.prototype = {
     this._initialize();
 
     // Present any new add-ons if update is enabled.
-    if (this._updateEnabled)
+    if (this._updateEnabled) {
+      // Update the add-on bundle cache synchronously if the application was
+      // updated.
+      if (this._getApplicationWasUpdated())
+        this._updateAddOnBundleCache(true);
+
+      // Present any new add-ons.
       this._presentNewAddOns();
+    }
   },
 
 
@@ -295,7 +320,7 @@ sbAddOnBundleUpdateService.prototype = {
   _handleAddOnUpdateTimer:
     function sbAddOnBundleUpdateService__handleAddOnUpdateTimer(aTimer) {
     // Update the add-on bundle cache.
-    this._updateAddOnBundleCache();
+    this._updateAddOnBundleCache(false);
   },
 
 
@@ -325,6 +350,15 @@ sbAddOnBundleUpdateService.prototype = {
     // Wait until preferences are available.
     if (!this._prefsAvailable)
       return;
+
+    // Initialize the previous application version if first-run has not
+    // completed.  This needs to be done as soon as possible so it occurs before
+    // the first-run.
+    if (!this._checkedFirstRunHasCompleted) {
+      if (!SBUtils.hasFirstRunCompleted())
+        this._updatePrevAppVersion();
+      this._checkedFirstRunHasCompleted = true;
+    }
 
     // Wait until the network is available.
     if (!this._networkAvailable)
@@ -394,13 +428,15 @@ sbAddOnBundleUpdateService.prototype = {
       return;
 
     // Present the new add-ons.
+    var restartRequired = {};
     WindowUtils.openModalDialog
                   (null,
                    "chrome://songbird/content/xul/recommendedAddOnsWizard.xul",
                    "",
                    "chrome,modal=yes,centerscreen",
                    [ addOnBundle ],
-                   null);
+                   [ restartRequired ]);
+    this.restartRequired = (restartRequired.value == "true");
   },
 
 
@@ -434,11 +470,14 @@ sbAddOnBundleUpdateService.prototype = {
 
 
   /**
-   * Update the add-on bundle cache.
+   * Update the add-on bundle cache.  If aSync is true, wait until the cache has
+   * been updated.
+   *
+   * \param aSync               If true, operate synchronously.
    */
 
   _updateAddOnBundleCache:
-    function sbAddOnBundleUpdateService__updateAddOnBundleCache() {
+    function sbAddOnBundleUpdateService__updateAddOnBundleCache(aSync) {
     // Start loading the add-on bundle into the cache.
     if (!this._addOnBundleLoader) {
       // Create an add-on bundle loader.
@@ -446,13 +485,90 @@ sbAddOnBundleUpdateService.prototype = {
 
       // Start loading the add-on bundle into the cache.
       var _this = this;
-      var func = function() { _this._updateAddOnBundleCache(); }
+      var func = function() { _this._updateAddOnBundleCacheContinue(); }
       this._addOnBundleLoader.start(func);
     }
 
+    // Wait for update to complete if operating synchronously.
+    if (aSync) {
+      // Get the current thread.
+      var threadManager = Cc["@mozilla.org/thread-manager;1"]
+                            .getService(Ci.nsIThreadManager);
+      currentThread = threadManager.currentThread;
+
+      // Process events until update completes.
+      while (this._addOnBundleLoader && !this._addOnBundleLoader.complete) {
+        currentThread.processNextEvent(true);
+      }
+    }
+  },
+
+
+  /**
+   * Continue the add-on bundle cache update operation.
+   */
+
+  _updateAddOnBundleCacheContinue:
+    function sbAddOnBundleUpdateService__updateAddOnBundleCacheContinue() {
     // Clear the add-on bundle loader upon completion.
     if (this._addOnBundleLoader.complete)
       this._addOnBundleLoader = null;
+  },
+
+
+  /**
+   * Return true if the application was updated.
+   *
+   * \return                    True if application was updated.
+   */
+
+  _getApplicationWasUpdated:
+    function sbAddOnBundleUpdateService__getApplicationWasUpdated() {
+    var updated = false;
+
+    // Get the application services.
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+
+    // Get the current application version.
+    var appInfo = Cc["@mozilla.org/xre/app-info;1"]
+                    .getService(Ci.nsIXULAppInfo);
+    var appVersion = appInfo.version;
+
+    // Get the previous application version.
+    var prevAppVersion =
+          Application.prefs.getValue(this._cfg.updatePrevAppVersionPref, "");
+
+    // Check for application update.  If the previous application version
+    // preference has not been set, the application must have been updated from
+    // a version of the application before the add-on bundle update support was
+    // added.
+    if (!prevAppVersion || (prevAppVersion != appVersion))
+      updated = true;
+
+    // Update the previous application version.
+    Application.prefs.setValue(this._cfg.updatePrevAppVersionPref, appVersion);
+
+    return updated;
+  },
+
+
+  /**
+   * Update the previous application version preference with the current
+   * application version.
+   */
+
+  _updatePrevAppVersion:
+    function sbAddOnBundleUpdateService__updatePrevAppVersion() {
+    // Get the current application version.
+    var appInfo = Cc["@mozilla.org/xre/app-info;1"]
+                    .getService(Ci.nsIXULAppInfo);
+    var appVersion = appInfo.version;
+
+    // Update the previous application version.
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+    Application.prefs.setValue(this._cfg.updatePrevAppVersionPref, appVersion);
   }
 };
 
