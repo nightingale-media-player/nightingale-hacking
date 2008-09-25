@@ -139,7 +139,6 @@
 <!ENTITY playlist.context.remove  "Remove" >
 <!ENTITY playlist.context.rename  "Rename" >
 <!ENTITY playlist.context.search  "Search" >
-<!ENTITY playlist.context.lyrics  "Lyrics" >
 <!ENTITY device.context.eject   "Eject" >
 <!ENTITY device.context.rename  "Rename" >
 <!ENTITY device.context.prefs   "Preferences..." >

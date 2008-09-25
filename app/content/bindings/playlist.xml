@@ -94,13 +94,10 @@
             >
               <sb-commands-menuitems sbid="playlist_popup_commands" commandtype="mediaitem" metricscategory="playlist.context"/>
               <menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
+              <children/>
               <xul:menu id="playlist_context_search" label="&playlist.context.search;">
                 <xul:menupopup id="playlist_context_search_popup" type="search" label="" searchterm="" />
               </xul:menu>
-              <xul:menu id="playlist_context_lyrics" label="&playlist.context.lyrics;">
-                <xul:menupopup id="playlist_context_lyrics_popup" type="search" label="" searchterm="" enginetags="lyrics" />
-              </xul:menu>
-              <children/>
             </popup>
           </popupset>
         </vbox>
@@ -1641,8 +1638,7 @@
 
   const COLUMN_TITLE = "title";
   const CONTEXT_IDS = ["playlist_context_before",
-                       "playlist_context_search",
-                       "playlist_context_lyrics"];
+                       "playlist_context_search"];
 
 
   // Small helper to loop through a list of the ids for the context
@@ -1692,7 +1688,7 @@
     this.edit_row = rowObject.value;
     this.edit_col = columnObject.value;
 
-    tree.view.getCellText(rowObject.value, columnObject.value);
+    cellText = tree.view.getCellText(rowObject.value, columnObject.value);
 
     // XXX: What to do here?
     if (!cellText) {
@@ -1711,24 +1707,17 @@
   if (cellText) {
 
     var searchHeader = this._getString("playlist.context.searchheader", "Search");
-    var lyricsHeader = this._getString("playlist.context.lyricsheader", "Lyrics");
 
     var searchMenu =
       document.getAnonymousElementByAttribute(this, 'id', 'playlist_context_search_popup');
     searchMenu.setAttribute("label", searchHeader + ": " + cellText);
     searchMenu.setAttribute("searchterm", cellText);
-
-    var lyricsMenu =
-      document.getAnonymousElementByAttribute(this, 'id', 'playlist_context_lyrics_popup');
-    lyricsMenu.setAttribute("label", lyricsHeader + ": " + cellText);
-    lyricsMenu.setAttribute("searchterm", cellText);
-
-    // Make sure that the search and lyrics menus are visible
+    // Make sure that the search menu is visible
     showContextItems(true);
   }
   else {
-    // We couldn't get any context, so hide the search and lyrics
-    // menu items.
+    // We couldn't get any context, so hide the search
+    // menu item.
     showContextItems(false);
   }
 
