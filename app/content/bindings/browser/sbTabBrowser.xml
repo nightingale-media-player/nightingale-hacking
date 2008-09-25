@@ -39,7 +39,8 @@
 
   <binding id="sb-tabbrowser" extends="chrome://songbird/content/bindings/browser/tabBrowserCompat.xml#tabbrowser-compat">
     <implementation implements="sbITabBrowser">
-      <constructor><![CDATA[
+      <constructor>
+          <![CDATA[
         window.gBrowser = this;
 
         if (!window.SBProperties)
@@ -52,6 +53,8 @@
           Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
         if (!window.XPCOMUtils) 
           Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
+        if (!window.URLUtils)
+          Components.utils.import("resource://app/jsmodules/URLUtils.jsm");
 
         // we moved the strip container to the tabs binding
         // this must happen before the addProgressListener call below to properly
@@ -167,6 +170,14 @@
           QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneListener])
         }
         this._servicePaneService.addListener(this._servicePaneListener);
+        
+        this.mm = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Components.interfaces.sbIMediacoreManager);
+                    
+        this.typeSniffer = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                    .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);
       ]]></constructor>
       <destructor><![CDATA[
 
@@ -184,6 +195,9 @@
         window.removeEventListener("remoteapi", this.onRemoteAPI, true);
         window.QueryInterface(Components.interfaces.nsIDOMChromeWindow)
               .browserDOMWindow = null;
+              
+        this.mm = null;
+        this.typeSniffer = null;
       ]]></destructor>
 
       <field name="_sessionStore">null</field>
@@ -638,7 +652,8 @@
 
           // figure out if the url is in the webplaylist
           var currentPlaylist = this.currentOuterPlaylist;
-          
+          var sequencer = this.mm.sequencer;
+
           if (aTryWeb && currentPlaylist)
           {
             var currentView = currentPlaylist.getListView();
@@ -668,8 +683,8 @@
             currentMediaList.enumerateItemsByProperty(SBProperties.contentURL, aURL, listener );
 
             if (listener.foundItem) {
-              gPPS.playView(currentView, 
-                            currentView.getIndexForItem(listener.foundItem));
+              sequencer.playView(currentView, 
+                                 currentView.getIndexForItem(listener.foundItem));
               return;
             }
           } 
@@ -689,8 +704,7 @@
           }
           
           // Play the item
-          gPPS.playView(view, index);
-          
+          sequencer.playView(view, index);
         ]]></body>
       </method>
 
@@ -719,7 +733,7 @@
             }
 
             // Stick playlists in the service pane (for now).
-            if ( uri && (forcePlaylist || gPPS.isPlaylistURL( uri.spec )) )
+            if ( uri && (forcePlaylist || this.typeSniffer.isValidPlaylistURL( uri )) )
             {
               var library = null;
               var scheme = uri.scheme;
@@ -776,7 +790,9 @@
                 
                 if (!mediaList) {
                   mediaList = library.createMediaList("simple");
-                  mediaList.name = gPPS.convertURLToDisplayName(aURL);
+                  
+                  mediaList.name = URLUtils.convertURLToDisplayName(aURL);
+                  
                   mediaList.setProperty("http://songbirdnest.com/data/1.0#originURL", uri.spec);
                 }
               }
@@ -791,7 +807,10 @@
               // Create this closure here to prevent this object from getting garbage
               // collected too soon.  The playlist reader uses the nsIWebBrowserPersist
               // component that does _not_ addref this listener :(
+              var self = this;
+              
               var playlist_observer = {
+                mm: self.mm,
                 observe: function ( aSubject, aTopic, aData ) {
                   if (aTopic.indexOf("error") != -1) {
                     // if we get an error parsing a page we thought was a 
@@ -815,7 +834,7 @@
 
                     // Start playback
                     var view = mediaList.createView();
-                    gPPS.playView(view, 0);
+                    this.mm.playView(view, 0);
                   }
                 }
               };
@@ -828,7 +847,7 @@
               retval = true;
             }
             // Everything else gets played directly.
-            else if ( gPPS.isMediaURL( aURL ) )
+            else if ( this.typeSniffer.isValidMediaURL( uri ) )
             {
               this._playExternalUrl(aURL, true);
               retval = true;
@@ -1149,7 +1168,8 @@
     </implementation>
 
     <handlers>
-      <handler event="click" phase="capturing" ><![CDATA[
+      <handler event="click" phase="capturing" >
+            <![CDATA[
         // inspired by contentAreaClick in ffox browser.js
         if (!event.isTrusted || event.getPreventDefault()) {
           return true;
@@ -1159,6 +1179,9 @@
           // if we're showing a popup or about to show one, let's do nothing
           return true;
         }
+
+        var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+            .getService(Components.interfaces.nsIIOService);
 
         var target = event.target;
         var linkNode = null;
@@ -1197,6 +1220,7 @@
         var wrapper = null;
         var href = null;
         var target = null;
+        
         if (linkNode) {
           href = linkNode.href;
           if (linkNode.hasAttribute('target')) {
@@ -1219,8 +1243,6 @@
             linkNode = linkNode.parentNode;
           }
           if (href) {
-            var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-                .getService(Components.interfaces.nsIIOService);
             var base = ioService.newURI(baseURI, null, null);
             href = ioService.newURI(base.resolve(href), null, null).spec;
           }
@@ -1237,10 +1259,12 @@
 
           // get the referrer if we can
           var referrer = doc ? doc.documentURIObject : null;
-          
+
+          var uri = ioService.newURI(href, null, null);
+
           // we need to handle playlists and media items specially
-          if ( gPPS.isPlaylistURL(href) ||
-               gPPS.isMediaURL(href) ) {
+          if ( this.typeSniffer.isValidPlaylistURL(uri) ||
+               this.typeSniffer.isValidMediaURL(uri) ) {
             this.handleMediaURL(href, false, false, target, referrer);
             event.stopPropagation();
             event.preventDefault();
@@ -1252,7 +1276,6 @@
               event.preventDefault();
             }
           }
-
         }
         return true;
       ]]></handler>

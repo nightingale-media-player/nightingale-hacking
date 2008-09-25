@@ -238,5 +238,4 @@ function setRapiPref(name, value) {
   prefs.setBoolPref(name, value);
 }
 
-initMockCore();
 setDefaultAccess();

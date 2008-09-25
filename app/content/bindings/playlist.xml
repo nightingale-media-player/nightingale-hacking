@@ -1454,11 +1454,11 @@
            // If nobody handled the event, just 
            // initiate playback manually.
            if (notHandled) {
-             var playbackService = 
-                Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                          .getService(Components.interfaces.sbIPlaylistPlayback);
-             playbackService.playView(this.mediaListView, 
-                Math.max(this.mediaListView.selection.currentIndex, -1));
+             var mm = 
+               Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                         .getService(Components.interfaces.sbIMediacoreManager);
+             mm.sequencer.playView(this.mediaListView, 
+                Math.max(this.mediaListView.selection.currentIndex, 0));
            }
          ]]>
         </body>
@@ -2938,16 +2938,22 @@
       
       <handler event="keypress" key=" " phase="target">
         <![CDATA[
+          var mm = 
+            Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                      .getService(Components.interfaces.sbIMediacoreManager);
           if (event.originalTarget != this.tree) {
             // possibly an event from the inline metadata editing textbox
             return;
           }
-          var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                              .getService(Components.interfaces.sbIPlaylistPlayback);
-          if (pps.playing && !pps.paused) {
-            pps.pause();
+          var primaryCore = mm.primaryCore;
+          var status = mm.status;
+          var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
+          
+          if (status.state == sbIMediacoreStatus.STATUS_PLAYING ||
+              status.state == sbIMediacoreStatus.STATUS_BUFFERING) {
+            primaryCore.pause();
           } else {
-            pps.play();
+            primaryCore.play();
           }
           event.stopPropagation();
         ]]>
@@ -2959,10 +2965,15 @@
             // possibly an event from the inline metadata editing textbox
             return;
           }
-          var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                              .getService(Components.interfaces.sbIPlaylistPlayback);
-          if (pps.playing)
-            pps.previous();
+          var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                             .getService(Components.interfaces.sbIMediacoreManager);
+          var status = mm.status;
+          
+          var playing = ( status.state == status.STATUS_PLAYING ||
+                          status.state == status.STATUS_BUFFERING ||
+                          status.state == status.STATUS_PAUSED );
+          if (playing)
+            mm.sequencer.previous();
         ]]>
       </handler>
 
@@ -2972,10 +2983,15 @@
             // possibly an event from the inline metadata editing textbox
             return;
           }
-          var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                              .getService(Components.interfaces.sbIPlaylistPlayback);
-          if (pps.playing)
-            pps.next();
+          var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                             .getService(Components.interfaces.sbIMediacoreManager);
+          var status = mm.status;
+          
+          var playing = ( status.state == status.STATUS_PLAYING ||
+                          status.state == status.STATUS_BUFFERING ||
+                          status.state == status.STATUS_PAUSED );
+          if (playing)
+            mm.sequencer.next();
         ]]>
       </handler>
 

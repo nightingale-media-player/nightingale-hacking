@@ -610,7 +610,7 @@ ContentAreaContextMenu.prototype = {
         // If someone built with composer disabled, we can't get an editing session.
       }
 
-      this.onMedia = gPPS.isMediaURL(this.linkURL);
+      this.onMedia = gTypeSniffer.isValidMediaURL(this.linkURL);
 
       if (isEditable) {
         this.onTextInput       = true;

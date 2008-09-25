@@ -37,14 +37,19 @@
 #include <prmon.h>
 
 // Interfaces
+#include <sbIDataRemote.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediacoreFactoryRegistrar.h>
 #include <sbIMediacoreVoting.h>
 
+#include <sbBaseMediacoreVolumeControl.h>
+
 // Forward declared classes
 class sbBaseMediacoreEventTarget;
 
-class sbMediacoreManager : public sbIMediacoreManager,
+class sbMediacoreManager : public sbBaseMediacoreVolumeControl,
+                           public sbIMediacoreManager,
+                           public sbPIMediacoreManager,
                            public sbIMediacoreEventTarget,
                            public sbIMediacoreFactoryRegistrar,
                            public sbIMediacoreVoting,
@@ -55,15 +60,25 @@ class sbMediacoreManager : public sbIMediacoreManager,
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIACOREMANAGER
+  NS_DECL_SBPIMEDIACOREMANAGER
   NS_DECL_SBIMEDIACOREEVENTTARGET
   NS_DECL_SBIMEDIACOREFACTORYREGISTRAR
   NS_DECL_SBIMEDIACOREVOTING
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
 
+  NS_FORWARD_SBIMEDIACOREVOLUMECONTROL(sbBaseMediacoreVolumeControl::)
+
   sbMediacoreManager();
 
   nsresult Init();
+  nsresult PreShutdown();
+  nsresult Shutdown();
+
+  // sbBaseMediacoreVolumeControl overrides
+  virtual nsresult OnInitBaseMediacoreVolumeControl();
+  virtual nsresult OnSetMute(PRBool aMute);
+  virtual nsresult OnSetVolume(PRFloat64 aVolume);
 
 private:
   virtual ~sbMediacoreManager();
@@ -96,4 +111,7 @@ protected:
   nsCOMPtr<sbIMediacore>                mPrimaryCore;
   nsCOMPtr<sbIMediacoreSequencer>       mSequencer;
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
+
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateVolume;
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateMute;
 };

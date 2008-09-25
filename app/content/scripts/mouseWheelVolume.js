@@ -85,15 +85,18 @@ try
         return;
       }
     
-      var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
+      var mm = 
+        Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                  .getService(Components.interfaces.sbIMediacoreManager);
       
       // walked up to the window
-      var s = PPS.volume;
-      var v = parseInt(s)+((evt.detail > 0) ? -8 : 8);
+      var curVol = mm.volumeControl.volume;
+      var v = curVol + ((evt.detail > 0) ? -0.03 : 0.03);
       if (v < 0) v = 0;
-      if (v > 255) v = 255;
-      PPS.volume = v;
-      if (v != 0) SBDataSetIntValue("faceplate.volume.last", v);
+      if (v > 1) v = 1;
+      mm.volumeControl.volume = v;
+      dump("mouseWheelVolume: " + v + "\n\n");
+      if (v != 0) SBDataSetStringValue("faceplate.volume.last", v);
     }
     catch (err)
     {

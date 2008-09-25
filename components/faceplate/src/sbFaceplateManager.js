@@ -231,8 +231,6 @@ FaceplateManager.prototype = {
     this.createPane("songbird-dashboard", dashboardName, URL_BINDING_DASHBOARD_PANE);
     
     // Set up a dataremote to show the dashboard on first playback.
-    // XXX: This needs to change. There shouldn't be an faceplate dataremotes.
-    // The PlaylistPlayback service should not know about faceplates.
     var createDataRemote =  new Components.Constructor(
                                    "@songbirdnest.com/Songbird/DataRemote;1",
                                    Components.interfaces.sbIDataRemote, "init");

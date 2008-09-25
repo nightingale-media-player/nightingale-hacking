@@ -323,41 +323,42 @@ var playbackHotkeyActions = {
   // -------------------------
   // actions implementation
 
-  _gPPS: Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback),
+  _mm: Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"].getService(Components.interfaces.sbIMediacoreManager),
   
   _hotkey_volumeUp: function() {
-    var volume = this._gPPS.volume + 8;
-    if (volume > 255) volume = 255;
-    this._gPPS.volume = volume;
+    var volume = this._mm.volumeControl.volume + 0.03;
+    if (volume > 1) volume = 1;
+    this._mm.volumeControl.volume = volume;
   },
 
   _hotkey_volumeDown: function() {
-    var volume = this._gPPS.volume - 8;
+    var volume = this._mm.volumeControl.volume - 0.03;
     if (volume < 0) volume = 0;
-    this._gPPS.volume = volume;
+    this._mm.volumeControl.volume = volume;
   },
 
   _hotkey_nextTrack: function() {
-    this._gPPS.next();
+    this._mm.sequencer.next();
   },
 
   _hotkey_previousTrack: function() {
-    this._gPPS.previous();
+    this._mm.sequencer.previous();
   },
 
   _hotkey_playPause: function() {
     try {
       // If we are already playing something just pause/unpause playback
-      if (this._gPPS.playing) {
-        if (this._gPPS.paused) {
-          this._gPPS.play();
-        } else {
-          this._gPPS.pause();
-        }
+      if (this._mm.status.state == sbIMediacoreStatus.STATUS_PLAYING || 
+          this._mm.status.state == sbIMediacoreStatus.STATUS_BUFFERING) {
+          this._mm.playbackControl.pause();
+      } 
+      else if(this._mm.status.state == sbIMediacoreStatus.STATUS_PAUSED) {
+          this._mm.playbackControl.play();
+      }
       // Otherwise dispatch a play event to the top window. 
       // Someone should catch this and intelligently initiate playback.  
       // If not, just have the playback service play the default.
-      } else {
+      else {
         var notHandled = true;
         var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
                            .getService(Components.interfaces.nsIWindowMediator);
@@ -367,9 +368,6 @@ var playbackHotkeyActions = {
           event.initEvent("Play", true, true);
           notHandled = topWindow.document.dispatchEvent(event);
         }
-        if (notHandled) {
-          this._gPPS.play();
-        }
       } 
     } catch (e) {
       Components.utils.reportError(e);
@@ -377,11 +375,11 @@ var playbackHotkeyActions = {
   },
 
   _hotkey_pause: function() {
-    this._gPPS.pause();
+    this._mm.playbackControl.pause();
   },
 
   _hotkey_stop: function() {
-    this._gPPS.stop();
+    this._mm.playbackControl.stop();
   },
 
   // -------------------------

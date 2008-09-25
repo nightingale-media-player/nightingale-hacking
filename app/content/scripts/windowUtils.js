@@ -59,15 +59,17 @@ var STATE_MAXIMIZED         = Ci.nsIDOMChromeWindow.STATE_MAXIMIZED;
  */
 var STATE_MINIMIZED         = Ci.nsIDOMChromeWindow.STATE_MINIMIZED;
 
-// Convenient globals.
-var gPPS     = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                 .getService(Ci.sbIPlaylistPlayback);
+var gMM      = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                 .getService(Ci.sbIMediacoreManager);
 var gPrompt  = Cc["@mozilla.org/embedcomp/prompt-service;1"]
                  .getService(Ci.nsIPromptService);
 var gPrefs   = Cc["@mozilla.org/preferences-service;1"]
                  .getService(Ci.nsIPrefBranch);
 var gConsole = Cc["@mozilla.org/consoleservice;1"]
                  .getService(Ci.nsIConsoleService);
+
+var gTypeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                     .createInstance(Ci.sbIMediacoreTypeSniffer);
                                     
 
 /**
@@ -682,7 +684,7 @@ function quitApp( )
 {
   // Why not stop playback, too?
   try {
-    gPPS.stop();
+    gMM.playbackControl.stop();
   } catch (e) {
     dump("windowUtils.js:quitApp() Error: could not stop playback.\n");
   }

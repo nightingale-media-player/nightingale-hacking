@@ -34,6 +34,8 @@
 #include <nsIURI.h>
 #include <nsIURL.h>
 #include <nsIRunnable.h>
+#include <nsIIOService.h>
+#include <nsIDOMXULElement.h>
 #include <nsThreadUtils.h>
 #include <nsCOMPtr.h>
 #include <prlog.h>
@@ -96,9 +98,10 @@ NS_IMPL_ISUPPORTS_INHERITED7(sbGStreamerMediacore,
                              sbIGStreamerMediacore,
                              nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER6(sbGStreamerMediacore,
+NS_IMPL_CI_INTERFACE_GETTER7(sbGStreamerMediacore,
                              sbIMediacore,
                              sbIMediacorePlaybackControl,
+                             sbIMediacoreVideoWindow,
                              sbIMediacoreVolumeControl,
                              sbIMediacoreVotingParticipant,
                              sbIGStreamerMediacore,
@@ -114,7 +117,9 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mPlatformInterface(nsnull),
     mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
     mTags(NULL),
-    mProperties(nsnull)
+    mProperties(nsnull),
+    mStopped(PR_FALSE),
+    mBuffering(PR_FALSE)
 {
   NS_WARN_IF_FALSE(mBaseEventTarget, 
           "mBaseEventTarget is null, may be out of memory");
@@ -210,6 +215,8 @@ sbGStreamerMediacore::DestroyPipeline()
 
     mPipeline = nsnull;
   }
+  mStopped = PR_FALSE;
+  mBuffering = PR_FALSE;
 
   return NS_OK;
 }
@@ -318,15 +325,116 @@ void sbGStreamerMediacore::HandleStateChangedMessage(GstMessage *message)
     gst_message_parse_state_changed (message, 
             &oldstate, &newstate, &pendingstate);
 
-    // Dispatch START, PAUSE, END (but only if it's our target state)
+    // Dispatch START, PAUSE, STOP/END (but only if it's our target state)
     if (pendingstate == GST_STATE_VOID_PENDING) {
       if (newstate == GST_STATE_PLAYING)
         DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_START);
       else if (newstate == GST_STATE_PAUSED)
         DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_PAUSE);
       else if (newstate == GST_STATE_NULL)
-        DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_END);
+      {
+        // Distinguish between 'stopped via API' and 'stopped due to error or
+        // reaching EOS'
+        if (mStopped)
+          DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_STOP);
+        else
+          DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_END);
+      }
     }
+  }
+}
+
+void sbGStreamerMediacore::HandleBufferingMessage (GstMessage *message)
+{
+  nsAutoMonitor lock(mMonitor);
+
+  gint percent = 0;
+  gst_message_parse_buffering (message, &percent);
+  TRACE(("Buffering (%u percent done)", percent));
+
+  /* If we receive buffering messages, go to PAUSED.
+   * Then, return to PLAYING once we have 100% buffering (which will be
+   * before we actually hit PAUSED)
+   */
+  if (mBuffering && percent >= 100 ) {
+    TRACE(("Buffering complete, setting back to playing"));
+    mBuffering = PR_FALSE;
+    gst_element_set_state (mPipeline, GST_STATE_PLAYING);
+  }
+  else if (!mBuffering && percent < 100) {
+    GstState cur_state;
+    gst_element_get_state (mPipeline, &cur_state, NULL, 0);
+
+    /* Only pause if we've already reached playing (this means we've underrun
+     * the buffer and need to rebuffer) */
+    if (cur_state == GST_STATE_PLAYING) {
+      TRACE(("Buffering... setting to paused"));
+      gst_element_set_state (mPipeline, GST_STATE_PAUSED);
+      mBuffering = PR_TRUE;
+
+      // And inform listeners that we've underrun */
+      DispatchMediacoreEvent(sbIMediacoreEvent::BUFFER_UNDERRUN);
+    }
+
+    // Inform listeners of current progress
+    double bufferingProgress = (double)percent / 100.;
+    nsCOMPtr<nsIVariant> variant = sbNewVariant(bufferingProgress).get();
+    DispatchMediacoreEvent(sbIMediacoreEvent::BUFFERING, variant);
+  }
+}
+
+// Demuxers (such as qtdemux) send redirect messages when the media
+// file itself redirects to another location. Handle these here.
+void sbGStreamerMediacore::HandleRedirectMessage(GstMessage *message)
+{
+  const gchar *location;
+  nsresult rv;
+  nsCString uriString;
+
+  location = gst_structure_get_string (message->structure, "new-location");
+
+  if (location && *location) {
+    if (strstr (location, "://") != NULL) {
+      // Then we assume it's an absolute URL
+      uriString = location;
+    }
+    else {
+      TRACE (("Resolving redirect to '%s'", location));
+
+      mUri->Resolve(nsDependentCString(location), uriString);
+      NS_ENSURE_SUCCESS (rv, /* void */ );
+    }
+
+    // Now create a URI from our string form.
+    nsCOMPtr<nsIIOService> ioService = do_GetService(
+            "@mozilla.org/network/io-service;1", &rv);
+    NS_ENSURE_SUCCESS (rv, /* void */ );
+
+    nsCOMPtr<nsIURI> finaluri;
+    rv = ioService->NewURI(uriString, nsnull, nsnull,
+            getter_AddRefs(finaluri));
+    NS_ENSURE_SUCCESS (rv, /* void */ );
+
+    PRBool isEqual;
+    rv = finaluri->Equals(mUri, &isEqual);
+    NS_ENSURE_SUCCESS (rv, /* void */ );
+
+    // Don't loop forever redirecting to ourselves. If the URIs are the same,
+    // then just ignore the redirect message.
+    if (isEqual)
+      return;
+
+    // Ok, we have a new uri, and we're ready to use it... 
+    rv = SetUri(finaluri);
+    NS_ENSURE_SUCCESS (rv, /* void */ );
+
+    // Inform listeners that we've switched URI
+    nsCOMPtr<nsIVariant> propVariant = sbNewVariant(finaluri).get();
+    DispatchMediacoreEvent (sbIMediacoreEvent::URI_CHANGE, propVariant);
+
+    // And finally, attempt to play it
+    rv = Play();
+    NS_ENSURE_SUCCESS (rv, /* void */ );
   }
 }
 
@@ -374,18 +482,24 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
   msg_type = GST_MESSAGE_TYPE(message);
 
   switch (msg_type) {
-    case GST_MESSAGE_STATE_CHANGED: {
+    case GST_MESSAGE_STATE_CHANGED:
       HandleStateChangedMessage(message);
       break;
-    }
     case GST_MESSAGE_TAG:
       HandleTagMessage(message);
       break;
     case GST_MESSAGE_ERROR:
       HandleErrorMessage(message);
       break;
-    case GST_MESSAGE_EOS: {
+    case GST_MESSAGE_EOS:
       HandleEOSMessage(message);
+      break;
+    case GST_MESSAGE_BUFFERING:
+      HandleBufferingMessage(message);
+    case GST_MESSAGE_ELEMENT: {
+      if (gst_structure_has_name (message->structure, "redirect")) {
+        HandleRedirectMessage(message);
+      }
       break;
     }
     default:
@@ -462,8 +576,35 @@ sbGStreamerMediacore::OnSetUri(nsIURI *aURI)
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbGStreamerMediacore::GetPosition(PRUint64 *aPosition)
+/*virtual*/ nsresult 
+sbGStreamerMediacore::OnGetDuration(PRUint64 *aDuration)
+{
+  GstQuery *query;
+  gboolean res;
+  nsresult rv;
+  nsAutoMonitor lock(mMonitor);
+
+  query = gst_query_new_duration(GST_FORMAT_TIME);
+  res = gst_element_query(mPipeline, query);
+
+  if(res) {
+    gint64 duration;
+    gst_query_parse_duration(query, NULL, &duration);
+
+    /* Convert to milliseconds */
+    *aDuration = duration / GST_MSECOND;
+    rv = NS_OK;
+  }
+  else
+    rv = NS_ERROR_NOT_AVAILABLE;
+
+  gst_query_unref (query);
+
+  return rv;
+}
+
+/*virtual*/ nsresult
+sbGStreamerMediacore::OnGetPosition(PRUint64 *aPosition)
 {
   GstQuery *query;
   gboolean res;
@@ -521,6 +662,14 @@ sbGStreamerMediacore::OnPlay()
 
   NS_ENSURE_STATE(mPipeline);
 
+  gint flags = 0x2 | 0x4 | 0x10; // audio | text | soft-volume
+  if (mVideoEnabled) {
+    // Enable video only if we're set up for itis turned off
+    flags |= 0x1;
+  }
+
+  g_object_set (G_OBJECT(mPipeline), "flags", flags, NULL);
+
   GstStateChangeReturn ret;
   ret = gst_element_set_state (mPipeline, GST_STATE_PLAYING);
 
@@ -554,6 +703,8 @@ sbGStreamerMediacore::OnStop()
   NS_ENSURE_STATE(mPipeline);
 
   GstStateChangeReturn ret;
+
+  mStopped = PR_TRUE;
   ret = gst_element_set_state (mPipeline, GST_STATE_NULL);
 
   return NS_OK;
@@ -579,9 +730,17 @@ sbGStreamerMediacore::OnSetMute(PRBool aMute)
 
   NS_ENSURE_STATE(mPipeline);
 
-  /* We have no explicit mute control, so just set the volume to zero, but
-   * don't update our internal mVolume value */
-  g_object_set(mPipeline, "volume", 0.0, NULL);
+  if(!aMute && mMute) {
+    nsAutoLock lock(sbBaseMediacoreVolumeControl::mLock);
+
+    /* Well, this is nice and easy! */
+    g_object_set(mPipeline, "volume", mVolume, NULL);
+  }
+  else if(aMute && !mMute){
+    /* We have no explicit mute control, so just set the volume to zero, but
+    * don't update our internal mVolume value */
+    g_object_set(mPipeline, "volume", 0.0, NULL);
+  }
 
   return NS_OK;
 }
@@ -621,6 +780,34 @@ sbGStreamerMediacore::VoteWithURI(nsIURI *aURI, PRUint32 *_retval)
 
 NS_IMETHODIMP 
 sbGStreamerMediacore::VoteWithChannel(nsIChannel *aChannel, PRUint32 *_retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+//-----------------------------------------------------------------------------
+// sbIMediacoreVideoWindow
+//-----------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbGStreamerMediacore::GetFullscreen(PRBool *aFullscreen)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbGStreamerMediacore::SetFullscreen(PRBool aFullscreen)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbGStreamerMediacore::GetVideoWindow(nsIDOMXULElement **aVideoWindow)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }

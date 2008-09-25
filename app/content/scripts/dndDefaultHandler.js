@@ -110,7 +110,7 @@ var SBDropObserver =
     }
     
     // Play the item
-    gPPS.playView(view, index);
+    gMM.sequencer.playView(view, index);
   }
 };
 

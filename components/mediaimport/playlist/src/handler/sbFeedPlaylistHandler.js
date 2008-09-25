@@ -54,9 +54,8 @@ function(aFile, aMediaList, aReplace)
   var parser = Cc["@mozilla.org/feed-processor;1"]
                  .createInstance(Ci.nsIFeedProcessor);
 
-  var pps = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-              .getService(Ci.sbIPlaylistPlayback);
-
+  var typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                      .createInstance(Ci.sbIMediacoreTypeSniffer);
   var toAdd = [];
   parser.listener = {
     handleResult: function(result) {
@@ -64,8 +63,8 @@ function(aFile, aMediaList, aReplace)
       var feed = result.doc.QueryInterface(Ci.nsIFeed);
       for (var i = 0; i < feed.items.length; ++i) {
         var entry = feed.items.queryElementAt(i, Ci.nsIFeedEntry);
-
-        if (pps.isMediaURL(entry.link.spec)) {
+        var uri = SB_ResolveURI(entry.link.spec);
+        if (typeSniffer.isValidMediaURL(uri)) {
           var item = { uri: entry.link, properties: {} };
           toAdd.push(item);
         }
@@ -85,23 +84,17 @@ function(aFile, aMediaList, aReplace)
       var url = enclosure.getPropertyAsAString("url");
       if (!url)
         return false;
-      var type = enclosure.getPropertyAsAString("type");
 
-      if (!type) /*XXXeps should be able to ask pps if type is supported. */
-        if (!pps.isMediaURL(url))
+      var resolvedURI = SB_ResolveURI(url);
+      if (!resolvedURI)
+        return false;
+        
+      var type = enclosure.getPropertyAsAString("type");
+      if (!type)
+        if (!typeSniffer.isValidMediaURL(resolvedURI))
             return false;
 
-      try {
-        var ioService = Cc["@mozilla.org/network/io-service;1"]
-                          .getService(Ci.nsIIOService);
-        var uri = ioService.newURI(url, null, null);
-      }
-      catch (e) {
-        Components.utils.reportError(e);
-        return false;
-      }
-
-      var item = { uri: uri, properties: {} };
+      var item = { uri: resolvedURI, properties: {} };
       toAdd.push(item);
 
       return true;

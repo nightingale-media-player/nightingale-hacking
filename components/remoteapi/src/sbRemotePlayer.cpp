@@ -43,6 +43,10 @@
 #include <sbIDeviceManager.h>
 #include <sbIDownloadDevice.h>
 #include <sbILibrary.h>
+#include <sbIMediacoreEvent.h>
+#include <sbIMediacoreEventTarget.h>
+#include <sbIMediacorePlaybackControl.h>
+#include <sbIMediacoreSequencer.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
 #include <sbIMetrics.h>
@@ -89,6 +93,7 @@
 #include <nsITreeSelection.h>
 #include <nsITreeView.h>
 #include <nsIURI.h>
+#include <nsIVariant.h>
 #include <nsIWindowMediator.h>
 #include <nsMemory.h>
 #include <nsNetUtil.h>
@@ -303,7 +308,7 @@ NS_IMPL_ISUPPORTS7( sbRemotePlayer,
                     sbIRemotePlayer,
                     nsIDOMEventListener,
                     nsISupportsWeakReference,
-                    sbIPlaylistPlaybackListener,
+                    sbIMediacoreEventListener,
                     sbISecurityAggregator )
 
 NS_IMPL_CI_INTERFACE_GETTER6( sbRemotePlayer,
@@ -311,7 +316,7 @@ NS_IMPL_CI_INTERFACE_GETTER6( sbRemotePlayer,
                               sbIRemotePlayer,
                               nsIDOMEventListener,
                               nsISupportsWeakReference,
-                              sbIPlaylistPlaybackListener,
+                              sbIMediacoreEventListener,
                               sbISecurityAggregator )
 
 SB_IMPL_CLASSINFO( sbRemotePlayer,
@@ -413,7 +418,11 @@ sbRemotePlayer::InitInternal(nsPIDOMWindow* aWindow)
   mPrivWindow = aWindow;
 
   nsresult rv;
-  mGPPS = do_GetService("@songbirdnest.com/Songbird/PlaylistPlayback;1", &rv);
+  nsCOMPtr<nsISupportsWeakReference> weakRef = 
+    do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = weakRef->GetWeakReference(getter_AddRefs(mMM));
   NS_ENSURE_SUCCESS(rv, rv);
 
   mIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
@@ -504,8 +513,12 @@ sbRemotePlayer::InitInternal(nsPIDOMWindow* aWindow)
 
   // Set up listener for playback service
   LOG(("sbRemotePlayer::Init() -- registering playback listener"));
-  rv = mGPPS->AddListener(this);
-  NS_ENSURE_SUCCESS( rv, rv );
+  nsCOMPtr<sbIMediacoreEventTarget> target = 
+    do_QueryReferent(mMM, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->AddListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Set up download callbacks
   mDownloadCallback = new sbRemotePlayerDownloadCallback();
@@ -1190,23 +1203,26 @@ sbRemotePlayer::RemoveListener( const nsAString &aKey,
 }
 
 static inline
-nsresult StandardPlay(sbIPlaylistPlayback *aPlaylistPlayback ) {
-  NS_ENSURE_ARG_POINTER(aPlaylistPlayback);
+nsresult StandardPlay(nsIWeakReference *aWeakRef) {
+  NS_ENSURE_ARG_POINTER(aWeakRef);
 
-  PRBool success = PR_FALSE;
-  nsCOMPtr<sbIPlaylistPlayback> gpps(aPlaylistPlayback);
+  // XXXAus: Get Main Library from Library Manager.
+  // XXXAus: Get View from Main Library.
+  // XXXAus: Play Main Library View.
 
-  nsresult rv = gpps->Play( &success );
-  NS_ENSURE_SUCCESS( rv, rv );
+  nsresult rv;
+  nsCOMPtr<sbIMediacoreManager> manager = 
+    do_QueryReferent(aWeakRef, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return success ? NS_OK : NS_ERROR_FAILURE;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::Play()
 {
   LOG(("sbRemotePlayer::Play()"));
-  NS_ENSURE_STATE(mGPPS);
+  NS_ENSURE_STATE(mMM);
 
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
@@ -1219,9 +1235,18 @@ sbRemotePlayer::Play()
   NS_ENSURE_SUCCESS( rv, rv );
 
   if ( isPaused ) {
-    PRBool isPlaying = PR_FALSE;
-    mGPPS->Play( &isPlaying );
-    return isPlaying ? NS_OK : NS_ERROR_FAILURE;
+    nsCOMPtr<sbIMediacoreManager> manager = 
+      do_QueryReferent(mMM, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediacorePlaybackControl> playbackControl;
+    rv = manager->GetPlaybackControl(getter_AddRefs(playbackControl));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = playbackControl->Play();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
   }
 
   if (!mRemWebPlaylist) {
@@ -1236,21 +1261,21 @@ sbRemotePlayer::Play()
   // If the page does not have a web playlist, fall back
   // to the standard play button functionality.
   if (!mediaListView) {
-    return StandardPlay(mGPPS);
+    return StandardPlay(mMM);
   }
 
   nsCOMPtr<nsITreeView> treeView;
   rv = mediaListView->GetTreeView( getter_AddRefs(treeView) );
   if ( NS_FAILED(rv) ) {
     NS_WARNING("Got list view but did not get tree view! Falling back to standard play.");
-    return StandardPlay(mGPPS);
+    return StandardPlay(mMM);
   }
 
   nsCOMPtr<nsITreeSelection> treeSelection;
   rv = treeView->GetSelection( getter_AddRefs(treeSelection) );
   if ( NS_FAILED(rv) ) {
     NS_WARNING("Got tree view but did not get selection in view. Falling back to standard play.");
-    return StandardPlay(mGPPS);
+    return StandardPlay(mMM);
   }
 
   PRInt32 index;
@@ -1258,12 +1283,21 @@ sbRemotePlayer::Play()
   if ( index < 0 )
     index = 0;
 
-  PRBool retval;
-  rv = mGPPS->PlayView( mediaListView, index, &retval );
+  nsCOMPtr<sbIMediacoreManager> manager = 
+    do_QueryReferent(mMM, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacoreSequencer> sequencer;
+  rv = manager->GetSequencer(getter_AddRefs(sequencer));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sequencer->PlayView( mediaListView, index);
   NS_ENSURE_SUCCESS( rv, rv );
+
   rv = TakePlaybackControl( nsnull );
   NS_ENSURE_SUCCESS( rv, rv );
-  return retval ? NS_OK : NS_ERROR_FAILURE;
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1271,7 +1305,7 @@ sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
 {
   LOG(("sbRemotePlayer::PlayMediaList()"));
   NS_ENSURE_ARG_POINTER(aList);
-  NS_ENSURE_STATE(mGPPS);
+  NS_ENSURE_STATE(mMM);
 
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
@@ -1292,99 +1326,142 @@ sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
   if ( aIndex < 0 )
     aIndex = 0;
 
-  PRBool retval;
-  rv = mGPPS->PlayView( mediaListView, aIndex, &retval );
+  nsCOMPtr<sbIMediacoreManager> manager = 
+    do_QueryReferent(mMM, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacoreSequencer> sequencer;
+  rv = manager->GetSequencer(getter_AddRefs(sequencer));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sequencer->PlayView( mediaListView, aIndex);
   NS_ENSURE_SUCCESS( rv, rv );
+
   rv = TakePlaybackControl( nsnull );
   NS_ENSURE_SUCCESS( rv, rv );
-  return retval ? NS_OK : NS_ERROR_FAILURE;
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::PlayURL( const nsAString &aURL )
 {
   LOG(("sbRemotePlayer::PlayURL()"));
-  NS_ENSURE_STATE(mGPPS);
+  NS_ENSURE_STATE(mMM);
 
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  PRBool retval;
-  rv = mGPPS->PlayURL( aURL, &retval );
-  NS_ENSURE_SUCCESS( rv, rv );
+  // XXXAus: Play Single URL using Sequencer?
+
   rv = TakePlaybackControl( nsnull );
   NS_ENSURE_SUCCESS( rv, rv );
-  return retval ? NS_OK : NS_ERROR_FAILURE;
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::Stop()
 {
   LOG(("sbRemotePlayer::Stop()"));
-  NS_ENSURE_STATE(mGPPS);
+  NS_ENSURE_STATE(mMM);
 
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  PRBool retval;
-  rv = mGPPS->Stop(&retval);
-  NS_ENSURE_SUCCESS( rv, rv );
+  nsCOMPtr<sbIMediacoreManager> manager = 
+    do_QueryReferent(mMM, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacorePlaybackControl> playbackControl;
+  rv = manager->GetPlaybackControl(getter_AddRefs(playbackControl));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = playbackControl->Stop();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = TakePlaybackControl( nsnull );
   NS_ENSURE_SUCCESS( rv, rv );
-  return retval ? NS_OK : NS_ERROR_FAILURE;
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::Pause()
 {
   LOG(("sbRemotePlayer::Pause()"));
-  NS_ENSURE_STATE(mGPPS);
+  NS_ENSURE_STATE(mMM);
 
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  PRBool retval;
-  rv = mGPPS->Pause(&retval);
-  NS_ENSURE_SUCCESS( rv, rv );
+  nsCOMPtr<sbIMediacoreManager> manager = 
+    do_QueryReferent(mMM, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacorePlaybackControl> playbackControl;
+  rv = manager->GetPlaybackControl(getter_AddRefs(playbackControl));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = playbackControl->Pause();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = TakePlaybackControl( nsnull );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  return retval ? NS_OK : NS_ERROR_FAILURE;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::Next()
 {
   LOG(("sbRemotePlayer::Next()"));
-  NS_ENSURE_STATE(mGPPS);
+  NS_ENSURE_STATE(mMM);
 
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  PRInt32 retval;
-  rv = mGPPS->Next(&retval);
+  nsCOMPtr<sbIMediacoreManager> manager = 
+    do_QueryReferent(mMM, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacoreSequencer> sequencer;
+  rv = manager->GetSequencer(getter_AddRefs(sequencer));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sequencer->Next();
   NS_ENSURE_SUCCESS( rv, rv );
+
   rv = TakePlaybackControl( nsnull );
   NS_ENSURE_SUCCESS( rv, rv );
-  return ( retval > -1 ) ? NS_OK : NS_ERROR_FAILURE;
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbRemotePlayer::Previous()
 {
   LOG(("sbRemotePlayer::Previous()"));
-  NS_ENSURE_STATE(mGPPS);
+  NS_ENSURE_STATE(mMM);
 
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  PRInt32 retval;
-  rv = mGPPS->Previous(&retval);
+  nsCOMPtr<sbIMediacoreManager> manager = 
+    do_QueryReferent(mMM, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacoreSequencer> sequencer;
+  rv = manager->GetSequencer(getter_AddRefs(sequencer));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sequencer->Next();
   NS_ENSURE_SUCCESS( rv, rv );
+
   rv = TakePlaybackControl( nsnull );
   NS_ENSURE_SUCCESS( rv, rv );
-  return ( retval > -1 ) ? NS_OK : NS_ERROR_FAILURE;
+
+  return NS_OK;
 }
 
 nsresult
@@ -1453,11 +1530,65 @@ sbRemotePlayer::FireMediaItemStatusEventToContent( const nsAString &aClass,
 
 // ---------------------------------------------------------------------------
 //
-//                           sbIPlaylistPlaybackListener
+//                           sbIMediacoreEventListener
 //
 // ---------------------------------------------------------------------------
 
 NS_IMETHODIMP
+sbRemotePlayer::OnMediacoreEvent(sbIMediacoreEvent *aEvent) 
+{
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  PRUint32 type = 0;
+  nsresult rv = aEvent->GetType(&type);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  switch(type) {
+    case sbIMediacoreEvent::STREAM_END:
+    case sbIMediacoreEvent::STREAM_STOP: {
+      rv = OnStop();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+
+    case sbIMediacoreEvent::TRACK_CHANGE: {
+      rv = OnTrackChange(aEvent);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+
+    /*
+    XXXAus: Uncomment this when TRACK_INDEX_CHANGE is implemented.
+
+    case sbIMediacoreEvent::TRACK_INDEX_CHANGE: {
+      rv = OnTrackIndexChange(aEvent);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+    */
+
+    case sbIMediacoreEvent::BEFORE_VIEW_CHANGE: {
+      rv = OnBeforeViewChange(aEvent);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+
+    case sbIMediacoreEvent::VIEW_CHANGE: {
+      rv = OnViewChange(aEvent);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+  }
+
+  return NS_OK;
+}
+
+// ---------------------------------------------------------------------------
+//
+//                           Event Handlers for sbIMediacoreEventListener
+//
+// ---------------------------------------------------------------------------
+nsresult
 sbRemotePlayer::OnStop()
 {
   LOG(("sbRemotePlayer::OnStop()"));
@@ -1469,83 +1600,102 @@ sbRemotePlayer::OnStop()
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbRemotePlayer::OnTrackChange(sbIMediaItem* aItem,
-                              sbIMediaListView* aView,
-                              PRInt32 aIndex)
-{
-  LOG(("sbRemotePlayer::OnTrackChange()"));
-  NS_ENSURE_ARG_POINTER(aItem);
-  NS_ENSURE_ARG_POINTER(aView);
-  nsresult rv;
-
-  rv = FireMediaItemStatusEventToContent( RAPI_EVENT_CLASS,
-                                          RAPI_EVENT_TYPE_TRACKCHANGE,
-                                          aItem,
-                                          NS_OK );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemotePlayer::OnTrackIndexChange(sbIMediaItem* aItem,
-                                   sbIMediaListView* aView,
-                                   PRInt32 aIndex) {
-  LOG(("sbRemotePlayer::OnTrackIndexChange()"));
-  NS_ENSURE_ARG_POINTER(aItem);
-  NS_ENSURE_ARG_POINTER(aView);
-  nsresult rv;
-
-  rv = FireMediaItemStatusEventToContent( RAPI_EVENT_CLASS,
-                                          RAPI_EVENT_TYPE_TRACKINDEXCHANGE,
-                                          aItem,
-                                          NS_OK );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemotePlayer::OnBeforeViewChange(sbIMediaListView* aView) {
-  LOG(("sbRemotePlayer::OnViewChange()"));
-  NS_ENSURE_ARG_POINTER(aView);
-  nsresult rv;
-
-  rv = FireEventToContent( RAPI_EVENT_CLASS, 
-                           RAPI_EVENT_TYPE_BEFOREVIEW );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemotePlayer::OnViewChange(sbIMediaListView* aView) {
-  LOG(("sbRemotePlayer::OnViewChange()"));
-  NS_ENSURE_ARG_POINTER(aView);
-  nsresult rv;
-
-  rv = FireEventToContent( RAPI_EVENT_CLASS, 
-                           RAPI_EVENT_TYPE_VIEW );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbRemotePlayer::OnBeforeTrackChange(sbIMediaItem* aItem,
-                                    sbIMediaListView* aView,
-                                    PRInt32 aIndex)
+nsresult
+sbRemotePlayer::OnBeforeTrackChange(sbIMediacoreEvent *aEvent)
 {
   LOG(("sbRemotePlayer::OnBeforeTrackChange()"));
-  NS_ENSURE_ARG_POINTER(aItem);
-  NS_ENSURE_ARG_POINTER(aView);
-  nsresult rv;
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsCOMPtr<nsIVariant> data;
+  nsresult rv = aEvent->GetData(getter_AddRefs(data));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupports> supports;
+  rv = data->GetAsISupports(getter_AddRefs(supports));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = FireMediaItemStatusEventToContent( RAPI_EVENT_CLASS,
                                           RAPI_EVENT_TYPE_BEFORETRACKCHANGE,
-                                          aItem,
+                                          item,
                                           NS_OK );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbRemotePlayer::OnTrackChange(sbIMediacoreEvent *aEvent)
+{
+  LOG(("sbRemotePlayer::OnTrackChange()"));
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsCOMPtr<nsIVariant> data;
+  nsresult rv = aEvent->GetData(getter_AddRefs(data));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupports> supports;
+  rv = data->GetAsISupports(getter_AddRefs(supports));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = FireMediaItemStatusEventToContent( RAPI_EVENT_CLASS,
+                                          RAPI_EVENT_TYPE_TRACKCHANGE,
+                                          item,
+                                          NS_OK );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbRemotePlayer::OnTrackIndexChange(sbIMediacoreEvent *aEvent) {
+  LOG(("sbRemotePlayer::OnTrackIndexChange()"));
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsCOMPtr<nsIVariant> data;
+  nsresult rv = aEvent->GetData(getter_AddRefs(data));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupports> supports;
+  rv = data->GetAsISupports(getter_AddRefs(supports));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = FireMediaItemStatusEventToContent( RAPI_EVENT_CLASS,
+                                          RAPI_EVENT_TYPE_TRACKINDEXCHANGE,
+                                          item,
+                                          NS_OK );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbRemotePlayer::OnBeforeViewChange(sbIMediacoreEvent *aEvent) {
+  LOG(("sbRemotePlayer::OnViewChange()"));
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsresult rv = FireEventToContent( RAPI_EVENT_CLASS, 
+                                    RAPI_EVENT_TYPE_BEFOREVIEW );
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbRemotePlayer::OnViewChange(sbIMediacoreEvent *aEvent) {
+  LOG(("sbRemotePlayer::OnViewChange()"));
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsresult rv = FireEventToContent( RAPI_EVENT_CLASS, 
+                                    RAPI_EVENT_TYPE_VIEW );
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1610,7 +1760,12 @@ sbRemotePlayer::HandleEvent( nsIDOMEvent *aEvent )
     NS_ASSERTION( NS_SUCCEEDED(rv),
                   "Failed to remove RemoteAPIPermissionChanged listener from document" );
 
-    rv = mGPPS->RemoveListener(this);
+    nsCOMPtr<sbIMediacoreEventTarget> target = 
+      do_QueryReferent(mMM, &rv);
+    NS_ASSERTION( NS_SUCCEEDED(rv), 
+      "Failed to get event target to remove playback listener" );
+
+    rv = target->RemoveListener(this);
     NS_ASSERTION( NS_SUCCEEDED(rv), "Failed to remove playback listener" );
 
     // the page is going away, clean up things that will cause us to

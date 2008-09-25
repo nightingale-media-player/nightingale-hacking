@@ -29,9 +29,6 @@
  */
 
 function runTest () {
-
-  initMockCore();
-
   var url = "data:application/vnd.mozilla.xul+xml," +
             "<?xml-stylesheet href='chrome://global/skin' type='text/css'?>" +
             "<?xml-stylesheet href='chrome://songbird/content/bindings/bindings.css' type='text/css'?>" +

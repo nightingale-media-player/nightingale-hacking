@@ -209,9 +209,9 @@ function onHideButtonClick()
 {
   // Stop video playback
   try {
-    var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                  .getService(Components.interfaces.sbIPlaylistPlayback);
-    PPS.stop();
+    var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+               .getService(Components.interfaces.sbIMediacoreManager);
+    mm.playbackControl.stop();
   } catch (e) {}
   SBHideCoreWindow();
 }
@@ -345,6 +345,10 @@ function videoCheckAltF4(evt)
  * that may help the user remedy this problem.
  */
 function SBMediaCoreCheck() {
+
+  // XXXAus: This is pretty much useless now. Just stubbing it out.
+  
+  /*
   var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                 .getService(Components.interfaces.sbIPlaylistPlayback);
 
@@ -409,6 +413,7 @@ function SBMediaCoreCheck() {
   if(rv == 0 || rv == 2) {
     quitApp( true ); // Skip saving the window position.
   }
-
+  */
+  
   return;
 }

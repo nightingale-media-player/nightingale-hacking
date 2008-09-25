@@ -238,7 +238,7 @@ Component.prototype =
      * mXMLFile                     XML file object being parsed.
      * mIOService                   IO service component.
      * mFileProtocolHandler         File protocol handler component.
-     * mPlaylistPlayback            Playlist playback services component.
+     * mTypeSniffer                 Mediacore Type Sniffer component.
      * mLibraryManager              Media library manager component.
      * mLibrary                     Media library component.
      * mPlaylist                    Current playlist component.
@@ -276,7 +276,7 @@ Component.prototype =
     mXMLFile: null,
     mIOService: null,
     mFileProtocolHandler: null,
-    mPlaylistPlayback: null,
+    mTypeSniffer: null,
     mLibraryManager: null,
     mLibrary: null,
     mPlaylist: null,
@@ -422,10 +422,8 @@ Component.prototype =
                 .createInstance(Components.interfaces.nsIFileProtocolHandler);
 
         /* Get the playlist playback services. */
-        this.mPlaylistPlayback =
-                Components.
-                    classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].
-                    getService(Components.interfaces.sbIPlaylistPlayback);
+        this.mTypeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                              .createInstance(Ci.sbIMediacoreTypeSniffer); 
 
         /* Get the media library manager service          */
         /* component and create a media library instance. */
@@ -876,9 +874,7 @@ Component.prototype =
     {
         var                         ready = true;
 
-        /* If the playlist playback core is not  */
-        /* available, the importer is not ready. */
-        if (!this.mPlaylistPlayback.core)
+        if (!this.mTypeSniffer)
             ready = false;
 
         return (ready);
@@ -1195,7 +1191,7 @@ Component.prototype =
 
         /* Check if the track media is supported and */
         /* add it to the iTunes library signature.   */
-        supported = this.mPlaylistPlayback.isMediaURL(url);
+        supported = this.mTypeSniffer.isValidMediaURL(url);
         if (!supported)
             this.mUnsupportedMediaCount++;
         this.mITunesLibSig.update("supported" + supported);

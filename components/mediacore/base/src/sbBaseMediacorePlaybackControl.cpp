@@ -120,7 +120,9 @@ sbBaseMediacorePlaybackControl::GetPosition(PRUint64 *aPosition)
   NS_ENSURE_ARG_POINTER(aPosition);
 
   nsAutoLock lock(mLock);
-  *aPosition = mPosition;
+
+  nsresult rv = OnGetPosition(aPosition);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -148,7 +150,9 @@ sbBaseMediacorePlaybackControl::GetDuration(PRUint64 *aDuration)
   NS_ENSURE_ARG_POINTER(aDuration);
 
   nsAutoLock lock(mLock);
-  *aDuration = mDuration;  
+  
+  nsresult rv = OnGetDuration(aDuration);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -206,14 +210,32 @@ sbBaseMediacorePlaybackControl::OnSetUri(nsIURI *aURI)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+/*virtual*/ nsresult
+sbBaseMediacorePlaybackControl::OnGetDuration(PRUint64 *aDuration) 
+{
+  /**
+   *  This is where you'll want to get the current duration (in milliseconds).
+   */
+  
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult 
+sbBaseMediacorePlaybackControl::OnGetPosition(PRUint64 *aPosition)
+{
+  /**
+   *  This is where you'll want to get the current position (in milliseconds).
+   */
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 /*virtual*/ nsresult 
 sbBaseMediacorePlaybackControl::OnSetPosition(PRUint64 aPosition)
 {
   /**
    *  This is where you'll want to seek to aPosition in the currently 
-   *  set source.
-   *
-   *  The position is cached in 
+   *  set source. The position is in milliseconds.
    */
 
   return NS_ERROR_NOT_IMPLEMENTED;

@@ -222,12 +222,11 @@ DirectoryImportJob.prototype = {
     this._fileScanner = Cc["@songbirdnest.com/Songbird/FileScan;1"]
                           .createInstance(Components.interfaces.sbIFileScan);
 
-    // Figure out what files we are looking for. Note that the playlist
-    // playback service will not be initialized when running unit tests.
-    var pps = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                .getService(Ci.sbIPlaylistPlayback);
+    // Figure out what files we are looking for.
+    var typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                        .createInstance(Ci.sbIMediacoreTypeSniffer);
     try {
-      var extensions = pps.getSupportedFileExtensions();
+      var extensions = typeSniffer.mediaFileExtensions;
       this._fileExtensions = [];
       while (extensions.hasMore()) {
         this._fileExtensions.push(extensions.getNext());

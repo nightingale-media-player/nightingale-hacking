@@ -49,13 +49,15 @@ public:
 
   nsresult InitBaseMediacorePlaybackControl();
 
-  nsresult SetDuration(PRUint64 aDuration);
-
   // Override me, see cpp file for implementation notes.
   virtual nsresult OnInitBaseMediacorePlaybackControl();
 
   // Override me, see cpp file for implementation notes.
   virtual nsresult OnSetUri(nsIURI *aURI);
+  // Override me, see cpp file for implementation notes.
+  virtual nsresult OnGetDuration(PRUint64 *aPosition);
+  // Override me, see cpp file for implementation notes.
+  virtual nsresult OnGetPosition(PRUint64 *aPosition);
   // Override me, see cpp file for implementation notes.
   virtual nsresult OnSetPosition(PRUint64 aPosition);
   // Override me, see cpp file for implementation notes.
@@ -72,7 +74,9 @@ protected:
 
   nsCOMPtr<nsIURI> mUri;
 
+  // Use for caching if you wish, lock mLock before using.
   PRUint64 mPosition;
+  // Use for caching if you wish, lock mLock before using.
   PRUint64 mDuration;
 };
 

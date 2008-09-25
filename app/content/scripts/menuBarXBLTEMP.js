@@ -104,31 +104,29 @@ function doMenu( command, event ) {
       quitApp();
     break;
     case "menuitem_control_play":
-      // If we are already playing something just pause/unpause playback
-      if (gPPS.playing) {
-        // if we're playing already then play / pause
-        if (gPPS.paused) {
-          gPPS.play();
-        } else {
-          gPPS.pause();
-        }
+      var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
+      var state = gMM.status.state;
+      if ( state == sbIMediacoreStatus.STATUS_PLAYING ||
+           state == sbIMediacoreStatus.STATUS_BUFFERING) {
+        gMM.playbackControl.pause();
+      }
+      else if(state == sbIMediacoreStatus.STATUS_PAUSED) {
+        gMM.playbackControl.play();
       // Otherwise dispatch a play event.  Someone should catch this
       // and intelligently initiate playback.  If not, just have
       // the playback service play the default.
-      } else {
-        var newEvent = document.createEvent("Events");
-        newEvent.initEvent("Play", true, true);
-        var notHandled = this.dispatchEvent(newEvent);
-        if (notHandled) {
-          gPPS.play();
-        }
+      } 
+      else {
+        var event = document.createEvent("Events");
+        event.initEvent("Play", true, true);
+        window.dispatchEvent(event);
       }
     break;
     case "menuitem_control_next":
-      gPPS.next();
+      gMM.sequencer.next();
     break;
     case "menuitem_control_prev":
-      gPPS.previous();
+      gMM.sequencer.previous();
     break;
     case "menuitem_control_shuf":
       SBDataSetIntValue( "playlist.shuffle", (SBDataGetIntValue( "playlist.shuffle" ) + 1) % 2 );
@@ -146,7 +144,7 @@ function doMenu( command, event ) {
       toggleJumpTo();
     break;
     case "menuitem_control_stop":
-      gPPS.stop();
+      gMM.playbackControl.stop();
     break;
     case "menu_extensions":
       SBOpenPreferences("paneAddons");

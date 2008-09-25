@@ -38,12 +38,14 @@ XPIDL_SRCS = sbIMediacore.idl \
              sbIMediacoreEventTarget.idl \
              sbIMediacoreFactory.idl \
              sbIMediacoreFactoryRegistrar.idl \
+             sbIMediacoreManager.idl \
              sbIMediacorePlaybackControl.idl \
              sbIMediacoreSequencer.idl \
              sbIMediacoreSequenceGenerator.idl \
              sbIMediacoreSimpleEqualizer.idl \
              sbIMediacoreStatus.idl \
              sbIMediacoreTranscodeControl.idl \
+             sbIMediacoreTypeSniffer.idl \
              sbIMediacoreVideoWindow.idl \
              sbIMediacoreVolumeControl.idl \
              sbIMediacoreVoting.idl \

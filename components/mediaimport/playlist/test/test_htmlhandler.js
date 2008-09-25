@@ -29,10 +29,6 @@
  */
 
 function runTest () {
-
-  // the html reader needs a core for isMediaURL
-  initMockCore();
-
   var library = createLibrary("test_playlistreader");
 
   var mediaList = library.createMediaList("simple");

@@ -269,41 +269,33 @@
             QueryInterface: this.XPCOMUtils.generateQI([Components.interfaces.sbIMediaListListener])
           };
 
+          var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                             .getService(Components.interfaces.sbIMediacoreManager);
+
           // Setup a playlist-playback listener to keep this binding in sync
           // with the current playing track
           this._playbackListener = {
             _callback: this,
-          
-            onStop: function() { 
+            _mm: mm,
+            onMediacoreEvent: function(aEvent) {
+              if(aEvent.type == aEvent.TRACK_CHANGE) {
+                var list = this._mm.sequencer.view.mediaList;
+                this._callback.onTrackChange(aEvent.data, list);
+              }
             },
-          
-            onBeforeTrackChange: function(aItem, aView, aIndex) { 
-            },
-          
-            onTrackChange: function(aItem, aView, aIndex) {
-              this._callback.onTrackChange(aItem, aView.mediaList);
-            },
-            
-            onTrackIndexChange: function(aItem, aView, aIndex) {
-            },
-            
-            onBeforeViewChange: function(aView) {
-            },
-
-            onViewChange: function(aView) {
-            },
-          
-            QueryInterface: this.XPCOMUtils.generateQI([Components.interfaces.sbIPlaylistPlaybackListener])
+            QueryInterface: this.XPCOMUtils.generateQI([Components.interfaces.sbIMediacoreEventListener])
           };
       
-          var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                              .getService(Components.interfaces.sbIPlaylistPlayback);
-          pps.addListener(this._playbackListener);
+          mm.addListener(this._playbackListener);
           
-          if (pps.playing) {
+          var status = mm.status;
+          var playing = (status.state == status.STATUS_PLAYING ||
+                         status.state == status.STATUS_BUFFERING ||
+                         status.state == status.STATUS_PAUSED);
+          if (playing) {
             // read data from the currently playing item
-            var view = pps.playingView;
-            var item = view.getItemByIndex(pps.currentIndex);
+            var view = mm.sequencer.view;
+            var item = view.getItemByIndex(mm.sequencer.viewPosition);
             if (item) {
               this.onTrackChange(item, view.mediaList);
             }
@@ -315,9 +307,9 @@
           this._ratingBinding.removeEventListener("input", this._ratingschange, true);
           this._ratingschange = null;
         
-          var pps = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                              .getService(Components.interfaces.sbIPlaylistPlayback);
-          pps.removeListener(this._playbackListener);
+          var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                             .getService(Components.interfaces.sbIMediacoreManager);
+          mm.removeListener(this._playbackListener);
           this._playbackListener = null;
         ]]>
       </destructor>

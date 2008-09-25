@@ -31,8 +31,7 @@
 #include <nsIRequest.h>
 #include <nsIServiceManager.h>
 #include <nsIURI.h>
-#include <sbIPlaylistPlayback.h>
-#include <sbICoreWrapper.h>
+#include <sbIMediacoreTypeSniffer.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
@@ -40,9 +39,6 @@
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOM.h>
 #include <nsXPCOMCID.h>
-
-#define SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID \
-  "@songbirdnest.com/Songbird/PlaylistPlayback;1"
 
 /**
  * An implementation of nsIContentSniffer that prevents audio and video files
@@ -104,26 +100,13 @@ sbMediaSniffer::GetMIMETypeFromContent(nsIRequest* aRequest,
   rv = channel->GetURI(getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCAutoString spec;
-  rv = uri->GetSpec(spec);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPlaylistPlayback> playlistPlayback =
-    do_GetService(SONGBIRD_PLAYLISTPLAYBACK_CONTRACTID, &rv);
+  nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
+    do_GetService(SB_MEDIACORETYPESNIFFER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool isMediaURL = PR_FALSE;
-
-  // If there are no media cores registered (like at startup),
-  // don't do anything
-  nsCOMPtr<sbICoreWrapper> core;
-  rv = playlistPlayback->GetCore(getter_AddRefs(core));
-  if (NS_SUCCEEDED(rv) && core) {
-    
-    // If there is at least one core, try to find out if this
-    // is a media file
-    rv = playlistPlayback->IsMediaURL(NS_ConvertUTF8toUTF16(spec), &isMediaURL);  
-  }
+  rv = typeSniffer->IsValidMediaURL(uri, 
+                                    &isMediaURL);
   
   if (NS_SUCCEEDED(rv) && isMediaURL) {
     

@@ -39,9 +39,6 @@ try
 {
   function SBFileOpen( )
   {
-    var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                        .getService(Components.interfaces.sbIPlaylistPlayback);
-
     // Make a filepicker thingie.
     var nsIFilePicker = Components.interfaces.nsIFilePicker;
     var fp = Components.classes["@mozilla.org/filepicker;1"]
@@ -58,7 +55,7 @@ try
     // ask the playback core for supported extensions
     var ext;
     var exts = new Array();
-    var extensions = PPS.getSupportedFileExtensions();
+    var extensions = gTypeSniffer.mediaFileExtensions;
     while (extensions.hasMore())
     {
       ext = extensions.getNext();
@@ -110,10 +107,9 @@ try
       {
         installXPI( uri.spec );
       }
-      else if ( PPS.isMediaURL(uri.spec) )
+      else if ( gTypeSniffer.isValidMediaURL(uri.spec) )
       {
         // And if we're good, play it.
-        SBDataSetBoolValue("faceplate.seenplaying", false);
         SBDataSetStringValue("metadata.title", fp.file.leafName);
         SBDataSetStringValue("metadata.artist", "");
         SBDataSetStringValue("metadata.album", "");
@@ -136,7 +132,7 @@ try
         }
         
         // Play the item
-        gPPS.playView(view, index);
+        gMM.sequencer.playView(view, index);
       }
       else
       {
@@ -176,12 +172,11 @@ try
       {
         installXPI( uri.spec );
       }
-      else if ( gPPS.isMediaURL(uri.spec) )
+      else if ( gTypeSniffer.isValidMediaURL(uri.spec) )
       {
         var item = SBImportURLIntoWebLibrary(uri);
 
         // And if we're good, play it.
-        SBDataSetBoolValue("faceplate.seenplaying", false);
         SBDataSetStringValue("metadata.title", uri.spec);
         SBDataSetStringValue("metadata.artist", "");
         SBDataSetStringValue("metadata.album", "");
@@ -204,7 +199,7 @@ try
         }
         
         // Play the item
-        gPPS.playView(view, index);
+        gMM.sequencer.playView(view, index);
       }
       else
       {

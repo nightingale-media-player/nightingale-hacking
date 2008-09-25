@@ -32,7 +32,7 @@ interface sbIMediacoreSequence;
 interface sbIMediacoreSequenceGenerator;
 interface sbIMediaListView;
 
-[scriptable, uuid(91e8edfc-17a8-47af-8d75-1bbe9ab5fa5f)]
+[scriptable, uuid(61884483-3801-41e5-a5ed-006b8ada0be9)]
 interface sbIMediacoreSequencer : nsISupports
 {
   const unsigned long MODE_FORWARD    = 0;
@@ -44,18 +44,53 @@ interface sbIMediacoreSequencer : nsISupports
   attribute unsigned long mode;
 
   const unsigned long MODE_REPEAT_NONE = 0;
-  const unsigned long MODE_REPEAT_ONE = 1;
-  const unsigned long MODE_REPEAT_ALL = 1 << 1;
+  const unsigned long MODE_REPEAT_ONE  = 1;
+  const unsigned long MODE_REPEAT_ALL  = 1 << 1;
 
   attribute unsigned long repeatMode;
 
+  /**
+   * \brief The view that was used to generate the current sequence.
+   */
   attribute sbIMediaListView view;
 
+  /**
+   * \brief The current position in the view. This position
+   *        is tied to the sequencePosition.
+   */
+  readonly attribute unsigned long viewPosition;
+
+  /**
+   * \brief The current sequence.
+   */
   readonly attribute nsIArray currentSequence;
+
+  /**
+   * \brief The current position in the sequence. This position is tied
+   *        to the viewPosition. 
+   */
   attribute unsigned long sequencePosition;
 
+  /**
+   * \brief Play a media list view as a sequence. Optionally provide the index
+   *        of the item in the view that should play first in the sequence.
+   */
+  void playView(in sbIMediaListView aView, 
+                [optional] in unsigned long aItemIndex);
+
+  /**
+   * \brief Play the sequence.
+   */
   void play();
+
+  /**
+   * \brief Go to the next item in the sequence.
+   */
   void next();
+
+  /**
+   * \brief Go to the previous item in the sequence.
+   */
   void previous();
 
   // When in custom mode, this generator is used to generate the sequence.

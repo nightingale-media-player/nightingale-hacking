@@ -49,8 +49,8 @@ function(aFile, aMediaList, aReplace)
 {
   var toAdd = [];
 
-  var pps = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-              .getService(Ci.sbIPlaylistPlayback);
+  var typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                      .createInstance(Ci.sbIMediacoreTypeSniffer);
 
   // A fairly permissive regular expression to match href attributes.  It will
   // match href values that are surrounded by single or double quotes, or no
@@ -73,12 +73,10 @@ function(aFile, aMediaList, aReplace)
     var a = re.exec(aLine);
     while (a && a.length == 3) {
       var href = a[2];
-      if (href && pps.isMediaURL(href)) {
-        var newUri = SB_ResolveURI(href, this._originalURI);
-        if (newUri) {
-          var item = { uri: newUri, properties: {}};
-          toAdd.push(item);
-        }
+      var newUri = SB_ResolveURI(href, this._originalURI);
+      if (newUri && typeSniffer.isValidMediaURL(newUri)) {
+        var item = { uri: newUri, properties: {}};
+        toAdd.push(item);
       }
 
       a = re.exec(aLine);

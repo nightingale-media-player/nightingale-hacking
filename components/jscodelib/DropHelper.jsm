@@ -1128,9 +1128,10 @@ var ExternalDropHandler = {
   _importDropFile: function(aURI) {
     try {    
       // is this a media url ?
-      var gPPS = this._Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                     .getService(this._Ci.sbIPlaylistPlayback);
-      if (gPPS.isMediaURL( aURI.spec )) {
+      var typeSniffer = this._Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                            .createInstance(this._Ci.sbIMediacoreTypeSniffer);
+                            
+      if (typeSniffer.isValidMediaURL( aURI )) {
         
         // check whether the item already exists in the library 
         // for the target list

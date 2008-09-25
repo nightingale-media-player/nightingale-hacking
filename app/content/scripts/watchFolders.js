@@ -58,6 +58,9 @@ function WFInit()
   if(!wfMediaLibrary)
     wfMediaLibrary = new MediaLibrary();
 
+  if (!window.URLUtils)
+    Components.utils.import("resource://app/jsmodules/URLUtils.jsm");
+
   wfFileScan =
     Components.classes["@songbirdnest.com/Songbird/FileScan;1"]
               .createInstance(Components.interfaces.sbIFileScan);
@@ -147,12 +150,12 @@ function onWFLibraryAdd()
   {
     var strURL = wfFileScanQuery.getFilePath(wfCurrentFile);
     
-    if(gPPS.isMediaURL(strURL))
+    if(gTypeSniffer.isValidMediaURL(strURL))
     {
       var keys = new Array( "title" );
       var values = new Array();
           
-      values.push( gPPS.convertURLToDisplayName( strURL ) );
+      values.push( URLUtils.convertURLToDisplayName( strURL ) );
       
       wfMediaLibrary.addMedia(strURL, keys.length, keys, values.length, values, false, true);
       

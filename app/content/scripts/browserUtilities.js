@@ -561,7 +561,14 @@ function toOpenWindowByType(inType, uri, features)
  * and other UI.
  */
 function nsBrowserStatusHandler()
-{}
+{
+  this.typeSniffer = 
+    Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+              .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);
+  this.ios = Components.classes["@mozilla.org/network/io-service;1"]
+                       .getService(Components.interfaces.nsIIOService);
+}
+
 nsBrowserStatusHandler.prototype =
 {
   // Stored Status, Link and Loading values
@@ -571,6 +578,8 @@ nsBrowserStatusHandler.prototype =
   jsDefaultStatus : "",
   overLink : "",
   statusText: "",
+  typeSniffer: null,
+  ios: null,
 
   QueryInterface : function(aIID)
   {
@@ -618,8 +627,14 @@ nsBrowserStatusHandler.prototype =
     // and cause needless (slow!) UI updates
     if (this.statusText != text) {
       SBDataSetStringValue( "faceplate.status.text", text);
-      if (this.overLink && (gPPS.isMediaURL(this.overLink) || 
-                            gPPS.isPlaylistURL(this.overLink))) {
+    
+      if (!this.overLink)
+        return;
+
+      var uri = this.ios.newURI(this.overLink, null, null);
+      
+      if (uri && (this.typeSniffer.isValidMediaURL(uri) || 
+                  this.typeSniffer.isValidPlaylistURL(uri))) {
         SBDataSetStringValue( "faceplate.status.type", "playable");
       } else {
         SBDataSetStringValue( "faceplate.status.type", "normal");

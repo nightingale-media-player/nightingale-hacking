@@ -27,8 +27,10 @@
 
 #include <sbIMediacoreSequencer.h>
 
+#include <nsIClassInfo.h>
 #include <nsIMutableArray.h>
 #include <nsIStringEnumerator.h>
+#include <nsITimer.h>
 #include <nsIURI.h>
 #include <nsIWeakReference.h>
 
@@ -37,8 +39,10 @@
 #include <nsTHashtable.h>
 #include <prmon.h>
 
+#include <sbIDataRemote.h>
 #include <sbIMediacoreEventListener.h>
 #include <sbIMediacoreManager.h>
+#include <sbIMediacoreStatus.h>
 #include <sbIMediacoreSequenceGenerator.h>
 #include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
@@ -46,12 +50,19 @@
 #include <vector>
 
 class sbMediacoreSequencer : public sbIMediacoreSequencer,
-                             public sbIMediacoreEventListener
+                             public sbIMediacoreEventListener,
+                             public sbIMediacoreStatus,
+                             public nsIClassInfo,
+                             public nsITimerCallback
 {
 public:
   NS_DECL_ISUPPORTS
+
   NS_DECL_SBIMEDIACORESEQUENCER
   NS_DECL_SBIMEDIACOREEVENTLISTENER
+  NS_DECL_SBIMEDIACORESTATUS
+  NS_DECL_NSICLASSINFO
+  NS_DECL_NSITIMERCALLBACK
 
   sbMediacoreSequencer();
 
@@ -59,23 +70,52 @@ public:
 
   nsresult Init();
 
+  // Sequence Processor (timer driven)
+  nsresult StartSequenceProcessor();
+  nsresult StopSequenceProcessor();
+
+  // DataRemotes
+  nsresult BindDataRemotes();
+  nsresult UnbindDataRemotes();
+
+  // Faceplate Playback Status DataRemotes
+  nsresult UpdatePlayStateDataRemotes();
+  nsresult UpdatePositionDataRemotes(PRUint64 aPosition);
+  nsresult UpdateDurationDataRemotes(PRUint64 aDuration);
+  nsresult UpdateURLDataRemotes(nsIURI *aURI);
+
+  // Metadata Event & DataRemote
+  nsresult HandleMetadataEvent(sbIMediacoreEvent *aEvent);
+  nsresult SetMetadataDataRemote(const nsAString &aId, 
+                                 const nsAString &aValue);
+
   // Sequence management
-  nsresult RecalculateSequence();
-  //nsresult RecalculatePartialSequence();
+  nsresult RecalculateSequence(PRUint32 *aViewPosition = nsnull);
 
   // Fetching of items, item manipulation.
   nsresult GetItem(const sequence_t &aSequence,
                    PRUint32 aPosition, 
                    sbIMediaItem **aItem);
 
+  // Setup for playback
+  nsresult Setup();
+
+  // Set view with optional view position
+  nsresult SetViewWithViewPosition(sbIMediaListView *aView, 
+                                   PRUint32 *aViewPosition = nsnull);
+
 private:
   virtual ~sbMediacoreSequencer();
+
+  nsresult DispatchMediacoreEvent(sbIMediacoreEvent *aEvent, 
+                                  PRBool aAsync = PR_FALSE);
 
 protected:
   PRMonitor *mMonitor;
   
   PRUint32                       mStatus;
-  PRBool                         mIsWaitingForPlayback;
+  PRPackedBool                   mIsWaitingForPlayback;
+  PRPackedBool                   mSeenPlaying;
   
   PRUint32                       mChainIndex;
   nsCOMPtr<nsIArray>             mChain;
@@ -88,10 +128,32 @@ protected:
 
   nsCOMPtr<sbIMediaListView>     mView;
   sequence_t                     mSequence;
+  sequence_t                     mViewIndexToSequenceIndex;
   PRUint32                       mPosition;
+  PRUint32                       mViewPosition;
 
   nsCOMPtr<sbIMediacoreSequenceGenerator> mCustomGenerator;
   nsCOMPtr<sbIMediacoreSequenceGenerator> mShuffleGenerator;
 
   nsCOMPtr<nsIWeakReference> mMediacoreManager;
+
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateBuffering;
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplatePaused;
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplatePlaying;
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateSeenPlaying;
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateURL;
+
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataAlbum;
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataArtist;
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataTitle;
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataGenre;
+
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataDuration;
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataDurationStr;
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataPosition;
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataPositionStr;
+
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataURL;
+
+  nsCOMPtr<nsITimer> mSequenceProcessorTimer;
 };

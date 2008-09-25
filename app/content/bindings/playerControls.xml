@@ -75,9 +75,10 @@
         this.setAttribute("class", this.getAttribute("class") + " sb-player-volume-slider");
       
         // Then do the rest of your crap
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                    .getService(Components.interfaces.sbIPlaylistPlayback);
- 
+        this.mm = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Components.interfaces.sbIMediacoreManager);
+
         // observer for DataRemote 
         const on_remote_volume_change = { 
           _that: null, 
@@ -90,8 +91,9 @@
         this.remote_lastVolume = SB_NewDataRemote("faceplate.volume.last", null );
         this.remote_volume.bindObserver(on_remote_volume_change, true);
 
-        this.maxpos = 255;
-        this.value = this.remote_volume.intValue;
+        this.sliderScale = 10000;
+        this.maxpos = this.sliderScale;
+        this.value = parseFloat(this.remote_volume.stringValue) * this.sliderScale;
         this.trackingVolume = false;
       ]]>
     </constructor>
@@ -104,6 +106,8 @@
         if (this.remote_lastVolume) {
           this.remote_lastVolume = null;
         }
+        
+        this.mm = null;
       ]]>
     </destructor>
     
@@ -113,15 +117,17 @@
           // prevent this volume control from being updated while it is being
           //   moved (but other volume controls are updated with our motion)
           this.trackingVolume = true; 
-          this.gPPS.volume = this.value;
-          this.remote_volume.intValue = this.value;
+          var scaledValue = this.value / this.sliderScale;
+          this.mm.volumeControl.volume = scaledValue;
+          dump("onTrackVolume: new volume is " + scaledValue + "\n\n");
+          this.remote_volume.stringValue = scaledValue;
           if (this.value == 0) {
             // set mute when we bring the volume to 0
-            this.gPPS.mute = true;
+            this.mm.volumeControl.mute = true;
           }
           else {
             // otherwise reset it, and record the last volume
-            this.gPPS.mute = false;
+            this.mm.volumeControl.mute = false;
           }
         ]]>
       </body>
@@ -131,7 +137,7 @@
       <body>
         <![CDATA[
           this.trackingVolume = false;
-          this.gPPS.volume = this.value;
+          this.mm.volumeControl.volume = this.value / this.sliderScale;
         ]]>
       </body>
     </method>
@@ -140,9 +146,7 @@
       <body>
         <![CDATA[
           try {
-            if (this.trackingVolume) // if volume is being actively changed, wait until release
-              return; 
-            this.value = this.remote_volume.intValue;
+            this.value = parseFloat(this.remote_volume.stringValue) * this.sliderScale;
           } catch (err) {
             dump("playerControls.xml - onRemoteVolumeChange - " + err + "\n");
           }
@@ -153,10 +157,10 @@
     <!-- override the values in the progress slider to make it track the volume -->
     <property name="lastValue">
       <getter>
-        return this.remote_lastVolume.intValue;
+        return parseFloat(this.remote_lastVolume.stringValue) * this.sliderScale;
       </getter>
       <setter>
-        this.remote_lastVolume.intValue = val;
+        this.remote_lastVolume.stringValue = val / this.sliderScale;
       </setter>
     </property>
 
@@ -223,8 +227,9 @@
 
     <constructor>
       <![CDATA[
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                    .getService(Components.interfaces.sbIPlaylistPlayback);
+        this.mm = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind the data remotes
         this.remote_volume = SB_NewDataRemote( "faceplate.volume", null );
@@ -236,6 +241,7 @@
         //SB_LOG("playerControls.js", "mute binding destructor");
         // Release the data remotes
         this.remote_volume = this.remote_lastVolume = null;
+        this.mm = null;
       ]]>
     </destructor>
 
@@ -257,15 +263,16 @@
     <method name="doMute">
       <body>
         <![CDATA[
-          var newmute = !this.gPPS.mute; 
-          this.gPPS.mute = newmute;
+          var newmute = !this.mm.volumeControl.mute; 
+          this.mm.volumeControl.mute = newmute;
           if (!newmute) {
             // restore last volume when coming back from mute state
-            this.gPPS.volume = this.remote_lastVolume.intValue;
+            this.mm.volumeControl.volume = 
+              parseFloat(this.remote_lastVolume.stringValue);
           } 
           else {
-            this.remote_lastVolume.intValue = this.remote_volume.intValue;
-            this.gPPS.volume = 0;
+            this.remote_lastVolume.stringValue = this.remote_volume.stringValue;
+            this.mm.volumeControl.volume = 0;
           }
         ]]>
       </body>
@@ -349,8 +356,9 @@
     <constructor>
         this.setAttribute("tooltiptext", "&tooltip.control.fwd;")
       <![CDATA[
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                      .getService(Components.interfaces.sbIPlaylistPlayback);
+        this.mm = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Components.interfaces.sbIMediacoreManager);
 
         this.seen_skip = false;
         this.skip = false;
@@ -364,8 +372,9 @@
     <method name="onFwdMouseDown">
       <body>
         <![CDATA[
+          var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
           this.seen_skip = false;
-          if ( this.gPPS.playing )
+          if ( this.mm.status.state == sbIMediacoreStatus.STATUS_PLAYING)
           {
             this.skip = true;
             if ( ! this.skip_interval )
@@ -414,7 +423,7 @@
         <![CDATA[
           if ( !this.seen_skip )
           {
-            this.gPPS.next();
+            this.mm.sequencer.next();
           }
         ]]>
       </body>
@@ -427,12 +436,12 @@
           if ( _this.skip )
           {
             // If we're allowed to skip
-            if ( _this.gPPS.length > 0 )
+            if ( _this.mm.playbackControl.duration > 0 )
             {
               _this.seen_skip = true;
-              var target = _this.gPPS.position + 15000;
-              var max = _this.gPPS.length - 1000;
-              _this.gPPS.position = ( max < target ) ? max : target;
+              var target = _this.mm.playbackControl.position + 15000;
+              var max = _this.mm.playbackControl.duration - 1000;
+              _this.mm.playbackControl.position = ( max < target ) ? max : target;
             }
           }
           else
@@ -470,8 +479,9 @@
     <constructor>
         this.setAttribute("tooltiptext", "&tooltip.control.back;")
       <![CDATA[
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                      .getService(Components.interfaces.sbIPlaylistPlayback);
+        this.mm = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Components.interfaces.sbIMediacoreManager);
 
         this.seen_skip = false;
         this.skip = false;
@@ -480,13 +490,16 @@
     </constructor>
 
     <destructor>
+      this.mm = null;
     </destructor>
     
     <method name="onBackMouseDown">
       <body>
         <![CDATA[
+          var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
           this.seen_skip = false;
-          if ( this.gPPS.playing )
+          var status = mm.status;
+          if ( status.state == sbIMediacoreStatus.STATUS_PLAYING)
           {
             this.skip = true;
             if ( ! this.skip_interval )
@@ -535,7 +548,7 @@
         <![CDATA[
           if ( !this.seen_skip )
           {
-            this.gPPS.previous();
+            this.mm.sequencer.previous();
           }
         ]]>
       </body>
@@ -545,11 +558,12 @@
       <body>
         <![CDATA[
           var _this = document.__SKIPLOOPOBJECT__;
+          var playbackControl = _this.mm.playbackControl;
           if ( _this.skip )
           {
             _this.seen_skip = true;
-            var target = _this.gPPS.position - 15000;
-            _this.gPPS.position = ( target > 1 ) ? target : 1;
+            var target = playbackControl.position - 15000;
+            playbackControl.position = ( target > 1 ) ? target : 1;
           }
           else
           {
@@ -631,8 +645,9 @@
 
     <constructor>
       <![CDATA[
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                    .getService(Components.interfaces.sbIPlaylistPlayback);
+        this.mm = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remotes
         this.remote_repeat = SB_NewDataRemote( "playlist.repeat", null );
@@ -739,8 +754,9 @@
 
     <constructor>
       <![CDATA[
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                    .getService(Components.interfaces.sbIPlaylistPlayback);
+        this.mm = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remotes
         this.remote_shuffle = SB_NewDataRemote( "playlist.shuffle", null );
@@ -792,8 +808,9 @@
         // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
         this.setAttribute("class", this.getAttribute("class") + " sb-player-seek-slider");
 
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                    .getService(Components.interfaces.sbIPlaylistPlayback);
+        this.mm = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Components.interfaces.sbIMediacoreManager);
 
         // observer for DataRemote 
         const on_remote_position_change = { 
@@ -834,7 +851,7 @@
 
     <method name="onReleaseSeekbar">
       <body>
-        this.gPPS.position = this.value;
+        this.mm.playbackControl.position = this.value;
         this.trackingPosition = 0;
       </body>
     </method>
@@ -844,7 +861,7 @@
         <![CDATA[
           try {
             if (this.trackingPosition) return; // we are the control changing the position, ignore this callback
-            this.value = this.gPPS.position;
+            this.value = this.mm.playbackControl.position;
           } catch (e) {
             alert("playerControls.xml - onRemotePositionChange - " + e);
           }
@@ -879,18 +896,14 @@
           if (!ColumnSpecParser)
             throw new Error("Import of sbColumnSpecParser module failed");
         }
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                      .getService(Components.interfaces.sbIPlaylistPlayback);
-        // Create and bind data remotes
-        this.remote_seenPlaying = SB_NewDataRemote( "faceplate.seenplaying", null );
+        this.mm = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Components.interfaces.sbIMediacoreManager);
+                    
         ]]>
       </constructor>
       <destructor>
-        this.gPPS = null;
-        if (this.remote_seenPlaying) {
-          this.remote_seenPlaying.unbind();
-          this.remote_seenPlaying = null;
-        }
+        this.mm = null;
       </destructor>
                      
       <method name="playbackPlay">
@@ -898,13 +911,14 @@
         <body>
           <![CDATA[
             // If we are already playing something just pause/unpause playback
-            if (this.gPPS.playing) {
-              // if we're playing already then play / pause
-              if (this.gPPS.paused || nopause) {
-                this.gPPS.play();
-              } else {
-                this.gPPS.pause();
-              }
+            var status = this.mm.status;
+            var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
+            if (status.state == sbIMediacoreStatus.STATUS_PAUSED || nopause) {
+              this.mm.playbackControl.play();
+            } else if(status.state == sbIMediacoreStatus.STATUS_PLAYING || 
+                      status.state == sbIMediacoreStatus.STATUS_BUFFERING) {
+              this.mm.playbackControl.pause();
+            
             // Otherwise dispatch a play event.  Someone should catch this
             // and intelligently initiate playback.  If not, just have
             // the playback service play the default.
@@ -913,7 +927,8 @@
               event.initEvent("Play", true, true);
               var notHandled = this.dispatchEvent(event);
               if (notHandled) {
-                this.gPPS.play();
+                // XXXAus: Fetch default? Throw?
+                //this.mm.playbackControl.play();
               }
             }
           ]]>
@@ -923,9 +938,7 @@
       <method name="playbackPause">
         <body>
           <![CDATA[
-            if ( this.remote_seenPlaying.boolValue ) {
-              this.gPPS.pause();
-            }
+            this.mm.playbackControl.pause();
           ]]>
         </body>
       </method>
@@ -933,7 +946,7 @@
       <method name="playbackStop">
         <body>
           <![CDATA[
-            this.gPPS.stop();
+            this.mm.playbackControl.stop();
           ]]>
         </body>
       </method>
@@ -1200,20 +1213,23 @@
       <parameter name="parent"/>
       <body>
         <![CDATA[
+          var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
+          var status = this.mm.status;
           for (var i=0;i<parent.childNodes.length;i++) {
             var node = parent.childNodes[i];
             switch (node.id) {
               case "menu_play":
                 // play is disabled if we are already playing but we are not also paused (playing remains true while we are paused!)
-                node.disabled = this.gPPS.playing && !this.gPPS.paused;
+                node.disabled = (status.state == sbIMediacoreStatus.STATUS_PLAYING);
                 break;
               case "menu_pause":
                 // pause is disabled if we are already paused, or if we are stopped
-                node.disabled = this.gPPS.paused || !this.gPPS.playing;
+                node.disabled = (status.state == sbIMediacoreStatus.STATUS_PAUSED ||
+                                 status.state != sbIMediacoreStatus.STATUS_PLAYING);
                 break;
               case "menu_stop":
                 // stop is disabled if we are already stopped (ie, the playbutton is visible, but we are not paused)
-                node.disabled = !this.gPPS.playing;
+                node.disabled = (status.state == sbIMediacoreStatus.STATUS_STOPPED);
                 break;
             }
           }
@@ -1312,8 +1328,9 @@
 
     <constructor>
       <![CDATA[
-        this.gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                    .getService(Components.interfaces.sbIPlaylistPlayback);
+        this.mm = 
+          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remote
         this.remote_showRemaining = SB_NewDataRemote( "faceplate.showremainingtime", null );
@@ -1329,7 +1346,7 @@
     <method name="onTotalDown">
       <body>
         <![CDATA[
-          var len = this.gPPS.length;
+          var len = this.mm.playbackControl.duration;
           if ( len > 0 )
             this.remote_showRemaining.boolValue = !this.remote_showRemaining.boolValue;
           // If you try to toggle it while it is zero, you lose the state.
@@ -1786,9 +1803,8 @@
       <method name="onCommand">
         <body>
           <![CDATA[
-            var playlistPlayback = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                                             .getService(Components.interfaces.sbIPlaylistPlayback);
-            playlistPlayback.goFullscreen();
+            // XXXAus: Reimplement this when we have video enabled using the new
+            //         mediacore api.
           ]]>
         </body>
       </method>

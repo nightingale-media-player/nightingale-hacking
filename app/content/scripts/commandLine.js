@@ -57,6 +57,8 @@ try
 
   var commandLineItemHandler = {
     cmdline_mgr: null,
+    mm: null,
+    typeSniffer: null,
     
     init: function() {
       var cmdline = Components.classes["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
@@ -68,6 +70,11 @@ try
             cmdline_mgr.addItemHandler(this);
         }
       }
+      
+      this.mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                          .getService(Components.interfaces.sbIMediacoreManager);
+      this.typeSniffer = Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                                   .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);
     },
     
     shutdown: function() {
@@ -79,11 +86,11 @@ try
           aUriSpec.toLowerCase().indexOf("https:") == 0) {
         gBrowser.loadURI(aUriSpec);
       } else {
-        if (gPPS.isPlaylistURL(aUriSpec)) {
+        if (this.typeSniffer.isValidPlaylistURL(aUriSpec)) {
           var list = SBOpenPlaylistURI(aUriSpec);
           if (list) {
             var view = LibraryUtils.createStandardMediaListView(list);
-            gPPS.playView(view, 0);
+            this.mm.sequencer.playView(view, 0);
           }
         } else {
           var dropHandlerListener = {
@@ -106,7 +113,7 @@ try
               }
               
               // Play the item
-              gPPS.playView(view, index);
+              this.mm.sequencer.playView(view, index);
             },
           };
           ExternalDropHandler.dropUrls(window, [aUriSpec], dropHandlerListener);

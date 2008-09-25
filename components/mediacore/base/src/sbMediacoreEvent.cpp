@@ -79,8 +79,6 @@ sbMediacoreEvent::Init(PRUint32 aType,
 {
   TRACE(("sbMediacoreEvent[0x%x] - Init", this));
 
-  NS_ENSURE_ARG_POINTER(aOrigin);
-
   mLock = nsAutoLock::NewLock("sbMediacoreEvent::mLock");
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 

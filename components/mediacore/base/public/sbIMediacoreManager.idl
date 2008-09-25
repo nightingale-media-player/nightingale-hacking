@@ -38,10 +38,11 @@ interface sbIMediacorePlaybackControl;
 interface sbIMediacoreVolumeControl;
 
 interface sbIMediacoreCapabilities;
+interface sbIMediacoreStatus;
 
 interface sbIMediacoreSequencer;
 
-[scriptable, uuid(c9eb7de1-87fc-4eea-886e-6202cae826bc)]
+[scriptable, uuid(d7cf1fbe-987b-4425-af9f-9db0f45bfaf3)]
 interface sbIMediacoreManager : nsISupports
 {
   /**
@@ -49,14 +50,8 @@ interface sbIMediacoreManager : nsISupports
    * 
    * If you need a mediacore for background tasks of any kind, it is 
    * preferable to create a new instance.
-   *
-   * Setting the primaryCore will have the following effect:
-   *
-   * 1. Playback will be stopped for the current sequence.
-   * 2. A new sequence will be generated for the new primary core.
-   * 3. The new sequence is set on the new primary core.
    */
-  attribute sbIMediacore primaryCore;
+  readonly attribute sbIMediacore primaryCore;
 
   readonly attribute sbIMediacoreBalanceControl  balanceControl;
   readonly attribute sbIMediacoreVolumeControl   volumeControl;
@@ -65,6 +60,7 @@ interface sbIMediacoreManager : nsISupports
   readonly attribute sbIMediacorePlaybackControl playbackControl;
 
   readonly attribute sbIMediacoreCapabilities    capabilities;
+  readonly attribute sbIMediacoreStatus          status;
 
   /**
    * The current sequencer used to generate and manage playback sequences.
@@ -98,9 +94,12 @@ interface sbIMediacoreManager : nsISupports
                                 in sbIMediacore aOrigin,
                                 [optional] in nsIVariant aData,
                                 [optional] in sbIMediacoreError aError);
+};
 
-  //void playURI(in nsIURI aUri);
-  //void playMediaListView(in sbIMediaListView aView, in unsigned long aIndex);
+[uuid(f1a8315a-d745-49e4-bea7-01d66e914f43)]
+interface sbPIMediacoreManager : nsISupports
+{
+  void setPrimaryCore(in sbIMediacore aMediacore);
 };
 
 %{C++

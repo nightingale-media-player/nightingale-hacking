@@ -38,7 +38,6 @@ const CONTRACTID  = "@songbirdnest.com/contentlistener/media;1";
 const CONTRACTID_ARRAY              = "@songbirdnest.com/moz/xpcom/threadsafe-array;1";
 const CONTRACTID_LIBRARYMANAGER     = "@songbirdnest.com/Songbird/library/Manager;1";
 const CONTRACTID_OBSERVERSERVICE    = "@mozilla.org/observer-service;1";
-const CONTRACTID_PLAYLISTPLAYBACK   = "@songbirdnest.com/Songbird/PlaylistPlayback;1";
 const CONTRACTID_PREFSERVICE        = "@mozilla.org/preferences-service;1";
 
 const CATEGORY_CONTENT_LISTENER = "external-uricontentlisteners";
@@ -64,6 +63,10 @@ Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
  * listeners will be able to support the MIME type except for this component.
  */
 function sbMediaContentListener() {
+  this._typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                        .createInstance(Ci.sbIMediacoreTypeSniffer);
+  this._mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+               .getService(Ci.sbIMediacoreManager);
 }
 sbMediaContentListener.prototype = {
   _parentContentListener: null,
@@ -74,11 +77,13 @@ sbMediaContentListener.prototype = {
   classDescription: DESCRIPTION,
   classID:          Components.ID(CID),
   contractID:       CONTRACTID,
+  _typeSniffer:     null,
+  _mm:              null,
 
   /**
    * Takes care of adding a url to the library and playing it.
    */
-  _handleURI: function _handleURI(aURI, aPPS) {
+  _handleURI: function _handleURI(aURI) {
     // TODO: Check a pref to determine if this should be going into our library?
     var libraryManager = Cc[CONTRACTID_LIBRARYMANAGER].
                          getService(Ci.sbILibraryManager);
@@ -130,9 +135,9 @@ sbMediaContentListener.prototype = {
         [SBProperties.contentURL, [url]]
       ]
     ]);
-    view.filterConstraint = filter;;
+    view.filterConstraint = filter;
 
-    aPPS.playView(view, 0);
+    this._mm.sequencer.playView(view, 0);
   },
 
   /**
@@ -157,10 +162,7 @@ sbMediaContentListener.prototype = {
     
     dump("\n---------------------------\nsbMediaContentListener -- contentType: " + contentType + "\n---------------------------\n");
 
-    var pps = Cc[CONTRACTID_PLAYLISTPLAYBACK].
-              getService(Ci.sbIPlaylistPlayback);
-
-    if (!pps.isMediaURL(uri.spec)) {
+    if (!this._typeSniffer.isValidMediaURL(uri)) {
       // Hmm, badness. We can't actually play this file type. Throw an error
       // here to get the URILoader to keep trying with other content listeners.
       throw Cr.NS_ERROR_UNEXPECTED;
@@ -181,7 +183,7 @@ sbMediaContentListener.prototype = {
 
     // Let exceptions propogate from here!
     try {
-      this._handleURI(uri, pps);
+      this._handleURI(uri);
     }
     catch (e) {
       Components.utils.reportError(e);

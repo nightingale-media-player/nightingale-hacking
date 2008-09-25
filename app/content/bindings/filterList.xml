@@ -373,9 +373,11 @@
       <method name="_onFilterListDblClick">
         <body>
           <![CDATA[
-           var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                                .getService(Components.interfaces.sbIPlaylistPlayback);
-           var view = gPPS.playingView;
+           var mm = 
+             Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                       .getService(Components.interfaces.sbIMediacoreManager);
+
+           var view = mm.sequencer.view;
 
            if (view != null) {
              view.treeView.selection.currentIndex = 0;

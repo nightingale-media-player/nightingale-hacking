@@ -104,30 +104,32 @@ var gMiniplayer = {
 
     // TODO Does this not interfere with global hotkeys?
     // Should this be a consistent thing that anyone can use?
-
+    var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
     switch ( evt.keyCode )
     {
       case 37: // Arrow Left
-        gPPS.previous();
+        gMM.sequencer.previous();
         break;
       case 39: // Arrow Right
-        gPPS.next();
+        gMM.sequencer.next();
         break;
       case 40: // Arrow Down
       case 13: // Return
-        if ( gPPS.playing )
-          gPPS.pause();
+        if ( gMM.status.state == sbIMediacoreStatus.STATUS_PLAYING ||
+             gMM.status.state == sbIMediacoreStatus.STATUS_BUFFERING )
+          gMM.playbackControl.pause();
         else
-          gPPS.play();
+          gMM.playbackControl.play();
         break;
     }
     switch ( evt.charCode )
     {
       case 32: // Space
-        if ( gPPS.playing )
-          gPPS.pause();
+          if ( gMM.status.state == sbIMediacoreStatus.STATUS_PLAYING ||
+              gMM.status.state == sbIMediacoreStatus.STATUS_BUFFERING )
+          gMM.playbackControl.pause();
         else
-          gPPS.play();
+          gMM.playbackControl.play();
         break;
     }
   },

@@ -156,13 +156,6 @@ function SBAppInitialize()
 //
 function SBAppDeinitialize()
 {
-  // Get playlist playback and tell it to stop.
-  try {
-    var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                  .getService(Components.interfaces.sbIPlaylistPlayback);
-    PPS.stop(); // else we crash?
-  } catch (e) {}
-
   // Shutdown the Hotkeys
   resetGlobalHotkeys();
   
@@ -535,26 +528,7 @@ var dataRemoteCmdlineHandler =
   }
 };
 
-var registeredCores = [];
-function UnregiserCoreWrappers() {
-
-  // We must remove the core wrappers before this window closes since the core
-  // wrapper JS objects live in the scope of this window.  If they outlive
-  // the scope of this window we get "XPConnect is being called on a scope
-  // without a 'Components' property!" assertions.
-  var pps =
-    Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-              .getService(Components.interfaces.sbIPlaylistPlayback);
-
-  registeredCores.forEach(function(e) {
-    pps.removeCore(e);
-  });
-
-}
-
-
 // !!!
 // !!! THIS FUNCTION MUST BE CALLED AT THE BOTTOM OF THIS MODULE OR ELSE BAD THINGS HAPPEN !!!
 // !!!
 appInit.onScriptInit();
-

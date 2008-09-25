@@ -34,6 +34,7 @@
 
 #include <sbIMediacore.h>
 #include <sbIMediacorePlaybackControl.h>
+#include <sbIMediacoreVideoWindow.h>
 #include <sbIMediacoreVolumeControl.h>
 #include <sbIMediacoreVotingParticipant.h>
 #include <sbIMediacoreEventTarget.h>
@@ -56,13 +57,15 @@ class sbGStreamerMediacore : public sbBaseMediacore,
                              public sbBaseMediacoreVolumeControl,
                              public sbIMediacoreVotingParticipant,
                              public sbIGStreamerMediacore,
-                             public sbIMediacoreEventTarget
+                             public sbIMediacoreEventTarget,
+                             public sbIMediacoreVideoWindow
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_DECL_NSICLASSINFO
   NS_DECL_SBIMEDIACOREEVENTTARGET
   NS_DECL_SBIMEDIACOREVOTINGPARTICIPANT
+  NS_DECL_SBIMEDIACOREVIDEOWINDOW
   NS_DECL_SBIGSTREAMERMEDIACORE
 
   sbGStreamerMediacore();
@@ -77,11 +80,12 @@ public:
   // sbBaseMediacorePlaybackControl overrides
   virtual nsresult OnInitBaseMediacorePlaybackControl();
   virtual nsresult OnSetUri(nsIURI *aURI);
+  virtual nsresult OnGetDuration(PRUint64 *aDuration);
+  virtual nsresult OnGetPosition(PRUint64 *aPosition);
   virtual nsresult OnSetPosition(PRUint64 aPosition);
   virtual nsresult OnPlay();
   virtual nsresult OnPause();
   virtual nsresult OnStop();
-  NS_IMETHOD GetPosition(PRUint64 *aPosition);
 
   // sbBaseMediacoreVolumeControl overrides
   virtual nsresult OnInitBaseMediacoreVolumeControl();
@@ -105,6 +109,8 @@ protected:
   void HandleStateChangedMessage (GstMessage *message);
   void HandleEOSMessage (GstMessage *message);
   void HandleErrorMessage (GstMessage *message);
+  void HandleBufferingMessage (GstMessage *message);
+  void HandleRedirectMessage (GstMessage *message);
 
 private:
   // Static helper for C callback
@@ -125,6 +131,11 @@ protected:
   // sbIPropertyArray. Both may be NULL.
   GstTagList *mTags;
   nsCOMPtr<sbIPropertyArray> mProperties;
+
+  // Distinguish between being stopped, and stopping due to reaching the end.
+  PRBool mStopped;
+  // Track whether we're currently buffering
+  PRBool mBuffering;
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */

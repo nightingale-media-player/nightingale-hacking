@@ -345,8 +345,8 @@ sbMediacoreTypeSniffer::IsValidPlaylistURL(nsIURI *aURL,
   }
 
   // XXXAus: For the time being, if there's no extension we'll pretend like this
-  //         is a playlist.
-  *_retval = PR_TRUE;
+  //         is _not_ a playlist.
+  *_retval = PR_FALSE;
 
   // XXXAus: Below are comments for implementing further functionality.
   // Looks like we'll have to crack open the file or connect to the server

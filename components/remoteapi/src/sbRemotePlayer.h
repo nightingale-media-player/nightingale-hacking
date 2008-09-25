@@ -35,7 +35,8 @@
 #include <sbIDataRemote.h>
 #include <sbIDownloadDevice.h>
 #include <sbIMediaList.h>
-#include <sbIPlaylistPlayback.h>
+#include <sbIMediacoreEventListener.h>
+#include <sbIMediacoreManager.h>
 #include <sbIRemoteLibrary.h>
 #include <sbIRemotePlayer.h>
 #include <sbISecurityAggregator.h>
@@ -49,6 +50,7 @@
 #include <nsIGenericFactory.h>
 #include <nsIIOService.h>
 #include <nsISecurityCheckedComponent.h>
+#include <nsIWeakReference.h>
 #include <nsPIDOMWindow.h>
 #include <nsStringGlue.h>
 #include <nsWeakReference.h>
@@ -80,7 +82,7 @@ class sbRemotePlayer : public sbIRemotePlayer,
                        public nsIDOMEventListener,
                        public nsISecurityCheckedComponent,
                        public nsSupportsWeakReference,
-                       public sbIPlaylistPlaybackListener,
+                       public sbIMediacoreEventListener,
                        public sbISecurityAggregator
 {
   friend class sbRemotePlayerDownloadCallback;
@@ -92,7 +94,7 @@ public:
   NS_DECL_NSIDOMEVENTLISTENER
   NS_FORWARD_SAFE_NSISECURITYCHECKEDCOMPONENT(mSecurityMixin)
   NS_DECL_SBISECURITYAGGREGATOR
-  NS_DECL_SBIPLAYLISTPLAYBACKLISTENER
+  NS_DECL_SBIMEDIACOREEVENTLISTENER
 
   sbRemotePlayer();
 
@@ -162,11 +164,21 @@ protected:
                            PRBool aHidden,
                            PRUint32 aNullSort );
 
+  // Event handlers for mediacore 
+  nsresult OnStop();
+
+  nsresult OnBeforeTrackChange(sbIMediacoreEvent *aEvent);
+  nsresult OnTrackChange(sbIMediacoreEvent *aEvent);
+  nsresult OnTrackIndexChange(sbIMediacoreEvent *aEvent);
+
+  nsresult OnBeforeViewChange(sbIMediacoreEvent *aEvent);
+  nsresult OnViewChange(sbIMediacoreEvent *aEvent);
+
   // Data members
   PRBool mInitialized;
   PRBool mUseDefaultCommands;
   PRBool mPrivileged;
-  nsCOMPtr<sbIPlaylistPlayback> mGPPS;
+  nsCOMPtr<nsIWeakReference> mMM;
   nsCOMPtr<nsIIOService> mIOService;
 
   // The documents for the web page and for the tabbrowser
@@ -175,9 +187,6 @@ protected:
 
   // the remote impl for the playlist binding
   nsRefPtr<sbRemoteWebPlaylist> mRemWebPlaylist;
-
-  // the playback service listener
-  nsCOMPtr<sbIPlaylistPlaybackListener> mPlaybackListener;
 
   // The download device callback
   nsRefPtr<sbRemotePlayerDownloadCallback> mDownloadCallback;

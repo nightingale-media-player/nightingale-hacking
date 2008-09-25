@@ -31,32 +31,19 @@ include $(DEPTH)/build/autodefs.mk
 
 target_name = sbLocalDatabaseLibrary
 
-#
-# XXXAus: Remove the following when we switch to new Mediacore API.
-#
-
-XPIDL_INCLUDES = $(topsrcdir)/components/playlistplayback/public \
+XPIDL_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
                  $(NULL)
 
-XPIDL_HEADER_SRCS = $(DEPTH)/components/playlistplayback/public/sbIPlaylistPlayback.idl \
+XPIDL_HEADER_SRCS = $(DEPTH)/components/mediacore/base/public/sbIMediacoreEvent.idl \
+                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventTarget.idl \
+                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventListener.idl \
+                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreManager.idl \
+                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreSequencer.idl \
+                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreStatus.idl \
                     $(NULL)
 
-XPIDL_EXTRA_FLAGS = -o $(DEPTH)/components/playlistplayback/public/`basename $(@:.h=)` \
+XPIDL_EXTRA_FLAGS = -o $(DEPTH)/components/mediacore/base/public/`basename $(@:.h=)` \
                     $(NULL)                     
-
-#
-# XXXAus: Uncomment the following when we switch to new Mediacore API.
-#
-
-#XPIDL_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
-#                 $(NULL)
-
-#XPIDL_HEADER_SRCS = $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventTarget.idl \
-#                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventListener.idl \
-#                    $(NULL)
-
-#XPIDL_EXTRA_FLAGS = -o $(DEPTH)/components/mediacore/base/public/`basename $(@:.h=)` \
-#                    $(NULL)                     
 
 CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseGUIDArray.cpp \
@@ -91,6 +78,7 @@ CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/job/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
+               $(DEPTH)/components/mediacore/base/public \
                $(DEPTH)/components/metrics/public \
                $(DEPTH)/components/playlistplayback/public \
                $(DEPTH)/components/property/public \

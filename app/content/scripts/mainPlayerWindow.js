@@ -81,9 +81,9 @@ var gSongbirdWindowController =
       return (aTarget || window).dispatchEvent(newEvent);
     }
     
-    var pps = gPPS ||
-              Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                        .getService(Components.interfaces.sbIPlaylistPlayback);
+    var mm = gMM ||
+             Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+               .getService(Components.interfaces.sbIMediacoreManager);
     if (aCommand == "cmd_find") {
       gTabBrowser.onFindCommand();
     } else if (aCommand == "cmd_findAgain") {
@@ -99,7 +99,7 @@ var gSongbirdWindowController =
     } else if (aCommand == "cmd_reveal") {
       SBRevealFile(); // reveal the selected file
     } else if (aCommand == "cmd_find_current_track") {
-      if (!pps.playingView) {
+      if (!mm.sequencer.view) {
         // nothing to see here, move along
         return;
       }
@@ -112,38 +112,34 @@ var gSongbirdWindowController =
       if (handled) { 
         return;
       }
-      
-      if (pps.currentIndex >= 0) {
-        gTabBrowser.showIndexInView(pps.playingView, pps.currentIndex);
-      }
+      gTabBrowser.showIndexInView(mm.sequencer.view, mm.sequencer.viewPosition);
     } else if (aCommand == "cmd_control_playpause") {
       // If we are already playing something just pause/unpause playback
-      if (pps.playing) {
-        // if we're playing already then play / pause
-        if (pps.paused) {
-          pps.play();
-        } else {
-          pps.pause();
-        }
+      if (mm.status.state == sbIMediacoreStatus.STATUS_PLAYING ||
+          mm.status.state == sbIMediacoreStatus.STATUS_BUFFERING) {
+        mm.playbackControl.pause();
+      }
+      else if(mm.status.state == sbIMediacoreStatus.STATUS_PAUSED) {
+        mm.playbackControl.play();
       // Otherwise dispatch a play event.  Someone should catch this
       // and intelligently initiate playback.  If not, just have
       // the playback service play the default.
-      } else {
-        var notHandled = dispatchEvent("Play", true, true);
-        if (notHandled) {
-          pps.play();
-        }
+      } 
+      else {
+        var event = document.createEvent("Events");
+        event.initEvent("Play", true, true);
+        window.dispatchEvent(event);
       }
     } else if (aCommand == "cmd_control_next") {
-      pps.next();
+      mm.sequencer.next();
     } else if (aCommand == "cmd_control_previous") {
-      pps.previous();
+      mm.sequencer.previous();
     } else if (aCommand == "cmd_volume_down") {
-      pps.volume = Math.max(0, pps.volume - 12.5);
+      mm.volumeControl.volume = Math.max(0, mm.volumeControl.volume - 0.05);
     } else if (aCommand == "cmd_volume_up") {
-      pps.volume = Math.min(255, pps.volume + 12.5);
+      mm.volumeControl.volume = Math.min(1, mm.volumeControl.volume + 0.05);
     } else if (aCommand == "cmd_volume_mute") {
-      pps.mute = !pps.mute;
+      mm.volumeControl.mute = !mm.volumeControl.mute;
     } else if (aCommand == "cmd_delete") {
       SBDeleteMediaList(this._getVisiblePlaylist());
     } else if (aCommand == "cmd_mediapage_next") {
@@ -191,9 +187,9 @@ var gSongbirdWindowController =
       view = browser.currentMediaPage.mediaListView;
     }
 
-    var pps = gPPS ||
-              Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                        .getService(Components.interfaces.sbIPlaylistPlayback);
+    var mm = gMM||
+             Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+               .getService(Components.interfaces.sbIMediacoreManager);
 
     switch(aCommand) {
       case "cmd_find":
@@ -221,20 +217,24 @@ var gSongbirdWindowController =
         return false;
       }
       case "cmd_find_current_track":
-        return pps.playingView && pps.currentIndex >= 0;
+        return mm.sequencer.view ? true : false;
       case "cmd_control_playpause":
         return true;
       case "cmd_control_next":
       case "cmd_control_previous":
-        return pps.playing && document.commandDispatcher.focusedWindow == window;
+        var status = mm.status;
+        var playing = ( status.state == status.STATUS_PLAYING ||
+                        status.state == status.STATUS_BUFFERING ||
+                        status.state == status.STATUS_PAUSED );
+        return playing && document.commandDispatcher.focusedWindow == window;
       case "cmd_delete": {
         var list = this._getVisiblePlaylist();
         return (list && list.userEditable);
       }
       case "cmd_volume_down":
-        return pps.volume > 0;
+        return mm.volumeControl.volume > 0;
       case "cmd_volume_up":
-        return pps.volume < 255;
+        return mm.volumeControl.volume < 1;
       case "cmd_volume_mute":
         return true;
       case "cmd_mediapage_next":
@@ -359,11 +359,10 @@ var gSongbirdPlayerWindow = {
       
       // If we've got a view, try playing it.
       if (view && view.length > 0) {
-        var playbackService = 
-          Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                    .getService(Components.interfaces.sbIPlaylistPlayback);
- 
-        playbackService.playView(view, Math.max(view.selection.currentIndex, -1));
+        var mm = 
+          Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                           .getService(Ci.sbIMediacoreManager);
+        mm.sequencer.playView(view, Math.max(view.selection.currentIndex, 0));
         
         // Since we've handled this play event, prevent any fallback action from
         // occurring.

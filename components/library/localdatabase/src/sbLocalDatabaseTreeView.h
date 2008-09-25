@@ -32,11 +32,14 @@
 #include <nsIClassInfo.h>
 #include <nsITreeView.h>
 #include <nsITreeSelection.h>
+#include <nsIWeakReference.h>
+#include <nsIWeakReferenceUtils.h>
+
 #include <sbILocalDatabaseGUIDArray.h>
 #include <sbILocalDatabaseTreeView.h>
+#include <sbIMediacoreEventListener.h>
 #include <sbIMediaListViewTreeView.h>
 #include <sbIMediaListViewSelection.h>
-#include <sbIPlaylistPlayback.h>
 
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
@@ -58,6 +61,7 @@ class sbILocalDatabasePropertyCache;
 class sbILocalDatabaseResourcePropertyBag;
 class sbILibrary;
 class sbILibrarySort;
+class sbIMediacoreEvent;
 class sbIMediaList;
 class sbIMediaListView;
 class sbIPropertyArray;
@@ -74,7 +78,7 @@ class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
                                 public sbILocalDatabaseGUIDArrayListener,
                                 public sbIMediaListViewTreeView,
                                 public sbILocalDatabaseTreeView,
-                                public sbIPlaylistPlaybackListener,
+                                public sbIMediacoreEventListener,
                                 public sbIMediaListViewSelectionListener
 
 {
@@ -91,7 +95,7 @@ public:
   NS_DECL_SBILOCALDATABASEGUIDARRAYLISTENER
   NS_DECL_SBIMEDIALISTVIEWTREEVIEW
   NS_DECL_SBILOCALDATABASETREEVIEW
-  NS_DECL_SBIPLAYLISTPLAYBACKLISTENER
+  NS_DECL_SBIMEDIACOREEVENTLISTENER
   NS_DECL_SBIMEDIALISTVIEWSELECTIONLISTENER
 
   sbLocalDatabaseTreeView();
@@ -112,6 +116,16 @@ public:
 protected:
   nsresult TokenizeProperties(const nsAString& aProperties,
                               nsISupportsArray* aAtomArray);
+
+  // Event Listener Handlers
+  nsresult OnStop();
+
+  nsresult OnTrackChange(sbIMediacoreEvent *aEvent);
+  nsresult OnTrackChange(sbIMediaItem *aItem, 
+                         sbIMediaListView *aView, 
+                         PRUint32 aIndex);
+
+  nsresult OnTrackIndexChange(sbIMediacoreEvent *aEvent);
 
 private:
 
@@ -243,7 +257,7 @@ private:
 
   // Currently playing track UID and index
   nsString mPlayingItemUID;
-  nsCOMPtr<sbIPlaylistPlayback> mPlaylistPlayback;
+  nsCOMPtr<nsIWeakReference> mMediacoreManager;
 
   // True when the everything is selected
   PRPackedBool mSelectionIsAll;

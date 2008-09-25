@@ -37,11 +37,10 @@
 <window
   id="video_window"
   hidechrome="true"
-    
   title="Cheezy Video Window"  
   windowtype="Songbird:Core"
   onclose="return false; /*This window must never be closed unless the app is shutdown*/"
-  onunload="UnregiserCoreWrappers();"
+  onunload=""
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -103,8 +102,6 @@
    src="chrome://global/content/dialogOverlay.js" />
 
   <!-- Load the interface code -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/asyncForLoop.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/playerOpen.js"/>
    

@@ -166,9 +166,9 @@ try
     var filters;
     var plsource;
     var libraryguid;
-    var gPPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-               .getService(Components.interfaces.sbIPlaylistPlayback);
-    var view = gPPS.playingView;
+    var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                       .getService(Components.interfaces.sbIMediacoreManager);
+    var view = mm.sequencer.view;
     if (view) {
       // a view is playing, use it
       guid = view.mediaList.guid;
@@ -221,7 +221,7 @@ try
         view.filterConstraint = LibraryUtils.standardFilterConstraint;
       }
     } else {
-      view = gPPS.playingView;
+      view = mm.sequencer.view;
       if (!view) 
         view = displayed_view;
       search = _getSearchString( view );
@@ -495,8 +495,8 @@ try
   
   function playSourceViewAndClose(rowid) {
     var view = play_own_view ? jumpto_view : source_view;
-    var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"].getService(Components.interfaces.sbIPlaylistPlayback);
-    PPS.playView(view, rowid);
+    var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"].getService(Components.interfaces.sbIMediacoreManager);
+    mm.sequencer.playView(view, rowid);
     onExit();
   }
 

@@ -41,6 +41,8 @@
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 
+#include <prprf.h>
+
 #include <sbIMediacore.h>
 #include <sbIMediacoreBalanceControl.h>
 #include <sbIMediacoreCapabilities.h>
@@ -54,6 +56,7 @@
 #include <sbBaseMediacoreEventTarget.h>
 #include <sbMediacoreVotingChain.h>
 
+#include "sbMediacoreDataRemotes.h"
 #include "sbMediacoreSequencer.h"
 
 /* observer topics */
@@ -84,10 +87,12 @@ static PRLogModuleInfo* gMediacoreManager = nsnull;
 
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreManager)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreManager)
-NS_IMPL_QUERY_INTERFACE7_CI(sbMediacoreManager,
+NS_IMPL_QUERY_INTERFACE9_CI(sbMediacoreManager,
                             sbIMediacoreManager,
+                            sbPIMediacoreManager,
                             sbIMediacoreEventTarget,
                             sbIMediacoreFactoryRegistrar,
+                            sbIMediacoreVolumeControl,
                             sbIMediacoreVoting,
                             nsISupportsWeakReference,
                             nsIClassInfo,
@@ -239,7 +244,25 @@ sbMediacoreManager::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   mSequencer = sequencer;
-  
+
+  rv = InitBaseMediacoreVolumeControl();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreManager::PreShutdown()
+{
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreManager::Shutdown()
+{
+  nsresult rv = mDataRemoteFaceplateVolume->Unbind();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -374,6 +397,112 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
 }
 
 // ----------------------------------------------------------------------------
+// sbBaseMediacoreVolumeControl overrides
+// ----------------------------------------------------------------------------
+
+/*virtual*/ nsresult 
+sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
+{
+  nsString nullString;
+  nullString.SetIsVoid(PR_TRUE);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  mDataRemoteFaceplateVolume = 
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteFaceplateVolume->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_FACEPLATE_VOLUME),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString volumeStr;
+  rv = mDataRemoteFaceplateVolume->GetStringValue(volumeStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ConvertUTF16toUTF8 volStr(volumeStr);
+  PRFloat64 volume = 0;
+
+  if(PR_sscanf(volStr.BeginReading(), "%lg", &volume) != 1) {
+    mVolume = 0.5;
+  }
+  else {
+    mVolume = volume;
+#if defined(DEBUG)
+    printf("[sbMediacoreManager] - Initializing volume from data remote\n\tVolume: %s\n",
+           volStr.BeginReading());
+#endif
+  }
+
+  mDataRemoteFaceplateMute = 
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteFaceplateMute->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_FACEPLATE_MUTE),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool mute = PR_FALSE;
+  rv = mDataRemoteFaceplateMute->GetBoolValue(&mute);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mMute = mute;
+
+#if defined(DEBUG)
+  printf("[sbMediacoreManager] - Initializing mute from data remote\n\tMute: %l\n",
+         mute);
+#endif
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbMediacoreManager::OnSetMute(PRBool aMute)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_STATE(mPrimaryCore);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
+    do_QueryInterface(mPrimaryCore, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = volumeControl->SetMute(aMute);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbMediacoreManager::OnSetVolume(double aVolume)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_STATE(mPrimaryCore);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
+    do_QueryInterface(mPrimaryCore, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = volumeControl->SetVolume(mVolume);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  char volume[64] = {0};
+  PR_snprintf(volume, 64, "%lg", aVolume);
+
+  NS_ConvertUTF8toUTF16 volumeStr(volume);
+  rv = mDataRemoteFaceplateVolume->SetStringValue(volumeStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+// ----------------------------------------------------------------------------
 // sbIMediacoreManager Interface
 // ----------------------------------------------------------------------------
 
@@ -389,20 +518,6 @@ sbMediacoreManager::GetPrimaryCore(sbIMediacore * *aPrimaryCore)
 
   return NS_OK;
 }
-
-NS_IMETHODIMP
-sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
-{
-  TRACE(("sbMediacoreManager[0x%x] - SetPrimaryCore", this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_ARG_POINTER(aPrimaryCore);
-
-  nsAutoMonitor mon(mMonitor);
-
-  // XXXAus: Implement this when implementing the default sequencer!
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
 NS_IMETHODIMP
 sbMediacoreManager::GetBalanceControl(
                       sbIMediacoreBalanceControl * *aBalanceControl)
@@ -435,7 +550,7 @@ sbMediacoreManager::GetVolumeControl(
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
-    do_QueryInterface(mPrimaryCore, &rv);
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediacoreManager *, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   volumeControl.forget(aVolumeControl);
@@ -504,6 +619,24 @@ sbMediacoreManager::GetCapabilities(
 }
 
 NS_IMETHODIMP
+sbMediacoreManager::GetStatus(sbIMediacoreStatus * *aStatus) 
+{
+  TRACE(("sbMediacoreManager[0x%x] - GetStatus", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aStatus);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsAutoMonitor mon(mMonitor);
+  nsCOMPtr<sbIMediacoreStatus> status = 
+    do_QueryInterface(mSequencer, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  status.forget(aStatus);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbMediacoreManager::GetSequencer(
                       sbIMediacoreSequencer * *aSequencer)
 {
@@ -511,8 +644,13 @@ sbMediacoreManager::GetSequencer(
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aSequencer);
 
+  nsresult rv = NS_ERROR_UNEXPECTED;
   nsAutoMonitor mon(mMonitor);
-  NS_IF_ADDREF(*aSequencer = mSequencer);
+  nsCOMPtr<sbIMediacoreSequencer> sequencer = 
+    do_QueryInterface(mSequencer, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sequencer.forget(aSequencer);
 
   return NS_OK;
 }
@@ -525,6 +663,36 @@ sbMediacoreManager::SetSequencer(
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+// ----------------------------------------------------------------------------
+// sbPIMediacoreManager Interface
+// ----------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
+{
+  TRACE(("sbMediacoreManager[0x%x] - SetPrimaryCore", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aPrimaryCore);
+
+  nsAutoMonitor mon(mMonitor);
+  mPrimaryCore = aPrimaryCore;
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
+    do_QueryInterface(mPrimaryCore, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoLock lock(sbBaseMediacoreVolumeControl::mLock);
+
+  rv = volumeControl->SetVolume(mVolume);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = volumeControl->SetMute(mMute);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 // ----------------------------------------------------------------------------
@@ -826,6 +994,8 @@ NS_IMETHODIMP sbMediacoreManager::Observe(nsISupports *aSubject,
     rv = obsSvc->RemoveObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    rv = PreShutdown();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else if (!strcmp(NS_PROFILE_SHUTDOWN_OBSERVER_ID, aTopic)) {
 
@@ -844,6 +1014,9 @@ NS_IMETHODIMP sbMediacoreManager::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->RemoveObserver(observer, NS_PROFILE_SHUTDOWN_OBSERVER_ID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = Shutdown();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

@@ -32,7 +32,7 @@ interface sbIMediacore;
 interface sbIMediacoreError;
 interface sbIMediacoreEventTarget;
 
-[scriptable, uuid(edf5e894-5265-4599-a970-39c536dfa182)]
+[scriptable, uuid(63984732-9d62-421b-accb-7861a829e5d3)]
 interface sbIMediacoreEvent : nsISupports
 {
   const unsigned long UNINTIALIZED    = 0x00000000;
@@ -63,6 +63,31 @@ interface sbIMediacoreEvent : nsISupports
    */
   const unsigned long MUTE_CHANGE     = 0x00001004;
 
+  // Sequencer Events
+
+  /**
+   * \brief Before the track playing is changed.
+   * \note This event should only be fired by the sequencer.
+   * \note data is the new sbIMediaItem that will be played.
+   */
+  const unsigned long BEFORE_TRACK_CHANGE = 0x00001500;
+  /**
+   * \brief Track playing has changed.
+   * \note This event should only be fired by the sequencer.
+   * \note data is the new sbIMediaItem being played.
+   */
+  const unsigned long TRACK_CHANGE        = 0x00001501;
+  /**
+   *  \brief Sequencer view is about to change
+   */
+  const unsigned long BEFORE_VIEW_CHANGE  = 0x00001502;
+  /**
+   * \brief Sequencer view changed.
+   */
+  const unsigned long VIEW_CHANGE         = 0x00001503;
+
+  // End Sequencer Events
+
   /**
    * \brief Stream found.
    */
@@ -90,6 +115,10 @@ interface sbIMediacoreEvent : nsISupports
    * \brief End of stream.
    */
   const unsigned long STREAM_END      = 0x00004002;
+  /**
+   * \brief Stream was stopped.
+   */
+  const unsigned long STREAM_STOP     = 0x00004003;
 
   /**
    * \brief Plugin missing for requested format.

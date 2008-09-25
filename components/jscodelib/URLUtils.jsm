@@ -91,6 +91,33 @@ var URLUtils = {
     }
 
     return urlQuery;
+  },
+  
+  convertURLToDisplayName: function URLUtils_convertURLToDisplayName(aURL) {
+    var urlDisplay = "";
+    
+    try {
+      urlDisplay = decodeURI( aURL );
+    } catch(err) {
+      dump("convertURLToDisplayName, oops! URI decode weirdness: " + err + "\n");
+    }
+    
+    // Set the title display  
+    if ( urlDisplay.lastIndexOf('/') != -1 )
+    {
+      urlDisplay = urlDisplay.substring( urlDisplay.lastIndexOf('/') + 1, urlDisplay.length );
+    }
+    else if ( aURL.lastIndexOf('\\') != -1 )
+    {
+      urlDisplay = aURL.substring( aURL.lastIndexOf('\\') + 1, aURL.length );
+    }
+
+    if ( ! urlDisplay.length )
+    {
+      urlDisplay = aURL;
+    }
+    
+    return urlDisplay;
   }
 };
 

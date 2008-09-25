@@ -37,7 +37,7 @@ CPP_SRCS = \
   $(NULL)
 
 CPP_INCLUDES = \
-  $(DEPTH)/components/playlistplayback/public \
+  $(DEPTH)/components/mediacore/base/public \
   $(MOZSDK_INCLUDE_DIR) \
   $(MOZSDK_INCLUDE_DIR)/nspr \
   $(MOZSDK_INCLUDE_DIR)/necko \

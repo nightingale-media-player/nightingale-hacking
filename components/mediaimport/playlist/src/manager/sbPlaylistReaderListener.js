@@ -73,8 +73,8 @@ CPlaylistReaderListener.prototype =
 
       var playlistReaderMngr = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
                                  .getService(Ci.sbIPlaylistReaderManager);
-      var pps = Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                  .getService(Ci.sbIPlaylistPlayback);
+      var mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                 .getService(Ci.sbIMediacoreManager);
 
       var strContentType = "";
       var aChannel = aRequest.QueryInterface(Components.interfaces.nsIChannel);
@@ -97,7 +97,7 @@ CPlaylistReaderListener.prototype =
         if (this.playWhenLoaded)
         {
           var view = this.mediaList.createView();
-          pps.playView(view, 0);
+          mm.sequencer.playView(view, 0);
         }
         if (this.observer)
         {
