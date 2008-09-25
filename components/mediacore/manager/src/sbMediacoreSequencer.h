@@ -99,6 +99,7 @@ public:
                    sbIMediaItem **aItem);
 
   // Setup for playback
+  nsresult ProcessNewPosition();
   nsresult Setup();
 
   // Set view with optional view position

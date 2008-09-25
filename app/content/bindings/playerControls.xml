@@ -859,12 +859,11 @@
     <method name="onRemotePositionChange">
       <body>
         <![CDATA[
-          try {
-            if (this.trackingPosition) return; // we are the control changing the position, ignore this callback
-            this.value = this.mm.playbackControl.position;
-          } catch (e) {
-            alert("playerControls.xml - onRemotePositionChange - " + e);
-          }
+          // if we are the control changing the position, ignore this callback
+          if (this.trackingPosition) 
+            return; 
+            
+          this.value = this.remote_position.intValue;
         ]]>
       </body>
     </method>

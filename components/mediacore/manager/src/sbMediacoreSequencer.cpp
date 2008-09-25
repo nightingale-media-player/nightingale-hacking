@@ -122,7 +122,7 @@ NS_DECL_CLASSINFO(sbMediacoreSequencer)
 NS_IMPL_THREADSAFE_CI(sbMediacoreSequencer)
 
 sbMediacoreSequencer::sbMediacoreSequencer()
-: mStatus(sbIMediacoreStatus::STATUS_UNKNOWN)
+: mStatus(sbIMediacoreStatus::STATUS_STOPPED)
 , mIsWaitingForPlayback(PR_FALSE)
 , mSeenPlaying(PR_FALSE)
 , mMode(sbIMediacoreSequencer::MODE_FORWARD)
@@ -188,6 +188,12 @@ sbMediacoreSequencer::StopSequenceProcessor()
   NS_ENSURE_TRUE(mSequenceProcessorTimer, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = mSequenceProcessorTimer->Cancel();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdatePositionDataRemotes(0);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateDurationDataRemotes(0);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -647,6 +653,7 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
   rv = list->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mPosition = 0;
   mSequence.reserve(length);
   mViewIndexToSequenceIndex.reserve(length);
 
@@ -662,11 +669,6 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
       if(aViewPosition) {
         mPosition = *aViewPosition;
       }
-      else {
-        mPosition = 0;
-      }
-      
-      mViewPosition = mSequence[mPosition];
     }
     break;
     case sbIMediacoreSequencer::MODE_REVERSE:
@@ -681,10 +683,6 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
       if(aViewPosition) {
         mPosition = length - *aViewPosition;
       }
-      else {
-        mPosition = 0;
-      }
-      mViewPosition = mSequence[mPosition];
     }
     break;
     case sbIMediacoreSequencer::MODE_SHUFFLE:
@@ -699,10 +697,9 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
       // XXXAus: Match view position if present.
     }
     break;
-
-    default:
-      return NS_ERROR_UNEXPECTED;
   }
+
+  mViewPosition = mSequence[mPosition];
 
   return NS_OK;
 }
@@ -726,6 +723,40 @@ sbMediacoreSequencer::GetItem(const sequence_t &aSequence,
   NS_ENSURE_SUCCESS(rv, rv);
 
   item.forget(aItem);
+
+  return NS_OK;
+}
+
+nsresult
+sbMediacoreSequencer::ProcessNewPosition() 
+{
+  nsresult rv = ResetMetadataDataRemotes();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = Setup();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
+     mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
+
+    mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
+    mIsWaitingForPlayback = PR_TRUE;
+
+    rv = UpdatePlayStateDataRemotes();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mPlaybackControl->Play();
+
+    if(NS_FAILED(rv)) {
+      mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+      mIsWaitingForPlayback = PR_FALSE;
+
+      rv = UpdatePlayStateDataRemotes();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return rv;
+    }
+  }
 
   return NS_OK;
 }
@@ -1180,37 +1211,21 @@ sbMediacoreSequencer::Next()
 
   // No next track, not an error.
   if(!hasNext) {
-    // XXXAus: Send End of Sequence Event?
-    return NS_OK;
-  }
+    mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
-  nsresult rv = ResetMetadataDataRemotes();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = Setup();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
-     mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
-    
-    mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
-    mIsWaitingForPlayback = PR_TRUE;
+    nsresult rv = StopSequenceProcessor();
+    NS_ENSURE_SUCCESS(rv, rv);
 
     rv = UpdatePlayStateDataRemotes();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mPlaybackControl->Play();
+    // XXXAus: Send End of Sequence Event?
 
-    if(NS_FAILED(rv)) {
-      mStatus = sbIMediacoreStatus::STATUS_STOPPED;
-      mIsWaitingForPlayback = PR_FALSE;
-
-      rv = UpdatePlayStateDataRemotes();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      return rv;
-    }
+    return NS_OK;
   }
+
+  nsresult rv = ProcessNewPosition();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1219,7 +1234,58 @@ NS_IMETHODIMP
 sbMediacoreSequencer::Previous()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  return NS_ERROR_NOT_IMPLEMENTED;
+
+  nsAutoMonitor mon(mMonitor);
+
+  // No sequence, no error, return early.
+  if(!mSequence.size()) {
+    return NS_OK;
+  }
+
+  PRBool hasNext = PR_FALSE;
+  PRUint32 length = mSequence.size();
+  PRInt64 position = mPosition;
+
+  if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ALL &&
+     position - 1 < 0) {
+      mPosition = length - 1;
+      mViewPosition = mSequence[mPosition];
+      hasNext = PR_TRUE;
+
+      if(mMode == sbIMediacoreSequencer::MODE_SHUFFLE ||
+         mMode == sbIMediacoreSequencer::MODE_CUSTOM) {
+          nsresult rv = RecalculateSequence();
+          NS_ENSURE_SUCCESS(rv, rv);
+      }
+  }
+  else if(mMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) {
+    hasNext = PR_TRUE;
+  }
+  else if(position - 1 >= 0) {
+    --mPosition;
+    mViewPosition = mSequence[mPosition];
+    hasNext = PR_TRUE;
+  }
+
+  // No next track, not an error.
+  if(!hasNext) {
+    mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+
+    nsresult rv = StopSequenceProcessor();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = UpdatePlayStateDataRemotes();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // XXXAus: Send End of Sequence Event?
+
+    return NS_OK;
+  }
+
+  nsresult rv = ProcessNewPosition();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -1437,7 +1503,8 @@ sbMediacoreSequencer::Notify(nsITimer *timer)
   nsAutoMonitor mon(mMonitor);
 
   // Update the position in the position data remote.
-  if(mStatus == sbIMediacoreStatus::STATUS_PLAYING) {
+  if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
+     mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
     PRUint64 position = 0;
     
     rv = mPlaybackControl->GetPosition(&position);

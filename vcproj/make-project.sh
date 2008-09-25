@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Run this script to create dummy (non-compilable) MSVC projects that reflect the source tree

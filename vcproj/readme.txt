@@ -21,6 +21,4 @@
   will create or update a VC8 (Visual Studio 2005) project file.
 
 
-  Note: For VC8 and above, you have to make sure that the Solution Explorer Mode is
-  set to "Show only files in project". For VC8, this setting is found under Tools 
-  -> Options -> Projects and Solutions -> VC++ Project Settings.
+  
