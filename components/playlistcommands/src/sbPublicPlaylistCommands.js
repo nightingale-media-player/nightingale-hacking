@@ -364,17 +364,25 @@ PublicPlaylistCommands.prototype = {
 
       this.m_cmd_Reveal = new PlaylistCommandsBuilder();
 
+      // Mac will use different strings.
+      var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                    .getService(Components.interfaces.nsIPropertyBag2);
+      var platformSuffix = "";
+      if ( sysInfo.getProperty("name") == "Darwin" ) {
+        platformSuffix = ".mac";
+      }
+
       this.m_cmd_Reveal.appendAction(null,
                                      "library_cmd_reveal",
-                                     "&command.reveal",
+                                     "&command.reveal" + platformSuffix,
                                      "&command.tooltip.reveal",
                                      plCmd_Reveal_TriggerCallback);
 
       this.m_cmd_Reveal.setCommandShortcut(null,
                                            "library_cmd_reveal",
-                                           "&command.shortcut.key.reveal",
-                                           "&command.shortcut.keycode.reveal",
-                                           "&command.shortcut.modifiers.reveal",
+                                           "&command.shortcut.key.reveal" + platformSuffix,
+                                           "&command.shortcut.keycode.reveal" + platformSuffix,
+                                           "&command.shortcut.modifiers.reveal" + platformSuffix,
                                            true);
 
       function plCmd_isSelectionRevealable(aContext, aSubMenuId, aCommandId, aHost) {
