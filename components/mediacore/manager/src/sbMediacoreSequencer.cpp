@@ -779,9 +779,6 @@ sbMediacoreSequencer::Setup()
     if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING ||
        mStatus == sbIMediacoreStatus::STATUS_PLAYING) {
       
-      rv = mPlaybackControl->Pause();
-      NS_ENSURE_SUCCESS(rv, rv);
-         
       // Also stop the current core.
       rv = mPlaybackControl->Stop();
       NS_ENSURE_SUCCESS(rv, rv);
