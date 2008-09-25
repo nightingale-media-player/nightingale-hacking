@@ -5,10 +5,6 @@ if (typeof(Ci) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
-if (typeof(gPPS) == "undefined")
-	var gPPS = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
-			.getService(Ci.sbIPlaylistPlayback);
-
 if (typeof(songbirdMainWindow) == "undefined")
 	var songbirdMainWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
 			.getService(Ci.nsIWindowMediator)

@@ -168,15 +168,30 @@ ShoutcastRadio.Controller = {
 	},
 };
 
-var curTrackListener = function(e){
-	var gPPS = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
-			.getService(Ci.sbIPlaylistPlayback);
+var curTrackListener = function(e) {
+	var list;
+	var gMcMgr;
+	var gPPS;
+	if (typeof(Ci.sbIMediacoreManager != "undefined")) {
+		gMcMgr = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+				.getService(Ci.sbIMediacoreManager);
+		list = gMcMgr.sequencer.view.mediaList;
+	} else {
+		gPPS = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
+				.getService(Ci.sbIPlaylistPlayback);
+		list = gPPS.playingView.mediaList;
+	}
 
 	// get the list that owns this guid
-	var list = gPPS.playingView.mediaList;
 	if (list.getProperty(SBProperties.customType) == "radio_tempStreamList") {
-		var streamName = list.getItemByGuid(gPPS.currentGUID)
-				.getProperty(SC_streamName);
+		var streamName;
+		if (typeof(Ci.sbIMediacoreManager != "undefined")) {
+			streamName = gMcMgr.sequencer.view.getItemByIndex(
+					gMcMgr.sequencer.viewPosition).getProperty(SC_streamName);
+		} else {
+			streamName = list.getItemByGuid(gPPS.currentGUID)
+					.getProperty(SC_streamName);
+		}
 
 		// check to see if this tab is already loaded
 		var tabs = gBrowser.mTabs;
