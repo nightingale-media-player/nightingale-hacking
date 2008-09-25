@@ -612,6 +612,25 @@ sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
   return NS_OK;
 }
 
+nsresult
+sbMediacoreSequencer::ResetMetadataDataRemotes() {
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv = mDataRemoteMetadataAlbum->SetStringValue(EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataArtist->SetStringValue(EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataGenre->SetStringValue(EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataTitle->SetStringValue(EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 nsresult 
 sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
 {
@@ -1168,7 +1187,10 @@ sbMediacoreSequencer::Next()
     return NS_OK;
   }
 
-  nsresult rv = Setup();
+  nsresult rv = ResetMetadataDataRemotes();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = Setup();
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||

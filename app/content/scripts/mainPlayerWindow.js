@@ -84,6 +84,7 @@ var gSongbirdWindowController =
     var mm = gMM ||
              Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                .getService(Components.interfaces.sbIMediacoreManager);
+    var status = mm.status;
     if (aCommand == "cmd_find") {
       gTabBrowser.onFindCommand();
     } else if (aCommand == "cmd_findAgain") {
@@ -115,11 +116,11 @@ var gSongbirdWindowController =
       gTabBrowser.showIndexInView(mm.sequencer.view, mm.sequencer.viewPosition);
     } else if (aCommand == "cmd_control_playpause") {
       // If we are already playing something just pause/unpause playback
-      if (mm.status.state == sbIMediacoreStatus.STATUS_PLAYING ||
-          mm.status.state == sbIMediacoreStatus.STATUS_BUFFERING) {
+      if (status.state == status.STATUS_PLAYING ||
+          status.state == status.STATUS_BUFFERING) {
         mm.playbackControl.pause();
       }
-      else if(mm.status.state == sbIMediacoreStatus.STATUS_PAUSED) {
+      else if(status.state == status.STATUS_PAUSED) {
         mm.playbackControl.play();
       // Otherwise dispatch a play event.  Someone should catch this
       // and intelligently initiate playback.  If not, just have
@@ -190,7 +191,11 @@ var gSongbirdWindowController =
     var mm = gMM||
              Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                .getService(Components.interfaces.sbIMediacoreManager);
-
+    var status = mm.status;
+    
+    var playing = ( status.state == status.STATUS_BUFFERING ||
+                    status.state == status.STATUS_PLAYING  ||
+                    status.state == status.STATUS_PAUSED );
     switch(aCommand) {
       case "cmd_find":
       case "cmd_findAgain":

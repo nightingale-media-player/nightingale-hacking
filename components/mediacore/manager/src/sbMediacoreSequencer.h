@@ -88,6 +88,7 @@ public:
   nsresult HandleMetadataEvent(sbIMediacoreEvent *aEvent);
   nsresult SetMetadataDataRemote(const nsAString &aId, 
                                  const nsAString &aValue);
+  nsresult ResetMetadataDataRemotes();
 
   // Sequence management
   nsresult RecalculateSequence(PRUint32 *aViewPosition = nsnull);
