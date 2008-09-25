@@ -23,6 +23,8 @@ if (typeof(SmartMediaListColumnSpecUpdater) == "undefined") {
 		throw new Error("Import of sbSmartMediaList module failed");
 }
 
+var gMediaCore;
+
 if (typeof(gBrowser) == "undefined")
 	var gBrowser = Cc["@mozilla.org/appshell/window-mediator;1"]
 			.getService(Ci.nsIWindowMediator)
@@ -35,10 +37,6 @@ if (typeof(gSkSvc) == "undefined")
 if (typeof(gMetrics) == "undefined")
 	var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
 			.createInstance(Ci.sbIMetrics);
-
-if (typeof(gPPS) == "undefined")
-	var gPPS = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
-			.getService(Ci.sbIPlaylistPlayback);
 
 function debugLog(funcName, str) {
 	var debug = Application.prefs.getValue("extensions.concerts.debug", false);
@@ -61,7 +59,17 @@ Concerts = {
 		// Initialization code
 		this._initialized = true;
 		this._strings = document.getElementById("concerts-strings");
-    
+
+		if (typeof(Ci.sbIMediacoreManager) != "undefined") {
+			this.newMediaCore = true;
+			gMediaCore = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+				.getService(Ci.sbIMediacoreManager);
+		} else {
+			this.newMediaCore = false;
+			gMediaCore = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
+				.getService(Ci.sbIPlaylistPlayback);
+		}
+
 		// Instantiate the Songkick XPCOM service
 		this.skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
 			.getService(Ci.sbISongkick);
@@ -105,7 +113,7 @@ Concerts = {
 			this._getOnTourPlaylist();
 			this.rebuildOnTourPlaylist();
 
-			// Add our gPPS listener to listen for Artists on Tour pls plays
+			// Add our mediacore listener to listen for Artists on Tour plays
 			this._setupSmartPlaylistListener();
 	 
 			// Add the listener for playlist "On Tour" clicks
@@ -254,12 +262,26 @@ Concerts = {
 		artistDataRemote.bindObserver(this, true);
 
 		// See if we're already playing (to catch the feather/layout switch)
-		if (gPPS.playing) {
-			var currentItem = gPPS.playingView.mediaList
-					.getItemByGuid(gPPS.currentGUID);
-			if (currentItem.getProperty(this.onTourImgProperty) != null &&
-						currentItem.getProperty(this.onTourImgProperty) != "")
-				this._onTourIcon.style.visibility = "visible";
+		var currentItem;
+		var playing = false;
+		if (this.newMediaCore && (
+			gMediaCore.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING ||
+			gMediaCore.status.state == Ci.sbIMediacoreStatus.STATUS_BUFFERING ||
+			gMediaCore.status.state == Ci.sbIMediacoreStatus.STATUS_PAUSED))
+		{
+			playing = true;
+			currentItem = gMediaCore.sequencer.view.getItemByIndex(
+				gMediaCore.sequencer.viewPosition);
+		} else if (!this.newMediaCore && gMediaCore.playing) {
+			playing = true;
+			currentItem = gMediaCore.playingView.mediaList
+					.getItemByGuid(gMediaCore.currentGUID);
+		}
+
+		if (playing && currentItem.getProperty(this.onTourImgProperty) != ""
+				&& currentItem.getProperty(this.onTourImgProperty) != null)
+		{
+			this._onTourIcon.style.visibility = "visible";
 		}
 	},
 	
@@ -284,7 +306,13 @@ Concerts = {
 
 		gMetrics.metricsInc("concerts", "faceplate.link", "");
 		// Load the artist event page into a new tab
-		var item = gPPS.playingView.mediaList.getItemByGuid(gPPS.currentGUID);
+		var item;
+		if (concerts.newMediaCore)
+			item = gMediaCore.sequencer.view.getItemByIndex(
+				gMediaCore.sequencer.viewPosition);
+		else
+			item = gMediaCore.playingView.mediaList.getItemByGuid(
+				gMediaCore.currentGUID);
 		var city = Application.prefs.getValue("extensions.concerts.city", 0);
 		var url = item.getProperty(this.onTourUrlProperty) +
 			"?user_location=" + city;
@@ -386,6 +414,16 @@ Concerts = {
 	 *********************************************************************/
 	_setupSmartPlaylistListener : function() {
 		var observer = {
+			onMediacoreEvent : function(ev) {
+				switch (ev.type) {
+					case Ci.sbIMediacoreEvent.VIEW_CHANGE:
+						dump("!!!!!!!!!!!!!!!!!!!!! OMFG!\n");
+						observer.onViewChange(ev.data);
+						break;
+					default:
+						break;
+				}
+			},
 			onStop : function() { },
 			onBeforeTrackChange : function() { },
 			onTrackChange : function() { },
@@ -417,7 +455,11 @@ Concerts = {
 				}
 			}
 		};
-		gPPS.addListener(observer);
+
+		// works for both old & new API since gMediaCore is aliased to gPPS
+		// and both gPPS & the new media core manager have the same
+		// addListener interface
+		gMediaCore.addListener(observer);
 	},
 }
 

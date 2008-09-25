@@ -27,10 +27,6 @@ if (typeof(gBrowser) == "undefined")
 			.getService(Ci.nsIWindowMediator)
 			.getMostRecentWindow("Songbird:Main").window.gBrowser;
 
-if (typeof(gPPS) == "undefined")
-	var gPPS = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
-			.getService(Ci.sbIPlaylistPlayback);
-
 if (typeof(gMetrics) == "undefined")
 	var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
     		.createInstance(Ci.sbIMetrics);
@@ -60,6 +56,11 @@ ConcertTicketing.unload = function() {
 
 ConcertTicketing.init = function() {
 	var self = this;
+
+	if (typeof(Ci.sbIMediacoreManager) != "undefined")
+		ConcertTicketing.newMediaCore = true;
+	else
+		ConcertTicketing.newMediaCore = false;
 
 	this.dateFormat = "%a, %b %e, %Y";
 	if (navigator.platform.substr(0, 3) == "Win")
@@ -342,7 +343,14 @@ ConcertTicketing.playArtist = function(e) {
 	cfs.clearAll();
 	cfs.set(2, [artistName], 1);
 
-	gPPS.playView(view, 0);
+	if (ConcertTicketing.newMediaCore)
+		Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+			.getService(Ci.sbIMediacoreManager)
+			.playView(view, 0);
+	else
+		Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
+			.getService(Ci.sbIPlaylistPlayback)
+			.playView(view, 0);
 }
 
 /***************************************************************************
