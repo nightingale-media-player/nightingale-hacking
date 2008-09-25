@@ -20,7 +20,7 @@ var ShoutcastRadio = {
 		if (genre == "sbITop")
 			genre = "BigAll&limit=200";
 		req.open("GET",
-			"http://www.shoutcast.com/sbin/newxml.phtml?genre="+genre, false);
+			"http://yp.shoutcast.com/sbin/newxml.phtml?genre="+genre, false);
 		req.genre = genre;
 		req.send(null);
 		var xml = (new DOMParser()).
