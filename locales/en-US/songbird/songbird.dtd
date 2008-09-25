@@ -441,6 +441,7 @@
 <!ENTITY searchFocus.key               "K" >
 <!ENTITY locationbar.key               "L" >
 <!ENTITY locationbar.key2              "D" >
+<!ENTITY currentTrackCmd.commandKey    "L" >
 <!ENTITY mediapage.next.key            "S" >
 <!ENTITY trackeditor.key               "E" >
 <!ENTITY trackeditor.key2              "I" >

@@ -422,6 +422,7 @@
       -->
       <key id="find-key" modifiers="accel" key="&menu.edit.find.key;" oncommand="goDoCommand('cmd_find');" />
       <key id="findagain-key" modifiers="accel" key="&menu.edit.findagain.key;" oncommand="goDoCommand('cmd_findAgain');" />
+      <key id="find-current-track-key" modifiers="accel shift" key="&currentTrackCmd.commandKey;" oncommand="goDoCommand('cmd_find_current_track');"/>
       
       <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
       <key id="locationbar-key2" modifiers="alt" key="&locationbar.key2;" oncommand="document.getElementById('location_bar').focus();"/>

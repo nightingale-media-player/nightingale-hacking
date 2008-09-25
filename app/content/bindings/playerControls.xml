@@ -1685,36 +1685,7 @@
       <method name="onCurrentTrack">
         <body>
           <![CDATA[
-
-          if (!gPPS.playingView) {
-            // nothing to see here, move along
-            return;
-          }
-
-          // Before showing the current track we trigger
-          // a custom event, so that if this object is used wihout
-          // a gBrowser object, the current window may still perform
-          // its own custom action.
-          
-          var e = document.createEvent("Events");
-          e.initEvent("ShowCurrentTrack", false, true);
-          var handled = !this.dispatchEvent(e);
-          if (handled) { 
-            return;
-          }
-          
-          
-          // Find a gBrowser in the window hierarchy chain (for display panels, etc)
-          var browser = this.getBrowser();
-          if (typeof browser == 'undefined') {
-            // where do you expect me to show you this currently playing
-            // track of yours?
-            return;
-          }
-          
-          if (gPPS.currentIndex >= 0) {
-            browser.showIndexInView(gPPS.playingView, gPPS.currentIndex);
-          }
+            goDoCommand('cmd_find_current_track');
           ]]>
         </body>
       </method>

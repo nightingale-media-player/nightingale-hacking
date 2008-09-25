@@ -75,6 +75,12 @@ var gSongbirdWindowController =
 {
   doCommand: function(aCommand)
   {
+    function dispatchEvent(aType, aCanBubble, aCanCancel, aTarget) {
+      var newEvent = document.createEvent("Events");
+      newEvent.initEvent(aType, aCanBubble, aCanCancel);
+      return (aTarget || window).dispatchEvent(newEvent);
+    }
+    
     var pps = gPPS ||
               Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
                         .getService(Components.interfaces.sbIPlaylistPlayback);
@@ -92,6 +98,24 @@ var gSongbirdWindowController =
       SBTrackEditorOpen("summary"); // open to the 'summary' tab
     } else if (aCommand == "cmd_reveal") {
       SBRevealFile(); // reveal the selected file
+    } else if (aCommand == "cmd_find_current_track") {
+      if (!pps.playingView) {
+        // nothing to see here, move along
+        return;
+      }
+
+      // Before showing the current track we trigger
+      // a custom event, so that if this object is used wihout
+      // a gBrowser object, the current window may still perform
+      // its own custom action.
+      var handled = !dispatchEvent("ShowCurrentTrack", false, true);
+      if (handled) { 
+        return;
+      }
+      
+      if (pps.currentIndex >= 0) {
+        gTabBrowser.showIndexInView(pps.playingView, pps.currentIndex);
+      }
     } else if (aCommand == "cmd_control_playpause") {
       // If we are already playing something just pause/unpause playback
       if (pps.playing) {
@@ -105,9 +129,7 @@ var gSongbirdWindowController =
       // and intelligently initiate playback.  If not, just have
       // the playback service play the default.
       } else {
-        var event = document.createEvent("Events");
-        event.initEvent("Play", true, true);
-        var notHandled = window.dispatchEvent(event);
+        var notHandled = dispatchEvent("Play", true, true);
         if (notHandled) {
           pps.play();
         }
@@ -140,6 +162,7 @@ var gSongbirdWindowController =
       case "cmd_editmetadata":
       case "cmd_viewmetadata":
       case "cmd_reveal":
+      case "cmd_find_current_track":
         return true;
       case "cmd_control_playpause":
       case "cmd_control_next":
@@ -197,6 +220,8 @@ var gSongbirdWindowController =
         }
         return false;
       }
+      case "cmd_find_current_track":
+        return pps.playingView && pps.currentIndex >= 0;
       case "cmd_control_playpause":
         return true;
       case "cmd_control_next":
