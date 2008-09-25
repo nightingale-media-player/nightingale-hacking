@@ -615,26 +615,31 @@ PublicPlaylistCommands.prototype = {
       this.m_defaultCommands = new PlaylistCommandsBuilder();
 
       this.m_defaultCommands.appendPlaylistCommands(null,
-                                                    "library_cmdobj_play",
-                                                    this.m_cmd_Play);
-      this.m_defaultCommands.appendPlaylistCommands(null,
-                                                    "library_cmdobj_remove",
-                                                    this.m_cmd_Remove);
-      this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_edit",
                                                     this.m_cmd_Edit);
       this.m_defaultCommands.appendPlaylistCommands(null,
-                                                    "library_cmdobj_rescan",
-                                                    this.m_cmd_Rescan);
-      this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_reveal",
                                                     this.m_cmd_Reveal);
+      
+      this.m_defaultCommands.appendSeparator(null, "default_commands_separator_1");
+      
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_addtoplaylist",
                                                     SBPlaylistCommand_AddToPlaylist);
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_addtodevice",
                                                     SBPlaylistCommand_AddToDevice);
+      
+      this.m_defaultCommands.appendSeparator(null, "default_commands_separator_2");
+
+      this.m_defaultCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_rescan",
+                                                    this.m_cmd_Rescan);
+
+      this.m_defaultCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_remove",
+                                                    this.m_cmd_Remove);
+      
       this.m_defaultCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
 
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
