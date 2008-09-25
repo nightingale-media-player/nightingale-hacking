@@ -417,7 +417,6 @@ Concerts = {
 			onMediacoreEvent : function(ev) {
 				switch (ev.type) {
 					case Ci.sbIMediacoreEvent.VIEW_CHANGE:
-						dump("!!!!!!!!!!!!!!!!!!!!! OMFG!\n");
 						observer.onViewChange(ev.data);
 						break;
 					default:
