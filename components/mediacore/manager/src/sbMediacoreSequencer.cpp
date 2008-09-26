@@ -806,6 +806,15 @@ sbMediacoreSequencer::Setup()
 
     rv = eventTarget->RemoveListener(this);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING ||
+       mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
+       mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
+
+      // Also stop the current core.
+      rv = mPlaybackControl->Stop();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = 
