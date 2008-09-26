@@ -662,10 +662,11 @@ sbGStreamerMediacore::OnPlay()
 
   NS_ENSURE_STATE(mPipeline);
 
-  gint flags = 0x2 | 0x4 | 0x10; // audio | text | soft-volume
+  gint flags = 0x2 | 0x10; // audio | soft-volume
   if (mVideoEnabled) {
-    // Enable video only if we're set up for itis turned off
-    flags |= 0x1;
+    // Enable video only if we're set up for it is turned off. Also enable
+    // text (subtitles), which require a video window to display.
+    flags |= 0x1 | 0x4; // video | text
   }
 
   g_object_set (G_OBJECT(mPipeline), "flags", flags, NULL);
