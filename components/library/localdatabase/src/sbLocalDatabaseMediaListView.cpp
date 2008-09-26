@@ -69,7 +69,7 @@
 #include "sbLocalDatabasePropertyCache.h"
 #include "sbLocalDatabaseSchemaInfo.h"
 
-#define DEFAULT_FETCH_SIZE 1000
+#define DEFAULT_FETCH_SIZE 300
 
 NS_IMPL_ISUPPORTS7(sbLocalDatabaseMediaListView,
                    sbIMediaListView,
@@ -295,7 +295,7 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = mArray->SetFetchSize(1000);
+  rv = mArray->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mSelection = new sbLocalDatabaseMediaListViewSelection();

@@ -1019,6 +1019,15 @@ sbLocalDatabaseCascadeFilterSet::ConfigureFilterArray(sbFilterSpec* aSpec,
   rv = mProtoArray->CloneAsyncArray(getter_AddRefs(aSpec->array));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Guidarrays typically fetch their length, then page in the actual content
+  // bit by bit as needed.  Unfortunately in complex filtering/searching
+  // cases the cost of the length query can be about the same as the
+  // cost of just fetching all the rows.  Since there aren't likely to be
+  // that many rows for a distinct filter, we tell the guidarray to 
+  // fetch everything at once and avoid the length query entirely.
+  rv = aSpec->array->SetFetchSize(PR_UINT32_MAX);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = aSpec->array->AddSort(aSortProperty, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 

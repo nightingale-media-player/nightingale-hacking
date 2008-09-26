@@ -973,6 +973,23 @@ sbLocalDatabaseGUIDArray::Initialize()
     mLengthX = mNonNullLength;
   }
 
+  // Figure out if there is an active search filter, 
+  // as this impacts how we do secondary sorting at the moment.
+  mHasActiveSearch = PR_FALSE;
+  PRUint32 filterCount = mFilters.Length();
+  for (PRUint32 index = 0; index < filterCount; index++) {
+    const FilterSpec& refSpec = mFilters.ElementAt(index);
+
+    nsTArray<nsString>* stringArray =
+      const_cast<nsTArray<nsString>*>(&refSpec.values);
+    NS_ENSURE_STATE(stringArray);
+
+    if (refSpec.isSearch && stringArray->Length() > 0) {
+      mHasActiveSearch = PR_TRUE;
+      break;
+    }
+  }
+
   mValid = PR_TRUE;
 
   return NS_OK;
@@ -983,15 +1000,35 @@ sbLocalDatabaseGUIDArray::UpdateLength()
 {
   nsresult rv;
 
-  rv = RunLengthQuery(mFullCountQuery, &mLength);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!mNonNullCountQuery.IsEmpty()) {
-    rv = RunLengthQuery(mNonNullCountQuery, &mNonNullLength);
+  // If we have a fetch size of 0 or PR_UINT32_MAX it means
+  // we're supposed to fetch everything.  If this is 
+  // the case, and we don't have to worry about the
+  // non null query, then we can skip the count query by
+  // just fetching and using the resulting length.
+  if ((mFetchSize == PR_UINT32_MAX || mFetchSize == 0) &&
+      mNonNullCountQuery.IsEmpty() && mNullGuidRangeQuery.IsEmpty()) 
+  {
+    rv = ReadRowRange(mFullGuidRangeQuery,
+                      0,
+                      PR_UINT32_MAX,
+                      0,
+                      PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
+    mLength = mCache.Length();
     mNonNullLength = mLength;
+  } 
+  else {
+    // Otherwise, use separate queries to establish the length 
+    rv = RunLengthQuery(mFullCountQuery, &mLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!mNonNullCountQuery.IsEmpty()) {
+      rv = RunLengthQuery(mNonNullCountQuery, &mNonNullLength);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      mNonNullLength = mLength;
+    }
   }
 
   return NS_OK;
@@ -1176,8 +1213,8 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
   PRUint32 indexB = mLengthX;
   PRUint32 indexC = mLength - 1;
 
-  // A fetch size of 0 means fetch everything
-  if (aFetchSize == 0) {
+  // Edge cases mean fetch everything
+  if (aFetchSize == PR_UINT32_MAX || aFetchSize == 0) {
     aFetchSize = mLength;
   }
 
@@ -1282,7 +1319,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   rv = MakeQuery(aSql, getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->BindInt32Parameter(0, aCount);
+  rv = query->BindInt64Parameter(0, aCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindInt32Parameter(1, aStartIndex);
@@ -1300,6 +1337,14 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  /*
+   * If asked to fetch everything, assume we got 
+   * the right number of rows.
+   */
+  if (aCount == PR_UINT32_MAX) {
+    aCount = rowCount;
+  }
+  
   /*
    * If there is a multi-level sort in effect, we need to apply the additional
    * level of sorts to this result
@@ -1416,7 +1461,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
 
   /*
    * If the number of rows returned is less than what was requested, this is
-   * really bad.  Fill the rest in so we don't crash
+   * really bad. Fill the rest in so we don't crash.
    */
   if (rowCount < aCount) {
     char* message = PR_smprintf("Did not get the requested number of rows, "
@@ -1521,14 +1566,18 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
 
   PRUint32 rangeLength = aEndIndex - aStartIndex + 1;
 
-  // XXX Disable memory sorting since it appears to slow things down with the
-  // index fix from bug 8612
-#if 0
+  // XXX Disable memory sorting in the general case, since it appears to slow things 
+  // down with the index fix from bug 8612. Enable it however when an FTS search
+  // is active, as joining the FTS table can severely slow the resort query.
+  
+  // TODO All of this can be removed once bug 6855 (pre-bake secondary sort values)
+  // is complete
+
   // We can sort these rows in memory in the case where the entire group of
   // rows lies within the fetched chunk, meaning for a distinct primary sort
   // value, the rows with this value is not the first or last row in the
   // chunk.  It also is not the only value in the chunk.
-  if (!aIsFirst && !aIsLast && !aIsOnly && mPropertyCache) {
+  if (mHasActiveSearch && !aIsFirst && !aIsLast && !aIsOnly && mPropertyCache) {
 
     nsTArray<const PRUnichar*> guids(rangeLength);
     for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
@@ -1592,7 +1641,6 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
 
     return NS_OK;
   }
-#endif
 
   nsCOMPtr<sbIDatabaseQuery> query;
   if(aIsNull) {

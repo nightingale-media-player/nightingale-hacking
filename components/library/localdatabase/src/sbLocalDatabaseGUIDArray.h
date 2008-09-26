@@ -247,6 +247,9 @@ private:
   // Is the cache valid
   PRPackedBool mValid;
 
+  // Is there a search filter with at least one active search term
+  PRPackedBool mHasActiveSearch;
+
   // How nulls are sorted
   PRPackedBool mNullsFirst;
 };

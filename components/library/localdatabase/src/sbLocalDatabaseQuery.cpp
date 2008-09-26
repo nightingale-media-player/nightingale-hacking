@@ -236,10 +236,10 @@ sbLocalDatabaseQuery::GetNullGuidRangeQuery(nsAString& aQuery)
   rv = AddBaseTable();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddJoinToGetNulls();
+  rv = AddFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddFilters();
+  rv = AddJoinToGetNulls();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Always sort nulls by ascending media item so their positions never change
@@ -492,17 +492,8 @@ sbLocalDatabaseQuery::AddCountColumns()
     }
   }
   else {
-    if (mHasSearch) {
-      nsAutoString count;
-      count.AssignLiteral("count(distinct _mi.media_item_id)");
-
-      rv = mBuilder->AddColumn(EmptyString(), count);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      rv = mBuilder->AddColumn(EmptyString(), COUNT_COLUMN);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+    rv = mBuilder->AddColumn(EmptyString(), COUNT_COLUMN);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -596,20 +587,6 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
   }
   else {
     rv = mBuilder->AddColumn(base, ROWID_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // The where clause that is generated for filtered queries that contain
-  // searches returns duplicate rows, so make this a distinct query if that
-  // is tha case.
-  PRBool hasSearch = PR_FALSE;
-  PRUint32 len = mFilters->Length();
-  for (PRUint32 i = 0; i < len && !hasSearch; i++) {
-    hasSearch = mFilters->ElementAt(i).isSearch;
-  }
-
-  if (hasSearch) {
-    rv = mBuilder->SetDistinct(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
