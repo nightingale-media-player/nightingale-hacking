@@ -41,11 +41,11 @@ sbDurationPropertyUnitConverter::sbDurationPropertyUnitConverter()
   RegisterUnit(DURATION_UNIT_MILLISECONDS,
     NS_LITERAL_STRING("ms"),
     NS_LITERAL_STRING("&duration.unit.milliseconds"), 
-    NS_LITERAL_STRING("&duration.unit.millisecond.short"));
+    NS_LITERAL_STRING("&duration.unit.milliseconds.short"));
   RegisterUnit(DURATION_UNIT_SECONDS,
     NS_LITERAL_STRING("sec"),
     NS_LITERAL_STRING("&duration.unit.seconds"),
-    NS_LITERAL_STRING("&duration.unit.second.short"));
+    NS_LITERAL_STRING("&duration.unit.seconds.short"));
   RegisterUnit(DURATION_UNIT_MINUTES,
     NS_LITERAL_STRING("min"),
     NS_LITERAL_STRING("&duration.unit.minutes"),

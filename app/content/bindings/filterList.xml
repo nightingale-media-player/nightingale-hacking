@@ -328,7 +328,7 @@
                 itemsstr = n + " " + this._getString("library.oneitem", "item");
                 break;
               default:
-                itemsstr = n + " " + this._getString("library.manyitem", "items");
+                itemsstr = n + " " + this._getString("library.manyitems", "items");
                 break;
             }
             this.treecol.setAttribute("label", this._propertyInfo.displayName + " (" + itemsstr + ")");

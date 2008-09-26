@@ -228,18 +228,6 @@ sb-mini-player-controls {
   -moz-binding: url("chrome://songbird/content/bindings/miniPlayer.xml#sb-mini-player-controls") !important;
 }
 
-sb-dbedit-label {
-  -moz-binding: url("chrome://songbird/content/bindings/dbControls.xml#label");
-}
-
-sb-dbedit-textbox {
-  -moz-binding: url("chrome://songbird/content/bindings/dbControls.xml#textbox") !important;
-}
-
-sb-dbedit-menulist {
-  -moz-binding: url("chrome://songbird/content/bindings/dbControls.xml#menulist") !important;
-}
-
 sb-smart-splitter {
   -moz-binding: url("chrome://songbird/content/bindings/smartSplitter.xml#smart-splitter") !important;
 }

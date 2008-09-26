@@ -1,11 +1,5 @@
-<!ENTITY window.main.title  "&brandShortName;" >
-<!ENTITY window.dev.title   "&brandShortName;" >
 <!ENTITY songbird           "&brandShortName;" >
-<!ENTITY web.url.first.old  "" >
-<!ENTITY web.url.first      "http://www.songbirdnest.com/birdhouse/" >
 <!ENTITY window.ok          "OK" >
-<!ENTITY window.undo        "Undo" >
-<!ENTITY window.apply       "Apply" >
 <!ENTITY window.cancel      "Cancel" >
 <!ENTITY window.browse      "Browse..." >
 <!ENTITY window.save        "Save">
@@ -41,14 +35,6 @@
 <!ENTITY menu.file.newtab       "New Tab" >
 <!ENTITY menu.file.closetab     "Close Tab" >
 <!ENTITY menu.file.scan         "Import Media..." >
-<!ENTITY menu.file.viewmetadata "View Metadata..."> <!-- obsolete -->
-<!ENTITY menu.file.dlfolder     "Set Download Folder..." >
-<!ENTITY menu.file.watch        "Set Watched Folders..." >
-<!ENTITY menu.file.htmlbar      "Always Show Web Bar" >
-<!ENTITY menu.file.skin         "Alternate Skin" >
-<!ENTITY menu.file.window       "Open Main Window" >
-<!ENTITY menu.file.mini         "Open Mini Player" >
-<!ENTITY menu.file.about        "About &brandShortName;..." >
 <!ENTITY menu.file.exit         "Exit" >
 
 <!ENTITY menu.edit          "Edit" >
@@ -57,10 +43,8 @@
 <!ENTITY menu.edit.cut      "Cut" >
 <!ENTITY menu.edit.copy     "Copy" >
 <!ENTITY menu.edit.paste    "Paste" >
-<!ENTITY menu.edit.clear    "Clear" >
 <!ENTITY menu.edit.delete   "Delete" >
 <!ENTITY menu.edit.selall   "Select All" >
-<!ENTITY menu.edit.selnone  "Select None" >
 <!ENTITY menu.edit.find        "Find" >
 <!ENTITY menu.edit.findagain   "Find Again" >
 
@@ -79,77 +63,41 @@
 <!ENTITY menu.control.jumpto "Jump To..." >
 
 <!ENTITY menu.control.play.button      "Play" >
-<!ENTITY menu.control.playpause.button "Play/Pause" >
 <!ENTITY menu.control.pause.button     "Pause" >
-<!ENTITY menu.control.resume.button    "Resume" >
 <!ENTITY menu.control.stop.button      "Stop" >
 
 <!ENTITY menu.displaypane.hide          "Hide">
-<!ENTITY menu.displaypane.not-available "None">
-<!ENTITY menu.displaypane.recommended   "Recommended Extensions">
-<!ENTITY menu.displaypane.other         "Other Extensions">
-<!ENTITY menu.displaypane.title         "Title Bar">
-<!ENTITY menu.displaypane.title.show    "Show">
-<!ENTITY menu.displaypane.title.auto    "Auto Show/Hide">
-<!ENTITY menu.displaypane.title.hide    "Hide">
-<!ENTITY menu.displaypane.title.default "[untitled]"> <!-- obsolete -->
 <!ENTITY menu.displaypane.get           "Get More Display Panes...">
 <!ENTITY displaypane.name.servicepane   "Service Pane Bottom">
 <!ENTITY displaypane.name.browser       "Content Pane Bottom">
 <!ENTITY displaypane.name.sidebar       "Right Sidebar">
-<!ENTITY displaypane.servicepane.label  "Show Service Pane Bottom">
-<!ENTITY displaypane.browser.label      "Show Content Pane Bottom">
-<!ENTITY displaypane.sidebar.label      "Show Right Sidebar">
 
 <!ENTITY servicepane.title.label        "Service Pane">
 
-<!ENTITY menu.services        "Services" >
-<!ENTITY menu.services.browse "Browse Add-ons..." >
 
 <!ENTITY menu.tools           "Tools" >
 <!ENTITY menu.tools.metadata  "Metadata Editor...">
 
 <!ENTITY menu.help          "Help" >
 <!ENTITY menu.help.bugz     "Report a Bug" >
-<!ENTITY menu.help.bugz.url "&bugzillaURL;" >
 <!ENTITY menu.help.topics   "Help Topics" >
-<!ENTITY menu.help.topics.url "&supportURL;" >
 <!ENTITY menu.help.about    "About &brandShortName;..." >
 
 <!ENTITY menu.preferences   "Options..." >
 <!ENTITY menu.extensions    "Add-ons..." >
 <!ENTITY menu.clearprivatedata "Clear Private Data...">
-<!ENTITY menu.viewpagesource "View Page Source">
 <!ENTITY menu.errorconsole "Error Console">
-<!ENTITY menu.dominspector  "DOM Inspector" >
 <!ENTITY menu.downloadmgr   "File Downloads..." >
 <!ENTITY menu.switchplayercontrols  "Player Controls" >
 <!ENTITY menu.controllerontop       "Display at Top">
 <!ENTITY menu.controlleronbottom    "Display at Bottom">
 
-
-<!ENTITY html.context.open  "Open" >
-<!ENTITY html.context.opentab  "Open in New Tab" >
-<!ENTITY html.context.openexternal  "Open with Default Browser" >
-<!ENTITY html.context.play  "Play" >
-<!ENTITY html.context.add   "Add to library" >
-<!ENTITY html.context.download   "Download to library" >
-<!ENTITY html.context.playlist   "Open as Playlist" >
-<!ENTITY html.context.copytoclipboard "Copy Link Location" >
-<!ENTITY playlist.context.remove  "Remove" >
-<!ENTITY playlist.context.rename  "Rename" >
 <!ENTITY playlist.context.search  "Search" >
-<!ENTITY device.context.eject   "Eject" >
-<!ENTITY device.context.rename  "Rename" >
-<!ENTITY device.context.prefs   "Preferences..." >
-
-<!ENTITY device.context.eject  "Eject" >
 
 <!ENTITY device.dialog.wait_for_completion.title  "Waiting for devices.">
 <!ENTITY device.dialog.wait_for_completion.msg    "Waiting for all device operations to complete.  Click &quot;Quit&quot; to stop waiting and quit application.">
 <!ENTITY device.dialog.wait_for_completion.quit   "Quit">
 
-<!ENTITY tooltip.miniplayer       "Switch to Miniplayer" >
 <!ENTITY tooltip.minimize         "Minimize" >
 <!ENTITY tooltip.maximize         "Maximize/Restore" >
 <!ENTITY tooltip.exit             "Exit" >
@@ -163,11 +111,9 @@
 <!ENTITY tooltip.control.fwd      "Next Track" >
 <!ENTITY tooltip.control.mute     "Mute" >
 <!ENTITY tooltip.control.volume   "Volume" >
-<!ENTITY tooltip.control.repeat   "Repeat" >
 <!ENTITY tooltip.control.shuffle  "Shuffle" >
 <!ENTITY tooltip.control.shuf_off "Shuffle Off" >
 <!ENTITY tooltip.control.curtrack "Find Current Track" >
-<!ENTITY tooltip.control.service  "Switch Faceplate Display" >
 <!ENTITY tooltip.search           "Search" >
 <!ENTITY tooltip.browser.back     "Browse Back" >
 <!ENTITY tooltip.browser.fwd      "Browse Forward" >
@@ -176,8 +122,6 @@
 <!ENTITY tooltip.browser.refresh  "Refresh" >
 <!ENTITY tooltip.browser.bookmark "Bookmark this page" >
 <!ENTITY tooltip.browser.subscription "Subscribe to this page" >
-<!ENTITY tooltip.browser.playlist "Show/Hide the Web Playlist" >
-<!ENTITY tooltip.browser.download "View Current Downloads" >
 <!ENTITY tooltip.browser.mediapages "Switch Media Views..." >
 <!ENTITY tooltip.browser.bookmarksubscribe "Add this page" >
 <!ENTITY tooltip.servicepane.show    "Show Service Pane" >
@@ -185,7 +129,6 @@
 <!ENTITY tooltip.servicepane.newnode "New Playlist" >
 
 <!ENTITY smart.window             "Smart Playlist" >
-<!ENTITY smart.library            "Select Library:" >
 <!ENTITY smart.limit              "Limit to" >
 <!ENTITY smart.match              "Match" >
 <!ENTITY smart.matchsingle        "Match the following condition:" >
@@ -210,22 +153,11 @@
 <!ENTITY smart.mb                 "MB" >
 <!ENTITY smart.gb                 "GB" >
 <!ENTITY smart.songs              "items" >
-<!ENTITY smart.contains           "contains" >
-<!ENTITY smart.not_contain        "does not contain" >
-<!ENTITY smart.is                 "is" >
-<!ENTITY smart.is_not             "is not" >
-<!ENTITY smart.starts             "starts with" >
-<!ENTITY smart.ends               "ends with" >
 <!ENTITY smart.selectedby         "selected by" >
 <!ENTITY smart.to                 "to" >
 <!ENTITY smart.autoupdate         "Auto update">
-<!ENTITY smart.autoupdate.never   "Manual">
-<!ENTITY smart.autoupdate.whendisplayed "Auto">
 <!ENTITY smart.playlistcondition.library "Library">
 
-<!ENTITY download.window          "Download" >
-<!ENTITY download.select          "Select destination folder:" >
-<!ENTITY download.always          "Always use this folder" >
 
 <!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:">
 
@@ -238,23 +170,14 @@
 <!ENTITY subscribe.autocheck      "Automatically update every">
 <!ENTITY subscribe.destinationfolder      "Select destination folder:">
 
-<!ENTITY exists.title             "Playlist Exists">
-<!ENTITY exists.exists            "A playlist with that name already exists!">
 
-<!ENTITY media_scan.title         "Scanning for Media">
-<!ENTITY media_scan.watch         "Watch this folder for new media">
 
-<!ENTITY new_playlist.title       "Create New Playlist">
-<!ENTITY new_playlist.name        "Enter the name of the new playlist.">
 
-<!ENTITY addtoplaylist.title      "Add To Playlist">
-<!ENTITY addtoplaylist.create     "Create new playlist">
 
 <!ENTITY watchfolder.title        "Watch Folders">
 <!ENTITY watchfolder.folderlist   "Watch these folders for new media:">
 
 <!ENTITY locale.language          "Language" >
-<!ENTITY menu.feathers            "Feathers" >
 <!ENTITY menu.view                "View" >
 <!ENTITY about.version            "Version" >
 
@@ -273,15 +196,10 @@
 <!ENTITY menu.file.newtab.accesskey       "T" >
 <!ENTITY menu.file.closetab.accesskey     "C" >
 <!ENTITY menu.file.scan.accesskey         "M" >
-<!ENTITY menu.file.viewmetadata.accesskey "E" > <!-- obsolete -->
-<!ENTITY menu.file.dlfolder.accesskey     "D" >
-<!ENTITY menu.file.watch.accesskey        "W" >
 <!ENTITY locale.language.accesskey        "L" >
-<!ENTITY menu.feathers.accesskey          "r" >
 <!ENTITY menu.view.accesskey              "V" >
 <!ENTITY menu.preferences.accesskey       "O" >
 <!ENTITY menu.extensions.accesskey        "A" >
-<!ENTITY menu.viewpagesource.accesskey    "V" >
 <!ENTITY menu.clearprivatedata.accesskey  "P" >
 <!ENTITY menu.errorconsole.accesskey      "C" >
 <!ENTITY menu.file.exit.accesskey         "X" >
@@ -294,9 +212,7 @@
 <!ENTITY menu.edit.copy.accesskey     "C" >
 <!ENTITY menu.edit.paste.accesskey    "P" >
 <!ENTITY menu.edit.delete.accesskey   "D" >
-<!ENTITY menu.edit.clear.accesskey    "L" >
 <!ENTITY menu.edit.selall.accesskey   "A" >
-<!ENTITY menu.edit.selnone.accesskey  "N" >
 <!ENTITY menu.edit.find.accesskey        "F" >
 <!ENTITY menu.edit.findagain.accesskey   "G" >
 
@@ -310,7 +226,6 @@
 <!ENTITY menu.control.repx.accesskey  "E" >
 <!ENTITY menu.control.jumpto.accesskey "J" >
 
-<!ENTITY menu.services.accesskey      "S" >
 
 <!ENTITY menu.tools.accesskey          "T" >
 <!ENTITY menu.tools.metadata.accesskey "E" >
@@ -339,7 +254,6 @@
 <!ENTITY trackeditor.tab.summary.title            "Summary" >
 <!ENTITY trackeditor.tab.edit.title               "Properties" >
 <!ENTITY trackeditor.tab.lyrics.title             "Lyrics" >
-<!ENTITY trackeditor.artwork.label                "Album Art" >
 <!ENTITY trackeditor.prev.button.label            "&lt;" >
 <!ENTITY trackeditor.next.button.label            "&gt;" >
 <!ENTITY trackeditor.prev.accesskey               "P" >
@@ -348,9 +262,6 @@
 <!ENTITY trackeditor.next.key                     "N" >
 
 <!-- The following strings are from the old track editor, and can be remove one day -->
-<!ENTITY trackeditor.trackdata        "Track Data" >
-<!ENTITY trackeditor.exttrackdata     "Extended Data" >
-<!ENTITY trackeditor.tags             "Tags" >
 <!ENTITY trackeditor.addtag.title     "Add Tag" >
 <!ENTITY trackeditor.addtag.tag       "Tag:" >
 
@@ -396,14 +307,6 @@
 <!ENTITY umsd.video.video_path_browse_msg   "Select the device directory in which to place video files." >
 <!ENTITY umsd.video.video_ext_desc          "Copy video files with the following extensions to the device:" >
 
-<!ENTITY metadata.uuid                "Media UUID" >
-<!ENTITY metadata.url                 "Location" >
-<!ENTITY metadata.artist              "Artist" >
-<!ENTITY metadata.title               "Title" >
-<!ENTITY metadata.album               "Album" >
-<!ENTITY metadata.genre               "Genre" >
-<!ENTITY metadata.length              "Time" >
-<!ENTITY metadata.bitrate             "Bit Rate" >
 
 <!ENTITY restartbox.restartnow        "Restart Now" >
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >
@@ -415,9 +318,7 @@
 
 <!ENTITY menu.updateCmd.label          "Check for Updates...">
 <!ENTITY menu.updateCmd.accessKey      "o">
-<!ENTITY trackeditor.disclaimer        "The Track Editor feature is not yet complete.  Edited metadata is saved only in &brandShortName;'s database.  In a future version, metadata edited here will be saved to your media files as well.">
 
-<!ENTITY callout.firstwebplaylist "&brandShortName; has found the following playable tracks.">
 
 <!ENTITY menu.file.new.key             "N" >
 <!ENTITY menu.file.smart.key           "N" >
@@ -427,14 +328,12 @@
 <!ENTITY menu.file.closetab.key        "W" >
 <!ENTITY menu.file.mini.key            "M" >
 <!ENTITY menu.file.filescan.key        "O" >
-<!ENTITY menu.file.dominspector        "I" >
 <!ENTITY menu.edit.undo.key            "Z" >
 <!ENTITY menu.edit.redo.key            "Y" >
 <!ENTITY menu.edit.cut.key             "X" >
 <!ENTITY menu.edit.copy.key            "C" >
 <!ENTITY menu.edit.paste.key           "V" >
 <!ENTITY menu.edit.selall.key          "A" >
-<!ENTITY menu.edit.delete.key          "Del" >
 <!ENTITY menu.edit.find.key            "F" >
 <!ENTITY menu.edit.findagain.key       "G" >
 <!ENTITY bookmarkPage.key              "D" >
@@ -454,20 +353,17 @@
 
 <!ENTITY tabs.closeTab "Close tab">
 <!ENTITY tabs.listAllTabs "List all tabs">
-<!ENTITY tabs.enabled.label "Enable tabs">
 
 <!ENTITY window.browser.titledefault       "" >
 <!ENTITY window.browser.titlemodifier      "&brandShortName;" >
 <!ENTITY window.browser.titlemenuseparator " - " >
 <!ENTITY window.browser.titlepreface       "" >
 
+<!-- Preferences dialogs (strings that would have been in browser/) -->
 <!ENTITY prefs.homepage.label          "Home Page" >
 <!ENTITY prefs.homepage.url.label          "URL:" >
 <!ENTITY prefs.homepage.url.accesskey          "" >
 <!ENTITY prefs.security.addons.label   "Add-on Installation" >
-
-<!ENTITY menu.windowpopup.alwaysontop  "Always On Top" >
-<!ENTITY menu.windowpopup.alwaysontop.accesskey  "" >
 
 <!-- Device entities -->
 <!ENTITY command.device.canceldevicecopy                "Cancel Copy">
@@ -609,10 +505,8 @@
 <!ENTITY import_library.prefs.title                       "iTunes Importer">
 <!ENTITY import_library.library_file_label                "Library File:">
 <!ENTITY import_library.auto_import_checkbox              "Automatically import changes in my iTunes library when Songbird launches">
-<!ENTITY import_library.auto_import_no_query_checkbox     "Initiate import without notification">
 <!ENTITY import_library.dont_import_playlists_checkbox    "Do not update playlists (only update songs)">
 <!ENTITY import_library.unsupported_media_alert_checkbox  "Alert me when unsupported tracks or playlists are not imported">
-<!ENTITY import_library.unsupported_media_alert           "Some tracks were in an unsupported format.  These were not imported.">
 <!ENTITY import_library.prefs.path_group_caption          "iTunes Music Library Location">
 <!ENTITY import_library.prefs.options_group_caption       "Import Options">
 <!ENTITY import_library.import_command                    "Import Library">
