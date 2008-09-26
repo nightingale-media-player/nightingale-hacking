@@ -107,7 +107,7 @@ try
       {
         installXPI( uri.spec );
       }
-      else if ( gTypeSniffer.isValidMediaURL(uri.spec) )
+      else if ( gTypeSniffer.isValidMediaURL(uri) )
       {
         // And if we're good, play it.
         SBDataSetStringValue("metadata.title", fp.file.leafName);
@@ -172,7 +172,7 @@ try
       {
         installXPI( uri.spec );
       }
-      else if ( gTypeSniffer.isValidMediaURL(uri.spec) )
+      else if ( gTypeSniffer.isValidMediaURL(uri) )
       {
         var item = SBImportURLIntoWebLibrary(uri);
 
