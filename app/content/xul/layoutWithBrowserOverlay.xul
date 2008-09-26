@@ -87,9 +87,11 @@
               label="&menu.tools.reveal;"
 #endif
         />
-        <menuseparator id="menuseparator_file_print"/>
+        <menuseparator id="menuseparator_file_print"
+                       insertbefore="menu_LocaleSeparator"/>
         <menuitem id="menuitem_file_print" key="printKb" command="cmd_print" 
-                  accesskey="&printCmd.accesskey;" label="&printCmd.label;"/>
+                  accesskey="&printCmd.accesskey;" label="&printCmd.label;"
+                  insertbefore="menu_LocaleSeparator"/>
       </menupopup>
 
 
