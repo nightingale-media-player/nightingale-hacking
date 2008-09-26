@@ -806,14 +806,6 @@ sbMediacoreSequencer::Setup()
 
     rv = eventTarget->RemoveListener(this);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING ||
-       mStatus == sbIMediacoreStatus::STATUS_PLAYING) {
-      
-      // Also stop the current core.
-      rv = mPlaybackControl->Stop();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
   }
 
   nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = 
@@ -935,7 +927,8 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else if(aViewPosition && 
-          mViewPosition != *aViewPosition) {
+          mViewPosition != *aViewPosition &&
+          mViewIndexToSequenceIndex.size() > *aViewPosition) {
     // We check to see if the view position is different than the current view
     // position before setting the new view position.
     mPosition = mViewIndexToSequenceIndex[*aViewPosition];
