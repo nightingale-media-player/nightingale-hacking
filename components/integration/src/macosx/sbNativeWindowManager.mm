@@ -28,25 +28,37 @@
  * \file sbINativeWindowManager
  * \brief Interface to native window managers (on MacOS X).
  */
- 
 
 #include "sbNativeWindowManager.h"
 #include "../NativeWindowFromNode.h"
 
+
 NS_IMPL_ISUPPORTS1(sbNativeWindowManager, sbINativeWindowManager)
 
-NS_IMETHODIMP sbNativeWindowManager::BeginResizeDrag(nsISupports *aWindow, nsIDOMMouseEvent* aEvent, PRInt32 aDirection)
+sbNativeWindowManager::sbNativeWindowManager()
+{
+}
+
+
+sbNativeWindowManager::~sbNativeWindowManager()
+{
+}
+
+
+NS_IMETHODIMP 
+sbNativeWindowManager::BeginResizeDrag(nsISupports *aWindow, 
+                                       nsIDOMMouseEvent* aEvent, 
+                                       PRInt32 aDirection)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 
-NS_IMETHODIMP sbNativeWindowManager::GetSupportsResizeDrag(PRBool *aSupportsResizeDrag)
+NS_IMETHODIMP 
+sbNativeWindowManager::GetSupportsResizeDrag(PRBool *aSupportsResizeDrag)
 {
   NS_ENSURE_ARG_POINTER(aSupportsResizeDrag);
-  
   *aSupportsResizeDrag = PR_FALSE;
-
   return NS_OK;
 }
 
@@ -56,11 +68,14 @@ sbNativeWindowManager::SetMinimumWindowSize(nsISupports *aWindow,
                                             PRInt32 aMinimumWidth, 
                                             PRInt32 aMinimumHeight)
 {
+  nsresult rv = NS_OK;
   id window = NativeWindowFromNode::get(aWindow);
   if (window)
     [window setMinSize:NSMakeSize(aMinimumWidth, aMinimumHeight)];
-  
-  return NS_OK;
+  else
+    rv = NS_ERROR_UNEXPECTED;
+
+  return rv;
 }
 
 
@@ -69,15 +84,19 @@ sbNativeWindowManager::SetMaximumWindowSize(nsISupports *aWindow,
                                             PRInt32 aMaximumWidth, 
                                             PRInt32 aMaximumHeight)
 {
+  nsresult rv = NS_OK;
   id window = NativeWindowFromNode::get(aWindow);
   if (window)
     [window setMaxSize:NSMakeSize(aMaximumWidth, aMaximumHeight)];
+  else
+    rv = NS_ERROR_UNEXPECTED;
   
-  return NS_OK;
+  return rv;
 }
 
 
-NS_IMETHODIMP sbNativeWindowManager::GetSupportsMinimumWindowSize(PRBool *aSupportsMinimumWindowSize)
+NS_IMETHODIMP 
+sbNativeWindowManager::GetSupportsMinimumWindowSize(PRBool *aSupportsMinimumWindowSize)
 {
   NS_ENSURE_ARG_POINTER(aSupportsMinimumWindowSize);
   *aSupportsMinimumWindowSize = PR_TRUE;
@@ -85,7 +104,8 @@ NS_IMETHODIMP sbNativeWindowManager::GetSupportsMinimumWindowSize(PRBool *aSuppo
 }
 
 
-NS_IMETHODIMP sbNativeWindowManager::GetSupportsMaximumWindowSize(PRBool *aSupportsMaximumWindowSize)
+NS_IMETHODIMP 
+sbNativeWindowManager::GetSupportsMaximumWindowSize(PRBool *aSupportsMaximumWindowSize)
 {
   NS_ENSURE_ARG_POINTER(aSupportsMaximumWindowSize);
   *aSupportsMaximumWindowSize = PR_TRUE;
@@ -93,27 +113,27 @@ NS_IMETHODIMP sbNativeWindowManager::GetSupportsMaximumWindowSize(PRBool *aSuppo
 }
 
 
-NS_IMETHODIMP sbNativeWindowManager::SetOnTop(nsISupports *aWindow, PRBool aOnTop)
+NS_IMETHODIMP 
+sbNativeWindowManager::SetOnTop(nsISupports *aWindow, PRBool aOnTop)
 {
-  nsresult rv;
-
   NS_ENSURE_ARG_POINTER(aWindow);
 
+  nsresult rv = NS_OK;
   id window = NativeWindowFromNode::get(aWindow);
+  if (window)
+    [window setLevel:(aOnTop?NSStatusWindowLevel:NSNormalWindowLevel)];
+  else
+    rv = NS_ERROR_UNEXPECTED;
 
-  [window setLevel:(aOnTop?NSStatusWindowLevel:NSNormalWindowLevel)];
-
-  return NS_OK;
+  return rv;
 }
 
 
-NS_IMETHODIMP sbNativeWindowManager::GetSupportsOnTop(PRBool *aSupportsOnTop)
+NS_IMETHODIMP 
+sbNativeWindowManager::GetSupportsOnTop(PRBool *aSupportsOnTop)
 {
   NS_ENSURE_ARG_POINTER(aSupportsOnTop);
-
   *aSupportsOnTop = PR_TRUE;
-
   return NS_OK;
 }
-
 

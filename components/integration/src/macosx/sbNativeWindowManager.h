@@ -38,8 +38,8 @@
 class sbNativeWindowManager : public sbINativeWindowManager
 {
 public:
-  sbNativeWindowManager() { };
-  virtual ~sbNativeWindowManager() { };
+  sbNativeWindowManager();
+  virtual ~sbNativeWindowManager();
 
   NS_DECL_ISUPPORTS
   NS_DECL_SBINATIVEWINDOWMANAGER
