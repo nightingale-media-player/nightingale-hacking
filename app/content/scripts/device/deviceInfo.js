@@ -447,7 +447,7 @@ var DIW = {
     var func = function() { _this._update(); }
     this._pollingTimer = new SBTimer(func,
                                      aPollPeriod,
-                                     Ci.nsITimer.TYPE_REPEATING_PRECISE);
+                                     Ci.nsITimer.TYPE_REPEATING_SLACK);
   },
 
 
