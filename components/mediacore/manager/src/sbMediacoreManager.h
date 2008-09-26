@@ -80,6 +80,8 @@ public:
   virtual nsresult OnSetMute(PRBool aMute);
   virtual nsresult OnSetVolume(PRFloat64 aVolume);
 
+  nsresult SetVolumeDataRemote(PRFloat64 aVolume);
+
 private:
   virtual ~sbMediacoreManager();
 

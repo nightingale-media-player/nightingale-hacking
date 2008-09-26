@@ -425,9 +425,15 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
 
   if(PR_sscanf(volStr.BeginReading(), "%lg", &volume) != 1) {
     mVolume = 0.5;
+    
+    rv = SetVolumeDataRemote(mVolume);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
+    if(volume > 1) volume = 1;
+    if(volume < 0) volume = 0;
     mVolume = volume;
+
 #if defined(DEBUG)
     printf("[sbMediacoreManager] - Initializing volume from data remote\n\tVolume: %s\n",
            volStr.BeginReading());
@@ -492,11 +498,25 @@ sbMediacoreManager::OnSetVolume(double aVolume)
   rv = volumeControl->SetVolume(mVolume);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = SetVolumeDataRemote(mVolume);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreManager::SetVolumeDataRemote(PRFloat64 aVolume)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_STATE(mDataRemoteFaceplateVolume);
+
+  nsAutoMonitor mon(mMonitor);
+  
   char volume[64] = {0};
   PR_snprintf(volume, 64, "%lg", aVolume);
 
   NS_ConvertUTF8toUTF16 volumeStr(volume);
-  rv = mDataRemoteFaceplateVolume->SetStringValue(volumeStr);
+  nsresult rv = mDataRemoteFaceplateVolume->SetStringValue(volumeStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

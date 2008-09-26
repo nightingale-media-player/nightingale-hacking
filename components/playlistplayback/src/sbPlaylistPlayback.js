@@ -558,9 +558,6 @@ PlaylistPlayback.prototype = {
       this._shuffle.boolValue = false; // start with no shuffle
     if ( this._repeat.stringValue == "" )
       this._repeat.intValue = sbIPlaylistPlayback.REPEAT_MODE_OFF; // start with no repeat
-    if ( this._volume.stringValue == "" )
-      this._volume.intValue = 128;
-    this._requestedVolume = this._calculatedVolume = this._volume.intValue;
   },
   
   _releaseDataRemotes: function() {
