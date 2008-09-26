@@ -64,6 +64,8 @@
 #include <nsIFile.h>
 #include <nsIMIMEService.h>
 #include <nsIBinaryInputStream.h>
+#include <nsIIOService.h>
+#include <nsIProtocolHandler.h>
 #include <nsIStandardURL.h>
 #include <nsICharsetDetector.h>
 #include <nsIUTF8ConverterService.h>
@@ -1306,9 +1308,15 @@ nsresult sbMetadataHandlerTaglib::Init()
 {
     nsresult                    rv;
 
-    /* Create a file protocol handler instance. */
-    mpFileProtocolHandler =
-            do_CreateInstance("@mozilla.org/network/protocol;1?name=file", &rv);
+    /* Get the file protocol handler now (since this is mostly threadsafe,
+       whereas the IO service definitely isn't) */
+    nsCOMPtr<nsIIOService> ioservice =
+      do_GetService("@mozilla.org/network/io-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIProtocolHandler> fileHandler;
+    rv = ioservice->GetProtocolHandler("file", getter_AddRefs(fileHandler));
+    NS_ENSURE_SUCCESS(rv, rv);
+    mpFileProtocolHandler = do_QueryInterface(fileHandler, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mProxiedServices =
@@ -1368,7 +1376,7 @@ PRUint32 sbMetadataHandlerTaglib::sNextChannelID = 0;
  *                              names.
  */
 
-static char *ID3v2Map[][2] =
+static const char *ID3v2Map[][2] =
 {
     { "TENC", SB_PROPERTY_SOFTWAREVENDOR },
     { "TIT3", SB_PROPERTY_SUBTITLE },
@@ -1458,7 +1466,7 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
  */
 
 // see http://wiki.hydrogenaudio.org/index.php?title=APE_key
-static char *APEMap[][2] =
+static const char *APEMap[][2] =
 {
     { "Subtitle", SB_PROPERTY_SUBTITLE },
 //    { "Debut album", "original_album" },
