@@ -35,7 +35,7 @@
 #include <nsTHashtable.h>
 #include <prmon.h>
 
-#include <sbiMediacoreSequenceGenerator.h>
+#include <sbIMediacoreSequenceGenerator.h>
 #include <sbIMediaListView.h>
 
 class sbMediacoreShuffleSequenceGenerator : public sbIMediacoreSequenceGenerator
