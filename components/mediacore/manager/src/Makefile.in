@@ -33,6 +33,7 @@ target := sbMediacoreManager$(DEBUG:%=_d)
 
 CPP_SRCS = sbMediacoreManager.cpp \
            sbMediacoreManagerModule.cpp \
+           sbMediacoreShuffleSequenceGenerator.cpp \
            sbMediacoreSequencer.cpp \
            sbMediacoreTypeSniffer.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbMediacoreVotingChain.cpp \

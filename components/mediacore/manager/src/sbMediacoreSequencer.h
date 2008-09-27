@@ -83,6 +83,8 @@ public:
   nsresult UpdatePositionDataRemotes(PRUint64 aPosition);
   nsresult UpdateDurationDataRemotes(PRUint64 aDuration);
   nsresult UpdateURLDataRemotes(nsIURI *aURI);
+  nsresult UpdateShuffleDataRemote(PRUint32 aMode);
+  nsresult UpdateRepeatDataRemote(PRUint32 aRepeatMode);
 
   // Metadata Event & DataRemote
   nsresult HandleMetadataEvent(sbIMediacoreEvent *aEvent);
@@ -156,6 +158,9 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataPositionStr;
 
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataURL;
+
+  nsCOMPtr<sbIDataRemote> mDataRemotePlaylistShuffle;
+  nsCOMPtr<sbIDataRemote> mDataRemotePlaylistRepeat;
 
   nsCOMPtr<nsITimer> mSequenceProcessorTimer;
 };

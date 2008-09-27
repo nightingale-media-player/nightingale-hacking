@@ -40,8 +40,11 @@
 
 #include <sbTArrayStringEnumerator.h>
 
-NS_IMPL_ISUPPORTS1(sbMediacoreShuffleSequenceGenerator, 
-                   sbIMediacoreSequenceGenerator)
+#include <vector>
+#include <algorithm>
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreShuffleSequenceGenerator, 
+                              sbIMediacoreSequenceGenerator)
 
 sbMediacoreShuffleSequenceGenerator::sbMediacoreShuffleSequenceGenerator()
 {
@@ -63,7 +66,39 @@ sbMediacoreShuffleSequenceGenerator::Init()
 
 NS_IMETHODIMP 
 sbMediacoreShuffleSequenceGenerator::OnGenerateSequence(sbIMediaListView *aView, 
-                                                        nsIArray **_retval)
+                                                        PRUint32 *aSequenceLength, 
+                                                        PRUint32 **aSequence)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aView);
+  NS_ENSURE_ARG_POINTER(aSequenceLength);
+  NS_ENSURE_ARG_POINTER(aSequence);
+
+  *aSequenceLength = 0;
+  *aSequence = nsnull;
+
+  PRUint32 length = 0;
+  nsresult rv = aView->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Reserve space for return array
+  *aSequence = new PRUint32[length];
+  *aSequenceLength = length;
+
+  // Reserve space for pool and sequence.
+  std::vector<PRUint32> pool;
+  pool.reserve(length);
+
+  // Generate pool.
+  for(PRUint32 current = 0; current < length; ++current) {
+    pool.push_back(current);
+  }
+
+  // Randomly sample the pool to populate the sequence.
+  random_shuffle(pool.begin(), pool.end());
+
+  // Copy into the return array
+  copy(pool.begin(), pool.end(), *aSequence);
+  
+  return NS_OK;
 }

@@ -32,5 +32,7 @@ interface sbIMediaListView;
 [scriptable, uuid(be20d7ef-9795-4609-a126-bfe142206aca)]
 interface sbIMediacoreSequenceGenerator : nsISupports
 {
-  nsIArray onGenerateSequence(in sbIMediaListView aView);
+  void onGenerateSequence(in sbIMediaListView aView, 
+                          out unsigned long aSequenceLength,
+                          [array,retval,size_is(aSequenceLength)] out unsigned long aSequence);
 };

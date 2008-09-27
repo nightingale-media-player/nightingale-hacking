@@ -54,4 +54,10 @@
 #define SB_MEDIACORE_DATAREMOTE_METADATA_POSITION     "metadata.position"
 #define SB_MEDIACORE_DATAREMOTE_METADATA_POSITION_STR "metadata.position.str"
 
+/**
+ * Playlist DataRemotes
+ */
+#define SB_MEDIACORE_DATAREMOTE_PLAYLIST_SHUFFLE "playlist.shuffle"
+#define SB_MEDIACORE_DATAREMOTE_PLAYLIST_REPEAT  "playlist.repeat"
+
 #endif /*__SB_MEDIACOREDATAREMOTES_H__*/

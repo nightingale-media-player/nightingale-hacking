@@ -35,6 +35,7 @@
 #include <nsIWeakReferenceUtils.h>
 
 #include <nsAutoLock.h>
+#include <nsAutoPtr.h>
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 
@@ -63,6 +64,7 @@
 #include <sbVariantUtils.h>
 
 #include "sbMediacoreDataRemotes.h"
+#include "sbMediacoreShuffleSequenceGenerator.h"
 
 inline nsresult 
 EmitMillisecondsToTimeString(PRUint64 aValue, nsAString &aString)
@@ -162,6 +164,28 @@ sbMediacoreSequencer::Init()
 
   rv = BindDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsRefPtr<sbMediacoreShuffleSequenceGenerator> generator;
+  NS_NEWXPCOM(generator, sbMediacoreShuffleSequenceGenerator);
+  NS_ENSURE_TRUE(generator, NS_ERROR_OUT_OF_MEMORY);
+
+  mShuffleGenerator = do_QueryInterface(generator, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool shuffle = PR_FALSE;
+  rv = mDataRemotePlaylistShuffle->GetBoolValue(&shuffle);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(shuffle) {
+    mMode = sbIMediacoreSequencer::MODE_SHUFFLE;
+  }
+
+  PRInt64 repeatMode = 0;
+  rv = mDataRemotePlaylistRepeat->GetIntValue(&repeatMode);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_ARG_RANGE(repeatMode, 0, 2);
+
+  mRepeatMode = repeatMode;
 
   return NS_OK;
 }
@@ -399,6 +423,26 @@ sbMediacoreSequencer::BindDataRemotes()
   rv = mDataRemoteMetadataURL->SetStringValue(EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Playlist Shuffle
+  mDataRemotePlaylistShuffle = 
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemotePlaylistShuffle->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_PLAYLIST_SHUFFLE),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Playlist Repeat
+  mDataRemotePlaylistRepeat = 
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemotePlaylistRepeat->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_PLAYLIST_REPEAT),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -451,6 +495,16 @@ sbMediacoreSequencer::UnbindDataRemotes()
   rv = mDataRemoteMetadataURL->Unbind();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //
+  // Playlist DataRemotes
+  //
+
+  rv = mDataRemotePlaylistShuffle->Unbind();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemotePlaylistRepeat->Unbind();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -486,11 +540,13 @@ sbMediacoreSequencer::UpdatePositionDataRemotes(PRUint64 aPosition)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsresult rv = mDataRemoteMetadataPosition->SetIntValue(aPosition);
+  nsString str;
+  nsresult rv = EmitMillisecondsToTimeString(aPosition, str);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString str;
-  rv = EmitMillisecondsToTimeString(aPosition, str);
+  nsAutoMonitor mon(mMonitor);
+
+  rv = mDataRemoteMetadataPosition->SetIntValue(aPosition);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteMetadataPositionStr->SetStringValue(str);
@@ -511,6 +567,8 @@ sbMediacoreSequencer::UpdateDurationDataRemotes(PRUint64 aDuration)
   rv = EmitMillisecondsToTimeString(aDuration, str);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsAutoMonitor mon(mMonitor);
+
   rv = mDataRemoteMetadataDurationStr->SetStringValue(str);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -527,6 +585,8 @@ sbMediacoreSequencer::UpdateURLDataRemotes(nsIURI *aURI)
   nsresult rv = aURI->GetSpec(spec);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsAutoMonitor mon(mMonitor);
+
   NS_ConvertUTF8toUTF16 wideSpec(spec);
   rv = mDataRemoteFaceplateURL->SetStringValue(wideSpec);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -537,6 +597,36 @@ sbMediacoreSequencer::UpdateURLDataRemotes(nsIURI *aURI)
   return NS_OK;
 }
 
+nsresult
+sbMediacoreSequencer::UpdateShuffleDataRemote(PRUint32 aMode)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  PRBool shuffle = PR_FALSE;
+  if(aMode == sbIMediacoreSequencer::MODE_SHUFFLE) {
+    shuffle = PR_TRUE;
+  }
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = mDataRemotePlaylistShuffle->SetBoolValue(shuffle);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::UpdateRepeatDataRemote(PRUint32 aRepeatMode)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+  
+  nsresult rv = mDataRemotePlaylistRepeat->SetIntValue(aRepeatMode);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
 
 nsresult 
 sbMediacoreSequencer::HandleMetadataEvent(sbIMediacoreEvent *aEvent)
@@ -642,15 +732,15 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
 {
   nsAutoMonitor mon(mMonitor);
 
+  if(!mView) {
+    return NS_OK;
+  }
+
   mSequence.clear();
   mViewIndexToSequenceIndex.clear();
 
-  nsCOMPtr<sbIMediaList> list;
-  nsresult rv = mView->GetMediaList(getter_AddRefs(list));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRUint32 length = 0;
-  rv = list->GetLength(&length);
+  nsresult rv = mView->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mPosition = 0;
@@ -687,8 +777,30 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
     break;
     case sbIMediacoreSequencer::MODE_SHUFFLE:
     {
-      // XXXAus: Use shuffle generator.
-      // XXXAus: Match view position if present.
+      NS_ENSURE_TRUE(mShuffleGenerator, NS_ERROR_UNEXPECTED);
+      
+      PRUint32 sequenceLength = 0;
+      PRUint32 *sequence = nsnull;
+      
+      rv = mShuffleGenerator->OnGenerateSequence(mView, 
+                                                 &sequenceLength, 
+                                                 &sequence);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for(PRUint32 i = 0; i < sequenceLength; ++i) {
+        mSequence.push_back(sequence[i]);
+
+        if(aViewPosition &&
+           *aViewPosition == sequence[i]) {
+          // Swap the first position item with the item that was selected by the
+          // user to play first.
+          PRUint32 index = mSequence[0];
+          mSequence[0] = mSequence[i];
+          mSequence[i] = index;
+        }
+      }
+
+      delete [] sequence;
     }
     break;
     case sbIMediacoreSequencer::MODE_CUSTOM:
@@ -1003,8 +1115,11 @@ sbMediacoreSequencer::SetMode(PRUint32 aMode)
 
   if(mMode != aMode) {
     mMode = aMode;
-    
+
     nsresult rv = RecalculateSequence();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = UpdateShuffleDataRemote(aMode);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1040,6 +1155,9 @@ sbMediacoreSequencer::SetRepeatMode(PRUint32 aRepeatMode)
 
   nsAutoMonitor mon(mMonitor);
   mRepeatMode = aRepeatMode;
+
+  nsresult rv = UpdateRepeatDataRemote(aRepeatMode);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;  
 }
@@ -1213,9 +1331,19 @@ sbMediacoreSequencer::Next()
 
   // No next track, not an error.
   if(!hasNext) {
+    nsresult rv = NS_ERROR_UNEXPECTED;
+
+    // No next track and playing, stop.
+    if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
+       mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
+       mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
+      rv = mPlaybackControl->Stop();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
-    nsresult rv = StopSequenceProcessor();
+    rv = StopSequenceProcessor();
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = UpdatePlayStateDataRemotes();
@@ -1271,9 +1399,19 @@ sbMediacoreSequencer::Previous()
 
   // No next track, not an error.
   if(!hasNext) {
+    nsresult rv = NS_ERROR_UNEXPECTED;
+
+    // No next track and playing, stop.
+    if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
+       mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
+       mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
+      rv = mPlaybackControl->Stop();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
-    nsresult rv = StopSequenceProcessor();
+    rv = StopSequenceProcessor();
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = UpdatePlayStateDataRemotes();
