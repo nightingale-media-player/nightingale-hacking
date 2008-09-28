@@ -127,6 +127,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 : mStatus(sbIMediacoreStatus::STATUS_STOPPED)
 , mIsWaitingForPlayback(PR_FALSE)
 , mSeenPlaying(PR_FALSE)
+, mNextTriggeredByStreamEnd(PR_FALSE)
 , mMode(sbIMediacoreSequencer::MODE_FORWARD)
 , mRepeatMode(sbIMediacoreSequencer::MODE_REPEAT_NONE)
 , mPosition(0)
@@ -1273,7 +1274,10 @@ sbMediacoreSequencer::Play()
   mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
   mIsWaitingForPlayback = PR_TRUE;
 
-  nsresult rv = Setup();
+  nsresult rv = ResetMetadataDataRemotes();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = Setup();
   
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1320,8 +1324,18 @@ sbMediacoreSequencer::Next()
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
-  else if(mMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) {
+  else if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) {
     hasNext = PR_TRUE;
+
+    if(!mNextTriggeredByStreamEnd) {
+      if(mPosition + 1 >= length) {
+        mPosition = 0;
+      }
+      else if(mPosition + 1 < length) {
+        ++mPosition;
+      }
+      mViewPosition = mSequence[mPosition];
+    }
   }
   else if(mPosition + 1 < length) {
     ++mPosition;
@@ -1388,8 +1402,18 @@ sbMediacoreSequencer::Previous()
           NS_ENSURE_SUCCESS(rv, rv);
       }
   }
-  else if(mMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) {
+  else if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) {
     hasNext = PR_TRUE;
+
+    if(mNextTriggeredByStreamEnd) {
+      if(position - 1 < 0) {
+        mPosition = length - 1;
+      }
+      else if(position - 1 >= 0) {
+        --mPosition;
+      }
+      mViewPosition = mSequence[mPosition];
+    }
   }
   else if(position - 1 >= 0) {
     --mPosition;
@@ -1539,7 +1563,15 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       /* Track done, continue on to the next, if possible. */
       if(mStatus == sbIMediacoreStatus::STATUS_PLAYING &&
          !mIsWaitingForPlayback) {
-        rv = Next();
+        
+        sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
+        
+        if(mMode != sbIMediacoreSequencer::MODE_REVERSE) {
+          rv = Next();
+        }
+        else {
+          rv = Previous();
+        }
 
         if(NS_FAILED(rv)) {
           mStatus = sbIMediacoreStatus::STATUS_STOPPED;

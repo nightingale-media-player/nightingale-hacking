@@ -128,17 +128,22 @@ function doMenu( command, event ) {
     case "menuitem_control_prev":
       gMM.sequencer.previous();
     break;
-    case "menuitem_control_shuf":
-      SBDataSetIntValue( "playlist.shuffle", (SBDataGetIntValue( "playlist.shuffle" ) + 1) % 2 );
+    case "menuitem_control_shuf": {
+      let sequencer = gMM.sequencer;
+      let sequencerMode = sequencer.mode;
+      sequencer.mode = 
+        (sequencerMode != sequencer.MODE_SHUFFLE) ? 
+          sequencer.MODE_SHUFFLE : sequencer.MODE_FORWARD;
+    }
     break;
     case "menuitem_control_repa":
-      SBDataSetIntValue( "playlist.repeat", 2 );
+      gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_ALL;
     break;
     case "menuitem_control_rep1":
-      SBDataSetIntValue( "playlist.repeat", 1 );
+      gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_ONE;
     break;
     case "menuitem_control_repx":
-      SBDataSetIntValue( "playlist.repeat", 0 );
+      gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_NONE;
     break;
     case "menuitem_control_jumpto":
       toggleJumpTo();

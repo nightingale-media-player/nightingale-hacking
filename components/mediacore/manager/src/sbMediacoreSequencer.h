@@ -120,6 +120,7 @@ protected:
   PRUint32                       mStatus;
   PRPackedBool                   mIsWaitingForPlayback;
   PRPackedBool                   mSeenPlaying;
+  PRPackedBool                   mNextTriggeredByStreamEnd;
   
   PRUint32                       mChainIndex;
   nsCOMPtr<nsIArray>             mChain;
@@ -163,4 +164,22 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemotePlaylistRepeat;
 
   nsCOMPtr<nsITimer> mSequenceProcessorTimer;
+};
+
+class sbScopedBoolToggle
+{
+public:
+  explicit 
+  sbScopedBoolToggle(PRPackedBool *aBool, PRBool aValue = PR_TRUE) {
+    mBool = aBool;
+    *mBool = aValue;
+  }
+  ~sbScopedBoolToggle() {
+    if(mBool) {
+      *mBool = !(*mBool);
+    }
+  }
+
+private:
+  PRPackedBool *mBool;
 };

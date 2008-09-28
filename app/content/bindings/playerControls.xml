@@ -660,6 +660,10 @@
           this.remote_repeat.unbind();
           this.remote_repeat = null;
         }
+        
+        if(this.mm) {
+          this.mm = null;
+        }
       ]]>
     </destructor>
 
@@ -698,7 +702,8 @@
               }
               break;
           }
-          this.remote_repeat.intValue = value;
+          
+          this.mm.sequencer.repeatMode = value;
         ]]>
       </body>
     </method>
@@ -765,6 +770,14 @@
     <destructor>
       <![CDATA[
         //SB_LOG("playerControls.js", "shuffle binding destructor");
+        if(this.remote_shuffle) {
+          this.remote_shuffle.unbind();
+          this.remote_shuffle = null;
+        }
+        
+        if(this.mm) {
+          this.mm = null;
+        }
       ]]>
     </destructor>
 
@@ -774,7 +787,10 @@
     <method name="onShuffle">
       <body>
         <![CDATA[
-          this.remote_shuffle.boolValue = !this.remote_shuffle.boolValue;
+          this.mm.sequencer.mode = 
+            !this.remote_shuffle.boolValue ? 
+            this.mm.sequencer.MODE_SHUFFLE : 
+            this.mm.sequencer.MODE_FORWARD;
         ]]>
       </body>
     </method>
