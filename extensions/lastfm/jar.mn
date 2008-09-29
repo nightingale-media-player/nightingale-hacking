@@ -1,6 +1,7 @@
 lastfm.jar:
 % content lastfm  %content/
 % locale  lastfm  bn-IN  %locale/bn-IN/
+% locale  lastfm  ca-AD  %locale/ca-AD/
 % locale  lastfm  da-DK  %locale/da-DK/
 % locale  lastfm  de-DE  %locale/de-DE/
 % locale  lastfm  en-US  %locale/en-US/
@@ -18,6 +19,8 @@ lastfm.jar:
   content/extensionicon.png       (chrome/content/extensionicon.png)
   locale/bn-IN/overlay.dtd        (chrome/locale/bn-IN/overlay.dtd)
   locale/bn-IN/overlay.properties (chrome/locale/bn-IN/overlay.properties)
+  locale/ca-AD/overlay.dtd        (chrome/locale/ca-AD/overlay.dtd)
+  locale/ca-AD/overlay.properties (chrome/locale/ca-AD/overlay.properties)
   locale/da-DK/overlay.dtd        (chrome/locale/da-DK/overlay.dtd)
   locale/da-DK/overlay.properties (chrome/locale/da-DK/overlay.properties)
   locale/de-DE/overlay.dtd        (chrome/locale/de-DE/overlay.dtd)
