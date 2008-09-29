@@ -393,3 +393,6 @@ pref("songbird.library_importer.unsupported_media_alert.enabled", true);
 // Album art preferences
 //
 pref("songbird.albumart.maxsize", 16777216);
+
+// Show the 'rescan metadata' playlist command ?
+pref("songbird.commands.enableRescanItem", false);

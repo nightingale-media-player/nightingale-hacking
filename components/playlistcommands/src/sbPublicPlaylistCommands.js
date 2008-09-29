@@ -357,6 +357,10 @@ PublicPlaylistCommands.prototype = {
                                                   "library_cmd_rescan",
                                                   plCmd_IsAnyTrackSelected);
 
+      this.m_cmd_Rescan.setCommandVisibleCallback(null,
+                                                  "library_cmd_rescan",
+                                                  plCmd_IsRescanItemEnabled);
+
       // --------------------------------------------------------------------------
       // The REVEAL button
       // --------------------------------------------------------------------------
@@ -1381,6 +1385,19 @@ function plCmd_EditSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandI
 // Returns true when at least one track is selected in the playlist
 function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
   return ( unwrap(aContext.playlist).tree.currentIndex != -1 );
+}
+
+// Returns true if the 'rescan' item command is enabled
+function plCmd_IsRescanItemEnabled(aContext, aSubMenuId, aCommandId, aHost) {
+  var prefs = Cc["@mozilla.org/preferences-service;1"]
+                .getService(Ci.nsIPrefBranch2);
+  var enabled = false;
+  try {
+   enabled = prefs.getBoolPref("songbird.commands.enableRescanItem");
+  } catch (e) {
+    // nothing to do
+  }
+  return enabled;
 }
 
 // Returns true if the host is the shortcuts instantiator
