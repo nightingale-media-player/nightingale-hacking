@@ -999,16 +999,14 @@
   if (columnIndex < 0) {
     if (this._pm.hasProperty(aPropertyID)) {
       var propertyInfo = this._pm.getPropertyInfo(aPropertyID);
-      if (propertyInfo.userViewable) {
-        this._appendColumn(propertyInfo,
-                           true,
-                           null,
-                           (columns.length * 2));
-        columnIndex = columns.length;
+      this._appendColumn(propertyInfo,
+                         true,
+                         null,
+                         (columns.length * 2));
+      columnIndex = columns.length;
 
-        // get the new array of columns
-        columns = this._getSortedColumnArray();
-      }
+      // get the new array of columns
+      columns = this._getSortedColumnArray();
     }
   }
 
