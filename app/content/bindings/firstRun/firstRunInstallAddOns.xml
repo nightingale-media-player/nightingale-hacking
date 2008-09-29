@@ -49,12 +49,12 @@
    * installation status UI.  This widget reads the first-run add-ons bundle
    * from the element specified by the "addonsid" attribute.  The add-ons bundle
    * is read from the property with the name specified by the
-   * "addonsbundleproperty" attribute.
+   * "addonbundleproperty" attribute.
    *
    * Attributes:
    *
    *   addonsid                 ID of element with add-ons bundle.
-   *   addonsbundleproperty     Name of add-ons bundle property of add-ons
+   *   addonbundleproperty      Name of add-on bundle property of add-ons
    *                            element.
    *
    *****************************************************************************

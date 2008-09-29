@@ -186,12 +186,12 @@ firstRunInstallAddOnsSvc.prototype = {
    */
 
   _doPageShow: function firstRunInstallAddOnsSvc__doPageShow() {
-    // Get the add-ons bundle object.
+    // Get the add-on bundle object.
     var addOnsID = this._widget.getAttribute("addonsid");
-    var addOnsBundleProperty =
-          this._widget.getAttribute("addonsbundleproperty");
+    var addOnBundleProperty =
+          this._widget.getAttribute("addonbundleproperty");
     var addOnsElem = document.getElementById(addOnsID);
-    var addOnBundle = addOnsElem[addOnsBundleProperty];
+    var addOnBundle = addOnsElem[addOnBundleProperty];
 
     // Start add-on bundle installation.
     this._addOnBundleInstallerElem.install(addOnBundle);

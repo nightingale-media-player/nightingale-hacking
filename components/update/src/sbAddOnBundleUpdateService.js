@@ -155,6 +155,7 @@ sbAddOnBundleUpdateService.prototype = {
   //   _checkedFirstRunHasCompleted
   //                            True if a check has been made for first-run
   //                            completion.
+  //   _firstRunHasCompleted    True if the first-run has been completed.
   //   _addOnBundleLoader       Add-on bundle loader object.
   //
 
@@ -170,6 +171,7 @@ sbAddOnBundleUpdateService.prototype = {
   _networkAvailable: false,
   _updateEnabled: false,
   _checkedFirstRunHasCompleted: false,
+  _firstRunHasCompleted: false,
   _addOnBundleLoader: null,
 
 
@@ -355,7 +357,8 @@ sbAddOnBundleUpdateService.prototype = {
     // completed.  This needs to be done as soon as possible so it occurs before
     // the first-run.
     if (!this._checkedFirstRunHasCompleted) {
-      if (!SBUtils.hasFirstRunCompleted())
+      this._firstRunHasCompleted = SBUtils.hasFirstRunCompleted();
+      if (!this._firstRunHasCompleted)
         this._updatePrevAppVersion();
       this._checkedFirstRunHasCompleted = true;
     }
@@ -366,6 +369,10 @@ sbAddOnBundleUpdateService.prototype = {
 
     // Initialization is now complete.
     this._isInitialized = true;
+
+    // Don't check for add-on bundle updates if the first-run has not completed.
+    if (!this._firstRunHasCompleted)
+      return;
 
     // Get the application services.
     var Application = Cc["@mozilla.org/fuel/application;1"]

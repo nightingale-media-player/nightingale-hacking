@@ -50,7 +50,12 @@
    *
    * Properties:
    *
-   *   addOnsBundle             First-run add-ons bundle object.
+   *   addOnBundle              First-run add-on bundle object.
+   *
+   * Methods:
+   *
+   *   saveSettings             Save the user settings in the first-run wizard
+   *                            page.
    *
    *****************************************************************************
    ************************************************************************* -->
@@ -117,10 +122,10 @@
        * Widget properties.
        -->
 
-      <!-- addOnsBundle -->
-      <property name="addOnsBundle" readonly="true">
+      <!-- addOnBundle -->
+      <property name="addOnBundle" readonly="true">
         <getter>
-          return this._widgetSvc.addOnsBundle;
+          return this._widgetSvc.addOnBundle;
         </getter>
       </property>
 
@@ -163,6 +168,15 @@
         if (this._widgetSvc)
             this._widgetSvc.finalize();
       ]]></destructor>
+
+
+      <!--
+       * Save the user settings in the first-run-wizard page.
+       -->
+
+      <method name="saveSettings"><body><![CDATA[
+        this._widgetSvc.saveSettings();
+      ]]></body></method>
 
 
       <!--

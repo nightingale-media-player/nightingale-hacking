@@ -177,7 +177,7 @@
                                   class="first-run-wizard-page"
                                   firstrunwizardpage="true"
                                   addonsid="first_run_add_ons"
-                                  addonsbundleproperty="addOnsBundle"/>
+                                  addonbundleproperty="addOnBundle"/>
   </wizardpage>
 
 

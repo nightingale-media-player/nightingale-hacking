@@ -46,6 +46,7 @@
 //------------------------------------------------------------------------------
 
 // Songbird imports.
+Components.utils.import("resource://app/jsmodules/AddOnUtils.jsm");
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 
 
@@ -64,23 +65,6 @@ if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
-
-
-//------------------------------------------------------------------------------
-//
-// First-run wizard add-ons widget services configuration.
-//
-//------------------------------------------------------------------------------
-
-/*
- * addOnsBundleDataLoadTimeout  Timeout in milliseconds for loading the add-ons
- *                              bundle data.
- */
-
-var firstRunAddOnsSvcCfg = {
-  addOnsBundleDataLoadTimeout: 15000,
-  addOnsBundleURLPref: "songbird.url.firstrun"
-};
 
 
 //------------------------------------------------------------------------------
@@ -108,35 +92,25 @@ firstRunAddOnsSvc.prototype = {
   //
   // Public widget services fields.
   //
-  //   addOnsBundle             Add-ons bundle object.
+  //   addOnBundle              Add-on bundle object.
   //
 
-  addOnsBundle: null,
+  addOnBundle: null,
 
 
   //
   // Internal widget services fields.
   //
-  //   _cfg                     Widget services configuration.
   //   _widget                  First-run wizard add-ons widget.
   //   _domEventListenerSet     Set of DOM event listeners.
-  //   _addOnsBundleRunning     True if the add-ons bundle services are running.
-  //   _addOnsBundleLoading     True if an add-ons bundle is being loaded.
-  //   _addOnsBundleDataLoadComplete
-  //                            True if loading of add-ons bundle data is
-  //                            complete.
-  //   _addOnsBundleDataLoadSucceeded
-  //                            True if loading of add-ons bundle data
-  //                            succeeded.
+  //   _addOnBundleRunning      True if the add-on bundle services are running.
+  //   _addOnBundleLoader       Add-on bundle loader object.
   //
 
-  _cfg: firstRunAddOnsSvcCfg,
   _widget: null,
   _domEventListenerSet: null,
-  _addOnsBundleRunning: false,
-  _addOnsBundleLoading: false,
-  _addOnsBundleDataLoadComplete: false,
-  _addOnsBundleDataLoadSucceeded: false,
+  _addOnBundleRunning: false,
+  _addOnBundleLoader: null,
 
 
   //----------------------------------------------------------------------------
@@ -159,8 +133,8 @@ firstRunAddOnsSvc.prototype = {
     // Create a DOM event listener set.
     this._domEventListenerSet = new DOMEventListenerSet();
 
-    // Initialize the add-ons bundle services.
-    this._addOnsBundleInitialize();
+    // Initialize the add-on bundle services.
+    this._addOnBundleInitialize();
 
     // Listen for page show events.
     func = function() { return _this._doPageShow(); };
@@ -192,12 +166,31 @@ firstRunAddOnsSvc.prototype = {
     }
     this._domEventListenerSet = null;
 
-    // Finalize the add-ons bundle services.
-    this._addOnsBundleFinalize();
+    // Finalize the add-on bundle services.
+    this._addOnBundleFinalize();
 
     // Clear object fields.
     this._widget = null;
-    this.addOnsBundle = null;
+    this.addOnBundle = null;
+  },
+
+
+  /**
+   * Save the user settings in the first run wizard page.
+   */
+
+  saveSettings: function firstRunAddOnsSvc_saveSettings() {
+    // Add all add-ons in bundle to recommended add-ons blacklist.
+    if (this.addOnBundle) {
+      var extensionCount = this.addOnBundle.bundleExtensionCount;
+      for (var i = 0; i < extensionCount; i++) {
+        // Get the bundle add-on ID.
+        var addOnID = this.addOnBundle.getExtensionAttribute(i, "id");
+
+        // Add add-on to blacklist.
+        AddOnBundleLoader.addAddOnToBlacklist(addOnID);
+      }
+    }
   },
 
 
@@ -212,8 +205,8 @@ firstRunAddOnsSvc.prototype = {
    */
 
   _doPageShow: function firstRunAddOnsSvc__doPageShow() {
-    // Start the add-ons bundle services.
-    this._addOnsBundleStart();
+    // Start the add-on bundle services.
+    this._addOnBundleStart();
 
     // Update the UI.
     this._update();
@@ -225,111 +218,73 @@ firstRunAddOnsSvc.prototype = {
    */
 
   _doConnectionReset: function firstRunAddOnsSvc__doConnectionReset() {
-    // Re-initialize the add-ons bundle services.
-    this._addOnsBundleFinalize();
-    this._addOnsBundleInitialize();
+    // Do nothing if the add-on bundle successfully loaded.
+    if (this.addOnBundle)
+      return;
 
-    // Continue the add-ons bundle services.  They shouldn't start running until
+    // Re-initialize the add-on bundle services.
+    this._addOnBundleFinalize();
+    this._addOnBundleInitialize();
+
+    // Continue the add-on bundle services.  They shouldn't start running until
     // after the first time the first-run add-ons page is shown.
-    this._addOnsBundleContinue();
+    this._addOnBundleContinue();
   },
 
 
   //----------------------------------------------------------------------------
   //
-  // sbIBundleDataListener services.
+  // Widget add-on bundle services.
   //
   //----------------------------------------------------------------------------
 
   /**
-   * \brief Bundle download completion callback
-   * This method is called upon completion of the bundle data download
-   * \param bundle An interface to the bundle manager that triggered the event
-   * \sa onError, sbIBundle
+   * Initialize the add-on bundle services.
    */
 
-  onDownloadComplete: function firstRunAddOnsSvc__onDownloadComplete(aBundle) {
-    this._addOnsBundleLoading = false;
-    this._addOnsBundleDataLoadComplete = true;
-    this._addOnsBundleDataLoadSucceeded = true;
-    this._getAddOns();
+  _addOnBundleInitialize:
+    function firstRunAddOnSvc__addOnBundleInitialize() {
+    // Initialize the add-on bundle fields.
+    this.addOnBundle = null;
+    this._addOnBundleLoader = null;
   },
 
 
   /**
-   * \brief Bundle download error callback
-   * This method is called upon error while downloading the bundle data
-   * \param bundle An interface to the bundle manager that triggered the event
-   * \sa onDownloadComplete, sbIBundle
+   * Finalize the add-on bundle services.
    */
 
-  onError: function firstRunAddOnsSvc__onError(aBundle) {
-    this._addOnsBundleLoading = false;
-    this._addOnsBundleDataLoadComplete = true;
-    this._addOnsBundleDataLoadSucceeded = false;
-    this._getAddOns();
-  },
+  _addOnBundleFinalize:
+    function firstRunAddOnSvc__addOnBundleFinalize() {
+    // Cancel the add-on bundle loader.
+    if (this._addOnBundleLoader) {
+      this._addOnBundleLoader.cancel();
+      this._addOnBundleLoader = null;
+    }
 
-
-  //----------------------------------------------------------------------------
-  //
-  // Widget add-ons bundle services.
-  //
-  //----------------------------------------------------------------------------
-
-  /**
-   * Initialize the add-ons bundle services.
-   */
-
-  _addOnsBundleInitialize:
-    function firstRunAddOnsSvc__addOnsBundleInitialize() {
-    // Initialize the add-ons bundle fields.
-    this.addOnsBundle = null;
-    this._addOnsBundleLoading = false;
-    this._addOnsBundleDataLoadComplete = false;
-    this._addOnsBundleDataLoadSucceeded = false;
+    // Clear add-on bundle object fields.
+    this.addOnBundle = null;
   },
 
 
   /**
-   * Finalize the add-ons bundle services.
+   * Start running the add-on bundle services.
    */
 
-  _addOnsBundleFinalize:
-    function firstRunAddOnsSvc__addOnsBundleFinalize() {
-    // Finalize add-ons bundle.
-    //XXXeps need way to cancel it
-    if (this.addOnsBundle)
-      this.addOnsBundle.removeBundleDataListener(this);
-
-    // Reset the add-ons bundle fields.
-    this._addOnsBundleLoading = false;
-    this._addOnsBundleDataLoadComplete = false;
-    this._addOnsBundleDataLoadSucceeded = false;
-
-    // Clear add-ons bundle object fields.
-    this.addOnsBundle = null;
+  _addOnBundleStart: function firstRunAddOnSvc__addOnBundleStart() {
+    // Mark the add-on bundle services running and continue.
+    this._addOnBundleRunning = true;
+    this._addOnBundleContinue();
   },
 
 
   /**
-   * Start running the add-ons bundle services.
+   * Continue running the add-on bundle services.
    */
 
-  _addOnsBundleStart: function firstRunAddOnsSvc__addOnsBundleStart() {
-    // Mark the add-ons bundle services running and continue.
-    this._addOnsBundleRunning = true;
-    this._addOnsBundleContinue();
-  },
-
-
-  /**
-   * Continue running the add-ons bundle services.
-   */
-
-  _addOnsBundleContinue: function firstRunAddOnsSvc__addOnsBundleContinue() {
+  _addOnBundleContinue: function firstRunAddOnSvc__addOnBundleContinue() {
     // Do nothing if not running.
-    if (!this._addOnsBundleRunning)
+    if (!this._addOnBundleRunning)
       return;
 
     // Get the add-ons.
@@ -342,38 +297,34 @@ firstRunAddOnsSvc.prototype = {
    */
 
   _getAddOns: function firstRunAddOnsSvc__getAddOns() {
-    // Start loading the add-ons bundle data.
-    if (!this._addOnsBundleDataLoadComplete && !this._addOnsBundleLoading) {
-      // Set up the add-ons bundle for loading.
-      this.addOnsBundle = Cc["@songbirdnest.com/Songbird/Bundle;1"]
-                            .createInstance(Ci.sbIBundle);
-      this.addOnsBundle.bundleId = "firstrun";
-      this.addOnsBundle.bundleURL = Application.prefs.getValue
-                                      (this._cfg.addOnsBundleURLPref,
-                                       "default");
-      this.addOnsBundle.addBundleDataListener(this);
+    // Start loading the add-on bundle.
+    if (!this._addOnBundleLoader) {
+      // Add all installed add-ons to the blacklist.  This prevents an add-on
+      // from being presented if it was previously installed and then
+      // uninstalled.
+      AddOnBundleLoader.addInstalledAddOnsToBlacklist();
 
-      // Start loading the add-ons bundle data.
-      try {
-        this.addOnsBundle.retrieveBundleData
-                            (this._cfg.addOnsBundleDataLoadTimeout);
-        this._addOnsBundleLoading = true;
-      } catch (ex) {
-        // Report the exception as an error.
-        Components.utils.reportError(ex);
+      // Create an add-on bundle loader that filters out installed and
+      // blacklisted add-ons.
+      this._addOnBundleLoader = new AddOnBundleLoader();
+      this._addOnBundleLoader.filterInstalledAddOns = true;
+      this._addOnBundleLoader.filterBlacklistedAddOns = true;
 
-        // Indicate that the add-ons bundle loading failed.
-        this._addOnsBundleLoading = false;
-        this._addOnsBundleDataLoadComplete = true;
-        this._addOnsBundleDataLoadSucceeded = false;
-      }
+      // Start the add-on bundle loader.
+      var _this = this;
+      var func = function() { _this._getAddOns(); };
+      this._addOnBundleLoader.start(func);
     }
 
-    // Set the add-on bundle object for the add-on bundle element.
-    if (this._addOnsBundleDataLoadComplete &&
-        this._addOnsBundleDataLoadSucceeded) {
+    // Get the add-on bundle.
+    if (this._addOnBundleLoader.complete &&
+        Components.isSuccessCode(this._addOnBundleLoader.result)) {
+      // Set add-on bundle property for the first-run add-on bundle widget
+      this.addOnBundle = this._addOnBundleLoader.addOnBundle;
+
+      // Set the add-on bundle object for the add-on bundle element.
       var addOnBundleElem = this._getElement("add_on_bundle");
-      addOnBundleElem.addOnBundle = this.addOnsBundle;
+      addOnBundleElem.addOnBundle = this._addOnBundleLoader.addOnBundle;
     }
 
     // Update the UI.
@@ -392,24 +343,23 @@ firstRunAddOnsSvc.prototype = {
    */
 
   _update: function firstRunAddOnsSvc__update() {
-    // Determine the panel to select in the status deck.  Default to the no
-    // status panel.
-    var selectedPanel = this._getElement("no_status");
-
-    // If loading the add-ons bundle, select the loading status panel.
-    if (this._addOnsBundleLoading) {
+    // If not loading the add-on bundle, select the no status panel.
+    var selectedPanel;
+    if (!this._addOnBundleLoader) {
+      selectedPanel = this._getElement("no_status");
+    }
+    // Otherwise, if the add-on bundle loading has not completed, select the
+    // loading status panel.
+    else if (!this._addOnBundleLoader.complete) {
       selectedPanel = this._getElement("add_ons_loading_status");
     }
-    // Otherwise, if the add-ons bundle loading completed with success, select
+    // Otherwise, if the add-on bundle loading completed with success, select
     // the add-on bundle panel.
-    else if (this._addOnsBundleDataLoadComplete &&
-             this._addOnsBundleDataLoadSucceeded) {
+    else if (Components.isSuccessCode(this._addOnBundleLoader.result)) {
       selectedPanel = this._getElement("add_on_bundle");
     }
-    // Otherwise, if the add-ons bundle loading completed with failure, select
-    // the load failed status panel.
-    else if (this._addOnsBundleDataLoadComplete &&
-             !this._addOnsBundleDataLoadSucceeded) {
+    // Otherwise, select the load failed status panel.
+    else {
       selectedPanel = this._getElement("add_ons_load_failed_status");
     }
 
@@ -420,8 +370,9 @@ firstRunAddOnsSvc.prototype = {
     // Handle any connection errors.
     //XXXeps ideally, we wouldn't handle non-connection errors as connection
     //XXXeps errors.
-    if (this._addOnsBundleDataLoadComplete &&
-        !this._addOnsBundleDataLoadSucceeded) {
+    if (this._addOnBundleLoader &&
+        this._addOnBundleLoader.complete &&
+        !Components.isSuccessCode(this._addOnBundleLoader.result)) {
       firstRunWizard.handleConnectionError();
     }
   },
