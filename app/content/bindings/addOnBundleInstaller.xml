@@ -55,6 +55,8 @@
    * Properties:
    *
    *   restartRequired          An application restart is required.
+   *   errorCount               Count of the number of add-on installation
+   *                            errors.
    *
    * Methods:
    *
@@ -78,18 +80,44 @@
                 class="sb-add-on-bundle-installer-box"
                 flex="1">
 
-        <!-- Current add-on box. -->
-        <xul:hbox anonid="current_add_on_box"
-                  class="sb-add-on-bundle-installer-current-add-on-box">
-          <xul:label anonid="current_add_on_label"
-                     class="sb-add-on-bundle-installer-current-add-on-label"/>
-          <xul:label anonid="total_progress_label"
-                     class="sb-add-on-bundle-installer-total-progress-label"/>
-        </xul:hbox>
+        <xul:deck anonid="status_deck">
 
-        <!-- Current add-on progress meter. -->
-        <xul:progressmeter anonid="progressmeter"
-                           class="sb-add-on-bundle-installer-progressmeter"/>
+          <xul:vbox anonid="progress_panel"
+                    class="sb-add-on-bundle-installer-progress-panel">
+
+            <!-- Current add-on box. -->
+            <xul:hbox anonid="current_add_on_box"
+                      class="sb-add-on-bundle-installer-current-add-on-box">
+              <xul:label anonid="current_add_on_label"
+                         class="sb-add-on-bundle-installer-current-add-on-label"/>
+              <xul:label anonid="total_progress_label"
+                         class="sb-add-on-bundle-installer-total-progress-label"/>
+            </xul:hbox>
+
+            <!-- Current add-on progress meter. -->
+            <xul:progressmeter anonid="progressmeter"
+                               class="sb-add-on-bundle-installer-progressmeter"/>
+          </xul:vbox>
+
+          <xul:vbox anonid="error_panel"
+                    class="sb-add-on-bundle-installer-error-panel">
+
+            <!-- Error description. -->
+            <xul:description anonid="error_description_1"/>
+            <xul:description anonid="error_description_2"/>
+
+            <!-- Error list. -->
+            <xul:sb-closable-box
+              anonid="error_box"
+              class="sb-add-on-bundle-installer-error-box"
+              label="&add_on_bundle_installer.error_box.label;">
+              <xul:listbox anonid="error_listbox"
+                           class="sb-add-on-bundle-installer-error-listbox"/>
+            </xul:sb-closable-box>
+
+          </xul:vbox>
+
+        </xul:deck>
 
       </xul:vbox>
 

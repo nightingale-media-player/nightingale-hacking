@@ -39,7 +39,8 @@
 
 EXPORTED_SYMBOLS = [ "SBString",
                      "SBFormattedString",
-                     "SBFormattedCountString" ];
+                     "SBFormattedCountString",
+                     "SBStringBrandShortName" ];
 
 
 //------------------------------------------------------------------------------
@@ -60,6 +61,7 @@ const Cr = Components.results
 //------------------------------------------------------------------------------
 
 var gSBStringDefaultBundle = null;
+var gSBStringBrandBundle = null;
 
 
 //------------------------------------------------------------------------------
@@ -135,6 +137,8 @@ function SBFormattedString(aKey, aParams, aStringBundle) {
  * formatted string using the plural string key and count.
  *   The singular string key is the key base with the suffix "_1".  The plural
  * string key is the key base with the suffix "_n".
+ *   Use the format parameters specified by aParams.  If aParams is not
+ * specified, use the count as the single format parameter.
  *   Use the string bundle specified by aStringBundle.  If the string bundle is
  * not specified, use the main Songbird string bundle.
  *   If the string cannot be found, return the default string specified by
@@ -142,15 +146,27 @@ function SBFormattedString(aKey, aParams, aStringBundle) {
  *
  * \param aKeyBase              Localized string key base.
  * \param aCount                Count value for string.
+ * \param aParams               Format params array.
  * \param aDefault              Optional default string.
  * \param aStringBundle         Optional string bundle.
  *
  * \return                      Localized string.
  */
 
-function SBFormattedCountString(aKeyBase, aCount, aDefault, aStringBundle) {
+function SBFormattedCountString(aKeyBase,
+                                aCount,
+                                aParams,
+                                aDefault,
+                                aStringBundle) {
   // Get the string bundle.
   var stringBundle = aStringBundle ? aStringBundle : SBStringGetDefaultBundle();
+
+  // Get the format parameters.
+  var params;
+  if (aParams)
+    params = aParams;
+  else
+    params = [ aCount ];
 
   // Produce the string key.
   var key = aKeyBase;
@@ -164,10 +180,21 @@ function SBFormattedCountString(aKeyBase, aCount, aDefault, aStringBundle) {
 
   // Try formatting the string from the bundle.
   try {
-    value = stringBundle.formatStringFromName(key, [ aCount ], 1);
+    value = stringBundle.formatStringFromName(key, params, params.length);
   } catch(ex) {}
 
   return value;
+}
+
+
+/**
+ * Return the Songbird brand short name localized string.
+ *
+ * \return Songbird brand short name.
+ */
+
+function SBStringBrandShortName() {
+  return SBString("brandShortName", "Songbird", SBStringGetBrandBundle());
 }
 
 
@@ -192,5 +219,23 @@ function SBStringGetDefaultBundle() {
   }
 
   return gSBStringDefaultBundle;
+}
+
+
+/**
+ * Return the Songbird branding localized string bundle.
+ *
+ * \return Songbird branding localized string bundle.
+ */
+
+function SBStringGetBrandBundle() {
+  if (!gSBStringBrandBundle) {
+    gSBStringBrandBundle =
+      Cc["@mozilla.org/intl/stringbundle;1"]
+        .getService(Ci.nsIStringBundleService)
+        .createBundle("chrome://branding/locale/brand.properties");
+  }
+
+  return gSBStringBrandBundle;
 }
 

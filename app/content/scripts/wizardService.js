@@ -279,6 +279,14 @@ sbWizardPageSvc.prototype = {
     // Listen for page show events.
     func = function() { return _this._doPageShow(); };
     this._domEventListenerSet.add(this._widget, "pageshow", func, false);
+
+    // Listen for button related attribute modified events.
+    func = function(aEvent) { return _this._doButtonDOMAttrModified(aEvent); };
+    var buttonAttributesElem = this._getElement("button_attributes");
+    this._domEventListenerSet.add(buttonAttributesElem,
+                                  "DOMAttrModified",
+                                  func,
+                                  false);
   },
 
 
@@ -315,6 +323,19 @@ sbWizardPageSvc.prototype = {
   },
 
 
+  /**
+   * Handle the button DOM attribute modified event specified by aEvent.
+   *
+   * \param aEvent              DOM attribute modified event.
+   */
+
+  _doButtonDOMAttrModified:
+    function sbWizardPageSvc__doButtonDOMAttrModified(aEvent) {
+    // Update the wizard buttons.
+    this._updateButtons();
+  },
+
+
   //----------------------------------------------------------------------------
   //
   // Internal widget services.
@@ -334,21 +355,27 @@ sbWizardPageSvc.prototype = {
     var hideCancelButton = currentPage.getAttribute("hidecancel") == "true";
     var hideNextButton = currentPage.getAttribute("hidenext") == "true";
     var hideFinishButton = currentPage.getAttribute("hidefinish") == "true";
+    var showBackButton = currentPage.getAttribute("showback") == "true";
+    var showCancelButton = currentPage.getAttribute("showcancel") == "true";
+    var showNextButton = currentPage.getAttribute("shownext") == "true";
+    var showFinishButton = currentPage.getAttribute("showfinish") == "true";
     var showExtra1Button = currentPage.getAttribute("showextra1") == "true";
+    var showExtra2Button = currentPage.getAttribute("showextra2") == "true";
 
-    // Always hide navigation buttons on post-finish pages.
+    // Hide navigation buttons by default on post-finish pages.
     if (this._wizardElem.postFinish) {
       hideBackButton = true;
       hideNextButton = true;
       hideFinishButton = true;
     }
 
-    // Update the buttons.
-    this._setHideButton("back", hideBackButton);
-    this._setHideButton("cancel", hideCancelButton);
-    this._setHideButton("next", hideNextButton);
-    this._setHideButton("finish", hideFinishButton);
-    this._setShowButton("extra1", showExtra1Button);
+    // Update the buttons.  Hide extra buttons by default.
+    this._showHideButton("back", showBackButton, hideBackButton);
+    this._showHideButton("cancel", showCancelButton, hideCancelButton);
+    this._showHideButton("next", showNextButton, hideNextButton);
+    this._showHideButton("finish", showFinishButton, hideFinishButton);
+    this._showHideButton("extra1", showExtra1Button, true);
+    this._showHideButton("extra2", showExtra2Button, true);
 
     // Focus the next or finish buttons unless they're disabled or hidden.
     var finishButton = this._wizardElem.getButton("finish");
@@ -365,37 +392,46 @@ sbWizardPageSvc.prototype = {
 
 
   /**
-   * Set the wizard button specified by aButtonID to be hidden as specified by
-   * aHide.
-   *
-   * \param aButtonID           ID of button to set hidden.
-   * \param aHide               If true, button should be hidden.
+   * Set the wizard buttons specified by aButtonID to be shown or hidden as
+   * specified by aShow and aHide.  aShow takes precedence over aHide.
    */
 
-  _setHideButton: function sbWizardPageSvc__setHideButton(aButtonID, aHide) {
-    // Hide the button if specified to do so.  Use a "hidewizardbutton"
-    // attribute with CSS to avoid conflicts with the wizard widget's use of the
-    // button "hidden" attribute.
+  _showHideButton: function sbWizardPageSvc__showHideButton(aButtonID,
+                                                            aShow,
+                                                            aHide) {
+    // Get the button element.
     var button = this._wizardElem.getButton(aButtonID);
-    if (aHide)
-      button.setAttribute("hidewizardbutton", "true");
-    else
+
+    // If button is set to be shown, force it to be visible.
+    // If button is set to be hidden, force it to be hidden.  Use an attribute
+    // and CSS to hide in order to let the Mozilla wizard widget implementation
+    // control the hidden attribute.
+    // If button is not set to be shown or hidden, remove the hidden attribute
+    // and allow the Mozilla wizard widget to control the show/hide state.
+    if (aShow) {
       button.removeAttribute("hidewizardbutton");
+      button.hidden = false;
+    } else if (aHide) {
+      button.setAttribute("hidewizardbutton", "true");
+    } else {
+      button.removeAttribute("hidewizardbutton");
+    }
   },
 
 
   /**
-   * Set the wizard button specified by aButtonID to be shown as specified by
-   * aShow.
+   * \brief Return the XUL element with the ID specified by aElementID.  Use the
+   *        element "anonid" attribute as the ID.
    *
-   * \param aButtonID           ID of button to set show.
-   * \param aShow               If true, button should be shown.
+   * \param aElementID          ID of element to get.
+   *
+   * \return Element.
    */
 
-  _setShowButton: function firstRunWizard__setShowButton(aButtonID, aShow) {
-    // Show button if specified to do so.
-    var button = this._wizardElem.getButton(aButtonID);
-    button.hidden = !aShow;
+  _getElement: function sbWizardPageSvc__getElement(aElementID) {
+    return document.getAnonymousElementByAttribute(this._widget,
+                                                   "anonid",
+                                                   aElementID);
   }
 }
 

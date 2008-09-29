@@ -526,3 +526,6 @@
 <!-- Recommended add-ons update dialog entities. -->
 <!ENTITY recommended_add_ons.title        "&brandShortName; Setup">
 
+<!-- Add-on bundle installer properties. -->
+<!ENTITY add_on_bundle_installer.error_box.label    "Details">
+

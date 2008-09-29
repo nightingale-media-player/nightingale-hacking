@@ -200,10 +200,15 @@
    * Attributes:
    *
    *   hideback                 If true, hide the back button.
+   *   showback                 If true, show the back button.
    *   hidecancel               If true, hide the cancel button.
+   *   showcancel               If true, show the cancel button.
    *   hidenext                 If true, hide the next button.
+   *   shownext                 If true, show the next button.
    *   hidefinish               If true, hide the finish button.
+   *   showfinish               If true, show the finish button.
    *   showextra1               If true, show the extra1 button.
+   *   showextra2               If true, show the extra2 button.
    *   postfinish               ID of page to show after wizard is finished.
    *
    *****************************************************************************
@@ -211,6 +216,25 @@
 
   <binding id="sb-wizard-page"
            extends="chrome://global/content/bindings/wizard.xml#wizardpage">
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <!-- Wizard page contents. -->
+      <children/>
+
+      <!-- Element containing button related attributes -->
+      <!-- for use with DOM attribute changed events.   -->
+      <xul:box anonid="button_attributes"
+               xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
+
+    </content>
+
 
     <!-- ***********************************************************************
      *

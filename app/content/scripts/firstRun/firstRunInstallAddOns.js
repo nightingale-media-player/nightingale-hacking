@@ -97,6 +97,7 @@ firstRunInstallAddOnsSvc.prototype = {
   //   _widget                  First-run wizard install add-ons widget.
   //   _domEventListenerSet     Set of DOM event listeners.
   //   _wizardElem              First-run wizard element.
+  //   _wizardPageElem          First-run install add-ons wizard page element.
   //   _addOnBundleInstallerElem
   //                            Add-on bundle installer element.
   //
@@ -104,6 +105,7 @@ firstRunInstallAddOnsSvc.prototype = {
   _widget: null,
   _domEventListenerSet: null,
   _wizardElem: null,
+  _wizardPageElem: null,
   _addOnBundleInstallerElem: null,
 
 
@@ -125,8 +127,8 @@ firstRunInstallAddOnsSvc.prototype = {
     this._domEventListenerSet = new DOMEventListenerSet();
 
     // Get the first-run wizard and wizard page elements.
-    var wizardPageElem = this._widget.parentNode;
-    this._wizardElem = wizardPageElem.parentNode;
+    this._wizardPageElem = this._widget.parentNode;
+    this._wizardElem = this._wizardPageElem.parentNode;
 
     // Get the add-on bundle installer element.
     this._addOnBundleInstallerElem =
@@ -134,12 +136,12 @@ firstRunInstallAddOnsSvc.prototype = {
 
     // Listen for page show and hide events.
     func = function() { _this._doPageShow(); };
-    this._domEventListenerSet.add(wizardPageElem,
+    this._domEventListenerSet.add(this._wizardPageElem,
                                   "pageshow",
                                   func,
                                   false);
     func = function() { _this._doPageHide(); };
-    this._domEventListenerSet.add(wizardPageElem,
+    this._domEventListenerSet.add(this._wizardPageElem,
                                   "pagehide",
                                   func,
                                   false);
@@ -220,9 +222,21 @@ firstRunInstallAddOnsSvc.prototype = {
     if (this._addOnBundleInstallerElem.restartRequired)
       firstRunWizard.restartApp = true;
 
-    // Advance wizard.
-    this._wizardElem.canAdvance = true;
-    this._wizardElem.advance();
+    // If installation completed successfully, advance wizard.  Otherwise, allow
+    // user to view errors.
+    if (this._addOnBundleInstallerElem.errorCount == 0) {
+      // Advance wizard.
+      this._wizardElem.canAdvance = true;
+      this._wizardElem.advance();
+    } else {
+      // Change the next button to an OK button.
+      var okButton = this._wizardElem.getButton("next");
+      okButton.label = SBString("first_run.ok");
+
+      // Hide the cancel button and show the OK button.
+      this._wizardPageElem.setAttribute("hidecancel", "true");
+      this._wizardPageElem.setAttribute("shownext", "true");
+    }
   },
 
 

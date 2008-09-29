@@ -183,9 +183,23 @@ var recommendedAddOnsWizard = {
     // Set up for application restart if required.
     this._restartRequired = this._addOnBundleInstallerElem.restartRequired;
 
-    // Advance wizard.
-    this._wizardElem.canAdvance = true;
-    this._wizardElem.advance();
+    // If installation completed successfully, advance wizard.  Otherwise, allow
+    // user to view errors.
+    if (this._addOnBundleInstallerElem.errorCount == 0) {
+      // Advance wizard.
+      this._wizardElem.canAdvance = true;
+      this._wizardElem.advance();
+    } else {
+      // Change the next button to an OK button.
+      var okButton = this._wizardElem.getButton("next");
+      okButton.label = SBString("first_run.ok");
+
+      // Hide the cancel button and show the OK button.
+      var wizardPageElem =
+            document.getElementById("recommended_add_ons_installation_page");
+      wizardPageElem.setAttribute("hidecancel", "true");
+      wizardPageElem.setAttribute("shownext", "true");
+    }
   },
 
 

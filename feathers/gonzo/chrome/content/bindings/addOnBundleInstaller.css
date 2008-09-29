@@ -48,3 +48,8 @@ Imported by bindings.css or directly into feathers.
   text-align: right;
 }
 
+/* Installation error listbox style. */
+.sb-add-on-bundle-installer-error-listbox {
+  -moz-box-flex: 1;
+}
+

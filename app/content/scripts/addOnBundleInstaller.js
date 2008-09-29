@@ -92,19 +92,17 @@ addOnBundleInstallerSvc.prototype = {
   //
   //   _widget                  First-run wizard add-ons widget.
   //   _addOnBundle             Add-on bundle object.
-  //   _addOnsInstallIndexList  List of add-ons to install.
-  //   _nextAddOnToInstall      Index within _addOnsInstallIndexList of next
-  //                            add-on to install.
+  //   _addOnInstallList        List of add-ons to install.
+  //   _nextAddOnToInstall      Index within _addOnInstallList of next add-on to
+  //                            install.
   //   _addOnFileDownloader     File downloader for add-on.
-  //   _addOnFileList           List of downloaded add-ons.
   //
 
   _widget: null,
   _addOnBundle: null,
-  _addOnsInstallIndexList: null,
+  _addOnInstallList: null,
   _nextAddOnToInstall: 0,
   _addOnFileDownloader: null,
-  _addOnFileList: null,
 
 
   //----------------------------------------------------------------------------
@@ -126,10 +124,17 @@ addOnBundleInstallerSvc.prototype = {
    */
 
   finalize: function addOnBundleInstallerSvc_finalize() {
+    // Finalize the add-on file downloader.
+    if (this._addOnFileDownloader) {
+      this._addOnFileDownloader.listener = null;
+      this._addOnFileDownloader.cancel();
+      this._addOnFileDownloader = null;
+    }
+
     // Clear object fields.
     this._widget = null;
     this._addOnBundle = null;
-    this._addOnFileList = null;
+    this._addOnInstallList = null;
   },
 
 
@@ -143,15 +148,14 @@ addOnBundleInstallerSvc.prototype = {
     // Set the add-on bundle to install.
     this._addOnBundle = aAddOnBundle;
 
-    // Initialize add-on file list.
-    this._addOnFileList = [];
-
     // Get the list of add-ons to install.
-    this._addOnsInstallIndexList = [];
+    this._addOnInstallList = [];
     var extensionCount = this._addOnBundle.bundleExtensionCount;
     for (var i = 0; i < extensionCount; i++) {
-      if (this._addOnBundle.getExtensionInstallFlag(i))
-        this._addOnsInstallIndexList.push(i);
+      if (this._addOnBundle.getExtensionInstallFlag(i)) {
+        var installInfo = { index: i, failed: false };
+        this._addOnInstallList.push(installInfo);
+      }
     }
 
     // Start downloading the add-ons.
@@ -214,7 +218,7 @@ addOnBundleInstallerSvc.prototype = {
   _update: function addOnBundleInstallerSvc__update() {
     // Get the current add-on index.
     var currentAddOnIndex =
-          this._addOnsInstallIndexList[this._nextAddOnToInstall];
+          this._addOnInstallList[this._nextAddOnToInstall].index;
 
     // Set the current add-on name.
     var currentAddOnLabelElem = this._getElement("current_add_on_label");
@@ -226,7 +230,7 @@ addOnBundleInstallerSvc.prototype = {
     totalProgressLabelElem.value =
       SBFormattedString("add_on_bundle_installer.progress_all",
                         [ this._nextAddOnToInstall + 1,
-                          this._addOnsInstallIndexList.length ]);
+                          this._addOnInstallList.length ]);
 
     // Set the current add-on download progress meter.
     var progressMeterElem = this._getElement("progressmeter");
@@ -244,14 +248,14 @@ addOnBundleInstallerSvc.prototype = {
   _downloadNextAddOnStart:
     function addOnBundleInstallerSvc__downloadNextAddOnStart() {
     // If all add-ons have been downloaded, install them all.
-    if (this._nextAddOnToInstall == this._addOnsInstallIndexList.length) {
+    if (this._nextAddOnToInstall == this._addOnInstallList.length) {
       this._installAllAddOns();
       return;
     }
 
     // Get the index of the next add-on to install.
     var nextAddOnIndex =
-          this._addOnsInstallIndexList[this._nextAddOnToInstall];
+          this._addOnInstallList[this._nextAddOnToInstall].index;
 
     // Create an add-on file downloader.
     this._addOnFileDownloader =
@@ -276,9 +280,12 @@ addOnBundleInstallerSvc.prototype = {
 
   _downloadNextAddOnComplete:
     function addOnBundleInstallerSvc__downloadNextAddOnComplete() {
-    // Add downloaded file to the add-on file list.
+    // Add downloaded file to the add-on install list.
+    var installInfo = this._addOnInstallList[this._nextAddOnToInstall];
     if (this._addOnFileDownloader.succeeded)
-        this._addOnFileList.push(this._addOnFileDownloader.destinationFile);
+      installInfo.file = this._addOnFileDownloader.destinationFile;
+    else
+      installInfo.failed = true;
     this._addOnFileDownloader.listener = null;
     this._addOnFileDownloader = null;
 
@@ -294,9 +301,14 @@ addOnBundleInstallerSvc.prototype = {
 
   _installAllAddOns: function addOnBundleInstallerSvc__installAddOns() {
     // Install all of the add-ons.
-    for (var i = 0; i < this._addOnFileList.length; i++) {
-      this._installAddOnFile(this._addOnFileList[i]);
+    for (var i = 0; i < this._addOnInstallList.length; i++) {
+      var installInfo = this._addOnInstallList[i];
+      if (!installInfo.failed)
+        this._installAddOnFile(installInfo);
     }
+
+    // Present any add-on install errors.
+    this._widget.errorCount = this._presentErrors();
 
     // Post an install completion event.
     var event = document.createEvent("Events");
@@ -306,27 +318,94 @@ addOnBundleInstallerSvc.prototype = {
 
 
   /**
-   * Install the add-on from the file specified by aAddOnFile.
+   * Install the add-on specified by aInstallInfo.
    *
-   * \param aAddOnFile          Add-on file to install.
+   * \param aInstallInfo        Add-on installation information.
    */
 
   _installAddOnFile:
-    function addOnBundleInstallerSvc__installAddOnFile(aAddOnFile) {
+    function addOnBundleInstallerSvc__installAddOnFile(aInstallInfo) {
+    // Ensure an add-on file was downloaded.
+    if (!aInstallInfo.file) {
+      aInstallInfo.failed = true;
+      return;
+    }
+
     // Get the extension manager.
     var extensionManager = Cc["@mozilla.org/extensions/manager;1"]
                              .getService(Ci.nsIExtensionManager);
 
     // Install the add-on.
     try {
-      extensionManager.installItemFromFile(aAddOnFile, "app-profile");
+      extensionManager.installItemFromFile(aInstallInfo.file, "app-profile");
       this.restartRequired = true;
     } catch (ex) {
+      // Report exception.
       Cu.reportError("Error installing add-on: " + ex);
+
+      // Add-on install failed.
+      aInstallInfo.failed = true;
     }
 
     // Remove the add-on file.
-    aAddOnFile.remove(false);
+    aInstallInfo.file.remove(false);
+  },
+
+
+  /**
+   * Present any add-on installation errors and return the number of errors.
+   *
+   * \return                    Number of add-on installation errors.
+   */
+
+  _presentErrors: function addOnBundleInstallerSvc__presentErrors() {
+    var errorCount = 0;
+
+    // Fill the error listbox with the failed add-ons.
+    var errorListBoxElem = this._getElement("error_listbox");
+    for (var i = 0; i < this._addOnInstallList.length; i++) {
+      // Get add-on install info and skip if it did not fail to install.
+      var installInfo = this._addOnInstallList[i];
+      if (!installInfo.failed)
+        continue;
+
+      // One more error.
+      errorCount++;
+
+      // Get the add-on info.
+      var addOnBundleIndex = installInfo.index;
+      var addOnName = this._addOnBundle.getExtensionAttribute(addOnBundleIndex,
+                                                              "name");
+      errorListBoxElem.appendItem(addOnName);
+    }
+
+    // Present the error panel if any errors occurred.
+    if (errorCount > 0) {
+      // Set the error description line 1.
+      var description = SBFormattedCountString
+                          ("add_on_bundle_installer.error.description1",
+                           errorCount);
+      var descriptionTextNode = document.createTextNode(description);
+      var errorDescriptionElem = this._getElement("error_description_1");
+      errorDescriptionElem.appendChild(descriptionTextNode);
+
+      // Set the error description line 2.
+      description = SBFormattedCountString
+                      ("add_on_bundle_installer.error.description2",
+                       errorCount,
+                       [ SBStringBrandShortName() ]);
+      descriptionTextNode = document.createTextNode(description);
+      errorDescriptionElem = this._getElement("error_description_2");
+      errorDescriptionElem.appendChild(descriptionTextNode);
+
+      // Show the error panel.
+      var statusDeckElem = this._getElement("status_deck");
+      var errorPanelElem = this._getElement("error_panel");
+      statusDeckElem.selectedPanel = errorPanelElem;
+    }
+
+    // Return results.
+    return errorCount;
   },
 
 
