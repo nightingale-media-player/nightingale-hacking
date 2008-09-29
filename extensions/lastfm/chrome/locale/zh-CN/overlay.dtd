@@ -1,0 +1,12 @@
+<!ENTITY lastfm.menu.login "登录Last.fm...">
+<!ENTITY lastfm.menu.logout "退出Last.fm">
+<!ENTITY lastfm.menu.enable "允许擦除">
+<!ENTITY lastfm.signup.label "注册表Last.fm">
+<!ENTITY lastfm.login.button "登入">
+<!ENTITY lastfm.loggingin.label "登入中">
+<!ENTITY lastfm.cancel.button "取消">
+<!ENTITY lastfm.profile.caption "文件">
+<!ENTITY lastfm.profile.numtracks.before "lastfm.profile.numtracks.before">
+<!ENTITY lastfm.profile.numtracks.after "tracks scrobbled">
+<!ENTITY lastfm.profile.scrobble "Scrobble my tracks">
+<!ENTITY lastfm.profile.logout "退出">

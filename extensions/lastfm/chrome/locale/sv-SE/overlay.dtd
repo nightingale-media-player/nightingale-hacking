@@ -1,0 +1,12 @@
+<!ENTITY lastfm.menu.login "Logga in till Last.fm...">
+<!ENTITY lastfm.menu.logout "Logga ut från Last.fm">
+<!ENTITY lastfm.menu.enable "Aktivera Scrobbling">
+<!ENTITY lastfm.signup.label "Registrera dig på Last.fm">
+<!ENTITY lastfm.login.button "Logga in">
+<!ENTITY lastfm.loggingin.label "Loggar in...">
+<!ENTITY lastfm.cancel.button "Avbryt">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.numtracks.before ".">
+<!ENTITY lastfm.profile.numtracks.after "scrobblade låtar">
+<!ENTITY lastfm.profile.scrobble "Scrobbla mina låtar">
+<!ENTITY lastfm.profile.logout "Logga ut">

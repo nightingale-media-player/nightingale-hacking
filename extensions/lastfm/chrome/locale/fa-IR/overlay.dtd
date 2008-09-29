@@ -1,0 +1,12 @@
+<!ENTITY lastfm.menu.login "ورود به سایت">
+<!ENTITY lastfm.menu.logout "خروج از سایت">
+<!ENTITY lastfm.menu.enable "فعال سازی ثبت موسیقی">
+<!ENTITY lastfm.signup.label "ثبت نام در سایت">
+<!ENTITY lastfm.login.button "ورود">
+<!ENTITY lastfm.loggingin.label "...در حال ورود">
+<!ENTITY lastfm.cancel.button "لغو">
+<!ENTITY lastfm.profile.caption "پروفایل">
+<!ENTITY lastfm.profile.numtracks.before " ">
+<!ENTITY lastfm.profile.numtracks.after "آهنگ ثبت شده">
+<!ENTITY lastfm.profile.scrobble "آهنگ های مرا ثبت کن">
+<!ENTITY lastfm.profile.logout "خروج">

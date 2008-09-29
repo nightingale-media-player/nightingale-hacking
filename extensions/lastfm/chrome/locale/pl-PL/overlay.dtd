@@ -1,0 +1,12 @@
+<!ENTITY lastfm.menu.login "Zaloguj się do Last.fm...">
+<!ENTITY lastfm.menu.logout "Wyloguj się z Last.fm">
+<!ENTITY lastfm.menu.enable "Włącz scrobbling">
+<!ENTITY lastfm.signup.label "Zarejestruj się na Last.fm">
+<!ENTITY lastfm.login.button "Zaloguj się">
+<!ENTITY lastfm.loggingin.label "Logowanie się...">
+<!ENTITY lastfm.cancel.button "Anuluj">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.numtracks.before "">
+<!ENTITY lastfm.profile.numtracks.after "utworów zostało poddanych scrobblingowi">
+<!ENTITY lastfm.profile.scrobble "Scrobbluj utwory, których słucham">
+<!ENTITY lastfm.profile.logout "Wyloguj się">

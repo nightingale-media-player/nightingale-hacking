@@ -1,0 +1,12 @@
+<!ENTITY lastfm.menu.login "Entrando en Last.fm ...">
+<!ENTITY lastfm.menu.logout "Salir de Last.fm">
+<!ENTITY lastfm.menu.enable "Habilitar notificación">
+<!ENTITY lastfm.signup.label "Registrate en Last.fm">
+<!ENTITY lastfm.login.button "Entrar">
+<!ENTITY lastfm.loggingin.label "Entrando">
+<!ENTITY lastfm.cancel.button "Cancelar">
+<!ENTITY lastfm.profile.caption "Perfil">
+<!ENTITY lastfm.profile.numtracks.before "Sin texto">
+<!ENTITY lastfm.profile.numtracks.after "Cancion notificada">
+<!ENTITY lastfm.profile.scrobble "Notificar mis canciones">
+<!ENTITY lastfm.profile.logout "Salir">
