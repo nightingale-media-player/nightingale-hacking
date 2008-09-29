@@ -1191,7 +1191,7 @@ Component.prototype =
 
         /* Check if the track media is supported and */
         /* add it to the iTunes library signature.   */
-        supported = this.mTypeSniffer.isValidMediaURL(url);
+        supported = this.mTypeSniffer.isValidMediaURL(trackURI);
         if (!supported)
             this.mUnsupportedMediaCount++;
         this.mITunesLibSig.update("supported" + supported);
