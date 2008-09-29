@@ -140,6 +140,7 @@ firstRunImportMediaSvc.prototype = {
 
   saveSettings: function firstRunImportMediaSvc_saveSettings() {
     // Dispatch processing of the import settings radio group.
+    var metricsImportType = "none";
     var importRadioGroupElem = this._getElement("import_radiogroup");
     switch (importRadioGroupElem.value) {
       case "scan_directories" :
@@ -147,6 +148,7 @@ firstRunImportMediaSvc.prototype = {
         Application.prefs.setValue("songbird.firstrun.scan_directory_path",
                                    scanDirectoryTextBox.value);
         Application.prefs.setValue("songbird.firstrun.do_scan_directory", true);
+        metricsImportType = "filescan";
         break;
 
       case "itunes" :
@@ -158,11 +160,17 @@ firstRunImportMediaSvc.prototype = {
                             ("songbird.library_importer.library_file_path",
                              this._libraryImporter.libraryDefaultFilePath);
         Application.prefs.setValue("songbird.firstrun.do_import_library", true);
+        metricsImportType = "itunes";
         break;
 
       default :
         break;
     }
+
+    // Update first-run metrics.
+    var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+                    .createInstance(Ci.sbIMetrics);
+    metrics.metricsInc("firstrun", "mediaimport", metricsImportType);
   },
 
 
