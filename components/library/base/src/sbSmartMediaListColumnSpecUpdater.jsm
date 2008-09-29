@@ -42,7 +42,7 @@ var SmartMediaListColumnSpecUpdater = {
     var columnWidth;
 
     var storageGuid = list.getProperty(SBProperties.storageGUID);
-    var storageList = LibraryUtils.mainLibrary.getMediaItem(storageGuid);
+    var storageList = list.library.getMediaItem(storageGuid);
     
     // if we are limiting, use the selectby property/direction as sort
     if (list.limitType != Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_NONE) {

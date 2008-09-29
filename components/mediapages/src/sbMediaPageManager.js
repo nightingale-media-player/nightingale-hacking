@@ -132,6 +132,9 @@ MediaPageManager.prototype = {
   
   getPage: function(aList) {
     this._ensureMediaPageRegistration();
+
+    // use the outermost list
+    aList = this._getOutermostList(aList);
     
     // Read the saved state
     var remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
@@ -183,11 +186,24 @@ MediaPageManager.prototype = {
   },
   
   setPage: function(aList, aPageInfo) {
+    // use the outermost list
+    aList = this._getOutermostList(aList);
+
     // Save the state
     var remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
                  .createInstance(Ci.sbIDataRemote);
     remote.init("mediapages." + aList.guid, null);
     remote.stringValue = aPageInfo.contentUrl;
+  },
+
+  // internal, get the outermost list for a given list. for instance, when
+  // given a smart medialist's storage list, this returns the original
+  // smart medialist.
+  _getOutermostList: function(aList) {
+    var outerGuid = aList.getProperty(SBProperties.outerGUID);
+    if (outerGuid)
+      aList = aList.library.getMediaItem(outerGuid);
+    return aList;
   },
   
   // internal. checks that a url is registered in the list of pages, and that 
