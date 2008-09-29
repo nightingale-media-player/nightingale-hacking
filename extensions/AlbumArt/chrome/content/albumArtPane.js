@@ -62,7 +62,7 @@ const PREF_STATE = "songbird.albumart.displaypane.view";
  *****************************************************************************/
 var AlbumArt = {
   _coverBind: null,                 // Data remote for the now playing image.
-  _playListPlaybackService: null,   // Get notifications of track changes.
+  _mediacoreManager: null,          // Get notifications of track changes.
   _mediaListView: null,             // Current active mediaListView.
   _browser: null,                   // Handle to browser for tab changes.
   _displayPane: null,               // Display pane we are in.
@@ -436,14 +436,18 @@ var AlbumArt = {
     AlbumArt._coverBind = createDataRemote("metadata.imageURL", null);
     AlbumArt._coverBind.bindObserver(AlbumArt, false);
 
-    // Load the playListPlaybackService so we can monitor track changes for
+    // Load the mediacoreManager so we can monitor track changes for
     // faster image changing.
-    AlbumArt._playListPlaybackService = 
-                          Cc["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                            .getService(Ci.sbIPlaylistPlayback);
-    AlbumArt._playListPlaybackService.addListener(AlbumArt);
+    AlbumArt._mediacoreManager = 
+      Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        .getService(Ci.sbIMediacoreManager);
+        
+    AlbumArt._mediacoreManager.addListener(AlbumArt);
 
-    if (!AlbumArt._playListPlaybackService.playing) {
+    var currentStatus = AlbumArt._mediacoreManager.status;
+    var stopped = (currentStatus.state == currentStatus.STATUS_STOPPED ||
+                   currentStatus.state == currentStatus.STATUS_UNKNOWN);
+    if (stopped) {
       AlbumArt.changeNowPlaying(null);
     }
 
@@ -472,8 +476,8 @@ var AlbumArt = {
     // Save the current display state for when the user starts again
     Application.prefs.setValue(PREF_STATE, AlbumArt._currentState);
                                
-    AlbumArt._playListPlaybackService.removeListener(AlbumArt);
-    AlbumArt._playListPlaybackService = null;
+    AlbumArt._mediacoreManager.removeListener(AlbumArt);
+    AlbumArt._mediacoreManager = null;
     
     AlbumArt._coverBind.unbind();
     AlbumArt._coverBind = null;
@@ -866,8 +870,20 @@ var AlbumArt = {
   },
 
   /*********************************
-   * sbIPlaylistPlaybackListener
+   * sbIMediacoreEventListener and Event Handlers
    ********************************/
+  onMediacoreEvent: function AlbumArt_onMediacoreEvent(aEvent) {
+    switch(aEvent.type) {
+      case Ci.sbIMediacoreEvent.STREAM_END:
+      case Ci.sbIMediacoreEvent.STREAM_STOP:
+        AlbumArt.onStop();
+      break;
+      
+      case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
+        AlbumArt.onBeforeTrackChange(aEvent.data);
+      break;
+    }
+  },
   /**
    * \brief The playback has stopped so clear the now playing.
    */
@@ -879,7 +895,7 @@ var AlbumArt = {
    * \brief A new track is going to play so update the now playing.
    * \param aItem - Item that is going to play.
    */
-  onBeforeTrackChange: function AlbumArt_onBeforeTrackChange(aItem, aView, aIndex) {
+  onBeforeTrackChange: function AlbumArt_onBeforeTrackChange(aItem) {
     var newImageURL = aItem.getProperty(SBProperties.primaryImageURL);
     AlbumArt.changeNowPlaying(newImageURL);
   },
@@ -903,7 +919,7 @@ var AlbumArt = {
   /*********************************
    * nsISupports
    ********************************/
-  QueryInterface: XPCOMUtils.generateQI([Ci.sbIPlaylistPlaybackListener,
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediacoreEventListener,
                                          Ci.sbIMediaListViewSelectionListener])
 };
 
