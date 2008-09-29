@@ -135,29 +135,31 @@ CompConfig.categoryList =
 /*******************************************************************************
  *******************************************************************************
  *
- * iTunes importer component class.
+ * iTunes importer component.
  *
  *******************************************************************************
  ******************************************************************************/
 
 /*
- * Component
+ * sbITunesImporter
  *
  *   This function is the constructor for the component.
  */
 
-function Component()
+function sbITunesImporter()
 {
 }
 
 
 /*
- * Component prototype object.
+ * sbITunesImporter object.
  */
 
-Component.prototype.constructor = Component;
-Component.prototype =
+sbITunesImporter.prototype =
 {
+    /* Set the constructor. */
+    constructor: sbITunesImporter,
+
     /***************************************************************************
      *
      * Importer configuration.
@@ -227,76 +229,73 @@ Component.prototype =
      **************************************************************************/
 
     /*
-     * mOSType                      OS type.
-     * mListener                    Listener for import events.
-     * mExcludedPlaylistList        List of excluded playlists.
-     * mHandleImportReqFunc         handleImportReq function with object
+     * _osType                      OS type.
+     * _listener                    Listener for import events.
+     * _excludedPlaylists           List of excluded playlists.
+     * _handleImportReqFunc         handleImportReq function with object
      *                              closure.
-     * mHandleAppStartupReqFunc     handleAppStartupReq function with object
-     *                              closure.
-     * mXMLParser                   XML parser object.
-     * mXMLFile                     XML file object being parsed.
-     * mIOService                   IO service component.
-     * mFileProtocolHandler         File protocol handler component.
-     * mTypeSniffer                 Mediacore Type Sniffer component.
-     * mLibraryManager              Media library manager component.
-     * mLibrary                     Media library component.
-     * mPlaylist                    Current playlist component.
-     * mTrackIDMap                  Map of iTunes track IDs and Songbird track
+     * _xmlParser                   XML parser object.
+     * _xmlFile                     XML file object being parsed.
+     * _ioService                   IO service component.
+     * _fileProtocolHandler         File protocol handler component.
+     * _typeSniffer                 Mediacore Type Sniffer component.
+     * _libraryManager              Media library manager component.
+     * _library                     Media library component.
+     * _playlist                    Current playlist component.
+     * _trackIDMap                  Map of iTunes track IDs and Songbird track
      *                              UUIDs.
-     * mTrackCount                  Count of the number of tracks.
-     * mNonExistentMediaCount       Count of the number of non-existent track
+     * _trackCount                  Count of the number of tracks.
+     * _nonExistentMediaCount       Count of the number of non-existent track
      *                              media files.
-     * mUnsupportedMediaCount       Count of the number of unsupported media
+     * _unsupportedMediaCount       Count of the number of unsupported media
      *                              tracks.
-     * mITunesLibID                 ID of iTunes library to import.
-     * mITunesLibSig                iTunes library signature.
-     * mImport                      If true, import library into Songbird while
+     * _iTunesLibID                 ID of iTunes library to import.
+     * _iTunesLibSig                iTunes library signature.
+     * _import                      If true, import library into Songbird while
      *                              processing.
-     * mImportPlaylists             If true, import playlists into Songbird
+     * _importPlaylists             If true, import playlists into Songbird
      *                              while processing.
-     * mDirtyPlaylistAction         Import action to take for all dirty
+     * _dirtyPlaylistAction         Import action to take for all dirty
      *                              playlists.
-     * mLibraryFilePathPref         Import library file path preference.
-     * mAutoImportPref              Auto import preference.
-     * mDontImportPlaylistsPref     Don't import playlists preference.
-     * mLibPrevPathDR               Saved path of previously imported library.
-     * mVersionDR                   Importer data format version.
-     * mInLibraryBatch              True if beginLibraryBatch has been called
-     * mTimingService               sbITimingService, if enabled
-     * mTimingIdentifier            Identifier used with the timing service
+     * _libraryFilePathPref         Import library file path preference.
+     * _autoImportPref              Auto import preference.
+     * _dontImportPlaylistsPref     Don't import playlists preference.
+     * _libPrevPathDR               Saved path of previously imported library.
+     * _versionDR                   Importer data format version.
+     * _inLibraryBatch              True if beginLibraryBatch has been called
+     * _timingService               sbITimingService, if enabled
+     * _timingIdentifier            Identifier used with the timing service
      */
 
-    mOSType: null,
-    mListener: null,
-    mExcludedPlaylists: "",
-    mHandleImportReqFunc: null,
-    mHandleAppStartupReqFunc: null,
-    mXMLParser: null,
-    mXMLFile: null,
-    mIOService: null,
-    mFileProtocolHandler: null,
-    mTypeSniffer: null,
-    mLibraryManager: null,
-    mLibrary: null,
-    mPlaylist: null,
-    mTrackIDMap: null,
-    mTrackCount: 0,
-    mNonExistentMediaCount: 0,
-    mUnsupportedMediaCount: 0,
-    mITunesLibID: "",
-    mITunesLibSig: "",
-    mImport: false,
-    mImportPlaylists: false,
-    mDirtyPlaylistAction: null,
-    mLibraryFilePathPref: null,
-    mAutoImportPref: null,
-    mDontImportPlaylistsPref: null,
-    mLibPrevPathDR: null,
-    mVersionDR: null,
-    mInLibraryBatch: false,
-    mTimingService: null,
-    mTimingIdentifier: null,
+    _osType: null,
+    _listener: null,
+    _excludedPlaylists: "",
+    _handleImportReqFunc: null,
+    _xmlParser: null,
+    _xmlFile: null,
+    _ioService: null,
+    _fileProtocolHandler: null,
+    _typeSniffer: null,
+    _libraryManager: null,
+    _library: null,
+    _playlist: null,
+    _trackIDMap: null,
+    _trackCount: 0,
+    _nonExistentMediaCount: 0,
+    _unsupportedMediaCount: 0,
+    _iTunesLibID: "",
+    _iTunesLibSig: "",
+    _import: false,
+    _importPlaylists: false,
+    _dirtyPlaylistAction: null,
+    _libraryFilePathPref: null,
+    _autoImportPref: null,
+    _dontImportPlaylistsPref: null,
+    _libPrevPathDR: null,
+    _versionDR: null,
+    _inLibraryBatch: false,
+    _timingService: null,
+    _timingIdentifier: null,
 
 
     /***************************************************************************
@@ -350,7 +349,7 @@ Component.prototype =
 
         /* Search for an iTunes library database file. */
         /*XXXErikS Should localize directory names. */
-        switch (this.mOSType)
+        switch (this._osType)
         {
             case "MacOSX" :
                 libraryFile = directoryService.get
@@ -393,7 +392,7 @@ Component.prototype =
 
     get libraryPreviousImportPath()
     {
-        return this.mLibPrevPathDR.stringValue;
+        return this._libPrevPathDR.stringValue;
     },
 
 
@@ -404,71 +403,71 @@ Component.prototype =
     initialize: function()
     {
         /* Get the OS type. */
-        this.mOSType = this.getOSType();
+        this._osType = this.getOSType();
 
         /* Get the list of excluded playlists. */
-        this.mExcludedPlaylists =
+        this._excludedPlaylists =
           SBString("import_library.itunes.excluded_playlists", "");
 
         /* Get the IO service component. */
-        this.mIOService = Components.
+        this._ioService = Components.
                                 classes["@mozilla.org/network/io-service;1"].
                                 getService(Components.interfaces.nsIIOService);
 
         /* Get a file protocol handler. */
-        this.mFileProtocolHandler =
+        this._fileProtocolHandler =
             Components
                 .classes["@mozilla.org/network/protocol;1?name=file"]
                 .createInstance(Components.interfaces.nsIFileProtocolHandler);
 
         /* Get the playlist playback services. */
-        this.mTypeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+        this._typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
                               .createInstance(Ci.sbIMediacoreTypeSniffer); 
 
         /* Get the media library manager service          */
         /* component and create a media library instance. */
-        this.mLibraryManager =
+        this._libraryManager =
             Components.
                 classes["@songbirdnest.com/Songbird/library/Manager;1"].
                 getService(Components.interfaces.sbILibraryManager);
-        this.mLibrary = this.mLibraryManager.getLibrary
-                                        (this.mLibraryManager.mainLibrary.guid);
-        this.mLibrary = this.mLibrary.QueryInterface
+        this._library = this._libraryManager.getLibrary
+                                        (this._libraryManager.mainLibrary.guid);
+        this._library = this._library.QueryInterface
                                 (Components.interfaces.sbILocalDatabaseLibrary);
 
         /* Get the importer preferences. */
-        this.mLibraryFilePathPref =
+        this._libraryFilePathPref =
                         Components.
                             classes["@songbirdnest.com/Songbird/DataRemote;1"].
                             createInstance(Components.interfaces.sbIDataRemote);
-        this.mLibraryFilePathPref.init
+        this._libraryFilePathPref.init
                                 (this.prefPrefix + ".library_file_path", null);
-        this.mAutoImportPref =
+        this._autoImportPref =
                         Components.
                             classes["@songbirdnest.com/Songbird/DataRemote;1"].
                             createInstance(Components.interfaces.sbIDataRemote);
-        this.mAutoImportPref.init(this.prefPrefix + ".auto_import", null);
-        this.mDontImportPlaylistsPref =
+        this._autoImportPref.init(this.prefPrefix + ".auto_import", null);
+        this._dontImportPlaylistsPref =
                         Components.
                             classes["@songbirdnest.com/Songbird/DataRemote;1"].
                             createInstance(Components.interfaces.sbIDataRemote);
-        this.mDontImportPlaylistsPref.init
+        this._dontImportPlaylistsPref.init
                                     (this.prefPrefix + ".dont_import_playlists",
                                      null);
 
         /* Get the importer data remotes. */
-        this.mLibPrevPathDR = Components.
+        this._libPrevPathDR = Components.
                             classes["@songbirdnest.com/Songbird/DataRemote;1"].
                             createInstance(Components.interfaces.sbIDataRemote);
-        this.mLibPrevPathDR.init(this.prefPrefix + ".lib_prev_path", null);
-        this.mVersionDR = Components.
+        this._libPrevPathDR.init(this.prefPrefix + ".lib_prev_path", null);
+        this._versionDR = Components.
                             classes["@songbirdnest.com/Songbird/DataRemote;1"].
                             createInstance(Components.interfaces.sbIDataRemote);
-        this.mVersionDR.init(this.prefPrefix + ".version", null);
+        this._versionDR.init(this.prefPrefix + ".version", null);
 
         /* Set up timing if enabled */
         if ("@songbirdnest.com/Songbird/TimingService;1" in Cc) {
-          this.mTimingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
+          this._timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
                                   .getService(Ci.sbITimingService);
         }
 
@@ -491,7 +490,7 @@ Component.prototype =
         /* Create a handleImportReq function with an object closure. */
         var                     _this = this;
 
-        this.mHandleImportReqFunc = function(libFilePath,
+        this._handleImportReqFunc = function(libFilePath,
                                              dbGUID,
                                              checkForChanges)
         {
@@ -535,7 +534,7 @@ Component.prototype =
         /* Do nothing if just checking for changes and */
         /* the library file has not been modified.     */
         if (aCheckForChanges &&
-            (aLibFilePath == this.mLibPrevPathDR.stringValue))
+            (aLibFilePath == this._libPrevPathDR.stringValue))
         {
             file = Cc["@mozilla.org/file/local;1"]
                        .createInstance(Ci.nsILocalFile);
@@ -554,9 +553,9 @@ Component.prototype =
         ITStatus.bringToFront();
 
         /* Start timing, if enabled */
-        if (this.mTimingService) {
-            this.mTimingIdentifier = "ITunesImport-" + Date.now();
-            this.mTimingService.startPerfTimer(this.mTimingIdentifier);
+        if (this._timingService) {
+            this._timingIdentifier = "ITunesImport-" + Date.now();
+            this._timingService.startPerfTimer(this._timingIdentifier);
         }
 
         /* Start an import thread. */
@@ -585,7 +584,7 @@ Component.prototype =
     setListener: function(aListener)
     {
         /* Set the listener. */
-        this.mListener = aListener;
+        this._listener = aListener;
     },
 
 
@@ -604,8 +603,8 @@ Component.prototype =
             this.endLibraryBatch();
 
             /* Stop timing */
-            if (this.mTimingService) {
-                this.mTimingService.stopPerfTimer(this.mTimingIdentifier);
+            if (this._timingService) {
+                this._timingService.stopPerfTimer(this._timingIdentifier);
             }
         }
     },
@@ -635,12 +634,12 @@ Component.prototype =
      * endLibraryBatch will prevent the library from updating.
      */
     beginLibraryBatch: function() {
-        if (this.mInLibraryBatch) {
+        if (this._inLibraryBatch) {
             return;
         }
-        if (this.mLibrary instanceof Ci.sbILocalDatabaseLibrary) {
-            this.mLibrary.forceBeginUpdateBatch();
-            this.mInLibraryBatch = true;
+        if (this._library instanceof Ci.sbILocalDatabaseLibrary) {
+            this._library.forceBeginUpdateBatch();
+            this._inLibraryBatch = true;
         }
     },
 
@@ -650,12 +649,12 @@ Component.prototype =
      *   Attempt to undo a forced library batch if one is in progress
      */
     endLibraryBatch: function() {
-        if (!this.mInLibraryBatch) {
+        if (!this._inLibraryBatch) {
             return;
         }
-        if (this.mLibrary instanceof Ci.sbILocalDatabaseLibrary) {
-            this.mLibrary.forceEndUpdateBatch();
-            this.mInLibraryBatch = false;
+        if (this._library instanceof Ci.sbILocalDatabaseLibrary) {
+            this._library.forceEndUpdateBatch();
+            this._inLibraryBatch = false;
         }
     },
 
@@ -699,7 +698,7 @@ Component.prototype =
             this.endLibraryBatch();
 
             /* Send an import error event. */
-            this.mListener.onImportError();
+            this._listener.onImportError();
         }
         finally
         {
@@ -718,23 +717,23 @@ Component.prototype =
             yield;
 
         /* Initialize importer data format version. */
-        if (!this.mVersionDR.intValue)
-            this.mVersionDR.intValue = this.dataFormatVersion;
+        if (!this._versionDR.intValue)
+            this._versionDR.intValue = this.dataFormatVersion;
 
         /* If checking for changes, don't import. */
         if (checkForChanges)
-            this.mImport = false;
+            this._import = false;
         else
-            this.mImport = true;
+            this._import = true;
 
         /* Check if playlists should be imported. */
-        if (this.mImport)
+        if (this._import)
         {
-            this.mImportPlaylists = !this.mDontImportPlaylistsPref.boolValue;
+            this._importPlaylists = !this._dontImportPlaylistsPref.boolValue;
         }
         else
         {
-            this.mImportPlaylists = false;
+            this._importPlaylists = false;
         }
 
         /* Update status. */
@@ -744,22 +743,22 @@ Component.prototype =
             ITStatus.mStageText = "Importing library";
 
         /* Create an xml parser. */
-        this.mXMLParser = new ITXMLParser(libFilePath);
-        this.mXMLFile = this.mXMLParser.getFile();
+        this._xmlParser = new ITXMLParser(libFilePath);
+        this._xmlFile = this._xmlParser.getFile();
 
         /* Initialize the iTunes library signature. */
-        this.mITunesLibSig = new ITSig();
+        this._iTunesLibSig = new ITSig();
 
         /* Initialize the track ID map. */
-        this.mTrackIDMap = {};
+        this._trackIDMap = {};
 
         /* Initialize import statistics. */
-        this.mTrackCount = 0;
-        this.mNonExistentMediaCount = 0;
-        this.mUnsupportedMediaCount = 0;
+        this._trackCount = 0;
+        this._nonExistentMediaCount = 0;
+        this._unsupportedMediaCount = 0;
 
         /* Initialize dirty playlist action. */
-        this.mDirtyPlaylistAction = null;
+        this._dirtyPlaylistAction = null;
 
         /* We are about to do a lot of work, so
            force the library into a batch state */
@@ -769,13 +768,13 @@ Component.prototype =
         yield this.findKey("Library Persistent ID");
 
         /* Get the iTunes library ID. */
-        this.mXMLParser.getNextTag(tag, tagPreText);
-        this.mXMLParser.getNextTag(tag, tagPreText);
-        this.mITunesLibID = tagPreText.value;
+        this._xmlParser.getNextTag(tag, tagPreText);
+        this._xmlParser.getNextTag(tag, tagPreText);
+        this._iTunesLibID = tagPreText.value;
 
         /* Add the iTunes library ID to the iTunes library signature. */
-        this.mITunesLibSig.update(  "Library Persistent ID"
-                                  + this.mITunesLibID);
+        this._iTunesLibSig.update(  "Library Persistent ID"
+                                  + this._iTunesLibID);
 
         /* Process the library track list. */
         yield this.processTrackList();
@@ -792,32 +791,32 @@ Component.prototype =
         var                         completeMsg;
 
         /* Get the iTunes library signature. */
-        signature = this.mITunesLibSig.getSignature();
+        signature = this._iTunesLibSig.getSignature();
 
         /* Get the stored iTunes library signature. */
         storedSignature =
-                        this.mITunesLibSig.retrieveSignature(this.mITunesLibID);
+                        this._iTunesLibSig.retrieveSignature(this._iTunesLibID);
 
         /* If imported signature changed, store new signature. */
-        if (this.mImport && (signature != storedSignature))
-            this.mITunesLibSig.storeSignature(this.mITunesLibID, signature);
+        if (this._import && (signature != storedSignature))
+            this._iTunesLibSig.storeSignature(this._iTunesLibID, signature);
 
         /* Update previous imported library path and modification time. */
-        if (this.mImport || (signature == storedSignature))
+        if (this._import || (signature == storedSignature))
         {
-            this.mLibPrevPathDR.stringValue = libFilePath;
+            this._libPrevPathDR.stringValue = libFilePath;
             this.setPref("lib_prev_mod_time",
-                         this.mXMLFile.lastModifiedTime.toString());
+                         this._xmlFile.lastModifiedTime.toString());
         }
 
         /* Update import data format version. */
-        if (this.mImport)
-            this.mVersionDR.intValue = this.dataFormatVersion;
+        if (this._import)
+            this._versionDR.intValue = this.dataFormatVersion;
 
         /* Dispose of the XML parser. */
         /*zzz won't happen on exceptions. */
-        this.mXMLParser.close();
-        this.mXMLParser = null;
+        this._xmlParser.close();
+        this._xmlParser = null;
 
         /* Check if changes were looked for and found. */
         if ((checkForChanges) && (signature != storedSignature))
@@ -846,18 +845,18 @@ Component.prototype =
         /* If checking for changes and changes were */
         /* found, send a library changed event.     */
         if (foundChanges)
-            this.mListener.onLibraryChanged(libFilePath, dbGUID);
+            this._listener.onLibraryChanged(libFilePath, dbGUID);
 
         /* If non-existent media is encountered, send an event. */
-        if (this.mImport && (this.mNonExistentMediaCount > 0))
+        if (this._import && (this._nonExistentMediaCount > 0))
         {
-            this.mListener.onNonExistentMedia(this.mNonExistentMediaCount,
-                                              this.mTrackCount);
+            this._listener.onNonExistentMedia(this._nonExistentMediaCount,
+                                              this._trackCount);
         }
 
         /* If unsupported media is encountered, send an event. */
-        if (this.mImport && (this.mUnsupportedMediaCount > 0))
-            this.mListener.onUnsupportedMedia();
+        if (this._import && (this._unsupportedMediaCount > 0))
+            this._listener.onUnsupportedMedia();
     },
 
 
@@ -874,7 +873,7 @@ Component.prototype =
     {
         var                         ready = true;
 
-        if (!this.mTypeSniffer)
+        if (!this._typeSniffer)
             ready = false;
 
         return (ready);
@@ -899,7 +898,7 @@ Component.prototype =
         while (true)
         {
             /* Get the next tag. */
-            this.mXMLParser.getNextTag(tag, tagPreText);
+            this._xmlParser.getNextTag(tag, tagPreText);
 
             /* If the next key is the target or no more     */
             /* tags are left, transition to the next state. */
@@ -1023,10 +1022,10 @@ Component.prototype =
     yieldWithStatusUpdate: function()
     {
         /* Update status. */
-        if (this.mXMLParser)
+        if (this._xmlParser)
         {
-            ITStatus.mProgress =   (100 * this.mXMLParser.tell())
-                                 / this.mXMLFile.fileSize;
+            ITStatus.mProgress =   (100 * this._xmlParser.tell())
+                                 / this._xmlFile.fileSize;
         }
         ITStatus.update();
 
@@ -1078,7 +1077,7 @@ Component.prototype =
         yield this.findKey("Tracks");
 
         /* Skip the "dict" tag. */
-        this.mXMLParser.getNextTag(tag, tagPreText);
+        this._xmlParser.getNextTag(tag, tagPreText);
 
         /* Process each track in list. */
         while (true)
@@ -1088,7 +1087,7 @@ Component.prototype =
             if (!this.addTrackBatchFull())
             {
                 /* Get the next tag. */
-                this.mXMLParser.getNextTag(tag, tagPreText);
+                this._xmlParser.getNextTag(tag, tagPreText);
 
                 /* If it's a "/key" tag, process the track.  If  */
                 /* it's a "/dict" tag, there are no more tracks. */
@@ -1118,8 +1117,8 @@ Component.prototype =
         }
 
         /* Update status. */
-        ITStatus.mProgress =   (100 * this.mXMLParser.tell())
-                             / this.mXMLFile.fileSize;
+        ITStatus.mProgress =   (100 * this._xmlParser.tell())
+                             / this._xmlFile.fileSize;
     },
 
 
@@ -1146,10 +1145,10 @@ Component.prototype =
         var                         supported;
 
         /* One more track. */
-        this.mTrackCount++;
+        this._trackCount++;
 
         /* Skip the "dict" tag. */
-        this.mXMLParser.getNextTag(tag, tagPreText);
+        this._xmlParser.getNextTag(tag, tagPreText);
 
         /* Get the track info. */
         this.getTrackInfo(trackInfoTable, tag, tagPreText);
@@ -1165,12 +1164,12 @@ Component.prototype =
 
         /* Check if the track media exists. */
         var trackExists = false;
-        trackURI = this.mIOService.newURI(url, null, null);
+        trackURI = this._ioService.newURI(url, null, null);
         if (trackURI.scheme == "file")
         {
             try
             {
-                trackFile = this.mFileProtocolHandler.getFileFromURLSpec(url);
+                trackFile = this._fileProtocolHandler.getFileFromURLSpec(url);
                 trackExists = trackFile.exists();
             }
             catch (ex)
@@ -1179,7 +1178,7 @@ Component.prototype =
                 Log(url + "\n");
             }
             if (!trackExists)
-                this.mNonExistentMediaCount++;
+                this._nonExistentMediaCount++;
         }
 
         /* Add the track content length metadata. */
@@ -1191,18 +1190,18 @@ Component.prototype =
 
         /* Check if the track media is supported and */
         /* add it to the iTunes library signature.   */
-        supported = this.mTypeSniffer.isValidMediaURL(trackURI);
+        supported = this._typeSniffer.isValidMediaURL(trackURI);
         if (!supported)
-            this.mUnsupportedMediaCount++;
-        this.mITunesLibSig.update("supported" + supported);
+            this._unsupportedMediaCount++;
+        this._iTunesLibSig.update("supported" + supported);
 
         /* Get the track persistent ID and add */
         /* it to the iTunes library signature. */
         iTunesTrackID = trackInfoTable["Persistent ID"];
-        this.mITunesLibSig.update("Persistent ID" + iTunesTrackID);
+        this._iTunesLibSig.update("Persistent ID" + iTunesTrackID);
 
         /* Add the track to the media library. */
-        if (this.mImport && supported)
+        if (this._import && supported)
         {
             this.addTrack(trackInfoTable,
                           url,
@@ -1236,18 +1235,18 @@ Component.prototype =
         while (!done)
         {
             /* Get the next tag. */
-            this.mXMLParser.getNextTag(tag, tagPreText);
+            this._xmlParser.getNextTag(tag, tagPreText);
 
             /* If it's a "key" tag, process the track info. */
             if (tag.value == "key")
             {
                 /* Get the key name. */
-                this.mXMLParser.getNextTag(tag, tagPreText);
+                this._xmlParser.getNextTag(tag, tagPreText);
                 keyName = tagPreText.value;
 
                 /* Get the key value.  If the next tag is */
                 /* empty, use its name as the key value.  */
-                this.mXMLParser.getNextTag(tag, tagPreText);
+                this._xmlParser.getNextTag(tag, tagPreText);
                 if (tag.value.charCodeAt(tag.value.length - 1) ==
                     this.mSlashCharCode)
                 {
@@ -1255,7 +1254,7 @@ Component.prototype =
                 }
                 else
                 {
-                    this.mXMLParser.getNextTag(tag, tagPreText);
+                    this._xmlParser.getNextTag(tag, tagPreText);
                     keyValue = tagPreText.value;
                 }
 
@@ -1311,10 +1310,10 @@ Component.prototype =
             if (!url.match(/^\w*:/))
                 url = "file:////" + url;
         }
-        this.mITunesLibSig.update("url" + url);
+        this._iTunesLibSig.update("url" + url);
 
         /* Windows is case-insensitive, so convert to lower case. */
-        if (this.mOSType == "Windows")
+        if (this._osType == "Windows")
             url = url.toLowerCase();
 
         return (url);
@@ -1350,7 +1349,7 @@ Component.prototype =
         metaValues.push(duration);
 
         /* Add the metadata to the iTunes library signature. */
-        this.mITunesLibSig.update(SBProperties.duration + duration);
+        this._iTunesLibSig.update(SBProperties.duration + duration);
     },
 
 
@@ -1383,7 +1382,7 @@ Component.prototype =
         metaValues.push(rating);
 
         /* Add the metadata to the iTunes library signature. */
-        this.mITunesLibSig.update(SBProperties.rating + rating);
+        this._iTunesLibSig.update(SBProperties.rating + rating);
     },
 
 
@@ -1427,7 +1426,7 @@ Component.prototype =
 
             /* Add the metadata to the iTunes library signature. */
             if (trackInfo)
-                this.mITunesLibSig.update(metaDataEntry.songbird + trackInfo);
+                this._iTunesLibSig.update(metaDataEntry.songbird + trackInfo);
         }
     },
 
@@ -1587,7 +1586,7 @@ Component.prototype =
         for (i = 0; i < this.mAddTrackList.length; i++)
         {
             addTrack = this.mAddTrackList[i];
-            this.mTrackIDMap[addTrack.trackInfoTable["Track ID"]] =
+            this._trackIDMap[addTrack.trackInfoTable["Track ID"]] =
                                                                 addTrack.guid;
         }
 
@@ -1615,7 +1614,7 @@ Component.prototype =
         for (i = 0; i < this.mAddTrackList.length; i++)
         {
             addTrack = this.mAddTrackList[i];
-            guid = ITDB.getSBIDFromITID(this.mITunesLibID,
+            guid = ITDB.getSBIDFromITID(this._iTunesLibID,
                                         addTrack.iTunesTrackID);
             guidList[i] = guid;
         }
@@ -1658,7 +1657,7 @@ Component.prototype =
             guid = guidList[i];
             try
             {
-                mediaItem = this.mLibrary.getMediaItem(guid);
+                mediaItem = this._library.getMediaItem(guid);
             }
             catch (e)
             {
@@ -1735,7 +1734,7 @@ Component.prototype =
             },
         };
         addTrackMediaItemList = {};
-        this.mLibrary.batchCreateMediaItemsAsync(createMediaItemsListener,
+        this._library.batchCreateMediaItemsAsync(createMediaItemsListener,
                                                  uriList,
                                                  propertyArrayArray, false);
 
@@ -1807,7 +1806,7 @@ Component.prototype =
 
                 /* Try creating a media item.  This should */
                 /* return a duplicate for the add track.   */
-                mediaItem = this.mLibrary.createMediaItem(uri, properties);
+                mediaItem = this._library.createMediaItem(uri, properties);
 
                 /* Add the media item to the add track. */
                 if (mediaItem)
@@ -1827,7 +1826,7 @@ Component.prototype =
         /* Map the Songbird track GUIDs to iTunes track IDs. */
         for (i = 0; i < iTunesTrackIDList.length; i++)
         {
-            ITDB.mapID(this.mITunesLibID,
+            ITDB.mapID(this._iTunesLibID,
                        iTunesTrackIDList[i],
                        guidList[i]);
         }
@@ -1895,7 +1894,7 @@ Component.prototype =
                 .createInstance(Components.interfaces.sbIMutablePropertyArray);
 
         /* Add the track URI. */
-        trackURI = this.mIOService.newURI(aAddTrack.url, null, null);
+        trackURI = this._ioService.newURI(aAddTrack.url, null, null);
         aURIList.appendElement(trackURI, false);
 
         /* Add the track properties. */
@@ -1969,13 +1968,13 @@ Component.prototype =
         yield this.findKey("Playlists");
 
         /* Skip the "array" tag. */
-        this.mXMLParser.getNextTag(tag, tagPreText);
+        this._xmlParser.getNextTag(tag, tagPreText);
 
         /* Process each playlist in list. */
         while (true)
         {
             /* Get the next tag. */
-            this.mXMLParser.getNextTag(tag, tagPreText);
+            this._xmlParser.getNextTag(tag, tagPreText);
 
             /* If it's a "dict" tag, process the playlist.  If   */
             /* it's a "/array" tag, there are no more playlists. */
@@ -2031,7 +2030,7 @@ Component.prototype =
             importPlaylist = false;
 
         /* Don't import excluded playlists. */
-        else if (   this.mExcludedPlaylists.indexOf(":" + playlistName + ":")
+        else if (   this._excludedPlaylists.indexOf(":" + playlistName + ":")
                  != -1)
         {
             importPlaylist = false;
@@ -2041,27 +2040,27 @@ Component.prototype =
         /* to the iTunes library signature. */
         if (importPlaylist)
         {
-            this.mITunesLibSig.update("Name" + playlistName);
-            this.mITunesLibSig.update(  "Playlist Persistent ID"
+            this._iTunesLibSig.update("Name" + playlistName);
+            this._iTunesLibSig.update(  "Playlist Persistent ID"
                                       + iTunesPlaylistID);
         }
 
         /* Get the Songbird playlist. */
-        if ((importPlaylist) && (this.mImportPlaylists))
+        if ((importPlaylist) && (this._importPlaylists))
         {
             /* Get the Songbird playlist ID. */
-            playlistID = ITDB.getSBIDFromITID(this.mITunesLibID,
+            playlistID = ITDB.getSBIDFromITID(this._iTunesLibID,
                                               iTunesPlaylistID);
 
             /* If the importer data format version is less than 2, try   */
             /* getting the Songbird playlist ID from the iTunes playlist */
             /* name.                                                     */
-            if (!playlistID && (this.mVersionDR.intValue < 2))
+            if (!playlistID && (this._versionDR.intValue < 2))
             {
                 playlistID = ITDB.getSBPlaylistIDFromITName(playlistName);
                 if (playlistID)
                 {
-                    ITDB.mapID(this.mITunesLibID,
+                    ITDB.mapID(this._iTunesLibID,
                                iTunesPlaylistID,
                                playlistID);
                 }
@@ -2072,11 +2071,11 @@ Component.prototype =
             {
                 try
                 {
-                    this.mPlaylist = this.mLibrary.getItemByGuid(playlistID);
+                    this._playlist = this._library.getItemByGuid(playlistID);
                 }
                 catch (e)
                 {
-                    this.mPlaylist = null;
+                    this._playlist = null;
                 }
             }
         }
@@ -2088,7 +2087,7 @@ Component.prototype =
         }
 
         /* Check for dirty playlist. */
-        if (importPlaylist && this.mPlaylist)
+        if (importPlaylist && this._playlist)
         {
             dirtyPlaylist = {};
             yield this.isDirtyPlaylist(dirtyPlaylist);
@@ -2097,7 +2096,7 @@ Component.prototype =
 
         /* If not importing playlists, keep current ones.   */
         /* Otherwise, determine what import action to take. */
-        if (!this.mImportPlaylists)
+        if (!this._importPlaylists)
         {
             action = "keep";
         }
@@ -2108,7 +2107,7 @@ Component.prototype =
 
             /* Check for a dirty Songbird playlist.  If it's dirty, */
             /* query the user for the proper action to take.        */
-            if (this.mPlaylist && dirtyPlaylist)
+            if (this._playlist && dirtyPlaylist)
                 action = this.getDirtyPlaylistAction(playlistName);
         }
 
@@ -2116,16 +2115,16 @@ Component.prototype =
         if (importPlaylist && (action == "replace"))
         {
             /* Delete Songbird playlist if present. */
-            if (this.mImport && this.mPlaylist)
-                this.mLibrary.remove(this.mPlaylist);
+            if (this._import && this._playlist)
+                this._library.remove(this._playlist);
 
             /* Create the playlist. */
-            if (this.mImport)
+            if (this._import)
             {
-                this.mPlaylist = this.mLibrary.createMediaList("simple");
-                this.mPlaylist.name = playlistName;
-                playlistID = this.mPlaylist.guid;
-                ITDB.mapID(this.mITunesLibID, iTunesPlaylistID, playlistID);
+                this._playlist = this._library.createMediaList("simple");
+                this._playlist.name = playlistName;
+                playlistID = this._playlist.guid;
+                ITDB.mapID(this._iTunesLibID, iTunesPlaylistID, playlistID);
             }
         }
 
@@ -2139,30 +2138,30 @@ Component.prototype =
         if (importPlaylist)
             yield this.processPlaylistItems(action);
         else if (hasPlaylistItems)
-            this.mXMLParser.skipNextElement();
+            this._xmlParser.skipNextElement();
 
         /* Delete playlist if it's empty. */
-        if (this.mImport && this.mPlaylist)
+        if (this._import && this._playlist)
         {
-            if (this.mPlaylist.isEmpty)
+            if (this._playlist.isEmpty)
             {
-                this.mLibrary.remove(this.mPlaylist);
-                this.mPlaylist = null;
+                this._library.remove(this._playlist);
+                this._playlist = null;
             }
         }
 
         /* Compute and store the Songbird playlist signature. */
-        if (this.mImport && this.mPlaylist && (action != "keep"))
+        if (this._import && this._playlist && (action != "keep"))
         {
             sigGen = {};
-            yield this.generateSBPlaylistSig(this.mPlaylist, sigGen);
+            yield this.generateSBPlaylistSig(this._playlist, sigGen);
             sigGen = sigGen.value;
             signature = sigGen.getSignature();
             sigGen.storeSignature(playlistID, signature);
         }
 
         /* Clear current playlist object. */
-        this.mPlaylist = null;
+        this._playlist = null;
     },
 
 
@@ -2186,12 +2185,12 @@ Component.prototype =
 
         /* Compute the playlist signature. */
         sigGen = {};
-        yield this.generateSBPlaylistSig(this.mPlaylist, sigGen);
+        yield this.generateSBPlaylistSig(this._playlist, sigGen);
         sigGen = sigGen.value;
         signature = sigGen.getSignature();
 
         /* Get the stored signature. */
-        storedSignature = sigGen.retrieveSignature(this.mPlaylist.guid);
+        storedSignature = sigGen.retrieveSignature(this._playlist.guid);
 
         /* If the computed signature is not the same as */
         /* the stored signature, the playlist is dirty. */
@@ -2224,18 +2223,18 @@ Component.prototype =
         var                         applyAll;
 
         /* If an action has been set for all playlists, just return it. */
-        if (this.mDirtyPlaylistAction)
-            return (this.mDirtyPlaylistAction);
+        if (this._dirtyPlaylistAction)
+            return (this._dirtyPlaylistAction);
 
         /* Send a dirty playlist event and get the action to take. */
         applyAll = {};
-        action = this.mListener.onDirtyPlaylist(playlistName, applyAll);
+        action = this._listener.onDirtyPlaylist(playlistName, applyAll);
         applyAll = applyAll.value;
 
         /* If the user selected to apply action */
         /* to all playlists, save the action.   */
         if (applyAll)
-            this.mDirtyPlaylistAction = action;
+            this._dirtyPlaylistAction = action;
 
         return (action);
     },
@@ -2268,13 +2267,13 @@ Component.prototype =
         while (!done)
         {
             /* Get the next tag. */
-            this.mXMLParser.getNextTag(tag, tagPreText);
+            this._xmlParser.getNextTag(tag, tagPreText);
 
             /* If it's a "key" tag, process the playlist info. */
             if (tag.value == "key")
             {
                 /* Get the key name. */
-                this.mXMLParser.getNextTag(tag, tagPreText);
+                this._xmlParser.getNextTag(tag, tagPreText);
                 keyName = tagPreText.value;
 
                 /* If the key is "Playlist Items", the playlist */
@@ -2288,7 +2287,7 @@ Component.prototype =
                 {
                     /* Get the key value.  If the next tag is */
                     /* empty, use its name as the key value.  */
-                    this.mXMLParser.getNextTag(tag, tagPreText);
+                    this._xmlParser.getNextTag(tag, tagPreText);
                     if (tag.value.charCodeAt(tag.value.length - 1) ==
                         this.mSlashCharCode)
                     {
@@ -2296,7 +2295,7 @@ Component.prototype =
                     }
                     else
                     {
-                        this.mXMLParser.getNextTag(tag, tagPreText);
+                        this._xmlParser.getNextTag(tag, tagPreText);
                         keyValue = tagPreText.value;
                     }
 
@@ -2339,7 +2338,7 @@ Component.prototype =
         var                         done;
 
         /* Check if the Songbird playlist should be updated. */
-        if (this.mImport && (action != "keep"))
+        if (this._import && (action != "keep"))
             updateSBPlaylist = true;
         else
             updateSBPlaylist = false;
@@ -2352,7 +2351,7 @@ Component.prototype =
                 this.addPlaylistTrackBatchProcess();
 
             /* Get the next tag. */
-            this.mXMLParser.getNextTag(tag, tagPreText);
+            this._xmlParser.getNextTag(tag, tagPreText);
 
             /* If it's a "dict" tag, process the playlist item. */
             /* If it's a "/array" tag, there are no more items. */
@@ -2360,32 +2359,32 @@ Component.prototype =
             {
                 /* Skip the key and integer tags  */
                 /* and get the track ID and GUID. */
-                this.mXMLParser.getNextTag(tag, tagPreText);
-                this.mXMLParser.getNextTag(tag, tagPreText);
-                this.mXMLParser.getNextTag(tag, tagPreText);
-                this.mXMLParser.getNextTag(tag, tagPreText);
+                this._xmlParser.getNextTag(tag, tagPreText);
+                this._xmlParser.getNextTag(tag, tagPreText);
+                this._xmlParser.getNextTag(tag, tagPreText);
+                this._xmlParser.getNextTag(tag, tagPreText);
                 trackID = tagPreText.value;
                 if (updateSBPlaylist)
-                    trackGUID = this.mTrackIDMap[trackID];
+                    trackGUID = this._trackIDMap[trackID];
 
                 /* Add the iTunes track persistent ID */
                 /* to the iTunes library signature.   */
                 /*zzz get ID value. */
-                this.mITunesLibSig.update("Persistent ID");
+                this._iTunesLibSig.update("Persistent ID");
 
                 /* Add the track to the playlist. */
                 if (updateSBPlaylist && trackGUID)
                 {
                     try
                     {
-                        track = this.mLibrary.getItemByGuid(trackGUID);
+                        track = this._library.getItemByGuid(trackGUID);
                     }
                     catch (e)
                     {
                         track = null;
                     }
                     if (track)
-                        this.addPlaylistTrackBatchAdd(this.mPlaylist, track);
+                        this.addPlaylistTrackBatchAdd(this._playlist, track);
                 }
             }
             else if (tag.value == "/array")
@@ -2548,7 +2547,7 @@ Component.prototype =
  ******************************************************************************/
 
 function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([Component]);
+  return XPCOMUtils.generateModule([sbITunesImporter]);
 }
 
 
@@ -2590,7 +2589,7 @@ function ITXMLParser(filePath) {
 
 //
 // ITXMLParser prototype object.
-///
+//
 
 ITXMLParser.prototype = {
   // Set the constructor.
