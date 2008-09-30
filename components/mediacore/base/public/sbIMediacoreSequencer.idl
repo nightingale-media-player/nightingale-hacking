@@ -30,9 +30,10 @@ interface nsIArray;
 
 interface sbIMediacoreSequence;
 interface sbIMediacoreSequenceGenerator;
+interface sbIMediaItem;
 interface sbIMediaListView;
 
-[scriptable, uuid(61884483-3801-41e5-a5ed-006b8ada0be9)]
+[scriptable, uuid(1247f64b-c01d-4921-bc56-6a6c21729ded)]
 interface sbIMediacoreSequencer : nsISupports
 {
   const unsigned long MODE_FORWARD    = 0;
@@ -59,6 +60,14 @@ interface sbIMediacoreSequencer : nsISupports
    *        is tied to the sequencePosition.
    */
   readonly attribute unsigned long viewPosition;
+
+  /**
+   * \brief The current item in the view. 
+   * \note This is the equivalent of calling sbIMediaListView::getItemByIndex 
+   *       using viewPosition.
+   * \note This may be null if there is no currentItem.
+   */
+  readonly attribute sbIMediaItem currentItem;
 
   /**
    * \brief The current sequence.

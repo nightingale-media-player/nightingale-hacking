@@ -1196,6 +1196,26 @@ sbMediacoreSequencer::GetViewPosition(PRUint32 *aViewPosition)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbMediacoreSequencer::GetCurrentItem(sbIMediaItem **aItem) 
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  // by default, if there's no current item, this doesn't throw, it returns a
+  // null item instead.
+  *aItem = nsnull;
+
+  if(!mView) {
+    return NS_OK;
+  }
+
+  nsresult rv = mView->GetItemByIndex(mViewPosition, aItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP 
 sbMediacoreSequencer::GetCurrentSequence(nsIArray * *aCurrentSequence)
 {

@@ -35,6 +35,7 @@
 #include <nsIFile.h>
 #include <nsIGenericFactory.h>
 #include <nsIObserver.h>
+#include <nsIWeakReference.h>
 
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
@@ -42,12 +43,17 @@
 #include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
 
+#include <prmon.h>
+#include <prtime.h>
+
 #include <sbIDatabaseQuery.h>
 #include <sbILibrary.h>
+#include <sbIMediacoreEventListener.h>
 #include <sbIMediaItem.h>
 #include <sbIPlaybackHistoryListener.h>
 
 class sbPlaybackHistoryService : public sbIPlaybackHistoryService,
+                                 public sbIMediacoreEventListener,
                                  public nsIObserver
 {
 public:
@@ -55,6 +61,7 @@ public:
 
   NS_DECL_ISUPPORTS
   NS_DECL_NSIOBSERVER
+  NS_DECL_SBIMEDIACOREEVENTLISTENER
   NS_DECL_SBIPLAYBACKHISTORYSERVICE
 
   static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
@@ -113,6 +120,11 @@ public:
   
   nsresult DoEntriesClearedCallback();
 
+  // playcount, last played time management.
+  nsresult UpdateTrackingDataFromEvent(sbIMediacoreEvent *aEvent);
+  nsresult VerifyDataAndCreateNewEntry();
+  nsresult ResetTrackingData();
+
 protected:
   ~sbPlaybackHistoryService();
 
@@ -153,6 +165,18 @@ private:
 
   nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyDBIDToID;
   nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyIDToDBID;
+
+  nsCOMPtr<nsIWeakReference> mMediacoreManager;
+
+  PRMonitor*   mMonitor;
+
+  PRPackedBool mCurrentlyTracking;
+
+  PRTime mCurrentStartTime;
+  PRTime mCurrentPauseTime;
+  PRTime mCurrentDelta;
+
+  nsCOMPtr<sbIMediaItem> mCurrentItem;
 };
 
 #endif /* __SB_PLAYBACKHISTORYSERVICE_H__ */

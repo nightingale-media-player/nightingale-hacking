@@ -33,8 +33,11 @@
 #include <nsILocalFile.h>
 #include <nsIMutableArray.h>
 #include <nsIObserverService.h>
+#include <nsIVariant.h>
+#include <nsIWeakReferenceUtils.h>
 
 #include <nsArrayUtils.h>
+#include <nsAutoLock.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
@@ -45,6 +48,9 @@
 
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
+#include <sbIMediacoreEvent.h>
+#include <sbIMediacoreEventTarget.h>
+#include <sbIMediacoreManager.h>
 #include <sbIPlaybackHistoryEntry.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
@@ -54,6 +60,7 @@
 #include <sbArray.h>
 #include <sbLibraryCID.h>
 #include <sbPropertiesCID.h>
+#include <sbStandardProperties.h>
 #include <sbProxyUtils.h>
 #include <sbSQLBuilderCID.h>
 #include <sbStringUtils.h>
@@ -113,11 +120,16 @@ GetDBFolder()
 //-----------------------------------------------------------------------------
 // sbPlaybackHistoryService
 //-----------------------------------------------------------------------------
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbPlaybackHistoryService, 
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbPlaybackHistoryService, 
                               sbIPlaybackHistoryService,
+                              sbIMediacoreEventListener,
                               nsIObserver)
 
 sbPlaybackHistoryService::sbPlaybackHistoryService()
+: mCurrentlyTracking(PR_FALSE)
+, mCurrentStartTime(0)
+, mCurrentPauseTime(0)
+, mCurrentDelta(0)
 {
   MOZ_COUNT_CTOR(sbPlaybackHistoryService);
 }
@@ -191,6 +203,9 @@ sbPlaybackHistoryService::Init()
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mMonitor = nsAutoMonitor::NewMonitor("sbPlaybackHistoryService::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -205,6 +220,20 @@ sbPlaybackHistoryService::Init()
 
   success = mPropertyIDToDBID.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<nsISupportsWeakReference> weakRef = 
+    do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = weakRef->GetWeakReference(getter_AddRefs(mMediacoreManager));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacoreEventTarget> eventTarget = 
+    do_QueryReferent(mMediacoreManager, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = eventTarget->AddListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1504,6 +1533,141 @@ sbPlaybackHistoryService::DoEntriesClearedCallback()
   return NS_OK;
 }
 
+nsresult
+sbPlaybackHistoryService::UpdateTrackingDataFromEvent(sbIMediacoreEvent *aEvent)
+{
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsCOMPtr<nsIVariant> variant;
+  nsresult rv = aEvent->GetData(getter_AddRefs(variant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupports> supports;
+  rv = variant->GetAsISupports(getter_AddRefs(supports));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mCurrentItem = item;
+  mCurrentlyTracking = PR_TRUE;
+
+  mCurrentStartTime = 0;
+  mCurrentDelta = 0;
+
+  return NS_OK;
+}
+
+nsresult
+sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
+{
+  nsAutoMonitor mon(mMonitor);
+
+  NS_ENSURE_STATE(mCurrentlyTracking);
+  NS_ENSURE_STATE(mCurrentItem);
+  NS_ENSURE_STATE(mCurrentStartTime);
+
+  if(!mCurrentlyTracking) {
+    return NS_ERROR_UNEXPECTED;
+  }
+
+  // figure out actual playing time in milliseconds.
+  PRTime actualPlayingTime = PR_Now() - mCurrentStartTime - mCurrentDelta;
+  actualPlayingTime /= PR_USEC_PER_MSEC;
+  
+  NS_NAMED_LITERAL_STRING(PROPERTY_DURATION, SB_PROPERTY_DURATION);
+  NS_NAMED_LITERAL_STRING(PROPERTY_PLAYCOUNT, SB_PROPERTY_PLAYCOUNT);
+  NS_NAMED_LITERAL_STRING(PROPERTY_SKIPCOUNT, SB_PROPERTY_SKIPCOUNT);
+  NS_NAMED_LITERAL_STRING(PROPERTY_LASTPLAYTIME, SB_PROPERTY_LASTPLAYTIME);
+  NS_NAMED_LITERAL_STRING(PROPERTY_LASTSKIPTIME, SB_PROPERTY_LASTSKIPTIME);
+
+  nsString durationStr;
+  nsresult rv = mCurrentItem->GetProperty(PROPERTY_DURATION, durationStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint64 duration = ToInteger64(durationStr, &rv);
+  duration /= PR_USEC_PER_MSEC;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // if we played for at least 240 seconds (matching audioscrobbler)
+  // or more than half the track (matching audioscrobbler)
+  if(duration && (actualPlayingTime >= (duration / 2)) ||
+     actualPlayingTime >= (240 * 1000)) {
+
+    // increment play count.
+    nsString playCountStr;
+    rv = mCurrentItem->GetProperty(PROPERTY_PLAYCOUNT, playCountStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint64 playCount = 0;
+    if(!playCountStr.IsEmpty()) {
+      playCount = ToInteger64(playCountStr, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    playCount++;
+
+    sbAutoString newPlayCountStr(playCount);
+    rv = mCurrentItem->SetProperty(PROPERTY_PLAYCOUNT, newPlayCountStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // update last time played
+    sbAutoString newLastPlayTimeStr((PRUint64)(mCurrentStartTime / 
+                                               PR_USEC_PER_MSEC));
+    rv = mCurrentItem->SetProperty(PROPERTY_LASTPLAYTIME, newLastPlayTimeStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // create new playback history entry
+    nsCOMPtr<sbIPlaybackHistoryEntry> entry;
+    rv = CreateEntry(mCurrentItem, 
+                     mCurrentStartTime, 
+                     actualPlayingTime, 
+                     nsnull, 
+                     getter_AddRefs(entry));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = AddEntry(entry);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // update skip count.
+    nsString skipCountStr;
+    rv = mCurrentItem->GetProperty(PROPERTY_SKIPCOUNT, skipCountStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint64 skipCount = 0;
+    if(!skipCountStr.IsEmpty()) {
+      skipCount = ToInteger64(skipCountStr, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    skipCount++;
+
+    sbAutoString newSkipCountStr(skipCount);
+    rv = mCurrentItem->SetProperty(PROPERTY_SKIPCOUNT, newSkipCountStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // update last skip time.
+    sbAutoString newLastSkipTimeStr((PRUint64) (mCurrentStartTime / 
+                                                PR_USEC_PER_MSEC));
+    rv = mCurrentItem->SetProperty(PROPERTY_LASTSKIPTIME, newLastSkipTimeStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbPlaybackHistoryService::ResetTrackingData()
+{
+  nsAutoMonitor mon(mMonitor);
+
+  mCurrentlyTracking = PR_FALSE;
+  mCurrentStartTime = 0;
+  mCurrentPauseTime = 0;
+  mCurrentDelta = 0;
+  mCurrentItem = nsnull;
+
+  return NS_OK;
+}
 //-----------------------------------------------------------------------------
 // nsIObserver
 //-----------------------------------------------------------------------------
@@ -1534,6 +1698,72 @@ sbPlaybackHistoryService::Observe(nsISupports* aSubject,
       observerService->RemoveObserver(this, 
                                       SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+// sbIMediacoreEventListener
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+sbPlaybackHistoryService::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
+{
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  PRUint32 eventType = 0;
+  nsresult rv = aEvent->GetType(&eventType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoMonitor mon(mMonitor);
+
+  switch(eventType) {
+    case sbIMediacoreEvent::STREAM_START: {
+      if(mCurrentlyTracking && !mCurrentStartTime) {
+        mCurrentStartTime = PR_Now();
+      }
+
+      if(mCurrentlyTracking && mCurrentStartTime && mCurrentPauseTime) {
+        mCurrentDelta = mCurrentDelta + (PR_Now() - mCurrentPauseTime);
+        mCurrentPauseTime = 0;
+      }
+    }
+    break;
+
+    case sbIMediacoreEvent::STREAM_PAUSE: {
+      if(mCurrentlyTracking && mCurrentStartTime && !mCurrentPauseTime) {
+        mCurrentPauseTime = PR_Now();
+      }
+    }
+    break;
+
+    case sbIMediacoreEvent::STREAM_END:
+    case sbIMediacoreEvent::STREAM_STOP: {
+      if(mCurrentlyTracking) {
+        // Regardless of failure, we reset the data after this block of code.
+        VerifyDataAndCreateNewEntry();
+      }
+      
+      rv = ResetTrackingData();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+
+    case sbIMediacoreEvent::TRACK_CHANGE: {
+      // already tracking, check to see if we should add an entry for the 
+      // current item before starting to track the next one.
+      if(mCurrentlyTracking) {
+        rv = VerifyDataAndCreateNewEntry();
+        if(NS_FAILED(rv)) {
+          rv = ResetTrackingData();
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+
+      rv = UpdateTrackingDataFromEvent(aEvent);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
   }
 
   return NS_OK;

@@ -40,6 +40,7 @@ CPP_INCLUDES = \
       $(DEPTH)/components/dbengine/public \
       $(topsrcdir)/components/dbengine/src \
       $(topsrcdir)/components/include \
+      $(DEPTH)/components/mediacore/base/public \
       $(DEPTH)/components/mediacore/playback/history/public \
       $(DEPTH)/components/library/base/public \
       $(topsrcdir)/components/library/base/src \
