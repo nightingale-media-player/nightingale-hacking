@@ -57,8 +57,7 @@ sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPro
                                                            const PRBool aRemoteReadable,
                                                            const PRBool aRemoteWritable,
                                                            const PRBool aUserViewable,
-                                                           const PRBool aUserEditable,
-                                                           const PRBool aIgnoreColumnPicker)
+                                                           const PRBool aUserEditable)
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
@@ -68,7 +67,6 @@ sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPro
   mUserEditable = aUserEditable;
   mRemoteReadable = aRemoteReadable;
   mRemoteWritable = aRemoteWritable;
-  mIgnoreColumnPicker = aIgnoreColumnPicker;
   mType.AssignLiteral("downloadbutton");
 }
 

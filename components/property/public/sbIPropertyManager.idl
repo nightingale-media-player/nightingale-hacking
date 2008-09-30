@@ -127,7 +127,7 @@ interface sbIPropertyOperator : nsISupports
 * \brief An interface used to describe a metadata property for use by the UI and other sbILibrary interfaces (smartplaylists, etc)
 * \sa sbIPropertyManager
 */
-[scriptable, uuid(452576df-1230-45f0-840c-5848efabf2b2)]
+[scriptable, uuid(88e15960-fe21-4995-b752-3ebe650c51bf)]
 interface sbIPropertyInfo : nsISupports
 {
   readonly attribute AString OPERATOR_EQUALS;
@@ -221,12 +221,6 @@ interface sbIPropertyInfo : nsISupports
    */
   attribute boolean remoteWritable;
   
-  /**
-   * \brief The property is hidden from playlist column pickers
-   *        (ie, the column cannot be removed or added manually)
-   */
-  attribute boolean ignoreColumnPicker;
-
   /**
    * \brief True if this property has a selection list
    */

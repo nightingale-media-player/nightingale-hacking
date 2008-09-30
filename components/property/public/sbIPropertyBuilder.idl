@@ -40,7 +40,7 @@ interface nsIStringBundle;
 * \interface sbIPropertyBuilder
 * \sa sbIPropertyInfo
 */
-[scriptable, uuid(9f7e04df-ba25-4176-9539-f6b60b72b45d)]
+[scriptable, uuid(9b1026c6-3896-49c6-a72f-4f4a2b21a6be)]
 interface sbIPropertyBuilder : nsISupports
 {
   attribute AString propertyID;
@@ -57,8 +57,6 @@ interface sbIPropertyBuilder : nsISupports
 
   attribute boolean remoteWritable;
   
-  attribute boolean ignoreColumnPicker;
-
   sbIPropertyInfo get();
 };
 

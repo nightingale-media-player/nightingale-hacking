@@ -1225,7 +1225,10 @@
     treecol.setAttribute("hidden", "true");
   }
   
-  if (propertyInfo.ignoreColumnPicker) {
+  // Ordinal and track name (title) are special cases, we never want them in
+  // the column picker (bug 12230)
+  if (propertyInfo.id == SBProperties.ordinal ||
+      propertyInfo.id == SBProperties.trackName) {
     treecol.setAttribute("ignoreincolumnpicker", "true");
   }
 

@@ -73,8 +73,7 @@ sbDownloadButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
                                      mRemoteReadable,
                                      mRemoteWritable,
                                      mUserViewable,
-                                     mUserEditable,
-                                     mIgnoreColumnPicker);
+                                     mUserEditable);
   NS_ENSURE_TRUE(pi, NS_ERROR_OUT_OF_MEMORY);
 
   rv = pi->Init();

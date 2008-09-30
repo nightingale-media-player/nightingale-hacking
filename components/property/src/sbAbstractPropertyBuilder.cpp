@@ -45,8 +45,7 @@ sbAbstractPropertyBuilder::sbAbstractPropertyBuilder() :
   mUserViewable(PR_TRUE),
   mUserEditable(PR_TRUE),
   mRemoteReadable(PR_FALSE),
-  mRemoteWritable(PR_FALSE),
-  mIgnoreColumnPicker(PR_FALSE)
+  mRemoteWritable(PR_FALSE)
 {
 }
 
@@ -218,20 +217,6 @@ NS_IMETHODIMP
 sbAbstractPropertyBuilder::SetRemoteWritable(PRBool aRemoteWritable)
 {
   mRemoteWritable = aRemoteWritable;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbAbstractPropertyBuilder::GetIgnoreColumnPicker(PRBool* aIgnoreColumnPicker)
-{
-  NS_ENSURE_ARG_POINTER(aIgnoreColumnPicker);
-  *aIgnoreColumnPicker = mIgnoreColumnPicker;
-  return NS_OK;
-}
-NS_IMETHODIMP
-sbAbstractPropertyBuilder::SetIgnoreColumnPicker(PRBool aIgnoreColumnPicker)
-{
-  mIgnoreColumnPicker = aIgnoreColumnPicker;
   return NS_OK;
 }
 

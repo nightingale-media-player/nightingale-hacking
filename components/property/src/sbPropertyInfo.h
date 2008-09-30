@@ -76,9 +76,7 @@ NS_IMETHOD GetOperators(nsISimpleEnumerator * *aOperators) { return _to GetOpera
 NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperators(aOperators); } \
 NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retval) { return _to GetOperator(aOperator, _retval); } \
 NS_IMETHOD SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter) { return _to SetUnitConverter(aUnitConverter); } \
-NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetUnitConverter(retVal); } \
-NS_IMETHOD SetIgnoreColumnPicker(PRBool aIgnoreColumnPicker) { return _to SetIgnoreColumnPicker(aIgnoreColumnPicker); } \
-NS_IMETHOD GetIgnoreColumnPicker(PRBool *aIgnoreColumnPicker) { return _to GetIgnoreColumnPicker(aIgnoreColumnPicker); }
+NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetUnitConverter(retVal); }
 
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
   static_cast<sbIPropertyInfo*>(static_cast<__unambiguousBase>(__expr))
@@ -127,9 +125,6 @@ protected:
   PRLock*   mRemoteWritableLock;
   PRBool    mRemoteWritable;
   
-  PRLock*   mIgnoreColumnPickerLock;
-  PRBool    mIgnoreColumnPicker;
-
   PRLock*   mUnitConverterLock;
   nsCOMPtr<sbIPropertyUnitConverter> mUnitConverter;
 };

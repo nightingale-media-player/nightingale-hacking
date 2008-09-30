@@ -61,7 +61,6 @@ protected:
   PRBool mUserEditable;
   PRBool mRemoteReadable;
   PRBool mRemoteWritable;
-  PRBool mIgnoreColumnPicker;
   nsCOMPtr<nsIStringBundle> mBundle;
   PRLock*   mOperatorsLock;
   nsCOMArray<sbIPropertyOperator> mOperators;

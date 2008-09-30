@@ -339,7 +339,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL),
                       NS_LITERAL_STRING("property.ordinal"),
                       stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE, 0, PR_FALSE,
-                      PR_FALSE, PR_FALSE, NULL, PR_TRUE);
+                      PR_FALSE, PR_FALSE, NULL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Guid (internal use only)
@@ -456,7 +456,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     NS_LITERAL_STRING("property.track_name"),
                     stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE, NULL, PR_TRUE);
+                    PR_TRUE, PR_TRUE);
 
   //Album name
   nsCOMPtr<sbIMutablePropertyArray> albumSortProfile =
@@ -1024,8 +1024,7 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
                                 PRBool aHasNullSort,
                                 PRBool aRemoteReadable,
                                 PRBool aRemoteWritable,
-                                sbIPropertyArray* aSortProfile,
-                                PRBool aIgnoreColumnPicker)
+                                sbIPropertyArray* aSortProfile)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1067,9 +1066,6 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
-  rv = textProperty->SetIgnoreColumnPicker(aIgnoreColumnPicker);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbITextPropertyInfo*, textProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1092,8 +1088,7 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyID,
                                     PRBool aUserViewable,
                                     PRBool aUserEditable,
                                     PRBool aRemoteReadable,
-                                    PRBool aRemoteWritable,
-                                    PRBool aIgnoreColumnPicker)
+                                    PRBool aRemoteWritable)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1125,9 +1120,6 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyID,
   rv = datetimeProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = datetimeProperty->SetIgnoreColumnPicker(aIgnoreColumnPicker);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIDatetimePropertyInfo*, datetimeProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1148,8 +1140,7 @@ sbPropertyManager::RegisterDuration(const nsAString& aPropertyID,
                                     PRBool aUserViewable,
                                     PRBool aUserEditable,
                                     PRBool aRemoteReadable,
-                                    PRBool aRemoteWritable,
-                                    PRBool aIgnoreColumnPicker)
+                                    PRBool aRemoteWritable)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1189,9 +1180,6 @@ sbPropertyManager::RegisterDuration(const nsAString& aPropertyID,
   rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = durationProperty->SetIgnoreColumnPicker(aIgnoreColumnPicker);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1205,8 +1193,7 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyID,
                                PRBool aUserViewable,
                                PRBool aUserEditable,
                                PRBool aRemoteReadable,
-                               PRBool aRemoteWritable,
-                               PRBool aIgnoreColumnPicker)
+                               PRBool aRemoteWritable)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1241,9 +1228,6 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyID,
   rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = uriProperty->SetIgnoreColumnPicker(aIgnoreColumnPicker);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1257,8 +1241,7 @@ sbPropertyManager::RegisterImage(const nsAString& aPropertyID,
                                  PRBool aUserViewable,
                                  PRBool aUserEditable,
                                  PRBool aRemoteReadable,
-                                 PRBool aRemoteWritable,
-                                 PRBool aIgnoreColumnPicker)
+                                 PRBool aRemoteWritable)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
   nsresult rv;
@@ -1273,7 +1256,7 @@ sbPropertyManager::RegisterImage(const nsAString& aPropertyID,
   nsRefPtr<sbImagePropertyInfo> imageProperty(
       new sbImagePropertyInfo(aPropertyID, displayName,
         aRemoteReadable, aRemoteWritable, aUserViewable,
-        aUserEditable, aIgnoreColumnPicker));
+        aUserEditable));
   NS_ENSURE_TRUE(imageProperty, NS_ERROR_OUT_OF_MEMORY);
 
   rv = AddPropertyInfo(imageProperty);
@@ -1294,8 +1277,7 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
                                   PRBool aHasMaxValue,
                                   PRBool aRemoteReadable,
                                   PRBool aRemoteWritable,
-                                  sbIPropertyUnitConverter *aUnitConverter,
-                                  PRBool aIgnoreColumnPicker)
+                                  sbIPropertyUnitConverter *aUnitConverter)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1336,9 +1318,6 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
   rv = numberProperty->SetUnitConverter(aUnitConverter);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = numberProperty->SetIgnoreColumnPicker(aIgnoreColumnPicker);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbINumberPropertyInfo*, numberProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1359,8 +1338,7 @@ sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
                                    PRBool aUserViewable,
                                    PRBool aUserEditable,
                                    PRBool aRemoteReadable,
-                                   PRBool aRemoteWritable,
-                                   PRBool aIgnoreColumnPicker)
+                                   PRBool aRemoteWritable)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1388,9 +1366,6 @@ sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
   rv = booleanProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = booleanProperty->SetIgnoreColumnPicker(aIgnoreColumnPicker);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIBooleanPropertyInfo*, booleanProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
