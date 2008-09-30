@@ -996,7 +996,7 @@ PlaylistPlayback.prototype = {
       // If paused, then continue where we left off.
       // Otherwise start the last played song.
       if (core.getPaused()) {
-        core.play()
+        core.play();
       } else {
         this.playView( this._playingView, 
                        (this.currentIndex != -1) ? this.currentIndex : -1);
@@ -1191,7 +1191,7 @@ PlaylistPlayback.prototype = {
         ext = "???";  // Well, we certainly tried to play something.
       var protocol = spec.substr(0, spec.indexOf(":"));
       if (protocol.length < 1) 
-        protocol = "???"
+        protocol = "???";
       gMetrics.metricsInc("mediacore.play.attempt", core.getId(), ext + "." + protocol);
     } catch( err ) {
       Components.utils.reportError(err);
@@ -1483,7 +1483,7 @@ PlaylistPlayback.prototype = {
     if ( hours > 50 ) // lame
       return "Error";
     minutes = parseInt( minutes ) % 60;
-    var text = ""
+    var text = "";
     if ( hours > 0 )
       text += hours + ":";
     if ( hours > 0 && minutes < 10 )
@@ -1599,7 +1599,7 @@ PlaylistPlayback.prototype = {
     this._incPlayCountItem = null;
     this._timer = Components.classes[ "@mozilla.org/timer;1" ]
                   .createInstance( Components.interfaces.nsITimer );
-    this._timer.initWithCallback( this, LOOP_DURATION, 1 ) // TYPE_REPEATING_SLACK
+    this._timer.initWithCallback( this, LOOP_DURATION, 1 ); // TYPE_REPEATING_SLACK
     this._beginWatchPlayItem();
   },
   
@@ -2064,7 +2064,7 @@ PlaylistPlayback.prototype = {
     if ( cur_index > -1 ) {
       // Play the next playlist entry tree index (or whatever, based upon state.)
       // XXXnewlib
-      var num_items = this._playingView.length
+      var num_items = this._playingView.length;
       LOG( num_items + " items in the current playlist" );
       
       var next_index = -1;
@@ -2359,7 +2359,7 @@ PlaylistPlayback.prototype = {
           var ioService =  Cc['@mozilla.org/network/io-service;1']
                              .getService(Ci.nsIIOService);
 
-          uri = ioService.newURI(primaryImageURL, null, null);
+          var uri = ioService.newURI(primaryImageURL, null, null);
           if (uri.scheme == 'file') {
             var fph = ioService.getProtocolHandler("file")
                                .QueryInterface(Ci.nsIFileProtocolHandler);
@@ -2750,7 +2750,7 @@ PlaylistPlayback.prototype = {
         }
         throw Components.results.NS_ERROR_NO_INTERFACE;
       }
-    } 
+    };
     
     watcher.init();
   },
@@ -2841,7 +2841,7 @@ PlaylistPlayback.prototype = {
 function NSGetModule(compMgr, fileSpec) {
 
   return XPCOMUtils.generateModule([
-    PlaylistPlayback,
+    PlaylistPlayback
   ],
   function(aCompMgr, aFileSpec, aLocation) {
     XPCOMUtils.categoryManager.addCategoryEntry(
