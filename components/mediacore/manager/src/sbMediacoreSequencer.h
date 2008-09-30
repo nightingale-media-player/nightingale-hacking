@@ -90,6 +90,7 @@ public:
   nsresult HandleMetadataEvent(sbIMediacoreEvent *aEvent);
   nsresult SetMetadataDataRemote(const nsAString &aId, 
                                  const nsAString &aValue);
+  nsresult SetMetadataDataRemotesFromItem(sbIMediaItem *aItem);
   nsresult ResetMetadataDataRemotes();
 
   // Sequence management

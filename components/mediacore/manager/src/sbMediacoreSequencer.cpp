@@ -132,7 +132,8 @@ NS_DECL_CLASSINFO(sbMediacoreSequencer)
 NS_IMPL_THREADSAFE_CI(sbMediacoreSequencer)
 
 sbMediacoreSequencer::sbMediacoreSequencer()
-: mStatus(sbIMediacoreStatus::STATUS_STOPPED)
+: mMonitor(nsnull)
+, mStatus(sbIMediacoreStatus::STATUS_STOPPED)
 , mIsWaitingForPlayback(PR_FALSE)
 , mSeenPlaying(PR_FALSE)
 , mNextTriggeredByStreamEnd(PR_FALSE)
@@ -177,6 +178,9 @@ sbMediacoreSequencer::Init()
   nsRefPtr<sbMediacoreShuffleSequenceGenerator> generator;
   NS_NEWXPCOM(generator, sbMediacoreShuffleSequenceGenerator);
   NS_ENSURE_TRUE(generator, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = generator->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mShuffleGenerator = do_QueryInterface(generator, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -751,6 +755,42 @@ sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
   return NS_OK;
 }
 
+nsresult 
+sbMediacoreSequencer::SetMetadataDataRemotesFromItem(sbIMediaItem *aItem)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  nsString albumName, artistName, genre, trackName;
+  nsresult rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), 
+                                   albumName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), 
+                          artistName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_GENRE), genre);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), trackName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataAlbum->SetStringValue(albumName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataArtist->SetStringValue(artistName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataGenre->SetStringValue(genre);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataTitle->SetStringValue(trackName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 nsresult
 sbMediacoreSequencer::ResetMetadataDataRemotes() {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1029,6 +1069,9 @@ sbMediacoreSequencer::Setup()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdateURLDataRemotes(uri);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetMetadataDataRemotesFromItem(item);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Fire track change event
