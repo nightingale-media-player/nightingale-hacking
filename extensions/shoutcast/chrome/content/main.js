@@ -172,7 +172,7 @@ var curTrackListener = function(e) {
 	var list;
 	var gMcMgr;
 	var gPPS;
-	if (typeof(Ci.sbIMediacoreManager != "undefined")) {
+	if (typeof(Ci.sbIMediacoreManager) != "undefined") {
 		gMcMgr = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
 				.getService(Ci.sbIMediacoreManager);
 		list = gMcMgr.sequencer.view.mediaList;
@@ -185,7 +185,7 @@ var curTrackListener = function(e) {
 	// get the list that owns this guid
 	if (list.getProperty(SBProperties.customType) == "radio_tempStreamList") {
 		var streamName;
-		if (typeof(Ci.sbIMediacoreManager != "undefined")) {
+		if (typeof(Ci.sbIMediacoreManager) != "undefined") {
 			streamName = gMcMgr.sequencer.view.getItemByIndex(
 					gMcMgr.sequencer.viewPosition).getProperty(SC_streamName);
 		} else {
