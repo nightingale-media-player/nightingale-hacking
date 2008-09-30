@@ -46,10 +46,17 @@
           if ( this.getAttribute("hidden") != "true" ) // not hidden already
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
           var self = this;
-          window.addEventListener("resize", function(aEvent) {
-            const nsIDOMChromeWindow = Components.interfaces.nsIDOMChromeWindow;
-            self.checked = (window.windowState == nsIDOMChromeWindow.STATE_MAXIMIZED);
-          }, false);
+
+          // Mac handles the MAXIMIZED property via a Zoom controller and does not need
+          // notifications about |window.windowState| on resize events.
+          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                        .getService(Components.interfaces.nsIPropertyBag2);
+          if ( sysInfo.getProperty("name") != "Darwin" ) {
+            window.addEventListener("resize", function(aEvent) {
+              const nsIDOMChromeWindow = Components.interfaces.nsIDOMChromeWindow;
+              self.checked = (window.windowState == nsIDOMChromeWindow.STATE_MAXIMIZED);
+            }, false);
+          }
         ]]>
       </constructor>
       <destructor>
