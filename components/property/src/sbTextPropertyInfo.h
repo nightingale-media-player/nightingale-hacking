@@ -61,6 +61,9 @@ protected:
 
   PRLock*  mEnforceLowercaseLock;
   PRBool   mEnforceLowercase;
+
+  PRLock*  mNoCompressWhitespaceLock;
+  PRBool   mNoCompressWhitespace;
 };
 
 #endif /* __SBTEXTPROPERTYINFO_H__ */

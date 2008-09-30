@@ -285,7 +285,7 @@ interface sbIPropertyInfo : nsISupports
  * \brief The property information specific to text fields
  * \sa sbIPropertyInfo
  */
-[scriptable, uuid(ceff6b77-4b4d-48d0-816f-26ec1992a5b2)]
+[scriptable, uuid(2c5553c0-8f2e-11dd-ad8b-0800200c9a66)]
 interface sbITextPropertyInfo : sbIPropertyInfo
 {
   /**
@@ -302,6 +302,11 @@ interface sbITextPropertyInfo : sbIPropertyInfo
    * \brief Must be lowercase (only valid for languages where this applies)
    */
   attribute boolean enforceLowercase;
+  
+  /**
+   * \brief The property value should not be formatted.
+   */
+  attribute boolean noCompressWhitespace;
 };
 
 /**

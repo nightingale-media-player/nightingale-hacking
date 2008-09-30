@@ -51,6 +51,8 @@ sbTextPropertyInfo::sbTextPropertyInfo()
 , mMaxLen(0)
 , mEnforceLowercaseLock(nsnull)
 , mEnforceLowercase(PR_FALSE)
+, mNoCompressWhitespaceLock(nsnull)
+, mNoCompressWhitespace(PR_FALSE)
 {
   mType = NS_LITERAL_STRING("text");
 
@@ -60,7 +62,11 @@ sbTextPropertyInfo::sbTextPropertyInfo()
 
   mEnforceLowercaseLock = PR_NewLock();
   NS_ASSERTION(mEnforceLowercaseLock,
-    "sbTextPropertyInfo::mMinMaxLock failed to create lock!");
+    "sbTextPropertyInfo::mEnforceLowercaseLock failed to create lock!");
+
+  mNoCompressWhitespaceLock = PR_NewLock();
+  NS_ASSERTION(mNoCompressWhitespaceLock,
+    "sbTextPropertyInfo::mNoCompressWhitespaceLock failed to create lock!");
 }
 
 sbTextPropertyInfo::~sbTextPropertyInfo()
@@ -71,6 +77,10 @@ sbTextPropertyInfo::~sbTextPropertyInfo()
 
   if(mEnforceLowercaseLock) {
     PR_DestroyLock(mEnforceLowercaseLock);
+  }
+  
+  if(mNoCompressWhitespaceLock) {
+    PR_DestroyLock(mNoCompressWhitespaceLock);
   }
 }
 
@@ -186,7 +196,14 @@ NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _
 
   _retval = aValue;
 
-  CompressWhitespace(_retval);
+  //Don't compress/strip the whitespace if requested
+  {
+    sbSimpleAutoLock lock(mNoCompressWhitespaceLock);
+    if (!mNoCompressWhitespace) {
+      CompressWhitespace(_retval);
+    }
+  }
+
   PRInt32 len = aValue.Length();
 
   {
@@ -315,5 +332,19 @@ NS_IMETHODIMP sbTextPropertyInfo::SetEnforceLowercase(PRBool aEnforceLowercase)
 {
   sbSimpleAutoLock lock(mEnforceLowercaseLock);
   mEnforceLowercase = aEnforceLowercase;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbTextPropertyInfo::GetNoCompressWhitespace(PRBool *aNoCompressWhitespace)
+{
+  NS_ENSURE_ARG_POINTER(aNoCompressWhitespace);
+  sbSimpleAutoLock lock(mNoCompressWhitespaceLock);
+  *aNoCompressWhitespace = mNoCompressWhitespace;
+  return NS_OK;
+}
+NS_IMETHODIMP sbTextPropertyInfo::SetNoCompressWhitespace(PRBool aNoCompressWhitespace)
+{
+  sbSimpleAutoLock lock(mNoCompressWhitespaceLock);
+  mNoCompressWhitespace = aNoCompressWhitespace;
   return NS_OK;
 }

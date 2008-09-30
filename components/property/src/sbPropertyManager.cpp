@@ -603,7 +603,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_LYRICS),
                     NS_LITERAL_STRING("property.lyrics"),
                     stringBundle, PR_FALSE, PR_TRUE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE);
+                    PR_TRUE, PR_TRUE, nsnull, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Record Label
@@ -687,7 +687,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_COMMENT),
                     NS_LITERAL_STRING("property.comment"),
                     stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE);
+                    PR_TRUE, PR_TRUE, nsnull, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Copyright
@@ -1024,7 +1024,8 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
                                 PRBool aHasNullSort,
                                 PRBool aRemoteReadable,
                                 PRBool aRemoteWritable,
-                                sbIPropertyArray* aSortProfile)
+                                sbIPropertyArray* aSortProfile,
+                                PRBool aNoCompressWhitespace)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1063,6 +1064,11 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
 
   if (aSortProfile) {
     rv = textProperty->SetSortProfile(aSortProfile);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  if (aNoCompressWhitespace) {
+    rv = textProperty->SetNoCompressWhitespace(aNoCompressWhitespace);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   

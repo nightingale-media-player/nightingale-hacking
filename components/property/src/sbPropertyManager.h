@@ -106,7 +106,8 @@ private:
                         PRBool aHasNullSort,
                         PRBool aRemoteReadable,
                         PRBool aRemoteWritable,
-                        sbIPropertyArray* aSortProfile = nsnull);
+                        sbIPropertyArray* aSortProfile = nsnull,
+                        PRBool aNoCompressWhitespace = PR_FALSE);
 
   nsresult RegisterURI(const nsAString& aPropertyID,
                        const nsAString& aDisplayKey,
