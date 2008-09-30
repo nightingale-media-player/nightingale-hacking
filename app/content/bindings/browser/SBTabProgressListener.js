@@ -77,7 +77,7 @@ SBTabProgressListener.prototype = {
       }
 
       // set the context-menu based on the chromeyness of the location
-      if (aLocation.scheme == 'chrome') {
+      if (aLocation.scheme == 'chrome' || aLocation.scheme == 'about') {
         //XXXAus: Disable bookmarking for chrome URI's to prevent
         //stale bookmarks. See bug #4009.
         SBDataSetBoolValue('browser.canbookmark', false);
