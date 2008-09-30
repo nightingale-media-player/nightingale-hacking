@@ -307,7 +307,7 @@ Concerts = {
 		gMetrics.metricsInc("concerts", "faceplate.link", "");
 		// Load the artist event page into a new tab
 		var item;
-		if (concerts.newMediaCore)
+		if (Concerts.newMediaCore)
 			item = gMediaCore.sequencer.view.getItemByIndex(
 				gMediaCore.sequencer.viewPosition);
 		else
