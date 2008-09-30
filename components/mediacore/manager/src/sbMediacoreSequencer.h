@@ -148,6 +148,8 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateSeenPlaying;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateURL;
 
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateRemainingTime;
+
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataAlbum;
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataArtist;
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataTitle;

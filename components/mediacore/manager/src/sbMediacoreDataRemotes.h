@@ -37,6 +37,13 @@
 #define SB_MEDIACORE_DATAREMOTE_FACEPLATE_PLAY_URL    "faceplate.play.url"
 #define SB_MEDIACORE_DATAREMOTE_FACEPLATE_SEENPLAYING "faceplate.seenplaying"
 
+/** 
+ * Show remaining is special, when this data remote is set to true
+ * it will cause the METADATA_LENGTH_STR dataremote to have it's value set
+ * to the remaining amount of time left in the song.
+ */
+#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_SHOWREMAINING "faceplate.showremainingtime"
+
 #define SB_MEDIACORE_DATAREMOTE_FACEPLATE_VOLUME      "faceplate.volume"
 #define SB_MEDIACORE_DATAREMOTE_FACEPLATE_MUTE        "faceplate.mute"
 
@@ -51,6 +58,7 @@
 
 #define SB_MEDIACORE_DATAREMOTE_METADATA_LENGTH       "metadata.length"
 #define SB_MEDIACORE_DATAREMOTE_METADATA_LENGTH_STR   "metadata.length.str"
+
 #define SB_MEDIACORE_DATAREMOTE_METADATA_POSITION     "metadata.position"
 #define SB_MEDIACORE_DATAREMOTE_METADATA_POSITION_STR "metadata.position.str"
 
