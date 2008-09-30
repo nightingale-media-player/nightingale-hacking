@@ -166,9 +166,9 @@
   this._onMouseDownClosure = function(event) {
     self._onMouseDown(event);
   };
-  this.addEventListener("mousedown",
-                        this._onMouseDownClosure,
-                        false);
+  this._treechildren.addEventListener("mousedown",
+                                      this._onMouseDownClosure,
+                                      false);
                         
                         
   // Add a capturing listener so we can swallow command events
@@ -608,9 +608,9 @@
                                       this._onColumnMutationClosure,
                                         false);
 
-    this.removeEventListener("mousedown",
-                            this._onMouseDownClosure,
-                            true);
+    this._treechildren.removeEventListener("mousedown",
+                                           this._onMouseDownClosure,
+                                           true);
                             
     this.removeEventListener("command",
                             this._onCommandClosure,
