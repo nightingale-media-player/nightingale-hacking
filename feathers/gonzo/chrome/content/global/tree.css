@@ -49,7 +49,9 @@ tree,
 .sb-playlist-tree,
 .sb-filterlist-tree { 
   -moz-appearance: none;
-  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
+  background-image: url('chrome://songbird/skin/base-elements/bg-empty-table.png');
+  /* why? */
+  background-position:left 16px;
 }
 
 

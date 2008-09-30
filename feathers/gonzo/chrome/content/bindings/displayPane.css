@@ -126,3 +126,14 @@ menuitem.displaypane-menuitem[recommended] {
 
 
 
+/******************************************************************************
+> EMPTY STATE
+******************************************************************************/
+.empty {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');
+}
+.empty-message {
+  padding:10px;
+}

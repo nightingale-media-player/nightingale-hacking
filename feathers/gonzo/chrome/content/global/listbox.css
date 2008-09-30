@@ -46,8 +46,6 @@
 /* ::::: listbox ::::: */
 
 listbox {
-  background-color:white;
-  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
 }
 
 .listcell-label {
