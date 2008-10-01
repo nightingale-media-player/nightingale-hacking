@@ -27,26 +27,18 @@
 #ifndef __SBORIGINPAGEIMAGEPROPERTYINFO_H__
 #define __SBORIGINPAGEIMAGEPROPERTYINFO_H__
 
-#include "sbImmutablePropertyInfo.h"
+#include "sbImageLinkPropertyInfo.h"
 
 #include <sbIPropertyManager.h>
-#include <sbITreeViewPropertyInfo.h>
-#include <sbIClickablePropertyInfo.h>
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
 #include <nsIFaviconService.h>
 
-class sbOriginPageImagePropertyInfo : public sbImmutablePropertyInfo,
-                                      public sbIClickablePropertyInfo,
-                                      public sbITreeViewPropertyInfo
+class sbOriginPageImagePropertyInfo : public sbImageLinkPropertyInfo
 {
 public:
-
-  NS_DECL_ISUPPORTS_INHERITED
-  NS_DECL_SBICLICKABLEPROPERTYINFO
-  NS_DECL_SBITREEVIEWPROPERTYINFO
 
   sbOriginPageImagePropertyInfo(const nsAString& aPropertyID,
                                 const nsAString& aDisplayName,
@@ -55,7 +47,11 @@ public:
                                 const PRBool aUserViewable,
                                 const PRBool aUserEditable);
 
-  NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
+  NS_IMETHOD GetCellProperties(const nsAString& aValue, nsAString& _retval);
+  NS_IMETHOD GetImageSrc(const nsAString& aValue, nsAString& _retval);
+  NS_IMETHOD GetPreventNavigation(const nsAString& aImageValue,
+                                  const nsAString& aUrlValue,
+                                  PRBool *_retval);
 
   nsresult Init();
   virtual ~sbOriginPageImagePropertyInfo() {}

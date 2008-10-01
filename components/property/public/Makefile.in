@@ -35,6 +35,7 @@ XPIDL_SRCS = sbIPropertyArray.idl \
              sbIPropertyBuilder.idl \
              sbITreeViewPropertyInfo.idl \
              sbIClickablePropertyInfo.idl \
+             sbIImageLinkPropertyInfo.idl \
              sbIPropertyUnitConverter.idl \
              sbISmartPlaylistPropertyRegistrar.idl \
              $(NULL)

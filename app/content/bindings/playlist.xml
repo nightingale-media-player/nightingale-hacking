@@ -861,25 +861,50 @@
 
   // Add the rest of the columns from the property manager.  Note if there was
   // any saved column info, add these additional columns as hidden, otherwise
-  // show them
-  var propEnumerator = this._pm.propertyIDs;
-  while (propEnumerator.hasMore()) {
-    var propertyID = propEnumerator.getNext();
-    if (!alreadyAdded[propertyID]) {
-      var propertyInfo = this._pm.getPropertyInfo(propertyID);
-      if (propertyInfo.userViewable ||
-          propertyID in defaultColumnsMap) {
-
-        this._appendColumn(propertyInfo,
-                           true,
-                           null,
-                           ordinal);
-        addedColumns++;
-        ordinal += 2;
+  // show them. Also, if pref "songbird.columnpicker.allowSecondary Properties"
+  // is true, do a second pass with everything that has not yet been added, and
+  // set the secondary attribute to true, so we can use it later to sort the
+  // additional properties below the primary ones
+  var enableAll = Application.prefs.getValue(
+                 "songbird.columnpicker.allowAllProperties", false);
+  var alsoUnlocalized = Application.prefs.getValue(
+                 "songbird.columnpicker.allowUnlocalizedSecondaryProperties", 
+                 false);
+  for (var i=0;i<2;i++) {
+    var isSecondary = (i == 1);
+    if (!enableAll && 
+        isSecondary) 
+      break;
+    var propEnumerator = this._pm.propertyIDs;
+    while (propEnumerator.hasMore()) {
+      var propertyID = propEnumerator.getNext();
+      if (!alreadyAdded[propertyID]) {
+        var propertyInfo = this._pm.getPropertyInfo(propertyID);
+        if (propertyInfo.userViewable ||
+            propertyID in defaultColumnsMap ||
+            isSecondary) {
+          // if this is a secondary prop, and it has no localized string
+          // it probably doesn't make sense to have it there, so only show it
+          // if the user really really wants it there
+          if (isSecondary &&
+              !alsoUnlocalized && 
+              propertyInfo.displayName.indexOf("http://") == 0)
+            continue;
+          // add the column, hidden (meaning it will appear in the column picker
+          // but with no checkmark)
+          this._appendColumn(propertyInfo,
+                             true,
+                             null,
+                             ordinal,
+                             isSecondary);
+          alreadyAdded[propertyInfo.id] = true;
+          addedColumns++;
+          ordinal += 2;
+        }
       }
     }
   }
-
+  
   // If there is no sort, default to the ordinal column 
   if (!sortProperty) {
     sortProperty = SBProperties.ordinal;
@@ -1203,6 +1228,7 @@
         <parameter name="isHidden"/>
         <parameter name="width"/>
         <parameter name="ordinal"/>
+        <parameter name="secondary"/>
         <body>
 <![CDATA[
   // If the last child of the columns element is a treecol, add a splitter
@@ -1223,6 +1249,10 @@
 
   if (isHidden) {
     treecol.setAttribute("hidden", "true");
+  }
+
+  if (secondary) {
+    treecol.setAttribute("secondary", "true");
   }
   
   // Ordinal and track name (title) are special cases, we never want them in
@@ -1840,27 +1870,38 @@
             evt.stopPropagation();
             return;
           }
-
-          // Special case for the origin page image property. If it is clicked,
-          // go to the origin page url.
-          if (property == SBProperties.originPageImage) {
-            var originPageURI = item.getProperty(SBProperties.originPage);
-            var originPageImage = item.getProperty(SBProperties.originPageImage);
-
-            var browser = null;
-            if (typeof SBGetBrowser == 'function') browser = SBGetBrowser();
-
-            if (originPageURI &&
-               originPageImage != null &&
-               originPageImage != "" &&
-               originPageImage != "unknownOrigin") {
+          
+          // Special case for clickable image links
+          if (info instanceof this._Ci.sbIImageLinkPropertyInfo) {
+            // Get the associated uri to navigate to
+            var uri = item.getProperty(info.urlProperty);
+            // Get the text value of the image property, this will depend on
+            // which property we're handling as each may have its own set of
+            // special strings for css purposes. For instance #originPageImage
+            // will have either <empty>, "webOrigin", or "unknownOrigin", which
+            // determines the icon that is displayed. Standard image link
+            // properties (such as #artistDetailImage), will have <empty>,
+            // "default", or the url to an image.
+            // Since the meaning of the value is not determinate, we cannot
+            // rely on a simple test to determine whether to proceed with
+            // navigation or not (for instance "unknownOrigin" should block it),
+            // so we ask the property info. Also, although the property info
+            // probably checks for empty urls, we still check here, just in
+            // case, so we don't try to navigate to nothing.
+            var image = item.getProperty(info.id);
+            if (uri != null && 
+                uri != "" &&
+                !info.getPreventNavigation(image, uri)) {
+              // navigate to the url
+              var browser = null;
+              if (typeof SBGetBrowser == 'function') 
+                browser = SBGetBrowser();
               if (browser) {
-                browser.loadURI(originPageURI, null, null, evt);
+                browser.loadURI(uri, null, null, evt);
               } else {
-                SBBrowserOpenURLInNewWindow(originPageURI);
+                SBBrowserOpenURLInNewWindow(uri);
               }
-            } 
-
+            }
             evt.stopPropagation();
             return;
           }
@@ -3064,9 +3105,22 @@
         <body>
           <![CDATA[
             var sortarray = [];
+            var sortarray2 = [];
+            var secondaryMap = {};
             var sep = null;
             var i;
-            // put everything that precedes the separator in a separate array
+            // make a map of colindex/secondary attribute
+            var tree = this.parentNode.parentNode;
+            var colIndex = 0;
+            for (var currCol = tree.columns.getFirstColumn(); currCol;
+                 currCol = currCol.getNext()) {
+              var element = currCol.element;
+              secondaryMap[colIndex] = 
+                (element.getAttribute("secondary") == "true");
+              colIndex++;
+            }
+            // put everything that precedes the separator in an array. if the
+            // property is secondary, put it in a different array
             // (if no separator is there, use everything)
             for (i = 0; i < aPopup.childNodes.length; i++) {
               var item = aPopup.childNodes[i];
@@ -3074,23 +3128,40 @@
                 sep = item;
                 break;
               }
-              sortarray.push(item);
+              var colIndex = item.getAttribute("colindex");
+              if (secondaryMap[colIndex])
+                sortarray2.push(item);
+              else
+                sortarray.push(item);
             }
-            // remove all these items from the dom
+            // remove all the items from the dom
             for (i = 0; i < sortarray.length; i++) {
               aPopup.removeChild(sortarray[i]);
             }
+            for (i = 0; i < sortarray2.length; i++) {
+              aPopup.removeChild(sortarray2[i]);
+            }
             // sort them
-            sortarray.sort(function(a, b) {
+            var sortFn = function(a, b) {
               var alabel = a.getAttribute("label").toLowerCase();
               var blabel = b.getAttribute("label").toLowerCase();
               if (alabel == blabel) return 0;
               if (alabel < blabel) return -1;
               return 1;
-            });
+            }
+            sortarray.sort(sortFn);
+            sortarray2.sort(sortFn);
             // and reinsert them in the dom
             for (i = 0; i < sortarray.length; i++) {
               aPopup.insertBefore(sortarray[i], sep);
+            }
+            // if there are any secondary item, separate them from the rest
+            if (sortarray2.length > 0) {
+              var sep2 = document.createElement("separator");
+              aPopup.insertBefore(sep2, sep);
+              for (i = 0; i < sortarray2.length; i++) {
+                aPopup.insertBefore(sortarray2[i], sep);
+              }
             }
            ]]>
         </body>

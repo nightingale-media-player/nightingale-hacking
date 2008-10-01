@@ -133,6 +133,15 @@ private:
                            PRBool aRemoteReadable,
                            PRBool aRemoteWritable);
 
+  nsresult RegisterImageLink(const nsAString &aPropertyID,
+                             const nsAString &aDisplayKey,
+                             nsIStringBundle* aStringBundle,
+                             PRBool aUserViewable,
+                             PRBool aUserEditable,
+                             PRBool aRemoteReadable,
+                             PRBool aRemoteWritable,
+                             const nsAString &aUriPropertyID);
+
   nsresult RegisterDummy(sbDummyPropertyInfo *aDummyProperty,
                          const nsAString &aPropertyID,
                          const nsAString &aDisplayKey,

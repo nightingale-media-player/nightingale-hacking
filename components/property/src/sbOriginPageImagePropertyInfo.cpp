@@ -35,32 +35,31 @@
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsUnicharUtils.h>
-
-NS_IMPL_ISUPPORTS_INHERITED2(sbOriginPageImagePropertyInfo,
-                             sbImmutablePropertyInfo,
-                             sbIClickablePropertyInfo,
-                             sbITreeViewPropertyInfo)
+#include "sbStandardProperties.h"
 
 sbOriginPageImagePropertyInfo::sbOriginPageImagePropertyInfo(const nsAString& aPropertyID,
                                                              const nsAString& aDisplayName,
                                                              const PRBool aRemoteReadable,
                                                              const PRBool aRemoteWritable,
                                                              const PRBool aUserViewable,
-                                                             const PRBool aUserEditable)
+                                                             const PRBool aUserEditable) :
+  sbImageLinkPropertyInfo(aPropertyID, 
+                          aDisplayName, 
+                          aRemoteReadable, 
+                          aRemoteWritable, 
+                          aUserViewable, 
+                          aUserEditable,
+                          NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE))
 {
-  mID = aPropertyID;
-  mDisplayName = aDisplayName;
-  mUserViewable = aUserViewable;
-  mUserEditable = aUserEditable;
-  mRemoteReadable = aRemoteReadable;
-  mRemoteWritable = aRemoteWritable;
-  mType.AssignLiteral("image");
 }
 
 nsresult
 sbOriginPageImagePropertyInfo::Init()
 {
   nsresult rv;
+  
+  rv = sbImageLinkPropertyInfo::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIFaviconService> faviconService = 
     do_GetService("@mozilla.org/browser/favicon-service;1", &rv);
@@ -120,39 +119,6 @@ sbOriginPageImagePropertyInfo::GetImageSrc(const nsAString& aValue,
 }
 
 NS_IMETHODIMP
-sbOriginPageImagePropertyInfo::GetProgressMode(const nsAString& aValue,
-                                               PRInt32* _retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = nsITreeView::PROGRESS_NONE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbOriginPageImagePropertyInfo::GetCellValue(const nsAString& aValue,
-                                            nsAString& _retval)
-{
-  _retval.Truncate();
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbOriginPageImagePropertyInfo::GetColumnProperties(const nsAString& aValue,
-                                                   nsAString& _retval)
-{
-  _retval.Truncate();
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbOriginPageImagePropertyInfo::GetRowProperties(const nsAString& aValue,
-                                                nsAString& _retval)
-{
-  _retval.Truncate();
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbOriginPageImagePropertyInfo::GetCellProperties(const nsAString& aValue,
                                                  nsAString& _retval)
 {
@@ -178,63 +144,16 @@ sbOriginPageImagePropertyInfo::GetCellProperties(const nsAString& aValue,
 }
 
 NS_IMETHODIMP
-sbOriginPageImagePropertyInfo::GetColumnType(nsAString& _retval)
-{
-  _retval.AssignLiteral("text");
-  return NS_OK;
-}
-
-// sbIClickablePropertyInfo
-
-NS_IMETHODIMP
-sbOriginPageImagePropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
-{
-  NS_ENSURE_ARG_POINTER(aSuppressSelect);
-  *aSuppressSelect = PR_TRUE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbOriginPageImagePropertyInfo::IsDisabled(const nsAString& aCurrentValue,
-                                          PRBool* _retval)
+sbOriginPageImagePropertyInfo::GetPreventNavigation(const nsAString& aImageValue,
+                                                    const nsAString& aUrlValue,
+                                                    PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = PR_FALSE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbOriginPageImagePropertyInfo::HitTest(const nsAString& aCurrentValue,
-                                       const nsAString& aPart,
-                                       PRUint32 aBoxWidth,
-                                       PRUint32 aBoxHeight,
-                                       PRUint32 aMouseX,
-                                       PRUint32 aMouseY,
-                                       PRBool* _retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = aPart.EqualsLiteral("image");
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbOriginPageImagePropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
-                                                PRUint32 aBoxWidth,
-                                                PRUint32 aBoxHeight,
-                                                PRUint32 aMouseX,
-                                                PRUint32 aMouseY,
-                                                nsAString& _retval)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-// sbIPropertyInfo
-
-NS_IMETHODIMP
-sbOriginPageImagePropertyInfo::Format(const nsAString& aValue,
-                                      nsAString& _retval)
-{
-  _retval.Truncate();
+  
+  *_retval = aImageValue.LowerCaseEqualsLiteral("unknownOrigin") ||
+             aImageValue.IsEmpty() ||
+             aUrlValue.IsEmpty();
+  
   return NS_OK;
 }
 

@@ -50,6 +50,7 @@
 #include "sbSimpleButtonPropertyBuilder.h"
 #include "sbRatingPropertyBuilder.h"
 #include "sbOriginPageImagePropertyBuilder.h"
+#include "sbImageLinkPropertyInfo.h"
 #include "sbDurationPropertyUnitConverter.h"
 #include "sbStoragePropertyUnitConverter.h"
 #include "sbFrequencyPropertyUnitConverter.h"
@@ -783,6 +784,18 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Artist detail uri
+  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_ARTISTDETAILURL),
+                   NS_LITERAL_STRING("property.artist_detail_url"),
+                   stringBundle, PR_FALSE, PR_TRUE, PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //album detail uri
+  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_ALBUMDETAILURL),
+                   NS_LITERAL_STRING("property.album_detail_url"),
+                   stringBundle, PR_FALSE, PR_TRUE, PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Origin page title
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGETITLE),
                     NS_LITERAL_STRING("property.origin_pagetitle"),
@@ -899,6 +912,20 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   rv = AddPropertyInfo(propertyInfo);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Artist detail image link
+  rv = RegisterImageLink(NS_LITERAL_STRING(SB_PROPERTY_ARTISTDETAIL),
+                         NS_LITERAL_STRING("property.artist_detail_image"),
+                         stringBundle,
+                         PR_FALSE, PR_TRUE, PR_TRUE, PR_TRUE,
+                         NS_LITERAL_STRING(SB_PROPERTY_ARTISTDETAILURL));
+
+  // Album detail image link
+  rv = RegisterImageLink(NS_LITERAL_STRING(SB_PROPERTY_ALBUMDETAIL),
+                         NS_LITERAL_STRING("property.album_detail_image"),
+                         stringBundle,
+                         PR_FALSE, PR_TRUE, PR_TRUE, PR_TRUE,
+                         NS_LITERAL_STRING(SB_PROPERTY_ALBUMDETAILURL));
 
   //Remote API scope URL
   rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_RAPISCOPEURL),
@@ -1266,6 +1293,38 @@ sbPropertyManager::RegisterImage(const nsAString& aPropertyID,
   NS_ENSURE_TRUE(imageProperty, NS_ERROR_OUT_OF_MEMORY);
 
   rv = AddPropertyInfo(imageProperty);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterImageLink(const nsAString& aPropertyID,
+                                     const nsAString& aDisplayKey,
+                                     nsIStringBundle* aStringBundle,
+                                     PRBool aUserViewable,
+                                     PRBool aUserEditable,
+                                     PRBool aRemoteReadable,
+                                     PRBool aRemoteWritable,
+                                     const nsAString& aUrlPropertyID)
+{
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+  nsresult rv;
+
+  // translate the display name
+  nsAutoString displayName(aDisplayKey);
+  if (!aDisplayKey.IsEmpty()) {
+    rv = GetStringFromName(aStringBundle, aDisplayKey, displayName);
+  }
+
+  // create the image property
+  nsRefPtr<sbImageLinkPropertyInfo> imageLinkProperty(
+      new sbImageLinkPropertyInfo(aPropertyID, displayName,
+        aRemoteReadable, aRemoteWritable, aUserViewable,
+        aUserEditable, aUrlPropertyID));
+  NS_ENSURE_TRUE(imageLinkProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = AddPropertyInfo(imageLinkProperty);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

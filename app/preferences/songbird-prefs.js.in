@@ -396,3 +396,9 @@ pref("songbird.albumart.maxsize", 16777216);
 
 // Show the 'rescan metadata' playlist command ?
 pref("songbird.commands.enableRescanItem", false);
+
+// Show secondary properties in playlist column pickers ?
+pref("songbird.columnpicker.allowSecondaryProperties", false);
+
+// If showing secondary properties, also show unlocalized ones ?
+pref("songbird.columnpicker.allowUnlocalizedSecondaryProperties", false);

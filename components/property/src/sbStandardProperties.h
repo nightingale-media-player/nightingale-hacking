@@ -101,6 +101,10 @@
 #define SB_PROPERTY_AVAILABILITY              "http://songbirdnest.com/data/1.0#availability"
 #define SB_PROPERTY_ALBUMARTISTNAME           "http://songbirdnest.com/data/1.0#albumArtistName"
 #define SB_PROPERTY_OUTERGUID                 "http://songbirdnest.com/data/1.0#outerGUID"
+#define SB_PROPERTY_ALBUMDETAIL               "http://songbirdnest.com/data/1.0#albumDetailImage"
+#define SB_PROPERTY_ARTISTDETAIL              "http://songbirdnest.com/data/1.0#artistDetailImage"
+#define SB_PROPERTY_ALBUMDETAILURL            "http://songbirdnest.com/data/1.0#albumDetailUrl"
+#define SB_PROPERTY_ARTISTDETAILURL           "http://songbirdnest.com/data/1.0#artistDetailUrl"
 
 // Device library specific properties
 #define SB_PROPERTY_DEVICE_PERSISTENT_ID      "http://songbirdnest.com/data/1.0#deviceId"
