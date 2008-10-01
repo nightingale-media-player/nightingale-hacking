@@ -75,18 +75,7 @@
         <menuseparator insertbefore="menu_LocaleSeparator"/>
         <menuitem id="menuitem_file_newtab" key="newtab-key" class="menuitem-iconic" label="&menu.file.newtab;" accesskey="&menu.file.newtab.accesskey;" insertbefore="menu_LocaleSeparator"/>
         <menuitem id="menuitem_file_closetab" key="closetab-key" class="menuitem-iconic" label="&menu.file.closetab;" accesskey="&menu.file.closetab.accesskey;" insertbefore="menu_LocaleSeparator"/>
-        <menuitem 
-              id="menuitem_tools_reveal" 
-              key="reveal-key" 
-              class="menuitem-iconic"  
-              insertbefore="menu_LocaleSeparator" 
-              command="cmd_reveal"
-#ifdef XP_MACOSX
-              label="&menu.tools.reveal.mac;"
-#else
-              label="&menu.tools.reveal;"
-#endif
-        />
+        <menuitem id="menuitem_tools_reveal" key="reveal-key" class="menuitem-iconic" label="&menu.tools.reveal;" accesskey="&menu.tools.reveal.accesskey;" insertbefore="menu_LocaleSeparator" command="cmd_reveal"/>
         <menuseparator id="menuseparator_file_print"
                        insertbefore="menu_LocaleSeparator"/>
         <menuitem id="menuitem_file_print" key="printKb" command="cmd_print" 
@@ -457,15 +446,7 @@
       <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
       <key id="key_reload2" keycode="VK_F5" command="Browser:Reload"/>
       <key id="key_stop" keycode="VK_ESCAPE" oncommand="gBrowser.stop();"/>
-      <key id="reveal-key" 
-#ifndef XP_MACOSX
-        modifiers="&menu.tools.reveal.modifiers;" 
-        key="&menu.tools.reveal.accesskey;" 
-#else
-        modifiers="&menu.tools.reveal.modifiers.mac;" 
-        key="&menu.tools.reveal.accesskey.mac;" 
-#endif
-        command="cmd_reveal"/>
+      <key id="reveal-key" modifiers="&menu.tools.reveal.modifiers;" key="&menu.tools.reveal.accesskey;" command="cmd_reveal"/>
       <key id="browser_view" keycode="VK_F11" oncommand="window.fullScreen = !window.fullScreen;"/>
 	
       <key id="key_selectTab1" oncommand="BrowserNumberTabSelection(event, 0);" key="1" modifiers="accel"/>

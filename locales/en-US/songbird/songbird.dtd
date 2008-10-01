@@ -230,13 +230,9 @@
 <!ENTITY menu.tools.accesskey          "T" >
 <!ENTITY menu.tools.metadata.accesskey "E" >
 
-<!ENTITY menu.tools.reveal             "Open Containing Folder" >
+<!ENTITY menu.tools.reveal             "Show File" >
 <!ENTITY menu.tools.reveal.accesskey   "F" >
 <!ENTITY menu.tools.reveal.modifiers   "accel,shift" >
-
-<!ENTITY menu.tools.reveal.mac             "Show in Finder" >
-<!ENTITY menu.tools.reveal.accesskey.mac   "F" >
-<!ENTITY menu.tools.reveal.modifiers.mac   "accel,shift" >
 
 <!ENTITY menu.help.accesskey          "H" >
 <!ENTITY menu.help.bugz.accesskey     "B" >
