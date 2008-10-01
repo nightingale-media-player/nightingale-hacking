@@ -226,7 +226,7 @@ LastFm.onLoad = function() {
             LastFm._service.loveBan(null, false);
           } else {
             /* otherwise, love */
-            LastFm._service.loveBan(gPPS.currentGUID, true);
+            LastFm._service.loveBan(gMM.sequencer.currentItem.guid, true);
           }
         }, false);
     this._faceplate.appendChild(this._faceplateLove);
@@ -242,7 +242,7 @@ LastFm.onLoad = function() {
             LastFm._service.loveBan(null, false);
           } else {
             /* otherwise, ban */
-            LastFm._service.loveBan(gPPS.currentGUID, false);
+            LastFm._service.loveBan(gMM.sequencer.currentItem.guid, false);
           }
         }, false);
     this._faceplate.appendChild(this._faceplateBan);

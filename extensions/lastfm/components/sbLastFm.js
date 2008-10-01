@@ -307,9 +307,9 @@ function sbLastFm() {
   this._timer.init(this, TIMER_INTERVAL, Ci.nsITimer.TYPE_REPEATING_SLACK);
 
   // listen to the playlist playback service
-  var pps = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
-    .getService(Ci.sbIPlaylistPlayback);
-  pps.addListener(this);
+  var mm = Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+    .getService(Ci.sbIMediacoreManager);
+  mm.addListener(this);
 
   // track metrics
   this._metrics = Cc['@songbirdnest.com/Songbird/Metrics;1']
@@ -829,10 +829,22 @@ function sbLastFm_observe(subject, topic, data) {
   }
 }
 
+// sbIMediacoreEventListener
+sbLastFm.prototype.onMediacoreEvent = 
+function sbLastFm_onMediacoreEvent(aEvent) {
+  switch(aEvent.type) {
+    case Ci.sbIMediacoreEvent.STREAM_STOP:
+      this.onStop();
+    break;
+    case Ci.sbIMediacoreEvent.TRACK_CHANGE:
+      this.onTrackChange(aEvent.data);
+    break;
+  }
+}
 
 // sbIPlaylistPlaybackListener
 sbLastFm.prototype.onTrackChange =
-function sbLastFm_onTrackChange(aItem, aView, aIndex) {
+function sbLastFm_onTrackChange(aItem) {
   // NOTE: This depends on the current assumption that onTrackChange will
   // be run before onEntriesAdded. Otherwise love/ban won't work.
 
@@ -849,15 +861,6 @@ sbLastFm.prototype.onStop = function sbLastFm_onStop() {
   // reset the love/ban state
   this.loveBan(null, false);
 }
-sbLastFm.prototype.onBeforeTrackChange =
-function sbLastFm_onBeforeTrackChange(aItem, aView, aIndex) { }
-sbLastFm.prototype.onTrackIndexChange =
-function sbLastFm_onTrackIndexChange(aItem, aView, aIndex) { }
-sbLastFm.prototype.onBeforeViewChange =
-function sbLastFm_onBeforeViewChange(aView) { }
-sbLastFm.prototype.onViewChange =
-function sbLastFm_onViewChange(aView) { }
-
 
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([sbLastFm]);
