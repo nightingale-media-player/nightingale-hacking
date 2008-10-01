@@ -861,7 +861,7 @@
 
   // Add the rest of the columns from the property manager.  Note if there was
   // any saved column info, add these additional columns as hidden, otherwise
-  // show them. Also, if pref "songbird.columnpicker.allowSecondary Properties"
+  // show them. Also, if pref "songbird.columnpicker.allowSecondaryProperties"
   // is true, do a second pass with everything that has not yet been added, and
   // set the secondary attribute to true, so we can use it later to sort the
   // additional properties below the primary ones
