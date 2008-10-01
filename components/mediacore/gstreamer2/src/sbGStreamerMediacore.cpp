@@ -244,6 +244,18 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
     g_object_set(mPipeline, "audio-sink", audiosink, NULL);
   }
 
+/* FIXME: This is just temporary until we have the platform interface stuff
+   implemented */
+#ifdef XP_WIN
+  GstElement *audiosink = gst_element_factory_make ("directsoundsink", NULL);
+  g_object_set(mPipeline, "audio-sink", audiosink, NULL);
+#endif
+
+#ifdef XP_MACOSX
+  GstElement *audiosink = gst_element_factory_make ("osxaudiosink", NULL);
+  g_object_set(mPipeline, "audio-sink", audiosink, NULL);
+#endif
+
   GstBus *bus = gst_element_get_bus (mPipeline);
 
   // We want to receive state-changed messages when shutting down, so we
