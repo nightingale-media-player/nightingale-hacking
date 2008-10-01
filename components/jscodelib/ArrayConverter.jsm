@@ -193,6 +193,37 @@ var ArrayConverter = {
   },
 
   /**
+   * Get a JavaScript iterator for a nsIArray, nsISimpleEnumerator,
+   * or nsIStringEnumerator.
+   *
+   * @param aObject nsIArray or nsISimpleEnumerator to convert.
+   *
+   * @throws NS_ERROR_INVALID_ARG.
+   */
+  JSEnum: function JSEnum(enumIn) {
+    if (enumIn instanceof Components.interfaces.nsIArray) {
+      enumIn = enumIn.enumerate();
+    }
+    
+    if (enumIn instanceof Components.interfaces.nsISimpleEnumerator) {
+      return {
+        __iterator__: function() {
+          while(enumIn.hasMoreElements())
+            yield(enumIn.getNext());
+        }
+      }
+    }
+    else if (enumIn instanceof Components.interfaces.nsIStringEnumerator) {
+      return {
+        __iterator__: function() {
+          while(enumIn.hasMore())
+            yield(enumIn.getNext());
+        }
+      }
+    }
+  },
+
+  /**
    * Return a nsIArray for a JavaScript array.
    *
    * @param aArray JavaScript array to convert.
@@ -241,6 +272,6 @@ var ArrayConverter = {
       }
       return rv;
     }
-  }
+  }  
 };
 

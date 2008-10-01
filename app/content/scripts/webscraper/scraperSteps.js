@@ -156,13 +156,12 @@ var WebScraperSteps = {
    *    not really a great policy, but at least it's easy to replace.
    */
   MediaURL: function ScraperStep_MediaURL(scraper, node, pipeline) {
-    var mediaURLExtensions = ["mp3", "ogg", "flac", "mpc",  "wav",   "aac", "mva",
-                              "wma", "wmv", "asf",  "avi",  "mov",   "mpg",
-                              "mp4", "mp2", "mpeg", "mpga", "mpega", "mkv",
-                              "mka", "ogm", "mpe",  "qt",   "aiff",  "aif", "m4a",
-                              "m4v", "oga", "ogv",  "ogx"];
-    var mediaURLSchemes    = ["mms", "rstp"];
-    
+    Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+    var typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                        .createInstance(Ci.sbIMediacoreTypeSniffer);
+    var mediaURLExtensions = [i for each (i in
+                       ArrayConverter.JSEnum(typeSniffer.mediaFileExtensions))];
+    var mediaURLSchemes = ["mms", "rstp"];
     
     var properties;
     while ((properties = yield properties)) {
@@ -170,7 +169,7 @@ var WebScraperSteps = {
       if (!(url instanceof Ci.nsIURL)) {
         continue;
       }
-      
+
       if (mediaURLExtensions.indexOf(url.fileExtension) != -1 ||
           mediaURLSchemes.indexOf(url.scheme) != -1) {
             pipeline.send(properties);
