@@ -530,8 +530,8 @@ sbGStreamerMediacore::OnInitBaseMediacore()
   nsresult rv;
 
   // Ensure the service component is loaded; it initialises GStreamer for us.
-  nsCOMPtr<sbIGStreamerService2> service =
-    do_GetService(SBGSTREAMERSERVICE2_CONTRACTID, &rv);
+  nsCOMPtr<sbIGStreamerService> service =
+    do_GetService(SBGSTREAMERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

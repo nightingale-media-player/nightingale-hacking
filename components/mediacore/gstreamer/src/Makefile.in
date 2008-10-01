@@ -47,7 +47,7 @@ CPP_INCLUDES = \
       $(topsrcdir)/components/include \
       $(DEPTH)/components/mediacore/base/public \
       $(topsrcdir)/components/mediacore/base/src \
-      $(DEPTH)/components/mediacore/gstreamer2/public \
+      $(DEPTH)/components/mediacore/gstreamer/public \
       $(topsrcdir)/components/moz/strings/src \
 	    $(DEPTH)/components/property/public \
 	    $(topsrcdir)/components/property/src \
@@ -158,7 +158,7 @@ else
   endif
 endif
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbAboutGStreamer2.js \
+SONGBIRD_COMPONENTS = $(srcdir)/sbAboutGStreamer.js \
                       $(NULL)
 
 # We use the stub loader to load this dll, so stick it in the lib directory

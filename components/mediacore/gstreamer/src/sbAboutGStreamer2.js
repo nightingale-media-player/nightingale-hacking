@@ -29,7 +29,7 @@ const Ci = Components.interfaces;
 const Cr = Components.results;
 
 const DESCRIPTION = "sbAboutGStreamer";
-const CID         = "4e1e4d25-0465-4a51-b9e7-751ec700502a";
+const CID         = "ea82983c-4e22-43e0-8942-ae5f31d3671a";
 const CONTRACTID  = "@mozilla.org/network/protocol/about;1?what=gstreamer";
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");

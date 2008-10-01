@@ -35,7 +35,7 @@
 #include "sbGStreamerMediacoreFactory.h"
 #include "sbGStreamerService.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerService2, Init)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerService, Init)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerMediacoreFactory, Init);
 SB_MEDIACORE_FACTORY_REGISTERSELF(sbGStreamerMediacoreFactory);
@@ -43,10 +43,10 @@ SB_MEDIACORE_FACTORY_REGISTERSELF(sbGStreamerMediacoreFactory);
 static const nsModuleComponentInfo components[] =
 {
   {
-    SBGSTREAMERSERVICE2_CLASSNAME,
-    SBGSTREAMERSERVICE2_CID,
-    SBGSTREAMERSERVICE2_CONTRACTID,
-    sbGStreamerService2Constructor
+    SBGSTREAMERSERVICE_CLASSNAME,
+    SBGSTREAMERSERVICE_CID,
+    SBGSTREAMERSERVICE_CONTRACTID,
+    sbGStreamerServiceConstructor
   },
   {
     SB_GSTREAMERMEDIACOREFACTORY_CLASSNAME, 

@@ -47,16 +47,16 @@
  */
 #ifdef PR_LOGGING
 
-static PRLogModuleInfo* gGStreamerService2 =
-  PR_NewLogModule("sbGStreamerService2");
+static PRLogModuleInfo* gGStreamerService =
+  PR_NewLogModule("sbGStreamerService");
 
 #define LOG(args)                                          \
-  if (gGStreamerService2)                             \
-    PR_LOG(gGStreamerService2, PR_LOG_WARNING, args)
+  if (gGStreamerService)                             \
+    PR_LOG(gGStreamerService, PR_LOG_WARNING, args)
 
 #define TRACE(args)                                        \
-  if (gGStreamerService2)                             \
-    PR_LOG(gGStreamerService2, PR_LOG_DEBUG, args)
+  if (gGStreamerService)                             \
+    PR_LOG(gGStreamerService, PR_LOG_DEBUG, args)
 
 #else /* PR_LOGGING */
 
@@ -82,14 +82,14 @@ get_rank_name (gint rank)
   }
 }
 
-NS_IMPL_ISUPPORTS2(sbGStreamerService2, sbIGStreamerService2, nsIObserver)
+NS_IMPL_ISUPPORTS2(sbGStreamerService, sbIGStreamerService, nsIObserver)
 
-sbGStreamerService2::sbGStreamerService2()
+sbGStreamerService::sbGStreamerService()
 {
   LOG(("sbGStreamerService[0x%.8x] - ctor", this));
 }
 
-sbGStreamerService2::~sbGStreamerService2()
+sbGStreamerService::~sbGStreamerService()
 {
   LOG(("sbGStreamerService[0x%.8x] - dtor", this));
 }
@@ -119,7 +119,7 @@ nsresult SetEnvVar(const nsAString& aName, const nsAString& aValue)
 
 // sbIGStreamerService
 nsresult
-sbGStreamerService2::Init()
+sbGStreamerService::Init()
 {
   nsresult rv;
   NS_NAMED_LITERAL_STRING(kGstPluginSystemPath, "GST_PLUGIN_SYSTEM_PATH");
@@ -260,7 +260,7 @@ sbGStreamerService2::Init()
 }
 
 NS_IMETHODIMP
-sbGStreamerService2::Inspect(sbIGStreamerInspectHandler2* aHandler)
+sbGStreamerService::Inspect(sbIGStreamerInspectHandler* aHandler)
 {
   NS_ENSURE_ARG_POINTER(aHandler);
   nsresult rv;
@@ -328,8 +328,8 @@ sbGStreamerService2::Inspect(sbIGStreamerInspectHandler2* aHandler)
 }
 
 nsresult
-sbGStreamerService2::InspectFactory(GstElementFactory* aFactory,
-                                   sbIGStreamerInspectHandler2* aHandler)
+sbGStreamerService::InspectFactory(GstElementFactory* aFactory,
+                                   sbIGStreamerInspectHandler* aHandler)
 {
   nsresult rv;
 
@@ -364,9 +364,9 @@ sbGStreamerService2::InspectFactory(GstElementFactory* aFactory,
 }
 
 nsresult
-sbGStreamerService2::InspectFactoryPads(GstElement* aElement,
+sbGStreamerService::InspectFactoryPads(GstElement* aElement,
                                        GstElementFactory* aFactory,
-                                       sbIGStreamerInspectHandler2* aHandler)
+                                       sbIGStreamerInspectHandler* aHandler)
 {
   GstElementClass *gstelement_class;
   gstelement_class = GST_ELEMENT_CLASS(G_OBJECT_GET_CLASS(aElement));
@@ -382,25 +382,25 @@ sbGStreamerService2::InspectFactoryPads(GstElement* aElement,
     PRUint32 direction;
     switch (padtemplate->direction) {
       case GST_PAD_SRC:
-        direction = sbIGStreamerService2::PAD_DIRECTION_SRC;
+        direction = sbIGStreamerService::PAD_DIRECTION_SRC;
         break;
       case GST_PAD_SINK:
-        direction = sbIGStreamerService2::PAD_DIRECTION_SINK;
+        direction = sbIGStreamerService::PAD_DIRECTION_SINK;
         break;
       default:
-        direction = sbIGStreamerService2::PAD_DIRECTION_UNKNOWN;
+        direction = sbIGStreamerService::PAD_DIRECTION_UNKNOWN;
     }
 
     PRUint32 presence;
     switch (padtemplate->presence) {
       case GST_PAD_ALWAYS:
-        presence = sbIGStreamerService2::PAD_PRESENCE_ALWAYS;
+        presence = sbIGStreamerService::PAD_PRESENCE_ALWAYS;
         break;
       case GST_PAD_SOMETIMES:
-        presence = sbIGStreamerService2::PAD_PRESENCE_SOMETIMES;
+        presence = sbIGStreamerService::PAD_PRESENCE_SOMETIMES;
         break;
       default:
-        presence = sbIGStreamerService2::PAD_PRESENCE_REQUEST;
+        presence = sbIGStreamerService::PAD_PRESENCE_REQUEST;
     }
 
     nsCString codecDescription;
@@ -435,7 +435,7 @@ sbGStreamerService2::InspectFactoryPads(GstElement* aElement,
 
 // nsIObserver
 NS_IMETHODIMP
-sbGStreamerService2::Observe(nsISupports *aSubject,
+sbGStreamerService::Observe(nsISupports *aSubject,
                             const char *aTopic,
                             const PRUnichar *aData)
 {

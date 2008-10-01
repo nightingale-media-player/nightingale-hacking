@@ -26,7 +26,7 @@
 
 function runTest() {
 
-  var gst = Cc["@songbirdnest.com/Songbird/Playback/GStreamer/Service;1"]
+  var gst = Cc["@songbirdnest.com/Songbird/Mediacore/GStreamer/Service;1"]
               .getService(Ci.sbIGStreamerService);
 
   var list = [];

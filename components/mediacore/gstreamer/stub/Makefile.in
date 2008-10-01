@@ -5,7 +5,7 @@ VPATH     = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbGStreamerStub2
+target_name = sbGStreamerStub
 
 CPP_SRCS   = \
       sbGStreamerStub.cpp \

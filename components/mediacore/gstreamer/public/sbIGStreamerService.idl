@@ -30,7 +30,7 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid(d7bae616-9e4a-4be1-a294-09c850eb9ab1)]
+[scriptable, uuid(880347ab-710f-426f-a57c-56e81fff3ee6)]
 interface sbIGStreamerInspectHandler : nsISupports
 {
   void beginInspect();
@@ -66,7 +66,7 @@ interface sbIGStreamerInspectHandler : nsISupports
 /**
  * \interface sbIGStreamerService
  */
-[scriptable, uuid(ae9887e3-ef5a-4466-a6fa-b3b695395cdd)]
+[scriptable, uuid(5be9dcac-c60a-46c9-90f5-cc9533d84179)]
 interface sbIGStreamerService : nsISupports
 {
   const unsigned long PAD_DIRECTION_UNKNOWN = 0;
@@ -81,11 +81,11 @@ interface sbIGStreamerService : nsISupports
 };
 
 %{C++
-// {c27f50c0-6dae-45ee-883e-24fd3b30254b}
+// {8cfebfa9-7cd3-4dd8-bf13-6ddc666d3629}
 #define SBGSTREAMERSERVICE_CID \
-  { 0xc27f50c0, 0x6dae, 0x45ee,                               \
-  { 0x88, 0x3e, 0x24, 0xfd, 0x3b, 0x30, 0x25, 0x4b } }
+  { 0x8cfebfa9, 0x7cd3, 0x4dd8,                               \
+  { 0xbf, 0x13, 0x6d, 0xdc, 0x66, 0x6d, 0x36, 0x29 } }
 
-#define SBGSTREAMERSERVICE_CONTRACTID "@songbirdnest.com/Songbird/Playback/GStreamer/Service;1"
+#define SBGSTREAMERSERVICE_CONTRACTID "@songbirdnest.com/Songbird/Mediacore/GStreamer/Service;1"
 #define SBGSTREAMERSERVICE_CLASSNAME  "GStreamerService"
 %}

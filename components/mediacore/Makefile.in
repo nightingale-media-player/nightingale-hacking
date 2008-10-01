@@ -30,13 +30,13 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = base \
-          gstreamer2 \
+          gstreamer \
           metadata \
           manager \
           playback \
           $(NULL)
 
-SUBDIRDEPS = metadata manager gstreamer2 : base
+SUBDIRDEPS = metadata manager gstreamer : base
 SUBDIRDEPS2 = playback : manager 
 
 include $(topsrcdir)/build/rules.mk

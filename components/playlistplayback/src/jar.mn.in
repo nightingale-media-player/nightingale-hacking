@@ -4,9 +4,3 @@ songbird.jar:
   content/songbird/scripts/coreVLC.js             (coreVLC.js)
 #endif
   content/songbird/scripts/coreBase.js            (coreBase.js)
-#ifdef MEDIA_CORE_GST
-  content/songbird/scripts/coreGStreamerSimple.js (coreGStreamerSimple.js)
-#endif
-#ifdef MEDIA_CORE_GST_SYSTEM
-  content/songbird/scripts/coreGStreamerSimple.js (coreGStreamerSimple.js)
-#endif
