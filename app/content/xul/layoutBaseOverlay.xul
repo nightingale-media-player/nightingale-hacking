@@ -228,6 +228,10 @@
                   value="songbird.url.support"
                   key="help-key"
                   accesskey="&menu.help.help.accesskey;"/>
+        <menuitem id="menuitem_help_keyboard"
+                  label="&menu.help.keyboard;"
+                  value="songbird.url.keyboard"
+                  accesskey="&menu.help.keyboard.accesskey;"/>
         <menuseparator/>
         <menuitem id="updateCmd"
                   label="&menu.updateCmd.label;"

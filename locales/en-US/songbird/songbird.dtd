@@ -81,6 +81,7 @@
 <!ENTITY menu.help          "Help" >
 <!ENTITY menu.help.bugz     "Report a Bug" >
 <!ENTITY menu.help.topics   "Help Topics" >
+<!ENTITY menu.help.keyboard "Keyboard Shortcuts">
 <!ENTITY menu.help.about    "About &brandShortName;..." >
 
 <!ENTITY menu.preferences   "Options..." >
@@ -237,6 +238,7 @@
 <!ENTITY menu.help.accesskey          "H" >
 <!ENTITY menu.help.bugz.accesskey     "B" >
 <!ENTITY menu.help.help.accesskey     "H" >
+<!ENTITY menu.help.keyboard.accesskey "K" >
 <!ENTITY menu.help.about.accesskey    "A" >
 
 
