@@ -85,6 +85,7 @@ a {
   color: #1694d9;
   text-decoration: none;
   outline: 0;
+  cursor: pointer;
 }
 li.selected a{
   color:#333;
