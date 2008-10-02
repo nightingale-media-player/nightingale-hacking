@@ -1,0 +1,48 @@
+#include "nsISupports.idl"
+
+interface sbIMashTapeCallback;
+interface nsISimpleEnumerator;
+
+[scriptable, function, uuid(a1b678c0-64a3-11dd-ad8b-0800200c9a66)]
+interface sbIMashTapeProvider : nsISupports
+{
+	readonly attribute string providerName;
+	readonly attribute string providerType;
+	void query(in AUTF8String searchTerms, in sbIMashTapeCallback updateFn);
+};
+
+[scriptable, function, uuid(65f60210-73bc-11dd-ad8b-0800200c9a66)]
+interface sbIMashTapeInfoProvider : sbIMashTapeProvider
+{
+	readonly attribute long numSections;
+	readonly attribute string providerIconBio;
+	readonly attribute string providerIconTags;
+	readonly attribute string providerIconDiscography;
+	readonly attribute string providerIconMembers;
+	readonly attribute string providerIconLinks;
+};
+
+[scriptable, function, uuid(8da914c0-64a6-11dd-ad8b-0800200c9a66)]
+interface sbIMashTapePhotoProvider : sbIMashTapeProvider
+{
+	readonly attribute string providerIcon;
+};
+
+[scriptable, function, uuid(a414db50-64c8-11dd-ad8b-0800200c9a66)]
+interface sbIMashTapeFlashProvider : sbIMashTapeProvider
+{
+	readonly attribute string providerIcon;
+};
+
+[scriptable, function, uuid(ec4fea10-64a3-11dd-ad8b-0800200c9a66)]
+interface sbIMashTapeRSSProvider : sbIMashTapeProvider
+{
+	readonly attribute string providerIcon;
+};
+
+/*******************************/
+
+[scriptable, function, uuid(959b2c40-68ca-11dd-ad8b-0800200c9a66)]
+interface sbIMashTapeCallback : nsISupports
+{
+};

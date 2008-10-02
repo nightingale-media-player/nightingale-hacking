@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE window SYSTEM "chrome://mashtape/locale/overlay.dtd" >
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+	type="text/css"?>
+<?xml-stylesheet href="chrome://mashtape/skin/styles.css"
+	type="text/css"?>
+
+<page title="mashTape"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:xbl="http://www.mozilla.org/xbl">
+
+	<stringbundleset id="stringbundleset"> 
+		<stringbundle id="mashTape-strings"
+				src="chrome://mashTape/locale/mashtape.properties"/>
+	</stringbundleset>
+	
+	<script type="application/x-javascript" src="ExtendedDate.js" />
+	<script type="application/x-javascript;charset=UTF-8" src="mashTape.js" />
+
+	<tooltip id="aHTMLTooltip"
+		onpopupshowing="return mashTape.tooltip(document.tooltipNode);"/>
+	
+	<tabbox flex="1" id="mashTape-tabbox" orient="horizontal">
+		<tabpanels flex="1" id="mashTape-tabpanels">
+		</tabpanels>
+	</tabbox>
+</page>

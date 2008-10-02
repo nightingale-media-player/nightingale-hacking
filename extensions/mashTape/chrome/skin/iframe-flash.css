@@ -1,0 +1,45 @@
+body {
+	margin: 0;
+	padding: 1em 1em 0em 1em;
+}
+
+div#content {
+	position: absolute;
+	top: 1em;
+	/* right: 0; */
+	padding-right: 1em;
+	min-width: 100px;
+	max-width: 200px;
+}
+img#favicon {
+	float: left;
+}
+div#caption {
+	padding-left: 20px;
+}
+h4 {
+	margin: 0;
+	padding: 0;
+	display: inline;
+}
+div#caption .time {
+	font-size: 80%;
+	padding-left: 0;
+}
+
+.time {
+	color: grey;
+	padding-left: 1em;
+}
+
+div#description {
+	padding-top: 1em;
+}
+
+div#loading {
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+	text-align: center;
+}

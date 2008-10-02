@@ -1,0 +1,35 @@
+.mashTape-message-container {
+	-moz-box-flex: 1;
+	-moz-box-align: center;
+	-moz-box-pack: center;
+	background-color: rgb(220,220,220);
+	background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');
+}
+
+.mashTape-message-label {
+	-moz-border-radius:8px;
+	background-color:rgb(235,235,235);
+	padding:10px;
+	color:gray;
+	border:1px solid rgb(200,200,200);
+}
+
+iframe#mashTape-flash-index {
+	width: 300px;
+	min-width: 100px;
+}
+
+iframe#mashTape-rss-index {
+	width: 300px;
+	min-width: 100px;
+}
+
+.mashTape-splitter {
+	background-color: rgb(220,220,220);
+	background-image: url(chrome://songbird/skin/base-elements/bg-splitter-vertical.png) !important;
+	background-position: center center;
+	background-repeat: repeat-y !important;
+	border-left: 1px solid rgb(161,161,161) !important;
+	border-right: 1px solid rgb(161,161,161) !important;
+	width: 1px !important;
+}

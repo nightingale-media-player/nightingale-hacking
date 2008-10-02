@@ -1,0 +1,22 @@
+<!ENTITY mtprefs.general "Generale">
+<!ENTITY mtprefs.info "Informazioni Artista">
+<!ENTITY mtprefs.rss "News">
+<!ENTITY mtprefs.photo "Foto">
+<!ENTITY mtprefs.flash "Video">
+<!ENTITY mtprefs.defaulttab "Tab Default">
+<!ENTITY mtprefs.defaulttab.help "Quando mashTape parte:">
+<!ENTITY mtprefs.show.info "Mostra Informazioni Artista">
+<!ENTITY mtprefs.show.rss "Mostra News">
+<!ENTITY mtprefs.show.photo "Mostra Foto">
+<!ENTITY mtprefs.show.flash "Mostra Video">
+<!ENTITY mtprefs.autohide "Nascondi automaticamente">
+<!ENTITY mtprefs.autohide.help "Consenti al pannello di mashTape di scomparire automaticamente quando si passa ad una pagina web.">
+<!ENTITY mtprefs.services "Servizi">
+<!ENTITY mtprefs.getmore "Ottieni più servizi per mashTape">
+<!ENTITY mtprefs.tab.info "Impostazioni Tab Informazioni Artista">
+<!ENTITY mtprefs.tab.rss "Impostazioni Tab News">
+<!ENTITY mtprefs.tab.photo "Impostazioni Tab Foto">
+<!ENTITY mtprefs.tab.flash "Impostazioni Tab Video">
+<!ENTITY mtprefs.tab.help "Mostra questo tab in mashTape.">
+<!ENTITY mtprefs.single "Questo pannello consente di visualizzare contenuti da un servizio alla volta. Selezionare un servizio dalla lista in basso.">
+<!ENTITY mtprefs.multiple "Questo pannello consente di visualizzare contenuti da più servizi contemporaneamente. Effettuare la scelta dei servizi dalla lista in basso.">

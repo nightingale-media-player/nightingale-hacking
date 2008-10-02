@@ -1,0 +1,22 @@
+prefpane#mashTapePrefsPane #general-default-tab {
+	min-width: 13em;
+}
+
+prefpane#mashTapePrefsPane tabpanel>vbox {
+	padding: 1em;
+}
+
+prefpane#mashTapePrefsPane hbox,
+prefpane#mashTapePrefsPane richlistitem {
+	-moz-box-align: center;
+}
+
+prefpane#mashTapePrefsPane richlistitem image {
+	padding-left: 2px;
+}
+
+prefpane#mashTapePrefsPane radiogroup {
+	border: none;
+	padding: 0;
+	margin: 0;
+}

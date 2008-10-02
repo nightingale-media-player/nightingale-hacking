@@ -35,6 +35,7 @@ SUBDIRS = xpcom_helloworld \
           shoutcast \
           lastfm \
           concerts \
+          mashTape \
           $(NULL)
 
 # XXX Mook: NOT installed by default yet, this shouldn't go anywhere, just a build check

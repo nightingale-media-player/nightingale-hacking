@@ -1,0 +1,31 @@
+<!-- Used for the tab headers -->
+<!ENTITY mtprefs.general "General">
+<!ENTITY mtprefs.info "Artist Info">
+<!ENTITY mtprefs.rss "News">
+<!ENTITY mtprefs.photo "Photos">
+<!ENTITY mtprefs.flash "Videos">
+
+<!-- General preferences -->
+<!ENTITY mtprefs.defaulttab "Default Tab">
+<!ENTITY mtprefs.defaulttab.help "When mashTape starts:">
+<!ENTITY mtprefs.show.info "Show Artist Info">
+<!ENTITY mtprefs.show.rss "Show News">
+<!ENTITY mtprefs.show.photo "Show Photos">
+<!ENTITY mtprefs.show.flash "Show Videos">
+
+<!ENTITY mtprefs.autohide "Auto-hide">
+<!ENTITY mtprefs.autohide.help "Automatically hide the mashTape display pane when you switch to viewing a webpage.">
+
+<!ENTITY mtprefs.services "Services">
+<!ENTITY mtprefs.getmore "Get more services for mashTape">
+
+<!-- Common entities for the remaining tabs -->
+<!ENTITY mtprefs.tab.info "Artist Info Tab Settings">
+<!ENTITY mtprefs.tab.rss "News Tab Settings">
+<!ENTITY mtprefs.tab.photo "Photos Tab Settings">
+<!ENTITY mtprefs.tab.flash "Videos Tab Settings">
+
+<!ENTITY mtprefs.tab.help "Show this tab in mashTape.">
+
+<!ENTITY mtprefs.single "This pane supports displaying content from one service at a time.  Please select a service from the list below.">
+<!ENTITY mtprefs.multiple "This pane supports displaying content from multiple services at a time.  Please select your choice of services from the list below.">
