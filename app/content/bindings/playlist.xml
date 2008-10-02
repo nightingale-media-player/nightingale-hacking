@@ -866,7 +866,7 @@
   // set the secondary attribute to true, so we can use it later to sort the
   // additional properties below the primary ones
   var enableAll = Application.prefs.getValue(
-                 "songbird.columnpicker.allowAllProperties", false);
+                 "songbird.columnpicker.allowSecondaryProperties", false);
   var alsoUnlocalized = Application.prefs.getValue(
                  "songbird.columnpicker.allowUnlocalizedSecondaryProperties", 
                  false);
