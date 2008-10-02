@@ -1,0 +1,12 @@
+<!ENTITY concerts.groupby "组：">
+<!ENTITY concerts.libraryartists "仅仅显示指定作者的演奏在我的库中">
+<!ENTITY concerts.sort.artist "作者名：">
+<!ENTITY concerts.sort.event "音乐会的日期">
+<!ENTITY concerts.sort.venue "地点：">
+<!ENTITY concerts.editlocation "变化">
+<!ENTITY concerts.loading "我们正在检查你最近的">
+<!ENTITY concerts.changelocation "转变地址">
+<!ENTITY concerts.easteregg.fail "失败">
+<!ENTITY concerts.easteregg.fail.2 "没有找到音乐会">
+<!ENTITY concerts.timeout.error "你可能没有连接到网络也或者我们的数据库没有工作。请稍候重试。">
+<!ENTITY concerts.timeoutreport.error "报告一个错误">
