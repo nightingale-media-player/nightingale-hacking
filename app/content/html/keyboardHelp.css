@@ -8,7 +8,7 @@ body{
   color:#333;
   background: white;
   margin:0;
-  padding-top:42px;
+  padding-top:20px;
 }
 
 table {
@@ -17,6 +17,7 @@ table {
   line-height:1.62;
   border-top:1px solid #eee;
   margin:0 0 2em;
+  width:100%;
 }
 
 a:hover{
@@ -24,14 +25,9 @@ a:hover{
 }
 
 .content{
-  max-width:960px;
+  width:640px;
   text-align:left;
   margin:0 auto;
-}
-.primary{
-  width:640px;
-  margin-right:20px;
-  float:left;
 }
 
 
