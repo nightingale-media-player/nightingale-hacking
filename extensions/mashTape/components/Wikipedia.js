@@ -109,13 +109,46 @@ ArtistInfo.prototype = {
 				var xmlNs = new Namespace(
 								"http://www.w3.org/XML/1998/namespace");
 
-				var data = new Array();
+				// Links
+				var links = new Object;
+				links.provider = "Wikipedia";
+				links.links = new Array();
+				if (x..foafNs::homepage.length() >= 1) {
+					links.links.push({
+						name: homepage,
+						url: x..foafNs::homepage[0].@rdfNs::resource
+					});
+				}
+				
+				var wikiUrl = null;
+				var enUrl = null;
+				for each (var resource in x..rdfNs::Description) {
+					var child = resource.child(0);
+					if (child.localName() == ("wikipage-" + language)) {
+						wikiUrl = decodeURI(child.@rdfNs::resource);
+						links.links.push({
+							name: wikipedia,
+							url: wikiUrl
+						});
+					} else if (child.localName() == ("page")) {
+						enUrl = decodeURI(child.@rdfNs::resource);
+						links.links.push({
+							name: wikipedia,
+							url: enUrl
+						});
+					}
+				}
+				if (wikiUrl == null)
+					wikiUrl = enUrl;
+				links.url = wikiUrl;
+	
+				var bio = new Object;
 				var bioText = null;
 				// Artist bio
 				var englishBio = null;
 				for each (var bio in x..dbNs::abstract) {
 					var thisLang = bio.@xmlNs::lang.toString();
-					//debugLog("Language scan", "Found: " + thisLang);
+					debugLog("Language scan", "Found: " + thisLang);
 					if (thisLang == language)
 						bioText = bio.toString();
 					if (thisLang == "en")
@@ -123,65 +156,51 @@ ArtistInfo.prototype = {
 				}
 				if (bioText == null)
 					bioText = englishBio;
-				
 				if (bioText == null)
 					updateFn.wrappedJSObject.update(CONTRACTID, null, "bio");
 				else {
-					data["bio"] = bioText;
-					updateFn.wrappedJSObject.update(CONTRACTID, data, "bio");
+					bio.provider = "Wikipedia";
+					bio.bioText = bioText;
+					bio.bioUrl = wikiUrl;
+					bio.bioEditUrl = wikiUrl;
+					updateFn.wrappedJSObject.update(CONTRACTID, bio, "bio");
 				}
 
 				// Members
-				var members = new Array();
+				var members = new Object;
+				members.provider = "Wikipedia";
+				members.url = wikiUrl;
+				members.members = new Array();
 				if (x..dbNs::currentMembers.length() == 1 &&
 					x..dbNs::currentMembers.@rdfNs::resource.toString() == "")
 				{
 					var memberStr = x..dbNs::currentMembers.toString();
-					members = memberStr.split(/\n/);
+					members.members = memberStr.split(/\n/);
 				} else {
 					for each (var memberName in x..dbNs::currentMembers) {
 						var name = memberName.@rdfNs::resource.toString();
 						var uri = name.split(/\//);
 						name = unescape(uri[uri.length-1].replace(/_/g, " "));
-						members.push(name);
+						members.members.push(name);
 					}
 				}
 
-				// Links
-				var links = new Array();
-				if (x..foafNs::homepage.length() >= 1) {
-					links.push({
-						name: homepage,
-						url: x..foafNs::homepage[0].@rdfNs::resource
-					});
-				}
-				
-				for each (var resource in x..rdfNs::Description) {
-					var child = resource.child(0);
-					if (child.localName() == ("wikipage-" + language)) {
-						links.push({
-							name: wikipedia,
-							url: decodeURI(child.@rdfNs::resource)
-						});
-					}
-				}
-				
+			
 				var image = x..dbNs::img.@rdfNs::resource.toString();
 				if (image == "")
 					updateFn.wrappedJSObject.update(CONTRACTID, null, "photo");
 				else {
-					data["image"] = image;
-					updateFn.wrappedJSObject.update(CONTRACTID, data, "photo");
+					updateFn.wrappedJSObject.update(CONTRACTID, image, "photo");
 				}
 
-				if (members.length > 0)
+				if (members.members.length > 0)
 					updateFn.wrappedJSObject.update(CONTRACTID, members,
 						"members");
 				else
 					updateFn.wrappedJSObject.update(CONTRACTID, null,
 						"members");
 
-				if (links.length > 0)
+				if (links.links.length > 0)
 					updateFn.wrappedJSObject.update(CONTRACTID, links, "links");
 				else
 					updateFn.wrappedJSObject.update(CONTRACTID, null, "links");
