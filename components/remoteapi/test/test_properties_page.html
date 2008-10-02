@@ -55,7 +55,9 @@ function runTest(tester) {
     var uriPropNames = [
       "primaryImageURL",
       "originURL",
-      "copyrightURL"
+      "copyrightURL",
+      "albumDetailUrl",
+      "artistDetailUrl"
     ];
 
     // this one is just super special
@@ -229,8 +231,15 @@ function runTest(tester) {
           if ( obj == "library" ) {
             tester.log( "property (!w)\t" + stuff );
           } else {
-            tester.failNoThrow( "property ( w)\t" + stuff +
-                                " ERR: not writable when supposed to be" );
+            // test for NS_ERROR_NOT_AVAILABLE, can't use Components.results.*
+            // since we're in an html page
+            if (e.result == 0x80070057) {
+              tester.failNoThrow( "property ( w)\t" + stuff +
+                                  " ERR: Tried to write an illegal value, probably missing from a *PropNames array" );
+            } else {
+              tester.failNoThrow( "property ( w)\t" + stuff +
+                                  " ERR: not writable when supposed to be? (" + e + ")");
+            }
           }
         }
       }
@@ -317,7 +326,7 @@ function runTest(tester) {
             }
           } catch (e) {
             tester.failNoThrow( "property (ro)\t" + stuff +
-                                " ERR: not readable when supposed to be" );
+                                " ERR: not readable when supposed to be? (" + e + ")" );
           }
           continue;
         }
@@ -348,7 +357,7 @@ function runTest(tester) {
           tester.log( "property ( r)\t" + stuff );
         } catch (e) {
           tester.failNoThrow( "property ( r)\t" + stuff +
-                              " ERR: not readable when supposed to be" );
+                              " ERR: not readable when supposed to be? (" + e + ")" );
         }
       }
     }
