@@ -1,6 +1,7 @@
 /*
 Author:
 	luistar15, <leo020588 [at] gmail.com>
+	with modifications by Stephen Lau <stevel [at] songbirdnest.com>
 License:
 	MIT License
  
@@ -175,7 +176,6 @@ var noobSlide = new Class({
 	gotoSlide: function(index) {
 		//dump("proceeding to slide: " + index);
 		this.walk(index, true, true);
-		//this.fx.start(this.items[index].offset);
 	},
 
 	walk: function(item,manual,noFx){
@@ -192,32 +192,7 @@ var noobSlide = new Class({
 			if(noFx){
 				this.fx.cancel().set((this.size*-this.currentIndex)+'px');
 			}else{
-				//this.fx.start(this.size*-this.currentIndex);
-				if (typeof(this.items[this.currentIndex].offset) == "undefined" 
-						|| this.items[this.currentIndex].offset == null)
-				{
-					var previousOffset = this.items[this.previousIndex].offset;
-					var currentOffset = previousOffset -
-						this.items[this.previousIndex].imgEl.width;
-					this.items[this.currentIndex].offset = currentOffset;
-				} else if (this.items[this.currentIndex].offset == 1) {
-					/*
-					dump("resize! restarting...\n");
-					// We got flagged for resize, reset all offsets to null
-					for (j=1; j<this.items.length; j++)
-						this.items[j].offset = null;
-					// and restart the stream
-					this.currentIndex = 0;
-					*/
-					//dump("resize! resetting...\n");
-					for (j=this.currentIndex; j<this.items.length; j++)
-						this.items[j].offset = null;
-				}
-
-				// animate to the next photo
-				//dump("idx:" + this.currentIndex + " -- offset:" +
-				//		this.items[this.currentIndex].offset + "\n");
-				this.fx.start(this.items[this.currentIndex].offset);
+				this.fx.start(0-this.items[this.currentIndex].el.offsetLeft);
 			}
 			if(manual && this.autoPlay){
 				this.play(this.interval,'next',true);

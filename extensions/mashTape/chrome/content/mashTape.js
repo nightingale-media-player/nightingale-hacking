@@ -1473,6 +1473,7 @@ mashTape.drawPhotoStream = function(provider, results) {
 			author: author,
 			authorUrl: item.ownerUrl,
 			date: timestamp,
+			el: img,
 			link: item.url,
 			small: item.small,
 			medium: item.medium
@@ -1517,6 +1518,7 @@ mashTape.imageLoadListener = function(e) {
 				author: item.owner.replace(/'/g, "\\'"),
 				authorUrl: item.ownerUrl,
 				date: item.time,
+				el: img,
 				link: item.url,
 				small: item.small,
 				medium: item.medium
