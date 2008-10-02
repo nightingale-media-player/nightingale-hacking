@@ -100,9 +100,12 @@ public:
    *   - All media items must be from the same library
    *
    * \param aMediaItemsArray Array of sbIMediaItems
+   * \param aRequiredProperties Array of nsStrings for properties to use.
    * \param aJobType Operation to perform (TYPE_READ or TYPE_WRITE)
    */
-  nsresult Init(nsIArray *aMediaItemsArray, JobType aJobType);
+  nsresult Init(nsIArray *aMediaItemsArray,
+                nsIStringEnumerator* aRequiredProperties,
+                JobType aJobType);
 
   /**
    * Add additional media items to the job.
@@ -235,13 +238,6 @@ private:
                                  nsAString& retval);
 
   /**
-   * If the given property is not present in the given property array, 
-   * add a value of empty string for the property.
-   */
-  nsresult ForcePropertyInArray(const nsAString& aProperty, 
-                                sbIMutablePropertyArray* aPropertyArray);
-
-  /**
    * If the given property key-value pair is valid, append it to 
    * a property array.
    */
@@ -269,10 +265,6 @@ private:
   nsString                                 mTitleText;
   nsCOMArray<sbIJobProgressListener>       mListeners;
   
-  // Set to true if the rating property is allowed to be written
-  // as part of write jobs
-  PRBool                                   mEnableRatingWrite;
-
   // TYPE_READ or TYPE_WRITE
   JobType                                  mJobType;
   
@@ -280,6 +272,8 @@ private:
   // (since batch operations are per-library) 
   nsCOMPtr<sbILibrary>                     mLibrary;
   
+  // List of properties we require for this job
+  nsStringArray                            mRequiredProperties;
   
   // List of job items that MUST be processed on the 
   // main thread due to sbIMetadataHandler limitations

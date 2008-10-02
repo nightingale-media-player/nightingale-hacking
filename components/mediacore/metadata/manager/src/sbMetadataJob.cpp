@@ -113,7 +113,6 @@ sbMetadataJob::sbMetadataJob() :
   mStatus(sbIJobProgress::STATUS_RUNNING),
   mCompletedItemCount(0),
   mTotalItemCount(0),
-  mEnableRatingWrite(PR_FALSE),
   mJobType(TYPE_READ),
   mLibrary(nsnull),
   mNextMainThreadIndex(0),
@@ -122,7 +121,8 @@ sbMetadataJob::sbMetadataJob() :
   mProcessedBackgroundThreadItems(nsnull),
   mProcessedBackgroundItemsLock(nsnull),
   mInLibraryBatch(PR_FALSE),
-  mStringBundle(nsnull)
+  mStringBundle(nsnull),
+  mRequiredProperties(nsnull)
 {
   TRACE(("sbMetadataJob[0x%.8x] - ctor", this));
   MOZ_COUNT_CTOR(sbMetadataJob);
@@ -145,7 +145,8 @@ sbMetadataJob::~sbMetadataJob()
 }
 
 
-nsresult sbMetadataJob::Init(nsIArray *aMediaItemsArray, 
+nsresult sbMetadataJob::Init(nsIArray *aMediaItemsArray,
+                             nsIStringEnumerator* aRequiredProperties,
                              JobType aJobType)
 {
   NS_ENSURE_ARG_POINTER(aMediaItemsArray);
@@ -176,13 +177,45 @@ nsresult sbMetadataJob::Init(nsIArray *aMediaItemsArray,
   
   mJobType = aJobType;
   
+  // Check if we have to remove any properties due to preferences
   if (mJobType == TYPE_WRITE) {
-    // Figure out if we are allowed to write rating values to files
+    NS_ENSURE_ARG_POINTER(aRequiredProperties);
+    
+    // Create a string array of the properties
+    PRBool hasMore;
+    rv = aRequiredProperties->HasMore(&hasMore);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsString propertyId;
+    while (hasMore) {
+      rv = aRequiredProperties->GetNext(propertyId);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      mRequiredProperties.AppendString(propertyId);
+  
+      rv = aRequiredProperties->HasMore(&hasMore);
+      NS_ENSURE_SUCCESS(rv, rv);
+   }
+
+    // Figure out if we are allowed to write rating or artwork values to files
+    PRBool enableRatingWrite = PR_FALSE;
+    PRBool enableArtworkWrite = PR_FALSE;
     nsCOMPtr<nsIPrefBranch> prefService =
         do_GetService("@mozilla.org/preferences-service;1", &rv);
     NS_ENSURE_SUCCESS( rv, rv);
     prefService->GetBoolPref("songbird.metadata.ratings.enableWriting", 
-                             &mEnableRatingWrite);
+                             &enableRatingWrite);
+    prefService->GetBoolPref("songbird.metadata.artwork.enableWriting", 
+                             &enableArtworkWrite);
+
+    if (!enableRatingWrite) {
+      // Remove the rating property if we are not allowed to write it out
+      mRequiredProperties.RemoveString(NS_LITERAL_STRING(SB_PROPERTY_RATING));
+    }
+    if (!enableArtworkWrite) {
+      // Remove the primaryImageURL property if we are not allowed to write it out
+      mRequiredProperties.RemoveString(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL));      
+    }
   }
 
   rv = AppendMediaItems(aMediaItemsArray);
@@ -255,7 +288,7 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsRefPtr<sbMetadataJobItem> jobItem = 
-        new sbMetadataJobItem(mJobType, mediaItem, this);
+        new sbMetadataJobItem(mJobType, mediaItem, &mRequiredProperties, this);
     NS_ENSURE_TRUE(jobItem, NS_ERROR_OUT_OF_MEMORY);
     
     // Set up the handler now, as this must be done on the main thread
@@ -466,72 +499,11 @@ nsresult sbMetadataJob::PrepareWriteItem(sbMetadataJobItem *aJobItem)
                "sbMetadataJob::PrepareWriteItem called during a read job");
   nsresult rv;
 
-  // Get the properties from the media item
-  nsCOMPtr<sbIMediaItem> item;
-  rv = aJobItem->GetMediaItem(getter_AddRefs(item));
+  // Get the properties from the meta data job item
+  nsCOMPtr<sbIMutablePropertyArray> writeProps;
+  rv = aJobItem->GetProperties(getter_AddRefs(writeProps));
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbIPropertyArray> props;
-  rv = item->GetProperties(nsnull, getter_AddRefs(props));
-  nsCOMPtr<sbIMutablePropertyArray> writeProps = do_QueryInterface(props, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  // For all the basic values, if there is no value on 
-  // the item, it means we want to null out/remove 
-  // the value from the file.  This is painful, 
-  // but writing doesn't have to be fast.
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTISTNAME), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_COMMENT), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_LYRICS), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_GENRE), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_PRODUCERNAME), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_COMPOSERNAME), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_CONDUCTORNAME), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_LYRICISTNAME), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_RECORDLABELNAME), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_LANGUAGE), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_KEY), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_COPYRIGHT), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_COPYRIGHTURL), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_YEAR), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_TOTALDISCS), writeProps);
-  ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_BPM), writeProps);
-  
-  // If we aren't allowed to write the rating, remove it from 
-  // the property array.  :(
-  if (!mEnableRatingWrite) {
 
-    PRUint32 propertyCount;
-    rv = props->GetLength(&propertyCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIMutableArray> array = do_QueryInterface(props, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    for (PRUint32 i = 0; i < propertyCount; i++) {
-      nsCOMPtr<sbIProperty> property;
-      rv = props->GetPropertyAt(i, getter_AddRefs(property));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsString propertyID;
-      rv = property->GetId(propertyID);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (propertyID.EqualsLiteral(SB_PROPERTY_RATING)) {
-        array->RemoveElementAt(i);
-        break;
-      }
-    }
-  } else {
-    // We are allowed to write rating, so ensure that it
-    // is either being set or nulled out
-    ForcePropertyInArray(NS_LITERAL_STRING(SB_PROPERTY_RATING), writeProps);
-  }
-  
   nsCOMPtr<sbIMetadataHandler> handler;
   rv = aJobItem->GetHandler(getter_AddRefs(handler));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1281,29 +1253,6 @@ sbMetadataJob::AppendToPropertiesIfValid(sbIPropertyManager* aPropertyManager,
   if (isValid) {
     rv = aProperties->AppendProperty(aID, aValue);
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-
-nsresult 
-sbMetadataJob::ForcePropertyInArray(const nsAString& aProperty,
-                                    sbIMutablePropertyArray *aPropertyArray)
-{
-  NS_ASSERTION(!aProperty.IsEmpty(), "Don't pass an empty property id!");
-  NS_ENSURE_ARG_POINTER( aPropertyArray );
-
-  nsresult rv;
-  nsString value;
-  rv = aPropertyArray->GetPropertyValue(aProperty, value);
-
-  // If the property is not in the array, add it as an empty string
-  if (NS_FAILED(rv)) {
-    value = EmptyString();
-    value.SetIsVoid(PR_TRUE);
-    rv = aPropertyArray->AppendProperty(aProperty, value);
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Metadata job failed to add null property");
   }
 
   return NS_OK;

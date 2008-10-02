@@ -32,6 +32,7 @@
 #include "nsISupports.idl"
 
 interface nsIArray;
+interface nsIStringEnumerator;
 interface sbIJobProgress;
 
 /**
@@ -52,7 +53,7 @@ interface sbIJobProgress;
  * 
  * \endcode 
  */
-[scriptable, uuid(47dac650-521e-11dd-ae16-0800200c9a16)]
+[scriptable, uuid(dc652317-ead6-4e37-953a-290ee4f3979c)]
 interface sbIFileMetadataService : nsISupports
 {
 
@@ -87,6 +88,10 @@ interface sbIFileMetadataService : nsISupports
    * exist in the associated sbIMediaItem, it will be removed 
    * from the file on write.
    *
+   * Also note that for each item all the properties in the list
+   * of aRequiredProperties will be written even if they have not
+   * changed.
+   *
    * If called off of the main thread, will proxy to complete
    * job startup.  Be aware that proxy events may be processed
    * on the calling thread while waiting. Also note that the 
@@ -94,7 +99,10 @@ interface sbIFileMetadataService : nsISupports
    * of the main thread.
    *
    * \param aMediaItemsArray An array filled with media items to be scanned.
+   * \param aRequiredProperties A String Enumertor filled with property ids that
+   *        we wish to write.
    * \return An interface for monitoring the status of the request
    */
-  sbIJobProgress write(in nsIArray aMediaItemArray);
+  sbIJobProgress write(in nsIArray aMediaItemArray,
+                       in nsIStringEnumerator aRequiredProperties);
 };

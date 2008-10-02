@@ -228,6 +228,7 @@
           Components.utils.import("resource://app/jsmodules/sbProperties.jsm", this);
           Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm", this);
           Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm", this);
+          Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm", this);
         
           var self = this;
           this._ratingschange = function(evt) {
@@ -377,11 +378,11 @@
                           .createInstance(Components.interfaces.nsIMutableArray);
                         
               mediaItemArray.appendElement(self._curMediaItem, false);
-
+              var propArray = ArrayConverter.stringEnumerator([SBProperties.rating]);
               var metadataService = 
                  Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
                            .getService(Components.interfaces.sbIFileMetadataService);
-              var job = metadataService.write(mediaItemArray);       
+              var job = metadataService.write(mediaItemArray, propArray);       
             
               this.SBJobUtils.showProgressDialog(job, null);
             }

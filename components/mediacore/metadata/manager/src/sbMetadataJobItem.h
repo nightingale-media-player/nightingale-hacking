@@ -39,6 +39,7 @@
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
 #include <sbIMetadataHandler.h>
+#include <sbIPropertyArray.h>
 #include "sbMetadataJob.h"
 
 // CLASSES ====================================================================
@@ -64,7 +65,8 @@ public:
   NS_DECL_ISUPPORTS
 
   sbMetadataJobItem(sbMetadataJob::JobType aJobType, 
-                    sbIMediaItem* aMediaItem, 
+                    sbIMediaItem* aMediaItem,
+                    nsStringArray* aRequiredProperties,
                     sbMetadataJob* aOwningJob);
   virtual ~sbMetadataJobItem();
   
@@ -77,6 +79,7 @@ public:
   nsresult SetProcessed(PRBool aProcessed);
   nsresult GetURL(nsACString& aURL);
   nsresult SetURL(const nsACString& aURL);
+  nsresult GetProperties(sbIMutablePropertyArray** aPropertyArray);
 
 protected:
   sbMetadataJob::JobType             mJobType;
@@ -85,6 +88,7 @@ protected:
   nsRefPtr<sbMetadataJob>            mOwningJob;
   
   nsCString                          mURL;
+  nsStringArray*                     mPropertyList;
   
   // Flag to indicate that a handler was run for this item
   PRBool                             mProcessingComplete;

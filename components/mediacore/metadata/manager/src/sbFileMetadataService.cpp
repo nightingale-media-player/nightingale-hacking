@@ -189,19 +189,27 @@ NS_IMETHODIMP
 sbFileMetadataService::Read(nsIArray* aMediaItemsArray,
                             sbIJobProgress** _retval)
 {
-  return ProxiedStartJob(aMediaItemsArray, sbMetadataJob::TYPE_READ, _retval);
+  return ProxiedStartJob(aMediaItemsArray,
+                         nsnull,
+                         sbMetadataJob::TYPE_READ,
+                         _retval);
 }
 
 NS_IMETHODIMP 
 sbFileMetadataService::Write(nsIArray* aMediaItemsArray,
+                             nsIStringEnumerator* aRequiredProperties,
                              sbIJobProgress** _retval)
 {
-  return ProxiedStartJob(aMediaItemsArray, sbMetadataJob::TYPE_WRITE, _retval);
+  return ProxiedStartJob(aMediaItemsArray,
+                         aRequiredProperties,
+                         sbMetadataJob::TYPE_WRITE,
+                         _retval);
 }
 
 
 nsresult 
 sbFileMetadataService::ProxiedStartJob(nsIArray* aMediaItemsArray,
+                                       nsIStringEnumerator* aRequiredProperties,
                                        sbMetadataJob::JobType aJobType,
                                        sbIJobProgress** _retval)
 {
@@ -221,12 +229,12 @@ sbFileMetadataService::ProxiedStartJob(nsIArray* aMediaItemsArray,
     // Can't call StartJob via proxy, since it is not
     // an interface method.  
     if (aJobType == sbMetadataJob::TYPE_WRITE) {
-      rv = proxy->Write(aMediaItemsArray, _retval);
+      rv = proxy->Write(aMediaItemsArray, aRequiredProperties, _retval);
     } else {
       rv = proxy->Read(aMediaItemsArray, _retval);
     }    
   } else {
-    rv = StartJob(aMediaItemsArray, aJobType, _retval);
+    rv = StartJob(aMediaItemsArray, aRequiredProperties, aJobType, _retval);
   }
   return rv;
 }
@@ -234,6 +242,7 @@ sbFileMetadataService::ProxiedStartJob(nsIArray* aMediaItemsArray,
 
 nsresult 
 sbFileMetadataService::StartJob(nsIArray* aMediaItemsArray,
+                                nsIStringEnumerator* aRequiredProperties,
                                 sbMetadataJob::JobType aJobType,
                                 sbIJobProgress** _retval)
 {
@@ -243,7 +252,7 @@ sbFileMetadataService::StartJob(nsIArray* aMediaItemsArray,
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   
   NS_ASSERTION(NS_IsMainThread(), 
-    "\n\n\nsbFileMetadataService::StartJob IS MAIN THREAD ONLY!!!!111\n\n\n");
+    "\n\n\nsbFileMetadataService::StartJob IS MAIN THREAD ONLY!!!!!!!\n\n\n");
 
   nsresult rv = NS_OK;
 
@@ -257,7 +266,7 @@ sbFileMetadataService::StartJob(nsIArray* aMediaItemsArray,
   nsRefPtr<sbMetadataJob> job = new sbMetadataJob();
   NS_ENSURE_TRUE(job, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = job->Init(aMediaItemsArray, aJobType);
+  rv = job->Init(aMediaItemsArray, aRequiredProperties, aJobType);
   NS_ENSURE_SUCCESS(rv, rv);
 
   { 

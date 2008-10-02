@@ -33,6 +33,7 @@
 // INCLUDES ===================================================================
 #include <nspr.h>
 #include <nscore.h>
+#include <nsComponentManagerUtils.h>
 #include "prlog.h"
 #include "sbMetadataJobItem.h"
 
@@ -46,15 +47,19 @@ extern PRLogModuleInfo* gMetadataLog;
 #define LOG(args)   /* nothing */
 #endif
 
+#define SB_MUTABLEPROPERTYARRAY_CONTRACTID "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"
+
 // CLASSES ====================================================================
 
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbMetadataJobItem);
 
 sbMetadataJobItem::sbMetadataJobItem(sbMetadataJob::JobType aJobType, 
-                                     sbIMediaItem* aMediaItem, 
+                                     sbIMediaItem* aMediaItem,
+                                     nsStringArray* aRequiredProperties, 
                                      sbMetadataJob* aOwningJob) :
   mJobType(aJobType),
   mMediaItem(aMediaItem),
+  mPropertyList(aRequiredProperties),
   mHandler(nsnull),
   mOwningJob(aOwningJob),
   mProcessingComplete(PR_FALSE)
@@ -132,3 +137,46 @@ nsresult sbMetadataJobItem::SetURL(const nsACString& aURL)
   return NS_OK;
 }
 
+nsresult sbMetadataJobItem::GetProperties(sbIMutablePropertyArray** aPropertyArray)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyArray);
+  NS_ENSURE_STATE(mMediaItem);
+  nsresult rv;
+
+  // Create a property array we can put the properties we want into.
+  nsCOMPtr<sbIMutablePropertyArray> writeProps =
+                    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Now grab all the properties from the item.
+  nsCOMPtr<sbIPropertyArray> propArray;
+  rv = mMediaItem->GetProperties(nsnull, getter_AddRefs(propArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // We have to make sure that any properties we wanted that are missing from
+  // propArray get added with empty strings to ensure we can erase values.
+  nsCOMPtr<sbIProperty> property;
+  nsString propertyId;
+  nsString propertyValue;
+  for (PRUint32 current = 0; current < mPropertyList->Count(); ++current) {
+    // Get the wanted property
+    mPropertyList->StringAt(current, propertyId);
+    
+    // Get the value for this property and if null make an empty string
+    rv = propArray->GetPropertyValue(propertyId, propertyValue);
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      // This is a null value or does not exist so we should write out an
+      // empty string
+      propertyValue = EmptyString();
+      propertyValue.SetIsVoid(PR_TRUE);
+    } else {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    
+    rv = writeProps->AppendProperty(propertyId, propertyValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  NS_ADDREF(*aPropertyArray = writeProps);
+  return NS_OK;
+}

@@ -29,6 +29,7 @@
  */
 
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 var gFilesToClose = [];
 

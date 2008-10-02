@@ -172,10 +172,13 @@ protected:
    * Calls StartJob on the main thread, proxying if necessary.
    *
    * \param aMediaItemsArray Array of sbIMediaItems
+   * \param aRequiredProperties String Enumerator of the properties to be
+   *        written, null for read.
    * \param aJobType Operation to perform (TYPE_READ or TYPE_WRITE)
    * \returns An sbIJobProgress interface used to track the work.
    */
   nsresult ProxiedStartJob(nsIArray* aMediaItemsArray,
+                           nsIStringEnumerator* aRequiredProperties,
                            sbMetadataJob::JobType aJobType,
                            sbIJobProgress** _retval);
   
@@ -187,10 +190,13 @@ protected:
    *   - All media items must be from the same library
    *
    * \param aMediaItemsArray Array of sbIMediaItems
+   * \param aRequiredProperties String Enumerator of the properties to be
+   *        written, null for read.
    * \param aJobType Operation to perform (TYPE_READ or TYPE_WRITE)
    * \returns An sbIJobProgress interface used to track the work.
    */
   nsresult StartJob(nsIArray* aMediaItemsArray,
+                    nsIStringEnumerator* aRequiredProperties,
                     sbMetadataJob::JobType aJobType,
                     sbIJobProgress** _retval);
   

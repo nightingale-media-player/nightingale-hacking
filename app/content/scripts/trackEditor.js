@@ -43,6 +43,7 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
@@ -968,6 +969,9 @@ var TrackEditor = {
     
     var enableRatingWrite = Application.prefs.getValue("songbird.metadata.ratings.enableWriting", false);
     
+    // Properties we want to write
+    var writeProperties = [];
+    
     // Apply each modified property back onto the selected items,
     // keeping track of which items have been modified
     var needsWriting = new Array(items.length);
@@ -975,6 +979,9 @@ var TrackEditor = {
       if (!TrackEditor.state.isPropertyEdited(property)) {
         continue;
       }
+      // Add the property to our list so only the changed ones get written
+      writeProperties.push(property);
+
       for (var i = 0; i < items.length; i++) {
         var value = TrackEditor.state.getPropertyValue(property);
         var item = items[i];
@@ -983,9 +990,6 @@ var TrackEditor = {
           // HACK for 0.7: primaryImageURL likes to be set to ""
           //               this says "i am scanned and empty"
           //               setting it to null says "rescan me"
-          //               and at the moment, there's no way to take image
-          //               out of the file, so the next time you look
-          //               it will pop back in again
           if (value == "" && property != SBProperties.primaryImageURL) {
             value = null;
           }
@@ -1038,11 +1042,13 @@ var TrackEditor = {
         mediaItemArray.appendElement(items[i], false);
       }
     }
-    if (mediaItemArray.length > 0) {
+    if (mediaItemArray.length > 0 && writeProperties.length > 0) {
       var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
                               .getService(Ci.sbIFileMetadataService);      
       try {
-        var job = metadataService.write(mediaItemArray);
+	// This will write out the properties in propArray for each item.
+        var propArray = ArrayConverter.stringEnumerator(writeProperties);
+        var job = metadataService.write(mediaItemArray, propArray);
       
         SBJobUtils.showProgressDialog(job, window);
       } catch (e) {

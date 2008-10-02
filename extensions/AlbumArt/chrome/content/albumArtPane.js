@@ -33,6 +33,7 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
@@ -572,10 +573,11 @@ var AlbumArt = {
     aMediaItem.setProperty(SBProperties.primaryImageURL, aNewImageUrl);
     AlbumArt.changeNowPlaying(aNewImageUrl);
     
+    var propArray = ArrayConverter.stringEnumerator([SBProperties.primaryImageURL]);
     var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
                             .getService(Ci.sbIFileMetadataService);      
     try {
-      var job = metadataService.write([aMediaItem]);
+      var job = metadataService.write([aMediaItem], propArray);
     
       SBJobUtils.showProgressDialog(job, window);
     } catch (e) {
@@ -668,10 +670,11 @@ var AlbumArt = {
     
     // Write the images to metadata
     if (mediaItemArray.length > 0) {
+      var propArray = ArrayConverter.stringEnumerator([SBProperties.primaryImageURL]);
       var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
                               .getService(Ci.sbIFileMetadataService);      
       try {
-        var job = metadataService.write(mediaItemArray);
+        var job = metadataService.write(mediaItemArray, propArray);
       
         SBJobUtils.showProgressDialog(job, window);
       } catch (e) {

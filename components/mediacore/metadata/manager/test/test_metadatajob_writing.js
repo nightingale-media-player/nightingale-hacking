@@ -159,14 +159,22 @@ function runTest() {
       // bug 9090: isCompliation not dealt with by MetadataHandlerTaglib
     ];
 
+    // List of properties we want to write
+    var propertiesToWrite = [];
+    
     // set all mediaitems to the supplied metadata
     for each (var item in items) {
       for each (var pair in successValues) {
         item.setProperty(pair[0], pair[1]);
+        
+        // Add the property name to the write list if we have not alredy done so
+        if (propertiesToWrite.indexOf(pair[0]) < 0) {
+          propertiesToWrite.push(pair[0]);
+        }
       }
     }
 
-    job = startMetadataJob(items, "write");
+    job = startMetadataJob(items, "write", propertiesToWrite);
 
     // Wait for writing to complete before continuing
     job.addJobProgressListener(function onWriteComplete(job) {
@@ -291,7 +299,7 @@ function importFilesToLibrary(files, library) {
 /**
  * Get a metadata job for the given items
  */
-function startMetadataJob(items, type) {
+function startMetadataJob(items, type, writeProperties) {
   var array = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Components.interfaces.nsIMutableArray);
   for each (var item in items) {
@@ -302,7 +310,7 @@ function startMetadataJob(items, type) {
                       
   var job;
   if (type == "write") {
-    job = manager.write(array);
+    job = manager.write(array, ArrayConverter.stringEnumerator(writeProperties));
   } else {
     job = manager.read(array);
   }
