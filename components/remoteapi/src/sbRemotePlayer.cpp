@@ -1557,15 +1557,11 @@ sbRemotePlayer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     }
     break;
 
-    /*
-    XXXAus: Uncomment this when TRACK_INDEX_CHANGE is implemented.
-
     case sbIMediacoreEvent::TRACK_INDEX_CHANGE: {
       rv = OnTrackIndexChange(aEvent);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
-    */
 
     case sbIMediacoreEvent::BEFORE_VIEW_CHANGE: {
       rv = OnBeforeViewChange(aEvent);

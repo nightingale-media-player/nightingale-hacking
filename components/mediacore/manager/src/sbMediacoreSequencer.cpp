@@ -46,6 +46,7 @@
 
 #include <prtime.h>
 
+#include <sbILibrary.h>
 #include <sbIMediacore.h>
 #include <sbIMediacoreEvent.h>
 #include <sbIMediacoreEventTarget.h>
@@ -118,9 +119,11 @@ EmitMillisecondsToTimeString(PRUint64 aValue,
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreSequencer)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreSequencer)
 
-NS_IMPL_QUERY_INTERFACE4_CI(sbMediacoreSequencer, 
+NS_IMPL_QUERY_INTERFACE6_CI(sbMediacoreSequencer, 
                             sbIMediacoreSequencer,
                             sbIMediacoreStatus,
+                            sbIMediaListListener,
+                            sbIMediaListViewListener,
                             nsIClassInfo,
                             nsITimerCallback)
 
@@ -141,6 +144,13 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mRepeatMode(sbIMediacoreSequencer::MODE_REPEAT_NONE)
 , mPosition(0)
 , mViewPosition(0)
+, mCurrentItemIndex(0)
+, mListBatchCount(0)
+, mLibraryBatchCount(0)
+, mSmartRebuildDetectBatchCount(0)
+, mNeedCheck(PR_FALSE)
+, mViewIsLibrary(PR_FALSE)
+, mNeedSearchPlayingItem(PR_FALSE)
 {
 }
 
@@ -215,6 +225,9 @@ sbMediacoreSequencer::StartSequenceProcessor()
                                               nsITimer::TYPE_REPEATING_SLACK);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = StartWatchingView();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -231,6 +244,9 @@ sbMediacoreSequencer::StopSequenceProcessor()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdateDurationDataRemotes(0);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = StopWatchingView();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -963,6 +979,13 @@ sbMediacoreSequencer::Setup()
   nsresult rv = GetItem(mSequence, mPosition, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mCurrentItemIndex = mSequence[mPosition];
+
+  rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mCurrentItem = item;
+
   nsCOMPtr<nsIURI> uri;
   rv = item->GetContentSrc(getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1144,6 +1167,165 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
 
   return NS_OK;
 }
+
+nsresult 
+sbMediacoreSequencer::StartWatchingView()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_STATE(mView);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = mView->GetMediaList(getter_AddRefs(mViewList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(mViewList, &rv);
+  mViewIsLibrary = NS_SUCCEEDED(rv) ? PR_TRUE : PR_FALSE;
+
+  rv = mViewList->AddListener(this, 
+                              PR_FALSE, 
+                              sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                              sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                              sbIMediaList::LISTENER_FLAGS_BATCHBEGIN |
+                              sbIMediaList::LISTENER_FLAGS_BATCHEND |
+                              sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
+                              nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!mViewIsLibrary) {
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(mViewList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = item->GetLibrary(getter_AddRefs(library));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaList> list = do_QueryInterface(library, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = list->AddListener(this,
+                           PR_FALSE,
+                           sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                           sbIMediaList::LISTENER_FLAGS_BATCHBEGIN |
+                           sbIMediaList::LISTENER_FLAGS_BATCHEND |
+                           sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
+                           nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::StopWatchingView()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_STATE(mView);
+
+  nsAutoMonitor mon(mMonitor);
+  
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  if(mDelayedCheckTimer) {
+    rv = HandleDelayedCheckTimer(mDelayedCheckTimer);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDelayedCheckTimer->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mDelayedCheckTimer = nsnull;
+  }
+
+  rv = mViewList->RemoveListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!mViewIsLibrary) {
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(mViewList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILibrary> library;
+    rv = item->GetLibrary(getter_AddRefs(library));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaList> list = do_QueryInterface(library, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = list->RemoveListener(this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::DelayedCheck()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+  
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  if(mDelayedCheckTimer) {
+    rv = mDelayedCheckTimer->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    mDelayedCheckTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = mDelayedCheckTimer->InitWithCallback(this, 100, nsITimer::TYPE_ONE_SHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::UpdateItemUIDIndex()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_STATE(mView);
+  NS_ENSURE_STATE(mCurrentItem);
+  
+  nsAutoMonitor mon(mMonitor);
+  
+  nsString previousItemUID = mCurrentItemUID;
+  PRUint32 previousItemIndex = mCurrentItemIndex;
+
+  nsresult rv = mView->GetIndexForItem(mCurrentItem, &mCurrentItemIndex);
+
+  if(NS_FAILED(rv)) {
+    mCurrentItemIndex = 0;
+    mCurrentItemUID = EmptyString();
+  }
+  else {
+    rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if(mCurrentItemIndex != previousItemIndex || 
+     mCurrentItemUID != previousItemUID) {
+
+    rv = RecalculateSequence(&mCurrentItemIndex);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIVariant> variant = sbNewVariant(mCurrentItem).get();
+    NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
+
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_INDEX_CHANGE, 
+                                       nsnull, 
+                                       variant, 
+                                       mCore, 
+                                       getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = DispatchMediacoreEvent(event);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 
 nsresult 
 sbMediacoreSequencer::DispatchMediacoreEvent(sbIMediacoreEvent *aEvent, 
@@ -1767,6 +1949,265 @@ sbMediacoreSequencer::GetState(PRUint32 *aState)
 }
 
 // -----------------------------------------------------------------------------
+// sbIMediaListListener
+// -----------------------------------------------------------------------------
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnItemAdded(sbIMediaList *aMediaList, 
+                                  sbIMediaItem *aMediaItem, 
+                                  PRUint32 aIndex, 
+                                  PRBool *_retval)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  nsAutoMonitor mon(mMonitor);
+
+  // 2nd part of smart playlist rebuild detection: are we adding
+  // items in the same batch as we cleared the list in ?
+
+  if (aMediaList == mViewList && 
+      mSmartRebuildDetectBatchCount == mListBatchCount) {
+      // Our playing list is a smart playlist, and it is being rebuilt,
+      // so make a note that we need to try to find the old playitem in
+      // the new list (this will update the now playing icon in 
+      // tree views, and ensure that currentIndex returns the new index).
+      // The 1st part of the detection has already scheduled a check, but
+      // our search will occur before the check happens, so if the old
+      // playing item no longer exists, playback will correctly stop.
+      mNeedSearchPlayingItem = true;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnBeforeItemRemoved(sbIMediaList *aMediaList, 
+                                          sbIMediaItem *aMediaItem, 
+                                          PRUint32 aIndex, 
+                                          PRBool *_retval)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList, 
+                                         sbIMediaItem *aMediaItem, 
+                                         PRUint32 aIndex, 
+                                         PRBool *_retval)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  nsAutoMonitor mon(mMonitor);
+
+  PRBool listEvent = (aMediaList == mViewList);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(aMediaList, &rv);
+
+  PRBool libraryEvent = PR_FALSE;
+  if(!mViewIsLibrary && NS_SUCCEEDED(rv)) {
+    libraryEvent = PR_TRUE;
+  }
+
+  // if this is an event on the library...
+  if (libraryEvent) {
+  
+    // and the item is not our list, get more events if in a batch, or
+    // just discard event if not in a batch.
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(mViewList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (aMediaItem != item) {
+      *_retval = PR_FALSE;
+      return NS_OK;
+    } else {
+      // if the item is our list, stop playback now and shutdown watcher
+      rv = mPlaybackControl->Stop();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+
+      rv = StopSequenceProcessor();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = UpdatePlayStateDataRemotes();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = StopWatchingView();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // return value does not actually matter since shutdown removes our
+      // listener
+      *_retval = PR_FALSE;
+      return NS_OK;
+    }
+  }
+  // if this is a track being removed from our list, and we're in a batch,
+  // don't get anymore events for this batch, we'll do the check when it
+  // ends
+  if (listEvent && mListBatchCount > 0) {
+    // remember that we need to do a check when batch ends
+    mNeedCheck = PR_TRUE;
+    *_retval = PR_TRUE;
+    
+    return NS_OK;
+  }
+
+  // we have to delay the check for currentIndex, because its invalidation
+  // relies on a medialistlistener (in the view) which may occur after
+  // ours has been issued, in which case it will still be valid now.
+  rv = DelayedCheck();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = PR_FALSE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList, 
+                                    sbIMediaItem *aMediaItem, 
+                                    sbIPropertyArray *aProperties, 
+                                    PRBool *_retval)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsCOMPtr<sbIMediaItem> item;
+  nsresult rv = GetCurrentItem(getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(aMediaItem == item) {
+    rv = SetMetadataDataRemotesFromItem(item);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnItemMoved(sbIMediaList *aMediaList, 
+                                  PRUint32 aFromIndex, 
+                                  PRUint32 aToIndex, 
+                                  PRBool *_retval)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnListCleared(sbIMediaList *aMediaList, 
+                                    PRBool *_retval)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  nsAutoMonitor mon(mMonitor);
+
+  // list or library cleared, playing item must have gone away, however
+  // the item might be coming back immediately, in which case we want to
+  // keep playing it, so delay the check.
+  nsresult rv = DelayedCheck();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // 1st part of smart playlist rebuild detection: is the event
+  // occurring on our list and inside a batch ? if 2nd part never
+  // happens, it could be a smart playlist rebuild that now has no
+  // content, we don't care about that, the item will simply not be
+  // found, and playback will correctly stop.
+  if(mListBatchCount > 0 && aMediaList == mViewList) {
+    mSmartRebuildDetectBatchCount = mListBatchCount;
+  }
+
+  *_retval = PR_FALSE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnBatchBegin(sbIMediaList *aMediaList)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  nsAutoMonitor mon(mMonitor);
+  
+  if(aMediaList == mViewList) {
+    mListBatchCount++;
+  }
+  else {
+    mLibraryBatchCount++;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsAutoMonitor mon(mMonitor);
+
+  if(aMediaList == mViewList) {
+    mListBatchCount--;
+  }
+  else {
+    mLibraryBatchCount--;
+  }
+
+  if(mListBatchCount == 0 || mLibraryBatchCount == 0) {
+    
+    if(mNeedCheck) {
+      rv = DelayedCheck();
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      mNeedCheck = PR_FALSE;
+    }
+
+    if(mNeedSearchPlayingItem) {
+      rv = UpdateItemUIDIndex();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mNeedSearchPlayingItem = PR_FALSE;
+    }
+
+  }
+
+  return NS_OK;
+}
+
+
+// -----------------------------------------------------------------------------
+// sbIMediaListViewListener
+// -----------------------------------------------------------------------------
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnFilterChanged(sbIMediaListView *aChangedView)
+{
+  // XXXAus: Not used currently, leaving stubbed.
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnSearchChanged(sbIMediaListView *aChangedView)
+{
+  // XXXAus: Not used currently, leaving stubbed.
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreSequencer::OnSortChanged(sbIMediaListView *aChangedView)
+{
+  // XXXAus: Not used currently, leaving stubbed.
+  return NS_OK;
+}
+
+
+// -----------------------------------------------------------------------------
 // nsITimerCallback
 // -----------------------------------------------------------------------------
 
@@ -1779,11 +2220,32 @@ sbMediacoreSequencer::Notify(nsITimer *timer)
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsAutoMonitor mon(mMonitor);
 
+  if(timer == mSequenceProcessorTimer) {
+    rv = HandleSequencerTimer(timer);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if(timer == mDelayedCheckTimer) {
+    rv = HandleDelayedCheckTimer(timer);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::HandleSequencerTimer(nsITimer *aTimer)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aTimer);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsAutoMonitor mon(mMonitor);
+
   // Update the position in the position data remote.
   if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
      mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
+
     PRUint64 position = 0;
-    
     rv = mPlaybackControl->GetPosition(&position);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1800,6 +2262,37 @@ sbMediacoreSequencer::Notify(nsITimer *timer)
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = UpdateDurationDataRemotes(duration);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_STATE(mDelayedCheckTimer);
+
+  nsAutoMonitor mon(mMonitor);
+  mDelayedCheckTimer = nsnull;
+
+  PRUint32 index = 0;
+  nsresult rv = mView->GetIndexForViewItemUID(mCurrentItemUID, &index);
+  if(NS_FAILED(rv)) {
+    // if the item is our list, stop playback now and shutdown watcher
+    rv = mPlaybackControl->Stop();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+
+    rv = StopSequenceProcessor();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = UpdatePlayStateDataRemotes();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = StopWatchingView();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

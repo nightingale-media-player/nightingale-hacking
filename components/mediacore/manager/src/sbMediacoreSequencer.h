@@ -52,6 +52,8 @@
 class sbMediacoreSequencer : public sbIMediacoreSequencer,
                              public sbIMediacoreEventListener,
                              public sbIMediacoreStatus,
+                             public sbIMediaListListener,
+                             public sbIMediaListViewListener,
                              public nsIClassInfo,
                              public nsITimerCallback
 {
@@ -61,6 +63,8 @@ public:
   NS_DECL_SBIMEDIACORESEQUENCER
   NS_DECL_SBIMEDIACOREEVENTLISTENER
   NS_DECL_SBIMEDIACORESTATUS
+  NS_DECL_SBIMEDIALISTLISTENER
+  NS_DECL_SBIMEDIALISTVIEWLISTENER
   NS_DECL_NSICLASSINFO
   NS_DECL_NSITIMERCALLBACK
 
@@ -108,6 +112,16 @@ public:
   // Set view with optional view position
   nsresult SetViewWithViewPosition(sbIMediaListView *aView, 
                                    PRUint32 *aViewPosition = nsnull);
+
+  // Timer handlers
+  nsresult HandleSequencerTimer(nsITimer *aTimer);
+  nsresult HandleDelayedCheckTimer(nsITimer *aTimer);
+
+  nsresult StartWatchingView();
+  nsresult StopWatchingView();
+
+  nsresult DelayedCheck();
+  nsresult UpdateItemUIDIndex();
 
 private:
   virtual ~sbMediacoreSequencer();
@@ -167,6 +181,22 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemotePlaylistRepeat;
 
   nsCOMPtr<nsITimer> mSequenceProcessorTimer;
+
+  // MediaListListener and ViewListener data.
+  nsCOMPtr<nsITimer> mDelayedCheckTimer;
+  nsCOMPtr<sbIMediaList> mViewList;
+  
+  nsString mCurrentItemUID;
+  PRUint32 mCurrentItemIndex;
+  nsCOMPtr<sbIMediaItem> mCurrentItem;
+
+  PRUint32 mListBatchCount;
+  PRUint32 mLibraryBatchCount;
+  PRInt32  mSmartRebuildDetectBatchCount;
+
+  PRPackedBool mNeedCheck;
+  PRPackedBool mViewIsLibrary;
+  PRPackedBool mNeedSearchPlayingItem;
 };
 
 class sbScopedBoolToggle

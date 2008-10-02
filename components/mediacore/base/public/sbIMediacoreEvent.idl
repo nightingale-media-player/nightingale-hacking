@@ -32,7 +32,7 @@ interface sbIMediacore;
 interface sbIMediacoreError;
 interface sbIMediacoreEventTarget;
 
-[scriptable, uuid(63984732-9d62-421b-accb-7861a829e5d3)]
+[scriptable, uuid(801dcd5b-2443-4757-adc2-5be282103539)]
 interface sbIMediacoreEvent : nsISupports
 {
   const unsigned long UNINTIALIZED    = 0x00000000;
@@ -78,13 +78,19 @@ interface sbIMediacoreEvent : nsISupports
    */
   const unsigned long TRACK_CHANGE        = 0x00001501;
   /**
+   * \brief Index in view of item currently playing has changed.
+   * \note This event should only be fired by the sequencer.
+   * \note data is the new index (unsigned long).
+   */
+  const unsigned long TRACK_INDEX_CHANGE  = 0x00001502;
+  /**
    *  \brief Sequencer view is about to change
    */
-  const unsigned long BEFORE_VIEW_CHANGE  = 0x00001502;
+  const unsigned long BEFORE_VIEW_CHANGE  = 0x00001503;
   /**
    * \brief Sequencer view changed.
    */
-  const unsigned long VIEW_CHANGE         = 0x00001503;
+  const unsigned long VIEW_CHANGE         = 0x00001504;
 
   // End Sequencer Events
 
