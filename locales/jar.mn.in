@@ -9,5 +9,6 @@ locales.jar:
 % locale  songbird  en-US  @LOCALE_LOCATION@/locale/en-US/songbird/
   locale/en-US/songbird/songbird.dtd            (en-US/songbird/songbird.dtd)
   locale/en-US/songbird/songbird.properties     (en-US/songbird/songbird.properties)
+  locale/en-US/songbird/help.dtd                (en-US/songbird/help.dtd)
   locale/branding/brand.dtd                               (branding/brand.dtd)
   locale/branding/brand.properties                        (branding/brand.properties)
