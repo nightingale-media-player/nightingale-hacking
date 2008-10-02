@@ -43,7 +43,7 @@ html {
 }
 #aboutPageContainer,
 #thirdPartySoftwareContainer {
-  width:540px;
+  max-width:540px;
   padding: 2em;
   text-align:center;
 }
