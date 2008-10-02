@@ -30,11 +30,11 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
 <!DOCTYPE window [
-<!ENTITY % albumartDTD SYSTEM "chrome://albumart/locale/albumArt.dtd">
-%albumartDTD;
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%songbirdDTD;
 ]>
 
-<window title="&artwork.coverpreview.title;"
+<window title="&albumart.coverpreview.title;"
         xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         xmlns:svg="http://www.w3.org/2000/svg"

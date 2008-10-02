@@ -603,7 +603,7 @@ var AlbumArt = {
     while (itemEnum.hasMoreElements()) {
       var item = itemEnum.getNext().mediaItem;
       var albumName = item.getProperty(SBProperties.albumName);
-      var albumArtist = item.getProperty(SBProperties.albumArtist);
+      var albumArtist = item.getProperty(SBProperties.albumArtistName);
       if (!albumArtist || albumArtist == "") {
         albumArtist = item.getProperty(SBProperties.artistName);
       }
@@ -629,14 +629,10 @@ var AlbumArt = {
         var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
                               .getService(Ci.nsIPromptService);
         var check = { value: false };
-        
-        var sbs = Cc["@mozilla.org/intl/stringbundle;1"]
-                    .getService(Ci.nsIStringBundleService);
-        var albumartStrings = sbs.createBundle("chrome://albumart/locale/albumart.properties");
-        
-        var strTitle = SBString(STRINGROOT + "title", null, albumartStrings);
-        var strMsg = SBString(STRINGROOT + "message", null, albumartStrings);
-        var strCheck = SBString(STRINGROOT + "check", null, albumartStrings);
+                
+        var strTitle = SBString(STRINGROOT + "title");
+        var strMsg = SBString(STRINGROOT + "message");
+        var strCheck = SBString(STRINGROOT + "check");
         
         var confirmOk = promptService.confirmCheck(window, 
                                                    strTitle, 

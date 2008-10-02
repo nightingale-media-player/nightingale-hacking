@@ -23,13 +23,10 @@
 #
 albumart.jar:
 % content albumart  %content/
-% locale  albumart  en-US  %locale/en-US/
 % skin    albumart  classic/1.0 %skin/
   content/albumArtPane.js             (chrome/content/albumArtPane.js)
   content/albumArtPane.xul            (chrome/content/albumArtPane.xul)
   content/coverPreview.xul            (chrome/content/coverPreview.xul)
   content/coverPreview.js             (chrome/content/coverPreview.js)
-  locale/en-US/albumArt.dtd           (chrome/locale/en-US/albumArt.dtd)
-  locale/en-US/albumArt.properties    (chrome/locale/en-US/albumArt.properties)
   skin/albumArt.css                   (chrome/skin/albumArt.css)
   skin/icon-albumart.png              (chrome/skin/icon-albumart.png)
