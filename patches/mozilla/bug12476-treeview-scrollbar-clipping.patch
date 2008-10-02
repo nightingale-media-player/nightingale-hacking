@@ -1,0 +1,103 @@
+Index: layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp,v
+retrieving revision 1.354
+diff -u -8 -r1.354 nsTreeBodyFrame.cpp
+--- layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	10 Apr 2008 15:11:16 -0000	1.354
++++ layout/xul/base/src/tree/src/nsTreeBodyFrame.cpp	2 Oct 2008 22:39:02 -0000
+@@ -2473,18 +2473,25 @@
+   AdjustForBorderPadding(mStyleContext, mInnerBox);
+ }
+ 
+ nscoord
+ nsTreeBodyFrame::CalcHorzWidth(const ScrollParts& aParts)
+ {
+   // Compute the adjustment to the last column. This varies depending on the
+   // visibility of the columnpicker and the scrollbar.
+-  if (aParts.mColumnsFrame)
+-    mAdjustWidth = mRect.width - aParts.mColumnsFrame->GetRect().width;
++  if (aParts.mColumnsFrame) {
++    // Only compute the adjustment padding if the columns view width is at least the same
++    // size of bigger than the entire treeview width + vertical scrollbar width (if present).
++    PRInt32 colViewWidth = nsPresContext::CSSPixelsToAppUnits(mColumns->GetColumnsWidth());
++    if (colViewWidth < aParts.mColumnsFrame->GetRect().width)
++      mAdjustWidth = 0;
++    else 
++      mAdjustWidth = mRect.width - aParts.mColumnsFrame->GetRect().width;
++  }
+   else
+     mAdjustWidth = 0;
+ 
+   nscoord width = 0;
+   nscoord height;
+ 
+   // We calculate this from the scrollable view, so that it 
+   // properly covers all contingencies of what could be 
+Index: layout/xul/base/src/tree/src/nsTreeColumns.cpp
+===================================================================
+RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeColumns.cpp,v
+retrieving revision 1.26
+diff -u -8 -r1.26 nsTreeColumns.cpp
+--- layout/xul/base/src/tree/src/nsTreeColumns.cpp	4 Sep 2007 09:08:15 -0000	1.26
++++ layout/xul/base/src/tree/src/nsTreeColumns.cpp	2 Oct 2008 22:39:02 -0000
+@@ -657,8 +657,33 @@
+         }
+         currCol = col;
+       }
+ 
+       colFrame = colFrame->GetNextSibling();
+     }
+   }
+ }
++
++PRInt32
++nsTreeColumns::GetColumnsWidth()
++{
++  PRInt32 width = 0;
++  
++  PRInt32 colCount = 0;
++  nsresult rv = GetCount(&colCount);
++  NS_ENSURE_SUCCESS(rv, width);
++
++  for (PRInt32 i = 0; i < colCount; i++) {
++    nsCOMPtr<nsITreeColumn> curTreeCol;
++    rv = GetColumnAt(i, getter_AddRefs(curTreeCol));
++    if (NS_SUCCEEDED(rv) && curTreeCol) {
++      PRInt32 curTreeColWidth = 0;
++      rv = curTreeCol->GetWidth(&curTreeColWidth);
++      if (NS_SUCCEEDED(rv)) {
++        width += curTreeColWidth;
++      }
++    }
++  }
++
++  return width;
++}
++
+Index: layout/xul/base/src/tree/src/nsTreeColumns.h
+===================================================================
+RCS file: /cvsroot/mozilla/layout/xul/base/src/tree/src/nsTreeColumns.h,v
+retrieving revision 1.11
+diff -u -8 -r1.11 nsTreeColumns.h
+--- layout/xul/base/src/tree/src/nsTreeColumns.h	4 Sep 2007 09:08:15 -0000	1.11
++++ layout/xul/base/src/tree/src/nsTreeColumns.h	2 Oct 2008 22:39:02 -0000
+@@ -149,16 +149,19 @@
+   void SetTree(nsITreeBoxObject* aTree) { mTree = aTree; }
+ 
+   // Builds our cache of column info.
+   void EnsureColumns();
+ 
+   nsTreeColumn* GetFirstColumn() { EnsureColumns(); return mFirstColumn; }
+   nsTreeColumn* GetPrimaryColumn();
+ 
++  // Get the width of all the current columns
++  PRInt32 GetColumnsWidth();
++
+ private:
+   nsITreeBoxObject* mTree;
+ 
+   /**
+    * The first column in the list of columns. All of the columns are supposed
+    * to be "alive", i.e. have a frame. This is achieved by clearing the columns
+    * list each time an nsTreeColFrame is destroyed.
+    *
