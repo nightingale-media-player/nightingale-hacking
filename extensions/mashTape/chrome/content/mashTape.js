@@ -826,10 +826,13 @@ mashTape.updateInfo = function(provider, results, section) {
 			{
 				var noBioFound = mashTape.strings.formatStringFromName(
 					"extensions.mashTape.info.no_bio", [mashTape.prevArtist],1);
-				bioDiv.innerHTML = noBioFound + "  <a href='" +
+				var bioText = noBioFound;
+				if (typeof(results.bioEditUrl) != "undefined")
+					bioText += "  <a href='" +
 					results.bioEditUrl + "'>" +
 					mashTape.strings.GetStringFromName(
 						"extensions.mashTape.info.create") + "</a>";
+				bioDiv.innerHTML = bioText;
 				doc.getElementById("bio-toggle-text").style.display = "none";
 				break;
 			}
