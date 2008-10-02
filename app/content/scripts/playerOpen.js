@@ -372,43 +372,6 @@ try
     consoleService.logStringMessage( str );
   }
 
-  function SBUrlExistsInDatabase( the_url )
-  {
-    var retval = false;
-    try
-    {
-      aDBQuery = Components.classes["@songbirdnest.com/Songbird/DatabaseQuery;1"];
-      if (aDBQuery)
-      {
-        aDBQuery = aDBQuery.createInstance();
-        aDBQuery = aDBQuery.QueryInterface(Components.interfaces.sbIDatabaseQuery);
-
-        if ( ! aDBQuery )
-        {
-          return false;
-        }
-
-        aDBQuery.setAsyncQuery(false);
-        aDBQuery.setDatabaseGUID("testdb-0000");
-        aDBQuery.addQuery('select * from test where url="' + the_url + '"' );
-        var ret = aDBQuery.execute();
-
-        resultset = aDBQuery.getResultObject();
-
-        // we didn't find anything that matches our url
-        if ( resultset.getRowCount() != 0 )
-        {
-          retval = true;
-        }
-      }
-    }
-    catch(err)
-    {
-      alert(err);
-    }
-    return retval;
-  }
-
   // This function should be called when we need to open a URL but gBrowser is 
   // not available. Eventually this should be replaced by code that opens a new 
   // Songbird window, when we are able to do that, but for now, open in the 
@@ -487,11 +450,6 @@ function SBOpenDownloadManager()
   else {
     window.open("chrome://mozapps/content/downloads/downloads.xul", "Download:Manager", "chrome,centerscreen,dialog=no,resizable", null);
   }
-}
-
-function SBWatchFolders( parentWindow )
-{
-  SBOpenModalDialog( "chrome://songbird/content/xul/watchFolders.xul", "", "chrome,centerscreen", null, parentWindow );
 }
 
 function SBScanMedia( aParentWindow, aScanDirectory )

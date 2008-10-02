@@ -82,21 +82,6 @@ function doMenu( command, event ) {
     case "menuitem_file_scan":
       SBScanMedia();
     break;
-    case "menuitem_file_watch":
-      SBWatchFolders();
-    break;
-/*
-    case "file.htmlbar":
-      if ( SBDataGetIntValue( "option.htmlbar" ) == 0 )
-      {
-        SBDataSetIntValue( "option.htmlbar", 1 );
-      }
-      else
-      {
-        SBDataSetIntValue( "option.htmlbar", 0 );
-      }
-    break;
-*/
     case "aboutName": // This has to be hardcoded this way for the stinky mac.
       About();
     break;
