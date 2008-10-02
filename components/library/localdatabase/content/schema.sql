@@ -116,3 +116,30 @@ insert into media_list_types (type, factory_contractid) values ('simple', '@song
 
 /* XXXAus: !!!WARNING!!! When changing this value, you _MUST_ update sbLocalDatabaseMigration._latestSchemaVersion to match this value */
 insert into library_metadata (name, value) values ('version', '10');
+
+
+
+/************************************************ 
+  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data must be updated and replace the contents below:
+************************************************/
+
+/* Insert static |ANALYZE| results */
+ANALYZE;
+INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_member_media_item_id','10039 1');
+INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_media_item_id_ordinal','10039 10039 1');
+INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_media_item_id_member_media_item_id','10039 10039 1 1');
+INSERT INTO "sqlite_stat1" VALUES('resource_properties','idx_resource_properties_property_id_obj_sortable_media_item_id','78383 2240 4 1');
+INSERT INTO "sqlite_stat1" VALUES('resource_properties','sqlite_autoindex_resource_properties_1','78383 8 1');
+INSERT INTO "sqlite_stat1" VALUES('properties','sqlite_autoindex_properties_1','74 1');
+INSERT INTO "sqlite_stat1" VALUES('library_media_item','sqlite_autoindex_library_media_item_1','1 1');
+INSERT INTO "sqlite_stat1" VALUES('resource_properties_fts_all_segdir','sqlite_autoindex_resource_properties_fts_all_segdir_1','25 13 1');
+INSERT INTO "sqlite_stat1" VALUES('media_list_types','sqlite_autoindex_media_list_types_1','3 1');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_hidden_media_list_type_id','10048 5024 2');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_is_list','10048 5024');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_media_list_type_id','10048 2');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_content_url','10048 2');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_created','10048 7');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_hidden','10048 5024');
+INSERT INTO "sqlite_stat1" VALUES('media_items','sqlite_autoindex_media_items_1','10048 1');
+INSERT INTO "sqlite_stat1" VALUES('library_metadata','sqlite_autoindex_library_metadata_1','2 1');
+

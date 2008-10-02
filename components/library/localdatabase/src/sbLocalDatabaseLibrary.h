@@ -287,10 +287,6 @@ private:
   nsresult AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
                                   sbIMediaItem** _retval);
 
-  void IncrementDatabaseDirtyItemCounter(PRUint32 aIncrement = 1);
-
-  nsresult RunAnalyzeQuery(PRBool aRunAsync = PR_TRUE);
-
   nsresult GetContainingLists(sbMediaItemArray* aItems,
                               sbMediaListArray* aLists,
                               sbMediaItemToListsMap* aMap);
@@ -387,8 +383,6 @@ private:
 
   nsCOMPtr<nsIPropertyBag2> mCreationParameters;
   nsCOMPtr<sbILibraryFactory> mFactory;
-
-  PRUint32 mDirtyItemCount;
 
   PRUint32 mAnalyzeCountLimit;
 

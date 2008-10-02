@@ -446,8 +446,7 @@ NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseLibrary,
                              sbIMediaList);
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
-: mDirtyItemCount(0),
-  mAnalyzeCountLimit(DEFAULT_ANALYZE_COUNT_LIMIT),
+: mAnalyzeCountLimit(DEFAULT_ANALYZE_COUNT_LIMIT),
   mPreventAddedNotification(PR_FALSE),
   mMonitor(nsnull)
 {
@@ -1672,7 +1671,8 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
       rv = contentUri->GetSpec(spec);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mutableProperties->AppendProperty(PROP_ORIGINURL, NS_ConvertUTF8toUTF16(spec));
+      rv = mutableProperties->AppendProperty(PROP_ORIGINURL, 
+                                             NS_ConvertUTF8toUTF16(spec));
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
@@ -1687,44 +1687,6 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
   }
 
   newItem.swap(*_retval);
-  return NS_OK;
-}
-
-void
-sbLocalDatabaseLibrary::IncrementDatabaseDirtyItemCounter(PRUint32 aIncrement)
-{
-  mDirtyItemCount += aIncrement;
-
-  if (mDirtyItemCount >= mAnalyzeCountLimit) {
-    mDirtyItemCount = 0;
-
-#ifdef DEBUG
-    nsresult rv =
-#endif
-    RunAnalyzeQuery();
-#ifdef DEBUG
-    if (NS_FAILED(rv)) {
-      NS_WARNING("RunAnalyzeQuery failed!");
-    }
-#endif
-  }
-}
-
-nsresult
-sbLocalDatabaseLibrary::RunAnalyzeQuery(PRBool aRunAsync)
-{
-  nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query), aRunAsync);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(NS_LITERAL_STRING("ANALYZE"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt32 dbresult;
-  rv = query->Execute(&dbresult);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbresult, NS_ERROR_FAILURE);
-
   return NS_OK;
 }
 
@@ -2191,18 +2153,6 @@ sbLocalDatabaseLibrary::Shutdown()
   // changes to disk (regardless of whether or not this library will be leaked)
   // to prevent data loss.
   mPropertyCache = nsnull;
-
-  if (mDirtyItemCount) {
-#ifdef DEBUG
-    rv =
-#endif
-    RunAnalyzeQuery(PR_FALSE);
-#ifdef DEBUG
-    if (NS_FAILED(rv)) {
-      NS_WARNING("RunAnalyzeQuery failed!");
-    }
-#endif
-  }
 
   return NS_OK;
 }
@@ -2845,8 +2795,6 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(dbOk, dbOk);
-
-  IncrementDatabaseDirtyItemCounter();
 
   // Add the new media item into cache
   nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
@@ -4723,8 +4671,6 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
   PRUint32 length = mGuids.Length();
 
   if (length > 0) {
-    mLibrary->IncrementDatabaseDirtyItemCounter(length);
-
     sbAutoBatchHelper batchHelper(*mLibrary);
 
     // Bulk get all the property bags for the newly added items

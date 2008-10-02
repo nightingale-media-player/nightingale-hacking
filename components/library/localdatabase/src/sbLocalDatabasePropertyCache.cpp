@@ -1078,9 +1078,7 @@ sbLocalDatabasePropertyCache::Write()
       rv = query->Execute(&dbOk);
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-
-      mLibrary->IncrementDatabaseDirtyItemCounter(mUnflushedQueries[0].dirtyGuidCount);
-
+      
       mUnflushedQueries.RemoveElementAt(0);
     }
   }
@@ -1331,8 +1329,6 @@ sbLocalDatabasePropertyCache::Write()
       rv = query->Execute(&dbOk);
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
-
-      mLibrary->IncrementDatabaseDirtyItemCounter(mUnflushedQueries[0].dirtyGuidCount);
 
       mUnflushedQueries.RemoveElementAt(0);
     }
