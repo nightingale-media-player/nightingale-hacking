@@ -430,6 +430,7 @@
         <xbl:body><![CDATA[
           this._hidden = true;
           this._lastHiddenState.boolValue = true;
+          this._getElem("content").loadURI("about:blank", null, null);
         ]]></xbl:body>
       </xbl:method>
       <xbl:method name="_getElem">
