@@ -749,7 +749,8 @@ mashTape.displayCallback.prototype =  {
 				if (results != null &&
 							splitter.getAttribute("state") == "collapsed")
 				{
-					splitter.setAttribute("state", "open");
+					mashTape.flashDetailFrame.contentWindow.mashTapeVideo
+						.toggleExpand(false);
 				}
 				if (classPending.pending == 0)
 					mashTape.loadFirstFlashFeed()
@@ -1649,23 +1650,38 @@ mashTape.loadFlashDetail = function(el) {
 		var swf = doc.getElementById("mTFlashObject");
 		//dump("Current SWF size: " + swf.width + "x" + swf.height + "\n");
 
-		var contentWidth = doc.getElementById("content").clientWidth;
-		//dump("Content width: " + contentWidth + "\n");
 		var newHeight = frameHeight - 25; // 25px is more or less our padding
 		var newWidth = newHeight * ratio;
-		if (newWidth > frameWidth - contentWidth - 20) {
-			newWidth = frameWidth - contentWidth - 20;
+		//dump("Proposed: " + newWidth + "x" + newHeight + "\n");
+		if (newWidth > frameWidth - 25) {
+			//dump("Capping because "+newWidth + " > " +(frameWidth-25) + "\n");
+			newWidth = frameWidth - 25;
 			newHeight = newWidth / ratio;
+			//dump("Proposed2: " + newWidth + "x" + newHeight + "\n");
+		}
+
+		if (frameWidth - newWidth > 100) {
+			doc.getElementById("content").style.clear = "none";
+			doc.getElementById("author").style.display = "block";
+		} else {
+			doc.getElementById("content").style.clear = "both";
+			doc.getElementById("author").style.display = "inline";
+			var capHeight = doc.getElementById("content").clientHeight;
+			//dump("caption height: " + capHeight + "\n");
+			if (frameHeight - newHeight < capHeight) {
+				newHeight = newHeight - capHeight;
+				newWidth = newHeight * ratio;
+				//dump("Adjustment: " + newWidth + "x" + newHeight + "\n");
+			}
 		}
 
 		if (newWidth != swf.width && newWidth > 150 && newHeight > 50) {
-		//	dump("Setting new SWF size: " + newWidth + "x" + newHeight + "\n");
+			//dump("Setting new SWF size: "+newWidth + "x" + newHeight + "\n");
 			swf.width = newWidth;
 			swf.height = newHeight;
-			doc.getElementById("content").style.left = newWidth + 20 + "px";
+			//doc.getElementById("content").style.left = newWidth + 20 + "px";
 		}
-
-		e.preventDefault();
+			e.preventDefault();
 		e.stopPropagation();
 	}, false);
 
