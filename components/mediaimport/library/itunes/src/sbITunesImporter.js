@@ -1902,7 +1902,13 @@ sbITunesImporter.prototype =
       // Get the Songbird property from the iTunes metadata.
       var propertyValue =
             this._convertMetaValue(iTunesMetaData, metaDataEntry.convertFunc);
-      propertyArray.appendProperty(metaDataEntry.songbird, propertyValue);
+      try {
+        propertyArray.appendProperty(metaDataEntry.songbird, propertyValue);
+      } catch (ex) {
+        Log("Exception adding property \"" +
+            metaDataEntry.songbird + "\" \"" + propertyValue + "\"\n");
+        LogException(ex);
+      }
 
       // Add the Songbird property to the iTunes library signature.
       this._iTunesLibSig.update(metaDataEntry.songbird + propertyValue);
@@ -2000,6 +2006,9 @@ sbITunesImporter.prototype =
     // Get the media items for previously imported tracks.
     this._getTrackMediaItems(aTrackBatch);
 
+    // Update the media item properties of previously imported tracks.
+    this._updateTrackMediaItems(aTrackBatch);
+
     // Create media items for new tracks.
     yield this._createTrackMediaItems(aTrackBatch);
 
@@ -2031,7 +2040,7 @@ sbITunesImporter.prototype =
     for (var i = 0; i < aTrackBatch.length; i++) {
       // Get the track info.
       var trackInfo = aTrackBatch[i];
-      var iTunesTrackID = trackInfo.iTunes["Track ID"];
+      var iTunesTrackID = trackInfo.iTunes["Persistent ID"];
 
       // Get the mapped GUID.  Skip track if it hasn't been previously imported.
       guid = ITDB.getSBIDFromITID(this._iTunesLibID, iTunesTrackID);
@@ -2040,6 +2049,61 @@ sbITunesImporter.prototype =
 
       // Get the track media item.
       trackInfo.mediaItem = this._library.getMediaItem(guid);
+    }
+  },
+
+
+  /**
+   * Update the media item properties for the tracks in the batch specified by
+   * aTrackBatch that have already been imported.
+   *
+   * \param aTrackBatch         Batch of tracks for which to update media item
+   *                            properties.
+   */
+
+  _updateTrackMediaItems:
+    function sbITunesImporter__updateTrackMediaItems(aTrackBatch) {
+    // Update each track.
+    for (var i = 0; i < aTrackBatch.length; i++) {
+      // Get the next track.  Skip tracks that have not been previously
+      // imported.
+      var trackInfo = aTrackBatch[i];
+      if (!trackInfo.mediaItem)
+        continue;
+
+      // Get the track iTunes properties and media item properties.
+      var iTunesPropertyArray = trackInfo.propertyArray;
+      var mediaItemProperties =
+            trackInfo.mediaItem.getProperties(trackInfo.propertyArray);
+
+      // Create an array containing the properties that need updating.
+      var updatePropertyArray =
+          Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+            .createInstance(Ci.sbIMutablePropertyArray);
+      var updateNeeded = false;
+
+      // Determine which properties need updating.
+      var propertyCount = iTunesPropertyArray.length;
+      for (var j = 0; j < propertyCount; j++) {
+        // Get the next iTunes property and corresponding media item property.
+        var iTunesProperty = iTunesPropertyArray.getPropertyAt(j);
+        var iTunesPropertyID = iTunesProperty.id;
+        var iTunesPropertyValue = iTunesProperty.value;
+        var mediaItemPropertyValue =
+              mediaItemProperties.getPropertyValue(iTunesPropertyID);
+
+        // If the property value has changed, add it to the update property
+        // array.
+        if (mediaItemPropertyValue != iTunesPropertyValue) {
+          updatePropertyArray.appendProperty(iTunesPropertyID,
+                                             iTunesPropertyValue);
+          updateNeeded = true;
+        }
+      }
+
+      // Update the media item properties if needed.
+      if (updateNeeded)
+        trackInfo.mediaItem.setProperties(updatePropertyArray);
     }
   },
 
