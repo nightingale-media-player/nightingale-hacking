@@ -64,14 +64,14 @@
   
   
   <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox" mousethrough="never">
-    <tabs>
+    <tabs id="trackeditor-tabs" hidden="true">
       <!--><tab label="&trackeditor.tab.summary.title;" id="summary"/>-->
       <tab label="&trackeditor.tab.edit.title;" id="edit"/>
       <!--><tab label="&trackeditor.tab.lyrics.title;" id="lyrics"/>-->
       <!--tab disabled="true" label="Sort Values"/-->
     </tabs>
 
-    <tabpanels flex="1">
+    <tabpanels id="trackeditor-tabpanels" flex="1">
       
       <!--
       <vbox flex="1" id="summary-tab">
@@ -195,11 +195,15 @@
           <!-- the first row spans the whole grid -->
           <label id="infotab_trackname_label"
                  property-type="label" 
-                 property="http://songbirdnest.com/data/1.0#trackName"/>
-          <!-- this one element gets an ID so we can look it up and disable it -->
-          <textbox id="infotab_trackname_textbox"
-                   property="http://songbirdnest.com/data/1.0#trackName"
-                   flex="1"/>
+				 property="http://songbirdnest.com/data/1.0#trackName"/>
+          <!-- need a box wrapping element around the textbox, otherwise it
+               flexes vertically, stretching it weirdly -->
+          <box>
+            <!-- this element gets an ID so we can look it up and disable it -->
+            <textbox id="infotab_trackname_textbox"
+                     property="http://songbirdnest.com/data/1.0#trackName"
+                     flex="1"/>
+          </box>
 
           <row>
             <label property-type="label" property="http://songbirdnest.com/data/1.0#artistName"/>

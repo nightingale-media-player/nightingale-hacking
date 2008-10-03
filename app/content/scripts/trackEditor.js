@@ -651,7 +651,6 @@ var TrackEditor = {
 
       var tabBox = document.getElementById("trackeditor-tabbox");
       var tabs = tabBox.tabs;
-      tabs.setAttribute("hidden", "true");
       /*    
       // FIXME: hid summary and lyrics tabs halfheartedly
       //        (you can probably still keyboard shortcut to them)
@@ -1386,6 +1385,7 @@ TrackEditorInputWidget.prototype = {
   _createCheckbox: function() {
     var hbox = document.createElement("hbox");
     this._element.parentNode.replaceChild(hbox, this._element);
+    var flex = this._element.getAttribute("flex");
     this._checkbox = document.createElement("checkbox");
     
     // In order for tabbing to work in the desired order
@@ -1401,6 +1401,9 @@ TrackEditorInputWidget.prototype = {
       function() { self.onCheckboxCommand(); }, false);
     
     hbox.appendChild(this._checkbox);
+    if (flex) {
+      hbox.setAttribute("flex", flex);
+    }
     hbox.appendChild(this._element);
   },
   
