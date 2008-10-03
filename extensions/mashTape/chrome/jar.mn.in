@@ -12,6 +12,7 @@ mashTape.jar:
 % locale mashtape bn-IN %locale/bn-IN/
 % locale mashtape sv-SE %locale/bn-IN/
 % locale mashtape pl-PL %locale/pl-PL/
+% locale mashtape zh-CN %locale/zh-CN/
 % skin mashtape classic/1.0 %skin/
 % overlay chrome://browser/content/preferences/preferences.xul chrome://mashtape/content/prefsOverlay.xul
 @include_all_to
