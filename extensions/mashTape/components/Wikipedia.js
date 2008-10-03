@@ -7,7 +7,7 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
-const DESCRIPTION = "mashTape Provider: Wikipedia (localised) Artist Info Provider";
+const DESCRIPTION = "mashTape Provider: Wikipedia (localized) Artist Info Provider";
 const CID         = "{a7780910-8c10-11dd-ad8b-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/mashTape/provider/info/WikipediaLocal;1";
 
@@ -71,7 +71,7 @@ ArtistInfo.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Ci.sbIMashTapeInfoProvider,
 			Ci.sbIMashTapeProvider]),
 
-	providerName: "Wikipedia Auto-Localised",
+	providerName: "Wikipedia Auto-Localized",
 	providerType: "info",
 	numSections: 4,
 	providerIconBio : "chrome://mashtape/content/tabs/wikipedia.png",
