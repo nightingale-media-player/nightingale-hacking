@@ -747,10 +747,10 @@ mashTape.displayCallback.prototype =  {
 						document.getElementById("mashTape-flash-splitter");
 				mashTape.updateFlash(provider, results);
 				if (results != null &&
-							splitter.getAttribute("state") == "collapsed")
+				!mashTape.flashDetailFrame.contentWindow.mashTapeVideo.expanded
+					&& splitter.getAttribute("state") == "collapsed")
 				{
-					mashTape.flashDetailFrame.contentWindow.mashTapeVideo
-						.toggleExpand(false);
+					splitter.setAttribute("state", "open");
 				}
 				if (classPending.pending == 0)
 					mashTape.loadFirstFlashFeed()
