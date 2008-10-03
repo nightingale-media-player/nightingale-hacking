@@ -737,9 +737,9 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
 #if defined(USE_SQLITE_SHARED_CACHE)
   sqlite3_enable_shared_cache(1);
 #endif
-
-  PRInt32 ret = sqlite3_open16(PromiseFlatString(strFilename).get(), &pHandle);
-  NS_ASSERTION(ret == SQLITE_OK, "Failed to open database: sqlite_open16 failed!");
+ 
+  PRInt32 ret = sqlite3_open(NS_ConvertUTF16toUTF8(strFilename).get(), &pHandle);
+  NS_ASSERTION(ret == SQLITE_OK, "Failed to open database: sqlite_open failed!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
   ret  = sqlite3_create_collation(pHandle,
@@ -1192,7 +1192,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
       nsAutoString strQuery;
       nsAutoPtr<bindParameterArray_t> pParameters;
-      const void *pzTail = nsnull;
+      const char *pzTail = nsnull;
 
       pQuery->GetQuery(currentQuery, strQuery);
       
@@ -1237,7 +1237,10 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
       sqlite3_update_hook(pDB, SQLiteUpdateHook, pQuery);
 
-      retDB = sqlite3_prepare16(pDB, PromiseFlatString(strQuery).get(), (int)strQuery.Length() * sizeof(PRUnichar), &pStmt, &pzTail);
+      nsCString cStrQuery = NS_ConvertUTF16toUTF8(strQuery);
+      retDB = sqlite3_prepare(pDB, cStrQuery.get(), (int)cStrQuery.Length(), 
+                              &pStmt, &pzTail);
+
       if(retDB != SQLITE_OK) {
 #if defined(HARD_SANITY_CHECK)
         const char *szErr = sqlite3_errmsg(pDB);
@@ -1273,12 +1276,15 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
             LOG(("DBE: Parameter %d is '%s'", i, p.utf8StringValue.get()));
             break;
           case STRING:
-            sqlite3_bind_text16(pStmt, i + 1,
-              p.stringValue.get(),
-              p.stringValue.Length() * 2,
+          {
+            nsCString cStringValue = NS_ConvertUTF16toUTF8(p.stringValue);
+            sqlite3_bind_text(pStmt, i + 1,
+              cStringValue.get(),
+              cStringValue.Length(),
               SQLITE_TRANSIENT);
-            LOG(("DBE: Parameter %d is '%s'", i, NS_ConvertUTF16toUTF8(p.stringValue).get()));
+             LOG(("DBE: Parameter %d is '%s'", i, cStringValue.get()));
             break;
+          }
           case DOUBLE:
             sqlite3_bind_double(pStmt, i + 1, p.doubleValue);
             LOG(("DBE: Parameter %d is '%f'", i, p.doubleValue));
@@ -1339,21 +1345,17 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
                 j = 1;
               }
 
-              for(; j < nCount; j++)
-              {
-                PRUnichar *p = (PRUnichar *)sqlite3_column_name16(pStmt, j);
-                nsString strColumnName;
-
-                if(p) {
-                  strColumnName = p;
+              for(; j < nCount; j++) {
+                const char *p = (const char *)sqlite3_column_name(pStmt, j);
+                if (p) {
+                  vColumnNames.push_back(NS_ConvertUTF8toUTF16(p));
                 }
                 else {
+                  nsAutoString strColumnName;
                   strColumnName.SetIsVoid(PR_TRUE);
+                  vColumnNames.push_back(strColumnName);
                 }
-
-                vColumnNames.push_back(strColumnName);
               }
-
               pRes->SetColumnNames(vColumnNames);
             }
 
@@ -1386,11 +1388,10 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
             if (rollingLimit == 0 || rollingSum >= rollingLimit) {
               for(; k < nCount; k++)
               {
-                PRUnichar *p = (PRUnichar *)sqlite3_column_text16(pStmt, k);
+                const char *p = (const char *)sqlite3_column_text(pStmt, k);
                 nsString strCellValue;
-
-                if(p) {
-                  strCellValue = p;
+                if (p) {
+                  strCellValue = NS_ConvertUTF8toUTF16(p);
                 }
                 else {
                   strCellValue.SetIsVoid(PR_TRUE);
