@@ -237,8 +237,8 @@ function runTest() {
         assertEqual(job.errorCount, 4);
       } else {
         // Missing file, permission files, files with wrong extensions
-        // This should be 6 but is 7 due to bug 12663
-        assertEqual(job.errorCount, 7);
+        // This should be 7 but is 6 due to bug 12663
+        assertEqual(job.errorCount, 6);
       }
       assertEqual(files.length, job.total);
       assertEqual(files.length, job.progress);
