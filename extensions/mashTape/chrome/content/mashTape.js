@@ -649,10 +649,10 @@ mashTape.update = function(artist, album, track) {
 		mashTape.pendingCallbacks["rss"].pending++;
 	}
 
-	mashTape.photoFrameLoaded = false;
-	mashTape.photosReady = null;
-	mashTape.resetPhotoFrame();
 	if (mashTape.prevArtist != artist) {
+		mashTape.photoFrameLoaded = false;
+		mashTape.photosReady = null;
+		mashTape.resetPhotoFrame();
 		mashTape.updateEnabledProviders("photo");
 		for (var i=0; i<mashTape.enabledProviders["photo"].length; i++) {
 			var clsid = mashTape.enabledProviders["photo"][i];
