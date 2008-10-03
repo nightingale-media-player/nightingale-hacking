@@ -957,16 +957,19 @@ sbMediacoreSequencer::ProcessNewPosition()
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mPlaybackControl->Play();
+  }
+  else if(mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
+    rv = mPlaybackControl->Pause();
+  }
 
-    if(NS_FAILED(rv)) {
-      mStatus = sbIMediacoreStatus::STATUS_STOPPED;
-      mIsWaitingForPlayback = PR_FALSE;
+  if(NS_FAILED(rv)) {
+    mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+    mIsWaitingForPlayback = PR_FALSE;
 
-      rv = UpdatePlayStateDataRemotes();
-      NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdatePlayStateDataRemotes();
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      return rv;
-    }
+    return rv;
   }
 
   return NS_OK;
