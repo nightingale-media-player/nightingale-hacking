@@ -1808,6 +1808,13 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
   }
 
   nsAutoMonitor mon(mMonitor);
+  nsCOMPtr<sbIMediacoreEventTarget> target = 
+    do_QueryReferent(mMediacoreManager, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool dispatched;
+  rv = target->DispatchEvent(aEvent, PR_TRUE, &dispatched);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   switch(eventType) {
     // Stream Events
@@ -1923,14 +1930,6 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     default:;
   }
 
-  nsCOMPtr<sbIMediacoreEventTarget> target = 
-    do_QueryReferent(mMediacoreManager, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool dispatched;
-  rv = target->DispatchEvent(aEvent, PR_TRUE, &dispatched);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
   return NS_OK;
 }
 

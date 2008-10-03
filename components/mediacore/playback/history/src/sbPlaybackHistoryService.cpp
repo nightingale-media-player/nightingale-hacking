@@ -1739,13 +1739,13 @@ sbPlaybackHistoryService::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
     case sbIMediacoreEvent::STREAM_END:
     case sbIMediacoreEvent::STREAM_STOP: {
-      if(mCurrentlyTracking) {
-        // Regardless of failure, we reset the data after this block of code.
-        VerifyDataAndCreateNewEntry();
+      if(mCurrentlyTracking && mCurrentStartTime) {
+        rv = VerifyDataAndCreateNewEntry();
+        NS_ASSERTION(NS_SUCCEEDED(rv), "Entry won't be created.");
+
+        rv = ResetTrackingData();
+        NS_ENSURE_SUCCESS(rv, rv);
       }
-      
-      rv = ResetTrackingData();
-      NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
 
