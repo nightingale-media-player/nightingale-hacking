@@ -197,15 +197,15 @@ sbITunesImporter.prototype =
         { songbird: SBProperties.contentMimeType,  iTunes: "Kind" },
         { songbird: SBProperties.discNumber,       iTunes: "Disc Number" },
         { songbird: SBProperties.duration,         iTunes: "Total Time",
-          convertFunc: "convertDuration" },
+          convertFunc: "_convertDuration" },
         { songbird: SBProperties.genre,            iTunes: "Genre" },
         { songbird: SBProperties.lastPlayTime,     iTunes: "Play Date UTC",
-          convertFunc: "convertDateTime" },
+          convertFunc: "_convertDateTime" },
         { songbird: SBProperties.lastSkipTime,     iTunes: "Skip Date",
-          convertFunc: "convertDateTime" },
+          convertFunc: "_convertDateTime" },
         { songbird: SBProperties.playCount,        iTunes: "Play Count" },
         { songbird: SBProperties.rating,           iTunes: "Rating",
-          convertFunc: "convertRating" },
+          convertFunc: "_convertRating" },
         { songbird: SBProperties.sampleRate,       iTunes: "Sample Rate" },
         { songbird: SBProperties.skipCount,        iTunes: "Skip Count" },
         { songbird: SBProperties.totalDiscs,       iTunes: "Disc Count" },
@@ -777,7 +777,7 @@ sbITunesImporter.prototype =
                                   + this._iTunesLibID);
 
         /* Process the library track list. */
-        yield this.processTrackList();
+        yield this._processTrackList();
 
         /* Process the library playlist list. */
         yield this.processPlaylistList();
@@ -1046,894 +1046,6 @@ sbITunesImporter.prototype =
         /* Check if it's time to yield. */
         if (GeneratorThread.shouldYield())
             yield this.yieldWithStatusUpdate();
-    },
-
-
-    /***************************************************************************
-     *
-     * Importer track functions.
-     *
-     **************************************************************************/
-
-    /*
-     * mAddTrackList                List of tracks to add.
-     */
-
-    mAddTrackList: [],
-
-
-    /*
-     * processTrackList
-     *
-     *   This function processes the library track list.
-     */
-
-    processTrackList: function()
-    {
-        var                         tag = {};
-        var                         tagPreText = {};
-
-        /* Find the track list. */
-        yield this.findKey("Tracks");
-
-        /* Skip the "dict" tag. */
-        this._xmlParser.getNextTag(tag, tagPreText);
-
-        /* Process each track in list. */
-        while (true)
-        {
-            /* Process another track and add it to batch.  If */
-            /* add track batch is full, process the batch.    */
-            if (!this.addTrackBatchFull())
-            {
-                /* Get the next tag. */
-                this._xmlParser.getNextTag(tag, tagPreText);
-
-                /* If it's a "/key" tag, process the track.  If  */
-                /* it's a "/dict" tag, there are no more tracks. */
-                if (tag.value == "/key")
-                    this.processTrack(tag, tagPreText);
-                else if (tag.value == "/dict")
-                    break;
-            }
-            else
-            {
-                /* Process add track batch. */
-                yield this.addTrackBatchProcess();
-
-                /* Yield if thread should. */
-                yield this.yieldIfShouldWithStatusUpdate();
-            }
-        }
-
-        /* Process the remaining add track batch. */
-        if (!this.addTrackBatchEmpty())
-            yield this.addTrackBatchProcess();
-
-        /* Wait for the database services to synchronize. */
-        while (!ITDB.sync())
-        {
-            yield;
-        }
-
-        /* Update status. */
-        ITStatus.mProgress =   (100 * this._xmlParser.tell())
-                             / this._xmlFile.fileSize;
-    },
-
-
-    /*
-     * processTrack
-     *
-     *   --> tag.value              Track starting tag value.
-     *   --> tagPreText.value       Track starting pre-text.
-     *
-     *   This function processes the next track with the starting tag value and
-     * pre-text specified by tag and tagPreText.
-     */
-
-    processTrack: function(tag, tagPreText)
-    {
-        var                         trackInfoTable = {};
-        var                         iTunesTrackID;
-        var                         url;
-        var                         metaKeys = [];
-        var                         metaValues = [];
-        var                         uuid;
-        var                         trackURI;
-        var                         trackFile;
-        var                         supported;
-
-        /* One more track. */
-        this._trackCount++;
-
-        /* Skip the "dict" tag. */
-        this._xmlParser.getNextTag(tag, tagPreText);
-
-        /* Get the track info. */
-        this.getTrackInfo(trackInfoTable, tag, tagPreText);
-
-        /* Get the track media URL. */
-        url = this.getTrackURL(trackInfoTable);
-
-        /* Log progress. */
-        Log("1: processTrack \"" + url + "\"\n");
-
-        /* Set up the metadata. */
-        this.setupTrackMetadata(metaKeys, metaValues, trackInfoTable);
-
-        /* Check if the track media exists. */
-        var trackExists = false;
-        trackURI = this._ioService.newURI(url, null, null);
-        if (trackURI.scheme == "file")
-        {
-            try
-            {
-                trackFile = this._fileProtocolHandler.getFileFromURLSpec(url);
-                trackExists = trackFile.exists();
-            }
-            catch (ex)
-            {
-                Log("processTrack: File protocol error " + ex + "\n");
-                Log(url + "\n");
-            }
-            if (!trackExists)
-                this._nonExistentMediaCount++;
-        }
-
-        /* Add the track content length metadata. */
-        if (trackExists && trackFile)
-        {
-            metaKeys.push(SBProperties.contentLength);
-            metaValues.push(trackFile.fileSize.toString());
-        }
-
-        /* Check if the track media is supported and */
-        /* add it to the iTunes library signature.   */
-        supported = this._typeSniffer.isValidMediaURL(trackURI);
-        if (!supported)
-            this._unsupportedMediaCount++;
-        this._iTunesLibSig.update("supported" + supported);
-
-        /* Get the track persistent ID and add */
-        /* it to the iTunes library signature. */
-        iTunesTrackID = trackInfoTable["Persistent ID"];
-        this._iTunesLibSig.update("Persistent ID" + iTunesTrackID);
-
-        /* Add the track to the media library. */
-        if (this._import && supported)
-        {
-            this.addTrack(trackInfoTable,
-                          url,
-                          iTunesTrackID,
-                          metaKeys,
-                          metaValues);
-        }
-    },
-
-
-    /*
-     * getTrackInfo
-     *
-     *   <-- trackInfoTable         Table of track information.
-     *   --> tag.value              Track starting tag value.
-     *   --> tagPreText.value       Track starting pre-text.
-     *
-     *   This function gets track information from the next track with the
-     * starting tag value and pre-text specified by tag and tagPreText.  The
-     * track information is returned in trackInfoTable.
-     */
-
-    getTrackInfo: function(trackInfoTable, tag, tagPreText)
-    {
-        var                         keyName;
-        var                         keyValue;
-        var                         done;
-
-        /* Get the track info. */
-        done = false;
-        while (!done)
-        {
-            /* Get the next tag. */
-            this._xmlParser.getNextTag(tag, tagPreText);
-
-            /* If it's a "key" tag, process the track info. */
-            if (tag.value == "key")
-            {
-                /* Get the key name. */
-                this._xmlParser.getNextTag(tag, tagPreText);
-                keyName = tagPreText.value;
-
-                /* Get the key value.  If the next tag is */
-                /* empty, use its name as the key value.  */
-                this._xmlParser.getNextTag(tag, tagPreText);
-                if (tag.value.charCodeAt(tag.value.length - 1) ==
-                    this.mSlashCharCode)
-                {
-                    keyValue = tag.value.substring(0, tag.value.length - 1);
-                }
-                else
-                {
-                    this._xmlParser.getNextTag(tag, tagPreText);
-                    keyValue = tagPreText.value;
-                }
-
-                /* Save the track info. */
-                trackInfoTable[keyName] = keyValue;
-            }
-
-            /* Otherwise, if it's "/dict" tag, the track info is done. */
-            else if (tag.value == "/dict")
-            {
-                done = true;
-            }
-        }
-    },
-
-
-    /*
-     * getTrackURL
-     *
-     *   --> trackInfoTable         Table of track information.
-     *
-     *   <--                        Track URL.
-     *
-     *   This function extracts and returns the track URL from the track
-     * information table specified by trackInfoTable.
-     */
-
-    getTrackURL: function(trackInfoTable)
-    {
-        var                         url;
-
-        /* Get the track media URL and add it */
-        /* to the iTunes library signature.   */
-        url = trackInfoTable["Location"];
-        {
-            /* If file path prefix is "file://localhost//", */
-            /* convert path as a UNC network path.          */
-            url = url.replace(/^file:\/\/localhost\/\//, "file://///");
-
-            /* If file path prefix is "file://localhost/", */
-            /* convert path as a local file path.          */
-            url = url.replace(/^file:\/\/localhost\//, "file:///");
-
-            /* Strip trailing "/" that iTunes apparently adds sometimes. */
-            url = url.replace(/\/$/, "");
-
-            /* If bare DOS drive letter path is specified, set file scheme. */
-            if (url.match(/^\w:/))
-                url = "file:///" + url;
-
-            /* If no scheme is specified, set file */
-            /* scheme with a UNC network path.     */
-            if (!url.match(/^\w*:/))
-                url = "file:////" + url;
-        }
-        this._iTunesLibSig.update("url" + url);
-
-        /* Windows is case-insensitive, so convert to lower case. */
-        if (this._osType == "Windows")
-            url = url.toLowerCase();
-
-        return (url);
-    },
-
-
-    /*
-     * setupTrackDuration
-     *
-     *   --> metaKeys               Metadata keys.
-     *   <-- metaValues             Metadata values.
-     *   <-- trackInfoTable         Table of track information.
-     *
-     *   This function extracts track duration metadata from the track
-     * information table specified by trackInfoTable and places it in the
-     * metadata tables specified by metaKeys and metaValues.
-     */
-
-    setupTrackDuration: function(metaKeys, metaValues, trackInfoTable)
-    {
-        var                         trackInfo;
-        var                         duration;
-
-        /* Do nothing if no duration metadata available. */
-        trackInfo = trackInfoTable["Total Time"];
-        if (!trackInfo)
-            return;
-
-        /* Get the track duration, convert it to           */
-        /* micro-seconds and add it to the metadata array. */
-        duration = parseInt(trackInfo) * 1000;
-        metaKeys.push(SBProperties.duration);
-        metaValues.push(duration);
-
-        /* Add the metadata to the iTunes library signature. */
-        this._iTunesLibSig.update(SBProperties.duration + duration);
-    },
-
-
-    /*
-     * setupTrackRating
-     *
-     *   --> metaKeys               Metadata keys.
-     *   <-- metaValues             Metadata values.
-     *   <-- trackInfoTable         Table of track information.
-     *
-     *   This function extracts track rating metadata from the track information
-     * table specified by trackInfoTable and places it in the metadata tables
-     * specified by metaKeys and metaValues.
-     */
-
-    setupTrackRating: function(metaKeys, metaValues, trackInfoTable)
-    {
-        var                         trackInfo;
-        var                         rating;
-
-        /* Do nothing if no rating metadata available. */
-        trackInfo = trackInfoTable["Rating"];
-        if (!trackInfo)
-            return;
-
-        /* Get the iTunes track rating, convert it to a Songbird */
-        /* track rating, and add it to the metadata array.       */
-        rating = Math.floor((parseInt(trackInfo) + 10) / 20);
-        metaKeys.push(SBProperties.rating);
-        metaValues.push(rating);
-
-        /* Add the metadata to the iTunes library signature. */
-        this._iTunesLibSig.update(SBProperties.rating + rating);
-    },
-
-
-    /*
-     * setupTrackMetadata
-     *
-     *   --> metaKeys               Metadata keys.
-     *   <-- metaValues             Metadata values.
-     *   <-- trackInfoTable         Table of track information.
-     *
-     *   This function extracts track metadata from the track information table
-     * specified by trackInfoTable and places it in the metadata tables
-     * specified by metaKeys and metaValues.
-     */
-
-    setupTrackMetadata: function(metaKeys, metaValues, trackInfoTable)
-    {
-        var                         metaDataEntry;
-        var                         trackInfo;
-        var                         metaValue;
-        var                         i;
-
-        /* Set up the metadata. */
-        for (i = 0; i < this.metaDataTable.length; i++)
-        {
-            /* Get the metadata entry name. */
-            metaDataEntry = this.metaDataTable[i];
-
-            /* Add the metadata to the metadata array. */
-            trackInfo = trackInfoTable[metaDataEntry.iTunes];
-            if (trackInfo)
-            {
-                /* Convert the metadata value from iTunes to Songbird format. */
-                metaValue = this.convertMetaValue(trackInfo,
-                                                  metaDataEntry.convertFunc);
-
-                /* Add the metadata to the metadata array. */
-                metaKeys.push(metaDataEntry.songbird);
-                metaValues.push(metaValue);
-            }
-
-            /* Add the metadata to the iTunes library signature. */
-            if (trackInfo)
-                this._iTunesLibSig.update(metaDataEntry.songbird + trackInfo);
-        }
-    },
-
-
-    /*
-     * convertMetaValue
-     *
-     *   --> iTunesMetaValue        iTunes metadata value.
-     *   --> convertFunc            Conversion function.
-     *
-     *   <--                        Songbird metadata value.
-     *
-     *   This function converts the iTunes metadata value specified by
-     * iTunesMetaValue to a Songbird metadata value using the conversion
-     * function specified by convertFunc.  This function returns the Songbird
-     * metadata value.
-     */
-
-    convertMetaValue: function(iTunesMetaValue, convertFunc)
-    {
-        var                         sbMetaValue;
-
-        /* If a conversion function was provided, use it.  Otherwise, just */
-        /* copy the iTunes metadata value to the Songbird metadata value.  */
-        if (convertFunc)
-            sbMetaValue = this[convertFunc](iTunesMetaValue);
-        else
-            sbMetaValue = iTunesMetaValue;
-
-        return sbMetaValue;
-    },
-
-
-    /*
-     * convertRating
-     *
-     *   --> iTunesMetaValue        iTunes metadata value.
-     *
-     *   <--                        Songbird metadata value.
-     *
-     *   This function converts the iTunes metadata rating value specified by
-     * iTunesMetaValue to a Songbird metadata rating value and returns the
-     * Songbird metadata value.
-     */
-
-    convertRating: function(iTunesMetaValue)
-    {
-        var rating = Math.floor((parseInt(iTunesMetaValue) + 10) / 20);
-        return rating.toString();
-    },
-
-
-    /*
-     * convertDuration
-     *
-     *   --> iTunesMetaValue        iTunes metadata value.
-     *
-     *   <--                        Songbird metadata value.
-     *
-     *   This function converts the iTunes metadata duration value specified by
-     * iTunesMetaValue to a Songbird metadata duration value and returns the
-     * Songbird metadata value.
-     */
-
-    convertDuration: function(iTunesMetaValue)
-    {
-        var duration = parseInt(iTunesMetaValue) * 1000;
-        return duration.toString();
-    },
-
-
-    /*
-     * convertDateTime
-     *
-     *   --> iTunesMetaValue        iTunes metadata value.
-     *
-     *   <--                        Songbird metadata value.
-     *
-     *   This function converts the iTunes metadata date/time value specified by
-     * iTunesMetaValue to a Songbird metadata date/time value and returns the
-     * Songbird metadata value.
-     */
-
-    convertDateTime: function(iTunesMetaValue)
-    {
-        var                         sbMetaValue;
-
-        /* Convert "1970-01-01T00:00:00Z" to "1970/01/01 00:00:00 UTC". */
-        iTunesMetaValue = iTunesMetaValue.replace(/-/g, "/");
-        iTunesMetaValue = iTunesMetaValue.replace(/T/g, " ");
-        iTunesMetaValue = iTunesMetaValue.replace(/Z/g, " UTC");
-
-        /* Parse the date/time string into epoc time. */
-        sbMetaValue = Date.parse(iTunesMetaValue);
-
-        return sbMetaValue.toString();
-    },
-
-
-    /*
-     * addTrack
-     *
-     *   --> trackInfoTable         Table of track information.
-     *   --> url                    Track media URL.
-     *   --> iTunesTrackID          iTunes track ID.
-     *   --> metaValues             Metadata values.
-     *   --> trackInfoTable         Table of track information.
-     *
-     *   This function adds the track with the specified information to the
-     * media library.
-     */
-
-    addTrack: function(trackInfoTable, url, iTunesTrackID, metaKeys, metaValues)
-    {
-        var                         addTrack = {};
-
-        /* Add the track to the add track batch. */
-        addTrack.trackInfoTable = trackInfoTable;
-        addTrack.url = url;
-        addTrack.iTunesTrackID = iTunesTrackID;
-        addTrack.metaKeys = metaKeys;
-        addTrack.metaValues = metaValues;
-        this.mAddTrackList.push(addTrack);
-    },
-
-
-    /*
-     * addTrackBatchProcess
-     *
-     *   This function processes the batch of tracks to be added to the library.
-     */
-
-    addTrackBatchProcess: function()
-    {
-        var                         addTrack;
-        var                         guidList = [];
-        var                         guid;
-        var                         uriList = [];
-        var                         uri;
-        var                         iTunesTrackIDList = [];
-        var                         propertyName;
-        var                         i, j;
-
-        /* Get the list of Songbird track GUIDs */
-        /* from the list of iTunes track IDs.   */
-        this.addTrackBatchGetGUIDs();
-
-        /* Get the list of existing track media items. */
-        this.addTrackBatchGetMediaItems();
-
-        /* Create track media items for non-existent tracks. */
-        yield this.addTrackBatchCreateMediaItems();
-
-        /*XXXeps should sync any updated properties in existing tracks. */
-
-        /* Add the tracks to the track ID map. */
-        for (i = 0; i < this.mAddTrackList.length; i++)
-        {
-            addTrack = this.mAddTrackList[i];
-            this._trackIDMap[addTrack.trackInfoTable["Track ID"]] =
-                                                                addTrack.guid;
-        }
-
-        /* Clear add track list. */
-        this.mAddTrackList = [];
-    },
-
-
-    /*
-     * addTrackBatchGetGUIDs
-     *
-     *   This function gets the Songbird track GUIDs mapped to the iTunes track
-     * IDs within the add track batch.
-     */
-
-    addTrackBatchGetGUIDs: function()
-    {
-        var                         addTrack;
-        var                         guid;
-        var                         guidList = [];
-        var                         i;
-
-        /* Get the list of Songbird track GUIDs */
-        /* from the list of iTunes track IDs.   */
-        for (i = 0; i < this.mAddTrackList.length; i++)
-        {
-            addTrack = this.mAddTrackList[i];
-            guid = ITDB.getSBIDFromITID(this._iTunesLibID,
-                                        addTrack.iTunesTrackID);
-            guidList[i] = guid;
-        }
-
-        /* Add the Songbird track GUIDs to the add track list. */
-        for (i = 0; i < this.mAddTrackList.length; i++)
-        {
-            this.mAddTrackList[i].guid = guidList[i];
-        }
-    },
-
-
-    /*
-     * addTrackBatchGetMediaItems
-     *
-     *   This function gets the existing track media items within the add track
-     * batch.
-     */
-
-    addTrackBatchGetMediaItems: function()
-    {
-        var                         addTrack;
-        var                         mediaItemList = [];
-        var                         mediaItem;
-        var                         guidList = [];
-        var                         guid;
-        var                         i;
-
-        /* Get the list of existing track GUIDs. */
-        for (i = 0; i < this.mAddTrackList.length; i++)
-        {
-            addTrack = this.mAddTrackList[i];
-            if (addTrack.guid)
-                guidList.push(addTrack.guid);
-        }
-
-        /* Get the list of existing track media items. */
-        for (i = 0; i < guidList.length; i++)
-        {
-            guid = guidList[i];
-            try
-            {
-                mediaItem = this._library.getMediaItem(guid);
-            }
-            catch (e)
-            {
-                mediaItem = null;
-            }
-            mediaItemList[i] = mediaItem;
-        }
-
-        /* Add the media items to the add track list. */
-        for (i = 0; i < this.mAddTrackList.length; i++)
-        {
-            addTrack = this.mAddTrackList[i];
-            if (addTrack.guid)
-                addTrack.mediaItem = mediaItemList.shift();
-        }
-    },
-
-
-    /*
-     * addTrackBatchCreateMediaItems
-     *
-     *   This function creates media items for the tracks in the add track
-     * batch.
-     */
-
-    addTrackBatchCreateMediaItems: function()
-    {
-        var                         createMediaItemsListener;
-        var                         addTrackMediaItemList;
-        var                         uriList;
-        var                         propertyArrayArray;
-
-        var                         addTrack;
-        var                         mediaItemList = [];
-        var                         mediaItem;
-        var                         iTunesTrackIDList = [];
-        var                         guidList = [];
-        var                         trackURI;
-        var                         i, j;
-
-        /* Set up a list of track URIs and           */
-        /* properties.  Do nothing if list is empty. */
-        uriList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                      .createInstance(Ci.nsIMutableArray);
-        propertyArrayArray =
-                Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                    .createInstance(Ci.nsIMutableArray);
-        for (i = 0; i < this.mAddTrackList.length; i++)
-        {
-            addTrack = this.mAddTrackList[i];
-            if (!addTrack.mediaItem)
-            {
-                this.addTrackMediaItemInfo(this.mAddTrackList[i],
-                                           uriList,
-                                           propertyArrayArray);
-            }
-        }
-        if (!uriList.length)
-            return;
-
-        /* Create the track media items. */
-        createMediaItemsListener =
-        {
-            complete: false,
-            mediaItems: null,
-            result: Components.results.NS_OK,
-
-            onProgress: function(aIndex) {},
-            onComplete: function(aMediaItems, aResult)
-            {
-                this.mediaItems = aMediaItems;
-                this.result = aResult;
-                this.complete = true;
-            },
-        };
-        addTrackMediaItemList = {};
-        this._library.batchCreateMediaItemsAsync(createMediaItemsListener,
-                                                 uriList,
-                                                 propertyArrayArray, false);
-
-        /* Wait for media item creation to complete. */
-        while (!createMediaItemsListener.complete)
-            yield this.yieldWithStatusUpdate();
-
-        /* If the creation completed successfully, get the list */
-        /* of created items.  Otherwise, skip to the end state. */
-        if (createMediaItemsListener.result == Components.results.NS_OK)
-        {
-            addTrackMediaItemList = createMediaItemsListener.mediaItems;
-        }
-        else
-        {
-            Log("Error adding media items " +
-                createMediaItemsListener.result + "\n");
-            return;
-        }
-
-        /* Get the list of media items added by the batch create. */
-        mediaItemList = this.getJSArray(addTrackMediaItemList);
-
-        /* Create a hash table for the add track list. */
-        var addTrackMap = {};
-        for (i = 0; i < this.mAddTrackList.length; i++)
-        {
-            addTrack = this.mAddTrackList[i];
-            addTrackMap[addTrack.iTunesTrackID] = addTrack;
-        }
-
-        /* Add the added media items to the add track list. */
-        for (i = 0; i < mediaItemList.length; i++)
-        {
-            /* Get the next media item and its associated iTunes GUID. */
-            mediaItem = mediaItemList[i];
-            var iTunesGUID = mediaItem.getProperty
-                                                (CompConfig.iTunesGUIDProperty);
-
-            /* Find the matching track in the add track */
-            /* list and add the media item to it.       */
-            addTrack = addTrackMap[iTunesGUID];
-            if (addTrack)
-            {
-                addTrack.mediaItem = mediaItem;
-                addTrack.guid = mediaItem.guid;
-                iTunesTrackIDList.push(addTrack.iTunesTrackID);
-                guidList.push(addTrack.guid);
-            }
-        }
-
-        /* The batch create won't return a media item for any tracks that */
-        /* are duplicates.  For any track in the add track list that      */
-        /* doesn't have a media item, create a single media item and add  */
-        /* the returned media item to the add track list.  This shouldn't */
-        /* add a new media item; it should just return the matching,      */
-        /* duplicate media item.  Ideally, there would be a more direct   */
-        /* way to get a media item for a duplicate URL.                   */
-        for (i = 0; i < this.mAddTrackList.length; i++)
-        {
-            /* Add a media item for each track */
-            /* to add without a media item.    */
-            addTrack = this.mAddTrackList[i];
-            if (!addTrack.mediaItem)
-            {
-                /* Get the add track URI and properties. */
-                var uri = addTrack.trackURI;
-                var properties = addTrack.propertyArray;
-
-                /* Try creating a media item.  This should */
-                /* return a duplicate for the add track.   */
-                mediaItem = this._library.createMediaItem(uri, properties);
-
-                /* Add the media item to the add track. */
-                if (mediaItem)
-                {
-                    addTrack.mediaItem = mediaItem;
-                    addTrack.guid = mediaItem.guid;
-                    iTunesTrackIDList.push(addTrack.iTunesTrackID);
-                    guidList.push(addTrack.guid);
-                }
-                else
-                {
-                    Log("Error creating track.\n");
-                }
-            }
-        }
-
-        /* Map the Songbird track GUIDs to iTunes track IDs. */
-        for (i = 0; i < iTunesTrackIDList.length; i++)
-        {
-            ITDB.mapID(this._iTunesLibID,
-                       iTunesTrackIDList[i],
-                       guidList[i]);
-        }
-    },
-
-
-    /*
-     * addTrackBatchFull
-     *
-     *   <--                        True if add track batch is full.
-     *
-     *   This function returns true if the add track batch is full and needs to
-     * be processed.
-     */
-
-    addTrackBatchFull: function()
-    {
-        if (this.mAddTrackList.length >= this.addTrackBatchSize)
-            return (true);
-        else
-            return (false);
-    },
-
-
-    /*
-     * addTrackBatchEmpty
-     *
-     *   <--                        True if add track batch is empty.
-     *
-     *   This function returns true if there are no tracks to be processed in
-     * the add track batch.
-     */
-
-    addTrackBatchEmpty: function()
-    {
-        if (this.mAddTrackList.length == 0)
-            return (true);
-        else
-            return (false);
-    },
-
-
-    /*
-     * addTrackMediaItemInfo
-     *
-     *   --> aAddTrack              Track to add.
-     *   --> aURIList               List of media item URI's.
-     *   --> aPropertyArrayArray    Array of media item properties.
-     *
-     *   This function extracts track information from the track specified by
-     * aAddTrack and adds it to the media item URI list specified by aURIList
-     * and the media item property list specified by aPropertyArrayArray.
-     */
-
-    addTrackMediaItemInfo: function(aAddTrack, aURIList, aPropertyArrayArray)
-    {
-        var                         propertyArray;
-        var                         trackURI;
-        var                         i;
-
-        /* Create a property array. */
-        propertyArray =
-            Components.classes
-                ["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                .createInstance(Components.interfaces.sbIMutablePropertyArray);
-
-        /* Add the track URI. */
-        trackURI = this._ioService.newURI(aAddTrack.url, null, null);
-        aURIList.appendElement(trackURI, false);
-
-        /* Add the track properties. */
-        for (i = 0; i < aAddTrack.metaKeys.length; i++)
-        {
-            if (aAddTrack.metaKeys[i] &&
-                aAddTrack.metaValues[i] &&
-                aAddTrack.metaKeys[i].length &&
-                aAddTrack.metaValues[i].length) {
-                try
-                {
-                    propertyArray.appendProperty(aAddTrack.metaKeys[i],
-                                                 aAddTrack.metaValues[i]);
-                }
-                catch (e)
-                {
-                    Log(  "Exception adding property \""
-                        + aAddTrack.metaKeys[i]
-                        + "\" \"" + aAddTrack.metaValues[i] + "\"\n");
-                    Log(e + "\n");
-                }
-            }
-        }
-
-        /* If the track URI has an "http:" scheme, set the                   */
-        /* downloadStatusTarget property to prevent the auto-downloader from */
-        /* trying to download it.                                            */
-        if (trackURI.scheme.match(/^http/))
-        {
-            propertyArray.appendProperty(SBProperties.downloadStatusTarget,
-                                         "stream");
-        }
-
-        /* Add the track properties to the property array array. */
-        aPropertyArrayArray.appendElement(propertyArray, false);
-
-        /* Add the track URI and track properties to the add track object. */
-        aAddTrack.trackURI = trackURI;
-        aAddTrack.propertyArray = propertyArray;
     },
 
 
@@ -2534,7 +1646,514 @@ sbITunesImporter.prototype =
         }
 
         aSigGen.value = sigGen;
+    },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Importer track services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Process the iTunes library track list.
+   */
+
+  _processTrackList: function sbITunesImporter__processTrackList() {
+    // Find the track list.
+    yield this.findKey("Tracks");
+
+    // Skip the "dict" tag.
+    this._xmlParser.getNextTag();
+    if (this._xmlParser.tag != "dict")
+      throw new Error("Error parsing iTunes library XML file.");
+
+    // Process each track in list and import in batches.
+    var trackBatch = [];
+    while (true) {
+      // Get the next tag.
+      this._xmlParser.getNextTag();
+      var tag = this._xmlParser.tag;
+
+      // If tag is a "/key" tag, process the track and add it to the batch.
+      // If tag is a "/dict" tag, there are no more tracks.
+      // Otherwise, process the next tag.
+      if (tag == "/key") {
+        var trackInfo = this._processTrack();
+        if (trackInfo)
+          trackBatch.push(trackInfo);
+      }
+      else if (tag == "/dict")
+        break;
+      else
+        continue;
+
+      // Process batch if full.
+      if (trackBatch.length >= this.addTrackBatchSize) {
+        // Import tracks.
+        if (this._import)
+          yield this._importTracks(trackBatch);
+        trackBatch = [];
+
+        // Yield if thread should.
+        yield this.yieldIfShouldWithStatusUpdate();
+      }
     }
+
+    // Import remaining tracks.
+    if ((trackBatch.length > 0) && (this._import))
+      yield this._importTracks(trackBatch);
+
+    // Wait for the mapping database to synchronize.
+    while (!ITDB.sync())
+      yield;
+
+    // Update status.
+    ITStatus.mProgress =
+               (100 * this._xmlParser.tell()) / this._xmlFile.fileSize;
+  },
+
+
+  /**
+   * Process the next track in the iTunes library and return an object
+   * containing track information.
+   *
+   * \return                    Track information or null if track media is not
+   *                            supported.
+   */
+
+  _processTrack: function sbITunesImporter__processTrack() {
+    // One more track.
+    this._trackCount++;
+
+    // Skip the "dict" tag.
+    this._xmlParser.getNextTag();
+    if (this._xmlParser.tag != "dict")
+      throw new Error("Error parsing iTunes library XML file.");
+
+    // Get the track iTunes information.
+    var trackInfo = {};
+    this._getTrackITunesInfo(trackInfo);
+
+    // Get the track URI.
+    this._getTrackURI(trackInfo);
+
+    // Log progress.
+    Log("1: processTrack \"" + trackInfo.uri.spec + "\"\n");
+
+    // Get the track properties.
+    this._getTrackProperties(trackInfo);
+
+    // Get the track file and check if the track media exists.
+    var trackFile = null;
+    var trackExists = false;
+    if (trackInfo.uri instanceof Ci.nsIFileURL) {
+      try {
+        trackFile = trackInfo.uri.file;
+        trackExists = trackFile.exists();
+      } catch (ex) {
+        Log("processTrack: File protocol error " + ex + "\n");
+        Log(trackInfo.uri.spec + "\n");
+      }
+      if (!trackExists)
+        this._nonExistentMediaCount++;
+    }
+
+    // Add the track content length property.
+    if (trackExists && trackFile) {
+      trackInfo.propertyArray.appendProperty(SBProperties.contentLength,
+                                             trackFile.fileSize.toString());
+    }
+
+    // Check if the track media is supported and add result to the iTunes
+    // library signature.  This ensures the signature changes if support for the
+    // track media is added (e.g., by installing an extension).
+    var supported = this._typeSniffer.isValidMediaURL(trackInfo.uri);
+    if (!supported)
+      this._unsupportedMediaCount++;
+    this._iTunesLibSig.update("supported" + supported);
+
+    // Get the track iTunes persistent ID and add it to the iTunes library
+    // signature.
+    var iTunesTrackID = trackInfo.iTunes["Persistent ID"];
+    this._iTunesLibSig.update("Persistent ID" + iTunesTrackID);
+
+    // Return track info if track is supported.
+    if (!supported)
+      return null;
+    return trackInfo;
+  },
+
+
+  /**
+   * Get the iTunes track info from the next track in the iTunes library and
+   * return it in aTrackInfo.
+   *
+   * \param aTrackInfo          Track information table.
+   */
+
+  _getTrackITunesInfo:
+    function sbITunesImporter__getTrackITunesInfo(aTrackInfo) {
+    // Initialize the track iTunes info.
+    aTrackInfo.iTunes = {};
+
+    // Get the track iTunes info.
+    while (true) {
+      // Get the next tag.
+      this._xmlParser.getNextTag();
+      tag = this._xmlParser.tag;
+      tagPreText = this._xmlParser.tagPreText;
+
+      // If tag is a "key" tag, process the track info.
+      // If tag is a "/dict" tag, the track info is done.
+      if (tag == "key") {
+        // Get the key name.
+        this._xmlParser.getNextTag();
+        var keyName = this._xmlParser.tagPreText;
+
+        // Get the key value.  If the next tag is empty, use its name as the key
+        // value.
+        var keyValue;
+        this._xmlParser.getNextTag();
+        var tag = this._xmlParser.tag;
+        if (tag.substring(tag.length - 1) == "/") {
+          keyValue = tag.substring(0, tag.length - 1);
+        } else {
+          this._xmlParser.getNextTag();
+          keyValue = this._xmlParser.tagPreText;
+        }
+
+        // Save the track info.
+        aTrackInfo.iTunes[keyName] = keyValue;
+      } else if (tag == "/dict") {
+        break;
+      }
+    }
+  },
+
+
+  /**
+   * Get the track URI from the track information specified by aTrackInfo and
+   * save it there.
+   *
+   * \param aTrackInfo          Track information.
+   */
+
+  _getTrackURI: function sbITunesImporter__getTrackURI(aTrackInfo) {
+    // Get the track media location.
+    var location = aTrackInfo.iTunes["Location"];
+
+    // If the track location prefix is "file://localhost//", convert path as a
+    // UNC network path.
+    location = location.replace(/^file:\/\/localhost\/\//, "file://///");
+
+    // If the track location prefix is "file://localhost/", convert path as a
+    // local file path.
+    location = location.replace(/^file:\/\/localhost\//, "file:///");
+
+    // Strip trailing "/" that iTunes sometimes adds.
+    location = location.replace(/\/$/, "");
+
+    // If location contains a bare DOS drive letter, set file scheme.
+    if (location.match(/^\w:/))
+      location = "file:///" + location;
+
+    // If no scheme is specified, set file scheme with a UNC network path.
+    if (!location.match(/^\w*:/))
+      location = "file:////" + url;
+
+    // Convert to lower case on Windows since it's case-insensitive.
+    if (this._osType == "Windows")
+      location = location.toLowerCase();
+
+    // Add file location to iTunes library signature.
+    this._iTunesLibSig.update("location" + location);
+
+    // Get the track URI.
+    aTrackInfo.uri = this._ioService.newURI(location, null, null);
+  },
+
+
+  /**
+   * Get the track Songbird properties from the iTunes track information in the
+   * track information specified by aTrackInfo.
+   *
+   * \param aTrackInfo          Track information.
+   */
+
+  _getTrackProperties:
+    function sbITunesImporter__getTrackProperties(aTrackInfo) {
+    // Initialize the track property array.
+    var propertyArray =
+          Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+            .createInstance(Ci.sbIMutablePropertyArray);
+    aTrackInfo.propertyArray = propertyArray;
+
+    // Convert between iTunes metadata and Songbird properties.
+    for (var i = 0; i < this.metaDataTable.length; i++) {
+      // Get the next metadata table entry.
+      var metaDataEntry = this.metaDataTable[i];
+
+      // Get the track iTunes metadata.  Skip if no metadata.
+      var iTunesMetaData = aTrackInfo.iTunes[metaDataEntry.iTunes];
+      if (!iTunesMetaData)
+        continue;
+
+      // Get the Songbird property from the iTunes metadata.
+      var propertyValue =
+            this._convertMetaValue(iTunesMetaData, metaDataEntry.convertFunc);
+      propertyArray.appendProperty(metaDataEntry.songbird, propertyValue);
+
+      // Add the Songbird property to the iTunes library signature.
+      this._iTunesLibSig.update(metaDataEntry.songbird + propertyValue);
+    }
+  },
+
+
+  /**
+   * Convert the iTunes metadata value specified by aITunesMetaValue to a
+   * Songbird property value using the conversion function specified by
+   * aConvertFunc and return the result.
+   *
+   * \param aITunesMetaValue    iTunes metadata value.
+   * \param aConvertFunc        Metadata conversion function.
+   *
+   * \return                    Songbird property value.
+   */
+
+  _convertMetaValue:
+    function sbITunesImporter__convertMetaValue(aITunesMetaValue,
+                                                aConvertFunc) {
+    // If a conversion function was provided, use it.  Otherwise, just copy the
+    // iTunes metadata value to the Songbird property value.
+    var sbPropertyValue;
+    if (aConvertFunc)
+      sbPropertyValue = this[aConvertFunc](aITunesMetaValue);
+    else
+      sbPropertyValue = aITunesMetaValue;
+
+    return sbPropertyValue;
+  },
+
+
+  /**
+   * Convert the iTunes rating value specified by aITunesMetaValue to a Songbird
+   * rating property value and return the result.
+   *
+   * \param aITunesMetaValue    iTunes metadata value.
+   *
+   * \return                    Songbird property value.
+   */
+
+  _convertRating: function sbITunesImporter__convertRating(aITunesMetaValue) {
+    var rating = Math.floor((parseInt(aITunesMetaValue) + 10) / 20);
+    return rating.toString();
+  },
+
+
+  /**
+   * Convert the iTunes duration value specified by aITunesMetaValue to a
+   * Songbird duration property value and return the result.
+   *
+   * \param aITunesMetaValue    iTunes metadata value.
+   *
+   * \return                    Songbird property value.
+   */
+
+  _convertDuration:
+    function sbITunesImporter__convertDuration(aITunesMetaValue) {
+    var duration = parseInt(aITunesMetaValue) * 1000;
+    return duration.toString();
+  },
+
+
+  /**
+   * Convert the iTunes date/time value specified by aITunesMetaValue to a
+   * Songbird date/time property value and return the result.
+   *
+   * \param aITunesMetaValue    iTunes metadata value.
+   *
+   * \return                    Songbird property value.
+   */
+
+  _convertDateTime:
+    function sbITunesImporter__convertDateTime(aITunesMetaValue) {
+    // Convert "1970-01-01T00:00:00Z" to "1970/01/01 00:00:00 UTC".
+    var iTunesDateTime = aITunesMetaValue.replace(/-/g, "/");
+    iTunesDateTime = iTunesDateTime.replace(/T/, " ");
+    iTunesDateTime = iTunesDateTime.replace(/Z/, " UTC");
+
+    // Parse the date/time string into epoch time.
+    sbDateTime = Date.parse(iTunesDateTime);
+
+    return sbDateTime.toString();
+  },
+
+
+  /**
+   * Import the batch of tracks specified by aTrackBatch into Songbird.
+   *
+   * \param aTrackBatch         Batch of tracks to import.
+   */
+
+  _importTracks: function sbITunesImporter__importTracks(aTrackBatch) {
+    // Get the media items for previously imported tracks.
+    this._getTrackMediaItems(aTrackBatch);
+
+    // Create media items for new tracks.
+    yield this._createTrackMediaItems(aTrackBatch);
+
+    // Add tracks to the track ID map.
+    for (var i = 0; i < aTrackBatch.length; i++) {
+      // Get the track ID's.
+      var trackInfo = aTrackBatch[i];
+      var iTunesTrackID = trackInfo.iTunes["Track ID"];
+      if (!trackInfo.mediaItem)
+        continue;
+      var guid = trackInfo.mediaItem.guid;
+
+      // Add the track ID's to the map.
+      this._trackIDMap[iTunesTrackID] = guid;
+    }
+  },
+
+
+  /**
+   * Get the media items for the tracks in the batch specified by aTrackBatch
+   * that have already been imported.
+   *
+   * \param aTrackBatch         Batch of tracks for which to get media items.
+   */
+
+  _getTrackMediaItems:
+    function sbITunesImporter__getTrackMediaItems(aTrackBatch) {
+    // Get the media item for each previously imported track.
+    for (var i = 0; i < aTrackBatch.length; i++) {
+      // Get the track info.
+      var trackInfo = aTrackBatch[i];
+      var iTunesTrackID = trackInfo.iTunes["Track ID"];
+
+      // Get the mapped GUID.  Skip track if it hasn't been previously imported.
+      guid = ITDB.getSBIDFromITID(this._iTunesLibID, iTunesTrackID);
+      if (!guid)
+        continue;
+
+      // Get the track media item.
+      trackInfo.mediaItem = this._library.getMediaItem(guid);
+    }
+  },
+
+
+  /**
+   * Create media items for the tracks in the batch specified by aTrackBatch.
+   *
+   * \param aTrackBatch         Batch of tracks for which to create media items.
+   */
+
+  _createTrackMediaItems:
+    function sbITunesImporter__createTrackMediaItems(aTrackBatch) {
+    // Set up arrays of track URIs and properties.  Do nothing more if list is
+    // empty.
+    var uriArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                     .createInstance(Ci.nsIMutableArray);
+    var propertyArrayArray =
+          Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+            .createInstance(Ci.nsIMutableArray);
+    for (var i = 0; i < aTrackBatch.length; i++) {
+      // Get track info.  Skip tracks that have previously been imported.
+      var trackInfo = aTrackBatch[i];
+      if (trackInfo.mediaItem)
+        continue;
+
+      // Get the track URI and properties.
+      uriArray.appendElement(trackInfo.uri, false);
+      propertyArrayArray.appendElement(trackInfo.propertyArray, false);
+    }
+    if (uriArray.length == 0)
+      return;
+
+    // Create the track media items.
+    var createdMediaItems;
+    var createResult;
+    var createComplete = false;
+    var listener = {
+      onProgress: function(aIndex) {},
+      onComplete: function(aMediaItems, aResult) {
+        createdMediaItems = aMediaItems;
+        createResult = aResult;
+        createComplete = true;
+      }
+    };
+    this._library.batchCreateMediaItemsAsync(listener,
+                                             uriArray,
+                                             propertyArrayArray,
+                                             false);
+
+    // Wait for media item creation to complete.
+    while (!createComplete)
+      yield this.yieldWithStatusUpdate();
+
+    // Do nothing more if creation failed.
+    if (!Components.isSuccessCode(createResult)) {
+      Log("Error creating media items " + createResult + "\n");
+      return;
+    }
+
+    // Create a table mapping iTunes track ID's to track info objects.
+    var iTunesTrackIDTable = {};
+    for (var i = 0; i < aTrackBatch.length; i++) {
+      var trackInfo = aTrackBatch[i];
+      var iTunesTrackID = trackInfo.iTunes["Persistent ID"];
+      iTunesTrackIDTable[iTunesTrackID] = trackInfo;
+    }
+
+    // Add the created media items to each corresponding track info object.
+    var createCount = createdMediaItems.length;
+    for (var i = 0; i < createCount; i++) {
+      // Get the media item.
+      var mediaItem = createdMediaItems.queryElementAt(i, Ci.sbIMediaItem);
+      var iTunesGUID = mediaItem.getProperty(CompConfig.iTunesGUIDProperty);
+
+      // Add the media item to the corresponding track info object.
+      var trackInfo = iTunesTrackIDTable[iTunesGUID];
+      if (trackInfo)
+        trackInfo.mediaItem = mediaItem;
+    }
+
+    // batchCreateMediaItemsAsync won't return media items for duplicate tracks.
+    // In order to get the corresponding media item for each duplicate track,
+    // createMediaItem must be called.  Thus, for each track that does not have
+    // a corresponding media item, call createMediaItem.
+    for (var i = 0; i < aTrackBatch.length; i++) {
+      // Get the track info and skip tracks that have media items.
+      var trackInfo = aTrackBatch[i];
+      if (trackInfo.mediaItem)
+        continue;
+
+      // Create the track media item.
+      var mediaItem = this._library.createMediaItem(trackInfo.uri,
+                                                    trackInfo.propertyArray);
+
+      // Add the media item to the track info.
+      if (mediaItem)
+        trackInfo.mediaItem = mediaItem;
+      else
+        Log("Error creating track.\n");
+    }
+
+    // Map the Songbird track GUID's to iTunes track persistent ID's.
+    for (var i = 0; i < aTrackBatch.length; i++) {
+      // Get the track ID's.
+      var trackInfo = aTrackBatch[i];
+      if (!trackInfo.mediaItem)
+        continue;
+      var sbGUID = trackInfo.mediaItem.guid;
+      var iTunesTrackID = trackInfo.iTunes["Persistent ID"];
+
+      // Add track ID's to map.
+      ITDB.mapID(this._iTunesLibID, iTunesTrackID, sbGUID);
+    }
+  }
 };
 
 
@@ -2604,9 +2223,13 @@ ITXMLParser.prototype = {
   //
   // readSize                   Number of bytes to read when filling stream
   //                            buffer.
+  // tag                        Last parsed tag.
+  // tagPreText                 Text before last parsed tag.
   //
 
   readSize: 16384,
+  tag: null,
+  tagPreText: null,
 
 
   //----------------------------------------------------------------------------
@@ -2652,8 +2275,8 @@ ITXMLParser.prototype = {
    * Get the next tag and return it in aTag.  Return the text between the
    * previous tag and the returned tag in aTagPreText.
    *
-   * \param aTag                Tag string.
-   * \param aPreText            Text before tag.
+   * \param aTag                Returned tag string.  Optional.
+   * \param aPreText            Returned text before tag.  Optional.
    */
 
   getNextTag: function ITXMLParser_getNextTag(aTag, aTagPreText) {
@@ -2668,12 +2291,18 @@ ITXMLParser.prototype = {
     if (this._tagList.length > 0) {
       var tagSplit = this._tagList[this._nextTagIndex].split("<");
       this._nextTagIndex++;
-      aTag.value = tagSplit[1];
-      aTagPreText.value = this._decodeEntities(tagSplit[0]);
+      this.tag = tagSplit[1];
+      this.tagPreText = this._decodeEntities(tagSplit[0]);
     } else {
-      aTag.value = null;
-      aTagPreText.value = null;
+      this.tag = null;
+      this.tagPreText = null;
     }
+
+    // Return tag and pre-text.
+    if (aTag)
+      aTag.value = this.tag;
+    if (aTagPreText)
+      aTagPreText.value = this.tagPreText;
   },
 
 
