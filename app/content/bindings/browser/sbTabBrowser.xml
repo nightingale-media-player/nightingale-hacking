@@ -733,7 +733,7 @@
             }
 
             // Stick playlists in the service pane (for now).
-            if ( uri && (forcePlaylist || this.typeSniffer.isValidPlaylistURL( uri )) )
+            if ( uri && (forcePlaylist || this.typeSniffer.isValidWebSafePlaylistURL( uri )) )
             {
               var library = null;
               var scheme = uri.scheme;
@@ -1263,7 +1263,7 @@
           var uri = ioService.newURI(href, null, null);
 
           // we need to handle playlists and media items specially
-          if ( this.typeSniffer.isValidPlaylistURL(uri) ||
+          if ( this.typeSniffer.isValidWebSafePlaylistURL(uri) ||
                this.typeSniffer.isValidMediaURL(uri) ) {
             this.handleMediaURL(href, false, false, target, referrer);
             event.stopPropagation();

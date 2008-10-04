@@ -44,6 +44,10 @@
 
 #include <sbTArrayStringEnumerator.h>
 
+const char *gBannedWebExtensions[] = {"htm", "html", "php", "php3"};
+const PRUint16 gBannedWebExtensionsSize = 
+  sizeof(gBannedWebExtensions) / sizeof(gBannedWebExtensions[0]);
+
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreTypeSniffer, 
                               sbIMediacoreTypeSniffer)
 
@@ -83,6 +87,9 @@ sbMediacoreTypeSniffer::Init()
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = mPlaylistExtensions.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  success = mBannedWebExtensions.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = mAllExtensions.Init();
@@ -188,6 +195,10 @@ sbMediacoreTypeSniffer::Init()
 
   NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(length, extensions);
   NS_ENSURE_TRUE(length == mPlaylistExtensions.Count(), NS_ERROR_UNEXPECTED);
+
+  for(PRUint16 current = 0; current < gBannedWebExtensionsSize; ++current) {
+    mBannedWebExtensions.PutEntry(nsDependentCString(gBannedWebExtensions[current]));
+  }
 
   return NS_OK;
 }
@@ -351,6 +362,32 @@ sbMediacoreTypeSniffer::IsValidPlaylistURL(nsIURI *aURL,
   // XXXAus: Below are comments for implementing further functionality.
   // Looks like we'll have to crack open the file or connect to the server
   // to have a look at the content type.
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMediacoreTypeSniffer::IsValidWebSafePlaylistURL(nsIURI *aURL,
+                                                  PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aURL);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  *_retval = PR_FALSE;
+
+  nsCString fileExtension;
+  nsresult rv = GetFileExtensionFromURI(aURL, fileExtension);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoMonitor mon(mMonitor);
+
+  if(!fileExtension.IsEmpty() &&
+     !mBannedWebExtensions.GetEntry(fileExtension)) {
+    
+    if(mPlaylistExtensions.GetEntry(fileExtension)) {
+      *_retval = PR_TRUE;
+    }
+  }
 
   return NS_OK;
 }

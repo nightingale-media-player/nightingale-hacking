@@ -62,6 +62,7 @@ protected:
   nsTHashtable<nsCStringHashKey> mVideoExtensions;
   nsTHashtable<nsCStringHashKey> mImageExtensions;
   nsTHashtable<nsCStringHashKey> mPlaylistExtensions;
+  nsTHashtable<nsCStringHashKey> mBannedWebExtensions;
 
   nsTHashtable<nsCStringHashKey> mAllExtensions;
 };
