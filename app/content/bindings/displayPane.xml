@@ -412,6 +412,10 @@
         <xbl:parameter name="aPaneInfo"/>
         <xbl:body><![CDATA[
         try{
+          // Clean up our tabs and clickable title bar
+          this.clearTabs();
+          this.resetClickableTitleBar(this._titleBarClickCallback);
+          
           this._hidden = (aPaneInfo.contentUrl == "about:blank");
           this._getElem("content").loadURI(aPaneInfo.contentUrl, null, null);
           var header = this._getElem("header");
@@ -446,12 +450,31 @@
           paneMgr.unregisterInstantiator(this);
         ]]></xbl:body>
       </xbl:method>
+
+      <!-- Title bar button -->
+      <xbl:field name="_titleBarClickCallback">null</xbl:field>
       <xbl:method name="makeClickableTitleBar">
         <xbl:parameter name="aCallback"/>
         <xbl:body><![CDATA[
+          if (aCallback == null) {
+            // need a callback to make the title bar clickable
+            return;
+          }
           var titleBar = this._getElem("titlebar");
           titleBar.addEventListener("click", aCallback, false);
+          this._titleBarClickCallback = aCallback;
           titleBar.setAttribute("button", true);
+        ]]></xbl:body>
+      </xbl:method>
+      
+      <xbl:method name="resetClickableTitleBar">
+        <xbl:parameter name="aCallback"/>
+        <xbl:body><![CDATA[
+          var titleBar = this._getElem("titlebar");
+          if (aCallback != null) {
+            titleBar.removeEventListener("click", aCallback, false);
+          }
+          titleBar.setAttribute("button", false);
         ]]></xbl:body>
       </xbl:method>
 
@@ -504,6 +527,16 @@
             newTab.setAttribute("image", aTabIcon);
           }
           return newTab;
+        ]]></xbl:body>
+      </xbl:method>
+      
+      <xbl:method name="clearTabs">
+        <xbl:body><![CDATA[
+          var tabBar = this.tabBar;
+          while (tabBar.itemCount > 0) {
+            tabBar.removeItemAt(0);
+          }
+          this.tabsHidden = true;
         ]]></xbl:body>
       </xbl:method>
 
