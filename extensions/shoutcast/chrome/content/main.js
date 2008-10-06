@@ -60,21 +60,18 @@ var metricsObserver = {
 				// if our new stream we're playing isn't a shoutcast
 				// stream then cancel the timer
 				if (!currentItem.getProperty(SC_id)) {
-					dump(">>> not a shoutcast stream, bailing\n");
 					metricsObserver.time = null;
 					return;
 				}
 
 				// if we're here then we're a shoutcast stream, and we should
 				// start a timer
-				dump(">>> starting a shoutcast stream\n");
 				metricsObserver.time = Date.now()/1000;
 				break;
 			case Ci.sbIMediacoreEvent.STREAM_END:
 			case Ci.sbIMediacoreEvent.STREAM_STOP:
 				// check to see if we have an active timer
 				if (!metricsObserver.time) {
-					dump(">>> not a shoutcast stream, bailing\n");
 					metricsObserver.time = null;
 					return;
 				}
