@@ -3,6 +3,10 @@ if (typeof(Cc) == "undefined")
 if (typeof(Ci) == "undefined")
   var Ci = Components.interfaces;
 
+if (typeof(gMetrics) == "undefined")
+	var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+    		.createInstance(Ci.sbIMetrics);
+
 const shoutcastTempLibGuid = "extensions.shoutcast-radio.templib.guid";
 
 var FavouriteStreams = {
@@ -69,6 +73,9 @@ var FavouriteStreams = {
 		var prop = e.getData("property");
 		var item = e.getData("item");
 		if (prop == SC_bookmark) {
+			// # of times a station is unfavourited
+			gMetrics.metricsInc("shoutcast", "favourites", "removed");
+
 			var list =
 				document.getElementById("playlist").mediaListView.mediaList;
 			list.remove(item);
@@ -78,7 +85,8 @@ var FavouriteStreams = {
 	onPlay : function(e) {
 		var item = document.getElementById("playlist").mediaListView
 			.selection.currentMediaItem;
-		var plsURL = ShoutcastRadio.getListenURL(item.getProperty(SC_id));
+		var id = item.getProperty(SC_id);
+		var plsURL = ShoutcastRadio.getListenURL(id);
 		var plsMgr = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
 				.getService(Ci.sbIPlaylistReaderManager);
 		var listener = Cc["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
@@ -105,11 +113,24 @@ var FavouriteStreams = {
 					var list = aSubject;
 					var name = item.getProperty(SC_streamName);
 					for (var i=0; i<list.length; i++) {
-						list.getItemByIndex(i).setProperty(SC_streamName, name);
+						listItem = list.getItemByIndex(i);
+						listItem.setProperty(SC_streamName, name);
+						listItem.setProperty(SC_id, id);
 					}
 				}
 			}
 		}
+
+		// # of times a station is played
+		gMetrics.metricsInc("shoutcast", "station", "total.played");
+
+		// # of times this station (ID) is played
+		gMetrics.metricsInc("shoutcast", "station", "played." + id.toString());
+
+		// # of times this genre is played
+		var genre = item.getProperty(SBProperties.genre);
+		gMetrics.metricsInc("shoutcast", "genre", "played." + genre);
+
 		var uri = ioService.newURI(plsURL, null, null);
 		plsMgr.loadPlaylist(uri, this.streamList, null, false, listener);
 	}

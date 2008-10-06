@@ -19,6 +19,10 @@ if (typeof(ioService) == "undefined")
 	var ioService = Cc["@mozilla.org/network/io-service;1"]
 			.getService(Ci.nsIIOService);
 
+if (typeof(gMetrics) == "undefined")
+	var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+    		.createInstance(Ci.sbIMetrics);
+
 const shoutcastTempLibGuid = "extensions.shoutcast-radio.templib.guid";
 const shoutcastLibraryGuid = "extensions.shoutcast-radio.library.guid";
 const shoutcastPlaylistInit = "extensions.shoutcast-radio.plsinit";
@@ -56,6 +60,11 @@ var RadioDirectory = {
 	radioLib : null,
 
 	init : function() {
+		// the # of times the directory is loaded (corresponds to the # of
+		// times the servicepane is clicked, though also works if the user
+		// for some reason or another bookmarks it separately)
+		gMetrics.metricsInc("shoutcast", "directory", "loaded");
+
 		var genre;
 		this._strings = document.getElementById("shoutcast-radio-strings");
 		if (Application.prefs.has(shoutcastGenre)) {
@@ -530,6 +539,9 @@ function onPlaylistCellClick(e) {
 		var id = item.getProperty(SC_id);
 		var idx = RadioDirectory.favouriteIDs.indexOf(id);
 		if (idx != -1) {
+			// # of times a station is unfavourited
+			gMetrics.metricsInc("shoutcast", "favourites", "removed");
+
 			// Already in the favourites list, so remove it
 			RadioDirectory.favouriteIDs.splice(idx, 1);
 			item.setProperty(SC_bookmark,
@@ -544,6 +556,9 @@ function onPlaylistCellClick(e) {
 					RadioDirectory.favesList.remove(item);
 			}
 		} else {
+			// # of times a station is favourited
+			gMetrics.metricsInc("shoutcast", "favourites", "added");
+
 			// Add to favourites
 			var genreLabel =
 					document.getElementById('shoutcast-genre-menulist').label;
@@ -561,7 +576,8 @@ function onPlaylistCellClick(e) {
 
 function onPlay(e) {
 	var item = RadioDirectory.playlist.mediaListView.selection.currentMediaItem;
-	var plsURL = ShoutcastRadio.getListenURL(item.getProperty(SC_id));
+	var id = item.getProperty(SC_id);
+	var plsURL = ShoutcastRadio.getListenURL(id);
     var plsMgr = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
             .getService(Ci.sbIPlaylistReaderManager);
     var listener = Cc["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
@@ -579,11 +595,24 @@ function onPlay(e) {
 				var list = aSubject;
 				var name = item.getProperty(SC_streamName);
 				for (var i=0; i<list.length; i++) {
-					list.getItemByIndex(i).setProperty(SC_streamName, name);
+					var listItem = list.getItemByIndex(i);
+					listItem.setProperty(SC_streamName, name);
+					listItem.setProperty(SC_id, id);
 				}
 			}
 		}
 	}
+	
+	// # of times a station is played
+	gMetrics.metricsInc("shoutcast", "station", "total.played");
+
+	// # of times this station (ID) is played
+	gMetrics.metricsInc("shoutcast", "station", "played." + id.toString());
+
+	// # of times this genre is played
+	var genre = item.getProperty(SBProperties.genre);
+	gMetrics.metricsInc("shoutcast", "genre", "played." + genre);
+
     var uri = ioService.newURI(plsURL, null, null);
     plsMgr.loadPlaylist(uri, RadioDirectory.streamList, null, false, listener);
 }

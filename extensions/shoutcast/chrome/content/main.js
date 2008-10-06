@@ -11,6 +11,14 @@ if (typeof Ci == 'undefined')
 if (typeof SP == 'undefined')
 	var SP = "http://songbirdnest.com/rdf/servicepane#";
 
+if (typeof(gMM) == "undefined")
+	var gMM = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+		.getService(Ci.sbIMediacoreManager);
+
+if (typeof(gMetrics) == "undefined")
+	var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+    		.createInstance(Ci.sbIMetrics);
+
 function findRadioNode(node) {
 	if (node.isContainer && node.name != null && node.name ==
 			ShoutcastRadio.Controller._strings.getString("radioFolderLabel"))
@@ -28,6 +36,58 @@ function findRadioNode(node) {
 	}
 
 	return null;
+}
+
+var metricsObserver = {
+	time : null,
+	onMediacoreEvent : function(ev) {
+		var item = ev.data;
+		var list = gMM.sequencer.view.mediaList;
+		switch (ev.type) {
+			case Ci.sbIMediacoreEvent.STREAM_START:
+				// first we'll get the currently playing media item
+				var currentItem = gMM.sequencer.view.getItemByIndex(
+						gMM.sequencer.viewPosition);
+				
+				// check to see if we have an active timer
+				if (metricsObserver.time) {
+					var now = Date.now()/1000;
+					var diff = now - metricsObserver.time;
+					dump("!!!!!!!!!! time spent streaming: " + diff + "\n");
+					gMetrics.metricsAdd("shoutcast", "stream", "time", diff);
+				}
+				
+				// if our new stream we're playing isn't a shoutcast
+				// stream then cancel the timer
+				if (!currentItem.getProperty(SC_id)) {
+					dump(">>> not a shoutcast stream, bailing\n");
+					metricsObserver.time = null;
+					return;
+				}
+
+				// if we're here then we're a shoutcast stream, and we should
+				// start a timer
+				dump(">>> starting a shoutcast stream\n");
+				metricsObserver.time = Date.now()/1000;
+				break;
+			case Ci.sbIMediacoreEvent.STREAM_END:
+			case Ci.sbIMediacoreEvent.STREAM_STOP:
+				// check to see if we have an active timer
+				if (!metricsObserver.time) {
+					dump(">>> not a shoutcast stream, bailing\n");
+					metricsObserver.time = null;
+					return;
+				}
+				var now = Date.now()/1000;
+				var diff = now - metricsObserver.time;
+				dump("!!!!!!!!!! time spent streaming: " + diff + "\n");
+				gMetrics.metricsAdd("shoutcast", "stream", "time", diff);
+				metricsObserver.time = null;
+				break;
+			default:
+				break;
+		}
+	}
 }
 
 /**
@@ -60,16 +120,18 @@ ShoutcastRadio.Controller = {
 
 		// Bookmark the SHOUTcast chrome
 		var bmNode = BMS.addBookmarkAt(
-				"chrome://shoutcast-radio/content/directory.xul",
-				//"SHOUTcast", "http://shoutcast.com/favicon.ico",
-				"SHOUTcast", "chrome://shoutcast-radio/skin/shoutcast_favicon.png",
+				"chrome://shoutcast-radio/content/directory.xul", "SHOUTcast",
+				"chrome://shoutcast-radio/skin/shoutcast_favicon.png",
 				radioFolder, null);
 		if (bmNode) {
 			bmNode.editable = false;
-			bmNode.image = "chrome://shoutcast-radio/skin/shoutcast_favicon.png";
+			bmNode.image ="chrome://shoutcast-radio/skin/shoutcast_favicon.png";
 		}
 
 		SPS.save();
+
+		// Attach our listener for media core events
+		gMM.addListener(metricsObserver);
 
 		// Attach our listener to the ShowCurrentTrack event issued by the
 		// faceplate
@@ -170,12 +232,9 @@ ShoutcastRadio.Controller = {
 
 var curTrackListener = function(e) {
 	var list;
-	var gMcMgr;
 	var gPPS;
 	if (typeof(Ci.sbIMediacoreManager) != "undefined") {
-		gMcMgr = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-				.getService(Ci.sbIMediacoreManager);
-		list = gMcMgr.sequencer.view.mediaList;
+		list = gMM.sequencer.view.mediaList;
 	} else {
 		gPPS = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
 				.getService(Ci.sbIPlaylistPlayback);
@@ -186,8 +245,8 @@ var curTrackListener = function(e) {
 	if (list.getProperty(SBProperties.customType) == "radio_tempStreamList") {
 		var streamName;
 		if (typeof(Ci.sbIMediacoreManager) != "undefined") {
-			streamName = gMcMgr.sequencer.view.getItemByIndex(
-					gMcMgr.sequencer.viewPosition).getProperty(SC_streamName);
+			streamName = gMM.sequencer.view.getItemByIndex(
+					gMM.sequencer.viewPosition).getProperty(SC_streamName);
 		} else {
 			streamName = list.getItemByGuid(gPPS.currentGUID)
 					.getProperty(SC_streamName);
