@@ -1568,6 +1568,7 @@ sbMediacoreSequencer::Play()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = Setup();
+  NS_ENSURE_SUCCESS(rv, rv);
   
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
