@@ -69,7 +69,7 @@ var mashTapeVideo = {
 
 	// expand or collapse.  When expanded, we hide the index and the metadata
 	// giving the whole pane to the flash video itself
-	// we could optionally make the display pane height go full too
+	// make the display pane height go full too
 	toggleExpand: function(expand) {
 		if (!this.expanded && !expand)
 			this.height = null;
