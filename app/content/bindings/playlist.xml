@@ -93,11 +93,7 @@
               onpopuphidden="onPopupHidden( event );"
             >
               <sb-commands-menuitems sbid="playlist_popup_commands" commandtype="mediaitem" metricscategory="playlist.context"/>
-              <menuseparator id="playlist_context_before" sbid="playlist_context_before"/>
               <children/>
-              <xul:menu id="playlist_context_search" label="&playlist.context.search;">
-                <xul:menupopup id="playlist_context_search_popup" type="search" label="" searchterm="" />
-              </xul:menu>
             </popup>
           </popupset>
         </vbox>
@@ -1672,91 +1668,6 @@
     return;
   }
 
-  const COLUMN_TITLE = "title";
-  const CONTEXT_IDS = ["playlist_context_before",
-                       "playlist_context_search"];
-
-
-  // Small helper to loop through a list of the ids for the context
-  // menu items and show or hide each element.
-  //
-  // aShow - a boolean specifying if items are to be shown or
-  //           hidden. Defaults to true.
-  function showContextItems(aShow) {
-    if (aShow === undefined)
-      aShow = true;
-
-    var items = CONTEXT_IDS;
-    var count = items.length;
-    for (var index = 0; index < count; index++) {
-      var id = items[index];
-      var item = document.getElementById(id);
-      if (!item)
-        continue;
-
-      var isHidden = item.getAttribute("hidden") == "true";
-
-      if (aShow && isHidden) {
-        item.removeAttribute("hidden");
-      }
-      else if (!aShow && !isHidden) {
-        item.setAttribute("hidden", "true");
-      }
-    }
-  }
-
-  var tree = this.tree;
-  if (tree.currentIndex < 0)
-    return;
-
-  var cellText = null;
-  if (isMouseEvent) {
-    // First, get the row and column clicked.
-    var childElement = {}, rowObject = {}, columnObject = {};
-    tree.treeBoxObject.getCellAt(evt.clientX, evt.clientY, rowObject,
-                                 columnObject, childElement);
-  
-    // Bail if we got a bad result
-    if (rowObject.value == -1)
-      return;
-  
-    // Store the last clicked cell
-    this.edit_row = rowObject.value;
-    this.edit_col = columnObject.value;
-
-    cellText = tree.view.getCellText(rowObject.value, columnObject.value);
-
-    // XXX: What to do here?
-    if (!cellText) {
-      // If we couldn't get text from the cell then we'll try to pull it
-      // out another way
-      var titleColumn = tree.columns.getNamedColumn(COLUMN_TITLE);
-      if (titleColumn)
-        cellText = tree.view.getCellText(tree.currentIndex, titleColumn);
-    }
-  
-    // Make sure that everyone knows about our context
-    this.context_term = cellText;
-    SBDataSetStringValue("playlist.context.term", cellText);
-  }
-
-  if (cellText) {
-
-    var searchHeader = this._getString("playlist.context.searchheader", "Search");
-
-    var searchMenu =
-      document.getAnonymousElementByAttribute(this, 'id', 'playlist_context_search_popup');
-    searchMenu.setAttribute("label", searchHeader + ": " + cellText);
-    searchMenu.setAttribute("searchterm", cellText);
-    // Make sure that the search menu is visible
-    showContextItems(true);
-  }
-  else {
-    // We couldn't get any context, so hide the search
-    // menu item.
-    showContextItems(false);
-  }
-
   if (isMouseEvent) {
     // HEY LOOK!  WE CAN TRUST THE EVENT DATA!!!  WOW!!!!!
     this._context_x = evt.screenX;
@@ -1782,6 +1693,10 @@
 
   document.popupNode = null;
 
+  var tree = this.tree;
+  if (tree.currentIndex < 0)
+    return;
+  
   this._context_popup.showPopup(tree, this._context_x, this._context_y,
                                 "context", null, null, null);
 
