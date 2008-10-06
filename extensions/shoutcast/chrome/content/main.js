@@ -149,7 +149,7 @@ ShoutcastRadio.Controller = {
 			pI.id = SC_streamName;
 			pI.displayName = this._strings.getString("streamName");
 			pI.userEditable = false;
-			pI.userViewable = true;
+			pI.userViewable = false;
 			pMgr.addPropertyInfo(pI);
 		}
 		if (!pMgr.hasProperty(SC_nodeCreated)) {
@@ -167,7 +167,7 @@ ShoutcastRadio.Controller = {
 			pI.id = SC_bitRate;
 			pI.displayName = this._strings.getString("bitRate");
 			pI.userEditable = false;
-			pI.userViewable = true;
+			pI.userViewable = false;
 			pMgr.addPropertyInfo(pI);
 		}
 		if (!pMgr.hasProperty(SC_comment)) {
@@ -176,7 +176,7 @@ ShoutcastRadio.Controller = {
 			pI.id = SC_comment;
 			pI.displayName = this._strings.getString("comment");
 			pI.userEditable = false;
-			pI.userViewable = true;
+			pI.userViewable = false;
 			pMgr.addPropertyInfo(pI);
 		}
 		if (!pMgr.hasProperty(SC_listenerCount)) {
@@ -185,7 +185,7 @@ ShoutcastRadio.Controller = {
 			pI.id = SC_listenerCount;
 			pI.displayName = this._strings.getString("listenerCount");
 			pI.userEditable = false;
-			pI.userViewable = true;
+			pI.userViewable = false;
 			pMgr.addPropertyInfo(pI);
 		}
 		if (!pMgr.hasProperty(SC_bookmark)) {
@@ -195,7 +195,7 @@ ShoutcastRadio.Controller = {
 			builder.propertyID = SC_bookmark;
 			builder.displayName = this._strings.getString("bookmark");
 			builder.userEditable = false;
-			builder.userViewable = true;
+			builder.userViewable = false;
 			var pI = builder.get();
 			pMgr.addPropertyInfo(pI);
 		}
