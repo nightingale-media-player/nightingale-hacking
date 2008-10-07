@@ -39,5 +39,6 @@ See SBJobUtils.jsm and sbIJobProgress.idl.
   width: 500px;
   min-width: 500px;
   max-width: 500px;
+  min-height: 10em;
 }
 
