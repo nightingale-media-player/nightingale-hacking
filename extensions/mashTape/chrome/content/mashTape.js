@@ -340,19 +340,14 @@ mashTape.init = function(e) {
 	}
 
 	// Hide the tabs the user doesn't want to see
-	if (!Application.prefs.getValue("extensions.mashTape.info.enabled",
-				true))
-		document.getElementById("mashTape-tab-info").style.visibility
-			= "collapse";
+	if (!Application.prefs.getValue("extensions.mashTape.info.enabled", true))
+		mashTape.infoTabTop.style.visibility = "collapse";
 	if (!Application.prefs.getValue("extensions.mashTape.rss.enabled", true))
-		document.getElementById("mashTape-tab-rss").style.visibility
-			= "collapse";
+		mashTape.rssTabTop.style.visibility = "collapse";
 	if (!Application.prefs.getValue("extensions.mashTape.photo.enabled", true))
-		document.getElementById("mashTape-tab-photo").style.visibility
-			= "collapse";
+		mashTape.photoTabTop.style.visibility = "collapse";
 	if (!Application.prefs.getValue("extensions.mashTape.flash.enabled", true))
-		document.getElementById("mashTape-tab-flash").style.visibility
-			= "collapse";
+		mashTape.flashTabTop.style.visibility = "collapse";
 
 	// pre-select the tab the user has defined as their default
 	switch(Application.prefs.getValue("extensions.mashTape.defaultpane","")) {
