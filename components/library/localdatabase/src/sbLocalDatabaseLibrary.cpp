@@ -92,6 +92,7 @@
 #include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
+#include <nsIVariant.h>
 
 #define NS_UUID_GENERATOR_CONTRACTID "@mozilla.org/uuid-generator;1"
 
@@ -428,14 +429,15 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED5(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS_INHERITED6(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
                                                      nsIClassInfo,
                                                      nsIObserver,
                                                      sbIDatabaseSimpleQueryCallback,
                                                      sbILibrary,
-                                                     sbILocalDatabaseLibrary)
+                                                     sbILocalDatabaseLibrary,
+                                                     sbILibraryStatistics)
 
-NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseLibrary,
+NS_IMPL_CI_INTERFACE_GETTER9(sbLocalDatabaseLibrary,
                              nsIClassInfo,
                              nsIObserver,
                              nsISupportsWeakReference,
@@ -443,7 +445,8 @@ NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseLibrary,
                              sbILibrary,
                              sbILibraryResource,
                              sbIMediaItem,
-                             sbIMediaList);
+                             sbIMediaList,
+                             sbILibraryStatistics);
 
 sbLocalDatabaseLibrary::sbLocalDatabaseLibrary()
 : mAnalyzeCountLimit(DEFAULT_ANALYZE_COUNT_LIMIT),
@@ -616,6 +619,8 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   // Initialize the list of instantiated medialists
   success = mMediaListTable.Init(DEFAULT_MEDIALIST_CACHE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  InitializeLibraryStatistics();
   
   // See if the user has specified a different analyze count limit. We don't
   // care if any of this fails.
@@ -4784,3 +4789,100 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
   NS_ADDREF(*_retval = array);
   return NS_OK;
 }
+
+
+// library statistics implementation
+nsresult 
+sbLocalDatabaseLibrary::InitializeLibraryStatistics() {
+  nsresult rv = NS_OK;
+
+  // make the SUM query
+  rv = MakeStandardQuery(getter_AddRefs(mStatisticsSumQuery));
+  NS_ENSURE_SUCCESS(rv, rv);
+  // what's the SQL?
+  NS_NAMED_MULTILINE_LITERAL_STRING(sumQuery,
+    NS_LL("SELECT value1.obj, SUM(value2.obj)")
+    NS_LL("  FROM properties AS property1")
+    NS_LL("    INNER JOIN resource_properties AS value1")
+    NS_LL("      ON value1.property_id = property1.property_id")
+    NS_LL("    INNER JOIN resource_properties AS value2")
+    NS_LL("      ON value1.media_item_id = value2.media_item_id")
+    NS_LL("    INNER JOIN properties AS property2")
+    NS_LL("      ON value2.property_id = property2.property_id")
+    NS_LL("  WHERE property1.property_name = ?")
+    NS_LL("    AND property2.property_name = ?")
+    NS_LL("  GROUP BY value1.obj")
+    NS_LL("  ORDER BY ? * SUM(value2.obj)")
+    NS_LL("  LIMIT ?;"));
+  // add the SQL to the query object
+  rv = mStatisticsSumQuery->AddQuery(sumQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbLocalDatabaseLibrary::CollectDistinctValues(const nsAString & aProperty, 
+                                              PRUint32 aCollectionMethod, 
+                                              const nsAString & aOtherProperty,
+                                              PRBool aAscending, 
+                                              PRUint32 aMaxResults, 
+                                              nsIArray **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  // main thread only, thanks!
+  NS_ENSURE_TRUE(NS_IsMainThread(), NS_ERROR_FAILURE);
+
+  nsresult rv = NS_OK;
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+
+  switch(aCollectionMethod) {
+    case COLLECT_SUM:
+      query = mStatisticsSumQuery;
+      query->BindStringParameter(0, aProperty);
+      query->BindStringParameter(1, aOtherProperty);
+      query->BindInt32Parameter(2, aAscending ? 1 : -1);
+      query->BindInt32Parameter(3, aMaxResults);
+      break;
+    default:
+      return NS_ERROR_INVALID_ARG;
+  }
+
+  PRInt32 dbOk = 0;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(dbOk, NS_ERROR_FAILURE);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount = 0;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIMutableArray> array = 
+    do_CreateInstance("@mozilla.org/array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i=0; i<rowCount; i++) {
+    // create a variant to hold this string value
+    nsCOMPtr<nsIWritableVariant> variant = 
+      do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // get the value
+    nsString name;
+    rv = result->GetRowCell(i, 0, name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    variant->SetAsAString(name);
+    array->AppendElement(variant, PR_FALSE);
+  }
+
+  return CallQueryInterface(array, _retval);
+}
+
+

@@ -78,6 +78,7 @@ CPP_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(DEPTH)/components/playlistcommands/public \
                $(DEPTH)/components/mediaimport/playlist/public \
                $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/job/public \
                $(DEPTH)/components/dataremote/public \

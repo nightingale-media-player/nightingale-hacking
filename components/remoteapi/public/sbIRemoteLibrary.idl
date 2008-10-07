@@ -36,6 +36,7 @@ interface nsISimpleEnumerator;
 interface nsIStringEnumerator;
 interface sbIMediaItem;
 interface sbIMediaList;
+interface nsIVariant;
 
 [scriptable, function, uuid(27bfbb84-ac22-46bd-b1bb-cf3baf6f3b3c)]
 interface sbICreateMediaListCallback : nsISupports
@@ -393,6 +394,34 @@ interface sbIRemoteLibrary : nsISupports
     Please see <http://www.xulplanet.com/references/xpcomref/ifaces/nsISimpleEnumerator.html> for nsISimpleEnumerator interface reference.
   */
   readonly attribute nsISimpleEnumerator playlists;
+
+
+  /*
+  Method: mostPlayedArtists
+
+  Get the most played artists from the <Library>.
+
+  Prototype:
+    Array mostPlayedArtists
+
+  Returns:
+    An array of the most played artists - up to 100.
+
+  Example:
+    (start code)
+    var artists = window.songbird.mainLibrary.mostPlayedArtists;
+    for (var i in artists) {
+      var elem = document.createElement('li');
+      elem.textContent = artists[i];
+      output.appendChild(elem);
+    }
+    (end)
+
+  See Also:
+    <artists>
+  */
+
+  readonly attribute nsIVariant mostPlayedArtists;
 };
 
 /**

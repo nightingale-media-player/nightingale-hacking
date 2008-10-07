@@ -51,6 +51,7 @@
 #include <nsIURI.h>
 #include <nsStringGlue.h>
 #include <sbIMediaListFactory.h>
+#include <sbILibraryStatistics.h>
 
 class nsIPropertyBag2;
 class nsIWeakReference;
@@ -131,7 +132,8 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
                                public sbIDatabaseSimpleQueryCallback,
                                public sbILibrary,
                                public sbILocalDatabaseLibrary,
-                               public nsIObserver
+                               public nsIObserver,
+                               public sbILibraryStatistics
 {
   friend class sbLibraryInsertingEnumerationListener;
   friend class sbLibraryRemovingEnumerationListener;
@@ -202,6 +204,7 @@ public:
   NS_DECL_SBILOCALDATABASELIBRARY
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
+  NS_DECL_SBILIBRARYSTATISTICS
 
   NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaListBase::)
   SB_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaListBase::)
@@ -395,6 +398,10 @@ private:
   nsInterfaceHashtableMT<nsISupportsHashKey, 
                          sbILocalDatabaseLibraryCopyListener> mCopyListeners;
 
+  // initialize the library statistics stuff
+  nsresult InitializeLibraryStatistics();
+  // precompiled queries for library stats
+  nsCOMPtr<sbIDatabaseQuery> mStatisticsSumQuery;
 };
 
 /**

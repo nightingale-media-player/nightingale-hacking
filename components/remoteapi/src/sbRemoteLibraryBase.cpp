@@ -77,8 +77,10 @@
 #include "sbScriptableFilter.h"
 #include "sbScriptableFilterItems.h"
 #include "sbScriptableFunction.h"
+#include "sbRemoteWrappingStringEnumerator.h"
 #include <sbStandardProperties.h>
 #include "sbURIChecker.h"
+#include <sbILibraryStatistics.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -796,6 +798,67 @@ sbRemoteLibraryBase::GetItems( nsISupports** _retval )
 }
 
 NS_IMETHODIMP
+sbRemoteLibraryBase::GetMostPlayedArtists(nsIVariant** _retval)
+{
+  LOG_LIB(("sbRemoteLibraryBase::GetMostPlayedArtists()"));
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv = NS_OK;
+
+  nsCOMPtr<sbILibraryStatistics> libraryStatistics = 
+    do_QueryInterface( mLibrary, &rv );
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  // get the most played artists in an array of variants
+  nsCOMPtr<nsIArray> mostPlayedArtists;
+  rv = libraryStatistics->CollectDistinctValues(
+      NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), 
+      sbILibraryStatistics::COLLECT_SUM,
+      NS_LITERAL_STRING(SB_PROPERTY_PLAYCOUNT), PR_FALSE, 100,
+      getter_AddRefs(mostPlayedArtists));
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  PRUint32 count;
+  rv = mostPlayedArtists->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG_LIB(("sbRemoteLibraryBase::GetMostPlayedArtists() got %d artists", count));
+
+  // create a variant to hold the array
+  nsCOMPtr<nsIWritableVariant> variant = 
+    do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (count > 0) {
+    // okay, create a variant array to hold these artists
+    nsIVariant** arr = (nsIVariant**)NS_Alloc(sizeof(nsIVariant*)*count);
+    if (!arr) {
+      return NS_ERROR_OUT_OF_MEMORY;
+    }
+
+    // put nsIVariants from mostPlayedArtists into arr
+    for (PRUint32 i = 0; i < count; i++) {
+      rv = mostPlayedArtists->QueryElementAt(i, NS_GET_IID(nsIVariant), 
+          (void**)&arr[i]);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // put the array into the variant
+    rv = variant->SetAsArray(nsIDataType::VTYPE_INTERFACE_IS,
+        &NS_GET_IID(nsIVariant), count, arr);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // empty arrays are easy
+    rv = variant->SetAsEmptyArray();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // pass it back
+  return CallQueryInterface(variant, _retval);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbRemoteLibraryBase::GetConstraint(sbILibraryConstraint * *aConstraint)
 {
   nsresult rv;
@@ -920,6 +983,9 @@ sbRemoteLibraryBase::NewResolve( nsIXPConnectWrappedNative *wrapper,
     TRACE_LIB(( "   resolving %s", NS_LossyConvertUTF16toASCII(jsid).get() ));
   }
 #endif
+
+  NS_ENSURE_TRUE(mRemMediaList, NS_ERROR_FAILURE);
+
   return mRemMediaList->NewResolve( wrapper, cx, obj, id, flags, objp, _retval );
 }
 

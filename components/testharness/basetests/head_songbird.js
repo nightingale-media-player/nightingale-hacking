@@ -436,3 +436,12 @@ function createLibrary(databaseGuid, databaseLocation, init) {
   }
   return library;
 }
+
+// assert the equality of two JS arrays
+// assertEqual is used for each of the items
+function assertArraysEqual(a1, a2) {
+  assertEqual(a1.length, a2.length);
+  for (var i=0; i<a1.length; i++) {
+    assertEqual(a1[i], a2[i]);
+  }
+} 

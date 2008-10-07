@@ -172,14 +172,6 @@ function runTest () {
 
 }
 
-function assertArrays(a1, a2) {
-
-  assertEqual(a1.length, a2.length);
-  for (var i = 0; i < a1.length; i++) {
-    assertEqual(a1[i], a2[i]);
-  }
-
-}
 
 function writeAndRead(o) {
   var pipe = Cc["@mozilla.org/pipe;1"].createInstance(Ci.nsIPipe);

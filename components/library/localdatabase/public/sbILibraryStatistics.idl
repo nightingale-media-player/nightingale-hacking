@@ -1,0 +1,62 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+/**
+ * \file sbILibraryStatistics.idl
+ * \brief Extract statistics from a media library.
+ */
+
+#include "nsISupports.idl"
+
+interface nsIArray;
+
+/**
+ * \interface sbILibraryStatistics
+ * \brief Extract statistics from a media library.
+ */
+[scriptable, uuid(05bf2a32-81f6-4828-aa7c-b08a2a3ccf85)]
+interface sbILibraryStatistics : nsISupports
+{
+
+  const PRUint32 COLLECT_SUM = 0;
+
+  /* \brief collect distinct values of a property, sorted by the values of 
+   *        another property.
+   * \param aProperty the property whose values will be connected.
+   * \param aCollectionMethod the method used to collect the other property's
+   *        values.
+   * \param aOtherProperty the property whose values are used for sorting
+   * \param aAscending should the results be returned in ascending order?
+   * \param aMaxResults how many results should be collected.
+   * \return an array of strings
+   */
+  
+  nsIArray collectDistinctValues(in AString aProperty,
+    in PRUint32 aCollectionMethod, in AString aOtherProperty,
+    in boolean aAscending, in PRUint32 aMaxResults);
+};
+
+

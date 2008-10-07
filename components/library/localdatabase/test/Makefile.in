@@ -48,6 +48,7 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_library_diffing.js \
                  $(srcdir)/test_library_getmedialists.js \
                  $(srcdir)/test_library_notifications.js \
+                 $(srcdir)/test_library_statistics.js \
                  $(srcdir)/test_libraryloader.js \
                  $(srcdir)/test_multilibrary.js \
                  $(srcdir)/test_filterable.js \

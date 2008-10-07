@@ -59,6 +59,7 @@ const static char* sPublicRProperties[] =
     "library_read:albums",
     "library_read:genres",
     "library_read:years",
+    "library_read:mostPlayedArtists",
 
     // nsIClassInfo
     "classinfo:classDescription",
