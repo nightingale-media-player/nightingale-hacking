@@ -28,6 +28,7 @@
 #define __SBSTRINGUTILS_H__
 
 #include <nsStringGlue.h>
+#include <nsTArray.h>
 #include <prprf.h>
 
 class nsIStringEnumerator;
@@ -94,6 +95,20 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
  * the nsReadableUtils version.
  */
 PRBool IsLikelyUTF8(const nsACString& aString);
+
+/**
+ * Split the string specified by aString into sub-strings using the delimiter
+ * specified by aDelimiter and place the sub-strings in the array specified by
+ * aStringArray.
+ *
+ * \param aString               String to split.
+ * \param aDelimiter            Sub-string delimiter.
+ * \param aSubStringArray       Array of sub-strings.
+ */
+
+void nsString_Split(const nsAString&    aString,
+                    const nsAString&    aDelimiter,
+                    nsTArray<nsString>& aSubStringArray);
 
 #endif /* __SBSTRINGUTILS_H__ */
 

@@ -2171,12 +2171,21 @@ sbITunesImporter.prototype =
       iTunesTrackIDTable[iTunesTrackID] = trackInfo;
     }
 
-    // Add the created media items to each corresponding track info object.
+    // Post-process created media items.
     var createCount = createdMediaItems.length;
     for (var i = 0; i < createCount; i++) {
       // Get the media item.
       var mediaItem = createdMediaItems.queryElementAt(i, Ci.sbIMediaItem);
       var iTunesGUID = mediaItem.getProperty(CompConfig.iTunesGUIDProperty);
+
+      // Try fetching local file album art.
+      try {
+        var fileAlbumArtFetcher =
+              Cc["@songbirdnest.com/Songbird/album-art/file-fetcher;1"]
+                .getService(Ci.sbIAlbumArtFetcher);
+        fileAlbumArtFetcher.fetchAlbumArtForMediaItem(mediaItem, null, null);
+      } catch (ex) {
+      }
 
       // Add the media item to the corresponding track info object.
       var trackInfo = iTunesTrackIDTable[iTunesGUID];

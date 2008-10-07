@@ -210,3 +210,45 @@ PRBool IsLikelyUTF8(const nsACString& aString)
   }
   return PR_TRUE;
 }
+
+void
+nsString_Split(const nsAString&    aString,
+               const nsAString&    aDelimiter,
+               nsTArray<nsString>& aSubStringArray)
+{
+  // Clear out sub-string array.
+  aSubStringArray.Clear();
+
+  // Get the delimiter length.  Just put the entire string in the array if the
+  // delimiter is empty.
+  PRUint32 delimiterLength = aDelimiter.Length();
+  if (delimiterLength == 0) {
+    aSubStringArray.AppendElement(aString);
+    return;
+  }
+
+  // Split string into sub-strings.
+  PRInt32 stringLength = aString.Length();
+  PRInt32 currentOffset = 0;
+  PRInt32 delimiterIndex = 0;
+  do {
+    // Find the index of the next delimiter.  If delimiter cannot be found, set
+    // the index to the end of the string.
+    delimiterIndex = aString.Find(aDelimiter, currentOffset);
+    if (delimiterIndex < 0)
+      delimiterIndex = stringLength;
+
+    // Add the next sub-string to the array.
+    PRUint32 subStringLength = delimiterIndex - currentOffset;
+    if (subStringLength > 0) {
+      nsDependentSubstring subString(aString, currentOffset, subStringLength);
+      aSubStringArray.AppendElement(subString);
+    } else {
+      aSubStringArray.AppendElement(NS_LITERAL_STRING(""));
+    }
+
+    // Advance to the next sub-string.
+    currentOffset = delimiterIndex + delimiterLength;
+  } while (delimiterIndex < stringLength);
+}
+
