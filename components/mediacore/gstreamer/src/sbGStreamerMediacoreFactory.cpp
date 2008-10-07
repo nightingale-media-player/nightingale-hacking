@@ -126,8 +126,9 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
   nsTArray<nsString> extensions;
   const char *blacklist[] = {
       "txt", "htm", "html", "xml", "pdf", "cpl", "msstyles", "scr", "sys",
-      "ocx", "bz2", "gz", "zip", "Z", "rar", "tar", "dll", "exe", "a"
-      "bmp", "png", "gif", "jpeg", "jpg", "jpe", "dat"};
+      "ocx", "bz2", "gz", "zip", "Z", "rar", "tar", "dll", "exe", "a",
+      "bmp", "png", "gif", "jpeg", "jpg", "jpe", "tif", "tiff", "xpm",
+      "dat", "swf", "swfl"};
 
   const char *extraExtensions[] = {"m4r", "m4p", "vob"};
   GList *walker, *list;
