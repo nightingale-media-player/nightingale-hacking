@@ -28,6 +28,7 @@
 #include "sbMediacoreSequencer.h"
 
 #include <nsIClassInfoImpl.h>
+#include <nsIDOMXULElement.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIURL.h>
@@ -52,6 +53,7 @@
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediacorePlaybackControl.h>
 #include <sbIMediacoreStatus.h>
+#include <sbIMediacoreVideoWindow.h>
 #include <sbIMediacoreVoting.h>
 #include <sbIMediacoreVotingChain.h>
 #include <sbIMediaItem.h>
@@ -301,6 +303,19 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteFaceplatePlaying->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Faceplate Playing Video
+  mDataRemoteFaceplatePlayingVideo = 
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteFaceplatePlayingVideo->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_FACEPLATE_PLAYINGVIDEO),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Faceplate Seen Playing
@@ -1034,7 +1049,8 @@ sbMediacoreSequencer::Setup()
 
       // Also stop the current core.
       rv = mPlaybackControl->Stop();
-      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ASSERTION(NS_FAILED(rv), 
+        "Stop returned failure. Attempting to recover.");
     }
   }
 
@@ -1045,6 +1061,30 @@ sbMediacoreSequencer::Setup()
 
   mCore = do_QueryElementAt(chain, mChainIndex, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set Video Window if core supports it.
+  nsCOMPtr<sbIMediacoreVideoWindow> videoWindow = 
+    do_QueryInterface(mCore, &rv);
+  
+  if(NS_SUCCEEDED(rv) && videoWindow) {
+    nsCOMPtr<sbIMediacoreManager> mediacoreManager = 
+      do_QueryReferent(mMediacoreManager, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediacoreVideoWindow> managerVideoWindow;
+    rv = mediacoreManager->GetVideo(getter_AddRefs(managerVideoWindow));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMXULElement> xulElement;
+    rv = managerVideoWindow->GetVideoWindow(getter_AddRefs(xulElement));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = videoWindow->SetVideoWindow(xulElement);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // XXXAus: Set Fullscreen here to maintain fullscreen state across 
+    //         items being played?
+  }
 
   // Add listener to new core.
   nsCOMPtr<sbIMediacoreEventTarget> eventTarget = 
@@ -1880,6 +1920,10 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
           rv = UpdatePlayStateDataRemotes();
           NS_ENSURE_SUCCESS(rv, rv);
         }
+
+        rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+
 #if defined(DEBUG)
         printf("[sbMediacoreSequencer] - Was playing, stream ended, attempting to go to next track in sequence.\n");
 #endif
@@ -1895,6 +1939,14 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = UpdatePlayStateDataRemotes();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+    case sbIMediacoreEvent::STREAM_HAS_VIDEO: {
+      rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     break;

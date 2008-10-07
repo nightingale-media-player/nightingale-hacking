@@ -42,7 +42,9 @@ interface sbIMediacoreStatus;
 
 interface sbIMediacoreSequencer;
 
-[scriptable, uuid(d7cf1fbe-987b-4425-af9f-9db0f45bfaf3)]
+interface sbIMediacoreVideoWindow;
+
+[scriptable, uuid(83373eeb-72c7-4612-93eb-3ea6a0a84eb6)]
 interface sbIMediacoreManager : nsISupports
 {
   /**
@@ -69,9 +71,15 @@ interface sbIMediacoreManager : nsISupports
    *
    * 1. Current sequences remain unaffected.
    * 2. When playback of current sequences is complete, the new sequencer
-   *    is used to 
+   *    is used to generate the next sequence.
    */
   attribute sbIMediacoreSequencer sequencer;
+
+  /**
+   * \brief The primary video window that will be used by all cores to 
+   *        display video when it's available. 
+   */
+  readonly attribute sbIMediacoreVideoWindow video;
 
   /**
    * Create a new event

@@ -29,6 +29,7 @@
 
 #include <nsAutoPtr.h>
 #include <nsIClassInfo.h>
+#include <nsIDOMXULElement.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIObserver.h>
 
@@ -40,6 +41,7 @@
 #include <sbIDataRemote.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediacoreFactoryRegistrar.h>
+#include <sbIMediacoreVideoWindow.h>
 #include <sbIMediacoreVoting.h>
 
 #include <sbBaseMediacoreVolumeControl.h>
@@ -52,6 +54,7 @@ class sbMediacoreManager : public sbBaseMediacoreVolumeControl,
                            public sbPIMediacoreManager,
                            public sbIMediacoreEventTarget,
                            public sbIMediacoreFactoryRegistrar,
+                           public sbIMediacoreVideoWindow,
                            public sbIMediacoreVoting,
                            public nsIClassInfo,
                            public nsIObserver,
@@ -63,6 +66,7 @@ public:
   NS_DECL_SBPIMEDIACOREMANAGER
   NS_DECL_SBIMEDIACOREEVENTTARGET
   NS_DECL_SBIMEDIACOREFACTORYREGISTRAR
+  NS_DECL_SBIMEDIACOREVIDEOWINDOW
   NS_DECL_SBIMEDIACOREVOTING
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
@@ -116,4 +120,7 @@ protected:
 
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateVolume;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateMute;
+
+  PRPackedBool mFullscreen;
+  nsCOMPtr<nsIDOMXULElement> mVideoWindow;
 };

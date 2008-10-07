@@ -38,6 +38,7 @@
 class BasePlatformInterface : public sbIGstPlatformInterface
 {
 public:
+  BasePlatformInterface ();
   BasePlatformInterface (nsIBoxObject *aVideoBox);
   virtual ~BasePlatformInterface ();
 
@@ -48,6 +49,8 @@ public:
   void SetFullscreen(bool aFullscreen);
   void SetDisplayAspectRatio(int aNumerator, int aDenominator);
   void PrepareVideoWindow();
+
+  void SetVideoBox(nsIBoxObject *aVideoBox);
 
 protected:
   // Set the display area available for rendering the video to

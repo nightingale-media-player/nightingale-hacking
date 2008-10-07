@@ -160,6 +160,7 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateBuffering;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplatePaused;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplatePlaying;
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplatePlayingVideo;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateSeenPlaying;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateURL;
 

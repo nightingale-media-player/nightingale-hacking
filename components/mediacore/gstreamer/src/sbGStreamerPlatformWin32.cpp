@@ -80,6 +80,15 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
   return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
+Win32PlatformInterface::Win32PlatformInterface()
+: BasePlatformInterface()
+, mWindow(NULL)
+, mFullscreenWindow(NULL)
+, mParentWindow(NULL)
+{
+
+}
+
 Win32PlatformInterface::Win32PlatformInterface(nsIBoxObject *aVideoBox, 
         HWND aParent) : 
     BasePlatformInterface(aVideoBox),
@@ -217,5 +226,3 @@ Win32PlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
   gst_x_overlay_set_xwindow_id(aXOverlay, (glong)mWindow);
   LOG(("Set xoverlay %p to HWND %x\n", aXOverlay, mWindow));
 }
-
-

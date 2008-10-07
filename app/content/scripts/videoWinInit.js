@@ -86,18 +86,6 @@ function SBVideoInitialize()
 
     windowPlacementSanityChecks();
 
-    /*
-    */
-    var theVLCInstance = document.getElementById( "core_vlc" );
-    var theVLCBox = document.getElementById( "box_vlc" );
-
-    /*
-    */
-    var theGSTInstance = document.getElementById( "box_gstreamer_simple" );
-    var theGSTBox = document.getElementById( "box_gstreamer_simple" );
-
-    var theGStreamerSimpleBox = document.getElementById( "box_gstreamer_simple" );
-
     var platform;
     try {
       var sysInfo =
@@ -119,45 +107,27 @@ function SBVideoInitialize()
     }
 
     //
-    // Depending upon the platform, initialize one core
-    // and hide all of the rest of them.
+    // Initialize the video window on the mediacore manager.
     //
-
-    var hasGst =
-      Components.classes["@songbirdnest.com/Songbird/Playback/GStreamer/Service;1"] != null;
-
-    if (hasGst) {
-      CoreGStreamerSimpleDocumentInit("box_gstreamer_simple");
-      if (theVLCBox) {
-        theVLCBox.hidden = true;
-      }
-    }
-    else {
-      if (theGSTBox) {
-        theGSTBox.hidden = true;
-      }
-    }
-
+    var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                       .getService(Components.interfaces.sbIMediacoreManager);
+    
+    var box = document.getElementById("video-box");
+    mm.video.videoWindow = box;
+    
     if (platform == "Darwin") {
       var quitMenuItem = document.getElementById("menu_FileQuitItem");
       quitMenuItem.removeAttribute("hidden");
     }
-
+    
     // If we are a top level window, hide us.
-    if ( window.parent == window )
-    {
-      if ( document.__dont_hide_video_window != true )
-      {
-        SBHideCoreWindow();
-      }
+    if ( window.parent == window && document.__dont_hide_video_window != true) {
+      SBHideCoreWindow();
     }
-
-    // Make sure we actually have a media core
-    setTimeout(SBMediaCoreCheck, 0);
   }
-  catch( err )
-  {
-    alert( "SBVideoInitialize\n" + err );
+  catch( e ) {
+    alert("SBVideoInitialize\n" + e); 
+    throw(e);
   }
 }
 
@@ -213,6 +183,7 @@ function onHideButtonClick()
                .getService(Components.interfaces.sbIMediacoreManager);
     mm.playbackControl.stop();
   } catch (e) {}
+
   SBHideCoreWindow();
 }
 
@@ -333,87 +304,4 @@ function videoCheckAltF4(evt)
   {
     onHideButtonClick();
   }
-}
-
-/**
- * \brief Check state of media core initialization.
- * This function attempts to detect media core initialization failures
- * by asking the sbIPlaylistPlayback service if an empty URL is a media url.
- *
- * Upon failure, this function pops open a message box indicating failure
- * of media core initialization. It also provides a link to documentation
- * that may help the user remedy this problem.
- */
-function SBMediaCoreCheck() {
-
-  // XXXAus: This is pretty much useless now. Just stubbing it out.
-  
-  /*
-  var PPS = Components.classes["@songbirdnest.com/Songbird/PlaylistPlayback;1"]
-                .getService(Components.interfaces.sbIPlaylistPlayback);
-
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                        .getService(Components.interfaces.nsIPrefBranch);
-  var skipCoreCheck = false;
-  try {
-    skipCoreCheck = prefs.getBoolPref("songbird.skipCoreCheck");
-  }
-  catch(e) {
-    // pref does not exist
-  }
-
-  // Try and call a PPS function and make sure we have a core.
-  var working = true;
-  try {
-    var test = PPS.isMediaURL("");
-  }
-  catch(e) {
-    working = false;
-  }
-
-  if(skipCoreCheck || working) {
-    return;
-  }
-
-  var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
-                      .getService(Components.interfaces.nsIStringBundleService);
-  var bundle = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-
-  var ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                     .getService(Components.interfaces.nsIPromptService);
-  var check = { value: 0 };
-  var rv = ps.confirmEx(null,
-                        bundle.GetStringFromName("mediacorecheck.dialog.title"),
-                        bundle.GetStringFromName("mediacorecheck.dialog.message"),
-                        (ps.BUTTON_POS_0 * ps.BUTTON_TITLE_IS_STRING) +
-                        (ps.BUTTON_POS_1 * ps.BUTTON_TITLE_IS_STRING) +
-                        (ps.BUTTON_POS_2 * ps.BUTTON_TITLE_IS_STRING),
-                        bundle.GetStringFromName("mediacorecheck.dialog.quitButtonLabel"),
-                        bundle.GetStringFromName("mediacorecheck.dialog.continueButtonLabel"),
-                        bundle.GetStringFromName("mediacorecheck.dialog.moreInfoButtonLabel"),
-                        bundle.GetStringFromName("mediacorecheck.dialog.skipCheckboxLabel"),
-                        check);
-
-  if(check.value) {
-    prefs.setBoolPref("songbird.skipCoreCheck", true);
-  }
-
-  if(rv == 2) {
-    var eps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
-                        .getService(Components.interfaces.nsIExternalProtocolService);
-    var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                        .getService(Components.interfaces.nsIIOService);
-
-    var coreFailureURL = Application.prefs.get("songbird.url.support.corefailure");
-    var uri = ios.newURI(coreFailureURL, null, null);
-
-    eps.loadURI(uri, null);
-  }
-
-  if(rv == 0 || rv == 2) {
-    quitApp( true ); // Skip saving the window position.
-  }
-  */
-  
-  return;
 }

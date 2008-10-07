@@ -29,6 +29,9 @@
 
 #include <sbIGStreamerMediacore.h>
 
+#include <nsIDOMEventListener.h>
+#include <nsIDOMXULElement.h>
+
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 
@@ -58,11 +61,13 @@ class sbGStreamerMediacore : public sbBaseMediacore,
                              public sbIMediacoreVotingParticipant,
                              public sbIGStreamerMediacore,
                              public sbIMediacoreEventTarget,
-                             public sbIMediacoreVideoWindow
+                             public sbIMediacoreVideoWindow,
+                             public nsIDOMEventListener
 {
 public:
-  NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
+  NS_DECL_NSIDOMEVENTLISTENER
   NS_DECL_SBIMEDIACOREEVENTTARGET
   NS_DECL_SBIMEDIACOREVOTINGPARTICIPANT
   NS_DECL_SBIMEDIACOREVIDEOWINDOW
@@ -136,6 +141,10 @@ protected:
   PRBool mStopped;
   // Track whether we're currently buffering
   PRBool mBuffering;
+
+  // the video box
+  nsCOMPtr<nsIDOMXULElement> mVideoWindow;
+  nsCOMPtr<nsIDOMWindow> mDOMWindow;
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */

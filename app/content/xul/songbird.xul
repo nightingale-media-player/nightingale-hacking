@@ -37,7 +37,7 @@
 <window
   id="video_window"
   hidechrome="true"
-  title="Cheezy Video Window"  
+  title="Video Window"  
   windowtype="Songbird:Core"
   onclose="return false; /*This window must never be closed unless the app is shutdown*/"
   onunload=""
@@ -75,16 +75,15 @@
   <sb-sys-outer-frame flex="1">
     <sb-sys-titlebar type="hide"/>
 
-    <!-- ??? Is this for the mac? -->    
+    <!-- This is for Mac -->    
     <menubar id="video_menu" hidden="false" >
       <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;" oncommand="quitApp();" hidden="true"/>
     </menubar>
 
     <spacer height="5"/>
-    <hbox flex="1" id="video-boxes">
-      <!-- video-boxes is an overlay target; media cores should overlay this file
-           and place their boxes here, deactivated. -->
-      
+    <hbox flex="1" id="video-box">
+      <!-- video-box is the element that mediacores will use as their parent window
+           for their own output window. -->
     </hbox>
     <spacer height="5"/>
     <hbox id="controls">

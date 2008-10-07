@@ -31,11 +31,12 @@
 /**
  * Faceplate DataRemotes
  */
-#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_BUFFERING   "faceplate.buffering"
-#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_PLAYING     "faceplate.playing"
-#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_PAUSED      "faceplate.paused"
-#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_PLAY_URL    "faceplate.play.url"
-#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_SEENPLAYING "faceplate.seenplaying"
+#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_BUFFERING     "faceplate.buffering"
+#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_PLAYING       "faceplate.playing"
+#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_PLAYINGVIDEO  "faceplate.playingvideo"
+#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_PAUSED        "faceplate.paused"
+#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_PLAY_URL      "faceplate.play.url"
+#define SB_MEDIACORE_DATAREMOTE_FACEPLATE_SEENPLAYING   "faceplate.seenplaying"
 
 /** 
  * Show remaining is special, when this data remote is set to true

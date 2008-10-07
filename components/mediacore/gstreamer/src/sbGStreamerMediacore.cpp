@@ -35,10 +35,25 @@
 #include <nsIURL.h>
 #include <nsIRunnable.h>
 #include <nsIIOService.h>
-#include <nsIDOMXULElement.h>
 #include <nsThreadUtils.h>
 #include <nsCOMPtr.h>
 #include <prlog.h>
+
+// Required to crack open the DOM XUL Element and get a native window handle.
+#include <nsIBaseWindow.h>
+#include <nsIBoxObject.h>
+#include <nsIDocument.h>
+#include <nsIDOMAbstractView.h>
+#include <nsIDOMEvent.h>
+#include <nsIDocShellTreeItem.h>
+#include <nsIDocShellTreeOwner.h>
+#include <nsIDOMDocument.h>
+#include <nsIDOMDocumentView.h>
+#include <nsIDOMEventTarget.h>
+#include <nsIDOMXULElement.h>
+#include <nsIScriptGlobalObject.h>
+#include <nsIWebNavigation.h>
+#include <nsIWidget.h>
 
 #include <sbClassInfoUtils.h>
 #include <sbTArrayStringEnumerator.h>
@@ -88,22 +103,27 @@ static PRLogModuleInfo* gGStreamerMediacore =
 
 #endif /* PR_LOGGING */
 
-NS_IMPL_ISUPPORTS_INHERITED7(sbGStreamerMediacore,
-                             sbBaseMediacore,
-                             sbIMediacore,
-                             sbIMediacorePlaybackControl,
-                             sbIMediacoreVolumeControl,
-                             sbIMediacoreVotingParticipant,
-                             sbIMediacoreEventTarget,
-                             sbIGStreamerMediacore,
-                             nsIClassInfo)
+NS_IMPL_THREADSAFE_ADDREF(sbGStreamerMediacore)
+NS_IMPL_THREADSAFE_RELEASE(sbGStreamerMediacore)
 
-NS_IMPL_CI_INTERFACE_GETTER7(sbGStreamerMediacore,
+NS_IMPL_QUERY_INTERFACE9_CI(sbGStreamerMediacore,
+                            sbIMediacore,
+                            sbIMediacorePlaybackControl,
+                            sbIMediacoreVolumeControl,
+                            sbIMediacoreVotingParticipant,
+                            sbIMediacoreEventTarget,
+                            sbIMediacoreVideoWindow,
+                            sbIGStreamerMediacore,
+                            nsIDOMEventListener,
+                            nsIClassInfo)
+
+NS_IMPL_CI_INTERFACE_GETTER8(sbGStreamerMediacore,
                              sbIMediacore,
                              sbIMediacorePlaybackControl,
                              sbIMediacoreVideoWindow,
                              sbIMediacoreVolumeControl,
                              sbIMediacoreVotingParticipant,
+                             sbIMediacoreVideoWindow,
                              sbIGStreamerMediacore,
                              sbIMediacoreEventTarget)
 
@@ -276,7 +296,22 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
 
 PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
 {
-  /* XXX: Handle prepare-xwindow-id here */
+  GstMessageType msg_type;
+  msg_type = GST_MESSAGE_TYPE(aMessage);
+
+  switch (msg_type) {
+    case GST_MESSAGE_ELEMENT: {
+      if (gst_structure_has_name(aMessage->structure, "prepare-xwindow-id")) {
+        if(mPlatformInterface) {
+          mPlatformInterface->PrepareVideoWindow();
+          mPlatformInterface->ResizeToWindow();
+
+          DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_HAS_VIDEO);
+        }
+        return PR_TRUE;
+      }
+    }
+  }
 
   /* Return PR_FALSE since we haven't handled the message */
   return PR_FALSE;
@@ -413,7 +448,7 @@ void sbGStreamerMediacore::HandleRedirectMessage(GstMessage *message)
     else {
       TRACE (("Resolving redirect to '%s'", location));
 
-      mUri->Resolve(nsDependentCString(location), uriString);
+      rv = mUri->Resolve(nsDependentCString(location), uriString);
       NS_ENSURE_SUCCESS (rv, /* void */ );
     }
 
@@ -816,13 +851,79 @@ sbGStreamerMediacore::SetFullscreen(PRBool aFullscreen)
 NS_IMETHODIMP
 sbGStreamerMediacore::GetVideoWindow(nsIDOMXULElement **aVideoWindow)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsAutoMonitor mon(mMonitor);
+  NS_IF_ADDREF(*aVideoWindow = mVideoWindow);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aVideoWindow);
+  
+  nsAutoMonitor mon(mMonitor);
+
+  // Get the box object representing the actual display area for the video.
+  nsCOMPtr<nsIBoxObject> boxObject;
+  nsresult rv = aVideoWindow->GetBoxObject(getter_AddRefs(boxObject));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  nsCOMPtr<nsIDOMDocument> domDocument;
+  rv = aVideoWindow->GetOwnerDocument(getter_AddRefs(domDocument));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMDocumentView> domDocumentView(do_QueryInterface(domDocument));
+  NS_ENSURE_TRUE(domDocumentView, NS_NOINTERFACE);
+
+  nsCOMPtr<nsIDOMAbstractView> domAbstractView;
+  rv = domDocumentView->GetDefaultView(getter_AddRefs(domAbstractView));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIWebNavigation> webNavigation(do_GetInterface(domAbstractView));
+  nsCOMPtr<nsIDocShellTreeItem> docShellTreeItem(do_QueryInterface(webNavigation));
+  NS_ENSURE_TRUE(docShellTreeItem, NS_NOINTERFACE);
+
+  nsCOMPtr<nsIDocShellTreeOwner> docShellTreeOwner;
+  rv = docShellTreeItem->GetTreeOwner(getter_AddRefs(docShellTreeOwner));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIBaseWindow> baseWindow = do_QueryInterface(docShellTreeOwner);
+  NS_ENSURE_TRUE(baseWindow, NS_NOINTERFACE);
+
+  nsCOMPtr<nsIWidget> widget;
+  rv = baseWindow->GetMainWidget(getter_AddRefs(widget));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Attach event listeners
+  nsCOMPtr<nsIDocument> document(do_QueryInterface(domDocument));
+  NS_ENSURE_TRUE(document, NS_NOINTERFACE);
+
+  mDOMWindow = do_QueryInterface(document->GetScriptGlobalObject());
+  NS_ENSURE_TRUE(mDOMWindow, NS_NOINTERFACE);
+
+  nsCOMPtr<nsIDOMEventTarget> target(do_QueryInterface(mDOMWindow));
+  NS_ENSURE_TRUE(target, NS_NOINTERFACE);
+  target->AddEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
+  target->AddEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
+
+  mVideoEnabled = PR_TRUE;
+  mVideoWindow = aVideoWindow;
+
+#if defined (MOZ_WIDGET_GTK2)
+  GdkWindow *native = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
+  LOG(("Found native window %x", native));
+  mPlatformInterface = new GDKPlatformInterface(boxObject, native);
+#elif defined (XP_WIN)
+  HWND native = (HWND)widget->GetNativeData(NS_NATIVE_WIDGET);
+  LOG(("Found native window %x", native));
+  mPlatformInterface = new Win32PlatformInterface(boxObject, native);
+#else
+  LOG(("No video backend available for this platform"));
+  mVideoEnabled = PR_FALSE;
+#endif
+
+  return NS_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -873,3 +974,31 @@ sbGStreamerMediacore::RemoveListener(sbIMediacoreEventListener *aListener)
          NS_ERROR_NULL_POINTER;
 }
 
+
+//-----------------------------------------------------------------------------
+// nsIDOMEventListener
+//-----------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbGStreamerMediacore::HandleEvent(nsIDOMEvent* aEvent)
+{
+  nsAutoString eventType;
+  aEvent->GetType(eventType);
+
+  if(eventType.EqualsLiteral("unload")) {
+
+    // Clean up here
+    nsCOMPtr<nsIDOMEventTarget> target(do_QueryInterface(mDOMWindow));
+    NS_ENSURE_TRUE(target, NS_NOINTERFACE);
+    target->RemoveEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
+    target->RemoveEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
+
+    mDOMWindow = nsnull;
+  }
+  else if(eventType.EqualsLiteral("resize") &&
+          mPlatformInterface) {
+    mPlatformInterface->ResizeToWindow();  
+  }
+
+  return NS_OK;
+}

@@ -55,18 +55,33 @@ static PRLogModuleInfo* gGStreamerPlatformBase =
 
 #endif /* PR_LOGGING */
 
-BasePlatformInterface::BasePlatformInterface(nsIBoxObject *aVideoBox) : 
-    sbIGstPlatformInterface(),
-    mDisplayWidth(0),
-    mDisplayHeight(0),
-    mDisplayX(0),
-    mDisplayY(0),
-    mDARNum(1),
-    mDARDenom(1),
-    mFullscreen(false),
-    mVideoBox(aVideoBox),
-    mVideoSink(NULL),
-    mAudioSink(NULL)
+BasePlatformInterface::BasePlatformInterface()
+: sbIGstPlatformInterface()
+,  mDisplayWidth(0)
+,  mDisplayHeight(0)
+,  mDisplayX(0)
+,  mDisplayY(0)
+,  mDARNum(1)
+,  mDARDenom(1)
+,  mFullscreen(false)
+,  mVideoBox(NULL)
+,  mVideoSink(NULL)
+,  mAudioSink(NULL)
+{
+}
+
+BasePlatformInterface::BasePlatformInterface(nsIBoxObject *aVideoBox) 
+: sbIGstPlatformInterface()
+,  mDisplayWidth(0)
+,  mDisplayHeight(0)
+,  mDisplayX(0)
+,  mDisplayY(0)
+,  mDARNum(1)
+,  mDARDenom(1)
+,  mFullscreen(false)
+,  mVideoBox(aVideoBox)
+,  mVideoSink(NULL)
+,  mAudioSink(NULL)
 {
 }
 
@@ -194,3 +209,8 @@ BasePlatformInterface::PrepareVideoWindow()
   SetXOverlayWindowID(xoverlay);
 }
 
+void 
+BasePlatformInterface::SetVideoBox(nsIBoxObject *aVideoBox)
+{
+  mVideoBox = aVideoBox;
+}

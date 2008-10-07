@@ -87,11 +87,12 @@ static PRLogModuleInfo* gMediacoreManager = nsnull;
 
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreManager)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreManager)
-NS_IMPL_QUERY_INTERFACE9_CI(sbMediacoreManager,
+NS_IMPL_QUERY_INTERFACE10_CI(sbMediacoreManager,
                             sbIMediacoreManager,
                             sbPIMediacoreManager,
                             sbIMediacoreEventTarget,
                             sbIMediacoreFactoryRegistrar,
+                            sbIMediacoreVideoWindow,
                             sbIMediacoreVolumeControl,
                             sbIMediacoreVoting,
                             nsISupportsWeakReference,
@@ -115,6 +116,7 @@ sbMediacoreManager::sbMediacoreManager()
 : mMonitor(nsnull)
 , mLastCore(0)
 , mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
+, mFullscreen(PR_FALSE)
 {
   // mBaseEventTarget being null is handled on access
   NS_WARN_IF_FALSE(mBaseEventTarget, "mBaseEventTarget is null, may be out of memory");
@@ -685,6 +687,23 @@ sbMediacoreManager::SetSequencer(
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+NS_IMETHODIMP
+sbMediacoreManager::GetVideo(sbIMediacoreVideoWindow **aVideo) 
+{
+  TRACE(("sbMediacoreManager[0x%x] - GetVideoWindow", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aVideo);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediacoreManager *, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  videoWindow.forget(aVideo);
+
+  return NS_OK;
+}
+
 // ----------------------------------------------------------------------------
 // sbPIMediacoreManager Interface
 // ----------------------------------------------------------------------------
@@ -914,6 +933,67 @@ sbMediacoreManager::UnregisterFactory(sbIMediacoreFactory *aFactory)
 
   return NS_OK;
 }
+
+
+// ----------------------------------------------------------------------------
+// sbIMediacoreVideoWindow Interface
+// ----------------------------------------------------------------------------
+
+NS_IMETHODIMP 
+sbMediacoreManager::GetFullscreen(PRBool *aFullscreen)
+{
+  TRACE(("sbMediacoreManager[0x%x] - GetFullscreen", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aFullscreen);
+
+  nsAutoMonitor mon(mMonitor);
+  *aFullscreen = mFullscreen;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreManager::SetFullscreen(PRBool aFullscreen)
+{
+  TRACE(("sbMediacoreManager[0x%x] - SetFullscreen", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+  if(aFullscreen != mFullscreen) {
+    //XXXAus: Toggle fullscreen.
+  }
+
+  mFullscreen = aFullscreen;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreManager::GetVideoWindow(nsIDOMXULElement * *aVideoWindow)
+{
+  TRACE(("sbMediacoreManager[0x%x] - GetVideoWindow", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aVideoWindow);
+
+  nsAutoMonitor mon(mMonitor);
+  NS_IF_ADDREF(*aVideoWindow = mVideoWindow);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreManager::SetVideoWindow(nsIDOMXULElement * aVideoWindow)
+{
+  TRACE(("sbMediacoreManager[0x%x] - SetVideoWindow", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aVideoWindow);
+
+  nsAutoMonitor mon(mMonitor);
+  mVideoWindow = aVideoWindow;
+
+  return NS_OK;
+}
+
 
 // ----------------------------------------------------------------------------
 // sbIMediacoreVoting Interface
