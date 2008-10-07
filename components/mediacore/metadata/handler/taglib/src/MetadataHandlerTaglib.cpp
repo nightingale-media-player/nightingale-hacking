@@ -2007,6 +2007,18 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
             if (mMetadataChannelRestart)
                 isValid = PR_FALSE;
         }
+        if (NS_SUCCEEDED(result) && isValid) {
+            PRUint64 size;
+            result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
+                                                                  &size);
+            if (NS_SUCCEEDED(result)) {
+                // we don't consider empty files to be valid because no data
+                // could have been read.  Taglib considers files valid by default
+                // so we can't actually ask it for anything useful (that still
+                // manages to separate the "read error" and "validly no tags" cases)
+                isValid = (size > 0);
+            }
+        }
     }
 
     /* Read the base file metadata. */
@@ -2074,6 +2086,18 @@ PRBool sbMetadataHandlerTaglib::ReadMPCFile(
             if (mMetadataChannelRestart)
                 isValid = PR_FALSE;
         }
+        if (NS_SUCCEEDED(result) && isValid) {
+            PRUint64 size;
+            result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
+                                                                  &size);
+            if (NS_SUCCEEDED(result)) {
+                // we don't consider empty files to be valid because no data
+                // could have been read.  Taglib considers files valid by default
+                // so we can't actually ask it for anything useful (that still
+                // manages to separate the "read error" and "validly no tags" cases)
+                isValid = (size > 0);
+            }
+        }
     }
 
     /* Read the base file metadata. */
@@ -2107,7 +2131,7 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
     nsACString                  &aFilePath)
 {
     nsAutoPtr<TagLib::MPEG::File>   pTagFile;
-    PRBool                          restart;
+    PRBool                          restart = PR_FALSE;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
 
@@ -2143,6 +2167,18 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
             mMetadataChannelRestart = restart;
             if (mMetadataChannelRestart)
                 isValid = PR_FALSE;
+        }
+        if (NS_SUCCEEDED(result) && isValid) {
+            PRUint64 size;
+            result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
+                                                                  &size);
+            if (NS_SUCCEEDED(result)) {
+                // we don't consider empty files to be valid because no data
+                // could have been read.  Taglib considers files valid by default
+                // so we can't actually ask it for anything useful (that still
+                // manages to separate the "read error" and "validly no tags" cases)
+                isValid = (size > 0);
+            }
         }
     }
 
@@ -2219,6 +2255,18 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File(
             if (mMetadataChannelRestart)
                 isValid = PR_FALSE;
         }
+        if (NS_SUCCEEDED(result) && isValid) {
+            PRUint64 size;
+            result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
+                                                                  &size);
+            if (NS_SUCCEEDED(result)) {
+                // we don't consider empty files to be valid because no data
+                // could have been read.  Taglib considers files valid by default
+                // so we can't actually ask it for anything useful (that still
+                // manages to separate the "read error" and "validly no tags" cases)
+                isValid = (size > 0);
+            }
+        }
     }
 
     /* Read the base file metadata. */
@@ -2282,6 +2330,18 @@ PRBool sbMetadataHandlerTaglib::ReadOGGFile(
             if (mMetadataChannelRestart)
                 isValid = PR_FALSE;
         }
+        if (NS_SUCCEEDED(result) && isValid) {
+            PRUint64 size;
+            result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
+                                                                  &size);
+            if (NS_SUCCEEDED(result)) {
+                // we don't consider empty files to be valid because no data
+                // could have been read.  Taglib considers files valid by default
+                // so we can't actually ask it for anything useful (that still
+                // manages to separate the "read error" and "validly no tags" cases)
+                isValid = (size > 0);
+            }
+        }
     }
 
     /* Read the base file metadata. */
@@ -2322,7 +2382,7 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
 
     /* Add the metadata value. */
     result = mpMetadataPropertyArray->AppendProperty
-                        (NS_ConvertUTF8toUTF16(name),
+                        (NS_ConvertASCIItoUTF16(name),
                          NS_ConvertUTF8toUTF16(value.toCString(true)));
 
     return (result);
@@ -2356,7 +2416,7 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
 
     /* Add the metadata value. */
     result = mpMetadataPropertyArray->AppendProperty
-                                     (NS_ConvertUTF8toUTF16(name),
+                                     (NS_ConvertASCIItoUTF16(name),
                                       valueString);
 
     return (result);

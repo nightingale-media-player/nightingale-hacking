@@ -29,7 +29,9 @@
  */
  
 var gTestFileLocation = "testharness/metadatamanager/errorcases/";
-  
+
+// the number of errors we expect
+var gErrorExpected = 0;
 
 /**
  * Confirm that Songbird doesn't crash or damage files when
@@ -49,21 +51,27 @@ function runTest() {
   var file = newAppRelativeFile("testharness/metadatamanager/errorcases/file_that_doesnt_exist.mp3");
   assertEqual(file.exists(), false);
   files.push(file);
+  gErrorExpected++;
   
   // Bogus files
   var fakeFile = newAppRelativeFile("testharness/metadatamanager/errorcases/fake-file.mp3");
   fakeFile = getCopyOfFile(fakeFile, "fake-file-temp.mp3");
   files.push(fakeFile);
   filesToRemove.push(fakeFile);
+  // fake file is not seen as an error
   var corruptFile = newAppRelativeFile("testharness/metadatamanager/errorcases/corrupt.mp3");
   corruptFile = getCopyOfFile(corruptFile, "corrupt-file-temp.mp3");
   files.push(corruptFile);
   filesToRemove.push(corruptFile);
+  // corrupt file is not seen as an error
   
   // Media files with the wrong extensions
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/mp3-disguised-as.flac"));
+  gErrorExpected++;
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/mp3-disguised-as.ogg"));
+  gErrorExpected++;
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/ogg-disguised-as.m4a"));
+  gErrorExpected++;
 
   // Misc file permissions
   file = newAppRelativeFile("testharness/metadatamanager/errorcases/access-tests.mp3");  
@@ -77,6 +85,7 @@ function runTest() {
   // If we aren't able to set write only, don't bother with this test (e.g. on windows)
   if ((writeonly.permissions & 0777) == 0200) {
     files.push(writeonly);
+    gErrorExpected++;
   } else {
     log("MetadataJob_ErrorCases: platform does not support write-only. Perms=" + (writeonly.permissions & 0777));
   }
@@ -86,9 +95,14 @@ function runTest() {
   noaccess.permissions = 0000;  
   files.push(noaccess);
   filesToRemove.push(noaccess);
+  if (!isWindows) {
+    // only seen as an error on non-Windows (Windows doesn't support permissions correctly)
+    gErrorExpected++
+  }
   
   // A remote file that doesn't exist
   files.push(newURI("http://localhost/remote/file/that/doesnt/exist.mp3"));
+  gErrorExpected++;
 
     
   ///////////////////////////////////////
@@ -232,14 +246,7 @@ function runTest() {
       
       // Verify job progress reporting.  Do this last since the info above is
       // useful for debugging.
-      if (isWindows) {
-        // Missing file plus three files with wrong extensions
-        assertEqual(job.errorCount, 4);
-      } else {
-        // Missing file, permission files, files with wrong extensions
-        // This should be 7 but is 6 due to bug 12663
-        assertEqual(job.errorCount, 6);
-      }
+      assertEqual(job.errorCount, gErrorExpected);
       assertEqual(files.length, job.total);
       assertEqual(files.length, job.progress);
       assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
