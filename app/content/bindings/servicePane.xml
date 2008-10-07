@@ -618,8 +618,11 @@
               //that people like or hate while not tracking any bookmarks they create.
               //See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
 
+              // changed to loadNode from click as there are ways other than clicking
+              // to get here.
+
               try {
-                metrics_inc("app.servicepane.bookmarks.click", node.url, null);
+                metrics_inc("app.servicepane.loadnode.bookmarks", node.url, null);
               } catch(e) { Components.utils.reportError(e); }
             }
             
@@ -640,10 +643,12 @@
 
               // Record list type metrics for some reason.
               // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
+              // changed to loadNode from click as there are ways other than clicking
+              // to get here.
               try {
                 var listType = mediaList.getProperty(SBProperties.customType);
                 var libType = mediaList.library.getProperty(SBProperties.customType);
-                metrics_inc(libType, listType, null);
+                metrics_inc("app.servicepane.loadnode.medialist", libType + "." + listType, null);
               } catch(e) { Components.utils.reportError(e); }
 
             } else {
