@@ -55,6 +55,9 @@ sbTestMediacoreStressThreads::sbTestMediacoreStressThreads()
 
 sbTestMediacoreStressThreads::~sbTestMediacoreStressThreads()
 {
+  if(mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
+  }
   /* destructor code */
 }
 
@@ -102,6 +105,8 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ENSURE_TRUE(mCounter == 0, NS_ERROR_FAILURE);
+
+  mBaseEventTarget = nsnull;
 
   return NS_OK;
 }

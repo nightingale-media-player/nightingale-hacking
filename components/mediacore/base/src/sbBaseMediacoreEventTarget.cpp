@@ -199,45 +199,5 @@ sbBaseMediacoreEventTarget::RemoveListener(sbIMediacoreEventListener *aListener)
   return NS_OK;
 }
 
-NS_IMETHODIMP_(nsrefcnt)
-sbBaseMediacoreEventTarget::AsyncDispatchHelper::AddRef(void)
-{
-    NS_PRECONDITION(PRInt32(mRefCnt) >= 0, "illegal refcnt");
-    nsrefcnt count;
-    count = PR_AtomicIncrement((PRInt32*)&mRefCnt);
-    NS_LOG_ADDREF(this, count, "sbBaseMediacoreEventTarget::AsyncDispatchHelper", sizeof(*this));
-    return count;
-}
-
-NS_IMETHODIMP_(nsrefcnt)
-sbBaseMediacoreEventTarget::AsyncDispatchHelper::Release(void)
-{
-  nsrefcnt count;
-  NS_PRECONDITION(0 != mRefCnt, "dup release");
-  count = PR_AtomicDecrement((PRInt32 *)&mRefCnt);
-  NS_LOG_RELEASE(this, count, "sbBaseMediacoreEventTarget::AsyncDispatchHelper");
-  if (0 == count) {
-    mRefCnt = 1; /* stabilize */
-    NS_DELETEXPCOM(this);
-    return 0;
-  }
-  return count;
-}
-
-
-NS_IMETHODIMP
-sbBaseMediacoreEventTarget::AsyncDispatchHelper::QueryInterface(REFNSIID aIID,
-                                                                void** aInstancePtr)
-{
-  NS_ENSURE_ARG_POINTER(aInstancePtr);
-  nsresult rv = NS_ERROR_NO_INTERFACE;
-  if (aIID.Equals(NS_GET_IID(nsIRunnable))) {
-    *aInstancePtr = static_cast<void*>(static_cast<nsIRunnable*>(this));
-    NS_ADDREF_THIS();
-  }
-  else if (aIID.Equals(NS_GET_IID(nsISupports))) {
-    *aInstancePtr = static_cast<void*>(static_cast<nsISupports*>(this));
-    NS_ADDREF_THIS();
-  }
-  return rv;
-}
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacoreEventTarget::AsyncDispatchHelper, 
+                              nsIRunnable);

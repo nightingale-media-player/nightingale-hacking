@@ -93,5 +93,6 @@ function testSimpleListener(mediaManager) {
     assertEqual(listener.log[index].type, eventIDs[index], "Event type doesn't match event ID sent");
   }
   mediaManager.removeListener(listener);
+  listener.wrappedJSObject = null;
 }
  

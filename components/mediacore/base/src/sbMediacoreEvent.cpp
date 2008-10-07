@@ -30,6 +30,8 @@
 */
 #include "sbMediacoreEvent.h"
 
+#include <nsAutoPtr.h>
+
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbMediacoreEvent:5
@@ -195,12 +197,11 @@ sbMediacoreEvent::CreateEvent(PRUint32 aType,
                               sbIMediacoreEvent **retval)
 {
   nsresult rv;
-  nsCOMPtr<sbMediacoreEvent> event = new sbMediacoreEvent();
-
+  nsRefPtr<sbMediacoreEvent> event = new sbMediacoreEvent();
   NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
 
   rv = event->Init(aType, aError, aData, aOrigin);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return CallQueryInterface(event, retval);
+  return CallQueryInterface(event.get(), retval);
 }

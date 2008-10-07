@@ -75,10 +75,10 @@ function createEventTarget() {
             .createInstance(Ci.sbIMediacoreEventTarget);
 }
 
-function createEvent(type, error, data, origin) {
-  var creator = Cc["@songbirdnest.com/mediacore/sbTestMediacoreEventCreator;1"]
-            .createInstance(Ci.sbITestMediacoreEventCreator);
-  return creator.create(type, error, data, new dummyCore());
+function createEvent(type, error, data) {
+  var creator = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                  .getService(Ci.sbIMediacoreManager);
+  return creator.createEvent(type, new dummyCore(), error, data);
 }
 
 /**
@@ -87,18 +87,34 @@ function createEvent(type, error, data, origin) {
 function runTest () {
   log("Synchronous\n");
   testSimpleListener(false);
+  
   log("Asynchronous\n");
   testSimpleListener(true);
   testPending();
+  
+  eventTarget.removeListener(listener);  
+  
+  listener = null;
+  eventTarget = null;
 }
 
+var eventTarget = null;
+var listener = null;
+
 function testSimpleListener(async) {
-  var eventTarget = createEventTarget();
-  var listener = new testListener();
+  
+  if(!eventTarget) {
+    eventTarget = createEventTarget();
+  }
+  
+  if(!listener) {
+    listener = new testListener();
+  }
 
   eventTarget.addListener(listener);
+  
   for (index = 0; index < eventIDs.length; ++index) {
-    var event = createEvent(eventIDs[index], null, "", eventTarget);
+    var event = createEvent(eventIDs[index], null, null);
     eventTarget.dispatchEvent(event, async);
   }
   var testValues = function() {
@@ -112,6 +128,8 @@ function testSimpleListener(async) {
   }
   else {
     testValues();
+    listener.log = [];
+    eventTarget.removeListener(listener);
   }
 }
  
