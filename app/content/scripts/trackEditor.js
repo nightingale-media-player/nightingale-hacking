@@ -1958,31 +1958,43 @@ TrackEditorArtwork.prototype = {
     var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
                         .createInstance(Ci.sbIClipboardHelper);
 
-    // Load up the file
+    // Load up the file (Properties are stored as URL Strings)
     var imageFilePath = TrackEditor.state.getPropertyValue(this.property);
     var ioService = Cc["@mozilla.org/network/io-service;1"]
                       .getService(Ci.nsIIOService);
-    var normalPath = decodeURI(ioService.newURI(imageFilePath, null, null).path);
-    var imageFile = Cc["@mozilla.org/file/local;1"]
-                      .createInstance(Ci.nsILocalFile);
+
+    // Convert the URL to a URI
+    var imageURI = null;
     try {
-      imageFile.initWithPath(normalPath);
-    } catch(err) {
+      imageURI = ioService.newURI(imageFilePath, null, null);
+    } catch (err) {
+      Cu.reportError("trackEditor: Unable to convert to URI: [" +
+                     imageFilePath + "] - " + err);
       return false;
     }
     
+    // Check if this is a local file
+    if (!(imageURI instanceof Ci.nsIFileURL)) {
+      Cu.reportError("trackEditor: Not a local file [" +
+                     imageFilePath + "]");
+      return false;
+    }
+    
+    imageFile = imageURI.file; // The .file is a nsIFile
     var imageData;
     var mimetype;
     [imageData, mimeType] = sbCoverHelper.readImageData(imageFile);
     
-    var copyOk = true;
     try {
-      sbClipboard.pasteImageToClipboard(mimeType, imageData, imageData.length);
+      sbClipboard.pasteImageToClipboard(mimeType,
+                                        imageData,
+                                        imageData.length);
     } catch (err) {
-      copyOk = false;
+      Cu.reportError("trackEditor: Unable to copy from clipboard - " + err);
+      return false;
     }
     
-    return copyOk;
+    return true;
   },
   
   /**
