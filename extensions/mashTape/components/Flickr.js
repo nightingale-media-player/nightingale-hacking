@@ -42,15 +42,20 @@ Flickr.prototype = {
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var query = "&per_page=" + this.limit + this.sort + this.searchType +
 			searchTerms;
-		debugLog("URL", this.searchURL + query);
 		/*
 		if (this.searchType.substr(1,3) == "tex")
 			query += "%20concert";
 		else
 			query += ",concert";
 			*/
+		var url = this.searchURL + query;
+
+		if (searchTerms == "Songbird")
+			url = "http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=33a6c9b21ada1e5b7d85f5cde788e6c7&extras=owner_name,date_taken,o_dims,original_format&user_id=11878025@N03&tags=mashtape";
+
+		debugLog("URL", url);
 			
-		req.open("GET", this.searchURL + query, true);
+		req.open("GET", url, true);
 		req.provider = this;
 		req.updateFn = updateFn;
 		req.onreadystatechange = function() {
