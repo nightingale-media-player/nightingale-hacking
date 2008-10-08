@@ -1202,7 +1202,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 #endif
           }
         }
-        
+
         // Throttle slightly.
         // XXXAus: Not in use for the time being.
         // PR_Sleep(PR_MillisecondsToInterval(0));
@@ -1253,6 +1253,12 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
         CDatabaseResult *pRes = pQuery->GetResultObject();
         pRes->ClearResultSet();
       }
+
+      // Quoth the sqlite wiki:
+      // Sometimes people think they have finished with a SELECT statement because sqlite3_step() 
+      // has returned SQLITE_DONE. But the SELECT is not really complete until sqlite3_reset() 
+      //  or sqlite3_finalize() have been called. 
+      sqlite3_reset(pStmt);
 
     }
 
