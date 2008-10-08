@@ -162,11 +162,67 @@ var mashTapePreferences = {
 		}
 	},
 
+	observe: function(subject, topic, data) {
+		if (subject instanceof Components.interfaces.nsIPrefBranch) {
+			var pref = data.split(".");
+			if (pref.length == 2 && pref[1] == "enabled") {
+				var tabName = pref[0];
+				this.checkDefaultTab(tabName);
+			}
+		}
+	},
+
+	getDefaultTabItem : function(providerType) {
+		for (var i=0; i<this.defaultTabSelect.itemCount; i++) {
+			var item = this.defaultTabSelect.getItemAtIndex(i);
+			if (item.value == providerType)
+				return item;
+		}
+		return null;
+	},
+
+	checkDefaultTab: function(tabName) {
+		var prefKey = tabName + ".enabled";
+		var enabled = this._prefBranch.getBoolPref(prefKey);
+		var item = this.getDefaultTabItem(tabName);
+		if (!enabled) {
+			item.disabled = true;
+			if (item.selected) {
+				// select an enabled tab instead
+				for each (var tab in ["info", "rss", "photo", "flash"])
+				{
+					if (this._prefBranch.getBoolPref(tab + ".enabled")) {
+						var sItem = this.getDefaultTabItem(tab);
+						this.defaultTabSelect.selectedItem = sItem;
+						this._prefBranch.setCharPref("defaultpane", tab);
+						break;
+					}
+				}
+			}
+		} else
+			item.disabled = false;
+	},
+
 	init: function() {
+		this.defaultTabSelect = document.getElementById("general-default-tab");
+
+		// Setup our preferences observer
+		this._prefBranch = Cc["@mozilla.org/preferences-service;1"]
+			.getService(Ci.nsIPrefService).getBranch("extensions.mashTape.")
+			.QueryInterface(Ci.nsIPrefBranch2);
+		this._prefBranch.addObserver("", this, false);
+
+		for each (var tab in ["info", "rss", "photo", "flash"])
+			this.checkDefaultTab(tab);
+
 		this.enumerateServices();
 		this.populateServices("info");
 		this.populateServices("rss");
 		this.populateServices("photo");
 		this.populateServices("flash");
+	},
+
+	unload: function() {
+		this._prefBranch.removeObserver("", this);
 	}
 }

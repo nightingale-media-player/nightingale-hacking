@@ -7,6 +7,7 @@
 <prefwindow id="BrowserPreferences">
 <prefpane id="mashTapePrefsPane" label="mashTape"
 	onpaneload="mashTapePreferences.init()"
+	onpaneunload="mashTapePreferences.unload()"
 	image="chrome://mashtape/content/tape.png">
 
 <preferences>

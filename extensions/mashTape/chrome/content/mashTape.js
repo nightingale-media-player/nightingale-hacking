@@ -350,6 +350,17 @@ mashTape.init = function(e) {
 		mashTape.flashTabTop.style.visibility = "collapse";
 
 	// pre-select the tab the user has defined as their default
+	mashTape.selectDefaultTab();
+
+	gMM.addListener(mashTape);
+
+	var SB_NewDataRemote = Components.Constructor(
+			"@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
+	mashTape.pausedDr = SB_NewDataRemote("faceplate.paused", null);
+	mashTape.pausedDr.bindObserver(mashTape.playingObserver, true);
+}
+
+mashTape.selectDefaultTab = function() {
 	switch(Application.prefs.getValue("extensions.mashTape.defaultpane","")) {
 		case "flash":
 			if (mashTape.flashTabTop.style.visibility != "collapse") {
@@ -374,15 +385,6 @@ mashTape.init = function(e) {
 		default:
 			break;
 	}
-
-	gMM = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-		.getService(Ci.sbIMediacoreManager);
-	gMM.addListener(mashTape);
-
-	var SB_NewDataRemote = Components.Constructor(
-			"@songbirdnest.com/Songbird/DataRemote;1", "sbIDataRemote", "init");
-	mashTape.pausedDr = SB_NewDataRemote("faceplate.paused", null);
-	mashTape.pausedDr.bindObserver(mashTape.playingObserver, true);
 }
 
 mashTape.unload = function() {
@@ -1908,7 +1910,6 @@ mashTape.locationListener = {
 mashTape.prefObserver = {
 	observe: function(subject, topic, data) {
 		if (subject instanceof Components.interfaces.nsIPrefBranch) {
-			dump("pref observer: " + data + "\n");
 			var pref = data.split(".");
 			if (pref.length == 2 && pref[1] == "enabled") {
 				var tab;
@@ -1943,6 +1944,7 @@ mashTape.prefObserver = {
 			} else if (data == "defaultpane") {
 				var which = subject.getCharPref(data);
 				gMetrics.metricsInc("mashtape", "defaultpane", which);
+				mashTape.selectDefaultTab();
 			}
 		}
 	}
