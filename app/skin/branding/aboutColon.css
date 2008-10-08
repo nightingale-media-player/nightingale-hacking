@@ -59,6 +59,9 @@ html {
   -moz-border-radius-bottomright: 8px;
   background-color:rgb(235,235,235);
 }
+#thirdPartySoftwareContainer > p.details > a+a {
+  margin-left:0.5em;
+}
 
 p {
   margin:0;
