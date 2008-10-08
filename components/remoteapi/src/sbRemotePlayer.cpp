@@ -1352,7 +1352,23 @@ sbRemotePlayer::PlayURL( const nsAString &aURL )
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // XXXAus: Play Single URL using Sequencer?
+  nsCOMPtr<sbIMediacoreManager> manager = 
+    do_QueryReferent(mMM, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacoreSequencer> sequencer;
+  rv = manager->GetSequencer(getter_AddRefs(sequencer));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> uri;
+  rv = mIOService->NewURI(NS_ConvertUTF16toUTF8(aURL), 
+                          nsnull, 
+                          nsnull, 
+                          getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sequencer->PlayURL(uri);
+  NS_ENSURE_SUCCESS( rv, rv );
 
   rv = TakePlaybackControl( nsnull );
   NS_ENSURE_SUCCESS( rv, rv );

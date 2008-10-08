@@ -107,7 +107,7 @@ public:
 
   // Setup for playback
   nsresult ProcessNewPosition();
-  nsresult Setup();
+  nsresult Setup(nsIURI *aURI = nsnull);
 
   // Set view with optional view position
   nsresult SetViewWithViewPosition(sbIMediaListView *aView, 

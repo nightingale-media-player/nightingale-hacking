@@ -27,13 +27,14 @@
 #include "nsISupports.idl"
 
 interface nsIArray;
+interface nsIURI;
 
 interface sbIMediacoreSequence;
 interface sbIMediacoreSequenceGenerator;
 interface sbIMediaItem;
 interface sbIMediaListView;
 
-[scriptable, uuid(1247f64b-c01d-4921-bc56-6a6c21729ded)]
+[scriptable, uuid(890bb5d1-022a-4bdc-86e8-c22ec7e383d1)]
 interface sbIMediacoreSequencer : nsISupports
 {
   const unsigned long MODE_FORWARD    = 0;
@@ -86,6 +87,11 @@ interface sbIMediacoreSequencer : nsISupports
    */
   void playView(in sbIMediaListView aView, 
                 [optional] in unsigned long aItemIndex);
+
+  /**
+   * \brief Play a single URL as a sequence.
+   */
+  void playURL(in nsIURI aURI);
 
   /**
    * \brief Play the sequence.

@@ -58,7 +58,7 @@ function sbRestartBox( title, message )
     restartbox_data.title = title;
     restartbox_data.message = message;
     restartbox_data.playing = state == sbIMediacoreStatus.STATUS_PLAYING || 
-                              state == sbIMediacoreStatus::STATUS_BUFFERING;
+                              state == sbIMediacoreStatus.STATUS_BUFFERING;
     restartbox_data.ret = 0;
     SBOpenModalDialog( "chrome://songbird/content/xul/restartBox.xul", "restartbox", "chrome,centerscreen", restartbox_data ); 
     var restartOnPlaybackEnd = SB_NewDataRemote( "restart.onplaybackend", null );

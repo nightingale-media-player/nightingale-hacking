@@ -636,7 +636,9 @@ sbMediacoreSequencer::UpdateDurationDataRemotes(PRUint64 aDuration)
     PRUint64 position = 0;
     
     rv = mPlaybackControl->GetPosition(&position);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if(NS_FAILED(rv)) {
+      position = 0;
+    }
 
     duration -= position;
   }
@@ -991,22 +993,30 @@ sbMediacoreSequencer::ProcessNewPosition()
 }
 
 nsresult 
-sbMediacoreSequencer::Setup()
+sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 {
-  nsCOMPtr<sbIMediaItem> item;
-  nsresult rv = GetItem(mSequence, mPosition, getter_AddRefs(item));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mCurrentItemIndex = mSequence[mPosition];
-
-  rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mCurrentItem = item;
-
   nsCOMPtr<nsIURI> uri;
-  rv = item->GetContentSrc(getter_AddRefs(uri));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaItem> item;
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  if(!aURI) {
+    rv = GetItem(mSequence, mPosition, getter_AddRefs(item));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mCurrentItemIndex = mSequence[mPosition];
+
+    rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mCurrentItem = item;
+
+    rv = item->GetContentSrc(getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    uri = aURI;
+  }
 
   nsCOMPtr<sbIMediacoreVoting> voting = 
     do_QueryReferent(mMediacoreManager, &rv);
@@ -1086,24 +1096,26 @@ sbMediacoreSequencer::Setup()
     //         items being played?
   }
 
+  // Fire before track change event
+  if(item) {
+    nsCOMPtr<nsIVariant> variant = sbNewVariant(item).get();
+    NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
+
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_TRACK_CHANGE, 
+                                       nsnull, 
+                                       variant, 
+                                       mCore, 
+                                       getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = DispatchMediacoreEvent(event);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Add listener to new core.
   nsCOMPtr<sbIMediacoreEventTarget> eventTarget = 
     do_QueryInterface(mCore, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Fire before track change event 
-  nsCOMPtr<nsIVariant> variant = sbNewVariant(item).get();
-  NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
-
-  nsCOMPtr<sbIMediacoreEvent> event;
-  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_TRACK_CHANGE, 
-                                     nsnull, 
-                                     variant, 
-                                     mCore, 
-                                     getter_AddRefs(event));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = DispatchMediacoreEvent(event);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = eventTarget->AddListener(this);
@@ -1137,22 +1149,25 @@ sbMediacoreSequencer::Setup()
   rv = UpdateURLDataRemotes(uri);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = SetMetadataDataRemotesFromItem(item);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(item) {
+    rv = SetMetadataDataRemotesFromItem(item);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  // Fire track change event
-  variant = sbNewVariant(item);
-  NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
+    // Fire track change event
+    nsCOMPtr<nsIVariant> variant = sbNewVariant(item).get();
+    NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_CHANGE, 
-                                     nsnull, 
-                                     variant, 
-                                     mCore, 
-                                     getter_AddRefs(event));
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_CHANGE, 
+                                       nsnull, 
+                                       variant, 
+                                       mCore, 
+                                       getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = DispatchMediacoreEvent(event);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = DispatchMediacoreEvent(event);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -1215,9 +1230,13 @@ nsresult
 sbMediacoreSequencer::StartWatchingView()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_STATE(mView);
 
   nsAutoMonitor mon(mMonitor);
+
+  // No view, we're probably playing single items
+  if(!mView) {
+    return NS_OK;
+  }
 
   nsresult rv = mView->GetMediaList(getter_AddRefs(mViewList));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1262,10 +1281,14 @@ nsresult
 sbMediacoreSequencer::StopWatchingView()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_STATE(mView);
 
   nsAutoMonitor mon(mMonitor);
-  
+
+  // No view, we're probably playing single items
+  if(!mView) {
+    return NS_OK;
+  }
+
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   if(mDelayedCheckTimer) {
@@ -1586,6 +1609,44 @@ sbMediacoreSequencer::PlayView(sbIMediaListView *aView,
   rv = Play();
   NS_ENSURE_SUCCESS(rv, rv);
   
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMediacoreSequencer::PlayURL(nsIURI *aURI) 
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  nsAutoMonitor mon(mMonitor);
+
+  mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
+  mIsWaitingForPlayback = PR_TRUE;
+
+  nsresult rv = ResetMetadataDataRemotes();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = Setup(aURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = Play();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdatePlayStateDataRemotes();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPlaybackControl->Play();
+
+  if(NS_FAILED(rv)) {
+    mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+    mIsWaitingForPlayback = PR_FALSE;
+
+    rv = UpdatePlayStateDataRemotes();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return rv;
+  }
+
   return NS_OK;
 }
 
@@ -1911,7 +1972,8 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
           rv = Previous();
         }
 
-        if(NS_FAILED(rv)) {
+        if(NS_FAILED(rv) ||
+           mSequence.empty()) {
           mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
           rv = StopSequenceProcessor();
