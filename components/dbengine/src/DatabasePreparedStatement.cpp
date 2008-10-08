@@ -96,7 +96,7 @@ sqlite3_stmt* CDatabasePreparedStatement::GetStatement(sqlite3 *db)
     const void *pzTail = nsnull;
     int retDB = sqlite3_prepare16_v2(db, PromiseFlatString(mSql).get(), (int)mSql.Length() * sizeof(PRUnichar), &mStatement, &pzTail);
     if(retDB != SQLITE_OK) {
-      NS_WARNING(PromiseFlatString(mSql).get());
+      NS_WARNING(NS_ConvertUTF16toUTF8(mSql).get());
       const char *szErr = sqlite3_errmsg(db);
       nsCAutoString log;
       log.Append(szErr);
