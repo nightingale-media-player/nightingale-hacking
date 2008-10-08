@@ -231,7 +231,8 @@ firstRunInstallAddOnsSvc.prototype = {
     } else {
       // Change the next button to an OK button.
       var okButton = this._wizardElem.getButton("next");
-      okButton.label = SBString("first_run.ok");
+      okButton.label = SBString("first_run.ok.label");
+      okButton.accessKey = SBString("first_run.ok.accesskey");
 
       // Hide the cancel button and show the OK button.
       this._wizardPageElem.setAttribute("hidecancel", "true");

@@ -33,6 +33,10 @@
   %globalDTD;
   <!ENTITY % wizardDTD SYSTEM "chrome://global/locale/wizard.dtd">
   %wizardDTD;
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  %brandDTD;
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  %songbirdDTD;
 ]>
 
 <bindings
@@ -310,6 +314,65 @@
     </implementation>
 
   </binding> <!-- sb-wizard-page" -->
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Songbird wizard buttons.
+   *
+   *   This binding is used to override the OS dependent wizard buttons to
+   * provide a single Songbird wizard button set for all OS'es.  This binding
+   * is derived from the Mac OS/X wizard buttons binding.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-wizard-buttons"
+           extends="chrome://global/content/bindings/wizard.xml#wizard-buttons">
+    <content>
+      <xul:vbox flex="1">
+        <xul:hbox class="wizard-buttons-btm">
+          <xul:button class="wizard-button"
+                      dlgtype="extra1"
+                      hidden="true"/>
+          <xul:button class="wizard-button" dlgtype="extra2" hidden="true"/>
+          <xul:button label="&wizard.button.cancel.label;"
+                      class="wizard-button"
+                      dlgtype="cancel"/>
+          <xul:spacer flex="1"/>
+          <xul:button label="&wizard.button.back.label;"
+                      accesskey="&wizard.button.back.accesskey;"
+                      class="wizard-button wizard-nav-button"
+                      dlgtype="back"/>
+          <xul:hbox class="wizard-label-box" align="center">
+            <xul:label class="wizard-page-label" xbl:inherits="value=pagestep"/>
+          </xul:hbox>
+          <xul:button label="&wizard.button.next.label;"
+                      accesskey="&wizard.button.next.accesskey;"
+                      class="wizard-button wizard-nav-button"
+                      dlgtype="next"
+                      default="true"
+                      xbl:inherits="hidden=lastpage"/>
+          <xul:button label="&wizard.button.finish.label;"
+                      class="wizard-button"
+                      dlgtype="finish"
+                      default="true"
+                      xbl:inherits="hidden=hidefinishbutton"/>
+        </xul:hbox>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <method name="onPageChange">
+        <body><![CDATA[
+          this.setAttribute("hidefinishbutton",
+                            !(this.getAttribute("lastpage") == "true"));
+        ]]></body>
+      </method>
+    </implementation>
+
+  </binding> <!-- sb-wizard-buttons -->
 
 </bindings>
 

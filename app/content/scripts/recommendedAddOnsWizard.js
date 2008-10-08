@@ -192,7 +192,8 @@ var recommendedAddOnsWizard = {
     } else {
       // Change the next button to an OK button.
       var okButton = this._wizardElem.getButton("next");
-      okButton.label = SBString("first_run.ok");
+      okButton.label = SBString("recommended_add_ons.ok.label");
+      okButton.accessKey = SBString("recommended_add_ons.ok.accesskey");
 
       // Hide the cancel button and show the OK button.
       var wizardPageElem =

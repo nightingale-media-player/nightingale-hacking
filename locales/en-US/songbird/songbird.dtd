@@ -444,12 +444,6 @@
 
 <!-- First-run wizard entities. -->
 <!ENTITY first_run.title                  "&brandShortName; Setup">
-<!ENTITY first_run.button.back.label      "Go Back">
-<!ENTITY first_run.button.back.accesskey  "B">
-<!ENTITY first_run.button.cancel.label    "Cancel">
-<!ENTITY first_run.button.next.label      "Continue">
-<!ENTITY first_run.button.next.accesskey  "C">
-<!ENTITY first_run.button.finish.label    "Finish">
 
 <!-- First-run add-ons entities. -->
 <!ENTITY first_run.add_ons.header.label      "Recommended Add-ons">
@@ -534,3 +528,12 @@
 <!ENTITY albumart.displaypane.selected.menu.paste "Paste">
 <!ENTITY albumart.displaypane.selected.menu.clear "Clear">
 <!ENTITY albumart.coverpreview.title "Album Art">
+
+<!-- Wizard entities. -->
+<!ENTITY wizard.button.back.label      "Go Back">
+<!ENTITY wizard.button.back.accesskey  "B">
+<!ENTITY wizard.button.cancel.label    "Cancel">
+<!ENTITY wizard.button.next.label      "Continue">
+<!ENTITY wizard.button.next.accesskey  "C">
+<!ENTITY wizard.button.finish.label    "Finish">
+
