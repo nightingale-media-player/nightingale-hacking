@@ -343,7 +343,7 @@
 <!ENTITY mediapage.next.key            "S" >
 <!ENTITY trackeditor.key               "E" >
 <!ENTITY trackeditor.key2              "I" >
-<!ENTITY sanitize.key                  "Del" >
+<!ENTITY sanitize.keycode              "VK_DELETE" >
 <!ENTITY menu.viewpagesource.key       "U" >
 <!ENTITY downloadmgr.key               "J" >
 

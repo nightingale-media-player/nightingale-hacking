@@ -359,7 +359,7 @@
       <key id="switch-feathers-key" modifiers="accel,shift" key="&switchfeathers.key;" oncommand="toggleNextFeatherLayout();"/>
       <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
       <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
-      <key id="sanitize-key" modifiers="accel,shift" key="&sanitize.key;" oncommand="doMenu('menu.clearprivatedata');"/>
+      <key id="sanitize-key" modifiers="accel,shift" keycode="&sanitize.keycode;" oncommand="doMenu('menuitem_tools_clearprivatedata');"/>
       <key id="downloadmgr-key" modifiers="accel,shift" key="&downloadmgr.key;" oncommand="doMenu('menu_downloadmgr');"/>
       
       <!-- player controls -->
