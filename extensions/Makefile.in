@@ -31,7 +31,6 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = xpcom_helloworld \
           AlbumArt \
-          AlbumArtManager \
           shoutcast \
           lastfm \
           concerts \
