@@ -31,6 +31,7 @@
 
 // INCLUDES ===================================================================
 #include "DatabaseEngine.h"
+#include "DatabasePreparedStatement.h"
 
 #include <nsCOMPtr.h>
 #include <nsIFile.h>
@@ -134,283 +135,6 @@ void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB
 
   return;
 }
-
-int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger)
-{
-  int ret = SQLITE_OK;
-
-  CDatabaseQuery *pQuery = reinterpret_cast<CDatabaseQuery *>(pData);
-
-  if(pQuery)
-  {
-    switch(nOp)
-    {
-      case SQLITE_CREATE_INDEX:
-      {
-      }
-      break;
-
-      case SQLITE_CREATE_TABLE:
-      {
-      }
-      break;
-
-      case SQLITE_CREATE_TEMP_INDEX:
-      {
-      }
-      break;
-
-      case SQLITE_CREATE_TEMP_TABLE:
-      {
-      }
-      break;
-
-      case SQLITE_CREATE_TEMP_TRIGGER:
-      {
-      }
-      break;
-
-      case SQLITE_CREATE_TEMP_VIEW:
-      {
-      }
-      break;
-
-      case SQLITE_CREATE_TRIGGER:
-      {
-      }
-      break;
-
-      case SQLITE_CREATE_VIEW:
-      {
-      }
-      break;
-
-      case SQLITE_DELETE:
-      {
-        if(pArgA && pDBName && strnicmp("sqlite_", pArgA, 7))
-        {
-          pQuery->m_HasChangedDataOfPersistQuery = PR_TRUE;
-
-          {
-            sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
-            nsCAutoString strDBName(pDBName);
-
-            if(strDBName.EqualsLiteral("main"))
-            {
-              nsAutoString strDBGUID;
-              pQuery->GetDatabaseGUID(strDBGUID);
-              strDBName = NS_ConvertUTF16toUTF8(strDBGUID);
-            }
-
-            CDatabaseQuery::modifieddata_t::iterator itDB = pQuery->m_ModifiedData.find(strDBName);
-            if(itDB != pQuery->m_ModifiedData.end()) {
-              itDB->second.insert(nsCAutoString(pArgA));
-            } else {
-              CDatabaseQuery::modifiedtables_t modifiedTables;
-              modifiedTables.insert(nsCAutoString(pArgA));
-              pQuery->m_ModifiedData.insert(
-                std::make_pair<nsCString, CDatabaseQuery::modifiedtables_t>(
-                strDBName, modifiedTables));
-            }
-          }
-        }
-      }
-      break;
-
-      case SQLITE_DROP_INDEX:
-      {
-      }
-      break;
-
-      case SQLITE_DROP_TABLE:
-      {
-        if(pArgA && strnicmp("sqlite_", pArgA, 7))
-        {
-          pQuery->m_HasChangedDataOfPersistQuery = PR_TRUE;
-
-          {
-            sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
-            nsCAutoString strDBName(pDBName);
-
-            if(strDBName.EqualsLiteral("main"))
-            {
-              nsAutoString strDBGUID;
-              pQuery->GetDatabaseGUID(strDBGUID);
-              strDBName = NS_ConvertUTF16toUTF8(strDBGUID);
-            }
-
-            CDatabaseQuery::modifieddata_t::iterator itDB = pQuery->m_ModifiedData.find(strDBName);
-            if(itDB != pQuery->m_ModifiedData.end()) {
-              itDB->second.insert(nsCAutoString(pArgA));
-            } else {
-              CDatabaseQuery::modifiedtables_t modifiedTables;
-              modifiedTables.insert(nsCAutoString(pArgA));
-              pQuery->m_ModifiedData.insert(
-                std::make_pair<nsCString, CDatabaseQuery::modifiedtables_t>(
-                strDBName, modifiedTables));
-            }
-          }
-        }
-      }
-      break;
-
-      case SQLITE_DROP_TEMP_INDEX:
-      {
-      }
-      break;
-
-      case SQLITE_DROP_TEMP_TABLE:
-      {
-        if(pArgA && strnicmp("sqlite_", pArgA, 7))
-        {
-          pQuery->m_HasChangedDataOfPersistQuery = PR_TRUE;
-
-          {
-            sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
-            nsCAutoString strDBName(pDBName);
-
-            CDatabaseQuery::modifieddata_t::iterator itDB = pQuery->m_ModifiedData.find(strDBName);
-            if(itDB != pQuery->m_ModifiedData.end()) {
-              itDB->second.insert(nsCAutoString(pArgA));
-            } else {
-              CDatabaseQuery::modifiedtables_t modifiedTables;
-              modifiedTables.insert(nsCAutoString(pArgA));
-              pQuery->m_ModifiedData.insert(
-                std::make_pair<nsCString, CDatabaseQuery::modifiedtables_t>(
-                strDBName, modifiedTables));
-            }
-          }
-        }
-      }
-      break;
-
-      case SQLITE_DROP_TEMP_TRIGGER:
-      {
-      }
-      break;
-
-      case SQLITE_DROP_TEMP_VIEW:
-      {
-      }
-      break;
-
-      case SQLITE_DROP_TRIGGER:
-      {
-      }
-      break;
-
-      case SQLITE_DROP_VIEW:
-      {
-      }
-      break;
-
-      case SQLITE_INSERT:
-      {
-        if(pArgA && strnicmp("sqlite_", pArgA, 7))
-        {
-          pQuery->m_HasChangedDataOfPersistQuery = PR_TRUE;
-
-          {
-            sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
-            nsCAutoString strDBName(pDBName);
-
-            if(strDBName.EqualsLiteral("main"))
-            {
-              nsAutoString strDBGUID;
-              pQuery->GetDatabaseGUID(strDBGUID);
-              strDBName = NS_ConvertUTF16toUTF8(strDBGUID);
-            }
-
-            CDatabaseQuery::modifieddata_t::iterator itDB = pQuery->m_ModifiedData.find(strDBName);
-            if(itDB != pQuery->m_ModifiedData.end()) {
-              itDB->second.insert(nsCAutoString(pArgA));
-            } else {
-              CDatabaseQuery::modifiedtables_t modifiedTables;
-              modifiedTables.insert(nsCAutoString(pArgA));
-              pQuery->m_ModifiedData.insert(
-                std::make_pair<nsCString, CDatabaseQuery::modifiedtables_t>(
-                strDBName, modifiedTables));
-            }
-          }
-        }
-      }
-      break;
-
-      case SQLITE_PRAGMA:
-      {
-      }
-      break;
-
-      case SQLITE_READ:
-      {
-        //If there's a table name but no column name, it means we're doing the initial SELECT on the table.
-        //This is a good time to check if the query is supposed to be persistent and insert it
-        //into the list of persistent queries.
-        if(pQuery->m_PersistentQuery && strnicmp( "sqlite_", pArgA, 7 ) )
-        {
-          nsCOMPtr<sbIDatabaseEngine> p = do_GetService(SONGBIRD_DATABASEENGINE_CONTRACTID);
-          if(p) p->AddPersistentQuery( pQuery, nsCAutoString(pArgA) );
-        }
-      }
-      break;
-
-      case SQLITE_SELECT:
-      {
-      }
-      break;
-
-      case SQLITE_TRANSACTION:
-      {
-      }
-      break;
-
-      case SQLITE_UPDATE:
-      {
-        if(pArgA && pArgB && pDBName)
-        {
-          pQuery->m_HasChangedDataOfPersistQuery = PR_TRUE;
-
-          {
-            sbSimpleAutoLock lock(pQuery->m_pModifiedDataLock);
-            nsCAutoString strDBName(pDBName);
-
-            if(strDBName.EqualsLiteral("main"))
-            {
-              nsAutoString strDBGUID;
-              pQuery->GetDatabaseGUID(strDBGUID);
-              strDBName = NS_ConvertUTF16toUTF8(strDBGUID);
-            }
-
-            CDatabaseQuery::modifieddata_t::iterator itDB = pQuery->m_ModifiedData.find(strDBName);
-            if(itDB != pQuery->m_ModifiedData.end()) {
-              itDB->second.insert(nsCAutoString(pArgA));
-            } else {
-              CDatabaseQuery::modifiedtables_t modifiedTables;
-              modifiedTables.insert(nsCAutoString(pArgA));
-              pQuery->m_ModifiedData.insert(
-                std::make_pair<nsCString, CDatabaseQuery::modifiedtables_t>(
-                strDBName, modifiedTables));
-            }
-          }
-        }
-      }
-      break;
-
-      case SQLITE_ATTACH:
-      {
-      }
-      break;
-
-      case SQLITE_DETACH:
-      {
-      }
-      break;
-
-    }
-  }
-
-  return ret;
-} //SQLiteAuthorizer
 
 /*
  * Parse a path string in the form of "n1.n2.n3..." where n is an integer.
@@ -1105,9 +829,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 //-----------------------------------------------------------------------------
 /*static*/ void PR_CALLBACK CDatabaseEngine::QueryProcessor(CDatabaseEngine* pEngine,
                                                             QueryProcessorThread *pThread)
-{
-  NS_NAMED_LITERAL_STRING(strSelectToken, "SELECT");
-
+{  
   if(!pEngine ||
      !pThread ) {
     NS_WARNING("Called QueryProcessor without an engine or thread!!!!");
@@ -1187,14 +909,23 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
 
     for(PRUint32 currentQuery = 0; currentQuery < nQueryCount && !pQuery->m_IsAborting; ++currentQuery)
     {
-      int retDB = 0;
-      sqlite3_stmt *pStmt = nsnull;
-
-      nsAutoString strQuery;
       nsAutoPtr<bindParameterArray_t> pParameters;
-      const char *pzTail = nsnull;
-
-      pQuery->GetQuery(currentQuery, strQuery);
+      
+      int retDB = 0; // sqlite return code.
+      
+      nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement;
+      nsresult rv = pQuery->GetQuery(currentQuery, getter_AddRefs(preparedStatement));
+      if (NS_FAILED(rv)) {
+        LOG(("DBE: Failed to get a prepared statement from the Query object."));
+        continue;
+      }
+      nsString strQuery;
+      preparedStatement->GetQueryString(strQuery);
+      // cast the prepared statement to its C implementation. this is a really lousy thing to do to an interface pointer.
+      // since it mostly prevents ever being able to provide an alternative implementation.
+      CDatabasePreparedStatement *actualPreparedStatement = static_cast<CDatabasePreparedStatement*>(preparedStatement.get());
+      sqlite3_stmt *pStmt = actualPreparedStatement->GetStatement(pThread->m_pHandle);
+      
       
       PR_Lock(pQuery->m_CurrentQueryLock);
       pQuery->m_CurrentQuery = currentQuery;
@@ -1209,6 +940,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
         //rowid's that do get changed. We are notified of rowid's that are modified
         //using the sqlite3_update_hook function that we call to register a callback
         //that enables tracking of all data update in the database.
+        NS_NAMED_LITERAL_STRING(strSelectToken, "SELECT");
         PRInt32 selectOffset = strQuery.Find(strSelectToken, 0, CaseInsensitiveCompare);
         if(selectOffset > -1)
         {
@@ -1223,34 +955,7 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
       nsAutoString dbName;
       pQuery->GetDatabaseGUID(dbName);
 
-      retDB = sqlite3_set_authorizer(pDB, SQLiteAuthorizer, pQuery);
-      if(retDB != SQLITE_OK) {
-#if defined(HARD_SANITY_CHECK)
-        const char *szErr = sqlite3_errmsg(pDB);
-        nsCAutoString log;
-        log.Append(szErr);
-        log.AppendLiteral("\n");
-        NS_WARNING(log.get());
-#endif
-        continue;
-      }
-
       sqlite3_update_hook(pDB, SQLiteUpdateHook, pQuery);
-
-      nsCString cStrQuery = NS_ConvertUTF16toUTF8(strQuery);
-      retDB = sqlite3_prepare(pDB, cStrQuery.get(), (int)cStrQuery.Length(), 
-                              &pStmt, &pzTail);
-
-      if(retDB != SQLITE_OK) {
-#if defined(HARD_SANITY_CHECK)
-        const char *szErr = sqlite3_errmsg(pDB);
-        nsCAutoString log;
-        log.Append(szErr);
-        log.AppendLiteral("\n");
-        NS_WARNING(log.get());
-#endif
-        continue;
-      }
 
       BEGIN_PERFORMANCE_LOG(strQuery, dbName);
 
@@ -1549,21 +1254,6 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
         pRes->ClearResultSet();
       }
 
-      //Always release the statement.
-      retDB = sqlite3_finalize(pStmt);
-
-#if defined(HARD_SANITY_CHECK)
-      if(retDB != SQLITE_OK)
-      {
-        const char *szErr = sqlite3_errmsg(pDB);
-        nsCAutoString log;
-        log.Append(szErr);
-        log.AppendLiteral("\nThe query that caused the error is:\n");
-        log.Append(NS_LossyConvertUTF16toASCII(strQuery));
-        log.AppendLiteral("\n");
-        NS_WARNING(log.get());
-      }
-#endif
     }
 
     //Whatever happened, the query is done running now.
@@ -1808,11 +1498,20 @@ void CDatabaseEngine::DoSimpleCallback(CDatabaseQuery *pQuery)
   nsCOMArray<sbIDatabaseSimpleQueryCallback> callbackSnapshot;
 
   nsCOMPtr<sbIDatabaseResult> pDBResult;
-  nsAutoString strGUID, strQuery;
+  nsAutoString strGUID;
 
   pQuery->GetResultObject(getter_AddRefs(pDBResult));
   pQuery->GetDatabaseGUID(strGUID);
-  pQuery->GetQuery(0, strQuery);
+
+  nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement;
+  nsresult rv = pQuery->GetQuery(0, getter_AddRefs(preparedStatement));
+  if (NS_FAILED(rv)) {
+    LOG(("Couldn't get the prepared statement from inside the simple callback.\n"));
+    return;
+  }
+  
+  nsString strQuery;
+  preparedStatement->GetQueryString(strQuery);
 
   PR_Lock(pQuery->m_pPersistentCallbackListLock);
   pQuery->m_PersistentCallbackList.EnumerateRead(EnumSimpleCallback, &callbackSnapshot);

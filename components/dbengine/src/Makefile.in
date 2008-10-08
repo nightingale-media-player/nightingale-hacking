@@ -123,6 +123,7 @@ C_INCLUDES = $(srcdir) \
 CPP_SRCS = DatabaseEngineComponent.cpp \
            DatabaseEngine.cpp \
            DatabaseQuery.cpp \
+           DatabasePreparedStatement.cpp \
            DatabaseResult.cpp \
            $(NULL)
 

@@ -36,7 +36,6 @@ SONGBIRD_TESTS = $(srcdir)/test_bind.js \
                  $(srcdir)/test_bug6514.js \
                  $(srcdir)/test_nullresultvalue.js \
                  $(srcdir)/test_tree_collate.js \
-                 $(srcdir)/test_selective_persistent.js \
                  $(srcdir)/test_rollinglimit.js \
                  $(NULL)
 

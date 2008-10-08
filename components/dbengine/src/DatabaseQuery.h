@@ -46,6 +46,7 @@ class CDatabaseQuery;
 #include <prmon.h>
 
 #include <nsCOMPtr.h>
+#include <nsCOMArray.h>
 #include <nsTArray.h>
 #include <nsStringGlue.h>
 #include <nsIClassInfo.h>
@@ -53,6 +54,7 @@ class CDatabaseQuery;
 #include <nsHashKeys.h>
 
 #include "sbIDatabaseQuery.h"
+#include "sbIDatabasePreparedStatement.h"
 #include "DatabaseResult.h"
 
 // DEFINES ====================================================================
@@ -151,9 +153,8 @@ protected:
   PRLock* m_pDatabaseGUIDLock;
   nsString m_DatabaseGUID;
 
-  typedef std::vector<nsString> dbquerylist_t;
   PRLock* m_pDatabaseQueryListLock;
-  dbquerylist_t m_DatabaseQueryList;
+  nsCOMArray<sbIDatabasePreparedStatement> m_DatabaseQueryList;
 
   PRMonitor* m_pQueryRunningMonitor;
   PRBool m_QueryHasCompleted;

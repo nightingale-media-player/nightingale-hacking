@@ -34,6 +34,7 @@
 
 interface nsIURI;
 interface sbIDatabaseResult;
+interface sbIDatabasePreparedStatement;
 
 /**
  * \interface sbIDatabaseSimpleQueryCallback 
@@ -44,10 +45,6 @@ interface sbIDatabaseResult;
  * Clients that simply need to be informed when a query has completed may
  * implement this interface and pass it to 
  * sbIDatabaseQuery::addSimpleQueryCallback().
- *
- * For persistent queries, the callback will be called every time the system
- * detects that the queried table has been changed and has executed the query
- * again.
  *
  * NOTE: The onQueryEnd() method is called from a database thread.
  *
@@ -313,6 +310,29 @@ interface sbIDatabaseQuery : nsISupports
   void addQuery(in AString strQuery);
 
   /**
+   * \brief Create a prepared statement object to reduce overhead for repeated queries.
+   *
+   * This method only creates the object, and does not actually compile the statement until
+   * first execution. As of first execution, the sqlite database pointer becomes fixed, and 
+   * from that point on, it will return null if the Engine attempts to execute it via
+   * a different database engine.
+   *
+   * See: http://www.sqlite.org/lang.html for supported query syntax.
+   *
+   * \param strQuery The query string
+   */
+  sbIDatabasePreparedStatement prepareQuery(in AString strQuery);
+  
+  /**
+   * \brief Add a prepared query to the queue
+   *
+   * This method enqueues a PreparedStatement prepared via prepareQuery().
+   *
+   * \param PreparedStatement The prepared query. Must be prepared for use with this Query object.
+   */
+  void addPreparedStatement(in sbIDatabasePreparedStatement PreparedStatement);
+
+  /**
    * \brief Return the number of query strings enqueued for execution
    *
    * \return The number of query strings enqueued
@@ -320,11 +340,12 @@ interface sbIDatabaseQuery : nsISupports
   unsigned long getQueryCount();
 
   /**
-   * \brief Get the query string at the Nth index
+   * \brief Get the query at the Nth index
    *
    * \param nIndex The index into the queue
+   * \return The Prepared Query.
    */
-  AString getQuery(in unsigned long nIndex);
+  sbIDatabasePreparedStatement getQuery(in unsigned long nIndex);
 
   /**
    * \brief Clear out the query and make it all sparkly new

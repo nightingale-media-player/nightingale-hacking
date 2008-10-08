@@ -32,6 +32,7 @@
 // INCLUDES ===================================================================
 #include "DatabaseQuery.h"
 #include "DatabaseEngine.h"
+#include "DatabasePreparedStatement.h"
 
 #include <prlog.h>
 #include <prmem.h>
@@ -478,9 +479,36 @@ NS_IMETHODIMP CDatabaseQuery::GetDatabaseGUID(nsAString &_retval)
 /* void AddQuery (in wstring strQuery); */
 NS_IMETHODIMP CDatabaseQuery::AddQuery(const nsAString &strQuery)
 {
+  // First, we need to create a prepared statement.
+  nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement;
+  nsresult rv = PrepareQuery(strQuery, getter_AddRefs(preparedStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = AddPreparedStatement(preparedStatement);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+} //AddQuery
+
+//-----------------------------------------------------------------------------
+/* sbIPreparedStatement PrepareQuery (in wstring strQuery); */
+NS_IMETHODIMP CDatabaseQuery::PrepareQuery(const nsAString &strQuery, sbIDatabasePreparedStatement **_retval)
+{  
+  nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement = new CDatabasePreparedStatement(strQuery);
+  NS_ENSURE_TRUE(preparedStatement, NS_ERROR_OUT_OF_MEMORY);
+  preparedStatement.forget(_retval);
+
+  return NS_OK;
+} //AddQuery
+
+NS_IMETHODIMP CDatabaseQuery::AddPreparedStatement(sbIDatabasePreparedStatement *preparedStatement) 
+{
+  NS_ENSURE_ARG_POINTER(preparedStatement);
+
   PR_Lock(m_pDatabaseQueryListLock);
-  m_DatabaseQueryList.push_back(PromiseFlatString(strQuery));
+  m_DatabaseQueryList.AppendObject(preparedStatement);
   PR_Unlock(m_pDatabaseQueryListLock);
+
 
   // Also add an element to the bind parameters array
   PR_Lock(m_pBindParametersLock);
@@ -488,9 +516,9 @@ NS_IMETHODIMP CDatabaseQuery::AddQuery(const nsAString &strQuery)
   PR_Unlock(m_pBindParametersLock);
 
   NS_ENSURE_TRUE(m_LastBindParameters, NS_ERROR_OUT_OF_MEMORY);
-
+  
   return NS_OK;
-} //AddQuery
+}
 
 //-----------------------------------------------------------------------------
 /* PRInt32 GetQueryCount (); */
@@ -498,25 +526,31 @@ NS_IMETHODIMP CDatabaseQuery::GetQueryCount(PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   PR_Lock(m_pDatabaseQueryListLock);
-  *_retval = (PRInt32)m_DatabaseQueryList.size();
+  *_retval = (PRInt32)m_DatabaseQueryList.Count();
   PR_Unlock(m_pDatabaseQueryListLock);
   return NS_OK;
 } //GetQueryCount
 
 //-----------------------------------------------------------------------------
-/* wstring GetQuery (in PRInt32 nIndex); */
-NS_IMETHODIMP CDatabaseQuery::GetQuery(PRUint32 nIndex, nsAString &_retval)
+/* sbIDatabasePreparedStatement GetQuery (in PRInt32 nIndex); */
+NS_IMETHODIMP CDatabaseQuery::GetQuery(PRUint32 nIndex, sbIDatabasePreparedStatement **_retval)
 {
+  nsresult rv = NS_OK;
+  
   NS_ENSURE_ARG_MIN(nIndex, 0);
+  NS_ENSURE_ARG_POINTER(_retval);
 
   PR_Lock(m_pDatabaseQueryListLock);
 
-  if((PRUint32)nIndex < m_DatabaseQueryList.size())
-    _retval = m_DatabaseQueryList[nIndex];
-
+  if((PRUint32)nIndex < m_DatabaseQueryList.Count()) {
+    NS_ADDREF(*_retval = m_DatabaseQueryList[nIndex]);
+  }
+  else {
+    rv = NS_ERROR_ILLEGAL_VALUE;
+  }
   PR_Unlock(m_pDatabaseQueryListLock);
 
-  return NS_OK;
+  return rv;
 } //GetQuery
 
 //-----------------------------------------------------------------------------
@@ -540,7 +574,7 @@ NS_IMETHODIMP CDatabaseQuery::ResetQuery()
   PR_Lock(m_StateLock);
 
   PR_Lock(m_pDatabaseQueryListLock);
-  m_DatabaseQueryList.clear();
+  m_DatabaseQueryList.Clear();
   PR_Unlock(m_pDatabaseQueryListLock);
 
   // Also clear parameters array
