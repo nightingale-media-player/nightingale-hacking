@@ -31,7 +31,9 @@ if (typeof(SBProperties) == "undefined") {
 
 if (typeof mashTape == "undefined")
 	var mashTape = {
-		initialised : false
+		initialised : false,
+		expanded: false,
+		height: null,
 	}
 
 /*
@@ -139,6 +141,22 @@ mashTape.init = function(e) {
 	mashTape.displayPane.enableTabs(tabpanels);
 
 	mashTape.iframeLoadCount = 6;
+
+	// Setup the display pane maximize button
+	var dpHeader = mashTape.displayPane.tabBar.parentNode;
+	var menuButton = dpHeader.getElementsByTagName("button")[0];
+	if (menuButton.id != "mashTape-expand-display-pane") {
+		var maxButton = document.createElement("button");
+		maxButton.id = "mashTape-expand-display-pane";
+		maxButton.style.margin = 0;
+		maxButton.style.border = "none";
+		maxButton.style.outline = "none";
+		maxButton.style.backgroundImage = "none";
+		maxButton.style.listStyleImage =
+			"url('chrome://mashtape/skin/expand.png')";
+		maxButton.addEventListener("click", mashTape.maximiseDisplayPane,false);
+		dpHeader.insertBefore(maxButton, menuButton);
+	}
 
 	var dpTabBar = mashTape.displayPane.tabBar;
 	// XXX holy hokey
@@ -743,8 +761,7 @@ mashTape.displayCallback.prototype =  {
 				var splitter =
 						document.getElementById("mashTape-flash-splitter");
 				mashTape.updateFlash(provider, results);
-				if (results != null &&
-				!mashTape.flashDetailFrame.contentWindow.mashTapeVideo.expanded
+				if (results != null && !mashTape.expanded
 					&& splitter.getAttribute("state") == "collapsed")
 				{
 					splitter.setAttribute("state", "open");
@@ -1869,6 +1886,43 @@ mashTape.updateFlash = function(provider, results) {
 /****************************************************************************
  * Miscellaneous routines
  ****************************************************************************/
+// Maximise the display pane
+mashTape.maximiseDisplayPane = function(ev) {
+	var splitter = document.getElementById("mashTape-flash-splitter");
+	var dp = mashTape.displayPane;
+
+	if (mashTape.expanded) {
+		// we're already expanded, so restore to the non-expanded state
+		mashTape.expanded = false;
+		
+		// open the splitter back up
+		splitter.setAttribute("state", "open");
+		
+		// restore the height
+		if (mashTape.height != null)
+			dp.height = mashTape.height;
+	} else {
+		// expand!
+		mashTape.expanded = true;
+
+		// collapse the splitter
+		splitter.setAttribute("state", "collapsed");
+		
+		// get the height of the main tabbrowser
+		var mainDoc = Cc['@mozilla.org/appshell/window-mediator;1']
+			.getService(Ci.nsIWindowMediator)
+			.getMostRecentWindow('Songbird:Main').window.document;
+		var tabbrowser = mainDoc.getElementById("content");
+		var tabstyle = mainDoc.defaultView.getComputedStyle(tabbrowser, "");
+
+		// save our old height
+		mashTape.height = dp.height;
+		
+		// now go big!
+		dp.height = parseInt(dp.height) + parseInt(tabstyle.height);
+	}
+}
+
 // Our listener for auto-hiding mashTape when switching to web views
 mashTape.locationListener = {
 	QueryInterface: function(aIID) {

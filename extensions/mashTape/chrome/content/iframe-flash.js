@@ -66,43 +66,4 @@ var mashTapeVideo = {
 			return;
 		mashTapeVideo.resumeSongbird();
 	},
-
-	// expand or collapse.  When expanded, we hide the index and the metadata
-	// giving the whole pane to the flash video itself
-	// make the display pane height go full too
-	toggleExpand: function(expand) {
-		if (!this.expanded && !expand)
-			this.height = null;
-		if (expand != null)
-			this.expanded = !expand;
-		var splitter = window.parent.document
-			.getElementById("mashTape-flash-splitter");
-		var metadata = document.getElementById("content");
-		var img = document.getElementById("toggle-expand-img");
-		var dp = window.parent.mashTape.displayPane;
-
-		if (this.expanded) {
-			//metadata.style.visibility = "visible";
-			splitter.setAttribute("state", "open");
-			img.src = "chrome://mashtape/skin/video_expand.png";
-			this.expanded = false;
-			
-			if (this.height != null)
-				dp.height = this.height;
-		} else {
-			//metadata.style.visibility = "collapse";
-			splitter.setAttribute("state", "collapsed");
-			img.src = "chrome://mashtape/skin/video_collapse.png";
-			this.expanded = true;
-			
-			var mainDoc = Cc['@mozilla.org/appshell/window-mediator;1']
-				.getService(Ci.nsIWindowMediator)
-				.getMostRecentWindow('Songbird:Main').window.document;
-			var tabbrowser = mainDoc.getElementById("content");
-			var tabstyle = mainDoc.defaultView.getComputedStyle(tabbrowser, "");
-
-			this.height = dp.height;
-			dp.height = parseInt(dp.height) + parseInt(tabstyle.height);
-		}
-	},
 }
