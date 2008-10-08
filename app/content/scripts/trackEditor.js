@@ -51,7 +51,7 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-const ARTWORK_NO_COVER = "chrome://songbird/skin/album-art/default-cover.png";
+const ARTWORK_NO_COVER = "chrome://songbird/skin/album-art/drop-target.png";
 
 
 /******************************************************************************
@@ -1796,8 +1796,12 @@ TrackEditorArtwork.prototype = {
 
     // Label for Drag here text
     var dragLabel = document.createElement("label");
-    dragLabel.setAttribute("class", "artDragLabel");
-    dragLabel.setAttribute("value", SBString("trackeditor.artwork.drag"));
+    dragLabel.setAttribute("class", "drop-message");
+
+    // Text value to be added to the label as a child
+    var dragLabelValue
+    dragLabelValue = document.createTextNode(SBString("trackeditor.artwork.drag"));
+    dragLabel.appendChild(dragLabelValue);
 
     // Create a wrapper box around the image for the stack
     var imageVBox = document.createElement("vbox");

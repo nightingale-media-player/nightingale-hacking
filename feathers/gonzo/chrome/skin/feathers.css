@@ -692,6 +692,9 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
   color:rgb(120,120,120);
 }
 
+.drop-message {
+  color:rgb(120,120,120);
+}
 
 /******************************************************************************
 > SPLITTERS

@@ -370,3 +370,7 @@ html|*.numberbox-input {
 
 
 
+.drop-message {
+  text-align: center;
+  margin:15px;
+}

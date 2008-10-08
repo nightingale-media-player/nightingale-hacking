@@ -45,7 +45,7 @@ const DISPLAY_PANE_CONTENTURL = "chrome://albumart/content/albumArtPane.xul";
 const DISPLAY_PANE_ICON       = "chrome://albumart/skin/icon-albumart.png";
 
 // Default cover for items missing the cover
-const DEFAULT_COVER = "chrome://songbird/skin/album-art/default-cover.png";
+const DROP_TARGET_IMAGE = "chrome://songbird/skin/album-art/drop-target.png";
 
 // Constants for toggling between Selected and Playing states
 // These releate to the deck
@@ -298,14 +298,14 @@ var AlbumArt = {
       // Hide the Drag Here box
       albumArtSelectedDragBox.setAttribute("hidden", true);
       // Set the image to the default cover
-      aNewURL = DEFAULT_COVER;
+      aNewURL = DROP_TARGET_IMAGE;
     } else if (aNewURL == "") {
      // Show the Drag Here box
       albumArtSelectedDragBox.removeAttribute("hidden");
       // Hide the not selected message.
       albumArtNotSelectedBox.setAttribute("hidden", true);
       // Set the image to the default cover
-      aNewURL = DEFAULT_COVER;
+      aNewURL = DROP_TARGET_IMAGE;
     } else {
       // Hide the not selected message.
       albumArtNotSelectedBox.setAttribute("hidden", true);
@@ -332,14 +332,14 @@ var AlbumArt = {
       // Show the not playing message.
       albumArtNotPlayingBox.removeAttribute("hidden");
       // Set the image to the default cover
-      aNewURL = DEFAULT_COVER;
+      aNewURL = DROP_TARGET_IMAGE;
     } else if (aNewURL == "") {
       // Show the Drag Here box
       albumArtPlayingDragBox.removeAttribute("hidden");
       // Hide the not playing message.
       albumArtNotPlayingBox.setAttribute("hidden", true);
       // Set the image to the default cover
-      aNewURL = DEFAULT_COVER;
+      aNewURL = DROP_TARGET_IMAGE;
     } else {
       // Hide the not playing message.
       albumArtNotPlayingBox.setAttribute("hidden", true);
@@ -364,7 +364,7 @@ var AlbumArt = {
       return;
     }
     
-    if (aData == DEFAULT_COVER) {
+    if (aData == DROP_TARGET_IMAGE) {
       aData = "";
     }
     AlbumArt.changeNowPlaying(aData);
@@ -414,7 +414,7 @@ var AlbumArt = {
     // set the width and height of the images to the width and height of the
     // window so the image does not stretch out of bounds on the first load.
     var newImg = new Image();
-    newImg.src = DEFAULT_COVER;
+    newImg.src = DROP_TARGET_IMAGE;
     var windowWidth = window.innerWidth;
     var windowHeight = window.innerHeight;
     for (var cIndex = 0; cIndex < AlbumArt._stateInfo.length; cIndex++) {

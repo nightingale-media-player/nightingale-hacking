@@ -24,97 +24,20 @@
 //
  */
 
-/**
- * Not Playing part of the stack
- */
-.albumArtNotPlayingContainer {
-  -moz-box-flex: 1;
-  -moz-box-align: center;
-  -moz-box-pack: center;
-  background-color:rgb(220,220,220);
-  background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');
-}
 
-.albumArtNotPlayingMessage {
-  -moz-border-radius:8px;
-  background-color:rgb(235,235,235);
-  padding:10px;
-  color:gray;
-  border:1px solid rgb(200,200,200);
-}
-
-/**
- * Now Playing part of the stack
- */
+.albumArtNotSelectedContainer,
+.albumArtNowSelectedContainer,
+.albumArtNotPlayingContainer,
 .albumArtNowPlayingContainer {
   -moz-box-flex: 1;
   -moz-box-align: center;
   -moz-box-pack: center;
-  background-color:rgb(255,255,255);
-  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
-}
-
-
-/**
- * Not Selected part of the stack
- */
-.albumArtNotSelectedContainer {
-  -moz-box-flex: 1;
-  -moz-box-align: center;
-  -moz-box-pack: center;
-  background-color:rgb(220,220,220);
   background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');
 }
 
-.albumArtNotSelectedMessage {
-  -moz-border-radius:8px;
-  background-color:rgb(235,235,235);
-  padding:10px;
-  color:gray;
-  border:1px solid rgb(200,200,200);
-}
-
-/**
- * Now Selected part of the stack
- */
-.albumArtNowSelectedContainer {
-  -moz-box-flex: 1;
-  -moz-box-align: center;
-  -moz-box-pack: center;
-  background-color:rgb(255,255,255);
-  background-image: url('chrome://songbird/skin/base-elements/bg-empty.png');
-}
-
-/**
- * Now Selected Drag here part of the stack
- */
-.albumArtNowSelectedDragAndDrop {
-  -moz-box-flex: 1;
-  -moz-box-align: center;
-  -moz-box-pack: center;
-}
-
-.albumArtNotSelectedDragAndDropMessage {
-  -moz-border-radius:8px;
-  background-color:rgb(235,235,235);
-  padding:10px;
-  color:gray;
-  border:1px solid rgb(200,200,200);
-}
-
-/**
- * Now Playing Drag here part of the stack
- */
+.albumArtNowSelectedDragAndDrop,
 .albumArtNowPlayingDragAndDrop {
   -moz-box-flex: 1;
   -moz-box-align: center;
   -moz-box-pack: center;
-}
-
-.albumArtNotPlayingDragAndDropMessage {
-  -moz-border-radius:8px;
-  background-color:rgb(235,235,235);
-  padding:10px;
-  color:gray;
-  border:1px solid rgb(200,200,200);
 }

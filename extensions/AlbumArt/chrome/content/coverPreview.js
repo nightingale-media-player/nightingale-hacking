@@ -1,5 +1,5 @@
 
-const DEFAULT_COVER = "chrome://songbird/skin/album-art/default-cover.png";
+const DROP_TARGET_IMAGE = "chrome://songbird/skin/album-art/drop-target.png";
 const XLINK = "http://www.w3.org/1999/xlink";
 
 var metadataImage = null;
@@ -16,7 +16,7 @@ function onLoad () {
     var imageObserver = {
       observe: function(aSubject, aTopic, aData) {
         var coverPreviewImage = document.getElementById("coverPreviewImage");
-        if (!aData) { aData = DEFAULT_COVER; }
+        if (!aData) { aData = DROP_TARGET_IMAGE; }
         coverPreviewImage.setAttributeNS(XLINK, "href", aData);
       }
     }

@@ -522,7 +522,7 @@
 <!-- Album Art display pane properties. -->
 <!ENTITY albumart.displaypane.not_playing_message  "Nothing playing" >
 <!ENTITY albumart.displaypane.not_selected_message  "Nothing selected" >
-<!ENTITY albumart.displaypane.drag_and_drop  "Drag image here" >
+<!ENTITY albumart.displaypane.drag_and_drop  "Drag album artwork here" >
 <!ENTITY albumart.displaypane.selected.menu.cut "Cut">
 <!ENTITY albumart.displaypane.selected.menu.copy "Copy">
 <!ENTITY albumart.displaypane.selected.menu.paste "Paste">

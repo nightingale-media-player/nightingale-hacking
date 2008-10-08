@@ -68,13 +68,13 @@
             class="albumArtNowSelectedDragAndDrop"
             ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
             ondragover="nsDragAndDrop.dragOver(event, AlbumArt);">
-        <label class="albumArtNotSelectedDragAndDropMessage"
-               value="&albumart.displaypane.drag_and_drop;"/>
-      </vbox>    
+          <description class="drop-message">
+            &albumart.displaypane.drag_and_drop;
+          </description>
+      </vbox>
       <vbox id="sb-albumart-not-selected"
             class="albumArtNotSelectedContainer">
-        <label class="albumArtNotSelectedMessage"
-               value="&albumart.displaypane.not_selected_message;"/>
+        <description class="empty-message" value="&albumart.displaypane.not_selected_message;" />
       </vbox>
     </stack>
 
@@ -93,13 +93,13 @@
             class="albumArtNowPlayingDragAndDrop"
             ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
             ondragover="nsDragAndDrop.dragOver(event, AlbumArt);">
-        <label class="albumArtNotPlayingDragAndDropMessage"
-               value="&albumart.displaypane.drag_and_drop;"/>
+        <description class="drop-message">
+          &albumart.displaypane.drag_and_drop;
+        </description>
       </vbox>    
       <vbox id="sb-albumart-not-playing"
             class="albumArtNotPlayingContainer">
-        <label class="albumArtNotPlayingMessage"
-               value="&albumart.displaypane.not_playing_message;"/>
+        <description class="empty-message" value="&albumart.displaypane.not_playing_message;" />
       </vbox>
     </stack>
   </deck>
