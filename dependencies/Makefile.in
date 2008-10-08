@@ -278,10 +278,6 @@ GST_PLUGINS_BAD_NAMES := gstaiffparse \
 # XR first.
 ifneq (linux_x86_64,$(SB_PLATFORM)_$(SB_ARCH))
   GST_PLUGINS_BAD_NAMES += gstmozillasrc
-  ifeq (debug,$(SB_CONFIGURATION))
-    GST_PLUGINS_GOOD_NAMES += gstdebug \
-      gstnavigationtest
-  endif
 endif
 
 ifeq (windows,$(SB_PLATFORM))
