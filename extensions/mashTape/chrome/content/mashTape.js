@@ -1927,10 +1927,6 @@ mashTape.maximiseDisplayPane = function(ev) {
 		dpSplitter.setAttribute("collapse", "before");
 		dpSplitter.setAttribute("state", "collapsed");
 	}
-	
-	var e = doc.createEvent("UIEvents");
-	e.initUIEvent("resize", true, true, window, 1);
-	doc.dispatchEvent(e);
 }
 
 // Our listener for auto-hiding mashTape when switching to web views

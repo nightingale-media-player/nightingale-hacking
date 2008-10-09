@@ -41,6 +41,8 @@ var mashTapeVideo = {
 
 	pauseVideo: function() {
 		var obj = document.getElementById("mTFlashObject");
+		if (typeof(obj) == "undefined")
+			return;
 		switch(obj.getAttribute("mashTape-provider")) {
 			case "YouTube":
 				obj.pauseVideo();
