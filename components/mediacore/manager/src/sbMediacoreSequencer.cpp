@@ -931,7 +931,12 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
     break;
   }
 
-  mViewPosition = mSequence[mPosition];
+  if(mSequence.size()) {
+    mViewPosition = mSequence[mPosition];
+  }
+  else {
+    mViewPosition = 0;
+  }
 
   return NS_OK;
 }
