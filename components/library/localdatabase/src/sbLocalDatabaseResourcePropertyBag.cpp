@@ -46,7 +46,7 @@
 #include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabaseResourcePropertyBag.h"
 #include "sbLocalDatabaseSchemaInfo.h"
-#include "sbLocalDatabaseSQl.h"
+#include "sbLocalDatabaseSQL.h"
 #include <sbTArrayStringEnumerator.h>
 #include <sbStringUtils.h>
 
