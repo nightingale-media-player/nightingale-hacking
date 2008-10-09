@@ -42,6 +42,8 @@ var metricsObserver = {
 	time : null,
 	onMediacoreEvent : function(ev) {
 		var item = ev.data;
+		if (gMM.sequencer.view == null)
+			return;
 		var list = gMM.sequencer.view.mediaList;
 		switch (ev.type) {
 			case Ci.sbIMediacoreEvent.STREAM_START:
