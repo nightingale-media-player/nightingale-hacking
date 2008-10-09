@@ -48,6 +48,7 @@
 #include <sbIMediaListView.h>
 
 #include <vector>
+#include <map>
 
 class sbMediacoreSequencer : public sbIMediacoreSequencer,
                              public sbIMediacoreEventListener,
@@ -71,6 +72,7 @@ public:
   sbMediacoreSequencer();
 
   typedef std::vector<PRUint32> sequence_t;
+  typedef std::map<PRUint32, PRUint32> sequencemap_t;
 
   nsresult Init();
 
@@ -148,7 +150,7 @@ protected:
 
   nsCOMPtr<sbIMediaListView>     mView;
   sequence_t                     mSequence;
-  sequence_t                     mViewIndexToSequenceIndex;
+  sequencemap_t                  mViewIndexToSequenceIndex;
   PRUint32                       mPosition;
   PRUint32                       mViewPosition;
 

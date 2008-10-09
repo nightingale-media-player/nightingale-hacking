@@ -860,8 +860,7 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mPosition = 0;
-  mSequence.reserve(length);
-  mViewIndexToSequenceIndex.reserve(length);
+  mSequence.reserve(length);  
 
   switch(mMode) {
     case sbIMediacoreSequencer::MODE_FORWARD:
@@ -869,7 +868,7 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
       // Generate forward sequence
       for(PRUint32 i = 0; i < length; ++i) {
         mSequence.push_back(i);
-        mViewIndexToSequenceIndex.push_back(i);
+        mViewIndexToSequenceIndex[i] = i;
       }
 
       if(aViewPosition) {
@@ -883,7 +882,7 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
       PRUint32 j = 0;
       for(PRUint32 i = length - 1; i >= 0; --i, ++j) {
         mSequence.push_back(i);
-        mViewIndexToSequenceIndex.push_back(j);
+        mViewIndexToSequenceIndex[j] = j;
       }
 
       if(aViewPosition) {
@@ -905,6 +904,7 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
 
       for(PRUint32 i = 0; i < sequenceLength; ++i) {
         mSequence.push_back(sequence[i]);
+        mViewIndexToSequenceIndex[sequence[i]] = i;
 
         if(aViewPosition &&
            *aViewPosition == sequence[i]) {
@@ -913,6 +913,10 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
           PRUint32 index = mSequence[0];
           mSequence[0] = mSequence[i];
           mSequence[i] = index;
+
+          PRUint32 sequenceIndex = mViewIndexToSequenceIndex[index];
+          mViewIndexToSequenceIndex[index] = mViewIndexToSequenceIndex[mSequence[i]];
+          mViewIndexToSequenceIndex[mSequence[i]] = sequenceIndex;
         }
       }
 
@@ -1254,6 +1258,9 @@ sbMediacoreSequencer::StartWatchingView()
                               nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mView->AddListener(this, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if(!mViewIsLibrary) {
     nsCOMPtr<sbIMediaItem> item = do_QueryInterface(mViewList, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1302,6 +1309,9 @@ sbMediacoreSequencer::StopWatchingView()
   }
 
   rv = mViewList->RemoveListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mView->RemoveListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(!mViewIsLibrary) {
@@ -1450,7 +1460,7 @@ sbMediacoreSequencer::SetMode(PRUint32 aMode)
   if(mMode != aMode) {
     mMode = aMode;
 
-    nsresult rv = RecalculateSequence();
+    nsresult rv = RecalculateSequence(&mViewPosition);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = UpdateShuffleDataRemote(aMode);
@@ -2305,21 +2315,39 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
 NS_IMETHODIMP 
 sbMediacoreSequencer::OnFilterChanged(sbIMediaListView *aChangedView)
 {
-  // XXXAus: Not used currently, leaving stubbed.
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = UpdateItemUIDIndex();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
 NS_IMETHODIMP 
 sbMediacoreSequencer::OnSearchChanged(sbIMediaListView *aChangedView)
 {
-  // XXXAus: Not used currently, leaving stubbed.
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = UpdateItemUIDIndex();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
 NS_IMETHODIMP 
 sbMediacoreSequencer::OnSortChanged(sbIMediaListView *aChangedView)
 {
-  // XXXAus: Not used currently, leaving stubbed.
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = UpdateItemUIDIndex();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
