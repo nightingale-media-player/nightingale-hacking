@@ -34,6 +34,7 @@
 #include <nsILocalFile.h>
 #include <nsIMutableArray.h>
 #include <nsIObserverService.h>
+#include <nsIURL.h>
 #include <nsIVariant.h>
 #include <nsIWeakReferenceUtils.h>
 
@@ -1712,8 +1713,14 @@ sbPlaybackHistoryService::UpdateMetrics()
   PRTime actualPlayingTime = PR_Now() - mCurrentStartTime - mCurrentDelta;
   actualPlayingTime /= PR_USEC_PER_SEC;
 
+  // increment total items played.
+  nsresult rv = mMetrics->MetricsInc(NS_LITERAL_STRING(METRIC_MEDIACORE_ROOT),
+                                     NS_LITERAL_STRING(METRIC_PLAY),
+                                     NS_LITERAL_STRING(METRIC_ITEM));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // increment total play time.
-  nsresult rv = mMetrics->MetricsAdd(NS_LITERAL_STRING(METRIC_MEDIACORE_ROOT),
+  rv = mMetrics->MetricsAdd(NS_LITERAL_STRING(METRIC_MEDIACORE_ROOT),
                                      NS_LITERAL_STRING(METRIC_PLAYTIME),
                                      EmptyString(),
                                      actualPlayingTime);
@@ -1724,7 +1731,7 @@ sbPlaybackHistoryService::UpdateMetrics()
   rv = mCurrentItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE), 
                                  bitRateStr);
   if(NS_FAILED(rv) || bitRateStr.IsEmpty()) {
-    bitRateStr.AssignLiteral("unknown");
+    bitRateStr.AssignLiteral(METRIC_UNKNOWN);
   }
 
   nsString bitRateKey(NS_LITERAL_STRING(METRIC_BITRATE));
@@ -1788,8 +1795,51 @@ sbPlaybackHistoryService::UpdateMetrics()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // increment appropriate play attempt bucket.
+  nsCOMPtr<nsIURI> uri;
+  rv = mCurrentItem->GetContentSrc(getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: still need to implement play attempt metrics.
+  nsCString scheme;
+  rv = uri->GetScheme(scheme);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(scheme.IsEmpty()) {
+    scheme = METRIC_UNKNOWN;
+  }
+
+  nsCString extension;
+  nsCOMPtr<nsIURL> url = do_QueryInterface(uri, &rv);
+  if(NS_SUCCEEDED(rv)) {
+    rv = url->GetFileExtension(extension);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if(extension.IsEmpty()) {
+    extension = METRIC_UNKNOWN;
+  }
+
+  // key is attempt.<extension>.<scheme>
+  nsString playAttemptKey(NS_LITERAL_STRING(METRIC_ATTEMPT));
+  playAttemptKey.AppendLiteral(".");
+  playAttemptKey += NS_ConvertUTF8toUTF16(extension);
+  playAttemptKey.AppendLiteral(".");
+  playAttemptKey += NS_ConvertUTF8toUTF16(scheme);
+
+  rv = mMetrics->MetricsInc(NS_LITERAL_STRING(METRIC_MEDIACORE_ROOT),
+                            NS_LITERAL_STRING(METRIC_PLAY),
+                            playAttemptKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // increment streaming bucket.
+  if(scheme.EqualsLiteral("http") ||
+     scheme.EqualsLiteral("https") ||
+     scheme.EqualsLiteral("ftp") ||
+     scheme.EqualsLiteral("rtsp")) {
+    rv = mMetrics->MetricsInc(NS_LITERAL_STRING(METRIC_MEDIACORE_ROOT),
+                              NS_LITERAL_STRING(METRIC_PLAY),
+                              NS_LITERAL_STRING(METRIC_STREAMING));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

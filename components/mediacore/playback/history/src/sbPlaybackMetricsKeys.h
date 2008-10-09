@@ -34,11 +34,13 @@
 #define METRIC_PLAY              "play"
 
 #define METRIC_DEVICE            "device"
+#define METRIC_ITEM              "item"
 #define METRIC_LIBRARY           "library"
 #define METRIC_SIMPLE            "simple"
 #define METRIC_SMART             "smart"
 #define METRIC_STREAMING         "streaming"
 #define METRIC_SUBSCRIPTION      "subscription"
+#define METRIC_UNKNOWN           "unknown"
 #define METRIC_WEBPLAYLIST       "web"
 
 #define METRIC_BITRATE           "bitrate"
