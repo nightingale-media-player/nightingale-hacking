@@ -834,7 +834,7 @@
 
                     // Start playback
                     var view = mediaList.createView();
-                    this.mm.playView(view, 0);
+                    this.mm.sequencer.playView(view, 0);
                   }
                 }
               };
