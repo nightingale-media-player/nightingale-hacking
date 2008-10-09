@@ -57,7 +57,7 @@ function runTest() {
 
   var platform = getPlatform();
 
-  assertContains(list, ["staticelements", "ogg", "vorbis]);
+  assertContains(list, ["staticelements", "ogg", "vorbis"]);
 
   if (platform == "Windows NT") {
     assertContains(list, ["directsound", "directdraw"]);
