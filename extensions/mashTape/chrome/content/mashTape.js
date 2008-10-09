@@ -1400,6 +1400,9 @@ mashTape.drawPhotoStream = function(provider, results) {
 
 	// Add resize handler for photostream
 	mashTape.photoFrame.contentWindow.addEventListener("resize", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		var mTWindow = mashTape.photoFrame.contentWindow;
 
 		var nS5 = mTWindow.nS5;
@@ -1449,8 +1452,6 @@ mashTape.drawPhotoStream = function(provider, results) {
 		// Reset the stream
 		mTWindow.nS5.gotoSlide(current);
 
-		e.preventDefault();
-		e.stopPropagation();
 	}, false);
 
 	// Build our iframe's JS image array
@@ -1657,6 +1658,9 @@ mashTape.loadFlashDetail = function(el) {
 	// Add resize handler
 	mashTape.flashDetailFrame.contentWindow.addEventListener("resize",
 	function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+
 		var frameWidth = doc.getElementsByTagName("html")[0].clientWidth;
 		var frameHeight = doc.getElementsByTagName("html")[0].clientHeight;
 		//dump("New frame size: " + frameWidth + "x" + frameHeight + "\n");
@@ -1695,8 +1699,6 @@ mashTape.loadFlashDetail = function(el) {
 			swf.height = newHeight;
 			//doc.getElementById("content").style.left = newWidth + 20 + "px";
 		}
-			e.preventDefault();
-		e.stopPropagation();
 	}, false);
 
 	// Reset some divs
@@ -1888,39 +1890,47 @@ mashTape.updateFlash = function(provider, results) {
  ****************************************************************************/
 // Maximise the display pane
 mashTape.maximiseDisplayPane = function(ev) {
+	var mainDoc = Cc['@mozilla.org/appshell/window-mediator;1']
+		.getService(Ci.nsIWindowMediator).getMostRecentWindow('Songbird:Main')
+		.window.document;
+	
 	var splitter = document.getElementById("mashTape-flash-splitter");
 	var dp = mashTape.displayPane;
+	var splitterId = mashTape.displayPane.getAttribute("splitter");
+	var dpSplitter = mainDoc.getElementById(splitterId);
 
 	if (mashTape.expanded) {
 		// we're already expanded, so restore to the non-expanded state
 		mashTape.expanded = false;
-		
+
+		dp.setAttribute("flex", 0);
+
 		// open the splitter back up
 		splitter.setAttribute("state", "open");
+
+		// reset the display pane splitter
+		dpSplitter.setAttribute("collapse", "after");
+		dpSplitter.setAttribute("state", "open");
 		
-		// restore the height
-		if (mashTape.height != null)
-			dp.height = mashTape.height;
+		dp.height = mashTape.height;
 	} else {
 		// expand!
 		mashTape.expanded = true;
 
+		mashTape.height = dp.height;
+
+		dp.setAttribute("flex", 1);
 		// collapse the splitter
 		splitter.setAttribute("state", "collapsed");
 		
-		// get the height of the main tabbrowser
-		var mainDoc = Cc['@mozilla.org/appshell/window-mediator;1']
-			.getService(Ci.nsIWindowMediator)
-			.getMostRecentWindow('Songbird:Main').window.document;
-		var tabbrowser = mainDoc.getElementById("content");
-		var tabstyle = mainDoc.defaultView.getComputedStyle(tabbrowser, "");
-
-		// save our old height
-		mashTape.height = dp.height;
-		
-		// now go big!
-		dp.height = parseInt(dp.height) + parseInt(tabstyle.height);
+		// collapse the display pane splitter
+		dpSplitter.setAttribute("collapse", "before");
+		dpSplitter.setAttribute("state", "collapsed");
 	}
+	
+	var e = doc.createEvent("UIEvents");
+	e.initUIEvent("resize", true, true, window, 1);
+	doc.dispatchEvent(e);
 }
 
 // Our listener for auto-hiding mashTape when switching to web views
