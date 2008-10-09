@@ -57,13 +57,7 @@ function runTest() {
 
   var platform = getPlatform();
 
-  // XXX: will be there for all platforms - should have 'ogg' and 'vorbis' too
-  assertContains(list, ["staticelements"]);
-
-  if (platform != "Linux") {
-    // XXX: Re-enable this once we have working linux binaries
-    assertContains(list, ["ogg", "vorbis"]);
-  }
+  assertContains(list, ["staticelements", "ogg", "vorbis]);
 
   if (platform == "Windows NT") {
     assertContains(list, ["directsound", "directdraw"]);
@@ -74,11 +68,7 @@ function runTest() {
   }
 
   if (platform == "Linux") {
-    // XXX: change back to assertContains once we have working linux binaries
-    assertDoesNotContain(list, ["alsa", "ximagesink", "xvimagesink"]);
-
-    // XXX: should be available for all platforms
-    assertDoesNotContain(list, ["ogg", "vorbis"]);
+    assertContains(list, ["alsa", "ximagesink", "xvimagesink"]);
   }
 }
 
