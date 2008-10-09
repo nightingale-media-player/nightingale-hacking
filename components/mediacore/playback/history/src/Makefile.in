@@ -42,10 +42,12 @@ CPP_INCLUDES = \
       $(topsrcdir)/components/include \
       $(DEPTH)/components/mediacore/base/public \
       $(DEPTH)/components/mediacore/playback/history/public \
+      $(DEPTH)/components/metrics/public \
       $(DEPTH)/components/library/base/public \
       $(topsrcdir)/components/library/base/src \
       $(topsrcdir)/components/moz/strings/src \
       $(topsrcdir)/components/moz/xpcom/src \
+      $(topsrcdir)/components/moz/threads/src \
       $(DEPTH)/components/property/public \
       $(topsrcdir)/components/property/src \
       $(DEPTH)/components/sqlbuilder/public \

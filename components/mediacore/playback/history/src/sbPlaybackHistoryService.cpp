@@ -25,6 +25,7 @@
 */
 
 #include "sbPlaybackHistoryService.h"
+#include "sbPlaybackMetricsKeys.h"
 
 #include <nsIArray.h>
 #include <nsICategoryManager.h>
@@ -51,6 +52,7 @@
 #include <sbIMediacoreEvent.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediacoreManager.h>
+#include <sbIMediaList.h>
 #include <sbIPlaybackHistoryEntry.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
@@ -62,6 +64,7 @@
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbProxyUtils.h>
+#include <sbProxiedComponentManager.h>
 #include <sbSQLBuilderCID.h>
 #include <sbStringUtils.h>
 
@@ -233,6 +236,10 @@ sbPlaybackHistoryService::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = eventTarget->AddListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mMetrics = do_ProxiedCreateInstance("@songbirdnest.com/Songbird/Metrics;1", 
+                                      &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1559,6 +1566,27 @@ sbPlaybackHistoryService::UpdateTrackingDataFromEvent(sbIMediacoreEvent *aEvent)
 }
 
 nsresult
+sbPlaybackHistoryService::UpdateCurrentViewFromEvent(sbIMediacoreEvent *aEvent)
+{
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsCOMPtr<nsIVariant> variant;
+  nsresult rv = aEvent->GetData(getter_AddRefs(variant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupports> supports;
+  rv = variant->GetAsISupports(getter_AddRefs(supports));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaListView> view = do_QueryInterface(supports, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  view.swap(mCurrentView);
+
+  return NS_OK;
+}
+
+nsresult
 sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
 {
   nsAutoMonitor mon(mMonitor);
@@ -1652,6 +1680,10 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  // Regardless, we update playback metrics.
+  rv = UpdateMetrics();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -1668,6 +1700,100 @@ sbPlaybackHistoryService::ResetTrackingData()
 
   return NS_OK;
 }
+
+nsresult 
+sbPlaybackHistoryService::UpdateMetrics()
+{
+  nsAutoMonitor mon(mMonitor);
+
+  NS_ENSURE_STATE(mCurrentView);
+
+  // figure out actual playing time in seconds.
+  PRTime actualPlayingTime = PR_Now() - mCurrentStartTime - mCurrentDelta;
+  actualPlayingTime /= PR_USEC_PER_SEC;
+
+  // increment total play time.
+  nsresult rv = mMetrics->MetricsAdd(NS_LITERAL_STRING(METRIC_MEDIACORE_ROOT),
+                                     NS_LITERAL_STRING(METRIC_PLAYTIME),
+                                     EmptyString(),
+                                     actualPlayingTime);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // increment the appropriate bitrate bucket.
+  nsString bitRateStr;
+  rv = mCurrentItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE), 
+                                 bitRateStr);
+  if(NS_FAILED(rv) || bitRateStr.IsEmpty()) {
+    bitRateStr.AssignLiteral("unknown");
+  }
+
+  nsString bitRateKey(NS_LITERAL_STRING(METRIC_BITRATE));
+  bitRateKey.AppendLiteral(".");
+  bitRateKey += bitRateStr;
+
+  rv = mMetrics->MetricsInc(NS_LITERAL_STRING(METRIC_MEDIACORE_ROOT),
+                            NS_LITERAL_STRING(METRIC_PLAY),
+                            bitRateKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // increment appropriate medialist total play time.
+  nsCOMPtr<sbILibrary> library;
+  rv = mCurrentItem->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> libraryList = do_QueryInterface(library, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> list;
+  rv = mCurrentView->GetMediaList(getter_AddRefs(list));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString listCustomType, libraryCustomType;
+  rv = list->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), 
+                         listCustomType);
+  if(NS_FAILED(rv) || listCustomType.IsEmpty()) {
+    listCustomType.AssignLiteral("simple");
+  }
+
+  rv = library->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), 
+                            libraryCustomType);
+  if(NS_FAILED(rv) || listCustomType.IsEmpty()) {
+    libraryCustomType.AssignLiteral("library");
+  }
+
+  nsString medialistKey;
+  if(listCustomType.EqualsLiteral("dynamic")) {
+    medialistKey.AssignLiteral(METRIC_SUBSCRIPTION);
+  }
+  else if(listCustomType.EqualsLiteral("local") ||
+          listCustomType.EqualsLiteral("simple") ||
+          libraryCustomType.EqualsLiteral("library")) {
+    if(libraryList == list) {
+      medialistKey.AssignLiteral(METRIC_LIBRARY);
+    }
+    else if(libraryCustomType.EqualsLiteral("web")) {
+      medialistKey.AssignLiteral(METRIC_WEBPLAYLIST);
+    }
+    else {
+      medialistKey.AssignLiteral("simple");
+    }
+  }
+  else {
+    medialistKey = listCustomType;
+  }
+
+  rv = mMetrics->MetricsInc(NS_LITERAL_STRING(METRIC_MEDIALIST_ROOT),
+                            NS_LITERAL_STRING(METRIC_PLAY),
+                            medialistKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // increment appropriate play attempt bucket.
+
+  // XXXAus: still need to implement play attempt metrics.
+
+  return NS_OK;
+}
+
 //-----------------------------------------------------------------------------
 // nsIObserver
 //-----------------------------------------------------------------------------
@@ -1761,6 +1887,13 @@ sbPlaybackHistoryService::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       }
 
       rv = UpdateTrackingDataFromEvent(aEvent);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+
+    case sbIMediacoreEvent::VIEW_CHANGE: {
+      // we need to keep track of the current view for metrics
+      rv = UpdateCurrentViewFromEvent(aEvent);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     break;

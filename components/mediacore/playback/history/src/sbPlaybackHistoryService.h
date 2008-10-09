@@ -50,6 +50,8 @@
 #include <sbILibrary.h>
 #include <sbIMediacoreEventListener.h>
 #include <sbIMediaItem.h>
+#include <sbIMediaListView.h>
+#include <sbIMetrics.h>
 #include <sbIPlaybackHistoryListener.h>
 
 class sbPlaybackHistoryService : public sbIPlaybackHistoryService,
@@ -122,8 +124,12 @@ public:
 
   // playcount, last played time management.
   nsresult UpdateTrackingDataFromEvent(sbIMediacoreEvent *aEvent);
+  nsresult UpdateCurrentViewFromEvent(sbIMediacoreEvent *aEvent);
   nsresult VerifyDataAndCreateNewEntry();
   nsresult ResetTrackingData();
+
+  // metrics
+  nsresult UpdateMetrics();
 
 protected:
   ~sbPlaybackHistoryService();
@@ -177,6 +183,9 @@ private:
   PRTime mCurrentDelta;
 
   nsCOMPtr<sbIMediaItem> mCurrentItem;
+  nsCOMPtr<sbIMediaListView> mCurrentView;
+
+  nsCOMPtr<sbIMetrics> mMetrics;
 };
 
 #endif /* __SB_PLAYBACKHISTORYSERVICE_H__ */
