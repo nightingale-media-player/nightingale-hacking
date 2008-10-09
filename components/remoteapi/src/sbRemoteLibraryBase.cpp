@@ -432,13 +432,12 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
 
   if (mShouldScan) {
 
+
     nsCOMPtr<sbIFileMetadataService> metadataService =
       do_GetService( "@songbirdnest.com/Songbird/FileMetadataService;1", &rv );
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get FileMetadataService!");
 
     if(NS_SUCCEEDED(rv)) {
-      LOG_LIB(("sbRemoteLibraryBase::CreateMediaItem() -- doing a MD scan"));
-
       nsCOMPtr<nsIMutableArray> mediaItems = 
         do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);

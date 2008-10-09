@@ -884,8 +884,8 @@ sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
     do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv ));
   NS_ENSURE_SUCCESS( rv, rv );
 
-  // no check here, download device helper doesn't return values.
-  dh->DownloadItem(item);
+  rv = dh->DownloadItem(item);
+  NS_ENSURE_SUCCESS( rv, rv );
 
   mNotificationMgr->Action( sbRemoteNotificationManager::eDownload, nsnull );
 

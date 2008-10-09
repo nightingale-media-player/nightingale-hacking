@@ -64,14 +64,21 @@
         songbird.webPlaylist.mediaList = siteList;
       }
 
+      function downloadList() {
+        songbird.downloadList(siteList);
+      }
+
+      function downloadItem() {
+        songbird.downloadItem( siteList.getItemByIndex(1) );
+      }
+
+      function downloadSelected() {
+        songbird.downloadSelected(songbird.webPlaylist);
+      }
+
       function addToMain() {
         var item = siteLib.createMediaItem("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/jaspertine_-_Introvert.mp3");
         songbird.mainLibrary.add(item);
-      }
-
-      function addToMainAndDownload() {
-        var item = siteLib.createMediaItem("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/jaspertine_-_Introvert.mp3");
-        songbird.mainLibrary.add(item, true);
       }
 
       function addListToMain() {
@@ -118,11 +125,17 @@
       <input type="button" id="addToList_button" value="Add To DL List"
              onclick="addToDLList();" /> (songbird.downloadList.add())
       <br />
+      <input type="button" id="download_list_button" value="downloadList"
+             onclick="downloadList();" />  (songbird.downloadList())
+      <br />
+      <input type="button" id="download_item_button" value="downloadItem"
+             onclick="downloadItem();" />  (songbird.downloadItem())
+      <br />
+      <input type="button" id="download_selected_button" value="downloadSelected"
+             onclick="downloadSelected();" />  (songbird.downloadSelcted())
+      <br />
       <input type="button" id="add_remote_to_lib" value="add track to main"
              onclick="addToMain();" /> (songbird.mainLibrary.add())
-      <br />
-      <input type="button" id="add_remote_to_lib_dl" value="add track to main and download"
-             onclick="addToMainAndDownload();" /> (songbird.mainLibrary.add(true))
       <br />
       <input type="button" id="add_remotelist_to_lib" value="add list to main"
              onclick="addListToMain();" /> (songbird.mainLibrary.add())

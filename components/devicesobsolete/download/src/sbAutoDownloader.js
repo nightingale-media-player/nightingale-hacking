@@ -33,7 +33,7 @@ var Cr = Components.results;
 
 // big-ass debug function
 function DEBUG(msg) {
-  //return;
+  return;
 
   function repr(x) {
     if (x == undefined) {
@@ -186,7 +186,6 @@ function sbAutoDownloader_onItemAdded(aMediaList, aMediaItem, aIndex) {
   DEBUG();
   if ((aMediaItem.getProperty(SBProperties.enableAutoDownload) == "1") &&
       aMediaItem.contentSrc.scheme.match(/^http/)) {
-    DEBUG("XXXredfive - onItemAdded, autodownload (" + aMediaItem.getProperty(SBProperties.enableAutoDownload) + ") and contentSrc(" + aMediaItem.contentSrc.spec + ") !!!");
     // Don't download items already in the download medialist.
     if (!this._helper.getDownloadMediaList().contains(aMediaItem)) {
       this._queue.push(aMediaItem);
@@ -195,8 +194,6 @@ function sbAutoDownloader_onItemAdded(aMediaList, aMediaItem, aIndex) {
       }
     }
   }
-  else
-    DEBUG("XXXredfive - onItemAdded, Not autodownload (" + aMediaItem.getProperty(SBProperties.enableAutoDownload) + ") and contentSrc(" + aMediaItem.contentSrc.spec + ") !!!");
 }
 sbAutoDownloader.prototype.onBeforeItemRemoved =
 function sbAutoDownloader_onBeforeItemRemoved(aMediaList, aMediaItem, aIndex) {
