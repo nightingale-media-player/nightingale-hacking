@@ -13,15 +13,6 @@ document.addEvent('mousewheel', function(event) {
 	}
 });
 
-function mashTape_resetPhotoStream() {
-	if (typeof(nS5) != 'undefined') {
-		nS5.stop();
-		delete nS5;
-		$('playpause').removeEvents();
-		$('icon-playpause').src = "chrome://mashtape/skin/pause.png";
-	}
-}
-
 function _mashTape_setupPhotoStream(imageItems, paneWidth, paneHeight) {
 	var info = $('info').set('opacity', 0.5);
 

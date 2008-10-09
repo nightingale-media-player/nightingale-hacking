@@ -1304,14 +1304,6 @@ mashTape.drawPhotoStream = function(provider, results) {
 	doc.getElementById("buttons").style.visibility = "visible";
 
 	var images = doc.getElementById("box");
-	/*
-	// Stop the current script
-	mashTape.photoFrame.contentWindow.mashTape_resetPhotoStream();
-	
-	// Clear existing images
-	while (images.firstChild)
-		images.removeChild(images.firstChild);
-	*/
 
 	// Set the mask height to the height of the display pane
 	doc.getElementById("mask").style.height = paneHeight + "px";
