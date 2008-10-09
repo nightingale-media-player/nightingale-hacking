@@ -344,6 +344,7 @@
 <!ENTITY trackeditor.key               "E" >
 <!ENTITY trackeditor.key2              "I" >
 <!ENTITY sanitize.keycode              "VK_DELETE" >
+<!ENTITY sanitize.key                  "Del" >
 <!ENTITY menu.viewpagesource.key       "U" >
 <!ENTITY downloadmgr.key               "J" >
 
