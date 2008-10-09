@@ -31,7 +31,7 @@
 
 #include <nsClassHashtable.h>
 #include <nsDataHashtable.h>
-#include <nsStringApi.h>
+#include <nsStringAPI.h>
 
 class sbLocalDatabasePropertyCache;
 class sbIPropertyManager;

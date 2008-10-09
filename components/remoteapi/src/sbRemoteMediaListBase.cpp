@@ -40,6 +40,7 @@
 #include <sbIWrappedMediaList.h>
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
+#include <sbStandardProperties.h>
 
 #include <nsAutoPtr.h>
 #include <nsITreeSelection.h>
@@ -320,10 +321,11 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
   // do the security check
   char* access;
   nsIID iid = NS_GET_IID(nsISupports);
-  // note that an error return value also means access denied
   rv = checkedComponent->CanCallMethod( &iid,
                                         NS_LITERAL_STRING("add").get(),
                                         &access );
+
+  // note that an error return value or empty access means access denied
   PRBool canCallMethod = NS_SUCCEEDED(rv);
   if (canCallMethod) {
     if (!access) {
@@ -344,7 +346,19 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
   // the additions by hand from the array of strings passed in
   //
 
-  // Find out if we should download the tracking after adding.
+  // Need to QI ourself to get to our library, create the item, check target
+  nsCOMPtr<sbIMediaItem> selfItem( do_QueryWrappedNative( wrapper, &rv ) );
+  SB_ENSURE_WITH_JSTHROW( cx, rv, "Not a valid MediaItem.")
+
+  // Find out if we're targetting the main library early, to know if we should
+  // download the track at the end, and have the arg ready for recursion.
+  PRBool isTargetMain = PR_FALSE;
+  rv = SB_IsFromLibName( selfItem, NS_LITERAL_STRING("main"), &isTargetMain );
+  SB_ENSURE_WITH_JSTHROW( cx, rv, "Not able to determine mainLibrariness." );
+
+  // Find out if we should download the tracking after adding. Only download if
+  //   -- the list being added to is in the main library (isTargetMain).
+  //   -- the 2nd arg is set to something true and is not a mediaitem
   PRBool shouldDownload = PR_FALSE;
   if ( 1 < argc ) {
     LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[1] exists, make sure it's not an item"));
@@ -358,6 +372,7 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
         nsCOMPtr<sbIMediaItem> tempItem;
         tempItem = do_QueryWrappedNative( wn, &rv );
         if ( NS_SUCCEEDED(rv) ) {
+          // Hard fail so devs don't expect add(item,item) to add multiple items.
           ThrowJSException( cx, NS_LITERAL_CSTRING("Second arg should NOT be a media item.")  );
           return JS_FALSE;
         }
@@ -366,15 +381,32 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
 
     LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[1] exists, is not a mediaitem"));
     shouldDownload = JSVAL_TO_BOOLEAN( argv[1] );
+
+    if ( shouldDownload && !isTargetMain ) {
+      // not targetting main library, no download
+      shouldDownload = PR_FALSE;
+      NS_WARNING(("Non-Fatal Error: Tried to download an item to non-mainLibrary."));
+    }
   }
+
+
+  // Need the Aggregator interface to get to the remotePlayer
+  //nsCOMPtr<sbISecurityAggregator> secAgg( do_QueryWrappedNative( wrapper, &rv ) );
+  nsCOMPtr<sbISecurityAggregator> secAgg( do_QueryInterface( selfItem, &rv ) );
+  SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid security aggregator.")
+
+  // Get the remote player
+  nsCOMPtr<sbIRemotePlayer> remotePlayer;
+  rv = secAgg->GetRemotePlayer( getter_AddRefs(remotePlayer) );
+  SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get RemotePlayer.")
+
+  // declare here, it gets set inside the next conditional and used aftewards
+  nsCOMPtr<sbIMediaItem> item;
 
   JSAutoRequest ar(cx);
 
-  nsCOMPtr<sbIMediaItem> item;
-  nsCOMPtr<sbIRemotePlayer> remotePlayer;
-
   // Handle the args passed in. If we are passed an array, recurse over the
-  // contents, otherwise set |item| to be the item to add to this list.
+  // contents, otherwise set |item| to be the item to add to the target.
   if ( JSVAL_IS_STRING(argv[0]) ) {
 
     // If we have a string arg it should be a URI, use our library to create
@@ -384,7 +416,7 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
     LOG_LIST(("          length: %d", ::JS_GetStringLength( JSVAL_TO_STRING(argv[0]) ) ) );
 
     if ( ::JS_GetStringLength( JSVAL_TO_STRING(argv[0]) ) == 0 ) {
-      // empty strings are not failure cases
+      // light, silent failure on empty strings
       return JS_TRUE;
     }
 
@@ -398,38 +430,43 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
 
     // Create a URI object to pass into the library for item creation.
     nsCOMPtr<nsIURI> uri;
-    rv = NS_NewURI(getter_AddRefs(uri), url);
+    rv = NS_NewURI( getter_AddRefs(uri), url );
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not create new URI object.")
 
-    // Need to QI ourself to get to our library.
-    nsCOMPtr<sbIMediaItem> selfItem( do_QueryWrappedNative( wrapper, &rv ) );
-    SB_ENSURE_WITH_JSTHROW( cx, rv, "Not a valid MediaItem.")
+    // The item will return an unwrapped library so find out where we came from
+    // and get the appropriately wrapped library from the remotePlayer.
+    nsCOMPtr<sbIRemoteLibrary> library;
 
-    // We'll use our library to create the item, get it here.
-    nsCOMPtr<sbILibrary> library;
-    rv = selfItem->GetLibrary( getter_AddRefs(library) );
-    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get library for MediaItem.")
- 
+    // isTargetMain set well above
+    if ( isTargetMain ) {
+      // from Main, get the main library
+      rv = remotePlayer->GetMainLibrary( getter_AddRefs(library) );
+      SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get remote library.")
+    } else {
+      PRBool isTargetWeb = PR_FALSE;
+      rv = SB_IsFromLibName( selfItem, NS_LITERAL_STRING("web"), &isTargetWeb );
+      SB_ENSURE_WITH_JSTHROW( cx, rv, "Not able to determine webLibrariness." );
+
+      if ( !isTargetMain ) {
+        // from web, get the web library
+        rv = remotePlayer->GetWebLibrary( getter_AddRefs(library) );
+        SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get web library.")
+      } else {
+        // get the Site Library
+        rv = remotePlayer->GetSiteLibrary( getter_AddRefs(library) );
+        SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get site library.")
+      }
+    }
+
+    nsCString uriCStr;
+    rv = uri->GetSpec(uriCStr);
+    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get spec from uri.")
+
     // Create the item. 
     nsCOMPtr<sbIMediaItem> newItem;
-    nsCOMPtr<sbIPropertyArray> dummyProps;
-    rv = library->CreateMediaItem( uri , dummyProps, PR_FALSE,  getter_AddRefs(newItem) );
+    rv = library->CreateMediaItem( NS_ConvertUTF8toUTF16(uriCStr),
+                                   getter_AddRefs(item) );
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not create new Media Item.")
-
-    // Need the Aggregator interface to get to the remotePlayer
-    nsCOMPtr<sbISecurityAggregator> secAgg( do_QueryWrappedNative( wrapper, &rv ) );
-    SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid security aggregator.")
-
-    // Get the remote player
-    rv = secAgg->GetRemotePlayer( getter_AddRefs(remotePlayer) );
-    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get RemotePlayer.")
-
-    // Wrap the mediaItem (needs the remotePlayer) so we have the correct
-    // type to pass in to the add method.
-    rv = SB_WrapMediaItem( (sbRemotePlayer*)remotePlayer.get(),
-                           newItem,
-                           getter_AddRefs(item) );
-    SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get wrap MediaItem.")
 
   } else if ( JSVAL_IS_OBJECT(argv[0]) ) {
     JSObject* jsobj = JSVAL_TO_OBJECT(argv[0]);
@@ -495,41 +532,52 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
     return JS_TRUE;
   }
 
-  // If we have an item here, add it to the ourself
+  // If we have an item here, add it to ourself
+  // this works if we are adding an item that was created outside of ourself.
+  // If we are adding a mainlib item to the mainlib/list and downloading then
+  // it doesn't work because an add isn't done, instead we need to just download
+  // it.
   if ( item ) {
+    LOG_LIST(("sbRemoteMediaListBase::AddHelper() - Have item to add."));
+
     nsCOMPtr<sbIMediaList> selfList( do_QueryWrappedNative( wrapper, &rv ) );
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid MediaList.")
+
+    // we only download into the mainLib with the correct param (see above)
+    if (shouldDownload) { 
+      LOG_LIST(("sbRemoteMediaListBase::AddHelper() - Downloading item."));
+
+      // We need to know if this is the main library for downloading
+      PRBool isItemMain = PR_FALSE;
+      rv = SB_IsFromLibName( item, NS_LITERAL_STRING("main"), &isItemMain );
+      SB_ENSURE_WITH_JSTHROW( cx, rv, "Not able to determine mainLibrariness." );
+
+      if (!isItemMain) {
+        // set autodownload so addition will kick off a download
+        rv = item->SetProperty( NS_LITERAL_STRING(SB_PROPERTY_ENABLE_AUTO_DOWNLOAD),
+                                NS_LITERAL_STRING("1") );
+      } else {
+        // item is already in mainLib so just add it to the download list
+        rv = remotePlayer->DownloadItem(item);
+      }
+
+      if (NS_FAILED(rv)) {
+        // don't throw if we can't download
+        NS_WARNING(("sbRemoteMediaListBase::AddHelper() - Failed to download."));
+      }
+    } else {
+      LOG_LIST(("sbRemoteMediaListBase::AddHelper() - Not downloading"));
+    }
 
     rv = selfList->Add(item);
     if ( NS_FAILED(rv) ) {
       NS_WARNING(("sbRemoteMediaListBase::AddHelper() - Failed to add the item."));
-    }
-
-    if (shouldDownload) { 
-      LOG_LIST(("sbRemoteMediaListBase::AddHelper() - adding to download list."));
-      if (!remotePlayer) {
-        nsCOMPtr<sbISecurityAggregator> secAgg( do_QueryWrappedNative( wrapper, &rv ) );
-        SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid security aggregator.")
-
-        rv = secAgg->GetRemotePlayer( getter_AddRefs(remotePlayer) );
-        SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get RemotePlayer.")
-      }
-
-      rv = remotePlayer->DownloadItem(item);
-      if (NS_FAILED(rv)) {
-        LOG_LIST(("sbRemoteMediaListBase::AddHelper() - Failed to download item."));
-        ThrowJSException( cx, NS_LITERAL_CSTRING("Failed to download item.")  );
-        return JS_FALSE;
-      }
-    } else {
-      LOG_LIST(("sbRemoteMediaListBase::AddHelper() - NOT adding to download list."));
     }
   }
 
   LOG_LIST(("sbRemoteMediaListBase::AddHelper() - returning JS_TRUE"));
   return JS_TRUE;
 }
-
 
 // ---------------------------------------------------------------------------
 //
