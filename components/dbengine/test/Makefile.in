@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = dbengine
 
 SONGBIRD_TESTS = $(srcdir)/test_bind.js \
+                 $(srcdir)/test_closedatabase.js \
                  $(srcdir)/test_proxy.js \
                  $(srcdir)/test_bug6514.js \
                  $(srcdir)/test_nullresultvalue.js \

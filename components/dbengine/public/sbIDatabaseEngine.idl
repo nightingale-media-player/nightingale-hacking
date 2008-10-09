@@ -43,30 +43,33 @@
 *
 * \sa sbIDatabaseQuery, sbIDatabaseResult
 */
-[uuid(3E3D92D6-EF65-4b76-8670-93A025C3D76B)]
+[scriptable, uuid(3E3D92D6-EF65-4b76-8670-93A025C3D76B)]
 interface sbIDatabaseEngine : nsISupports
 {
   /**
-   * \brief 
-   *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \deprecated
    */
   [noscript] void AddPersistentQuery(in CDatabaseQueryPtr aDBQuery, in ACString aTableName);
 
   /**
-   * \brief 
-   *
-   * \param 
-   * \sa sbIDatabaseQuery
+   * \deprecated
    */
   [noscript] void RemovePersistentQuery(in CDatabaseQueryPtr aDBQuery);
 
   /**
-   * \brief 
+   * \brief Submit a query to the database engine for processing.
    *
-   * \param 
+   * \param aDBQuery - Native CDatabaseQuery Pointer.
    * \sa sbIDatabaseQuery
    */
   [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr aDBQuery);
+
+  /**
+   * \brief Shutdown a database.
+   * \note Do not use this method unless you really know why you are using it.
+   * \note You are not guaranteed that the database will remain shutdown. If a 
+   *       query is submitted that requires access to this database, it will be
+   *       reopened.
+   */
+  void closeDatabase(in AString aDatabaseGUID);
 };

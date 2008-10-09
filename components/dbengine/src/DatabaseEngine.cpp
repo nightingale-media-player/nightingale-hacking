@@ -567,6 +567,26 @@ nsresult CDatabaseEngine::CloseDB(sqlite3 *pHandle)
 } //CloseDB
 
 //-----------------------------------------------------------------------------
+NS_IMETHODIMP CDatabaseEngine::CloseDatabase(const nsAString &aDatabaseGUID) 
+{
+  nsAutoMonitor mon(m_pThreadMonitor);
+
+  nsRefPtr<QueryProcessorThread> pThread;
+  if(m_ThreadPool.Get(aDatabaseGUID, getter_AddRefs(pThread))) {
+    
+    nsresult rv = pThread->PrepareForShutdown();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = pThread->GetThread()->Shutdown();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    m_ThreadPool.Remove(aDatabaseGUID);
+  }
+
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
 /* [noscript] PRInt32 SubmitQuery (in CDatabaseQueryPtr dbQuery); */
 NS_IMETHODIMP CDatabaseEngine::SubmitQuery(CDatabaseQuery * dbQuery, PRInt32 *_retval)
 {
