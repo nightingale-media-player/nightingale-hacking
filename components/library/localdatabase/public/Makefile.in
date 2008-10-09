@@ -38,6 +38,7 @@ XPIDL_SRCS = sbILocalDatabaseAsyncGUIDArray.idl \
              sbILocalDatabaseMigrationHelper.idl \
              sbILocalDatabasePropertyCache.idl \
              sbILocalDatabaseResourceProperty.idl \
+             sbILocalDatabaseResourcePropertyBag.idl \
              sbILocalDatabaseSmartMediaList.idl \
              sbILocalDatabaseTreeView.idl \
              sbILocalDatabaseSimpleMediaList.idl \

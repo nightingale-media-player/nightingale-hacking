@@ -4725,6 +4725,7 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
         do_QueryInterface(mediaItem, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
+      NS_ENSURE_TRUE(bags[i], NS_ERROR_NULL_POINTER);
       rv = ldbmi->SetPropertyBag(bags[i]);
       NS_ENSURE_SUCCESS(rv, rv);
 

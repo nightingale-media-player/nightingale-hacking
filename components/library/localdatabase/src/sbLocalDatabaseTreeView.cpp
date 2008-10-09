@@ -565,7 +565,7 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
     return NS_OK;
   }
 
-  // Explicitly cache all of the properies of all the visible rows
+  // Explicitly cache all of the properties of all the visible rows
   if (mTreeBoxObject) {
     PRInt32 first;
     PRInt32 last;
@@ -590,32 +590,33 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
       if (intersects) {
         length -= (intersectEnd - intersectStart + 1);
       }
-      // Set the capacity
-      mGuidWorkArray.SetCapacity(length);
-      mGuidWorkArray.Reset();
-      for (PRUint32 row = first;
-           row <= static_cast<PRUint32>(last) && row < mArrayLength;
-           row++) {
+      if (length > 0) {
+        // Set the capacity
+        mGuidWorkArray.SetCapacity(length);
+        mGuidWorkArray.Reset();
+        for (PRInt32 row = first;
+             row <= static_cast<PRUint32>(last) && row < mArrayLength;
+             row++) {
 
-        // Skip the fake row and any row's we have already cached
-        if ((row >= mPreviousFirstVisibleRow && row <= mPreviousLastVisibleRow) ||
-            (mFakeAllRow && row == 0)) {
-          continue;
+          // Skip the fake row and any row's we have already cached
+          if ((row >= mPreviousFirstVisibleRow && row <= mPreviousLastVisibleRow) ||
+              (mFakeAllRow && row == 0)) {
+            continue;
+          }
+
+          nsString guid;
+          rv = mArray->GetGuidByIndex(TreeToArray(row), guid);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = mGuidWorkArray.Append(guid);
+          NS_ENSURE_SUCCESS(rv, rv);
         }
 
-        nsString guid;
-        rv = mArray->GetGuidByIndex(TreeToArray(row), guid);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = mGuidWorkArray.Append(guid);
+        rv = mPropertyCache->CacheProperties(const_cast<PRUnichar const **>(
+                                               mGuidWorkArray.AsCharArray()),
+                                             mGuidWorkArray.Length());
         NS_ENSURE_SUCCESS(rv, rv);
       }
-
-      rv = mPropertyCache->CacheProperties(const_cast<PRUnichar const **>(
-                                             mGuidWorkArray.AsCharArray()),
-                                           mGuidWorkArray.Length());
-      NS_ENSURE_SUCCESS(rv, rv);
-
       mPreviousFirstVisibleRow = first;
       mPreviousLastVisibleRow = last;
     }
@@ -960,7 +961,7 @@ sbLocalDatabaseTreeView::GetState(sbLocalDatabaseTreeViewState** aState)
   }
 #endif
 
-  NS_ADDREF(*aState = state);
+  state.forget(aState);
   return NS_OK;
 }
 
@@ -1136,7 +1137,7 @@ sbLocalDatabaseTreeView::GetSelectedValues(nsIStringEnumerator** aValues)
       new sbTArrayStringEnumerator(&empty);
     NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
 
-    NS_ADDREF(*aValues = enumerator);
+    enumerator.forget(aValues);
     return NS_OK;
   }
 
@@ -1168,7 +1169,7 @@ sbLocalDatabaseTreeView::GetSelectedValues(nsIStringEnumerator** aValues)
     new sbTArrayStringEnumerator(&values);
   NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
 
-  NS_ADDREF(*aValues = enumerator);
+  enumerator.forget(aValues);
   return NS_OK;
 }
 
@@ -1235,7 +1236,7 @@ sbLocalDatabaseTreeView::GetTreeColumnForProperty(const nsAString& aProperty,
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (bind.Equals(aProperty)) {
-      NS_ADDREF(*aTreeColumn = column);
+      column.forget(aTreeColumn);
       return NS_OK;
     }
   }
@@ -1284,7 +1285,7 @@ sbLocalDatabaseTreeView::GetPropertyInfoAndValue(PRInt32 aRow,
   rv = bag->GetProperty(propertyID, aValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*aPropertyInfo = pi);
+  pi.forget(aPropertyInfo);
   return NS_OK;
 }
 
@@ -1351,7 +1352,7 @@ sbLocalDatabaseTreeView::GetBag(const nsAString& aGuid,
     return NS_ERROR_NOT_AVAILABLE;
   }
 
-  NS_IF_ADDREF(*aBag = bag);
+  bag.forget(aBag);
   return NS_OK;
 }
 
@@ -2282,7 +2283,7 @@ sbLocalDatabaseTreeView::GetObserver(sbIMediaListViewTreeViewObserver** aObserve
     nsCOMPtr<sbIMediaListViewTreeViewObserver> observer =
       do_QueryReferent(mObserver);
     if (observer) {
-      NS_ADDREF(*aObserver = observer);
+      observer.forget(aObserver);
     }
   }
 

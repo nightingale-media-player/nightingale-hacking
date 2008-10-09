@@ -71,7 +71,6 @@
 
 /* Songbird imports. */
 #include <sbILibraryManager.h>
-#include <sbILocalDatabasePropertyCache.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIFileMetadataService.h>
 #include <sbIJobProgress.h>

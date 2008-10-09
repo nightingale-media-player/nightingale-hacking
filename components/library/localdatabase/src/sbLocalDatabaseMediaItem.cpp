@@ -29,6 +29,7 @@
 #include <nsIProgrammingLanguage.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
+#include <sbILocalDatabaseResourcePropertyBag.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
@@ -178,6 +179,7 @@ sbLocalDatabaseMediaItem::EnsurePropertyBag()
   NS_ASSERTION(count == 1, "GetProperties returned too many bags");
   NS_ASSERTION(bags[0], "GetProperties returned a null bag!");
 
+  NS_ENSURE_TRUE(bags[0], NS_ERROR_NULL_POINTER);
   mPropertyBag = bags[0];
   NS_FREE_XPCOM_ISUPPORTS_POINTER_ARRAY(count, bags);
 

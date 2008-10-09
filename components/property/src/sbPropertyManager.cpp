@@ -174,7 +174,10 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aID,
     rv = textProperty->SetId(aID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = AddPropertyInfo(SB_IPROPERTYINFO_CAST(sbITextPropertyInfo *, textProperty));
+    nsCOMPtr<sbIPropertyInfo> propInfo = do_QueryInterface(NS_ISUPPORTS_CAST(sbITextPropertyInfo*, textProperty), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = AddPropertyInfo(propInfo);
     NS_ENSURE_SUCCESS(rv, rv);
 
     //This is the only safe way to hand off the instance because the hash table
@@ -1465,7 +1468,8 @@ sbPropertyManager::RegisterDummy(sbDummyPropertyInfo *dummyProperty,
     }
   }
 
-  nsCOMPtr<sbIPropertyInfo> propInfo = SB_IPROPERTYINFO_CAST(sbIDummyPropertyInfo *, dummyProperty);
+  nsCOMPtr<sbIPropertyInfo> propInfo = do_QueryInterface(NS_ISUPPORTS_CAST(sbIDummyPropertyInfo*, dummyProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);

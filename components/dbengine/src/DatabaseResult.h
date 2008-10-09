@@ -35,6 +35,7 @@
 // INCLUDES ===================================================================
 #include "sbIDatabaseResult.h"
 
+#include <deque>
 #include <vector>
 #include <map>
 
@@ -80,7 +81,7 @@ public:
 
 protected:
   typedef std::vector<nsString> dbcolumnnames_t;
-  typedef std::vector< std::vector<nsString> > dbrowcells_t;
+  typedef std::deque< std::vector<nsString> > dbrowcells_t;
   typedef std::map<nsString, PRUint32> dbcolumnresolvemap_t;
   
   dbcolumnnames_t m_ColumnNames;

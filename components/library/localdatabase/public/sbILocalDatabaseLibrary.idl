@@ -40,7 +40,6 @@ interface sbIDatabaseQuery;
 interface sbILocalDatabaseLibraryCopyListener;
 interface sbILocalDatabaseGUIDArray;
 interface sbILocalDatabasePropertyCache;
-interface sbILocalDatabaseResourcePropertyBag;
 interface sbIPropertyArray;
 
 %{C++

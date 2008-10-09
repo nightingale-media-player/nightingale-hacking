@@ -57,10 +57,12 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseLibrary.cpp \
            sbLocalDatabaseLibraryFactory.cpp \
            sbLocalDatabaseMediaListBase.cpp \
+           sbLocalDatabaseResourcePropertyBag.cpp \
            sbLocalDatabaseSimpleMediaList.cpp \
            sbLocalDatabaseSimpleMediaListFactory.cpp \
            sbLocalDatabaseSmartMediaList.cpp \
            sbLocalDatabaseSmartMediaListFactory.cpp \
+           sbLocalDatabaseSQL.cpp \
            sbLocalDatabaseCascadeFilterSet.cpp \
            sbLocalDatabaseMediaListView.cpp \
            sbLocalDatabaseMediaListViewSelection.cpp \

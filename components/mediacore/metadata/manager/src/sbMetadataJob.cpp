@@ -61,7 +61,6 @@
 #include <sbILocalDatabaseLibrary.h>
 #include <sbLocalDatabaseLibrary.h>
 #include <sbILocalDatabaseMediaItem.h>
-#include <sbILocalDatabasePropertyCache.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyManager.h>
 #include <sbIMediaItem.h>

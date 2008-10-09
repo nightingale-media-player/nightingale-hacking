@@ -1,28 +1,28 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ //
+ // BEGIN SONGBIRD GPL
+ //
+ // This file is part of the Songbird web player.
+ //
+ // Copyright(c) 2005-2008 POTI, Inc.
+ // http://songbirdnest.com
+ //
+ // This file may be licensed under the terms of of the
+ // GNU General Public License Version 2 (the "GPL").
+ //
+ // Software distributed under the License is distributed
+ // on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+ // express or implied. See the GPL for the specific language
+ // governing rights and limitations.
+ //
+ // You should have received a copy of the GPL along with this
+ // program. If not, go to http://www.gnu.org/licenses/gpl.html
+ // or write to the Free Software Foundation, Inc.,
+ // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ //
+ // END SONGBIRD GPL
+ //
+ */
 
 #ifndef __SBLOCALDATABASEPROPERTYCACHE_H__
 #define __SBLOCALDATABASEPROPERTYCACHE_H__
@@ -30,7 +30,6 @@
 #include <nsIStringEnumerator.h>
 #include <sbILocalDatabasePropertyCache.h>
 
-#include <nsClassHashtable.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
@@ -40,6 +39,9 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
+#include "sbLocalDatabaseResourcePropertyBag.h"
+#include "sbFixedInterfaceCache.h"
+#include "sbLocalDatabaseSQL.h"
 
 struct PRLock;
 struct PRMonitor;
@@ -54,13 +56,31 @@ class sbISQLSelectBuilder;
 class sbISQLUpdateBuilder;
 class sbISQLDeleteBuilder;
 
-class sbLocalDatabasePropertyCache : public sbILocalDatabasePropertyCache,
-                                     public nsIObserver
+/**
+ * \brief Max number of pending changes before automatic cache write.
+ */
+#define SB_LOCALDATABASE_MAX_PENDING_CHANGES (500)
+
+class sbLocalDatabasePropertyCache: public sbILocalDatabasePropertyCache,
+    public nsIObserver
 {
 public:
+  friend class sbLocalDatabaseResourcePropertyBag;
+  /**
+   * The size of our property bag cache
+   */
+  static PRUint32 const CACHE_SIZE = 1024;
+  /**
+   * The number of bags to read at a time
+   */
+  static PRUint32 const BATCH_READ_SIZE = 128;
+
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASEPROPERTYCACHE
   NS_DECL_NSIOBSERVER
+
+  typedef sbFixedInterfaceCache<nsStringHashKey,
+                                sbLocalDatabaseResourcePropertyBag> InterfaceCache;
 
   sbLocalDatabasePropertyCache();
 
@@ -68,26 +88,75 @@ public:
   ~sbLocalDatabasePropertyCache();
 
   nsresult Init(sbLocalDatabaseLibrary* aLibrary,
-                const nsAString& aLibraryResourceGUID);
+      const nsAString& aLibraryResourceGUID);
+
+  PRBool GetPropertyID(PRUint32 aPropertyDBID, nsAString& aPropertyID);
+
+  void GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn);
+
+private:
   nsresult Shutdown();
 
   nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
   nsresult LoadProperties();
 
-  nsresult AddDirtyGUID(const nsAString &aGuid);
+  nsresult AddDirty(const nsAString &aGuid,
+      sbLocalDatabaseResourcePropertyBag * aBag);
 
   PRUint32 GetPropertyDBIDInternal(const nsAString& aPropertyID);
-  PRBool GetPropertyID(PRUint32 aPropertyDBID, nsAString& aPropertyID);
-
-  void GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn);
 
   nsresult InsertPropertyIDInLibrary(const nsAString& aPropertyID,
-                                     PRUint32 *aPropertyDBID);
+      PRUint32 *aPropertyDBID);
 
-private:
-  nsresult GetBag(const nsAString& aGuid,
-                  PRUint32 aMediaItemId,
-                  sbILocalDatabaseResourcePropertyBag** _retval);
+  typedef nsInterfaceHashtable<nsUint32HashKey, sbLocalDatabaseResourcePropertyBag> IDToBagMap;
+
+  nsresult RetrieveSecondaryProperties(nsAString const & aSQLStatement,
+      IDToBagMap const & bags);
+
+  nsresult RetrieveLibraryProperties(nsAString const & aSQLStatement,
+      sbLocalDatabaseResourcePropertyBag * aBag);
+
+  /**
+   * This retrieves a collection of property bags for the list of guids passed
+   * to aGUIDs.
+   * \param aGUIDs this is the collection of guids. NOTE: this array may be
+   *               modified if it contains a library guid. In that case the
+   *               library guid will be moved to the end of the array.
+   * \param aBags This is the collection of property bags returned. It is
+   *              returned in the same order as aGUIDs as it is returned.
+   */
+  template <class T>
+  nsresult RetrieveProperties(T & aGUIDs,
+      nsCOMArray<sbLocalDatabaseResourcePropertyBag> & aBags);
+
+  /**
+   * Creates property bags containing the primary properties. This also
+   * creates a list of ID's that were retrieved. This is primarily an
+   * optimization issue so we don't have to go back through and enumerate
+   * the bags or ID to Bag Map to get an array.
+   * \param aSQLStatement an SQL statement that will retrieve media item
+   *                      primary properties
+   * \param aGuids The list of guids of the media items to retrieve the
+   *               properties
+   * \param aIDToBagMap Will hold the map of item ID's to property bags
+   * \param aBags The collection of bags containing the primary properties
+   * \param aItemIDs the collection of item ID's for the property bags
+   *                 being retrieved
+   */
+  template <class T>
+  nsresult
+  RetrievePrimaryProperties(nsAString const & aSQLStatement,
+      T const & aGuids,
+      IDToBagMap & aIDToBagMap,
+      nsCOMArray<sbLocalDatabaseResourcePropertyBag> & aBags,
+      nsTArray<PRUint32> & aItemIDs);
+
+  /**
+   * This does the actual writing of the properties and optionally locks
+   * the cache. This allows GetProperites to write dirty properties
+   * and maintain it's lock.
+   */
+  nsresult WriteDirtyProperties(PRBool aLockTheCache);
 
   // Pending write count.
   PRUint32 mWritePendingCount;
@@ -102,32 +171,6 @@ private:
   nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyDBIDToID;
   nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyIDToDBID;
 
-  // Used to template the properties select statement
-  nsCOMPtr<sbISQLSelectBuilder> mPropertiesSelect;
-  // mPropertiesSelect has an owning reference to this
-  sbISQLBuilderCriterionIn* mPropertiesInCriterion;
-
-  // Used to template the library media item properties select statement
-  nsCOMPtr<sbISQLSelectBuilder> mLibraryMediaItemPropertiesSelect;
-
-  // Used to template the media items select statement
-  nsCOMPtr<sbISQLSelectBuilder> mMediaItemsSelect;
-  // mMediaItemsSelect has an owning reference to this
-  sbISQLBuilderCriterionIn* mMediaItemsInCriterion;
-
-  // Used to template the library media item select statement
-  nsCOMPtr<sbISQLSelectBuilder> mLibraryMediaItemSelect;
-
-  // Used to template the properties table insert that generates
-  // the property ID for the property in the current library.
-  nsCOMPtr<sbISQLInsertBuilder> mPropertiesTableInsert;
-
-  // Property insert or replace statement
-  nsString mPropertiesInsertOrReplace;
-
-  // Property delete query
-  nsString mPropertiesDelete;
-
   // Media items fts delete query
   // XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617
   //         for more details.
@@ -140,30 +183,12 @@ private:
   //nsCOMPtr<sbISQLInsertBuilder> mMediaItemsFtsInsert;
   //sbISQLBuilderCriterionIn* mMediaItemsFtsInsertInCriterion;
 
-  // Media items fts all delete query
-  nsCOMPtr<sbISQLDeleteBuilder> mMediaItemsFtsAllDelete;
-  sbISQLBuilderCriterionIn* mMediaItemsFtsAllDeleteInCriterion;
-
-  // Media items fts all insert query
-  nsCOMPtr<sbISQLInsertBuilder> mMediaItemsFtsAllInsert;
-  sbISQLBuilderCriterionIn* mMediaItemsFtsAllInsertInCriterion;
-
-  // Used to template the media item property update statement
-  nsDataHashtable<nsUint32HashKey, nsString> mMediaItemsUpdateQueries;
-
-  // Used to template the library media item property update statement
-  nsDataHashtable<nsUint32HashKey, nsString> mLibraryMediaItemUpdateQueries;
-
-  // Used to template the query used to verify if we need to insert or
-  // update a peculiar property.
-  nsCOMPtr<sbISQLSelectBuilder> mPropertyInsertSelect;
-
   // Cache for GUID -> property bag
-  nsInterfaceHashtableMT<nsStringHashKey, sbILocalDatabaseResourcePropertyBag> mCache;
-
+  InterfaceCache mCache;
+  PRLock* mCacheLock;
   // Dirty GUIDs
   PRLock* mDirtyLock;
-  nsTHashtable<nsStringHashKey> mDirty;
+  nsInterfaceHashtable<nsStringHashKey, sbLocalDatabaseResourcePropertyBag> mDirty;
 
   // flushing on a background thread
   struct FlushQueryData {
@@ -172,11 +197,13 @@ private:
   };
   void RunFlushThread();
 
+  static
+  nsresult ProcessQueries(nsTArray<FlushQueryData> & aQueries);
+
   // The GUID of the library resource
   nsString mLibraryResourceGUID;
 
   PRBool mIsShuttingDown;
-  nsTArray<FlushQueryData> mUnflushedQueries;
   nsCOMPtr<nsIThread> mFlushThread;
   PRMonitor* mFlushThreadMonitor;
 
@@ -186,57 +213,7 @@ private:
 
   nsCOMPtr<sbIPropertyManager> mPropertyManager;
 
-  PRLock* mCachePropertiesLock;
-};
-
-class sbLocalDatabaseResourcePropertyBag : public sbILocalDatabaseResourcePropertyBag
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBILOCALDATABASERESOURCEPROPERTYBAG
-
-  sbLocalDatabaseResourcePropertyBag(sbLocalDatabasePropertyCache* aCache,
-                                     PRUint32 mMediaItemId,
-                                     const nsAString& aGuid);
-
-  ~sbLocalDatabaseResourcePropertyBag();
-
-  nsresult Init();
-  nsresult PutValue(PRUint32 aPropertyID,
-                    const nsAString& aValue,
-                    const nsAString& aSortable);
-
-  nsresult EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, void *aClosure, PRUint32 *aDirtyCount);
-  nsresult SetDirty(PRBool aDirty);
-
-private:
-
-  struct sbValuePair {
-    sbValuePair(const nsAString& aValue, const nsAString& aSortable) :
-      value(aValue),
-      sortable(aSortable)
-    {};
-
-    nsString value;
-    nsString sortable;
-  };
-
-  static PLDHashOperator PR_CALLBACK
-    PropertyBagKeysToArray(const PRUint32& aPropertyID,
-                           sbValuePair* aValuePair,
-                           void *aArg);
-
-  sbLocalDatabasePropertyCache* mCache;
-  nsClassHashtableMT<nsUint32HashKey, sbValuePair> mValueMap;
-
-  nsCOMPtr<sbIPropertyManager> mPropertyManager;
-
-  PRUint32  mWritePendingCount;
-  nsString  mGuid;
-  PRUint32  mMediaItemId;
-  // Dirty Property ID's
-  PRLock* mDirtyLock;
-  nsTHashtable<nsUint32HashKey> mDirty;
+  sbLocalDatabaseSQL mSQLStrings;
 };
 
 #endif /* __SBLOCALDATABASEPROPERTYCACHE_H__ */

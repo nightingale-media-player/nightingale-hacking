@@ -27,7 +27,7 @@
 #ifndef __SBSTRINGUTILS_H__
 #define __SBSTRINGUTILS_H__
 
-#include <nsStringGlue.h>
+#include <nsStringAPI.h>
 #include <nsTArray.h>
 #include <prprf.h>
 
@@ -109,6 +109,65 @@ PRBool IsLikelyUTF8(const nsACString& aString);
 void nsString_Split(const nsAString&    aString,
                     const nsAString&    aDelimiter,
                     nsTArray<nsString>& aSubStringArray);
+
+template <class T>
+inline
+T const & sbAppendStringArrayDefaultExtractor(T const & aArrayItem)
+{
+  return aArrayItem;
+}
+
+template <class S, class Sep, class T, class E>
+inline
+S sbAppendStringArray(S & aTarget,
+                      Sep const & aSeparator,
+                      T const & aStringArray,
+                      E aExtractor)
+{
+  // Save off the lengths
+  PRUint32 const separatorLength = aSeparator.Length();
+  PRUint32 const stringLength = aTarget.Length();
+  PRUint32 const length = aStringArray.Length();
+
+  // Calc the final length from the original string + length of all the
+  // separators
+  PRUint32 finalLength = stringLength + (separatorLength * (aStringArray.Length() - 1));
+  PRUint32 index;
+  for (PRUint32 index = 0; index < length; ++index) {
+    finalLength += aStringArray[index].Length();
+  }
+  typename S::char_type const * const separator = aSeparator.BeginReading();
+  // Set the writePosition to the end of the string
+  typename S::char_type * writePosition;
+  typename S::char_type * endPosition;
+  aTarget.BeginWriting(&writePosition, &endPosition, finalLength);
+  if (!writePosition)
+    return aTarget;
+  writePosition += stringLength;
+  // Now append
+  PRBool const isSeparatorEmpty = aSeparator.IsEmpty();
+  for (PRUint32 index = 0; index < length; ++index) {
+    if (index != 0 && !isSeparatorEmpty) {
+      memcpy(writePosition, separator, separatorLength * sizeof(typename S::char_type));
+      writePosition += separatorLength;
+    }
+    S const & value = aExtractor(aStringArray[index]);
+    memcpy(writePosition,
+           value.BeginReading(),
+           value.Length() * sizeof(typename S::char_type));
+    writePosition += value.Length();
+  }
+  return aTarget;
+}
+
+template <class S, class Sep, class T>
+inline
+S sbAppendStringArray(S & aTarget,
+                      Sep const & aSeparator,
+                      T const & aStringArray)
+{
+  return sbAppendStringArray(aTarget, aSeparator, aStringArray, sbAppendStringArrayDefaultExtractor<S>);
+}
 
 #endif /* __SBSTRINGUTILS_H__ */
 
