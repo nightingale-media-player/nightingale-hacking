@@ -615,4 +615,7 @@ function onPlay(e) {
 
     var uri = ioService.newURI(plsURL, null, null);
     plsMgr.loadPlaylist(uri, RadioDirectory.streamList, null, false, listener);
+
+    e.stopPropagation();
+    e.preventDefault();
 }
