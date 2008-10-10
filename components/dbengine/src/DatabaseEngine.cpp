@@ -1280,6 +1280,10 @@ nsresult CDatabaseEngine::ClearPersistentQueries()
       //  or sqlite3_finalize() have been called. 
       sqlite3_reset(pStmt);
 
+      // free the statement handle if we don't need it.
+      // this is a temprary workaround fix.
+      actualPreparedStatement->TempFix();
+
     }
 
     //Whatever happened, the query is done running now.

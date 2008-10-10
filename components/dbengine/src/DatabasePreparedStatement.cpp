@@ -41,8 +41,8 @@
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabasePreparedStatement, sbIDatabasePreparedStatement)
 
-CDatabasePreparedStatement::CDatabasePreparedStatement(const nsAString &sql) 
-  : mStatement(nsnull), mDB(nsnull), mSql(sql)
+CDatabasePreparedStatement::CDatabasePreparedStatement(const nsAString &sql, bool tempFix) 
+  : mStatement(nsnull), mDB(nsnull), mSql(sql), mTempFix(tempFix)
 {
   
 }
@@ -106,4 +106,17 @@ sqlite3_stmt* CDatabasePreparedStatement::GetStatement(sqlite3 *db)
     }
   }
   return mStatement;
+}
+
+void CDatabasePreparedStatement::TempFix() {
+  if(mTempFix && mStatement) {
+    // this should always be safe if mStatement is defined.
+    // if it does, it means we have a bad mStatement pointer. 
+    // error codes returned here are okay, since they either reiterate
+    // errors caused by bad statements being compiled, or indicate
+    // that the statement was aborted during execution.
+    // see: http://sqlite.org/c3ref/finalize.html
+    sqlite3_finalize(mStatement);
+    mStatement = nsnull;
+  }   
 }
