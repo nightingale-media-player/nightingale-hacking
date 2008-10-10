@@ -148,12 +148,15 @@ mashTape.init = function(e) {
 	if (menuButton.id != "mashTape-expand-display-pane") {
 		var maxButton = document.createElement("button");
 		maxButton.id = "mashTape-expand-display-pane";
+		/*
 		maxButton.style.margin = 0;
 		maxButton.style.border = "none";
 		maxButton.style.outline = "none";
 		maxButton.style.backgroundImage = "none";
+		*/
+		maxButton.className = "sb-displaypane-menubutton";
 		maxButton.style.listStyleImage =
-		"url('chrome://songbird/skin/icons/display-pane/button-maximize.png')";
+		"url('chrome://songbird/skin/display-pane/button-maximize.png')";
 		maxButton.addEventListener("click", mashTape.maximiseDisplayPane,false);
 		dpHeader.insertBefore(maxButton, menuButton);
 		mashTape.displayPaneMaxButton = maxButton;
@@ -167,6 +170,8 @@ mashTape.init = function(e) {
 		// We have at least one info provider, so create the info tab
 		mashTape.infoTabTop = null;
 		for each (var tab in tabs) {
+			if (tab == null)
+				continue;
 			if (tab.id == "mashTape-tab-info")
 				mashTape.infoTabTop = tab;
 		}
@@ -205,6 +210,8 @@ mashTape.init = function(e) {
 		// assuming uber-tab for now
 		mashTape.rssTabTop = null;
 		for each (var tab in tabs) {
+			if (tab == null)
+				continue;
 			if (tab.id == "mashTape-tab-rss")
 				mashTape.rssTabTop = tab;
 		}
@@ -266,6 +273,8 @@ mashTape.init = function(e) {
 		// XXX same preference thing applies from above
 		mashTape.photoTabTop = null;
 		for each (var tab in tabs) {
+			if (tab == null)
+				continue;
 			if (tab.id == "mashTape-tab-photo")
 				mashTape.photoTabTop = tab;
 		}
@@ -301,6 +310,8 @@ mashTape.init = function(e) {
 		// assuming uber-tab for now
 		mashTape.flashTabTop = null;
 		for each (var tab in tabs) {
+			if (tab == null)
+				continue;
 			if (tab.id == "mashTape-tab-flash")
 				mashTape.flashTabTop = tab;
 		}
@@ -1203,7 +1214,8 @@ mashTape.updateRssFeeds = function(provider, results) {
 			var img = doc.createElement("img");
 			img.src = "chrome://mashtape/skin/photos.png";
 			img.setAttribute("title", mashTape.strings.GetStringFromName(
-					"extensions.mashTape.rss.photo");
+					"extensions.mashTape.rss.photo"));
+			img.className = "legend";
 			metadata.appendChild(img);
 		}
 		if (results[i].content.indexOf("<object") >= 0 ||
@@ -1211,7 +1223,8 @@ mashTape.updateRssFeeds = function(provider, results) {
 			var img = doc.createElement("img");
 			img.src = "chrome://mashtape/skin/video.png";
 			img.setAttribute("title", mashTape.strings.GetStringFromName(
-					"extensions.mashTape.rss.video");
+					"extensions.mashTape.rss.video"));
+			img.className = "legend";
 			metadata.appendChild(img);
 		}
 		entryDiv.appendChild(metadata);
@@ -1831,7 +1844,7 @@ mashTape.maximiseDisplayPane = function(ev) {
 		dp.height = mashTape.height;
 		
 		mashTape.displayPaneMaxButton.style.listStyleImage =
-		"url('chrome://songbird/skin/icons/display-pane/button-maximize.png')";
+		"url('chrome://songbird/skin/display-pane/button-maximize.png')";
 	} else {
 		// expand!
 		mashTape.expanded = true;
@@ -1847,7 +1860,7 @@ mashTape.maximiseDisplayPane = function(ev) {
 		dpSplitter.setAttribute("state", "collapsed");
 		
 		mashTape.displayPaneMaxButton.style.listStyleImage =
-		"url('chrome://songbird/skin/icons/display-pane/button-restore.png')";
+		"url('chrome://songbird/skin/display-pane/button-restore.png')";
 	}
 }
 
@@ -1934,4 +1947,55 @@ mashTape.prefObserver = {
 
 window.addEventListener("DOMContentLoaded", mashTape.init, false);
 window.addEventListener("unload", mashTape.unload, false);
+
+mashTape.tooltip = function(tipElement)
+{
+  var retVal = false;
+  if (tipElement.namespaceURI == "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul")
+    return retVal;
+
+  const XLinkNS = "http://www.w3.org/1999/xlink";
+
+
+  var titleText = null;
+  var XLinkTitleText = null;
+  var direction = tipElement.ownerDocument.dir;
+
+  while (!titleText && !XLinkTitleText && tipElement) {
+    if (tipElement.nodeType == Node.ELEMENT_NODE) {
+      titleText = tipElement.getAttribute("title");
+      XLinkTitleText = tipElement.getAttributeNS(XLinkNS, "title");
+      var defView = tipElement.ownerDocument.defaultView;
+      // XXX Work around bug 350679:
+      // "Tooltips can be fired in documents with no view".
+      if (!defView)
+        return retVal;
+      direction = defView.getComputedStyle(tipElement, "")
+        .getPropertyValue("direction");
+    }
+    tipElement = tipElement.parentNode;
+  }
+
+  var tipNode = document.getElementById("aHTMLTooltip");
+  tipNode.style.direction = direction;
+  
+  for each (var t in [titleText, XLinkTitleText]) {
+    if (t && /\S/.test(t)) {
+
+      // Per HTML 4.01 6.2 (CDATA section), literal CRs and tabs should be
+      // replaced with spaces, and LFs should be removed entirely.
+      // XXX Bug 322270: We don't preserve the result of entities like &#13;,
+      // which should result in a line break in the tooltip, because we can't
+      // distinguish that from a literal character in the source by this point.
+      t = t.replace(/[\r\t]/g, ' ');
+      t = t.replace(/\n/g, '');
+
+      tipNode.setAttribute("label", t);
+      retVal = true;
+    }
+  }
+
+  return retVal;
+}
+
 

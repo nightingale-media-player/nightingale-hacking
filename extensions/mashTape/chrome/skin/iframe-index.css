@@ -11,7 +11,7 @@ body b {
 .time {
 	color: grey;
 	padding-left: 1em;
-	padding-right: 1em;
+	padding-right: 5px;
 }
 
 div.entryDark {
@@ -67,4 +67,8 @@ div.entrySelected {
 }
 div.entrySelected a {
 	color: black;
+}
+
+img.legend {
+	padding-left: 3px;
 }
