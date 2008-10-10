@@ -140,6 +140,10 @@ ifdef SONGBIRD_COMPONENTS
 targets += copy_sb_components
 endif
 
+ifdef SONGBIRD_PP_COMPONENTS
+targets += sb_components_preprocess
+endif
+
 ifdef SONGBIRD_LIB
 targets += copy_sb_lib
 endif
@@ -887,6 +891,27 @@ ifneq (,$(strip $(SONGBIRD_COMPONENTS)))
 endif
 .PHONY : copy_sb_components
 endif #SONGBIRD_COMPONENTS
+
+#-----------------------
+
+ifdef SONGBIRD_PP_COMPONENTS
+ifndef PP_COMPONENTS_STRIP_SUFFIXES
+PP_COMPONENTS_STRIP_SUFFIXES = .in
+endif
+sb_components_preprocess:
+ifeq (,$(wildcard $(SONGBIRD_COMPONENTSDIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_COMPONENTSDIR)
+endif
+ifneq (,$(strip $(SONGBIRD_PP_COMPONENTS)))
+	for item in $(SONGBIRD_PP_COMPONENTS); do \
+	  target=$(SONGBIRD_COMPONENTSDIR)/`basename $$item $(PP_COMPONENTS_STRIP_SUFFIXES)`; \
+	  $(CYGWIN_WRAPPER) $(RM) -f $$target; \
+	  $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(COMPONENTS_PPFLAGS) \
+	    $(PPDEFINES) -- $$item > $$target; \
+	done
+endif
+.PHONY : sb_components_preprocess
+endif #SONGBIRD_PP_COMPONENTS
 
 #-----------------------
 
