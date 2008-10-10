@@ -153,9 +153,10 @@ mashTape.init = function(e) {
 		maxButton.style.outline = "none";
 		maxButton.style.backgroundImage = "none";
 		maxButton.style.listStyleImage =
-			"url('chrome://mashtape/skin/expand.png')";
+		"url('chrome://songbird/skin/icons/display-pane/button-maximize.png')";
 		maxButton.addEventListener("click", mashTape.maximiseDisplayPane,false);
 		dpHeader.insertBefore(maxButton, menuButton);
+		mashTape.displayPaneMaxButton = maxButton;
 	}
 
 	var dpTabBar = mashTape.displayPane.tabBar;
@@ -1201,12 +1202,16 @@ mashTape.updateRssFeeds = function(provider, results) {
 		if (results[i].content.indexOf("<img") >= 0) {
 			var img = doc.createElement("img");
 			img.src = "chrome://mashtape/skin/photos.png";
+			img.setAttribute("title", mashTape.strings.GetStringFromName(
+					"extensions.mashTape.rss.photo");
 			metadata.appendChild(img);
 		}
 		if (results[i].content.indexOf("<object") >= 0 ||
 					results[i].content.indexOf("<embed") >= 0) {
 			var img = doc.createElement("img");
 			img.src = "chrome://mashtape/skin/video.png";
+			img.setAttribute("title", mashTape.strings.GetStringFromName(
+					"extensions.mashTape.rss.video");
 			metadata.appendChild(img);
 		}
 		entryDiv.appendChild(metadata);
@@ -1824,6 +1829,9 @@ mashTape.maximiseDisplayPane = function(ev) {
 		dpSplitter.setAttribute("state", "open");
 		
 		dp.height = mashTape.height;
+		
+		mashTape.displayPaneMaxButton.style.listStyleImage =
+		"url('chrome://songbird/skin/icons/display-pane/button-maximize.png')";
 	} else {
 		// expand!
 		mashTape.expanded = true;
@@ -1837,6 +1845,9 @@ mashTape.maximiseDisplayPane = function(ev) {
 		// collapse the display pane splitter
 		dpSplitter.setAttribute("collapse", "before");
 		dpSplitter.setAttribute("state", "collapsed");
+		
+		mashTape.displayPaneMaxButton.style.listStyleImage =
+		"url('chrome://songbird/skin/icons/display-pane/button-restore.png')";
 	}
 }
 
