@@ -72,4 +72,88 @@ private:
 };
 
 
+/**
+ * Define a class that wraps a data type and auto-disposes it when going out of
+ * scope.  The class name is specified by aName, and the data type is specified
+ * by aType.  An additional class field type may be specified by aType2.  A code
+ * snippet that checks for valid data is specified by aIsValid.  A code snippet
+ * that disposes of the data is specified by aDispose.  A code snippet that
+ * invalidates the data is specified by aInvalidate.  The code snippets may use
+ * mValue to refer to the wrapped data and mValue2 to refer to the additional
+ * class field.
+ *
+ * \param aName                 Name of class.
+ * \param aType                 Class data type.
+ * \param aType2                Additional class field data type.
+ * \param aIsValid              Code snippet to test for data validity.
+ * \param aDispose              Code snippet to dispose of the data.
+ * \param aInvalidate           Code snippet to invalidate the data.
+ *
+ * Example:
+ *   SB_AUTO_CLASS(sbAutoMemPtr,
+ *                 void*,
+ *                 mValue,
+ *                 NS_Free(mValue),
+ *                 mValue = nsnull)
+ *   sbAutoMemPtr autoMem(memPtr);
+ *
+ *   SB_AUTO_CLASS2(sbAutoClassData,
+ *                  void*,
+ *                  classType*,
+ *                  mValue,
+ *                  mValue2->Delete(mValue),
+ *                  mValue = nsnull)
+ *   sbAutoClassData(data, this);
+ */
+
+#define SB_AUTO_CLASS2(aName, aType, aType2, aIsValid, aDispose, aInvalidate)  \
+class aName                                                                    \
+{                                                                              \
+public:                                                                        \
+  aName() { Invalidate(); }                                                    \
+                                                                               \
+  aName(aType aValue) : mValue(aValue) {}                                      \
+                                                                               \
+  aName(aType aValue, aType2 aValue2) : mValue(aValue), mValue2(aValue2) {}    \
+                                                                               \
+  virtual ~aName()                                                             \
+  {                                                                            \
+    if (aIsValid) {                                                            \
+      aDispose;                                                                \
+    }                                                                          \
+  }                                                                            \
+                                                                               \
+  void Set(aType aValue) { mValue = aValue; }                                  \
+                                                                               \
+  void Set(aType aValue, aType2 aValue2)                                       \
+         { mValue = aValue; mValue2 = aValue2; }                               \
+                                                                               \
+  aType forget()                                                               \
+  {                                                                            \
+    aType value = mValue;                                                      \
+    Invalidate();                                                              \
+    return value;                                                              \
+  }                                                                            \
+                                                                               \
+private:                                                                       \
+  aType mValue;                                                                \
+  aType2 mValue2;                                                              \
+                                                                               \
+  void Invalidate() { aInvalidate; }                                           \
+}
+
+#define SB_AUTO_CLASS(aName, aType, aIsValid, aDispose, aInvalidate)           \
+          SB_AUTO_CLASS2(aName, aType, char, aIsValid, aDispose, aInvalidate)
+
+
+//
+// Auto-disposal class wrappers.
+//
+//   sbAutoNSMemPtr             Wrapper to auto-dispose memory blocks allocated
+//                              with NS_Alloc.
+//
+
+SB_AUTO_CLASS(sbAutoNSMemPtr, void*, mValue, NS_Free(mValue), mValue = nsnull);
+
+
 #endif /* __SBMEMORYUTILS_H__ */

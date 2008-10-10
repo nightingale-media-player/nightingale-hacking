@@ -1,0 +1,79 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//
+// Interface description for the album art service interface.
+//
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+#include "nsISupports.idl"
+
+
+/**
+ * \interface sbIAlbumArtService
+ * \brief Interface for the album art service.  Instantiate as a component
+ *        service.
+ *
+ * "@songbirdnest.com/Songbird/album-art-service;1"
+ */
+
+interface nsIFileURL;
+
+[scriptable, uuid(0efbc2f2-a401-4382-bbdf-a6c75d1502bf)]
+interface sbIAlbumArtService : nsISupports
+{
+  /**
+   * \brief Write the album art image specified by aData and aDataLen of type
+   *        specified by aMimeType to a cache file and return the cache file
+   *        URL.
+   *
+   * \param aMimeType           MIME type of image data.
+   * \param aData               Album art image data.
+   * \param aDataLen            Length in bytes of image data.
+   *
+   * \return                    Album art image cache file URL.
+   */
+
+  nsIFileURL cacheImage(in AUTF8String                             aMimeType,
+                        [const, array, size_is(aDataLen)] in octet aData,
+                        in unsigned long                           aDataLen);
+};
+
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_ALBUMARTSERVICE_CONTRACTID \
+          "@songbirdnest.com/Songbird/album-art-service;1"
+%}C++
+

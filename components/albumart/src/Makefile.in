@@ -36,14 +36,20 @@ target_name = sbAlbumArt
 endif
 
 CPP_SRCS = sbAlbumArtModule.cpp \
+           sbAlbumArtService.cpp \
            sbFileAlbumArtFetcher.cpp \
+           sbMetadataAlbumArtFetcher.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/albumart/public \
                $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/mediacore/metadata/manager/public \
+               $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/include \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/mimetype \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/pref \

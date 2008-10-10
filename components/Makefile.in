@@ -78,7 +78,7 @@ SUBDIRDEPS7 = contenthandling : mediacore library
 SUBDIRDEPS8 = devices : library property mediacore
 SUBDIRDEPS9 = testharness : moz
 SUBDIRDEPS10 = property : intl
-SUBDIRDEPS11 = albumart : library moz property
+SUBDIRDEPS11 = albumart : library mediacore moz property
 
 ifdef SB_ENABLE_STATIC
 SUBDIRS += static

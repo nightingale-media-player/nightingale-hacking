@@ -39,7 +39,8 @@
 
 /**
  * \interface sbIAlbumArtFetcher
- * \brief Interface for an album art fetcher.
+ * \brief Interface for an album art fetcher.  Instantiate as a component
+ *        service.
  * \sa sbIAlbumArtListener
  */
 
@@ -105,5 +106,8 @@ interface sbIAlbumArtFetcher : nsISupports
 %{C++
 #define SB_FILEALBUMARTFETCHER_CONTRACTID \
           "@songbirdnest.com/Songbird/album-art/file-fetcher;1"
+
+#define SB_METADATAALBUMARTFETCHER_CONTRACTID \
+          "@songbirdnest.com/Songbird/album-art/metadata-fetcher;1"
 %}C++
 

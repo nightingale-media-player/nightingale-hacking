@@ -46,10 +46,22 @@
 //------------------------------------------------------------------------------
 
 // Local imports.
+#include "sbAlbumArtService.h"
 #include "sbFileAlbumArtFetcher.h"
+#include "sbMetadataAlbumArtFetcher.h"
 
 // Mozilla imports.
 #include <nsIGenericFactory.h>
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird album art service.
+//
+//------------------------------------------------------------------------------
+
+// Construct the sbAlbumArtService object and call its Initialize method.
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtService, Initialize)
 
 
 //------------------------------------------------------------------------------
@@ -64,6 +76,17 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbFileAlbumArtFetcher, Initialize)
 
 //------------------------------------------------------------------------------
 //
+// Songbird metadata album art fetcher services.
+//
+//------------------------------------------------------------------------------
+
+// Construct the sbMetadataAlbumArtFetcher object and call its Initialize
+// method.
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataAlbumArtFetcher, Initialize)
+
+
+//------------------------------------------------------------------------------
+//
 // Songbird album art components module registration services.
 //
 //------------------------------------------------------------------------------
@@ -71,12 +94,28 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbFileAlbumArtFetcher, Initialize)
 // Module component information.
 static nsModuleComponentInfo sbAlbumArtComponents[] =
 {
-  // Controller component info.
+  // Album art service component info.
+  {
+    SB_ALBUMARTSERVICE_CLASSNAME,
+    SB_ALBUMARTSERVICE_CID,
+    SB_ALBUMARTSERVICE_CONTRACTID,
+    sbAlbumArtServiceConstructor
+  },
+
+  // Local file album art fetcher component info.
   {
     SB_FILEALBUMARTFETCHER_CLASSNAME,
     SB_FILEALBUMARTFETCHER_CID,
     SB_FILEALBUMARTFETCHER_CONTRACTID,
     sbFileAlbumArtFetcherConstructor
+  },
+
+  // Metadata album art fetcher component info.
+  {
+    SB_METADATAALBUMARTFETCHER_CLASSNAME,
+    SB_METADATAALBUMARTFETCHER_CID,
+    SB_METADATAALBUMARTFETCHER_CONTRACTID,
+    sbMetadataAlbumArtFetcherConstructor
   }
 };
 
