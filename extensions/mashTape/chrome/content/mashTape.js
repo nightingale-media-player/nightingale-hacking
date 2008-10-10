@@ -157,10 +157,13 @@ mashTape.init = function(e) {
 		maxButton.className = "sb-displaypane-menubutton";
 		maxButton.style.listStyleImage =
 		"url('chrome://songbird/skin/display-pane/button-maximize.png')";
-		maxButton.addEventListener("click", mashTape.maximiseDisplayPane,false);
 		dpHeader.insertBefore(maxButton, menuButton);
 		mashTape.displayPaneMaxButton = maxButton;
+	} else {
+		mashTape.displayPaneMaxButton = menuButton;
 	}
+	mashTape.displayPaneMaxButton.addEventListener("click",
+			mashTape.maximiseDisplayPane, false);
 
 	var dpTabBar = mashTape.displayPane.tabBar;
 	// XXX holy hokey
@@ -425,7 +428,9 @@ mashTape.unload = function() {
 	gBrowser.removeProgressListener(mashTape.locationListener);
 	mashTape._prefBranch.removeObserver("", mashTape.prefObserver);
 	gMM.removeListener(mashTape);
-
+	mashTape.displayPaneMaxButton.removeEventListener("click",
+			mashTape.maximiseDisplayPane, false);
+	
 	// destroy the dataremotes
 	mashTape.pausedDr.unbind();
 }
