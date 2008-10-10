@@ -1,5 +1,31 @@
-The source for this (the mashTape add-on) is covered under the below BSD
-license + Patent License
+Many thanks to Mark James for the use of his FAMFAMFAM Silk icons for the
+photo & video icons used in the News/RSS index frame.
+These icons can be found at:
+	http://www.famfamfam.com/lab/icons/silk
+and are used under the Creative Commons CC-BY-2.5 license:
+	http://creativecommons.org/licenses/by/2.5/
+
+This (the mashTape add-on) utilises the following Javascript libraries and/or
+code, which are covered under the described licenses:
+* mooTools (http://mootools.net)
+	- Copyright 2006-2008 Valerio Proiette (http://mad4milk.net)
+	- Used under the MIT License
+* noobSlide (http://www.efectorelativo.net/laboratory/noobSlide/)
+	- Credit: luistar (leo020588 [at] gmail.com)
+	  with modifications by Stephen Lau (stevel@songbirdnest.com)
+	- Used under the MIT License
+* ISO8601 Date Javascript routine (http://delete.me.uk/2005/03/iso8601.html)
+	- Copyright 2005 Paul Sowden
+	- Used under the AFL (Academic Free License)
+
+The individual service provider "favicons" are trademarked and/or copyright
+their respective owners and do not imply any endorsement either of Songbird
+by the provider, or of the respective providers by Pioneers of the Inevitable,
+Inc.
+==============================================================================
+
+The rest of the source for this (the mashTape add-on) is covered under
+the below BSD license + Patent License
 
 The POTI BSD + Patent License has been written to provide maximum flexibility
 to the recipient, as it does not require the recipient to use a particular
