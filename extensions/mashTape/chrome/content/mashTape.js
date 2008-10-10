@@ -148,13 +148,14 @@ mashTape.init = function(e) {
 	if (menuButton.id != "mashTape-expand-display-pane") {
 		var maxButton = document.createElement("button");
 		maxButton.id = "mashTape-expand-display-pane";
-		/*
+		maxButton.className = "sb-displaypane-maximizebutton";
 		maxButton.style.margin = 0;
 		maxButton.style.border = "none";
 		maxButton.style.outline = "none";
 		maxButton.style.backgroundImage = "none";
-		*/
-		maxButton.className = "sb-displaypane-menubutton";
+		maxButton.style.height = "14px";
+		maxButton.style.minHeight = "14px";
+		maxButton.style.width = "14px";
 		maxButton.style.listStyleImage =
 		"url('chrome://songbird/skin/display-pane/button-maximize.png')";
 		dpHeader.insertBefore(maxButton, menuButton);

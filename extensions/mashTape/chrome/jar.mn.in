@@ -15,4 +15,5 @@ mashTape.jar:
 % locale mashtape sv-SE %locale/bn-IN/
 % skin mashtape classic/1.0 %skin/
 % overlay chrome://browser/content/preferences/preferences.xul chrome://mashtape/content/prefsOverlay.xul
+% style chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://mashtape/skin/mainwin.css
 @include_all_to
