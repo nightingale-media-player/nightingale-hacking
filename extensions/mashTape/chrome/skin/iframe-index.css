@@ -31,8 +31,9 @@ div.entryLight {
 
 div.metadata-flash img,
 div.metadata-rss img {
-	width: 12px;
-	height: 12px;
+	width: 10px;
+	height: 10px;
+	vertical-align:middle;
 }
 div.metadata-flash{
 	margin-left: 106px;
