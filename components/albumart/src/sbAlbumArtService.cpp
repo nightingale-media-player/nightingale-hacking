@@ -55,6 +55,7 @@
 #include <nsIFileURL.h>
 #include <nsIProperties.h>
 #include <nsServiceManagerUtils.h>
+#include <prprf.h>
 
 
 //------------------------------------------------------------------------------
