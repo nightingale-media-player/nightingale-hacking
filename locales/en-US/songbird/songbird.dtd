@@ -66,14 +66,10 @@
 <!ENTITY menu.control.pause.button     "Pause" >
 <!ENTITY menu.control.stop.button      "Stop" >
 
-<!ENTITY menu.displaypane.hide          "Hide">
-<!ENTITY menu.displaypane.get           "Get More Display Panes...">
 <!ENTITY displaypane.name.servicepane   "Service Pane Bottom">
 <!ENTITY displaypane.name.browser       "Content Pane Bottom">
 <!ENTITY displaypane.name.sidebar       "Right Sidebar">
-
 <!ENTITY servicepane.title.label        "Service Pane">
-
 
 <!ENTITY menu.tools           "Tools" >
 <!ENTITY menu.tools.metadata  "Metadata Editor...">

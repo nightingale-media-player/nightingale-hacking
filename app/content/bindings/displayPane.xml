@@ -64,19 +64,8 @@
                 onselect="document.getBindingParent(this).onTabSelect(event)"/>
           <button type="menu" mousethrough="never" class="sb-displaypane-menubutton"
                   onclick="event.stopPropagation();">
-            <menupopup onpopupshowing="return document.getBindingParent(this).buildMenu(event)"
-                       anonid="menu">
-                       
-              <menuitem label="&menu.displaypane.hide;"
-                        anonid="menuitem_hide"/>
-              <menuseparator/>
-
-              <!-- Placeholders for the registered display panes -->
-              <dummy anonid="display_panes_items_start" />
-              <dummy anonid="display_panes_items_end" />
-
-              <menuitem label="&menu.displaypane.get;" oncommand="onMenu(this)"
-                        value="songbird.url.addons.displaypanes"/>
+            <menupopup anonid="menu">
+              <sb-displaypane-content-menuitems anonid="contentitems" xbl:inherits="paneid=id"/>
             </menupopup>
           </button>
         </hbox>
@@ -159,6 +148,13 @@
             this.hide();
           }
         }
+        var contentItems = 
+          document.getAnonymousElementByAttribute(this, 
+                                                  "anonid", 
+                                                  "contentitems");
+        // magic trick to force the contentitems binding to
+        // construct synchronously
+        contentItems.style.MozBinding;
       } catch(e) {
         Components.utils.reportError(e);
       }
@@ -212,13 +208,14 @@
           return this;
         ]]></xbl:getter>
       </xbl:property>
+      <xbl:property name="lastContentURL" readonly="true">
+        <xbl:getter><![CDATA[
+          return this._lastURL.stringValue;
+        ]]></xbl:getter>
+      </xbl:property>
       <xbl:property name="popup" readonly="true">
         <xbl:getter><![CDATA[
-          this.buildMenu();
-          var popup = document.getAnonymousElementByAttribute(this, "anonid", "menu");
-          popup = popup.cloneNode(true);
-          popup.removeAttribute("onpopupshowing");
-          return popup;
+          return popup = document.getAnonymousElementByAttribute(this, "anonid", "menu");
         ]]></xbl:getter>
       </xbl:property>
       <xbl:property name="collapsed">
@@ -259,127 +256,12 @@
               splitter.removeAttribute("collapsed");
             }
           }
-          document.getAnonymousElementByAttribute(this, "anonid", "menuitem_hide")
-                  .collapsed = val;
-          document.getAnonymousElementByAttribute(this, "anonid", "menuitem_hide")
-                  .nextSibling.collapsed = val;
           if (val != this.collapsed)
             this.collapsed = val;
 
           return val;
         ]]></xbl:setter>
       </xbl:property>
-      <xbl:method name="buildMenu">
-        <xbl:parameter name="aEvent" />
-        <xbl:body>
-          <![CDATA[
-          try {
-            // eagerly build the whole menu, since we need to loop through the whole
-            // list anyway
-            
-            if (aEvent && aEvent.originalTarget.getAttribute("anonid") != "menu") {
-              // this is a sub-menu event bubbling up
-              return true;
-            }
-          
-            // set the static commands
-            this._getElem("menuitem_hide").setAttribute("oncommand",
-                                                        "document.getElementById('" + this.id + "').hide()");
-          
-            // remove the previously made items
-            var itemsStartDummy = this._getElem("display_panes_items_start");
-            var itemsEndDummy = this._getElem("display_panes_items_end");
-            while (itemsStartDummy.nextSibling && itemsStartDummy.nextSibling != itemsEndDummy) {
-              itemsStartDummy.parentNode.removeChild(itemsStartDummy.nextSibling);
-            }
-          
-            var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                                    .getService(Components.interfaces.sbIDisplayPaneManager);
-            var contentGroup = this.contentGroup.toUpperCase();
-          
-            // Container structure for wrapping recommended flags with the current
-            // content group of this display pane.
-            function DisplayPaneItem(aContentInfo, aIsRecommended) {
-              this.contentInfo = aContentInfo;
-              this.isRecommended = aIsRecommended;
-            }
-            DisplayPaneItem.prototype = {
-              contentInfo: null,
-              isRecommended: false,
-            };
-          
-            // Iterate through the registered display pane items to bind them to
-            // the |DisplayPaneItem| structure.
-            var all = [];
-            var contentInfoEnum = paneMgr.contentList;
-            while (contentInfoEnum.hasMoreElements()) {
-              var curContentInfo = contentInfoEnum.getNext();
-              curContentInfo.QueryInterface(Components.interfaces.sbIDisplayPaneContentInfo);
-            
-              var isCurItemRecommended = false;
-              var itemGroups = curContentInfo.suggestedContentGroups.toUpperCase();
-              if (itemGroups.split(";").indexOf(contentGroup) != -1)
-                isCurItemRecommended = true;
-                          
-              all.push(new DisplayPaneItem(curContentInfo, isCurItemRecommended));
-            }
-          
-            // sort by title
-            function addonPaneSorter(x, y) {
-              if (x.contentInfo.contentTitle < y.contentInfo.contentTitle) return -1;
-              if (y.contentInfo.contentTitle < x.contentInfo.contentTitle) return 1;
-              return 0;
-            }
-            all.sort(addonPaneSorter);
-                          
-            // actually generate menuitems for each |DisplayPaneItem|.
-            var shouldInsertSeparator = false;
-            for each (var item in all) {
-              var elem = document.createElement("menuitem");
-              elem.setAttribute("label", item.contentInfo.contentTitle);
-              elem.setAttribute("url", item.contentInfo.contentUrl);
-              elem.setAttribute("image", item.contentInfo.contentIcon);
-              elem.setAttribute("type", "radio");
-              elem.setAttribute("class", "displaypane-menuitem");
-    
-              if (item.contentInfo.contentUrl == this.contentUrl) {
-                elem.setAttribute("selected", "true");
-              }
-            
-              if (item.isRecommended) {
-                elem.setAttribute("recommended", "true");
-              }
-              
-              // since the menu item can be cloned, we embed an oncommand
-              // that carries enough information to call this binding again
-              // with the menu item being used.  This is unfortunately quite ugly.
-              var oncommand = function(aEvent, aId) {
-                var binding = document.getElementById(aId);
-                var menuitem = aEvent.target;
-                var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                                        .getService(Components.interfaces.sbIDisplayPaneManager);
-                var paneinfo = paneMgr.getPaneInfo(menuitem.getAttribute("url"));
-                binding.loadContent(paneinfo);
-              }
-              elem.setAttribute("oncommand",
-                                "(" + uneval(oncommand) + ")(event, '" + this.id + "')");
-              itemsEndDummy.parentNode.insertBefore(elem, itemsEndDummy);
-
-              shouldInsertSeparator = true;
-            }
-          
-            // Only draw a separator if we inserted a least one menuitem.
-            if (shouldInsertSeparator) {
-              var sep = document.createElement("menuseparator");
-              itemsEndDummy.parentNode.insertBefore(sep, itemsEndDummy);
-            }
-          }
-          catch (e) {
-            Components.utils.reportError(e);
-          }
-          ]]>
-        </xbl:body>
-      </xbl:method>
       <xbl:method name="loadContent">
         <xbl:parameter name="aPaneInfo"/>
         <xbl:body><![CDATA[
@@ -435,6 +317,21 @@
           this._hidden = true;
           this._lastHiddenState.boolValue = true;
           this._getElem("content").loadURI("about:blank", null, null);
+        ]]></xbl:body>
+      </xbl:method>
+      <xbl:method name="show">
+        <xbl:body><![CDATA[
+          // show the last loaded pane
+          var lastContent = this.lastContentURL;
+          var paneMgr = 
+            Components
+              .classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+              .getService(Components.interfaces.sbIDisplayPaneManager);
+
+          var paneinfo = paneMgr.getPaneInfo(lastContent);
+          if (!paneinfo)
+            paneinfo = paneMgr.defaultPaneInfo;
+          this.loadContent(paneinfo);
         ]]></xbl:body>
       </xbl:method>
       <xbl:method name="_getElem">
@@ -597,6 +494,7 @@
         this.parentNode.addEventListener("popupshowing", this, false);
         this.handleEvent(null);
       ]]></xbl:constructor>
+      <xbl:field name="_items">[]</xbl:field>
       <xbl:method name="handleEvent">
         <xbl:parameter name="aEvent"/>
         <xbl:body><![CDATA[
@@ -610,8 +508,10 @@
             this.parentNode.removeChild(item);
           }
             
-          var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                                  .getService(Components.interfaces.sbIDisplayPaneManager);
+          var paneMgr = 
+            Components
+              .classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+              .getService(Components.interfaces.sbIDisplayPaneManager);
           
           var enumerator = paneMgr.instantiatorsList;
           if (enumerator.hasMoreElements()) {
@@ -635,7 +535,8 @@
           // create a menu item and stuff it in the view menu
           while (enumerator.hasMoreElements()) {
             var instantiator = enumerator.getNext();
-            instantiator.QueryInterface(Components.interfaces.sbIDisplayPaneInstantiator);
+            instantiator
+              .QueryInterface(Components.interfaces.sbIDisplayPaneInstantiator);
             instantiator.QueryInterface(Components.interfaces.nsIDOMXULElement);
             item = document.createElement("menuitem");
             var isCollapsed = instantiator.collapsed;
@@ -644,15 +545,19 @@
               label = instantiator.getAttribute("label");
             }
 
-            var strKey = (isCollapsed ? "menu.displaypane.title.show" : "menu.displaypane.title.hide");
+            var strKey = (isCollapsed ? 
+                            "menu.displaypane.title.show" : 
+                            "menu.displaypane.title.hide");
             item.setAttribute("label", this.formatString(strKey, label));
             item.setAttribute("target", instantiator.id);
             item.setAttribute("url", instantiator.contentUrl);
             
             var loadcmd = function(aEvent, aId) {
               var binding = document.getElementById(aId);
-              var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                                      .getService(Components.interfaces.sbIDisplayPaneManager);
+              var paneMgr = 
+                Components
+                  .classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                  .getService(Components.interfaces.sbIDisplayPaneManager);
 
               var paneinfo = paneMgr.getPaneInfo(binding._lastURL.stringValue);
               if (!paneinfo)
@@ -662,13 +567,16 @@
             }
             var unloadcmd = function(aEvent, aId) {
               var binding = document.getElementById(aId);
-              var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                                      .getService(Components.interfaces.sbIDisplayPaneManager);
+              var paneMgr = 
+                Components
+                  .classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                  .getService(Components.interfaces.sbIDisplayPaneManager);
               binding.hide();
             }
             item.setAttribute("oncommand",
                               "(" + 
-                              (instantiator.collapsed ? (uneval(loadcmd)) : (uneval(unloadcmd))) + 
+                              (instantiator.collapsed ? 
+                                (uneval(loadcmd)) : (uneval(unloadcmd))) + 
                               ")(event, '" + instantiator.id + "')");
             item.className = "menuitem-iconic displaypane-topmenu";
 
@@ -693,11 +601,13 @@
                   .getService(Components.interfaces.nsIStringBundleService); 
               
               this._strBundle = 
-                strBundleService.createBundle("chrome://songbird/locale/songbird.properties");          
+                strBundleService
+                  .createBundle("chrome://songbird/locale/songbird.properties");          
             }
             
             try {
-              retVal = this._strBundle.formatStringFromName(aStrKey, [ aLabel ], 1);
+              retVal = this._strBundle.formatStringFromName(aStrKey, 
+                                                            [ aLabel ], 1);
             }
             catch (e) {
             }
@@ -708,4 +618,399 @@
       </xbl:method>
     </xbl:implementation>
   </xbl:binding>
+
+  <xbl:binding id="sb-displaypane-content-menuitems">
+    
+    <!-- the placeholder for the list of available displaypanes in a menu, plus
+         show/hide and 'get more stuff' items. connected to its display pane
+         via its id, specified as a "paneid" attribute on this binding -->
+    <xbl:implementation implements="nsIDOMEventListener">
+    
+      <xbl:constructor>
+        this._items = [];
+        this.parentNode.addEventListener("popupshowing", this, false);
+      </xbl:constructor>
+    
+      <xbl:property name="contentGroup" readonly="true">
+        <xbl:getter>
+          // return the contentGroup for the associated display pane
+          var paneid = this.getAttribute("paneid");
+          if (!paneid) 
+            return null;
+          var binding = document.getElementById(paneid);
+          return binding.contentGroup;
+        </xbl:getter>
+      </xbl:property>
+      
+      <xbl:method name="_buildItems">
+        <xbl:body><![CDATA[
+          // add all the items to the parent menu
+          try {
+            // first remove all previously added items
+            this._deleteItems();
+            
+            var paneid = this.getAttribute("paneid");
+            if (!this.contentGroup) return;
+            
+            // do we want a top and/or bottom separator ?
+            var wantSeps = this.getAttribute("separator").split(",");
+            var wantBottomSeparator = wantSeps.indexOf("bottom") != -1;
+            var wantTopSeparator = wantSeps.indexOf("top") != -1;
+
+            if (wantTopSeparator) {
+              var sep = document.createElement("menuseparator");
+              this.parentNode.insertBefore(sep, this);
+              this._items.push(sep);
+            }
+
+            // add the "Show"/"Hide" item
+            var binding = document.getElementById(paneid);
+            var elem = document.createElement("menuitem");
+            elem.setAttribute("label", 
+                              binding.collapsed ? 
+                                SBString("menu.displaypane.title.showpane", 
+                                         "Show") : 
+                                SBString("menu.displaypane.title.hidepane", 
+                                         "Hide"));
+            elem.
+              setAttribute("oncommand",
+                           binding.collapsed ? 
+                             "document.getElementById('" + paneid + "').show()" :
+                             "document.getElementById('" + paneid + "').hide()");
+
+            this.parentNode.insertBefore(elem, this);
+            this._items.push(elem);
+            
+            // add a separator
+            var sep = document.createElement("menuseparator");
+            this.parentNode.insertBefore(sep, this);
+            this._items.push(sep);
+
+            // add an item for each available display pane content
+            var paneMgr = 
+              Components
+                .classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                .getService(Components.interfaces.sbIDisplayPaneManager);
+            var contentGroup = this.contentGroup.toUpperCase();
+          
+            // Container structure for wrapping recommended flags with the
+            // current content group of this display pane.
+            function DisplayPaneItem(aContentInfo, aIsRecommended) {
+              this.contentInfo = aContentInfo;
+              this.isRecommended = aIsRecommended;
+            }
+            DisplayPaneItem.prototype = {
+              contentInfo: null,
+              isRecommended: false,
+            };
+          
+            // Iterate through the registered display pane items to bind them to
+            // the |DisplayPaneItem| structure.
+            var all = [];
+            var contentInfoEnum = paneMgr.contentList;
+            while (contentInfoEnum.hasMoreElements()) {
+              var curContentInfo = contentInfoEnum.getNext();
+              curContentInfo
+                .QueryInterface(Components.interfaces
+                                          .sbIDisplayPaneContentInfo);
+            
+              var isCurItemRecommended = false;
+              var itemGroups = curContentInfo.suggestedContentGroups
+                                             .toUpperCase();
+              if (itemGroups.split(";").indexOf(contentGroup) != -1)
+                isCurItemRecommended = true;
+                          
+              all.push(new DisplayPaneItem(curContentInfo, 
+                                           isCurItemRecommended));
+            }
+          
+            // sort by title
+            function addonPaneSorter(x, y) {
+              if (x.contentInfo.contentTitle < y.contentInfo.contentTitle) 
+                return -1;
+              if (y.contentInfo.contentTitle < x.contentInfo.contentTitle)
+                return 1;
+              return 0;
+            }
+            all.sort(addonPaneSorter);
+                          
+            // actually generate menuitems for each |DisplayPaneItem|.
+            var shouldInsertSeparator = false;
+            for each (var item in all) {
+              var elem = document.createElement("menuitem");
+              elem.setAttribute("label", item.contentInfo.contentTitle);
+              elem.setAttribute("url", item.contentInfo.contentUrl);
+              elem.setAttribute("image", item.contentInfo.contentIcon);
+              elem.setAttribute("type", "radio");
+              elem.setAttribute("class", "displaypane-menuitem");
+    
+              if (item.contentInfo.contentUrl == this.contentUrl) {
+                elem.setAttribute("selected", "true");
+              }
+            
+              if (item.isRecommended) {
+                elem.setAttribute("recommended", "true");
+              }
+              
+              // we embed an oncommand that carries enough information to call
+              // this binding again with the menu item being used.  This is
+              // unfortunately quite ugly.
+              var oncommand = function(aEvent, aId) {
+                var binding = document.getElementById(aId);
+                var menuitem = aEvent.target;
+                var paneMgr = 
+                  Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                            .getService(Components.interfaces.sbIDisplayPaneManager);
+                var paneinfo = 
+                  paneMgr.getPaneInfo(menuitem.getAttribute("url"));
+                binding.loadContent(paneinfo);
+              }
+              elem.setAttribute("oncommand",
+                                "(" + uneval(oncommand) + ")(event, '" + paneid + "')");
+
+              // insert the menuitem
+              this.parentNode.insertBefore(elem, this);
+              this._items.push(elem);
+
+              shouldInsertSeparator = true;
+            }
+          
+            // Only draw a separator if we inserted a least one menuitem.
+            if (shouldInsertSeparator) {
+              var sep = document.createElement("menuseparator");
+              this.parentNode.insertBefore(sep, this);
+              this._items.push(sep);
+            }
+
+            // add the "get more stuff" menuitem
+            var elem = document.createElement("menuitem");
+            elem.setAttribute("label", 
+                              SBString("menu.displaypane.title.getmore", 
+                                       "Get More Display Panes..."));
+            elem.setAttribute("oncommand", "onMenu(this);");
+            elem.setAttribute("value", "songbird.url.addons.displaypanes");
+
+            this.parentNode.insertBefore(elem, this);
+            this._items.push(elem);
+
+            // if we want a bottom separator, add it
+            if (wantBottomSeparator) {
+              var sep = document.createElement("menuseparator");
+              this.parentNode.insertBefore(sep, this);
+              this._items.push(sep);
+            }
+
+          }
+          catch (e) {
+            Components.utils.reportError(e);
+          }
+          
+        ]]></xbl:body>
+      </xbl:method>
+      
+      <xbl:method name="_deleteItems">
+        <xbl:body>
+          // remove all items
+          var item;
+          while ((item = this._items.pop())) {
+            this.parentNode.removeChild(item);
+          }
+        </xbl:body>
+      </xbl:method>
+
+      <xbl:method name="handleEvent">
+        <xbl:parameter name="aEvent"/>
+        <xbl:body><![CDATA[
+          if (aEvent && aEvent.originalTarget != this.parentNode) {
+            // this is a sub-menu event bubbling up
+            return true;
+          }
+          // the menu is building, add all items
+          this._buildItems();
+        ]]>
+        </xbl:body>
+      </xbl:method>
+
+    </xbl:implementation>
+  </xbl:binding>
+
+  <xbl:binding id="sb-displaypane-button">
+    <!-- a display pane button, opens/close its associated pane,
+         and receives notifications in order to turn on/off when that pane
+         is shown/hidden by something else. also exposes the content menu
+         as a context menu -->
+    <xbl:content>
+      <button anonid="button"/>
+      <popupset>
+        <popup class="sb-playlist-popup"
+               anonid="popup">
+          <sb-displaypane-content-menuitems anonid="contentitems" 
+                                            xbl:inherits="paneid"/>
+        </popup>
+      </popupset>
+    </xbl:content>
+    <xbl:implementation>
+      <xbl:constructor><![CDATA[
+      try {
+        // connect to the appropriate display pane, using a dataremote based
+        // on the id of the pane, specified via the "paneid" attribute on this
+        // binding
+        this._lastHiddenState = 
+          Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
+                    .createInstance(Components.interfaces.sbIDataRemote);
+        
+      	var paneid = this.getAttribute("paneid");
+        this._lastHiddenState.init("displayPanes." + paneid + ".isHidden", 
+                                   null);
+
+        var binding = this;
+        var observer = {
+          observe: function(s,t,d) { binding._onStateChanged(); } 
+        }
+
+        this._lastHiddenState.bindObserver( observer, false );
+        
+        // magic trick to force the contentitems binding to
+        // construct synchronously. 
+        this._contentitems.style.MozBinding;
+      } catch(e) {
+        Components.utils.reportError(e);
+      }
+      ]]></xbl:constructor>
+      <xbl:destructor><![CDATA[
+        this.destroy();
+      ]]></xbl:destructor>
+      
+      <xbl:field name="_popup">
+        document.getAnonymousElementByAttribute(this, "anonid", "popup");
+      </xbl:field>
+
+      <xbl:field name="_button">
+        document.getAnonymousElementByAttribute(this, "anonid", "button");
+      </xbl:field>
+
+      <xbl:field name="_contentitems">
+        document.getAnonymousElementByAttribute(this, "anonid", "contentitems");
+      </xbl:field>
+
+      <xbl:property name="_closed" readonly="true">
+        <xbl:getter><![CDATA[
+          return this._lastHiddenState.boolValue;
+        ]]></xbl:getter>
+      </xbl:property>
+      
+      <xbl:method name="_onStateChanged">
+        <xbl:body>
+          // update the "state" attribute, so that css can switch the
+          // image on the fly
+          if (this._closed) {
+            this.setAttribute("state", "closed");
+          } else {
+            this.removeAttribute("state");
+          }
+          // update the tooltip
+          var contentpane = this._contentpane;
+          var label = contentpane.contentGroup;
+          if (contentpane.hasAttribute("label")) {
+            label = contentpane.getAttribute("label");
+          }
+          var strKey = (this._closed ? 
+                          "menu.displaypane.title.show" : 
+                          "menu.displaypane.title.hide");
+          this._button.setAttribute("tooltip", 
+                                    this.formatString(strKey, label));
+        </xbl:body>
+      </xbl:method>
+      
+      <xbl:property name="_contentpane" readonly="true">
+        <xbl:getter>
+        	var paneid = this.getAttribute("paneid");
+          return document.getElementById(paneid);
+        </xbl:getter>
+      </xbl:property>
+
+      <xbl:method name="show">
+        <xbl:body>
+        	var contentpane = this._contentpane;
+        	if (contentpane) {
+        	  // show the last content
+        	  contentpane.show();
+            this._onStateChanged();
+          }
+        </xbl:body>
+      </xbl:method>
+
+      <xbl:method name="hide">
+        <xbl:body>
+        	var contentpane = this._contentpane;
+        	if (contentpane) {
+        	  // hide/collapse the pane
+        	  contentpane.hide();
+            this._onStateChanged();
+          }
+        </xbl:body>
+      </xbl:method>
+      
+      <xbl:method name="formatString">
+        <xbl:parameter name="aStrKey" />
+        <xbl:parameter name="aLabel" />
+        <xbl:body>
+          <![CDATA[
+            if (!this._strBundle) {
+              var retVal = "";
+              
+              var strBundleService = 
+                Components.classes["@mozilla.org/intl/stringbundle;1"]
+                  .getService(Components.interfaces.nsIStringBundleService); 
+              
+              this._strBundle = 
+                strBundleService
+                  .createBundle("chrome://songbird/locale/songbird.properties");          
+            }
+            
+            try {
+              retVal = 
+                this._strBundle.formatStringFromName(aStrKey, [ aLabel ], 1);
+            }
+            catch (e) {
+            }
+            
+            return retVal;
+          ]]>
+        </xbl:body>
+      </xbl:method>
+
+    </xbl:implementation>
+    
+    <xbl:handlers>
+      <xbl:handler event="command">
+      <![CDATA[
+        // handle clicks on the button
+        if (event.originalTarget != this._button)
+          return;
+        if (this._closed)
+          this.show();
+        else
+          this.hide();
+        event.stopPropagation();
+      ]]>
+      </xbl:handler>
+
+      <xbl:handler event="contextmenu">
+      <![CDATA[
+        // handle right click
+        var anchor = this.getAttribute("popupanchor") || "topleft";
+        var align = this.getAttribute("popupalign") || "bottomleft";
+        this._popup.showPopup(this,
+                              -1, -1,
+                              "popup",
+                              anchor,
+                              align);
+        event.stopPropagation();
+        event.preventDefault();
+      ]]>
+      </xbl:handler>
+    </xbl:handlers>
+  </xbl:binding>
+
 </xbl:bindings>

@@ -417,6 +417,12 @@ sb-displaypane {
 sb-displaypane-menuitems {
   -moz-binding: url("chrome://songbird/content/bindings/displayPane.xml#sb-displaypane-menuitems");
 }
+sb-displaypane-content-menuitems {
+  -moz-binding: url("chrome://songbird/content/bindings/displayPane.xml#sb-displaypane-content-menuitems");
+}
+sb-displaypane-button {
+  -moz-binding: url("chrome://songbird/content/bindings/displayPane.xml#sb-displaypane-button");
+}
 
 /* Media Pages */
 

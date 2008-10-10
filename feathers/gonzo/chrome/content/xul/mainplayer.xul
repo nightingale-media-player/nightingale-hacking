@@ -132,39 +132,41 @@
               <vbox id="servicepane_box">
                 <sb-servicepane id="servicepane" flex="1" browser="content">
                 </sb-servicepane>
-                <statusbar id="servicepane-status-bar" mousethrough="never">
-                    <statusbarpanel>
-                    <button class="service-pane-spring-load-button"
-                            tooltiptext="&tooltip.servicepane.hide;"
-                            oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
-                                       gServicePane.open = !gServicePane.open;
-                                       SBDataSetBoolValue(key, gServicePane.open);"
-                            style="min-height:16px; min-width:16px;" >
-                      <observes type="dataremote" key="browser.in_media_page" boolean="true"
-                                attribute="disabled" onchange="
-                                  const key = 'splitter.servicepane_splitter.was_collapsed';
-                                  if (gServicePane) {
-                                    if (value) {
-                                      /* going into media page mode */
-                                      gServicePane.open = true;
-                                      document.getElementById('control_pane_box').hidden = false;
-                                    } else {
-                                      /* going out of media page */
-                                      gServicePane.open = SBDataGetBoolValue(key);
-                                      document.getElementById('control_pane_box').hidden = SBDataGetBoolValue('player_controls.was_collapsed')
-                                    }
+                <hbox id="servicepane-status-bar-box">
+                  <button class="service-pane-spring-load-button"
+                          tooltiptext="&tooltip.servicepane.hide;"
+                          oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
+                                     gServicePane.open = !gServicePane.open;
+                                     SBDataSetBoolValue(key, gServicePane.open);"
+                          style="min-height:16px; min-width:16px;" >
+                    <observes type="dataremote" key="browser.in_media_page" boolean="true"
+                              attribute="disabled" onchange="
+                                const key = 'splitter.servicepane_splitter.was_collapsed';
+                                if (gServicePane) {
+                                  if (value) {
+                                    /* going into media page mode */
+                                    gServicePane.open = true;
+                                    document.getElementById('control_pane_box').hidden = false;
+                                  } else {
+                                    /* going out of media page */
+                                    gServicePane.open = SBDataGetBoolValue(key);
+                                    document.getElementById('control_pane_box').hidden = SBDataGetBoolValue('player_controls.was_collapsed')
                                   }
-                                  return value;
-                                "/>
-                      <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
-                                attribute="hidden" inverted="false"/>
-                    </button>
-                  </statusbarpanel>
-                  <spacer flex="1" />
-                  <statusbarpanel>
-                    <sb-servicepane-toolbar id="servicepane_toolbar" />
-                  </statusbarpanel>
-                </statusbar>
+                                }
+                                return value;
+                              "/>
+                    <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
+                              attribute="hidden" inverted="false"/>
+                  </button>
+                  <sb-displaypane-button class="service-pane-display-pane-button"
+                                         paneid="displaypane_servicepane_bottom"/>
+                  <statusbar id="servicepane-status-bar" mousethrough="never" flex="1">
+                    <spacer flex="1" />
+                    <statusbarpanel>
+                      <sb-servicepane-toolbar id="servicepane_toolbar" />
+                    </statusbarpanel>
+                  </statusbar>
+                </hbox>
               </vbox>
               <sb-smart-splitter id="servicepane_splitter" state="open"
                                  resizebefore="closest" resizeafter="closest"
@@ -209,19 +211,23 @@
                        Note: this item must have id="status-bar" for Firefox 
                        extension compatibility.
                   -->
-                  <statusbar id="status-bar" mousethrough="never">
-                      <statusbarpanel>
-                        <button class="service-pane-spring-load-button"
-                                tooltiptext="&tooltip.servicepane.show;"
-                                oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
-                                           gServicePane.open = !gServicePane.open;
-                                           SBDataSetBoolValue(key, gServicePane.open);"
-                                style="min-height:16px; min-width:16px;" >
-                        <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
-                                  attribute="hidden" inverted="true"/>
-                      </button>
-                    </statusbarpanel>
-                  </statusbar>
+                  <hbox id="status-bar-box" flex="1">
+                    <button class="service-pane-spring-load-button"
+                            tooltiptext="&tooltip.servicepane.show;"
+                            oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
+                                       gServicePane.open = !gServicePane.open;
+                                       SBDataSetBoolValue(key, gServicePane.open);"
+                            style="min-height:16px; min-width:16px;" >
+                      <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
+                                attribute="hidden" inverted="true"/>
+                    </button>
+                    <statusbar id="status-bar" mousethrough="never" flex="1">
+                    </statusbar>
+                    <sb-displaypane-button class="content-pane-display-pane-button"
+                                           paneid="displaypane_contentpane_bottom"/>
+                    <sb-displaypane-button class="right-sidebar-display-pane-button"
+                                           paneid="displaypane_right_sidebar"/>
+                  </hbox>
                 </vbox>
               </vbox>
 

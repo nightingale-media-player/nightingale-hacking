@@ -253,10 +253,11 @@ statusbar {
   background-repeat:repeat-x;
   background-position:left top;
 }
-#servicepane-status-bar > statusbarpanel > .service-pane-spring-load-button {
+
+#servicepane-status-bar-box > .service-pane-spring-load-button {
   list-style-image:  url("chrome://songbird/skin/service-pane/button-hide-service-pane.png");
 }
-#status-bar > statusbarpanel > .service-pane-spring-load-button {
+#status-bar-box > .service-pane-spring-load-button {
   list-style-image:  url("chrome://songbird/skin/service-pane/button-show-service-pane.png");
 }
 .servicepane-toolbar-newitem-button > .clickhold-button > .button-box > .button-icon {
