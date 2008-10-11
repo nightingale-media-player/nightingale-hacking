@@ -1,0 +1,9 @@
+7digital.jar:
+% content 7digital  %content/
+% locale  7digital  en-US  %locale/en-US/
+% skin    7digital  classic/1.0 %skin/
+  content/7digital-search.xml      (chrome/content/7digital-search.xml)
+  locale/en-US/7digital.properties (chrome/locale/en-US/7digital.properties)
+  skin/7digital.css                (chrome/skin/7digital.css)
+  skin/extension-icon.png          (chrome/skin/extension-icon.png)
+  skin/servicepane-icon.png        (chrome/skin/servicepane-icon.png)
