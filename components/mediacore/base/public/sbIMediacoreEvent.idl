@@ -32,6 +32,10 @@ interface sbIMediacore;
 interface sbIMediacoreError;
 interface sbIMediacoreEventTarget;
 
+/**
+ * \interface sbIMediacoreEvent
+ * \brief Definition of the sbIMediacoreEvent interface.
+ */
 [scriptable, uuid(95a9e6da-bd93-4b16-beb4-5f95d16e3b3e)]
 interface sbIMediacoreEvent : nsISupports
 {
@@ -84,11 +88,13 @@ interface sbIMediacoreEvent : nsISupports
    */
   const unsigned long TRACK_INDEX_CHANGE  = 0x00001502;
   /**
-   *  \brief Sequencer view is about to change
+   * \brief Sequencer view is about to change
+   * \note data is the new sbIMediaListView.
    */
   const unsigned long BEFORE_VIEW_CHANGE  = 0x00001503;
   /**
    * \brief Sequencer view changed.
+   * \note data is the new sbIMediaListView.
    */
   const unsigned long VIEW_CHANGE         = 0x00001504;
 
@@ -96,6 +102,7 @@ interface sbIMediacoreEvent : nsISupports
 
   /**
    * \brief Stream found.
+   * \note Reserved for later use.
    */
   const unsigned long STREAM_FOUND      = 0x00002000;
 
@@ -112,28 +119,35 @@ interface sbIMediacoreEvent : nsISupports
   const unsigned long BUFFERING       = 0x00003000;
   /**
    * \brief Buffer underrun, operation is likely to halt.
+   * \note This event is likely to be followed by BUFFERING events.
+   * \note data is null.
    */
   const unsigned long BUFFER_UNDERRUN = 0x00003001;
   
   /**
    * \brief Stream has started.
+   * \note data is null.
    */
   const unsigned long STREAM_START    = 0x00004000;
   /**
    * \brief Stream is now paused.
+   * \note data is null.
    */
   const unsigned long STREAM_PAUSE    = 0x00004001;
   /**
    * \brief End of stream.
+   * \note data is null.
    */
   const unsigned long STREAM_END      = 0x00004002;
   /**
    * \brief Stream was stopped.
+   * \note data is null.
    */
   const unsigned long STREAM_STOP     = 0x00004003;
 
   /**
    * \brief Plugin missing for requested format.
+   * \note Reserved for later use.
    */
   const unsigned long PLUGIN_MISSING  = 0x00008000;
 
