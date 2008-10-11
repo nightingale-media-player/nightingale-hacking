@@ -121,13 +121,12 @@ NS_IMPL_QUERY_INTERFACE9_CI(sbGStreamerMediacore,
                             nsIDOMEventListener,
                             nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER8(sbGStreamerMediacore,
+NS_IMPL_CI_INTERFACE_GETTER7(sbGStreamerMediacore,
                              sbIMediacore,
                              sbIMediacorePlaybackControl,
                              sbIMediacoreVideoWindow,
                              sbIMediacoreVolumeControl,
                              sbIMediacoreVotingParticipant,
-                             sbIMediacoreVideoWindow,
                              sbIGStreamerMediacore,
                              sbIMediacoreEventTarget)
 
