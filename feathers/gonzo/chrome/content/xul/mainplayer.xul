@@ -161,11 +161,8 @@
                   <sb-displaypane-button class="service-pane-display-pane-button"
                                          paneid="displaypane_servicepane_bottom"/>
                   <statusbar id="servicepane-status-bar" mousethrough="never" flex="1">
-                    <spacer flex="1" />
-                    <statusbarpanel>
-                      <sb-servicepane-toolbar id="servicepane_toolbar" />
-                    </statusbarpanel>
                   </statusbar>
+                  <sb-servicepane-toolbar id="servicepane_toolbar" />
                 </hbox>
               </vbox>
               <sb-smart-splitter id="servicepane_splitter" state="open"

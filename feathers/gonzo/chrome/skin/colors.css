@@ -672,9 +672,6 @@ tab[first-tab="true"],
 
 
 .service-pane-spring-load-button {
-  max-height:16px;
-  min-height:16px;
-  margin:0px;
 }
 .service-pane-spring-load-button > .button-box {
   padding:0;
@@ -705,9 +702,10 @@ notification,
   min-height: 53px;
   max-height: 53px;
 }
-#content_player_wrapper[playercontrols='top'] #status-bar,
-#content_player_wrapper[playercontrols='top'] #servicepane-status-bar {
+#content_player_wrapper[playercontrols='top'] #servicepane-status-bar-box,
+#content_player_wrapper[playercontrols='top'] #status-bar-box {
   border-bottom:none !important;
+  max-height:19px;
 }
 
 

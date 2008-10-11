@@ -97,3 +97,58 @@ description.sb-status-bar-status-label[type="playable"] {
 statusbarpanel.statusbar-resizerpanel {
   display: none;
 }
+
+#status-bar,
+#servicepane-status-bar {
+  border:none !important;
+}
+
+/******************************************************************************
+> BUTTONS IN STATUSBARS
+  used for service pane toggle, new node, display pane toggle
+******************************************************************************/
+.service-pane-spring-load-button,
+.servicepane-toolbar-newitem-button,
+sb-displaypane-button > button {
+  min-height:18px;
+  min-width:19px !important;
+
+  -moz-border-radius:0px;
+  margin:0px;
+
+  border-top: none;
+  border-bottom: none;
+  outline:none !important;
+
+  background-image:url('chrome://songbird/skin/browser/bg-status-bar-button.png');
+  background-repeat:repeat-x;
+  background-position:left 0px;
+}
+.service-pane-spring-load-button:hover,
+.servicepane-toolbar-newitem-button:hover,
+sb-displaypane-button > button:hover {
+  background-position:left -18px;
+}
+.service-pane-spring-load-button:active,
+.servicepane-toolbar-newitem-button:active,
+sb-displaypane-button > button:active {
+  background-position:left -36px;
+}
+.service-pane-spring-load-button[disabled="true"] {
+  background-position:left 0px;
+  opacity:1.0 !important;
+}
+
+#servicepane-status-bar-box > .service-pane-spring-load-button,
+#servicepane-status-bar-box > sb-displaypane-button > button {
+  border-left:none;
+}
+#servicepane-status-bar-box > #servicepane_toolbar > .servicepane-toolbar-box > .servicepane-toolbar-newitem-button {
+  border-right:none;
+}
+#status-bar-box > .service-pane-spring-load-button {
+  border-left:none;
+}
+#status-bar-box > sb-displaypane-button > button{
+  border-right:none;
+}

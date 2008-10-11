@@ -441,9 +441,16 @@ notification[type="critical"],
 statusbar {
   border-top:1px solid rgb(131,131,131);
 }
-#status-bar,
-#servicepane-status-bar {
+#servicepane-status-bar-box,
+#status-bar-box {
+  border-top:1px solid rgb(131,131,131);
   border-bottom:1px solid rgb(131,131,131);
+}
+.service-pane-spring-load-button,
+.servicepane-toolbar-newitem-button,
+sb-displaypane-button > button {
+  border-right: 1px solid rgb(161,161,161);
+  border-left: 1px solid rgb(161,161,161);
 }
 
 
@@ -514,6 +521,9 @@ toolbarbutton[disabled="true"] > .toolbarbutton-icon,
 toolbarbutton[disabled="true"] > .toolbarbutton-menu-dropmarker,
 toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
   opacity:0.25;
+}
+.service-pane-spring-load-button[disabled="true"] >.button-box {
+  opacity:0.5;
 }
 
 
@@ -706,8 +716,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
   border-right:1px solid rgb(131,131,131);
   border-left:1px solid rgb(131,131,131);
 }
-#servicepane_splitter,
-#displaypane_right_sidebar_splitter {
+#servicepane_splitter {
   border-bottom:1px solid rgb(131,131,131);
 }
 #filter_splitter {
@@ -994,3 +1003,6 @@ html|*.error-text,
 } 
 .text-link[visited="true"] {
 }
+
+
+

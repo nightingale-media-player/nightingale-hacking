@@ -60,7 +60,13 @@ window:not([active="true"]) .inactive-box {
   background-color:rgba(255,255,255,0.33);
 }
 
-#content_player_wrapper[playercontrols='top'] > #content_wrapper statusbar
-{
+#content_player_wrapper[playercontrols='top'] #status-bar-box {
   padding-right: 12px;
+}
+#content_player_wrapper[playercontrols='top'] #status-bar-box > sb-displaypane-button.right-sidebar-display-pane-button > button {
+  min-width:20px !important;
+  border-right: 1px solid rgb(161,161,161);
+}
+#content_player_wrapper[playercontrols='top'] #servicepane_splitter {
+  border-bottom:none;
 }

@@ -254,16 +254,20 @@ statusbar {
   background-position:left top;
 }
 
+#servicepane-status-bar-box > .service-pane-spring-load-button,
+#status-bar-box > .service-pane-spring-load-button {
+  list-style-image:  url("chrome://songbird/skin/service-pane/button-service-pane-toggle.png");
+}
 #servicepane-status-bar-box > .service-pane-spring-load-button {
-  list-style-image:  url("chrome://songbird/skin/service-pane/button-hide-service-pane.png");
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
 }
 #status-bar-box > .service-pane-spring-load-button {
-  list-style-image:  url("chrome://songbird/skin/service-pane/button-show-service-pane.png");
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
 }
+
+
 .servicepane-toolbar-newitem-button > .clickhold-button > .button-box > .button-icon {
   list-style-image:  url("chrome://songbird/skin/service-pane/button-new-node.png");
-  min-height:14px;
-  min-width:14px;
 }
 
 

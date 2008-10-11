@@ -42,8 +42,7 @@ Love the box.
 *******************************************************************************
 */ 
 
-window#mainplayer
-{
+window#mainplayer {
   min-width:640px;
   min-height:480px;
   width:1000px;
@@ -59,8 +58,7 @@ window#mainplayer
   overflow-x: hidden;
 }
 
-#middle_pane_box
-{
+#middle_pane_box {
   overflow: hidden;
 }
 
@@ -72,13 +70,14 @@ window#mainplayer
   max-width: 300px;
 }
 
-
-
 statusbar {
-  min-height:20px;
+  min-height:18px;
+  max-height:18px;
+}
+#servicepane-status-bar-box,
+#status-bar-box {
   max-height:20px;
 }
-
 
 #search-splitter{
   display:none;

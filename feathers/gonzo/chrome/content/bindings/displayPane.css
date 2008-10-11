@@ -47,10 +47,10 @@ Imported by bindings.css or directly into feathers.
   These are used in the View menu
 ******************************************************************************/
 menuitem[target="displaypane_contentpane_bottom"] {
-  list-style-image: url('chrome://songbird/skin/display-pane/contentpane-bottom.png');
+  list-style-image: url('chrome://songbird/skin/display-pane/content-pane-bottom.png');
 }
 menuitem[target="displaypane_servicepane_bottom"] {
-  list-style-image: url('chrome://songbird/skin/display-pane/servicepane-bottom.png');
+  list-style-image: url('chrome://songbird/skin/display-pane/service-pane-bottom.png');
 }
 menuitem[target="displaypane_right_sidebar"] {
   list-style-image: url('chrome://songbird/skin/display-pane/right-sidebar.png');
@@ -130,39 +130,39 @@ menuitem.displaypane-menuitem[recommended] {
 
 sb-displaypane-button > button {
   max-height:16px;
-  min-height:16px;
+  max-width:16px;
+  margin:0px;
+}
+sb-displaypane-button > button > .button-box {
+  padding:0px;
   margin:0px;
 }
 
 sb-displaypane-button.service-pane-display-pane-button > button {
-  background-image:url('chrome://songbird/skin/display-pane/displaypane-servicepane-close.png');
-  background-repeat:no-repeat;
-  background-position:center;
+  list-style-image:  url("chrome://songbird/skin/display-pane/button-service-pane-toggle.png");
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
 }
-
 sb-displaypane-button.service-pane-display-pane-button[state="closed"] > button {
-  background-image:url('chrome://songbird/skin/display-pane/displaypane-servicepane-open.png');
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 
 sb-displaypane-button.content-pane-display-pane-button > button {
-  background-image:url('chrome://songbird/skin/display-pane/displaypane-contentpane-close.png');
-  background-repeat:no-repeat;
-  background-position:center;
+  list-style-image:  url("chrome://songbird/skin/display-pane/button-content-pane-toggle.png");
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
 }
-
 sb-displaypane-button.content-pane-display-pane-button[state="closed"] > button {
-  background-image:url('chrome://songbird/skin/display-pane/displaypane-contentpane-open.png');
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 
 sb-displaypane-button.right-sidebar-display-pane-button > button {
-  background-image:url('chrome://songbird/skin/display-pane/displaypane-rightsidebar-close.png');
-  background-repeat:no-repeat;
-  background-position:center;
+  list-style-image:  url("chrome://songbird/skin/display-pane/button-right-sidebar-toggle.png");
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+sb-displaypane-button.right-sidebar-display-pane-button[state="closed"] > button {
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
 }
 
-sb-displaypane-button.right-sidebar-display-pane-button[state="closed"] > button {
-  background-image:url('chrome://songbird/skin/display-pane/displaypane-rightsidebar-open.png');
-}
+
 
 /******************************************************************************
 > EMPTY STATE
