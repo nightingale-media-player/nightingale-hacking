@@ -184,7 +184,7 @@ BasePlatformInterface::SetDisplayAspectRatio(int aNumerator, int aDenominator)
 }
 
 void
-BasePlatformInterface::PrepareVideoWindow()
+BasePlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 {
   GstElement *element = NULL;
   GstXOverlay *xoverlay = NULL;
@@ -200,6 +200,7 @@ BasePlatformInterface::PrepareVideoWindow()
 
   if (GST_IS_X_OVERLAY (element)) {
     xoverlay = GST_X_OVERLAY (element);
+    LOG(("xoverlay interface found, setting video window"));
   }
   else {
     LOG(("No xoverlay interface found, cannot set video window"));
@@ -207,6 +208,8 @@ BasePlatformInterface::PrepareVideoWindow()
   }
 
   SetXOverlayWindowID(xoverlay);
+
+  ResizeToWindow();
 }
 
 void 

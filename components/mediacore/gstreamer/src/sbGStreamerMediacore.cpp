@@ -73,6 +73,10 @@
 #include "sbGStreamerPlatformWin32.h"
 #endif
 
+#ifdef XP_MACOSX
+#include "sbGStreamerPlatformOSX.h"
+#endif
+
 #ifdef CreateEvent
 #undef CreateEvent
 #endif
@@ -264,18 +268,6 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
     g_object_set(mPipeline, "audio-sink", audiosink, NULL);
   }
 
-/* FIXME: This is just temporary until we have the platform interface stuff
-   implemented */
-#ifdef XP_WIN
-  GstElement *audiosink = gst_element_factory_make ("directsoundsink", NULL);
-  g_object_set(mPipeline, "audio-sink", audiosink, NULL);
-#endif
-
-#ifdef XP_MACOSX
-  GstElement *audiosink = gst_element_factory_make ("osxaudiosink", NULL);
-  g_object_set(mPipeline, "audio-sink", audiosink, NULL);
-#endif
-
   GstBus *bus = gst_element_get_bus (mPipeline);
 
   // We want to receive state-changed messages when shutting down, so we
@@ -301,10 +293,14 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
 
   switch (msg_type) {
     case GST_MESSAGE_ELEMENT: {
-      if (gst_structure_has_name(aMessage->structure, "prepare-xwindow-id")) {
-        if(mPlatformInterface) {
-          mPlatformInterface->PrepareVideoWindow();
-          mPlatformInterface->ResizeToWindow();
+      // Win32 and GDK use prepare-xwindow-id, OSX has its own private thing,
+      // have-ns-view
+      if (gst_structure_has_name(aMessage->structure, "prepare-xwindow-id") ||
+          gst_structure_has_name(aMessage->structure, "have-ns-view"))
+      {
+        if(mPlatformInterface) 
+        {
+          mPlatformInterface->PrepareVideoWindow(aMessage);
 
           DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_HAS_VIDEO);
         }
@@ -617,6 +613,8 @@ sbGStreamerMediacore::OnSetUri(nsIURI *aURI)
   rv = aURI->GetSpec(spec);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  LOG(("Setting URI to \"%s\"", spec.get()));
+
   /* Set the URI to play */
   g_object_set (G_OBJECT (mPipeline), "uri", spec.get(), NULL);
 
@@ -918,6 +916,10 @@ sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
   HWND native = (HWND)widget->GetNativeData(NS_NATIVE_WIDGET);
   LOG(("Found native window %x", native));
   mPlatformInterface = new Win32PlatformInterface(boxObject, native);
+#elif defined (XP_MACOSX)
+  void * native = (void *)widget->GetNativeData(NS_NATIVE_WIDGET);
+  LOG(("Found native window %x", native));
+  mPlatformInterface = new OSXPlatformInterface(boxObject, native);
 #else
   LOG(("No video backend available for this platform"));
   mVideoEnabled = PR_FALSE;

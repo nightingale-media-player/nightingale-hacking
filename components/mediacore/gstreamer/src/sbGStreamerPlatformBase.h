@@ -48,7 +48,7 @@ public:
   bool GetFullscreen();
   void SetFullscreen(bool aFullscreen);
   void SetDisplayAspectRatio(int aNumerator, int aDenominator);
-  void PrepareVideoWindow();
+  virtual void PrepareVideoWindow(GstMessage *aMessage);
 
   void SetVideoBox(nsIBoxObject *aVideoBox);
 

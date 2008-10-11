@@ -36,7 +36,7 @@ ifeq (windows,$(SB_PLATFORM))
 	  CPP_SRCS += sbGStreamerPlatformWin32.cpp
 else
 ifeq (macosx, $(SB_PLATFORM))
-	   # Nothing yet; we don't have a macos implementation
+	  CMM_SRCS = sbGStreamerPlatformOSX.mm
 else
 	  # Others - linux, solaris, etc.
 	  CPP_SRCS += sbGStreamerPlatformGDK.cpp
@@ -94,6 +94,11 @@ else
   endif
 endif
 
+ifeq (macosx, $(SB_PLATFORM))
+	  CMM_INCLUDES = $(CPP_INCLUDES) 
+      CMM_EXTRA_INCLUDES = $(CPP_EXTRA_INCLUDES)
+endif
+
 # The dynamic gstreamer libs on windows have "-0" appended to their names
 ifeq (windows,$(SB_PLATFORM))
   GST_LIB_SUFFIX=-0
@@ -103,6 +108,11 @@ DYNAMIC_LIB = $(MODULE)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))) \
                    $(NULL)
+
+ifeq (macosx, $(SB_PLATFORM))
+    DYNAMIC_LIB_OBJS += $(notdir $(CMM_SRCS:.mm=$(OBJ_SUFFIX))) \
+                   $(NULL)
+endif
 
 
 DYNAMIC_LIB_EXTRA_IMPORTS = \
@@ -157,6 +167,11 @@ else
                                $(NULL)
   endif
 endif
+
+ifeq (macosx, $(SB_PLATFORM))
+	  DYNAMIC_LIB_EXTRA_FLAGS = -framework AppKit
+endif
+
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbAboutGStreamer.js \
                       $(NULL)

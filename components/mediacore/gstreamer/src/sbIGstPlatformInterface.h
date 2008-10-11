@@ -62,7 +62,7 @@ public:
 
   // Called when a video window is required by the gstreamer element, so
   // that any necessary setup can be done.
-  virtual void PrepareVideoWindow() = 0;
+  virtual void PrepareVideoWindow(GstMessage *aMessage) = 0;
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_INTERFACE_H_
