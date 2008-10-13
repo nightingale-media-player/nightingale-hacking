@@ -51,6 +51,8 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_remotemediaitem_page.html \
                  $(srcdir)/test_remotemedialist.js \
                  $(srcdir)/test_remotemedialist_page.html \
+                 $(srcdir)/test_remotemedialist_add2.js \
+                 $(srcdir)/test_remotemedialist_add2_page.html \
                  $(srcdir)/test_remotemedialist_add.js \
                  $(srcdir)/test_remotemedialist_add_page.html \
                  $(srcdir)/test_remoteplayer.js \
@@ -65,6 +67,22 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_properties_page.html \
                  $(srcdir)/test_properties_urls.js \
                  $(srcdir)/test_properties_urls_page.html \
+                 $(srcdir)/media/test01.mp3 \
+                 $(srcdir)/media/test02.mp3 \
+                 $(srcdir)/media/test03.mp3 \
+                 $(srcdir)/media/test04.mp3 \
+                 $(srcdir)/media/test05.mp3 \
+                 $(srcdir)/media/test06.mp3 \
+                 $(srcdir)/media/test07.mp3 \
+                 $(srcdir)/media/test08.mp3 \
+                 $(srcdir)/media/test09.mp3 \
+                 $(srcdir)/media/test10.mp3 \
+                 $(srcdir)/media/test11.mp3 \
+                 $(srcdir)/media/test12.mp3 \
+                 $(srcdir)/media/test13.mp3 \
+                 $(srcdir)/media/test14.mp3 \
+                 $(srcdir)/media/test15.mp3 \
+                 $(srcdir)/media/test16.mp3 \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

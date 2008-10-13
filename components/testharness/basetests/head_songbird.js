@@ -204,7 +204,7 @@ function sleep(ms, suppressOutput) {
 }
 
 function getTestServerPortNumber() {
-  var DEFAULT_PORT = 8080;
+  var DEFAULT_PORT = 8180;
   const ENV_VAR_PORT = "SONGBIRD_TEST_SERVER_PORT";
 
   var environment =

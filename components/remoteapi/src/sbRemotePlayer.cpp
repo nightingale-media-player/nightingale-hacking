@@ -884,8 +884,8 @@ sbRemotePlayer::DownloadItem( sbIMediaItem *aItem )
     do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv ));
   NS_ENSURE_SUCCESS( rv, rv );
 
-  rv = dh->DownloadItem(item);
-  NS_ENSURE_SUCCESS( rv, rv );
+  // no check here, download device helper doesn't return values.
+  dh->DownloadItem(item);
 
   mNotificationMgr->Action( sbRemoteNotificationManager::eDownload, nsnull );
 
@@ -917,8 +917,8 @@ sbRemotePlayer::DownloadList( sbIRemoteMediaList *aList )
     do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv ));
   NS_ENSURE_SUCCESS( rv, rv );
 
-  rv = dh->DownloadAll(list);
-  NS_ENSURE_SUCCESS( rv, rv );
+  // no check here, download device helper doesn't return values.
+  dh->DownloadAll(list);
 
   return NS_OK;
 }
@@ -944,8 +944,8 @@ sbRemotePlayer::DownloadSelected( sbIRemoteWebPlaylist *aWebPlaylist )
     do_GetService( "@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  rv = dh->DownloadSome(wrapper);
-  NS_ENSURE_SUCCESS( rv, rv );
+  // no check here, download device helper doesn't return values.
+  dh->DownloadSome(wrapper);
 
   return NS_OK;
 }

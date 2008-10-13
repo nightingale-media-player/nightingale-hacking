@@ -32,11 +32,11 @@ function runTest(tester) {
   try {
 
     var dlList = songbird.downloadMediaList;
-    var siteLib = songbird.siteLibrary;
-    var siteList = siteLib.createSimpleMediaList("testRemoteMediaList");
+    var mainLib = songbird.mainLibrary;
+    var mainList = mainLib.createSimpleMediaList("testRemoteMediaList");
 
-    siteList.clear();
     dlList.clear();
+    mainList.clear();
 
     // Test addition by string with and without downloading
     tester.log("");
@@ -45,41 +45,41 @@ function runTest(tester) {
     tester.log("");
 
     tester.log("    With download == true:");
-    siteList.add( "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/DJBLUE_-_Hear_Me.mp3", true );
+    mainList.add( "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/DJBLUE_-_Hear_Me.mp3", true );
 
-    tester.assertEqual(siteList.length, 1);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 1);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
     tester.log("    With download == false:");
-    siteList.add("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/jaspertine_-_Introvert.mp3", false);
+    mainList.add("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/jaspertine_-_Introvert.mp3", false);
 
-    tester.assertEqual(siteList.length, 2);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 2);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
     tester.log("    With default download:");
-    siteList.add("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3");
+    mainList.add("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3");
 
-    tester.assertEqual(siteList.length, 3);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 3);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
     tester.log("    With extra args:");
-    siteList.add("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/absent.mp3", true, "extra");
+    mainList.add("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/absent.mp3", true, "extra");
 
-    tester.assertEqual(siteList.length, 4);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 4);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 2);
     tester.log("      dlList length is correct:   " + dlList.length);
 
-    siteList.clear();
     dlList.clear();
+    mainList.clear();
 
-    tester.assertEqual(siteList.length, 0);
+    tester.assertEqual(mainList.length, 0);
     tester.assertEqual(dlList.length, 0);
 
     tester.log("--------------------------------------------------");
@@ -90,47 +90,47 @@ function runTest(tester) {
     tester.log("");
 
     // Test addition by item with and without downloading
-    var item = siteLib.createMediaItem("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/DJBLUE_-_Hear_Me.mp3");
+    var item = mainLib.createMediaItem("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/DJBLUE_-_Hear_Me.mp3");
     tester.log("    With download == true:");
-    siteList.add(item, true);
+    mainList.add(item, true);
 
-    tester.assertEqual(siteList.length, 1);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 1);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
-    item = siteLib.createMediaItem("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/jaspertine_-_Introvert.mp3");
+    item = mainLib.createMediaItem("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/jaspertine_-_Introvert.mp3");
 
     tester.log("    Without download == false:");
-    siteList.add(item, false);
+    mainList.add(item, false);
 
-    tester.assertEqual(siteList.length, 2);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 2);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
-    item = siteLib.createMediaItem("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3");
+    item = mainLib.createMediaItem("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3");
     tester.log("    With default download:");
-    siteList.add(item);
+    mainList.add(item);
 
-    tester.assertEqual(siteList.length, 3);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 3);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
-    item = siteLib.createMediaItem("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/absent.mp3");
+    item = mainLib.createMediaItem("http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/absent.mp3");
     tester.log("    With extra args:");
-    siteList.add(item, true, "extra");
+    mainList.add(item, true, "extra");
 
-    tester.assertEqual(siteList.length, 4);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 4);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 2);
     tester.log("      dlList length is correct:   " + dlList.length);
 
-    siteList.clear();
     dlList.clear();
+    mainList.clear();
 
-    tester.assertEqual(siteList.length, 0);
+    tester.assertEqual(mainList.length, 0);
     tester.assertEqual(dlList.length, 0);
     tester.log("--------------------------------------------------");
     tester.log("");
@@ -146,43 +146,43 @@ function runTest(tester) {
     var urls4 = ["http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/absent.mp3"];
 
     tester.log("    With download == true:");
-    siteList.add(urls1, true);
+    mainList.add(urls1, true);
 
-    tester.assertEqual(siteList.length, 1);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 1);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
 
     tester.log("    With download == false:");
-    siteList.add(urls2, false);
+    mainList.add(urls2, false);
 
-    tester.assertEqual(siteList.length, 2);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 2);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
     tester.log("    With default download:");
-    siteList.add(urls3);
+    mainList.add(urls3);
 
-    tester.assertEqual(siteList.length, 3);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 3);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 1);
     tester.log("      dlList length is correct:   " + dlList.length);
 
     tester.log("    With extra args:");
-    siteList.add(urls4, true, "extra");
+    mainList.add(urls4, true, "extra");
 
-    tester.assertEqual(siteList.length, 4);
-    tester.log("      sitelist length is correct: " + siteList.length);
+    tester.assertEqual(mainList.length, 4);
+    tester.log("      mainlist length is correct: " + mainList.length);
     tester.assertEqual(dlList.length, 2);
     tester.log("      dlList length is correct:   " + dlList.length);
 
 
-    siteList.clear();
     dlList.clear();
+    mainList.clear();
 
-    tester.assertEqual(siteList.length, 0);
+    tester.assertEqual(mainList.length, 0);
     tester.assertEqual(dlList.length, 0);
     tester.log("--------------------------------------------------");
     tester.log("");
@@ -193,28 +193,28 @@ function runTest(tester) {
     tester.log("");
 
     try {
-      siteList.add();
+      mainList.add();
       tester.failNoThrow("     FAIL: add() didn't throw.");
     } catch (e) {
       tester.log("    SUCCESS: add() failed: " + e);
     }
 
     try {
-      siteList.add( "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3", item );
+      mainList.add( "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3", item );
       tester.failNoThrow("     FAIL: add(string, item) didn't throw.");
     } catch (e) {
       tester.log("    SUCCESS: add(string, item) failed: " + e);
     }
 
     try {
-      siteList.add(item, item);
+      mainList.add(item, item);
       tester.failNoThrow("     FAIL: add(item, item) didn't throw.");
     } catch (e) {
       tester.log("    SUCCESS: add(item, item) failed: " + e);
     }
 
     try {
-      siteList.add( [item, item] );
+      mainList.add( [item, item] );
       tester.failNoThrow("     FAIL: add( [item, item] ) didn't throw.");
     } catch (e) {
       tester.log("    SUCCESS: add( [item, item] ) failed: " + e);

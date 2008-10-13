@@ -1,0 +1,170 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Add() with download</title>
+    <script>
+function runTest(tester) {
+  try {
+
+  const SB_NS = "http://songbirdnest.com/data/1.0#";
+
+  // prep the site library
+  var siteLib = songbird.siteLibrary;
+  siteLib.clear();
+  var siteList = siteLib.createSimpleMediaList("testsitelist");
+
+  // prep the main library
+  var mainLib = songbird.mainLibrary;
+  var downList = songbird.downloadMediaList;
+  var mainList = mainLib.createSimpleMediaList("testmainlist");
+
+  // prep the web library
+  var webLib = songbird.webLibrary;
+
+  //
+  // Download Observers
+  //
+
+  function onDownloadStart(event) {
+    tester.log('onDownloadStart - ' +
+               event.item.getProperty(SB_NS + "originURL"));
+    tester.testPending();
+  }
+
+  function onDownloadComplete(event) {
+    tester.log('onDownloadComplete - ' +
+                event.item.getProperty(SB_NS + "originURL"));
+    tester.testFinished();
+  }
+
+  function onDownloadStartFail(event) {
+    tester.log('onDownloadStart - ' +
+               event.item.getProperty(SB_NS + "originURL"));
+    tester.fail('FAIL - should NOT be starting this download');
+    tester.endRemoteAPITest();
+  }
+
+
+  //
+  // generic functions
+  //
+
+  function a2bByUrlDL(list, file) {
+    tester.log("a2bByUrlDL : " + tester.gPrefix + file);
+    list.add( tester.gPrefix + file, true );
+  }
+
+  function a2bByUrl(list, file) {
+    tester.log("a2bByUrl : " + tester.gPrefix + file);
+    list.add( tester.gPrefix + file );
+  }
+
+  function a2bByItemDL(library, list, file) {
+    tester.log("a2bByItemDL : " + tester.gPrefix + file);
+    var item = library.createMediaItem( tester.gPrefix + file );
+    list.add( item, true );
+  }
+
+  function a2bByItem(library, list, file) {
+    tester.log("a2bByItem : " + tester.gPrefix + file);
+    var item = library.createMediaItem( tester.gPrefix + file );
+    list.add( item );
+  }
+
+  // Setup listeners to track start/stop of downloads
+  document.addEventListener("downloadstart", onDownloadStart, true);
+  document.addEventListener("downloadcomplete", onDownloadComplete, true);
+
+  // 4 download cases, to mainList from url, mainLib, siteLib, webLib
+  a2bByUrlDL( mainList, "test01.mp3");
+  a2bByItemDL( mainLib, mainList, "test02.mp3");
+  a2bByItemDL( siteLib, mainList, "test03.mp3");
+  tester.log("a2bByItemDL : gWebItem1");
+  mainLib.add(webLib.getItemByGuid(tester.gWebItemGUID1), true); 
+
+  // give a second for the downloads to kick in.
+  tester.sleep(1000);
+
+  // remove the success listeners
+  document.removeEventListener("downloadstart", onDownloadStart, true);
+  document.removeEventListener("downloadcomplete", onDownloadComplete, true);
+
+  // add a failure listener - if downloads start it fails
+  document.addEventListener("downloadstart", onDownloadStartFail, true);
+
+  // non-downloading cases - to siteLib, webLib, mainLib without d/l flag.
+  // not allowed to add to the webLib directly
+
+  // by URL
+  a2bByUrl( mainLib, "test04.mp3");
+  a2bByUrlDL( siteLib, "test05.mp3");
+  a2bByUrl( siteLib, "test06.mp3");
+
+  // by Item from mainLib
+  a2bByItem( mainLib, mainList, "test07.mp3");
+  a2bByItemDL( mainLib, siteList, "test08.mp3");
+  a2bByItem( mainLib, siteList, "test09.mp3");
+
+  // by Item from siteLib
+  a2bByItem( siteLib, mainList, "test10.mp3");
+  a2bByItemDL( siteLib, siteList, "test11.mp3");
+  a2bByItem( siteLib, siteList, "test12.mp3");
+
+  // by Item from webLib
+  tester.log("a2bByItemDL : gWebItem2");
+  mainLib.add(webLib.getItemByGuid(tester.gWebItemGUID2)); 
+  tester.log("a2bByItemDL : gWebItem3");
+  siteLib.add(webLib.getItemByGuid(tester.gWebItemGUID3), true); 
+  tester.log("a2bByItemDL : gWebItem4");
+  siteLib.add(webLib.getItemByGuid(tester.gWebItemGUID4)); 
+
+  // remove listener
+  document.removeEventListener("downloadstart", onDownloadStartFail, true);
+
+  tester.sleep(1000);
+
+}
+catch(e) {
+  tester.endRemoteAPITest(e);
+}
+  tester.endRemoteAPITest();
+} // runTest
+
+function runPageTest(tester) {
+  setTimeout(function runPageTest_setTimeout() { runTest(tester) }, 0);
+}
+    </script>
+  </head>
+
+  <body>
+  </body>
+
+</html>
+
