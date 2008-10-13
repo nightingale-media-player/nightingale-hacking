@@ -94,11 +94,15 @@ firstRunImportMediaSvc.prototype = {
   // Widget services fields.
   //
   //   _widget                  First-run wizard import media widget.
+  //   _domEventListenerSet     Set of DOM event listeners.
   //   _libraryImporter         Library importer object.
+  //   _metricsImportType       Import type to add to metrics.
   //
 
   _widget: null,
+  _domEventListenerSet: null,
   _libraryImporter: null,
+  _metricsImportType: "none",
 
 
   //----------------------------------------------------------------------------
@@ -112,6 +116,17 @@ firstRunImportMediaSvc.prototype = {
    */
 
   initialize: function firstRunImportMediaSvc_initialize() {
+    // Create a DOM event listener set.
+    this._domEventListenerSet = new DOMEventListenerSet();
+
+    // Listen for first-run wizard connection reset events.
+    var _this = this;
+    var func = function() { return _this._doSaveComplete(); };
+    this._domEventListenerSet.add(firstRunWizard.wizardElem,
+                                  "FirstRunSaveComplete",
+                                  func,
+                                  false);
+
     // Get the library importer.
     this._libraryImporter = Cc["@songbirdnest.com/Songbird/ITunesImporter;1"]
                               .getService(Ci.sbILibraryImporter);
@@ -129,6 +144,11 @@ firstRunImportMediaSvc.prototype = {
    */
 
   finalize: function firstRunImportMediaSvc_finalize() {
+    // Remove DOM event listeners.
+    if (this._domEventListenerSet)
+      this._domEventListenerSet.removeAll();
+    this._domEventListenerSet = null;
+
     // Clear object fields.
     this._widget = null;
   },
@@ -140,7 +160,6 @@ firstRunImportMediaSvc.prototype = {
 
   saveSettings: function firstRunImportMediaSvc_saveSettings() {
     // Dispatch processing of the import settings radio group.
-    var metricsImportType = "none";
     var importRadioGroupElem = this._getElement("import_radiogroup");
     switch (importRadioGroupElem.value) {
       case "scan_directories" :
@@ -148,7 +167,7 @@ firstRunImportMediaSvc.prototype = {
         Application.prefs.setValue("songbird.firstrun.scan_directory_path",
                                    scanDirectoryTextBox.value);
         Application.prefs.setValue("songbird.firstrun.do_scan_directory", true);
-        metricsImportType = "filescan";
+        this._metricsImportType = "filescan";
         break;
 
       case "itunes" :
@@ -160,17 +179,13 @@ firstRunImportMediaSvc.prototype = {
                             ("songbird.library_importer.library_file_path",
                              this._libraryImporter.libraryDefaultFilePath);
         Application.prefs.setValue("songbird.firstrun.do_import_library", true);
-        metricsImportType = "itunes";
+        this._metricsImportType = "itunes";
         break;
 
       default :
+        this._metricsImportType = "none";
         break;
     }
-
-    // Update first-run metrics.
-    var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
-                    .createInstance(Ci.sbIMetrics);
-    metrics.metricsInc("firstrun", "mediaimport", metricsImportType);
   },
 
 
@@ -206,6 +221,7 @@ firstRunImportMediaSvc.prototype = {
   /**
    * Browse for the scan directory.
    */
+
   _doBrowseScanDirectory: function
                             firstRunImportMediaSvc__browseScanDirectory() {
     // Get the currently selected scan directory.
@@ -233,6 +249,20 @@ firstRunImportMediaSvc.prototype = {
     // Update the scan directory path.
     if (result == Ci.nsIFilePicker.returnOK)
       scanDirectoryTextBox.value = filePicker.file.path;
+  },
+
+
+  /**
+   * Handle the wizard save complete event specified by aEvent.
+   *
+   * \param aEvent              Wizard save complete event.
+   */
+
+  _doSaveComplete: function firstRunImportMediaSvc__doSaveComplete(aEvent) {
+    // Update first-run metrics after all wizard settings have been saved.
+    var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+                    .createInstance(Ci.sbIMetrics);
+    metrics.metricsInc("firstrun", "mediaimport", this._metricsImportType);
   },
 
 

@@ -334,6 +334,11 @@ var firstRunWizard = {
         firstRunWizardPageElem.saveSettings();
     }
 
+    // Send a save complete event.
+    var event = document.createEvent("Events");
+    event.initEvent("FirstRunSaveComplete", true, true);
+    this.wizardElem.dispatchEvent(event);
+
     // Settings have now been saved.
     this._savedSettings = true;
   }
