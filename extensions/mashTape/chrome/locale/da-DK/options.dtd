@@ -1,0 +1,22 @@
+<!ENTITY mtprefs.general "Generelt">
+<!ENTITY mtprefs.info "Kunstnerinformation">
+<!ENTITY mtprefs.rss "Nyheder">
+<!ENTITY mtprefs.photo "Fotos">
+<!ENTITY mtprefs.flash "Videoer">
+<!ENTITY mtprefs.defaulttab "Standard">
+<!ENTITY mtprefs.defaulttab.help "Når mashTape starter:">
+<!ENTITY mtprefs.show.info "Vis kunstner info">
+<!ENTITY mtprefs.show.rss "Vis nyheder">
+<!ENTITY mtprefs.show.photo "Vis fotos">
+<!ENTITY mtprefs.show.flash "Vis videoer">
+<!ENTITY mtprefs.autohide "Auto-skjul">
+<!ENTITY mtprefs.autohide.help "Skjul automatisk mashTape visningspanelet når du skifter til visning af en webside.">
+<!ENTITY mtprefs.services "Services">
+<!ENTITY mtprefs.getmore "Få flere services til mashTape">
+<!ENTITY mtprefs.tab.info "Kunstnerinfo fanebladsindstillinger">
+<!ENTITY mtprefs.tab.rss "Nyheder fanebladsindstillinger">
+<!ENTITY mtprefs.tab.photo "Fotos fanebladsindstillinger">
+<!ENTITY mtprefs.tab.flash "Videoer fanebladsindstillinger">
+<!ENTITY mtprefs.tab.help "Vis dette faneblad i mashTape.">
+<!ENTITY mtprefs.single "Dette panel understøtter visning af indhold fra én service ad gangen.">
+<!ENTITY mtprefs.multiple "Dette panel understøtter visning af indhold fra flere services ad gangen. Vælg venligst dine foretrukne services fra nedenstående liste.">
