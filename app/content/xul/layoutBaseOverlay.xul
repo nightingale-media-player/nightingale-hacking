@@ -152,10 +152,10 @@
 
     <menu id="controls-menu" label="&menu.controls;"  accesskey="&menu.controls.accesskey;">
       <menupopup id="menu_ControlsPopup">
-        <menuitem id="menuitem_control_play" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
+        <menuitem id="menuitem_control_play" key="control-playpause-key" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
         <menuseparator/>
-        <menuitem id="menuitem_control_next" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
-        <menuitem id="menuitem_control_prev" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
+        <menuitem id="menuitem_control_next" key="control-next-key" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
+        <menuitem id="menuitem_control_prev" key="control-previous-key" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
         <menuseparator/>
         <menuitem id="menuitem_control_shuf" label="&menu.control.shuf;" type="checkbox" observes="controlModeShuffle" accesskey="&menu.control.shuf.accesskey;" />
         <menuseparator/>
@@ -367,6 +367,7 @@
       <key id="volume-up-key" modifiers="accel" keycode="VK_UP" command="cmd_volume_up"/>
       <key id="volume-mute-key" modifiers="accel,alt" keycode="VK_DOWN" command="cmd_volume_mute"/>
       <key id="volume-mute-key2" modifiers="accel,alt" keycode="VK_UP" command="cmd_volume_mute"/>
+      <key id="control-playpause-key" keytext="&menu.control.playpause.spacebar;" oncommand="cmd_control_playpause"/>
       <!-- not using accel here because we want control on all platforms -->
       <key id="control-next-key" keycode="VK_RIGHT" modifiers="control" command="cmd_control_next"/>
       <key id="control-previous-key" keycode="VK_LEFT" modifiers="control" command="cmd_control_previous"/>

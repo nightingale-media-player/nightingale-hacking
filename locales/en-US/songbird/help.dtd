@@ -17,7 +17,6 @@
 <!ENTITY help.keyboard.section.search     "Search" >
 <!ENTITY help.keyboard.section.misc       "Miscellaneous" >
 
-<!ENTITY help.keyboard.key.space          "Spacebar" >
 <!ENTITY help.keyboard.key.left           "Left Arrow" >
 <!ENTITY help.keyboard.key.right          "Right Arrow" >
 <!ENTITY help.keyboard.key.up             "Up Arrow" >

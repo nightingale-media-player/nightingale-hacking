@@ -344,6 +344,8 @@
 <!ENTITY menu.viewpagesource.key       "U" >
 <!ENTITY downloadmgr.key               "J" >
 
+<!ENTITY menu.control.playpause.spacebar "Spacebar" >
+
 <!ENTITY tabs.closeTab "Close tab">
 <!ENTITY tabs.listAllTabs "List all tabs">
 
