@@ -2018,6 +2018,9 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       rv = UpdatePlayStateDataRemotes();
       NS_ENSURE_SUCCESS(rv, rv);
 
+      rv = ResetMetadataDataRemotes();
+      NS_ENSURE_SUCCESS(rv, rv);
+
       rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
     }

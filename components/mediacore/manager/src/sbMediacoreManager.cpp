@@ -256,14 +256,64 @@ sbMediacoreManager::Init()
 nsresult 
 sbMediacoreManager::PreShutdown()
 {
+  TRACE(("sbMediacoreManager[0x%x] - PreShutdown", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
+  if(mPrimaryCore) {
+    nsCOMPtr<sbIMediacoreStatus> status;
+    
+    nsresult rv = GetStatus(getter_AddRefs(status));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 state = sbIMediacoreStatus::STATUS_UNKNOWN;
+    rv = status->GetState(&state);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(state != sbIMediacoreStatus::STATUS_STOPPED) {
+      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl;
+      rv = GetPlaybackControl(getter_AddRefs(playbackControl));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = playbackControl->Stop();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
   return NS_OK;
 }
 
 nsresult 
 sbMediacoreManager::Shutdown()
 {
+  TRACE(("sbMediacoreManager[0x%x] - Shutdown", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
   nsresult rv = mDataRemoteFaceplateVolume->Unbind();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIMutableArray> mutableArray =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mCores.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayStringKey,
+                       mutableArray.get());
+
+  PRUint32 length = 0;
+  rv = mutableArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 current = 0; current < length; ++current) {
+    nsCOMPtr<sbIMediacore> core = do_QueryElementAt(mutableArray, current, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = core->Shutdown();
+    NS_ASSERTION(NS_SUCCEEDED(rv), 
+      "Failed to Shutdown a Mediacore. This may cause problems during final shutdown.");
+  }
 
   return NS_OK;
 }
