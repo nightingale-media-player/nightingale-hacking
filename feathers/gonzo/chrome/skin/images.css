@@ -384,6 +384,21 @@ statusbar {
   background-repeat:repeat-x;
   background-position:left center;
 }
+
+/* buffering state */
+#faceplate_seekbar_box[buffering="true"] > .hook > .left {
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-seekbar-buffering-left.png');
+}
+#faceplate_seekbar_box[buffering="true"] > .hook > .right {
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-seekbar-buffering-right.png');
+}
+#faceplate_seekbar_box[buffering="true"] > .hook > .middle {
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-seekbar-buffering.png');
+}
+#faceplate_seekbar_box[buffering="true"] > sb-player-seek-slider {
+  visibility:hidden;
+}
+
 /* the seekbar has 4 hboxes that can be used to display notches */
 #faceplate_seekbar_box > .notches > hbox+hbox {
   /*

@@ -277,7 +277,6 @@ sb-player-totaltime-label {
 
 #miniplayer #faceplate_seekbar_box > .hook {
   margin:0 8px;
-  background-image: url(chrome://songbird/skin/media-control-pane/bg-seekbar.png2);
   background-repeat:repeat-x;
   background-position:left center;
 }
