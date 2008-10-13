@@ -2922,7 +2922,7 @@
         ]]>
       </handler>
       
-      <handler event="keypress" keycode="VK_LEFT" phase="target">
+      <handler event="keypress" keycode="VK_LEFT" modifiers="control" phase="target">
         <![CDATA[
           if (event.originalTarget != this.tree) {
             // possibly an event from the inline metadata editing textbox
@@ -2940,7 +2940,7 @@
         ]]>
       </handler>
 
-      <handler event="keypress" keycode="VK_RIGHT" phase="target">
+      <handler event="keypress" keycode="VK_RIGHT" modifiers="control" phase="target">
         <![CDATA[
           if (event.originalTarget != this.tree) {
             // possibly an event from the inline metadata editing textbox
