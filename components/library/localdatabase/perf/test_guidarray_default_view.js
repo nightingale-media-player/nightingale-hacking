@@ -38,8 +38,6 @@ function perfTest(library, timer) {
 
   var array = newGuidArray(library);
   array.addSort(SBProperties.artistName, true);
-  array.addSort(SBProperties.albumName, true);
-  array.addSort(SBProperties.trackNumber, true);
   array.addFilter(SBProperties.hidden, new StringArrayEnumerator(["0"]), false);
   array.addFilter(SBProperties.isList, new StringArrayEnumerator(["0"]), false);
 

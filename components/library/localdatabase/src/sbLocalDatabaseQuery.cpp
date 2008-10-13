@@ -38,17 +38,18 @@
 #include <sbSQLBuilderCID.h>
 #include <sbStringUtils.h>
 
-#define COUNT_COLUMN          NS_LITERAL_STRING("count(1)")
-#define GUID_COLUMN           NS_LITERAL_STRING("guid")
-#define OBJ_COLUMN            NS_LITERAL_STRING("obj")
-#define OBJSORTABLE_COLUMN    NS_LITERAL_STRING("obj_sortable")
-#define MEDIAITEMID_COLUMN    NS_LITERAL_STRING("media_item_id")
-#define PROPERTYID_COLUMN     NS_LITERAL_STRING("property_id")
-#define ORDINAL_COLUMN        NS_LITERAL_STRING("ordinal")
-#define PROPERTYNAME_COLUMN   NS_LITERAL_STRING("property_name")
-#define MEDIALISTYPEID_COLUMN NS_LITERAL_STRING("media_list_type_id")
-#define ISLIST_COLUMN         NS_LITERAL_STRING("is_list")
-#define ROWID_COLUMN          NS_LITERAL_STRING("rowid")
+#define COUNT_COLUMN                NS_LITERAL_STRING("count(1)")
+#define GUID_COLUMN                 NS_LITERAL_STRING("guid")
+#define OBJ_COLUMN                  NS_LITERAL_STRING("obj")
+#define OBJSORTABLE_COLUMN          NS_LITERAL_STRING("obj_sortable")
+#define OBJSECONDARYSORTABLE_COLUMN NS_LITERAL_STRING("obj_secondary_sortable")
+#define MEDIAITEMID_COLUMN          NS_LITERAL_STRING("media_item_id")
+#define PROPERTYID_COLUMN           NS_LITERAL_STRING("property_id")
+#define ORDINAL_COLUMN              NS_LITERAL_STRING("ordinal")
+#define PROPERTYNAME_COLUMN         NS_LITERAL_STRING("property_name")
+#define MEDIALISTYPEID_COLUMN       NS_LITERAL_STRING("media_list_type_id")
+#define ISLIST_COLUMN               NS_LITERAL_STRING("is_list")
+#define ROWID_COLUMN                NS_LITERAL_STRING("rowid")
 
 #define PROPERTIES_TABLE         NS_LITERAL_STRING("resource_properties")
 #define PROPERTIES_FTS_TABLE     NS_LITERAL_STRING("resource_properties_fts")
@@ -999,6 +1000,18 @@ sbLocalDatabaseQuery::AddPrimarySort()
                           OBJSORTABLE_COLUMN,
                           mSorts->ElementAt(0).ascending);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  /*
+   * Add a sort on the pre-baked secondary sort, unless
+   * this is a distinct list, in which case the secondary
+   * sort will make no difference.
+   */
+  if (!mIsDistinct) {
+    rv = mBuilder->AddOrder(SORT_ALIAS,
+                            OBJSECONDARYSORTABLE_COLUMN,
+                            mSorts->ElementAt(0).ascending);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   /*
    * Sort on media_item_id to make the order of the rows always the same.  Make

@@ -106,7 +106,7 @@ private:
                         PRBool aHasNullSort,
                         PRBool aRemoteReadable,
                         PRBool aRemoteWritable,
-                        sbIPropertyArray* aSortProfile = nsnull,
+                        sbIPropertyArray* aSecondarySort = nsnull,
                         PRBool aNoCompressWhitespace = PR_FALSE);
 
   nsresult RegisterURI(const nsAString& aPropertyID,
@@ -152,6 +152,9 @@ private:
                            PRBool aRemoteWritable);
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
+  
+  // Maps property ID to all properties that depend on that ID in some way
+  nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyArray> mPropDependencyMap;
 
   PRLock* mPropIDsLock;
   nsTArray<nsString> mPropIDs;

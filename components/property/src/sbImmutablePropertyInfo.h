@@ -53,7 +53,7 @@ protected:
   nsresult Init();
 
   PRUint32 mNullSort;
-  nsCOMPtr<sbIPropertyArray> mSortProfile;
+  nsCOMPtr<sbIPropertyArray> mSecondarySort;
   nsString mID;
   nsString mType;
   nsString mDisplayName;

@@ -95,7 +95,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbPropertyInfo, sbIPropertyInfo, nsISupportsWeakRe
 
 sbPropertyInfo::sbPropertyInfo()
 : mNullSort(sbIPropertyInfo::SORT_NULL_SMALL)
-, mSortProfileLock(nsnull)
+, mSecondarySortLock(nsnull)
+, mSecondarySort(nsnull)
 , mIDLock(nsnull)
 , mTypeLock(nsnull)
 , mDisplayNameLock(nsnull)
@@ -109,10 +110,10 @@ sbPropertyInfo::sbPropertyInfo()
 , mUnitConverter(nsnull)
 , mUnitConverterLock(nsnull)
 {
-  mSortProfileLock = PR_NewLock();
+  mSecondarySortLock = PR_NewLock();
 
-  NS_ASSERTION(mSortProfileLock,
-    "sbPropertyInfo::mSortProfileLock failed to create lock!");
+  NS_ASSERTION(mSecondarySortLock,
+    "sbPropertyInfo::mSecondarySortLock failed to create lock!");
 
   mIDLock = PR_NewLock();
   NS_ASSERTION(mIDLock,
@@ -153,8 +154,8 @@ sbPropertyInfo::sbPropertyInfo()
 
 sbPropertyInfo::~sbPropertyInfo()
 {
-  if(mSortProfileLock) {
-    PR_DestroyLock(mSortProfileLock);
+  if(mSecondarySortLock) {
+    PR_DestroyLock(mSecondarySortLock);
   }
 
   if(mIDLock) {
@@ -320,22 +321,38 @@ NS_IMETHODIMP sbPropertyInfo::GetNullSort(PRUint32 *aNullSort)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyInfo::SetSortProfile(sbIPropertyArray * aSortProfile)
+NS_IMETHODIMP sbPropertyInfo::SetSecondarySort(sbIPropertyArray * aSecondarySort)
 {
-  NS_ENSURE_ARG_POINTER(aSortProfile);
+  NS_ENSURE_ARG_POINTER(aSecondarySort);
 
-  sbSimpleAutoLock lock(mSortProfileLock);
-  mSortProfile = aSortProfile;
+  sbSimpleAutoLock lock(mSecondarySortLock);
+  
+  // XXX - Due to caching we cannot allow the secondary sort
+  // to be updated more than once.  This is a nasty hack
+  // and will have to be fixed with a large scale architectural
+  // change.  
+  //
+  // See Bug 12677 – "[sorting] cached sortable values should 
+  //                  auto-invalidate when property implementations change"
+  //
+  // If you need to change the secondary sort for a property that
+  // may already be cached in the db, check out 
+  // sbILocalDatabasePropertyCache.InvalidateSortData()
+  if (mSecondarySort) {
+    return NS_ERROR_ALREADY_INITIALIZED;
+  }
+  
+  mSecondarySort = aSecondarySort;
 
   return NS_OK;
 }
-NS_IMETHODIMP sbPropertyInfo::GetSortProfile(sbIPropertyArray * *aSortProfile)
+NS_IMETHODIMP sbPropertyInfo::GetSecondarySort(sbIPropertyArray * *aSecondarySort)
 {
-  NS_ENSURE_ARG_POINTER(aSortProfile);
+  NS_ENSURE_ARG_POINTER(aSecondarySort);
 
-  sbSimpleAutoLock lock(mSortProfileLock);
-  *aSortProfile = mSortProfile;
-  NS_IF_ADDREF(*aSortProfile);
+  sbSimpleAutoLock lock(mSecondarySortLock);
+  *aSecondarySort = mSecondarySort;
+  NS_IF_ADDREF(*aSecondarySort);
 
   return NS_OK;
 }

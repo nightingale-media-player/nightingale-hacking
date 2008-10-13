@@ -237,14 +237,56 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
   nsString sortable;
   rv = propertyInfo->MakeSortable(aValue, sortable);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Find all properties whose secondary sort depends on this
+  // property
+  nsCOMPtr<sbIPropertyArray> dependentProperties;
+  rv = mPropertyManager->GetDependentProperties(aPropertyID, 
+            getter_AddRefs(dependentProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRUint32 dependentPropertyCount;
+  rv = dependentProperties->GetLength(&dependentPropertyCount);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = PutValue(propertyDBID, aValue, sortable);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mCache->AddDirty(mGuid, this);
-  NS_ENSURE_SUCCESS(rv, rv);
+  PR_Lock(mDirtyLock);
 
+  PRUint32 previousDirtyCount = mDirty.Count();
+  
+  // Mark the property that changed as dirty
   mDirty.PutEntry(propertyDBID);
+  
+  // Also mark as dirty any properties that use
+  // the changed property in their secondary sort values
+  if (dependentPropertyCount > 0) {
+    for (PRUint32 i = 0; i < dependentPropertyCount; i++) {
+      nsCOMPtr<sbIProperty> property;
+      rv = dependentProperties->GetPropertyAt(i, getter_AddRefs(property));
+      NS_ASSERTION(NS_SUCCEEDED(rv),
+          "Property cache failed to update dependent properties!");
+      if (NS_SUCCEEDED(rv)) {
+        nsString propertyID;
+        rv = property->GetId(propertyID);
+        NS_ASSERTION(NS_SUCCEEDED(rv), 
+          "Property cache failed to update dependent properties!");
+        if (NS_SUCCEEDED(rv)) {
+          mDirty.PutEntry(propertyDBID);
+        }
+      }
+    }
+  }
+  
+  PR_Unlock(mDirtyLock);
+
+  // If this bag just became dirty, then let the property cache know.
+  // Only notify once in order to avoid unnecessarily locking the 
+  // property cache 
+  if (previousDirtyCount == 0) {
+    rv = mCache->AddDirty(mGuid, this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // If this property is user editable we need to
   // set the updated timestamp.  We only
@@ -272,7 +314,7 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
 {
   nsresult rv = NS_OK;
-
+  
   if(mDirty.Count() > 0) {
     rv = mCache->Write();
     NS_ENSURE_SUCCESS(rv, rv);

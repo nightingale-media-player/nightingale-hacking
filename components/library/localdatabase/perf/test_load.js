@@ -36,11 +36,11 @@ function runTest () {
 // manual testing.
 
 //  makeLibrary(1000);
-//  makeLibrary(5000);
-//  makeLibrary(10000);
-//  makeLibrary(25000);
-//  makeLibrary(50000);
-//  makeLibrary(100000);
+  makeLibrary(5000);
+  makeLibrary(10000);
+  makeLibrary(25000);
+  makeLibrary(50000);
+  makeLibrary(100000);
 }
 
 function makeLibrary(aLength) {

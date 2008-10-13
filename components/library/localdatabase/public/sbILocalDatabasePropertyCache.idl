@@ -32,12 +32,13 @@
 #include "nsISupports.idl"
 
 interface sbILocalDatabaseResourcePropertyBag;
+interface sbIJobProgress;
 
 /**
  * \interface sbILocalDatabasePropertyCache
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(26bba3ab-a69e-4600-8e0d-3fb2f6c9baf8)]
+[scriptable, uuid(0e5c3c10-8ff8-11dd-ad8b-0800200c9a66)]
 interface sbILocalDatabasePropertyCache : nsISupports
 {
   readonly attribute boolean writePending;
@@ -61,4 +62,23 @@ interface sbILocalDatabasePropertyCache : nsISupports
   void write();
 
   unsigned long getPropertyDBID(in AString aPropertyID);
+
+ /**
+  * Used to rebuild all sortable and secondary sortable
+  * data in the library.  Should be called any time the
+  * GetSecondarySort or MakeSortable functions of an 
+  * sbIPropertyInfo implementation are changed.
+  *
+  * See Bug 12677 – "[sorting] cached sortable values should 
+  *                  auto-invalidate when property implementations change"
+  *
+  * Example:
+  *    var mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+  *                      .getService(Ci.sbILibraryManager).mainLibrary;
+  *    var cache = mainLibrary.QueryInterface(Ci.sbILocalDatabaseLibrary)
+  *                         .propertyCache;
+  *    Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
+  *    SBJobUtils.showProgressDialog(cache.invalidateSortData(), null, 0);
+  */
+  sbIJobProgress invalidateSortData();
 };

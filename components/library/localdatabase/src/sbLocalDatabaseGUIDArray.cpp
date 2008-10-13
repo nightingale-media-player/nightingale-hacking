@@ -1569,9 +1569,6 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
   // XXX Disable memory sorting in the general case, since it appears to slow things 
   // down with the index fix from bug 8612. Enable it however when an FTS search
   // is active, as joining the FTS table can severely slow the resort query.
-  
-  // TODO All of this can be removed once bug 6855 (pre-bake secondary sort values)
-  // is complete
 
   // We can sort these rows in memory in the case where the entire group of
   // rows lies within the fetched chunk, meaning for a distinct primary sort
@@ -1703,7 +1700,6 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
         PRUint32 position;
         rv = GetPrimarySortKeyPosition(aKey, &position);
         NS_ENSURE_SUCCESS(rv, rv);
-
         offset = aStartIndex - position;
       }
     }

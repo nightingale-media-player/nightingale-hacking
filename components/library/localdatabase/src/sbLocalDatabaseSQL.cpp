@@ -185,8 +185,8 @@ nsString sbLocalDatabaseSQL::PropertiesSelect()
 nsString sbLocalDatabaseSQL::PropertiesInsert()
 {
   return NS_LITERAL_STRING("INSERT OR REPLACE INTO resource_properties \
-                            (media_item_id, property_id, obj, obj_sortable) \
-                            VALUES (?, ?, ?, ?)");
+                            (media_item_id, property_id, obj, obj_sortable, obj_secondary_sortable) \
+                            VALUES (?, ?, ?, ?, ?)");
 }
 
 

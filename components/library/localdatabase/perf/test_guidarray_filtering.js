@@ -59,8 +59,6 @@ function perfTest(library, timer) {
   var playlistArray = filterArray1.clone();
   playlistArray.clearSorts();
   playlistArray.addSort(SBProperties.artistName, true);
-  playlistArray.addSort(SBProperties.albumName, true);
-  playlistArray.addSort(SBProperties.trackNumber, true);
   playlistArray.fetchSize = 300; 
   playlistArray.isDistinct = false;  
 

@@ -204,15 +204,15 @@ sbImmutablePropertyInfo::GetNullSort(PRUint32* aNullSort)
 }
 
 NS_IMETHODIMP
-sbImmutablePropertyInfo::SetSortProfile(sbIPropertyArray* aSortProfile)
+sbImmutablePropertyInfo::SetSecondarySort(sbIPropertyArray* aSecondarySort)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 NS_IMETHODIMP
-sbImmutablePropertyInfo::GetSortProfile(sbIPropertyArray** aSortProfile)
+sbImmutablePropertyInfo::GetSecondarySort(sbIPropertyArray** aSecondarySort)
 {
-  NS_ENSURE_ARG_POINTER(aSortProfile);
-  NS_IF_ADDREF(*aSortProfile = mSortProfile);
+  NS_ENSURE_ARG_POINTER(aSecondarySort);
+  NS_IF_ADDREF(*aSecondarySort = mSecondarySort);
   return NS_OK;
 }
 

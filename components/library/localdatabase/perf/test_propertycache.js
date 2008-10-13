@@ -37,16 +37,16 @@ function perfTest(library, timer) {
   // Get all the guids
   var guidList = [];
   library.enumerateAllItems({
-   		onEnumerationBegin: function(list) {
-   			return Ci.sbIMediaListEnumerationListener.CONTINUE;
-   		},
-   		onEnumeratedItem: function(list, item) {
-   		  guidList.push(item.guid);
-   			return Ci.sbIMediaListEnumerationListener.CONTINUE;
-   		},
-   		onEnumerationEnd: function(list, status) {
-   		}
- 	  });
+      onEnumerationBegin: function(list) {
+        return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      },
+      onEnumeratedItem: function(list, item) {
+        guidList.push(item.guid);
+        return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      },
+      onEnumerationEnd: function(list, status) {
+      }
+    });
   
   var cache = library.QueryInterface(Ci.sbILocalDatabaseLibrary).propertyCache;
   

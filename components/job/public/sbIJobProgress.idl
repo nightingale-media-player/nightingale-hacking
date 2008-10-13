@@ -125,7 +125,7 @@ interface sbIJobProgress : nsISupports
 interface sbIJobProgressListener : nsISupports
 {
   /**
-   * \brief Notification that an object implmenting sbIJobProgress has changed
+   * \brief Notification that an object implementing sbIJobProgress has changed
    * \param aJobProgress The job whose status has been updated
    * \note Notification frequency is at the discretion of the sbIJobProgress implementor
    */

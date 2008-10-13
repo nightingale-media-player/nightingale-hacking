@@ -85,7 +85,11 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyManager,
 sbPropertyManager::sbPropertyManager()
 : mPropIDsLock(nsnull)
 {
-  PRBool success = mPropInfoHashtable.Init(32);
+  PRBool success = mPropInfoHashtable.Init(100);
+  NS_ASSERTION(success,
+    "sbPropertyManager::mPropInfoHashtable failed to initialize!");
+
+  success = mPropDependencyMap.Init(100);
   NS_ASSERTION(success,
     "sbPropertyManager::mPropInfoHashtable failed to initialize!");
 
@@ -97,6 +101,7 @@ sbPropertyManager::sbPropertyManager()
 sbPropertyManager::~sbPropertyManager()
 {
   mPropInfoHashtable.Clear();
+  mPropDependencyMap.Clear();
 
   if(mPropIDsLock) {
     PR_DestroyLock(mPropIDsLock);
@@ -146,6 +151,7 @@ NS_IMETHODIMP sbPropertyManager::AddPropertyInfo(sbIPropertyInfo *aPropertyInfo)
 
   PR_Lock(mPropIDsLock);
   mPropIDs.AppendElement(id);
+  mPropDependencyMap.Clear();
   PR_Unlock(mPropIDsLock);
 
   return NS_OK;
@@ -251,80 +257,71 @@ NS_IMETHODIMP sbPropertyManager::GetStringFromName(nsIStringBundle *aBundle,
   return NS_OK;
 }
 
-NS_IMETHODIMP sbPropertyManager::GetPropertySort(const nsAString & aId,
-                                                 PRBool aIsAscending,
-                                                 sbIPropertyArray** _retval)
+NS_IMETHODIMP sbPropertyManager::GetDependentProperties(const nsAString & aId,
+                                                        sbIPropertyArray** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv = NS_OK;
+  PRBool success = PR_FALSE;
 
-  nsCOMPtr<sbIPropertyInfo> propertyInfo;
-  nsresult rv = GetPropertyInfo(aId, getter_AddRefs(propertyInfo));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoLock lock(mPropIDsLock);
 
-  nsCOMPtr<sbIPropertyArray> sortProfile;
-  rv = propertyInfo->GetSortProfile(getter_AddRefs(sortProfile));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Lazily init a map like: { propID: [props, that, use, propID], ... }
+  if (mPropDependencyMap.Count() == 0) {
+    nsCOMPtr<sbIMutablePropertyArray> deps;
 
-  nsCOMPtr<sbIPropertyArray> sort;
-  if (sortProfile) {
-    if (aIsAscending) {
-      sort = sortProfile;
+    // First create an empty array for every known property
+    for (PRUint32 i=0; i < mPropIDs.Length(); i++) {
+      deps = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = deps->SetStrict(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      success = mPropDependencyMap.Put(mPropIDs.ElementAt(i), deps);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
     }
-    else {
-      // If this is a descending sort, create a new sort profile with the
-      // directions reversed
-      nsCOMPtr<sbIMutablePropertyArray> newSort =
-        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+
+    // Now populate the dependency arrays using the property infos
+    nsCOMPtr<sbIPropertyInfo> propertyInfo;
+    nsCOMPtr<sbIPropertyArray> secondarySort;
+    nsCOMPtr<sbIPropertyArray> currentDeps;
+    for (PRUint32 i=0; i < mPropIDs.Length(); i++) {
+      nsString dependentID = mPropIDs.ElementAt(i);
+      rv = GetPropertyInfo(dependentID, getter_AddRefs(propertyInfo));
       NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = newSort->SetStrict(PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRUint32 propertyCount;
-      rv = sortProfile->GetLength(&propertyCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      for (PRUint32 i = 0; i < propertyCount; i++) {
-        nsCOMPtr<sbIProperty> property;
-        rv = sortProfile->GetPropertyAt(i, getter_AddRefs(property));
+      
+      secondarySort = nsnull;
+      rv = propertyInfo->GetSecondarySort(getter_AddRefs(secondarySort));
+      
+      if (NS_SUCCEEDED(rv) && secondarySort) {
+        PRUint32 propertyCount;
+        rv = secondarySort->GetLength(&propertyCount);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        nsString propertyID;
-        rv = property->GetId(propertyID);
-        NS_ENSURE_SUCCESS(rv, rv);
+        // Map prop id to all dependent ids
+        for (PRUint32 j=0; j < propertyCount; j++) {
+          nsCOMPtr<sbIProperty> property;
+          rv = secondarySort->GetPropertyAt(j, getter_AddRefs(property));
+          NS_ENSURE_SUCCESS(rv, rv);
+          nsString propertyID;
+          rv = property->GetId(propertyID);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-        nsString value;
-        rv = property->GetValue(value);
-        NS_ENSURE_SUCCESS(rv, rv);
+          success = mPropDependencyMap.Get(propertyID, getter_AddRefs(currentDeps));
+          NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+          deps = do_QueryInterface(currentDeps, &rv);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = newSort->AppendProperty(propertyID,
-                                     value.EqualsLiteral("a") ?
-                                       NS_LITERAL_STRING("d") :
-                                       NS_LITERAL_STRING("a"));
-        NS_ENSURE_SUCCESS(rv, rv);
+          rv = deps->AppendProperty(dependentID, EmptyString());
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
-
-      sort = newSort;
     }
   }
-  else {
-    nsCOMPtr<sbIMutablePropertyArray> newSort =
-      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = newSort->SetStrict(PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = newSort->AppendProperty(aId,
-                                 aIsAscending ?
-                                   NS_LITERAL_STRING("a") :
-                                   NS_LITERAL_STRING("d"));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    sort = newSort;
-  }
-
-  NS_ADDREF(*_retval = sort);
+  // Use the map to return all dependent properties for aID
+  success = mPropDependencyMap.Get(aId, _retval);
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -367,7 +364,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //List Type 
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_LISTTYPE), EmptyString(),
                       stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, 
-                      0, PR_FALSE, PR_FALSE, PR_FALSE, nsnull);
+                      0, PR_FALSE, PR_TRUE, PR_FALSE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Is List 
@@ -463,23 +460,19 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
 
   //Album name
-  nsCOMPtr<sbIMutablePropertyArray> albumSortProfile =
+  nsCOMPtr<sbIMutablePropertyArray> albumSecondarySort =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumSortProfile->SetStrict(PR_FALSE);
+  rv = albumSecondarySort->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Sorting by album will sort by album->disc no->track no
-  rv = albumSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+  rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                                        NS_LITERAL_STRING("a"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = albumSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+  rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -487,30 +480,26 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     NS_LITERAL_STRING("property.album_name"),
                     stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE, albumSortProfile);
+                    PR_TRUE, PR_TRUE, albumSecondarySort);
 
   //Artist name
-  nsCOMPtr<sbIMutablePropertyArray> artistSortProfile =
+  nsCOMPtr<sbIMutablePropertyArray> artistSecondarySort =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = artistSortProfile->SetStrict(PR_FALSE);
+  rv = artistSecondarySort->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Sorting by artist will sort by artist->album->disc no->track no
-  rv = artistSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                                          NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = artistSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                         NS_LITERAL_STRING("a"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = artistSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
     NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = artistSortProfile->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
                                          NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -518,7 +507,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     NS_LITERAL_STRING("property.artist_name"),
                     stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                    PR_TRUE, PR_TRUE, artistSortProfile);
+                    PR_TRUE, PR_TRUE, artistSecondarySort);
 
   //Duration (in usecs)
   rv = RegisterDuration(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
@@ -809,7 +798,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // Custom type (used for css and metrics reporting)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), EmptyString(),
     stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
-    PR_FALSE, PR_FALSE);
+    PR_TRUE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Is sortable (for lists)
@@ -1054,7 +1043,7 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
                                 PRBool aHasNullSort,
                                 PRBool aRemoteReadable,
                                 PRBool aRemoteWritable,
-                                sbIPropertyArray* aSortProfile,
+                                sbIPropertyArray* aSecondarySort,
                                 PRBool aNoCompressWhitespace)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
@@ -1092,8 +1081,8 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
   rv = textProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (aSortProfile) {
-    rv = textProperty->SetSortProfile(aSortProfile);
+  if (aSecondarySort) {
+    rv = textProperty->SetSecondarySort(aSecondarySort);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   

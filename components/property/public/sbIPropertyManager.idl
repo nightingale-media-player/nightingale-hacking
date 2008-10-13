@@ -48,7 +48,7 @@ interface sbIPropertyUnitConverter;
 *
 * \sa sbIPropertyInfo
 */
-[scriptable, uuid(fa691a34-5739-427e-afd6-d8d55ea0f3d0)]
+[scriptable, uuid(ed260380-8c1b-11dd-ad8b-0800200c9a66)]
 interface sbIPropertyManager : nsISupports
 {
   /**
@@ -90,11 +90,11 @@ interface sbIPropertyManager : nsISupports
   AString getStringFromName(in nsIStringBundle aBundle, in AString aName);
 
   /**
-   * \brief Gets a sort for the given property based on the property's
-   * sort profile.  The array returned is suitable for passing to a view's
-   * setSort() method.
+   * \brief Get all the properties that in any way depend on 
+   * the given property.  For example, the secondary sort 
+   * of property A may include property B.
    */
-  sbIPropertyArray getPropertySort(in AString aID, in boolean aIsAscending);
+  sbIPropertyArray getDependentProperties(in AString aID);
 };
 
 /**
@@ -127,7 +127,7 @@ interface sbIPropertyOperator : nsISupports
 * \brief An interface used to describe a metadata property for use by the UI and other sbILibrary interfaces (smartplaylists, etc)
 * \sa sbIPropertyManager
 */
-[scriptable, uuid(88e15960-fe21-4995-b752-3ebe650c51bf)]
+[scriptable, uuid(80fc8a30-8f2c-11dd-ad8b-0800200c9a66)]
 interface sbIPropertyInfo : nsISupports
 {
   readonly attribute AString OPERATOR_EQUALS;
@@ -176,13 +176,27 @@ interface sbIPropertyInfo : nsISupports
   attribute unsigned long nullSort;
 
   /**
-   * \brief Sort profile to be used.
+   * \brief When sorting by this property, additionally 
+   *        sort by the following properties
    *
-   * This is a list of columns to sort by for a peculiar 
-   * property. For example, when sorting by artist, you typically want to sort
+   * A secondary list of columns to sort by for a particular property.
+   * For example, when sorting by artist, you typically want to sort
    * by Artist, Album and Track No.
+   *
+   * This attribute is provided as a hint and optimization only.  
+   * If you want control over how a table of properties is sorted, 
+   * specify it on the view.
+   *
+   * NOTE: Setting this attribute after a property has already
+   * been registered with the manager may not work as expected.  
+   * This is a shortcoming of the architecture and will be fixed
+   * with Bug 12677 – "[sorting] cached sortable values should 
+   *                   invalidate when property implementations change"
+   * If you need to change the secondary sort for a property that
+   * may already be cached in the db, check out 
+   * sbILocalDatabasePropertyCache.InvalidateSortData()
    */
-  attribute sbIPropertyArray sortProfile;
+  attribute sbIPropertyArray secondarySort;
 
   /**
    * \brief Unique ID for this property

@@ -152,11 +152,13 @@ var LibraryUtils = {
     // ID
     var parser = new ColumnSpecParser(aMediaList, null);
     if (parser.sortID) {
-      var pm =
-        Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                  .getService(Components.interfaces.sbIPropertyManager);
-      var sort = pm.getPropertySort(parser.sortID, parser.sortIsAscending);
-      mediaListView.setSort(sort);
+      var propertyArray =
+        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+        createInstance(Ci.sbIMutablePropertyArray);
+      propertyArray.strict = true;
+      propertyArray.appendProperty(parser.sortID, 
+          (parser.sortIsAscending ? "a" : "d"));
+      mediaListView.setSort(propertyArray);
     }
     
     // By default, we never want to show lists and hidden 

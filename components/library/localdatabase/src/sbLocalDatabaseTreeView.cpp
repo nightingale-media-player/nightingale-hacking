@@ -1000,17 +1000,24 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
   if (mListType != eDistinct) {
     NS_ENSURE_STATE(mMediaListView);
 
-    nsCOMPtr<sbIPropertyArray> sort;
-    rv = mPropMan->GetPropertySort(sortProperty,
-                                   aDirection,
-                                   getter_AddRefs(sort));
+    nsCOMPtr<sbIMutablePropertyArray> newSort =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = newSort->SetStrict(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = newSort->AppendProperty(aProperty,
+                                  aDirection ?
+                                    NS_LITERAL_STRING("a") :
+                                    NS_LITERAL_STRING("d"));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbISortableMediaListView> sortable =
       do_QueryInterface(NS_ISUPPORTS_CAST(sbISortableMediaListView*, mMediaListView), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = sortable->SetSort(sort);
+    rv = sortable->SetSort(newSort);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {

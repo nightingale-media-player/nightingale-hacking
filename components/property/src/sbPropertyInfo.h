@@ -56,8 +56,8 @@ NS_IMETHOD GetOPERATOR_ISSET(nsAString & aOPERATOR_ISSET) { return _to GetOPERAT
 NS_IMETHOD GetOPERATOR_ISNOTSET(nsAString & aOPERATOR_ISNOTSET) { return _to GetOPERATOR_ISNOTSET(aOPERATOR_ISNOTSET); } \
 NS_IMETHOD GetNullSort(PRUint32 *aNullSort) { return _to GetNullSort(aNullSort); } \
 NS_IMETHOD SetNullSort(PRUint32 aNullSort) { return _to SetNullSort(aNullSort); } \
-NS_IMETHOD GetSortProfile(sbIPropertyArray * *aSortProfile) { return _to GetSortProfile(aSortProfile); } \
-NS_IMETHOD SetSortProfile(sbIPropertyArray * aSortProfile) { return _to SetSortProfile(aSortProfile); } \
+NS_IMETHOD GetSecondarySort(sbIPropertyArray * *aSecondarySort) { return _to GetSecondarySort(aSecondarySort); } \
+NS_IMETHOD SetSecondarySort(sbIPropertyArray * aSecondarySort) { return _to SetSecondarySort(aSecondarySort); } \
 NS_IMETHOD GetId(nsAString & aID) { return _to GetId(aID); } \
 NS_IMETHOD SetId(const nsAString & aID) { return _to SetId(aID); } \
 NS_IMETHOD GetType(nsAString & aType) { return _to GetType(aType); } \
@@ -98,8 +98,8 @@ protected:
 
   PRUint32  mNullSort;
 
-  PRLock*   mSortProfileLock;
-  nsCOMPtr<sbIPropertyArray> mSortProfile;
+  PRLock*   mSecondarySortLock;
+  nsCOMPtr<sbIPropertyArray> mSecondarySort;
 
   PRLock*   mIDLock;
   nsString  mID;

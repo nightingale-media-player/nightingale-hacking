@@ -47,14 +47,24 @@
 #include <nsXPCOM.h>
 #include <nsXPCOMCIDInternal.h>
 #include <prlog.h>
+#include <nsThreadUtils.h>
+#include <nsIClassInfoImpl.h>
+#include <nsIProgrammingLanguage.h>
+#include <nsMemory.h>
+#include <nsIStringBundle.h>
+#include <nsIPrefBranch.h>
+#include <nsIPrefService.h> 
 
 #include "sbDatabaseResultStringEnumerator.h"
 #include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabaseResourcePropertyBag.h"
 #include "sbLocalDatabaseSchemaInfo.h"
-#include "sbLocalDatabaseSQL.h"
+#include <sbIJobProgressService.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbStringUtils.h>
+#include <sbMediaListBatchCallback.h>
+#include <sbIPropertyArray.h>
+#include "sbLocalDatabaseSQL.h"
 
 /*
  * To log this module, set the following environment variable:
@@ -74,7 +84,16 @@ PRLogModuleInfo *gLocalDatabasePropertyCacheLog = nsnull;
 
 #define CACHE_HASHTABLE_SIZE 1000
 
+
+/**
+ * \brief Number of milliseconds between sbIJobProgress notifications
+ * for sbLocalDatabaseSortInvalidateJob
+ */
+#define SORTINVALIDATE_TIMER_PERIOD  50
+
 #define NS_XPCOM_SHUTDOWN_THREADS_OBSERVER_ID "xpcom-shutdown-threads"
+#define NS_FINAL_UI_STARTUP_OBSERVER_ID     "final-ui-startup"
+
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabasePropertyCache,
                               sbILocalDatabasePropertyCache,
@@ -85,7 +104,9 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
   mCache(sbLocalDatabasePropertyCache::CACHE_SIZE),
   mIsShuttingDown(PR_FALSE),
   mFlushThreadMonitor(nsnull),
-  mLibrary(nsnull)
+  mCacheMonitor(nsnull),
+  mLibrary(nsnull),
+  mSortInvalidateJob(nsnull)
 {
   MOZ_COUNT_CTOR(sbLocalDatabasePropertyCache);
 #ifdef PR_LOGGING
@@ -93,22 +114,12 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
     gLocalDatabasePropertyCacheLog = PR_NewLogModule("sbLocalDatabasePropertyCache");
   }
 #endif
-
-  mCacheLock = nsAutoLock::NewLock("sbLocalDatabasePropertyCache::mCacheLock");
-  NS_ASSERTION(mCacheLock, "sbLocalDatabasePropertyCache::mCacheLock failed to create lock!");
-
-  mDirtyLock = nsAutoLock::NewLock("sbLocalDatabasePropertyCache::mDirtyLock");
-  NS_ASSERTION(mDirtyLock,
-    "sbLocalDatabasePropertyCache::mDirtyLock failed to create lock!");
 }
 
 sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
-  if (mCacheLock) {
-    nsAutoLock::DestroyLock(mCacheLock);
-  }
-  if (mDirtyLock) {
-    nsAutoLock::DestroyLock(mDirtyLock);
+  if (mCacheMonitor) {
+    nsAutoMonitor::DestroyMonitor(mCacheMonitor);
   }
   if (mFlushThreadMonitor) {
     nsAutoMonitor::DestroyMonitor(mFlushThreadMonitor);
@@ -162,6 +173,7 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   NS_NAMED_LITERAL_STRING(kFtsPropertyId, "propertyid");
   NS_NAMED_LITERAL_STRING(kObj, "obj");
   NS_NAMED_LITERAL_STRING(kObjSortable, "obj_sortable");
+  NS_NAMED_LITERAL_STRING(kObjSecondarySortable, "obj_secondary_sortable");
   NS_NAMED_LITERAL_STRING(kMediaItemId, "media_item_id");
 
   // Media items delete fts query.  This query deletes all of the fts data
@@ -252,6 +264,9 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
 
     */
 
+  mCacheMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mCacheMonitor");
+  NS_ENSURE_TRUE(mCacheMonitor, NS_ERROR_OUT_OF_MEMORY);
+
   rv = LoadProperties();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -279,6 +294,7 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Shut down the prop cache when the app goes away
   rv = observerService->AddObserver(this,
                                     SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC,
                                     PR_FALSE);
@@ -289,12 +305,26 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Shut down any library related tasks BEFORE the library goes away
+  rv = observerService->AddObserver(this,
+                                    SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
+                                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check for background tasks to be run when the first window comes up
+  rv = observerService->AddObserver(this,
+                                    NS_FINAL_UI_STARTUP_OBSERVER_ID,
+                                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }
 
 nsresult
 sbLocalDatabasePropertyCache::Shutdown()
 {
+  TRACE(("sbLocalDatabasePropertyCache[0x%.8x] - Shutdown()", this));
+  
   if (mFlushThread) {
     {
       // tell the flush thread to finish
@@ -306,6 +336,13 @@ sbLocalDatabasePropertyCache::Shutdown()
     // let the thread join
     mFlushThread->Shutdown();
     mFlushThread = nsnull;
+  }
+  
+  // If we were in the middle of rebuilding all the sort info
+  // then must abort.
+  if (mSortInvalidateJob) {
+    mSortInvalidateJob->Shutdown();
+    mSortInvalidateJob = nsnull;
   }
 
   if(mWritePendingCount) {
@@ -654,7 +691,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
   // thread coming in behind us and thinking there's misses when they're
   // going to be loaded.
   {
-    nsAutoLock lock(mCacheLock);
+    nsAutoMonitor mon(mCacheMonitor);
 
     for (PRUint32 i = 0; i < aGUIDArrayCount; i++) {
 
@@ -725,25 +762,25 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
 
   // must initialize because we look for errors coming out of the for loop
   nsresult rv = NS_OK;
-  PRBool locked = PR_FALSE;
   nsTArray<PRUint32> missesIndex(CACHE_SIZE);
   nsTArray<nsString> misses(CACHE_SIZE);
   PRUint32 i;
   PRBool cacheUpdated = PR_FALSE;
-  nsAutoLock lookupLock(mCacheLock);
+  
+  nsAutoMonitor mon(mCacheMonitor);
+
   for (i = 0; i < aGUIDArrayCount; i++) {
 
     nsDependentString const guid(aGUIDArray[i]);
     sbLocalDatabaseResourcePropertyBag * bag = nsnull;
 
     // If the bag has a pending write waiting we need to get it into the
-    // database so that what is returned is consistent. And we do this
-    // inside the lock so that we don't get a Write call right after the
-    // flush.
+    // database so that what is returned is consistent.
     if (mDirty.Get(guid, nsnull)) {
-      rv = WriteDirtyProperties(PR_FALSE);
+      rv = Write();
       NS_ENSURE_SUCCESS(rv, rv);
     }
+
     bag = mCache.Get(guid);
     if (bag) {
       // Bag is not addref from mCache, and propertyBagArray is straight
@@ -829,7 +866,8 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
 
   sbAutoBatchHelper batchHelper(*mLibrary);
 
-  nsAutoLock lock(mCacheLock);
+  nsAutoMonitor mon(mCacheMonitor);
+  
   for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
     nsDependentString const guid(aGUIDArray[i]);
     nsRefPtr<sbLocalDatabaseResourcePropertyBag> bag;
@@ -860,19 +898,17 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
       bag->SetProperty(id, value);
     }
 
-    PR_Lock(mDirtyLock);
     mDirty.Put(guid, bag);
     PRBool const writeNeeded = ++mWritePendingCount > SB_LOCALDATABASE_MAX_PENDING_CHANGES;
-    PR_Unlock(mDirtyLock);
 
     if(writeNeeded) {
-      rv = WriteDirtyProperties(PR_FALSE);
+      rv = Write();
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
   if(aWriteThroughNow) {
-    rv = WriteDirtyProperties(PR_FALSE);
+    rv = Write();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -948,6 +984,11 @@ nsresult DirtyPropertyEnumerator::Process(PRUint32 aDirtyPropertyKey)
       rv = mBag->GetSortablePropertyByID(aDirtyPropertyKey, sortable);
       NS_ENSURE_SUCCESS(rv, rv);
 
+      nsString secondarySortable;
+      rv = mCache->CreateSecondarySortValue(mBag,
+                     aDirtyPropertyKey, secondarySortable);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       rv = mQuery->AddQuery(sbLocalDatabaseSQL::PropertiesInsert());
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -961,6 +1002,9 @@ nsresult DirtyPropertyEnumerator::Process(PRUint32 aDirtyPropertyKey)
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = mQuery->BindStringParameter(3, sortable);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = mQuery->BindStringParameter(4, secondarySortable);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -1031,8 +1075,10 @@ EnumDirtyItemsSetDirty(nsAString const & aKey, sbLocalDatabaseResourcePropertyBa
   return PL_DHASH_NEXT;
 }
 
+// note: this might be called either from the main thread (for a forced write)
+// or a background thread (from the flush thread)
 nsresult
-sbLocalDatabasePropertyCache::WriteDirtyProperties(PRBool aLockTheCache)
+sbLocalDatabasePropertyCache::Write()
 {
   NS_ASSERTION(mLibrary, "You didn't initialize!");
 
@@ -1044,7 +1090,7 @@ sbLocalDatabasePropertyCache::WriteDirtyProperties(PRBool aLockTheCache)
     DirtyItems dirtyItems;
 
     //Lock it.
-    nsAutoLock lock(mDirtyLock);
+    nsAutoMonitor mon(mCacheMonitor);
 
    //Reset the dirty flag of the property bags help by mDirty
     dirtyItemCount = mDirty.EnumerateRead(EnumDirtyItems, (void *) &dirtyItems);
@@ -1101,7 +1147,6 @@ sbLocalDatabasePropertyCache::WriteDirtyProperties(PRBool aLockTheCache)
 
         PRUint32 const mediaItemId = dirtyItems.mIDs[i];
 
-
         PRBool const isLibrary = guid.Equals(mLibraryResourceGUID);
 
         DirtyPropertyEnumerator dirtyPropertyEnumerator(this,
@@ -1131,15 +1176,8 @@ sbLocalDatabasePropertyCache::WriteDirtyProperties(PRBool aLockTheCache)
     rv = query->AddQuery(NS_LITERAL_STRING("commit"));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    {
-      if (aLockTheCache) {
-        PR_Lock(mCacheLock);
-      }
-      mDirty.EnumerateRead(EnumDirtyItemsSetDirty, nsnull);
-      if (aLockTheCache) {
-        PR_Unlock(mCacheLock);
-      }
-    }
+    mDirty.EnumerateRead(EnumDirtyItemsSetDirty, nsnull);
+
     //Clear out dirty guid hashtable.
     mDirty.Clear();
   }
@@ -1149,13 +1187,6 @@ sbLocalDatabasePropertyCache::WriteDirtyProperties(PRBool aLockTheCache)
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
   return NS_OK;
-}
-// note: this might be called either from the main thread (for a forced write)
-// or a background thread (from the flush thread)
-NS_IMETHODIMP
-sbLocalDatabasePropertyCache::Write()
-{
-  return WriteDirtyProperties(PR_TRUE);
 }
 
 NS_IMETHODIMP
@@ -1173,23 +1204,125 @@ sbLocalDatabasePropertyCache::Observe(nsISupports* aSubject,
                                       const char* aTopic,
                                       const PRUnichar* aData)
 {
+  nsresult rv = NS_OK;
+
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Prop cache failed to get observer service");
+  if (NS_SUCCEEDED(rv)) {
+    observerService->RemoveObserver(this, aTopic);
+  }
+
   if (strcmp(aTopic, SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC) == 0 ||
       strcmp(aTopic, NS_XPCOM_SHUTDOWN_THREADS_OBSERVER_ID) == 0) {
-
-    nsresult rv;
-    nsCOMPtr<nsIObserverService> observerService =
-      do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
-
-    if (NS_SUCCEEDED(rv)) {
-      observerService->RemoveObserver(this, aTopic);
-    }
-
     Shutdown();
+    
+  } else if (strcmp(aTopic, NS_FINAL_UI_STARTUP_OBSERVER_ID) == 0) {
+    
+    // If InvalidateSortData was previously called for this library but did not 
+    // complete, then we need to start it up again.   Don't worry about UI this time, 
+    // just let it run in the background.
+    PRBool hasInvalidData = PR_FALSE;
+    GetSetInvalidSortDataPref(PR_FALSE, hasInvalidData);
+    if (NS_SUCCEEDED(rv) && hasInvalidData) {
+      nsCOMPtr<sbIJobProgress> job;
+      InvalidateSortData(getter_AddRefs(job));
+      
+      // Launch modal UI.  This prevents all libraries from trying to 
+      // update at once, in the case were multiple libraries have 
+      // been flagged as invalid
+      nsCOMPtr<sbIJobProgressService> progressService =
+        do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = progressService->ShowProgressDialog(job, nsnull, 0);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  } else if (strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC) == 0) {
+
+    // If we were in the middle of rebuilding all the sort info
+    // then must abort.  Do this BEFORE library shutdown, as 
+    // when library shutdown actually happens the invalidate job 
+    // library enumeration will fail.
+    if (mSortInvalidateJob) {
+      mSortInvalidateJob->Shutdown();
+      mSortInvalidateJob = nsnull;
+    }
   }
 
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabasePropertyCache::InvalidateSortData(sbIJobProgress** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(!mIsShuttingDown, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(!mSortInvalidateJob, NS_ERROR_ALREADY_INITIALIZED);
+  nsresult rv = NS_OK;
+  
+  // Flag this library as containing invalid sort data.  This way
+  // if we crash or are shutdown before the invalidate job completes
+  // we can try again on next launch
+  PRBool hasInvalidData = PR_TRUE;
+  GetSetInvalidSortDataPref(PR_TRUE, hasInvalidData);
+    
+  // Start a job to read, process, and set all the properties in the library
+  NS_NEWXPCOM(mSortInvalidateJob, sbLocalDatabaseSortInvalidateJob);
+  NS_ENSURE_TRUE(mSortInvalidateJob, NS_ERROR_OUT_OF_MEMORY);
+  
+  // Go!
+  mSortInvalidateJob->Init(this, mLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  NS_ADDREF(*_retval = mSortInvalidateJob);
+  return rv;
+}
+
+nsresult
+sbLocalDatabasePropertyCache::InvalidateSortDataComplete() {
+
+  // Clear the needs-rebuilding flag
+  PRBool hasInvalidData = PR_FALSE;
+  GetSetInvalidSortDataPref(PR_TRUE, hasInvalidData);
+  
+  mSortInvalidateJob = nsnull;
+  return NS_OK;
+}
+
+nsresult 
+sbLocalDatabasePropertyCache::GetSetInvalidSortDataPref(
+  PRBool aWrite, PRBool& aValue)
+{
+  // Figure out the pref key
+  nsString guid;
+  nsresult rv = mLibrary->GetDatabaseGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCString pref = NS_LITERAL_CSTRING("songbird.propertycache.");
+  pref.Append(NS_LossyConvertUTF16toASCII(guid));
+  pref.AppendLiteral(".invalidSortData");
+  
+  nsCOMPtr<nsIPrefBranch> prefBranch =
+      do_GetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIPrefService> prefRoot = do_QueryInterface(prefBranch, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // If writing, set value and flush to disk just in case
+  if (aWrite) {
+    rv = prefBranch->SetBoolPref(pref.get(), aValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = prefRoot->SavePrefFile(nsnull);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to save prefs.");
+  // If reading, assume not set == false
+  } else {
+    rv = prefBranch->GetBoolPref(
+      pref.get(), &aValue);
+    if (NS_FAILED(rv)) {
+      aValue = PR_FALSE;
+    }
+  }
+  return rv;
+}
 
 void
 sbLocalDatabasePropertyCache::RunFlushThread()
@@ -1331,12 +1464,19 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
 {
   nsAutoString guid(aGuid);
 
-  {
-    nsAutoLock lock(mDirtyLock);
-    mDirty.Put(guid, aBag);
-    ++mWritePendingCount;
+  nsAutoMonitor mon(mCacheMonitor);
+  
+  // If another bag for the same guid is already in the dirty list, then we 
+  // risk losing information if we don't write out immediately.
+  if (mDirty.Get(guid, nsnull)) {
+    NS_WARNING("Property cache forcing Write() due to duplicate "
+               "guids in the dirty bag list.  This should be a rare event.");
+    nsresult rv = Write();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
-
+  
+  mDirty.Put(guid, aBag);
+  ++mWritePendingCount;
 
   return NS_OK;
 }
@@ -1421,6 +1561,520 @@ sbLocalDatabasePropertyCache::InsertPropertyIDInLibrary(const nsAString& aProper
 
   mPropertyDBIDToID.Put(propertyDBID, nsAutoString(aPropertyID));
   mPropertyIDToDBID.Put(nsAutoString(aPropertyID), propertyDBID);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabasePropertyCache::CreateSecondarySortValue(
+    sbILocalDatabaseResourcePropertyBag* aBag,
+    PRUint32 aPropertyDBID, 
+    nsAString& _retval)
+{
+  NS_ENSURE_ARG_POINTER(aBag);
+  nsresult rv = NS_OK;
+  _retval.Truncate();
+  
+  // Get the secondary sort properties for the given property
+  nsString id;
+  rv = GetPropertyID(aPropertyDBID, id);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbIPropertyInfo> propertyInfo;
+  rv = mPropertyManager->GetPropertyInfo(id,
+                                         getter_AddRefs(propertyInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyArray> secondaryProps;
+  rv = propertyInfo->GetSecondarySort(getter_AddRefs(secondaryProps));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // If we found secondary properties, get the sort value for
+  // each and concat them together
+  if (secondaryProps) {
+    PRUint32 secondaryPropCount;
+    rv = secondaryProps->GetLength(&secondaryPropCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsTArray<nsString> strings(secondaryPropCount);
+    
+    for (PRUint32 i = 0; i < secondaryPropCount; i++) {
+      nsCOMPtr<sbIProperty> property;
+      rv = secondaryProps->GetPropertyAt(i, getter_AddRefs(property));
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsString propertyID;
+      rv = property->GetId(propertyID);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsString sortable;
+      rv = aBag->GetSortablePropertyByID(GetPropertyDBIDInternal(propertyID), 
+                                   sortable);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString* appended = strings.AppendElement(sortable);
+      NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+    }
+        
+    // Use a small separator so that Foo|Bar comes before Foobar|Baz
+    // \u001f is INFO SEPARATOR 1
+    nsString result;
+    sbAppendStringArray(result, NS_LITERAL_STRING("\x1f"), strings);
+    _retval = result;
+  }
+
+  return NS_OK;
+}
+
+
+
+NS_IMPL_THREADSAFE_ISUPPORTS5(sbLocalDatabaseSortInvalidateJob,
+                              nsIClassInfo,
+                              sbIJobProgress,
+                              nsIRunnable,
+                              sbIMediaListEnumerationListener,
+                              nsIObserver);
+
+NS_IMPL_CI_INTERFACE_GETTER5(sbLocalDatabaseSortInvalidateJob,
+                             nsIClassInfo,
+                             sbIJobProgress,
+                             nsIRunnable,
+                             sbIMediaListEnumerationListener,
+                             nsIObserver)
+
+NS_DECL_CLASSINFO(sbLocalDatabaseSortInvalidateJob)
+NS_IMPL_THREADSAFE_CI(sbLocalDatabaseSortInvalidateJob)
+
+sbLocalDatabaseSortInvalidateJob::sbLocalDatabaseSortInvalidateJob() :
+  mShouldShutdown(PR_FALSE),
+  mThread(nsnull),
+  mLibrary(nsnull),
+  mPropCache(nsnull),
+  mNotificationTimer(nsnull),
+  mStatus(sbIJobProgress::STATUS_RUNNING),
+  mCompletedItemCount(0),
+  mTotalItemCount(0)
+{
+  MOZ_COUNT_CTOR(sbLocalDatabaseSortInvalidateJob);
+}
+
+sbLocalDatabaseSortInvalidateJob::~sbLocalDatabaseSortInvalidateJob()
+{
+  MOZ_COUNT_DTOR(sbLocalDatabaseSortInvalidateJob);
+  TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Destroyed", 
+        this));  
+  Shutdown();
+}
+
+nsresult sbLocalDatabaseSortInvalidateJob::Init(
+  sbLocalDatabasePropertyCache* aPropCache,
+  sbLocalDatabaseLibrary* aLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aPropCache);
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_TRUE(!mThread, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ASSERTION(NS_IsMainThread(), 
+    "sbLocalDatabaseSortInvalidateJob::Init called off the main thread!");
+  TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Initialized", 
+        this));
+  nsresult rv;
+  
+  mPropCache = aPropCache;
+  mLibrary = aLibrary;
+  
+  // Set up job progress params
+  mLibrary->GetLength(&mTotalItemCount);
+  mCompletedItemCount = 0;
+  
+  // Localize some strings
+  nsCOMPtr<nsIStringBundleService> stringBundleService =
+    do_GetService("@mozilla.org/intl/stringbundle;1", &rv );
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIStringBundle> strings;
+  rv = stringBundleService->CreateBundle(
+       "chrome://songbird/locale/songbird.properties",
+       getter_AddRefs(strings));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = strings->GetStringFromName(
+          NS_LITERAL_STRING("propertycache.invalidatesortjob.title").get(),
+          getter_Copies(mTitleText));
+  if (NS_FAILED(rv)) {
+    mTitleText.AssignLiteral("Updating Library");
+  }
+  rv = strings->GetStringFromName(
+          NS_LITERAL_STRING("propertycache.invalidatesortjob.status").get(),
+          getter_Copies(mStatusText));
+  if (NS_FAILED(rv)) {
+    mStatusText.AssignLiteral("Rebuilding library sorting data");
+  }
+  rv = strings->GetStringFromName(
+          NS_LITERAL_STRING("propertycache.invalidatesortjob.failed").get(),
+          getter_Copies(mFailedText));
+  if (NS_FAILED(rv)) {
+    mFailedText.AssignLiteral("Failed!");
+  }
+  
+  // Start a timer to send job progress notifications
+  if (!mNotificationTimer) {
+    mNotificationTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  rv = mNotificationTimer->Init(this, 
+                                SORTINVALIDATE_TIMER_PERIOD,
+                                nsITimer::TYPE_REPEATING_SLACK);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Start up processing thread
+  rv = NS_NewThread(getter_AddRefs(mThread), this);
+  NS_ENSURE_SUCCESS(rv, rv);    
+  
+  return NS_OK;
+}
+
+nsresult sbLocalDatabaseSortInvalidateJob::Shutdown() 
+{
+  NS_ASSERTION(NS_IsMainThread(), 
+    "sbLocalDatabaseSortInvalidateJob::Shutdown called off the main thread!");
+  TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Shutdown requested", 
+        this));
+  nsresult rv;
+  
+  mShouldShutdown = PR_TRUE;
+ 
+  // We're done. No more notifications needed.
+  mListeners.Clear();
+ 
+  if (mNotificationTimer) {
+    rv = mNotificationTimer->Cancel();
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel a notification timer");
+    mNotificationTimer = nsnull;
+  }
+ 
+  // Wait for the thread to shutdown
+  if (mThread) {
+    mThread->Shutdown();
+    mThread = nsnull;
+  }
+  
+  return NS_OK;
+}
+
+/**
+ * nsIRunnable implementation.  Called by mThread.
+ */
+NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::Run()
+{
+  TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Thread Starting", 
+        this));
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaListBatchCallback> batchCallback =
+    new sbMediaListBatchCallback(&sbLocalDatabaseSortInvalidateJob::RunLibraryBatch);
+  NS_ENSURE_TRUE(batchCallback, NS_ERROR_OUT_OF_MEMORY);
+  
+  rv = mLibrary->RunInBatchMode(
+          batchCallback, static_cast<sbIJobProgress*>(this)); 
+  if (NS_FAILED(rv)) {
+    mStatus = sbIJobProgress::STATUS_FAILED;
+  }
+  
+  TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Thread Finished", this));
+  return NS_OK;
+}
+
+/* static */
+nsresult 
+sbLocalDatabaseSortInvalidateJob::RunLibraryBatch(nsISupports* aUserData)
+{
+  TRACE(("sbLocalDatabaseSortInvalidateJob::RunLibraryBatch[0x%.8x]"));
+  NS_ENSURE_ARG_POINTER(aUserData);
+  sbLocalDatabaseSortInvalidateJob* thisJob = 
+      static_cast<sbLocalDatabaseSortInvalidateJob*>(
+        static_cast<sbIJobProgress*>(aUserData));  
+  NS_ENSURE_TRUE(thisJob->mPropCache, NS_ERROR_UNEXPECTED);
+  
+  // Begin processing every item in the library
+  nsresult rv = thisJob->mLibrary->EnumerateAllItems(thisJob,
+            sbIMediaList::ENUMERATIONTYPE_LOCKING);
+  if (NS_FAILED(rv)) {
+    thisJob->mStatus = sbIJobProgress::STATUS_FAILED;
+  }
+  
+  return NS_OK;
+}
+
+// ======================================================
+// ==  sbIMediaListEnumerationListener Implementation  ==
+// ======================================================
+
+/* unsigned short onEnumerationBegin (in sbIMediaList aMediaList); */
+NS_IMETHODIMP 
+sbLocalDatabaseSortInvalidateJob::OnEnumerationBegin(sbIMediaList *aMediaList,
+                                                     PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  return NS_OK;
+}                                              
+
+/* unsigned short onEnumeratedItem (in sbIMediaList aMediaList, in sbIMediaItem aMediaItem); */
+NS_IMETHODIMP 
+sbLocalDatabaseSortInvalidateJob::OnEnumeratedItem(sbIMediaList *aMediaList,
+                                                   sbIMediaItem *aMediaItem,
+                                                   PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv = NS_OK;
+  
+  // On error, keep enumerating
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  
+  
+  // Loop through all the properties for the current item, 
+  // and set back all non top-level properties.
+  // This will force the sortable and secondary sortable
+  // info to be recomputed. 
+  
+  nsCOMPtr<sbIPropertyArray> properties;
+  rv = aMediaItem->GetProperties(nsnull, getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, NS_OK);
+
+  nsCOMPtr<sbIMutablePropertyArray> newPropertyArray =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = newPropertyArray->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, NS_OK);
+
+  PRUint32 propCount;
+  rv = properties->GetLength(&propCount);
+  NS_ENSURE_SUCCESS(rv, NS_OK);
+
+  for (PRUint32 i = 0; i < propCount; i++) {
+    nsCOMPtr<sbIProperty> property;
+    rv = properties->GetPropertyAt(i, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, NS_OK);
+    
+    nsString propertyID;
+    rv = property->GetId(propertyID);
+    NS_ENSURE_SUCCESS(rv, NS_OK);
+    
+    if (!SB_IsTopLevelProperty(propertyID)) {
+      nsString propertyValue;
+      rv = property->GetValue(propertyValue);
+      NS_ENSURE_SUCCESS(rv, NS_OK);
+      
+      rv = newPropertyArray->AppendProperty(propertyID, propertyValue);
+      NS_ENSURE_SUCCESS(rv, NS_OK);
+    }
+  }
+  
+  rv = aMediaItem->SetProperties(newPropertyArray);
+  NS_ENSURE_SUCCESS(rv, NS_OK);
+  
+  mCompletedItemCount++;
+
+  if (mShouldShutdown) {
+    *_retval = sbIMediaListEnumerationListener::CANCEL;
+    mStatus = sbIJobProgress::STATUS_FAILED;
+    TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Thread saw shutdown request",
+          this));
+  }
+  
+  return NS_OK;
+}
+
+/* void onEnumerationEnd (in sbIMediaList aMediaList, in nsresult aStatusCode); */
+NS_IMETHODIMP 
+sbLocalDatabaseSortInvalidateJob::OnEnumerationEnd(sbIMediaList *aMediaList,
+                                                   nsresult aStatusCode)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  if (mCompletedItemCount == mTotalItemCount) {
+    mStatus = sbIJobProgress::STATUS_SUCCEEDED;
+  } else {
+    mStatus = sbIJobProgress::STATUS_FAILED;
+  }
+  
+  mShouldShutdown = PR_TRUE;
+  
+  TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Finished enumerating",
+        this));
+  
+  return NS_OK;
+}
+
+// =====================================
+// ==  sbIJobProgress Implementation  ==
+// =====================================
+
+/* readonly attribute unsigned short status; */
+NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetStatus(PRUint16* aStatus)
+{
+  NS_ENSURE_ARG_POINTER( aStatus );
+  *aStatus = mStatus;
+  return NS_OK;
+}
+
+/* readonly attribute unsigned AString statusText; */
+NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetStatusText(nsAString& aText)
+{
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbLocalDatabaseSortInvalidateJob::GetStatusText is main thread only!");
+  nsresult rv = NS_OK;
+
+  if (mStatus == sbIJobProgress::STATUS_FAILED) {
+    aText = mFailedText;
+  } else {
+    aText = mStatusText;
+  } 
+  
+  return rv;
+}
+
+/* readonly attribute AString titleText; */
+NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetTitleText(nsAString& aText)
+{
+  nsresult rv;
+  aText = mTitleText;
+  return NS_OK;
+}
+
+/* readonly attribute unsigned long progress; */
+NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetProgress(PRUint32* aProgress)
+{
+  NS_ENSURE_ARG_POINTER( aProgress );
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbLocalDatabaseSortInvalidateJob::GetProgress is main thread only!");
+
+  *aProgress = mCompletedItemCount;
+  return NS_OK;
+}
+
+/* readonly attribute unsigned long total; */
+NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetTotal(PRUint32* aTotal)
+{
+  NS_ENSURE_ARG_POINTER( aTotal );
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbLocalDatabaseSortInvalidateJob::GetTotal is main thread only!");
+
+  *aTotal = mTotalItemCount;
+  return NS_OK;
+}
+
+/* readonly attribute unsigned long errorCount; */
+NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetErrorCount(PRUint32* aCount)
+{
+  NS_ENSURE_ARG_POINTER( aCount );
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbLocalDatabaseSortInvalidateJob::GetErrorCount is main thread only!");
+  // We don't provide additional info
+  *aCount = 0;
+  return NS_OK;
+}
+
+/* nsIStringEnumerator getErrorMessages(); */
+NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetErrorMessages(nsIStringEnumerator** aMessages)
+{
+  NS_ENSURE_ARG_POINTER(aMessages);
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbLocalDatabaseSortInvalidateJob::GetErrorMessages is main thread only!");
+
+  // No error messages, so just give back an empty enumerator
+  *aMessages = nsnull;
+  nsTArray<nsString> empty;
+  nsCOMPtr<nsIStringEnumerator> enumerator =
+     new sbTArrayStringEnumerator(&empty);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+ 
+  enumerator.forget(aMessages);
+  
+  return NS_OK;
+}
+
+/* void addJobProgressListener( in sbIJobProgressListener aListener ); */
+NS_IMETHODIMP
+sbLocalDatabaseSortInvalidateJob::AddJobProgressListener(sbIJobProgressListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbLocalDatabaseSortInvalidateJob::AddJobProgressListener is main thread only!");
+  TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Listener added",
+        this));
+  
+  PRInt32 index = mListeners.IndexOf(aListener);
+  if (index >= 0) {
+    // the listener already exists, do not re-add
+    return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
+  }
+  PRBool succeeded = mListeners.AppendObject(aListener);
+  return succeeded ? NS_OK : NS_ERROR_OUT_OF_MEMORY;
+}
+
+/* void removeJobProgressListener( in sbIJobProgressListener aListener ); */
+NS_IMETHODIMP
+sbLocalDatabaseSortInvalidateJob::RemoveJobProgressListener(sbIJobProgressListener* aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbLocalDatabaseSortInvalidateJob::RemoveJobProgressListener is main thread only!");
+  TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Listener removed",
+        this));
+
+  PRInt32 indexToRemove = mListeners.IndexOf(aListener);
+  if (indexToRemove < 0) {
+    // Err, no such listener
+    return NS_ERROR_UNEXPECTED;
+  }
+
+  // remove the listener
+  PRBool succeeded = mListeners.RemoveObjectAt(indexToRemove);
+  NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
+// ==================================
+// ==  nsIObserver Implementation  ==
+// ==================================
+
+// Called by mNotification Timer. 
+NS_IMETHODIMP
+sbLocalDatabaseSortInvalidateJob::Observe(nsISupports *aSubject, 
+                                          const char *aTopic,
+                                          const PRUnichar *aData)
+{
+  TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Notification Timer Callback", this));
+  nsresult rv;
+
+  // Then announce status to the world
+  for (PRInt32 i = mListeners.Count() - 1; i >= 0; --i) {
+     mListeners[i]->OnJobProgress(this);
+  }
+  
+  if (mStatus != sbIJobProgress::STATUS_RUNNING) {
+    TRACE(("sbLocalDatabaseSortInvalidateJob[0x%.8x] - Finishing job...", this));
+    Shutdown();
+    
+    // Write everything to disk so that the new sort data takes effect
+    rv = mLibrary->Flush();
+    NS_ASSERTION(NS_SUCCEEDED(rv), 
+      "sbLocalDatabaseSortInvalidateJob failed to flush library!");
+
+    // Vacuum, analyze, etc.
+    rv = mLibrary->Optimize();
+    NS_ASSERTION(NS_SUCCEEDED(rv), 
+      "sbLocalDatabaseSortInvalidateJob failed to optimize library!");
+
+    
+    // Let the property cache know that we're done. 
+    // --------------------------------- NOTE ---------------------------------
+    // This call may release our instance, deleting us.
+    // It is not safe to use any member variables after this point
+    mPropCache->InvalidateSortDataComplete();
+  }
 
   return NS_OK;
 }

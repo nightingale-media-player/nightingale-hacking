@@ -216,12 +216,43 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbLocalDatabaseMediaListBase* a
          this, aListener));
   NS_ASSERTION(mListenerArrayLock, "You haven't called Init yet!");
   NS_ENSURE_ARG_POINTER(aListener);
-
-  nsAutoLock lock(mListenerArrayLock);
-
   nsresult rv;
-  PRUint32 length = mListenerArray.Length();
 
+  PRUint32 batchDepth;
+  {
+    nsAutoLock lock(mListenerArrayLock);
+
+    PRUint32 length = mListenerArray.Length();
+
+    nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
+    for (PRUint32 i = 0; i < length; i++) {
+      if(mListenerArray[i]->mRef == ref) {
+        for (PRUint32 j = 0; j < mBatchDepth; j++) {
+          mListenerArray[i]->EndBatch();
+        }
+        mListenerArray.RemoveElementAt(i);
+        return NS_OK;
+      }
+    }
+
+    nsCOMPtr<nsIWeakReference> weak = do_GetWeakReference(aListener, &rv);
+    if (NS_SUCCEEDED(rv)) {
+      for (PRUint32 i = 0; i < length; i++) {
+        if(mListenerArray[i]->mRef == weak) {
+          mListenerArray.RemoveElementAt(i);
+          return NS_OK;
+        }
+      }
+      NS_WARNING("Attempted to remove a weak listener that was never added!");
+    }
+    else {
+      NS_WARNING("Attempted to remove a strong listener that was never added!");
+    }
+    
+    // Snapshot batchdepth at the time of removal (while still in the lock)
+    batchDepth = mBatchDepth;
+  }
+  
   // If this list is in a batch, the listener being removed should be 
   // sent the batch end callback mBatchDepth times, otherwise, if that
   // listener is re-registered immediately (like, for instance, in 
@@ -234,40 +265,20 @@ sbLocalDatabaseMediaListListener::RemoveListener(sbLocalDatabaseMediaListBase* a
   // argued that the batch has indeed ended for that listener, since 
   // no more callbacks will be issued to it after that (unless it is 
   // re-registered, of course)
-  if (mBatchDepth > 0) {
+  
+  // Do this AFTER removing from the array, and after releasing the lock
+  // since the onbatchend listener should be free to add/modify other
+  // listeners without causing a deadlock
+  
+  if (batchDepth > 0) {
     nsCOMPtr<sbIMediaList> list =
       do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaList*, aList), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    for (PRUint32 i = 0; i < mBatchDepth; i++) {
+    for (PRUint32 i = 0; i < batchDepth; i++) {
       rv = aListener->OnBatchEnd(aList);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnBatchEnd returned a failure code");
     }
-  }
-
-  nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
-  for (PRUint32 i = 0; i < length; i++) {
-    if(mListenerArray[i]->mRef == ref) {
-      for (PRUint32 j = 0; j < mBatchDepth; j++) {
-        mListenerArray[i]->EndBatch();
-      }
-      mListenerArray.RemoveElementAt(i);
-      return NS_OK;
-    }
-  }
-
-  nsCOMPtr<nsIWeakReference> weak = do_GetWeakReference(aListener, &rv);
-  if (NS_SUCCEEDED(rv)) {
-    for (PRUint32 i = 0; i < length; i++) {
-      if(mListenerArray[i]->mRef == weak) {
-        mListenerArray.RemoveElementAt(i);
-        return NS_OK;
-      }
-    }
-    NS_WARNING("Attempted to remove a weak listener that was never added!");
-  }
-  else {
-    NS_WARNING("Attempted to remove a strong listener that was never added!");
   }
 
   return NS_OK;
@@ -547,11 +558,10 @@ sbLocalDatabaseMediaListListener::NotifyListenersBatchBegin(sbIMediaList* aList)
 {
   SB_ENSURE_TRUE_VOID(aList);
 
-  mBatchDepth++;
-
   // Tell all of our listener infos that we have started a batch
   {
     nsAutoLock lock(mListenerArrayLock);
+    mBatchDepth++;
     PRUint32 length = mListenerArray.Length();
     for (PRUint32 i = 0; i < length; i++) {
       mListenerArray[i]->BeginBatch();
@@ -571,16 +581,16 @@ sbLocalDatabaseMediaListListener::NotifyListenersBatchEnd(sbIMediaList* aList)
 {
   SB_ENSURE_TRUE_VOID(aList);
 
-  if (mBatchDepth == 0) {
-    NS_ERROR("Batch begin/end imbalance");
-    return;
-  }
-
-  mBatchDepth--;
-
   // Tell all of our listener infos that we have ended a batch
   {
     nsAutoLock lock(mListenerArrayLock);
+    
+    if (mBatchDepth == 0) {
+      NS_ERROR("Batch begin/end imbalance");
+      return;
+    }
+    
+    mBatchDepth--;
     PRUint32 length = mListenerArray.Length();
     for (PRUint32 i = 0; i < length; i++) {
       mListenerArray[i]->EndBatch();

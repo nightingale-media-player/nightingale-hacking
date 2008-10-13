@@ -62,9 +62,10 @@ create table resource_properties (
   property_id integer not null,
   obj text not null,
   obj_sortable text,
+  obj_secondary_sortable text,
   primary key (media_item_id, property_id)
 );
-create index idx_resource_properties_property_id_obj_sortable_media_item_id on resource_properties (property_id, obj_sortable, media_item_id);
+create index idx_resource_properties_property_id_obj_sortable_obj_secondary_sortable_media_item_id on resource_properties (property_id, obj_sortable, obj_secondary_sortable, media_item_id);
 
 create table simple_media_lists (
   media_item_id integer not null,
@@ -115,31 +116,50 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
 
 /* XXXAus: !!!WARNING!!! When changing this value, you _MUST_ update sbLocalDatabaseMigration._latestSchemaVersion to match this value */
-insert into library_metadata (name, value) values ('version', '10');
+insert into library_metadata (name, value) values ('version', '11');
 
 
-
-/************************************************ 
-  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data must be updated and replace the contents below:
-************************************************/
+/******************************************************************************* 
+  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data 
+  must be updated and replace the contents below.
+  
+  To obtain new analyze data:
+  * Launch a release build of the app with a clean profile
+  * Import 10,000+ tracks
+  * Spend some time scrolling, searching, filtering, and sorting
+  * Play some tracks, and exercise the smart playlists
+  * Shutdown
+  * Run ./songbird -test localdatabaselibraryperf
+    (requires exporting environment variables 
+     SB_ENABLE_TESTS="1" SB_ENABLE_LIBRARY_PERF="1" 
+     and SB_PERF_RESULTS="/builds/songbird/trunk/results.txt")
+  * Run Songbird, and install the Developer Tools Extension
+  * Open XPCOM Viewer from the Tools menu
+  * Execute the following in the JS Shell:
+     Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+     LibraryUtils.mainLibrary.optimize();
+  * Shutdown
+  * Open the main library db using sqlite and run ".dump sqlite_stat1"
+     
+*******************************************************************************/
 
 /* Insert static |ANALYZE| results */
 ANALYZE;
-INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_member_media_item_id','10039 1');
-INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_media_item_id_ordinal','10039 10039 1');
-INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_media_item_id_member_media_item_id','10039 10039 1 1');
-INSERT INTO "sqlite_stat1" VALUES('resource_properties','idx_resource_properties_property_id_obj_sortable_media_item_id','78383 2240 4 1');
-INSERT INTO "sqlite_stat1" VALUES('resource_properties','sqlite_autoindex_resource_properties_1','78383 8 1');
-INSERT INTO "sqlite_stat1" VALUES('properties','sqlite_autoindex_properties_1','74 1');
+INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_media_item_id_ordinal','10003 5002 1');
+INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_member_media_item_id','10003 2');
+INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_media_item_id_member_media_item_id','10003 5002 1 1');
+INSERT INTO "sqlite_stat1" VALUES('resource_properties','idx_resource_properties_property_id_obj_sortable_obj_secondary_sortable_media_item_id','133429 3707 6 4 1');
+INSERT INTO "sqlite_stat1" VALUES('resource_properties','sqlite_autoindex_resource_properties_1','133429 14 1');
+INSERT INTO "sqlite_stat1" VALUES('properties','sqlite_autoindex_properties_1','89 1');
 INSERT INTO "sqlite_stat1" VALUES('library_media_item','sqlite_autoindex_library_media_item_1','1 1');
-INSERT INTO "sqlite_stat1" VALUES('resource_properties_fts_all_segdir','sqlite_autoindex_resource_properties_fts_all_segdir_1','25 13 1');
+INSERT INTO "sqlite_stat1" VALUES('resource_properties_fts_all_segdir','sqlite_autoindex_resource_properties_fts_all_segdir_1','18 6 1');
 INSERT INTO "sqlite_stat1" VALUES('media_list_types','sqlite_autoindex_media_list_types_1','3 1');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_hidden_media_list_type_id','10048 5024 2');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_is_list','10048 5024');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_media_list_type_id','10048 2');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_content_url','10048 2');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_created','10048 7');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_hidden','10048 5024');
-INSERT INTO "sqlite_stat1" VALUES('media_items','sqlite_autoindex_media_items_1','10048 1');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_hidden_media_list_type_id','10009 5005 2');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_is_list','10009 5005');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_media_list_type_id','10009 2');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_content_url','10009 1');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_created','10009 12');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_hidden','10009 5005');
+INSERT INTO "sqlite_stat1" VALUES('media_items','sqlite_autoindex_media_items_1','10009 1');
 INSERT INTO "sqlite_stat1" VALUES('library_metadata','sqlite_autoindex_library_metadata_1','2 1');
 

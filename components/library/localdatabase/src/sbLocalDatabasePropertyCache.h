@@ -32,6 +32,7 @@
 
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
+#include <nsIClassInfo.h>
 #include <nsDataHashtable.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIObserver.h>
@@ -39,9 +40,17 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
+#include <nsIRunnable.h> 
+
+#include <sbIJobProgress.h>
+#include <sbIMediaListListener.h>
+#include <nsITimer.h>
+
 #include "sbLocalDatabaseResourcePropertyBag.h"
 #include "sbFixedInterfaceCache.h"
 #include "sbLocalDatabaseSQL.h"
+
+
 
 struct PRLock;
 struct PRMonitor;
@@ -55,6 +64,7 @@ class sbISQLInsertBuilder;
 class sbISQLSelectBuilder;
 class sbISQLUpdateBuilder;
 class sbISQLDeleteBuilder;
+class sbLocalDatabaseSortInvalidateJob;
 
 /**
  * \brief Max number of pending changes before automatic cache write.
@@ -94,6 +104,14 @@ public:
 
   void GetColumnForPropertyID(PRUint32 aPropertyID, nsAString &aColumn);
 
+  // Called when mSortInvalidateJob completes
+  nsresult InvalidateSortDataComplete();
+  
+  // Determine the pre-baked secondary sort string for a property
+  // in a given bag
+  nsresult CreateSecondarySortValue(sbILocalDatabaseResourcePropertyBag* aBag,
+                                    PRUint32 aPropertyDBID, 
+                                    nsAString& _retval);
 private:
   nsresult Shutdown();
 
@@ -107,6 +125,10 @@ private:
 
   nsresult InsertPropertyIDInLibrary(const nsAString& aPropertyID,
       PRUint32 *aPropertyDBID);
+  
+  // Used to persist invalid sorting state in case mSortInvalidateJob 
+  // is interrupted.
+  nsresult GetSetInvalidSortDataPref(PRBool aWrite, PRBool& aValue);
 
   typedef nsInterfaceHashtable<nsUint32HashKey, sbLocalDatabaseResourcePropertyBag> IDToBagMap;
 
@@ -151,13 +173,6 @@ private:
       nsCOMArray<sbLocalDatabaseResourcePropertyBag> & aBags,
       nsTArray<PRUint32> & aItemIDs);
 
-  /**
-   * This does the actual writing of the properties and optionally locks
-   * the cache. This allows GetProperites to write dirty properties
-   * and maintain it's lock.
-   */
-  nsresult WriteDirtyProperties(PRBool aLockTheCache);
-
   // Pending write count.
   PRUint32 mWritePendingCount;
 
@@ -183,11 +198,13 @@ private:
   //nsCOMPtr<sbISQLInsertBuilder> mMediaItemsFtsInsert;
   //sbISQLBuilderCriterionIn* mMediaItemsFtsInsertInCriterion;
 
+  // Used to protect mCache and mDirty
+  PRMonitor* mCacheMonitor;
+
   // Cache for GUID -> property bag
   InterfaceCache mCache;
-  PRLock* mCacheLock;
+
   // Dirty GUIDs
-  PRLock* mDirtyLock;
   nsInterfaceHashtable<nsStringHashKey, sbLocalDatabaseResourcePropertyBag> mDirty;
 
   // flushing on a background thread
@@ -213,7 +230,69 @@ private:
 
   nsCOMPtr<sbIPropertyManager> mPropertyManager;
 
+  // When invalidating sort data this keeps the job alive, and
+  // is used to cancel if shutdown occurs. 
+  nsRefPtr<sbLocalDatabaseSortInvalidateJob> mSortInvalidateJob;
+
   sbLocalDatabaseSQL mSQLStrings;
+};
+
+
+/**
+ * \class sbLocalDatabaseSortInvalidateJob
+ * Used by sbLocalDatabasePropertyCache rebuild the database sortable 
+ * data for every item in the associated media library. Implements
+ * sbIJobProgress so that it is easy to present progress to the user.
+ */
+class sbLocalDatabaseSortInvalidateJob : public sbIJobProgress,
+                                         public nsIClassInfo,
+                                         public nsIRunnable,
+                                         public sbIMediaListEnumerationListener,
+                                         public nsIObserver
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSICLASSINFO
+  NS_DECL_SBIJOBPROGRESS
+  NS_DECL_NSIRUNNABLE
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+  NS_DECL_NSIOBSERVER
+
+  sbLocalDatabaseSortInvalidateJob();
+
+  virtual ~sbLocalDatabaseSortInvalidateJob();
+
+  nsresult Init(sbLocalDatabasePropertyCache* aPropCache,
+                sbLocalDatabaseLibrary* aLibrary);
+  
+  nsresult Shutdown();  
+
+private:
+
+  /**
+   * sbMediaListBatchCallbackFunc used to perform
+   * batch sbIMediaItem setProperties calls.
+   * Begins an EnumerateAllItems call on the background thread.
+   */
+  static nsresult RunLibraryBatch(nsISupports* aUserData);
+  
+  PRPackedBool                             mShouldShutdown;
+  nsCOMPtr<nsIThread>                      mThread;
+
+  sbLocalDatabaseLibrary*                  mLibrary;  
+  sbLocalDatabasePropertyCache*            mPropCache;
+  
+  // Timer used to send job progress notifications()
+  nsCOMPtr<nsITimer>                       mNotificationTimer;
+  
+  // sbIJobProgress variables
+  PRUint16                                 mStatus;
+  PRUint32                                 mCompletedItemCount;
+  PRUint32                                 mTotalItemCount;
+  nsString                                 mTitleText;
+  nsString                                 mStatusText;
+  nsString                                 mFailedText;
+  nsCOMArray<sbIJobProgressListener>       mListeners;
 };
 
 #endif /* __SBLOCALDATABASEPROPERTYCACHE_H__ */
