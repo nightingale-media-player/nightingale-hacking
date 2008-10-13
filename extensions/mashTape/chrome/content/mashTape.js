@@ -142,7 +142,7 @@ mashTape.init = function(e) {
 
 	mashTape.iframeLoadCount = 6;
 
-	// Setup the display pane maximize button
+	// Setup the display pane maximise button
 	var dpHeader = mashTape.displayPane.tabBar.parentNode;
 	var menuButton = dpHeader.getElementsByTagName("button")[0];
 	if (menuButton.id != "mashTape-expand-display-pane") {
@@ -431,7 +431,15 @@ mashTape.unload = function() {
 	gMM.removeListener(mashTape);
 	mashTape.displayPaneMaxButton.removeEventListener("click",
 			mashTape.maximiseDisplayPane, false);
+
+	// Save our expanded state to a pref
+	Application.prefs.setValue("extensions.mashTape.expanded",
+			mashTape.expanded);
 	
+	// if we're expanded, then unexpand
+	if (mashTape.expanded)
+		mashTape.maximiseDisplayPane(null);
+
 	// destroy the dataremotes
 	mashTape.pausedDr.unbind();
 }
@@ -443,6 +451,9 @@ mashTape.iframeLoadListener = function(e) {
 	dump(">> " + iframe.id + " done loading\n");
 	mashTape.iframeLoadCount--;
 	if (mashTape.iframeLoadCount == 0) {
+		if (Application.prefs.getValue("extensions.mashTape.expanded", false))
+			mashTape.maximiseDisplayPane(null);
+
 		if (!mashTape.oldMediaCore && (
 				(gMM.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING) ||
 				(gMM.status.state == Ci.sbIMediacoreStatus.STATUS_PAUSED) ||
@@ -450,6 +461,7 @@ mashTape.iframeLoadListener = function(e) {
 				))
 		{
 			mashTape.showTabPanels();
+			
 			// in the event we're already playing a track we should trigger the
 			// update, but we need to wait for all the iframe DOMs to finish
 			// loading first
@@ -722,6 +734,10 @@ mashTape.displayCallback = function(uid) {
 }
 mashTape.displayCallback.prototype =  {
 	update: function(contractId, results, section) {
+		// this happens when the window has been closed (e.g. display pane
+		// hidden/unloaded) before a callback has returned
+		if (typeof(gMM) == "undefined")
+			return;
 		var i = gMM.sequencer.view.getItemByIndex(
 					gMM.sequencer.viewPosition);
 		if (this.uid != i.getProperty(SBProperties.artistName)) {
@@ -1825,11 +1841,12 @@ mashTape.updateFlash = function(provider, results) {
  ****************************************************************************/
 // Maximise the display pane
 mashTape.maximiseDisplayPane = function(ev) {
+	dump("\n\n>>>>>>>>>>>>>>>>>>>>>>> GO BIG!\n");
+	var flashSplitter = document.getElementById("mashTape-flash-splitter");
+	
 	var mainDoc = Cc['@mozilla.org/appshell/window-mediator;1']
 		.getService(Ci.nsIWindowMediator).getMostRecentWindow('Songbird:Main')
 		.window.document;
-	
-	var splitter = document.getElementById("mashTape-flash-splitter");
 	var dp = mashTape.displayPane;
 	var splitterId = mashTape.displayPane.getAttribute("splitter");
 	var dpSplitter = mainDoc.getElementById(splitterId);
@@ -1841,7 +1858,7 @@ mashTape.maximiseDisplayPane = function(ev) {
 		dp.setAttribute("flex", 0);
 
 		// open the splitter back up
-		splitter.setAttribute("state", "open");
+		flashSplitter.setAttribute("state", "open");
 
 		// reset the display pane splitter
 		dpSplitter.setAttribute("collapse", "after");
@@ -1859,7 +1876,7 @@ mashTape.maximiseDisplayPane = function(ev) {
 
 		dp.setAttribute("flex", 1);
 		// collapse the splitter
-		splitter.setAttribute("state", "collapsed");
+		flashSplitter.setAttribute("state", "collapsed");
 		
 		// collapse the display pane splitter
 		dpSplitter.setAttribute("collapse", "before");
@@ -1894,10 +1911,25 @@ mashTape.locationListener = {
 			dump("mashTape undefined, returning\n");
 			return;
 		}
+		var mainDoc = Cc['@mozilla.org/appshell/window-mediator;1']
+			.getService(Ci.nsIWindowMediator)
+			.getMostRecentWindow('Songbird:Main').window.document;
+		var splitterId = mashTape.displayPane.getAttribute("splitter");
+		var dpSplitter = mainDoc.getElementById(splitterId);
 		if (url.spec.indexOf("chrome://songbird/") == 0) {
+			// expose the mashTape display pane
 			mashTape.displayPane.collapsed = false;
+			if (mashTape.expanded) {
+				dpSplitter.setAttribute("collapse", "before");
+				dpSplitter.setAttribute("state", "collapsed");
+			}
 		} else {
+			// collapse the mashTape display pane
 			mashTape.displayPane.collapsed = true;
+			if (mashTape.expanded) {
+				dpSplitter.setAttribute("collapse", "after");
+				dpSplitter.setAttribute("state", "open");
+			}
 		}
 	},
 	onProgressChange: function() {return 0;},
