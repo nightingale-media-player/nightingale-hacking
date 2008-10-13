@@ -33,7 +33,6 @@ var mashTapeVideo = {
 				gMcMgr.status.state == Ci.sbIMediacoreStatus.STATUS_PAUSED) &&
 				mashTapeVideo.paused)
 		{
-			dump("triggering play\n");
 			mashTapeVideo.paused = false;
 			gMcMgr.playbackControl.play();
 		}

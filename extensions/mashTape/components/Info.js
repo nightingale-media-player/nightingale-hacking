@@ -11,13 +11,10 @@ const DESCRIPTION = "mashTape Provider: UberMash Artist Info Provider";
 const CID         = "{7792e470-75ec-11dd-ad8b-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/mashTape/provider/info/UberMash;1";
 
-function debugLog(funcName, str) {
-	dump("*** Info.js::" + funcName + " // " + str + "\n");
-}
-
 // XPCOM constructor for our Artist Info mashTape provider
 function ArtistInfo() {
 	this.wrappedJSObject = this;
+	Components.utils.import("resource://mashtape/mtUtils.jsm");
 }
 
 var linkMap = {
@@ -59,7 +56,7 @@ ArtistInfo.prototype = {
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var url = "http://ws.audioscrobbler.com/2.0/artist/info.xml?artist=" +
 			encodeURIComponent(artist);
-		debugLog("Last.FM Bio URL", url);
+		mtUtils.log("Info", "Last.FM Bio URL: " + url);
 		bioReq.open("GET", url, true);
 		bioReq.onreadystatechange = function(ev) {
 			return function(artistName, updateFn) {
@@ -114,7 +111,7 @@ ArtistInfo.prototype = {
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var url = "http://ws.audioscrobbler.com/1.0/artist/" +
 			escape(artist) + "/toptags.xml";
-		debugLog("Last.FM Tags URL", url);
+		mtUtils.log("Info", "Last.FM Tags URL: " + url);
 		tagsReq.open("GET", url, true);
 		tagsReq.updateFn = callback;
 		tagsReq.artist = artist;
@@ -164,7 +161,7 @@ ArtistInfo.prototype = {
 			'"qImages":{"query":[{"/common/topic/image":[{"*":null}],"name":"' + (artist) + '","type":"/music/artist"}]},' +
 			'"qLinks":{"query":[{"/common/topic/webpage":[{"*":null}],"name":"' + (artist) + '","type":"/music/artist"}]}' +
 		'}';
-		debugLog("Freebase URL", url);
+		mtUtils.log("Info", "Freebase URL: " + url);
 		req.open("GET", url, true);
 		req.updateFn = updateFn;
 		req.onreadystatechange = function() {
@@ -205,7 +202,8 @@ ArtistInfo.prototype = {
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var url =
 			"http://musicbrainz.org/ws/1/artist/?type=xml&inc=sa-Album&query=";
-		debugLog("MusicBrainz URL", url + encodeURIComponent(artist));
+		mtUtils.log("Info", "MusicBrainz URL: " + url +
+				encodeURIComponent(artist));
 		req.open("GET", url + artist, true);
 		req.updateFn = updateFn;
 		req.onreadystatechange = function() {
@@ -227,7 +225,7 @@ ArtistInfo.prototype = {
 				}
 
 				var mbId = x..mbns::artist[0].@id;
-				debugLog("MBID", mbId);
+				mtUtils.log("Info", "MBID: " + mbId);
 				
 				var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 					.createInstance(Ci.nsIXMLHttpRequest);
@@ -286,7 +284,7 @@ ArtistInfo.prototype = {
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var url = "http://musicbrainz.org/ws/1/release/?type=xml" +
 			"&artist=" + artist + "&releasetypes=Album+Official&limit=100";
-		debugLog("MusicBrainz Discography URL", url);
+		mtUtils.log("Info", "MusicBrainz Discography URL: " + url);
 		req.open("GET", url, true);
 		req.updateFn = updateFn;
 		req.albumMetadata = this.getAlbumMetadata;
@@ -375,7 +373,7 @@ ArtistInfo.prototype = {
 			"&mbid=" + data[i].mbid;
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
-		debugLog("Last.fm Album URL", url);
+		mtUtils.log("Info", "Last.fm Album URL: " + url);
 		req.open("GET", url, true);
 		req.updateFn = updateFn;
 		req.data = data;
@@ -386,7 +384,9 @@ ArtistInfo.prototype = {
 			if (this.status == 200) {
 				var xmlText = req.responseText.replace(
 					/<\?xml version="1.0" encoding="[uU][tT][fF]-8"\?>/, "");
-				debugLog("albumMetadata", this.data[this.i].mbid + " complete! " + this.data.pending + " left.");
+				mtUtils.log("Info", "albumMetadata: " + 
+						this.data[this.i].mbid + " complete! " +
+						this.data.pending + " left.");
 				var x = new XML(xmlText);
 				var url = x..url.toString();
 				if (url != "") {

@@ -10,38 +10,10 @@ const DESCRIPTION = "mashTape Provider: YouTube Provider";
 const CID         = "{e0f43860-6a5c-11dd-ad8b-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/mashTape/provider/flash/YouTube;1";
 
-function debugLog(funcName, str) {
-	dump("*** YouTube.js::" + funcName + " // " + str + "\n");
-}
-
-Date.prototype.setISO8601 = function (string) {
-    var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
-        "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
-        "(Z|(([-+])([0-9]{2}):([0-9]{2})))?)?)?)?";
-    var d = string.match(new RegExp(regexp));
-
-    var offset = 0;
-    var date = new Date(d[1], 0, 1);
-
-    if (d[3]) { date.setMonth(d[3] - 1); }
-    if (d[5]) { date.setDate(d[5]); }
-    if (d[7]) { date.setHours(d[7]); }
-    if (d[8]) { date.setMinutes(d[8]); }
-    if (d[10]) { date.setSeconds(d[10]); }
-    if (d[12]) { date.setMilliseconds(Number("0." + d[12]) * 1000); }
-    if (d[14]) {
-        offset = (Number(d[16]) * 60) + Number(d[17]);
-        offset *= ((d[15] == '-') ? 1 : -1);
-    }
-
-    offset -= date.getTimezoneOffset();
-    time = (Number(date) + (offset * 60 * 1000));
-    this.setTime(Number(time));
-}
-
 // XPCOM constructor for our YouTube mashTape provider
 function YouTube() {
 	this.wrappedJSObject = this;
+	Components.utils.import("resource://mashtape/mtUtils.jsm");
 }
 
 YouTube.prototype.constructor = YouTube;
@@ -62,7 +34,7 @@ YouTube.prototype = {
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var query = "%22" + escape(searchTerms) + "%22";
-		debugLog("URL", this.searchURL + query);
+		mtUtils.log("YouTube", "URL: " + this.searchURL + query);
 		req.open("GET", this.searchURL + query, true);
 		req.provider = this;
 		req.updateFn = updateFn;

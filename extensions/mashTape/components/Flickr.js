@@ -10,13 +10,10 @@ const DESCRIPTION = "mashTape Provider: Flickr Provider";
 const CID         = "{a86cc290-6990-11dd-ad8b-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/mashTape/provider/photo/Flickr;1";
 
-function debugLog(funcName, str) {
-	dump("*** Flickr.js::" + funcName + " // " + str + "\n");
-}
-
 // XPCOM constructor for our Flickr mashTape provider
 function Flickr() {
 	this.wrappedJSObject = this;
+	Components.utils.import("resource://mashtape/mtUtils.jsm");
 }
 
 Flickr.prototype.constructor = Flickr;
@@ -53,7 +50,7 @@ Flickr.prototype = {
 		if (searchTerms == "Songbird")
 			url = "http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=33a6c9b21ada1e5b7d85f5cde788e6c7&extras=owner_name,date_taken,o_dims,original_format&user_id=11878025@N03&tags=mashtape";
 
-		debugLog("URL", url);
+		mtUtils.log("Flickr", "URL:" + url);
 			
 		req.open("GET", url, true);
 		req.provider = this;
@@ -101,7 +98,7 @@ Flickr.prototype = {
 					}
 					results.push(item);
 				}
-				debugLog("process", x..photos.photo.length() + " photos found");
+				mtUtils.log("Flickr", x..photos.photo.length()+" photos found");
 
 				results.wrappedJSObject = results;
 				this.updateFn.wrappedJSObject.update(CONTRACTID, results);

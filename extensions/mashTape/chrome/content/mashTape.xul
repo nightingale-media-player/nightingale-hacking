@@ -18,7 +18,6 @@
 				src="chrome://mashTape/locale/mashtape.properties"/>
 	</stringbundleset>
 	
-	<script type="application/x-javascript" src="ExtendedDate.js" />
 	<script type="application/x-javascript;charset=UTF-8" src="mashTape.js" />
 
 	<tooltip id="aHTMLTooltip"

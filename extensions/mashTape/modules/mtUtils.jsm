@@ -1,3 +1,8 @@
+var EXPORTED_SYMBOLS = [ "Date", "mtUtils" ];
+
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+
 Date.prototype.setISO8601 = function (string) {
     var regexp = "([0-9]{4})(-([0-9]{2})(-([0-9]{2})" +
         "(T([0-9]{2}):([0-9]{2})(:([0-9]{2})(\.([0-9]+))?)?" +
@@ -84,9 +89,23 @@ Date.prototype.ago = function() {
 		try {
 			agoVal = strings.formatStringFromName(key, [number], 1);
 		} catch (e) {
-			dump("Failed: " + e.toString() + " on " + key + "\n");
 		}
 	}
 	return agoVal;
 }
 
+var mtUtils = {
+	_prefBranch : Cc["@mozilla.org/preferences-service;1"]
+						.getService(Ci.nsIPrefService)
+						.getBranch("extensions.mashTape."),
+						
+	_errorConsole : Cc["@mozilla.org/consoleservice;1"]
+						.getService(Ci.nsIConsoleService),
+
+	log: function(providerName, msg) {
+		if (!this._prefBranch.getBoolPref("debug"))
+			return;
+
+		this._errorConsole.logStringMessage("[" + providerName + "] " + msg);
+	}
+}

@@ -10,13 +10,10 @@ const DESCRIPTION = "mashTape Provider: Yahoo News Provider";
 const CID         = "{92cd9a40-7a16-11dd-ad8b-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/mashTape/provider/rss/YahooNews;1";
 
-function debugLog(funcName, str) {
-	dump("*** YahooNews.js::" + funcName + " // " + str + "\n");
-}
-
 // XPCOM constructor for our Yahoo News mashTape provider
 function YahooNews() {
 	this.wrappedJSObject = this;
+	Components.utils.import("resource://mashtape/mtUtils.jsm");
 }
 
 YahooNews.prototype.constructor = YahooNews;
@@ -37,7 +34,7 @@ YahooNews.prototype = {
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var url = "http://news.search.yahoo.com/news/rss?p=\"" + searchTerms +
 			"\"&ei=UTF-8";
-		debugLog("URL", url);
+		mtUtils.log("YahooNews", "URL: " + url);
 		req.open("GET", url, true);
 		req.provider = this;
 		req.updateFn = updateFn;

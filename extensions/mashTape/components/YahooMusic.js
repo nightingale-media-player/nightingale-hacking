@@ -16,13 +16,10 @@ const ymAppId =
 const ymSwfUrl =
 	"http://d.yimg.com/cosmos.bcst.yahoo.com/up/fop/embedflv/swf/fop.swf";
 
-function debugLog(funcName, str) {
-	dump("*** YahooMusic.js::" + funcName + " // " + str + "\n");
-}
-
 // XPCOM constructor for our Yahoo Music mashTape provider
 function YahooMusic() {
 	this.wrappedJSObject = this;
+	Components.utils.import("resource://mashtape/mtUtils.jsm");
 }
 
 YahooMusic.prototype.constructor = YahooMusic;
@@ -43,7 +40,7 @@ YahooMusic.prototype = {
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var url = "http://us.music.yahooapis.com/video/v1/list/search/video/" +
 			searchTerms + "?appid=" + ymAppId + "&format=json";
-		debugLog("URL", url);
+		mtUtils.log("YahooMusic", "URL: " + url);
 		req.open("GET", url, true);
 		req.provider = this;
 		req.updateFn = updateFn;

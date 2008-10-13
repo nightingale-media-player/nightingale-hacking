@@ -1,5 +1,6 @@
 mashTape.jar:
 % content mashtape %content/
+% resource mashtape modules/
 % locale mashtape en-US %locale/en-US/
 % locale mashtape en-GB %locale/en-GB/
 % locale mashtape bn-IN %locale/bn-IN/

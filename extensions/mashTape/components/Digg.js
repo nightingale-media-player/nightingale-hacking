@@ -10,13 +10,10 @@ const DESCRIPTION = "mashTape Provider: Digg Provider";
 const CID         = "{9a301ac0-745c-11dd-ad8b-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/mashTape/provider/rss/Digg;1";
 
-function debugLog(funcName, str) {
-	dump("*** Digg.js::" + funcName + " // " + str + "\n");
-}
-
 // XPCOM constructor for our Digg mashTape provider
 function Digg() {
 	this.wrappedJSObject = this;
+	Components.utils.import("resource://mashtape/mtUtils.jsm");
 }
 
 Digg.prototype.constructor = Digg;
@@ -66,7 +63,7 @@ Digg.prototype = {
 				results.wrappedJSObject = results;
 				this.updateFn.wrappedJSObject.update(CONTRACTID, results);
 			} else {
-				debugLog("process", "FAIL: status code:" + this.status);
+				mtUtils.log("Digg", "FAIL: status code:" + this.status);
 				this.updateFn.wrappedJSObject.update(CONTRACTID, null);
 			}
 		}

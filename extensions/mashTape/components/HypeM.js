@@ -10,13 +10,10 @@ const DESCRIPTION = "mashTape Provider: Hype Machine Provider";
 const CID         = "{ad43af30-7a1c-11dd-ad8b-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/mashTape/provider/rss/HypeM;1";
 
-function debugLog(funcName, str) {
-	dump("*** HypeM.js::" + funcName + " // " + str + "\n");
-}
-
 // XPCOM constructor for our Yahoo News mashTape provider
 function HypeM() {
 	this.wrappedJSObject = this;
+	Components.utils.import("resource://mashtape/mtUtils.jsm");
 }
 
 HypeM.prototype.constructor = HypeM;
@@ -36,7 +33,7 @@ HypeM.prototype = {
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var url = "http://hypem.com/feed/search/" + searchTerms + "/1/feed.xml";
-		debugLog("URL", url);
+		mtUtils.log("HypeM", "URL:" + url);
 		req.open("GET", url, true);
 		req.provider = this;
 		req.updateFn = updateFn;

@@ -10,13 +10,10 @@ const DESCRIPTION = "mashTape Provider: MTV Music News Provider";
 const CID         = "{f6256890-79d3-11dd-ad8b-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/mashTape/provider/rss/MTV;1";
 
-function debugLog(funcName, str) {
-	dump("*** MTV.js::" + funcName + " // " + str + "\n");
-}
-
 // XPCOM constructor for our MTV mashTape provider
 function MTV() {
 	this.wrappedJSObject = this;
+	Components.utils.import("resource://mashtape/mtUtils.jsm");
 }
 
 MTV.prototype.constructor = MTV;
@@ -38,7 +35,7 @@ MTV.prototype = {
 		var url = "http://www.mtv.com/music/artist/" +
 			searchTerms.replace(/ /g, '_').toLowerCase() +
 			"/rss/highlights_full.jhtml";
-		debugLog("URL", url);
+		mtUtils.log("MTV", "URL:" + url);
 		req.open("GET", url, true);
 		req.provider = this;
 		req.updateFn = updateFn;
@@ -50,7 +47,6 @@ MTV.prototype = {
 						'<?xml version="1.0" encoding="iso-8859-1"?>', ""));
 				var mrssNs = new Namespace('http://search.yahoo.com/mrss/');
 				var results = new Array();
-				debugLog("query", "Found " + x..item.length() + " items");
 				for each (var item in x..item) {
 					var content = item.description.toString();
 					content = content.replace(

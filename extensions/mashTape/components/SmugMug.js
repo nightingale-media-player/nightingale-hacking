@@ -10,13 +10,10 @@ const DESCRIPTION = "mashTape Provider: SmugMug Provider";
 const CID         = "{68551fc0-6a50-11dd-ad8b-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/mashTape/provider/photo/SmugMug;1";
 
-function debugLog(funcName, str) {
-	dump("*** SmugMug.js::" + funcName + " // " + str + "\n");
-}
-
 // XPCOM constructor for our SmugMug mashTape provider
 function SmugMug() {
 	this.wrappedJSObject = this;
+	Components.utils.import("resource://mashtape/mtUtils.jsm");
 }
 
 SmugMug.prototype.constructor = SmugMug;
@@ -70,7 +67,6 @@ SmugMug.prototype = {
 					}
 					results.push(item);
 				}
-				debugLog("process", results.length + " photos found");
 
 				results.wrappedJSObject = results;
 				this.updateFn.wrappedJSObject.update(CONTRACTID, results);

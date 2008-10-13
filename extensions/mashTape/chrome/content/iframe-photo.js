@@ -1,3 +1,7 @@
+Components.utils.import("resource://mashTape/mtUtils.jsm");
+
+var nS5;
+
 document.addEvent('mousewheel', function(event) {
 	event = new Event(event);
  
@@ -33,7 +37,7 @@ function _mashTape_setupPhotoStream(imageItems, paneWidth, paneHeight) {
 		addButtons: {
 			previous: $('prev'),
 			next: $('next'),
-			playpause: $('playpause'),
+			playpause: $('playpause')
 		},
 		onButtons: function(command, isPlaying) {
 			//dump("> " + command + "|" + isPlaying + "\n");

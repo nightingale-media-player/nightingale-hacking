@@ -11,10 +11,6 @@ const DESCRIPTION = "mashTape Provider: Wikipedia (localized) Artist Info Provid
 const CID         = "{a7780910-8c10-11dd-ad8b-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/mashTape/provider/info/WikipediaLocal;1";
 
-function debugLog(funcName, str) {
-	dump("*** Wikipedia.js::" + funcName + " // " + str + "\n");
-}
-
 var language;
 var homepage;
 var wikipedia;
@@ -22,6 +18,7 @@ var wikipedia;
 // XPCOM constructor for our Artist Info mashTape provider
 function ArtistInfo() {
 	this.wrappedJSObject = this;
+	Components.utils.import("resource://mashtape/mtUtils.jsm");
 
 	if (typeof(language) == "undefined") {
 		// Get the user's locale
@@ -29,7 +26,7 @@ function ArtistInfo() {
 				.getService(Ci.nsIPrefService).getBranch("general.");
 		var locale = prefBranch.getCharPref("useragent.locale");
 		language = locale.split(/-/)[0];
-		debugLog("Constructor", "language set to " + language);
+		mtUtils.log("Wikipedia", "language set to " + language);
 	}
 	if (typeof(homepage) == "undefined") {
 		// Initialise to English for now
@@ -42,8 +39,7 @@ function ArtistInfo() {
 				.createInstance(Ci.nsIXMLHttpRequest);
 		var url = "http://ajax.googleapis.com/ajax/services/language/translate"
 			+ "?v=1.0&q=Wikipedia%7CHomepage&langpair=en%7C" + language;
-		debugLog("Constructor", "translating homepage & wikipedia terms");
-		debugLog("Constructor translate URL", url);
+		mtUtils.log("Wikipedia", "translate URL: " + url);
 		gtReq.open("GET", url, true);
 		gtReq.onreadystatechange = function(ev) {
 			if (this.readyState != 4)
@@ -55,8 +51,8 @@ function ArtistInfo() {
 				var text = results.responseData.translatedText.split("|");
 				wikipedia = text[0].replace(/^[\s]*/, '').replace(/[\s]*$/, '');
 				homepage = text[1].replace(/^[\s]*/, '').replace(/[\s]*$/, '');
-				debugLog("Homepage", homepage);
-				debugLog("Wikipedia", wikipedia);
+				mtUtils.log("Wikipedia", "Homepage: " + homepage);
+				mtUtils.log("Wikipedia", "Wikipedia: " + wikipedia);
 			}
 		}
 		gtReq.send(null);
@@ -88,7 +84,7 @@ ArtistInfo.prototype = {
 				"default-graph-uri=http%3A%2F%2Fdbpedia.org" +
 				"&query=DESCRIBE+%3Chttp://dbpedia.org/resource/" +
 				artist.replace(/ /g, "_") + "%3E&output=xml";
-		debugLog("Wikipedia (DBpedia) URL", url);
+		mtUtils.log("Wikipedia", "DBpedia URL:" + url);
 		dbReq.open("GET", url, true);
 		dbReq.onreadystatechange = function(ev) {
 			return function(updateFn) {
@@ -148,7 +144,7 @@ ArtistInfo.prototype = {
 				var englishBio = null;
 				for each (var bio in x..dbNs::abstract) {
 					var thisLang = bio.@xmlNs::lang.toString();
-					debugLog("Language scan", "Found: " + thisLang);
+					mtUtils.log("Wikipedia", "Language scan: " + thisLang);
 					if (thisLang == language)
 						bioText = bio.toString();
 					if (thisLang == "en")

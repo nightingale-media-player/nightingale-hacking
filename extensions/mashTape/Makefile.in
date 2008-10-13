@@ -33,7 +33,7 @@ VPATH     = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = chrome components defaults
+SUBDIRS = chrome components modules defaults
 
 EXTENSION_NAME = mashTape
 EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com

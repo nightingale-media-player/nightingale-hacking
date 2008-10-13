@@ -1,5 +1,6 @@
 #include "nsISupports.idl"
 
+interface sbIMashTapeUtils;
 interface sbIMashTapeCallback;
 interface nsISimpleEnumerator;
 
@@ -46,3 +47,12 @@ interface sbIMashTapeRSSProvider : sbIMashTapeProvider
 interface sbIMashTapeCallback : nsISupports
 {
 };
+
+/*******************************/
+/*
+[scriptable, uuid(0fd6a050-996a-11dd-ad8b-0800200c9a66)]
+interface sbIMashTapeUtils : nsISupports
+{
+	void log(in string provider, in string msg);
+};
+*/

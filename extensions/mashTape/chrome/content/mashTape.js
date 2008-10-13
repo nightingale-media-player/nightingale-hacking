@@ -29,6 +29,9 @@ if (typeof(SBProperties) == "undefined") {
         throw new Error("Import of sbProperties module failed");
 }
 
+if (typeof(mtUtils) == "undefined")
+	Cu.import("resource://mashTape/mtUtils.jsm");
+
 if (typeof mashTape == "undefined")
 	var mashTape = {
 		initialised : false,
@@ -51,7 +54,10 @@ mashTape.firstRun = function() {
 	gMetrics.metricsInc("mashtape", "rss", "tab.disabled");
 	gMetrics.metricsInc("mashtape", "photo", "tab.disabled");
 	gMetrics.metricsInc("mashtape", "flash", "tab.disabled");
-	dump(">> Initial mashTape metrics set\n");
+}
+
+mashTape.log = function(msg) {
+	mtUtils.log("mashTape", msg);
 }
 
 /*
@@ -117,7 +123,7 @@ mashTape.init = function(e) {
 				component.indexOf("mashTape/provider") + 18, component.length);
 			mtClass = mtClass.substring(0, mtClass.indexOf("/"));
 			mashTape.providers[mtClass].push(component);
-			dump("Found " + mtClass + " provider: " + component + "\n");
+			mashTape.log("Found " + mtClass + " provider: " + component);
 			
 			var existedPrior = false;
 			var clsid = mashTape.compMgr.contractIDToCID(component);
@@ -128,7 +134,7 @@ mashTape.init = function(e) {
 					existedPrior = true;
 			}
 			if (!existedPrior) {
-				dump("	^^^ is new, auto-enabling\n");
+				mashTape.log(component + " is new, auto-enabling");
 				mashTape.enableProvider(clsid, mtClass);
 			}
 		}
@@ -455,7 +461,6 @@ mashTape.iframeLoadListener = function(e) {
 	var iframe = e.currentTarget;
 	iframe.removeEventListener("DOMContentLoaded",
 			mashTape.iframeLoadListener, false);
-	dump(">> " + iframe.id + " done loading\n");
 	mashTape.iframeLoadCount--;
 	if (mashTape.iframeLoadCount == 0) {
 		if (Application.prefs.getValue("extensions.mashTape.expanded", false))
@@ -614,7 +619,7 @@ mashTape.updateEnabledProviders = function(providerType) {
 		var clsid = mashTape.enabledProviders[providerType][i];
 		if (typeof(CcID[clsid]) == "undefined") {
 			// remove this from the enabled providers list
-			dump("provider " + clsid + " is no longer installed, removing\n");
+			mashTape.log("provider " + clsid + " is uninstalled, disabling");
 			mashTape.enabledProviders[providerType].splice(i, 1);
 			changed = true;
 		} else {
@@ -728,11 +733,13 @@ mashTape.update = function(artist, album, track) {
 
 	mashTape.prevArtist = artist;
 
+	/*
 	dump("Outgoing callbacks:\n");
 	dump("	info : " + mashTape.pendingCallbacks["info"].pending + "\n");
 	dump("	rss  : " + mashTape.pendingCallbacks["rss"].pending + "\n");
 	dump("	photo: " + mashTape.pendingCallbacks["photo"].pending + "\n");
 	dump("	flash: " + mashTape.pendingCallbacks["flash"].pending + "\n");
+	*/
 }
 
 mashTape.displayCallback = function(uid) {
@@ -748,7 +755,7 @@ mashTape.displayCallback.prototype =  {
 		var i = gMM.sequencer.view.getItemByIndex(
 					gMM.sequencer.viewPosition);
 		if (this.uid != i.getProperty(SBProperties.artistName)) {
-			dump("> callback triggered with a different UID, aborting.\n");
+			// dump("> callback triggered with a different UID, aborting.\n");
 			return;
 		}
 		var clsid = mashTape.compMgr.contractIDToCID(contractId);
@@ -764,6 +771,7 @@ mashTape.displayCallback.prototype =  {
 		}
 		classPending.pending--;
 
+		/*
 		if (provider.providerType == "info") {
 			dump(section + " returned\n");
 			dump("info pending: " + classPending.pending +
@@ -772,11 +780,11 @@ mashTape.displayCallback.prototype =  {
 			dump("rss: " + provider.providerName + " returned, pending: " +
 					classPending.pending + "\n");
 		}
+		*/
 
 		if (classPending.pending == 0 && classPending.valid == 0) {
 			// All our pending callbacks completed, let's check to see if
 			// we actually got any valid results for this providerType
-			//dump("calling nodatatab:" + provider.providerType + "\n");
 			mashTape.noDataTab(provider.providerType);
 		}
 
@@ -1624,16 +1632,13 @@ mashTape.loadFlashDetail = function(el) {
 		//dump("New frame size: " + frameWidth + "x" + frameHeight + "\n");
 
 		var swf = doc.getElementById("mTFlashObject");
-		//dump("Current SWF size: " + swf.width + "x" + swf.height + "\n");
 
 		var newHeight = frameHeight - 25; // 25px is more or less our padding
 		var newWidth = newHeight * ratio;
-		//dump("Proposed: " + newWidth + "x" + newHeight + "\n");
 		if (newWidth > frameWidth - 25) {
 			//dump("Capping because "+newWidth + " > " +(frameWidth-25) + "\n");
 			newWidth = frameWidth - 25;
 			newHeight = newWidth / ratio;
-			//dump("Proposed2: " + newWidth + "x" + newHeight + "\n");
 		}
 
 		if (frameWidth - newWidth > 100) {
@@ -1643,7 +1648,6 @@ mashTape.loadFlashDetail = function(el) {
 			doc.getElementById("content").style.clear = "both";
 			doc.getElementById("author").style.display = "inline";
 			var capHeight = doc.getElementById("content").clientHeight;
-			//dump("caption height: " + capHeight + "\n");
 			if (frameHeight - newHeight < capHeight) {
 				newHeight = newHeight - capHeight;
 				newWidth = newHeight * ratio;
@@ -1655,7 +1659,6 @@ mashTape.loadFlashDetail = function(el) {
 			//dump("Setting new SWF size: "+newWidth + "x" + newHeight + "\n");
 			swf.width = newWidth;
 			swf.height = newHeight;
-			//doc.getElementById("content").style.left = newWidth + 20 + "px";
 		}
 	}, false);
 
@@ -1848,7 +1851,6 @@ mashTape.updateFlash = function(provider, results) {
  ****************************************************************************/
 // Maximise the display pane
 mashTape.maximiseDisplayPane = function(ev) {
-	dump("\n\n>>>>>>>>>>>>>>>>>>>>>>> GO BIG!\n");
 	var flashSplitter = document.getElementById("mashTape-flash-splitter");
 	
 	var mainDoc = Cc['@mozilla.org/appshell/window-mediator;1']
@@ -1915,7 +1917,6 @@ mashTape.locationListener = {
 		if (url.spec == "chrome://songbird/content/mediapages/firstrun.xul")
 			return;
 		if (typeof(mashTape) == "undefined") {
-			dump("mashTape undefined, returning\n");
 			return;
 		}
 		var mainDoc = Cc['@mozilla.org/appshell/window-mediator;1']
