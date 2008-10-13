@@ -168,6 +168,13 @@ mashTape.init = function(e) {
 
 	var dpTabBar = mashTape.displayPane.tabBar;
 	// XXX holy hokey
+	// XXX lone> yeah, this sucks because although it makes the tabs aligned to
+	//           the content, it is specific to the size of the displaypane label
+	//           for the string "mashTape" in gonzo, and when the displaypane is
+	//           resized down (because it is on a side instead of a bottom pane)
+	//           the label and the tabs overlap :( If there is a css trick to
+	//           shift a centering to the left without causing an overlap with
+	//           the previous element, I do not know it.
 	dpTabBar.style.marginLeft = "-50px";
 	var tabs = dpTabBar.getElementsByTagName("tab");
 	if (mashTape.providers["info"].length > 0) {

@@ -140,6 +140,7 @@ tabs.sb-displaypane-tabs {
   border-bottom:1px solid transparent !important;
   background-color:transparent;
   padding:1px 0px 0px 0px;
+  overflow: hidden;
   
   background-image:none;
 }
