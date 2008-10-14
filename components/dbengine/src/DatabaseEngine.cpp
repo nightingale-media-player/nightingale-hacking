@@ -51,6 +51,7 @@
 #include <algorithm>
 #include <prmem.h>
 #include <prtypes.h>
+#include <assert.h>
 
 #include <nsCOMArray.h>
 
