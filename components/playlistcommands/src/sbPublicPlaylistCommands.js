@@ -1189,9 +1189,12 @@ function plCmd_Reveal_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
       } catch (e) {
         // If launch also fails (probably because it's not implemented), let the
         // OS handler try to open the parent
+        var parentUri = Cc["@mozilla.org/network/io-service;1"]
+                          .getService(Ci.nsIIOService).newFileURI(parent);
+
         var protocolSvc = Cc["@mozilla.org/uriloader/external-protocol-service;1"]
                             .getService(Ci.nsIExternalProtocolService);
-        protocolSvc.loadUrl(parent);
+        protocolSvc.loadURI(parentUri);
       }
     }
   }

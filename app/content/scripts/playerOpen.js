@@ -816,7 +816,7 @@ function SBRevealFile( initialTab, parentWindow ) {
 
       var protocolSvc = Cc["@mozilla.org/uriloader/external-protocol-service;1"]
                           .getService(Ci.nsIExternalProtocolService);
-      protocolSvc.loadUrl(parentUri);
+      protocolSvc.loadURI(parentUri);
     }
   }
 }
