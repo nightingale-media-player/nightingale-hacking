@@ -155,7 +155,7 @@ var LibraryUtils = {
       var propertyArray =
         Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
         createInstance(Ci.sbIMutablePropertyArray);
-      propertyArray.strict = true;
+      propertyArray.strict = false;
       propertyArray.appendProperty(parser.sortID, 
           (parser.sortIsAscending ? "a" : "d"));
       mediaListView.setSort(propertyArray);
