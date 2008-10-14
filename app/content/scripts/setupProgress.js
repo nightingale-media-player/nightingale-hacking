@@ -35,6 +35,8 @@
  * \internal
  */
 
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+
 var label;
 var progressmeter;
 var cancelButton;
@@ -78,9 +80,10 @@ function init()
 function installNextXPI()
 {
   cur_ext++;
-  if (cur_ext+1 > n_ext) { 
-    pbundle.setInstallResult(afailure ? 0 : 1); 
-    for (var i=0;i<pbundle.installListenerCount;i++) 
+  if (cur_ext + 1 > n_ext) {
+    var sbIBundle = Components.interfaces.sbIBundle;
+    pbundle.setInstallResult(afailure ? sbIBundle.BUNDLE_INSTALL_ERROR : sbIBundle.BUNDLE_INSTALL_SUCCESS);
+    for (var i = 0; i < pbundle.installListenerCount; i++) 
       pbundle.getInstallListener(i).onComplete(bundle);
     window.close(); 
     return; 
@@ -92,18 +95,13 @@ function installNextXPI()
     return;
   }
 
-  var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-  var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-  var downloading = "Downloading";
-  try {
-    downloading = songbirdStrings.GetStringFromName("setupprogress.downloading");
-  } catch (e) {}
+  var downloading = SBString("setupprogress.downloading", "Downloading");
   label.setAttribute("value", downloading + " " + bundle.getExtensionAttribute(cur_ext, "name"));
   cancelButton.removeAttribute("disabled");
   userCancel = false;
   progressmeter.setAttribute("value", 0);
   
-  for (var i=0;i<pbundle.installListenerCount;i++) 
+  for (var i = 0; i < pbundle.installListenerCount; i++) 
     pbundle.getInstallListener(i).onExtensionDownloadProgress(bundle, cur_ext, 0, 1);
   
   destFile = downloadFile(bundle.getExtensionAttribute(cur_ext, "url"));
@@ -114,7 +112,7 @@ function installNextXPI()
  * \internal
  */
 function onExtensionDownloadProgress(aCurrentProgress, aMaxProgress) {
-  progressmeter.setAttribute("value", aCurrentProgress/aMaxProgress*100);
+  progressmeter.setAttribute("value", aCurrentProgress / aMaxProgress * 100);
   for (var i=0; i < pbundle.installListenerCount; i++) 
     pbundle.getInstallListener(i).onExtensionDownloadProgress(pbundle, cur_ext, aCurrentProgress, aMaxProgress);
 }
@@ -124,18 +122,20 @@ function onExtensionDownloadProgress(aCurrentProgress, aMaxProgress) {
  * \internal
  */  
 function onExtensionDownloadComplete() {
-  for (var i=0;i<pbundle.installListenerCount;i++) 
+  for (var i = 0; i < pbundle.installListenerCount; i++) 
     pbundle.getInstallListener(i).onDownloadComplete(pbundle, cur_ext);
-  var r = forceInstallXPI(destFile);
-  if (r == 0) {
+  var succeeded = forceInstallXPI(destFile);
+  if (!succeeded) {
     gPrompt.alert( window, "Error",
                   SBString( "setupprogress.couldnotinstall", "Could not install" ) + " " +
                   bundle.getExtensionAttribute(cur_ext, "name") );
-    for (var i=0;i<pbundle.installListenerCount;i++) 
+    for (var i = 0; i < pbundle.installListenerCount; i++) 
       pbundle.getInstallListener(i).onInstallError(pbundle, cur_ext);
-  } else pbundle.setNeedRestart(true);
+  } else {
+    pbundle.setNeedRestart(true);
+  }
   deleteLastDownloadedFile();
-  for (var i=0;i<pbundle.installListenerCount;i++) 
+  for (var i = 0; i < pbundle.installListenerCount; i++) 
     pbundle.getInstallListener(i).onInstallComplete(pbundle, cur_ext);
   setTimeout(installNextXPI, 0);
 }
@@ -148,7 +148,6 @@ function onExtensionDownloadError() {
   gPrompt.alert( window, "Error",
                 SBString( "setupprogress.couldnotdownload", "Downloading" ) + " " +
                 bundle.getExtensionAttribute(cur_ext, "name") );
-  sbMessageBox("Error", couldnotdownload + " " + bundle.getExtensionAttribute(cur_ext, "name"), false);
   afailure = true;
   deleteLastDownloadedFile();
   for (var i=0;i<pbundle.installListenerCount;i++) 
@@ -191,7 +190,7 @@ var _downloadListener = {
 
   onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus)
   {
-    if (aStateFlags & 16 /*this.STATE_STOP*/)
+    if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP)
     {
       if ( (aStatus == NS_BINDING_ABORTED) && userCancel ) {
         // User canceled so delete the downloaded file if any and
@@ -201,10 +200,19 @@ var _downloadListener = {
         setTimeout(installNextXPI, 2000);
       } else {
         try {
+          var succeeded = true;
+          if (aRequest instanceof Components.interfaces.nsIHttpChannel) {
+            if (!aRequest.requestSucceeded) {
+              succeeded = false;
+            }
+          }
           var file = Components.classes["@mozilla.org/file/local;1"]
                           .createInstance(Components.interfaces.nsILocalFile);
           file.initWithPath(_filename);
-          if (file.exists())
+          if (!file.exists()) {
+            succeeded = false;
+          }
+          if (succeeded)
             onExtensionDownloadComplete();
           else
             onExtensionDownloadError();
@@ -258,8 +266,7 @@ function downloadFile(url) {
   var aLocalURI = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService).newURI(url + getRandomParameter(), null, null);
 
   const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
-  var flags = nsIWBP.PERSIST_FLAGS_NO_CONVERSION |
-              nsIWBP.PERSIST_FLAGS_REPLACE_EXISTING_FILES |
+  var flags = nsIWBP.PERSIST_FLAGS_REPLACE_EXISTING_FILES |
               nsIWBP.PERSIST_FLAGS_BYPASS_CACHE;
   _browser.persistFlags = flags;
 
@@ -350,7 +357,7 @@ function getRandomParameter() {
  * This method will install the XPI without asking the user's permission.
  * Use "installXPI()" to involve the user in the install process.
  * \param localFilename The filename of the XPI to install.
- * \return Non-zero on success.
+ * \return true on success.
  * \internal
  */
 function forceInstallXPI(localFilename)
@@ -361,10 +368,9 @@ function forceInstallXPI(localFilename)
   
   var em = Components.classes["@mozilla.org/extensions/manager;1"]
                       .getService(Components.interfaces.nsIExtensionManager);
-  var r = 0;
   try {
     em.installItemFromFile(file, "app-profile");
-    r = 1;
+    return true;
   } catch (e) {}
-  return r;
+  return false;
 }

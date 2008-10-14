@@ -260,9 +260,12 @@ Bundle.prototype = {
     var windowWatcherService = Components.classes['@mozilla.org/embedcomp/window-watcher;1']
                             .getService(Components.interfaces.nsIWindowWatcher);
                             
-    // TODO: do the install !
-    this._installresult = "";
-    windowWatcherService.openWindow(aWindow, "chrome://songbird/content/xul/setupProgress.xul", "_blank", "chrome,dialog=yes,centerscreen,alwaysRaised,close=no,modal", this);
+    this._installresult = Components.interfaces.sbIBundle.BUNDLE_INSTALL_ERROR;
+    windowWatcherService.openWindow(aWindow,
+                                    "chrome://songbird/content/xul/setupProgress.xul",
+                                    "_blank",
+                                    "chrome,dialog=yes,centerscreen,alwaysRaised,close=no,modal",
+                                    this);
     return this._installresult;
   },
   

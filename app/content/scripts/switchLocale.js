@@ -31,6 +31,8 @@
  * \internal
  */
 
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+
 const MENUBAR_LOCALESBUNDLE_TIMEOUT = 15000;
 
 try {
@@ -121,12 +123,15 @@ try {
    * \internal
    */
   function menubarLoadBundledLocales(menu) {
+
     if (menubar_locales_bundle && menubar_locales_bundle.bundleExtensionCount > 0) {
+      
       var className = menu.parentNode.getAttribute("class");
 
       var separator = null;
-
-      var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+      
+      var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                          .getService(Components.interfaces.nsIStringBundleService);
       var langNames = sbs.createBundle("chrome://global/locale/languageNames.properties");
       var regNames  = sbs.createBundle("chrome://global/locale/regionNames.properties");
 
@@ -135,27 +140,35 @@ try {
       for (var i=0; i < menubar_locales_bundle.bundleExtensionCount; i++) {
         menubar_locales_bundle.setExtensionInstallFlag(i, false);
 
-        var locale = menubar_locales_bundle.getExtensionAttribute(i, "name");
-        locale = locale.split(" ")[0]; // FIX ! name should not have a trailing " (Country)"
-        
-        if (menubarIsLanguageInstalled(locale)) continue;
-
-        var parts = locale.split(/-/);
-
-        var displayName;
-        try {
-          displayName = langNames.GetStringFromName(parts[0]);
-          if (parts.length > 1) {
-            try {
-              displayName += " (" + regNames.GetStringFromName(parts[1].toLowerCase()) + ")";
-            }
-            catch (e) {
-              displayName += " (" + parts[1] + ")";
-            }
+        var locale = menubar_locales_bundle.getExtensionAttribute(i, "languageTag");
+        if (!locale) {
+          // Umm, bad server response?
+          var localeID = menubar_locales_bundle.getExtensionAttribute(i, "id");
+          var localeMatch = /langpack-([^@]+)/(localeID);
+          if (localeMatch) {
+            locale = localeMatch[1];
+          } else {
+            // really bad server response; ignore this locale
+            continue;
           }
         }
-        catch (e) {
-          displayName = menubar_locales_bundle.getExtensionAttribute(i, "desc");
+        
+        if (menubar_locales_installed.indexOf(locale) != -1) {
+          continue;
+        }
+
+        var displayName = menubar_locales_bundle.getExtensionAttribute(i, "name");
+        if (!displayName) {
+          var parts = locale.split(/-/);
+  
+          if (parts.length > 1) {
+            displayName = SBFormattedString("locales.name.format.regional",
+                                            [SBString(parts[0], parts[0], langNames),
+                                             SBString(parts[1].toLowerCase(), parts[1], regNames)]);
+          } else {
+            displayName = SBFormattedString("locales.name.format",
+                                            [SBString(parts[0], parts[0], langNames)]);
+          }
         }
 
         if (!separator) {
@@ -219,16 +232,19 @@ try {
     {
       menubar_locales_installed = Array();
       _lastmenu = menu;
-      var prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+      var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                            .getService(Components.interfaces.nsIPrefBranch);
       var curLocale = "en-US";
       try {
         curLocale = prefs.getCharPref("general.useragent.locale");
       }
       catch (e) { }
 
-      var cr = Components.classes["@mozilla.org/chrome/chrome-registry;1"].getService(Components.interfaces.nsIToolkitChromeRegistry);
+      var cr = Components.classes["@mozilla.org/chrome/chrome-registry;1"]
+                         .getService(Components.interfaces.nsIToolkitChromeRegistry);
 
-      var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+      var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                          .getService(Components.interfaces.nsIStringBundleService);
       var langNames = sbs.createBundle("chrome://global/locale/languageNames.properties");
       var regNames  = sbs.createBundle("chrome://global/locale/regionNames.properties");
 
@@ -243,6 +259,7 @@ try {
       
       while (locales.hasMore()) {
         var locale = locales.getNext();
+        menubar_locales_installed.push(locale);
 
         var parts = locale.split(/-/);
 
@@ -261,8 +278,6 @@ try {
         catch (e) {
           displayName = locale;
         }
-
-        menubar_locales_installed.push(locale);
 
         var item = document.createElement("menuitem");
         var className = menu.parentNode.getAttribute("class");
@@ -313,17 +328,6 @@ try {
   } 
 
   /**
-   * \brief Determine if a Locale is marked installed in the Locales menu.
-   * \internal
-   */
-  function menubarIsLanguageInstalled(locale) {
-    for (var i=0;i<menubar_locales_installed.length;i++) {
-      if (menubar_locales_installed[i] == locale) return true;
-    }
-    return false;
-  }
-
-  /**
    * \brief Sort Locale language names.
    * \internal
    */
@@ -347,7 +351,7 @@ try {
                         SBString( "locales.installconfirm.title", "Language Download" ),
                         SBString( "locales.installconfirm.msg", "This language is not installed, would you like to download and install it?" ) ) ) {
       if (bundleindex != -1 && menubar_locales_bundle && bundleindex < menubar_locales_bundle.bundleExtensionCount) {
-        for (var i=0;i<menubar_locales_bundle.bundleExtensionCount;i++) {
+        for (var i = 0; i < menubar_locales_bundle.bundleExtensionCount; i++) {
           menubar_locales_bundle.setExtensionInstallFlag(i, i == bundleindex);
         }
         var res = menubar_locales_bundle.installFlaggedExtensions(window);
