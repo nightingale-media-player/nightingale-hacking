@@ -42,6 +42,7 @@
 var gServicePane = null;
 
 Components.utils.import("resource://app/jsmodules/sbSmartMediaListColumnSpecUpdater.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
 //
 // Module specific auto-init/deinit support
@@ -220,9 +221,6 @@ function SBDoFirstRun() {
 
   // Run first-run directory scan.
   job = SBFirstRunScanDirectories() || job;
-  
-  var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                 .getService(Ci.sbILibraryManager);
 
   // If we are scanning directories or importing a library, 
   // track the progress and show the library on completion.
@@ -237,7 +235,7 @@ function SBDoFirstRun() {
       // unhook the listener
       job.removeJobProgressListener(arguments.callee);
       // load the main library in the media tab / first tab
-      gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
+      gBrowser.loadMediaList(LibraryUtils.mainLibrary, null, gBrowser.selectedTab);
       
       // Set up the smart playlists after import is complete
       // (improves performance slightly)
@@ -253,7 +251,12 @@ function SBDoFirstRun() {
       const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
       var currentURI = gBrowser.selectedBrowser.currentURI.spec;
       if (currentURI == placeholderURL || currentURI == "about:blank") {
-        gBrowser.loadMediaList(libMgr.mainLibrary, null, gBrowser.selectedTab);
+        const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
+        var mediaListView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
+        gBrowser.loadMediaListViewWithFlags(mediaListView,
+                                            gBrowser.selectedTab,
+                                            null,
+                                            nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY);
       }
     }
   }

@@ -372,27 +372,142 @@
 
             // Now, actually open the URI
             if (where == "_blank") {
-              var tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
-              tab._viewForPage = aMediaListView;
-              tab._isNewViewForPage = true;
-              retval = tab;
+              retval = this._loadMediaListViewInternal(aURI,
+                                                       null,
+                                                       aReferrerURI,
+                                                       aCharset,
+                                                       aMediaListView);
             } else if (where == "_top") {
-              this.mCurrentBrowser.loadURI(aURI, aReferrerURI, aCharset);
-              this.mCurrentTab._viewForPage = aMediaListView;
-              this.mCurrentTab._isNewViewForPage = true;
-              retval = this.mCurrentTab;
-              
+              retval = this._loadMediaListViewInternal(aURI,
+                                                       this.mCurrentTab,
+                                                       aReferrerURI,
+                                                       aCharset,
+                                                       aMediaListView);
             // If aDefaultLocation is a tab, load there
             } else if (where && where.linkedBrowser) {
-              var tab = where;
-              tab.linkedBrowser.loadURI(aURI, aReferrerURI, aCharset);
-              tab._viewForPage = aMediaListView;
-              tab._isNewViewForPage = true;
-              retval = tab;
+              retval = this._loadMediaListViewInternal(aURI,
+                                                       where,
+                                                       aReferrerURI,
+                                                       aCharset,
+                                                       aMediaListView);
             } else {
               // eek! unknown target
             }
             return retval;
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Load a media list view with flags -->
+      <method name="loadMediaListViewWithFlags">
+        <parameter name="aMediaListView"/>
+        <parameter name="aTab"/>
+        <parameter name="aPageURL"/>
+        <parameter name="aFlags"/>
+        <body>
+          <![CDATA[
+            var pageURL = this._getMediaPageURL(aMediaListView.mediaList, aPageURL);
+            const sbIMediaListView = Components.interfaces.sbIMediaListView;
+            if (!aMediaListView || !(aMediaListView instanceof sbIMediaListView)) {
+              Components.utils.reportError(new Exception('Attempting to load invalid media list view',
+                                                         Components.results.NS_ERROR_INVALID_ARG));
+              var url = "about:neterror?e=malformedURI&u=" + encodeURIComponent(aPageURL);
+              if (aTab) {
+                aTab.linkedBrowser.loadURIWithFlags(url, aFlags);
+              } else {
+                this.loadOneTab(url, null, null, null, null, null);
+              }
+            }
+            return this._loadMediaListViewInternal(pageURL,
+                                                   aTab,
+                                                   null,
+                                                   null,
+                                                   aMediaListView,
+                                                   aFlags);
+          ]]>
+        </body>
+      </method>
+
+      <!-- Helper to load a media list into a given tab
+           @param aTab the <tab> to load into; null to load in a new tab
+           @param aURI the URI to load
+           @param aReferrerURI the referrer (may be null)
+           @param aCharset the charset (may be null)
+           @param aMediaListView the media list view to load
+           @param aFlags flags for the load (doesn't apply to new tabs)
+           -->
+      <method name="_loadMediaListViewInternal">
+        <parameter name="aURI"/>
+        <parameter name="aTab"/>
+        <parameter name="aReferrerURI"/>
+        <parameter name="aCharset"/>
+        <parameter name="aMediaListView"/>
+        <parameter name="aFlags"/>
+        <body>
+          <![CDATA[
+            var tab = aTab;
+            if (!aFlags) {
+              aFlags = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE;
+            }
+            if (tab) {
+              tab.linkedBrowser.loadURIWithFlags(aURI, aFlags, aReferrerURI, aCharset);
+            } else {
+              tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
+            }
+            tab._viewForPage = aMediaListView;
+            tab._isNewViewForPage = true;
+            return tab;
+          ]]>
+        </body>
+      </method>
+      
+      <!-- Get the media page URL for a media list
+           @param aMediaList the media list to look up
+           @param aPageURL [optional] a suggested URL
+        -->
+      <method name="_getMediaPageURL">
+        <parameter name="aMediaList"/>
+        <parameter name="aPageURL"/>
+        <body>
+          <![CDATA[
+            var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                                .getService(Components.interfaces.sbIMediaPageManager);
+            
+            var pageURL = null;
+
+            // If a page URL was provided, confirm that it is allowed for this medialist
+            if (aPageURL) {
+              var found = false;
+              for each (var page in ArrayConverter.JSArray(mgr.getAvailablePages(aMediaList))) {
+                page.QueryInterface(Components.interfaces.sbIMediaPageInfo);
+                if (aPageURL.indexOf(page.contentUrl) == 0) {
+                  pageURL = aPageURL;
+                  break;
+                }
+              }
+            }
+            
+            // If no URL, get the default from the page manager
+            if (!pageURL) {
+              var page = mgr.getPage(aMediaList);
+              pageURL = page.contentUrl;
+            }
+            
+            // If not already present, attach the guids to the querystring 
+            // so that the page gets a unique browser history entry.  
+            // I would have preferred to use a # instead of a querystring, 
+            // but anchors are ignored in loadURI.
+            if (pageURL.indexOf("libraryGUID=") == -1) {
+              if (pageURL.indexOf("?") != -1) {
+                pageURL += "&";
+              } else {
+                pageURL += "?";
+              }
+              pageURL += "libraryGUID=" + escape(aMediaList.library.guid) +
+                         "&listGUID=" + escape(aMediaList.guid);
+            }
+
+            return pageURL;
           ]]>
         </body>
       </method>
@@ -434,49 +549,13 @@
               aMediaListView = LibraryUtils.createStandardMediaListView(aMediaList);
             }
 
-            var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
-                                .getService(Components.interfaces.sbIMediaPageManager);
+            aPageURL = this._getMediaPageURL(aMediaList, aPageURL);
 
-            // If a page URL was provided, confirm that it is allowed for this medialist
-            if (aPageURL) {
-              var found = false;
-              for each (var page in ArrayConverter.JSArray(mgr.getAvailablePages(aMediaList))) {
-                if (aPageURL.indexOf(page.QueryInterface(Components.interfaces.sbIMediaPageInfo)
-                        .contentUrl) == 0) {
-                  found = true;
-                  break;
-                }
-              }
-              if (!found){
-                aPageURL = null;
-              }            
-            }
-            
-            // If no URL, get the default from the page manager
-            if (!aPageURL) {
-              var page = mgr.getPage(aMediaList);
-              aPageURL = page.contentUrl;
-            }
-            
-            // If not already present, attach the guids to the querystring 
-            // so that the page gets a unique browser history entry.  
-            // I would have preferred to use a # instead of a querystring, 
-            // but anchors are ignored in loadURI.
-            if (aPageURL.indexOf("libraryGUID=") == -1) {
-              if (aPageURL.indexOf("?") != -1) {
-                aPageURL += "&";
-              } else {
-                aPageURL += "?";
-              }
-              aPageURL += "libraryGUID=" + escape(aMediaList.library.guid) +
-                          "&listGUID=" + escape(aMediaList.guid);
-            }
-            
             // if no default location specified, load in the media tab (if available)
             var defaultLocation = aDefaultLocation;
             if (!defaultLocation && this.mediaTab)
               defaultLocation = "_media";
-            
+
             return this.loadURI(aPageURL, null, null, aEvent, 
                                 defaultLocation, aMediaListView);
           ]]>
