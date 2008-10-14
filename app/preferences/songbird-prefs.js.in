@@ -393,9 +393,12 @@ pref("songbird.library_importer.unsupported_media_alert.enabled", true);
 //
 // Album art preferences
 //
+// Maximum size of images in bytes that we accept.
 pref("songbird.albumart.maxsize", 16777216);
 pref("songbird.albumart.file.extensions", "jpg,png,gif");
 pref("songbird.albumart.file.base_names", "cover,folder");
+// Enable writing artwork to meta data by default
+pref("songbird.metadata.artwork.enableWriting", true);
 
 // Show the 'rescan metadata' playlist command ?
 pref("songbird.commands.enableRescanItem", false);
