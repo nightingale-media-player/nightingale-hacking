@@ -28,6 +28,9 @@
 #define __SB_STRINGTRANSFORMIMPL_H__
 
 #include <sbIStringTransform.h>
+#include <nsTArray.h>
+
+#include <windows.h>
 
 class sbStringTransformImpl
 {
@@ -39,7 +42,7 @@ public:
 
   nsresult Init();
 
-  unsigned long MakeFlags(PRUint32 aFlags);
+  unsigned long MakeFlags(PRUint32 aFlags, nsTArray<WORD> &aInvalidChars);
 };
 
 #endif /* __SB_STRINGTRANSFORMIMPL_H__ */

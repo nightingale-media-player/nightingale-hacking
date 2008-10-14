@@ -31,8 +31,6 @@
 
 #include <prmem.h>
 
-#include <windows.h>
-
 sbStringTransformImpl::sbStringTransformImpl()
 {
 }
@@ -47,7 +45,7 @@ sbStringTransformImpl::Init() {
 }
 
 unsigned long 
-sbStringTransformImpl::MakeFlags(PRUint32 aFlags)
+sbStringTransformImpl::MakeFlags(PRUint32 aFlags, nsTArray<WORD> &aInvalidChars)
 {
   DWORD actualFlags = 0;
 
@@ -60,11 +58,13 @@ sbStringTransformImpl::MakeFlags(PRUint32 aFlags)
   }
 
   if(aFlags & sbIStringTransform::TRANSFORM_IGNORE_NONSPACE) {
-    actualFlags |= NORM_IGNORENONSPACE;
+    aInvalidChars.AppendElement(C3_DIACRITIC);
+    aInvalidChars.AppendElement(C3_NONSPACING);
   }
 
   if(aFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS) {
-    actualFlags |= NORM_IGNORESYMBOLS;
+    aInvalidChars.AppendElement(C3_LEXICAL);
+    aInvalidChars.AppendElement(C3_VOWELMARK);
   }
 
   return actualFlags;
@@ -76,32 +76,88 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
                                        const nsAString & aInput, 
                                        nsAString & _retval)
 {
-  DWORD dwFlags = MakeFlags(aTransformFlags);
-
-  if(!(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS)) {
-
-  }
-  else {
-
-  }
-
-  LPWSTR wszJunk = {0};
-  int requiredBufferSize = ::LCMapStringW(LOCALE_USER_DEFAULT,
-                                          dwFlags,
-                                          aInput.BeginReading(),
-                                          aInput.Length(),
-                                          wszJunk,
-                                          0);
-
-  int convertedChars = ::LCMapStringW(LOCALE_USER_DEFAULT, 
-                                      dwFlags, 
-                                      aInput.BeginReading(), 
-                                      aInput.Length(), 
-                                      _retval.BeginWriting(requiredBufferSize),
-                                      requiredBufferSize);
+  nsTArray<WORD> invalidChars;
+  DWORD dwFlags = MakeFlags(aTransformFlags, invalidChars);
   
-  NS_ENSURE_TRUE(convertedChars == requiredBufferSize, 
-                 NS_ERROR_CANNOT_CONVERT_DATA);
+  nsString finalStr;
+  nsString inStr(aInput);
+
+  if(aTransformFlags & sbIStringTransform::TRANSFORM_LOWERCASE ||
+     aTransformFlags & sbIStringTransform::TRANSFORM_UPPERCASE) {
+
+    WCHAR *wszJunk = {0};
+    int requiredBufferSize = ::LCMapStringW(LOCALE_USER_DEFAULT,
+                                            dwFlags,
+                                            inStr.BeginReading(),
+                                            inStr.Length(),
+                                            wszJunk,
+                                            0);
+
+    nsString bufferStr;
+    int convertedChars = ::LCMapStringW(LOCALE_USER_DEFAULT, 
+                                        dwFlags, 
+                                        inStr.BeginReading(), 
+                                        inStr.Length(), 
+                                        bufferStr.BeginWriting(requiredBufferSize),
+                                        requiredBufferSize);
+
+    NS_ENSURE_TRUE(convertedChars == requiredBufferSize, 
+                   NS_ERROR_CANNOT_CONVERT_DATA);
+
+    finalStr = bufferStr;
+    inStr = bufferStr;
+  }
+
+  if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONSPACE ||
+     aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS) {
+    LPWSTR wszJunk = {0};
+    int requiredBufferSize = ::FoldStringW(MAP_COMPOSITE, 
+                                           inStr.BeginReading(), 
+                                           inStr.Length(), 
+                                           wszJunk, 
+                                           0);
+
+    nsString bufferStr;
+    int convertedChars = ::FoldStringW(MAP_COMPOSITE, 
+                                       inStr.BeginReading(),
+                                       inStr.Length(),
+                                       bufferStr.BeginWriting(requiredBufferSize),
+                                       requiredBufferSize);
+
+    NS_ENSURE_TRUE(convertedChars == requiredBufferSize,
+                   NS_ERROR_CANNOT_CONVERT_DATA);
+
+    LPWORD charTypes = new WORD[requiredBufferSize];
+    BOOL success = GetStringTypeW(CT_CTYPE3, 
+                                  (LPWSTR) bufferStr.BeginReading(), 
+                                  bufferStr.Length(), 
+                                  &charTypes[0]);
+
+    if(!success) {
+     delete [] charTypes;
+     _retval.Truncate();
+     return NS_ERROR_CANNOT_CONVERT_DATA;
+    }
+
+
+    PRUint32 invalidCharsLength = invalidChars.Length();
+
+    for(int current = 0; current < requiredBufferSize; ++current) {
+      PRBool validChar = PR_TRUE;
+      for(PRUint32 invalid = 0; invalid < invalidCharsLength; ++invalid) {
+        if(invalidChars[invalid] & charTypes[current]) {
+          validChar = PR_FALSE;
+          break;
+        }
+      }
+
+      if(validChar) {
+        finalStr.Append(bufferStr.CharAt(current));
+      }
+    }
+  }
+
+  _retval = finalStr;
 
   return NS_OK;
 }

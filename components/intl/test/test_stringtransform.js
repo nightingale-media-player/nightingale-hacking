@@ -39,20 +39,29 @@ function runTest() {
   log("Normalized string: " + normalizeTestOut);
   assertEqual(normalizeTestOut, normalizeTestExpectedOut);
 
+  normalizeTestIn = "DP-6";
+  normalizeTestExpectedOut = "DP-6";
+  
+  normalizeTestOut = stringTransform.normalizeString("", 
+                                  Ci.sbIStringTransform.TRANSFORM_IGNORE_NONSPACE,
+                                  normalizeTestIn);
+                                  
+  log("Pre-normalized string: " + normalizeTestIn);
+  log("Normalized string: " + normalizeTestOut);
+  assertEqual(normalizeTestOut, normalizeTestExpectedOut);
+
   // Sadly, the implementation of IGNORE SYMBOLS on Windows is not consistent
   // with Linux and Mac OS X :(	
-	if(getPlatform() != "Windows_NT") {
-    var symbolsTestIn = "I have $5";
-    var symbolsTestExpectedOut = "I have 5";
+  var symbolsTestIn = "I have $5";
+  var symbolsTestExpectedOut = "I have 5";
 
-    var symbolsTestOut = stringTransform.normalizeString("",
-																    Ci.sbIStringTransform.TRANSFORM_IGNORE_SYMBOLS,
-															      symbolsTestIn);
+  var symbolsTestOut = stringTransform.normalizeString("",
+															    Ci.sbIStringTransform.TRANSFORM_IGNORE_SYMBOLS,
+														      symbolsTestIn);
 
-    log("Pre-normalized string: " + symbolsTestIn);
-    log("Normalized string: " + symbolsTestOut);
-    assertEqual(symbolsTestOut, symbolsTestExpectedOut);
-	}
+  log("Pre-normalized string: " + symbolsTestIn);
+  log("Normalized string: " + symbolsTestOut);
+  assertEqual(symbolsTestOut, symbolsTestExpectedOut);
 
   return;
 }
