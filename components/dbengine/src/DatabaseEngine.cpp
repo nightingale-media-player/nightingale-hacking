@@ -264,6 +264,330 @@ static int tree_collate_func_utf8(void *pCtx,
   return tree_collate_func(pCtx, nA, zA, nB, zB, SQLITE_UTF8);
 }
 
+//-----------------------------------------------------------------------------
+/* Sqlite Dump Helper Class */
+//-----------------------------------------------------------------------------
+class CDatabaseDumpProcessor : public nsIRunnable 
+{
+public:
+  CDatabaseDumpProcessor(CDatabaseEngine *aCallback,
+                         QueryProcessorThread *aQueryProcessorThread,
+                         nsIFile *aOutputFile);
+  virtual ~CDatabaseDumpProcessor();
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIRUNNABLE
+
+protected:
+  nsresult OutputBuffer(const char *aBuffer);
+  PRInt32 RunSchemaDumpQuery(const nsACString & aQuery);
+  PRInt32 RunTableDumpQuery(const nsACString & aSelect);
+
+  static int DumpCallback(void *pArg, int inArg, 
+                          char **azArg, const char **azCol);
+  static char *appendText(char *zIn, char const *zAppend, 
+                          char quote);
+
+protected:
+  nsCOMPtr<nsIFileOutputStream>  mOutputStream;
+  nsCOMPtr<nsIFile>              mOutputFile;
+  nsRefPtr<CDatabaseEngine>      mEngineCallback;
+  nsRefPtr<QueryProcessorThread> mQueryProcessorThread;
+  PRBool                         writeableSchema;  // true if PRAGMA writable_schema=on
+};
+
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseDumpProcessor, nsIRunnable)
+
+CDatabaseDumpProcessor::CDatabaseDumpProcessor(CDatabaseEngine *aCallback,
+                                               QueryProcessorThread *aQueryProcessorThread,
+                                               nsIFile *aOutputFile)
+: mEngineCallback(aCallback)
+, mQueryProcessorThread(aQueryProcessorThread)
+, mOutputFile(aOutputFile)
+{
+}
+
+CDatabaseDumpProcessor::~CDatabaseDumpProcessor()
+{
+}
+
+NS_IMETHODIMP
+CDatabaseDumpProcessor::Run()
+{
+  nsresult rv;
+  mOutputStream = 
+    do_CreateInstance("@mozilla.org/network/file-output-stream;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mOutputStream->Init(mOutputFile, -1, 0600, 0);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  {
+    nsAutoLock handleLock(mQueryProcessorThread->m_pHandleLock);
+    
+    // First query, 'schema' dump
+    PRInt32 rc;
+    nsCString schemaDump;    
+    schemaDump.AppendLiteral("SELECT name, type, sql FROM sqlite_master "
+                             "WHERE sql NOT NULL and type=='table'");
+    rc = RunSchemaDumpQuery(schemaDump);
+    if (rc != SQLITE_OK) {
+      return NS_ERROR_FAILURE;
+    }
+
+    // Next query, 'table' dump
+    nsCString tableDump;
+    tableDump.AppendLiteral("SELECT sql FROM sqlite_master "
+                            "WHERE sql NOT NULL AND type IN ('index', 'trigger', 'view')");
+    rc = RunTableDumpQuery(tableDump);
+    if (rc != SQLITE_OK) {
+      return NS_ERROR_FAILURE;
+    }
+  }
+
+  return NS_OK;
+}
+
+nsresult
+CDatabaseDumpProcessor::OutputBuffer(const char *aBuffer)
+{
+  NS_ENSURE_ARG_POINTER(aBuffer);
+  
+  nsresult rv = NS_OK;
+  nsCString buffer(aBuffer);
+  if (buffer.Length() > 0) {
+    PRUint32 writeCount;
+    rv = mOutputStream->Write(buffer.get(), buffer.Length(), &writeCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return rv;
+}
+
+PRInt32
+CDatabaseDumpProcessor::RunSchemaDumpQuery(const nsACString & aQuery)
+{
+  // Run |aQuery|. Use |DumpCallback()| as the callback routine so that
+  // the contents of the query are output as SQL statements.
+  //
+  // If we get a SQLITE_CORRUPT error, rerun the query after appending
+  // "ORDER BY rowid DESC" to the end.
+  nsCString query(aQuery);
+  PRInt32 rc = sqlite3_exec(mQueryProcessorThread->m_pHandle,
+                            query.get(),
+                            (sqlite3_callback)DumpCallback,
+                            this,
+                            0);
+  if (rc == SQLITE_CORRUPT) {
+    char *zQ2 = (char *)malloc(query.Length() + 100);
+    if (zQ2 == 0) {
+      return rc;
+    }
+
+    sqlite3_snprintf(sizeof(zQ2), zQ2, "%s ORDER BY rowid DESC", query.get());
+    rc = sqlite3_exec(mQueryProcessorThread->m_pHandle,
+                      zQ2,
+                      (sqlite3_callback)DumpCallback,
+                      this,
+                      0);
+    free(zQ2);
+  }
+
+  return rc;
+}
+
+PRInt32
+CDatabaseDumpProcessor::RunTableDumpQuery(const nsACString & aSelect)
+{
+  nsCString select(aSelect);
+  sqlite3_stmt *pSelect;
+  int rc = sqlite3_prepare(mQueryProcessorThread->m_pHandle,
+                           select.get(),
+                           -1,
+                           &pSelect,
+                           0);
+  if (rc != SQLITE_OK || !pSelect) {
+    return rc;
+  }
+
+  nsresult rv;
+  rc = sqlite3_step(pSelect);
+  while (rc == SQLITE_ROW) {
+    rv = OutputBuffer((const char *)sqlite3_column_text(pSelect, 0));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = OutputBuffer("\n");
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rc = sqlite3_step(pSelect);
+  }
+
+  return sqlite3_finalize(pSelect);
+}
+
+/* static */ int 
+CDatabaseDumpProcessor::DumpCallback(void *pArg, 
+                                     int inArg, 
+                                     char **azArg, 
+                                     const char **azCol)
+{
+  // This callback routine is used for dumping the database.
+  // Each row received by this callback consists of a table name.
+  // The table type ("index" or "table") and SQL to create the table.
+  // This routine should print text sufficient to recreate the table.
+  int rc;
+  const char *zTable;
+  const char *zType;
+  const char *zSql;
+  CDatabaseDumpProcessor *dumpProcessor = (CDatabaseDumpProcessor *)pArg;
+  
+  if (inArg != 3) 
+    return 1;
+  
+  zTable = azArg[0];
+  zType = azArg[1];
+  zSql = azArg[2];
+  
+  if (strcmp(zTable, "sqlite_sequence") == 0) {
+    dumpProcessor->OutputBuffer("DELETE FROM sqlite_sequence;\n");
+  }
+  else if (strcmp(zTable, "sqlite_stat1") == 0) {
+    dumpProcessor->OutputBuffer("ANALYZE sqlite_master;\n");
+  }
+  else if (strncmp(zTable, "sqlite_", 7) == 0) {
+    return 0;
+  }
+  else if (strncmp(zSql, "CREATE VIRTUAL TABLE", 20) == 0) {
+    char *zIns;
+    if (!dumpProcessor->writeableSchema) {
+      dumpProcessor->OutputBuffer("PRAGMA writable_schema=ON;\n");
+      dumpProcessor->writeableSchema = PR_TRUE;
+    }
+    zIns = sqlite3_mprintf(
+       "INSERT INTO sqlite_master(type,name,tbl_name,rootpage,sql)"
+       "VALUES('table','%q','%q',0,'%q');",
+       zTable, zTable, zSql);
+    dumpProcessor->OutputBuffer(zIns);
+    dumpProcessor->OutputBuffer("\n");
+    sqlite3_free(zIns);
+    return 0;
+  }
+  else {
+    dumpProcessor->OutputBuffer(zSql);
+    dumpProcessor->OutputBuffer("\n");
+  }
+
+  if (strcmp(zType, "table") == 0) {
+    sqlite3_stmt *pTableInfo = 0;
+    char *zSelect = 0;
+    char *zTableInfo = 0;
+    char *zTmp = 0;
+   
+    zTableInfo = appendText(zTableInfo, "PRAGMA table_info(", 0);
+    zTableInfo = appendText(zTableInfo, zTable, '"');
+    zTableInfo = appendText(zTableInfo, ");", 0);
+
+    rc = sqlite3_prepare(dumpProcessor->mQueryProcessorThread->m_pHandle, 
+                         zTableInfo, -1, &pTableInfo, 0);
+    if (zTableInfo) { 
+      free(zTableInfo);
+    }
+    if (rc != SQLITE_OK || !pTableInfo) {
+      return 1;
+    }
+
+    zSelect = appendText(zSelect, "SELECT 'INSERT INTO ' || ", 0);
+    zTmp = appendText(zTmp, zTable, '"');
+    if (zTmp) {
+      zSelect = appendText(zSelect, zTmp, '\'');
+    }
+    zSelect = appendText(zSelect, " || ' VALUES(' || ", 0);
+    rc = sqlite3_step(pTableInfo);
+    while (rc == SQLITE_ROW) {
+      const char *zText = (const char *)sqlite3_column_text(pTableInfo, 1);
+      zSelect = appendText(zSelect, "quote(", 0);
+      zSelect = appendText(zSelect, zText, '"');
+      rc = sqlite3_step(pTableInfo);
+      if (rc == SQLITE_ROW) {
+        zSelect = appendText(zSelect, ") || ',' || ", 0);
+      }
+      else {
+        zSelect = appendText(zSelect, ") ", 0);
+      }
+    }
+    rc = sqlite3_finalize(pTableInfo);
+    if (rc != SQLITE_OK) {
+      if (zSelect) {
+        free(zSelect);
+      }
+      return 1;
+    }
+    zSelect = appendText(zSelect, "|| ')' FROM  ", 0);
+    zSelect = appendText(zSelect, zTable, '"');
+
+    rc = dumpProcessor->RunTableDumpQuery(nsDependentCString(zSelect));
+    if (rc == SQLITE_CORRUPT) {
+      zSelect = appendText(zSelect, " ORDER BY rowid DESC", 0);
+      rc = dumpProcessor->RunTableDumpQuery(nsDependentCString(zSelect));
+    }
+    if (zSelect) {
+      free(zSelect);
+    }
+  }
+  return 0;
+}
+
+/* static */ char* 
+CDatabaseDumpProcessor::appendText(char *zIn, 
+                                   char const *zAppend, 
+                                   char quote)
+{
+  // zIn is either a pointer to a NULL-terminated string in memory obtained
+  // from |malloc()|, or a NULL pointer. The string pointed to by zAppend
+  // is added to zIn, and the result returned in memory obtained from |malloc()|.
+  // zIn, if it was not NULL, is freed.
+  int len;
+  int i;
+  int nAppend = strlen(zAppend);
+  int nIn = (zIn ? strlen(zIn) : 0);
+
+  len = nAppend + nIn + 1;
+  if (quote) {
+    len += 2;
+    for (i = 0; i < nAppend; i++) {
+      if (zAppend[i] == quote) {
+        len++;
+      }
+    }
+  }
+
+  zIn = (char *)realloc(zIn, len);
+  if (!zIn) {
+    return 0;
+  }
+
+  if (quote) {
+    char *zCsr = &zIn[nIn];
+    *zCsr++ = quote;
+    for (i = 0; i < nAppend; i++) {
+      *zCsr++ = zAppend[i];
+      if (zAppend[i] == quote) {
+        *zCsr++ = quote;
+      }
+    }
+    *zCsr++ = quote;
+    *zCsr++ = '\0';
+    assert((zCsr - zIn) == len);
+  }
+  else{
+    memcpy(&zIn[nIn], zAppend, nAppend);
+    zIn[len-1] = '\0';
+  }
+
+  return zIn;
+}
+
+//-----------------------------------------------------------------------------
+
 NS_IMPL_THREADSAFE_ISUPPORTS2(CDatabaseEngine, sbIDatabaseEngine, nsIObserver)
 NS_IMPL_THREADSAFE_ISUPPORTS1(QueryProcessorThread, nsIRunnable)
 
@@ -645,6 +969,30 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
 
   return result;
 } //SubmitQueryPrivate
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+CDatabaseEngine::DumpDatabase(const nsAString & aDatabaseGUID, nsIFile *aOutFile)
+{
+  NS_ENSURE_ARG_POINTER(aOutFile);
+
+  nsRefPtr<CDatabaseQuery> dummyQuery = new CDatabaseQuery();
+  NS_ENSURE_TRUE(dummyQuery, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = dummyQuery->SetDatabaseGUID(aDatabaseGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dummyQuery->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsRefPtr<QueryProcessorThread> pThread = GetThreadByQuery(dummyQuery, PR_TRUE);
+  NS_ENSURE_TRUE(pThread, NS_ERROR_FAILURE);
+
+  nsRefPtr<CDatabaseDumpProcessor> dumpProcessor = 
+    new CDatabaseDumpProcessor(this, pThread, aOutFile);
+
+  return dumpProcessor->Run();
+}
 
 //-----------------------------------------------------------------------------
 already_AddRefed<QueryProcessorThread> CDatabaseEngine::GetThreadByQuery(CDatabaseQuery *pQuery,

@@ -78,6 +78,7 @@ void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB
 
 // CLASSES ====================================================================
 class QueryProcessorThread;
+class CDatabaseDumpProcessor;
 
 class CDatabaseEngine : public sbIDatabaseEngine,
                         public nsIObserver
@@ -162,6 +163,7 @@ private:
 class QueryProcessorThread : public nsIRunnable
 {
    friend class CDatabaseEngine;
+   friend class CDatabaseDumpProcessor;
 
 public:
   //[thread queue]

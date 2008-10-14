@@ -32,6 +32,9 @@
  */
 #include "nsISupports.idl"
 
+interface nsIFile;
+
+
 [ptr] native CDatabaseQueryPtr(CDatabaseQuery);
 [ref] native stlCStringRef(std::string);
 
@@ -43,7 +46,7 @@
 *
 * \sa sbIDatabaseQuery, sbIDatabaseResult
 */
-[scriptable, uuid(424447ef-ad75-4517-b72a-4bf2504dd7d5)]
+[scriptable, uuid(5BEE9BAB-D6B8-4B43-998D-9F76122CEE35)]
 interface sbIDatabaseEngine : nsISupports
 {
   /**
@@ -72,4 +75,9 @@ interface sbIDatabaseEngine : nsISupports
    *       reopened.
    */
   void closeDatabase(in AString aDatabaseGUID);
+
+  /**
+   * \brief Dump the contents of a database to file.
+   */
+  void dumpDatabase(in AString aDatabaseGUID, in nsIFile aOutFile);
 };
