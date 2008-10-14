@@ -119,29 +119,29 @@ insert into media_list_types (type, factory_contractid) values ('simple', '@song
 insert into library_metadata (name, value) values ('version', '11');
 
 
-/******************************************************************************* 
-  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data 
-  must be updated and replace the contents below.
-  
-  To obtain new analyze data:
-  * Launch a release build of the app with a clean profile
-  * Import 10,000+ tracks
-  * Spend some time scrolling, searching, filtering, and sorting
-  * Play some tracks, and exercise the smart playlists
-  * Shutdown
-  * Run ./songbird -test localdatabaselibraryperf
-    (requires exporting environment variables 
-     SB_ENABLE_TESTS="1" SB_ENABLE_LIBRARY_PERF="1" 
-     and SB_PERF_RESULTS="/builds/songbird/trunk/results.txt")
-  * Run Songbird, and install the Developer Tools Extension
-  * Open XPCOM Viewer from the Tools menu
-  * Execute the following in the JS Shell:
-     Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-     LibraryUtils.mainLibrary.optimize();
-  * Shutdown
-  * Open the main library db using sqlite and run ".dump sqlite_stat1"
-     
-*******************************************************************************/
+/**************************************************************************** */
+/*  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data   */
+/*  must be updated and replace the contents below.                           */
+/*                                                                            */
+/*  To obtain new analyze data:                                               */
+/*  * Launch a release build of the app with a clean profile                  */
+/*  * Import 10,000+ tracks                                                   */
+/*  * Spend some time scrolling, searching, filtering, and sorting            */
+/*  * Play some tracks, and exercise the smart playlists                      */
+/*  * Shutdown                                                                */
+/*  * Run ./songbird -test localdatabaselibraryperf                           */
+/*    (requires exporting environment variables                               */
+/*     SB_ENABLE_TESTS="1" SB_ENABLE_LIBRARY_PERF="1"                         */
+/*     and SB_PERF_RESULTS="/builds/songbird/trunk/results.txt")              */
+/*  * Run Songbird, and install the Developer Tools Extension                 */
+/*  * Open XPCOM Viewer from the Tools menu                                   */
+/*  * Execute the following in the JS Shell:                                  */
+/*     Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");*/
+/*     LibraryUtils.mainLibrary.optimize();                                   */
+/*  * Shutdown                                                                */
+/*  * Open the main library db using sqlite and run ".dump sqlite_stat1"      */
+/*                                                                            */
+/**************************************************************************** */
 
 /* Insert static |ANALYZE| results */
 ANALYZE;
