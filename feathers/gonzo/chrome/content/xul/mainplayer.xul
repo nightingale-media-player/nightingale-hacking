@@ -302,6 +302,12 @@
                           <hbox flex="1"/>
                         </hbox>
                         <sb-player-seek-slider class="faceplate-seekbar" flex="1" orient="horizontal"  maxpos="100" />
+                        <observes type="dataremote"
+                          id="buffering-faceplate-observes"
+                          key="faceplate.buffering"
+                          attribute="buffering"
+                          boolean="true"
+                          inverted="false" />
                       </stack>
                       <sb-player-totaltime-label class="faceplate-text" align="left" />
                     </hbox>

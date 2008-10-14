@@ -276,7 +276,7 @@ sbMediacoreSequencer::BindDataRemotes()
     nullString);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDataRemoteFaceplateBuffering->SetIntValue(0);
+  rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Faceplate Paused
@@ -1956,6 +1956,9 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       rv = UpdatePlayStateDataRemotes();
       NS_ENSURE_SUCCESS(rv, rv);
 
+      rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       if(!mSeenPlaying) {
         mSeenPlaying = PR_TRUE;
 
@@ -2007,6 +2010,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       }
     }
     break;
+
     case sbIMediacoreEvent::STREAM_STOP: {
       /* If we're explicitly stopped, don't continue to the next track,
        * just clean up... */
@@ -2025,9 +2029,23 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
+
     case sbIMediacoreEvent::STREAM_HAS_VIDEO: {
       rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+
+    case sbIMediacoreEvent::BUFFERING: {
+      PRBool buffering = PR_FALSE;
+      
+      rv = mDataRemoteFaceplateBuffering->GetBoolValue(&buffering);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if(!buffering) {
+        rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
     break;
 
