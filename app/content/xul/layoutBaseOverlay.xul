@@ -367,7 +367,7 @@
       <key id="volume-up-key" modifiers="accel" keycode="VK_UP" command="cmd_volume_up"/>
       <key id="volume-mute-key" modifiers="accel,alt" keycode="VK_DOWN" command="cmd_volume_mute"/>
       <key id="volume-mute-key2" modifiers="accel,alt" keycode="VK_UP" command="cmd_volume_mute"/>
-      <key id="control-playpause-key" keytext="&menu.control.playpause.spacebar;" oncommand="cmd_control_playpause"/>
+      <key id="control-playpause-key" keytext="&menu.control.playpause.spacebar;" disabled="true"/>
       <!-- not using accel here because we want control on all platforms -->
       <key id="control-next-key" keycode="VK_RIGHT" modifiers="control" command="cmd_control_next"/>
       <key id="control-previous-key" keycode="VK_LEFT" modifiers="control" command="cmd_control_previous"/>
