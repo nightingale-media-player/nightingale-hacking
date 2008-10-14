@@ -337,7 +337,6 @@
 <!ENTITY locationbar.key2              "D" >
 <!ENTITY currentTrackCmd.commandKey    "L" >
 <!ENTITY mediapage.next.key            "S" >
-<!ENTITY trackeditor.key               "E" >
 <!ENTITY trackeditor.key2              "I" >
 <!ENTITY sanitize.keycode              "VK_DELETE" >
 <!ENTITY sanitize.key                  "Del" >

@@ -236,7 +236,7 @@
       </menupopup>
 
       <menupopup id="menu_ToolsPopup">
-        <menuitem id="menuitem_tools_metadata" key="trackeditor-key"
+        <menuitem id="menuitem_tools_metadata" key="trackeditor-key2"
                   class="menuitem-iconic" label="&menu.tools.metadata;"
                   accesskey="&menu.tools.metadata.accesskey;"
                   insertbefore="menu_downloadmgr" command="cmd_metadata"/>
@@ -428,7 +428,6 @@
       
       <key id="locationbar-key" modifiers="accel" key="&locationbar.key;" oncommand="document.getElementById('location_bar').focus();"/>
       <key id="locationbar-key2" modifiers="alt" key="&locationbar.key2;" oncommand="document.getElementById('location_bar').focus();"/>
-      <key id="trackeditor-key" modifiers="accel" key="&trackeditor.key;" command="cmd_metadata"/>
       <key id="trackeditor-key2" modifiers="accel" key="&trackeditor.key2;" command="cmd_metadata"/>
       <key id="mediapage-next-key" modifiers="accel shift" key="&mediapage.next.key;" command="cmd_mediapage_next"/>
 
