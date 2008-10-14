@@ -26,72 +26,68 @@
 //
 */
 
-#ifndef __SB_FILEALBUMARTFETCHER_H__
-#define __SB_FILEALBUMARTFETCHER_H__
+#ifndef __SB_ALBUMARTFETCHERSET_H__
+#define __SB_ALBUMARTFETCHERSET_H__
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird local file album art fetcher.
+// Songbird album art fetcher set.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
- * \file  sbFileAlbumArtFetcher.h
- * \brief Songbird Local File Album Art Fetcher Definitions.
+ * \file  sbAlbumArtFetcherSet.h
+ * \brief Songbird Album Art Fetcher Set Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird local file album art fetcher imported services.
+// Songbird album art fetcher set imported services.
 //
 //------------------------------------------------------------------------------
 
 // Songbird imports.
-#include <sbIAlbumArtFetcher.h>
+#include <sbIAlbumArtFetcherSet.h>
+#include <sbIAlbumArtService.h>
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
-#include <nsIArray.h>
-#include <nsIIOService.h>
-#include <nsISimpleEnumerator.h>
-#include <nsTArray.h>
-#include <nsStringGlue.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird local file album art fetcher defs.
+// Songbird album art fetcher set defs.
 //
 //------------------------------------------------------------------------------
 
 //
-// Songbird local file album art fetcher component defs.
+// Songbird album art fetcher set component defs.
 //
 
-#define SB_FILEALBUMARTFETCHER_CLASSNAME "sbFileAlbumArtFetcher"
-#define SB_FILEALBUMARTFETCHER_CID                                             \
-  /* {5fdeaf80-1a91-4970-8cba-c016cd6edc82} */                                 \
+#define SB_ALBUMARTFETCHERSET_CLASSNAME "sbAlbumArtFetcherSet"
+#define SB_ALBUMARTFETCHERSET_CID                                              \
+  /* {5da41a79-0ed6-4876-bbd7-348a447c784f} */                                 \
   {                                                                            \
-    0x5fdeaf80,                                                                \
-    0x1a91,                                                                    \
-    0x4970,                                                                    \
-    { 0x8c, 0xba, 0xc0, 0x16, 0xcd, 0x6e, 0xdc, 0x82 }                         \
+    0x5da41a79,                                                                \
+    0x0ed6,                                                                    \
+    0x4876,                                                                    \
+    { 0xbb, 0xd7, 0x34, 0x8a, 0x44, 0x7c, 0x78, 0x4f }                         \
   }
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird local file album art fetcher classes.
+// Songbird album art fetcher set classes.
 //
 //------------------------------------------------------------------------------
 
 /**
- * This class implements the local file album art fetcher component.
+ * This class implements the album art fetcher set component.
  */
 
-class sbFileAlbumArtFetcher : public sbIAlbumArtFetcher
+class sbAlbumArtFetcherSet : public sbIAlbumArtFetcherSet
 {
   //----------------------------------------------------------------------------
   //
@@ -107,15 +103,16 @@ public:
 
   NS_DECL_ISUPPORTS
   NS_DECL_SBIALBUMARTFETCHER
+  NS_DECL_SBIALBUMARTFETCHERSET
 
 
   //
   // Public services.
   //
 
-  sbFileAlbumArtFetcher();
+  sbAlbumArtFetcherSet();
 
-  virtual ~sbFileAlbumArtFetcher();
+  virtual ~sbAlbumArtFetcherSet();
 
   nsresult Initialize();
 
@@ -129,38 +126,30 @@ public:
 private:
 
   //
-  // mIOService                 I/O service.
-  // mFileExtensionList         List of album art file extensions.
-  // mFileBaseNameList          List of album art file base names.
+  // mAlbumArtService           Album art service.
   // mAlbumArtSourceList        List of album art sources.
   // mIsComplete                True if fetching is complete.
   // mFoundAlbumArt             True if album art found.
+  // mLocalOnly                 If true, only fetch locally.
   //
 
-  nsCOMPtr<nsIIOService>        mIOService;
-  nsTArray<nsString>            mFileExtensionList;
-  nsTArray<nsString>            mFileBaseNameList;
+  nsCOMPtr<sbIAlbumArtService>  mAlbumArtService;
   nsCOMPtr<nsIArray>            mAlbumArtSourceList;
   PRBool                        mIsComplete;
   PRBool                        mFoundAlbumArt;
+  PRBool                        mLocalOnly;
 
 
   //
   // Internal services.
   //
 
-  nsresult GetMediaItemDirEntries(sbIMediaItem*         aMediaItem,
-                                  PRBool*               aIsLocalFile,
-                                  nsISimpleEnumerator** aDirEntries);
-
-  nsresult FindAlbumArtFile(nsISimpleEnumerator* aDirEntries,
-                            nsAString&           aAlbumName,
-                            nsIFile**            aAlbumArtFile);
-
-  nsresult SetMediaItemAlbumArt(sbIMediaItem* aMediaItem,
-                                nsIFile*      aAlbumArtFile);
+  nsresult FetchAlbumArtForMediaItem(const char*   aAlbumArtFetcherContractID,
+                                     sbIMediaItem* aMediaItem,
+                                     nsIDOMWindow* aWindow,
+                                     PRBool*       aFoundAlbumArt);
 };
 
 
-#endif // __SB_FILEALBUMARTFETCHER_H__
+#endif // __SB_ALBUMARTFETCHERSET_H__
 

@@ -50,6 +50,7 @@
 
 // Songbird imports.
 #include <sbIMediaItem.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 
@@ -69,7 +70,7 @@
 //
 //------------------------------------------------------------------------------
 
-NS_IMPL_ISUPPORTS1(sbFileAlbumArtFetcher, sbIAlbumArtFetcher)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileAlbumArtFetcher, sbIAlbumArtFetcher)
 
 
 //------------------------------------------------------------------------------
@@ -96,6 +97,10 @@ sbFileAlbumArtFetcher::FetchAlbumArtForMediaItem
   // Function variables.
   nsresult rv;
 
+  // Reset fetcher state.
+  mIsComplete = PR_FALSE;
+  mFoundAlbumArt = PR_FALSE;
+
   // Get the media item content source directory entries.
   nsCOMPtr<nsISimpleEnumerator> contentSrcDirEntries;
   PRBool                        isLocalFile;
@@ -103,8 +108,10 @@ sbFileAlbumArtFetcher::FetchAlbumArtForMediaItem
                               &isLocalFile,
                               getter_AddRefs(contentSrcDirEntries));
   NS_ENSURE_SUCCESS(rv, rv);
-  if (!isLocalFile)
+  if (!isLocalFile) {
+    mIsComplete = PR_TRUE;
     return NS_OK;
+  }
 
   // Get the media item album name.
   nsString albumName;
@@ -126,6 +133,11 @@ sbFileAlbumArtFetcher::FetchAlbumArtForMediaItem
     rv = SetMediaItemAlbumArt(aMediaItem, albumArtFile);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Update fetcher state.
+  if (albumArtFile)
+    mFoundAlbumArt = PR_TRUE;
+  mIsComplete = PR_TRUE;
 
   return NS_OK;
 }
@@ -231,6 +243,52 @@ sbFileAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
 }
 
 
+/**
+ * \brief Flag to indicate if fetching is complete.
+ */
+
+NS_IMETHODIMP
+sbFileAlbumArtFetcher::GetIsComplete(PRBool* aIsComplete)
+{
+  NS_ENSURE_ARG_POINTER(aIsComplete);
+  *aIsComplete = mIsComplete;
+  return NS_OK;
+}
+
+
+/**
+ * \brief Flag to indicate whether album art was found.
+ */
+
+NS_IMETHODIMP
+sbFileAlbumArtFetcher::GetFoundAlbumArt(PRBool* aFoundAlbumArt)
+{
+  NS_ENSURE_ARG_POINTER(aFoundAlbumArt);
+  *aFoundAlbumArt = mFoundAlbumArt;
+  return NS_OK;
+}
+
+
+/**
+ * \brief List of sources of album art (e.g., sbIMetadataHandler).
+ */
+
+NS_IMETHODIMP
+sbFileAlbumArtFetcher::GetAlbumArtSourceList(nsIArray** aAlbumArtSourceList)
+{
+  NS_ENSURE_ARG_POINTER(aAlbumArtSourceList);
+  NS_ADDREF(*aAlbumArtSourceList = mAlbumArtSourceList);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbFileAlbumArtFetcher::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
+{
+  mAlbumArtSourceList = aAlbumArtSourceList;
+  return NS_OK;
+}
+
+
 //------------------------------------------------------------------------------
 //
 // Public services.
@@ -241,7 +299,9 @@ sbFileAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
  * Construct a local file album art fetcher instance.
  */
 
-sbFileAlbumArtFetcher::sbFileAlbumArtFetcher()
+sbFileAlbumArtFetcher::sbFileAlbumArtFetcher() :
+  mIsComplete(PR_FALSE),
+  mFoundAlbumArt(PR_FALSE)
 {
 }
 
@@ -263,6 +323,10 @@ nsresult
 sbFileAlbumArtFetcher::Initialize()
 {
   nsresult rv;
+
+  // Get the I/O service, proxied to the main thread.
+  mIOService = do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the preference branch.
   nsCOMPtr<nsIPrefBranch>
@@ -467,14 +531,9 @@ sbFileAlbumArtFetcher::SetMediaItemAlbumArt(sbIMediaItem* aMediaItem,
   // Function variables.
   nsresult rv;
 
-  // Get the I/O service.
-  nsCOMPtr<nsIIOService>
-    ioService = do_GetService("@mozilla.org/network/io-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Create an album art file URI.
   nsCOMPtr<nsIURI> albumArtURI;
-  rv = ioService->NewFileURI(aAlbumArtFile, getter_AddRefs(albumArtURI));
+  rv = mIOService->NewFileURI(aAlbumArtFile, getter_AddRefs(albumArtURI));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the album art file URI spec.

@@ -40,15 +40,16 @@
 /**
  * \interface sbIAlbumArtFetcher
  * \brief Interface for an album art fetcher.  Instantiate as a component
- *        service.
+ *        instance.
  * \sa sbIAlbumArtListener
  */
 
-interface sbIAlbumArtListener;
+interface nsIArray;
 interface nsIDOMWindow;
+interface sbIAlbumArtListener;
 interface sbIMediaItem;
 
-[scriptable, uuid(baf8cbd1-34f1-41e0-bdff-4c13aac81e08)]
+[scriptable, uuid(36e82881-5285-4223-bc55-7ad546a82b77)]
 interface sbIAlbumArtFetcher : nsISupports
 {
   /**
@@ -84,6 +85,21 @@ interface sbIAlbumArtFetcher : nsISupports
    */
   attribute boolean isEnabled;
 
+  /**
+   * \brief Flag to indicate if fetching is complete.
+   */
+  readonly attribute boolean isComplete;
+
+  /**
+   * \brief Flag to indicate whether album art was found.
+   */
+  readonly attribute boolean foundAlbumArt;
+
+  /**
+   * \brief List of sources of album art (e.g., sbIMetadataHandler).
+   */
+  attribute nsIArray albumArtSourceList;
+
   /* \brief try to fetch album art for the given media item
    * \param aMediaItem the media item that we're looking for album art for
    * \param aListener the listener to inform of success or failure
@@ -104,6 +120,8 @@ interface sbIAlbumArtFetcher : nsISupports
 //
 
 %{C++
+#define SB_ALBUM_ART_FETCHER_CATEGORY "songbird-album-art-fetcher"
+
 #define SB_FILEALBUMARTFETCHER_CONTRACTID \
           "@songbirdnest.com/Songbird/album-art/file-fetcher;1"
 

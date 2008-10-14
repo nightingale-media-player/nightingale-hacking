@@ -49,6 +49,7 @@
 //------------------------------------------------------------------------------
 
 // Songbird imports.
+#include <sbIAlbumArtFetcher.h>
 #include <sbIAlbumArtService.h>
 #include <sbMemoryUtils.h>
 
@@ -57,6 +58,8 @@
 #include <nsIFileStreams.h>
 #include <nsIIOService.h>
 #include <nsIMIMEService.h>
+#include <nsIObserver.h>
+#include <nsIObserverService.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 
@@ -92,7 +95,8 @@
  * This class implements the album art service component.
  */
 
-class sbAlbumArtService : public sbIAlbumArtService
+class sbAlbumArtService : public sbIAlbumArtService,
+                          public nsIObserver
 {
   //----------------------------------------------------------------------------
   //
@@ -108,6 +112,7 @@ public:
 
   NS_DECL_ISUPPORTS
   NS_DECL_SBIALBUMARTSERVICE
+  NS_DECL_NSIOBSERVER
 
 
   //
@@ -130,21 +135,52 @@ public:
 private:
 
   //
+  // Fetcher information.
+  //
+  //   contractID                   Album art fetcher contract ID.
+  //   fetcher                      Album art fetcher.
+  //
+
+  class FetcherInfo
+  {
+  public:
+    nsCString                       contractID;
+    nsCOMPtr<sbIAlbumArtFetcher>    fetcher;
+  };
+
+
+  //
+  // mObserverService           Observer service.
   // mIOService                 I/O service.
   // mMIMEService               MIME service.
   // mAlbumArtCacheDir          Album art cache directory.
+  // mInitialized               True if album art service initialized.
+  // mPrefsAvailable            True if preferences are available.
+  // mFetcherInfoList           List of fetcher information.
   // mValidExtensionList        List of valid album art file extensions.
   //
 
+  nsCOMPtr<nsIObserverService>  mObserverService;
   nsCOMPtr<nsIIOService>        mIOService;
   nsCOMPtr<nsIMIMEService>      mMIMEService;
   nsCOMPtr<nsIFile>             mAlbumArtCacheDir;
+  PRBool                        mInitialized;
+  PRBool                        mPrefsAvailable;
+  nsTArray<FetcherInfo>         mFetcherInfoList;
   nsTArray<nsCString>           mValidExtensionList;
 
 
   //
   // Internal services.
   //
+
+  void Finalize();
+
+  nsresult GetAlbumArtCacheDir();
+
+  nsresult GetAlbumArtFetcherInfo();
+
+  nsresult SortAlbumArtFetcherInfo();
 
   nsresult GetCacheFileBaseName(const PRUint8* aData,
                                 PRUint32       aDataLen,

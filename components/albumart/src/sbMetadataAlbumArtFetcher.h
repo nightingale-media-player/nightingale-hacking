@@ -128,10 +128,24 @@ private:
   //
   // mAlbumArtService           Album art service.
   // mMetadataManager           Metadata manager.
+  // mAlbumArtSourceList        List of album art sources.
+  // mIsComplete                True if fetching is complete.
+  // mFoundAlbumArt             True if album art found.
   //
 
   nsCOMPtr<sbIAlbumArtService>  mAlbumArtService;
   nsCOMPtr<sbIMetadataManager>  mMetadataManager;
+  nsCOMPtr<nsIArray>            mAlbumArtSourceList;
+  PRBool                        mIsComplete;
+  PRBool                        mFoundAlbumArt;
+
+
+  //
+  // Internal services.
+  //
+
+  nsresult GetMetadataHandler(nsIURI*              aContentSrcURI,
+                              sbIMetadataHandler** aMetadataHandler);
 };
 
 

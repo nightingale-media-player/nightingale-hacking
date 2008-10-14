@@ -45,11 +45,25 @@
  * "@songbirdnest.com/Songbird/album-art-service;1"
  */
 
+interface nsIArray;
 interface nsIFileURL;
 
-[scriptable, uuid(0efbc2f2-a401-4382-bbdf-a6c75d1502bf)]
+[scriptable, uuid(0d0d6689-ab81-4e1f-aac1-8be9b96118fc)]
 interface sbIAlbumArtService : nsISupports
 {
+  /**
+   * Return a list of album art fetcher contract ID's as an array of
+   * nsIVariant's of type ACString.  If aLocalOnly is true, return only local
+   * album art fetchers.
+   *
+   * \param aLocalOnly          If true, only return local album art fetchers.
+   *
+   * \return                    List of album art fetcher contract ID's.
+   */
+
+  nsIArray getFetcherList(in boolean aLocalOnly);
+
+
   /**
    * \brief Write the album art image specified by aData and aDataLen of type
    *        specified by aMimeType to a cache file and return the cache file

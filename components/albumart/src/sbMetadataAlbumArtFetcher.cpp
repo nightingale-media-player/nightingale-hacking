@@ -54,6 +54,7 @@
 #include <sbStandardProperties.h>
 
 // Mozilla imports.
+#include <nsArrayUtils.h>
 #include <nsIFileURL.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
@@ -65,7 +66,7 @@
 //
 //------------------------------------------------------------------------------
 
-NS_IMPL_ISUPPORTS1(sbMetadataAlbumArtFetcher, sbIAlbumArtFetcher)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataAlbumArtFetcher, sbIAlbumArtFetcher)
 
 
 //------------------------------------------------------------------------------
@@ -92,26 +93,28 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForMediaItem
   // Function variables.
   nsresult rv;
 
+  // Reset fetcher state.
+  mIsComplete = PR_FALSE;
+  mFoundAlbumArt = PR_FALSE;
+
   // Do nothing if media item content is not a local file.
   nsCOMPtr<nsIURI> contentSrcURI;
   nsCOMPtr<nsIFileURL> contentSrcFileURL;
   rv = aMediaItem->GetContentSrc(getter_AddRefs(contentSrcURI));
   NS_ENSURE_SUCCESS(rv, rv);
   contentSrcFileURL = do_QueryInterface(contentSrcURI, &rv);
-  if (NS_FAILED(rv))
+  if (NS_FAILED(rv)) {
+    mIsComplete = PR_TRUE;
     return NS_OK;
+  }
 
   // Get the metadata handler for the media item content.  Do nothing more if
   // none available.
-  nsCAutoString contentSrcURISpec;
-  rv = contentSrcURI->GetSpec(contentSrcURISpec);
-  NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<sbIMetadataHandler> metadataHandler;
-  rv = mMetadataManager->GetHandlerForMediaURL
-                           (NS_ConvertUTF8toUTF16(contentSrcURISpec),
-                            getter_AddRefs(metadataHandler));
+  rv = GetMetadataHandler(contentSrcURI, getter_AddRefs(metadataHandler));
   if (NS_FAILED(rv) || !metadataHandler) {
     NS_WARNING("Could not find metadata handler.\n");
+    mIsComplete = PR_TRUE;
     return NS_OK;
   }
 
@@ -139,8 +142,10 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForMediaItem
   }
 
   // If no album art found, do nothing more.
-  if (dataLength == 0)
+  if (dataLength == 0) {
+    mIsComplete = PR_TRUE;
     return NS_OK;
+  }
 
   // Set up album art data for auto-disposal.
   sbAutoNSMemPtr autoData(data);
@@ -160,6 +165,10 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForMediaItem
   rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
                                NS_ConvertUTF8toUTF16(cacheFileURISpec));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update fetcher state.
+  mFoundAlbumArt = PR_TRUE;
+  mIsComplete = PR_TRUE;
 
   return NS_OK;
 }
@@ -265,6 +274,52 @@ sbMetadataAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
 }
 
 
+/**
+ * \brief Flag to indicate if fetching is complete.
+ */
+
+NS_IMETHODIMP
+sbMetadataAlbumArtFetcher::GetIsComplete(PRBool* aIsComplete)
+{
+  NS_ENSURE_ARG_POINTER(aIsComplete);
+  *aIsComplete = mIsComplete;
+  return NS_OK;
+}
+
+
+/**
+ * \brief Flag to indicate whether album art was found.
+ */
+
+NS_IMETHODIMP
+sbMetadataAlbumArtFetcher::GetFoundAlbumArt(PRBool* aFoundAlbumArt)
+{
+  NS_ENSURE_ARG_POINTER(aFoundAlbumArt);
+  *aFoundAlbumArt = mFoundAlbumArt;
+  return NS_OK;
+}
+
+
+/**
+ * \brief List of sources of album art (e.g., sbIMetadataHandler).
+ */
+
+NS_IMETHODIMP
+sbMetadataAlbumArtFetcher::GetAlbumArtSourceList(nsIArray** aAlbumArtSourceList)
+{
+  NS_ENSURE_ARG_POINTER(aAlbumArtSourceList);
+  NS_ADDREF(*aAlbumArtSourceList = mAlbumArtSourceList);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMetadataAlbumArtFetcher::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
+{
+  mAlbumArtSourceList = aAlbumArtSourceList;
+  return NS_OK;
+}
+
+
 //------------------------------------------------------------------------------
 //
 // Public services.
@@ -275,7 +330,9 @@ sbMetadataAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
  * Construct a metadata album art fetcher instance.
  */
 
-sbMetadataAlbumArtFetcher::sbMetadataAlbumArtFetcher()
+sbMetadataAlbumArtFetcher::sbMetadataAlbumArtFetcher() :
+  mIsComplete(PR_FALSE),
+  mFoundAlbumArt(PR_FALSE)
 {
 }
 
@@ -306,6 +363,72 @@ sbMetadataAlbumArtFetcher::Initialize()
   mMetadataManager =
     do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+//------------------------------------------------------------------------------
+//
+// Internal services.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * Return in aMetadataHandler a metadata handler for the content specified by
+ * aContentSrcURI.  Try getting a metadata handler from the album art source
+ * list and the metadata manager.
+ *
+ * \param aContentSrcURI        URI of content source.
+ * \param aMetadataHandler      Metadata handler for content.
+ *
+ * \return NS_ERROR_NOT_AVAILABLE
+ *                              No metadata handler available.
+ */
+
+nsresult
+sbMetadataAlbumArtFetcher::GetMetadataHandler
+                             (nsIURI*              aContentSrcURI,
+                              sbIMetadataHandler** aMetadataHandler)
+{
+  // Validate arguments.
+  NS_ASSERTION(aContentSrcURI, "aContentSrcURI is null");
+  NS_ASSERTION(aMetadataHandler, "aMetadataHandler is null");
+
+  // Function variables.
+  nsCOMPtr<sbIMetadataHandler> metadataHandler;
+  nsresult rv;
+
+  // Try getting a metadata handler from the album art source list.
+  if (mAlbumArtSourceList) {
+    PRUint32 albumArtSourceListCount;
+    rv = mAlbumArtSourceList->GetLength(&albumArtSourceListCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+    for (PRUint32 i = 0; i < albumArtSourceListCount; i++) {
+      metadataHandler = do_QueryElementAt(mAlbumArtSourceList, i, &rv);
+      if (NS_SUCCEEDED(rv))
+        break;
+    }
+  }
+
+  // Try getting a metadata handler from the metadata manager.
+  if (!metadataHandler) {
+    nsCAutoString contentSrcURISpec;
+    rv = aContentSrcURI->GetSpec(contentSrcURISpec);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mMetadataManager->GetHandlerForMediaURL
+                             (NS_ConvertUTF8toUTF16(contentSrcURISpec),
+                              getter_AddRefs(metadataHandler));
+    if (NS_FAILED(rv))
+      metadataHandler = nsnull;
+  }
+
+  // Check if a metadata handler was found.
+  if (!metadataHandler)
+    return NS_ERROR_NOT_AVAILABLE;
+
+  // Return results.
+  metadataHandler.forget(aMetadataHandler);
 
   return NS_OK;
 }

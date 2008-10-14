@@ -32,7 +32,8 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_INCLUDES = \
                  $(NULL)
 
-XPIDL_SRCS = sbIAlbumArtFetcher.idl \
+XPIDL_SRCS = sbIAlbumArtFetcherSet.idl \
+             sbIAlbumArtFetcher.idl \
              sbIAlbumArtListener.idl \
              sbIAlbumArtService.idl \
              $(NULL)

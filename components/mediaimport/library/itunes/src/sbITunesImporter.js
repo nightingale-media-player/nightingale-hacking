@@ -2180,11 +2180,13 @@ sbITunesImporter.prototype =
 
       // Try fetching local file album art.
       try {
-        var fileAlbumArtFetcher =
-              Cc["@songbirdnest.com/Songbird/album-art/file-fetcher;1"]
-                .getService(Ci.sbIAlbumArtFetcher);
-        fileAlbumArtFetcher.fetchAlbumArtForMediaItem(mediaItem, null, null);
+        var fileAlbumArtFetcherSet =
+              Cc["@songbirdnest.com/Songbird/album-art-fetcher-set;1"]
+                .createInstance(Ci.sbIAlbumArtFetcherSet);
+        fileAlbumArtFetcherSet.localOnly = true;
+        fileAlbumArtFetcherSet.fetchAlbumArtForMediaItem(mediaItem, null, null);
       } catch (ex) {
+        Cu.reportError(ex);
       }
 
       // Add the media item to the corresponding track info object.
