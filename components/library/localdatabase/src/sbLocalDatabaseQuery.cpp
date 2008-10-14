@@ -842,7 +842,10 @@ sbLocalDatabaseQuery::AddFilters()
     for (PRUint32 i = 0; i < fs.values.Length(); i++) {
 
       nsString stripped(fs.values[i]);
-      stripped.StripChars("*");
+
+      // '*' and '-' are special FTS operators. Make sure they are not in the
+      // search filter otherwise the query will fail with a logic error.
+      nsString_ReplaceChar(stripped, NS_LITERAL_STRING("*-"), ' ');
 
       match.AppendLiteral("'");
       match.Append(stripped);
