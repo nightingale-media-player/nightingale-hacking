@@ -31,8 +31,10 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = handler \
           manager \
+          albumartfetcher \
           $(NULL)
 
 SUBDIRDEPS = handler : manager
+SUBDIRDEPS2 = albumartfetcher : manager
 
 include $(topsrcdir)/build/rules.mk
