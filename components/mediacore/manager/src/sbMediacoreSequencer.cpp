@@ -1759,7 +1759,7 @@ sbMediacoreSequencer::Next()
        mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
        mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
       rv = mPlaybackControl->Stop();
-      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
     }
 
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -1769,6 +1769,13 @@ sbMediacoreSequencer::Next()
 
     rv = UpdatePlayStateDataRemotes();
     NS_ENSURE_SUCCESS(rv, rv);
+
+    if(mSeenPlaying) {
+      mSeenPlaying = PR_FALSE;
+
+      rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     // XXXAus: Send End of Sequence Event?
 
@@ -1837,7 +1844,7 @@ sbMediacoreSequencer::Previous()
        mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
        mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
       rv = mPlaybackControl->Stop();
-      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
     }
 
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -1847,6 +1854,13 @@ sbMediacoreSequencer::Previous()
 
     rv = UpdatePlayStateDataRemotes();
     NS_ENSURE_SUCCESS(rv, rv);
+
+    if(mSeenPlaying) {
+      mSeenPlaying = PR_FALSE;
+
+      rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     // XXXAus: Send End of Sequence Event?
 
@@ -2027,6 +2041,13 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
       rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      if(mSeenPlaying) {
+        mSeenPlaying = PR_FALSE;
+
+        rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
     break;
 
