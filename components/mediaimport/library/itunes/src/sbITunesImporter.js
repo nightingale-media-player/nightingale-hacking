@@ -2581,7 +2581,7 @@ var ITDB =
         this.mAsyncDBQuery.setDatabaseGUID("songbird");
 
         /* Create the iTunes ID map database table. */
-        this.mDBQuery.addQuery(  "CREATE TABLE itunes_id_map "
+        this.mDBQuery.addQuery(  "CREATE TABLE IF NOT EXISTS itunes_id_map "
                                + "(itunes_id TEXT UNIQUE NOT NULL, "
                                + "songbird_id TEXT UNIQUE NOT NULL)");
         this.mDBQuery.execute();
@@ -2793,7 +2793,7 @@ function ITSig()
     this.mDBQuery.setDatabaseGUID(this.dbGUID);
 
     /* Ensure the signature database table exists. */
-    this.mDBQuery.addQuery(  "CREATE TABLE " + this.dbTable + " "
+    this.mDBQuery.addQuery(  "CREATE TABLE IF NOT EXISTS " + this.dbTable + " "
                            + "(id TEXT UNIQUE NOT NULL, "
                            + " signature TEXT NOT NULL)");
     this.mDBQuery.execute();
