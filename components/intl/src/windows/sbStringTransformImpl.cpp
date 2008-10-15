@@ -76,11 +76,16 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
                                        const nsAString & aInput, 
                                        nsAString & _retval)
 {
-  nsTArray<WORD> invalidChars;
-  DWORD dwFlags = MakeFlags(aTransformFlags, invalidChars);
-  
   nsString finalStr;
   nsString inStr(aInput);
+
+  if(inStr.IsEmpty()) {
+    _retval.Truncate();
+    return NS_OK;
+  }
+
+  nsTArray<WORD> invalidChars;
+  DWORD dwFlags = MakeFlags(aTransformFlags, invalidChars);
 
   if(aTransformFlags & sbIStringTransform::TRANSFORM_LOWERCASE ||
      aTransformFlags & sbIStringTransform::TRANSFORM_UPPERCASE) {
