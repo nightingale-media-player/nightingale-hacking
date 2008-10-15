@@ -331,14 +331,6 @@ firstRunImportMediaSvc.prototype = {
     // Get the import radio group element.
     var importRadioGroupElem = this._getElement("import_radiogroup");
 
-    // If the iTunes import option is not disabled, set it as the default and
-    // return.
-    var iTunesRadioElem = this._getElement("itunes_radio");
-    if (!iTunesRadioElem.disabled) {
-      importRadioGroupElem.selectedItem = iTunesRadioElem;
-      return;
-    }
-
     // Select the scan directories import option.
     var scanDirectoriesElem = this._getElement("scan_directories_radio");
     importRadioGroupElem.selectedItem = scanDirectoriesElem;
