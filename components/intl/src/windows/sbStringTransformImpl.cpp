@@ -155,6 +155,8 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
         finalStr.Append(bufferStr.CharAt(current));
       }
     }
+
+    delete [] charTypes;
   }
 
   _retval = finalStr;
