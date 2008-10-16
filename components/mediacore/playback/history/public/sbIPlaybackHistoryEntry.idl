@@ -48,7 +48,7 @@ interface sbIPlaybackHistoryEntry : nsISupports
   
   /**
    * \brief Timestamp indicating at which time the item started playing.
-   * \note The timestamp is a standard UNIX style timestamp.
+   * \note The timestamp is a usecs since the unix epoch.
    */
   readonly attribute long long timestamp;
 
