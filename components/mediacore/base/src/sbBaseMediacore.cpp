@@ -172,6 +172,35 @@ sbBaseMediacore::GetStatus(sbIMediacoreStatus* *aStatus)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbBaseMediacore::GetSequencer(sbIMediacoreSequencer* *aSequencer)
+{
+  TRACE(("sbBaseMediacore[0x%x] - GetSequencer", this));
+  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aSequencer);
+
+  nsAutoLock lock(mLock);
+  NS_IF_ADDREF(*aSequencer = mSequencer);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseMediacore::SetSequencer(sbIMediacoreSequencer *aSequencer)
+{
+  TRACE(("sbBaseMediacore[0x%x] - GetSequencer", this));
+  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aSequencer);
+
+  nsresult rv = OnSetSequencer(aSequencer);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoLock lock(mLock);
+  mSequencer = aSequencer;
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP 
 sbBaseMediacore::Shutdown()
 {
@@ -208,6 +237,27 @@ sbBaseMediacore::OnGetCapabilities()
    */
 
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult 
+sbBaseMediacore::OnSetSequencer(sbIMediacoreSequencer *aSequencer)
+{
+  /** 
+   * If your mediacore can handle things like gapless playback and crossfading
+   * you can use the sequencer that is passed to you to peek at the item that
+   * will follow the current one.
+   *
+   * If you wish to handle the next item, you can indicate this to the sequencer
+   * by calling sbIMediacoreSequencer::requestHandleNextItem.
+   *
+   * The sequencer is available to you as 'mSequencer' as well if this method
+   * returns NS_OK. You should lock sbBaseMediacore::mLock when getting the
+   * sequencer from mSequencer and putting it in your own local nsCOMPtr. Do not
+   * hold the lock longer than you have to. Get your reference, and release the
+   * lock.
+   */
+
+  return NS_OK;
 }
 
 /*virtual*/ nsresult 

@@ -45,6 +45,7 @@ endif
 
 CPP_INCLUDES = \
       $(topsrcdir)/components/include \
+      $(DEPTH)/components/library/base/public \
       $(DEPTH)/components/mediacore/base/public \
       $(topsrcdir)/components/mediacore/base/src \
       $(DEPTH)/components/mediacore/gstreamer/public \

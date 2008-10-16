@@ -29,12 +29,13 @@
 interface nsIArray;
 interface nsIURI;
 
+interface sbIMediacore;
 interface sbIMediacoreSequence;
 interface sbIMediacoreSequenceGenerator;
 interface sbIMediaItem;
 interface sbIMediaListView;
 
-[scriptable, uuid(890bb5d1-022a-4bdc-86e8-c22ec7e383d1)]
+[scriptable, uuid(817ee262-9ca7-4cb4-a0a5-d554989a02d0)]
 interface sbIMediacoreSequencer : nsISupports
 {
   const unsigned long MODE_FORWARD    = 0;
@@ -69,6 +70,14 @@ interface sbIMediacoreSequencer : nsISupports
    * \note This may be null if there is no currentItem.
    */
   readonly attribute sbIMediaItem currentItem;
+
+  /**
+   * \brief The next item in the sequence.
+   * \note This is equivalent to getting the current sequence and asking it
+   *       for sequencePosition + 1.
+   * \note This may be null is there is no next item.
+   */
+  readonly attribute sbIMediaItem nextItem;
 
   /**
    * \brief The current sequence.
@@ -107,6 +116,12 @@ interface sbIMediacoreSequencer : nsISupports
    * \brief Go to the previous item in the sequence.
    */
   void previous();
+
+  /**
+   * \brief Indicate that the current core will handle the next item in the
+   *        sequence when the stream ends.
+   */
+  void requestHandleNextItem(in sbIMediacore aMediacore);
 
   // When in custom mode, this generator is used to generate the sequence.
   attribute sbIMediacoreSequenceGenerator customGenerator;

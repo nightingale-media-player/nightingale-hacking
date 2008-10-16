@@ -110,6 +110,7 @@ public:
   // Setup for playback
   nsresult ProcessNewPosition();
   nsresult Setup(nsIURI *aURI = nsnull);
+  nsresult CoreHandleNextSetup();
 
   // Set view with optional view position
   nsresult SetViewWithViewPosition(sbIMediaListView *aView, 
@@ -138,6 +139,7 @@ protected:
   PRPackedBool                   mIsWaitingForPlayback;
   PRPackedBool                   mSeenPlaying;
   PRPackedBool                   mNextTriggeredByStreamEnd;
+  PRPackedBool                   mCoreWillHandleNext;
   
   PRUint32                       mChainIndex;
   nsCOMPtr<nsIArray>             mChain;

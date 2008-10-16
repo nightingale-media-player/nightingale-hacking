@@ -27,16 +27,18 @@
 #include "nsISupports.idl"
 
 interface sbIMediacoreCapabilities;
-interface sbIMediacoreSequence;
+interface sbIMediacoreSequencer;
 interface sbIMediacoreStatus;
 
-[scriptable, uuid(927cc189-0dc6-4b3d-8881-1d0e80fcc854)]
+[scriptable, uuid(b22e7f79-c036-4d8e-bfe1-6bcc13d02d5b)]
 interface sbIMediacore : nsISupports
 {
   readonly attribute AString instanceName;
   readonly attribute sbIMediacoreCapabilities capabilities;
 
   readonly attribute sbIMediacoreStatus status;
+
+  attribute sbIMediacoreSequencer sequencer;
 
   void shutdown();
 };

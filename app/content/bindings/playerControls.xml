@@ -1409,7 +1409,12 @@
           // observer for DataRemote 
           this.on_remote_artist_album_change = { 
             _that: null, 
-            observe: function( aSubject, aTopic, aData ) { this._that.rebuildTip(); } 
+            observe: function( aSubject, aTopic, aData ) { 
+              try {
+                this._that.rebuildTip(); 
+              }
+              catch(e) {}
+            } 
           };
           this.on_remote_artist_album_change._that = this;
 

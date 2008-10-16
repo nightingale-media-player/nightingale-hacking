@@ -37,6 +37,7 @@
 #include <nsIClassInfo.h>
 
 #include <sbIMediacoreCapabilities.h>
+#include <sbIMediacoreSequencer.h>
 #include <sbIMediacoreStatus.h>
 
 #include <nsAutoLock.h>
@@ -67,6 +68,9 @@ public:
   virtual nsresult OnGetCapabilities();
 
   //Override me, see cpp file for implementation notes.
+  virtual nsresult OnSetSequencer(sbIMediacoreSequencer *aSequencer);
+
+  //Override me, see cpp file for implementation notes.
   virtual nsresult OnShutdown();
 
 protected:
@@ -78,6 +82,7 @@ protected:
 
   nsCOMPtr<sbIMediacoreCapabilities> mCapabilities;
   nsCOMPtr<sbIMediacoreStatus>       mStatus;
+  nsCOMPtr<sbIMediacoreSequencer>    mSequencer;
 };
 
 #endif /* __SB_BASEMEDIACORE_H__ */

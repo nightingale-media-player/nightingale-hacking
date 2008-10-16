@@ -110,6 +110,7 @@ protected:
   void DispatchMediacoreEvent (unsigned long type, 
           nsIVariant *aData = NULL, sbIMediacoreError *aError = NULL);
 
+  void HandleAboutToFinishSignal ();
   void HandleTagMessage (GstMessage *message);
   void HandleStateChangedMessage (GstMessage *message);
   void HandleEOSMessage (GstMessage *message);
@@ -120,6 +121,7 @@ protected:
 private:
   // Static helper for C callback
   static void syncHandler(GstBus *bus, GstMessage *message, gpointer data);
+  static void aboutToFinishHandler(GstElement *playbin, gpointer data);
 
 protected:
   // Protects all access to mPipeline

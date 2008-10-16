@@ -62,6 +62,7 @@
 #include <sbMediacoreError.h>
 
 #include <sbIGStreamerService.h>
+#include <sbIMediaItem.h>
 
 #include "sbGStreamerMediacoreUtils.h"
 
@@ -226,6 +227,14 @@ sbGStreamerMediacore::syncHandler(GstBus* bus, GstMessage* message,
   }
 }
 
+/* static */ void
+sbGStreamerMediacore::aboutToFinishHandler(GstElement *playbin, gpointer data)
+{
+  sbGStreamerMediacore *core = static_cast<sbGStreamerMediacore*>(data);
+  core->HandleAboutToFinishSignal();
+  return;
+}
+
 /* Must be called with mMonitor held */
 nsresult 
 sbGStreamerMediacore::DestroyPipeline()
@@ -282,6 +291,10 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
 
   g_object_unref ((GObject *)bus);
 
+  // Handle about-to-finish signal emitted by playbin2
+  g_signal_connect (mPipeline, "about-to-finish", 
+          G_CALLBACK (aboutToFinishHandler), this);
+
   return NS_OK;
 }
 
@@ -326,6 +339,45 @@ void sbGStreamerMediacore::DispatchMediacoreEvent (unsigned long type,
 
   rv = DispatchEvent(event, PR_FALSE, nsnull);
   NS_ENSURE_SUCCESS(rv, /* void */);
+}
+
+void sbGStreamerMediacore::HandleAboutToFinishSignal()
+{
+  LOG(("Handling about-to-finish signal"));
+
+  nsAutoLock lock(sbBaseMediacore::mLock);
+  nsCOMPtr<sbIMediacoreSequencer> sequencer = mSequencer;
+  lock.unlock();
+
+  if(!sequencer) {
+    return;
+  }
+
+  nsAutoMonitor mon(mMonitor);
+  NS_ENSURE_TRUE(mPipeline, /*void*/);
+
+  nsCOMPtr<sbIMediaItem> item;
+  nsresult rv = sequencer->GetNextItem(getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, /*void*/ );
+  NS_ENSURE_TRUE(item, /*void*/);
+
+  nsCOMPtr<nsIURI> uri;
+  rv = item->GetContentSrc(getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, /*void*/ );
+
+  rv = sequencer->RequestHandleNextItem(this);
+  NS_ENSURE_SUCCESS(rv, /*void*/ );
+
+  nsCString spec;
+  rv = uri->GetSpec(spec);
+  NS_ENSURE_SUCCESS(rv, /*void*/);
+
+  LOG(("Setting URI to \"%s\"", spec.get()));
+
+  /* Set the URI to play */
+  g_object_set (G_OBJECT (mPipeline), "uri", spec.get(), NULL);
+
+  return;
 }
 
 void sbGStreamerMediacore::HandleTagMessage(GstMessage *message)
@@ -522,6 +574,8 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
 {
   GstMessageType msg_type;
   msg_type = GST_MESSAGE_TYPE(message);
+
+  LOG(("Got message: %s", gst_message_type_get_name(msg_type)));
 
   switch (msg_type) {
     case GST_MESSAGE_STATE_CHANGED:

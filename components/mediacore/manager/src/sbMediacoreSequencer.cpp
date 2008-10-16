@@ -142,6 +142,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mIsWaitingForPlayback(PR_FALSE)
 , mSeenPlaying(PR_FALSE)
 , mNextTriggeredByStreamEnd(PR_FALSE)
+, mCoreWillHandleNext(PR_FALSE)
 , mMode(sbIMediacoreSequencer::MODE_FORWARD)
 , mRepeatMode(sbIMediacoreSequencer::MODE_REPEAT_NONE)
 , mPosition(0)
@@ -970,6 +971,15 @@ sbMediacoreSequencer::ProcessNewPosition()
   nsresult rv = ResetMetadataDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // if the current core requested handling of the next item, we have nothing
+  // to do here but reset the flag.
+  if(mCoreWillHandleNext) {
+    rv = CoreHandleNextSetup();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
+  }
+
   rv = Setup();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1152,6 +1162,9 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   rv = privateMediacoreManager->SetPrimaryCore(mCore);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mCore->SetSequencer(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = StartSequenceProcessor();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1177,6 +1190,61 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
     rv = DispatchMediacoreEvent(event);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::CoreHandleNextSetup()
+{
+  mCoreWillHandleNext = PR_FALSE;
+
+  nsCOMPtr<sbIMediaItem> item;
+  nsresult rv = GetItem(mSequence, mPosition, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mCurrentItemIndex = mSequence[mPosition];
+
+  rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mCurrentItem = item;
+
+  nsCOMPtr<nsIURI> uri;
+  rv = item->GetContentSrc(getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> variant = sbNewVariant(item).get();
+  NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<sbIMediacoreEvent> event;
+  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_TRACK_CHANGE, 
+                                     nsnull, 
+                                     variant, 
+                                     mCore, 
+                                     getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DispatchMediacoreEvent(event);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateURLDataRemotes(uri);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetMetadataDataRemotesFromItem(item);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Fire track change event
+  variant = sbNewVariant(item).get();
+  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_CHANGE, 
+                                     nsnull, 
+                                     variant, 
+                                     mCore, 
+                                     getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DispatchMediacoreEvent(event);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1564,6 +1632,28 @@ sbMediacoreSequencer::GetCurrentItem(sbIMediaItem **aItem)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbMediacoreSequencer::GetNextItem(sbIMediaItem **aItem) 
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  // by default, if there's no current item, this doesn't throw, it returns a
+  // null item instead.
+  *aItem = nsnull;
+
+  PRUint32 nextPosition = mPosition + 1;
+  if(!mView ||
+     nextPosition >= mSequence.size()) {
+    return NS_OK;
+  }
+
+  nsresult rv = mView->GetItemByIndex(mSequence[nextPosition], aItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP 
 sbMediacoreSequencer::GetCurrentSequence(nsIArray * *aCurrentSequence)
 {
@@ -1873,6 +1963,20 @@ sbMediacoreSequencer::Previous()
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aMediacore);
+
+  nsAutoMonitor mon(mMonitor);
+  NS_ENSURE_TRUE(mCore == aMediacore, NS_ERROR_INVALID_ARG);
+
+  mCoreWillHandleNext = PR_TRUE;
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP 
 sbMediacoreSequencer::GetCustomGenerator(
                         sbIMediacoreSequenceGenerator * *aCustomGenerator)
@@ -1967,6 +2071,12 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
          mStatus = sbIMediacoreStatus::STATUS_PLAYING;
       }
 
+      if(mCoreWillHandleNext) {
+        sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
+        nsresult rv = Next();
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
       rv = UpdatePlayStateDataRemotes();
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1996,13 +2106,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
          !mIsWaitingForPlayback) {
         
         sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
-        
-        if(mMode != sbIMediacoreSequencer::MODE_REVERSE) {
-          rv = Next();
-        }
-        else {
-          rv = Previous();
-        }
+        rv = Next();
 
         if(NS_FAILED(rv) ||
            mSequence.empty()) {

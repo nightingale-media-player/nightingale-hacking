@@ -162,6 +162,17 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::GetStatus(sbIMediacoreStatus * *aSta
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+/* attribute sbIMediacoreSequencer sequencer; */
+NS_IMETHODIMP sbTestMediacoreStressThreads::GetSequencer(sbIMediacoreSequencer* *aSequencer)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP sbTestMediacoreStressThreads::SetSequencer(sbIMediacoreSequencer *aSequencer)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 /* void shutdown (); */
 NS_IMETHODIMP sbTestMediacoreStressThreads::Shutdown()
 {
