@@ -50,16 +50,6 @@ interface nsIFile;
 interface sbIDatabaseEngine : nsISupports
 {
   /**
-   * \deprecated
-   */
-  [noscript] void AddPersistentQuery(in CDatabaseQueryPtr aDBQuery, in ACString aTableName);
-
-  /**
-   * \deprecated
-   */
-  [noscript] void RemovePersistentQuery(in CDatabaseQueryPtr aDBQuery);
-
-  /**
    * \brief Submit a query to the database engine for processing.
    *
    * \param aDBQuery - Native CDatabaseQuery Pointer.

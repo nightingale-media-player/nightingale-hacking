@@ -124,23 +124,11 @@ protected:
   PRLock *m_pLocationURILock;
   nsCOMPtr<nsIURI> m_LocationURI;
 
-  PRBool m_IsPersistentQueryRegistered;
-  PRBool m_HasChangedDataOfPersistQuery;
-
-  PRBool m_PersistExecSelectiveMode;
-  PRBool m_PersistExecOnInsert;
-  PRBool m_PersistExecOnUpdate;
-  PRBool m_PersistExecOnDelete;
-
-  PRLock* m_pPersistentQueryTableLock;
-  nsCString m_PersistentQueryTable;
-
   PRLock* m_StateLock;
   PRBool m_IsAborting;
   PRBool m_IsExecuting;
   
   PRBool m_AsyncQuery;
-  PRBool m_PersistentQuery;
 
   PRLock*  m_CurrentQueryLock;
   PRUint32 m_CurrentQuery;

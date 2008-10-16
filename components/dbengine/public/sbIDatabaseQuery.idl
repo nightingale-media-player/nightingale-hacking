@@ -76,10 +76,6 @@ interface sbIDatabaseSimpleQueryCallback : nsISupports
  * Clients that simply need to be informed when a query has completed may
  * implement this interface and pass it to sbIDatabaseQuery::addCallback().
  *
- * For persistent queries, the callback will be called every time the system
- * detects that the queried table has been changed and has executed the query
- * again.
- *
  * NOTE: The callback methods are called from a database thread.
  *
  * \sa sbIDatabaseSimpleQueryCallback, sbIDatabaseQuery
@@ -150,7 +146,7 @@ interface sbIDatabaseQueryCallback : nsISupports
 * The basic loop for using a query is as follows:
 *
 * 1) Object Initialization - setDatabaseGUID(), optionally setAsyncQuery(), 
-* setPersistentQuery(), set callbacks, etc
+* set callbacks, etc
 *
 * 2) Query Construction - addQuery(), or calls to the helper objects
 *
@@ -183,48 +179,6 @@ interface sbIDatabaseQuery : nsISupports
   attribute nsIURI databaseLocation;
 
   /**
-   * \brief Use selective persistent query update scheme.
-   *
-   * If this is enabled, a persistent query will only
-   * get re-executed when data is inserted, deleted or
-   * updated in such a way that it affects the result of the
-   * persistent query.
-   *
-   * This disabled by default.
-   */
-  attribute boolean persistExecSelectiveMode;
-  
-  /**
-   * A persistent query would use persistExecOnInsert to
-   * dictate whether it wishes to be re-executed when data
-   * is inserted.
-   *
-   * This is enabled by default but requires that persistExecSelectiveMode
-   * be enabled for it to be taken into account.
-   */
-  attribute boolean persistExecOnInsert;
-  
-  /**
-   * A persistent query would use persistExecOnUpdate to
-   * dictate whether it wishes to be re-executed when data
-   * in it's selection set is updated.
-   *
-   * This is enabled by default but requires that persistExecSelectiveMode
-   * be enabled for it to be taken into account.
-   */
-  attribute boolean persistExecOnUpdate;
-  
-  /**
-   * A persistent query would use persistExecOnDelete to
-   * dictate whether it wishes to be re-executed when data
-   * is deleted.
-   *
-   * This is enabled by default but requires that persistExecSelectiveMode
-   * be enabled for it to be taken into account.
-   */
-  attribute boolean persistExecOnDelete;
-
-  /**
    * \brief Set the query to run asynchronously (ie: execute() does not block)
    *
    * Use callbacks or poll via isExecuting() to know when the query completes.
@@ -241,27 +195,6 @@ interface sbIDatabaseQuery : nsISupports
    */
   PRBool isAyncQuery();
   
-  /**
-   * \brief Set the query to run persistently
-   *
-   * A persistent query will be executed again if the database engine detects 
-   * that an update or an insert has occured on the table queried by this 
-   * object.
-   *
-   * Usually, this is only useful with a callback.  :)
-   *
-   * \param bPersistentQuery If true, register as a persistent query (default: false)
-   */
-  void setPersistentQuery(in boolean bPersistentQuery);
-
-  /**
-   * \brief Return whether or not the query should run persistently
-   *
-   * \return If the query is persistent
-   * \sa setPersistentQuery
-   */
-  PRBool isPersistentQuery();
-
   /**
    * \brief Add a sbIDatabaseSimpleQueryCallback instance to the query
    *

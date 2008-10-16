@@ -115,13 +115,6 @@ protected:
 
   PRInt32 SubmitQueryPrivate(CDatabaseQuery *pQuery);
 
-  void AddPersistentQueryPrivate(CDatabaseQuery *pQuery, 
-                                 const nsACString &strTableName);
-
-  void RemovePersistentQueryPrivate(CDatabaseQuery *pQuery);
-
-  nsresult ClearPersistentQueries();
-
   static void PR_CALLBACK QueryProcessor(CDatabaseEngine* pEngine,
                                          QueryProcessorThread * pThread);
   
@@ -129,13 +122,6 @@ private:
   //[query list]
   typedef std::list<CDatabaseQuery *> querylist_t;
   
-  //[table guid/name]
-  typedef std::map<nsCString, querylist_t> tablepersistmap_t;
-
-  //[database guid/name]
-  typedef std::map<nsCString, tablepersistmap_t > querypersistmap_t;
-
-  void UpdatePersistentQueries(CDatabaseQuery *pQuery);
   void DoSimpleCallback(CDatabaseQuery *pQuery);
 
   nsresult CreateDBStorePath();
@@ -150,9 +136,6 @@ private:
 
   //[database guid / thread]
   nsRefPtrHashtableMT<nsStringHashKey, QueryProcessorThread> m_ThreadPool;
-
-  PRMonitor* m_pPersistentQueriesMonitor;
-  querypersistmap_t m_PersistentQueries;
 
   PRMonitor* m_pThreadMonitor;
 
