@@ -1905,9 +1905,9 @@
     
     var item = null;
     try {
-      this.mediaListView.getItemByIndex(lastCell.row);
+      item = this.mediaListView.getItemByIndex(lastCell.row);
     }
-    catch(e) { /* let item be null */ }
+    catch(e) { item = null; /* let item be null */ }
 
     var event = document.createEvent("datacontainerevent");
     event.initEvent("PlaylistCellMouseOut", true, true);
