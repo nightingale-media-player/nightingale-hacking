@@ -946,6 +946,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                        PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Exclude from playback history?
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_EXCLUDE_FROM_HISTORY), 
+                       EmptyString(), stringBundle, PR_FALSE, PR_FALSE, 
+                       PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Transfer policy
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_TRANSFER_POLICY),
                     EmptyString(),

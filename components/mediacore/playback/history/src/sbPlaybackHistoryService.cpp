@@ -1609,6 +1609,8 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
   NS_NAMED_LITERAL_STRING(PROPERTY_SKIPCOUNT, SB_PROPERTY_SKIPCOUNT);
   NS_NAMED_LITERAL_STRING(PROPERTY_LASTPLAYTIME, SB_PROPERTY_LASTPLAYTIME);
   NS_NAMED_LITERAL_STRING(PROPERTY_LASTSKIPTIME, SB_PROPERTY_LASTSKIPTIME);
+  NS_NAMED_LITERAL_STRING(PROPERTY_EXCLUDE_FROM_HISTORY, 
+      SB_PROPERTY_EXCLUDE_FROM_HISTORY);
 
   nsString durationStr;
   nsresult rv = mCurrentItem->GetProperty(PROPERTY_DURATION, durationStr);
@@ -1617,6 +1619,13 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
   PRUint64 duration = ToInteger64(durationStr, &rv);
   duration /= PR_USEC_PER_MSEC;
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString excludeFromHistoryStr;
+  rv = mCurrentItem->GetProperty(PROPERTY_EXCLUDE_FROM_HISTORY, 
+      excludeFromHistoryStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool excludeFromHistory = excludeFromHistoryStr.EqualsLiteral("1");
 
   // if we played for at least 240 seconds (matching audioscrobbler)
   // or more than half the track (matching audioscrobbler)
@@ -1645,17 +1654,19 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
     rv = mCurrentItem->SetProperty(PROPERTY_LASTPLAYTIME, newLastPlayTimeStr);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // create new playback history entry
-    nsCOMPtr<sbIPlaybackHistoryEntry> entry;
-    rv = CreateEntry(mCurrentItem, 
-                     mCurrentStartTime, 
-                     actualPlayingTime, 
-                     nsnull, 
-                     getter_AddRefs(entry));
-    NS_ENSURE_SUCCESS(rv, rv);
+    // create new playback history entry, if appropriate
+    if (!excludeFromHistory) {
+      nsCOMPtr<sbIPlaybackHistoryEntry> entry;
+      rv = CreateEntry(mCurrentItem, 
+                       mCurrentStartTime, 
+                       actualPlayingTime, 
+                       nsnull, 
+                       getter_AddRefs(entry));
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = AddEntry(entry);
-    NS_ENSURE_SUCCESS(rv, rv);
+      rv = AddEntry(entry);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   else {
     // update skip count.
