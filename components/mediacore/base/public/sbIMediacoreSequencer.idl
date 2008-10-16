@@ -75,7 +75,7 @@ interface sbIMediacoreSequencer : nsISupports
    * \brief The next item in the sequence.
    * \note This is equivalent to getting the current sequence and asking it
    *       for sequencePosition + 1.
-   * \note This may be null is there is no next item.
+   * \note This may be null if there is no next item.
    */
   readonly attribute sbIMediaItem nextItem;
 
