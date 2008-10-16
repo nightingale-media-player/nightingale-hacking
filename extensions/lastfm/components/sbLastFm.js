@@ -416,7 +416,7 @@ function sbLastFm_handshake(success, failure) {
 
   // make the url
   var timestamp = Math.round(Date.now()/1000).toString();
-  var hs_url = 'http://post.audioscrobbler.com/?hs=true&p=1.2&c=sbd&v=0.1' +
+  var hs_url = 'http://post.audioscrobbler.com/?hs=true&p=1.2.1&c=sbd&v=0.1' +
     '&u=' + this.username + '&t=' + timestamp + '&a=' +
     md5(md5(this.password) + timestamp);
 
@@ -740,7 +740,7 @@ function sbLastFm_scrobble() {
       }
       scrobble_list.push(
           new PlayedTrack(entry_list[i].item,
-                          Math.round(entry_list[i].timestamp/1000), rating));
+					  Math.round(entry_list[i].timestamp/1000000), rating));
     }
     // submit to the last.fm audioscrobbler api
     var self = this;

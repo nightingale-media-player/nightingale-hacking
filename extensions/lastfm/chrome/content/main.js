@@ -314,7 +314,9 @@ LastFm.onLoggedInStateChanged = function LastFm_onLoggedInStateChanged() {
     this._menuEnableScrobbling.parentNode.insertBefore(this._menuLogout,
         this._menuEnableScrobbling);
     // remove the "log in" menu item
-    this._menuLogin.parentNode.removeChild(this._menuLogin);
+    if (this._menuLogin.parentNode) {
+        this._menuLogin.parentNode.removeChild(this._menuLogin);
+    }
     // enable the "enable scrobbling" menu item
     this._menuEnableScrobbling.disabled = false;
 
