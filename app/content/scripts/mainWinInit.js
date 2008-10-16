@@ -235,7 +235,12 @@ function SBDoFirstRun() {
       // unhook the listener
       job.removeJobProgressListener(arguments.callee);
       // load the main library in the media tab / first tab
-      gBrowser.loadMediaList(LibraryUtils.mainLibrary, null, gBrowser.selectedTab);
+      const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
+      var mediaListView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
+      gBrowser.loadMediaListWithFlags(mediaListView,
+                                      gBrowser.selectedTab,
+                                      null,
+                                      nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY);
       
       // Set up the smart playlists after import is complete
       // (improves performance slightly)
