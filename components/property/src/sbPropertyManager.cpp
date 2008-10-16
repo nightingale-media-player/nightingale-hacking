@@ -949,7 +949,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // Exclude from playback history?
   rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_EXCLUDE_FROM_HISTORY), 
                        EmptyString(), stringBundle, PR_FALSE, PR_FALSE, 
-                       PR_FALSE, PR_FALSE);
+                       PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Transfer policy
