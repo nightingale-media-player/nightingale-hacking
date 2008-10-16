@@ -852,7 +852,8 @@ function sbLastFm_onTrackChange(aItem) {
   this.loveBan(null, false);
 
   // send now playing info if appropriate
-  if (this.shouldScrobble && this.loggedIn) {
+  if (this.shouldScrobble && this.loggedIn &&
+      aItem.getProperty(SBProperties.excludeFromHistory) != '1') {
     this.nowPlaying(new PlayedTrack(aItem));
   }
 }
