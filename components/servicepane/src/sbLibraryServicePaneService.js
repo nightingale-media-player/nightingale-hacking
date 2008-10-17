@@ -51,6 +51,7 @@ const SP='http://songbirdnest.com/rdf/servicepane#';
 const TYPE_X_SB_TRANSFER_MEDIA_ITEM = "application/x-sb-transfer-media-item";
 const TYPE_X_SB_TRANSFER_MEDIA_LIST = "application/x-sb-transfer-media-list";
 const TYPE_X_SB_TRANSFER_MEDIA_ITEMS = "application/x-sb-transfer-media-items";
+const TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD = "application/x-sb-transfer-disable-download";
 
 /**
  * Given the arguments var of a function, dump the
@@ -239,7 +240,7 @@ function sbLibraryServicePane__canDownloadDrop(aDragSession) {
   // the download playlist.
   if (!InternalDropHandler.isSupported(aDragSession)) 
     return false;
-    
+   
   var IOS = Cc["@mozilla.org/network/io-service;1"]
               .getService(Ci.nsIIOService);
 
@@ -453,6 +454,12 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow
   // don't allow drop on read-only nodes
   if (aNode.getAttributeNS(LSP, "ReadOnly") == "true")
     return false;
+
+  // if some of the items have disable download set then don't allow a drop 
+  // on the service pane
+  if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD)) {
+    return false;
+  }
 
   var list = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
   if (list) {

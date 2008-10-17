@@ -423,14 +423,17 @@
       <field name="_lastMouseOverColumn">null</field>
 
       <!-- Drag and Drop flavors -->
-      <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEM"  readonly="true">
+      <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEM" readonly="true">
         "application/x-sb-transfer-media-item"
       </field>
-      <field name="_TYPE_X_SB_TRANSFER_MEDIA_LIST"  readonly="true">
+      <field name="_TYPE_X_SB_TRANSFER_MEDIA_LIST" readonly="true">
         "application/x-sb-transfer-media-list"
       </field>
-      <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEMS"  readonly="true">
+      <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEMS" readonly="true">
         "application/x-sb-transfer-media-items"
+      </field>
+      <field name="_TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD" readonly="true">
+        "application/x-sb-transfer-disable-download"
       </field>
 
       <field name="_Cc"     readonly="true">Components.classes</field>
@@ -2462,6 +2465,18 @@
         transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
       }
     }
+
+    // are any of these items marked as not downloadable?
+    var enumerator = view.selection.selectedMediaItems;
+    while (enumerator.hasMoreElements()) {
+      var item = enumerator.getNext().QueryInterface(Ci.sbIMediaItem);
+      if (!item) continue; // WTF?
+      if (item.getProperty(SBProperties.disableDownload) == '1') {
+        // one of the items has download disabled, we need to disable the command
+        transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD, '');
+      }
+    }
+
 
     var transArray = Cc["@mozilla.org/supports-array;1"]
                        .createInstance(Ci.nsISupportsArray);
