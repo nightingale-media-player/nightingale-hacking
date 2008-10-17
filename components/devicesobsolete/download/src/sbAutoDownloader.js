@@ -171,6 +171,10 @@ function sbAutoDownloader_observe(subject, topic, data) {
         // it's already been processed by the download device
         continue;
       }
+      if (item.getProperty(SBProperties.disableDownload) == '1') {
+        // don't auto-download items who've had download disabled...
+        continue;
+      }
       this._helper.downloadItem(item);
     }
     this._clearTimer();
