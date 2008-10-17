@@ -331,7 +331,7 @@ PublicPlaylistCommands.prototype = {
 
       this.m_cmd_Download.setCommandEnabledCallback(null,
                                                     "library_cmd_download",
-                                                    plCmd_IsAnyTrackSelected);
+                                                    plCmd_Download_EnabledCallback);
 
       // --------------------------------------------------------------------------
       // The RESCAN button
@@ -1380,6 +1380,32 @@ function plCmd_EditSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandI
 // Returns true when at least one track is selected in the playlist
 function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
   return ( unwrap(aContext.playlist).tree.currentIndex != -1 );
+}
+
+// Returns true when at least one track is selected in the playlist and none of the selected tracks have downloading forbidden
+function plCmd_Download_EnabledCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  if (!plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
+    return false;
+  }
+  try {
+    var playlist = unwrap(aContext.playlist);
+    var window = unwrap(aContext.window);
+    var enumerator = playlist.mediaListView.selection.selectedMediaItems;
+    while (enumerator.hasMoreElements()) {
+      var item = enumerator.getNext().QueryInterface(Ci.sbIMediaItem);
+      if (!item) continue; // WTF?
+      if (item.getProperty(SBProperties.disableDownload) == '1') {
+        // one of the items has download disabled, we need to disable the command
+        return false;
+      }
+    }
+    // none of the items had download disabled, enable the command
+    return true;
+  } catch (e) {
+    Cu.reportError(err);
+    // something bad happened - I say no.
+    return false;
+  }
 }
 
 // Returns true if the 'rescan' item command is enabled
