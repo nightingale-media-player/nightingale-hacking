@@ -27,6 +27,6 @@ create table playback_history_entry_annotations (
   primary key (entry_id, property_id)
 );
 
-create index idx_playback_history_entry_annotations_entry_id (entry_id);
-create index idx_playback_history_entry_annotations_entry_id_property_id (entry_id, property_id);
-create index idx_playback_history_entry_annotations_obj_sortable (obj_sortable);
+create index idx_playback_history_entry_annotations_entry_id on playback_history_entry_annotations (entry_id);
+create index idx_playback_history_entry_annotations_entry_id_property_id on playback_history_entry_annotations (entry_id, property_id);
+create index idx_playback_history_entry_annotations_obj_sortable on playback_history_entry_annotations (obj_sortable);
