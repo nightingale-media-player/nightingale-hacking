@@ -62,7 +62,8 @@
 #include <nsIObserverService.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
-
+#include <nsInterfaceHashtable.h>
+#include <nsITimer.h>
 
 //------------------------------------------------------------------------------
 //
@@ -158,6 +159,8 @@ private:
   // mPrefsAvailable            True if preferences are available.
   // mFetcherInfoList           List of fetcher information.
   // mValidExtensionList        List of valid album art file extensions.
+  // mTemporaryCache            Hash of arbitrary data used by art fetchers
+  // mCacheFlushTimer           Timer used to empty the temporary cache
   //
 
   nsCOMPtr<nsIObserverService>  mObserverService;
@@ -168,7 +171,9 @@ private:
   PRBool                        mPrefsAvailable;
   nsTArray<FetcherInfo>         mFetcherInfoList;
   nsTArray<nsCString>           mValidExtensionList;
-
+  nsInterfaceHashtable<nsStringHashKey, nsISupports> 
+                                mTemporaryCache;
+  nsCOMPtr<nsITimer>            mCacheFlushTimer;
 
   //
   // Internal services.

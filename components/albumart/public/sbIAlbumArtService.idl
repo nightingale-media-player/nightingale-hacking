@@ -48,7 +48,7 @@
 interface nsIArray;
 interface nsIFileURL;
 
-[scriptable, uuid(0d0d6689-ab81-4e1f-aac1-8be9b96118fc)]
+[scriptable, uuid(0235cb60-9bc7-11dd-ad8b-0800200c9a66)]
 interface sbIAlbumArtService : nsISupports
 {
   /**
@@ -79,6 +79,34 @@ interface sbIAlbumArtService : nsISupports
   nsIFileURL cacheImage(in AUTF8String                             aMimeType,
                         [const, array, size_is(aDataLen)] in octet aData,
                         in unsigned long                           aDataLen);
+
+  
+  /**
+   * \brief Add arbitrary data to a temporary cache.
+   *
+   * Used by art fetchers to cache intermediate results
+   * for a short period of time.  Allows fetchers to 
+   * avoid additional work without keeping their own
+   * static cache.
+   *
+   * Note: The contents of this cache is flushed periodically
+   *
+   * \param aKey           Hash key
+   * \param aData          Arbitrary data to store.
+   */
+  void cacheTemporaryData(in AString aKey, in nsISupports aData);
+
+
+  /**
+   * \brief Get data previously placed into the temporary cache
+   *
+   * \param aKey                Hash key
+   * \return                    Arbitrary data
+   *
+   * \throws NS_ERROR_NOT_AVAILABLE if the key is not found
+   */
+  nsISupports retrieveTemporaryData(in AString aKey);
+
 };
 
 

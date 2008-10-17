@@ -76,6 +76,8 @@
 #include <nsIURL.h>
 #include <nsStringGlue.h>
 #include <nsMemory.h>
+#include <nsTArray.h>
+#include <nsAutoPtr.h>
 
 /* Songbird imports. */
 #include <sbIMetadataHandler.h>
@@ -156,6 +158,36 @@ private:
     PRBool                      mMetadataChannelRestart;
     PRBool                      mCompleted;
     nsCString                   mMetadataPath;
+    
+    
+    // When calling Read() keep a cache of any album art 
+    // encountered, so that subsequent GetImageData calls
+    // do not have to reload the file.
+    // We keep the data rather than the Taglib::File 
+    // because this lets us avoid the taglib lock.
+    
+    struct sbAlbumArt {
+      PRInt32       type;
+      nsCString     mimeType;
+      PRUint32      dataLen;
+      PRUint8       *data;
+      
+      sbAlbumArt() : type(0), dataLen(0), data(nsnull) {
+        MOZ_COUNT_CTOR(sbAlbumArt);
+      };
+      ~sbAlbumArt() {
+        MOZ_COUNT_DTOR(sbAlbumArt);
+
+        // If nobody has claimed the image by the time
+        // this object is destroyed, throw the image away
+        if (dataLen > 0 && data) {
+          NS_Free(data);
+        }
+      };
+    };
+    
+    nsTArray<nsAutoPtr<sbAlbumArt> > mCachedAlbumArt;
+
 
     /* BUG 11436 HACK START*/
     TagLib::ID3v2::AttachedPictureFrame *mBug11436Hack;
@@ -224,6 +256,13 @@ private:
         PRInt32                     aType,
         const nsAString             &imageSpec);
 
+    nsresult ReadImage(
+        TagLib::ID3v2::Tag          *aTag,
+        PRInt32                     aType,
+        nsACString                  &aMimeType,
+        PRUint32                    *aDataLen,
+        PRUint8                     **aData);
+
     /*
      * Private taglib metadata handler ID3v2 services.
      */
@@ -273,6 +312,9 @@ private:
     nsresult AcquireTaglibLock();
     nsresult ReleaseTaglibLock();
 
+    nsresult OpenTagFile(TagLib::File *pTagFile);
+    nsresult CheckChannelRestart();
+
     nsresult ReadMetadata();
 
     void GuessCharset(
@@ -293,20 +335,15 @@ private:
         TagLib::File                *pTagFile,
         const char                  *aCharset = 0);
 
-    PRBool ReadMPEGFile(
-        nsACString                  &aFilePath);
+    PRBool ReadMPEGFile();
 
-    PRBool ReadMP4File(
-        nsACString                  &aFilePath);
+    PRBool ReadMP4File();
 
-    PRBool ReadOGGFile(
-        nsACString                  &aFilePath);
+    PRBool ReadOGGFile();
 
-    PRBool ReadFLACFile(
-        nsACString                  &aFilePath);
+    PRBool ReadFLACFile();
 
-    PRBool ReadMPCFile(
-        nsACString                  &aFilePath);
+    PRBool ReadMPCFile();
 
     nsresult AddMetadataValue(
         const char                  *name,

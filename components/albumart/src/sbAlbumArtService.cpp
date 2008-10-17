@@ -71,6 +71,12 @@
 //
 //------------------------------------------------------------------------------
 
+// Default size for the temporary cache used by various fetchers
+#define TEMPORARY_CACHE_SIZE  1000
+
+// Time before clearing the temporary cache (in ms)
+#define TEMPORARY_CACHE_CLEAR_TIME  60000
+
 //
 // sbAlbumArtServiceValidExtensionList  List of valid album art file extensions.
 //
@@ -235,9 +241,71 @@ sbAlbumArtService::CacheImage(const nsACString& aMimeType,
 }
 
 
+
+/**
+ * \brief Add arbitrary data to a temporary cache.
+ *
+ * Used by art fetchers to cache intermediate results
+ * for a short period of time.  Allows fetchers to 
+ * avoid additional work without keeping their own
+ * static cache.
+ *
+ * Note: The contents of this cache is flushed periodically
+ *
+ * \param aKey           Hash key
+ * \param aData          Arbitrary data to store.
+ */
+NS_IMETHODIMP
+sbAlbumArtService::CacheTemporaryData(const nsAString& aKey,
+                                      nsISupports* aData)
+{
+  NS_ENSURE_ARG_POINTER(aData);
+  NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
+  
+  PRBool succeeded = mTemporaryCache.Put(aKey, aData);
+  NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
+  
+  // Start a timer empty out the cache at some point
+  if (!mCacheFlushTimer) {
+    nsresult rv = NS_OK;
+    mCacheFlushTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = mCacheFlushTimer->Init(this, 
+                                TEMPORARY_CACHE_CLEAR_TIME,
+                                nsITimer::TYPE_ONE_SHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+
+
+/**
+ * \brief Get data previously placed into the temporary cache
+ *
+ * \param aKey                Hash key
+ * \return                    Arbitrary data
+ *
+ * \throws NS_ERROR_NOT_AVAILABLE if the key is not found
+ */
+NS_IMETHODIMP
+sbAlbumArtService::RetrieveTemporaryData(const nsAString& aKey,
+                                         nsISupports** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
+  *_retval = nsnull;
+  PRBool succeeded = mTemporaryCache.Get(aKey, _retval);
+  return succeeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
+}
+
+
+
 //------------------------------------------------------------------------------
 //
-// Songbird window watcher nsIObserver implementation.
+// nsIObserver implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -275,6 +343,17 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
   } else if (!strcmp(aTopic, "quit-application")) {
     // Finalize the album art service.
     Finalize();
+  } else if (!strcmp(NS_TIMER_CALLBACK_TOPIC, aTopic)) {
+    // Time to flush the cache
+
+    if (mCacheFlushTimer) {
+      nsresult rv = mCacheFlushTimer->Cancel();
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel a cache timer");
+      mCacheFlushTimer = nsnull;
+    }
+
+    // Expire cached data
+    mTemporaryCache.Clear();
   }
 
   return NS_OK;
@@ -293,7 +372,8 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
 
 sbAlbumArtService::sbAlbumArtService() :
   mInitialized(PR_FALSE),
-  mPrefsAvailable(PR_FALSE)
+  mPrefsAvailable(PR_FALSE),
+  mCacheFlushTimer(nsnull)
 {
 }
 
@@ -304,6 +384,7 @@ sbAlbumArtService::sbAlbumArtService() :
 
 sbAlbumArtService::~sbAlbumArtService()
 {
+  Finalize();
 }
 
 
@@ -337,20 +418,8 @@ sbAlbumArtService::Initialize()
   if (!mPrefsAvailable)
     return NS_OK;
 
-  // Get the I/O service, proxied to the main thread.
-  nsCOMPtr<nsIIOService>
-    ioService = do_GetService("@mozilla.org/network/io-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIProxyObjectManager>
-    proxyObjectManager = do_GetService("@mozilla.org/xpcomproxy;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = proxyObjectManager->GetProxyForObject
-                             (NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(nsIIOService),
-                              ioService,
-                                nsIProxyObjectManager::INVOKE_SYNC |
-                                nsIProxyObjectManager::FORCE_PROXY_CREATION,
-                              (void**) getter_AddRefs(mIOService));
+  // Get the I/O service
+  mIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the MIME service.
@@ -376,6 +445,10 @@ sbAlbumArtService::Initialize()
   rv = GetAlbumArtCacheDir();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Set up the arbitrary data cache
+  PRBool succeeded = mTemporaryCache.Init(TEMPORARY_CACHE_SIZE);
+  NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
+
   // Mark component as initialized.
   mInitialized = PR_TRUE;
 
@@ -396,14 +469,23 @@ sbAlbumArtService::Initialize()
 void
 sbAlbumArtService::Finalize()
 {
+  // Clear the fetcher info.
+  mFetcherInfoList.Clear();
+  
+  // Clear any cache info
+  mTemporaryCache.Clear();
+  
   // Remove observers.
   if (mObserverService) {
     mObserverService->RemoveObserver(this, "profile-after-change");
     mObserverService->RemoveObserver(this, "quit-application");
   }
 
-  // Clear the fetcher info.
-  mFetcherInfoList.Clear();
+  if (mCacheFlushTimer) {
+    nsresult rv = mCacheFlushTimer->Cancel();
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel a cache timer");
+    mCacheFlushTimer = nsnull;
+  }
 }
 
 

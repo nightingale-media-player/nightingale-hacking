@@ -62,7 +62,7 @@
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <unicharutil/nsUnicharUtils.h>
-
+#include <nsIMutableArray.h>
 
 //------------------------------------------------------------------------------
 //
@@ -96,49 +96,83 @@ sbFileAlbumArtFetcher::FetchAlbumArtForMediaItem
 
   // Function variables.
   nsresult rv;
+  nsCOMPtr<nsIFile> albumArtFile = nsnull;
 
   // Reset fetcher state.
   mIsComplete = PR_FALSE;
   mFoundAlbumArt = PR_FALSE;
 
-  // Get the media item content source directory entries.
-  nsCOMPtr<nsISimpleEnumerator> contentSrcDirEntries;
-  PRBool                        isLocalFile;
-  rv = GetMediaItemDirEntries(aMediaItem,
-                              &isLocalFile,
-                              getter_AddRefs(contentSrcDirEntries));
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!isLocalFile) {
-    mIsComplete = PR_TRUE;
-    return NS_OK;
-  }
-
-  // Get the media item album name.
+  // Figure out what album we're looking for
+  nsString artistName;
   nsString albumName;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                               artistName);
+  NS_ENSURE_SUCCESS(rv, rv);
   rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                                albumName);
   NS_ENSURE_SUCCESS(rv, rv);
-  ToLowerCase(albumName);
+  nsString artistAlbum(artistName);
+  artistAlbum.AppendLiteral(" - ");
+  artistAlbum.Append(albumName);
+  
+  // Before doing anything else, check to see if we've  
+  // recently cached a value for the given artist/album
+  nsString cacheKey = NS_LITERAL_STRING("File:");
+  cacheKey.Append(artistAlbum);
+  nsCOMPtr<nsISupports> cacheData = nsnull;
+  rv = mAlbumArtService->RetrieveTemporaryData(cacheKey, getter_AddRefs(cacheData));
+  
+  // Try to get the file from the cache data
+  if (NS_SUCCEEDED(rv)) {
+    albumArtFile = do_QueryInterface(cacheData, &rv);
+    
+    // If there is an entry in the cache, but it isn't a file, then
+    // we can assume there is nothing for this fetcher to find.
+    if (NS_FAILED(rv)) {
+      mFoundAlbumArt = PR_FALSE;
+      mIsComplete = PR_TRUE;
+      return NS_OK;
+    }
 
-  // Search the media item content source directory entries for an album art
-  // file.
-  nsCOMPtr<nsIFile> albumArtFile;
-  rv = FindAlbumArtFile(contentSrcDirEntries,
-                        albumName,
-                        getter_AddRefs(albumArtFile));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // If we get a cache miss, then look through the parent directory for art.
+  } else {
+
+    // Make sure we look for files in the form
+    // albumname.ext and artist - albumname.ext
+    ToLowerCase(albumName);
+    ToLowerCase(artistAlbum);
+    mFileBaseNameList.AppendElement(albumName);
+    mFileBaseNameList.AppendElement(artistAlbum);
+
+    // Search the media item content source directory entries for an 
+    // album art file.
+    rv = FindAlbumArtFile(aMediaItem,
+                          getter_AddRefs(albumArtFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    // Now either save the file in the cache, or an empty
+    // string to indicate that there is nothing to be found
+    if (albumArtFile) {
+      rv = mAlbumArtService->CacheTemporaryData(cacheKey, albumArtFile);
+    } else {
+      nsCOMPtr<nsISupportsString> supportsStr;
+      supportsStr = do_CreateInstance("@mozilla.org/supports-string;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = mAlbumArtService->CacheTemporaryData(cacheKey, supportsStr);
+    }
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // If an album art file was found, set it as the media item album art.
   if (albumArtFile) {
     rv = SetMediaItemAlbumArt(aMediaItem, albumArtFile);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Update fetcher state.    
+    mFoundAlbumArt = PR_TRUE;
   }
 
-  // Update fetcher state.
-  if (albumArtFile)
-    mFoundAlbumArt = PR_TRUE;
   mIsComplete = PR_TRUE;
-
   return NS_OK;
 }
 
@@ -324,8 +358,8 @@ sbFileAlbumArtFetcher::Initialize()
 {
   nsresult rv;
 
-  // Get the I/O service, proxied to the main thread.
-  mIOService = do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
+  // Get the I/O service
+  mIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the preference branch.
@@ -351,6 +385,10 @@ sbFileAlbumArtFetcher::Initialize()
                  NS_LITERAL_STRING(","),
                  mFileBaseNameList);
 
+  // Get the album art service.
+  mAlbumArtService = do_GetService(SB_ALBUMARTSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -362,40 +400,35 @@ sbFileAlbumArtFetcher::Initialize()
 //------------------------------------------------------------------------------
 
 /**
- * Return in aDirEntries an enumerator of the files in the directory of the
- * content for the media item specified by aMediaItem.  If the content is not a
+ * Return in contentSrcDirEntries an enumerator of the files in the directory of the
+ * content for the specified url.  If the content is not a
  * local file, return false in aIsLocalFile and don't return anything in
- * aDirEntries.  Otherwise, return true in aIsLocalFile.
+ * contentSrcDirEntries.  Otherwise, return true in aIsLocalFile.
  *
- * \param aMediaItem            Media item for which to return directory
+ * \param aURL                  Location for which to return directory
  *                              entries.
  * \param aIsLocalFile          True if media item content is a local file.
- * \param aDirEntries           Enumerator of media item content directory
+ * \param contentSrcDirEntries  Enumerator of media item content directory
  *                              entries.
  */
 
 nsresult
-sbFileAlbumArtFetcher::GetMediaItemDirEntries
-                         (sbIMediaItem*         aMediaItem,
+sbFileAlbumArtFetcher::GetURLDirEntries
+                         (nsIURL*               aURL,
                           PRBool*               aIsLocalFile,
-                          nsISimpleEnumerator** aDirEntries)
+                          nsISimpleEnumerator** contentSrcDirEntries)
 {
   // Validate arguments.
-  NS_ASSERTION(aMediaItem, "aMediaItem is null");
-  NS_ASSERTION(aIsLocalFile, "aIsLocalFile is null");
-  NS_ASSERTION(aDirEntries, "aDirEntries is null");
+  NS_ENSURE_ARG_POINTER(aURL);
+  NS_ENSURE_ARG_POINTER(aIsLocalFile);
+  NS_ENSURE_ARG_POINTER(contentSrcDirEntries);
 
   // Function variables.
   nsresult rv;
 
-  // Get the media item content source URI.
-  nsCOMPtr<nsIURI> contentSrcURI;
-  rv = aMediaItem->GetContentSrc(getter_AddRefs(contentSrcURI));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Get the media item content source local file URL.  Do nothing more if not a
   // local file.
-  nsCOMPtr<nsIFileURL> contentSrcFileURL = do_QueryInterface(contentSrcURI,
+  nsCOMPtr<nsIFileURL> contentSrcFileURL = do_QueryInterface(aURL,
                                                              &rv);
   if (NS_FAILED(rv)) {
     *aIsLocalFile = PR_FALSE;
@@ -411,7 +444,7 @@ sbFileAlbumArtFetcher::GetMediaItemDirEntries
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the media item content source directory entries.
-  rv = contentSrcDir->GetDirectoryEntries(aDirEntries);
+  rv = contentSrcDir->GetDirectoryEntries(contentSrcDirEntries);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Return results.
@@ -422,41 +455,81 @@ sbFileAlbumArtFetcher::GetMediaItemDirEntries
 
 
 /**
- * Search the files specified by aDirEntries for an album art file for the album
- * specified by aAlbumName.  If a file is found, return it in aAlbumArtFile;
- * otherwise, return null in aAlbumArtFile.
+ * Search for album art near the location of the given media item
  *
- * \param aDirEntries           Diretory entries in which to search.
- * \param aAlbumName            Name of album for which to search for art.
+ * \param aMediaItem            Media item we need art for
  * \param aAlbumArtFile         Found album art file or null if not found.
  */
 
 nsresult
-sbFileAlbumArtFetcher::FindAlbumArtFile(nsISimpleEnumerator* aDirEntries,
-                                        nsAString&           aAlbumName,
+sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
                                         nsIFile**            aAlbumArtFile)
 {
   // Validate arguments.
-  NS_ASSERTION(aDirEntries, "aDirEntries is null");
-  NS_ASSERTION(aAlbumArtFile, "aAlbumArtFile is null");
-
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aAlbumArtFile);
+  
   // Function variables.
   nsresult rv;
+  nsCOMPtr<nsISimpleEnumerator> contentSrcDirEntries;
+  nsCOMPtr<nsIMutableArray> entriesToBeCached = nsnull;
 
   // Set default result.
   *aAlbumArtFile = nsnull;
+
+  // Get the media item content source
+  nsCOMPtr<nsIURI> contentSrcURI;
+  rv = aMediaItem->GetContentSrc(getter_AddRefs(contentSrcURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIURL> contentSrcURL = do_QueryInterface(contentSrcURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // First check to see if we have a cached list of all the images
+  // in this directory (useful in the edge case of 10000 tracks 
+  // from different albums, all in the same directory)
+
+  nsCString directory;
+  contentSrcURL->GetDirectory(directory);
+  nsString cacheKey = NS_LITERAL_STRING("Directory:");
+  cacheKey.Append(NS_ConvertUTF8toUTF16(directory));
+  nsCOMPtr<nsISupports> cacheData = nsnull;
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mAlbumArtService->RetrieveTemporaryData(cacheKey, getter_AddRefs(cacheData));
+  
+  // Try to get the entries from the cache data
+  if (NS_SUCCEEDED(rv)) {
+    nsCOMPtr<nsIArray> cachedEntries = do_QueryInterface(cacheData, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = cachedEntries->Enumerate(getter_AddRefs(contentSrcDirEntries));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+  } else {
+    
+    // Get the media item content source directory entries.
+    PRBool isLocalFile = PR_FALSE;
+    rv = GetURLDirEntries(contentSrcURL,
+                          &isLocalFile,
+                          getter_AddRefs(contentSrcDirEntries));
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!isLocalFile) {
+      return NS_OK;
+    }
+    
+    // Create an array to cache the image entries we find
+    entriesToBeCached = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  }
 
   // Search the media item content source directory entries for an album art
   // file.
   while (1) {
     // Get the next directory entry.
     PRBool hasMoreElements;
-    rv = aDirEntries->HasMoreElements(&hasMoreElements);
+    rv = contentSrcDirEntries->HasMoreElements(&hasMoreElements);
     NS_ENSURE_SUCCESS(rv, rv);
     if (!hasMoreElements)
       break;
     nsCOMPtr<nsIFile> file;
-    rv = aDirEntries->GetNext(getter_AddRefs(file));
+    rv = contentSrcDirEntries->GetNext(getter_AddRefs(file));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Skip file if it's not a regular file (e.g., a directory).
@@ -490,22 +563,37 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(nsISimpleEnumerator* aDirEntries,
     if (!fileExtensionMatched)
       continue;
 
-    // Check if file base name matches any album art file base name.  File is an
-    // album art file if it does.
-    nsDependentSubstring fileBaseName(leafName, 0, fileExtensionIndex);
-    for (PRUint32 i = 0; i < mFileBaseNameList.Length(); i++) {
-      if (fileBaseName.Equals(mFileBaseNameList[i])) {
-        file.forget(aAlbumArtFile);
-        return NS_OK;
-      }
+    // This is an image file.  If we are building
+    // a new cache list, add it now
+    if (entriesToBeCached) {
+      entriesToBeCached->AppendElement(file, PR_FALSE);
     }
 
-    // Check if file base name matches album name.  File is an album art file if
-    // it does.
-    if (fileBaseName.Equals(aAlbumName)) {
-      file.forget(aAlbumArtFile);
-      return NS_OK;
+    // Check if file name matches any album art file name.  File is an
+    // album art file if it does.
+    nsDependentSubstring fileBaseName(leafName, 0, fileExtensionIndex);
+    // Loop backwards, since album specific images should
+    // take precedence over "cover.jpg" etc.
+    for (PRInt32 i = (mFileBaseNameList.Length() - 1); i >= 0; i--) {
+      if (fileBaseName.Equals(mFileBaseNameList[i])) {
+        if (!(*aAlbumArtFile)) {
+          file.forget(aAlbumArtFile);
+        }
+        
+        // If we're using the cache we can just exit now.  
+        // If we're building the cache, then we have to continue through
+        // all files to make sure we've found all the images
+        if (!entriesToBeCached) {
+          return NS_OK;
+        }
+      }
     }
+  }
+  
+  // If needed, cache the list of images in this folder 
+  if (entriesToBeCached) {
+    rv = mAlbumArtService->CacheTemporaryData(cacheKey, entriesToBeCached);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;

@@ -787,9 +787,46 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
   
   LOG(("sbMetadataHandlerTaglib::GetImageData\n"));
 
+  // First check to see if we have cached art for
+  // the requested type.  This is an optimization
+  // to avoid reading metadata twice, or otherwise
+  // locking taglib on the main thread.
+  sbAlbumArt *cachedArt = nsnull;
+  for (PRUint32 i=0; i < mCachedAlbumArt.Length(); i++) {
+    cachedArt = mCachedAlbumArt[i];
+    NS_ENSURE_TRUE(cachedArt, NS_ERROR_UNEXPECTED);
+    if (cachedArt->type == aType) {
+      LOG(("sbMetadataHandlerTaglib::GetImageData - found cached image\n"));
+  
+      aMimeType.Assign(cachedArt->mimeType);
+      *aDataLen = cachedArt->dataLen;
+      *aData = cachedArt->data;
+
+      // The data now belongs to the caller, so we
+      // are not allowed to free it or use it again.
+      cachedArt->dataLen = 0;
+      cachedArt->data = nsnull;
+      mCachedAlbumArt.RemoveElementAt(i);
+
+      return NS_OK;
+    }
+  }
+
+  // If read has already been run, then we can assume 
+  // that all images should have been in the cache.
+  // Since we didn't find any in the cache, just go 
+  // ahead and return null.
+  if (mCompleted) {
+    *aDataLen = 0;
+    *aData = nsnull;
+    return NS_OK;
+  }
+
+  // Nothing was found in the cache, so open the target file
+  // and read the data out manually.
+
   AcquireTaglibLock();
   rv = GetImageDataInternal(aType, aMimeType, aDataLen, aData);
-  CompleteRead();
   ReleaseTaglibLock(); 
   return rv;
 }
@@ -841,35 +878,13 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
     nsCString filePath = mMetadataPath;
 #endif
 
-    /* Open and read the metadata file. */
-    TagLib::MPEG::File tagFile(filePath.BeginReading());
-    if (tagFile.ID3v2Tag()) {
-      /*
-       * Extract the requested image from the metadata
-       */
-      TagLib::ID3v2::FrameList frameList= tagFile.ID3v2Tag()->frameList("APIC");
-      if (!frameList.isEmpty()){
-        TagLib::ID3v2::AttachedPictureFrame *p = nsnull;
-        for (TagLib::uint frameIndex = 0;
-             frameIndex < frameList.size();
-             frameIndex++) {
-          p =  static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList[frameIndex]);
-          if( p->type() == aType &&
-              p->picture().size() > 0){
-            // Store the size of the data
-            *aDataLen = p->picture().size();
-            // Store the mimeType acquired from the image data
-            // these can sometimes be in a format like "PNG"
-            aMimeType.Assign(p->mimeType().toCString(), p->mimeType().length());
-            
-            // Copy the data over to a mozilla memory chunk so we don't break
-            // Things :).
-            *aData = static_cast<PRUint8 *>(nsMemory::Clone(p->picture().data(),
-                                                            *aDataLen));
-            break;
-          }
-        }
-      }
+    nsAutoPtr<TagLib::MPEG::File> pTagFile;
+    pTagFile = new TagLib::MPEG::File(filePath.BeginReading());    
+    NS_ENSURE_STATE(pTagFile);
+
+    /* Read the metadata file. */
+    if (pTagFile->ID3v2Tag()) {
+      result = ReadImage(pTagFile->ID3v2Tag(), aType, aMimeType, aDataLen, aData);
     } else {
       result = NS_ERROR_FILE_UNKNOWN_TYPE;
     }
@@ -1100,6 +1115,60 @@ nsresult sbMetadataHandlerTaglib::WriteImage(TagLib::MPEG::File* aMPEGFile,
 }
 
 /**
+ * \brief Extracts an image from the given mpeg file
+ * \param aTag - the ID3v2 tags
+ * \param imageType - an enum from determining the type of image like
+ *                    sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER
+ * \param aDataLen Output parameter for length of image data
+ * \param aData Output parameter for binary data of image
+ */
+nsresult sbMetadataHandlerTaglib::ReadImage(TagLib::ID3v2::Tag          *aTag,
+                                            PRInt32                     aType,
+                                            nsACString                  &aMimeType,
+                                            PRUint32                    *aDataLen,
+                                            PRUint8                     **aData)
+{
+  NS_ENSURE_ARG_POINTER(aTag);
+  NS_ENSURE_ARG_POINTER(aData);
+  nsresult rv = NS_OK;
+  
+  if (!aTag) {
+    // Not ID3v2 tag then abort
+    return NS_ERROR_FAILURE;
+  }
+  
+  /*
+   * Extract the requested image from the metadata
+   */
+  TagLib::ID3v2::FrameList frameList = aTag->frameList("APIC");
+  if (!frameList.isEmpty()){
+    TagLib::ID3v2::AttachedPictureFrame *p = nsnull;
+    for (TagLib::uint frameIndex = 0;
+         frameIndex < frameList.size();
+         frameIndex++) {
+      p =  static_cast<TagLib::ID3v2::AttachedPictureFrame *>(frameList[frameIndex]);
+      if (p->type() == aType && p->picture().size() > 0) {
+        // Store the size of the data
+        *aDataLen = p->picture().size();
+        // Store the mimeType acquired from the image data
+        // these can sometimes be in a format like "PNG"
+        aMimeType.Assign(p->mimeType().toCString(), p->mimeType().length());
+        
+        // Copy the data over to a mozilla memory chunk so we don't break
+        // Things :).
+        *aData = static_cast<PRUint8 *>(nsMemory::Clone(p->picture().data(),
+                                                        *aDataLen));
+        NS_ENSURE_TRUE(*aData, NS_ERROR_OUT_OF_MEMORY);
+        break;
+      }
+    }
+  }
+  
+  return rv;
+}
+
+
+/**
 * \brief Be thou informst that one's sbIMetadataChannel has just received data
 *
 * Every time the underlying nsIChannel dumps data on the sbIMetadataChannel,
@@ -1125,6 +1194,9 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::OnChannelData(
 
 NS_IMETHODIMP sbMetadataHandlerTaglib::Close()
 {
+    /* Throw away cached album art */
+    mCachedAlbumArt.Clear();
+    
     /* If a metadata channel is being used, remove it from */
     /* use with the TagLib nsIChannel file I/O services.   */
     if (!mMetadataChannelID.IsEmpty())
@@ -1450,6 +1522,35 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
     AddMetadataValue(SB_PROPERTY_ORIGINPAGETITLE,
                      ConvertCharset(taglibTitle, aCharset));*/
   }
+  
+  // If this is a local file, cache common album art in order to speed 
+  // up any subsequent calls to GetImageData.
+  nsCString urlScheme;
+  nsresult result = mpURL->GetScheme(urlScheme);
+  NS_ENSURE_SUCCESS(result,/*void*/);
+  
+  if (urlScheme.Equals(NS_LITERAL_CSTRING("file"))) { 
+    sbAlbumArt *art = new sbAlbumArt();
+    NS_ENSURE_TRUE(art,/*void*/);  
+    result = ReadImage(pTag, sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER,
+                       art->mimeType, &(art->dataLen), &(art->data));
+    NS_ENSURE_SUCCESS(result,/*void*/);
+    art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER;
+    nsAutoPtr<sbAlbumArt>* cacheSlot = mCachedAlbumArt.AppendElement();
+    NS_ENSURE_TRUE(cacheSlot,/*void*/);
+    *cacheSlot = art;
+  
+    art = new sbAlbumArt();
+    NS_ENSURE_TRUE(art,/*void*/);  
+    result = ReadImage(pTag, sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
+                       art->mimeType, &(art->dataLen), &(art->data));
+    NS_ENSURE_SUCCESS(result,/*void*/);
+    art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER;
+    cacheSlot = mCachedAlbumArt.AppendElement();
+    NS_ENSURE_TRUE(cacheSlot,/*void*/);
+    *cacheSlot = art;
+  }
+  
   return;
 }
 
@@ -1536,6 +1637,68 @@ void sbMetadataHandlerTaglib::ReadXiphTags(
  *
  ******************************************************************************/
 
+
+ /*
+  * OpenTagFile
+  *
+  *   Open and configure the given file instance for
+  * the specified URL.
+  */
+
+ nsresult sbMetadataHandlerTaglib::OpenTagFile(TagLib::File *pTagFile)
+ {
+     NS_ENSURE_ARG_POINTER(pTagFile);
+
+     /* Get the file path in the proper format for the platform. */
+ #if XP_WIN
+     NS_ConvertUTF8toUTF16 filePath(mMetadataPath);
+ #else
+     nsACString &filePath = mMetadataPath;
+ #endif
+
+     pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
+     pTagFile->open(filePath.BeginReading());
+
+     return NS_OK;
+ }
+
+
+ /*
+  * CheckChannelRestart
+  *
+  *   Determine if the channel is being restarted, or if
+  * it has failed in some way.
+  */
+
+ nsresult sbMetadataHandlerTaglib::CheckChannelRestart()
+ {
+     nsresult result = NS_OK;
+
+     if (!mMetadataChannelID.IsEmpty())
+     {
+         result =
+             mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
+                                                             &mMetadataChannelRestart);
+         NS_ENSURE_SUCCESS(result, result);
+         if (!mMetadataChannelRestart) {
+             PRUint64 size;
+             result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
+                                                                   &size);
+             NS_ENSURE_SUCCESS(result, result);
+
+             // we don't consider empty files to be valid because no data
+             // could have been read.  Taglib considers files valid by default
+             // so we can't actually ask it for anything useful (that still
+             // manages to separate the "read error" and "validly no tags" cases)
+             if (size <= 0) {
+                 result = NS_ERROR_FAILURE;
+             }
+         }
+     }
+
+     return (result);
+ }
+
 /*
  * ReadMetadata
  *
@@ -1571,28 +1734,29 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
     if (NS_SUCCEEDED(result))
     {
         decodedFileExt = PR_TRUE;
-        if (fileExt.Equals(NS_LITERAL_CSTRING("flac")))
-            isValid = ReadFLACFile(mMetadataPath);
-        else if (fileExt.Equals(NS_LITERAL_CSTRING("mpc")))
-            isValid = ReadMPCFile(mMetadataPath);
-        else if (fileExt.Equals(NS_LITERAL_CSTRING("mp3")))
-            isValid = ReadMPEGFile(mMetadataPath);
-        else if (fileExt.Equals(NS_LITERAL_CSTRING("m4a")))
-            isValid = ReadMP4File(mMetadataPath);
-        else if (fileExt.Equals(NS_LITERAL_CSTRING("m4p")))
-            isValid = ReadMP4File(mMetadataPath);
-        else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg")))
-            isValid = ReadOGGFile(mMetadataPath);
-        else if (fileExt.Equals(NS_LITERAL_CSTRING("oga")))
-            isValid = ReadOGGFile(mMetadataPath);
-        else if (fileExt.Equals(NS_LITERAL_CSTRING("ogv")))
-            isValid = ReadOGGFile(mMetadataPath);
-        else if (fileExt.Equals(NS_LITERAL_CSTRING("ogm")))
-            isValid = ReadOGGFile(mMetadataPath);
-        else if (fileExt.Equals(NS_LITERAL_CSTRING("ogx")))
-            isValid = ReadOGGFile(mMetadataPath);
-        else
+        if (fileExt.Equals(NS_LITERAL_CSTRING("flac"))) {            
+            isValid = ReadFLACFile();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("mpc"))) {
+            isValid = ReadMPCFile();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
+            isValid = ReadMPEGFile();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("m4a"))) {
+            isValid = ReadMP4File();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("m4p"))) {
+            isValid = ReadMP4File();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg"))) {
+            isValid = ReadOGGFile();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("oga"))) {
+            isValid = ReadOGGFile();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogv"))) {
+            isValid = ReadOGGFile();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogm"))) {
+            isValid = ReadOGGFile();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogx"))) {
+            isValid = ReadOGGFile();
+        } else {
             decodedFileExt = PR_FALSE;
+        }
     }
 
     /* If the file extension was not decoded, try */
@@ -1602,7 +1766,7 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
         && !isValid
         && !mMetadataChannelRestart)
     {
-        isValid = ReadMPEGFile(mMetadataPath);
+        isValid = ReadMPEGFile();
     }
 
     /* Check if the metadata reading is complete. */
@@ -1960,66 +2124,28 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
 
 /*
  * ReadFLACFile
- *
- *   --> filePath               Path to FLAC file.
- *
  *   <--                        True if file has valid FLAC metadata.
  *
  *   This function reads metadata from the FLAC file with the file path
- * specified by filePath.
+ * specified by mMetadataPath.
  */
 
-PRBool sbMetadataHandlerTaglib::ReadFLACFile(
-    nsACString                  &aFilePath)
+PRBool sbMetadataHandlerTaglib::ReadFLACFile()
 {
     nsAutoPtr<TagLib::FLAC::File>   pTagFile;
-    PRBool                          restart;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
-
-    /* Get the file path in the proper format for the platform. */
-#if XP_WIN
-    NS_ConvertUTF8toUTF16 filePath(aFilePath);
-#else
-    nsACString &filePath = aFilePath;
-#endif
 
     /* Open and read the metadata file. */
     pTagFile = new TagLib::FLAC::File();
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
     if (NS_SUCCEEDED(result))
-        pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-    if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath.BeginReading());
+        result = OpenTagFile(pTagFile);
     if (NS_SUCCEEDED(result))
         pTagFile->read();
-
-    /* Check for channel restart. */
-    if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
-    {
-        result =
-            mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
-                                                            &restart);
-        if (NS_SUCCEEDED(result))
-        {
-            mMetadataChannelRestart = restart;
-            if (mMetadataChannelRestart)
-                isValid = PR_FALSE;
-        }
-        if (NS_SUCCEEDED(result) && isValid) {
-            PRUint64 size;
-            result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
-                                                                  &size);
-            if (NS_SUCCEEDED(result)) {
-                // we don't consider empty files to be valid because no data
-                // could have been read.  Taglib considers files valid by default
-                // so we can't actually ask it for anything useful (that still
-                // manages to separate the "read error" and "validly no tags" cases)
-                isValid = (size > 0);
-            }
-        }
-    }
+    if (NS_SUCCEEDED(result))
+        result = CheckChannelRestart();
 
     /* Read the base file metadata. */
     if (NS_SUCCEEDED(result) && isValid)
@@ -2039,66 +2165,27 @@ PRBool sbMetadataHandlerTaglib::ReadFLACFile(
 
 /*
  * ReadMPCFile
- *
- *   --> filePath               Path to MPC file.
- *
  *   <--                        True if file has valid MPC metadata.
  *
  *   This function reads metadata from the MPC file with the file path specified
- * by filePath.
+ * by mMetadataPath.
  */
 
-PRBool sbMetadataHandlerTaglib::ReadMPCFile(
-    nsACString                  &aFilePath)
+PRBool sbMetadataHandlerTaglib::ReadMPCFile()
 {
     nsAutoPtr<TagLib::MPC::File>    pTagFile;
-    PRBool                          restart;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
 
-    /* Get the file path in the proper format for the platform. */
-#if XP_WIN
-    NS_ConvertUTF8toUTF16 filePath(aFilePath);
-#else
-    nsACString &filePath = aFilePath;
-#endif
-
-    /* Open and read the metadata file. */
     pTagFile = new TagLib::MPC::File();
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
     if (NS_SUCCEEDED(result))
-        pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-    if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath.BeginReading());
+        result = OpenTagFile(pTagFile);
     if (NS_SUCCEEDED(result))
         pTagFile->read();
-
-    /* Check for channel restart. */
-    if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
-    {
-        result =
-            mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
-                                                            &restart);
-        if (NS_SUCCEEDED(result))
-        {
-            mMetadataChannelRestart = restart;
-            if (mMetadataChannelRestart)
-                isValid = PR_FALSE;
-        }
-        if (NS_SUCCEEDED(result) && isValid) {
-            PRUint64 size;
-            result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
-                                                                  &size);
-            if (NS_SUCCEEDED(result)) {
-                // we don't consider empty files to be valid because no data
-                // could have been read.  Taglib considers files valid by default
-                // so we can't actually ask it for anything useful (that still
-                // manages to separate the "read error" and "validly no tags" cases)
-                isValid = (size > 0);
-            }
-        }
-    }
+    if (NS_SUCCEEDED(result))
+        result = CheckChannelRestart();
 
     /* Read the base file metadata. */
     if (NS_SUCCEEDED(result) && isValid)
@@ -2118,74 +2205,34 @@ PRBool sbMetadataHandlerTaglib::ReadMPCFile(
 
 /*
  * ReadMPEGFile
- *
- *   --> filePath               Path to MPEG file.
- *
  *   <--                        True if file has valid MPEG metadata.
  *
  *   This function reads metadata from the MPEG file with the file path
- * specified by filePath.
+ * specified by mMetadataPath.
  */
 
-PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
-    nsACString                  &aFilePath)
+PRBool sbMetadataHandlerTaglib::ReadMPEGFile()
 {
     nsAutoPtr<TagLib::MPEG::File>   pTagFile;
-    PRBool                          restart = PR_FALSE;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
-
-    /* Get the file path in the proper format for the platform. */
-#if XP_WIN
-    NS_ConvertUTF8toUTF16 filePath(aFilePath);
-#else
-    nsACString &filePath = aFilePath;
-#endif
-
-    /* Open and read the metadata file. */
+    
     pTagFile = new TagLib::MPEG::File();
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
     if (NS_SUCCEEDED(result))
-        pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
+        result = OpenTagFile(pTagFile);
     if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath.BeginReading());
-    if (NS_SUCCEEDED(result)) {
         pTagFile->read();
-    } else {
-        LOG(("ReadMPEGFile: failed to open file %s\n", filePath.BeginReading()));
-    }
-
-    /* Check for channel restart. */
-    if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
-    {
-        result =
-            mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
-                                                            &restart);
-        if (NS_SUCCEEDED(result))
-        {
-            mMetadataChannelRestart = restart;
-            if (mMetadataChannelRestart)
-                isValid = PR_FALSE;
-        }
-        if (NS_SUCCEEDED(result) && isValid) {
-            PRUint64 size;
-            result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
-                                                                  &size);
-            if (NS_SUCCEEDED(result)) {
-                // we don't consider empty files to be valid because no data
-                // could have been read.  Taglib considers files valid by default
-                // so we can't actually ask it for anything useful (that still
-                // manages to separate the "read error" and "validly no tags" cases)
-                isValid = (size > 0);
-            }
-        }
-    }
+    if (NS_SUCCEEDED(result))
+        result = CheckChannelRestart();
 
     /* Guess the charset */
     nsCString charset;
-    GuessCharset(pTagFile->tag(), charset);
-
+    if (NS_SUCCEEDED(result)) {
+        GuessCharset(pTagFile->tag(), charset);
+    }
+    
     /* Read the base file metadata. */
     if (NS_SUCCEEDED(result) && isValid)
         isValid = ReadFile(pTagFile, charset.BeginReading());
@@ -2208,69 +2255,30 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile(
 
 /*
  * ReadMP4File
- *
- *   --> filePath               Path to MP4 file.
- *
  *   <--                        True if file has valid MP4 metadata.
  *
  *   This function reads metadata from the MP4 file with the file path specified
- * by filePath.
+ * by mMetadataPath.
  */
 
-PRBool sbMetadataHandlerTaglib::ReadMP4File(
-    nsACString                  &aFilePath)
+PRBool sbMetadataHandlerTaglib::ReadMP4File()
 {
     nsAutoPtr<TagLib::MP4::File>    pTagFile;
-    PRBool                          restart;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
-
-    /* Get the file path in the proper format for the platform. */
-#if XP_WIN
-    NS_ConvertUTF8toUTF16 filePath(aFilePath);
-#else
-    nsACString &filePath = aFilePath;
-#endif
-
-    /* Open and read the metadata file. */
+    
     pTagFile = new TagLib::MP4::File();
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
     if (NS_SUCCEEDED(result))
-        pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-    if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath.BeginReading());
+        result = OpenTagFile(pTagFile);
     if (NS_SUCCEEDED(result))
         pTagFile->read();
-
-    /* Check for channel restart. */
-    if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
-    {
-        result =
-            mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
-                                                            &restart);
-        if (NS_SUCCEEDED(result))
-        {
-            mMetadataChannelRestart = restart;
-            if (mMetadataChannelRestart)
-                isValid = PR_FALSE;
-        }
-        if (NS_SUCCEEDED(result) && isValid) {
-            PRUint64 size;
-            result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
-                                                                  &size);
-            if (NS_SUCCEEDED(result)) {
-                // we don't consider empty files to be valid because no data
-                // could have been read.  Taglib considers files valid by default
-                // so we can't actually ask it for anything useful (that still
-                // manages to separate the "read error" and "validly no tags" cases)
-                isValid = (size > 0);
-            }
-        }
-    }
+    if (NS_SUCCEEDED(result))
+        result = CheckChannelRestart();
 
     /* Read the base file metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (NS_SUCCEEDED(result))
         isValid = ReadFile(pTagFile);
 
     /* File is invalid on any error. */
@@ -2283,69 +2291,30 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File(
 
 /*
  * ReadOGGFile
- *
- *   --> filePath               Path to OGG file.
- *
  *   <--                        True if file has valid OGG metadata.
  *
  *   This function reads metadata from the OGG file with the file path specified
- * by filePath.
+ * by mMetadataPath.
  */
 
-PRBool sbMetadataHandlerTaglib::ReadOGGFile(
-    nsACString                  &aFilePath)
+PRBool sbMetadataHandlerTaglib::ReadOGGFile()
 {
     nsAutoPtr<TagLib::Vorbis::File> pTagFile;
-    PRBool                          restart;
     PRBool                          isValid = PR_TRUE;
     nsresult                        result = NS_OK;
-
-    /* Get the file path in the proper format for the platform. */
-#if XP_WIN
-    NS_ConvertUTF8toUTF16 filePath(aFilePath);
-#else
-    nsACString &filePath = aFilePath;
-#endif
-
-    /* Open and read the metadata file. */
+    
     pTagFile = new TagLib::Vorbis::File();
     if (!pTagFile)
         result = NS_ERROR_OUT_OF_MEMORY;
     if (NS_SUCCEEDED(result))
-        pTagFile->setMaxScanBytes(MAX_SCAN_BYTES);
-    if (NS_SUCCEEDED(result))
-        pTagFile->open(filePath.BeginReading());
+        result = OpenTagFile(pTagFile);
     if (NS_SUCCEEDED(result))
         pTagFile->read();
-
-    /* Check for channel restart. */
-    if (NS_SUCCEEDED(result) && !mMetadataChannelID.IsEmpty())
-    {
-        result =
-            mpTagLibChannelFileIOManager->GetChannelRestart(mMetadataChannelID,
-                                                            &restart);
-        if (NS_SUCCEEDED(result))
-        {
-            mMetadataChannelRestart = restart;
-            if (mMetadataChannelRestart)
-                isValid = PR_FALSE;
-        }
-        if (NS_SUCCEEDED(result) && isValid) {
-            PRUint64 size;
-            result = mpTagLibChannelFileIOManager->GetChannelSize(mMetadataChannelID,
-                                                                  &size);
-            if (NS_SUCCEEDED(result)) {
-                // we don't consider empty files to be valid because no data
-                // could have been read.  Taglib considers files valid by default
-                // so we can't actually ask it for anything useful (that still
-                // manages to separate the "read error" and "validly no tags" cases)
-                isValid = (size > 0);
-            }
-        }
-    }
+    if (NS_SUCCEEDED(result))
+        result = CheckChannelRestart();
 
     /* Read the base file metadata. */
-    if (NS_SUCCEEDED(result) && isValid)
+    if (NS_SUCCEEDED(result))
         isValid = ReadFile(pTagFile);
 
     /* Read the Xiph metadata. */

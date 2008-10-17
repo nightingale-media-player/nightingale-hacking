@@ -48,6 +48,7 @@ CPP_SRCS = sbMetadataManager.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/mediacore/metadata/manager/src \
+               $(DEPTH)/components/albumart/public \
                $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
@@ -109,7 +110,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMo
 LIBSONGBIRD_COMPONENT = SongbirdMetadataComponent
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(srcdir)/sbMetadataImageScanner.js \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -771,16 +771,15 @@ var AlbumArt = {
     var mimeType = {};
     var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
     if (sbCoverHelper.isImageSizeValid(null, imageData.length)) {
-      var metadataImageScannerService =
-                        Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
-                          .getService(Ci.sbIMetadataImageScanner);
+      var artService =
+                        Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+                          .getService(Ci.sbIAlbumArtService);
 
-      var newFile = metadataImageScannerService
-                                        .saveImageDataToFile(imageData,
-                                                             imageData.length,
-                                                             mimeType.value);
+      var newFile = artService.cacheImage(mimeType.value,
+                                          imageData,
+                                          imageData.length);
       if (newFile) {
-        AlbumArt.setCurrentStateItemImage(newFile);
+        AlbumArt.setCurrentStateItemImage(newFile.spec);
       }
     }
   },
@@ -850,12 +849,6 @@ var AlbumArt = {
     if (itemEnum.hasMoreElements()) {
       var item = itemEnum.getNext().mediaItem;
       curImageUrl = item.getProperty(SBProperties.primaryImageURL);
-      if (curImageUrl == null) {
-        var metadataImageScannerService =
-                        Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
-                          .getService(Ci.sbIMetadataImageScanner);
-        curImageUrl = metadataImageScannerService.fetchCoverForMediaItem(item);
-      }
     }
 
     AlbumArt.changeNowSelected(curImageUrl);

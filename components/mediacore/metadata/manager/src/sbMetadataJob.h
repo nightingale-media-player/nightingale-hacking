@@ -194,6 +194,13 @@ private:
    * *** MAIN THREAD ONLY ***
    */
   nsresult CopyPropertiesToMediaItem(sbMetadataJobItem* aJobItem);
+  
+  /**
+   * Trigger an album art scan for the given job item.
+   * Assumes that the sbIMetadataHandler for the item
+   * is still open
+   */
+  nsresult ReadAlbumArtwork(sbMetadataJobItem* aJobItem);
 
   /**
    * Add the given job item to mErrorMessages.

@@ -76,11 +76,6 @@ TrackEditorState.prototype = {
   
   _propertyManager: Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                       .getService(Ci.sbIPropertyManager),
-
-  _metadataImageScannerService:
-                        Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
-                          .getService(Ci.sbIMetadataImageScanner),
-  
   
   // Array of media items that the track editor is operating on
   _selectedItems: null,
@@ -395,14 +390,6 @@ TrackEditorState.prototype = {
         var seedValue;
         for (var i = 0; i < numToCheck; i++) {
           value = selectedItems[i].getProperty(property);
-          // Note: "" implies the file was scanned and found empty.
-          //       null implies that the file has not been checked for data.
-          //       Both are false, so if you don't care, just use if(!value).
-          if (value == null) { 
-            value = this._metadataImageScannerService
-                        .fetchCoverForMediaItem(selectedItems[i]);
-            selectedItems[i].setProperty(property, value);
-          }
           
           // Break out early if we determine we don't need to scan any further items.
           if (i == 0) {
@@ -1706,10 +1693,6 @@ function TrackEditorArtwork(element) {
   
   TrackEditorInputWidget.call(this, element);
   
-  this._metadataImageScannerService =
-              Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
-                .getService(Ci.sbIMetadataImageScanner);
-  
   this._replaceLabel = SBString("trackeditor.artwork.replace");
   this._addLabel = SBString("trackeditor.artwork.add");
   this._createButton();
@@ -1936,16 +1919,16 @@ TrackEditorArtwork.prototype = {
     var mimeType = {};
     var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
     if (sbCoverHelper.isImageSizeValid(null, imageData.length)) {
-      var metadataImageScannerService =
-                        Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
-                          .getService(Ci.sbIMetadataImageScanner);
+      
+      var artService =
+                        Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+                          .getService(Ci.sbIAlbumArtService);
 
-      var newFile = metadataImageScannerService
-                      .saveImageDataToFile(imageData,
-                                           imageData.length,
-                                           mimeType.value);
+      var newFile = artService.cacheImage(mimeType.value,
+                                          imageData,
+                                          imageData.length);
       if (newFile) {
-        this._imageSrcChange(newFile);
+        this._imageSrcChange(newFile.spec);
       }
     }
   },

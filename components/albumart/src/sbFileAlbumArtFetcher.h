@@ -50,6 +50,7 @@
 
 // Songbird imports.
 #include <sbIAlbumArtFetcher.h>
+#include <sbIAlbumArtService.h>
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
@@ -58,6 +59,9 @@
 #include <nsISimpleEnumerator.h>
 #include <nsTArray.h>
 #include <nsStringGlue.h>
+#include <nsISupportsPrimitives.h>
+#include <nsIURL.h>
+
 
 
 //------------------------------------------------------------------------------
@@ -129,14 +133,16 @@ public:
 private:
 
   //
+  // mAlbumArtService           Art service - used for caching
   // mIOService                 I/O service.
   // mFileExtensionList         List of album art file extensions.
-  // mFileBaseNameList          List of album art file base names.
+  // mFileBaseNameList          List of album art file names.
   // mAlbumArtSourceList        List of album art sources.
   // mIsComplete                True if fetching is complete.
   // mFoundAlbumArt             True if album art found.
   //
 
+  nsCOMPtr<sbIAlbumArtService>  mAlbumArtService;
   nsCOMPtr<nsIIOService>        mIOService;
   nsTArray<nsString>            mFileExtensionList;
   nsTArray<nsString>            mFileBaseNameList;
@@ -149,12 +155,11 @@ private:
   // Internal services.
   //
 
-  nsresult GetMediaItemDirEntries(sbIMediaItem*         aMediaItem,
-                                  PRBool*               aIsLocalFile,
-                                  nsISimpleEnumerator** aDirEntries);
+  nsresult GetURLDirEntries(nsIURL*               aURL,
+                            PRBool*               aIsLocalFile,
+                            nsISimpleEnumerator** aDirEntries);
 
-  nsresult FindAlbumArtFile(nsISimpleEnumerator* aDirEntries,
-                            nsAString&           aAlbumName,
+  nsresult FindAlbumArtFile(sbIMediaItem*        aMediaItem,
                             nsIFile**            aAlbumArtFile);
 
   nsresult SetMediaItemAlbumArt(sbIMediaItem* aMediaItem,
