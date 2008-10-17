@@ -1425,7 +1425,7 @@
           this.remote_album.bindObserver(this.on_remote_artist_album_change, true);
 
           this.rebuildTip();
-      }
+        }
       ]]>
     </constructor>
 
