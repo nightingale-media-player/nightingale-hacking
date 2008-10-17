@@ -237,10 +237,10 @@ function SBDoFirstRun() {
       // load the main library in the media tab / first tab
       const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
       var mediaListView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
-      gBrowser.loadMediaListWithFlags(mediaListView,
-                                      gBrowser.selectedTab,
-                                      null,
-                                      nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY);
+      gBrowser.loadMediaListViewWithFlags(mediaListView,
+                                          gBrowser.selectedTab,
+                                          null,
+                                          nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY);
       
       // Set up the smart playlists after import is complete
       // (improves performance slightly)
