@@ -939,6 +939,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Disable downloading
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_DISABLE_DOWNLOAD),
+                       EmptyString(),
+                       stringBundle, PR_FALSE, PR_FALSE,
+                       PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Enable auto-download
   rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ENABLE_AUTO_DOWNLOAD),
                        EmptyString(),
