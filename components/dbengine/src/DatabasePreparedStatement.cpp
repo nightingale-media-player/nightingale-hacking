@@ -44,7 +44,6 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabasePreparedStatement, sbIDatabasePreparedSta
 CDatabasePreparedStatement::CDatabasePreparedStatement(const nsAString &sql, bool tempFix) 
   : mStatement(nsnull), mDB(nsnull), mSql(sql), mTempFix(tempFix)
 {
-  
 }
 
 CDatabasePreparedStatement::~CDatabasePreparedStatement() 
@@ -76,7 +75,7 @@ sqlite3_stmt* CDatabasePreparedStatement::GetStatement(sqlite3 *db)
   
   // either reset and return the existing statement, or compile it first and return that. 
   if (mStatement) {
-    if(db != mDB) {
+    if (db != mDB) {
       NS_WARNING("GetStatement() called with a different DB than the one originally used compile it!.");
       return nsnull;
     }
@@ -88,14 +87,16 @@ sqlite3_stmt* CDatabasePreparedStatement::GetStatement(sqlite3 *db)
   else {
     mDB = db;
     
-    if(mSql.Length() == 0) {
+    if (mSql.Length() == 0) {
       NS_WARNING("GetStatement() called on a PreparedStatement with no SQL.");
       return nsnull;
     }
 
-    const void *pzTail = nsnull;
-    int retDB = sqlite3_prepare16_v2(db, PromiseFlatString(mSql).get(), (int)mSql.Length() * sizeof(PRUnichar), &mStatement, &pzTail);
-    if(retDB != SQLITE_OK) {
+    const char *pzTail = nsnull;
+    nsCString sqlStr = NS_ConvertUTF16toUTF8(mSql);
+    int retDB = sqlite3_prepare_v2(db, sqlStr.get(), sqlStr.Length(),
+                                   &mStatement, &pzTail);
+    if (retDB != SQLITE_OK) {
       NS_WARNING(NS_ConvertUTF16toUTF8(mSql).get());
       const char *szErr = sqlite3_errmsg(db);
       nsCAutoString log;
@@ -120,3 +121,4 @@ void CDatabasePreparedStatement::TempFix() {
     mStatement = nsnull;
   }   
 }
+
