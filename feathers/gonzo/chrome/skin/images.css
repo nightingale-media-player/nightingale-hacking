@@ -107,6 +107,7 @@ menulist:hover {
 }
 button:active,
 button[open],
+button[checked="true"],
 toolbarbutton:active,
 toolbarbutton[open],
 toolbarbutton[checked="true"],
@@ -114,6 +115,11 @@ menulist:active,
 menulist[open="true"] {
   background-position:center -600px;
 }
+button[checked="true"]:hover,
+toolbarbutton[checked="true"] {
+  background-position:center -1200px;
+}
+
 button[disabled="true"],
 toolbarbutton[disabled="true"],
 menulist[disabled="true"] {
