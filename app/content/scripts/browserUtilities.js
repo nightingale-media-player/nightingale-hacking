@@ -893,3 +893,29 @@ function FullScreen() {
       gServicePane.open = servicepaneState;
   }
 }
+
+
+function BrowserHandleBackspace()
+{
+  switch (Application.prefs.getValue("browser.backspace_action", 2)) {
+  case 0:
+    gBrowser.goBack();
+    break;
+  case 1:
+    goDoCommand("cmd_scrollPageUp");
+    break;
+  }
+}
+
+function BrowserHandleShiftBackspace()
+{
+  switch (Application.prefs.getValue("browser.backspace_action", 2)) {
+  case 0:
+    gBrowser.goForward();
+    break;
+  case 1:
+    goDoCommand("cmd_scrollPageDown");
+    break; 
+  }
+}
+

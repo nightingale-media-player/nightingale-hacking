@@ -150,6 +150,20 @@ pref("browser.preferences.instantApply", true);
 pref("browser.preferences.animateFadeIn", false);
 ##endif
 
+// Backspace and Shift+Backspace behavior
+// Should do nothing on Linux, and go Back/Forward on Mac OSX and Windows
+// 0 goes Back/Forward
+// 2 and other values, nothing
+#ifdef XP_UNIX
+#ifndef XP_MACOSX
+pref("browser.backspace_action", 2);
+#else
+pref("browser.backspace_action", 0);
+#endif
+#else
+pref("browser.backspace_action", 0);
+#endif
+
 // Enable the web playlist.
 // Extracts A tags and add browser context menu.
 // Note that this pref is reset to "1" on every app start.
