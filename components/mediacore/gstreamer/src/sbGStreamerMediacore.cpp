@@ -362,19 +362,26 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
   rv = item->GetContentSrc(getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, /*void*/ );
 
-  rv = sequencer->RequestHandleNextItem(this);
-  NS_ENSURE_SUCCESS(rv, /*void*/ );
-
-  nsCString spec;
-  rv = uri->GetSpec(spec);
+  PRBool schemeIsFile = PR_FALSE;
+  
+  rv = uri->SchemeIs("file", &schemeIsFile);
   NS_ENSURE_SUCCESS(rv, /*void*/);
 
-  LOG(("Setting URI to \"%s\"", spec.get()));
+  if(schemeIsFile) {
+    rv = sequencer->RequestHandleNextItem(this);
+    NS_ENSURE_SUCCESS(rv, /*void*/ );
 
-  /* Set the URI to play */
-  nsAutoMonitor mon(mMonitor);
-  NS_ENSURE_TRUE(mPipeline, /*void*/);
-  g_object_set (G_OBJECT (mPipeline), "uri", spec.get(), NULL);
+    nsCString spec;
+    rv = uri->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, /*void*/);
+
+    LOG(("Setting URI to \"%s\"", spec.get()));
+
+    /* Set the URI to play */
+    nsAutoMonitor mon(mMonitor);
+    NS_ENSURE_TRUE(mPipeline, /*void*/);
+    g_object_set (G_OBJECT (mPipeline), "uri", spec.get(), NULL);
+  }
 
   return;
 }
