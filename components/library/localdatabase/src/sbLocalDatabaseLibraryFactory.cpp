@@ -426,11 +426,15 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 read;
-  nsString response;
-  rv = unichar->ReadString(PR_UINT32_MAX, response, &read);
+  nsString response, result;
+  rv = unichar->ReadString(PR_UINT32_MAX, result, &read);
   NS_ENSURE_SUCCESS(rv, rv);
-
   NS_ASSERTION(read, "Schema file zero bytes?");
+  while (read > 0) {
+    response.Append(result);
+    rv = unichar->ReadString(PR_UINT32_MAX, result, &read);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = unichar->Close();
   NS_ENSURE_SUCCESS(rv, rv);
