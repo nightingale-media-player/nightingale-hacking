@@ -1637,6 +1637,8 @@ sbMediacoreSequencer::GetNextItem(sbIMediaItem **aItem)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aItem);
+  
+  nsAutoMonitor mon(mMonitor);
 
   // by default, if there's no current item, this doesn't throw, it returns a
   // null item instead.
@@ -2535,7 +2537,6 @@ sbMediacoreSequencer::HandleSequencerTimer(nsITimer *aTimer)
   NS_ENSURE_ARG_POINTER(aTimer);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsAutoMonitor mon(mMonitor);
 
   // Update the position in the position data remote.
   if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||

@@ -353,9 +353,6 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
     return;
   }
 
-  nsAutoMonitor mon(mMonitor);
-  NS_ENSURE_TRUE(mPipeline, /*void*/);
-
   nsCOMPtr<sbIMediaItem> item;
   nsresult rv = sequencer->GetNextItem(getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, /*void*/ );
@@ -375,6 +372,8 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
   LOG(("Setting URI to \"%s\"", spec.get()));
 
   /* Set the URI to play */
+  nsAutoMonitor mon(mMonitor);
+  NS_ENSURE_TRUE(mPipeline, /*void*/);
   g_object_set (G_OBJECT (mPipeline), "uri", spec.get(), NULL);
 
   return;
