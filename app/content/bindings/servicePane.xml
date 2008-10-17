@@ -278,7 +278,8 @@
         // that actually saves off the data
         this.mTree._stopEditing = this.mTree.stopEditing;
         this.mTree.stopEditing = function evilStopEditing(accept) {
-          /* debugging output - really useful for debugging:
+          /* debugging output - really useful for debugging: */
+          /*
           dump('accept: '+accept+'\n');
           dump('this._editingColumn: '+this._editingColumn+'\n');
           dump('this._editingRow: '+this._editingRow+'\n');
@@ -286,6 +287,11 @@
           dump('this.inputField.hidden: '+this.inputField.hidden+'\n');
           dump('this.hasAttribute("editing"): '+this.hasAttribute("editing")+'\n');
           */
+          
+          // Always set accept to false, since we leave it
+          // up to the service pane service to determine
+          // what changes
+          this._stopEditing(false);
 
           if (!this._editingColumn)
             return;
@@ -300,11 +306,6 @@
             newName = this.inputField.value;
           }
 
-          // Always set accept to false, since we leave it
-          // up to the service pane service to determine
-          // what changes
-          this._stopEditing(false);
-
           // Give the new name to the service pane.
           if (node) {
             sp.mService.onRename(node.id, newName);
@@ -313,10 +314,6 @@
           // Now try to highlight the current node as per onBrowserTabChange
           try {
             var url = sp._browser.currentURI.spec;
-
-            // Is there a servicepane node for the current tab?
-            var node = sp._browser.selectedTab.servicePaneNode;
-
             if (node) {
               sp.highlightNode(node);
             }
