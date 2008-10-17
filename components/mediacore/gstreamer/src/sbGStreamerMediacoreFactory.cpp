@@ -130,7 +130,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       "bmp", "png", "gif", "jpeg", "jpg", "jpe", "tif", "tiff", "xpm",
       "dat", "swf", "swfl"};
 
-  const char *extraExtensions[] = {"m4r", "m4p", "vob"};
+  const char *extraExtensions[] = {"m4r", "m4p", "mp4", "vob"};
   GList *walker, *list;
 
   list = gst_type_find_factory_get_list ();
