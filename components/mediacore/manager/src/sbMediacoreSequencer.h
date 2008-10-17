@@ -202,6 +202,7 @@ protected:
   PRPackedBool mNeedCheck;
   PRPackedBool mViewIsLibrary;
   PRPackedBool mNeedSearchPlayingItem;
+  PRPackedBool mNeedsRecalculate;
 };
 
 class sbScopedBoolToggle

@@ -154,6 +154,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mNeedCheck(PR_FALSE)
 , mViewIsLibrary(PR_FALSE)
 , mNeedSearchPlayingItem(PR_FALSE)
+, mNeedsRecalculate(PR_FALSE)
 {
 }
 
@@ -1452,7 +1453,10 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
   }
 
   if(mCurrentItemIndex != previousItemIndex || 
-     mCurrentItemUID != previousItemUID) {
+     mCurrentItemUID != previousItemUID ||
+     mNeedsRecalculate) {
+
+    mNeedsRecalculate = PR_FALSE;
 
     rv = RecalculateSequence(&mCurrentItemIndex);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2254,7 +2258,10 @@ sbMediacoreSequencer::OnItemAdded(sbIMediaList *aMediaList,
       // The 1st part of the detection has already scheduled a check, but
       // our search will occur before the check happens, so if the old
       // playing item no longer exists, playback will correctly stop.
-      mNeedSearchPlayingItem = true;
+      mNeedSearchPlayingItem = PR_TRUE;
+  }
+  else if (aMediaList == mViewList && mListBatchCount) {
+    mNeedsRecalculate = PR_TRUE;
   }
 
   return NS_OK;
@@ -2449,13 +2456,12 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
       mNeedCheck = PR_FALSE;
     }
 
-    if(mNeedSearchPlayingItem) {
+    if(mNeedSearchPlayingItem || mNeedsRecalculate) {
       rv = UpdateItemUIDIndex();
       NS_ENSURE_SUCCESS(rv, rv);
 
       mNeedSearchPlayingItem = PR_FALSE;
     }
-
   }
 
   return NS_OK;
