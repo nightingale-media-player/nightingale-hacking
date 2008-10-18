@@ -1051,7 +1051,18 @@ FeathersManager.prototype = {
 
     // Determine window features.  If chrome is enabled, make resizable.
     // Otherwise remove the titlebar.
-    var chromeFeatures = "chrome,modal=no,resizable=yes,centerscreen,toolbar=yes,popup=no";
+    var chromeFeatures = "chrome,modal=no,resizable=yes,toolbar=yes,popup=no";
+    
+    // on windows and mac, centerscreen gets overriden by persisted position.
+    // not so for linux.
+    var runtimeInfo = Components.classes["@mozilla.org/xre/app-info;1"]
+                                .getService(Components.interfaces.nsIXULRuntime);
+    switch (runtimeInfo.OS) {
+      case "WINNT":
+      case "Darwin":
+        chromeFeatures += ",centerscreen";
+    }
+    
     var showChrome = this.isChromeEnabled(this.currentLayoutURL, this.currentSkinName);
     if (showChrome) {
        chromeFeatures += ",titlebar=yes";
