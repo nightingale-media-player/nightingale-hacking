@@ -60,6 +60,7 @@
 #include <sbVariantUtils.h>
 #include <sbBaseMediacoreEventTarget.h>
 #include <sbMediacoreError.h>
+#include <sbProxiedComponentManager.h>
 
 #include <sbIGStreamerService.h>
 #include <sbIMediaItem.h>
@@ -312,9 +313,8 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
       {
         if(mPlatformInterface) 
         {
-          mPlatformInterface->PrepareVideoWindow(aMessage);
-
           DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_HAS_VIDEO);
+          mPlatformInterface->PrepareVideoWindow(aMessage);
         }
         return PR_TRUE;
       }
@@ -964,21 +964,33 @@ sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
   target->AddEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
   target->AddEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
 
+  nsCOMPtr<nsIThread> eventTarget;
+  rv = NS_GetMainThread(getter_AddRefs(eventTarget));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIBoxObject> proxiedBoxObject;
+  rv = do_GetProxyForObject(eventTarget,
+                            NS_GET_IID(nsIBoxObject),
+                            boxObject,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedBoxObject));
+
+
   mVideoEnabled = PR_TRUE;
   mVideoWindow = aVideoWindow;
 
 #if defined (MOZ_WIDGET_GTK2)
   GdkWindow *native = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
   LOG(("Found native window %x", native));
-  mPlatformInterface = new GDKPlatformInterface(boxObject, native);
+  mPlatformInterface = new GDKPlatformInterface(proxiedBoxObject, native);
 #elif defined (XP_WIN)
   HWND native = (HWND)widget->GetNativeData(NS_NATIVE_WIDGET);
   LOG(("Found native window %x", native));
-  mPlatformInterface = new Win32PlatformInterface(boxObject, native);
+  mPlatformInterface = new Win32PlatformInterface(proxiedBoxObject, native);
 #elif defined (XP_MACOSX)
   void * native = (void *)widget->GetNativeData(NS_NATIVE_WIDGET);
   LOG(("Found native window %x", native));
-  mPlatformInterface = new OSXPlatformInterface(boxObject, native);
+  mPlatformInterface = new OSXPlatformInterface(proxiedBoxObject, native);
 #else
   LOG(("No video backend available for this platform"));
   mVideoEnabled = PR_FALSE;

@@ -163,11 +163,10 @@ function SBPlayingVideoChanged(value)
     window.focus();
   }
   else {
-    // restore window if it was maximized before cloaking it</pre>
+    // restore window if it was maximized before cloaking it
     restoreWindow();
-    // Save position before cloaking, because if we close the app after
-    // the window has been cloaked, we can't record its position.
-    windowCloak.cloak(window);
+    // hide window.
+    SBHideCoreWindow();
   }
 }
 

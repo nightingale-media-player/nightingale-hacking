@@ -83,7 +83,9 @@ protected:
 
   bool mFullscreen;   // Are we currently in fullscreen mode?
 
-  nsCOMPtr<nsIBoxObject> mVideoBox; // The box object for the video display area
+  // The box object for the video display area, access to this object
+  // is proxied to the main thread.
+  nsCOMPtr<nsIBoxObject> mVideoBox; 
 
 
   GstElement *mVideoSink;        // The GStreamer video sink we created

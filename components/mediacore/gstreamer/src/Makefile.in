@@ -10,10 +10,8 @@ GLIB_VERSION=2.0
 
 ifdef DEBUG
 MODULE = sbGStreamerMediacore_d
-moz_utils = sbMozStringUtils_d
 else
 MODULE = sbGStreamerMediacore
-moz_utils = sbMozStringUtils
 endif
 
 CPP_SRCS = $(topsrcdir)/components/mediacore/base/src/sbBaseMediacore.cpp \
@@ -50,6 +48,7 @@ CPP_INCLUDES = \
       $(topsrcdir)/components/mediacore/base/src \
       $(DEPTH)/components/mediacore/gstreamer/public \
       $(topsrcdir)/components/moz/strings/src \
+      $(topsrcdir)/components/moz/threads/src \
 	    $(DEPTH)/components/property/public \
 	    $(topsrcdir)/components/property/src \
       $(MOZSDK_INCLUDE_DIR) \
@@ -118,10 +117,9 @@ endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = \
       nspr4 \
-	  plds4 \
+	    plds4 \
       xpcomglue_s \
       xpcom \
-      $(moz_utils) \
       gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
       gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
       $(NULL)
@@ -129,6 +127,11 @@ DYNAMIC_LIB_EXTRA_IMPORTS = \
 DYNAMIC_LIB_IMPORT_PATHS = \
       $(MOZSDK_LIB_DIR) \
       $(DEPTH)/components/moz/strings/src \
+      $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS = \
+      $(DEPTH)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+      $(DEPTH)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
       $(NULL)
 
 # Use system headers for MEDIA_CORE_GST_SYSTEM only

@@ -61,6 +61,7 @@
 #include <sbIPropertyArray.h>
 
 #include <sbMediacoreEvent.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
@@ -1079,7 +1080,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 
       // Also stop the current core.
       rv = mPlaybackControl->Stop();
-      NS_ASSERTION(NS_FAILED(rv), 
+      NS_ASSERTION(NS_SUCCEEDED(rv), 
         "Stop returned failure. Attempting to recover.");
     }
   }
@@ -1109,7 +1110,21 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
     rv = managerVideoWindow->GetVideoWindow(getter_AddRefs(xulElement));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = videoWindow->SetVideoWindow(xulElement);
+    // We have to proxy this call because it may use DOM elements from another
+    // thread and as well all know, DOM elements are not thread-safe.
+    nsCOMPtr<nsIThread> eventTarget;
+    rv = NS_GetMainThread(getter_AddRefs(eventTarget));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediacoreVideoWindow> proxiedVideoWindow;
+    rv = do_GetProxyForObject(eventTarget,
+                              NS_GET_IID(sbIMediacoreVideoWindow),
+                              videoWindow,
+                              NS_PROXY_SYNC,
+                              getter_AddRefs(proxiedVideoWindow));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = proxiedVideoWindow->SetVideoWindow(xulElement);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // XXXAus: Set Fullscreen here to maintain fullscreen state across 
@@ -1776,7 +1791,12 @@ sbMediacoreSequencer::Play()
   mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
   mIsWaitingForPlayback = PR_TRUE;
 
-  nsresult rv = ResetMetadataDataRemotes();
+  // Always reset this data remote, otherwise the video window may get into
+  // an unexpected state and not get shown ever again.
+  nsresult rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ResetMetadataDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = Setup();

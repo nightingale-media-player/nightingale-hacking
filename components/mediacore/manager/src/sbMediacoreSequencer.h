@@ -222,3 +222,4 @@ public:
 private:
   PRPackedBool *mBool;
 };
+
