@@ -19,6 +19,9 @@ if (typeof(gMetrics) == "undefined")
 	var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
     		.createInstance(Ci.sbIMetrics);
 
+if (typeof(FAVICON_PATH) == "undefined")
+	const FAVICON_PATH = "chrome://shoutcast-radio/skin/shoutcast_favicon.png";
+
 function findRadioNode(node) {
 	if (node.isContainer && node.name != null && node.name ==
 			ShoutcastRadio.Controller._strings.getString("radioFolderLabel"))
@@ -120,11 +123,17 @@ ShoutcastRadio.Controller = {
 		// Bookmark the SHOUTcast chrome
 		var bmNode = BMS.addBookmarkAt(
 				"chrome://shoutcast-radio/content/directory.xul", "SHOUTcast",
-				"chrome://shoutcast-radio/skin/shoutcast_favicon.png",
-				radioFolder, null);
+				FAVICON_PATH, radioFolder, null);
 		if (bmNode) {
 			bmNode.editable = false;
-			bmNode.image ="chrome://shoutcast-radio/skin/shoutcast_favicon.png";
+			bmNode.image = FAVICON_PATH;
+		} else {
+			// bookmark already exists
+			var node = SPS.getNodeForURL(
+					"chrome://shoutcast-radio/content/directory.xul");
+			if (node.image != FAVICON_PATH) {
+				node.image = FAVICON_PATH;
+			}
 		}
 
 		SPS.save();
