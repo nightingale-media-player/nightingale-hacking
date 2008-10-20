@@ -488,8 +488,7 @@ function sbLastFm_handshake(success, failure) {
 sbLastFm.prototype.updateProfile =
 function sbLastFm_updateProfile(succeeded, failed) {
   var url = 'http://ws.audioscrobbler.com/1.0/user/' +
-    encodeURIComponent(this.username) + '/profile.xml?' + 
-    (new Date()).getTime();
+    encodeURIComponent(this.username) + '/profile.xml?' + Date.now();
   var self = this;
   this.getXML(url, function success(xml) {
     function text(tag) {
