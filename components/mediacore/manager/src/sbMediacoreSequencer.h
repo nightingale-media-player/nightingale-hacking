@@ -181,6 +181,7 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataPositionStr;
 
   nsCOMPtr<sbIDataRemote> mDataRemoteMetadataURL;
+  nsCOMPtr<sbIDataRemote> mDataRemoteMetadataImageURL;
 
   nsCOMPtr<sbIDataRemote> mDataRemotePlaylistShuffle;
   nsCOMPtr<sbIDataRemote> mDataRemotePlaylistRepeat;

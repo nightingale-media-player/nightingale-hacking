@@ -62,11 +62,13 @@ const PREF_STATE = "songbird.albumart.displaypane.view";
  *
  *****************************************************************************/
 var AlbumArt = {
-  _coverBind: null,                 // Data remote for the now playing image.
-  _mediacoreManager: null,          // Get notifications of track changes.
-  _mediaListView: null,             // Current active mediaListView.
-  _browser: null,                   // Handle to browser for tab changes.
-  _displayPane: null,               // Display pane we are in.
+  _coverBind: null,                   // Data remote for the now playing image.
+  _mediacoreManager: null,            // Get notifications of track changes.
+  _mediaListView: null,               // Current active mediaListView.
+  _browser: null,                     // Handle to browser for tab changes.
+  _displayPane: null,                 // Display pane we are in.
+  _nowSelectedMediaItem: null,        // Now selected media item.
+  _nowSelectedMediaItemWatcher: null, // Now selected media item watcher.
 
   // Array of state information for each display (selected/playing/etc)
   _stateInfo: [ { imageID: "sb-albumart-selected",
@@ -474,6 +476,9 @@ var AlbumArt = {
     // Remove our unload event listener so we do not leak
     window.removeEventListener("unload", AlbumArt.onUnload, false);
 
+    // Clear the now selected media item
+    AlbumArt.clearNowSelectedMediaItem();
+
     // Save the current display state for when the user starts again
     Application.prefs.setValue(PREF_STATE, AlbumArt._currentState);
                                
@@ -648,10 +653,8 @@ var AlbumArt = {
       }
     }
     
-    // Update the currently selected display.
-    AlbumArt.changeNowSelected(aNewImageUrl);
-    
-    // Now actually set the properties
+    // Now actually set the properties.  This will trigger a notification that
+    // will update the currently selected display.
     var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Ci.nsIMutableArray);
     itemEnum = selection.selectedIndexedMediaItems;
@@ -705,6 +708,21 @@ var AlbumArt = {
       var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
       return albumArtPlayingImage.src;
     }
+  },
+
+  /**
+   * \brief This will clear the now selected media item and stop watching it for
+   *        changes.
+   */
+  clearNowSelectedMediaItem: function AlbumArt_clearNowSelectedMediaItem() {
+    // Stop watching the now selected media item
+    if (AlbumArt._nowSelectedMediaItemWatcher) {
+      AlbumArt._nowSelectedMediaItemWatcher.cancel();
+      AlbumArt._nowSelectedMediaItemWatcher = null;
+    }
+
+    // Clear the now selected media item.
+    AlbumArt._nowSelectedMediaItem = null;
   },
 
   /*********************************
@@ -843,11 +861,31 @@ var AlbumArt = {
    *        selected image.
    */
   onSelectionChanged: function AlbumArt_onSelectionChanged() {
+    // Get the new now selected media item
     var selection = AlbumArt._mediaListView.selection;
     var curImageUrl = null;
+    var item = null;
     var itemEnum = selection.selectedIndexedMediaItems;
-    if (itemEnum.hasMoreElements()) {
-      var item = itemEnum.getNext().mediaItem;
+    if (itemEnum.hasMoreElements())
+      item = itemEnum.getNext().mediaItem;
+
+    // Clear the old now selected media item
+    AlbumArt.clearNowSelectedMediaItem();
+
+    // Watch new now selected media item for primary image URL changes
+    if (item) {
+      AlbumArt._nowSelectedMediaItem = item;
+      AlbumArt._nowSelectedMediaItemWatcher =
+                 Cc["@songbirdnest.com/Songbird/Library/MediaItemWatcher;1"]
+                   .createInstance(Ci.sbIMediaItemWatcher);
+      var filter = SBProperties.createArray([ [ SBProperties.primaryImageURL,
+                                                null ] ]);
+      AlbumArt._nowSelectedMediaItemWatcher.watch(item, this, filter);
+    }
+
+    // Get the now selected media item image.  Do this after adding watcher to
+    // ensure changes are always picked up.
+    if (item) {
       curImageUrl = item.getProperty(SBProperties.primaryImageURL);
     }
 
@@ -859,6 +897,27 @@ var AlbumArt = {
    *        anything with this.
    */
   onCurrentIndexChanged: function AlbumArt_onCurrentIndexChanged() {
+  },
+
+  /*********************************
+   * sbIMediaItemListener
+   ********************************/
+  /**
+   * \brief Called when a media item is removed from its library.
+   * \param aMediaItem The removed media item.
+   */
+  onItemRemoved: function AlbumArt_onItemRemoved(aMediaItem) {
+  },
+
+  /**
+   * \brief Called when a media item is changed.
+   * \param aMediaItem The item that has changed.
+   */
+  onItemUpdated: function AlbumArt_onItemUpdated(aMediaItem) {
+    // Update now selected media item image
+    var curImageUrl =
+          this._nowSelectedMediaItem.getProperty(SBProperties.primaryImageURL);
+    AlbumArt.changeNowSelected(curImageUrl);
   },
 
   /*********************************

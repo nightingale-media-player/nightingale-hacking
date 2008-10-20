@@ -489,6 +489,19 @@ sbMediacoreSequencer::BindDataRemotes()
   rv = mDataRemoteMetadataURL->SetStringValue(EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Metadata image URL
+  mDataRemoteMetadataImageURL =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataImageURL->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_METADATA_IMAGEURL),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataImageURL->SetStringValue(EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Playlist Shuffle
   mDataRemotePlaylistShuffle = 
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
@@ -559,6 +572,9 @@ sbMediacoreSequencer::UnbindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteMetadataURL->Unbind();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataImageURL->Unbind();
   NS_ENSURE_SUCCESS(rv, rv);
 
   //
@@ -782,6 +798,9 @@ sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
   else if(aId.EqualsLiteral(SB_PROPERTY_TRACKNAME)) {
     remote = mDataRemoteMetadataTitle;  
   }
+  else if(aId.EqualsLiteral(SB_PROPERTY_PRIMARYIMAGEURL)) {
+    remote = mDataRemoteMetadataImageURL;
+  }
   
   if(remote) {
     nsresult rv = remote->SetStringValue(aValue);
@@ -797,7 +816,7 @@ sbMediacoreSequencer::SetMetadataDataRemotesFromItem(sbIMediaItem *aItem)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aItem);
 
-  nsString albumName, artistName, genre, trackName;
+  nsString albumName, artistName, genre, trackName, imageURL;
   nsresult rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), 
                                    albumName);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -812,6 +831,10 @@ sbMediacoreSequencer::SetMetadataDataRemotesFromItem(sbIMediaItem *aItem)
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), trackName);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                          imageURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = mDataRemoteMetadataAlbum->SetStringValue(albumName);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -822,6 +845,9 @@ sbMediacoreSequencer::SetMetadataDataRemotesFromItem(sbIMediaItem *aItem)
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteMetadataTitle->SetStringValue(trackName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataImageURL->SetStringValue(imageURL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -841,6 +867,9 @@ sbMediacoreSequencer::ResetMetadataDataRemotes() {
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteMetadataTitle->SetStringValue(EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteMetadataImageURL->SetStringValue(EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1340,6 +1369,7 @@ sbMediacoreSequencer::StartWatchingView()
   rv = mViewList->AddListener(this, 
                               PR_FALSE, 
                               sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                              sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
                               sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
                               sbIMediaList::LISTENER_FLAGS_BATCHBEGIN |
                               sbIMediaList::LISTENER_FLAGS_BATCHEND |
@@ -1363,6 +1393,7 @@ sbMediacoreSequencer::StartWatchingView()
     rv = list->AddListener(this,
                            PR_FALSE,
                            sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                           sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
                            sbIMediaList::LISTENER_FLAGS_BATCHBEGIN |
                            sbIMediaList::LISTENER_FLAGS_BATCHEND |
                            sbIMediaList::LISTENER_FLAGS_LISTCLEARED,

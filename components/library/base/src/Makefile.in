@@ -41,10 +41,12 @@ endif
 CPP_SRCS = sbLibraryConstraints.cpp \
            sbLibraryManager.cpp \
            sbLibraryManagerModule.cpp \
+           sbMediaItemWatcher.cpp \
            sbMediaListViewMap.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/property/public \
                $(topsrcdir)/components/library/base/src/static/ \
                $(topsrcdir)/components/include \
                $(topsrcdir)/components/moz/strings/src \

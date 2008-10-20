@@ -34,12 +34,14 @@
 #include "sbLibraryConstraints.h"
 #include "sbLibraryManager.h"
 #include "sbMediaListViewMap.h"
+#include "sbMediaItemWatcher.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLibraryManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaListViewMap, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibrarySort);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryConstraintBuilder);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryConstraint);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaItemWatcher);
 
 static nsModuleComponentInfo components[] =
 {
@@ -74,6 +76,12 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_MEDIALISTVIEWMAP_CONTRACTID,
     sbMediaListViewMapConstructor,
     sbMediaListViewMap::RegisterSelf
+  },
+  {
+    SONGBIRD_MEDIAITEMWATCHER_CLASSNAME,
+    SONGBIRD_MEDIAITEMWATCHER_CID,
+    SONGBIRD_MEDIAITEMWATCHER_CONTRACTID,
+    sbMediaItemWatcherConstructor
   }
 };
 

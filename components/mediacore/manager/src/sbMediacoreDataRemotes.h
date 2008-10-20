@@ -51,11 +51,12 @@
 /**
  * Metadata DataRemotes
  */
-#define SB_MEDIACORE_DATAREMOTE_METADATA_ALBUM  "metadata.album"
-#define SB_MEDIACORE_DATAREMOTE_METADATA_ARTIST "metadata.artist"
-#define SB_MEDIACORE_DATAREMOTE_METADATA_GENRE  "metadata.genre"
-#define SB_MEDIACORE_DATAREMOTE_METADATA_TITLE  "metadata.title"
-#define SB_MEDIACORE_DATAREMOTE_METADATA_URL    "metadata.url"
+#define SB_MEDIACORE_DATAREMOTE_METADATA_ALBUM    "metadata.album"
+#define SB_MEDIACORE_DATAREMOTE_METADATA_ARTIST   "metadata.artist"
+#define SB_MEDIACORE_DATAREMOTE_METADATA_GENRE    "metadata.genre"
+#define SB_MEDIACORE_DATAREMOTE_METADATA_TITLE    "metadata.title"
+#define SB_MEDIACORE_DATAREMOTE_METADATA_URL      "metadata.url"
+#define SB_MEDIACORE_DATAREMOTE_METADATA_IMAGEURL "metadata.imageURL"
 
 #define SB_MEDIACORE_DATAREMOTE_METADATA_LENGTH       "metadata.length"
 #define SB_MEDIACORE_DATAREMOTE_METADATA_LENGTH_STR   "metadata.length.str"
