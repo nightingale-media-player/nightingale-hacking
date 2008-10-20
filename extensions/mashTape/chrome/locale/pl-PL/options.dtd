@@ -17,6 +17,6 @@
 <!ENTITY mtprefs.tab.rss "Ustawienia karty z nowościami">
 <!ENTITY mtprefs.tab.photo "Ustawienia karty ze zdjęciami">
 <!ENTITY mtprefs.tab.flash "Ustawienia karty z filmami">
-<!ENTITY mtprefs.tab.help "Wyświetl tę kartę w mashTapie.">
-<!ENTITY mtprefs.single "Ten panel może wyświetlać dane z jednego serwisu. Proszę wybrać serwis z poniższej listy.">
-<!ENTITY mtprefs.multiple "Ten panel obsługuje jednoczesne wyświetlanie danych z wielu serwisów. Proszę wybrać serwisy z poniższej listy.">
+<!ENTITY mtprefs.tab.help "Wyświetlaj tę kartę w mashTapie.">
+<!ENTITY mtprefs.single "Ten panel może jednocześnie wyświetlać dane z jednego serwisu. Proszę wybrać serwis z poniższej listy.">
+<!ENTITY mtprefs.multiple "Ten panel może jednocześnie wyświetlać dane z wielu serwisów. Proszę wybrać serwisy z poniższej listy.">
