@@ -340,40 +340,17 @@ private:
   // A dummy uri that holds a special 'songbird-library://' url.
   nsCOMPtr<nsIURI> mContentSrc;
 
+  nsCOMPtr<sbIDatabasePreparedStatement> mCreateMediaItemPreparedStatement;
+  nsCOMPtr<sbIDatabasePreparedStatement> mAddPropertyPreparedStatement;
+  nsCOMPtr<sbIDatabasePreparedStatement> mAddPropertyFTSPreparedStatement;
+  // There's a separate update statement for each top level property.
+  // This is because we have no efficient way to /not/ update a property
+  // if we try to only update some of the top level properties.
+  nsInterfaceHashtable<nsUint32HashKey, sbIDatabasePreparedStatement> mMediaItemsUpdatePreparedStatements;
+
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
-  nsString mGetTypeForGUIDQuery;
-  nsString mGetMediaItemIdForGUIDQuery;
-  nsString mInsertMediaItemQuery;
-  
-  // XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617
-  //         for more details.
-  //nsString mInsertPropertyFtsQuery;
-
-  nsString mInsertPropertyFtsAllQuery;
-  nsString mMediaListFactoriesQuery;
-  nsString mInsertMediaListFactoryQuery;
-
-  // Query to delete a single item from the library.
-  nsString mDeleteItemQuery;
-
-  // Query to clear the entire library.
-  nsString mDeleteAllQuery;
-
-  // Query to grab the media list factory type ID based on its type string.
-  nsString mGetFactoryIDForTypeQuery;
-
-  // Get the guids of all lists by type
-  nsString mGetAllListsByTypeId;
-
-  // Insert property query
-  nsString mInsertPropertyQuery;
-
-  // Get media item IDs for a URL query
-  nsString mGetGuidsFromContentUrl;
-
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
-
   sbMediaItemInfoTable mMediaItemTable;
 
   // Weak references to media lists that have been instantiated

@@ -41,58 +41,71 @@
 struct sbStaticProperty {
   const char* mPropertyID;
   const char* mColumn;
-  PRUint32         mDBID;
+  PRUint32    mColumnType;
+  PRUint32    mDBID;
 };
+const PRUint32 SB_COLUMN_TYPE_TEXT    = 0;
+const PRUint32 SB_COLUMN_TYPE_INTEGER = 1;
 
 static sbStaticProperty sStaticProperties[] = {
   {
     SB_PROPERTY_GUID,
     "guid",
+    SB_COLUMN_TYPE_TEXT,
     PR_UINT32_MAX,
   },
   {
     SB_PROPERTY_CREATED,
     "created",
+    SB_COLUMN_TYPE_INTEGER,
     PR_UINT32_MAX - 1,
   },
   {
     SB_PROPERTY_UPDATED,
     "updated",
+    SB_COLUMN_TYPE_INTEGER,
     PR_UINT32_MAX - 2,
   },
   {
     SB_PROPERTY_CONTENTURL,
     "content_url",
+    SB_COLUMN_TYPE_TEXT,
     PR_UINT32_MAX - 3,
   },
   {
     SB_PROPERTY_CONTENTMIMETYPE,
     "content_mime_type",
+    SB_COLUMN_TYPE_TEXT,
     PR_UINT32_MAX - 4,
   },
   {
     SB_PROPERTY_CONTENTLENGTH,
     "content_length",
+    SB_COLUMN_TYPE_INTEGER,
     PR_UINT32_MAX - 5,
   },
   {
     SB_PROPERTY_HIDDEN,
     "hidden",
+    SB_COLUMN_TYPE_INTEGER,
     PR_UINT32_MAX - 6,
   },
   {
     SB_PROPERTY_LISTTYPE,
     "media_list_type_id",
+    SB_COLUMN_TYPE_INTEGER,
     PR_UINT32_MAX - 7,
   },
   {
     SB_PROPERTY_HASH,
     "content_hash",
+    SB_COLUMN_TYPE_TEXT,
     PR_UINT32_MAX - 8,
   },
   {
     SB_PROPERTY_ISLIST,
     "is_list",
+    SB_COLUMN_TYPE_INTEGER,
     PR_UINT32_MAX - 9,
   },
 };
@@ -126,6 +139,32 @@ SB_GetTopLevelPropertyColumn(const nsAString& aProperty,
   for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
     if(aProperty.EqualsLiteral(sStaticProperties[i].mPropertyID)) {
       aColumnName.AssignLiteral(sStaticProperties[i].mColumn);
+      return NS_OK;
+    }
+  }
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+static nsresult
+SB_GetTopLevelPropertyColumnType(const nsAString& aProperty,
+                                 PRUint32 &aColumnType)
+{
+  for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
+    if(aProperty.EqualsLiteral(sStaticProperties[i].mPropertyID)) {
+      aColumnType = sStaticProperties[i].mColumnType;
+      return NS_OK;
+    }
+  }
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+static nsresult
+SB_GetTopLevelPropertyColumnType(const PRUint32 aPropertyDBID,
+                                 PRUint32 &aColumnType)
+{
+  for(PRUint32 i = 0; i < sStaticPropertyCount; i++) {
+    if(aPropertyDBID == sStaticProperties[i].mDBID) {
+      aColumnType = sStaticProperties[i].mColumnType;
       return NS_OK;
     }
   }
