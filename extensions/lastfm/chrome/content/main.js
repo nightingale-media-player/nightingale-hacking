@@ -207,6 +207,18 @@ LastFm.onLoad = function() {
   this._username.addEventListener('input', loginFormChanged, false);
   this._password.addEventListener('input', loginFormChanged, false);
   loginFormChanged();
+  // react to keypresses
+  function loginFormKeypress(event) {
+    // enter or return = login, if we're not disabled
+    if (event.keyCode == KeyEvent.DOM_VK_RETURN ||
+        event.keyCode == KeyEvent.DOM_VK_ENTER) {
+      if (!LastFm._loginButton.disabled) {
+        LastFm.onLoginClick(event);
+      }
+    }
+  }
+  this._username.addEventListener('keypress', loginFormKeypress, false);
+  this._password.addEventListener('keypress', loginFormKeypress, false);
 
   // create elements for the faceplate
   var faceplateParent = document.getElementById('faceplate-tool-bar');
