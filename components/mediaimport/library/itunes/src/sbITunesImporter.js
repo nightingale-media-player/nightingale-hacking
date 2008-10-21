@@ -2047,8 +2047,13 @@ sbITunesImporter.prototype =
       if (!guid)
         continue;
 
-      // Get the track media item.
-      trackInfo.mediaItem = this._library.getMediaItem(guid);
+      // Get the track media item.  If an exception occurs, the item must have
+      // been deleted.
+      try {
+        trackInfo.mediaItem = this._library.getMediaItem(guid);
+      } catch (ex) {
+        trackInfo.mediaItem = null;
+      }
     }
   },
 
