@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+#filter substitution
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
      xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
   <Description about="urn:mozilla:install-manifest">
@@ -29,7 +30,11 @@
         <songbird:compatibleLayout>
           <Description>
             <songbird:layoutURL>chrome://gonzo/content/xul/mainplayer.xul</songbird:layoutURL>
+#ifdef XP_MACOSX
+            <songbird:showChrome>true</songbird:showChrome>
+#else
             <songbird:showChrome>false</songbird:showChrome>
+#endif
             <songbird:onTop>false</songbird:onTop>
           </Description>
           <Description>
@@ -59,3 +64,4 @@
 
   </Description>
 </RDF>
+

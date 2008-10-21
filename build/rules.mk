@@ -144,6 +144,10 @@ ifdef SONGBIRD_PP_COMPONENTS
 targets += sb_components_preprocess
 endif
 
+ifdef SONGBIRD_PP_RESOURCES
+targets += sb_resources_preprocess
+endif
+
 ifdef SONGBIRD_LIB
 targets += copy_sb_lib
 endif
@@ -914,6 +918,59 @@ ifneq (,$(strip $(SONGBIRD_PP_COMPONENTS)))
 endif
 .PHONY : sb_components_preprocess
 endif #SONGBIRD_PP_COMPONENTS
+
+#-----------------------
+
+
+#------------------------------------------------------------------------------
+# Rules for Songbird Pre-processed resources
+#------------------------------------------------------------------------------
+#
+#  A target for pre-processing a list of files and a directory for those files
+#  to end up at.
+#
+#  SONGBIRD_PP_RESOURCES - The list of files to preprocess, the target assumes
+#                          that all the files in with ".in"
+#
+#  SONGBIRD_PP_DIR       - The target directory to put the pre-processed file
+#                          list in $(SONGBIRD_PP_RESOURCES).
+#
+
+ifdef SONGBIRD_PP_RESOURCES
+ifeq (windows,$(SB_PLATFORM))
+RESOURCES_PPFLAGS = --line-endings=crlf
+endif
+ifndef PP_RESOURCES_STRIP_SUFFIXES
+PP_RESOURCES_STRIP_SUFFIXES = .in
+endif
+endif
+
+sb_resources_preprocess:
+ifndef SONGBIRD_PP_DIR
+	$(error $(CURDIR)/Makefile: SONGBIRD_PP_DIR was not defined, use SONGBIRD_PP_DIR)
+endif
+ifeq (,$(wildcard $(SONGBIRD_PP_DIR)))
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_PP_DIR)
+endif
+ifneq (,$(strip $(SONGBIRD_PP_RESOURCES)))
+	for item in $(SONGBIRD_PP_RESOURCES); do \
+	  target=$(SONGBIRD_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIXES)`; \
+	  echo $$target; \
+	  $(CYGWIN_WRAPPER) $(RM) -f $$target; \
+	  $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(RESOURCES_PPFLAGS) \
+	    $(PPDEFINES) -- $$item > $$target; \
+	done
+endif
+
+clean_sb_resources_preprocess:
+ifneq (,$(strip $(SONGBIRD_PP_RESOURCES)))
+	for item in $(SONGBIRD_PP_RESOURCES); do \
+	  target = $(SONGBIRD_PP_DIR)/`basename $$item`; \
+	  $(CYGWIN_WRAPPER) $(RM) -f $$target; \
+	done
+endif
+
+.PHONY : sb_resources_preprocess clean_sb_resources_preprocess
 
 #-----------------------
 

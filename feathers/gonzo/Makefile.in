@@ -33,6 +33,9 @@ EXTENSION_UUID = gonzo@songbirdnest.com
 EXTENSION_DIR  = $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
 
 JAR_MANIFEST = jar.mn
+SONGBIRD_PP_DIR = $(EXTENSION_DIR)
+SONGBIRD_PP_RESOURCES = $(srcdir)/install.rdf.in \
+                        $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 
@@ -40,7 +43,6 @@ all:: extinstall
 
 extinstall :
 	@$(CYGWIN_WRAPPER)	$(MKDIR) -p $(EXTENSION_DIR)
-	$(CYGWIN_WRAPPER)	$(CP)	-f $(srcdir)/install.rdf $(EXTENSION_DIR)
 	$(CYGWIN_WRAPPER)	$(CP)	-f $(srcdir)/chrome.manifest $(EXTENSION_DIR)
 
 .PHONY : extinstall

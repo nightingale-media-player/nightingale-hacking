@@ -535,7 +535,6 @@ sb-sys-titlebar {
 
 #nav-bar {
   padding:3px 4px !important;
-  min-height:28px;
   max-height:28px;
 }
 #nav-bar > * {
@@ -549,10 +548,8 @@ sb-sys-titlebar {
 #nav_bar_box > .hook > .left,
 #nav_bar_box > .hook > .right {
   min-width:16px;
-  min-height:28px;
 }
 #nav_bar_box > .hook > .middle {
-  min-height:28px;
 }
 
 

@@ -26,39 +26,27 @@
 
 
 
-/** 
-*******************************************************************************
+/******************************************************************************
+> MAC OSX RULES
+  This css file provides additional rules that are only loaded on Mac OSX
+******************************************************************************/
 
-MAC OSX RULES
 
-This css file provides additional rules that are only loaded on Mac OSX.
 
-*******************************************************************************
-*/
-
-window[windowtype*="Songbird"] {
-  border:none !important;
-}
-wizard,
-dialog {
-  border:none !important;
-}
-
-#sb-sys-title-title {
-  font-family: Lucida Grande !important;
-  font-size: 13px;
-  margin:0;
-  padding:3px 0px 0px 0px !important;
-  font-weight:normal;
-}
-
-.sb-sys-outer-frame-resizer {
-  display:none;
-}
-
+/******************************************************************************
+> WINDOW UNFOCUSED
+******************************************************************************/
 window:not([active="true"]) .inactive-box {
   background-color:rgba(255,255,255,0.33);
 }
+
+
+
+/******************************************************************************
+> WINDOW RESIZER SUPPORT
+  Add padding to the status bar when the media controls are at the top so that 
+  the window resizer image can be shown without overlapping anything
+******************************************************************************/
 
 #content_player_wrapper[playercontrols='top'] #status-bar-box {
   padding-right: 12px;
@@ -69,4 +57,32 @@ window:not([active="true"]) .inactive-box {
 }
 #content_player_wrapper[playercontrols='top'] #servicepane_splitter {
   border-bottom:none;
+}
+
+
+
+/******************************************************************************
+> HIDE ELEMENTS
+  Hide specific elements in the window used only for Windows and Linux
+******************************************************************************/
+
+/* title bar */
+#titlebar_box {
+  visibility:collapse;
+  border:none !important;
+  min-height:0px !important;
+}
+
+/* window resizers */
+.sb-sys-outer-frame-resizer {
+  display:none;
+}
+
+/* remove window borders because Mac windows have shadows */
+window[windowtype*="Songbird"] {
+  border:none !important;
+}
+wizard,
+dialog {
+  border:none !important;
 }
