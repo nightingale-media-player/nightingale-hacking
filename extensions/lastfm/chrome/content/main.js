@@ -375,7 +375,11 @@ LastFm.onLoginSucceeded = function LastFm_onLoginSucceeded() {
 
 // last.fm profile changed
 LastFm.onProfileUpdated = function LastFm_onProfileUpdated() {
-  this._image.setAttribute('src', this._service.avatar);
+  var avatar = 'chrome://lastfm/skin/default-avatar.png';
+  if (this._service.avatar) {
+    avatar = this._service.avatar;
+  }
+  this._image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', avatar);
   if (this._service.realname && this._service.realname.length) {
     this._realname.textContent = this._service.realname;
   } else {

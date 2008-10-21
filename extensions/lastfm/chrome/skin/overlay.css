@@ -12,16 +12,11 @@
 }
 
 /* the avatar image */
-#lastfmImage {
-  width: 64px;
-  height: 64px;
+#lastfmImageContainer {
   border: 2px solid rgb(80,80,80);
   margin-right:4px;
-  background-image:url('default-avatar.png');
-  background-repeat:no-repeat;
-  background-position:center center;
 }
-#lastfmImage:hover {
+#lastfmImageContainer:hover {
   border-color: #1694d9;
   cursor:pointer;
 }
