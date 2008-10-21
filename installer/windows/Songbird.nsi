@@ -243,10 +243,6 @@ Section "-Application" Section1
   File ${PreferredIcon}
   File ${VistaIcon}
   
-  ; Taglib
-  File tag.dll
-  File tag_c.dll
-  
   ; List of text files to install
   File LICENSE.html
   File TRADEMARK.txt
@@ -474,10 +470,6 @@ Section "Uninstall"
   Delete $INSTDIR\${MozCRuntime}
   Delete $INSTDIR\${PreferredIcon}
   Delete $INSTDIR\${VistaIcon}
-  
-  ; Taglib
-  Delete $INSTDIR\tag.dll
-  Delete $INSTDIR\tag_c.dll
   
   ; Text files to uninstall
   Delete $INSTDIR\LICENSE.html

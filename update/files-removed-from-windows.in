@@ -19,3 +19,5 @@
 ./extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
 ./extensions/rubberducky@songbirdnest.com/chrome.manifest
 ./extensions/rubberducky@songbirdnest.com/install.rdf
+./tag.dll
+./tag_c.dll
