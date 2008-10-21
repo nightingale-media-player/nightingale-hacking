@@ -439,6 +439,7 @@ case "$SB_PLATFORM" in
   windows)
     BIN_SUFFIX=".exe"
     OBJ_SUFFIX=".obj"
+    LIB_PREFIX=""
     LIB_SUFFIX=".lib"
     DLL_SUFFIX=".dll"
     AC_DEFINE(UNICODE)
@@ -454,6 +455,7 @@ case "$SB_PLATFORM" in
   macosx)
     BIN_SUFFIX=
     OBJ_SUFFIX=".o"
+    LIB_PREFIX="lib"
     LIB_SUFFIX=".a"
     DLL_SUFFIX=".dylib"
     AC_DEFINE(XP_MACOSX)
@@ -463,6 +465,7 @@ case "$SB_PLATFORM" in
   linux|solaris)
     BIN_SUFFIX=
     OBJ_SUFFIX=".o"
+    LIB_PREFIX="lib"
     LIB_SUFFIX=".a"
     DLL_SUFFIX=".so"
     AC_DEFINE(XP_UNIX)
@@ -471,6 +474,7 @@ case "$SB_PLATFORM" in
 esac
 AC_SUBST(BIN_SUFFIX)
 AC_SUBST(OBJ_SUFFIX)
+AC_SUBST(LIB_PREFIX)
 AC_SUBST(LIB_SUFFIX)
 AC_SUBST(DLL_SUFFIX)
 

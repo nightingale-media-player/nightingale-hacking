@@ -65,6 +65,9 @@ CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
+CPP_EXTRA_DEFS = -DTAGLIB_STATIC_LIB \
+                 $(NULL)
+
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
@@ -72,18 +75,23 @@ DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             unicharutil_external_s \
                             plds4 \
-                            tag \
                             xpcomglue_s \
                             xpcom \
                             $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib \
-                           $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib \
                            $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-                              $(DEPTH)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d)
+                              $(DEPTH)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
+                              $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)tag_s \
+                              $(NULL)
+
+ifeq (windows,$(SB_PLATFORM))
+  DYNAMIC_LIB_STATIC_IMPORTS += $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/zlib
+else # SB_PLATFORM == windows
+  DYNAMIC_LIB_STATIC_IMPORTS += $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/libz
+endif # SB_PLATFORM == windows
 
 ifeq (linux,$(SB_PLATFORM))
   # Search in xulrunner directory at runtime for shared libraries.

@@ -864,7 +864,9 @@ copy_sb_dist:
 ifeq (,$(wildcard $(SONGBIRD_DISTDIR)))
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DISTDIR)
 endif
+ifneq (,$(SONGBIRD_DIST))
 	$(CYGWIN_WRAPPER) $(CP) -dfp $(SONGBIRD_DIST) $(SONGBIRD_DISTDIR)
+endif
 .PHONY : copy_sb_dist
 endif #SONGBIRD_DIST
 
