@@ -347,6 +347,8 @@ var playbackHotkeyActions = {
 
   _hotkey_playPause: function() {
     try {
+      const sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
+      
       // If we are already playing something just pause/unpause playback
       if (this._mm.status.state == sbIMediacoreStatus.STATUS_PLAYING || 
           this._mm.status.state == sbIMediacoreStatus.STATUS_BUFFERING) {
