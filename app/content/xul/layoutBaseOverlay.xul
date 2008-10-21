@@ -237,7 +237,7 @@
                   label="&menu.updateCmd.label;"
                   accesskey="&menu.updateCmd.accessKey;"
                   oncommand="checkForUpdates();"/>
-        <menuseparator/>
+        <menuseparator id="aboutName_menuseparator"/>
         <menuitem id="aboutName"
                   label="&menu.help.about;"
                   accesskey="&menu.help.about.accesskey;"/>

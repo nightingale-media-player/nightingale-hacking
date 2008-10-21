@@ -61,7 +61,7 @@
       <menuitem id="menu_mac_hide_others" label="&menu.mac.hideothers;" key="hideothers-mac-key"/>
       <menuitem id="menu_mac_show_all" label="&menu.mac.showall;"/>
     </menupopup>
-  
+
   </menubar>
 
 
@@ -71,7 +71,10 @@
   
   <!-- Replace the delete key with the mac specific one. -->
   <menuitem id="menu_EditDeleteMenuItem" label="&menu.edit.delete;" key="mac-delete-key" command="cmd_delete"/>
-  
+ 
+  <!-- Remove the extra separator in the Help menu -->
+  <menuseparator removeelement="true" id="aboutName_menuseparator"/>
+
   <!--===========================================================================-->
 
   <keyset id="mainKeyset">
