@@ -134,6 +134,10 @@ public:
 
     virtual bool isOpen() const;
 
+    virtual bool isReadable();
+
+    virtual bool isWritable();
+
     virtual int seek(
         long                        offset,
         Position                    p = Beginning);

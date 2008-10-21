@@ -221,6 +221,30 @@ bool TagLibChannelFileIO::isOpen() const
     return (isOpen);
 }
 
+/*!
+ * Returns true if the file can be opened for reading.  If the file does not
+ * exist, this will return false.
+ *
+ * \deprecated
+ */
+bool TagLibChannelFileIO::isReadable()
+{
+    LOG(("1: isReadable"));
+    return (true);
+}
+
+/*!
+ * Returns true if the file can be opened for writing.
+ *
+ * \deprecated
+ */
+bool TagLibChannelFileIO::isWritable()
+{
+    LOG(("1: isWritable"));
+
+    return (false);
+}
+
 
 /*!
  * Move the I/O pointer to \a offset in the file from position \a p.  This
