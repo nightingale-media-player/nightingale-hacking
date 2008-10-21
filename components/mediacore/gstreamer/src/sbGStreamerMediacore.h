@@ -115,8 +115,11 @@ protected:
   void HandleStateChangedMessage (GstMessage *message);
   void HandleEOSMessage (GstMessage *message);
   void HandleErrorMessage (GstMessage *message);
+  void HandleWarningMessage (GstMessage *message);
   void HandleBufferingMessage (GstMessage *message);
   void HandleRedirectMessage (GstMessage *message);
+
+  nsresult LogMessageToErrorConsole(nsString message, PRUint32 flags);
 
 private:
   // Static helper for C callback

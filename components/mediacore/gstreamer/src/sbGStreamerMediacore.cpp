@@ -35,6 +35,8 @@
 #include <nsIURL.h>
 #include <nsIRunnable.h>
 #include <nsIIOService.h>
+#include <nsIConsoleService.h>
+#include <nsIScriptError.h>
 #include <nsThreadUtils.h>
 #include <nsCOMPtr.h>
 #include <prlog.h>
@@ -319,6 +321,8 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
         return PR_TRUE;
       }
     }
+    default:
+      break;
   }
 
   /* Return PR_FALSE since we haven't handled the message */
@@ -547,12 +551,46 @@ void sbGStreamerMediacore::HandleEOSMessage(GstMessage *message)
   gst_element_set_state (mPipeline, GST_STATE_NULL);
 }
 
+nsresult sbGStreamerMediacore::LogMessageToErrorConsole(
+        nsString message, PRUint32 flags)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIConsoleService> consoleService = 
+    do_GetService("@mozilla.org/consoleservice;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  nsCOMPtr<nsIScriptError> scriptError = 
+      do_CreateInstance(NS_SCRIPTERROR_CONTRACTID);
+  if (!scriptError) {
+    return NS_ERROR_FAILURE;
+  }
+
+  rv = scriptError->Init(message.get(),
+                         EmptyString().get(),
+                         EmptyString().get(),
+                         0, // No line number
+                         0, // No column number
+                         flags,
+                         "Mediacore:GStreamer");
+  NS_ENSURE_SUCCESS(rv,rv);
+
+  rv = consoleService->LogMessage(scriptError);
+  NS_ENSURE_SUCCESS(rv,rv);
+
+  return NS_OK;
+}
+
 void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 {
   GError *gerror = NULL;
   nsString errormessage;
   nsCOMPtr<sbMediacoreError> error;
   nsCOMPtr<sbIMediacoreEvent> event;
+  gchar *debugMessage;
+  nsresult rv;
+
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
   nsAutoMonitor lock(mMonitor);
 
@@ -560,16 +598,54 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
   NS_NEWXPCOM(error, sbMediacoreError);
   NS_ENSURE_TRUE(error, /* void */);
 
-  gst_message_parse_error(message, &gerror, NULL);
+  gst_message_parse_error(message, &gerror, &debugMessage);
   CopyUTF8toUTF16(nsDependentCString(gerror->message), errormessage);
   error->Init(0, errormessage); // XXX: Use a proper error code once they exist
-  g_error_free (gerror);
 
   DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);
+
+  // Build an error message to output to the console 
+  // TODO: This is currently not localised (but we're probably not setting
+  // things up right to get translated gstreamer messages anyway).
+  nsString errmessage = NS_LITERAL_STRING("GStreamer error: ");
+  errmessage.Append(NS_ConvertUTF8toUTF16(gerror->message));
+  errmessage.Append(NS_LITERAL_STRING(" Additional information: "));
+  errmessage.Append(NS_ConvertUTF8toUTF16(debugMessage));
+
+  g_error_free (gerror);
+  g_free (debugMessage);
 
   // Then, shut down the pipeline, which will cause
   // a STREAM_END event to be fired.
   gst_element_set_state (mPipeline, GST_STATE_NULL);
+
+  // Log the error message
+  rv = LogMessageToErrorConsole(errmessage, nsIScriptError::errorFlag);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+}
+
+void sbGStreamerMediacore::HandleWarningMessage(GstMessage *message)
+{
+  GError *gerror = NULL;
+  gchar *debugMessage;
+  nsresult rv;
+
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+
+  gst_message_parse_warning(message, &gerror, &debugMessage);
+
+  // TODO: This is currently not localised (but we're probably not setting
+  // things up right to get translated gstreamer messages anyway).
+  nsString warning = NS_LITERAL_STRING("GStreamer warning: ");
+  warning.Append(NS_ConvertUTF8toUTF16(gerror->message));
+  warning.Append(NS_LITERAL_STRING(" Additional information: "));
+  warning.Append(NS_ConvertUTF8toUTF16(debugMessage));
+
+  g_error_free (gerror);
+  g_free (debugMessage);
+
+  rv = LogMessageToErrorConsole(warning, nsIScriptError::warningFlag);
+  NS_ENSURE_SUCCESS(rv, /* void */);
 }
 
 /* Dispatch messages based on type.
@@ -592,6 +668,9 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
       break;
     case GST_MESSAGE_ERROR:
       HandleErrorMessage(message);
+      break;
+    case GST_MESSAGE_WARNING:
+      HandleWarningMessage(message);
       break;
     case GST_MESSAGE_EOS:
       HandleEOSMessage(message);
