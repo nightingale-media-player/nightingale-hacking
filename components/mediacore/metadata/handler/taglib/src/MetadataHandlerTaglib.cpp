@@ -1910,6 +1910,23 @@ void sbMetadataHandlerTaglib::GuessCharset(
     std::string data = tagString.toCString(true);
     NS_ConvertUTF8toUTF16 expandedData(data.c_str());
 
+    #if PR_LOGGING && DEBUG
+    {
+      nsCOMPtr<nsINetUtil> netUtil =
+        do_GetService("@mozilla.org/network/util;1", &rv);
+      NS_ENSURE_SUCCESS(rv, /* void */);
+      
+      nsCString escaped;
+      rv = netUtil->EscapeString(NS_ConvertUTF16toUTF8(expandedData),
+                                 nsINetUtil::ESCAPE_ALL,
+                                 escaped);
+      NS_ENSURE_SUCCESS(rv, /* void */);
+      
+      LOG(("sbMetadataHandlerTaglib::GuessCharset: guessing with data %s",
+           escaped.BeginReading()));
+    }
+    #endif /* PR_LOGGING && DEBUG */
+
     const PRUnichar *begin, *end;
     expandedData.BeginReading(&begin, &end);
 
@@ -1959,6 +1976,8 @@ void sbMetadataHandlerTaglib::GuessCharset(
     if (NS_SUCCEEDED(rv)) {
         if (eSureAnswer == mLastConfidence || eBestAnswer == mLastConfidence) {
             _retval.Assign(mLastCharset);
+            LOG(("sbMetadataHandlerTaglib::GuessCharset: detected answer %s",
+                 _retval.BeginReading()));
 
             // Bug 8394 - The universal charset detector likes to treat cp1251
             // as MacUkranian, so in this case run the specific Ukranian 
@@ -2064,11 +2083,16 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
 
     // If UTF16 or ASCII, or we have no idea, 
     // just leave the string as-is
-    if (!aCharset || !*aCharset || 
+    if (!aCharset || !*aCharset ||
+        aString.type() != TagLib::String::Latin1 ||
         !strcmp("utf-8", aCharset) ||
         !strcmp("us-ascii", aCharset))
         
     {
+        LOG(("sbMetadataHandlerTaglib::ConvertCharset: not converting to \"%s\" (type %i)",
+             aCharset ? aCharset : "(null)",
+             aString.type()
+             ));
         return aString;
     }
 
@@ -2231,6 +2255,8 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile()
     nsCString charset;
     if (NS_SUCCEEDED(result)) {
         GuessCharset(pTagFile->tag(), charset);
+        LOG(("sbMetadataHandlerTaglib::ReadMPEGFile: Guessed charset: %s",
+             charset.BeginReading()));
     }
     
     /* Read the base file metadata. */
