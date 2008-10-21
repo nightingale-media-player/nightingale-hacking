@@ -86,7 +86,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
                        Ci.sbIJobProgress,
                        Ci.sbIJobCancelable ],
   
-  _latestSchemaVersion: 11,
+  _latestSchemaVersion: 12,
   _lowestFromSchemaVersion: Number.MAX_VALUE,
   
   _migrationHandlers:   null,
@@ -106,6 +106,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
     for(let contractID in Cc) {
       if(contractID.indexOf(SBLDBCOMP + "Migration/Handler") == 0) {
 
+        dump("\n\n\n contractID == " + contractID + "\n\n\n");
         let migrationHandler = 
           Cc[contractID].createInstance(Ci.sbILocalDatabaseMigrationHandler);
         let migrationHandlerKey = migrationHandler.fromVersion + 
@@ -164,7 +165,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
       if(!(key in this._migrationHandlers)) {
         throw Cr.NS_ERROR_UNEXPECTED;
       }
-      
+
       this._migrationHandlers[key].migrate(aLibrary);
       
       oldVersion = newVersion;

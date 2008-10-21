@@ -46,8 +46,8 @@ function sbLibraryMigration()
   
   this.fromVersion = 10;
   this.toVersion   = 11;
-  this.versionString = sbLibraryMigration.fromVersion + " to " + 
-                        sbLibraryMigration.toVersion;
+  this.versionString = this.fromVersion + " to " + 
+                       this.toVersion;
 }
 
 //-----------------------------------------------------------------------------
@@ -57,10 +57,10 @@ function sbLibraryMigration()
 sbLibraryMigration.prototype = {
   __proto__: SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype,
 
-  classDescription: 'Songbird Migration Handler, version ' + sbLibraryMigration.versionString,
+  classDescription: 'Songbird Migration Handler, version ' + this.versionString,
   classID: Components.ID("{62bb8fb0-8fd8-11dd-ad8b-0800200c9a66}"),
-  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + sbLibraryMigration.versionString,
-  
+  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + this.versionString,
+
   _databaseLocation: null,
   _databaseGUID: null,
   

@@ -416,7 +416,7 @@ CDatabaseDumpProcessor::RunTableDumpQuery(const nsACString & aSelect)
   while (rc == SQLITE_ROW) {
     rv = OutputBuffer((const char *)sqlite3_column_text(pSelect, 0));
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = OutputBuffer("\n");
+    rv = OutputBuffer(";\n");
     NS_ENSURE_SUCCESS(rv, rv);
 
     rc = sqlite3_step(pSelect);
@@ -474,7 +474,7 @@ CDatabaseDumpProcessor::DumpCallback(void *pArg,
   }
   else {
     dumpProcessor->OutputBuffer(zSql);
-    dumpProcessor->OutputBuffer("\n");
+    dumpProcessor->OutputBuffer(";\n");
   }
 
   if (strcmp(zType, "table") == 0) {
