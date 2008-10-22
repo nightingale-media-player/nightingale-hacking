@@ -157,6 +157,8 @@ sbLibraryMigration.prototype = {
       }
     } while (cont);
 
+    inputStream.close();
+
     insertQuery.addQuery("update library_metadata set value = '" 
                    + this.toVersion + "' where name = 'version'");
     insertQuery.addQuery("commit");
