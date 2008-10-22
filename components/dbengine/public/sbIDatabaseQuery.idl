@@ -301,11 +301,6 @@ interface sbIDatabaseQuery : nsISupports
   sbIDatabaseResult getResultObject();
 
   /**
-   * \brief [DEPRECATED]
-   */
-  [noscript] sbIDatabaseResult getResultObjectOrphan();
-
-  /**
    * \brief Get the last error on the query that has executed
    *
    * Don't call this method unless you know the query has completed executing.
@@ -338,20 +333,6 @@ interface sbIDatabaseQuery : nsISupports
    * \return NS_OK
    */
   long waitForCompletion();
-
-  /**
-   * \brief Add a sbIDatabaseQueryCallback instance to the query
-   *
-   * \param dbPersistCB The callback instance
-   */
-  void addCallback(in sbIDatabaseQueryCallback dbCallback);
-
-  /**
-   * \brief Remove a sbIDatabaseQueryCallback instance from the query
-   *
-   * \param dbPersistCB The callback instance
-   */
-  void removeCallback(in sbIDatabaseQueryCallback dbCallback);
 
   /**
    * \brief Return whether or not the query is currently executing

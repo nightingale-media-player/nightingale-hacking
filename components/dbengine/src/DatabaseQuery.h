@@ -38,6 +38,7 @@ class CDatabaseQuery;
 // INCLUDES ===================================================================
 #include <string>
 #include <vector>
+#include <deque>
 #include <set>
 
 #include <sqlite3.h>
@@ -89,7 +90,7 @@ struct CQueryParameter
   PRInt64 int64Value;
 };
 
-typedef nsTArray<CQueryParameter> bindParameterArray_t;
+typedef std::vector< CQueryParameter > bindParameterArray_t;
 
 class CDatabaseEngine;
 class QueryProcessorThread;
@@ -119,7 +120,9 @@ public:
 
 protected:
   CDatabaseResult* GetResultObject();
+  NS_IMETHOD PopQuery(sbIDatabasePreparedStatement **_retval);
   bindParameterArray_t* GetQueryParameters(PRInt32 aQueryIndex);
+  bindParameterArray_t* PopQueryParameters();
 
   PRLock *m_pLocationURILock;
   nsCOMPtr<nsIURI> m_LocationURI;
@@ -142,16 +145,13 @@ protected:
   nsString m_DatabaseGUID;
 
   PRLock* m_pDatabaseQueryListLock;
-  nsCOMArray<sbIDatabasePreparedStatement> m_DatabaseQueryList;
+  std::deque< nsCOMPtr<sbIDatabasePreparedStatement> > m_DatabaseQueryList;
 
   PRMonitor* m_pQueryRunningMonitor;
   PRBool m_QueryHasCompleted;
 
   PRLock* m_pCallbackListLock;
-  nsInterfaceHashtable<nsISupportsHashKey, sbIDatabaseQueryCallback> m_CallbackList;
-
-  PRLock* m_pPersistentCallbackListLock;
-  nsInterfaceHashtable<nsISupportsHashKey, sbIDatabaseSimpleQueryCallback> m_PersistentCallbackList;
+  nsInterfaceHashtable<nsISupportsHashKey, sbIDatabaseSimpleQueryCallback> m_CallbackList;
 
   typedef std::set<nsCString> modifiedtables_t;
   typedef std::map<nsCString, modifiedtables_t> modifieddata_t;
@@ -173,7 +173,7 @@ protected:
   dbrowids_t m_DeletedRowIDs;
 
   PRLock* m_pBindParametersLock;
-  nsTArray<bindParameterArray_t> m_BindParameters;
+  std::deque< bindParameterArray_t > m_BindParameters;
   bindParameterArray_t* m_LastBindParameters;
 
   PRLock* m_pRollingLimitLock;

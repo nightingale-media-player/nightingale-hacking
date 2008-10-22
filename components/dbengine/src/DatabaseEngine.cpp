@@ -1124,7 +1124,7 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
       int retDB = 0; // sqlite return code.
       
       nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement;
-      nsresult rv = pQuery->GetQuery(currentQuery, getter_AddRefs(preparedStatement));
+      nsresult rv = pQuery->PopQuery(getter_AddRefs(preparedStatement));
       if (NS_FAILED(rv)) {
         LOG(("DBE: Failed to get a prepared statement from the Query object."));
         continue;
@@ -1141,7 +1141,7 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
       pQuery->m_CurrentQuery = currentQuery;
       PR_Unlock(pQuery->m_CurrentQueryLock);
 
-      pParameters = pQuery->GetQueryParameters(currentQuery);
+      pParameters = pQuery->PopQueryParameters();
 
       nsAutoString dbName;
       pQuery->GetDatabaseGUID(dbName);
@@ -1155,9 +1155,12 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
         NS_ConvertUTF16toUTF8(strQuery).get()));
 
       // If we have parameters for this query, bind them
-      PRUint32 len = pParameters->Length();
-      for(PRUint32 i = 0; i < len; i++) {
-        CQueryParameter& p = pParameters->ElementAt(i);
+      PRUint32 i = 0; // we need the index as well to know where to bind our values.
+      bindParameterArray_t::const_iterator const end = pParameters->end();
+      for (bindParameterArray_t::const_iterator paramIter = pParameters->begin();
+           paramIter != end;
+           ++paramIter, ++i) {
+        const CQueryParameter& p = *paramIter;
 
         switch(p.type) {
           case ISNULL:
@@ -1457,24 +1460,16 @@ void CDatabaseEngine::DoSimpleCallback(CDatabaseQuery *pQuery)
 
   pQuery->GetResultObject(getter_AddRefs(pDBResult));
   pQuery->GetDatabaseGUID(strGUID);
-
-  nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement;
-  nsresult rv = pQuery->GetQuery(0, getter_AddRefs(preparedStatement));
-  if (NS_FAILED(rv)) {
-    LOG(("Couldn't get the prepared statement from inside the simple callback.\n"));
-    return;
-  }
   
-  nsString strQuery;
-  preparedStatement->GetQueryString(strQuery);
-
-  PR_Lock(pQuery->m_pPersistentCallbackListLock);
-  pQuery->m_PersistentCallbackList.EnumerateRead(EnumSimpleCallback, &callbackSnapshot);
-  PR_Unlock(pQuery->m_pPersistentCallbackListLock);
+  PR_Lock(pQuery->m_pCallbackListLock);
+  pQuery->m_CallbackList.EnumerateRead(EnumSimpleCallback, &callbackSnapshot);
+  PR_Unlock(pQuery->m_pCallbackListLock);
 
   callbackCount = callbackSnapshot.Count();
   if(!callbackCount)
     return;
+
+  nsString strQuery = NS_LITERAL_STRING("UNIMPLEMENTED");
 
   for(PRUint32 i = 0; i < callbackCount; i++)
   {

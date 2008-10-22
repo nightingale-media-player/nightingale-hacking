@@ -379,6 +379,7 @@ private:
   nsresult InitializeLibraryStatistics();
   // precompiled queries for library stats
   nsCOMPtr<sbIDatabaseQuery> mStatisticsSumQuery;
+  nsCOMPtr<sbIDatabasePreparedStatement> mStatisticsSumPreparedStatement;
 };
 
 /**
@@ -456,8 +457,9 @@ public:
   nsresult AddMapping(PRUint32 aQueryIndex,
                       PRUint32 aItemIndex);
 
-  nsresult NotifyInternal(nsITimer* aTimer,
-                          PRBool* _retval);
+  nsresult SetQueryCount(PRUint32 aQueryCount);
+
+  nsresult NotifyInternal(PRBool* _retval);
 
   sbBatchCreateHelper* BatchHelper();
   

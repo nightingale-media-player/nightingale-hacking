@@ -3938,6 +3938,13 @@ sbBatchCreateTimerCallback::AddMapping(PRUint32 aQueryIndex,
   return NS_OK;
 }
 
+nsresult
+sbBatchCreateTimerCallback::SetQueryCount(PRUint32 aQueryCount)
+{
+  mQueryCount = aQueryCount;
+  return NS_OK;
+}
+
 sbBatchCreateHelper*
 sbBatchCreateTimerCallback::BatchHelper()
 {
@@ -3951,7 +3958,7 @@ sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
   NS_ENSURE_ARG_POINTER(aTimer);
 
   PRBool complete;
-  nsresult rv = NotifyInternal(aTimer, &complete);
+  nsresult rv = NotifyInternal(&complete);
   if (NS_SUCCEEDED(rv) && !complete) {
     // Everything looks fine, let the timer continue.
     return NS_OK;
@@ -3978,30 +3985,15 @@ sbBatchCreateTimerCallback::Notify(nsITimer* aTimer)
 }
 
 nsresult
-sbBatchCreateTimerCallback::NotifyInternal(nsITimer* aTimer,
-                                           PRBool* _retval)
+sbBatchCreateTimerCallback::NotifyInternal(PRBool* _retval)
 {
   NS_ASSERTION(_retval, "Null retval!");
 
   nsresult rv;
-
-  // Use mTimer as a "runonce" flag so that we can cache the query count.
-  if (!mTimer) {
-    rv = mQuery->GetQueryCount(&mQueryCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mTimer = aTimer;
-  }
-#ifdef DEBUG
-  else {
-    // Make sure this is the timer we think it should be.
-    NS_ASSERTION(mTimer == aTimer, "Not the timer we saw last time!");
-  }
-#endif
+  *_retval = PR_TRUE;
 
   // Exit early if there's nothing to do.
   if (!mQueryCount) {
-    *_retval = PR_TRUE;
     return NS_OK;
   }
 
@@ -4014,24 +4006,26 @@ sbBatchCreateTimerCallback::NotifyInternal(nsITimer* aTimer,
   rv = mQuery->CurrentQuery(&currentQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  currentQuery++;
   NS_ASSERTION(currentQuery <= mQueryCount, "Invalid position!");
 
-  if (mQueryCount != currentQuery &&
+  // FIXME: This is wrong for several reasons. First, the mQueryCount we get is not meaningful anymore
+  //        since we have a queue that we pop as we work, so this length is always decreasing.
+  //        Second, we seem to be getting one past the end of the *real* query count in the DBEngine somehow.
+  //        Still, if we are at this point, we should basically be within a timer's length or so of the end,
+  //        (assuming incorrectly that all queries take about the same length of time.)
+  
+  if (currentQuery <= mQueryCount &&
       isExecuting) {
     // Notify listener of progress.
     PRUint32 itemIndex = 0;
     PRBool success = mQueryToIndexMap.Get(currentQuery, &itemIndex);
-    
     NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
 
     mListener->OnProgress(itemIndex);
 
     *_retval = PR_FALSE;
-    return NS_OK;
   }
 
-  *_retval = PR_TRUE;
   return NS_OK;
 }
 
@@ -4172,8 +4166,10 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
   if (mCallback) {
     rv = mCallback->AddMapping(queryCount, listLength - 1);
     NS_ENSURE_SUCCESS(rv, rv);
+    queryCount++;
+    mCallback->SetQueryCount(queryCount);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
-  queryCount++;
 
   // Remember length for notifications
   rv = mLibrary->GetLength(&mLength);
@@ -4297,9 +4293,6 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
                                            moreMappedItems->ObjectAt(0),
                                            mLength + notifiedCount);
         success = moreMappedItems->RemoveObjectAt(0);
-        if (!success) {
-          printf("FAILURE\n");
-        }
         NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
         notifiedCount++;
       }
@@ -4339,7 +4332,7 @@ sbLocalDatabaseLibrary::InitializeLibraryStatistics() {
     NS_LL("  ORDER BY ? * SUM(value2.obj)")
     NS_LL("  LIMIT ?;"));
   // add the SQL to the query object
-  rv = mStatisticsSumQuery->AddQuery(sumQuery);
+  rv = mStatisticsSumQuery->PrepareQuery(sumQuery, getter_AddRefs(mStatisticsSumPreparedStatement));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -4365,6 +4358,7 @@ sbLocalDatabaseLibrary::CollectDistinctValues(const nsAString & aProperty,
   switch(aCollectionMethod) {
     case COLLECT_SUM:
       query = mStatisticsSumQuery;
+      query->AddPreparedStatement(mStatisticsSumPreparedStatement);
       query->BindStringParameter(0, aProperty);
       query->BindStringParameter(1, aOtherProperty);
       query->BindInt32Parameter(2, aAscending ? 1 : -1);

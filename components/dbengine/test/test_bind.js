@@ -78,7 +78,7 @@ function runTest () {
     fail("No exception thrown");
   }
   catch(e) {
-    assertEqual(e.result, Cr.NS_ERROR_INVALID_POINTER);
+    assertEqual(e.result, Cr.NS_ERROR_FAILURE);
   }
 
   // Test each binding method
