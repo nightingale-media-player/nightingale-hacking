@@ -1302,14 +1302,20 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
   NS_ENSURE_ARG_POINTER(aView);
 
   nsAutoMonitor mon(mMonitor);
-  if(mView != aView) {
+
+  PRUint32 viewLength = 0;
+  nsresult rv = aView->GetLength(&viewLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(mView != aView || 
+     mSequence.size() != viewLength) {
 
     // Fire before view change event 
     nsCOMPtr<nsIVariant> variant = sbNewVariant(aView).get();
     NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<sbIMediacoreEvent> event;
-    nsresult rv = 
+    rv = 
       sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_VIEW_CHANGE, 
                                     nsnull, 
                                     variant, 
@@ -1360,7 +1366,10 @@ sbMediacoreSequencer::StartWatchingView()
     return NS_OK;
   }
 
-  nsresult rv = mView->GetMediaList(getter_AddRefs(mViewList));
+  nsresult rv = mView->AddListener(this, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mView->GetMediaList(getter_AddRefs(mViewList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILibrary> library = do_QueryInterface(mViewList, &rv);
