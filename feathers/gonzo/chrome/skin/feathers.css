@@ -146,7 +146,8 @@ groupbox caption {
 description,
 caption,
 label,
-treechildren::-moz-tree-cell-text {
+treechildren::-moz-tree-cell-text,
+body.songbird-addon-content {
   color: rgb(40,40,40);
 }
 
@@ -199,8 +200,13 @@ treechildren::-moz-tree-separator {
 
 toolbar,
 menubar,
-.generic-bar {
+.generic-bar,
+body.songbird-addon-content {
   background-color: rgb(220,220,220);
+}
+toolbar,
+menubar,
+.generic-bar {
   border-bottom:1px solid rgb(131,131,131);
 }
 toolbarseparator {
@@ -992,17 +998,20 @@ html|*.error-text,
 }
 
 /* text that looks like a link */
-.text-link {
+.text-link,
+body.songbird-addon-content a {
   color:#1694d9;
   text-decoration:none;
 }
-.text-link:hover {
+.text-link:hover,
+body.songbird-addon-content a:hover {
   text-decoration:underline;
 } 
-.text-link:hover:active {
+.text-link:hover:active,
+body.songbird-addon-content a:active {
 } 
-.text-link[visited="true"] {
+.text-link[visited="true"],
+body.songbird-addon-content a:visited {
 }
-
 
 

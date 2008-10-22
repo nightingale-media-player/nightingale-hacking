@@ -41,7 +41,9 @@ textbox html|input {
   font-size:11px !important;
 }
 
-
+body.songbird-addon-content {
+  font:message-box;
+}
 
 
 
