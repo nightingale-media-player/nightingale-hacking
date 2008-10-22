@@ -57,6 +57,7 @@ CMM_INCLUDES = $(DEPTH)/components/integration/public \
                $(MOZSDK_INCLUDE_DIR)/widget \
                $(MOZSDK_INCLUDE_DIR)/docshell \
                $(MOZSDK_INCLUDE_DIR)/layout \
+               $(MOZSDK_INCLUDE_DIR)/appshell \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
@@ -66,6 +67,7 @@ CMM_SRCS = NativeWindowFromNode.mm \
            sbNativeWindowManager.mm \
            IntegrationComponent.mm \
            WindowCloak.mm \
+           sbMacAppDelegate.mm \
            $(NULL)
 
 DYNAMIC_LIB_OBJS = $(patsubst %.mm,%$(OBJ_SUFFIX),$(notdir $(CMM_SRCS)))
@@ -75,7 +77,10 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xpcomglue_s \
                             $(NULL)
 
-DYNAMIC_LIB_EXTRA_FLAGS= -framework Foundation -framework Cocoa -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk
+ifdef DEBUG
+DYNAMIC_LIB_EXTRA_FLAGS = -framework ExceptionHandling
+endif
+DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation -framework Cocoa -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)

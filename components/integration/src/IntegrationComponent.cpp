@@ -39,6 +39,7 @@
 #ifdef XP_UNIX
 #ifdef XP_MACOSX
 #include "macosx/sbNativeWindowManager.h"
+#include "macosx/sbMacAppDelegate.h"
 #else
 #include "linux/sbNativeWindowManager.h"
 #endif
@@ -69,6 +70,9 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CGlobalHotkeys)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowLayer)
 #endif
 
+#ifdef XP_MACOSX
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacAppDelegateManager, Init);
+#endif
 
 static nsModuleComponentInfo sbIntegration[] =
 {  
@@ -126,6 +130,15 @@ static nsModuleComponentInfo sbIntegration[] =
     SONGBIRD_WINDOWLAYER_CID,
     SONGBIRD_WINDOWLAYER_CONTRACTID,
     CWindowLayerConstructor
+  },
+#endif
+#ifdef XP_MACOSX
+  {
+    SONGBIRD_MACAPPDELEGATEMANAGER_CLASSNAME,
+    SONGBIRD_MACAPPDELEGATEMANAGER_CID,
+    SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID,
+    sbMacAppDelegateManagerConstructor,
+    sbMacAppDelegateManager::RegisterSelf
   },
 #endif
 };
