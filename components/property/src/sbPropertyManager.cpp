@@ -55,6 +55,7 @@
 #include "sbStoragePropertyUnitConverter.h"
 #include "sbFrequencyPropertyUnitConverter.h"
 #include "sbBitratePropertyUnitConverter.h"
+#include <sbLockUtils.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbIPropertyBuilder.h>
 
@@ -264,7 +265,7 @@ NS_IMETHODIMP sbPropertyManager::GetDependentProperties(const nsAString & aId,
   nsresult rv = NS_OK;
   PRBool success = PR_FALSE;
 
-  nsAutoLock lock(mPropIDsLock);
+  sbSimpleAutoLock lock(mPropIDsLock);
 
   // Lazily init a map like: { propID: [props, that, use, propID], ... }
   if (mPropDependencyMap.Count() == 0) {
