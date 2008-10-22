@@ -158,7 +158,12 @@ var sbCoverHelper = {
     if ( !(aFromFile instanceof Ci.nsIFile)) {
       return null;
     }
-    
+   
+    // Make sure this is a valid image file
+    if (!this.isFileImage(aFromFile)) {
+      return null;
+    }
+
     // First check that we do not exceed the maximum file size.
     if (!this.isImageSizeValid(null, aFromFile.fileSize)) {
       return null;
@@ -182,6 +187,33 @@ var sbCoverHelper = {
     
     return null;
   },
+
+  /**
+   * \brief Make sure the given file has at least the appropriate file name
+   *        extension. In the future, it would be nice to do some real MIME
+   *        sniffing here.
+   * \param aFile file to look for a matching file extension with.
+   */
+  isFileImage: function(aFile) {
+    var isSafe = false; 
+    
+    if (aFile instanceof Ci.nsIFile) {
+      var prefs = Cc["@mozilla.org/preferences-service;1"]
+                    .getService(Ci.nsIPrefBranch);
+      var prefStr = prefs.getCharPref("songbird.albumart.file.extensions");
+      var supportedFileExtensions = prefStr.split(",");
+      
+      var length = supportedFileExtensions.length;
+      var filename = aFile.QueryInterface(Ci.nsIFile).leafName;
+      var result = filename.match(/.*\.(\w*)$/);
+      var extension = (result ? result[1] : null);
+      if (extension) {
+        isSafe = (supportedFileExtensions.indexOf(extension) != -1);
+      }
+    }
+
+    return isSafe;
+   },
 
   /**
    * \brief Downloads a file from the web and then saves it to the artwork
