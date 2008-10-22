@@ -47,7 +47,6 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreShuffleSequenceGenerator,
                               sbIMediacoreSequenceGenerator)
 
 sbMediacoreShuffleSequenceGenerator::sbMediacoreShuffleSequenceGenerator()
-: mMonitor(nsnull)
 {
 }
 
@@ -58,10 +57,6 @@ sbMediacoreShuffleSequenceGenerator::~sbMediacoreShuffleSequenceGenerator()
 nsresult 
 sbMediacoreShuffleSequenceGenerator::Init()
 {
-  mMonitor = 
-    nsAutoMonitor::NewMonitor("sbMediacoreShuffleSequenceGenerator::mMonitor");
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
-
   return NS_OK;
 }
 
@@ -70,7 +65,6 @@ sbMediacoreShuffleSequenceGenerator::OnGenerateSequence(sbIMediaListView *aView,
                                                         PRUint32 *aSequenceLength, 
                                                         PRUint32 **aSequence)
 {
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aView);
   NS_ENSURE_ARG_POINTER(aSequenceLength);
   NS_ENSURE_ARG_POINTER(aSequence);
@@ -83,7 +77,7 @@ sbMediacoreShuffleSequenceGenerator::OnGenerateSequence(sbIMediaListView *aView,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reserve space for return array
-  *aSequence = new PRUint32[length];
+  *aSequence = (PRUint32*)NS_Alloc(sizeof(PRUint32) * length);
   *aSequenceLength = length;
 
   // Reserve space for pool and sequence.

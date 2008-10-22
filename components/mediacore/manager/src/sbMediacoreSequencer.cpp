@@ -952,7 +952,7 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
         }
       }
 
-      delete [] sequence;
+      NS_Free(sequence);
     }
     break;
     case sbIMediacoreSequencer::MODE_CUSTOM:

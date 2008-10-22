@@ -50,7 +50,4 @@ public:
   
 private:
   virtual ~sbMediacoreShuffleSequenceGenerator();
-
-protected:
-  PRMonitor *mMonitor;
 };
