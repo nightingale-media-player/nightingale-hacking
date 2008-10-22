@@ -1398,11 +1398,6 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
       // has returned SQLITE_DONE. But the SELECT is not really complete until sqlite3_reset() 
       //  or sqlite3_finalize() have been called. 
       sqlite3_reset(pStmt);
-
-      // free the statement handle if we don't need it.
-      // this is a temprary workaround fix.
-      actualPreparedStatement->TempFix();
-
     }
 
     //Whatever happened, the query is done running now.

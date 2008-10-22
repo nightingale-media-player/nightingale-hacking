@@ -55,20 +55,16 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDATABASEPREPAREDSTATEMENT
 
-  CDatabasePreparedStatement(const nsAString &sql, bool tempFix);
+  CDatabasePreparedStatement(const nsAString &sql);
   virtual ~CDatabasePreparedStatement();
   
   sqlite3_stmt* GetStatement(sqlite3 *db);
 
-  void TempFix();
 protected:
   CDatabaseQuery *mQuery;
   sqlite3_stmt *mStatement;
   sqlite3 *mDB;
   nsString mSql;
-
-  // Temporary fix to allow these to be freed.
-  bool mTempFix;
 };
 
 #endif // __DATABASE_PREPAREDSTATEMENT_H__

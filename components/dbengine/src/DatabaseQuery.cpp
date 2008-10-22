@@ -373,15 +373,9 @@ NS_IMETHODIMP CDatabaseQuery::GetDatabaseGUID(nsAString &_retval)
 NS_IMETHODIMP CDatabaseQuery::AddQuery(const nsAString &strQuery)
 {
   // First, we need to create a prepared statement.
-// TEMPFIX:
-//  nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement;
-//  nsresult rv = PrepareQuery(strQuery, getter_AddRefs(preparedStatement));
-//  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement = new CDatabasePreparedStatement(strQuery, true); // tempfix
-  NS_ENSURE_TRUE(preparedStatement, NS_ERROR_OUT_OF_MEMORY);
-  nsresult rv;
-// ENDTEMPFIX
-
+  nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement;
+  nsresult rv = PrepareQuery(strQuery, getter_AddRefs(preparedStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
   
   rv = AddPreparedStatement(preparedStatement);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -393,7 +387,7 @@ NS_IMETHODIMP CDatabaseQuery::AddQuery(const nsAString &strQuery)
 /* sbIPreparedStatement PrepareQuery (in wstring strQuery); */
 NS_IMETHODIMP CDatabaseQuery::PrepareQuery(const nsAString &strQuery, sbIDatabasePreparedStatement **_retval)
 {  
-  nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement = new CDatabasePreparedStatement(strQuery, false); // tempfix
+  nsCOMPtr<sbIDatabasePreparedStatement> preparedStatement = new CDatabasePreparedStatement(strQuery);
   NS_ENSURE_TRUE(preparedStatement, NS_ERROR_OUT_OF_MEMORY);
   preparedStatement.forget(_retval);
 
