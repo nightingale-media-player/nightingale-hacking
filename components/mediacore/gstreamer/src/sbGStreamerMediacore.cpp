@@ -37,6 +37,7 @@
 #include <nsIIOService.h>
 #include <nsIConsoleService.h>
 #include <nsIScriptError.h>
+#include <nsIPrefBranch.h>
 #include <nsThreadUtils.h>
 #include <nsCOMPtr.h>
 #include <prlog.h>
@@ -238,7 +239,62 @@ sbGStreamerMediacore::aboutToFinishHandler(GstElement *playbin, gpointer data)
   return;
 }
 
-/* Must be called with mMonitor held */
+GstElement *
+sbGStreamerMediacore::CreateSinkFromPrefs(char *pref)
+{
+  nsresult rv;
+  PRBool val;
+
+  nsCOMPtr<nsIPrefBranch> prefs = 
+      do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS (rv, NULL);
+
+  rv = prefs->GetPrefType(pref, &val);
+  NS_ENSURE_SUCCESS(rv, NULL);
+
+  if (val == nsIPrefBranch::PREF_STRING) {
+    nsCString sinkdescription;
+    rv = prefs->GetCharPref(pref, getter_Copies(sinkdescription));
+    NS_ENSURE_SUCCESS(rv, NULL);
+
+    // If this fails, that's ok; we just return it anyway
+    GstElement *sink = gst_parse_bin_from_description (sinkdescription.get(),
+            TRUE, NULL);
+
+    return sink;
+  }
+  return NULL;
+}
+
+GstElement *
+sbGStreamerMediacore::CreateVideoSink()
+{
+  nsAutoMonitor lock(mMonitor);
+
+  GstElement *videosink = CreateSinkFromPrefs(
+          (char *)"songbird.mediacore.gstreamer.videosink");
+
+  if (mPlatformInterface)
+    videosink = mPlatformInterface->SetVideoSink(videosink);
+
+  return videosink;
+}
+
+GstElement *
+sbGStreamerMediacore::CreateAudioSink()
+{
+  nsAutoMonitor lock(mMonitor);
+
+  GstElement *audiosink = CreateSinkFromPrefs(
+          (char *)"songbird.mediacore.gstreamer.audiosink");
+
+  if (mPlatformInterface)
+    audiosink = mPlatformInterface->SetAudioSink(audiosink);
+
+  return audiosink;
+}
+
+
 nsresult 
 sbGStreamerMediacore::DestroyPipeline()
 {
@@ -256,7 +312,6 @@ sbGStreamerMediacore::DestroyPipeline()
   return NS_OK;
 }
 
-/* Must be called with mMonitor held */
 nsresult 
 sbGStreamerMediacore::CreatePlaybackPipeline()
 {
@@ -273,8 +328,8 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
     return NS_ERROR_FAILURE;
 
   if (mPlatformInterface) {
-    GstElement *videosink = mPlatformInterface->CreateVideoSink();
-    GstElement *audiosink = mPlatformInterface->CreateAudioSink();
+    GstElement *videosink = CreateVideoSink();
+    GstElement *audiosink = CreateAudioSink();
     g_object_set(mPipeline, "video-sink", videosink, NULL);
     g_object_set(mPipeline, "audio-sink", audiosink, NULL);
   }

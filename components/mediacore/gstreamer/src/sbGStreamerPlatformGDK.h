@@ -44,8 +44,8 @@ public:
   GDKPlatformInterface (nsIBoxObject *aVideoBox, GdkWindow *aWin);
 
   // Implementation of the rest of sbIGstPlatformInterface interface
-  GstElement * CreateVideoSink ();
-  GstElement * CreateAudioSink ();
+  GstElement * SetVideoSink (GstElement *aVideoSink);
+  GstElement * SetAudioSink (GstElement *aAudioSink);
 
 protected:
   // Implement virtual methods in BasePlatformInterface

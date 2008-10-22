@@ -190,9 +190,17 @@ void Win32PlatformInterface::MoveVideoWindow(int x, int y,
 
 
 GstElement *
-Win32PlatformInterface::CreateVideoSink()
+Win32PlatformInterface::SetVideoSink(GstElement *aVideoSink)
 {
-  mVideoSink = ::gst_element_factory_make("dshowvideosink", NULL);
+  if (mVideoSink) {
+    gst_object_unref(mVideoSink);
+    mVideoSink = NULL;
+  }
+
+  mVideoSink = aVideoSink;
+
+  if (!mVideoSink)
+    mVideoSink = ::gst_element_factory_make("dshowvideosink", NULL);
   if (!mVideoSink)
     mVideoSink = ::gst_element_factory_make("autovideosink", NULL);
 
@@ -204,10 +212,19 @@ Win32PlatformInterface::CreateVideoSink()
 }
 
 GstElement *
-Win32PlatformInterface::CreateAudioSink()
+Win32PlatformInterface::SetAudioSink(GstElement *aAudioSink)
 {
-  // Hopefully autoaudiosink will pick something appropriate...
-  mAudioSink = gst_element_factory_make("autoaudiosink", "audio-sink");
+  if (mAudioSink) {
+    gst_object_unref(mAudioSink);
+    mAudioSink = NULL;
+  }
+
+  mAudioSink = aAudioSink;
+
+  if (!mAudioSink) {
+    // Hopefully autoaudiosink will pick something appropriate...
+    mAudioSink = gst_element_factory_make("autoaudiosink", "audio-sink");
+  }
 
   // Keep a reference to it.
   if (mAudioSink) 

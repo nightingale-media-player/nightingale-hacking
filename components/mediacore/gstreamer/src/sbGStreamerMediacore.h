@@ -121,6 +121,10 @@ protected:
 
   nsresult LogMessageToErrorConsole(nsString message, PRUint32 flags);
 
+  GstElement *CreateSinkFromPrefs(char *pref);
+  GstElement *CreateVideoSink();
+  GstElement *CreateAudioSink();
+
 private:
   // Static helper for C callback
   static void syncHandler(GstBus *bus, GstMessage *message, gpointer data);

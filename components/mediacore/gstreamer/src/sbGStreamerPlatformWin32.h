@@ -42,8 +42,8 @@ public:
   Win32PlatformInterface (nsIBoxObject *aVideoBox, HWND aWin);
 
   // Implement the rest of sbIGstPlatformInterface
-  GstElement * CreateVideoSink();
-  GstElement * CreateAudioSink();
+  GstElement * SetVideoSink(GstElement *aVideoSink);
+  GstElement * SetAudioSink(GstElement *aAudioSink);
 
 protected:
   // Implement virtual methods in BasePlatformInterface

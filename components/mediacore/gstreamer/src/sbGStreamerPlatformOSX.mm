@@ -70,18 +70,23 @@ OSXPlatformInterface::OSXPlatformInterface(nsIBoxObject *aVideoBox,
 }
 
 GstElement *
-OSXPlatformInterface::CreateVideoSink()
+OSXPlatformInterface::SetVideoSink(GstElement *aVideoSink)
 {
   if (mVideoSink) {
     gst_object_unref(mVideoSink);
     mVideoSink = NULL;
   }
 
-  mVideoSink = gst_element_factory_make("osxvideosink", "video-sink");
-  if (mVideoSink) {
-    g_object_set (mVideoSink, "embed", TRUE, NULL);
+  mVideoSink = aVideoSink;
+
+  if (!mVideoSink) {
+    mVideoSink = gst_element_factory_make("osxvideosink", "video-sink");
+    if (mVideoSink) {
+      g_object_set (mVideoSink, "embed", TRUE, NULL);
+    }
   }
-  else {
+
+  if (!mVideoSink) {
     // Then hopefully autovideosink will pick something appropriate...
     mVideoSink = gst_element_factory_make("autovideosink", "video-sink");
   }
@@ -94,14 +99,17 @@ OSXPlatformInterface::CreateVideoSink()
 }
 
 GstElement *
-OSXPlatformInterface::CreateAudioSink()
+OSXPlatformInterface::SetAudioSink(GstElement *aAudioSink)
 {
   if (mAudioSink) {
     gst_object_unref(mAudioSink);
     mAudioSink = NULL;
   }
 
-  mAudioSink = gst_element_factory_make("osxaudiosink", "audio-sink");
+  mAudioSink = aAudioSink;
+
+  if (!mAudioSink)
+    mAudioSink = gst_element_factory_make("osxaudiosink", "audio-sink");
   if (!mAudioSink) {
     // Then hopefully autoaudiosink will pick something appropriate...
     mAudioSink = gst_element_factory_make("autoaudiosink", "audio-sink");

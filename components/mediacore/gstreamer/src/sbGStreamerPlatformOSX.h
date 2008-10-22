@@ -40,8 +40,8 @@ public:
   OSXPlatformInterface (nsIBoxObject *aVideoBox, void *aParentView);
 
   // Implementation of the rest of sbIGstPlatformInterface interface
-  GstElement * CreateVideoSink ();
-  GstElement * CreateAudioSink ();
+  GstElement * SetVideoSink (GstElement *aVideoSink);
+  GstElement * SetAudioSink (GstElement *aAudioSink);
 
   virtual void PrepareVideoWindow(GstMessage *aMessage);
 

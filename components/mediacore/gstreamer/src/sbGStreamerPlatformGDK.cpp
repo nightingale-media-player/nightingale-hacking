@@ -211,14 +211,18 @@ GDKPlatformInterface::MoveVideoWindow(int x, int y, int width, int height)
 }
 
 GstElement *
-GDKPlatformInterface::CreateVideoSink()
+GDKPlatformInterface::SetVideoSink(GstElement *aVideoSink)
 {
   if (mVideoSink) {
     gst_object_unref(mVideoSink);
     mVideoSink = NULL;
   }
 
-  mVideoSink = gst_element_factory_make("gconfvideosink", "video-sink");
+  // Use the provided sink, if any.
+  mVideoSink = aVideoSink;
+
+  if (!mVideoSink)
+    mVideoSink = gst_element_factory_make("gconfvideosink", "video-sink");
   if (!mVideoSink) {
     // Then hopefully autovideosink will pick something appropriate...
     mVideoSink = gst_element_factory_make("autovideosink", "video-sink");
@@ -232,14 +236,18 @@ GDKPlatformInterface::CreateVideoSink()
 }
 
 GstElement *
-GDKPlatformInterface::CreateAudioSink()
+GDKPlatformInterface::SetAudioSink(GstElement *aAudioSink)
 {
   if (mAudioSink) {
     gst_object_unref(mAudioSink);
     mAudioSink = NULL;
   }
 
-  mAudioSink = gst_element_factory_make("gconfaudiosink", "audio-sink");
+  // Use the audio sink provided, if any.
+  mAudioSink = aAudioSink;
+
+  if (!mAudioSink)
+    mAudioSink = gst_element_factory_make("gconfaudiosink", "audio-sink");
   if (!mAudioSink) {
     // Then hopefully autoaudiosink will pick something appropriate...
     mAudioSink = gst_element_factory_make("autoaudiosink", "audio-sink");

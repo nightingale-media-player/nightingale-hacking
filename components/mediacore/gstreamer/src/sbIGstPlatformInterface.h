@@ -54,11 +54,13 @@ public:
   // fullscreen on a 16:9 monitor with no black bars).
   virtual void SetDisplayAspectRatio (int numerator, int denominator) = 0;
 
-  // Create a GStreamer video sink element appropriate for this platform.
-  virtual GstElement * CreateVideoSink () = 0;
+  // Set a GStreamer video sink element, or, if NULL, create one 
+  // appropriate for this platform.
+  virtual GstElement * SetVideoSink (GstElement *aVideoSink) = 0;
 
-  // Create a GStreamer audio sink element appropriate for this platform.
-  virtual GstElement * CreateAudioSink () = 0;
+  // Set a GStreamer audio sink element, or, if NULL, create one 
+  // appropriate for this platform.
+  virtual GstElement * SetAudioSink (GstElement *aAudioSink) = 0;
 
   // Called when a video window is required by the gstreamer element, so
   // that any necessary setup can be done.
