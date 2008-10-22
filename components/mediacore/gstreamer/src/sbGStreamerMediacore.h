@@ -118,6 +118,7 @@ protected:
   void HandleWarningMessage (GstMessage *message);
   void HandleBufferingMessage (GstMessage *message);
   void HandleRedirectMessage (GstMessage *message);
+  void OnVideoCapsSet(GstCaps *caps);
 
   nsresult LogMessageToErrorConsole(nsString message, PRUint32 flags);
 
@@ -129,6 +130,10 @@ private:
   // Static helper for C callback
   static void syncHandler(GstBus *bus, GstMessage *message, gpointer data);
   static void aboutToFinishHandler(GstElement *playbin, gpointer data);
+  static void videoCapsSetHelper(GObject *obj, GParamSpec *pspec, 
+          sbGStreamerMediacore *core);
+  static void currentVideoSetHelper(GObject *obj, GParamSpec *pspec, 
+          sbGStreamerMediacore *core);
 
 protected:
   // Protects all access to mPipeline

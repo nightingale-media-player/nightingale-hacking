@@ -294,6 +294,47 @@ sbGStreamerMediacore::CreateAudioSink()
   return audiosink;
 }
 
+/* static */ void
+sbGStreamerMediacore::currentVideoSetHelper(GObject* obj, GParamSpec* pspec,
+        sbGStreamerMediacore *core)
+{
+  int current_video;
+  GstPad *pad;
+
+  /* Which video stream has been activated? */
+  g_object_get(obj, "current-video", &current_video, NULL);
+  NS_ASSERTION(current_video >= 0, "current video is negative");
+
+  /* Get the video pad for this stream number */
+  g_signal_emit_by_name(obj, "get-video-pad", current_video, &pad);
+
+  if (pad) {
+    GstCaps *caps;
+    caps = gst_pad_get_negotiated_caps(pad);
+    if (caps) {
+      core->OnVideoCapsSet(caps);
+      gst_caps_unref(caps);
+    }
+
+    g_signal_connect(pad, "notify::caps",
+            G_CALLBACK(videoCapsSetHelper), core);
+
+    gst_object_unref(pad);
+  }
+}
+
+/* static */ void
+sbGStreamerMediacore::videoCapsSetHelper(GObject* obj, GParamSpec* pspec,
+        sbGStreamerMediacore *core)
+{
+  GstPad *pad = GST_PAD(obj);
+  GstCaps *caps = gst_pad_get_negotiated_caps(pad);
+
+  if (caps) {
+    core->OnVideoCapsSet(caps);
+    gst_caps_unref (caps);
+  }
+}
 
 nsresult 
 sbGStreamerMediacore::DestroyPipeline()
@@ -352,6 +393,11 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   // Handle about-to-finish signal emitted by playbin2
   g_signal_connect (mPipeline, "about-to-finish", 
           G_CALLBACK (aboutToFinishHandler), this);
+  // Get notified when the current video stream changes.
+  // This will let us get information about the specific video stream
+  // being played.
+  g_signal_connect (mPipeline, "notify::current-video",
+          G_CALLBACK (currentVideoSetHelper), this);
 
   return NS_OK;
 }
@@ -741,6 +787,37 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
     default:
       LOG(("Got message: %s", gst_message_type_get_name(msg_type)));
       break;
+  }
+}
+
+void
+sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
+{
+  GstStructure *s;
+  gint pixelAspectRatioN, pixelAspectRatioD;
+  gint videoWidth, videoHeight;
+
+  s = gst_caps_get_structure(caps, 0);
+  if(s) {
+    gst_structure_get_int(s, "width", &videoWidth);
+    gst_structure_get_int(s, "height", &videoHeight);
+
+    /* pixel-aspect-ratio is optional */
+    const GValue* par = gst_structure_get_value(s, "pixel-aspect-ratio");
+    if (par) {
+      pixelAspectRatioN = gst_value_get_fraction_numerator(par);
+      pixelAspectRatioD = gst_value_get_fraction_denominator(par);
+    }
+    else {
+      /* PAR not set; default to square pixels */
+      pixelAspectRatioN = pixelAspectRatioD = 1;
+    }
+
+    if (mPlatformInterface) {
+      int num = videoWidth * pixelAspectRatioN;
+      int denom = videoHeight * pixelAspectRatioD;
+      mPlatformInterface->SetDisplayAspectRatio(num, denom);
+    }
   }
 }
 
