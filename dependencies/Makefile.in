@@ -281,8 +281,8 @@ GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
 
 GST_PLUGINS_BAD_NAMES += gstacmenc \
                          gstqtwrapper \
-                         dshowdecwrapper \
-                         dshowvideosink \
+                         gstdshowdecwrapper \
+                         gstdshowvideosink \
                          $(NULL)
 
 GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \
@@ -301,14 +301,14 @@ GST_PLUGINS_BASE_LIBS = $(addprefix $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURAT
                           $(addsuffix -$(GST_VERSION)-0$(DLL_SUFFIX), $(GST_PLUGINS_BASE_LIBS_NAMES)))
 
 OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/bin/, \
-        $(addsuffix $(DEBUG:%=_d)$(DLL_SUFFIX), $(OGG_NAMES)))
+        $(addsuffix -0$(DLL_SUFFIX), $(OGG_NAMES)))
 
 LIBICONV = $(addprefix $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/bin/, \
              $(addsuffix $(DLL_SUFFIX), $(LIBICONV_NAMES)))
 
 # XXX We need to append the version numbers of the libraries
 VORBIS_VERSIONED_NAMES = $(join $(VORBIS_NAMES), -0 -2 -3)
-VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
+VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/bin/, \
            $(addsuffix $(DLL_SUFFIX), $(VORBIS_VERSIONED_NAMES)))
 
 FLAC_VERSIONED_NAMES = $(join $(FLAC_NAMES), -8)
