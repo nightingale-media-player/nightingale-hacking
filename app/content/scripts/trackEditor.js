@@ -2053,6 +2053,53 @@ TrackEditorArtwork.prototype = {
     }
   },
   
+  /**
+   * \brief Resize the image so that it maintains the proper aspect ratio
+   *       in the image box.
+   */
+  _resizeImage: function TrackEditorArtwork__resizeImage() {
+    // First get the image information
+    if (this._element.getAttribute("src").length <= 0) {
+      // we need a valid image to resize
+      return;
+    }
+
+    // Now get the height and width of the box we are in
+    var imageBox = this._element.parentNode;
+    var boxWidth = imageBox.boxObject.width;
+    var boxHeight = imageBox.boxObject.height;
+
+    // Get the real image height and width
+    var newImg = new Image();
+    newImg.src = this._element.getAttribute("src");
+    var imageHeight = (newImg.height > 0 ? newImg.height : boxHeight);
+    var imageWidth = (newImg.width > 0 ? newImg.width : boxWidth);
+
+    // Default our new size to the orig size
+    var newWidth = imageWidth;
+    var newHeight = imageHeight;
+    if ( (imageWidth > boxWidth) ||
+         (imageHeight > boxHeight) ) {
+      // Figure out the ratios of the image and box.
+      var boxRatio = boxWidth / boxHeight;
+      var imageRatio = imageWidth / imageHeight;
+      
+      // If boxRatio is greater than the imageRatio then we want to resize
+      // the height, otherwize we resize the width to keep the aspect ratio.
+      // We also do not want to make the image bigger than it actually is.
+      if (imageRatio >= boxRatio) {
+        newWidth = Math.min(boxWidth, imageWidth);
+        newHeight = (imageHeight * newWidth / imageWidth);
+      } else {
+        newHeight = Math.min(boxHeight, imageHeight);
+        newWidth = (imageWidth * newHeight / imageHeight);
+      }
+    }
+
+    this._element.style.width = newWidth + "px";
+    this._element.style.height = newHeight + "px";
+  },
+
   onTrackEditorPropertyChange: function TrackEditorArtwork_onTrackEditorPropertyChange() {
     var value = TrackEditor.state.getPropertyValue(this.property);
     
@@ -2091,6 +2138,7 @@ TrackEditorArtwork.prototype = {
     if (allMatch) {
       // All the items match on this property (or if there is only one)
       this._element.setAttribute("src", value);
+      this._resizeImage();
     } else {
       // Multiple items that do not match show nothing
       this._element.setAttribute("src", "");
