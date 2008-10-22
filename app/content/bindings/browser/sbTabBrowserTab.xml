@@ -482,7 +482,10 @@
               if (servicePaneNode.properties) {
                 properties = servicePaneNode.properties;
               }
-              if (servicePaneNode.name) {
+              // if the service pane node has an actual name, not a
+              // stringbundle reference then set that name as the tab label
+              if (servicePaneNode.name && 
+                  servicePaneNode.name.charAt(0) != '&') {
                 this.label = servicePaneNode.name;
               }
             }
