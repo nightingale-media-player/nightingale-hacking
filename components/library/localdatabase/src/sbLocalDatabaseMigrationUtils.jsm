@@ -116,11 +116,15 @@ SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype = {
         return Ci.sbIJobProgress.STATUS_RUNNING;
       }
       
-      var complete = (this.migrationQuery.currentQuery() == 
-                      this.migrationQuery.getQueryCount() - 1);
+      var complete = ( this.migrationQuery.getQueryCount() == 0 );
                       
-      if(complete && !executing) {
-        return Ci.sbIJobProgress.STATUS_SUCCEEDED;
+      if(!executing) {
+        if (complete) {
+          return Ci.sbIJobProgress.STATUS_SUCCEEDED;
+        }
+        else {
+          return Ci.sbIJobProgress.STATUS_FAILED;
+        }
       }
     }
     
@@ -136,10 +140,13 @@ SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype = {
   },
   
   get total() {
-    if(this.migrationQuery) {
-      return this.migrationQuery.getQueryCount();
+    if(this.migrationQuery && !this._total) {
+      // this number will be less than the original number of queries added
+      // but is the number of remaining queries as of the first call to this function
+      // which is close enough for simply tracking progress of a long sql job.
+      this._total = this.migrationQuery.getQueryCount() + this.migrationQuery.currentQuery();
     }
-    
+
     return this._total;
   },
   
