@@ -203,6 +203,7 @@
 NS_IMPL_ISUPPORTS1(sbMacAppDelegateManager, nsIObserver)
 
 sbMacAppDelegateManager::sbMacAppDelegateManager()
+  : mDelegate(nil)
 {
 }
 
@@ -212,11 +213,6 @@ sbMacAppDelegateManager::~sbMacAppDelegateManager()
     [mDelegate release];
     mDelegate = nil;
   }
-
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1");
-  if (observerService)
-    observerService->RemoveObserver(this, "final-ui-startup");
 }
 
 NS_IMETHODIMP
