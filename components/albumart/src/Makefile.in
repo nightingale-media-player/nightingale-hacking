@@ -87,5 +87,8 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
                       $(NULL)
 
+SONGBIRD_JSMODULES = $(srcdir)/sbCoverHelper.jsm \
+                     $(NULL)
+
 include $(topsrcdir)/build/rules.mk
 

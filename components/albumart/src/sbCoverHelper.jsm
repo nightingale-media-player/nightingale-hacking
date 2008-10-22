@@ -158,11 +158,6 @@ var sbCoverHelper = {
     if ( !(aFromFile instanceof Ci.nsIFile)) {
       return null;
     }
-
-    // Make sure this is a valid image file
-    if (!this.isFileImage(aFromFile)) {
-      return null;
-    }
     
     // First check that we do not exceed the maximum file size.
     if (!this.isImageSizeValid(null, aFromFile.fileSize)) {
@@ -175,46 +170,17 @@ var sbCoverHelper = {
       [imageData, mimeType] = this.readImageData(aFromFile);
 
       // Save the image data out to the new file in the artwork folder
-      var metadataImageScannerService =
-                        Cc["@songbirdnest.com/Songbird/Metadata/ImageScanner;1"]
-                          .getService(Ci.sbIMetadataImageScanner);
-      var newFile = metadataImageScannerService
-                                          .saveImageDataToFile(imageData,
-                                                               imageData.length,
-                                                               mimeType);
-      return newFile;
+      var artService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+                         .getService(Ci.sbIAlbumArtService);
+      var newFile = artService.cacheImage(mimeType, imageData, imageData.length);
+      if (newFile) {
+        return newFile.spec;
+      }
     } catch (err) {
       Cu.reportError("sbCoverHelper: Unable to save file image data: " + err);
     }
     
     return null;
-  },
-
-  /**
-   * \brief Make sure the given file has at least the appropriate file name
-   *        extension. In the future, it would be nice to do some real MIME
-   *        sniffing here.
-   * \param aFile file to look for a matching file extension with.
-   */
-  isFileImage: function(aFile) {
-    var isSafe = false; 
-    
-    if (aFile instanceof Ci.nsIFile) {
-      var prefs = Cc["@mozilla.org/preferences-service;1"]
-                    .getService(Ci.nsIPrefBranch);
-      var prefStr = prefs.getCharPref("songbird.albumart.file.extensions");
-      var supportedFileExtensions = prefStr.split(",");
-      
-      var length = supportedFileExtensions.length;
-      var filename = aFile.QueryInterface(Ci.nsIFile).leafName;
-      var result = filename.match(/.*\.(\w*)$/);
-      var extension = (result ? result[1] : null);
-      if (extension) {
-        isSafe = (supportedFileExtensions.indexOf(extension) != -1);
-      }
-    }
-
-    return isSafe;
   },
 
   /**
@@ -339,7 +305,8 @@ var sbCoverHelper = {
         switch (uri.scheme) {
           case 'file':
             if (uri instanceof Ci.nsIFileURL) {
-              aCallback(this.saveFileToArtworkFolder(uri));
+              var fileName = this.saveFileToArtworkFolder(uri);
+              aCallback(fileName);
             }
           break; 
 
