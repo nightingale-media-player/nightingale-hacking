@@ -217,7 +217,14 @@ function testAddonMetadataReader()
   assertEnumeratorMatchesFieldArray(enumerator, "internalName", [DEFAULT_SKIN_NAME]);
   
   // Verify showChrome
-  assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[0]), false);
+  // Chrome is only enabled on Mac OS X
+  var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                  .getService(Components.interfaces.nsIPropertyBag2);
+  if (sysInfo.getProperty("name") == "Darwin")
+    assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[0]), true);
+  else
+    assertEqual( feathersManager.isChromeEnabled(layoutURLs[0], skinNames[1]), false);
+
   // Verify onTop
   assertEqual( feathersManager.isOnTop(layoutURLs[0], skinNames[0]), false);
   assertEqual( feathersManager.isOnTop(layoutURLs[1], skinNames[0]), false);
