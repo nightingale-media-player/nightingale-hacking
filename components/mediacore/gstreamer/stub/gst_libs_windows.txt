@@ -6,10 +6,10 @@
 @lib\libgobject-2.0-0.dll
 @lib\libgthread-2.0-0.dll
 @lib\oil-0.3-0.dll
-@lib\ogg.dll
-@lib\libvorbis-0.dll
-@lib\libvorbisenc-2.dll
-@lib\libvorbisfile-3.dll
+@lib\ogg-0.dll
+@lib\vorbis-0.dll
+@lib\vorbisenc-2.dll
+@lib\vorbisfile-3.dll
 @lib\FLAC-8.dll
 @lib\gstreamer-0.10-0.dll
 @lib\gstbase-0.10-0.dll
