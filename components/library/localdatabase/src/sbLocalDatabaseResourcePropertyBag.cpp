@@ -272,7 +272,7 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
         NS_ASSERTION(NS_SUCCEEDED(rv), 
           "Property cache failed to update dependent properties!");
         if (NS_SUCCEEDED(rv)) {
-          mDirty.PutEntry(propertyDBID);
+          mDirty.PutEntry(mCache->GetPropertyDBIDInternal(propertyID));
         }
       }
     }

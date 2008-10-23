@@ -948,6 +948,34 @@ sbLocalDatabaseMediaListView::ShouldCauseInvalidation(sbIPropertyArray* aPropert
   if (hasCommon) {
     return NS_OK;
   }
+  
+  // Search secondary sort
+  nsCOMPtr<sbIProperty> property = nsnull;
+  rv = props->GetPropertyAt(0, getter_AddRefs(property));
+  if (NS_SUCCEEDED(rv) && property) {
+    nsString propertyID;
+    rv = property->GetId(propertyID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIPropertyInfo> propertyInfo;
+    nsCOMPtr<sbIPropertyManager> propertyManager = 
+      do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = propertyManager->GetPropertyInfo(propertyID,
+                                          getter_AddRefs(propertyInfo));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIPropertyArray> secondarySort = nsnull;
+    rv = propertyInfo->GetSecondarySort(getter_AddRefs(secondarySort));
+    
+    if (NS_SUCCEEDED(rv) && secondarySort) {
+      rv = HasCommonProperty(aProperties, secondarySort, &hasCommon);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (hasCommon) {
+        return NS_OK;
+      }
+    }
+  }
 
   // Search filter
   nsCOMPtr<sbILibraryConstraint> filter;
