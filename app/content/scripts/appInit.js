@@ -118,8 +118,11 @@ window.addEventListener("unload", appInit.onUnload, false);
 function SBAppInitialize()
 {
   dump("SBAppInitialize\n");
-  try
-  {
+  try {
+    // XXXAus: We should not have to call this when mozbug 461399 is fixed.
+    // Initialize the extension manager permissions.
+    initExtensionManagerPermissions();
+    
     // Startup the Metrics
     SBMetricsAppStart();
 
@@ -128,33 +131,8 @@ function SBAppInitialize()
     
     // Handle dataremote commandline parameters
     initDataRemoteCmdLine();
-
-/*
-    // XXX Migrate this crap
-
-    // Startup the Dynamic Playlist Updater
-    try
-    {
-      DPUpdaterInit(1);
-    }
-    catch(err)
-    {
-      alert("DPUpdaterInit(1) - " + err);
-    }
-
-    // Startup the Watch Folders    
-    try
-    {
-      WFInit();
-    }
-    catch(err)
-    {
-      alert("WFInit() - " + err);
-    }
-*/    
   }
-  catch( err )
-  {
+  catch( err ) {
     alert( "SBAppInitialize\n" + err );
   }
 }
@@ -543,6 +521,47 @@ var dataRemoteCmdlineHandler =
     return this;
   }
 };
+
+// XXXAus: This function should be removed when mozbug 461399 is fixed.
+function initExtensionManagerPermissions() {
+  const httpPrefix = "http://";
+  const prefRoot = "xpinstall.whitelist.add";
+  const permissionType = "install";
+  
+  var prefBranch = 
+    Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+    
+  var ioService = 
+    Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+    
+  var permissionManager = 
+    Cc["@mozilla.org/permissionmanager;1"].getService(Ci.nsIPermissionManager);
+  
+  var childBranches = prefBranch.getChildList(prefRoot, {});
+  
+  for each (let prefName in childBranches) {
+    if(prefBranch.getPrefType(prefName) == Ci.nsIPrefBranch.PREF_STRING) {
+      let prefValue = prefBranch.getCharPref(prefName);
+      let values = prefValue.split(",");
+      for each (let value in values) {
+        value = value.replace(" ", "", "g");
+        value = httpPrefix + value;
+        let uri = null;
+        try {
+          uri = ioService.newURI(value, null, null);
+          permissionManager.add(uri, 
+                                permissionType, 
+                                Ci.nsIPermissionManager.ALLOW_ACTION);
+        }
+        catch(e) {
+          Cu.reportError(e);
+        }
+      }
+      
+      prefBranch.setCharPref(prefName, "");
+    }
+  }
+}
 
 // !!!
 // !!! THIS FUNCTION MUST BE CALLED AT THE BOTTOM OF THIS MODULE OR ELSE BAD THINGS HAPPEN !!!
