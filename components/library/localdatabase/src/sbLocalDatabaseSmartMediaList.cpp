@@ -844,36 +844,36 @@ sbLocalDatabaseSmartMediaList::Rebuild()
 {
   TRACE(("sbLocalDatabaseSmartMediaList[0x%.8x] - Rebuild()", this));
 
-  nsAutoMonitor monitor(mConditionsMonitor);
-  nsAutoMonitor monitor2(mSourceMonitor);
-
   nsresult rv;
+  {
+    nsAutoMonitor monitor(mConditionsMonitor);
+    nsAutoMonitor monitor2(mSourceMonitor);
 
-  // You must either have a match or a limit
-  NS_ENSURE_ARG(!(mMatchType == sbILocalDatabaseSmartMediaList::MATCH_TYPE_NONE &&
-                  mLimitType == sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE));
+    // You must either have a match or a limit
+    NS_ENSURE_ARG(!(mMatchType == sbILocalDatabaseSmartMediaList::MATCH_TYPE_NONE &&
+                    mLimitType == sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE));
 
-  // If we have a limit, either random or the selection property must be set
-  if (mLimitType != sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE) {
-    if (!(mRandomSelection || !mSelectPropertyID.IsEmpty()))
-      return NS_ERROR_INVALID_ARG;
-  }
+    // If we have a limit, either random or the selection property must be set
+    if (mLimitType != sbILocalDatabaseSmartMediaList::LIMIT_TYPE_NONE) {
+      if (!(mRandomSelection || !mSelectPropertyID.IsEmpty()))
+        return NS_ERROR_INVALID_ARG;
+    }
 
-  if (mMatchType == sbILocalDatabaseSmartMediaList::MATCH_TYPE_NONE) {
-    if (mRandomSelection) {
-      rv = RebuildMatchTypeNoneRandom();
-      NS_ENSURE_SUCCESS(rv, rv);
+    if (mMatchType == sbILocalDatabaseSmartMediaList::MATCH_TYPE_NONE) {
+      if (mRandomSelection) {
+        rv = RebuildMatchTypeNoneRandom();
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        rv = RebuildMatchTypeNoneNotRandom();
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
     else {
-      rv = RebuildMatchTypeNoneNotRandom();
+      rv = RebuildMatchTypeAnyAll();
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
-  else {
-    rv = RebuildMatchTypeAnyAll();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  
   // Notify our inner list that its content changed
   nsCOMPtr<sbILocalDatabaseSimpleMediaList> ldsml =
     do_QueryInterface(mList, &rv);
@@ -881,7 +881,8 @@ sbLocalDatabaseSmartMediaList::Rebuild()
 
   rv = ldsml->NotifyContentChanged();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
+  nsAutoMonitor monitor(mListenersMonitor);
   for (PRUint32 i=0;i<mListeners.Count();i++)
     mListeners.ObjectAt(i)->OnRebuild(this);
 
