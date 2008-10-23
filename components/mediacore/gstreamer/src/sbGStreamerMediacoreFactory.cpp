@@ -128,7 +128,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       "txt", "htm", "html", "xml", "pdf", "cpl", "msstyles", "scr", "sys",
       "ocx", "bz2", "gz", "zip", "Z", "rar", "tar", "dll", "exe", "a",
       "bmp", "png", "gif", "jpeg", "jpg", "jpe", "tif", "tiff", "xpm",
-      "dat", "swf", "swfl", "stm"};
+      "dat", "swf", "swfl", "stm", "cgi"};
 
   const char *extraExtensions[] = {"m4r", "m4p", "mp4", "vob"};
   GList *walker, *list;
