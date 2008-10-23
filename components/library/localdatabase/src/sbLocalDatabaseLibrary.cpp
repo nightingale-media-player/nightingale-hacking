@@ -660,22 +660,6 @@ nsresult sbLocalDatabaseLibrary::CreateQueries()
     values (?, ?, ?, ?, ?, ?, ?)"), getter_AddRefs(mCreateMediaItemPreparedStatement));
   NS_ENSURE_SUCCESS(rv, rv);
   
-  query->PrepareQuery(NS_LITERAL_STRING("\
-        INSERT INTO resource_properties(media_item_id, property_id, obj, obj_sortable) \
-        VALUES ((SELECT media_item_id FROM media_items WHERE guid = ?), ?, ?, ?)"), 
-        getter_AddRefs(mAddPropertyPreparedStatement));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  query->PrepareQuery(NS_LITERAL_STRING("\
-      INSERT INTO resource_properties_fts_all (rowid, alldata) \
-      SELECT _mi.media_item_id, group_concat(_rp.obj_sortable, ' ') \
-      FROM media_items as _mi \
-      JOIN resource_properties as _rp ON _rp.media_item_id = _mi.media_item_id \
-      WHERE _mi.guid = ? \
-      GROUP BY _mi.media_item_id"),
-      getter_AddRefs(mAddPropertyFTSPreparedStatement));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
   return NS_OK;
 }
 /**
@@ -821,123 +805,61 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
 }
 
 nsresult
-sbLocalDatabaseLibrary::AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
-                                                 const nsAString& aGuid,
-                                                 sbIPropertyArray* aProperties,
-                                                 PRUint32* aAddedQueryCount)
+sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
+                                                 sbIPropertyArray* aProperties)
 {
-  NS_ASSERTION(aQuery, "aQuery is null");
-  NS_ASSERTION(aProperties, "aProperties is null");
-  NS_ASSERTION(aAddedQueryCount, "aAddedQueryCount is null");
+  NS_ASSERTION(aItem, "aItem is null");
 
   nsresult rv;
 
-  nsCOMPtr<sbIPropertyManager> propMan =
-    do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+  nsString url;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                          url);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 length;
-  rv = aProperties->GetLength(&length);
+  nsCOMPtr<sbIPropertyArray> filteredProperties;
+
+  if (aProperties) {
+    rv = GetFilteredPropertiesForNewItem(aProperties,
+                                         getter_AddRefs(filteredProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString originURL;
+    rv = filteredProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                              originURL);
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
+        do_QueryInterface(filteredProperties);
+      rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                             url);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+  }
+  else {
+    nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                           url);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    filteredProperties = do_QueryInterface(mutableProperties);
+  }
+
+  // Set the new properties, but do not send notifications,
+  // since we assume aItem was only just created, and at 
+  // this point nobody cares.
+  
+  nsCOMPtr<sbILocalDatabaseMediaItem> item =
+    do_QueryInterface(aItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  item->SetSuppressNotifications(PR_TRUE);
+  rv = aItem->SetProperties(filteredProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
+  item->SetSuppressNotifications(PR_FALSE);
 
-  PRUint32 count = 0;
-    
-  PRBool hasProperties = PR_FALSE;
-  for (PRUint32 i = 0; i < length; i++) {
-    nsCOMPtr<sbIProperty> property;
-    rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString id;
-    rv = property->GetId(id);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString value;
-    rv = property->GetValue(value);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRUint32 propertyId;
-    rv = mPropertyCache->GetPropertyDBID(id, &propertyId);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // TODO: it would be nice if we had a more efficient way of separating these values.
-    //       (SB_IsTopLevelProperty iterates through the list of TLPs)
-    if (SB_IsTopLevelProperty(propertyId)) {
-      // First, account for Top Level Properties.
-      nsCOMPtr<sbIDatabasePreparedStatement> topLevelPropertyUpdate;
-      PRBool success = mMediaItemsUpdatePreparedStatements.Get(propertyId, getter_AddRefs(topLevelPropertyUpdate));
-      NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-      rv = aQuery->AddPreparedStatement(topLevelPropertyUpdate);
-      NS_ENSURE_SUCCESS(rv,rv);
-
-      nsString columnName;
-      SB_GetTopLevelPropertyColumn(propertyId, columnName);
-      NS_ENSURE_SUCCESS(rv,rv);
-
-      PRUint32 columnType = -1;
-      rv = SB_GetTopLevelPropertyColumnType(propertyId, columnType);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      if (columnType == SB_COLUMN_TYPE_TEXT) {
-        rv = aQuery->BindStringParameter(0, value);
-        NS_ENSURE_SUCCESS(rv,rv);
-      }
-      else if (columnType == SB_COLUMN_TYPE_INTEGER) {
-        PRUint32 intVal = value.ToInteger(&rv);
-        NS_ENSURE_SUCCESS(rv,rv);
-        rv = aQuery->BindInt32Parameter(0, intVal);
-        NS_ENSURE_SUCCESS(rv,rv);
-      }
-      else {
-        NS_WARNING("Failed to determine the column type of a top level property.");
-        return NS_ERROR_CANNOT_CONVERT_DATA;
-      }
-
-      rv = aQuery->BindStringParameter(1, aGuid);
-      NS_ENSURE_SUCCESS(rv,rv);
-
-      count++;
-    }
-    else {
-      hasProperties = PR_TRUE;
-      nsCOMPtr<sbIPropertyInfo> propertyInfo;
-      rv = propMan->GetPropertyInfo(id, getter_AddRefs(propertyInfo));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsAutoString sortableValue;
-      rv = propertyInfo->MakeSortable(value, sortableValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = aQuery->AddPreparedStatement(mAddPropertyPreparedStatement);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = aQuery->BindStringParameter(0, aGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = aQuery->BindInt32Parameter(1, propertyId);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = aQuery->BindStringParameter(2, value);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = aQuery->BindStringParameter(3, sortableValue);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      count++;
-    }
-  }
-
-  if (hasProperties) {
-    rv = aQuery->AddPreparedStatement(mAddPropertyFTSPreparedStatement);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = aQuery->BindStringParameter(0, aGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-     
-    count += 1;
-  }
-
-  *aAddedQueryCount = count;
   return NS_OK;
 }
 
@@ -2338,43 +2260,6 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
                        guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (aProperties) {
-    nsCOMPtr<sbIPropertyArray> filteredProperties;
-    rv = GetFilteredPropertiesForNewItem(aProperties,
-                                         getter_AddRefs(filteredProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString originURL;
-    rv = filteredProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL), 
-                                              originURL); 
-    if(rv == NS_ERROR_NOT_AVAILABLE) {
-      nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
-        do_QueryInterface(filteredProperties, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                             NS_ConvertUTF8toUTF16(spec));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    PRUint32 junk;
-    rv = AddItemPropertiesQueries(query, guid, filteredProperties, &junk);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
-      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                           NS_ConvertUTF8toUTF16(spec));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRUint32 junk;
-    rv = AddItemPropertiesQueries(query, guid, mutableProperties, &junk);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2396,6 +2281,10 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
 
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set up properties for the new item
+  rv = SetDefaultItemProperties(mediaItem, aProperties);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate our array
@@ -2436,17 +2325,6 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   rv = AddNewItemQuery(query, factoryInfo->typeID, aType, guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (aProperties) {
-    nsCOMPtr<sbIPropertyArray> filteredProperties;
-    rv = GetFilteredPropertiesForNewItem(aProperties,
-                                         getter_AddRefs(filteredProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRUint32 junk;
-    rv = AddItemPropertiesQueries(query, guid, filteredProperties, &junk);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   // Remember the length for notification
   PRUint32 length;
   rv = GetArray()->GetLength(&length);
@@ -2475,6 +2353,11 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (aProperties) {
+    rv = SetDefaultItemProperties(mediaItem, aProperties);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Invalidate our array
   rv = GetArray()->Invalidate();
@@ -3919,21 +3802,8 @@ sbBatchCreateTimerCallback::sbBatchCreateTimerCallback(
 nsresult
 sbBatchCreateTimerCallback::Init()
 {
-  PRBool success = mQueryToIndexMap.Init();
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
   mBatchHelper = new sbBatchCreateHelper(mLibrary, this);
   NS_ENSURE_TRUE(mBatchHelper, NS_ERROR_OUT_OF_MEMORY);
-
-  return NS_OK;
-}
-
-nsresult
-sbBatchCreateTimerCallback::AddMapping(PRUint32 aQueryIndex,
-                                       PRUint32 aItemIndex)
-{
-  PRBool success = mQueryToIndexMap.Put(aQueryIndex, aItemIndex);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -4016,11 +3886,10 @@ sbBatchCreateTimerCallback::NotifyInternal(PRBool* _retval)
   
   if (currentQuery <= mQueryCount &&
       isExecuting) {
+        
     // Notify listener of progress.
-    PRUint32 itemIndex = 0;
-    PRBool success = mQueryToIndexMap.Get(currentQuery, &itemIndex);
-    NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-
+    // There is one query per item, plus a BEGIN and COMMIT.
+    PRUint32 itemIndex = (currentQuery > 2) ? currentQuery - 2 : 0;
     mListener->OnProgress(itemIndex);
 
     *_retval = PR_FALSE;
@@ -4052,16 +3921,10 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
   NS_ASSERTION(aQuery, "aQuery is null");
 
   mURIArray = aURIArray;
-  PRUint32 queryCount = 0;
+  mPropertiesArray = aPropertyArrayArray;
 
   nsresult rv = aQuery->AddQuery(NS_LITERAL_STRING("begin"));
   NS_ENSURE_SUCCESS(rv, rv);
-  if (mCallback) {
-    // map 0 to 0
-    rv = mCallback->AddMapping(queryCount, 0);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  queryCount++;
   
   // Iterate over all items in the URI array, creating media items.
   PRUint32 listLength = 0;
@@ -4089,86 +3952,18 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
     NS_ENSURE_SUCCESS(rv, rv);
     TRACE(("sbBatchCreateHelper[0x%.8x] - InitQuery() -- added new itemQuery", this));
 
-    if (mCallback) {
-      rv = mCallback->AddMapping(queryCount, i);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    queryCount++;
-
-    if (aPropertyArrayArray) {
-      nsCOMPtr<sbIPropertyArray> properties =
-        do_QueryElementAt(aPropertyArrayArray, i, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<sbIPropertyArray> filteredProperties;
-      rv = mLibrary->GetFilteredPropertiesForNewItem(properties,
-                                                     getter_AddRefs(filteredProperties));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsString originURL;
-      rv = filteredProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                                originURL);
-      if(rv == NS_ERROR_NOT_AVAILABLE) {
-        nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
-          do_QueryInterface(filteredProperties);
-        rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                               NS_ConvertUTF8toUTF16(spec));
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      PRUint32 addedCount;
-      rv = mLibrary->AddItemPropertiesQueries(aQuery,
-                                              guid,
-                                              filteredProperties,
-                                              &addedCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      for (PRUint32 j = 0; j < addedCount; j++) {
-        if (mCallback) {
-          rv = mCallback->AddMapping(queryCount, i);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-        queryCount++;
-      }
-
-    }
-    else {
-      nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
-        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                             NS_ConvertUTF8toUTF16(spec));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRUint32 addedCount;
-      rv = mLibrary->AddItemPropertiesQueries(aQuery,
-                                              guid,
-                                              mutableProperties,
-                                              &addedCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      for (PRUint32 j = 0; j < addedCount; j++) {
-        if (mCallback) {
-          rv = mCallback->AddMapping(queryCount, i);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-        queryCount++;
-      }
-    }
-
     nsString* success = mGuids.AppendElement(guid);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
+ 
 
   rv = aQuery->AddQuery(NS_LITERAL_STRING("commit"));
   NS_ENSURE_SUCCESS(rv, rv);
+
   if (mCallback) {
-    rv = mCallback->AddMapping(queryCount, listLength - 1);
-    NS_ENSURE_SUCCESS(rv, rv);
-    queryCount++;
+    PRUint32 queryCount = 0;
+    aQuery->GetQueryCount(&queryCount);
     mCallback->SetQueryCount(queryCount);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Remember length for notifications
@@ -4243,6 +4038,16 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
 
       NS_ENSURE_TRUE(bags[i], NS_ERROR_NULL_POINTER);
       rv = ldbmi->SetPropertyBag(bags[i]);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      // Now that we have a media item, set up the initial
+      // properties
+      nsCOMPtr<sbIPropertyArray> properties = nsnull;
+      if (mPropertiesArray) {
+        properties = do_QueryElementAt(mPropertiesArray, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      rv = mLibrary->SetDefaultItemProperties(mediaItem, properties);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = array->AppendElement(mediaItem, PR_FALSE);

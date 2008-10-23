@@ -244,10 +244,12 @@ private:
                            const nsAString& aURISpecOrPrefix,
                            nsAString& _retval);
 
-  nsresult AddItemPropertiesQueries(sbIDatabaseQuery* aQuery,
-                                    const nsAString& aGuid,
-                                    sbIPropertyArray* aProperties,
-                                    PRUint32* aAddedQueryCount);
+  /**
+   * Sets properties of a newly created media item without
+   * sending notifications.
+   */
+  nsresult SetDefaultItemProperties(sbIMediaItem* aItem,
+                                    sbIPropertyArray* aProperties);
 
   nsresult GetTypeForGUID(const nsAString& aGUID,
                           nsAString& _retval);
@@ -341,8 +343,7 @@ private:
   nsCOMPtr<nsIURI> mContentSrc;
 
   nsCOMPtr<sbIDatabasePreparedStatement> mCreateMediaItemPreparedStatement;
-  nsCOMPtr<sbIDatabasePreparedStatement> mAddPropertyPreparedStatement;
-  nsCOMPtr<sbIDatabasePreparedStatement> mAddPropertyFTSPreparedStatement;
+
   // There's a separate update statement for each top level property.
   // This is because we have no efficient way to /not/ update a property
   // if we try to only update some of the top level properties.
@@ -454,9 +455,6 @@ public:
 
   nsresult Init();
 
-  nsresult AddMapping(PRUint32 aQueryIndex,
-                      PRUint32 aItemIndex);
-
   nsresult SetQueryCount(PRUint32 aQueryCount);
 
   nsresult NotifyInternal(PRBool* _retval);
@@ -468,7 +466,6 @@ private:
   nsCOMPtr<sbIBatchCreateMediaItemsListener> mListener;
   nsRefPtr<sbBatchCreateHelper> mBatchHelper;
   nsCOMPtr<sbIDatabaseQuery> mQuery;
-  nsDataHashtable<nsUint32HashKey, PRUint32> mQueryToIndexMap;
   nsITimer* mTimer;
   PRUint32 mQueryCount;
 
@@ -499,6 +496,7 @@ private:
   sbLocalDatabaseLibrary*     mLibrary;
   sbBatchCreateTimerCallback*      mCallback;
   nsCOMPtr<nsIArray>  mURIArray;
+  nsCOMPtr<nsIArray>  mPropertiesArray;
   nsTArray<nsString>  mGuids;
   PRUint32 mLength;
 };
