@@ -287,11 +287,6 @@
           dump('this.inputField.hidden: '+this.inputField.hidden+'\n');
           dump('this.hasAttribute("editing"): '+this.hasAttribute("editing")+'\n');
           */
-          
-          // Always set accept to false, since we leave it
-          // up to the service pane service to determine
-          // what changes
-          this._stopEditing(false);
 
           if (!this._editingColumn)
             return;
@@ -306,6 +301,11 @@
             newName = this.inputField.value;
           }
 
+          // Always set accept to false, since we leave it
+          // up to the service pane service to determine
+          // what changes
+          this._stopEditing(false);
+
           // Give the new name to the service pane.
           if (node) {
             sp.mService.onRename(node.id, newName);
@@ -313,7 +313,6 @@
 
           // Now try to highlight the current node as per onBrowserTabChange
           try {
-            var url = sp._browser.currentURI.spec;
             if (node) {
               sp.highlightNode(node);
             }
@@ -584,6 +583,14 @@
             this.mPopup.hidePopup();
           ]]>
         </body>
+      </method>
+      <method name="selectAndLoadNode">
+        <parameter name="node"/>
+        <parameter name="event"/>
+        <body><![CDATA[
+          this.highlightNode(node);  // also unhighlights other nodes
+          this.loadNode(node, event);
+        ]]></body>
       </method>
       <method name="loadSelectedNode">
         <parameter name="event"/>
@@ -860,6 +867,9 @@
 
       var node = this.getNodeForRow(row.value);
       if (node) {
+        // ensure that the node is highlighted
+        this.highlightNode(node);
+
         // ask the service to fill in the popup for this node
         this.mService.fillContextMenu(node.id, this.mPopup, window);
       } else {
@@ -889,6 +899,13 @@
           this.loadSelectedNode(event);
         }
       ]]></handler>
+      <!-- The click handlers should use the clicked row instead of the tree -->
+      <!-- selection since the tree selection can be changed by external     -->
+      <!-- events (e.g., RDF tree changes).  These events can occur in a     -->
+      <!-- certain order such that the currently selected tree row does not  -->
+      <!-- equal the click event row.  Using the tree selection can cause a  -->
+      <!-- click action to be applied to a row that is different from the    -->
+      <!-- row that was clicked.                                             -->
       <handler event="click" clickcount="1" button="0"><![CDATA[
         // only handle the click if it occured on a treechildren element,
         // this avoids handling a click when it occured on a child piece of
@@ -897,10 +914,17 @@
         // even though it wasn't clicked.
         if (event.originalTarget.tagName == "treechildren") {
           var obj={}, row={}, col={};
-          this.mTree.treeBoxObject.getCellAt(event.clientX, event.clientY, row, col, obj);
+          this.mTree.treeBoxObject.getCellAt(event.clientX,
+                                             event.clientY,
+                                             row,
+                                             col,
+                                             obj);
 
+          // ensure the node that was clicked is selected and loaded
           if ((obj.value != 'twisty') && (row.value >= 0)) {
-            this.loadSelectedNode(event);
+            var node = this.getNodeForRow(row.value);
+            if (node)
+              this.selectAndLoadNode(node, event);
           }
         }
       ]]></handler>
@@ -909,18 +933,40 @@
         // ditto
         if (event.originalTarget.tagName == "treechildren") {
           var obj={}, row={}, col={};
-          this.mTree.treeBoxObject.getCellAt(event.clientX, event.clientY, row, col, obj);
+          this.mTree.treeBoxObject.getCellAt(event.clientX,
+                                             event.clientY,
+                                             row,
+                                             col,
+                                             obj);
 
+          // ensure the node that was clicked is selected and loaded
           if ((obj.value != 'twisty') && (row.value >= 0)) {
-            this.loadSelectedNode(event);
+            var node = this.getNodeForRow(row.value);
+            if (node)
+              this.selectAndLoadNode(node, event);
           }
         }
       ]]>
       </handler>
       <handler event="click" clickcount="2" button="0"><![CDATA[
-        var node = this.getNodeForRow(this.mTree.currentIndex);
-        if (node && node.editable) {
-          this.startEditingNode(node);
+        if (event.originalTarget.tagName == "treechildren") {
+          var obj={}, row={}, col={};
+          this.mTree.treeBoxObject.getCellAt(event.clientX,
+                                             event.clientY,
+                                             row,
+                                             col,
+                                             obj);
+
+          // ensure the node that was clicked is selected and loaded and is the
+          // one to be edited
+          if ((obj.value != 'twisty') && (row.value >= 0)) {
+            var node = this.getNodeForRow(row.value);
+            if (node) {
+              this.selectAndLoadNode(node, event);
+              if (node.editable)
+                this.startEditingNode(node);
+            }
+          }
         }
       ]]></handler>
 
