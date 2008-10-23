@@ -65,6 +65,7 @@
                ondragover="nsDragAndDrop.dragOver(event, AlbumArt);"/>
       </vbox>
       <vbox id="sb-albumart-select-drag"
+            contextmenu="nowSelectedMenu"
             class="albumArtNowSelectedDragAndDrop"
             ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
             ondragover="nsDragAndDrop.dragOver(event, AlbumArt);">
@@ -90,6 +91,7 @@
                ondragover="nsDragAndDrop.dragOver(event, AlbumArt);"/>
       </vbox>
       <vbox id="sb-albumart-playing-drag"
+            contextmenu="nowSelectedMenu"
             class="albumArtNowPlayingDragAndDrop"
             ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
             ondragover="nsDragAndDrop.dragOver(event, AlbumArt);">
