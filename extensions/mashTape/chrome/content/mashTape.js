@@ -453,6 +453,10 @@ mashTape.unload = function() {
 	if (mashTape.expanded)
 		mashTape.maximiseDisplayPane(null);
 
+	// remove the maximize button
+	var dpHeader = mashTape.displayPane.tabBar.parentNode;
+	dpHeader.removeChild(mashTape.displayPaneMaxButton);
+
 	// destroy the dataremotes
 	mashTape.pausedDr.unbind();
 }
