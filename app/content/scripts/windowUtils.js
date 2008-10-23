@@ -307,10 +307,14 @@ function onMaximize(aMaximize)
     if ( aMaximize )
     {
       document.defaultView.maximize();
+      // Force sizemode attribute, due to mozbug 409095.
+      document.documentElement.setAttribute("sizemode", "maximized");
     }
     else
     {
       document.defaultView.restore();
+      // Force sizemode attribute, due to mozbug 409095.
+      document.documentElement.setAttribute("sizemode", "normal");
     }
   }
   // TODO

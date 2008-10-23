@@ -36,6 +36,10 @@ This css file provides additional rules that are only loaded on Windows.
 *******************************************************************************
 */
 
+window:root[sizemode="maximized"] .sb-sys-outer-frame-resizer {
+  visibility: collapse;
+}
+
 popup,
 menupopup,
 tooltip,
