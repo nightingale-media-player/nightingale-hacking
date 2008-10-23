@@ -83,14 +83,16 @@ var WebScraperSteps = {
   
     // Use xpath instead of getElementsByTagName to preserve
     // document order between tag types.
+    // XXX: note the '.' in front of the expressions to select a set of nodes 
+    //      relative to the context node.
     var xpath = [ 
-        "//@href",
+        ".//@href",
         // TODO: ultimately, some of these things really shouldn't be treated as urls
         //       particularly the param/@values which are used for random crap all the time
-        "//embed/@src",     "//*[local-name()='embed']/@src", 
-        "//object/@data",   "//*[local-name()='object']/@data",
-        "//param/@value",   "//*[local-name()='param']/@value", 
-        "//enclosure/@url", "//*[local-name()='enclosure']/@url"
+        ".//embed/@src",     ".//*[local-name()='embed']/@src", 
+        ".//object/@data",   ".//*[local-name()='object']/@data",
+        ".//param/@value",   ".//*[local-name()='param']/@value", 
+        ".//enclosure/@url", ".//*[local-name()='enclosure']/@url"
     ].join('|');
   
     var nodeDocument;
