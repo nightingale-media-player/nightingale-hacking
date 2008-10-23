@@ -147,7 +147,9 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mTags(NULL),
     mProperties(nsnull),
     mStopped(PR_FALSE),
-    mBuffering(PR_FALSE)
+    mBuffering(PR_FALSE),
+    mIsLive(PR_FALSE),
+    mTargetState(GST_STATE_NULL)
 {
   NS_WARN_IF_FALSE(mBaseEventTarget, 
           "mBaseEventTarget is null, may be out of memory");
@@ -349,6 +351,8 @@ sbGStreamerMediacore::DestroyPipeline()
   }
   mStopped = PR_FALSE;
   mBuffering = PR_FALSE;
+  mIsLive = PR_FALSE;
+  mTargetState = GST_STATE_NULL;
 
   return NS_OK;
 }
@@ -531,7 +535,7 @@ void sbGStreamerMediacore::HandleStateChangedMessage(GstMessage *message)
             &oldstate, &newstate, &pendingstate);
 
     // Dispatch START, PAUSE, STOP/END (but only if it's our target state)
-    if (pendingstate == GST_STATE_VOID_PENDING) {
+    if (pendingstate == GST_STATE_VOID_PENDING && newstate == mTargetState) {
       if (newstate == GST_STATE_PLAYING)
         DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_START);
       else if (newstate == GST_STATE_PAUSED)
@@ -546,6 +550,17 @@ void sbGStreamerMediacore::HandleStateChangedMessage(GstMessage *message)
           DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_END);
       }
     }
+    // We've reached our current pending state, but not our target state.
+    else if (pendingstate == GST_STATE_VOID_PENDING)
+    {
+      // If we're not waiting for buffering to complete (where we handle
+      // the state changes differently), then continue on to PLAYING.
+      if (newstate == GST_STATE_PAUSED && mTargetState == GST_STATE_PLAYING &&
+          !mBuffering)
+      {
+        gst_element_set_state (mPipeline, GST_STATE_PLAYING);
+      }
+    }
   }
 }
 
@@ -557,12 +572,16 @@ void sbGStreamerMediacore::HandleBufferingMessage (GstMessage *message)
   gst_message_parse_buffering (message, &percent);
   TRACE(("Buffering (%u percent done)", percent));
 
+  // We don't want to handle buffering specially for live pipelines
+  if (mIsLive)
+    return;
+
   /* If we receive buffering messages, go to PAUSED.
    * Then, return to PLAYING once we have 100% buffering (which will be
    * before we actually hit PAUSED)
    */
-  if (mBuffering && percent >= 100 ) {
-    TRACE(("Buffering complete, setting back to playing"));
+  if (percent >= 100 && mTargetState == GST_STATE_PLAYING) {
+    TRACE(("Buffering complete, setting state to playing"));
     mBuffering = PR_FALSE;
     gst_element_set_state (mPipeline, GST_STATE_PLAYING);
   }
@@ -576,6 +595,7 @@ void sbGStreamerMediacore::HandleBufferingMessage (GstMessage *message)
       TRACE(("Buffering... setting to paused"));
       gst_element_set_state (mPipeline, GST_STATE_PAUSED);
       mBuffering = PR_TRUE;
+      mTargetState = GST_STATE_PLAYING;
 
       // And inform listeners that we've underrun */
       DispatchMediacoreEvent(sbIMediacoreEvent::BUFFER_UNDERRUN);
@@ -649,6 +669,7 @@ void sbGStreamerMediacore::HandleEOSMessage(GstMessage *message)
 
   // Shut down the pipeline. This will cause us to send a STREAM_END
   // event when we get the state-changed message to GST_STATE_NULL
+  mTargetState = GST_STATE_NULL;
   gst_element_set_state (mPipeline, GST_STATE_NULL);
 }
 
@@ -718,6 +739,7 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 
   // Then, shut down the pipeline, which will cause
   // a STREAM_END event to be fired.
+  mTargetState = GST_STATE_NULL;
   gst_element_set_state (mPipeline, GST_STATE_NULL);
 
   // Log the error message
@@ -973,11 +995,14 @@ sbGStreamerMediacore::OnSetPosition(PRUint64 aPosition)
 /*virtual*/ nsresult 
 sbGStreamerMediacore::OnPlay()
 {
+  GstStateChangeReturn ret;
+  gint flags;
+
   nsAutoMonitor lock(mMonitor);
 
   NS_ENSURE_STATE(mPipeline);
 
-  gint flags = 0x2 | 0x10; // audio | soft-volume
+  flags = 0x2 | 0x10; // audio | soft-volume
   if (mVideoEnabled) {
     // Enable video only if we're set up for it is turned off. Also enable
     // text (subtitles), which require a video window to display.
@@ -986,24 +1011,37 @@ sbGStreamerMediacore::OnPlay()
 
   g_object_set (G_OBJECT(mPipeline), "flags", flags, NULL);
 
-  GstStateChangeReturn ret;
-  ret = gst_element_set_state (mPipeline, GST_STATE_PLAYING);
+  // Change our state to PAUSED, but have our target state set to
+  // PLAYING. Then, when we reach PAUSED, we'll change state to
+  // PLAYING (unless we're buffering, in which case we'll wait for
+  // that to complete).
+  mTargetState = GST_STATE_PLAYING;
+  ret = gst_element_set_state (mPipeline, GST_STATE_PAUSED);
 
   /* Usually ret will be GST_STATE_CHANGE_ASYNC, but we could get a synchronous
    * error... */
   if (ret == GST_STATE_CHANGE_FAILURE)
     return NS_ERROR_FAILURE;
+  else if (ret == GST_STATE_CHANGE_NO_PREROLL)
+  {
+    /* NO_PREROLL means we have a live pipeline, for which we have to 
+     * handle buffering differently */
+    mIsLive = PR_TRUE;
+  }
+
   return NS_OK;
 }
 
 /*virtual*/ nsresult 
 sbGStreamerMediacore::OnPause()
 {
+  GstStateChangeReturn ret;
+
   nsAutoMonitor lock(mMonitor);
 
   NS_ENSURE_STATE(mPipeline);
 
-  GstStateChangeReturn ret;
+  mTargetState = GST_STATE_PAUSED;
   ret = gst_element_set_state (mPipeline, GST_STATE_PAUSED);
 
   if (ret == GST_STATE_CHANGE_FAILURE)
@@ -1021,6 +1059,7 @@ sbGStreamerMediacore::OnStop()
   GstStateChangeReturn ret;
 
   mStopped = PR_TRUE;
+  mTargetState = GST_STATE_NULL;
   ret = gst_element_set_state (mPipeline, GST_STATE_NULL);
 
   return NS_OK;

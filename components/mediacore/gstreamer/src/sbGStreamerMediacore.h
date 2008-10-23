@@ -155,6 +155,12 @@ protected:
   PRBool mStopped;
   // Track whether we're currently buffering
   PRBool mBuffering;
+  // Track if we are using a live pipeline
+  PRBool mIsLive;
+
+  // The GstState we want to reach (not necessarily the current pipeline
+  // pending state)
+  GstState mTargetState;
 
   // the video box
   nsCOMPtr<nsIDOMXULElement> mVideoWindow;
