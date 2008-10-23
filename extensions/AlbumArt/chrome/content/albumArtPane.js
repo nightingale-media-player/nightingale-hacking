@@ -294,14 +294,14 @@ var AlbumArt = {
 
 
     // Configure the display pane
-    if (aNewURL == null) {
+    if (!AlbumArt._nowSelectedMediaItem) {
       // Show the not playing message.
       albumArtNotSelectedBox.removeAttribute("hidden");
       // Hide the Drag Here box
       albumArtSelectedDragBox.setAttribute("hidden", true);
       // Set the image to the default cover
       aNewURL = DROP_TARGET_IMAGE;
-    } else if (aNewURL == "") {
+    } else if (!aNewURL) {
      // Show the Drag Here box
       albumArtSelectedDragBox.removeAttribute("hidden");
       // Hide the not selected message.
@@ -330,12 +330,12 @@ var AlbumArt = {
     var albumArtPlayingDragBox = document.getElementById('sb-albumart-playing-drag');
 
     // Configure the display pane
-    if (aNewURL == null) {
+    if (!AlbumArt.getNowPlayingItem()) {
       // Show the not playing message.
       albumArtNotPlayingBox.removeAttribute("hidden");
       // Set the image to the default cover
       aNewURL = DROP_TARGET_IMAGE;
-    } else if (aNewURL == "") {
+    } else if (!aNewURL) {
       // Show the Drag Here box
       albumArtPlayingDragBox.removeAttribute("hidden");
       // Hide the not playing message.
@@ -402,6 +402,11 @@ var AlbumArt = {
       AlbumArt._displayPane = dpInstantiator.displayPane;
     }
 
+    // Get the mediacoreManager.
+    AlbumArt._mediacoreManager =
+      Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        .getService(Ci.sbIMediacoreManager);
+
     // Load the previous selected display the user shutdown with
     AlbumArt._currentState = Application.prefs.getValue(PREF_STATE,
                                                         AlbumArt._currentState);
@@ -439,12 +444,7 @@ var AlbumArt = {
     AlbumArt._coverBind = createDataRemote("metadata.imageURL", null);
     AlbumArt._coverBind.bindObserver(AlbumArt, false);
 
-    // Load the mediacoreManager so we can monitor track changes for
-    // faster image changing.
-    AlbumArt._mediacoreManager = 
-      Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-        .getService(Ci.sbIMediacoreManager);
-        
+    // Monitor track changes for faster image changing.
     AlbumArt._mediacoreManager.addListener(AlbumArt);
 
     var currentStatus = AlbumArt._mediacoreManager.status;
@@ -563,17 +563,9 @@ var AlbumArt = {
    * \param aNewImageUrl - new string url of file to set cover to on the item.
    */
   setNowPlayingCover: function AlbumArt_setNowPlayingCover(aNewImageUrl) {
-    var mediaView = AlbumArt._playListPlaybackService.playingView;
-    if (!mediaView) {
-      // No current view playing.
+    var aMediaItem = AlbumArt.getNowPlayingItem();
+    if (!aMediaItem)
       return;
-    }
-    var itemIndex = AlbumArt._playListPlaybackService.currentIndex;
-    if (itemIndex == -1) {
-      // PlayListPlaybackService says there is no item playing.
-      return;
-    }
-    var aMediaItem = mediaView.getItemByIndex(itemIndex)
     
     aMediaItem.setProperty(SBProperties.primaryImageURL, aNewImageUrl);
     AlbumArt.changeNowPlaying(aNewImageUrl);
@@ -723,6 +715,22 @@ var AlbumArt = {
 
     // Clear the now selected media item.
     AlbumArt._nowSelectedMediaItem = null;
+  },
+
+  /**
+   * \brief This will get the now playing media item.
+   * \return Now playing media item.
+   */
+  getNowPlayingItem: function AlbumArt_getNowPlayingItem() {
+    // No playing item if the media core is stopped.
+    var currentStatus = AlbumArt._mediacoreManager.status;
+    var stopped = (currentStatus.state == currentStatus.STATUS_STOPPED ||
+                   currentStatus.state == currentStatus.STATUS_UNKNOWN);
+    if (stopped)
+      return null;
+
+    // Return the currently playing item.
+    return AlbumArt._mediacoreManager.sequencer.currentItem;
   },
 
   /*********************************
