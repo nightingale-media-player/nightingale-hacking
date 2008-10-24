@@ -50,7 +50,6 @@
  ondialogaccept="return doOK();"
 >
 
-  <!-- Astounding complexity! -->
   <vbox flex="1">
     <textbox value="&about.version;" id="version_number" class="plain" clickSelectsAll="true" readonly="true" tabindex="2" />
     <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false" disablehistory="true" flex="2" tabindex="1"/>
