@@ -66,11 +66,6 @@ class sbISQLUpdateBuilder;
 class sbISQLDeleteBuilder;
 class sbLocalDatabaseSortInvalidateJob;
 
-/**
- * \brief Max number of pending changes before automatic cache write.
- */
-#define SB_LOCALDATABASE_MAX_PENDING_CHANGES (500)
-
 class sbLocalDatabasePropertyCache: public sbILocalDatabasePropertyCache,
     public nsIObserver
 {

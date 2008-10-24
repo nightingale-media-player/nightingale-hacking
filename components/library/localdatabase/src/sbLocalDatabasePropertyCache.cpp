@@ -899,12 +899,6 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
     }
 
     mDirty.Put(guid, bag);
-    PRBool const writeNeeded = ++mWritePendingCount > SB_LOCALDATABASE_MAX_PENDING_CHANGES;
-
-    if(writeNeeded) {
-      rv = Write();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
   }
 
   if(aWriteThroughNow) {
