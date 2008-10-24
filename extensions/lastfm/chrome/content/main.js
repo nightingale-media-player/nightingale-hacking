@@ -385,7 +385,9 @@ LastFm.onProfileUpdated = function LastFm_onProfileUpdated() {
   } else {
     this._realname.textContent = this._service.username;
   }
-  this._tracks.textContent = this._service.playcount;
+  this._tracks.textContent = 
+      this._strings.getFormattedString('lastfm.profile.numtracks', 
+          [this._service.playcount]);
 }
 
 // shouldScrobble changed

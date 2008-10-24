@@ -6,7 +6,5 @@
 <!ENTITY lastfm.loggingin.label "Anmelden...">
 <!ENTITY lastfm.cancel.button "Abbrechen">
 <!ENTITY lastfm.profile.caption "Profil">
-<!ENTITY lastfm.profile.numtracks.before "">
-<!ENTITY lastfm.profile.numtracks.after "Lieder gescrobbelt">
 <!ENTITY lastfm.profile.scrobble "Meine Lieder scrobbeln">
 <!ENTITY lastfm.profile.logout "Abmelden">

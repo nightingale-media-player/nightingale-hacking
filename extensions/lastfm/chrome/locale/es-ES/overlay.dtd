@@ -6,7 +6,5 @@
 <!ENTITY lastfm.loggingin.label "Entrando">
 <!ENTITY lastfm.cancel.button "Cancelar">
 <!ENTITY lastfm.profile.caption "Perfil">
-<!ENTITY lastfm.profile.numtracks.before "Sin texto">
-<!ENTITY lastfm.profile.numtracks.after "Cancion notificada">
 <!ENTITY lastfm.profile.scrobble "Notificar mis canciones">
 <!ENTITY lastfm.profile.logout "Salir">

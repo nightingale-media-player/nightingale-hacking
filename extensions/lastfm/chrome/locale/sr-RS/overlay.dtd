@@ -6,7 +6,5 @@
 <!ENTITY lastfm.loggingin.label "Пријављујем се...">
 <!ENTITY lastfm.cancel.button "Поништи">
 <!ENTITY lastfm.profile.caption "Профил">
-<!ENTITY lastfm.profile.numtracks.before " ">
-<!ENTITY lastfm.profile.numtracks.after "песама скробловано">
 <!ENTITY lastfm.profile.scrobble "Скроблуј песме које слушам">
 <!ENTITY lastfm.profile.logout "Одјави се">

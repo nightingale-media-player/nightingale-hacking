@@ -6,7 +6,5 @@
 <!ENTITY lastfm.loggingin.label "Logger ind...">
 <!ENTITY lastfm.cancel.button "Annuller">
 <!ENTITY lastfm.profile.caption "Profil">
-<!ENTITY lastfm.profile.numtracks.before ".">
-<!ENTITY lastfm.profile.numtracks.after "numre scrobbled">
 <!ENTITY lastfm.profile.scrobble "Scrobble mine numre">
 <!ENTITY lastfm.profile.logout "Log ud">

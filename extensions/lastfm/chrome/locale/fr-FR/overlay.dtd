@@ -6,7 +6,5 @@
 <!ENTITY lastfm.loggingin.label "Connexion en cours...">
 <!ENTITY lastfm.cancel.button "Annuler">
 <!ENTITY lastfm.profile.caption "Profil">
-<!ENTITY lastfm.profile.numtracks.before "">
-<!ENTITY lastfm.profile.numtracks.after " musiques scrobblés">
 <!ENTITY lastfm.profile.scrobble "Scrobbler mes musiques">
 <!ENTITY lastfm.profile.logout "Déconnexion">

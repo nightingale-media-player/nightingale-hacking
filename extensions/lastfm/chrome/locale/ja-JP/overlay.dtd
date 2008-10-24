@@ -6,7 +6,5 @@
 <!ENTITY lastfm.loggingin.label "ログイン中...">
 <!ENTITY lastfm.cancel.button "取り消す">
 <!ENTITY lastfm.profile.caption "プロフィール">
-<!ENTITY lastfm.profile.numtracks.before "">
-<!ENTITY lastfm.profile.numtracks.after "曲を Scrobble 済み">
 <!ENTITY lastfm.profile.scrobble "曲を Scrobble">
 <!ENTITY lastfm.profile.logout "ログアウト">

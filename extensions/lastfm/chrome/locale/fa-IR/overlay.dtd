@@ -6,7 +6,5 @@
 <!ENTITY lastfm.loggingin.label "...در حال ورود">
 <!ENTITY lastfm.cancel.button "لغو">
 <!ENTITY lastfm.profile.caption "پروفایل">
-<!ENTITY lastfm.profile.numtracks.before " ">
-<!ENTITY lastfm.profile.numtracks.after "آهنگ ثبت شده">
 <!ENTITY lastfm.profile.scrobble "آهنگ های مرا ثبت کن">
 <!ENTITY lastfm.profile.logout "خروج">

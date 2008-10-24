@@ -6,7 +6,5 @@
 <!ENTITY lastfm.loggingin.label "Logowanie się...">
 <!ENTITY lastfm.cancel.button "Anuluj">
 <!ENTITY lastfm.profile.caption "Profil">
-<!ENTITY lastfm.profile.numtracks.before "">
-<!ENTITY lastfm.profile.numtracks.after "utworów zostało poddanych scrobblingowi">
 <!ENTITY lastfm.profile.scrobble "Scrobbluj utwory, których słucham">
 <!ENTITY lastfm.profile.logout "Wyloguj się">

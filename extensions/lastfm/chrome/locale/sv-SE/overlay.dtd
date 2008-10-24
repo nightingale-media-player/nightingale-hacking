@@ -6,7 +6,5 @@
 <!ENTITY lastfm.loggingin.label "Loggar in...">
 <!ENTITY lastfm.cancel.button "Avbryt">
 <!ENTITY lastfm.profile.caption "Profil">
-<!ENTITY lastfm.profile.numtracks.before ".">
-<!ENTITY lastfm.profile.numtracks.after "scrobblade låtar">
 <!ENTITY lastfm.profile.scrobble "Scrobbla mina låtar">
 <!ENTITY lastfm.profile.logout "Logga ut">
