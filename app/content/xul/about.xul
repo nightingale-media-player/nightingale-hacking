@@ -45,15 +45,16 @@
  width="480"
  height="360"
  hidechrome="true"
+ type="songbird"
  onload="return doInit();"
  ondialogaccept="return doOK();"
 >
 
   <!-- Astounding complexity! -->
-  <sb-draggable flex="1">
+  <vbox flex="1">
     <textbox value="&about.version;" id="version_number" class="plain" clickSelectsAll="true" readonly="true" tabindex="2" />
     <browser id="about_browser" src="chrome://songbird/content/html/about.html" autoscroll="false" disablehistory="true" flex="2" tabindex="1"/>
-  </sb-draggable>
+  </vbox>
 
   <!-- And intrepid instructions! -->
   <script type="application/x-javascript" 
