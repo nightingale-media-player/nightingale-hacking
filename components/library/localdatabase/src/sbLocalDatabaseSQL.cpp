@@ -102,8 +102,6 @@ nsString sbLocalDatabaseSQL::SecondaryPropertySelect()
 
 nsString sbLocalDatabaseSQL::MediaItemsFtsAllDelete()
 {
-  NS_ASSERTION(aRowIDs.Length() > 0,
-               "sbLocalDatabaseSQL::DeleteMediaItemsFtsAll must be passed at least one row id");
   nsString sql = NS_LITERAL_STRING("DELETE FROM resource_properties_fts_all \
                                     WHERE rowid = ?");
   return sql;
@@ -111,9 +109,6 @@ nsString sbLocalDatabaseSQL::MediaItemsFtsAllDelete()
 
 nsString sbLocalDatabaseSQL::MediaItemSelect()
 {
-  NS_ASSERTION(aGuidArray.Length() > 0,
-               "sbLocalDatabaseSQL::MediaItemSelect must be called with at least one guid");
-
   nsString result(NS_LITERAL_STRING("SELECT "));
   result.Append(MediaItemColumns(PR_TRUE));
   result.AppendLiteral(" FROM media_items WHERE guid = ?");

@@ -1252,8 +1252,6 @@ sbLocalDatabasePropertyCache::MakeQuery(sbIDatabaseQuery** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  LOG(("MakeQuery: %s", NS_ConvertUTF16toUTF8(aSql).get()));
-
   nsresult rv;
 
   nsCOMPtr<sbIDatabaseQuery> query =
