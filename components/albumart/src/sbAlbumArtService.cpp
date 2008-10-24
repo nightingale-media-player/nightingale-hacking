@@ -151,6 +151,51 @@ sbAlbumArtService::GetFetcherList(PRBool     aLocalOnly,
 
 
 /**
+ * \brief Determine whether the image specified by aData and aDataLen of type
+ *        specified by aMimeType is a valid album art image.  Return true if
+ *        so.
+ *
+ * \param aMimeType           MIME type of image data.
+ * \param aData               Album art image data.
+ * \param aDataLen            Length in bytes of image data.
+ *
+ * \return                    True if image is valid album art.
+ */
+
+NS_IMETHODIMP
+sbAlbumArtService::ImageIsValidAlbumArt(const nsACString& aMimeType,
+                                        const PRUint8*    aData,
+                                        PRUint32          aDataLen,
+                                        PRBool*           _retval)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  // Function variables.
+  nsresult rv;
+
+  // Ensure image is not empty.
+  if (!aData || !aDataLen) {
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+
+  // Ensure a valid album art file extension can be obtained for the image.
+  nsAutoString fileExtension;
+  rv = GetAlbumArtFileExtension(aMimeType, fileExtension);
+  if (NS_FAILED(rv)) {
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+
+  // Image is valid.
+  *_retval = PR_TRUE;
+
+  return NS_OK;
+}
+
+
+/**
  * \brief Write the album art image specified by aData and aDataLen of type
  *        specified by aMimeType to a cache file and return the cache file
  *        URL.
@@ -184,7 +229,7 @@ sbAlbumArtService::CacheImage(const nsACString& aMimeType,
 
   // Get the image cache file extension.
   nsAutoString fileExtension;
-  rv = GetCacheFileExtension(aMimeType, fileExtension);
+  rv = GetAlbumArtFileExtension(aMimeType, fileExtension);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Produce the image cache file object within the album art cache directory.
@@ -670,16 +715,16 @@ sbAlbumArtService::GetCacheFileBaseName(const PRUint8* aData,
 
 
 /**
- * Get the album art cache file extension for the image with the MIME type
- * specified by aMimeType.
+ * Get the album art file extension for the image with the MIME type specified
+ * by aMimeType.
  *
  * \param aMimeType           MIME type of image data.
  * \param aFileExtension      Returned image cache file extension.
  */
 
 nsresult
-sbAlbumArtService::GetCacheFileExtension(const nsACString& aMimeType,
-                                         nsAString&        aFileExtension)
+sbAlbumArtService::GetAlbumArtFileExtension(const nsACString& aMimeType,
+                                            nsAString&        aFileExtension)
 {
   nsCAutoString fileExtension;
   nsresult      rv;
@@ -706,8 +751,8 @@ sbAlbumArtService::GetCacheFileExtension(const nsACString& aMimeType,
   ToLowerCase(fileExtension);
 
   // Validate the extension.
-  NS_ENSURE_TRUE(mValidExtensionList.Contains(fileExtension),
-                 NS_ERROR_FAILURE);
+  if (!mValidExtensionList.Contains(fileExtension))
+    return NS_ERROR_FAILURE;
 
   // Return results.
   aFileExtension.AssignLiteral(fileExtension.get());

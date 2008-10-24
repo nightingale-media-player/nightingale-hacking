@@ -191,8 +191,8 @@ private:
                                 PRUint32       aDataLen,
                                 nsAString&     aFileBaseName);
 
-  nsresult GetCacheFileExtension(const nsACString& aMimeType,
-                                 nsAString&        aFileExtension);
+  nsresult GetAlbumArtFileExtension(const nsACString& aMimeType,
+                                    nsAString&        aFileExtension);
 };
 
 

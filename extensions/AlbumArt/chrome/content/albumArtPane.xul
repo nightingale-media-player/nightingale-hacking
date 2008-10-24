@@ -39,15 +39,19 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <popupset id="albumArtPopupSet">
-    <menupopup id="nowSelectedMenu">
-      <menuitem label="&albumart.displaypane.selected.menu.cut;"
+    <menupopup id="nowSelectedMenu" onpopupshowing="AlbumArt.onPopupShowing();">
+      <menuitem id="cutMenuItem"
+                label="&albumart.displaypane.selected.menu.cut;"
                 oncommand="AlbumArt.onCut();"/>
-      <menuitem label="&albumart.displaypane.selected.menu.copy;"
+      <menuitem id="copyMenuItem"
+                label="&albumart.displaypane.selected.menu.copy;"
                 oncommand="AlbumArt.onCopy();"/>
-      <menuitem label="&albumart.displaypane.selected.menu.paste;"
+      <menuitem id="pasteMenuItem"
+                label="&albumart.displaypane.selected.menu.paste;"
                 oncommand="AlbumArt.onPaste();"/>
       <menuseparator />
-      <menuitem label="&albumart.displaypane.selected.menu.clear;"
+      <menuitem id="clearMenuItem"
+                label="&albumart.displaypane.selected.menu.clear;"
                 oncommand="AlbumArt.onClear();"/>
     </menupopup>
   </popupset>

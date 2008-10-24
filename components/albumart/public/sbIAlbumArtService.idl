@@ -48,7 +48,7 @@
 interface nsIArray;
 interface nsIFileURL;
 
-[scriptable, uuid(0235cb60-9bc7-11dd-ad8b-0800200c9a66)]
+[scriptable, uuid(9c101073-c3a4-4c8a-a967-32ff855cd748)]
 interface sbIAlbumArtService : nsISupports
 {
   /**
@@ -62,6 +62,24 @@ interface sbIAlbumArtService : nsISupports
    */
 
   nsIArray getFetcherList(in boolean aLocalOnly);
+
+
+  /**
+   * \brief Determine whether the image specified by aData and aDataLen of type
+   *        specified by aMimeType is a valid album art image.  Return true if
+   *        so.
+   *
+   * \param aMimeType           MIME type of image data.
+   * \param aData               Album art image data.
+   * \param aDataLen            Length in bytes of image data.
+   *
+   * \return                    True if image is valid album art.
+   */
+
+  boolean imageIsValidAlbumArt
+            (in AUTF8String                             aMimeType,
+             [const, array, size_is(aDataLen)] in octet aData,
+             in unsigned long                           aDataLen);
 
 
   /**

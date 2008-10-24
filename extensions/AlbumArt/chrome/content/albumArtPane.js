@@ -294,20 +294,23 @@ var AlbumArt = {
 
 
     // Configure the display pane
+    var itemImage = aNewURL;
     if (!AlbumArt._nowSelectedMediaItem) {
       // Show the not playing message.
       albumArtNotSelectedBox.removeAttribute("hidden");
       // Hide the Drag Here box
       albumArtSelectedDragBox.setAttribute("hidden", true);
-      // Set the image to the default cover
+      // Set the image to the default cover and clear the item image
       aNewURL = DROP_TARGET_IMAGE;
+      itemImage = null;
     } else if (!aNewURL) {
      // Show the Drag Here box
       albumArtSelectedDragBox.removeAttribute("hidden");
       // Hide the not selected message.
       albumArtNotSelectedBox.setAttribute("hidden", true);
-      // Set the image to the default cover
+      // Set the image to the default cover and clear the item image
       aNewURL = DROP_TARGET_IMAGE;
+      itemImage = null;
     } else {
       // Hide the not selected message.
       albumArtNotSelectedBox.setAttribute("hidden", true);
@@ -315,6 +318,10 @@ var AlbumArt = {
       albumArtSelectedDragBox.setAttribute("hidden", true);
     }
     albumArtSelectedImage.src = aNewURL;
+    if (itemImage)
+      albumArtSelectedImage.setAttribute("itemimage", itemImage);
+    else
+      albumArtSelectedImage.removeAttribute("itemimage");
     // Call the onResize so we display the image correctly.
     AlbumArt.onResize();
   },
@@ -330,18 +337,21 @@ var AlbumArt = {
     var albumArtPlayingDragBox = document.getElementById('sb-albumart-playing-drag');
 
     // Configure the display pane
+    var itemImage = aNewURL;
     if (!AlbumArt.getNowPlayingItem()) {
       // Show the not playing message.
       albumArtNotPlayingBox.removeAttribute("hidden");
-      // Set the image to the default cover
+      // Set the image to the default cover and clear the item image
       aNewURL = DROP_TARGET_IMAGE;
+      itemImage = null;
     } else if (!aNewURL) {
       // Show the Drag Here box
       albumArtPlayingDragBox.removeAttribute("hidden");
       // Hide the not playing message.
       albumArtNotPlayingBox.setAttribute("hidden", true);
-      // Set the image to the default cover
+      // Set the image to the default cover and clear the item image
       aNewURL = DROP_TARGET_IMAGE;
+      itemImage = null;
     } else {
       // Hide the not playing message.
       albumArtNotPlayingBox.setAttribute("hidden", true);
@@ -349,6 +359,10 @@ var AlbumArt = {
       albumArtPlayingDragBox.setAttribute("hidden", true);
     }
     albumArtPlayingImage.src = aNewURL;
+    if (itemImage)
+      albumArtPlayingImage.setAttribute("itemimage", itemImage);
+    else
+      albumArtPlayingImage.removeAttribute("itemimage");
     AlbumArt.onResize();
   },
 
@@ -689,16 +703,16 @@ var AlbumArt = {
   },
 
   /**
-   * \brief This will get the appropriate image depending on current state.
+   * \brief This will get the appropriate item image depending on current state.
    * \returns imageURL for currently displayed image, or null if none.
    */
   getCurrentStateItemImage: function AlbumArt_getCurrentStateItemImage() {
     if (AlbumArt._currentState == STATE_SELECTED) {
       var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
-      return albumArtSelectedImage.src;
+      return albumArtSelectedImage.getAttribute("itemimage");
     } else {
       var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
-      return albumArtPlayingImage.src;
+      return albumArtPlayingImage.getAttribute("itemimage");
     }
   },
 
@@ -731,6 +745,80 @@ var AlbumArt = {
 
     // Return the currently playing item.
     return AlbumArt._mediacoreManager.sequencer.currentItem;
+  },
+
+  /**
+   * \brief Get album art from the clipboard.
+   * \param aMimeType - Returned album art MIME type.  Null if clipboard does
+   *                    not contain valid album art.
+   * \param aImageData - Returned album art image data.  Null if clipboard does
+   *                     not contain valid album art.
+   * \param aIsValidAlbumArt - Returned true if clipboard contains valid album
+   *                           art.
+   */
+  getClipboardAlbumArt:
+    function AlbumArt_getClipboardAlbumArt(aMimeType,
+                                           aImageData,
+                                           aIsValidAlbumArt) {
+    // Get the clipboard image.
+    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+                        .createInstance(Ci.sbIClipboardHelper);
+    var mimeType = {};
+    var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
+    mimeType = mimeType.value;
+
+    // Validate image as valid album art.
+    var isValidAlbumArt = false;
+    if (imageData && (imageData.length > 0)) {
+      var artService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+                         .getService(Ci.sbIAlbumArtService);
+      isValidAlbumArt = artService.imageIsValidAlbumArt(mimeType,
+                                                        imageData,
+                                                        imageData.length);
+    }
+    if (!isValidAlbumArt) {
+      mimeType = null;
+      imageData = null;
+    }
+
+    // Return results.
+    aMimeType.value = mimeType;
+    aImageData.value = imageData;
+    aIsValidAlbumArt.value = isValidAlbumArt;
+  },
+
+  /**
+   * \brief Handle showing of the context menu popup.
+   */
+  onPopupShowing: function AlbumArt_onPopupShowing() {
+    // Get the current state item image.
+    var curImageUrl = AlbumArt.getCurrentStateItemImage();
+
+    // Update the popup menu for the current state item image.
+    var cutElem = document.getElementById("cutMenuItem");
+    var copyElem = document.getElementById("copyMenuItem");
+    var clearElem = document.getElementById("clearMenuItem");
+    if (curImageUrl) {
+      cutElem.removeAttribute("disabled");
+      copyElem.removeAttribute("disabled");
+      clearElem.removeAttribute("disabled");
+    } else {
+      cutElem.setAttribute("disabled", true);
+      copyElem.setAttribute("disabled", true);
+      clearElem.setAttribute("disabled", true);
+    }
+
+    // Check if the clipboard contains valid album art.
+    var validAlbumArt = {};
+    AlbumArt.getClipboardAlbumArt({}, {}, validAlbumArt);
+    validAlbumArt = validAlbumArt.value;
+
+    // Update the popup menu for the clipboard contents.
+    var pasteElem = document.getElementById("pasteMenuItem");
+    if (validAlbumArt)
+      pasteElem.removeAttribute("disabled");
+    else
+      pasteElem.setAttribute("disabled", true);
   },
 
   /*********************************
@@ -792,16 +880,16 @@ var AlbumArt = {
    * \brief Paste an image to the item that is either selected or playing.
    */
   onPaste: function AlbumArt_onPaste() {
-    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
-                        .createInstance(Ci.sbIClipboardHelper);
     var mimeType = {};
-    var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
-    if (sbCoverHelper.isImageSizeValid(null, imageData.length)) {
-      var artService =
-                        Cc["@songbirdnest.com/Songbird/album-art-service;1"]
-                          .getService(Ci.sbIAlbumArtService);
+    var imageData = {};
+    AlbumArt.getClipboardAlbumArt(mimeType, imageData, {});
+    mimeType = mimeType.value;
+    imageData = imageData.value;
+    if (imageData && sbCoverHelper.isImageSizeValid(null, imageData.length)) {
+      var artService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+                         .getService(Ci.sbIAlbumArtService);
 
-      var newFile = artService.cacheImage(mimeType.value,
+      var newFile = artService.cacheImage(mimeType,
                                           imageData,
                                           imageData.length);
       if (newFile) {
