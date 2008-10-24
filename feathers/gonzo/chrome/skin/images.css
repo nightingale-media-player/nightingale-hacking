@@ -23,8 +23,8 @@
 // END SONGBIRD GPL
 //
  */
-
-
+ @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+ @namespace html url("http://www.w3.org/1999/xhtml");
 
 /** 
 *******************************************************************************
@@ -46,7 +46,6 @@ to find existing rules, or use DOM Inspector to make your own.
 
 *******************************************************************************
 */
-
 
 
 
@@ -449,8 +448,7 @@ thumb.sb-player-seek-slider[disabled="true"] {
 
 toolbar,
 menubar,
-.generic-bar,
-body.songbird-addon-content {
+.generic-bar {
   background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:center top;

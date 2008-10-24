@@ -23,6 +23,8 @@
 // END SONGBIRD GPL
 //
 */
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+@namespace html url("http://www.w3.org/1999/xhtml");
 
 /******************************************************************************
 > FEATHERS.CSS
@@ -146,8 +148,7 @@ groupbox caption {
 description,
 caption,
 label,
-treechildren::-moz-tree-cell-text,
-body.songbird-addon-content {
+treechildren::-moz-tree-cell-text {
   color: rgb(40,40,40);
 }
 
@@ -200,8 +201,7 @@ treechildren::-moz-tree-separator {
 
 toolbar,
 menubar,
-.generic-bar,
-body.songbird-addon-content {
+.generic-bar {
   background-color: rgb(220,220,220);
 }
 toolbar,
@@ -998,20 +998,16 @@ html|*.error-text,
 }
 
 /* text that looks like a link */
-.text-link,
-body.songbird-addon-content a {
+.text-link {
   color:#1694d9;
   text-decoration:none;
 }
-.text-link:hover,
-body.songbird-addon-content a:hover {
+.text-link:hover {
   text-decoration:underline;
 } 
-.text-link:hover:active,
-body.songbird-addon-content a:active {
+.text-link:hover:active {
 } 
-.text-link[visited="true"],
-body.songbird-addon-content a:visited {
+.text-link[visited="true"] {
 }
 
 
