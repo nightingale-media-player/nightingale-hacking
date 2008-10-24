@@ -133,6 +133,10 @@ DirectoryImportJob.prototype = {
   // and should not be used directly.
   _allMediaItems            : null,
   
+  // True if we've forced the library into a batch state for
+  // performance reasons
+  _inLibraryBatch           : false,
+  
   // Used to track performance
   _timingService            : null,
   _timingIdentifier         : null,
@@ -235,6 +239,17 @@ DirectoryImportJob.prototype = {
       dump("WARNING: DirectoryImportJob_begin could not find supported file extensions.  " +
            "Assuming test mode, and using a hardcoded list.\n");
       this._fileExtensions = ["mp3", "ogg", "flac"];
+    }
+    
+    // XXX If possible, wrap the entire operation in an update batch
+    // so that onbatchend listeners dont go to work between the 
+    // end of the batchcreate and the start of the metadata scan.
+    // This is an ugly hack, but it prevents a few second hang
+    // when importing 100k tracks.
+    var library = this.targetMediaList.library;
+    if (library instanceof Ci.sbILocalDatabaseLibrary) {
+      this._inLibraryBatch = true;
+      library.forceBeginUpdateBatch();
     }
     
     this._startNextDirectoryScan();
@@ -519,6 +534,18 @@ DirectoryImportJob.prototype = {
     this.notifyJobProgressListeners();
     
     this._importService.onJobComplete();
+    
+    // XXX If we forced the library into a batch mode
+    // in order to improve performance, make sure 
+    // we end the batch (if we fail to do this
+    // the tree view will never update)
+    var library = this.targetMediaList.library;
+    if (library instanceof Ci.sbILocalDatabaseLibrary &&
+        this._inLibraryBatch) 
+    {
+      this._inLibraryBatch = false;
+      library.forceEndUpdateBatch();
+    }
     
     if (this._timingService) {
       this._timingService.stopPerfTimer(this._timingIdentifier);
