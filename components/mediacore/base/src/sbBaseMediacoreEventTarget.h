@@ -55,13 +55,10 @@ class sbIMediacoreEventListener;
 class sbBaseMediacoreEventTarget {
 public:
   /**
-   * Initializes the monitor
+   * Constructor and destructor
    */
-  sbBaseMediacoreEventTarget(sbIMediacoreEventTarget * aTarget):
-    mTarget(aTarget),
-    mMonitor(::nsAutoMonitor::NewMonitor("sbBaseMediacoreEventTarget::mMonitor"))
-  {
-  }
+  sbBaseMediacoreEventTarget(sbIMediacoreEventTarget * aTarget);
+  virtual ~sbBaseMediacoreEventTarget();
   //sbIMediacoreEventTarget interface methods @see sbIMediacoreEventTarget
   /**
    * See sbIMediacoreEventTarget

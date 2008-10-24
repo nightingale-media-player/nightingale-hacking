@@ -35,6 +35,19 @@
 #include <sbIMediacoreEventListener.h>
 
 #include <sbMediacoreEvent.h>
+
+/* ctor / dtor */
+sbBaseMediacoreEventTarget::sbBaseMediacoreEventTarget(sbIMediacoreEventTarget * aTarget)
+  : mTarget(aTarget),
+    mMonitor(nsAutoMonitor::NewMonitor("sbBaseMediacoreEventTarget::mMonitor"))
+{
+}
+sbBaseMediacoreEventTarget::~sbBaseMediacoreEventTarget()
+{
+  nsAutoMonitor::DestroyMonitor(mMonitor);
+}
+
+
 /* boolean dispatchEvent (in sbIMediacoreEvent aEvent, [optional] PRBool aAsync); */
 nsresult
 sbBaseMediacoreEventTarget::DispatchEvent(sbIMediacoreEvent *aEvent,
