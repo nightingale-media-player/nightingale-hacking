@@ -91,64 +91,44 @@ nsString sbLocalDatabaseSQL::MediaItemColumns(PRBool aIncludeMediaItem)
   return aIncludeMediaItem ? mMediaItemColumnsWithID : mMediaItemColumns;
 }
 
-nsString sbLocalDatabaseSQL::SecondaryPropertySelect(nsTArray<PRUint32> const & aIDArray)
+nsString sbLocalDatabaseSQL::SecondaryPropertySelect()
 {
-  NS_ASSERTION(aIDArray.Length() > 0,
-               "sbLocalDatabaseSQL::MediaItemSelect must be called with at least one guid");
-
   nsString sql =
     NS_LITERAL_STRING("SELECT media_item_id, property_id, obj, obj_sortable \
                        FROM resource_properties \
-                       WHERE media_item_id ");
-  if (aIDArray.Length() > 1) {
-    sql.AppendLiteral("in (");
-    AppendNumbers(sql, aIDArray);
-    sql.AppendLiteral(")");
-  }
-  else {
-    sql.AppendLiteral("= ");
-    sql.AppendInt(aIDArray[0]);
-  }
+                       WHERE media_item_id = ?");
   return sql;
 }
 
-nsString sbLocalDatabaseSQL::MediaItemsFtsAllDelete(nsTArray<PRUint32> aRowIDs)
+nsString sbLocalDatabaseSQL::MediaItemsFtsAllDelete()
 {
   NS_ASSERTION(aRowIDs.Length() > 0,
                "sbLocalDatabaseSQL::DeleteMediaItemsFtsAll must be passed at least one row id");
   nsString sql = NS_LITERAL_STRING("DELETE FROM resource_properties_fts_all \
-                                    WHERE rowid ");
-  if (aRowIDs.Length() > 1) {
-    sql.AppendLiteral("in (");
-    AppendNumbers(sql, aRowIDs);
-    sql.AppendLiteral(")");
-  }
-  else {
-    sql.AppendLiteral("= ");
-    sql.AppendInt(aRowIDs[0]);
-  }
+                                    WHERE rowid = ?");
   return sql;
 }
 
-nsString sbLocalDatabaseSQL::MediaItemsFtsAllInsert(nsTArray<PRUint32> aRowIDs)
+nsString sbLocalDatabaseSQL::MediaItemSelect()
+{
+  NS_ASSERTION(aGuidArray.Length() > 0,
+               "sbLocalDatabaseSQL::MediaItemSelect must be called with at least one guid");
+
+  nsString result(NS_LITERAL_STRING("SELECT "));
+  result.Append(MediaItemColumns(PR_TRUE));
+  result.AppendLiteral(" FROM media_items WHERE guid = ?");
+
+  return result;
+}
+
+nsString sbLocalDatabaseSQL::MediaItemsFtsAllInsert()
 {
   nsString sql =
     NS_LITERAL_STRING("INSERT INTO resource_properties_fts_all \
                         (rowid, alldata) \
                        SELECT media_item_id, group_concat(obj_sortable) \
                        FROM resource_properties \
-                       WHERE media_item_id ");
-
-  if (aRowIDs.Length() > 1) {
-    sql.AppendLiteral("in (");
-    AppendNumbers(sql, aRowIDs);
-    sql.AppendLiteral(")");
-  }
-  else {
-    sql.AppendLiteral("= ");
-    sql.AppendInt(aRowIDs[0]);
-  }
-  sql.AppendLiteral(" GROUP BY media_item_id");
+                       WHERE media_item_id = ? GROUP BY media_item_id");
   return sql;
 }
 

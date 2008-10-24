@@ -28,8 +28,6 @@
 
 #include <sbIDatabaseQuery.h>
 #include <sbILibraryManager.h>
-#include <sbISQLBuilder.h>
-#include <sbSQLBuilderCID.h>
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 
@@ -65,6 +63,7 @@
 #include <sbMediaListBatchCallback.h>
 #include <sbIPropertyArray.h>
 #include "sbLocalDatabaseSQL.h"
+#include <sbIDatabaseQuery.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -156,114 +155,6 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /* XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617
-             for more information.
-
-  NS_NAMED_LITERAL_STRING(kResourceProperties, "resource_properties");
-  NS_NAMED_LITERAL_STRING(kResourcePropertiesAlias, "rp");
-  NS_NAMED_LITERAL_STRING(kMediaItems, "media_items");
-  NS_NAMED_LITERAL_STRING(kMediaItemsAlias, "mi");
-  NS_NAMED_LITERAL_STRING(kLibraryMediaItem, "library_media_item");
-  NS_NAMED_LITERAL_STRING(kResourcePropertiesFts, "resource_properties_fts");
-  NS_NAMED_LITERAL_STRING(kResourcePropertiesFtsAll, "resource_properties_fts_all");
-  NS_NAMED_LITERAL_STRING(kGUID, "guid");
-  NS_NAMED_LITERAL_STRING(kRowid, "rowid");
-  NS_NAMED_LITERAL_STRING(kAllData, "alldata");
-  NS_NAMED_LITERAL_STRING(kPropertyId, "property_id");
-  NS_NAMED_LITERAL_STRING(kFtsPropertyId, "propertyid");
-  NS_NAMED_LITERAL_STRING(kObj, "obj");
-  NS_NAMED_LITERAL_STRING(kObjSortable, "obj_sortable");
-  NS_NAMED_LITERAL_STRING(kObjSecondarySortable, "obj_secondary_sortable");
-  NS_NAMED_LITERAL_STRING(kMediaItemId, "media_item_id");
-
-  // Media items delete fts query.  This query deletes all of the fts data
-  // for the media items specified in the in criterion
-   mMediaItemsFtsDelete =
-    do_CreateInstance(SB_SQLBUILDER_DELETE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMediaItemsFtsDelete->SetTableName(kResourcePropertiesFts);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbISQLSelectBuilder> subselect =
-    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = subselect->AddColumn(EmptyString(), kRowid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = subselect->SetBaseTableName(kResourceProperties);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = subselect->CreateMatchCriterionIn(EmptyString(),
-                                         kMediaItemId,
-                                         getter_AddRefs(inCriterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = subselect->AddCriterion(inCriterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mMediaItemsFtsDeleteInCriterion = inCriterion;
-
-  rv = mMediaItemsFtsDelete->CreateMatchCriterionIn(EmptyString(),
-                                                    kRowid,
-                                                    getter_AddRefs(inCriterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = inCriterion->AddSubquery(subselect);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMediaItemsFtsDelete->AddCriterion(inCriterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Media items insert fts query.  This query inserts all of the fts data
-  // for the media items specified in the in criterion
-  mMediaItemsFtsInsert =
-    do_CreateInstance(SB_SQLBUILDER_INSERT_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMediaItemsFtsInsert->SetIntoTableName(kResourcePropertiesFts);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMediaItemsFtsInsert->AddColumn(kRowid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMediaItemsFtsInsert->AddColumn(kFtsPropertyId);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mMediaItemsFtsInsert->AddColumn(kObj);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  subselect = do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = subselect->AddColumn(EmptyString(), kRowid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = subselect->AddColumn(EmptyString(), kPropertyId);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = subselect->AddColumn(EmptyString(), kObj);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = subselect->SetBaseTableName(kResourceProperties);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = subselect->CreateMatchCriterionIn(EmptyString(),
-                                         kMediaItemId,
-                                         getter_AddRefs(inCriterion));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = subselect->AddCriterion(inCriterion);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mMediaItemsFtsInsertInCriterion = inCriterion;
-
-  rv = mMediaItemsFtsInsert->SetSelect(subselect);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-    */
-
   mCacheMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mCacheMonitor");
   NS_ENSURE_TRUE(mCacheMonitor, NS_ERROR_OUT_OF_MEMORY);
 
@@ -317,6 +208,27 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
   
+  // Initialise some prepared statements.
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->PrepareQuery(mSQLStrings.MediaItemSelect(), 
+                           getter_AddRefs(mItemSelectPreparedStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->PrepareQuery(mSQLStrings.SecondaryPropertySelect(), 
+                           getter_AddRefs(mSecondaryPropertySelectPreparedStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+ 
+  rv = query->PrepareQuery(mSQLStrings.MediaItemsFtsAllDelete(), 
+                           getter_AddRefs(mMediaItemsFtsAllDeletePreparedStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->PrepareQuery(mSQLStrings.MediaItemsFtsAllInsert(), 
+                           getter_AddRefs(mMediaItemsFtsAllInsertPreparedStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+   
   return NS_OK;
 }
 
@@ -354,16 +266,21 @@ sbLocalDatabasePropertyCache::Shutdown()
 
 template <class T>
 nsresult
-sbLocalDatabasePropertyCache::RetrievePrimaryProperties(nsAString const & aSQLStatement,
+sbLocalDatabasePropertyCache::RetrievePrimaryProperties(sbIDatabaseQuery* query, 
                                                         T const & aGuids,
                                                         IDToBagMap & aIDToBagMap,
                                                         nsCOMArray<sbLocalDatabaseResourcePropertyBag> & aBags,
                                                         nsTArray<PRUint32> & aMissesIDs)
 {
-  nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeQuery(aSQLStatement,
-                          getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv;
+  
+  PRUint32 const length = aGuids.Length();
+  for (PRUint32 i = 0; i < length; ++i) {
+    rv = query->AddPreparedStatement(mItemSelectPreparedStatement);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = query->BindStringParameter(0, aGuids[i]);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
@@ -429,17 +346,25 @@ sbLocalDatabasePropertyCache::RetrievePrimaryProperties(nsAString const & aSQLSt
 
     aBags.ReplaceObjectAt(bag, index);
   }
+  
+  query->ResetQuery();
   return NS_OK;
 }
 
 nsresult
-sbLocalDatabasePropertyCache::RetrieveSecondaryProperties(nsAString const & aSQLStatement,
+sbLocalDatabasePropertyCache::RetrieveSecondaryProperties(sbIDatabaseQuery* query,
+                                                          nsTArray<PRUint32> itemIDs,
                                                           IDToBagMap const & bags)
 {
-  nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeQuery(aSQLStatement,
-                          getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv;
+  
+  PRUint32 const length = itemIDs.Length();
+  for (PRUint32 i = 0; i < length; ++i) {
+    rv = query->AddPreparedStatement(mSecondaryPropertySelectPreparedStatement);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = query->BindInt32Parameter(0, itemIDs[i]);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
@@ -454,7 +379,6 @@ sbLocalDatabasePropertyCache::RetrieveSecondaryProperties(nsAString const & aSQL
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Temporaries declared outside of loop for minor perf gain
   nsString objSortable;
   nsString obj;
   nsString propertyIDStr;
@@ -488,16 +412,20 @@ sbLocalDatabasePropertyCache::RetrieveSecondaryProperties(nsAString const & aSQL
 
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  query->ResetQuery();
+  
   return NS_OK;
 }
 
 nsresult
-sbLocalDatabasePropertyCache::RetrieveLibraryProperties(nsAString const & aSQLStatement,
-                                                        sbLocalDatabaseResourcePropertyBag * aBag)
+sbLocalDatabasePropertyCache::RetrieveLibraryProperties(sbLocalDatabaseResourcePropertyBag * aBag)
 {
   nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeQuery(aSQLStatement,
-                          getter_AddRefs(query));
+  nsresult rv = MakeQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // no sense preparing this. it hardly ever happens.
+  rv = query->AddQuery(sbLocalDatabaseSQL::LibraryMediaItemsPropertiesSelect());
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 dbOk;
@@ -534,10 +462,13 @@ sbLocalDatabasePropertyCache::RetrieveLibraryProperties(nsAString const & aSQLSt
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = MakeQuery(mSQLStrings.LibraryMediaItemSelect(),
-                 getter_AddRefs(query));
+  rv = MakeQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
+  // no sense preparing this either.
+  rv = query->AddQuery(mSQLStrings.LibraryMediaItemSelect());
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
@@ -578,15 +509,19 @@ nsresult sbLocalDatabasePropertyCache::RetrieveProperties(
   // the next lookup on the resource_properties table
 
   if (aGUIDs.Length() > 0) {
+    nsCOMPtr<sbIDatabaseQuery> query;
+    nsresult rv = MakeQuery(getter_AddRefs(query));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     // As we read in the data from media_item_ids, keep a map of the id to
     // property bag so we don't need guids in the second pass
+    
     nsTArray<PRUint32> itemIDs(aGUIDs.Length());
     IDToBagMap idToBagMap;
     PRBool const success = idToBagMap.Init(aGUIDs.Length());
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = RetrievePrimaryProperties(mSQLStrings.MediaItemSelect(aGUIDs),
-                                   aGUIDs, idToBagMap, aBags, itemIDs);
+    rv = RetrievePrimaryProperties(query, aGUIDs, idToBagMap, aBags, itemIDs);
     NS_ENSURE_SUCCESS(rv, rv);
 
     NS_ASSERTION(idToBagMap.Count() == aBags.Count() &&
@@ -596,8 +531,7 @@ nsresult sbLocalDatabasePropertyCache::RetrieveProperties(
       return NS_OK;
 
     // Now do the data from resource_properties
-    rv = RetrieveSecondaryProperties(sbLocalDatabaseSQL::SecondaryPropertySelect(itemIDs),
-                                     idToBagMap);
+    rv = RetrieveSecondaryProperties(query, itemIDs, idToBagMap);
   }
   // Cache the library's property data from library_media_item and
   // resource_properties
@@ -609,7 +543,7 @@ nsresult sbLocalDatabasePropertyCache::RetrieveProperties(
     rv = bag->Init();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = RetrieveLibraryProperties(sbLocalDatabaseSQL::LibraryMediaItemsPropertiesSelect(), bag);
+    rv = RetrieveLibraryProperties(bag);
     NS_ENSURE_SUCCESS(rv, rv);
 
     NS_ENSURE_TRUE(aBags.AppendObject(bag),
@@ -1093,45 +1027,20 @@ sbLocalDatabasePropertyCache::Write()
     if (!dirtyItemCount)
       return NS_OK;
 
-    rv = MakeQuery(NS_LITERAL_STRING("begin"), getter_AddRefs(query));
+    rv = MakeQuery(getter_AddRefs(query));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->AddQuery(NS_LITERAL_STRING("begin"));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Run through the list of dirty items and build the fts delete/insert
     // queries
-
-    /* XXXAus: resource_properties_fts is disabled for now. See bug 9488
-               and bug 9617 for more information.
-
-    rv = mMediaItemsFtsDeleteInCriterion->Clear();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mMediaItemsFtsInsertInCriterion->Clear();
-    NS_ENSURE_SUCCESS(rv, rv);
-    */
-
-    /* XXXAus: resource_properties_fts is disabled for now. See bug 9488
-               and bug 9617 for more information.
-
-    nsString mediaItemsFtsDeleteSql;
-    rv = mMediaItemsFtsDelete->ToString(mediaItemsFtsDeleteSql);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString mediaItemsFtsInsertSql;
-    rv = mMediaItemsFtsInsert->ToString(mediaItemsFtsInsertSql);
-    NS_ENSURE_SUCCESS(rv, rv);
-    */
-
-    // The first queries are to delete the fts data of the updated items
-
-    /* XXXAus: resource_properties_fts is disabled for now. See bug 9488
-               and bug 9617 for more information.
-
-    rv = query->AddQuery(mediaItemsFtsDeleteSql);
-    NS_ENSURE_SUCCESS(rv, rv);
-    */
-
-    rv = query->AddQuery(sbLocalDatabaseSQL::MediaItemsFtsAllDelete(dirtyItems.mIDs));
-    NS_ENSURE_SUCCESS(rv, rv);
+    for (PRUint32 i = 0; i < dirtyItemCount; ++i) {
+      rv = query->AddPreparedStatement(mMediaItemsFtsAllDeletePreparedStatement);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = query->BindInt32Parameter(0, dirtyItems.mIDs[i]);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     //For each GUID, there's a property bag that needs to be processed as well.
     for(PRUint32 i = 0; i < dirtyItemCount; ++i) {
@@ -1156,17 +1065,14 @@ sbLocalDatabasePropertyCache::Write()
     }
 
     // Finally, insert the new fts data for the updated items
-
-    /* XXXAus: resource_properties_fts is disabled for now. See bug 9488
-               and bug 9617 for more information.
-
-    rv = query->AddQuery(mediaItemsFtsInsertSql);
-    NS_ENSURE_SUCCESS(rv, rv);
-    */
-
-    rv = query->AddQuery(sbLocalDatabaseSQL::MediaItemsFtsAllInsert(dirtyItems.mIDs));
-    NS_ENSURE_SUCCESS(rv, rv);
-
+    // (we reuse the length from above. it hasn't changed.)
+    for (PRUint32 i = 0; i < dirtyItemCount; ++i) {
+      rv = query->AddPreparedStatement(mMediaItemsFtsAllInsertPreparedStatement);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = query->BindInt32Parameter(0, dirtyItems.mIDs[i]);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    
     rv = query->AddQuery(NS_LITERAL_STRING("commit"));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1342,8 +1248,7 @@ sbLocalDatabasePropertyCache::RunFlushThread()
 }
 
 nsresult
-sbLocalDatabasePropertyCache::MakeQuery(const nsAString& aSql,
-                                        sbIDatabaseQuery** _retval)
+sbLocalDatabasePropertyCache::MakeQuery(sbIDatabaseQuery** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -1364,9 +1269,6 @@ sbLocalDatabasePropertyCache::MakeQuery(const nsAString& aSql,
   }
 
   rv = query->SetAsyncQuery(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(aSql);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = query);
@@ -1396,9 +1298,12 @@ sbLocalDatabasePropertyCache::LoadProperties()
   }
 
   nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeQuery(sbLocalDatabaseSQL::PropertiesSelect(), getter_AddRefs(query));
+  rv = MakeQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = query->AddQuery(sbLocalDatabaseSQL::PropertiesSelect());
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
@@ -1524,8 +1429,10 @@ sbLocalDatabasePropertyCache::InsertPropertyIDInLibrary(const nsAString& aProper
   nsAutoString sql;
 
   nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeQuery(sbLocalDatabaseSQL::PropertiesTableInsert(),
-                          getter_AddRefs(query));
+  nsresult rv = MakeQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(sbLocalDatabaseSQL::PropertiesTableInsert());
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindStringParameter(0, aPropertyID);

@@ -40,25 +40,23 @@ class sbLocalDatabaseSQL
 {
 public:
   /**
-   * Returns an SQL string that selects the items with GUID's given by the
-   * array passed in
+   * Returns an SQL string that selects a single media item.
    */
-  template <class T>
-  nsString MediaItemSelect(T const & aGuidArray);
+  nsString MediaItemSelect();
   /**
    * Selects secondary properties for the given media
    */
-  static nsString SecondaryPropertySelect(nsTArray<PRUint32> const & aGuidArray);
+  static nsString SecondaryPropertySelect();
   /**
    * Removes the items with id's matching those found in aRowIDs from the
    * resource_properties_fts table
    */
-  static nsString MediaItemsFtsAllDelete(nsTArray<PRUint32> aRowIDs);
+  static nsString MediaItemsFtsAllDelete();
   /**
    * Populates the resource_properties_fts from the resource_properties table
    * for the ID's given in aRowIDs
    */
-  static nsString MediaItemsFtsAllInsert(nsTArray<PRUint32> aRowIDs);
+  static nsString MediaItemsFtsAllInsert();
   /**
    * Retrieves the list of properties for the library
    */
@@ -91,27 +89,5 @@ private:
 
   nsString MediaItemColumns(PRBool aIncludeMediaItem);
 };
-
-template <class T>
-nsString sbLocalDatabaseSQL::MediaItemSelect(T const & aGuidArray)
-{
-  NS_ASSERTION(aGuidArray.Length() > 0,
-               "sbLocalDatabaseSQL::MediaItemSelect must be called with at least one guid");
-
-  nsString result(NS_LITERAL_STRING("SELECT "));
-  result.Append(MediaItemColumns(PR_TRUE));
-  if (aGuidArray.Length() > 1) {
-    result.AppendLiteral(" FROM media_items WHERE guid in (\"");
-    sbAppendStringArray(result, NS_LITERAL_STRING("\", \""), aGuidArray);
-    result.AppendLiteral("\")");
-  }
-  else {
-    result.AppendLiteral(" FROM media_items WHERE guid = \"");
-    result.Append(aGuidArray[0]);
-    result.AppendLiteral("\"");
-  }
-  return result;
-}
-
 
 #endif /* SBLOCALDATABASEPRIMARYPROPERTYSELECT_H_ */

@@ -57,13 +57,9 @@ struct PRMonitor;
 
 class nsIURI;
 class sbIDatabaseQuery;
+class sbIDatabasePreparedStatement;
 class sbLocalDatabaseLibrary;
 class sbIPropertyManager;
-class sbISQLBuilderCriterionIn;
-class sbISQLInsertBuilder;
-class sbISQLSelectBuilder;
-class sbISQLUpdateBuilder;
-class sbISQLDeleteBuilder;
 class sbLocalDatabaseSortInvalidateJob;
 
 class sbLocalDatabasePropertyCache: public sbILocalDatabasePropertyCache,
@@ -110,7 +106,7 @@ public:
 private:
   nsresult Shutdown();
 
-  nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
+  nsresult MakeQuery(sbIDatabaseQuery** _retval);
   nsresult LoadProperties();
 
   nsresult AddDirty(const nsAString &aGuid,
@@ -127,11 +123,10 @@ private:
 
   typedef nsInterfaceHashtable<nsUint32HashKey, sbLocalDatabaseResourcePropertyBag> IDToBagMap;
 
-  nsresult RetrieveSecondaryProperties(nsAString const & aSQLStatement,
+  nsresult RetrieveSecondaryProperties(sbIDatabaseQuery* query, nsTArray<PRUint32> itemIDs,
       IDToBagMap const & bags);
 
-  nsresult RetrieveLibraryProperties(nsAString const & aSQLStatement,
-      sbLocalDatabaseResourcePropertyBag * aBag);
+  nsresult RetrieveLibraryProperties(sbLocalDatabaseResourcePropertyBag * aBag);
 
   /**
    * This retrieves a collection of property bags for the list of guids passed
@@ -162,7 +157,7 @@ private:
    */
   template <class T>
   nsresult
-  RetrievePrimaryProperties(nsAString const & aSQLStatement,
+  RetrievePrimaryProperties(sbIDatabaseQuery* query, 
       T const & aGuids,
       IDToBagMap & aIDToBagMap,
       nsCOMArray<sbLocalDatabaseResourcePropertyBag> & aBags,
@@ -180,18 +175,6 @@ private:
   // Cache the property name list
   nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyDBIDToID;
   nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyIDToDBID;
-
-  // Media items fts delete query
-  // XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617
-  //         for more details.
-  //nsCOMPtr<sbISQLDeleteBuilder> mMediaItemsFtsDelete;
-  //sbISQLBuilderCriterionIn* mMediaItemsFtsDeleteInCriterion;
-
-  // Media items fts insert query
-  // XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617
-  //         for more details.
-  //nsCOMPtr<sbISQLInsertBuilder> mMediaItemsFtsInsert;
-  //sbISQLBuilderCriterionIn* mMediaItemsFtsInsertInCriterion;
 
   // Used to protect mCache and mDirty
   PRMonitor* mCacheMonitor;
@@ -230,8 +213,12 @@ private:
   nsRefPtr<sbLocalDatabaseSortInvalidateJob> mSortInvalidateJob;
 
   sbLocalDatabaseSQL mSQLStrings;
-};
+  nsCOMPtr<sbIDatabasePreparedStatement> mItemSelectPreparedStatement;
+  nsCOMPtr<sbIDatabasePreparedStatement> mSecondaryPropertySelectPreparedStatement;
+  nsCOMPtr<sbIDatabasePreparedStatement> mMediaItemsFtsAllDeletePreparedStatement;
+  nsCOMPtr<sbIDatabasePreparedStatement> mMediaItemsFtsAllInsertPreparedStatement;
 
+};
 
 /**
  * \class sbLocalDatabaseSortInvalidateJob
