@@ -346,11 +346,11 @@ ConcertTicketing.playArtist = function(e) {
 	if (ConcertTicketing.newMediaCore)
 		Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
 			.getService(Ci.sbIMediacoreManager)
-			.playView(view, 0);
+			.sequencer.playView(view, 0);
 	else
 		Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
 			.getService(Ci.sbIPlaylistPlayback)
-			.playView(view, 0);
+			.sequencer.playView(view, 0);
 }
 
 /***************************************************************************
