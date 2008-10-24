@@ -1136,6 +1136,10 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
       CDatabasePreparedStatement *actualPreparedStatement = static_cast<CDatabasePreparedStatement*>(preparedStatement.get());
       sqlite3_stmt *pStmt = actualPreparedStatement->GetStatement(pThread->m_pHandle);
       
+      if (!pStmt) {
+        LOG(("DBE: Failed to create a prepared statement from the Query object."));
+        continue;
+      }
       
       PR_Lock(pQuery->m_CurrentQueryLock);
       pQuery->m_CurrentQuery = currentQuery;
