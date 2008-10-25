@@ -996,6 +996,7 @@ sbGStreamerMediacore::OnSetPosition(PRUint64 aPosition)
 sbGStreamerMediacore::OnPlay()
 {
   GstStateChangeReturn ret;
+  GstState curstate;
   gint flags;
 
   nsAutoMonitor lock(mMonitor);
@@ -1011,12 +1012,22 @@ sbGStreamerMediacore::OnPlay()
 
   g_object_set (G_OBJECT(mPipeline), "flags", flags, NULL);
 
-  // Change our state to PAUSED, but have our target state set to
-  // PLAYING. Then, when we reach PAUSED, we'll change state to
-  // PLAYING (unless we're buffering, in which case we'll wait for
-  // that to complete).
+  gst_element_get_state (mPipeline, &curstate, NULL, 0);
+
   mTargetState = GST_STATE_PLAYING;
-  ret = gst_element_set_state (mPipeline, GST_STATE_PAUSED);
+
+  if (curstate == GST_STATE_PAUSED && !mBuffering) {
+    // If we're already paused, then go directly to PLAYING, unless
+    // we're still waiting for buffering to complete.
+    ret = gst_element_set_state (mPipeline, GST_STATE_PLAYING);
+  }
+  else {
+    // Otherwise, we change our state to PAUSED (our target state is
+    // PLAYING, though). Then, when we reach PAUSED, we'll either
+    // continue on to PLAYING, or (if we're buffering) wait for buffering
+    // to complete.
+    ret = gst_element_set_state (mPipeline, GST_STATE_PAUSED);
+  }
 
   /* Usually ret will be GST_STATE_CHANGE_ASYNC, but we could get a synchronous
    * error... */
