@@ -169,6 +169,16 @@ var AlbumArt = {
     var albumArtDeck = document.getElementById('sb-albumart-deck');
     albumArtDeck.selectedIndex = AlbumArt._currentState;
     AlbumArt.setPaneTitle();
+
+    // Update the display-pane title button tooltip
+    var tooltip = "";
+    if (AlbumArt._currentState == STATE_SELECTED) {
+      tooltip = SBString("albumart.displaypane.tooltip.selected");
+    }
+    else {
+      tooltip = SBString("albumart.displaypane.tooltip.playing");
+    }
+    AlbumArt._displayPane.titlebarTooltipText = tooltip;
   },
 
   /**
@@ -291,7 +301,6 @@ var AlbumArt = {
     var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
     var albumArtNotSelectedBox = document.getElementById('sb-albumart-not-selected');
     var albumArtSelectedDragBox = document.getElementById('sb-albumart-select-drag');
-
 
     // Configure the display pane
     var itemImage = aNewURL;

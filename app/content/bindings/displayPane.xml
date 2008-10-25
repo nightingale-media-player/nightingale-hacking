@@ -233,6 +233,16 @@
           return val;
         ]]></xbl:setter>
       </xbl:property>
+      <xbl:property name="titlebarTooltipText">
+        <xbl:setter><![CDATA[
+          var titlebar = this._getElem("titlebar");
+          titlebar.setAttribute("tooltiptext", val);
+        ]]></xbl:setter>
+        <xbl:getter><![CDATA[
+          var titlebar = this._getElem("titlebar");
+          titlebar.getAttribute("tooltiptext");
+        ]]></xbl:getter>
+      </xbl:property>
       <xbl:property name="_splitter">
         <xbl:getter><![CDATA[
           if (!this.hasAttribute("splitter"))
