@@ -1946,24 +1946,52 @@
             return;
           }
 
-          if (('shiftKey' in aEvent && aEvent.shiftKey) ||
-              ('altKey' in aEvent && aEvent.altKey))
+          if ('altKey' in aEvent && aEvent.altKey)
             return;
-          
-          var isMac = window.navigator.platform.match(/^Mac/) == 'Mac';
-          if ( (isMac && 'metaKey' in aEvent && aEvent.metaKey) ||
-              (!isMac &&
-               ('ctrlKey' in aEvent && aEvent.ctrlKey) &&
-              !('metaKey' in aEvent && aEvent.metaKey)) ) {
-            if (!isMac && aEvent.keyCode == KeyEvent.DOM_VK_F4 &&
-                this.tabbrowser.mTabBox.handleCtrlPageUpDown) {
-              this.tabbrowser.removeCurrentTab();
 
-              aEvent.stopPropagation();
-              aEvent.preventDefault();
-              return;
+          var processKeyEvent = false;
+          var isMac = window.navigator.platform.match(/^Mac/) == 'Mac';          
+          if (isMac) {
+            if ('metaKey' in aEvent && aEvent.metaKey) {
+              var offset = 1;
+              switch (aEvent.charCode) {
+                // Fallthrough to handle when the text direction is left-to-right 
+                case '}'.charCodeAt(0):
+                  offset *= -1;
+                case '{'.charCodeAt(0):
+                  if (window.getComputedStyle(this.tabbrowser, null).direction == "ltr")
+                    offset *= -1;
+
+                  this.tabbrowser.mTabContainer.advanceSelectedTab(offset, true);
+                  aEvent.stopPropagation();
+                  aEvent.preventDefault();
+                  return;
+              }
+              if ('shiftKey' in aEvent && aEvent.shiftKey)
+                return;
+
+              processKeyEvent = true;
             }
+          }
+          else {
+            if (('ctrlKey' in aEvent && aEvent.ctrlKey) &&
+                !('shiftKey' in aEvent && aEvent.shiftKey) &&
+                !('metaKey' in aEvent && aEvent.metaKey)) 
+            {
+              if (aEvent.keyCode == KeyEvent.DOM_VK_F4 &&
+                  this.tabbrowser.mTabBox.handleCtrlPageUpDown) {
+                this.tabbrowser.removeCurrentTab();
 
+                aEvent.stopPropagation();
+                aEvent.preventDefault();
+                return;
+              }
+
+              processKeyEvent = true;
+            }
+          }
+
+          if (processKeyEvent) {
             if (aEvent.target.localName == "tabbrowser" ||
                 aEvent.target.localName == "sb-tabbrowser") {
               switch (aEvent.keyCode) {
