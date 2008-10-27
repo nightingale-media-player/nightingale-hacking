@@ -189,10 +189,6 @@ private:
     nsTArray<nsAutoPtr<sbAlbumArt> > mCachedAlbumArt;
 
 
-    /* BUG 11436 HACK START*/
-    TagLib::ID3v2::AttachedPictureFrame *mBug11436Hack;
-    /* BUG 11436 HACK END*/
-  
     // Statics to help manage the single threading of taglib
     static PRLock* sBusyLock;
     static PRLock* sBackgroundLock;
