@@ -149,6 +149,17 @@
 
         // Initialize the widget services.
         this._widgetSvc.initialize();
+
+        // Handle showChrome=true
+        var plucked = Application.prefs.getValue("songbird.accessibility.enabled", false);
+        if (plucked) {
+          document.documentElement.removeAttribute("hidechrome");
+          var header = document.getAnonymousElementByAttribute(this, "anonid", "Header");
+          if (header) {
+            header.hidden = true;
+          }
+        }
+
       ]]></constructor>
 
 
