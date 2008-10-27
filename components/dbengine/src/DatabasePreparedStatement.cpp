@@ -62,7 +62,16 @@ CDatabasePreparedStatement::~CDatabasePreparedStatement()
 
 NS_IMETHODIMP CDatabasePreparedStatement::GetQueryString(nsAString &_retval)
 {
-  _retval = mSql;
+  if (mSql.Length() > 0) {
+    _retval = mSql;
+  }
+  else if (mStatement) {
+    const char* sql = sqlite3_sql(mStatement);
+    _retval = NS_ConvertUTF8toUTF16(sql);
+  }
+  else {
+    _retval = EmptyString();
+  }
   return NS_OK;
 }
 
@@ -105,6 +114,8 @@ sqlite3_stmt* CDatabasePreparedStatement::GetStatement(sqlite3 *db)
       NS_WARNING(log.get());
       return nsnull;
     }
+    // Henceforth, the sqlite_stmt will be responsible for holding onto the sql, not this object.
+    mSql = EmptyString();
   }
   return mStatement;
 }
