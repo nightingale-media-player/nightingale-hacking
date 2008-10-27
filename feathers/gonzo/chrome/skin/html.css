@@ -43,6 +43,11 @@ body {
   background-repeat:repeat-x;
   background-position:center top;
 }
+body.plain {
+  background-color: rgb(225,225,225);
+  background-image:none;
+}
+
 
 a {
   color:#1694d9;
