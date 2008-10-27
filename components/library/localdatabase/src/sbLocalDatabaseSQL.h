@@ -81,7 +81,7 @@ public:
   /**
    * Removes a property given the item ID and property ID
    */
-  static nsString PropertiesDelete(PRUint32 aMediaItemID, PRUint32 aPropertyID);
+  static nsString PropertiesDelete();
 private:
   nsString mMediaItemColumns;
   nsString mMediaItemColumnsWithID;

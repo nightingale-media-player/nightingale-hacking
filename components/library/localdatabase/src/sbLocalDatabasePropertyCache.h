@@ -67,6 +67,7 @@ class sbLocalDatabasePropertyCache: public sbILocalDatabasePropertyCache,
 {
 public:
   friend class sbLocalDatabaseResourcePropertyBag;
+  friend class DirtyPropertyEnumerator;
   /**
    * The size of our property bag cache
    */
@@ -217,6 +218,14 @@ private:
   nsCOMPtr<sbIDatabasePreparedStatement> mSecondaryPropertySelectPreparedStatement;
   nsCOMPtr<sbIDatabasePreparedStatement> mMediaItemsFtsAllDeletePreparedStatement;
   nsCOMPtr<sbIDatabasePreparedStatement> mMediaItemsFtsAllInsertPreparedStatement;
+  nsCOMPtr<sbIDatabasePreparedStatement> mPropertiesDeletePreparedStatement;
+  nsCOMPtr<sbIDatabasePreparedStatement> mPropertiesInsertPreparedStatement;
+  
+  // There's a separate update statement for each top level property.
+  // This is because we have no efficient way to /not/ update a property
+  // if we try to only update some of the top level properties.
+  nsInterfaceHashtable<nsUint32HashKey, sbIDatabasePreparedStatement> mMediaItemsUpdatePreparedStatements;
+  nsInterfaceHashtable<nsUint32HashKey, sbIDatabasePreparedStatement> mLibraryMediaItemUpdatePreparedStatements;
 
 };
 

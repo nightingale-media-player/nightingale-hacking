@@ -38,20 +38,6 @@ nsString ExtractColumnFromProperty(sbStaticProperty const & aProperty)
   return NS_ConvertASCIItoUTF16(aProperty.mColumn);
 }
 
-template <class T>
-static
-nsString AppendNumbers(nsString & aString, T const & aNumbers)
-{
-  NS_NAMED_LITERAL_STRING(COMMA, ",");
-  PRUint32 const length = aNumbers.Length();
-  for (PRUint32 index = 0; index < length; ++index) {
-    if (index > 0)
-      aString.Append(COMMA);
-    aString.AppendInt(aNumbers[index]);
-  }
-  return aString;
-}
-
 /**
  * Simple concatenate function since there's no + operator and we can't use
  * Append below
@@ -165,13 +151,8 @@ nsString sbLocalDatabaseSQL::PropertiesInsert()
 }
 
 
-nsString sbLocalDatabaseSQL::PropertiesDelete(PRUint32 aMediaItemID, PRUint32 aPropertyID)
+nsString sbLocalDatabaseSQL::PropertiesDelete()
 {
-  nsString sql = NS_LITERAL_STRING("DELETE FROM resource_properties WHERE ");
-  sql.AppendLiteral("media_item_id = ");
-  sql.AppendInt(aMediaItemID);
-  sql.AppendLiteral(" AND property_id = ");
-  sql.AppendInt(aPropertyID);
-  return sql;
+  return NS_LITERAL_STRING("DELETE FROM resource_properties WHERE media_item_id = ? AND property_id = ? ");
 }
 

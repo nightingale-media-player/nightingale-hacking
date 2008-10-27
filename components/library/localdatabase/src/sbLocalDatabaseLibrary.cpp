@@ -637,23 +637,6 @@ nsresult sbLocalDatabaseLibrary::CreateQueries()
   nsresult rv = MakeStandardQuery(getter_AddRefs(query), PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Put together the update queries for each property.
-  // By preparing these queries in advance we avoid having to recompile them all the time.
-  PRBool success = mMediaItemsUpdatePreparedStatements.Init(sStaticPropertyCount);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
-    nsString updateSQL = NS_LITERAL_STRING("UPDATE media_items SET ");
-    updateSQL.AppendLiteral(sStaticProperties[i].mColumn);
-    updateSQL.Append(NS_LITERAL_STRING(" = ? WHERE guid = ?"));
-
-    nsCOMPtr<sbIDatabasePreparedStatement> updateMediaItemPreparedStatement;
-    query->PrepareQuery(updateSQL, getter_AddRefs(updateMediaItemPreparedStatement));
-    NS_ENSURE_SUCCESS(rv,rv);
-
-    mMediaItemsUpdatePreparedStatements.Put(sStaticProperties[i].mDBID, updateMediaItemPreparedStatement);
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);    
-  }
-  
   rv = query->PrepareQuery(NS_LITERAL_STRING("\
     INSERT INTO media_items \
     (guid, created, updated, content_url, hidden, media_list_type_id, is_list) \

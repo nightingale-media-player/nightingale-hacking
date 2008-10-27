@@ -229,6 +229,50 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
                            getter_AddRefs(mMediaItemsFtsAllInsertPreparedStatement));
   NS_ENSURE_SUCCESS(rv, rv);
    
+  rv = query->PrepareQuery(sbLocalDatabaseSQL::PropertiesDelete(),
+                           getter_AddRefs(mPropertiesDeletePreparedStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = query->PrepareQuery(sbLocalDatabaseSQL::PropertiesInsert(),
+                           getter_AddRefs(mPropertiesInsertPreparedStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Put together the update queries for each property.
+  // By preparing these queries in advance we avoid having to recompile them all the time.
+  success = mMediaItemsUpdatePreparedStatements.Init(sStaticPropertyCount);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
+    nsString updateSQL = NS_LITERAL_STRING("UPDATE media_items SET ");
+    updateSQL.AppendLiteral(sStaticProperties[i].mColumn);
+    updateSQL.Append(NS_LITERAL_STRING(" = ? WHERE media_item_id = ?"));
+
+    nsCOMPtr<sbIDatabasePreparedStatement> updateMediaItemPreparedStatement;
+    rv = query->PrepareQuery(updateSQL, getter_AddRefs(updateMediaItemPreparedStatement));
+    NS_ENSURE_SUCCESS(rv,rv);
+
+    success = mMediaItemsUpdatePreparedStatements.Put(sStaticProperties[i].mDBID,
+                                                      updateMediaItemPreparedStatement);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);    
+  }  
+
+  // Create a second, identical set of queries for the library media item.
+  // The library media item is stored in its own table.
+  success = mLibraryMediaItemUpdatePreparedStatements.Init(sStaticPropertyCount);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  for (PRUint32 i = 0; i < sStaticPropertyCount; i++) {
+    nsString updateSQL = NS_LITERAL_STRING("UPDATE library_media_item SET ");
+    updateSQL.AppendLiteral(sStaticProperties[i].mColumn);
+    updateSQL.Append(NS_LITERAL_STRING(" = ?"));
+
+    nsCOMPtr<sbIDatabasePreparedStatement> updateMediaItemPreparedStatement;
+    rv = query->PrepareQuery(updateSQL, getter_AddRefs(updateMediaItemPreparedStatement));
+    NS_ENSURE_SUCCESS(rv,rv);
+
+    success = mLibraryMediaItemUpdatePreparedStatements.Put(sStaticProperties[i].mDBID, 
+                                                            updateMediaItemPreparedStatement);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);    
+  }
+  
   return NS_OK;
 }
 
@@ -860,7 +904,6 @@ public:
                             mMediaItemID(aMediaItemID),
                             mIsLibrary(aIsLibrary) {}
   nsresult Process(PRUint32 aDirtyPropertyKey);
-  nsresult Finish();
 private:
   // None-owning reference
   sbLocalDatabasePropertyCache * mCache;
@@ -893,18 +936,55 @@ nsresult DirtyPropertyEnumerator::Process(PRUint32 aDirtyPropertyKey)
 
   //Top level properties need to be treated differently, so check for them.
   if(SB_IsTopLevelProperty(aDirtyPropertyKey)) {
+    // First, account for Top Level Properties.
+    nsCOMPtr<sbIDatabasePreparedStatement> topLevelPropertyUpdate;
+    if (!mIsLibrary) {
+      PRBool success = mCache->mMediaItemsUpdatePreparedStatements.Get(aDirtyPropertyKey,
+                                                                       getter_AddRefs(topLevelPropertyUpdate));
+    }
+    else {
+      PRBool success = mCache->mLibraryMediaItemUpdatePreparedStatements.Get(aDirtyPropertyKey,
+                                                                             getter_AddRefs(topLevelPropertyUpdate));
+    }
+    
+    NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+    rv = mQuery->AddPreparedStatement(topLevelPropertyUpdate);
+    NS_ENSURE_SUCCESS(rv,rv);
 
-    // Switch the query if we are updating the library resource
-    nsString set;
-    SB_GetTopLevelPropertyColumn(aDirtyPropertyKey, set);
-    set.AppendLiteral("=\"");
-    set.Append(value);
-    set.AppendLiteral("\"");
-    mTopLevelSets.AppendElement(set);
+    nsString columnName;
+    rv = SB_GetTopLevelPropertyColumn(aDirtyPropertyKey, columnName);
+    NS_ENSURE_SUCCESS(rv,rv);
+
+    PRUint32 columnType = -1;
+    rv = SB_GetTopLevelPropertyColumnType(aDirtyPropertyKey, columnType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (columnType == SB_COLUMN_TYPE_TEXT) {
+     rv = mQuery->BindStringParameter(0, value);
+     NS_ENSURE_SUCCESS(rv,rv);
+    }
+    else if (columnType == SB_COLUMN_TYPE_INTEGER) {
+     PRUint32 intVal = value.ToInteger(&rv);
+     NS_ENSURE_SUCCESS(rv,rv);
+     rv = mQuery->BindInt32Parameter(0, intVal);
+     NS_ENSURE_SUCCESS(rv,rv);
+    }
+    else {
+     NS_WARNING("Failed to determine the column type of a top level property.");
+     return NS_ERROR_CANNOT_CONVERT_DATA;
+    }
+    rv = mQuery->BindInt32Parameter(1, mMediaItemID);
+    NS_ENSURE_SUCCESS(rv,rv);
   }
   else { //Regular properties all go in the same spot.
     if (value.IsVoid()) {
-      rv = mQuery->AddQuery(sbLocalDatabaseSQL::PropertiesDelete(mMediaItemID, aDirtyPropertyKey));
+      rv = mQuery->AddPreparedStatement(mCache->mPropertiesDeletePreparedStatement);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = mQuery->BindInt32Parameter(0, mMediaItemID);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = mQuery->BindInt32Parameter(1, aDirtyPropertyKey);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
@@ -917,7 +997,7 @@ nsresult DirtyPropertyEnumerator::Process(PRUint32 aDirtyPropertyKey)
                      aDirtyPropertyKey, secondarySortable);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mQuery->AddQuery(sbLocalDatabaseSQL::PropertiesInsert());
+      rv = mQuery->AddPreparedStatement(mCache->mPropertiesInsertPreparedStatement);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = mQuery->BindInt32Parameter(0, mMediaItemID);
@@ -935,33 +1015,6 @@ nsresult DirtyPropertyEnumerator::Process(PRUint32 aDirtyPropertyKey)
       rv = mQuery->BindStringParameter(4, secondarySortable);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-  }
-  return NS_OK;
-}
-
-nsresult DirtyPropertyEnumerator::Finish()
-{
-  PRUint32 const length = mTopLevelSets.Length();
-  if (length > 0) {
-    nsString sql;
-    if (mIsLibrary) {
-      sql.AppendLiteral("UPDATE library_media_item SET ");
-    }
-    else {
-      sql.AppendLiteral("UPDATE media_items SET ");
-    }
-    for (PRUint32 index = 0; index < length; ++index) {
-      if (index > 0) {
-        sql.AppendLiteral(",");
-      }
-      sql.Append(mTopLevelSets[index]);
-    }
-    if (!mIsLibrary) {
-      sql.AppendLiteral(" WHERE media_item_id = ");
-      sql.AppendInt(mMediaItemID);
-    }
-    nsresult rv = mQuery->AddQuery(sql);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
   return NS_OK;
 }
@@ -1060,7 +1113,6 @@ sbLocalDatabasePropertyCache::Write()
         PRUint32 dirtyPropsCount;
         rv = bag->EnumerateDirty(EnumDirtyProps, (void *) &dirtyPropertyEnumerator, &dirtyPropsCount);
         NS_ENSURE_SUCCESS(rv, rv);
-        dirtyPropertyEnumerator.Finish();
       }
     }
 

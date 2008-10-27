@@ -344,11 +344,6 @@ private:
 
   nsCOMPtr<sbIDatabasePreparedStatement> mCreateMediaItemPreparedStatement;
 
-  // There's a separate update statement for each top level property.
-  // This is because we have no efficient way to /not/ update a property
-  // if we try to only update some of the top level properties.
-  nsInterfaceHashtable<nsUint32HashKey, sbIDatabasePreparedStatement> mMediaItemsUpdatePreparedStatements;
-
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
   sbMediaListFactoryInfoTable mMediaListFactoryTable;
