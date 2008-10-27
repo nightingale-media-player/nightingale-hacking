@@ -637,14 +637,20 @@ function ServicePaneService_removeNode(aNode) {
 ServicePaneService.prototype.getNode =
 function ServicePaneService_getNode(aId) {
   if (!this._initialized) { this.init(); }
-  var resource = RDFSVC.GetResource(aId);
-  /* ensure the node already exists */
-  if (!this._dataSource.GetTargets(resource,
-      RDFSVC.GetResource(SP+'Hidden'), true).hasMoreElements()) {
-    /* the node has a "hidden" attribute so it must exist */
+  try {
+    var resource = RDFSVC.GetResource(aId);
+    /* ensure the node already exists */
+    if (!this._dataSource.GetTargets(resource,
+        RDFSVC.GetResource(SP+'Hidden'), true).hasMoreElements()) {
+      /* the node has a "hidden" attribute so it must exist */
+      return null;
+    }
+  } catch (e) {
+    // if we failed, report the error
+    Components.utils.reportError(e);
+    // and return null, caller may be able to get back on his feet
     return null;
   }
-
   return new ServicePaneNode(this._dataSource, resource);
 }
 

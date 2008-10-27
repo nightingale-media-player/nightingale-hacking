@@ -73,7 +73,14 @@ SBTabProgressListener.prototype = {
       SBDataSetStringValue( "faceplate.status.text", "");
 
       if (!aLocation) {
-        aLocation = "about:blank";
+        // If we do not have a location, make a new uri that points to
+        // about:blank. Do not assign a simple string, or subsequent usage
+        // of .scheme and .spec will fail
+        var ioService =
+          Components.classes["@mozilla.org/network/io-service;1"]
+                    .getService(Components.interfaces.nsIIOService);
+        
+        aLocation = ioService.newURI("about:blank", null, null);
       }
 
       // set the context-menu based on the chromeyness of the location
