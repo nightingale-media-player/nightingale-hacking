@@ -1835,7 +1835,7 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
 
   // Reset the playing-video dataremote in case the user was previously
   // playing video
-  nsresult rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
+  rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = Setup(aURI);
