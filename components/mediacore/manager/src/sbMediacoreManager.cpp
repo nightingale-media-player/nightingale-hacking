@@ -421,10 +421,11 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
     nsCOMPtr<sbIMediacore> mediacore;
     rv = factory->Create(mediacoreInstanceName, getter_AddRefs(mediacore));
 #if defined(DEBUG)
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to create mediacore.");
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to create mediacore.");
 #endif
 
     // Creation of core failed. Just move along to the next one.
+    // This can often happen if dependecies for the mediacore are missing.
     if(NS_FAILED(rv)) {
       continue;
     }
