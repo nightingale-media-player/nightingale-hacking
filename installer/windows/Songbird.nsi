@@ -479,8 +479,12 @@ Section "Uninstall"
   ; These files are created by the application
   Delete $INSTDIR\*.chk
 
-  ; This file will exist after any Mozilla-based update
+  ; Mozilla updates can leave this folder behind when updates fail.
+  RMDir /r $INSTDIR\updates
+  ; Mozilla updates can leave some of these files over when updates fail.
   Delete $INSTDIR\removed-files
+  Delete $INSTDIR\active-update.xml
+  Delete $INSTDIR\updates.xml
   
   ; List of directories to remove recursively.
   RMDir /r $INSTDIR\chrome
@@ -639,6 +643,14 @@ Function BackupOldVersion
 FunctionEnd
 
 Function shouldPickNewDirectory
+  ${DirState} "$INSTDIR" $0
+
+  ${If} $0 == 1
+    StrCpy $HasValidInstallDirectory 0
+  ${Else}
+    StrCpy $HasValidInstallDirectory 1
+  ${EndIf}
+
   ; Seems the directory that was picked isn't empty
   ${If} $HasValidInstallDirectory == "0"
     
@@ -755,17 +767,6 @@ Function .onInit
   ;MessageBox MB_OK "Register is $SilentModeRunRegistration"
 
   StrCpy $HasBeenBackedUp "False"
-FunctionEnd
-
-Function .onVerifyInstDir
-  ${DirState} "$INSTDIR" $0
-
-  ${If} $0 == 1
-    StrCpy $HasValidInstallDirectory 0
-  ${Else}
-    StrCpy $HasValidInstallDirectory 1
-  ${EndIf}
-
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
