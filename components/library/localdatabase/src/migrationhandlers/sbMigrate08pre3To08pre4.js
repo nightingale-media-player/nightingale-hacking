@@ -124,7 +124,8 @@ sbLibraryMigration.prototype = {
     dropTableQuery.addQuery("drop table if exists simple_media_lists;");
     dropTableQuery.addQuery("drop table if exists library_media_item;");
     dropTableQuery.addQuery("drop table if exists resource_properties_fts;");
-    dropTableQuery.addQuery("drop table if exists resource_properties_fts_all;");
+    // Bug 13033 we don't want to drop this table, we'll ignore the create in the dump
+    //dropTableQuery.addQuery("drop table if exists resource_properties_fts_all;");
     var retval;
     dropTableQuery.setAsyncQuery(true);
     dropTableQuery.execute(retval);
@@ -151,7 +152,11 @@ sbLibraryMigration.prototype = {
         // If this string ends with a ';', it is the end of the query.
         // Let's push it into the query object.
         if (curQueryStr.charAt(curQueryStr.length - 1) == ";") {
-          insertQuery.addQuery(curQueryStr);
+          // check for the resource_properties_fts_all table and skip it.
+          // The dump version doesn't work see bug 13033
+          if (!curQueryStr.match("INSERT INTO sqlite_master.*resource_properties_fts_all")) {                
+            insertQuery.addQuery(curQueryStr);
+          }
           curQueryStr = "";
         }
       }
