@@ -420,7 +420,14 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
 
     nsCOMPtr<sbIMediacore> mediacore;
     rv = factory->Create(mediacoreInstanceName, getter_AddRefs(mediacore));
-    NS_ENSURE_SUCCESS(rv, rv);
+#if defined(DEBUG)
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to create mediacore.");
+#endif
+
+    // Creation of core failed. Just move along to the next one.
+    if(NS_FAILED(rv)) {
+      continue;
+    }
 
     nsCOMPtr<sbIMediacoreVotingParticipant> votingParticipant =
       do_QueryInterface(mediacore, &rv);
