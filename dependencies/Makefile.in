@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = vendor/mozilla
+SUBDIRS = vendor/mozbrowser
 
 # XXXredfive -erhn?
 

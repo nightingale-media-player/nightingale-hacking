@@ -195,7 +195,18 @@ all : songbird_output build
 
 debug : all
 
-$(CONFIGSTATUS) : $(CONFIGURE)
+ifeq (,$(wildcard $(TOPSRCDIR)/dependencies/vendor/mozbrowser))
+SVN_GET_URL=$(shell svn info $(1) | grep '^URL:' | cut -d ' ' -f 2-)
+SVNBASE=$(call SVN_GET_URL,$(TOPSRCDIR))
+ifneq (,$(SVNBASE))
+getmozbrowser:
+	svn co $(SVNBASE:client/trunk=vendor/trunk/mozbrowser) $(TOPSRCDIR)/dependencies/vendor/mozbrowser
+
+  SB_NEW_MOZBROWSER_DEP = getmozbrowser
+endif # no SVNBASE
+endif # need to pull mozbrowser
+
+$(CONFIGSTATUS) : $(CONFIGURE) $(SB_NEW_MOZBROWSER_DEP)
 	$(CREATE_OBJ_DIR_CMD)
 	$(RUN_CONFIGURE_CMD)
 

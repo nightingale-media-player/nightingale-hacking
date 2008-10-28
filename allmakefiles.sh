@@ -99,20 +99,20 @@ build/Makefile
 
 MAKEFILES_dependencies="
 dependencies/Makefile
-dependencies/vendor/mozilla/Makefile
-dependencies/vendor/mozilla/browser/components/preferences/Makefile
-dependencies/vendor/mozilla/browser/exthelper/Makefile
-dependencies/vendor/mozilla/browser/fuel/Makefile
-dependencies/vendor/mozilla/browser/fuel/public/Makefile
-dependencies/vendor/mozilla/browser/fuel/src/Makefile
-dependencies/vendor/mozilla/browser/locales/Makefile
-dependencies/vendor/mozilla/browser/themes/Makefile
-dependencies/vendor/mozilla/browser/themes/pinstripe/browser/Makefile
-dependencies/vendor/mozilla/browser/themes/winstripe/browser/Makefile
-dependencies/vendor/mozilla/browser/components/search/Makefile
-dependencies/vendor/mozilla/browser/components/sidebar/src/Makefile
-dependencies/vendor/mozilla/browser/components/Makefile
-dependencies/vendor/mozilla/browser/base/Makefile
+dependencies/vendor/mozbrowser/Makefile
+dependencies/vendor/mozbrowser/components/preferences/Makefile
+dependencies/vendor/mozbrowser/exthelper/Makefile
+dependencies/vendor/mozbrowser/fuel/Makefile
+dependencies/vendor/mozbrowser/fuel/public/Makefile
+dependencies/vendor/mozbrowser/fuel/src/Makefile
+dependencies/vendor/mozbrowser/locales/Makefile
+dependencies/vendor/mozbrowser/themes/Makefile
+dependencies/vendor/mozbrowser/themes/pinstripe/browser/Makefile
+dependencies/vendor/mozbrowser/themes/winstripe/browser/Makefile
+dependencies/vendor/mozbrowser/components/search/Makefile
+dependencies/vendor/mozbrowser/components/sidebar/src/Makefile
+dependencies/vendor/mozbrowser/components/Makefile
+dependencies/vendor/mozbrowser/base/Makefile
 "
 
 
