@@ -954,10 +954,18 @@ sbGStreamerMediacore::OnGetPosition(PRUint64 *aPosition)
   if(res) {
     gint64 position;
     gst_query_parse_position(query, NULL, &position);
-    
-    /* Convert to milliseconds */
-    *aPosition = position / GST_MSECOND;
-    rv = NS_OK;
+
+    if (position == 0) {
+      // GStreamer bugs can cause us to get a position of zero when we in fact
+      // don't know the current position. A real position of zero is unlikely
+      // and transient, so we just treat this as unknown.
+      rv = NS_ERROR_NOT_AVAILABLE;
+    }
+    else {
+      /* Convert to milliseconds */
+      *aPosition = position / GST_MSECOND;
+      rv = NS_OK;
+    }
   }
   else
     rv = NS_ERROR_NOT_AVAILABLE;
