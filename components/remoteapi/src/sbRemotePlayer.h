@@ -161,7 +161,7 @@ protected:
                            const nsAString& aButtonLabel,
                            PRInt32 aTimeType,
                            PRBool aReadonly,
-                           PRBool aHidden,
+                           PRBool aUserViewable,
                            PRUint32 aNullSort );
 
   // Event handlers for mediacore 

@@ -1,0 +1,86 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Webpage API Test: Property Creation Base F</title>
+    <script>
+      var siteLib = songbird.siteLibrary;
+      var siteList = siteLib.createSimpleMediaList("testlist_base_f");
+
+      function load() {
+
+        // create a property to test with
+        try {
+          songbird.createTextProperty( "http://example.com/foobar_f1", // name
+                                       "Foobar_f1",                    // display name
+                                       false,                          // readonly
+                                       true,                           // viewable
+                                       0 );                            // nullSort
+          songbird.createTextProperty( "http://example.com/foobar_f2", // name
+                                       "Foobar_f2",                    // display name
+                                       false,                          // readonly
+                                       true,                           // viewable
+                                       0 );                            // nullSort
+        } catch (e) {
+          alert("Failed to create text property: " + e + "\n");
+        }
+
+        // create an item and add to the list
+        siteList.add(siteLib.createMediaItem("http://example.com/example_base_f.mp3"));
+
+        // set the list into the webPlaylist
+        songbird.webPlaylist.mediaList = siteList;
+        
+        // add a column to the end
+        songbird.webPlaylist.insertColumnBefore( "http://example.com/foobar_f1",
+                                                 "http://songbirdnest.com/data/1.0#artistName",
+                                                 "100" );
+        // add a column to the end
+        songbird.webPlaylist.appendColumn( "http://example.com/foobar_f2" );
+      }
+
+      function unload() {
+        if (siteLib)
+          siteLib.clear();
+      }
+
+    </script>
+  </head>
+
+  <body onload="load();" onunload="unload();">
+    <h2>Insert(f1):Append(f2) Viewable(f1):Viewable(f2)</h2>
+    <ul>
+      <li> foobar_f1 should be directly to the left of artist
+      <li> foobar_f2 should be on the far right
+      <li> both foobar_f1 and foobar_f2 should be in the column picker for this page
+      <li> both foobar_f1 and foobar_f2 should be in the column picker for the main library
+    </ul>
+  </body>
+</html>
+

@@ -41,27 +41,20 @@
                          "Button1",                     // display name
                          "label1",                      // button label name
                          false,                         // readonly
-                         false,                         // hidden
+                         false,                         // viewable
                          0 );                           // nullSort
         songbird.createImageProperty(
                          "http://example.com/logo1",
                          "Logo",
-                         true,
-                         false,
-                         0 ); 
+                         true);
         songbird.createDownloadButtonProperty(
                          "http://example.com/downloadButton1",
                          "Download1",
                          "Download",               // button label - Must be set here or button looks wrong.
-                         true,
-                         false,
-                         0 );
+                         true);
         songbird.createRatingsProperty(
                          "http://example.com/ratings1",
-                         "Rating",
-                         false,
-                         false,
-                         0 ); 
+                         "Rating" );
       }
 
       function populateList() {

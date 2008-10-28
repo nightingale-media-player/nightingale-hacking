@@ -88,10 +88,6 @@ treecolpicker > .tree-columnpicker-icon {
   padding:0px 1px 1px 1px;
 }
 
-treecol:last-child {
-  border-right:none;
-}
-
 
 .servicepane-tree > treechildren::-moz-tree-row {
   min-height:20px !important;

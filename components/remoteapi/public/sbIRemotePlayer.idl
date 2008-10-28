@@ -936,7 +936,8 @@ interface sbIRemotePlayer : nsISupports
          but that is a recommended format for ensuring uniqueness.
     displayName - The displayed name of the property.
     readOnly - If true this property's value can NOT be edited by the user.
-    hidden - If true this property can NOT be viewed by the user.
+    viewable - If true this property will be viewable in all locations of Songbird
+               including the main library.
     nullSort - The type of null sorting desired. When sorted will empty values
                sort small or large; see below for more detail.
 
@@ -984,7 +985,7 @@ interface sbIRemotePlayer : nsISupports
     createTextProperty ( in AString ID,
                          in AString displayName,
                          [optional] in boolean readOnly = false,
-                         [optional] in boolean hidden = false,
+                         [optional] in boolean viewable = false,
                          [optional] in unsigned long nullSort = 0 )
 
   Parameters:
@@ -1015,7 +1016,7 @@ interface sbIRemotePlayer : nsISupports
   void createTextProperty( in AString ID,
                            in AString displayName,
                            [optional] in boolean readOnly,
-                           [optional] in boolean hidden,
+                           [optional] in boolean viewable,
                            [optional] in unsigned long nullSort );
 
   /*
@@ -1033,7 +1034,7 @@ interface sbIRemotePlayer : nsISupports
                              in AString displayName,
                              in PRInt32 timeType,
                              [optional] in boolean readOnly = false,
-                             [optional] in boolean hidden = false,
+                             [optional] in boolean viewable = false,
                              [optional] in unsigned long nullSort = 0 )
 
   Parameters:
@@ -1065,7 +1066,7 @@ interface sbIRemotePlayer : nsISupports
                                in AString displayName,
                                in PRInt32 timeType,
                                [optional] in boolean readOnly,
-                               [optional] in boolean hidden,
+                               [optional] in boolean viewable,
                                [optional] in unsigned long nullSort );
 
   /*
@@ -1078,7 +1079,7 @@ interface sbIRemotePlayer : nsISupports
     createURIProperty ( in AString ID,
                         in AString displayName,
                         [optional] in boolean readOnly = false,
-                        [optional] in boolean hidden = false,
+                        [optional] in boolean viewable = false,
                         [optional] in unsigned long nullSort = 0 )
 
   Parameters:
@@ -1109,7 +1110,7 @@ interface sbIRemotePlayer : nsISupports
   void createURIProperty( in AString ID,
                           in AString displayName,
                           [optional] in boolean readOnly,
-                          [optional] in boolean hidden,
+                          [optional] in boolean viewable,
                           [optional] in unsigned long nullSort );
 
   /*
@@ -1123,7 +1124,7 @@ interface sbIRemotePlayer : nsISupports
     createNumberProperty ( in AString ID,
                            in AString displayName,
                            [optional] in boolean readOnly = false,
-                           [optional] in boolean hidden = false,
+                           [optional] in boolean viewable = false,
                            [optional] in unsigned long nullSort = 0 )
 
   Parameters:
@@ -1153,7 +1154,7 @@ interface sbIRemotePlayer : nsISupports
   void createNumberProperty( in AString ID,
                              in AString displayName,
                              [optional] in boolean readOnly,
-                             [optional] in boolean hidden,
+                             [optional] in boolean viewable,
                              [optional] in unsigned long nullSort );
 
   /*
@@ -1167,7 +1168,7 @@ interface sbIRemotePlayer : nsISupports
     createImageProperty ( in AString ID,
                           in AString displayName,
                           [optional] in boolean readOnly = false,
-                          [optional] in boolean hidden = false,
+                          [optional] in boolean viewable = false,
                           [optional] in unsigned long nullSort = 0 )
 
   Parameters:
@@ -1198,7 +1199,7 @@ interface sbIRemotePlayer : nsISupports
   void createImageProperty( in AString ID,
                             in AString displayName,
                             [optional] in boolean readOnly,
-                            [optional] in boolean hidden,
+                            [optional] in boolean viewable,
                             [optional] in unsigned long nullSort );
 
   /*
@@ -1212,7 +1213,7 @@ interface sbIRemotePlayer : nsISupports
     createRatingsProperty ( in AString ID,
                             in AString displayName,
                             [optional] in boolean readOnly = false,
-                            [optional] in boolean hidden = false,
+                            [optional] in boolean viewable = false,
                             [optional] in unsigned long nullSort = 0 )
 
   Parameters:
@@ -1242,7 +1243,7 @@ interface sbIRemotePlayer : nsISupports
   void createRatingsProperty( in AString ID,
                               in AString displayName,
                               [optional] in boolean readOnly,
-                              [optional] in boolean hidden,
+                              [optional] in boolean viewable,
                               [optional] in unsigned long nullSort );
 
   /*
@@ -1257,7 +1258,7 @@ interface sbIRemotePlayer : nsISupports
                            in AString displayName,
                            in AString buttonLabel,
                            [optional] in boolean readOnly = false,
-                           [optional] in boolean hidden = false,
+                           [optional] in boolean viewable = false,
                            [optional] in unsigned long nullSort = 0 )
 
   Parameters:
@@ -1289,7 +1290,7 @@ interface sbIRemotePlayer : nsISupports
                              in AString displayName,
                              in AString buttonLabel,
                              [optional] in boolean readOnly,
-                             [optional] in boolean hidden,
+                             [optional] in boolean viewable,
                              [optional] in unsigned long nullSort );
 
   /*
@@ -1310,7 +1311,7 @@ interface sbIRemotePlayer : nsISupports
                                    in AString displayName,
                                    in AString buttonLabel,
                                    [optional] in boolean readOnly = false,
-                                   [optional] in boolean hidden = false,
+                                   [optional] in boolean viewable = false,
                                    [optional] in unsigned long nullSort = 0 )
 
   Parameters:
@@ -1351,7 +1352,7 @@ interface sbIRemotePlayer : nsISupports
                                      in AString displayName,
                                      in AString buttonLabel,
                                      [optional] in boolean readOnly,
-                                     [optional] in boolean hidden,
+                                     [optional] in boolean viewable,
                                      [optional] in unsigned long nullSort );
 
 };
