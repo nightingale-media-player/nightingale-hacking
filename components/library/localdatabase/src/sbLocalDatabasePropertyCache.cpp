@@ -1062,7 +1062,6 @@ nsresult
 sbLocalDatabasePropertyCache::Write()
 {
   NS_ASSERTION(mLibrary, "You didn't initialize!");
-
   nsresult rv = NS_OK;
 
   nsCOMPtr<sbIDatabaseQuery> query;
@@ -1072,6 +1071,10 @@ sbLocalDatabasePropertyCache::Write()
 
     //Lock it.
     nsAutoMonitor mon(mCacheMonitor);
+    
+    if (!mDirty.Count()) {
+      return NS_OK;
+    }
 
    //Reset the dirty flag of the property bags help by mDirty
     dirtyItemCount = mDirty.EnumerateRead(EnumDirtyItems, (void *) &dirtyItems);
