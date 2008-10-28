@@ -359,6 +359,14 @@
            inline edit -->
       <field name="_lastClickIndex">0</field>
       
+      <!-- Maximum time in milliseconds between two clicks to consider them a
+           double-click -->
+      <field name="_maxDoubleClickTime">300</field>
+
+      <!-- Time of last click, used to determine whether double-clicks should be
+           ignored -->
+      <field name="_lastClickTime">0</field>
+
       <!-- Interval used to defer in-cell editing, just incase we see a 
            double-click and need to start playback instead -->
       <field name="_startEditingTimer">null</field>
@@ -1538,6 +1546,17 @@
          // another click.
          this._cancelEditTimer();
          
+          // If the last single click occurred long ago, the first click of this
+          // double-click was probably consumed by some other element such as
+          // the playlist context menu.  In that case, the double-click really
+          // applies to that element and should not be processed here.
+          if (!this._lastClickTime)
+            return;
+          var currentTime = (new Date()).getTime();
+          var msSinceLastClick = currentTime - this._lastClickTime;
+          if (msSinceLastClick > this._maxDoubleClickTime)
+            return;
+
           // Check to see that the user double clicked on a row
           var row = {};
           var col = {};
@@ -1727,6 +1746,9 @@
   var bo = this.tree.treeBoxObject;
   try
   {
+    // Record time of this click event
+    this._lastClickTime = (new Date()).getTime();
+
     // Any additional clicks mean stop waiting for in-cell editing to start.
     this._cancelEditTimer();
   
@@ -1857,7 +1879,8 @@
             // case we want to play rather than edit.
             var params = { that: this, row: this.edit_row, col: this.edit_col };
             this._startEditingTimer = setTimeout( 
-              function() { params.that.startCellEditing( params.row, params.col ); }, 300);
+              function() { params.that.startCellEditing( params.row, params.col ); },
+              this._maxDoubleClickTime);
           }
         }
 
