@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 PREFERENCES = songbird-prefs.js.in \
               songbird-channel-prefs.js.in \
+              browser-prefs.js \
               $(NULL)
 
 include $(topsrcdir)/build/rules.mk

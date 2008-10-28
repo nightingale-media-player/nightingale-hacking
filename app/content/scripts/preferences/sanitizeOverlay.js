@@ -52,20 +52,22 @@ var gSongbirdSanitizeOverlay = {
                                 null);
 
     var prefpane = document.getElementById("SanitizeDialogPane");
-    var children = prefpane.childNodes;
-    for (var i=0;i<children.length;i++) {
-      if (children[i].tagName == "preferences" || children[i].tagName == "xul:preferences") {
-        this.prefs = children[i];
-      }
-      if (!this.checkBox && (children[i].tagName == "checkbox" || children[i].tagName == "xul:checkbox")) {
-        this.checkBox = document.createElement("checkbox");
-        this.checkBox.setAttribute("id", "sanitize.mediaHistory");
-        this.checkBox.setAttribute("label", SBString("sanitize.mediaHistory.label", "Web Media History"));
-        this.checkBox.setAttribute("accesskey", SBString("sanitize.mediaHistory.accesskey", "W"));
-        this.checkBox.setAttribute("oncommand", "gSongbirdSanitizeOverlay.onCommand();");
-        this.updateDisabled();
-        prefpane.insertBefore(this.checkBox, children[i]);
-        continue;
+    if (prefpane) {
+      var children = prefpane.childNodes;
+      for (var i=0;i<children.length;i++) {
+        if (children[i].tagName == "preferences" || children[i].tagName == "xul:preferences") {
+          this.prefs = children[i];
+        }
+        if (!this.checkBox && (children[i].tagName == "checkbox" || children[i].tagName == "xul:checkbox")) {
+          this.checkBox = document.createElement("checkbox");
+          this.checkBox.setAttribute("id", "sanitize.mediaHistory");
+          this.checkBox.setAttribute("label", SBString("sanitize.mediaHistory.label", "Web Media History"));
+          this.checkBox.setAttribute("accesskey", SBString("sanitize.mediaHistory.accesskey", "W"));
+          this.checkBox.setAttribute("oncommand", "gSongbirdSanitizeOverlay.onCommand();");
+          this.updateDisabled();
+          prefpane.insertBefore(this.checkBox, children[i]);
+          continue;
+        }
       }
     }
     if (this.checkBox && this.prefs) {
