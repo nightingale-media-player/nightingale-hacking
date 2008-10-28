@@ -1565,7 +1565,12 @@
           b.getCellAt(evt.clientX, evt.clientY, row, col, obj);
 
           if (row.value >= 0 && col.value) {
-            this.sendPlayEvent();
+            // Only play the track if the double clicked cell does not contain
+            // clickable content
+            var property = col.value.element.getAttribute("bind");
+            var info = this._pm.getPropertyInfo(property);
+            if (!(info instanceof this._Ci.sbIClickablePropertyInfo))
+              this.sendPlayEvent();
           }
          ]]>
         </body>
