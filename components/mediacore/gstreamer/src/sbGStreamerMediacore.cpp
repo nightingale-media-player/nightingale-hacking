@@ -446,7 +446,7 @@ void sbGStreamerMediacore::DispatchMediacoreEvent (unsigned long type,
                                      getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, /* void */);
 
-  rv = DispatchEvent(event, PR_FALSE, nsnull);
+  rv = DispatchEvent(event, PR_TRUE, nsnull);
   NS_ENSURE_SUCCESS(rv, /* void */);
 }
 
