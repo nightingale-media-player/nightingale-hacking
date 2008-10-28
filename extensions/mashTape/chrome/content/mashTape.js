@@ -193,7 +193,9 @@ mashTape.init = function(e) {
 				mashTape.infoTabTop = tab;
 		}
 		if (mashTape.infoTabTop == null) {
-			mashTape.infoTabTop = mashTape.displayPane.addTab("Artist Info");
+			var tabLabel = mashTape.strings.GetStringFromName(
+					"extensions.mashTape.artistinfo"));
+			mashTape.infoTabTop = mashTape.displayPane.addTab(tabLabel);
 			mashTape.infoTabTop.id = "mashTape-tab-info";
 		}
 
@@ -233,7 +235,9 @@ mashTape.init = function(e) {
 				mashTape.rssTabTop = tab;
 		}
 		if (mashTape.rssTabTop == null) {
-			mashTape.rssTabTop = mashTape.displayPane.addTab("News");
+			var tabLabel = mashTape.strings.GetStringFromName(
+					"extensions.mashTape.rss"));
+			mashTape.rssTabTop = mashTape.displayPane.addTab(tabLabel);
 			mashTape.rssTabTop.id = "mashTape-tab-rss";
 		}
 
@@ -296,7 +300,9 @@ mashTape.init = function(e) {
 				mashTape.photoTabTop = tab;
 		}
 		if (mashTape.photoTabTop == null) {
-			mashTape.photoTabTop = mashTape.displayPane.addTab("Photos");
+			var tabLabel = mashTape.strings.GetStringFromName(
+					"extensions.mashTape.photo"));
+			mashTape.photoTabTop = mashTape.displayPane.addTab(tabLabel);
 			mashTape.photoTabTop.id = "mashTape-tab-photo";
 		}
 
@@ -333,7 +339,9 @@ mashTape.init = function(e) {
 				mashTape.flashTabTop = tab;
 		}
 		if (mashTape.flashTabTop == null) {
-			mashTape.flashTabTop = mashTape.displayPane.addTab("Videos");
+			var tabLabel = mashTape.strings.GetStringFromName(
+					"extensions.mashTape.flash"));
+			mashTape.flashTabTop = mashTape.displayPane.addTab(tabLabel);
 			mashTape.flashTabTop.id = "mashTape-tab-flash";
 		}
 
