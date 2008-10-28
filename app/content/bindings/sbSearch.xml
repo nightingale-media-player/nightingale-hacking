@@ -131,10 +131,8 @@
             if (this._textbox.hasAttribute("focused")) {
               // Just clear the textbox
               this._textbox.value = "";
-            }
-            else {
-              // Display the current engine
-              this._textbox._displayCurrentEngine();
+            } else {
+              this.updateDisplay();
             }
           }
           
@@ -157,10 +155,6 @@
         <body><![CDATA[
            // Add text to the engine name -> text map
            this._engineDisplayText[aEngine.name] = aText;
-           
-           // Replace the standard display text function
-           // with our own
-           this._replaceDisplayCurrentEngine();
         ]]></body>
       </method>    
 
@@ -273,50 +267,29 @@
       </method>      
       
       
-      <!-- Ensure that the FF default _displayCurrentEngine
-           function has been replaced with our own.
-           This allows overriding of the default display text.
-           Since we want to avoid forking the mozilla search.xml
-           we do this at runtime. Yay javascript.           
-        -->
-      <method name="_replaceDisplayCurrentEngine">
+      <!-- Overrides the normal updateDisplay to display override text as appropriate -->
+      <method name="updateDisplay">
         <body><![CDATA[
-          // If the function has already been replaced 
-          // then do nothing.
-          if (this._textbox._originalDisplayCurrentEngine) {
-            return;
+          // find the previous updateDisplay in the prototype chain
+          var proto = this;
+          while (proto && proto.updateDisplay !== arguments.callee) {
+            proto = proto.__proto__;
+          }
+          while (proto && proto.updateDisplay === arguments.callee) {
+            proto = proto.__proto__;
           }
           
-          // Save the original function so that we can use it for 
-          // cases when the engine text has not been overridden
-          this._textbox._originalDisplayCurrentEngine = 
-                    this._textbox._displayCurrentEngine;
+          if ("function" == typeof(proto.updateDisplay)) {
+            proto.updateDisplay.apply(this, arguments);
+          }
           
-          // Replace textbox function with one that will 
-          // first check this._engineDisplayText
-          this._textbox._displayCurrentEngine = function() {
-            // See FF searchbar.xml _displayCurrentEngine
-            var searchbar = this._getParentSearchbar();
-            var text = searchbar._engineDisplayText[searchbar.currentEngine.name];
-
-            // If no override text has been provided, then use the 
-            // original display text function
-            if (text == null) {
-              this._originalDisplayCurrentEngine();
-              return;
-            }
-           
-            // Otherwise set the textbox to display
-            // the given text.
-            searchbar.setAttribute("empty", "true");
-            var searchTextbox = this;
-            setTimeout(function() {
-              if (searchbar.getAttribute("empty") == "true")
-                searchTextbox.value = text;
-            }, 0);
-          };
+          // Check for an emptyText override
+          var name = this.currentEngine.name;
+          if (name in this._engineDisplayText) {
+            this._textbox.emptyText = this._engineDisplayText[name];
+          }
         ]]></body>
-      </method>        
+      </method>
       
       
       <!-- Called when a Songbird search is selected, and a short delay has passed since

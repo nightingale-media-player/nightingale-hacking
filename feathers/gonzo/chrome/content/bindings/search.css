@@ -58,14 +58,19 @@ searchbar {
 }
 .searchbar-engine-button {  
   padding:0 2px 0 0 !important;
-  margin:0;
+  margin:0 2px 0 0;
   min-height:22px;
 }
 
 
 .searchbar-textbox {
   margin:0;
+  padding: 0;
   min-height:22px;
+}
+
+.searchbar-textbox > .autocomplete-textbox-container {
+  margin-top: -1px;
 }
 
 .searchbar-engine-image {
