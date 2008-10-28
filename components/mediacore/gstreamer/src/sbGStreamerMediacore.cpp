@@ -341,12 +341,21 @@ sbGStreamerMediacore::videoCapsSetHelper(GObject* obj, GParamSpec* pspec,
 nsresult 
 sbGStreamerMediacore::DestroyPipeline()
 {
+  GstElement *pipeline = NULL;
   nsAutoMonitor lock(mMonitor);
+  if (mPipeline)
+    pipeline = (GstElement *)g_object_ref (mPipeline);
+  lock.Exit();
 
+  /* Do state-change with the lock dropped */
+  if (pipeline) {
+    gst_element_set_state (pipeline, GST_STATE_NULL);
+    gst_object_unref (pipeline);
+  }
+
+  lock.Enter();
   if (mPipeline) {
-    gst_element_set_state (mPipeline, GST_STATE_NULL);
     gst_object_unref (mPipeline);
-
     mPipeline = nsnull;
   }
   mStopped = PR_FALSE;
@@ -666,11 +675,14 @@ void sbGStreamerMediacore::HandleRedirectMessage(GstMessage *message)
 void sbGStreamerMediacore::HandleEOSMessage(GstMessage *message)
 {
   nsAutoMonitor lock(mMonitor);
+  GstElement *pipeline = (GstElement *)g_object_ref (mPipeline);
+  mTargetState = GST_STATE_NULL;
+  lock.Exit();
 
   // Shut down the pipeline. This will cause us to send a STREAM_END
   // event when we get the state-changed message to GST_STATE_NULL
-  mTargetState = GST_STATE_NULL;
-  gst_element_set_state (mPipeline, GST_STATE_NULL);
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  g_object_unref (pipeline);
 }
 
 nsresult sbGStreamerMediacore::LogMessageToErrorConsole(
@@ -714,8 +726,6 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
-  nsAutoMonitor lock(mMonitor);
-
   // Create and dispatch an error event. 
   NS_NEWXPCOM(error, sbMediacoreError);
   NS_ENSURE_TRUE(error, /* void */);
@@ -739,8 +749,13 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 
   // Then, shut down the pipeline, which will cause
   // a STREAM_END event to be fired.
+  nsAutoMonitor lock(mMonitor);
   mTargetState = GST_STATE_NULL;
-  gst_element_set_state (mPipeline, GST_STATE_NULL);
+  GstElement *pipeline = (GstElement *)g_object_ref (mPipeline);
+  lock.Exit();
+
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  g_object_unref (pipeline);
 
   // Log the error message
   rv = LogMessageToErrorConsole(errmessage, nsIScriptError::errorFlag);
@@ -1072,14 +1087,18 @@ sbGStreamerMediacore::OnPause()
 sbGStreamerMediacore::OnStop()
 {
   nsAutoMonitor lock(mMonitor);
-
-  NS_ENSURE_STATE(mPipeline);
-
-  GstStateChangeReturn ret;
-
-  mStopped = PR_TRUE;
   mTargetState = GST_STATE_NULL;
-  ret = gst_element_set_state (mPipeline, GST_STATE_NULL);
+  mStopped = PR_TRUE;
+  // If we get stopped without ever starting, that's ok... 
+  if (!mPipeline)
+    return NS_OK;
+
+  GstElement *pipeline = (GstElement *)g_object_ref (mPipeline);
+  lock.Exit();
+
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  g_object_unref (pipeline);
+
 
   return NS_OK;
 }
