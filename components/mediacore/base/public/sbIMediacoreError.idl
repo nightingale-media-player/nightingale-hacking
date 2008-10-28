@@ -37,7 +37,7 @@ interface sbIMediacoreError : nsISupports
   readonly attribute unsigned long code;
 
   /**
-   * \brief Error message (human readable string, localized, preferrably).
+   * \brief Error message (human readable string, localized, preferably).
    */
   readonly attribute AString message;
 };

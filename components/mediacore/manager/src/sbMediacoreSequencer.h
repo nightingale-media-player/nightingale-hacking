@@ -99,6 +99,9 @@ public:
   nsresult SetMetadataDataRemotesFromItem(sbIMediaItem *aItem);
   nsresult ResetMetadataDataRemotes();
 
+  // Error Event
+  nsresult HandleErrorEvent(sbIMediacoreEvent *aEvent);
+
   // Sequence management
   nsresult RecalculateSequence(PRUint32 *aViewPosition = nsnull);
 

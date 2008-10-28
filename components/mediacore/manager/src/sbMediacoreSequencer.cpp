@@ -28,6 +28,7 @@
 #include "sbMediacoreSequencer.h"
 
 #include <nsIClassInfoImpl.h>
+#include <nsIDOMWindow.h>
 #include <nsIDOMXULElement.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISupportsPrimitives.h>
@@ -58,6 +59,7 @@
 #include <sbIMediacoreVotingChain.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
+#include <sbIPrompter.h>
 #include <sbIPropertyArray.h>
 
 #include <sbMediacoreEvent.h>
@@ -69,6 +71,11 @@
 
 #include "sbMediacoreDataRemotes.h"
 #include "sbMediacoreShuffleSequenceGenerator.h"
+
+#define MEDIACORE_ERROR_DIALOG_URI \
+  "chrome://songbird/content/xul/mediacore/mediacoreErrorDialog.xul"
+#define MEDIACORE_ERROR_DIALOG_ID \
+  "mediacoreErrorDialog"
 
 inline nsresult 
 EmitMillisecondsToTimeString(PRUint64 aValue, 
@@ -871,6 +878,40 @@ sbMediacoreSequencer::ResetMetadataDataRemotes() {
 
   rv = mDataRemoteMetadataImageURL->SetStringValue(EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsAutoMonitor mon(mMonitor);
+  if(mIsWaitingForPlayback) {
+    mIsWaitingForPlayback = PR_FALSE;
+  }
+  mon.Exit();
+
+  nsCOMPtr<sbIMediacoreError> error;
+  nsresult rv = aEvent->GetError(getter_AddRefs(error));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If there's an error object, we'll show the contents of it to the user 
+  if(error) {
+    nsCOMPtr<sbIPrompter> prompter = 
+      do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMWindow> domWindow;
+    prompter->OpenDialog(nsnull, 
+                         NS_LITERAL_STRING(MEDIACORE_ERROR_DIALOG_URI), 
+                         NS_LITERAL_STRING(MEDIACORE_ERROR_DIALOG_ID),
+                         NS_LITERAL_STRING(""),
+                         error,
+                         getter_AddRefs(domWindow));
+  }
 
   return NS_OK;
 }
@@ -2107,11 +2148,11 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
   printf("[sbMediacoreSequencer] - Event Type: %d\n\n", eventType);
 #endif
 
+  nsAutoMonitor mon(mMonitor);
   if(mCore != core) {
     return NS_OK;
   }
 
-  nsAutoMonitor mon(mMonitor);
   nsCOMPtr<sbIMediacoreEventTarget> target = 
     do_QueryReferent(mMediacoreManager, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2119,10 +2160,14 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
   PRBool dispatched;
   rv = target->DispatchEvent(aEvent, PR_TRUE, &dispatched);
   NS_ENSURE_SUCCESS(rv, rv);
+  mon.Exit();
 
   switch(eventType) {
+
     // Stream Events
     case sbIMediacoreEvent::STREAM_START: {
+      mon.Enter();
+
       if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING &&
          mIsWaitingForPlayback) {
         mIsWaitingForPlayback = PR_FALSE;
@@ -2143,6 +2188,8 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
         NS_ENSURE_SUCCESS(rv, rv);
       }
 
+      mon.Exit();
+
       rv = UpdatePlayStateDataRemotes();
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2159,7 +2206,9 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     break;
 
     case sbIMediacoreEvent::STREAM_PAUSE: {
+      mon.Enter();
       mStatus = sbIMediacoreStatus::STATUS_PAUSED;
+      mon.Exit();
 
       rv = UpdatePlayStateDataRemotes();
       NS_ENSURE_SUCCESS(rv, rv);
@@ -2167,6 +2216,8 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     break;
 
     case sbIMediacoreEvent::STREAM_END: {
+      mon.Enter();
+
       /* Track done, continue on to the next, if possible. */
       if(mStatus == sbIMediacoreStatus::STATUS_PLAYING &&
          !mIsWaitingForPlayback) {
@@ -2178,12 +2229,16 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
            mSequence.empty()) {
           mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
+          mon.Exit();
+
           rv = StopSequenceProcessor();
           NS_ENSURE_SUCCESS(rv, rv);
 
           rv = UpdatePlayStateDataRemotes();
           NS_ENSURE_SUCCESS(rv, rv);
         }
+
+        mon.Exit();
 
         rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
@@ -2196,9 +2251,11 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     break;
 
     case sbIMediacoreEvent::STREAM_STOP: {
+      mon.Enter();
       /* If we're explicitly stopped, don't continue to the next track,
        * just clean up... */
       mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+      mon.Exit();
 
       rv = StopSequenceProcessor();
       NS_ENSURE_SUCCESS(rv, rv);
@@ -2212,8 +2269,10 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
 
+      mon.Enter();
       if(mSeenPlaying) {
         mSeenPlaying = PR_FALSE;
+        mon.Exit();
 
         rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
@@ -2242,12 +2301,8 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
     // Error Events
     case sbIMediacoreEvent::ERROR_EVENT: {
-      if(mIsWaitingForPlayback) {
-        mIsWaitingForPlayback = PR_FALSE;
-
-        // XXXAus: Error while trying to play, try next core in chain if there 
-        //         is one. If not, proceed to the next item.
-      }
+      rv = HandleErrorEvent(aEvent);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
 
@@ -2610,10 +2665,10 @@ sbMediacoreSequencer::HandleSequencerTimer(nsITimer *aTimer)
 
     PRUint64 position = 0;
     rv = mPlaybackControl->GetPosition(&position);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = UpdatePositionDataRemotes(position);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if(NS_SUCCEEDED(rv)) {
+      rv = UpdatePositionDataRemotes(position);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
@@ -2622,10 +2677,10 @@ sbMediacoreSequencer::HandleSequencerTimer(nsITimer *aTimer)
 
     PRUint64 duration = 0;
     rv = mPlaybackControl->GetDuration(&duration);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = UpdateDurationDataRemotes(duration);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if(NS_SUCCEEDED(rv)) {
+      rv = UpdateDurationDataRemotes(duration);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;

@@ -535,3 +535,5 @@
 <!ENTITY wizard.button.next.accesskey  "C">
 <!ENTITY wizard.button.finish.label    "Finish">
 
+<!-- Mediacore entities. -->
+<!ENTITY mediacore.error.title  "Mediacore Error">
