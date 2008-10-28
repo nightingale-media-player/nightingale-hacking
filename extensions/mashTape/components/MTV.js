@@ -47,7 +47,7 @@ MTV.prototype = {
 						'<?xml version="1.0" encoding="iso-8859-1"?>', ""));
 				var mrssNs = new Namespace('http://search.yahoo.com/mrss/');
 				var results = new Array();
-				for each (var item in x..item) {
+				for each (var item in x..channel..item) {
 					var content = item.description.toString();
 					content = content.replace(
 							/<embed src="\/player\//, 
