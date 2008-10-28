@@ -2,7 +2,7 @@
 
 <!ENTITY help.keyboard.title              "&brandShortName; Keyboard Shortcuts" >
 <!ENTITY help.keyboard.subtitle           "Keyboard Shortcuts" >
-<!ENTITY help.keyboard.description        "Keyboard shortcuts can make tasks in Songbird much easier. Below is a list of available commands followed by there appropriate shortcuts.">
+<!ENTITY help.keyboard.description        "Keyboard shortcuts can make tasks in &brandShortName; much easier. Below is a list of available commands followed by their appropriate shortcuts.">
 <!ENTITY help.platform.windows            "Windows" >
 <!ENTITY help.platform.macosx             "Mac" >
 <!ENTITY help.platform.linux              "Linux" >

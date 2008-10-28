@@ -129,7 +129,7 @@
 <!ENTITY smart.matchsingle        "Match the following condition:" >
 <!ENTITY smart.any                "any" >
 <!ENTITY smart.all                "all" >
-<!ENTITY smart.following          "of the following conditions:" >   
+<!ENTITY smart.following          "of the following conditions:" >
 <!ENTITY smart.random             "random" >
 <!ENTITY smart.album              "album" >
 <!ENTITY smart.artist             "artist" >
@@ -268,11 +268,11 @@
 <!ENTITY hotkeys.set                  "Set" >
 <!ENTITY hotkeys.remove               "Remove" >
 <!ENTITY hotkeys.prefpane             "Hotkeys" >
-<!ENTITY hotkeys.info                 "Global Hotkeys allow you to access Songbird functionality even if Songbird is not the active application.&#10;&#10;Some Hotkey combinations must include modifier keys to minimize unwanted interference with other applications." >
+<!ENTITY hotkeys.info                 "Global Hotkeys allow you to access &brandShortName; functionality even if &brandShortName; is not the active application.&#10;&#10;Some hotkey combinations must include modifier keys to minimize unwanted interference with other applications." >
 
 <!ENTITY rapi.prefpane.title             "Web Integration" >
 <!ENTITY rapi.prefpane.access.caption    "Web Integration Permissions" >
-<!ENTITY rapi.prefpane.access.text       "You can allow websites to integrate with &brandShortName; to create a tighter coupling between the Web and your media. Please configure &brandShortName; to allow or block the following points of integration." > 
+<!ENTITY rapi.prefpane.access.text       "You can allow websites to integrate with &brandShortName; to create a tighter coupling between the Web and your media. Please configure &brandShortName; to allow or block the following points of integration." >
 <!ENTITY rapi.whitelist.label            "Exceptions..." >
 <!ENTITY rapi.restore_defaults.label      "Restore to Default" >
 <!ENTITY rapi.playback_control_disable.label "Block websites from controlling media playback" >
@@ -432,13 +432,13 @@
 <!ENTITY subscribeMediaFrameCmd.label                   "Subscribe To This Frame...">
 <!ENTITY subscribeMediaFrameCmd.accesskey               "u">
 
-<!ENTITY feedback.dialog.title      "Help Make Songbird Better!">
+<!ENTITY feedback.dialog.title      "Help Make &brandShortName; Better!">
 <!ENTITY feedback.dialog.yes        "Yes">
 <!ENTITY feedback.dialog.no         "No">
-<!ENTITY feedback.dialog.sentence1  "Will you help us make Songbird better by taking a quick, anonymous survey?">
-<!ENTITY feedback.dialog.sentence2  "If you're not interested, we will not ask you again.  Thanks for considering and we appreciate you using Songbird!">
+<!ENTITY feedback.dialog.sentence1  "Will you help us make &brandShortName; better by taking a quick, anonymous survey?">
+<!ENTITY feedback.dialog.sentence2  "If you're not interested, we will not ask you again.  Thanks for considering and we appreciate you using &brandShortName;!">
 <!ENTITY feedback.dialog.sentence3  "Regards,">
-<!ENTITY feedback.dialog.sentence4  "The Songbird Team">
+<!ENTITY feedback.dialog.sentence4  "The &brandShortName; Team">
 
 <!-- First-run wizard entities. -->
 <!ENTITY first_run.title                  "&brandShortName; Setup">
@@ -492,7 +492,7 @@
 <!ENTITY import_library.dialog.title                      "Import a library">
 <!ENTITY import_library.prefs.title                       "iTunes Importer">
 <!ENTITY import_library.library_file_label                "Library File:">
-<!ENTITY import_library.auto_import_checkbox              "Automatically import changes in my iTunes library when Songbird launches">
+<!ENTITY import_library.auto_import_checkbox              "Automatically import changes in my iTunes library when &brandShortName; launches">
 <!ENTITY import_library.dont_import_playlists_checkbox    "Do not update playlists (only update songs)">
 <!ENTITY import_library.unsupported_media_alert_checkbox  "Alert me when unsupported tracks or playlists are not imported">
 <!ENTITY import_library.prefs.path_group_caption          "iTunes Music Library Location">
@@ -504,7 +504,7 @@
 <!ENTITY import_library.dirty_playlist_dialog.keep         "Keep the current &brandShortName; playlist (Do not import this playlist)">
 <!ENTITY import_library.dirty_playlist_dialog.merge        "Merge the current &brandShortName; and iTunes playlists">
 <!ENTITY import_library.dirty_playlist_dialog.replace      "Replace this &brandShortName; playlist with the current iTunes playlist">
-<!ENTITY import_library.dirty_playlist_dialog.note         "Note:  Merge and replace cannot be undone.">
+<!ENTITY import_library.dirty_playlist_dialog.note         "Note: Merge and replace cannot be undone.">
 <!ENTITY import_library.dirty_playlist_dialog.apply_all    "Apply selection to all playlists">
 
 <!-- Advanced preference pane update tab entities. -->
