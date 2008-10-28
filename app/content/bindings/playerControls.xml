@@ -867,7 +867,14 @@
 
     <method name="onReleaseSeekbar">
       <body>
-        this.mm.playbackControl.position = this.value;
+        try {
+          // Setting the position may fail if the format doesn't support
+          // seeking or if http resuming does not work.
+          this.mm.playbackControl.position = this.value;
+        }
+        catch(e) {
+          Components.utils.reportError(e);
+        }
         this.trackingPosition = 0;
       </body>
     </method>
