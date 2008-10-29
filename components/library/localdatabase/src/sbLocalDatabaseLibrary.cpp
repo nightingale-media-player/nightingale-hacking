@@ -644,6 +644,14 @@ nsresult sbLocalDatabaseLibrary::CreateQueries()
     values (?, ?, ?, ?, ?, ?, ?)"), getter_AddRefs(mCreateMediaItemPreparedStatement));
   NS_ENSURE_SUCCESS(rv, rv);
   
+  query->PrepareQuery(NS_LITERAL_STRING("\
+    SELECT _mlt.type \
+    FROM media_items as _mi \
+    LEFT JOIN media_list_types as _mlt ON _mi.media_list_type_id = _mlt.media_list_type_id \
+    WHERE _mi.guid = ?"),
+    getter_AddRefs(mGetTypeForGUID));
+  NS_ENSURE_SUCCESS(rv, rv);
+    
   return NS_OK;
 }
 /**
@@ -876,11 +884,7 @@ sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
   nsresult rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->AddQuery(NS_LITERAL_STRING("\
-    SELECT _mlt.type \
-    FROM media_items as _mi \
-    LEFT JOIN media_list_types as _mlt ON _mi.media_list_type_id = _mlt.media_list_type_id \
-    WHERE _mi.guid = ?"));
+  rv = query->AddPreparedStatement(mGetTypeForGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindStringParameter(0, aGUID);

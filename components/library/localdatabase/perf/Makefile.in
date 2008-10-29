@@ -40,6 +40,7 @@ SONGBIRD_TESTS = $(srcdir)/head_localdatabaselibraryperf.js \
                  $(srcdir)/test_guidarray_search.js \
                  $(srcdir)/test_guidarray_search_distinct.js \
                  $(srcdir)/test_propertycache.js \
+                 $(srcdir)/test_library_enumerate.js \
                  $(srcdir)/test_guidarray_filtering.js \
                  $(NULL)
 

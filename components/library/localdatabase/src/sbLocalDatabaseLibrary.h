@@ -346,6 +346,7 @@ private:
   nsCOMPtr<nsIURI> mContentSrc;
 
   nsCOMPtr<sbIDatabasePreparedStatement> mCreateMediaItemPreparedStatement;
+  nsCOMPtr<sbIDatabasePreparedStatement> mGetTypeForGUID;
 
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
