@@ -577,7 +577,10 @@ var AlbumArt = {
     if (AlbumArt._mediaListView) {
       AlbumArt._mediaListView.selection.addListener(AlbumArt);
       // Make an initial call so we can change our image based on selection
-      AlbumArt.onSelectionChanged();
+      // (but wait for the tab to stabilize)
+      setTimeout(function() {
+        AlbumArt.onSelectionChanged();
+      }, 0);
     }
   },
 
