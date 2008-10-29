@@ -2949,22 +2949,29 @@
       
       <handler event="keypress" key=" " phase="target">
         <![CDATA[
-          var mm = 
-            Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-                      .getService(Components.interfaces.sbIMediacoreManager);
           if (event.originalTarget != this.tree) {
             // possibly an event from the inline metadata editing textbox
             return;
           }
+          var mm = 
+            Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                      .getService(Components.interfaces.sbIMediacoreManager);
           var primaryCore = mm.primaryCore;
           var status = mm.status;
-          var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
+          const sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
           
-          if (status.state == sbIMediacoreStatus.STATUS_PLAYING ||
-              status.state == sbIMediacoreStatus.STATUS_BUFFERING) {
+          if (primaryCore &&
+              (status.state == sbIMediacoreStatus.STATUS_PLAYING ||
+               status.state == sbIMediacoreStatus.STATUS_BUFFERING))
+          {
             primaryCore.pause();
           } else {
-            primaryCore.play();
+            if (primaryCore) {
+              primaryCore.play();
+            } else {
+              mm.sequencer.playView(this.mediaListView,
+                                    Math.max(this.mediaListView.selection.currentIndex, 0));
+            }
           }
           event.stopPropagation();
         ]]>
