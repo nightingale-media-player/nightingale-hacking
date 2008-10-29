@@ -2052,14 +2052,14 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
     // If UTF16 or ASCII, or we have no idea, 
     // just leave the string as-is
     if (!aCharset || !*aCharset ||
-        aString.type() != TagLib::String::Latin1 ||
+        !aString.shouldGuessCharacterSet() ||
         !strcmp("utf-8", aCharset) ||
         !strcmp("us-ascii", aCharset))
         
     {
-        LOG(("sbMetadataHandlerTaglib::ConvertCharset: not converting to \"%s\" (type %i)",
+        LOG(("sbMetadataHandlerTaglib::ConvertCharset: not converting to \"%s\" (guess? %i)",
              aCharset ? aCharset : "(null)",
-             aString.type()
+             aString.shouldGuessCharacterSet()
              ));
         return aString;
     }
