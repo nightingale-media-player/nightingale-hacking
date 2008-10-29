@@ -35,6 +35,10 @@ similar to the selected application feather.
 
 ******************************************************************************/
 
+/*
+ * Make the body look "XUL"-y, with the same background color and image
+ * that XUL would get in the Feather
+ */
 body {
   font: message-box;
   color: rgb(40,40,40);
@@ -43,11 +47,32 @@ body {
   background-repeat:repeat-x;
   background-position:center top;
 }
+
+/*
+ * Make the body look "Webby", with a white background
+ */
 body.plain {
-  background-color: rgb(225,225,225);
+  background-color: rgb(255,255,255);
   background-image:none;
 }
 
+/*
+ * Classes for presenting alternating rows of data to visually distinguish
+ * and separate the rows from each other
+ */
+.row-even {
+  background-color: #eee;
+}
+.row-odd {
+  background-color: #fff;
+}
+/* The selected row */
+.row-selected {
+  background-color: #a4cffa;
+}
+.row-selected a {
+  color: #000;
+}
 
 a {
   color:#1694d9;
