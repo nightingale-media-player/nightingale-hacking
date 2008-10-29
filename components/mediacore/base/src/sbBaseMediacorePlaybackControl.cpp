@@ -122,7 +122,10 @@ sbBaseMediacorePlaybackControl::GetPosition(PRUint64 *aPosition)
   nsAutoLock lock(mLock);
 
   nsresult rv = OnGetPosition(aPosition);
-  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if(NS_FAILED(rv)) {
+    *aPosition = 0;
+  }
 
   return NS_OK;
 }
@@ -152,7 +155,10 @@ sbBaseMediacorePlaybackControl::GetDuration(PRUint64 *aDuration)
   nsAutoLock lock(mLock);
   
   nsresult rv = OnGetDuration(aDuration);
-  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(NS_FAILED(rv)) {
+    *aDuration = 0;
+  }
 
   return NS_OK;
 }
