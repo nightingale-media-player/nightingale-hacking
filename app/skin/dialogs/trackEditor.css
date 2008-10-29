@@ -231,6 +231,10 @@ image.art+button > .button-box > .button-text {
   -moz-box-flex: 1;
   -moz-box-align: center;
   -moz-box-pack: center;
+  min-width: 88px;
+  min-height: 88px;
+  width: 88px;
+  height: 88px;
 }
 
 
