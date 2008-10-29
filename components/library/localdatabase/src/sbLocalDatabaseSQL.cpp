@@ -82,7 +82,12 @@ nsString sbLocalDatabaseSQL::SecondaryPropertySelect()
   nsString sql =
     NS_LITERAL_STRING("SELECT media_item_id, property_id, obj, obj_sortable \
                        FROM resource_properties \
-                       WHERE media_item_id = ?");
+                       WHERE media_item_id IN (");
+  for (int i = 0; i < sbLocalDatabaseSQL::SecondaryPropertyBindCount-1; i++) {
+    sql.AppendLiteral("?, ");
+  }
+  sql.AppendLiteral("?)");
+  
   return sql;
 }
 
@@ -97,7 +102,11 @@ nsString sbLocalDatabaseSQL::MediaItemSelect()
 {
   nsString result(NS_LITERAL_STRING("SELECT "));
   result.Append(MediaItemColumns(PR_TRUE));
-  result.AppendLiteral(" FROM media_items WHERE guid = ?");
+  result.AppendLiteral(" FROM media_items WHERE guid IN (");
+  for (int i = 0; i < sbLocalDatabaseSQL::MediaItemBindCount-1; i++) {
+    result.AppendLiteral("?, ");
+  }
+  result.AppendLiteral("?)");
 
   return result;
 }

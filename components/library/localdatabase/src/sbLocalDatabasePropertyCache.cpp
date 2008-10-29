@@ -320,9 +320,11 @@ sbLocalDatabasePropertyCache::RetrievePrimaryProperties(sbIDatabaseQuery* query,
   
   PRUint32 const length = aGuids.Length();
   for (PRUint32 i = 0; i < length; ++i) {
-    rv = query->AddPreparedStatement(mItemSelectPreparedStatement);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = query->BindStringParameter(0, aGuids[i]);
+    if (i % mSQLStrings.MediaItemBindCount == 0) {
+      rv = query->AddPreparedStatement(mItemSelectPreparedStatement);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    rv = query->BindStringParameter(i % mSQLStrings.MediaItemBindCount, aGuids[i]);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -404,9 +406,11 @@ sbLocalDatabasePropertyCache::RetrieveSecondaryProperties(sbIDatabaseQuery* quer
   
   PRUint32 const length = itemIDs.Length();
   for (PRUint32 i = 0; i < length; ++i) {
-    rv = query->AddPreparedStatement(mSecondaryPropertySelectPreparedStatement);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = query->BindInt32Parameter(0, itemIDs[i]);
+    if ( i % mSQLStrings.SecondaryPropertyBindCount == 0 ) {
+      rv = query->AddPreparedStatement(mSecondaryPropertySelectPreparedStatement);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    rv = query->BindInt32Parameter(i % mSQLStrings.SecondaryPropertyBindCount, itemIDs[i]);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

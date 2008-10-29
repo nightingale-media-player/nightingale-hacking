@@ -82,6 +82,12 @@ public:
    * Removes a property given the item ID and property ID
    */
   static nsString PropertiesDelete();
+
+  // These are the number of "IN" bind variables for statements which use them.
+  // They are tuned to optimize performance.
+  static const int MediaItemBindCount = 50;
+  static const int SecondaryPropertyBindCount = 50;
+
 private:
   nsString mMediaItemColumns;
   nsString mMediaItemColumnsWithID;
