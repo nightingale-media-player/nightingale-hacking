@@ -235,6 +235,7 @@ ShoutcastRadio.Controller = {
 
 	onUnLoad: function() {
 		this._initialized = false;
+		gMM.removeListener(metricsObserver);
 	},
 };
 
@@ -378,3 +379,5 @@ var shoutcastUninstallObserver = {
 
 window.addEventListener("load",
 		function(e) { ShoutcastRadio.Controller.onLoad(e); }, false);
+window.addEventListener("unload",
+		function(e) { ShoutcastRadio.Controller.onUnLoad(e); }, false);
