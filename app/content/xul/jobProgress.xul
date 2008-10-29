@@ -52,6 +52,9 @@
 >
 
   <vbox>
+    <vbox id="jobprogress_title_box">
+      <description id="jobprogress_title_desc" />
+    </vbox>
     <vbox id="jobprogress_status_box" >
       <description id="jobprogress_status_desc" />
     </vbox>

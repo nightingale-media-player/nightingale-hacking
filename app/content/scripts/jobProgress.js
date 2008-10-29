@@ -185,9 +185,26 @@ var JobProgressDialog = {
    */
   _setTitle: function JobProgressDialog__setTitle(aTitle) {
     document.title = aTitle;
-    var windowTitle = document.getElementById('dialog-titlebar');
-    if (windowTitle) {
-      windowTitle.title = aTitle;
+
+    // If this dialog is going to be shown on Mac (i.e. sheets) and the current
+    // skin is running showChrome=true, use the inline progress title.
+    var sysInfo = Components.classes["@mozilla.org/system-info;1"]
+                    .getService(Components.interfaces.nsIPropertyBag2);
+    var platform = sysInfo.getProperty("name");
+    var isPlucked = Application.prefs.getValue("songbird.accessibility.enabled", false); 
+    var titleBox = document.getElementById("jobprogress_title_box");
+    if (platform == "Darwin" && isPlucked) {
+      var macSheetTitle = document.getElementById("jobprogress_title_desc");
+      if (macSheetTitle) {
+        macSheetTitle.value = aTitle;
+      }
+    }
+    else {
+      titleBox.hidden = true;
+      var windowTitle = document.getElementById('dialog-titlebar');
+      if (windowTitle) {
+        windowTitle.title = aTitle;
+      }
     }
   },
   
