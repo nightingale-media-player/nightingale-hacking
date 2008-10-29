@@ -27,7 +27,12 @@
  */
 -->
 
-<!DOCTYPE overlay SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
 
 <overlay id="HotkeysPaneOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
