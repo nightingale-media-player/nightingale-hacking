@@ -63,11 +63,11 @@ function DirectoryImportJob(aDirectoryArray,
 
   this._importService = aImportService;
   
-  this._itemURIs = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                     .createInstance(Components.interfaces.nsIMutableArray);
-  this._itemInitialProperties = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                                  .createInstance(Components.interfaces.nsIMutableArray);
-
+  if (this._setItemProperties) {
+    this._itemInitialProperties = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                                    .createInstance(Components.interfaces.nsIMutableArray);
+  }
+  
   // TODO these strings probably need updating
   this._titleText = SBString("media_scan.scanning");
   this._statusText =  SBString("media_scan.adding");
@@ -117,11 +117,15 @@ DirectoryImportJob.prototype = {
   // The sbIDirectoryImportService.  Called back on job completion.
   _importService            : null,
   
-  // nsIMutableArray of nsIURI items for all found media items
-  _itemURIs                 : null,
+  // nsIMutableArray of URI strings for all found media items
+  _itemURIStrings           : null,
+  
+  // true if you want to associate properties to the media items
+  _setItemProperties         : false,
   
   // nsIMutableArray of sbIMutablePropertyArrays containing default
-  // properties (e.g. track name), with one for every URI in _itemURIs
+  // properties (e.g. track name), with one for every URI string 
+  // in _itemURIStrings
   _itemInitialProperties    : null,
   
   // nsIArray of previously unknown sbIMediaItems that were created during 
@@ -166,14 +170,14 @@ DirectoryImportJob.prototype = {
     // using the list of URIs from the file scan.
     
     // If no URIs, just return the empty enumerator
-    if (this._itemURIs.length == 0) {
-      return this._itemURIs.enumerate();
+    if (this._itemURIStrings.length == 0) {
+      return this._itemURIStrings.enumerate();
     }
     
     // If all the URIs resulted in new items, we can 
     // cheat and just return that list
     if (this._newMediaItems && 
-        this._itemURIs.length == this._newMediaItems.length) {
+        this._itemURIStrings.length == this._newMediaItems.length) {
       return this.enumerateNewItemsOnly();
     }
     
@@ -181,15 +185,15 @@ DirectoryImportJob.prototype = {
     // the results cached just in case the function is called 
     // multiple times
     if (!this._allMediaItems || 
-        this._allMediaItems.length != this._itemURIs.length) {
+        this._allMediaItems.length != this._itemURIStrings.length) {
       
       // Make an array of contentURL properties, so we can search 
       // for all tracks in one go
       var propertyArray = SBProperties.createArray();
-      var enumerator = this._itemURIs.enumerate();
+      var enumerator = this._itemURIStrings.enumerate();
       while (enumerator.hasMoreElements()) {
-        var itemURI = enumerator.getNext().QueryInterface(Ci.nsIURI);
-        propertyArray.appendProperty(SBProperties.contentURL, itemURI.spec);
+        var itemURIStr = enumerator.getNext().QueryInterface(Ci.nsISupportsString);
+        propertyArray.appendProperty(SBProperties.contentURL, itemURIStr.data);
       } 
 
       // Get media items for the URI list
@@ -281,12 +285,15 @@ DirectoryImportJob.prototype = {
       return;
     }
     
-    var fileScanQuery = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
-                          .createInstance(Components.interfaces.sbIFileScanQuery);
-    fileScanQuery.setDirectory(directory.path);
-    fileScanQuery.setRecurse(true);
-    this._fileExtensions.forEach(function(ext) { fileScanQuery.addFileExtension(ext) });
-    this._fileScanQuery = fileScanQuery;
+    // We use the same _fileScanQuery object for scanning multiple directories.
+    if (!this._fileScanQuery) {
+      this._fileScanQuery = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
+                              .createInstance(Components.interfaces.sbIFileScanQuery);
+      var fileScanQuery = this._fileScanQuery;
+      this._fileExtensions.forEach(function(ext) { fileScanQuery.addFileExtension(ext) });
+    }
+    this._fileScanQuery.setDirectory(directory.path);
+    this._fileScanQuery.setRecurse(true);
     this._fileScanner.submitQuery(this._fileScanQuery);
   },
   
@@ -299,35 +306,32 @@ DirectoryImportJob.prototype = {
     // If the current query is finished, collect the results and move on to
     // the next directory
     if (!this._fileScanQuery.isScanning()) {
-      
-      var fileCount = this._fileScanQuery.getFileCount();
-      if (fileCount > 0 ) {
-        var files = this._fileScanQuery.getResultRangeAsURIs(0, fileCount - 1);
-        var fileURI;
-        for (var i = 0; i < files.length; i++) {
-          fileURI = files.queryElementAt(i, Components.interfaces.nsIURI);
-          this._itemURIs.appendElement(fileURI, false);
-        
-          // Create a temporary track name for each of the found items
-          var props =
-            Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                      .createInstance(Components.interfaces.sbIMutablePropertyArray);
-          props.appendProperty(SBProperties.trackName, this._createDefaultTitle(fileURI));
-          this._itemInitialProperties.appendElement(props, false);
-        }
-      }
-
       // If there are more directories to scan, start the next one
       if (this._directories.length > 0) {
         this._startNextDirectoryScan();
       } else {
-        // Otherwise, we're done scanning directories, and it is time 
-        // to create media items
+        // Otherwise, we're done scanning directories, and it is time to collect
+        // information and create media items
+        var fileCount = this._fileScanQuery.getFileCount();
+        if (fileCount > 0 ) {
+          this._itemURIStrings = this._fileScanQuery.getResultRangeAsURIStrings(0, fileCount - 1);
+          if (this._setItemProperties) {
+            var fileURIStr;
+            for (var i = 0; i < this._itemURIStrings.length; i++) {
+              fileURIStr = files.queryElementAt(i, Components.interfaces.nsISupportsString);
+              // Create a temporary track name for each of the found items
+              var props =
+                Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                  .createInstance(Components.interfaces.sbIMutablePropertyArray);
+                props.appendProperty(SBProperties.trackName, this._createDefaultTitle(fileURIStr.data));
+                this._itemInitialProperties.appendElement(props, false);
+              }
+          }
+        }
         this._finishFileScan();
         this._startMediaItemCreation();
       }
-
-    // If the file scan query is still running just update the UI
+      // If the file scan query is still running just update the UI
     } else {
       var text = this._fileScanQuery.getLastFileFound();
       if (text.length > 60) {
@@ -361,13 +365,15 @@ DirectoryImportJob.prototype = {
    */
   _startMediaItemCreation: 
   function DirectoryImportJob__startMediaItemCreation() {
-    if (!this._itemURIs || !this._itemInitialProperties || 
-        this._itemURIs.length != this._itemInitialProperties.length) {
+    if (!this._itemURIStrings || 
+        (this._setItemPropeties &&
+         (!this._itemInitialProperties || 
+          this._itemURIStrings.length != this._itemInitialProperties.length))) {
       Cu.reportError(
         "DirectoryImportJob__startMediaItemCreation called with invalid state");
       this.complete();      
     }
-    if (this._itemURIs.length == 0) {
+    if (this._itemURIStrings.length == 0) {
       this.complete();
     }
     
@@ -396,7 +402,7 @@ DirectoryImportJob.prototype = {
     
     // BatchCreateMediaItems needs to return an sbIJobProgress
     this.targetMediaList.library.batchCreateMediaItemsAsync(
-        batchCreateListener, this._itemURIs, this._itemInitialProperties);
+        batchCreateListener, this._itemURIStrings, this._itemInitialProperties);
   },
   
   /** 
@@ -416,7 +422,7 @@ DirectoryImportJob.prototype = {
     }
     
     this.totalAddedToLibrary = this._newMediaItems.length;
-    this.totalDuplicates = this._itemURIs.length - this._newMediaItems.length;
+    this.totalDuplicates = this._itemURIStrings.length - this._newMediaItems.length;
     
     // TODO update UI?
     
@@ -440,7 +446,7 @@ DirectoryImportJob.prototype = {
     // the ones that previously existed) into the list at the requested position
     if (!(this.targetMediaList instanceof Ci.sbILibrary)) {
       try {
-        if (this._itemURIs.length > 0) {
+        if (this._itemURIStrings.length > 0) {
           // If we need to insert, then do so
           if ((this.targetMediaList  instanceof Ci.sbIOrderableMediaList) && 
               (this.targetIndex >= 0) && 
@@ -560,27 +566,12 @@ DirectoryImportJob.prototype = {
   },
   
   /**
-   * Convert an nsIURI into a string filename
+   * Retrieve the file name from the URI spec string (in UTF16 encoding).
    */
-  _createDefaultTitle: function DirectoryImportJob__createDefaultTitle(aURI) {
-
-    var netutil = Cc["@mozilla.org/network/util;1"]
-                    .getService(Ci.nsINetUtil);
-
-    var s = netutil.unescapeString(aURI.spec,
-                                   Ci.nsINetUtil.ESCAPE_URL_SKIP_CONTROL);
-
-    var unicodeConverter = 
-      Cc["@mozilla.org/intl/scriptableunicodeconverter"]
-        .createInstance(Ci.nsIScriptableUnicodeConverter);
-    unicodeConverter.charset = "UTF-8";
-
-    try {
-      s = unicodeConverter.ConvertToUnicode(s);
-    } catch (ex) {
-      // conversion failed, use encoded string
-    }
-    return s.split("/").pop();
+  _createDefaultTitle: function DirectoryImportJob__createDefaultTitle(aURIStr) {
+    if (aURIStr)
+      return aURIStr.split("/").pop;
+    return null;
   }
 }
 

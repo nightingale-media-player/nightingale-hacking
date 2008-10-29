@@ -50,6 +50,7 @@
 #include <nsIThreadPool.h>
 #include <nsIURI.h>
 #include <nsStringGlue.h>
+#include <nsVoidArray.h>
 #include <sbIMediaListFactory.h>
 #include <sbILibraryStatistics.h>
 
@@ -298,9 +299,11 @@ private:
 
   nsresult GetAllListsByType(const nsAString& aType, sbMediaListArray* aArray);
 
-  nsresult FilterExistingItems(nsIArray* aURIs,
+  nsresult ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aStringArray);
+  
+  nsresult FilterExistingItems(nsStringArray* aURIs,
                                nsIArray* aPropertyArrayArray,
-                               nsIArray** aFilteredURIs,
+                               nsStringArray** aFilteredURIs,
                                nsIArray** aFilteredPropertyArrayArray);
 
   nsresult GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID);
@@ -476,7 +479,7 @@ public:
                       sbBatchCreateTimerCallback* aCallback = nsnull);
 
   nsresult InitQuery(sbIDatabaseQuery* aQuery,
-                     nsIArray* aURIArray,
+                     nsStringArray* aURIArray,
                      nsIArray* aPropertyArrayArray);
 
   nsresult NotifyAndGetItems(nsIArray** _retval);
@@ -490,7 +493,7 @@ private:
   // reference to the callback
   sbLocalDatabaseLibrary*     mLibrary;
   sbBatchCreateTimerCallback*      mCallback;
-  nsCOMPtr<nsIArray>  mURIArray;
+  nsAutoPtr<nsStringArray>  mURIArray;
   nsCOMPtr<nsIArray>  mPropertiesArray;
   nsTArray<nsString>  mGuids;
   PRUint32 mLength;

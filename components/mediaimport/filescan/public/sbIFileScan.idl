@@ -113,7 +113,7 @@ function ScanBeneathADirectory(aPath) {
  *
  * \sa sbIFileScanCallback, sbIFileScan, FileScan.h
  */
-[scriptable, uuid(7BB22470-E03D-4220-AC93-AC70700AF6AB)]
+[scriptable, uuid(db7d7cda-a6fd-4f32-98d1-32ed746eb13d)]
 interface sbIFileScanQuery : nsISupports
 {
   attribute boolean searchHidden;
@@ -239,8 +239,8 @@ interface sbIFileScanQuery : nsISupports
   /**
    * \brief
    */
-  nsIArray getResultRangeAsURIs(in unsigned long aStartIndex,
-                                in unsigned long aEndIndex);
+  nsIArray getResultRangeAsURIStrings(in unsigned long aStartIndex,
+                                      in unsigned long aEndIndex);
 
   /**
    * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD

@@ -33,7 +33,6 @@
 #define __FILE_SCAN_H__
 
 // INCLUDES ===================================================================
-#include <vector>
 #include <deque>
 
 #include "sbIFileScan.h"
@@ -43,12 +42,15 @@
 
 #include <nsIFile.h>
 #include <nsILocalFile.h>
+#include <nsIMutableArray.h>
 #include <nsINetUtil.h>
 
 #include <nsStringGlue.h>
 #include <nsServiceManagerUtils.h>
 #include <nsComponentManagerUtils.h>
+#include <nsHashKeys.h>
 #include <nsISimpleEnumerator.h>
+#include <nsTHashtable.h>
 #include <nsXPCOM.h>
 #include <prlock.h>
 #include <prmon.h>
@@ -82,15 +84,15 @@ class sbFileScanQuery : public sbIFileScanQuery
 public:
   sbFileScanQuery();
   sbFileScanQuery(const nsString &strDirectory, const PRBool &bRecurse, sbIFileScanCallback *pCallback);
-
+  
   virtual ~sbFileScanQuery();
-
+  // Common initializations.
+  void init();
+  
   NS_DECL_ISUPPORTS
   NS_DECL_SBIFILESCANQUERY
 
 protected:
-  typedef std::vector<nsString> filestack_t;
-
   nsString GetExtensionFromFilename(const nsAString &strFilename);
   PRBool VerifyFileExtension(const nsAString &strExtension);
 
@@ -109,11 +111,14 @@ protected:
   PRLock* m_pCallbackLock;
   nsCOMPtr<sbIFileScanCallback> m_pCallback;
 
-  PRLock* m_pFileStackLock;
-  filestack_t m_FileStack;
+  // thread-safe nsIMutableArray to store the URI spec strings
+  nsCOMPtr<nsIMutableArray> m_pFileStack;
 
-  PRLock *m_pExtensionsLock;
-  filestack_t m_Extensions;
+  PRLock* m_pExtensionsLock;
+  nsTHashtable<nsStringHashKey> m_Extensions;
+
+  // m_lastSeenExtension records the extension for the last added URI
+  nsString m_lastSeenExtension;
 
   PRLock* m_pCancelLock;
   PRBool m_bCancel;

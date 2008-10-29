@@ -40,6 +40,8 @@
 #include <necko/nsIIOService.h>
 #include <necko/nsIURI.h>
 #include <unicharutil/nsUnicharUtils.h>
+#include <nsISupportsPrimitives.h>
+#include <nsArrayUtils.h>
 #include <nsThreadUtils.h>
 #include <nsStringGlue.h>
 #include <nsIMutableArray.h>
@@ -86,7 +88,6 @@ sbFileScanQuery::sbFileScanQuery()
 , m_pScanningLock(PR_NewLock())
 , m_bIsScanning(PR_FALSE)
 , m_pCallbackLock(PR_NewLock())
-, m_pFileStackLock(PR_NewLock())
 , m_pExtensionsLock(PR_NewLock())
 , m_pCancelLock(PR_NewLock())
 , m_bCancel(PR_FALSE)
@@ -94,11 +95,11 @@ sbFileScanQuery::sbFileScanQuery()
   NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
   NS_ASSERTION(m_pCallbackLock, "FileScanQuery.m_pCallbackLock failed");
-  NS_ASSERTION(m_pFileStackLock, "FileScanQuery.m_pFileStackLock failed");
   NS_ASSERTION(m_pExtensionsLock, "FileScanQuery.m_pExtensionsLock failed");
   NS_ASSERTION(m_pScanningLock, "FileScanQuery.m_pScanningLock failed");
   NS_ASSERTION(m_pCancelLock, "FileScanQuery.m_pCancelLock failed");
   MOZ_COUNT_CTOR(sbFileScanQuery);
+  init();
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -112,7 +113,6 @@ sbFileScanQuery::sbFileScanQuery(const nsString &strDirectory, const PRBool &bRe
 , m_bIsScanning(PR_FALSE)
 , m_pCallbackLock(PR_NewLock())
 , m_pCallback(pCallback)
-, m_pFileStackLock(PR_NewLock())
 , m_pExtensionsLock(PR_NewLock())
 , m_pCancelLock(PR_NewLock())
 , m_bCancel(PR_FALSE)
@@ -120,12 +120,21 @@ sbFileScanQuery::sbFileScanQuery(const nsString &strDirectory, const PRBool &bRe
   NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
   NS_ASSERTION(m_pCallbackLock, "FileScanQuery.m_pCallbackLock failed");
-  NS_ASSERTION(m_pFileStackLock, "FileScanQuery.m_pFileStackLock failed");
   NS_ASSERTION(m_pExtensionsLock, "FileScanQuery.m_pExtensionsLock failed");
   NS_ASSERTION(m_pScanningLock, "FileScanQuery.m_pScanningLock failed");
   NS_ASSERTION(m_pCancelLock, "FileScanQuery.m_pCancelLock failed");
   MOZ_COUNT_CTOR(sbFileScanQuery);
+  init();
 } //ctor
+
+void sbFileScanQuery::init() {
+  m_pFileStack = nsnull;
+  m_lastSeenExtension = EmptyString();
+  PR_Lock(m_pExtensionsLock);
+  PRBool success = m_Extensions.Init();
+  NS_ASSERTION(success, "FileScanQuery.m_Extensions failed to be initialized");
+  PR_Unlock(m_pExtensionsLock);
+}  
 
 //-----------------------------------------------------------------------------
 /*virtual*/ sbFileScanQuery::~sbFileScanQuery()
@@ -137,8 +146,6 @@ sbFileScanQuery::sbFileScanQuery(const nsString &strDirectory, const PRBool &bRe
     PR_DestroyLock(m_pCurrentPathLock);
   if (m_pCallbackLock)
     PR_DestroyLock(m_pCallbackLock);
-  if (m_pFileStackLock)
-    PR_DestroyLock(m_pFileStackLock);
   if (m_pExtensionsLock)
     PR_DestroyLock(m_pExtensionsLock);
   if (m_pScanningLock)
@@ -167,13 +174,12 @@ NS_IMETHODIMP sbFileScanQuery::SetSearchHidden(PRBool aSearchHidden)
 NS_IMETHODIMP sbFileScanQuery::SetDirectory(const nsAString &strDirectory)
 {
   PR_Lock(m_pDirectoryLock);
-  {
-    PR_Lock(m_pFileStackLock);
-    m_FileStack.clear();
-
-    m_strDirectory = strDirectory;
-    PR_Unlock(m_pFileStackLock);
+  if (!m_pFileStack) {
+    nsresult rv;
+    m_pFileStack = 
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   }
+  m_strDirectory = strDirectory;
   PR_Unlock(m_pDirectoryLock);
   return NS_OK;
 } //SetDirectory
@@ -209,7 +215,12 @@ NS_IMETHODIMP sbFileScanQuery::GetRecurse(PRBool *_retval)
 NS_IMETHODIMP sbFileScanQuery::AddFileExtension(const nsAString &strExtension)
 {
   PR_Lock(m_pExtensionsLock);
-  m_Extensions.push_back(PromiseFlatString(strExtension));
+  nsAutoString extStr(strExtension);
+  ToLowerCase(extStr);
+  if (!m_Extensions.GetEntry(extStr)) {
+    nsStringHashKey* hashKey = m_Extensions.PutEntry(extStr);
+    NS_ENSURE_TRUE(hashKey != nsnull, NS_ERROR_OUT_OF_MEMORY);
+  }
   PR_Unlock(m_pExtensionsLock);
   return NS_OK;
 } //AddFileExtension
@@ -245,8 +256,7 @@ NS_IMETHODIMP sbFileScanQuery::GetCallback(sbIFileScanCallback **_retval)
 NS_IMETHODIMP sbFileScanQuery::GetFileCount(PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  size_t nSize = m_FileStack.size();
-  *_retval = (PRUint32) nSize;
+  m_pFileStack->GetLength(_retval);
   LOG(("sbFileScanQuery: reporting %d files\n", *_retval));
   return NS_OK;
 } //GetFileCount
@@ -255,13 +265,25 @@ NS_IMETHODIMP sbFileScanQuery::GetFileCount(PRUint32 *_retval)
 /* void AddFilePath (in wstring strFilePath); */
 NS_IMETHODIMP sbFileScanQuery::AddFilePath(const nsAString &strFilePath)
 {
-  nsString strExtension = GetExtensionFromFilename(strFilePath);
-  if(VerifyFileExtension(strExtension)) {
-    PR_Lock(m_pFileStackLock);
-    m_FileStack.push_back(PromiseFlatString(strFilePath));
-    PR_Unlock(m_pFileStackLock);
-    LOG(("sbFileScanQuery::AddFilePath(%s)\n", NS_LossyConvertUTF16toASCII(strFilePath).get()));
+  const nsAutoString strExtension = GetExtensionFromFilename(strFilePath);
+  if (m_lastSeenExtension.IsEmpty() ||
+      !m_lastSeenExtension.Equals(strExtension, CaseInsensitiveCompare)) {
+    // m_lastSeenExtension could be set multiple times without lock guarded
+    // in theory. However, the race is benign and in practice, it is rare.
+    if (VerifyFileExtension(strExtension)) {
+      m_lastSeenExtension = strExtension;
+    } else {
+      LOG(("sbFileScanQuery::AddFilePath, unrecognized extension: (%s) is seen\n",
+           NS_LossyConvertUTF16toASCII(strExtension).get()));
+      return NS_OK;
+    }
   }
+  nsCOMPtr<nsISupportsString> string(do_CreateInstance("@mozilla.org/supports-string;1"));
+  string->SetData(strFilePath);
+  nsresult rv = m_pFileStack->AppendElement(string, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  LOG(("sbFileScanQuery::AddFilePath(%s)\n", 
+       NS_LossyConvertUTF16toASCII(strFilePath).get()));
   return NS_OK;
 } //AddFilePath
 
@@ -272,14 +294,15 @@ NS_IMETHODIMP sbFileScanQuery::GetFilePath(PRUint32 nIndex, nsAString &_retval)
   _retval = EmptyString();
   NS_ENSURE_ARG_MIN(nIndex, 0);
 
-  PR_Lock(m_pFileStackLock);
-
-  if(nIndex < m_FileStack.size()) {
-    _retval = m_FileStack[nIndex];
+  PRUint32 length;
+  m_pFileStack->GetLength(&length);
+  if (nIndex < length) {
+    nsresult rv;
+    nsCOMPtr<nsISupportsString> path = do_QueryElementAt(m_pFileStack, nIndex, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    path->GetData(_retval);
   }
-
-  PR_Unlock(m_pFileStackLock);
-
+  
   return NS_OK;
 } //GetFilePath
 
@@ -308,15 +331,17 @@ NS_IMETHODIMP sbFileScanQuery::SetIsScanning(PRBool bIsScanning)
 /* wstring GetLastFileFound (); */
 NS_IMETHODIMP sbFileScanQuery::GetLastFileFound(nsAString &_retval)
 {
-  PR_Lock(m_pFileStackLock);
-  PRInt32 nIndex = (PRInt32)m_FileStack.size() - 1;
-  if (nIndex >= 0) {
-    _retval = m_FileStack[nIndex];
+  PRUint32 length;
+  m_pFileStack->GetLength(&length);
+  if (length > 0) {
+    nsCOMPtr<nsISupportsString> path;
+    m_pFileStack->QueryElementAt(length - 1, NS_GET_IID(nsISupportsString),
+                                 getter_AddRefs(path));
+    path->GetData(_retval);
   }
   else {
     _retval.Truncate();
   }
-  PR_Unlock(m_pFileStackLock);
   return NS_OK;
 } //GetLastFileFound
 
@@ -351,33 +376,40 @@ NS_IMETHODIMP sbFileScanQuery::Cancel()
 } //Cancel
 
 //-----------------------------------------------------------------------------
-NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIs(PRUint32 aStartIndex,
-                                                    PRUint32 aEndIndex,
-                                                    nsIArray** _retval)
+NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIStrings(PRUint32 aStartIndex,
+                                                          PRUint32 aEndIndex,
+                                                          nsIArray** _retval)
 {
-  sbSimpleAutoLock lock(m_pFileStackLock);
-
-  PRUint32 length = m_FileStack.size();
+  PRUint32 length;
+  m_pFileStack->GetLength(&length);
   NS_ENSURE_TRUE(aStartIndex < length, NS_ERROR_INVALID_ARG);
   NS_ENSURE_TRUE(aEndIndex < length, NS_ERROR_INVALID_ARG);
 
-  nsresult rv;
-  nsCOMPtr<nsIMutableArray> array =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  if (aStartIndex == 0 && aEndIndex == length - 1) {
+    NS_ADDREF(*_retval = m_pFileStack);
+  } else {
+    nsresult rv;
+    nsCOMPtr<nsIMutableArray> array =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
 
-  for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
-    nsCOMPtr<nsIURI> uri;
-    rv = NS_NewURI(getter_AddRefs(uri), m_FileStack[i]);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = array->AppendElement(uri, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-    #if PR_LOGGING
-    LOG(("sbFileScanQuery:: fetched URI %s\n", NS_LossyConvertUTF16toASCII(m_FileStack[i]).get()));
-    #endif /* PR_LOGGING */
+    for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
+      nsCOMPtr<nsISupportsString> uriSpec;
+      m_pFileStack->QueryElementAt(i, 
+                                   NS_GET_IID(nsISupportsString), 
+                                   getter_AddRefs(uriSpec));
+      rv = array->AppendElement(uriSpec, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+#if PR_LOGGING
+      nsAutoString s;
+      if (NS_SUCCEEDED(uriSpec->GetData(s)) && !s.IsEmpty()) {
+        LOG(("sbFileScanQuery:: fetched URI %s\n", NS_LossyConvertUTF16toASCII(s).get()));
+      }
+#endif /* PR_LOGGING */
+    }
+    NS_ADDREF(*_retval = array);
   }
   LOG(("sbFileScanQuery:: fetched URIs %d through %d\n", aStartIndex, aEndIndex));
-
-  NS_ADDREF(*_retval = array);
+  
   return NS_OK;
 }
 
@@ -410,18 +442,9 @@ PRBool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension)
   PRBool isValid = PR_FALSE;
 
   PR_Lock(m_pExtensionsLock);
-  filestack_t::size_type extCount =  m_Extensions.size();
-  for(filestack_t::size_type extCur = 0; extCur < extCount; ++extCur)
-  {
-    if(m_Extensions[extCur].Equals(strExtension, CaseInsensitiveCompare))
-    {
-      isValid = PR_TRUE;
-      break;
-    }
-  }
-
-  if(extCount == 0)
-    isValid = PR_TRUE;
+  nsAutoString extString = PromiseFlatString(strExtension);
+  ToLowerCase(extString);
+  isValid = m_Extensions.GetEntry(extString) != nsnull;
   PR_Unlock(m_pExtensionsLock);
 
   return isValid;

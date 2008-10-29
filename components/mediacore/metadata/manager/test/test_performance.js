@@ -58,7 +58,7 @@ function runTest () {
   while (query.isScanning()) {
     sleep(1000);
   }
-  var urls = query.getResultRangeAsURIs(0, query.getFileCount() - 1);
+  var urls = query.getResultRangeAsURIStrings(0, query.getFileCount() - 1);
 
   log("Creating " + urls.length + " items...");
   var items = library.batchCreateMediaItems(urls, null, true);
