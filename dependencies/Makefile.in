@@ -503,7 +503,7 @@ include $(topsrcdir)/build/rules.mk
 # Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
 xulrunner_extensions = $(notdir $(wildcard $(SONGBIRD_XULRUNNERDIR)/extensions/*))
 
-all:: copy-extensions copy-xr-shell-stub addmsvcrtmanifest
+all:: move-sb-stub-executable copy-extensions copy-xr-shell-stub addmsvcrtmanifest
 
 # WE have to add manifest information to the few remaining .exes that actually
 # link against the MSVCRT; see bug 10022
@@ -521,7 +521,7 @@ ifeq ($(SB_USE_JEMALLOC)_$(MSMANIFEST_TOOL),_1)
 endif # NOT SB_USE_JEMALLOC and MSVC with manifest tool
 
 
-.PHONY : copy-xr-shell-stub copy-extensions addmsvcrtmanifest
+.PHONY : move-sb-stub-executable copy-xr-shell-stub copy-extensions addmsvcrtmanifest
 
 copy-extensions : gunzip_file
 	@echo $(xulrunner_extensions)
@@ -533,6 +533,55 @@ ifneq (,$(xulrunner_extensions))
   done
 	$(RM) -rf $(SONGBIRD_XULRUNNERDIR)/extensions
 endif
+
+ifeq (macosx,$(SB_PLATFORM))
+sb_executable_dir = $(SONGBIRD_MACOS)
+else
+sb_executable_dir = $(call normalizepath,$(SONGBIRD_DISTDIR))
+endif
+
+include $(SONGBIRD_BRANDING_DIR)/branding.mk
+SONGBIRD_STUB = $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
+RESHACKER_BIN = $(CYGWIN_WRAPPER) $(topsrcdir)/tools/win32/reshacker/ResHacker.exe
+ifeq (,$(SONGBIRD_OFFICIAL))
+ICON_FILE = $(topsrcdir)/installer/windows/songbird_nightly.ico
+else
+ICON_FILE = $(topsrcidr)/installer/windows/songbird.ico
+endif
+RESHACKER_OVERWRITE_ICON = $(RESHACKER_BIN) -addoverwrite $(sb_executable_dir)/$(1), $(sb_executable_dir)/$(1), $(ICON_FILE), icongroup, $(2), 1033
+RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e 's/(VALUE "$1", ")[^"]*(")/$${1}$(2)$${2}/' songbird.rc
+move-sb-stub-executable: $(SONGBIRD_MAIN_APP)
+	$(CYGWIN_WRAPPER) $(MKDIR) -p $(sb_executable_dir)
+	$(CYGWIN_WRAPPER) $(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable_dir)
+ifeq (windows,$(SB_PLATFORM))
+# If we're not using jemalloc, add the manifest...
+ifeq ($(MSMANIFEST_TOOL)_$(SB_USE_JEMALLOC),1_)
+	$(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
+          -OUTPUTRESOURCE:$(SONGBIRD_STUB)\;1
+endif # Not-jemalloc and MSVC with manifest tool
+	# On Win32, the stub requires the custom CRT in the same directory now,
+	# if it's enabled; move that along if we find it too...
+	test -e $(MOZ_WIN32_CUSTOM_CRT) && $(CYGWIN_WRAPPER) $(CP) -vf $(MOZ_WIN32_CUSTOM_CRT) $(sb_executable_dir)
+	# Win32 only - munge the stub installer for icons
+	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_APPICON)
+	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_DOCUMENT)
+	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,32512)
+	$(call RESHACKER_OVERWRITE_ICON,songbird.exe,IDI_APPICON)
+	$(call RESHACKER_OVERWRITE_ICON,songbird.exe,IDI_DOCUMENT)
+	$(call RESHACKER_OVERWRITE_ICON,songbird.exe,32512)
+	# overwrite the VersionInfo fields to say Songbird
+	$(RESHACKER_BIN) -extract $(sb_executable_dir)/songbird.exe, songbird.rc, VersionInfo, 1, 1033
+	$(call RESHACKER_REPLACE_RC,Comments,Mozilla XULRunner stub loader)
+	$(call RESHACKER_REPLACE_RC,CompanyName,$(SB_BRAND_VENDOR_NAME)) 
+	$(call RESHACKER_REPLACE_RC,FileDescription,$(SB_BRAND_FULL_NAME))
+	$(call RESHACKER_REPLACE_RC,ProductName,$(SB_BRAND_SHORT_NAME))
+	$(call RESHACKER_REPLACE_RC,ProductVersion,$(SB_MILESTONE_WINDOWS))
+	$(call RESHACKER_REPLACE_RC,LegalTrademarks,$(SB_BRAND_TRADEMARKS))
+	$(call RESHACKER_REPLACE_RC,BuildID,$(SB_BUILD_NUMBER))
+	rc -v -fo songbird.res songbird.rc
+	$(RESHACKER_BIN) -addoverwrite $(sb_executable_dir)/songbird.exe, $(sb_executable_dir)/songbird.exe, songbird.res, VersionInfo,1,1033
+endif # windows
+	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
 
 copy-xr-shell-stub: gunzip_file
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))

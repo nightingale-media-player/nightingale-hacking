@@ -3,14 +3,16 @@
 !define BrandFullName         "@SB_APPNAME@"
 
 !define BrandFullNameInternal "@SB_APPNAME@"
-!define CompanyName           "POTI, Inc."
+!define CompanyName           "@SB_VENDOR@"
 !define URLInfoAbout          "http://www.songbirdnest.com/"
 !define URLUpdateInfo         "http://www.songbirdnest.com/"
+!define LegalTrademarks       "@SB_TRADEMARKS@"
 
 !define AppVersion            "@SB_MILESTONE@"
 !define AppOldVersion         "0.2.5"
 !define GREVersion            "@SB_MOZILLA_VERSION@"
 !define AppVersionWindows     "@SB_MILESTONE_WINDOWS@"
+!define AppBuildID            "@SB_BUILD_NUMBER@"
 
 !define FileMainEXE           "Songbird.exe"
 !define FileUninstallEXE      "Songbird-Uninstall.exe"

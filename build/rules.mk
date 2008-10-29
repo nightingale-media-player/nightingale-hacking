@@ -120,10 +120,6 @@ ifdef GUNZIP_SRC
 targets += gunzip_file
 endif
 
-ifdef SONGBIRD_MAIN_APP
-targets += move_sb_stub_executable
-endif
-
 ifdef EXECUTABLE
 targets += chmod_add_executable
 endif
@@ -1282,7 +1278,7 @@ run_installer_preprocess:
     source=$(SONGBIRD_INSTALLERDIR)/$$file.in; \
     target=$(SONGBIRD_INSTALLERDIR)/$$file; \
     $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(INSTALLER_PPFLAGS) \
-      $(ACDEFINES) $(PPDEFINES) -- $$source > $$target; \
+      $(ACDEFINES) $(PPDEFINES) $(SB_BRANDING_DEFINES) -- $$source > $$target; \
   done
 
 clean_installer_preprocess:
@@ -1557,35 +1553,6 @@ clean_xpi:
 	$(RM) -rf $(EXTENSION_STAGE_DIR)
 
 endif # XPI_NAME
-
-#-----------------------
-
-ifdef SONGBIRD_MAIN_APP
-
-ifeq (macosx,$(SB_PLATFORM))
-sb_executable_dir = $(SONGBIRD_MACOS)
-else
-sb_executable_dir = $(call normalizepath,$(SONGBIRD_DISTDIR))
-endif
-
-move_sb_stub_executable: $(SONGBIRD_MAIN_APP)
-	$(CYGWIN_WRAPPER) $(MKDIR) -p $(sb_executable_dir)
-	$(CYGWIN_WRAPPER) $(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable_dir)
-# If we're not using jemalloc, add the manifest...
-ifeq ($(MSMANIFEST_TOOL)_$(SB_USE_JEMALLOC),1_)
-	$(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
-    -OUTPUTRESOURCE:$(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))\;1
-endif # Not-jemalloc and MSVC with manifest tool
-	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
-ifeq (windows,$(SB_PLATFORM))
-	# On Win32, the stub requires the custom CRT in the same directory now,
-	# if it's enabled; move that along if we find it too...
-	test -e $(MOZ_WIN32_CUSTOM_CRT) && $(CYGWIN_WRAPPER) $(CP) -vf $(MOZ_WIN32_CUSTOM_CRT) $(sb_executable_dir)
-endif
-
-#.PHONY : move_sb_stub_executable
-
-endif
 
 #------------------------------------------------------------------------------
 # Rules for changing permissions
