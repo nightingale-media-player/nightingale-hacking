@@ -82,7 +82,7 @@ VIAddVersionKey "LegalTrademarks" "${LegalTrademarks}"
 VIAddVersionKey "ProductName"     "${BrandFullName}"
 VIAddVersionKey "ProductVersion"  "${AppVersion}"
 VIAddVersionKey "SpecialBuild"    "${DebugBuild}"
-VIAddVersionKey "BuildID"         "${AppBuildID}"
+VIAddVersionKey "BuildID"         "${AppBuildNumber}"
 
 Name "${BrandFullName}"
 OutFile "${PreferredInstallerName}"

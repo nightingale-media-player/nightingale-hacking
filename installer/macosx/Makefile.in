@@ -43,6 +43,7 @@ SONGBIRD_DIST = $(topsrcdir)/TRADEMARK.txt \
 SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh \
                   $(SB_PLATFORM)-$(SB_ARCH) \
                   $(SB_MILESTONE) \
+                  $(SB_BUILD_NUMBER) \
                   $(readme)
 
 include $(topsrcdir)/build/rules.mk

@@ -1,22 +1,18 @@
 #!/bin/sh
 
-if [[ $# < 2 ]]; then
-  echo usage: make-installer architecture version readme
+if [[ $# < 4 ]]; then
+  echo usage: make-installer architecture version build-number readme
   exit 1
 fi
 
 DEPTH=../../..
 CURRENT_DIR=`pwd`
-CURRENT_DATE=`date +%Y%m%d`
 SONGBIRD_ARCH="$1"
 SONGBIRD_VERSION="$2"
-README_FILE="$3"
+SONGBIRD_BUILD_NUMBER="$3"
+README_FILE="$4"
 
-if [ ${README_FILE} = README_OFFICIAL.txt ]; then
-SONGBIRD_FILENAME=Songbird_${SONGBIRD_VERSION}_${SONGBIRD_ARCH}
-else
-SONGBIRD_FILENAME=Songbird_${SONGBIRD_VERSION}_${CURRENT_DATE}_${SONGBIRD_ARCH}
-fi
+SONGBIRD_FILENAME=Songbird_${SONGBIRD_VERSION}-${SONGBIRD_BUILD_NUMBER}_${SONGBIRD_ARCH}
 
 rm -rf ${DEPTH}/compiled/_built_installer
 mkdir ${DEPTH}/compiled/_built_installer
