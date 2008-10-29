@@ -92,7 +92,8 @@ sbLibraryMigration.prototype = {
     var oldLibraryFile = dbParentDir.clone();
     oldLibraryFile.append(this._mOldLibrary.databaseGuid + ".db");
     
-    var newLibraryFile = oldLibraryFile.clone();
+    var newLibraryFile = dbParentDir.clone();
+    newLibraryFile.append(this._mOldLibrary.databaseGuid + ".db");    
    
     // Paranoia, make sure the new temp location for the old database doesn't exist
     var tempOldLibFile = dbParentDir.clone();
@@ -116,18 +117,22 @@ sbLibraryMigration.prototype = {
     // Remove all the TABLES from the new library.
     var dropTableQuery = this._createQuery();
     dropTableQuery.addQuery("begin");
-    dropTableQuery.addQuery("drop table if exists media_items;");
-    dropTableQuery.addQuery("drop table if exists media_list_types;");
-    dropTableQuery.addQuery("drop table if exists properties;");
-    dropTableQuery.addQuery("drop table if exists resource_properties;");
-    dropTableQuery.addQuery("drop table if exists library_metadata;");
-    dropTableQuery.addQuery("drop table if exists simple_media_lists;");
-    dropTableQuery.addQuery("drop table if exists library_media_item;");
-    dropTableQuery.addQuery("drop table if exists resource_properties_fts;");
+    dropTableQuery.addQuery("drop table if exists media_items");
+    dropTableQuery.addQuery("drop table if exists media_list_types");
+    dropTableQuery.addQuery("drop table if exists properties");
+    dropTableQuery.addQuery("drop table if exists resource_properties");
+    dropTableQuery.addQuery("drop table if exists library_metadata");
+    dropTableQuery.addQuery("drop table if exists simple_media_lists");
+    dropTableQuery.addQuery("drop table if exists library_media_item");
+    dropTableQuery.addQuery("drop table if exists resource_properties_fts");
+
     // Bug 13033 we don't want to drop this table, we'll ignore the create in the dump
     //dropTableQuery.addQuery("drop table if exists resource_properties_fts_all;");
-    var retval;
-    dropTableQuery.setAsyncQuery(true);
+
+    dropTableQuery.addQuery("commit");
+
+    var retval = {};
+    dropTableQuery.setAsyncQuery(false);
     dropTableQuery.execute(retval);
 
     // Read in the dumped out SQL from the dump text file
@@ -145,6 +150,8 @@ sbLibraryMigration.prototype = {
     var insertQuery = this._createQuery();
     var curQueryStr = "";
     var cont;
+ 
+    insertQuery.addQuery("begin");
     do {
       cont = inputStream.readLine(curLine);
       if (cont) {
@@ -154,7 +161,7 @@ sbLibraryMigration.prototype = {
         if (curQueryStr.charAt(curQueryStr.length - 1) == ";") {
           // check for the resource_properties_fts_all table and skip it.
           // The dump version doesn't work see bug 13033
-          if (!curQueryStr.match("INSERT INTO sqlite_master.*resource_properties_fts_all")) {                
+          if (!curQueryStr.match("INSERT INTO sqlite_master.*resource_properties_fts_all")) {
             insertQuery.addQuery(curQueryStr);
           }
           curQueryStr = "";
@@ -186,7 +193,7 @@ sbLibraryMigration.prototype = {
     this.stopNotificationTimer();
 
     // Cleanup
-    oldLibraryFile.remove(false);
+    tempOldLibFile.remove(false);
     oldLibDumpFile.remove(false);
   },
 
