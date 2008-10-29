@@ -306,15 +306,19 @@
           // what changes
           this._stopEditing(false);
 
+          // Get the currently selected node.  This may be unselected after
+          // renaming.
+          var selectedNode = sp.getSelectedNode();
+
           // Give the new name to the service pane.
           if (node) {
             sp.mService.onRename(node.id, newName);
           }
 
-          // Now try to highlight the current node as per onBrowserTabChange
+          // Now try to reselect the node
           try {
-            if (node) {
-              sp.highlightNode(node);
+            if (selectedNode) {
+              sp.highlightNode(selectedNode);
             }
           } catch (e) {
             Components.utils.reportError(e);
@@ -413,8 +417,10 @@
           aNode.parentNode.isOpen = true;
           // TODO: do we need to scroll to the row?
 
+          // Ensure the node is highlighted and start editing it
           var index = this.getRowForNode(aNode);
           if (index >= 0 && aNode.editable) {
+            this.highlightNode(aNode);
             this.mTree.startEditing(index, this.mTree.columns[0]);
             return true;
           }
