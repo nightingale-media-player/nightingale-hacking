@@ -936,6 +936,9 @@ sbGStreamerMediacore::OnGetDuration(PRUint64 *aDuration)
   nsresult rv;
   nsAutoMonitor lock(mMonitor);
 
+  if (!mPipeline)
+    return NS_ERROR_NOT_AVAILABLE;
+
   query = gst_query_new_duration(GST_FORMAT_TIME);
   res = gst_element_query(mPipeline, query);
 
@@ -962,6 +965,9 @@ sbGStreamerMediacore::OnGetPosition(PRUint64 *aPosition)
   gboolean res;
   nsresult rv;
   nsAutoMonitor lock(mMonitor);
+
+  if (!mPipeline)
+    return NS_ERROR_NOT_AVAILABLE;
 
   query = gst_query_new_position(GST_FORMAT_TIME);
   res = gst_element_query(mPipeline, query);
