@@ -1739,6 +1739,11 @@ sbMediacoreSequencer::GetNextItem(sbIMediaItem **aItem)
   NS_ENSURE_ARG_POINTER(aItem);
   
   nsAutoMonitor mon(mMonitor);
+  
+  if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) {
+    NS_IF_ADDREF(*aItem = mCurrentItem);
+    return NS_OK;
+  }
 
   // by default, if there's no current item, this doesn't throw, it returns a
   // null item instead.
