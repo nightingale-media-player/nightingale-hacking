@@ -66,7 +66,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
-#include <nsTHashTable.h>
+#include <nsTHashtable.h>
 #include <nsHashKeys.h>
 #include <nsID.h>
 #include <nsIInputStreamPump.h>
