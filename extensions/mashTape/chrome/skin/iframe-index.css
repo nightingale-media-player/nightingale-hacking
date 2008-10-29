@@ -14,17 +14,10 @@ body b {
 	padding-right: 5px;
 }
 
-div.entryDark {
-	padding: .5em 1.2em .5em 1em;
+div.row-even,
+div.row-odd {
+	padding: 5px 1.2em .5em 1em;
 	clear: both;
-	background-color: #eee;
-	cursor: pointer;
-	overflow: hidden;
-}
-div.entryLight {
-	padding: 5px 1.2em 5px 1em;
-	clear: both;
-	background-color: #fff;
 	cursor: pointer;
 	overflow: hidden;
 }
@@ -53,20 +46,13 @@ img.thumbnail {
 	float: left;
 	width: 80px;
 }
-div.entryDark .time,
-div.entryLight .time {
+div.row-even .time,
+div.row-odd .time {
 	font-size: 80%;
 	white-space: nowrap;
 }
 div.metadata-flash .time {
 	padding-left: 0;
-}
-
-div.entrySelected {
-	background-color: #a4cffa;
-}
-div.entrySelected a {
-	color: black;
 }
 
 img.legend {

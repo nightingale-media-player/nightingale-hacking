@@ -3,17 +3,13 @@ body {
 	font-family:Arial,Helvetica,FreeSans,sans-serif;
 	font-size:80.0%;
 	line-height:1.25;
-	color:#777;
-	background:#fff;
 	margin:10px;
 }
 a {
-	color:#1694d9;
 	text-decoration:none;
 	outline:0;
 }
 a:hover {
-	text-decoration:underline;
 }
 img {
 	border:0;

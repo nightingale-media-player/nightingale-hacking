@@ -98,7 +98,7 @@ mashTape.init = function(e) {
 	mashTape._prefBranch.addObserver("", mashTape.prefObserver, false);
 
 	// class names for our index listings (RSS & Flash)
-	mashTape.classes = ["entryLight", "entryDark"];
+	mashTape.classes = ["row-odd", "row-even"];
 
 	// Array to hold our mashTape providers
 	mashTape.providers = new Array();
@@ -1187,10 +1187,10 @@ mashTape.loadRssDetail = function(entry) {
 	var containingDiv = entry;
 	if (mashTape.selectedRss)
 		mashTape.selectedRss.className =
-			mashTape.selectedRss.className.replace("entrySelected", "");
-	while (containingDiv.className.indexOf("entry") != 0)
+			mashTape.selectedRss.className.replace("row-selected", "");
+	while (containingDiv.className.indexOf("row-") != 0)
 		containingDiv = containingDiv.parentNode;
-	containingDiv.className += " entrySelected";
+	containingDiv.className += " row-selected";
 	mashTape.selectedRss = containingDiv;
 
 	detailTitle.innerHTML = title;
@@ -1285,19 +1285,19 @@ mashTape.updateRssFeeds = function(provider, results) {
 		var inserted = false;
 		var nextClass = 0;
 		for (var j=0; j<divs.length; j++) {
-			if (divs[j].className.indexOf("entry") == -1)
+			if (divs[j].className.indexOf("row-") == -1)
 				continue;
 			divs[j].className = mashTape.classes[nextClass];
 			nextClass = Math.abs(nextClass-1);
 
 			var otherTimestamp = divs[j].getAttribute("mashTape-timestamp");
 			if (otherTimestamp < results[i].time && !inserted) {
-				if (divs[j].className == "entryDark") {
-					entryDiv.className = "entryDark";
-					divs[j].className = "entryLight";
+				if (divs[j].className == "row-even") {
+					entryDiv.className = "row-even";
+					divs[j].className = "row-odd";
 				} else {
-					entryDiv.className = "entryLight";
-					divs[j].className = "entryDark";
+					entryDiv.className = "row-odd";
+					divs[j].className = "row-even";
 				}
 				body.insertBefore(entryDiv, divs[j]);
 				inserted = true;
@@ -1627,10 +1627,10 @@ mashTape.loadFlashDetail = function(el) {
 	var containingDiv = el;
 	if (mashTape.selectedFlash)
 		mashTape.selectedFlash.className =
-			mashTape.selectedFlash.className.replace("entrySelected","");
-	while (containingDiv.className.indexOf("entry") != 0)
+			mashTape.selectedFlash.className.replace("row-selected","");
+	while (containingDiv.className.indexOf("row-") != 0)
 		containingDiv = containingDiv.parentNode;
-	containingDiv.className += " entrySelected";
+	containingDiv.className += " row-selected";
 	mashTape.selectedFlash = containingDiv;
 
 	// Add resize handler
@@ -1653,7 +1653,6 @@ mashTape.loadFlashDetail = function(el) {
 			newHeight = newWidth / ratio;
 		}
 
-		dump("delta: " + (frameWidth-newWidth) + "\n");
 		if (frameWidth - newWidth > 120) {
 			doc.getElementById("content").style.clear = "none";
 			doc.getElementById("author").style.display = "block";
@@ -1760,7 +1759,6 @@ mashTape.updateFlash = function(provider, results) {
 		.providerIcon;
 	for (var i=0; i<results.length; i++) {
 		var entryDiv = doc.createElement("div");
-		entryDiv.className = "entry";
 		var video = results[i];
 
 		entryDiv.setAttribute("mashTape-title", video.title);
@@ -1834,19 +1832,19 @@ mashTape.updateFlash = function(provider, results) {
 		var inserted = false;
 		var nextClass = 0;
 		for (var j=0; j<divs.length; j++) {
-			if (divs[j].className.indexOf("entry") == -1)
+			if (divs[j].className.indexOf("row-") == -1)
 				continue;
 			divs[j].className = mashTape.classes[nextClass];
 			nextClass = Math.abs(nextClass-1);
 
 			var otherTimestamp = divs[j].getAttribute("mashTape-timestamp");
 			if (otherTimestamp < results[i].time && !inserted) {
-				if (divs[j].className == "entryDark") {
-					entryDiv.className = "entryDark";
-					divs[j].className = "entryLight";
+				if (divs[j].className == "row-even") {
+					entryDiv.className = "row-even";
+					divs[j].className = "row-odd";
 				} else {
-					entryDiv.className = "entryLight";
-					divs[j].className = "entryDark";
+					entryDiv.className = "row-odd";
+					divs[j].className = "row-even";
 				}
 				body.insertBefore(entryDiv, divs[j]);
 				inserted = true;
