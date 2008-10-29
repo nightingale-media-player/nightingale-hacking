@@ -43,7 +43,5 @@ See SBJobUtils.jsm and sbIJobProgress.idl.
 }
 
 #jobprogress_title_desc {
-  text-align: center;
-  font: menu;
   font-weight: bold !important;
 }
