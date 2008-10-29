@@ -71,7 +71,6 @@
     function doOnUnload() {
       try {
         gMM.sequencer.next();
-        gMM.sequencer.play();
       }
       catch(e) {
         Cu.reportError(e);
