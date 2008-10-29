@@ -1653,7 +1653,8 @@ mashTape.loadFlashDetail = function(el) {
 			newHeight = newWidth / ratio;
 		}
 
-		if (frameWidth - newWidth > 100) {
+		dump("delta: " + (frameWidth-newWidth) + "\n");
+		if (frameWidth - newWidth > 120) {
 			doc.getElementById("content").style.clear = "none";
 			doc.getElementById("author").style.display = "block";
 		} else {
