@@ -1873,29 +1873,38 @@
         else if (this.tree.currentIndex != -1 &&
                  this.treeView.isEditable(row.value, col.value))
         {
-          // Remember the row and column
-          this.edit_row = row.value;
-          this.edit_col = col.value;
-          if ( this.tree.currentIndex == this._lastClickIndex  )
-          {
-            // Don't start editing immediately since a) we can't do it in 
-            // the middle of the event chain anyway without crashing, and 
-            // b) since this click may be part of a doubleclick, in which 
-            // case we want to play rather than edit.
-            var params = { that: this, row: this.edit_row, col: this.edit_col };
-            this._startEditingTimer = setTimeout( 
-              function() { params.that.startCellEditing( params.row, params.col ); },
-              this._maxDoubleClickTime);
+          let handleEdit = true;
+          
+          let isMac = window.navigator.platform.match(/^Mac/) == 'Mac';          
+          if((isMac && 'metaKey' in evt && evt.metaKey) ||
+             (!isMac && 'ctrlKey' in evt && evt.ctrlKey) ||
+             ('shiftKey' in evt && evt.shiftKey)) {
+            handleEdit = false;
+          }
+
+          if (handleEdit) {
+            // Remember the row and column
+            this.edit_row = row.value;
+            this.edit_col = col.value;
+            
+            if ( this.tree.currentIndex == this._lastClickIndex  ) {
+              // Don't start editing immediately since a) we can't do it in 
+              // the middle of the event chain anyway without crashing, and 
+              // b) since this click may be part of a doubleclick, in which 
+              // case we want to play rather than edit.
+              var params = { that: this, row: this.edit_row, col: this.edit_col };
+              this._startEditingTimer = setTimeout( 
+                function() { params.that.startCellEditing( params.row, params.col ); },
+                this._maxDoubleClickTime);
+            }
           }
         }
-
         // Always fire the event.
         fireEvent(this);
-        
       }
-    }
     
-    this._lastClickIndex = this.tree.currentIndex;
+      this._lastClickIndex = this.tree.currentIndex;
+    }
   }
   catch( err )
   {

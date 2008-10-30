@@ -35,7 +35,7 @@ interface sbIMediacoreSequenceGenerator;
 interface sbIMediaItem;
 interface sbIMediaListView;
 
-[scriptable, uuid(817ee262-9ca7-4cb4-a0a5-d554989a02d0)]
+[scriptable, uuid(5dd7abe3-e872-4f69-8d9d-125806dbd580)]
 interface sbIMediacoreSequencer : nsISupports
 {
   const unsigned long MODE_FORWARD    = 0;
@@ -93,9 +93,27 @@ interface sbIMediacoreSequencer : nsISupports
   /**
    * \brief Play a media list view as a sequence. Optionally provide the index
    *        of the item in the view that should play first in the sequence.
+   * \param aView The view you wish to play.
+   * \param aItemIndex The index of the item inside the view to play first.
+   *                   You may pass sbIMediacoreSequencer::AUTO_PICK_INDEX if
+   *                   you wish to have the sequencer pick the most appropriate
+   *                   start index for the sequence.
+   * \see AUTO_PICK_INDEX
    */
   void playView(in sbIMediaListView aView, 
-                [optional] in unsigned long aItemIndex);
+                [optional] in long long aItemIndex);
+
+  /**
+   * \brief Allow the sequencer to pick the most appropriate start index for a
+   *        sequence.
+   *
+   * The sequencer will pick a random index for the start of the sequence
+   * if shuffle is enabled. If shuffle is disabled, the sequencer will pick
+   * the first available index: 0.
+   *
+   * \see playView
+   */
+  const long AUTO_PICK_INDEX = -1;
 
   /**
    * \brief Play a single URL as a sequence.

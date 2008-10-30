@@ -917,7 +917,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
 }
 
 nsresult 
-sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
+sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
 {
   nsAutoMonitor mon(mMonitor);
 
@@ -931,9 +931,16 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
   PRUint32 length = 0;
   nsresult rv = mView->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   mPosition = 0;
-  mSequence.reserve(length);  
+  mSequence.reserve(length);
+  
+  // ensure view position is inside the bounds of the view.
+  if(aViewPosition && 
+     ((*aViewPosition >= length) || 
+      (*aViewPosition < sbIMediacoreSequencer::AUTO_PICK_INDEX))) {
+    *aViewPosition = 0;
+  }
 
   switch(mMode) {
     case sbIMediacoreSequencer::MODE_FORWARD:
@@ -980,16 +987,17 @@ sbMediacoreSequencer::RecalculateSequence(PRUint32 *aViewPosition /*= nsnull*/)
         mViewIndexToSequenceIndex[sequence[i]] = i;
 
         if(aViewPosition &&
+           *aViewPosition != sbIMediacoreSequencer::AUTO_PICK_INDEX &&
            *aViewPosition == sequence[i]) {
           // Swap the first position item with the item that was selected by the
           // user to play first.
-          PRUint32 index = mSequence[0];
+          PRUint32 viewIndex = mSequence[0];
           mSequence[0] = mSequence[i];
-          mSequence[i] = index;
+          mSequence[i] = viewIndex;
 
-          PRUint32 sequenceIndex = mViewIndexToSequenceIndex[index];
-          mViewIndexToSequenceIndex[index] = mViewIndexToSequenceIndex[mSequence[i]];
-          mViewIndexToSequenceIndex[mSequence[i]] = sequenceIndex;
+          PRUint32 sequenceIndex = mViewIndexToSequenceIndex[viewIndex];
+          mViewIndexToSequenceIndex[viewIndex] = mViewIndexToSequenceIndex[mSequence[0]];
+          mViewIndexToSequenceIndex[mSequence[0]] = sequenceIndex;
         }
       }
 
@@ -1337,7 +1345,7 @@ sbMediacoreSequencer::CoreHandleNextSetup()
 
 nsresult 
 sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView, 
-                                              PRUint32 *aViewPosition /* = nsnull */)
+                                              PRInt64 *aViewPosition /* = nsnull */)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aView);
@@ -1383,7 +1391,8 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
     rv = DispatchMediacoreEvent(event);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  else if(aViewPosition && 
+  else if(aViewPosition &&
+          *aViewPosition >= 0 &&
           mViewPosition != *aViewPosition &&
           mViewIndexToSequenceIndex.size() > *aViewPosition) {
     // We check to see if the view position is different than the current view
@@ -1554,7 +1563,8 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
 
     mNeedsRecalculate = PR_FALSE;
 
-    rv = RecalculateSequence(&mCurrentItemIndex);
+    PRInt64 currentItemIndex = mCurrentItemIndex;
+    rv = RecalculateSequence(&currentItemIndex);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIVariant> variant = sbNewVariant(mCurrentItem).get();
@@ -1633,7 +1643,8 @@ sbMediacoreSequencer::SetMode(PRUint32 aMode)
   if(mMode != aMode) {
     mMode = aMode;
 
-    nsresult rv = RecalculateSequence(&mViewPosition);
+    PRInt64 viewPosition = mViewPosition;
+    nsresult rv = RecalculateSequence(&viewPosition);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = UpdateShuffleDataRemote(aMode);
@@ -1808,7 +1819,7 @@ sbMediacoreSequencer::SetSequencePosition(PRUint32 aSequencePosition)
 
 NS_IMETHODIMP 
 sbMediacoreSequencer::PlayView(sbIMediaListView *aView, 
-                               PRUint32 aItemIndex)
+                               PRInt64 aItemIndex)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aView);

@@ -103,7 +103,7 @@ public:
   nsresult HandleErrorEvent(sbIMediacoreEvent *aEvent);
 
   // Sequence management
-  nsresult RecalculateSequence(PRUint32 *aViewPosition = nsnull);
+  nsresult RecalculateSequence(PRInt64 *aViewPosition = nsnull);
 
   // Fetching of items, item manipulation.
   nsresult GetItem(const sequence_t &aSequence,
@@ -117,7 +117,7 @@ public:
 
   // Set view with optional view position
   nsresult SetViewWithViewPosition(sbIMediaListView *aView, 
-                                   PRUint32 *aViewPosition = nsnull);
+                                   PRInt64 *aViewPosition = nsnull);
 
   // Timer handlers
   nsresult HandleSequencerTimer(nsITimer *aTimer);

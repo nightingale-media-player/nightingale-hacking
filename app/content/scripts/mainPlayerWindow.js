@@ -367,7 +367,18 @@ var gSongbirdPlayerWindow = {
         var mm = 
           Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                            .getService(Ci.sbIMediacoreManager);
-        mm.sequencer.playView(view, Math.max(view.selection.currentIndex, 0));
+         
+        var index = view.selection.currentIndex;
+        
+        // If same view as current view on sequencer and nothing
+        // selected in the view, use sequencer view position.
+        if((index == -1) && (mm.sequencer.view == view)) {
+          index = mm.sequencer.viewPosition;
+        }
+        
+        mm.sequencer.playView(view, 
+                              Math.max(index, 
+                                       Ci.sbIMediacoreSequencer.AUTO_PICK_INDEX));
         
         // Since we've handled this play event, prevent any fallback action from
         // occurring.
