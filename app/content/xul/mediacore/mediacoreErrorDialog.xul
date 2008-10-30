@@ -39,11 +39,10 @@
  title="&mediacore.error.title;"
  buttons="accept"
  type="songbird"
- hidechrome="true"
  onload="doOnLoad();"
  onunload="doOnUnload();" 
  ondialogaccept="onExit();"
- width="450"
+ width="500"
  >
   <description id="mediacore_error_desc" />
   
