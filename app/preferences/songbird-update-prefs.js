@@ -89,7 +89,9 @@ pref("extensions.ignoreMTimeChanges", false);
 // Whitelist addons, translate, and Mozilla addons.
 pref("xpinstall.whitelist.add", "addons.songbirdnest.com");
 pref("xpinstall.whitelist.add.0", "translate.songbirdnest.com");
-pref("xpinstall.whitelist.add.1", "addons.mozilla.org");
+
+// We may want to whitelist addons.mozilla.org in the future.
+//pref("xpinstall.whitelist.add.1", "addons.mozilla.org");
 
 pref("songbird.recommended_addons.update.enabled", true);
 // Interval: Time in seconds between checks for a new add-on bundle.
