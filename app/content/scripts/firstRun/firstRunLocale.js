@@ -525,8 +525,8 @@ firstRunLocaleSvc.prototype = {
     var isTargetLocaleAvailable = false;
     for (var i = 0; i < bundleExtensionCount; i++) {
       // Get the next locale in the bundle.
-      var localeName = this._localeBundle.getExtensionAttribute(i, "name");
-      localeName = localeName.split(" ")[0];
+      var localeName = this._localeBundle.getExtensionAttribute(i,
+                                                                "languageTag");
 
       // If the locale is the target locale, mark it to be installed.
       // Otherwise, mark it to not be installed.
