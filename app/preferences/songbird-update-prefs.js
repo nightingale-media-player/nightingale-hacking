@@ -86,9 +86,10 @@ pref("extensions.blocklist.url", "https://addons.songbirdnest.com/blocklist/1/%A
 pref("extensions.blocklist.detailsURL", "https://addons.songbirdnest.com/blocklist/");
 pref("extensions.ignoreMTimeChanges", false);
 
-// We whitelist addons and translate
+// Whitelist addons, translate, and Mozilla addons.
 pref("xpinstall.whitelist.add", "addons.songbirdnest.com");
 pref("xpinstall.whitelist.add.0", "translate.songbirdnest.com");
+pref("xpinstall.whitelist.add.1", "addons.mozilla.org");
 
 pref("songbird.recommended_addons.update.enabled", true);
 // Interval: Time in seconds between checks for a new add-on bundle.
