@@ -546,7 +546,7 @@ RESHACKER_BIN = $(CYGWIN_WRAPPER) $(topsrcdir)/tools/win32/reshacker/ResHacker.e
 ifeq (,$(SONGBIRD_OFFICIAL))
 ICON_FILE = $(topsrcdir)/installer/windows/songbird_nightly.ico
 else
-ICON_FILE = $(topsrcidr)/installer/windows/songbird.ico
+ICON_FILE = $(topsrcdir)/installer/windows/songbird.ico
 endif
 RESHACKER_OVERWRITE_ICON = $(RESHACKER_BIN) -addoverwrite $(sb_executable_dir)/$(1), $(sb_executable_dir)/$(1), $(ICON_FILE), icongroup, $(2), 1033
 RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e 's/(VALUE "$1", ")[^"]*(")/$${1}$(2)$${2}/' songbird.rc
