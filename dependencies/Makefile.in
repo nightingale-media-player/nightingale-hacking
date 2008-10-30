@@ -265,13 +265,8 @@ GST_PLUGINS_BAD_NAMES := gstaiffparse \
                         gstrtpmanager \
                         gstsdpelem \
                         gstselector \
+                        gstmozillasrc \
                         $(NULL)
-
-# We don't build this plugin on linux 64-bit yet, because we need to rebuild
-# XR first.
-ifneq (linux_x86_64,$(SB_PLATFORM)_$(SB_ARCH))
-  GST_PLUGINS_BAD_NAMES += gstmozillasrc
-endif
 
 ifeq (windows,$(SB_PLATFORM))
 
