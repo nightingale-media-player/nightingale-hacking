@@ -1,0 +1,22 @@
+<!ENTITY mtprefs.general "Allgemein">
+<!ENTITY mtprefs.info "Künstlerinformation">
+<!ENTITY mtprefs.rss "News">
+<!ENTITY mtprefs.photo "Fotos">
+<!ENTITY mtprefs.flash "Videos">
+<!ENTITY mtprefs.defaulttab "Voreinstellungs-Registerkarte">
+<!ENTITY mtprefs.defaulttab.help "Wenn MashTape startet:">
+<!ENTITY mtprefs.show.info "Künstlerinformation anzeigen">
+<!ENTITY mtprefs.show.rss "News anzeigen">
+<!ENTITY mtprefs.show.photo "Fotos anzeigen">
+<!ENTITY mtprefs.show.flash "Videos anzeigen">
+<!ENTITY mtprefs.autohide "Automatisch ausblenden">
+<!ENTITY mtprefs.autohide.help "Die DisplayPane von MashTape automatisch ausblenden, wenn eine Website angezeigt wird">
+<!ENTITY mtprefs.services "Dienste">
+<!ENTITY mtprefs.getmore "Mehr Dienste von MashTape erhalten">
+<!ENTITY mtprefs.tab.info "Einstellungen für die Künstlerinformations-Registerkarte">
+<!ENTITY mtprefs.tab.rss "Einstellungen für die News-Registerkarte">
+<!ENTITY mtprefs.tab.photo "Einstellungen für die Foto-Registerkarte">
+<!ENTITY mtprefs.tab.flash "Einstellungen für die Video-Registerkarte">
+<!ENTITY mtprefs.tab.help "Diese Registerkarte in MashTape anzeigen.">
+<!ENTITY mtprefs.single "Dieser Ausschnitt zeigt Inhalte eines Dienstes an. Bitte wählen Sie einen untensthehenden Dienst aus.">
+<!ENTITY mtprefs.multiple "Dieser Ausschnitt zeigt Inhlate von mehreren Diensten aus. Bitte wählen Sie sie aus der untenstehenden Liste.">
