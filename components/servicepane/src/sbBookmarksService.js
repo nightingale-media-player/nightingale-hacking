@@ -562,7 +562,7 @@ function sbBookmarks_fillNewItemMenu(aNode, aContextMenu, aParentWindow) {
     aContextMenu.appendChild(menuitem);
   }
 
-  add('file.folder', 'menu.file.folder', 'menu.file.folder.accesskey', 'doMenu("file.folder")');
+  add('file.folder', 'menu.servicepane.file.folder', 'menu.servicepane.file.folder.accesskey', 'doMenu("file.folder")');
   */
 }
 

@@ -201,9 +201,19 @@ function sbLibraryServicePane_fillNewItemMenu(aNode, aContextMenu, aParentWindow
     aContextMenu.appendChild(menuitem);
   }
 
-  add('menuitem_file_new', 'menu.file.new', 'menu.file.new.accesskey', 'doMenu("menuitem_file_new", event)');
-  add('file.smart', 'menu.file.smart', 'menu.file.smart.accesskey', 'doMenu("menuitem_file_smart")', "alt");
-  add('menuitem_file_remote', 'menu.file.remote', 'menu.file.remote.accesskey', 'doMenu("menuitem_file_remote")');
+  add('menuitem_file_new',
+      'menu.servicepane.file.new',
+      'menu.servicepane.file.new.accesskey',
+      'doMenu("menuitem_file_new", event)');
+  add('file.smart',
+      'menu.servicepane.file.smart',
+      'menu.servicepane.file.smart.accesskey',
+      'doMenu("menuitem_file_smart")',
+      "alt");
+  add('menuitem_file_remote',
+      'menu.servicepane.file.remote',
+      'menu.servicepane.file.remote.accesskey',
+      'doMenu("menuitem_file_remote")');
 }
 
 sbLibraryServicePane.prototype.onSelectionChanged =
