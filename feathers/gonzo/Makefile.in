@@ -32,14 +32,19 @@ include $(DEPTH)/build/autodefs.mk
 EXTENSION_UUID = gonzo@songbirdnest.com
 EXTENSION_DIR  = $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
 
-EXTENSION_VER := $(SB_MILESTONE)
-EXTENSION_MIN_VER := 1.1.0pre
-EXTENSION_MAX_VER := 1.1.0rc1
+EXTENSION_VER = $(SB_MILESTONE)
+EXTENSION_MIN_VER = 1.1.0pre
+EXTENSION_MAX_VER = 1.1.0rc1
 
 JAR_MANIFEST = jar.mn
 SONGBIRD_PP_DIR = $(EXTENSION_DIR)
 SONGBIRD_PP_RESOURCES = $(srcdir)/install.rdf.in \
                         $(NULL)
+
+RESOURCES_PPFLAGS = -DEXTENSION_VER=$(EXTENSION_VER) \
+                    -DEXTENSION_MIN_VER=$(EXTENSION_MIN_VER) \
+                    -DEXTENSION_MAX_VER=$(EXTENSION_MAX_VER) \
+                    $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 
