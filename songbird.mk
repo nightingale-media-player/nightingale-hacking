@@ -239,3 +239,5 @@ build : $(CONFIGSTATUS)
 	$(BUILD_CMD)
 
 .PHONY : all debug songbird_output run_autoconf create_dist_dir run_configure clean clobber build
+
+#end
