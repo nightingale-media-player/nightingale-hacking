@@ -42,9 +42,9 @@ EXTENSION_DIR  = .
 EXTENSION_STAGE_DIR = ./.xpistage
 XPI_NAME = $(EXTENSION_NAME)
 
-EXTENSION_VER := 2.0
-EXTENSION_MIN_VER := 0.7pre
-EXTENSION_MAX_VER := 1.0pre
+EXTENSION_VER := 2.0.0
+EXTENSION_MIN_VER := 1.1.0pre
+EXTENSION_MAX_VER := 1.1.0rc1
 
 # For now we are going to continue supporting Rubberducky.
 # This probably won't be the case for 1.0
