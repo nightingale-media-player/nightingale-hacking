@@ -195,16 +195,29 @@ all : songbird_output build
 
 debug : all
 
-ifeq (,$(wildcard $(TOPSRCDIR)/dependencies/vendor/mozbrowser))
-SVN_GET_URL=$(shell svn info $(1) | grep '^URL:' | cut -d ' ' -f 2-)
-SVNBASE=$(call SVN_GET_URL,$(TOPSRCDIR))
-ifneq (,$(SVNBASE))
-getmozbrowser:
-	svn co $(SVNBASE:client/trunk=vendor/trunk/mozbrowser) $(TOPSRCDIR)/dependencies/vendor/mozbrowser
+SB_MOZBROWSER_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozbrowser
 
+ifeq (,$(wildcard $(SB_MOZBROWSER_DIR)))
+  # Seems weird, but we do this so people can get this directory in other ways
+  # (tarballs/git/whatever)
+  SVNBASE := $(shell svn info $(TOPSRCDIR) | grep '^URL:' | cut -d ' ' -f 2-)
+ifneq (,$(SVNBASE))
+  SVN_MOZBROWSER_URL := $(shell echo $(SVNBASE) | perl -pe 's@(.*)/client/(.*)@\1/vendor/\2/mozbrowser@')
   SB_NEW_MOZBROWSER_DEP = getmozbrowser
 endif # no SVNBASE
+else
+  SB_NEW_MOZBROWSER_DEP = updatemozbrowser
 endif # need to pull mozbrowser
+
+# TODO: add a variable users can define do their own "version" of "svn up"
+# (Looking in Mook's general direction... ;-)
+updatemozbrowser:
+ifneq (,$(wildcard $(SB_MOZBROWSER_DIR)/.svn))
+	svn up $(SB_MOZBROWSER_DIR)
+endif
+
+getmozbrowser:
+	svn co $(SVN_MOZBROWSER_URL) $(SB_MOZBROWSER_DIR)
 
 $(CONFIGSTATUS) : $(CONFIGURE) $(SB_NEW_MOZBROWSER_DEP)
 	$(CREATE_OBJ_DIR_CMD)
