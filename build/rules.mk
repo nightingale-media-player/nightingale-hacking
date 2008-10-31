@@ -1477,15 +1477,10 @@ EXTENSION_DIR  = $(SONGBIRD_OBJDIR)/xpi-stage/$(EXTENSION_NAME)
 endif
 
 ifdef EXTENSION_VER
-ifndef SONGBIRD_OFFICIAL
-ifndef SONGBIRD_NIGHTLY
-EXTENSION_VER := $(EXTENSION_VER)+dev
+ifeq ($(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY),_)
+  EXTENSION_VER := $(EXTENSION_VER)+dev
 else
-# the minus makes it alpha in the comparator and less than an official
-# build of the same base version.
-CURRENT_DATE := $(shell date +%Y%m%d)
-EXTENSION_VER := $(EXTENSION_VER)-$(CURRENT_DATE)
-endif
+  EXTENSION_VER := $(EXTENSION_VER).$(SB_BUILD_NUMBER)
 endif
 endif # EXTENSION_VER
 
