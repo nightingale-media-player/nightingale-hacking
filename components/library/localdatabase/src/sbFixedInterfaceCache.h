@@ -79,7 +79,7 @@ public:
    */
   void Put(KeyType aKey, Interface * aValue)
   {
-    NS_ADDREF(aValue);
+    NS_IF_ADDREF(aValue);
     if (mCurrent == 0)
       mCurrent = mSize - 1;
     else
