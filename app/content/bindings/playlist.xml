@@ -2975,7 +2975,7 @@
           {
             primaryCore.pause();
           } else {
-            if (primaryCore) {
+            if (primaryCore && status.state == sbIMediacoreStatus.STATUS_PAUSED) {
               primaryCore.play();
             } else {
               mm.sequencer.playView(this.mediaListView,
