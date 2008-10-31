@@ -585,6 +585,27 @@ var AlbumArt = {
   },
 
   /**
+   * \brief Check if the media item is a local file or not.
+   * \param aMediaItem - sbIMediaItem to check
+   * \return true if the media item is a local file.
+   */
+  checkIsLocal: function AlbumArt_checkIsLocal(aMediaItem) {
+    var contentURL = aMediaItem.getProperty(SBProperties.contentURL);
+    var ioService = Cc["@mozilla.org/network/io-service;1"]
+                      .getService(Ci.nsIIOService);
+    var uri = null;
+    try {
+      uri = ioService.newURI(contentURL, null, null);
+    } catch (err) {
+      Cu.reportError("AlbumArt: Unable to convert to URI: [" +
+                     contentURL + "] " + err);
+      return false;
+    }
+    
+    return (uri instanceof Ci.nsIFileURL);
+  },
+
+  /**
    * \brief This will set the currently playing items image.
    * \param aNewImageUrl - new string url of file to set cover to on the item.
    */
@@ -596,16 +617,19 @@ var AlbumArt = {
     aMediaItem.setProperty(SBProperties.primaryImageURL, aNewImageUrl);
     AlbumArt.changeNowPlaying(aNewImageUrl);
     
-    var propArray = ArrayConverter.stringEnumerator([SBProperties.primaryImageURL]);
-    var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
-                            .getService(Ci.sbIFileMetadataService);      
-    try {
-      var job = metadataService.write([aMediaItem], propArray);
-    
-      SBJobUtils.showProgressDialog(job, window);
-    } catch (e) {
-      // Job will fail if writing is disabled by the pref
-      Components.utils.reportError(e);
+    // Only write the image if it is local
+    if (this.checkIsLocal(aMediaItem)) {
+      var propArray = ArrayConverter.stringEnumerator([SBProperties.primaryImageURL]);
+      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                              .getService(Ci.sbIFileMetadataService);      
+      try {
+        var job = metadataService.write([aMediaItem], propArray);
+      
+        SBJobUtils.showProgressDialog(job, window);
+      } catch (e) {
+        // Job will fail if writing is disabled by the pref
+        Components.utils.reportError(e);
+      }
     }
   },
 
@@ -681,7 +705,9 @@ var AlbumArt = {
       var oldImage = item.getProperty(SBProperties.primaryImageURL);
       if (oldImage != aNewImageUrl) {
         item.setProperty(SBProperties.primaryImageURL, aNewImageUrl);
-        mediaItemArray.appendElement(item, false);
+        if (this.checkIsLocal(item)) {
+          mediaItemArray.appendElement(item, false);
+        }
       }
     }
     
