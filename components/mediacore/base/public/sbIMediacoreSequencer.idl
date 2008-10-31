@@ -124,6 +124,11 @@ interface sbIMediacoreSequencer : nsISupports
    * \brief Play the sequence.
    */
   void play();
+  
+  /**
+   * \brief Stop the sequence.
+   */
+  void stop();
 
   /**
    * \brief Go to the next item in the sequence.

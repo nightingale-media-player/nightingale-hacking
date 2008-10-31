@@ -149,6 +149,7 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mStopped(PR_FALSE),
     mBuffering(PR_FALSE),
     mIsLive(PR_FALSE),
+    mHasSeenError(PR_FALSE),
     mTargetState(GST_STATE_NULL)
 {
   NS_WARN_IF_FALSE(mBaseEventTarget, 
@@ -361,6 +362,7 @@ sbGStreamerMediacore::DestroyPipeline()
   mStopped = PR_FALSE;
   mBuffering = PR_FALSE;
   mIsLive = PR_FALSE;
+  mHasSeenError = PR_FALSE;
   mTargetState = GST_STATE_NULL;
 
   return NS_OK;
@@ -726,15 +728,19 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
-  // Create and dispatch an error event. 
-  NS_NEWXPCOM(error, sbMediacoreError);
-  NS_ENSURE_TRUE(error, /* void */);
-
   gst_message_parse_error(message, &gerror, &debugMessage);
-  CopyUTF8toUTF16(nsDependentCString(gerror->message), errormessage);
-  error->Init(0, errormessage); // XXX: Use a proper error code once they exist
+  
+  if (!mHasSeenError) {
+    // Create and dispatch an error event. 
+    NS_NEWXPCOM(error, sbMediacoreError);
+    NS_ENSURE_TRUE(error, /* void */);
 
-  DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);
+    CopyUTF8toUTF16(nsDependentCString(gerror->message), errormessage);
+    error->Init(0, errormessage); // XXX: Use a proper error code once they exist
+
+    DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);
+    mHasSeenError = PR_TRUE;
+  }
 
   // Build an error message to output to the console 
   // TODO: This is currently not localised (but we're probably not setting

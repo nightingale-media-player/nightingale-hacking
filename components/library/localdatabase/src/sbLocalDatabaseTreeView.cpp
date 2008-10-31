@@ -2310,12 +2310,14 @@ sbLocalDatabaseTreeView::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
   NS_ENSURE_SUCCESS(rv, rv);
 
   switch(eventType) {
+    case sbIMediacoreEvent::STREAM_START:
     case sbIMediacoreEvent::TRACK_CHANGE: {
       rv = OnTrackChange(aEvent);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
 
+    case sbIMediacoreEvent::STREAM_END:
     case sbIMediacoreEvent::STREAM_STOP: {
       rv = OnStop();
       NS_ENSURE_SUCCESS(rv, rv);

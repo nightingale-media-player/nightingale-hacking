@@ -35,6 +35,7 @@
 #include <nsIURL.h>
 #include <nsIVariant.h>
 #include <nsIWeakReferenceUtils.h>
+#include <nsIWindowWatcher.h>
 
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
@@ -61,6 +62,7 @@
 #include <sbIMediaList.h>
 #include <sbIPrompter.h>
 #include <sbIPropertyArray.h>
+#include <sbIWindowWatcher.h>
 
 #include <sbMediacoreEvent.h>
 #include <sbProxiedComponentManager.h>
@@ -900,17 +902,24 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
 
   // If there's an error object, we'll show the contents of it to the user 
   if(error) {
-    nsCOMPtr<sbIPrompter> prompter = 
-      do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+    nsCOMPtr<nsIDOMWindow> parentWindow;
+    
+    // Get the window watcher service.
+    nsCOMPtr<nsIWindowWatcher> windowWatcher = 
+      do_GetService("@mozilla.org/embedcomp/window-watcher;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-
+    
+    rv = windowWatcher->GetActiveWindow(getter_AddRefs(parentWindow));
+    NS_ENSURE_SUCCESS(rv, rv);
+        
     nsCOMPtr<nsIDOMWindow> domWindow;
-    prompter->OpenDialog(nsnull, 
-                         NS_LITERAL_STRING(MEDIACORE_ERROR_DIALOG_URI), 
-                         NS_LITERAL_STRING(MEDIACORE_ERROR_DIALOG_ID),
-                         NS_LITERAL_STRING(""),
-                         error,
-                         getter_AddRefs(domWindow));
+    rv = windowWatcher->OpenWindow(parentWindow, 
+                                   MEDIACORE_ERROR_DIALOG_URI, 
+                                   nsnull,
+                                   "centerscreen,chrome,modal,titlebar",
+                                   error,
+                                   getter_AddRefs(domWindow));
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -1919,6 +1928,35 @@ sbMediacoreSequencer::Play()
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbMediacoreSequencer::Stop() {
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  
+  mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+  
+  nsresult rv = StopSequenceProcessor();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = UpdatePlayStateDataRemotes();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsAutoMonitor mon(mMonitor);
+  
+  if(mPlaybackControl) {
+    rv = mPlaybackControl->Stop();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't stop core.");
+  }
+  
+  if(mSeenPlaying) {
+    rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  mSeenPlaying = PR_FALSE;
+  
+  return NS_OK;
+}
+
 NS_IMETHODIMP 
 sbMediacoreSequencer::Next()
 {
@@ -2235,7 +2273,6 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
     case sbIMediacoreEvent::STREAM_END: {
       mon.Enter();
-
       /* Track done, continue on to the next, if possible. */
       if(mStatus == sbIMediacoreStatus::STATUS_PLAYING &&
          !mIsWaitingForPlayback) {
@@ -2245,8 +2282,8 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
         if(NS_FAILED(rv) ||
            mSequence.empty()) {
-          mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
+          mStatus = sbIMediacoreStatus::STATUS_STOPPED;
           mon.Exit();
 
           rv = StopSequenceProcessor();
@@ -2255,7 +2292,6 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
           rv = UpdatePlayStateDataRemotes();
           NS_ENSURE_SUCCESS(rv, rv);
         }
-
         mon.Exit();
 
         rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
@@ -2269,6 +2305,10 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     break;
 
     case sbIMediacoreEvent::STREAM_STOP: {
+#if defined(DEBUG)
+      printf("[sbMediacoreSequencer] - Hard stop requested.\n");
+#endif
+      
       mon.Enter();
       /* If we're explicitly stopped, don't continue to the next track,
        * just clean up... */

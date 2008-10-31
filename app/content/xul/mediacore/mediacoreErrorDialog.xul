@@ -37,14 +37,15 @@
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="mediacore_error"
  title="&mediacore.error.title;"
- buttons="accept"
+ buttons="cancel,accept"
  type="songbird"
  onload="doOnLoad();"
- onunload="doOnUnload();" 
- ondialogaccept="onExit();"
+ ondialogaccept="return doNext();"
+ ondialogcancel="return doStop();"
  width="500"
- >
-  <description id="mediacore_error_desc" />
+ height="200"
+>
+  <description flex="1" id="mediacore_error_desc" />
   
   <!-- Import the Songbird services code. -->
   <script type="application/x-javascript"
@@ -58,6 +59,7 @@
           var mediacoreError = 
             window.arguments[0].QueryInterface(Ci.sbIMediacoreError);
           var desc = document.getElementById("mediacore_error_desc");
+          
           desc.textContent = mediacoreError.message;
           window.sizeToContent();
         }
@@ -67,12 +69,23 @@
       }
     }
     
-    function doOnUnload() {
+    function doNext() {
       try {
         gMM.sequencer.next();
       }
       catch(e) {
         Cu.reportError(e);
+      }
+      
+      onExit();
+    }
+    
+    function doStop() {
+      try {
+        gMM.sequencer.stop();
+      }
+      catch(err) {
+        Cu.reportError(err);
       }
     }
   ]]>

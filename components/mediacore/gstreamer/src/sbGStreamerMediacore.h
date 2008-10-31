@@ -158,6 +158,10 @@ protected:
   // Track if we are using a live pipeline
   PRBool mIsLive;
 
+  // If we've seen an error for the current mediacore, suppress further
+  // error messages.
+  PRBool mHasSeenError;
+
   // The GstState we want to reach (not necessarily the current pipeline
   // pending state)
   GstState mTargetState;
