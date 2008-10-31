@@ -35,9 +35,12 @@
 #include <nsIInputStream.h>
 #include <nsIInterfaceRequestor.h>
 #include <nsIInterfaceRequestorUtils.h>
+#include <nsIMIMEService.h>
 #include <nsIStringStream.h>
 #include <nsISupportsPrimitives.h>
 #include <nsITransferable.h>
+#include <nsIURL.h>
+#include <nsNetUtil.h>
 #include <nsStringAPI.h>
 
 #include "nsWidgetsCID.h"
@@ -65,68 +68,139 @@ sbClipboardHelper::CopyImageFromClipboard(nsAString  &aMimeType,
   
   *aDataLen = 0;
   
-  nsCOMPtr<nsIClipboard> nsClipboard = do_GetService("@mozilla.org/widget/clipboard;1", &rv);
+  nsCOMPtr<nsIClipboard> nsClipboard =
+                         do_GetService("@mozilla.org/widget/clipboard;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsITransferable> xferable = do_CreateInstance("@mozilla.org/widget/transferable;1", &rv);
+  
+  nsCOMPtr<nsITransferable> xferable =
+                  do_CreateInstance("@mozilla.org/widget/transferable;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  const int imageTypesLen = 3;
-  const char *imageTypes[3] = { "image/png",
-                                "image/jpg",
-                                "image/jpeg" };
-
-  for (int iIndex = 0; iIndex < imageTypesLen; iIndex++) {
-    rv = xferable->AddDataFlavor(imageTypes[iIndex]);
+  /*
+   * Load up the flavors we support
+   */
+  const char *flavorTypes[] = { kPNGImageMime,
+                                kJPEGImageMime,
+                                "image/jpeg",
+                                kGIFImageMime,
+                                kFileMime,
+                                kUnicodeMime };
+  const int flavorTypesLen = NS_ARRAY_LENGTH(flavorTypes);
+  for (int iIndex = 0; iIndex < flavorTypesLen; iIndex++) {
+    rv = xferable->AddDataFlavor(flavorTypes[iIndex]);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
+  // Check the clipboard if it has one of those flavors
   PRBool clipboardHasData = PR_FALSE;
-  rv = nsClipboard->HasDataMatchingFlavors(imageTypes,
-                                           imageTypesLen,
+  rv = nsClipboard->HasDataMatchingFlavors(flavorTypes,
+                                           flavorTypesLen,
                                            nsIClipboard::kGlobalClipboard,
                                            &clipboardHasData);
   NS_ENSURE_SUCCESS(rv, rv);
   
   if (clipboardHasData) {
+    // Grab the data as a nsITransferable
     rv = nsClipboard->GetData(xferable, nsIClipboard::kGlobalClipboard);
     NS_ENSURE_SUCCESS(rv, rv);
     
     nsCOMPtr<nsISupports> clipboardData;
-    char* clipboardDataFlavor = 0;
+    char *clipboardDataFlavor = 0;
     PRUint32 clipboardDataLen = 0;
 
     rv = xferable->GetAnyTransferData(&clipboardDataFlavor,
                                       getter_AddRefs(clipboardData),
                                       &clipboardDataLen);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Once we get a stream we can grab the data
+    nsCOMPtr<nsIInputStream> dataStream;
     
-    if(strcmp(clipboardDataFlavor, "image/jpg")) {
-      aMimeType.AssignLiteral(clipboardDataFlavor);
+    // First check if this is a file/url flavor
+    if (!strcmp(clipboardDataFlavor, kUnicodeMime) ||
+        !strcmp(clipboardDataFlavor, kFileMime)) {
+
+      // This is a file we are copying from
+      nsCOMPtr<nsILocalFile> imageFile;
+      if (!strcmp(clipboardDataFlavor, kUnicodeMime)) {
+        nsAutoString url;
+        nsCOMPtr<nsISupportsString> stringData(do_QueryInterface(clipboardData));
+        if (stringData) {
+          stringData->GetData(url);
+        }
+        
+        if (url.IsEmpty()) {
+          // Nothing to work with so abort
+          return NS_OK;
+        }
+        
+        imageFile = do_CreateInstance("@mozilla.org/file/local;1", &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = imageFile->InitWithPath(url);
+        if (NS_FAILED(rv)) {
+          return NS_OK;
+        }
+      } else {
+        // it already is a file :)
+        imageFile = do_QueryInterface(clipboardData);
+        if (!imageFile) {
+          return NS_OK;
+        }
+      }
+      
+      // Get the mime type from the file
+      nsCOMPtr<nsIMIMEService> mimeService =
+                                do_CreateInstance("@mozilla.org/mime;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsCAutoString mimeType;
+      rv = mimeService->GetTypeFromFile(imageFile, mimeType);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      aMimeType.Assign(NS_ConvertUTF8toUTF16(mimeType));
+
+      // Now set up an input stream for the file
+      nsCOMPtr<nsIFileInputStream> fileStream =
+            do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = fileStream->Init(imageFile, 0x01, 0600, 0);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      dataStream = do_QueryInterface(fileStream, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    } else {
+      // Assume it is a image then
+      // Here we have to force the image/jpg mime type as image/jpeg because
+      // the windows clipboard does not like image/jpg. The other systems work
+      // either way.
+      if(strcmp(clipboardDataFlavor, kJPEGImageMime)) {
+        aMimeType.AssignLiteral(clipboardDataFlavor);
+      }
+      else {
+        aMimeType.AssignLiteral("image/jpeg");
+      }
+      
+      dataStream = do_QueryInterface(clipboardData, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
-    else {
-      aMimeType.AssignLiteral("image/jpeg");
-    }
-    
-    
-    nsCOMPtr<nsIInputStream> clipboardDataStream = do_QueryInterface(clipboardData,
-                                                                     &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Now read in the data from the stream
     PRUint32 dataSize;
-    rv = clipboardDataStream->Available(&dataSize);
+    rv = dataStream->Available(&dataSize);
     NS_ENSURE_SUCCESS(rv, rv);
     
-    nsCOMPtr<nsIBinaryInputStream> imageDataStream = do_CreateInstance(kBinaryInputStream,
-                                                                       &rv);
+    nsCOMPtr<nsIBinaryInputStream> imageDataStream =
+                                    do_CreateInstance(kBinaryInputStream, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = imageDataStream->SetInputStream(clipboardDataStream);
+    
+    rv = imageDataStream->SetInputStream(dataStream);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = imageDataStream->ReadByteArray(dataSize, aData);
     NS_ENSURE_SUCCESS(rv, rv);
     *aDataLen = dataSize;
-  } else {
-    *aDataLen = 0;
-    *aData = nsnull;
   }
 
   return NS_OK;
@@ -197,3 +271,4 @@ sbClipboardHelper::PasteImageToClipboard(const nsACString &aMimeType,
 
   return clipboard->SetData(xferable, nsnull, nsIClipboard::kGlobalClipboard);
 }
+
