@@ -451,6 +451,7 @@
             }
             if (tab) {
               tab.linkedBrowser.loadURIWithFlags(aURI, aFlags, aReferrerURI, aCharset);
+              this.selectedTab = tab;
             } else {
               tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
             }
@@ -663,15 +664,15 @@
       <method name="notifyTabContentChange">
         <body>
         <![CDATA[
+          // Update the loading status of the web-toolbar items:
+          this.loading = this.mIsBusy;
+          
           var event = document.createEvent("Events");
           event.initEvent("TabContentChange", true, false);
           this.dispatchEvent(event);
           
           this._updateFindbarState();
-          
-          // Update the loading status of the web-toolbar items:
-          this.loading = this.mIsBusy;
-          
+                    
           document.commandDispatcher.updateCommands("tabchange");
           
           // Update the edit menu since the content has changed in the tab:

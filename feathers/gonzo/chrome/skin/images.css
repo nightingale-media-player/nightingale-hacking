@@ -605,16 +605,15 @@ treechildren::-moz-tree-twisty(open) {
   list-style-image: url("chrome://songbird/skin/menu/dropmarker.png");
   border:none;
 }
-.searchbar-engine-button[addengines="true"] > stack > hbox > .searchbar-dropmarker-image {
+.searchbar-engine-button[addengines="true"] > .searchbar-dropmarker-image {
   list-style-image: url("chrome://songbird/skin/nav-bar/button-add-search-service.png");
 } 
 .searchbar-engine-button[addengines="true"] {
   background-image:url('chrome://songbird/skin/base-elements/bg-button-highlighted.png');
 }
-searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-box > .search-go-button-stack > .search-go-button {
+searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-textbox > .search-go-container > .search-go-button {
   list-style-image: url("chrome://songbird/skin/nav-bar/button-clear-search.png");
 }
-
 
 
 

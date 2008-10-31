@@ -306,22 +306,9 @@
           // what changes
           this._stopEditing(false);
 
-          // Get the currently selected node.  This may be unselected after
-          // renaming.
-          var selectedNode = sp.getSelectedNode();
-
           // Give the new name to the service pane.
           if (node) {
             sp.mService.onRename(node.id, newName);
-          }
-
-          // Now try to reselect the node
-          try {
-            if (selectedNode) {
-              sp.highlightNode(selectedNode);
-            }
-          } catch (e) {
-            Components.utils.reportError(e);
           }
         }
 

@@ -85,19 +85,11 @@
           return currentEngine || {name:"", uri:null};
         ]]></getter>
         <setter><![CDATA[
-          var isChanging = (this.searchService.currentEngine != val);
           this.searchService.currentEngine = val; 
 
           // Set the live search indicator attribute
           // according to the state of the new engine
           this.updateLiveSearchAttribute();
-
-          // If there was a query, then run it immediately
-          if (this.value != "" && this.getAttribute("empty") != "true" && isChanging) 
-          {
-            // Pretend the user hit enter
-            this.handleSearchCommand(null);
-          }
 
           // JMC - Don't return just val in case it's null
           return this.searchService.currentEngine;
@@ -128,10 +120,8 @@
             this._textbox.value = val;
           }
           else {
-            if (this._textbox.hasAttribute("focused")) {
-              // Just clear the textbox
-              this._textbox.value = "";
-            } else {
+            this._textbox.value = "";
+            if (!this._textbox.hasAttribute("focused")) {
               this.updateDisplay();
             }
           }
@@ -285,9 +275,13 @@
           
           // Check for an emptyText override
           var name = this.currentEngine.name;
-          if (name in this._engineDisplayText) {
-            this._textbox.emptyText = this._engineDisplayText[name];
+          if (name in this._engineDisplayText && this._engineDisplayText[name]) {
+            name = this._engineDisplayText[name];
           }
+          
+          this._textbox.emptyText = 
+            SBFormattedString('search.prefix', 
+                              [name]);
         ]]></body>
       </method>
       

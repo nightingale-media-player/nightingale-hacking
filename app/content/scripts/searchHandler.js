@@ -392,6 +392,12 @@ const gSearchHandler = {
    * browser location
    */
   updateSearchMode: function SearchHandler_updateSearchMode() {
+
+    // Do nothing until the browser is finished loading
+    // This avoids annoying flickering.
+    if (gBrowser.loading) {
+      return; 
+    }
  
     // If a media page is open in the current tab,
     // then we will need to restore the search filter state
@@ -442,6 +448,8 @@ const gSearchHandler = {
 
     // Set the query to match the state of the media page
     this._syncSearchBarToMediaPage();
+    
+    searchBar.updateDisplay();
   },
   
   
@@ -483,7 +491,9 @@ const gSearchHandler = {
         // manually choosing the internal engine.  Don't switch.
       }
     }
-  },  
+    
+    searchBar.updateDisplay();
+  },
     
   
   /**

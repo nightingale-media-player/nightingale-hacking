@@ -286,7 +286,11 @@
               break;
             }
           };
-          
+
+          if (gBrowser.loading) {
+            return; // Do nothing until loading is complete.  This avoids flickering.
+          }
+
           if (gBrowser.currentMediaPage || mediaPageURL) {
             button.setAttribute("disabled", "false");
           }
