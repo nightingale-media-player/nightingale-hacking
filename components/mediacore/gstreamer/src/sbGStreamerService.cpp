@@ -30,12 +30,14 @@
 #include <nsIEnvironment.h>
 #include <nsIProperties.h>
 #include <nsIFile.h>
+#include <nsILocalFile.h>
 #include <nsStringGlue.h>
 #include <prlog.h>
 #include <prenv.h>
 #include <nsServiceManagerUtils.h>
 #include <nsDirectoryServiceDefs.h>
 #include <nsAppDirectoryServiceDefs.h>
+#include <nsComponentManagerUtils.h>
 #include <nsXULAppAPI.h>
 #include <nsISimpleEnumerator.h>
 
@@ -239,8 +241,28 @@ sbGStreamerService::Init()
     systemPluginPaths = NS_ConvertUTF8toUTF16(homeDirPlugins);
 
     // 5. Add /usr/lib/gstreamer-0.10 to system plugin path
-    systemPluginPaths.Append(NS_LITERAL_STRING(G_SEARCHPATH_SEPARATOR_S));
-    systemPluginPaths.Append(NS_LITERAL_STRING("/usr/lib/gstreamer-0.10"));
+
+    // There's a bug in GStreamer which can cause registry problems with
+    // renamed plugins. Older versions of decodebin2 were in 
+    // 'libgsturidecodebin.so' rather than the current 'libgstdecodebin2.so'.
+    // To avoid this, do not use system plugins if this old plugin file
+    // exists.
+    nsCOMPtr<nsILocalFile> badFile = do_CreateInstance(
+            "@mozilla.org/file/local;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = badFile->InitWithPath(
+            NS_LITERAL_STRING("/usr/lib/gstreamer-0.10/libgsturidecodebin.so"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool badFileExists;
+    rv = badFile->Exists(&badFileExists);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!badFileExists) {
+      systemPluginPaths.Append(NS_LITERAL_STRING(G_SEARCHPATH_SEPARATOR_S));
+      systemPluginPaths.Append(NS_LITERAL_STRING("/usr/lib/gstreamer-0.10"));
+    }
 #else
     systemPluginPaths = NS_LITERAL_STRING("");
 #endif
