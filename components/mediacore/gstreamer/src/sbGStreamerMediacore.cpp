@@ -596,21 +596,21 @@ void sbGStreamerMediacore::HandleBufferingMessage (GstMessage *message)
     mBuffering = PR_FALSE;
     gst_element_set_state (mPipeline, GST_STATE_PLAYING);
   }
-  else if (!mBuffering && percent < 100) {
+  else if (percent < 100) {
     GstState cur_state;
     gst_element_get_state (mPipeline, &cur_state, NULL, 0);
 
     /* Only pause if we've already reached playing (this means we've underrun
      * the buffer and need to rebuffer) */
-    if (cur_state == GST_STATE_PLAYING) {
+    if (!mBuffering && cur_state == GST_STATE_PLAYING) {
       TRACE(("Buffering... setting to paused"));
       gst_element_set_state (mPipeline, GST_STATE_PAUSED);
-      mBuffering = PR_TRUE;
       mTargetState = GST_STATE_PLAYING;
 
       // And inform listeners that we've underrun */
       DispatchMediacoreEvent(sbIMediacoreEvent::BUFFER_UNDERRUN);
     }
+    mBuffering = PR_TRUE;
 
     // Inform listeners of current progress
     double bufferingProgress = (double)percent / 100.;
