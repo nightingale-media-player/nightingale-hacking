@@ -56,7 +56,7 @@
 
 #ifdef SONGBIRD_OFFICIAL
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}\"
-!define PreferredInstallerName    "${BrandShortName}_${AppVersion}-${AppBuildNumber}-${ARCH}.exe"
+!define PreferredInstallerName    "${BrandShortName}_${AppVersion}-${AppBuildNumber}_${ARCH}.exe"
 !define PreferredIcon             songbird.ico
 !define PreferredInstallerIcon    songbird_installer.ico
 !define PreferredUninstallerIcon  songbird_installer.ico
