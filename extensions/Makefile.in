@@ -38,13 +38,22 @@ SUBDIRS = xpcom_helloworld \
           7digital \
           $(NULL)
 
+# Right now, all of these addons are so-called "noarch" addons; because
+# of this, we only want to build them on one platform if we're an official build
+# QA has traditionally picked Win32 for this, so we'll do that, too.
+ifneq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
+ifneq (windows,$(SB_PLATFORM))
+  SUBDIRS =
+endif
+endif
+
 # XXX Mook: NOT installed by default yet, this shouldn't go anywhere, just a build check
 ifeq (,$(filter-out windows,$(SB_PLATFORM)))
-SUBDIRS += systray
+  SUBDIRS += systray
 endif # platforms with systray support
 
 ifneq (default, $(SB_EXTENSIONS))
-SUBDIRS = $(subst $(COMMA),$(SPACE),$(SB_EXTENSIONS))
+  SUBDIRS = $(subst $(COMMA),$(SPACE),$(SB_EXTENSIONS))
 endif
 
 include $(topsrcdir)/build/rules.mk
