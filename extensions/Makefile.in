@@ -31,20 +31,26 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = xpcom_helloworld \
           AlbumArt \
-          shoutcast \
-          lastfm \
-          concerts \
-          mashTape \
-          7digital \
           $(NULL)
+
+# AlbumArt is not on the list because it's used internally by the bird, so
+# we need to build it regardless of platform
+NOARCH_EXTENSIONS = shoutcast \
+                    lastfm \
+                    concerts \
+                    mashTape \
+                    7digital \
+                    $(NULL)
 
 # Right now, all of these addons are so-called "noarch" addons; because
 # of this, we only want to build them on one platform if we're an official build
 # QA has traditionally picked Win32 for this, so we'll do that, too.
-ifneq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
-ifneq (windows,$(SB_PLATFORM))
-  SUBDIRS =
-endif
+ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
+  SUBDIRS += $(NOARCH_EXTENSIONS)
+else
+  ifeq (windows,$(SB_PLATFORM))
+    SUBDIRS += $(NOARCH_EXTENSIONS)
+  endif
 endif
 
 # XXX Mook: NOT installed by default yet, this shouldn't go anywhere, just a build check
