@@ -184,6 +184,10 @@ var JobProgressDialog = {
    * Workaround to set the title of a super special Songbird dialog
    */
   _setTitle: function JobProgressDialog__setTitle(aTitle) {
+    if (document.title == aTitle) {
+      return;
+    }
+
     document.title = aTitle;
 
     // If this dialog is going to be shown on Mac (i.e. sheets) and the current
@@ -193,7 +197,7 @@ var JobProgressDialog = {
     var platform = sysInfo.getProperty("name");
     var isPlucked = Application.prefs.getValue("songbird.accessibility.enabled", false); 
     var titleBox = document.getElementById("jobprogress_title_box");
-    if (platform == "Darwin" && isPlucked) {
+    if (platform == "Darwin" && isPlucked && window.opener) {
       var macSheetTitle = document.getElementById("jobprogress_title_desc");
       if (macSheetTitle) {
         macSheetTitle.value = aTitle;
