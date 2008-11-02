@@ -61,100 +61,78 @@ sbLibraryMigration.prototype = {
   contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "utf16 to utf8",
 
   _mOldLibrary: null,
-  _mNewLibrary: null,
-  _databaseLocation: null,
   _databaseGUID: null,
 
   migrate: function sbLibraryMigration_migrate(aLibrary) {
-    this._databaseGUID = aLibrary.databaseGuid;
-    this._databaseLocation = aLibrary.databaseLocation;
+    try{
+      this._databaseGUID = aLibrary.databaseGuid;
+      this._databaseLocation = aLibrary.databaseLocation;
 
-    this._mOldLibrary = aLibrary;
-    var dbParentDir = 
-      this._mOldLibrary.databaseLocation.QueryInterface(Ci.nsIFileURL).file;
-    var dbEngine = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
-                     .getService(Ci.sbIDatabaseEngine);
+      dump("Migrating " + this._databaseLocation.spec + this._databaseGUID + "\n");
+      var dbParentDir = 
+        this._databaseLocation.QueryInterface(Ci.nsIFileURL).file;
+      var dbEngine = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
+                       .getService(Ci.sbIDatabaseEngine);
 
-    // Dump the existing data into a temporary file
-    var oldLibDumpFile = dbParentDir.clone();
-    oldLibDumpFile.append(this._mOldLibrary.databaseGuid + ".txt");
-    if (oldLibDumpFile.exists()) {
-      oldLibDumpFile.remove(false);
-    }
-    oldLibDumpFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0777);
+      // Dump the existing data into a temporary file
+      var oldLibDumpFile = dbParentDir.clone();
+      oldLibDumpFile.append(this._databaseGUID + ".txt");
+      if (oldLibDumpFile.exists()) {
+        oldLibDumpFile.remove(false);
+      }
+      oldLibDumpFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0777);
 
-    dbEngine.dumpDatabase(this._mOldLibrary.databaseGuid, oldLibDumpFile);
+      dbEngine.dumpDatabase(this._databaseGUID, oldLibDumpFile);
 
-    // Close existing DB handles and move the database to a new location
-    dbEngine.closeDatabase(this._mOldLibrary.databaseGuid);
+      // Close existing DB handles and move the database to a new location
+      dbEngine.closeDatabase(this._databaseGUID);
    
-    // Move the old database to a new temporary location
-    var oldLibraryFile = dbParentDir.clone();
-    oldLibraryFile.append(this._mOldLibrary.databaseGuid + ".db");
+      // Move the old database to a new temporary location
+      var oldLibraryFile = dbParentDir.clone();
+      oldLibraryFile.append(this._databaseGUID + ".db");
     
-    var newLibraryFile = dbParentDir.clone();
-    newLibraryFile.append(this._mOldLibrary.databaseGuid + ".db");    
-   
-    // Paranoia, make sure the new temp location for the old database doesn't exist
-    var tempOldLibFile = dbParentDir.clone();
-    tempOldLibFile.append("old_" + oldLibraryFile.leafName);
-    if (tempOldLibFile.exists()) {
-      tempOldLibFile.remove(false);
-    }
-    oldLibraryFile.moveTo(oldLibraryFile.parent, tempOldLibFile.leafName);
+      // Paranoia, make sure the new temp location for the old database doesn't exist
+      var tempOldLibFile = dbParentDir.clone();
+      tempOldLibFile.append("old_" + oldLibraryFile.leafName);
+      if (tempOldLibFile.exists()) {
+        tempOldLibFile.remove(false);
+      }
+      oldLibraryFile.moveTo(oldLibraryFile.parent, tempOldLibFile.leafName);
 
-    // Create a new main library.
-    var libraryFactory =    
-      Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
-        .getService(Ci.sbILibraryFactory);
-    var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
-                createInstance(Ci.nsIWritablePropertyBag2);
-    hashBag.setPropertyAsInterface("databaseFile", newLibraryFile);
+      var query = this._createQuery();
+      query.addQuery("begin");
+      this._createLibrary(query);
 
-    this._mNewLibrary = libraryFactory.createLibrary(hashBag);
-    this._mNewLibrary.clear();
-    
-    // Remove all the TABLES from the new library.
-    var dropTableQuery = this._createQuery();
-    dropTableQuery.addQuery("begin");
-    dropTableQuery.addQuery("drop table if exists media_items");
-    dropTableQuery.addQuery("drop table if exists media_list_types");
-    dropTableQuery.addQuery("drop table if exists properties");
-    dropTableQuery.addQuery("drop table if exists resource_properties");
-    dropTableQuery.addQuery("drop table if exists library_metadata");
-    dropTableQuery.addQuery("drop table if exists simple_media_lists");
-    dropTableQuery.addQuery("drop table if exists library_media_item");
-    dropTableQuery.addQuery("drop table if exists resource_properties_fts");
+      // Remove all the TABLES from the new library.
+      query.addQuery("drop table if exists media_items");
+      query.addQuery("drop table if exists media_list_types");
+      query.addQuery("drop table if exists properties");
+      query.addQuery("drop table if exists resource_properties");
+      query.addQuery("drop table if exists library_metadata");
+      query.addQuery("drop table if exists simple_media_lists");
+      query.addQuery("drop table if exists library_media_item");
+      query.addQuery("drop table if exists resource_properties_fts");
 
-    // Bug 13033 we don't want to drop this table, we'll ignore the create in the dump
-    //dropTableQuery.addQuery("drop table if exists resource_properties_fts_all;");
+      // Bug 13033 we don't want to drop this table, we'll ignore the create in the dump
+      //query.addQuery("drop table if exists resource_properties_fts_all;");
 
-    dropTableQuery.addQuery("commit");
+      var retval = {};
+      // Read in the dumped out SQL from the dump text file
+      var fileInputStream = Cc["@mozilla.org/network/file-input-stream;1"]
+                            .createInstance(Ci.nsIFileInputStream);
+      fileInputStream.init(oldLibDumpFile, 1, 0, 0);
 
-    var retval = {};
-    dropTableQuery.setAsyncQuery(false);
-    dropTableQuery.execute(retval);
-
-    // Read in the dumped out SQL from the dump text file
-    var fileInputStream = Cc["@mozilla.org/network/file-input-stream;1"]
-                          .createInstance(Ci.nsIFileInputStream);
-    fileInputStream.init(oldLibDumpFile, 1, 0, 0);
-
-    var inputStream = Cc["@mozilla.org/intl/converter-input-stream;1"]
-                        .createInstance(Ci.nsIConverterInputStream);
-    inputStream.init(fileInputStream, "UTF-8", 16384,
+      var inputStream = Cc["@mozilla.org/intl/converter-input-stream;1"]
+                          .createInstance(Ci.nsIConverterInputStream);
+      inputStream.init(fileInputStream, "UTF-8", 16384,
                      Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
-    inputStream = inputStream.QueryInterface(Ci.nsIUnicharLineInputStream);
+      inputStream = inputStream.QueryInterface(Ci.nsIUnicharLineInputStream);
 
-    var curLine = {};
-    var insertQuery = this._createQuery();
-    var curQueryStr = "";
-    var cont;
- 
-    insertQuery.addQuery("begin");
-    do {
-      cont = inputStream.readLine(curLine);
-      if (cont) {
+      var curLine = {};
+      var curQueryStr = "";
+      var cont;
+      do {
+        cont = inputStream.readLine(curLine);
         curQueryStr += curLine.value;
         // If this string ends with a ';', it is the end of the query.
         // Let's push it into the query object.
@@ -162,39 +140,42 @@ sbLibraryMigration.prototype = {
           // check for the resource_properties_fts_all table and skip it.
           // The dump version doesn't work see bug 13033
           if (!curQueryStr.match("INSERT INTO sqlite_master.*resource_properties_fts_all")) {
-            insertQuery.addQuery(curQueryStr);
+            query.addQuery(curQueryStr);
           }
           curQueryStr = "";
         }
-      }
-    } while (cont);
+      } while (cont);
 
-    inputStream.close();
+      inputStream.close();
 
-    insertQuery.addQuery("update library_metadata set value = '" 
-                   + this.toVersion + "' where name = 'version'");
-    insertQuery.addQuery("commit");
+      query.addQuery("update library_metadata set value = '" 
+                     + this.toVersion + "' where name = 'version'");
+      query.addQuery("commit");
 
-    // Insert the dumped information into the new database.
-    insertQuery.setAsyncQuery(true);
-    insertQuery.execute(retval);
-
-    var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
-                .createInstance(Ci.nsISupportsInterfacePointer);
-    sip.data = this;
+      // Insert the dumped information into the new database.
+      query.setAsyncQuery(true);
+      query.execute(retval);
+      dump("Database execute\n");
+      var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
+                  .createInstance(Ci.nsISupportsInterfacePointer);
+      sip.data = this;
    
-    // XXX todo: Localize!
-    this._titleText = "Library Migration Helper";
-    this._statusText = "Converting Database Format...";
-    this.migrationQuery = insertQuery;
+      // XXX todo: Localize!
+      this._titleText = "Library Migration Helper";
+      this._statusText = "Converting Database Format...";
+      this.migrationQuery = query;
     
-    this.startNotificationTimer();
-    SBJobUtils.showProgressDialog(sip.data, null, 0);
-    this.stopNotificationTimer();
-
-    // Cleanup
-    tempOldLibFile.remove(false);
-    oldLibDumpFile.remove(false);
+      this.startNotificationTimer();
+      SBJobUtils.showProgressDialog(sip.data, null, 0);
+      this.stopNotificationTimer();
+      // Cleanup
+      tempOldLibFile.remove(false);
+      oldLibDumpFile.remove(false);
+    }
+    catch (e) {
+      dump("Exception occured: " + e);
+      throw e;
+    }
   },
 
   _createQuery: function sbLibraryMigration_createQuery() {
@@ -204,6 +185,50 @@ sbLibraryMigration.prototype = {
     query.setDatabaseGUID(this._databaseGUID);
     
     return query;
+  },
+  _createLibrary : function sbLibraryMigration_createLibrary(query) {
+    try {
+    	// Now that we know we have appropriate permissions make a new query.
+    
+      var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                            .getService(Components.interfaces.nsIIOService);
+
+      var schemaURI = ioService.newURI("chrome://songbird/content/library/localdatabase/schema.sql", null, null);
+      var channel = ioService.newChannelFromURI(schemaURI);
+      var stream = channel.open();
+ 
+      var converterStream = Components.classes["@mozilla.org/intl/converter-input-stream;1"]
+                                 .createInstance(Components.interfaces.nsIConverterInputStream);
+
+      converterStream.init(stream,
+                           "UTF-8",
+                           8192,
+                           Components.interfaces.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
+
+      var response = "";
+      var result = {};
+      var bytesRead = converterStream.readString(0xFFFFFFFF, result);
+  
+      while (bytesRead > 0) {
+        response += result.value;
+        bytesRead = converterStream.readString(0xFFFFFFFF, result);
+      }
+
+      converterStream.close();
+
+      const colonNewline = ";\n";
+      var posStart = 0;
+      var posEnd = response.indexOf(colonNewline);
+      while (posEnd >= 0) {
+        query.addQuery(response.substring(posStart, posEnd));
+        posStart = posEnd + 2;
+        posEnd = response.indexOf(colonNewline, posStart);
+      }
+    }
+    catch (e) {
+      dump("Exception: " + e);
+      throw e;
+    }
   }
 };
 

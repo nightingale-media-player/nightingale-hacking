@@ -558,15 +558,16 @@ sbLocalDatabasePropertyCache::RetrieveLibraryProperties(sbLocalDatabaseResourceP
 }
 
 /**
- * This takes in to account the missing library guid when getting the bag
- * count. This represents the current logical bag count and is mainly for
+ * This takes in to account the missing library guid when getting the guid
+ * count. This represents the current logical guid count and is mainly for
  * debug purposes. Since it's inline no need of message #if's
  */
+template <class T>
 inline
-PRInt32 GetBagCount(nsCOMArray<sbLocalDatabaseResourcePropertyBag> const & aBags,
+PRInt32 GetGUIDCount(T const & aGUIDs,
             PRInt32 aLibraryItemPosition)
 {
-  return aLibraryItemPosition == -1 ? aBags.Count() : (aBags.Count() - 1);
+  return aLibraryItemPosition == -1 ? aGUIDs.Length() : (aGUIDs.Length() - 1);
 }
 
 template <class T>
@@ -601,9 +602,10 @@ nsresult sbLocalDatabasePropertyCache::RetrieveProperties(
     rv = RetrievePrimaryProperties(query, aGUIDs, idToBagMap, aBags, itemIDs);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    NS_ASSERTION(idToBagMap.Count() == GetBagCount(aBags, libraryItemPosition)   &&
-                   GetBagCount(aBags, libraryItemPosition) == itemIDs.Length(),
-                 "RetrieveMediaItems returned an inconsistent result set");
+    NS_ASSERTION(idToBagMap.Count() == GetGUIDCount(aGUIDs, libraryItemPosition)   &&
+                   GetGUIDCount(aGUIDs, libraryItemPosition) == itemIDs.Length() &&
+                   GetGUIDCount(aGUIDs, libraryItemPosition) == aBags.Count(),
+                 "RetrieveProperties returned an inconsistent result set");
 
     // Now do the data from resource_properties
     rv = RetrieveSecondaryProperties(query, itemIDs, idToBagMap);
