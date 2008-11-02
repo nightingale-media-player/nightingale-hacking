@@ -960,7 +960,8 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
         mViewIndexToSequenceIndex[i] = i;
       }
 
-      if(aViewPosition) {
+      if(aViewPosition && 
+         *aViewPosition != sbIMediacoreSequencer::AUTO_PICK_INDEX) {
         mPosition = *aViewPosition;
       }
     }
@@ -974,7 +975,8 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
         mViewIndexToSequenceIndex[j] = j;
       }
 
-      if(aViewPosition) {
+      if(aViewPosition && 
+         *aViewPosition != sbIMediacoreSequencer::AUTO_PICK_INDEX) {
         mPosition = length - *aViewPosition;
       }
     }
