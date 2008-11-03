@@ -537,6 +537,11 @@ sbMediacoreManager::OnSetMute(PRBool aMute)
   rv = volumeControl->SetMute(aMute);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mon.Exit();
+
+  rv = mDataRemoteFaceplateMute->SetBoolValue(aMute);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -556,6 +561,8 @@ sbMediacoreManager::OnSetVolume(double aVolume)
   rv = volumeControl->SetVolume(mVolume);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mon.Exit();
+
   rv = SetVolumeDataRemote(mVolume);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -568,8 +575,6 @@ sbMediacoreManager::SetVolumeDataRemote(PRFloat64 aVolume)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_STATE(mDataRemoteFaceplateVolume);
 
-  nsAutoMonitor mon(mMonitor);
-  
   char volume[64] = {0};
   PR_snprintf(volume, 64, "%lg", aVolume);
 
