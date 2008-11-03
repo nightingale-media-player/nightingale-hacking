@@ -2356,6 +2356,13 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
         rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_TRUE);
         NS_ENSURE_SUCCESS(rv, rv);
       }
+
+      if(!mSeenPlaying) {
+        mSeenPlaying = PR_TRUE;
+
+        rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
     break;
 

@@ -1079,6 +1079,18 @@ sbGStreamerMediacore::OnPlay()
     mIsLive = PR_TRUE;
   }
 
+  // If we're starting an HTTP stream, send an immediate buffering event,
+  // since GStreamer won't do that until it's connected to the server.
+  PRBool schemeIsHttp;
+  nsresult rv = mUri->SchemeIs("http", &schemeIsHttp);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  if (schemeIsHttp) {
+    double bufferingProgress = 0.0;
+    nsCOMPtr<nsIVariant> variant = sbNewVariant(bufferingProgress).get();
+    DispatchMediacoreEvent(sbIMediacoreEvent::BUFFERING, variant);
+  }
+
   return NS_OK;
 }
 
