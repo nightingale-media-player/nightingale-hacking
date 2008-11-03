@@ -360,6 +360,9 @@ sbMetadataJob::SetUpHandlerForJobItem(sbMetadataJobItem* aJobItem)
                               stringURL);
   NS_ENSURE_SUCCESS(rv, rv);
   
+  rv = aJobItem->SetURL(NS_ConvertUTF16toUTF8(stringURL));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   // Now see if we can find a handler for this URL
   nsCOMPtr<sbIMetadataManager> metadataManager =
     do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
@@ -395,9 +398,6 @@ sbMetadataJob::SetUpHandlerForJobItem(sbMetadataJobItem* aJobItem)
     LOG(("Failed to find metadata handler\n"));
   }
   #endif /* PR_LOGGING */
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = aJobItem->SetURL(NS_ConvertUTF16toUTF8(stringURL));
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Finally, stick the handler into the jobitem 
@@ -769,6 +769,24 @@ nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem)
   
   // Now add the final string into the list of error messages
   mErrorMessages.AppendElement(stringURL);
+  
+  // If this is a read job, then failed items should get filename
+  // as the trackname (this avoids blank rows, and makes it easier 
+  // to tell what failed)
+  if (mJobType == TYPE_READ) {
+    PRInt32 slash = stringURL.RFind(NS_LITERAL_STRING("/"));
+    if (slash > 0 && slash < stringURL.Length() - 1) {
+      stringURL = nsDependentSubstring(stringURL, slash + 1,
+                                       stringURL.Length() - slash - 1);
+    }
+    
+    nsCOMPtr<sbIMediaItem> item;
+    rv = aJobItem->GetMediaItem(getter_AddRefs(item));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = item->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), stringURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
