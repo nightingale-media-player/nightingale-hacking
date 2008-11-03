@@ -59,7 +59,7 @@
 !define PreferredInstallerName    "${BrandShortName}_${AppVersion}-${AppBuildNumber}_${ARCH}.exe"
 !define PreferredIcon             songbird.ico
 !define PreferredInstallerIcon    songbird_installer.ico
-!define PreferredUninstallerIcon  songbird_installer.ico
+!define PreferredUninstallerIcon  songbird_uninstaller.ico
 !define VistaIcon                 songbird_vista.ico
 !define IsOfficialBuild           "true"
 #else
