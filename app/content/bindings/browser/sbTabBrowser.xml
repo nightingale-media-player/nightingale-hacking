@@ -113,6 +113,32 @@
           }
         }
         window.addEventListener('load', this.windowLoadEventListener, true);
+        
+        this.windowUnloadEventListener = {
+          tabbrowser: this,
+          document: document,
+          handleEvent: function(event) {
+            if (event.target != this.document) {
+              return;
+            }
+
+            // Save current view into view map.
+            var viewMap = 
+              Components
+                .classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                .getService(Components.interfaces.sbIMediaListViewMap);
+
+            // Grab the current tab media list view.
+            var view = this.tabbrowser.mCurrentTab.mediaListView;
+
+            // If we have a view, stash it for others to use.
+            if(view) {
+              viewMap.setView(this.tabbrowser.mm, this.tabbrowser.mm.sequencer, 
+                              view);
+            }
+          }          
+        }
+        window.addEventListener('unload', this.windowUnloadEventListener, true);
 
         /* load the remote API handler bits
          * this provides the onRemoteAPI() method that is pretty self-contained
@@ -179,7 +205,8 @@
           Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
                     .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);
       ]]></constructor>
-      <destructor><![CDATA[
+      <destructor>
+        <![CDATA[
 
         // Save the tabState on shutdown
         this._sessionStore.saveTabState(this);
@@ -191,6 +218,7 @@
         this.removeProgressListener(this);
 
         window.removeEventListener('load', this.windowLoadEventListener, true);
+        window.removeEventListener('unload', this.windowUnloadEventListener, true);
 
         window.removeEventListener("remoteapi", this.onRemoteAPI, true);
         window.QueryInterface(Components.interfaces.nsIDOMChromeWindow)

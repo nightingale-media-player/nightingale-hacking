@@ -40,6 +40,8 @@ class Win32PlatformInterface : public BasePlatformInterface
 public:
   Win32PlatformInterface ();
   Win32PlatformInterface (nsIBoxObject *aVideoBox, HWND aWin);
+  
+  virtual ~Win32PlatformInterface ();
 
   // Implement the rest of sbIGstPlatformInterface
   GstElement * SetVideoSink(GstElement *aVideoSink);

@@ -359,9 +359,6 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
                         selectionState);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = UpdateViewArrayConfiguration(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Restore cfs and tree state
   if (state) {
     nsRefPtr<sbLocalDatabaseCascadeFilterSetState> filterSetState;
@@ -395,6 +392,11 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
       mTreeView = tree;
     }
   }
+
+  // Always do this last otherwise certain settings may 
+  // not get applied properly.
+  rv = UpdateViewArrayConfiguration(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

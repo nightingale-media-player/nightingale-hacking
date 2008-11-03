@@ -379,6 +379,12 @@ function onExit( skipSave )
  */
 function onHide()
 {
+  // Fire custom DOM event so that potential listeners interested in
+  // the fact that the window is about to hide can do something about it.
+  e = document.createEvent("UIEvents");
+  e.initUIEvent("hide", true, true, window, 1);
+  document.dispatchEvent(e);
+
   var windowCloak =
     Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
               .getService(Components.interfaces.sbIWindowCloak);

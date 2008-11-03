@@ -129,6 +129,19 @@ Win32PlatformInterface::Win32PlatformInterface(nsIBoxObject *aVideoBox,
   ::ShowWindow(mWindow, SW_SHOWNORMAL);
 }
 
+Win32PlatformInterface::~Win32PlatformInterface ()
+{
+  // Must free sink before destroying window.
+  if (mVideoSink) {
+    gst_object_unref(mVideoSink);
+    mVideoSink = NULL;
+  }
+
+  if (mWindow) {
+   ::DestroyWindow(mWindow);
+  }
+}
+
 void
 Win32PlatformInterface::FullScreen()
 {

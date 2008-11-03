@@ -483,22 +483,20 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
   NS_ConvertUTF16toUTF8 volStr(volumeStr);
   PRFloat64 volume = 0;
 
-  if(PR_sscanf(volStr.BeginReading(), "%lg", &volume) != 1) {
-    mVolume = 0.5;
-    
-    rv = SetVolumeDataRemote(mVolume);
-    NS_ENSURE_SUCCESS(rv, rv);
+  if((PR_sscanf(volStr.BeginReading(), "%lg", &volume) != 1) ||
+     (volume > 1 || volume < 0)) {
+    volume = 0.5;
   }
-  else {
-    if(volume > 1) volume = 1;
-    if(volume < 0) volume = 0;
-    mVolume = volume;
+
+  mVolume = volume;
 
 #if defined(DEBUG)
     printf("[sbMediacoreManager] - Initializing volume from data remote\n\tVolume: %s\n",
            volStr.BeginReading());
 #endif
-  }
+   
+  rv = SetVolumeDataRemote(mVolume);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mDataRemoteFaceplateMute = 
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
@@ -606,7 +604,13 @@ sbMediacoreManager::GetBalanceControl(
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aBalanceControl);
 
+  *aBalanceControl = nsnull;
+
   nsAutoMonitor mon(mMonitor);
+
+  if(!mPrimaryCore) {
+    return nsnull;
+  }
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIMediacoreBalanceControl> balanceControl =
@@ -646,7 +650,13 @@ sbMediacoreManager::GetEqualizer(
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aEqualizer);
 
+  *aEqualizer = nsnull;
+
   nsAutoMonitor mon(mMonitor);
+
+  if(!mPrimaryCore) {
+    return nsnull;
+  }
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIMediacoreSimpleEqualizer> eq =
@@ -666,7 +676,13 @@ sbMediacoreManager::GetPlaybackControl(
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aPlaybackControl);
 
+  *aPlaybackControl = nsnull;
+
   nsAutoMonitor mon(mMonitor);
+
+  if(!mPrimaryCore) {
+    return NS_OK;
+  }
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIMediacorePlaybackControl> playbackControl =
@@ -686,7 +702,13 @@ sbMediacoreManager::GetCapabilities(
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aCapabilities);
 
+  *aCapabilities = nsnull;
+
   nsAutoMonitor mon(mMonitor);
+
+  if(!mPrimaryCore) {
+    return NS_OK;
+  }
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIMediacoreCapabilities> volumeControl =

@@ -152,6 +152,8 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mHasSeenError(PR_FALSE),
     mTargetState(GST_STATE_NULL)
 {
+  MOZ_COUNT_CTOR(sbGStreamerMediacore);
+
   NS_WARN_IF_FALSE(mBaseEventTarget, 
           "mBaseEventTarget is null, may be out of memory");
 
@@ -159,6 +161,8 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
 
 sbGStreamerMediacore::~sbGStreamerMediacore()
 {
+  MOZ_COUNT_DTOR(sbGStreamerMediacore);
+
   if (mTags)
     gst_tag_list_free(mTags);
 
@@ -1263,6 +1267,7 @@ sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
   NS_ENSURE_TRUE(target, NS_NOINTERFACE);
   target->AddEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
   target->AddEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
+  target->AddEventListener(NS_LITERAL_STRING("hide"), this, PR_FALSE);
 
   nsCOMPtr<nsIThread> eventTarget;
   rv = NS_GetMainThread(getter_AddRefs(eventTarget));
@@ -1274,7 +1279,6 @@ sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
                             boxObject,
                             NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(proxiedBoxObject));
-
 
   mVideoEnabled = PR_TRUE;
   mVideoWindow = aVideoWindow;
@@ -1358,13 +1362,15 @@ sbGStreamerMediacore::HandleEvent(nsIDOMEvent* aEvent)
   nsAutoString eventType;
   aEvent->GetType(eventType);
 
-  if(eventType.EqualsLiteral("unload")) {
+  if(eventType.EqualsLiteral("unload") ||
+     eventType.EqualsLiteral("hide")) {
 
     // Clean up here
     nsCOMPtr<nsIDOMEventTarget> target(do_QueryInterface(mDOMWindow));
     NS_ENSURE_TRUE(target, NS_NOINTERFACE);
     target->RemoveEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
     target->RemoveEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
+    target->RemoveEventListener(NS_LITERAL_STRING("hide"), this, PR_FALSE);
 
     mDOMWindow = nsnull;
   }

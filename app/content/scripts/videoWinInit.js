@@ -49,6 +49,7 @@ videoWinInit.onUnload = function()
   window.removeEventListener("unload", videoWinInit.onUnload, false);
   SBVideoDeinitialize();
 }
+
 window.addEventListener("load", videoWinInit.onLoad, false);
 window.addEventListener("unload", videoWinInit.onUnload, false);
 
@@ -193,7 +194,8 @@ function onHideButtonClick()
  */
 function SBHideCoreWindow()
 {
-  // Save position before cloaking, because if we close the app after the window has been cloaked, we can't record its position
+  // Save position before cloaking, because if we close the app after 
+  // the window has been cloaked, we can't record its position
   onHide();
 }
 

@@ -106,7 +106,8 @@
            Used to ensure that the tab can be garbage collected. -->
       <field name="_destroyed">false</field>     
       <method name="destroy">
-        <body><![CDATA[
+        <body>
+              <![CDATA[
           if (this._destroyed) {
             return;  // Nothing to do.
           }
@@ -116,9 +117,11 @@
             this.clearOuterPlaylist();
 
             // When we drop the tab, release all of the associated views stored in the map.
-            Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-                      .getService(Components.interfaces.sbIMediaListViewMap)
-                      .releaseViews(this.linkedBrowser);
+            if(this.linkedBrowser) {
+              Components.classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
+                        .getService(Components.interfaces.sbIMediaListViewMap)
+                        .releaseViews(this.linkedBrowser);
+            }
 
             if (this._playlist) {
               this._playlist.destroy();
@@ -140,10 +143,12 @@
             
             this._viewForPage = null;
             
-            // Remove the browser DOM loaded event listener.
-            this.linkedBrowser.removeEventListener("DOMContentLoaded",
-                                                   this.browserDOMLoadedEventListener,
-                                                   true);
+            if(this.linkedBrowser) {
+              // Remove the browser DOM loaded event listener.
+              this.linkedBrowser.removeEventListener("DOMContentLoaded",
+                                                     this.browserDOMLoadedEventListener,
+                                                     true);
+            }
             
             // Clear the progress filter.
             if (this._progressFilter) {
