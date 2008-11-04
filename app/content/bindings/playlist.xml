@@ -771,6 +771,7 @@
 <![CDATA[
   if((event.attrName == "dragging" && event.newValue == "") ||
      event.attrName == "width" || event.attrName == "hidden") {
+     this._ensureEndSplitter(null);
     this._setColumnSpecDirty();
   }
 ]]>
@@ -1244,13 +1245,7 @@
         <body>
 <![CDATA[
   // If the last child of the columns element is a treecol, add a splitter
-  if (this._treecols.lastChild && this._treecols.lastChild.tagName == "treecol") {
-    var splitter = document.createElementNS(this._XUL_NS, "splitter");
-    splitter.setAttribute("class", "tree-splitter");
-    splitter.setAttribute("ordinal", ordinal - 1);
-    splitter.setAttribute("resizeafter", "grow");
-    this._treecols.appendChild(splitter);
-  }
+  this._ensureEndSplitter(ordinal - 1);
 
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
   treecol.setAttribute("bind", propertyInfo.id);
@@ -1297,6 +1292,23 @@
   if (this.tree.columns) {
     this.tree.columns.invalidateColumns();
   }
+]]>
+        </body>
+      </method>
+
+      <method name="_ensureEndSplitter">
+        <parameter name="ordinal"/>
+        <body>
+<![CDATA[
+  // Make sure that their is a splitter at the end of a playlist
+  if (this._treecols.lastChild && this._treecols.lastChild.tagName == "treecol") {
+    var splitter = document.createElementNS(this._XUL_NS, "splitter");
+    splitter.setAttribute("class", "tree-splitter");
+    if (ordinal != null)
+      splitter.setAttribute("ordinal", ordinal);
+    splitter.setAttribute("resizeafter", "grow");
+    this._treecols.appendChild(splitter);
+  } 
 ]]>
         </body>
       </method>
