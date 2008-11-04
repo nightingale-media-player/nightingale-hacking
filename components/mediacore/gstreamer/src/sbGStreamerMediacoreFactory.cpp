@@ -29,6 +29,9 @@
 #include <nsAutoPtr.h>
 #include <nsMemory.h>
 
+#include <nsIPrefBranch.h>
+#include <nsIPrefService.h>
+
 #include <sbMediacoreCapabilities.h>
 #include <sbTArrayStringEnumerator.h>
 
@@ -135,10 +138,25 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
   const char *extraVideoExtensions[] = {"vob"};
   
   // XXX Mook: we currently assume anything not known to be video is audio :|
-  const char *knownVideoExtensions[] = {
-    "264", "avi", "dif", "dv", "flc", "fli", "flv", "h264", "jng", "m4v", "mkv",
-    "mng", "mov", "mpe", "mpeg", "mpg", "mpv", "mve", "nuv", "ogm", "qif",
-    "qti", "qtif", "ras", "rm", "rmvb", "smil", "ts", "viv", "wmv", "x264" };
+  const char defaultKnownVideoExtensions[] =
+    "264,avi,dif,dv,flc,fli,flv,h264,jng,m4v,mkv,mng,mov,mpe,mpeg,mpg,mpv,mve,"
+    "nuv,ogm,qif,qti,qtif,ras,rm,rmvb,smil,ts,viv,wmv,x264";
+  
+  char* knownVideoExtensionsPtr = nsnull;
+  nsCString knownVideoExtensions;
+  nsCOMPtr<nsIPrefBranch> rootPrefBranch =
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = rootPrefBranch->GetCharPref("songbird.mediacore.gstreamer.videoExtensions",
+                                   &knownVideoExtensionsPtr);
+  if (NS_SUCCEEDED(rv)) {
+    knownVideoExtensions.Adopt(knownVideoExtensionsPtr);
+  } else {
+    knownVideoExtensions.Assign(defaultKnownVideoExtensions);
+  }
+  knownVideoExtensions.Insert(',', 0);
+  knownVideoExtensions.Append(',');
+
   GList *walker, *list;
 
   list = gst_type_find_factory_get_list ();
@@ -164,12 +182,11 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 
         if (!blacklisted) {
           if (!isAudioExtension) {
-            isAudioExtension = TRUE;
-            for (i = 0; i < NS_ARRAY_LENGTH(knownVideoExtensions); i++) {
-              if (!g_ascii_strcasecmp(*factoryexts, knownVideoExtensions[i])) {
-                isAudioExtension = FALSE;
-                break;
-              }
+            nsCString extension(*factoryexts);
+            extension.Insert(',', 0);
+            extension.Append(',');
+            if (knownVideoExtensions.Find(extension) == -1) {
+              isAudioExtension = TRUE;
             }
           }
           
