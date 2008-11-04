@@ -332,11 +332,8 @@
           if (this.selectedItem != this._firstTab) {
             this.lastSelectedTab = this.selectedItem;
           }
-          this.SBDataSetBoolValue("browser.in_media_page",
-                                  this.selectedItem == this._firstTab);
         } else {
           this.lastSelectedTab = this.selectedItem;
-          this.SBDataSetBoolValue("browser.in_media_page", false);
         }
       ]]></handler>
     </handlers>

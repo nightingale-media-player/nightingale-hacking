@@ -109,6 +109,9 @@ SBTabProgressListener.prototype = {
       SBDataSetBoolValue('browser.cansubscription',
                          this._tabBrowser.selectedTab.outerPlaylistShowing);
 
+      SBDataSetBoolValue("browser.in_media_page", 
+                         this._tabBrowser.selectedTab.servicePaneNode != null);
+
       // Let listeners know that the tab location has changed
       this._tabBrowser.notifyTabContentChange();
     }

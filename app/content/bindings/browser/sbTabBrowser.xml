@@ -1053,29 +1053,6 @@
           return this.mStrip.lastSelectedTab;
         </getter>
       </property>
-      <method name="isMediaTabURL">
-        <parameter name="aURL"/>
-        <body><![CDATA[
-          if (!aURL) {
-            return Components.results.NS_ERROR_INVALID_ARG;
-          }
-          if (!this.mediaTab) {
-            // we don't have a media tab
-            return false;
-          }
-          var url = aURL;
-          if (aURL instanceof Components.interfaces.nsIURI) {
-            url = aURL.spec;
-          }
-          if (!(/chrome:\/\//.test(url))) {
-            // not chrome
-            return false;
-          }
-          var node = this._servicePaneService.getNodeForURL(url);
-          if (!node) return false;
-          return true;
-        ]]></body>
-      </method>
       
       <!-- context menu handler -->
       <field name="_urlForHTMLContextMenu">null</field>
