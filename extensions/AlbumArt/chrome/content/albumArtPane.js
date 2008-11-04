@@ -127,10 +127,10 @@ var AlbumArt = {
       if (aEvent.target.id == 'sb-albumart-selected') {
         passImageParam = this.getCurrentStateItemImage();
       }
-      
-      SBOpenModalDialog("chrome://albumart/content/coverPreview.xul",
+    
+      SBOpenWindow("chrome://albumart/content/coverPreview.xul",
                    "coverPreview",
-                   "all,chrome,centerscreen",
+                   "chrome,centerscreen,resizable=no",
                    passImageParam,
                    null);
     }
