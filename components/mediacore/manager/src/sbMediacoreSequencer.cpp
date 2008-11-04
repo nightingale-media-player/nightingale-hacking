@@ -165,6 +165,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mViewIsLibrary(PR_FALSE)
 , mNeedSearchPlayingItem(PR_FALSE)
 , mNeedsRecalculate(PR_FALSE)
+, mWatchingView(PR_FALSE)
 {
 }
 
@@ -1386,6 +1387,9 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
     rv = DispatchMediacoreEvent(event);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    rv = StopWatchingView();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     mView = aView;
 
     rv = RecalculateSequence(aViewPosition);
@@ -1427,6 +1431,10 @@ sbMediacoreSequencer::StartWatchingView()
     return NS_OK;
   }
 
+  if(mWatchingView) {
+    return NS_OK;
+  }
+
   nsresult rv = mView->AddListener(this, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1445,9 +1453,6 @@ sbMediacoreSequencer::StartWatchingView()
                               sbIMediaList::LISTENER_FLAGS_BATCHEND |
                               sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
                               nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mView->AddListener(this, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(!mViewIsLibrary) {
@@ -1471,6 +1476,8 @@ sbMediacoreSequencer::StartWatchingView()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  mWatchingView = PR_TRUE;
+
   return NS_OK;
 }
 
@@ -1483,6 +1490,10 @@ sbMediacoreSequencer::StopWatchingView()
 
   // No view, we're probably playing single items
   if(!mView) {
+    return NS_OK;
+  }
+
+  if(!mWatchingView) {
     return NS_OK;
   }
 
@@ -1518,6 +1529,8 @@ sbMediacoreSequencer::StopWatchingView()
     rv = list->RemoveListener(this);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  mWatchingView = PR_FALSE;
 
   return NS_OK;
 }

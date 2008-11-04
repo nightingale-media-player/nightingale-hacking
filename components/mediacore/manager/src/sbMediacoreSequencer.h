@@ -207,6 +207,7 @@ protected:
   PRPackedBool mViewIsLibrary;
   PRPackedBool mNeedSearchPlayingItem;
   PRPackedBool mNeedsRecalculate;
+  PRPackedBool mWatchingView;
 };
 
 class sbScopedBoolToggle
