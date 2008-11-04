@@ -123,7 +123,8 @@ private:
   typedef std::list<CDatabaseQuery *> querylist_t;
   
   void DoSimpleCallback(CDatabaseQuery *pQuery);
-
+  void CDatabaseEngine::ReportError(sqlite3*, sqlite3_stmt*);
+  
   nsresult CreateDBStorePath();
   nsresult GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery *pQuery, nsAString &strPath);
 

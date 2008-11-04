@@ -63,7 +63,6 @@ public:
 protected:
   CDatabaseQuery *mQuery;
   sqlite3_stmt *mStatement;
-  sqlite3 *mDB;
   nsString mSql;
 };
 

@@ -53,6 +53,9 @@
 #include <prtypes.h>
 #include <assert.h>
 
+#include <nsIScriptError.h>
+#include <nsIConsoleService.h>
+
 #include <nsCOMArray.h>
 
 // The maximum characters to output in a single PR_LOG call
@@ -1292,6 +1295,8 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
               // If this is a rolling limit query, we're done
               if (rollingLimit > 0) {
                 pQuery->SetRollingLimitResult(rollingRowCount);
+                pQuery->SetLastError(SQLITE_OK);
+                TRACE(("Rolling limit query complete, %d rows", totalRows));
                 finishEarly = PR_TRUE;
               }
             }
@@ -1307,40 +1312,8 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
           }
         break;
 
-        case SQLITE_MISUSE:
-          {
-#if defined(HARD_SANITY_CHECK)
-            NS_WARNING("SQLITE: MISUSE\n");
-            NS_LossyConvertUTF16toASCII str(PromiseFlatString(strQuery).get());
-            nsCAutoString log;
-
-            log.Append(str);
-            log.AppendLiteral("\n");
-            NS_WARNING(log.get());
-
-            const char *szErr = sqlite3_errmsg(pDB);
-            log.Assign(szErr);
-            log.AppendLiteral("\n");
-            NS_WARNING(log.get());
-#endif
-          }
-          break;
-
         case SQLITE_BUSY:
           {
-#if defined(HARD_SANITY_CHECK)
-            NS_WARNING("SQLITE: BUSY\n");
-            NS_LossyConvertUTF16toASCII str(PromiseFlatString(strQuery).get());
-            nsCAutoString log;
-
-            log.Append(str);
-            log.AppendLiteral("\nWith SQLite Error: \n");
-            
-            const char *szErr = sqlite3_errmsg(pDB);
-            log.Append(szErr);
-
-            NS_WARNING(log.get());
-#endif
             sqlite3_reset(pStmt);
             sqlite3_sleep(50);
 
@@ -1350,35 +1323,9 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
 
         default:
           {
+            // Log all SQL errors to the error console.
+            pEngine->ReportError(pDB, pStmt);
             pQuery->SetLastError(retDB);
-
-#if defined(HARD_SANITY_CHECK)
-#if defined(XP_WIN)
-            OutputDebugStringA("SQLITE: DEFAULT ERROR\n");
-            OutputDebugStringA("Error Code: ");
-            char szCode[64] = {0};
-            OutputDebugStringA(itoa(retDB, szCode, 10));
-            OutputDebugStringA("\n");
-
-            OutputDebugStringW(PromiseFlatString(strQuery).get());
-            OutputDebugStringW(L"\n");
-
-            const char *szErr = sqlite3_errmsg(pDB);
-            OutputDebugStringA(szErr);
-            OutputDebugStringA("\n");
-#endif
-
-            {
-              const char *szErr = sqlite3_errmsg(pDB);
-              nsCAutoString log;
-              log.Append(szErr);
-              log.AppendLiteral("\n");
-              log.AppendLiteral("\nThe query that caused the error is:\n");
-              log.Append(NS_LossyConvertUTF16toASCII(strQuery));
-              log.AppendLiteral("\n");
-              NS_WARNING(log.get());
-            }
-#endif
           }
         }
 
@@ -1439,6 +1386,35 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
   return;
 } //QueryProcessor
 
+//-----------------------------------------------------------------------------
+void CDatabaseEngine::ReportError(sqlite3* db, sqlite3_stmt* stmt) {
+  const char *sql = sqlite3_sql(stmt);
+  const char *errMsg = sqlite3_errmsg(db);
+
+  nsString log;
+  log.AppendLiteral("SQLite execution error: \n");
+  log.Append(NS_ConvertUTF8toUTF16(sql));
+  log.AppendLiteral("\nresulted in the error\n");
+  log.Append(NS_ConvertUTF8toUTF16(errMsg));
+  log.AppendLiteral("\n");
+
+  nsresult rv;
+  nsCOMPtr<nsIConsoleService> consoleService = do_GetService("@mozilla.org/consoleservice;1", &rv);
+
+  nsCOMPtr<nsIScriptError> scriptError = do_CreateInstance(NS_SCRIPTERROR_CONTRACTID);
+  if (scriptError) {
+    nsresult rv = scriptError->Init(log.get(),
+                                    EmptyString().get(),
+                                    EmptyString().get(),
+                                    0, // No line number
+                                    0, // No column number
+                                    0, // An error message.
+                                    "DBEngine:StatementExecution");
+    if (NS_SUCCEEDED(rv)) {
+      rv = consoleService->LogMessage(scriptError);
+    }
+  }
+}
 //-----------------------------------------------------------------------------
 PR_STATIC_CALLBACK(PLDHashOperator)
 EnumSimpleCallback(nsISupports *key, sbIDatabaseSimpleQueryCallback *data, void *closure)

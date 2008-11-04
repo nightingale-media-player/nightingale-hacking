@@ -562,11 +562,12 @@ NS_IMETHODIMP CDatabaseQuery::Execute(PRInt32 *_retval)
   nsresult rv = mDatabaseEngine->SubmitQuery(this, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if(*_retval != 0)
+  if(*_retval != SQLITE_OK)
   {
     nsAutoMonitor mon(m_pQueryRunningMonitor);
     m_QueryHasCompleted = PR_TRUE;
     mon.NotifyAll();
+    return NS_ERROR_FAILURE;
   }
 
   LOG(("DBQ:[0x%x] Execute - EXIT POINT\n\n", this));

@@ -31,7 +31,11 @@
 #include "DatabaseEngine.h"
 
 #include <nsCOMPtr.h>
+#include <nsServiceManagerUtils.h>
+#include <nsComponentManagerUtils.h>
 #include <nsStringGlue.h>
+#include <nsIConsoleService.h>
+#include <nsIScriptError.h>
 
 #include <prmem.h>
 #include <prtypes.h>
@@ -42,7 +46,7 @@
 NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabasePreparedStatement, sbIDatabasePreparedStatement)
 
 CDatabasePreparedStatement::CDatabasePreparedStatement(const nsAString &sql) 
-  : mStatement(nsnull), mDB(nsnull), mSql(sql)
+  : mStatement(nsnull), mSql(sql)
 {
 }
 
@@ -84,7 +88,7 @@ sqlite3_stmt* CDatabasePreparedStatement::GetStatement(sqlite3 *db)
   
   // either reset and return the existing statement, or compile it first and return that. 
   if (mStatement) {
-    if (db != mDB) {
+    if (db != sqlite3_db_handle(mStatement)) {
       NS_WARNING("GetStatement() called with a different DB than the one originally used compile it!.");
       return nsnull;
     }
@@ -94,8 +98,6 @@ sqlite3_stmt* CDatabasePreparedStatement::GetStatement(sqlite3 *db)
     retDB = sqlite3_clear_bindings(mStatement);
   }
   else {
-    mDB = db;
-    
     if (mSql.Length() == 0) {
       NS_WARNING("GetStatement() called on a PreparedStatement with no SQL.");
       return nsnull;
@@ -106,12 +108,32 @@ sqlite3_stmt* CDatabasePreparedStatement::GetStatement(sqlite3 *db)
     int retDB = sqlite3_prepare_v2(db, sqlStr.get(), sqlStr.Length(),
                                    &mStatement, &pzTail);
     if (retDB != SQLITE_OK) {
-      NS_WARNING(NS_ConvertUTF16toUTF8(mSql).get());
       const char *szErr = sqlite3_errmsg(db);
-      nsCAutoString log;
-      log.Append(szErr);
+
+      nsString log;
+      log.AppendLiteral("SQLite compile step: \n");
+      log.Append(mSql);
+      log.AppendLiteral("\ncaused the error\n");
+      log.Append(NS_ConvertUTF8toUTF16(szErr));
       log.AppendLiteral("\n");
-      NS_WARNING(log.get());
+
+      nsresult rv;
+      nsCOMPtr<nsIConsoleService> consoleService = do_GetService("@mozilla.org/consoleservice;1", &rv);
+
+      nsCOMPtr<nsIScriptError> scriptError = do_CreateInstance(NS_SCRIPTERROR_CONTRACTID);
+      if (scriptError) {
+        nsresult rv = scriptError->Init(log.get(),
+                                        EmptyString().get(),
+                                        EmptyString().get(),
+                                        0, // No line number
+                                        0, // No column number
+                                        0, // An error message.
+                                        "DBEngine:StatementCompilation");
+        if (NS_SUCCEEDED(rv)) {
+          rv = consoleService->LogMessage(scriptError);
+        }
+      }
+
       return nsnull;
     }
     // Henceforth, the sqlite_stmt will be responsible for holding onto the sql, not this object.
