@@ -1410,7 +1410,6 @@ sbLocalDatabaseSmartMediaList::GetRollingLimit(const nsAString& aSql,
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   rv = query->GetRollingLimitResult(aRow);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2521,7 +2520,6 @@ sbLocalDatabaseSmartMediaList::ExecuteQuery(const nsAString& aSql)
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   return NS_OK;
 }
@@ -2582,7 +2580,6 @@ sbLocalDatabaseSmartMediaList::GetMediaItemIdRange(PRUint32* aMin,
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2633,7 +2630,6 @@ sbLocalDatabaseSmartMediaList::GetRowCount(const nsAString& aTableName,
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbOk, dbOk);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));

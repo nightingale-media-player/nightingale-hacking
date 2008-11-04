@@ -451,7 +451,6 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   // Create a resource guid for this database.
   nsCOMPtr<nsIUUIDGenerator> uuidGen =
@@ -500,7 +499,6 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsString now;
   sbLocalDatabaseLibrary::GetNowString(now);
@@ -563,7 +561,6 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }

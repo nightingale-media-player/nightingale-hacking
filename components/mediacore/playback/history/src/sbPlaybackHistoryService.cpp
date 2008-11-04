@@ -789,7 +789,6 @@ sbPlaybackHistoryService::CreateAnnotationsFromEntryId(
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -1004,7 +1003,6 @@ sbPlaybackHistoryService::EnsureHistoryDatabaseAvailable()
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -1278,7 +1276,6 @@ sbPlaybackHistoryService::InsertPropertyID(const nsAString &aPropertyID,
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -1331,7 +1328,6 @@ sbPlaybackHistoryService::LoadPropertyIDs()
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -1988,7 +1984,6 @@ sbPlaybackHistoryService::GetEntries(nsISimpleEnumerator * *aEntries)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2019,7 +2014,6 @@ sbPlaybackHistoryService::GetEntryCount(PRUint64 *aEntryCount)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2084,7 +2078,6 @@ sbPlaybackHistoryService::AddEntry(sbIPlaybackHistoryEntry *aEntry)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2141,7 +2134,6 @@ sbPlaybackHistoryService::AddEntries(nsIArray *aEntries)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2206,7 +2198,6 @@ sbPlaybackHistoryService::GetEntryByIndex(PRInt64 aIndex,
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2250,7 +2241,6 @@ sbPlaybackHistoryService::GetEntriesByIndex(PRInt64 aStartIndex,
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2299,7 +2289,6 @@ sbPlaybackHistoryService::GetEntriesByTimestamp(PRInt64 aStartTimestamp,
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2339,7 +2328,6 @@ sbPlaybackHistoryService::RemoveEntry(sbIPlaybackHistoryEntry *aEntry)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   rv = DoEntryRemovedCallback(aEntry);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2416,7 +2404,6 @@ sbPlaybackHistoryService::RemoveEntries(nsIArray *aEntries)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   rv = DoEntriesRemovedCallback(aEntries);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2473,7 +2460,6 @@ sbPlaybackHistoryService::GetEntriesByAnnotation(
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2559,7 +2545,6 @@ sbPlaybackHistoryService::GetEntriesByAnnotations(
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2587,7 +2572,6 @@ sbPlaybackHistoryService::Clear()
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_SUCCESS(dbError, NS_ERROR_UNEXPECTED);
 
   rv = DoEntriesClearedCallback();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2664,7 +2648,6 @@ sbPlaybackHistoryService::AddOrUpdateAnnotation(
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -2713,7 +2696,6 @@ sbPlaybackHistoryService::AddOrUpdateAnnotation(
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -2742,7 +2724,6 @@ sbPlaybackHistoryService::RemoveAnnotation(PRInt64 aEntryId,
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }

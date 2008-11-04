@@ -341,7 +341,6 @@ sbLocalDatabasePropertyCache::RetrievePrimaryProperties(sbIDatabaseQuery* query,
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -430,7 +429,6 @@ sbLocalDatabasePropertyCache::RetrieveSecondaryProperties(sbIDatabaseQuery* quer
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -492,7 +490,6 @@ sbLocalDatabasePropertyCache::RetrieveLibraryProperties(sbLocalDatabaseResourceP
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -532,7 +529,6 @@ sbLocalDatabasePropertyCache::RetrieveLibraryProperties(sbLocalDatabaseResourceP
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   rv = query->GetResultObject(getter_AddRefs(result));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1187,7 +1183,6 @@ sbLocalDatabasePropertyCache::Write()
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
   return NS_OK;
 }
 
@@ -1406,7 +1401,6 @@ sbLocalDatabasePropertyCache::LoadProperties()
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
@@ -1546,7 +1540,6 @@ sbLocalDatabasePropertyCache::InsertPropertyIDInLibrary(const nsAString& aProper
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
