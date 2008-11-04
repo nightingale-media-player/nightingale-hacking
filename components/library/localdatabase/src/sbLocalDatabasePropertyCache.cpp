@@ -1009,17 +1009,19 @@ nsresult DirtyPropertyEnumerator::Process(PRUint32 aDirtyPropertyKey)
      NS_ENSURE_SUCCESS(rv,rv);
     }
     else if (columnType == SB_COLUMN_TYPE_INTEGER) {
-     PRUint32 intVal = value.ToInteger(&rv);
+     PRUint64 intVal = ToInteger64(value, &rv);
      NS_ENSURE_SUCCESS(rv,rv);
-     rv = mQuery->BindInt32Parameter(0, intVal);
+     rv = mQuery->BindInt64Parameter(0, intVal);
      NS_ENSURE_SUCCESS(rv,rv);
     }
     else {
      NS_WARNING("Failed to determine the column type of a top level property.");
      return NS_ERROR_CANNOT_CONVERT_DATA;
     }
-    rv = mQuery->BindInt32Parameter(1, mMediaItemID);
-    NS_ENSURE_SUCCESS(rv,rv);
+    if (!mIsLibrary) {
+      rv = mQuery->BindInt32Parameter(1, mMediaItemID);
+      NS_ENSURE_SUCCESS(rv,rv);
+    }
   }
   else { //Regular properties all go in the same spot.
     if (value.IsVoid()) {
