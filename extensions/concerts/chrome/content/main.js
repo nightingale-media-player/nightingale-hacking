@@ -416,7 +416,7 @@ Concerts = {
 		var observer = {
 			onMediacoreEvent : function(ev) {
 				switch (ev.type) {
-					case Ci.sbIMediacoreEvent.VIEW_CHANGE:
+					case Components.interfaces.sbIMediacoreEvent.VIEW_CHANGE:
 						observer.onViewChange(ev.data);
 						break;
 					default:

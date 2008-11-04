@@ -652,10 +652,10 @@ Songkick.prototype = {
 			var month = concertDate.substr(5, 2);
 			var day = concertDate.substr(8, 2);
 			timestamp = Date.UTC(year,month-1,day,19,0,0)/1000;
-			var venue = concert.Venue;
+			var venue = concert.Venue.toString();
 			var venueURL = concert.SkVenuePage;
 			var city = concert.City;
-			var title = concert.Title;
+			var title = concert.Title.toString();
 			var concertURL = concert.SkConcertPage;
 			var tickets = concert.Tickets == "true";
 			
@@ -666,10 +666,11 @@ Songkick.prototype = {
 			var artists = concert.Artists.Artist;
 			for (j in artists) {
 				artistDbq.resetQuery();
-				var artist = artists[j].Name;
+				var artist = artists[j].Name.toString();
 				var artistURL = artists[j].SkArtistPage;
 				var query = "insert or ignore into artists values (" +
-						'"' + artist + '", "' + artistURL + '")';
+						"'" + artist.replace(/'/g, "''") + "', '" +
+						artistURL + "')";
 				artistDbq.addQuery(query);
 				artistDbq.addQuery("select ROWID from artists where artistURL="
 						+ '"' + artistURL + '"');
@@ -693,9 +694,10 @@ Songkick.prototype = {
 			if (tickets)
 				ticketsAvail = 1;
 			var query = "insert into concerts values (" + concertID +
-					", " + timestamp + ', "' + venue + '", "' + city + '", "' +
-					title + '", "' + concertURL + '", "' + venueURL + '", "' +
-					ticketsAvail + '")';
+					", " + timestamp + ", '" + venue.replace(/'/g, "''") +
+					"', '" + city + "', '" + title.replace(/'/g, "''") +
+					"', '" + concertURL + "', '" + venueURL + "', '" +
+					ticketsAvail + "')";
 			dbq.addQuery(query);
 
 			for (artistid in artistList) {
