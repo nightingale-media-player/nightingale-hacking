@@ -194,7 +194,24 @@
             }
             var storage = this.getAttribute("storage") == "true";
             var nolibraries = this.getAttribute("nolibraries") == "true";
-            var onlylibrary = this.getAttribute("library");
+            var libs = this.getAttribute("library").split(",");
+            var libraries = null;
+            // make table, translate special keywords into guids
+            for (var i in libs) {
+              switch (libs[i]) {
+                case "main":
+                  libs[i] = mainLibraryGuid;
+                  break;
+                case "web": 
+                  libs[i] = webListGUID;
+                  break;
+                case "":
+                  continue;
+              }
+              if (!libraries)
+                libraries = {};
+              libraries[libs[i]] = true;
+            }
             var exclude = this.getAttribute("exclude").split(",");
             var enumListener = {
               sbs: stringBundleService,
@@ -263,8 +280,8 @@
             pa.appendProperty(SBProperties.hidden, "0");
             while (libs.hasMoreElements()) {
               var library = libs.getNext();
-              if (!onlylibrary ||
-                  onlylibrary == library.guid) {
+              if (!libraries ||
+                  libraries[library.guid]) {
                 enumListener.onEnumeratedItem(library, library);
                 library.
                   enumerateItemsByProperties(
