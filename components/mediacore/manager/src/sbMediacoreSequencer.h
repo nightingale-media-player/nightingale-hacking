@@ -129,7 +129,7 @@ public:
   nsresult DelayedCheck();
   nsresult UpdateItemUIDIndex();
 
-private:
+protected:
   virtual ~sbMediacoreSequencer();
 
   nsresult DispatchMediacoreEvent(sbIMediacoreEvent *aEvent, 

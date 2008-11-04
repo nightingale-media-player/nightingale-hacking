@@ -86,10 +86,9 @@ public:
 
   nsresult SetVolumeDataRemote(PRFloat64 aVolume);
 
-private:
+protected:
   virtual ~sbMediacoreManager();
 
-protected:
   // copies the given hash table into the given mutable array
   template<class T>
   static NS_HIDDEN_(PLDHashOperator)

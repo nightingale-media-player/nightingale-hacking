@@ -292,6 +292,8 @@ sbMediacoreManager::Shutdown()
 
   nsAutoMonitor mon(mMonitor);
 
+  mSequencer = nsnull;
+
   nsresult rv = mDataRemoteFaceplateVolume->Unbind();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -314,6 +316,11 @@ sbMediacoreManager::Shutdown()
     NS_ASSERTION(NS_SUCCEEDED(rv), 
       "Failed to Shutdown a Mediacore. This may cause problems during final shutdown.");
   }
+
+  mPrimaryCore = nsnull;
+
+  mFactories.Clear();
+  mCores.Clear();
 
   return NS_OK;
 }
@@ -417,9 +424,11 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
 
     nsString mediacoreInstanceName;
     GenerateInstanceName(mediacoreInstanceName);
-
+    
     nsCOMPtr<sbIMediacore> mediacore;
-    rv = factory->Create(mediacoreInstanceName, getter_AddRefs(mediacore));
+    rv = CreateMediacoreWithFactory(factory, 
+                                    mediacoreInstanceName, 
+                                    getter_AddRefs(mediacore));
 #if defined(DEBUG)
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to create mediacore.");
 #endif
@@ -848,8 +857,10 @@ sbMediacoreManager::GetFactories(nsIArray * *aFactories)
     return NS_ERROR_FAILURE;
   }
 
-  rv = CallQueryInterface(mutableArray, aFactories);
+  nsCOMPtr<nsIArray> array = do_QueryInterface(mutableArray, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  array.forget(aFactories);
 
   return NS_OK;
 }
