@@ -38,7 +38,6 @@ endif
 
 SONGBIRD_DIST = $(topsrcdir)/TRADEMARK.txt \
                 $(topsrcdir)/installer/common/$(readme) \
-                $(topsrcdir)/installer/common/songbird.desktop \
                 $(topsrcdir)/app/branding/songbird.png \
                 $(NULL)
 
