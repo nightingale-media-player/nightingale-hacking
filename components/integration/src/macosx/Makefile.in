@@ -42,6 +42,7 @@ CMM_INCLUDES = $(DEPTH)/components/integration/public \
                $(DEPTH)/components/devicesobsolete/base/public \
                $(DEPTH)/components/devicesobsolete/cd/public \
                $(DEPTH)/components/devicesobsolete/usb_mass_storage/public \
+               $(DEPTH)/components/mediacore/base/public \
                $(COMPONENTS_DIR)/integration/src/win32 \
                $(COMPONENTS_DIR)/devicesobsolete/base/src \
                $(COMPONENTS_DIR)/devicesobsolete/cd/src \
