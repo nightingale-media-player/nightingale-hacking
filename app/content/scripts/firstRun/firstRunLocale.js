@@ -400,6 +400,14 @@ firstRunLocaleSvc.prototype = {
   //----------------------------------------------------------------------------
 
   /**
+   * Get the primary language subtag (discard the region) of a locale string
+   */
+  
+  _getPrimaryLanguage: function firstRunLocaleSvc__getPrimaryLanguage(aTag) {
+    return aTag.match(/^[^-]+/)[0];
+  },
+
+  /**
    * Update the UI.
    */
 
@@ -493,7 +501,9 @@ firstRunLocaleSvc.prototype = {
     // If Songbird is already selected to use the locale that applications
     // should use, then no locale switch is required.  Otherwise, a locale
     // switch is required.
-    if (selectedLocale == this._targetLocale) {
+    if (selectedLocale == this._targetLocale ||
+        selectedLocale == this._getPrimaryLanguage(this._targetLocale))
+    {
       this._localeSwitchRequired = false;
       return;
     }
@@ -507,8 +517,11 @@ firstRunLocaleSvc.prototype = {
     // Check if the target locale is installed.
     while (localeEnum.hasMore()) {
       var locale = localeEnum.getNext();
-      if (locale == this._targetLocale) {
+      if (locale == this._targetLocale ||
+          locale == this._getPrimaryLanguage(this._targetLocale))
+      {
         this._targetLocaleInstalled = true;
+        this._targetLocale = locale;
         break;
       }
     }
@@ -523,6 +536,8 @@ firstRunLocaleSvc.prototype = {
     // Set up to install the target locale.
     var bundleExtensionCount = this._localeBundle.bundleExtensionCount;
     var isTargetLocaleAvailable = false;
+    var fallbackLocaleIndex = -1;
+    var fallbackLocaleName = this._getPrimaryLanguage(this._targetLocale);
     for (var i = 0; i < bundleExtensionCount; i++) {
       // Get the next locale in the bundle.
       var localeName = this._localeBundle.getExtensionAttribute(i,
@@ -536,6 +551,19 @@ firstRunLocaleSvc.prototype = {
       } else {
         this._localeBundle.setExtensionInstallFlag(i, false);
       }
+      if ((fallbackLocaleIndex < 0) && (localeName == fallbackLocaleName)) {
+        fallbackLocaleIndex = i;
+      }
+    }
+
+    // if we can't find the wanted locale, try without the region code
+    // ("en" when "en-AU" is missing)
+    if ((!isTargetLocaleAvailable) && (fallbackLocaleIndex > -1)) {
+      this._localeBundle.setExtensionInstallFlag(fallbackLocaleIndex, true);
+      this._targetLocale =
+        this._localeBundle.getExtensionAttribute(fallbackLocaleIndex,
+                                                 "languageTag");
+      isTargetLocaleAvailable = true;
     }
 
     // If the target locale is not available, mark failure and do nothing more.
