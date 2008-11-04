@@ -123,14 +123,22 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
   // Build a big list of extensions based on everything gstreamer knows about,
   // plus some known ones, minus a few known non-media-file extensions that
   // gstreamer has typefinders for.
-  nsTArray<nsString> extensions;
+  nsTArray<nsString> audioExtensions;
+  nsTArray<nsString> videoExtensions;
   const char *blacklist[] = {
       "txt", "htm", "html", "xml", "pdf", "cpl", "msstyles", "scr", "sys",
       "ocx", "bz2", "gz", "zip", "Z", "rar", "tar", "dll", "exe", "a",
       "bmp", "png", "gif", "jpeg", "jpg", "jpe", "tif", "tiff", "xpm",
       "dat", "swf", "swfl", "stm", "cgi", "sf", "xcf", "far", "wvc"};
 
-  const char *extraExtensions[] = {"m4r", "m4p", "mp4", "vob"};
+  const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4"};
+  const char *extraVideoExtensions[] = {"vob"};
+  
+  // XXX Mook: we currently assume anything not known to be video is audio :|
+  const char *knownVideoExtensions[] = {
+    "264", "avi", "dif", "dv", "flc", "fli", "flv", "h264", "jng", "m4v", "mkv",
+    "mng", "mov", "mpe", "mpeg", "mpg", "mpv", "mve", "nuv", "ogm", "qif",
+    "qti", "qtif", "ras", "rm", "rmvb", "smil", "ts", "viv", "wmv", "x264" };
   GList *walker, *list;
 
   list = gst_type_find_factory_get_list ();
@@ -138,12 +146,15 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
   while (walker) {
     GstTypeFindFactory *factory = GST_TYPE_FIND_FACTORY (walker->data);
     gboolean blacklisted = FALSE;
+    const gchar* factoryName = gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (factory));
+    gboolean isAudioFactory = g_str_has_prefix(factoryName, "audio/");
 
     gchar **factoryexts = gst_type_find_factory_get_extensions (factory);
     if (factoryexts) {
       while (*factoryexts) {
+        gboolean isAudioExtension = isAudioFactory;
         unsigned int i;
-        for (i = 0; i < sizeof(blacklist)/sizeof(*blacklist); i++) {
+        for (i = 0; i < NS_ARRAY_LENGTH(blacklist); i++) {
           if (!g_ascii_strcasecmp(*factoryexts, blacklist[i])) {
             blacklisted = TRUE;
             LOG(("Ignoring extension '%s'", *factoryexts));
@@ -152,9 +163,24 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
         }
 
         if (!blacklisted) {
+          if (!isAudioExtension) {
+            isAudioExtension = TRUE;
+            for (i = 0; i < NS_ARRAY_LENGTH(knownVideoExtensions); i++) {
+              if (!g_ascii_strcasecmp(*factoryexts, knownVideoExtensions[i])) {
+                isAudioExtension = FALSE;
+                break;
+              }
+            }
+          }
+          
           nsString ext = NS_ConvertUTF8toUTF16(*factoryexts);
-          if (!extensions.Contains(ext))
-            extensions.AppendElement(ext);
+          if (isAudioExtension) {
+            if (!audioExtensions.Contains(ext))
+              audioExtensions.AppendElement(ext);
+          } else {
+            if (!videoExtensions.Contains(ext))
+              videoExtensions.AppendElement(ext);
+          }
         }
         factoryexts++;
       }
@@ -163,18 +189,24 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
   }
   g_list_free (list);
 
-  for (unsigned int i = 0; 
-          i < sizeof(extraExtensions)/sizeof(*extraExtensions); i++) 
+  for (unsigned int i = 0; i < NS_ARRAY_LENGTH(extraAudioExtensions); i++) 
   {
-    nsString ext = NS_ConvertUTF8toUTF16(extraExtensions[i]);
-    if(!extensions.Contains(ext))
-      extensions.AppendElement(ext);
+    nsString ext = NS_ConvertUTF8toUTF16(extraAudioExtensions[i]);
+    if(!audioExtensions.Contains(ext))
+      audioExtensions.AppendElement(ext);
   }
 
-  // For the moment, we pretend these are all audio file extensions. 
-  // Later, we'll whitelist a few as audio, and throw the rest in as video.
+  for (unsigned int i = 0; i < NS_ARRAY_LENGTH(extraVideoExtensions); i++) 
+  {
+    nsString ext = NS_ConvertUTF8toUTF16(extraVideoExtensions[i]);
+    if(!videoExtensions.Contains(ext))
+      videoExtensions.AppendElement(ext);
+  }
 
-  rv = caps->SetAudioExtensions(extensions);
+  rv = caps->SetAudioExtensions(audioExtensions);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = caps->SetVideoExtensions(videoExtensions);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Only audio playback for today.

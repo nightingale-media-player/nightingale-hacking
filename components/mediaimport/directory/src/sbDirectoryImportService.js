@@ -227,6 +227,9 @@ DirectoryImportJob.prototype = {
     
     // Start by finding all the files in the given directories
     
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+    
     this._fileScanner = Cc["@songbirdnest.com/Songbird/FileScan;1"]
                           .createInstance(Components.interfaces.sbIFileScan);
 
@@ -235,6 +238,10 @@ DirectoryImportJob.prototype = {
                         .createInstance(Ci.sbIMediacoreTypeSniffer);
     try {
       var extensions = typeSniffer.mediaFileExtensions;
+      if (!Application.prefs.getValue("songbird.mediascan.enableVideo", false)) {
+        // disable video, so scan only audio - see bug 13173
+        extensions = typeSniffer.audioFileExtensions;
+      }
       this._fileExtensions = [];
       while (extensions.hasMore()) {
         this._fileExtensions.push(extensions.getNext());

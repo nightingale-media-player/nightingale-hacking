@@ -29,6 +29,7 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 
 // Open functions
@@ -53,14 +54,12 @@ try
     var mediafiles = SBString("open.mediafiles", "Media Files", theSongbirdStrings);
 
     // ask the playback core for supported extensions
-    var ext;
-    var exts = new Array();
     var extensions = gTypeSniffer.mediaFileExtensions;
-    while (extensions.hasMore())
-    {
-      ext = extensions.getNext();
-      exts.push(ext);
+    if (!Application.prefs.getValue("songbird.mediascan.enableVideo", false)) {
+      // disable video, so scan only audio - see bug 13173
+      extensions = gTypeSniffer.audioFileExtensions;
     }
+    var exts = ArrayConverter.JSArray(extensions);
 
     // map ["mp3", "ogg"] to ["*.mp3", "*.ogg"]
     var filters = exts.map(function(x){return "*." + x});

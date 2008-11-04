@@ -50,7 +50,8 @@
 
 EXPORTED_SYMBOLS = [ "ArrayConverter" ];
 
-debug("*** loading ArrayConverter\n");
+const Ci = Components.interfaces;
+const Cr = Components.results;
 
 /**
  * Get a simple enumerator.
@@ -80,8 +81,8 @@ Enumerator.prototype = {
   // nsISupports
   QueryInterface: function QueryInterface(aIID)
   {
-    if (aIID.equals(Components.interfaces.nsISimpleEnumerator) ||
-        aIID.equals(Components.interfaces.nsISupports))
+    if (aIID.equals(Ci.nsISimpleEnumerator) ||
+        aIID.equals(Ci.nsISupports))
       return this;
 
     throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -116,8 +117,8 @@ StringEnumerator.prototype = {
   // nsISupports
   QueryInterface: function QueryInterface(aIID)
   {
-    if (aIID.equals(Components.interfaces.nsIStringEnumerator) ||
-        aIID.equals(Components.interfaces.nsISupports))
+    if (aIID.equals(Ci.nsIStringEnumerator) ||
+        aIID.equals(Ci.nsISupports))
       return this;
 
     throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -160,8 +161,8 @@ NSArray.prototype = {
   // nsISupports
   QueryInterface: function QueryInterface(aIID)
   {
-    if (aIID.equals(Components.interfaces.nsIArray) ||
-        aIID.equals(Components.interfaces.nsISupports))
+    if (aIID.equals(Ci.nsIArray) ||
+        aIID.equals(Ci.nsISupports))
       return this;
 
     throw Components.results.NS_ERROR_NO_INTERFACE;
@@ -177,17 +178,26 @@ var ArrayConverter = {
    * @throws NS_ERROR_INVALID_ARG.
    */
   JSArray: function getJSArray(aObject) {
-    if (aObject instanceof Components.interfaces.nsIArray) {
+    if (aObject instanceof Ci.nsIArray) {
       aObject = aObject.enumerate();
     }
-
-    if (!(aObject instanceof Components.interfaces.nsISimpleEnumerator)) {
-      throw Components.results.NS_ERROR_INVALID_ARG;
+    
+    var hasMore;
+    
+    if (aObject instanceof Ci.nsISimpleEnumerator) {
+        hasMore = "hasMoreElements";
+    } else if (aObject instanceof Ci.nsIStringEnumerator ||
+               aObject instanceof Ci.nsIUTF8StringEnumerator)
+    {
+        hasMore = "hasMore";
+    } else {
+        throw new Components.Exception("invalid object",
+                                       Cr.NS_ERROR_INVALID_ARG);
     }
 
     var array = [];
-    while (aObject.hasMoreElements()) {
-      array[array.length] = aObject.getNext();
+    while (aObject[hasMore]()) {
+        array.push(aObject.getNext());
     }
     return array;
   },
@@ -201,11 +211,11 @@ var ArrayConverter = {
    * @throws NS_ERROR_INVALID_ARG.
    */
   JSEnum: function JSEnum(enumIn) {
-    if (enumIn instanceof Components.interfaces.nsIArray) {
+    if (enumIn instanceof Ci.nsIArray) {
       enumIn = enumIn.enumerate();
     }
     
-    if (enumIn instanceof Components.interfaces.nsISimpleEnumerator) {
+    if (enumIn instanceof Ci.nsISimpleEnumerator) {
       return {
         __iterator__: function() {
           while(enumIn.hasMoreElements())
@@ -213,7 +223,7 @@ var ArrayConverter = {
         }
       }
     }
-    else if (enumIn instanceof Components.interfaces.nsIStringEnumerator) {
+    else if (enumIn instanceof Ci.nsIStringEnumerator) {
       return {
         __iterator__: function() {
           while(enumIn.hasMore())

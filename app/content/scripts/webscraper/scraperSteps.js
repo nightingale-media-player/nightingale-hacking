@@ -161,8 +161,12 @@ var WebScraperSteps = {
     Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
     var typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
                         .createInstance(Ci.sbIMediacoreTypeSniffer);
-    var mediaURLExtensions = [i for each (i in
-                       ArrayConverter.JSEnum(typeSniffer.mediaFileExtensions))];
+    var extensionsEnum = typeSniffer.mediaFileExtensions;
+    if (!Application.prefs.getValue("songbird.mediascan.enableVideo", false)) {
+      // disable video, so scan only audio - see bug 13173
+      extensionsEnum = typeSniffer.audioFileExtensions;
+    }
+    var mediaURLExtensions = [i for each (i in ArrayConverter.JSEnum(extensionsEnum))];
     var mediaURLSchemes = ["mms", "rstp"];
     
     var properties;
