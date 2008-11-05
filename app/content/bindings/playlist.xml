@@ -72,8 +72,6 @@
               ondraggesture="_onDragGesture(event);"
               ondragover="_onDragOver(event);"
               ondragdrop="_onDragDrop(event);"
-              onmousemove="_onMouseMove(event);"
-              onmouseout="_onMouseMove(event);"
               onmouseup="_onMouseUp(event);"
             />
           </tree>
@@ -162,16 +160,6 @@
     jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", null);
   }
 
-  // Add a capturing listener so we can swallow the mousedown for clickable
-  // properties, preventing row selection
-  this._onMouseDownClosure = function(event) {
-    self._onMouseDown(event);
-  };
-  this._treechildren.addEventListener("mousedown",
-                                      this._onMouseDownClosure,
-                                      false);
-                        
-                        
   // Add a capturing listener so we can swallow command events
   // in cases such as column restoreNaturalOrder.
   this._onCommandClosure = function(event) {
@@ -424,9 +412,13 @@
       -->
       <field name="_columnSpecOrigin">0</field>
 
-      <!-- Track mouse for sending mouse state to the tree view -->
-      <field name="_lastMouseDownRow">-1</field>
-      <field name="_lastMouseDownColumn">null</field>
+      <!-- Track mouse for sending mouse state to the tree view and determining
+           click location -->
+      <field name="_onMouseDownRow">-1</field>
+      <field name="_onMouseDownColumn">null</field>
+      <field name="_onMouseDownObject">null</field>
+      <field name="_mouseIsDown">false</field>
+      <field name="_isHandlingClickableContent">false</field>
       <field name="_lastMouseOverRow">-1</field>
       <field name="_lastMouseOverColumn">null</field>
 
@@ -619,10 +611,6 @@
     this._treecols.removeEventListener("DOMAttrModified",
                                       this._onColumnMutationClosure,
                                         false);
-
-    this._treechildren.removeEventListener("mousedown",
-                                           this._onMouseDownClosure,
-                                           true);
                             
     this.removeEventListener("command",
                             this._onCommandClosure,
@@ -1570,16 +1558,13 @@
             return;
 
           // Check to see that the user double clicked on a row
-          var row = {};
-          var col = {};
-          var obj = {};
-          var b = this.tree.treeBoxObject;
-          b.getCellAt(evt.clientX, evt.clientY, row, col, obj);
+          var row = this._onMouseDownRow;
+          var col = this._onMouseDownColumn;
 
-          if (row.value >= 0 && col.value) {
+          if (row >= 0 && col) {
             // Only play the track if the double clicked cell does not contain
             // clickable content
-            var property = col.value.element.getAttribute("bind");
+            var property = col.element.getAttribute("bind");
             var info = this._pm.getPropertyInfo(property);
             if (!(info instanceof this._Ci.sbIClickablePropertyInfo))
               this.sendPlayEvent();
@@ -1760,7 +1745,6 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
-  var bo = this.tree.treeBoxObject;
   try
   {
     // Record time of this click event
@@ -1771,15 +1755,28 @@
   
     if ( evt.button == 0 )
     {
-      var obj = {}, row = {}, col = {};
-      bo.getCellAt( evt.clientX, evt.clientY, row, col, obj );
+      // Get the current mouse over cell info
+      var bo = this.tree.treeBoxObject;
+      var mouseOverObj = {}, mouseOverRow = {}, mouseOverCol = {};
+      bo.getCellAt( evt.clientX,
+                    evt.clientY,
+                    mouseOverRow,
+                    mouseOverCol,
+                    mouseOverObj );
+      mouseOverRow = mouseOverRow.value;
+      mouseOverCol = mouseOverCol.value;
+      mouseOverObj = mouseOverObj.value;
 
-      if (obj.value)
+      // Use the mouse down event cell as the click event cell
+      var row = this._onMouseDownRow;
+      var col = this._onMouseDownColumn;
+      var obj = this._onMouseDownObject;
+      if (obj)
       {
         // If this clickable cell is disabled, just return
         var props = this._Cc["@mozilla.org/supports-array;1"]
                             .createInstance(this._Ci.nsISupportsArray);
-        this.tree.view.getCellProperties(row.value, col.value, props);
+        this.tree.view.getCellProperties(row, col, props);
         for (var i = 0; i < props.Count(); i++) {
           var atom = props.QueryElementAt(i, this._Ci.nsIAtom);
           if (atom.equals("disabled")) {
@@ -1787,16 +1784,16 @@
           }
         }
 
-        var property = col.value.element.getAttribute("bind");
-        var item = this.mediaListView.getItemByIndex(row.value);
+        var property = col.element.getAttribute("bind");
+        var item = this.mediaListView.getItemByIndex(row);
 
         function fireEvent(aElement) {
           var event = document.createEvent("datacontainerevent");
           event.initEvent("PlaylistCellClick", true, true);
           event.setData("property", property);
           event.setData("item", item);
-          event.setData("row", row.value);
-          event.setData("column", col.value);
+          event.setData("row", row);
+          event.setData("column", col);
           aElement._lastClickEvent = { property: property, item: item, __proto__: evt };
           aElement.dispatchEvent(event);
           aElement._lastClickEvent = null;
@@ -1807,13 +1804,21 @@
           var clickable =
             info.QueryInterface(this._Ci.sbIClickablePropertyInfo);
 
-          var coords = this._getCellCoords(evt, row.value, col.value);
+          // Don't register click if mouse is no longer over clicked cell
+          if ((mouseOverRow != row) ||
+              (mouseOverCol != col) ||
+              (mouseOverObj != obj)) {
+            return;
+          }
+
+          // Get the coordinates of the cell that the mouse is over
+          var coords = this._getCellCoords(evt, mouseOverRow, mouseOverCol);
 
           var oldValue = item.getProperty(property);
 
           // Should this click register?
           var hit = clickable.hitTest(oldValue,
-                                      obj.value,
+                                      obj,
                                       coords.cellWidth,
                                       coords.cellHeight,
                                       coords.x,
@@ -1875,7 +1880,7 @@
                                                    coords.cellHeight,
                                                    coords.x,
                                                    coords.y);
-            this.tree.view.setCellValue(row.value, col.value, value);
+            this.tree.view.setCellValue(row, col, value);
           }
           catch(e if e.result == this._Cr.NS_ERROR_NOT_IMPLEMENTED) {
             // It is ok for this not to be implemented
@@ -1883,7 +1888,7 @@
           evt.stopPropagation();
         }
         else if (this.tree.currentIndex != -1 &&
-                 this.treeView.isEditable(row.value, col.value))
+                 this.treeView.isEditable(row, col))
         {
           let handleEdit = true;
           
@@ -1896,8 +1901,8 @@
 
           if (handleEdit) {
             // Remember the row and column
-            this.edit_row = row.value;
-            this.edit_col = col.value;
+            this.edit_row = row;
+            this.edit_col = col;
             
             if ( this.tree.currentIndex == this._lastClickIndex  ) {
               // Don't start editing immediately since a) we can't do it in 
@@ -1930,6 +1935,8 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
+  var view = this.treeView;
+
   var obj = {}, row = {}, col = {};
   var bo = this.tree.treeBoxObject;
   bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
@@ -1970,14 +1977,18 @@
     this.dispatchEvent(event);
   }
 
-  // If the mouse is not over any cell, do nothing more.
+  // If the mouse is not over any cell, set mouse state to none and do nothing
+  // more.
   if (!obj.value || (evt.type == "mouseout")) {
+    view.setMouseState(-1,
+                       null,
+                       this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_NONE);
     return;
   } 
 
-  // Register a hover on all clickable properties that pass the hit test, or
-  // all other cells
-  var shouldHover = false;
+  // Determine if mouse is over the cell content (hits clickable property
+  // content or over any other cell)
+  var overCellContent = false;
 
   var property = col.value.element.getAttribute("bind");
   var propertyInfo = this._pm.getPropertyInfo(property);
@@ -1998,44 +2009,48 @@
                           coords.y);
 
     if (hit) {
-      shouldHover = true;
+      overCellContent = true;
     }
   }
   else {
-    shouldHover = true;
+    overCellContent = true;
   }
 
-  var view = this.treeView;
-  if (shouldHover) {
+  // Update the last mouse over state
+  this._lastMouseOverRow = row.value;
+  this._lastMouseOverColumn = col.value;
 
-    // Set the state only if this cell is not the last mouse down cell
-    if (!(row.value == this._lastMouseDownRow &&
-        col.value == this._lastMouseDownColumn)) {
-      view.setMouseState(row.value,
-                         col.value,
-                         this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_HOVER);
-      this._lastMouseDownRow    = -1;
-      this._lastMouseDownColumn = null;
+  // If the mouse is not down and is over cell content, set the mouse state to
+  // hover.  If the mouse is down over the same cell content as the mouse down
+  // event, set the mouse state to down.  Otherwise, set the mouse state to
+  // none.
+  if (!this._mouseIsDown && overCellContent) {
+    view.setMouseState(row.value,
+                       col.value,
+                       this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_HOVER);
 
-      // If mouse has moved into a different cell, dispatch a mouse over event.
-      if (!sameCell) {
-        var property = col.value.element.getAttribute("bind");
-        var item = this.mediaListView.getItemByIndex(row.value);
+    // If mouse has moved into a different cell, dispatch a mouse over event.
+    if (!sameCell) {
+      var property = col.value.element.getAttribute("bind");
+      var item = this.mediaListView.getItemByIndex(row.value);
 
-        var event = document.createEvent("datacontainerevent");
-        event.initEvent("PlaylistCellMouseOver", true, true);
-        event.setData("property", property);
-        event.setData("item", item);
-        event.setData("row", row.value);
-        event.setData("column", col.value);
-        this.dispatchEvent(event);
-
-        this._lastMouseOverRow = row.value;
-        this._lastMouseOverColumn = col.value;
-      }
+      var event = document.createEvent("datacontainerevent");
+      event.initEvent("PlaylistCellMouseOver", true, true);
+      event.setData("property", property);
+      event.setData("item", item);
+      event.setData("row", row.value);
+      event.setData("column", col.value);
+      this.dispatchEvent(event);
     }
-  }
-  else {
+  } else if (this._mouseIsDown &&
+             overCellContent &&
+             (row.value == this._onMouseDownRow) &&
+             (col.value == this._onMouseDownColumn) &&
+             (obj.value == this._onMouseDownObject)) {
+    view.setMouseState(row.value,
+                       col.value,
+                       this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_DOWN);
+  } else {
     view.setMouseState(-1,
                        null,
                        this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_NONE);
@@ -2048,15 +2063,24 @@
       <parameter name="evt"/>
       <body>
 <![CDATA[
-  var obj = {}, row = {}, col = {};
-  var bo = this.tree.treeBoxObject;
-  bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
-  if (!obj.value) {
+  // Do nothing if event does not occur over a visible tree cell
+  if (!this._pointInTreeRows(this.tree, evt.clientX, evt.clientY)) {
     return;
   }
 
-  this._lastMouseDownRow    = row.value;
-  this._lastMouseDownColumn = col.value;
+  var obj = {}, row = {}, col = {};
+  var bo = this.tree.treeBoxObject;
+  bo.getCellAt(evt.clientX, evt.clientY, row, col, obj);
+
+  this._onMouseDownRow             = row.value;
+  this._onMouseDownColumn          = col.value;
+  this._onMouseDownObject          = obj.value;
+  this._isHandlingClickableContent = false;
+  this._mouseIsDown                = true;
+
+  if (!obj.value) {
+    return;
+  }
 
   var view = this.treeView;
 
@@ -2081,6 +2105,7 @@
                           coords.x,
                           coords.y);
     if (hit) {
+      this._isHandlingClickableContent = true;
       view.setMouseState(row.value,
                          col.value,
                          this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_DOWN);
@@ -2108,8 +2133,8 @@
 
   if (obj.value) {
     var view = this.treeView;
-    if (row.value == this._lastMouseDownRow &&
-        col.value == this._lastMouseDownColumn) {
+    if (row.value == this._onMouseDownRow &&
+        col.value == this._onMouseDownColumn) {
       view.setMouseState(row.value,
                          col.value,
                          this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_HOVER);
@@ -2121,8 +2146,10 @@
     }
   }
 
-  this._lastMouseDownRow    = -1;
-  this._lastMouseDownColumn = null;
+  // The mouse is no longer down and widget is no longer handling clickable
+  // content
+  this._mouseIsDown = false;
+  this._isHandlingClickableContent= false;
 ]]>
       </body>
     </method>
@@ -2464,6 +2491,12 @@
         <parameter name="event"/>
         <body>
 <![CDATA[
+    // Don't initiate a drag if handling clickable content
+    if (this._isHandlingClickableContent) {
+      event.stopPropagation();
+      return;
+    }
+
     var view = this._mediaListView;
     var numRows = view.selection.count;
     if (numRows == 0) {
@@ -2479,6 +2512,14 @@
     dragService.invokeDragSessionWithImage(event.target, transArray,
                                            null, dragAction,
                                            icon, 0, 0, event);
+
+    // Mouse events will be handled by drag-and-drop, so clear the mouse down
+    // state
+    this._onMouseDownRow = -1;
+    this._onMouseDownColumn = null;
+    this._onMouseDownObject = null;
+    this._mouseIsDown = false;
+    this._isHandlingClickableContent= false;
 
     event.stopPropagation();
 ]]>
@@ -2956,6 +2997,47 @@
     </implementation>
 
     <handlers>
+      <!-- Grab mouse events in the capturing phase to enable proper handling
+           of clickable properties (e.g., prevent row selection, stop movement
+           event propagation).  This also enables reading of the mouse down cell
+           info before any tree scrolling occurs. -->
+      <handler event="mousedown" clickcount="1" phase="capturing">
+        <![CDATA[
+          this._onMouseDown(event);
+        ]]>
+      </handler>
+
+      <handler event="mousemove" phase="capturing">
+        <![CDATA[
+          // Handle the event
+          this._onMouseMove(event);
+
+          // Don't propagate event if handling clickable content
+          if (this._isHandlingClickableContent)
+            event.stopPropagation();
+        ]]>
+      </handler>
+
+      <handler event="mouseout" phase="capturing">
+        <![CDATA[
+          // Handle the event
+          this._onMouseMove(event);
+
+          // Don't propagate event if handling clickable content
+          if (this._isHandlingClickableContent)
+            event.stopPropagation();
+
+          // Since the mouse can no longer be tracked after it moves out, treat
+          // the mouse as no longer down and the widget as no longer handling
+          // clickable content.  Also, clear the on mouse down cell info.
+          this._onMouseDownRow = -1;
+          this._onMouseDownColumn = null;
+          this._onMouseDownObject = null;
+          this._mouseIsDown = false;
+          this._isHandlingClickableContent= false;
+        ]]>
+      </handler>
+
       <!-- Grab doubleclicks in the capturing phase, so we can prevent
            the standard click function from being called (prevent inline editing, etc.) -->
       <handler event="click" clickcount="2" phase="capturing">
