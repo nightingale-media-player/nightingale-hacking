@@ -1,6 +1,13 @@
 content concerts  chrome/content/	contentaccessible=yes
 locale  concerts  en-US  chrome/locale/en-US/
+locale  concerts  en-GB  chrome/locale/en-GB/
+locale  concerts  zh-CN  chrome/locale/zh-CN/
 locale  concerts  fr-FR  chrome/locale/fr-FR/
+locale  concerts  de-DE  chrome/locale/de-DE/
+locale  concerts  pl-PL  chrome/locale/pl-PL/
+locale  concerts  pt-BR  chrome/locale/pt-BR/
+locale  concerts  es-ES  chrome/locale/es-ES/
+locale  concerts  sv-SE  chrome/locale/sv-SE/
 skin    concerts  classic/1.0 chrome/skin/
 skin    concerts  rubberducky/0.2 chrome/skin/rubberducky/
 
