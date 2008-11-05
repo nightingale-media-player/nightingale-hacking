@@ -56,7 +56,16 @@
     <em:name>Concerts</em:name>
 	<em:creator>Stephen Lau (stevel@songbirdnest.com)</em:creator>
 	<em:contributor>Mark James (FAMFAMFAM)</em:contributor>
-	<em:contributor>Antoine Turmel (geekshadow@gmail.com) - fr-FR translation</em:contributor>
+	<em:contributor>Antoine Turmel (GeekShadow) - fr-FR translation</em:contributor>
+	<em:contributor>Tael_ - fr-FR translation</em:contributor>
+	<em:contributor>Goofy - fr-FR translation</em:contributor>
+	<em:contributor>Schwadegan - sv-SE translation</em:contributor>
+	<em:contributor>Nukeador - es-ES translation</em:contributor>
+	<em:contributor>Dark_eye - es-ES translation</em:contributor>
+	<em:contributor>Lukas_Skywalker - de-DE translation</em:contributor>
+	<em:contributor>cest713 - zh-CN translation</em:contributor>
+	<em:contributor>Waclaw Jacek - pl-PL translation</em:contributor>
+	<em:contributor>humbertosartini - pt-BR translation</em:contributor>
 	<em:description>See when your library's artists are touring in your city.  Concert and ticketing information powered by Songkick.com.</em:description>
 
 	<em:iconURL>chrome://concerts/content/ticket_icon.png</em:iconURL>
