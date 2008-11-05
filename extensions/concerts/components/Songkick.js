@@ -958,7 +958,11 @@ Songkick.prototype = {
 					"from playing_at where anyLibraryArtist=1");
 		else
 			this._db.addQuery("select count(*) from concerts");
-		var ret = this._db.execute();
+		try {
+			var ret = this._db.execute();
+		} catch (e) {
+			return (0);
+		}
 		var result = this._db.getResultObject();
 		var count = result.getRowCell(0, 0);
 		return (count);
@@ -1130,13 +1134,20 @@ Songkick.prototype = {
 				this._db.addQuery(query);
 				for (k=0; k<x..Country[i].State[j].City.length(); k++) {
 					var cityId = x..Country[i].State[j].City[k].@id;
-					var cityName = x..Country[i].State[j].City[k].@name;
-					var cityLat = x..Country[i].State[j].City[k].@lat;
-					var cityLng = x..Country[i].State[j].City[k].@lng;
+					var cityName =
+						x..Country[i].State[j].City[k].@name.toString();
+					var cityLat =
+						x..Country[i].State[j].City[k].@lat.toString();
+					var cityLng =
+						x..Country[i].State[j].City[k].@lng.toString();
+					if (!cityLat)
+						cityLat = "0";
+					if (!cityLng)
+						cityLng = "0";
 					var query = "insert into cities values " +
 							"(" + cityId + ", " + stateId + ", " + countryId +
 							", " + cityLat + ", " + cityLng + ", '" +
-							cityName + "')";
+							cityName.replace(/'/g, "''") + "')";
 					this._db.addQuery(query);
 				}
 
@@ -1150,7 +1161,12 @@ Songkick.prototype = {
 	gotLocationInfo : function() {
 		this._db.resetQuery();
 		this._db.addQuery("select count(*) from cities");
-		this._db.execute();
+		try {
+			this._db.execute();
+		} catch (e) {
+			dump("FAIL\n");
+			return (-1);
+		}
 		var result = this._db.getResultObject();
 		var count = result.getRowCell(0,0);
 		if (count <= 0)
