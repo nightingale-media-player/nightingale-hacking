@@ -1,0 +1,12 @@
+<!ENTITY concerts.groupby "Gruppe von">
+<!ENTITY concerts.libraryartists "Nur Konzerte von Künstlern in meiner Bibliothek anzeigen">
+<!ENTITY concerts.sort.artist "Küntlername">
+<!ENTITY concerts.sort.event "Konzertdatum">
+<!ENTITY concerts.sort.venue "Veranstaltungsort">
+<!ENTITY concerts.editlocation "ändern">
+<!ENTITY concerts.loading "Es wird geprüft, wer in der Nähe von Ihnen auf Tour ist...">
+<!ENTITY concerts.changelocation "Ort ändern">
+<!ENTITY concerts.easteregg.fail "Fehler">
+<!ENTITY concerts.easteregg.fail.2 "Keine Konzerte gefunden für">
+<!ENTITY concerts.timeout.error "Entweder sind Sie nicht mit dem Internet verbunden, oder unsere Konzertdatenbank arbeitet nicht richtig. Bitte versuchen Sie es in ein paar Minuten nochmals.">
+<!ENTITY concerts.timeoutreport.error "Ein Problem berichten">
