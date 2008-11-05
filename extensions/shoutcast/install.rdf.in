@@ -53,7 +53,11 @@
     <em:id>shoutcast-radio@songbirdnest.com</em:id>
     <em:name>SHOUTcast Radio</em:name>
     <em:description>Directory of SHOUTcast Internet radio streams</em:description>
-    <em:creator>Stephen Lau (stevel@songbirdnest.com)</em:creator>
+	<em:creator>Stephen Lau (stevel@songbirdnest.com)</em:creator>
+	<em:contributor>Goofy (fr-FR localisation)</em:contributor>
+	<em:contributor>Nukeador (es-ES localisation)</em:contributor>
+	<em:contributor>Lukas_Skywalker (de-DE localisation)</em:contributor>
+	<em:contributor>Waclaw Jacek (pl-PL localisation)</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
     <em:iconURL>chrome://shoutcast-radio/skin/shoutcast_icon-32x32.png</em:iconURL>
 	<em:optionsURL>chrome://shoutcast-radio/content/optionsWindow.xul</em:optionsURL>

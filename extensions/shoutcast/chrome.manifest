@@ -1,6 +1,10 @@
 content shoutcast-radio chrome/content/
 locale shoutcast-radio en-US chrome/locale/en-US/
 locale shoutcast-radio en-GB chrome/locale/en-GB/
+locale shoutcast-radio fr-FR chrome/locale/fr-FR/
+locale shoutcast-radio de-DE chrome/locale/de-DE/
+locale shoutcast-radio pl-PL chrome/locale/pl-PL/
+locale shoutcast-radio es-ES chrome/locale/es-ES/
 skin shoutcast-radio classic/1.0 chrome/skin/
 skin shoutcast-radio rubberducky/0.2 chrome/skin/rubberducky/
 

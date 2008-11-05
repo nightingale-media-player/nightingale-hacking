@@ -1,0 +1,13 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Filtry strumieni">
+<!ENTITY prefwindow.title "SHOUTcast Radio - preferencje">
+<!ENTITY bit-rate.limit.label "Wyświetlaj wyłącznie strumienie SHOUTcasta o bitrate wynoszącym co najmniej">
+<!ENTITY listeners.limit.label "Wyświetlaj wyłącznie strumienie SHOUTcasta z co najmniej">
+<!ENTITY listeners.limit.label.2 "słuchaczami">
+<!ENTITY bit-rate.label "Bitrate (kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Liczba słuchaczy">
+<!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.customGenres "Własne gatunki">
+<!ENTITY prefs.tosCaption "Zasady używania">
+<!ENTITY prefs.tosLinkText "Zobacz zasady używania">

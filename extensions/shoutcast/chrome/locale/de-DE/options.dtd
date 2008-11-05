@@ -1,0 +1,15 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Streams filtern">
+<!ENTITY prefwindow.title "SHOUTcast Radio-Einstellungen">
+<!ENTITY bit-rate.limit.label "Nur SHOUTcast-Streams anzeigen, die eine Mindestbitrate haben">
+<!ENTITY listeners.limit.label "Nur SHOUTcast-Streams mit mindestens">
+<!ENTITY listeners.limit.label.2 "Höhrern anzeigen">
+<!ENTITY bit-rate.label "Bitrate (kb/s)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Anzahl Hörer">
+<!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.customGenres "Benutzerdefinierte Genres">
+<!ENTITY custom-genres.help.label "Wenn Sie benutzerdefinierte Genres im SHOUTcast-Ordner anzeigen lassen wollen, geben Sie hier eine durch Kommas abgetrennte Liste der Genres ein">
+<!ENTITY prefs.tosCaption "Nutzungsbedingungen">
+<!ENTITY prefs.tosBegin "Die Benutzung von SHOUTcast ist an die Nutzungsbedingungen gebunden">
+<!ENTITY prefs.tosLinkText "Nutzungsbedingungen anzeigen">
