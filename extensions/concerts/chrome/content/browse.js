@@ -396,8 +396,12 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 			this.pState, this.pCity);
 	regionLabel.value = locationString;
 	regionLabel.className = "text-link";
+	/*
+	 * bug 13347 - disabling this in favour of going to 'edit location' page
+	 * instead
 	regionLabel.addEventListener("click",
 			self.ConcertTicketing.openCityPage, false);
+	*/
 
 	this._bodyNode = this._browseDoc.getElementsByTagName("body")[0];
 

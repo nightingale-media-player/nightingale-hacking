@@ -51,7 +51,8 @@
 						command="command-changeLibraryArtistFilter"
 						label="&concerts.libraryartists;" />
 					<spacer flex="1" />
-					<label class="region" id="label-myregion" />
+					<label class="region" id="label-myregion" 
+						onclick="ConcertTicketing.editLocation()" />
 					<image src="chrome://concerts/skin/edit-location.png"
 						onclick="ConcertTicketing.editLocation()"
 						class="image-edit-location"/>
