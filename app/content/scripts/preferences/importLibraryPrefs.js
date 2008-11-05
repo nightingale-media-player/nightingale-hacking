@@ -121,7 +121,7 @@ var importLibraryPrefsUI = {
     //XXXeps don't hard code.
     this._userReadableLibraryType = "iTunes";
     this._defaultLibraryFileName = "iTunes Music Library.xml";
-    this._libraryFileExtFilter = "xml";
+    this._libraryFileExtFilter = "*.xml";
 
     // Get the preferences branch.
     this._prefBranch = Cc["@mozilla.org/preferences-service;1"]
