@@ -536,4 +536,5 @@
 <!ENTITY wizard.button.finish.label    "Finish">
 
 <!-- Mediacore entities. -->
-<!ENTITY mediacore.error.title  "Mediacore Error">
+<!ENTITY mediacore.error.title    "Mediacore Error">
+<!ENTITY mediacore.error.preface  "&brandShortName; encountered a playback error.">

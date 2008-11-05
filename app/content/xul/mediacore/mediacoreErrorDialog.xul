@@ -30,7 +30,14 @@
 <?xml-stylesheet href="chrome://global/content/commonDialog.css"
                  type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<!-- Import external definitions. -->
+<!DOCTYPE overlay [
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  %brandDTD;
+  %songbirdDTD;
+]>
 
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
@@ -42,11 +49,17 @@
  onload="doOnLoad();"
  ondialogaccept="return doNext();"
  ondialogcancel="return doStop();"
- width="500"
- height="200"
+ width="440"
+ height="160"
 >
-  <description flex="1" id="mediacore_error_desc" />
-  
+  <vbox>
+    <!-- Preface the error with a quick message -->
+    <label value="&mediacore.error.preface;" />
+
+    <!-- Detailed description of the error -->
+    <description flex="1" id="mediacore_error_desc" />
+  </vbox>
+
   <!-- Import the Songbird services code. -->
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/windowUtils.js" />
@@ -87,6 +100,8 @@
       catch(err) {
         Cu.reportError(err);
       }
+      
+      onExit();
     }
   ]]>
   </script>
