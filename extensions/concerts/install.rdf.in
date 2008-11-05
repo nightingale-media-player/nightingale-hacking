@@ -70,7 +70,8 @@
 
 	<em:iconURL>chrome://concerts/content/ticket_icon.png</em:iconURL>
 	<em:homepageURL>http://addons.songbirdnest.com/addon/1281</em:homepageURL>
-	
+
+	<!--
 	<em:localized>
 		<Description>
 			<em:locale>en-US</em:locale>
@@ -89,6 +90,7 @@
 		</Description>
 	</em:localized>
 
+	-->
   </Description>
 </RDF>
 
