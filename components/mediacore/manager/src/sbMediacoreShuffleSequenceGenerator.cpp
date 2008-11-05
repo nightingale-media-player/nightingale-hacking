@@ -46,14 +46,6 @@
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreShuffleSequenceGenerator, 
                               sbIMediacoreSequenceGenerator)
 
-sbMediacoreShuffleSequenceGenerator::sbMediacoreShuffleSequenceGenerator()
-{
-}
-
-sbMediacoreShuffleSequenceGenerator::~sbMediacoreShuffleSequenceGenerator()
-{
-}
-
 nsresult 
 sbMediacoreShuffleSequenceGenerator::Init()
 {

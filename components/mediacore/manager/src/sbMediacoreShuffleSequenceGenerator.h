@@ -44,10 +44,5 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIACORESEQUENCEGENERATOR
 
-  sbMediacoreShuffleSequenceGenerator();
-
   nsresult Init();
-  
-private:
-  virtual ~sbMediacoreShuffleSequenceGenerator();
 };

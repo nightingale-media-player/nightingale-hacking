@@ -1392,6 +1392,9 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
 
     mView = aView;
 
+    rv = StartWatchingView();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = RecalculateSequence(aViewPosition);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1531,6 +1534,15 @@ sbMediacoreSequencer::StopWatchingView()
   }
 
   mWatchingView = PR_FALSE;
+  
+  mListBatchCount = 0;
+  mLibraryBatchCount = 0;
+  mSmartRebuildDetectBatchCount = 0;
+
+  mNeedCheck = PR_FALSE;
+  mViewIsLibrary = PR_FALSE;
+  mNeedSearchPlayingItem = PR_FALSE;
+  mNeedsRecalculate = PR_FALSE;
 
   return NS_OK;
 }
@@ -2444,8 +2456,8 @@ sbMediacoreSequencer::OnItemAdded(sbIMediaList *aMediaList,
   // 2nd part of smart playlist rebuild detection: are we adding
   // items in the same batch as we cleared the list in ?
 
-  if (aMediaList == mViewList && 
-      mSmartRebuildDetectBatchCount == mListBatchCount) {
+  if (aMediaList == mViewList && mListBatchCount) {
+    if (mSmartRebuildDetectBatchCount == mListBatchCount) {
       // Our playing list is a smart playlist, and it is being rebuilt,
       // so make a note that we need to try to find the old playitem in
       // the new list (this will update the now playing icon in 
@@ -2454,9 +2466,16 @@ sbMediacoreSequencer::OnItemAdded(sbIMediaList *aMediaList,
       // our search will occur before the check happens, so if the old
       // playing item no longer exists, playback will correctly stop.
       mNeedSearchPlayingItem = PR_TRUE;
+    }
+    else {
+      mNeedsRecalculate = PR_TRUE;
+    }
   }
-  else if (aMediaList == mViewList && mListBatchCount) {
+  else {
     mNeedsRecalculate = PR_TRUE;
+    
+    nsresult rv = UpdateItemUIDIndex();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -2565,6 +2584,11 @@ sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList,
   if(aMediaItem == item) {
     rv = SetMetadataDataRemotesFromItem(item);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    mNeedsRecalculate = PR_TRUE;
+    
+    rv = UpdateItemUIDIndex();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -2576,6 +2600,26 @@ sbMediacoreSequencer::OnItemMoved(sbIMediaList *aMediaList,
                                   PRUint32 aToIndex, 
                                   PRBool *_retval)
 {
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  nsAutoMonitor mon(mMonitor);
+
+  if (aMediaList == mViewList && mListBatchCount) {
+    if (mSmartRebuildDetectBatchCount == mListBatchCount) {
+      mNeedSearchPlayingItem = PR_TRUE;
+    }
+    else {
+      mNeedsRecalculate = PR_TRUE;
+    }
+  }
+  else {
+    mNeedsRecalculate = PR_TRUE;
+
+    nsresult rv = UpdateItemUIDIndex();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -2631,15 +2675,18 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aMediaList);
-  
+
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsAutoMonitor mon(mMonitor);
 
-  if(aMediaList == mViewList) {
+  if(aMediaList == mViewList && mListBatchCount > 0) {
     mListBatchCount--;
   }
-  else {
+  else if(mLibraryBatchCount > 0) {
     mLibraryBatchCount--;
+  }
+  else {
+    mNeedsRecalculate = PR_TRUE;
   }
 
   if(mListBatchCount == 0 || mLibraryBatchCount == 0) {

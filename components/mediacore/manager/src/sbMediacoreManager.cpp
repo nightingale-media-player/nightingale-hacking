@@ -292,9 +292,12 @@ sbMediacoreManager::Shutdown()
 
   nsAutoMonitor mon(mMonitor);
 
+  nsresult rv = mSequencer->Stop();
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to stop sequencer.");
+
   mSequencer = nsnull;
 
-  nsresult rv = mDataRemoteFaceplateVolume->Unbind();
+  rv = mDataRemoteFaceplateVolume->Unbind();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMutableArray> mutableArray =
