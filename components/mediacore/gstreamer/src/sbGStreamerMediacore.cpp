@@ -250,7 +250,7 @@ GstElement *
 sbGStreamerMediacore::CreateSinkFromPrefs(char *pref)
 {
   nsresult rv;
-  PRBool val;
+  PRInt32 val;
 
   nsCOMPtr<nsIPrefBranch> prefs = 
       do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
@@ -373,6 +373,55 @@ sbGStreamerMediacore::DestroyPipeline()
 }
 
 nsresult 
+sbGStreamerMediacore::SetBufferingProperties(GstElement *aPipeline)
+{
+  NS_ENSURE_ARG_POINTER(aPipeline);
+
+  /* In milliseconds */
+  const char *DURATION_PREF = "songbird.mediacore.gstreamer.buffer.duration";
+  /* In bytes */
+  const char *SIZE_PREF = "songbird.mediacore.gstreamer.buffer.size";
+
+  /* Defaults if the prefs aren't present */
+  PRInt32 bufferSizeBytes = 10 * 1024 * 1024; /* 10 MB */
+  PRInt64 bufferDuration = 10 * GST_SECOND;   /* 10 seconds */
+  nsresult rv;
+  PRInt32 prefType;
+
+  nsCOMPtr<nsIPrefBranch> prefs = 
+      do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = prefs->GetPrefType(SIZE_PREF, &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (prefType == nsIPrefBranch::PREF_INT) {
+    rv = prefs->GetIntPref(SIZE_PREF, &bufferSizeBytes);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = prefs->GetPrefType(DURATION_PREF, &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (prefType == nsIPrefBranch::PREF_INT) {
+    PRInt32 durationMS;
+    rv = prefs->GetIntPref(DURATION_PREF, &durationMS);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    bufferDuration = durationMS * GST_MSECOND;
+  }
+
+  if (g_object_class_find_property(
+              G_OBJECT_GET_CLASS (aPipeline), "buffer-size")) 
+    g_object_set (aPipeline, "buffer-size", bufferSizeBytes, NULL);
+  if (g_object_class_find_property(
+              G_OBJECT_GET_CLASS (aPipeline), "buffer-duration")) 
+    g_object_set (aPipeline, "buffer-duration", bufferDuration, NULL);
+
+  return NS_OK;
+}
+
+nsresult 
 sbGStreamerMediacore::CreatePlaybackPipeline()
 {
   nsresult rv;
@@ -399,6 +448,9 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   // We want to receive state-changed messages when shutting down, so we
   // need to turn off bus auto-flushing
   g_object_set(mPipeline, "auto-flush-bus", FALSE, NULL);
+
+  rv = SetBufferingProperties(mPipeline);
+  NS_ENSURE_SUCCESS (rv, rv);
 
   gst_bus_enable_sync_message_emission (bus);
 

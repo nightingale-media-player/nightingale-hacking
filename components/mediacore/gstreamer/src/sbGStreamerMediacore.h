@@ -126,6 +126,8 @@ protected:
   GstElement *CreateVideoSink();
   GstElement *CreateAudioSink();
 
+  nsresult SetBufferingProperties(GstElement *aPipeline);
+
 private:
   // Static helper for C callback
   static void syncHandler(GstBus *bus, GstMessage *message, gpointer data);
