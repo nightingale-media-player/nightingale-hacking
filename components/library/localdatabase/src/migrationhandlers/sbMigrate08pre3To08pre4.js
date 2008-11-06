@@ -215,6 +215,7 @@ sbLibraryMigration.prototype = {
       }
 
       converterStream.close();
+      stream.close();
 
       const colonNewline = ";\n";
       var posStart = 0;
