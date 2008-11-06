@@ -53,12 +53,12 @@ const NODE_7DIGITAL = 'SB:7Digital';
 // Where's our stringbundle?
 const STRINGBUNDLE = 'chrome://7digital/locale/7digital.properties';
 // Where's that store?
-const STORE_URL = 'http://songbird.7digital.com/songbird/';
+const STORE_URL = 'http://www.7digital.com/songbird/';
 // What's the search engine's name?
 const SEARCHENGINE_NAME = '7digital'; // Note - must match ShortName in:
 const SEARCHENGINE_URL = 'chrome://7digital/content/7digital-search.xml';
 // What's the permission for?
-const PERMISSION_SCOPE = 'http://songbird.7digital.com/';
+const PERMISSION_SCOPE = 'http://7digital.com/';
 // What's the service pane's namespace
 const SERVICEPANE_NS = 'http://songbirdnest.com/rdf/servicepane#'
 
