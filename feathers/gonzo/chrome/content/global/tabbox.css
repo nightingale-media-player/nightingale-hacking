@@ -137,12 +137,11 @@ tabs[orient="horizontal"] > .tabs-right {
 ******************************************************************************/
 tabs.sb-displaypane-tabs {
   -moz-box-flex: 1;
-  border-bottom:1px solid transparent !important;
   background-color:transparent;
-  padding:1px 0px 0px 0px;
-  overflow: hidden;
-  
   background-image:none;
+  border-bottom:none !important;
+  padding:0px;
+  margin:0px 0px -1px 0px;
 }
 tabs.sb-displaypane-tabs > tab {
   padding:1px 2px 1px 2px;
