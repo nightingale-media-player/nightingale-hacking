@@ -300,6 +300,9 @@ sbMediacoreManager::Shutdown()
   rv = mDataRemoteFaceplateVolume->Unbind();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mDataRemoteFaceplateMute->Unbind();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<nsIMutableArray> mutableArray =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -519,14 +522,23 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
     nullString);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool mute = PR_FALSE;
-  rv = mDataRemoteFaceplateMute->GetBoolValue(&mute);
+  nsString muteStr;
+  rv = mDataRemoteFaceplateMute->GetStringValue(muteStr);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool mute = PR_FALSE;
+  if(!muteStr.IsEmpty()) {
+    rv = mDataRemoteFaceplateMute->GetBoolValue(&mute);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   mMute = mute;
 
+  rv = mDataRemoteFaceplateMute->SetBoolValue(mMute);
+  NS_ENSURE_SUCCESS(rv, rv);
+
 #if defined(DEBUG)
-  printf("[sbMediacoreManager] - Initializing mute from data remote\n\tMute: %l\n",
+  printf("[sbMediacoreManager] - Initializing mute from data remote\n\tMute: %d\n",
          mute);
 #endif
 
@@ -589,6 +601,12 @@ sbMediacoreManager::SetVolumeDataRemote(PRFloat64 aVolume)
 
   char volume[64] = {0};
   PR_snprintf(volume, 64, "%lg", aVolume);
+
+  // We have to replace the decimal point character with '.' so that
+  // parseFloat in JS still understands that this number is a floating point
+  // number. The JS Standard dictates that parseFloat _ONLY_ supports '.' as
+  // it's decimal point character. 
+  volume[1] = '.';
 
   NS_ConvertUTF8toUTF16 volumeStr(volume);
   nsresult rv = mDataRemoteFaceplateVolume->SetStringValue(volumeStr);

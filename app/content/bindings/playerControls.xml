@@ -91,7 +91,7 @@
         this.remote_lastVolume = SB_NewDataRemote("faceplate.volume.last", null );
         this.remote_volume.bindObserver(on_remote_volume_change, true);
 
-        this.sliderScale = 10000;
+        this.sliderScale = 10000.0;
         this.maxpos = this.sliderScale;
         this.value = parseFloat(this.remote_volume.stringValue) * this.sliderScale;
         this.trackingVolume = false;
@@ -117,9 +117,9 @@
           // prevent this volume control from being updated while it is being
           //   moved (but other volume controls are updated with our motion)
           this.trackingVolume = true; 
-          var scaledValue = this.value / this.sliderScale;
+          var scaledValue = parseFloat(this.value / this.sliderScale);
           this.mm.volumeControl.volume = scaledValue;
-          dump("onTrackVolume: new volume is " + scaledValue + "\n\n");
+
           this.remote_volume.stringValue = scaledValue;
           if (this.value == 0) {
             // set mute when we bring the volume to 0
@@ -146,7 +146,7 @@
       <body>
         <![CDATA[
           try {
-            this.value = parseFloat(this.remote_volume.stringValue) * this.sliderScale;
+            this.value = parseFloat(this.remote_volume.stringValue) * parseFloat(this.sliderScale);
           } catch (err) {
             dump("playerControls.xml - onRemoteVolumeChange - " + err + "\n");
           }
@@ -367,6 +367,9 @@
     </constructor>
 
     <destructor>
+      <![CDATA[
+        this.mm = null;
+      ]]>
     </destructor>
     
     <method name="onFwdMouseDown">
@@ -490,7 +493,9 @@
     </constructor>
 
     <destructor>
-      this.mm = null;
+      <![CDATA[
+        this.mm = null;
+      ]]>
     </destructor>
     
     <method name="onBackMouseDown">
@@ -854,6 +859,8 @@
           this.remote_length.unbind();
           this.remote_length = null;
         }
+        
+        this.mm = null;
       ]]>
     </destructor>
 
@@ -925,7 +932,9 @@
         ]]>
       </constructor>
       <destructor>
-        this.mm = null;
+        <![CDATA[
+          this.mm = null;
+        ]]>
       </destructor>
                      
       <method name="playbackPlay">
@@ -1365,6 +1374,8 @@
       <![CDATA[
         //SB_LOG("playerControls.js", "totaltime binding destructor");
         this.remote_showRemaining = null;
+        
+        this.mm = null;
       ]]>
     </destructor>
 
