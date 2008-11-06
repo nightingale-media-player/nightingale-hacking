@@ -333,7 +333,7 @@ Songkick.prototype = {
 						"SET libraryArtist=1,anyLibraryArtist=1 " +
 						"WHERE artistid = " +
 							"(SELECT ROWID FROM artists " +
-							"WHERE name='" + artist + "')");
+							"WHERE name='" + artist.replace(/'/g, "''") + "')");
 				this._db.execute();
 				this.spsUpdater();
 			}
@@ -370,7 +370,7 @@ Songkick.prototype = {
 						"SET libraryArtist=1,anyLibraryArtist=1 " +
 						"WHERE artistid = " +
 							"(SELECT ROWID FROM artists " +
-							"WHERE name='" + artist + "')");
+							"WHERE name='" + artist.replace(/'/g, "''") + "')");
 				debugLog("onBatchEnd", "Adding update query for " + artist);
 				artistsAdded = true;
 			}
@@ -424,7 +424,7 @@ Songkick.prototype = {
 					"SET libraryArtist=0 " +
 					"WHERE artistid = " +
 						"(SELECT ROWID FROM artists " +
-						"WHERE name='" + artist + "')");
+						"WHERE name='" + artist.replace(/'/g, "''") + "')");
 			this._db.execute();
 			this.spsUpdater();
 
@@ -976,7 +976,7 @@ Songkick.prototype = {
 		this._db.addQuery('SELECT count(*) FROM playing_at ' +
 				'JOIN artists on artistid=artists.ROWID ' +
 				'JOIN concerts on concertid=concerts.id ' +
-				'WHERE artists.name = "' + artist + '"' +
+				"WHERE artists.name = '" + artist.replace(/'/g, "''") + "'" +
 				'AND concerts.timestamp > ' + parseInt(Date.now()/1000));
 		var ret = this._db.execute();
 		var result = this._db.getResultObject();
@@ -990,7 +990,7 @@ Songkick.prototype = {
 	getArtistUrl : memoize(function getArtistUrl(artist) {
 		this._db.resetQuery();
 		this._db.addQuery("SELECT artistURL FROM artists " +
-				'where name = "' + artist + '"');
+				"where name = '" + artist.replace(/'/g, "''") + "'");
 		var ret = this._db.execute();
 		var result = this._db.getResultObject();
 		if (result.getRowCount() > 0) {
@@ -1011,7 +1011,7 @@ Songkick.prototype = {
 		this._db.addQuery("SELECT artistURL FROM artists " +
 			'JOIN playing_at on playing_at.artistid = artists.ROWID ' +
 			'JOIN concerts on playing_at.concertid=concerts.id ' +
-			'WHERE artists.name = "' + artist + '"' +
+			"WHERE artists.name = '" + artist.replace(/'/g, "'") + "'" +
 			'AND concerts.timestamp > ' + parseInt(Date.now()/1000));
 		var ret = this._db.execute();
 		var result = this._db.getResultObject();
