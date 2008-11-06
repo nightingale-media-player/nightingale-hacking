@@ -35,6 +35,9 @@
 //  * Explore skin/layout versioning issues?
 // 
  
+Components.utils.import("resource://app/jsmodules/ObserverUtils.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 const Ci = Components.interfaces;
 const Cc = Components.classes; 
 
@@ -431,10 +434,13 @@ AddonMetadataReader.prototype = {
  */
 function FeathersManager() {
 
-  var os      = Cc["@mozilla.org/observer-service;1"]
-                      .getService(Ci.nsIObserverService);
+  this._observerSet = new ObserverSet();
+
+  // We need to init after the profile is loaded
+  this._observerSet.add(this, "profile-after-change", false, true);
+
   // We need to unhook things on shutdown
-  os.addObserver(this, "quit-application", false);
+  this._observerSet.add(this, "quit-application", false, true);
   
   this._skins = {};
   this._layouts = {};
@@ -443,8 +449,19 @@ function FeathersManager() {
   this._listeners = [];
 };
 FeathersManager.prototype = {
+  classDescription:  CLASSNAME,
+  classID:           CID,
+  contractID:        CONTRACTID,
+  _xpcom_categories:
+  [{
+    category: "app-startup",
+    entry: "feathers-manager",
+    value: "service," + CONTRACTID
+  }],
   constructor: FeathersManager,
   
+  _observerSet: null,
+
   _layoutDataRemote: null,
   _skinDataRemote: null,
 
@@ -489,8 +506,6 @@ FeathersManager.prototype = {
   _layoutCount: 0,
   _skinCount: 0,
   
-  _initialized: false,
-  
 
   /**
    * Initializes dataremotes and triggers the AddonMetadataReader
@@ -502,12 +517,6 @@ FeathersManager.prototype = {
    * 
    */
   _init: function init() {
-  
-    // If already initialized do nothing
-    if (this._initialized) {
-      return;
-    }
-
     // If the safe-mode dialog was requested to disable all addons, our
     // basic layouts and default skin have been disabled too. We need to 
     // check if that's the case, and reenable them if needed
@@ -535,14 +544,19 @@ FeathersManager.prototype = {
     if (this._layoutDataRemote.stringValue == "") {
       this._layoutDataRemote.stringValue = DEFAULT_MAIN_LAYOUT_URL;
     }
-    
-    this._initialized = true;
+
+    // Ensure chrome enabled is set appropriately
+    var showChrome = this.isChromeEnabled(this.currentLayoutURL,
+                                          this.currentSkinName);
+    this._setChromeEnabled(showChrome);
   },
   
   /**
    * Called on xpcom-shutdown
    */
   _deinit: function deinit() {
+    this._observerSet.removeAll();
+    this._observerSet = null;
     this._skins = null;
     this._layouts = null;
     this._mappings = null;
@@ -558,7 +572,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   get currentSkinName() {
-    this._init();
     return this._skinDataRemote.stringValue;
   },
   
@@ -567,7 +580,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */  
   get currentLayoutURL() {
-    this._init();
     return this._layoutDataRemote.stringValue;
   },
   
@@ -576,8 +588,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */  
   get previousSkinName() {
-    this._init();
-    
     // Test to make sure the previous skin exists
     var skin = this.getSkinDescription(this._previousSkinDataRemote.stringValue);
     
@@ -595,8 +605,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */  
   get previousLayoutURL() {
-    this._init();
-    
     // Test to make sure the previous layout exists
     var layout = this.getLayoutDescription(this._previousLayoutDataRemote.stringValue);
     
@@ -623,7 +631,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */ 
   get skinCount() {
-    this._init();
     return this._skinCount;
   },
   
@@ -631,7 +638,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */  
   get layoutCount() {
-    this._init();
     return this._layoutCount;
   },
 
@@ -640,7 +646,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   getSkinDescriptions: function getSkinDescriptions() {
-    this._init();      
     // Copy all the descriptions into an array, and then return an enumerator
     return new ArrayEnumerator( [this._skins[key] for (key in this._skins)] );
   },
@@ -649,7 +654,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   getLayoutDescriptions: function getLayoutDescriptions() {
-    this._init();        
     // Copy all the descriptions into an array, and then return an enumerator
     return new ArrayEnumerator( [this._layouts[key] for (key in this._layouts)] );
   },
@@ -688,7 +692,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   getSkinDescription: function getSkinDescription(internalName) {
-    this._init();
     return this._skins[internalName];
   },
   
@@ -725,7 +728,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */    
   getLayoutDescription: function getLayoutDescription(url) {
-    this._init();
     return this._layouts[url];
   }, 
 
@@ -798,7 +800,6 @@ FeathersManager.prototype = {
       throw Components.results.NS_ERROR_INVALID_ARG;
     }
     
-    this._init();
     var defaultLayoutURL = this._skinDefaults[aInternalName];
     
     // If a default URL isn't registered, just use the first compatible 
@@ -824,8 +825,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   isChromeEnabled: function isChromeEnabled(layoutURL, internalName) {
-    this._init();
-    
     // TEMP fix for the Mac to enable the titlebar on the main window.
     // See Bug 4363
     var sysInfo = Cc["@mozilla.org/system-info;1"]
@@ -864,8 +863,6 @@ FeathersManager.prototype = {
 
 
   canOnTop: function canOnTop(layoutURL, internalName) {
-    this._init();
-    
     if (this._mappings[layoutURL]) {
       if (this._mappings[layoutURL][internalName]) {
         return this._mappings[layoutURL][internalName].onTop == true;
@@ -877,8 +874,6 @@ FeathersManager.prototype = {
 
 
   isOnTop: function isOnTop(layoutURL, internalName) {
-    this._init();
-
     if (!this.canOnTop(layoutURL, internalName)) {
       return false;
     }
@@ -893,8 +888,6 @@ FeathersManager.prototype = {
 
 
   setOnTop: function setOnTop(layoutURL, internalName, onTop) {
-    this._init();
-    
     if (!this.canOnTop(layoutURL, internalName)) {
       return false;
     }
@@ -913,8 +906,6 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   getSkinsForLayout: function getSkinsForLayout(layoutURL) {
-    this._init();
-
     var skins = [];
     
     // Find skin descriptions that are compatible with the given layout.
@@ -946,8 +937,6 @@ FeathersManager.prototype = {
     if (this._switching) {
       return;
     }
-
-    this._init();
 
     layoutDescription = this.getLayoutDescription(layoutURL);
     skinDescription = this.getSkinDescription(internalName);
@@ -1015,9 +1004,6 @@ FeathersManager.prototype = {
    * Relaunch the main window
    */
   openPlayerWindow: function openPlayerWindow() {
-    
-    this._init();
-
     // First, check if we should auto switch to a new skin/layout
     // (but only if we're not already in the middle of a switch)
     if (this._autoswitch && !this._switching) {
@@ -1105,8 +1091,6 @@ FeathersManager.prototype = {
    * Get an array of the layouts for the current skin.
    */
   _getLayoutsArrayForSkin: function _getLayoutsArrayForSkin(internalName) {
-    this._init();
-    
     var layouts = [];
     
     // Find skin descriptions that are compatible with the given layout.
@@ -1264,8 +1248,11 @@ FeathersManager.prototype = {
                       .getService(Ci.nsIObserverService);
     switch (topic) {
     case "quit-application":
-      os.removeObserver(this, "quit-application");
       this._deinit();
+      break;
+
+    case "profile-after-change":
+      this._init();
       break;
     }
   },
@@ -1307,13 +1294,8 @@ FeathersManager.prototype = {
   /**
    * See nsISupports.idl
    */
-  QueryInterface: function(iid) {
-    if (!iid.equals(IID) &&
-        !iid.equals(Ci.nsIObserver) && 
-        !iid.equals(Ci.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
+  QueryInterface:
+    XPCOMUtils.generateQI([IID, Components.interfaces.nsIObserver]),
 }; // FeathersManager.prototype
 
 /**
@@ -1354,40 +1336,9 @@ FeathersManager_switchFeathers_callback.prototype = {
  * Registration for XPCOM
  * ----------------------------------------------------------------------------
  */
-var gModule = {
-  registerSelf: function(componentManager, fileSpec, location, type) {
-    componentManager = componentManager.QueryInterface(Ci.nsIComponentRegistrar);
-
-    componentManager.registerFactoryLocation(CID, CLASSNAME, CONTRACTID,
-                                               fileSpec, location, type);
-  },
-
-  getClassObject: function(componentManager, cid, iid) {
-    if (!iid.equals(Ci.nsIFactory))
-      throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-
-    if (cid.equals(CID)) {
-       return { 
-          createInstance: function(outer, iid) {
-            if (outer != null)
-              throw Components.results.NS_ERROR_NO_AGGREGATION;
-              
-            // Make the feathers manager  
-            return (new FeathersManager()).QueryInterface(iid);;
-          }
-       };
-    }
-    
-    throw Components.results.NS_ERROR_NO_INTERFACE;
-  },
-
-  canUnload: function(componentManager) { 
-    return true; 
-  }
-}; // gModule
 
 function NSGetModule(comMgr, fileSpec) {
-  return gModule;
+  return XPCOMUtils.generateModule([FeathersManager]);
 } // NSGetModule
 
 

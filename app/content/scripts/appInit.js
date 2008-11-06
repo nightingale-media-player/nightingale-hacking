@@ -253,12 +253,12 @@ function doFirstRun()
       data.document = document;
       data.perfTest = perfTest;
       
-      // This cannot be modal it will block the download of extensions
-      window.openDialog
-               ( "chrome://songbird/content/xul/firstRunWizard.xul",
-                 "firstrun",
-                 "chrome,centerscreen,titlebar=no,resizable=no,modal=no",
-                 data );
+      // This cannot be modal as it will block the download of extensions
+      SBOpenWindow("chrome://songbird/content/xul/firstRunWizard.xul",
+                   "firstrun",
+                   "chrome,centerscreen,resizable=no",
+                   data,
+                   window);
 
       // Do not open main window until the non-modal first run dialog returns
       return false;
@@ -276,6 +276,11 @@ function firstRunComplete(restartfirstrun) {
   if (restartfirstrun) {
     doFirstRun();
   } else {
+    // If EULA has not been accepted, quit application.
+    var eulaAccepted = Application.prefs.getValue("songbird.eulacheck", false);
+    if (!eulaAccepted)
+      quitApp();
+
     doMainwinStart();
   }
 }
