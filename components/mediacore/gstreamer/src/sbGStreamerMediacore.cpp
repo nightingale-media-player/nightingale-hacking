@@ -1095,7 +1095,20 @@ sbGStreamerMediacore::OnPlay()
   NS_ENSURE_STATE(mPipeline);
 
   flags = 0x2 | 0x10; // audio | soft-volume
-  if (mVideoEnabled) {
+
+  nsresult rv;
+  nsCOMPtr<nsIPrefBranch> prefs = 
+      do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS (rv, NULL);
+
+  PRBool disableVideo;
+  rv = prefs->GetBoolPref("songbird.mediacore.gstreamer.disableVideoDecoder", &disableVideo);
+  if (rv == NS_ERROR_UNEXPECTED)
+    disableVideo = PR_FALSE;
+  else
+    NS_ENSURE_SUCCESS(rv, NULL);
+
+  if (mVideoEnabled && !disableVideo) {
     // Enable video only if we're set up for it is turned off. Also enable
     // text (subtitles), which require a video window to display.
     flags |= 0x1 | 0x4; // video | text
@@ -1134,7 +1147,7 @@ sbGStreamerMediacore::OnPlay()
   // If we're starting an HTTP stream, send an immediate buffering event,
   // since GStreamer won't do that until it's connected to the server.
   PRBool schemeIsHttp;
-  nsresult rv = mUri->SchemeIs("http", &schemeIsHttp);
+  rv = mUri->SchemeIs("http", &schemeIsHttp);
   NS_ENSURE_SUCCESS (rv, rv);
 
   if (schemeIsHttp) {
