@@ -82,37 +82,59 @@ ApplicationController.prototype = {
    * Play something using the UI for context
    */
   playDefault: function ApplicationController_playDefault() {
+    var mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+               .getService(Ci.sbIMediacoreManager);
+                 
+    // If paused, just continue
+    if (mm.status.state == Ci.sbIMediacoreStatus.STATUS_PAUSED) {
+      mm.playbackControl.play();
+      return;
+    }
+    
     var handled = false;
     
-    // First, try to get the front-most window to start
+    // Try to get the front-most window to start
     // playback, based on whatever context it has
     var window = this.activeWindow;
     if (window) {
-      handled = this._sendEventToWindow("Play", window);
+      if (this._sendEventToWindow("Play", window))
+        return;
     }
-    
+        
     // If that didn't work, then try the main songbird window
     // (if different)
-    if (!handled) {
-      var mainWindow = this.activeMainWindow;
-      if (mainWindow && mainWindow != window) {
-        handled = this._sendEventToWindow("Play", mainWindow);
-      }
+    var mainWindow = this.activeMainWindow;
+    if (mainWindow && mainWindow != window) {
+      if (this._sendEventToWindow("Play", mainWindow)) 
+        return;
     }
     
-    // Worst case, fall back to the main library.
-    if (!handled) {      
+    // Fallback to a stashed view, or the main library
+    
+    // When the tabbrowser is unloaded, the currently active view is
+    // set on the sequencer, just in case it is of some use
+    // to the next window to load.
+    var view = mm.sequencer.view;
+
+    // Still no view, fetch main library.
+    if(!view) {
       if (typeof(LibraryUtils) == "undefined") {
         Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
       }
-      var view = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
-      
-      var mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-                 .getService(Ci.sbIMediacoreManager);
-
-      mm.sequencer.playView(view,  
-                            Ci.sbIMediacoreSequencer.AUTO_PICK_INDEX); 
+      view = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
     }
+
+    var index = view.selection.currentIndex;
+      
+    // If same view as current view on sequencer and nothing
+    // selected in the view, use sequencer view position.
+    if((index == -1) && (mm.sequencer.view == view)) {
+      index = mm.sequencer.viewPosition;
+    }
+
+    mm.sequencer.playView(view,  
+                           Math.max(index, 
+                                    Ci.sbIMediacoreSequencer.AUTO_PICK_INDEX)); 
   },
   
   /** 

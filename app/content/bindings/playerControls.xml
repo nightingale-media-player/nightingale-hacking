@@ -949,8 +949,11 @@
               event.initEvent("Play", true, true);
               var notHandled = this.dispatchEvent(event);
               if (notHandled) {
-                // XXXAus: Fetch default? Throw?
-                //this.mm.playbackControl.play();
+                // If we have no context, initiate playback
+                // via the root application controller
+                var app = Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"]
+                                    .getService(Components.interfaces.sbIApplicationController);
+                app.playDefault();
               }
             }
           ]]>
@@ -987,10 +990,10 @@
         <xul:button type="sb-clickhold"
                     id="sb-player-play-button-play"
                     sbid="play"
-	            class="sb-player-play-button-play sb-player-button"
-	            oncommand="onPlay();"
-	            tooltiptext="&tooltip.control.play;"
-	            xbl:inherits="label,position">
+                    class="sb-player-play-button-play sb-player-button"
+                    oncommand="onPlay();"
+                    tooltiptext="&tooltip.control.play;"
+                    xbl:inherits="label,position">
           <xul:menupopup xbl:inherits="popupanchor,popupalign"/>
         </xul:button>
           

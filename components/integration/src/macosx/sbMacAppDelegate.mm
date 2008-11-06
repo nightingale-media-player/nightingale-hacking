@@ -39,6 +39,7 @@
 #include <nsStringAPI.h>
 #include <nsIStringBundle.h>
 #include <nsObjCExceptions.h>
+#include <sbIApplicationController.h>
 #include <sbIMediacoreManager.h>
 #include <sbIMediacorePlaybackControl.h>
 #include <sbIMediacoreSequencer.h>
@@ -300,14 +301,16 @@
 
   nsCOMPtr<sbIMediacorePlaybackControl> playbackControl;
   rv = manager->GetPlaybackControl(getter_AddRefs(playbackControl));
-  if (NS_FAILED(rv) || !playbackControl)
-    return;
-  
-  if ([self _isPlaybackPlaying]) {
+  if (NS_SUCCEEDED(rv) && playbackControl && [self _isPlaybackPlaying]) {
     playbackControl->Pause();
   }
   else {
-    playbackControl->Play();
+    nsresult rv;
+    nsCOMPtr<sbIApplicationController> app =
+        do_GetService("@songbirdnest.com/Songbird/ApplicationController;1", &rv);
+    NS_ENSURE_SUCCESS(rv,);
+    rv = app->PlayDefault();
+    NS_ENSURE_SUCCESS(rv,);
   }
 
   NS_OBJC_END_TRY_ABORT_BLOCK;

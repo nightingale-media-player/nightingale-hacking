@@ -96,7 +96,7 @@
         this.windowLoadEventListener = {
           tabbrowser: this,
           document: document,
-          handleEvent: function(event) {
+          handleEvent: function sbTabBrowser_loadListener(event) {
             if (event.target != this.document) {
               return;
             }
@@ -117,24 +117,27 @@
         this.windowUnloadEventListener = {
           tabbrowser: this,
           document: document,
-          handleEvent: function(event) {
+          handleEvent: function sbTabBrowser_unloadListener(event) {
             if (event.target != this.document) {
               return;
             }
 
-            // Save current view into view map.
-            var viewMap = 
-              Components
-                .classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-                .getService(Components.interfaces.sbIMediaListViewMap);
-
-            // Grab the current tab media list view.
-            var view = this.tabbrowser.mCurrentTab.mediaListView;
-
-            // If we have a view, stash it for others to use.
-            if(view) {
-              viewMap.setView(this.tabbrowser.mm, this.tabbrowser.mm.sequencer, 
-                              view);
+            // If we're stopped, then we need to stash whatever the user is looking at
+            // so that the next view to load will use the same thing.
+            if (this.tabbrowser.mm.status.state == 
+                Components.interfaces.sbIMediacoreStatus.STATUS_STOPPED) {
+            
+              // If the current tab has a view then stash that.
+              if (this.tabbrowser.mCurrentTab.mediaListView && 
+                  this.tabbrowser.mCurrentTab.mediaListView.length > 0) {
+                this.tabbrowser.mm.sequencer.view = this.tabbrowser.mCurrentTab.mediaListView;
+              
+              // Otherwise, use whatever is in the media tab (if we have one)
+              } else if (this.tabbrowser.mediaTab &&
+                         this.tabbrowser.mediaTab.mediaListView &&
+                         this.tabbrowser.mediaTab.mediaListView.length > 0) {
+                this.tabbrowser.mm.sequencer.view = this.tabbrowser.mediaTab.mediaListView;
+              }
             }
           }          
         }

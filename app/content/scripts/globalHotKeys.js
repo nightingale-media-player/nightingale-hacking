@@ -357,19 +357,13 @@ var playbackHotkeyActions = {
       else if(this._mm.status.state == sbIMediacoreStatus.STATUS_PAUSED) {
           this._mm.playbackControl.play();
       }
-      // Otherwise dispatch a play event to the top window. 
-      // Someone should catch this and intelligently initiate playback.  
-      // If not, just have the playback service play the default.
+      // Otherwise just have the root application controller figure it out
       else {
-        var notHandled = true;
-        var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                           .getService(Components.interfaces.nsIWindowMediator);
-        var topWindow = wm.getMostRecentWindow(null);
-        if (topWindow) {
-          var event = topWindow.document.createEvent("Events");
-          event.initEvent("Play", true, true);
-          notHandled = topWindow.document.dispatchEvent(event);
-        }
+        // If we have no context, initiate playback
+        // via the root application controller
+        var app = Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"]
+                            .getService(Components.interfaces.sbIApplicationController);
+        app.playDefault();
       } 
     } catch (e) {
       Components.utils.reportError(e);

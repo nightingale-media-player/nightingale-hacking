@@ -358,8 +358,13 @@ var gSongbirdPlayerWindow = {
       var view = this._getMediaListViewForEvent(event);
       
       // If no view could be found, try getting one from the current tab
-      if (!view) {
+      if (!(view && view.length > 0)) {
         view = gBrowser.currentMediaListView;
+      }
+      
+      // If the current tab has failed, try the media tab (if it exists)
+      if (!(view && view.length > 0) && gBrowser.mediaTab) {
+        view = gBrowser.mediaTab.mediaListView;
       }
       
       // If we've got a view, try playing it.

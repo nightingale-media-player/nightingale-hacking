@@ -38,6 +38,7 @@ endif
 
 CMM_INCLUDES = $(DEPTH)/components/integration/public \
                $(DEPTH)/components/dataremote/public \
+               $(DEPTH)/components/controller/public \
                $(DEPTH)/components/devicesobsolete/manager/public \
                $(DEPTH)/components/devicesobsolete/base/public \
                $(DEPTH)/components/devicesobsolete/cd/public \

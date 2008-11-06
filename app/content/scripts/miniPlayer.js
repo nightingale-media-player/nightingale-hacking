@@ -54,8 +54,6 @@ var gMiniplayer = {
   {
     dump("\nMiniplayer." + arguments.callee.name + "\n");
 
-    window.addEventListener("Play", this._onPlayCallback, true);
-
     window.focus();
     window.dockDistance = 10;
 
@@ -95,10 +93,7 @@ var gMiniplayer = {
   onUnload: function onUnload()
   {
     dump("\nMiniplayer." + arguments.callee.name + "\n");
-
-    window.removeEventListener("Play",  this._onPlayCallback, true);
-    this._onPlayCallback = null;
-    
+        
     resetJumpToFileHotkey();
     closeJumpTo();
 
@@ -136,7 +131,11 @@ var gMiniplayer = {
         else if(gMM.primaryCore)
           gMM.playbackControl.play();
         else
-          this._onPlayCallback(evt);
+          // If we have no context, initiate playback
+          // via the root application controller
+          var app = Components.classes["@songbirdnest.com/Songbird/ApplicationController;1"]
+                              .getService(Components.interfaces.sbIApplicationController);
+          app.playDefault();
         break;
     }
     switch ( evt.charCode )
@@ -335,41 +334,5 @@ var gMiniplayer = {
 
     // Phew... now, do we have a titlebar?
     return windowChrome.chromeFlags & windowChrome.CHROME_TITLEBAR;
-  },
-  
-  _onPlayCallback: function _onPlayCallback( event ) {
-    // This is only triggered when there's nothing available to play.
-    // Otherwise playback is resumed from the currently active sequence
-    // on the sequencer automatically.
-    
-    // First attempt to restore from view map.
-    var viewMap = 
-      Components
-          .classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
-          .getService(Components.interfaces.sbIMediaListViewMap);
-    
-    // When the tabbrowser is unloaded, the currently active view is stashed
-    // away using the mediacore manager service instance and sequencer instance
-    // as the parent key and page key. This enables the mini player or other
-    // modes to pick up the last view that was active and maintain playback
-    // context.  
-    var view = viewMap.getView(gMM, gMM.sequencer);
-
-    // Still no view, fetch main library.
-    if(!view) {
-      view = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
-    }
-
-    var index = view.selection.currentIndex;
-      
-    // If same view as current view on sequencer and nothing
-    // selected in the view, use sequencer view position.
-    if((index == -1) && (gMM.sequencer.view == view)) {
-      index = gMM.sequencer.viewPosition;
-    }
-
-    gMM.sequencer.playView(view,  
-                           Math.max(index, 
-                                    Ci.sbIMediacoreSequencer.AUTO_PICK_INDEX));
   }
 }  // End of gMiniplayer
