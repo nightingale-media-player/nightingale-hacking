@@ -51,8 +51,8 @@
  * any error occurs, the method will return NS_ERROR_FAILURE.
  *
  * "@songbirdnest.com/Songbird/Prompter;1"
- * Use create instance with this component.  The default parent window type
- * is "Songbird:Main".  The default waitForWindow is false.
+ * Use create instance with this component.  No default parent window type is
+ * set and the default waitForWindow is false.
  */
 
 [scriptable, uuid(b3369b4b-83d6-4dca-bab8-2ac0c706f7c0)]

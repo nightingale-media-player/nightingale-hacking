@@ -937,7 +937,6 @@ sbPrompter::Init()
   // Set defaults.
   {
     nsAutoLock autoLock(mPrompterLock);
-    mParentWindowType = NS_LITERAL_STRING("Songbird:Main");
     mWaitForWindow = PR_FALSE;
   }
 
@@ -1028,8 +1027,10 @@ sbPrompter::GetParent(nsIDOMWindow** aParent)
   }
 
   // Get the parent.
-  rv = mSBWindowWatcher->GetWindow(mParentWindowType, getter_AddRefs(parent));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mParentWindowType.Length() > 0) {
+    rv = mSBWindowWatcher->GetWindow(mParentWindowType, getter_AddRefs(parent));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // If no window of the configured type is available and we're not waiting for
   // one, use the currently active window as the parent.
