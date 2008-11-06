@@ -1137,8 +1137,8 @@ mashTape.resetRssFrame = function() {
 	var loading = doc.getElementById("loading");
 	loading.style.display = "block";
 	var paneHeight = doc.getElementsByTagName("html")[0].clientHeight;
-	// 32 is the height of the load.gif
-	loading.style.marginTop = (paneHeight-32)/2 + "px";
+	// 64 is the height of the load.gif
+	loading.style.marginTop = (paneHeight-64)/2 + "px";
 }
 
 mashTape.loadFirstRssFeed = function() {
