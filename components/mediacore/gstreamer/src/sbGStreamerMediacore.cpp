@@ -1090,10 +1090,6 @@ sbGStreamerMediacore::OnPlay()
   GstState curstate;
   gint flags;
 
-  nsAutoMonitor lock(mMonitor);
-
-  NS_ENSURE_STATE(mPipeline);
-
   flags = 0x2 | 0x10; // audio | soft-volume
 
   nsresult rv;
@@ -1113,6 +1109,9 @@ sbGStreamerMediacore::OnPlay()
     // text (subtitles), which require a video window to display.
     flags |= 0x1 | 0x4; // video | text
   }
+
+  nsAutoMonitor lock(mMonitor);
+  NS_ENSURE_STATE(mPipeline);
 
   g_object_set (G_OBJECT(mPipeline), "flags", flags, NULL);
 
@@ -1149,6 +1148,9 @@ sbGStreamerMediacore::OnPlay()
   PRBool schemeIsHttp;
   rv = mUri->SchemeIs("http", &schemeIsHttp);
   NS_ENSURE_SUCCESS (rv, rv);
+
+  // Drop out lock before sending events
+  lock.Exit();
 
   if (schemeIsHttp) {
     double bufferingProgress = 0.0;
