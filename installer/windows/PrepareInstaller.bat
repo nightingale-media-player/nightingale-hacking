@@ -63,9 +63,9 @@ goto failure
 
 @mkdir %DEPTH%\compiled\_built_installer
 move /y %DIST_DIR%\%BRANDSHORTNAME%_%APPVERSION%-%BUILD_NUMBER%_%ARCH%.exe %DEPTH%\compiled\_built_installer\
-%DEPTH%\tools\win32\fsum\fsum.exe -d%DEPTH%\compiled\_built_installer -md5 -sha1 -jm ^
-  %BRANDSHORTNAME%_%APPVERSION%-%BUILD_NUMBER%_%ARCH%.exe ^
-  > %DEPTH%\compiled\_built_installer\%BRANDSHORTNAME%_%APPVERSION%-%BUILD_NUMBER%_%ARCH%.exe.md5
+pushd %DEPTH%\compiled\_built_installer\
+md5sum ./%BRANDSHORTNAME%_%APPVERSION%-%BUILD_NUMBER%_%ARCH%.exe > %BRANDSHORTNAME%_%APPVERSION%-%BUILD_NUMBER%_%ARCH%.exe.md5
+popd
 
 goto end
 
