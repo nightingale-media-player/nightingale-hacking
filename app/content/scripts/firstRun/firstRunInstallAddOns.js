@@ -195,8 +195,14 @@ firstRunInstallAddOnsSvc.prototype = {
     var addOnsElem = document.getElementById(addOnsID);
     var addOnBundle = addOnsElem[addOnBundleProperty];
 
-    // Start add-on bundle installation.
-    this._addOnBundleInstallerElem.install(addOnBundle);
+    // If an add-on bundle is available, start add-on bundle installation.
+    // Otherwise, advance the wizard.
+    if (addOnBundle) {
+      this._addOnBundleInstallerElem.install(addOnBundle);
+    } else {
+      this._wizardElem.canAdvance = true;
+      this._wizardElem.advance();
+    }
   },
 
 
