@@ -53,7 +53,8 @@
 <!ENTITY menu.linux.preferences.accesskey "N">
 
 <!ENTITY menu.controls      "Controls" >
-<!ENTITY menu.control.play  "Play/Pause" >
+<!ENTITY menu.control.play  "Play" >
+<!ENTITY menu.control.pause "Pause" >
 <!ENTITY menu.control.next  "Next Track" >
 <!ENTITY menu.control.prev  "Previous Track" >
 <!ENTITY menu.control.shuf  "Shuffle" >

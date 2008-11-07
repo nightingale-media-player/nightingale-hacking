@@ -152,7 +152,7 @@
 
     <menu id="controls-menu" label="&menu.controls;"  accesskey="&menu.controls.accesskey;">
       <menupopup id="menu_ControlsPopup">
-        <menuitem id="menuitem_control_play" key="control-playpause-key" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
+        <menuitem id="menuitem_control_play" key="control-playpause-key" observes="controlIsPlaying" label="&menu.control.play;" accesskey="&menu.control.play.accesskey;"/>
         <menuseparator/>
         <menuitem id="menuitem_control_next" key="control-next-key" label="&menu.control.next;" accesskey="&menu.control.next.accesskey;"/>
         <menuitem id="menuitem_control_prev" key="control-previous-key" label="&menu.control.prev;" accesskey="&menu.control.prev.accesskey;"/>
@@ -303,6 +303,12 @@
 
     <broadcasterset id="mainBroadcasterSet">
       <!-- Used by the Control menu -->
+      <broadcaster id="controlIsPlaying">
+        <observes type="dataremote"
+                  key="faceplate.playing"
+                  attribute="label"
+                  onchange="return (value == '0' ? '&menu.control.play;' : '&menu.control.pause;')" />
+      </broadcaster>
       <broadcaster id="controlModeShuffle" >
         <observes type="dataremote"
                   key="playlist.shuffle" 
