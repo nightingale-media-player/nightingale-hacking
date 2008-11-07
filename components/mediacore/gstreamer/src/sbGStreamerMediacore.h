@@ -133,6 +133,7 @@ protected:
   nsresult InitPreferences();
   nsresult ReadPreferences();
   nsresult SetBufferingProperties(GstElement *aPipeline);
+  nsresult SendInitialBufferingEvent();
 
 private:
   // Static helper for C callback

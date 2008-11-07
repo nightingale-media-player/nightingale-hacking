@@ -1130,7 +1130,18 @@ sbGStreamerMediacore::OnSetPosition(PRUint64 aPosition)
     return NS_ERROR_FAILURE;
   }
 
-  return NS_OK;
+
+  // Set state to PAUSED. Leave mTargetState as it is, so if we did a seek when
+  // playing, we'll return to playing (after rebuffering if required)
+  ret = gst_element_set_state (mPipeline, GST_STATE_PAUSED);
+
+  if (ret == GST_STATE_CHANGE_FAILURE)
+    return NS_ERROR_FAILURE;
+
+  nsresult rv = SendInitialBufferingEvent();
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  return rv;
 }
 
 /*virtual*/ nsresult 
@@ -1168,6 +1179,9 @@ sbGStreamerMediacore::OnPlay()
     // continue on to PLAYING, or (if we're buffering) wait for buffering
     // to complete.
     ret = gst_element_set_state (mPipeline, GST_STATE_PAUSED);
+
+    nsresult rv = SendInitialBufferingEvent();
+    NS_ENSURE_SUCCESS (rv, rv);
   }
 
   /* Usually ret will be GST_STATE_CHANGE_ASYNC, but we could get a synchronous
@@ -1181,14 +1195,19 @@ sbGStreamerMediacore::OnPlay()
     mIsLive = PR_TRUE;
   }
 
+  return NS_OK;
+}
+
+nsresult
+sbGStreamerMediacore::SendInitialBufferingEvent()
+{
+  nsAutoMonitor lock(mMonitor);
+
   // If we're starting an HTTP stream, send an immediate buffering event,
   // since GStreamer won't do that until it's connected to the server.
   PRBool schemeIsHttp;
   nsresult rv = mUri->SchemeIs("http", &schemeIsHttp);
   NS_ENSURE_SUCCESS (rv, rv);
-
-  // Drop out lock before sending events
-  lock.Exit();
 
   if (schemeIsHttp) {
     double bufferingProgress = 0.0;
