@@ -1222,7 +1222,7 @@ appini_target = $(SONGBIRD_DISTDIR)/application.ini
 $(SONGBIRD_DISTDIR)/application.ini: $(APPINI)
 	$(CYGWIN_WRAPPER) $(RM) -f $(appini_target)
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DISTDIR)
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) $(SB_BRANDING_DEFINES) -- \
     $(srcdir)/$(APPINI) > $(appini_target)
 
 clean_appini:
