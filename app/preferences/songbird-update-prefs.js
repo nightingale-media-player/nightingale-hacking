@@ -82,8 +82,8 @@ pref("extensions.getMoreThemesURL", "http://addons.songbirdnest.com/tag/feathers
 
 pref("extensions.blocklist.enabled", true);
 pref("extensions.blocklist.interval", 86400);
-pref("extensions.blocklist.url", "https://addons.songbirdnest.com/blocklist/1/%APP_ID%/%APP_VERSION%/");
-pref("extensions.blocklist.detailsURL", "https://addons.songbirdnest.com/blocklist/");
+pref("extensions.blocklist.url", "https://addon-files.songbirdnest.com/blocklist/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/blocklist.xml");
+pref("extensions.blocklist.detailsURL", "https://addon-files.songbirdnest.com/blocklist/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/details");
 pref("extensions.ignoreMTimeChanges", false);
 
 // Whitelist addons, translate, and Mozilla addons.
