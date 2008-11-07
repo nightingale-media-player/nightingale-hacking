@@ -100,12 +100,12 @@ AC_SUBST(MAKE_INSTALLER)
 #  Check for --enable-official
 #
 
-SONGBIRD_BRANDING_DIR='$(topsrcdir)/branding'
+SONGBIRD_BRANDING_DIR='branding'
 AC_ARG_ENABLE(official,
               [  --enable-official       create an official build (default=no)])
 if test "$enable_official" == "yes"; then
   SONGBIRD_OFFICIAL=1
-  SONGBIRD_BRANDING_DIR='$(topsrcdir)/branding'
+  SONGBIRD_BRANDING_DIR='branding'
 fi
 AC_SUBST(SONGBIRD_OFFICIAL)
 AC_SUBST(SONGBIRD_BRANDING_DIR)

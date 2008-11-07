@@ -7,6 +7,7 @@
 <!ENTITY supportURL            "http://getsongbird.com/help/">
 <!ENTITY vendorURL             "http://getsongbird.com/about">
 <!ENTITY productURL            "http://getsongbird.com">
+<!ENTITY getDisplayPanesURL    "http://addons.songbirdnest.com/tag/displaypane">
 <!ENTITY faviconURL            "chrome://songbird-branding/skin/logo_16.png">
 <!ENTITY aboutImageURL         "chrome://songbird-branding/skin/powered-by-mozilla.gif">
 

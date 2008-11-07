@@ -20,4 +20,4 @@ EnableExtensionManager=true
 #if SB_ENABLE_BREAKPAD
 Enabled=1
 #endif
-ServerURL=https://crashreports.songbirdnest.com/submit
+ServerURL=@SB_CRASHREPORT_SERVER_URL@

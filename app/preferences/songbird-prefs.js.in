@@ -193,9 +193,6 @@ pref("xpinstall.dialog.progress.skin", "chrome://browser/content/preferences/pre
 // Search Preferences
 //
 
-// Search engines URL
-pref("browser.search.searchEnginesURL",      "http://addons.songbirdnest.com/tag/search");
-
 // pointer to the default engine name
 pref("browser.search.defaultenginename",      "chrome://branding/locale/brand.properties");
 
@@ -256,22 +253,10 @@ pref("browser.startup.homepage", "http://birdhouse.songbirdnest.com/");
 pref("songbird.url.firstrunpage", "http://birdhouse.songbirdnest.com/firstrun");
 pref("songbird.url.bugzilla", "http://bugzilla.songbirdnest.com/");
 pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
-pref("songbird.url.subscribe", "http://list-manage.com/subscribe.phtml");
 pref("songbird.url.support", "http://songbirdnest.com/support/");
 pref("songbird.url.keyboard", "about:keyboard-help");
 pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
 pref("songbird.url.support.corefailure", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Core_Wrapper_Failure");
-
-// urls that connect to hummingbird
-pref("songbird.url.bookmarks",
-     "https://bookmarks.songbirdnest.com/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/bookmarks.xml");
-pref("songbird.url.firstrun",
-     "https://firstrun.songbirdnest.com/bundles/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/firstrun.xml");
-pref("songbird.url.locales",
-     "https://locales.songbirdnest.com/bundles/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/locales.xml");
-
-// The breakpad report server to link to in about:crashes
-pref("breakpad.reportURL", "http://crashreports.songbirdnest.com/report/index/");
 
 //
 // Media Core prefs

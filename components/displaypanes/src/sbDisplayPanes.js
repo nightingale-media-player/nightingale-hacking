@@ -236,7 +236,7 @@ DisplayPaneManager.prototype = {
       var paneInfo = {
         contentUrl: this._getString("displaypane.default.url",  "chrome://songbird/content/xul/defaultDisplayPane.xul"),
         contentTitle: null, // automatically set by host depending on where the default pane is instantiated
-        contentIcon: this._getString("displaypane.default.icon",  "http://songbirdnest.com/favicon.ico"),
+        contentIcon: this._getString("displaypane.default.icon",  "chrome://branding/content/branding.ico"),
         defaultWidth: this._getString("displaypane.default.width",  "150"),
         defaultHeight: this._getString("displaypane.default.height",  "75"),
         suggestedContentGroups: this._getString("displaypane.default.groups",  "")

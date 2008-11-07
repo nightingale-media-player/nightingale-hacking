@@ -58,6 +58,7 @@ SUBDIRS = build \
           feathers \
           locales \
           extensions \
+          $(SONGBIRD_BRANDING_DIR) \
           $(NULL)
 
 SUBDIRDEPS = components : bindings

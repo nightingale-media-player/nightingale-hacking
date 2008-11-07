@@ -20,17 +20,17 @@ pref("app.update.mode", 1);
 // If set to true, the Update Service will present no UI for any event.
 pref("app.update.silent", false);
 
-// Update service URL:
-// Hardcoded 'en-US'. See bug 994.
-pref("app.update.url", "https://updates.songbirdnest.com/update/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/en-US/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml");
+// Update service URL - see branding prefs
+// pref("app.update.url", ****);
 
 // URL user can browse to manually if for some reason all update installation
-// attempts fail.  TODO: Change this URL
-pref("app.update.url.manual", "http://www.songbirdnest.com");
+// attempts fail.  - see branding prefs
+// pref("app.update.url.manual", ****);
 
 // A default value for the "More information about this update" link
 // supplied in the "An update is available" page of the update wizard.
-pref("app.update.url.details", "http://www.songbirdnest.com");
+// - see branding prefs
+// pref("app.update.url.details", ****);
 
 // User-settable override to app.update.url for testing purposes.
 //pref("app.update.url.override", "");
@@ -73,22 +73,25 @@ pref("app.update.incompatible.mode", 0);
 //  .. etc ..
 //
 pref("extensions.update.enabled", true);
-pref("extensions.update.url", "https://addon-files.songbirdnest.com/updates/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/%ITEM_VERSION%/%ITEM_ID%/update.rdf");
+// - see branding prefs
+// pref("extensions.update.url", ****);
 pref("extensions.update.interval", 86400);  // Check for updates to Extensions and
                                             // Feathers every day
 // Non-symmetric (not shared by extensions) extension-specific [update] preferences
-pref("extensions.getMoreExtensionsURL", "http://addons.songbirdnest.com/");
-pref("extensions.getMoreThemesURL", "http://addons.songbirdnest.com/tag/feathers");
+// - see branding prefs
+// pref("extensions.getMoreExtensionsURL", ****);
+// pref("extensions.getMoreThemesURL", ****);
 
 pref("extensions.blocklist.enabled", true);
 pref("extensions.blocklist.interval", 86400);
-pref("extensions.blocklist.url", "https://addon-files.songbirdnest.com/blocklist/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/blocklist.xml");
-pref("extensions.blocklist.detailsURL", "https://addon-files.songbirdnest.com/blocklist/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/details");
+// see branding prefs
+// pref("extensions.blocklist.url", ****);
+// pref("extensions.blocklist.detailsURL", ****);
 pref("extensions.ignoreMTimeChanges", false);
 
-// Whitelist addons, translate, and Mozilla addons.
-pref("xpinstall.whitelist.add", "addons.songbirdnest.com");
-pref("xpinstall.whitelist.add.0", "translate.songbirdnest.com");
+// We whitelist addons and translate - see branding prefs
+// pref("xpinstall.whitelist.add", ****);
+// pref("xpinstall.whitelist.add.0", ****);
 
 // We may want to whitelist addons.mozilla.org in the future.
 //pref("xpinstall.whitelist.add.1", "addons.mozilla.org");

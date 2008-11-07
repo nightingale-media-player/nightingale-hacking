@@ -63,5 +63,5 @@ INSTALLER_PREPROCESS = defines.nsi \
 
 SHELL_EXECUTE = make-installer.sh $(SB_PLATFORM)-$(SB_ARCH) $(readme)
 
-include $(SONGBIRD_BRANDING_DIR)/branding.mk
+include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 include $(topsrcdir)/build/rules.mk

@@ -6,8 +6,14 @@ SB_BRAND_VENDOR_NAME = POTI, Inc.
 SB_BRAND_TRADEMARKS  = \
   Songbird is a registered trademark of POTI, Inc.\\n\
   Mozilla is a registered trademark and XULRunner is a trademark of the Mozilla Foundation.
+SB_INSTALLER_ABOUT_URL=http://www.songbirdnest.com/
+SB_INSTALLER_UPDATE_URL=http://getsongbird.com/
+SB_CRASHREPORT_SERVER_URL=https://crashreports.songbirdnest.com/submit
 
 SB_BRANDING_DEFINES += \
   -DSB_VENDOR="$(SB_BRAND_VENDOR_NAME)" \
   -DSB_TRADEMARKS="$(SB_BRAND_TRADEMARKS)" \
+  -DSB_INSTALLER_ABOUT_URL="$(SB_INSTALLER_ABOUT_URL)" \
+  -DSB_INSTALLER_UPDATE_URL="$(SB_INSTALLER_UPDATE_URL)" \
+  -DSB_CRASHREPORT_SERVER_URL="$(SB_CRASHREPORT_SERVER_URL)" \
   $(NULL)

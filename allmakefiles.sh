@@ -64,6 +64,7 @@ fi
 #
 SCANNED_MAKEFILE_DIRS="
 app
+branding
 bindings
 components
 documentation

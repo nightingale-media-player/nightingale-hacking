@@ -535,7 +535,7 @@ else
 sb_executable_dir = $(call normalizepath,$(SONGBIRD_DISTDIR))
 endif
 
-include $(SONGBIRD_BRANDING_DIR)/branding.mk
+include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 SONGBIRD_STUB = $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
 RESHACKER_BIN = $(CYGWIN_WRAPPER) $(topsrcdir)/tools/win32/reshacker/ResHacker.exe
 ifeq (,$(SONGBIRD_OFFICIAL))
