@@ -436,8 +436,9 @@ function FeathersManager() {
 
   this._observerSet = new ObserverSet();
 
-  // We need to init after the profile is loaded
-  this._observerSet.add(this, "profile-after-change", false, true);
+  // We need to init at final UI startup after the Extension Manager has checked
+  // for feathers (required for NO_EM_RESTART support).
+  this._observerSet.add(this, "final-ui-startup", false, true);
 
   // We need to unhook things on shutdown
   this._observerSet.add(this, "quit-application", false, true);
@@ -1251,7 +1252,7 @@ FeathersManager.prototype = {
       this._deinit();
       break;
 
-    case "profile-after-change":
+    case "final-ui-startup":
       this._init();
       break;
     }
