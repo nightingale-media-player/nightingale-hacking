@@ -27,6 +27,8 @@
  *        dialog should be shown (based on pre-defined metrics).
  */
 
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+
 /**
  * Feedback pref constants:
  */
@@ -34,13 +36,13 @@ const PREF_APP_SESSIONS = "feedback.app_sessions";
 const PREF_FIRST_OPENED_DATE = "feedback.first_opened_date";
 const PREF_TOTAL_RUNTIME = "feedback.total_runtime";
 const PREF_SURVEY_DATE = "feedback.survey_date";
-const PREF_DISABLE_FEEDBACK = "feedback.disabled"
-const PREF_DENIED_FEEDBACK = "feedback.denied"
+const PREF_DISABLE_FEEDBACK = "feedback.disabled";
+const PREF_DENIED_FEEDBACK = "feedback.denied";
 
 /**
  * Misc. constants:
  */
-const SURVEY_URL = "http://www.songbirdnest.com/survey";
+const SURVEY_URL_KEY = "feedback.survey.url";
 const MIN_APP_SESSIONS  = 3;
 const MIN_TOTAL_RUNTIME = 1800000;  // 30 minutes
 const STARTUP_DELAY     = 5000;   // 5 seconds
@@ -81,6 +83,11 @@ FeedbackDelegate.prototype =
     // Don't show the feedback dialog again if the user turned down feedback.
     if (gAppPrefs.has(PREF_DENIED_FEEDBACK)) {
       return; 
+    }
+    
+    // Don't show the feedback dialog if we don't know where to send the survey
+    if ("false" == SBString(SURVEY_URL_KEY, "false", SBStringGetBrandBundle())) {
+      return;
     }
     
     var curDate = new Date();
@@ -186,7 +193,8 @@ FeedbackDelegate.prototype =
       gAppPrefs.setValue(PREF_SURVEY_DATE, "" + new Date().getTime());
       
       if (retVal.shouldLoadSurvey) {
-        mainWin.window.gBrowser.loadURI(SURVEY_URL, null, null, null, "_blank");
+        var surveyURL = SBString(SURVEY_URL_KEY, "false", SBStringGetBrandBundle());
+        mainWin.window.gBrowser.loadURI(surveyURL, null, null, null, "_blank");
         mainWin.focus();
       }
       else {
@@ -244,4 +252,5 @@ FeedbackDelegate.prototype =
   }
 };
 
-var gFeedbackDelegate = new FeedbackDelegate();
+// initialize a new feedback delegate (no need for a refernce to it)
+new FeedbackDelegate();
