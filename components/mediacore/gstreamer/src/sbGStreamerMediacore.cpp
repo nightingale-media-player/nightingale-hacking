@@ -140,7 +140,7 @@ NS_IMPL_THREADSAFE_CI(sbGStreamerMediacore)
 
 sbGStreamerMediacore::sbGStreamerMediacore() :
     mMonitor(nsnull),
-    mVideoEnabled(PR_FALSE),
+    mHaveVideoWindow(PR_FALSE),
     mPipeline(nsnull),
     mPlatformInterface(nsnull),
     mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
@@ -150,7 +150,12 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mBuffering(PR_FALSE),
     mIsLive(PR_FALSE),
     mHasSeenError(PR_FALSE),
-    mTargetState(GST_STATE_NULL)
+    mTargetState(GST_STATE_NULL),
+    mVideoDisabled(PR_FALSE),
+    mVideoSinkDescription(),
+    mAudioSinkDescription(),
+    mBufferSizeBytes(0),
+    mBufferDuration(0)
 {
   MOZ_COUNT_CTOR(sbGStreamerMediacore);
 
@@ -187,8 +192,79 @@ sbGStreamerMediacore::Init()
   rv = sbBaseMediacoreVolumeControl::InitBaseMediacoreVolumeControl();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = InitPreferences();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
+
+nsresult
+sbGStreamerMediacore::InitPreferences()
+{
+  nsresult rv;
+  nsCOMPtr<nsIPrefBranch> prefs = 
+      do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS (rv, NULL);
+
+  rv = prefs->GetBoolPref("songbird.mediacore.gstreamer.disableVideoDecoder", 
+	&mVideoDisabled);
+  if (rv == NS_ERROR_UNEXPECTED)
+    mVideoDisabled = PR_FALSE;
+  else
+    NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 prefType;
+  const char *VIDEO_SINK_PREF = "songbird.mediacore.gstreamer.videosink";
+  const char *AUDIO_SINK_PREF = "songbird.mediacore.gstreamer.audiosink";
+
+  rv = prefs->GetPrefType(VIDEO_SINK_PREF, &prefType);
+  NS_ENSURE_SUCCESS(rv, NULL);
+  if (prefType == nsIPrefBranch::PREF_STRING) {
+    rv = prefs->GetCharPref(VIDEO_SINK_PREF, 
+	getter_Copies(mVideoSinkDescription));
+    NS_ENSURE_SUCCESS(rv, NULL);
+  }
+
+  rv = prefs->GetPrefType(AUDIO_SINK_PREF, &prefType);
+  NS_ENSURE_SUCCESS(rv, NULL);
+  if (prefType == nsIPrefBranch::PREF_STRING) {
+    rv = prefs->GetCharPref(AUDIO_SINK_PREF, 
+	getter_Copies(mAudioSinkDescription));
+    NS_ENSURE_SUCCESS(rv, NULL);
+  }
+
+  /* In milliseconds */
+  const char *DURATION_PREF = "songbird.mediacore.gstreamer.buffer.duration";
+  /* In bytes */
+  const char *SIZE_PREF = "songbird.mediacore.gstreamer.buffer.size";
+
+  /* Defaults if the prefs aren't present */
+  PRInt32 bufferSizeBytes = 10 * 1024 * 1024; /* 10 MB */
+  PRInt64 bufferDuration = 10 * GST_SECOND;   /* 10 seconds */
+
+  rv = prefs->GetPrefType(SIZE_PREF, &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (prefType == nsIPrefBranch::PREF_INT) {
+    rv = prefs->GetIntPref(SIZE_PREF, &bufferSizeBytes);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = prefs->GetPrefType(DURATION_PREF, &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (prefType == nsIPrefBranch::PREF_INT) {
+    PRInt32 durationMS;
+    rv = prefs->GetIntPref(DURATION_PREF, &durationMS);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    bufferDuration = durationMS * GST_MSECOND;
+  }
+
+  mBufferSizeBytes = bufferSizeBytes;
+  mBufferDuration = bufferDuration;
+
+  return NS_OK;
+}
+
 
 // Utility methods
 
@@ -247,29 +323,17 @@ sbGStreamerMediacore::aboutToFinishHandler(GstElement *playbin, gpointer data)
 }
 
 GstElement *
-sbGStreamerMediacore::CreateSinkFromPrefs(char *pref)
-{
-  nsresult rv;
-  PRInt32 val;
-
-  nsCOMPtr<nsIPrefBranch> prefs = 
-      do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
-  NS_ENSURE_SUCCESS (rv, NULL);
-
-  rv = prefs->GetPrefType(pref, &val);
-  NS_ENSURE_SUCCESS(rv, NULL);
-
-  if (val == nsIPrefBranch::PREF_STRING) {
-    nsCString sinkdescription;
-    rv = prefs->GetCharPref(pref, getter_Copies(sinkdescription));
-    NS_ENSURE_SUCCESS(rv, NULL);
-
-    // If this fails, that's ok; we just return it anyway
-    GstElement *sink = gst_parse_bin_from_description (sinkdescription.get(),
+sbGStreamerMediacore::CreateSinkFromPrefs(const char *aSinkDescription)
+{ 
+  // Only try to create it if we have a non-null, non-zero-length description
+  if (aSinkDescription && *aSinkDescription) 
+  {
+    GstElement *sink = gst_parse_bin_from_description (aSinkDescription,
             TRUE, NULL);
-
+    // If parsing failed, sink is NULL; return it either way.
     return sink;
   }
+
   return NULL;
 }
 
@@ -278,8 +342,7 @@ sbGStreamerMediacore::CreateVideoSink()
 {
   nsAutoMonitor lock(mMonitor);
 
-  GstElement *videosink = CreateSinkFromPrefs(
-          (char *)"songbird.mediacore.gstreamer.videosink");
+  GstElement *videosink = CreateSinkFromPrefs(mVideoSinkDescription.get());
 
   if (mPlatformInterface)
     videosink = mPlatformInterface->SetVideoSink(videosink);
@@ -292,8 +355,7 @@ sbGStreamerMediacore::CreateAudioSink()
 {
   nsAutoMonitor lock(mMonitor);
 
-  GstElement *audiosink = CreateSinkFromPrefs(
-          (char *)"songbird.mediacore.gstreamer.audiosink");
+  GstElement *audiosink = CreateSinkFromPrefs(mAudioSinkDescription.get());
 
   if (mPlatformInterface)
     audiosink = mPlatformInterface->SetAudioSink(audiosink);
@@ -377,46 +439,12 @@ sbGStreamerMediacore::SetBufferingProperties(GstElement *aPipeline)
 {
   NS_ENSURE_ARG_POINTER(aPipeline);
 
-  /* In milliseconds */
-  const char *DURATION_PREF = "songbird.mediacore.gstreamer.buffer.duration";
-  /* In bytes */
-  const char *SIZE_PREF = "songbird.mediacore.gstreamer.buffer.size";
-
-  /* Defaults if the prefs aren't present */
-  PRInt32 bufferSizeBytes = 10 * 1024 * 1024; /* 10 MB */
-  PRInt64 bufferDuration = 10 * GST_SECOND;   /* 10 seconds */
-  nsresult rv;
-  PRInt32 prefType;
-
-  nsCOMPtr<nsIPrefBranch> prefs = 
-      do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
-  NS_ENSURE_SUCCESS (rv, rv);
-
-  rv = prefs->GetPrefType(SIZE_PREF, &prefType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (prefType == nsIPrefBranch::PREF_INT) {
-    rv = prefs->GetIntPref(SIZE_PREF, &bufferSizeBytes);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = prefs->GetPrefType(DURATION_PREF, &prefType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (prefType == nsIPrefBranch::PREF_INT) {
-    PRInt32 durationMS;
-    rv = prefs->GetIntPref(DURATION_PREF, &durationMS);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    bufferDuration = durationMS * GST_MSECOND;
-  }
-
   if (g_object_class_find_property(
               G_OBJECT_GET_CLASS (aPipeline), "buffer-size")) 
-    g_object_set (aPipeline, "buffer-size", bufferSizeBytes, NULL);
+    g_object_set (aPipeline, "buffer-size", mBufferSizeBytes, NULL);
   if (g_object_class_find_property(
               G_OBJECT_GET_CLASS (aPipeline), "buffer-duration")) 
-    g_object_set (aPipeline, "buffer-duration", bufferDuration, NULL);
+    g_object_set (aPipeline, "buffer-duration", mBufferDuration, NULL);
 
   return NS_OK;
 }
@@ -1092,19 +1120,7 @@ sbGStreamerMediacore::OnPlay()
 
   flags = 0x2 | 0x10; // audio | soft-volume
 
-  nsresult rv;
-  nsCOMPtr<nsIPrefBranch> prefs = 
-      do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
-  NS_ENSURE_SUCCESS (rv, NULL);
-
-  PRBool disableVideo;
-  rv = prefs->GetBoolPref("songbird.mediacore.gstreamer.disableVideoDecoder", &disableVideo);
-  if (rv == NS_ERROR_UNEXPECTED)
-    disableVideo = PR_FALSE;
-  else
-    NS_ENSURE_SUCCESS(rv, NULL);
-
-  if (mVideoEnabled && !disableVideo) {
+  if (mHaveVideoWindow && !mVideoDisabled) {
     // Enable video only if we're set up for it is turned off. Also enable
     // text (subtitles), which require a video window to display.
     flags |= 0x1 | 0x4; // video | text
@@ -1146,7 +1162,7 @@ sbGStreamerMediacore::OnPlay()
   // If we're starting an HTTP stream, send an immediate buffering event,
   // since GStreamer won't do that until it's connected to the server.
   PRBool schemeIsHttp;
-  rv = mUri->SchemeIs("http", &schemeIsHttp);
+  nsresult rv = mUri->SchemeIs("http", &schemeIsHttp);
   NS_ENSURE_SUCCESS (rv, rv);
 
   // Drop out lock before sending events
@@ -1359,7 +1375,7 @@ sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
                             NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(proxiedBoxObject));
 
-  mVideoEnabled = PR_TRUE;
+  mHaveVideoWindow = PR_TRUE;
   mVideoWindow = aVideoWindow;
 
 #if defined (MOZ_WIDGET_GTK2)
@@ -1376,7 +1392,7 @@ sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
   mPlatformInterface = new OSXPlatformInterface(proxiedBoxObject, native);
 #else
   LOG(("No video backend available for this platform"));
-  mVideoEnabled = PR_FALSE;
+  mHaveVideoWindow = PR_FALSE;
 #endif
 
   return NS_OK;

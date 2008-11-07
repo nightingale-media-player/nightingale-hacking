@@ -122,10 +122,11 @@ protected:
 
   nsresult LogMessageToErrorConsole(nsString message, PRUint32 flags);
 
-  GstElement *CreateSinkFromPrefs(char *pref);
+  GstElement *CreateSinkFromPrefs(const char *aSinkDescription);
   GstElement *CreateVideoSink();
   GstElement *CreateAudioSink();
 
+  nsresult InitPreferences();
   nsresult SetBufferingProperties(GstElement *aPipeline);
 
 private:
@@ -141,7 +142,9 @@ protected:
   // Protects all access to mPipeline
   PRMonitor*  mMonitor;
 
-  PRBool mVideoEnabled;
+  PRBool mHaveVideoWindow; // true if we have a video window and a 
+                           // platform-integration backend that can use it 
+                           // (preconditions for video to be enabled)
 
   GstElement *mPipeline;
   nsAutoPtr<sbIGstPlatformInterface> mPlatformInterface;
@@ -171,6 +174,15 @@ protected:
   // the video box
   nsCOMPtr<nsIDOMXULElement> mVideoWindow;
   nsCOMPtr<nsIDOMWindow> mDOMWindow;
+
+  // Various things read from preferences
+  PRBool mVideoDisabled; // Whether video is disabled via prefs
+
+  nsCString mVideoSinkDescription;
+  nsCString mAudioSinkDescription;
+
+  PRInt32 mBufferSizeBytes; // Streaming buffer max size in bytes
+  PRInt64 mBufferDuration;  // Streaming buffer duration in nanoseconds
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */
