@@ -4,8 +4,8 @@
 
 !define BrandFullNameInternal "@SB_APPNAME@"
 !define CompanyName           "@SB_VENDOR@"
-!define URLInfoAbout          "http://www.songbirdnest.com/"
-!define URLUpdateInfo         "http://www.songbirdnest.com/"
+!define URLInfoAbout          "@SB_INSTALLER_ABOUT_URL@"
+!define URLUpdateInfo         "@SB_INSTALLER_UPDATE_URL@"
 !define LegalTrademarks       "@SB_TRADEMARKS@"
 
 !define AppVersion            "@SB_MILESTONE@"
