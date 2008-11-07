@@ -360,8 +360,8 @@ GST_PLUGINS_BAD_NAMES += gstqtwrapper \
 GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/lib, \
          $(addsuffix -$(GLIB_VERSION)$(DLL_SUFFIX), $(GLIB_NAMES)))
 
-LIBICONV = $(addprefix $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/lib/lib, \
-             $(addsuffix $(DLL_SUFFIX), $(LIBICONV_NAMES)))
+# We use system iconv on Mac
+LIBICONV = 
 
 GETTEXT = $(addprefix $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib/lib, \
             $(addsuffix $(DLL_SUFFIX), $(GETTEXT_NAMES)))

@@ -90,7 +90,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += $(DEPTH)/components/moz/strings/src/sbMozStringUti
 ifeq (windows,$(SB_PLATFORM))
   DYNAMIC_LIB_STATIC_IMPORTS += $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/zlib
 else # SB_PLATFORM == windows
-  DYNAMIC_LIB_STATIC_IMPORTS += $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/libz
+  DYNAMIC_LIB_EXTRA_IMPORTS += z
 endif # SB_PLATFORM == windows
 
 ifeq (linux,$(SB_PLATFORM))
