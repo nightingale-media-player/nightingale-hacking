@@ -37,7 +37,8 @@
 #include <nsIIOService.h>
 #include <nsIConsoleService.h>
 #include <nsIScriptError.h>
-#include <nsIPrefBranch.h>
+#include <nsIPrefBranch2.h>
+#include <nsIObserver.h>
 #include <nsThreadUtils.h>
 #include <nsCOMPtr.h>
 #include <prlog.h>
@@ -115,7 +116,7 @@ static PRLogModuleInfo* gGStreamerMediacore =
 NS_IMPL_THREADSAFE_ADDREF(sbGStreamerMediacore)
 NS_IMPL_THREADSAFE_RELEASE(sbGStreamerMediacore)
 
-NS_IMPL_QUERY_INTERFACE9_CI(sbGStreamerMediacore,
+NS_IMPL_QUERY_INTERFACE10_CI(sbGStreamerMediacore,
                             sbIMediacore,
                             sbIMediacorePlaybackControl,
                             sbIMediacoreVolumeControl,
@@ -124,6 +125,7 @@ NS_IMPL_QUERY_INTERFACE9_CI(sbGStreamerMediacore,
                             sbIMediacoreVideoWindow,
                             sbIGStreamerMediacore,
                             nsIDOMEventListener,
+                            nsIObserver,			
                             nsIClassInfo)
 
 NS_IMPL_CI_INTERFACE_GETTER7(sbGStreamerMediacore,
@@ -144,6 +146,7 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mPipeline(nsnull),
     mPlatformInterface(nsnull),
     mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
+    mPrefs(nsnull),
     mTags(NULL),
     mProperties(nsnull),
     mStopped(PR_FALSE),
@@ -202,11 +205,25 @@ nsresult
 sbGStreamerMediacore::InitPreferences()
 {
   nsresult rv;
-  nsCOMPtr<nsIPrefBranch> prefs = 
-      do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
-  NS_ENSURE_SUCCESS (rv, NULL);
+  mPrefs = do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
 
-  rv = prefs->GetBoolPref("songbird.mediacore.gstreamer.disableVideoDecoder", 
+  rv = mPrefs->AddObserver("songbird.mediacore.gstreamer", this, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ReadPreferences();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbGStreamerMediacore::ReadPreferences()
+{
+  NS_ENSURE_STATE (mPrefs);
+  nsresult rv;
+
+  rv = mPrefs->GetBoolPref("songbird.mediacore.gstreamer.disableVideoDecoder", 
 	&mVideoDisabled);
   if (rv == NS_ERROR_UNEXPECTED)
     mVideoDisabled = PR_FALSE;
@@ -217,20 +234,20 @@ sbGStreamerMediacore::InitPreferences()
   const char *VIDEO_SINK_PREF = "songbird.mediacore.gstreamer.videosink";
   const char *AUDIO_SINK_PREF = "songbird.mediacore.gstreamer.audiosink";
 
-  rv = prefs->GetPrefType(VIDEO_SINK_PREF, &prefType);
-  NS_ENSURE_SUCCESS(rv, NULL);
+  rv = mPrefs->GetPrefType(VIDEO_SINK_PREF, &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
   if (prefType == nsIPrefBranch::PREF_STRING) {
-    rv = prefs->GetCharPref(VIDEO_SINK_PREF, 
+    rv = mPrefs->GetCharPref(VIDEO_SINK_PREF, 
 	getter_Copies(mVideoSinkDescription));
-    NS_ENSURE_SUCCESS(rv, NULL);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = prefs->GetPrefType(AUDIO_SINK_PREF, &prefType);
-  NS_ENSURE_SUCCESS(rv, NULL);
+  rv = mPrefs->GetPrefType(AUDIO_SINK_PREF, &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
   if (prefType == nsIPrefBranch::PREF_STRING) {
-    rv = prefs->GetCharPref(AUDIO_SINK_PREF, 
+    rv = mPrefs->GetCharPref(AUDIO_SINK_PREF, 
 	getter_Copies(mAudioSinkDescription));
-    NS_ENSURE_SUCCESS(rv, NULL);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   /* In milliseconds */
@@ -242,18 +259,18 @@ sbGStreamerMediacore::InitPreferences()
   PRInt32 bufferSizeBytes = 10 * 1024 * 1024; /* 10 MB */
   PRInt64 bufferDuration = 10 * GST_SECOND;   /* 10 seconds */
 
-  rv = prefs->GetPrefType(SIZE_PREF, &prefType);
+  rv = mPrefs->GetPrefType(SIZE_PREF, &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
   if (prefType == nsIPrefBranch::PREF_INT) {
-    rv = prefs->GetIntPref(SIZE_PREF, &bufferSizeBytes);
+    rv = mPrefs->GetIntPref(SIZE_PREF, &bufferSizeBytes);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = prefs->GetPrefType(DURATION_PREF, &prefType);
+  rv = mPrefs->GetPrefType(DURATION_PREF, &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
   if (prefType == nsIPrefBranch::PREF_INT) {
     PRInt32 durationMS;
-    rv = prefs->GetIntPref(DURATION_PREF, &durationMS);
+    rv = mPrefs->GetIntPref(DURATION_PREF, &durationMS);
     NS_ENSURE_SUCCESS(rv, rv);
 
     bufferDuration = durationMS * GST_MSECOND;
@@ -982,6 +999,11 @@ sbGStreamerMediacore::OnShutdown()
     DestroyPipeline();
   }
 
+  if (mPrefs) {
+    nsresult rv = mPrefs->RemoveObserver("songbird.mediacore.gstreamer", this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -1476,3 +1498,22 @@ sbGStreamerMediacore::HandleEvent(nsIDOMEvent* aEvent)
 
   return NS_OK;
 }
+
+
+//-----------------------------------------------------------------------------
+// nsIObserver
+//-----------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbGStreamerMediacore::Observe(nsISupports *aSubject,
+                              const char *aTopic,
+                              const PRUnichar *aData)
+{
+  if (!strcmp(NS_PREFBRANCH_PREFCHANGE_TOPIC_ID, aTopic)) {
+    nsresult rv = ReadPreferences();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+

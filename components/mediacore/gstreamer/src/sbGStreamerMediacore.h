@@ -31,6 +31,8 @@
 
 #include <nsIDOMEventListener.h>
 #include <nsIDOMXULElement.h>
+#include <nsIObserver.h>
+#include <nsIPrefBranch2.h>
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -62,12 +64,14 @@ class sbGStreamerMediacore : public sbBaseMediacore,
                              public sbIGStreamerMediacore,
                              public sbIMediacoreEventTarget,
                              public sbIMediacoreVideoWindow,
-                             public nsIDOMEventListener
+                             public nsIDOMEventListener,
+                             public nsIObserver
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIDOMEVENTLISTENER
+  NS_DECL_NSIOBSERVER
   NS_DECL_SBIMEDIACOREEVENTTARGET
   NS_DECL_SBIMEDIACOREVOTINGPARTICIPANT
   NS_DECL_SBIMEDIACOREVIDEOWINDOW
@@ -127,6 +131,7 @@ protected:
   GstElement *CreateAudioSink();
 
   nsresult InitPreferences();
+  nsresult ReadPreferences();
   nsresult SetBufferingProperties(GstElement *aPipeline);
 
 private:
@@ -150,6 +155,8 @@ protected:
   nsAutoPtr<sbIGstPlatformInterface> mPlatformInterface;
 
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
+
+  nsCOMPtr<nsIPrefBranch2> mPrefs;
 
   // Metadata, both in original GstTagList form, and transformed into an
   // sbIPropertyArray. Both may be NULL.
