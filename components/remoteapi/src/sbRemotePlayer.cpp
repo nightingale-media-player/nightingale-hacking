@@ -2049,6 +2049,10 @@ sbRemotePlayer::UnregisterCommands()
 
 nsresult
 sbRemotePlayer::ConfirmPlaybackControl() {
+  // NOTE: Making this function always succeed.
+  // See bugs 13368 and 13403
+  return NS_OK;
+
   // the web site is trying to control the user's playback.
   // try to guess if this is likely to annoy the user.
 
