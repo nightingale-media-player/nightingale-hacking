@@ -34,12 +34,15 @@
 %songbirdDTD;
 ]>
 
-<window title="&albumart.coverpreview.title;"
+<dialog title="&albumart.coverpreview.title;"
         xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         xmlns:svg="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         onload="onLoad();"
+        type="songbird"
+        buttons="accept"
+        hidechrome="true"
         width="500"
         height="500"
         persist="width height">
@@ -54,4 +57,4 @@
   <script type="application/x-javascript"
           src="chrome://albumart/content/coverPreview.js" />
 
-</window>
+</dialog>
