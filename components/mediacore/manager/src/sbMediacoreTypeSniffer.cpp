@@ -239,7 +239,8 @@ sbMediacoreTypeSniffer::GetFileExtensionFromURI(nsIURI* aURI,
   // Strip '.' from the beginning and end, if it exists
   strExtension.Trim(".");
 
-  _retval.Assign(strExtension);
+  ToLowerCase(strExtension, _retval);
+
   return NS_OK;
 }
 
