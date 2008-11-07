@@ -127,12 +127,16 @@ var AlbumArt = {
       if (aEvent.target.id == 'sb-albumart-selected') {
         passImageParam = this.getCurrentStateItemImage();
       }
-    
-      SBOpenWindow("chrome://albumart/content/coverPreview.xul",
-                   "coverPreview",
-                   "chrome,centerscreen,resizable=no",
-                   passImageParam,
-                   null);
+
+      var winMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
+                          .getService(Ci.nsIWindowMediator);
+      var mainWin = winMediator.getMostRecentWindow("Songbird:Main");
+      if (mainWin && mainWin.window) {
+        mainWin.openDialog("chrome://albumart/content/coverPreview.xul",
+                           "coverPreview",
+                           "chrome,centerscreen,resizeable=no",
+                           passImageParam);
+      }
     }
   },
 
