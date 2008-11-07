@@ -171,6 +171,9 @@
 
   // Add the controller to respond to the edit menu
   this.tree.controllers.appendController(this._commandController);
+
+  // Nothing has been selected yet.
+  this._lastClickIndex = -1;
 ]]>
       </constructor>
 
@@ -1903,7 +1906,7 @@
             // Remember the row and column
             this.edit_row = row;
             this.edit_col = col;
-            
+
             if ( this.tree.currentIndex == this._lastClickIndex  ) {
               // Don't start editing immediately since a) we can't do it in 
               // the middle of the event chain anyway without crashing, and 
