@@ -150,27 +150,7 @@ protected:
   PRMonitor* m_pQueryRunningMonitor;
   PRBool m_QueryHasCompleted;
 
-  PRLock* m_pCallbackListLock;
-  nsInterfaceHashtable<nsISupportsHashKey, sbIDatabaseSimpleQueryCallback> m_CallbackList;
-
-  typedef std::set<nsCString> modifiedtables_t;
-  typedef std::map<nsCString, modifiedtables_t> modifieddata_t;
-  typedef std::vector< PRInt64 > dbrowids_t;
-  
-  PRLock* m_pModifiedDataLock;
-  modifieddata_t m_ModifiedData;
-
-  PRLock *m_pSelectedRowIDsLock;
-  dbrowids_t m_SelectedRowIDs;
-
-  PRLock *m_pInsertedRowIDsLock;
-  dbrowids_t m_InsertedRowIDs;
-
-  PRLock *m_pUpdatedRowIDsLock;
-  dbrowids_t m_UpdatedRowIDs;
-
-  PRLock *m_pDeletedRowIDsLock;
-  dbrowids_t m_DeletedRowIDs;
+  nsInterfaceHashtableMT<nsISupportsHashKey, sbIDatabaseSimpleQueryCallback> m_CallbackList;
 
   PRLock* m_pBindParametersLock;
   std::deque< bindParameterArray_t > m_BindParameters;

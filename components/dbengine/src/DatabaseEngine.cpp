@@ -109,37 +109,6 @@ static PRLogModuleInfo* sDatabaseEnginePerformanceLog = nsnull;
 #define BEGIN_PERFORMANCE_LOG(_strQuery, _dbName) /* nothing */
 #endif
 
-void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, sqlite_int64 nRowID)
-{
-  CDatabaseQuery *pQuery = reinterpret_cast<CDatabaseQuery *>(pData);
-
-  switch(nOp)
-  {
-    case SQLITE_INSERT:
-    {
-      sbSimpleAutoLock lock(pQuery->m_pInsertedRowIDsLock);
-      pQuery->m_InsertedRowIDs.push_back(nRowID);
-    }
-    break;
-
-    case SQLITE_UPDATE:
-    {
-      sbSimpleAutoLock lock(pQuery->m_pUpdatedRowIDsLock);
-      pQuery->m_UpdatedRowIDs.push_back(nRowID);
-    }
-    break;
-
-    case SQLITE_DELETE:
-    {
-      sbSimpleAutoLock lock(pQuery->m_pDeletedRowIDsLock);
-      pQuery->m_DeletedRowIDs.push_back(nRowID);
-    }
-    break;
-  }
-
-  return;
-}
-
 /*
  * Parse a path string in the form of "n1.n2.n3..." where n is an integer.
  * Returns the next integer in the list while advancing the pos pointer to
@@ -1197,8 +1166,6 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
       nsAutoString dbName;
       pQuery->GetDatabaseGUID(dbName);
 
-      sqlite3_update_hook(pDB, SQLiteUpdateHook, pQuery);
-
       BEGIN_PERFORMANCE_LOG(strQuery, dbName);
 
       LOG(("DBE: '%s' on '%s'\n",
@@ -1480,9 +1447,7 @@ void CDatabaseEngine::DoSimpleCallback(CDatabaseQuery *pQuery)
   pQuery->GetResultObject(getter_AddRefs(pDBResult));
   pQuery->GetDatabaseGUID(strGUID);
   
-  PR_Lock(pQuery->m_pCallbackListLock);
   pQuery->m_CallbackList.EnumerateRead(EnumSimpleCallback, &callbackSnapshot);
-  PR_Unlock(pQuery->m_pCallbackListLock);
 
   callbackCount = callbackSnapshot.Count();
   if(!callbackCount)

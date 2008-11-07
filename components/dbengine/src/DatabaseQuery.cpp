@@ -109,12 +109,6 @@ CDatabaseQuery::CDatabaseQuery()
   m_pQueryResultLock = PR_NewLock();
   m_pDatabaseGUIDLock = PR_NewLock();
   m_pDatabaseQueryListLock = PR_NewLock();
-  m_pCallbackListLock = PR_NewLock();
-  m_pModifiedDataLock = PR_NewLock();
-  m_pSelectedRowIDsLock = PR_NewLock();
-  m_pInsertedRowIDsLock = PR_NewLock();
-  m_pUpdatedRowIDsLock = PR_NewLock();
-  m_pDeletedRowIDsLock = PR_NewLock();
   m_pBindParametersLock = PR_NewLock();
   m_pRollingLimitLock = PR_NewLock();
 
@@ -124,12 +118,6 @@ CDatabaseQuery::CDatabaseQuery()
   NS_ASSERTION(m_pQueryResultLock, "CDatabaseQuery.m_pQueryResultLock failed");
   NS_ASSERTION(m_pDatabaseGUIDLock, "CDatabaseQuery.m_pDatabaseGUIDLock failed");
   NS_ASSERTION(m_pDatabaseQueryListLock, "CDatabaseQuery.m_pDatabaseQueryListLock failed");
-  NS_ASSERTION(m_pCallbackListLock, "CDatabaseQuery.m_pCallbackListLock failed");
-  NS_ASSERTION(m_pSelectedRowIDsLock, "CDatabaseQuery.m_pModifiedRowIDsLock failed");
-  NS_ASSERTION(m_pModifiedDataLock, "CDatabaseQuery.m_pModifiedDataLock failed");
-  NS_ASSERTION(m_pInsertedRowIDsLock, "CDatabaseQuery.m_pModifiedRowIDsLock failed");
-  NS_ASSERTION(m_pUpdatedRowIDsLock, "CDatabaseQuery.m_pModifiedRowIDsLock failed");
-  NS_ASSERTION(m_pDeletedRowIDsLock, "CDatabaseQuery.m_pModifiedRowIDsLock failed");
   NS_ASSERTION(m_pQueryRunningMonitor, "CDatabaseQuery.m_pQueryRunningMonitor failed");
   NS_ASSERTION(m_pBindParametersLock, "CDatabaseQuery.m_pBindParametersLock failed");
   NS_ASSERTION(m_pRollingLimitLock, "CDatabaseQuery.m_pRollingLimitLock failed");
@@ -140,7 +128,6 @@ CDatabaseQuery::CDatabaseQuery()
   log += NS_LITERAL_CSTRING("m_pQueryResultLock            = ") + nsPrintfCString("%x\n", m_pQueryResultLock);
   log += NS_LITERAL_CSTRING("m_pDatabaseGUIDLock           = ") + nsPrintfCString("%x\n", m_pDatabaseGUIDLock);
   log += NS_LITERAL_CSTRING("m_pDatabaseQueryListLock      = ") + nsPrintfCString("%x\n", m_pDatabaseQueryListLock);
-  log += NS_LITERAL_CSTRING("m_pModifiedTablesLock         = ") + nsPrintfCString("%x\n", m_pModifiedTablesLock);
   log += NS_LITERAL_CSTRING("m_pQueryRunningMonitor        = ") + nsPrintfCString("%x\n", m_pQueryRunningMonitor);
   log += NS_LITERAL_CSTRING("m_pBindParametersLock         = ") + nsPrintfCString("%x\n", m_pBindParametersLock);
   log += NS_LITERAL_CSTRING("m_pRollingLimitLock           = ") + nsPrintfCString("%x\n", m_pRollingLimitLock);
@@ -183,24 +170,6 @@ CDatabaseQuery::~CDatabaseQuery()
 
   if (m_pDatabaseQueryListLock)
     PR_DestroyLock(m_pDatabaseQueryListLock);
-
-  if (m_pCallbackListLock)
-    PR_DestroyLock(m_pCallbackListLock);
-
-  if (m_pModifiedDataLock)
-    PR_DestroyLock(m_pModifiedDataLock);
-
-  if (m_pSelectedRowIDsLock)
-    PR_DestroyLock(m_pSelectedRowIDsLock);
-
-  if (m_pInsertedRowIDsLock)
-    PR_DestroyLock(m_pInsertedRowIDsLock);
-
-  if (m_pUpdatedRowIDsLock)
-    PR_DestroyLock(m_pUpdatedRowIDsLock);
-
-  if (m_pDeletedRowIDsLock)
-    PR_DestroyLock(m_pDeletedRowIDsLock);
 
   if (m_pBindParametersLock)
     PR_DestroyLock(m_pBindParametersLock);
@@ -329,7 +298,6 @@ NS_IMETHODIMP CDatabaseQuery::AddSimpleQueryCallback(sbIDatabaseSimpleQueryCallb
                                      getter_AddRefs(proxiedCallback));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbSimpleAutoLock lock(m_pCallbackListLock);
   m_CallbackList.Put(dbPersistCB, proxiedCallback);
 
   return NS_OK;
@@ -341,9 +309,7 @@ NS_IMETHODIMP CDatabaseQuery::RemoveSimpleQueryCallback(sbIDatabaseSimpleQueryCa
 {
   NS_ENSURE_ARG_POINTER(dbPersistCB);
 
-  PR_Lock(m_pCallbackListLock);
   m_CallbackList.Remove(dbPersistCB);
-  PR_Unlock(m_pCallbackListLock);
 
   return NS_OK;
 } //RemoveSimpleQueryCallback
