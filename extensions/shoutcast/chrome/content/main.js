@@ -224,13 +224,6 @@ ShoutcastRadio.Controller = {
 		shoutcastUninstallObserver.register();
 
 		Application.prefs.setValue("extensions.shoutcast-radio.filter", "");
-/*
-		if (!("sbIAlbumArtService" in Ci)) {
-			// Album art manager isn't installed
-			alert("Album art manager isn't installed");
-			installXPI("http://addons.songbirdnest.com/xpis/969");
-		}
-		*/
 	},
 
 	onUnLoad: function() {
