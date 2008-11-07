@@ -138,8 +138,18 @@ private:
   nsresult ClonePropertyArray(sbIPropertyArray* aSource,
                               sbIMutablePropertyArray** _retval);
 
+  /**
+   * Determines if two sets of properties have any in common.
+   * \param aBag1 first set of properties
+   * \param aBag2 second set of properties
+   * \param aPropertiesToIgnore an optional list of properties to ignore
+   * \param aHasCommonProperty Return value PR_TRUE if one or more properties
+   * exist in both bags and isn't in the list to ignore
+   * \return NS_OK if nothing bad happened
+   */
   nsresult HasCommonProperty(sbIPropertyArray* aBag1,
                              sbIPropertyArray* aBag2,
+                             nsStringArray * aPropertiesToIgnore,
                              PRBool* aHasCommonProperty);
 
   nsresult HasCommonProperty(sbIPropertyArray* aBag,
@@ -213,6 +223,11 @@ private:
   PRPackedBool mInitializing;
 
   nsRefPtr<sbLocalDatabaseMediaListViewSelection> mSelection;
+  /**
+   * This holds the list of properties that should be ignored when considering
+   * whether to invalidate the view.
+   */
+  nsStringArray mIgnoreSystemProperties;
 };
 
 class sbMakeSortableStringEnumerator : public nsIStringEnumerator

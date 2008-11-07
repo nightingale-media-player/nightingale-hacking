@@ -191,6 +191,13 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbLocalDatabaseLibrar
   NS_ASSERTION(aLibrary, "aLibrary is null");
   NS_ASSERTION(aMediaList, "aMediaList is null");
 
+  // Build list of properties to ignore when considering whether to invalidate
+  // the view. This is used by ShouldCauseInvalidation
+  mIgnoreSystemProperties.AppendString(NS_LITERAL_STRING(SB_PROPERTY_PLAYCOUNT));
+  mIgnoreSystemProperties.AppendString(NS_LITERAL_STRING(SB_PROPERTY_LASTPLAYTIME));
+  mIgnoreSystemProperties.AppendString(NS_LITERAL_STRING(SB_PROPERTY_SKIPCOUNT));
+  mIgnoreSystemProperties.AppendString(NS_LITERAL_STRING(SB_PROPERTY_LASTSKIPTIME));
+
   MOZ_COUNT_CTOR(sbLocalDatabaseMediaListView);
 #ifdef PR_LOGGING
   if (!sMediaListViewLog) {
@@ -393,7 +400,7 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     }
   }
 
-  // Always do this last otherwise certain settings may 
+  // Always do this last otherwise certain settings may
   // not get applied properly.
   rv = UpdateViewArrayConfiguration(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -848,6 +855,7 @@ sbLocalDatabaseMediaListView::ClonePropertyArray(sbIPropertyArray* aSource,
 nsresult
 sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag1,
                                                 sbIPropertyArray* aBag2,
+                                                nsStringArray * aPropertiesToIgnore,
                                                 PRBool* aHasCommonProperty)
 {
   NS_ASSERTION(aBag1, "aBag1 is null");
@@ -867,13 +875,16 @@ sbLocalDatabaseMediaListView::HasCommonProperty(sbIPropertyArray* aBag1,
     rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString junk;
-    rv = aBag2->GetPropertyValue(propertyID, junk);
-    if (NS_SUCCEEDED(rv)) {
-      *aHasCommonProperty = PR_TRUE;
-      return NS_OK;
+    // Only compare if we're not ignoring this property
+    if (!aPropertiesToIgnore ||
+        aPropertiesToIgnore->IndexOf(propertyID) == -1) {
+      nsString junk;
+      rv = aBag2->GetPropertyValue(propertyID, junk);
+      if (NS_SUCCEEDED(rv)) {
+        *aHasCommonProperty = PR_TRUE;
+        return NS_OK;
+      }
     }
-
   }
 
   *aHasCommonProperty = PR_FALSE;
@@ -938,19 +949,19 @@ sbLocalDatabaseMediaListView::ShouldCauseInvalidation(sbIPropertyArray* aPropert
   PRBool hasCommon;
   *aShouldCauseInvalidation = PR_TRUE;
 
-  // If one of the updated proprties is involved in the current sort, filter,
+  // If one of the updated properties is involved in the current filter,
   // or search, we should invalidate
 
   // Search sort
   nsCOMPtr<sbIPropertyArray> props;
   rv = GetCurrentSort(getter_AddRefs(props));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = HasCommonProperty(aProperties, props, &hasCommon);
+  rv = HasCommonProperty(aProperties, props, &mIgnoreSystemProperties, &hasCommon);
   NS_ENSURE_SUCCESS(rv, rv);
   if (hasCommon) {
     return NS_OK;
   }
-  
+
   // Search secondary sort
   nsCOMPtr<sbIProperty> property = nsnull;
   rv = props->GetPropertyAt(0, getter_AddRefs(property));
@@ -960,7 +971,7 @@ sbLocalDatabaseMediaListView::ShouldCauseInvalidation(sbIPropertyArray* aPropert
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIPropertyInfo> propertyInfo;
-    nsCOMPtr<sbIPropertyManager> propertyManager = 
+    nsCOMPtr<sbIPropertyManager> propertyManager =
       do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = propertyManager->GetPropertyInfo(propertyID,
@@ -969,9 +980,9 @@ sbLocalDatabaseMediaListView::ShouldCauseInvalidation(sbIPropertyArray* aPropert
 
     nsCOMPtr<sbIPropertyArray> secondarySort = nsnull;
     rv = propertyInfo->GetSecondarySort(getter_AddRefs(secondarySort));
-    
+
     if (NS_SUCCEEDED(rv) && secondarySort) {
-      rv = HasCommonProperty(aProperties, secondarySort, &hasCommon);
+      rv = HasCommonProperty(aProperties, secondarySort, &mIgnoreSystemProperties, &hasCommon);
       NS_ENSURE_SUCCESS(rv, rv);
       if (hasCommon) {
         return NS_OK;
