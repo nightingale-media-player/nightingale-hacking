@@ -70,4 +70,10 @@ interface sbIDatabaseEngine : nsISupports
    * \brief Dump the contents of a database to file.
    */
   void dumpDatabase(in AString aDatabaseGUID, in nsIFile aOutFile);
+  
+  /**
+   * \brief Dump memory usage to the console.
+   * See components/dbengine/src/sqlite3.c#6625 for details.
+   */
+  void dumpMemoryStatistics();
 };

@@ -987,6 +987,40 @@ CDatabaseEngine::DumpDatabase(const nsAString & aDatabaseGUID, nsIFile *aOutFile
 }
 
 //-----------------------------------------------------------------------------
+NS_IMETHODIMP CDatabaseEngine::DumpMemoryStatistics()
+{
+  int status_op  = -1;
+  int current    = -1;
+  int highwater  = -1;
+
+  printf("DumpMemoryStatistics() format\tCurrent\tHighwater\n");
+
+  sqlite3_status(SQLITE_STATUS_MEMORY_USED, &current, &highwater, 0);
+  printf("SQLITE_STATUS_MEMORY_USED:\t%d\t%d\n", current, highwater);
+  sqlite3_status(SQLITE_STATUS_PAGECACHE_USED, &current, &highwater, 0);
+  printf("SQLITE_STATUS_PAGECACHE_USED:\t%d\t%d\n", current, highwater);
+  sqlite3_status(SQLITE_STATUS_PAGECACHE_OVERFLOW, &current, &highwater, 0);
+  printf("SQLITE_STATUS_PAGECACHE_OVERFLOW:\t%d\t%d\n", current, highwater);
+  sqlite3_status(SQLITE_STATUS_SCRATCH_USED, &current, &highwater, 0);
+  printf("SQLITE_STATUS_SCRATCH_USED:\t%d\t%d\n", current, highwater);
+  sqlite3_status(SQLITE_STATUS_SCRATCH_OVERFLOW, &current, &highwater, 0);
+  printf("SQLITE_STATUS_SCRATCH_OVERFLOW:\t%d\t%d\n", current, highwater);
+  sqlite3_status(SQLITE_STATUS_MALLOC_SIZE, &current, &highwater, 0);
+  printf("SQLITE_STATUS_MALLOC_SIZE\t%d\t%d\n", current, highwater);
+  sqlite3_status(SQLITE_STATUS_PARSER_STACK, &current, &highwater, 0);
+  printf("SQLITE_STATUS_PARSER_STACK\t%d\t%d\n", current, highwater);
+  sqlite3_status(SQLITE_STATUS_PAGECACHE_SIZE, &current, &highwater, 0);
+  printf("SQLITE_STATUS_PAGECACHE_SIZE\t%d\t%d\n", current, highwater);
+  sqlite3_status(SQLITE_STATUS_SCRATCH_SIZE, &current, &highwater, 0);
+  printf("SQLITE_STATUS_SCRATCH_SIZE\t%d\t%d\n", current, highwater);
+
+  printf("DumpMemoryStatistics() finished.  "
+         "See dbengine/src/sqlite3.h#6168\n");
+
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
 already_AddRefed<QueryProcessorThread> CDatabaseEngine::GetThreadByQuery(CDatabaseQuery *pQuery,
                                                          PRBool bCreate /*= PR_FALSE*/)
 {
