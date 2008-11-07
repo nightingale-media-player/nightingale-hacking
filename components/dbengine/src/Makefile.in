@@ -92,6 +92,7 @@ endif
 C_EXTRA_DEFS += -DSQLITE_ALLOW_XTHREAD_CONNECT=1 \
                 -DSQLITE_OMIT_LOAD_EXTENSION=1 \
                 -DSQLITE_THREADSAFE=1 \
+                -DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 \
                 -DTEMP_STORE=2 \
                 -DNO_TCL \
                 -DSQLITE_CORE \

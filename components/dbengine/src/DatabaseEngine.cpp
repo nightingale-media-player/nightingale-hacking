@@ -688,7 +688,7 @@ NS_IMETHODIMP CDatabaseEngine::Init()
     NS_ERROR("Unable to register xpcom-shutdown observer");
     m_AttemptShutdownOnDestruction = PR_TRUE;
   }
-
+  
   return NS_OK;
 }
 
@@ -1017,6 +1017,16 @@ NS_IMETHODIMP CDatabaseEngine::DumpMemoryStatistics()
   printf("DumpMemoryStatistics() finished.  "
          "See dbengine/src/sqlite3.h#6168\n");
 
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP CDatabaseEngine::ReleaseMemory()
+{
+  // Attempt to free a large amount of memory.
+  // This will cause SQLite to free as much as it can.
+  int memReleased = sqlite3_release_memory(500000000);
+  printf("CDatabaseEngine::ReleaseMemory() managed to release %d bytes\n", memReleased);
   return NS_OK;
 }
 

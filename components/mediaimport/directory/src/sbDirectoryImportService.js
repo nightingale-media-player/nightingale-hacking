@@ -558,11 +558,23 @@ DirectoryImportJob.prototype = {
     {
       this._inLibraryBatch = false;
       library.forceEndUpdateBatch();
+      
+      // XXX Performance hack
+      // If we've imported a ton of items then most of the 
+      // library database is probably in memory.  
+      // This isn't useful, and makes a bad first impression,
+      // so lets just dump the entire DB cache.
+      if (this._newMediaItems.length > 500) {
+        var dbEngine = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
+                                     .getService(Ci.sbIDatabaseEngine);
+        dbEngine.releaseMemory();
+      }
     }
     
     if (this._timingService) {
       this._timingService.stopPerfTimer(this._timingIdentifier);
     }
+    
   },
   
   /**

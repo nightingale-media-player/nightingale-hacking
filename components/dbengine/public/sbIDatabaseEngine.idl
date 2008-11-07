@@ -46,7 +46,7 @@ interface nsIFile;
 *
 * \sa sbIDatabaseQuery, sbIDatabaseResult
 */
-[scriptable, uuid(5BEE9BAB-D6B8-4B43-998D-9F76122CEE35)]
+[scriptable, uuid(35e0ae00-ac6e-11dd-ad8b-0800200c9a66)]
 interface sbIDatabaseEngine : nsISupports
 {
   /**
@@ -76,4 +76,12 @@ interface sbIDatabaseEngine : nsISupports
    * See components/dbengine/src/sqlite3.c#6625 for details.
    */
   void dumpMemoryStatistics();
+
+  /**
+   * \brief Release all non-essential memory.
+   * Attempt to release all non-essential memory currently
+   * held by SQLite. An example of non-essential memory is memory 
+   * used to cache database pages that are not currently in use.
+   */
+  void releaseMemory();
 };
