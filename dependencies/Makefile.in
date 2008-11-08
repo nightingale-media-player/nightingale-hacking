@@ -544,7 +544,7 @@ else
 ICON_FILE = $(topsrcdir)/installer/windows/songbird.ico
 endif
 RESHACKER_OVERWRITE_ICON = $(RESHACKER_BIN) -addoverwrite $(sb_executable_dir)/$(1), $(sb_executable_dir)/$(1), $(ICON_FILE), icongroup, $(2), 1033
-RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e 's/(VALUE "$1", ")[^"]*(")/$${1}$(2)$${2}/' songbird.rc
+RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e "s/(VALUE \"$1\", \")[^\"]*(\")/\$${1}$(2)\$${2}/" songbird.rc
 move-sb-stub-executable: $(SONGBIRD_MAIN_APP)
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(sb_executable_dir)
 	$(CYGWIN_WRAPPER) $(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable_dir)
@@ -566,7 +566,7 @@ endif # Not-jemalloc and MSVC with manifest tool
 	$(call RESHACKER_OVERWRITE_ICON,songbird.exe,32512)
 	# overwrite the VersionInfo fields to say Songbird
 	$(RESHACKER_BIN) -extract $(sb_executable_dir)/songbird.exe, songbird.rc, VersionInfo, 1, 1033
-	$(call RESHACKER_REPLACE_RC,Comments,Mozilla XULRunner stub loader)
+	$(call RESHACKER_REPLACE_RC,Comments,Songbird.exe is based on the Mozilla XULRunner stub loader)
 	$(call RESHACKER_REPLACE_RC,CompanyName,$(SB_BRAND_VENDOR_NAME)) 
 	$(call RESHACKER_REPLACE_RC,FileDescription,$(SB_BRAND_FULL_NAME))
 	$(call RESHACKER_REPLACE_RC,ProductName,$(SB_BRAND_SHORT_NAME))

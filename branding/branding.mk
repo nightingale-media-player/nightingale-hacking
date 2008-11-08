@@ -4,8 +4,9 @@ SB_BRAND_SHORT_NAME  = $(SB_APPNAME)
 SB_BRAND_FULL_NAME   = Songbird Web Player
 SB_BRAND_VENDOR_NAME = POTI, Inc.
 SB_BRAND_TRADEMARKS  = \
-  Songbird is a registered trademark of POTI, Inc.\\n\
-  Mozilla is a registered trademark and XULRunner is a trademark of the Mozilla Foundation.
+  Songbird and 'Play the Web' are registered trademarks of POTI, Inc.\\\\r\\\\n\
+  Mozilla is a registered trademark of the Mozilla Foundation.\\\\r\\\\n\
+  XULRunner is a trademark of the Mozilla Foundation.
 SB_INSTALLER_ABOUT_URL=http://www.songbirdnest.com/
 SB_INSTALLER_UPDATE_URL=http://getsongbird.com/
 SB_CRASHREPORT_SERVER_URL=https://crashreports.songbirdnest.com/submit
