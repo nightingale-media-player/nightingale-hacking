@@ -277,14 +277,21 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
   SortSpec* ss = mSorts.AppendElement();
   NS_ENSURE_TRUE(ss, NS_ERROR_OUT_OF_MEMORY);
 
-  ss->property   = aProperty;
+  // Can't sort by ordinal for media_item table default to created
+  if (aProperty.Equals(NS_LITERAL_STRING(SB_PROPERTY_ORDINAL)) &&
+      !mBaseTable.Equals(NS_LITERAL_STRING("simple_media_lists"))) {
+    NS_WARNING("Trying to sort by ordinal on a non-media list");
+      ss->property = NS_LITERAL_STRING(SB_PROPERTY_CREATED);
+  }
+  else {
+    ss->property   = aProperty;
+  }
   ss->ascending  = aAscending;
 
   if (mPropertyCache) {
     nsresult rv = mPropertyCache->GetPropertyDBID(aProperty, &ss->propertyId);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
   return Invalidate();
 }
 
@@ -306,7 +313,7 @@ sbLocalDatabaseGUIDArray::GetCurrentSort(sbIPropertyArray** aCurrentSort)
   nsCOMPtr<sbIMutablePropertyArray> sort =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = sort->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -841,10 +848,10 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
   }
 
   // Since we don't actually care where in the array the GUID appears,
-  // we can take advantage of mGuidToFirstIndexMap even when this 
+  // we can take advantage of mGuidToFirstIndexMap even when this
   // is NOT a distinct array.
 
-  // First check to see if the guid is cached. 
+  // First check to see if the guid is cached.
   PRUint32 index;
   if (mGuidToFirstIndexMap.Get(aGuid, &index)) {
     *_retval = PR_TRUE;
@@ -972,7 +979,7 @@ sbLocalDatabaseGUIDArray::Initialize()
     mLengthX = mNonNullLength;
   }
 
-  // Figure out if there is an active search filter, 
+  // Figure out if there is an active search filter,
   // as this impacts how we do secondary sorting at the moment.
   mHasActiveSearch = PR_FALSE;
   PRUint32 filterCount = mFilters.Length();
@@ -1000,12 +1007,12 @@ sbLocalDatabaseGUIDArray::UpdateLength()
   nsresult rv;
 
   // If we have a fetch size of 0 or PR_UINT32_MAX it means
-  // we're supposed to fetch everything.  If this is 
+  // we're supposed to fetch everything.  If this is
   // the case, and we don't have to worry about the
   // non null query, then we can skip the count query by
   // just fetching and using the resulting length.
   if ((mFetchSize == PR_UINT32_MAX || mFetchSize == 0) &&
-      mNonNullCountQuery.IsEmpty() && mNullGuidRangeQuery.IsEmpty()) 
+      mNonNullCountQuery.IsEmpty() && mNullGuidRangeQuery.IsEmpty())
   {
     rv = ReadRowRange(mFullGuidRangeQuery,
                       0,
@@ -1015,9 +1022,9 @@ sbLocalDatabaseGUIDArray::UpdateLength()
     NS_ENSURE_SUCCESS(rv, rv);
     mLength = mCache.Length();
     mNonNullLength = mLength;
-  } 
+  }
   else {
-    // Otherwise, use separate queries to establish the length 
+    // Otherwise, use separate queries to establish the length
     rv = RunLengthQuery(mFullCountQuery, &mLength);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1335,13 +1342,13 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   NS_ENSURE_SUCCESS(rv, rv);
 
   /*
-   * If asked to fetch everything, assume we got 
+   * If asked to fetch everything, assume we got
    * the right number of rows.
    */
   if (aCount == PR_UINT32_MAX) {
     aCount = rowCount;
   }
-  
+
   /*
    * If there is a multi-level sort in effect, we need to apply the additional
    * level of sorts to this result
@@ -1563,7 +1570,7 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
 
   PRUint32 rangeLength = aEndIndex - aStartIndex + 1;
 
-  // XXX Disable memory sorting in the general case, since it appears to slow things 
+  // XXX Disable memory sorting in the general case, since it appears to slow things
   // down with the index fix from bug 8612. Enable it however when an FTS search
   // is active, as joining the FTS table can severely slow the resort query.
 

@@ -39,6 +39,7 @@
 #include <sbStringUtils.h>
 
 #define COUNT_COLUMN                NS_LITERAL_STRING("count(1)")
+#define CREATED_COLUMN              NS_LITERAL_STRING("created")
 #define GUID_COLUMN                 NS_LITERAL_STRING("guid")
 #define OBJ_COLUMN                  NS_LITERAL_STRING("obj")
 #define OBJSORTABLE_COLUMN          NS_LITERAL_STRING("obj_sortable")
@@ -298,7 +299,7 @@ sbLocalDatabaseQuery::GetPrefixSearchQuery(nsAString& aQuery)
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
-      return NS_ERROR_INVALID_ARG;
+      return NS_OK;
     }
   }
   else {
@@ -809,9 +810,9 @@ sbLocalDatabaseQuery::AddFilters()
                                           PR_FALSE,
                                           PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
-    
+
     }
-    
+
     /* XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617.
     else {
       // This is not the everything search so we need to use the per-property
@@ -967,8 +968,13 @@ sbLocalDatabaseQuery::AddPrimarySort()
       return NS_OK;
     }
 
-
-    return NS_ERROR_INVALID_ARG;
+    // Default to the created property for non-lists. This addresses
+    // bug 13287 where the sort wasn't specified for some lists
+    mBuilder->AddOrder(CONSTRAINT_ALIAS,
+                       CREATED_COLUMN,
+                       mSorts->ElementAt(0).ascending);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
   }
 
   /*
@@ -1064,9 +1070,6 @@ sbLocalDatabaseQuery::AddNonNullPrimarySortConstraint()
                                                 getter_AddRefs(criterion));
         rv = mBuilder->AddCriterion(criterion);
         NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        return NS_ERROR_INVALID_ARG;
       }
     }
     else {
