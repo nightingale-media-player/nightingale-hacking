@@ -356,7 +356,7 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
         getInternalTransferDataForFlavour(aDragSession,
                                           TYPE_X_SB_TRANSFER_MEDIA_LIST,
                                           Ci.sbIMediaListTransferContext);
-      if (targetResource == draggedList.library) {
+      if (targetResource == draggedList.list.library) {
         return null;
       }
         
