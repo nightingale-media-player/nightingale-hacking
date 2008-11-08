@@ -47,8 +47,14 @@ Flickr.prototype = {
 			*/
 		var url = this.searchURL + query;
 
-		if (searchTerms == "Songbird")
-			url = "http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=33a6c9b21ada1e5b7d85f5cde788e6c7&extras=owner_name,date_taken,o_dims,original_format&user_id=11878025@N03&tags=mashtape";
+		var songbirdmode = false;
+		if (searchTerms == "Songbird") {
+			songbirdmode = true;
+			// all photos tagged 'mashtape'
+			//url = "http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=33a6c9b21ada1e5b7d85f5cde788e6c7&extras=owner_name,date_taken,o_dims,original_format&user_id=11878025@N03&tags=mashtape";
+			// all photos in the mashTape set
+			url = "http://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key=33a6c9b21ada1e5b7d85f5cde788e6c7&photoset_id=72157607854460548&extras=owner_name,date_taken,o_dims,original_format";
+		}
 
 		mtUtils.log("Flickr", "URL:" + url);
 			
@@ -62,7 +68,12 @@ Flickr.prototype = {
 				var x = new XML(this.responseText.replace(
 						'<?xml version="1.0" encoding="utf-8" ?>', ""));
 				var results = new Array();
-				for each (var entry in x..photos.photo) {
+				var set;
+				if (songbirdmode)
+					set = x..photoset.photo;
+				else
+					set = x..photos.photo;
+				for each (var entry in set) {
 					var origFormat = entry.@originalformat.toString();
 					//if (origFormat == "")
 					//	continue;
